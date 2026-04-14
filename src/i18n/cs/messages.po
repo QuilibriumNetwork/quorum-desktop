@@ -15,11 +15,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:16
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -36,9 +31,9 @@ msgid "No Role - {count}"
 msgstr "Žádná role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:270
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Velikost vašeho profilového obrázku musí být {maxFileSize} nebo méně a musí mít příponu PNG, JPG nebo JPEG."
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Vítejte v Quorumu, {name}! Vaše účet je zabezpečený a připravený k použití."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1601
@@ -95,9 +90,8 @@ msgstr "byl vykopnut"
 #~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "Výchozí nastavení Prostor poskytují nejtypičtější zážitek z chatu, ale pro vyšší záruky soukromí si prohlédněte Pokročilé nastavení."
 
-#: src/components/Maintenance.native.tsx:59
-msgid " for updates."
-msgstr "pro aktualizace."
+#~ msgid " for updates."
+#~ msgstr "pro aktualizace."
 
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'everyone' je rezervované jméno."
@@ -192,7 +186,7 @@ msgstr "{0} připnuté zprávy v tomto kanálu"
 #. placeholder {0}: metadata.senderName
 #: src/services/NotificationService.ts:318
 msgid "{0} replied to your message in {spaceName}"
-msgstr "{0} odpověděl na tvou zprávu v {spaceName}"
+msgstr "{0} odpověděl na vaši zprávu v {spaceName}"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:150
@@ -303,9 +297,9 @@ msgstr "1 odpověď"
 msgid "4-Character Code"
 msgstr "4místný kód"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:91
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
-msgstr ""
+msgstr "Přihlašovací klíč používá bezpečnostní funkce vašeho zařízení (Face ID, otisk prstu nebo PIN) k ochraně vašeho účtu. Je to bezpečnější než heslo a nemusíte si nic pamatovat."
 
 #: src/services/MessageService.ts:4130
 #: src/services/NotificationService.ts:305
@@ -322,8 +316,12 @@ msgstr "prostor"
 msgid "Account"
 msgstr "Účet"
 
+#: src/components/onboarding/steps/DisplayNameStep.tsx:45
+msgid "Account address"
+msgstr "Adresa účtu"
+
 #: src/components/modals/UserSettingsModal/General.tsx:173
-#: src/components/onboarding/steps/DisplayNameStep.tsx:40
+#: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Adresa účtu"
 
@@ -342,9 +340,9 @@ msgstr "Akce ve frontě"
 msgid "Add a friend"
 msgstr "Přidat přítele"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:45
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
-msgstr ""
+msgstr "Přidejte profilovou fotku"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -542,9 +540,9 @@ msgstr "Pracovní"
 msgid "Back to invite link"
 msgstr "Zpět na pozvánkový odkaz"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:16
+#: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
-msgstr ""
+msgstr "Zálohujte svůj účtový klíč"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:128
 msgid "Backup Failed"
@@ -703,13 +701,12 @@ msgstr "Téma kanálu nemůže obsahovat speciální znaky"
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 msgstr "Téma kanálu musí mít maximálně {MAX_TOPIC_LENGTH} znaků"
 
-#: src/components/Maintenance.native.tsx:50
-msgid "Check "
-msgstr "Zkontrolovat"
+#~ msgid "Check "
+#~ msgstr "Zkontrolovat"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:49
+#: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
-msgstr ""
+msgstr "vyberte soubor"
 
 #~ msgid "Choose how you'd like to add an image"
 #~ msgstr "Vyberte, jak byste chtěli přidat obrázek"
@@ -753,13 +750,11 @@ msgstr "Klikněte znovu pro potvrzení"
 msgid "Click on the role name and tag to edit them."
 msgstr "Klikněte na název role a štítek pro jejich úpravu."
 
-#: src/components/onboarding/Onboarding.tsx:177
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "Klikněte na tlačítko níže pro vytvoření zálohy vašich klíčových informací, protože jakmile to zmizí, zmizí to navždy. Můžete být vyzváni k opětovnému ověření."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+#~ msgstr "Klikněte na tlačítko níže pro vytvoření zálohy vašich klíčových informací, protože jakmile to zmizí, zmizí to navždy. Můžete být vyzváni k opětovnému ověření."
 
-#: src/components/onboarding/Onboarding.native.tsx:257
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr "Klikněte na tlačítko níže pro vytvoření zálohy vašich klíčových informací, protože jakmile zmizí, zmizí navždy. Můžete být vyzváni k opětovnému ověření."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+#~ msgstr "Klikněte na tlačítko níže pro vytvoření zálohy vašich klíčových informací, protože jakmile zmizí, zmizí navždy. Můžete být vyzváni k opětovnému ověření."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -797,14 +792,14 @@ msgstr "Potvrdit reset"
 msgid "Connecting"
 msgstr "Připojuji se"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:73
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:90
+#: src/components/onboarding/steps/DisplayNameStep.tsx:57
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:99
 msgid "Continue"
-msgstr ""
+msgstr "Pokračovat"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:85
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:68
 msgid "Continue without passkey"
-msgstr ""
+msgstr "Pokračovat bez přihlašovacího klíče"
 
 #: src/components/direct/DirectMessage.tsx:773
 msgid "Conversation settings"
@@ -885,7 +880,7 @@ msgid "Couldn't decrypt your saved profile. Please re-enter your name and profil
 msgstr "Nepodařilo se dešifrovat váš uložený profil. Prosím, zadejte znovu své jméno a profilový obrázek."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:297
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "Nepodařilo se načíst váš uložený profil. Prosím, zadejte znovu své jméno a profilový obrázek."
 
@@ -898,20 +893,18 @@ msgstr "Vytvořit Prostor"
 msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
 msgstr "Vytvořte značku, kterou mohou členové zobrazovat vedle svého uživatelského jména v zprávách. Nahrajte obrázek a nastavte 4místný kód k identifikaci vašeho Space."
 
-#: src/components/onboarding/Login.native.tsx:102
-#: src/components/onboarding/Login.tsx:62
-#: src/components/onboarding/steps/WelcomeStep.tsx:24
+#: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
 msgstr "Vytvořit nový účet"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:70
+#: src/components/onboarding/steps/ImportKeyStep.tsx:81
 msgid "Create new account instead"
-msgstr ""
+msgstr "Vytvořit nový účet místo toho"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:29
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:65
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:33
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:48
 msgid "Create Passkey"
-msgstr ""
+msgstr "Vytvořit přihlašovací klíč"
 
 #: src/components/modals/ChannelEditorModal.tsx:180
 msgid "Create roles in Space Settings first."
@@ -1178,13 +1171,13 @@ msgstr "Zobrazte svůj soukromý klíč jako QR kód, který lze naskenovat pomo
 msgid "Documentation"
 msgstr "Dokumentace"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:31
+#: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
-msgstr ""
+msgstr "Stáhnout zálohu klíče"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:47
+#: src/components/onboarding/steps/ImportKeyStep.tsx:52
 msgid "Drag and drop or"
-msgstr ""
+msgstr "Přetáhněte a pusťte nebo"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1194,10 +1187,8 @@ msgstr "Zásuvka"
 msgid "Drop here"
 msgstr "Pusťte sem"
 
-#: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:131
-msgid "Drop your profile photo here"
-msgstr "Sem vložte svou profilovou fotografii"
+#~ msgid "Drop your profile photo here"
+#~ msgstr "Sem vložte svou profilovou fotografii"
 
 #: src/components/message/MessageActionsMenu.tsx:281
 msgid "Edit"
@@ -1296,17 +1287,17 @@ msgstr "Zadejte jak ID Space, tak konfigurační klíč pro ověření"
 msgid "Enter details manually"
 msgstr "Zadejte detaily ručně"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:27
+#: src/components/onboarding/steps/CompleteStep.tsx:30
 msgid "Enter Quorum"
-msgstr ""
+msgstr "Přihlásit se do Quorumu"
 
 #: src/components/message/MessageEditTextarea.tsx:727
 msgid "Enter to"
 msgstr "Stiskněte Enter pro"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:31
+#: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
-msgstr ""
+msgstr "Zadejte své jméno"
 
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
@@ -1637,9 +1628,9 @@ msgstr "Vydržte..."
 msgid "Help"
 msgstr "Nápověda"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:47
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:51
 msgid "Help others recognize you with a profile picture."
-msgstr ""
+msgstr "Pomozte ostatním vás poznat pomocí profilové fotografie."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:541
 msgid "Hide"
@@ -1660,18 +1651,16 @@ msgstr "Skrýt ztlumené kanály"
 msgid "Hide muted channels in list"
 msgstr "Skrýt ztlumené kanály v seznamu"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:31
+#: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
-msgstr ""
+msgstr "Už mám účet"
 
-#: src/components/onboarding/Onboarding.native.tsx:288
-#: src/components/onboarding/Onboarding.tsx:198
-msgid "I already saved mine"
-msgstr "Už jsem si ten svůj uložil"
+#~ msgid "I already saved mine"
+#~ msgstr "Už jsem si ten svůj uložil"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:24
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:26
 msgid "I understand"
-msgstr ""
+msgstr "Rozumím"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:515
 msgid "I Understand, Show QR"
@@ -1682,46 +1671,35 @@ msgstr "Rozumím, zobrazit QR"
 msgid "I'm new!"
 msgstr "Jsem nový!"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:38
+#: src/components/onboarding/steps/BackupKeyStep.tsx:35
 msgid "I've already saved my key"
-msgstr ""
+msgstr "Už jsem si svůj klíč uložil"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Uložil jsem to"
 
-#: src/components/onboarding/Onboarding.tsx:333
-#: src/components/onboarding/Onboarding.tsx:340
-msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "Pokud přeskočíte, dostanete výchozí profilový obrázek a můžete ho nastavit později"
+#~ msgid "If skipped, you'll get the default profile image and can set it later"
+#~ msgstr "Pokud přeskočíte, dostanete výchozí profilový obrázek a můžete ho nastavit později"
 
-#: src/components/onboarding/Onboarding.tsx:167
-#: src/components/onboarding/steps/BackupKeyStep.tsx:23
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "Pokud vymažete úložiště prohlížeče nebo přepnete prohlížeče, vaše staré zprávy a klíče mohou zmizet."
+#~ msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+#~ msgstr "Pokud vymažete úložiště prohlížeče nebo přepnete prohlížeče, vaše staré zprávy a klíče mohou zmizet."
 
-#: src/components/onboarding/Onboarding.native.tsx:252
-#: src/components/onboarding/Onboarding.tsx:172
-#: src/components/onboarding/steps/BackupKeyStep.tsx:22
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
-msgstr "Pokud aplikaci odinstalujete ze svého zařízení, ztratíte své staré zprávy a klíče."
+#~ msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+#~ msgstr "Pokud aplikaci odinstalujete ze svého zařízení, ztratíte své staré zprávy a klíče."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:577
 msgid "Import a backup instead"
 msgstr "Namísto toho importujte zálohu"
 
-#: src/components/onboarding/Login.native.tsx:111
-#: src/components/onboarding/Login.tsx:76
-msgid "Import Existing Key"
-msgstr "Importovat existující klíč"
+#~ msgid "Import Existing Key"
+#~ msgstr "Importovat existující klíč"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:29
+#: src/components/onboarding/steps/ImportKeyStep.tsx:32
 msgid "Import your account key"
-msgstr ""
+msgstr "Importovat váš účtový klíč"
 
-#: src/components/onboarding/Onboarding.native.tsx:242
-#: src/components/onboarding/Onboarding.tsx:154
-msgid "Important first-time user information:"
-msgstr "Důležité informace pro nové uživatele:"
+#~ msgid "Important first-time user information:"
+#~ msgstr "Důležité informace pro nové uživatele:"
 
 #: src/components/message/PinnedMessagesPanel.tsx:192
 msgid "Important messages will be pinned here"
@@ -1747,9 +1725,9 @@ msgstr "Neplatný formát adresy. Adresy musí používat platné alfanumerické
 #~ msgid "Invalid file type. Please check accepted file formats."
 #~ msgstr "Neplatný typ souboru. Zkontrolujte přijímané formáty souborů."
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:60
+#: src/components/onboarding/steps/ImportKeyStep.tsx:71
 msgid "Invalid Key File"
-msgstr ""
+msgstr "Neplatný soubor klíče"
 
 #: src/services/InvitationService.ts:509
 #: src/services/InvitationService.ts:520
@@ -1824,13 +1802,13 @@ msgstr "Přeskočit"
 msgid "Jump to present"
 msgstr "Přejít na současnost"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:18
 msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
-msgstr ""
+msgstr "Uchovejte stažený soubor v bezpečí a soukromí! Kdokoliv, kdo má tento soubor, může přistupovat k vašemu účtu."
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:14
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
-msgstr ""
+msgstr "Uchovejte svůj klíč v bezpečí!"
 
 #~ msgid "Key Copied!"
 #~ msgstr "Klíč zkopírován!"
@@ -1893,15 +1871,11 @@ msgstr "Opuštění Prostor"
 msgid "Leave this space"
 msgstr "Opustit tento space"
 
-#: src/components/onboarding/Onboarding.native.tsx:308
-#: src/components/onboarding/Onboarding.tsx:212
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
-msgstr "Dej svým přátelům vědět, kdo jsi! Vyber si přátelské jméno, které se bude zobrazovat v tvých konverzacích, něco snadněji čitelného než:"
+#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+#~ msgstr "Dej svým přátelům vědět, kdo jsi! Vyber si přátelské jméno, které se bude zobrazovat v tvých konverzacích, něco snadněji čitelného než:"
 
-#: src/components/onboarding/Onboarding.native.tsx:497
-#: src/components/onboarding/Onboarding.tsx:366
-msgid "Let's gooooooooo"
-msgstr "Jdeme na to"
+#~ msgid "Let's gooooooooo"
+#~ msgstr "Jdeme na to"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1932,7 +1906,6 @@ msgstr "Načítání připnutých zpráv..."
 msgid "Loading thread..."
 msgstr "Načítání vlákna..."
 
-#: src/components/onboarding/Onboarding.tsx:143
 #: src/components/onboarding/steps/LoadingStep.tsx:14
 msgid "Loading your profile..."
 msgstr "Načítání vašeho profilu..."
@@ -1953,8 +1926,7 @@ msgstr "Hledání"
 msgid "Main navigation"
 msgstr "Hlavní navigace"
 
-#: src/components/Maintenance.native.tsx:40
-#: src/components/Maintenance.tsx:17
+#: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "Údržba probíhá"
 
@@ -1966,10 +1938,8 @@ msgstr "Udělat roli neviditelnou"
 msgid "Make role public"
 msgstr "Udělat roli veřejnou"
 
-#: src/components/onboarding/Onboarding.native.tsx:358
-#: src/components/onboarding/Onboarding.tsx:261
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "Udělej si svůj účet jedinečným – nastav si profilový obrázek. Tyto informace jsou poskytovány pouze pro Prostory, které navštěvuješ."
+#~ msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+#~ msgstr "Udělej si svůj účet jedinečným – nastav si profilový obrázek. Tyto informace jsou poskytovány pouze pro Prostory, které navštěvuješ."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
@@ -2272,9 +2242,9 @@ msgstr "Oznámení nejsou v tomto prohlížeči podporována"
 msgid "Notify all members"
 msgstr "Oznámit všem členům"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:17
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
 msgid "Now let's store your account key inside your passkey. One more confirmation needed."
-msgstr ""
+msgstr "Teď si uložme váš účtový klíč do přihlašovacího klíče. Potřebujeme ještě jedno potvrzení."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
@@ -2286,10 +2256,8 @@ msgstr "Offline"
 msgid "OK"
 msgstr "OK"
 
-#: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:120
-msgid "One of us, one of us!"
-msgstr "Jeden z nás, jeden z nás!"
+#~ msgid "One of us, one of us!"
+#~ msgstr "Jeden z nás, jeden z nás!"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
@@ -2321,17 +2289,17 @@ msgstr "Původní"
 msgid "Page Not Found"
 msgstr "Stránka nebyla nalezena"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:19
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Nastavení přihlašovacího klíče selhalo. Můžete to zkusit znovu nebo pokračovat bez přihlašovacího klíče (stále bezpečné, jen bez ochrany zařízení)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:15
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Přihlašovací klíče nejsou na tomto prohlížeči podporovány. Musíte pokračovat bez přihlašovacího klíče (stále bezpečné, jen bez ochrany zařízení)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:31
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
-msgstr ""
+msgstr "Přihlašovací klíče používají vestavěnou bezpečnost vašeho zařízení k ochraně vašeho účtu. To vyžaduje dvě rychlá potvrzení přes vaše zařízení."
 
 #: src/components/modals/AddSpaceModal.tsx:146
 msgid "Paste an invite link"
@@ -2350,10 +2318,8 @@ msgstr "Čekající na odstranění - klikněte na Uložit pro potvrzení"
 msgid "Permissions:"
 msgstr "Oprávnění:"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:121
-msgid "Personalize your account"
-msgstr "Personalizuj si svůj účet"
+#~ msgid "Personalize your account"
+#~ msgstr "Personalizuj si svůj účet"
 
 #~ msgid "Photo"
 #~ msgstr "Fotografie"
@@ -2429,10 +2395,8 @@ msgstr "Připnuté zprávy"
 #~ msgid "Pinned!"
 #~ msgstr "Připnuto!"
 
-#: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:133
-msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
-msgstr "PNG, JPG nebo JPEG • Optimální poměr 1:1"
+#~ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
+#~ msgstr "PNG, JPG nebo JPEG • Optimální poměr 1:1"
 
 #~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 #~ msgstr "Stiskněte Enter pro uložení, Shift+Enter pro nový řádek, Esc pro zrušení"
@@ -2477,34 +2441,34 @@ msgstr "Veřejné pozvánkové odkazy umožňují každému, kdo má přístup k
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kód se automaticky skryje za 60 sekund"
 
-#: src/components/Maintenance.tsx:24
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Quorum infrastruktura je v tuto chvíli nasazována. Zkus prosím obnovit stránku a zkontroluj <0>https://status.quilibrium.com/</0> pro aktualizace."
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+#~ msgstr "Quorum infrastruktura je v tuto chvíli nasazována. Zkus prosím obnovit stránku a zkontroluj <0>https://status.quilibrium.com/</0> pro aktualizace."
 
-#: src/components/Maintenance.native.tsx:45
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr "Quorum infrastruktura je v tuto chvíli nasazována. Zkuste prosím obnovit."
+#: src/components/Maintenance.tsx:18
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
+msgstr "Infrastruktura Quorumu se právě nasazuje. Zkuste prosím obnovit stránku a podívejte se na <0>status.quilibrium.com</0> pro aktualizace."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:35
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+#~ msgstr "Quorum infrastruktura je v tuto chvíli nasazována. Zkuste prosím obnovit."
+
+#: src/components/onboarding/steps/WelcomeStep.tsx:36
 msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
-msgstr ""
+msgstr "Quorum je decentralizovaná zprávovací platforma, kde vlastníte svou identitu. Bez e-mailu, bez telefonního čísla - pouze bezpečný klíč, který ovládáte pouze vy."
 
-#: src/components/onboarding/Onboarding.native.tsx:247
-#: src/components/onboarding/Onboarding.tsx:157
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum je peer-to-peer a šifrované end-to-end. To znamená, že tvé zprávy zůstávají soukromé, ale stejně důležité je, že žijí v síti pouze po dobu potřebnou k tomu, aby se dostaly k tobě a tvým příjemcům."
+#~ msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+#~ msgstr "Quorum je peer-to-peer a šifrované end-to-end. To znamená, že tvé zprávy zůstávají soukromé, ale stejně důležité je, že žijí v síti pouze po dobu potřebnou k tomu, aby se dostaly k tobě a tvým příjemcům."
 
 #: src/components/context/RegistrationPersister.tsx:275
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "Quorum bylo načteno, zatímco prohlížeč nebyl v ohnisku nebo byla odmítnuta žádost o klíč. Prosím, znovu autorizuj přístup k tvým zprávám."
+msgstr "Quorum bylo načteno, zatímco prohlížeč nebyl v ohnisku nebo byla odmítnuta žádost o klíč. Prosím, znovu autorizujte přístup k vašim zprávám."
 
 #: src/components/modals/ReactionsModal.tsx:89
 msgid "Reactions"
 msgstr "Reakce"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:40
+#: src/components/onboarding/steps/WelcomeStep.tsx:35
 msgid "Read more about Quorum"
-msgstr ""
+msgstr "Přečtěte si více o Quorumu"
 
 #: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Read only"
@@ -2535,8 +2499,7 @@ msgstr "obdržena konfigurace s neplatným podpisem!"
 msgid "Recipient has no devices"
 msgstr "Příjemce nemá žádná zařízení"
 
-#: src/components/Maintenance.native.tsx:71
-#: src/components/Maintenance.tsx:46
+#: src/components/Maintenance.tsx:38
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Obnovit"
@@ -2660,10 +2623,8 @@ msgstr "ULOŽIT"
 msgid "Save Changes"
 msgstr "Uložit změny"
 
-#: src/components/onboarding/Onboarding.native.tsx:467
-#: src/components/onboarding/Onboarding.tsx:322
-msgid "Save Contact Photo"
-msgstr "Uložit fotografii kontaktu"
+#~ msgid "Save Contact Photo"
+#~ msgstr "Uložit fotografii kontaktu"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
 #: src/components/modals/SpaceSettingsModal/General.tsx:331
@@ -2679,18 +2640,16 @@ msgstr "Uložení se nezdařilo"
 msgid "Save Private Key"
 msgstr "Uložit soukromý klíč"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:27
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:31
 msgid "Save to Passkey"
-msgstr ""
+msgstr "Uložit do přihlašovacího klíče"
 
-#: src/components/onboarding/Onboarding.native.tsx:267
-#: src/components/onboarding/Onboarding.tsx:191
-msgid "Save User Key"
-msgstr "Uložit uživatelský klíč"
+#~ msgid "Save User Key"
+#~ msgstr "Uložit uživatelský klíč"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:15
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:19
 msgid "Save Your Account Key"
-msgstr ""
+msgstr "Uložte svůj účtový klíč"
 
 #: src/services/ConfigService.ts:64
 msgid "saved config is out of date"
@@ -2787,9 +2746,9 @@ msgstr "Vyberte výchozí kanál"
 #~ msgid "Select Image"
 #~ msgstr "Vyberte obrázek"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:31
+#: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
-msgstr ""
+msgstr "Vyberte nebo přetáhněte svůj soubor s účtovým klíčem, abyste obnovili svůj účet."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:157
 msgid "Select permissions"
@@ -2837,7 +2796,7 @@ msgstr "Odeslat soukromou pozvánku"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:267
 msgid "Send your public invite link directly to someone via DM."
-msgstr "Odeslat svůj veřejný pozvánkový odkaz přímo někomu prostřednictvím DM."
+msgstr "Odeslat svůj veřejný pozvánkový odkaz přímo někomu přes DM."
 
 #: src/components/message/Message.tsx:1380
 msgid "Sending..."
@@ -2847,10 +2806,8 @@ msgstr "Odesílání..."
 msgid "Session Encrypted"
 msgstr "Relace zašifrována"
 
-#: src/components/onboarding/Onboarding.native.tsx:340
-#: src/components/onboarding/Onboarding.tsx:247
-msgid "Set Display Name"
-msgstr "Nastavit zobrazené jméno"
+#~ msgid "Set Display Name"
+#~ msgstr "Nastavit zobrazené jméno"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2896,18 +2853,16 @@ msgstr "Zobrazit QR"
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Zobrazuje se prvních 500 výsledků. Upřesněte svůj dotaz pro konkrétnější výsledky."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:15
+#: src/components/onboarding/steps/WelcomeStep.tsx:16
 msgid "Sign in into Quorum"
-msgstr ""
+msgstr "Přihlaste se do Quorum"
 
-#: src/components/onboarding/Onboarding.native.tsx:455
-#: src/components/onboarding/Onboarding.tsx:329
-msgid "Skip Adding Photo"
-msgstr "Přeskočit přidání fotografie"
+#~ msgid "Skip Adding Photo"
+#~ msgstr "Přeskočit přidání fotografie"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:97
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:107
 msgid "Skip for now"
-msgstr ""
+msgstr "Přeskočit prozatím"
 
 #: src/services/MessageService.ts:4113
 msgid "Someone"
@@ -3031,9 +2986,8 @@ msgstr "Obrázek značky"
 msgid "Tap to copy"
 msgstr "Klepněte pro zkopírování"
 
-#: src/components/onboarding/Onboarding.native.tsx:437
-msgid "Tap to select"
-msgstr "Klepněte pro výběr"
+#~ msgid "Tap to select"
+#~ msgstr "Klepněte pro výběr"
 
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Tell us about yourself..."
@@ -3053,9 +3007,9 @@ msgstr "Odkaz na pozvánku vypršel nebo je neplatný."
 msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 msgstr "Stránka, kterou hledáte, neexistuje nebo byla přesunuta. Pojďme vás dostat zpět na správnou cestu."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:17
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Nastavení passkey vypršelo. Můžete to zkusit znovu, nebo pokračovat bez passkey (stále bezpečné, jen bez hardwarové ochrany zařízení)."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
@@ -3083,18 +3037,16 @@ msgstr "Tento popis bude viditelný na pozvánkách a zobrazen lidem, když hled
 msgid "This device"
 msgstr "Toto zařízení"
 
-#: src/components/onboarding/Onboarding.native.tsx:314
-#: src/components/onboarding/Onboarding.tsx:221
-msgid "This information is only provided to the Spaces you join."
-msgstr "Tato informace je poskytována pouze pro Prostory, které se připojíte."
+#~ msgid "This information is only provided to the Spaces you join."
+#~ msgstr "Tato informace je poskytována pouze pro Prostory, které se připojíte."
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
 msgstr "To je trapné..."
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:20
+#: src/components/onboarding/steps/DisplayNameStep.tsx:21
 msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
-msgstr ""
+msgstr "Toto je, jak vás ostatní uvidí v Quorum. Můžete to kdykoli změnit v nastavení."
 
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -3229,9 +3181,9 @@ msgstr "Dnes"
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "Příliš mnoho zmínek v zprávě. Maximálně {MAX_MENTIONS_PER_MESSAGE} povoleno."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:75
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:58
 msgid "Try Again"
-msgstr ""
+msgstr "Zkusit znovu"
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -3467,9 +3419,8 @@ msgstr "Uživatel neexistuje."
 #~ msgid "User Muted!"
 #~ msgstr "Uživatel ztlumen!"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:26
-msgid "User Name"
-msgstr ""
+#~ msgid "User Name"
+#~ msgstr "Uživatelské jméno"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:77
 #: src/hooks/business/messages/usePinnedMessages.ts:169
@@ -3503,31 +3454,37 @@ msgstr "Ověřuji pozvánku..."
 msgid "View edit history"
 msgstr "Zobrazit historii úprav"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:50
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:74
 msgid "View technical details"
-msgstr ""
+msgstr "Zobrazit technické podrobnosti"
 
 #: src/components/message/MessageActionsMenu.tsx:264
 #: src/components/thread/ThreadIndicator.tsx:35
 msgid "View Thread"
 msgstr "Zobrazit vlákno"
 
-#: src/components/onboarding/Onboarding.native.tsx:237
-#: src/components/onboarding/Onboarding.tsx:117
-msgid "Welcome to Quorum!"
-msgstr "Vítejte v Quorum!"
+#~ msgid "Welcome to Quorum!"
+#~ msgstr "Vítejte v Quorum!"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:96
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:79
 msgid "What is a Passkey?"
-msgstr ""
+msgstr "Co je passkey?"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:37
+#: src/components/onboarding/steps/ImportKeyStep.tsx:63
+msgid "What is an account key?"
+msgstr "Co je účtový klíč?"
+
+#: src/components/onboarding/steps/DisplayNameStep.tsx:62
+msgid "What is the account address?"
+msgstr "Co je účtová adresa?"
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:35
 msgid "What is the Account Key?"
-msgstr ""
+msgstr "Co je to účtový klíč?"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:18
+#: src/components/onboarding/steps/DisplayNameStep.tsx:19
 msgid "What should we call you?"
-msgstr ""
+msgstr "Jak vás máme oslovovat?"
 
 #: src/components/direct/EmptyDirectMessage.tsx:69
 msgid "What's on your mind today?"
@@ -3584,9 +3541,8 @@ msgstr "Když někdo odpoví na vaše zprávy"
 #~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 #~ msgstr "Když je toto nastavení povoleno, pozvánkové odkazy automaticky umožní uživateli připojit se k vašemu Prostor. Když není povoleno, uživatelé následující pozvánkový odkaz vám zašlou žádost o připojení k vašemu Prostor, kterou musíte ručně schválit. Veřejné odkazy vyžadují, aby v odkazu byly přítomny určité klíčové materiály – buďte si vědomi, že vlastnictví veřejného odkazu na Prostor může umožnit komukoli s odkazem číst zprávy ve Prostor po dobu platnosti odkazu."
 
-#: src/components/onboarding/Onboarding.tsx:164
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "Když používáte Quorum v prohlížeči, vaše zprávy jsou ukládány lokálně do vašeho prohlížeče."
+#~ msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+#~ msgstr "Když používáte Quorum v prohlížeči, vaše zprávy jsou ukládány lokálně do vašeho prohlížeče."
 
 #: src/components/modals/ConversationSettingsModal.tsx:223
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
@@ -3596,13 +3552,13 @@ msgstr "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče. Když zprávu nepodepíšete, máte rozumnou popření. Toto nastavení můžete ovládat pro každou konverzaci a zprávu jednotlivě."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:48
+#: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
-msgstr ""
+msgstr "Proč to musím dělat?"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:43
+#: src/components/onboarding/steps/BackupKeyStep.tsx:40
 msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr ""
+msgstr "Bez této zálohy ztráta zařízení znamená ztrátu účtu - není žádná možnost \"zapomenuté heslo\". Tohle je cena, kterou platíte za soukromí :-)"
 
 #: src/utils/dateFormatting.ts:29
 msgid "Yesterday"
@@ -3633,9 +3589,9 @@ msgstr "Toto můžete později změnit pro tuto konverzaci kliknutím na ikonu z
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "Můžete spravovat oznámení o zmínkách ve vašem prostoru v nastavení každého prostoru."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:13
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Zrušili jste nastavení passkey. Můžete to zkusit znovu, nebo pokračovat bez passkey (stále bezpečné, jen bez hardwarové ochrany zařízení)."
 
 #: src/components/modals/GroupEditorModal.tsx:114
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
@@ -3671,26 +3627,24 @@ msgstr "Musíte si přiřadit roli pro moderátorské akce (kromě vyhazování)
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Nebudete se moci znovu připojit, pokud nebudete znovu pozváni. Vaše stávající zprávy NEBUDOU smazány."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:18
+#: src/components/onboarding/steps/BackupKeyStep.tsx:19
 msgid "You'll need this file to recover your account if you lose access to your device."
-msgstr ""
+msgstr "Budete potřebovat tento soubor, abyste obnovili svůj účet, pokud přijdete o přístup k vašemu zařízení."
 
 #: src/components/notifications/NotificationPanel.tsx:203
 msgid "You're all caught up!"
 msgstr "Jste všichni v obraze!"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:14
+#: src/components/onboarding/steps/CompleteStep.tsx:17
 msgid "You're all set!"
-msgstr ""
+msgstr "Jste připraveni!"
 
-#: src/components/onboarding/Onboarding.native.tsx:486
-#: src/components/onboarding/Onboarding.tsx:354
-msgid "You're all set. Welcome to Quorum!"
-msgstr "Jste připraveni. Vítejte v Quorum!"
+#~ msgid "You're all set. Welcome to Quorum!"
+#~ msgstr "Jste připraveni. Vítejte v Quorum!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
-msgstr "Nejsi uveden mezi členy tohoto Space. Oprava tohoto přidá tvůj profil do seznamu členů Space (ukládá tvůj profil lokálně s tvou adresou doručené pošty)."
+msgstr "Nejste uveden mezi členy tohoto Space. Oprava tohoto přidá váš profil do seznamu členů Space (ukládá váš profil lokálně s vaší adresou doručené pošty)."
 
 #: src/components/ui/OfflineBanner.tsx:56
 msgid "You're offline"
@@ -3717,17 +3671,21 @@ msgstr "Zprávy posíláte příliš rychle. Prosím, počkejte chvíli."
 msgid "You've been invited to join a Space"
 msgstr "Byli jste pozváni k připojení k Prostor"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:43
+#: src/components/onboarding/steps/DisplayNameStep.tsx:63
 msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
-msgstr ""
+msgstr "Vaše účtová adresa je unikátní veřejný identifikátor odvozený z vašeho účtového klíče. Ostatní ho mohou použít, aby vás našli a napsali vám. Představte si to jako uživatelské jméno, které se nikdy nemění."
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:32
+#: src/components/onboarding/steps/ImportKeyStep.tsx:64
+msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "Váš účtový klíč je soubor s privátním klíčem (.key), který prokazuje vlastnictví vašeho účtu. Můžete ho stáhnout z nastavení vašeho účtu. Zachovejte ho bezpečně — kdokoli, kdo ho má, může přistupovat k vašemu účtu."
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
-msgstr ""
+msgstr "Váš účtový klíč je vaše unikátní identita v Quorum. Je to jako hlavní heslo, které prokazuje, že jste vy sami - ale generuje se automaticky a ukládá se zabezpečeně ve vašem passkey."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:17
+#: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
-msgstr ""
+msgstr "Vaše komunity, vaše pravidla - žádná platforma vás nemůže zabanovat."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:124
 msgid "Your Details"
@@ -3742,13 +3700,15 @@ msgstr "Vaše údaje"
 #~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
 #~ msgstr "Váš soukromý klíč bude zobrazen na obrazovce. Každý, kdo tento QR kód uvidí nebo vyfotí, může převzít plnou kontrolu nad vaším účtem Quorum a ukrást jakékoli související prostředky."
 
+#~ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Velikost vašeho profilového obrázku musí být {maxFileSize} nebo méně a musí mít příponu PNG, JPG nebo JPEG."
+
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Velikost vašeho profilového obrázku musí být {maxSize} nebo méně a musí mít příponu PNG, JPG nebo JPEG."
 
-#: src/components/onboarding/Onboarding.native.tsx:363
-msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Velikost vašeho profilového obrázku musí být 2 MB nebo méně a musí mít příponu PNG, JPG nebo JPEG."
+#~ msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Velikost vašeho profilového obrázku musí být 2 MB nebo méně a musí mít příponu PNG, JPG nebo JPEG."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:204
 msgid "Your Roles"

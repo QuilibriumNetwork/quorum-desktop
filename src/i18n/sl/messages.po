@@ -15,11 +15,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:16
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -36,9 +31,9 @@ msgid "No Role - {count}"
 msgstr "Brez vloge - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:270
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Velikost vaše profilne slike mora biti {maxFileSize} ali manj in mora imeti končnico PNG, JPG ali JPEG."
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Dobrodošli v Quorum, {name}! Vaš račun je varovan in pripravljen za uporabo."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1601
@@ -95,9 +90,8 @@ msgstr "je bil izgnan"
 #~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "Privzete nastavitve za Space zagotavljajo najbolj tipično izkušnjo klepeta, vendar za višje jamstvo zasebnosti preglejte Napredne nastavitve."
 
-#: src/components/Maintenance.native.tsx:59
-msgid " for updates."
-msgstr "za posodobitve."
+#~ msgid " for updates."
+#~ msgstr "za posodobitve."
 
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'vsi' je rezervirano ime."
@@ -303,9 +297,9 @@ msgstr "1 odgovor"
 msgid "4-Character Code"
 msgstr "Kod iz 4 znakov"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:91
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
-msgstr ""
+msgstr "Passkey uporablja varnostne značilnosti vaše naprave (Face ID, odtis prsta ali PIN) za zaščito vašega računa. Je bolj varno kot geslo in ga ne morate zapomniti."
 
 #: src/services/MessageService.ts:4130
 #: src/services/NotificationService.ts:305
@@ -322,8 +316,12 @@ msgstr "prostor"
 msgid "Account"
 msgstr "Račun"
 
+#: src/components/onboarding/steps/DisplayNameStep.tsx:45
+msgid "Account address"
+msgstr "Naslov računa"
+
 #: src/components/modals/UserSettingsModal/General.tsx:173
-#: src/components/onboarding/steps/DisplayNameStep.tsx:40
+#: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Naslov računa"
 
@@ -342,9 +340,9 @@ msgstr "Dejanja v čakanju"
 msgid "Add a friend"
 msgstr "Dodaj prijatelja"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:45
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
-msgstr ""
+msgstr "Dodajte profilno sliko"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -543,9 +541,9 @@ msgstr "Oddaljen"
 msgid "Back to invite link"
 msgstr "Nazaj na povezavo za povabilo"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:16
+#: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
-msgstr ""
+msgstr "Varnostno shranite ključ računa"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:128
 msgid "Backup Failed"
@@ -704,13 +702,12 @@ msgstr "Tema kanala ne more vsebovati posebnih znakov"
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 msgstr "Tema kanala mora biti dolga {MAX_TOPIC_LENGTH} znakov ali manj"
 
-#: src/components/Maintenance.native.tsx:50
-msgid "Check "
-msgstr "Preveri"
+#~ msgid "Check "
+#~ msgstr "Preveri"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:49
+#: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
-msgstr ""
+msgstr "izberi datoteko"
 
 #~ msgid "Choose how you'd like to add an image"
 #~ msgstr "Izberi, kako želiš dodati sliko"
@@ -754,13 +751,11 @@ msgstr "Kliknite znova za potrditev"
 msgid "Click on the role name and tag to edit them."
 msgstr "Kliknite na ime vloge in oznako, da ju uredite."
 
-#: src/components/onboarding/Onboarding.tsx:177
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "Kliknite gumb spodaj, da ustvarite varnostno kopijo svojih ključnih informacij, ker, ko enkrat izgine, izgine za vedno. Morda boste morali ponovno potrditi identiteto."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+#~ msgstr "Kliknite gumb spodaj, da ustvarite varnostno kopijo svojih ključnih informacij, ker, ko enkrat izgine, izgine za vedno. Morda boste morali ponovno potrditi identiteto."
 
-#: src/components/onboarding/Onboarding.native.tsx:257
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr "Klikni gumb spodaj, da ustvariš varnostno kopijo svojih ključnih informacij, ker ko enkrat izginejo, izginejo za vedno. Morda boš moral ponovno potrditi."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+#~ msgstr "Klikni gumb spodaj, da ustvariš varnostno kopijo svojih ključnih informacij, ker ko enkrat izginejo, izginejo za vedno. Morda boš moral ponovno potrditi."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -798,14 +793,14 @@ msgstr "Potrdi ponastavitev"
 msgid "Connecting"
 msgstr "Povezovanje"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:73
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:90
+#: src/components/onboarding/steps/DisplayNameStep.tsx:57
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:99
 msgid "Continue"
-msgstr ""
+msgstr "Naprej"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:85
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:68
 msgid "Continue without passkey"
-msgstr ""
+msgstr "Naprej brez passkey"
 
 #: src/components/direct/DirectMessage.tsx:773
 msgid "Conversation settings"
@@ -886,7 +881,7 @@ msgid "Couldn't decrypt your saved profile. Please re-enter your name and profil
 msgstr "Ni bilo mogoče dešifrirati vašega shranjenega profila. Prosimo, ponovno vnesite svoje ime in sliko profila."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:297
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "Ni bilo mogoče naložiti vašega shranjenega profila. Prosimo, ponovno vnesite svoje ime in sliko profila."
 
@@ -899,20 +894,18 @@ msgstr "Ustvari Prostor"
 msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
 msgstr "Ustvari oznako, ki jo lahko člani prikazujejo poleg svojih uporabniških imen v sporočilih. Naloži sliko in nastavi 4-znakovni kod za identifikacijo tvojega Space."
 
-#: src/components/onboarding/Login.native.tsx:102
-#: src/components/onboarding/Login.tsx:62
-#: src/components/onboarding/steps/WelcomeStep.tsx:24
+#: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
 msgstr "Ustvari nov račun"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:70
+#: src/components/onboarding/steps/ImportKeyStep.tsx:81
 msgid "Create new account instead"
-msgstr ""
+msgstr "Ustvari nov račun namesto tega"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:29
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:65
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:33
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:48
 msgid "Create Passkey"
-msgstr ""
+msgstr "Ustvari Passkey"
 
 #: src/components/modals/ChannelEditorModal.tsx:180
 msgid "Create roles in Space Settings first."
@@ -1179,13 +1172,13 @@ msgstr "Prikažite svoj zasebni ključ kot QR kodo, ki jo lahko skenirate z mobi
 msgid "Documentation"
 msgstr "Dokumentacija"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:31
+#: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
-msgstr ""
+msgstr "Prenesi varnostno kopijo ključa"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:47
+#: src/components/onboarding/steps/ImportKeyStep.tsx:52
 msgid "Drag and drop or"
-msgstr ""
+msgstr "Povleci in spusti ali"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1195,10 +1188,8 @@ msgstr "Predal"
 msgid "Drop here"
 msgstr "Spusti tukaj"
 
-#: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:131
-msgid "Drop your profile photo here"
-msgstr "Pusti svojo profilno sliko tukaj"
+#~ msgid "Drop your profile photo here"
+#~ msgstr "Pusti svojo profilno sliko tukaj"
 
 #: src/components/message/MessageActionsMenu.tsx:281
 msgid "Edit"
@@ -1297,17 +1288,17 @@ msgstr "Vnesite tako ID Space kot ključ za konfiguracijo za preverjanje"
 msgid "Enter details manually"
 msgstr "Vnesite podrobnosti ročno"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:27
+#: src/components/onboarding/steps/CompleteStep.tsx:30
 msgid "Enter Quorum"
-msgstr ""
+msgstr "Vstopi v Quorum"
 
 #: src/components/message/MessageEditTextarea.tsx:727
 msgid "Enter to"
 msgstr "Vnesite za"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:31
+#: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
-msgstr ""
+msgstr "Vnesite svoje ime"
 
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
@@ -1353,7 +1344,7 @@ msgstr "Izvozi"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:559
 msgid "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
-msgstr "Izvozi šifrirano rezervo svojih neposrednih sporočil, da jih lahko obnoviš, če izgubiš dostop do tega uređaja."
+msgstr "Izvozi šifrirano rezervo svojih neposrednih sporočil, da jih lahko obnoviš, če izgubiš dostop do te naprave."
 
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "Izvozi svoj ključ v datoteko s klikom na to gumb. Ne delite te datoteke z nikomer drugim, saj vas lahko posnemajo ali ukradejo vaše Apex zaslužke v Space-u."
@@ -1638,9 +1629,9 @@ msgstr "Zadrži se..."
 msgid "Help"
 msgstr "Pomoč"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:47
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:51
 msgid "Help others recognize you with a profile picture."
-msgstr ""
+msgstr "Pomagajte drugim, da vas prepoznajo z profilno sliko."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:541
 msgid "Hide"
@@ -1661,18 +1652,16 @@ msgstr "Skrij utišane kanale"
 msgid "Hide muted channels in list"
 msgstr "Skrij utišane kanale na seznamu"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:31
+#: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
-msgstr ""
+msgstr "Že imam račun"
 
-#: src/components/onboarding/Onboarding.native.tsx:288
-#: src/components/onboarding/Onboarding.tsx:198
-msgid "I already saved mine"
-msgstr "Že sem shranil svojega"
+#~ msgid "I already saved mine"
+#~ msgstr "Že sem shranil svojega"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:24
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:26
 msgid "I understand"
-msgstr ""
+msgstr "Razumem"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:515
 msgid "I Understand, Show QR"
@@ -1683,46 +1672,35 @@ msgstr "Razumem, prikaži QR"
 msgid "I'm new!"
 msgstr "Sem nov!"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:38
+#: src/components/onboarding/steps/BackupKeyStep.tsx:35
 msgid "I've already saved my key"
-msgstr ""
+msgstr "Že sem shranil svoj ključ"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Shranjeno!"
 
-#: src/components/onboarding/Onboarding.tsx:333
-#: src/components/onboarding/Onboarding.tsx:340
-msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "Če preskočite, boste dobili privzeto profilno sliko in jo lahko nastavite kasneje"
+#~ msgid "If skipped, you'll get the default profile image and can set it later"
+#~ msgstr "Če preskočite, boste dobili privzeto profilno sliko in jo lahko nastavite kasneje"
 
-#: src/components/onboarding/Onboarding.tsx:167
-#: src/components/onboarding/steps/BackupKeyStep.tsx:23
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "Če izbrišete shranjevanje brskalnika ali preklopite brskalnike, lahko vaša stara sporočila in ključi izginejo."
+#~ msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+#~ msgstr "Če izbrišete shranjevanje brskalnika ali preklopite brskalnike, lahko vaša stara sporočila in ključi izginejo."
 
-#: src/components/onboarding/Onboarding.native.tsx:252
-#: src/components/onboarding/Onboarding.tsx:172
-#: src/components/onboarding/steps/BackupKeyStep.tsx:22
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
-msgstr "Če odstranite aplikacijo s svojega naprave, boste izgubili svoja stara sporočila in ključe."
+#~ msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+#~ msgstr "Če odstranite aplikacijo s svojega naprave, boste izgubili svoja stara sporočila in ključe."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:577
 msgid "Import a backup instead"
 msgstr "Namesto tega uvozi rezervo"
 
-#: src/components/onboarding/Login.native.tsx:111
-#: src/components/onboarding/Login.tsx:76
-msgid "Import Existing Key"
-msgstr "Uvozi obstoječi ključ"
+#~ msgid "Import Existing Key"
+#~ msgstr "Uvozi obstoječi ključ"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:29
+#: src/components/onboarding/steps/ImportKeyStep.tsx:32
 msgid "Import your account key"
-msgstr ""
+msgstr "Uvozite ključ računa"
 
-#: src/components/onboarding/Onboarding.native.tsx:242
-#: src/components/onboarding/Onboarding.tsx:154
-msgid "Important first-time user information:"
-msgstr "Pomembne informacije za nove uporabnike:"
+#~ msgid "Important first-time user information:"
+#~ msgstr "Pomembne informacije za nove uporabnike:"
 
 #: src/components/message/PinnedMessagesPanel.tsx:192
 msgid "Important messages will be pinned here"
@@ -1748,9 +1726,9 @@ msgstr "Neveljavna oblika naslova. Naslovi morajo uporabljati veljavne alfanumer
 #~ msgid "Invalid file type. Please check accepted file formats."
 #~ msgstr "Neveljavna vrsta datoteke. Preverite sprejete formate datotek."
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:60
+#: src/components/onboarding/steps/ImportKeyStep.tsx:71
 msgid "Invalid Key File"
-msgstr ""
+msgstr "Neveljavna datoteka ključa"
 
 #: src/services/InvitationService.ts:509
 #: src/services/InvitationService.ts:520
@@ -1825,13 +1803,13 @@ msgstr "Preskoči"
 msgid "Jump to present"
 msgstr "Preskoči na sedanjost"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:18
 msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
-msgstr ""
+msgstr "Shranite datoteko, ki ste jo prenesli, varno in zasebno! Kdo koli z to datoteko lahko dostopa do vašega računa."
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:14
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
-msgstr ""
+msgstr "Varnostno shranite svoj ključ!"
 
 #~ msgid "Key Copied!"
 #~ msgstr "Ključ je kopiran!"
@@ -1894,15 +1872,11 @@ msgstr "Ostavi prostor"
 msgid "Leave this space"
 msgstr "Zapustite to space"
 
-#: src/components/onboarding/Onboarding.native.tsx:308
-#: src/components/onboarding/Onboarding.tsx:212
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
-msgstr "Povej svojim prijateljem, kdo si! Izberi prijazno ime, ki se bo prikazovalo v tvojih pogovorih, nekaj lažjega za branje kot:"
+#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+#~ msgstr "Povej svojim prijateljem, kdo si! Izberi prijazno ime, ki se bo prikazovalo v tvojih pogovorih, nekaj lažjega za branje kot:"
 
-#: src/components/onboarding/Onboarding.native.tsx:497
-#: src/components/onboarding/Onboarding.tsx:366
-msgid "Let's gooooooooo"
-msgstr "Hajde da idemo"
+#~ msgid "Let's gooooooooo"
+#~ msgstr "Hajde da idemo"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1933,7 +1907,6 @@ msgstr "Nalagam pripeta sporočila..."
 msgid "Loading thread..."
 msgstr "Nalagam nit..."
 
-#: src/components/onboarding/Onboarding.tsx:143
 #: src/components/onboarding/steps/LoadingStep.tsx:14
 msgid "Loading your profile..."
 msgstr "Nalaganje vašega profila..."
@@ -1954,8 +1927,7 @@ msgstr "Iskanje"
 msgid "Main navigation"
 msgstr "Glavna navigacija"
 
-#: src/components/Maintenance.native.tsx:40
-#: src/components/Maintenance.tsx:17
+#: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "U toku održavanja"
 
@@ -1967,10 +1939,8 @@ msgstr "Naredite vlogo nevidno"
 msgid "Make role public"
 msgstr "Naredite vlogo javno"
 
-#: src/components/onboarding/Onboarding.native.tsx:358
-#: src/components/onboarding/Onboarding.tsx:261
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "Učini svoj nalog jedinstvenim – postavi kontakt fotografiju. Ove informacije se pružaju samo prostorima koje pridružite."
+#~ msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+#~ msgstr "Učini svoj nalog jedinstvenim – postavi kontakt fotografiju. Ove informacije se pružaju samo prostorima koje pridružite."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
@@ -1978,7 +1948,7 @@ msgstr "Uredi nastavitve namiznih obvestil za nove sporočila."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
-msgstr "Upravljaj uređajima i uslovima privatnosti za poruke i sinhronizaciju."
+msgstr "Upravljajte z napravami in pogoji zasebnosti za sporočanje in sinhronizacijo."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:246
 msgid "Manage Inivte links and send invites to people you've previously had conversations with."
@@ -2273,9 +2243,9 @@ msgstr "Obvestila v tem brskalniku niso podprta"
 msgid "Notify all members"
 msgstr "Obvesti vse člane"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:17
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
 msgid "Now let's store your account key inside your passkey. One more confirmation needed."
-msgstr ""
+msgstr "Zdaj bomo shranili vaš ključ računa znotraj vašega passkey. Potrebno je še eno potrditev."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
@@ -2287,10 +2257,8 @@ msgstr "Van mreže"
 msgid "OK"
 msgstr "V redu"
 
-#: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:120
-msgid "One of us, one of us!"
-msgstr "Jedan od nas, jedan od nas!"
+#~ msgid "One of us, one of us!"
+#~ msgstr "Jedan od nas, jedan od nas!"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
@@ -2322,17 +2290,17 @@ msgstr "Izvirno"
 msgid "Page Not Found"
 msgstr "Stran ni bila najdena"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:19
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Nastavitev passkey ni uspela. Poskusite znova ali nadaljujte brez Passkey (še vedno varno, le brez varnosti naprave)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:15
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Passkey ni podprto v tem brskalniku. Boste morali nadaljevati brez Passkey (še vedno varno, le brez varnosti naprave)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:31
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
-msgstr ""
+msgstr "Passkey uporabljajo vgrajene varnostne značilnosti vaše naprave za zaščito vašega računa. To zahteva dve hitri potrditvi preko vaše naprave."
 
 #: src/components/modals/AddSpaceModal.tsx:146
 msgid "Paste an invite link"
@@ -2351,10 +2319,8 @@ msgstr "Čaka na odstranitev - kliknite Shrani, da potrdite"
 msgid "Permissions:"
 msgstr "Dovoljenja:"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:121
-msgid "Personalize your account"
-msgstr "Personalizuj svoj nalog"
+#~ msgid "Personalize your account"
+#~ msgstr "Personalizuj svoj nalog"
 
 #~ msgid "Photo"
 #~ msgstr "Fotografija"
@@ -2430,10 +2396,8 @@ msgstr "Pripeta sporočila"
 #~ msgid "Pinned!"
 #~ msgstr "Pripeto!"
 
-#: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:133
-msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
-msgstr "PNG, JPG ali JPEG • Optimalno razmerje 1:1"
+#~ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
+#~ msgstr "PNG, JPG ali JPEG • Optimalno razmerje 1:1"
 
 #~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 #~ msgstr "Pritisnite Enter za shranjevanje, Shift+Enter za novo vrstico, Esc za preklic"
@@ -2478,34 +2442,34 @@ msgstr "Javne povabilne povezave omogočajo vsakomur, ki ima dostop do povezave,
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR koda se bo samodejno skrila v 60 sekundah"
 
-#: src/components/Maintenance.tsx:24
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Quorum infrastruktura se trenutno postavlja. Molimo pokušajte da osvežite, i proverite <0>https://status.quilibrium.com/</0> za ažuriranja."
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+#~ msgstr "Quorum infrastruktura se trenutno postavlja. Molimo pokušajte da osvežite, i proverite <0>https://status.quilibrium.com/</0> za ažuriranja."
 
-#: src/components/Maintenance.native.tsx:45
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr "Quorum infrastruktura se trenutno uvaja. Poskusite osvežiti."
+#: src/components/Maintenance.tsx:18
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
+msgstr "Infrastruktura Quorum se trenutno razvija. Poskusite osvežiti in preverite <0>status.quilibrium.com</0> za posodobitve."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:35
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+#~ msgstr "Quorum infrastruktura se trenutno uvaja. Poskusite osvežiti."
+
+#: src/components/onboarding/steps/WelcomeStep.tsx:36
 msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
-msgstr ""
+msgstr "Quorum je decentralizirana platforma za sporočanje, kjer lastnite svojo identiteto. Brez e-pošte, brez telefonske številke - le z varnim ključem, ki ga le vi nadzorujete."
 
-#: src/components/onboarding/Onboarding.native.tsx:247
-#: src/components/onboarding/Onboarding.tsx:157
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum je peer-to-peer i end-to-end enkriptovan. To znači da vaše poruke ostaju privatne, ali jednako važno, žive samo na mreži onoliko dugo koliko je potrebno da stignu do vas i vaših primalaca."
+#~ msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+#~ msgstr "Quorum je peer-to-peer i end-to-end enkriptovan. To znači da vaše poruke ostaju privatne, ali jednako važno, žive samo na mreži onoliko dugo koliko je potrebno da stignu do vas i vaših primalaca."
 
 #: src/components/context/RegistrationPersister.tsx:275
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "Quorum je učitan dok pregledač nije bio u fokusu ili je zahtev za lozinkom odbijen. Molimo ponovo autorizujte da biste pristupili svojim porukama."
+msgstr "Quorum se je naložil, ko brskalnik ni bil v fokusu ali je bila zahteva za passkey zavrnjena. Prosimo, ponovno se avtorizirajte za dostop do svojih sporočil."
 
 #: src/components/modals/ReactionsModal.tsx:89
 msgid "Reactions"
 msgstr "Reakcije"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:40
+#: src/components/onboarding/steps/WelcomeStep.tsx:35
 msgid "Read more about Quorum"
-msgstr ""
+msgstr "Preberite več o Quorum"
 
 #: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Read only"
@@ -2526,18 +2490,17 @@ msgstr "Pripravljen na začetek resnično zasebnega pogovora?"
 
 #: src/components/context/RegistrationPersister.tsx:290
 msgid "Reauthorize"
-msgstr "Ponovo autorizuj"
+msgstr "Ponovno avtorizirajte"
 
 #: src/services/ConfigService.ts:106
 msgid "received config with invalid signature!"
-msgstr "primljena konfiguracija sa nevažećim potpisom!"
+msgstr "prejeta konfiguracija z neveljavnim podpisom!"
 
 #: src/services/ActionQueueHandlers.ts:1162
 msgid "Recipient has no devices"
 msgstr "Prejemnik nima naprav"
 
-#: src/components/Maintenance.native.tsx:71
-#: src/components/Maintenance.tsx:46
+#: src/components/Maintenance.tsx:38
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Osveži"
@@ -2661,10 +2624,8 @@ msgstr "SHRANI"
 msgid "Save Changes"
 msgstr "Shrani spremembe"
 
-#: src/components/onboarding/Onboarding.native.tsx:467
-#: src/components/onboarding/Onboarding.tsx:322
-msgid "Save Contact Photo"
-msgstr "Shrani fotografijo stika"
+#~ msgid "Save Contact Photo"
+#~ msgstr "Shrani fotografijo stika"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
 #: src/components/modals/SpaceSettingsModal/General.tsx:331
@@ -2680,18 +2641,16 @@ msgstr "Shranjevanje ni uspelo"
 msgid "Save Private Key"
 msgstr "Shrani zasebni ključ"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:27
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:31
 msgid "Save to Passkey"
-msgstr ""
+msgstr "Shrani v Passkey"
 
-#: src/components/onboarding/Onboarding.native.tsx:267
-#: src/components/onboarding/Onboarding.tsx:191
-msgid "Save User Key"
-msgstr "Shrani uporabniški ključ"
+#~ msgid "Save User Key"
+#~ msgstr "Shrani uporabniški ključ"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:15
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:19
 msgid "Save Your Account Key"
-msgstr ""
+msgstr "Shranite svoj ključ računa"
 
 #: src/services/ConfigService.ts:64
 msgid "saved config is out of date"
@@ -2788,9 +2747,9 @@ msgstr "Izberite privzeti kanal"
 #~ msgid "Select Image"
 #~ msgstr "Izberite sliko"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:31
+#: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
-msgstr ""
+msgstr "Izberite ali povlecite datoteko ključa računa za obnovitev računa."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:157
 msgid "Select permissions"
@@ -2848,10 +2807,8 @@ msgstr "Pošiljanje..."
 msgid "Session Encrypted"
 msgstr "Seja šifrirana"
 
-#: src/components/onboarding/Onboarding.native.tsx:340
-#: src/components/onboarding/Onboarding.tsx:247
-msgid "Set Display Name"
-msgstr "Nastavi prikazno ime"
+#~ msgid "Set Display Name"
+#~ msgstr "Nastavi prikazno ime"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2897,18 +2854,16 @@ msgstr "Prikaži QR"
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Prikazujem prvih 500 rezultatov. Natančnejše iskanje za bolj specifične rezultate."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:15
+#: src/components/onboarding/steps/WelcomeStep.tsx:16
 msgid "Sign in into Quorum"
-msgstr ""
+msgstr "Prijava v Quorum"
 
-#: src/components/onboarding/Onboarding.native.tsx:455
-#: src/components/onboarding/Onboarding.tsx:329
-msgid "Skip Adding Photo"
-msgstr "Preskoči dodajanje fotografije"
+#~ msgid "Skip Adding Photo"
+#~ msgstr "Preskoči dodajanje fotografije"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:97
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:107
 msgid "Skip for now"
-msgstr ""
+msgstr "Preskoči zdaj"
 
 #: src/services/MessageService.ts:4113
 msgid "Someone"
@@ -3032,9 +2987,8 @@ msgstr "Označna slika"
 msgid "Tap to copy"
 msgstr "Dotakni se za kopiranje"
 
-#: src/components/onboarding/Onboarding.native.tsx:437
-msgid "Tap to select"
-msgstr "Dotakni se za izbiro"
+#~ msgid "Tap to select"
+#~ msgstr "Dotakni se za izbiro"
 
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Tell us about yourself..."
@@ -3054,9 +3008,9 @@ msgstr "Povezava za povabilo je potekla ali je neveljavna."
 msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 msgstr "Stran, ki jo iščete, ne obstaja ali je bila premaknjena. Poglejmo, da vas vrnemo na pravo pot."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:17
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Nastavitev gesla je potekla prekoračen čas. Lahko poskusite znova ali nadaljujete brez gesla (še vedno varno, le brez zaščite strojne opreme)."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
@@ -3084,18 +3038,16 @@ msgstr "Ta opis bo viden na povabilih in prikazan ljudem, ko iščejo ali se pri
 msgid "This device"
 msgstr "Ta naprava"
 
-#: src/components/onboarding/Onboarding.native.tsx:314
-#: src/components/onboarding/Onboarding.tsx:221
-msgid "This information is only provided to the Spaces you join."
-msgstr "Te informacije so na voljo samo za prostore, ki se jim pridružiš."
+#~ msgid "This information is only provided to the Spaces you join."
+#~ msgstr "Te informacije so na voljo samo za prostore, ki se jim pridružiš."
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
 msgstr "To je nerodno..."
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:20
+#: src/components/onboarding/steps/DisplayNameStep.tsx:21
 msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
-msgstr ""
+msgstr "To je, kako vas bodo videli drugi v Quorum. To lahko kadarkoli spremenite v nastavitvah."
 
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -3230,9 +3182,9 @@ msgstr "Danes"
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "Preveč omemb v sporočilu. Največ {MAX_MENTIONS_PER_MESSAGE} je dovoljeno."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:75
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:58
 msgid "Try Again"
-msgstr ""
+msgstr "Poskusi znova"
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -3468,9 +3420,8 @@ msgstr "Uporabnik ne obstaja."
 #~ msgid "User Muted!"
 #~ msgstr "Uporabnik utišan!"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:26
-msgid "User Name"
-msgstr ""
+#~ msgid "User Name"
+#~ msgstr "Uporabniško ime"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:77
 #: src/hooks/business/messages/usePinnedMessages.ts:169
@@ -3504,31 +3455,37 @@ msgstr "Preverjanje povabila..."
 msgid "View edit history"
 msgstr "Ogled zgodovine urejanja"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:50
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:74
 msgid "View technical details"
-msgstr ""
+msgstr "Poglej tehnične podrobnosti"
 
 #: src/components/message/MessageActionsMenu.tsx:264
 #: src/components/thread/ThreadIndicator.tsx:35
 msgid "View Thread"
 msgstr "Ogled niti"
 
-#: src/components/onboarding/Onboarding.native.tsx:237
-#: src/components/onboarding/Onboarding.tsx:117
-msgid "Welcome to Quorum!"
-msgstr "Dobrodošli v Quorum!"
+#~ msgid "Welcome to Quorum!"
+#~ msgstr "Dobrodošli v Quorum!"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:96
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:79
 msgid "What is a Passkey?"
-msgstr ""
+msgstr "Kaj je passkey?"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:37
+#: src/components/onboarding/steps/ImportKeyStep.tsx:63
+msgid "What is an account key?"
+msgstr "Kaj je ključ računa?"
+
+#: src/components/onboarding/steps/DisplayNameStep.tsx:62
+msgid "What is the account address?"
+msgstr "Kaj je naslov računa?"
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:35
 msgid "What is the Account Key?"
-msgstr ""
+msgstr "Kaj je Ključ računa?"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:18
+#: src/components/onboarding/steps/DisplayNameStep.tsx:19
 msgid "What should we call you?"
-msgstr ""
+msgstr "Kako bi vas morali klicati?"
 
 #: src/components/direct/EmptyDirectMessage.tsx:69
 msgid "What's on your mind today?"
@@ -3585,9 +3542,8 @@ msgstr "Ko nekdo odgovori na vaše sporočila"
 #~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 #~ msgstr "Ko je ta nastavitev omogočena, bodo povezave za povabilo samodejno omogočile uporabniku, da se pridruži vašemu Space. Ko ni omogočeno, bodo uporabniki, ki sledijo povezavi za povabilo, poslali zahtevo, da se pridružite vašemu Space, ki jo morate ročno odobriti. Javne povezave zahtevajo, da je v povezavi prisoten nek ključni material – bodite pozorni, da lahko posedovanje javne povezave Space omogoči komurkoli s povezavo, da bere sporočila v Spaceu, dokler je povezava veljavna."
 
-#: src/components/onboarding/Onboarding.tsx:164
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "Ko uporabljate Quorum v brskalniku, se vaša sporočila shranijo lokalno v vašem brskalniku."
+#~ msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+#~ msgstr "Ko uporabljate Quorum v brskalniku, se vaša sporočila shranijo lokalno v vašem brskalniku."
 
 #: src/components/modals/ConversationSettingsModal.tsx:223
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
@@ -3597,13 +3553,13 @@ msgstr "Ko podpišeš sporočilo, potrjuješ, da prihaja iz tvoje ključe. Ko ne
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Ko podpišeš sporočilo, potrjuješ, da prihaja iz tvoje ključe. Ko ne podpišeš sporočila, imaš verjetno zanikanje. To nastavitev lahko nadzoruješ za vsak pogovor in sporočilo posebej."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:48
+#: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
-msgstr ""
+msgstr "Zakaj moram to storiti?"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:43
+#: src/components/onboarding/steps/BackupKeyStep.tsx:40
 msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr ""
+msgstr "Brez te varnostne kopije izguba naprave pomeni izgubo računa - ni možnosti \"sem pozabil geslo\". To je cena za zasebnost :-)"
 
 #: src/utils/dateFormatting.ts:29
 msgid "Yesterday"
@@ -3634,9 +3590,9 @@ msgstr "To lahko spremenite kasneje za to pogovor tako, da kliknete ikono zaklep
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "Upravljate lahko z obvestili o omembah vašega prostora v nastavitvah vsakega prostora."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:13
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Prekinili ste nastavitev gesla. Lahko poskusite znova ali nadaljujete brez gesla (še vedno varno, le brez zaščite strojne opreme)."
 
 #: src/components/modals/GroupEditorModal.tsx:114
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
@@ -3672,22 +3628,20 @@ msgstr "Dodeliti si morate vlogo za moderacijska dejanja (razen izključevanja).
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Ne boš se mogel ponovno pridružiti, razen če te ponovno povabijo. Tvoje obstoječe sporočila NE bodo izbrisana."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:18
+#: src/components/onboarding/steps/BackupKeyStep.tsx:19
 msgid "You'll need this file to recover your account if you lose access to your device."
-msgstr ""
+msgstr "Potrebovali boste to datoteko za obnovitev računa, če izgubite dostop do naprave."
 
 #: src/components/notifications/NotificationPanel.tsx:203
 msgid "You're all caught up!"
 msgstr "Vse si ujel!"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:14
+#: src/components/onboarding/steps/CompleteStep.tsx:17
 msgid "You're all set!"
-msgstr ""
+msgstr "Vse je pripravljeno!"
 
-#: src/components/onboarding/Onboarding.native.tsx:486
-#: src/components/onboarding/Onboarding.tsx:354
-msgid "You're all set. Welcome to Quorum!"
-msgstr "Vse je pripravljeno. Dobrodošli v Quorum!"
+#~ msgid "You're all set. Welcome to Quorum!"
+#~ msgstr "Vse je pripravljeno. Dobrodošli v Quorum!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
@@ -3718,17 +3672,21 @@ msgstr "Prehitro pošiljate sporočila. Prosimo, počakajte trenutek."
 msgid "You've been invited to join a Space"
 msgstr "Bili ste povabljeni, da se pridružite Prostoru"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:43
+#: src/components/onboarding/steps/DisplayNameStep.tsx:63
 msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
-msgstr ""
+msgstr "Vaš naslov računa je edinstven javni identifikator, izpeljan iz vašega ključa računa. Drugi ga lahko uporabljajo za iskanje in sporočanje z vami. Misli na to kot na uporabniško ime, ki se nikoli ne more spremeniti."
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:32
+#: src/components/onboarding/steps/ImportKeyStep.tsx:64
+msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "Vaš ključ računa je zasebna datoteka ključa (.key), ki dokazuje lastništvo vašega računa. Jo lahko prenesete iz nastavitev računa. Držite jo v varnosti — kdorkoli jo ima, lahko dostopa do vašega računa."
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
-msgstr ""
+msgstr "Vaš ključ računa je vaš edinstven identitetni znak v Quorum. Tako kot glavno geslo, ki dokazuje, da ste vi sami - le da je avtomatsko ustvarjeno in varno shranjeno v vašem passkey-u."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:17
+#: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
-msgstr ""
+msgstr "Vaše skupnosti, vaše pravila - nobena platforma vas ne more izgnati."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:124
 msgid "Your Details"
@@ -3743,13 +3701,15 @@ msgstr "Vaši podatki"
 #~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
 #~ msgstr "Vaš zasebni ključ bo prikazan na zaslonu. Kdor koli, ki vidi ali fotografira to QR kodo, lahko prevzame popoln nadzor nad vašim računom Quorum in ukrade vse povezane sredstva."
 
+#~ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Velikost vaše profilne slike mora biti {maxFileSize} ali manj in mora imeti končnico PNG, JPG ali JPEG."
+
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Velikost vaše profilne slike mora biti {maxSize} ali manj in mora biti v PNG, JPG ali JPEG datotečni končnici."
 
-#: src/components/onboarding/Onboarding.native.tsx:363
-msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Velikost vaše profilne slike mora biti 2MB ali manj in mora biti v formatu PNG, JPG ali JPEG."
+#~ msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Velikost vaše profilne slike mora biti 2MB ali manj in mora biti v formatu PNG, JPG ali JPEG."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:204
 msgid "Your Roles"

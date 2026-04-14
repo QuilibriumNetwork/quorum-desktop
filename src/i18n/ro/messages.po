@@ -15,11 +15,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:16
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -36,9 +31,9 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:270
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Dimensiunea imaginii tale de profil trebuie să fie {maxFileSize} sau mai mică și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1601
@@ -95,9 +90,8 @@ msgstr "a fost dat afară"
 #~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "Setările implicite ale Espaciului oferă cea mai tipică experiență de chat, dar pentru garanții mai mari de confidențialitate, revizuiește Setările Avansate."
 
-#: src/components/Maintenance.native.tsx:59
-msgid " for updates."
-msgstr "pentru actualizări."
+#~ msgid " for updates."
+#~ msgstr "pentru actualizări."
 
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'nimeni' este un nume rezervat."
@@ -303,9 +297,9 @@ msgstr "1 răspuns"
 msgid "4-Character Code"
 msgstr "Cod de 4 caractere"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:91
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
-msgstr ""
+msgstr "Un passkey folosește caracteristicile de securitate ale dispozitivului tău (ID Față, amprentă digitală sau PIN) pentru a proteja contul tău. Este mai sigur decât o parolă și nu trebuie să reții nimic."
 
 #: src/services/MessageService.ts:4130
 #: src/services/NotificationService.ts:305
@@ -322,8 +316,12 @@ msgstr "un spațiu"
 msgid "Account"
 msgstr "Contul"
 
+#: src/components/onboarding/steps/DisplayNameStep.tsx:45
+msgid "Account address"
+msgstr "Adresă de cont"
+
 #: src/components/modals/UserSettingsModal/General.tsx:173
-#: src/components/onboarding/steps/DisplayNameStep.tsx:40
+#: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Adresă de cont"
 
@@ -342,9 +340,9 @@ msgstr "acțiuni în așteptare"
 msgid "Add a friend"
 msgstr "Adaugă un prieten"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:45
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
-msgstr ""
+msgstr "Adaugă o fotografie de profil"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -542,9 +540,9 @@ msgstr "Departe"
 msgid "Back to invite link"
 msgstr "Înapoi la linkul de invitație"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:16
+#: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
-msgstr ""
+msgstr "Fă o copie de siguranță a cheii contului"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:128
 msgid "Backup Failed"
@@ -703,13 +701,12 @@ msgstr "Subiectul canalului nu poate conține caractere speciale"
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 msgstr "Subiectul canalului trebuie să aibă {MAX_TOPIC_LENGTH} caractere sau mai puțin"
 
-#: src/components/Maintenance.native.tsx:50
-msgid "Check "
-msgstr "Verifică"
+#~ msgid "Check "
+#~ msgstr "Verifică"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:49
+#: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
-msgstr ""
+msgstr "alege fișier"
 
 #~ msgid "Choose how you'd like to add an image"
 #~ msgstr "Alege cum ai dori să adaugi o imagine"
@@ -753,13 +750,11 @@ msgstr "Click din nou pentru a confirma"
 msgid "Click on the role name and tag to edit them."
 msgstr "Fă clic pe numele rolului și eticheta pentru a le edita."
 
-#: src/components/onboarding/Onboarding.tsx:177
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "Fă clic pe butonul de mai jos pentru a crea o copie de rezervă a informațiilor tale esențiale, pentru că odată ce s-au dus, s-au dus pentru totdeauna. Este posibil să ți se ceară să te autentifici din nou."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+#~ msgstr "Fă clic pe butonul de mai jos pentru a crea o copie de rezervă a informațiilor tale esențiale, pentru că odată ce s-au dus, s-au dus pentru totdeauna. Este posibil să ți se ceară să te autentifici din nou."
 
-#: src/components/onboarding/Onboarding.native.tsx:257
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr "Fă clic pe butonul de mai jos pentru a crea un backup al informațiilor tale cheie, pentru că odată ce s-au dus, s-au dus pentru totdeauna. Este posibil să ți se ceară să te autentifici din nou."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+#~ msgstr "Fă clic pe butonul de mai jos pentru a crea un backup al informațiilor tale cheie, pentru că odată ce s-au dus, s-au dus pentru totdeauna. Este posibil să ți se ceară să te autentifici din nou."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -797,14 +792,14 @@ msgstr "Confirmă resetarea"
 msgid "Connecting"
 msgstr "Conectare"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:73
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:90
+#: src/components/onboarding/steps/DisplayNameStep.tsx:57
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:99
 msgid "Continue"
-msgstr ""
+msgstr "Continuă"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:85
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:68
 msgid "Continue without passkey"
-msgstr ""
+msgstr "Continuă fără passkey"
 
 #: src/components/direct/DirectMessage.tsx:773
 msgid "Conversation settings"
@@ -885,7 +880,7 @@ msgid "Couldn't decrypt your saved profile. Please re-enter your name and profil
 msgstr "Nu am putut decripta profilul tău salvat. Te rugăm să reintroduci numele și imaginea de profil."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:297
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "Nu am putut încărca profilul tău salvat. Te rugăm să reintroduci numele și imaginea de profil."
 
@@ -898,20 +893,18 @@ msgstr "Creează un Spațiu"
 msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
 msgstr "Creează un tag pe care membrii îl pot afișa lângă numele de utilizator în mesaje. Încarcă o imagine și setează un cod de 4 caractere pentru a identifica Spațiul tău."
 
-#: src/components/onboarding/Login.native.tsx:102
-#: src/components/onboarding/Login.tsx:62
-#: src/components/onboarding/steps/WelcomeStep.tsx:24
+#: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
 msgstr "Creează cont nou"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:70
+#: src/components/onboarding/steps/ImportKeyStep.tsx:81
 msgid "Create new account instead"
-msgstr ""
+msgstr "Creează un cont nou în schimb"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:29
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:65
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:33
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:48
 msgid "Create Passkey"
-msgstr ""
+msgstr "Creează passkey"
 
 #: src/components/modals/ChannelEditorModal.tsx:180
 msgid "Create roles in Space Settings first."
@@ -1178,13 +1171,13 @@ msgstr "Afișează cheia ta privată ca un cod QR pentru a fi scanat cu aplicaț
 msgid "Documentation"
 msgstr "Documentație"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:31
+#: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
-msgstr ""
+msgstr "Descarcă Copia de Siguranță a Cheii"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:47
+#: src/components/onboarding/steps/ImportKeyStep.tsx:52
 msgid "Drag and drop or"
-msgstr ""
+msgstr "Trage și lasă sau"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1194,10 +1187,8 @@ msgstr "Drawer"
 msgid "Drop here"
 msgstr "Lăsați aici"
 
-#: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:131
-msgid "Drop your profile photo here"
-msgstr "Trage fotografia ta de profil aici"
+#~ msgid "Drop your profile photo here"
+#~ msgstr "Trage fotografia ta de profil aici"
 
 #: src/components/message/MessageActionsMenu.tsx:281
 msgid "Edit"
@@ -1296,17 +1287,17 @@ msgstr "Introdu atât ID-ul Espaciului cât și Cheia de configurare pentru a va
 msgid "Enter details manually"
 msgstr "Introdu detaliile manual"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:27
+#: src/components/onboarding/steps/CompleteStep.tsx:30
 msgid "Enter Quorum"
-msgstr ""
+msgstr "Accesează Quorum"
 
 #: src/components/message/MessageEditTextarea.tsx:727
 msgid "Enter to"
 msgstr "Introduceti pentru"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:31
+#: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
-msgstr ""
+msgstr "Introdu numele tău"
 
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
@@ -1637,9 +1628,9 @@ msgstr "Mai ai puțin..."
 msgid "Help"
 msgstr "Ajutor"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:47
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:51
 msgid "Help others recognize you with a profile picture."
-msgstr ""
+msgstr "Ajută alții să te recunoască cu o imagine de profil."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:541
 msgid "Hide"
@@ -1660,18 +1651,16 @@ msgstr "Ascunde Canalele Închise"
 msgid "Hide muted channels in list"
 msgstr "Ascunde canalele închise din listă"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:31
+#: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
-msgstr ""
+msgstr "Deja am un cont"
 
-#: src/components/onboarding/Onboarding.native.tsx:288
-#: src/components/onboarding/Onboarding.tsx:198
-msgid "I already saved mine"
-msgstr "Eu deja mi-am salvat al meu"
+#~ msgid "I already saved mine"
+#~ msgstr "Eu deja mi-am salvat al meu"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:24
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:26
 msgid "I understand"
-msgstr ""
+msgstr "Înțeleg"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:515
 msgid "I Understand, Show QR"
@@ -1682,46 +1671,35 @@ msgstr "Înțeleg, Afișează QR"
 msgid "I'm new!"
 msgstr "Sunt nou!"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:38
+#: src/components/onboarding/steps/BackupKeyStep.tsx:35
 msgid "I've already saved my key"
-msgstr ""
+msgstr "Am salvat deja cheia mea"
 
 #~ msgid "I've Saved It"
 #~ msgstr "L-am salvat"
 
-#: src/components/onboarding/Onboarding.tsx:333
-#: src/components/onboarding/Onboarding.tsx:340
-msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "Dacă este sărit, vei obține imaginea de profil implicită și o poți seta mai târziu"
+#~ msgid "If skipped, you'll get the default profile image and can set it later"
+#~ msgstr "Dacă este sărit, vei obține imaginea de profil implicită și o poți seta mai târziu"
 
-#: src/components/onboarding/Onboarding.tsx:167
-#: src/components/onboarding/steps/BackupKeyStep.tsx:23
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "Dacă îți ștergi stocarea browser-ului sau schimbi browsere, mesajele și cheile tale vechi pot dispărea."
+#~ msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+#~ msgstr "Dacă îți ștergi stocarea browser-ului sau schimbi browsere, mesajele și cheile tale vechi pot dispărea."
 
-#: src/components/onboarding/Onboarding.native.tsx:252
-#: src/components/onboarding/Onboarding.tsx:172
-#: src/components/onboarding/steps/BackupKeyStep.tsx:22
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
-msgstr "Dacă dezinstalezi aplicația de pe dispozitivul tău, vei pierde mesajele și cheile tale vechi."
+#~ msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+#~ msgstr "Dacă dezinstalezi aplicația de pe dispozitivul tău, vei pierde mesajele și cheile tale vechi."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:577
 msgid "Import a backup instead"
 msgstr "În loc de asta, importă o copie de siguranță"
 
-#: src/components/onboarding/Login.native.tsx:111
-#: src/components/onboarding/Login.tsx:76
-msgid "Import Existing Key"
-msgstr "Importă cheia existentă"
+#~ msgid "Import Existing Key"
+#~ msgstr "Importă cheia existentă"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:29
+#: src/components/onboarding/steps/ImportKeyStep.tsx:32
 msgid "Import your account key"
-msgstr ""
+msgstr "Importă cheia contului"
 
-#: src/components/onboarding/Onboarding.native.tsx:242
-#: src/components/onboarding/Onboarding.tsx:154
-msgid "Important first-time user information:"
-msgstr "Informații importante pentru utilizatorii pentru prima dată:"
+#~ msgid "Important first-time user information:"
+#~ msgstr "Informații importante pentru utilizatorii pentru prima dată:"
 
 #: src/components/message/PinnedMessagesPanel.tsx:192
 msgid "Important messages will be pinned here"
@@ -1747,9 +1725,9 @@ msgstr "Formatul adresei este invalid. Adresele trebuie să folosească caracter
 #~ msgid "Invalid file type. Please check accepted file formats."
 #~ msgstr "Tip de fișier invalid. Te rog verifică formatele de fișier acceptate."
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:60
+#: src/components/onboarding/steps/ImportKeyStep.tsx:71
 msgid "Invalid Key File"
-msgstr ""
+msgstr "Fișier cheie nevalid"
 
 #: src/services/InvitationService.ts:509
 #: src/services/InvitationService.ts:520
@@ -1824,13 +1802,13 @@ msgstr "Sari"
 msgid "Jump to present"
 msgstr "Sari la prezent"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:18
 msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
-msgstr ""
+msgstr "Păstrează fișierul descărcat în siguranță și privat! Oricine cu acest fișier poate accesa contul tău."
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:14
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
-msgstr ""
+msgstr "Păstrează Cheia în Siguranță!"
 
 #~ msgid "Key Copied!"
 #~ msgstr "Cheia a fost copiată!"
@@ -1893,15 +1871,11 @@ msgstr "Părăsește Spațiul"
 msgid "Leave this space"
 msgstr "Părăsește acest spațiu"
 
-#: src/components/onboarding/Onboarding.native.tsx:308
-#: src/components/onboarding/Onboarding.tsx:212
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
-msgstr "Lasă-ți prietenii să știe cine ești! Alege un nume prietenos de afișat în conversațiile tale, ceva mai ușor de citit decât:"
+#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+#~ msgstr "Lasă-ți prietenii să știe cine ești! Alege un nume prietenos de afișat în conversațiile tale, ceva mai ușor de citit decât:"
 
-#: src/components/onboarding/Onboarding.native.tsx:497
-#: src/components/onboarding/Onboarding.tsx:366
-msgid "Let's gooooooooo"
-msgstr "Să mergem!"
+#~ msgid "Let's gooooooooo"
+#~ msgstr "Să mergem!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1932,7 +1906,6 @@ msgstr "Se încarcă mesajele fixate..."
 msgid "Loading thread..."
 msgstr "Încărcare fir..."
 
-#: src/components/onboarding/Onboarding.tsx:143
 #: src/components/onboarding/steps/LoadingStep.tsx:14
 msgid "Loading your profile..."
 msgstr "Încărcarea profilului tău..."
@@ -1953,8 +1926,7 @@ msgstr "Caută"
 msgid "Main navigation"
 msgstr "Navigare principală"
 
-#: src/components/Maintenance.native.tsx:40
-#: src/components/Maintenance.tsx:17
+#: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "Întreținere în desfășurare"
 
@@ -1966,10 +1938,8 @@ msgstr "Fă rolul invizibil"
 msgid "Make role public"
 msgstr "Fă rolul public"
 
-#: src/components/onboarding/Onboarding.native.tsx:358
-#: src/components/onboarding/Onboarding.tsx:261
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "Fă-ți contul unic – setează o fotografie de contact. Aceste informații sunt furnizate doar Spațiilor la care te alături."
+#~ msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+#~ msgstr "Fă-ți contul unic – setează o fotografie de contact. Aceste informații sunt furnizate doar Spațiilor la care te alături."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
@@ -2272,9 +2242,9 @@ msgstr "Notificările nu sunt acceptate în acest browser"
 msgid "Notify all members"
 msgstr "Notifică toți membrii"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:17
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
 msgid "Now let's store your account key inside your passkey. One more confirmation needed."
-msgstr ""
+msgstr "Acum să stocăm cheia contului tău în interiorul passkey-ului. Este nevoie de o confirmare suplimentară."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
@@ -2286,10 +2256,8 @@ msgstr "Offline"
 msgid "OK"
 msgstr "OK"
 
-#: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:120
-msgid "One of us, one of us!"
-msgstr "Unul dintre noi, unul dintre noi!"
+#~ msgid "One of us, one of us!"
+#~ msgstr "Unul dintre noi, unul dintre noi!"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
@@ -2321,17 +2289,17 @@ msgstr "Original"
 msgid "Page Not Found"
 msgstr "Pagina nu a fost găsită"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:19
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Configurarea passkey-ului a eșuat. Poți încerca din nou sau să continui fără passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:15
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Passkey-urile nu sunt susținute de acest browser. Va trebui să continui fără passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:31
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
-msgstr ""
+msgstr "Passkey-urile folosesc securitatea încorporată a dispozitivului tău pentru a proteja contul tău. Acest lucru necesită două confirmări rapide prin intermediul dispozitivului tău."
 
 #: src/components/modals/AddSpaceModal.tsx:146
 msgid "Paste an invite link"
@@ -2350,10 +2318,8 @@ msgstr "Eliminare în așteptare - apasă Salvează pentru a confirma"
 msgid "Permissions:"
 msgstr "Permisiuni:"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:121
-msgid "Personalize your account"
-msgstr "Personalizează-ți contul"
+#~ msgid "Personalize your account"
+#~ msgstr "Personalizează-ți contul"
 
 #~ msgid "Photo"
 #~ msgstr "Fotografie"
@@ -2429,10 +2395,8 @@ msgstr "Mesaje fixate"
 #~ msgid "Pinned!"
 #~ msgstr "Fixat!"
 
-#: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:133
-msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
-msgstr "PNG, JPG sau JPEG • Raport optim 1:1"
+#~ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
+#~ msgstr "PNG, JPG sau JPEG • Raport optim 1:1"
 
 #~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 #~ msgstr "Apasă Enter pentru a salva, Shift+Enter pentru o linie nouă, Esc pentru a anula"
@@ -2477,34 +2441,34 @@ msgstr "Linkurile de invitație publice permit oricui are acces la link să se a
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Codul QR se va ascunde automat în 60 de secunde"
 
-#: src/components/Maintenance.tsx:24
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+#~ msgstr "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 
-#: src/components/Maintenance.native.tsx:45
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr "Infrastructura Quorum este în curs de desfășurare în acest moment. Te rugăm să încerci să reîmprospătezi."
+#: src/components/Maintenance.tsx:18
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
+msgstr "Infrastructura Quorum este implementată în acest moment. Te rugăm să încerci să reîncarci și să verifici <0>status.quilibrium.com</0> pentru actualizări."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:35
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+#~ msgstr "Infrastructura Quorum este în curs de desfășurare în acest moment. Te rugăm să încerci să reîmprospătezi."
+
+#: src/components/onboarding/steps/WelcomeStep.tsx:36
 msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
-msgstr ""
+msgstr "Quorum este o platformă de mesajare descentralizată unde deții identitatea ta. Fără e-mail, fără număr de telefon - doar o cheie securizată pe care doar tu o controlezi."
 
-#: src/components/onboarding/Onboarding.native.tsx:247
-#: src/components/onboarding/Onboarding.tsx:157
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+#~ msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+#~ msgstr "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 
 #: src/components/context/RegistrationPersister.tsx:275
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "Quorum a fost încărcat în timp ce browserul nu era în prim-plan sau o cerere de passkey a fost respinsă. Te rugăm să te reautorizezi pentru a accesa mesajele tale."
 
 #: src/components/modals/ReactionsModal.tsx:89
 msgid "Reactions"
 msgstr "Reacții"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:40
+#: src/components/onboarding/steps/WelcomeStep.tsx:35
 msgid "Read more about Quorum"
-msgstr ""
+msgstr "Citește mai multe despre Quorum"
 
 #: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Read only"
@@ -2535,8 +2499,7 @@ msgstr "received config with invalid signature!"
 msgid "Recipient has no devices"
 msgstr "Destinatarul nu are dispozitive"
 
-#: src/components/Maintenance.native.tsx:71
-#: src/components/Maintenance.tsx:46
+#: src/components/Maintenance.tsx:38
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Refresh"
@@ -2660,10 +2623,8 @@ msgstr "SALVEAZĂ"
 msgid "Save Changes"
 msgstr "Salvează modificările"
 
-#: src/components/onboarding/Onboarding.native.tsx:467
-#: src/components/onboarding/Onboarding.tsx:322
-msgid "Save Contact Photo"
-msgstr "Salvează fotografia de contact"
+#~ msgid "Save Contact Photo"
+#~ msgstr "Salvează fotografia de contact"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
 #: src/components/modals/SpaceSettingsModal/General.tsx:331
@@ -2679,18 +2640,16 @@ msgstr "Salvarea a eșuat"
 msgid "Save Private Key"
 msgstr "Salvează cheia privată"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:27
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:31
 msgid "Save to Passkey"
-msgstr ""
+msgstr "Salvează în passkey"
 
-#: src/components/onboarding/Onboarding.native.tsx:267
-#: src/components/onboarding/Onboarding.tsx:191
-msgid "Save User Key"
-msgstr "Salvează cheia utilizatorului"
+#~ msgid "Save User Key"
+#~ msgstr "Salvează cheia utilizatorului"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:15
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:19
 msgid "Save Your Account Key"
-msgstr ""
+msgstr "Salvează Cheia Contului"
 
 #: src/services/ConfigService.ts:64
 msgid "saved config is out of date"
@@ -2787,9 +2746,9 @@ msgstr "Selectează canalul implicit"
 #~ msgid "Select Image"
 #~ msgstr "Selectează imaginea"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:31
+#: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
-msgstr ""
+msgstr "Selectează sau trage fișierul cheii contului pentru a-ți restaura contul."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:157
 msgid "Select permissions"
@@ -2847,10 +2806,8 @@ msgstr "Se trimite..."
 msgid "Session Encrypted"
 msgstr "Sesiune criptată"
 
-#: src/components/onboarding/Onboarding.native.tsx:340
-#: src/components/onboarding/Onboarding.tsx:247
-msgid "Set Display Name"
-msgstr "Setează numele de afișare"
+#~ msgid "Set Display Name"
+#~ msgstr "Setează numele de afișare"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2896,18 +2853,16 @@ msgstr "Arată QR"
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Afișăm primele 500 de rezultate. Rafinați căutarea pentru rezultate mai specifice."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:15
+#: src/components/onboarding/steps/WelcomeStep.tsx:16
 msgid "Sign in into Quorum"
-msgstr ""
+msgstr "Conectează-te la Quorum"
 
-#: src/components/onboarding/Onboarding.native.tsx:455
-#: src/components/onboarding/Onboarding.tsx:329
-msgid "Skip Adding Photo"
-msgstr "Salt la adăugarea fotografiei"
+#~ msgid "Skip Adding Photo"
+#~ msgstr "Salt la adăugarea fotografiei"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:97
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:107
 msgid "Skip for now"
-msgstr ""
+msgstr "Sari peste pentru moment"
 
 #: src/services/MessageService.ts:4113
 msgid "Someone"
@@ -3031,9 +2986,8 @@ msgstr "Imagine Tag"
 msgid "Tap to copy"
 msgstr "Atinge pentru a copia"
 
-#: src/components/onboarding/Onboarding.native.tsx:437
-msgid "Tap to select"
-msgstr "Atinge pentru a selecta"
+#~ msgid "Tap to select"
+#~ msgstr "Atinge pentru a selecta"
 
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Tell us about yourself..."
@@ -3053,9 +3007,9 @@ msgstr "Linkul de invitație a expirat sau este invalid."
 msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 msgstr "Pagina pe care o cauți nu există sau a fost mutată. Să te ajutăm să te întorci pe drumul cel bun."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:17
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Configurarea passkey-ului a expirat. Poți încerca din nou sau continua fără passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
@@ -3083,18 +3037,16 @@ msgstr "Această descriere va fi vizibilă pe invitații și va fi arătată per
 msgid "This device"
 msgstr "Acest dispozitiv"
 
-#: src/components/onboarding/Onboarding.native.tsx:314
-#: src/components/onboarding/Onboarding.tsx:221
-msgid "This information is only provided to the Spaces you join."
-msgstr "Această informație este oferită doar pentru Spațiile la care te alături."
+#~ msgid "This information is only provided to the Spaces you join."
+#~ msgstr "Această informație este oferită doar pentru Spațiile la care te alături."
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
 msgstr "Aceasta este jenant..."
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:20
+#: src/components/onboarding/steps/DisplayNameStep.tsx:21
 msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
-msgstr ""
+msgstr "Acesta este modul în care alții te vor vedea în Quorum. Poți schimba acest lucru oricând în Setări."
 
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -3229,9 +3181,9 @@ msgstr "Astăzi"
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "Prea multe mențiuni în mesaj. Maxim {MAX_MENTIONS_PER_MESSAGE} permis."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:75
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:58
 msgid "Try Again"
-msgstr ""
+msgstr "Încearcă din nou"
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -3467,9 +3419,8 @@ msgstr "Utilizatorul nu există."
 #~ msgid "User Muted!"
 #~ msgstr "Utilizator dezactivat!"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:26
-msgid "User Name"
-msgstr ""
+#~ msgid "User Name"
+#~ msgstr "Nume Utilizator"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:77
 #: src/hooks/business/messages/usePinnedMessages.ts:169
@@ -3503,31 +3454,37 @@ msgstr "Validare invitație..."
 msgid "View edit history"
 msgstr "Vezi istoricul editărilor"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:50
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:74
 msgid "View technical details"
-msgstr ""
+msgstr "Vezi detalii tehnice"
 
 #: src/components/message/MessageActionsMenu.tsx:264
 #: src/components/thread/ThreadIndicator.tsx:35
 msgid "View Thread"
 msgstr "Vizualizează firul"
 
-#: src/components/onboarding/Onboarding.native.tsx:237
-#: src/components/onboarding/Onboarding.tsx:117
-msgid "Welcome to Quorum!"
-msgstr "Bine ai venit la Quorum!"
+#~ msgid "Welcome to Quorum!"
+#~ msgstr "Bine ai venit la Quorum!"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:96
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:79
 msgid "What is a Passkey?"
-msgstr ""
+msgstr "Ce este un passkey?"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:37
+#: src/components/onboarding/steps/ImportKeyStep.tsx:63
+msgid "What is an account key?"
+msgstr "Ce este o cheie de cont?"
+
+#: src/components/onboarding/steps/DisplayNameStep.tsx:62
+msgid "What is the account address?"
+msgstr "Ce este adresa contului?"
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:35
 msgid "What is the Account Key?"
-msgstr ""
+msgstr "Ce este Cheia Contului?"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:18
+#: src/components/onboarding/steps/DisplayNameStep.tsx:19
 msgid "What should we call you?"
-msgstr ""
+msgstr "Cum ai vrea să te numim?"
 
 #: src/components/direct/EmptyDirectMessage.tsx:69
 msgid "What's on your mind today?"
@@ -3584,9 +3541,8 @@ msgstr "Când cineva răspunde la mesajele tale"
 #~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 #~ msgstr "Când această setare este activată, linkurile de invitație vor permite automat unui utilizator să se alăture Spațiului tău. Când nu este activată, utilizatorii care urmează un link de invitație îți vor trimite o cerere de a se alătura Spațiului tău pe care trebuie să o aprobi manual. Linkurile publice necesită ca unele materiale cheie să fie prezente în link – fii conștient că deținerea unui link public al Spațiului poate permite oricui cu linkul să citească mesaje pe Spațiu pe durata valabilității linkului."
 
-#: src/components/onboarding/Onboarding.tsx:164
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "Când folosești Quorum pe un browser, mesajele tale sunt salvate local în browserul tău."
+#~ msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+#~ msgstr "Când folosești Quorum pe un browser, mesajele tale sunt salvate local în browserul tău."
 
 #: src/components/modals/ConversationSettingsModal.tsx:223
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
@@ -3596,13 +3552,13 @@ msgstr "Când semnezi un mesaj, confirmi că provine de la cheia ta. Când nu se
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Când semnezi un mesaj, confirmi că provine de la cheia ta. Când nu semnezi un mesaj, ai o negare plauzibilă. Poți controla această setare pentru fiecare conversație și mesaj în parte."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:48
+#: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
-msgstr ""
+msgstr "De ce trebuie să fac asta?"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:43
+#: src/components/onboarding/steps/BackupKeyStep.tsx:40
 msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr ""
+msgstr "Fără această copie de rezervă, pierderea dispozitivului înseamnă pierderea contului - nu există opțiune de „parolă uitată”. Acesta este prețul pe care îl plătești pentru confidențialitate :-)"
 
 #: src/utils/dateFormatting.ts:29
 msgid "Yesterday"
@@ -3633,9 +3589,9 @@ msgstr "Poți schimba asta mai târziu pentru această conversație făcând cli
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "Poți gestiona notificările mențiunilor pentru spațiul tău în setările fiecărui spațiu."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:13
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Ai anulat configurarea passkey-ului. Poți încerca din nou sau continua fără passkey (încă sigur, doar fără protecția hardware a dispozitivului)."
 
 #: src/components/modals/GroupEditorModal.tsx:114
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
@@ -3671,22 +3627,20 @@ msgstr "Trebuie să îți atribui un rol pentru acțiunile de moderare (cu excep
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Nu veți putea să vă reintrați decât dacă sunteți reinvitat. Mesajele existente nu vor fi șterse."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:18
+#: src/components/onboarding/steps/BackupKeyStep.tsx:19
 msgid "You'll need this file to recover your account if you lose access to your device."
-msgstr ""
+msgstr "Vei avea nevoie de acest fișier pentru a-ți recupera contul dacă pierzi accesul la dispozitiv."
 
 #: src/components/notifications/NotificationPanel.tsx:203
 msgid "You're all caught up!"
 msgstr "Ești la curent!"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:14
+#: src/components/onboarding/steps/CompleteStep.tsx:17
 msgid "You're all set!"
-msgstr ""
+msgstr "Ești gata!"
 
-#: src/components/onboarding/Onboarding.native.tsx:486
-#: src/components/onboarding/Onboarding.tsx:354
-msgid "You're all set. Welcome to Quorum!"
-msgstr "Ești pregătit. Bine ai venit la Quorum!"
+#~ msgid "You're all set. Welcome to Quorum!"
+#~ msgstr "Ești pregătit. Bine ai venit la Quorum!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
@@ -3717,17 +3671,21 @@ msgstr "Trimiteți mesaje prea repede. Vă rugăm să așteptați un moment."
 msgid "You've been invited to join a Space"
 msgstr "Ai fost invitat să te alături unui Spațiu"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:43
+#: src/components/onboarding/steps/DisplayNameStep.tsx:63
 msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
-msgstr ""
+msgstr "Adresa contului tău este un identificator public unic derivat din cheia contului tău. Alții îl pot folosi pentru a te găsi și a-ți trimite mesaje. Gândește-te la el ca la un nume de utilizator care nu se poate schimba niciodată."
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:32
+#: src/components/onboarding/steps/ImportKeyStep.tsx:64
+msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "Cheia contului tău este un fișier cheie privat (.key) care dovedește posesia contului tău. Poți descărca-l din setările contului tău. Păzește-l în siguranță — cineva care îl are poate accesa contul tău."
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
-msgstr ""
+msgstr "Cheia contului tău este identitatea ta unică în Quorum. Este ca o parolă principală care dovedește că ești tu - dar este generată automat și stocată în mod sigur în passkey-ul tău."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:17
+#: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
-msgstr ""
+msgstr "Comunitățile tale, regulile tale - nicio platformă nu te poate interzice."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:124
 msgid "Your Details"
@@ -3742,13 +3700,15 @@ msgstr "Detaliile tale"
 #~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
 #~ msgstr "Cheia ta privată va fi afișată pe ecran. Oricine vede sau fotografiază acest cod QR poate prelua controlul total asupra contului tău Quorum și poate fura orice fonduri asociate."
 
+#~ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Dimensiunea imaginii tale de profil trebuie să fie {maxFileSize} sau mai mică și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
+
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Dimensiunea imaginii tale de profil trebuie să fie de {maxSize} sau mai puțin și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
 
-#: src/components/onboarding/Onboarding.native.tsx:363
-msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Dimensiunea imaginii tale de profil trebuie să fie de 2MB sau mai puțin și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
+#~ msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Dimensiunea imaginii tale de profil trebuie să fie de 2MB sau mai puțin și trebuie să fie un fișier cu extensia PNG, JPG sau JPEG."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:204
 msgid "Your Roles"

@@ -15,11 +15,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:16
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -36,9 +31,9 @@ msgid "No Role - {count}"
 msgstr "Rol Yok - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:270
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Profil resminizin boyutu {maxFileSize} veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Hoş geldin Quorum'a, {name}! Hesabın güvenli ve hazır."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1601
@@ -95,9 +90,8 @@ msgstr "atıldı"
 #~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "Varsayılan Space ayarları en tipik sohbet deneyimini sağlar, ancak daha yüksek gizlilik garantileri için Gelişmiş Ayarları gözden geçirin."
 
-#: src/components/Maintenance.native.tsx:59
-msgid " for updates."
-msgstr "güncellemeler için."
+#~ msgid " for updates."
+#~ msgstr "güncellemeler için."
 
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'reveryone' ayrılmış bir isimdir."
@@ -303,9 +297,9 @@ msgstr "1 yanıt"
 msgid "4-Character Code"
 msgstr "4-Karakter Kod"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:91
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
-msgstr ""
+msgstr "Bir passkey, cihazınızın güvenlik özellikleri (Face ID, parmak izi veya PIN) kullanarak hesabınızı korur. Şifreden daha güvenlidir ve hiçbir şeyi hatırlamanıza gerek yoktur."
 
 #: src/services/MessageService.ts:4130
 #: src/services/NotificationService.ts:305
@@ -322,8 +316,12 @@ msgstr "bir alan"
 msgid "Account"
 msgstr "Hesap"
 
+#: src/components/onboarding/steps/DisplayNameStep.tsx:45
+msgid "Account address"
+msgstr "Hesap adresi"
+
 #: src/components/modals/UserSettingsModal/General.tsx:173
-#: src/components/onboarding/steps/DisplayNameStep.tsx:40
+#: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Hesap Adresi"
 
@@ -342,9 +340,9 @@ msgstr "Eylemler sıraya alındı"
 msgid "Add a friend"
 msgstr "Arkadaş ekle"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:45
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
-msgstr ""
+msgstr "Bir profil fotoğrafı ekle"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -543,9 +541,9 @@ msgstr "Uzak"
 msgid "Back to invite link"
 msgstr "Davet bağlantısına geri dön"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:16
+#: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
-msgstr ""
+msgstr "Hesap Anahtarını Yedekle"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:128
 msgid "Backup Failed"
@@ -704,13 +702,12 @@ msgstr "Kanal konusu özel karakterler içeremez"
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 msgstr "Kanal konusu {MAX_TOPIC_LENGTH} karakter veya daha az olmalıdır"
 
-#: src/components/Maintenance.native.tsx:50
-msgid "Check "
-msgstr "Kontrol Et"
+#~ msgid "Check "
+#~ msgstr "Kontrol Et"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:49
+#: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
-msgstr ""
+msgstr "dosya seç"
 
 #~ msgid "Choose how you'd like to add an image"
 #~ msgstr "Bir resmi nasıl eklemek istediğinizi seçin"
@@ -754,13 +751,11 @@ msgstr "Onaylamak için tekrar tıklayın"
 msgid "Click on the role name and tag to edit them."
 msgstr "Onları düzenlemek için rol adını ve etiketini tıklayın."
 
-#: src/components/onboarding/Onboarding.tsx:177
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "Bilgilerinizi yedeklemek için aşağıdaki düğmeye tıklayın, çünkü bir kez gittiğinde, sonsuza dek gitmiştir. Yeniden kimlik doğrulaması yapmanız istenebilir."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+#~ msgstr "Bilgilerinizi yedeklemek için aşağıdaki düğmeye tıklayın, çünkü bir kez gittiğinde, sonsuza dek gitmiştir. Yeniden kimlik doğrulaması yapmanız istenebilir."
 
-#: src/components/onboarding/Onboarding.native.tsx:257
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr "Anahtar bilgilerinizin yedeğini oluşturmak için aşağıdaki düğmeye tıklayın, çünkü bir kez gittiğinde, sonsuza dek gitmiş olacak. Yeniden kimlik doğrulaması yapmanız istenebilir."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+#~ msgstr "Anahtar bilgilerinizin yedeğini oluşturmak için aşağıdaki düğmeye tıklayın, çünkü bir kez gittiğinde, sonsuza dek gitmiş olacak. Yeniden kimlik doğrulaması yapmanız istenebilir."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -798,14 +793,14 @@ msgstr "Sıfırlamayı Onayla"
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:73
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:90
+#: src/components/onboarding/steps/DisplayNameStep.tsx:57
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:99
 msgid "Continue"
-msgstr ""
+msgstr "Devam"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:85
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:68
 msgid "Continue without passkey"
-msgstr ""
+msgstr "Geçiş anahtarı olmadan devam et"
 
 #: src/components/direct/DirectMessage.tsx:773
 msgid "Conversation settings"
@@ -886,7 +881,7 @@ msgid "Couldn't decrypt your saved profile. Please re-enter your name and profil
 msgstr "Kaydedilmiş profilinizi şifreleyemedik. Lütfen adınızı ve profil resminizi tekrar girin."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:297
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "Kaydedilmiş profilinizi yükleyemedik. Lütfen adınızı ve profil resminizi tekrar girin."
 
@@ -899,20 +894,18 @@ msgstr "Bir Alan oluştur"
 msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
 msgstr "Bir etiket oluşturun, üyeler bu etiketi mesajlarında kullanıcı adlarının yanına gösterebilir. Bir görsel yükleyin ve 4 karakterlik bir kod belirleyin ki Alanınızı tanımlayabilesiniz."
 
-#: src/components/onboarding/Login.native.tsx:102
-#: src/components/onboarding/Login.tsx:62
-#: src/components/onboarding/steps/WelcomeStep.tsx:24
+#: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
 msgstr "Yeni Hesap Oluştur"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:70
+#: src/components/onboarding/steps/ImportKeyStep.tsx:81
 msgid "Create new account instead"
-msgstr ""
+msgstr "Yeni hesap oluştur"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:29
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:65
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:33
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:48
 msgid "Create Passkey"
-msgstr ""
+msgstr "Passkey Oluştur"
 
 #: src/components/modals/ChannelEditorModal.tsx:180
 msgid "Create roles in Space Settings first."
@@ -1179,13 +1172,13 @@ msgstr "Özel anahtarınızı Quorum mobil uygulaması ile taramak için bir QR 
 msgid "Documentation"
 msgstr "Dokümantasyon"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:31
+#: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
-msgstr ""
+msgstr "Anahtar Yedeklemesini İndir"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:47
+#: src/components/onboarding/steps/ImportKeyStep.tsx:52
 msgid "Drag and drop or"
-msgstr ""
+msgstr "Sürükle ve bırak veya"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1195,10 +1188,8 @@ msgstr "Çekmece"
 msgid "Drop here"
 msgstr "Buraya bırak"
 
-#: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:131
-msgid "Drop your profile photo here"
-msgstr "Profil fotoğrafını buraya bırak"
+#~ msgid "Drop your profile photo here"
+#~ msgstr "Profil fotoğrafını buraya bırak"
 
 #: src/components/message/MessageActionsMenu.tsx:281
 msgid "Edit"
@@ -1297,17 +1288,17 @@ msgstr "Doğrulamak için hem Space ID'sini hem de Yapılandırma Anahtarını g
 msgid "Enter details manually"
 msgstr "Ayrıntıları manuel olarak girin"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:27
+#: src/components/onboarding/steps/CompleteStep.tsx:30
 msgid "Enter Quorum"
-msgstr ""
+msgstr "Quorum'a gir"
 
 #: src/components/message/MessageEditTextarea.tsx:727
 msgid "Enter to"
 msgstr "Girmek için"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:31
+#: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
-msgstr ""
+msgstr "Adınızı girin"
 
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
@@ -1638,9 +1629,9 @@ msgstr "Biraz sabırlı olun..."
 msgid "Help"
 msgstr "Yardım"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:47
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:51
 msgid "Help others recognize you with a profile picture."
-msgstr ""
+msgstr "Diğerlerinin sizi tanıması için bir profil fotoğrafı ekleyin."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:541
 msgid "Hide"
@@ -1661,18 +1652,16 @@ msgstr "Susturulmuş Kanalları Gizle"
 msgid "Hide muted channels in list"
 msgstr "Liste içinde susturulmuş kanalları gizle"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:31
+#: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
-msgstr ""
+msgstr "Zaten bir hesabım var"
 
-#: src/components/onboarding/Onboarding.native.tsx:288
-#: src/components/onboarding/Onboarding.tsx:198
-msgid "I already saved mine"
-msgstr "Ben zaten kaydettim"
+#~ msgid "I already saved mine"
+#~ msgstr "Ben zaten kaydettim"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:24
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:26
 msgid "I understand"
-msgstr ""
+msgstr "Anladım"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:515
 msgid "I Understand, Show QR"
@@ -1683,46 +1672,35 @@ msgstr "Anladım, QR Göster"
 msgid "I'm new!"
 msgstr "Ben yeniym!"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:38
+#: src/components/onboarding/steps/BackupKeyStep.tsx:35
 msgid "I've already saved my key"
-msgstr ""
+msgstr "Anahtarımı zaten kaydettim"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Kaydettim"
 
-#: src/components/onboarding/Onboarding.tsx:333
-#: src/components/onboarding/Onboarding.tsx:340
-msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "Atlanırsa, varsayılan profil resmini alırsınız ve bunu daha sonra ayarlayabilirsiniz"
+#~ msgid "If skipped, you'll get the default profile image and can set it later"
+#~ msgstr "Atlanırsa, varsayılan profil resmini alırsınız ve bunu daha sonra ayarlayabilirsiniz"
 
-#: src/components/onboarding/Onboarding.tsx:167
-#: src/components/onboarding/steps/BackupKeyStep.tsx:23
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "Tarayıcı depolamanızı temizlerseniz veya tarayıcıları değiştirirseniz, eski mesajlarınız ve anahtarlarınız kaybolabilir."
+#~ msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+#~ msgstr "Tarayıcı depolamanızı temizlerseniz veya tarayıcıları değiştirirseniz, eski mesajlarınız ve anahtarlarınız kaybolabilir."
 
-#: src/components/onboarding/Onboarding.native.tsx:252
-#: src/components/onboarding/Onboarding.tsx:172
-#: src/components/onboarding/steps/BackupKeyStep.tsx:22
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
-msgstr "Uygulamayı cihazınızdan kaldırırsanız, eski mesajlarınızı ve anahtarlarınızı kaybedersiniz."
+#~ msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+#~ msgstr "Uygulamayı cihazınızdan kaldırırsanız, eski mesajlarınızı ve anahtarlarınızı kaybedersiniz."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:577
 msgid "Import a backup instead"
 msgstr "Bir yedekleme içe aktar"
 
-#: src/components/onboarding/Login.native.tsx:111
-#: src/components/onboarding/Login.tsx:76
-msgid "Import Existing Key"
-msgstr "Mevcut Anahtarı İçe Aktar"
+#~ msgid "Import Existing Key"
+#~ msgstr "Mevcut Anahtarı İçe Aktar"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:29
+#: src/components/onboarding/steps/ImportKeyStep.tsx:32
 msgid "Import your account key"
-msgstr ""
+msgstr "Hesap anahtarınızı içe aktarın"
 
-#: src/components/onboarding/Onboarding.native.tsx:242
-#: src/components/onboarding/Onboarding.tsx:154
-msgid "Important first-time user information:"
-msgstr "Önemli ilk kez kullanıcı bilgileri:"
+#~ msgid "Important first-time user information:"
+#~ msgstr "Önemli ilk kez kullanıcı bilgileri:"
 
 #: src/components/message/PinnedMessagesPanel.tsx:192
 msgid "Important messages will be pinned here"
@@ -1748,9 +1726,9 @@ msgstr "Geçersiz adres formatı. Adresler geçerli alfanümerik karakterler kul
 #~ msgid "Invalid file type. Please check accepted file formats."
 #~ msgstr "Geçersiz dosya türü. Lütfen kabul edilen dosya formatlarını kontrol edin."
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:60
+#: src/components/onboarding/steps/ImportKeyStep.tsx:71
 msgid "Invalid Key File"
-msgstr ""
+msgstr "Geçersiz Anahtar Dosyası"
 
 #: src/services/InvitationService.ts:509
 #: src/services/InvitationService.ts:520
@@ -1825,13 +1803,13 @@ msgstr "Atla"
 msgid "Jump to present"
 msgstr "Şu ana atla"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:18
 msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
-msgstr ""
+msgstr "İndirdiğiniz dosyayı güvenli ve gizli tutun! Bu dosyaya sahip olan herkes hesabınıza erişebilir."
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:14
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
-msgstr ""
+msgstr "Anahtarınızı Güvenli Tutun!"
 
 #~ msgid "Key Copied!"
 #~ msgstr "Anahtar Kopyalandı!"
@@ -1894,15 +1872,11 @@ msgstr "Uzayı Terket"
 msgid "Leave this space"
 msgstr "Bu alanı terk et"
 
-#: src/components/onboarding/Onboarding.native.tsx:308
-#: src/components/onboarding/Onboarding.tsx:212
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
-msgstr "Arkadaşlarına kim olduğunu bildir! Sohbetlerinde görüntülemek için daha okunaklı bir dostça isim seç, şunlardan daha kolay:"
+#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+#~ msgstr "Arkadaşlarına kim olduğunu bildir! Sohbetlerinde görüntülemek için daha okunaklı bir dostça isim seç, şunlardan daha kolay:"
 
-#: src/components/onboarding/Onboarding.native.tsx:497
-#: src/components/onboarding/Onboarding.tsx:366
-msgid "Let's gooooooooo"
-msgstr "Hadi gidelim"
+#~ msgid "Let's gooooooooo"
+#~ msgstr "Hadi gidelim"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1933,7 +1907,6 @@ msgstr "Sabit mesajlar yükleniyor..."
 msgid "Loading thread..."
 msgstr "Konu yükleniyor..."
 
-#: src/components/onboarding/Onboarding.tsx:143
 #: src/components/onboarding/steps/LoadingStep.tsx:14
 msgid "Loading your profile..."
 msgstr "Profilinizi yüklüyoruz..."
@@ -1954,8 +1927,7 @@ msgstr "Ara"
 msgid "Main navigation"
 msgstr "Ana navigasyon"
 
-#: src/components/Maintenance.native.tsx:40
-#: src/components/Maintenance.tsx:17
+#: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "Bakım Devam Ediyor"
 
@@ -1967,10 +1939,8 @@ msgstr "Rolü görünmez yap"
 msgid "Make role public"
 msgstr "Rolü herkese açık yap"
 
-#: src/components/onboarding/Onboarding.native.tsx:358
-#: src/components/onboarding/Onboarding.tsx:261
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "Hesabınızı benzersiz kılın – bir profil fotoğrafı ayarlayın. Bu bilgi yalnızca katıldığınız Uzaylara sağlanır."
+#~ msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+#~ msgstr "Hesabınızı benzersiz kılın – bir profil fotoğrafı ayarlayın. Bu bilgi yalnızca katıldığınız Uzaylara sağlanır."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
@@ -2273,9 +2243,9 @@ msgstr "Bu tarayıcıda bildirimler desteklenmiyor"
 msgid "Notify all members"
 msgstr "Tüm üyeleri bilgilendir"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:17
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
 msgid "Now let's store your account key inside your passkey. One more confirmation needed."
-msgstr ""
+msgstr "Şimdi hesap anahtarınızı passkey'inizin içinde depolayalım. Bir onay daha gerekiyor."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
@@ -2287,10 +2257,8 @@ msgstr "Çevrimdışı"
 msgid "OK"
 msgstr "Tamam"
 
-#: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:120
-msgid "One of us, one of us!"
-msgstr "Bizden biri, bizden biri!"
+#~ msgid "One of us, one of us!"
+#~ msgstr "Bizden biri, bizden biri!"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
@@ -2322,17 +2290,17 @@ msgstr "Orijinal"
 msgid "Page Not Found"
 msgstr "Sayfa Bulunamadı"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:19
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Passkey kurulumu başarısız oldu. Tekrar deneyebilir veya Passkey olmadan devam edebilirsiniz (yine de güvenli, sadece cihaz donanımı koruması olmadan)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:15
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Bu tarayıcıda passkey'ler desteklenmiyor. Passkey olmadan devam etmeniz gerekiyor (yine de güvenli, sadece cihaz donanımı koruması olmadan)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:31
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
-msgstr ""
+msgstr "Passkey'ler, hesabınızı korumak için cihazınızın yerleşik güvenliğini kullanır. Cihazınız üzerinden iki hızlı onay gerektirir."
 
 #: src/components/modals/AddSpaceModal.tsx:146
 msgid "Paste an invite link"
@@ -2351,10 +2319,8 @@ msgstr "Bekleyen kaldırma - onaylamak için Kaydet'e tıklayın"
 msgid "Permissions:"
 msgstr "İzinler:"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:121
-msgid "Personalize your account"
-msgstr "Hesabınızı kişiselleştirin"
+#~ msgid "Personalize your account"
+#~ msgstr "Hesabınızı kişiselleştirin"
 
 #~ msgid "Photo"
 #~ msgstr "Foto"
@@ -2430,10 +2396,8 @@ msgstr "Sabitlenmiş Mesajlar"
 #~ msgid "Pinned!"
 #~ msgstr "Sabitlenmiş!"
 
-#: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:133
-msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
-msgstr "PNG, JPG veya JPEG • Optimal oran 1:1"
+#~ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
+#~ msgstr "PNG, JPG veya JPEG • Optimal oran 1:1"
 
 #~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 #~ msgstr "Kaydetmek için Enter'a basın, yeni satır için Shift+Enter, iptal için Esc tuşuna basın"
@@ -2478,22 +2442,22 @@ msgstr "Herkese açık davet bağlantıları, bağlantıya erişimi olan herkesi
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kodu 60 saniye içinde otomatik olarak gizlenecektir"
 
-#: src/components/Maintenance.tsx:24
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "Quorum altyapısı şu anda dağıtılıyor. Lütfen yenilemeyi deneyin ve güncellemeler için <0>https://status.quilibrium.com/</0> adresini kontrol edin."
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+#~ msgstr "Quorum altyapısı şu anda dağıtılıyor. Lütfen yenilemeyi deneyin ve güncellemeler için <0>https://status.quilibrium.com/</0> adresini kontrol edin."
 
-#: src/components/Maintenance.native.tsx:45
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr "Quorum altyapısı şu anda dağıtılmaktadır. Lütfen yenilemeyi deneyin."
+#: src/components/Maintenance.tsx:18
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
+msgstr "Quorum altyapısı şu anda dağıtılıyor. Lütfen sayfayı yenileyin ve <0>status.quilibrium.com</0> adresinden güncellemeleri kontrol edin."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:35
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+#~ msgstr "Quorum altyapısı şu anda dağıtılmaktadır. Lütfen yenilemeyi deneyin."
+
+#: src/components/onboarding/steps/WelcomeStep.tsx:36
 msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
-msgstr ""
+msgstr "Quorum, kimliğinize sahip olduğunuz merkezi olmayan bir mesajlaşma platformudur. E-posta veya telefon numarası olmadan - sadece sizin kontrol ettiğiniz güvenli bir anahtarla."
 
-#: src/components/onboarding/Onboarding.native.tsx:247
-#: src/components/onboarding/Onboarding.tsx:157
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum, eşler arası ve uçtan uca şifrelenmiştir. Bu, mesajlarınızın özel kalacağı anlamına gelir, ancak aynı zamanda, yalnızca size ve alıcılarınıza ulaşmak için gereken süre boyunca ağda kalır."
+#~ msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+#~ msgstr "Quorum, eşler arası ve uçtan uca şifrelenmiştir. Bu, mesajlarınızın özel kalacağı anlamına gelir, ancak aynı zamanda, yalnızca size ve alıcılarınıza ulaşmak için gereken süre boyunca ağda kalır."
 
 #: src/components/context/RegistrationPersister.tsx:275
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
@@ -2503,9 +2467,9 @@ msgstr "Quorum, tarayıcı odak dışındayken veya bir şifre isteği reddedild
 msgid "Reactions"
 msgstr "Tepkiler"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:40
+#: src/components/onboarding/steps/WelcomeStep.tsx:35
 msgid "Read more about Quorum"
-msgstr ""
+msgstr "Quorum hakkında daha fazla bilgi edin"
 
 #: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Read only"
@@ -2536,8 +2500,7 @@ msgstr "geçersiz imzaya sahip yapılandırma alındı!"
 msgid "Recipient has no devices"
 msgstr "Alıcının cihazı yok"
 
-#: src/components/Maintenance.native.tsx:71
-#: src/components/Maintenance.tsx:46
+#: src/components/Maintenance.tsx:38
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Yenile"
@@ -2661,10 +2624,8 @@ msgstr "KAYDET"
 msgid "Save Changes"
 msgstr "Değişiklikleri Kaydet"
 
-#: src/components/onboarding/Onboarding.native.tsx:467
-#: src/components/onboarding/Onboarding.tsx:322
-msgid "Save Contact Photo"
-msgstr "İletişim Fotoğrafını Kaydet"
+#~ msgid "Save Contact Photo"
+#~ msgstr "İletişim Fotoğrafını Kaydet"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
 #: src/components/modals/SpaceSettingsModal/General.tsx:331
@@ -2680,18 +2641,16 @@ msgstr "Kaydetme Başarısız"
 msgid "Save Private Key"
 msgstr "Özel Anahtarı Kaydet"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:27
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:31
 msgid "Save to Passkey"
-msgstr ""
+msgstr "Passkey'e Kaydet"
 
-#: src/components/onboarding/Onboarding.native.tsx:267
-#: src/components/onboarding/Onboarding.tsx:191
-msgid "Save User Key"
-msgstr "Kullanıcı Anahtarını Kaydet"
+#~ msgid "Save User Key"
+#~ msgstr "Kullanıcı Anahtarını Kaydet"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:15
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:19
 msgid "Save Your Account Key"
-msgstr ""
+msgstr "Hesap Anahtarınızı Kaydedin"
 
 #: src/services/ConfigService.ts:64
 msgid "saved config is out of date"
@@ -2788,9 +2747,9 @@ msgstr "Varsayılan kanalı seçin"
 #~ msgid "Select Image"
 #~ msgstr "Görüntü Seçin"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:31
+#: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
-msgstr ""
+msgstr "Hesabınızı geri yüklemek için hesap anahtar dosyanızı seçin veya sürükleyin."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:157
 msgid "Select permissions"
@@ -2848,10 +2807,8 @@ msgstr "Gönderiliyor..."
 msgid "Session Encrypted"
 msgstr "Oturum Şifreli"
 
-#: src/components/onboarding/Onboarding.native.tsx:340
-#: src/components/onboarding/Onboarding.tsx:247
-msgid "Set Display Name"
-msgstr "Görüntü Adını Ayarla"
+#~ msgid "Set Display Name"
+#~ msgstr "Görüntü Adını Ayarla"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2897,18 +2854,16 @@ msgstr "QR'yi Göster"
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "İlk 500 sonucu gösteriliyor. Daha spesifik sonuçlar için aramanızı daraltın."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:15
+#: src/components/onboarding/steps/WelcomeStep.tsx:16
 msgid "Sign in into Quorum"
-msgstr ""
+msgstr "Quorum'a Giriş Yap"
 
-#: src/components/onboarding/Onboarding.native.tsx:455
-#: src/components/onboarding/Onboarding.tsx:329
-msgid "Skip Adding Photo"
-msgstr "Fotoğraf Eklemeyi Atla"
+#~ msgid "Skip Adding Photo"
+#~ msgstr "Fotoğraf Eklemeyi Atla"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:97
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:107
 msgid "Skip for now"
-msgstr ""
+msgstr "Şimdi Atla"
 
 #: src/services/MessageService.ts:4113
 msgid "Someone"
@@ -3032,9 +2987,8 @@ msgstr "Etiket Görseli"
 msgid "Tap to copy"
 msgstr "Kopyalamak için dokunun"
 
-#: src/components/onboarding/Onboarding.native.tsx:437
-msgid "Tap to select"
-msgstr "Seçmek için dokunun"
+#~ msgid "Tap to select"
+#~ msgstr "Seçmek için dokunun"
 
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Tell us about yourself..."
@@ -3054,9 +3008,9 @@ msgstr "Davet bağlantısı süresi dolmuş veya geçersiz."
 msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 msgstr "Aradığınız sayfa mevcut değil veya taşındı. Sizi tekrar yola çıkaralım."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:17
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Passkey kurulumu zaman aşımına uğradı. Tekrar deneyebilir veya Passkey olmadan devam edebilirsiniz (yine de güvenli, sadece cihaz donanım koruması olmadan)."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
@@ -3084,18 +3038,16 @@ msgstr "Bu açıklama davetlerde görünür olacak ve bir davet bağlantısı ku
 msgid "This device"
 msgstr "Bu cihaz"
 
-#: src/components/onboarding/Onboarding.native.tsx:314
-#: src/components/onboarding/Onboarding.tsx:221
-msgid "This information is only provided to the Spaces you join."
-msgstr "Bu bilgi yalnızca katıldığınız Alanlar için sağlanmaktadır."
+#~ msgid "This information is only provided to the Spaces you join."
+#~ msgstr "Bu bilgi yalnızca katıldığınız Alanlar için sağlanmaktadır."
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
 msgstr "Bu oldukça utanç verici..."
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:20
+#: src/components/onboarding/steps/DisplayNameStep.tsx:21
 msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
-msgstr ""
+msgstr "Diğerlerinin Quorum'da sizi nasıl göreceğini belirler. Bu ayarı her zaman Ayarlar'dan değiştirebilirsiniz."
 
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -3230,9 +3182,9 @@ msgstr "Bugün"
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "Mesajda çok fazla etiket var. Maksimum {MAX_MENTIONS_PER_MESSAGE} izin verilmektedir."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:75
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:58
 msgid "Try Again"
-msgstr ""
+msgstr "Tekrar Deneyin"
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -3468,9 +3420,8 @@ msgstr "Kullanıcı mevcut değil."
 #~ msgid "User Muted!"
 #~ msgstr "Kullanıcı Susturuldu!"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:26
-msgid "User Name"
-msgstr ""
+#~ msgid "User Name"
+#~ msgstr "Kullanıcı Adı"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:77
 #: src/hooks/business/messages/usePinnedMessages.ts:169
@@ -3504,31 +3455,37 @@ msgstr "Davet doğrulanıyor..."
 msgid "View edit history"
 msgstr "Düzenleme geçmişini görüntüle"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:50
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:74
 msgid "View technical details"
-msgstr ""
+msgstr "Teknik detayları göster"
 
 #: src/components/message/MessageActionsMenu.tsx:264
 #: src/components/thread/ThreadIndicator.tsx:35
 msgid "View Thread"
 msgstr "Konuyu görüntüle"
 
-#: src/components/onboarding/Onboarding.native.tsx:237
-#: src/components/onboarding/Onboarding.tsx:117
-msgid "Welcome to Quorum!"
-msgstr "Quorum'a hoş geldiniz!"
+#~ msgid "Welcome to Quorum!"
+#~ msgstr "Quorum'a hoş geldiniz!"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:96
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:79
 msgid "What is a Passkey?"
-msgstr ""
+msgstr "Passkey nedir?"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:37
+#: src/components/onboarding/steps/ImportKeyStep.tsx:63
+msgid "What is an account key?"
+msgstr "Hesap anahtarı nedir?"
+
+#: src/components/onboarding/steps/DisplayNameStep.tsx:62
+msgid "What is the account address?"
+msgstr "Hesap adresi nedir?"
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:35
 msgid "What is the Account Key?"
-msgstr ""
+msgstr "Hesap Anahtarı nedir?"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:18
+#: src/components/onboarding/steps/DisplayNameStep.tsx:19
 msgid "What should we call you?"
-msgstr ""
+msgstr "Sizi nasıl çağırmalıyız?"
 
 #: src/components/direct/EmptyDirectMessage.tsx:69
 msgid "What's on your mind today?"
@@ -3585,9 +3542,8 @@ msgstr "Birisi mesajlarınıza yanıt verdiğinde"
 #~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 #~ msgstr "Bu ayar etkinleştirildiğinde, davet bağlantıları otomatik olarak bir kullanıcının Space'inize katılmasına izin verecektir. Etkinleştirilmediğinde, bir davet bağlantısını takip eden kullanıcı, Space'inize katılmak için size bir talep gönderecektir ve bunu manuel olarak onaylamanız gerekecektir. Kamu bağlantıları, bağlantıda bazı anahtar materyallerin mevcut olmasını gerektirir - bir kamu Space bağlantısına sahip olmanın, bağlantının geçerli olduğu süre boyunca Space'teki mesajları okumak için bağlantıya sahip olan herkesin bunu yapmasına izin verebileceğini unutmayın."
 
-#: src/components/onboarding/Onboarding.tsx:164
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "Bir tarayıcıda Quorum kullanırken, mesajlarınız tarayıcınıza yerel olarak kaydedilir."
+#~ msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+#~ msgstr "Bir tarayıcıda Quorum kullanırken, mesajlarınız tarayıcınıza yerel olarak kaydedilir."
 
 #: src/components/modals/ConversationSettingsModal.tsx:223
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
@@ -3597,13 +3553,13 @@ msgstr "Bir mesajı imzaladığınızda, bunun kendi anahtarınızdan geldiğini
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Bir mesajı imzaladığınızda, bunun kendi anahtarınızdan geldiğini onaylıyorsunuz. Bir mesajı imzalamadığınızda, makul bir inkar hakkına sahip olursunuz. Bu ayarı her bir konuşma ve mesaj için bireysel olarak kontrol edebilirsiniz."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:48
+#: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
-msgstr ""
+msgstr "Bunu neden yapmam gerekiyor?"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:43
+#: src/components/onboarding/steps/BackupKeyStep.tsx:40
 msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr ""
+msgstr "Bu yedeğe sahip olmadan, cihazınıza erişim kaybettiğinizde hesabınızı da kaybedersiniz - 'şifremi unuttum' seçeneği yok. Bu, gizliliğin bedeli :-)"
 
 #: src/utils/dateFormatting.ts:29
 msgid "Yesterday"
@@ -3634,9 +3590,9 @@ msgstr "Bu konuşma için bunu daha sonra, Konuşma görünümündeki kilit simg
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "Her Alan'ın ayarlarında Alan bildirimlerinizi yönetebilirsiniz."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:13
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Passkey kurulumunu iptal ettiniz. Tekrar deneyebilir veya Passkey olmadan devam edebilirsiniz (yine de güvenli, sadece cihaz donanım koruması olmadan)."
 
 #: src/components/modals/GroupEditorModal.tsx:114
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
@@ -3672,22 +3628,20 @@ msgstr "Moderasyon eylemleri için (atmak hariç) kendinize bir rol atamalısın
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Yeniden katılmak için tekrar davet edilmeniz gerekecek. Mevcut mesajlarınız silinmeyecek."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:18
+#: src/components/onboarding/steps/BackupKeyStep.tsx:19
 msgid "You'll need this file to recover your account if you lose access to your device."
-msgstr ""
+msgstr "Cihazınıza erişim kaybettiğinizde hesabınızı kurtarmak için bu dosyaya ihtiyacınız olacak."
 
 #: src/components/notifications/NotificationPanel.tsx:203
 msgid "You're all caught up!"
 msgstr "Her şey yolunda!"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:14
+#: src/components/onboarding/steps/CompleteStep.tsx:17
 msgid "You're all set!"
-msgstr ""
+msgstr "Her şey tamam!"
 
-#: src/components/onboarding/Onboarding.native.tsx:486
-#: src/components/onboarding/Onboarding.tsx:354
-msgid "You're all set. Welcome to Quorum!"
-msgstr "Her şey hazır. Quorum'a hoş geldiniz!"
+#~ msgid "You're all set. Welcome to Quorum!"
+#~ msgstr "Her şey hazır. Quorum'a hoş geldiniz!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
@@ -3695,7 +3649,7 @@ msgstr "Bu Alanın üyeleri arasında yer almıyorsun. Bunu düzeltmek, seni Ala
 
 #: src/components/ui/OfflineBanner.tsx:56
 msgid "You're offline"
-msgstr "Çevrimdışı olduğunuz için"
+msgstr "Çevrimdışısınız"
 
 #: src/components/modals/AddSpaceModal.tsx:137
 msgid "You're offline. Adding or creating a Space requires an internet connection."
@@ -3718,17 +3672,21 @@ msgstr "Mesajları çok hızlı gönderiyorsunuz. Lütfen bir süre bekleyin."
 msgid "You've been invited to join a Space"
 msgstr "Bir Alan'a katılmanız için davet edildiniz"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:43
+#: src/components/onboarding/steps/DisplayNameStep.tsx:63
 msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
-msgstr ""
+msgstr "Hesap adresiniz, hesap anahtarınızdan türetilen benzersiz bir genel tanımlayıcıdır. Diğerlerinin sizi bulup mesaj göndermesi için kullanabilir. Bunu, hiç değişmeyen bir kullanıcı adı gibi düşünebilirsiniz."
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:32
+#: src/components/onboarding/steps/ImportKeyStep.tsx:64
+msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "Hesap anahtarınız, hesabınızın sahibi olduğunu kanıtlayan özel bir anahtar dosyasıdır (.key). Hesap ayarlarından indirebilirsiniz. Güvende tutun — buna kim sahip olursa hesabınıza erişebilir."
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
-msgstr ""
+msgstr "Hesap anahtarınız, Quorum'daki benzersiz kimliktir. Sizin olduğunuzu kanıtlayan bir ana şifre gibidir - ancak otomatik olarak oluşturulur ve güvenli bir şekilde passkey'inizde saklanır."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:17
+#: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
-msgstr ""
+msgstr "Topluluklarınız, kurallarınız - hiçbir platform sizi yasaklayamaz."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:124
 msgid "Your Details"
@@ -3743,13 +3701,15 @@ msgstr "Detaylarınız"
 #~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
 #~ msgstr "Özel anahtarınız ekranda gösterilecektir. Bu QR kodunu gören veya fotoğrafını çeken herkes, Quorum hesabınız üzerinde tam kontrol sağlayabilir ve ilişkili fonları çalabilir."
 
+#~ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Profil resminizin boyutu {maxFileSize} veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
+
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Profil resminizin boyutu {maxSize} veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
 
-#: src/components/onboarding/Onboarding.native.tsx:363
-msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "Profil resminizin boyutu 2MB veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
+#~ msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "Profil resminizin boyutu 2MB veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:204
 msgid "Your Roles"

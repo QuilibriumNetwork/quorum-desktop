@@ -15,11 +15,6 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:16
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -36,9 +31,9 @@ msgid "No Role - {count}"
 msgstr "Aucun rôle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:270
-msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "La taille de votre image de profil doit être de {maxFileSize} ou moins et doit être au format PNG, JPG ou JPEG."
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Bienvenue à Quorum, {name} ! Votre compte est sécurisé et prêt à l'emploi."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1601
@@ -95,9 +90,8 @@ msgstr "a été expulsé"
 #~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "Les paramètres par défaut de l'Espace offrent l'expérience de chat la plus typique, mais pour des garanties de confidentialité plus élevées, consultez les paramètres avancés."
 
-#: src/components/Maintenance.native.tsx:59
-msgid " for updates."
-msgstr "pour les mises à jour."
+#~ msgid " for updates."
+#~ msgstr "pour les mises à jour."
 
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "' tout le monde' est un nom réservé."
@@ -303,9 +297,9 @@ msgstr "1 réponse"
 msgid "4-Character Code"
 msgstr "Code de 4 caractères"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:91
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
 msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
-msgstr ""
+msgstr "Un passkey utilise les fonctionnalités de sécurité de votre appareil (Face ID, empreinte digitale ou code PIN) pour protéger votre compte. C'est plus sûr qu'un mot de passe et vous n'avez rien à retenir."
 
 #: src/services/MessageService.ts:4130
 #: src/services/NotificationService.ts:305
@@ -322,8 +316,12 @@ msgstr "un espace"
 msgid "Account"
 msgstr "Compte"
 
+#: src/components/onboarding/steps/DisplayNameStep.tsx:45
+msgid "Account address"
+msgstr "Adresse du compte"
+
 #: src/components/modals/UserSettingsModal/General.tsx:173
-#: src/components/onboarding/steps/DisplayNameStep.tsx:40
+#: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Adresse du compte"
 
@@ -342,9 +340,9 @@ msgstr "actions en attente"
 msgid "Add a friend"
 msgstr "Ajouter un ami"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:45
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
-msgstr ""
+msgstr "Ajouter une photo de profil"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -542,9 +540,9 @@ msgstr "Absent"
 msgid "Back to invite link"
 msgstr "Retour au lien d'invitation"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:16
+#: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
-msgstr ""
+msgstr "Sauvegardez votre clé de compte"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:128
 msgid "Backup Failed"
@@ -703,13 +701,12 @@ msgstr "Le sujet du canal ne peut pas contenir de caractères spéciaux"
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 msgstr "Le sujet du canal doit comporter {MAX_TOPIC_LENGTH} caractères ou moins"
 
-#: src/components/Maintenance.native.tsx:50
-msgid "Check "
-msgstr "Vérifier"
+#~ msgid "Check "
+#~ msgstr "Vérifier"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:49
+#: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
-msgstr ""
+msgstr "choisir un fichier"
 
 #~ msgid "Choose how you'd like to add an image"
 #~ msgstr "Choisissez comment vous souhaitez ajouter une image"
@@ -753,13 +750,11 @@ msgstr "Cliquez à nouveau pour confirmer"
 msgid "Click on the role name and tag to edit them."
 msgstr "Cliquez sur le nom du rôle et l'étiquette pour les modifier."
 
-#: src/components/onboarding/Onboarding.tsx:177
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr "Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos informations clés, car une fois perdues, elles le sont pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+#~ msgstr "Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos informations clés, car une fois perdues, elles le sont pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
 
-#: src/components/onboarding/Onboarding.native.tsx:257
-msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr "Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos informations clés, car une fois qu'elles sont perdues, elles sont perdues pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
+#~ msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+#~ msgstr "Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos informations clés, car une fois qu'elles sont perdues, elles sont perdues pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -797,14 +792,14 @@ msgstr "Confirmer la réinitialisation"
 msgid "Connecting"
 msgstr "Connexion"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:73
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:90
+#: src/components/onboarding/steps/DisplayNameStep.tsx:57
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:99
 msgid "Continue"
-msgstr ""
+msgstr "Continuer"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:85
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:68
 msgid "Continue without passkey"
-msgstr ""
+msgstr "Continuer sans passkey"
 
 #: src/components/direct/DirectMessage.tsx:773
 msgid "Conversation settings"
@@ -885,7 +880,7 @@ msgid "Couldn't decrypt your saved profile. Please re-enter your name and profil
 msgstr "Impossible de déchiffrer votre profil enregistré. Veuillez réentrer votre nom et votre image de profil."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:297
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "Impossible de charger votre profil enregistré. Veuillez réentrer votre nom et votre image de profil."
 
@@ -898,20 +893,18 @@ msgstr "Créer un Space"
 msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
 msgstr "Créez un tag que les membres peuvent afficher à côté de leur nom d'utilisateur dans les messages. Téléchargez une image et définissez un code de 4 caractères pour identifier votre Space."
 
-#: src/components/onboarding/Login.native.tsx:102
-#: src/components/onboarding/Login.tsx:62
-#: src/components/onboarding/steps/WelcomeStep.tsx:24
+#: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
 msgstr "Créer un nouveau compte"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:70
+#: src/components/onboarding/steps/ImportKeyStep.tsx:81
 msgid "Create new account instead"
-msgstr ""
+msgstr "Créer un nouveau compte"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:29
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:65
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:33
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:48
 msgid "Create Passkey"
-msgstr ""
+msgstr "Créer un passkey"
 
 #: src/components/modals/ChannelEditorModal.tsx:180
 msgid "Create roles in Space Settings first."
@@ -1178,13 +1171,13 @@ msgstr "Affichez votre clé privée sous forme de code QR à scanner avec l'appl
 msgid "Documentation"
 msgstr "Documentation"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:31
+#: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
-msgstr ""
+msgstr "Télécharger la sauvegarde de la clé"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:47
+#: src/components/onboarding/steps/ImportKeyStep.tsx:52
 msgid "Drag and drop or"
-msgstr ""
+msgstr "Glissez-déposez ou"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1194,10 +1187,8 @@ msgstr "Tiroir"
 msgid "Drop here"
 msgstr "Déposer ici"
 
-#: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:131
-msgid "Drop your profile photo here"
-msgstr "Déposez votre photo de profil ici"
+#~ msgid "Drop your profile photo here"
+#~ msgstr "Déposez votre photo de profil ici"
 
 #: src/components/message/MessageActionsMenu.tsx:281
 msgid "Edit"
@@ -1296,17 +1287,17 @@ msgstr "Entrez à la fois l'ID de l'Espace et la clé de configuration pour vali
 msgid "Enter details manually"
 msgstr "Entrez les détails manuellement"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:27
+#: src/components/onboarding/steps/CompleteStep.tsx:30
 msgid "Enter Quorum"
-msgstr ""
+msgstr "Accéder à Quorum"
 
 #: src/components/message/MessageEditTextarea.tsx:727
 msgid "Enter to"
 msgstr "Entrer pour"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:31
+#: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
-msgstr ""
+msgstr "Entrez votre nom"
 
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
@@ -1637,9 +1628,9 @@ msgstr "Accrochez-vous..."
 msgid "Help"
 msgstr "Aide"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:47
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:51
 msgid "Help others recognize you with a profile picture."
-msgstr ""
+msgstr "Aidez les autres à vous reconnaître avec une photo de profil."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:541
 msgid "Hide"
@@ -1660,18 +1651,16 @@ msgstr "Masquer les canaux muets"
 msgid "Hide muted channels in list"
 msgstr "Masquer les canaux muets dans la liste"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:31
+#: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
-msgstr ""
+msgstr "J'ai déjà un compte"
 
-#: src/components/onboarding/Onboarding.native.tsx:288
-#: src/components/onboarding/Onboarding.tsx:198
-msgid "I already saved mine"
-msgstr "J'ai déjà sauvegardé le mien"
+#~ msgid "I already saved mine"
+#~ msgstr "J'ai déjà sauvegardé le mien"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:24
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:26
 msgid "I understand"
-msgstr ""
+msgstr "J'ai compris"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:515
 msgid "I Understand, Show QR"
@@ -1682,46 +1671,35 @@ msgstr "Je comprends, Afficher le QR"
 msgid "I'm new!"
 msgstr "Je suis nouveau !"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:38
+#: src/components/onboarding/steps/BackupKeyStep.tsx:35
 msgid "I've already saved my key"
-msgstr ""
+msgstr "J'ai déjà sauvegardé ma clé"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Je l'ai enregistré"
 
-#: src/components/onboarding/Onboarding.tsx:333
-#: src/components/onboarding/Onboarding.tsx:340
-msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr "Si vous passez cette étape, vous obtiendrez l'image de profil par défaut et pourrez la définir plus tard"
+#~ msgid "If skipped, you'll get the default profile image and can set it later"
+#~ msgstr "Si vous passez cette étape, vous obtiendrez l'image de profil par défaut et pourrez la définir plus tard"
 
-#: src/components/onboarding/Onboarding.tsx:167
-#: src/components/onboarding/steps/BackupKeyStep.tsx:23
-msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
-msgstr "Si vous effacez le stockage de votre navigateur ou changez de navigateur, vos anciens messages et clés peuvent disparaître."
+#~ msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+#~ msgstr "Si vous effacez le stockage de votre navigateur ou changez de navigateur, vos anciens messages et clés peuvent disparaître."
 
-#: src/components/onboarding/Onboarding.native.tsx:252
-#: src/components/onboarding/Onboarding.tsx:172
-#: src/components/onboarding/steps/BackupKeyStep.tsx:22
-msgid "If you uninstall the app from your device, you will lose your old messages and keys."
-msgstr "Si vous désinstallez l'application de votre appareil, vous perdrez vos anciens messages et clés."
+#~ msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+#~ msgstr "Si vous désinstallez l'application de votre appareil, vous perdrez vos anciens messages et clés."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:577
 msgid "Import a backup instead"
 msgstr "Importer une sauvegarde à la place"
 
-#: src/components/onboarding/Login.native.tsx:111
-#: src/components/onboarding/Login.tsx:76
-msgid "Import Existing Key"
-msgstr "Importer une clé existante"
+#~ msgid "Import Existing Key"
+#~ msgstr "Importer une clé existante"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:29
+#: src/components/onboarding/steps/ImportKeyStep.tsx:32
 msgid "Import your account key"
-msgstr ""
+msgstr "Importer votre clé de compte"
 
-#: src/components/onboarding/Onboarding.native.tsx:242
-#: src/components/onboarding/Onboarding.tsx:154
-msgid "Important first-time user information:"
-msgstr "Informations importantes pour le premier utilisateur :"
+#~ msgid "Important first-time user information:"
+#~ msgstr "Informations importantes pour le premier utilisateur :"
 
 #: src/components/message/PinnedMessagesPanel.tsx:192
 msgid "Important messages will be pinned here"
@@ -1747,9 +1725,9 @@ msgstr "Format d'adresse invalide. Les adresses doivent utiliser des caractères
 #~ msgid "Invalid file type. Please check accepted file formats."
 #~ msgstr "Type de fichier invalide. Veuillez vérifier les formats de fichier acceptés."
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:60
+#: src/components/onboarding/steps/ImportKeyStep.tsx:71
 msgid "Invalid Key File"
-msgstr ""
+msgstr "Fichier de clé invalide"
 
 #: src/services/InvitationService.ts:509
 #: src/services/InvitationService.ts:520
@@ -1824,13 +1802,13 @@ msgstr "Sauter"
 msgid "Jump to present"
 msgstr "Aller au présent"
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:18
 msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
-msgstr ""
+msgstr "Gardez le fichier que vous avez téléchargé en sécurité et privé ! Quiconque possède ce fichier peut accéder à votre compte."
 
-#: src/components/onboarding/steps/SecurityWarningStep.tsx:14
+#: src/components/onboarding/steps/SecurityWarningStep.tsx:16
 msgid "Keep your Key Safe!"
-msgstr ""
+msgstr "Gardez votre clé en sécurité !"
 
 #~ msgid "Key Copied!"
 #~ msgstr "Clé copiée !"
@@ -1893,15 +1871,11 @@ msgstr "Laisser de l'Espace"
 msgid "Leave this space"
 msgstr "Quitter cet Espace"
 
-#: src/components/onboarding/Onboarding.native.tsx:308
-#: src/components/onboarding/Onboarding.tsx:212
-msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
-msgstr "Faites savoir à vos amis qui vous êtes ! Choisissez un nom amical à afficher dans vos conversations, quelque chose de plus facile à lire que :"
+#~ msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+#~ msgstr "Faites savoir à vos amis qui vous êtes ! Choisissez un nom amical à afficher dans vos conversations, quelque chose de plus facile à lire que :"
 
-#: src/components/onboarding/Onboarding.native.tsx:497
-#: src/components/onboarding/Onboarding.tsx:366
-msgid "Let's gooooooooo"
-msgstr "Allons-y !"
+#~ msgid "Let's gooooooooo"
+#~ msgstr "Allons-y !"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1932,7 +1906,6 @@ msgstr "Chargement des messages épinglés..."
 msgid "Loading thread..."
 msgstr "Chargement du fil…"
 
-#: src/components/onboarding/Onboarding.tsx:143
 #: src/components/onboarding/steps/LoadingStep.tsx:14
 msgid "Loading your profile..."
 msgstr "Chargement de votre profil..."
@@ -1953,8 +1926,7 @@ msgstr "Recherche"
 msgid "Main navigation"
 msgstr "Navigation principale"
 
-#: src/components/Maintenance.native.tsx:40
-#: src/components/Maintenance.tsx:17
+#: src/components/Maintenance.tsx:15
 msgid "Maintenance in Progress"
 msgstr "Maintenance en cours"
 
@@ -1966,10 +1938,8 @@ msgstr "Rendre le rôle invisible"
 msgid "Make role public"
 msgstr "Rendre le rôle public"
 
-#: src/components/onboarding/Onboarding.native.tsx:358
-#: src/components/onboarding/Onboarding.tsx:261
-msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
-msgstr "Rendez votre compte unique – définissez une photo de contact. Cette information est uniquement fournie aux Espaces que vous rejoignez."
+#~ msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+#~ msgstr "Rendez votre compte unique – définissez une photo de contact. Cette information est uniquement fournie aux Espaces que vous rejoignez."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
@@ -2272,9 +2242,9 @@ msgstr "Les notifications ne sont pas prises en charge dans ce navigateur"
 msgid "Notify all members"
 msgstr "Notifier tous les membres"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:17
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
 msgid "Now let's store your account key inside your passkey. One more confirmation needed."
-msgstr ""
+msgstr "Maintenant, stockons votre clé de compte dans votre passkey. Une confirmation supplémentaire est nécessaire."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
@@ -2286,10 +2256,8 @@ msgstr "Hors ligne"
 msgid "OK"
 msgstr "D'accord"
 
-#: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:120
-msgid "One of us, one of us!"
-msgstr "L'un d'entre nous, l'un d'entre nous !"
+#~ msgid "One of us, one of us!"
+#~ msgstr "L'un d'entre nous, l'un d'entre nous !"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
@@ -2321,17 +2289,17 @@ msgstr "Original"
 msgid "Page Not Found"
 msgstr "Page non trouvée"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:19
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
 msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "La configuration du passkey a échoué. Vous pouvez réessayer, ou continuer sans passkey (toujours sécurisé, mais sans protection matérielle de l'appareil)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:15
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
 msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Les passkeys ne sont pas pris en charge par ce navigateur. Vous devrez continuer sans passkey (toujours sécurisé, mais sans protection matérielle de l'appareil)."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:31
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
-msgstr ""
+msgstr "Les passkeys utilisent la sécurité intégrée de votre appareil pour protéger votre compte. Cela nécessite deux confirmations rapides via votre appareil."
 
 #: src/components/modals/AddSpaceModal.tsx:146
 msgid "Paste an invite link"
@@ -2350,10 +2318,8 @@ msgstr "Suppression en attente - cliquez sur Enregistrer pour confirmer"
 msgid "Permissions:"
 msgstr "Autorisations :"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:121
-msgid "Personalize your account"
-msgstr "Personnalisez votre compte"
+#~ msgid "Personalize your account"
+#~ msgstr "Personnalisez votre compte"
 
 #~ msgid "Photo"
 #~ msgstr "Photo"
@@ -2429,10 +2395,8 @@ msgstr "Messages Épinglés"
 #~ msgid "Pinned!"
 #~ msgstr "Épinglé !"
 
-#: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:133
-msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
-msgstr "PNG, JPG ou JPEG • Ratio optimal 1:1"
+#~ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
+#~ msgstr "PNG, JPG ou JPEG • Ratio optimal 1:1"
 
 #~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 #~ msgstr "Appuyez sur Entrée pour enregistrer, Maj+Entrée pour une nouvelle ligne, Échap pour annuler"
@@ -2477,34 +2441,34 @@ msgstr "Les liens d'invitation publics permettent à quiconque ayant accès au l
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Le code QR se cachera automatiquement dans 60 secondes"
 
-#: src/components/Maintenance.tsx:24
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr "L'infrastructure Quorum est en cours de déploiement. Veuillez essayer d'actualiser et vérifier <0>https://status.quilibrium.com/</0> pour les mises à jour."
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+#~ msgstr "L'infrastructure Quorum est en cours de déploiement. Veuillez essayer d'actualiser et vérifier <0>https://status.quilibrium.com/</0> pour les mises à jour."
 
-#: src/components/Maintenance.native.tsx:45
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr "L'infrastructure Quorum est en cours de déploiement à ce moment. Veuillez essayer de rafraîchir."
+#: src/components/Maintenance.tsx:18
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
+msgstr "L'infrastructure de Quorum est en cours de déploiement. Veuillez actualiser et consulter <0>status.quilibrium.com</0> pour obtenir des mises à jour."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:35
+#~ msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+#~ msgstr "L'infrastructure Quorum est en cours de déploiement à ce moment. Veuillez essayer de rafraîchir."
+
+#: src/components/onboarding/steps/WelcomeStep.tsx:36
 msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
-msgstr ""
+msgstr "Quorum est une plateforme de messagerie décentralisée où vous possédez votre identité. Pas d'email, pas de numéro de téléphone - juste une clé sécurisée que vous seul contrôlez."
 
-#: src/components/onboarding/Onboarding.native.tsx:247
-#: src/components/onboarding/Onboarding.tsx:157
-msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
-msgstr "Quorum est pair-à-pair et chiffré de bout en bout. Cela signifie que vos messages restent privés, mais tout aussi important, ils ne vivent sur le réseau que le temps nécessaire pour vous atteindre, vous et vos destinataires."
+#~ msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+#~ msgstr "Quorum est pair-à-pair et chiffré de bout en bout. Cela signifie que vos messages restent privés, mais tout aussi important, ils ne vivent sur le réseau que le temps nécessaire pour vous atteindre, vous et vos destinataires."
 
 #: src/components/context/RegistrationPersister.tsx:275
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "Quorum a été chargé alors que le navigateur n'était pas au premier plan ou qu'une demande de clé d'accès a été rejetée. Veuillez réautoriser pour accéder à vos messages."
+msgstr "Quorum a été chargé alors que le navigateur n'était pas au premier plan ou qu'une demande de passkey a été rejetée. Veuillez réautoriser pour accéder à vos messages."
 
 #: src/components/modals/ReactionsModal.tsx:89
 msgid "Reactions"
 msgstr "Réactions"
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:40
+#: src/components/onboarding/steps/WelcomeStep.tsx:35
 msgid "Read more about Quorum"
-msgstr ""
+msgstr "En savoir plus sur Quorum"
 
 #: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Read only"
@@ -2535,8 +2499,7 @@ msgstr "configuration reçue avec une signature invalide !"
 msgid "Recipient has no devices"
 msgstr "Le destinataire n'a pas d'appareils"
 
-#: src/components/Maintenance.native.tsx:71
-#: src/components/Maintenance.tsx:46
+#: src/components/Maintenance.tsx:38
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Rafraîchir"
@@ -2660,10 +2623,8 @@ msgstr "ENREGISTRER"
 msgid "Save Changes"
 msgstr "Sauvegarder les modifications"
 
-#: src/components/onboarding/Onboarding.native.tsx:467
-#: src/components/onboarding/Onboarding.tsx:322
-msgid "Save Contact Photo"
-msgstr "Sauvegarder la photo du contact"
+#~ msgid "Save Contact Photo"
+#~ msgstr "Sauvegarder la photo du contact"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
 #: src/components/modals/SpaceSettingsModal/General.tsx:331
@@ -2679,18 +2640,16 @@ msgstr "Échec de la sauvegarde"
 msgid "Save Private Key"
 msgstr "Sauvegarder la clé privée"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:27
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:31
 msgid "Save to Passkey"
-msgstr ""
+msgstr "Sauvegarder dans le passkey"
 
-#: src/components/onboarding/Onboarding.native.tsx:267
-#: src/components/onboarding/Onboarding.tsx:191
-msgid "Save User Key"
-msgstr "Sauvegarder la clé utilisateur"
+#~ msgid "Save User Key"
+#~ msgstr "Sauvegarder la clé utilisateur"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:15
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:19
 msgid "Save Your Account Key"
-msgstr ""
+msgstr "Sauvegarder votre clé de compte"
 
 #: src/services/ConfigService.ts:64
 msgid "saved config is out of date"
@@ -2787,9 +2746,9 @@ msgstr "Sélectionner le canal par défaut"
 #~ msgid "Select Image"
 #~ msgstr "Sélectionner une image"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:31
+#: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
-msgstr ""
+msgstr "Sélectionnez ou faites glisser votre fichier de clé de compte pour restaurer votre compte."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:157
 msgid "Select permissions"
@@ -2847,10 +2806,8 @@ msgstr "Envoi..."
 msgid "Session Encrypted"
 msgstr "Session chiffrée"
 
-#: src/components/onboarding/Onboarding.native.tsx:340
-#: src/components/onboarding/Onboarding.tsx:247
-msgid "Set Display Name"
-msgstr "Définir le nom d'affichage"
+#~ msgid "Set Display Name"
+#~ msgstr "Définir le nom d'affichage"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2896,18 +2853,16 @@ msgstr "Afficher le QR"
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Affichage des 500 premiers résultats. Affinez votre recherche pour des résultats plus spécifiques."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:15
+#: src/components/onboarding/steps/WelcomeStep.tsx:16
 msgid "Sign in into Quorum"
-msgstr ""
+msgstr "Se connecter à Quorum"
 
-#: src/components/onboarding/Onboarding.native.tsx:455
-#: src/components/onboarding/Onboarding.tsx:329
-msgid "Skip Adding Photo"
-msgstr "Passer l'ajout de photo"
+#~ msgid "Skip Adding Photo"
+#~ msgstr "Passer l'ajout de photo"
 
-#: src/components/onboarding/steps/ProfilePhotoStep.tsx:97
+#: src/components/onboarding/steps/ProfilePhotoStep.tsx:107
 msgid "Skip for now"
-msgstr ""
+msgstr "Passer pour l'instant"
 
 #: src/services/MessageService.ts:4113
 msgid "Someone"
@@ -3031,9 +2986,8 @@ msgstr "Image du tag"
 msgid "Tap to copy"
 msgstr "Appuyez pour copier"
 
-#: src/components/onboarding/Onboarding.native.tsx:437
-msgid "Tap to select"
-msgstr "Appuyez pour sélectionner"
+#~ msgid "Tap to select"
+#~ msgstr "Appuyez pour sélectionner"
 
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Tell us about yourself..."
@@ -3053,9 +3007,9 @@ msgstr "Le lien d'invitation a expiré ou n'est pas valide."
 msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 msgstr "La page que vous recherchez n'existe pas ou a été déplacée. Revenons sur la bonne voie."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:17
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
 msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "La configuration du passkey a expiré. Vous pouvez réessayer, ou continuer sans passkey (toujours sécurisé, mais sans protection matérielle)."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
@@ -3083,18 +3037,16 @@ msgstr "Cette description sera visible sur les invitations et montrée aux perso
 msgid "This device"
 msgstr "Cet appareil"
 
-#: src/components/onboarding/Onboarding.native.tsx:314
-#: src/components/onboarding/Onboarding.tsx:221
-msgid "This information is only provided to the Spaces you join."
-msgstr "Ces informations ne sont fournies qu'aux Spaces que vous rejoignez."
+#~ msgid "This information is only provided to the Spaces you join."
+#~ msgstr "Ces informations ne sont fournies qu'aux Spaces que vous rejoignez."
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
 msgstr "C'est embarrassant..."
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:20
+#: src/components/onboarding/steps/DisplayNameStep.tsx:21
 msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
-msgstr ""
+msgstr "C'est ainsi que les autres vous verront dans Quorum. Vous pouvez modifier cela à tout moment dans les Paramètres."
 
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -3229,9 +3181,9 @@ msgstr "Aujourd'hui"
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "Trop de mentions dans le message. Maximum {MAX_MENTIONS_PER_MESSAGE} autorisées."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:75
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:58
 msgid "Try Again"
-msgstr ""
+msgstr "Réessayer"
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -3467,9 +3419,8 @@ msgstr "L'utilisateur n'existe pas."
 #~ msgid "User Muted!"
 #~ msgstr "Utilisateur mis en sourdine !"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:26
-msgid "User Name"
-msgstr ""
+#~ msgid "User Name"
+#~ msgstr "Nom d'utilisateur"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:77
 #: src/hooks/business/messages/usePinnedMessages.ts:169
@@ -3503,31 +3454,37 @@ msgstr "Validation de l'invitation..."
 msgid "View edit history"
 msgstr "Voir l'historique des modifications"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:50
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:74
 msgid "View technical details"
-msgstr ""
+msgstr "Afficher les détails techniques"
 
 #: src/components/message/MessageActionsMenu.tsx:264
 #: src/components/thread/ThreadIndicator.tsx:35
 msgid "View Thread"
 msgstr "Voir le fil"
 
-#: src/components/onboarding/Onboarding.native.tsx:237
-#: src/components/onboarding/Onboarding.tsx:117
-msgid "Welcome to Quorum!"
-msgstr "Bienvenue à Quorum !"
+#~ msgid "Welcome to Quorum!"
+#~ msgstr "Bienvenue à Quorum !"
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:96
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:79
 msgid "What is a Passkey?"
-msgstr ""
+msgstr "Qu'est-ce qu'un passkey ?"
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:37
+#: src/components/onboarding/steps/ImportKeyStep.tsx:63
+msgid "What is an account key?"
+msgstr "Qu'est-ce qu'une clé de compte ?"
+
+#: src/components/onboarding/steps/DisplayNameStep.tsx:62
+msgid "What is the account address?"
+msgstr "Qu'est-ce que l'adresse de compte ?"
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:35
 msgid "What is the Account Key?"
-msgstr ""
+msgstr "Qu'est-ce que la Clé de compte ?"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:18
+#: src/components/onboarding/steps/DisplayNameStep.tsx:19
 msgid "What should we call you?"
-msgstr ""
+msgstr "Comment devrions-nous vous appeler ?"
 
 #: src/components/direct/EmptyDirectMessage.tsx:69
 msgid "What's on your mind today?"
@@ -3584,9 +3541,8 @@ msgstr "Lorsque quelqu'un répond à vos messages"
 #~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 #~ msgstr "Lorsque ce paramètre est activé, les liens d'invitation permettront automatiquement à un utilisateur de rejoindre votre Space. Lorsqu'il n'est pas activé, les utilisateurs suivant un lien d'invitation vous enverront une demande pour rejoindre votre Space que vous devez approuver manuellement. Les liens publics nécessitent que certains matériaux clés soient présents dans le lien – soyez conscient que la possession d'un lien public de Space peut permettre à quiconque ayant le lien de lire les messages sur le Space pendant la durée de validité du lien."
 
-#: src/components/onboarding/Onboarding.tsx:164
-msgid "When using Quorum on a browser, your messages are saved locally to your browser."
-msgstr "Lors de l'utilisation de Quorum sur un navigateur, vos messages sont enregistrés localement sur votre navigateur."
+#~ msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+#~ msgstr "Lors de l'utilisation de Quorum sur un navigateur, vos messages sont enregistrés localement sur votre navigateur."
 
 #: src/components/modals/ConversationSettingsModal.tsx:223
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
@@ -3596,13 +3552,13 @@ msgstr "Lorsque vous signez un message, vous confirmez qu'il provient de votre c
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Lorsque vous signez un message, vous confirmez qu'il provient de votre clé. Lorsque vous ne signez pas un message, vous avez une dénégation plausible. Vous pouvez contrôler ce paramètre pour chaque conversation et message individuellement."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:48
+#: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
-msgstr ""
+msgstr "Pourquoi dois-je faire cela ?"
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:43
+#: src/components/onboarding/steps/BackupKeyStep.tsx:40
 msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr ""
+msgstr "Sans cette sauvegarde, perdre votre appareil signifie perdre votre compte - il n'y a pas d'option « mot de passe oublié ». C'est le prix à payer pour la confidentialité :-)"
 
 #: src/utils/dateFormatting.ts:29
 msgid "Yesterday"
@@ -3633,9 +3589,9 @@ msgstr "Vous pouvez changer cela plus tard pour cette conversation en cliquant s
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "Vous pouvez gérer vos notifications de mention d'espace dans les paramètres de chaque espace."
 
-#: src/components/onboarding/steps/CreatePasskeyStep.tsx:13
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr ""
+msgstr "Vous avez annulé la configuration du passkey. Vous pouvez réessayer, ou continuer sans passkey (toujours sécurisé, mais sans protection matérielle)."
 
 #: src/components/modals/GroupEditorModal.tsx:114
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
@@ -3671,22 +3627,20 @@ msgstr "Vous devez vous attribuer un rôle pour les actions de modération (sauf
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Vous ne pourrez pas rejoindre à nouveau à moins d'être réinvité. Vos messages existants NE seront PAS supprimés."
 
-#: src/components/onboarding/steps/BackupKeyStep.tsx:18
+#: src/components/onboarding/steps/BackupKeyStep.tsx:19
 msgid "You'll need this file to recover your account if you lose access to your device."
-msgstr ""
+msgstr "Vous aurez besoin de ce fichier pour récupérer votre compte si vous perdez l'accès à votre appareil."
 
 #: src/components/notifications/NotificationPanel.tsx:203
 msgid "You're all caught up!"
 msgstr "Vous êtes à jour !"
 
-#: src/components/onboarding/steps/CompleteStep.tsx:14
+#: src/components/onboarding/steps/CompleteStep.tsx:17
 msgid "You're all set!"
-msgstr ""
+msgstr "C'est parti !"
 
-#: src/components/onboarding/Onboarding.native.tsx:486
-#: src/components/onboarding/Onboarding.tsx:354
-msgid "You're all set. Welcome to Quorum!"
-msgstr "Vous êtes prêt. Bienvenue à Quorum !"
+#~ msgid "You're all set. Welcome to Quorum!"
+#~ msgstr "Vous êtes prêt. Bienvenue à Quorum !"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
@@ -3717,17 +3671,21 @@ msgstr "Vous envoyez des messages trop rapidement. Veuillez patienter un moment.
 msgid "You've been invited to join a Space"
 msgstr "Vous avez été invité à rejoindre un Space"
 
-#: src/components/onboarding/steps/DisplayNameStep.tsx:43
+#: src/components/onboarding/steps/DisplayNameStep.tsx:63
 msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
-msgstr ""
+msgstr "Votre adresse de compte est un identifiant public unique dérivé de votre clé de compte. Les autres peuvent l'utiliser pour vous trouver et vous envoyer des messages. Pensez à cela comme un nom d'utilisateur qui ne peut jamais changer."
 
-#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:32
+#: src/components/onboarding/steps/ImportKeyStep.tsx:64
+msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "Votre clé de compte est un fichier de clé privée (.key) qui prouve la propriété de votre compte. Vous pouvez le télécharger depuis les paramètres de votre compte. Gardez-la en sécurité — quiconque la possède peut accéder à votre compte."
+
+#: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
-msgstr ""
+msgstr "Votre clé de compte est votre identité unique dans Quorum. C'est comme un mot de passe principal qui prouve que vous êtes vous-même - mais elle est générée automatiquement et stockée de manière sécurisée dans votre passkey."
 
-#: src/components/onboarding/steps/WelcomeStep.tsx:17
+#: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
-msgstr ""
+msgstr "Vos communautés, vos règles - aucune plateforme ne peut vous bannir."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:124
 msgid "Your Details"
@@ -3742,13 +3700,15 @@ msgstr "Vos Détails"
 #~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
 #~ msgstr "Votre clé privée sera affichée à l'écran. Quiconque voit ou photographie ce code QR peut prendre le contrôle total de votre compte Quorum et voler tous les fonds associés."
 
+#~ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "La taille de votre image de profil doit être de {maxFileSize} ou moins et doit être au format PNG, JPG ou JPEG."
+
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "La taille de votre image de profil doit être de {maxSize} ou moins et doit avoir une extension de fichier PNG, JPG ou JPEG."
 
-#: src/components/onboarding/Onboarding.native.tsx:363
-msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
-msgstr "La taille de votre image de profil doit être de 2 Mo ou moins et doit avoir une extension de fichier PNG, JPG ou JPEG."
+#~ msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+#~ msgstr "La taille de votre image de profil doit être de 2 Mo ou moins et doit avoir une extension de fichier PNG, JPG ou JPEG."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:204
 msgid "Your Roles"
