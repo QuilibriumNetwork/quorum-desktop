@@ -59,6 +59,9 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  // Suppress rangeChanged updates briefly after a manual category scroll
+  // to prevent Virtuoso's async scroll event from overwriting the clicked category.
+  const ignoreRangeChangedUntilRef = useRef<number>(0);
 
   const { skinTone, setSkinTone } = useSkinTone();
   const { frequentUnifieds, recordUsage } = useFrequentlyUsed();
@@ -162,6 +165,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   const handleRangeChanged = useCallback(
     (range: ListRange) => {
       if (isSearching) return;
+      if (Date.now() < ignoreRangeChangedUntilRef.current) return; // suppressed after manual scroll
       let best: string | undefined;
       let bestIndex = -1;
       for (const [category, idx] of categoryRowIndices) {
@@ -182,6 +186,8 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
       if (index != null && virtuosoRef.current) {
         virtuosoRef.current.scrollToIndex({ index, align: 'start' });
         setActiveCategory(category);
+        // Suppress rangeChanged for 400ms to let Virtuoso settle
+        ignoreRangeChangedUntilRef.current = Date.now() + 400;
       }
     },
     [categoryRowIndices]
