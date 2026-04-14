@@ -38,6 +38,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mute User System Documentation](docs/features/mute-user-system.md)
 - [Notification Indicators System](docs/features/notification-indicators-system.md)
 - [Offline Support](docs/features/offline-support.md)
+- [Onboarding Flow](docs/features/onboarding-flow.md)
 - [Profile Sync on Returning User Login](docs/features/profile-sync-returning-user-login.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
@@ -90,6 +91,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
+- [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/display-name-input-layout-shift-on-error.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -121,6 +123,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
 - [No visual feedback when dragging files onto dropzone areas](bugs/.solved/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
+- [Profile sync not triggered after key import in new onboarding flow](bugs/.solved/2026-04-13-profile-sync-not-triggered-after-key-import.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -170,11 +173,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/2025-01-06-add-user-bio-field.md)
 - [User Status Feature Implementation Plan](tasks/2025-01-20-user-status.md)
-- [Passkey Import UX Issue](tasks/2025-11-13-passkey-import-ux-issue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/2025-11-16-message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/2025-11-19-notification-mention-context-extraction.md)
-- SDK PasskeyModal Hook Extraction - Design & Plan *(moved to SDK repo: `quilibrium-js-sdk-channels/.agents/tasks/`)*
-- ~~[SDK PasskeyModal Customization Props Enhancement](tasks/.archived/2025-11-21-sdk-passkey-modal-customization-props.md)~~ *(archived: superseded by hook extraction design)*
 - [Service Worker for App Update Detection](tasks/2025-12-14-service-worker-app-updates.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/2025-12-18-tombstone-cleanup-strategy.md)
 - [Implement Role-Based Channel Visibility](tasks/2025-12-26-channel-role-visibility.md)
@@ -195,6 +195,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
+- [Passkey Import UX Issue](tasks/.archived/2025-11-13-passkey-import-ux-issue.md)
+- [SDK PasskeyModal Customization Props Enhancement](tasks/.archived/2025-11-21-sdk-passkey-modal-customization-props.md)
 - [Primitives Migration to quorum-shared](tasks/.archived/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Mobile Thread Reply Visibility Implementation Plan](tasks/.archived/2026-03-11-mobile-thread-reply-visibility-plan.md)
 - [Mobile Thread Reply Visibility — Design Spec](tasks/.archived/2026-03-11-mobile-thread-reply-visibility.md)
@@ -323,6 +325,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropzone Visual Feedback & Style Redesign — Implementation Plan](tasks/.done/2026-04-09-dropzone-visual-feedback-plan.md)
 - [Text + Image Combined Message — Implementation Plan](tasks/.done/2026-04-09-text-image-combined-message-plan.md)
 - [Text + Image Combined Message](tasks/.done/2026-04-09-text-image-combined-message-spec.md)
+- [New Onboarding UI/UX - Design Spec](tasks/.done/2026-04-13-new-onboarding-ui-ux-design.md)
+- [New Onboarding UI/UX - Implementation Plan](tasks/.done/2026-04-13-new-onboarding-ui-ux-plan.md)
+- [Old Onboarding Cleanup & Maintenance Restyling - Implementation Plan](tasks/.done/2026-04-14-old-onboarding-cleanup-plan.md)
+- [Old Onboarding Cleanup & Maintenance Restyling](tasks/.done/2026-04-14-old-onboarding-cleanup.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -487,6 +493,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
+### .Archived Onboarding Flow .Done
+- [Passkey Authentication Flow Analysis](reports/.archived/onboarding-flow/.done/passkey-authentication-flow-analysis-2025-11-23.md)
+- [Passkey Flow - Simplified User Journey](reports/.archived/onboarding-flow/.done/passkey-flow-simplified-2025-11-23.md)
+- [Quorum Authentication Flows](reports/.archived/onboarding-flow/.done/new-onboarding-flow-inline-passkey-2025-12-08.md)
+
 ### Action Queue
 - [Action Queue Summary](reports/action-queue/000-action-queue-summary.md)
 - [DM "Sending..." Indicator Hangs Indefinitely](reports/action-queue/001-dm-sending-indicator-hang.md)
@@ -501,11 +512,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Messages Not Delivered - Device Registration Inbox Mismatch](reports/action-queue/010-dm-registration-inbox-mismatch-fix.md)
 - [DM Debug Console Snippets](reports/action-queue/011-dm-debug-console-snippets.md)
 
-### Onboarding Flow
-- [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
-- [Passkey Flow - Simplified User Journey](reports/onboarding-flow/passkey-flow-simplified-2025-11-23.md)
-- [Quorum Authentication Flows](reports/onboarding-flow/new-onboarding-flow-inline-passkey-2025-12-08.md)
-
 ---
 
-**Last Updated**: 2026-04-09 12:04:40
+**Last Updated**: 2026-04-14 12:32:41
