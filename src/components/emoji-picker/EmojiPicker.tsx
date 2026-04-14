@@ -67,9 +67,11 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   // Measure container width to compute column count
   useEffect(() => {
     if (!containerRef.current) return;
+    const SIDEBAR_WIDTH = 49; // $s-12 (48px) + 1px border
     const measure = () => {
-      const w = containerRef.current?.clientWidth ?? 300;
-      setColumnsCount(Math.max(1, Math.floor((w - H_PADDING) / CELL_SIZE)));
+      const w = containerRef.current?.clientWidth ?? 380;
+      const gridWidth = w - SIDEBAR_WIDTH - H_PADDING;
+      setColumnsCount(Math.max(1, Math.floor(gridWidth / CELL_SIZE)));
     };
     measure();
     const observer = new ResizeObserver(measure);
