@@ -3,7 +3,7 @@ import { useState, useCallback, useMemo } from 'react';
 
 const STORAGE_KEY = 'emoji-picker-frequently-used';
 const LEGACY_KEY = 'epr_suggested'; // emoji-picker-react's key
-const MAX_FREQUENT = 28;
+const MAX_FREQUENT = 24;
 
 interface FrequentEntry {
   count: number;
