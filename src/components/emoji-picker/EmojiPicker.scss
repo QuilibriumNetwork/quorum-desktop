@@ -123,6 +123,15 @@
     opacity: 0.85;                       // CHANGED: was 0.75
   }
 
+  &:disabled {
+    cursor: default;
+
+    &:hover {
+      background-color: transparent;
+      opacity: 0.45;
+    }
+  }
+
   &--active {
     opacity: 1;
     background-color: var(--surface-4); // CHANGED: was surface-3

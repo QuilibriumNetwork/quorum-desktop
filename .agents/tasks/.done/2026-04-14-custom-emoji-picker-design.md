@@ -197,7 +197,7 @@ The drawer container (`EmojiPickerDrawer.tsx`) remains unchanged -- it's just a 
 
 ## Phasing
 
-### Phase 1 -- Core picker (replaces emoji-picker-react)
+### Phase 1 -- Core picker (replaces emoji-picker-react) ✓ Complete
 
 - Emoji grid with sprite sheet rendering (sheets-clean/32.png, 4.7MB)
 - Virtualized grid with VirtuosoGrid (sentinel headers, rangeChanged for active tab)
@@ -213,14 +213,6 @@ The drawer container (`EmojiPickerDrawer.tsx`) remains unchanged -- it's just a 
 - Swap into all 8 render sites across 6 files
 - Remove old dependencies and unused imports
 
-### Phase 2 -- Gender preference
-
-- Gender preference filter: collapse gendered emoji variants (person/man/woman) into one entry based on user preference
-- Data supports this via `obsoletes`/`obsoleted_by` fields (72 emojis have explicit linkage)
-- Selector next to skin tone picker (neutral / male / female)
-- Default: show all (no preference set = current behavior)
-- Reduces People category clutter significantly
-
 ## References
 
 - [Rebuilding Slack's Emoji Picker in React](https://slack.engineering/rebuilding-slacks-emoji-picker-in-react/) -- Slack's approach, 85% faster first mount with virtualization + sprites
@@ -233,3 +225,4 @@ The drawer container (`EmojiPickerDrawer.tsx`) remains unchanged -- it's just a 
 
 _Created: 2026-04-14_
 _Updated: 2026-04-14 -- Corrected after deep review: emoji count (1,911 not 3,786), sprite sheet (sheets-clean/64.png at 2.4MB for Retina), virtualization (VirtuosoGrid not GroupedVirtuoso, rangeChanged not IntersectionObserver), background-size formula, CustomEmoji type scope (9 files), frequently-used migration, two-person skin tone simplification, sort_order requirement, gender variant data fields._
+_Updated: 2026-04-14 -- Dropped Phase 2 (gender preference filter). Affects only 20 emoji groups out of 1,911; adds complexity for negligible user value._

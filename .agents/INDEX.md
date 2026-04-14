@@ -57,9 +57,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Auto-Jump to First Unread Message](docs/features/messages/auto-jump-first-unread.md)
 - [Bookmarks Feature](docs/features/messages/bookmarks.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
+- [Custom Emoji Picker](docs/features/messages/custom-emoji-picker.md)
 - [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
 - [DM Receipts (Delivery & Read)](docs/features/messages/dm-receipts.md)
-- [Custom Emoji Picker](docs/features/messages/custom-emoji-picker.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
 - [Markdown Stripping](docs/features/messages/markdown-stripping.md)
@@ -192,9 +192,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Decentralized GIF Library on Quilibrium](tasks/2026-02-24-gifs-library-integration.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
-- [Watch: emoji-picker-react virtualization PR #439](tasks/2026-04-14-emoji-picker-virtualization-watch.md)
-- [Custom Emoji Picker with Sprite Sheet Rendering](tasks/2026-04-14-custom-emoji-picker-design.md)
-- [Custom Emoji Picker — Implementation Plan](tasks/2026-04-14-custom-emoji-picker-plan.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -203,6 +200,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Primitives Migration to quorum-shared](tasks/.archived/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Mobile Thread Reply Visibility Implementation Plan](tasks/.archived/2026-03-11-mobile-thread-reply-visibility-plan.md)
 - [Mobile Thread Reply Visibility — Design Spec](tasks/.archived/2026-03-11-mobile-thread-reply-visibility.md)
+- [Watch: emoji-picker-react virtualization PR](tasks/.archived/2026-04-14-emoji-picker-virtualization-watch.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
 - [Background Action Queue with Web Worker Crypto](tasks/.archived/background-action-queue-with-worker-crypto.md)
 - [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/.archived/config-save-space-key-caching.md)
@@ -330,6 +328,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Text + Image Combined Message](tasks/.done/2026-04-09-text-image-combined-message-spec.md)
 - [New Onboarding UI/UX - Design Spec](tasks/.done/2026-04-13-new-onboarding-ui-ux-design.md)
 - [New Onboarding UI/UX - Implementation Plan](tasks/.done/2026-04-13-new-onboarding-ui-ux-plan.md)
+- [Custom Emoji Picker with Sprite Sheet Rendering](tasks/.done/2026-04-14-custom-emoji-picker-design.md)
+- [Custom Emoji Picker Implementation Plan](tasks/.done/2026-04-14-custom-emoji-picker-plan.md)
+- [Emoji Picker Layout V2 Implementation Plan](tasks/.done/2026-04-14-emoji-picker-layout-v2.md)
 - [Old Onboarding Cleanup & Maintenance Restyling - Implementation Plan](tasks/.done/2026-04-14-old-onboarding-cleanup-plan.md)
 - [Old Onboarding Cleanup & Maintenance Restyling](tasks/.done/2026-04-14-old-onboarding-cleanup.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
@@ -479,7 +480,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
-- [Emoji Picker Library Comparison: emoji-picker-react vs emoji-mart](reports/.archived/emoji-picker-library-comparison_2026-02-24.md) *(archived — superseded by custom picker)*
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Mention Pills Feature Research & Validation](reports/mention-pills-research.md)
 - [Primitives Gap Analysis: quorum-shared Migration](reports/primitives-gap-analysis-quorum-shared_2026-01-14.md)
@@ -494,6 +494,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Expert Panel Analysis: DM Receipts (Delivery & Read)](reports/.archived/2026-03-24-dm-receipts-expert-panel-analysis.md)
 - [TypeScript Errors Audit](reports/.archived/2026-04-07-typescript-errors-audit.md)
 - [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
+- [Emoji Picker Library Comparison: emoji-picker-react vs emoji-mart](reports/.archived/emoji-picker-library-comparison_2026-02-24.md)
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
@@ -518,4 +519,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-14 12:56:36
+**Last Updated**: 2026-04-14 18:14:02

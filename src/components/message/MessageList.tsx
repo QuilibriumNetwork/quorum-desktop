@@ -195,6 +195,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     }, [setEmojiPickerOpen]);
 
     // Close emoji picker when focus moves to the message composer (textarea or contenteditable)
+    // but NOT when focus moves to the search input inside the emoji picker itself.
     useEffect(() => {
       const handleFocusIn = (e: FocusEvent) => {
         const target = e.target as HTMLElement;
@@ -203,6 +204,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           target.tagName === 'INPUT' ||
           target.getAttribute('contenteditable') === 'true'
         ) {
+          if (target.closest('.emoji-picker')) return;
           setEmojiPickerOpen(undefined);
         }
       };

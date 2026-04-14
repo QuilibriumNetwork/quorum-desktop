@@ -310,30 +310,29 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
 
       {/* Body: sidebar + grid */}
       <div className="emoji-picker__body">
-        {/* Left sidebar — hidden during search */}
-        {!isSearching && (
-          <div className="emoji-picker__sidebar">
-            {availableCategories.map((cat) => (
-              <button
-                key={cat}
-                type="button"
-                className={`emoji-picker__category-btn${activeCategory === cat ? ' emoji-picker__category-btn--active' : ''}`}
-                onClick={() => handleCategoryClick(cat)}
-                aria-label={cat}
-              >
-                {CATEGORY_ICONS[cat] ? (
-                  <EmojiSprite
-                    sheetX={CATEGORY_ICONS[cat].sheetX}
-                    sheetY={CATEGORY_ICONS[cat].sheetY}
-                    size={18}
-                  />
-                ) : (
-                  <span style={{ fontSize: '1rem', lineHeight: 1 }}>●</span>
-                )}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Left sidebar — always visible; buttons disabled during search */}
+        <div className="emoji-picker__sidebar">
+          {availableCategories.map((cat) => (
+            <button
+              key={cat}
+              type="button"
+              className={`emoji-picker__category-btn${activeCategory === cat && !isSearching ? ' emoji-picker__category-btn--active' : ''}`}
+              onClick={() => { if (!isSearching) handleCategoryClick(cat); }}
+              disabled={isSearching}
+              aria-label={cat}
+            >
+              {CATEGORY_ICONS[cat] ? (
+                <EmojiSprite
+                  sheetX={CATEGORY_ICONS[cat].sheetX}
+                  sheetY={CATEGORY_ICONS[cat].sheetY}
+                  size={18}
+                />
+              ) : (
+                <span style={{ fontSize: '1rem', lineHeight: 1 }}>●</span>
+              )}
+            </button>
+          ))}
+        </div>
 
         {/* Grid + preview (column) — sidebar does not extend behind preview */}
         <div className="emoji-picker__grid-col">

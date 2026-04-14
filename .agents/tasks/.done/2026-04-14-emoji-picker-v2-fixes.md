@@ -563,7 +563,7 @@ cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/styles/_chat.scss && git
 
 **Current behavior:** The picker opens `absolute right-4` relative to the message content div, with `bottom-6` or `top-0` depending on direction. It covers the cursor and the actions toolbar.
 
-**Fix:** Shift it further right so it opens to the **left** of the actions toolbar. The message actions toolbar is on the right edge of the message. Change `right-4` to a class that positions it so the picker's right edge aligns a bit left of the actions toolbar — specifically use `right-10` (40px from right, which moves the picker left enough to not obscure the action buttons). Also fix the vertical: when `upwards`, use `bottom-full` (bottom of picker aligns with top of message) instead of `bottom-6`. When downwards, use `top-full` to not cover the message itself. Add `mt-1`/`mb-1` for a small gap.
+**Fix:** Shift it further right so it opens to the **left** of the actions toolbar. The message actions toolbar is on the right edge of the message. Change `right-4` to a class that positions it so the picker's right edge aligns a bit left of the actions toolbar — specifically use `right-10` (40px from right, which moves the picker left enough to not obscure the action buttons). Also fix the vertical: when `upwards`, use `bottom-full mb-1` (picker floats entirely above the message content div) instead of `bottom-6`. When downwards, use `top-full mt-1` to open below the message content div — **verify this with single-line messages**, as `top-full` relative to `.message-content` places the picker below the whole message div and may overlap the next message row or be clipped by the Virtuoso scroll container on short messages. If that happens, fall back to `top-0 right-12` instead.
 
 For the **portal picker** (context menu, `emojiPickerPosition`), fix the clamp values:
 - `window.innerWidth - 352` → `window.innerWidth - 400` (picker is 380px + 20px buffer)
@@ -656,7 +656,7 @@ cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/message/Messa
 
 - [ ] **Step 1: Add event listener in MessageList.tsx to close picker on external signal**
 
-In `MessageList.tsx`, inside the `MessageListInner` component (where `emojiPickerOpen` and `setEmojiPickerOpen` are defined), add a `useEffect` after the existing effects:
+In `MessageList.tsx`, inside the `MessageList` `forwardRef` callback (where `emojiPickerOpen` and `setEmojiPickerOpen` are defined at lines 178-179), add a `useEffect` after the existing effect that resets `emojiPickerPosition` (lines 184-188):
 
 ```tsx
 // Close emoji picker when stickers panel opens
@@ -710,7 +710,7 @@ cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/message/Messa
 
 **Root cause:** When clicking a category, `handleCategoryClick` calls `scrollToIndex({ index, align: 'start' })` and immediately sets `setActiveCategory(category)`. Virtuoso then fires `rangeChanged` asynchronously as the scroll settles — if the target category's header row ends up not quite at `startIndex` (which happens when scrolling upward, as Virtuoso may not reach the exact index), `handleRangeChanged` overwrites `activeCategory` with the nearest header *actually visible*, which may be the previous category.
 
-**Fix:** Suppress `rangeChanged` updates for a short window (300ms) after a manual category click, using a `ignoreRangeChangedUntil` ref. After the debounce window expires, range tracking resumes normally.
+**Fix:** Suppress `rangeChanged` updates for a short window (400ms) after a manual category click, using a `ignoreRangeChangedUntil` ref. After the debounce window expires, range tracking resumes normally.
 
 **Files:**
 - Modify: `src/components/emoji-picker/EmojiPicker.tsx`
