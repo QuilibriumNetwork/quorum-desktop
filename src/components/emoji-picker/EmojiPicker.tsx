@@ -23,9 +23,10 @@ interface EmojiPickerProps {
 }
 
 const DEFAULT_COLUMNS = 8;
-const CELL_SIZE = 36; // px, matches $s-9 (2.25rem)
-const CELL_GAP = 2;   // px, matches $s-0-5 gap between emoji buttons
-const H_PADDING = 16; // px, $s-2 * 2 sides (row horizontal padding)
+const CELL_SIZE = 36;    // px, matches $s-9 (2.25rem)
+const CELL_GAP = 2;      // px, matches $s-0-5 gap between emoji buttons
+const H_PADDING = 16;    // px, $s-2 * 2 sides (row horizontal padding)
+const SCROLLBAR_W = 12;  // px, Virtuoso scrollbar width (inside grid container)
 
 const SKIN_TONE_LABELS: Record<string, string> = {
   default: 'Default skin tone',
@@ -73,7 +74,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     const SIDEBAR_WIDTH = 49; // $s-12 (48px) + 1px border
     const measure = () => {
       const w = containerRef.current?.clientWidth ?? 380;
-      const gridWidth = w - SIDEBAR_WIDTH - H_PADDING;
+      const gridWidth = w - SIDEBAR_WIDTH - SCROLLBAR_W - H_PADDING;
       setColumnsCount(Math.max(1, Math.floor((gridWidth + CELL_GAP) / (CELL_SIZE + CELL_GAP))));
     };
     measure();

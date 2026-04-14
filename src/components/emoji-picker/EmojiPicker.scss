@@ -156,12 +156,6 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
-
-  // Hide Virtuoso's scrollbar — the grid scrolls but no gutter shown
-  & > div {
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
-  }
 }
 
 .emoji-picker__row-header {
