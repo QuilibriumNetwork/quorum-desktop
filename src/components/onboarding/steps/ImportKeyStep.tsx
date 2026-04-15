@@ -39,7 +39,7 @@ export const ImportKeyStep: React.FC<StepProps> = ({ flow }) => {
           onFilesSelected={handleFilesSelected}
           onError={handleFileError}
           multiple={false}
-          maxSize={1024}
+          maxSize={5 * 1024}
           validator={(file) => file.name?.endsWith('.key') ? null : 'Only .key files are accepted'}
           {...({ onDragActiveChange: setIsDragActive } as any)}
         >
