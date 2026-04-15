@@ -1,5 +1,5 @@
 import { logger } from '@quilibrium/quorum-shared';
-import React, { useMemo, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useCallback, useRef, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
@@ -11,11 +11,11 @@ import type {
   Sticker,
   Channel,
 } from '@quilibrium/quorum-shared';
-import EmojiPicker, {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
+// Lazy-load EmojiPicker — Message renders for every visible chat item; eager import parses the full emoji dataset on page load
+const EmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
+import type { EmojiData } from '../emoji-picker/types';
 import UserProfile from '../user/UserProfile';
 import { SpaceTag } from '../space/SpaceTag';
 import { useParams } from 'react-router';
@@ -83,10 +83,6 @@ type MessageProps = {
   virtuosoRef?: any;
   emojiPickerOpen: string | undefined;
   setEmojiPickerOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
-  emojiPickerOpenDirection: string | undefined;
-  setEmojiPickerOpenDirection: React.Dispatch<
-    React.SetStateAction<string | undefined>
-  >;
   emojiPickerPosition: { x: number; y: number } | null;
   setEmojiPickerPosition: React.Dispatch<React.SetStateAction<{ x: number; y: number } | null>>;
   hoverTarget: string | undefined;
@@ -140,8 +136,6 @@ export const Message = React.memo(
     virtuosoRef,
     emojiPickerOpen,
     setEmojiPickerOpen,
-    emojiPickerOpenDirection,
-    setEmojiPickerOpenDirection,
     emojiPickerPosition,
     setEmojiPickerPosition,
     hoverTarget,
@@ -194,6 +188,7 @@ export const Message = React.memo(
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
     const contextMenuClosedAt = useRef(0);
     const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
+    const [userProfileDirection, setUserProfileDirection] = useState<'upwards' | 'downwards'>('downwards');
 
     // Modal contexts
     const { showImageModal } = useImageModal();
@@ -204,11 +199,9 @@ export const Message = React.memo(
       message,
       userAddress: user.currentPasskeyInfo!.address,
       canDeleteMessages,
-      height,
       onSubmitMessage: submitMessage,
       onSetInReplyTo: setInReplyTo,
       onSetEmojiPickerOpen: setEmojiPickerOpen,
-      onSetEmojiPickerDirection: setEmojiPickerOpenDirection,
       editorRef,
       mapSenderToUser,
       stickers,
@@ -260,10 +253,9 @@ export const Message = React.memo(
     // Emoji picker business logic
     const emojiPicker = useEmojiPicker({
       customEmoji,
-      height,
       onEmojiClick: messageActions.handleReaction,
       onSetEmojiPickerOpen: setEmojiPickerOpen,
-      onSetEmojiPickerDirection: setEmojiPickerOpenDirection,
+      onSetEmojiPickerPosition: setEmojiPickerPosition,
     });
 
     // Message interactions logic
@@ -281,7 +273,10 @@ export const Message = React.memo(
           ...config,
         });
       },
-      onEmojiPickerUserProfileClick: emojiPicker.handleUserProfileClick,
+      onEmojiPickerUserProfileClick: (clientY: number, onProfileClick: () => void) => {
+        setUserProfileDirection(clientY / window.innerHeight > 0.5 ? 'upwards' : 'downwards');
+        emojiPicker.handleUserProfileClick(clientY, onProfileClick);
+      },
       onReply: messageActions.handleReply,
       isEditing: editingMessageId === message.messageId,
     });
@@ -601,7 +596,7 @@ export const Message = React.memo(
               >
                 <div
                   className={
-                    emojiPickerOpenDirection == 'upwards'
+                    userProfileDirection === 'upwards'
                       ? 'ml-[10px] mt-[-220px]'
                       : 'ml-[10px]'
                   }
@@ -661,7 +656,9 @@ export const Message = React.memo(
                   userAddress={user.currentPasskeyInfo!.address}
                   onReaction={messageActions.handleReaction}
                   onReply={messageActions.handleReply}
-                  onMoreReactions={messageActions.handleMoreReactions}
+                  onMoreReactions={(rect: DOMRect) => {
+                    emojiPicker.openDesktopEmojiPicker(message.messageId, rect);
+                  }}
                   onDotsClick={(position) => {
                     // Skip if menu was just closed by click-outside (mousedown fires before click)
                     if (Date.now() - contextMenuClosedAt.current < 200) return;
@@ -670,57 +667,23 @@ export const Message = React.memo(
                 />
               )}
 
-              {emojiPickerOpen === message.messageId && !emojiPickerPosition && (
-                <div
-                  onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                  className={
-                    'absolute right-4 z-[9999] ' +
-                    (emojiPickerOpenDirection == 'upwards'
-                      ? 'bottom-6'
-                      : 'top-0')
-                  }
-                >
-                  <EmojiPicker
-                    suggestedEmojisMode={SuggestionMode.FREQUENT}
-                    customEmojis={emojiPicker.customEmojis}
-                    getEmojiUrl={(unified) => {
-                      return '/twitter/64/' + unified + '.png';
-                    }}
-                    skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                    theme={Theme.DARK}
-                    onEmojiClick={(e) => {
-                      emojiPicker.handleDesktopEmojiClick(e.emoji);
-                    }}
-                    lazyLoadEmojis={true}
-                  />
-                </div>
-              )}
-
-              {/* Fixed position emoji picker (opened from context menu) */}
+              {/* Fixed position emoji picker — always renders via Portal */}
               {emojiPickerOpen === message.messageId && emojiPickerPosition && (
                 <Portal>
                   <div
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                    className="fixed z-[10002]"
+                    className="fixed z-[10002] bg-modal border border-default rounded-lg shadow-lg overflow-hidden"
                     style={{
-                      left: Math.min(emojiPickerPosition.x, window.innerWidth - 352),
-                      top: Math.min(emojiPickerPosition.y, window.innerHeight - 435),
+                      left: emojiPickerPosition.x,
+                      top: emojiPickerPosition.y,
                     }}
                   >
-                    <EmojiPicker
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
-                      customEmojis={emojiPicker.customEmojis}
-                      getEmojiUrl={(unified) => {
-                        return '/twitter/64/' + unified + '.png';
-                      }}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={(e) => {
-                        emojiPicker.handleDesktopEmojiClick(e.emoji);
-                        setEmojiPickerPosition(null);
-                      }}
-                      lazyLoadEmojis={true}
-                    />
+                    <Suspense fallback={<div className="emoji-picker-loading" />}>
+                      <EmojiPicker
+                        customEmojis={emojiPicker.customEmojis}
+                        onEmojiClick={(e: EmojiData) => emojiPicker.handleDesktopEmojiClick(e.emoji)}
+                      />
+                    </Suspense>
                   </div>
                 </Portal>
               )}
@@ -734,21 +697,12 @@ export const Message = React.memo(
                     onClose={emojiPicker.closeMobileEmojiDrawer}
                     hideClose={false}
                   >
-                    <EmojiPicker
-                      width="100%"
-                      height={300}
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
-                      customEmojis={emojiPicker.customEmojis}
-                      getEmojiUrl={(unified) => {
-                        return '/twitter/64/' + unified + '.png';
-                      }}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={(e) => {
-                        emojiPicker.handleMobileEmojiClick(e.emoji);
-                      }}
-                      lazyLoadEmojis={true}
-                    />
+                    <Suspense fallback={<div className="emoji-picker-loading" />}>
+                      <EmojiPicker
+                        customEmojis={emojiPicker.customEmojis}
+                        onEmojiClick={(e: EmojiData) => emojiPicker.handleMobileEmojiClick(e.emoji)}
+                      />
+                    </Suspense>
                   </Modal>
                 )}
 
@@ -1445,7 +1399,7 @@ export const Message = React.memo(
                 if (menuPosition) {
                   setEmojiPickerPosition(menuPosition);
                 }
-                messageActions.handleMoreReactions(0);
+                messageActions.handleMoreReactions();
               }, 0);
             }}
             onEdit={

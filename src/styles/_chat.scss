@@ -422,27 +422,18 @@ img.twemoji {
   pointer-events: none;
 }
 
-// Panel content
+// Panel content — width matches emoji picker (380px), height wraps content
 .stickers-panel {
   display: flex;
   flex-direction: column;
-  width: 300px;
-  height: 400px;
+  width: clamp(280px, 92vw, 380px); // matches .emoji-picker width
+  height: fit-content;
   border: $border solid var(--color-border-default);
   border-radius: $rounded-lg;
   background-color: var(--color-bg-modal);
   box-shadow: $shadow-lg;
   pointer-events: auto;
   overflow: hidden;
-
-  // Emoji-only variant (DMs) — no tabs header
-  &--emoji-only {
-    .EmojiPickerReact {
-      border: none !important;
-      border-radius: 0 !important;
-      --epr-category-navigation-button-size: 28px !important;
-    }
-  }
 }
 
 // Tab navigation bar
@@ -479,15 +470,6 @@ img.twemoji {
 .stickers-panel-emoji-content {
   flex: 1;
   overflow: hidden;
-
-  // Remove emoji picker's own border/shadow since the parent panel provides it
-  // Shrink category nav icons to fit the 300px-wide panel (global is 38px for wider pickers)
-  .EmojiPickerReact {
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    --epr-category-navigation-button-size: 28px !important;
-  }
 }
 
 // Sticker panel header (legacy — kept for backwards compat, replaced by tabs in Channel)
@@ -501,13 +483,15 @@ img.twemoji {
 // Sticker grid container
 .stickers-panel-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   grid-auto-rows: min-content;
   gap: $s-1;
-  width: 300px;
+  width: 100%;
   padding: $s-4;
   overflow-y: auto;
   flex: 1;
+  // Cap height so the panel doesn't exceed the emoji picker's max height
+  max-height: clamp(300px, 76vh, 436px); // 480px picker - 44px tabs
 }
 
 // Individual sticker item
@@ -515,8 +499,7 @@ img.twemoji {
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 80px;
-  height: 80px;
+  aspect-ratio: 1;
   padding: $s-1;
   border-radius: $rounded-lg;
   background-color: var(--surface-0);
@@ -529,8 +512,8 @@ img.twemoji {
   }
 
   img {
-    max-width: 100%;
-    max-height: 100%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: $rounded-md;
   }

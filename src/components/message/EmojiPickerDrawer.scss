@@ -46,7 +46,12 @@
 .emoji-picker-drawer__content {
   flex: 1;
   overflow: hidden;
-  padding: $s-4; // Standard padding for non-list content
+  padding: 0;
+
+  .emoji-picker {
+    width: 100%;
+    height: clamp(340px, 80vh, 480px);
+  }
 
   // Override emoji picker styles for mobile drawer
   .EmojiPickerReact {

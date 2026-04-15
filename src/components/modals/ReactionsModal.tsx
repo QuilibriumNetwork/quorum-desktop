@@ -5,7 +5,7 @@ import { Modal, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Reaction } from '@quilibrium/quorum-shared';
-import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import type { CustomEmoji } from '../emoji-picker/types';
 
 export interface MemberInfo {
   displayName?: string;

@@ -44,15 +44,12 @@ import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal
 import { UserAvatar } from '../user/UserAvatar';
 import { getUserRoles, hasPermission } from '@quilibrium/quorum-shared';
 import { useMobile } from '../context/MobileProvider';
-import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
-import {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
+import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 
 // Lazy-load EmojiPicker to avoid bundling on every channel init
-const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
+const LazyEmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
 
 /** Read --sidebar-right-width from :root (defined in _base.scss). Fallback 260px. */
 function getSidebarRightWidth(): number {
@@ -1103,7 +1100,7 @@ const Channel: React.FC<ChannelProps> = ({
   // Compute responsive icon size for header icons (lg for desktop ≥1024px, sm for mobile/tablet)
   const headerIconSize = isDesktop ? 'lg' : 'lg';
 
-  // Transform custom emoji data for emoji-picker-react
+  // Build custom emoji list for the picker
   const customEmojis: CustomEmoji[] = useMemo(() => {
     if (!space?.emojis) return [];
     return space.emojis.map((c) => ({
@@ -1128,8 +1125,7 @@ const Channel: React.FC<ChannelProps> = ({
   }, []);
 
   // Handle emoji selection from the panel — insert into composer
-  const handleComposerEmojiClick = useCallback((emojiData: any) => {
-    const emoji = emojiData.emoji || emojiData.imageUrl;
+  const handleComposerEmojiClick = useCallback((emoji: string) => {
     if (emoji) {
       messageComposerRef.current?.insertEmoji(emoji);
     }
@@ -1150,6 +1146,7 @@ const Channel: React.FC<ChannelProps> = ({
       });
     } else {
       composer.setShowStickers(true);
+      document.dispatchEvent(new CustomEvent('quorum:close-emoji-picker'));
     }
   }, [isMobile, openMobileEmojiDrawer, customEmojis, space?.stickers, composer]);
 
@@ -1195,6 +1192,7 @@ const Channel: React.FC<ChannelProps> = ({
       messageComposerRef.current?.focus();
     }
   }, [composer.inReplyTo]);
+
 
   // Calculate header height for mobile sidebar positioning
   // Debounced to avoid excessive recalculations during window drag
@@ -1789,15 +1787,8 @@ const Channel: React.FC<ChannelProps> = ({
                 <div className="stickers-panel-emoji-content">
                   <Suspense fallback={<div className="emoji-picker-loading" />}>
                     <LazyEmojiPicker
-                      width={300}
-                      height={358}
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={customEmojis}
-                      getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={handleComposerEmojiClick}
-                      lazyLoadEmojis={true}
+                      onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e.emoji)}
                     />
                   </Suspense>
                 </div>

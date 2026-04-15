@@ -12,8 +12,8 @@ Follow these steps **exactly**, pausing for user confirmation before any destruc
 
 - Verify the current branch is `main`. If not, **stop and tell the user**.
 - Run `git status` and check for uncommitted changes. If any exist, **stop and tell the user** — the working tree must be clean before deploying.
-- Show the user the last 3 commits on `main` so they know what will be deployed.
-- **Ask the user to confirm** they want to deploy these commits before proceeding.
+- Show the user the last 3 commits on `main` as a reference for where HEAD is (the entire app will be built and deployed, not just these commits).
+- **Ask the user to confirm** they want to build and deploy `main` to production before proceeding.
 
 ### 2. Build
 

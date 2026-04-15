@@ -176,8 +176,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const [_width, height] = useWindowSize();
     const [hoverTarget, setHoverTarget] = useState<string>();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
-    const [emojiPickerOpenDirection, setEmojiPickerOpenDirection] =
-      useState<string>();
     const [emojiPickerPosition, setEmojiPickerPosition] = useState<{ x: number; y: number } | null>(null);
 
     // Reset emoji picker position when picker closes
@@ -186,6 +184,31 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         setEmojiPickerPosition(null);
       }
     }, [emojiPickerOpen]);
+
+    // Close emoji picker when stickers panel opens
+    useEffect(() => {
+      const handleClose = () => setEmojiPickerOpen(undefined);
+      document.addEventListener('quorum:close-emoji-picker', handleClose);
+      return () => document.removeEventListener('quorum:close-emoji-picker', handleClose);
+    }, [setEmojiPickerOpen]);
+
+    // Close emoji picker when focus moves to the message composer (textarea or contenteditable)
+    // but NOT when focus moves to the search input inside the emoji picker itself.
+    useEffect(() => {
+      const handleFocusIn = (e: FocusEvent) => {
+        const target = e.target as HTMLElement;
+        if (
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'INPUT' ||
+          target.getAttribute('contenteditable') === 'true'
+        ) {
+          if (target.closest('.emoji-picker')) return;
+          setEmojiPickerOpen(undefined);
+        }
+      };
+      document.addEventListener('focusin', handleFocusIn);
+      return () => document.removeEventListener('focusin', handleFocusIn);
+    }, [setEmojiPickerOpen]);
 
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
@@ -312,8 +335,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               stickers={stickers}
               emojiPickerOpen={emojiPickerOpen}
               setEmojiPickerOpen={setEmojiPickerOpen}
-              emojiPickerOpenDirection={emojiPickerOpenDirection}
-              setEmojiPickerOpenDirection={setEmojiPickerOpenDirection}
               emojiPickerPosition={emojiPickerPosition}
               setEmojiPickerPosition={setEmojiPickerPosition}
               message={message}
@@ -368,8 +389,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         stickers,
         emojiPickerOpen,
         setEmojiPickerOpen,
-        emojiPickerOpenDirection,
-        setEmojiPickerOpenDirection,
         emojiPickerPosition,
         setEmojiPickerPosition,
         customEmoji,

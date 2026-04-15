@@ -44,14 +44,12 @@ import {
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useMobile } from '../context/MobileProvider';
-import {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
+import type { EmojiData } from '../emoji-picker/types';
 
 // Lazy-load EmojiPicker to avoid bundling on every DM init
-const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
+const LazyEmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
@@ -404,8 +402,7 @@ const DirectMessage: React.FC<{}> = () => {
 
 
   // Handle emoji selection from the panel — insert into composer
-  const handleComposerEmojiClick = useCallback((emojiData: any) => {
-    const emoji = emojiData.emoji || emojiData.imageUrl;
+  const handleComposerEmojiClick = useCallback((emoji: string) => {
     if (emoji) {
       messageComposerRef.current?.insertEmoji(emoji);
     }
@@ -955,15 +952,7 @@ const DirectMessage: React.FC<{}> = () => {
                   <div className="stickers-panel stickers-panel--emoji-only">
                     <Suspense fallback={<div className="emoji-picker-loading" />}>
                       <LazyEmojiPicker
-                        width={300}
-                        height={400}
-                        suggestedEmojisMode={SuggestionMode.FREQUENT}
-                        customEmojis={[]}
-                        getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
-                        skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                        theme={Theme.DARK}
-                        onEmojiClick={handleComposerEmojiClick}
-                        lazyLoadEmojis={true}
+                        onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e.emoji)}
                       />
                     </Suspense>
                   </div>

@@ -12,7 +12,7 @@ interface MessageActionsProps {
 
   onReaction: (emoji: string) => void;
   onReply: () => void;
-  onMoreReactions: (clientY: number) => void;
+  onMoreReactions: (rect: DOMRect) => void;
   onDotsClick: (position: { x: number; y: number }) => void;
 }
 
@@ -116,7 +116,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           {/* More reactions */}
           <div
             onClick={(e: React.MouseEvent) => {
-              onMoreReactions(e.clientY);
+              onMoreReactions((e.currentTarget as HTMLElement).getBoundingClientRect());
             }}
             onMouseEnter={() => setHoveredAction('emoji')}
             className={iconButtonClassMr}

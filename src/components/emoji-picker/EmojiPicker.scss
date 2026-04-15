@@ -1,0 +1,232 @@
+// src/components/emoji-picker/EmojiPicker.scss
+// Chromeless picker -- no border, shadow, or radius.
+// Parent containers provide the visual frame.
+@use '@/styles/variables' as *;
+
+// Root: responsive size via clamp so it shrinks on narrow viewports (mobile web)
+.emoji-picker {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Sen, sans-serif;
+  width: clamp(280px, 92vw, 380px);
+  height: clamp(340px, 80vh, 480px);
+}
+
+// ── Top bar: search field + skin tone trigger ──────────────────────────────
+.emoji-picker__topbar {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding: $s-3 $s-4; // CHANGED: was $s-2 — more breathing room around search
+  border-bottom: 1px solid var(--color-border-default);
+  flex-shrink: 0;
+}
+
+.emoji-picker__search-wrap {
+  flex: 1;
+  min-width: 0;
+
+  input {
+    font-size: $text-sm;
+  }
+}
+
+// ── Skin tone trigger (hand emoji, right of search) ───────────────────────
+.emoji-picker__skin-trigger {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.emoji-picker__skin-rock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $s-8;
+  height: $s-8;
+  border-radius: $rounded-md;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color $duration-150 ease-in-out,
+              background-color $duration-150 ease-in-out;
+
+  &:hover {
+    background-color: var(--surface-5);
+  }
+
+  &--open {
+    border-color: var(--accent);
+  }
+
+  &--active {
+    border-color: var(--accent);
+  }
+}
+
+// Floating popover — vertical column of hand emoji per tone
+.emoji-picker__skin-popover {
+  position: absolute;
+  top: calc(100% + #{$s-1-5});
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $s-1;
+  padding: $s-1-5;
+  background: var(--color-bg-modal);
+  border: 1px solid var(--color-border-default);
+  border-radius: $rounded-lg;
+  box-shadow: $shadow-lg;
+  z-index: 10;
+}
+
+// ── Body: sidebar + grid ───────────────────────────────────────────────────
+.emoji-picker__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// Left sidebar: category icon list, vertically scrollable
+.emoji-picker__sidebar {
+  width: $s-12; // 48px
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid var(--color-border-default);
+  scrollbar-width: none;
+  padding: $s-1 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.emoji-picker__category-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: $s-10; // 40px touch target
+  flex-shrink: 0;
+  opacity: 0.45;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity $duration-150 ease-in-out,
+              background-color $duration-150 ease-in-out;
+
+  &:hover {
+    background-color: var(--surface-5); // CHANGED: was surface-3, stronger contrast
+    opacity: 0.85;                       // CHANGED: was 0.75
+  }
+
+  &:disabled {
+    cursor: default;
+
+    &:hover {
+      background-color: transparent;
+      opacity: 0.45;
+    }
+  }
+
+  &--active {
+    opacity: 1;
+    background-color: var(--surface-4); // CHANGED: was surface-3
+
+    // Left accent bar — CHANGED: full height (top:0 bottom:0), no border-radius
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;    // CHANGED: was 25%
+      bottom: 0; // CHANGED: was 25%
+      width: 3px;
+      border-radius: 0; // CHANGED: was rounded-sm
+      background: var(--accent);
+    }
+  }
+}
+
+// ── Grid column: grid + preview stacked, right of sidebar ─────────────────
+.emoji-picker__grid-col {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.emoji-picker__grid-container {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+
+  // Hide Virtuoso's internal scrollbar — sidebar handles category navigation
+  [data-virtuoso-scroller] {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+.emoji-picker__row-header {
+  padding: $s-1-5 $s-2 $s-1;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  color: var(--color-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.emoji-picker__emoji-row {
+  display: grid;
+  grid-template-columns: repeat(var(--emoji-cols, 8), 1fr);
+  gap: $s-1;
+  padding: 0 $s-2;
+}
+
+.emoji-picker__emoji-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;  // always square; size driven by grid column width
+  border-radius: $rounded-md;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform $duration-150 ease-in-out,
+              filter $duration-150 ease-in-out;
+
+  &:hover {
+    transform: scale(1.3);
+    z-index: 1;
+    filter: brightness(1.2);
+  }
+}
+
+.emoji-picker__custom-emoji-img {
+  width: $s-7;
+  height: $s-7;
+  object-fit: contain;
+}
+
+.emoji-picker__no-results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $s-8;
+  color: var(--color-text-subtle);
+  font-size: $text-sm;
+}
+
