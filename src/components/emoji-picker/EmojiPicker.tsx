@@ -24,10 +24,9 @@ interface EmojiPickerProps {
 }
 
 const DEFAULT_COLUMNS = 8;
-const CELL_SIZE = 36;    // px, matches $s-9 (2.25rem)
-const CELL_GAP = 2;      // px, matches $s-0-5 gap between emoji buttons
-const H_PADDING = 16;    // px, $s-2 * 2 sides (row horizontal padding)
-const SCROLLBAR_W = 12;  // px, Virtuoso scrollbar width (inside grid container)
+const CELL_MIN_SIZE = 36;  // px — minimum cell size; JS picks how many cols fit
+const CELL_GAP = 4;        // px — gap between cells, matches $s-1 in CSS
+const H_PADDING = 16;      // px — row horizontal padding ($s-2 × 2)
 
 const SKIN_TONE_LABELS: Record<string, string> = {
   default: 'Default skin tone',
@@ -47,12 +46,12 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('');
   const [columnsCount, setColumnsCount] = useState(DEFAULT_COLUMNS);
-  const [hoveredEmoji, setHoveredEmoji] = useState<{ shortName: string; sheetX: number; sheetY: number; isCustom?: boolean; customImgUrl?: string } | null>(null);
   const [skinPopoverOpen, setSkinPopoverOpen] = useState(false);
   const skinTriggerRef = useRef<HTMLDivElement>(null);
 
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const searchTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Suppress rangeChanged updates briefly after a manual category scroll
   // to prevent Virtuoso's async scroll event from overwriting the clicked category.
@@ -61,18 +60,19 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   const { skinTone, setSkinTone } = useSkinTone();
   const { frequentUnifieds, recordUsage } = useFrequentlyUsed();
 
-  // Measure container width to compute column count
+  // Measure the grid container directly to compute column count.
+  // Observing the grid element itself avoids manual subtraction of sidebar/scrollbar/padding widths
+  // and works correctly regardless of how the picker is sized by its parent (popover vs drawer).
   useEffect(() => {
-    if (!containerRef.current) return;
-    const SIDEBAR_WIDTH = 49; // $s-12 (48px) + 1px border
+    if (!gridRef.current) return;
     const measure = () => {
-      const w = containerRef.current?.clientWidth ?? 380;
-      const gridWidth = w - SIDEBAR_WIDTH - SCROLLBAR_W - H_PADDING;
-      setColumnsCount(Math.max(1, Math.floor((gridWidth + CELL_GAP) / (CELL_SIZE + CELL_GAP))));
+      const w = gridRef.current?.clientWidth ?? 300;
+      const cols = Math.max(1, Math.floor((w - H_PADDING + CELL_GAP) / (CELL_MIN_SIZE + CELL_GAP)));
+      setColumnsCount(cols);
     };
     measure();
     const observer = new ResizeObserver(measure);
-    observer.observe(containerRef.current);
+    observer.observe(gridRef.current);
     return () => observer.disconnect();
   }, []);
 
@@ -213,8 +213,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 type="button"
                 className="emoji-picker__emoji-btn"
                 onClick={() => handleCustomEmojiClick(ce)}
-                onMouseEnter={() => setHoveredEmoji({ shortName: `:${ce.names[0]}:`, sheetX: -1, sheetY: -1, isCustom: true, customImgUrl: ce.imgUrl })}
-                onMouseLeave={() => setHoveredEmoji(null)}
                 aria-label={ce.names[0]}
               >
                 <img src={ce.imgUrl} alt={ce.names[0]} className="emoji-picker__custom-emoji-img" />
@@ -242,8 +240,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 type="button"
                 className="emoji-picker__emoji-btn"
                 onClick={() => handleEmojiClick(item)}
-                onMouseEnter={() => setHoveredEmoji({ shortName: `:${item.shortName}:`, sheetX, sheetY })}
-                onMouseLeave={() => setHoveredEmoji(null)}
                 aria-label={item.shortName}
               >
                 <EmojiSprite sheetX={sheetX} sheetY={sheetY} label={item.shortName} />
@@ -257,7 +253,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   );
 
   return (
-    <div className="emoji-picker" ref={containerRef}>
+    <div className="emoji-picker" ref={containerRef} style={{ '--emoji-cols': columnsCount } as React.CSSProperties}>
       {/* Top bar: search + skin tone */}
       <div className="emoji-picker__topbar">
         <div className="emoji-picker__search-wrap">
@@ -337,7 +333,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
 
         {/* Grid + preview (column) — sidebar does not extend behind preview */}
         <div className="emoji-picker__grid-col">
-          <div className="emoji-picker__grid-container">
+          <div className="emoji-picker__grid-container" ref={gridRef}>
             {displayRows.length === 0 && isSearching ? (
               <div className="emoji-picker__no-results">{t`No emoji found`}</div>
             ) : (
@@ -351,23 +347,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
             )}
           </div>
 
-          {/* Preview bar — right of sidebar only */}
-          <div className="emoji-picker__preview">
-            {hoveredEmoji ? (
-              <>
-                <div className="emoji-picker__preview-sprite">
-                  {hoveredEmoji.isCustom && hoveredEmoji.customImgUrl ? (
-                    <img src={hoveredEmoji.customImgUrl} alt={hoveredEmoji.shortName} style={{ width: 32, height: 32, objectFit: 'contain' }} />
-                  ) : (
-                    <EmojiSprite sheetX={hoveredEmoji.sheetX} sheetY={hoveredEmoji.sheetY} size={32} label={hoveredEmoji.shortName} />
-                  )}
-                </div>
-                <span className="emoji-picker__preview-name">{hoveredEmoji.shortName}</span>
-              </>
-            ) : (
-              <span className="emoji-picker__preview-empty">{t`Hover an emoji to preview`}</span>
-            )}
-          </div>
         </div>
       </div>
     </div>
