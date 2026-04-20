@@ -3,7 +3,7 @@ type: report
 title: "i18n Onboarding Translation Audit — April 2026"
 ai_generated: true
 created: 2026-04-14
-updated: 2026-04-14
+updated: 2026-04-20
 related_tasks: []
 related_docs: []
 ---
@@ -16,7 +16,9 @@ related_docs: []
 
 On 2026-04-14, 53 new strings were added to the onboarding flow and translated into all 30 target languages via the automated LLM pipeline (Qwen on OpenRouter). A subsequent quality review by 4 parallel review agents identified 150+ issues across all languages, ranging from critical semantic errors (wrong words, wrong language contamination) to medium-severity inconsistencies (passkey terminology, register mixing). All issues were fixed before compilation.
 
-**Scope covered**: Only the 53 newly translated onboarding strings. The ~824 remaining strings per language (existing non-onboarding translations) were NOT systematically reviewed. Many pre-existing issues exist across those strings (same patterns: passkey terminology inconsistency, register mixing, etc.) and are candidates for a future quality pass.
+On 2026-04-20, a **full quality pass** was completed covering all ~877 strings across all 30 languages. Every PO file was reviewed by a native-language subagent, fixing semantic errors, untranslated strings, wrong-language contamination, gender/case agreement, register consistency, and terminology unification. All 30 languages are now fully translated, reviewed, and compiled.
+
+**Scope covered (April 2026 quality pass)**: All ~877 strings × 30 languages = ~26,310 string reviews. Zero untranslated strings remaining.
 
 ---
 
@@ -137,16 +139,49 @@ The ~824 remaining translated strings per language (existing non-onboarding UI) 
 
 ---
 
-## State at End of This Session
+## Full Quality Pass Complete — 2026-04-20
+
+All 30 languages reviewed and fixed in parallel subagent batches:
+
+| Phase | Languages | Commits |
+|-------|-----------|---------|
+| Phase 1 — Critical | el, he, no, fi, sl, sr, uk | 5f0a3c6, af22087, 53e6cd7, 527dacb, 97da0f8, 3f834bfe, 3643386f, 8f337c00, 1dd7b5c5 |
+| Phase 2 — High severity | de, nl, sv, th, ro, zh-TW | 1481bba8, fed07658, 1a826fa1, 7319c2b1, 54d8318d, 7a616f48 |
+| Phase 3A — Medium | es, fr, pt, ru | b59a38c0, 85943d9f, 64c8570a, b755f00e |
+| Phase 3B — Medium | ar, tr, cs, sk | 8f5cbd3d, da14bc90, 26cafd8f, 470d668e |
+| Phase 3C — Medium | ko, ja, vi, zh-CN | 2659622d, 07a7f63b, b210ca2e, ced0e3e5 |
+| Phase 3D + Special | id, it, da, pl, en-PI | 8d14b289, afafc3a7, 6a59ac49, b2ea6f18, c52b2686 |
+| Phase 4 — Compile | all | da14416c |
+
+### Highlights of Additional Issues Found Beyond Original Audit Predictions
+
+- **Finnish**: 55 additional fixes beyond known patterns — "Bold" translated as "brave/courageous", "Tap" translated as "knock/rap", 2× invented word "Animoidit", theme "Light" → correct adjective form
+- **Dutch**: "account sleutel" compound error extended beyond onboarding; "HTML tariffs" for HTML tags; full Space terminology overhaul
+- **Romanian**: "Espaciul/Espaciului" — entirely invented non-Romanian word used in 10 strings; verb form errors (infinitive used as imperative); formality unification across ~25 strings
+- **Thai**: "Space" had been translated as "พื้นที่" (physical area) throughout — 30+ instances corrected to keep "Space" in English
+- **Serbian**: Cyrillic "Простор" → Latin "Prostor" for Space; full informal register pass; Croatian words replaced
+- **Ukrainian**: 14 instances of wrong "Простір" declension fixed
+- **Traditional Chinese**: 80+ Simplified character replacements across the full file, not just the ~6 originally predicted
+- **German**: 135 strings fixed — far more than predicted; "Space" had been translated as "Raum" and "Platz" throughout
+- **Vietnamese**: "Space" had been translated as "Không gian" (physical space) in 58 strings — all corrected to English "Space"
+- **Polish**: "Space" translated as "Przestrzeń" with full declension (nominative/genitive) added throughout
+
+### Remaining Known Limitations
+
+1. **Pirate English (en-PI)**: Coverage is still incomplete — many UI strings got minimal pirate treatment. The file is functional and non-hostile, but a dedicated pirate-flavor pass would improve personality.
+2. **Arabic gender**: The passkey unification was done, but a full grammatical audit by a human native speaker is recommended.
+3. **Context-sensitive strings**: Some strings without clear context (single words like "More", "Back") may be translated incorrectly for their UI context — a visual/in-app review would catch these.
+4. **Plural forms**: Languages with complex plural rules (Polish, Czech, Slovak, Arabic, Russian) use Lingui's plural syntax — this was not systematically verified.
+
+## State at End of This Session (2026-04-20)
 
 ```
-Date: 2026-04-14
-Branch: feat/new-onboarding-ui-ux
-Strings per language: 877 total / 0 untranslated
-New strings added: 53 (onboarding flow)
-Languages: 30
-Files modified: src/i18n/{ar,cs,da,de,el,en-PI,es,fi,fr,he,id,it,ja,ko,nl,no,pl,pt,ro,ru,sk,sl,sr,sv,th,tr,uk,vi,zh-CN,zh-TW}/messages.po
-Compile status: NOT YET compiled (npx lingui compile pending)
+Date: 2026-04-20
+Branch: fix/improve-translations
+Strings per language: ~877 total / 0 untranslated
+Languages reviewed: 30
+Files modified: all src/i18n/{locale}/messages.po and messages.ts
+Compile status: Compiled successfully (commit da14416c)
 ```
 
 ---
@@ -256,4 +291,5 @@ Compile status: NOT YET compiled (npx lingui compile pending)
 ---
 
 *Created: 2026-04-14*
+*Updated: 2026-04-20 — Full quality pass complete*
 *Report Type: Audit*

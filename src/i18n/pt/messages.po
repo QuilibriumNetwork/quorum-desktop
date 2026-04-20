@@ -114,7 +114,7 @@ msgstr "[Mensagem]"
 #: src/components/message/Message.tsx:568
 #: src/components/message/Message.tsx:938
 msgid "[Original message was deleted]"
-msgstr "Olá {username}"
+msgstr "[Mensagem original foi excluída]"
 
 #: src/components/bookmarks/BookmarkItem.tsx:74
 msgid "[Sticker]"
@@ -293,7 +293,7 @@ msgstr "Adicionar uma foto de perfil"
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
 msgid "Add a Space"
-msgstr "Adicionar um Space"
+msgstr "Adicionar um Espaço"
 
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
@@ -416,7 +416,7 @@ msgstr "Sempre assinar mensagens"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
-msgstr "Ocorreu um erro ao deletar o Space. Por favor, tente novamente."
+msgstr "Ocorreu um erro ao excluir o Espaço. Por favor, tente novamente."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:59
 msgid "An error occurred while resetting app data. Please try again."
@@ -545,11 +545,11 @@ msgstr "Limite de marcadores alcançado! Remova alguns para adicionar novos."
 
 #: src/components/message/MessageActionsDrawer.tsx:267
 msgid "Bookmark message"
-msgstr "Mensagem de marcador"
+msgstr "Salvar nos marcadores"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:193
 msgid "Bookmark messages to save them for later reference"
-msgstr "Mensagens de marcador para salvá-las para referência futura"
+msgstr "Salve mensagens para consultar depois"
 
 #: src/components/message/Message.tsx:756
 #: src/components/message/Message.tsx:850
@@ -593,12 +593,12 @@ msgstr "Cancelar"
 
 #: src/components/message/MessageEditTextarea.tsx:725
 msgid "CANCEL"
-msgstr "CANCEL"
+msgstr "CANCELAR"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
 msgstr ""
-"Não é possível deletar o Space com canais. Por favor, delete todos os canais"
+"Não é possível excluir o Espaço com canais. Por favor, exclua todos os canais"
 " primeiro."
 
 #. placeholder {0}: Math.min(10, remaining)
@@ -612,7 +612,7 @@ msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:127
 msgid "Change your avatar and name for this Space"
-msgstr "Altere seu avatar e nome para este Space"
+msgstr "Altere seu avatar e nome para este Espaço"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:79
 msgid ""
@@ -1035,7 +1035,7 @@ msgstr "Confirmas de entrega"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:184
 msgid "Describe what this Space is about..."
-msgstr "Descreva sobre o que é este Space..."
+msgstr "Descreva sobre o que é este Espaço..."
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:66
 msgid "Description cannot contain special characters"
@@ -1231,11 +1231,11 @@ msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:175
 msgid "Enter a description for your Space (optional)"
-msgstr "Insira uma descrição para o seu Space (opcional)"
+msgstr "Insira uma descrição para o seu Espaço (opcional)"
 
 #: src/components/modals/CreateSpaceModal.tsx:141
 msgid "Enter a name for your Space"
-msgstr "Insira um nome para o seu Space"
+msgstr "Insira um nome para o seu Espaço"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
 msgid "Enter a user's address to start messaging them."
@@ -1328,7 +1328,7 @@ msgstr "Exportando..."
 
 #: src/components/modals/CreateSpaceModal.tsx:29
 msgid "Failed to create space. Please try again."
-msgstr "Falha ao criar o Space. Por favor, tente novamente."
+msgstr "Falha ao criar o Espaço. Por favor, tente novamente."
 
 #: src/services/MessageService.ts:2523
 msgid "Failed to decrypt message with any known state"
@@ -1618,7 +1618,7 @@ msgstr "Entendi"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:515
 msgid "I Understand, Show QR"
-msgstr "Eu Entendo, Mostrar QR"
+msgstr "Entendido, Mostrar QR"
 
 #: src/components/message/Message.tsx:771
 #: src/components/message/Message.tsx:865
@@ -1805,7 +1805,7 @@ msgstr ""
 #: src/components/ui/ThemeRadioGroup.tsx:17
 #: src/components/ui/ThemeRadioGroup.tsx:19
 msgid "Light"
-msgstr "Luz"
+msgstr "Claro"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:173
 msgid "Loading bookmarks..."
@@ -2791,7 +2791,7 @@ msgstr "Descrição do Espaço"
 
 #: src/components/modals/AddSpaceModal.tsx:175
 msgid "Space ID"
-msgstr "ID do Space"
+msgstr "ID do Espaço"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:169
 msgid "Space name"
@@ -2810,7 +2810,7 @@ msgstr "Nome do Espaço é obrigatório"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:21
 #: src/hooks/business/validation/useSpaceNameValidation.ts:43
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "O nome do Space deve ter {MAX_NAME_LENGTH} caracteres ou menos"
+msgstr "O nome do Espaço deve ter {MAX_NAME_LENGTH} caracteres ou menos"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:39
 #: src/components/navbar/NavMenu.tsx:260
@@ -2822,7 +2822,7 @@ msgstr "Configurações do Espaço"
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
 #: src/components/modals/UserSettingsModal/General.tsx:197
 msgid "Space Tag"
-msgstr "Space Tag"
+msgstr "Tag do Espaço"
 
 #: src/components/navbar/NavMenu.tsx:571
 msgid "Spaces"
@@ -2922,7 +2922,7 @@ msgid ""
 "settings. To delete the Space, you must first delete all Channels."
 msgstr ""
 "Esta ação não pode ser desfeita e removerá permanentemente todas as "
-"configurações do Space. Para deletar o Space, você deve primeiro deletar "
+"configurações do Espaço. Para excluir o Espaço, você deve primeiro excluir "
 "todos os Canais."
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
@@ -3011,7 +3011,7 @@ msgstr "Este tópico foi fechado"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
-msgstr "Este usuário já é membro deste Space."
+msgstr "Este usuário já é membro deste Espaço."
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
@@ -3553,7 +3553,7 @@ msgstr "Você"
 
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
-msgstr "Você já é membro deste Space."
+msgstr "Você já é membro deste Espaço."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
 #: src/components/space/Channel.tsx:1624
@@ -3670,7 +3670,7 @@ msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:88
 msgid "You're offline. Creating a Space requires an internet connection."
-msgstr "Você está offline. Criar um Space requer uma conexão à internet."
+msgstr "Você está offline. Criar um Espaço requer uma conexão à internet."
 
 #: src/components/modals/NewDirectMessageModal.tsx:98
 msgid "You're offline. Looking up new users requires an internet connection."
