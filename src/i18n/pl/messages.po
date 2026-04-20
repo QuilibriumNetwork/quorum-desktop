@@ -51,7 +51,7 @@ msgstr "Więcej"
 #: src/components/message/ReactionsList.tsx:119
 #: src/components/message/ReactionsList.tsx:124
 msgid "Reacted by"
-msgstr "Odrzucone przez"
+msgstr "Zareagował/a"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
@@ -114,7 +114,7 @@ msgstr "[Wiadomość]"
 #: src/components/message/Message.tsx:568
 #: src/components/message/Message.tsx:938
 msgid "[Original message was deleted]"
-msgstr "Wydano oryginalne wiadomości"
+msgstr "[Oryginalna wiadomość została usunięta]"
 
 #: src/components/bookmarks/BookmarkItem.tsx:74
 msgid "[Sticker]"
@@ -293,7 +293,7 @@ msgstr "Dodaj zdjęcie profilowe"
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
 msgid "Add a Space"
-msgstr "Dodaj Space"
+msgstr "Dodaj Przestrzeń"
 
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
@@ -322,7 +322,7 @@ msgid ""
 "You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
 msgstr ""
 "Dodaj do 50 niestandardowych emoji. Niestandardowe emoji mogą być używane "
-"tylko w Space. Możesz przesyłać pliki PNG, JPG lub GIF, maks. 5MB "
+"tylko w Przestrzeni. Możesz przesyłać pliki PNG, JPG lub GIF, maks. 5MB "
 "(automatycznie zoptymalizowane)."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:46
@@ -331,7 +331,7 @@ msgid ""
 "Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr ""
 "Dodaj do 50 niestandardowych naklejek. Niestandardowe naklejki mogą być "
-"używane tylko w Space. Możesz przesyłać pliki PNG, JPG lub GIF, maks. 25MB "
+"używane tylko w Przestrzeni. Możesz przesyłać pliki PNG, JPG lub GIF, maks. 25MB "
 "(automatycznie zoptymalizowane)."
 
 #: src/components/user/UserProfile.tsx:200
@@ -417,7 +417,7 @@ msgstr "Zawsze podpisuj wiadomości"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
-msgstr "Wystąpił błąd podczas usuwania Space. Proszę spróbować ponownie."
+msgstr "Wystąpił błąd podczas usuwania Przestrzeni. Proszę spróbować ponownie."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:59
 msgid "An error occurred while resetting app data. Please try again."
@@ -600,7 +600,7 @@ msgstr "ANULUJ"
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
 msgstr ""
-"Nie można usunąć Space z kanałami. Proszę najpierw usunąć wszystkie kanały."
+"Nie można usunąć Przestrzeni z kanałami. Proszę najpierw usunąć wszystkie kanały."
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
@@ -613,7 +613,7 @@ msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:127
 msgid "Change your avatar and name for this Space"
-msgstr "Zmień swój awatar i nazwę dla tej Space"
+msgstr "Zmień swój awatar i nazwę dla tej Przestrzeni"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:79
 msgid ""
@@ -812,16 +812,16 @@ msgstr "Skopiuj link wiadomości"
 
 #: src/services/ConfigService.ts:289
 msgid "Could not add Space"
-msgstr "Nie można dodać Przestrzeń"
+msgstr "Nie można dodać Przestrzeni"
 
 #: src/components/message/InviteLink.tsx:38
 #: src/hooks/business/invites/useInviteProcessing.ts:46
 msgid "Could not fetch the Space details. Please try again."
-msgstr "Nie udało się pobrać szczegółów Space. Proszę spróbować ponownie."
+msgstr "Nie udało się pobrać szczegółów Przestrzeni. Proszę spróbować ponownie."
 
 #: src/services/ConfigService.ts:162
 msgid "Could not obtain manifest for Space"
-msgstr "Nie można uzyskać manifestu dla Przestrzeń"
+msgstr "Nie można uzyskać manifestu dla Przestrzeni"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:42
 #: src/hooks/business/spaces/useInviteValidation.ts:111
@@ -857,7 +857,7 @@ msgid ""
 msgstr ""
 "Utwórz tag, który członkowie mogą wyświetlać obok swojej nazwy użytkownika w"
 " wiadomościach. Prześlij obraz i ustaw 4-znakowy kod, aby zidentyfikować "
-"swój Space."
+"swoją Przestrzeń."
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
@@ -882,7 +882,7 @@ msgstr "Utwórz Przestrzeń"
 
 #: src/components/modals/CreateSpaceModal.tsx:280
 msgid "Creating Space..."
-msgstr "Tworzenie Przestrzeń..."
+msgstr "Tworzenie Przestrzeni..."
 
 #: src/components/modals/EditHistoryModal.tsx:88
 msgid "Current"
@@ -930,7 +930,7 @@ msgid ""
 "Default Space settings provide the most typical chat experience, but for "
 "higher privacy guarantees, review these advanced settings."
 msgstr ""
-"Domyślne ustawienia Space zapewniają najbardziej typowe doświadczenie czatu,"
+"Domyślne ustawienia Przestrzeni zapewniają najbardziej typowe doświadczenie czatu,"
 " ale w celu uzyskania wyższych gwarancji prywatności, zapoznaj się z tymi "
 "zaawansowanymi ustawieniami."
 
@@ -1035,7 +1035,7 @@ msgstr "Potwierdzenia dostarczenia"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:184
 msgid "Describe what this Space is about..."
-msgstr "Opisz, o czym jest ta Space..."
+msgstr "Opisz, o czym jest ta Przestrzeń..."
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:66
 msgid "Description cannot contain special characters"
@@ -1096,7 +1096,7 @@ msgstr "Wiadomości bezpośrednie"
 msgid ""
 "Display a tag from one of your Spaces next to your username in messages."
 msgstr ""
-"Wyświetl tag z jednego ze swoich Space obok swojej nazwy użytkownika w "
+"Wyświetl tag z jednej ze swoich Przestrzeni obok swojej nazwy użytkownika w "
 "wiadomościach."
 
 #: src/components/modals/UserSettingsModal/General.tsx:125
@@ -1231,11 +1231,11 @@ msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:175
 msgid "Enter a description for your Space (optional)"
-msgstr "Wprowadź opis dla swojego Space (opcjonalnie)"
+msgstr "Wprowadź opis dla swojej Przestrzeni (opcjonalnie)"
 
 #: src/components/modals/CreateSpaceModal.tsx:141
 msgid "Enter a name for your Space"
-msgstr "Wprowadź nazwę dla swojego Space"
+msgstr "Wprowadź nazwę dla swojej Przestrzeni"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
 msgid "Enter a user's address to start messaging them."
@@ -1248,7 +1248,7 @@ msgstr "Wprowadź adres ręcznie"
 #: src/components/modals/AddSpaceModal.tsx:168
 msgid "Enter both Space ID and Config Key to validate"
 msgstr ""
-"Wprowadź zarówno ID Space, jak i klucz konfiguracyjny, aby zweryfikować"
+"Wprowadź zarówno ID Przestrzeni, jak i klucz konfiguracyjny, aby zweryfikować"
 
 #: src/components/modals/AddSpaceModal.tsx:160
 msgid "Enter details manually"
@@ -1704,7 +1704,7 @@ msgstr "Dołącz"
 #: src/components/modals/JoinSpaceModal.tsx:90
 #: src/components/modals/JoinSpaceModal.tsx:166
 msgid "Join Space"
-msgstr "Dołącz do Przestrzeń"
+msgstr "Dołącz do Przestrzeni"
 
 #: src/components/modals/JoinSpaceModal.tsx:70
 #: src/hooks/business/invites/useInviteUI.ts:31
@@ -1714,7 +1714,7 @@ msgstr "Dołączono"
 #: src/components/modals/AddSpaceModal.tsx:130
 #: src/components/modals/JoinSpaceModal.tsx:100
 msgid "Joining Space..."
-msgstr "Dołączanie do Space..."
+msgstr "Dołączanie do Przestrzeni..."
 
 #: src/components/modals/JoinSpaceModal.tsx:69
 #: src/hooks/business/invites/useInviteUI.ts:29
@@ -1910,7 +1910,7 @@ msgid ""
 "here."
 msgstr ""
 "Członkowie wybranych ról mogą publikować, usuwać i przypinać wiadomości w "
-"tym kanale tylko do odczytu. Uwaga: właściciele przestrzeni muszą również "
+"tym kanale tylko do odczytu. Uwaga: właściciele Przestrzeni muszą również "
 "być w roli menedżera, aby publikować tutaj."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:164
@@ -2353,7 +2353,7 @@ msgid ""
 " Consider who you share the link with and where you post it."
 msgstr ""
 "Publiczne linki zaproszeniowe pozwalają każdemu, kto ma dostęp do linku, "
-"dołączyć do twojego Space. Zastanów się, z kim dzielisz się linkiem i gdzie "
+"dołączyć do twojej Przestrzeni. Zastanów się, z kim dzielisz się linkiem i gdzie "
 "go publikujesz."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:532
@@ -2602,7 +2602,7 @@ msgstr "Wyszukaj w tej Przestrzeni"
 
 #: src/components/search/SearchResults.tsx:131
 msgid "Search in this Space..."
-msgstr "Szukaj w tej Space..."
+msgstr "Szukaj w tej Przestrzeni..."
 
 #: src/components/direct/DirectMessage.tsx:814
 #: src/components/space/Channel.tsx:1489
@@ -2790,11 +2790,11 @@ msgstr "Opis Przestrzeni"
 
 #: src/components/modals/AddSpaceModal.tsx:175
 msgid "Space ID"
-msgstr "ID Space"
+msgstr "ID Przestrzeni"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:169
 msgid "Space name"
-msgstr "Nazwa Space"
+msgstr "Nazwa Przestrzeni"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:24
 #: src/hooks/business/validation/useSpaceNameValidation.ts:46
@@ -2809,19 +2809,19 @@ msgstr "Nazwa Przestrzeni jest wymagana"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:21
 #: src/hooks/business/validation/useSpaceNameValidation.ts:43
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Nazwa Space musi mieć {MAX_NAME_LENGTH} znaków lub mniej"
+msgstr "Nazwa Przestrzeni musi mieć {MAX_NAME_LENGTH} znaków lub mniej"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:39
 #: src/components/navbar/NavMenu.tsx:260
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
-msgstr "Ustawienia Space"
+msgstr "Ustawienia Przestrzeni"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
 #: src/components/modals/UserSettingsModal/General.tsx:197
 msgid "Space Tag"
-msgstr "Tag Space"
+msgstr "Tag Przestrzeni"
 
 #: src/components/navbar/NavMenu.tsx:571
 msgid "Spaces"
@@ -2921,8 +2921,8 @@ msgid ""
 "This action cannot be undone and will permanently remove all the Space "
 "settings. To delete the Space, you must first delete all Channels."
 msgstr ""
-"Ta akcja nie może być cofnięta i na stałe usunie wszystkie ustawienia Space."
-" Aby usunąć Space, musisz najpierw usunąć wszystkie kanały."
+"Ta akcja nie może być cofnięta i na stałe usunie wszystkie ustawienia Przestrzeni."
+" Aby usunąć Przestrzeń, musisz najpierw usunąć wszystkie kanały."
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "This bio will be visible to others when they view your profile."
@@ -2948,7 +2948,7 @@ msgid ""
 "look up or join your Space using an invite link."
 msgstr ""
 "Ten opis będzie widoczny w zaproszeniach i pokazany osobom, gdy będą szukać "
-"lub dołączać do Twojej Space za pomocą linku zaproszenia."
+"lub dołączać do Twojej Przestrzeni za pomocą linku zaproszenia."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:441
 msgid "This device"
@@ -3009,19 +3009,19 @@ msgstr "Ten wątek został zamknięty"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
-msgstr "Ten użytkownik jest już członkiem tego Space."
+msgstr "Ten użytkownik jest już członkiem tej Przestrzeni."
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
-msgstr "Ten użytkownik będzie mógł ponownie wysyłać wiadomości w tym Space."
+msgstr "Ten użytkownik będzie mógł ponownie wysyłać wiadomości w tej Przestrzeni."
 
 #: src/components/modals/KickUserModal.tsx:86
 msgid "This user will be removed from the Space."
-msgstr "Ten użytkownik zostanie usunięty z Space."
+msgstr "Ten użytkownik zostanie usunięty z Przestrzeni."
 
 #: src/components/modals/MuteUserModal.tsx:117
 msgid "This user will no longer be able to send messages in this Space."
-msgstr "Ten użytkownik nie będzie mógł już wysyłać wiadomości w tym Space."
+msgstr "Ten użytkownik nie będzie mógł już wysyłać wiadomości w tej Przestrzeni."
 
 #: src/components/modals/MuteUserModal.tsx:118
 msgid "This user will not be able to send messages for {days} days."
@@ -3033,7 +3033,7 @@ msgid ""
 "Space. Consider who you share this link with."
 msgstr ""
 "To utworzy publiczny link zaproszenia, z którego każdy może skorzystać, aby "
-"dołączyć do Twojego Space. Zastanów się, z kim dzielisz się tym linkiem."
+"dołączyć do Twojej Przestrzeni. Zastanów się, z kim dzielisz się tym linkiem."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:49
 msgid ""
@@ -3138,7 +3138,7 @@ msgid ""
 msgstr ""
 "Włącz to, aby pozwolić każdemu z linkiem zaproszenia dołączyć automatycznie."
 " Wyłącz to, aby podglądać i zatwierdzać każdą osobę przed dołączeniem. "
-"Uwaga: Publiczne linki dają pełny dostęp do odczytu w Twoim Space, gdy link "
+"Uwaga: Publiczne linki dają pełny dostęp do odczytu w Twojej Przestrzeni, gdy link "
 "jest aktywny."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:67
@@ -3463,7 +3463,7 @@ msgid ""
 msgstr ""
 "Gdy wiadomości są podpisane, nadawcy potwierdzają, że pochodzą z ich klucza."
 " Gdy wiadomości nie są podpisane, nadawcy mają wiarygodne zaprzeczenie. To "
-"ustawienie dotyczy wszystkich wiadomości w tym Space."
+"ustawienie dotyczy wszystkich wiadomości w tej Przestrzeni."
 
 #: src/components/modals/ConversationSettingsModal.tsx:244
 msgid ""
@@ -3551,7 +3551,7 @@ msgstr "Ty"
 
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
-msgstr "Jesteś już członkiem tego Space."
+msgstr "Jesteś już członkiem tej Przestrzeni."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
 #: src/components/space/Channel.tsx:1624
@@ -3606,7 +3606,7 @@ msgstr "Masz nową nieprzeczytaną wiadomość"
 
 #: src/components/space/Channel.tsx:1625
 msgid "You have been muted in this Space"
-msgstr "Zostałeś wyciszony w tym Space"
+msgstr "Zostałeś wyciszony w tej Przestrzeni"
 
 #: src/services/NotificationService.ts:119
 msgid "You have new unread messages"
@@ -3651,8 +3651,8 @@ msgid ""
 "the Space Members list (stores your profile locally with your inbox "
 "address)."
 msgstr ""
-"Nie jesteś wymieniony w członkach tego Space. Poprawienie tego doda cię do "
-"listy członków Space (przechowuje twój profil lokalnie z adresem twojej "
+"Nie jesteś wymieniony w członkach tej Przestrzeni. Poprawienie tego doda cię do "
+"listy członków Przestrzeni (przechowuje twój profil lokalnie z adresem twojej "
 "skrzynki odbiorczej)."
 
 #: src/components/ui/OfflineBanner.tsx:56
@@ -3663,12 +3663,12 @@ msgstr "Jesteś offline"
 msgid ""
 "You're offline. Adding or creating a Space requires an internet connection."
 msgstr ""
-"Jesteś offline. Dodawanie lub tworzenie Space wymaga połączenia z "
+"Jesteś offline. Dodawanie lub tworzenie Przestrzeni wymaga połączenia z "
 "internetem."
 
 #: src/components/modals/CreateSpaceModal.tsx:88
 msgid "You're offline. Creating a Space requires an internet connection."
-msgstr "Jesteś offline. Tworzenie Space wymaga połączenia z internetem."
+msgstr "Jesteś offline. Tworzenie Przestrzeni wymaga połączenia z internetem."
 
 #: src/components/modals/NewDirectMessageModal.tsx:98
 msgid "You're offline. Looking up new users requires an internet connection."
@@ -3738,7 +3738,7 @@ msgstr "Twoje role"
 
 #: src/components/modals/FolderEditorModal.tsx:136
 msgid "Your Spaces will NOT be deleted"
-msgstr "Twoje Spaces nie zostaną usunięte"
+msgstr "Twoje Przestrzenie nie zostaną usunięte"
 
 #: src/components/ui/YouTubeFacade.tsx:77
 msgid "YouTube Video"
