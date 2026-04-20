@@ -55,17 +55,17 @@ msgstr "Reageret af"
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
-msgstr "Mislykkedes at behandle billede"
+msgstr "Kunne ikke behandle billede"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
-msgstr "Svarer til {user}"
+msgstr "Svarer {user}"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.tsx:681
 msgid "Replying to"
-msgstr "Svarer til"
+msgstr "Svarer"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:354
@@ -75,7 +75,7 @@ msgstr "er blevet medlem"
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:362
 msgid "has left"
-msgstr "er blevet fjernet"
+msgstr "er gået"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:370
@@ -257,7 +257,7 @@ msgstr "en rolle"
 #: src/services/MessageService.ts:4140 src/services/NotificationService.ts:304
 #: src/services/NotificationService.ts:317
 msgid "a space"
-msgstr "et rum"
+msgstr "et Space"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Account"
@@ -807,7 +807,7 @@ msgstr "Kopier link til besked"
 
 #: src/services/ConfigService.ts:289
 msgid "Could not add Space"
-msgstr "Kunne ikke tilføje rum"
+msgstr "Kunne ikke tilføje Space"
 
 #: src/components/message/InviteLink.tsx:38
 #: src/hooks/business/invites/useInviteProcessing.ts:46
@@ -816,7 +816,7 @@ msgstr "Kunne ikke hente Space detaljer. Prøv venligst igen."
 
 #: src/services/ConfigService.ts:162
 msgid "Could not obtain manifest for Space"
-msgstr "Kunne ikke opnå manifest for rum"
+msgstr "Kunne ikke opnå manifest for Space"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:42
 #: src/hooks/business/spaces/useInviteValidation.ts:111
@@ -843,7 +843,7 @@ msgstr ""
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:83
 msgid "Create a Space"
-msgstr "Opret et rum"
+msgstr "Opret et Space"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:55
 msgid ""
@@ -876,7 +876,7 @@ msgstr "Skab Rum"
 
 #: src/components/modals/CreateSpaceModal.tsx:280
 msgid "Creating Space..."
-msgstr "Opretter rum..."
+msgstr "Opretter Space..."
 
 #: src/components/modals/EditHistoryModal.tsx:88
 msgid "Current"
@@ -909,11 +909,11 @@ msgstr "dage"
 
 #: src/services/ConfigService.ts:141
 msgid "decrypted space with no known config key"
-msgstr "dekrypteret rum uden kendt konfigurationsnøgle"
+msgstr "dekrypteret Space uden kendt konfigurationsnøgle"
 
 #: src/services/ConfigService.ts:147
 msgid "Decrypted Space with no known hub key"
-msgstr "Dekrypteret rum uden kendt hub-nøgle"
+msgstr "Dekrypteret Space uden kendt hub-nøgle"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:275
 msgid "Default Channel"
@@ -1015,7 +1015,7 @@ msgstr "Slet tråd"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:437
 msgid "Deleting Space..."
-msgstr "Sletter rum..."
+msgstr "Sletter Space..."
 
 #: src/components/modals/ConversationSettingsModal.tsx:397
 msgid "Deleting..."
@@ -1368,7 +1368,7 @@ msgstr "Kunne ikke fastgøre besked"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:102
 msgid "Failed to restore spaces"
-msgstr "Kunne ikke gendanne rum"
+msgstr "Kunne ikke gendanne Space"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:300
 msgid "Failed to save notification settings"
@@ -1380,7 +1380,7 @@ msgstr "Kunne ikke gemme indstillinger"
 
 #: src/services/ActionQueueHandlers.ts:119
 msgid "Failed to save space settings"
-msgstr "Kunne ikke gemme rumindstillinger"
+msgstr "Kunne ikke gemme Space-indstillinger"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
@@ -1401,7 +1401,7 @@ msgstr "Kunne ikke fjerne fastgørelse af besked"
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:243
 msgid "Failed to update profile"
-msgstr "Mislykkedes med at opdatere profil"
+msgstr "Kunne ikke opdatere profil"
 
 #: src/components/direct/DirectMessageContactsList.tsx:292
 msgid "Favorites"
@@ -1692,7 +1692,7 @@ msgstr "Bliv medlem"
 #: src/components/modals/JoinSpaceModal.tsx:90
 #: src/components/modals/JoinSpaceModal.tsx:166
 msgid "Join Space"
-msgstr "Kom med i rummet"
+msgstr "Tilslut dig Space"
 
 #: src/components/modals/JoinSpaceModal.tsx:70
 #: src/hooks/business/invites/useInviteUI.ts:31
@@ -2091,7 +2091,7 @@ msgstr "Ingen beskeder fundet"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:77
 msgid "No missing spaces found"
-msgstr "Ingen manglende rum fundet"
+msgstr "Ingen manglende Spaces fundet"
 
 #: src/components/direct/DirectMessageContactsList.tsx:373
 msgid "No muted conversations"
@@ -2241,7 +2241,7 @@ msgstr "Fotoalbum"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:327
 msgid "pin"
-msgstr "pin"
+msgstr "fastgør"
 
 #: src/components/message/MessageActionsMenu.tsx:302
 #: src/hooks/business/messages/usePinnedMessages.ts:324
@@ -2487,7 +2487,7 @@ msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
 msgstr ""
-"Gendan rum, der findes på denne enhed, men mangler i din navigationsmenu."
+"Gendan Spaces, der findes på denne enhed, men mangler i din navigationsmenu."
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
@@ -2498,7 +2498,7 @@ msgstr "Gendannet {0} beskeder og {1} samtaler."
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:99
 msgid "Restored {0} space(s)"
-msgstr "Gendannet {0} rum"
+msgstr "Gendannet {0} Space(s)"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:83
 msgid "Restoring..."
