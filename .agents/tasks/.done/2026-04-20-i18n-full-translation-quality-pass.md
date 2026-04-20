@@ -1042,17 +1042,17 @@ git commit -m "docs: final i18n audit report update after full quality pass"
 
 | Phase | Languages | Status |
 |-------|-----------|--------|
-| Phase 1 — Critical | el, he, no, fi, sl, sr, uk | - [x] Complete |
-| Phase 2 — High severity | de, nl, sv, th, ro, zh-TW | - [x] Complete |
-| Phase 3A — Medium | es, fr, pt, ru | - [x] Complete |
-| Phase 3B — Medium | ar, tr, cs, sk | - [x] Complete |
-| Phase 3C — Medium | ko, ja, vi, zh-CN | - [x] Complete |
-| Phase 3D — Medium | id, it, da, pl | - [x] Complete |
-| Phase 3E — Special | en-PI | - [x] Complete |
-| Phase 4 — Compile | all | - [x] Complete |
-| Phase 5 — Report | — | - [x] Complete |
+| Phase 1 — Critical | el, he, no, fi, sl, sr, uk | - [ ] Not started |
+| Phase 2 — High severity | de, nl, sv, th, ro, zh-TW | - [ ] Not started |
+| Phase 3A — Medium | es, fr, pt, ru | - [ ] Not started |
+| Phase 3B — Medium | ar, tr, cs, sk | - [ ] Not started |
+| Phase 3C — Medium | ko, ja, vi, zh-CN | - [ ] Not started |
+| Phase 3D — Medium | id, it, da, pl | - [ ] Not started |
+| Phase 3E — Special | en-PI | - [ ] Not started |
+| Phase 4 — Compile | all | - [ ] Not started |
+| Phase 5 — Report | — | - [ ] Not started |
 
 ---
 
 *Created: 2026-04-20*
-*Last updated: 2026-04-20 — Full quality pass complete, all 30 languages done*
+*Last updated: 2026-04-20*
