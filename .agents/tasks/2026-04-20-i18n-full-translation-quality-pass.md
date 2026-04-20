@@ -12,6 +12,28 @@
 
 ---
 
+## Session Progress (2026-04-20)
+
+**Stopped due to credit limit.** Resume from Task 4.
+
+**Completed and committed:**
+- ✅ Task 1: Greek (el) — full review, formal register, Space→Χώρος, 128 strings translated (commits: 5f0a3c6, af22087, 53e6cd7)
+- ✅ Task 2: Hebrew (he) — semantic errors, מרחב for Space, passkey unified (commit: 527dacb)
+- ✅ Task 3: Norwegian (no) — passordnøkkel→passkey, grammar, invented words (commit: 97da0f8)
+
+**Not started (resume here):**
+- Task 4: Finnish (fi) — was dispatched but stopped before commit; repo is clean, start fresh
+- Tasks 5–23: not started
+
+**Execution notes for next session:**
+- Run Tasks 4–7 in parallel (4 background agents simultaneously) — much faster than sequential
+- For Phase 2 (Tasks 9–14) and Phase 3 batches, also run in parallel
+- Use `run_in_background: true` on Agent tool calls, then wait for all to complete before reviewing
+- Two-stage review (spec + quality) can be lightweight for PO files — a single haiku spec-check is sufficient; skip full code-quality review for PO-only changes to save credits
+- Skip the audit report mid-phase updates (Tasks 8, 15, 21) and do one final report at Task 23
+
+---
+
 ## Critical Context for All Subagents
 
 Every subagent working on a PO file MUST know the following before starting.
@@ -121,10 +143,10 @@ Known error patterns to specifically hunt for:
 Edit the file directly. Return a bullet list of every string you changed and why.
 ```
 
-- [ ] **Step 1.1:** Dispatch Sonnet subagent for Greek with brief above
-- [ ] **Step 1.2:** Review the change summary returned by the subagent
-- [ ] **Step 1.3:** Spot-check 5–10 random fixed strings in `src/i18n/el/messages.po` against English source
-- [ ] **Step 1.4:** Commit
+- [x] **Step 1.1:** Dispatch Sonnet subagent for Greek with brief above
+- [x] **Step 1.2:** Review the change summary returned by the subagent
+- [x] **Step 1.3:** Spot-check 5–10 random fixed strings in `src/i18n/el/messages.po` against English source
+- [x] **Step 1.4:** Commit
 
 ```bash
 git add src/i18n/el/messages.po
@@ -166,10 +188,10 @@ Known error patterns:
 Edit the file directly. Return a bullet list of every string you changed and why.
 ```
 
-- [ ] **Step 2.1:** Dispatch Sonnet subagent for Hebrew
-- [ ] **Step 2.2:** Review change summary
-- [ ] **Step 2.3:** Spot-check 5–10 strings
-- [ ] **Step 2.4:** Commit
+- [x] **Step 2.1:** Dispatch Sonnet subagent for Hebrew
+- [x] **Step 2.2:** Review change summary
+- [x] **Step 2.3:** Spot-check 5–10 strings
+- [x] **Step 2.4:** Commit
 
 ```bash
 git add src/i18n/he/messages.po
@@ -213,10 +235,10 @@ Known error patterns:
 Edit the file directly. Return a bullet list of every string you changed and why.
 ```
 
-- [ ] **Step 3.1:** Dispatch Sonnet subagent for Norwegian
-- [ ] **Step 3.2:** Review change summary
-- [ ] **Step 3.3:** Spot-check 5–10 strings
-- [ ] **Step 3.4:** Commit
+- [x] **Step 3.1:** Dispatch Sonnet subagent for Norwegian
+- [x] **Step 3.2:** Review change summary
+- [x] **Step 3.3:** Spot-check 5–10 strings
+- [x] **Step 3.4:** Commit
 
 ```bash
 git add src/i18n/no/messages.po
