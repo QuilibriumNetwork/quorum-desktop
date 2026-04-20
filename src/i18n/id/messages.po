@@ -45,13 +45,13 @@ msgstr "Kirim pesan ke #{channel_name}"
 #: src/components/message/ReactionsList.tsx:117
 #: src/components/message/ReactionsList.tsx:131
 msgid "more"
-msgstr "lebih"
+msgstr "lagi"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:119
 #: src/components/message/ReactionsList.tsx:124
 msgid "Reacted by"
-msgstr "Dibuat oleh"
+msgstr "Bereaksi oleh"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
@@ -280,7 +280,7 @@ msgstr "Pengaturan Akun"
 
 #: src/components/ui/OfflineBanner.tsx:57
 msgid "actions queued"
-msgstr "Tindakan antri"
+msgstr "tindakan tertunda"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "Add a friend"
@@ -293,7 +293,7 @@ msgstr "Tambahkan foto profil"
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
 msgid "Add a Space"
-msgstr "Tambahkan Ruang"
+msgstr "Tambahkan Space"
 
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
@@ -416,7 +416,7 @@ msgstr "Selalu tanda tangan pesan"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
-msgstr "Terjadi kesalahan saat menghapus Ruang. Silakan coba lagi."
+msgstr "Terjadi kesalahan saat menghapus Space. Silakan coba lagi."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:59
 msgid "An error occurred while resetting app data. Please try again."
@@ -484,7 +484,7 @@ msgid ""
 "Are you sure you want to leave this Space? You won't be able to rejoin "
 "unless you are re-invited."
 msgstr ""
-"Apakah Anda yakin ingin meninggalkan Ruang ini? Anda tidak akan dapat "
+"Apakah Anda yakin ingin meninggalkan Space ini? Anda tidak akan dapat "
 "bergabung kembali kecuali Anda diundang kembali."
 
 #: src/hooks/business/messages/usePinnedMessages.ts:313
@@ -600,7 +600,7 @@ msgstr "BATAL"
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
 msgstr ""
-"Tidak dapat menghapus Ruang dengan saluran. Silakan hapus semua saluran "
+"Tidak dapat menghapus Space dengan saluran. Silakan hapus semua saluran "
 "terlebih dahulu."
 
 #. placeholder {0}: Math.min(10, remaining)
@@ -818,7 +818,7 @@ msgstr "Tidak dapat menambahkan Space"
 #: src/components/message/InviteLink.tsx:38
 #: src/hooks/business/invites/useInviteProcessing.ts:46
 msgid "Could not fetch the Space details. Please try again."
-msgstr "Tidak dapat mengambil detail Ruang. Silakan coba lagi."
+msgstr "Tidak dapat mengambil detail Space. Silakan coba lagi."
 
 #: src/services/ConfigService.ts:162
 msgid "Could not obtain manifest for Space"
@@ -920,11 +920,11 @@ msgstr "ruang yang didekripsi tanpa kunci konfigurasi yang diketahui"
 
 #: src/services/ConfigService.ts:147
 msgid "Decrypted Space with no known hub key"
-msgstr "Ruang yang Didekripsi tanpa kunci hub yang diketahui"
+msgstr "Space yang Didekripsi tanpa kunci hub yang diketahui"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:275
 msgid "Default Channel"
-msgstr "Kanal Default"
+msgstr "Saluran Default"
 
 #: src/components/modals/CreateSpaceModal.tsx:212
 msgid ""
@@ -954,7 +954,7 @@ msgstr "Hapus"
 #: src/components/modals/ChannelEditorModal.tsx:239
 #: src/hooks/business/channels/useChannelManagement.ts:256
 msgid "Delete Channel"
-msgstr "Hapus Kanal"
+msgstr "Hapus Saluran"
 
 #: src/components/direct/DirectMessageContactsList.tsx:256
 #: src/components/modals/ConversationSettingsModal.tsx:63
@@ -1023,7 +1023,7 @@ msgstr "Hapus Thread"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:437
 msgid "Deleting Space..."
-msgstr "Menghapus Ruang..."
+msgstr "Menghapus Space..."
 
 #: src/components/modals/ConversationSettingsModal.tsx:397
 msgid "Deleting..."
@@ -1248,7 +1248,7 @@ msgstr "Masukkan Alamat Secara Manual"
 
 #: src/components/modals/AddSpaceModal.tsx:168
 msgid "Enter both Space ID and Config Key to validate"
-msgstr "Masukkan ID Ruang dan Kunci Konfigurasi untuk memvalidasi"
+msgstr "Masukkan ID Space dan Kunci Konfigurasi untuk memvalidasi"
 
 #: src/components/modals/AddSpaceModal.tsx:160
 msgid "Enter details manually"
@@ -1714,7 +1714,7 @@ msgstr "Telah Bergabung"
 #: src/components/modals/AddSpaceModal.tsx:130
 #: src/components/modals/JoinSpaceModal.tsx:100
 msgid "Joining Space..."
-msgstr "Bergabung dengan Ruang..."
+msgstr "Bergabung dengan Space..."
 
 #: src/components/modals/JoinSpaceModal.tsx:69
 #: src/hooks/business/invites/useInviteUI.ts:29
@@ -1989,11 +1989,11 @@ msgstr "Bisukan Selamanya"
 
 #: src/components/navbar/NavMenu.tsx:240
 msgid "Mute Space"
-msgstr "Bisukan Ruang"
+msgstr "Bisukan Space"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:280
 msgid "Mute this Space"
-msgstr "Bisukan Ruang ini"
+msgstr "Bisukan Space ini"
 
 #: src/components/modals/MuteUserModal.tsx:67
 msgid "Mute User"
@@ -2472,8 +2472,8 @@ msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
 "speaking, this makes the messages in this Space non-repudiable."
 msgstr ""
-"Memerlukan pesan yang dikirim di Espasi ini untuk ditandatangani oleh "
-"pengirim. Secara teknis, ini membuat pesan di Espasi ini tidak dapat "
+"Memerlukan pesan yang dikirim di Space ini untuk ditandatangani oleh "
+"pengirim. Secara teknis, ini membuat pesan di Space ini tidak dapat "
 "disangkal."
 
 #: src/components/modals/AddSpaceModal.tsx:265
@@ -2498,7 +2498,7 @@ msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
 msgstr ""
-"Pulihkan Ruang yang ada di perangkat ini tetapi hilang dari menu navigasi "
+"Pulihkan Space yang ada di perangkat ini tetapi hilang dari menu navigasi "
 "Anda."
 
 #. placeholder {0}: result.messagesWritten
@@ -2595,7 +2595,7 @@ msgstr "Cari di Space ini"
 
 #: src/components/search/SearchResults.tsx:131
 msgid "Search in this Space..."
-msgstr "Cari di Ruang ini..."
+msgstr "Cari di Space ini..."
 
 #: src/components/direct/DirectMessage.tsx:814
 #: src/components/space/Channel.tsx:1489
@@ -2774,7 +2774,7 @@ msgstr "Seseorang"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:204
 msgid "Space Banner"
-msgstr "Spanduk Ruang"
+msgstr "Spanduk Space"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:178
 msgid "Space Description"
@@ -2782,7 +2782,7 @@ msgstr "Deskripsi Space"
 
 #: src/components/modals/AddSpaceModal.tsx:175
 msgid "Space ID"
-msgstr "ID Ruang"
+msgstr "ID Space"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:169
 msgid "Space name"
@@ -2796,7 +2796,7 @@ msgstr "Nama Space tidak boleh mengandung karakter khusus"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:18
 #: src/hooks/business/validation/useSpaceNameValidation.ts:40
 msgid "Space name is required"
-msgstr "Nama Ruang diperlukan"
+msgstr "Nama Space diperlukan"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:21
 #: src/hooks/business/validation/useSpaceNameValidation.ts:43
@@ -2807,7 +2807,7 @@ msgstr "Nama Space harus {MAX_NAME_LENGTH} karakter atau kurang"
 #: src/components/navbar/NavMenu.tsx:260
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
-msgstr "Pengaturan Ruang"
+msgstr "Pengaturan Space"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
@@ -2837,7 +2837,7 @@ msgstr "Dimulai oleh"
 
 #: src/components/user/UserProfileEdit.tsx:102
 msgid "Status goes here"
-msgstr "Status pergi di sini"
+msgstr "Tulis status Anda di sini"
 
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
@@ -2914,7 +2914,7 @@ msgid ""
 "settings. To delete the Space, you must first delete all Channels."
 msgstr ""
 "Tindakan ini tidak dapat dibatalkan dan akan menghapus semua pengaturan "
-"Ruang secara permanen. Untuk menghapus Ruang, Anda harus terlebih dahulu "
+"Space secara permanen. Untuk menghapus Space, Anda harus terlebih dahulu "
 "menghapus semua Saluran."
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
@@ -3003,7 +3003,7 @@ msgstr "Thread ini telah ditutup"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
-msgstr "Pengguna ini sudah menjadi anggota Ruang ini."
+msgstr "Pengguna ini sudah menjadi anggota Space ini."
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
@@ -3027,7 +3027,7 @@ msgid ""
 "Space. Consider who you share this link with."
 msgstr ""
 "Ini akan membuat tautan undangan publik yang dapat digunakan siapa saja "
-"untuk bergabung dengan Ruang Anda. Pertimbangkan dengan siapa Anda "
+"untuk bergabung dengan Space Anda. Pertimbangkan dengan siapa Anda "
 "membagikan tautan ini."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:49
@@ -3062,7 +3062,7 @@ msgstr "Pengaturan thread"
 
 #: src/components/modals/ThreadSettingsModal.tsx:133
 msgid "Thread Settings"
-msgstr "Thread Settings"
+msgstr "Pengaturan Thread"
 
 #: src/components/modals/ThreadSettingsModal.tsx:144
 msgid "Thread title"
@@ -3273,7 +3273,7 @@ msgstr "Batalkan Bisukan Percakapan"
 
 #: src/components/navbar/NavMenu.tsx:240
 msgid "Unmute Space"
-msgstr "Batalkan Bisukan Ruang"
+msgstr "Batalkan Bisukan Space"
 
 #: src/components/modals/MuteUserModal.tsx:67
 msgid "Unmute User"
@@ -3322,11 +3322,11 @@ msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:242
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
-msgstr "Unggah spanduk untuk Ruangmu - PNG atau JPG - Rasio optimal 3:1"
+msgstr "Unggah spanduk untuk Space-mu - PNG atau JPG - Rasio optimal 3:1"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:166
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
-msgstr "Unggah avatar untuk Ruang ini - PNG atau JPG - Rasio optimal 1:1"
+msgstr "Unggah avatar untuk Space ini - PNG atau JPG - Rasio optimal 1:1"
 
 #: src/components/modals/UserSettingsModal/General.tsx:114
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
@@ -3335,7 +3335,7 @@ msgstr "Unggah avatar untuk profil Anda - PNG atau JPG - Rasio optimal 1:1"
 #: src/components/modals/CreateSpaceModal.tsx:130
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
 msgid "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
-msgstr "Unggah ikon untuk Ruangmu - PNG atau JPG - Rasio optimal 1:1"
+msgstr "Unggah ikon untuk Space-mu - PNG atau JPG - Rasio optimal 1:1"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:61
 msgid "Upload Emoji"
@@ -3463,7 +3463,7 @@ msgstr ""
 "Ketika pesan ditandatangani, pengirim mengonfirmasi bahwa pesan tersebut "
 "berasal dari kunci mereka. Ketika pesan tidak ditandatangani, pengirim "
 "memiliki alasan yang dapat diterima. Pengaturan ini berlaku untuk semua "
-"pesan di Ruang ini."
+"pesan di Space ini."
 
 #: src/components/modals/ConversationSettingsModal.tsx:244
 msgid ""
@@ -3554,7 +3554,7 @@ msgstr "Kamu"
 
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
-msgstr "Anda sudah menjadi anggota Ruang ini."
+msgstr "Anda sudah menjadi anggota Space ini."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
 #: src/components/space/Channel.tsx:1624
@@ -3573,8 +3573,8 @@ msgstr ""
 msgid ""
 "You can manage your Space mention notifications in each Space's settings."
 msgstr ""
-"Anda dapat mengelola pemberitahuan sebutan Ruang Anda di pengaturan setiap "
-"Ruang."
+"Anda dapat mengelola pemberitahuan sebutan Space Anda di pengaturan setiap "
+"Space."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
 msgid ""
@@ -3654,8 +3654,8 @@ msgid ""
 "the Space Members list (stores your profile locally with your inbox "
 "address)."
 msgstr ""
-"Anda tidak terdaftar dalam anggota Ruang ini. Memperbaiki ini akan "
-"menambahkan Anda ke daftar Anggota Ruang (menyimpan profil Anda secara lokal"
+"Anda tidak terdaftar dalam anggota Space ini. Memperbaiki ini akan "
+"menambahkan Anda ke daftar Anggota Space (menyimpan profil Anda secara lokal"
 " dengan alamat kotak masuk Anda)."
 
 #: src/components/ui/OfflineBanner.tsx:56
@@ -3741,7 +3741,7 @@ msgstr "Peran Anda"
 
 #: src/components/modals/FolderEditorModal.tsx:136
 msgid "Your Spaces will NOT be deleted"
-msgstr "Ruang Anda TIDAK akan dihapus"
+msgstr "Space Anda TIDAK akan dihapus"
 
 #: src/components/ui/YouTubeFacade.tsx:77
 msgid "YouTube Video"
