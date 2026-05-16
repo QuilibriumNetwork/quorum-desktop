@@ -770,16 +770,16 @@ const DirectMessage: React.FC<{}> = () => {
             {/* Controls - right side on both mobile and desktop */}
             <Flex className="items-center gap-3 sm:gap-2">
               <Tooltip
-                id="dm-profile-toggle"
-                content={t`User Profile`}
+                id="dm-settings-toggle"
+                content={t`Conversation settings`}
                 place="bottom"
                 showOnTouch={false}
               >
                 <Button
                   type="unstyled"
-                  onClick={() => setShowProfile((prev) => !prev)}
-                  className={`header-icon-button ${showProfile ? 'active' : ''}`}
-                  iconName="user"
+                  onClick={() => openConversationSettings(conversationId)}
+                  className="header-icon-button"
+                  iconName="settings"
                   iconSize={headerIconSize}
                   iconOnly
                 />
@@ -811,16 +811,16 @@ const DirectMessage: React.FC<{}> = () => {
                 />
               </div>
               <Tooltip
-                id="dm-settings-toggle"
-                content={t`Conversation settings`}
+                id="dm-profile-toggle"
+                content={t`User Profile`}
                 place="bottom"
                 showOnTouch={false}
               >
                 <Button
                   type="unstyled"
-                  onClick={() => openConversationSettings(conversationId)}
-                  className="header-icon-button"
-                  iconName="settings"
+                  onClick={() => setShowProfile((prev) => !prev)}
+                  className={`header-icon-button ${showProfile ? 'active' : ''}`}
+                  iconName="user"
                   iconSize={headerIconSize}
                   iconOnly
                 />
