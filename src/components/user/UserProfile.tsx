@@ -92,6 +92,7 @@ const UserProfile: React.FunctionComponent<{
 
   React.useEffect(() => {
     const existing = userNoteData?.note ?? '';
+    logger.debug('[UserNote] useEffect fired — userNoteData:', userNoteData, '→ existing:', existing);
     setNoteValue(existing);
     setNoteCharCount(existing.length);
     if (existing) setIsNoteOpen(true);
@@ -108,23 +109,32 @@ const UserProfile: React.FunctionComponent<{
   const handleNoteBlur = async () => {
     setIsNoteFocused(false);
     const noteKey = buildUserNoteKey({ targetAddress: props.user.address });
+    logger.debug('[UserNote] handleNoteBlur — noteValue:', JSON.stringify(noteValue));
     if (!noteValue.trim()) {
+      logger.debug('[UserNote] empty — collapsing and deleting');
       setIsNoteOpen(false);
       try {
         await messageDB.deleteUserNote(props.user.address);
+        logger.debug('[UserNote] deleteUserNote done — setting cache to undefined');
         queryClient.setQueryData(noteKey, undefined);
+        logger.debug('[UserNote] cache after delete:', queryClient.getQueryData(noteKey));
       } catch (err) {
-        logger.error('Failed to delete user note', err);
+        logger.error('[UserNote] Failed to delete user note', err);
       }
       return;
     }
     const errors = validateUserNote(noteValue);
-    if (errors.length > 0) return;
+    if (errors.length > 0) {
+      logger.debug('[UserNote] validation errors:', errors);
+      return;
+    }
     try {
       await messageDB.saveUserNote(props.user.address, noteValue);
-      queryClient.setQueryData(noteKey, { targetAddress: props.user.address, note: noteValue.trim(), updatedAt: Date.now() });
+      const newData = { targetAddress: props.user.address, note: noteValue.trim(), updatedAt: Date.now() };
+      logger.debug('[UserNote] saveUserNote done — setting cache to:', newData);
+      queryClient.setQueryData(noteKey, newData);
     } catch (err) {
-      logger.error('Failed to save user note', err);
+      logger.error('[UserNote] Failed to save user note', err);
     }
   };
 
