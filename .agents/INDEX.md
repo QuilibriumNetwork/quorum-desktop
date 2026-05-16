@@ -21,6 +21,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 
 ### Features
+- [User Notes](docs/features/user-notes.md)
 - [Action Queue](docs/features/action-queue.md)
 - [Avatar & Initials System](docs/features/avatar-initials-system.md)
 - [Channel and Space Mute System](docs/features/channel-space-mute-system.md)
