@@ -19,7 +19,8 @@ import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
-import { useUserNote, useInvalidateUserNote } from '../../hooks/queries/userNotes';
+import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
+import { useQueryClient } from '@tanstack/react-query';
 import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
 
 const UserProfile: React.FunctionComponent<{
@@ -83,7 +84,7 @@ const UserProfile: React.FunctionComponent<{
   const isOwnProfile = currentPasskeyInfo?.address === props.user.address;
 
   const { data: userNoteData } = useUserNote({ targetAddress: props.user.address });
-  const invalidateUserNote = useInvalidateUserNote();
+  const queryClient = useQueryClient();
   const [noteValue, setNoteValue] = React.useState('');
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
@@ -106,11 +107,12 @@ const UserProfile: React.FunctionComponent<{
 
   const handleNoteBlur = async () => {
     setIsNoteFocused(false);
+    const noteKey = buildUserNoteKey({ targetAddress: props.user.address });
     if (!noteValue.trim()) {
       setIsNoteOpen(false);
       try {
         await messageDB.deleteUserNote(props.user.address);
-        invalidateUserNote({ targetAddress: props.user.address });
+        queryClient.setQueryData(noteKey, undefined);
       } catch (err) {
         logger.error('Failed to delete user note', err);
       }
@@ -120,7 +122,7 @@ const UserProfile: React.FunctionComponent<{
     if (errors.length > 0) return;
     try {
       await messageDB.saveUserNote(props.user.address, noteValue);
-      invalidateUserNote({ targetAddress: props.user.address });
+      queryClient.setQueryData(noteKey, { targetAddress: props.user.address, note: noteValue.trim(), updatedAt: Date.now() });
     } catch (err) {
       logger.error('Failed to save user note', err);
     }
