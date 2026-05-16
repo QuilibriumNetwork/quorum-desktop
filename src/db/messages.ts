@@ -76,6 +76,8 @@ export type UserConfig = {
   };
   bookmarks?: Bookmark[];
   deletedBookmarkIds?: string[];
+  userNotes?: UserNote[];
+  deletedUserNoteAddresses?: string[];
   // Channel mute settings: maps spaceId to array of muted channelIds
   mutedChannels?: {
     [spaceId: string]: string[];
@@ -2610,6 +2612,18 @@ export class MessageDB {
       request.onsuccess = () => {
         resolve(request.result as MutedUserRecord[]);
       };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getAllUserNotes(): Promise<UserNote[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('user_notes', 'readonly');
+      const store = transaction.objectStore('user_notes');
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result as UserNote[]);
       request.onerror = () => reject(request.error);
     });
   }
