@@ -3,6 +3,7 @@ import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { useQueryClient } from '@tanstack/react-query';
 import { logger } from '@quilibrium/quorum-shared';
+import { Icon } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { ClickToCopyContent } from '../ui';
 import { getAddressSuffix } from '../../utils';
@@ -138,7 +139,8 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
               className="user-profile-note-add-link"
               onClick={() => setIsNoteOpen(true)}
             >
-              {t`+ Add a note`}
+              <Icon name="notes" size="sm" />
+              {t`Add a note`}
             </span>
           </div>
         )}

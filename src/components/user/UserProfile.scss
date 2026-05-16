@@ -162,6 +162,9 @@
 }
 
 .user-profile-note-add-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-1;
   font-size: $text-sm;
   color: var(--color-text-muted);
   cursor: pointer;

@@ -280,7 +280,8 @@ const UserProfile: React.FunctionComponent<{
                 className="user-profile-note-add-link"
                 onClick={() => setIsNoteOpen(true)}
               >
-                {t`+ Add a note`}
+                <Icon name="notes" size="sm" />
+                {t`Add a note`}
               </span>
             </div>
           )
