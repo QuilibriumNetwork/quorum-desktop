@@ -9,9 +9,9 @@ const useUserNote = ({ targetAddress }: { targetAddress: string }) => {
   return useQuery({
     queryKey: buildUserNoteKey({ targetAddress }),
     queryFn: buildUserNoteFetcher({ messageDB, targetAddress }),
-    staleTime: Infinity,
+    staleTime: Infinity, // Note state is invalidated manually after save or delete
     enabled: !!targetAddress,
-    networkMode: 'always',
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 
