@@ -19,6 +19,8 @@ import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
+import { useUserNote, useInvalidateUserNote } from '../../hooks/queries/userNotes';
+import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -79,6 +81,33 @@ const UserProfile: React.FunctionComponent<{
 
   // Check if viewing own profile
   const isOwnProfile = currentPasskeyInfo?.address === props.user.address;
+
+  const { data: userNoteData } = useUserNote({ targetAddress: props.user.address });
+  const invalidateUserNote = useInvalidateUserNote();
+  const [noteValue, setNoteValue] = React.useState('');
+  const [noteCharCount, setNoteCharCount] = React.useState(0);
+  const [isNoteFocused, setIsNoteFocused] = React.useState(false);
+
+  React.useEffect(() => {
+    setNoteValue(userNoteData?.note ?? '');
+    setNoteCharCount((userNoteData?.note ?? '').length);
+  }, [userNoteData?.note]);
+
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    if (val.length <= MAX_USER_NOTE_LENGTH) {
+      setNoteValue(val);
+      setNoteCharCount(val.length);
+    }
+  };
+
+  const handleNoteBlur = async () => {
+    setIsNoteFocused(false);
+    const errors = validateUserNote(noteValue);
+    if (errors.length > 0) return;
+    await messageDB.saveUserNote(props.user.address, noteValue);
+    invalidateUserNote({ targetAddress: props.user.address });
+  };
 
   return (
     <div
@@ -202,6 +231,27 @@ const UserProfile: React.FunctionComponent<{
                   </div>
                 ))}
             </div>
+          </div>
+        )}
+        {!isOwnProfile && (
+          <div className="user-profile-note-section">
+            <div className="user-profile-content-section-header">
+              <span className="text-sm">{t`NOTE — only visible to you`}</span>
+            </div>
+            <textarea
+              className="user-profile-note-textarea"
+              placeholder={t`Click to add a note`}
+              value={noteValue}
+              maxLength={MAX_USER_NOTE_LENGTH}
+              onChange={handleNoteChange}
+              onFocus={() => setIsNoteFocused(true)}
+              onBlur={handleNoteBlur}
+            />
+            {isNoteFocused && (
+              <div className="user-profile-note-char-count">
+                {noteCharCount}/{MAX_USER_NOTE_LENGTH}
+              </div>
+            )}
           </div>
         )}
         {/* Action buttons section - shown when viewing others OR when you have moderation permissions */}
