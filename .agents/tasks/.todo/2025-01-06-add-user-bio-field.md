@@ -1,7 +1,7 @@
 ---
 type: task
 title: Add User Bio Field to UserSettingsModal General Tab
-status: in-progress
+status: open
 complexity: low
 ai_generated: true
 created: 2025-01-06T00:00:00.000Z

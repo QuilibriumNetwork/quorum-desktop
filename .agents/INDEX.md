@@ -127,6 +127,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
+- [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Bug: Mention Dropdown Not Showing When Typing Just `@` or `#`](bugs/.solved/mention-dropdown-not-showing-on-empty-query.md)
 - [Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll](bugs/.solved/message-scroll-jank-on-send.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
@@ -172,26 +173,12 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/2025-01-06-add-user-bio-field.md)
-- [User Status Feature Implementation Plan](tasks/2025-01-20-user-status.md)
-- [Implement Message Forwarding with Privacy Controls](tasks/2025-11-16-message-forwarding-with-privacy-controls.md)
-- [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/2025-11-19-notification-mention-context-extraction.md)
-- [Service Worker for App Update Detection](tasks/2025-12-14-service-worker-app-updates.md)
-- [Tombstone Cleanup Strategy for Deleted Messages](tasks/2025-12-18-tombstone-cleanup-strategy.md)
 - [Implement Role-Based Channel Visibility](tasks/2025-12-26-channel-role-visibility.md)
-- [Public Space Directory Feature](tasks/2025-12-30-public-space-directory.md)
-- [Space Tags](tasks/2025-12-30-space-tags.md)
-- [Fix Lingui "Uncompiled Message Detected" Warning](tasks/2026-01-04-fix-lingui-uncompiled-message-warning.md)
-- [Accessibility Features — Remaining Work](tasks/2026-01-06-accessibility-features-implementation.md)
 - [Full Markdown Support Inside Spoilers](tasks/2026-01-06-spoiler-full-markdown-support.md)
 - [Implement Channel Ordering Feature](tasks/2026-01-07-channel-ordering-feature.md)
-- [Conversation Deletion State Synchronization](tasks/2026-01-09-conversation-deletion-state-sync.md)
-- [Task: Implement Delete Public Invite Link Feature](tasks/2026-01-09-delete-public-invite-link.md)
-- [Multi-User Invite Selection Enhancement](tasks/2026-01-09-multi-user-invite-selection.md)
-- [Test Suite Implementation Plan for Quorum Desktop](tasks/2026-01-09-test-suite-plan.md)
-- [Auto-save settings modals — eliminate save buttons](tasks/2026-02-16-auto-save-settings-modals.md)
-- [Decentralized GIF Library on Quilibrium](tasks/2026-02-24-gifs-library-integration.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
-- [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
+- [Invite with Role — Design](tasks/2026-04-20-invite-with-role-design.md)
+- [Invite with Role Implementation Plan](tasks/2026-04-20-invite-with-role-implementation.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -223,6 +210,23 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/.archived/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
+
+### .Todo
+- [User Status Feature Implementation Plan](tasks/.todo/2025-01-20-user-status.md)
+- [Implement Message Forwarding with Privacy Controls](tasks/.todo/2025-11-16-message-forwarding-with-privacy-controls.md)
+- [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/.todo/2025-11-19-notification-mention-context-extraction.md)
+- [Service Worker for App Update Detection](tasks/.todo/2025-12-14-service-worker-app-updates.md)
+- [Tombstone Cleanup Strategy for Deleted Messages](tasks/.todo/2025-12-18-tombstone-cleanup-strategy.md)
+- [Public Space Directory Feature](tasks/.todo/2025-12-30-public-space-directory.md)
+- [Fix Lingui "Uncompiled Message Detected" Warning](tasks/.todo/2026-01-04-fix-lingui-uncompiled-message-warning.md)
+- [Accessibility Features — Remaining Work](tasks/.todo/2026-01-06-accessibility-features-implementation.md)
+- [Conversation Deletion State Synchronization](tasks/.todo/2026-01-09-conversation-deletion-state-sync.md)
+- [Task: Implement Delete Public Invite Link Feature](tasks/.todo/2026-01-09-delete-public-invite-link.md)
+- [Multi-User Invite Selection Enhancement](tasks/.todo/2026-01-09-multi-user-invite-selection.md)
+- [Test Suite Implementation Plan for Quorum Desktop](tasks/.todo/2026-01-09-test-suite-plan.md)
+- [Auto-save settings modals — eliminate save buttons](tasks/.todo/2026-02-16-auto-save-settings-modals.md)
+- [Decentralized GIF Library on Quilibrium](tasks/.todo/2026-02-24-gifs-library-integration.md)
+- [Thread List Panel: "Created by me" Filter](tasks/.todo/2026-03-14-thread-list-created-filter.md)
 
 ### Messagedb
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
@@ -283,6 +287,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Design: Discord-style Thread Panel Layout with Resize](tasks/.done/2025-03-09-thread-panel-discord-layout-design.md)
 - [Discord-style Thread Panel Layout Implementation Plan](tasks/.done/2025-03-09-thread-panel-discord-layout.md)
+- [Space Tags](tasks/.done/2025-12-30-space-tags.md)
 - [Dependency Updates Audit](tasks/.done/2026-02-24-dependency-updates-audit.md)
 - [Simplified Message Actions Toolbar](tasks/.done/2026-03-09-simplified-message-actions-design.md)
 - [Simplified Message Actions Toolbar — Implementation Plan](tasks/.done/2026-03-09-simplified-message-actions-plan.md)
@@ -331,8 +336,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom Emoji Picker with Sprite Sheet Rendering](tasks/.done/2026-04-14-custom-emoji-picker-design.md)
 - [Custom Emoji Picker Implementation Plan](tasks/.done/2026-04-14-custom-emoji-picker-plan.md)
 - [Emoji Picker Layout V2 Implementation Plan](tasks/.done/2026-04-14-emoji-picker-layout-v2.md)
+- [Per-Message Emoji Picker Portal Fix](tasks/.done/2026-04-14-emoji-picker-portal-fix-design.md)
+- [Emoji Picker Portal Fix Implementation Plan](tasks/.done/2026-04-14-emoji-picker-portal-fix-plan.md)
+- [Emoji Picker v2 Fixes Implementation Plan](tasks/.done/2026-04-14-emoji-picker-v2-fixes.md)
 - [Old Onboarding Cleanup & Maintenance Restyling - Implementation Plan](tasks/.done/2026-04-14-old-onboarding-cleanup-plan.md)
 - [Old Onboarding Cleanup & Maintenance Restyling](tasks/.done/2026-04-14-old-onboarding-cleanup.md)
+- [Rock-Hand Skin Tone Picker Implementation Plan](tasks/.done/2026-04-14-rock-hand-skin-tone-picker.md)
+- [i18n Full Translation Quality Pass — Implementation Plan](tasks/.done/2026-04-20-i18n-full-translation-quality-pass.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -474,7 +484,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
-- [i18n Onboarding Translation Audit — April 2026](reports/2026-04-14-i18n-onboarding-translation-audit.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -493,6 +502,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### .Archived
 - [Expert Panel Analysis: DM Receipts (Delivery & Read)](reports/.archived/2026-03-24-dm-receipts-expert-panel-analysis.md)
 - [TypeScript Errors Audit](reports/.archived/2026-04-07-typescript-errors-audit.md)
+- [i18n Onboarding Translation Audit — April 2026](reports/.archived/2026-04-14-i18n-onboarding-translation-audit.md)
 - [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [Emoji Picker Library Comparison: emoji-picker-react vs emoji-mart](reports/.archived/emoji-picker-library-comparison_2026-02-24.md)
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
@@ -519,4 +529,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-14 18:14:02
+**Last Updated**: 2026-05-16 10:08:12

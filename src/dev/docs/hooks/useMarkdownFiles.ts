@@ -7,7 +7,7 @@ export interface MarkdownFile {
   folder: string;
   title: string;
   slug: string; // URL-safe identifier
-  status?: 'pending' | 'done' | 'archived' | 'active' | 'solved' | 'in-progress' | 'blocked';
+  status?: 'pending' | 'open' | 'done' | 'archived' | 'active' | 'solved' | 'in-progress' | 'on-hold' | 'blocked' | 'deferred' | 'design' | 'backlog';
   priority?: 'low' | 'medium' | 'high' | 'critical';
   complexity?: 'low' | 'medium' | 'high' | 'very-high'; // tasks only
   content?: string;
@@ -66,13 +66,17 @@ const determineStatus = (
   type: 'docs' | 'tasks' | 'bugs' | 'reports'
 ): MarkdownFile['status'] => {
   if (type === 'tasks') {
-    // Check if it's in a .done folder or has status prefix
     if (path.includes('/.done/') || filename.startsWith('DONE_')) {
       return 'done';
     }
-    // Check if it's in a .archived folder or has ARCHIVED prefix
     if (path.includes('/.archived/') || filename.startsWith('ARCHIVED_')) {
       return 'archived';
+    }
+    if (path.includes('/.deferred/')) {
+      return 'deferred';
+    }
+    if (path.includes('/.todo/')) {
+      return 'open';
     }
     return 'pending';
   }

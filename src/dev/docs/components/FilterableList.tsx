@@ -26,6 +26,14 @@ function getStatusIcon(status: string): IconName {
       return 'warning';
     case 'open':
       return 'circle';
+    case 'deferred':
+      return 'clock';
+    case 'blocked':
+      return 'ban';
+    case 'design':
+      return 'pencil';
+    case 'backlog':
+      return 'clipboard-list';
     case 'archived':
       return 'history';
     default:
@@ -97,8 +105,8 @@ export const FilterableList: React.FC<FilterableListProps> = ({
       }
     });
 
-    // Define status order: open → in-progress → on-hold → done → archived
-    const statusOrder = ['open', 'in-progress', 'on-hold', 'done', 'archived'];
+    // Define status order
+    const statusOrder = ['open', 'in-progress', 'on-hold', 'blocked', 'design', 'backlog', 'deferred', 'done', 'archived'];
     const statusOptions: FilterOption[] = [
       { label: 'All', value: 'all', count: files.length },
       ...statusOrder
@@ -530,6 +538,14 @@ function getStatusStyle(status: string): string {
     case 'on-hold':
       return 'bg-warning/20 text-warning border border-warning/30';
     case 'open':
+      return 'bg-surface-2 text-subtle border border-default';
+    case 'deferred':
+      return 'bg-info/20 text-info border border-info/30';
+    case 'blocked':
+      return 'bg-danger/20 text-danger border border-danger/30';
+    case 'design':
+      return 'bg-accent/10 text-accent border border-accent/20';
+    case 'backlog':
       return 'bg-surface-2 text-subtle border border-default';
     case 'archived':
       return 'bg-muted/20 text-muted border border-muted/30';

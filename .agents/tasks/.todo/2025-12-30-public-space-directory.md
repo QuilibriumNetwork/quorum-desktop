@@ -9,6 +9,8 @@ updated: '2026-01-09'
 
 # Public Space Directory Feature
 
+ALREADY IMPLEMENTED ON MOBILE _ we need to check the mobiel app to see how it was done
+
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > Reviewed by feature-analyzer agent.
 
