@@ -93,3 +93,19 @@ export const validateUserBio = (bio: string): string[] => {
 
   return errors;
 };
+
+const MAX_USER_NOTE_LENGTH = 256;
+
+export const validateUserNote = (note: string): string[] => {
+  const errors: string[] = [];
+
+  if (!validateNameForXSS(note)) {
+    errors.push(t`Note cannot contain special characters`);
+  }
+
+  if (note.length > MAX_USER_NOTE_LENGTH) {
+    errors.push(t`Note must be ${MAX_USER_NOTE_LENGTH} characters or less`);
+  }
+
+  return errors;
+};
