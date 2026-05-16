@@ -777,7 +777,7 @@ const DirectMessage: React.FC<{}> = () => {
               >
                 <Button
                   type="unstyled"
-                  onClick={() => setShowProfile(!showProfile)}
+                  onClick={() => setShowProfile((prev) => !prev)}
                   className={`header-icon-button ${showProfile ? 'active' : ''}`}
                   iconName="user"
                   iconSize={headerIconSize}
@@ -1014,7 +1014,7 @@ const DirectMessage: React.FC<{}> = () => {
 
           {/* Desktop profile sidebar — hidden on mobile/tablet, shown when toggled */}
           {showProfile && !isMobile && !isTablet && (
-            <div className="hidden lg:flex flex-col flex-shrink-0 w-[var(--sidebar-right-width)] bg-chat border-l border-default">
+            <div className="flex flex-col flex-shrink-0 w-[var(--sidebar-right-width)] bg-chat border-l border-default">
               <DMUserProfileSidebar user={otherUser} />
             </div>
           )}
