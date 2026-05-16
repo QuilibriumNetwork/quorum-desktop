@@ -94,7 +94,7 @@ export const validateUserBio = (bio: string): string[] => {
   return errors;
 };
 
-const MAX_USER_NOTE_LENGTH = 256;
+export const MAX_USER_NOTE_LENGTH = 256;
 
 export const validateUserNote = (note: string): string[] => {
   const errors: string[] = [];
