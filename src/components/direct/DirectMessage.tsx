@@ -784,21 +784,6 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               </Tooltip>
-              <Tooltip
-                id="dm-settings-toggle"
-                content={t`Conversation settings`}
-                place="bottom"
-                showOnTouch={false}
-              >
-                <Button
-                  type="unstyled"
-                  onClick={() => openConversationSettings(conversationId)}
-                  className="header-icon-button"
-                  iconName="settings"
-                  iconSize={headerIconSize}
-                  iconOnly
-                />
-              </Tooltip>
               {/* Bookmarks */}
               <div className="relative">
                 <Tooltip
@@ -825,6 +810,21 @@ const DirectMessage: React.FC<{}> = () => {
                   mapSenderToUser={mapSenderToUser}
                 />
               </div>
+              <Tooltip
+                id="dm-settings-toggle"
+                content={t`Conversation settings`}
+                place="bottom"
+                showOnTouch={false}
+              >
+                <Button
+                  type="unstyled"
+                  onClick={() => openConversationSettings(conversationId)}
+                  className="header-icon-button"
+                  iconName="settings"
+                  iconSize={headerIconSize}
+                  iconOnly
+                />
+              </Tooltip>
 
               {/* Search: Touch devices always show icon, non-touch devices show inline search */}
               {isTouchDevice() ? (
