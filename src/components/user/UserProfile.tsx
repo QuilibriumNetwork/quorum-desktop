@@ -4,7 +4,7 @@ import { Button, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
-import { createChannelPermissionChecker } from '@quilibrium/quorum-shared';
+import { createChannelPermissionChecker, logger } from '@quilibrium/quorum-shared';
 import type { Role } from '@quilibrium/quorum-shared';
 import {
   useUserRoleManagement,
@@ -105,8 +105,12 @@ const UserProfile: React.FunctionComponent<{
     setIsNoteFocused(false);
     const errors = validateUserNote(noteValue);
     if (errors.length > 0) return;
-    await messageDB.saveUserNote(props.user.address, noteValue);
-    invalidateUserNote({ targetAddress: props.user.address });
+    try {
+      await messageDB.saveUserNote(props.user.address, noteValue);
+      invalidateUserNote({ targetAddress: props.user.address });
+    } catch (err) {
+      logger.error('Failed to save user note', err);
+    }
   };
 
   return (
