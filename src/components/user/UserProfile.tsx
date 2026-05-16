@@ -108,6 +108,12 @@ const UserProfile: React.FunctionComponent<{
     setIsNoteFocused(false);
     if (!noteValue.trim()) {
       setIsNoteOpen(false);
+      try {
+        await messageDB.deleteUserNote(props.user.address);
+        invalidateUserNote({ targetAddress: props.user.address });
+      } catch (err) {
+        logger.error('Failed to delete user note', err);
+      }
       return;
     }
     const errors = validateUserNote(noteValue);
