@@ -89,12 +89,13 @@ const UserProfile: React.FunctionComponent<{
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
   const [isNoteOpen, setIsNoteOpen] = React.useState(false);
+  const [noteError, setNoteError] = React.useState('');
 
   React.useEffect(() => {
     const existing = userNoteData?.note ?? '';
     setNoteValue(existing);
     setNoteCharCount(existing.length);
-    if (existing) setIsNoteOpen(true);
+    setIsNoteOpen(!!existing);
   }, [userNoteData?.note]);
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -113,13 +114,28 @@ const UserProfile: React.FunctionComponent<{
       try {
         await messageDB.deleteUserNote(props.user.address);
         queryClient.setQueryData(noteKey, null);
+        // Write tombstone so deletion propagates to other devices on next sync
+        if (currentPasskeyInfo?.address) {
+          const config = await messageDB.getUserConfig({ address: currentPasskeyInfo.address });
+          if (config) {
+            config.deletedUserNoteAddresses = [
+              ...(config.deletedUserNoteAddresses ?? []),
+              props.user.address,
+            ];
+            await messageDB.saveUserConfig(config);
+          }
+        }
       } catch (err) {
         logger.error('Failed to delete user note', err);
       }
       return;
     }
     const errors = validateUserNote(noteValue);
-    if (errors.length > 0) return;
+    if (errors.length > 0) {
+      setNoteError(errors[0]);
+      return;
+    }
+    setNoteError('');
     try {
       await messageDB.saveUserNote(props.user.address, noteValue);
       queryClient.setQueryData(noteKey, { targetAddress: props.user.address, note: noteValue.trim(), updatedAt: Date.now() });
@@ -268,7 +284,10 @@ const UserProfile: React.FunctionComponent<{
                 onBlur={handleNoteBlur}
                 autoFocus={!noteValue}
               />
-              {isNoteFocused && (
+              {noteError && (
+                <div className="user-profile-note-error">{noteError}</div>
+              )}
+              {isNoteFocused && !noteError && (
                 <div className="user-profile-note-char-count">
                   {noteCharCount}/{MAX_USER_NOTE_LENGTH}
                 </div>

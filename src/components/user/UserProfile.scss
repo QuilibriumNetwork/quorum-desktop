@@ -199,7 +199,13 @@
 
 .user-profile-note-char-count {
   text-align: right;
-  font-size: 0.75rem;
+  font-size: $text-xs;
   color: var(--color-text-muted);
+  padding: $s-1 0 $s-2;
+}
+
+.user-profile-note-error {
+  font-size: $text-xs;
+  color: var(--color-error);
   padding: $s-1 0 $s-2;
 }

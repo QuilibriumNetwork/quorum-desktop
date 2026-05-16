@@ -302,11 +302,17 @@ export class ConfigService {
     config.deletedDeviceNameAddresses = deviceNamesMerge.deletedDeviceNameAddresses;
 
     // Merge user notes from remote
+    const deletedNoteAddresses = config.deletedUserNoteAddresses ?? [];
+
+    // Always apply remote tombstones — even when there are no notes to merge
+    for (const addr of deletedNoteAddresses) {
+      await this.messageDB.deleteUserNote(addr);
+    }
+
     if (config.userNotes && config.userNotes.length > 0) {
-      const deletedAddresses = config.deletedUserNoteAddresses ?? [];
       const localNotes = await this.messageDB.getAllUserNotes();
       const remoteNotes = config.userNotes.filter(
-        n => !deletedAddresses.includes(n.targetAddress)
+        n => !deletedNoteAddresses.includes(n.targetAddress)
       );
 
       // Last-write-wins per targetAddress
@@ -318,17 +324,12 @@ export class ConfigService {
         }
       }
 
-      // Apply deletions from remote tombstones
-      for (const addr of deletedAddresses) {
-        await this.messageDB.deleteUserNote(addr);
-      }
-
       // Sync merged notes to local DB
       for (const note of noteMap.values()) {
         await this.messageDB.saveUserNote(note.targetAddress, note.note);
       }
 
-      logger.log(`User note sync: ${noteMap.size} notes merged, ${deletedAddresses.length} deleted`);
+      logger.log(`User note sync: ${noteMap.size} notes merged, ${deletedNoteAddresses.length} deleted`);
     }
 
     // Merge bookmarks from remote

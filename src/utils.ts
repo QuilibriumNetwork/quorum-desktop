@@ -16,6 +16,8 @@ export const getDefaultUserConfig = (address: string): UserConfig => {
     spaceIds: [],
     bookmarks: [],
     deletedBookmarkIds: [],
+    userNotes: [],
+    deletedUserNoteAddresses: [],
     timestamp: Date.now(),
     name: undefined,
     profile_image: undefined,

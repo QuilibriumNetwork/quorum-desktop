@@ -99,8 +99,9 @@ export const MAX_USER_NOTE_LENGTH = 256;
 export const validateUserNote = (note: string): string[] => {
   const errors: string[] = [];
 
-  if (!validateNameForXSS(note)) {
-    errors.push(t`Note cannot contain special characters`);
+  // Notes are private and never rendered as HTML — only block actual script injection patterns
+  if (/<script|<\/script|javascript:/i.test(note)) {
+    errors.push(t`Note contains invalid content`);
   }
 
   if (note.length > MAX_USER_NOTE_LENGTH) {
