@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 .dm-profile-sidebar {
   display: flex;
   flex-direction: column;
@@ -8,13 +10,11 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 24px 16px 16px;
-    gap: 8px;
+    padding: $s-6 $s-4 $s-4;
+    gap: $s-2;
   }
 
   .dm-profile-name {
-    font-weight: 600;
-    font-size: 1rem;
     max-width: 100%;
     text-align: center;
   }
@@ -25,15 +25,15 @@
   }
 
   .dm-profile-section {
-    padding: 12px 16px;
+    padding: $s-3 $s-4;
     border-top: 1px solid var(--border-default);
   }
 
   .dm-profile-section-label {
-    font-size: 0.7rem;
+    font-size: $text-xs;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
-    margin-bottom: 6px;
+    margin-bottom: $s-1-5;
   }
 }

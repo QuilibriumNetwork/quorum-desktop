@@ -26,7 +26,7 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
           address={user.address}
           size={96}
         />
-        <span className="dm-profile-name truncate text-main">
+        <span className="dm-profile-name truncate text-main font-semibold text-base">
           {user.displayName ?? user.address}
         </span>
         <div className="dm-profile-address">
