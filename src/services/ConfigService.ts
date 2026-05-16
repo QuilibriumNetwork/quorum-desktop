@@ -301,6 +301,37 @@ export class ConfigService {
     config.deviceNames = deviceNamesMerge.deviceNames;
     config.deletedDeviceNameAddresses = deviceNamesMerge.deletedDeviceNameAddresses;
 
+    // Merge user notes from remote
+    const deletedNoteAddresses = config.deletedUserNoteAddresses ?? [];
+
+    // Always apply remote tombstones — even when there are no notes to merge
+    for (const addr of deletedNoteAddresses) {
+      await this.messageDB.deleteUserNote(addr);
+    }
+
+    if (config.userNotes && config.userNotes.length > 0) {
+      const localNotes = await this.messageDB.getAllUserNotes();
+      const remoteNotes = config.userNotes.filter(
+        n => !deletedNoteAddresses.includes(n.targetAddress)
+      );
+
+      // Last-write-wins per targetAddress
+      const noteMap = new Map<string, { targetAddress: string; note: string; updatedAt: number }>();
+      for (const n of [...localNotes, ...remoteNotes]) {
+        const existing = noteMap.get(n.targetAddress);
+        if (!existing || n.updatedAt > existing.updatedAt) {
+          noteMap.set(n.targetAddress, n);
+        }
+      }
+
+      // Sync merged notes to local DB
+      for (const note of noteMap.values()) {
+        await this.messageDB.saveUserNote(note.targetAddress, note.note);
+      }
+
+      logger.log(`User note sync: ${noteMap.size} notes merged, ${deletedNoteAddresses.length} deleted`);
+    }
+
     // Merge bookmarks from remote
     if (config.bookmarks && config.bookmarks.length > 0) {
       const localBookmarks = await this.messageDB.getBookmarks();
@@ -453,6 +484,10 @@ export class ConfigService {
       config.bookmarks = await this.messageDB.getBookmarks();
       // Note: deletedBookmarkIds will be reset AFTER successful sync
 
+      // Collect user notes before encryption
+      config.userNotes = await this.messageDB.getAllUserNotes();
+      // Note: deletedUserNoteAddresses will be reset AFTER successful sync
+
       const iv = crypto.getRandomValues(new Uint8Array(12));
       const configJson = JSON.stringify(config);
       const ciphertext =
@@ -498,6 +533,7 @@ export class ConfigService {
 
       // Reset tombstones only after successful sync (Phase 7: Critical Fix)
       config.deletedBookmarkIds = [];
+      config.deletedUserNoteAddresses = [];
     }
 
     logger.log('[ConfigService] Saving config to local DB...');

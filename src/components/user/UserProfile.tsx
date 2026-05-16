@@ -4,7 +4,7 @@ import { Button, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
-import { createChannelPermissionChecker } from '@quilibrium/quorum-shared';
+import { createChannelPermissionChecker, logger } from '@quilibrium/quorum-shared';
 import type { Role } from '@quilibrium/quorum-shared';
 import {
   useUserRoleManagement,
@@ -19,6 +19,9 @@ import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
+import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
+import { useQueryClient } from '@tanstack/react-query';
+import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
 
 const UserProfile: React.FunctionComponent<{
   spaceId?: string;
@@ -79,6 +82,67 @@ const UserProfile: React.FunctionComponent<{
 
   // Check if viewing own profile
   const isOwnProfile = currentPasskeyInfo?.address === props.user.address;
+
+  const { data: userNoteData } = useUserNote({ targetAddress: props.user.address });
+  const queryClient = useQueryClient();
+  const [noteValue, setNoteValue] = React.useState('');
+  const [noteCharCount, setNoteCharCount] = React.useState(0);
+  const [isNoteFocused, setIsNoteFocused] = React.useState(false);
+  const [isNoteOpen, setIsNoteOpen] = React.useState(false);
+  const [noteError, setNoteError] = React.useState('');
+
+  React.useEffect(() => {
+    const existing = userNoteData?.note ?? '';
+    setNoteValue(existing);
+    setNoteCharCount(existing.length);
+    setIsNoteOpen(!!existing);
+  }, [userNoteData?.note]);
+
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    if (val.length <= MAX_USER_NOTE_LENGTH) {
+      setNoteValue(val);
+      setNoteCharCount(val.length);
+    }
+  };
+
+  const handleNoteBlur = async () => {
+    setIsNoteFocused(false);
+    const noteKey = buildUserNoteKey({ targetAddress: props.user.address });
+    if (!noteValue.trim()) {
+      setIsNoteOpen(false);
+      try {
+        await messageDB.deleteUserNote(props.user.address);
+        queryClient.setQueryData(noteKey, null);
+        // Write tombstone so deletion propagates to other devices on next sync
+        if (currentPasskeyInfo?.address) {
+          const config = await messageDB.getUserConfig({ address: currentPasskeyInfo.address });
+          if (config) {
+            config.deletedUserNoteAddresses = [
+              ...(config.deletedUserNoteAddresses ?? []),
+              props.user.address,
+            ];
+            await messageDB.saveUserConfig(config);
+          }
+        }
+      } catch (err) {
+        logger.error('Failed to delete user note', err);
+      }
+      return;
+    }
+    const errors = validateUserNote(noteValue);
+    if (errors.length > 0) {
+      setNoteError(errors[0]);
+      return;
+    }
+    setNoteError('');
+    try {
+      await messageDB.saveUserNote(props.user.address, noteValue);
+      queryClient.setQueryData(noteKey, { targetAddress: props.user.address, note: noteValue.trim(), updatedAt: Date.now() });
+    } catch (err) {
+      logger.error('Failed to save user note', err);
+    }
+  };
 
   return (
     <div
@@ -203,6 +267,43 @@ const UserProfile: React.FunctionComponent<{
                 ))}
             </div>
           </div>
+        )}
+        {!isOwnProfile && (
+          isNoteOpen ? (
+            <div className="user-profile-note-section">
+              <div className="user-profile-note-label">
+                <strong>{t`Note`}</strong>{' '}<span className="font-normal">{t`(only visible to you)`}</span>
+              </div>
+              <textarea
+                className="user-profile-note-textarea"
+                placeholder={t`Add a personal note...`}
+                value={noteValue}
+                maxLength={MAX_USER_NOTE_LENGTH}
+                onChange={handleNoteChange}
+                onFocus={() => setIsNoteFocused(true)}
+                onBlur={handleNoteBlur}
+                autoFocus={!noteValue}
+              />
+              {noteError && (
+                <div className="user-profile-note-error">{noteError}</div>
+              )}
+              {isNoteFocused && !noteError && (
+                <div className="user-profile-note-char-count">
+                  {noteCharCount}/{MAX_USER_NOTE_LENGTH}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="user-profile-note-trigger">
+              <span
+                className="user-profile-note-add-link"
+                onClick={() => setIsNoteOpen(true)}
+              >
+                <Icon name="notes" size="sm" />
+                {t`Add a note`}
+              </span>
+            </div>
+          )
         )}
         {/* Action buttons section - shown when viewing others OR when you have moderation permissions */}
         {(!isOwnProfile || canMuteUsers || canKickUsers) && (

@@ -15,7 +15,7 @@ Quick reference for debugging and creating console snippets.
 | Property | Value |
 |----------|-------|
 | **Database Name** | `quorum_db` |
-| **Current Version** | 11 |
+| **Current Version** | 12 |
 | **Schema Location** | `src/db/messages.ts` |
 
 ---
@@ -24,7 +24,7 @@ Quick reference for debugging and creating console snippets.
 
 | Store | Key Path | Indexes |
 |-------|----------|---------|
-| **messages** | `messageId` | `by_conversation_time`, `by_channel_pinned` |
+| **messages** | `messageId` | `by_conversation_time`, `by_channel_pinned`, `by_thread` |
 | **conversations** | `[conversationId]` | `by_type_time` |
 | **encryption_states** | `[conversationId, inboxId]` | — |
 | **conversation_users** | `address` | `by_conversation` |
@@ -39,6 +39,9 @@ Quick reference for debugging and creating console snippets.
 | **muted_users** | `[spaceId, targetUserId]` | `by_space`, `by_mute_id` |
 | **action_queue** | `id` (auto-increment) | `status`, `taskType`, `key`, `nextRetryAt` |
 | **deleted_messages** | `messageId` | `by_space_channel`, `by_deleted_at` |
+| **channel_threads** | `threadId` | `by_channel` |
+| **thread_read_times** | `threadId` | `by_channel` |
+| **user_notes** | `targetAddress` | — |
 
 ---
 
@@ -51,6 +54,7 @@ Quick reference for debugging and creating console snippets.
 **Indexes:**
 - `by_conversation_time` → `[spaceId, channelId, createdDate]`
 - `by_channel_pinned` → `[spaceId, channelId, isPinned, pinnedAt]`
+- `by_thread` → `[spaceId, channelId, threadId, createdDate]`
 
 ```typescript
 {
@@ -379,13 +383,67 @@ type NavItem =
 
 ---
 
+### channel_threads
+
+**Key:** `threadId` (string)
+
+**Indexes:**
+- `by_channel` → `[spaceId, channelId]`
+
+```typescript
+{
+  threadId: string
+  spaceId: string
+  channelId: string
+  // ... thread metadata
+}
+```
+
+---
+
+### thread_read_times
+
+**Key:** `threadId` (string)
+
+**Indexes:**
+- `by_channel` → `[spaceId, channelId]`
+
+```typescript
+{
+  threadId: string
+  spaceId: string
+  channelId: string
+  // ... read timestamp metadata
+}
+```
+
+---
+
+### user_notes
+
+**Key:** `targetAddress` (string)
+
+Private annotations one user writes about another. Never synced — local only.
+
+```typescript
+{
+  targetAddress: string   // address of the user being annotated
+  note: string            // max 256 chars, XSS-sanitized
+  updatedAt: number       // Unix timestamp ms
+}
+```
+
+**MessageDB methods:** `getUserNote(targetAddress)`, `saveUserNote(targetAddress, note)`, `deleteUserNote(targetAddress)`
+
+---
+
 ## Console Snippets
 
 ### Open Database
 
 ```javascript
 const db = await new Promise((resolve, reject) => {
-  const req = indexedDB.open('quorum_db', 7);
+  const req = indexedDB.open('quorum_db', 12);
   req.onsuccess = () => resolve(req.result);
   req.onerror = () => reject(req.error);
 });
@@ -509,7 +567,12 @@ for (const s of stores) console.log(s, await countStore(s));
 | 5 | Added: muted_users store |
 | 6 | Added: action_queue store |
 | 7 | Added: deleted_messages store |
+| 8 | Schema-only bump: added `spaceTag` field support to space_members (no store changes — IndexedDB is schemaless for object values) |
+| 9 | Added: `by_thread` index on messages (`[spaceId, channelId, threadId, createdDate]`) |
+| 10 | Added: channel_threads store |
+| 11 | Added: thread_read_times store |
+| 12 | Added: user_notes store (private per-user annotations, local-only) |
 
 ---
 
-*Last updated: 2025-12-23*
+*Last updated: 2026-05-16*

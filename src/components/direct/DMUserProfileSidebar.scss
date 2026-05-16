@@ -1,0 +1,46 @@
+@use '@/styles/variables' as *;
+
+.dm-profile-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+
+  .dm-profile-identity {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: $s-6 $s-4 $s-4;
+    gap: $s-2;
+  }
+
+  .dm-profile-name {
+    max-width: 100%;
+    text-align: center;
+  }
+
+  .dm-profile-address {
+    display: flex;
+    justify-content: center;
+  }
+
+  .dm-profile-section {
+    padding: $s-3 $s-4;
+    border-top: 1px solid var(--border-default);
+
+    // Override inner padding from UserProfile note styles — section already provides it
+    .user-profile-note-section,
+    .user-profile-note-trigger {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  .dm-profile-section-label {
+    font-size: $text-xs;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: $s-1-5;
+  }
+}

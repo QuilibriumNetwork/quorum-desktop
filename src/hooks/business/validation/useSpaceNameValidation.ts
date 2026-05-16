@@ -93,3 +93,20 @@ export const validateUserBio = (bio: string): string[] => {
 
   return errors;
 };
+
+export const MAX_USER_NOTE_LENGTH = 256;
+
+export const validateUserNote = (note: string): string[] => {
+  const errors: string[] = [];
+
+  // Notes are private and never rendered as HTML — only block actual script injection patterns
+  if (/<script|<\/script|javascript:/i.test(note)) {
+    errors.push(t`Note contains invalid content`);
+  }
+
+  if (note.length > MAX_USER_NOTE_LENGTH) {
+    errors.push(t`Note must be ${MAX_USER_NOTE_LENGTH} characters or less`);
+  }
+
+  return errors;
+};

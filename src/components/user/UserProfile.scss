@@ -146,3 +146,66 @@
 .dark .user-profile-role-tag {
   background: rgb(var(--success) / 0.7);
 }
+
+.user-profile-note-section {
+  padding: $s-2 $s-2 0;
+}
+
+.user-profile-note-label {
+  font-size: $text-sm;
+  color: var(--color-text-subtle);
+  padding-bottom: $s-1;
+}
+
+.user-profile-note-trigger {
+  padding: $s-1 $s-2 $s-2;
+}
+
+.user-profile-note-add-link {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-1;
+  font-size: $text-sm;
+  color: var(--color-text-muted);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-text-main);
+  }
+}
+
+.user-profile-note-textarea {
+  width: 100%;
+  min-height: $s-16;
+  padding: $s-2;
+  background: transparent;
+  border: 1px solid var(--color-border-default);
+  border-radius: $rounded-md;
+  color: var(--color-text-main);
+  font-size: $text-sm;
+  line-height: $text-sm-lh;
+  resize: none;
+  box-sizing: border-box;
+
+  &::placeholder {
+    color: var(--color-text-muted);
+  }
+
+  &:focus {
+    outline: none;
+    border-color: var(--color-field-border-focus);
+  }
+}
+
+.user-profile-note-char-count {
+  text-align: right;
+  font-size: $text-xs;
+  color: var(--color-text-muted);
+  padding: $s-1 0 $s-2;
+}
+
+.user-profile-note-error {
+  font-size: $text-xs;
+  color: var(--color-error);
+  padding: $s-1 0 $s-2;
+}

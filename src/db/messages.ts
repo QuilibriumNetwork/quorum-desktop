@@ -76,6 +76,8 @@ export type UserConfig = {
   };
   bookmarks?: Bookmark[];
   deletedBookmarkIds?: string[];
+  userNotes?: UserNote[];
+  deletedUserNoteAddresses?: string[];
   // Channel mute settings: maps spaceId to array of muted channelIds
   mutedChannels?: {
     [spaceId: string]: string[];
@@ -102,6 +104,12 @@ export type UserConfig = {
   // Tombstones for removed devices so names don't resurrect on sync
   deletedDeviceNameAddresses?: string[];
 };
+
+export interface UserNote {
+  targetAddress: string;
+  note: string;
+  updatedAt: number;
+}
 
 export interface SearchableMessage {
   id: string;
@@ -150,7 +158,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 11;
+  private readonly DB_VERSION = 12;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -300,6 +308,12 @@ export class MessageDB {
             keyPath: 'threadId',
           });
           threadReadTimesStore.createIndex('by_channel', ['spaceId', 'channelId']);
+        }
+
+        if (event.oldVersion < 12) {
+          db.createObjectStore('user_notes', {
+            keyPath: 'targetAddress',
+          });
         }
       };
     });
@@ -2598,6 +2612,63 @@ export class MessageDB {
       request.onsuccess = () => {
         resolve(request.result as MutedUserRecord[]);
       };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getAllUserNotes(): Promise<UserNote[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('user_notes', 'readonly');
+      const store = transaction.objectStore('user_notes');
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result as UserNote[]);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getUserNote(targetAddress: string): Promise<UserNote | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('user_notes', 'readonly');
+      const store = transaction.objectStore('user_notes');
+      const request = store.get(targetAddress);
+
+      request.onsuccess = () => resolve(request.result as UserNote | undefined);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async saveUserNote(targetAddress: string, note: string): Promise<void> {
+    await this.init();
+    const trimmed = note.trim();
+    if (!trimmed) {
+      return this.deleteUserNote(targetAddress);
+    }
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('user_notes', 'readwrite');
+      const store = transaction.objectStore('user_notes');
+      const record: UserNote = {
+        targetAddress,
+        note: trimmed,
+        updatedAt: Date.now(),
+      };
+      const request = store.put(record);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteUserNote(targetAddress: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('user_notes', 'readwrite');
+      const store = transaction.objectStore('user_notes');
+      const request = store.delete(targetAddress);
+
+      request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
     });
   }
