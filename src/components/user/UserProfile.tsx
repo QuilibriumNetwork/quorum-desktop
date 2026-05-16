@@ -116,7 +116,7 @@ const UserProfile: React.FunctionComponent<{
       try {
         await messageDB.deleteUserNote(props.user.address);
         logger.debug('[UserNote] deleteUserNote done — setting cache to undefined');
-        queryClient.setQueryData(noteKey, undefined);
+        queryClient.setQueryData(noteKey, null);
         logger.debug('[UserNote] cache after delete:', queryClient.getQueryData(noteKey));
       } catch (err) {
         logger.error('[UserNote] Failed to delete user note', err);
