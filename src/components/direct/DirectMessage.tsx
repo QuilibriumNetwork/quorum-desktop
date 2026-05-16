@@ -43,6 +43,8 @@ import {
   Tooltip,
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
+import { MobileDrawer } from '../ui';
+import { DMUserProfileSidebar } from './DMUserProfileSidebar';
 import { useMobile } from '../context/MobileProvider';
 import type { EmojiData } from '../emoji-picker/types';
 
@@ -60,6 +62,7 @@ const DirectMessage: React.FC<{}> = () => {
 
   // Emoji panel state (desktop floating panel)
   const [showEmojiPanel, setShowEmojiPanel] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   // Unified panel state for search - ensures only search panel can be open
   type ActivePanel = 'search' | 'bookmarks' | null;
@@ -585,6 +588,7 @@ const DirectMessage: React.FC<{}> = () => {
   useEffect(() => {
     setScrollToMessageId(undefined);
     setNewMessagesSeparator(null);
+    setShowProfile(false);
     // Reset timestamp refs to ensure read time is saved for each conversation
     latestTimestampRef.current = 0;
     lastSavedTimestampRef.current = 0;
@@ -765,6 +769,21 @@ const DirectMessage: React.FC<{}> = () => {
 
             {/* Controls - right side on both mobile and desktop */}
             <Flex className="items-center gap-3 sm:gap-2">
+              <Tooltip
+                id="dm-profile-toggle"
+                content={t`User Profile`}
+                place="bottom"
+                showOnTouch={false}
+              >
+                <Button
+                  type="unstyled"
+                  onClick={() => setShowProfile(!showProfile)}
+                  className={`header-icon-button ${showProfile ? 'active' : ''}`}
+                  iconName="user"
+                  iconSize={headerIconSize}
+                  iconOnly
+                />
+              </Tooltip>
               <Tooltip
                 id="dm-settings-toggle"
                 content={t`Conversation settings`}
@@ -993,8 +1012,27 @@ const DirectMessage: React.FC<{}> = () => {
             </div>
           </div>
 
+          {/* Desktop profile sidebar — hidden on mobile/tablet, shown when toggled */}
+          {showProfile && !isMobile && !isTablet && (
+            <div className="hidden lg:flex flex-col flex-shrink-0 w-[var(--sidebar-right-width)] bg-chat border-l border-default">
+              <DMUserProfileSidebar user={otherUser} />
+            </div>
+          )}
         </div>
       </Flex>
+
+      {/* Mobile/tablet profile drawer */}
+      {(isMobile || isTablet) && (
+        <MobileDrawer
+          isOpen={showProfile}
+          onClose={() => setShowProfile(false)}
+          showCloseButton={false}
+          enableSwipeToClose={true}
+          ariaLabel={t`User profile`}
+        >
+          <DMUserProfileSidebar user={otherUser} />
+        </MobileDrawer>
+      )}
     </div>
   );
 };
