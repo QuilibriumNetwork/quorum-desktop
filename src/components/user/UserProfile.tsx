@@ -87,10 +87,13 @@ const UserProfile: React.FunctionComponent<{
   const [noteValue, setNoteValue] = React.useState('');
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
+  const [isNoteOpen, setIsNoteOpen] = React.useState(false);
 
   React.useEffect(() => {
-    setNoteValue(userNoteData?.note ?? '');
-    setNoteCharCount((userNoteData?.note ?? '').length);
+    const existing = userNoteData?.note ?? '';
+    setNoteValue(existing);
+    setNoteCharCount(existing.length);
+    if (existing) setIsNoteOpen(true);
   }, [userNoteData?.note]);
 
   const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -103,6 +106,10 @@ const UserProfile: React.FunctionComponent<{
 
   const handleNoteBlur = async () => {
     setIsNoteFocused(false);
+    if (!noteValue.trim()) {
+      setIsNoteOpen(false);
+      return;
+    }
     const errors = validateUserNote(noteValue);
     if (errors.length > 0) return;
     try {
@@ -238,25 +245,37 @@ const UserProfile: React.FunctionComponent<{
           </div>
         )}
         {!isOwnProfile && (
-          <div className="user-profile-note-section">
-            <div className="user-profile-content-section-header">
-              <span className="text-sm">{t`NOTE — only visible to you`}</span>
-            </div>
-            <textarea
-              className="user-profile-note-textarea"
-              placeholder={t`Click to add a note`}
-              value={noteValue}
-              maxLength={MAX_USER_NOTE_LENGTH}
-              onChange={handleNoteChange}
-              onFocus={() => setIsNoteFocused(true)}
-              onBlur={handleNoteBlur}
-            />
-            {isNoteFocused && (
-              <div className="user-profile-note-char-count">
-                {noteCharCount}/{MAX_USER_NOTE_LENGTH}
+          isNoteOpen ? (
+            <div className="user-profile-note-section">
+              <div className="user-profile-note-label">
+                {t`Note — only visible to you`}
               </div>
-            )}
-          </div>
+              <textarea
+                className="user-profile-note-textarea"
+                placeholder={t`Add a personal note...`}
+                value={noteValue}
+                maxLength={MAX_USER_NOTE_LENGTH}
+                onChange={handleNoteChange}
+                onFocus={() => setIsNoteFocused(true)}
+                onBlur={handleNoteBlur}
+                autoFocus={!noteValue}
+              />
+              {isNoteFocused && (
+                <div className="user-profile-note-char-count">
+                  {noteCharCount}/{MAX_USER_NOTE_LENGTH}
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="user-profile-note-trigger">
+              <span
+                className="user-profile-note-add-link"
+                onClick={() => setIsNoteOpen(true)}
+              >
+                {t`+ Add a note`}
+              </span>
+            </div>
+          )
         )}
         {/* Action buttons section - shown when viewing others OR when you have moderation permissions */}
         {(!isOwnProfile || canMuteUsers || canKickUsers) && (
