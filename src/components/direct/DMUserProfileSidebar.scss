@@ -27,6 +27,18 @@
   .dm-profile-section {
     padding: $s-3 $s-4;
     border-top: 1px solid var(--border-default);
+
+    // Override inner padding from UserProfile note styles — section already provides it
+    .user-profile-note-section,
+    .user-profile-note-trigger {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    // Sidebar uses text-sm for the add-note link (global style uses text-xs)
+    .user-profile-note-add-link {
+      font-size: $text-sm;
+    }
   }
 
   .dm-profile-section-label {
