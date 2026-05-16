@@ -1,9 +1,14 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { useQueryClient } from '@tanstack/react-query';
+import { logger } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { ClickToCopyContent } from '../ui';
 import { getAddressSuffix } from '../../utils';
+import { useMessageDB } from '../context/useMessageDB';
+import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
+import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
 import './DMUserProfileSidebar.scss';
 
 interface DMUserProfileSidebarProps {
@@ -16,6 +21,53 @@ interface DMUserProfileSidebarProps {
 }
 
 export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user }) => {
+  const { messageDB } = useMessageDB();
+  const queryClient = useQueryClient();
+  const { data: userNoteData } = useUserNote({ targetAddress: user.address });
+
+  const [noteValue, setNoteValue] = React.useState('');
+  const [noteCharCount, setNoteCharCount] = React.useState(0);
+  const [isNoteFocused, setIsNoteFocused] = React.useState(false);
+  const [isNoteOpen, setIsNoteOpen] = React.useState(false);
+
+  React.useEffect(() => {
+    const existing = userNoteData?.note ?? '';
+    setNoteValue(existing);
+    setNoteCharCount(existing.length);
+    if (existing) setIsNoteOpen(true);
+  }, [userNoteData?.note]);
+
+  const handleNoteChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const val = e.target.value;
+    if (val.length <= MAX_USER_NOTE_LENGTH) {
+      setNoteValue(val);
+      setNoteCharCount(val.length);
+    }
+  };
+
+  const handleNoteBlur = async () => {
+    setIsNoteFocused(false);
+    const noteKey = buildUserNoteKey({ targetAddress: user.address });
+    if (!noteValue.trim()) {
+      setIsNoteOpen(false);
+      try {
+        await messageDB.deleteUserNote(user.address);
+        queryClient.setQueryData(noteKey, null);
+      } catch (err) {
+        logger.error('Failed to delete user note', err);
+      }
+      return;
+    }
+    const errors = validateUserNote(noteValue);
+    if (errors.length > 0) return;
+    try {
+      await messageDB.saveUserNote(user.address, noteValue);
+      queryClient.setQueryData(noteKey, { targetAddress: user.address, note: noteValue.trim(), updatedAt: Date.now() });
+    } catch (err) {
+      logger.error('Failed to save user note', err);
+    }
+  };
+
   return (
     <div className="dm-profile-sidebar">
       {/* Identity block */}
@@ -57,12 +109,39 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
         )}
       </div>
 
-      {/* Notes placeholder — replaced when user-notes feature lands */}
+      {/* Notes section */}
       <div className="dm-profile-section">
-        <div className="dm-profile-section-label text-subtle">
-          <Trans>Notes</Trans>
-        </div>
-        <p className="text-sm text-subtle">{t`Coming soon`}</p>
+        {isNoteOpen ? (
+          <div className="user-profile-note-section">
+            <div className="user-profile-note-label">
+              {t`Note — only visible to you`}
+            </div>
+            <textarea
+              className="user-profile-note-textarea"
+              placeholder={t`Add a personal note...`}
+              value={noteValue}
+              maxLength={MAX_USER_NOTE_LENGTH}
+              onChange={handleNoteChange}
+              onFocus={() => setIsNoteFocused(true)}
+              onBlur={handleNoteBlur}
+              autoFocus={!noteValue}
+            />
+            {isNoteFocused && (
+              <div className="user-profile-note-char-count">
+                {noteCharCount}/{MAX_USER_NOTE_LENGTH}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="user-profile-note-trigger">
+            <span
+              className="user-profile-note-add-link"
+              onClick={() => setIsNoteOpen(true)}
+            >
+              {t`+ Add a note`}
+            </span>
+          </div>
+        )}
       </div>
     </div>
   );
