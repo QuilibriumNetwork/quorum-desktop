@@ -114,7 +114,7 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
         {isNoteOpen ? (
           <div className="user-profile-note-section">
             <div className="user-profile-note-label">
-              {t`Note — only visible to you`}
+              <strong>{t`Note`}</strong>{' '}<span className="font-normal">{t`(only visible to you)`}</span>
             </div>
             <textarea
               className="user-profile-note-textarea"

@@ -256,7 +256,7 @@ const UserProfile: React.FunctionComponent<{
           isNoteOpen ? (
             <div className="user-profile-note-section">
               <div className="user-profile-note-label">
-                {t`Note — only visible to you`}
+                <strong>{t`Note`}</strong>{' '}<span className="font-normal">{t`(only visible to you)`}</span>
               </div>
               <textarea
                 className="user-profile-note-textarea"
