@@ -1014,7 +1014,7 @@ const DirectMessage: React.FC<{}> = () => {
 
           {/* Desktop profile sidebar — hidden on mobile/tablet, shown when toggled */}
           {showProfile && !isMobile && !isTablet && (
-            <div className="flex flex-col flex-shrink-0 w-[var(--sidebar-right-width)] bg-chat border-l border-default">
+            <div className="hidden lg:flex flex-col flex-shrink-0 w-[var(--sidebar-right-width)] bg-chat border-l border-default">
               <DMUserProfileSidebar user={otherUser} />
             </div>
           )}
