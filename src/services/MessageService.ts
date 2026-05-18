@@ -345,11 +345,8 @@ export class MessageService {
     // so we don't even hand off when the user has the relevant setting OFF.
     const isTyping = raw.type === 'typing-start' || raw.type === 'typing-stop';
     if (isTyping) {
+      logger.log('[Typing] MessageService intercepted typing message', { raw, hasService: !!this.typingService });
       if (this.typingService) {
-        // Hand off to TypingService. Its isEnabledForScope gate (set in MessageDB.tsx)
-        // will decide whether to emit the event based on the user's current settings.
-        // We avoid duplicating the config-read here because MessageService doesn't
-        // have direct access to the live UserConfig — that's the TypingService's job.
         this.typingService.onTypingReceived(raw as TypingMessage);
       }
       return true; // Signal: intercept this message — never reaches saveMessage

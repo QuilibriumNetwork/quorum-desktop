@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { logger } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import type { TypingScope } from '@/types/typing';
 
@@ -27,7 +28,10 @@ export function useTypingNotifier(
   const activeScopeRef = useRef<TypingScope | null>(null);
 
   const notifyKeystroke = useCallback(() => {
-    if (!enabled || !scope || !typingService) return;
+    if (!enabled || !scope || !typingService) {
+      logger.log('[Typing] notifyKeystroke skipped', { enabled, hasScope: !!scope, hasService: !!typingService });
+      return;
+    }
     typingService.notifyTyping(scope);
     activeScopeRef.current = scope;
   }, [enabled, scope, typingService]);

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { logger } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import type { TypingScope } from '@/types/typing';
 
@@ -27,13 +28,17 @@ export function useTypingIndicator(scope: TypingScope | null): string[] {
 
   useEffect(() => {
     if (!scope || !typingService) {
+      logger.log('[Typing] useTypingIndicator skipped subscribe', { hasScope: !!scope, hasService: !!typingService });
       setTypists([]);
       return;
     }
+    logger.log('[Typing] useTypingIndicator subscribing', { scopeKey });
     const unsubscribe = typingService.subscribe(scope, (next) => {
+      logger.log('[Typing] useTypingIndicator received typists update', { scopeKey, next });
       setTypists(next);
     });
     return () => {
+      logger.log('[Typing] useTypingIndicator unsubscribing', { scopeKey });
       unsubscribe();
       setTypists([]);
     };
