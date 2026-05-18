@@ -991,9 +991,7 @@ const DirectMessage: React.FC<{}> = () => {
               <TypingIndicator
                 scope={typingScope}
                 resolveName={(addr) =>
-                  addr === otherUser.address
-                    ? otherUser.displayName ?? t`Unknown User`
-                    : undefined
+                  addr === otherUser.address ? otherUser.displayName : undefined
                 }
               />
               <MessageComposer
