@@ -92,6 +92,8 @@ export type UserConfig = {
   deliveryReceipts?: boolean;
   // Read receipts: when ON, sends read acks and displays ✓✓ on own messages
   readReceipts?: boolean;
+  typingIndicatorsDM?: boolean;
+  typingIndicatorsSpaces?: boolean;
   // The spaceId of the Space whose tag this user has selected to display globally
   spaceTagId?: string;
   // Snapshot of the last tag data broadcast so startup refresh can detect owner changes

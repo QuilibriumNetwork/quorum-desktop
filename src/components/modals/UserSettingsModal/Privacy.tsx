@@ -29,6 +29,10 @@ interface PrivacyProps {
   setDeliveryReceipts: (value: boolean) => void;
   readReceipts: boolean;
   setReadReceipts: (value: boolean) => void;
+  typingIndicatorsDM: boolean;
+  setTypingIndicatorsDM: (value: boolean) => void;
+  typingIndicatorsSpaces: boolean;
+  setTypingIndicatorsSpaces: (value: boolean) => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -53,6 +57,10 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   setDeliveryReceipts,
   readReceipts,
   setReadReceipts,
+  typingIndicatorsDM,
+  setTypingIndicatorsDM,
+  typingIndicatorsSpaces,
+  setTypingIndicatorsSpaces,
 }) => {
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
@@ -308,6 +316,52 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </div>
           </div>
           )}
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              value={typingIndicatorsDM}
+              onChange={setTypingIndicatorsDM}
+              disabled={!isConfigLoaded}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Typing indicators in DMs`}
+              </div>
+              <Tooltip
+                id="settings-typing-indicators-dm-tooltip"
+                content={t`When on, your DM contacts see when you're typing, and you see when they're typing.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              value={typingIndicatorsSpaces}
+              onChange={setTypingIndicatorsSpaces}
+              disabled={!isConfigLoaded}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Typing indicators in spaces`}
+              </div>
+              <Tooltip
+                id="settings-typing-indicators-spaces-tooltip"
+                content={t`When on, everyone in a space channel sees when you're typing, and you see when they're typing.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />

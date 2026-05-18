@@ -25,6 +25,7 @@ import {
   ActionQueueHandlers,
   ReceiptService,
 } from '../../services';
+import { TypingService } from '@/services/TypingService';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
@@ -246,6 +247,14 @@ type MessageDBContextValue = {
   ) => Promise<void>;
   actionQueueService: ActionQueueService;
   receiptService: ReceiptService | null;
+  typingService: TypingService | null;
+  /**
+   * Imperative update for the typing-indicator privacy flags. Called by
+   * useUserSettings.saveChanges so the gate reflects new state immediately
+   * (no polling). Detects ON→OFF transitions and triggers immediate clearing
+   * of outbound and received typing state.
+   */
+  setTypingConfig: (dm: boolean, spaces: boolean) => void;
 };
 
 type MessageDBContextProps = {
@@ -966,6 +975,41 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     }
   }, [keyset, actionQueueService]);
 
+  // Live ref to the typing-relevant UserConfig flags. Read by TypingService's
+  // isEnabledForScope callback. Updated in two places:
+  //   1. Once on mount, from IndexedDB, so the gate is correct before any
+  //      user interaction.
+  //   2. Imperatively via setTypingConfig() exposed to consumers (useUserSettings
+  //      calls it when the user saves the privacy toggles). This guarantees
+  //      the gate reflects the new state immediately, no polling involved.
+  const typingConfigRef = useRef<{ dm: boolean; spaces: boolean }>({ dm: false, spaces: false });
+  useEffect(() => {
+    if (!selfAddress) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const cfg = await messageDB.getUserConfig({ address: selfAddress });
+        if (cancelled) return;
+        typingConfigRef.current = {
+          dm: !!cfg?.typingIndicatorsDM,
+          spaces: !!cfg?.typingIndicatorsSpaces,
+        };
+      } catch (err) {
+        logger.warn('[Typing] failed to load initial typing config', err);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [selfAddress, messageDB]);
+
+  // Imperative update from useUserSettings when the user saves new toggle state.
+  // Detects ON→OFF transitions and tells TypingService to clear immediately.
+  const setTypingConfig = useCallback((dm: boolean, spaces: boolean) => {
+    const prev = typingConfigRef.current;
+    typingConfigRef.current = { dm, spaces };
+    if (prev.dm && !dm) typingServiceRef.current?.onSettingDisabled('dm');
+    if (prev.spaces && !spaces) typingServiceRef.current?.onSettingDisabled('space');
+  }, []);
+
   // ReceiptService — batched ack buffer with piggyback + standalone flush
   const receiptService = useMemo(() => {
     if (!selfAddress) return null;
@@ -1082,6 +1126,72 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       receiptService?.destroy();
     };
   }, [receiptService, messageService]);
+
+  // TypingService — ephemeral typing-indicator signaling (DMs + spaces)
+  //
+  // Built ONCE per selfAddress. messageService and actionQueueService are
+  // accessed via refs inside the callbacks so that even though they may be
+  // re-memoized many times during a session (large dep lists in their own
+  // useMemos), the TypingService instance stays stable. Destroying and
+  // recreating the service on every messageService rebuild causes existing
+  // hook subscribers to silently end up on a destroyed-then-replaced instance
+  // (subscribe to old, but messages dispatch to new with empty listeners).
+  const messageServiceRef = useRef(messageService);
+  const actionQueueServiceRef = useRef(actionQueueService);
+  useEffect(() => {
+    messageServiceRef.current = messageService;
+  }, [messageService]);
+  useEffect(() => {
+    actionQueueServiceRef.current = actionQueueService;
+  }, [actionQueueService]);
+
+  const typingService = useMemo(() => {
+    if (!selfAddress) return null;
+    return new TypingService({
+      selfAddress,
+      sendDM: async (address, msg) => {
+        const ks = actionQueueServiceRef.current.getUserKeyset();
+        if (!ks) return; // not logged in / not initialized
+        await messageServiceRef.current.sendEphemeralDMControl(address, msg, selfAddress, ks);
+      },
+      sendSpace: async (spaceId, msg) => {
+        await messageServiceRef.current.sendEphemeralSpaceControl(spaceId, msg);
+      },
+      isEnabledForScope: (scope) => {
+        const cfg = typingConfigRef.current;
+        if (scope.kind === 'dm') return cfg.dm;
+        return cfg.spaces;
+      },
+    });
+    // Intentionally only depends on selfAddress — see note above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selfAddress]);
+
+  // Stable ref to the current TypingService so the setTypingConfig callback
+  // (defined above) can reach the instance without re-creating itself.
+  const typingServiceRef = useRef<TypingService | null>(null);
+  useEffect(() => {
+    typingServiceRef.current = typingService;
+  }, [typingService]);
+
+  // Wire TypingService to MessageService. Also re-wires whenever messageService
+  // changes identity, so the latest messageService always knows about the
+  // (stable) typingService. No destroy on cleanup of this effect — the
+  // typingService outlives messageService re-memoizations on purpose.
+  useEffect(() => {
+    if (typingService) {
+      messageService.setTypingService(typingService);
+    }
+  }, [typingService, messageService]);
+
+  // Destroy the typingService only when its memo invalidates (i.e., on
+  // selfAddress change / sign-out / provider unmount), not on every
+  // messageService rebuild.
+  useEffect(() => {
+    return () => {
+      typingService?.destroy();
+    };
+  }, [typingService]);
 
   const createSpace = React.useCallback(
     async (
@@ -1302,6 +1412,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deleteConversation,
         actionQueueService,
         receiptService,
+        typingService,
+        setTypingConfig,
       }}
     >
       <ActionQueueProvider actionQueueService={actionQueueService}>
@@ -1339,6 +1451,8 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   deleteConversation: () => undefined as never,
   actionQueueService: undefined as never,
   receiptService: null,
+  typingService: null,
+  setTypingConfig: () => undefined,
 });
 
 export { MessageDBProvider, MessageDBContext };

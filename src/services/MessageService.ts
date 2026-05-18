@@ -57,6 +57,8 @@ import { showWarning, noteSyncActivity } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
 import type { ReceiptService } from './ReceiptService';
+import { TypingService } from './TypingService';
+import type { TypingMessage } from '@/types/typing';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
 
@@ -151,6 +153,9 @@ export class MessageService {
   // ReceiptService for DM delivery + read receipts (optional, set via setter)
   private receiptService: ReceiptService | null = null;
 
+  // TypingService for ephemeral typing-indicator signaling (optional, set via setter)
+  private typingService: TypingService | null = null;
+
   // Cooldown guard: prevents rapid re-broadcasts when a space owner spam-updates their tag
   private pendingTagRebroadcast = new Set<string>();
 
@@ -189,6 +194,83 @@ export class MessageService {
    */
   setReceiptService(service: ReceiptService): void {
     this.receiptService = service;
+  }
+
+  /**
+   * Set the TypingService for ephemeral typing-indicator signaling.
+   * Call this after MessageService is created to avoid circular dependencies.
+   */
+  setTypingService(service: TypingService): void {
+    this.typingService = service;
+  }
+
+  /**
+   * Send an ephemeral control message to a DM partner.
+   *
+   * Encrypts via Double Ratchet and posts to the partner's inbox using the
+   * same path as delivery/read receipts. Never calls saveMessage — the message
+   * has no local persistence and never enters the sync manifest. Fire-and-forget:
+   * errors are logged but not thrown.
+   *
+   * Used by: TypingService for typing-start/stop signaling.
+   *
+   * Known limitation: requires existing Double Ratchet sessions in
+   * `encryption_states` for the conversation. `encryptAndSendDm` reuses
+   * cached sessions and does NOT create new ones (unlike the legacy DM
+   * send path which can hydrate sessions from registration data on the
+   * fly). Consequence: in a brand-new DM (or one where local session
+   * state is missing), typing signals silently no-op until the user sends
+   * a real message that bootstraps a session. After that one bootstrap,
+   * typing works normally for the rest of the conversation. Acceptable
+   * trade-off — typing is fire-and-forget and shouldn't do expensive
+   * session establishment.
+   *
+   * @param address - DM partner address
+   * @param msg - Control message payload (TypingMessage)
+   * @param selfUserAddress - This client's own address
+   * @param keyset - Device + user keyset for encryption
+   */
+  async sendEphemeralDMControl(
+    address: string,
+    msg: TypingMessage,
+    selfUserAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): Promise<void> {
+    try {
+      // Cast to Record<string, unknown> because TypingMessage's typed shape
+      // doesn't satisfy the generic signature, but the JSON serialisation works fine.
+      await this.encryptAndSendDm(
+        address,
+        msg as unknown as Record<string, unknown>,
+        selfUserAddress,
+        keyset,
+      );
+    } catch (err) {
+      logger.warn('[Typing] sendEphemeralDMControl failed', { err, address: address.slice(0, 16) });
+    }
+  }
+
+  /**
+   * Broadcast an ephemeral control message to a space.
+   *
+   * Encrypts via Triple Ratchet and broadcasts via the space hub. Never
+   * calls saveMessage — the control message has no local persistence and
+   * never enters the sync manifest. Fire-and-forget.
+   *
+   * Used by: TypingService for typing-start/stop signaling in channels and threads.
+   */
+  async sendEphemeralSpaceControl(spaceId: string, msg: TypingMessage): Promise<void> {
+    try {
+      // No options: stripEphemeralFields is a no-op for TypingMessage (no
+      // sendStatus/sendError fields), and saveStateAfterSend is not consulted
+      // by encryptAndSendToSpace. Pass through as-is.
+      await this.encryptAndSendToSpace(spaceId, msg as unknown as Message);
+    } catch (err) {
+      logger.warn('[Typing] sendEphemeralSpaceControl failed', { err, spaceId });
+    }
   }
 
   /**
@@ -266,6 +348,18 @@ export class MessageService {
         }
       }
       return true; // Signal: intercept this message
+    }
+
+    // 1c. Intercept typing-start / typing-stop control messages — never save, never display.
+    // The privacy gate lives inside TypingService.onTypingReceived (it reads the live
+    // userConfig via the service's isEnabledForScope callback). We intercept here so
+    // typing messages never reach saveMessage regardless of the gate's state.
+    const isTyping = raw.type === 'typing-start' || raw.type === 'typing-stop';
+    if (isTyping) {
+      if (this.typingService) {
+        this.typingService.onTypingReceived(raw as TypingMessage);
+      }
+      return true; // Signal: intercept this message — never reaches saveMessage
     }
 
     // 2. Extract piggybacked ackMessageIds, process, then strip
@@ -503,6 +597,120 @@ export class MessageService {
         return messages;
       });
     });
+  }
+
+  /**
+   * Shared helper to encrypt and send DM messages using Double Ratchet.
+   * Used by send-dm, reaction-dm, delete-dm, edit-dm handlers.
+   *
+   * @param address - The DM conversation address
+   * @param messageContent - The message content to encrypt and send (already a plain object)
+   * @param self - Sender's UserRegistration
+   * @param counterparty - Recipient's UserRegistration
+   * @param keyset - Sender's device and user keysets
+   * @param senderDisplayName - Optional sender display name for identity revelation
+   * @param senderUserIcon - Optional sender profile picture URL
+   */
+  async encryptAndSendDm(
+    address: string,
+    messageContent: Record<string, unknown>,
+    selfUserAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+    senderDisplayName?: string,
+    senderUserIcon?: string
+  ): Promise<void> {
+    const conversationId = address + '/' + address;
+
+    // Get encryption states - these contain all the inbox info we need for established sessions
+    const response = await this.messageDB.getEncryptionStates({
+      conversationId,
+    });
+    const sets = response.map((e) => JSON.parse(e.state));
+
+    // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
+    const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
+
+    let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+    // Get target inboxes from existing encryption states (excluding our own device)
+    const targetInboxes = sets
+      .map((s) => s.tag as string)
+      .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
+
+    // Validate we have recipients to send to
+    if (targetInboxes.length === 0) {
+      throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
+    }
+
+    // Encrypt for each inbox using existing encryption states (Double Ratchet)
+    for (const inbox of targetInboxes) {
+      const set = sets.find((s) => s.tag === inbox);
+      if (!set) {
+        continue; // Skip - no encryption state for this inbox
+      }
+
+      if (set.sending_inbox.inbox_public_key === '') {
+        const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+          keyset.deviceKeyset,
+          [set],
+          JSON.stringify(messageContent),
+          minimalSelf,
+          senderDisplayName,
+          senderUserIcon
+        );
+        sessions = [...sessions, ...newSessions];
+      } else {
+        const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+          keyset.deviceKeyset,
+          [set],
+          JSON.stringify(messageContent),
+          minimalSelf,
+          senderDisplayName,
+          senderUserIcon
+        );
+        sessions = [...sessions, ...newSessions];
+      }
+    }
+
+    // Save encryption states and collect messages to send
+    const outboundMessages: string[] = [];
+
+    for (const session of sessions) {
+      if (!session.receiving_inbox) {
+        continue;
+      }
+
+      const newEncryptionState = {
+        state: JSON.stringify({
+          ratchet_state: session.ratchet_state,
+          receiving_inbox: session.receiving_inbox,
+          tag: session.tag,
+          sending_inbox: session.sending_inbox,
+        } as secureChannel.DoubleRatchetStateAndInboxKeys),
+        timestamp: Date.now(),
+        inboxId: session.receiving_inbox.inbox_address,
+        conversationId: address + '/' + address,
+        sentAccept: session.sent_accept,
+      };
+      await this.messageDB.saveEncryptionState(newEncryptionState, true);
+
+      // Collect messages to send: listen subscription + direct message
+      outboundMessages.push(
+        JSON.stringify({
+          type: 'listen',
+          inbox_addresses: [session.receiving_inbox.inbox_address],
+        })
+      );
+      outboundMessages.push(
+        JSON.stringify({ type: 'direct', ...session.sealed_message })
+      );
+    }
+
+    // Send all messages via WebSocket
+    await this.sendDirectMessages(outboundMessages);
   }
 
   /**
@@ -2704,6 +2912,21 @@ export class MessageService {
 
         const envelope = JSON.parse(result);
         if (envelope.type === 'message') {
+          // Intercept typing-start / typing-stop control messages BEFORE attempting
+          // TripleRatchetDecrypt. Typing messages are sealed via the hub envelope only
+          // (no Triple Ratchet wrap), so attempting TR-decrypt would fail. They also
+          // don't match the isPlaintextMessage heuristic (no messageId / content).
+          const innerMsg = envelope.message;
+          const isTypingMessage = typeof innerMsg === 'object' &&
+            innerMsg !== null &&
+            (innerMsg.type === 'typing-start' || innerMsg.type === 'typing-stop');
+          if (isTypingMessage) {
+            if (this.typingService) {
+              this.typingService.onTypingReceived(innerMsg as TypingMessage);
+            }
+            return;
+          }
+
           // Check if message is already plaintext (envelope-only encryption, no TR)
           // Plaintext messages have messageId, channelId, and content fields directly
           const isPlaintextMessage = typeof envelope.message === 'object' &&

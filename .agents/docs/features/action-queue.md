@@ -131,6 +131,21 @@ See [010-dm-registration-inbox-mismatch-fix.md](../../reports/action-queue/010-d
 
 2. **New DM sessions require registration data**: Creating a new Double Ratchet session requires the counterparty's device registration (public keys, inbox addresses). The Action Queue deliberately doesn't store this data for security reasons. New conversations must be started online.
 
+### Actions That Deliberately Bypass The Queue (Ephemeral Signals)
+
+Some outbound messages are sent directly through the transport without ever touching the Action Queue, even though they reuse the same encryption paths (`encryptAndSendDm`, `encryptAndSendToSpace`). These are **ephemeral control signals** with fundamentally different semantics from the queue's persisted-and-retried model:
+
+| Signal | Why it bypasses the queue |
+|---|---|
+| `typing-start` / `typing-stop` (see [typing-indicators.md](messages/typing-indicators.md)) | High frequency (one per 5 seconds per active typist), fire-and-forget (no retry value — by the time a retry could fire, the indicator's TTL has already expired), no persistence required (typing state lives in memory only). Queueing would write a row to IndexedDB per keystroke session and force retries that produce stale indicators. |
+
+The pattern for ephemeral signals: a dedicated method on `MessageService` (e.g., `sendEphemeralDMControl`, `sendEphemeralSpaceControl`) calls the same encryption helpers as queued actions, but invokes them synchronously and swallows any failure with a `logger.warn`. The receive side intercepts the control message in `MessageService.processDeliveryReceiptData` (or the hub envelope intercept, for spaces) before `saveMessage` runs, so the message never enters IndexedDB or the sync manifest.
+
+When adding a new outbound action, decide which model applies before choosing a path:
+
+- **Durable, must succeed eventually** (a normal message, a moderation action) → Action Queue
+- **Fire-and-forget, must be timely or pointless** (typing indicator, presence signal, future ephemeral signals) → direct transport via the encrypted send helpers, intercepted on receive before persistence
+
 ## Architecture
 
 ```

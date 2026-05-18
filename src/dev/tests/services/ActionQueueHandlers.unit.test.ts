@@ -121,6 +121,7 @@ describe('ActionQueueHandlers - Unit Tests', () => {
       messageService: {
         submitChannelMessage: vi.fn().mockResolvedValue(undefined),
         sendDirectMessages: vi.fn().mockResolvedValue(undefined),
+        encryptAndSendDm: vi.fn().mockResolvedValue(undefined),
         saveMessage: vi.fn().mockResolvedValue(undefined),
         updateMessageStatus: vi.fn(),
         getEncryptAndSendToSpace: vi.fn().mockReturnValue(
@@ -792,7 +793,7 @@ describe('ActionQueueHandlers - Unit Tests', () => {
 
       await handler.execute(context);
 
-      expect(mockDeps.messageService.sendDirectMessages).toHaveBeenCalled();
+      expect(mockDeps.messageService.encryptAndSendDm).toHaveBeenCalled();
     });
 
     it('should skip when messageIds is empty', async () => {
@@ -805,7 +806,7 @@ describe('ActionQueueHandlers - Unit Tests', () => {
 
       await handler.execute(context);
 
-      expect(mockDeps.messageService.sendDirectMessages).not.toHaveBeenCalled();
+      expect(mockDeps.messageService.encryptAndSendDm).not.toHaveBeenCalled();
     });
 
     it('should classify 400/403 as permanent errors', () => {
@@ -844,7 +845,7 @@ describe('ActionQueueHandlers - Unit Tests', () => {
 
       await handler.execute(context);
 
-      expect(mockDeps.messageService.sendDirectMessages).toHaveBeenCalled();
+      expect(mockDeps.messageService.encryptAndSendDm).toHaveBeenCalled();
     });
 
     it('should classify 400/403 as permanent errors', () => {

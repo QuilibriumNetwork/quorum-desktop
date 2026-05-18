@@ -15,6 +15,8 @@ import { toggleBold, toggleItalic, toggleStrikethrough, wrapCode } from '@quilib
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
+import { useTypingNotifier } from '../../hooks/business/messages/useTypingNotifier';
+import type { TypingScope } from '@/types/typing';
 
 interface User {
   address: string;
@@ -82,6 +84,12 @@ interface MessageComposerProps {
   roles?: Role[];
   groups?: Group[]; // Changed from channels to groups for grouped channel mentions
   canUseEveryone?: boolean;
+
+  // Typing indicators
+  /** Scope for typing-indicator broadcasts. Null disables typing notifications. */
+  typingScope?: TypingScope | null;
+  /** Permission gate. When false, typing notifications are suppressed (e.g., read-only channels). */
+  canSendMessage?: boolean;
 }
 
 export interface MessageComposerRef {
@@ -124,6 +132,8 @@ export const MessageComposer = forwardRef<
       roles = [],
       groups = [],
       canUseEveryone = false,
+      typingScope = null,
+      canSendMessage = true,
     },
     ref
   ) => {
@@ -136,6 +146,11 @@ export const MessageComposer = forwardRef<
     const [isMultiline, setIsMultiline] = useState(false);
     const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
     const { isDesktop } = useResponsiveLayout();
+
+    const { notifyKeystroke, notifyMessageSent } = useTypingNotifier(
+      typingScope,
+      canSendMessage,
+    );
 
     // Mention pill editor hook (for contentEditable mode)
     const pillEditor = useMentionPillEditor({
@@ -249,6 +264,12 @@ export const MessageComposer = forwardRef<
     // Track cursor position
     const handleTextareaChange = useCallback(
       (newValue: string) => {
+        // Only notify typing when the text actually changed and is non-empty.
+        // Same guard as the contentEditable path — prevents spurious broadcasts
+        // on focus or programmatic value resets.
+        if (newValue && newValue !== value) {
+          notifyKeystroke();
+        }
         onChange(newValue);
         setTimeout(() => {
           setCursorPosition(textareaRef.current?.selectionStart || 0);
@@ -257,18 +278,31 @@ export const MessageComposer = forwardRef<
           setCaretCoords(coords);
         }, 0);
       },
-      [onChange]
+      [onChange, notifyKeystroke, value]
     );
+
+    // Wrap submit to broadcast typing-stop before sending
+    const handleSubmit = useCallback(() => {
+      notifyMessageSent();
+      onSubmitMessage();
+    }, [notifyMessageSent, onSubmitMessage]);
 
     // Handle input changes for contentEditable
     const handleEditorInput = useCallback(() => {
       const newText = extractStorageText();
+      // Only notify typing when the text actually changed and is non-empty.
+      // The contentEditable's `input` event can fire on focus / cursor moves
+      // without any real content change, which would broadcast spurious
+      // typing-start signals.
+      if (newText && newText !== value) {
+        notifyKeystroke();
+      }
       onChange(newText);
       setCursorPosition(getCursorPosition());
       // Capture caret coordinates for dropdown positioning
       const coords = getCaretCoordinates(editorRef.current, true);
       setCaretCoords(coords);
-    }, [extractStorageText, onChange, getCursorPosition]);
+    }, [extractStorageText, onChange, getCursorPosition, notifyKeystroke, value]);
 
     // Handle copy/paste for contentEditable
     const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -843,7 +877,7 @@ export const MessageComposer = forwardRef<
 
           <Button
             type="unstyled"
-            onClick={messageValidation?.isOverLimit || isProcessingImage ? undefined : onSubmitMessage}
+            onClick={messageValidation?.isOverLimit || isProcessingImage ? undefined : handleSubmit}
             className={`message-composer-send-btn ${messageValidation?.isOverLimit || isProcessingImage ? 'disabled' : ''}`}
           >
             <svg width="18" height="14" viewBox="0 0 100 80" fill="none">

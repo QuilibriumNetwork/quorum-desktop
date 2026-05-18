@@ -28,6 +28,10 @@ export interface UseUserSettingsReturn {
   setDeliveryReceipts: (value: boolean) => void;
   readReceipts: boolean;
   setReadReceipts: (value: boolean) => void;
+  typingIndicatorsDM: boolean;
+  setTypingIndicatorsDM: (value: boolean) => void;
+  typingIndicatorsSpaces: boolean;
+  setTypingIndicatorsSpaces: (value: boolean) => void;
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
@@ -60,6 +64,8 @@ export const useUserSettings = (
   const [nonRepudiable, setNonRepudiable] = useState(true);
   const [deliveryReceipts, setDeliveryReceipts] = useState(false);
   const [readReceipts, setReadReceipts] = useState(false);
+  const [typingIndicatorsDM, setTypingIndicatorsDM] = useState(false);
+  const [typingIndicatorsSpaces, setTypingIndicatorsSpaces] = useState(false);
   const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
@@ -68,7 +74,7 @@ export const useUserSettings = (
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
-  const { messageDB, actionQueueService, getConfig, updateUserProfile } = useMessageDB();
+  const { messageDB, actionQueueService, getConfig, updateUserProfile, setTypingConfig } = useMessageDB();
   const uploadRegistration = useUploadRegistration();
 
   const [stagedRegistration, setStagedRegistration] = useState(
@@ -98,6 +104,8 @@ export const useUserSettings = (
         setNonRepudiable(config?.nonRepudiable ?? true);
         setDeliveryReceipts(config?.deliveryReceipts ?? false);
         setReadReceipts(config?.readReceipts ?? false);
+        setTypingIndicatorsDM(config?.typingIndicatorsDM ?? false);
+        setTypingIndicatorsSpaces(config?.typingIndicatorsSpaces ?? false);
         setBio(config?.bio ?? '');
         setSpaceTagId(config?.spaceTagId ?? undefined);
         const loadedNames = config?.deviceNames ?? {};
@@ -295,6 +303,8 @@ export const useUserSettings = (
       nonRepudiable: nonRepudiable,
       deliveryReceipts,
       readReceipts,
+      typingIndicatorsDM,
+      typingIndicatorsSpaces,
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
@@ -315,6 +325,12 @@ export const useUserSettings = (
       { config: newConfig },
       `config:${currentPasskeyInfo.address}` // Dedup key
     );
+
+    // Update TypingService gate immediately so toggle-OFF doesn't wait for
+    // the action queue / IndexedDB round-trip. On ON→OFF transitions this
+    // also clears any active outbound typing sessions and received typists
+    // of the affected kind.
+    setTypingConfig(typingIndicatorsDM, typingIndicatorsSpaces);
 
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {
@@ -355,6 +371,10 @@ export const useUserSettings = (
     setDeliveryReceipts,
     readReceipts,
     setReadReceipts,
+    typingIndicatorsDM,
+    setTypingIndicatorsDM,
+    typingIndicatorsSpaces,
+    setTypingIndicatorsSpaces,
     spaceTagId,
     setSpaceTagId,
     saveChanges,

@@ -4,6 +4,8 @@ import { Button, Icon, Tooltip } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
+import { TypingIndicator } from '../message/TypingIndicator';
+import type { TypingScope } from '@/types/typing';
 import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
 import { useUpdateThreadReadTime } from '../../hooks/business/conversations/useUpdateThreadReadTime';
@@ -190,6 +192,18 @@ export const ThreadPanel: React.FC = () => {
   const isClosed = rootMessage?.threadMeta?.isClosed ?? false;
   const canReopen =
     isThreadAuthor || (rootMessage ? (channelProps?.canDeleteMessages?.(rootMessage) ?? false) : false);
+
+  // Typing indicator scope — 'thread' kind scopes typing to this specific thread,
+  // distinct from the parent channel scope.
+  const typingScope = useMemo<TypingScope | null>(
+    () => {
+      if (!channelProps?.spaceId || !channelProps?.channelId || !threadId) return null;
+      return { kind: 'thread', spaceId: channelProps.spaceId, channelId: channelProps.channelId, threadId };
+    },
+    [channelProps?.spaceId, channelProps?.channelId, threadId],
+  );
+
+  const canSendMessage = !isClosed;
 
   // Thread read time tracking — same 2s interval pattern as Channel.tsx
   const latestThreadTimestampRef = useRef<number>(0);
@@ -399,6 +413,10 @@ export const ThreadPanel: React.FC = () => {
 
       {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
+        <TypingIndicator
+          scope={typingScope}
+          resolveName={(addr) => channelProps.mapSenderToUser(addr).displayName}
+        />
         {isClosed ? (
           <div className="message-composer-container">
             <div className="message-composer-row">
@@ -453,6 +471,8 @@ export const ThreadPanel: React.FC = () => {
             showSigningToggle={channelProps.isRepudiable}
             skipSigning={channelProps.skipSigning}
             onSigningToggle={channelProps.onSigningToggle}
+            typingScope={typingScope}
+            canSendMessage={canSendMessage}
           />
         )}
       </div>
