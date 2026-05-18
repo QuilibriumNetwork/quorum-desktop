@@ -117,7 +117,17 @@ typingIndicatorsSpaces?: boolean; // default false
 
 `useUserSettings` hook exposes both with corresponding setters, persisted via the existing config sync.
 
-The MessageDB context maintains a `userConfigRef` polled every 5 seconds from IndexedDB so TypingService's `isEnabledForScope` callback always sees the current toggle state without React re-renders.
+The MessageDB context maintains a `typingConfigRef` loaded once on mount from IndexedDB. Updates to the privacy toggles are pushed imperatively from `useUserSettings.saveChanges` via `setTypingConfig(dm, spaces)`, so the gate reflects new state immediately with no polling delay. On ON→OFF transitions, the setter also calls `TypingService.onSettingDisabled(kind)` which sends explicit `typing-stop` signals for all active outbound scopes of that kind and clears received typists so the indicator disappears on both ends instantly.
+
+## DM session bootstrap caveat
+
+For DMs, the typing send path uses `MessageService.encryptAndSendDm`, which **requires existing Double Ratchet sessions** in the local `encryption_states` table for the conversation. The method reuses cached sessions and does NOT create new ones on the fly (unlike the legacy DM send path which can hydrate sessions from `self`/`counterparty` registration data).
+
+Consequence: in a brand-new DM, or one where local session state is missing (e.g., right after a fresh login on a device that hasn't yet sent or received any DM with that contact this session), typing signals silently no-op until the user sends a real message that bootstraps a session. After that one real message, typing works normally for the rest of the conversation.
+
+This is an accepted trade-off: typing is fire-and-forget and shouldn't do expensive session establishment for every keystroke. The user-visible impact is that the "Alice is typing" indicator is absent on the first round-trip of a fresh DM, then works for everything after.
+
+Space-channel typing is not affected — it broadcasts via the hub envelope, which doesn't depend on per-conversation ratchet state.
 
 ## Backwards compatibility
 
@@ -130,8 +140,13 @@ New clients receiving from old clients: no compatibility surface -- old clients 
 - Per-conversation typing override (Conversation Settings)
 - Per-space typing override (Space Settings)
 - Mobile (`quorum-mobile`) implementation -- the `TypingIndicator.native.tsx` stub keeps Metro happy; mobile keystroke wiring is a follow-up task
-- Real display-name resolution (currently truncated address)
 - Custom status / presence -- see `.agents/tasks/.todo/2025-01-20-user-status.md`
+
+## Known limitations
+
+- **First-send DM bootstrap (see "DM session bootstrap caveat" above):** typing doesn't show in a fresh DM until one real message has been exchanged.
+- **Display name fallback:** if the resolver can't find a display name, the indicator shows a truncated address. A proper per-context resolver could be added later (see the deferred display-name resolver hook discussion in the implementation plan).
+- **DM ratchet advance per keystroke:** each typing-start/stop in a DM advances the Double Ratchet state. Investigation pending in `.agents/tasks/2026-05-18-typing-dm-ratchet-investigation.md`.
 
 ## Implementation notes worth knowing
 

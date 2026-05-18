@@ -214,6 +214,17 @@ export class MessageService {
    *
    * Used by: TypingService for typing-start/stop signaling.
    *
+   * Known limitation: requires existing Double Ratchet sessions in
+   * `encryption_states` for the conversation. `encryptAndSendDm` reuses
+   * cached sessions and does NOT create new ones (unlike the legacy DM
+   * send path which can hydrate sessions from registration data on the
+   * fly). Consequence: in a brand-new DM (or one where local session
+   * state is missing), typing signals silently no-op until the user sends
+   * a real message that bootstraps a session. After that one bootstrap,
+   * typing works normally for the rest of the conversation. Acceptable
+   * trade-off — typing is fire-and-forget and shouldn't do expensive
+   * session establishment.
+   *
    * @param address - DM partner address
    * @param msg - Control message payload (TypingMessage)
    * @param selfUserAddress - This client's own address
