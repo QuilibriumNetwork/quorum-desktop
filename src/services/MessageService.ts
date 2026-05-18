@@ -253,11 +253,10 @@ export class MessageService {
    */
   async sendEphemeralSpaceControl(spaceId: string, msg: TypingMessage): Promise<void> {
     try {
-      await this.encryptAndSendToSpace(
-        spaceId,
-        msg as unknown as Message,
-        { stripEphemeralFields: true, saveStateAfterSend: false },
-      );
+      // No options: stripEphemeralFields is a no-op for TypingMessage (no
+      // sendStatus/sendError fields), and saveStateAfterSend is not consulted
+      // by encryptAndSendToSpace. Pass through as-is.
+      await this.encryptAndSendToSpace(spaceId, msg as unknown as Message);
     } catch (err) {
       logger.warn('[Typing] sendEphemeralSpaceControl failed', { err, spaceId });
     }
@@ -341,8 +340,9 @@ export class MessageService {
     }
 
     // 1c. Intercept typing-start / typing-stop control messages — never save, never display.
-    // Privacy gate also runs inside TypingService.onTypingReceived; we check here too
-    // so we don't even hand off when the user has the relevant setting OFF.
+    // The privacy gate lives inside TypingService.onTypingReceived (it reads the live
+    // userConfig via the service's isEnabledForScope callback). We intercept here so
+    // typing messages never reach saveMessage regardless of the gate's state.
     const isTyping = raw.type === 'typing-start' || raw.type === 'typing-stop';
     if (isTyping) {
       if (this.typingService) {

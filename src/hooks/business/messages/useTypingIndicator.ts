@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import type { TypingScope } from '@/types/typing';
+import { scopeKey as buildScopeKey, type TypingScope } from '@/types/typing';
 
 /**
  * Hook used by TypingIndicator to subscribe to the list of typists for a given scope.
@@ -16,14 +16,8 @@ export function useTypingIndicator(scope: TypingScope | null): string[] {
   const { typingService } = useMessageDB();
   const [typists, setTypists] = useState<string[]>([]);
 
-  // Build a stable dependency key from the scope. Re-subscribes when this changes.
-  const scopeKey = scope
-    ? scope.kind === 'dm'
-      ? `dm:${scope.address}`
-      : scope.kind === 'space-channel'
-        ? `sc:${scope.spaceId}:${scope.channelId}`
-        : `th:${scope.spaceId}:${scope.channelId}:${scope.threadId}`
-    : null;
+  // Stable string key for the useEffect dep. Re-subscribes when this changes.
+  const stableKey = scope ? buildScopeKey(scope) : null;
 
   useEffect(() => {
     if (!scope || !typingService) {
@@ -38,7 +32,7 @@ export function useTypingIndicator(scope: TypingScope | null): string[] {
       setTypists([]);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scopeKey, typingService]);
+  }, [stableKey, typingService]);
 
   return typists;
 }
