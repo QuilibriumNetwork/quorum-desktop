@@ -255,11 +255,20 @@ describe('TypingService — receive-side state', () => {
     expect(listener).not.toHaveBeenCalled();
   });
 
-  it('supports multiple typists in same scope', () => {
+  it('supports multiple typists in same space-channel scope', () => {
+    // DMs are 1:1 so multiple typists in a single DM scope is impossible.
+    // Multiple typists are only meaningful in a space channel (or thread).
+    const channelScope: TypingScope = { kind: 'space-channel', spaceId: 'sp1', channelId: 'ch1' };
     const listener = vi.fn();
-    service.subscribe(dmScope, listener);
-    service.onTypingReceived({ type: 'typing-start', senderId: 'alice', scope: 'dm', timestamp: 1000 });
-    service.onTypingReceived({ type: 'typing-start', senderId: 'bob', scope: 'dm', timestamp: 1100 });
+    service.subscribe(channelScope, listener);
+    service.onTypingReceived({
+      type: 'typing-start', senderId: 'alice', scope: 'space',
+      spaceId: 'sp1', channelId: 'ch1', timestamp: 1000,
+    });
+    service.onTypingReceived({
+      type: 'typing-start', senderId: 'bob', scope: 'space',
+      spaceId: 'sp1', channelId: 'ch1', timestamp: 1100,
+    });
     expect(listener).toHaveBeenLastCalledWith(expect.arrayContaining(['alice', 'bob']));
     expect(listener.mock.lastCall![0]).toHaveLength(2);
   });

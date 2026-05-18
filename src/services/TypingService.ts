@@ -139,10 +139,7 @@ export class TypingService {
 
     if (!this.options.isEnabledForScope(scope)) return;
 
-    // For DM messages the wire format carries no conversation-partner address,
-    // so we use the generic "dm" bucket shared by all DM subscribers. For
-    // space messages we use the full scope key (spaceId + channelId [+ threadId]).
-    const key = scope.kind === 'dm' ? 'dm' : scopeKey(scope);
+    const key = scopeKey(scope);
     let entries = this.typists.get(key);
     if (!entries) {
       entries = new Map();
@@ -178,7 +175,7 @@ export class TypingService {
   }
 
   subscribe(scope: TypingScope, listener: Listener): () => void {
-    const key = scope.kind === 'dm' ? 'dm' : scopeKey(scope);
+    const key = scopeKey(scope);
     let set = this.listeners.get(key);
     if (!set) {
       set = new Set();
