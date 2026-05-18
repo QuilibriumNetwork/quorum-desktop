@@ -73,6 +73,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Feature](docs/features/messages/pinned-messages.md)
 - [Thread Panel](docs/features/messages/thread-panel.md)
 - [Thread Visibility on Mobile — Guidance for quorum-mobile](docs/features/messages/thread-mobile-visibility-guidance.md)
+- [Typing Indicators](docs/features/messages/typing-indicators.md)
 - [YouTube Facade Optimization](docs/features/messages/youtube-facade-optimization.md)
 
 ### Features / Primitives
@@ -530,4 +531,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-05-16 10:08:12
+**Last Updated**: 2026-05-18 12:50:00
