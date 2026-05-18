@@ -248,6 +248,13 @@ type MessageDBContextValue = {
   actionQueueService: ActionQueueService;
   receiptService: ReceiptService | null;
   typingService: TypingService | null;
+  /**
+   * Imperative update for the typing-indicator privacy flags. Called by
+   * useUserSettings.saveChanges so the gate reflects new state immediately
+   * (no polling). Detects ON→OFF transitions and triggers immediate clearing
+   * of outbound and received typing state.
+   */
+  setTypingConfig: (dm: boolean, spaces: boolean) => void;
 };
 
 type MessageDBContextProps = {
@@ -968,28 +975,40 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     }
   }, [keyset, actionQueueService]);
 
-  // Keep a live ref to UserConfig so TypingService can gate sends/receives
-  // without needing React state re-renders. Polled every 5s as a safety net;
-  // the primary update path is the user explicitly saving settings.
-  const userConfigRef = useRef<UserConfig | null>(null);
+  // Live ref to the typing-relevant UserConfig flags. Read by TypingService's
+  // isEnabledForScope callback. Updated in two places:
+  //   1. Once on mount, from IndexedDB, so the gate is correct before any
+  //      user interaction.
+  //   2. Imperatively via setTypingConfig() exposed to consumers (useUserSettings
+  //      calls it when the user saves the privacy toggles). This guarantees
+  //      the gate reflects the new state immediately, no polling involved.
+  const typingConfigRef = useRef<{ dm: boolean; spaces: boolean }>({ dm: false, spaces: false });
   useEffect(() => {
     if (!selfAddress) return;
     let cancelled = false;
-    const refresh = async () => {
+    (async () => {
       try {
         const cfg = await messageDB.getUserConfig({ address: selfAddress });
-        if (!cancelled) userConfigRef.current = cfg ?? null;
-      } catch {
-        // ignore — ref stays at last known value
+        if (cancelled) return;
+        typingConfigRef.current = {
+          dm: !!cfg?.typingIndicatorsDM,
+          spaces: !!cfg?.typingIndicatorsSpaces,
+        };
+      } catch (err) {
+        logger.warn('[Typing] failed to load initial typing config', err);
       }
-    };
-    refresh();
-    const interval = setInterval(refresh, 5_000);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-    };
+    })();
+    return () => { cancelled = true; };
   }, [selfAddress, messageDB]);
+
+  // Imperative update from useUserSettings when the user saves new toggle state.
+  // Detects ON→OFF transitions and tells TypingService to clear immediately.
+  const setTypingConfig = useCallback((dm: boolean, spaces: boolean) => {
+    const prev = typingConfigRef.current;
+    typingConfigRef.current = { dm, spaces };
+    if (prev.dm && !dm) typingServiceRef.current?.onSettingDisabled('dm');
+    if (prev.spaces && !spaces) typingServiceRef.current?.onSettingDisabled('space');
+  }, []);
 
   // ReceiptService — batched ack buffer with piggyback + standalone flush
   const receiptService = useMemo(() => {
@@ -1122,13 +1141,19 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         await messageService.sendEphemeralSpaceControl(spaceId, msg);
       },
       isEnabledForScope: (scope) => {
-        const cfg = userConfigRef.current;
-        if (!cfg) return false;
-        if (scope.kind === 'dm') return !!cfg.typingIndicatorsDM;
-        return !!cfg.typingIndicatorsSpaces;
+        const cfg = typingConfigRef.current;
+        if (scope.kind === 'dm') return cfg.dm;
+        return cfg.spaces;
       },
     });
   }, [selfAddress, messageService, actionQueueService]);
+
+  // Stable ref to the current TypingService so the setTypingConfig callback
+  // (defined above) can reach the instance without re-creating itself.
+  const typingServiceRef = useRef<TypingService | null>(null);
+  useEffect(() => {
+    typingServiceRef.current = typingService;
+  }, [typingService]);
 
   // Wire TypingService to MessageService
   useEffect(() => {
@@ -1360,6 +1385,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         actionQueueService,
         receiptService,
         typingService,
+        setTypingConfig,
       }}
     >
       <ActionQueueProvider actionQueueService={actionQueueService}>
@@ -1398,6 +1424,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   actionQueueService: undefined as never,
   receiptService: null,
   typingService: null,
+  setTypingConfig: () => undefined,
 });
 
 export { MessageDBProvider, MessageDBContext };

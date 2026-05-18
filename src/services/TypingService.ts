@@ -88,6 +88,67 @@ export class TypingService {
     this.emit(scope, 'typing-stop');
   }
 
+  /**
+   * Called when the user toggles the relevant typing setting OFF. For every
+   * active outbound scope of the given kind, sends an explicit typing-stop
+   * (bypassing the now-closed privacy gate, since these are sessions WE opened
+   * while the gate was still open). Also clears any received typists of that
+   * kind from the local map so the indicator disappears immediately.
+   *
+   * `kind` is 'dm' to affect DM scopes only, 'space' to affect space-channel
+   * AND thread scopes (which share the same global toggle).
+   */
+  onSettingDisabled(kind: 'dm' | 'space'): void {
+    const prefixes = kind === 'dm' ? ['dm:'] : ['sc:', 'th:'];
+    const matches = (key: string) => prefixes.some((p) => key.startsWith(p));
+
+    // 1. Send stops for active outbound scopes of this kind.
+    for (const key of Array.from(this.activeOutbound)) {
+      if (!matches(key)) continue;
+      const scope = this.scopeFromKey(key);
+      this.activeOutbound.delete(key);
+      this.lastSentAt.delete(key);
+      if (scope) {
+        // Bypass the gate explicitly — we started these sessions while ON,
+        // we must stop them even though the toggle is now OFF.
+        this.emit(scope, 'typing-stop');
+      }
+    }
+
+    // 2. Clear received typists of this kind. Notify subscribers with [].
+    for (const key of Array.from(this.typists.keys())) {
+      if (!matches(key)) continue;
+      const entries = this.typists.get(key);
+      if (!entries) continue;
+      for (const entry of entries.values()) {
+        clearTimeout(entry.timeoutId);
+      }
+      this.typists.delete(key);
+      this.notifyListeners(key);
+    }
+  }
+
+  /**
+   * Reverse of scopeKey. Used by onSettingDisabled to reconstruct a scope
+   * from its stored key so emit() can be called.
+   */
+  private scopeFromKey(key: string): TypingScope | null {
+    if (key.startsWith('dm:')) {
+      return { kind: 'dm', address: key.slice(3) };
+    }
+    if (key.startsWith('sc:')) {
+      const [spaceId, channelId] = key.slice(3).split(':');
+      if (!spaceId || !channelId) return null;
+      return { kind: 'space-channel', spaceId, channelId };
+    }
+    if (key.startsWith('th:')) {
+      const [spaceId, channelId, threadId] = key.slice(3).split(':');
+      if (!spaceId || !channelId || !threadId) return null;
+      return { kind: 'thread', spaceId, channelId, threadId };
+    }
+    return null;
+  }
+
   private emit(scope: TypingScope, type: 'typing-start' | 'typing-stop'): void {
     const baseMsg = {
       type,

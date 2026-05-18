@@ -311,3 +311,107 @@ describe('TypingService — receive-side state', () => {
     expect(listener).toHaveBeenCalledWith(['alice']);
   });
 });
+
+describe('TypingService — onSettingDisabled (toggle-OFF clear)', () => {
+  let service: TypingService;
+  let sendDM: ReturnType<typeof vi.fn>;
+  let sendSpace: ReturnType<typeof vi.fn>;
+  let isEnabledForScope: ReturnType<typeof vi.fn>;
+
+  const dmScope: TypingScope = { kind: 'dm', address: 'alice' };
+  const channelScope: TypingScope = { kind: 'space-channel', spaceId: 'sp1', channelId: 'ch1' };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    sendDM = vi.fn().mockResolvedValue(undefined);
+    sendSpace = vi.fn().mockResolvedValue(undefined);
+    isEnabledForScope = vi.fn().mockReturnValue(true);
+    service = new TypingService({
+      selfAddress: 'self',
+      sendDM,
+      sendSpace,
+      isEnabledForScope,
+    });
+  });
+
+  afterEach(() => {
+    service.destroy();
+    vi.useRealTimers();
+  });
+
+  it('sends typing-stop for active outbound DM scopes when DM setting disabled', () => {
+    service.notifyTyping(dmScope);
+    expect(sendDM).toHaveBeenCalledTimes(1); // typing-start
+    // Now simulate the user toggling DM off — gate would be closed but the
+    // service must still fire stops for scopes it opened.
+    isEnabledForScope.mockReturnValue(false);
+    service.onSettingDisabled('dm');
+    expect(sendDM).toHaveBeenCalledTimes(2);
+    expect(sendDM).toHaveBeenLastCalledWith(
+      'alice',
+      expect.objectContaining({ type: 'typing-stop' }),
+    );
+  });
+
+  it('clears received DM typists and notifies subscribers with []', () => {
+    const listener = vi.fn();
+    service.subscribe(dmScope, listener);
+    service.onTypingReceived({ type: 'typing-start', senderId: 'alice', scope: 'dm', timestamp: 1000 });
+    expect(listener).toHaveBeenLastCalledWith(['alice']);
+    service.onSettingDisabled('dm');
+    expect(listener).toHaveBeenLastCalledWith([]);
+  });
+
+  it('DM disable does not affect space scopes', () => {
+    service.notifyTyping(channelScope);
+    expect(sendSpace).toHaveBeenCalledTimes(1);
+    service.onSettingDisabled('dm');
+    // No additional sendSpace call — space scope is untouched
+    expect(sendSpace).toHaveBeenCalledTimes(1);
+  });
+
+  it('space disable clears both space-channel and thread scopes', () => {
+    const threadScope: TypingScope = { kind: 'thread', spaceId: 'sp1', channelId: 'ch1', threadId: 'th1' };
+    service.notifyTyping(channelScope);
+    service.notifyTyping(threadScope);
+    expect(sendSpace).toHaveBeenCalledTimes(2);
+    service.onSettingDisabled('space');
+    // Two more sends — one stop per scope
+    expect(sendSpace).toHaveBeenCalledTimes(4);
+    const calls = sendSpace.mock.calls.map((c) => c[1].type);
+    expect(calls.filter((t) => t === 'typing-stop')).toHaveLength(2);
+  });
+
+  it('clears received space typists too on space disable', () => {
+    const channelListener = vi.fn();
+    service.subscribe(channelScope, channelListener);
+    service.onTypingReceived({
+      type: 'typing-start', senderId: 'bob', scope: 'space',
+      spaceId: 'sp1', channelId: 'ch1', timestamp: 1000,
+    });
+    expect(channelListener).toHaveBeenLastCalledWith(['bob']);
+    service.onSettingDisabled('space');
+    expect(channelListener).toHaveBeenLastCalledWith([]);
+  });
+
+  it('subsequent typing in a disabled scope is blocked by gate (no stale outbound)', () => {
+    service.notifyTyping(dmScope);
+    isEnabledForScope.mockReturnValue(false);
+    service.onSettingDisabled('dm');
+    sendDM.mockClear();
+    // Now try to type again — gate is OFF, nothing should fire
+    service.notifyTyping(dmScope);
+    expect(sendDM).not.toHaveBeenCalled();
+  });
+
+  it('throttle is reset after onSettingDisabled, so re-enabling fires immediately', () => {
+    service.notifyTyping(dmScope);
+    expect(sendDM).toHaveBeenCalledTimes(1);
+    service.onSettingDisabled('dm');
+    sendDM.mockClear();
+    // Re-enable and try again — should NOT be throttled
+    isEnabledForScope.mockReturnValue(true);
+    service.notifyTyping(dmScope);
+    expect(sendDM).toHaveBeenCalledTimes(1);
+  });
+});

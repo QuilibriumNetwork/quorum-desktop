@@ -74,7 +74,7 @@ export const useUserSettings = (
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
-  const { messageDB, actionQueueService, getConfig, updateUserProfile } = useMessageDB();
+  const { messageDB, actionQueueService, getConfig, updateUserProfile, setTypingConfig } = useMessageDB();
   const uploadRegistration = useUploadRegistration();
 
   const [stagedRegistration, setStagedRegistration] = useState(
@@ -325,6 +325,12 @@ export const useUserSettings = (
       { config: newConfig },
       `config:${currentPasskeyInfo.address}` // Dedup key
     );
+
+    // Update TypingService gate immediately so toggle-OFF doesn't wait for
+    // the action queue / IndexedDB round-trip. On ON→OFF transitions this
+    // also clears any active outbound typing sessions and received typists
+    // of the affected kind.
+    setTypingConfig(typingIndicatorsDM, typingIndicatorsSpaces);
 
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {
