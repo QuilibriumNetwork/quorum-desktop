@@ -413,7 +413,10 @@ export const ThreadPanel: React.FC = () => {
 
       {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
-        <TypingIndicator scope={typingScope} />
+        <TypingIndicator
+          scope={typingScope}
+          resolveName={(addr) => channelProps.mapSenderToUser(addr).displayName}
+        />
         {isClosed ? (
           <div className="message-composer-container">
             <div className="message-composer-row">

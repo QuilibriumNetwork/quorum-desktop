@@ -67,21 +67,15 @@ export class TypingService {
   // ============================================================
 
   notifyTyping(scope: TypingScope): void {
-    const enabled = this.options.isEnabledForScope(scope);
-    logger.log('[Typing] notifyTyping called', { scope, enabled });
-    if (!enabled) return;
+    if (!this.options.isEnabledForScope(scope)) return;
 
     const key = scopeKey(scope);
     const now = Date.now();
     const last = this.lastSentAt.get(key) ?? 0;
-    if (now - last < TYPING_THROTTLE_MS) {
-      logger.log('[Typing] notifyTyping throttled', { key, sinceLast: now - last });
-      return;
-    }
+    if (now - last < TYPING_THROTTLE_MS) return;
 
     this.lastSentAt.set(key, now);
     this.activeOutbound.add(key);
-    logger.log('[Typing] emitting typing-start', { key });
     this.emit(scope, 'typing-start');
   }
 
@@ -135,26 +129,15 @@ export class TypingService {
    * re-check the gate here as defense in depth.
    */
   onTypingReceived(msg: TypingMessage): void {
-    logger.log('[Typing] onTypingReceived', { msg, selfAddress: this.options.selfAddress });
     // Defense in depth: drop self-originated messages
-    if (msg.senderId === this.options.selfAddress) {
-      logger.log('[Typing] dropped (self-originated)');
-      return;
-    }
+    if (msg.senderId === this.options.selfAddress) return;
 
     const scope = scopeFromMessage(msg);
-    if (!scope) {
-      logger.log('[Typing] dropped (could not resolve scope)');
-      return;
-    }
+    if (!scope) return;
 
-    if (!this.options.isEnabledForScope(scope)) {
-      logger.log('[Typing] dropped (privacy gate OFF for scope)', { scope });
-      return;
-    }
+    if (!this.options.isEnabledForScope(scope)) return;
 
     const key = scopeKey(scope);
-    logger.log('[Typing] accepted', { key, listeners: this.listeners.get(key)?.size ?? 0 });
     let entries = this.typists.get(key);
     if (!entries) {
       entries = new Map();

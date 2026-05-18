@@ -345,7 +345,6 @@ export class MessageService {
     // so we don't even hand off when the user has the relevant setting OFF.
     const isTyping = raw.type === 'typing-start' || raw.type === 'typing-stop';
     if (isTyping) {
-      logger.log('[Typing] MessageService intercepted typing message', { raw, hasService: !!this.typingService });
       if (this.typingService) {
         this.typingService.onTypingReceived(raw as TypingMessage);
       }
@@ -2911,7 +2910,6 @@ export class MessageService {
             innerMsg !== null &&
             (innerMsg.type === 'typing-start' || innerMsg.type === 'typing-stop');
           if (isTypingMessage) {
-            logger.log('[Typing] MessageService (hub envelope path) intercepted typing message', { raw: innerMsg, hasService: !!this.typingService });
             if (this.typingService) {
               this.typingService.onTypingReceived(innerMsg as TypingMessage);
             }
@@ -4254,19 +4252,6 @@ export class MessageService {
           profileToUse
         );
       } else {
-        // Intercept typing control messages BEFORE saveMessage — never persist.
-        // Space messages take a different decrypt path than DMs (no processDeliveryReceiptData
-        // is called here), so the typing branch from that helper must be replicated here.
-        const rawForTyping = decryptedContent as any;
-        const isTyping = rawForTyping.type === 'typing-start' || rawForTyping.type === 'typing-stop';
-        if (isTyping) {
-          logger.log('[Typing] MessageService (space path) intercepted typing message', { raw: rawForTyping, hasService: !!this.typingService });
-          if (this.typingService) {
-            this.typingService.onTypingReceived(rawForTyping as TypingMessage);
-          }
-          return;
-        }
-
         await this.saveMessage(
           decryptedContent,
           this.messageDB,

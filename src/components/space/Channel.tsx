@@ -1601,7 +1601,10 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
 
             <div className="message-editor-container">
-              <TypingIndicator scope={typingScope} />
+              <TypingIndicator
+                scope={typingScope}
+                resolveName={(addr) => mapSenderToUser(addr).displayName}
+              />
               <MessageComposer
                 canUseEveryone={canUseEveryone}
                 typingScope={typingScope}

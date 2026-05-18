@@ -988,7 +988,10 @@ const DirectMessage: React.FC<{}> = () => {
 
             {/* Message Composer */}
             <div className="message-editor-container">
-              <TypingIndicator scope={typingScope} />
+              <TypingIndicator
+                scope={typingScope}
+                resolveName={(addr) => (addr === otherUser.address ? otherUser.displayName : undefined)}
+              />
               <MessageComposer
                 ref={messageComposerRef}
                 value={composer.pendingMessage}
