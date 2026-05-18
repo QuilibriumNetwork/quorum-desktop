@@ -316,32 +316,55 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </div>
           </div>
           )}
+        </div>
 
+        <Spacer size="md" direction="vertical" borderTop={true} />
+        <div className="text-subtitle-2 mb-2">{t`Typing indicators`}</div>
+        <div className="modal-content-info">
           <div className="flex flex-row items-center gap-3 mt-3">
             <Switch
               value={typingIndicatorsDM}
               onChange={setTypingIndicatorsDM}
               disabled={!isConfigLoaded}
             />
-            <div>
-              <div className="text-label-strong">{t`Send typing indicators in DMs`}</div>
-              <div className="text-label text-muted">
-                {t`When ON, your DM contacts see when you're composing a message. They can see when you start and stop typing. Default OFF.`}
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Send typing indicators in DMs`}
               </div>
+              <Tooltip
+                id="settings-typing-indicators-dm-tooltip"
+                content={t`When on, your DM contacts see when you're composing a message. They can see when you start and stop typing.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
             </div>
           </div>
-
           <div className="flex flex-row items-center gap-3 mt-3">
             <Switch
               value={typingIndicatorsSpaces}
               onChange={setTypingIndicatorsSpaces}
               disabled={!isConfigLoaded}
             />
-            <div>
-              <div className="text-label-strong">{t`Send typing indicators in spaces`}</div>
-              <div className="text-label text-muted">
-                {t`When ON, everyone subscribed to a space channel sees when you're composing a message in that channel. This can be many people in large spaces. Default OFF.`}
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Send typing indicators in spaces`}
               </div>
+              <Tooltip
+                id="settings-typing-indicators-spaces-tooltip"
+                content={t`When on, everyone subscribed to a space channel sees when you're composing a message there. This can be many people in large spaces.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
             </div>
           </div>
         </div>
