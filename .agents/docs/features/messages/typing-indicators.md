@@ -8,8 +8,8 @@ updated: 2026-05-18
 related_docs:
   - .agents/docs/features/messages/dm-receipts.md
 related_tasks:
-  - .agents/tasks/2026-05-18-typing-indicators-design.md
-  - .agents/tasks/2026-05-18-typing-indicators-plan.md
+  - .agents/tasks/.done/2026-05-18-typing-indicators-design.md
+  - .agents/tasks/.done/2026-05-18-typing-indicators-plan.md
 ---
 
 # Typing Indicators
@@ -36,6 +36,24 @@ Typing signals are ephemeral control messages. They ride the existing encrypted 
 - Exist only as an in-memory event
 
 This is the same mechanism that makes `delivery-ack` and `read-ack` safe to broadcast. The packet transits the network but does not live on the network.
+
+## Cost profile (DM path)
+
+Although typing messages never touch `messages` storage, each DM typing event **does** advance the Double Ratchet on both sides. Per `typing-start` (Alice → Bob):
+
+| What | Where | Cost |
+|---|---|---|
+| DR encrypt + new sender state | `MessageService.encryptAndSendDm` | 1 IndexedDB `put` on `encryption_states` + 1 on `latest_states` (Alice) |
+| Network frames | WebSocket | one `listen` + one `direct` envelope |
+| DR decrypt + new receiver state | DM decrypt path | 1 `put` on `encryption_states` + 1 on `latest_states` (Bob) |
+
+`encryption_states` is keyed by `(conversationId, inboxId)` and the counterparty inbox address is stable across ratchet advances, so writes **overwrite in place** — no row count growth, no append-on-each-keystroke bloat. Worst-case write frequency per active opted-in DM is ~12 events/min, bounded by the 5 s sender throttle. In typical bursty composing the multiplier is ~2–4× ratchet operations per drafted message (a couple of typing-starts + one typing-stop + the real message).
+
+The one plausible slow-leak vector is `skipped_keys_map` growth on a single DR row if typing ciphertexts are lost or arrive out of order (the receiver holds skipped keys waiting for ciphertext that for typing will never come). Whether the SDK bounds this map (by entry count or age) is a pending question for the SDK team — applies to any out-of-order DM, not just typing.
+
+Space typing rides Triple Ratchet hub broadcast and does NOT advance any per-conversation ratchet — see [`cryptographic-architecture.md`](.agents/docs/cryptographic-architecture.md) for the broadcast model.
+
+Full analysis: [`.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md`](.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md).
 
 ## Key files
 
@@ -65,6 +83,7 @@ This is the same mechanism that makes `delivery-ack` and `read-ack` safe to broa
 | Receiver TTL | 8 seconds per typist; renewals reset the timer |
 | `typing-stop` behaviour | Removes the typist immediately; ignored if no prior entry |
 | Reorder protection | Receiver tracks `msg.timestamp` per typist; older messages are dropped |
+| Freshness filter | Receiver drops any typing message whose wire timestamp is older than 30 seconds before any further processing. Defends against hub-replay on subscribe-join, which would otherwise flood the receive path with ancient typing-starts the TTL expired long ago. |
 
 ## Privacy gate (symmetric)
 
@@ -146,7 +165,7 @@ New clients receiving from old clients: no compatibility surface -- old clients 
 
 - **First-send DM bootstrap (see "DM session bootstrap caveat" above):** typing doesn't show in a fresh DM until one real message has been exchanged.
 - **Display name fallback:** if the resolver can't find a display name, the indicator shows a truncated address. A proper per-context resolver could be added later (see the deferred display-name resolver hook discussion in the implementation plan).
-- **DM ratchet advance per keystroke:** each typing-start/stop in a DM advances the Double Ratchet state. Investigation pending in `.agents/tasks/2026-05-18-typing-dm-ratchet-investigation.md`.
+- **DM ratchet advance per typing event:** opted-in DM typing costs a ~2–4× multiplier on Double Ratchet operations per drafted message (writes overwrite in place, no row growth). One open question: whether the SDK bounds `skipped_keys_map` for out-of-order DR receives. See the "Cost profile" section above and `.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md`.
 
 ## Implementation notes worth knowing
 
@@ -156,6 +175,14 @@ New clients receiving from old clients: no compatibility surface -- old clients 
 
 **Why fixed-height indicator row:** A row that shows/hides dynamically would shift the composer position and create CLS, particularly painful on mobile where Virtuoso scroll positions are already fragile (see `.agents/bugs/2026-03-19-message-list-scroll-jank-on-send.md`). The `h-5` (20px) reserves space at all times.
 
+**Why the TypingService instance is stable across MessageService re-memoizations:** In `MessageDB.tsx`, `messageService` and `actionQueueService` have large dependency lists in their own `useMemo`s, so they get re-memoized on many navigations (e.g., when the `navigate` callback changes identity). An earlier version of the typing wiring depended on these directly in the TypingService `useMemo`, which caused the service to be destroyed and recreated on every such re-memo. Hook subscribers in the indicator component held closures pointing at the destroyed instance while incoming messages were dispatched to the new instance with an empty listeners map — manifesting as "after navigating Space → DM → Space, typing indicator stops showing until hard refresh." Fix (commit `7654dc0a`): TypingService is built once per `selfAddress` (the only dep that genuinely warrants a new instance). The callbacks read the latest `messageService` / `actionQueueService` via refs so they always call the current versions. The wiring `useEffect` re-runs `setTypingService(typingService)` when either side changes (no-op when nothing changed); the destroy `useEffect` only fires when `typingService` itself invalidates (sign-out / provider unmount).
+
 ---
 
 *Created: 2026-05-18 -- initial implementation.*
+
+*Updated: 2026-05-18 -- resolved the "DM ratchet advance per keystroke" known-limitation entry with the investigation outcome (in-place overwrite, ~2–4× ratchet-op multiplier accepted, skipped_keys_map bound pending SDK confirmation).*
+
+*Updated: 2026-05-18 -- added "Cost profile (DM path)" section with concrete per-event accounting; trimmed the limitations bullet to a one-line summary now that the detail lives in its own section.*
+
+*Updated: 2026-05-18 -- added "freshness filter" row to the Throttling and TTL table (drops typing messages > 30s old at receiver) and an implementation note explaining why TypingService is built once per `selfAddress` instead of per-messageService rebuild (fixed the Space → DM → Space stale-listener bug).*
