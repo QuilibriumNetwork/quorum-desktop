@@ -1128,17 +1128,34 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   }, [receiptService, messageService]);
 
   // TypingService — ephemeral typing-indicator signaling (DMs + spaces)
+  //
+  // Built ONCE per selfAddress. messageService and actionQueueService are
+  // accessed via refs inside the callbacks so that even though they may be
+  // re-memoized many times during a session (large dep lists in their own
+  // useMemos), the TypingService instance stays stable. Destroying and
+  // recreating the service on every messageService rebuild causes existing
+  // hook subscribers to silently end up on a destroyed-then-replaced instance
+  // (subscribe to old, but messages dispatch to new with empty listeners).
+  const messageServiceRef = useRef(messageService);
+  const actionQueueServiceRef = useRef(actionQueueService);
+  useEffect(() => {
+    messageServiceRef.current = messageService;
+  }, [messageService]);
+  useEffect(() => {
+    actionQueueServiceRef.current = actionQueueService;
+  }, [actionQueueService]);
+
   const typingService = useMemo(() => {
     if (!selfAddress) return null;
     return new TypingService({
       selfAddress,
       sendDM: async (address, msg) => {
-        const ks = actionQueueService.getUserKeyset();
+        const ks = actionQueueServiceRef.current.getUserKeyset();
         if (!ks) return; // not logged in / not initialized
-        await messageService.sendEphemeralDMControl(address, msg, selfAddress, ks);
+        await messageServiceRef.current.sendEphemeralDMControl(address, msg, selfAddress, ks);
       },
       sendSpace: async (spaceId, msg) => {
-        await messageService.sendEphemeralSpaceControl(spaceId, msg);
+        await messageServiceRef.current.sendEphemeralSpaceControl(spaceId, msg);
       },
       isEnabledForScope: (scope) => {
         const cfg = typingConfigRef.current;
@@ -1146,7 +1163,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         return cfg.spaces;
       },
     });
-  }, [selfAddress, messageService, actionQueueService]);
+    // Intentionally only depends on selfAddress — see note above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selfAddress]);
 
   // Stable ref to the current TypingService so the setTypingConfig callback
   // (defined above) can reach the instance without re-creating itself.
@@ -1155,15 +1174,24 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     typingServiceRef.current = typingService;
   }, [typingService]);
 
-  // Wire TypingService to MessageService
+  // Wire TypingService to MessageService. Also re-wires whenever messageService
+  // changes identity, so the latest messageService always knows about the
+  // (stable) typingService. No destroy on cleanup of this effect — the
+  // typingService outlives messageService re-memoizations on purpose.
   useEffect(() => {
     if (typingService) {
       messageService.setTypingService(typingService);
     }
+  }, [typingService, messageService]);
+
+  // Destroy the typingService only when its memo invalidates (i.e., on
+  // selfAddress change / sign-out / provider unmount), not on every
+  // messageService rebuild.
+  useEffect(() => {
     return () => {
       typingService?.destroy();
     };
-  }, [typingService, messageService]);
+  }, [typingService]);
 
   const createSpace = React.useCallback(
     async (
