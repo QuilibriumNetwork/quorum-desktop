@@ -123,3 +123,52 @@ export const dismissToast = (id: string): void => {
     })
   );
 };
+
+// ---- Sync toast lifecycle ----
+// The "Syncing..." toast is shown when SyncService.requestSync() runs.
+// It must be dismissed in one of three ways:
+//   1. Happy path: 5s after the last sync-delta/sync-messages chunk arrives.
+//   2. Fallback: a hard timeout from when the toast was shown, in case no peer
+//      ever responds (e.g. lone-member space, all peers offline).
+// Both timers are tracked here so any caller can reset/clear them safely.
+
+const SYNC_TOAST_ID = 'sync';
+const SYNC_TOAST_MAX_LIFETIME_MS = 15_000;
+const SYNC_TOAST_IDLE_DISMISS_MS = 5_000;
+
+let syncIdleTimer: NodeJS.Timeout | undefined;
+let syncFallbackTimer: NodeJS.Timeout | undefined;
+
+const clearSyncTimers = (): void => {
+  clearTimeout(syncIdleTimer);
+  clearTimeout(syncFallbackTimer);
+  syncIdleTimer = undefined;
+  syncFallbackTimer = undefined;
+};
+
+/**
+ * Show the global "Syncing..." toast and arm a fallback dismiss in case
+ * no sync chunks ever arrive (lone-member space, all peers offline, etc.).
+ */
+export const showSyncToast = (message: string): void => {
+  showPersistentToast(SYNC_TOAST_ID, message, 'info');
+  clearTimeout(syncFallbackTimer);
+  syncFallbackTimer = setTimeout(() => {
+    dismissToast(SYNC_TOAST_ID);
+    clearSyncTimers();
+  }, SYNC_TOAST_MAX_LIFETIME_MS);
+};
+
+/**
+ * Called when a sync chunk arrives. Cancels the fallback timer and arms the
+ * 5s idle-dismiss timer (resets on each chunk).
+ */
+export const noteSyncActivity = (): void => {
+  clearTimeout(syncFallbackTimer);
+  syncFallbackTimer = undefined;
+  clearTimeout(syncIdleTimer);
+  syncIdleTimer = setTimeout(() => {
+    dismissToast(SYNC_TOAST_ID);
+    syncIdleTimer = undefined;
+  }, SYNC_TOAST_IDLE_DISMISS_MS);
+};

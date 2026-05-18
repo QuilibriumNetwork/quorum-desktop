@@ -20,6 +20,8 @@ import {
   PeerEntry,
 } from '@quilibrium/quorum-shared';
 import { IndexedDBAdapter } from '../adapters/indexedDbAdapter';
+import { showSyncToast } from '../utils/toast';
+import { t } from '@lingui/core/macro';
 
 export class SyncService {
   private messageDB: MessageDB;
@@ -468,6 +470,7 @@ export class SyncService {
    */
   async requestSync(spaceId: string): Promise<void> {
     logger.log(`[SyncService] requestSync called for space ${spaceId}`);
+    showSyncToast(t`Syncing...`);
     try {
       const space = await this.messageDB.getSpace(spaceId);
       const channelId = space?.defaultChannelId || spaceId;

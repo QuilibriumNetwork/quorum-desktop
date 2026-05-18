@@ -53,15 +53,12 @@ import {
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../utils';
 import { QuorumApiClient } from '../api/baseTypes';
-import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
+import { showWarning, noteSyncActivity } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
 import type { ReceiptService } from './ReceiptService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
-
-// Timer for dismissing sync toast after inactivity
-let syncDismissTimer: NodeJS.Timeout | undefined;
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -3754,12 +3751,6 @@ export class MessageService {
                 )
               );
               if (verify) {
-                // Show toast when receiving actual sync messages (not preemptively)
-                // Only show for significant syncs (>= 20 messages in this chunk)
-                if (envelope.message.messages?.length >= 20) {
-                  showPersistentToast('sync', t`Syncing...`, 'info');
-                }
-
                 const space = await this.messageDB.getSpace(
                   conversationId.split('/')[0]
                 );
@@ -3843,11 +3834,7 @@ export class MessageService {
                   }
                 }
 
-                // Reset dismiss timer on each sync chunk (5s after last chunk)
-                clearTimeout(syncDismissTimer);
-                syncDismissTimer = setTimeout(() => {
-                  dismissToast('sync');
-                }, 5000);
+                noteSyncActivity();
               }
             }
           } else if (envelope.message.type === 'sync-manifest') {
@@ -3869,13 +3856,6 @@ export class MessageService {
             // Apply message delta
             if (envelope.message.messageDelta) {
               const msgDelta = envelope.message.messageDelta;
-
-              // Show toast for significant syncs (>= 20 messages)
-              const totalMessages = (msgDelta.newMessages?.length || 0) +
-                                    (msgDelta.updatedMessages?.length || 0);
-              if (totalMessages >= 20) {
-                showPersistentToast('sync', t`Syncing...`, 'info');
-              }
 
               const space = await this.messageDB.getSpace(spaceId);
 
@@ -3932,11 +3912,7 @@ export class MessageService {
                 });
               }
 
-              // Reset dismiss timer on each sync chunk (5s after last chunk)
-              clearTimeout(syncDismissTimer);
-              syncDismissTimer = setTimeout(() => {
-                dismissToast('sync');
-              }, 5000);
+              noteSyncActivity();
             }
 
             // Apply member delta

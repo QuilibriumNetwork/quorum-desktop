@@ -5,13 +5,45 @@ status: done
 complexity: medium
 ai_generated: true
 created: 2025-12-14T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-05-18'
 ---
 
 # Sync Toast Notifications
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
+## 2026-05-18 — Reworked (current behavior)
+
+The original implementation below was reworked because the toast almost never fired in practice. Root cause: the trigger was a per-chunk message-count threshold (`>= 20`), but the new manifest/delta sync protocol chunks by byte size (5MB), so most syncs arrive as a single delta with a wide range of message counts and the threshold check produced non-deterministic results. It also fired late (after data verification, inside the receive handler), missing the user-anxious window between login and first delta arrival.
+
+**New trigger point:** `SyncService.requestSync()` — the toast fires the moment a sync handshake is initiated, regardless of expected delta size. This is the original spec's "intent-based" goal, just at the request stage rather than `initiateSync()`.
+
+**When the toast appears (sync is episodic, not continuous):**
+- App startup, 10s after login, once per space — [MessageDB.tsx:497-505](../../../src/components/context/MessageDB.tsx#L497-L505)
+- Accepting an invite — [InvitationService.ts:900](../../../src/services/InvitationService.ts#L900)
+- Manual "Sync now" from Space Settings — [SpaceSettingsModal.tsx:58](../../../src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx#L58)
+
+Live messages received over the open WebSocket are NOT sync — they don't trigger the toast.
+
+**Dismiss logic — two-timer system (lives in `src/utils/toast.ts`):**
+
+The dismiss path is much narrower than the fire path — a sync handshake can complete (or fail) without ever producing a `messageDelta`, so a single dismiss timer keyed only on chunk arrival was leaving the toast stuck indefinitely (most visible in lone-member or quiet spaces, where no peer ever responds to `sync-request`). Fix: two cooperating timers, both centralised in `toast.ts`.
+
+1. **Idle dismiss (happy path):** 5s after the last `sync-messages` / `sync-delta` chunk arrives. Reset on every chunk via `noteSyncActivity()` in MessageService.ts.
+2. **Fallback dismiss (safety net):** 15s hard maximum from when the toast was shown. Armed by `showSyncToast()` in SyncService.requestSync(). Cleared as soon as the first chunk arrives (idle dismiss takes over). Handles: lone-member spaces, all peers offline, peer responds with metadata-only envelopes, handshake errors, anything that doesn't produce a `messageDelta`.
+
+Manual X-close still works in both states.
+
+**Trade-off accepted:** A genuinely large sync that takes >15s before the *first* chunk arrives would lose the toast prematurely. In practice, the first chunk from a willing peer arrives within 1-2s of `initiateSync` running, so 15s is a comfortable margin. Once any chunk arrives, the idle timer takes over and the toast stays for the full duration of activity.
+
+**Files changed in rework (2026-05-18):**
+- `src/utils/toast.ts` — added `showSyncToast()` and `noteSyncActivity()` helpers; centralised the two timers (`syncIdleTimer`, `syncFallbackTimer`) as module state. Constants: `SYNC_TOAST_MAX_LIFETIME_MS = 15_000`, `SYNC_TOAST_IDLE_DISMISS_MS = 5_000`.
+- `src/services/SyncService.ts` — calls `showSyncToast(t\`Syncing...\`)` at top of `requestSync()`; added toast/`t` imports.
+- `src/services/MessageService.ts` — removed two per-chunk threshold checks (the source of the original non-determinism); removed module-level `syncDismissTimer` (now in toast.ts); both chunk-arrival sites call `noteSyncActivity()` instead.
+
+---
+
+## Original spec (superseded — kept for historical context)
 
 **Files**:
 - `src/utils/toast.ts`
