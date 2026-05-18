@@ -20,7 +20,6 @@ import {
   type TypingMessage,
   type TypingScope,
   scopeKey,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   scopeFromMessage,
 } from '@/types/typing';
 
@@ -39,7 +38,10 @@ export interface TypingServiceOptions {
 }
 
 type TypistEntry = {
+  /** Wall-clock expiry, used for TTL timeout scheduling. */
   expiresAt: number;
+  /** The logical timestamp from the last accepted message (for reorder protection). */
+  msgTimestamp: number;
   timeoutId: ReturnType<typeof setTimeout>;
 };
 
@@ -119,16 +121,93 @@ export class TypingService {
   }
 
   // ============================================================
-  // RECEIVE SIDE (stubs — filled in Task 3)
+  // RECEIVE SIDE
   // ============================================================
 
-  onTypingReceived(_msg: TypingMessage): void {
-    // Implemented in Task 3
+  /**
+   * Process an incoming TypingMessage from the decrypt layer.
+   * MessageService MUST gate this call by the user's typing setting AND
+   * call back here so this method does the routing. We additionally
+   * re-check the gate here as defense in depth.
+   */
+  onTypingReceived(msg: TypingMessage): void {
+    // Defense in depth: drop self-originated messages
+    if (msg.senderId === this.options.selfAddress) return;
+
+    const scope = scopeFromMessage(msg);
+    if (!scope) return;
+
+    if (!this.options.isEnabledForScope(scope)) return;
+
+    // For DM messages the wire format carries no conversation-partner address,
+    // so we use the generic "dm" bucket shared by all DM subscribers. For
+    // space messages we use the full scope key (spaceId + channelId [+ threadId]).
+    const key = scope.kind === 'dm' ? 'dm' : scopeKey(scope);
+    let entries = this.typists.get(key);
+    if (!entries) {
+      entries = new Map();
+      this.typists.set(key, entries);
+    }
+
+    const existing = entries.get(msg.senderId);
+
+    // Reorder protection: ignore messages older than what we already have
+    if (existing && msg.timestamp <= existing.msgTimestamp) return;
+
+    if (existing) {
+      clearTimeout(existing.timeoutId);
+    }
+
+    if (msg.type === 'typing-stop') {
+      entries.delete(msg.senderId);
+      this.notifyListeners(key);
+      return;
+    }
+
+    const expiresAt = Date.now() + TYPING_TTL_MS;
+    const timeoutId = setTimeout(() => {
+      const fresh = this.typists.get(key);
+      if (fresh) {
+        fresh.delete(msg.senderId);
+        this.notifyListeners(key);
+      }
+    }, TYPING_TTL_MS);
+
+    entries.set(msg.senderId, { expiresAt, msgTimestamp: msg.timestamp, timeoutId });
+    this.notifyListeners(key);
   }
 
-  subscribe(_scope: TypingScope, _listener: Listener): () => void {
-    // Implemented in Task 3
-    return () => {};
+  subscribe(scope: TypingScope, listener: Listener): () => void {
+    const key = scope.kind === 'dm' ? 'dm' : scopeKey(scope);
+    let set = this.listeners.get(key);
+    if (!set) {
+      set = new Set();
+      this.listeners.set(key, set);
+    }
+    set.add(listener);
+
+    // Emit current state immediately if any typists exist
+    const entries = this.typists.get(key);
+    if (entries && entries.size > 0) {
+      listener(Array.from(entries.keys()));
+    }
+
+    return () => {
+      const s = this.listeners.get(key);
+      if (!s) return;
+      s.delete(listener);
+      if (s.size === 0) this.listeners.delete(key);
+    };
+  }
+
+  private notifyListeners(key: string): void {
+    const listeners = this.listeners.get(key);
+    if (!listeners || listeners.size === 0) return;
+    const entries = this.typists.get(key);
+    const typists = entries ? Array.from(entries.keys()) : [];
+    for (const listener of listeners) {
+      listener(typists);
+    }
   }
 
   // ============================================================
@@ -148,5 +227,3 @@ export class TypingService {
   }
 }
 
-// Suppress unused-import lint warning for TYPING_TTL_MS (used in Task 3)
-void TYPING_TTL_MS;
