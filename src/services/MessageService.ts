@@ -4238,6 +4238,19 @@ export class MessageService {
           profileToUse
         );
       } else {
+        // Intercept typing control messages BEFORE saveMessage — never persist.
+        // Space messages take a different decrypt path than DMs (no processDeliveryReceiptData
+        // is called here), so the typing branch from that helper must be replicated here.
+        const rawForTyping = decryptedContent as any;
+        const isTyping = rawForTyping.type === 'typing-start' || rawForTyping.type === 'typing-stop';
+        if (isTyping) {
+          logger.log('[Typing] MessageService (space path) intercepted typing message', { raw: rawForTyping, hasService: !!this.typingService });
+          if (this.typingService) {
+            this.typingService.onTypingReceived(rawForTyping as TypingMessage);
+          }
+          return;
+        }
+
         await this.saveMessage(
           decryptedContent,
           this.messageDB,
