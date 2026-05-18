@@ -264,7 +264,12 @@ export const MessageComposer = forwardRef<
     // Track cursor position
     const handleTextareaChange = useCallback(
       (newValue: string) => {
-        notifyKeystroke();
+        // Only notify typing when the text actually changed and is non-empty.
+        // Same guard as the contentEditable path — prevents spurious broadcasts
+        // on focus or programmatic value resets.
+        if (newValue && newValue !== value) {
+          notifyKeystroke();
+        }
         onChange(newValue);
         setTimeout(() => {
           setCursorPosition(textareaRef.current?.selectionStart || 0);
@@ -273,7 +278,7 @@ export const MessageComposer = forwardRef<
           setCaretCoords(coords);
         }, 0);
       },
-      [onChange, notifyKeystroke]
+      [onChange, notifyKeystroke, value]
     );
 
     // Wrap submit to broadcast typing-stop before sending
@@ -284,14 +289,20 @@ export const MessageComposer = forwardRef<
 
     // Handle input changes for contentEditable
     const handleEditorInput = useCallback(() => {
-      notifyKeystroke();
       const newText = extractStorageText();
+      // Only notify typing when the text actually changed and is non-empty.
+      // The contentEditable's `input` event can fire on focus / cursor moves
+      // without any real content change, which would broadcast spurious
+      // typing-start signals.
+      if (newText && newText !== value) {
+        notifyKeystroke();
+      }
       onChange(newText);
       setCursorPosition(getCursorPosition());
       // Capture caret coordinates for dropdown positioning
       const coords = getCaretCoordinates(editorRef.current, true);
       setCaretCoords(coords);
-    }, [extractStorageText, onChange, getCursorPosition, notifyKeystroke]);
+    }, [extractStorageText, onChange, getCursorPosition, notifyKeystroke, value]);
 
     // Handle copy/paste for contentEditable
     const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
