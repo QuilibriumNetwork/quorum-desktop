@@ -31,15 +31,15 @@ msgid "No Role - {count}"
 msgstr "Ei roolia - {count}"
 
 #. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1616
+msgid "Send a message to #{channel_name}"
+msgstr "Lähetä viesti #{channel_name}:lle"
+
+#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr ""
 "Tervetuloa Quorumiin, {name}! Tili on turvattu ja valmis käytettäväksi."
-
-#. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1599
-msgid "Send a message to #{channel_name}"
-msgstr "Lähetä viesti #{channel_name}:lle"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -64,7 +64,7 @@ msgid "Replying to {user}"
 msgstr "Vastaamassa {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:681
+#: src/components/message/MessageComposer.tsx:715
 msgid "Replying to"
 msgstr "Vastaamassa"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "on potkittu"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:970
+#: src/components/direct/DirectMessage.tsx:1002
 msgid "Send a message to {user}"
 msgstr "Lähetä viesti {user}:lle"
 
@@ -96,6 +96,11 @@ msgstr "(muokattu)"
 #: src/components/modals/EditHistoryModal.tsx:104
 msgid "(empty)"
 msgstr "(tyhjää)"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:118
+#: src/components/user/UserProfile.tsx:275
+msgid "(only visible to you)"
+msgstr "(vain sinulle näkyvä)"
 
 #: src/components/bookmarks/BookmarkItem.tsx:80
 #: src/components/message/MessagePreview.tsx:206
@@ -121,7 +126,7 @@ msgid "[Sticker]"
 msgstr "[Tarra]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:320
+#: src/components/modals/UserSettingsModal/Privacy.tsx:374
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} laitetta merkitty poistettavaksi. Klikkaa \"Tallenna muutokset\" "
@@ -228,7 +233,7 @@ msgstr "0 = ikuisesti"
 msgid "0 hours"
 msgstr "0 tuntia"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:319
+#: src/components/modals/UserSettingsModal/Privacy.tsx:373
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 laite merkitty poistettavaksi. Klikkaa \"Tallenna muutokset\" "
@@ -252,11 +257,11 @@ msgstr ""
 "sormenjälkikoodi tai PIN) tilin suojaamiseen. Se on turvallisempi kuin "
 "salasana, eikä sinun tarvitse muistaa mitään."
 
-#: src/services/MessageService.ts:4130 src/services/NotificationService.ts:305
+#: src/services/MessageService.ts:4329 src/services/NotificationService.ts:305
 msgid "a role"
 msgstr "rooli"
 
-#: src/services/MessageService.ts:4140 src/services/NotificationService.ts:304
+#: src/services/MessageService.ts:4339 src/services/NotificationService.ts:304
 #: src/services/NotificationService.ts:317
 msgid "a space"
 msgstr "tila"
@@ -285,6 +290,16 @@ msgstr "Toiminnot jonossa"
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "Add a friend"
 msgstr "Lisää ystävä"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:143
+#: src/components/user/UserProfile.tsx:303
+msgid "Add a note"
+msgstr "Lisää muistiinpano"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:122
+#: src/components/user/UserProfile.tsx:279
+msgid "Add a personal note..."
+msgstr "Lisää henkilökohtainen muistiinpano..."
 
 #: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
@@ -334,7 +349,7 @@ msgstr ""
 "Spacessa. Voit ladata PNG-, JPG- tai GIF-tiedostoja, enintään 25MB "
 "(automaattisesti optimoitu)."
 
-#: src/components/user/UserProfile.tsx:200
+#: src/components/user/UserProfile.tsx:264
 msgid "Adding..."
 msgstr "Lisätään..."
 
@@ -348,7 +363,7 @@ msgstr "Osoitteiden on oltava tarkalleen 46 merkkiä pitkiä."
 msgid "Addresses start with \"Qm\"."
 msgstr "Osoitteet alkavat \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:199
+#: src/components/modals/UserSettingsModal/Privacy.tsx:207
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -405,7 +420,7 @@ msgstr "Melkein valmis..."
 msgid "Already Joined"
 msgstr "Jo liittynyt"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:225
+#: src/components/modals/UserSettingsModal/Privacy.tsx:233
 msgid "Always sign Direct Messages"
 msgstr "Allekirjoita suorat viestit aina"
 
@@ -421,6 +436,11 @@ msgstr "Virhe tapahtui poistaessa Tilaa. Yritä uudelleen."
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:59
 msgid "An error occurred while resetting app data. Please try again."
 msgstr "Virhe tapahtui palautettaessa sovelluksen asetuksia. Yritä uudelleen."
+
+#: src/components/message/TypingIndicator.tsx:48
+#: src/components/message/TypingIndicator.tsx:54
+msgid "and"
+msgstr "ja"
 
 #: src/utils/imageProcessing/errors.ts:23
 msgid ""
@@ -438,7 +458,7 @@ msgstr ""
 "Animoidut tarra GIFit eivät voi olla suurempia kuin 750KB. Optimoi GIFisi "
 "tarra käyttöä varten."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:498
+#: src/components/modals/UserSettingsModal/Privacy.tsx:552
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -452,6 +472,11 @@ msgstr ""
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
 msgstr "Ulkoasu"
+
+#: src/components/message/TypingIndicator.tsx:48
+#: src/components/message/TypingIndicator.tsx:54
+msgid "are typing"
+msgstr "kirjoittavat"
 
 #: src/hooks/business/channels/useChannelManagement.ts:257
 msgid ""
@@ -495,7 +520,7 @@ msgstr "Oletko varma, että haluat kiinnittää tämän viestin?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Oletko varma, että haluat irrottaa tämän viestin?"
 
-#: src/components/message/MessageComposer.tsx:759
+#: src/components/message/MessageComposer.tsx:793
 msgid "attach image"
 msgstr "liitä kuva"
 
@@ -519,6 +544,7 @@ msgstr "Varmuuskopioi tilin avain"
 msgid "Backup Failed"
 msgstr "Varmuuskopiointi epäonnistui"
 
+#: src/components/direct/DMUserProfileSidebar.tsx:104
 #: src/components/modals/UserSettingsModal/General.tsx:135
 msgid "Bio"
 msgstr "Bio"
@@ -550,7 +576,8 @@ msgstr "Lisää viesti kirjanmerkkeihin"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:193
 msgid "Bookmark messages to save them for later reference"
-msgstr "Lisää viestejä kirjanmerkkeihin tallentaaksesi ne myöhempää käyttöä varten"
+msgstr ""
+"Lisää viestejä kirjanmerkkeihin tallentaaksesi ne myöhempää käyttöä varten"
 
 #: src/components/message/Message.tsx:756
 #: src/components/message/Message.tsx:850
@@ -565,8 +592,8 @@ msgstr "Kirjanmerkitty kuva"
 msgid "Bookmarked sticker"
 msgstr "Kirjanmerkitty tarra"
 
-#: src/components/direct/DirectMessage.tsx:787
-#: src/components/space/Channel.tsx:1444
+#: src/components/direct/DirectMessage.tsx:798
+#: src/components/space/Channel.tsx:1455
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
@@ -583,7 +610,7 @@ msgstr "Kamera"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:507
+#: src/components/modals/UserSettingsModal/Privacy.tsx:561
 #: src/hooks/business/channels/useChannelManagement.ts:263
 #: src/hooks/business/messages/useMessageActions.ts:435
 #: src/hooks/business/messages/usePinnedMessages.ts:325
@@ -628,7 +655,7 @@ msgstr "Kanavan kuvake"
 msgid "Channel Managers"
 msgstr "Kanavan hallinnoijat"
 
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1879
 msgid "Channel members"
 msgstr "Kanavan jäsenet"
 
@@ -754,7 +781,7 @@ msgstr "Jatka"
 msgid "Continue without passkey"
 msgstr "Jatka ilman passkeyä"
 
-#: src/components/direct/DirectMessage.tsx:770
+#: src/components/direct/DirectMessage.tsx:781
 msgid "Conversation settings"
 msgstr "Keskustelun asetukset"
 
@@ -772,12 +799,13 @@ msgstr "Keskustelun Asetukset"
 msgid "Copied!"
 msgstr "Kopioitu!"
 
-#: src/components/direct/DirectMessage.tsx:752
-#: src/components/direct/DirectMessage.tsx:856
-#: src/components/direct/DirectMessage.tsx:874
+#: src/components/direct/DirectMessage.tsx:763
+#: src/components/direct/DirectMessage.tsx:882
+#: src/components/direct/DirectMessage.tsx:900
+#: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
 #: src/components/user/ExpandableUserAvatar.tsx:90
-#: src/components/user/UserProfile.tsx:123
+#: src/components/user/UserProfile.tsx:187
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Kopioi osoite"
@@ -786,7 +814,7 @@ msgstr "Kopioi osoite"
 msgid "Copy Failed"
 msgstr "Kopiointi epäonnistui"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:395
+#: src/components/modals/UserSettingsModal/Privacy.tsx:449
 msgid "Copy full address"
 msgstr "Kopioi koko osoite"
 
@@ -897,7 +925,7 @@ msgstr "Vaaravyöhyke"
 msgid "Dark"
 msgstr "Tumma"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:553
+#: src/components/modals/UserSettingsModal/Privacy.tsx:607
 msgid "Data Backup"
 msgstr "Tiedon varmuuskopiointi"
 
@@ -1025,7 +1053,7 @@ msgid "Deleting..."
 msgstr "Poistetaan..."
 
 #: src/components/modals/ConversationSettingsModal.tsx:269
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
+#: src/components/modals/UserSettingsModal/Privacy.tsx:279
 msgid "Delivery receipts"
 msgstr "Toimitusvahvistukset"
 
@@ -1073,7 +1101,7 @@ msgstr "Laiteen nimi ei voi sisältää HTML-koodia"
 msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Laiteen nimen tulee olla {MAX_NAME_LENGTH} merkkiä tai vähemmän"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:314
+#: src/components/modals/UserSettingsModal/Privacy.tsx:368
 msgid "Devices"
 msgstr "Laitteet"
 
@@ -1117,7 +1145,7 @@ msgstr "Näyttönimi on pakollinen"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Näyttönimen on oltava {MAX_NAME_LENGTH} merkkiä tai vähemmän"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:481
+#: src/components/modals/UserSettingsModal/Privacy.tsx:535
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1180,7 +1208,7 @@ msgstr "Muokkaushistoria"
 msgid "Edit message"
 msgstr "Muokkaa viestiä"
 
-#: src/components/message/MessageComposer.tsx:807
+#: src/components/message/MessageComposer.tsx:841
 msgid "emoji & stickers"
 msgstr "emoji & tarrat"
 
@@ -1191,12 +1219,12 @@ msgstr "Emoji-valitsin"
 #: src/components/message/EmojiPickerDrawer.tsx:66
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
-#: src/components/space/Channel.tsx:1775
-#: src/components/thread/ThreadPanel.tsx:487
+#: src/components/space/Channel.tsx:1792
+#: src/components/thread/ThreadPanel.tsx:507
 msgid "Emojis"
 msgstr "Emojit"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:206
+#: src/components/modals/UserSettingsModal/Privacy.tsx:214
 msgid "Enable sync"
 msgstr "Ota synkronointi käyttöön"
 
@@ -1204,7 +1232,7 @@ msgstr "Ota synkronointi käyttöön"
 msgid "Enable threaded conversations in channels"
 msgstr "Käytä ketjuitettuja keskusteluja kanavissa"
 
-#: src/services/ActionQueueHandlers.ts:1159
+#: src/services/ActionQueueHandlers.ts:1045
 msgid "Encryption error"
 msgstr "Salausvirhe"
 
@@ -1292,12 +1320,12 @@ msgstr "Paina Esc"
 msgid "Existing Conversations"
 msgstr "Olemassa olevat keskustelut"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:465
-#: src/components/modals/UserSettingsModal/Privacy.tsx:568
+#: src/components/modals/UserSettingsModal/Privacy.tsx:519
+#: src/components/modals/UserSettingsModal/Privacy.tsx:622
 msgid "Export"
 msgstr "Vie"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:559
+#: src/components/modals/UserSettingsModal/Privacy.tsx:613
 msgid ""
 "Export an encrypted backup of your direct messages to restore them if you "
 "lose access to this device."
@@ -1305,7 +1333,7 @@ msgstr ""
 "Vie salatun varmuuskopion suoraan viestistäsi palauttaaksesi ne, jos menetät"
 " pääsyn tähän laitteeseen."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:457
+#: src/components/modals/UserSettingsModal/Privacy.tsx:511
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1313,7 +1341,7 @@ msgstr ""
 "Vie avain tiedostoon. Älä jaa tätä tiedostoa kenellekään muulle, tai he "
 "voivat esiintyä sinä tai varastaa Space-tilisi Apex-tulot."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:568
+#: src/components/modals/UserSettingsModal/Privacy.tsx:622
 msgid "Exporting..."
 msgstr "Viedään..."
 
@@ -1321,21 +1349,21 @@ msgstr "Viedään..."
 msgid "Failed to create space. Please try again."
 msgstr "Tilaa ei voitu luoda. Yritä uudelleen."
 
-#: src/services/MessageService.ts:2523
+#: src/services/MessageService.ts:2728
 msgid "Failed to decrypt message with any known state"
 msgstr "Viestin purkaminen tunnetuilla tiloilla epäonnistui"
 
 #: src/services/ActionQueueHandlers.ts:330
-#: src/services/ActionQueueHandlers.ts:989
+#: src/services/ActionQueueHandlers.ts:875
 msgid "Failed to delete message"
 msgstr "Viestin poistaminen epäonnistui"
 
 #: src/services/ActionQueueHandlers.ts:306
-#: src/services/ActionQueueHandlers.ts:1034
+#: src/services/ActionQueueHandlers.ts:920
 msgid "Failed to edit message"
 msgstr "Viestin muokkaaminen epäonnistui"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:155
+#: src/components/modals/UserSettingsModal/Privacy.tsx:163
 msgid "Failed to export backup"
 msgstr "Varmuuskopiointi epäonnistui"
 
@@ -1343,7 +1371,7 @@ msgstr "Varmuuskopiointi epäonnistui"
 msgid "Failed to generate invite link. Please try again."
 msgstr "Kutsulinkin luominen epäonnistui. Yritä uudelleen."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:178
+#: src/components/modals/UserSettingsModal/Privacy.tsx:186
 msgid "Failed to import backup"
 msgstr "Tietojen palautus epäonnistui"
 
@@ -1582,7 +1610,7 @@ msgstr "Apua"
 msgid "Help others recognize you with a profile picture."
 msgstr "Auta muita tunnistamaan sinut profiilikuvan avulla."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:541
+#: src/components/modals/UserSettingsModal/Privacy.tsx:595
 msgid "Hide"
 msgstr "Piilota"
 
@@ -1606,7 +1634,7 @@ msgstr "Minulla on jo tili"
 msgid "I understand"
 msgstr "Ymmärrän"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:515
+#: src/components/modals/UserSettingsModal/Privacy.tsx:569
 msgid "I Understand, Show QR"
 msgstr "Ymmärrän, näytä QR"
 
@@ -1619,7 +1647,7 @@ msgstr "Olen uusi!"
 msgid "I've already saved my key"
 msgstr "Olen jo tallentanut avaimeni"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:577
+#: src/components/modals/UserSettingsModal/Privacy.tsx:631
 msgid "Import a backup instead"
 msgstr "Tuo varmuuskopio sen sijaan"
 
@@ -1631,7 +1659,7 @@ msgstr "Tuo tilin avain"
 msgid "Important messages will be pinned here"
 msgstr "Tärkeät viestit kiinnitetään tänne"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:577
+#: src/components/modals/UserSettingsModal/Privacy.tsx:631
 msgid "Importing..."
 msgstr "Tuodaan..."
 
@@ -1639,7 +1667,7 @@ msgstr "Tuodaan..."
 msgid "Inline Code"
 msgstr "Upotuskoodi"
 
-#: src/services/MessageService.ts:2816
+#: src/services/MessageService.ts:3036
 msgid "invalid address for signature"
 msgstr "virheellinen osoite allekirjoitusta varten"
 
@@ -1682,6 +1710,10 @@ msgstr "Kutsu lähetetty"
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 msgid "Invites"
 msgstr "Kutsut"
+
+#: src/components/message/TypingIndicator.tsx:42
+msgid "is typing"
+msgstr "kirjoittaa"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:51
 msgid "Italic"
@@ -1734,7 +1766,7 @@ msgstr ""
 msgid "Keep your Key Safe!"
 msgstr "Pidä avaintasi turvassa!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:452
+#: src/components/modals/UserSettingsModal/Privacy.tsx:506
 msgid "Key Export"
 msgstr "Avaimen vienti"
 
@@ -1751,7 +1783,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Näppäinoikotiet"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:265
+#: src/components/user/UserProfile.tsx:366
 msgid "Kick"
 msgstr "Potkaise"
 
@@ -1759,7 +1791,7 @@ msgstr "Potkaise"
 msgid "Kick User"
 msgstr "Potkaise käyttäjä"
 
-#: src/components/user/UserProfile.tsx:265
+#: src/components/user/UserProfile.tsx:366
 msgid "Kicked!"
 msgstr "Potkittu!"
 
@@ -1813,7 +1845,7 @@ msgstr "Ladataan ilmoituksia..."
 msgid "Loading pinned messages..."
 msgstr "Ladataan kiinnitettyjä viestejä..."
 
-#: src/components/thread/ThreadPanel.tsx:363
+#: src/components/thread/ThreadPanel.tsx:377
 msgid "Loading thread..."
 msgstr "Ladataan ketjua..."
 
@@ -1821,7 +1853,7 @@ msgstr "Ladataan ketjua..."
 msgid "Loading your profile..."
 msgstr "Ladataan profiiliasi..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:515
+#: src/components/modals/UserSettingsModal/Privacy.tsx:569
 msgid "Loading..."
 msgstr "Ladataan..."
 
@@ -1853,7 +1885,7 @@ msgstr "Tee roolista julkinen"
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Hallitse työpöydän ilmoitusasetuksia uusille viesteille."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:190
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1891,7 +1923,7 @@ msgstr "jäsen"
 msgid "members"
 msgstr "jäsenet"
 
-#: src/components/space/Channel.tsx:1470
+#: src/components/space/Channel.tsx:1481
 msgid "Members List"
 msgstr "Jäsenluettelo"
 
@@ -1922,19 +1954,19 @@ msgstr ""
 "Viesti ei sisällä voimassa olevaa allekirjoitusta, tämä ei välttämättä ole "
 "lähettäjältä"
 
-#: src/components/message/MessageComposer.tsx:155
+#: src/components/message/MessageComposer.tsx:170
 msgid "Message..."
 msgstr "Viesti..."
 
-#: src/components/message/MessageComposer.tsx:824
+#: src/components/message/MessageComposer.tsx:858
 msgid "Messages are NOT signed!"
 msgstr "Viestejä EI ole allekirjoitettu!"
 
-#: src/components/message/MessageComposer.tsx:825
+#: src/components/message/MessageComposer.tsx:859
 msgid "Messages are signed!"
 msgstr "Viestit on allekirjoitettu!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:474
+#: src/components/modals/UserSettingsModal/Privacy.tsx:528
 msgid "Mobile Import"
 msgstr "Mobiili tuonti"
 
@@ -1950,7 +1982,7 @@ msgstr "Lisää reaktioita"
 msgid "Must be exactly 4 characters"
 msgstr "Tasan 4 merkkiä"
 
-#: src/components/user/UserProfile.tsx:246
+#: src/components/user/UserProfile.tsx:347
 msgid "Mute"
 msgstr "Mykistä"
 
@@ -2007,7 +2039,7 @@ msgid "My Account"
 msgstr "Oma tili"
 
 #: src/components/direct/DirectMessageContactsList.tsx:359
-#: src/components/space/Channel.tsx:1645
+#: src/components/space/Channel.tsx:1662
 msgid "Name or Address"
 msgstr "Nimi tai osoite"
 
@@ -2017,7 +2049,7 @@ msgid "Names resembling admin, moderator, or support are reserved."
 msgstr ""
 "Nimiä, jotka muistuttavat adminia, moderaattoria tai tukea, on varattu."
 
-#: src/services/ActionQueueHandlers.ts:1156
+#: src/services/ActionQueueHandlers.ts:1042
 msgid "Network error"
 msgstr "Verkkovirhe"
 
@@ -2037,6 +2069,10 @@ msgstr "Uusi kansio"
 #: src/services/NotificationService.ts:301
 msgid "New message from {0}"
 msgstr "Uusi viesti {0}lta"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:109
+msgid "No bio yet."
+msgstr "Ei biota vielä."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:210
 msgid "No bookmarks found"
@@ -2122,7 +2158,7 @@ msgstr "Ei tuntemattomia kontakteja"
 msgid "No unread notifications"
 msgstr "Ei lukemattomia ilmoituksia"
 
-#: src/components/space/Channel.tsx:1653 src/components/space/Channel.tsx:1882
+#: src/components/space/Channel.tsx:1670 src/components/space/Channel.tsx:1899
 msgid "No users found!"
 msgstr "Käyttäjiä ei löytynyt!"
 
@@ -2131,6 +2167,21 @@ msgstr "Käyttäjiä ei löytynyt!"
 msgid "None"
 msgstr "Ei mitään"
 
+#: src/components/direct/DMUserProfileSidebar.tsx:118
+#: src/components/user/UserProfile.tsx:275
+msgid "Note"
+msgstr "Muistiinpano"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:104
+msgid "Note contains invalid content"
+msgstr "Muistiinpanossa on virheellistä sisältöä"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:108
+msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+msgstr ""
+"Muistiinpanon pituuden tulee olla {MAX_USER_NOTE_LENGTH} merkkiä tai "
+"vähemmän"
+
 #: src/services/NotificationService.ts:201
 msgid "Notification permission not granted"
 msgstr "Ilmoituslupaa ei myönnetty"
@@ -2138,7 +2189,7 @@ msgstr "Ilmoituslupaa ei myönnetty"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:1409
+#: src/components/space/Channel.tsx:1420
 msgid "Notifications"
 msgstr "Ilmoitukset"
 
@@ -2226,11 +2277,11 @@ msgstr ""
 msgid "Paste an invite link"
 msgstr "Liitä kutsulinkki"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:432
+#: src/components/modals/UserSettingsModal/Privacy.tsx:486
 msgid "Pending"
 msgstr "Odottaa"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:418
+#: src/components/modals/UserSettingsModal/Privacy.tsx:472
 msgid "Pending removal - click Save to confirm"
 msgstr "Odottaa poistoa - klikkaa Tallenna vahvistaaksesi"
 
@@ -2301,7 +2352,7 @@ msgstr "Kiinnitetty"
 msgid "Pinned by {0}"
 msgstr "Kiinnittänyt {0}"
 
-#: src/components/space/Channel.tsx:1341
+#: src/components/space/Channel.tsx:1352
 msgid "Pinned Messages"
 msgstr "Kiinnitetyt viestit"
 
@@ -2314,7 +2365,7 @@ msgid "Preview:"
 msgstr "Esikatselu:"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:188
+#: src/components/modals/UserSettingsModal/Privacy.tsx:196
 msgid "Privacy/Security"
 msgstr "Yksityisyys/Turvallisuus"
 
@@ -2322,7 +2373,7 @@ msgstr "Yksityisyys/Turvallisuus"
 msgid "Private key saved to selected folder"
 msgstr "Yksityinen avain tallennettu valittuun kansioon"
 
-#: src/components/message/MessageComposer.tsx:632
+#: src/components/message/MessageComposer.tsx:666
 msgid "Processing image... This may take a moment for large files."
 msgstr ""
 "Kuvankäsittelyssä... Tämä saattaa kestää hetken suurille tiedostoille."
@@ -2343,7 +2394,7 @@ msgstr ""
 "Julkiset kutsulinkit antavat kaikille, joilla on pääsy linkkiin, liittyä "
 "Spaceosi. Mieti, kenelle jaat linkin ja minne julkaiset sen."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:532
+#: src/components/modals/UserSettingsModal/Privacy.tsx:586
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR-koodi piiloutuu automaattisesti 60 sekunnissa"
 
@@ -2389,7 +2440,7 @@ msgid "Read only channel"
 msgstr "Vain luku kanava"
 
 #: src/components/modals/ConversationSettingsModal.tsx:312
-#: src/components/modals/UserSettingsModal/Privacy.tsx:295
+#: src/components/modals/UserSettingsModal/Privacy.tsx:303
 msgid "Read receipts"
 msgstr "Lukemavahvistukset"
 
@@ -2405,7 +2456,7 @@ msgstr "Valtuuta uudelleen"
 msgid "received config with invalid signature!"
 msgstr "vastaanotettu konfiguraatio, jossa on virheellinen allekirjoitus!"
 
-#: src/services/ActionQueueHandlers.ts:1162
+#: src/services/ActionQueueHandlers.ts:1048
 msgid "Recipient has no devices"
 msgstr "Vastaanottajalla ei ole laitteita"
 
@@ -2414,7 +2465,7 @@ msgstr "Vastaanottajalla ei ole laitteita"
 msgid "Refresh"
 msgstr "Päivitä"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:432
+#: src/components/modals/UserSettingsModal/Privacy.tsx:486
 msgid "Remove"
 msgstr "Poista"
 
@@ -2428,15 +2479,15 @@ msgstr "Poista kirjanmerkki"
 msgid "Remove from Favorites"
 msgstr "Poista suosikeista"
 
-#: src/components/user/UserProfile.tsx:172
+#: src/components/user/UserProfile.tsx:236
 msgid "Removing..."
 msgstr "Poistetaan..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:403
+#: src/components/modals/UserSettingsModal/Privacy.tsx:457
 msgid "Rename this device"
 msgstr "Nimeä tämä laite uudelleen"
 
-#: src/components/thread/ThreadPanel.tsx:422
+#: src/components/thread/ThreadPanel.tsx:440
 msgid "Reopen"
 msgstr "Avaa uudelleen"
 
@@ -2451,7 +2502,7 @@ msgstr "Vastaukset"
 msgid "Reply"
 msgstr "Vastaa"
 
-#: src/components/thread/ThreadPanel.tsx:434
+#: src/components/thread/ThreadPanel.tsx:452
 msgid "Reply in thread..."
 msgstr "Vastaa ketjussa..."
 
@@ -2496,7 +2547,7 @@ msgstr ""
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:182
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Palautettiin {0} viestiä ja {1} keskustelua."
 
@@ -2531,7 +2582,7 @@ msgstr "TALLENNA"
 #: src/components/modals/GroupEditorModal.tsx:95
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
 #: src/components/modals/ThreadSettingsModal.tsx:184
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:333
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:341
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Tallenna muutokset"
@@ -2542,7 +2593,7 @@ msgid "Save Edit History"
 msgstr "Tallenna muokkaushistoria"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:649
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:322
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:330
 msgid "Save Failed"
 msgstr "Tallennus epäonnistui"
 
@@ -2590,8 +2641,8 @@ msgstr "Hae tässä Tilassa"
 msgid "Search in this Space..."
 msgstr "Etsi tästä Space..."
 
-#: src/components/direct/DirectMessage.tsx:814
-#: src/components/space/Channel.tsx:1489
+#: src/components/direct/DirectMessage.tsx:840
+#: src/components/space/Channel.tsx:1500
 msgid "Search Messages"
 msgstr "Etsi viestejä"
 
@@ -2611,7 +2662,7 @@ msgstr "Etsi ketjuja…"
 msgid "Search username or address"
 msgstr "Etsi käyttäjänimeä tai osoitetta"
 
-#: src/components/space/Channel.tsx:1873
+#: src/components/space/Channel.tsx:1890
 msgid "Search Username or Address"
 msgstr "Hae käyttäjänimeä tai osoitetta"
 
@@ -2623,7 +2674,7 @@ msgstr "Hae..."
 msgid "Searching..."
 msgstr "Etsitään..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:196
+#: src/components/modals/UserSettingsModal/Privacy.tsx:204
 msgid "Security"
 msgstr "Turvallisuus"
 
@@ -2676,7 +2727,7 @@ msgstr ""
 "Lähetä ainutlaatuinen kutsulinkki suoraan jollekin. Jokainen kutsu voidaan "
 "käyttää vain kerran."
 
-#: src/services/ActionQueueHandlers.ts:1164
+#: src/services/ActionQueueHandlers.ts:1050
 msgid "Send failed"
 msgstr "Lähetys epäonnistui"
 
@@ -2684,7 +2735,7 @@ msgstr "Lähetys epäonnistui"
 msgid "Send Invite"
 msgstr "Lähetä kutsu"
 
-#: src/components/user/UserProfile.tsx:218
+#: src/components/user/UserProfile.tsx:319
 msgid "Send Message"
 msgstr "Lähetä viesti"
 
@@ -2708,6 +2759,10 @@ msgstr "Istunto salattu"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
 msgstr "Asetukset"
+
+#: src/components/message/TypingIndicator.tsx:58
+msgid "Several people are typing"
+msgstr "Useat henkilöt kirjoittavat"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:260
 msgid "Share Public Link"
@@ -2735,11 +2790,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Näytä mykistetyt kanavat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:244
+#: src/components/modals/UserSettingsModal/Privacy.tsx:252
 msgid "Show Online Status"
 msgstr "Näytä online-tila"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:489
+#: src/components/modals/UserSettingsModal/Privacy.tsx:543
 msgid "Show QR"
 msgstr "Näytä QR"
 
@@ -2759,7 +2814,7 @@ msgstr "Kirjaudu sisään Quorumiin"
 msgid "Skip for now"
 msgstr "Ohita nyt"
 
-#: src/services/MessageService.ts:4113
+#: src/services/MessageService.ts:4312
 msgid "Someone"
 msgstr "Joku"
 
@@ -2822,7 +2877,7 @@ msgstr "Aloita ketju"
 msgid "Start typing to search messages..."
 msgstr "Aloita kirjoittaminen etsiäksesi viestejä..."
 
-#: src/components/thread/ThreadPanel.tsx:285
+#: src/components/thread/ThreadPanel.tsx:299
 msgid "Started by"
 msgstr "Aloittanut"
 
@@ -2833,8 +2888,8 @@ msgstr "Tila menee tänne"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
-#: src/components/space/Channel.tsx:1781
-#: src/components/thread/ThreadPanel.tsx:493
+#: src/components/space/Channel.tsx:1798
+#: src/components/thread/ThreadPanel.tsx:513
 msgid "Stickers"
 msgstr "Tarrat"
 
@@ -2851,7 +2906,7 @@ msgstr "Kutsu lähetetty onnistuneesti käyttäjälle {0}"
 msgid "Sync Kick Status"
 msgstr "Synkronoi potkutila"
 
-#: src/services/MessageService.ts:3760 src/services/MessageService.ts:3877
+#: src/services/SyncService.ts:473
 msgid "Syncing..."
 msgstr "Synkronoidaan..."
 
@@ -2932,7 +2987,7 @@ msgstr ""
 "Tämä kuvaus näkyy kutsuissa ja näytetään ihmisille, kun he etsivät tai "
 "liittyvät Space:esi kutsulinkin kautta."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:441
+#: src/components/modals/UserSettingsModal/Privacy.tsx:495
 msgid "This device"
 msgstr "Tämä laite"
 
@@ -2985,7 +3040,7 @@ msgstr ""
 "Tätä ketjua ei voida poistaa, koska siinä on muita käyttäjiä koskevia "
 "viestejä."
 
-#: src/components/thread/ThreadPanel.tsx:413
+#: src/components/thread/ThreadPanel.tsx:431
 msgid "This thread has been closed"
 msgstr "Tämä ketju on suljettu"
 
@@ -3042,8 +3097,8 @@ msgstr ""
 msgid "Thread"
 msgstr "Ketju"
 
-#: src/components/thread/ThreadPanel.tsx:326
 #: src/components/thread/ThreadPanel.tsx:340
+#: src/components/thread/ThreadPanel.tsx:354
 msgid "Thread settings"
 msgstr "Ketjun asetukset"
 
@@ -3055,7 +3110,7 @@ msgstr "Ketjun asetukset"
 msgid "Thread title"
 msgstr "Ketjun otsikko"
 
-#: src/components/space/Channel.tsx:1382
+#: src/components/space/Channel.tsx:1393
 #: src/components/thread/ThreadsListPanel.tsx:97
 msgid "Threads"
 msgstr "Ketjut"
@@ -3127,6 +3182,14 @@ msgstr ""
 msgid "Type RESET to confirm"
 msgstr "Kirjoita RESET vahvistaaksesi"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+msgid "Typing indicators in DMs"
+msgstr "Kirjoittiluettelot yksityisviesteissä"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:350
+msgid "Typing indicators in spaces"
+msgstr "Kirjoittiluettelot tiloissa"
+
 #: src/hooks/business/ui/useCustomAssets.ts:198
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Ei voitu pakata emoji-kuvia. Käytä pienempiä kuvia."
@@ -3182,7 +3245,7 @@ msgstr "Palauttaminen epäonnistui: et ole kirjautunut sisään"
 
 #: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:2496 src/services/MessageService.ts:4045
+#: src/services/MessageService.ts:2701 src/services/MessageService.ts:4244
 msgid "Unknown"
 msgstr "Tuntematon"
 
@@ -3197,11 +3260,11 @@ msgid "Unknown time"
 msgstr "Tuntematon aika"
 
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:199
-#: src/components/direct/DirectMessage.tsx:206
-#: src/components/direct/DirectMessage.tsx:213
-#: src/components/direct/DirectMessage.tsx:277
-#: src/components/direct/DirectMessage.tsx:636
+#: src/components/direct/DirectMessage.tsx:209
+#: src/components/direct/DirectMessage.tsx:216
+#: src/components/direct/DirectMessage.tsx:223
+#: src/components/direct/DirectMessage.tsx:287
+#: src/components/direct/DirectMessage.tsx:647
 #: src/components/direct/DirectMessageContactsList.tsx:40
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
@@ -3228,16 +3291,16 @@ msgstr "Tuntematon aika"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2146
-#: src/services/MessageService.ts:2334 src/services/MessageService.ts:2484
-#: src/services/MessageService.ts:2513 src/services/MessageService.ts:4519
-#: src/services/MessageService.ts:4631 src/services/MessageService.ts:4716
-#: src/services/MessageService.ts:4932 src/services/MessageService.ts:5130
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2351
+#: src/services/MessageService.ts:2539 src/services/MessageService.ts:2689
+#: src/services/MessageService.ts:2718 src/services/MessageService.ts:4718
+#: src/services/MessageService.ts:4830 src/services/MessageService.ts:4915
+#: src/services/MessageService.ts:5131 src/services/MessageService.ts:5329
 msgid "Unknown User"
 msgstr "Tuntematon käyttäjä"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:246
+#: src/components/user/UserProfile.tsx:347
 msgid "Unmute"
 msgstr "Poista mykistys"
 
@@ -3282,7 +3345,7 @@ msgstr "Poista viestin kiinnitys"
 msgid "Unpin this post"
 msgstr "Poista tämän postauksen kiinnitys"
 
-#: src/components/direct/DirectMessage.tsx:931
+#: src/components/direct/DirectMessage.tsx:957
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3343,6 +3406,14 @@ msgstr "Käyttäjää ei ole olemassa."
 #: src/hooks/business/messages/usePinnedMessages.ts:169
 msgid "User not authenticated"
 msgstr "Käyttäjää ei ole todennettu"
+
+#: src/components/direct/DirectMessage.tsx:1046
+msgid "User profile"
+msgstr "Käyttäjäprofiili"
+
+#: src/components/direct/DirectMessage.tsx:822
+msgid "User Profile"
+msgstr "Käyttäjäprofiili"
 
 #: src/components/modals/ConversationSettingsModal.tsx:288
 #: src/components/modals/ConversationSettingsModal.tsx:327
@@ -3411,7 +3482,7 @@ msgstr ""
 "tallennetaan. Kun se on pois päältä, vain nykyinen muokattu versio "
 "säilytetään."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:248
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
 msgid ""
 "When enabled, other users can see when you are active. This feature is not "
 "yet available."
@@ -3419,7 +3490,7 @@ msgstr ""
 "Kun tämä on käytössä, muut käyttäjät voivat nähdä, milloin olet aktiivinen. "
 "Tämä ominaisuus ei ole vielä saatavilla."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:210
+#: src/components/modals/UserSettingsModal/Privacy.tsx:218
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -3439,8 +3510,7 @@ msgid ""
 msgstr ""
 "Kun viestit on allekirjoitettu, lähettäjät vahvistavat, että ne tulevat "
 "heidän avaimestaan. Kun viestejä ei ole allekirjoitettu, lähettäjillä on "
-"uskottava kieltäytyminen. Tämä asetus koskee kaikkia viestejä tässä "
-"Tilassa."
+"uskottava kieltäytyminen. Tämä asetus koskee kaikkia viestejä tässä Tilassa."
 
 #: src/components/modals/ConversationSettingsModal.tsx:244
 msgid ""
@@ -3450,7 +3520,15 @@ msgstr ""
 "Kun mykistetty, uudet viestit eivät näytä lukemattomia merkkejä tai "
 "työpöytäilmoituksia."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:275
+#: src/components/modals/UserSettingsModal/Privacy.tsx:354
+msgid ""
+"When on, everyone in a space channel sees when you're typing, and you see "
+"when they're typing."
+msgstr ""
+"Kun päällä, kaikki kanavassa näkevät, kun kirjoitat, ja sinä näet, kun he "
+"kirjoittavat."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "When on, senders see when their messages reach your device, and you see when"
 " yours reach theirs."
@@ -3458,13 +3536,21 @@ msgstr ""
 "Kun tämä on päällä, lähettäjät näkevät milloin viestinsä saapuvat "
 "laitteeseesi, ja näet milloin viestisi saapuvat heidän laitteisiinsa."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:299
+#: src/components/modals/UserSettingsModal/Privacy.tsx:307
 msgid ""
 "When on, senders see when you've read their messages, and you see when yours"
 " are read."
 msgstr ""
 "Kun tämä on päällä, lähettäjät näkevät milloin olet lukenut heidän "
 "viestinsä, ja näet milloin viestisi on luettu."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:331
+msgid ""
+"When on, your DM contacts see when you're typing, and you see when they're "
+"typing."
+msgstr ""
+"Kun päällä, yksityisviestiyhteyksesi näkevät, kun kirjoitat, ja sinä näet, "
+"kun he kirjoittavat."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:254
 msgid "When someone mentions @everyone"
@@ -3492,7 +3578,7 @@ msgstr ""
 "allekirjoita viestiä, sinulla on uskottava kieltäytyminen. Oletus kaikille "
 "keskusteluille voidaan muuttaa käyttäjäasetuksissa."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:229
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -3532,7 +3618,7 @@ msgid "You are already a member of this Space."
 msgstr "Olet jo tämän Tilan jäsen."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1624
+#: src/components/space/Channel.tsx:1641
 msgid "You are muted for {0}"
 msgstr "Olet mykistetty {0}"
 
@@ -3565,8 +3651,8 @@ msgstr ""
 "Et voi poistaa ryhmää, joka sisältää kanavia. Poista ensin kaikki "
 "{channelCount} kanavaa tästä ryhmästä."
 
-#: src/components/message/MessageComposer.tsx:611
-#: src/components/space/Channel.tsx:1627
+#: src/components/message/MessageComposer.tsx:645
+#: src/components/space/Channel.tsx:1644
 msgid "You cannot post in this channel"
 msgstr "Et voi julkaista tässä kanavassa"
 
@@ -3579,7 +3665,7 @@ msgstr "Et voi lähettää suoraa viestiä itsellesi."
 msgid "You have a new unread message"
 msgstr "Sinulla on uusi lukematon viesti"
 
-#: src/components/space/Channel.tsx:1625
+#: src/components/space/Channel.tsx:1642
 msgid "You have been muted in this Space"
 msgstr "Olet mykistetty tässä Space:ssa"
 
