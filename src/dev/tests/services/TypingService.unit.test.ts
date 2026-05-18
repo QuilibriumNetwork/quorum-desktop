@@ -174,6 +174,19 @@ describe('TypingService — receive-side state', () => {
     expect(listener).toHaveBeenLastCalledWith([]);
   });
 
+  it('typing-stop with no prior entry is a silent no-op (no spurious notify)', () => {
+    const listener = vi.fn();
+    service.subscribe(dmScope, listener);
+    listener.mockClear(); // ignore the initial empty-state emit on subscribe
+    service.onTypingReceived({
+      type: 'typing-stop',
+      senderId: 'alice',
+      scope: 'dm',
+      timestamp: 1000,
+    });
+    expect(listener).not.toHaveBeenCalled();
+  });
+
   it('typing-stop removes the typist immediately', () => {
     const listener = vi.fn();
     service.subscribe(dmScope, listener);

@@ -38,9 +38,7 @@ export interface TypingServiceOptions {
 }
 
 type TypistEntry = {
-  /** Wall-clock expiry, used for TTL timeout scheduling. */
-  expiresAt: number;
-  /** The logical timestamp from the last accepted message (for reorder protection). */
+  /** Logical timestamp from the last accepted message (for reorder protection). */
   msgTimestamp: number;
   timeoutId: ReturnType<typeof setTimeout>;
 };
@@ -156,21 +154,23 @@ export class TypingService {
     }
 
     if (msg.type === 'typing-stop') {
+      if (!existing) return; // nothing to remove, nothing changed
       entries.delete(msg.senderId);
+      if (entries.size === 0) this.typists.delete(key);
       this.notifyListeners(key);
       return;
     }
 
-    const expiresAt = Date.now() + TYPING_TTL_MS;
     const timeoutId = setTimeout(() => {
       const fresh = this.typists.get(key);
       if (fresh) {
         fresh.delete(msg.senderId);
+        if (fresh.size === 0) this.typists.delete(key);
         this.notifyListeners(key);
       }
     }, TYPING_TTL_MS);
 
-    entries.set(msg.senderId, { expiresAt, msgTimestamp: msg.timestamp, timeoutId });
+    entries.set(msg.senderId, { msgTimestamp: msg.timestamp, timeoutId });
     this.notifyListeners(key);
   }
 
