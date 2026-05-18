@@ -28,6 +28,10 @@ export interface UseUserSettingsReturn {
   setDeliveryReceipts: (value: boolean) => void;
   readReceipts: boolean;
   setReadReceipts: (value: boolean) => void;
+  typingIndicatorsDM: boolean;
+  setTypingIndicatorsDM: (value: boolean) => void;
+  typingIndicatorsSpaces: boolean;
+  setTypingIndicatorsSpaces: (value: boolean) => void;
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
@@ -60,6 +64,8 @@ export const useUserSettings = (
   const [nonRepudiable, setNonRepudiable] = useState(true);
   const [deliveryReceipts, setDeliveryReceipts] = useState(false);
   const [readReceipts, setReadReceipts] = useState(false);
+  const [typingIndicatorsDM, setTypingIndicatorsDM] = useState(false);
+  const [typingIndicatorsSpaces, setTypingIndicatorsSpaces] = useState(false);
   const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
@@ -98,6 +104,8 @@ export const useUserSettings = (
         setNonRepudiable(config?.nonRepudiable ?? true);
         setDeliveryReceipts(config?.deliveryReceipts ?? false);
         setReadReceipts(config?.readReceipts ?? false);
+        setTypingIndicatorsDM(config?.typingIndicatorsDM ?? false);
+        setTypingIndicatorsSpaces(config?.typingIndicatorsSpaces ?? false);
         setBio(config?.bio ?? '');
         setSpaceTagId(config?.spaceTagId ?? undefined);
         const loadedNames = config?.deviceNames ?? {};
@@ -295,6 +303,8 @@ export const useUserSettings = (
       nonRepudiable: nonRepudiable,
       deliveryReceipts,
       readReceipts,
+      typingIndicatorsDM,
+      typingIndicatorsSpaces,
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
@@ -355,6 +365,10 @@ export const useUserSettings = (
     setDeliveryReceipts,
     readReceipts,
     setReadReceipts,
+    typingIndicatorsDM,
+    setTypingIndicatorsDM,
+    typingIndicatorsSpaces,
+    setTypingIndicatorsSpaces,
     spaceTagId,
     setSpaceTagId,
     saveChanges,
