@@ -25,6 +25,13 @@ import {
 
 const TYPING_THROTTLE_MS = 5_000;
 const TYPING_TTL_MS = 8_000;
+/**
+ * Reject incoming typing messages whose wire timestamp is older than this.
+ * The hub broadcasts may be replayed to new subscribers on subscribe-join,
+ * which would otherwise flood the receive path with ancient typing-starts
+ * that have no UI value (TTL expired long ago anyway).
+ */
+const TYPING_MAX_AGE_MS = 30_000;
 
 export interface TypingServiceOptions {
   /** Caller's own address, stamped onto outgoing TypingMessage.senderId */
@@ -71,8 +78,9 @@ export class TypingService {
 
     const key = scopeKey(scope);
     const now = Date.now();
-    const last = this.lastSentAt.get(key) ?? 0;
-    if (now - last < TYPING_THROTTLE_MS) return;
+    const last = this.lastSentAt.get(key);
+    // First emit for this scope always fires; subsequent ones throttle.
+    if (last !== undefined && now - last < TYPING_THROTTLE_MS) return;
 
     this.lastSentAt.set(key, now);
     this.activeOutbound.add(key);
@@ -192,6 +200,11 @@ export class TypingService {
   onTypingReceived(msg: TypingMessage): void {
     // Defense in depth: drop self-originated messages
     if (msg.senderId === this.options.selfAddress) return;
+
+    // Drop ancient messages — hub-replay backlog on subscribe-join would
+    // otherwise flood through the gate and trigger spurious indicators
+    // (later filtered by the per-typist reorder protection, but at a cost).
+    if (Date.now() - msg.timestamp > TYPING_MAX_AGE_MS) return;
 
     const scope = scopeFromMessage(msg);
     if (!scope) return;

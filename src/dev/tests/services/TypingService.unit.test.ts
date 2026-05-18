@@ -13,6 +13,7 @@ describe('TypingService — send-side throttle', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.setSystemTime(0);
     sendDM = vi.fn().mockResolvedValue(undefined);
     sendSpace = vi.fn().mockResolvedValue(undefined);
     isEnabledForScope = vi.fn().mockReturnValue(true);
@@ -113,6 +114,9 @@ describe('TypingService — receive-side state', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    // Pin fake clock to 0 so the small synthetic msg.timestamps (1000/2000/etc)
+    // pass the freshness filter (Date.now() - timestamp must be < 30s).
+    vi.setSystemTime(0);
     isEnabledForScope = vi.fn().mockReturnValue(true);
     service = new TypingService({
       selfAddress: 'self',
@@ -323,6 +327,7 @@ describe('TypingService — onSettingDisabled (toggle-OFF clear)', () => {
 
   beforeEach(() => {
     vi.useFakeTimers();
+    vi.setSystemTime(0);
     sendDM = vi.fn().mockResolvedValue(undefined);
     sendSpace = vi.fn().mockResolvedValue(undefined);
     isEnabledForScope = vi.fn().mockReturnValue(true);
@@ -413,5 +418,65 @@ describe('TypingService — onSettingDisabled (toggle-OFF clear)', () => {
     isEnabledForScope.mockReturnValue(true);
     service.notifyTyping(dmScope);
     expect(sendDM).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('TypingService — freshness filter (hub replay protection)', () => {
+  let service: TypingService;
+  const dmScope: TypingScope = { kind: 'dm', address: 'alice' };
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    service = new TypingService({
+      selfAddress: 'self',
+      sendDM: vi.fn().mockResolvedValue(undefined),
+      sendSpace: vi.fn().mockResolvedValue(undefined),
+      isEnabledForScope: () => true,
+    });
+  });
+
+  afterEach(() => {
+    service.destroy();
+    vi.useRealTimers();
+  });
+
+  it('drops typing messages older than 30 seconds', () => {
+    vi.setSystemTime(60_000);
+    const listener = vi.fn();
+    service.subscribe(dmScope, listener);
+    service.onTypingReceived({
+      type: 'typing-start',
+      senderId: 'alice',
+      scope: 'dm',
+      timestamp: 1_000, // 59 seconds old
+    });
+    expect(listener).not.toHaveBeenCalled();
+  });
+
+  it('accepts typing messages within the 30s window', () => {
+    vi.setSystemTime(10_000);
+    const listener = vi.fn();
+    service.subscribe(dmScope, listener);
+    service.onTypingReceived({
+      type: 'typing-start',
+      senderId: 'alice',
+      scope: 'dm',
+      timestamp: 5_000, // 5 seconds old
+    });
+    expect(listener).toHaveBeenLastCalledWith(['alice']);
+  });
+
+  it('accepts typing messages with future timestamps (clock skew tolerance)', () => {
+    vi.setSystemTime(10_000);
+    const listener = vi.fn();
+    service.subscribe(dmScope, listener);
+    service.onTypingReceived({
+      type: 'typing-start',
+      senderId: 'alice',
+      scope: 'dm',
+      timestamp: 15_000, // 5 seconds in the future
+    });
+    // Date.now() - timestamp = -5000, not > 30000, so accepted
+    expect(listener).toHaveBeenLastCalledWith(['alice']);
   });
 });
