@@ -320,30 +320,46 @@ Even if the underlying services migrated to shared, the handler class itself wou
 
 ## Sequencing Notes
 
-### Independent migrations (can ship in any order, no mutual dependencies)
+> **Important calibration on Tier 1 readiness (2026-05-18):** the original audit grouped five services in Tier 1 as if they were equivalently ready. After review with the project lead, only TWO of them are genuinely ready to migrate today. The other three are technically portable but should NOT be migrated until we have access to the current mobile codebase, because the migration direction itself depends on what mobile already has. The bucket-split below reflects this.
 
-- **`ReceiptService` + receipt types PR**: Standalone. `src/types/deliveryReceipt.ts` moves with it. No dependency on typing migration or hooks migration.
-- **`channelThreadHelpers`**: Can be included in a `ThreadService`-related PR or as a standalone tiny addition to `quorum-shared/src/utils/`.
-- **`TypingService` + typing types PR**: Standalone (see dedicated task). Can ship before or after ReceiptService.
+### Tier 1A — Ready now (migrate without waiting for anything)
 
-### Prerequisite-gated migrations
+- **`ReceiptService` + receipt types PR**: Standalone. `src/types/deliveryReceipt.ts` moves with it. No dependency on typing migration, hooks migration, or mobile inspection — mobile doesn't have a receipts feature yet, so desktop's implementation is canonical.
+- **`TypingService` + typing types PR**: Standalone (see dedicated task at `2026-05-18-typing-shared-migration.md`). Same reasoning: mobile doesn't have typing yet, so desktop's implementation is canonical.
 
-- **`SearchService`**: Needs `SearchAdapter` interface in quorum-shared first. Once that interface is defined and `StorageAdapter` (or a separate `SearchAdapter`) exposes the four full-text-search methods, `SearchService` moves verbatim.
-- **`ActionQueueService`**: Needs a single small constructor change (`onError` callback injection) before moving. The types it depends on (`QueueTask`, `ActionType`, `QueueStats`) would need to move to shared as well — these are currently in `src/types/actionQueue.ts`.
-- **`ThreadService`**: Blocked on hooks migration (specifically `buildMessagesKeyPrefix` and the query key builders). When the hooks migration produces a shared set of query key builders, the cache-update methods of ThreadService unblock.
-- **`BackupService`**: Blocked on symmetric crypto abstraction. No timeline currently.
+These two are the only services whose migration is "one-way": desktop's code → shared → eventually mobile consumes. Either can ship before the other.
 
-### What would unlock the most Tier 2 work
+### Tier 1B — Pending mobile codebase access (technically portable, but migration DIRECTION is unclear)
 
-The hooks migration (currently blocked on mobile codebase access) is the single highest-leverage unblocking action. It would unlock `ThreadService` and implicitly improve the migration story for `ActionQueueHandlers` (which depends on desktop services for now but would benefit from shared versions).
+These services look platform-agnostic on inspection, but we know mobile already has its own implementation of the same conceptual feature. We don't yet know whether mobile's implementation differs from desktop's in design assumptions. Migrating desktop's code "to shared" could be the wrong direction if mobile's implementation turns out to be the better starting point. Inspect mobile first; THEN decide which side becomes the shared baseline.
+
+- **`ActionQueueService`**: Mobile has its own action queue. We don't know if it's based on desktop's design (durable, retried with exponential backoff, dedup keys) or something different. Migrating desktop's code to shared before inspecting mobile's risks codifying the wrong abstraction. The one-line `onError` refactor is small enough to do later, alongside the directional decision.
+- **`SearchService`**: Mobile has its own search story. Migration would mean BOTH platforms run the same search logic against their respective storage adapters — but if mobile's search has different feature requirements (e.g., trigram fallback for mobile constraints, different indexing tradeoffs), the migration could be premature. Inspect mobile's search code first to confirm the logic actually wants to be shared.
+- **`channelThreadHelpers`**: Two pure functions, would be trivial to migrate. But we don't know yet whether mobile's thread model matches desktop's (same channel/thread linkage rules, same helper signatures). Wait to confirm shared logic actually applies.
+
+### Tier 2 — Deferred (blocked on a specific named dependency, not just mobile access)
+
+- **`ThreadService`**: Blocked on hooks migration (specifically `buildMessagesKeyPrefix` and the query key builders). When the hooks migration produces a shared set of query key builders, the cache-update methods of ThreadService unblock. The hooks migration itself is also blocked on mobile codebase access, so in practice these unblock together.
+- **`BackupService`**: Blocked on symmetric crypto abstraction in shared (uses `window.crypto.subtle` AES-GCM directly). No timeline currently.
+
+### What would unlock the most work
+
+**Access to the current mobile codebase is the single highest-leverage unblock.** It would:
+
+1. Move ActionQueueService, SearchService, channelThreadHelpers from "pending" to a real decision (migrate desktop's version, migrate mobile's version, or design a third).
+2. Unblock the hooks migration (separately tracked) which in turn unblocks ThreadService.
+
+Until then, the ONLY service migrations to ship are ReceiptService and TypingService.
 
 ---
 
 ## Recommended Next PRs (after TypingService)
 
+### Ready to ship now
+
 **PR A — ReceiptService + delivery receipt types**
 
-Smallest footprint after typing. Files to add to quorum-shared:
+The only post-typing migration that's ready today. Smallest footprint after typing. Files to add to quorum-shared:
 ```
 src/types/deliveryReceipt.ts       (copy from desktop src/types/deliveryReceipt.ts)
 src/receipts/service.ts            (copy from desktop src/services/ReceiptService.ts)
@@ -355,24 +371,26 @@ Updates to quorum-desktop: delete local files, update importers in `MessageDB.ts
 
 Effort: half a day. Service code moves verbatim; the `typeof document` guards are already present. Tests would need to be written from scratch (none exist in desktop for `ReceiptService`).
 
-**PR B — channelThreadHelpers**
+A receipts migration branch could also include the deferred UserConfig field consolidation (`deliveryReceipts`, `readReceipts`, and now `typingIndicatorsDM`/`typingIndicatorsSpaces`) lifted into shared's `UserConfig` type, since those fields cluster naturally.
 
-Two pure functions, can be bundled with PR A or shipped as a trivial standalone:
-```
-src/utils/threadUtils.ts           (copy from desktop src/services/channelThreadHelpers.ts)
-```
-Zero risk. Reexport from `src/utils/index.ts`.
+### Deferred until mobile inspection (DO NOT ship yet)
 
-**PR C — ActionQueueService + action queue types**
+**PR B (deferred) — channelThreadHelpers**
 
-After the `onError` injection refactor:
-```
-src/types/actionQueue.ts           (copy from desktop src/types/actionQueue.ts)
-src/queue/service.ts               (copy from desktop src/services/ActionQueueService.ts, with onError injection)
-src/queue/service.test.ts          (copy from desktop src/dev/tests/services/ActionQueueService.unit.test.ts)
-src/queue/index.ts                 (barrel)
-```
-The 42-test suite already exists and can move verbatim. `ActionQueueHandlers` stays in desktop — the service is the portable half, the handlers are the per-app half.
+Trivial in size (two pure functions) but the migration could be premature if mobile has a different thread model. Inspect mobile's thread code first to confirm the helper signatures and channel/thread linkage rules match.
+
+**PR C (deferred) — ActionQueueService + action queue types**
+
+Mobile already has an action queue. We don't know if mobile's queue matches desktop's design (durable, retried, dedup keys) or whether mobile's implementation is the better starting point. Inspect mobile's queue first, then decide direction:
+- Mobile's queue is a port of desktop's → migrate desktop's code to shared as planned
+- Mobile's queue is a different design → either pick the better one to share, OR don't share at all and accept divergence
+- Designs differ in subtle ways → design a new shared interface based on what both need
+
+The 42-test suite in desktop is a useful artifact regardless of which direction wins.
+
+**PR D (deferred) — SearchService + SearchAdapter interface**
+
+Same reasoning. Inspect mobile's search implementation first to confirm sharing the logic is actually desirable. If mobile's search has different requirements (mobile-specific indexing tradeoffs, smaller search corpus, different fuzzy matching), the migration may be premature.
 
 ---
 
@@ -388,3 +406,5 @@ The 42-test suite already exists and can move verbatim. `ActionQueueHandlers` st
 ---
 
 *Created: 2026-05-18 — First-principles audit of all 13 service classes plus channelThreadHelpers for quorum-shared migration potential.*
+
+*Updated 2026-05-18 (same day, after review with project lead) — Split the original Tier 1 group into 1A (ready: ReceiptService, TypingService) and 1B (pending mobile inspection: ActionQueueService, SearchService, channelThreadHelpers). The 1B services are technically portable but their migration direction depends on what mobile already has — mobile has its own action queue, its own search, possibly its own thread model. Migrating desktop's code blindly could codify the wrong abstraction. Wait for mobile codebase access before deciding direction for those three.*
