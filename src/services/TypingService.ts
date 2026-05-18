@@ -89,29 +89,33 @@ export class TypingService {
   }
 
   private emit(scope: TypingScope, type: 'typing-start' | 'typing-stop'): void {
-    const msg: TypingMessage = {
+    const baseMsg = {
       type,
       senderId: this.options.selfAddress,
-      scope: scope.kind === 'dm' ? 'dm' : 'space',
       timestamp: Date.now(),
     };
-    if (scope.kind === 'space-channel' || scope.kind === 'thread') {
-      msg.spaceId = scope.spaceId;
-      msg.channelId = scope.channelId;
-    }
-    if (scope.kind === 'thread') {
-      msg.threadId = scope.threadId;
-    }
 
     if (scope.kind === 'dm') {
+      const msg: TypingMessage = { ...baseMsg, scope: 'dm' };
       this.options.sendDM(scope.address, msg).catch((err) => {
         logger.warn('[Typing] sendDM failed', err);
       });
-    } else {
-      this.options.sendSpace(scope.spaceId, msg).catch((err) => {
-        logger.warn('[Typing] sendSpace failed', err);
-      });
+      return;
     }
+
+    // space-channel or thread — guaranteed to have spaceId/channelId
+    const msg: TypingMessage = {
+      ...baseMsg,
+      scope: 'space',
+      spaceId: scope.spaceId,
+      channelId: scope.channelId,
+    };
+    if (scope.kind === 'thread') {
+      msg.threadId = scope.threadId;
+    }
+    this.options.sendSpace(scope.spaceId, msg).catch((err) => {
+      logger.warn('[Typing] sendSpace failed', err);
+    });
   }
 
   // ============================================================
