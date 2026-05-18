@@ -284,13 +284,14 @@ export const MessageComposer = forwardRef<
 
     // Handle input changes for contentEditable
     const handleEditorInput = useCallback(() => {
+      notifyKeystroke();
       const newText = extractStorageText();
       onChange(newText);
       setCursorPosition(getCursorPosition());
       // Capture caret coordinates for dropdown positioning
       const coords = getCaretCoordinates(editorRef.current, true);
       setCaretCoords(coords);
-    }, [extractStorageText, onChange, getCursorPosition]);
+    }, [extractStorageText, onChange, getCursorPosition, notifyKeystroke]);
 
     // Handle copy/paste for contentEditable
     const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
