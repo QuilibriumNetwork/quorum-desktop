@@ -26,6 +26,8 @@ import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
+import { TypingIndicator } from '../message/TypingIndicator';
+import type { TypingScope } from '@/types/typing';
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -94,6 +96,11 @@ const DirectMessage: React.FC<{}> = () => {
   // Extract business logic hooks but also get the original data for compatibility
   const { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
+
+  const typingScope: TypingScope = useMemo(
+    () => ({ kind: 'dm', address: address! }),
+    [address],
+  );
 
   // Store last viewed DM address for navigation persistence
   useEffect(() => {
@@ -981,6 +988,7 @@ const DirectMessage: React.FC<{}> = () => {
 
             {/* Message Composer */}
             <div className="message-editor-container">
+              <TypingIndicator scope={typingScope} />
               <MessageComposer
                 ref={messageComposerRef}
                 value={composer.pendingMessage}
@@ -1008,6 +1016,8 @@ const DirectMessage: React.FC<{}> = () => {
                 mentionError={composer.mentionError}
                 messageValidation={composer.messageValidation}
                 characterCount={composer.characterCount}
+                typingScope={typingScope}
+                canSendMessage={true}
               />
             </div>
           </div>
