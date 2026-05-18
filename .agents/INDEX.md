@@ -21,7 +21,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 
 ### Features
-- [User Notes](docs/features/user-notes.md)
 - [Action Queue](docs/features/action-queue.md)
 - [Avatar & Initials System](docs/features/avatar-initials-system.md)
 - [Channel and Space Mute System](docs/features/channel-space-mute-system.md)
@@ -52,6 +51,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
 - [User Config Sync on Existing Accounts](docs/features/user-config-sync.md)
 - [User Data Backup & Restore](docs/features/user-data-backup.md)
+- [User Notes](docs/features/user-notes.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
@@ -174,7 +174,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Add User Bio Field to UserSettingsModal General Tab](tasks/2025-01-06-add-user-bio-field.md)
 - [Implement Role-Based Channel Visibility](tasks/2025-12-26-channel-role-visibility.md)
 - [Full Markdown Support Inside Spoilers](tasks/2026-01-06-spoiler-full-markdown-support.md)
 - [Implement Channel Ordering Feature](tasks/2026-01-07-channel-ordering-feature.md)
@@ -214,6 +213,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
 
 ### .Todo
+- [Add User Bio Field to UserSettingsModal General Tab](tasks/.todo/2025-01-06-add-user-bio-field.md)
 - [User Status Feature Implementation Plan](tasks/.todo/2025-01-20-user-status.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/.todo/2025-11-16-message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/.todo/2025-11-19-notification-mention-context-extraction.md)
@@ -345,6 +345,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Old Onboarding Cleanup & Maintenance Restyling](tasks/.done/2026-04-14-old-onboarding-cleanup.md)
 - [Rock-Hand Skin Tone Picker Implementation Plan](tasks/.done/2026-04-14-rock-hand-skin-tone-picker.md)
 - [i18n Full Translation Quality Pass — Implementation Plan](tasks/.done/2026-04-20-i18n-full-translation-quality-pass.md)
+- [DM User Profile Sidebar — Design Spec](tasks/.done/2026-05-16-dm-user-profile-sidebar-design.md)
+- [DM User Profile Sidebar Implementation Plan](tasks/.done/2026-05-16-dm-user-profile-sidebar-plan.md)
+- [User Notes — Design Spec](tasks/.done/2026-05-16-user-notes-design.md)
+- [User Notes Implementation Plan](tasks/.done/2026-05-16-user-notes-plan.md)
+- [Investigate: Double Ratchet state advance on DM typing](tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md)
+- [Typing Indicators — Design Spec](tasks/.done/2026-05-18-typing-indicators-design.md)
+- [Typing Indicators Implementation Plan](tasks/.done/2026-05-18-typing-indicators-plan.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -434,6 +441,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Cross-Client Synchronization](tasks/.done/pinned-messages-sync.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
+- [Primitives Migration to quorum-shared](tasks/.done/primitives-migration-to-quorum-shared.md)
 - [Primitives System Optimization](tasks/.done/primitives-optimization.md)
 - [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
@@ -531,4 +539,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-05-18 12:50:00
+**Last Updated**: 2026-05-18 16:14:45
