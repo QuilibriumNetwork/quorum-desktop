@@ -25,6 +25,7 @@ import {
   ActionQueueHandlers,
   ReceiptService,
 } from '../../services';
+import { TypingService } from '@/services/TypingService';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
@@ -246,6 +247,7 @@ type MessageDBContextValue = {
   ) => Promise<void>;
   actionQueueService: ActionQueueService;
   receiptService: ReceiptService | null;
+  typingService: TypingService | null;
 };
 
 type MessageDBContextProps = {
@@ -966,6 +968,29 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     }
   }, [keyset, actionQueueService]);
 
+  // Keep a live ref to UserConfig so TypingService can gate sends/receives
+  // without needing React state re-renders. Polled every 5s as a safety net;
+  // the primary update path is the user explicitly saving settings.
+  const userConfigRef = useRef<UserConfig | null>(null);
+  useEffect(() => {
+    if (!selfAddress) return;
+    let cancelled = false;
+    const refresh = async () => {
+      try {
+        const cfg = await messageDB.getUserConfig({ address: selfAddress });
+        if (!cancelled) userConfigRef.current = cfg ?? null;
+      } catch {
+        // ignore — ref stays at last known value
+      }
+    };
+    refresh();
+    const interval = setInterval(refresh, 5_000);
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+    };
+  }, [selfAddress, messageDB]);
+
   // ReceiptService — batched ack buffer with piggyback + standalone flush
   const receiptService = useMemo(() => {
     if (!selfAddress) return null;
@@ -1082,6 +1107,51 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       receiptService?.destroy();
     };
   }, [receiptService, messageService]);
+
+  // TypingService — ephemeral typing-indicator signaling (DMs + spaces)
+  const typingService = useMemo(() => {
+    if (!selfAddress) return null;
+    return new TypingService({
+      selfAddress,
+      sendDM: async (address, msg) => {
+        // Task 7 will add MessageService.sendEphemeralDMControl. Until then,
+        // this is a placeholder that no-ops at runtime. After Task 7 lands,
+        // the placeholder is replaced with the actual call.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ms = messageService as any;
+        if (typeof ms.sendEphemeralDMControl === 'function') {
+          await ms.sendEphemeralDMControl(address, msg);
+        }
+      },
+      sendSpace: async (spaceId, msg) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const ms = messageService as any;
+        if (typeof ms.sendEphemeralSpaceControl === 'function') {
+          await ms.sendEphemeralSpaceControl(spaceId, msg);
+        }
+      },
+      isEnabledForScope: (scope) => {
+        const cfg = userConfigRef.current;
+        if (!cfg) return false;
+        if (scope.kind === 'dm') return !!cfg.typingIndicatorsDM;
+        return !!cfg.typingIndicatorsSpaces;
+      },
+    });
+  }, [selfAddress, messageService]);
+
+  // Wire TypingService to MessageService (setTypingService added in Task 7)
+  useEffect(() => {
+    if (typingService) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const ms = messageService as any;
+      if (typeof ms.setTypingService === 'function') {
+        ms.setTypingService(typingService);
+      }
+    }
+    return () => {
+      typingService?.destroy();
+    };
+  }, [typingService, messageService]);
 
   const createSpace = React.useCallback(
     async (
@@ -1302,6 +1372,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         deleteConversation,
         actionQueueService,
         receiptService,
+        typingService,
       }}
     >
       <ActionQueueProvider actionQueueService={actionQueueService}>
@@ -1339,6 +1410,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   deleteConversation: () => undefined as never,
   actionQueueService: undefined as never,
   receiptService: null,
+  typingService: null,
 });
 
 export { MessageDBProvider, MessageDBContext };
