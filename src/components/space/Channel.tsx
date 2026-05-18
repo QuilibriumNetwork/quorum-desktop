@@ -32,6 +32,8 @@ import { parseMessageHash } from '../../utils/messageHashNavigation';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
+import { TypingIndicator } from '../message/TypingIndicator';
+import type { TypingScope } from '@/types/typing';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { ThreadsListPanel } from '../thread/ThreadsListPanel';
 import { useThreadMessages } from '../../hooks/business/threads';
@@ -1068,6 +1070,15 @@ const Channel: React.FC<ChannelProps> = ({
   // Also block muted users from posting
   const canPost = canPostInChannel && !isCurrentUserMuted;
 
+  // Typing indicator scope for this channel
+  const typingScope = useMemo<TypingScope>(
+    () => ({ kind: 'space-channel', spaceId, channelId }),
+    [spaceId, channelId],
+  );
+
+  // Gate typing notifications on send permission
+  const canSendMessage = canPost;
+
   // Helper function to get channel icon and color
   const getChannelIconAndColor = () => {
     if (channel?.icon) {
@@ -1590,8 +1601,11 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
 
             <div className="message-editor-container">
+              <TypingIndicator scope={typingScope} />
               <MessageComposer
                 canUseEveryone={canUseEveryone}
+                typingScope={typingScope}
+                canSendMessage={canSendMessage}
                 ref={messageComposerRef}
                 value={composer.pendingMessage}
                 onChange={composer.setPendingMessage}
