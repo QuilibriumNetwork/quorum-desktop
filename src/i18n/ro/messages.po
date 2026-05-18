@@ -31,15 +31,15 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1616
+msgid "Send a message to #{channel_name}"
+msgstr "Trimite un mesaj către #{channel_name}"
+
+#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr ""
 "Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
-
-#. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1599
-msgid "Send a message to #{channel_name}"
-msgstr "Trimite un mesaj către #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -64,7 +64,7 @@ msgid "Replying to {user}"
 msgstr "Răspunzând lui {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:681
+#: src/components/message/MessageComposer.tsx:715
 msgid "Replying to"
 msgstr "Răspunzând la"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "a fost dat afară"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:970
+#: src/components/direct/DirectMessage.tsx:1002
 msgid "Send a message to {user}"
 msgstr "Trimite un mesaj lui {user}"
 
@@ -96,6 +96,11 @@ msgstr "(editat)"
 #: src/components/modals/EditHistoryModal.tsx:104
 msgid "(empty)"
 msgstr "(gol)"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:118
+#: src/components/user/UserProfile.tsx:275
+msgid "(only visible to you)"
+msgstr "(doar tu îl vezi)"
 
 #: src/components/bookmarks/BookmarkItem.tsx:80
 #: src/components/message/MessagePreview.tsx:206
@@ -121,7 +126,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:320
+#: src/components/modals/UserSettingsModal/Privacy.tsx:374
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} dispozitive marcate pentru eliminare. Apasă \"Salvează modificările\" "
@@ -228,7 +233,7 @@ msgstr "0 = pentru totdeauna"
 msgid "0 hours"
 msgstr "0 ore"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:319
+#: src/components/modals/UserSettingsModal/Privacy.tsx:373
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 dispozitiv marcat pentru eliminare. Apasă \"Salvează modificările\" pentru"
@@ -252,11 +257,11 @@ msgstr ""
 "(ID Față, amprentă digitală sau PIN) pentru a proteja contul tău. Este mai "
 "sigur decât o parolă și nu trebuie să reții nimic."
 
-#: src/services/MessageService.ts:4130 src/services/NotificationService.ts:305
+#: src/services/MessageService.ts:4329 src/services/NotificationService.ts:305
 msgid "a role"
 msgstr "un rol"
 
-#: src/services/MessageService.ts:4140 src/services/NotificationService.ts:304
+#: src/services/MessageService.ts:4339 src/services/NotificationService.ts:304
 #: src/services/NotificationService.ts:317
 msgid "a space"
 msgstr "un spațiu"
@@ -285,6 +290,16 @@ msgstr "acțiuni în așteptare"
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "Add a friend"
 msgstr "Adaugă un prieten"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:143
+#: src/components/user/UserProfile.tsx:303
+msgid "Add a note"
+msgstr "Adaugă o notă"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:122
+#: src/components/user/UserProfile.tsx:279
+msgid "Add a personal note..."
+msgstr "Adaugă o notă personală..."
 
 #: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
@@ -322,8 +337,8 @@ msgid ""
 "You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
 msgstr ""
 "Adaugă până la 50 de emoji personalizate. Emoji-urile personalizate pot fi "
-"folosite doar în cadrul unui Spațiu. Poți încărca PNG, JPG sau GIF, max "
-"5MB (optimizat automat)."
+"folosite doar în cadrul unui Spațiu. Poți încărca PNG, JPG sau GIF, max 5MB "
+"(optimizat automat)."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:46
 msgid ""
@@ -334,7 +349,7 @@ msgstr ""
 " folosite doar în cadrul unui Spațiu. Poți încărca PNG, JPG sau GIF, max "
 "25MB (optimizat automat)."
 
-#: src/components/user/UserProfile.tsx:200
+#: src/components/user/UserProfile.tsx:264
 msgid "Adding..."
 msgstr "Adăugare..."
 
@@ -348,7 +363,7 @@ msgstr "Adresele trebuie să aibă exact 46 de caractere."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresele încep cu \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:199
+#: src/components/modals/UserSettingsModal/Privacy.tsx:207
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -405,7 +420,7 @@ msgstr "Aproape terminat..."
 msgid "Already Joined"
 msgstr "Deja ai intrat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:225
+#: src/components/modals/UserSettingsModal/Privacy.tsx:233
 msgid "Always sign Direct Messages"
 msgstr "Semnează întotdeauna Mesajele Directe"
 
@@ -424,6 +439,11 @@ msgstr ""
 msgid "An error occurred while resetting app data. Please try again."
 msgstr "A apărut o eroare la resetarea datelor aplicației. Încearcă din nou."
 
+#: src/components/message/TypingIndicator.tsx:48
+#: src/components/message/TypingIndicator.tsx:54
+msgid "and"
+msgstr "și"
+
 #: src/utils/imageProcessing/errors.ts:23
 msgid ""
 "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
@@ -440,7 +460,7 @@ msgstr ""
 "GIF-urile animate cu autocolante nu pot fi mai mari de 750KB. Te rugăm să "
 "îți optimizezi GIF-ul pentru utilizarea autocolantelor."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:498
+#: src/components/modals/UserSettingsModal/Privacy.tsx:552
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -454,6 +474,11 @@ msgstr ""
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
 msgstr "Apariție"
+
+#: src/components/message/TypingIndicator.tsx:48
+#: src/components/message/TypingIndicator.tsx:54
+msgid "are typing"
+msgstr "scriu"
 
 #: src/hooks/business/channels/useChannelManagement.ts:257
 msgid ""
@@ -496,7 +521,7 @@ msgstr "Ești sigur că vrei să fixezi acest mesaj?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Ești sigur că vrei să desfaci fixarea acestui mesaj?"
 
-#: src/components/message/MessageComposer.tsx:759
+#: src/components/message/MessageComposer.tsx:793
 msgid "attach image"
 msgstr "atașează imagine"
 
@@ -520,6 +545,7 @@ msgstr "Fă o copie de siguranță a cheii contului"
 msgid "Backup Failed"
 msgstr "Backup eșuat"
 
+#: src/components/direct/DMUserProfileSidebar.tsx:104
 #: src/components/modals/UserSettingsModal/General.tsx:135
 msgid "Bio"
 msgstr "Bio"
@@ -566,8 +592,8 @@ msgstr "Imagine marcată"
 msgid "Bookmarked sticker"
 msgstr "Sticker marcat"
 
-#: src/components/direct/DirectMessage.tsx:787
-#: src/components/space/Channel.tsx:1444
+#: src/components/direct/DirectMessage.tsx:798
+#: src/components/space/Channel.tsx:1455
 msgid "Bookmarks"
 msgstr "Marcaje"
 
@@ -584,7 +610,7 @@ msgstr "Cameră"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:507
+#: src/components/modals/UserSettingsModal/Privacy.tsx:561
 #: src/hooks/business/channels/useChannelManagement.ts:263
 #: src/hooks/business/messages/useMessageActions.ts:435
 #: src/hooks/business/messages/usePinnedMessages.ts:325
@@ -632,7 +658,7 @@ msgstr "Icon canal"
 msgid "Channel Managers"
 msgstr "Manageri de canal"
 
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1879
 msgid "Channel members"
 msgstr "Membrii canalului"
 
@@ -761,7 +787,7 @@ msgstr "Continuă"
 msgid "Continue without passkey"
 msgstr "Continuă fără passkey"
 
-#: src/components/direct/DirectMessage.tsx:770
+#: src/components/direct/DirectMessage.tsx:781
 msgid "Conversation settings"
 msgstr "Setările conversației"
 
@@ -779,12 +805,13 @@ msgstr "Setările conversației"
 msgid "Copied!"
 msgstr "Copiat!"
 
-#: src/components/direct/DirectMessage.tsx:752
-#: src/components/direct/DirectMessage.tsx:856
-#: src/components/direct/DirectMessage.tsx:874
+#: src/components/direct/DirectMessage.tsx:763
+#: src/components/direct/DirectMessage.tsx:882
+#: src/components/direct/DirectMessage.tsx:900
+#: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
 #: src/components/user/ExpandableUserAvatar.tsx:90
-#: src/components/user/UserProfile.tsx:123
+#: src/components/user/UserProfile.tsx:187
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Copiază adresa"
@@ -793,7 +820,7 @@ msgstr "Copiază adresa"
 msgid "Copy Failed"
 msgstr "Copiere Eșuată"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:395
+#: src/components/modals/UserSettingsModal/Privacy.tsx:449
 msgid "Copy full address"
 msgstr "Copiază adresa completă"
 
@@ -906,7 +933,7 @@ msgstr "Zonă periculoasă"
 msgid "Dark"
 msgstr "Întunecat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:553
+#: src/components/modals/UserSettingsModal/Privacy.tsx:607
 msgid "Data Backup"
 msgstr "Rezervă de date"
 
@@ -1034,7 +1061,7 @@ msgid "Deleting..."
 msgstr "Se șterge..."
 
 #: src/components/modals/ConversationSettingsModal.tsx:269
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
+#: src/components/modals/UserSettingsModal/Privacy.tsx:279
 msgid "Delivery receipts"
 msgstr "Confirmări de livrare"
 
@@ -1085,7 +1112,7 @@ msgstr ""
 "Numele dispozitivului trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai "
 "puțin"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:314
+#: src/components/modals/UserSettingsModal/Privacy.tsx:368
 msgid "Devices"
 msgstr "Dispozitive"
 
@@ -1131,7 +1158,7 @@ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Numele de afișare trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai puțin"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:481
+#: src/components/modals/UserSettingsModal/Privacy.tsx:535
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1194,7 +1221,7 @@ msgstr "Istoricul editărilor"
 msgid "Edit message"
 msgstr "Editează mesajul"
 
-#: src/components/message/MessageComposer.tsx:807
+#: src/components/message/MessageComposer.tsx:841
 msgid "emoji & stickers"
 msgstr "emoji & stickers"
 
@@ -1205,12 +1232,12 @@ msgstr "Selector de emoji"
 #: src/components/message/EmojiPickerDrawer.tsx:66
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
-#: src/components/space/Channel.tsx:1775
-#: src/components/thread/ThreadPanel.tsx:487
+#: src/components/space/Channel.tsx:1792
+#: src/components/thread/ThreadPanel.tsx:507
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:206
+#: src/components/modals/UserSettingsModal/Privacy.tsx:214
 msgid "Enable sync"
 msgstr "Activează sincronizarea"
 
@@ -1218,7 +1245,7 @@ msgstr "Activează sincronizarea"
 msgid "Enable threaded conversations in channels"
 msgstr "Activează conversațiile în fire în canale"
 
-#: src/services/ActionQueueHandlers.ts:1159
+#: src/services/ActionQueueHandlers.ts:1045
 msgid "Encryption error"
 msgstr "Eroare de criptare"
 
@@ -1309,12 +1336,12 @@ msgstr "Esc pentru"
 msgid "Existing Conversations"
 msgstr "Conversații existente"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:465
-#: src/components/modals/UserSettingsModal/Privacy.tsx:568
+#: src/components/modals/UserSettingsModal/Privacy.tsx:519
+#: src/components/modals/UserSettingsModal/Privacy.tsx:622
 msgid "Export"
 msgstr "Exportă"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:559
+#: src/components/modals/UserSettingsModal/Privacy.tsx:613
 msgid ""
 "Export an encrypted backup of your direct messages to restore them if you "
 "lose access to this device."
@@ -1322,7 +1349,7 @@ msgstr ""
 "Exportă o copie de siguranță criptată a mesajelor tale private pentru a le "
 "restaura dacă pierzi accesul la acest dispozitiv."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:457
+#: src/components/modals/UserSettingsModal/Privacy.tsx:511
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1331,7 +1358,7 @@ msgstr ""
 "altcineva sau aceștia pot să te imite sau să fure câștigurile tale Apex din "
 "Spațiu."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:568
+#: src/components/modals/UserSettingsModal/Privacy.tsx:622
 msgid "Exporting..."
 msgstr "Se exportă..."
 
@@ -1339,21 +1366,21 @@ msgstr "Se exportă..."
 msgid "Failed to create space. Please try again."
 msgstr "Crearea spațiului a eșuat. Te rugăm să încerci din nou."
 
-#: src/services/MessageService.ts:2523
+#: src/services/MessageService.ts:2728
 msgid "Failed to decrypt message with any known state"
 msgstr "Nu s-a reușit decriptarea mesajului cu niciun stat cunoscut"
 
 #: src/services/ActionQueueHandlers.ts:330
-#: src/services/ActionQueueHandlers.ts:989
+#: src/services/ActionQueueHandlers.ts:875
 msgid "Failed to delete message"
 msgstr "Ștergerea mesajului a eșuat"
 
 #: src/services/ActionQueueHandlers.ts:306
-#: src/services/ActionQueueHandlers.ts:1034
+#: src/services/ActionQueueHandlers.ts:920
 msgid "Failed to edit message"
 msgstr "Editarea mesajului a eșuat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:155
+#: src/components/modals/UserSettingsModal/Privacy.tsx:163
 msgid "Failed to export backup"
 msgstr "Eșec la exportul copiei de siguranță"
 
@@ -1362,7 +1389,7 @@ msgid "Failed to generate invite link. Please try again."
 msgstr ""
 "Nu s-a reușit generarea linkului de invitație. Te rugăm să încerci din nou."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:178
+#: src/components/modals/UserSettingsModal/Privacy.tsx:186
 msgid "Failed to import backup"
 msgstr "Eșec la importul copiei de siguranță"
 
@@ -1605,7 +1632,7 @@ msgstr "Ajutor"
 msgid "Help others recognize you with a profile picture."
 msgstr "Ajută alții să te recunoască cu o imagine de profil."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:541
+#: src/components/modals/UserSettingsModal/Privacy.tsx:595
 msgid "Hide"
 msgstr "Ascunde"
 
@@ -1629,7 +1656,7 @@ msgstr "Deja am un cont"
 msgid "I understand"
 msgstr "Înțeleg"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:515
+#: src/components/modals/UserSettingsModal/Privacy.tsx:569
 msgid "I Understand, Show QR"
 msgstr "Înțeleg, Afișează QR"
 
@@ -1642,7 +1669,7 @@ msgstr "Sunt nou!"
 msgid "I've already saved my key"
 msgstr "Am salvat deja cheia mea"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:577
+#: src/components/modals/UserSettingsModal/Privacy.tsx:631
 msgid "Import a backup instead"
 msgstr "În loc de asta, importă o copie de siguranță"
 
@@ -1654,7 +1681,7 @@ msgstr "Importă cheia contului"
 msgid "Important messages will be pinned here"
 msgstr "Mesajele importante vor fi fixate aici"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:577
+#: src/components/modals/UserSettingsModal/Privacy.tsx:631
 msgid "Importing..."
 msgstr "Se importă..."
 
@@ -1662,7 +1689,7 @@ msgstr "Se importă..."
 msgid "Inline Code"
 msgstr "Cod inline"
 
-#: src/services/MessageService.ts:2816
+#: src/services/MessageService.ts:3036
 msgid "invalid address for signature"
 msgstr "adresă invalidă pentru semnătură"
 
@@ -1705,6 +1732,10 @@ msgstr "Invitație trimisă"
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 msgid "Invites"
 msgstr "Invitații"
+
+#: src/components/message/TypingIndicator.tsx:42
+msgid "is typing"
+msgstr "scrie"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:51
 msgid "Italic"
@@ -1757,7 +1788,7 @@ msgstr ""
 msgid "Keep your Key Safe!"
 msgstr "Păstrează Cheia în Siguranță!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:452
+#: src/components/modals/UserSettingsModal/Privacy.tsx:506
 msgid "Key Export"
 msgstr "Exportare Cheie"
 
@@ -1774,7 +1805,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Scurtături de tastatură"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:265
+#: src/components/user/UserProfile.tsx:366
 msgid "Kick"
 msgstr "Îndepărtează"
 
@@ -1782,7 +1813,7 @@ msgstr "Îndepărtează"
 msgid "Kick User"
 msgstr "Excludere utilizator"
 
-#: src/components/user/UserProfile.tsx:265
+#: src/components/user/UserProfile.tsx:366
 msgid "Kicked!"
 msgstr "Dat afară!"
 
@@ -1834,7 +1865,7 @@ msgstr "Se încarcă notificările..."
 msgid "Loading pinned messages..."
 msgstr "Se încarcă mesajele fixate..."
 
-#: src/components/thread/ThreadPanel.tsx:363
+#: src/components/thread/ThreadPanel.tsx:377
 msgid "Loading thread..."
 msgstr "Încărcare fir..."
 
@@ -1842,7 +1873,7 @@ msgstr "Încărcare fir..."
 msgid "Loading your profile..."
 msgstr "Încărcarea profilului tău..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:515
+#: src/components/modals/UserSettingsModal/Privacy.tsx:569
 msgid "Loading..."
 msgstr "Se încarcă..."
 
@@ -1875,7 +1906,7 @@ msgid "Manage desktop notification preferences for new messages."
 msgstr ""
 "Gestionează preferințele pentru notificările pe desktop pentru mesaje noi."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:190
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1914,7 +1945,7 @@ msgstr "membru"
 msgid "members"
 msgstr "membri"
 
-#: src/components/space/Channel.tsx:1470
+#: src/components/space/Channel.tsx:1481
 msgid "Members List"
 msgstr "Lista membrilor"
 
@@ -1944,19 +1975,19 @@ msgid ""
 msgstr ""
 "Mesajul nu are o semnătură validă, acesta poate să nu fie de la expeditor"
 
-#: src/components/message/MessageComposer.tsx:155
+#: src/components/message/MessageComposer.tsx:170
 msgid "Message..."
 msgstr "Mesaj..."
 
-#: src/components/message/MessageComposer.tsx:824
+#: src/components/message/MessageComposer.tsx:858
 msgid "Messages are NOT signed!"
 msgstr "Mesajele NU sunt semnate!"
 
-#: src/components/message/MessageComposer.tsx:825
+#: src/components/message/MessageComposer.tsx:859
 msgid "Messages are signed!"
 msgstr "Mesajele sunt semnate!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:474
+#: src/components/modals/UserSettingsModal/Privacy.tsx:528
 msgid "Mobile Import"
 msgstr "Import mobil"
 
@@ -1972,7 +2003,7 @@ msgstr "Mai multe reacții"
 msgid "Must be exactly 4 characters"
 msgstr "Trebuie să aibă exact 4 caractere"
 
-#: src/components/user/UserProfile.tsx:246
+#: src/components/user/UserProfile.tsx:347
 msgid "Mute"
 msgstr "Dezactivează"
 
@@ -2029,7 +2060,7 @@ msgid "My Account"
 msgstr "Contul Meu"
 
 #: src/components/direct/DirectMessageContactsList.tsx:359
-#: src/components/space/Channel.tsx:1645
+#: src/components/space/Channel.tsx:1662
 msgid "Name or Address"
 msgstr "Nume sau Adresă"
 
@@ -2038,7 +2069,7 @@ msgstr "Nume sau Adresă"
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Numele care seamănă cu admin, moderator sau suport sunt rezervate."
 
-#: src/services/ActionQueueHandlers.ts:1156
+#: src/services/ActionQueueHandlers.ts:1042
 msgid "Network error"
 msgstr "Eroare de rețea"
 
@@ -2058,6 +2089,10 @@ msgstr "Folder Nou"
 #: src/services/NotificationService.ts:301
 msgid "New message from {0}"
 msgstr "Mesaj nou de la {0}"
+
+#: src/components/direct/DMUserProfileSidebar.tsx:109
+msgid "No bio yet."
+msgstr "Niciun bio încă."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:210
 msgid "No bookmarks found"
@@ -2145,7 +2180,7 @@ msgstr "Niciun contact necunoscut"
 msgid "No unread notifications"
 msgstr "Nu sunt notificări necitite"
 
-#: src/components/space/Channel.tsx:1653 src/components/space/Channel.tsx:1882
+#: src/components/space/Channel.tsx:1670 src/components/space/Channel.tsx:1899
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
@@ -2154,6 +2189,19 @@ msgstr "Niciun utilizator găsit!"
 msgid "None"
 msgstr "Niciunul"
 
+#: src/components/direct/DMUserProfileSidebar.tsx:118
+#: src/components/user/UserProfile.tsx:275
+msgid "Note"
+msgstr "Notă"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:104
+msgid "Note contains invalid content"
+msgstr "Notă conține conținut invalid"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:108
+msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+msgstr "Notă trebuie să aibă {MAX_USER_NOTE_LENGTH} caractere sau mai puțin"
+
 #: src/services/NotificationService.ts:201
 msgid "Notification permission not granted"
 msgstr "Permisiunea pentru notificări nu a fost acordată"
@@ -2161,7 +2209,7 @@ msgstr "Permisiunea pentru notificări nu a fost acordată"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:1409
+#: src/components/space/Channel.tsx:1420
 msgid "Notifications"
 msgstr "Notificări"
 
@@ -2252,11 +2300,11 @@ msgstr ""
 msgid "Paste an invite link"
 msgstr "Lipește un link de invitație"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:432
+#: src/components/modals/UserSettingsModal/Privacy.tsx:486
 msgid "Pending"
 msgstr "În așteptare"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:418
+#: src/components/modals/UserSettingsModal/Privacy.tsx:472
 msgid "Pending removal - click Save to confirm"
 msgstr "Eliminare în așteptare - apasă Salvează pentru a confirma"
 
@@ -2327,7 +2375,7 @@ msgstr "Fixat"
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/space/Channel.tsx:1341
+#: src/components/space/Channel.tsx:1352
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -2340,7 +2388,7 @@ msgid "Preview:"
 msgstr "Previzualizare:"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:188
+#: src/components/modals/UserSettingsModal/Privacy.tsx:196
 msgid "Privacy/Security"
 msgstr "Confidențialitate/Securitate"
 
@@ -2348,7 +2396,7 @@ msgstr "Confidențialitate/Securitate"
 msgid "Private key saved to selected folder"
 msgstr "Cheia privată a fost salvată în folderul selectat"
 
-#: src/components/message/MessageComposer.tsx:632
+#: src/components/message/MessageComposer.tsx:666
 msgid "Processing image... This may take a moment for large files."
 msgstr ""
 "Se procesează imaginea... Acest lucru poate dura un moment pentru fișiere "
@@ -2370,7 +2418,7 @@ msgstr ""
 "Linkurile de invitație publice permit oricui are acces la link să se alăture"
 " Spațiului tău. Gândește-te cu cine împărtășești linkul și unde îl postezi."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:532
+#: src/components/modals/UserSettingsModal/Privacy.tsx:586
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Codul QR se va ascunde automat în 60 de secunde"
 
@@ -2418,7 +2466,7 @@ msgid "Read only channel"
 msgstr "Canal doar pentru citire"
 
 #: src/components/modals/ConversationSettingsModal.tsx:312
-#: src/components/modals/UserSettingsModal/Privacy.tsx:295
+#: src/components/modals/UserSettingsModal/Privacy.tsx:303
 msgid "Read receipts"
 msgstr "Confirmări de citire"
 
@@ -2434,7 +2482,7 @@ msgstr "Reautentificare"
 msgid "received config with invalid signature!"
 msgstr "configurație primită cu semnătură invalidă!"
 
-#: src/services/ActionQueueHandlers.ts:1162
+#: src/services/ActionQueueHandlers.ts:1048
 msgid "Recipient has no devices"
 msgstr "Destinatarul nu are dispozitive"
 
@@ -2443,7 +2491,7 @@ msgstr "Destinatarul nu are dispozitive"
 msgid "Refresh"
 msgstr "Reîmprospătează"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:432
+#: src/components/modals/UserSettingsModal/Privacy.tsx:486
 msgid "Remove"
 msgstr "Elimină"
 
@@ -2457,15 +2505,15 @@ msgstr "Șterge marcajul"
 msgid "Remove from Favorites"
 msgstr "Elimină din Favorite"
 
-#: src/components/user/UserProfile.tsx:172
+#: src/components/user/UserProfile.tsx:236
 msgid "Removing..."
 msgstr "Eliminare..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:403
+#: src/components/modals/UserSettingsModal/Privacy.tsx:457
 msgid "Rename this device"
 msgstr "Redenumește acest dispozitiv"
 
-#: src/components/thread/ThreadPanel.tsx:422
+#: src/components/thread/ThreadPanel.tsx:440
 msgid "Reopen"
 msgstr "Re-deschide"
 
@@ -2480,7 +2528,7 @@ msgstr "Răspunsuri"
 msgid "Reply"
 msgstr "Răspunde"
 
-#: src/components/thread/ThreadPanel.tsx:434
+#: src/components/thread/ThreadPanel.tsx:452
 msgid "Reply in thread..."
 msgstr "Răspunde în fir..."
 
@@ -2525,7 +2573,7 @@ msgstr ""
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:182
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Restaurat {0} mesaje și {1} conversații."
 
@@ -2560,7 +2608,7 @@ msgstr "SALVEAZĂ"
 #: src/components/modals/GroupEditorModal.tsx:95
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
 #: src/components/modals/ThreadSettingsModal.tsx:184
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:333
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:341
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Salvează modificările"
@@ -2571,7 +2619,7 @@ msgid "Save Edit History"
 msgstr "Salvează istoricul editărilor"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:649
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:322
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:330
 msgid "Save Failed"
 msgstr "Salvarea a eșuat"
 
@@ -2619,8 +2667,8 @@ msgstr "Caută în acest Spațiu"
 msgid "Search in this Space..."
 msgstr "Caută în acest Spațiu..."
 
-#: src/components/direct/DirectMessage.tsx:814
-#: src/components/space/Channel.tsx:1489
+#: src/components/direct/DirectMessage.tsx:840
+#: src/components/space/Channel.tsx:1500
 msgid "Search Messages"
 msgstr "Caută Mesaje"
 
@@ -2640,7 +2688,7 @@ msgstr "Caută fire…"
 msgid "Search username or address"
 msgstr "Caută numele de utilizator sau adresa"
 
-#: src/components/space/Channel.tsx:1873
+#: src/components/space/Channel.tsx:1890
 msgid "Search Username or Address"
 msgstr "Caută numele de utilizator sau adresa"
 
@@ -2652,7 +2700,7 @@ msgstr "Caută..."
 msgid "Searching..."
 msgstr "Căutare..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:196
+#: src/components/modals/UserSettingsModal/Privacy.tsx:204
 msgid "Security"
 msgstr "Securitate"
 
@@ -2706,7 +2754,7 @@ msgstr ""
 "Trimite un link de invitație unic direct cuiva. Fiecare invitație poate fi "
 "folosită o singură dată."
 
-#: src/services/ActionQueueHandlers.ts:1164
+#: src/services/ActionQueueHandlers.ts:1050
 msgid "Send failed"
 msgstr "Trimiterea a eșuat"
 
@@ -2714,7 +2762,7 @@ msgstr "Trimiterea a eșuat"
 msgid "Send Invite"
 msgstr "Trimite invitație"
 
-#: src/components/user/UserProfile.tsx:218
+#: src/components/user/UserProfile.tsx:319
 msgid "Send Message"
 msgstr "Trimite mesaj"
 
@@ -2738,6 +2786,10 @@ msgstr "Sesiune criptată"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
 msgstr "Setări"
+
+#: src/components/message/TypingIndicator.tsx:58
+msgid "Several people are typing"
+msgstr "Câțiva oameni scriu"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:260
 msgid "Share Public Link"
@@ -2766,11 +2818,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Arată Canalele Închise"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:244
+#: src/components/modals/UserSettingsModal/Privacy.tsx:252
 msgid "Show Online Status"
 msgstr "Arată statutul online"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:489
+#: src/components/modals/UserSettingsModal/Privacy.tsx:543
 msgid "Show QR"
 msgstr "Arată QR"
 
@@ -2790,7 +2842,7 @@ msgstr "Conectează-te la Quorum"
 msgid "Skip for now"
 msgstr "Sari peste pentru moment"
 
-#: src/services/MessageService.ts:4113
+#: src/services/MessageService.ts:4312
 msgid "Someone"
 msgstr "Cineva"
 
@@ -2854,7 +2906,7 @@ msgstr "Începe fir"
 msgid "Start typing to search messages..."
 msgstr "Începe să scrii pentru a căuta mesaje..."
 
-#: src/components/thread/ThreadPanel.tsx:285
+#: src/components/thread/ThreadPanel.tsx:299
 msgid "Started by"
 msgstr "Început de"
 
@@ -2865,8 +2917,8 @@ msgstr "Starea merge aici"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
-#: src/components/space/Channel.tsx:1781
-#: src/components/thread/ThreadPanel.tsx:493
+#: src/components/space/Channel.tsx:1798
+#: src/components/thread/ThreadPanel.tsx:513
 msgid "Stickers"
 msgstr "Autocolante"
 
@@ -2883,7 +2935,7 @@ msgstr "Invitația a fost trimisă cu succes către {0}"
 msgid "Sync Kick Status"
 msgstr "Sincronizează statutul de eliminare"
 
-#: src/services/MessageService.ts:3760 src/services/MessageService.ts:3877
+#: src/services/SyncService.ts:473
 msgid "Syncing..."
 msgstr "Sincronizare..."
 
@@ -2967,7 +3019,7 @@ msgstr ""
 "Această descriere va fi vizibilă pe invitații și va fi arătată persoanelor "
 "când caută sau se alătură Spațiului tău folosind un link de invitație."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:441
+#: src/components/modals/UserSettingsModal/Privacy.tsx:495
 msgid "This device"
 msgstr "Acest dispozitiv"
 
@@ -3019,7 +3071,7 @@ msgid ""
 msgstr ""
 "Acest fir nu poate fi șters deoarece conține mesaje de la alți utilizatori."
 
-#: src/components/thread/ThreadPanel.tsx:413
+#: src/components/thread/ThreadPanel.tsx:431
 msgid "This thread has been closed"
 msgstr "Acest fir a fost închis"
 
@@ -3077,8 +3129,8 @@ msgstr ""
 msgid "Thread"
 msgstr "Fir"
 
-#: src/components/thread/ThreadPanel.tsx:326
 #: src/components/thread/ThreadPanel.tsx:340
+#: src/components/thread/ThreadPanel.tsx:354
 msgid "Thread settings"
 msgstr "Setări fir"
 
@@ -3090,7 +3142,7 @@ msgstr "Setări fir"
 msgid "Thread title"
 msgstr "Titlu fir"
 
-#: src/components/space/Channel.tsx:1382
+#: src/components/space/Channel.tsx:1393
 #: src/components/thread/ThreadsListPanel.tsx:97
 msgid "Threads"
 msgstr "Fire"
@@ -3161,6 +3213,14 @@ msgstr ""
 msgid "Type RESET to confirm"
 msgstr "Tastează RESET pentru a confirma"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+msgid "Typing indicators in DMs"
+msgstr "Indicatori de scriere în DM-uri"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:350
+msgid "Typing indicators in spaces"
+msgstr "Indicatori de scriere în spații"
+
 #: src/hooks/business/ui/useCustomAssets.ts:198
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr ""
@@ -3226,7 +3286,7 @@ msgstr "Imposibil de restaurat: nu ești conectat"
 
 #: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:2496 src/services/MessageService.ts:4045
+#: src/services/MessageService.ts:2701 src/services/MessageService.ts:4244
 msgid "Unknown"
 msgstr "Necunoscut"
 
@@ -3241,11 +3301,11 @@ msgid "Unknown time"
 msgstr "Timp necunoscut"
 
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:199
-#: src/components/direct/DirectMessage.tsx:206
-#: src/components/direct/DirectMessage.tsx:213
-#: src/components/direct/DirectMessage.tsx:277
-#: src/components/direct/DirectMessage.tsx:636
+#: src/components/direct/DirectMessage.tsx:209
+#: src/components/direct/DirectMessage.tsx:216
+#: src/components/direct/DirectMessage.tsx:223
+#: src/components/direct/DirectMessage.tsx:287
+#: src/components/direct/DirectMessage.tsx:647
 #: src/components/direct/DirectMessageContactsList.tsx:40
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
@@ -3272,16 +3332,16 @@ msgstr "Timp necunoscut"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2146
-#: src/services/MessageService.ts:2334 src/services/MessageService.ts:2484
-#: src/services/MessageService.ts:2513 src/services/MessageService.ts:4519
-#: src/services/MessageService.ts:4631 src/services/MessageService.ts:4716
-#: src/services/MessageService.ts:4932 src/services/MessageService.ts:5130
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2351
+#: src/services/MessageService.ts:2539 src/services/MessageService.ts:2689
+#: src/services/MessageService.ts:2718 src/services/MessageService.ts:4718
+#: src/services/MessageService.ts:4830 src/services/MessageService.ts:4915
+#: src/services/MessageService.ts:5131 src/services/MessageService.ts:5329
 msgid "Unknown User"
 msgstr "Utilizator necunoscut"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:246
+#: src/components/user/UserProfile.tsx:347
 msgid "Unmute"
 msgstr "Reactivează"
 
@@ -3326,7 +3386,7 @@ msgstr "Defixează Mesajul"
 msgid "Unpin this post"
 msgstr "Dezfixează această postare"
 
-#: src/components/direct/DirectMessage.tsx:931
+#: src/components/direct/DirectMessage.tsx:957
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3391,6 +3451,14 @@ msgstr "Utilizatorul nu există."
 #: src/hooks/business/messages/usePinnedMessages.ts:169
 msgid "User not authenticated"
 msgstr "Utilizator neautentificat"
+
+#: src/components/direct/DirectMessage.tsx:1046
+msgid "User profile"
+msgstr "Profil utilizator"
+
+#: src/components/direct/DirectMessage.tsx:822
+msgid "User Profile"
+msgstr "Profil Utilizator"
 
 #: src/components/modals/ConversationSettingsModal.tsx:288
 #: src/components/modals/ConversationSettingsModal.tsx:327
@@ -3458,7 +3526,7 @@ msgstr ""
 "Când este activat, toate versiunile anterioare ale mesajelor editate vor fi "
 "salvate. Când este dezactivat, doar versiunea curentă editată este păstrată."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:248
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
 msgid ""
 "When enabled, other users can see when you are active. This feature is not "
 "yet available."
@@ -3466,7 +3534,7 @@ msgstr ""
 "Când este activat, alți utilizatori pot vedea când ești activ. Această "
 "funcție nu este încă disponibilă."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:210
+#: src/components/modals/UserSettingsModal/Privacy.tsx:218
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -3496,7 +3564,15 @@ msgstr ""
 "Când este pe silențios, mesajele noi nu vor arăta indicatori de citire sau "
 "notificări pe desktop."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:275
+#: src/components/modals/UserSettingsModal/Privacy.tsx:354
+msgid ""
+"When on, everyone in a space channel sees when you're typing, and you see "
+"when they're typing."
+msgstr ""
+"Când este pornit, toată lumea dintr-un canal de spațiu vede când scrii, și "
+"tu vezi când ei scriu."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "When on, senders see when their messages reach your device, and you see when"
 " yours reach theirs."
@@ -3504,13 +3580,21 @@ msgstr ""
 "Când este activat, expeditorii văd când mesajele lor ajung pe dispozitivul "
 "tău, iar tu vezi când ale tale ajung la ei."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:299
+#: src/components/modals/UserSettingsModal/Privacy.tsx:307
 msgid ""
 "When on, senders see when you've read their messages, and you see when yours"
 " are read."
 msgstr ""
 "Când este activat, expeditorii văd când ai citit mesajele lor, iar tu vezi "
 "când ale tale sunt citite."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:331
+msgid ""
+"When on, your DM contacts see when you're typing, and you see when they're "
+"typing."
+msgstr ""
+"Când este pornit, contactele tale de DM văd când scrii, și tu vezi când ei "
+"scriu."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:254
 msgid "When someone mentions @everyone"
@@ -3538,7 +3622,7 @@ msgstr ""
 "un mesaj, ai o negare plauzibilă. Implicitul pentru toate conversațiile "
 "poate fi schimbat în Setările utilizatorului."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:229
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -3578,7 +3662,7 @@ msgid "You are already a member of this Space."
 msgstr "Ești deja membru al acestui Spațiu."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1624
+#: src/components/space/Channel.tsx:1641
 msgid "You are muted for {0}"
 msgstr "Ești în silențiu pentru {0}"
 
@@ -3613,8 +3697,8 @@ msgstr ""
 "Nu poți șterge un grup care conține canale. Șterge mai întâi toate cele "
 "{channelCount} canale din acest grup."
 
-#: src/components/message/MessageComposer.tsx:611
-#: src/components/space/Channel.tsx:1627
+#: src/components/message/MessageComposer.tsx:645
+#: src/components/space/Channel.tsx:1644
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 
@@ -3627,7 +3711,7 @@ msgstr "Nu poți trimite un mesaj direct ție însuți."
 msgid "You have a new unread message"
 msgstr "Ai un mesaj nou necitit"
 
-#: src/components/space/Channel.tsx:1625
+#: src/components/space/Channel.tsx:1642
 msgid "You have been muted in this Space"
 msgstr "Ai fost dezactivat în acest Spațiu"
 
@@ -3649,8 +3733,8 @@ msgid ""
 "You won't be able to rejoin unless you are re-invited. Your existing "
 "messages will NOT be deleted."
 msgstr ""
-"Nu vei putea să te reintrezi decât dacă ești reinvitat. Mesajele "
-"existente nu vor fi șterse."
+"Nu vei putea să te reintrezi decât dacă ești reinvitat. Mesajele existente "
+"nu vor fi șterse."
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:19
 msgid ""

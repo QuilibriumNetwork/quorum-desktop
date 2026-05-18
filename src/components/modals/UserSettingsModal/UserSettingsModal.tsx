@@ -75,6 +75,10 @@ const UserSettingsModal: React.FunctionComponent<{
     setDeliveryReceipts,
     readReceipts,
     setReadReceipts,
+    typingIndicatorsDM,
+    setTypingIndicatorsDM,
+    typingIndicatorsSpaces,
+    setTypingIndicatorsSpaces,
     spaceTagId,
     setSpaceTagId,
     saveChanges: saveUserChanges,
@@ -266,6 +270,10 @@ const UserSettingsModal: React.FunctionComponent<{
                         setDeliveryReceipts={setDeliveryReceipts}
                         readReceipts={readReceipts}
                         setReadReceipts={setReadReceipts}
+                        typingIndicatorsDM={typingIndicatorsDM}
+                        setTypingIndicatorsDM={setTypingIndicatorsDM}
+                        typingIndicatorsSpaces={typingIndicatorsSpaces}
+                        setTypingIndicatorsSpaces={setTypingIndicatorsSpaces}
                       />
                     );
                   case 'notifications':

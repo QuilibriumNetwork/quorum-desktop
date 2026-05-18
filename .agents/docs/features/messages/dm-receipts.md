@@ -277,6 +277,7 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 - **Crash before flush**: If the app crashes before the 5s debounce fires, pending read marks are lost. The next time the user opens the conversation, new marks are established.
 - **Observer overhead**: Every incoming message from the other person that's newer than the baseline gets an IntersectionObserver. For very long active conversations, this could mean many observers. The browser optimizes them internally (shared scroll listener), but it's worth noting.
 - **Sync issues**: Intermittent DM delivery failures (Double Ratchet state desync) can prevent read acks from arriving. This is a pre-existing infrastructure issue, not specific to read receipts.
+- **Standalone-ack ratchet cost**: Standalone delivery and read acks go through `messageService.encryptAndSendDm` and therefore advance the Double Ratchet on both sides (1 IndexedDB `put` on `encryption_states` + 1 on `latest_states` per side, writes overwrite in place — no row growth). Piggybacked acks have no extra cost (they ride the encryption of the message they attach to). The standalone path shares the same `skipped_keys_map` slow-leak question raised by typing indicators — see `.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md` for the analysis. Not typing-specific; applies to any out-of-order DR receive.
 
 ## Related Documentation
 
@@ -292,3 +293,5 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 ---
 
 *Updated: 2026-03-24 — Renamed DeliveryReceiptService → ReceiptService*
+
+*Updated: 2026-05-18 — Added "Standalone-ack ratchet cost" to Known Limitations, cross-linking to the typing-indicators DR cost investigation.*
