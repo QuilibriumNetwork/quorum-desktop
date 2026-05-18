@@ -1114,21 +1114,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     return new TypingService({
       selfAddress,
       sendDM: async (address, msg) => {
-        // Task 7 will add MessageService.sendEphemeralDMControl. Until then,
-        // this is a placeholder that no-ops at runtime. After Task 7 lands,
-        // the placeholder is replaced with the actual call.
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ms = messageService as any;
-        if (typeof ms.sendEphemeralDMControl === 'function') {
-          await ms.sendEphemeralDMControl(address, msg);
-        }
+        const ks = actionQueueService.getUserKeyset();
+        if (!ks) return; // not logged in / not initialized
+        await messageService.sendEphemeralDMControl(address, msg, selfAddress, ks);
       },
       sendSpace: async (spaceId, msg) => {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const ms = messageService as any;
-        if (typeof ms.sendEphemeralSpaceControl === 'function') {
-          await ms.sendEphemeralSpaceControl(spaceId, msg);
-        }
+        await messageService.sendEphemeralSpaceControl(spaceId, msg);
       },
       isEnabledForScope: (scope) => {
         const cfg = userConfigRef.current;
@@ -1137,16 +1128,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         return !!cfg.typingIndicatorsSpaces;
       },
     });
-  }, [selfAddress, messageService]);
+  }, [selfAddress, messageService, actionQueueService]);
 
-  // Wire TypingService to MessageService (setTypingService added in Task 7)
+  // Wire TypingService to MessageService
   useEffect(() => {
     if (typingService) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const ms = messageService as any;
-      if (typeof ms.setTypingService === 'function') {
-        ms.setTypingService(typingService);
-      }
+      messageService.setTypingService(typingService);
     }
     return () => {
       typingService?.destroy();

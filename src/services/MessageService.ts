@@ -57,6 +57,8 @@ import { showWarning, noteSyncActivity } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
 import type { ReceiptService } from './ReceiptService';
+import { TypingService } from './TypingService';
+import type { TypingMessage } from '@/types/typing';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
 
@@ -151,6 +153,9 @@ export class MessageService {
   // ReceiptService for DM delivery + read receipts (optional, set via setter)
   private receiptService: ReceiptService | null = null;
 
+  // TypingService for ephemeral typing-indicator signaling (optional, set via setter)
+  private typingService: TypingService | null = null;
+
   // Cooldown guard: prevents rapid re-broadcasts when a space owner spam-updates their tag
   private pendingTagRebroadcast = new Set<string>();
 
@@ -189,6 +194,73 @@ export class MessageService {
    */
   setReceiptService(service: ReceiptService): void {
     this.receiptService = service;
+  }
+
+  /**
+   * Set the TypingService for ephemeral typing-indicator signaling.
+   * Call this after MessageService is created to avoid circular dependencies.
+   */
+  setTypingService(service: TypingService): void {
+    this.typingService = service;
+  }
+
+  /**
+   * Send an ephemeral control message to a DM partner.
+   *
+   * Encrypts via Double Ratchet and posts to the partner's inbox using the
+   * same path as delivery/read receipts. Never calls saveMessage — the message
+   * has no local persistence and never enters the sync manifest. Fire-and-forget:
+   * errors are logged but not thrown.
+   *
+   * Used by: TypingService for typing-start/stop signaling.
+   *
+   * @param address - DM partner address
+   * @param msg - Control message payload (TypingMessage)
+   * @param selfUserAddress - This client's own address
+   * @param keyset - Device + user keyset for encryption
+   */
+  async sendEphemeralDMControl(
+    address: string,
+    msg: TypingMessage,
+    selfUserAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): Promise<void> {
+    try {
+      // Cast to Record<string, unknown> because TypingMessage's typed shape
+      // doesn't satisfy the generic signature, but the JSON serialisation works fine.
+      await this.encryptAndSendDm(
+        address,
+        msg as unknown as Record<string, unknown>,
+        selfUserAddress,
+        keyset,
+      );
+    } catch (err) {
+      logger.warn('[Typing] sendEphemeralDMControl failed', { err, address: address.slice(0, 16) });
+    }
+  }
+
+  /**
+   * Broadcast an ephemeral control message to a space.
+   *
+   * Encrypts via Triple Ratchet and broadcasts via the space hub. Never
+   * calls saveMessage — the control message has no local persistence and
+   * never enters the sync manifest. Fire-and-forget.
+   *
+   * Used by: TypingService for typing-start/stop signaling in channels and threads.
+   */
+  async sendEphemeralSpaceControl(spaceId: string, msg: TypingMessage): Promise<void> {
+    try {
+      await this.encryptAndSendToSpace(
+        spaceId,
+        msg as unknown as Message,
+        { stripEphemeralFields: true, saveStateAfterSend: false },
+      );
+    } catch (err) {
+      logger.warn('[Typing] sendEphemeralSpaceControl failed', { err, spaceId });
+    }
   }
 
   /**
@@ -266,6 +338,21 @@ export class MessageService {
         }
       }
       return true; // Signal: intercept this message
+    }
+
+    // 1c. Intercept typing-start / typing-stop control messages — never save, never display.
+    // Privacy gate also runs inside TypingService.onTypingReceived; we check here too
+    // so we don't even hand off when the user has the relevant setting OFF.
+    const isTyping = raw.type === 'typing-start' || raw.type === 'typing-stop';
+    if (isTyping) {
+      if (this.typingService) {
+        // Hand off to TypingService. Its isEnabledForScope gate (set in MessageDB.tsx)
+        // will decide whether to emit the event based on the user's current settings.
+        // We avoid duplicating the config-read here because MessageService doesn't
+        // have direct access to the live UserConfig — that's the TypingService's job.
+        this.typingService.onTypingReceived(raw as TypingMessage);
+      }
+      return true; // Signal: intercept this message — never reaches saveMessage
     }
 
     // 2. Extract piggybacked ackMessageIds, process, then strip
