@@ -148,12 +148,6 @@ This is an accepted trade-off: typing is fire-and-forget and shouldn't do expens
 
 Space-channel typing is not affected — it broadcasts via the hub envelope, which doesn't depend on per-conversation ratchet state.
 
-## Backwards compatibility
-
-Old clients receiving typing messages: the wire format uses `type: 'typing-start'` / `'typing-stop'` at the top level (same shape as `delivery-ack` / `read-ack`). Old clients without typing-message handling will fall through their decrypt-layer interception to `saveMessage`, which may produce noise but cannot crash. New control types should be added to the existing intercept whitelist if encountered in production.
-
-New clients receiving from old clients: no compatibility surface -- old clients simply do not send typing.
-
 ## Deferred features
 
 - Per-conversation typing override (Conversation Settings)
@@ -186,3 +180,5 @@ New clients receiving from old clients: no compatibility surface -- old clients 
 *Updated: 2026-05-18 -- added "Cost profile (DM path)" section with concrete per-event accounting; trimmed the limitations bullet to a one-line summary now that the detail lives in its own section.*
 
 *Updated: 2026-05-18 -- added "freshness filter" row to the Throttling and TTL table (drops typing messages > 30s old at receiver) and an implementation note explaining why TypingService is built once per `selfAddress` instead of per-messageService rebuild (fixed the Space → DM → Space stale-listener bug).*
+
+*Updated: 2026-05-18 -- removed the "Backwards compatibility" section. It described federated mixed-version scenarios (Alice on v1.5 with typing, Bob on v1.4 without) that don't apply pre-production. If we later need to handle clients on different versions, mitigations can be designed against the actual situation.*
