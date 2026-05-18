@@ -29,6 +29,10 @@ interface PrivacyProps {
   setDeliveryReceipts: (value: boolean) => void;
   readReceipts: boolean;
   setReadReceipts: (value: boolean) => void;
+  typingIndicatorsDM: boolean;
+  setTypingIndicatorsDM: (value: boolean) => void;
+  typingIndicatorsSpaces: boolean;
+  setTypingIndicatorsSpaces: (value: boolean) => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -53,6 +57,10 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   setDeliveryReceipts,
   readReceipts,
   setReadReceipts,
+  typingIndicatorsDM,
+  setTypingIndicatorsDM,
+  typingIndicatorsSpaces,
+  setTypingIndicatorsSpaces,
 }) => {
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
@@ -308,6 +316,34 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </div>
           </div>
           )}
+
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              value={typingIndicatorsDM}
+              onChange={setTypingIndicatorsDM}
+              disabled={!isConfigLoaded}
+            />
+            <div>
+              <div className="text-label-strong">{t`Send typing indicators in DMs`}</div>
+              <div className="text-label text-muted">
+                {t`When ON, your DM contacts see when you're composing a message. They can see when you start and stop typing. Default OFF.`}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              value={typingIndicatorsSpaces}
+              onChange={setTypingIndicatorsSpaces}
+              disabled={!isConfigLoaded}
+            />
+            <div>
+              <div className="text-label-strong">{t`Send typing indicators in spaces`}</div>
+              <div className="text-label text-muted">
+                {t`When ON, everyone subscribed to a space channel sees when you're composing a message in that channel. This can be many people in large spaces. Default OFF.`}
+              </div>
+            </div>
+          </div>
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />
