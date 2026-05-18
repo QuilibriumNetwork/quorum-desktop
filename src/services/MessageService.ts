@@ -2902,6 +2902,22 @@ export class MessageService {
 
         const envelope = JSON.parse(result);
         if (envelope.type === 'message') {
+          // Intercept typing-start / typing-stop control messages BEFORE attempting
+          // TripleRatchetDecrypt. Typing messages are sealed via the hub envelope only
+          // (no Triple Ratchet wrap), so attempting TR-decrypt would fail. They also
+          // don't match the isPlaintextMessage heuristic (no messageId / content).
+          const innerMsg = envelope.message;
+          const isTypingMessage = typeof innerMsg === 'object' &&
+            innerMsg !== null &&
+            (innerMsg.type === 'typing-start' || innerMsg.type === 'typing-stop');
+          if (isTypingMessage) {
+            logger.log('[Typing] MessageService (hub envelope path) intercepted typing message', { raw: innerMsg, hasService: !!this.typingService });
+            if (this.typingService) {
+              this.typingService.onTypingReceived(innerMsg as TypingMessage);
+            }
+            return;
+          }
+
           // Check if message is already plaintext (envelope-only encryption, no TR)
           // Plaintext messages have messageId, channelId, and content fields directly
           const isPlaintextMessage = typeof envelope.message === 'object' &&
