@@ -790,120 +790,6 @@ export class ActionQueueHandlers {
   // === DM SECONDARY ACTION HANDLERS (Double Ratchet) ===
 
   /**
-   * Shared helper to encrypt and send DM messages using Double Ratchet.
-   * Used by send-dm, reaction-dm, delete-dm, edit-dm handlers.
-   *
-   * @param address - The DM conversation address
-   * @param messageContent - The message content to encrypt and send (already a plain object)
-   * @param self - Sender's UserRegistration
-   * @param counterparty - Recipient's UserRegistration
-   * @param keyset - Sender's device and user keysets
-   * @param senderDisplayName - Optional sender display name for identity revelation
-   * @param senderUserIcon - Optional sender profile picture URL
-   */
-  private async encryptAndSendDm(
-    address: string,
-    messageContent: Record<string, unknown>,
-    selfUserAddress: string,
-    keyset: {
-      deviceKeyset: secureChannel.DeviceKeyset;
-      userKeyset: secureChannel.UserKeyset;
-    },
-    senderDisplayName?: string,
-    senderUserIcon?: string
-  ): Promise<void> {
-    const conversationId = address + '/' + address;
-
-    // Get encryption states - these contain all the inbox info we need for established sessions
-    const response = await this.deps.messageDB.getEncryptionStates({
-      conversationId,
-    });
-    const sets = response.map((e) => JSON.parse(e.state));
-
-    // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
-    const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
-
-    let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-
-    // Get target inboxes from existing encryption states (excluding our own device)
-    const targetInboxes = sets
-      .map((s) => s.tag as string)
-      .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
-
-    // Validate we have recipients to send to
-    if (targetInboxes.length === 0) {
-      throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
-    }
-
-    // Encrypt for each inbox using existing encryption states (Double Ratchet)
-    for (const inbox of targetInboxes) {
-      const set = sets.find((s) => s.tag === inbox);
-      if (!set) {
-        continue; // Skip - no encryption state for this inbox
-      }
-
-      if (set.sending_inbox.inbox_public_key === '') {
-        const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-          keyset.deviceKeyset,
-          [set],
-          JSON.stringify(messageContent),
-          minimalSelf,
-          senderDisplayName,
-          senderUserIcon
-        );
-        sessions = [...sessions, ...newSessions];
-      } else {
-        const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
-          keyset.deviceKeyset,
-          [set],
-          JSON.stringify(messageContent),
-          minimalSelf,
-          senderDisplayName,
-          senderUserIcon
-        );
-        sessions = [...sessions, ...newSessions];
-      }
-    }
-
-    // Save encryption states and collect messages to send
-    const outboundMessages: string[] = [];
-
-    for (const session of sessions) {
-      if (!session.receiving_inbox) {
-        continue;
-      }
-
-      const newEncryptionState = {
-        state: JSON.stringify({
-          ratchet_state: session.ratchet_state,
-          receiving_inbox: session.receiving_inbox,
-          tag: session.tag,
-          sending_inbox: session.sending_inbox,
-        } as secureChannel.DoubleRatchetStateAndInboxKeys),
-        timestamp: Date.now(),
-        inboxId: session.receiving_inbox.inbox_address,
-        conversationId: address + '/' + address,
-        sentAccept: session.sent_accept,
-      };
-      await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
-
-      // Collect messages to send: listen subscription + direct message
-      outboundMessages.push(
-        JSON.stringify({
-          type: 'listen',
-          inbox_addresses: [session.receiving_inbox.inbox_address],
-        })
-      );
-      outboundMessages.push(
-        JSON.stringify({ type: 'direct', ...session.sealed_message })
-      );
-    }
-
-    // Send all messages via WebSocket
-    await this.deps.messageService.sendDirectMessages(outboundMessages);
-  }
-
-  /**
    * Add/remove a reaction to a DM message.
    * Uses Double Ratchet encryption.
    *
@@ -926,7 +812,7 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
-      await this.encryptAndSendDm(
+      await this.deps.messageService.encryptAndSendDm(
         address,
         reactionMessage,
         selfUserAddress,
@@ -967,7 +853,7 @@ export class ActionQueueHandlers {
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
       try {
-        await this.encryptAndSendDm(
+        await this.deps.messageService.encryptAndSendDm(
           address,
           deleteMessage,
           selfUserAddress,
@@ -1020,7 +906,7 @@ export class ActionQueueHandlers {
         return;
       }
 
-      await this.encryptAndSendDm(
+      await this.deps.messageService.encryptAndSendDm(
         address,
         editMessage,
         selfUserAddress,
@@ -1073,7 +959,7 @@ export class ActionQueueHandlers {
       };
 
       try {
-        await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        await this.deps.messageService.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
         logger.log('[ActionQueue:sendDeliveryAck] Ack sent successfully');
       } catch (err: any) {
         logger.error('[ActionQueue:sendDeliveryAck] Failed to send ack', err.message);
@@ -1131,7 +1017,7 @@ export class ActionQueueHandlers {
       };
 
       try {
-        await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        await this.deps.messageService.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
         logger.log('[ActionQueue:sendReadAck] Read ack sent successfully');
       } catch (err: any) {
         logger.error('[ActionQueue:sendReadAck] Failed to send read ack', err.message);
