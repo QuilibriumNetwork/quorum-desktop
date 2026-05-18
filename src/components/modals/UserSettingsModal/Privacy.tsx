@@ -316,11 +316,6 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </div>
           </div>
           )}
-        </div>
-
-        <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2 mb-2">{t`Typing indicators`}</div>
-        <div className="modal-content-info">
           <div className="flex flex-row items-center gap-3 mt-3">
             <Switch
               value={typingIndicatorsDM}
@@ -329,11 +324,11 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
-                {t`Send typing indicators in DMs`}
+                {t`Typing indicators in DMs`}
               </div>
               <Tooltip
                 id="settings-typing-indicators-dm-tooltip"
-                content={t`When on, your DM contacts see when you're composing a message. They can see when you start and stop typing.`}
+                content={t`When on, your DM contacts see when you're typing, and you see when they're typing.`}
                 place="bottom"
               >
                 <Icon
@@ -352,11 +347,11 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
-                {t`Send typing indicators in spaces`}
+                {t`Typing indicators in spaces`}
               </div>
               <Tooltip
                 id="settings-typing-indicators-spaces-tooltip"
-                content={t`When on, everyone subscribed to a space channel sees when you're composing a message there. This can be many people in large spaces.`}
+                content={t`When on, everyone in a space channel sees when you're typing, and you see when they're typing.`}
                 place="bottom"
               >
                 <Icon
