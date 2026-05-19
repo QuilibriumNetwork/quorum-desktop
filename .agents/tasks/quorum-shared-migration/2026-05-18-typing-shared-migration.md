@@ -1,16 +1,19 @@
 ---
 type: task
 title: "Typing Indicators — Migration to quorum-shared"
-status: open
+status: ready
 created: 2026-05-18
-updated: 2026-05-18
+updated: 2026-05-19
 related_docs:
   - .agents/docs/features/messages/typing-indicators.md
   - .agents/docs/quorum-shared-architecture.md
 related_tasks:
   - .agents/tasks/.done/2026-05-18-typing-indicators-design.md
-  - .agents/tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md
+  - .agents/tasks/quorum-shared-migration/designs/2026-03-19-hooks-design.md
+  - .agents/tasks/quorum-shared-migration/designs/2026-05-18-services-design.md
 ---
+
+> **2026-05-19 status check.** Plan still valid. Line counts in this doc are slightly outdated (current actuals: `TypingService.ts` is 300 lines, `TypingService.unit.test.ts` is 482 lines — both grew during the typing-indicators feature work but the dependency profile and migration verdict are unchanged). Ready to execute.
 
 # Typing Indicators — Migration to quorum-shared
 
@@ -80,7 +83,7 @@ The class also imports `scopeKey` and `scopeFromMessage` from `types/typing`, so
 These hooks couple to React's API (`useEffect`, `useState`, `useRef`, `useCallback`) AND to desktop's `useMessageDB` context. React Native uses the same React API so the hook logic itself could work on mobile, but the context dependency would need parameterization.
 
 Two reasons to defer:
-1. **Hooks migration is the team's separately-tracked initiative** ([hooks-migration-design.md](2026-03-19-hooks-migration-design.md)), currently BLOCKED on mobile codebase access. Don't fragment that work by migrating typing hooks in isolation.
+1. **Hooks migration is the team's separately-tracked initiative** ([hooks-migration-design.md](designs/2026-03-19-hooks-design.md)), currently BLOCKED on mobile codebase access. Don't fragment that work by migrating typing hooks in isolation.
 2. **Small surface, easy to duplicate if mobile needs it before the hooks migration unblocks.** Both hooks combined are ~110 lines.
 
 **Verdict: Tier 2. Defer to the broader hooks migration.**

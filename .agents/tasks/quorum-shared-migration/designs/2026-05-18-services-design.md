@@ -3,16 +3,24 @@ type: task
 title: "Services Layer — Migration Design for quorum-shared"
 status: open
 created: 2026-05-18
-updated: 2026-05-18
+updated: 2026-05-19
 related_docs:
   - .agents/docs/quorum-shared-architecture.md
   - .agents/docs/features/action-queue.md
   - .agents/docs/features/messages/dm-receipts.md
 related_tasks:
   - .agents/tasks/quorum-shared-migration/2026-05-18-typing-shared-migration.md
-  - .agents/tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md
-  - .agents/tasks/quorum-shared-migration/2026-03-18-utils-migration-design.md
+  - .agents/tasks/quorum-shared-migration/2026-05-19-receipts-shared-migration.md
+  - .agents/tasks/quorum-shared-migration/designs/2026-03-19-hooks-design.md
+  - .agents/tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md
 ---
+
+> **2026-05-19 update.** Re-audited against actual codebase state. Corrections inline:
+> - **ReceiptService** is now 204 lines (was 218 in original audit). Behaviour unchanged.
+> - **No `src/types/deliveryReceipt.ts` file exists in desktop.** Receipt wire types live as literal `'delivery-ack' as const` and `'read-ack' as const` in `ActionQueueHandlers.ts` (lines 957, 1014), with string comparisons in `MessageService.ts` (lines 324–340). Migration must create these types fresh in shared, not "move them".
+> - **`ReceiptService.unit.test.ts` exists (273 lines)** — the original "tests would need to be written from scratch" note was wrong; tests already exist and travel with the service.
+> - **TypingService** is now 300 lines (was 226). Test file is 482 lines (audit said 313 then 370). Pattern unchanged; line-count drift is from added features (freshness, onSettingDisabled).
+> - No services have migrated to shared yet. Shared still contains only `sync/` as a service-class folder. Both ReceiptService and TypingService remain candidates as described below.
 
 # Services Layer — Migration Design for quorum-shared
 
@@ -34,15 +42,15 @@ This document intentionally does NOT include `MessageService.ts` in the per-serv
 
 ### 1. `ReceiptService.ts` — TIER 1: MIGRATE NOW
 
-**218 lines.** I read it line-by-line.
+**204 lines.** I read it line-by-line.
 
 Dependencies:
 - `Map`, `Set`, `setTimeout`, `clearTimeout` — universal JS
 - No imports at all at the top of the file (no `import` statements — zero external deps)
 
 Platform surface:
-- Lines 122–126: `destroy()` references `typeof document !== 'undefined'` and `window.removeEventListener` / `document.removeEventListener` — **guards are already present**.
-- Lines 193–203: `setupVisibilityListener()` sets up `document.visibilitychange` and `window.beforeunload` — again guarded with `if (typeof document === 'undefined') return;`.
+- `destroy()` references `typeof document !== 'undefined'` and `window.removeEventListener` / `document.removeEventListener` — **guards are already present**.
+- `setupVisibilityListener()` sets up `document.visibilitychange` and `window.beforeunload` — again guarded with `if (typeof document === 'undefined') return;`.
 
 The constructor takes `ReceiptServiceOptions` containing callbacks only:
 - `onFlush(address, messageIds)` — caller handles the actual encrypted send
@@ -52,7 +60,15 @@ The constructor takes `ReceiptServiceOptions` containing callbacks only:
 
 This is the exact SyncService/TypingService pattern. The service contains buffer management, timer logic, and high-water mark tracking; the platform supplies transport and cache update callbacks. The `typeof document` guards on the DOM listener already make the class safely no-op in environments without a DOM. On mobile, the caller would simply not register the `visibilitychange` listener (or supply an equivalent lifecycle hook for app backgrounding).
 
-**Verdict: Tier 1. Verified portable. Zero platform imports, constructor surface is already all adapters/callbacks. Migrate alongside its types (`src/types/deliveryReceipt.ts`) in one PR.**
+**Wire types are inline, not in a dedicated file.** Unlike typing (which has `src/types/typing.ts`), receipt control messages are encoded as literal strings:
+- `ActionType` union in `src/types/actionQueue.ts` includes `'send-delivery-ack'` and `'send-read-ack'` (lines 33, 36)
+- The actual wire shape — `{ type: 'delivery-ack', senderId, messageIds }` and `{ type: 'read-ack', senderId, upToMessageId, upToTimestamp }` — is constructed inline in `ActionQueueHandlers.ts` (lines 957, 1014) and parsed inline in `MessageService.ts` (lines 324–340)
+
+**Migration must create these types in shared as new types**, not "move" them. Recommended new file: `quorum-shared/src/types/receipt.ts` exporting `DeliveryAckMessage`, `ReadAckMessage`, and a `ReceiptControlMessage` union, mirroring the typing.ts pattern. Desktop's inline string literals then narrow against the shared union.
+
+**Tests already exist.** `src/dev/tests/services/ReceiptService.unit.test.ts` (273 lines, vitest, fake timers, mocked callbacks). They travel with the service.
+
+**Verdict: Tier 1. Verified portable. Zero platform imports, constructor surface is already all adapters/callbacks. Migrate with NEW shared wire types in one PR.**
 
 ---
 
@@ -357,21 +373,23 @@ Until then, the ONLY service migrations to ship are ReceiptService and TypingSer
 
 ### Ready to ship now
 
-**PR A — ReceiptService + delivery receipt types**
+**PR A — ReceiptService + new receipt wire types**
 
 The only post-typing migration that's ready today. Smallest footprint after typing. Files to add to quorum-shared:
 ```
-src/types/deliveryReceipt.ts       (copy from desktop src/types/deliveryReceipt.ts)
-src/receipts/service.ts            (copy from desktop src/services/ReceiptService.ts)
-src/receipts/service.test.ts       (new — unit tests for buffer/timer/flush logic)
+src/types/receipt.ts               (NEW — DeliveryAckMessage, ReadAckMessage, ReceiptControlMessage union;
+                                    mirrors typing.ts pattern. No source file to copy from desktop —
+                                    wire types are currently inline string literals)
+src/receipts/service.ts            (copy from desktop src/services/ReceiptService.ts, 204 lines)
+src/receipts/service.test.ts       (copy from desktop src/dev/tests/services/ReceiptService.unit.test.ts, 273 lines)
 src/receipts/index.ts              (barrel)
 ```
 Updates to quorum-shared barrel: `src/types/index.ts`, `src/index.ts`.
-Updates to quorum-desktop: delete local files, update importers in `MessageDB.tsx`, `MessageService.ts`, `ActionQueueHandlers.ts`.
+Updates to quorum-desktop: delete `src/services/ReceiptService.ts` + test file, update importers in `MessageDB.tsx`, `MessageService.ts`, `ActionQueueHandlers.ts` to consume `ReceiptService` from shared, narrow the inline `'delivery-ack'`/`'read-ack'` literals against the new shared `ReceiptControlMessage` union.
 
-Effort: half a day. Service code moves verbatim; the `typeof document` guards are already present. Tests would need to be written from scratch (none exist in desktop for `ReceiptService`).
+Effort: half to one day. Service code moves verbatim; tests too. The new step (vs. the simpler typing migration) is designing and adding the receipt wire types in shared, since they don't exist as a coherent type file in desktop yet.
 
-A receipts migration branch could also include the deferred UserConfig field consolidation (`deliveryReceipts`, `readReceipts`, and now `typingIndicatorsDM`/`typingIndicatorsSpaces`) lifted into shared's `UserConfig` type, since those fields cluster naturally.
+A receipts migration branch could also include the deferred UserConfig field consolidation (`deliveryReceipts`, `readReceipts`, and `typingIndicatorsDM`/`typingIndicatorsSpaces`) lifted into shared's `UserConfig` type, since those fields cluster naturally.
 
 ### Deferred until mobile inspection (DO NOT ship yet)
 
