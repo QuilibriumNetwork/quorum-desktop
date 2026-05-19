@@ -14,9 +14,32 @@
  * - saveConfig queryClient.setQueryData side effect
  */
 
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
+import { i18n } from '@lingui/core';
+import { messages } from '@/i18n/en/messages';
 import { ConfigService } from '@/services/ConfigService';
 import { QueryClient } from '@tanstack/react-query';
+
+vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
+  channel: {
+    SealHubEnvelope: vi.fn().mockResolvedValue({ sealed: 'hub-envelope' }),
+  },
+  channel_raw: {
+    js_sign_ed448: vi.fn().mockReturnValue(JSON.stringify('mock-signature')),
+    js_verify_ed448: vi.fn().mockReturnValue(JSON.stringify(true)),
+    js_decrypt_inbox_message: vi.fn().mockReturnValue(
+      JSON.stringify([...Buffer.from(JSON.stringify({ name: 'Mock Space' }), 'utf-8')])
+    ),
+    js_generate_ed448: vi.fn().mockReturnValue(
+      JSON.stringify({ public_key: [1, 2, 3], private_key: [4, 5, 6] })
+    ),
+  },
+}));
+
+beforeAll(() => {
+  i18n.load('en', messages);
+  i18n.activate('en');
+});
 
 describe('ConfigService - Unit Tests', () => {
   let configService: ConfigService;
@@ -50,6 +73,12 @@ describe('ConfigService - Unit Tests', () => {
         getSpaces: vi.fn().mockResolvedValue([]),
         getEncryptionStates: vi.fn().mockResolvedValue([]),
         saveEncryptionState: vi.fn().mockResolvedValue(undefined),
+        getBookmarks: vi.fn().mockResolvedValue([]),
+        addBookmark: vi.fn().mockResolvedValue(undefined),
+        removeBookmark: vi.fn().mockResolvedValue(undefined),
+        getAllUserNotes: vi.fn().mockResolvedValue([]),
+        saveUserNote: vi.fn().mockResolvedValue(undefined),
+        deleteUserNote: vi.fn().mockResolvedValue(undefined),
       } as any,
       apiClient: {
         getUserSettings: vi.fn().mockRejectedValue(new Error('No remote config')),
@@ -201,6 +230,160 @@ describe('ConfigService - Unit Tests', () => {
 
       // ✅ VERIFY: Config still saved to database
       expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalled();
+    });
+  });
+
+  describe('3. getConfig() - remote timestamp branches', () => {
+    const address = 'user-address-123';
+    const mockUserKey = {
+      user_key: {
+        private_key: new Uint8Array(57),
+        public_key: new Uint8Array(57),
+      },
+    } as any;
+
+    function makeRemoteConfig(timestamp: number) {
+      return {
+        user_config: 'aabbccdd' + '000000000000000000000000',
+        timestamp,
+        signature: 'aabbcc',
+      };
+    }
+
+    it('returns stored config and does not decrypt when remote timestamp equals stored timestamp', async () => {
+      const ts = 1000;
+      const storedConfig = { address, spaceIds: [], timestamp: ts };
+      mockDeps.messageDB.getUserConfig = vi.fn().mockResolvedValue(storedConfig);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({ data: makeRemoteConfig(ts) });
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(result).toEqual(storedConfig);
+      expect(global.crypto.subtle.decrypt).not.toHaveBeenCalled();
+    });
+
+    it('returns stored config and does not decrypt when remote timestamp is older than stored', async () => {
+      const storedConfig = { address, spaceIds: [], timestamp: 2000 };
+      mockDeps.messageDB.getUserConfig = vi.fn().mockResolvedValue(storedConfig);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({ data: makeRemoteConfig(1000) });
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(result).toEqual(storedConfig);
+      expect(global.crypto.subtle.decrypt).not.toHaveBeenCalled();
+    });
+
+    it('saves merged config and returns it when remote timestamp is newer than stored', async () => {
+      const storedConfig = { address, spaceIds: ['space-old'], timestamp: 500 };
+      const decryptedConfig = {
+        address,
+        spaceIds: ['space-new'],
+        spaceKeys: [],
+        timestamp: 999,
+      };
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(decryptedConfig));
+      const decryptedBuffer = jsonBytes.buffer.slice(jsonBytes.byteOffset, jsonBytes.byteOffset + jsonBytes.byteLength);
+
+      mockDeps.messageDB.getUserConfig = vi.fn().mockResolvedValue(storedConfig);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({ data: makeRemoteConfig(1000) });
+
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(decryptedBuffer as ArrayBuffer);
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({ address, timestamp: 1000 })
+      );
+      expect(result).toMatchObject({ address, spaceIds: ['space-new'] });
+    });
+
+    it('merges bookmarks from remote into local when remote timestamp is newer', async () => {
+      const storedConfig = { address, spaceIds: [], timestamp: 100 };
+      const localBookmark = { bookmarkId: 'bk-local', messageId: 'msg-1', createdAt: 50 };
+      const remoteBookmark = { bookmarkId: 'bk-remote', messageId: 'msg-2', createdAt: 200 };
+      const decryptedConfig = {
+        address,
+        spaceIds: [],
+        spaceKeys: [],
+        bookmarks: [remoteBookmark],
+        deletedBookmarkIds: [],
+      };
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(decryptedConfig));
+      const decryptedBuffer = jsonBytes.buffer.slice(jsonBytes.byteOffset, jsonBytes.byteOffset + jsonBytes.byteLength);
+
+      mockDeps.messageDB.getUserConfig = vi.fn().mockResolvedValue(storedConfig);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({ data: makeRemoteConfig(500) });
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([localBookmark]);
+
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(decryptedBuffer as ArrayBuffer);
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.addBookmark).toHaveBeenCalledWith(
+        expect.objectContaining({ bookmarkId: 'bk-remote' })
+      );
+    });
+  });
+
+  describe('4. saveConfig() - allowSync:true path', () => {
+    const mockKeyset = {
+      userKeyset: {
+        user_key: {
+          private_key: new Uint8Array(57),
+          public_key: new Uint8Array(57),
+        },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    it('calls getSpaces, getSpaceKeys, postUserSettings, and saveUserConfig when allowSync is true', async () => {
+      const mockConfig = {
+        address: 'user-sync',
+        spaceIds: ['space-1'],
+        allowSync: true,
+        timestamp: 0,
+      };
+      const mockSpace = { spaceId: 'space-1' };
+
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([mockSpace]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'encrypt').mockResolvedValue(new Uint8Array(16).buffer as ArrayBuffer);
+
+      await configService.saveConfig({ config: mockConfig, keyset: mockKeyset });
+
+      expect(mockDeps.messageDB.getSpaces).toHaveBeenCalled();
+      expect(mockDeps.messageDB.getSpaceKeys).toHaveBeenCalledWith('space-1');
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalledWith(
+        'user-sync',
+        expect.objectContaining({ user_address: 'user-sync' })
+      );
+      expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalled();
+    });
+
+    it('calls queryClient.setQueryData after saving config', async () => {
+      const mockConfig = {
+        address: 'user-cache',
+        spaceIds: [],
+        allowSync: false,
+        timestamp: 0,
+      };
+
+      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData');
+
+      await configService.saveConfig({ config: mockConfig, keyset: mockKeyset });
+
+      expect(setQueryDataSpy).toHaveBeenCalledWith(
+        expect.arrayContaining(['Config']),
+        expect.anything()
+      );
     });
   });
 });

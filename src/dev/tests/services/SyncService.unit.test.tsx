@@ -17,6 +17,17 @@
  * logic lives in quorum-shared/src/sync/ with its own test file.
  */
 
+vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
+  channel: {
+    SealHubEnvelope: vi.fn().mockResolvedValue({ sealed: 'hub' }),
+    SealSyncEnvelope: vi.fn().mockResolvedValue({ sealed: 'sync' }),
+  },
+  channel_raw: {
+    js_sign_ed448: vi.fn().mockReturnValue(JSON.stringify('mock-sig')),
+    js_verify_ed448: vi.fn().mockReturnValue(true),
+  },
+}));
+
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { SyncService } from '@/services/SyncService';
 
@@ -213,6 +224,171 @@ describe('SyncService - Unit Tests', () => {
 
       // ✅ VERIFY: No sync envelope created (early return)
       expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+    });
+
+    it('should return early when inboxKey is null', async () => {
+      const spaceId = 'space-123';
+      const inboxAddress = 'remote-inbox';
+
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockResolvedValue(null);
+
+      await syncService.informSyncData(spaceId, inboxAddress, 5, 2);
+
+      expect(mockDeps.messageDB.getSpaceMembers).not.toHaveBeenCalled();
+      expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('4. sendVerifyKickedStatuses() - Additional Guards', () => {
+    it('should ignore kick messages with null senderId', async () => {
+      const spaceId = 'space-123';
+
+      mockDeps.messageDB.getAllSpaceMessages = vi.fn().mockResolvedValue([
+        {
+          messageId: 'msg-1',
+          content: { type: 'kick', senderId: null },
+          createdDate: Date.now() - 1000,
+        },
+      ]);
+
+      const result = await syncService.sendVerifyKickedStatuses(spaceId);
+
+      expect(result).toBe(0);
+      expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+    });
+
+    it('should count and enqueue once for multiple kicked users', async () => {
+      const spaceId = 'space-123';
+
+      mockDeps.messageDB.getAllSpaceMessages = vi.fn().mockResolvedValue([
+        {
+          messageId: 'msg-1',
+          content: { type: 'kick', senderId: 'user-a' },
+          createdDate: Date.now() - 3000,
+        },
+        {
+          messageId: 'msg-2',
+          content: { type: 'kick', senderId: 'user-b' },
+          createdDate: Date.now() - 2000,
+        },
+        {
+          messageId: 'msg-3',
+          content: { type: 'kick', senderId: 'user-c' },
+          createdDate: Date.now() - 1000,
+        },
+      ]);
+
+      const result = await syncService.sendVerifyKickedStatuses(spaceId);
+
+      expect(result).toBe(3);
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('5. synchronizeAll() - Owner Key Guard', () => {
+    it('should not enqueue outbound when ownerKey is null', async () => {
+      const spaceId = 'space-123';
+      const inboxAddress = 'remote-inbox';
+
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockResolvedValue(null);
+
+      await syncService.synchronizeAll(spaceId, inboxAddress);
+
+      expect(mockDeps.enqueueOutbound).not.toHaveBeenCalled();
+    });
+
+    it('should enqueue outbound when ownerKey exists', async () => {
+      const spaceId = 'space-123';
+      const inboxAddress = 'remote-inbox';
+
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockResolvedValue({
+        keyId: 'owner',
+        address: 'owner-address',
+        publicKey: 'pubkey-hex',
+        privateKey: 'privkey-hex',
+      });
+
+      await syncService.synchronizeAll(spaceId, inboxAddress);
+
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('6. handleSyncInitiateV2() - Missing Manifest Fallback', () => {
+    it('should fall back to directSync when manifest is missing', async () => {
+      const spaceId = 'space-123';
+      const message = {
+        inboxAddress: 'remote-inbox',
+        manifest: undefined,
+        memberDigests: [],
+        peerIds: [],
+        memberCount: 2,
+        messageCount: 5,
+        latestMessageTimestamp: -1,
+        oldestMessageTimestamp: -1,
+      } as any;
+
+      await syncService.handleSyncInitiateV2(spaceId, message);
+
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
+    });
+
+    it('should fall back to directSync when inboxAddress is missing', async () => {
+      const spaceId = 'space-123';
+      const message = {
+        inboxAddress: undefined,
+        manifest: { digests: [], channelId: spaceId },
+        memberDigests: [],
+        peerIds: [],
+        memberCount: 2,
+        messageCount: 5,
+        latestMessageTimestamp: -1,
+        oldestMessageTimestamp: -1,
+      } as any;
+
+      await syncService.handleSyncInitiateV2(spaceId, message);
+
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('7. getSharedSyncService() - Accessor', () => {
+    it('should return a non-null SharedSyncService instance', () => {
+      const shared = syncService.getSharedSyncService();
+
+      expect(shared).not.toBeNull();
+      expect(typeof shared.buildSyncRequest).toBe('function');
+    });
+  });
+
+  describe('8. updateCacheWith* / removeCacheMessage() - Delegation to SharedSyncService', () => {
+    it('updateCacheWithMessage delegates to sharedSyncService', () => {
+      const shared = syncService.getSharedSyncService();
+      const spy = vi.spyOn(shared as any, 'updateCacheWithMessage');
+
+      const message = { messageId: 'msg-42', createdDate: 1000, content: { type: 'post' } } as any;
+      syncService.updateCacheWithMessage('space-1', 'channel-1', message);
+
+      expect(spy).toHaveBeenCalledWith('space-1', 'channel-1', message);
+    });
+
+    it('updateCacheWithMember delegates to sharedSyncService', () => {
+      const shared = syncService.getSharedSyncService();
+      const spy = vi.spyOn(shared as any, 'updateCacheWithMember');
+
+      const member = { address: 'addr-abc' } as any;
+      syncService.updateCacheWithMember('space-1', 'channel-1', member);
+
+      expect(spy).toHaveBeenCalledWith('space-1', 'channel-1', member);
+    });
+
+    it('removeCacheMessage delegates to sharedSyncService', () => {
+      const shared = syncService.getSharedSyncService();
+      const spy = vi.spyOn(shared as any, 'removeCacheMessage');
+
+      syncService.removeCacheMessage('space-1', 'channel-1', 'msg-42');
+
+      expect(spy).toHaveBeenCalledWith('space-1', 'channel-1', 'msg-42');
     });
   });
 });
