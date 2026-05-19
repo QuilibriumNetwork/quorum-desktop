@@ -441,4 +441,254 @@ describe('MessageService - Unit Tests', () => {
     });
 
   });
+
+  describe('5. updateMessageStatus() - Cache Mutation', () => {
+    const seedCacheWithSendingMessage = (
+      qc: QueryClient,
+      spaceId: string,
+      channelId: string,
+      msg: Record<string, unknown>
+    ) => {
+      qc.setQueryData(['Messages', spaceId, channelId, 'no-threads'], {
+        pageParams: [null],
+        pages: [{ messages: [msg], nextCursor: null, prevCursor: null }],
+      });
+    };
+
+    it('should clear sendStatus and sendError when status is "sent"', () => {
+      const spaceId = 'space-abc';
+      const channelId = 'channel-abc';
+      const messageId = 'msg-optimistic-1';
+
+      seedCacheWithSendingMessage(queryClient, spaceId, channelId, {
+        messageId,
+        sendStatus: 'sending',
+        sendError: undefined,
+        content: { type: 'post', senderId: 'me', text: 'hello' },
+      });
+
+      messageService.updateMessageStatus(queryClient, spaceId, channelId, messageId, 'sent');
+
+      const cached = queryClient.getQueryData<any>(['Messages', spaceId, channelId, 'no-threads']);
+      const updatedMsg = cached.pages[0].messages[0];
+      expect(updatedMsg.sendStatus).toBeUndefined();
+      expect(updatedMsg.sendError).toBeUndefined();
+    });
+
+    it('should set sendStatus "failed" and write the error string', () => {
+      const spaceId = 'space-abc';
+      const channelId = 'channel-abc';
+      const messageId = 'msg-optimistic-2';
+
+      seedCacheWithSendingMessage(queryClient, spaceId, channelId, {
+        messageId,
+        sendStatus: 'sending',
+        content: { type: 'post', senderId: 'me', text: 'hello' },
+      });
+
+      messageService.updateMessageStatus(queryClient, spaceId, channelId, messageId, 'failed', 'Network timeout');
+
+      const cached = queryClient.getQueryData<any>(['Messages', spaceId, channelId, 'no-threads']);
+      const updatedMsg = cached.pages[0].messages[0];
+      expect(updatedMsg.sendStatus).toBe('failed');
+      expect(updatedMsg.sendError).toBe('Network timeout');
+    });
+
+    it('should not modify a message that has no sendStatus (server version already landed)', () => {
+      const spaceId = 'space-abc';
+      const channelId = 'channel-abc';
+      const messageId = 'msg-server-version';
+
+      seedCacheWithSendingMessage(queryClient, spaceId, channelId, {
+        messageId,
+        sendStatus: undefined,
+        content: { type: 'post', senderId: 'me', text: 'confirmed' },
+      });
+
+      messageService.updateMessageStatus(queryClient, spaceId, channelId, messageId, 'failed', 'late error');
+
+      const cached = queryClient.getQueryData<any>(['Messages', spaceId, channelId, 'no-threads']);
+      const msg = cached.pages[0].messages[0];
+      // sendStatus was already undefined — must remain undefined (server version is authoritative)
+      expect(msg.sendStatus).toBeUndefined();
+      expect(msg.sendError).toBeUndefined();
+    });
+  });
+
+  describe('6. encryptAndSendDm() - DM Encryption and Dispatch', () => {
+    const makeKeyset = (selfInboxAddress: string) =>
+      ({
+        deviceKeyset: {
+          inbox_keyset: { inbox_address: selfInboxAddress },
+        },
+        userKeyset: {},
+      }) as any;
+
+    beforeEach(() => {
+      // sendDirectMessages wraps resolve() inside the enqueueOutbound callback.
+      // The default vi.fn() never calls the callback, so the promise never settles.
+      // Override here so the callback is invoked immediately, unblocking the await.
+      mockDeps.enqueueOutbound = vi.fn().mockImplementation((fn: () => Promise<string[]>) => fn());
+      messageService = new MessageService(mockDeps);
+    });
+
+    it('should throw when there are no encryption states (no established sessions)', async () => {
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([]);
+
+      await expect(
+        messageService.encryptAndSendDm(
+          'partner-address',
+          { type: 'post', text: 'hi' },
+          'self-address',
+          makeKeyset('self-inbox-addr'),
+        )
+      ).rejects.toThrow('No established sessions available');
+    });
+
+    it('should call DoubleRatchetInboxEncrypt and enqueueOutbound for an established session', async () => {
+      const selfInbox = 'self-inbox-addr';
+      const partnerInbox = 'partner-inbox-addr';
+
+      // One encryption state for the partner (tag !== selfInbox, has a public key)
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          state: JSON.stringify({
+            tag: partnerInbox,
+            sending_inbox: { inbox_public_key: 'some-pubkey', inbox_address: partnerInbox },
+            receiving_inbox: { inbox_address: 'recv-inbox' },
+            ratchet_state: '{}',
+          }),
+          inboxId: partnerInbox,
+          conversationId: 'partner-address/partner-address',
+        },
+      ]);
+
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+
+      await messageService.encryptAndSendDm(
+        'partner-address',
+        { type: 'post', text: 'hi' },
+        'self-address',
+        makeKeyset(selfInbox),
+      );
+
+      expect(channel.DoubleRatchetInboxEncrypt).toHaveBeenCalledWith(
+        expect.objectContaining({ inbox_keyset: { inbox_address: selfInbox } }),
+        expect.arrayContaining([expect.objectContaining({ tag: partnerInbox })]),
+        expect.any(String),
+        expect.objectContaining({ user_address: 'self-address' }),
+        undefined,
+        undefined
+      );
+      // sendDirectMessages always calls enqueueOutbound (even with empty outbound list)
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalled();
+    });
+
+    it('should call DoubleRatchetInboxEncryptForceSenderInit when sending_inbox.inbox_public_key is empty', async () => {
+      const selfInbox = 'self-inbox-addr';
+      const partnerInbox = 'partner-inbox-force';
+
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          state: JSON.stringify({
+            tag: partnerInbox,
+            sending_inbox: { inbox_public_key: '', inbox_address: partnerInbox },
+            receiving_inbox: { inbox_address: 'recv-inbox-force' },
+            ratchet_state: '{}',
+          }),
+          inboxId: partnerInbox,
+          conversationId: 'partner-address/partner-address',
+        },
+      ]);
+
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+
+      await messageService.encryptAndSendDm(
+        'partner-address',
+        { type: 'post', text: 'hi' },
+        'self-address',
+        makeKeyset(selfInbox),
+      );
+
+      expect(channel.DoubleRatchetInboxEncryptForceSenderInit).toHaveBeenCalledWith(
+        expect.objectContaining({ inbox_keyset: { inbox_address: selfInbox } }),
+        expect.arrayContaining([expect.objectContaining({ tag: partnerInbox })]),
+        expect.any(String),
+        expect.objectContaining({ user_address: 'self-address' }),
+        undefined,
+        undefined
+      );
+    });
+  });
+
+  describe('7. sendEphemeralSpaceControl() - Typing Indicator (Space)', () => {
+    it('should encrypt via TripleRatchet and enqueue outbound without saving to DB', async () => {
+      const typingMsg = { type: 'typing-start', senderId: 'me' } as any;
+
+      await messageService.sendEphemeralSpaceControl('space-xyz', typingMsg);
+
+      expect(mockDeps.sendHubMessage).toHaveBeenCalledWith(
+        'space-xyz',
+        expect.stringContaining('"type":"message"')
+      );
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalled();
+      expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+
+    it('should not throw even when encryptAndSendToSpace rejects', async () => {
+      mockDeps.sendHubMessage = vi.fn().mockRejectedValue(new Error('hub down'));
+      messageService = new MessageService(mockDeps);
+
+      await expect(
+        messageService.sendEphemeralSpaceControl('space-xyz', { type: 'typing-start' } as any)
+      ).resolves.toBeUndefined();
+    });
+  });
+
+  describe('8. sendEphemeralDMControl() - Typing Indicator (DM)', () => {
+    it('should not throw even when encryptAndSendDm rejects (no sessions)', async () => {
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([]);
+
+      const keyset = {
+        deviceKeyset: { inbox_keyset: { inbox_address: 'self-inbox' } },
+        userKeyset: {},
+      } as any;
+
+      await expect(
+        messageService.sendEphemeralDMControl('partner', { type: 'typing-start' } as any, 'self-addr', keyset)
+      ).resolves.toBeUndefined();
+    });
+  });
+
+  describe('9. addMessage() - Space post rejected when space not found in DB', () => {
+    it('should not update the cache when getSpace returns null for a space post message', async () => {
+      const spaceId = 'space-unknown';
+      const channelId = 'channel-456';
+
+      // getSpace returns null → fail-secure rejection
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(null);
+
+      const postMessage = {
+        messageId: 'msg-rejected',
+        spaceId,
+        channelId,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        nonce: 'nonce',
+        lastModifiedHash: 'hash',
+        content: {
+          senderId: 'sender',
+          type: 'post' as const,
+          text: 'This should be rejected',
+        },
+      };
+
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+
+      await messageService.addMessage(queryClient, spaceId, channelId, postMessage);
+
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
 });
