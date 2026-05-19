@@ -1,7 +1,7 @@
 ---
 type: report
 title: "Test Suite Review — Cleanup Before Migration"
-status: open
+status: in-progress
 created: 2026-05-19
 updated: 2026-05-19
 related_tasks:
@@ -14,6 +14,57 @@ related_tasks:
 # Test Suite Review — Cleanup Before Migration
 
 > **Sibling workstreams in flight (2026-05-19):** [quorum-shared migration](./quorum-shared-migration/README.md) and [MessageDB refactor](./messagedb/README.md). The ReceiptService cleanup and util-test expansion items below are prerequisites of the receipts and util-tests migration PRs in the shared-migration stream.
+
+---
+
+## Execution status (2026-05-19, branch `feat/test-cleanup-pre-migration`)
+
+The recommendations below have been **partially executed** on a working branch. Four commits on top of `main`:
+
+| Commit | Phase | What landed |
+|---|---|---|
+| `21390bb9` | 1 — Dead weight removal | -53 tests across 12 files, -733 lines |
+| `3e8db4f5` | 2 — Service rewrites | +23 tests (MessageService, SpaceService, InvitationService) |
+| `4f391d52` | 3a — Migration-bound gaps | +62 tests (ReceiptService DOM listeners + 3 util files) |
+| `107bc052` | 3b — Per-app gaps | +17 tests (ConfigService decrypt path + SyncService 9 untested methods) |
+
+**Net effect**: 250 → 453 tests (+49 net after the -53 cleanup), 5178 → ~5630 lines. Suite still green: 24 files, 453 tests + 2 todo.
+
+### Per-file final state (updated counts)
+
+| File | Tests then → now | Lines then → now | Status |
+|---|---|---|---|
+| MessageService.unit.test.tsx | 22 → 19 | 751 → 694 | Phase 2 done. 7 always-passing tests removed, 10 behavior tests added. `handleNewMessage` inbox-match branch deferred (needs `UnsealInitializationEnvelope` + `NewDoubleRatchetRecipientSession` mocks — false-positive risk). |
+| SpaceService.unit.test.tsx | 11 → 10 | 231 → 364 | Phase 2 done. 10 theatre tests removed, 7 behavior tests added with WASM mock + Lingui activation. `kickUser` / `submitUpdateSpace` covered only at "enqueueOutbound was called" level (bodies run inside fire-and-forget callbacks). |
+| InvitationService.unit.test.tsx | 13 → 12 | 296 → 456 | Phase 2 done. 7 theatre tests removed, 6 behavior tests added. `constructInviteLink` non-cached path with ratchet.id formula pinning landed. `joinInviteLink` valid-link path deferred (would require deep multiformats + crypto utils mocking). |
+| ReceiptService.unit.test.ts | 28 → 35 | 273 → 367 | Phase 3a done. Migration-bound. DOM listeners (`visibilitychange`, `beforeunload`) and `destroy()` cleanup now tested. Edge cases on `flushAll`, `onMessageRead` equal-timestamp, `clearReadBuffer` covered. **Ready to migrate to shared.** |
+| reservedNames.test.ts | 17 → 50 | 228 → 389 | Phase 3a done. Migration-bound. Added `validateNameForXSS`, `sanitizeNameForXSS`, `validateMessageContent`, `validateMessage`, `isValidIPFSCID` coverage. **Ready to migrate to shared.** |
+| mentionUtils.enhanced.test.ts | 13 → 19 | 238 → 251 | Phase 3a done. Migration-bound. `hasWordBoundaries` covered indirectly, `@here` behavior documented, role case-insensitivity, empty input baseline. **Ready to migrate to shared.** |
+| messageGrouping.unit.test.ts | 10 → 22 | 193 → 279 | Phase 3a done. Migration-bound. `shouldShowCompactHeader` (was zero coverage) now has 9 tests covering all return-false conditions + the 5-minute threshold. **Ready to migrate to shared.** |
+| ConfigService.unit.test.tsx | 8 → 10 | 239 → 389 | Phase 3b done. The 60-line `getConfig` decrypt path is now covered using `vi.spyOn(global.crypto.subtle, 'decrypt')` with a TextEncoder-built buffer (NOT via WASM `js_decrypt_inbox_message` — that's only used for per-space manifests in the inner loop). Bookmark merge tested. `saveConfig` allowSync:true path tested. |
+| SyncService.unit.test.tsx | 11 → 18 | 271 → 394 | Phase 3b done. 4 of the 9 untested methods now have coverage. 3 happy-path tests use no-arg `enqueueOutbound.toHaveBeenCalled()` (weak — would catch "method never ran" but not "ran with wrong args") because the bodies run inside fire-and-forget callbacks. Documented in the commit. |
+| ActionQueueService.unit.test.ts | 42 → 39 | 842 → 813 | Phase 1 trim done. 3 dead-weight tests removed (construction tautology, method-existence loop, `expect(true).toBe(true)` no-op for `stop`). Gaps not yet filled. |
+| ActionQueueHandlers.unit.test.ts | 67 → 61 | 1203 → 1143 | Phase 1 trim done. 6 duplicate tests removed (16b/16c registration + toast-message duplicates, 19-context-fields duplicates). DM-handler happy paths still missing. |
+| ConfigService.deviceNames.unit.test.ts | 5 → 5 | 67 → 67 | Untouched. `mergeDeviceNames` extraction still pending (test file has a copy-pasted impl that has diverged from production). |
+| TypingService.unit.test.ts | 30 → 30 | 482 → 482 | Untouched. Already strong, migration-ready. |
+| ThreadService.unit.test.ts | 27 → 27 | 700 → 700 | Untouched. Already strong, minor gaps (reopen, updateSettings, updateTitle) deferred. |
+| channelThreadsWritePaths.test.ts | 4 → 4 | 76 → 76 | Untouched. Edge cases (truncation, out-of-order timestamp) deferred. |
+| EncryptionService.unit.test.tsx | 8 → 4 | 213 → 183 | Phase 1 trim done. 4 dead-weight tests removed. `ensureKeyForSpace` migration path still untested (intentionally — `ownerKey!.publicKey` crash + 80-line key-rotation operation is high-effort to mock). |
+
+### What's still open
+
+- **🟢 `mergeDeviceNames` extraction** (~30-45 min) — real refactor that extracts the function from `ConfigService.ts` as a pure exported utility. Fixes a concrete prod/test drift: prod uses `new Set(...)` for dedup, test file has a copy-pasted version using array spread. Without this, the test cannot catch dedup regressions.
+- **🟢 ActionQueueHandlers DM happy paths** — `reaction-dm`, `delete-dm`, `pin-message`/`unpin-message` `isPermanentError`, `DoubleRatchetInboxEncryptForceSenderInit` branch.
+- **🟢 ActionQueueService concurrency-guard** — `enqueue` without keyset, max-retries `onFailure`, debounce verification.
+- **🟢 ThreadService** — `reopen`/`updateSettings` actions, `handleThreadSendPostBroadcast updateTitle`.
+- **🟢 channelThreadHelpers** — truncation, empty rootMessageText, markdown stripping, out-of-order reply timestamp.
+- **🟡 SyncService deferred** — `handleSyncManifest`, `requestSync` happy path, `directSync` happy path (need seeded IndexedDB cache to be testable).
+- **🟡 ConfigService allowSync:true filter branch** — spaces without encryptionState should be filtered out.
+- **🔴 None remaining.** All critical (migration-blocking) gaps are closed.
+
+The branch is ready to be merged or PR'd. Receipts/util-tests migrations are unblocked.
+
+---
 
 ## Why this exists
 
