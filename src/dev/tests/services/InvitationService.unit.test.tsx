@@ -1,23 +1,23 @@
 /**
  * InvitationService - Unit Tests
  *
- * PURPOSE: Validates that InvitationService functions correctly call dependencies
- * with correct parameters. Uses mocks and spies to verify behavior.
+ * PURPOSE: Validates InvitationService error/validation paths that do not
+ * require WASM crypto.
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * NOTE: InvitationService methods use complex crypto operations (js_generate_x448,
- * js_sign_ed448, js_decrypt_inbox_message) that require WASM initialization.
- * Tests focus on service construction, method signatures, and error handling.
+ * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * - constructInviteLink non-cached path (multi-step stateful crypto with
+ *   mutable ratchet ID — most valuable missing test)
+ * - constructInviteLink error branches (no encryption states, missing template,
+ *   no evals available)
+ * - sendInviteToUser argument verification (currently only verifies the mock
+ *   was called)
+ * - joinInviteLink valid-link success path
+ * - generateNewInviteLink — the 200+ one-time-invite generator + rekey + post
  *
- * CRITICAL TESTS:
- * - Service construction and dependency injection
- * - Method existence and signatures
- * - Error handling for invalid invites
- *
- * FAILURE GUIDANCE:
- * - "Expected function but got undefined": Method is missing
- * - "Expected X parameters but got Y": Method signature changed
+ * Future rewrite should vi.mock @quilibrium/quilibrium-js-sdk-channels and
+ * verify the actual sequence of DB / API / state-mutation calls.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -109,51 +109,7 @@ describe('InvitationService - Unit Tests', () => {
     vi.clearAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct InvitationService with all required dependencies', () => {
-      // ✅ VERIFY: Service constructed successfully
-      expect(invitationService).toBeDefined();
-      expect(invitationService instanceof InvitationService).toBe(true);
-    });
-
-    it('should have all required methods', () => {
-      // ✅ VERIFY: All methods exist
-      expect(typeof invitationService.constructInviteLink).toBe('function');
-      expect(typeof invitationService.sendInviteToUser).toBe('function');
-      expect(typeof invitationService.generateNewInviteLink).toBe('function');
-      expect(typeof invitationService.processInviteLink).toBe('function');
-      expect(typeof invitationService.joinInviteLink).toBe('function');
-    });
-  });
-
-  describe('2. Method Signatures', () => {
-    it('should have correct parameter count for constructInviteLink', () => {
-      // ✅ VERIFY: constructInviteLink has 1 parameter (spaceId)
-      expect(invitationService.constructInviteLink.length).toBe(1);
-    });
-
-    it('should have correct parameter count for sendInviteToUser', () => {
-      // ✅ VERIFY: sendInviteToUser has 5 parameters
-      expect(invitationService.sendInviteToUser.length).toBe(5);
-    });
-
-    it('should have correct parameter count for generateNewInviteLink', () => {
-      // ✅ VERIFY: generateNewInviteLink has 4 parameters
-      expect(invitationService.generateNewInviteLink.length).toBe(4);
-    });
-
-    it('should have correct parameter count for processInviteLink', () => {
-      // ✅ VERIFY: processInviteLink has 1 parameter (inviteLink)
-      expect(invitationService.processInviteLink.length).toBe(1);
-    });
-
-    it('should have correct parameter count for joinInviteLink', () => {
-      // ✅ VERIFY: joinInviteLink has 3 parameters
-      expect(invitationService.joinInviteLink.length).toBe(3);
-    });
-  });
-
-  describe('3. constructInviteLink() - Invite Link Construction', () => {
+  describe('1. constructInviteLink() - Invite Link Construction', () => {
     it('should return existing invite URL if space has one', async () => {
       const spaceId = 'space-123';
       const existingUrl = 'https://quorum.app/invite#spaceId=space-123&configKey=abc';
@@ -174,7 +130,7 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('4. processInviteLink() - Invite Link Validation', () => {
+  describe('2. processInviteLink() - Invite Link Validation', () => {
     it('should throw error for invalid invite link format', async () => {
       const invalidLink = 'invalid-link-format';
 
@@ -202,22 +158,9 @@ describe('InvitationService - Unit Tests', () => {
       ).rejects.toThrow();
     });
 
-    it('should call apiClient.getSpaceManifest for valid invite', async () => {
-      const validLink = 'https://quorum.app/invite#spaceId=space-123&configKey=abc123';
-
-      // Mock decryption to avoid crypto operations
-      try {
-        await invitationService.processInviteLink(validLink);
-      } catch (error) {
-        // Expected to fail due to crypto operations, but should have called getSpaceManifest
-      }
-
-      // ✅ VERIFY: getSpaceManifest called with spaceId
-      expect(mockDeps.apiClient.getSpaceManifest).toHaveBeenCalledWith('space-123');
-    });
   });
 
-  describe('5. sendInviteToUser() - Send Invite to User', () => {
+  describe('3. sendInviteToUser() - Send Invite to User', () => {
     it('should call constructInviteLink and submitMessage', async () => {
       const address = 'recipient-address';
       const spaceId = 'space-123';
@@ -256,7 +199,7 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('6. joinInviteLink() - Join Space via Invite', () => {
+  describe('4. joinInviteLink() - Join Space via Invite', () => {
     it('should return undefined for invalid invite link format', async () => {
       const invalidLink = 'invalid-link';
       const mockKeyset = {
@@ -281,16 +224,4 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('7. generateNewInviteLink() - Generate New Invite', () => {
-    it('should verify method exists and has correct signature', () => {
-      // NOTE: generateNewInviteLink uses complex crypto operations
-      // We can only verify method exists and has correct signature
-
-      // ✅ VERIFY: Method exists
-      expect(typeof invitationService.generateNewInviteLink).toBe('function');
-
-      // ✅ VERIFY: Has 4 parameters (spaceId, user_keyset, device_keyset, registration)
-      expect(invitationService.generateNewInviteLink.length).toBe(4);
-    });
-  });
 });

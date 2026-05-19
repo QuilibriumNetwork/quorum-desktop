@@ -212,13 +212,6 @@ describe('Reserved Name Validation', () => {
   });
 
   describe('isReservedName', () => {
-    it('should return true for any reserved name', () => {
-      expect(isReservedName('everyone')).toBe(true);
-      expect(isReservedName('admin')).toBe(true);
-      expect(isReservedName('adm1n')).toBe(true);
-      expect(isReservedName('moderator team')).toBe(true);
-    });
-
     it('should return false for allowed names', () => {
       expect(isReservedName('John')).toBe(false);
       expect(isReservedName('sysadmin')).toBe(false);

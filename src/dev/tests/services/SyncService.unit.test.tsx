@@ -1,23 +1,20 @@
 /**
  * SyncService - Unit Tests
  *
- * PURPOSE: Validates that SyncService functions correctly call dependencies
- * with correct parameters. Uses mocks and spies to verify behavior.
+ * PURPOSE: Validates SyncService early-return / control-flow paths that do
+ * not require WASM crypto.
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * NOTE: SyncService methods use complex crypto operations (SealSyncEnvelope,
- * SealHubEnvelope) that require WASM initialization. Tests focus on service
- * construction, method signatures, and basic validation logic.
+ * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * 9 of 12 public methods have zero coverage: handleSyncInitiateV2,
+ * handleSyncManifest, requestSync, directSync, synchronizeAll,
+ * updateCacheWithMessage, updateCacheWithMember, removeCacheMessage,
+ * getSharedSyncService. Several have testable early-return paths that
+ * don't require WASM and should be filled in.
  *
- * CRITICAL TESTS:
- * - Service construction and dependency injection
- * - Method existence and signatures
- * - Early return conditions
- *
- * FAILURE GUIDANCE:
- * - "Expected function but got undefined": Method is missing
- * - "Expected X parameters but got Y": Method signature changed
+ * Note: this is the desktop wrapper of SyncService. The shared protocol
+ * logic lives in quorum-shared/src/sync/ with its own test file.
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -65,57 +62,7 @@ describe('SyncService - Unit Tests', () => {
     vi.clearAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct SyncService with all required dependencies', () => {
-      // ✅ VERIFY: Service constructed successfully
-      expect(syncService).toBeDefined();
-      expect(syncService instanceof SyncService).toBe(true);
-    });
-
-    it('should have all required methods', () => {
-      // ✅ VERIFY: All methods exist
-      expect(typeof syncService.synchronizeAll).toBe('function');
-      expect(typeof syncService.initiateSync).toBe('function');
-      expect(typeof syncService.directSync).toBe('function');
-      expect(typeof syncService.requestSync).toBe('function');
-      expect(typeof syncService.sendVerifyKickedStatuses).toBe('function');
-      expect(typeof syncService.informSyncData).toBe('function');
-    });
-  });
-
-  describe('2. Method Signatures', () => {
-    it('should have correct parameter count for synchronizeAll', () => {
-      // ✅ VERIFY: synchronizeAll has 2 parameters (spaceId, inboxAddress)
-      expect(syncService.synchronizeAll.length).toBe(2);
-    });
-
-    it('should have correct parameter count for initiateSync', () => {
-      // ✅ VERIFY: initiateSync has 1 parameter (spaceId)
-      expect(syncService.initiateSync.length).toBe(1);
-    });
-
-    it('should have correct parameter count for directSync', () => {
-      // ✅ VERIFY: directSync has 2 parameters (spaceId, message)
-      expect(syncService.directSync.length).toBe(2);
-    });
-
-    it('should have correct parameter count for requestSync', () => {
-      // ✅ VERIFY: requestSync has 1 parameter (spaceId)
-      expect(syncService.requestSync.length).toBe(1);
-    });
-
-    it('should have correct parameter count for sendVerifyKickedStatuses', () => {
-      // ✅ VERIFY: sendVerifyKickedStatuses has 1 parameter (spaceId)
-      expect(syncService.sendVerifyKickedStatuses.length).toBe(1);
-    });
-
-    it('should have correct parameter count for informSyncData', () => {
-      // ✅ VERIFY: informSyncData has 5 parameters (spaceId, inboxAddress, messageCount, memberCount, theirSummary?)
-      expect(syncService.informSyncData.length).toBe(5);
-    });
-  });
-
-  describe('3. initiateSync() - Early Return Validation', () => {
+  describe('1. initiateSync() - Early Return Validation', () => {
     it('should return early if no sync info exists for space', async () => {
       const spaceId = 'space-123';
 
@@ -147,7 +94,7 @@ describe('SyncService - Unit Tests', () => {
     });
   });
 
-  describe('4. sendVerifyKickedStatuses() - Kicked User Detection', () => {
+  describe('2. sendVerifyKickedStatuses() - Kicked User Detection', () => {
     it('should return 0 if no kicked users found', async () => {
       const spaceId = 'space-123';
 
@@ -214,7 +161,7 @@ describe('SyncService - Unit Tests', () => {
     });
   });
 
-  describe('5. informSyncData() - Sync Info Early Return', () => {
+  describe('3. informSyncData() - Sync Info Early Return', () => {
     it('should return early if inbox addresses match', async () => {
       const spaceId = 'space-123';
       const inboxAddress = 'inbox-address';

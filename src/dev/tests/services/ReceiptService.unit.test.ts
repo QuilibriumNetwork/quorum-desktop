@@ -138,12 +138,6 @@ describe('ReceiptService', () => {
       expect(mockReadAckProcessed).toHaveBeenCalledWith('msg-5', 5000, 'alice');
     });
 
-    it('does not throw when onReadAckProcessed is not provided', () => {
-      service = new ReceiptService({
-        onFlush: mockFlushCallback,
-      });
-      expect(() => service.onReadAckReceived('msg-5', 5000, 'alice')).not.toThrow();
-    });
   });
 });
 

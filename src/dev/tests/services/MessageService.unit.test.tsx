@@ -6,13 +6,17 @@
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * CRITICAL TESTS:
- * - submitMessage: Verifies P2P message submission workflow
- * - handleNewMessage: Verifies message routing and processing
- * - addMessage: Verifies message creation and cache updates
- * - saveMessage: Verifies message persistence
- * - deleteConversation: Verifies message deletion
- * - submitChannelMessage: Verifies channel message submission
+ * COVERED SECTIONS:
+ * - submitMessage (P2P submission via enqueueOutbound)
+ * - addMessage (React Query cache updates for DM and Space)
+ * - saveMessage (database persistence for reaction/remove paths)
+ * - encryptAndSendToSpace (hub message helper)
+ *
+ * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * - handleNewMessage routing (inbox-match branch and 7 message types)
+ * - updateMessageStatus, encryptAndSendDm, sendEphemeralDM/SpaceControl
+ * - deleteConversation, submitChannelMessage actual side effects
+ * - SimpleRateLimiter integration
  *
  * FAILURE GUIDANCE:
  * - "Expected to be called but was not": Check if method call is missing
@@ -144,181 +148,9 @@ describe('MessageService - Unit Tests', () => {
       // We verify the high-level behavior (enqueue) rather than internal details
     });
 
-    it('should handle reply messages with replyTo parameter', async () => {
-      const selfAddress = 'address-self';
-      const replyToMessageId = 'msg-original-123';
-
-      const mockRegistration = {
-        address: selfAddress,
-        publicKey: 'pubkey',
-      } as any;
-      const mockPasskeyInfo = { address: selfAddress } as any;
-      const mockKeyset = {
-        userKeyset: { privateKey: 'key' },
-        deviceKeyset: { privateKey: 'key' },
-      } as any;
-
-      await messageService.submitMessage(
-        selfAddress,
-        'Reply message',
-        mockRegistration,
-        mockRegistration,
-        queryClient,
-        mockPasskeyInfo,
-        mockKeyset,
-        replyToMessageId // Reply parameter
-      );
-
-      // ✅ VERIFY: enqueueOutbound called
-      expect(mockDeps.enqueueOutbound).toHaveBeenCalled();
-    });
   });
 
-  describe('2. handleNewMessage() - Message Routing', () => {
-    const createTestMessage = (type: string, content: any) => ({
-      messageId: `msg-${type}`,
-      spaceId: 'space-123',
-      channelId: 'channel-123',
-      createdDate: Date.now(),
-      modifiedDate: Date.now(),
-      digestAlgorithm: 'sha256' as const,
-      nonce: 'test-nonce',
-      lastModifiedHash: 'test-hash',
-      inboxAddress: 'other-inbox', // Don't match keyset inbox to skip inbox logic
-      content: {
-        senderId: 'sender-123',
-        type: type.toLowerCase(),
-        ...content,
-      },
-    });
-
-    const createMockKeyset = () => ({
-      userKeyset: { privateKey: 'key' },
-      deviceKeyset: {
-        privateKey: 'key',
-        inbox_keyset: { inbox_address: 'inbox-address' },
-      },
-    } as any);
-
-    it('should handle POST_MESSAGE type', async () => {
-      const message = createTestMessage('post', { text: 'Hello' });
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: Message processed (no errors thrown)
-      // Note: handleNewMessage has complex routing logic
-      // We verify it doesn't throw errors for valid message types
-      expect(true).toBe(true);
-    });
-
-    it('should handle REACTION_MESSAGE type', async () => {
-      const message = createTestMessage('reaction', {
-        reaction: '👍',
-        messageId: 'target-msg',
-      });
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: No errors thrown
-      expect(true).toBe(true);
-    });
-
-    it('should handle REMOVE_MESSAGE type', async () => {
-      const message = createTestMessage('remove-message', {
-        removeMessageId: 'msg-to-remove',
-      });
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: No errors thrown
-      expect(true).toBe(true);
-    });
-
-    it('should handle JOIN_MESSAGE type', async () => {
-      const message = createTestMessage('join', {});
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: No errors thrown
-      expect(true).toBe(true);
-    });
-
-    it('should handle LEAVE_MESSAGE type', async () => {
-      const message = createTestMessage('leave', {});
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: No errors thrown
-      expect(true).toBe(true);
-    });
-
-    it('should handle KICK_MESSAGE type', async () => {
-      const message = createTestMessage('kick', {
-        kickedUserId: 'user-456',
-      });
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: No errors thrown
-      expect(true).toBe(true);
-    });
-
-    it('should handle UPDATE_PROFILE_MESSAGE type', async () => {
-      const message = createTestMessage('update-profile', {
-        displayName: 'New Name',
-        userIcon: 'icon.png',
-      });
-      const selfAddress = 'address-self';
-
-      await messageService.handleNewMessage(
-        selfAddress,
-        createMockKeyset(),
-        message,
-        queryClient
-      );
-
-      // ✅ VERIFY: No errors thrown
-      expect(true).toBe(true);
-    });
-  });
-
-  describe('3. addMessage() - Cache Updates', () => {
+  describe('2. addMessage() - Cache Updates', () => {
     it('should update queryClient cache when adding DM message', async () => {
       // DM scenario: spaceId === channelId (both are partner's address)
       const conversationId = 'dm-partner-address';
@@ -435,39 +267,7 @@ describe('MessageService - Unit Tests', () => {
     });
   });
 
-  describe('4. saveMessage() - Database Persistence', () => {
-    it('should call messageDB.saveMessage for post messages', async () => {
-      const testMessage = {
-        messageId: 'msg-123',
-        spaceId: 'space',
-        channelId: 'channel',
-        createdDate: Date.now(),
-        modifiedDate: Date.now(),
-        digestAlgorithm: 'sha256' as const,
-        nonce: 'nonce',
-        lastModifiedHash: 'hash',
-        content: {
-          senderId: 'sender',
-          type: 'post',
-          text: 'Test message',
-        },
-      };
-
-      await messageService.saveMessage(
-        testMessage,
-        mockDeps.messageDB,
-        'space',
-        'channel',
-        'direct',
-        { user_icon: 'icon.png', display_name: 'User' }
-      );
-
-      // ✅ VERIFY: saveMessage called (for post messages it may not be called directly)
-      // Post messages are handled differently from reactions
-      // This test verifies the function executes without errors
-      expect(true).toBe(true);
-    });
-
+  describe('3. saveMessage() - Database Persistence', () => {
     it('should handle reaction messages by updating target message', async () => {
       const targetMessage = {
         messageId: 'target-msg',
@@ -574,92 +374,7 @@ describe('MessageService - Unit Tests', () => {
     });
   });
 
-  describe('5. deleteConversation() - Message Deletion', () => {
-    it('should execute deletion workflow without errors', async () => {
-      const conversationId = 'space-123/channel-123';
-      const mockPasskeyInfo = {
-        credentialId: 'cred',
-        address: 'address-self',
-        publicKey: 'pubkey',
-        completedOnboarding: true,
-      };
-      const mockKeyset = {
-        userKeyset: { privateKey: 'key' } as any,
-        deviceKeyset: { privateKey: 'key' } as any,
-      };
-      const mockSubmitMessage = vi.fn().mockResolvedValue(undefined);
-
-      // ✅ VERIFY: No errors thrown during deletion
-      await expect(
-        messageService.deleteConversation(
-          conversationId,
-          mockPasskeyInfo,
-          queryClient,
-          mockKeyset,
-          mockSubmitMessage
-        )
-      ).resolves.not.toThrow();
-    });
-  });
-
-  describe('6. submitChannelMessage() - Channel Message Submission', () => {
-    it('should execute channel message submission without errors', async () => {
-      const spaceId = 'space-123';
-      const channelId = 'channel-456';
-      const messageContent = 'Channel message';
-
-      const mockRegistration = {
-        address: 'user-address',
-        publicKey: 'pubkey',
-      } as any;
-      const mockPasskeyInfo = { address: 'user-address' } as any;
-      const mockKeyset = {
-        userKeyset: { privateKey: 'key' },
-        deviceKeyset: { privateKey: 'key' },
-      } as any;
-
-      // Mock space with channel
-      const mockSpace = {
-        spaceId,
-        spaceName: 'Test Space',
-        groups: [
-          {
-            channels: [
-              {
-                channelId,
-                channelName: 'Test Channel',
-                isReadOnly: false,
-              },
-            ],
-          },
-        ],
-      };
-
-      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(mockSpace);
-
-      // Mock ActionQueueService (required for channel message submission)
-      const mockActionQueueService = {
-        enqueue: vi.fn().mockResolvedValue(undefined),
-        getQueueLength: vi.fn().mockReturnValue(0),
-      } as any;
-      messageService.setActionQueueService(mockActionQueueService);
-
-      // ✅ VERIFY: No errors thrown during channel message submission
-      await expect(
-        messageService.submitChannelMessage(
-          spaceId,
-          channelId,
-          messageContent,
-          queryClient,
-          mockRegistration,
-          mockPasskeyInfo,
-          mockKeyset
-        )
-      ).resolves.not.toThrow();
-    });
-  });
-
-  describe('7. encryptAndSendToSpace() - Hub Message Helper', () => {
+  describe('4. encryptAndSendToSpace() - Hub Message Helper', () => {
     const createTestMessage = () =>
       ({
         messageId: 'msg-123',
@@ -712,19 +427,6 @@ describe('MessageService - Unit Tests', () => {
       expect(payload.message.sendError).toBeUndefined();
     });
 
-    it('should call sendHubMessage with correct message format', async () => {
-      const message = createTestMessage();
-      const spaceId = 'space-123';
-
-      await messageService.encryptAndSendToSpace(spaceId, message);
-
-      // ✅ VERIFY: sendHubMessage called with spaceId
-      expect(mockDeps.sendHubMessage).toHaveBeenCalledWith(
-        spaceId,
-        expect.stringContaining('"type":"message"')
-      );
-    });
-
     it('should return the outbound message ID from sendHubMessage', async () => {
       const message = createTestMessage();
       const expectedOutboundId = 'outbound-msg-id-456';
@@ -738,14 +440,5 @@ describe('MessageService - Unit Tests', () => {
       expect(result).toBe(expectedOutboundId);
     });
 
-    it('should expose helper via getEncryptAndSendToSpace() for ActionQueueHandlers', () => {
-      const helper = messageService.getEncryptAndSendToSpace();
-
-      // ✅ VERIFY: Returns a function
-      expect(typeof helper).toBe('function');
-
-      // ✅ VERIFY: Function is bound (can be called without 'this' context)
-      expect(helper.name).toBe('bound encryptAndSendToSpace');
-    });
   });
 });

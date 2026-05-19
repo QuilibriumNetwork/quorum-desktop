@@ -84,16 +84,9 @@ describe('messageGrouping utilities', () => {
 
   describe('getDateLabel', () => {
     it('should return formatted date labels in "MMMM D, YYYY" format', () => {
-      // Test the format pattern
       const label = getDateLabel(today);
       expect(typeof label).toBe('string');
       expect(label).toMatch(/^[A-Za-z]+ \d{1,2}, \d{4}$/); // "October 15, 2025" format
-
-      // Test the function doesn't throw
-      expect(() => getDateLabel(today)).not.toThrow();
-      expect(() => getDateLabel(yesterday)).not.toThrow();
-      expect(() => getDateLabel(lastWeek)).not.toThrow();
-      expect(() => getDateLabel(lastMonth)).not.toThrow();
     });
 
     it('should handle different timestamps correctly', () => {

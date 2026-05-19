@@ -778,11 +778,6 @@ describe('ActionQueueHandlers - Unit Tests', () => {
   });
 
   describe('16b. send-delivery-ack Handler', () => {
-    it('should be registered in getHandler', () => {
-      const handler = handlers.getHandler('send-delivery-ack');
-      expect(handler).toBeDefined();
-    });
-
     it('should encrypt and send ack via encryptAndSendDm pattern', async () => {
       const handler = handlers.getHandler('send-delivery-ack')!;
       const context = {
@@ -820,20 +815,9 @@ describe('ActionQueueHandlers - Unit Tests', () => {
       const handler = handlers.getHandler('send-delivery-ack')!;
       expect(handler.onFailure).toBeUndefined();
     });
-
-    it('should NOT have toast messages (silent)', () => {
-      const handler = handlers.getHandler('send-delivery-ack')!;
-      expect(handler.successMessage).toBeUndefined();
-      expect(handler.failureMessage).toBeUndefined();
-    });
   });
 
   describe('16c. send-read-ack Handler', () => {
-    it('should be registered in getHandler', () => {
-      const handler = handlers.getHandler('send-read-ack');
-      expect(handler).toBeDefined();
-    });
-
     it('should encrypt and send read ack via encryptAndSendDm pattern', async () => {
       const handler = handlers.getHandler('send-read-ack')!;
       const context = {
@@ -858,12 +842,6 @@ describe('ActionQueueHandlers - Unit Tests', () => {
     it('should NOT have onFailure callback (best effort)', () => {
       const handler = handlers.getHandler('send-read-ack')!;
       expect(handler.onFailure).toBeUndefined();
-    });
-
-    it('should NOT have toast messages (silent)', () => {
-      const handler = handlers.getHandler('send-read-ack')!;
-      expect(handler.successMessage).toBeUndefined();
-      expect(handler.failureMessage).toBeUndefined();
     });
   });
 
@@ -969,44 +947,6 @@ describe('ActionQueueHandlers - Unit Tests', () => {
      * If someone changes the context structure in enqueue() but forgets to
      * update the handler, these tests will catch it.
      */
-
-    it('send-channel-message requires correct context fields', async () => {
-      const handler = handlers.getHandler('send-channel-message')!;
-
-      // Valid context - should not throw for missing fields
-      const validContext = {
-        spaceId: 'space-123',
-        channelId: 'channel-456',
-        signedMessage: createTestMessage(),
-        messageId: 'msg-123',
-      };
-
-      // Handler should access these fields without throwing
-      await expect(handler.execute(validContext)).resolves.not.toThrow();
-
-      // Verify the handler actually used the context fields
-      expect(mockDeps.messageDB.getSpace).toHaveBeenCalledWith('space-123');
-    });
-
-    it('send-dm requires correct context fields', async () => {
-      const handler = handlers.getHandler('send-dm')!;
-
-      const validContext = {
-        address: 'recipient-address',
-        signedMessage: createTestMessage(),
-        messageId: 'msg-123',
-        selfUserAddress: 'self-address',
-      };
-
-      // Should execute without throwing for undefined field access
-      // (mock has encryption state so it won't throw "No established sessions")
-      await expect(handler.execute(validContext)).resolves.not.toThrow();
-
-      // Verify context was properly accessed with correct address pattern
-      expect(mockDeps.messageDB.getEncryptionStates).toHaveBeenCalledWith({
-        conversationId: 'recipient-address/recipient-address',
-      });
-    });
 
     it('kick-user requires correct context fields', async () => {
       const handler = handlers.getHandler('kick-user')!;

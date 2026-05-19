@@ -1,24 +1,20 @@
 /**
  * EncryptionService - Unit Tests
  *
- * PURPOSE: Validates that EncryptionService functions correctly call dependencies
- * with correct parameters. Uses mocks and spies to verify behavior.
+ * PURPOSE: Validates EncryptionService cleanup and early-return paths that do
+ * not require WASM crypto.
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * NOTE: EncryptionService methods use complex crypto operations (js_generate_ed448,
- * js_sign_ed448) that require WASM initialization. Tests focus on service
- * construction, method signatures, and early return conditions.
- *
- * CRITICAL TESTS:
- * - Service construction and dependency injection
- * - Method existence and signatures
- * - Early return when key exists
- * - Encryption state deletion
- *
- * FAILURE GUIDANCE:
- * - "Expected function but got undefined": Method is missing
- * - "Expected X parameters but got Y": Method signature changed
+ * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * - ensureKeyForSpace migration path — the 80-line key-rotation operation
+ *   (re-ID conversations, copy messages, migrate members, post API, update
+ *   config) is the most destructive operation in the service and is
+ *   completely untested
+ * - ensureKeyForSpace when ownerKey is undefined (would crash on
+ *   ownerKey!.publicKey)
+ * - deleteEncryptionStates mid-loop failure handling
+ * - getSpaceKey throws vs returns null (different code paths)
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -86,33 +82,7 @@ describe('EncryptionService - Unit Tests', () => {
     vi.clearAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct EncryptionService with all required dependencies', () => {
-      // ✅ VERIFY: Service constructed successfully
-      expect(encryptionService).toBeDefined();
-      expect(encryptionService instanceof EncryptionService).toBe(true);
-    });
-
-    it('should have all required methods', () => {
-      // ✅ VERIFY: All methods exist
-      expect(typeof encryptionService.deleteEncryptionStates).toBe('function');
-      expect(typeof encryptionService.ensureKeyForSpace).toBe('function');
-    });
-  });
-
-  describe('2. Method Signatures', () => {
-    it('should have correct parameter count for deleteEncryptionStates', () => {
-      // ✅ VERIFY: deleteEncryptionStates has 1 parameter (object with conversationId)
-      expect(encryptionService.deleteEncryptionStates.length).toBe(1);
-    });
-
-    it('should have correct parameter count for ensureKeyForSpace', () => {
-      // ✅ VERIFY: ensureKeyForSpace has 3 parameters (user_address, space, queryClient)
-      expect(encryptionService.ensureKeyForSpace.length).toBe(3);
-    });
-  });
-
-  describe('3. deleteEncryptionStates() - Encryption State Cleanup', () => {
+  describe('1. deleteEncryptionStates() - Encryption State Cleanup', () => {
     it('should delete all encryption states for conversation', async () => {
       const conversationId = 'space-123/channel-456';
 
@@ -174,7 +144,7 @@ describe('EncryptionService - Unit Tests', () => {
     });
   });
 
-  describe('4. ensureKeyForSpace() - Key Generation/Retrieval', () => {
+  describe('2. ensureKeyForSpace() - Key Generation/Retrieval', () => {
     it('should return existing spaceId if key already exists', async () => {
       const userAddress = 'user-123';
       const space = {

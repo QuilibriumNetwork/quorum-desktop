@@ -112,27 +112,7 @@ describe('ActionQueueService - Unit Tests', () => {
     vi.restoreAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct with messageDB dependency', () => {
-      expect(service).toBeDefined();
-      expect(service instanceof ActionQueueService).toBe(true);
-    });
-
-    it('should have all required public methods', () => {
-      expect(typeof service.setIsOnlineCallback).toBe('function');
-      expect(typeof service.setHandlers).toBe('function');
-      expect(typeof service.setUserKeyset).toBe('function');
-      expect(typeof service.getUserKeyset).toBe('function');
-      expect(typeof service.clearUserKeyset).toBe('function');
-      expect(typeof service.enqueue).toBe('function');
-      expect(typeof service.start).toBe('function');
-      expect(typeof service.stop).toBe('function');
-      expect(typeof service.processQueue).toBe('function');
-      expect(typeof service.getStats).toBe('function');
-    });
-  });
-
-  describe('2. Keyset Management', () => {
+  describe('1. Keyset Management', () => {
     it('should return null before keyset is set', () => {
       const result = service.getUserKeyset();
       expect(result).toBeNull();
@@ -157,7 +137,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('3. enqueue() - Task Enqueueing', () => {
+  describe('2. enqueue() - Task Enqueueing', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
     });
@@ -245,7 +225,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('4. processQueue() - Queue Processing', () => {
+  describe('3. processQueue() - Queue Processing', () => {
     it('should not process when offline (navigator.onLine)', async () => {
       // Set keyset first (required for processing)
       service.setUserKeyset(mockKeyset);
@@ -368,7 +348,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('5. processTask() - Task Execution', () => {
+  describe('4. processTask() - Task Execution', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -485,7 +465,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('6. Multi-Tab Safety', () => {
+  describe('5. Multi-Tab Safety', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -549,7 +529,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('7. start() and stop()', () => {
+  describe('6. start() and stop()', () => {
     it('should reset stuck tasks on start', async () => {
       await service.start();
 
@@ -564,18 +544,9 @@ describe('ActionQueueService - Unit Tests', () => {
       expect(mockMessageDB.resetStuckProcessingTasks).toHaveBeenCalledTimes(1);
     });
 
-    it('should stop processing interval', async () => {
-      await service.start();
-      service.stop();
-
-      // Service should be stopped (no further processing)
-      // We can verify by checking that subsequent processQueue calls
-      // don't happen automatically
-      expect(true).toBe(true); // Service stopped without error
-    });
   });
 
-  describe('8. getStats()', () => {
+  describe('7. getStats()', () => {
     it('should return queue statistics from messageDB', async () => {
       const expectedStats: QueueStats = {
         pending: 5,
@@ -593,7 +564,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('9. Handler Not Found', () => {
+  describe('8. Handler Not Found', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -616,7 +587,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('10. Exponential Backoff', () => {
+  describe('9. Exponential Backoff', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -681,7 +652,7 @@ describe('ActionQueueService - Unit Tests', () => {
   // These verify contracts that are easy to break during refactoring
   // ==========================================================================
 
-  describe('11. Context Integrity (No Keyset Leakage)', () => {
+  describe('10. Context Integrity (No Keyset Leakage)', () => {
     /**
      * SECURITY-CRITICAL: Keyset must NEVER be stored in task context.
      * It should only be retrieved at processing time via getUserKeyset().
@@ -721,7 +692,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('12. Task Key Format Consistency', () => {
+  describe('11. Task Key Format Consistency', () => {
     /**
      * Keys are used for deduplication. Different key formats for the
      * same logical entity would cause duplicate tasks.
@@ -760,7 +731,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('13. Handler-Service Contract', () => {
+  describe('12. Handler-Service Contract', () => {
     /**
      * These tests verify the interface between ActionQueueService
      * and ActionQueueHandlers is respected.

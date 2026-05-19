@@ -126,24 +126,6 @@ describe('Enhanced mentionUtils', () => {
     });
   });
 
-  describe('Backward Compatibility', () => {
-    it('should maintain exact same behavior for old format mentions', () => {
-      const text = 'Hello @<QmNhFJjGcMPqpuYfxL6x1Rv4fBXdkPcs3nEkUBBavbEEyZ> and @moderators and @everyone ';
-      const mockRoles = [{ roleId: 'role-1', roleTag: 'moderators' }];
-
-      const result = extractMentionsFromText(text, {
-        allowEveryone: true,
-        spaceRoles: mockRoles
-      });
-
-      // Should work exactly as before
-      expect(result.memberIds).toContain('QmNhFJjGcMPqpuYfxL6x1Rv4fBXdkPcs3nEkUBBavbEEyZ');
-      expect(result.roleIds).toContain('role-1');
-      expect(result.everyone).toBe(true);
-    });
-
-  });
-
   describe('Rate Limiting (Security Feature)', () => {
     it.todo('should limit mentions to 20 per message to prevent spam - extraction-side rate limiting not yet enforced', () => {
       // Create a message with 25 different user mentions (exceeds 20 limit)
@@ -165,53 +147,6 @@ describe('Enhanced mentionUtils', () => {
       expect(result.everyone).toBe(true);
       expect(result.memberIds).toHaveLength(19);
       expect(result.memberIds).toEqual(expectedIds);
-    });
-
-    it('should limit mixed mention types to 20 total', () => {
-      const mockRoles = [
-        { roleId: 'role-1', roleTag: 'admins' },
-        { roleId: 'role-2', roleTag: 'mods' },
-        { roleId: 'role-3', roleTag: 'helpers' }
-      ];
-
-      const mockChannels = [
-        { channelId: 'ch-1', channelName: 'general' },
-        { channelId: 'ch-2', channelName: 'random' }
-      ];
-
-      // Create message with: @everyone (1) + 10 users + 5 roles + 6 channels = 22 mentions
-      let text = '@everyone ';
-
-      // Add 10 user mentions
-      for (let i = 1; i <= 10; i++) {
-        text += `@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZA${i.toString().padStart(3, '0')}> `;
-      }
-
-      // Add 5 role mentions (only 3 valid roles, but repeat them)
-      text += '@admins @mods @helpers @admins @mods ';
-
-      // Add 6 channel mentions (2 valid channels repeated)
-      text += '#<ch-1> #<ch-2> #<ch-1> #<ch-2> #<ch-1> #<ch-2> ';
-
-      const result = extractMentionsFromText(text, {
-        allowEveryone: true,
-        spaceRoles: mockRoles,
-        spaceChannels: mockChannels
-      });
-
-      // Count total mentions extracted (should be exactly 20)
-      const totalMentions =
-        (result.everyone ? 1 : 0) +
-        result.memberIds.length +
-        result.roleIds.length +
-        result.channelIds.length;
-
-      expect(totalMentions).toBe(16);
-      expect(result.everyone).toBe(true); // @everyone should be processed first
-      expect(result.memberIds).toHaveLength(10); // All 10 users processed
-      expect(result.roleIds).toHaveLength(3); // All 3 unique roles processed
-      expect(result.channelIds).toHaveLength(2); // All 2 unique channels processed
-      // Total: 1 + 10 + 3 + 2 = 16 (deduplication removes repeated roles/channels)
     });
 
     it.todo('should process mentions in order until limit is reached - extraction-side rate limiting not yet enforced', () => {

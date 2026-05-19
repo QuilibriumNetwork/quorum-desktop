@@ -1,24 +1,17 @@
 /**
  * ConfigService - Unit Tests
  *
- * PURPOSE: Validates that ConfigService functions correctly call dependencies
- * with correct parameters. Uses mocks and spies to verify behavior.
+ * PURPOSE: Validates ConfigService getConfig/saveConfig paths that do not
+ * require crypto operations.
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * NOTE: ConfigService methods use complex crypto operations (crypto.subtle.digest,
- * js_sign_ed448, js_decrypt_inbox_message) that require browser crypto API.
- * Tests focus on service construction, method signatures, and return conditions.
- *
- * CRITICAL TESTS:
- * - Service construction and dependency injection
- * - Method existence and signatures
- * - getConfig return scenarios
- * - saveConfig database calls
- *
- * FAILURE GUIDANCE:
- * - "Expected function but got undefined": Method is missing
- * - "Expected X parameters but got Y": Method signature changed
+ * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * - getConfig newer-remote-timestamp branch (the 60-line decrypt-and-verify path)
+ * - getConfig equal-timestamp / stale-remote branches
+ * - getConfig bookmark merge, user notes merge, tombstone application paths
+ * - saveConfig allowSync:true filtering logic
+ * - saveConfig queryClient.setQueryData side effect
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -78,33 +71,7 @@ describe('ConfigService - Unit Tests', () => {
     vi.clearAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct ConfigService with all required dependencies', () => {
-      // ✅ VERIFY: Service constructed successfully
-      expect(configService).toBeDefined();
-      expect(configService instanceof ConfigService).toBe(true);
-    });
-
-    it('should have all required methods', () => {
-      // ✅ VERIFY: All methods exist
-      expect(typeof configService.getConfig).toBe('function');
-      expect(typeof configService.saveConfig).toBe('function');
-    });
-  });
-
-  describe('2. Method Signatures', () => {
-    it('should have correct parameter count for getConfig', () => {
-      // ✅ VERIFY: getConfig has 1 parameter (object with address and userKey)
-      expect(configService.getConfig.length).toBe(1);
-    });
-
-    it('should have correct parameter count for saveConfig', () => {
-      // ✅ VERIFY: saveConfig has 1 parameter (object with config and keyset)
-      expect(configService.saveConfig.length).toBe(1);
-    });
-  });
-
-  describe('3. getConfig() - Configuration Retrieval', () => {
+  describe('1. getConfig() - Configuration Retrieval', () => {
     it('should return default config when no saved or stored config exists', async () => {
       const address = 'user-address-123';
       const mockUserKey = {
@@ -164,7 +131,7 @@ describe('ConfigService - Unit Tests', () => {
     });
   });
 
-  describe('4. saveConfig() - Configuration Persistence', () => {
+  describe('2. saveConfig() - Configuration Persistence', () => {
     it('should save config to database with updated timestamp', async () => {
       const mockConfig = {
         address: 'user-123',
