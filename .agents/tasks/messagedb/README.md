@@ -8,6 +8,8 @@ updated: '2026-05-19'
 
 # MessageDB Refactor — Master Tracker
 
+> **Sibling workstreams in flight (2026-05-19):** [quorum-shared migration](../quorum-shared-migration/README.md) and [test suite review](../2026-05-19-test-suite-review.md). The receipts PR in the shared migration is coupled to Tier 0 #3 here (see [shared-migration-cross-check.md](./shared-migration-cross-check.md)).
+
 > **What this folder is.** Single source of truth for the ongoing decomposition of the originally-5,650-line `MessageDB.tsx` and the services extracted from it. The refactor runs opportunistically rather than as a single tracked epic. This README is the bird's-eye view.
 
 ## Folder map

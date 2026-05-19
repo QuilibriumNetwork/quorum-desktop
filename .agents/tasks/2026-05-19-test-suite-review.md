@@ -13,6 +13,8 @@ related_tasks:
 
 # Test Suite Review — Cleanup Before Migration
 
+> **Sibling workstreams in flight (2026-05-19):** [quorum-shared migration](./quorum-shared-migration/README.md) and [MessageDB refactor](./messagedb/README.md). The ReceiptService cleanup and util-test expansion items below are prerequisites of the receipts and util-tests migration PRs in the shared-migration stream.
+
 ## Why this exists
 
 Editing tests in `quorum-desktop` is cheap (one `yarn test` cycle). Editing tests in `quorum-shared` is expensive (build + publish + version bump + consumer update). So before migrating any tests to shared, clean them up here.
