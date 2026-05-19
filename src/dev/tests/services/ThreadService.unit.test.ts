@@ -275,6 +275,93 @@ describe('ThreadService', () => {
       expect(result).toBe(false);
     });
 
+    it('reopen action: sets isClosed=false in channel_threads registry', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+      (mockDB.getChannelThreads as any).mockResolvedValue([
+        { threadId: 'thread-1', isClosed: true },
+      ]);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'reopen',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', isClosed: false },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      expect(mockDB.saveChannelThread).toHaveBeenCalledOnce();
+      const saved = (mockDB.saveChannelThread as any).mock.calls[0][0];
+      expect(saved.isClosed).toBe(false);
+    });
+
+    it('updateSettings action: persists customTitle from threadMeta', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+      (mockDB.getChannelThreads as any).mockResolvedValue([
+        { threadId: 'thread-1', isClosed: false, customTitle: undefined },
+      ]);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'updateSettings',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', customTitle: 'New Title' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      expect(mockDB.saveChannelThread).toHaveBeenCalledOnce();
+      const saved = (mockDB.saveChannelThread as any).mock.calls[0][0];
+      expect(saved.customTitle).toBe('New Title');
+    });
+
+    it('returns false when targetMessage is null for a non-remove action', async () => {
+      (mockDB.getMessage as any).mockResolvedValue(null);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-missing',
+        action: 'updateTitle',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', customTitle: 'Title' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(false);
+      expect(mockDB.saveMessage).not.toHaveBeenCalled();
+      expect(mockDB.saveChannelThread).not.toHaveBeenCalled();
+    });
+
     it('remove action: falls back to channel_threads registry when root is null', async () => {
       (mockDB.getMessage as any).mockResolvedValue(null);
       (mockDB.getChannelThread as any).mockResolvedValue({
@@ -378,6 +465,26 @@ describe('ThreadService', () => {
         currentUserAddress: 'user-a',
       });
       expect(result).toBe(false);
+    });
+
+    it('returns true without saving when thread entry is not found in registry', async () => {
+      (mockDB.getChannelThreads as any).mockResolvedValue([]);
+
+      const message = {
+        threadId: 'thread-unknown',
+        isThreadReply: false,
+        content: { senderId: 'user-b' },
+        createdDate: 9000,
+      } as any;
+
+      const result = await threadService.handleThreadReplyReceive({
+        message,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-b',
+      });
+      expect(result).toBe(true);
+      expect(mockDB.saveChannelThread).not.toHaveBeenCalled();
     });
   });
 
@@ -543,6 +650,23 @@ describe('ThreadService', () => {
       // Only called if targetMessage is a thread reply
       expect(spy).not.toHaveBeenCalled();
     });
+
+    it('floors replyCount at 0 when it is already 0', () => {
+      queryClient.setQueryData(
+        ['thread-messages', 'space-1', 'channel-1', 'thread-1'],
+        { messages: [], replyCount: 0 }
+      );
+
+      threadService.handleThreadDeletedMessageCache({
+        targetMessage: { messageId: 'reply-gone', isThreadReply: true, threadId: 'thread-1' } as any,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+
+      const data = queryClient.getQueryData(['thread-messages', 'space-1', 'channel-1', 'thread-1']) as any;
+      expect(data.replyCount).toBe(0);
+    });
   });
 
   describe('handleThreadSend', () => {
@@ -596,6 +720,19 @@ describe('ThreadService', () => {
         currentUserAddress: 'user-intruder',
       });
       expect(result.shouldProceed).toBe(false);
+    });
+
+    it('returns shouldProceed:false when targetMessage is not found', async () => {
+      (mockDB.getMessage as any).mockResolvedValue(null);
+      const result = await threadService.handleThreadSend({
+        threadMsg: { type: 'thread', senderId: 'user-a', targetMessageId: 'msg-missing', action: 'create', threadMeta: { threadId: 'thread-1', createdBy: 'user-a' } },
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+        currentUserAddress: 'user-a',
+      });
+      expect(result.shouldProceed).toBe(false);
+      expect(result.targetMessage).toBeUndefined();
     });
 
     it('returns targetMessage when shouldProceed is true', async () => {
@@ -670,6 +807,35 @@ describe('ThreadService', () => {
       expect(result.earlyReturn).toBe(true);
       expect(mockDB.deleteMessage).toHaveBeenCalledTimes(2); // root + reply
       expect(mockDB.deleteChannelThread).toHaveBeenCalledWith('thread-1');
+    });
+
+    it('updateTitle: saves channel_threads entry and invalidates queries', async () => {
+      const targetMessage = {
+        messageId: 'msg-1',
+        content: { senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', customTitle: 'Old Title' },
+      } as any;
+      (mockDB.getChannelThreads as any).mockResolvedValue([
+        { threadId: 'thread-1', customTitle: 'Old Title' },
+      ]);
+      const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+
+      const result = await threadService.handleThreadSendPostBroadcast({
+        threadMsg: { type: 'thread', senderId: 'user-a', targetMessageId: 'msg-1', action: 'updateTitle', threadMeta: { threadId: 'thread-1', createdBy: 'user-a', customTitle: 'New Title' } },
+        targetMessage,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+        currentUserAddress: 'user-a',
+        conversationProfile: { user_icon: 'icon.png', display_name: 'Test' },
+      });
+      expect(result.earlyReturn).toBe(false);
+      expect(mockDB.saveChannelThread).toHaveBeenCalledOnce();
+      const saved = (mockDB.saveChannelThread as any).mock.calls[0][0];
+      expect(saved.customTitle).toBe('New Title');
+      expect(invalidateSpy).toHaveBeenCalledWith({
+        queryKey: ['channel-threads', 'space-1', 'channel-1'],
+      });
     });
 
     it('remove: strips threadMeta when root belongs to another user', async () => {
