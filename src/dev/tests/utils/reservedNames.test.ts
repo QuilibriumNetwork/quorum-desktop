@@ -6,6 +6,12 @@ import {
   isMentionReserved,
   getReservedNameType,
   isReservedName,
+  validateNameForXSS,
+  sanitizeNameForXSS,
+  validateMessageContent,
+  validateMessage,
+  isValidIPFSCID,
+  MAX_MESSAGE_LENGTH,
 } from '@quilibrium/quorum-shared';
 
 describe('Reserved Name Validation', () => {
@@ -217,5 +223,167 @@ describe('Reserved Name Validation', () => {
       expect(isReservedName('sysadmin')).toBe(false);
       expect(isReservedName('everyone loves me')).toBe(false);
     });
+  });
+});
+
+describe('validateNameForXSS', () => {
+  it('should reject strings that start an HTML tag with a letter', () => {
+    expect(validateNameForXSS('<script>alert(1)</script>')).toBe(false);
+    expect(validateNameForXSS('<img src=x>')).toBe(false);
+    expect(validateNameForXSS('</div>')).toBe(false);
+    expect(validateNameForXSS('<!--comment')).toBe(false);
+  });
+
+  it('should reject strings with closing or processing-instruction angle brackets', () => {
+    expect(validateNameForXSS('<?xml version="1.0"')).toBe(false);
+  });
+
+  it('should allow safe names with letters, digits, and common punctuation', () => {
+    expect(validateNameForXSS('John Doe')).toBe(true);
+    expect(validateNameForXSS("O'Brien")).toBe(true);
+    expect(validateNameForXSS('"The Legend"')).toBe(true);
+    expect(validateNameForXSS('AT&T')).toBe(true);
+    expect(validateNameForXSS('Tom & Jerry')).toBe(true);
+  });
+
+  it('should allow safe emoticon-style angle bracket uses', () => {
+    expect(validateNameForXSS('<3')).toBe(true);
+    expect(validateNameForXSS('>_<')).toBe(true);
+    expect(validateNameForXSS('->')).toBe(true);
+    expect(validateNameForXSS('<-')).toBe(true);
+  });
+
+  it('should allow names with international characters', () => {
+    expect(validateNameForXSS('Nicolò')).toBe(true);
+    expect(validateNameForXSS('José')).toBe(true);
+    expect(validateNameForXSS('Björn')).toBe(true);
+    expect(validateNameForXSS('漢字')).toBe(true);
+  });
+});
+
+describe('sanitizeNameForXSS', () => {
+  it('should strip the opening < before HTML tag letters', () => {
+    expect(sanitizeNameForXSS('John<script>alert(1)</script>')).toBe('Johnscript>alert(1)/script>');
+  });
+
+  it('should strip < before closing-tag slash', () => {
+    expect(sanitizeNameForXSS('test</div>')).toBe('test/div>');
+  });
+
+  it('should leave safe characters untouched', () => {
+    expect(sanitizeNameForXSS('John & Jane')).toBe('John & Jane');
+    expect(sanitizeNameForXSS("<3 heart")).toBe('<3 heart');
+    expect(sanitizeNameForXSS(">_<")).toBe('>_<');
+    expect(sanitizeNameForXSS("O'Brien")).toBe("O'Brien");
+  });
+
+  it('should remove all dangerous < occurrences globally', () => {
+    expect(sanitizeNameForXSS('<b>bold</b>')).toBe('b>bold/b>');
+  });
+});
+
+describe('validateMessageContent', () => {
+  it('should accept a normal non-empty message', () => {
+    const result = validateMessageContent('Hello world');
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
+  it('should reject an empty string', () => {
+    const result = validateMessageContent('');
+    expect(result.valid).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
+
+  it('should reject a whitespace-only string', () => {
+    const result = validateMessageContent('   ');
+    expect(result.valid).toBe(false);
+    expect(result.errors.length).toBeGreaterThan(0);
+  });
+
+  it('should accept a message exactly at MAX_MESSAGE_LENGTH', () => {
+    const content = 'a'.repeat(MAX_MESSAGE_LENGTH);
+    const result = validateMessageContent(content);
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+
+  it('should reject a message that exceeds MAX_MESSAGE_LENGTH', () => {
+    const content = 'a'.repeat(MAX_MESSAGE_LENGTH + 1);
+    const result = validateMessageContent(content);
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => e.includes('2500'))).toBe(true);
+  });
+});
+
+describe('validateMessage', () => {
+  it('should reject a message missing required fields', () => {
+    const result = validateMessage({});
+    expect(result.valid).toBe(false);
+    expect(result.errors.some((e) => /message id/i.test(e))).toBe(true);
+    expect(result.errors.some((e) => /channel id/i.test(e))).toBe(true);
+    expect(result.errors.some((e) => /space id/i.test(e))).toBe(true);
+  });
+
+  it('should accept a message with all required fields', () => {
+    const result = validateMessage({
+      messageId: 'msg-1',
+      channelId: 'ch-1',
+      spaceId: 'sp-1',
+      content: { type: 'post', text: 'Hello' } as any,
+    });
+    expect(result.valid).toBe(true);
+    expect(result.errors).toHaveLength(0);
+  });
+});
+
+describe('isValidIPFSCID', () => {
+  const VALID_CID = 'QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n';
+
+  it('should accept a known-valid CIDv0', () => {
+    expect(isValidIPFSCID(VALID_CID)).toBe(true);
+  });
+
+  it('should reject a string that is too short', () => {
+    expect(isValidIPFSCID('QmShort')).toBe(false);
+  });
+
+  it('should reject a string that does not start with Qm', () => {
+    expect(isValidIPFSCID('bafy' + 'a'.repeat(42))).toBe(false);
+  });
+
+  it('should reject a 46-char string containing non-base58 characters', () => {
+    expect(isValidIPFSCID('Qm' + '0'.repeat(44))).toBe(false);
+  });
+
+  it('should reject an empty string', () => {
+    expect(isValidIPFSCID('')).toBe(false);
+  });
+
+  it('should accept the same CID with precise flag', () => {
+    expect(isValidIPFSCID(VALID_CID, true)).toBe(true);
+  });
+
+  it('should reject a string containing uppercase O (excluded from base58)', () => {
+    const withO = 'Qm' + 'O'.repeat(44);
+    expect(isValidIPFSCID(withO, true)).toBe(false);
+  });
+});
+
+describe('normalizeHomoglyphs - additional edge cases', () => {
+  it('should pass through characters not in the homoglyph map unchanged', () => {
+    expect(normalizeHomoglyphs('2')).toBe('2');
+    expect(normalizeHomoglyphs('6')).toBe('6');
+    expect(normalizeHomoglyphs('#')).toBe('#');
+  });
+
+  it('should return an empty string for empty input', () => {
+    expect(normalizeHomoglyphs('')).toBe('');
+  });
+});
+
+describe('isMentionReserved - additional edge cases', () => {
+  it('should return false for an empty string', () => {
+    expect(isMentionReserved('')).toBe(false);
   });
 });

@@ -126,6 +126,66 @@ describe('Enhanced mentionUtils', () => {
     });
   });
 
+  describe('extractMentionsFromText - empty input', () => {
+    it('should return empty result for empty string without throwing', () => {
+      const result = extractMentionsFromText('', { allowEveryone: true });
+      expect(result.memberIds).toEqual([]);
+      expect(result.roleIds).toEqual([]);
+      expect(result.channelIds).toEqual([]);
+      expect(result.everyone).toBeUndefined();
+    });
+  });
+
+  describe('extractMentionsFromText - @here behavior', () => {
+    it('should not set everyone=true for @here when allowEveryone is true', () => {
+      const result = extractMentionsFromText('@here', { allowEveryone: true });
+      expect(result.everyone).toBeUndefined();
+      expect(result.memberIds).toEqual([]);
+    });
+
+    it('should not set everyone=true for @here when allowEveryone is false', () => {
+      const result = extractMentionsFromText('@here', { allowEveryone: false });
+      expect(result.everyone).toBeUndefined();
+    });
+  });
+
+  describe('extractMentionsFromText - hasWordBoundaries via user mentions', () => {
+    it('should extract a mention at the very start of a string', () => {
+      const text = '@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX> how are you?';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toContain('QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX');
+    });
+
+    it('should extract a mention at the very end of a string', () => {
+      const text = 'Hey @<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX>';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toContain('QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX');
+    });
+
+    it('should not extract a mention inside backtick code', () => {
+      const text = '`@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX>`';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toHaveLength(0);
+    });
+
+    it('should not extract a mention inside bold markdown asterisks', () => {
+      const text = '**@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX>**';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toHaveLength(0);
+    });
+  });
+
+  describe('extractMentionsFromText - role mention case-insensitivity', () => {
+    const mockRoles = [
+      { roleId: 'role-1', roleTag: 'moderators' },
+    ];
+
+    it('should match @Moderators (capital M) against a lowercase role tag', () => {
+      const result = extractMentionsFromText('@Moderators please help!', { spaceRoles: mockRoles });
+      expect(result.roleIds).toContain('role-1');
+    });
+  });
+
   describe('Rate Limiting (Security Feature)', () => {
     it.todo('should limit mentions to 20 per message to prevent spam - extraction-side rate limiting not yet enforced', () => {
       // Create a message with 25 different user mentions (exceeds 20 limit)

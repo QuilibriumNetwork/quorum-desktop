@@ -263,5 +263,104 @@ describe('Read receipt buffering', () => {
       vi.advanceTimersByTime(10000);
       expect(mockReadFlushCallback).not.toHaveBeenCalled();
     });
+
+    it('leaves delivery buffer intact after clearing read buffer', () => {
+      service.onMessageReceived('alice', 'msg-delivery-1');
+      service.onMessageRead('alice', 'msg-read-1', 1000);
+      service.clearReadBuffer();
+      expect(service.flushReadForPiggyback('alice')).toBeNull();
+      expect(service.flushForPiggyback('alice')).toEqual(['msg-delivery-1']);
+    });
+  });
+});
+
+describe('DOM event listeners', () => {
+  let service: ReceiptService;
+  let mockFlushCallback: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.useRealTimers();
+    mockFlushCallback = vi.fn();
+    service = new ReceiptService({ onFlush: mockFlushCallback });
+  });
+
+  afterEach(() => {
+    service.destroy();
+  });
+
+  it('calls flushAll when visibilitychange fires with hidden state', () => {
+    const flushSpy = vi.spyOn(service, 'flushAll');
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    expect(flushSpy).toHaveBeenCalled();
+  });
+
+  it('does not call flushAll when visibilitychange fires with visible state', () => {
+    const flushSpy = vi.spyOn(service, 'flushAll');
+    Object.defineProperty(document, 'visibilityState', { value: 'visible', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    expect(flushSpy).not.toHaveBeenCalled();
+  });
+
+  it('calls flushAll when beforeunload fires', () => {
+    const flushSpy = vi.spyOn(service, 'flushAll');
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    window.dispatchEvent(new Event('beforeunload'));
+    expect(flushSpy).toHaveBeenCalled();
+  });
+});
+
+describe('destroy() cleanup', () => {
+  let service: ReceiptService;
+  let mockFlushCallback: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.useRealTimers();
+    mockFlushCallback = vi.fn();
+  });
+
+  it('prevents visibilitychange from triggering flushAll after destroy', () => {
+    service = new ReceiptService({ onFlush: mockFlushCallback });
+    service.destroy();
+    service.onMessageReceived('alice', 'msg-1');
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    document.dispatchEvent(new Event('visibilitychange'));
+    expect(mockFlushCallback).not.toHaveBeenCalled();
+  });
+
+  it('prevents beforeunload from triggering flushAll after destroy', () => {
+    service = new ReceiptService({ onFlush: mockFlushCallback });
+    service.destroy();
+    service.onMessageReceived('alice', 'msg-1');
+    Object.defineProperty(document, 'visibilityState', { value: 'hidden', configurable: true });
+    window.dispatchEvent(new Event('beforeunload'));
+    expect(mockFlushCallback).not.toHaveBeenCalled();
+  });
+});
+
+describe('Edge cases', () => {
+  let service: ReceiptService;
+  let mockFlushCallback: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.useRealTimers();
+    mockFlushCallback = vi.fn();
+    service = new ReceiptService({ onFlush: mockFlushCallback });
+  });
+
+  afterEach(() => {
+    service.destroy();
+  });
+
+  it('flushAll does not call onFlush when all delivery buffers are empty', () => {
+    service.flushAll();
+    expect(mockFlushCallback).not.toHaveBeenCalled();
+  });
+
+  it('onMessageRead ignores equal timestamp and keeps original messageId as HWM', () => {
+    service.onMessageRead('alice', 'msg-1', 1000);
+    service.onMessageRead('alice', 'msg-2', 1000);
+    const result = service.flushReadForPiggyback('alice');
+    expect(result).toEqual({ messageId: 'msg-1', timestamp: 1000 });
   });
 });
