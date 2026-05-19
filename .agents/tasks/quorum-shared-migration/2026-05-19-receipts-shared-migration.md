@@ -23,6 +23,10 @@ The full per-service audit lives in [designs/2026-05-18-services-design.md §1](
 
 **Sequencing.** Ship this PR **after** the typing PR lands. They are independent functionally, but typing sets the precedent for the `src/<feature>/` folder layout (service.ts + service.test.ts + index.ts) and the receipts PR should mirror it.
 
+> **Prerequisite from the MessageDB refactor**: before (or as part of) this PR, **resolve the wire-format ambiguity in `processDeliveryReceiptData`** — see [messagedb/optimizations-low-risk.md §4.3](../messagedb/optimizations-low-risk.md#43-normalize-control-message-intercept-shape) and [messagedb/shared-migration-cross-check.md §Sequencing constraint on #3](../messagedb/shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization). Today desktop senders emit acks in two shapes (`raw.type === 'delivery-ack'` and `raw.content?.type === 'delivery-ack'`); the receivers handle both via triple-fallback reads. The shared `DeliveryAckMessage` / `ReadAckMessage` types defined in this PR will codify one shape — pick the flat shape (per the type definitions in this task) and unify the desktop senders to match BEFORE merging, otherwise mobile inherits a wire format that doesn't actually match what some desktop paths emit.
+>
+> **Scope cost**: small. The fix is in `ActionQueueHandlers.ts` (the two `as const` ack-construction sites at lines 957, 1014) and possibly in `MessageService.ts` ack handling. Receivers can stop the triple-fallback after senders are unified. Worth doing in this PR to avoid a follow-up.
+
 ## What makes this slightly larger than typing
 
 The typing migration moved an existing `src/types/typing.ts` file verbatim. **Receipts has no equivalent file** — the wire types are inline string literals scattered across two desktop files:
@@ -201,3 +205,5 @@ If bundling the UserConfig consolidation: add another half-day for the UserConfi
 ---
 
 *Created: 2026-05-19 — companion task to the typing migration; introduces new receipt wire types in shared since desktop never had a dedicated types file for them.*
+
+*Updated 2026-05-19 (same day) — added prerequisite block at the top: must resolve the desktop wire-format ambiguity (Tier 0 #3 of the MessageDB refactor) before or as part of this PR, otherwise the shared types lock in only one of the two shapes desktop emits. Cross-referenced from [messagedb/shared-migration-cross-check.md](../messagedb/shared-migration-cross-check.md).*

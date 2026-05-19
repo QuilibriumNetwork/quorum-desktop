@@ -24,7 +24,7 @@ This document tracks **high-risk optimization opportunities** that involve break
 - The specific function is causing maintenance pain
 - You have time for comprehensive testing
 
-**Note**: The `handleNewMessage` refactoring has been archived as not recommended. See [messagedb-current-state.md](./messagedb-current-state.md) for current direction.
+**Note**: The original `handleNewMessage` decomposition plan (Dec 2025) was archived as not recommended. As of May 2026 a fresh re-evaluation lives in [handleNewMessage-reconsidered.md](./handleNewMessage-reconsidered.md), based on the ThreadService extraction precedent. See also [current-state.md](./current-state.md) for the overall picture.
 
 ---
 
@@ -422,6 +422,6 @@ yarn vitest src/dev/refactoring/tests/ --run  # Verify tests pass
 
 ---
 
-_Last updated: 2026-03-24_
+_Last updated: 2026-05-19 — line refs verified against current files: `createSpace` now at SpaceService.ts:126, `kickUser` at SpaceService.ts:676, `joinInviteLink` at InvitationService.ts:561. Function sizes and risk assessments unchanged._
 _Status: ⏸️ Future Reference - Opportunistic refactorings_
 _Targets: SpaceService (kickUser, createSpace), InvitationService (joinInviteLink)_

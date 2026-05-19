@@ -231,10 +231,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread List Panel: "Created by me" Filter](tasks/.todo/2026-03-14-thread-list-created-filter.md)
 
 ### Messagedb
-- [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
-- [Low/Medium Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-1.md)
-- [MessageDB Refactoring - Current State](tasks/messagedb/messagedb-current-state.md)
-- [MessageService.ts Analysis](tasks/messagedb/messageservice-analysis.md)
+- [MessageDB README](tasks/messagedb/README.md) — folder index + master action plan
+- [MessageDB Refactoring - Current State](tasks/messagedb/current-state.md)
+- [MessageService Deep Dive](tasks/messagedb/messageservice-deep-dive.md)
+- [Low/Medium Risk Optimization Opportunities](tasks/messagedb/optimizations-low-risk.md)
+- [High-Risk Optimization Opportunities](tasks/messagedb/optimizations-high-risk.md)
+- [handleNewMessage Reconsidered](tasks/messagedb/handleNewMessage-reconsidered.md)
+- [Shared-Migration Cross-Check](tasks/messagedb/shared-migration-cross-check.md)
 
 ### Messagedb .Archived
 - [handleNewMessage Integration Tests Guide](tasks/messagedb/.archived/messageservice-handlenewmessage-tests.md)

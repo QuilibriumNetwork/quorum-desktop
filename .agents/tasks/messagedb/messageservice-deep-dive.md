@@ -3,14 +3,14 @@ type: task
 title: MessageService.ts Analysis
 status: in-progress
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-05-19'
 ---
 
 # MessageService.ts Analysis
 
 **File**: `src/services/MessageService.ts`
-**Current Size**: ~4,150 lines
-**Last Updated**: 2025-12-20
+**Current Size**: 5,465 lines (May 2026)
+**Last Updated**: 2026-05-19
 
 > **AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent (partial)
@@ -19,9 +19,11 @@ updated: '2026-01-09'
 
 ## Quick Summary
 
-MessageService.ts is large (~4,150 lines) but handles 4-5 distinct concerns that could be separated. Per [best practices research](../../reports/file-size-best-practices_2025-12-20.md), size alone isn't the issue — the file has **multiple reasons to change**.
+MessageService.ts is large (5,465 lines as of May 2026) and handles 7+ distinct concerns that could be separated. Per [best practices research](../../reports/file-size-best-practices_2025-12-20.md), size alone isn't the issue — the file has **multiple reasons to change**.
 
 **Recommended action**: Extract `MessageCacheService` (~800 lines) as the safest, highest-value refactoring.
+
+> **Relationship to quorum-shared migration:** `MessageService` is explicitly classified as "stays per-app" in the [services-design audit](../quorum-shared-migration/designs/2026-05-18-services-design.md). Extracting Cache/DM/Channel sub-services doesn't change that — the extracted pieces are all React Query + ActionQueue + decrypt-pipeline coupled. See [current-state.md](./current-state.md#cross-cutting-context-relationship-to-quorum-shared-migration) for the full cross-cutting note.
 
 ---
 
@@ -49,11 +51,12 @@ MessageService.ts is large (~4,150 lines) but handles 4-5 distinct concerns that
 | Dec 18, 2025 (PM) | 4,148 | -5.7% | Removed dead fallback code |
 | Dec 19, 2025 | 4,350 | +4.9% | Restored update-profile handler |
 | Dec 20, 2025 | ~4,150 | -4.6% | Extracted `encryptAndSendToSpace()` helper |
-| Mar 2026 | **~5,261** | **+27%** | Delivery/read receipts, threads, tag rebroadcast, DM handling growth |
+| Mar 2026 | ~5,261 | +27% | Delivery/read receipts, threads, tag rebroadcast, DM handling growth |
+| May 2026 | **5,465** | **+4%** | Typing-indicator integration (`sendEphemeralDMControl`, `sendEphemeralSpaceControl`, `setTypingService`, expanded ack/typing dispatch in `processDeliveryReceiptData`) |
 
-**Growth rate**: +127% since initial extraction (Oct 2025)
+**Growth rate**: +136% since initial extraction (Oct 2025)
 
-### Method Breakdown (19 methods)
+### Method Breakdown (May 2026 — line numbers verified against current file)
 
 | Method | Lines | Concern | Description |
 |--------|-------|---------|-------------|
@@ -68,32 +71,37 @@ MessageService.ts is large (~4,150 lines) but handles 4-5 distinct concerns that
 | `retryDirectMessage()` | ~200 | Retry | Retry failed direct messages |
 | `deleteConversation()` | ~100 | Cleanup | Cleanup operations |
 | `encryptAndSendToSpace()` | ~70 | Crypto | Triple Ratchet encryption helper |
+| `encryptAndSendDm()` | ~110 | Crypto | DM encryption (Triple Ratchet, per-inbox sessions) |
 | `getEncryptAndSendToSpace()` | ~10 | Crypto | Getter for ActionQueueHandlers |
 | `getSendHubMessage()` | ~10 | Crypto | Getter for ActionQueueHandlers |
 | `sendDirectMessages()` | ~10 | Transport | Direct message WebSocket send |
-| `processDeliveryReceiptData()` | ~70 | Receipts | Intercept ack control messages at decrypt layer |
+| `sendEphemeralDMControl()` | ~30 | Typing | Encrypt + send typing control messages to a DM peer (new in May 2026) |
+| `sendEphemeralSpaceControl()` | ~15 | Typing | Encrypt + send typing control messages to a space/channel (new in May 2026) |
+| `processDeliveryReceiptData()` | ~90 | Receipts + Typing | Intercept ack AND typing control messages at decrypt layer (extended May 2026 to dispatch typing alongside receipts) |
 | `attachPiggybackedAcks()` | ~15 | Receipts | Attach acks to outgoing DMs before encryption |
 | `stripPiggybackedAcks()` | ~5 | Receipts | Strip transient ack fields before persist |
 | `rebroadcastTagIfChanged()` | ~130 | Tags | Space tag rebroadcast with cooldown |
 | `setReceiptService()` | ~5 | DI | ReceiptService dependency injection |
 | `setActionQueueService()` | ~5 | DI | ActionQueue dependency injection |
+| `setTypingService()` | ~5 | DI | TypingService dependency injection (new in May 2026) |
 | `sanitizeError()` | ~20 | Utility | Error message sanitization |
 
 ### Concerns Analysis
 
-The file handles **7 distinct concerns** (different "reasons to change"):
+The file handles **8 distinct concerns** (different "reasons to change"):
 
 | Concern | Methods | Lines | Changes When... |
 |---------|---------|-------|-----------------|
 | **Cache** | `addMessage`, `updateMessageStatus` | ~800 | React Query patterns change |
 | **DM Submission** | `submitMessage` | ~560 | DM encryption/ActionQueue changes |
 | **Channel Submission** | `submitChannelMessage` | ~590 | Space permissions/Triple Ratchet changes |
-| **Incoming Messages** | `handleNewMessage` | ~1,850 | New message types added |
-| **Receipts** | `processDeliveryReceiptData`, `attachPiggybackedAcks`, `stripPiggybackedAcks` | ~90 | Receipt protocol changes |
+| **Incoming Messages** | `handleNewMessage`, `processDeliveryReceiptData` | ~1,940 | New message types or control-message kinds added |
+| **Receipts** | `attachPiggybackedAcks`, `stripPiggybackedAcks` (+ shared dispatch in `processDeliveryReceiptData`) | ~110 | Receipt protocol changes |
+| **Typing** | `sendEphemeralDMControl`, `sendEphemeralSpaceControl`, `setTypingService` (+ shared dispatch in `processDeliveryReceiptData`) | ~55 | Typing protocol changes |
 | **Tags** | `rebroadcastTagIfChanged` | ~130 | Tag broadcast logic changes |
 | **Retry/Cleanup** | `retryMessage`, `retryDirectMessage`, `deleteConversation` | ~400 | Error handling strategy changes |
 
-> **Note on Receipts**: The bulk of receipt logic lives in `ReceiptService` (204 lines, separate file). The ~90 lines in MessageService are integration points (intercept at decrypt, attach/strip at send) that are tightly coupled to the message pipeline and cannot easily move out.
+> **Note on Receipts and Typing**: The bulk of receipt and typing logic lives in `ReceiptService` (204 lines) and `TypingService` (300 lines), separate files. The lines in MessageService for each are integration points (intercept at decrypt for both; attach/strip at send for receipts; encrypted ephemeral send for typing) tightly coupled to the message pipeline and difficult to move out.
 
 ---
 
@@ -150,7 +158,9 @@ export class MessageCacheService {
 
 | Service | Lines | Date | Notes |
 |---------|-------|------|-------|
-| `ReceiptService` | 204 | Mar 2026 | Delivery + read receipt buffering, timers, piggyback coordination. Created as new service (not extracted from MessageService). ~90 lines of integration code remain in MessageService. |
+| `ReceiptService` | 204 | Mar 2026 | Delivery + read receipt buffering, timers, piggyback coordination. Created as new service (not extracted from MessageService). ~110 lines of integration code remain in MessageService. |
+| `TypingService` | 300 | May 2026 | Typing-indicator buffering, freshness window, scope routing. Created as new service. ~55 lines of integration code remain in MessageService (`sendEphemeralDMControl`, `sendEphemeralSpaceControl`, typing dispatch inside `processDeliveryReceiptData`). |
+| `ThreadService` | 607 | Apr–May 2026 | Threads feature. Mostly built outside MessageService (ActionQueueHandlers shrank by ~110 lines as thread logic landed here). |
 
 ### Not Recommended
 
@@ -159,7 +169,7 @@ export class MessageCacheService {
 | `handleNewMessage()` | Too tightly coupled to decryption + 7 injected callbacks. Now ~1,850 lines. |
 | Decryption logic | High risk of crypto bugs, complex error handling |
 | `submitMessage()` | Tied to ActionQueue initialization flow |
-| Receipt integration methods | `processDeliveryReceiptData`, `attachPiggybackedAcks`, `stripPiggybackedAcks` — only ~90 lines and tightly coupled to the decrypt/send pipeline |
+| Receipt + Typing integration methods | `processDeliveryReceiptData`, `attachPiggybackedAcks`, `stripPiggybackedAcks`, `sendEphemeralDMControl`, `sendEphemeralSpaceControl` — only ~165 lines combined and tightly coupled to the decrypt/send pipeline |
 
 ---
 
@@ -174,6 +184,17 @@ Small helpers that reduce duplication **within** the file (not extraction to new
 | Extract `generateMessageId()` helper | ~25 | Low | Worth doing |
 | Extract `signMessage()` helper | ~30 | Medium | Worth doing |
 | Extract `setOptimisticSendingStatus()` | ~30 | Low | Low priority |
+
+### May 2026 small wins (cross-referenced)
+
+These were surfaced during the 2026-05-19 audit. Full details in [optimizations-low-risk.md §4](./optimizations-low-risk.md#4-new-may-2026-findings). Briefly:
+
+| Finding | Risk | Time | Note |
+|---------|------|------|------|
+| Rename `processDeliveryReceiptData` → `interceptControlMessages` (§4.1) | Low | 15 min | Method now also dispatches typing — name lies |
+| NotificationService singleton → normal class (§4.2) | Low–Med | half-day | Testability win; every other service is DI'd |
+| Normalize control-message intercept shape (§4.3) | Low | 30 min | Removes triple-fallback `raw.foo ?? raw.content?.foo` reads |
+| Type the piggybacked ack fields (§4.4) | Low | 30 min | Removes 4 `(message as any)` casts; do after receipts shared migration |
 
 #### generateMessageId() — Recommended
 
@@ -221,8 +242,10 @@ private async signMessage(
 
 | Date | What | Lines Saved | Details |
 |------|------|-------------|---------|
+| May 2026 | Created `TypingService` (300 lines) | N/A (new) | Typing-indicator service. ~55 lines of integration remain in MessageService (`sendEphemeralDMControl`, `sendEphemeralSpaceControl`, typing dispatch in `processDeliveryReceiptData`, `setTypingService`). |
+| Apr–May 2026 | Created `ThreadService` (607 lines) | N/A (new) | Threads feature. Mostly outside MessageService. |
 | Mar 24, 2026 | Extracted `attachPiggybackedAcks()` / `stripPiggybackedAcks()` helpers | ~20 (DRY) | Eliminated duplicated piggyback code across two send paths. Fixed `readAckUpTo` strip bug. |
-| Mar 2026 | Created `ReceiptService` (204 lines) | N/A (new) | Delivery + read receipt service. Not extracted from MessageService — created as new service with ~90 lines of integration in MessageService. |
+| Mar 2026 | Created `ReceiptService` (204 lines) | N/A (new) | Delivery + read receipt service. Not extracted from MessageService — created as new service with ~110 lines of integration in MessageService. |
 | Dec 20, 2025 | Extracted `encryptAndSendToSpace()` | ~200 | [Task file](./messageservice-extract-encrypt-helper.md) |
 | Dec 18, 2025 | Removed dead fallback code | 249 | Cleaned up `enqueueOutbound` paths |
 
@@ -250,17 +273,22 @@ private async signMessage(
 ## Related Files
 
 ### Documentation
-- [MessageDB Current State](./messagedb-current-state.md) — Overall refactoring status
+- [MessageDB Current State](./current-state.md) — Overall refactoring status
+- [README](./README.md) — folder index + master action plan
+- [Low-Risk Optimizations](./optimizations-low-risk.md) — Type safety, React types, small cleanups
+- [High-Risk Optimizations](./optimizations-high-risk.md) — kickUser, createSpace, joinInviteLink breakdowns
+- [handleNewMessage Reconsidered](./handleNewMessage-reconsidered.md) — Fresh re-evaluation in light of the ThreadService extraction precedent
 - [File Size Best Practices](../../reports/file-size-best-practices_2025-12-20.md) — When to split files
 - [Cryptographic Code Best Practices](../../reports/cryptographic-code-best-practices_2025-12-20.md) — Abstraction for crypto
 
-### Task Files
-- [Extract encryptAndSendToSpace](./messageservice-extract-encrypt-helper.md) — ✅ Completed
-- [handleNewMessage Refactor Plan](./messageservice-handlenewmessage-refactor.md) — On Hold
+### Archived Task Files (`.archived/`)
+- `messageservice-handlenewmessage-refactor.md` — Dec 2025 plan, superseded by `handleNewMessage-reconsidered.md`
+- `messageservice-handlenewmessage-tests.md`
+- `messagedb-optimization-2.md`
 
 ### Feature Documentation
 - [Action Queue](../../docs/features/action-queue.md) — Background task processing
 
 ---
 
-_Last updated: 2026-03-24_
+_Last updated: 2026-05-19 — file renamed from `messageservice-analysis.md` → `messageservice-deep-dive.md` as part of folder reorganization. Refreshed against current file (5,465 lines). Added typing-indicator methods (`sendEphemeralDMControl`, `sendEphemeralSpaceControl`, `setTypingService`), `encryptAndSendDm`. Updated `processDeliveryReceiptData` to reflect that it now dispatches typing alongside receipts. Added Typing as an 8th distinct concern. Added cross-reference to quorum-shared migration in Quick Summary. Added "May 2026 small wins" sub-table linking to [optimizations-low-risk.md §4](./optimizations-low-risk.md#4-new-may-2026-findings)._

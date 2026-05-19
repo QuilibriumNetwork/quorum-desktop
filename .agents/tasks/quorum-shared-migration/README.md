@@ -77,6 +77,18 @@ These three can ship in any order and are not blocked on mobile codebase access.
 
 Until then, only the three "ready" rows ship.
 
+## Relationship to the MessageDB refactor
+
+The pending [MessageDB refactor work](../messagedb/messagedb-current-state.md) (extracting `MessageCacheService`, `DirectMessageService`, `ChannelMessageService`; breaking down `kickUser` / `createSpace` / `joinInviteLink`) is **largely orthogonal** to this migration. Every service in that refactor is explicitly classified as "stays per-app" in [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) — they're coupled to React Query, ActionQueue, or the desktop decrypt pipeline.
+
+**One real interaction** plus a couple of doc-framing notes:
+
+1. **Sequencing constraint** — Tier 0 #3 of the MessageDB plan (control-message intercept normalization, [optimizations-low-risk.md §4.3](../messagedb/optimizations-low-risk.md#43-normalize-control-message-intercept-shape)) **must land BEFORE or WITH the receipts shared migration** ([2026-05-19-receipts-shared-migration.md](./2026-05-19-receipts-shared-migration.md)). Otherwise the wire-format ambiguity (`raw.type` vs `raw.content?.type`) gets codified into the shared `DeliveryAckMessage` / `ReadAckMessage` types and mobile inherits only one of the two shapes desktop emits. Full reasoning in [messagedb/shared-migration-cross-check.md §Sequencing constraint on #3](../messagedb/shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization).
+2. **Type-safety pass** ([optimizations-low-risk.md §2.1–2.2](../messagedb/optimizations-low-risk.md)) is desktop hygiene, not a "precondition for shared migration." MessageService and ConfigService each have multiple independent coupling points (Web Crypto, React Query keys, `@lingui`, `React.MutableRefObject`); fixing types alone doesn't unblock migration. Earlier docs implied otherwise — corrected by the cross-check.
+3. **BaseService extraction** ([optimizations-low-risk.md §3.1](../messagedb/optimizations-low-risk.md)) was earlier flagged as making future shared migration harder. On cross-check, no migration-eligible service actually fits the BaseService dependency shape, so the concern is theoretical, not concrete.
+
+Net: doing the MessageDB refactor first does not expand or shrink the shared migration backlog. The one place it interacts is Tier 0 #3, which is small enough to bundle into the receipts migration PR if needed. Full verification in [messagedb/shared-migration-cross-check.md](../messagedb/shared-migration-cross-check.md).
+
 ## Branch / PR workflow
 
 See [2026-03-15-stacked-prs-workflow.md](2026-03-15-stacked-prs-workflow.md) for the stacked-branch convention and the `link:` / published-npm dependency dance. Earlier migrations used stacked branches (types → primitives → utils → hooks); ongoing per-feature migrations (typing, receipts, tests) are independent and branch from `main` on both repos.
@@ -103,4 +115,4 @@ The typing task is the reference example. Receipts and future migrations should 
 
 ---
 
-*Last updated: 2026-05-19 — folder restructure: introduced designs/ subfolder for audits, root holds executable per-PR tasks, this README is the master tracker.*
+*Last updated: 2026-05-19 — folder restructure: introduced designs/ subfolder for audits, root holds executable per-PR tasks, this README is the master tracker. Added "Relationship to the MessageDB refactor" section documenting the orthogonality of the two efforts. Cross-check pass later same day refined that section: surfaced the Tier 0 #3 sequencing constraint and corrected the framing on the type-safety pass and BaseService extraction.*
