@@ -1,25 +1,5 @@
 import { describe, it, expect } from 'vitest';
-
-// Pure merge logic extracted for testing — mirrors the private method in ConfigService
-function mergeDeviceNames(
-  localNames: Record<string, string> | undefined,
-  remoteNames: Record<string, string> | undefined,
-  localTombstones: string[] | undefined,
-  remoteTombstones: string[] | undefined
-): { deviceNames: Record<string, string>; deletedDeviceNameAddresses: string[] } {
-  const allTombstones = [
-    ...(localTombstones ?? []),
-    ...(remoteTombstones ?? []),
-  ];
-  const merged: Record<string, string> = {
-    ...(localNames ?? {}),
-    ...(remoteNames ?? {}), // remote wins on conflict for same key
-  };
-  for (const addr of allTombstones) {
-    delete merged[addr];
-  }
-  return { deviceNames: merged, deletedDeviceNameAddresses: allTombstones };
-}
+import { mergeDeviceNames } from '@/services/configMergeHelpers';
 
 describe('mergeDeviceNames', () => {
   it('merges local and remote names', () => {
@@ -59,9 +39,25 @@ describe('mergeDeviceNames', () => {
     expect(result.deletedDeviceNameAddresses).toContain('QmBBB');
   });
 
+  it('deduplicates tombstones when the same address appears in both sides', () => {
+    const result = mergeDeviceNames({}, {}, ['QmAAA'], ['QmAAA']);
+    expect(result.deletedDeviceNameAddresses).toEqual(['QmAAA']);
+  });
+
   it('handles undefined inputs gracefully', () => {
     const result = mergeDeviceNames(undefined, undefined, undefined, undefined);
     expect(result.deviceNames).toEqual({});
     expect(result.deletedDeviceNameAddresses).toEqual([]);
+  });
+
+  it('removes remote-only name when remote tombstones it', () => {
+    const result = mergeDeviceNames(
+      {},
+      { 'QmX': 'Foo' },
+      [],
+      ['QmX']
+    );
+    expect(result.deviceNames).not.toHaveProperty('QmX');
+    expect(result.deletedDeviceNameAddresses).toEqual(['QmX']);
   });
 });

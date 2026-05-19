@@ -12,6 +12,7 @@ import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { validateItems } from '../utils/folderUtils';
+import { mergeDeviceNames } from './configMergeHelpers';
 
 export class ConfigService {
   private messageDB: MessageDB;
@@ -292,7 +293,7 @@ export class ConfigService {
     }
 
     // Merge deviceNames: additive union so names from all devices survive concurrent saves
-    const deviceNamesMerge = this.mergeDeviceNames(
+    const deviceNamesMerge = mergeDeviceNames(
       storedConfig?.deviceNames,
       config.deviceNames,
       storedConfig?.deletedDeviceNameAddresses,
@@ -546,26 +547,6 @@ export class ConfigService {
       buildConfigKey({ userAddress: config.address! }),
       config
     );
-  }
-
-  private mergeDeviceNames(
-    localNames: Record<string, string> | undefined,
-    remoteNames: Record<string, string> | undefined,
-    localTombstones: string[] | undefined,
-    remoteTombstones: string[] | undefined
-  ): { deviceNames: Record<string, string>; deletedDeviceNameAddresses: string[] } {
-    const allTombstones = [...new Set([
-      ...(localTombstones ?? []),
-      ...(remoteTombstones ?? []),
-    ])];
-    const merged: Record<string, string> = {
-      ...(localNames ?? {}),
-      ...(remoteNames ?? {}),
-    };
-    for (const addr of allTombstones) {
-      delete merged[addr];
-    }
-    return { deviceNames: merged, deletedDeviceNameAddresses: allTombstones };
   }
 
   /**

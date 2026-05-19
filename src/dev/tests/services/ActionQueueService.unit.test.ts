@@ -112,30 +112,58 @@ describe('ActionQueueService - Unit Tests', () => {
     vi.restoreAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct with messageDB dependency', () => {
-      expect(service).toBeDefined();
-      expect(service instanceof ActionQueueService).toBe(true);
-    });
-
-    it('should have all required public methods', () => {
-      expect(typeof service.setIsOnlineCallback).toBe('function');
-      expect(typeof service.setHandlers).toBe('function');
-      expect(typeof service.setUserKeyset).toBe('function');
-      expect(typeof service.getUserKeyset).toBe('function');
-      expect(typeof service.clearUserKeyset).toBe('function');
-      expect(typeof service.enqueue).toBe('function');
-      expect(typeof service.start).toBe('function');
-      expect(typeof service.stop).toBe('function');
-      expect(typeof service.processQueue).toBe('function');
-      expect(typeof service.getStats).toBe('function');
-    });
-  });
-
-  describe('2. Keyset Management', () => {
+  describe('1. Keyset Management', () => {
     it('should return null before keyset is set', () => {
       const result = service.getUserKeyset();
       expect(result).toBeNull();
+    });
+
+    it('enqueue before keyset is set queues the task without throwing', async () => {
+      const freshDB = {
+        ...mockMessageDB,
+        addQueueTask: vi.fn().mockResolvedValue(99),
+        getQueueStats: vi.fn().mockResolvedValue(defaultStats),
+        getPendingTasksByKey: vi.fn().mockResolvedValue([]),
+        hasProcessingTaskWithKey: vi.fn().mockResolvedValue(false),
+      };
+      const serviceNoKeyset = new ActionQueueService(freshDB);
+      serviceNoKeyset.setHandlers(mockHandlers);
+
+      const id = await serviceNoKeyset.enqueue('save-user-config', { config: {} }, 'config:no-keyset');
+
+      expect(typeof id).toBe('number');
+      expect(freshDB.addQueueTask).toHaveBeenCalledWith(
+        expect.objectContaining({ taskType: 'save-user-config', status: 'pending' })
+      );
+    });
+
+    it('clearUserKeyset while handler is in flight causes next processQueue to skip work', async () => {
+      let resolveHandler!: () => void;
+      const slowHandler = new Promise<void>(resolve => { resolveHandler = resolve; });
+
+      mockHandlers.getHandler().execute.mockReturnValue(slowHandler);
+
+      const task = createMockTask();
+      mockMessageDB.getQueueTasksByStatus.mockResolvedValue([task]);
+      mockMessageDB.getQueueTask.mockResolvedValue(task);
+      mockMessageDB.getPendingTasksByKey.mockResolvedValue([]);
+
+      service.setUserKeyset(mockKeyset);
+      vi.clearAllMocks();
+
+      const processingPromise = service.processQueue();
+
+      service.clearUserKeyset();
+
+      resolveHandler();
+      await processingPromise;
+
+      mockMessageDB.getQueueTasksByStatus.mockResolvedValue([createMockTask({ id: 2 })]);
+      vi.clearAllMocks();
+
+      await service.processQueue();
+
+      expect(mockMessageDB.getQueueTasksByStatus).not.toHaveBeenCalled();
     });
 
     it('should store and return keyset after setUserKeyset', () => {
@@ -157,7 +185,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('3. enqueue() - Task Enqueueing', () => {
+  describe('2. enqueue() - Task Enqueueing', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
     });
@@ -243,9 +271,44 @@ describe('ActionQueueService - Unit Tests', () => {
 
       expect(processQueueSpy).toHaveBeenCalled();
     });
+
+    it('rapid enqueue calls batch into a single quorum:queue-updated event', async () => {
+      vi.useFakeTimers();
+      const dispatchSpy = vi.spyOn(window, 'dispatchEvent');
+
+      await service.enqueue('save-user-config', { config: { a: 1 } }, 'config:a');
+      await service.enqueue('save-user-config', { config: { b: 2 } }, 'config:b');
+      await service.enqueue('save-user-config', { config: { c: 3 } }, 'config:c');
+      await service.enqueue('save-user-config', { config: { d: 4 } }, 'config:d');
+      await service.enqueue('save-user-config', { config: { e: 5 } }, 'config:e');
+
+      const beforeAdvance = dispatchSpy.mock.calls.filter(
+        c => (c[0] as CustomEvent).type === 'quorum:queue-updated'
+      ).length;
+      expect(beforeAdvance).toBe(0);
+
+      vi.advanceTimersByTime(600);
+
+      const afterAdvance = dispatchSpy.mock.calls.filter(
+        c => (c[0] as CustomEvent).type === 'quorum:queue-updated'
+      ).length;
+      expect(afterAdvance).toBe(1);
+
+      vi.useRealTimers();
+    });
+
+    it('enqueue rejects when getQueueStats DB call throws', async () => {
+      mockMessageDB.getQueueStats.mockRejectedValue(new Error('IndexedDB unavailable'));
+
+      await expect(
+        service.enqueue('save-user-config', { config: {} }, 'config:db-error')
+      ).rejects.toThrow('IndexedDB unavailable');
+
+      expect(mockMessageDB.addQueueTask).not.toHaveBeenCalled();
+    });
   });
 
-  describe('4. processQueue() - Queue Processing', () => {
+  describe('3. processQueue() - Queue Processing', () => {
     it('should not process when offline (navigator.onLine)', async () => {
       // Set keyset first (required for processing)
       service.setUserKeyset(mockKeyset);
@@ -343,6 +406,38 @@ describe('ActionQueueService - Unit Tests', () => {
       expect(mockHandlers.getHandler().execute).not.toHaveBeenCalled();
     });
 
+    it('concurrent processQueue calls serialize via isProcessing guard', async () => {
+      let resolveFirst!: () => void;
+      const firstHandlerDone = new Promise<void>(resolve => { resolveFirst = resolve; });
+
+      const task1 = createMockTask({ id: 1 });
+
+      const isolatedDB = {
+        ...mockMessageDB,
+        getQueueTasksByStatus: vi.fn().mockResolvedValue([task1]),
+        getQueueTask: vi.fn().mockResolvedValue(task1),
+        getPendingTasksByKey: vi.fn().mockResolvedValue([]),
+      };
+
+      const isolated = new ActionQueueService(isolatedDB);
+      isolated.setHandlers(mockHandlers);
+      isolated.setIsOnlineCallback(() => true);
+      isolated.setUserKeyset(mockKeyset);
+
+      await new Promise(resolve => setTimeout(resolve, 5));
+
+      isolatedDB.getQueueTasksByStatus.mockClear();
+      mockHandlers.getHandler().execute.mockReturnValueOnce(firstHandlerDone);
+
+      const call1 = isolated.processQueue();
+      const call2 = isolated.processQueue();
+
+      resolveFirst();
+      await Promise.all([call1, call2]);
+
+      expect(isolatedDB.getQueueTasksByStatus).toHaveBeenCalledTimes(1);
+    });
+
     it('should process tasks sequentially', async () => {
       // Set up mocks BEFORE setting keyset
       const task1 = createMockTask({ id: 1 });
@@ -368,7 +463,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('5. processTask() - Task Execution', () => {
+  describe('4. processTask() - Task Execution', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -467,6 +562,23 @@ describe('ActionQueueService - Unit Tests', () => {
       window.removeEventListener('quorum:session-expired', eventSpy);
     });
 
+    it('should call onFailure when max retries are exhausted on a transient error', async () => {
+      const task = createMockTask({ retryCount: 2, maxRetries: 3 });
+      mockMessageDB.getQueueTasksByStatus.mockResolvedValue([task]);
+      mockMessageDB.getQueueTask.mockResolvedValue(task);
+
+      const error = new Error('Transient network failure');
+      mockHandlers.getHandler().execute.mockRejectedValue(error);
+      mockHandlers.getHandler().isPermanentError.mockReturnValue(false);
+
+      await service.processQueue();
+
+      expect(mockHandlers.getHandler().onFailure).toHaveBeenCalledWith(task.context, error);
+      expect(mockMessageDB.updateQueueTask).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'failed', error: expect.stringContaining('Max retries exceeded') })
+      );
+    });
+
     it('should call onFailure callback on permanent error', async () => {
       const task = createMockTask();
       mockMessageDB.getQueueTasksByStatus.mockResolvedValue([task]);
@@ -485,7 +597,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('6. Multi-Tab Safety', () => {
+  describe('5. Multi-Tab Safety', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -549,7 +661,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('7. start() and stop()', () => {
+  describe('6. start() and stop()', () => {
     it('should reset stuck tasks on start', async () => {
       await service.start();
 
@@ -564,18 +676,19 @@ describe('ActionQueueService - Unit Tests', () => {
       expect(mockMessageDB.resetStuckProcessingTasks).toHaveBeenCalledTimes(1);
     });
 
-    it('should stop processing interval', async () => {
+    it('start → stop → start restarts correctly and calls resetStuckProcessingTasks a second time', async () => {
       await service.start();
+      expect(mockMessageDB.resetStuckProcessingTasks).toHaveBeenCalledTimes(1);
+
       service.stop();
 
-      // Service should be stopped (no further processing)
-      // We can verify by checking that subsequent processQueue calls
-      // don't happen automatically
-      expect(true).toBe(true); // Service stopped without error
+      await service.start();
+      expect(mockMessageDB.resetStuckProcessingTasks).toHaveBeenCalledTimes(2);
     });
+
   });
 
-  describe('8. getStats()', () => {
+  describe('7. getStats()', () => {
     it('should return queue statistics from messageDB', async () => {
       const expectedStats: QueueStats = {
         pending: 5,
@@ -593,7 +706,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('9. Handler Not Found', () => {
+  describe('8. Handler Not Found', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -616,7 +729,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('10. Exponential Backoff', () => {
+  describe('9. Exponential Backoff', () => {
     beforeEach(() => {
       service.setUserKeyset(mockKeyset);
       vi.clearAllMocks();
@@ -681,7 +794,7 @@ describe('ActionQueueService - Unit Tests', () => {
   // These verify contracts that are easy to break during refactoring
   // ==========================================================================
 
-  describe('11. Context Integrity (No Keyset Leakage)', () => {
+  describe('10. Context Integrity (No Keyset Leakage)', () => {
     /**
      * SECURITY-CRITICAL: Keyset must NEVER be stored in task context.
      * It should only be retrieved at processing time via getUserKeyset().
@@ -721,7 +834,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('12. Task Key Format Consistency', () => {
+  describe('11. Task Key Format Consistency', () => {
     /**
      * Keys are used for deduplication. Different key formats for the
      * same logical entity would cause duplicate tasks.
@@ -760,7 +873,7 @@ describe('ActionQueueService - Unit Tests', () => {
     });
   });
 
-  describe('13. Handler-Service Contract', () => {
+  describe('12. Handler-Service Contract', () => {
     /**
      * These tests verify the interface between ActionQueueService
      * and ActionQueueHandlers is respected.

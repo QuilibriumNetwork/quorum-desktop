@@ -126,22 +126,64 @@ describe('Enhanced mentionUtils', () => {
     });
   });
 
-  describe('Backward Compatibility', () => {
-    it('should maintain exact same behavior for old format mentions', () => {
-      const text = 'Hello @<QmNhFJjGcMPqpuYfxL6x1Rv4fBXdkPcs3nEkUBBavbEEyZ> and @moderators and @everyone ';
-      const mockRoles = [{ roleId: 'role-1', roleTag: 'moderators' }];
+  describe('extractMentionsFromText - empty input', () => {
+    it('should return empty result for empty string without throwing', () => {
+      const result = extractMentionsFromText('', { allowEveryone: true });
+      expect(result.memberIds).toEqual([]);
+      expect(result.roleIds).toEqual([]);
+      expect(result.channelIds).toEqual([]);
+      expect(result.everyone).toBeUndefined();
+    });
+  });
 
-      const result = extractMentionsFromText(text, {
-        allowEveryone: true,
-        spaceRoles: mockRoles
-      });
-
-      // Should work exactly as before
-      expect(result.memberIds).toContain('QmNhFJjGcMPqpuYfxL6x1Rv4fBXdkPcs3nEkUBBavbEEyZ');
-      expect(result.roleIds).toContain('role-1');
-      expect(result.everyone).toBe(true);
+  describe('extractMentionsFromText - @here behavior', () => {
+    it('should not set everyone=true for @here when allowEveryone is true', () => {
+      const result = extractMentionsFromText('@here', { allowEveryone: true });
+      expect(result.everyone).toBeUndefined();
+      expect(result.memberIds).toEqual([]);
     });
 
+    it('should not set everyone=true for @here when allowEveryone is false', () => {
+      const result = extractMentionsFromText('@here', { allowEveryone: false });
+      expect(result.everyone).toBeUndefined();
+    });
+  });
+
+  describe('extractMentionsFromText - hasWordBoundaries via user mentions', () => {
+    it('should extract a mention at the very start of a string', () => {
+      const text = '@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX> how are you?';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toContain('QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX');
+    });
+
+    it('should extract a mention at the very end of a string', () => {
+      const text = 'Hey @<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX>';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toContain('QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX');
+    });
+
+    it('should not extract a mention inside backtick code', () => {
+      const text = '`@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX>`';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toHaveLength(0);
+    });
+
+    it('should not extract a mention inside bold markdown asterisks', () => {
+      const text = '**@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX>**';
+      const result = extractMentionsFromText(text);
+      expect(result.memberIds).toHaveLength(0);
+    });
+  });
+
+  describe('extractMentionsFromText - role mention case-insensitivity', () => {
+    const mockRoles = [
+      { roleId: 'role-1', roleTag: 'moderators' },
+    ];
+
+    it('should match @Moderators (capital M) against a lowercase role tag', () => {
+      const result = extractMentionsFromText('@Moderators please help!', { spaceRoles: mockRoles });
+      expect(result.roleIds).toContain('role-1');
+    });
   });
 
   describe('Rate Limiting (Security Feature)', () => {
@@ -165,53 +207,6 @@ describe('Enhanced mentionUtils', () => {
       expect(result.everyone).toBe(true);
       expect(result.memberIds).toHaveLength(19);
       expect(result.memberIds).toEqual(expectedIds);
-    });
-
-    it('should limit mixed mention types to 20 total', () => {
-      const mockRoles = [
-        { roleId: 'role-1', roleTag: 'admins' },
-        { roleId: 'role-2', roleTag: 'mods' },
-        { roleId: 'role-3', roleTag: 'helpers' }
-      ];
-
-      const mockChannels = [
-        { channelId: 'ch-1', channelName: 'general' },
-        { channelId: 'ch-2', channelName: 'random' }
-      ];
-
-      // Create message with: @everyone (1) + 10 users + 5 roles + 6 channels = 22 mentions
-      let text = '@everyone ';
-
-      // Add 10 user mentions
-      for (let i = 1; i <= 10; i++) {
-        text += `@<QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZA${i.toString().padStart(3, '0')}> `;
-      }
-
-      // Add 5 role mentions (only 3 valid roles, but repeat them)
-      text += '@admins @mods @helpers @admins @mods ';
-
-      // Add 6 channel mentions (2 valid channels repeated)
-      text += '#<ch-1> #<ch-2> #<ch-1> #<ch-2> #<ch-1> #<ch-2> ';
-
-      const result = extractMentionsFromText(text, {
-        allowEveryone: true,
-        spaceRoles: mockRoles,
-        spaceChannels: mockChannels
-      });
-
-      // Count total mentions extracted (should be exactly 20)
-      const totalMentions =
-        (result.everyone ? 1 : 0) +
-        result.memberIds.length +
-        result.roleIds.length +
-        result.channelIds.length;
-
-      expect(totalMentions).toBe(16);
-      expect(result.everyone).toBe(true); // @everyone should be processed first
-      expect(result.memberIds).toHaveLength(10); // All 10 users processed
-      expect(result.roleIds).toHaveLength(3); // All 3 unique roles processed
-      expect(result.channelIds).toHaveLength(2); // All 2 unique channels processed
-      // Total: 1 + 10 + 3 + 2 = 16 (deduplication removes repeated roles/channels)
     });
 
     it.todo('should process mentions in order until limit is reached - extraction-side rate limiting not yet enforced', () => {

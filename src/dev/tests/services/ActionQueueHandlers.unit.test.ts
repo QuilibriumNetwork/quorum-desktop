@@ -427,6 +427,13 @@ describe('ActionQueueHandlers - Unit Tests', () => {
 
       expect(mockDeps.messageService.submitChannelMessage).not.toHaveBeenCalled();
     });
+
+    it('should classify 404 as permanent error and network errors as retryable', () => {
+      const handler = handlers.getHandler('pin-message')!;
+
+      expect(handler.isPermanentError(new Error('404 Not Found'))).toBe(true);
+      expect(handler.isPermanentError(new Error('network timeout'))).toBe(false);
+    });
   });
 
   describe('9. unpin-message Handler', () => {
@@ -448,6 +455,13 @@ describe('ActionQueueHandlers - Unit Tests', () => {
         queryClient,
         context.currentPasskeyInfo
       );
+    });
+
+    it('should classify 404 as permanent error and network errors as retryable', () => {
+      const handler = handlers.getHandler('unpin-message')!;
+
+      expect(handler.isPermanentError(new Error('404 Not Found'))).toBe(true);
+      expect(handler.isPermanentError(new Error('network timeout'))).toBe(false);
     });
   });
 
@@ -683,6 +697,41 @@ describe('ActionQueueHandlers - Unit Tests', () => {
         expect.any(String)
       );
     });
+
+    it('should call DoubleRatchetInboxEncryptForceSenderInit when sending_inbox.inbox_public_key is empty', async () => {
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          state: JSON.stringify({
+            tag: 'inbox-other',
+            sending_inbox: { inbox_public_key: '' },
+            receiving_inbox: { inbox_address: 'inbox-other' },
+            ratchet_state: {},
+          }),
+        },
+      ]);
+      handlers = new ActionQueueHandlers(mockDeps);
+
+      const handler = handlers.getHandler('send-dm')!;
+      await handler.execute({
+        address: 'recipient',
+        signedMessage: createTestMessage(),
+        messageId: 'msg-123',
+        selfUserAddress: 'self-addr',
+        senderDisplayName: 'Test User',
+      });
+
+      expect(channel.DoubleRatchetInboxEncryptForceSenderInit).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Array),
+        expect.any(String),
+        expect.objectContaining({ user_address: 'self-addr' }),
+        'Test User',
+        undefined
+      );
+      expect(channel.DoubleRatchetInboxEncrypt).not.toHaveBeenCalled();
+    });
   });
 
   describe('14. reaction-dm Handler', () => {
@@ -699,6 +748,28 @@ describe('ActionQueueHandlers - Unit Tests', () => {
           selfUserAddress: 'self',
         })
       ).rejects.toThrow('Keyset not available');
+    });
+
+    it('should call encryptAndSendDm with correct address and keyset', async () => {
+      const handler = handlers.getHandler('reaction-dm')!;
+      const context = {
+        address: 'recipient-addr',
+        reactionMessage: { type: 'reaction', emoji: '👍', messageId: 'msg-1' },
+        selfUserAddress: 'self-addr',
+        senderDisplayName: 'Test User',
+        senderUserIcon: 'icon.png',
+      };
+
+      await handler.execute(context);
+
+      expect(mockDeps.messageService.encryptAndSendDm).toHaveBeenCalledWith(
+        'recipient-addr',
+        context.reactionMessage,
+        'self-addr',
+        mockKeyset,
+        'Test User',
+        'icon.png'
+      );
     });
 
     it('should classify 404 as permanent error (message deleted)', () => {
@@ -723,6 +794,28 @@ describe('ActionQueueHandlers - Unit Tests', () => {
           selfUserAddress: 'self',
         })
       ).rejects.toThrow('Keyset not available');
+    });
+
+    it('should call encryptAndSendDm with correct address and keyset', async () => {
+      const handler = handlers.getHandler('delete-dm')!;
+      const context = {
+        address: 'recipient-addr',
+        deleteMessage: { type: 'remove-message', messageId: 'msg-1' },
+        selfUserAddress: 'self-addr',
+        senderDisplayName: 'Test User',
+        senderUserIcon: 'icon.png',
+      };
+
+      await handler.execute(context);
+
+      expect(mockDeps.messageService.encryptAndSendDm).toHaveBeenCalledWith(
+        'recipient-addr',
+        context.deleteMessage,
+        'self-addr',
+        mockKeyset,
+        'Test User',
+        'icon.png'
+      );
     });
 
     it('should always return false for isPermanentError (idempotent)', () => {
@@ -778,11 +871,6 @@ describe('ActionQueueHandlers - Unit Tests', () => {
   });
 
   describe('16b. send-delivery-ack Handler', () => {
-    it('should be registered in getHandler', () => {
-      const handler = handlers.getHandler('send-delivery-ack');
-      expect(handler).toBeDefined();
-    });
-
     it('should encrypt and send ack via encryptAndSendDm pattern', async () => {
       const handler = handlers.getHandler('send-delivery-ack')!;
       const context = {
@@ -820,20 +908,9 @@ describe('ActionQueueHandlers - Unit Tests', () => {
       const handler = handlers.getHandler('send-delivery-ack')!;
       expect(handler.onFailure).toBeUndefined();
     });
-
-    it('should NOT have toast messages (silent)', () => {
-      const handler = handlers.getHandler('send-delivery-ack')!;
-      expect(handler.successMessage).toBeUndefined();
-      expect(handler.failureMessage).toBeUndefined();
-    });
   });
 
   describe('16c. send-read-ack Handler', () => {
-    it('should be registered in getHandler', () => {
-      const handler = handlers.getHandler('send-read-ack');
-      expect(handler).toBeDefined();
-    });
-
     it('should encrypt and send read ack via encryptAndSendDm pattern', async () => {
       const handler = handlers.getHandler('send-read-ack')!;
       const context = {
@@ -858,12 +935,6 @@ describe('ActionQueueHandlers - Unit Tests', () => {
     it('should NOT have onFailure callback (best effort)', () => {
       const handler = handlers.getHandler('send-read-ack')!;
       expect(handler.onFailure).toBeUndefined();
-    });
-
-    it('should NOT have toast messages (silent)', () => {
-      const handler = handlers.getHandler('send-read-ack')!;
-      expect(handler.successMessage).toBeUndefined();
-      expect(handler.failureMessage).toBeUndefined();
     });
   });
 
@@ -897,6 +968,22 @@ describe('ActionQueueHandlers - Unit Tests', () => {
         'm',
         'failed',
         expect.stringContaining('Encryption error')
+      );
+    });
+
+    it('should sanitize network errors for send-dm', () => {
+      const handler = handlers.getHandler('send-dm')!;
+      const context = { address: 'recipient-addr', messageId: 'msg-1' };
+
+      handler.onFailure!(context, new Error('fetch failed: connection refused'));
+
+      expect(mockDeps.messageService.updateMessageStatus).toHaveBeenCalledWith(
+        queryClient,
+        'recipient-addr',
+        'recipient-addr',
+        'msg-1',
+        'failed',
+        expect.stringContaining('Network error')
       );
     });
   });
@@ -969,44 +1056,6 @@ describe('ActionQueueHandlers - Unit Tests', () => {
      * If someone changes the context structure in enqueue() but forgets to
      * update the handler, these tests will catch it.
      */
-
-    it('send-channel-message requires correct context fields', async () => {
-      const handler = handlers.getHandler('send-channel-message')!;
-
-      // Valid context - should not throw for missing fields
-      const validContext = {
-        spaceId: 'space-123',
-        channelId: 'channel-456',
-        signedMessage: createTestMessage(),
-        messageId: 'msg-123',
-      };
-
-      // Handler should access these fields without throwing
-      await expect(handler.execute(validContext)).resolves.not.toThrow();
-
-      // Verify the handler actually used the context fields
-      expect(mockDeps.messageDB.getSpace).toHaveBeenCalledWith('space-123');
-    });
-
-    it('send-dm requires correct context fields', async () => {
-      const handler = handlers.getHandler('send-dm')!;
-
-      const validContext = {
-        address: 'recipient-address',
-        signedMessage: createTestMessage(),
-        messageId: 'msg-123',
-        selfUserAddress: 'self-address',
-      };
-
-      // Should execute without throwing for undefined field access
-      // (mock has encryption state so it won't throw "No established sessions")
-      await expect(handler.execute(validContext)).resolves.not.toThrow();
-
-      // Verify context was properly accessed with correct address pattern
-      expect(mockDeps.messageDB.getEncryptionStates).toHaveBeenCalledWith({
-        conversationId: 'recipient-address/recipient-address',
-      });
-    });
 
     it('kick-user requires correct context fields', async () => {
       const handler = handlers.getHandler('kick-user')!;

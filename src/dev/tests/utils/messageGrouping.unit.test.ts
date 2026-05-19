@@ -6,6 +6,7 @@ import {
   getDateLabel,
   groupMessagesByDay,
   generateListWithSeparators,
+  shouldShowCompactHeader,
 } from '@quilibrium/quorum-shared';
 import type { Message } from '@quilibrium/quorum-shared';
 
@@ -84,16 +85,9 @@ describe('messageGrouping utilities', () => {
 
   describe('getDateLabel', () => {
     it('should return formatted date labels in "MMMM D, YYYY" format', () => {
-      // Test the format pattern
       const label = getDateLabel(today);
       expect(typeof label).toBe('string');
       expect(label).toMatch(/^[A-Za-z]+ \d{1,2}, \d{4}$/); // "October 15, 2025" format
-
-      // Test the function doesn't throw
-      expect(() => getDateLabel(today)).not.toThrow();
-      expect(() => getDateLabel(yesterday)).not.toThrow();
-      expect(() => getDateLabel(lastWeek)).not.toThrow();
-      expect(() => getDateLabel(lastMonth)).not.toThrow();
     });
 
     it('should handle different timestamps correctly', () => {
@@ -188,6 +182,98 @@ describe('messageGrouping utilities', () => {
       expect(items[0].type).toBe('dateSeparator');
       expect(items[1].type).toBe('message');
       expect(items[2].type).toBe('message');
+    });
+  });
+
+  describe('shouldShowCompactHeader', () => {
+    const SENDER_A = 'QmSenderAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA1';
+    const SENDER_B = 'QmSenderBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB2';
+    const WITHIN_THRESHOLD = 2 * 60 * 1000; // 2 minutes
+    const PAST_THRESHOLD = 6 * 60 * 1000;   // 6 minutes
+
+    const makeMsg = (
+      timestamp: number,
+      id: string,
+      senderId: string,
+      type: string = 'post',
+      extra: Record<string, unknown> = {}
+    ): Message => ({
+      ...createMockMessage(timestamp, id),
+      content: { type, text: 'hi', senderId, ...extra } as any,
+    });
+
+    it('should return false when there is no previous message', () => {
+      const current = makeMsg(today, 'msg1', SENDER_A);
+      expect(shouldShowCompactHeader(current, null, false, false)).toBe(false);
+    });
+
+    it('should return false when a date separator is present', () => {
+      const previous = makeMsg(yesterday, 'msg1', SENDER_A);
+      const current = makeMsg(today, 'msg2', SENDER_A);
+      expect(shouldShowCompactHeader(current, previous, true, false)).toBe(false);
+    });
+
+    it('should return false when a new-messages separator is present', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + WITHIN_THRESHOLD, 'msg2', SENDER_A);
+      expect(shouldShowCompactHeader(current, previous, false, true)).toBe(false);
+    });
+
+    it('should return false when the current message is a system "leave" message', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + WITHIN_THRESHOLD, 'msg2', SENDER_A, 'leave');
+      expect(shouldShowCompactHeader(current, previous, false, false)).toBe(false);
+    });
+
+    it('should return false when the current message is a system "kick" message', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + WITHIN_THRESHOLD, 'msg2', SENDER_A, 'kick');
+      expect(shouldShowCompactHeader(current, previous, false, false)).toBe(false);
+    });
+
+    it('should return false when the current message is a reply', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + WITHIN_THRESHOLD, 'msg2', SENDER_A, 'post', {
+        repliesToMessageId: 'msg0',
+      });
+      expect(shouldShowCompactHeader(current, previous, false, false)).toBe(false);
+    });
+
+    it('should return false when senders differ', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + WITHIN_THRESHOLD, 'msg2', SENDER_B);
+      expect(shouldShowCompactHeader(current, previous, false, false)).toBe(false);
+    });
+
+    it('should return true when same sender within time threshold', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + WITHIN_THRESHOLD, 'msg2', SENDER_A);
+      expect(shouldShowCompactHeader(current, previous, false, false)).toBe(true);
+    });
+
+    it('should return false when same sender but past time threshold', () => {
+      const previous = makeMsg(today, 'msg1', SENDER_A);
+      const current = makeMsg(today + PAST_THRESHOLD, 'msg2', SENDER_A);
+      expect(shouldShowCompactHeader(current, previous, false, false)).toBe(false);
+    });
+  });
+
+  describe('groupMessagesByDay - out-of-order messages', () => {
+    it('should place out-of-order same-day messages into a single group (groups fragment)', () => {
+      const morning = dayjs.tz('2024-11-10 08:00:00', testTimezone).valueOf();
+      const evening = dayjs.tz('2024-11-10 20:00:00', testTimezone).valueOf();
+
+      const messages = [
+        createMockMessage(evening, 'msg-evening'),
+        createMockMessage(morning, 'msg-morning'),
+      ];
+
+      const groups = groupMessagesByDay(messages);
+
+      expect(groups).toHaveLength(1);
+      expect(groups[0].messages).toHaveLength(2);
+      expect(groups[0].messages[0].messageId).toBe('msg-evening');
+      expect(groups[0].messages[1].messageId).toBe('msg-morning');
     });
   });
 });

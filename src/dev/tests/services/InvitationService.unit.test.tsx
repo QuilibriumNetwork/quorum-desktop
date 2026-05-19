@@ -1,28 +1,61 @@
 /**
  * InvitationService - Unit Tests
  *
- * PURPOSE: Validates that InvitationService functions correctly call dependencies
- * with correct parameters. Uses mocks and spies to verify behavior.
+ * PURPOSE: Validates InvitationService behavior including state mutations,
+ * dependency call sequences, and error branches.
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
- *
- * NOTE: InvitationService methods use complex crypto operations (js_generate_x448,
- * js_sign_ed448, js_decrypt_inbox_message) that require WASM initialization.
- * Tests focus on service construction, method signatures, and error handling.
- *
- * CRITICAL TESTS:
- * - Service construction and dependency injection
- * - Method existence and signatures
- * - Error handling for invalid invites
- *
- * FAILURE GUIDANCE:
- * - "Expected function but got undefined": Method is missing
- * - "Expected X parameters but got Y": Method signature changed
  */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InvitationService } from '@/services/InvitationService';
 import { QueryClient } from '@tanstack/react-query';
+
+vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
+  channel: {
+    SealHubEnvelope: vi.fn().mockResolvedValue(JSON.stringify({ envelope: 'mock' })),
+    TripleRatchetEncrypt: vi.fn().mockReturnValue(
+      JSON.stringify({ ratchet_state: {}, envelope: '{}' })
+    ),
+    DoubleRatchetInboxEncrypt: vi.fn().mockReturnValue([]),
+    EstablishTripleRatchetSessionForSpace: vi.fn().mockResolvedValue({
+      state: JSON.stringify({
+        peer_id_map: {},
+        id_peer_map: { 1: { public_key: 'peer-key' } },
+        root_key: 'root-key',
+      }),
+      template: {
+        dkg_ratchet: JSON.stringify({ id: 1, total: 1 }),
+        root_key: 'root-key',
+        peer_id_map: {},
+        id_peer_map: {},
+      },
+      evals: [],
+    }),
+    SealInboxEnvelope: vi.fn().mockResolvedValue('{}'),
+    SealSyncEnvelope: vi.fn().mockResolvedValue({}),
+  },
+  channel_raw: {
+    js_generate_x448: vi.fn().mockReturnValue(
+      JSON.stringify({ public_key: [1, 2, 3], private_key: [4, 5, 6] })
+    ),
+    js_generate_ed448: vi.fn().mockReturnValue(
+      JSON.stringify({ public_key: [7, 8, 9], private_key: [10, 11, 12] })
+    ),
+    js_sign_ed448: vi.fn().mockReturnValue(JSON.stringify('mock-signature')),
+    js_verify_ed448: vi.fn().mockReturnValue(true),
+    js_decrypt_inbox_message: vi.fn().mockReturnValue(
+      JSON.stringify(JSON.stringify({ spaceId: 'space-123', spaceName: 'Test Space', defaultChannelId: 'chan-1', inviteUrl: 'https://qm.one/invite/#spaceId=space-123&configKey=aabbcc' }))
+    ),
+    js_get_pubkey_x448: vi.fn().mockReturnValue(
+      Buffer.from([1, 2, 3]).toString('base64')
+    ),
+    js_get_pubkey_ed448: vi.fn().mockReturnValue(
+      Buffer.from([7, 8, 9]).toString('base64')
+    ),
+    js_encrypt_inbox_message: vi.fn().mockReturnValue('encrypted-ciphertext'),
+  },
+}));
 
 describe('InvitationService - Unit Tests', () => {
   let invitationService: InvitationService;
@@ -109,51 +142,7 @@ describe('InvitationService - Unit Tests', () => {
     vi.clearAllMocks();
   });
 
-  describe('1. Service Construction', () => {
-    it('should construct InvitationService with all required dependencies', () => {
-      // ✅ VERIFY: Service constructed successfully
-      expect(invitationService).toBeDefined();
-      expect(invitationService instanceof InvitationService).toBe(true);
-    });
-
-    it('should have all required methods', () => {
-      // ✅ VERIFY: All methods exist
-      expect(typeof invitationService.constructInviteLink).toBe('function');
-      expect(typeof invitationService.sendInviteToUser).toBe('function');
-      expect(typeof invitationService.generateNewInviteLink).toBe('function');
-      expect(typeof invitationService.processInviteLink).toBe('function');
-      expect(typeof invitationService.joinInviteLink).toBe('function');
-    });
-  });
-
-  describe('2. Method Signatures', () => {
-    it('should have correct parameter count for constructInviteLink', () => {
-      // ✅ VERIFY: constructInviteLink has 1 parameter (spaceId)
-      expect(invitationService.constructInviteLink.length).toBe(1);
-    });
-
-    it('should have correct parameter count for sendInviteToUser', () => {
-      // ✅ VERIFY: sendInviteToUser has 5 parameters
-      expect(invitationService.sendInviteToUser.length).toBe(5);
-    });
-
-    it('should have correct parameter count for generateNewInviteLink', () => {
-      // ✅ VERIFY: generateNewInviteLink has 4 parameters
-      expect(invitationService.generateNewInviteLink.length).toBe(4);
-    });
-
-    it('should have correct parameter count for processInviteLink', () => {
-      // ✅ VERIFY: processInviteLink has 1 parameter (inviteLink)
-      expect(invitationService.processInviteLink.length).toBe(1);
-    });
-
-    it('should have correct parameter count for joinInviteLink', () => {
-      // ✅ VERIFY: joinInviteLink has 3 parameters
-      expect(invitationService.joinInviteLink.length).toBe(3);
-    });
-  });
-
-  describe('3. constructInviteLink() - Invite Link Construction', () => {
+  describe('1. constructInviteLink() - Invite Link Construction', () => {
     it('should return existing invite URL if space has one', async () => {
       const spaceId = 'space-123';
       const existingUrl = 'https://quorum.app/invite#spaceId=space-123&configKey=abc';
@@ -174,7 +163,7 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('4. processInviteLink() - Invite Link Validation', () => {
+  describe('2. processInviteLink() - Invite Link Validation', () => {
     it('should throw error for invalid invite link format', async () => {
       const invalidLink = 'invalid-link-format';
 
@@ -202,22 +191,9 @@ describe('InvitationService - Unit Tests', () => {
       ).rejects.toThrow();
     });
 
-    it('should call apiClient.getSpaceManifest for valid invite', async () => {
-      const validLink = 'https://quorum.app/invite#spaceId=space-123&configKey=abc123';
-
-      // Mock decryption to avoid crypto operations
-      try {
-        await invitationService.processInviteLink(validLink);
-      } catch (error) {
-        // Expected to fail due to crypto operations, but should have called getSpaceManifest
-      }
-
-      // ✅ VERIFY: getSpaceManifest called with spaceId
-      expect(mockDeps.apiClient.getSpaceManifest).toHaveBeenCalledWith('space-123');
-    });
   });
 
-  describe('5. sendInviteToUser() - Send Invite to User', () => {
+  describe('3. sendInviteToUser() - Send Invite to User', () => {
     it('should call constructInviteLink and submitMessage', async () => {
       const address = 'recipient-address';
       const spaceId = 'space-123';
@@ -256,7 +232,7 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('6. joinInviteLink() - Join Space via Invite', () => {
+  describe('4. joinInviteLink() - Join Space via Invite', () => {
     it('should return undefined for invalid invite link format', async () => {
       const invalidLink = 'invalid-link';
       const mockKeyset = {
@@ -281,16 +257,199 @@ describe('InvitationService - Unit Tests', () => {
     });
   });
 
-  describe('7. generateNewInviteLink() - Generate New Invite', () => {
-    it('should verify method exists and has correct signature', () => {
-      // NOTE: generateNewInviteLink uses complex crypto operations
-      // We can only verify method exists and has correct signature
+  describe('5. constructInviteLink() - Non-Cached Path', () => {
+    it('should consume one eval, persist updated state, and return URL with spaceId and configKey', async () => {
+      const spaceId = 'space-abc';
 
-      // ✅ VERIFY: Method exists
-      expect(typeof invitationService.generateNewInviteLink).toBe('function');
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId,
+        spaceName: 'Test Space',
+        inviteUrl: null,
+      });
+      mockDeps.messageDB.getSpaceKey = vi.fn()
+        .mockResolvedValueOnce({ keyId: 'config', publicKey: 'cfg-pub', privateKey: 'cfg-priv' })
+        .mockResolvedValueOnce({ keyId: 'hub', publicKey: 'hub-pub', privateKey: 'hub-priv' });
 
-      // ✅ VERIFY: Has 4 parameters (spaceId, user_keyset, device_keyset, registration)
-      expect(invitationService.generateNewInviteLink.length).toBe(4);
+      const encStateRaw = {
+        state: JSON.stringify({
+          id_peer_map: { 1: { public_key: 'peer-key' } },
+          peer_id_map: {},
+          root_key: 'root-key-value',
+        }),
+        template: {
+          dkg_ratchet: JSON.stringify({ id: 5 }),
+          root_key: 'old-root-key',
+        },
+        evals: [[10, 20, 30], [40, 50, 60]],
+      };
+      const encStateRecord = { state: JSON.stringify(encStateRaw), conversationId: spaceId + '/' + spaceId };
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([encStateRecord]);
+
+      const result = await invitationService.constructInviteLink(spaceId);
+
+      expect(result).toContain('spaceId=' + spaceId);
+      expect(result).toContain('configKey=cfg-priv');
+      expect(result).toContain('hubKey=hub-priv');
+
+      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalledWith(
+        expect.objectContaining({
+          state: expect.stringContaining('"evals":[[40,50,60]]'),
+        }),
+        true
+      );
+    });
+
+    it('should set ratchet.id to 10001 minus the number of evals before consuming', async () => {
+      const spaceId = 'space-ratchet';
+
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({ spaceId, inviteUrl: null });
+      mockDeps.messageDB.getSpaceKey = vi.fn()
+        .mockResolvedValueOnce({ keyId: 'config', publicKey: 'cpub', privateKey: 'cpriv' })
+        .mockResolvedValueOnce({ keyId: 'hub', publicKey: 'hpub', privateKey: 'hpriv' });
+
+      const encStateRaw = {
+        state: JSON.stringify({ root_key: 'rk', id_peer_map: {}, peer_id_map: {} }),
+        template: {
+          dkg_ratchet: JSON.stringify({ id: 99 }),
+          root_key: 'rk',
+        },
+        evals: [[1], [2], [3]],
+      };
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        { state: JSON.stringify(encStateRaw), conversationId: spaceId + '/' + spaceId },
+      ]);
+
+      const result = await invitationService.constructInviteLink(spaceId);
+
+      const savedCall = mockDeps.messageDB.saveEncryptionState.mock.calls[0][0];
+      const savedSets = JSON.parse(savedCall.state);
+      const savedTemplate = savedSets.template;
+      const savedRatchet = JSON.parse(savedTemplate.dkg_ratchet);
+      expect(savedRatchet.id).toBe(10001 - 3);
+
+      expect(result).toContain('spaceId=' + spaceId);
+    });
+
+    it('should throw when getEncryptionStates returns empty array', async () => {
+      const spaceId = 'space-no-enc';
+
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({ spaceId, inviteUrl: null });
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockResolvedValue({ keyId: 'config', publicKey: 'p', privateKey: 'p' });
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([]);
+
+      await expect(invitationService.constructInviteLink(spaceId)).rejects.toThrow();
+    });
+
+    it('should throw when the encryption state has no evals', async () => {
+      const spaceId = 'space-no-evals';
+
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({ spaceId, inviteUrl: null });
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockResolvedValue({ keyId: 'config', publicKey: 'p', privateKey: 'p' });
+
+      const encStateRaw = {
+        state: JSON.stringify({ root_key: 'rk', id_peer_map: {}, peer_id_map: {} }),
+        template: { dkg_ratchet: JSON.stringify({ id: 1 }), root_key: 'rk' },
+        evals: [],
+      };
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        { state: JSON.stringify(encStateRaw), conversationId: spaceId + '/' + spaceId },
+      ]);
+
+      await expect(invitationService.constructInviteLink(spaceId)).rejects.toThrow();
     });
   });
+
+  describe('6. sendInviteToUser() - Argument Verification', () => {
+    it('should call submitMessage with the invite URL, sender address, and recipient address', async () => {
+      const spaceId = 'space-send';
+      const recipientAddress = 'recipient-addr';
+      const existingUrl = 'https://qm.one/#spaceId=space-send&configKey=deadbeef';
+      const mockPasskeyInfo = {
+        credentialId: 'cred',
+        address: 'sender-addr',
+        publicKey: 'pubkey',
+        completedOnboarding: true,
+      };
+      const mockKeyset = { userKeyset: {} as any, deviceKeyset: {} as any };
+      const mockSubmitMessage = vi.fn().mockResolvedValue(undefined);
+
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId,
+        inviteUrl: existingUrl,
+      });
+      mockDeps.apiClient.getUser = vi.fn()
+        .mockResolvedValueOnce({ data: { address: 'sender-addr', device_registrations: [] } })
+        .mockResolvedValueOnce({ data: { address: 'recipient-addr', device_registrations: [] } });
+
+      await invitationService.sendInviteToUser(
+        recipientAddress,
+        spaceId,
+        mockPasskeyInfo,
+        mockKeyset,
+        mockSubmitMessage
+      );
+
+      expect(mockSubmitMessage).toHaveBeenCalledWith(
+        recipientAddress,
+        existingUrl,
+        expect.objectContaining({ address: 'sender-addr' }),
+        expect.objectContaining({ address: 'recipient-addr' }),
+        expect.anything(),
+        expect.objectContaining({ address: mockPasskeyInfo.address }),
+        mockKeyset
+      );
+
+      expect(mockDeps.apiClient.getUser).toHaveBeenCalledWith(mockPasskeyInfo.address);
+      expect(mockDeps.apiClient.getUser).toHaveBeenCalledWith(recipientAddress);
+    });
+  });
+
+  describe('7. generateNewInviteLink() - Invite Generation', () => {
+    it('should call postSpaceInviteEvals, saveEncryptionState, and saveSpace', async () => {
+      const spaceId = 'space-gen';
+
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId,
+        spaceName: 'Gen Space',
+        inviteUrl: null,
+      });
+      mockDeps.messageDB.getSpaceKey = vi.fn()
+        .mockResolvedValueOnce({ spaceId, keyId: spaceId, publicKey: 'space-pub', privateKey: 'space-priv' })
+        .mockResolvedValueOnce({ spaceId, keyId: 'owner', publicKey: 'owner-pub', privateKey: 'owner-priv' })
+        .mockResolvedValueOnce({ spaceId, keyId: 'hub', publicKey: 'hub-pub', privateKey: 'hub-priv', address: 'hub-addr' });
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          state: JSON.stringify({
+            state: JSON.stringify({
+              id_peer_map: { 1: { public_key: 'peer-key' } },
+              peer_id_map: { 'peer-key': 1 },
+              root_key: 'root-key',
+            }),
+          }),
+          conversationId: spaceId + '/' + spaceId,
+        },
+      ]);
+
+      const mockUserKeyset = {} as any;
+      const mockDeviceKeyset = {} as any;
+      const mockRegistration = {} as any;
+
+      await invitationService.generateNewInviteLink(
+        spaceId,
+        mockUserKeyset,
+        mockDeviceKeyset,
+        mockRegistration
+      );
+
+      expect(mockDeps.apiClient.postSpaceInviteEvals).toHaveBeenCalledWith(
+        expect.objectContaining({ space_address: spaceId })
+      );
+      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalled();
+      expect(mockDeps.messageDB.saveSpace).toHaveBeenCalledWith(
+        expect.objectContaining({ spaceId, inviteUrl: expect.stringContaining('spaceId=' + spaceId) })
+      );
+    });
+  });
+
 });

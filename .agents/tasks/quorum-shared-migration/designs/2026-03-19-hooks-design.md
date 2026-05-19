@@ -1,9 +1,9 @@
 # Hooks Migration to quorum-shared — Design & Inventory
 
-> **Status**: BLOCKED — Waiting for access to latest quorum-mobile codebase
-> **Prep branch**: `feat/hooks-prep-for-sharing` (current, for this design doc and audit updates)
+> **Status (as of 2026-05-19)**: STILL BLOCKED — waiting for access to latest quorum-mobile codebase. Verified: `quorum-shared/src/hooks/` contains ~10 files (useChannels, useMessages, useSpaces, keys.ts, mutations/), versus ~274 files in desktop's hooks tree. No hooks have moved since this spec was written.
+> **Prep branch**: `feat/hooks-prep-for-sharing` (was used for this design doc and audit updates)
 > **Migration branch (future)**: `feat/shared-hooks-migration` (to be created from `main` when ready)
-> **Spec Date**: 2026-03-19
+> **Spec Date**: 2026-03-19 · **Last verified**: 2026-05-19
 
 ---
 
