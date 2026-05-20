@@ -56,10 +56,11 @@ import { QuorumApiClient } from '../api/baseTypes';
 import { showWarning, noteSyncActivity } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
-import type { ReceiptService } from '@quilibrium/quorum-shared';
+import type { ReceiptService, ReceiptEnvelopeFields } from '@quilibrium/quorum-shared';
 import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
+import type { Ref } from '../types/ref';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -81,8 +82,8 @@ export interface MessageServiceDependencies {
     apiClient: QuorumApiClient
   ) => Promise<void>;
   navigate: (path: string, options?: any) => void;
-  spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
-  syncInfo: React.MutableRefObject<{ [key: string]: any }>;
+  spaceInfo: Ref<{ [key: string]: any }>;
+  syncInfo: Ref<{ [key: string]: any }>;
   synchronizeAll: (spaceId: string, inboxAddress: string) => Promise<void>;
   informSyncData: (
     spaceId: string,
@@ -121,8 +122,8 @@ export class MessageService {
     apiClient: QuorumApiClient
   ) => Promise<void>;
   private navigate: (path: string, options?: any) => void;
-  private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
-  private syncInfo: React.MutableRefObject<{ [key: string]: any }>;
+  private spaceInfo: Ref<{ [key: string]: any }>;
+  private syncInfo: Ref<{ [key: string]: any }>;
   private synchronizeAll: (
     spaceId: string,
     inboxAddress: string
@@ -280,14 +281,16 @@ export class MessageService {
   private attachPiggybackedAcks(address: string, message: Message): void {
     if (!this.receiptService) return;
 
+    const envelope = message as Message & ReceiptEnvelopeFields;
+
     const pendingAcks = this.receiptService.flushForPiggyback(address);
     if (pendingAcks.length > 0) {
-      (message as any).ackMessageIds = pendingAcks;
+      envelope.ackMessageIds = pendingAcks;
     }
 
     const pendingReadAck = this.receiptService.flushReadForPiggyback(address);
     if (pendingReadAck) {
-      (message as any).readAckUpTo = pendingReadAck;
+      envelope.readAckUpTo = pendingReadAck;
     }
   }
 
@@ -296,21 +299,29 @@ export class MessageService {
    * These fields are transient wire-format data that should not be stored locally.
    */
   private stripPiggybackedAcks(message: Message): void {
-    delete (message as any).ackMessageIds;
-    delete (message as any).readAckUpTo;
+    const envelope = message as Message & ReceiptEnvelopeFields;
+    delete envelope.ackMessageIds;
+    delete envelope.readAckUpTo;
   }
 
   /**
-   * Process delivery receipt data from a decrypted DM message.
-   * Returns true if the message is a delivery-ack control message (should be intercepted, not saved).
-   * Returns false if the message is a normal message (continue with saveMessage pipeline).
+   * Intercept ephemeral control messages and process piggybacked receipt data
+   * from a decrypted DM message.
    *
-   * Three-step logic applied at both DM decrypt paths:
-   * 1. Intercept delivery-ack type BEFORE saveMessage — return true (early exit)
-   * 2. Extract + process ackMessageIds from any message — then strip before saveMessage
-   * 3. Buffer the received message's ID for acking — after decryption succeeds
+   * Returns true if the message is a control message (delivery-ack, read-ack,
+   * typing-start, typing-stop) that should be intercepted and never saved.
+   * Returns false if it is a normal message (continue with saveMessage pipeline);
+   * any piggybacked ack fields are processed and stripped in that case.
+   *
+   * Steps applied at both DM decrypt paths:
+   * 1.  Intercept delivery-ack control messages — return true (early exit)
+   * 1b. Intercept read-ack control messages — return true (early exit)
+   * 1c. Intercept typing-start / typing-stop control messages — return true (early exit)
+   * 2.  Extract + process piggybacked ackMessageIds — then strip before saveMessage
+   * 2b. Extract + process piggybacked readAckUpTo — then strip before saveMessage
+   * 3.  Buffer the received message's ID for acking — after decryption succeeds
    */
-  private processDeliveryReceiptData(
+  private interceptControlMessages(
     decryptedContent: Message,
     senderAddress: string,
     selfAddress: string,
@@ -2670,7 +2681,7 @@ export class MessageService {
           });
           const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
           const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
-          if (this.processDeliveryReceiptData(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
+          if (this.interceptControlMessages(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
             // delivery-ack control message — encryption state saved, but don't save/display the message
             return;
           }
@@ -4215,7 +4226,7 @@ export class MessageService {
         const senderAddress = conversationId.split('/')[0];
         const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
         const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
-        if (this.processDeliveryReceiptData(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
+        if (this.interceptControlMessages(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
           // delivery-ack control message — encryption state saved, but don't save/display the message
           return;
         }

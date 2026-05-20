@@ -3,7 +3,7 @@ type: index
 title: "MessageDB Refactor — Master Tracker"
 status: ongoing
 created: 2026-05-19
-updated: '2026-05-19'
+updated: '2026-05-20'
 ---
 
 # MessageDB Refactor — Master Tracker
@@ -48,10 +48,10 @@ Each item lists the doc that owns its content, the risk, the rough time investme
 |---|------|------|------|------|-------|
 | 1 | Rename `processDeliveryReceiptData` → `interceptControlMessages` | [low-risk §4.1](./optimizations-low-risk.md#41-rename-processdeliveryreceiptdata--interceptcontrolmessages) | ⚠️ Low | 15 min | Method now also dispatches typing — name lies |
 | 2 | Remove `React.MutableRefObject` from services (12 spots, 5 services) | [low-risk §2.2](./optimizations-low-risk.md#22-remove-react-types-from-services) | ⚠️ Low | 30 min–1 h | Hygiene; modest expansion of shared-migration surface |
-| 3 | Normalize control-message intercept shape | [low-risk §4.3](./optimizations-low-risk.md#43-normalize-control-message-intercept-shape) | ⚠️ Low | 30 min | Removes triple-fallback reads. **Sequencing constraint**: must land BEFORE or WITH the receipts shared migration — see [cross-check](./shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization). |
-| 4 | Type piggybacked ack fields (after receipts shared migration) | [low-risk §4.4](./optimizations-low-risk.md#44-type-the-piggybacked-ack-fields) | ⚠️ Low | 30 min | Removes 4 `(message as any)` casts |
+| 3 | ~~Normalize control-message intercept shape~~ ✅ DONE (2026-05-20) | [low-risk §4.3](./optimizations-low-risk.md#43-normalize-control-message-intercept-shape) | — | — | Landed as cleanup commit on the receipts-shared-migration branch (PR #147). Dead `raw.content?.type` fallbacks removed; receiver now reads only the flat wire shape. |
+| 4 | Type piggybacked ack fields | [low-risk §4.4](./optimizations-low-risk.md#44-type-the-piggybacked-ack-fields) | ⚠️ Low | 30 min | Removes 4 `(message as any)` casts. **Unblocked** — receipts shared migration landed in PR #147 (2026-05-20). |
 
-**Order rationale**: all four are < 1 hour each, near-zero risk, no behavior change. Stack them in any short session. #4 depends on the receipts shared migration landing first.
+**Order rationale**: #1, #2, #4 are < 1 hour each, near-zero risk, no behavior change. Stack them in any short session. #3 is done. #4 was previously gated on the receipts shared migration; that migration shipped 2026-05-20, so #4 is now ready.
 
 ### Tier 1 — Larger but still low-risk (when you have a focused day)
 
@@ -106,10 +106,12 @@ See also [current-state.md §Cross-cutting context](./current-state.md#cross-cut
 
 ## Active state
 
-- **In progress**: none (this is a tracker; items get picked up as feature work permits).
-- **Most recent**: ThreadService extraction (April–May 2026), TypingService extraction (May 2026), audit refresh + folder reorg (2026-05-19).
+- **In progress**: branch `refactor/messageservice-rename-and-typing` — stacking Tier 0 #1, #4, #2 (started 2026-05-20).
+- **Most recent**: receipts shared migration (PR #147, 2026-05-20) — incidentally landed Tier 0 #3 as a precursor cleanup. ThreadService extraction (April–May 2026), TypingService extraction (May 2026), audit refresh + folder reorg (2026-05-19).
 - **Blockers**: none for any Tier 0/1 item. Tier 2 items unblock once someone has a focused day. Tier 3 waits on feature triggers.
 
 ---
 
-_Last updated: 2026-05-19 — folder reorganized. Files renamed: `messagedb-current-state.md` → `current-state.md`, `messageservice-analysis.md` → `messageservice-deep-dive.md`, `messagedb-optimization-1.md` → `optimizations-low-risk.md`, `messagedb-optimization-3.md` → `optimizations-high-risk.md`. New files: `handleNewMessage-reconsidered.md`, `shared-migration-cross-check.md`. This README is new and owns the safest-to-riskiest master action plan. Tier 0 #3 marked with the sequencing constraint surfaced by the cross-check; framing softened for #5 and #7._
+_Last updated: 2026-05-20 — Tier 0 #3 marked ✅ done (landed inside receipts-shared-migration PR #147); Tier 0 #4 unblocked. Branch `refactor/messageservice-rename-and-typing` opened to stack #1 + #4 + #2._
+
+_Previously 2026-05-19 — folder reorganized. Files renamed: `messagedb-current-state.md` → `current-state.md`, `messageservice-analysis.md` → `messageservice-deep-dive.md`, `messagedb-optimization-1.md` → `optimizations-low-risk.md`, `messagedb-optimization-3.md` → `optimizations-high-risk.md`. New files: `handleNewMessage-reconsidered.md`, `shared-migration-cross-check.md`. This README is new and owns the safest-to-riskiest master action plan. Tier 0 #3 marked with the sequencing constraint surfaced by the cross-check; framing softened for #5 and #7._

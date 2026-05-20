@@ -13,11 +13,12 @@ import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { validateItems } from '../utils/folderUtils';
 import { mergeDeviceNames } from './configMergeHelpers';
+import type { Ref } from '../types/ref';
 
 export class ConfigService {
   private messageDB: MessageDB;
   private apiClient: QuorumApiClient;
-  private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
+  private spaceInfo: Ref<{ [key: string]: any }>;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
   private queryClient: QueryClient;
@@ -25,7 +26,7 @@ export class ConfigService {
   constructor(dependencies: {
     messageDB: MessageDB;
     apiClient: QuorumApiClient;
-    spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
+    spaceInfo: Ref<{ [key: string]: any }>;
     enqueueOutbound: (action: () => Promise<string[]>) => void;
     sendHubMessage: (spaceId: string, message: string) => Promise<string>;
     queryClient: QueryClient;
