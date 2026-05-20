@@ -215,7 +215,7 @@ return renderCachedPreview();  // Uses bookmark.cachedPreview
 Uses **dumb stripping** for plain text display (no interactive elements needed in search results).
 
 ```typescript
-import { stripMarkdownAndMentions } from '../../utils/markdownStripping';
+import { stripMarkdownAndMentions } from '@quilibrium/quorum-shared';
 
 const cleanSnippet = stripMarkdownAndMentions(contextualSnippet);
 // Renders as plain text
@@ -256,7 +256,7 @@ Documents the **bookmarks feature** including the hybrid MessagePreview approach
 | File | Purpose |
 |------|---------|
 | `src/components/message/MessagePreview.tsx` | Core preview component |
-| `src/utils/markdownStripping.ts` | Text processing utilities |
+| `@quilibrium/quorum-shared` (`src/utils/markdownStripping.ts`) | Text processing utilities (moved to shared package) |
 | `src/components/message/PinnedMessagesPanel.tsx` | Pinned messages consumer |
 | `src/components/bookmarks/BookmarkItem.tsx` | Bookmarks consumer (hybrid) |
 | `src/components/search/SearchResultItem.tsx` | Search consumer (plain text) |
@@ -285,4 +285,4 @@ MessagePreview is **20-100x faster** than full markdown rendering, making it sui
 ---
 
 
-*Verified: 2025-12-09 - File paths confirmed current*
+*Last updated: 2026-05-20 — staleness audit fixes*

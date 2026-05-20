@@ -390,3 +390,4 @@ Space-level mute checks happen first (O(1)) to avoid unnecessary channel iterati
 - [Config Sync System](../config-sync-system.md)
 
 ---
+_Last updated: 2026-05-20 — staleness audit: all paths verified current_

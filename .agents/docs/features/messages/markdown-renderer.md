@@ -53,7 +53,7 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 
 - `src/components/message/MessageMarkdownRenderer.tsx` - Main renderer component
 - `src/components/message/MarkdownToolbar.tsx` - Discord-style formatting toolbar
-- `src/utils/youtubeUtils.ts` - Centralized YouTube URL utilities
+- `@quilibrium/quorum-shared` (`src/utils/youtubeUtils.ts`) - Centralized YouTube URL utilities (moved to shared package)
 - `src/utils/codeFormatting.ts` - Code block analysis utilities
 - `src/utils/markdownFormatting.ts` - Markdown formatting functions for toolbar
 - `src/utils/messageLinkUtils.ts` - Message link URL parsing and validation
@@ -274,6 +274,7 @@ img: ({ src, alt, ...props }: any) => {
       <div className="my-2">
         <YouTubeFacade
           videoId={src}
+          thumbnailSrc={null}
           className="rounded-lg youtube-embed"
           style={{ width: '100%', maxWidth: 560, aspectRatio: '16/9' }}
         />
@@ -464,7 +465,7 @@ The markdown rendering feature can be toggled via the `ENABLE_MARKDOWN` flag:
  * Controls markdown rendering and formatting toolbar in messages.
  * When disabled, messages will use plain text rendering.
  */
-export const ENABLE_MARKDOWN = false; // Default: disabled
+export const ENABLE_MARKDOWN = true; // Default: enabled
 ```
 
 ### **What the Flag Controls**
@@ -538,7 +539,7 @@ All user-controlled content now follows this pattern:
 - [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
 
 ---
-**Last Updated**: 2026-01-09
+**Last Updated**: 2026-05-20 — staleness audit fixes
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added, display name lookup for security)
 **Performance Optimization**: Complete
 **Mention Formats**: Only `@<address>` and `#<channelId>` supported (display names looked up from space data for security)

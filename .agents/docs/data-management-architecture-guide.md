@@ -40,7 +40,7 @@ Following recent refactoring, core MessageDB functionalities have been extracted
 ### Key Components
 
 - **MessageDB Orchestrator**: Coordinates interactions with specialized services and IndexedDB (`src/db/messages.ts`, `src/components/context/MessageDB.tsx`)
-- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`, `src/services/ActionQueueService.ts`, `src/services/ActionQueueHandlers.ts`, `src/services/BackupService.ts`)
+- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`, `src/services/ActionQueueService.ts`, `src/services/ActionQueueHandlers.ts`, `src/services/BackupService.ts`, `src/services/ReceiptService.ts`, `src/services/ThreadService.ts`)
 - **Context Providers**: Data management contexts (`src/components/context/`)
 - **Query System**: TanStack Query hooks (`src/hooks/queries/`)
 - **API Layer**: RESTful client (`src/api/`)
@@ -60,7 +60,7 @@ Following recent refactoring, core MessageDB functionalities have been extracted
 class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 6;
+  private readonly DB_VERSION = 12;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
 }
 ```
@@ -80,6 +80,11 @@ class MessageDB {
 - `conversation_users` - Users in conversations
 - `bookmarks` - User bookmarked messages
 - `action_queue` - Persistent background task queue (see [Action Queue](features/action-queue.md))
+- `deleted_messages` - Tombstone records for deleted messages (prevents re-sync)
+- `channel_threads` - Thread metadata for space channels
+- `thread_read_times` - Per-thread read timestamps
+- `user_notes` - Private per-user annotations (local only, never synced)
+- `muted_users` - Muted user records with optional expiry
 
 ### 2. localStorage (Preferences & Settings)
 
@@ -781,7 +786,7 @@ export const getQuorumApiConfig = function () {
 
 ### Search Architecture
 
-**Location**: `src/services/searchService.ts`
+**Location**: `src/services/SearchService.ts`
 
 **Search Service Features**:
 
@@ -986,6 +991,8 @@ class ErrorBoundary extends React.Component {
   - `ActionQueueService.ts` - Persistent background task queue with retry logic.
   - `ActionQueueHandlers.ts` - Task handlers for each action type.
   - `BackupService.ts` - Encrypted DM backup export/import with domain-separated AES-256-GCM encryption.
+  - `ReceiptService.ts` - Delivery and read receipt acknowledgement handling.
+  - `ThreadService.ts` - Channel thread creation and management.
 - **`src/adapters/`** - Storage adapters for cross-platform compatibility:
   - `indexedDbAdapter.ts` - Wraps MessageDB to conform to `@quilibrium/quorum-shared` StorageAdapter interface.
 - **`src/components/context/WebsocketProvider.tsx`** - WebSocket management
@@ -1010,4 +1017,4 @@ class ErrorBoundary extends React.Component {
 
 ---
 
-_Last updated: 2026-01-02_
+*Last updated: 2026-05-20 — staleness audit fixes*

@@ -21,7 +21,7 @@ This guide helps developers manage existing components and create new ones in ou
 ### What We Have
 
 - **Primitives Collection**: `src/components/primitives/` - Cross-platform UI building blocks
-- **Theming System**: `src/components/primitives/theme/colors.ts` - Mirrors web CSS variables as hex colors for native app
+- **Theming System**: `@quilibrium/quorum-shared` — `useTheme`, `ThemeProvider`, and color tokens (previously `src/components/primitives/theme/colors.ts`, now in quorum-shared)
 - **Dev Playground**: Test primitives on both web (`/playground`) and mobile (React Native via Expo)
 - **Platform Files**: `.web.tsx` for browser, `.native.tsx` for React Native
 - **Mobile Testing**: `/mobile` workspace with test screens for real device testing
@@ -84,9 +84,9 @@ function UserProfile({ userId }) {
   }, [userId]);
 
   return (
-    <Container>
+    <div>
       {loading ? <Text>Loading...</Text> : <Text>{user.name}</Text>}
-    </Container>
+    </div>
   );
 }
 
@@ -95,9 +95,9 @@ function UserProfile({ userId }) {
   const { user, loading } = useUserProfile(userId);
 
   return (
-    <Container>
+    <div>
       {loading ? <Text>Loading...</Text> : <Text>{user.name}</Text>}
-    </Container>
+    </div>
   );
 }
 ```
@@ -109,10 +109,8 @@ The hook goes in `src/hooks/` following existing categories and index structure.
 ### Available Primitives
 
 ```tsx
-// Layout
-import { FlexRow, FlexBetween, FlexCenter, FlexColumn } from '../primitives';
-import { Container, ResponsiveContainer } from '../primitives';
-import { ModalContainer, OverlayBackdrop } from '../primitives';
+// Layout (all from @quilibrium/quorum-shared, re-exported via local barrel)
+import { Flex, Spacer, ScrollContainer, OverlayBackdrop } from '../primitives';
 
 // Interaction
 import { Button, Input, TextArea, Select } from '../primitives';
@@ -121,6 +119,8 @@ import { Modal, Switch, RadioGroup } from '../primitives';
 // Display
 import { Icon, ColorSwatch, Tooltip } from '../primitives';
 // Note: Text primitive is native-only. On web, use <span>/<p> with CSS typography classes.
+// Note: Container and the old FlexRow/FlexBetween/FlexCenter/FlexColumn/ResponsiveContainer
+//       primitives no longer exist. Use Flex (from quorum-shared) or plain <div> instead.
 ```
 
 ### Developer Guidelines by Approach
@@ -130,14 +130,14 @@ import { Icon, ColorSwatch, Tooltip } from '../primitives';
 ```tsx
 function UserCard({ user }) {
   return (
-    <Container className="p-4 bg-surface-0 rounded-lg">
-      <FlexBetween>
+    <div className="p-4 bg-surface-0 rounded-lg">
+      <Flex justify="between">
         <span className="text-strong">{user.name}</span>
         <Button size="small" onClick={onEdit}>
           Edit
         </Button>
-      </FlexBetween>
-    </Container>
+      </Flex>
+    </div>
   );
 }
 // Good: Interactive elements + layout patterns benefit from primitives
@@ -148,7 +148,7 @@ function UserCard({ user }) {
 ```tsx
 function ComplexComponent() {
   return (
-    <Container className="p-4">
+    <div className="p-4">
       {/* Use primitives for interactive/theme elements */}
       <span className="text-strong">Settings</span>
       <Button onClick={onSave}>Save</Button>
@@ -157,7 +157,7 @@ function ComplexComponent() {
       <div className="complex-animation-container">
         <span className="text-subtle">Loading animation...</span>
       </div>
-    </Container>
+    </div>
   );
 }
 // Good: Primitives where they add value, raw HTML where needed
@@ -178,12 +178,12 @@ function ComponentThatShouldUsePrimitives() {
     </div>
   );
 }
-// Bad: Missing consistency benefits of Button primitive and FlexBetween layout
+// Bad: Missing consistency benefits of Button primitive and Flex layout
 ```
 
 ### When to Use Primitives
 
-Follow the guidelines in [when-to-use-primitives.md](./when-to-use-primitives.md):
+Follow the guidelines in [when-to-use-primitives.md](./features/primitives/03-when-to-use-primitives.md):
 
 - **Always**: Interactive elements (Button, Input, Modal)
 - **Usually**: Layout containers with theme colors
@@ -202,17 +202,22 @@ Follow the guidelines in [when-to-use-primitives.md](./when-to-use-primitives.md
 
 ### Primitive Creation Rules
 
-Based on [primitive-styling-guide.md](./primitive-styling-guide.md):
+Based on [primitive-styling-guide.md](./features/primitives/05-primitive-styling-guide.md):
 
 #### 1. **File Structure**
 
+Primitive implementations live in `@quilibrium/quorum-shared`. If you are adding a new primitive, it must be added to quorum-shared, not to `src/components/primitives/`. The local folder only contains SCSS files and the barrel `index.ts`.
+
+For a new primitive in quorum-shared:
+
 ```
+quorum-shared/src/primitives/MyPrimitive/
+├── MyPrimitive.web.tsx     # Web implementation (in quorum-shared)
+├── MyPrimitive.native.tsx  # Mobile implementation (in quorum-shared)
+└── types.ts                # Shared TypeScript types (in quorum-shared)
+
 src/components/primitives/MyPrimitive/
-├── MyPrimitive.web.tsx     # Web implementation
-├── MyPrimitive.native.tsx  # Mobile implementation
-├── MyPrimitive.scss        # Web styles (if needed)
-├── types.ts                # Shared TypeScript types
-└── index.ts                # Platform resolution
+└── MyPrimitive.scss        # Web styles (local — imported by the barrel)
 ```
 
 #### 2. **Styling Consistency**
@@ -507,7 +512,7 @@ import { Button } from '../primitives/Button';
 ### Getting Help
 
 1. Check existing primitives first - don't reinvent
-2. Review [when-to-use-primitives.md](./when-to-use-primitives.md) for guidance
+2. Review [when-to-use-primitives.md](./features/primitives/03-when-to-use-primitives.md) for guidance
 3. Test with web playground (`/playground`) and mobile testing (`yarn mobile`) before implementing in main app
 4. Follow existing patterns from similar components
 
@@ -533,6 +538,4 @@ import { Button } from '../primitives/Button';
 
 ---
 
-_Created: 2025-07-31_
-_Updated: 2025-08-14 10:45 UTC_
-_This guide focuses on practical decision-making for component development in our cross-platform architecture._
+*Last updated: 2026-05-20 — staleness audit fixes*

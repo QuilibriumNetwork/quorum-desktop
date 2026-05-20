@@ -76,7 +76,7 @@ src/
 │   │   └── index.ts                    # Exports
 │   └── useSearchContext.ts             # Route-based context detection
 ├── services/
-│   └── searchService.ts                # Search logic and caching
+│   └── SearchService.ts                # Search logic and caching
 ├── types/
 │   └── minisearch.d.ts                 # Custom TypeScript definitions
 ├── db/
@@ -87,7 +87,7 @@ src/
 
 ## 🔍 Core Components Guide
 
-### 1. SearchService (`src/services/searchService.ts`)
+### 1. SearchService (`src/services/SearchService.ts`)
 
 **Purpose**: Handles search logic, caching, and MiniSearch integration
 
@@ -109,9 +109,9 @@ src/
 }
 ```
 
-### 2. SearchService Integration with MessageDB (`src/services/searchService.ts` and `src/db/messages.ts`)
+### 2. SearchService Integration with MessageDB (`src/services/SearchService.ts` and `src/db/messages.ts`)
 
-The `SearchService` (`src/services/searchService.ts`) is responsible for managing search indices and executing searches. It interacts with `src/db/messages.ts` for low-level access to message data in IndexedDB.
+The `SearchService` (`src/services/SearchService.ts`) is responsible for managing search indices and executing searches. It interacts with `src/db/messages.ts` for low-level access to message data in IndexedDB.
 
 **Key Methods in `SearchService` (interacting with `MessageDB`)**:
 
@@ -515,9 +515,9 @@ See `search-optimization/` for detailed plans:
 
 ### Key Files for Modifications
 
-- **Search Logic**: `src/services/searchService.ts`
+- **Search Logic**: `src/services/SearchService.ts`
 - **UI Components**: `src/components/search/`
-- **Database Integration**: `src/services/searchService.ts` (orchestrates interaction with `src/db/messages.ts` for data access)
+- **Database Integration**: `src/services/SearchService.ts` (orchestrates interaction with `src/db/messages.ts` for data access)
 - **Context Detection**: `src/hooks/useSearchContext.ts`
 - **Navigation**: `src/components/search/GlobalSearch.tsx`
 
@@ -540,5 +540,4 @@ This implementation provides a solid foundation for message search with room for
 
 ---
 
-_Last updated: November 12, 2025_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last updated: 2026-05-20 — staleness audit fixes_

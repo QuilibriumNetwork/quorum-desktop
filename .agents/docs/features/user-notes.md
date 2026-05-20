@@ -46,10 +46,11 @@ MessageDB methods (src/db/messages.ts):
 
 ### React Query Layer
 
-Four files in src/hooks/queries/userNotes/, following the mutedUsers pattern:
+Five files in src/hooks/queries/userNotes/, following the mutedUsers pattern:
 
 | File | Purpose |
 |------|---------|
+| index.ts | Barrel export for the directory |
 | buildUserNoteKey.ts | Key: ['userNote', targetAddress] |
 | buildUserNoteFetcher.ts | Returns null (not undefined) when no note exists |
 | useUserNote.ts | staleTime: Infinity, networkMode: always |
@@ -129,4 +130,4 @@ Both initialised to [] in getDefaultUserConfig (src/utils.ts).
 - [User Config Sync on Existing Accounts](user-config-sync.md) — sync architecture overview
 - [Bookmarks Feature](messages/bookmarks.md) — the sync pattern user notes follows
 
-*Last updated: 2026-05-16*
+*Last updated: 2026-05-20 — staleness audit fixes*

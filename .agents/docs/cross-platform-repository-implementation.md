@@ -32,12 +32,10 @@ quorum-desktop/
 quorum-desktop/
 ├── src/                          # SHARED CODE (90% of app)
 │   ├── components/
-│   │   ├── primitives/           # Cross-platform UI components
+│   │   ├── primitives/           # Local barrel — re-exports from @quilibrium/quorum-shared
+│   │   │   ├── index.ts               # Re-exports primitives + imports SCSS styles
 │   │   │   ├── Button/
-│   │   │   │   ├── Button.web.tsx     # Web implementation
-│   │   │   │   ├── Button.native.tsx  # Mobile implementation
-│   │   │   │   ├── types.ts           # Shared types
-│   │   │   │   └── index.ts           # Platform-aware exports
+│   │   │   │   └── Button.scss        # Web styles (implementations are in quorum-shared)
 │   │   │   └── ...
 │   │   ├── Router/               # Platform-specific routing
 │   │   │   ├── Router.web.tsx    # React Router (web)
@@ -145,11 +143,7 @@ export function Router() {
 
 ### 3. Cross-Platform Primitive Components
 
-Enhanced primitive components with platform-specific implementations:
-
-- `Button.web.tsx` - Web implementation with CSS
-- `Button.native.tsx` - React Native implementation
-- Shared types and interfaces
+Primitive component implementations (`Button.web.tsx`, `Button.native.tsx`, etc.) now live in `@quilibrium/quorum-shared`. The local `src/components/primitives/` directory is a barrel that re-exports from quorum-shared and imports SCSS style files. Existing `import { Button } from '../primitives'` imports continue to work unchanged.
 
 ## Build Configuration Changes
 
@@ -390,22 +384,14 @@ export default defineConfig({
 
 Critical fix for theme provider imports that caused build failures:
 
-**Theme Provider Hybrid Resolution**:
+**Theme Provider Hybrid Resolution** (now in `@quilibrium/quorum-shared`):
 
-```typescript
-// src/components/primitives/theme/index.ts
-// Vite will resolve ThemeProvider.web.tsx for web, Metro will resolve ThemeProvider.native.tsx for mobile
-export { useTheme, ThemeProvider } from './ThemeProvider';
+The theme module (`useTheme`, `ThemeProvider`, `getColors`) lives in `@quilibrium/quorum-shared`. The package ships pre-built bundles for each platform so Vite and Metro each get the correct implementation automatically:
 
-// src/components/primitives/theme/ThemeProvider.ts
-// For React Native, export from .native file explicitly since Metro resolution isn't always reliable
-export { useTheme, ThemeProvider } from './ThemeProvider.native';
-```
+- **Vite (Web):** resolves `dist/index.mjs` (built from `.web.tsx` sources)
+- **Metro (React Native):** resolves `dist/index.native.js` (built from `.native.tsx` sources)
 
-This hybrid approach ensures:
-
-- **Vite (Web)**: Uses platform resolution to find `.web.tsx` files
-- **Metro (Mobile)**: Uses explicit `.native` exports for reliable resolution
+The local `src/components/primitives/` directory is now a barrel that re-exports from quorum-shared and imports SCSS styles. The files `ThemeProvider.ts`, `ThemeProvider.web.tsx`, and `ThemeProvider.native.tsx` no longer exist locally.
 
 ### Single Shared Dependencies
 
@@ -456,11 +442,10 @@ yarn build:preview
 
 ### Platform File Resolution
 
-The build system automatically resolves platform-specific files:
+Primitive component source files (`Button.web.tsx`, `Button.native.tsx`, etc.) live in `@quilibrium/quorum-shared` and are pre-built into platform-specific bundles. The build system resolves:
 
-- `Button.web.tsx` → Used in web builds
-- `Button.native.tsx` → Used in mobile builds (when implemented)
-- `Button.tsx` → Fallback for shared logic
+- `dist/index.mjs` → Used in Vite (web) builds
+- `dist/index.native.js` → Used in Metro (mobile) builds
 
 ### Shared Asset Access
 
@@ -525,6 +510,10 @@ yarn workspaces info
 
 ---
 
-**Implementation Status**: ✅ Web Platform Complete and Production Ready
-**Mobile Status**: 🚧 Test playground implemented, full mobile app development pending
+**Implementation Status**: Web Platform Complete and Production Ready
+**Mobile Status**: Test playground implemented, full mobile app development pending
 **Next Phase**: Mobile application development using established cross-platform architecture
+
+---
+
+*Last updated: 2026-05-20 — staleness audit fixes*

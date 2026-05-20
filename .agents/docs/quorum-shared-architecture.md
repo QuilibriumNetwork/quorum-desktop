@@ -167,8 +167,8 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 | Property | Value |
 |----------|-------|
 | **Package** | `@quilibrium/quorum-shared` |
-| **Version** | 2.1.0 |
-| **Peer Dependencies** | React 18+, TanStack React Query 5+ |
+| **Version** | 2.1.0-13 |
+| **Peer Dependencies** | React 19+, TanStack React Query 5+ |
 | **Build Format** | Dual ESM/CJS with TypeScript declarations |
 
 ---
@@ -711,4 +711,4 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-02-10 -- Updated Text primitive status: native-only, web uses plain HTML with CSS typography classes*
+*Last updated: 2026-05-20 — staleness audit fixes*

@@ -270,6 +270,8 @@ Quick reference for debugging and creating console snippets.
   notificationSettings?: { [spaceId: string]: NotificationSettings }
   bookmarks?: Bookmark[]
   deletedBookmarkIds?: string[]
+  deviceNames?: { [inboxAddress: string]: string }
+  deletedDeviceNameAddresses?: string[]
 }
 
 type NavItem =
@@ -575,4 +577,4 @@ for (const s of stores) console.log(s, await countStore(s));
 
 ---
 
-*Last updated: 2026-05-16*
+*Last updated: 2026-05-20 — staleness audit fixes*

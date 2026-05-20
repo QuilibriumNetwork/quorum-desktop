@@ -31,8 +31,8 @@ This feature was originally implemented by Tyler Sturos, reverted due to a mobil
 | `src/hooks/business/user/useOnboardingFlowLogic.ts` | Core `fetchUser()` function — decrypts remote config, validates profile, calls `setUser()` to skip onboarding |
 | `src/hooks/platform/user/usePasskeyAdapter.web.ts` | Web adapter — provides `exportKey` from SDK's `usePasskeysContext()` |
 | `src/hooks/platform/user/usePasskeyAdapter.native.ts` | Native adapter — omits `exportKey` for graceful mobile degradation |
-| `src/hooks/business/user/useOnboardingFlow.ts` | Composition hook — wires adapter into flow logic |
-| `src/components/onboarding/Onboarding.tsx` | UI — triggers `fetchUser` on mount via `useEffect`, shows loading spinner |
+| `src/hooks/business/user/useUnifiedOnboardingFlow.ts` | Composition hook — wires adapter into flow logic and orchestrates onboarding steps |
+| `src/components/onboarding/OnboardingFlow.tsx` | UI — triggers `fetchUser` on mount via `useEffect`, shows loading spinner |
 | `src/hooks/business/validation/useProfileValidation.ts` | Zero-trust validation of profile image (size, MIME type) |
 | `src/hooks/business/validation/index.ts` | Exports `validateDisplayName()` for XSS/injection prevention |
 
@@ -41,10 +41,10 @@ This feature was originally implemented by Tyler Sturos, reverted due to a mobil
 ```
 App.tsx renders condition tree:
   user && currentPasskeyInfo         → Main app (with RegistrationProvider)
-  landing && !currentPasskeyInfo     → Login page
-  landing && currentPasskeyInfo      → Onboarding component ← THIS IS WHERE SYNC HAPPENS
+  landing && !user                   → OnboardingFlow ← THIS IS WHERE SYNC HAPPENS
+  (else)                             → Connecting spinner
 
-Onboarding.tsx
+OnboardingFlow.tsx (via useUnifiedOnboardingFlow.ts + useOnboardingFlowLogic.ts)
   └─ useEffect([currentPasskeyInfo?.address])
      └─ fetchUser(address, setUser)
 
@@ -112,7 +112,7 @@ This config object is serialized via `JSON.stringify()`, encrypted with AES-GCM,
 The rendering in `App.tsx` determines whether Onboarding is shown:
 
 ```typescript
-// src/App.tsx:85-96
+// src/App.tsx:83-94
 useEffect(() => {
   if (currentPasskeyInfo && currentPasskeyInfo.completedOnboarding && !user) {
     setUser({
@@ -126,8 +126,8 @@ useEffect(() => {
 }, [currentPasskeyInfo, passkeyRegistrationComplete, setUser, user]);
 ```
 
-- If `completedOnboarding: true` → sets user immediately, Onboarding never mounts
-- If `completedOnboarding: false` → Onboarding mounts → `fetchUser` runs
+- If `completedOnboarding: true` → sets user immediately, `OnboardingFlow` never mounts
+- If `completedOnboarding: false` → `landing && !user` branch renders `OnboardingFlow` → `fetchUser` runs
 
 ### Interaction with RegistrationPersister
 
@@ -189,3 +189,4 @@ All remote config data is treated as untrusted (zero-trust model):
 ---
 
 _Created: 2026-03-14_
+_Last updated: 2026-05-20 — staleness audit fixes_

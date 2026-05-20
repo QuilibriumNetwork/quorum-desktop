@@ -52,8 +52,7 @@ const useDesktopHover = !isMobile && !isTouchDevice;
 AppWithSearch (modal context level)
 ├── MessageActionsDrawer (mobile drawer)
 │   ├── MobileDrawer (common drawer component)
-│   ├── QuickReactionButton (touch-optimized reactions)
-│   └── ActionMenuItem (menu actions)
+│   └── QuickReactionButton (touch-optimized reactions)
 ├── EmojiPickerDrawer (mobile emoji picker)
 │   └── MobileDrawer (common drawer component)
 └── Message (individual message component)
@@ -136,7 +135,6 @@ src/components/message/MessageActionsDrawer.scss - Drawer styling
 src/components/message/EmojiPickerDrawer.tsx - Mobile emoji picker
 src/components/message/EmojiPickerDrawer.scss - Emoji picker styling
 src/components/message/QuickReactionButton.tsx - Reaction buttons
-src/components/message/ActionMenuItem.tsx - Menu action items
 ```
 
 ### Modified Files
@@ -165,7 +163,7 @@ src/index.scss - Added new stylesheet imports
 
 ### 3. Emoji Picker Integration
 
-- Reuses existing `emoji-picker-react` component
+- Uses the custom emoji picker at `src/components/emoji-picker/`
 - Maintains custom emoji support and theming
 - Wraps in `Modal` component for mobile presentation
 
@@ -348,4 +346,4 @@ _This feature represents a significant enhancement to the mobile user experience
 
 ---
 
-_Verified: 2025-12-09 - All file paths and architecture confirmed current_
+_Last updated: 2026-05-20 — staleness audit fixes_

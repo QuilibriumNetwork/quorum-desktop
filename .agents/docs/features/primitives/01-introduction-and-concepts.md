@@ -67,7 +67,7 @@ src/components/primitives/Button/
 
 ```tsx
 // This automatically imports the right version
-import { Button } from '../components/primitives/Button';
+import { Button } from '@quilibrium/quorum-shared';
 
 // Metro (React Native) picks Button.native.tsx
 // Webpack (Web) picks Button.web.tsx
@@ -427,7 +427,7 @@ You don't need to convert everything at once:
 
 ---
 
-_Last updated: 2026-03-15 - Removed Container primitive references (dropped); use div/View for styling containers_
+_Last updated: 2026-05-20 — staleness audit fixes_
 
 ---
 

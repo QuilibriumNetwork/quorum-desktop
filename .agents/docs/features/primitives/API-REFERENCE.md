@@ -32,7 +32,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 **Note:** The Text primitive is not used in web production code. On web, use plain HTML elements with CSS typography classes instead (see "Web Alternative" below).
 
-**Location**: `src/components/primitives/Text/Text.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Text/Text.tsx`
 
 **Props**:
 - `variant?: 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'success' | 'warning' | 'link'` - Text style variant
@@ -83,7 +83,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Title
 
-**Location**: `src/components/primitives/Text/Text.tsx` (semantic wrapper)
+**Location**: `@quilibrium/quorum-shared/src/primitives/Text/Text.tsx` (semantic wrapper)
 
 **Props**:
 - `size?: 'sm' | 'md' | 'lg' | 'xl'` - Title size (sm=18px, md=20px, lg=24px, xl=30px)
@@ -100,7 +100,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Paragraph
 
-**Location**: `src/components/primitives/Text/Text.tsx` (semantic wrapper)
+**Location**: `@quilibrium/quorum-shared/src/primitives/Text/Text.tsx` (semantic wrapper)
 
 **Props**:
 - All `Text` props
@@ -117,7 +117,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Label
 
-**Location**: `src/components/primitives/Text/Text.tsx` (semantic wrapper)
+**Location**: `@quilibrium/quorum-shared/src/primitives/Text/Text.tsx` (semantic wrapper)
 
 **Props**:
 - All `Text` props
@@ -132,7 +132,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Caption
 
-**Location**: `src/components/primitives/Text/Text.tsx` (semantic wrapper)
+**Location**: `@quilibrium/quorum-shared/src/primitives/Text/Text.tsx` (semantic wrapper)
 
 **Props**:
 - All `Text` props
@@ -147,7 +147,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### InlineText
 
-**Location**: `src/components/primitives/Text/Text.tsx` (semantic wrapper)
+**Location**: `@quilibrium/quorum-shared/src/primitives/Text/Text.tsx` (semantic wrapper)
 
 **Props**:
 - All `Text` props
@@ -164,7 +164,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Button
 
-**Location**: `src/components/primitives/Button/Button.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Button/Button.tsx`
 
 **Props**:
 - `type?: 'primary' | 'secondary' | 'subtle' | 'subtle-outline' | 'danger' | 'unstyled'` - Button style variant
@@ -196,7 +196,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Input
 
-**Location**: `src/components/primitives/Input/Input.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Input/Input.tsx`
 
 **Props**:
 - `value: string` - Input value (required)
@@ -239,7 +239,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### TextArea
 
-**Location**: `src/components/primitives/TextArea/TextArea.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/TextArea/TextArea.tsx`
 
 **Props**:
 - `value: string` - Textarea value (required)
@@ -270,7 +270,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Select
 
-**Location**: `src/components/primitives/Select/Select.web.tsx` (web), `src/components/primitives/Select/Select.native.tsx` (native)
+**Location**: `@quilibrium/quorum-shared/src/primitives/Select/Select.web.tsx` (web), `@quilibrium/quorum-shared/src/primitives/Select/Select.native.tsx` (native)
 
 **Props**:
 
@@ -387,7 +387,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### FileUpload
 
-**Location**: `src/components/primitives/FileUpload/FileUpload.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/FileUpload/FileUpload.tsx`
 
 **Props**:
 - `onFilesSelected: (files: File[]) => void` - File selection handler (required)
@@ -427,9 +427,9 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ### Flex
 
-**Location**: `src/components/primitives/Flex/Flex.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Flex/Flex.tsx`
 
-Unified flex layout container that replaces the legacy FlexRow, FlexColumn, FlexCenter, and FlexBetween primitives.
+Unified flex layout container that replaces the legacy FlexRow, FlexColumn, FlexCenter, and FlexBetween primitives. No local directory exists in this repo; Flex lives only in `@quilibrium/quorum-shared`.
 
 **Props**:
 - `direction?: 'row' | 'column'` - Flex direction (default: 'row')
@@ -487,7 +487,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Spacer
 
-**Location**: `src/components/primitives/Spacer/Spacer.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Spacer/Spacer.tsx` (no local directory in this repo; lives only in `@quilibrium/quorum-shared`)
 
 **Props**:
 - `size: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number` - Spacer size (required)
@@ -505,7 +505,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### ScrollContainer
 
-**Location**: `src/components/primitives/ScrollContainer/ScrollContainer.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/ScrollContainer/ScrollContainer.web.tsx` (web), `@quilibrium/quorum-shared/src/primitives/ScrollContainer/ScrollContainer.native.tsx` (native). No local directory in this repo; lives only in `@quilibrium/quorum-shared`.
 
 **Props**:
 - `height?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto' | string | number` - Container height (xs=200px, sm=280px, md=400px, lg=500px, xl=600px, auto=no fixed height)
@@ -572,7 +572,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Switch
 
-**Location**: `src/components/primitives/Switch/Switch.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Switch/Switch.tsx`
 
 **Props**:
 - `value: boolean` - Switch state (required)
@@ -596,7 +596,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### RadioGroup
 
-**Location**: `src/components/primitives/RadioGroup/RadioGroup.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/RadioGroup/RadioGroup.tsx`
 
 **Props**:
 - `value: string` - Selected value (required)
@@ -623,7 +623,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Modal
 
-**Location**: `src/components/primitives/Modal/Modal.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Modal/Modal.tsx`
 
 **Props**:
 - `isOpen: boolean` - Modal visibility (required)
@@ -649,7 +649,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### OverlayBackdrop
 
-**Location**: `src/components/primitives/OverlayBackdrop/OverlayBackdrop.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/OverlayBackdrop/OverlayBackdrop.tsx`
 
 **Props**:
 - `visible: boolean` - Backdrop visibility (required)
@@ -676,7 +676,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Portal
 
-**Location**: `src/components/primitives/Portal/Portal.web.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Portal/Portal.web.tsx`
 
 **Description**: Renders children into a portal at `document.body`, escaping parent container constraints. Used for overlays that need to break out of stacking contexts (toasts, right-aligned dropdowns).
 
@@ -714,7 +714,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Tooltip
 
-**Location**: `src/components/primitives/Tooltip/Tooltip.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Tooltip/Tooltip.tsx`
 
 **Cross-platform Props**:
 - `content: ReactNode` - Tooltip content (required)
@@ -749,7 +749,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Callout
 
-**Location**: `src/components/primitives/Callout/Callout.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Callout/Callout.tsx`
 
 **Props**:
 - `variant: 'info' | 'success' | 'warning' | 'error'` - Callout style (required)
@@ -787,7 +787,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### Icon
 
-**Location**: `src/components/primitives/Icon/Icon.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/Icon/Icon.tsx`
 
 **Props**:
 - `name: IconName` - Icon name (required)
@@ -837,7 +837,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ### ColorSwatch
 
-**Location**: `src/components/primitives/ColorSwatch/ColorSwatch.tsx`
+**Location**: `@quilibrium/quorum-shared/src/primitives/ColorSwatch/ColorSwatch.tsx`
 
 **Props**:
 - `color: string` - Hex color value (required)
@@ -920,7 +920,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ## Related Documentation
 
 - [Primitives INDEX](./INDEX.md) - Complete primitives documentation hub
-- [Quick Reference](./02-primitives-AGENTS.md) - Detailed examples and patterns
+- [Quick Reference](./02-primitives-quick-reference.md) - Detailed examples and patterns
 - [When to Use Primitives](./03-when-to-use-primitives.md) - Decision framework
 - [Migration Guide](./04-web-to-native-migration.md) - Web to native migration patterns
 - [Styling Guide](./05-primitive-styling-guide.md) - Color system and styling rules
@@ -928,4 +928,4 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ---
 
 
-_Last updated: 2026-03-15 - Removed Container and ModalContainer sections (Container dropped; ModalContainer now internal to Modal)_
+_Last updated: 2026-05-20 — staleness audit fixes_

@@ -300,12 +300,9 @@ The `rebroadcastTagIfChanged()` method is guarded by a `pendingTagRebroadcast` S
 
 ### quorum-shared / Mobile Parity
 
-`quorum-shared` has not been updated with `SpaceTag`, `BroadcastSpaceTag`, `spaceTagId` in `UserConfig`, or `spaceTag` in `SpaceMember`/`MemberDigest`. Consequences:
-- Mobile does not send or render space tags
-- Config sync of `spaceTagId` does not propagate to mobile devices
-- Member sync does not detect tag changes across a user's own devices
+`quorum-shared` now exports `SpaceTag` and `BroadcastSpaceTag` (from `src/types/space.ts`), and `spaceTagId`/`lastBroadcastSpaceTag` are present in `UserConfig` (from `src/types/user.ts`). The type migration is complete.
 
-See [tasks/space-tags.md — quorum-shared Integration](../../../.agents/tasks/space-tags.md#quorum-shared-integration-required-for-mobile--cross-device-sync) for the full list of required changes.
+Runtime mobile parity (sending, rendering, and cross-device config sync of space tags) may still be in progress. Check `src/` in the mobile app for usage of these shared types before assuming full feature parity.
 
 ### Real-Time Tag Re-Broadcast (Resolved)
 
@@ -348,4 +345,4 @@ See [tasks/space-tag-info-modal.md](../../tasks/space-tag-info-modal.md) for the
 
 ---
 
-_Last Updated: 2026-02-24 (hardened tag URL validation: reject SVG XSS + byte cap; updated Space Profile Modal section to directory-dependent approach)_
+_Last Updated: 2026-05-20 — staleness audit fixes (quorum-shared types confirmed migrated)_

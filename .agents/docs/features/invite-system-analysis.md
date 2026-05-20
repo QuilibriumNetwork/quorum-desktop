@@ -21,7 +21,7 @@ The invite system operates through several key components:
 
 ### Core Components
 
-1. **SpaceSettingsModal.tsx** - Main UI for managing invites (lines 742-907)
+1. **SpaceSettingsModal/Invites.tsx** - Main UI for managing invites (`src/components/modals/SpaceSettingsModal/Invites.tsx`, 476 lines)
 2. **useInviteManagement.ts** - Hook managing invite state and logic
 3. **useInviteValidation.ts** - Hook for validating invite links
 4. **useSpaceJoining.ts** - Hook for joining spaces via invites
@@ -311,7 +311,7 @@ True deletion requires a backend `DELETE /invite/evals` API endpoint that doesn'
 
 The invite system now dynamically detects the environment and uses appropriate domains:
 
-**Implementation:** `src/utils/inviteDomain.ts`
+**Implementation:** `@quilibrium/quorum-shared` — `src/utils/inviteDomain.ts`
 
 1. **Production Environment** (`app.quorummessenger.com`):
    - Generates invite links with `qm.one` (short domain)
@@ -335,7 +335,7 @@ The invite system now dynamically detects the environment and uses appropriate d
 - **Production safety**: No changes to existing production behavior
 
 ### Files Modified:
-- `src/utils/inviteDomain.ts` - New utility for dynamic domain resolution
+- `@quilibrium/quorum-shared` `src/utils/inviteDomain.ts` - Utility for dynamic domain resolution
 - `src/components/context/MessageDB.tsx` - Provides access to `InvitationService` which uses dynamic domain for invite generation
 - `src/components/modals/JoinSpaceModal.tsx` - Uses dynamic domain for display
 - `src/hooks/business/spaces/useInviteValidation.ts` - Dynamic validation prefixes
@@ -354,4 +354,6 @@ The invite system now dynamically detects the environment and uses appropriate d
 ---
 
 
-_Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_
+_Covers: SpaceSettingsModal/Invites.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_
+
+_Last updated: 2026-05-20 — staleness audit fixes_
