@@ -56,7 +56,7 @@ import { QuorumApiClient } from '../api/baseTypes';
 import { showWarning, noteSyncActivity } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
-import type { ReceiptService } from './ReceiptService';
+import type { ReceiptService } from '@quilibrium/quorum-shared';
 import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';

@@ -50,7 +50,7 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | Utils (22 modules: validation, mentions, formatting, etc.) | Logic | ✅ Done (PR #3) | [designs/2026-03-18-utils-design.md](designs/2026-03-18-utils-design.md) |
 | Util tests (4 test files testing already-shared utils) | Tests | 🟢 Ready | [2026-05-19-tests-migration.md](2026-05-19-tests-migration.md) |
 | Typing service + types + tests | Feature service | ✅ Done (2026-05-20) | [.done/2026-05-18-typing-shared-migration.md](.done/2026-05-18-typing-shared-migration.md) |
-| Receipts service + NEW wire types + tests | Feature service | 🟢 Ready (after typing lands) | [2026-05-19-receipts-shared-migration.md](2026-05-19-receipts-shared-migration.md) |
+| Receipts service + NEW wire types + tests | Feature service | ✅ Done (2026-05-20) | [.done/2026-05-19-receipts-shared-migration.md](.done/2026-05-19-receipts-shared-migration.md) |
 | Hooks (~265 hook files) | Logic | ⏸️ Blocked on mobile codebase access | [designs/2026-03-19-hooks-design.md](designs/2026-03-19-hooks-design.md) |
 | ActionQueueService | Service | ⏸️ Blocked on mobile access (direction unclear) | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §4 |
 | SearchService + SearchAdapter | Service | ⏸️ Blocked on mobile access | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §3 |
@@ -63,10 +63,9 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 
 ## Next up
 
-1. **Receipts migration** ([2026-05-19-receipts-shared-migration.md](2026-05-19-receipts-shared-migration.md)) — follows the precedent set by typing (now done): types in `src/types/`, service in `src/<feature>/service.ts` + `service.test.ts` + `index.ts` barrel. Plus a small new step (designing the receipt wire types in shared since they don't exist as a dedicated file in desktop). Coupled to MessageDB Tier 0 #3 — see "Relationship to the MessageDB refactor" below.
-2. **Util tests** ([2026-05-19-tests-migration.md](2026-05-19-tests-migration.md)) — trivial housekeeping. Independent.
+1. **Util tests** ([2026-05-19-tests-migration.md](2026-05-19-tests-migration.md)) — trivial housekeeping. Independent of everything else, not blocked on mobile codebase access.
 
-Both can ship in any order and are not blocked on mobile codebase access.
+After that, every remaining row in the status table is blocked on mobile codebase access or related preconditions (hooks migration, shared symmetric crypto for BackupService, etc.). See "What unblocks the rest" below.
 
 ## What unblocks the rest
 
@@ -84,7 +83,7 @@ The pending [MessageDB refactor work](../messagedb/messagedb-current-state.md) (
 
 **One real interaction** plus a couple of doc-framing notes:
 
-1. **Sequencing constraint** — Tier 0 #3 of the MessageDB plan (control-message intercept normalization, [optimizations-low-risk.md §4.3](../messagedb/optimizations-low-risk.md#43-normalize-control-message-intercept-shape)) **must land BEFORE or WITH the receipts shared migration** ([2026-05-19-receipts-shared-migration.md](./2026-05-19-receipts-shared-migration.md)). Otherwise the wire-format ambiguity (`raw.type` vs `raw.content?.type`) gets codified into the shared `DeliveryAckMessage` / `ReadAckMessage` types and mobile inherits only one of the two shapes desktop emits. Full reasoning in [messagedb/shared-migration-cross-check.md §Sequencing constraint on #3](../messagedb/shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization).
+1. **Sequencing constraint (RESOLVED 2026-05-20)** — Tier 0 #3 of the MessageDB plan (control-message intercept normalization, [optimizations-low-risk.md §4.3](../messagedb/optimizations-low-risk.md#43-normalize-control-message-intercept-shape)) was framed as a hard prerequisite for the receipts migration on the assumption that desktop emitted acks in two shapes (flat and nested-under-`.content`). Investigation during the receipts migration ([cross-check](../messagedb/shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization)) proved only the flat shape ever existed on the wire; the `raw.content?.type` branches in the receiver were dead defensive code from the original receiver bug. A 5-line cleanup commit in front of the receipts migration dropped the dead branches; the shared `DeliveryAckMessage` / `ReadAckMessage` types codify the flat shape, which matches every desktop emission. Tier 0 #3 is therefore done.
 2. **Type-safety pass** ([optimizations-low-risk.md §2.1–2.2](../messagedb/optimizations-low-risk.md)) is desktop hygiene, not a "precondition for shared migration." MessageService and ConfigService each have multiple independent coupling points (Web Crypto, React Query keys, `@lingui`, `React.MutableRefObject`); fixing types alone doesn't unblock migration. Earlier docs implied otherwise — corrected by the cross-check.
 3. **BaseService extraction** ([optimizations-low-risk.md §3.1](../messagedb/optimizations-low-risk.md)) was earlier flagged as making future shared migration harder. On cross-check, no migration-eligible service actually fits the BaseService dependency shape, so the concern is theoretical, not concrete.
 
@@ -116,6 +115,8 @@ The typing task is the reference example. Receipts and future migrations should 
 
 ---
 
-*Last updated: 2026-05-20 — typing migration done (2026-05-18 task moved to `.done/`). Status table updated, "Next up" reduced to receipts + util tests. Shared package now has `src/typing/` + `src/types/typing.ts`; desktop deletes the local copies and imports from `@quilibrium/quorum-shared`. Manual two-account QA passed (DM and space typing both work end-to-end).*
+*Last updated: 2026-05-20 (second update) — receipts migration done (2026-05-19 task moved to `.done/`). Status table updated, "Next up" reduced to util tests only. Shared package now has `src/receipts/` + the new `ReceiptControlMessage` / `ReceiptControlMessageType` types in `src/types/receipt.ts` (`DeliveryAckMessage` / `ReadAckMessage` / `ReceiptEnvelopeFields` were already there). Desktop deletes the local copies and imports from `@quilibrium/quorum-shared`. Tier 0 #3 (MessageDB intercept normalization) resolved in front of the migration: a 5-line cleanup commit dropped the dead `raw.content?.type` branches in `MessageService.processDeliveryReceiptData`. Two-account QA is an open follow-up — current dev environment has DM sync issues unrelated to this migration that prevent immediate verification.*
+
+*Previously: 2026-05-20 — typing migration done (2026-05-18 task moved to `.done/`). Status table updated, "Next up" reduced to receipts + util tests. Shared package now has `src/typing/` + `src/types/typing.ts`; desktop deletes the local copies and imports from `@quilibrium/quorum-shared`. Manual two-account QA passed (DM and space typing both work end-to-end).*
 
 *Previously: 2026-05-19 — folder restructure: introduced designs/ subfolder for audits, root holds executable per-PR tasks, this README is the master tracker. Added "Relationship to the MessageDB refactor" section documenting the orthogonality of the two efforts. Cross-check pass later same day refined that section: surfaced the Tier 0 #3 sequencing constraint and corrected the framing on the type-safety pass and BaseService extraction.*
