@@ -42,7 +42,7 @@ Both have separate privacy toggles (OFF by default), with read receipts nested u
 RECIPIENT SIDE (sending delivery acks):
 
 1. MessageService decrypts incoming DM
-   └─ processDeliveryReceiptData(): deliveryReceipts ON? → buffer messageId
+   └─ interceptControlMessages(): deliveryReceipts ON? → buffer messageId
 
 2. ReceiptService.onMessageReceived(address, messageId)
    └─ Adds to Set<string> buffer per address, resets 10s timer
@@ -57,7 +57,7 @@ RECIPIENT SIDE (sending delivery acks):
 SENDER SIDE (receiving delivery acks):
 
 4. MessageService decrypts incoming message
-   └─ processDeliveryReceiptData(): intercepts type === 'delivery-ack'
+   └─ interceptControlMessages(): intercepts type === 'delivery-ack'
    └─ Also extracts piggybacked ackMessageIds from regular messages
    └─ deliveryReceipts ON? → process; OFF? → silently drop
 
@@ -100,7 +100,7 @@ RECIPIENT SIDE (sending read acks):
 SENDER SIDE (receiving read acks):
 
 6. MessageService decrypts incoming message
-   └─ processDeliveryReceiptData(): intercepts type === 'read-ack'
+   └─ interceptControlMessages(): intercepts type === 'read-ack'
    └─ Also extracts piggybacked readAckUpTo from regular messages
    └─ readReceipts ON? → process; OFF? → silently drop
 
@@ -121,7 +121,7 @@ SENDER SIDE (receiving read acks):
 | File | Responsibility |
 |---|---|
 | `src/services/ReceiptService.ts` | Delivery ack buffer (Set per address, 10s timer) + read high-water mark (per address, 5s debounce) + piggyback coordination |
-| `src/services/MessageService.ts` | `processDeliveryReceiptData()` — intercepts both delivery-ack and read-ack at both DM decrypt paths, piggybacks on outgoing DMs |
+| `src/services/MessageService.ts` | `interceptControlMessages()` — intercepts both delivery-ack and read-ack at both DM decrypt paths, piggybacks on outgoing DMs |
 | `src/services/ActionQueueHandlers.ts` | `send-delivery-ack` and `send-read-ack` handlers — constructs ack wire objects inline and sends via Double Ratchet |
 | `src/components/context/MessageDB.tsx` | Wires all callbacks (`onFlush`, `onAckProcessed`, `onReadFlush`, `onReadAckProcessed`), updates React Query cache + IndexedDB |
 | `src/hooks/business/messages/useReadReceipt.ts` | Per-message IntersectionObserver with 1s dwell timer and tab focus check (read receipts only) |
@@ -227,7 +227,7 @@ The `ReceiptService` tracks one high-water mark per address (conversation partne
 
 ## Sender-Side Processing
 
-When the sender receives a read ack (standalone or piggybacked), `processDeliveryReceiptData()` intercepts it at the decrypt layer — the same method that handles delivery acks, at both DM decrypt paths.
+When the sender receives a read ack (standalone or piggybacked), `interceptControlMessages()` intercepts it at the decrypt layer — the same method that handles delivery acks, at both DM decrypt paths.
 
 **Key difference from delivery acks**: Read ack processing is gated on the sender's `readReceipts` setting — if OFF, incoming read acks are silently dropped (not persisted). This ensures users who opt out never accumulate `readAt` data. However, `readAt` values that were persisted while the setting was ON are **never retroactively removed** — toggling OFF only affects future acks, not historical ones.
 
@@ -262,7 +262,7 @@ Two toggles in Settings > Privacy, with read receipts nested under delivery rece
 
 Both toggles are also available as per-conversation overrides in Conversation Settings.
 
-**Hard boundary**: OFF = no data leaves the device, and no incoming ack data is persisted. The `useReadReceipt` hook doesn't mount observers, `reportRead` is a no-op, no acks are buffered or sent. Incoming acks from the other party are silently dropped at the `processDeliveryReceiptData` layer.
+**Hard boundary**: OFF = no data leaves the device, and no incoming ack data is persisted. The `useReadReceipt` hook doesn't mount observers, `reportRead` is a no-op, no acks are buffered or sent. Incoming acks from the other party are silently dropped at the `interceptControlMessages` layer.
 
 **Settings gate persistence, not display**: Once `deliveredAt`/`readAt` is written (while the setting was ON), the checkmark is permanently visible even if the setting is later turned OFF. This provides a natural UX: the setting controls *future* behavior, not retroactive erasure of already-received data.
 

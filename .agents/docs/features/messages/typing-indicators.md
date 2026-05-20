@@ -28,7 +28,7 @@ Two independent global toggles, both default OFF:
 
 ## Mechanism
 
-Typing signals are ephemeral control messages. They ride the existing encrypted transport (Double Ratchet for DMs, Triple Ratchet hub broadcast for spaces) but are intercepted in `MessageService.processDeliveryReceiptData` before `saveMessage`. This means:
+Typing signals are ephemeral control messages. They ride the existing encrypted transport (Double Ratchet for DMs, Triple Ratchet hub broadcast for spaces) but are intercepted in `MessageService.interceptControlMessages` before `saveMessage`. This means:
 
 - Never written to IndexedDB
 - Never added to the sync manifest digest
@@ -61,7 +61,7 @@ Full analysis: [`.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.
 |---|---|
 | `src/types/typing.ts` | `TypingMessage` wire type, `TypingScope` discriminated union, scope key helpers |
 | `src/services/TypingService.ts` | Send throttling, receive-side state, subscription bus, privacy gate |
-| `src/services/MessageService.ts` | `sendEphemeralDMControl`, `sendEphemeralSpaceControl`, interception in `processDeliveryReceiptData` |
+| `src/services/MessageService.ts` | `sendEphemeralDMControl`, `sendEphemeralSpaceControl`, interception in `interceptControlMessages` |
 | `src/components/context/MessageDB.tsx` | TypingService instantiation, transport-callback wiring, polled UserConfig ref |
 | `src/hooks/business/messages/useTypingNotifier.ts` | Composer-side hook (called inside MessageComposer) |
 | `src/hooks/business/messages/useTypingIndicator.ts` | Display-side hook (subscribes for current scope) |

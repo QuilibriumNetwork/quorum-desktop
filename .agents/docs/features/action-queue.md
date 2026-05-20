@@ -139,7 +139,7 @@ Some outbound messages are sent directly through the transport without ever touc
 |---|---|
 | `typing-start` / `typing-stop` (see [typing-indicators.md](messages/typing-indicators.md)) | High frequency (one per 5 seconds per active typist), fire-and-forget (no retry value — by the time a retry could fire, the indicator's TTL has already expired), no persistence required (typing state lives in memory only). Queueing would write a row to IndexedDB per keystroke session and force retries that produce stale indicators. |
 
-The pattern for ephemeral signals: a dedicated method on `MessageService` (e.g., `sendEphemeralDMControl`, `sendEphemeralSpaceControl`) calls the same encryption helpers as queued actions, but invokes them synchronously and swallows any failure with a `logger.warn`. The receive side intercepts the control message in `MessageService.processDeliveryReceiptData` (or the hub envelope intercept, for spaces) before `saveMessage` runs, so the message never enters IndexedDB or the sync manifest.
+The pattern for ephemeral signals: a dedicated method on `MessageService` (e.g., `sendEphemeralDMControl`, `sendEphemeralSpaceControl`) calls the same encryption helpers as queued actions, but invokes them synchronously and swallows any failure with a `logger.warn`. The receive side intercepts the control message in `MessageService.interceptControlMessages` (or the hub envelope intercept, for spaces) before `saveMessage` runs, so the message never enters IndexedDB or the sync manifest.
 
 When adding a new outbound action, decide which model applies before choosing a path:
 
