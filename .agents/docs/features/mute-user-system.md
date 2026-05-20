@@ -223,7 +223,7 @@ export type MuteMessage = {
 
 ### UI Permission Checking
 
-**Location**: `src/utils/channelPermissions.ts`
+**Location**: `@quilibrium/quorum-shared` (`src/utils/channelPermissions.ts`)
 
 ```typescript
 canMuteUser(): boolean {
@@ -316,7 +316,7 @@ Muted users see a disabled composer with message showing remaining time:
 - `src/db/messages.ts` - Database layer
 
 ### Permission System
-- `src/utils/channelPermissions.ts` - canMuteUser method
+- `@quilibrium/quorum-shared` (`src/utils/channelPermissions.ts`) - canMuteUser method (moved to shared package)
 - `src/api/quorumApi.ts` - Permission and message types
 - `src/components/modals/SpaceSettingsModal/Roles.tsx` - Role management UI
 
@@ -380,3 +380,5 @@ Mute is enforced by each client independently. A malicious custom client could c
 
 *Status: Production Ready*
 *Cross-Platform: ✅ Web + Mobile Compatible*
+
+_Last updated: 2026-05-20 — staleness audit fixes_

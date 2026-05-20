@@ -24,8 +24,10 @@ Our theming system is built with a shared-first approach, providing:
 
 ### File Structure
 
+All five theme files now live in `@quilibrium/quorum-shared`:
+
 ```
-src/components/primitives/theme/
+@quilibrium/quorum-shared — src/primitives/theme/
 ├── ThemeProvider.ts               # Shared types/interfaces
 ├── ThemeProvider.web.tsx          # Web implementation (matchMedia API)
 ├── ThemeProvider.native.tsx       # React Native (useColorScheme hook)
@@ -40,7 +42,7 @@ The system automatically selects the correct provider:
 - **Web**: Uses `ThemeProvider.web.tsx` with `window.matchMedia()`
 - **React Native**: Uses `ThemeProvider.native.tsx` with `useColorScheme()`
 
-Both platforms export the same API through `src/components/primitives/theme/index.ts`.
+Both platforms export the same API through `@quilibrium/quorum-shared` — `src/primitives/theme/index.ts`.
 
 ## Theme Types
 
@@ -396,4 +398,4 @@ backgroundColor: '#ffffff'; // Use colors.bg.app instead
 ---
 
 
-_Verified: 2025-12-09 - File structure confirmed current_
+_Last updated: 2026-05-20 — staleness audit fixes_

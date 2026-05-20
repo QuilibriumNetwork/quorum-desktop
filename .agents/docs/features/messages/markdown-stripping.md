@@ -142,7 +142,7 @@ const plainSnippet = stripMarkdownAndMentions(contextualSnippet); // Remove ever
 
 ## Key Files
 
-- `src/utils/markdownStripping.ts` - Core unified stripping utilities
+- `@quilibrium/quorum-shared` (`src/utils/markdownStripping.ts`) - Core unified stripping utilities (moved to shared package)
 - `src/components/message/MessagePreview.tsx` - Smart stripping for message previews
 - `src/components/message/PinnedMessagesPanel.tsx` - Smart stripping for pinned messages
 - `src/components/search/SearchResultItem.tsx` - Dumb stripping for search integration
@@ -163,5 +163,4 @@ const plainSnippet = stripMarkdownAndMentions(contextualSnippet); // Remove ever
 - [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
 
 ---
-**Last Updated**: 2025-12-02
-**Verified**: 2025-12-09 - File paths confirmed current
+**Last Updated**: 2026-05-20 — staleness audit fixes

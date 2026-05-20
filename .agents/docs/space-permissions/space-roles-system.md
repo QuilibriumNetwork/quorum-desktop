@@ -527,6 +527,6 @@ export type Role = {
 
 ---
 
-_Last Updated: 2025-12-15_
+_Last Updated: 2026-05-20 — staleness audit fixes_
 _Implementation Status: Core features complete, user:mute added, user:kick removed_
 _Security Update: Space owners must join roles for delete/pin/mute (kick is space-owner only via protocol)_

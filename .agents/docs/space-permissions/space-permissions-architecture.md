@@ -127,8 +127,8 @@ graph TD
 
 #### **Permission Logic**
 
-- `src/utils/permissions.ts` - Traditional role permission checking
-- `src/utils/channelPermissions.ts` - Unified UI permission system
+- `@quilibrium/quorum-shared` (`src/utils/permissions.ts`) - Traditional role permission checking (moved to shared package)
+- `@quilibrium/quorum-shared` (`src/utils/channelPermissions.ts`) - Unified UI permission system (moved to shared package)
 - `src/components/context/MessageDB.tsx` - Provides access to services (e.g., `MessageService`, `SpaceService`) that handle processing validation.
 
 #### **Space Role Management**
@@ -212,7 +212,7 @@ export type Channel = {
 
 ### Integration Patterns
 
-1. **UI Components**: Use unified permission system from `channelPermissions.ts`
+1. **UI Components**: Use unified permission system from `@quilibrium/quorum-shared` (`channelPermissions.ts`)
 2. **Processing Logic**: Validate within the relevant service (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context` with current working patterns.
 3. **New Features**: Follow existing isolation and hierarchy principles
 4. **Testing**: Verify both UI behavior and processing validation
@@ -224,6 +224,6 @@ export type Channel = {
 
 ---
 
-_Last Updated: 2025-12-15_
+_Last Updated: 2026-05-20 — staleness audit fixes_
 _Architecture Status: Complete - Space owner bypass removed, receiving-side validation added_
 _Security Update: Space owners must join roles for post/delete/pin/mute (kick exception via protocol)_

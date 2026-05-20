@@ -24,7 +24,7 @@ When a returning user imports an existing key on a new device, the onboarding fl
 | [useOnboardingFlowLogic.ts](src/hooks/business/user/useOnboardingFlowLogic.ts) | Core `fetchUser()` function with decryption logic |
 | [usePasskeyAdapter.web.ts](src/hooks/platform/user/usePasskeyAdapter.web.ts) | Provides `exportKey` for key extraction |
 | [usePasskeyAdapter.native.ts](src/hooks/platform/user/usePasskeyAdapter.native.ts) | Omits `exportKey` for graceful mobile degradation |
-| [Onboarding.tsx](src/components/onboarding/Onboarding.tsx) | Triggers fetch on mount, shows loading state |
+| [OnboardingFlow.tsx](src/components/onboarding/OnboardingFlow.tsx) | Triggers fetch on mount, shows loading state |
 
 ### Data Flow
 
@@ -94,3 +94,5 @@ When profile fetch fails for registered users, a toast notification is shown:
 - [useProfileValidation.ts](src/hooks/business/validation/useProfileValidation.ts) - Image validation utility
 
 ---
+
+_Last updated: 2026-05-20 — staleness audit fixes_

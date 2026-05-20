@@ -18,7 +18,7 @@ The app uses **two modal rendering systems** - this is intentional, not a tempor
 
 | System | Location | Modals | Best For |
 |--------|----------|--------|----------|
-| **ModalProvider** | Router level | 8 modals | Top-level triggers (NavMenu, menus) |
+| **ModalProvider** | Router level | 10 modals | Top-level triggers (NavMenu, menus) |
 | **Layout-Level** | Layout.tsx | 6 modals | Deep triggers (Message.tsx) - context providers avoid prop drilling |
 
 > ⚠️ **Never render modals at component level** (e.g., inside Message.tsx). This causes z-index issues where NavMenu appears above the modal overlay.
@@ -59,7 +59,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 
 **Context Providers**: ConfirmationModalProvider, ImageModalProvider, EditHistoryModalProvider
 
-### ModalProvider Modals (9)
+### ModalProvider Modals (10)
 
 | Modal | File | Purpose |
 |-------|------|---------|
@@ -72,6 +72,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 | MuteUserModal | `src/components/modals/MuteUserModal.tsx` | Mute user confirmation |
 | NewDirectMessageModal | `src/components/modals/NewDirectMessageModal.tsx` | Start new DM |
 | ConversationSettingsModal | `src/components/modals/ConversationSettingsModal.tsx` | DM conversation settings |
+| FolderEditorModal | `src/components/modals/FolderEditorModal.tsx` | Create/edit channel folders |
 
 **Access**: `const { openUserSettings, openSpaceEditor, ... } = useModals();`
 
@@ -175,5 +176,4 @@ All modals must use: `Button`, `Input`, `Switch`, `Icon`, `Tooltip`, `Select` fr
 
 ---
 
-**Last Updated:** 2025-12-15
-**Verified:** 2025-12-15 - Added MuteUserModal to ModalProvider section
+_Last updated: 2026-05-20 — staleness audit fixes_

@@ -57,13 +57,19 @@ Building cross-platform React applications for both web and React Native require
 
 ### Layer 1: Primitive Components (Platform-Specific)
 
+Primitive implementations live in `@quilibrium/quorum-shared`. The local `src/components/primitives/` folder is a barrel that re-exports from quorum-shared and imports SCSS styles:
+
 ```tsx
-// Our actual primitive structure in src/components/primitives/
+// In @quilibrium/quorum-shared (source of truth for implementations):
 Button/
 ├── Button.web.tsx     // Uses HTML <button> with Tailwind CSS
 ├── Button.native.tsx  // Uses React Native <Pressable> with StyleSheet
-├── types.ts           // Shared TypeScript interface
-└── index.ts           // Platform resolution
+└── types.ts           // Shared TypeScript interface
+
+// In src/components/primitives/ (local — barrel only):
+Button/
+└── Button.scss        // Web styles imported by the local barrel
+index.ts               // Re-exports all primitives from quorum-shared
 ```
 
 ### Layer 2: Business Logic (Shared)
@@ -112,7 +118,7 @@ This framework aligns with the practical guidance in [Component Management Guide
 // NOTE: Text is used here because this is a shared component (no .web.tsx/.native.tsx suffix).
 // In .web.tsx files, replace Text with plain HTML elements + CSS typography classes.
 // In .native.tsx files, Text is required (React Native).
-import { FlexColumn, Container, Text, Button } from '../primitives';
+import { Flex, Text, Button } from '../primitives';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useUserProfile } from '../hooks/useUserProfile';
 
@@ -128,8 +134,7 @@ export function UserProfile({ userId }) {
   if (isLoading) return <Text>Loading...</Text>;
 
   return (
-    <Container className={isMobile ? 'p-4' : 'p-6'}>
-      <FlexColumn gap={isMobile ? 'md' : 'lg'}>
+    <Flex direction="column" gap={isMobile ? 'md' : 'lg'} className={isMobile ? 'p-4' : 'p-6'}>
         <Text variant="heading" size={isMobile ? 'lg' : 'xl'}>
           {user.name}
         </Text>
@@ -139,8 +144,7 @@ export function UserProfile({ userId }) {
         ) : (
           <DesktopProfileLayout user={user} onEdit={() => setIsEditing(true)} />
         )}
-      </FlexColumn>
-    </Container>
+      </Flex>
   );
 }
 ```
@@ -178,7 +182,7 @@ export function useSpaceHeader(spaceId: string) {
 
 // SpaceHeader.web.tsx - Desktop layout using our primitives
 // NOTE: No Text import — web files use plain HTML elements + CSS typography classes
-import { FlexBetween, Button, Container } from '../primitives';
+import { Flex, Button } from '../primitives';
 
 export function SpaceHeader({ spaceId }) {
   const { space, memberCount } = useSpaceHeader(spaceId);
@@ -187,19 +191,19 @@ export function SpaceHeader({ spaceId }) {
   const [showDropdown, setShowDropdown] = useState(false);
 
   return (
-    <Container className="space-header-desktop">
-      <FlexBetween>
+    <div className="space-header-desktop">
+      <Flex justify="between">
         <span className="text-strong text-xl">{space?.name}</span>
         <Button variant="subtle" onClick={() => setShowDropdown(!showDropdown)}>
           Settings
         </Button>
-      </FlexBetween>
-    </Container>
+      </Flex>
+    </div>
   );
 }
 
 // SpaceHeader.native.tsx - Mobile layout using our primitives
-import { FlexColumn, FlexRow, Text, Button } from '../primitives';
+import { Flex, Text, Button } from '../primitives';
 
 export function SpaceHeader({ spaceId }) {
   const { space, memberCount } = useSpaceHeader(spaceId); // Same hook!
@@ -208,17 +212,17 @@ export function SpaceHeader({ spaceId }) {
   const [showActions, setShowActions] = useState(false);
 
   return (
-    <FlexColumn gap="sm" style={styles.mobileHeader}>
+    <Flex direction="column" gap="sm" style={styles.mobileHeader}>
       <Text variant="heading" size="lg">
         {space?.name}
       </Text>
-      <FlexRow gap="xs">
+      <Flex direction="row" gap="xs">
         <Text variant="subtle">{memberCount} members</Text>
         <Button size="small" onPress={() => setShowActions(!showActions)}>
           ⋯
         </Button>
-      </FlexRow>
-    </FlexColumn>
+      </Flex>
+    </Flex>
   );
 }
 ```
@@ -292,7 +296,7 @@ export function useSpacePermissions(spaceId: string, userId: string) {
 }
 
 // ✅ Clean component using our primitives and extracted logic
-import { FlexColumn, Text, Container } from '../primitives';
+import { Flex, Text } from '../primitives';
 
 export function SpaceView({ spaceId }) {
   const { messages, isLoading } = useSpaceData(spaceId);
@@ -302,11 +306,9 @@ export function SpaceView({ spaceId }) {
   if (isLoading) return <Text>Loading...</Text>;
 
   return (
-    <Container>
-      <FlexColumn gap="md">
-        <SpaceMessageList messages={messages} canManage={canManageSpace()} />
-      </FlexColumn>
-    </Container>
+    <Flex direction="column" gap="md">
+      <SpaceMessageList messages={messages} canManage={canManageSpace()} />
+    </Flex>
   );
 }
 ```
@@ -396,10 +398,10 @@ export function UserCard({ userId }) {
 
   return (
     <Card className={isMobile ? 'user-card-mobile' : 'user-card-desktop'}>
-      <FlexRow gap={isMobile ? 'sm' : 'md'}>
+      <Flex direction="row" gap={isMobile ? 'sm' : 'md'}>
         <Avatar src={user.avatar} size={isMobile ? 'md' : 'lg'} />
 
-        <FlexColumn flex={1}>
+        <Flex direction="column" flex={1}>
           <Text size={isMobile ? 'lg' : 'xl'} weight="bold">
             {user.name}
           </Text>
@@ -419,8 +421,8 @@ export function UserCard({ userId }) {
             // Desktop: Always visible details
             <UserDetails user={user} />
           )}
-        </FlexColumn>
-      </FlexRow>
+        </Flex>
+      </Flex>
     </Card>
   );
 }
@@ -464,7 +466,7 @@ export function ChannelChat({ channelId }) {
   const [selectedMessage, setSelectedMessage] = useState(null);
 
   return (
-    <FlexRow height="100vh">
+    <Flex direction="row" style={{ height: '100vh' }}>
       {/* Desktop: Always visible sidebar */}
       <ChannelSidebar
         members={chat.members}
@@ -472,7 +474,7 @@ export function ChannelChat({ channelId }) {
         onToggle={setShowMembersList}
       />
 
-      <FlexColumn flex={1}>
+      <Flex direction="column" flex={1}>
         <MessageList
           messages={chat.messages}
           onMessageSelect={setSelectedMessage}
@@ -480,8 +482,8 @@ export function ChannelChat({ channelId }) {
         />
 
         <MessageInput onSend={chat.sendMessage} typingUsers={chat.typing} />
-      </FlexColumn>
-    </FlexRow>
+      </Flex>
+    </Flex>
   );
 }
 
@@ -961,8 +963,8 @@ jest.mock('../../hooks/useSpaceChat', () => ({
 
 // Mock our primitives
 jest.mock('../primitives', () => ({
-  FlexColumn: ({ children, ...props }) => (
-    <div data-testid="flex-column" {...props}>
+  Flex: ({ children, ...props }) => (
+    <div data-testid="flex" {...props}>
       {children}
     </div>
   ),
@@ -988,7 +990,7 @@ describe('SpaceChat', () => {
 
     expect(screen.getByText('Hello space!')).toBeInTheDocument();
     expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.getByTestId('flex-column')).toBeInTheDocument();
+    expect(screen.getByTestId('flex')).toBeInTheDocument();
   });
 
   it('should handle message sending with our Input primitive', () => {
@@ -1041,47 +1043,48 @@ export function useSpaceHeader(spaceId: string) {
 
 // SpaceHeader.web.tsx - Desktop: Uses our primitives + plain HTML for text
 // NOTE: No Text import — web files use plain HTML elements + CSS typography classes
-import { Container, FlexBetween, Button } from '../primitives';
+import { Flex, Button } from '../primitives';
 
 export function SpaceHeader({ spaceId }) {
   const { space, memberCount, canManageSpace } = useSpaceHeader(spaceId);
 
   return (
-    <Container className="space-header-desktop bg-surface-0 border-b border-default">
-      <FlexBetween className="p-4">
-        <FlexColumn gap="xs">
+    <div className="space-header-desktop bg-surface-0 border-b border-default">
+      <Flex justify="between" className="p-4">
+        <Flex direction="column" gap="xs">
           <span className="text-strong text-xl">{space?.name}</span>
           <span className="text-subtle text-sm">{memberCount} members</span>
-        </FlexColumn>
+        </Flex>
 
         {canManageSpace && (
           <Button variant="subtle" onClick={() => openSpaceSettings(spaceId)}>
             Settings
           </Button>
         )}
-      </FlexBetween>
-    </Container>
+      </Flex>
+    </div>
   );
 }
 
 // SpaceHeader.native.tsx - Mobile: Uses our primitives with StyleSheet
-import { FlexColumn, FlexRow, Text, Button } from '../primitives';
+import { Flex, Text, Button } from '../primitives';
+import { getColors } from '@quilibrium/quorum-shared';
 import { StyleSheet } from 'react-native';
 
 export function SpaceHeader({ spaceId }) {
   const { space, memberCount, canManageSpace } = useSpaceHeader(spaceId);
 
   return (
-    <FlexColumn style={styles.container}>
-      <FlexRow style={styles.titleSection}>
-        <FlexColumn style={styles.titleContainer}>
+    <Flex direction="column" style={styles.container}>
+      <Flex direction="row" style={styles.titleSection}>
+        <Flex direction="column" style={styles.titleContainer}>
           <Text variant="heading" size="lg" style={styles.spaceName}>
             {space?.name}
           </Text>
           <Text variant="subtle" size="sm" style={styles.memberCount}>
             {memberCount} members
           </Text>
-        </FlexColumn>
+        </Flex>
 
         {canManageSpace && (
           <Button
@@ -1092,12 +1095,13 @@ export function SpaceHeader({ spaceId }) {
             ⋯
           </Button>
         )}
-      </FlexRow>
-    </FlexColumn>
+      </Flex>
+    </Flex>
   );
 }
 
-// Using our theming system from src/components/primitives/theme/colors.ts
+// Using the theming system from @quilibrium/quorum-shared
+const colors = getColors();
 const styles = StyleSheet.create({
   container: {
     backgroundColor: colors.surface[0],
@@ -1196,7 +1200,8 @@ export function Message({ messageId }) {
   const shouldShowActions = isMobile ? showActions : isHovered;
 
   return (
-    <FlexRow
+    <Flex
+      direction="row"
       gap="md"
       className="message group"
       onMouseEnter={() => !isMobile && setIsHovered(true)}
@@ -1205,22 +1210,22 @@ export function Message({ messageId }) {
     >
       <Avatar src={message.author.avatar} size="md" />
 
-      <FlexColumn flex={1} gap="xs">
-        <FlexRow gap="sm" align="center">
+      <Flex direction="column" flex={1} gap="xs">
+        <Flex direction="row" gap="sm" align="center">
           <Text weight="semibold" size="sm">
             {message.author.name}
           </Text>
           <Text size="xs" color="subtle">
             {formatTimestamp(message.createdAt)}
           </Text>
-        </FlexRow>
+        </Flex>
 
         <Text>{message.content}</Text>
 
         {message.reactions?.length > 0 && (
           <MessageReactions reactions={message.reactions} />
         )}
-      </FlexColumn>
+      </Flex>
 
       {/* Actions appear on hover (desktop) or long press (mobile) */}
       {shouldShowActions && (
@@ -1234,7 +1239,7 @@ export function Message({ messageId }) {
           positioning={isMobile ? 'bottom-sheet' : 'tooltip'}
         />
       )}
-    </FlexRow>
+    </Flex>
   );
 }
 ```
@@ -1346,7 +1351,7 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
 
   return (
     <form onSubmit={form.handleSubmit(onSubmit)}>
-      <FlexColumn gap="md">
+      <Flex direction="column" gap="md">
         <InputField
           label="Channel Name"
           value={form.values.name}
@@ -1372,7 +1377,7 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
           onChange={(checked) => form.setValue('isPrivate', checked)}
         />
 
-        <FlexRow gap="sm" justify="end">
+        <Flex direction="row" gap="sm" justify="end">
           <Button variant="subtle" onClick={onCancel}>
             Cancel
           </Button>
@@ -1383,8 +1388,8 @@ export function CreateChannelForm({ onSubmit, onCancel }) {
           >
             Create Channel
           </Button>
-        </FlexRow>
-      </FlexColumn>
+        </Flex>
+      </Flex>
     </form>
   );
 }
@@ -1667,8 +1672,12 @@ The investment in proper architecture pays dividends in **maintainability**, **t
 ## Additional Resources
 
 - **[Component Management Guide](./component-management-guide.md)** - Practical decisions for component creation and management
-- **[Primitive Styling Guide](./primitive-styling-guide.md)** - Detailed styling guidelines for primitives
-- **[When to Use Primitives](./when-to-use-primitives.md)** - Decision framework for primitive usage
+- **[Primitive Styling Guide](./features/primitives/05-primitive-styling-guide.md)** - Detailed styling guidelines for primitives
+- **[When to Use Primitives](./features/primitives/03-when-to-use-primitives.md)** - Decision framework for primitive usage
+
+---
+
+*Last updated: 2026-05-20 — staleness audit fixes*
 
 ---
 

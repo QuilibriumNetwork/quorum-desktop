@@ -170,7 +170,7 @@ return <UserInitials name={spaceName} backgroundColor={backgroundColor} />;
 
 ### How It Works
 
-**File**: `src/utils/avatar.ts`
+**File**: `@quilibrium/quorum-shared` — `src/utils/avatar.ts`
 
 **Function**: `getColorFromDisplayName(displayName: string): string`
 
@@ -221,7 +221,7 @@ getColorFromDisplayName("Team Chat")      → #d14882 (pink-600)
 
 ### How It Works
 
-**File**: `src/utils/avatar.ts`
+**File**: `@quilibrium/quorum-shared` — `src/utils/avatar.ts`
 
 **Function**: `getInitials(displayName: string): string`
 
@@ -284,7 +284,7 @@ const gradientEnd = darkenColor(backgroundColor, 10);
 />
 ```
 
-**Helper Functions** (`src/utils/avatar.ts`):
+**Helper Functions** (`@quilibrium/quorum-shared` — `src/utils/avatar.ts`):
 - `lightenColor(hex: string, percent: number)` - Increases lightness in HSL space
 - `darkenColor(hex: string, percent: number)` - Decreases lightness in HSL space
 
@@ -595,8 +595,8 @@ border-radius: 50%;
 - `src/components/navbar/SpaceIcon.tsx` - Navbar space icons with initials fallback
 
 ### Utilities
-- `src/utils/avatar.ts` - Color generation and initials extraction
-- `src/utils/DefaultImages.ts` - Default image constants
+- [`@quilibrium/quorum-shared` `src/utils/avatar.ts`](../../../../quorum-shared/src/utils/avatar.ts) - Color generation and initials extraction (moved to quorum-shared)
+- `src/utils.ts` - `DefaultImages` enum (defined in the local barrel)
 
 ### Hooks
 - `src/hooks/business/spaces/useSpaceCreation.ts` - Space creation with optional images
@@ -620,5 +620,4 @@ border-radius: 50%;
 
 ---
 
-_Last updated: 2025-10-26_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last updated: 2026-05-20 — staleness audit fixes_

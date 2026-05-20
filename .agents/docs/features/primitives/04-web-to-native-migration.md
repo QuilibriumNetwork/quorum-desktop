@@ -126,7 +126,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 #### ✅ Native Conversion
 
 ```tsx
-import { Title, Paragraph, Text } from '../components/primitives';
+import { Title, Paragraph, Text } from '@quilibrium/quorum-shared';
 
 // Using semantic typography components with proper props
 <>
@@ -180,7 +180,7 @@ import { Title, Paragraph, Text } from '../components/primitives';
 ```tsx
 // Native equivalent using primitives (Text primitive is native-only)
 // Note: The web version above already uses plain HTML + CSS classes — no migration needed on web
-import { Input, Text, Flex } from '../primitives';
+import { Input, Text, Flex } from '@quilibrium/quorum-shared';
 
 <Flex direction="column" gap="xs">
   <Text size="sm" variant="subtle">
@@ -214,7 +214,7 @@ import { Input, Text, Flex } from '../primitives';
 #### ✅ Native Select
 
 ```tsx
-import { Select } from '../components/primitives';
+import { Select } from '@quilibrium/quorum-shared';
 
 <Select
   value={country}
@@ -256,7 +256,7 @@ import { Select } from '../components/primitives';
 
 ```tsx
 // Using primitives for button patterns
-import { Button, Icon } from '../primitives';
+import { Button, Icon } from '@quilibrium/quorum-shared';
 import { TouchableOpacity } from 'react-native';
 
 // Primary action button
@@ -308,7 +308,7 @@ import { TouchableOpacity } from 'react-native';
 
 ```tsx
 // Native version using Text primitive and theme system
-import { Text } from '../primitives';
+import { Text } from '@quilibrium/quorum-shared';
 import { View } from 'react-native';
 
 <View style={headerStyle}>
@@ -491,7 +491,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-_Last updated: 2026-03-15 - Removed Container references (dropped); replaced with div (web) / View (native) in examples_
+_Last updated: 2026-05-20 — staleness audit fixes_
 
 ---
 

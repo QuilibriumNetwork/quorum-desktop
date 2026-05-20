@@ -3,7 +3,7 @@ type: doc
 title: Modal Save Overlay System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-01-16T00:00:00.000Z
+updated: 2026-01-16T00:00:00.000Z
 ---
 
 # Modal Save Overlay System
@@ -196,5 +196,6 @@ const handleSave = useCallback(async () => {
 ---
 
 
-*Last Updated: 2025-01-16 (Complete migration)*
-*Verified: 2025-12-09 - File paths confirmed current*
+*Last Updated: 2026-01-16 (Complete migration)*
+
+_Last updated: 2026-05-20 — staleness audit fixes_

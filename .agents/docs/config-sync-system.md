@@ -48,6 +48,11 @@ export type UserConfig = {
   deletedBookmarkIds?: string[];      // Tombstones for deletion sync
 
   nonRepudiable?: boolean;            // Message signing preference
+
+  // Device names: maps inbox_address → user-given label, synced across devices
+  deviceNames?: { [inboxAddress: string]: string };
+  // Tombstones for removed devices so names don't resurrect on sync
+  deletedDeviceNameAddresses?: string[];
 };
 ```
 
@@ -356,7 +361,7 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 | File | Purpose |
 |------|---------|
 | `src/services/ConfigService.ts` | Main sync implementation |
-| `src/db/messages.ts:50-75` | UserConfig type definition |
+| `src/db/messages.ts:48-108` | UserConfig type definition |
 | `src/utils.ts:17-18` | getDefaultUserConfig() |
 | `src/api/baseTypes.ts` | API client methods |
 | `src/hooks/queries/config/` | React Query integration |
@@ -364,4 +369,4 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 ---
 
 
-*Updated: 2025-12-12* - Added spaceIds/items filtering for server validation consistency
+*Last updated: 2026-05-20 — staleness audit fixes*

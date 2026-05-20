@@ -21,10 +21,10 @@ This document provides a quick reference for all input and textarea validations 
 
 | Input Type | Limit | Threshold Display | Constant | Files |
 |------------|-------|------------------|----------|-------|
-| **Message Content** | 2500 chars | 80% (2000 chars) | `MAX_MESSAGE_LENGTH` | `validation.ts:47`<br>`useMessageValidation.ts`<br>`MessageComposer.tsx`<br>`MessageComposer.native.tsx` |
-| **Display Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useDisplayNameValidation.ts`<br>Onboarding, User Settings & Space Settings modals |
-| **Space Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useSpaceNameValidation.ts`<br>`CreateSpaceModal.tsx` |
-| **Topics/Descriptions** | 80 chars | N/A | `MAX_TOPIC_LENGTH` | `validation.ts:41`<br>Channel & Space settings |
+| **Message Content** | 2500 chars | 80% (2000 chars) | `MAX_MESSAGE_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>`useMessageValidation.ts`<br>`MessageComposer.tsx`<br>`MessageComposer.native.tsx` |
+| **Display Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>`useDisplayNameValidation.ts`<br>Onboarding, User Settings & Space Settings modals |
+| **Space Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>`useSpaceNameValidation.ts`<br>`CreateSpaceModal.tsx` |
+| **Topics/Descriptions** | 80 chars | N/A | `MAX_TOPIC_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>Channel & Space settings |
 | **Thread Titles** | 100 chars | N/A | `THREAD_TITLE_MAX_CHARS` | `ThreadSettingsModal.tsx` |
 | **Mention Display Names** | 200 chars | N/A | Hardcoded | `MessageMarkdownRenderer.tsx:203` |
 
@@ -32,7 +32,7 @@ This document provides a quick reference for all input and textarea validations 
 
 | Validation Type | Rule | Blocked Patterns | Purpose | Files |
 |-----------------|------|------------------|---------|-------|
-| **XSS Prevention** | `DANGEROUS_HTML_PATTERN` | `<` + letter/`/`/`!`/`?` | Prevent HTML tag injection | `validation.ts:38`<br>`validateNameForXSS()` |
+| **XSS Prevention** | `DANGEROUS_HTML_PATTERN` | `<` + letter/`/`/`!`/`?` | Prevent HTML tag injection | `@quilibrium/quorum-shared` `validation.ts`<br>`validateNameForXSS()` |
 | **Mention Count Limit** | Max 20 mentions | N/A | Prevent notification spam | `mentionUtils.ts`<br>`useMessageComposer.ts` |
 | **Token Breaking** | Auto-removal | `>>>` | Prevent token injection | `MessageMarkdownRenderer.tsx:203` |
 
@@ -85,22 +85,22 @@ The `isImpersonationName()` function uses THREE checks to catch all variations:
 3. **Starts/ends check** on normalized string → catches "m0derat0r123" where trailing digits become letters after normalization
 
 #### Implementation Files
-- `validation.ts`: `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `MENTION_RESERVED_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isMentionReserved()`, `getReservedNameType()`, `isReservedName()`
+- `@quilibrium/quorum-shared` `validation.ts`: `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `MENTION_RESERVED_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isMentionReserved()`, `getReservedNameType()`, `isReservedName()`
 - `useDisplayNameValidation.ts`: Uses `getReservedNameType()` for validation
 
 ### Address & ID Validation
 
 | Type | Format | Validation | Files |
 |------|--------|------------|-------|
-| **IPFS Addresses** | `Qm[44 chars]` | Base58 + CID format | `validation.ts:109-154`<br>`isValidIPFSCID()` |
-| **Channel IDs** | IPFS CID format | Same as addresses | `validation.ts:182`<br>`isValidChannelId()` |
+| **IPFS Addresses** | `Qm[44 chars]` | Base58 + CID format | `@quilibrium/quorum-shared` `validation.ts`<br>`isValidIPFSCID()` |
+| **Channel IDs** | IPFS CID format | Same as addresses | `@quilibrium/quorum-shared` `validation.ts`<br>`isValidChannelId()` |
 
 ## Validation Implementation
 
 ### Core Validation Files
 
 ```
-src/utils/validation.ts
+@quilibrium/quorum-shared — src/utils/validation.ts
 ├── Constants: MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH, MAX_TOPIC_LENGTH
 ├── XSS Functions: validateNameForXSS(), sanitizeNameForXSS()
 ├── Reserved Names: HOMOGLYPH_MAP, IMPERSONATION_NAMES, MENTION_RESERVED_NAMES
@@ -135,7 +135,7 @@ src/hooks/business/validation/
 - **UX**: Unified error display (counter | separator | error messages)
 
 #### User Settings & Onboarding
-- **Files**: `Onboarding.tsx`, `UserSettingsModal.tsx`, `SpaceSettingsModal/Account.tsx`, `useOnboardingFlowLogic.ts`, `useSpaceProfile.ts`
+- **Files**: `OnboardingFlow.tsx`, `UserSettingsModal.tsx`, `SpaceSettingsModal/Account.tsx`, `useOnboardingFlowLogic.ts`, `useSpaceProfile.ts`
 - **Validations**:
   - XSS protection (blocks `< > " '`)
   - Length limit (40 chars)
@@ -242,7 +242,7 @@ const isValidAddress = isValidIPFSCID(address);
   - Fixed `SearchService.highlightSearchTerms` with proper HTML and regex escaping
   - Security analyst verified all attack vectors are covered
 - **Files Modified**:
-  - `src/utils/validation.ts`: New `DANGEROUS_HTML_PATTERN`, updated functions
+  - `@quilibrium/quorum-shared` `src/utils/validation.ts`: New `DANGEROUS_HTML_PATTERN`, updated functions
   - `src/services/SearchService.ts`: Added `escapeHtml()` and `escapeRegex()` methods
 
 ### 2025-11-21: Enhanced Reserved Name Validation with Anti-Impersonation
@@ -254,7 +254,7 @@ const isValidAddress = isValidIPFSCID(address);
 - **Word Boundary**: Allows embedded words (e.g., "sysadmin", "supporting") but blocks separated words (e.g., "admin team", "moderator123")
 - **Scope**: Only applies to user display names (not space/channel/group names)
 - **Files Modified**:
-  - `src/utils/validation.ts`: Added `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `MENTION_RESERVED_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isMentionReserved()`, `getReservedNameType()`, `isReservedName()`
+  - `@quilibrium/quorum-shared` `src/utils/validation.ts`: Added `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `MENTION_RESERVED_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isMentionReserved()`, `getReservedNameType()`, `isReservedName()`
   - `src/hooks/business/validation/useDisplayNameValidation.ts`: Updated to use `getReservedNameType()` with type-specific error messages
 
 ### 2025-11-19: Space Settings Modal Validation Fix
@@ -332,11 +332,9 @@ const isValidAddress = isValidIPFSCID(address);
 - **Security Details**: [security.md](./security.md)
 - **Architecture**: Message validation in useMessageComposer hook integration
 - **Task History**: `.agents/tasks/.done/` - Character limit implementation
-- **Validation Constants**: `src/utils/validation.ts`
+- **Validation Constants**: `@quilibrium/quorum-shared` — `src/utils/validation.ts`
 
 ---
 
 
-_Last Updated: 2026-03-12 (Added thread title validation: 100 char limit + XSS check in ThreadSettingsModal)_
-_Previously: 2025-11-23 (Pattern-based XSS validation; allows emoticons, arrows, quotes; fixed SearchService XSS)_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last updated: 2026-05-20 — staleness audit fixes_

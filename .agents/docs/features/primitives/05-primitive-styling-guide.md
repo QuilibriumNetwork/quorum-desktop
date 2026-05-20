@@ -80,7 +80,7 @@ borderColor: colors.field.borderError;
 // ... more variables
 ```
 
-### **TypeScript Colors:** `/src/components/primitives/theme/colors.ts`
+### **TypeScript Colors:** `@quilibrium/quorum-shared/src/primitives/theme/colors.ts`
 
 ```typescript
 // colors.ts uses two-layer architecture:
@@ -182,13 +182,12 @@ When creating or updating primitives:
 ## Related Files
 
 - **CSS Variables**: `/src/styles/_colors.scss`
-- **TypeScript Colors**: `/src/components/primitives/theme/colors.ts`
+- **TypeScript Colors**: `@quilibrium/quorum-shared/src/primitives/theme/colors.ts`
 - **Form Primitives**: Input, TextArea, Select, RadioGroup
-- **Theme System**: `/src/components/primitives/theme/`
+- **Theme System**: `@quilibrium/quorum-shared/src/primitives/theme/`
 
 ---
 
 **⚠️ Remember:** Visual consistency is crucial for user experience. When in doubt, use existing semantic classes rather than creating one-off styles.
 
-_Last updated: 2026-03-15_
-_Verified: 2026-03-15 - Updated for two-layer color architecture and border hierarchy_
+_Last updated: 2026-05-20 — staleness audit fixes_

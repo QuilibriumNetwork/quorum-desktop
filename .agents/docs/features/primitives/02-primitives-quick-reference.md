@@ -255,22 +255,23 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
 
 ```tsx
 <ScrollContainer
-  height="auto|fit|full|custom-value"
-  borderRadius="none|sm|md|lg|xl|custom-value"
+  height="xs|sm|md|lg|xl|auto|number|custom-string"
+  maxHeight="xs|sm|md|lg|xl|auto|number|custom-string"
+  showBorder={boolean}
+  borderColor="border-surface-3|var(--color-border-default)"
+  borderRadius="none|sm|md|lg"
   className="css-classes" // Web only
   style={CSSProperties}
+  testId="test-id"
   // Web-specific props:
   onScroll={(event) => {}} // Web only
   // Native-specific props:
-  horizontal={boolean} // Native only
   showsVerticalScrollIndicator={boolean} // Native only
   showsHorizontalScrollIndicator={boolean} // Native only
-  bounces={boolean} // Native only (iOS)
-  overScrollMode="auto|always|never" // Native only (Android)
-  scrollEventThrottle={16} // Native only
-  onScrollEndDrag={() => {}} // Native only
-  onMomentumScrollEnd={() => {}} // Native only
-  refreshControl={RefreshControl} // Native only
+  bounces={boolean} // Native only
+  scrollEnabled={boolean} // Native only
+  onScroll={(event) => {}} // Native only
+  onContentSizeChange={(w, h) => {}} // Native only
 >
   <span>Scrollable content</span>
 </ScrollContainer>
@@ -486,7 +487,7 @@ secureTextEntry={true}              // Password masking
 ### Using Theme Colors
 
 ```tsx
-import { useTheme } from '../components/primitives/theme';
+import { useTheme } from '@quilibrium/quorum-shared';
 
 const theme = useTheme();
 
@@ -739,11 +740,10 @@ theme.colors.utilities.info; // Info
 - [Web-to-Native Migration Guide](./04-web-to-native-migration.md) - Step-by-step conversion patterns
 - [Primitive Styling Guide](./05-primitive-styling-guide.md) - Color system and consistency rules
 - [Theme System](../theme/README.md) - Color system and theming
-- [Component Architecture](../component-architecture-workflow-explained.md) - Overall architecture explanation
 
 ---
 
-_Last updated: 2026-03-15 - Removed Container and ModalContainer sections (Container dropped; ModalContainer now internal to Modal)_
+_Last updated: 2026-05-20 — staleness audit fixes_
 
 ---
 
