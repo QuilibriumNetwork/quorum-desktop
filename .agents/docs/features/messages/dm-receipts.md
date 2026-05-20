@@ -120,43 +120,58 @@ SENDER SIDE (receiving read acks):
 
 | File | Responsibility |
 |---|---|
-| `src/types/deliveryReceipt.ts` | `DeliveryAckMessage`, `ReadAckMessage` control types, `MessageWithDelivery` intersection type |
 | `src/services/ReceiptService.ts` | Delivery ack buffer (Set per address, 10s timer) + read high-water mark (per address, 5s debounce) + piggyback coordination |
 | `src/services/MessageService.ts` | `processDeliveryReceiptData()` — intercepts both delivery-ack and read-ack at both DM decrypt paths, piggybacks on outgoing DMs |
-| `src/services/ActionQueueHandlers.ts` | `send-delivery-ack` and `send-read-ack` handlers for standalone acks via Double Ratchet |
+| `src/services/ActionQueueHandlers.ts` | `send-delivery-ack` and `send-read-ack` handlers — constructs ack wire objects inline and sends via Double Ratchet |
 | `src/components/context/MessageDB.tsx` | Wires all callbacks (`onFlush`, `onAckProcessed`, `onReadFlush`, `onReadAckProcessed`), updates React Query cache + IndexedDB |
 | `src/hooks/business/messages/useReadReceipt.ts` | Per-message IntersectionObserver with 1s dwell timer and tab focus check (read receipts only) |
 | `src/components/message/Message.tsx` | ✓ vs ✓✓ display logic, useReadReceipt hook wiring, ref attachment |
 | `src/components/direct/DirectMessage.tsx` | Config loading, `reportRead` callback, baseline snapshot |
 | `src/components/message/MessageList.tsx` | Threads `showDeliveryReceipts`, `showReadReceipts`, `reportRead`, `readReceiptBaseline` to Message |
 | `src/db/messages.ts` | `updateMessageDeliveredAt()`, `updateMessagesReadAt()`, `deliveryReceipts`/`readReceipts` in UserConfig |
-| `src/types/actionQueue.ts` | `send-delivery-ack` and `send-read-ack` action types |
+| `src/types/actionQueue.ts` | `send-delivery-ack` and `send-read-ack` action types (internal queue task types, NOT wire types) |
 | `src/components/modals/UserSettingsModal/Privacy.tsx` | Delivery + Read receipts toggle UI |
-| `src/types/deliveryReceipt.ts` | `ReadAckMessage` control type, `readAt`/`readAckUpTo` extensions |
-| `src/types/actionQueue.ts` | `send-read-ack` action type |
-| `src/components/modals/UserSettingsModal/Privacy.tsx` | Read receipts toggle UI |
 | `src/hooks/business/user/useUserSettings.ts` | `readReceipts` state and config persistence |
 
-### Types
+> **Note:** there is no `src/types/deliveryReceipt.ts` — wire types (`DeliveryAckMessage`, `ReadAckMessage`) live as inline `as const` literals at the construction sites in `ActionQueueHandlers.ts` (lines 957, 1014) and string comparisons in `MessageService.ts:325, 339`. Slated to be lifted into `@quilibrium/quorum-shared/src/types/receipt.ts` by the [receipts-shared-migration task](../../../tasks/quorum-shared-migration/2026-05-19-receipts-shared-migration.md).
+
+### Wire format (today, inline)
+
+Both ack messages are flat objects sent through `encryptAndSendDm`:
 
 ```typescript
-// src/types/deliveryReceipt.ts
+// Delivery ack — emitted in ActionQueueHandlers.ts:955
+{
+  senderId: string;
+  type: 'delivery-ack';
+  messageIds: string[];
+}
 
-// Control message — intercepted before saveMessage, never stored or displayed
-type ReadAckMessage = {
+// Read ack — emitted in ActionQueueHandlers.ts:1012
+{
   senderId: string;
   type: 'read-ack';
-  upToMessageId: string;    // high-water mark
+  upToMessageId: string;     // high-water mark
   upToTimestamp: number;     // createdDate of that message
-};
+}
+```
 
-// Extended fields on Message (local intersection type, migrates to quorum-shared later)
-type DeliveryReceiptMessageExtensions = {
-  ackMessageIds?: string[];                                    // piggybacked delivery acks (stripped)
-  deliveredAt?: number;                                        // persisted
-  readAckUpTo?: { messageId: string; timestamp: number };      // piggybacked read acks (stripped)
-  readAt?: number;                                             // persisted
-};
+### Piggybacked envelope fields
+
+Stamped onto outgoing DM messages by `attachPiggybackedAcks`, stripped by `stripPiggybackedAcks` before IndexedDB persistence:
+
+```typescript
+// On Message (transient, never stored locally)
+{
+  ackMessageIds?: string[];                                    // piggybacked delivery acks
+  readAckUpTo?: { messageId: string; timestamp: number };      // piggybacked read ack
+}
+
+// Persisted on Message after processing the incoming ack
+{
+  deliveredAt?: number;
+  readAt?: number;
+}
 ```
 
 ## The useReadReceipt Hook
@@ -295,3 +310,5 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 *Updated: 2026-03-24 — Renamed DeliveryReceiptService → ReceiptService*
 
 *Updated: 2026-05-18 — Added "Standalone-ack ratchet cost" to Known Limitations, cross-linking to the typing-indicators DR cost investigation.*
+
+*Updated: 2026-05-20 — Removed stale references to a non-existent `src/types/deliveryReceipt.ts` (wire types are inline literals, not a dedicated file). Documented the actual flat wire format and the piggybacked envelope fields. Added a forward-pointer to the receipts-shared-migration task that will lift these types into `@quilibrium/quorum-shared`.*

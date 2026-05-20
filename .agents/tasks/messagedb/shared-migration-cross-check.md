@@ -83,19 +83,17 @@ The doc proposes two approaches:
 - **Preferred (unify senders)**: edit ActionQueueHandlers send paths so all control messages use the same shape; readers then read only one shape.
 - **Fallback (normalize at receiver)**: defensive `const ctl = raw.content?.type ? raw.content : raw;` at the top of the intercept.
 
-**The constraint**: the [receipts shared migration](../quorum-shared-migration/2026-05-19-receipts-shared-migration.md) introduces `DeliveryAckMessage` and `ReadAckMessage` types in `quorum-shared/src/types/receipt.ts`. Once those types ship, **the wire format is locked across desktop and mobile.** If the wire-format ambiguity (`raw.foo` vs `raw.content?.foo`) is unresolved when the shared types ship:
+**The constraint**: the [receipts shared migration](../quorum-shared-migration/2026-05-19-receipts-shared-migration.md) introduces `DeliveryAckMessage` and `ReadAckMessage` types in `quorum-shared/src/types/receipt.ts`. Once those types ship, **the wire format is locked across desktop and mobile.** The defensive triple-fallback in the receiver (`raw.foo` vs `raw.content?.foo`) needs to be reconciled with whatever shape the shared types codify.
 
-- The shared types codify only one shape (the "flat" shape, per the receipts migration task)
-- Desktop's runtime keeps the triple-fallback because some send paths still produce the nested shape
-- Mobile would have no idea the alternative shape exists
-- Result: messages sent from desktop's nested-shape paths would not deserialize correctly on mobile
+**Resolution (2026-05-20 — investigated during the receipts migration)**: option 3 above turned out to be the reality. After grepping every ack-construction site in the codebase and tracing the git history, the verdict is:
 
-**Correct ordering**:
-1. Either resolve #3 (preferred form: unify desktop senders) BEFORE the receipts shared migration ships,
-2. OR bundle the sender-unification into the receipts migration PR,
-3. OR confirm by inspection that the nested-shape send paths don't exist (in which case #3 is purely cosmetic and the constraint dissolves).
+- **Only one sender path exists** for both ack types: `ActionQueueHandlers.ts:957` (delivery-ack) and `:1014` (read-ack). Both emit the **flat** shape (`type: 'delivery-ack' as const` at the top level) and have always done so.
+- The `raw.content?.type` branches in `MessageService.processDeliveryReceiptData` are **dead defensive code**. They were added because the receiver was originally written incorrectly to check `decryptedContent.content?.type === 'delivery-ack'` (looking inside `.content` for a flat message). The "fix" added the correct flat check via `||` but left the broken nested check in. See [`.agents/bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md`](../../bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md) line 28 for the historical record.
+- **No external peer ever shipped the nested shape.** No older desktop build, no mobile prototype. The fallback was never wire-compatibility code; it was an unreverted artifact of the original receiver bug.
 
-**Recommendation**: do option 1 or 2. Treat #3 as a prerequisite for the receipts migration, not a follow-up.
+So the wire format is unambiguously flat. The receipts shared migration codifies flat, drops the dead nested-fallback branches in the receiver, and ships in one PR. No sequencing constraint with #3 (#3 becomes a no-op once the dead code is removed).
+
+**Action taken**: the dead `raw.content?.type` fallbacks in `MessageService.ts:325, 328, 339, 342–343` were removed as a small cleanup commit on the receipts-shared-migration branch, in front of the migration itself. After that, the shared types map 1:1 with the only shape desktop emits or receives.
 
 ## Doc wording corrections (applied 2026-05-19)
 

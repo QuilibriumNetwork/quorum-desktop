@@ -332,33 +332,17 @@ These were surfaced during the 2026-05-19 audit prompted by the typing/receipts 
 
 **Why now**: NotificationService is the only service in the folder that isn't testable via the standard pattern. Worth one focused cleanup pass.
 
-### 4.3 Normalize control-message intercept shape
+### 4.3 Normalize control-message intercept shape ✅ DONE (2026-05-20)
 
-**Risk**: ⚠️ LOW (with a sequencing constraint)
-**Time**: ~30 min
-**Impact**: Removes defensive triple-fallback reads
+**Risk**: ⚠️ LOW
+**Time**: ~5 min (turned out smaller than estimated)
+**Impact**: Removes dead defensive code
 
-> **Cross-check sequencing constraint (2026-05-19).** This must land BEFORE or WITH the [receipts shared migration](../quorum-shared-migration/2026-05-19-receipts-shared-migration.md), otherwise the wire-format ambiguity gets codified into the shared `DeliveryAckMessage` / `ReadAckMessage` types and mobile inherits only one of the two shapes desktop emits. See [shared-migration-cross-check.md §Sequencing constraint on #3](./shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization) for the full reasoning.
+> **Resolved as a cleanup commit on the receipts-shared-migration branch.** Investigation (see [shared-migration-cross-check.md §Sequencing constraint on #3](./shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization)) revealed there was never a real wire-format ambiguity — only one sender path exists (`ActionQueueHandlers.ts:957, 1014`), it has always emitted the flat shape, and the `raw.content?.type` branches in the receiver were unreverted dead code from the original receiver bug ([2026-03-19-standalone-delivery-ack-unreliable.md](../../bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md) line 28).
 
-**Problem**: In `processDeliveryReceiptData` (MessageService.ts:326–351), every intercept reads with a triple-fallback pattern:
+**What was changed**: `MessageService.ts:325, 328, 339, 342–343` — dropped the `raw.content?.type` and `raw.content?.messageIds` / `raw.content?.upToMessageId` / `raw.content?.upToTimestamp` fallbacks. The receiver now reads only the flat shape, which is the only shape that ever flies on the wire.
 
-```ts
-const isDeliveryAck = raw.type === 'delivery-ack' || raw.content?.type === 'delivery-ack';
-const ackIds = raw.messageIds ?? raw.content?.messageIds ?? [];
-```
-
-This pattern suggests an unresolved wire-format ambiguity: control messages arrive as flat objects from some send paths and nested-under-`.content` from others. The defensive reads work, but they conceal the underlying inconsistency.
-
-**Proposed (preferred)**: Identify which sender paths produce flat-vs-nested control messages and unify them at the source. The ActionQueueHandlers paths around `ActionQueueHandlers.ts:957` (delivery-ack) and `:1014` (read-ack) are the obvious places to start.
-
-**Proposed (fallback)**: If unifying senders proves harder than expected, normalize once at the top of the intercept:
-```ts
-const ctl = raw.content?.type ? raw.content : raw;
-const isDeliveryAck = ctl.type === 'delivery-ack';
-// ...read ctl.messageIds etc.
-```
-
-**Why now**: Before any further intercept branches are added, and ideally before the receipts shared migration locks in the wire-type shape.
+**Why it was safe**: no external peer ever shipped the nested shape; the only producer is local code that emits flat. The nested branches were unreachable.
 
 ### 4.4 Type the piggybacked ack fields
 
