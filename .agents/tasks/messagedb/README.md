@@ -46,12 +46,12 @@ Each item lists the doc that owns its content, the risk, the rough time investme
 
 | # | Task | Doc | Risk | Time | Value |
 |---|------|------|------|------|-------|
-| 1 | Rename `processDeliveryReceiptData` → `interceptControlMessages` | [low-risk §4.1](./optimizations-low-risk.md#41-rename-processdeliveryreceiptdata--interceptcontrolmessages) | ⚠️ Low | 15 min | Method now also dispatches typing — name lies |
-| 2 | Remove `React.MutableRefObject` from services (12 spots, 5 services) | [low-risk §2.2](./optimizations-low-risk.md#22-remove-react-types-from-services) | ⚠️ Low | 30 min–1 h | Hygiene; modest expansion of shared-migration surface |
-| 3 | ~~Normalize control-message intercept shape~~ ✅ DONE (2026-05-20) | [low-risk §4.3](./optimizations-low-risk.md#43-normalize-control-message-intercept-shape) | — | — | Landed as cleanup commit on the receipts-shared-migration branch (PR #147). Dead `raw.content?.type` fallbacks removed; receiver now reads only the flat wire shape. |
-| 4 | Type piggybacked ack fields | [low-risk §4.4](./optimizations-low-risk.md#44-type-the-piggybacked-ack-fields) | ⚠️ Low | 30 min | Removes 4 `(message as any)` casts. **Unblocked** — receipts shared migration landed in PR #147 (2026-05-20). |
+| 1 | ~~Rename `processDeliveryReceiptData` → `interceptControlMessages`~~ ✅ DONE (PR #150, 2026-05-20) | [low-risk §4.1](./optimizations-low-risk.md#41-rename-processdeliveryreceiptdata--interceptcontrolmessages-✅-done-2026-05-20) | — | — | Method now also dispatches typing — name now matches. |
+| 2 | ~~Remove `React.MutableRefObject` from services~~ ✅ DONE (PR #150, 2026-05-20) | [low-risk §2.2](./optimizations-low-risk.md#22-remove-react-types-from-services-✅-done-2026-05-20) | — | — | All 12 spots replaced with platform-agnostic `Ref<T>` from `src/types/ref.ts`. |
+| 3 | ~~Normalize control-message intercept shape~~ ✅ DONE (PR #147, 2026-05-20) | [low-risk §4.3](./optimizations-low-risk.md#43-normalize-control-message-intercept-shape) | — | — | Landed as cleanup commit on the receipts-shared-migration branch. Dead `raw.content?.type` fallbacks removed; receiver now reads only the flat wire shape. |
+| 4 | ~~Type piggybacked ack fields~~ ✅ DONE (PR #150, 2026-05-20) | [low-risk §4.4](./optimizations-low-risk.md#44-type-the-piggybacked-ack-fields-✅-done-2026-05-20) | — | — | 4 `(message as any)` casts replaced via `Message & ReceiptEnvelopeFields` from `@quilibrium/quorum-shared`. |
 
-**Order rationale**: #1, #2, #4 are < 1 hour each, near-zero risk, no behavior change. Stack them in any short session. #3 is done. #4 was previously gated on the receipts shared migration; that migration shipped 2026-05-20, so #4 is now ready.
+**Tier 0 status**: **fully cleared.** All four items shipped 2026-05-20 across PRs #147 (incidentally) and #150 (deliberate batch).
 
 ### Tier 1 — Larger but still low-risk (when you have a focused day)
 
