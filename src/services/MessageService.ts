@@ -319,28 +319,27 @@ export class MessageService {
   ): boolean {
     const raw = decryptedContent as any;
 
-    // 1. Intercept delivery-ack control messages — never save, never display
+    // 1. Intercept delivery-ack control messages — never save, never display.
     // The ack message is a flat object { type: 'delivery-ack', senderId, messageIds }
-    // (not nested under .content like regular Message objects)
-    const isDeliveryAck = raw.type === 'delivery-ack' || raw.content?.type === 'delivery-ack';
-    if (isDeliveryAck) {
+    // (not nested under .content like regular Message objects). Only one sender path
+    // exists (ActionQueueHandlers.sendDeliveryAck) and it has always emitted flat.
+    if (raw.type === 'delivery-ack') {
       if (this.receiptService && deliveryReceiptsEnabled) {
-        const ackIds = raw.messageIds ?? raw.content?.messageIds ?? [];
+        const ackIds = raw.messageIds ?? [];
         logger.log('[DeliveryReceipt] Processing incoming ack', { ackIds, from: senderAddress });
         this.receiptService.onAckReceived(ackIds);
       }
       return true; // Signal: intercept this message
     }
 
-    // 1b. Intercept read-ack control messages — never save, never display
+    // 1b. Intercept read-ack control messages — never save, never display.
     // Only persist readAt when user's readReceipts setting is ON. This way toggling
     // OFF stops new read receipts from being written, but already-persisted ones
     // remain visible (settings gate persistence, display is unconditional).
-    const isReadAck = raw.type === 'read-ack' || raw.content?.type === 'read-ack';
-    if (isReadAck) {
+    if (raw.type === 'read-ack') {
       if (this.receiptService && readReceiptsEnabled) {
-        const upToMessageId = raw.upToMessageId ?? raw.content?.upToMessageId;
-        const upToTimestamp = raw.upToTimestamp ?? raw.content?.upToTimestamp;
+        const upToMessageId = raw.upToMessageId;
+        const upToTimestamp = raw.upToTimestamp;
         if (upToMessageId && upToTimestamp) {
           logger.log('[ReadReceipt] Processing incoming read ack', { upToMessageId, upToTimestamp, from: senderAddress });
           this.receiptService.onReadAckReceived(upToMessageId, upToTimestamp, senderAddress);
