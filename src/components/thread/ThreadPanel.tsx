@@ -1,11 +1,10 @@
 import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react';
-import type { PostMessage } from '@quilibrium/quorum-shared';
+import type { PostMessage, TypingScope } from '@quilibrium/quorum-shared';
 import { Button, Icon, Tooltip } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 import { TypingIndicator } from '../message/TypingIndicator';
-import type { TypingScope } from '@/types/typing';
 import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
 import { useUpdateThreadReadTime } from '../../hooks/business/conversations/useUpdateThreadReadTime';

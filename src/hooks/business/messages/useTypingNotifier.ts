@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import type { TypingScope } from '@/types/typing';
+import type { TypingScope } from '@quilibrium/quorum-shared';
 
 /**
  * Hook used inside MessageComposer to broadcast typing signals.

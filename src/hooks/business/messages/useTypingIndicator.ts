@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { scopeKey as buildScopeKey, type TypingScope } from '@/types/typing';
+import { scopeKey as buildScopeKey, type TypingScope } from '@quilibrium/quorum-shared';
 
 /**
  * Hook used by TypingIndicator to subscribe to the list of typists for a given scope.

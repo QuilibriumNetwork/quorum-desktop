@@ -1,7 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { useTypingIndicator } from '../../hooks/business/messages/useTypingIndicator';
-import type { TypingScope } from '@/types/typing';
+import type { TypingScope } from '@quilibrium/quorum-shared';
 import './TypingIndicator.scss';
 
 export interface TypingIndicatorProps {
