@@ -1,9 +1,11 @@
 ---
 type: report
 title: "Test Suite Review — Cleanup Before Migration"
-status: in-progress
+status: done
 created: 2026-05-19
 updated: 2026-05-19
+completed: 2026-05-19
+shipped_in: "PR #145 (df394cb0)"
 related_tasks:
   - .agents/tasks/quorum-shared-migration/README.md
   - .agents/tasks/quorum-shared-migration/2026-05-18-typing-shared-migration.md

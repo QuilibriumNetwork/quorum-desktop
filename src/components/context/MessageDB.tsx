@@ -23,9 +23,8 @@ import {
   InvitationService,
   ActionQueueService,
   ActionQueueHandlers,
-  ReceiptService,
 } from '../../services';
-import { TypingService } from '@quilibrium/quorum-shared';
+import { ReceiptService, TypingService } from '@quilibrium/quorum-shared';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
