@@ -14,11 +14,12 @@ import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { validateItems } from '../utils/folderUtils';
 import { mergeDeviceNames } from './configMergeHelpers';
 import type { Ref } from '../types/ref';
+import type { SpaceInfoMap } from '../types/spaceRefs';
 
 export class ConfigService {
   private messageDB: MessageDB;
   private apiClient: QuorumApiClient;
-  private spaceInfo: Ref<{ [key: string]: any }>;
+  private spaceInfo: Ref<SpaceInfoMap>;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
   private queryClient: QueryClient;
@@ -26,7 +27,7 @@ export class ConfigService {
   constructor(dependencies: {
     messageDB: MessageDB;
     apiClient: QuorumApiClient;
-    spaceInfo: Ref<{ [key: string]: any }>;
+    spaceInfo: Ref<SpaceInfoMap>;
     enqueueOutbound: (action: () => Promise<string[]>) => void;
     sendHubMessage: (spaceId: string, message: string) => Promise<string>;
     queryClient: QueryClient;

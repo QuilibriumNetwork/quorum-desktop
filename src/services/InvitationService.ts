@@ -12,11 +12,12 @@ import { buildSpacesKey, buildConfigKey, buildSpaceKey } from '../hooks';
 import type { Space } from '@quilibrium/quorum-shared';
 import { isQuorumApiError } from '../api/baseTypes';
 import type { Ref } from '../types/ref';
+import type { SpaceInfoMap } from '../types/spaceRefs';
 
 export class InvitationService {
   private messageDB: MessageDB;
   private apiClient: QuorumApiClient;
-  private spaceInfo: Ref<{ [key: string]: any }>;
+  private spaceInfo: Ref<SpaceInfoMap>;
   private selfAddress: string;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
   private queryClient: QueryClient;
@@ -28,7 +29,7 @@ export class InvitationService {
   constructor(dependencies: {
     messageDB: MessageDB;
     apiClient: QuorumApiClient;
-    spaceInfo: Ref<{ [key: string]: any }>;
+    spaceInfo: Ref<SpaceInfoMap>;
     selfAddress: string;
     enqueueOutbound: (action: () => Promise<string[]>) => void;
     queryClient: QueryClient;

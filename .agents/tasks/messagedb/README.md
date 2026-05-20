@@ -57,7 +57,7 @@ Each item lists the doc that owns its content, the risk, the rough time investme
 
 | # | Task | Doc | Risk | Time | Value |
 |---|------|------|------|------|-------|
-| 5 | Replace `any` types (97 occurrences across 5 services) | [low-risk §2.1](./optimizations-low-risk.md#21-replace-any-types) | ⚠️ Low (per service) | **1–2 days** | Compile-time bug catching; desktop hygiene. (All 5 affected services are per-app — see [cross-check](./shared-migration-cross-check.md#issue-a-overstating-shared-migration-enablement).) |
+| 5 | Replace `any` types (originally ~105 across 5 services; **93 remaining** after 2026-05-20) | [low-risk §2.1](./optimizations-low-risk.md#21-replace-any-types--partially-done-2026-05-20) | ⚠️ Low (per service) | ~1 day remaining | Compile-time bug catching; desktop hygiene. ConfigService cleared; `spaceInfo`/`syncInfo` ref types named. Remaining `any`s are mostly MessageService wire-message dispatch — naturally addressed at Tier 2 extraction time. (All 5 affected services are per-app — see [cross-check](./shared-migration-cross-check.md#issue-a-overstating-shared-migration-enablement).) |
 | 6 | ~~NotificationService singleton → DI'd class~~ ✅ DONE (2026-05-20, scope reduced) | [low-risk §4.2](./optimizations-low-risk.md#42-convert-notificationservice-singleton-to-a-normal-class) | — | ~10 min | Public constructor + module-level shared instance. Full context-DI was deemed over-engineered for a tab-global service — see §4.2 for the scope-reduction note. |
 | 7 | `BaseService` extraction (common deps) | [low-risk §3.1](./optimizations-low-risk.md) | ⚠️ Low | 1 h | -50 lines per service; **must follow #5** so base class uses real types. (Cross-check confirms no migration-eligible service fits the BaseService shape, so no shared-migration risk — see [cross-check](./shared-migration-cross-check.md#issue-c-overstated-baseservice-risk-to-shared-migration).) |
 
@@ -106,13 +106,15 @@ See also [current-state.md §Cross-cutting context](./current-state.md#cross-cut
 
 ## Active state
 
-- **In progress**: branch `refactor/notificationservice-dependency-injection` — Tier 1 #6 with reduced scope (started 2026-05-20).
-- **Most recent**: Tier 0 #1, #2, #4 landed in PR #150 (2026-05-20, branch `refactor/messageservice-rename-and-typing`). Receipts shared migration (PR #147, 2026-05-20) — incidentally landed Tier 0 #3 as a precursor cleanup. ThreadService extraction (April–May 2026), TypingService extraction (May 2026), audit refresh + folder reorg (2026-05-19).
+- **In progress**: branch `refactor/type-spaceinfo-syncinfo-refs` — partial Tier 1 #5 (the `spaceInfo`/`syncInfo` ref subset).
+- **Most recent**: Tier 1 #6 (NotificationService) landed in PR #151. Tier 0 #1, #2, #4 landed in PR #150. Receipts shared migration (PR #147) — incidentally landed Tier 0 #3 as a precursor cleanup. ThreadService extraction (April–May 2026), TypingService extraction (May 2026), audit refresh + folder reorg (2026-05-19).
 - **Blockers**: none for any Tier 0/1 item. Tier 2 items unblock once someone has a focused day. Tier 3 waits on feature triggers.
 
 ---
 
-_Last updated: 2026-05-20 PM — Tier 1 #6 marked ✅ done with reduced scope on branch `refactor/notificationservice-dependency-injection`. Full context-DI was rejected as over-engineering for a tab-global service; the change is now just "drop the static singleton ceremony, keep the module-level instance" (~10 min vs. half-day estimate)._
+_Last updated: 2026-05-20 (late) — Tier 1 #5 partial progress on branch `refactor/type-spaceinfo-syncinfo-refs`. The `spaceInfo` and `syncInfo` refs are now properly typed across all 5 services via `SpaceInfoMap` / `SyncInfoMap` aliases in `src/types/spaceRefs.ts`. ConfigService is `any`-free. 12 of 105 `any`s removed; the remaining 93 are mostly MessageService wire-message dispatch and naturally fall to Tier 2 per-message-type extractions._
+
+_Earlier 2026-05-20 PM — Tier 1 #6 marked ✅ done with reduced scope on branch `refactor/notificationservice-dependency-injection`. Full context-DI was rejected as over-engineering for a tab-global service; the change is now just "drop the static singleton ceremony, keep the module-level instance" (~10 min vs. half-day estimate)._
 
 _Earlier 2026-05-20 — Tier 0 #1, #2, #4 landed in PR #150. Tier 0 #3 was already ✅ done (landed inside receipts-shared-migration PR #147); Tier 0 #4 unblocked by same. Branch `refactor/messageservice-rename-and-typing` stacked #1 + #4 + #2._
 

@@ -11,6 +11,7 @@ import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibr
 import { t } from '@lingui/core/macro';
 import { QuorumApiClient } from '../api/baseTypes';
 import type { Ref } from '../types/ref';
+import type { SpaceInfoMap } from '../types/spaceRefs';
 
 // Type definitions for the service
 export interface SpaceServiceDependencies {
@@ -23,7 +24,7 @@ export interface SpaceServiceDependencies {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   };
-  spaceInfo: Ref<{ [key: string]: any }>;
+  spaceInfo: Ref<SpaceInfoMap>;
   saveMessage: (
     message: Message,
     messageDB: MessageDB,
@@ -50,7 +51,7 @@ export class SpaceService {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   };
-  private spaceInfo: Ref<{ [key: string]: any }>;
+  private spaceInfo: Ref<SpaceInfoMap>;
   private saveMessage: (
     message: Message,
     messageDB: MessageDB,
