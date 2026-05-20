@@ -126,10 +126,12 @@ export interface Keyset {
 
 ---
 
-#### 2.2 Remove React Types from Services
+#### 2.2 Remove React Types from Services ✅ DONE (2026-05-20)
 **Risk**: ⚠️ LOW
-**Time**: 30 minutes – 1 hour
+**Time**: ~30 min (as estimated)
 **Impact**: Better separation of concerns (services shouldn't know about React)
+
+**What was changed**: Added `src/types/ref.ts` with a platform-agnostic `Ref<T> { current: T }` interface. Replaced all 12 `React.MutableRefObject<…>` annotations across ConfigService, InvitationService, SpaceService, SyncService, MessageService with `Ref<…>`. `React.MutableRefObject<T>` is structurally compatible with `Ref<T>`, so MessageDB and other React-land callers pass their existing refs unchanged. Done as part of Tier 0 cleanup batch on branch `refactor/messageservice-rename-and-typing`.
 
 **Current usage counts (May 2026, `React.MutableRefObject`):**
 
@@ -298,20 +300,15 @@ The cross-doc master order is in [README.md](./README.md#master-action-plan-safe
 
 These were surfaced during the 2026-05-19 audit prompted by the typing/receipts shared-migration planning. They are low-risk small-scope improvements specific to the post-typing/threads state of MessageService.
 
-### 4.1 Rename `processDeliveryReceiptData` → `interceptControlMessages`
+### 4.1 Rename `processDeliveryReceiptData` → `interceptControlMessages` ✅ DONE (2026-05-20)
 
 **Risk**: ⚠️ LOW
-**Time**: ~15 min
+**Time**: ~15 min (as estimated)
 **Impact**: Method name reflects reality
 
-**Problem**: `processDeliveryReceiptData` (MessageService.ts:314) is named for receipts, but as of May 2026 it also intercepts `typing-start` / `typing-stop` (lines 357–363). The name lies, and the next ephemeral control message type added (presence? reactions-as-control?) will make this worse.
+**What was changed**: `MessageService.processDeliveryReceiptData` → `interceptControlMessages` (declaration at MessageService.ts:313 + two callers at :2680, :4225). JSDoc rewritten to describe both responsibilities (intercept + piggyback processing). The split into `interceptControlMessage()` + `processPiggybackedAcks()` was considered but deferred — the single-method form is fine until a third unrelated responsibility appears.
 
-**Proposed**:
-- Rename to `interceptControlMessages` (or split into `interceptControlMessage()` + `processPiggybackedAcks()` since the method does two unrelated things: intercepts at steps 1/1b/1c, and processes piggybacks at steps 2/3).
-- The two callers (DM decrypt paths around MessageService.ts:4220) need a one-line update.
-- Update the JSDoc to describe both responsibilities.
-
-**Why now**: ahead of any further ephemeral control-message additions; before adding presence or any new dispatch branch.
+**Why now (history)**: ahead of any further ephemeral control-message additions (presence, reactions-as-control). Done as part of Tier 0 cleanup batch on branch `refactor/messageservice-rename-and-typing`.
 
 ### 4.2 Convert NotificationService singleton to a normal class
 
@@ -344,30 +341,17 @@ These were surfaced during the 2026-05-19 audit prompted by the typing/receipts 
 
 **Why it was safe**: no external peer ever shipped the nested shape; the only producer is local code that emits flat. The nested branches were unreachable.
 
-### 4.4 Type the piggybacked ack fields
+### 4.4 Type the piggybacked ack fields ✅ DONE (2026-05-20)
 
 **Risk**: ⚠️ LOW
-**Time**: ~30 min
-**Impact**: Removes 4 `(message as any)` casts in `attachPiggybackedAcks` / `stripPiggybackedAcks`
+**Time**: ~10 min (smaller than estimated — `ReceiptEnvelopeFields` already existed in `quorum-shared`)
+**Impact**: Removed 4 `(message as any)` casts in `attachPiggybackedAcks` / `stripPiggybackedAcks`
 
-**Problem**: `attachPiggybackedAcks` (MessageService.ts:281) and `stripPiggybackedAcks` (:299) write/delete `ackMessageIds` and `readAckUpTo` on messages via `(message as any).foo = ...`. These are transient wire fields, not part of the `Message` type.
+**What was changed**: Imported `ReceiptEnvelopeFields` from `@quilibrium/quorum-shared` (already exported as part of the receipts shared migration, see `quorum-shared/src/types/receipt.ts`). The two methods now widen `message` once at the top via `const envelope = message as Message & ReceiptEnvelopeFields;` and access typed `envelope.ackMessageIds` / `envelope.readAckUpTo` afterwards. No remaining `(message as any).ackMessageIds` / `.readAckUpTo` in MessageService.
 
-**Proposed (after receipts shared migration lands)**:
+**Note**: The unrelated `(message as any)` cast at MessageService.ts:574 (for `sendStatus` / `sendError` destructuring) is out of scope for this item — it's about transient send-state fields, not piggybacked receipts.
 
-```ts
-// In quorum-shared/src/types/receipt.ts (or wherever the receipt types land)
-export interface PiggybackedReceiptFields {
-  ackMessageIds?: string[];
-  readAckUpTo?: { messageId: string; timestamp: number };
-}
-
-// In MessageService
-private attachPiggybackedAcks(address: string, message: Message & PiggybackedReceiptFields): void {
-  // no more `as any`
-}
-```
-
-**Why now**: Already flagged in [the receipts-shared-migration task](../quorum-shared-migration/2026-05-19-receipts-shared-migration.md#actionqueuehandlersts-send-paths--stays-per-app-narrows-against-shared-types) as optional cleanup. Track it here too so it doesn't get lost.
+**Why now (history)**: Unblocked by the receipts shared migration landing (PR #147, 2026-05-20). Done as part of Tier 0 cleanup batch on branch `refactor/messageservice-rename-and-typing`.
 
 ---
 
