@@ -62,21 +62,23 @@ After completing quick wins (code cleanup, hex utilities, JSDoc), this document 
 
 ### 🟡 Category 2: Type Safety Improvements (Low Risk)
 
-#### 2.1 Replace `any` Types
+#### 2.1 Replace `any` Types — Partially Done (2026-05-20)
 **Risk**: ⚠️ LOW per service, but volume is high
 **Time**: **1–2 days** (corrected — was previously listed as "1–2 hours")
 **Impact**: Better type safety, catches bugs at compile time
 
-**Current usage counts (May 2026, includes `: any`, `<any>`, `as any`):**
+> **2026-05-20 partial progress.** The `spaceInfo` and `syncInfo` ref types — previously `Ref<{ [key: string]: any }>` across all 5 services — are now properly typed via the new `SpaceInfoMap` and `SyncInfoMap` aliases in `src/types/spaceRefs.ts`. ConfigService is now `any`-free. 12 `any` occurrences removed across the 5 services (was 105 → now 93). Done on branch `refactor/type-spaceinfo-syncinfo-refs`. The remaining ~93 `any`s are mostly in MessageService's wire-message dispatch (`handleNewMessage` and friends) and should be addressed as Tier 2 per-message-type extractions land — typing each handler at extraction time is smaller-scope than retrofitting the monolith.
 
-| Service | Count |
-|---------|-------|
-| MessageService | 67 |
-| InvitationService | 12 |
-| SpaceService | 8 |
-| SyncService | 8 |
-| ConfigService | 2 |
-| **Total (5 main services)** | **97** |
+**Current usage counts (May 2026 → 2026-05-20):**
+
+| Service | May 2026 | 2026-05-20 |
+|---------|----------|------------|
+| MessageService | 67 → 74 (grew with features) | **70** |
+| InvitationService | 12 → 13 | **11** |
+| SpaceService | 8 | **6** |
+| SyncService | 8 | **6** |
+| ConfigService | 2 | **0** ✅ |
+| **Total** | **97 → 105** | **93** |
 
 Newer services already do this right: TypingService, ReceiptService, ThreadService, SearchService, BackupService have **zero** `any` usages.
 
