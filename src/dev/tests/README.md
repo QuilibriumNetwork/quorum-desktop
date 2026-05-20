@@ -56,12 +56,14 @@ src/dev/tests/
 │   ├── EncryptionService.unit.test.tsx   (7 tests)
 │   ├── ConfigService.unit.test.tsx       (6 tests)
 │   └── channelThreadsWritePaths.test.ts  (4 tests)
-├── utils/                       # Utility function tests (106 tests)
-│   ├── reservedNames.test.ts             (42 tests)
-│   ├── mentionUtils.enhanced.test.ts     (31 tests)
+├── utils/                       # Utility function tests (20 tests)
 │   ├── mentionHighlighting.test.ts       (20 tests)
-│   ├── messageGrouping.unit.test.ts      (13 tests)
 │   └── README.md
+│   # NOTE: reservedNames (42), mentionUtils.enhanced (31), and
+│   # messageGrouping.unit (13) moved to @quilibrium/quorum-shared
+│   # (src/utils/) on 2026-05-20 — they test functions that already
+│   # live in shared. mentionHighlighting stays here because its
+│   # source is DOM-coupled and stays per-app.
 ├── components/                  # React component tests (52 tests)
 │   ├── Button.test.tsx                   (27 tests)
 │   ├── Modal.test.tsx                    (14 tests)
@@ -307,34 +309,9 @@ yarn vitest src/dev/tests/ --watch
 
 ### Utils
 
-#### 11. reservedNames.test.ts (42 tests)
+> **Note (2026-05-20):** Three util test suites that lived here previously moved to `@quilibrium/quorum-shared` because they test functions that live there: `reservedNames.test.ts` → `quorum-shared/src/utils/validation.test.ts`, `mentionUtils.enhanced.test.ts` → `quorum-shared/src/utils/mentions.test.ts`, `messageGrouping.unit.test.ts` → `quorum-shared/src/utils/messageGrouping.test.ts`. Run them with `cd quorum-shared && yarn test:run`.
 
-**Purpose**: Validates reserved name validation and anti-impersonation logic.
-
-**Test Coverage**:
-- `normalizeHomoglyphs` - Homoglyph normalization (1->i, 0->o, @->a, etc.)
-- `isMentionReserved` / `isEveryoneReserved` - Mention keyword detection (everyone, here, mod, manager)
-- `isImpersonationName` - Impersonation detection with word boundary analysis
-- `getReservedNameType` - Name type classification
-- `isReservedName` - Combined validation
-
----
-
-#### 12. mentionUtils.enhanced.test.ts (31 tests)
-
-**Purpose**: Validates mention extraction with backward compatibility.
-
-**Test Coverage**:
-- User mentions - old (@<id>) and new (@[name]<id>) formats
-- Channel mentions extraction
-- @everyone handling with permissions
-- Role mentions extraction
-- Backward compatibility with legacy formats
-- Rate limiting - security cap at 20 mentions per message
-
----
-
-#### 13. mentionHighlighting.test.ts (20 tests)
+#### 11. mentionHighlighting.test.ts (20 tests)
 
 **Purpose**: Validates mention detection and highlighting in message text.
 
@@ -342,19 +319,6 @@ yarn vitest src/dev/tests/ --watch
 - `containsMentions` - Mention detection for users, channels, roles, @everyone
 - `highlightMentions` - HTML generation for highlighted mentions
 - Performance optimizations - HTML escaping, code block exclusion
-
----
-
-#### 14. messageGrouping.unit.test.ts (13 tests)
-
-**Purpose**: Validates message grouping utilities for chat display.
-
-**Test Coverage**:
-- `getStartOfDay` - Day boundary calculation
-- `shouldShowDateSeparator` - Separator detection between messages
-- `getDateLabel` - Date label formatting
-- `groupMessagesByDay` - Message grouping by day
-- `generateListWithSeparators` - List generation with date separators
 
 ---
 
