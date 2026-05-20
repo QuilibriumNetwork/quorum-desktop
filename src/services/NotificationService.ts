@@ -28,7 +28,6 @@ export type NotificationMetadata = {
 };
 
 export class NotificationService {
-  private static instance: NotificationService;
   private isSupported: boolean;
   private permission: NotificationPermission;
   private readonly quorumIcon = '/quorum-symbol.png';
@@ -36,16 +35,9 @@ export class NotificationService {
   private latestNotification: NotificationMetadata | null = null;
   private mutedConversations: Set<string> = new Set();
 
-  private constructor() {
+  public constructor() {
     this.isSupported = 'Notification' in window;
     this.permission = this.isSupported ? Notification.permission : 'denied';
-  }
-
-  public static getInstance(): NotificationService {
-    if (!NotificationService.instance) {
-      NotificationService.instance = new NotificationService();
-    }
-    return NotificationService.instance;
   }
 
   /**
@@ -338,5 +330,16 @@ export class NotificationService {
   }
 }
 
-// Export singleton instance
-export const notificationService = NotificationService.getInstance();
+/**
+ * Shared module-level instance.
+ *
+ * NotificationService is genuinely a per-tab singleton — it wraps the
+ * browser's `window.Notification` API and `document.visibilityState`,
+ * both of which are themselves global to the tab. We expose a single
+ * instance here so call sites don't accidentally end up with multiple
+ * permission caches or pending-notification counters out of sync.
+ *
+ * Tests that need an isolated instance can `new NotificationService()`
+ * directly (the constructor is public).
+ */
+export const notificationService = new NotificationService();

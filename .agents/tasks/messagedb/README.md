@@ -58,10 +58,10 @@ Each item lists the doc that owns its content, the risk, the rough time investme
 | # | Task | Doc | Risk | Time | Value |
 |---|------|------|------|------|-------|
 | 5 | Replace `any` types (97 occurrences across 5 services) | [low-risk §2.1](./optimizations-low-risk.md#21-replace-any-types) | ⚠️ Low (per service) | **1–2 days** | Compile-time bug catching; desktop hygiene. (All 5 affected services are per-app — see [cross-check](./shared-migration-cross-check.md#issue-a-overstating-shared-migration-enablement).) |
-| 6 | NotificationService singleton → DI'd class | [low-risk §4.2](./optimizations-low-risk.md#42-convert-notificationservice-singleton-to-a-normal-class) | ⚠️ Low–Med | Half-day | Testability; consistency (only service in the folder that isn't DI'd) |
+| 6 | ~~NotificationService singleton → DI'd class~~ ✅ DONE (2026-05-20, scope reduced) | [low-risk §4.2](./optimizations-low-risk.md#42-convert-notificationservice-singleton-to-a-normal-class) | — | ~10 min | Public constructor + module-level shared instance. Full context-DI was deemed over-engineered for a tab-global service — see §4.2 for the scope-reduction note. |
 | 7 | `BaseService` extraction (common deps) | [low-risk §3.1](./optimizations-low-risk.md) | ⚠️ Low | 1 h | -50 lines per service; **must follow #5** so base class uses real types. (Cross-check confirms no migration-eligible service fits the BaseService shape, so no shared-migration risk — see [cross-check](./shared-migration-cross-check.md#issue-c-overstated-baseservice-risk-to-shared-migration).) |
 
-**Order rationale**: #5 first (it's the precondition for #7 to be done well, and unlocks IDE confidence for everything downstream). #6 is independent — slot wherever convenient. #7 last in this tier.
+**Order rationale**: #5 first (it's the precondition for #7 to be done well, and unlocks IDE confidence for everything downstream). #6 was independent; landed 2026-05-20 with reduced scope. #7 last in this tier.
 
 ### Tier 2 — Per-message-type extractions (opportunistic, follow ThreadService precedent)
 
@@ -106,12 +106,14 @@ See also [current-state.md §Cross-cutting context](./current-state.md#cross-cut
 
 ## Active state
 
-- **In progress**: branch `refactor/messageservice-rename-and-typing` — stacking Tier 0 #1, #4, #2 (started 2026-05-20).
-- **Most recent**: receipts shared migration (PR #147, 2026-05-20) — incidentally landed Tier 0 #3 as a precursor cleanup. ThreadService extraction (April–May 2026), TypingService extraction (May 2026), audit refresh + folder reorg (2026-05-19).
+- **In progress**: branch `refactor/notificationservice-dependency-injection` — Tier 1 #6 with reduced scope (started 2026-05-20).
+- **Most recent**: Tier 0 #1, #2, #4 landed in PR #150 (2026-05-20, branch `refactor/messageservice-rename-and-typing`). Receipts shared migration (PR #147, 2026-05-20) — incidentally landed Tier 0 #3 as a precursor cleanup. ThreadService extraction (April–May 2026), TypingService extraction (May 2026), audit refresh + folder reorg (2026-05-19).
 - **Blockers**: none for any Tier 0/1 item. Tier 2 items unblock once someone has a focused day. Tier 3 waits on feature triggers.
 
 ---
 
-_Last updated: 2026-05-20 — Tier 0 #3 marked ✅ done (landed inside receipts-shared-migration PR #147); Tier 0 #4 unblocked. Branch `refactor/messageservice-rename-and-typing` opened to stack #1 + #4 + #2._
+_Last updated: 2026-05-20 PM — Tier 1 #6 marked ✅ done with reduced scope on branch `refactor/notificationservice-dependency-injection`. Full context-DI was rejected as over-engineering for a tab-global service; the change is now just "drop the static singleton ceremony, keep the module-level instance" (~10 min vs. half-day estimate)._
+
+_Earlier 2026-05-20 — Tier 0 #1, #2, #4 landed in PR #150. Tier 0 #3 was already ✅ done (landed inside receipts-shared-migration PR #147); Tier 0 #4 unblocked by same. Branch `refactor/messageservice-rename-and-typing` stacked #1 + #4 + #2._
 
 _Previously 2026-05-19 — folder reorganized. Files renamed: `messagedb-current-state.md` → `current-state.md`, `messageservice-analysis.md` → `messageservice-deep-dive.md`, `messagedb-optimization-1.md` → `optimizations-low-risk.md`, `messagedb-optimization-3.md` → `optimizations-high-risk.md`. New files: `handleNewMessage-reconsidered.md`, `shared-migration-cross-check.md`. This README is new and owns the safest-to-riskiest master action plan. Tier 0 #3 marked with the sequencing constraint surfaced by the cross-check; framing softened for #5 and #7._

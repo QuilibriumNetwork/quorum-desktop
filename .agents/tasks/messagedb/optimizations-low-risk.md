@@ -310,24 +310,25 @@ These were surfaced during the 2026-05-19 audit prompted by the typing/receipts 
 
 **Why now (history)**: ahead of any further ephemeral control-message additions (presence, reactions-as-control). Done as part of Tier 0 cleanup batch on branch `refactor/messageservice-rename-and-typing`.
 
-### 4.2 Convert NotificationService singleton to a normal class
+### 4.2 Convert NotificationService singleton to a normal class ✅ DONE (2026-05-20, scope reduced)
 
-**Risk**: ⚠️ LOW–MEDIUM
-**Time**: ~half-day
-**Impact**: Testability; consistency with all other services
+**Risk**: ⚠️ LOW (smaller than originally rated)
+**Time**: ~10 min (vs. half-day estimate)
+**Impact**: Testability; constructor is no longer private
 
-**Problem**: NotificationService uses `private static instance` + `getInstance()` (NotificationService.ts:39, 45). Every other service in `src/services/` is a normal class instantiated by MessageDB and wired via dependency injection. NotificationService has no unit test file — directly correlated with the singleton being hard to mock.
+**What was changed** (branch `refactor/notificationservice-dependency-injection`):
+- Removed `private static instance` and `getInstance()` from NotificationService.
+- Made the constructor `public` (was `private`).
+- Kept the module-level `export const notificationService = new NotificationService()` as the canonical shared instance, with a comment explaining why this remains a per-tab singleton (it wraps `window.Notification` and `document.visibilityState`, which are themselves tab-global).
+- Zero call-site changes: 5 consumers (MessageService, useNotificationSettings, useMutedConversationsSync, WebsocketProvider, services/index re-export) keep importing `notificationService` by the same name.
 
-**Proposed**:
-- Convert to a normal class with a constructor.
-- Have MessageDB instantiate it like every other service.
-- All current callers use `notificationService` (a lowercase singleton import from `./NotificationService`) — refactor those call sites to take it through context.
+**Scope reduction vs. original plan**:
+- The original §4.2 proposed instantiating NotificationService in MessageDB and threading it through React context, matching the ReceiptService/TypingService pattern. On second look that was over-engineered: NotificationService is genuinely a per-tab singleton (it wraps tab-global browser APIs), the React-land call sites have no per-user/per-session lifecycle to track, and threading it through context would add a hook + 3 consumer-site rewrites for zero behavior or testability gain that isn't already won by dropping `private constructor`.
+- The §4.2 caveat about "module-level state (`isProcessing`, `pendingNotifications`, `mutedConversations`) needs to move onto the instance" was incorrect on inspection — all three of those were already instance fields. Nothing had to move.
+- Tests that want isolation can now `new NotificationService()` directly. That's the testability win the original §4.2 was after.
 
-**Caveats**:
-- NotificationService.ts has DOM-coupled code (`document.visibilitychange`, `Notification`, Safari sniffing). It stays per-app forever per the [services-design audit](../quorum-shared-migration/designs/2026-05-18-services-design.md), so this is purely a desktop hygiene win, not a shared-migration enabler.
-- Module-level state in this file (`isProcessing`, `pendingNotifications`, `mutedConversations`) needs to move onto the instance.
-
-**Why now**: NotificationService is the only service in the folder that isn't testable via the standard pattern. Worth one focused cleanup pass.
+**What this is NOT**:
+- Not a "per-app forever vs. shared" change — NotificationService stays per-app forever per the [services-design audit](../quorum-shared-migration/designs/2026-05-18-services-design.md). DOM coupling unchanged.
 
 ### 4.3 Normalize control-message intercept shape ✅ DONE (2026-05-20)
 
