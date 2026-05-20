@@ -22,11 +22,12 @@ import {
 import { IndexedDBAdapter } from '../adapters/indexedDbAdapter';
 import { showSyncToast } from '../utils/toast';
 import { t } from '@lingui/core/macro';
+import type { Ref } from '../types/ref';
 
 export class SyncService {
   private messageDB: MessageDB;
   private enqueueOutbound: (callback: () => Promise<string[]>) => void;
-  private syncInfo: React.MutableRefObject<{
+  private syncInfo: Ref<{
     [spaceId: string]: {
       expiry: number;
       candidates: any[];
@@ -40,7 +41,7 @@ export class SyncService {
   constructor(dependencies: {
     messageDB: MessageDB;
     enqueueOutbound: (callback: () => Promise<string[]>) => void;
-    syncInfo: React.MutableRefObject<{
+    syncInfo: Ref<{
       [spaceId: string]: {
         expiry: number;
         candidates: any[];

@@ -10,6 +10,7 @@ import { buildSpacesKey, buildSpaceKey, buildSpaceMembersKey, buildConfigKey } f
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { QuorumApiClient } from '../api/baseTypes';
+import type { Ref } from '../types/ref';
 
 // Type definitions for the service
 export interface SpaceServiceDependencies {
@@ -22,7 +23,7 @@ export interface SpaceServiceDependencies {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   };
-  spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
+  spaceInfo: Ref<{ [key: string]: any }>;
   saveMessage: (
     message: Message,
     messageDB: MessageDB,
@@ -49,7 +50,7 @@ export class SpaceService {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   };
-  private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
+  private spaceInfo: Ref<{ [key: string]: any }>;
   private saveMessage: (
     message: Message,
     messageDB: MessageDB,
