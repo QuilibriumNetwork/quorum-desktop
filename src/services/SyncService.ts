@@ -23,17 +23,12 @@ import { IndexedDBAdapter } from '../adapters/indexedDbAdapter';
 import { showSyncToast } from '../utils/toast';
 import { t } from '@lingui/core/macro';
 import type { Ref } from '../types/ref';
+import type { SyncInfoMap } from '../types/spaceRefs';
 
 export class SyncService {
   private messageDB: MessageDB;
   private enqueueOutbound: (callback: () => Promise<string[]>) => void;
-  private syncInfo: Ref<{
-    [spaceId: string]: {
-      expiry: number;
-      candidates: any[];
-      invokable: NodeJS.Timeout | undefined;
-    };
-  }>;
+  private syncInfo: Ref<SyncInfoMap>;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
   private storageAdapter: IndexedDBAdapter;
   private sharedSyncService: SharedSyncService;
@@ -41,13 +36,7 @@ export class SyncService {
   constructor(dependencies: {
     messageDB: MessageDB;
     enqueueOutbound: (callback: () => Promise<string[]>) => void;
-    syncInfo: Ref<{
-      [spaceId: string]: {
-        expiry: number;
-        candidates: any[];
-        invokable: NodeJS.Timeout | undefined;
-      };
-    }>;
+    syncInfo: Ref<SyncInfoMap>;
     sendHubMessage: (spaceId: string, message: string) => Promise<string>;
   }) {
     this.messageDB = dependencies.messageDB;

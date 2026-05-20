@@ -61,6 +61,7 @@ import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
+import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -82,8 +83,8 @@ export interface MessageServiceDependencies {
     apiClient: QuorumApiClient
   ) => Promise<void>;
   navigate: (path: string, options?: any) => void;
-  spaceInfo: Ref<{ [key: string]: any }>;
-  syncInfo: Ref<{ [key: string]: any }>;
+  spaceInfo: Ref<SpaceInfoMap>;
+  syncInfo: Ref<SyncInfoMap>;
   synchronizeAll: (spaceId: string, inboxAddress: string) => Promise<void>;
   informSyncData: (
     spaceId: string,
@@ -122,8 +123,8 @@ export class MessageService {
     apiClient: QuorumApiClient
   ) => Promise<void>;
   private navigate: (path: string, options?: any) => void;
-  private spaceInfo: Ref<{ [key: string]: any }>;
-  private syncInfo: Ref<{ [key: string]: any }>;
+  private spaceInfo: Ref<SpaceInfoMap>;
+  private syncInfo: Ref<SyncInfoMap>;
   private synchronizeAll: (
     spaceId: string,
     inboxAddress: string
