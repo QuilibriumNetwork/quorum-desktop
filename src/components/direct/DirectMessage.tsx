@@ -27,7 +27,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { TypingIndicator } from '../message/TypingIndicator';
-import type { TypingScope } from '@/types/typing';
+import type { TypingScope } from '@quilibrium/quorum-shared';
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';

@@ -49,7 +49,7 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | Primitives (22 cross-platform UI components) | UI kit | ✅ Done (PR #2) | — |
 | Utils (22 modules: validation, mentions, formatting, etc.) | Logic | ✅ Done (PR #3) | [designs/2026-03-18-utils-design.md](designs/2026-03-18-utils-design.md) |
 | Util tests (4 test files testing already-shared utils) | Tests | 🟢 Ready | [2026-05-19-tests-migration.md](2026-05-19-tests-migration.md) |
-| Typing service + types + tests | Feature service | 🟢 Ready | [2026-05-18-typing-shared-migration.md](2026-05-18-typing-shared-migration.md) |
+| Typing service + types + tests | Feature service | ✅ Done (2026-05-20) | [.done/2026-05-18-typing-shared-migration.md](.done/2026-05-18-typing-shared-migration.md) |
 | Receipts service + NEW wire types + tests | Feature service | 🟢 Ready (after typing lands) | [2026-05-19-receipts-shared-migration.md](2026-05-19-receipts-shared-migration.md) |
 | Hooks (~265 hook files) | Logic | ⏸️ Blocked on mobile codebase access | [designs/2026-03-19-hooks-design.md](designs/2026-03-19-hooks-design.md) |
 | ActionQueueService | Service | ⏸️ Blocked on mobile access (direction unclear) | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §4 |
@@ -63,11 +63,10 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 
 ## Next up
 
-1. **Typing migration** ([2026-05-18-typing-shared-migration.md](2026-05-18-typing-shared-migration.md)) — fully audited, no blockers, smallest scope.
-2. **Receipts migration** ([2026-05-19-receipts-shared-migration.md](2026-05-19-receipts-shared-migration.md)) — same pattern as typing, plus a small new step (designing the receipt wire types in shared since they don't exist as a dedicated file in desktop). Best to ship after typing so the typing module's folder layout sets the precedent.
-3. **Util tests** ([2026-05-19-tests-migration.md](2026-05-19-tests-migration.md)) — trivial housekeeping. Independent of the other two.
+1. **Receipts migration** ([2026-05-19-receipts-shared-migration.md](2026-05-19-receipts-shared-migration.md)) — follows the precedent set by typing (now done): types in `src/types/`, service in `src/<feature>/service.ts` + `service.test.ts` + `index.ts` barrel. Plus a small new step (designing the receipt wire types in shared since they don't exist as a dedicated file in desktop). Coupled to MessageDB Tier 0 #3 — see "Relationship to the MessageDB refactor" below.
+2. **Util tests** ([2026-05-19-tests-migration.md](2026-05-19-tests-migration.md)) — trivial housekeeping. Independent.
 
-These three can ship in any order and are not blocked on mobile codebase access.
+Both can ship in any order and are not blocked on mobile codebase access.
 
 ## What unblocks the rest
 
@@ -117,4 +116,6 @@ The typing task is the reference example. Receipts and future migrations should 
 
 ---
 
-*Last updated: 2026-05-19 — folder restructure: introduced designs/ subfolder for audits, root holds executable per-PR tasks, this README is the master tracker. Added "Relationship to the MessageDB refactor" section documenting the orthogonality of the two efforts. Cross-check pass later same day refined that section: surfaced the Tier 0 #3 sequencing constraint and corrected the framing on the type-safety pass and BaseService extraction.*
+*Last updated: 2026-05-20 — typing migration done (2026-05-18 task moved to `.done/`). Status table updated, "Next up" reduced to receipts + util tests. Shared package now has `src/typing/` + `src/types/typing.ts`; desktop deletes the local copies and imports from `@quilibrium/quorum-shared`. Manual two-account QA passed (DM and space typing both work end-to-end).*
+
+*Previously: 2026-05-19 — folder restructure: introduced designs/ subfolder for audits, root holds executable per-PR tasks, this README is the master tracker. Added "Relationship to the MessageDB refactor" section documenting the orthogonality of the two efforts. Cross-check pass later same day refined that section: surfaced the Tier 0 #3 sequencing constraint and corrected the framing on the type-safety pass and BaseService extraction.*

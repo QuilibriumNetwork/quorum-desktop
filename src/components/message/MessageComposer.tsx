@@ -16,7 +16,7 @@ import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 import { useTypingNotifier } from '../../hooks/business/messages/useTypingNotifier';
-import type { TypingScope } from '@/types/typing';
+import type { TypingScope } from '@quilibrium/quorum-shared';
 
 interface User {
   address: string;

@@ -33,7 +33,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { TypingIndicator } from '../message/TypingIndicator';
-import type { TypingScope } from '@/types/typing';
+import type { TypingScope } from '@quilibrium/quorum-shared';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { ThreadsListPanel } from '../thread/ThreadsListPanel';
 import { useThreadMessages } from '../../hooks/business/threads';
