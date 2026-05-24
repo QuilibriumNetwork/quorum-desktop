@@ -28,7 +28,9 @@ Two distinct bugs, both with triggers entirely on **our** side. Both route throu
 | **Proposed fix** | **Fix C** — freeze `isCompact` for messages with `sendStatus==='sending'` | **Fix R2 + R3** — return same `InfiniteData` ref when nothing changed; cap `increaseViewportBy` |
 | **Estimated patch** | ~20 lines | ~17 lines total |
 
-**Status (2026-05-24, post-Session 8):** R3 + R4 in place, reduce receiver-side jump from 420px → ~120-135px. Bug still visible to user. R2 attempted and reverted (no help). Awaiting audit before deciding ship-as-is vs migrate-message-list-to-tanstack-virtual. **Plain-scroll is NOT viable** given user's target scale (100K-1M messages per channel, 50K+ members per space — virtualization is mandatory).
+**Status (2026-05-24, post-Session 9 — DECISION MADE):**
+
+R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. Bug still slightly visible. R2 attempted and reverted (no help). Three audits (Virtuoso-usage, feature-docs, alternatives-research) completed. **Decision: stay on Virtuoso.** Off-the-shelf chat virtualization is empirically an unsolved problem at our scale — TanStack Virtual has the same bug class open since 2021, no MIT-licensed library matches Virtuoso's chat primitives, Discord/Element wrote custom virtualizers. Plain-scroll is NOT viable at 100K-1M messages. Pending: Fix C (sender-side), instrumentation cleanup, PR. See Session 9 for the full audit findings.
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
@@ -444,15 +446,51 @@ After both report back, write a decision document **with** the user comparing Sh
 
 ---
 
-## Status: AWAITING AUDIT — no further code changes until decision
+### Session 9 (2026-05-24): Audits complete + DECISION — stay on Virtuoso
+
+Three audits returned:
+
+**Audit A (Virtuoso usage):** 6 usages total in the codebase. Only MessageList has the bug. The other 5 (Channel members ×2, EmojiPicker, SearchResults, PinnedMessagesPanel, BookmarksPanel) are all safe — no auto-scroll, no rapid mutations, no dynamic heights. Migration scope is unambiguously just MessageList. Two genuinely hard pieces to re-implement: `alignToBottom` and `followOutput`. Everything else (hash nav, jump-to-present, pagination triggers, etc.) has clean tanstack-virtual equivalents.
+
+**Audit B (feature docs):** 18+ documented behaviors hang off the message list. Most are layout/cache-only (compact grouping, sending indicator, receipts, lazy media, date separators, dm-receipts) and would survive any virtualizer. The Virtuoso-specific ones: hash nav (`scrollToIndex`), auto-jump to first unread, new messages separator (relies on `rangeChanged` because IntersectionObserver was explicitly rejected — Virtuoso unmounts items off-screen and DOM observers fire on unmount), jump-to-present, pin-to-bottom (`followOutput`, currently broken — the bug), pagination top/bottom (`atTopStateChange`/`atBottomStateChange`), thread panel (reuses MessageList wholesale with `alignToTop=true`).
+
+**Audit C (alternatives research) — this changed the decision:**
+
+| Finding | Implication |
+|---|---|
+| TanStack Virtual has the same bug class (Discussion #195 open since 2021, Issue #1093 auto-scroll-to-bottom Dec 2025 with zero maintainer response) | We'd migrate FROM Virtuoso's bug TO the same bug in a less-mature library |
+| No MIT-licensed virtualizer has `alignToBottom` + `followOutput` + `firstItemIndex` + auto-measurement working together | These are the four hard problems for chat. Virtuoso solves all four; everyone else makes you implement at least two yourself |
+| Virtuoso maintainer closes scroll-anchoring issues with "see troubleshooting docs" — recent 4.18.x releases fix RTL/SSR/React 19 detection but NO scroll-anchoring fixes | Don't expect upstream relief |
+| Discord wrote a custom virtualizer; Element/Matrix wrote a custom one and is rebuilding in Rust; no major chat app publicly uses Virtuoso/TanStack/virtua for their main message list at scale | Off-the-shelf chat virtualization is empirically an unsolved problem at our target scale |
+| Virtuoso sells `@virtuoso.dev/message-list` commercial at $168-312/seat/year | Even the maintainer treats chat as hard enough to charge for |
+
+**Decision: stay on Virtuoso.** Reasoning in three lines:
+1. The "better" alternative (tanstack-virtual) has the same bug class, unfixed for 5 years.
+2. Migration means rebuilding two chat primitives (`alignToBottom`, `followOutput`) ourselves — exactly the code area where chat apps get bugs.
+3. The honest answer to "what works at this scale" is "write your own like Discord did" — a much bigger investment than we're prepared for now.
+
+**Conclusion:** off-the-shelf virtualization for our scale targets is empirically an unsolved problem. Migrating shuffles bugs; it doesn't fix them. The only winning move would be a custom virtualizer (Discord pattern) which is out of scope.
+
+---
+
+## Status: ACCEPTED RESIDUAL JANK + Fix C pending
 
 Currently kept on branch `fix/virtuoso-scroll-jank`:
 - Commit `58e4c1f0`: docs split + diagnosis recorded.
-- Commit `308795ad`: throwaway instrumentation (will be removed before ship regardless of decision).
-- Commit `09361de7`: Fix R3 (overscan cap). **Keep** in either path.
-- Commit `dd966df7`: Fix R4 (stable rowRenderer). **Keep** in either path.
+- Commit `308795ad`: throwaway instrumentation — **REMOVE before ship.**
+- Commit `09361de7`: Fix R3 (overscan cap) — **KEEP.** Real improvement (420→130px on receive).
+- Commit `dd966df7`: Fix R4 (stable rowRenderer) — **KEEP.** Render-efficiency improvement, neutral for the bug.
+- Commit `db456a68`: revert of `528ba7fd` (Fix R2, did not help). Already reverted.
+- Commit `ebdf0913`: doc update (Sessions 7+8).
 
-Reverted: commit `db456a68` reverted `528ba7fd` (Fix R2, did not help).
+**Pending before PR:**
+1. Implement Fix C (freeze `isCompact` for `sendStatus='sending'` messages) — kills the 24px sender-side shrink. ~20 lines.
+2. Test Fix C with the instrumentation, confirm receiver-side still works.
+3. Remove the instrumentation (`__scrollDebug.ts` + 5 call-site TEMPORARY DEBUG blocks).
+4. Remove the rAF/setTimeout snap-back workarounds in `MessageList.tsx` + `DirectMessage.tsx` if Fix C makes them unnecessary, OR keep them as defensive code if they're still helping the residual ~130px on receive.
+5. Open PR with a focused description of the receiver-side residual being a known-and-documented Virtuoso limitation.
+
+**Accepted residual UX:** ~130px backward jump on inbound messages when items mount above the viewport. Has a visible but small "scroll up then snap back" character. Documented as a known limitation tied to upstream Virtuoso behavior; not actively worked around past R3/R4. If we hit the Discord-scale custom-virtualizer threshold later, that's a separate project.
 
 ---
 
