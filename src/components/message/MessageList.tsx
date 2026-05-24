@@ -31,6 +31,8 @@ import { Button as ButtonBase } from '../primitives';
 const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
+// TEMPORARY DEBUG — remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
+import { scrollDebug } from './__scrollDebug';
 
 export interface MessageListRef {
   scrollToBottom: () => void;
@@ -238,6 +240,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Combined bottom state handler: manages both "Jump to Present" button and forward pagination
     const handleBottomStateChange = useCallback(
       (atBottom: boolean) => {
+        // TEMPORARY DEBUG
+        scrollDebug.log({ kind: 'atBottomStateChange', note: `atBottom=${atBottom}` });
+
         // Update jump button visibility
         handleAtBottomStateChange(atBottom);
 
@@ -426,6 +431,21 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    // TEMPORARY DEBUG — attach scroll recorder once the Virtuoso scroller mounts.
+    // Remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
+    useEffect(() => {
+      let attempts = 0;
+      const tryAttach = () => {
+        const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
+        if (scroller) {
+          scrollDebug.attach(scroller);
+          return;
+        }
+        if (++attempts < 20) setTimeout(tryAttach, 100);
+      };
+      tryAttach();
+    }, []);
+
     // Track if we've already processed a hash navigation to prevent re-navigation on messageList changes
     const [hasProcessedHash, setHasProcessedHash] = useState(false);
     const [hasProcessedScrollTo, setHasProcessedScrollTo] = useState(false);
@@ -560,6 +580,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Handle separator dismissal via Virtuoso's rangeChanged callback
     const handleRangeChanged = useCallback(
       (range: { startIndex: number; endIndex: number }) => {
+        // TEMPORARY DEBUG
+        scrollDebug.log({
+          kind: 'rangeChanged',
+          note: `start=${range.startIndex} end=${range.endIndex}`,
+        });
         if (firstUnreadIndex === -1 || !onDismissSeparator) {
           return;
         }
@@ -617,6 +642,17 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
+            // TEMPORARY DEBUG
+            const scrollerForLog = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
+            scrollDebug.log({
+              kind: 'followOutput',
+              scrollTop: scrollerForLog?.scrollTop,
+              scrollHeight: scrollerForLog?.scrollHeight,
+              clientHeight: scrollerForLog?.clientHeight,
+              gap: scrollerForLog ? scrollerForLog.scrollHeight - scrollerForLog.clientHeight - scrollerForLog.scrollTop : undefined,
+              note: `isAtBottom=${isAtBottom} hasNextPage=${hasNextPage} deletion=${deletionInProgressRef.current} jumped=${hasJumpedToOldMessage} snapEnabled=${scrollDebug.snapEnabled}`,
+            });
+
             if (deletionInProgressRef.current) return false;
             if (hasJumpedToOldMessage) return false;
             if (isAtBottom && hasNextPage === false) {
@@ -626,19 +662,21 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
               // Don't let Virtuoso scroll (its measurement callback resets
               // scrollTop incorrectly in DMs). Snap to bottom every frame.
-              if (scroller) {
+              if (scroller && scrollDebug.snapEnabled) {
                 const s = scroller;
-                const snap = () => {
+                const snap = (label: 'snap-raf' | 'snap-timeout') => {
+                  const prev = s.scrollTop;
                   s.scrollTop = s.scrollHeight - s.clientHeight;
+                  scrollDebug.log({ kind: label, scrollTop: s.scrollTop, prev, gap: 0 });
                 };
                 let frameCount = 0;
                 const frameSnap = () => {
-                  snap();
+                  snap('snap-raf');
                   if (++frameCount < 10) requestAnimationFrame(frameSnap);
                 };
                 requestAnimationFrame(frameSnap);
-                setTimeout(snap, 300);
-                setTimeout(snap, 600);
+                setTimeout(() => snap('snap-timeout'), 300);
+                setTimeout(() => snap('snap-timeout'), 600);
               }
               return false;
             }

@@ -23,6 +23,8 @@ import { useQueryClient } from '@tanstack/react-query';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { MessageList, MessageListRef } from '../message/MessageList';
+// TEMPORARY DEBUG — remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
+import { scrollDebug } from '../message/__scrollDebug';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -361,9 +363,20 @@ const DirectMessage: React.FC<{}> = () => {
       // channels, but in DMs its internal measurement callback resets scrollTop.
       // Delayed direct scrollTop correction works around this.
       const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-      if (scroller) {
+      // TEMPORARY DEBUG — log submit + gate snap on flag
+      scrollDebug.log({
+        kind: 'note',
+        scrollTop: scroller?.scrollTop,
+        scrollHeight: scroller?.scrollHeight,
+        clientHeight: scroller?.clientHeight,
+        gap: scroller ? scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop : undefined,
+        note: `DM handleSubmitMessage finished; snapEnabled=${scrollDebug.snapEnabled}`,
+      });
+      if (scroller && scrollDebug.snapEnabled) {
         const snap = () => {
+          const prev = scroller.scrollTop;
           scroller.scrollTop = scroller.scrollHeight - scroller.clientHeight;
+          scrollDebug.log({ kind: 'submit-snap', scrollTop: scroller.scrollTop, prev, gap: 0 });
         };
         setTimeout(snap, 100);
         setTimeout(snap, 300);
