@@ -1894,87 +1894,49 @@ export class MessageService {
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
-          const lastIndex = oldData.pages.length - 1;
-          const lastPage = oldData.pages[lastIndex];
-          if (!lastPage) return oldData;
-
-          // Detect a true no-op: the message is already present AND identical.
-          // If so, return oldData unchanged so the InfiniteData reference is
-          // stable. This eliminates a class of receiver-side scroll jank where
-          // a new reference forced Virtuoso to re-window the entire list. See
-          // bugs/2026-05-24-virtuoso-measurement-scroll-reset.md (Fix R2).
-          const existingIndex = lastPage.messages.findIndex(
-            (m: Message) => m.messageId === decryptedContent.messageId
-          );
-          if (
-            existingIndex !== -1 &&
-            lastPage.messages[existingIndex] === decryptedContent
-          ) {
-            return oldData;
-          }
-
-          // Build new messages array with deduplication
-          const newMessages = [
-            ...lastPage.messages.filter(
-              (m: Message) => m.messageId !== decryptedContent.messageId
-            ),
-            decryptedContent,
-          ];
-
-          // Sort: pending messages ('sending') stay at end, others by createdDate
-          newMessages.sort((a: Message, b: Message) => {
-            // Pending messages always go to END
-            if (
-              a.sendStatus === 'sending' &&
-              b.sendStatus !== 'sending'
-            ) {
-              return 1;
-            }
-            if (
-              b.sendStatus === 'sending' &&
-              a.sendStatus !== 'sending'
-            ) {
-              return -1;
-            }
-            // Otherwise maintain chronological order by createdDate
-            return a.createdDate - b.createdDate;
-          });
-
-          // Compare the new last-page messages against the old one. If they
-          // are reference-equal in order AND content, the cache state hasn't
-          // meaningfully changed — return oldData. Otherwise rebuild only the
-          // last page; other pages keep their refs (pages.map returns the
-          // same `page` for non-last indices, but we now reuse oldData.pages
-          // directly for those slots).
-          const sameLength = newMessages.length === lastPage.messages.length;
-          let identical = sameLength;
-          if (sameLength) {
-            for (let i = 0; i < newMessages.length; i++) {
-              if (newMessages[i] !== lastPage.messages[i]) {
-                identical = false;
-                break;
-              }
-            }
-          }
-          if (identical) return oldData;
-
-          const newLastPage = {
-            ...lastPage,
-            messages: newMessages,
-            nextCursor: lastPage.nextCursor,
-            prevCursor: lastPage.prevCursor,
-          };
-
-          // Reuse the same outer `pages` slot for non-last pages — these
-          // weren't mutated, so their references are preserved. We can't
-          // skip building a new array (the last page is new), but every
-          // other slot is the same reference.
-          const newPages = oldData.pages.slice();
-          newPages[lastIndex] = newLastPage;
-
           return {
             pageParams: oldData.pageParams,
-            pages: newPages,
+            pages: oldData.pages.map((page, index) => {
+              // Only add the new message to the most recent page
+              if (index === oldData.pages.length - 1) {
+                // Build new messages array with deduplication
+                const newMessages = [
+                  ...page.messages.filter(
+                    (m: Message) => m.messageId !== decryptedContent.messageId
+                  ),
+                  decryptedContent,
+                ];
+
+                // Sort: pending messages ('sending') stay at end, others by createdDate
+                newMessages.sort((a: Message, b: Message) => {
+                  // Pending messages always go to END
+                  if (
+                    a.sendStatus === 'sending' &&
+                    b.sendStatus !== 'sending'
+                  ) {
+                    return 1;
+                  }
+                  if (
+                    b.sendStatus === 'sending' &&
+                    a.sendStatus !== 'sending'
+                  ) {
+                    return -1;
+                  }
+                  // Otherwise maintain chronological order by createdDate
+                  return a.createdDate - b.createdDate;
+                });
+
+                return {
+                  ...page,
+                  messages: newMessages,
+                  // Preserve any cursors or other pagination metadata
+                  nextCursor: page.nextCursor,
+                  prevCursor: page.prevCursor,
+                };
+              }
+              // Return other pages unchanged
+              return page;
+            }),
           };
         }
       );
