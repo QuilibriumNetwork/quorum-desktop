@@ -557,113 +557,83 @@ R4 decision pending: agent flagged R4's refs as part of the observed mechanism. 
 
 **Next:** write the β plan in plain-language reasoning (for a junior-dev reader who needs to evaluate philosophy, not code), then user reviews before any code is written.
 
-### Session 13 (2026-05-24): β plan — the thin scroll-anchoring wrapper
+### Session 13 (2026-05-24): β plan — application-owned scroll anchoring
 
-**R4 decision (settled):** KEEP. User chose keep with corrected disposition. R4 stays in the tree as a render-efficiency improvement. Its role in the observed scroll-jank mechanism is now documented (Session 11) but β will supersede that mechanism entirely, so R4 becomes safely irrelevant to the bug — just a small render-efficiency win we got along the way.
+**R4 disposition:** KEEP (user-confirmed). Stays as a render-efficiency improvement; bug-fix role superseded by β.
 
 ---
 
-## The β plan
+## β: application-owned scroll anchoring
 
 ### Goal
 
-Kill both observable bugs (sender-side ~24-85px jumps; receiver-side ~130px jump) completely. Not partially. Not "we accept the residual." Completely gone.
+Eliminate both observable bug classes (B1 sender-side ~24-85px, B2 receiver-side ~130px). Not reduce — eliminate. Process discipline: do not ship with residual jank.
 
-### Why patching individual triggers can't get there
+### Rationale
 
-Every one of the four fixes we tried (R2, R3, R4, C) targeted one specific thing that triggers Virtuoso's measurement callback. R3 (cap overscan) actually helped — but only by reducing how many items mount when the trigger fires, not by preventing the trigger.
+Sessions 2-12 established that Virtuoso's measurement callback writes incorrect `scrollTop` values in response to measurement events, and that the library has many independent measurement triggers (row resize, item mount above viewport, function-reference identity change, array-reference change, image load, late member-data resolution — Sessions 5, 10, 11). Each per-trigger fix attempt (R2, R3, R4, C) closed at most one trigger while leaving others open. R3 reduced amplitude via overscan capping but did not address the underlying class of bug.
 
-The pattern is clear after 11 sessions: Virtuoso has many independent triggers for measurement (row resize, item mount above the viewport, function-reference identity change, array-reference change, image load, late member-data resolution, etc.). Each fix closes one trigger; others remain open. Closing all of them isn't possible — we don't own Virtuoso, and the bug is in Virtuoso's response to measurement events, not in the events themselves.
+**The architectural reframing is to target the consequence rather than the cause:** let Virtuoso's measurement callback write whatever `scrollTop` it computes, then overwrite that value at the application layer when a cache write occurs while the user is anchored at bottom. The trigger inventory becomes irrelevant — every measurement event resolves to either "user was anchored, snap to bottom" or "user was not anchored, leave the scroll position alone."
 
-**So we stop trying to prevent the wrong write. We let Virtuoso write the wrong scrollTop, then we overwrite it with the correct value.**
+This is the pattern used by Discord and Element (custom virtualizers with application-owned anchoring) and corresponds to Virtuoso's commercial `@virtuoso.dev/message-list` product, which exists because the open-source `followOutput` API has insufficient guarantees for chat. We adopt the same pattern at the application layer.
 
-That sounds reckless on first read but it's actually the cleanest possible architecture, because:
+### Mechanism
 
-1. We don't have to understand or prevent every measurement trigger.
-2. We don't have to reason about Virtuoso's internal measurement math at all.
-3. Any future change that introduces a new dynamic-height behavior automatically works correctly — no new bug, no new patch needed.
+A `useScrollAnchor` hook in `src/components/message/`:
 
-### The mental model
+1. **Scroll-position tracker.** Passive scroll listener on the Virtuoso scroller element. Maintains `isAtBottomRef: boolean` based on `(scrollHeight - clientHeight - scrollTop) < THRESHOLD`. Threshold = 50px (consistent with `useScrollTracking`).
+2. **Cache-write subscription.** Subscribes to the React Query cache via `queryClient.getQueryCache().subscribe()` filtered to `buildMessagesKeyPrefix({ spaceId, channelId })`. On `updated` events where the data added items at the end of the last page, evaluates `isAtBottomRef`. If true, schedules a snap via `requestAnimationFrame` (next paint) and a second snap on the following frame (defense against Virtuoso's measurement callback overwriting in the intervening frame).
+3. **Imperative snap.** Returns a `snapToBottom()` function for callers that need to force-pin (jump-to-present button, post-send handler).
+4. **Initialization guard.** Snapping is gated on a `hasInteractedRef` flag set true on the first scroll event, preventing spurious snaps during initial mount when `initialTopMostItemIndex` is still doing its work.
+5. **Suppression interop.** Respects the existing `hasJumpedToOldMessage` state — when true, all auto-snap is disabled, matching current `followOutput` semantics.
 
-Think of the message list as a TV channel. The user is either "watching live" (anchored at the bottom, wants to see new messages) or "watching a rerun" (scrolled up, looking at history, doesn't want the view to jump). That's a one-bit state. Call it `wasAnchoredAtBottom`.
+### Scope of change
 
-Whenever a message is added to the cache, exactly one of two things should happen:
+**Modified:**
+- `MessageList.tsx` — `followOutput` reduced to `followOutput={false}` (always). The existing rAF + setTimeout snap loop in the `followOutput` body (lines 619-646) is removed. `useScrollAnchor` is mounted; exposed snap function wired into `useImperativeHandle` for parent callers.
+- `DirectMessage.tsx` — the `setTimeout(snap, 100/300/600)` block in `handleSubmitMessage` (lines 360-371) is removed. Post-send anchoring is handled by `useScrollAnchor` reacting to the optimistic `addMessage` cache write.
+- `Channel.tsx` — verify and remove any analogous ad-hoc snap calls. Pre-implementation grep needed.
 
-- If `wasAnchoredAtBottom === true`: the view should be at the bottom right now. So we directly set `scrollTop = scrollHeight - clientHeight`.
-- If `wasAnchoredAtBottom === false`: the user is mid-rerun. Don't move their view. Let Virtuoso do whatever (the wrong write may still happen, but it'll be in the historical region where the user doesn't care as much; and we can decide later if we also need to absorb that case).
+**Added:**
+- `src/components/message/useScrollAnchor.ts` (~80 lines).
 
-That's the entire architecture. Two lines of conceptual logic. The rest is plumbing.
+**Unchanged:**
+- `react-virtuoso` dependency, version, and core configuration (`alignToBottom`, `firstItemIndex`, `initialTopMostItemIndex`, `computeItemKey`, `itemContent`, `rangeChanged`, overscan, `atTopStateChange`, `atBottomStateChange`).
+- All other Virtuoso usages (`Channel.tsx` members, `EmojiPicker.tsx`, `SearchResults.tsx`, `PinnedMessagesPanel.tsx`, `BookmarksPanel.tsx`).
+- Hash navigation, `scrollToMessageId`, jump-to-present button, new-messages-separator dismissal, pagination top/bottom triggers, thread panel reuse of `MessageList` with `alignToTop={true}`.
 
-### What we add
+### Risk register
 
-A small custom hook (call it `useScrollAnchor`) that:
+| ID | Risk | Mitigation |
+|---|---|---|
+| R1 | Visible single-frame flash if Virtuoso writes wrong `scrollTop` before our `rAF` snap lands. | Telemetry verification post-implementation. Fallback: snap via `useLayoutEffect` synchronous with the React render that processes the cache update, ahead of paint. |
+| R2 | False positive snap (user is scrolled up but `isAtBottomRef` reports true). | 50px threshold matches existing `useScrollTracking` convention. Verified in production via that hook. |
+| R3 | Pagination cache writes (load-previous-page) misclassified as "new messages at bottom." | Hook filters on whether the cache update appended to the last page (vs prepended to the first page). The two paths take different code routes in `MessageService` already. |
+| R4 | Conflict with imperative scrolls (hash nav, scrollToMessageId, jump-to-present). | Hook respects `hasJumpedToOldMessage` flag (same suppression mechanism currently used by `followOutput`). |
+| R5 | Snap fires during initial mount before Virtuoso has measured. | `hasInteractedRef` gate — snapping is only enabled after the first user scroll event confirms the scroller is mounted and measured. |
+| R6 | Cache-subscription churn impacts performance at 100K-1M message scale. | Subscription is filtered by query key prefix and runs synchronously per update; cost is O(1) per cache write. No iteration over message list. |
 
-1. **Watches the scroll position.** A scroll listener on Virtuoso's scroller element. After each scroll, update a boolean ref: `isAtBottomRef.current = (scrollHeight - clientHeight - scrollTop) < 50` (50px tolerance, same threshold used elsewhere in our code).
-2. **Listens for cache writes.** A subscription to the React Query cache for the message-list query keys. When a new message is added, if `isAtBottomRef.current === true`, schedule a snap. We schedule on the next animation frame (so React has finished painting), then once more on the following frame (in case Virtuoso wrote scrollTop in between).
-3. **Exposes a manual snap** for callers that need to force-pin to bottom (jump-to-present button, send-message handler).
+### Acceptance criteria
 
-That's the hook. ~80 lines of code, exhaustive, with comments. Lives next to MessageList as a sibling file.
+Pre-existing instrumentation captures all relevant signals. Pass criteria:
 
-### What we remove
+- **Sender-side telemetry:** zero suspect events (`🔴 scroll-untracked` with negative Δ) across 3 consecutive captures. `item-resize` events may still occur but must not be followed by negative scrollTop deltas.
+- **Receiver-side telemetry:** same — zero suspect events across 3 consecutive captures.
+- **Functional regression checks (manual):**
+  - Hash navigation: clicking a search result scrolls to and highlights the message.
+  - `scrollToMessageId`: auto-jump-to-first-unread positions the new-messages-separator in view.
+  - Jump-to-present: button appears when scrolled up; clicking snaps to the latest message.
+  - Pagination top: scrolling to top triggers `fetchPreviousPage` and preserves position.
+  - Thread panel: opens, scrolls, and behaves identically to current.
+  - New-messages separator: appears and dismisses on visibility transition.
 
-- The `followOutput` callback's logic in `MessageList.tsx:619-646` reduces to `followOutput={false}`. The rAF snap loop inside it disappears (the new hook handles snapping correctly).
-- The `setTimeout(snap, 100/300/600)` block in `DirectMessage.tsx:360-371` disappears. Same reason — the new hook handles it.
-- Any other ad-hoc scroll-to-bottom call we have. (Need to grep for these — likely a couple more in Channel.tsx or similar.)
+### Failure mode
 
-### What we don't touch
+If acceptance criteria are not met after R1 mitigation (synchronous `useLayoutEffect` snap), β does not ship. Bug remains open. Next architectural step (custom virtualizer following Discord/Element pattern, or commercial `@virtuoso.dev/message-list` evaluation) is reopened in a new session.
 
-- Virtuoso itself. Same library, same windowing, same dynamic measurement, same item recycling. All the things Virtuoso is good at, we keep.
-- `alignToBottom={!alignToTop}` stays. Virtuoso's bottom-anchored layout is what makes the list grow downward visually; replacing it would require a CSS rewrite we don't need.
-- All five other Virtuoso usages in the codebase (Channel members, EmojiPicker, SearchResults, PinnedMessagesPanel, BookmarksPanel) are untouched.
-- All hash navigation, scrollToMessageId, jump-to-present button, new-messages-separator logic, pagination triggers — all unchanged.
+### Diff estimate
 
-### Why this is likely to actually work (not another patch)
-
-Three reasons:
-
-1. **It targets the consequence, not the cause.** Every previous fix tried to prevent the wrong-write. This one accepts it and corrects after. That class of fix has a higher success rate because it doesn't depend on understanding the cause completely.
-
-2. **It's how chat apps actually solve this.** Discord's custom virtualizer, Element's custom virtualizer, Telegram Web — they all own the anchor logic at the application layer rather than delegating it to a library. Virtuoso's `followOutput` is a convenience that breaks at edge cases; owning it ourselves is closer to industry pattern.
-
-3. **The signal is reliable.** "Cache write while user was anchored at bottom" is a well-defined event we have full visibility into. Both halves (cache writes via `MessageService`, scroll position via DOM) are in our control. There's no race condition we can't reason about.
-
-### Risks I can identify upfront
-
-- **Risk 1: Virtuoso's wrong write happens BEFORE our snap can run, and the user briefly sees the jump.** This is the most likely failure mode. If the wrong write lands at frame N and our snap lands at frame N+1, there's one frame (~16ms) where the user could see the wrong position. In practice 16ms is below the threshold of human perception for this kind of motion, but we'll verify with telemetry. If it IS visible, the fix is to schedule the snap synchronously after the cache write (before React paints) via a microtask or a `useLayoutEffect`.
-
-- **Risk 2: We snap to bottom when the user actually wants to stay scrolled up.** The `wasAnchoredAtBottom` flag must accurately reflect user intent. The 50px tolerance is the right number — small enough not to catch "scrolled up to read", large enough to handle "almost at bottom plus a row resize underneath." We use the same threshold elsewhere in the codebase already.
-
-- **Risk 3: Pagination interacts oddly.** When the user scrolls up far enough to trigger `fetchPreviousPage`, the list grows at the top. Virtuoso handles this via `firstItemIndex` accounting. The new hook only snaps to bottom on cache writes; pagination cache writes shouldn't change the `wasAnchoredAtBottom` flag (the user isn't at bottom while paginating). Need to verify with the existing telemetry.
-
-- **Risk 4: The hash-navigation / jump-to-present paths set scroll position via Virtuoso's imperative API; the new hook might fight them.** Solution: the new hook respects the existing `hasJumpedToOldMessage` flag (already used to suppress `followOutput`). When `hasJumpedToOldMessage === true`, the new hook skips snapping.
-
-- **Risk 5: Edge case in initial-load.** When the channel first opens, the list mounts with `initialTopMostItemIndex={messageList.length - 1}` (Virtuoso's way of starting at the bottom). The new hook should NOT snap during initial mount — only after the first scroll event arrives (which proves the scroll container is ready and measured). Solution: a flag that only enables snapping after the first scroll event.
-
-### Estimated diff size
-
-- New file `useScrollAnchor.ts`: ~80 lines, fully commented
-- Changes in `MessageList.tsx`: ~10 lines net (remove the rAF loop inside followOutput, mount the new hook)
-- Changes in `DirectMessage.tsx`: ~10 lines net (remove the setTimeout snap block)
-- Possibly a small change in `Channel.tsx` if it has a similar snap loop (need to grep)
-
-Total: about 100-150 lines of net change, including the new hook. Smaller than R2 alone was.
-
-### Testing strategy
-
-Same as previous sessions — the existing instrumentation already captures everything we need (cache writes, scroll-untracked events, item resizes). Run the same channel-send + receiver-side scenarios after β is in. Pass criteria:
-
-- Sender-side: zero 🔴 suspect events. No `scroll-untracked` with negative `Δ`. Optionally an `item-resize` event may still occur (the row shrink mechanism doesn't go away), but it should NOT produce a backward scroll.
-- Receiver-side: same — zero 🔴 suspect events on inbound.
-- Hash navigation: still works (manual test — click a search result, see it scroll and highlight).
-- Jump-to-present: still works.
-- Pagination top: still triggers when scrolled to top.
-- Thread panel (different alignToTop config): still works.
-
-### What "done" looks like
-
-Both the sender-side and receiver-side scroll jumps are eliminated, verified with the instrumentation. After that we remove the instrumentation and ship.
-
-If β fails (Risk 1 or some other surprise we hit during testing), we don't ship. We diagnose the failure and either fix it or, if it turns out to be unsolvable for some reason we can't anticipate, we have a serious conversation about what the next architectural move is. We do NOT ship β with known residual jank.
+~100-150 lines net change: ~80 line addition (`useScrollAnchor.ts`), ~30 line removal (existing snap loops), ~10 line modification across MessageList/DirectMessage/Channel call sites.
 
 ---
 
