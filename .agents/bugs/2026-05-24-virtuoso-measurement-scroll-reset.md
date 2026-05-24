@@ -28,9 +28,9 @@ Two distinct bugs, both with triggers entirely on **our** side. Both route throu
 | **Proposed fix** | **Fix C** — freeze `isCompact` for messages with `sendStatus==='sending'` | **Fix R2 + R3** — return same `InfiniteData` ref when nothing changed; cap `increaseViewportBy` |
 | **Estimated patch** | ~20 lines | ~17 lines total |
 
-**Status (2026-05-24, post-Session 10 — DECISION: STAY ON VIRTUOSO + KEEP DIGGING):**
+**Status (2026-05-24, post-Session 12 — PLANNING β, no new code pending plan approval):**
 
-R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. R2 and Fix C both attempted and reverted (didn't help — Fix C revealed the predecessor-flip theory was wrong; the 24px shrink happens even when no cache mutation fires in the relevant window). Three audits done (Sessions 9). Decided **NOT to migrate**: TanStack Virtual has the same bug class open since 2021; no MIT-licensed library matches Virtuoso's chat primitives; Discord/Element wrote custom virtualizers; plain-scroll not viable at 100K-1M messages. **Decided also NOT to accept the bug as a known limitation** — this is the most-used surface in the app and a constant visual degradation is unacceptable. Forward: investigate the REAL cause of the 24px shrink (the predecessor-flip theory failed; need a fresh trace), and explore the "hybrid" path (keep Virtuoso for windowing but replace `followOutput` with our own scroll anchoring) for the receiver-side residual.
+R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. R2 and Fix C both attempted and reverted (Fix C disproved the predecessor-flip theory). **Session 11 found the real cause of the 24px shrink**: `mapSenderToUser` identity changes when `members` data resolves async → `rowRenderer` rebuilds → Virtuoso re-renders the row → `isCompact` flip changes the row's CSS `margin-top` from 24px to 0px. **Session 12: user proposed the right architectural move** — build a thin wrapper around Virtuoso that owns scroll anchoring (`followOutput={false}` always, plus our own "scroll-to-bottom-on-cache-write-while-anchored" logic). Decision: NOT migrating off Virtuoso (alternatives have same bug class), NOT accepting the bug (most-used surface, constant degradation). Writing β plan in plain language for user review before any code. R4 disposition pending user input.
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
@@ -495,22 +495,67 @@ t=5433.3  🔴 scroll-untracked Δ=-85    ← receiver-style B2 bug also on send
 
 **Disposition: Fix C reverted** (was uncommitted, discarded via `git checkout --`). Following the process rule: revert immediately when a fix doesn't help, don't stack.
 
-### Session 11 (planned): Re-investigate the 24px shrink with a fresh trace
+### Session 11 (2026-05-24): Re-investigation — REAL cause of the 24px shrink found
 
-The previous Session 3 background agent traced "what shrinks the optimistic message" and concluded it was the compact-header flip. Telemetry now proves that theory wrong (no cache mutation fires in the relevant window). Need a NEW investigation with the corrected premise:
+Background agent launched with corrected premise (no cache mutation fires in the 190ms window between optimistic add and shrink). **Found a definitive, file:line-precise cause.**
 
-> The optimistic message renders at 74px at t=4879. At t=5070 (~190ms later) it shrinks to 50px. **No addMessage fires in between, no other cache mutation we logged.** What inside React/the Message component could cause this height change?
+**The 24px is NOT a content-height change — it's a CSS margin-top change on the wrapper.**
 
-Hypotheses to explore in the new trace:
-- **Member/user data resolving asynchronously.** If `members[senderId]` is initially missing (because the optimistic message lands in cache before the member lookup completes), the Message component may render a placeholder avatar/name, then re-render once member data arrives. Worth checking what `mapSenderToUser` does for missing senders.
-- **A `useEffect` inside Message that fires post-mount** — sets state that changes render output.
-- **An image/avatar `onLoad` handler** that adjusts something.
-- **Animation completion** — though `.sending` animation only does opacity, not height.
-- **Reaction list or other child component mounting in two passes** — initial render shows skeleton, second pass shows real content.
+Mechanism (all citations from agent's report):
 
-Will launch a background agent with the corrected premise + telemetry evidence and ask it to trace *specifically the optimistic phase* (between addMessage and 200ms after).
+1. `MessageList.tsx:286-300` — `mapSenderToUser` is a `useCallback` keyed on `[members]`. When the `members` state object updates (which happens after the optimistic message is added — member subscription firing, lookup resolving, etc.), `mapSenderToUser` gets a new function identity.
 
-**Also:** the sender-side B2 (85px confirm-cycle jump) is the SAME mechanism as receiver-side B2. The hybrid path (replace `followOutput`/anchoring with our own implementation while keeping Virtuoso for windowing) would address both if it works. Worth assessing complexity in parallel.
+2. `MessageList.tsx:405-441` — `mapSenderToUser` is in `rowRenderer`'s `useCallback` dep array (line ~417). New `mapSenderToUser` identity → new `rowRenderer` identity → Virtuoso receives a new `itemContent` reference and re-invokes `rowRenderer(100)` for the visible message.
+
+3. `MessageList.tsx:323-326` (the R4 refs we added) — `messageListRef` and `messageDisplayInfoRef` are updated synchronously on every render. By the time the re-invoked `rowRenderer(100)` reads `messageDisplayInfoRef.current[100]`, `messageDisplayInfo` has been recomputed in the parent render — and `isCompact` for index 100 may now be `true` (because `messageDisplayInfo`'s useMemo re-ran in the same render cycle that updated members).
+
+4. `MessageList.tsx:338-340` — `gapClass = displayInfo.isCompact ? 'message-row message-row-first' : 'message-row'`. When `isCompact` flips, the wrapper's class changes.
+
+5. `Message.scss:325`: `.message-row { margin-top: 24px }` — and `Message.scss:336`: `.message-row-first { margin-top: 0 }`. **The 24px delta is the margin difference.** Virtuoso measures items including margin, so the row goes from 74px (50 content + 24 margin) to 50px.
+
+**Two important implications:**
+
+A. **The shrink IS an `isCompact` flip after all** — but triggered by `members` data resolving asynchronously, not by the cache-write predecessor change we originally theorized. Fix C's *premise* was right (freeze isCompact for pending), but the trigger I targeted (cache mutation) was the wrong one. With the correct trigger understood, Fix C *could* be implemented properly. But we have a better option (see Session 12).
+
+B. **R4 (the ref-based stabilization, commit `dd966df7`) is implicated in the OBSERVED mechanism.** Agent: *"this is the R4 fix's exact vulnerability: `messageDisplayInfoRef.current` is written synchronously at MessageList.tsx:326 on every render, so by the time rowRenderer reads it, it may already reflect a different isCompact value than was used for the original render."* This doesn't mean R4 caused the bug (the same flip would happen pre-R4 via a different observation path) — but it DOES mean R4 is not "neutral" as previously labeled. Whether R4 should stay needs reassessment (see Session 12).
+
+C. **Important caveat about the agent's recommendation:** The agent suggested adding a `console.log` to confirm. We're skipping that step because we have a better-targeted approach already on the table (the hybrid wrapper, Session 12) that doesn't depend on closing this specific trigger. The diagnosis is solid enough to act on.
+
+**Also re-confirmed in Session 10 telemetry but worth re-stating here:** the sender-side B2 (85px confirm-cycle jump) is the SAME mechanism as receiver-side B2 — items mounting above the viewport when the cache mutates. So a single architectural fix on the anchoring side addresses both bugs in both directions.
+
+### Session 12 (2026-05-24): User proposed "thin Virtuoso wrapper" — commit inventory + plan-first
+
+**User's proposal (paraphrased):**
+
+> Build a thin wrapper that owns scroll anchoring. Keep Virtuoso for the hard parts it actually solves (dynamic-height measurement, windowing, item recycling). Strip the parts that fight us: `followOutput`, `alignToBottom`, scroll-anchoring-on-measurement. Concretely: `followOutput={false}` always, then implement "scroll-to-bottom-on-cache-write-while-user-is-anchored" ourselves. Maybe 200-400 lines of our code on top of Virtuoso's 10K lines of solved problems.
+
+**Assistant assessment:**
+
+This is the right architectural move. Reasoning:
+- Virtuoso's measurement-callback bug runs internally — we cannot patch it. Every "close one trigger" fix leaves other triggers open.
+- But the *visual consequence* of the bug is "scrollTop has the wrong value after a measurement." We CAN write the correct scrollTop ourselves, AFTER the wrong write, AS LONG AS we have a reliable signal for when to do it.
+- "Cache write while user was anchored at bottom" is a clean, reliable signal. We have full control over both halves (cache writes flow through `MessageService.addMessage`; user-anchored state is observable from a scroll listener).
+- The current rAF snap loops are a degenerate version of this — they fire on `followOutput`, which doesn't fire on receiver-side when `hasNextPage=true`. That's why receiver-side is broken. Restructuring around `addMessage` events instead of `followOutput` closes the gap.
+
+**Why this kills the entire bug class** (not just one trigger):
+- We don't try to prevent Virtuoso's wrong write. We let it happen, then overwrite it.
+- It doesn't matter WHICH measurement triggered Virtuoso's bad math (row shrink, item mount above viewport, image load, etc.) — we correct the consequence regardless of the cause.
+- Future code changes that introduce new dynamic heights won't reintroduce the bug.
+
+**Commit inventory + dispositions** (settled with user before any new code):
+
+| Commit | Description | Disposition |
+|---|---|---|
+| `58e4c1f0` | docs split + diagnosis | KEEP — the receipts |
+| `308795ad` | throwaway instrumentation | KEEP THROUGH TESTING, REMOVE before PR |
+| `09361de7` | Fix R3 (cap overscan 800→300) | KEEP — real improvement, survives β |
+| `528ba7fd` + `db456a68` | Fix R2 + revert | LEAVE — already reverted, git history fine |
+| `dd966df7` | Fix R4 (stable rowRenderer via refs) | **TBD — pending user decision in Session 12** |
+| `ebdf0913` `35a24473` `d22feb7d` | doc updates | KEEP — documentation |
+
+R4 decision pending: agent flagged R4's refs as part of the observed mechanism. With β in place, R4 becomes "render efficiency only, no longer relevant to the bug." Three options: keep (smaller diff narrative), revert (cleaner pre-β state), or rewrite (after β is in place). Awaiting user input.
+
+**Next:** write the β plan in plain-language reasoning (for a junior-dev reader who needs to evaluate philosophy, not code), then user reviews before any code is written.
 
 ---
 
@@ -524,14 +569,17 @@ Currently kept on branch `fix/virtuoso-scroll-jank`:
 - Commit `db456a68`: revert of `528ba7fd` (Fix R2, did not help). Already reverted.
 - Commit `ebdf0913`: doc update (Sessions 7+8).
 
-**Pending — investigate further, do NOT ship partial:**
+**Pending (in order):**
 
-1. Launch new investigation agent: trace what causes the 24px shrink in the 190ms-after-optimistic-add window when NO cache mutation fires. Previous theory (predecessor-flip → isCompact) was disproven in Session 10.
-2. Based on findings, implement a targeted fix and test.
-3. Investigate the "hybrid" path: replace `followOutput` with our own scroll-anchoring logic that reads `addMessage` events and manipulates scrollTop directly, bypassing Virtuoso's measurement-callback bug. Would address both B1 confirm-cycle (85px) and B2 receiver-side (130px). Estimated effort: 1 day.
-4. Once both bugs are gone (or as close as we can get), remove instrumentation and ship.
+1. **R4 disposition decision** — user picks: keep, revert, or rewrite. (Awaiting input as of Session 12.)
+2. **Write β plan in this doc** — plain language, focused on rationale not code. User reviews and approves.
+3. **Implement β** — the thin wrapper that owns scroll anchoring (`followOutput={false}` always, custom anchor logic in our code).
+4. **Test β** — sender-side AND receiver-side, with instrumentation still live, until both bug classes are gone.
+5. **Remove instrumentation** — `__scrollDebug.ts` + the 5 `TEMPORARY DEBUG` blocks across MessageList/DirectMessage/MessageService.
+6. **Remove the obsolete rAF/setTimeout snap-back loops** (in MessageList.tsx `followOutput` body and DirectMessage.tsx `handleSubmitMessage`) — β supersedes them.
+7. **Open PR.**
 
-**Do NOT accept residual jank as a known limitation.** Stated explicitly by user 2026-05-24: this is the most-used surface in the app and a constant visual degradation is unacceptable. We keep pushing until it's gone.
+**Process discipline (user-stated, 2026-05-24):** do NOT accept residual jank as a known limitation. This is the most-used surface in the app; a constant visual degradation is unacceptable. Keep pushing until it's gone. No stacking of patches; revert immediately when something doesn't help.
 
 ---
 
