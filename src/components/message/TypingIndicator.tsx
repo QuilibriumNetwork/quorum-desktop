@@ -60,19 +60,19 @@ export function TypingIndicator({ scope, resolveName }: TypingIndicatorProps) {
 
   return (
     <div
-      className="h-5 px-3 text-xs text-subtle overflow-hidden flex items-center"
+      className="h-5 pl-5 pr-3 text-xs text-subtle overflow-hidden flex items-center"
       role="status"
       aria-live="polite"
       aria-atomic="true"
     >
       {content && (
         <span>
-          {content}
           <span className="typing-indicator-dots" aria-hidden="true">
             <span></span>
             <span></span>
             <span></span>
           </span>
+          {content}
         </span>
       )}
     </div>

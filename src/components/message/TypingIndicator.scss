@@ -1,13 +1,15 @@
+@use '@/styles/variables' as *;
+
 .typing-indicator-dots {
   display: inline-block;
-  margin-left: 0.25rem;
+  margin-right: $s-1;
 
   span {
     display: inline-block;
-    width: 0.25rem;
-    height: 0.25rem;
-    margin: 0 0.0625rem;
-    border-radius: 50%;
+    width: $s-1-5;
+    height: $s-1-5;
+    margin: 0 0.09rem;
+    border-radius: $rounded-full;
     background-color: currentColor;
     opacity: 0.4;
     animation: typing-indicator-blink 1.4s infinite both;
