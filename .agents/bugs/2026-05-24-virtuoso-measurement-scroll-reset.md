@@ -28,9 +28,9 @@ Two distinct bugs, both with triggers entirely on **our** side. Both route throu
 | **Proposed fix** | **Fix C** — freeze `isCompact` for messages with `sendStatus==='sending'` | **Fix R2 + R3** — return same `InfiniteData` ref when nothing changed; cap `increaseViewportBy` |
 | **Estimated patch** | ~20 lines | ~17 lines total |
 
-**Status (2026-05-24, post-Session 12 — PLANNING β, no new code pending plan approval):**
+**Status (2026-05-24, post-Session 13 — β PLAN WRITTEN, awaiting user approval):**
 
-R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. R2 and Fix C both attempted and reverted (Fix C disproved the predecessor-flip theory). **Session 11 found the real cause of the 24px shrink**: `mapSenderToUser` identity changes when `members` data resolves async → `rowRenderer` rebuilds → Virtuoso re-renders the row → `isCompact` flip changes the row's CSS `margin-top` from 24px to 0px. **Session 12: user proposed the right architectural move** — build a thin wrapper around Virtuoso that owns scroll anchoring (`followOutput={false}` always, plus our own "scroll-to-bottom-on-cache-write-while-anchored" logic). Decision: NOT migrating off Virtuoso (alternatives have same bug class), NOT accepting the bug (most-used surface, constant degradation). Writing β plan in plain language for user review before any code. R4 disposition pending user input.
+R3 + R4 in place, reduce receiver-side jump from 420px → ~130px (kept; see Session 13 for R4's confirmed disposition). R2 and Fix C both attempted and reverted. **Session 11 found the real cause of the 24px shrink**: `mapSenderToUser` identity change when `members` data resolves async → `isCompact` flip → CSS `margin-top` drops 24→0. **Session 12: user proposed the architectural move** — thin wrapper around Virtuoso that owns scroll anchoring. **Session 13: β plan written** in plain-language reasoning (NOT code) for user to evaluate. Plan kills bug class by targeting the consequence (Virtuoso's wrong scrollTop write) rather than the cause (many independent triggers). Decision: NOT migrating off Virtuoso, NOT accepting residual jank. Awaiting user approval of plan before any implementation.
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
@@ -557,17 +557,125 @@ R4 decision pending: agent flagged R4's refs as part of the observed mechanism. 
 
 **Next:** write the β plan in plain-language reasoning (for a junior-dev reader who needs to evaluate philosophy, not code), then user reviews before any code is written.
 
+### Session 13 (2026-05-24): β plan — the thin scroll-anchoring wrapper
+
+**R4 decision (settled):** KEEP. User chose keep with corrected disposition. R4 stays in the tree as a render-efficiency improvement. Its role in the observed scroll-jank mechanism is now documented (Session 11) but β will supersede that mechanism entirely, so R4 becomes safely irrelevant to the bug — just a small render-efficiency win we got along the way.
+
 ---
 
-## Status: STAY ON VIRTUOSO + INVESTIGATE FURTHER
+## The β plan
+
+### Goal
+
+Kill both observable bugs (sender-side ~24-85px jumps; receiver-side ~130px jump) completely. Not partially. Not "we accept the residual." Completely gone.
+
+### Why patching individual triggers can't get there
+
+Every one of the four fixes we tried (R2, R3, R4, C) targeted one specific thing that triggers Virtuoso's measurement callback. R3 (cap overscan) actually helped — but only by reducing how many items mount when the trigger fires, not by preventing the trigger.
+
+The pattern is clear after 11 sessions: Virtuoso has many independent triggers for measurement (row resize, item mount above the viewport, function-reference identity change, array-reference change, image load, late member-data resolution, etc.). Each fix closes one trigger; others remain open. Closing all of them isn't possible — we don't own Virtuoso, and the bug is in Virtuoso's response to measurement events, not in the events themselves.
+
+**So we stop trying to prevent the wrong write. We let Virtuoso write the wrong scrollTop, then we overwrite it with the correct value.**
+
+That sounds reckless on first read but it's actually the cleanest possible architecture, because:
+
+1. We don't have to understand or prevent every measurement trigger.
+2. We don't have to reason about Virtuoso's internal measurement math at all.
+3. Any future change that introduces a new dynamic-height behavior automatically works correctly — no new bug, no new patch needed.
+
+### The mental model
+
+Think of the message list as a TV channel. The user is either "watching live" (anchored at the bottom, wants to see new messages) or "watching a rerun" (scrolled up, looking at history, doesn't want the view to jump). That's a one-bit state. Call it `wasAnchoredAtBottom`.
+
+Whenever a message is added to the cache, exactly one of two things should happen:
+
+- If `wasAnchoredAtBottom === true`: the view should be at the bottom right now. So we directly set `scrollTop = scrollHeight - clientHeight`.
+- If `wasAnchoredAtBottom === false`: the user is mid-rerun. Don't move their view. Let Virtuoso do whatever (the wrong write may still happen, but it'll be in the historical region where the user doesn't care as much; and we can decide later if we also need to absorb that case).
+
+That's the entire architecture. Two lines of conceptual logic. The rest is plumbing.
+
+### What we add
+
+A small custom hook (call it `useScrollAnchor`) that:
+
+1. **Watches the scroll position.** A scroll listener on Virtuoso's scroller element. After each scroll, update a boolean ref: `isAtBottomRef.current = (scrollHeight - clientHeight - scrollTop) < 50` (50px tolerance, same threshold used elsewhere in our code).
+2. **Listens for cache writes.** A subscription to the React Query cache for the message-list query keys. When a new message is added, if `isAtBottomRef.current === true`, schedule a snap. We schedule on the next animation frame (so React has finished painting), then once more on the following frame (in case Virtuoso wrote scrollTop in between).
+3. **Exposes a manual snap** for callers that need to force-pin to bottom (jump-to-present button, send-message handler).
+
+That's the hook. ~80 lines of code, exhaustive, with comments. Lives next to MessageList as a sibling file.
+
+### What we remove
+
+- The `followOutput` callback's logic in `MessageList.tsx:619-646` reduces to `followOutput={false}`. The rAF snap loop inside it disappears (the new hook handles snapping correctly).
+- The `setTimeout(snap, 100/300/600)` block in `DirectMessage.tsx:360-371` disappears. Same reason — the new hook handles it.
+- Any other ad-hoc scroll-to-bottom call we have. (Need to grep for these — likely a couple more in Channel.tsx or similar.)
+
+### What we don't touch
+
+- Virtuoso itself. Same library, same windowing, same dynamic measurement, same item recycling. All the things Virtuoso is good at, we keep.
+- `alignToBottom={!alignToTop}` stays. Virtuoso's bottom-anchored layout is what makes the list grow downward visually; replacing it would require a CSS rewrite we don't need.
+- All five other Virtuoso usages in the codebase (Channel members, EmojiPicker, SearchResults, PinnedMessagesPanel, BookmarksPanel) are untouched.
+- All hash navigation, scrollToMessageId, jump-to-present button, new-messages-separator logic, pagination triggers — all unchanged.
+
+### Why this is likely to actually work (not another patch)
+
+Three reasons:
+
+1. **It targets the consequence, not the cause.** Every previous fix tried to prevent the wrong-write. This one accepts it and corrects after. That class of fix has a higher success rate because it doesn't depend on understanding the cause completely.
+
+2. **It's how chat apps actually solve this.** Discord's custom virtualizer, Element's custom virtualizer, Telegram Web — they all own the anchor logic at the application layer rather than delegating it to a library. Virtuoso's `followOutput` is a convenience that breaks at edge cases; owning it ourselves is closer to industry pattern.
+
+3. **The signal is reliable.** "Cache write while user was anchored at bottom" is a well-defined event we have full visibility into. Both halves (cache writes via `MessageService`, scroll position via DOM) are in our control. There's no race condition we can't reason about.
+
+### Risks I can identify upfront
+
+- **Risk 1: Virtuoso's wrong write happens BEFORE our snap can run, and the user briefly sees the jump.** This is the most likely failure mode. If the wrong write lands at frame N and our snap lands at frame N+1, there's one frame (~16ms) where the user could see the wrong position. In practice 16ms is below the threshold of human perception for this kind of motion, but we'll verify with telemetry. If it IS visible, the fix is to schedule the snap synchronously after the cache write (before React paints) via a microtask or a `useLayoutEffect`.
+
+- **Risk 2: We snap to bottom when the user actually wants to stay scrolled up.** The `wasAnchoredAtBottom` flag must accurately reflect user intent. The 50px tolerance is the right number — small enough not to catch "scrolled up to read", large enough to handle "almost at bottom plus a row resize underneath." We use the same threshold elsewhere in the codebase already.
+
+- **Risk 3: Pagination interacts oddly.** When the user scrolls up far enough to trigger `fetchPreviousPage`, the list grows at the top. Virtuoso handles this via `firstItemIndex` accounting. The new hook only snaps to bottom on cache writes; pagination cache writes shouldn't change the `wasAnchoredAtBottom` flag (the user isn't at bottom while paginating). Need to verify with the existing telemetry.
+
+- **Risk 4: The hash-navigation / jump-to-present paths set scroll position via Virtuoso's imperative API; the new hook might fight them.** Solution: the new hook respects the existing `hasJumpedToOldMessage` flag (already used to suppress `followOutput`). When `hasJumpedToOldMessage === true`, the new hook skips snapping.
+
+- **Risk 5: Edge case in initial-load.** When the channel first opens, the list mounts with `initialTopMostItemIndex={messageList.length - 1}` (Virtuoso's way of starting at the bottom). The new hook should NOT snap during initial mount — only after the first scroll event arrives (which proves the scroll container is ready and measured). Solution: a flag that only enables snapping after the first scroll event.
+
+### Estimated diff size
+
+- New file `useScrollAnchor.ts`: ~80 lines, fully commented
+- Changes in `MessageList.tsx`: ~10 lines net (remove the rAF loop inside followOutput, mount the new hook)
+- Changes in `DirectMessage.tsx`: ~10 lines net (remove the setTimeout snap block)
+- Possibly a small change in `Channel.tsx` if it has a similar snap loop (need to grep)
+
+Total: about 100-150 lines of net change, including the new hook. Smaller than R2 alone was.
+
+### Testing strategy
+
+Same as previous sessions — the existing instrumentation already captures everything we need (cache writes, scroll-untracked events, item resizes). Run the same channel-send + receiver-side scenarios after β is in. Pass criteria:
+
+- Sender-side: zero 🔴 suspect events. No `scroll-untracked` with negative `Δ`. Optionally an `item-resize` event may still occur (the row shrink mechanism doesn't go away), but it should NOT produce a backward scroll.
+- Receiver-side: same — zero 🔴 suspect events on inbound.
+- Hash navigation: still works (manual test — click a search result, see it scroll and highlight).
+- Jump-to-present: still works.
+- Pagination top: still triggers when scrolled to top.
+- Thread panel (different alignToTop config): still works.
+
+### What "done" looks like
+
+Both the sender-side and receiver-side scroll jumps are eliminated, verified with the instrumentation. After that we remove the instrumentation and ship.
+
+If β fails (Risk 1 or some other surprise we hit during testing), we don't ship. We diagnose the failure and either fix it or, if it turns out to be unsolvable for some reason we can't anticipate, we have a serious conversation about what the next architectural move is. We do NOT ship β with known residual jank.
+
+---
+
+## Status: β PLAN READY — awaiting user approval before implementation
 
 Currently kept on branch `fix/virtuoso-scroll-jank`:
 - Commit `58e4c1f0`: docs split + diagnosis recorded.
 - Commit `308795ad`: throwaway instrumentation — **REMOVE before ship.**
 - Commit `09361de7`: Fix R3 (overscan cap) — **KEEP.** Real improvement (420→130px on receive).
-- Commit `dd966df7`: Fix R4 (stable rowRenderer) — **KEEP.** Render-efficiency improvement, neutral for the bug.
+- Commit `dd966df7`: Fix R4 (stable rowRenderer) — **KEEP** (user-confirmed Session 13). Was originally implicated in the observed 24px shrink mechanism; β supersedes its bug-fix role; remains as a render-efficiency improvement.
 - Commit `db456a68`: revert of `528ba7fd` (Fix R2, did not help). Already reverted.
-- Commit `ebdf0913`: doc update (Sessions 7+8).
+- Commits `ebdf0913` `35a24473` `d22feb7d` `875a3f9a`: doc updates (Sessions 7-12).
 
 **Pending (in order):**
 
