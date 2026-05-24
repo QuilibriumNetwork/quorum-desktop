@@ -31,6 +31,8 @@ import { Button as ButtonBase } from '../primitives';
 const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
+import { useQueryClient } from '@tanstack/react-query';
+import { useScrollAnchor } from './useScrollAnchor';
 // TEMPORARY DEBUG — remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
 import { scrollDebug } from './__scrollDebug';
 
@@ -104,6 +106,14 @@ interface MessageListProps {
   reportRead?: (messageId: string, timestamp: number) => void;
   /** Snapshot of lastReadTimestamp at conversation load — for read receipt observer filtering */
   readReceiptBaseline?: number;
+  /**
+   * Space + channel context for the application-owned scroll anchor.
+   * For DMs the convention is spaceId === channelId === recipientAddress.
+   * When either is undefined the anchor is inert.
+   * See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md.
+   */
+  anchorSpaceId?: string;
+  anchorChannelId?: string;
 }
 
 function useWindowSize() {
@@ -173,9 +183,12 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       showReadReceipts,
       reportRead,
       readReceiptBaseline,
+      anchorSpaceId,
+      anchorChannelId,
     } = props;
 
     const [_width, height] = useWindowSize();
+    const queryClient = useQueryClient();
     const [hoverTarget, setHoverTarget] = useState<string>();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
     const [emojiPickerPosition, setEmojiPickerPosition] = useState<{ x: number; y: number } | null>(null);
@@ -223,6 +236,18 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Track if we've jumped to an old message via hash navigation
     // This disables auto-scroll during manual pagination
     const [hasJumpedToOldMessage, setHasJumpedToOldMessage] = useState(false);
+    // Ref mirror so useScrollAnchor can read the latest value synchronously
+    // (state value would be stale in the cache-subscription callback).
+    const hasJumpedToOldMessageRef = useRef(false);
+    hasJumpedToOldMessageRef.current = hasJumpedToOldMessage;
+
+    // Application-owned scroll anchoring — replaces Virtuoso's followOutput.
+    // See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md and
+    // tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md.
+    const { snapToBottom, onAtBottomStateChange: anchorOnAtBottomStateChange } = useScrollAnchor({
+      hasJumpedToOldMessageRef,
+      deletionInProgressRef,
+    });
 
     // Message highlighting context - replaces direct DOM manipulation
     const { highlightMessage, scrollToMessage } = useMessageHighlight();
@@ -237,7 +262,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Track if separator has been visible (for dismissal logic via Virtuoso rangeChanged)
     const [separatorWasVisible, setSeparatorWasVisible] = useState(false);
 
-    // Combined bottom state handler: manages both "Jump to Present" button and forward pagination
+    // Combined bottom state handler: manages "Jump to Present" button,
+    // forward pagination, AND the useScrollAnchor readiness signal.
     const handleBottomStateChange = useCallback(
       (atBottom: boolean) => {
         // TEMPORARY DEBUG
@@ -246,36 +272,32 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         // Update jump button visibility
         handleAtBottomStateChange(atBottom);
 
+        // Signal scroll-anchor readiness on first atBottom=true after mount.
+        // (Virtuoso's initial scroll is imperative; no DOM scroll event fires.)
+        anchorOnAtBottomStateChange(atBottom);
+
         // Fetch next page when scrolling to bottom (for loading newer messages after jumping to old message)
         if (atBottom && init) {
           fetchNextPage();
         }
       },
-      [handleAtBottomStateChange, fetchNextPage, init]
+      [handleAtBottomStateChange, anchorOnAtBottomStateChange, fetchNextPage, init]
     );
 
-    // Jump to present handler
+    // Jump to present handler — uses the application-owned snap rather than
+    // Virtuoso's scrollToIndex to avoid re-triggering the measurement callback
+    // bug we're working around. snapToBottom writes scrollTop directly.
     const handleJumpToPresent = useCallback(() => {
-      if (virtuoso.current && messageList.length > 0) {
-        virtuoso.current.scrollToIndex({
-          index: messageList.length - 1,
-          align: 'end',
-          behavior: 'auto',
-        });
+      if (messageList.length > 0) {
+        snapToBottom();
         // Re-enable auto-scroll when user explicitly jumps to present
         setHasJumpedToOldMessage(false);
       }
-    }, [messageList.length]);
+    }, [messageList.length, snapToBottom]);
 
     useImperativeHandle(ref, () => ({
       scrollToBottom: () => {
-        if (virtuoso.current && messageList.length > 0) {
-          virtuoso.current.scrollToIndex({
-            index: messageList.length - 1,
-            align: 'end',
-            behavior: 'auto',
-          });
-        }
+        if (messageList.length > 0) snapToBottom();
       },
       getVirtuosoRef: () => virtuoso.current,
       setDeletionInProgress: (value: boolean) => {
@@ -665,47 +687,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 ? 0 // scroll to top initially, will override with scrollToIndex()
                 : messageList.length - 1
           }
-          followOutput={(isAtBottom: boolean) => {
-            // TEMPORARY DEBUG
-            const scrollerForLog = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-            scrollDebug.log({
-              kind: 'followOutput',
-              scrollTop: scrollerForLog?.scrollTop,
-              scrollHeight: scrollerForLog?.scrollHeight,
-              clientHeight: scrollerForLog?.clientHeight,
-              gap: scrollerForLog ? scrollerForLog.scrollHeight - scrollerForLog.clientHeight - scrollerForLog.scrollTop : undefined,
-              note: `isAtBottom=${isAtBottom} hasNextPage=${hasNextPage} deletion=${deletionInProgressRef.current} jumped=${hasJumpedToOldMessage} snapEnabled=${scrollDebug.snapEnabled}`,
-            });
-
-            if (deletionInProgressRef.current) return false;
-            if (hasJumpedToOldMessage) return false;
-            if (isAtBottom && hasNextPage === false) {
-              // Return 'auto' for Virtuoso's native scroll (works in channels).
-              // Additionally schedule a delayed correction for DMs where Virtuoso's
-              // internal measurement callback incorrectly resets scrollTop.
-              const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-              // Don't let Virtuoso scroll (its measurement callback resets
-              // scrollTop incorrectly in DMs). Snap to bottom every frame.
-              if (scroller && scrollDebug.snapEnabled) {
-                const s = scroller;
-                const snap = (label: 'snap-raf' | 'snap-timeout') => {
-                  const prev = s.scrollTop;
-                  s.scrollTop = s.scrollHeight - s.clientHeight;
-                  scrollDebug.log({ kind: label, scrollTop: s.scrollTop, prev, gap: 0 });
-                };
-                let frameCount = 0;
-                const frameSnap = () => {
-                  snap('snap-raf');
-                  if (++frameCount < 10) requestAnimationFrame(frameSnap);
-                };
-                requestAnimationFrame(frameSnap);
-                setTimeout(() => snap('snap-timeout'), 300);
-                setTimeout(() => snap('snap-timeout'), 600);
-              }
-              return false;
-            }
-            return false;
-          }}
+          // Virtuoso's followOutput is permanently disabled. Scroll anchoring
+          // on new messages is owned by useScrollAnchor (see bugs/2026-05-24-
+          // virtuoso-measurement-scroll-reset.md and tasks/2026-05-24-virtuoso-
+          // application-owned-scroll-anchoring.md).
+          followOutput={false}
           totalCount={messageList.length}
           computeItemKey={computeItemKey}
           itemContent={rowRenderer}

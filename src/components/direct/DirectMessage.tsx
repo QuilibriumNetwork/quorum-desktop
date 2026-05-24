@@ -359,29 +359,14 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
-      // Jump to bottom after sending. Virtuoso's followOutput handles this for
-      // channels, but in DMs its internal measurement callback resets scrollTop.
-      // Delayed direct scrollTop correction works around this.
-      const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-      // TEMPORARY DEBUG — log submit + gate snap on flag
+      // Scroll-to-bottom on send is now handled by useScrollAnchor in
+      // MessageList, which fires on the optimistic addMessage cache write.
+      // See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md.
+      // TEMPORARY DEBUG
       scrollDebug.log({
         kind: 'note',
-        scrollTop: scroller?.scrollTop,
-        scrollHeight: scroller?.scrollHeight,
-        clientHeight: scroller?.clientHeight,
-        gap: scroller ? scroller.scrollHeight - scroller.clientHeight - scroller.scrollTop : undefined,
-        note: `DM handleSubmitMessage finished; snapEnabled=${scrollDebug.snapEnabled}`,
+        note: 'DM handleSubmitMessage finished — anchoring handled by useScrollAnchor',
       });
-      if (scroller && scrollDebug.snapEnabled) {
-        const snap = () => {
-          const prev = scroller.scrollTop;
-          scroller.scrollTop = scroller.scrollHeight - scroller.clientHeight;
-          scrollDebug.log({ kind: 'submit-snap', scrollTop: scroller.scrollTop, prev, gap: 0 });
-        };
-        setTimeout(snap, 100);
-        setTimeout(snap, 300);
-        setTimeout(snap, 600);
-      }
     },
     [
       address,
@@ -932,6 +917,8 @@ const DirectMessage: React.FC<{}> = () => {
               <MessageList
                 ref={messageListRef}
                 roles={[]}
+                anchorSpaceId={address}
+                anchorChannelId={address}
                 canDeleteMessages={canDeleteMessages}
                 editor={composer.editor}
                 messageList={messageList}
