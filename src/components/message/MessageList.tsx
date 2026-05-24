@@ -314,10 +314,25 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       });
     }, [messageList, newMessagesSeparator]);
 
+    // Fix R4 (bugs/2026-05-24-virtuoso-measurement-scroll-reset.md):
+    // Keep messageList + messageDisplayInfo behind refs so rowRenderer can
+    // read current data without depending on their identity. This makes the
+    // rowRenderer callback's reference stable across cache updates that don't
+    // change Message component identity, which prevents Virtuoso from
+    // re-evaluating items merely because the array reference changed.
+    const messageListRef = useRef(messageList);
+    const messageDisplayInfoRef = useRef(messageDisplayInfo);
+    messageListRef.current = messageList;
+    messageDisplayInfoRef.current = messageDisplayInfo;
+
     const rowRenderer = useCallback(
       (index: number) => {
-        const message = messageList[index];
-        const displayInfo = messageDisplayInfo[index];
+        // Fix R4: read message + displayInfo from refs (always current), so
+        // this callback's identity does NOT depend on messageList /
+        // messageDisplayInfo array references.
+        const message = messageListRef.current[index];
+        const displayInfo = messageDisplayInfoRef.current[index];
+        if (!message || !displayInfo) return null;
 
         // Gap class: first message or compact messages get no gap
         const gapClass = index === 0 || displayInfo.isCompact
@@ -344,7 +359,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               setEmojiPickerPosition={setEmojiPickerPosition}
               message={message}
               customEmoji={customEmoji}
-              messageList={messageList}
+              messageList={messageListRef.current}
               virtuosoRef={virtuoso.current}
               mapSenderToUser={mapSenderToUser}
               hoverTarget={hoverTarget}
@@ -387,9 +402,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           </div>
         );
       },
+      // Fix R4: deliberately exclude messageList and messageDisplayInfo —
+      // they're read via refs above. Other deps are stable across cache
+      // updates (callbacks, settings) so rowRenderer's identity is stable.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [
-        messageList,
-        messageDisplayInfo,
         roles,
         stickers,
         emojiPickerOpen,
