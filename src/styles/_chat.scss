@@ -262,6 +262,15 @@ img.twemoji {
   flex-shrink: 0;
 }
 
+// In contexts where the composer is rendered as an absolute overlay
+// (Channel), the spacer must reserve space equal to the composer height so
+// the last message isn't hidden behind it. --composer-height is set via
+// ResizeObserver on .chat-area. No extra gap — the composer's own internal
+// padding already provides visual breathing room.
+.chat-area .message-list-bottom-spacer {
+  height: var(--composer-height, $s-16);
+}
+
 .message-list-expanded {
   flex: 1 0;
   min-width: 0; // Allow shrinking

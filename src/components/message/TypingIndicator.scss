@@ -1,5 +1,28 @@
 @use '@/styles/variables' as *;
 
+// Overlay sopra il composer. Riserva zero spazio quando inattivo.
+// Quando attivo, mostra una piccola riga con leggera sfumatura per leggibilità
+// sui messaggi che scorrono sotto.
+.typing-indicator-overlay {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%; // appena sopra il composer (parent .message-editor-container)
+  height: 0;
+  overflow: hidden;
+  transition: height $duration-200 $ease-in-out;
+  // Sfondo a gradiente: trasparente in alto, opaco verso il composer
+  background: linear-gradient(
+    to top,
+    var(--color-bg-chat) 60%,
+    rgba(0, 0, 0, 0) 100%
+  );
+
+  &.is-active {
+    height: 1.25rem; // h-5 originale, mostrato solo quando attivo
+  }
+}
+
 .typing-indicator-dots {
   display: inline-block;
   margin-right: $s-1;
