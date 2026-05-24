@@ -28,9 +28,9 @@ Two distinct bugs, both with triggers entirely on **our** side. Both route throu
 | **Proposed fix** | **Fix C** — freeze `isCompact` for messages with `sendStatus==='sending'` | **Fix R2 + R3** — return same `InfiniteData` ref when nothing changed; cap `increaseViewportBy` |
 | **Estimated patch** | ~20 lines | ~17 lines total |
 
-**Status (2026-05-24, post-Session 9 — DECISION MADE):**
+**Status (2026-05-24, post-Session 10 — DECISION: STAY ON VIRTUOSO + KEEP DIGGING):**
 
-R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. Bug still slightly visible. R2 attempted and reverted (no help). Three audits (Virtuoso-usage, feature-docs, alternatives-research) completed. **Decision: stay on Virtuoso.** Off-the-shelf chat virtualization is empirically an unsolved problem at our scale — TanStack Virtual has the same bug class open since 2021, no MIT-licensed library matches Virtuoso's chat primitives, Discord/Element wrote custom virtualizers. Plain-scroll is NOT viable at 100K-1M messages. Pending: Fix C (sender-side), instrumentation cleanup, PR. See Session 9 for the full audit findings.
+R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. R2 and Fix C both attempted and reverted (didn't help — Fix C revealed the predecessor-flip theory was wrong; the 24px shrink happens even when no cache mutation fires in the relevant window). Three audits done (Sessions 9). Decided **NOT to migrate**: TanStack Virtual has the same bug class open since 2021; no MIT-licensed library matches Virtuoso's chat primitives; Discord/Element wrote custom virtualizers; plain-scroll not viable at 100K-1M messages. **Decided also NOT to accept the bug as a known limitation** — this is the most-used surface in the app and a constant visual degradation is unacceptable. Forward: investigate the REAL cause of the 24px shrink (the predecessor-flip theory failed; need a fresh trace), and explore the "hybrid" path (keep Virtuoso for windowing but replace `followOutput` with our own scroll anchoring) for the receiver-side residual.
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
@@ -471,9 +471,50 @@ Three audits returned:
 
 **Conclusion:** off-the-shelf virtualization for our scale targets is empirically an unsolved problem. Migrating shuffles bugs; it doesn't fix them. The only winning move would be a custom virtualizer (Discord pattern) which is out of scope.
 
+### Session 10 (2026-05-24): Fix C attempted + REVERTED — predecessor-flip theory disproven + sender-side has hidden B2 too
+
+**Fix C implemented:** stash isCompact value per messageId in a useRef-backed Map; reuse stashed value for `sendStatus==='sending'` messages; recompute + clear stash when settled. Type-clean, ~50 lines.
+
+**Test result (sender-side):**
+
+```
+t=4786.5  addMessage (optimistic, sendStatus=sending)
+t=4879.5  item-added 100, height=74
+t=5070.2  item-resize 100, 74→50 Δ=-24   ← STILL SHRANK
+t=5233.5  addMessage (server-confirmed, sendStatus=none)
+t=5417.1  rangeChanged 64→100  (range expanded ABOVE viewport)
+t=5433.1  item-added index=64
+t=5433.3  🔴 scroll-untracked Δ=-85    ← receiver-style B2 bug also on sender
+```
+
+**Two findings:**
+
+1. **The shrink at t=5070 is NOT caused by the predecessor-flip mechanism.** Critical detail: the shrink happens at t=5070, **190ms BEFORE** the second addMessage at t=5233. So no cache mutation fired in the window between the optimistic add and the shrink. Yet `isCompact` (or *something*) made the row shrink anyway. Fix C froze isCompact for pending messages and the shrink still happened — proving the cause is something else. Possibilities (un-investigated): avatar/member-lookup resolving late, layout effect, image/embed sizing, useEffect-driven re-render inside Message.tsx.
+
+2. **Sender-side has the receiver-side B2 bug too**, after the server-confirmed message arrives. Item 64 (some message above the viewport) mounts in response to the second `addMessage`, and Virtuoso adjusts scrollTop backward by 85px. We previously only documented B2 for the receiver case but it fires on the sender's own confirm-cycle as well. This means a sender-side fix has to address BOTH the 24px optimistic-shrink AND the 85px confirm-cycle jump.
+
+**Disposition: Fix C reverted** (was uncommitted, discarded via `git checkout --`). Following the process rule: revert immediately when a fix doesn't help, don't stack.
+
+### Session 11 (planned): Re-investigate the 24px shrink with a fresh trace
+
+The previous Session 3 background agent traced "what shrinks the optimistic message" and concluded it was the compact-header flip. Telemetry now proves that theory wrong (no cache mutation fires in the relevant window). Need a NEW investigation with the corrected premise:
+
+> The optimistic message renders at 74px at t=4879. At t=5070 (~190ms later) it shrinks to 50px. **No addMessage fires in between, no other cache mutation we logged.** What inside React/the Message component could cause this height change?
+
+Hypotheses to explore in the new trace:
+- **Member/user data resolving asynchronously.** If `members[senderId]` is initially missing (because the optimistic message lands in cache before the member lookup completes), the Message component may render a placeholder avatar/name, then re-render once member data arrives. Worth checking what `mapSenderToUser` does for missing senders.
+- **A `useEffect` inside Message that fires post-mount** — sets state that changes render output.
+- **An image/avatar `onLoad` handler** that adjusts something.
+- **Animation completion** — though `.sending` animation only does opacity, not height.
+- **Reaction list or other child component mounting in two passes** — initial render shows skeleton, second pass shows real content.
+
+Will launch a background agent with the corrected premise + telemetry evidence and ask it to trace *specifically the optimistic phase* (between addMessage and 200ms after).
+
+**Also:** the sender-side B2 (85px confirm-cycle jump) is the SAME mechanism as receiver-side B2. The hybrid path (replace `followOutput`/anchoring with our own implementation while keeping Virtuoso for windowing) would address both if it works. Worth assessing complexity in parallel.
+
 ---
 
-## Status: ACCEPTED RESIDUAL JANK + Fix C pending
+## Status: STAY ON VIRTUOSO + INVESTIGATE FURTHER
 
 Currently kept on branch `fix/virtuoso-scroll-jank`:
 - Commit `58e4c1f0`: docs split + diagnosis recorded.
@@ -483,14 +524,14 @@ Currently kept on branch `fix/virtuoso-scroll-jank`:
 - Commit `db456a68`: revert of `528ba7fd` (Fix R2, did not help). Already reverted.
 - Commit `ebdf0913`: doc update (Sessions 7+8).
 
-**Pending before PR:**
-1. Implement Fix C (freeze `isCompact` for `sendStatus='sending'` messages) — kills the 24px sender-side shrink. ~20 lines.
-2. Test Fix C with the instrumentation, confirm receiver-side still works.
-3. Remove the instrumentation (`__scrollDebug.ts` + 5 call-site TEMPORARY DEBUG blocks).
-4. Remove the rAF/setTimeout snap-back workarounds in `MessageList.tsx` + `DirectMessage.tsx` if Fix C makes them unnecessary, OR keep them as defensive code if they're still helping the residual ~130px on receive.
-5. Open PR with a focused description of the receiver-side residual being a known-and-documented Virtuoso limitation.
+**Pending — investigate further, do NOT ship partial:**
 
-**Accepted residual UX:** ~130px backward jump on inbound messages when items mount above the viewport. Has a visible but small "scroll up then snap back" character. Documented as a known limitation tied to upstream Virtuoso behavior; not actively worked around past R3/R4. If we hit the Discord-scale custom-virtualizer threshold later, that's a separate project.
+1. Launch new investigation agent: trace what causes the 24px shrink in the 190ms-after-optimistic-add window when NO cache mutation fires. Previous theory (predecessor-flip → isCompact) was disproven in Session 10.
+2. Based on findings, implement a targeted fix and test.
+3. Investigate the "hybrid" path: replace `followOutput` with our own scroll-anchoring logic that reads `addMessage` events and manipulates scrollTop directly, bypassing Virtuoso's measurement-callback bug. Would address both B1 confirm-cycle (85px) and B2 receiver-side (130px). Estimated effort: 1 day.
+4. Once both bugs are gone (or as close as we can get), remove instrumentation and ship.
+
+**Do NOT accept residual jank as a known limitation.** Stated explicitly by user 2026-05-24: this is the most-used surface in the app and a constant visual degradation is unacceptable. We keep pushing until it's gone.
 
 ---
 
