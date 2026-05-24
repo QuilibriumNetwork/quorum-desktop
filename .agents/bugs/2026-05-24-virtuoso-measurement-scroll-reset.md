@@ -28,7 +28,7 @@ Two distinct bugs, both with triggers entirely on **our** side. Both route throu
 | **Proposed fix** | **Fix C** — freeze `isCompact` for messages with `sendStatus==='sending'` | **Fix R2 + R3** — return same `InfiniteData` ref when nothing changed; cap `increaseViewportBy` |
 | **Estimated patch** | ~20 lines | ~17 lines total |
 
-**Implementation order:** R3 (2 lines, immediate win) → R2 → C, testing telemetry after each. See Session 6 in log.
+**Status (2026-05-24, post-Session 8):** R3 + R4 in place, reduce receiver-side jump from 420px → ~120-135px. Bug still visible to user. R2 attempted and reverted (no help). Awaiting audit before deciding ship-as-is vs migrate-message-list-to-tanstack-virtual. **Plain-scroll is NOT viable** given user's target scale (100K-1M messages per channel, 50K+ members per space — virtualization is mandatory).
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
@@ -390,52 +390,69 @@ Background agent traced the receiver-side path and confirmed the reference-insta
 
 Both bugs route through Virtuoso's measurement-callback bug, but the **triggers are entirely on our side**. No Virtuoso migration needed.
 
+### Session 7 (2026-05-24): Fix attempts R3, R2, R4 — partial only
+
+After Session 6 traced the root cause, three fixes were attempted in sequence. Each tested with the same receiver-side procedure (have a second account send 1 message; record telemetry).
+
+| Fix | Description | Result | Disposition |
+|---|---|---|---|
+| **R3** | Cap `increaseViewportBy` from `{top: height, bottom: height}` (~800px) to `{top: 300, bottom: 300}` in `MessageList.tsx` | Cut largest backward jump from **420px → 133px** (-70%); event count from 105 → 10 | **KEPT** (commit `09361de7`) |
+| **R2** | Short-circuit `setQueriesData` to return `oldData` when content is reference-equal; preserve non-last page refs via `oldData.pages.slice()` | Jump went 133px → **124px** (within noise); event count went UP to 52 (more snap-loop firing) | **REVERTED** (commit `db456a68`) — the no-op short-circuit rarely triggered; cache writes are usually real changes |
+| **R4** | Read `messageList` / `messageDisplayInfo` from refs inside `rowRenderer` so its callback identity is stable across cache updates | Jump went 124px → **135px** (within noise) | **KEPT** (commit `dd966df7`) — neutral for the bug but real render-efficiency improvement; safe to leave in |
+
+**Pattern across all three:** every fix targets one trigger Virtuoso uses to re-evaluate items. Virtuoso has multiple triggers (array ref change, function ref change, item-resize, viewport recompute on size change). Closing one leaves the others open. The residual ~120-135px jump appears constant regardless of which trigger we close — strongly suggests Virtuoso re-anchors `scrollTop` whenever items mount above the current viewport, no matter why those items mounted.
+
+**The Cline maintainer's quote from #4780 is empirically validated for our codebase:** this class of bug is *fundamental to Virtuoso's algorithm*.
+
+**Sender-side fix (C, freeze isCompact for pending messages) NOT yet attempted.** Pending the migration decision below.
+
+### Session 8 (2026-05-24): Scale context + migration audit
+
+**Critical scale context from user (must inform all decisions):**
+
+- Target message volumes per channel: **100K to 1M messages** (Discord-scale).
+- Target user counts per space: **up to 50K+ members**.
+- Other Virtuoso usages exist in the codebase: search results, pinned messages, member lists, possibly more. These are out of scope for the bug but MUST be considered when deciding whether to remove or replace the dependency.
+
+**What this rules out:**
+
+Plain scroll + cap-at-N is **NOT viable** for the message list at these scales. Even with trim-oldest, users scrolling through historical context would either lose state or hit perf walls. **Virtualization is mandatory** for the message list.
+
+This collapses the earlier "Option 2 (plain scroll)" off the table.
+
+**What this rules in:**
+
+The real decision is between:
+
+1. **Ship current state (R3 + R4).** Accept ~120-135px residual jump on inbound, ~24px on send (B1 still untouched). No further structural work. Honest assessment of UX: "noticeable but not blocking" on receive, "small annoyance" on send.
+
+2. **Migrate the message list to `@tanstack/react-virtual`** (~1-2 days). Headless virtualizer, no internal `scrollTop` callbacks to fight. Same virtualization win as Virtuoso. Need to re-implement: auto-scroll-to-bottom, follow-output, paginate-on-top, sticky-bottom detection, scrollToIndex (hash navigation, scrollToMessageId, jump-to-present). Keep Virtuoso for all OTHER usages (search, pinned, members) — they don't have this bug because they don't auto-scroll.
+
+3. **Keep Virtuoso elsewhere** (independent of decision above). Confirmed scope: only the message list is buggy. Other lists may also benefit from `@tanstack/react-virtual` long-term but no urgency.
+
+**Audit needed before deciding:**
+
+User correctly insisted on full audit before any migration. Two background agents launched in parallel:
+
+- **Agent A** — Virtuoso usage audit. Map every file that imports react-virtuoso, every prop/method/callback used at each usage site, and which features in the codebase depend on Virtuoso-specific APIs. Specifically: hash navigation (`#msg-xxx` URLs), `scrollToMessageId`, jump-to-present button, paginate-on-top, paginate-on-bottom, sticky-bottom detection, follow-output, `firstItemIndex`, `rangeChanged` (for separator dismissal). Output: a table of feature → Virtuoso API → tanstack-virtual replacement → estimated complexity.
+
+- **Agent B** — feature-doc collation. Read all relevant `.agents/docs/` and `.agents/tasks/.done/` files that describe behavior tied to the message list. Surface the documented contracts so the migration knows what NOT to break.
+
+After both report back, write a decision document **with** the user comparing Ship vs Migrate with concrete scope, risks, and effort numbers grounded in the audit (not my guesses).
+
+**Process rule remains:** no migration code until decision is signed off. Diagnose-then-decide, not the other way around.
+
 ---
 
-## Proposed fixes
+## Status: AWAITING AUDIT — no further code changes until decision
 
-Two independent fixes, one per bug. Discuss and pick order.
+Currently kept on branch `fix/virtuoso-scroll-jank`:
+- Commit `58e4c1f0`: docs split + diagnosis recorded.
+- Commit `308795ad`: throwaway instrumentation (will be removed before ship regardless of decision).
+- Commit `09361de7`: Fix R3 (overscan cap). **Keep** in either path.
+- Commit `dd966df7`: Fix R4 (stable rowRenderer). **Keep** in either path.
 
-### Fix C (sender-side, B1) — Freeze `isCompact` for sending messages
-
-In `MessageList.tsx`'s `messageDisplayInfo` useMemo, special-case messages with `sendStatus === 'sending'`: compute `isCompact` once and stash by `messageId` in a `useRef`-backed map. When `sendStatus` clears, the message is no longer pending — recompute normally that one time, then accept the result.
-
-Trade-off: a pending message's compact state may look "wrong" relative to its eventual settled state for the ~200ms it's sending. Acceptable — the same message renders with the same height the entire time it's pending, then settles correctly once confirmed.
-
-**Estimated change:** ~20 lines in `MessageList.tsx`. No quorum-shared edits.
-
-### Fix R (receiver-side, B2) — Stabilize `messageList` array reference
-
-Two sub-options, ordered cheapest first:
-
-**Fix R1 — Tighten the useMemo dependency from `messages` to `messages.pages`.**
-Use a stable reference for the input. Currently the memo re-runs because `messages` (the outer wrapper) is a new object. If we depend on `messages.pages` directly, and the inner pages array is stable when no content changed, the memo doesn't re-run. Problem: `messages.pages` is *also* a new array because of how `setQueriesData` returns `{ pageParams, pages: [...] }`. So this alone may not help — needs verification.
-
-**Fix R2 — Make `setQueriesData` return the SAME object when the relevant page didn't change.**
-In `MessageService.addMessage`, instead of always returning `{ pageParams, pages: oldData.pages.map(...) }`, only return a new object when at least one page actually changed. Use `oldData.pages.map((page) => pageNeedsUpdate ? newPage : page)` and short-circuit to return `oldData` when ALL mapped pages are identical references. This keeps the `messages` reference stable when no relevant change occurred.
-
-**Fix R3 — Cap `increaseViewportBy` to a reasonable pixel value.**
-Currently `{ top: height, bottom: height }` where `height = window.innerHeight`. Drop to e.g. `{ top: 300, bottom: 300 }`. Mitigates Step 4 — even when `messageList` ref changes, Virtuoso won't briefly span the entire list. Doesn't fix the root cause but breaks the amplification chain.
-
-**Recommendation:** Combine **R2 + R3**.
-- R2 is the proper fix (reference stability is foundational; benefits everything in the codebase consuming this data).
-- R3 is a defense-in-depth hedge that prevents future ref-instability bugs from causing huge jumps. Cheap.
-
-**Estimated change:** R2 = ~15 lines in `MessageService.addMessage`. R3 = 2 lines in `MessageList.tsx`. Total <20 lines.
-
----
-
-## Suggested implementation order
-
-1. **R3 first** (2 lines, ~5 min) — even by itself, this should massively reduce the receiver-side jump from 400px to maybe 50px. Quick win, easy revert.
-2. **Test receiver-side** with R3 alone. Did the jump shrink? By how much?
-3. **R2 next** (~15 lines, ~20 min) — proper fix for receiver-side. Verify ref stability with telemetry (no `messageList` array regeneration when content didn't change).
-4. **Test receiver-side again.** Should be flat — no jumps.
-5. **C last** (~20 lines, ~15 min) — sender-side fix. Verify with telemetry (no `item-resize` event when `sendStatus` transitions).
-6. **Test sender-side.** Should be flat.
-7. **Both directions clean** → remove instrumentation, remove the rAF/setTimeout snap-back workarounds in MessageList.tsx + DirectMessage.tsx (they were band-aids for the symptom; should no longer be needed), commit, ship PR.
-
-**Process rule remains:** one fix at a time. Revert immediately if it doesn't help. Update this doc after each test.
+Reverted: commit `db456a68` reverted `528ba7fd` (Fix R2, did not help).
 
 ---
 
