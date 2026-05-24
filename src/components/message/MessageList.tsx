@@ -620,7 +620,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           className="scrollbar-message-list"
           style={{ position: 'relative' }}
           overscan={{ main: height, reverse: height }}
-          increaseViewportBy={{ top: height, bottom: height }}
+          // Fix R3 (bugs/2026-05-24-virtuoso-measurement-scroll-reset.md):
+          // Previously `{ top: height, bottom: height }` where height ≈ 800px.
+          // On a list of short messages that briefly spanned the entire visible
+          // index range, so any new InfiniteData ref from setQueriesData caused
+          // Virtuoso to mount items at index 0/1 even when the user was near
+          // the bottom — triggering a ~400px backward scrollTop adjustment.
+          // Cap at 300px (≈6 message rows) — still smooth, no over-span.
+          increaseViewportBy={{ top: 300, bottom: 300 }}
           atTopThreshold={0}
           atTopStateChange={(atTop) => {
             if (!init) {
