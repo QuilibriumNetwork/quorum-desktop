@@ -36,7 +36,8 @@ Session 16 identified the gap: pure-reactive only catches Virtuoso's backward wr
 
 Visible behavior NOW (end of day):
 - Original bug: large scroll-up jump (~130-420px), sometimes with snap-back, sometimes not.
-- Current: small single-frame flash on send; message lands fully visible. Much better, not perfect.
+- Current sender-side single-word: clean.
+- Current sender-side multi-line: **message lands hidden below the fold**, sometimes only the avatar/name strip is visible. Confirmed by the final checkpoint-confirmation test 2026-05-24 17:21Z — zero telemetry suspect events but clear visible regression because Virtuoso doesn't write scrollTop and the pure-reactive listener has nothing to absorb. This is the exact gap the HYBRID fix will close.
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
