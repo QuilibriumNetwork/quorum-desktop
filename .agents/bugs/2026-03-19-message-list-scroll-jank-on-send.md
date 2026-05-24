@@ -5,7 +5,7 @@ status: in-progress
 priority: high
 ai_generated: true
 created: 2026-03-19
-updated: 2026-03-22
+updated: 2026-05-24
 ---
 
 # Message list scroll jank on send — Virtuoso scroll position drift
@@ -162,6 +162,105 @@ Key principle: **the path from "message added to cache" → "Virtuoso renders" m
 - **(Phase 18)**: DOM parent chain is identical between DM and channel (same flex, same overflow, same heights). DOM structure is not the cause.
 - **The remaining untested hypothesis**: the `sendStatus: 'sending'` indicator causes message height to change when it appears then disappears, triggering Virtuoso's buggy re-measurement callback.
 
+## Session 3 (2026-05-24): Phase 19 — Reserve height for sendStatus indicator
+
+**Hypothesis under test** (from "What hasn't been tried" #2): The visible jank is caused by the optimistic message's height changing when the `.message-status.sending` `<Flex>` is removed from the DOM after `enqueueOutbound` resolves. The element renders with `opacity: 0` for the first 1s (CSS animation-delay) so the user never sees it appear — but it still occupies layout space while mounted, then collapses when removed. That height delta triggers Virtuoso's measurement callback, which resets `scrollTop` (the +16ms bug we've been chasing).
+
+**Change** (single, surgical):
+
+1. `Message.tsx` (~line 1330) — replaced the conditional `{message.sendStatus === 'sending' && (<Flex …/>)}` with an always-mounted `<div className="message-status-slot">` for own messages, containing the indicator `<Flex>` only when `sendStatus === 'sending'`. Slot is rendered when `sendStatus === 'sending'` OR (`!sendStatus` AND `isOwnMessage`). Failed state stays outside the slot (rare path, intentional height change).
+2. `Message.scss` — added `.message-status-slot { height: 1.5rem; }` to reserve constant vertical space. Moved the `pt-1` padding from the inline JSX class into `.message-status.sending` so the slot height matches whether the indicator is mounted or not.
+
+**Expected effect:** message height stays constant when `sendStatus` transitions from `'sending'` → undefined. No height change → no Virtuoso re-measurement → no scrollTop reset. If correct, this should ALSO let us remove the rAF/setTimeout scroll-correction band-aids in MessageList.tsx (lines 619-646) and DirectMessage.tsx (lines 360-371).
+
+**Caveats / known unknowns:**
+- Doesn't address initial page-load scroll offset (2-3 lines above bottom on refresh in DMs). Theory: separate cause, possibly first-paint measurement with images/embeds. Re-test after this fix and treat as a separate sub-issue if still present.
+- For non-own messages from the other party (received DMs), there's no sendStatus indicator at all. If receiving a message also janks the scroll, the cause is different (probably height changes from image/embed loading inside the incoming message).
+- Adds a tiny constant ~1.5rem of vertical space below every own message in DMs and channels. Acceptable for the test; if confirmed working, we can decide whether to keep it visually or tighten the slot height to a smaller value.
+
+**Status:** TESTED — **did NOT fix the bug.** Reverted 2026-05-24.
+
+**Test result (2026-05-24, user testing):**
+- No noticeable change on the front end.
+- Behavior persists in **channels** (not just DMs as previously assumed):
+  - Sender side: page scrolls up, then sometimes back down (non-deterministic). When it scrolls back down, the sent message is visible. When it doesn't, the sent message is below the fold.
+  - Receiver side: similar up-then-maybe-down behavior when receiving a message.
+- **Important re-scoping**: the bug also affects channels under some conditions. Previous Phase 18 conclusion that "channels work perfectly" may have been observed under different conditions (smaller message lists, different load state). Need to reconsider what differs between "channels worked in prior testing" and "channels don't work now."
+
+**Why this didn't work (post-mortem):**
+The `.message-status-slot` constant-height fix addressed a real height change but it's apparently not the trigger for Virtuoso's measurement-callback `scrollTop` reset. The trigger must be something else — either:
+- A different element height change (delivery receipt? avatar load? image embed measurement?)
+- Pure React-render-driven re-measurement (Virtuoso re-measures on certain re-renders even without height changes)
+- Initial-mount measurement of the new row (Virtuoso measures the new last item, and the measurement itself perturbs scrollTop)
+
+**Reverted:** all Phase 19 changes (Message.tsx slot wrapper, Message.scss `.message-status-slot` block, padding-top move into `.sending`).
+
+## What to try next (untested, do NOT combine — try one at a time and revert if no effect)
+
+1. **React DevTools Profiler instrumentation** — record a profile of a message send. Identify which component(s) re-render in the window between "followOutput fires" and "+16ms scrollTop reset". This tells us if the trigger is a height change (need to find which element) or a pure re-render (then we need to understand Virtuoso's re-measure trigger).
+
+2. **Disable `sendStatus: 'sending'` entirely (test-only)** — short-circuit the optimistic `addMessage` call so the message is added only AFTER `enqueueOutbound` resolves (without ever having `sendStatus`). If the jank disappears, the cause is the two-step add. If it persists, the optimistic path isn't the trigger.
+
+3. **Strip Virtuoso `increaseViewportBy` and `overscan` to minimum** — Phase 14 said changing these "broke channels." Re-verify with current code state. Possibly the breakage was a different symptom than today's bug.
+
+4. **Pin Virtuoso to a different version** — current is whatever's in package.json. Test the latest 4.x and the latest 5.x to see if upstream has fixed the measurement-callback reset.
+
+5. **Replace Virtuoso with native scroll** for the message list as a spike — if native scroll has zero jank, that confirms the bug is intrinsic to Virtuoso's measurement model in this codebase and we should plan a migration.
+
+**Process rule for this bug going forward:** every attempt must be (a) recorded here BEFORE testing, (b) tested in isolation, (c) reverted immediately if it doesn't work. Do not stack patches.
+
+## Session 4 (2026-05-24): Phase 20 — Reconnaissance, no code change
+
+Goal: cheap diagnosis before committing to any fix path. **No code changes this phase.**
+
+**Version check:**
+- `package.json` pins `react-virtuoso: ^4.12.3`, lockfile resolves to **4.18.4**.
+- npm latest: **4.18.7**.
+- Changelog between 4.18.4 → 4.18.7:
+  - 4.18.5 — React 19 detection for `useSyncExternalStore`
+  - 4.18.6 — SSR `useWindowScroll` layout collapse fix
+  - 4.18.7 — RTL horizontal scrolling fix
+- **None of these touch the measurement-callback / scrollTop-reset path.** A version bump will not help.
+
+**Upstream issue review** (Virtuoso GitHub issues, all matching our symptom, all closed without surfaced fix or workaround):
+- **#1273** "followOutput and scrollToIndex incorrectly positioned after rapid list updates" (May 2025) — *almost verbatim our bug*: rapid additions → scroll stops mid-item → manual scroll then auto-scroll returns to wrong position. Closed, no resolution comment.
+- **#1026** "Stick-to-bottom does not work with fast updates" (Jan 2024) — `followOutput` gets stuck when updates faster than ~40ms. Closed with "Workaround: TBD", no maintainer comment.
+- **#1243** "Best way to limit chat by removing oldest message without breaking autoscroll" (May 2025) — no answer, no workaround.
+- **#1145** "Unstable scroll on dynamic list" (Oct 2024) — closed, no resolution surfaced.
+- **#1246** "followOutput is broken when fixedItemHeight is set" (May 2025) — not our config (we don't use fixedItemHeight), but signals followOutput fragility.
+- Plus previously cited **#423** alignToBottom flickering and Cline **#4780** "fundamental to Virtuoso's algorithm."
+
+**Conclusion of reconnaissance:**
+
+This is a **known, long-standing, structural limitation** of Virtuoso for chat-style auto-bottom-aligned lists with frequent updates. Multiple people, multiple years, no upstream fix surfaced. The cause is in Virtuoso's measurement callback running incorrect scrollTop math after item resize/remeasure — confirmed in our Phase 14 stack trace.
+
+**This downgrades the value of further patch-attempts in our code.** We've spent ~4 hours across 20 phases applying workarounds to a library-level bug that the maintainer has not fixed in years. Continuing to apply per-symptom fixes is unlikely to converge.
+
+**Three viable forward paths** (must pick one — no stacking):
+
+### Path A: React DevTools Profiler session (~1h, low risk)
+Capture a profile of one message send. Confirm whether our specific trigger is identifiable (e.g. one specific component re-render or one specific height change). If yes, we may find a narrow fix. If profile shows "Virtuoso re-measures on every render regardless of height," that confirms the only remaining option is Path B or C.
+
+**Cost:** time. **Risk:** zero (read-only investigation). **Upside:** may find a narrow fix, OR may give us definitive proof to choose Path B/C with confidence.
+
+### Path B: Migrate the message list to `@tanstack/react-virtual` (~1-2 days, medium risk)
+Tanstack-virtual is headless: we control rendering, no internal scrollTop callback to fight. Trade-offs:
+- Have to re-implement: auto-scroll-to-bottom, follow-output, paginate-on-top sentinel, sticky-bottom detection, scrollToIndex (hash navigation, scrollToMessageId).
+- Keep all the existing MessageList prop surface; swap the internal implementation.
+- Other Virtuoso users in the codebase (search results, pinned messages, user lists) can stay on Virtuoso — they don't have followOutput jank because they don't auto-scroll.
+
+**Cost:** 1-2 days of focused work + regression testing. **Risk:** new bugs during migration. **Upside:** permanent fix, no more workarounds.
+
+### Path C: Replace virtualization with plain scroll + cap mounted messages (~half day, higher behavior risk)
+Render only the last N (say 300) messages plus whatever the user paginated into. Plain `<div>` scroll, no virtualizer. Simplest code, smallest dependency surface.
+
+**Cost:** half day implementation + tuning N. **Risk:** users who scroll back through thousands of messages on low-end machines may hit perf issues. **Upside:** simplest code, fewest moving parts.
+
+### Recommendation
+Path A first (cheap, zero-risk, generates evidence). Then either confirm a narrow fix or commit to Path B with confidence. Reserve Path C as the fallback if Path B turns out harder than estimated.
+
+**Do NOT** continue patching in-place (slot height, scroll-correction loops, hook isolation) without first running Path A — we've established empirically that one-off patches don't converge.
+
 ## Research Sources
 
 - [Issue #423](https://github.com/petyosi/react-virtuoso/issues/423): alignToBottom flickering (still present in v4.12.3)
@@ -171,4 +270,4 @@ Key principle: **the path from "message added to cache" → "Virtuoso renders" m
 
 ---
 
-*Last updated: 2026-03-22*
+*Last updated: 2026-05-24*

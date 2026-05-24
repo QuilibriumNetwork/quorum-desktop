@@ -3,12 +3,12 @@ type: task
 title: Design Decisions & Rationale
 status: in-progress
 created: 2025-11-12T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-05-24'
 ---
 
 # Design Decisions & Rationale
 
-**Last Updated**: 2025-11-12
+**Last Updated**: 2026-05-24
 
 This document captures key design decisions made during search optimization, including alternatives considered and rationale for choices.
 
@@ -299,6 +299,94 @@ Debated using Web Workers to offload search index building from main thread.
 
 ---
 
+## 9. Migration-Aware Design (added 2026-05-24)
+
+### Decision: **Shape Phase 1.3 persistence to mirror the planned `SearchAdapter` interface**
+
+**Context**:
+A session-start check of `D:\GitHub\Quilibrium\quorum-shared\src` confirmed `SearchService` and `MessageDB` are not yet in the shared package. The quorum-shared migration roadmap (see [../quorum-shared-migration/README.md](../quorum-shared-migration/README.md) status table) lists `SearchService + SearchAdapter` as Tier 1B: **blocked on mobile codebase access**. The services-design audit ([../quorum-shared-migration/designs/2026-05-18-services-design.md §3](../quorum-shared-migration/designs/2026-05-18-services-design.md)) classifies `SearchService` as portable verbatim once a `SearchAdapter` interface exists in shared.
+
+**Options Considered**:
+
+| Option | Pros | Cons | Verdict |
+|--------|------|------|---------|
+| Inline IndexedDB calls directly in `SearchService` | Simplest now | Service becomes non-portable; full rewrite at migration day | ❌ Rejected |
+| Wait for migration to unblock before Phase 1.3 | Cleanest architecture | Indefinite wait (mobile access has been blocked for months); meanwhile users keep paying the 2-5s startup cost | ❌ Rejected |
+| **Add persistence to `MessageDB` with method shapes that mirror the future `SearchAdapter` interface** | Migration-day refactor is near-zero; service stays storage-agnostic; ships value now | ~30 min extra design thinking now | ✅ **Selected** |
+
+**Rationale**:
+- Service-level logic (lazy load, LRU) goes in `SearchService` — moves verbatim on migration day.
+- Storage logic (persistence) goes in `MessageDB` — desktop's IndexedDB implementation of what will become the `SearchAdapter` interface.
+- Mobile already has its own search story; the migration audit explicitly warns against codifying desktop's logic as the shared abstraction before mobile inspection. Phase 1.3's persistence layer being adapter-shaped, not inlined, leaves that decision open.
+
+**Anti-pattern avoided**: building optimization work that gets thrown away at migration time.
+
+---
+
+## 10. MiniSearch Persistence API (added 2026-05-24)
+
+### Decision: **Use `MiniSearch.loadJSON()` for deserialization, not `addAll(JSON.parse(...))`**
+
+**Context**:
+The original Phase 1.3 pseudo-code in `future-phases.md` had:
+```typescript
+const searchIndex = new MiniSearch({...});
+searchIndex.addAll(JSON.parse(stored.serializedIndex)); // ❌ wrong
+```
+
+`addAll` expects an array of source documents and re-tokenizes them. This:
+1. Defeats the entire point of persistence (re-tokenization is most of the build cost).
+2. Is the wrong API shape — `toJSON()` returns a serialized index structure, not a doc array, so `JSON.parse` of it isn't even shaped right for `addAll`.
+
+**Correct API** (verified against installed MiniSearch 7.2):
+```typescript
+// Serialize
+const serialized = JSON.stringify(searchIndex.toJSON());
+
+// Deserialize — must pass SAME options used to create the original
+const searchIndex = MiniSearch.loadJSON(serialized, MINISEARCH_OPTIONS);
+```
+
+Also available: `MiniSearch.loadJSONAsync` for very large indices (avoids blocking on parse).
+
+**Implication**:
+The MiniSearch constructor options must be the single source of truth — stored in a static `MINISEARCH_OPTIONS` constant and reused by both `createSearchIndex()` and `loadSearchIndexFromDB()`. If they drift, the deserialized index silently misbehaves (wrong fuzzy, wrong boost, wrong stored fields).
+
+---
+
+## 11. Persistence Write Policy (added 2026-05-24)
+
+### Decision: **Debounced flush of dirty indices, not per-message saves**
+
+**Context**:
+The original Phase 1.3 sketch suggested:
+```typescript
+async addMessageToIndex(message): Promise<void> {
+  spaceIndex.add(searchable);
+  await this.saveSearchIndexToDB(spaceIndexKey, spaceIndex); // ❌ per-message
+}
+```
+
+In a busy space (~10 msg/sec during active conversation), this re-serializes the entire index and writes it to IndexedDB on every single message. The index for a 5k-message space is hundreds of KB of JSON — the write amplification is unacceptable.
+
+**Options Considered**:
+
+| Option | Pros | Cons | Verdict |
+|--------|------|------|---------|
+| Per-message save | Always durable | Massive write amplification; jank in busy spaces | ❌ Rejected |
+| **Dirty flag + debounced flush (5s)** | Bounded writes; coalesces bursts | Need lifecycle hooks for durability | ✅ **Selected** |
+| Batch incoming messages, flush every N adds | Simpler logic | Doesn't handle quiet periods well | ❌ Worse than debounce |
+| Periodic timer regardless of dirtiness | Predictable | Wastes writes when nothing changed | ❌ Rejected |
+
+**Durability strategy**:
+- 5-second debounce captures bursts.
+- Flush on `visibilitychange` → hidden (user tabbed away).
+- Flush on `beforeunload` (user closing).
+- Flush synchronously before LRU eviction (Phase 1.4 wires this in).
+- Acceptable loss window: ~5s of messages on crash — which on next launch get rebuilt from the messages store anyway (the source of truth is IndexedDB messages, not the cached index).
+
+---
+
 ## Summary Table
 
 | Decision | Choice | Rationale | Reversible? |
@@ -310,8 +398,16 @@ Debated using Web Workers to offload search index building from main thread.
 | **Startup Fix** | Defer to Phase 1.2 | Quick wins first | N/A (timing decision) |
 | **Web Workers** | Avoid for now | Measure before adding complexity | Yes (can add later) |
 | **Testing** | Manual first | Fast iteration, user feedback | Yes (will add automated) |
+| **Migration alignment** | Adapter-shaped persistence in `MessageDB` | Migration-day refactor is near-zero | Yes (can be hardened later) |
+| **MiniSearch persistence** | `loadJSON` + shared options constant | Correct API; avoids silent misbehavior | No (correct choice) |
+| **Persistence writes** | Debounced flush + lifecycle hooks | Bounds write amplification | Yes (can tune debounce window) |
 
 ---
 
-**Last Updated**: 2025-11-12
+**Last Updated**: 2026-05-24
 **Next Review**: After Phase 1.2 implementation (lazy loading)
+
+## Changelog
+
+- **2026-05-24** — Added decisions 9 (migration-aware design), 10 (MiniSearch `loadJSON` API correction), 11 (debounced flush policy) based on session research. Summary table extended.
+- **2025-11-12** — Initial decisions 1-8 documented alongside Phase 1.1 quick wins.

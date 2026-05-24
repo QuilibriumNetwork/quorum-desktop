@@ -3,15 +3,59 @@ type: task
 title: Future Search Optimization Phases
 status: in-progress
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-05-24'
 ---
 
 # Future Search Optimization Phases
 
 
-**Last Updated**: 2025-11-12
+**Last Updated**: 2026-05-24
 
 This document outlines the remaining optimization work planned for search functionality. These phases build on the quick wins already implemented.
+
+## Cross-cutting constraints (read before any phase)
+
+These apply to every phase below; they were not captured in the original doc.
+
+### C1. Stay aligned with the planned `SearchAdapter` migration
+
+`SearchService` is on the quorum-shared migration roadmap as Tier 1B (blocked on mobile codebase access). See [../quorum-shared-migration/designs/2026-05-18-services-design.md §3](../quorum-shared-migration/designs/2026-05-18-services-design.md). When migration unblocks:
+
+- A `SearchAdapter` interface (~4–5 methods: `searchMessages`, `initializeSearchIndices`, `addMessageToIndex`, `removeMessageFromIndex`, plus the persistence hooks introduced in Phase 1.3) gets defined in shared.
+- `SearchService` moves verbatim to shared.
+- Desktop keeps an IndexedDB-backed adapter; mobile writes a SQLite/MMKV adapter.
+
+**Implication for this work:**
+- Service-level logic (Phase 1.2 lazy loading, Phase 1.4 LRU eviction) belongs in `SearchService`, not `MessageDB`. It moves with the migration verbatim.
+- Storage-level logic (Phase 1.3 persistence) belongs in `MessageDB`, but designed to be the IndexedDB-shaped implementation of the future `SearchAdapter` interface. Don't inline IndexedDB calls into `SearchService`.
+
+### C2. Use MiniSearch's actual persistence API
+
+The original draft of Phase 1.3 had `searchIndex.addAll(JSON.parse(stored.serializedIndex))`. This is wrong — `addAll` expects source documents and re-tokenizes them, defeating the point of caching. The correct API in MiniSearch 7.2 (the installed version) is:
+
+```typescript
+// Serialize
+const serialized = JSON.stringify(searchIndex.toJSON());
+
+// Deserialize — MUST pass the same options used to create the original index
+const searchIndex = MiniSearch.loadJSON(serialized, {
+  fields: ['content', 'senderId'],
+  storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
+  searchOptions: { boost: { content: 2, senderId: 1 }, prefix: true, fuzzy: 0.2 },
+});
+```
+
+`MiniSearch.loadJSONAsync` is also available for large indices that would block on parse.
+
+Centralize the create-options in `createSearchIndex()` (already done at [src/db/messages.ts:1531-1541](../../../src/db/messages.ts)) and reuse them in the load path — otherwise the deserialized index will silently misbehave.
+
+### C3. Don't persist on every message
+
+Original draft suggested calling `saveSearchIndexToDB(spaceIndex)` from inside `addMessageToIndex()`. That re-serializes and writes the entire index to IndexedDB on every incoming message — expensive in busy spaces and noisy on disk. Use a **dirty-flag + debounced flush** instead:
+
+- Mark the index dirty on add/remove.
+- Flush dirty indices every N seconds (e.g. 5s), on `visibilitychange` to hidden, and on `beforeunload`.
+- On LRU eviction (Phase 1.4), flush synchronously before dropping from memory.
 
 ---
 
@@ -26,16 +70,22 @@ This document outlines the remaining optimization work planned for search functi
 - Blocks UI for 2-5 seconds
 - Wastes CPU for spaces user may never search
 
+**Where the startup cost actually comes from** (verified 2026-05-24):
+- [src/hooks/business/search/useSearchService.ts:22-28](../../../src/hooks/business/search/useSearchService.ts) — `useSearchService` instantiates `SearchService` and immediately calls `service.initialize()` in a `useMemo`.
+- `service.initialize()` ([src/services/SearchService.ts:39-41](../../../src/services/SearchService.ts)) calls `messageDB.initializeSearchIndices()`.
+- `initializeSearchIndices()` ([src/db/messages.ts:1551-1594](../../../src/db/messages.ts)) iterates every space and DM, calls `getAllSpaceMessages` / `getDirectMessages`, and `addAll`s each into a fresh MiniSearch — synchronously from the caller's perspective.
+
 **Solution**:
 Build indices lazily when user actually searches that space/DM.
 
 ### Key Changes
 
 1. **Remove upfront index building**
-   - Delete call to `initializeSearchIndices()` at startup
-   - Index building time: 2-5s → 0s ✅
+   - Remove the `service.initialize().catch(...)` call in `useSearchService` (or change `SearchService.initialize()` to a no-op kept for API back-compat).
+   - Optionally delete `SearchService.initialize()` and `MessageDB.initializeSearchIndices()` once nothing else calls them. Grep `initializeSearchIndices` to confirm no other callers.
+   - Index building time at app start: 2-5s → 0s ✅
 
-2. **Add on-demand loading**
+2. **Add on-demand loading on `MessageDB`** (storage-level — this becomes part of the future `SearchAdapter` surface, per C1)
    ```typescript
    async ensureIndexReady(context: SearchContext): Promise<void> {
      const indexKey = this.getIndexKey(context);
@@ -44,20 +94,34 @@ Build indices lazily when user actually searches that space/DM.
        return; // Already loaded
      }
 
-     // Build index on first search
      await this.loadIndexLazily(context);
    }
-   ```
 
-3. **Update search to use lazy loading**
-   ```typescript
-   async searchMessages(query, context, limit): Promise<SearchResult[]> {
-     await this.ensureIndexReady(context); // Lazy load if needed
+   private async loadIndexLazily(context: SearchContext): Promise<void> {
+     const indexKey = this.getIndexKey(context);
+     const messages = context.type === 'space'
+       ? await this.getAllSpaceMessages({ spaceId: context.spaceId! })
+       : await this.getDirectMessages(context.conversationId!);
 
-     const searchIndex = this.searchIndices.get(indexKey);
-     return searchIndex.search(query);
+     const searchIndex = this.createSearchIndex();
+     searchIndex.addAll(messages.map((m) => this.messageToSearchable(m)));
+     this.searchIndices.set(indexKey, searchIndex);
    }
    ```
+
+3. **Update `searchMessages()` to lazy-load** ([src/db/messages.ts:1644-1696](../../../src/db/messages.ts))
+   ```typescript
+   async searchMessages(query, context, limit): Promise<SearchResult[]> {
+     await this.ensureIndexReady(context);
+     const searchIndex = this.searchIndices.get(this.getIndexKey(context));
+     if (!searchIndex) return [];
+     // ... existing search logic
+   }
+   ```
+
+4. **UI feedback for the first-search-in-space case**
+   - First search builds the index synchronously (~200ms for a typical space).
+   - Add a subtle "indexing…" indicator in `SearchResults` while `searchMessages` is in flight — most of the time it's invisible (subsequent searches), but the first one in a fresh space will hit it.
 
 ### Impact
 
@@ -68,8 +132,10 @@ Build indices lazily when user actually searches that space/DM.
 
 ### Files to Modify
 
-- `src/db/messages.ts` - Add `ensureIndexReady()`, `loadIndexLazily()`
-- `src/services/SearchService.ts` - Remove `initialize()` call
+- `src/db/messages.ts` — add `ensureIndexReady()` and `loadIndexLazily()`; update `searchMessages()` to lazy-load
+- `src/hooks/business/search/useSearchService.ts` — remove the `service.initialize()` call
+- `src/services/SearchService.ts` — either delete `initialize()` or make it a no-op
+- `src/components/search/SearchResults.tsx` — add "indexing…" loading state for the first search
 
 ### Success Criteria
 
@@ -77,6 +143,7 @@ Build indices lazily when user actually searches that space/DM.
 - [ ] First search in space completes in < 200ms
 - [ ] Subsequent searches use cached index
 - [ ] All existing functionality preserved
+- [ ] No regression in incremental indexing (new/deleted messages still tracked correctly when their space's index is loaded; ignored otherwise — that's fine, lazy load will rebuild fresh)
 
 ---
 
@@ -92,79 +159,133 @@ Build indices lazily when user actually searches that space/DM.
 - First search after restart takes ~200ms to build index
 
 **Solution**:
-Persist serialized search indices to IndexedDB, load on demand.
+Persist serialized search indices to IndexedDB, load on demand. Writes are debounced (per C3) and use MiniSearch's `loadJSON` / `toJSON` correctly (per C2).
 
 ### Key Changes
 
-1. **Add IndexedDB object store**
+1. **Bump DB version and add object store**
+   - Current DB version: 12 (see [src/db/messages.ts:163](../../../src/db/messages.ts)). Bump to 13.
    ```typescript
-   // Add to database schema
-   if (!db.objectStoreNames.contains('search_indices')) {
+   if (event.oldVersion < 13) {
      const indexStore = db.createObjectStore('search_indices', {
-       keyPath: 'indexKey'
+       keyPath: 'indexKey',
      });
-     indexStore.createIndex('lastUpdated', 'lastUpdated');
+     indexStore.createIndex('by_lastUpdated', 'lastUpdated');
+   }
+   ```
+   Stored record shape:
+   ```typescript
+   interface StoredSearchIndex {
+     indexKey: string;            // 'space:<id>' | 'dm:<conversationId>'
+     serializedIndex: string;     // JSON.stringify(MiniSearch.toJSON())
+     messageCount: number;
+     lastUpdated: number;
+     // Optional, for future schema migrations:
+     indexVersion?: number;       // bump when MiniSearch options change
    }
    ```
 
-2. **Save/Load methods**
+2. **Save/Load methods (correct MiniSearch API)** — see C2
+
    ```typescript
-   async saveSearchIndexToDB(indexKey, searchIndex): Promise<void> {
-     const serialized = JSON.stringify(searchIndex.toJSON());
-     await db.put('search_indices', {
+   private static readonly MINISEARCH_OPTIONS = {
+     fields: ['content', 'senderId'],
+     storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
+     searchOptions: { boost: { content: 2, senderId: 1 }, prefix: true, fuzzy: 0.2 },
+   };
+
+   private createSearchIndex(): MiniSearch<SearchableMessage> {
+     return new MiniSearch(MessageDB.MINISEARCH_OPTIONS); // single source of truth
+   }
+
+   async saveSearchIndexToDB(indexKey: string, searchIndex: MiniSearch<SearchableMessage>): Promise<void> {
+     const record: StoredSearchIndex = {
        indexKey,
-       serializedIndex: serialized,
+       serializedIndex: JSON.stringify(searchIndex.toJSON()),
        messageCount: searchIndex.documentCount,
        lastUpdated: Date.now(),
-     });
+     };
+     // standard idb put on the 'search_indices' store
    }
 
-   async loadSearchIndexFromDB(indexKey): Promise<MiniSearch | null> {
-     const stored = await db.get('search_indices', indexKey);
+   async loadSearchIndexFromDB(indexKey: string): Promise<MiniSearch<SearchableMessage> | null> {
+     const stored = await /* idb get */;
      if (!stored) return null;
 
-     const searchIndex = new MiniSearch({...});
-     searchIndex.addAll(JSON.parse(stored.serializedIndex));
-     return searchIndex;
+     // ✅ CORRECT: loadJSON restores the index structure directly (no re-tokenization)
+     // ❌ DO NOT use addAll(JSON.parse(...)) — that defeats the cache and is wrong API usage
+     return MiniSearch.loadJSON(stored.serializedIndex, MessageDB.MINISEARCH_OPTIONS);
    }
    ```
+
+   For very large indices, use `MiniSearch.loadJSONAsync` instead of `loadJSON` to avoid blocking the main thread on parse.
 
 3. **Update lazy loading to check IndexedDB first**
    ```typescript
-   async loadIndexLazily(context): Promise<void> {
+   private async loadIndexLazily(context: SearchContext): Promise<void> {
+     const indexKey = this.getIndexKey(context);
+
      // Try IndexedDB first
      const cached = await this.loadSearchIndexFromDB(indexKey);
      if (cached) {
        this.searchIndices.set(indexKey, cached);
-       return; // Done in ~10ms!
+       return; // Done in ~10ms
      }
 
-     // Build from scratch if not in cache
+     // Build from scratch and persist
      await this.buildFreshIndex(context);
-     await this.saveSearchIndexToDB(indexKey, index);
+     this.markIndexDirty(indexKey);
+     await this.flushDirtyIndices(); // immediate first flush; subsequent writes debounced
    }
    ```
 
-4. **Update on message changes**
+4. **Debounced flush on message changes** (per C3 — NOT immediate)
+
    ```typescript
-   async addMessageToIndex(message): Promise<void> {
-     spaceIndex.add(this.messageToSearchable(message));
+   private dirtyIndices: Set<string> = new Set();
+   private flushTimer: NodeJS.Timeout | null = null;
+   private static readonly FLUSH_DEBOUNCE_MS = 5000;
 
-     // Also update persisted index
-     await this.saveSearchIndexToDB(spaceIndexKey, spaceIndex);
+   private markIndexDirty(indexKey: string): void {
+     this.dirtyIndices.add(indexKey);
+     if (this.flushTimer) return;
+     this.flushTimer = setTimeout(() => this.flushDirtyIndices(), MessageDB.FLUSH_DEBOUNCE_MS);
+   }
+
+   async flushDirtyIndices(): Promise<void> {
+     if (this.flushTimer) {
+       clearTimeout(this.flushTimer);
+       this.flushTimer = null;
+     }
+     const toFlush = Array.from(this.dirtyIndices);
+     this.dirtyIndices.clear();
+     for (const indexKey of toFlush) {
+       const index = this.searchIndices.get(indexKey);
+       if (index) await this.saveSearchIndexToDB(indexKey, index);
+     }
    }
    ```
+
+   Wire `markIndexDirty(spaceIndexKey)` (and dmIndexKey when applicable) into `addMessageToIndex()` and `removeMessageFromIndex()`. Also call `flushDirtyIndices()` from:
+   - `visibilitychange` → hidden
+   - `beforeunload`
+   - LRU eviction path (Phase 1.4) — synchronously before dropping from memory
 
 ### Impact
 
 - ✅ First search after restart: 200ms → ~10ms (20x faster)
 - ✅ No CPU waste rebuilding indices
 - ✅ Works offline (no backend needed)
+- ✅ Write amplification bounded (debounced flush, not per-message)
 
 ### Files to Modify
 
-- `src/db/messages.ts` - Add persistence methods, update schema
-- Update `addMessageToIndex()` and `removeMessageFromIndex()`
+- `src/db/messages.ts` — DB schema bump, persistence methods, dirty-flag plumbing, hook flush into `addMessageToIndex`/`removeMessageFromIndex`/eviction
+- App shell or `useSearchService` — wire `visibilitychange` and `beforeunload` flush handlers (one-line each)
+
+### Adapter-shape considerations (per C1)
+
+The four methods this phase adds (`saveSearchIndexToDB`, `loadSearchIndexFromDB`, `markIndexDirty`, `flushDirtyIndices`) are the IndexedDB implementation of what will eventually be `SearchAdapter` interface methods. Name them as if `MessageDB` were already implementing that interface. When migration day arrives, the interface declaration is a copy-paste of these method signatures — no logic change in `SearchService`.
 
 ### Success Criteria
 
@@ -172,6 +293,8 @@ Persist serialized search indices to IndexedDB, load on demand.
 - [ ] First search uses cached index (< 20ms)
 - [ ] Automatic invalidation of stale indices
 - [ ] Incremental updates maintain consistency
+- [ ] Write throughput sane in busy spaces (one flush per 5s window, not per message)
+- [ ] No data loss on app close (`beforeunload` flush succeeds in <100ms typical)
 
 ---
 
@@ -181,13 +304,15 @@ Persist serialized search indices to IndexedDB, load on demand.
 
 **Estimated Effort**: 1-2 days
 
+**Hard prerequisite**: Phase 1.3 must ship first. LRU is only safe to do when evicted indices can be reloaded from IndexedDB — otherwise eviction destroys work and the next search has to rebuild from messages (~200ms instead of ~10ms). Sequencing: 1.2 → 1.3 → 1.4.
+
 **Current Problem**:
 - Every space searched adds index to memory
 - Memory usage grows unbounded
 - No eviction strategy
 
 **Solution**:
-LRU (Least Recently Used) eviction with configurable memory limits.
+LRU (Least Recently Used) eviction with configurable memory limits. Evicted indices are reloaded transparently from IndexedDB on next access.
 
 ### Key Changes
 
@@ -213,10 +338,15 @@ LRU (Least Recently Used) eviction with configurable memory limits.
      const entries = Array.from(this.indexAccessTimes.entries())
        .sort((a, b) => a[1] - b[1]);
 
-     // Evict oldest
+     // Evict oldest — but flush dirty state first so we don't lose pending writes
      const toEvict = entries.slice(0, entries.length - MAX_INDICES);
      for (const [indexKey] of toEvict) {
-       this.searchIndices.delete(indexKey); // Index is in IndexedDB
+       if (this.dirtyIndices.has(indexKey)) {
+         const index = this.searchIndices.get(indexKey);
+         if (index) await this.saveSearchIndexToDB(indexKey, index);
+         this.dirtyIndices.delete(indexKey);
+       }
+       this.searchIndices.delete(indexKey); // Safe to drop — persisted in IndexedDB
        this.indexAccessTimes.delete(indexKey);
      }
    }
@@ -385,9 +515,18 @@ const finalScore = relevanceScore * calculateRecencyBoost(messageDate);
 | **2.3 Chunking** | 3-4 days | Medium (if large spaces exist) | Optional | 📋 Conditional |
 | **3.x Advanced** | 1 week+ | Low (edge cases) | Low | 📋 Optional |
 
-**Recommended Next Step**: Start with Phase 1.2 (Lazy Loading) after validating current quick wins work well.
+**Recommended Next Step**: Start with Phase 1.2 (Lazy Loading) after validating current quick wins work well. Bundle Phase 1.3 + 1.4 design together — they share dirty-tracking and persistence machinery.
 
 ---
 
-**Last Updated**: 2025-11-12
+**Last Updated**: 2026-05-24
 **Next Review**: After Phase 1.2 implementation
+
+## Changelog
+
+- **2026-05-24** — Major revision after session research:
+  - Added Cross-cutting constraints section (C1 SearchAdapter alignment, C2 MiniSearch `loadJSON`/`toJSON` correct API, C3 debounced flush instead of per-message save).
+  - Phase 1.2: pointed at actual startup-blocker location (`useSearchService` hook, not just `SearchService.initialize()`); added UI loading state requirement.
+  - Phase 1.3: fixed pseudo-code that used `addAll(JSON.parse(...))` (wrong) → `MiniSearch.loadJSON(...)` (correct); centralized MiniSearch options as a static so create + load match; replaced per-message persistence with dirty-flag + debounced flush + lifecycle hooks; added DB version bump note (12 → 13); added adapter-shape naming guidance.
+  - Phase 1.4: marked Phase 1.3 as a hard prerequisite; added flush-before-evict step.
+- **2025-11-12** — Initial roadmap drafted alongside Phase 1.1 quick wins.

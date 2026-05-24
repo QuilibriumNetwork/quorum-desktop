@@ -226,6 +226,21 @@ const Channel: React.FC<ChannelProps> = ({
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageComposerRef = useRef<MessageComposerRef>(null);
   const messageListRef = useRef<MessageListRef>(null);
+  // Track composer height so MessageList can reserve matching bottom padding.
+  // Composer is rendered as an overlay (position: absolute) above the message
+  // list; without this padding the last message would be hidden behind it.
+  const composerContainerRef = useRef<HTMLDivElement>(null);
+  const chatAreaRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const composerEl = composerContainerRef.current;
+    const chatAreaEl = chatAreaRef.current;
+    if (!composerEl || !chatAreaEl) return;
+    const ro = new ResizeObserver(() => {
+      chatAreaEl.style.setProperty('--composer-height', `${composerEl.offsetHeight}px`);
+    });
+    ro.observe(composerEl);
+    return () => ro.disconnect();
+  }, []);
 
   // Get channel data
   const {
@@ -1553,7 +1568,7 @@ const Channel: React.FC<ChannelProps> = ({
         {/* Content area - flex container for messages and sidebar */}
         <div className="flex flex-1 relative">
           {/* Messages and composer area */}
-          <div className="flex flex-col flex-1">
+          <div className="flex flex-col flex-1 chat-area" ref={chatAreaRef}>
             <div
               className={
                 'message-list relative' +
@@ -1600,7 +1615,7 @@ const Channel: React.FC<ChannelProps> = ({
               />
             </div>
 
-            <div className="message-editor-container">
+            <div className="message-editor-container" ref={composerContainerRef}>
               <TypingIndicator
                 scope={typingScope}
                 resolveName={(addr) => mapSenderToUser(addr).displayName}

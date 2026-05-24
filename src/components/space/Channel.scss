@@ -47,12 +47,32 @@
   background: var(--surface-5);
 }
 
-// Ensure the composer stays visible at bottom and doesn't get pushed off-screen
+// Composer floats as an overlay above the message list (Discord-style).
+// Container itself is transparent so the pill-shaped composer row reads as
+// a floating element. Messages stop just above the pill (handled via
+// --composer-height in .message-list-bottom-spacer) so avatars don't get
+// clipped by a rectangular background. The composer pill has its own
+// opaque background, so it visually covers the chat behind it.
 .message-editor-container {
-  position: sticky;
+  position: absolute;
+  left: 0;
+  right: 0;
   bottom: 0;
   background: transparent;
   z-index: 5;
+
+  // Remove the composer-row's top margin in this context — the bottom-spacer
+  // already provides the visual gap above the composer.
+  .message-composer-row {
+    margin-top: 0;
+  }
+}
+
+// Establish positioning context for the absolute-positioned composer overlay.
+// Bottom padding is reserved via .message-list-bottom-spacer inside Virtuoso,
+// which reads --composer-height set on this element via ResizeObserver.
+.chat-area {
+  position: relative;
 }
 
 /* Sticker/Emoji panel styles are in shared _chat.scss */

@@ -1,9 +1,9 @@
 ---
 type: task
 title: Quick Wins - Search Improvements
-status: in-progress
+status: done
 created: 2025-11-12T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-05-24'
 ---
 
 # Quick Wins - Search Improvements
@@ -122,7 +122,7 @@ title={!isTouch ? t`Search Results` : undefined}
 
 ### 5. Incremental Search Index Updates
 
-**File**: `src/db/messages.ts:662-667, 691-701`
+**File**: `src/db/messages.ts:1196-1202, 1257-1267` (line numbers refreshed 2026-05-24 — file has grown since Nov 2025)
 
 **Problem**: New messages saved to DB but never added to search index, so they were invisible to search until app reload.
 
@@ -165,7 +165,7 @@ transaction.oncomplete = () => {
 
 ### 6. Relevance-First Sorting
 
-**File**: `src/db/messages.ts:1062-1064`
+**File**: `src/db/messages.ts:1693-1695` (line numbers refreshed 2026-05-24)
 
 **Approach**:
 ```typescript
@@ -201,24 +201,9 @@ return results.sort((a, b) => b.score - a.score);
 
 ## 🐛 Known Issues
 
-### 1. Stale Search Index (One-Time Migration Issue)
+> The "Stale Search Index (One-Time Migration Issue)" entry was removed 2026-05-24. The Nov 2025 fix has been in `main` for ~6 months; any user still on an unfixed build has long since updated.
 
-**Issue**: Messages posted before this fix aren't in search index
-
-**Why**:
-- Search index built once at startup from existing DB messages
-- Users post 100 messages
-- Code updated to add incremental indexing
-- Those 100 messages are in DB but NOT in index
-- Only messages posted AFTER update are indexed
-
-**Workaround**: Reload app (rebuilds index from scratch)
-
-**Long-term fix**: Not needed - once users update to this version, all future messages will be indexed automatically
-
----
-
-### 2. Startup Still Slow (2-5 seconds)
+### 1. Startup Still Slow (2-5 seconds)
 
 **Issue**: Search indices still built synchronously at startup for ALL spaces/DMs
 
@@ -228,7 +213,7 @@ return results.sort((a, b) => b.score - a.score);
 
 ---
 
-### 3. No Persistence
+### 2. No Persistence
 
 **Issue**: Indices rebuilt from scratch every app restart
 
@@ -238,7 +223,7 @@ return results.sort((a, b) => b.score - a.score);
 
 ---
 
-### 4. 500 Result Hard Limit
+### 3. 500 Result Hard Limit
 
 **Issue**: Can't see more than 500 results
 
@@ -294,10 +279,10 @@ return results.sort((a, b) => b.score - a.score);
    - Lines 177-183: Added 500-result warning callout
    - Line 119: Fixed title from `searchContext.name` → `"Search Results"`
 
-3. **src/db/messages.ts**
-   - Lines 662-667: Added `addMessageToIndex()` call in `saveMessage()`
-   - Lines 691-701: Added `removeMessageFromIndex()` call in `deleteMessage()`
-   - Lines 1062-1064: Simplified sort to relevance-first
+3. **src/db/messages.ts** (line numbers reflect current state as of 2026-05-24; file has grown ~500 lines since Nov 2025)
+   - Lines 1196-1202: `addMessageToIndex()` call in `saveMessage()`
+   - Lines 1257-1267: `removeMessageFromIndex()` call in `deleteMessage()`
+   - Lines 1693-1695: relevance-first sort
 
 **Total lines changed**: ~30 lines
 **Files touched**: 3 files
@@ -315,3 +300,10 @@ return results.sort((a, b) => b.score - a.score);
 
 **Completed**: 2025-11-12
 **Review Date**: After Phase 1.2 implementation
+
+---
+
+## Changelog
+
+- **2026-05-24** — Refreshed line numbers (messages.ts has grown ~500 lines since Nov 2025). Removed stale "bulk history" known issue. Re-numbered known-issues list. Changed status from `in-progress` to `done` — this phase shipped and won't be edited further.
+- **2025-11-12** — Phase 1.1 shipped.
