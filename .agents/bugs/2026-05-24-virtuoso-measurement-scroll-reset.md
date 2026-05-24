@@ -28,9 +28,9 @@ Two distinct bugs, both with triggers entirely on **our** side. Both route throu
 | **Proposed fix** | **Fix C** — freeze `isCompact` for messages with `sendStatus==='sending'` | **Fix R2 + R3** — return same `InfiniteData` ref when nothing changed; cap `increaseViewportBy` |
 | **Estimated patch** | ~20 lines | ~17 lines total |
 
-**Status (2026-05-24, post-Session 13 — β PLAN WRITTEN, awaiting user approval):**
+**Status (2026-05-24, post-Session 14 — β PLAN REVIEWED + EXTRACTED, awaiting user approval to implement):**
 
-R3 + R4 in place, reduce receiver-side jump from 420px → ~130px (kept; see Session 13 for R4's confirmed disposition). R2 and Fix C both attempted and reverted. **Session 11 found the real cause of the 24px shrink**: `mapSenderToUser` identity change when `members` data resolves async → `isCompact` flip → CSS `margin-top` drops 24→0. **Session 12: user proposed the architectural move** — thin wrapper around Virtuoso that owns scroll anchoring. **Session 13: β plan written** in plain-language reasoning (NOT code) for user to evaluate. Plan kills bug class by targeting the consequence (Virtuoso's wrong scrollTop write) rather than the cause (many independent triggers). Decision: NOT migrating off Virtuoso, NOT accepting residual jank. Awaiting user approval of plan before any implementation.
+R3 + R4 in place, reduce receiver-side jump from 420px → ~130px. R2 and Fix C both attempted and reverted. Session 11 found the real cause of the 24px shrink (members async load → isCompact flip → CSS margin-top drops 24→0). Session 12-13 drafted the architectural fix: thin wrapper owning scroll anchoring, kills bug class by targeting consequence rather than cause. Session 14: plan independently reviewed (YELLOW verdict, four spec changes incorporated). **Plan extracted to its own task doc** for clarity: see [`../tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md`](../tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md). This bug doc enters maintenance mode — it remains the diagnosis history; the task doc is the forward-looking implementation spec. Decisions: NOT migrating off Virtuoso, NOT accepting residual jank.
 
 **Prior investigation:** 20 phases in the archived doc, ~4 hours, no fix that converged — because every attempt targeted Virtuoso's symptom rather than our own trigger. See [`.archived/2026-03-19-message-list-scroll-jank-on-send.md`](.archived/2026-03-19-message-list-scroll-jank-on-send.md) for the full receipts.
 
@@ -557,85 +557,33 @@ R4 decision pending: agent flagged R4's refs as part of the observed mechanism. 
 
 **Next:** write the β plan in plain-language reasoning (for a junior-dev reader who needs to evaluate philosophy, not code), then user reviews before any code is written.
 
-### Session 13 (2026-05-24): β plan — application-owned scroll anchoring
+### Session 13 (2026-05-24): β plan drafted
 
-**R4 disposition:** KEEP (user-confirmed). Stays as a render-efficiency improvement; bug-fix role superseded by β.
+**R4 disposition:** KEEP (user-confirmed). Stays as render-efficiency improvement; bug-fix role superseded by β.
 
----
+Plan drafted in this document, then extracted to its own task doc for clarity (this bug doc is the diagnosis history; the task doc is the forward-looking implementation spec).
 
-## β: application-owned scroll anchoring
+**Implementation plan moved to:** [`../tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md`](../tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 
-### Goal
+### Session 14 (2026-05-24): Independent review of β plan — YELLOW verdict, four spec changes incorporated
 
-Eliminate both observable bug classes (B1 sender-side ~24-85px, B2 receiver-side ~130px). Not reduce — eliminate. Process discipline: do not ship with residual jank.
+The β plan was reviewed by an independent expert agent given full bug-doc context and access to the relevant code. Verdict: **YELLOW** (proceed with four specific changes).
 
-### Rationale
+Findings (severity-ordered):
 
-Sessions 2-12 established that Virtuoso's measurement callback writes incorrect `scrollTop` values in response to measurement events, and that the library has many independent measurement triggers (row resize, item mount above viewport, function-reference identity change, array-reference change, image load, late member-data resolution — Sessions 5, 10, 11). Each per-trigger fix attempt (R2, R3, R4, C) closed at most one trigger while leaving others open. R3 reduced amplitude via overscan capping but did not address the underlying class of bug.
+1. **HIGH — Cache-subscription must filter on "append to last page."** Seven `setQueriesData` paths exist in `MessageService.ts` (reactions, pins, status flips, deletes, retries, real new messages). Only one — line 1892 — appends. The plan's prose said "filter on append" but didn't specify the diff logic. Resolved: explicit `next.pages.at(-1).messages.length > previous.pages.at(-1).messages.length` check documented in the task doc.
 
-**The architectural reframing is to target the consequence rather than the cause:** let Virtuoso's measurement callback write whatever `scrollTop` it computes, then overwrite that value at the application layer when a cache write occurs while the user is anchored at bottom. The trigger inventory becomes irrelevant — every measurement event resolves to either "user was anchored, snap to bottom" or "user was not anchored, leave the scroll position alone."
+2. **HIGH — Factual error in threshold claim.** Original plan said "50px matches `useScrollTracking`." Verified at `src/hooks/ui/useScrollTracking.ts:15-18` — the hook has no internal threshold; it wraps Virtuoso's 5000px `atBottomThreshold`. Two distinct semantic concepts (anchor threshold vs jump-button visibility) were conflated. Resolved: task doc now specifies 100px anchor threshold (new), 5000px jump-button threshold (existing) as independent values.
 
-This is the pattern used by Discord and Element (custom virtualizers with application-owned anchoring) and corresponds to Virtuoso's commercial `@virtuoso.dev/message-list` product, which exists because the open-source `followOutput` API has insufficient guarantees for chat. We adopt the same pattern at the application layer.
+3. **MEDIUM — Two-rAF "defense" is hand-wavy.** Existing code already uses 10 rAFs + setTimeouts and still fails. Resolved: `useLayoutEffect` adopted as the PRIMARY snap mechanism (synchronous with commit, before paint), not as a fallback. `rAF` belt-and-suspenders only escalated to if telemetry shows residual issues.
 
-### Mechanism
+4. **MEDIUM — `hasInteractedRef` first-scroll gate breaks fresh-session case.** Virtuoso's initial `initialTopMostItemIndex` scroll is imperative and does NOT fire a DOM scroll event, so the gate would never open before the user sends their first message. Resolved: use Virtuoso's first `atBottomStateChange(true)` callback as the readiness signal instead.
 
-A `useScrollAnchor` hook in `src/components/message/`:
+Additional risk added to the task doc per reviewer:
 
-1. **Scroll-position tracker.** Passive scroll listener on the Virtuoso scroller element. Maintains `isAtBottomRef: boolean` based on `(scrollHeight - clientHeight - scrollTop) < THRESHOLD`. Threshold = 50px (consistent with `useScrollTracking`).
-2. **Cache-write subscription.** Subscribes to the React Query cache via `queryClient.getQueryCache().subscribe()` filtered to `buildMessagesKeyPrefix({ spaceId, channelId })`. On `updated` events where the data added items at the end of the last page, evaluates `isAtBottomRef`. If true, schedules a snap via `requestAnimationFrame` (next paint) and a second snap on the following frame (defense against Virtuoso's measurement callback overwriting in the intervening frame).
-3. **Imperative snap.** Returns a `snapToBottom()` function for callers that need to force-pin (jump-to-present button, post-send handler).
-4. **Initialization guard.** Snapping is gated on a `hasInteractedRef` flag set true on the first scroll event, preventing spurious snaps during initial mount when `initialTopMostItemIndex` is still doing its work.
-5. **Suppression interop.** Respects the existing `hasJumpedToOldMessage` state — when true, all auto-snap is disabled, matching current `followOutput` semantics.
+5. **R8 — `hasNextPage=true` false-negative.** The existing followOutput suppresses snapping when `hasNextPage=true`. The new hook intentionally does NOT replicate this — when the user is at the bottom of the loaded window and a new message arrives with forward pages still pending, the correct behavior is to snap.
 
-### Scope of change
-
-**Modified:**
-- `MessageList.tsx` — `followOutput` reduced to `followOutput={false}` (always). The existing rAF + setTimeout snap loop in the `followOutput` body (lines 619-646) is removed. `useScrollAnchor` is mounted; exposed snap function wired into `useImperativeHandle` for parent callers.
-- `DirectMessage.tsx` — the `setTimeout(snap, 100/300/600)` block in `handleSubmitMessage` (lines 360-371) is removed. Post-send anchoring is handled by `useScrollAnchor` reacting to the optimistic `addMessage` cache write.
-- `Channel.tsx` — verify and remove any analogous ad-hoc snap calls. Pre-implementation grep needed.
-
-**Added:**
-- `src/components/message/useScrollAnchor.ts` (~80 lines).
-
-**Unchanged:**
-- `react-virtuoso` dependency, version, and core configuration (`alignToBottom`, `firstItemIndex`, `initialTopMostItemIndex`, `computeItemKey`, `itemContent`, `rangeChanged`, overscan, `atTopStateChange`, `atBottomStateChange`).
-- All other Virtuoso usages (`Channel.tsx` members, `EmojiPicker.tsx`, `SearchResults.tsx`, `PinnedMessagesPanel.tsx`, `BookmarksPanel.tsx`).
-- Hash navigation, `scrollToMessageId`, jump-to-present button, new-messages-separator dismissal, pagination top/bottom triggers, thread panel reuse of `MessageList` with `alignToTop={true}`.
-
-### Risk register
-
-| ID | Risk | Mitigation |
-|---|---|---|
-| R1 | Visible single-frame flash if Virtuoso writes wrong `scrollTop` before our `rAF` snap lands. | Telemetry verification post-implementation. Fallback: snap via `useLayoutEffect` synchronous with the React render that processes the cache update, ahead of paint. |
-| R2 | False positive snap (user is scrolled up but `isAtBottomRef` reports true). | 50px threshold matches existing `useScrollTracking` convention. Verified in production via that hook. |
-| R3 | Pagination cache writes (load-previous-page) misclassified as "new messages at bottom." | Hook filters on whether the cache update appended to the last page (vs prepended to the first page). The two paths take different code routes in `MessageService` already. |
-| R4 | Conflict with imperative scrolls (hash nav, scrollToMessageId, jump-to-present). | Hook respects `hasJumpedToOldMessage` flag (same suppression mechanism currently used by `followOutput`). |
-| R5 | Snap fires during initial mount before Virtuoso has measured. | `hasInteractedRef` gate — snapping is only enabled after the first user scroll event confirms the scroller is mounted and measured. |
-| R6 | Cache-subscription churn impacts performance at 100K-1M message scale. | Subscription is filtered by query key prefix and runs synchronously per update; cost is O(1) per cache write. No iteration over message list. |
-
-### Acceptance criteria
-
-Pre-existing instrumentation captures all relevant signals. Pass criteria:
-
-- **Sender-side telemetry:** zero suspect events (`🔴 scroll-untracked` with negative Δ) across 3 consecutive captures. `item-resize` events may still occur but must not be followed by negative scrollTop deltas.
-- **Receiver-side telemetry:** same — zero suspect events across 3 consecutive captures.
-- **Functional regression checks (manual):**
-  - Hash navigation: clicking a search result scrolls to and highlights the message.
-  - `scrollToMessageId`: auto-jump-to-first-unread positions the new-messages-separator in view.
-  - Jump-to-present: button appears when scrolled up; clicking snaps to the latest message.
-  - Pagination top: scrolling to top triggers `fetchPreviousPage` and preserves position.
-  - Thread panel: opens, scrolls, and behaves identically to current.
-  - New-messages separator: appears and dismisses on visibility transition.
-
-### Failure mode
-
-If acceptance criteria are not met after R1 mitigation (synchronous `useLayoutEffect` snap), β does not ship. Bug remains open. Next architectural step (custom virtualizer following Discord/Element pattern, or commercial `@virtuoso.dev/message-list` evaluation) is reopened in a new session.
-
-### Diff estimate
-
-~100-150 lines net change: ~80 line addition (`useScrollAnchor.ts`), ~30 line removal (existing snap loops), ~10 line modification across MessageList/DirectMessage/Channel call sites.
-
----
+All four findings + R8 incorporated into the task doc before any code is written. Plan is now ready for implementation pending user approval.
 
 ## Status: β PLAN READY — awaiting user approval before implementation
 
@@ -645,7 +593,8 @@ Currently kept on branch `fix/virtuoso-scroll-jank`:
 - Commit `09361de7`: Fix R3 (overscan cap) — **KEEP.** Real improvement (420→130px on receive).
 - Commit `dd966df7`: Fix R4 (stable rowRenderer) — **KEEP** (user-confirmed Session 13). Was originally implicated in the observed 24px shrink mechanism; β supersedes its bug-fix role; remains as a render-efficiency improvement.
 - Commit `db456a68`: revert of `528ba7fd` (Fix R2, did not help). Already reverted.
-- Commits `ebdf0913` `35a24473` `d22feb7d` `875a3f9a`: doc updates (Sessions 7-12).
+- Commits `ebdf0913` `35a24473` `d22feb7d` `875a3f9a` `f7ad98ab`: doc updates (Sessions 7-13).
+- β plan extracted to: [`../tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md`](../tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md). Independently reviewed (YELLOW, four changes incorporated). Awaiting user approval to implement.
 
 **Pending (in order):**
 
