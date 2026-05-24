@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Application-owned scroll anchoring for the message list (β)"
-status: ready-for-implementation
+status: in-progress
 priority: high
 ai_generated: true
 created: 2026-05-24
@@ -14,11 +14,100 @@ branch: fix/virtuoso-scroll-jank
 
 ## Context
 
-This task implements the fix for the scroll-jank bug class documented in [`bugs/2026-05-24-virtuoso-measurement-scroll-reset.md`](../bugs/2026-05-24-virtuoso-measurement-scroll-reset.md). Read that document first for the full diagnostic history (13 sessions, two confirmed bug classes B1 and B2, four fix attempts evaluated).
+This task implements the fix for the scroll-jank bug class documented in [`bugs/2026-05-24-virtuoso-measurement-scroll-reset.md`](../bugs/2026-05-24-virtuoso-measurement-scroll-reset.md). Read that document first for the full diagnostic history (16 sessions, two confirmed bug classes B1 and B2, six β iterations).
 
-Summary of why we are here: `react-virtuoso`'s measurement callback writes incorrect `scrollTop` values in response to measurement events, and the library has many independent measurement triggers. Per-trigger fix attempts close at most one trigger while leaving others open. The architectural reframing is to target the consequence (the wrong `scrollTop` write) rather than the cause (the trigger inventory) by overwriting the value at the application layer when a cache write occurs while the user is anchored at the bottom.
+Summary of why we are here: `react-virtuoso`'s measurement callback writes incorrect `scrollTop` values in response to measurement events, and the library has many independent measurement triggers. Per-trigger fix attempts close at most one trigger while leaving others open. The architectural reframing is to target the consequence (the wrong `scrollTop` write) rather than the cause (the trigger inventory) by overwriting the value at the application layer.
 
-This task has been reviewed by an independent expert agent which surfaced four spec-level issues. All four are addressed in the design below.
+## Current state (end-of-day 2026-05-24)
+
+**β checkpoint committed as `64663d6d`.** Implementation went through six iterations (β.1-β.6, fully documented in the bug doc Session 15). The current architecture is a **pure-reactive scroll listener**: on every scroll event, if `scrollTop` dropped backward AND the user was anchored on the previous event, the hook attributes the drop to Virtuoso and overwrites `scrollTop` back to the bottom.
+
+**Files in the current checkpoint:**
+
+- `src/components/message/useScrollAnchor.ts` — the hook (~110 lines)
+- `src/components/message/MessageList.tsx` — `followOutput={false}` + hook mounted + `scrollToBottom` imperative uses hook's `snapToBottom`
+- `src/components/direct/DirectMessage.tsx` — `setTimeout` snap block removed
+- `src/components/space/Channel.tsx` — passes `anchorSpaceId` / `anchorChannelId` props (currently unused by hook; reserved for hybrid path)
+
+**What works:**
+- Single-word sender-side: zero suspect events, visually clean.
+- Existing imperative paths (hash navigation, scrollToMessageId, jump-to-present) unaffected — hook respects `hasJumpedToOldMessage` flag.
+
+**What doesn't yet work (the gap to close next session):**
+- Multi-line sender-side: message appears partially visible, then snaps UP. Single-frame visible flash. This is because Virtuoso doesn't always write `scrollTop` when content extends BELOW the viewport (multi-line message added; user at bottom), so the pure-reactive hook has nothing to absorb.
+- Receiver-side: NOT TESTED with current implementation. Was the larger of the two bug magnitudes pre-fix (~130px residual after R3).
+
+## Next-step plan: HYBRID architecture
+
+Re-add the cache subscription path that β.4 implemented and β.6 dropped. The earlier subscription logic was correct in concept; β.6 removed it as part of an over-aggressive simplification. Specifically:
+
+**Hook becomes a hybrid:**
+
+1. **Reactive path (current implementation, KEEP):** scroll listener absorbs Virtuoso's backward writes when user was anchored.
+2. **Proactive path (TO ADD):** cache subscription on `buildMessagesKeyPrefix({ spaceId, channelId })`. On `updated` events where the last-page length grew OR the last-message OBJECT REFERENCE changed (not id; optimistic and server-confirmed share ids), AND `wasAnchored` was true, call `performSnap()` directly. No delayed snaps. No additional gates beyond `hasJumpedToOldMessage` + `deletionInProgress` + `wasAnchored`.
+
+**Why hybrid and not pure-cache-driven:**
+
+- Cache subscription catches APPENDS (proactive snap on new content below viewport).
+- Scroll listener catches Virtuoso's LATE backward writes (member data resolving 200ms+ after the cache write; image loads; internal measurement re-passes).
+- Together they cover both classes of trigger without overlap.
+
+**Why hybrid and not pure-scroll-listener (the current checkpoint):**
+
+- Scroll listener only fires on scrollTop change. When Virtuoso adds content below the viewport without scrolling (multi-line message; gap=0 before and after the write because Virtuoso preserved scrollTop), the listener never fires.
+- Cache subscription provides the missing signal.
+
+## Implementation steps for next session
+
+1. **Test receiver-side with the current checkpoint** (`64663d6d`). Establishes baseline for the hybrid to improve on.
+2. **Re-add cache subscription to `useScrollAnchor`:**
+   - Add `queryClient`, `spaceId`, `channelId` to options interface (already accepted by MessageList from Channel/DirectMessage props).
+   - Seed `lastSeenLastPageLen` and `lastSeenLastMessage` from the current cache state at subscription time (β.4's seed-from-cache logic was correct; do not regress to first-observation null-init).
+   - On `event.type === 'updated'` with matching query-key prefix, compare last-page length and last-message object reference. Snap if length grew OR reference changed AND `wasAnchored` AND not suppressed.
+   - Filter implementation: `next.pages.at(-1).messages.length > prev` OR `next.pages.at(-1).messages.at(-1) !== prev.last`.
+3. **Test sender single + multi-line + receiver-side.** Acceptance criteria below.
+4. **Strip diagnostic `scrollDebug.log` calls** from `useScrollAnchor.ts` (every-scroll-event log + ABSORB log were diagnostic-only).
+5. **Move hook** to `src/hooks/ui/useScrollAnchor.ts` per project convention (`useScrollTracking.ts` already lives there).
+6. **Strip working comments** from hook — β.X iteration suffixes, "previously did X" narratives. Keep JSDoc header + terse "why not the alternative" comments.
+7. **Remove instrumentation:**
+   - Delete `src/components/message/__scrollDebug.ts`.
+   - Grep `TEMPORARY DEBUG` and remove all blocks in MessageList.tsx, DirectMessage.tsx, MessageService.ts.
+8. **Functional regression manual checks** (see acceptance criteria).
+9. **Open PR.**
+
+## Acceptance criteria
+
+### Telemetry pass
+
+Existing instrumentation in `src/components/message/__scrollDebug.ts` captures everything needed. Run three sessions per side; each session = one message sent or received:
+
+- **Sender-side (channel), single-word:** zero `🔴 scroll-untracked` events with negative Δ.
+- **Sender-side (channel), multi-line:** zero suspect events AND no visible scroll-up flash (the gap currently in the checkpoint).
+- **Receiver-side (channel):** zero suspect events.
+- **Sender-side (DM):** zero suspect events.
+- **Receiver-side (DM):** zero suspect events.
+
+### Functional regression (manual)
+
+After telemetry passes:
+
+- Hash navigation: click a search result; message scrolls into view and highlights for 8s.
+- `scrollToMessageId` / auto-jump-to-first-unread: open a channel with unread messages; auto-jumps to first unread with New Messages separator visible.
+- Jump-to-present: scroll up 500+ px; button appears; click; immediate snap to latest message.
+- Pagination top: scroll to top; `fetchPreviousPage` fires; older messages appear without scroll jump.
+- Pagination bottom: after hash navigation, scroll down; `fetchNextPage` fires.
+- Thread panel: open a thread; scrolls and behaves identically to current behavior.
+- New-messages separator: receive a message while scrolled up; separator appears; scroll to it; separator dismisses on scroll-past.
+- Delete a message: list reflows without scroll jump.
+- React to a message (own and other): list reflows without scroll jump.
+
+### Failure mode
+
+If after the hybrid implementation telemetry STILL shows residual jank or visible flash that can't be eliminated by tuning thresholds, do NOT ship. Reopen the architecture conversation. Custom virtualizer (Discord pattern) becomes the next candidate.
+
+## Original design notes (for reference; superseded above)
+
+The original task doc was written before implementation revealed β needed six iterations to land. The original sections (Mechanism, Cache-update filter, Threshold decisions, Snap scheduling, Initialization gate, Suppression interop, hasNextPage handling, Scope, Risk register, Acceptance criteria) below are preserved for context but the **"Next-step plan"** section above supersedes them.
 
 ## Goal
 
