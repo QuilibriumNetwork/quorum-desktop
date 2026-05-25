@@ -52,7 +52,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [User Config Sync on Existing Accounts](docs/features/user-config-sync.md)
 - [User Data Backup & Restore](docs/features/user-data-backup.md)
 - [User Notes](docs/features/user-notes.md)
-- [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
+- [Message Search Feature](docs/features/search-feature.md)
 
 ### Features / Messages
 - [Auto-Jump to First Unread Message](docs/features/messages/auto-jump-first-unread.md)
@@ -283,10 +283,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Utilities Migration Implementation Plan](tasks/quorum-shared-migration/.done/2026-03-18-utils-migration-plan.md)
 
 ### Search Optimization
+- [Search Performance Optimization](tasks/search-optimization/README.md)
 - [Design Decisions & Rationale](tasks/search-optimization/decisions.md)
 - [Future Search Optimization Phases](tasks/search-optimization/future-phases.md)
-- [Quick Wins - Search Improvements](tasks/search-optimization/quick-wins.md)
-- [Search Performance Optimization](tasks/search-optimization/README.md)
+- [Phase 1.1 - Quick Wins](tasks/search-optimization/quick-wins.md)
+- [Phase 1.2 - Lazy Loading](tasks/search-optimization/phase-1.2-lazy-loading.md)
+- [Phase 1.3 - IndexedDB Persistence](tasks/search-optimization/phase-1.3-persistence.md)
+- [Phase 1.4 - LRU Memory Management](tasks/search-optimization/phase-1.4-lru-eviction.md)
 
 ## 📋 Completed Tasks
 

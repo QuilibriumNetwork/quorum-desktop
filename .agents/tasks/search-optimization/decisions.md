@@ -387,6 +387,38 @@ In a busy space (~10 msg/sec during active conversation), this re-serializes the
 
 ---
 
+## 12. Known limitations (deferred, added 2026-05-25)
+
+Surfaced by code review after Phase 1.4 shipped. Documenting rather than fixing because the cost-vs-benefit doesn't justify the work yet.
+
+### 12a. `beforeunload` flush is best-effort, not guaranteed
+
+`SearchService.flushIndices()` returns a Promise. `window.beforeunload` does NOT wait for promises before the page unloads. In a hard close (X button, browser quit, OS kill), the async IndexedDB write started inside the handler will likely not complete. `visibilitychange → hidden` covers tab-switch and soft-close cases more reliably.
+
+**Impact**: at most one debounce window (~5s) of incremental index updates lost on hard close. Acceptable because:
+- Source of truth is the `messages` store, not the cached index. Worst case the persisted index is one window stale; next lazy-load loads the stale version, then rebuilds dirty state, then re-persists.
+- Search is a derived view, not a system of record.
+
+**When to revisit**: if/when this app moves to a full Electron native shell, wire `app.on('before-quit')` in the main process to IPC the renderer for a synchronous `await flushDirtyIndices()` before exit. Web-only deployments are stuck with the current best-effort model.
+
+### 12b. No `indexVersion` field — option drift silently corrupts cached indices
+
+`StoredSearchIndex` has no version stamp. If `MINISEARCH_OPTIONS` is changed in code (e.g. adding a field to `fields` or `storeFields`), `MiniSearch.loadJSON` will happily deserialize old records using the new options — no error, but the restored index is structurally inconsistent with the options (missing the new field's tokens). Users see silently degraded results until the index is rebuilt for some other reason.
+
+**Mitigation when needed**: add `indexVersion: number` to `StoredSearchIndex` and a sibling `SEARCH_INDEX_VERSION = N` constant next to `MINISEARCH_OPTIONS`. Bump N whenever options change. In `loadSearchIndexFromDB`, return null when versions don't match (caller falls through to fresh build).
+
+**Why deferred**: `MINISEARCH_OPTIONS` hasn't changed since 2025-11-12, and the comment on the constant flags drift as a hazard. Adding the version field now is premature for a change that may never happen. Add it the first time anyone touches the options.
+
+### 12c. Persisted index for inactive spaces can be arbitrarily stale
+
+Phase 1.3 + 1.4 design: `markIndexDirty` is only called when the in-memory index exists. If a message arrives for a space whose index is NOT loaded, no dirty marker fires — the persisted record for that space stays as it was at last eviction (could be hours/days old).
+
+**Why this is fine**: when the user eventually searches that space, `loadIndexLazily` loads the stale persisted index. The freshly-built lazy load path then runs (cache hit), which IS the stale version. Next message added to that now-loaded index will mark dirty and trigger flush. So the "stale persisted version" only matters for the brief window of the user's first search in that space after a long absence — and even then, the search results may miss messages added during the staleness window.
+
+**Mitigation when needed**: on `loadIndexLazily` cache hit, compare `stored.messageCount` against actual message count for that space/DM. If they diverge by more than some threshold, treat the cache as a miss and rebuild from messages. Adds one count query per cold load; defer until someone reports a "search misses recent messages after reopening old space" bug.
+
+---
+
 ## Summary Table
 
 | Decision | Choice | Rationale | Reversible? |
@@ -401,13 +433,17 @@ In a busy space (~10 msg/sec during active conversation), this re-serializes the
 | **Migration alignment** | Adapter-shaped persistence in `MessageDB` | Migration-day refactor is near-zero | Yes (can be hardened later) |
 | **MiniSearch persistence** | `loadJSON` + shared options constant | Correct API; avoids silent misbehavior | No (correct choice) |
 | **Persistence writes** | Debounced flush + lifecycle hooks | Bounds write amplification | Yes (can tune debounce window) |
+| **beforeunload durability** | Best-effort (web platform limit) | Promise not awaited by browser; ~5s loss on hard close | Yes (Electron main-process hook later) |
+| **Index version drift** | No version field today | `MINISEARCH_OPTIONS` hasn't changed since Nov 2025 | Yes (add when options first change) |
+| **Stale persisted index for cold spaces** | Accept staleness on cache hit | First search after long absence may miss messages | Yes (add messageCount sanity check later) |
 
 ---
 
-**Last Updated**: 2026-05-24
-**Next Review**: After Phase 1.2 implementation (lazy loading)
+**Last Updated**: 2026-05-25
+**Next Review**: After Phase 2 metrics collection (deferred until production usage)
 
 ## Changelog
 
+- **2026-05-25** — Added decision 12 (known limitations) capturing three deferred concerns from post-Phase-1.4 code review: best-effort `beforeunload` durability, missing `indexVersion` field, stale persisted index for inactive spaces. Summary table extended.
 - **2026-05-24** — Added decisions 9 (migration-aware design), 10 (MiniSearch `loadJSON` API correction), 11 (debounced flush policy) based on session research. Summary table extended.
 - **2025-11-12** — Initial decisions 1-8 documented alongside Phase 1.1 quick wins.

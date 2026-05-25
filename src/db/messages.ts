@@ -6,7 +6,7 @@ import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
-import MiniSearch from 'minisearch';
+import MiniSearch, { type Options } from 'minisearch';
 
 export interface EncryptedMessage {
   encryptedContent: string;
@@ -157,12 +157,27 @@ export interface SearchResult {
   highlights: string[];
 }
 
+interface StoredSearchIndex {
+  indexKey: string;
+  serializedIndex: string;
+  messageCount: number;
+  lastUpdated: number;
+}
+
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 12;
+  private readonly DB_VERSION = 13;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
-  private indexInitialized = false;
+  private indexLoadPromises: Map<string, Promise<void>> = new Map();
+  private dirtyIndices: Set<string> = new Set();
+  private flushTimer: ReturnType<typeof setTimeout> | null = null;
+  private indexAccessTimes: Map<string, number> = new Map();
+  private static readonly FLUSH_DEBOUNCE_MS = 5000;
+  // Phase 1.4: cap in-memory indices. Evicted indices are reloaded
+  // transparently from IndexedDB (Phase 1.3) on next access, so the
+  // tradeoff is one ~10ms deserialize hit vs unbounded memory growth.
+  private static readonly MAX_IN_MEMORY_INDICES = 10;
 
   async init() {
     if (this.db) return;
@@ -316,6 +331,15 @@ export class MessageDB {
           db.createObjectStore('user_notes', {
             keyPath: 'targetAddress',
           });
+        }
+
+        if (event.oldVersion < 13) {
+          // Phase 1.3: persist serialized MiniSearch indices so they survive
+          // app restarts. Key shape: 'space:<id>' | 'dm:<conversationId>'.
+          const indexStore = db.createObjectStore('search_indices', {
+            keyPath: 'indexKey',
+          });
+          indexStore.createIndex('by_lastUpdated', 'lastUpdated');
         }
       };
     });
@@ -1528,16 +1552,25 @@ export class MessageDB {
     };
   }
 
+  /**
+   * Single source of truth for MiniSearch config. Used by both index creation
+   * and deserialization (MiniSearch.loadJSON requires the SAME options to
+   * correctly restore an index). Drift between create and load silently
+   * breaks fuzzy/boost/stored-field behavior — keep them aligned via this
+   * constant.
+   */
+  private static readonly MINISEARCH_OPTIONS: Options<SearchableMessage> = {
+    fields: ['content', 'senderId'],
+    storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
+    searchOptions: {
+      boost: { content: 2, senderId: 1 },
+      prefix: true,
+      fuzzy: 0.2,
+    },
+  };
+
   private createSearchIndex(): MiniSearch<SearchableMessage> {
-    return new MiniSearch({
-      fields: ['content', 'senderId'],
-      storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
-      searchOptions: {
-        boost: { content: 2, senderId: 1 },
-        prefix: true,
-        fuzzy: 0.2,
-      },
-    });
+    return new MiniSearch(MessageDB.MINISEARCH_OPTIONS);
   }
 
   private getIndexKey(context: SearchContext): string {
@@ -1548,49 +1581,233 @@ export class MessageDB {
     }
   }
 
+  /**
+   * Legacy entry point. Phase 1.2 (lazy loading) means we no longer build all
+   * indices at startup. Kept as a no-op for API back-compat with existing
+   * callers (e.g. SearchService.initialize()) until they're cleaned up.
+   *
+   * Indices are now built on first search per-space/DM via ensureIndexReady().
+   */
   async initializeSearchIndices(): Promise<void> {
-    if (this.indexInitialized) return;
+    return;
+  }
 
+  /**
+   * Ensures the search index for a given context is loaded in memory.
+   * No-op if already loaded; otherwise builds the index from messages.
+   *
+   * Storage-adapter-shaped: this is the IndexedDB implementation of what
+   * will become a SearchAdapter method once quorum-shared migration unblocks.
+   * Per `.agents/tasks/search-optimization/decisions.md` decision #9.
+   */
+  async ensureIndexReady(context: SearchContext): Promise<void> {
+    const indexKey = this.getIndexKey(context);
+    if (this.searchIndices.has(indexKey)) {
+      this.trackIndexAccess(indexKey);
+      return;
+    }
+
+    const existing = this.indexLoadPromises.get(indexKey);
+    if (existing) return existing;
+
+    const loadPromise = this.loadIndexLazily(context, indexKey)
+      .then(() => {
+        this.trackIndexAccess(indexKey);
+      })
+      .finally(() => {
+        this.indexLoadPromises.delete(indexKey);
+      });
+    this.indexLoadPromises.set(indexKey, loadPromise);
+    return loadPromise;
+  }
+
+  private async loadIndexLazily(
+    context: SearchContext,
+    indexKey: string
+  ): Promise<void> {
     await this.init();
 
-    // Get all spaces and conversations to build indices
-    const spaces = await this.getSpaces();
-    const dmConversations = await this.getConversations({ type: 'direct' });
+    // Phase 1.3: try persisted cache first; falls through to fresh build if
+    // miss or load fails.
+    const cached = await this.loadSearchIndexFromDB(indexKey);
+    if (cached) {
+      this.searchIndices.set(indexKey, cached);
+      return;
+    }
 
-    // Initialize space indices
-    for (const space of spaces) {
-      const indexKey = `space:${space.spaceId}`;
-      const messages = await this.getAllSpaceMessages({
-        spaceId: space.spaceId,
+    const messages =
+      context.type === 'space'
+        ? await this.getAllSpaceMessages({ spaceId: context.spaceId! })
+        : await this.getDirectMessages(context.conversationId!);
+
+    const searchIndex = this.createSearchIndex();
+    searchIndex.addAll(messages.map((msg) => this.messageToSearchable(msg)));
+    this.searchIndices.set(indexKey, searchIndex);
+
+    // First-build for this context — schedule a persist so the next restart
+    // hits the cache. Debounced; not a per-message write.
+    this.markIndexDirty(indexKey);
+  }
+
+  /**
+   * Persist a serialized MiniSearch index to IndexedDB.
+   *
+   * Adapter-shape note: when quorum-shared migration unblocks, this method's
+   * signature becomes the IndexedDB implementation of a SearchAdapter method.
+   * Mobile will write a SQLite/MMKV variant. See decisions.md #9.
+   */
+  private async saveSearchIndexToDB(
+    indexKey: string,
+    searchIndex: MiniSearch<SearchableMessage>
+  ): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('search_indices', 'readwrite');
+      const store = tx.objectStore('search_indices');
+      const record: StoredSearchIndex = {
+        indexKey,
+        serializedIndex: JSON.stringify(searchIndex.toJSON()),
+        messageCount: searchIndex.documentCount,
+        lastUpdated: Date.now(),
+      };
+      const request = store.put(record);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Load a serialized MiniSearch index from IndexedDB.
+   *
+   * Uses MiniSearch.loadJSON (NOT addAll(JSON.parse(...)) which would
+   * re-tokenize and defeat the cache). The same MINISEARCH_OPTIONS must
+   * be passed as were used to create the original index. See decisions.md #10.
+   *
+   * Returns null on miss or any load failure (caller falls back to fresh build).
+   */
+  private async loadSearchIndexFromDB(
+    indexKey: string
+  ): Promise<MiniSearch<SearchableMessage> | null> {
+    await this.init();
+    const stored = await new Promise<StoredSearchIndex | undefined>(
+      (resolve, reject) => {
+        const tx = this.db!.transaction('search_indices', 'readonly');
+        const store = tx.objectStore('search_indices');
+        const request = store.get(indexKey);
+        request.onsuccess = () =>
+          resolve(request.result as StoredSearchIndex | undefined);
+        request.onerror = () => reject(request.error);
+      }
+    );
+
+    if (!stored) return null;
+
+    try {
+      return MiniSearch.loadJSON<SearchableMessage>(
+        stored.serializedIndex,
+        MessageDB.MINISEARCH_OPTIONS
+      );
+    } catch (error) {
+      logger.warn(
+        `Failed to deserialize search index for ${indexKey}, will rebuild:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  /**
+   * Mark an index as dirty and schedule a debounced flush. Coalesces bursts
+   * of message activity into a single write per FLUSH_DEBOUNCE_MS window.
+   * See decisions.md #11.
+   */
+  private markIndexDirty(indexKey: string): void {
+    this.dirtyIndices.add(indexKey);
+    if (this.flushTimer) return;
+    this.flushTimer = setTimeout(() => {
+      // Clear BEFORE flushing so a dirty mark during the async flush
+      // schedules a fresh window. Otherwise the stale (already-fired) timer
+      // ID would block every subsequent markIndexDirty from rescheduling.
+      this.flushTimer = null;
+      this.flushDirtyIndices().catch((error) => {
+        logger.warn('Failed to flush dirty search indices:', error);
       });
+    }, MessageDB.FLUSH_DEBOUNCE_MS);
+  }
 
-      const searchIndex = this.createSearchIndex();
-      const searchableMessages = messages.map((msg) =>
-        this.messageToSearchable(msg)
-      );
-      searchIndex.addAll(searchableMessages);
+  private trackIndexAccess(indexKey: string): void {
+    this.indexAccessTimes.set(indexKey, Date.now());
+  }
 
-      this.searchIndices.set(indexKey, searchIndex);
+  /**
+   * Phase 1.4: drop least-recently-used indices once we exceed
+   * MAX_IN_MEMORY_INDICES. Safe because Phase 1.3 persists indices to
+   * IndexedDB — evicted indices reload transparently on next access.
+   *
+   * Always flushes dirty state before dropping, so we never lose pending
+   * writes to eviction.
+   */
+  private async evictLeastRecentlyUsed(): Promise<void> {
+    if (this.searchIndices.size <= MessageDB.MAX_IN_MEMORY_INDICES) return;
+
+    // Only consider keys actually loaded in memory. Without this filter,
+    // ghost entries in indexAccessTimes (e.g. from a future code path that
+    // drops a key from searchIndices without cleaning up accessTimes) would
+    // consume eviction slots without freeing any memory, leaving the cap
+    // unenforced.
+    const entries = Array.from(this.indexAccessTimes.entries())
+      .filter(([key]) => this.searchIndices.has(key))
+      .sort((a, b) => a[1] - b[1]);
+    const evictCount = this.searchIndices.size - MessageDB.MAX_IN_MEMORY_INDICES;
+    const toEvict = entries.slice(0, evictCount);
+
+    for (const [indexKey] of toEvict) {
+      if (this.dirtyIndices.has(indexKey)) {
+        const index = this.searchIndices.get(indexKey);
+        if (index) {
+          try {
+            await this.saveSearchIndexToDB(indexKey, index);
+          } catch (error) {
+            // If the flush failed, keep the index in memory rather than
+            // losing data — eviction will retry on the next cycle.
+            logger.warn(
+              `Failed to flush ${indexKey} before eviction; keeping in memory:`,
+              error
+            );
+            continue;
+          }
+        }
+        this.dirtyIndices.delete(indexKey);
+      }
+      this.searchIndices.delete(indexKey);
+      this.indexAccessTimes.delete(indexKey);
     }
+  }
 
-    // Initialize DM indices
-    for (const conversation of dmConversations.conversations) {
-      const indexKey = `dm:${conversation.conversationId}`;
-      // Get DM messages (need to implement this method)
-      const messages = await this.getDirectMessages(
-        conversation.conversationId
-      );
-
-      const searchIndex = this.createSearchIndex();
-      const searchableMessages = messages.map((msg) =>
-        this.messageToSearchable(msg)
-      );
-      searchIndex.addAll(searchableMessages);
-
-      this.searchIndices.set(indexKey, searchIndex);
+  /**
+   * Persist all dirty indices. Safe to call from lifecycle hooks
+   * (visibilitychange, beforeunload) or LRU eviction.
+   */
+  async flushDirtyIndices(): Promise<void> {
+    if (this.flushTimer) {
+      clearTimeout(this.flushTimer);
+      this.flushTimer = null;
     }
+    if (this.dirtyIndices.size === 0) return;
 
-    this.indexInitialized = true;
+    const toFlush = Array.from(this.dirtyIndices);
+    this.dirtyIndices.clear();
+    await Promise.all(
+      toFlush.map((indexKey) => {
+        const index = this.searchIndices.get(indexKey);
+        if (!index) return Promise.resolve();
+        return this.saveSearchIndexToDB(indexKey, index).catch((error) => {
+          logger.warn(`Failed to persist search index ${indexKey}:`, error);
+          // Re-mark dirty so we retry on the next flush.
+          this.dirtyIndices.add(indexKey);
+        });
+      })
+    );
   }
 
   async addMessageToIndex(message: Message): Promise<void> {
@@ -1605,6 +1822,7 @@ export class MessageDB {
       } else {
         spaceIndex.add(searchable);
       }
+      this.markIndexDirty(spaceIndexKey);
     }
 
     // If it's a DM, also add to DM index
@@ -1617,6 +1835,7 @@ export class MessageDB {
       } else {
         dmIndex.add(searchable);
       }
+      this.markIndexDirty(dmIndexKey);
     }
   }
 
@@ -1630,6 +1849,7 @@ export class MessageDB {
     const spaceIndex = this.searchIndices.get(spaceIndexKey);
     if (spaceIndex) {
       spaceIndex.discard(messageId);
+      this.markIndexDirty(spaceIndexKey);
     }
 
     // Remove from DM index if applicable
@@ -1638,6 +1858,7 @@ export class MessageDB {
     const dmIndex = this.searchIndices.get(dmIndexKey);
     if (dmIndex) {
       dmIndex.discard(messageId);
+      this.markIndexDirty(dmIndexKey);
     }
   }
 
@@ -1646,9 +1867,7 @@ export class MessageDB {
     context: SearchContext,
     limit: number = 50
   ): Promise<SearchResult[]> {
-    if (!this.indexInitialized) {
-      await this.initializeSearchIndices();
-    }
+    await this.ensureIndexReady(context);
 
     const indexKey = this.getIndexKey(context);
     const searchIndex = this.searchIndices.get(indexKey);
@@ -1689,6 +1908,12 @@ export class MessageDB {
         );
       }
     }
+
+    // Phase 1.4: trim memory after each search. Fire-and-forget — eviction
+    // touches IndexedDB but we don't want to block returning results on it.
+    this.evictLeastRecentlyUsed().catch((error) => {
+      logger.warn('LRU eviction failed:', error);
+    });
 
     // Sort by relevance score (best match first)
     // MiniSearch provides well-tuned relevance scoring

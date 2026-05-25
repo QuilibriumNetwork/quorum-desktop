@@ -821,15 +821,26 @@ interface SearchableMessage {
 }
 ```
 
-**Index Initialization**:
+**Index Lifecycle** (lazy + persisted + LRU-evicted):
 
 ```typescript
-// Per-context search indices
+// Per-context search indices, kept in memory
 private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
 
-// Initialize index for space/conversation
-await this.messageDB.initializeSearchIndices();
+// Indices are built lazily on first search for a given context; never at startup.
+// searchMessages() internally calls ensureIndexReady(context), which either:
+//   1. returns immediately if the index is in memory
+//   2. deserializes it from IndexedDB (search_indices object store, schema v13)
+//   3. or builds it fresh from messages and persists it via a debounced flush
+//
+// Memory is capped at MAX_IN_MEMORY_INDICES (10); least-recently-used indices
+// are flushed and evicted, then transparently reloaded from IndexedDB on next
+// access (~10ms hit).
+//
+// initializeSearchIndices() exists as a no-op for back-compat — do not call it.
 ```
+
+See [features/search-feature.md](features/search-feature.md) for the full architecture, and [tasks/search-optimization/](../tasks/search-optimization/) for phase docs and design decisions.
 
 ### Search Context
 

@@ -59,7 +59,13 @@ Original draft suggested calling `saveSearchIndexToDB(spaceIndex)` from inside `
 
 ---
 
-## 📅 Phase 1.2: Lazy Loading
+## ✅ Phase 1.2: Lazy Loading (COMPLETED 2026-05-25)
+
+See `phase-1.2-lazy-loading.md` for what shipped.
+
+---
+
+## 📅 Phase 1.2 — Original Plan (kept for reference)
 
 **Goal**: Eliminate startup blocking by building search indices on-demand instead of at startup.
 
@@ -147,7 +153,13 @@ Build indices lazily when user actually searches that space/DM.
 
 ---
 
-## 📅 Phase 1.3: IndexedDB Persistence
+## ✅ Phase 1.3: IndexedDB Persistence (COMPLETED 2026-05-25)
+
+See `phase-1.3-persistence.md` for what shipped.
+
+---
+
+## 📅 Phase 1.3 — Original Plan (kept for reference)
 
 **Goal**: Save search indices to IndexedDB so they don't need to be rebuilt every app restart.
 
@@ -298,7 +310,13 @@ The four methods this phase adds (`saveSearchIndexToDB`, `loadSearchIndexFromDB`
 
 ---
 
-## 📅 Phase 1.4: Memory Management (LRU)
+## ✅ Phase 1.4: LRU Memory Management (COMPLETED 2026-05-25)
+
+See `phase-1.4-lru-eviction.md` for what shipped.
+
+---
+
+## 📅 Phase 1.4 — Original Plan (kept for reference)
 
 **Goal**: Prevent unbounded memory growth as user searches more spaces.
 
@@ -507,23 +525,26 @@ const finalScore = relevanceScore * calculateRecencyBoost(messageDate);
 | Phase | Duration | Impact | Priority | Status |
 |-------|----------|--------|----------|--------|
 | **1.1 Quick Wins** | 2 hours | High (immediate value) | ✅ Done | ✅ Complete |
-| **1.2 Lazy Loading** | 2-3 days | Very High (90% startup improvement) | 🔥 Critical | 📋 Planned |
-| **1.3 Persistence** | 2-3 days | High (20x faster subsequent searches) | 🔥 Critical | 📋 Planned |
-| **1.4 Memory Mgmt** | 1-2 days | Medium (prevents leaks) | High | 📋 Planned |
+| **1.2 Lazy Loading** | ~1 hour | Very High (eliminates startup blocking) | ✅ Done | ✅ Complete |
+| **1.3 Persistence** | ~1.5 hours | High (20x faster first search after restart) | ✅ Done | ✅ Complete |
+| **1.4 Memory Mgmt** | ~30 min | Medium (bounds memory) | ✅ Done | ✅ Complete |
 | **2.1 Metrics** | 1 day | High (enables data-driven decisions) | High | 📋 Planned |
 | **2.2 Ranking** | 1 day | Low (only if needed) | Optional | 📋 Conditional |
 | **2.3 Chunking** | 3-4 days | Medium (if large spaces exist) | Optional | 📋 Conditional |
 | **3.x Advanced** | 1 week+ | Low (edge cases) | Low | 📋 Optional |
 
-**Recommended Next Step**: Start with Phase 1.2 (Lazy Loading) after validating current quick wins work well. Bundle Phase 1.3 + 1.4 design together — they share dirty-tracking and persistence machinery.
+**Recommended Next Step**: Phase 2 (metrics) — but defer until there's enough production usage to make the measurements meaningful. Foundation phases 1.2-1.4 are now complete.
 
 ---
 
-**Last Updated**: 2026-05-24
-**Next Review**: After Phase 1.2 implementation
+**Last Updated**: 2026-05-25
+**Next Review**: After Phase 1.3 implementation
 
 ## Changelog
 
+- **2026-05-25** — Phase 1.4 marked complete; see `phase-1.4-lru-eviction.md`. Foundation phases 1.2-1.4 complete; next step is Phase 2 metrics (deferred until production usage).
+- **2026-05-25** — Phase 1.3 marked complete; see `phase-1.3-persistence.md` for shipped work. Recommended next step updated to Phase 1.4.
+- **2026-05-25** — Phase 1.2 marked complete; see `phase-1.2-lazy-loading.md` for shipped work.
 - **2026-05-24** — Major revision after session research:
   - Added Cross-cutting constraints section (C1 SearchAdapter alignment, C2 MiniSearch `loadJSON`/`toJSON` correct API, C3 debounced flush instead of per-message save).
   - Phase 1.2: pointed at actual startup-blocker location (`useSearchService` hook, not just `SearchService.initialize()`); added UI loading state requirement.

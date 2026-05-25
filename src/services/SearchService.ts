@@ -36,8 +36,13 @@ export class SearchService {
     };
   }
 
+  /**
+   * No-op. Search indices are now built lazily on first search per-space/DM
+   * via MessageDB.ensureIndexReady(). Kept for API back-compat — safe to
+   * delete once no callers remain.
+   */
   async initialize(): Promise<void> {
-    await this.messageDB.initializeSearchIndices();
+    return;
   }
 
   private getCacheKey(query: string, context: SearchContext): string {
@@ -277,6 +282,15 @@ export class SearchService {
       activeDebouncers: this.debounceTimers.size,
       cacheHitRatio: 0, // Would need to track hits/misses to calculate this
     };
+  }
+
+  /**
+   * Flush any dirty search indices to persistent storage. Wire to
+   * visibilitychange (hidden) and beforeunload so we don't lose the last
+   * ~5s of incremental index updates on app close.
+   */
+  async flushIndices(): Promise<void> {
+    await this.messageDB.flushDirtyIndices();
   }
 
   cleanup(): void {
