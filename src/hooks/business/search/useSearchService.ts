@@ -18,16 +18,9 @@ export const useSearchService = ({
 }: UseSearchServiceProps): UseSearchServiceReturn => {
   const searchService = useMemo(() => {
     if (!messageDB) return null;
-
-    const service = new SearchService(messageDB);
-
-    // Initialize search indices asynchronously
-    service.initialize().catch(() => {
-      // Search initialization failed - service will handle gracefully
-      // This is intentionally silent as the service should degrade gracefully
-    });
-
-    return service;
+    // Indices are built lazily on first search per-space/DM (Phase 1.2).
+    // No upfront initialization needed.
+    return new SearchService(messageDB);
   }, [messageDB]);
 
   return {

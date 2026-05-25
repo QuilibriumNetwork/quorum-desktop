@@ -162,7 +162,7 @@ export class MessageDB {
   private readonly DB_NAME = 'quorum_db';
   private readonly DB_VERSION = 12;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
-  private indexInitialized = false;
+  private indexLoadPromises: Map<string, Promise<void>> = new Map();
 
   async init() {
     if (this.db) return;
@@ -1548,49 +1548,53 @@ export class MessageDB {
     }
   }
 
+  /**
+   * Legacy entry point. Phase 1.2 (lazy loading) means we no longer build all
+   * indices at startup. Kept as a no-op for API back-compat with existing
+   * callers (e.g. SearchService.initialize()) until they're cleaned up.
+   *
+   * Indices are now built on first search per-space/DM via ensureIndexReady().
+   */
   async initializeSearchIndices(): Promise<void> {
-    if (this.indexInitialized) return;
+    return;
+  }
 
+  /**
+   * Ensures the search index for a given context is loaded in memory.
+   * No-op if already loaded; otherwise builds the index from messages.
+   *
+   * Storage-adapter-shaped: this is the IndexedDB implementation of what
+   * will become a SearchAdapter method once quorum-shared migration unblocks.
+   * Per `.agents/tasks/search-optimization/decisions.md` decision #9.
+   */
+  async ensureIndexReady(context: SearchContext): Promise<void> {
+    const indexKey = this.getIndexKey(context);
+    if (this.searchIndices.has(indexKey)) return;
+
+    const existing = this.indexLoadPromises.get(indexKey);
+    if (existing) return existing;
+
+    const loadPromise = this.loadIndexLazily(context, indexKey).finally(() => {
+      this.indexLoadPromises.delete(indexKey);
+    });
+    this.indexLoadPromises.set(indexKey, loadPromise);
+    return loadPromise;
+  }
+
+  private async loadIndexLazily(
+    context: SearchContext,
+    indexKey: string
+  ): Promise<void> {
     await this.init();
 
-    // Get all spaces and conversations to build indices
-    const spaces = await this.getSpaces();
-    const dmConversations = await this.getConversations({ type: 'direct' });
+    const messages =
+      context.type === 'space'
+        ? await this.getAllSpaceMessages({ spaceId: context.spaceId! })
+        : await this.getDirectMessages(context.conversationId!);
 
-    // Initialize space indices
-    for (const space of spaces) {
-      const indexKey = `space:${space.spaceId}`;
-      const messages = await this.getAllSpaceMessages({
-        spaceId: space.spaceId,
-      });
-
-      const searchIndex = this.createSearchIndex();
-      const searchableMessages = messages.map((msg) =>
-        this.messageToSearchable(msg)
-      );
-      searchIndex.addAll(searchableMessages);
-
-      this.searchIndices.set(indexKey, searchIndex);
-    }
-
-    // Initialize DM indices
-    for (const conversation of dmConversations.conversations) {
-      const indexKey = `dm:${conversation.conversationId}`;
-      // Get DM messages (need to implement this method)
-      const messages = await this.getDirectMessages(
-        conversation.conversationId
-      );
-
-      const searchIndex = this.createSearchIndex();
-      const searchableMessages = messages.map((msg) =>
-        this.messageToSearchable(msg)
-      );
-      searchIndex.addAll(searchableMessages);
-
-      this.searchIndices.set(indexKey, searchIndex);
-    }
-
-    this.indexInitialized = true;
+    const searchIndex = this.createSearchIndex();
+    searchIndex.addAll(messages.map((msg) => this.messageToSearchable(msg)));
+    this.searchIndices.set(indexKey, searchIndex);
   }
 
   async addMessageToIndex(message: Message): Promise<void> {
@@ -1646,9 +1650,7 @@ export class MessageDB {
     context: SearchContext,
     limit: number = 50
   ): Promise<SearchResult[]> {
-    if (!this.indexInitialized) {
-      await this.initializeSearchIndices();
-    }
+    await this.ensureIndexReady(context);
 
     const indexKey = this.getIndexKey(context);
     const searchIndex = this.searchIndices.get(indexKey);

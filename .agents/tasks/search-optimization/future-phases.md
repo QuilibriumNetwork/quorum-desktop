@@ -59,7 +59,13 @@ Original draft suggested calling `saveSearchIndexToDB(spaceIndex)` from inside `
 
 ---
 
-## 📅 Phase 1.2: Lazy Loading
+## ✅ Phase 1.2: Lazy Loading (COMPLETED 2026-05-25)
+
+See `phase-1.2-lazy-loading.md` for what shipped.
+
+---
+
+## 📅 Phase 1.2 — Original Plan (kept for reference)
 
 **Goal**: Eliminate startup blocking by building search indices on-demand instead of at startup.
 
@@ -507,7 +513,7 @@ const finalScore = relevanceScore * calculateRecencyBoost(messageDate);
 | Phase | Duration | Impact | Priority | Status |
 |-------|----------|--------|----------|--------|
 | **1.1 Quick Wins** | 2 hours | High (immediate value) | ✅ Done | ✅ Complete |
-| **1.2 Lazy Loading** | 2-3 days | Very High (90% startup improvement) | 🔥 Critical | 📋 Planned |
+| **1.2 Lazy Loading** | ~1 hour | Very High (eliminates startup blocking) | ✅ Done | ✅ Complete |
 | **1.3 Persistence** | 2-3 days | High (20x faster subsequent searches) | 🔥 Critical | 📋 Planned |
 | **1.4 Memory Mgmt** | 1-2 days | Medium (prevents leaks) | High | 📋 Planned |
 | **2.1 Metrics** | 1 day | High (enables data-driven decisions) | High | 📋 Planned |
@@ -515,15 +521,16 @@ const finalScore = relevanceScore * calculateRecencyBoost(messageDate);
 | **2.3 Chunking** | 3-4 days | Medium (if large spaces exist) | Optional | 📋 Conditional |
 | **3.x Advanced** | 1 week+ | Low (edge cases) | Low | 📋 Optional |
 
-**Recommended Next Step**: Start with Phase 1.2 (Lazy Loading) after validating current quick wins work well. Bundle Phase 1.3 + 1.4 design together — they share dirty-tracking and persistence machinery.
+**Recommended Next Step**: Phase 1.3 (IndexedDB persistence). Bundle Phase 1.3 + 1.4 design together — they share dirty-tracking and persistence machinery.
 
 ---
 
-**Last Updated**: 2026-05-24
-**Next Review**: After Phase 1.2 implementation
+**Last Updated**: 2026-05-25
+**Next Review**: After Phase 1.3 implementation
 
 ## Changelog
 
+- **2026-05-25** — Phase 1.2 marked complete; see `phase-1.2-lazy-loading.md` for shipped work. Recommended next step updated to Phase 1.3.
 - **2026-05-24** — Major revision after session research:
   - Added Cross-cutting constraints section (C1 SearchAdapter alignment, C2 MiniSearch `loadJSON`/`toJSON` correct API, C3 debounced flush instead of per-message save).
   - Phase 1.2: pointed at actual startup-blocker location (`useSearchService` hook, not just `SearchService.initialize()`); added UI loading state requirement.

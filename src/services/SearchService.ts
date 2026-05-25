@@ -36,8 +36,13 @@ export class SearchService {
     };
   }
 
+  /**
+   * No-op. Search indices are now built lazily on first search per-space/DM
+   * via MessageDB.ensureIndexReady(). Kept for API back-compat — safe to
+   * delete once no callers remain.
+   */
   async initialize(): Promise<void> {
-    await this.messageDB.initializeSearchIndices();
+    return;
   }
 
   private getCacheKey(query: string, context: SearchContext): string {
