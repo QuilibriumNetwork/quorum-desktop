@@ -1,543 +1,188 @@
 ---
 type: doc
-title: "Global Message Search - Implementation Guide & Documentation"
+title: Message Search Feature
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-05-25T00:00:00.000Z
 ---
 
-# 🔍 Global Message Search - Implementation Guide & Documentation
+# Message Search Feature
 
-_The search feature has been built completely by Claude Code with human supervision_
+## Overview
 
-## 📋 Overview
+Client-side full-text search over messages, scoped to the current space or DM conversation. Built on MiniSearch with per-context indices that are lazily built, persisted to IndexedDB, and evicted under an LRU cap. Search is invoked via the global search bar (`Ctrl/Cmd + K`) and produces a dropdown of ranked, highlighted results that navigate to the message in place with a flash highlight.
 
-Complete implementation of a Discord-like global search feature for Quorum Desktop. This document provides comprehensive technical details for developers working on the search system.
+## Architecture
 
-## ✅ Implementation Status: **COMPLETE**
+### Core Components
 
-The global search feature is fully implemented and functional with:
+1. **SearchService** ([src/services/SearchService.ts](../../../src/services/SearchService.ts))
+   - Search facade between the UI and `MessageDB`
+   - 300ms input debounce and an in-memory result cache (LRU, 5-minute TTL, 100 entries)
+   - Cache invalidation on `addMessage` / `removeMessage`
+   - HTML- and regex-escaped highlight via `highlightSearchTerms`
+   - `flushIndices()` exposes `MessageDB.flushDirtyIndices()` for lifecycle hooks
+   - `initialize()` is a back-compat no-op (indices are lazy)
 
-- ✅ Real-time message search across spaces and DMs
-- ✅ Context-aware scoping (searches current space only)
-- ✅ Proper name resolution (displays user names, not public keys)
-- ✅ Message navigation with flash highlighting
-- ✅ Focus management and UX polish
-- ✅ 3-character minimum for better performance
-- ✅ DM search functionality with proper navigation
-- ✅ Component architecture to handle both spaces and DMs safely
+2. **MessageDB search layer** ([src/db/messages.ts](../../../src/db/messages.ts))
+   - Owns the per-context MiniSearch indices (`Map<indexKey, MiniSearch>`)
+   - `MINISEARCH_OPTIONS` static: single source of truth used by both `createSearchIndex()` and `MiniSearch.loadJSON()`. Drift between create and load would silently break fuzzy/boost/stored-field behavior, so it lives in one place
+   - Lazy build: `ensureIndexReady(context)` → `loadIndexLazily(context, indexKey)`. Concurrent first-search calls for the same key are deduplicated via `indexLoadPromises`
+   - Persistence: `saveSearchIndexToDB` / `loadSearchIndexFromDB` (IndexedDB v13, `search_indices` object store). Uses `MiniSearch.loadJSON` to restore the index structure directly (NOT `addAll(JSON.parse(...))`, which would re-tokenize and defeat the cache)
+   - Incremental updates: `addMessageToIndex` / `removeMessageFromIndex` mutate the in-memory index and call `markIndexDirty`
+   - Debounced flush: `markIndexDirty` schedules a `flushDirtyIndices` 5s out, coalescing bursts into one IndexedDB write per window per index
+   - LRU eviction: `evictLeastRecentlyUsed` caps in-memory indices at 10; dirty indices are flushed before being dropped so eviction is non-destructive
 
-## TO DO
+3. **useSearchService hook** ([src/hooks/business/search/useSearchService.ts](../../../src/hooks/business/search/useSearchService.ts))
+   - Instantiates `SearchService` and memoizes by `messageDB` identity
+   - Wires `document.visibilitychange` and `window.beforeunload` to `searchService.flushIndices()` so the debounce window doesn't lose updates on tab switch / app close
 
-- Further search performance optimization (lazy loading, persistence) - see `.agents/tasks/search-optimization/`
+4. **React Query integration** ([src/hooks/queries/search/](../../../src/hooks/queries/search/))
+   - `useGlobalSearch` is the main consumer-facing search hook
+   - `buildSearchFetcher` / `buildSearchKey` adapt the service to React Query's contract
 
-## Related Documentation
+5. **Context detection** ([src/hooks/useSearchContext.ts](../../../src/hooks/useSearchContext.ts))
+   - Maps the current route to a `SearchContext` (`space` or `dm`)
+   - Spaces: `/spaces/{spaceId}/{channelId}`
+   - DMs: `/messages/{conversationId}`
 
-- [Primitives Overview](./primitives/INDEX.md) - UI components used in search
-- [Cross-Platform Guide](../cross-platform-components-guide.md) - Component architecture
-- [Quick Reference](../../AGENTS.md) - Search implementation guide
-- [Search Optimization](../../tasks/search-optimization/) - Performance improvements and roadmap
-
-## 🏗️ Architecture Overview
-
-### Search Technology Stack
-
-- **MiniSearch 7.1.2**: Client-side full-text search engine
-- **IndexedDB**: Persistent message storage, accessed by `SearchService` via `MessageDB`
-- **React Query**: Caching and state management
-- **React Router**: Navigation and context detection
+6. **UI components** ([src/components/search/](../../../src/components/search/))
+   - `GlobalSearch.tsx` — orchestrator: search bar + results dropdown, navigation handler
+   - `SearchBar.tsx` — input with `Ctrl/Cmd + K` focus shortcut, 3-char minimum, contextual placeholder
+   - `SearchResults.tsx` — uses [DropdownPanel](../../../src/components/ui/DropdownPanel.tsx) and `react-virtuoso` to render up to 500 results smoothly; shows a "500-result" warning callout when the cap is hit
+   - `SearchResultItem.tsx` — resolves sender names via `useUserInfo`, space/channel names via `useSpace`; splits into space- vs DM-specific subcomponents to avoid conditional hook usage across context types
 
 ### Data Flow
 
 ```
-User Types → Search Service → MiniSearch Index → MessageDB (via SearchService) → Search Results → Navigation
-     ↓              ↓              ↓              ↓              ↓              ↓
-  Debounced    Text Analysis   In-Memory      IndexedDB    UI Components   Message Flash
-   (300ms)     & Ranking      Indices        Queries      & Highlighting   & Scroll
+User types in SearchBar
+  → useGlobalSearch (React Query)
+    → SearchService.searchWithDebounce (300ms)
+      → SearchService.search (cache check)
+        → MessageDB.searchMessages
+          → ensureIndexReady(context)
+            ├── cache hit: trackIndexAccess, return
+            └── cache miss:
+                  ├── loadSearchIndexFromDB (IndexedDB v13)
+                  │     ├── hit: deserialize via MiniSearch.loadJSON
+                  │     └── miss: build from messages, mark dirty
+                  └── store in searchIndices map, trackIndexAccess
+          → searchIndex.search(query)
+          → resolve full Message objects
+          → fire-and-forget evictLeastRecentlyUsed
+          → sort by relevance score
+  → SearchResults dropdown
+    → navigation handler routes to /spaces/.../#msg-... or /messages/.../#msg-...
+    → MessageList scrolls to message, triggers 6-second flash highlight
 ```
 
-## 📁 File Structure
+## MiniSearch Configuration
 
-```
-src/
-├── components/
-│   ├── DropdownPanel.tsx + .scss      # Reusable panel component for search results
-│   └── search/
-│       ├── SearchBar.tsx + .scss          # Search input with focus management
-│       ├── SearchResults.tsx + .scss      # Results dropdown using DropdownPanel
-│       ├── SearchResultItem.tsx + .scss   # Individual result with name resolution
-│       ├── GlobalSearch.tsx + .scss       # Main integration component
-│       └── index.ts                       # Exports
-├── hooks/
-│   ├── queries/search/
-│   │   ├── useGlobalSearch.ts          # Main search hook with React Query
-│   │   ├── buildSearchFetcher.ts       # Query fetcher function
-│   │   ├── buildSearchKey.ts           # Query key builder
-│   │   └── index.ts                    # Exports
-│   └── useSearchContext.ts             # Route-based context detection
-├── services/
-│   └── SearchService.ts                # Search logic and caching
-├── types/
-│   └── minisearch.d.ts                 # Custom TypeScript definitions
-├── db/
-│   └── messages.ts                     # Enhanced with search indices
-└── styles/
-    └── _base.scss                      # Global mark highlighting styles
-```
-
-## 🔍 Core Components Guide
-
-### 1. SearchService (`src/services/SearchService.ts`)
-
-**Purpose**: Handles search logic, caching, and MiniSearch integration
-
-**Key Methods**:
-
-- `initialize()`: Builds search indices from MessageDB
-- `search(query, context)`: Performs search with context scoping
-- `highlightSearchTerms(text, terms)`: Adds `<mark>` tags for highlighting
-- `invalidateCache(context)`: Clears cache for specific context
-
-**Configuration**:
+Single source of truth: `MessageDB.MINISEARCH_OPTIONS` ([src/db/messages.ts](../../../src/db/messages.ts)).
 
 ```typescript
 {
-  debounceMs: 300,        // Search debouncing
-  maxResults: 500,        // Results per query
-  cacheSize: 100,         // LRU cache size
-  CACHE_TTL: 5 * 60 * 1000 // 5 minutes
+  fields: ['content', 'senderId'],
+  storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
+  searchOptions: {
+    boost: { content: 2, senderId: 1 },
+    prefix: true,
+    fuzzy: 0.2,
+  },
 }
 ```
 
-### 2. SearchService Integration with MessageDB (`src/services/SearchService.ts` and `src/db/messages.ts`)
+`SearchableMessage` is produced by `messageToSearchable(message)`, which extracts text via `extractTextFromMessage` (handles `post` and `event` message types; other types index as empty string).
 
-The `SearchService` (`src/services/SearchService.ts`) is responsible for managing search indices and executing searches. It interacts with `src/db/messages.ts` for low-level access to message data in IndexedDB.
-
-**Key Methods in `SearchService` (interacting with `MessageDB`)**:
-
-- `initializeSearchIndices()`: Orchestrates building indices for all spaces and DMs by fetching data from MessageDB.
-- `searchMessages(query, context, limit)`: Performs context-aware search using its internal MiniSearch indices, fetching additional data from MessageDB as needed.
-- `addMessageToIndex(message)`: Automatically called when messages are saved to update the search index in real-time.
-- `removeMessageFromIndex(messageId, spaceId, channelId)`: Automatically called when messages are deleted to maintain index accuracy.
-
-**Internal Index Structure (within `SearchService`)**:
-
-```typescript
-// Index keys: "space:{spaceId}" or "dm:{conversationId}"
-searchIndices: Map<string, MiniSearch<SearchableMessage>>;
-
-// Searchable message format (used by MiniSearch within SearchService)
-interface SearchableMessage {
-  id: string; // messageId
-  spaceId: string; // Space identifier
-  channelId: string; // Channel identifier
-  content: string; // Extracted text content
-  senderId: string; // Message sender
-  createdDate: number; // Timestamp
-  type: string; // Message type
-}
-```
-
-### 3. GlobalSearch Component (`src/components/search/GlobalSearch.tsx`)
-
-**Purpose**: Main integration component that orchestrates search functionality
-
-**Key Features**:
-
-- Context detection via `useSearchContext`
-- Search service initialization
-- Navigation handling with proper URL patterns
-- State management for search results visibility
-
-**Navigation Pattern**:
-
-```typescript
-// Correct URL pattern for message navigation
-navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
-```
-
-### 4. SearchResultItem (`src/components/search/SearchResultItem.tsx`)
-
-**Purpose**: Individual search result with proper name resolution
-
-**Name Resolution**:
-
-- Uses `useUserInfo` hook for sender display names
-- Uses `useSpace` hook for space names
-- Resolves channel names from space data structure
-- Fallbacks: "Unknown User", "Unknown Space", channelId
-
-**Data Flow**:
-
-```typescript
-// Input: message with public keys
-message.content.senderId = 'Qm...';
-message.spaceId = 'Qm...';
-message.channelId = 'Qm...';
-
-// Output: human-readable names
-displayName = 'John Doe';
-spaceName = 'My Space';
-channelName = 'General';
-```
-
-## 🔧 Search Context System
-
-### Context Detection (`src/hooks/useSearchContext.ts`)
-
-**Route Patterns**:
-
-- Spaces: `/spaces/{spaceId}/{channelId}`
-- Direct Messages: `/messages/{conversationId}`
-
-**Context Types**:
+## Search Context System
 
 ```typescript
 interface SearchContext {
   type: 'space' | 'dm';
-  spaceId?: string; // For space searches
-  channelId?: string; // For channel context (display only)
-  conversationId?: string; // For DM searches
+  spaceId?: string;       // for space searches
+  channelId?: string;     // display only — search covers all channels in the space
+  conversationId?: string; // for DM searches
 }
 ```
 
-**Search Scoping**:
-
-- **Space context**: Searches ALL messages within the space (all channels)
-- **DM context**: Searches messages within specific conversation
-- **Index keys**: `space:{spaceId}` or `dm:{conversationId}`
-
-## 🎨 UI/UX Features
-
-### Search Bar (`src/components/search/SearchBar.tsx`)
-
-**Features**:
-
-- Keyboard shortcut: `Ctrl/Cmd + K` to focus
-- 3-character minimum before showing results
-- Debounced input (300ms)
-- Contextual placeholder text
-- Focus preservation during results display
-
-**Focus Management**:
-
-```typescript
-// Automatic focus restoration after state changes
-setTimeout(() => {
-  if (inputRef.current && document.activeElement !== inputRef.current) {
-    inputRef.current.focus();
-  }
-}, 0);
-```
-
-### Search Results (`src/components/search/SearchResults.tsx`)
-
-**Features**:
-
-- Uses reusable `DropdownPanel` component for consistent panel behavior
-- **Virtuoso virtual scrolling** for smooth rendering of 500+ results
-- Displays up to 500 results with smooth 60fps scrolling
-- Warning message when hitting 500-result limit
-- Click-outside to close (with search bar exclusion)
-- Position adjustment to prevent off-screen display (via `right-aligned` positioning)
-- Non-focusable elements (`tabIndex={-1}`)
-
-**Architecture**: Uses `src/components/ui/DropdownPanel.tsx` for consistent positioning and `react-virtuoso` for efficient rendering of large result sets. Only visible items are rendered to the DOM, ensuring smooth performance with hundreds of results.
-
-**Focus Preservation**:
-
-```typescript
-// Prevents focus stealing when results mount
-useEffect(() => {
-  const searchInput = document.querySelector(
-    '.search-input'
-  ) as HTMLInputElement;
-  if (searchInput && document.activeElement !== searchInput) {
-    searchInput.focus();
-  }
-}, []); // Run only on mount
-```
-
-### Message Navigation & Flash Effect
-
-**URL Pattern**: `/spaces/{spaceId}/{channelId}#msg-{messageId}`
-
-**Flash Highlighting**:
-
-- **Duration**: 6 seconds
-- **Animation**: Yellow highlight that fades to transparent
-- **CSS**: `message-highlighted` class with `flash-highlight` animation
-- **Implementation**: Via `isHashTarget` detection in Message component
-
-**Auto-scroll Implementation** (`src/components/message/MessageList.tsx`):
-
-```typescript
-useEffect(() => {
-  if (location.hash.startsWith('#msg-')) {
-    const msgId = hash.replace('#msg-', '');
-    const index = messageList.findIndex((m) => m.messageId === msgId);
-
-    // Scroll to message
-    setTimeout(() => {
-      virtuoso.current?.scrollToIndex({
-        index,
-        align: 'center',
-        behavior: 'smooth',
-      });
-    }, 200);
-
-    // Remove hash after flash effect has time to trigger
-    setTimeout(() => {
-      history.replaceState(
-        null,
-        '',
-        window.location.pathname + window.location.search
-      );
-    }, 1000);
-  }
-}, [init, messageList, location.hash]);
-```
-
-## 🔧 Technical Implementation Details
-
-### MiniSearch Configuration
-
-```typescript
-new MiniSearch({
-  fields: ['content', 'senderId'], // Searchable fields
-  storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
-  searchOptions: {
-    boost: { content: 2, senderId: 1 }, // Field importance
-    prefix: true, // Prefix matching
-    fuzzy: 0.2, // Fuzzy search tolerance
-    combineWith: 'OR', // Query combination
-  },
-});
-```
-
-### Text Extraction
-
-```typescript
-// From Message.content to searchable text
-extractTextFromMessage(message: Message): string {
-  if (message.content.type === 'post') {
-    const content = message.content.text;
-    return Array.isArray(content) ? content.join(' ') : content;
-  }
-  if (message.content.type === 'event') {
-    return message.content.text;
-  }
-  return '';
-}
-```
-
-### Highlight Implementation
-
-```typescript
-// Search service highlighting
-highlightSearchTerms(text: string, searchTerms: string[]): string {
-  let highlightedText = text;
-  searchTerms.forEach(term => {
-    const regex = new RegExp(`(${term})`, 'gi');
-    highlightedText = highlightedText.replace(regex, '<mark>$1</mark>');
-  });
-  return highlightedText;
-}
-
-// Global CSS for mark styling (src/styles/_base.scss)
-mark {
-  background-color: rgba(var(--accent-rgb), 0.5) !important;
-  color: var(--color-text-strong) !important;
-  padding: 1px 2px;
-  border-radius: 0.125rem;
-  font-weight: 500;
-}
-```
-
-## 🚨 Issues Fixed During Implementation
-
-### 1. Focus Management Issues
-
-**Problem**: Search input lost focus when results appeared
-**Solution**:
-
-- Added focus preservation in SearchResults component
-- Made all result containers non-focusable (`tabIndex={-1}`)
-- Implemented automatic focus restoration
-
-### 2. URL Navigation Issues
-
-**Problem**: Search results navigated to wrong URLs
-**Solution**: Fixed URL pattern from `/space/{id}/channel/{id}` to `/spaces/{id}/{id}`
-
-### 3. Context Detection Issues
-
-**Problem**: Route pattern didn't match `/spaces/` URLs
-**Solution**: Updated regex to handle both `/space/` and `/spaces/` patterns
-
-### 4. Name Resolution Issues
-
-**Problem**: Displayed public keys instead of user/space names
-**Solution**: Integrated `useUserInfo` and `useSpace` hooks with proper fallbacks
-
-### 5. Flash Effect Timing Issues
-
-**Problem**: Hash removed before Message components could detect it
-**Solution**: Added 1-second delay before hash removal to allow flash effect
-
-### 6. CSS Variable Issues
-
-**Problem**: Used `rgb(var(--surface-XX))` incorrectly
-**Solution**: Changed to `var(--surface-XX)` for hex colors
-
-### 7. DM Search Navigation Crashes
-
-**Problem**: DM search results navigated to `/spaces/` URLs causing crashes
-**Solution**: Added conditional navigation logic in `handleNavigate`:
-
-```typescript
-const handleNavigate = (
-  spaceId: string,
-  channelId: string,
-  messageId: string
-) => {
-  const isDM = spaceId === channelId;
-  if (isDM) {
-    navigate(`/messages/${spaceId}#msg-${messageId}`);
-  } else {
-    navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
-  }
-};
-```
-
-### 8. DM SearchResultItem Component Crashes
-
-**Problem**: SearchResultItem tried to fetch space data for DM addresses, causing React hook errors
-**Solution**: Split into separate components with conditional hook usage:
-
-- `DMSearchResultItem` - handles DM results with user info only
-- `SpaceSearchResultItem` - handles space results with space and user data
-- Main component delegates based on `spaceId === channelId` detection
-
-## 🔧 Development Guidelines
-
-### Adding New Search Features
-
-1. **Extend SearchContext**: Add new context types if needed
-2. **Update SearchService**: Modify search logic and ranking
-3. **Enhance UI Components**: Add new result types or filters
-4. **Test Context Switching**: Ensure indices update correctly
-
-### Performance Considerations
-
-- **Index Size**: Monitor memory usage for large message histories
-- **Search Frequency**: Debouncing (300ms) prevents excessive queries
-- **Cache Management**: LRU cache with TTL (5 minutes) prevents memory leaks
-- **Index Updates**: Automatic incremental updates on message save/delete maintain accuracy
-- **UI Performance**: Virtuoso ensures smooth scrolling with 500+ results
-
-### Testing Search Components
-
-```typescript
-// Test search context detection
-const { result } = renderHook(() => useSearchContext(), {
-  wrapper: ({ children }) => (
-    <MemoryRouter initialEntries={['/spaces/test-space/test-channel']}>
-      {children}
-    </MemoryRouter>
-  ),
-});
-
-expect(result.current).toEqual({
-  type: 'space',
-  spaceId: 'test-space',
-  channelId: 'test-channel'
-});
-```
-
-## 🎯 Performance Metrics
-
-### Current Performance
-
-- **Search Response**: < 100ms for typical queries
-- **Index Build Time**: ~2-5 seconds at startup for moderate message history
-- **Memory Usage**: ~5-10MB for search indices
-- **UI Responsiveness**: No blocking during search operations
-- **Result Rendering**: Smooth 60fps scrolling with Virtuoso (up to 500 results)
-- **Incremental Updates**: ~1ms per message save/delete (non-blocking)
-
-### Optimization Roadmap
-
-See `search-optimization/` for detailed plans:
-- **Phase 1.2**: Lazy loading (eliminate startup blocking)
-- **Phase 1.3**: IndexedDB persistence (instant subsequent searches)
-- **Phase 1.4**: Memory management with LRU eviction
-- **Phase 2**: Performance metrics and conditional optimizations
-
-## 🔄 Future Enhancements
-
-### Potential Features
-
-- **Advanced Filters**: Date range, user, channel filtering
-- **Search History**: Recent searches with quick access
-- **Search Suggestions**: Auto-complete based on message content
-- **Cross-Space Search**: Global search across all accessible spaces
-- **Search Analytics**: Usage tracking and optimization
-
-### Technical Improvements
-
-- **Offline Search**: Persist indices for offline access
-- **Search Workers**: Move search operations to Web Workers
-- **Progressive Loading**: Load older message indices on demand
-- **Search Shortcuts**: Quick filters and operators (from:user, in:channel)
-
-## 🐛 Known Limitations
-
-### Current Constraints
-
-1. **Search Scope**: Limited to current space/DM context
-2. **Index Persistence**: Indices are rebuilt on app restart (startup blocking ~2-5s)
-3. **Message Types**: Only text content is indexed (no attachments)
-4. **Result Limit**: Maximum 500 results per search (warning message displayed)
-5. **Memory Usage**: All indices kept in memory (unbounded growth)
-
-### Workarounds
-
-- Context switching provides focused, relevant results
-- 500-result limit sufficient for 95%+ of searches
-- Warning message encourages search refinement when limit hit
-- Incremental index updates keep searches current
-- Graceful degradation for edge cases
+Index key shape: `space:{spaceId}` or `dm:{conversationId}`. Scoping rules:
+
+- **Space context**: searches all messages across all channels in the space
+- **DM context**: searches messages within the specific conversation
+- **No cross-space search** — each context has its own index
+
+## Behavior
+
+| Aspect | Setting |
+|--------|---------|
+| Input debounce | 300ms |
+| Min query length | 3 characters |
+| Result cap | 500 (warning callout when reached) |
+| Result ordering | Relevance score descending (MiniSearch built-in) |
+| Result cache | 100 entries, 5-minute TTL, LRU |
+| Highlight | `<mark>` tags via HTML- + regex-escaped substitution |
+| Keyboard | `Ctrl/Cmd + K` focuses search |
+| Scrolling | `react-virtuoso` (smooth 60fps with hundreds of results) |
+| Navigation | `/spaces/{spaceId}/{channelId}#msg-{messageId}` or `/messages/{conversationId}#msg-{messageId}` |
+| Post-navigation | 6-second yellow flash highlight on target message |
+
+## Persistence and Memory Model
+
+| Property | Value |
+|----------|-------|
+| Storage | IndexedDB `search_indices` object store (schema v13) |
+| Serialization | `JSON.stringify(searchIndex.toJSON())` |
+| Deserialization | `MiniSearch.loadJSON(serialized, MINISEARCH_OPTIONS)` |
+| Write policy | Dirty flag + 5-second debounced flush; one write per window per index |
+| Lifecycle flush | `visibilitychange` (hidden), `beforeunload`, before LRU eviction |
+| In-memory cap | 10 indices (`MAX_IN_MEMORY_INDICES`) |
+| Eviction | LRU; dirty indices flushed before drop |
+
+### Performance
+
+- App startup search cost: 0ms (no upfront indexing)
+- First search in a space, cold IndexedDB cache: ~200ms (build from messages + persist)
+- First search in a space, warm cache: ~10ms (deserialize)
+- Subsequent searches: instant
+- Incremental index update on message save/delete: ~1ms, non-blocking
+
+## Adding a New Searchable Field
+
+1. Add the field to `SearchableMessage` interface in `src/db/messages.ts`
+2. Populate it in `messageToSearchable()` (extract from `Message` as needed)
+3. Update `MessageDB.MINISEARCH_OPTIONS`:
+   - Add to `fields` if the field should be tokenized and searched
+   - Add to `storeFields` if it should be returned with search results
+   - Add to `searchOptions.boost` to weight it
+4. Bump the persisted index format if you want existing caches invalidated. The current schema has no `indexVersion` field — option drift will silently misbehave on cached records. See [decisions.md §12b](../../tasks/search-optimization/decisions.md) for the deferred mitigation pattern (`SEARCH_INDEX_VERSION` constant + filter on load). The simplest workaround today: bump `DB_VERSION` (12→13→14...) and add a no-op upgrade step, which wipes the `search_indices` store on next launch via deletion-and-recreation if you choose to delete-then-create the store
+
+## Extending the Context System
+
+To add a new scope (e.g. cross-space search, channel-specific search):
+
+1. Extend the `SearchContext` interface in `src/db/messages.ts` with a new `type` discriminant
+2. Update `getIndexKey(context)` to emit a unique key shape for the new type
+3. Update `loadIndexLazily(context, indexKey)` to fetch the right message set for the new type
+4. Update `useSearchContext` to detect the new route pattern and emit the new context shape
+5. Update `SearchService.invalidateCache` so cache invalidation reaches the new key shape
+
+## Known Limitations
+
+- **500 result hard cap.** Most queries return well under 100, so the cap is rarely hit. When it is, the UI shows a warning callout suggesting refinement.
+- **Text-only indexing.** Only message `content.text` (for `post` and `event` types) is indexed. Attachments, images, and media are not searchable.
+- **Single-context scope.** No cross-space global search. Each search is confined to the current space or DM.
+- **`beforeunload` flush is best-effort.** Browsers don't await Promises returned from `beforeunload` handlers, so on a hard close (window X, browser quit) the in-flight IndexedDB write may not complete. At most one 5-second debounce window of incremental updates is lost. Source-of-truth is the `messages` store, so the next lazy load rebuilds from messages. See [decisions.md §12a](../../tasks/search-optimization/decisions.md).
+- **Persisted index can be stale for cold spaces.** `markIndexDirty` only fires when the index is loaded in memory. Messages arriving for a space whose index has been evicted are NOT reflected in the persisted version until the next lazy load triggers a fresh build. See [decisions.md §12c](../../tasks/search-optimization/decisions.md).
+
+## Related Documentation
+
+- [Search optimization tasks](../../tasks/search-optimization/) — phase docs, design decisions, performance roadmap
+- [Decisions log](../../tasks/search-optimization/decisions.md) — rationale for sorting, persistence, debounce, eviction
+- [Data management architecture guide](../data-management-architecture-guide.md) — MessageDB and IndexedDB schema context
+- [Dropdown panels](./dropdown-panels.md) — reusable panel used by `SearchResults`
+- [Primitives](./primitives/) — UI components used in search
+- [Cross-platform components guide](../cross-platform-components-guide.md) — shared component architecture
 
 ---
 
-## 📞 Developer Support
-
-### Key Files for Modifications
-
-- **Search Logic**: `src/services/SearchService.ts`
-- **UI Components**: `src/components/search/`
-- **Database Integration**: `src/services/SearchService.ts` (orchestrates interaction with `src/db/messages.ts` for data access)
-- **Context Detection**: `src/hooks/useSearchContext.ts`
-- **Navigation**: `src/components/search/GlobalSearch.tsx`
-
-### Common Debugging Tips
-
-1. **Check Context**: Verify `useSearchContext` returns expected values
-2. **Verify Indices**: Check `SearchService`'s internal `searchIndices.size` (accessed via `useMessageDB()`)
-3. **Test Navigation**: Ensure URL patterns match router configuration
-4. **Monitor Focus**: Use browser dev tools to track `document.activeElement`
-5. **Cache Issues**: Clear React Query cache if stale results appear
-
-### Integration Points
-
-- **New Message Types**: Update `extractTextFromMessage` method
-- **Permission Changes**: Modify context detection logic
-- **UI Updates**: Follow existing SCSS patterns and CSS variables
-- **Performance Issues**: Monitor with React DevTools and Performance tab
-
-This implementation provides a solid foundation for message search with room for future enhancements and optimizations.
-
----
-
-_Last updated: 2026-05-20 — staleness audit fixes_
+_Last updated: 2026-05-25 — rewritten from scratch to reflect Phase 1.2-1.4 (lazy loading, IndexedDB persistence, LRU eviction). Stripped status/roadmap/history sections that belong in `.agents/tasks/search-optimization/`._
