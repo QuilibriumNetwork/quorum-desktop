@@ -172,7 +172,12 @@ export class MessageDB {
   private indexLoadPromises: Map<string, Promise<void>> = new Map();
   private dirtyIndices: Set<string> = new Set();
   private flushTimer: ReturnType<typeof setTimeout> | null = null;
+  private indexAccessTimes: Map<string, number> = new Map();
   private static readonly FLUSH_DEBOUNCE_MS = 5000;
+  // Phase 1.4: cap in-memory indices. Evicted indices are reloaded
+  // transparently from IndexedDB (Phase 1.3) on next access, so the
+  // tradeoff is one ~10ms deserialize hit vs unbounded memory growth.
+  private static readonly MAX_IN_MEMORY_INDICES = 10;
 
   async init() {
     if (this.db) return;
@@ -1597,14 +1602,21 @@ export class MessageDB {
    */
   async ensureIndexReady(context: SearchContext): Promise<void> {
     const indexKey = this.getIndexKey(context);
-    if (this.searchIndices.has(indexKey)) return;
+    if (this.searchIndices.has(indexKey)) {
+      this.trackIndexAccess(indexKey);
+      return;
+    }
 
     const existing = this.indexLoadPromises.get(indexKey);
     if (existing) return existing;
 
-    const loadPromise = this.loadIndexLazily(context, indexKey).finally(() => {
-      this.indexLoadPromises.delete(indexKey);
-    });
+    const loadPromise = this.loadIndexLazily(context, indexKey)
+      .then(() => {
+        this.trackIndexAccess(indexKey);
+      })
+      .finally(() => {
+        this.indexLoadPromises.delete(indexKey);
+      });
     this.indexLoadPromises.set(indexKey, loadPromise);
     return loadPromise;
   }
@@ -1717,6 +1729,50 @@ export class MessageDB {
         logger.warn('Failed to flush dirty search indices:', error);
       });
     }, MessageDB.FLUSH_DEBOUNCE_MS);
+  }
+
+  private trackIndexAccess(indexKey: string): void {
+    this.indexAccessTimes.set(indexKey, Date.now());
+  }
+
+  /**
+   * Phase 1.4: drop least-recently-used indices once we exceed
+   * MAX_IN_MEMORY_INDICES. Safe because Phase 1.3 persists indices to
+   * IndexedDB — evicted indices reload transparently on next access.
+   *
+   * Always flushes dirty state before dropping, so we never lose pending
+   * writes to eviction.
+   */
+  private async evictLeastRecentlyUsed(): Promise<void> {
+    if (this.searchIndices.size <= MessageDB.MAX_IN_MEMORY_INDICES) return;
+
+    const entries = Array.from(this.indexAccessTimes.entries()).sort(
+      (a, b) => a[1] - b[1]
+    );
+    const evictCount = this.searchIndices.size - MessageDB.MAX_IN_MEMORY_INDICES;
+    const toEvict = entries.slice(0, evictCount);
+
+    for (const [indexKey] of toEvict) {
+      if (this.dirtyIndices.has(indexKey)) {
+        const index = this.searchIndices.get(indexKey);
+        if (index) {
+          try {
+            await this.saveSearchIndexToDB(indexKey, index);
+          } catch (error) {
+            // If the flush failed, keep the index in memory rather than
+            // losing data — eviction will retry on the next cycle.
+            logger.warn(
+              `Failed to flush ${indexKey} before eviction; keeping in memory:`,
+              error
+            );
+            continue;
+          }
+        }
+        this.dirtyIndices.delete(indexKey);
+      }
+      this.searchIndices.delete(indexKey);
+      this.indexAccessTimes.delete(indexKey);
+    }
   }
 
   /**
@@ -1843,6 +1899,12 @@ export class MessageDB {
         );
       }
     }
+
+    // Phase 1.4: trim memory after each search. Fire-and-forget — eviction
+    // touches IndexedDB but we don't want to block returning results on it.
+    this.evictLeastRecentlyUsed().catch((error) => {
+      logger.warn('LRU eviction failed:', error);
+    });
 
     // Sort by relevance score (best match first)
     // MiniSearch provides well-tuned relevance scoring

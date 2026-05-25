@@ -39,7 +39,7 @@ What this means for the work in this folder:
 | **Result limit** | 50 results | 500+ results | ✅ Done (500 limit) |
 | **UI performance** | Laggy with 50+ results | Smooth 60fps | ✅ Done (Virtuoso) |
 | **Index updates** | Manual rebuild | Automatic | ✅ Done (incremental) |
-| **Memory usage** | Unbounded growth | < 50MB total | 📋 Planned (LRU) |
+| **Memory usage** | Unbounded growth | Capped at 10 indices | ✅ Done (2026-05-25) |
 | **Persistence** | Rebuild every startup | Cached in IndexedDB | ✅ Done (2026-05-25) |
 
 ---
@@ -103,7 +103,17 @@ search-optimization/
 
 ---
 
-### 📋 Phase 1.4: Memory Management (PLANNED)
+### ✅ Phase 1.4: LRU Memory Management (COMPLETED 2026-05-25)
+
+**Goal**: Cap in-memory indices to bound memory usage in long sessions.
+
+**What was done**:
+- `MAX_IN_MEMORY_INDICES = 10` cap
+- `indexAccessTimes` tracking + `trackIndexAccess()` on every `ensureIndexReady`
+- `evictLeastRecentlyUsed()` with flush-before-evict (uses Phase 1.3 persistence so eviction is non-destructive)
+- Fire-and-forget eviction after each `searchMessages`
+
+**Details**: See `phase-1.4-lru-eviction.md`
 
 **Goal**: Eliminate startup blocking and enable scalability
 
@@ -276,6 +286,7 @@ Confirmed Phase 1.1 changes are still in place and have not been modified since 
 
 ## Changelog
 
+- **2026-05-25** — Phase 1.4 (LRU memory management) shipped. In-memory indices capped at 10; eviction is non-destructive thanks to Phase 1.3 persistence. Foundation phases 1.2-1.4 complete.
 - **2026-05-25** — Phase 1.3 (IndexedDB persistence) shipped. First-search-after-restart drops from ~200ms to ~10ms (cache hit). Debounced flush + lifecycle handlers. Deleted stale minisearch type shadow.
 - **2026-05-25** — Phase 1.2 (lazy loading) shipped. Startup blocking eliminated; indices now built per-space/DM on first search.
 - **2026-05-24** — Verified Phase 1.1 code still in place (no churn since Nov 2025). Added "Relationship to quorum-shared migration" section linking to the services-design audit. Dropped stale "bulk history" caveat from known issues. Re-numbered known-issues list (was 1-3-4).

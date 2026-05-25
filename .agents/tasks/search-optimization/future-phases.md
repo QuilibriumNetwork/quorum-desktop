@@ -310,7 +310,13 @@ The four methods this phase adds (`saveSearchIndexToDB`, `loadSearchIndexFromDB`
 
 ---
 
-## 📅 Phase 1.4: Memory Management (LRU)
+## ✅ Phase 1.4: LRU Memory Management (COMPLETED 2026-05-25)
+
+See `phase-1.4-lru-eviction.md` for what shipped.
+
+---
+
+## 📅 Phase 1.4 — Original Plan (kept for reference)
 
 **Goal**: Prevent unbounded memory growth as user searches more spaces.
 
@@ -521,13 +527,13 @@ const finalScore = relevanceScore * calculateRecencyBoost(messageDate);
 | **1.1 Quick Wins** | 2 hours | High (immediate value) | ✅ Done | ✅ Complete |
 | **1.2 Lazy Loading** | ~1 hour | Very High (eliminates startup blocking) | ✅ Done | ✅ Complete |
 | **1.3 Persistence** | ~1.5 hours | High (20x faster first search after restart) | ✅ Done | ✅ Complete |
-| **1.4 Memory Mgmt** | 1-2 days | Medium (prevents leaks) | High | 📋 Planned |
+| **1.4 Memory Mgmt** | ~30 min | Medium (bounds memory) | ✅ Done | ✅ Complete |
 | **2.1 Metrics** | 1 day | High (enables data-driven decisions) | High | 📋 Planned |
 | **2.2 Ranking** | 1 day | Low (only if needed) | Optional | 📋 Conditional |
 | **2.3 Chunking** | 3-4 days | Medium (if large spaces exist) | Optional | 📋 Conditional |
 | **3.x Advanced** | 1 week+ | Low (edge cases) | Low | 📋 Optional |
 
-**Recommended Next Step**: Phase 1.4 (LRU memory management). Phase 1.3 dirty-tracking + persistence machinery is in place — eviction can now safely drop indices from memory knowing they're persisted.
+**Recommended Next Step**: Phase 2 (metrics) — but defer until there's enough production usage to make the measurements meaningful. Foundation phases 1.2-1.4 are now complete.
 
 ---
 
@@ -536,6 +542,7 @@ const finalScore = relevanceScore * calculateRecencyBoost(messageDate);
 
 ## Changelog
 
+- **2026-05-25** — Phase 1.4 marked complete; see `phase-1.4-lru-eviction.md`. Foundation phases 1.2-1.4 complete; next step is Phase 2 metrics (deferred until production usage).
 - **2026-05-25** — Phase 1.3 marked complete; see `phase-1.3-persistence.md` for shipped work. Recommended next step updated to Phase 1.4.
 - **2026-05-25** — Phase 1.2 marked complete; see `phase-1.2-lazy-loading.md` for shipped work.
 - **2026-05-24** — Major revision after session research:
