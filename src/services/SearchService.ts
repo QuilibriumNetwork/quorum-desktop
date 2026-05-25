@@ -284,6 +284,15 @@ export class SearchService {
     };
   }
 
+  /**
+   * Flush any dirty search indices to persistent storage. Wire to
+   * visibilitychange (hidden) and beforeunload so we don't lose the last
+   * ~5s of incremental index updates on app close.
+   */
+  async flushIndices(): Promise<void> {
+    await this.messageDB.flushDirtyIndices();
+  }
+
   cleanup(): void {
     // Clear all timers
     this.debounceTimers.forEach((timer) => clearTimeout(timer));

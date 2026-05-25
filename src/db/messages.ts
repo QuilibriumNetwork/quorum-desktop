@@ -6,7 +6,7 @@ import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
-import MiniSearch from 'minisearch';
+import MiniSearch, { type Options } from 'minisearch';
 
 export interface EncryptedMessage {
   encryptedContent: string;
@@ -157,12 +157,22 @@ export interface SearchResult {
   highlights: string[];
 }
 
+interface StoredSearchIndex {
+  indexKey: string;
+  serializedIndex: string;
+  messageCount: number;
+  lastUpdated: number;
+}
+
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 12;
+  private readonly DB_VERSION = 13;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexLoadPromises: Map<string, Promise<void>> = new Map();
+  private dirtyIndices: Set<string> = new Set();
+  private flushTimer: ReturnType<typeof setTimeout> | null = null;
+  private static readonly FLUSH_DEBOUNCE_MS = 5000;
 
   async init() {
     if (this.db) return;
@@ -316,6 +326,15 @@ export class MessageDB {
           db.createObjectStore('user_notes', {
             keyPath: 'targetAddress',
           });
+        }
+
+        if (event.oldVersion < 13) {
+          // Phase 1.3: persist serialized MiniSearch indices so they survive
+          // app restarts. Key shape: 'space:<id>' | 'dm:<conversationId>'.
+          const indexStore = db.createObjectStore('search_indices', {
+            keyPath: 'indexKey',
+          });
+          indexStore.createIndex('by_lastUpdated', 'lastUpdated');
         }
       };
     });
@@ -1528,16 +1547,25 @@ export class MessageDB {
     };
   }
 
+  /**
+   * Single source of truth for MiniSearch config. Used by both index creation
+   * and deserialization (MiniSearch.loadJSON requires the SAME options to
+   * correctly restore an index). Drift between create and load silently
+   * breaks fuzzy/boost/stored-field behavior — keep them aligned via this
+   * constant.
+   */
+  private static readonly MINISEARCH_OPTIONS: Options<SearchableMessage> = {
+    fields: ['content', 'senderId'],
+    storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
+    searchOptions: {
+      boost: { content: 2, senderId: 1 },
+      prefix: true,
+      fuzzy: 0.2,
+    },
+  };
+
   private createSearchIndex(): MiniSearch<SearchableMessage> {
-    return new MiniSearch({
-      fields: ['content', 'senderId'],
-      storeFields: ['messageId', 'spaceId', 'channelId', 'createdDate', 'type'],
-      searchOptions: {
-        boost: { content: 2, senderId: 1 },
-        prefix: true,
-        fuzzy: 0.2,
-      },
-    });
+    return new MiniSearch(MessageDB.MINISEARCH_OPTIONS);
   }
 
   private getIndexKey(context: SearchContext): string {
@@ -1587,6 +1615,14 @@ export class MessageDB {
   ): Promise<void> {
     await this.init();
 
+    // Phase 1.3: try persisted cache first; falls through to fresh build if
+    // miss or load fails.
+    const cached = await this.loadSearchIndexFromDB(indexKey);
+    if (cached) {
+      this.searchIndices.set(indexKey, cached);
+      return;
+    }
+
     const messages =
       context.type === 'space'
         ? await this.getAllSpaceMessages({ spaceId: context.spaceId! })
@@ -1595,6 +1631,118 @@ export class MessageDB {
     const searchIndex = this.createSearchIndex();
     searchIndex.addAll(messages.map((msg) => this.messageToSearchable(msg)));
     this.searchIndices.set(indexKey, searchIndex);
+
+    // First-build for this context — schedule a persist so the next restart
+    // hits the cache. Debounced; not a per-message write.
+    this.markIndexDirty(indexKey);
+  }
+
+  /**
+   * Persist a serialized MiniSearch index to IndexedDB.
+   *
+   * Adapter-shape note: when quorum-shared migration unblocks, this method's
+   * signature becomes the IndexedDB implementation of a SearchAdapter method.
+   * Mobile will write a SQLite/MMKV variant. See decisions.md #9.
+   */
+  private async saveSearchIndexToDB(
+    indexKey: string,
+    searchIndex: MiniSearch<SearchableMessage>
+  ): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('search_indices', 'readwrite');
+      const store = tx.objectStore('search_indices');
+      const record: StoredSearchIndex = {
+        indexKey,
+        serializedIndex: JSON.stringify(searchIndex.toJSON()),
+        messageCount: searchIndex.documentCount,
+        lastUpdated: Date.now(),
+      };
+      const request = store.put(record);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Load a serialized MiniSearch index from IndexedDB.
+   *
+   * Uses MiniSearch.loadJSON (NOT addAll(JSON.parse(...)) which would
+   * re-tokenize and defeat the cache). The same MINISEARCH_OPTIONS must
+   * be passed as were used to create the original index. See decisions.md #10.
+   *
+   * Returns null on miss or any load failure (caller falls back to fresh build).
+   */
+  private async loadSearchIndexFromDB(
+    indexKey: string
+  ): Promise<MiniSearch<SearchableMessage> | null> {
+    await this.init();
+    const stored = await new Promise<StoredSearchIndex | undefined>(
+      (resolve, reject) => {
+        const tx = this.db!.transaction('search_indices', 'readonly');
+        const store = tx.objectStore('search_indices');
+        const request = store.get(indexKey);
+        request.onsuccess = () =>
+          resolve(request.result as StoredSearchIndex | undefined);
+        request.onerror = () => reject(request.error);
+      }
+    );
+
+    if (!stored) return null;
+
+    try {
+      return MiniSearch.loadJSON<SearchableMessage>(
+        stored.serializedIndex,
+        MessageDB.MINISEARCH_OPTIONS
+      );
+    } catch (error) {
+      logger.warn(
+        `Failed to deserialize search index for ${indexKey}, will rebuild:`,
+        error
+      );
+      return null;
+    }
+  }
+
+  /**
+   * Mark an index as dirty and schedule a debounced flush. Coalesces bursts
+   * of message activity into a single write per FLUSH_DEBOUNCE_MS window.
+   * See decisions.md #11.
+   */
+  private markIndexDirty(indexKey: string): void {
+    this.dirtyIndices.add(indexKey);
+    if (this.flushTimer) return;
+    this.flushTimer = setTimeout(() => {
+      this.flushDirtyIndices().catch((error) => {
+        logger.warn('Failed to flush dirty search indices:', error);
+      });
+    }, MessageDB.FLUSH_DEBOUNCE_MS);
+  }
+
+  /**
+   * Persist all dirty indices. Safe to call from lifecycle hooks
+   * (visibilitychange, beforeunload) or LRU eviction.
+   */
+  async flushDirtyIndices(): Promise<void> {
+    if (this.flushTimer) {
+      clearTimeout(this.flushTimer);
+      this.flushTimer = null;
+    }
+    if (this.dirtyIndices.size === 0) return;
+
+    const toFlush = Array.from(this.dirtyIndices);
+    this.dirtyIndices.clear();
+    await Promise.all(
+      toFlush.map((indexKey) => {
+        const index = this.searchIndices.get(indexKey);
+        if (!index) return Promise.resolve();
+        return this.saveSearchIndexToDB(indexKey, index).catch((error) => {
+          logger.warn(`Failed to persist search index ${indexKey}:`, error);
+          // Re-mark dirty so we retry on the next flush.
+          this.dirtyIndices.add(indexKey);
+        });
+      })
+    );
   }
 
   async addMessageToIndex(message: Message): Promise<void> {
@@ -1609,6 +1757,7 @@ export class MessageDB {
       } else {
         spaceIndex.add(searchable);
       }
+      this.markIndexDirty(spaceIndexKey);
     }
 
     // If it's a DM, also add to DM index
@@ -1621,6 +1770,7 @@ export class MessageDB {
       } else {
         dmIndex.add(searchable);
       }
+      this.markIndexDirty(dmIndexKey);
     }
   }
 
@@ -1634,6 +1784,7 @@ export class MessageDB {
     const spaceIndex = this.searchIndices.get(spaceIndexKey);
     if (spaceIndex) {
       spaceIndex.discard(messageId);
+      this.markIndexDirty(spaceIndexKey);
     }
 
     // Remove from DM index if applicable
@@ -1642,6 +1793,7 @@ export class MessageDB {
     const dmIndex = this.searchIndices.get(dmIndexKey);
     if (dmIndex) {
       dmIndex.discard(messageId);
+      this.markIndexDirty(dmIndexKey);
     }
   }
 

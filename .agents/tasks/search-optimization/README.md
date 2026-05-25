@@ -40,7 +40,7 @@ What this means for the work in this folder:
 | **UI performance** | Laggy with 50+ results | Smooth 60fps | ✅ Done (Virtuoso) |
 | **Index updates** | Manual rebuild | Automatic | ✅ Done (incremental) |
 | **Memory usage** | Unbounded growth | < 50MB total | 📋 Planned (LRU) |
-| **Persistence** | Rebuild every startup | Cached in IndexedDB | 📋 Planned |
+| **Persistence** | Rebuild every startup | Cached in IndexedDB | ✅ Done (2026-05-25) |
 
 ---
 
@@ -87,7 +87,23 @@ search-optimization/
 
 ---
 
-### 📋 Phase 1.3-1.4: Foundation (PLANNED)
+### ✅ Phase 1.3: IndexedDB Persistence (COMPLETED 2026-05-25)
+
+**Goal**: Cache serialized indices to IndexedDB so first-search-after-restart drops from ~200ms to ~10ms.
+
+**What was done**:
+- DB schema bump (12 → 13) + new `search_indices` object store
+- `MINISEARCH_OPTIONS` static = single source of truth for create + `loadJSON` (decision #10)
+- `save`/`loadSearchIndexFromDB` using `MiniSearch.loadJSON` (NOT `addAll(JSON.parse(...))`)
+- Dirty-flag + debounced flush (5s window) wired into incremental updates (decision #11)
+- `visibilitychange` + `beforeunload` lifecycle flush in `useSearchService`
+- Deleted stale `src/types/minisearch.d.ts` shadow
+
+**Details**: See `phase-1.3-persistence.md`
+
+---
+
+### 📋 Phase 1.4: Memory Management (PLANNED)
 
 **Goal**: Eliminate startup blocking and enable scalability
 
@@ -167,12 +183,7 @@ Confirmed Phase 1.1 changes are still in place and have not been modified since 
 
 ### Known Issues ⚠️
 
-1. **No persistence**
-   - **Issue**: Indices rebuilt from scratch on first search of each space/DM after restart
-   - **Impact**: First search in a space pays ~200ms; subsequent searches instant
-   - **Fix**: Phase 1.3 (IndexedDB persistence)
-
-2. **500 result hard limit**
+1. **500 result hard limit**
    - **Issue**: Can't see more than 500 results
    - **Impact**: Rare (most searches return < 100)
    - **Status**: Acceptable for now, may add pagination later
@@ -185,7 +196,10 @@ Confirmed Phase 1.1 changes are still in place and have not been modified since 
 - Search query: ~50-100ms (unchanged)
 - Memory: ~1KB per indexed message
 - Startup: 0ms (lazy loading — Phase 1.2 done)
-- First search in a space: ~200ms (index build); subsequent searches instant
+- First search in a space (cold cache): ~200ms (build + persist)
+- First search in a space (warm cache after restart): ~10ms (deserialize from IndexedDB — Phase 1.3 done)
+- Subsequent searches: instant
+- Index writes coalesced to one per 5s window (debounced flush — Phase 1.3 done)
 
 ---
 
@@ -262,6 +276,7 @@ Confirmed Phase 1.1 changes are still in place and have not been modified since 
 
 ## Changelog
 
+- **2026-05-25** — Phase 1.3 (IndexedDB persistence) shipped. First-search-after-restart drops from ~200ms to ~10ms (cache hit). Debounced flush + lifecycle handlers. Deleted stale minisearch type shadow.
 - **2026-05-25** — Phase 1.2 (lazy loading) shipped. Startup blocking eliminated; indices now built per-space/DM on first search.
 - **2026-05-24** — Verified Phase 1.1 code still in place (no churn since Nov 2025). Added "Relationship to quorum-shared migration" section linking to the services-design audit. Dropped stale "bulk history" caveat from known issues. Re-numbered known-issues list (was 1-3-4).
 - **2025-11-12** — Phase 1.1 quick wins shipped.
