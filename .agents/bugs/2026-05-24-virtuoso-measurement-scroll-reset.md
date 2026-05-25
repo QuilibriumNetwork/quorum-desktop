@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Virtuoso measurement callback resets scrollTop on new messages — scroll jank in channels and DMs"
-status: in-progress
+status: fixed-pending-cleanup
 priority: high
 ai_generated: true
 created: 2026-05-24
@@ -17,7 +17,7 @@ branch: fix/virtuoso-scroll-jank
 
 When a message is sent or received in a channel or DM, the message list jumps the scroll position incorrectly: small jumps that snap back, or larger jumps that leave the new message off-screen. Root cause is in `react-virtuoso`'s internal measurement callback (multiple GitHub issues open since 2021, unfixed). Fix is at the application layer: our own scroll-anchoring hook (`useScrollAnchor`) replaces Virtuoso's `followOutput` and handles snap-to-bottom logic ourselves on three signals (scroll position, cache updates, imperative calls from send handlers).
 
-**Status as of 2026-05-25:** functional fix in place on branch `fix/virtuoso-scroll-jank`. Behavior is much improved across all tested scenarios (channels, DMs, single-line, multi-line, image, sender, receiver). One known visual residual: DM has tighter spacing between last message and composer than Channel (a separate layout issue from PR #153). Cleanup + PR pending.
+**Status as of 2026-05-25:** functional fix in place on branch `fix/virtuoso-scroll-jank`. Behavior is good across all tested scenarios (channels, DMs, single-line, multi-line, image, sender, receiver, scroll-up, send-from-up). Remaining residual: an occasional single-frame visual flash on some sends — telemetry-clean, settles within one frame. Cleanup + PR pending.
 
 **For ongoing reference:** see [`docs/features/messages/scroll-anchoring.md`](../docs/features/messages/scroll-anchoring.md) — the canonical "how it works" doc for the scroll-anchoring system. That doc evolves with the code; this bug doc is the historical artifact.
 
@@ -88,9 +88,10 @@ Full reference: [`docs/features/messages/scroll-anchoring.md`](../docs/features/
 
 ## Known limitations / residuals
 
-- **DM bottom spacing** is tighter than Channel. DM's last message sits closer to the composer; a small browser bounce-back is visible when overscrolling at the bottom. Originally believed to be solvable by mirroring PR #153's composer-overlay treatment to DM, but Session 21 discovered that PR #153's overlay was never actually working in Channel either (a global CSS rule in DirectMessage.scss was silently overriding it). Both layouts were effectively `position: sticky` the whole time. Properly fixing this requires re-scoping both Channel.scss and DirectMessage.scss rules to be component-local (e.g., scoped under `.chat-area` or a similar gating class), which is out of scope for this PR. Tracked as a separate follow-up.
-- **Single-frame visual flash on some sends.** The optimistic message can briefly appear partially visible before the snap lands. Settles correctly within ~1 frame.
+- **Single-frame visual flash on some sends.** The optimistic message can briefly appear partially visible before the snap lands. Settles correctly within ~1 frame. Telemetry-clean.
 - **Non-deterministic edge cases.** Some message types (multi-line + image) occasionally have a less-clean landing than others. Telemetry-clean (no scrollTop drift events) but visual experience varies frame-to-frame.
+
+(Note: earlier sessions discussed a "DM bottom spacing tighter than Channel" issue. Session 21 user-confirmed this was the temporary regression I caused while attempting the DM overlay refactor — not a pre-existing condition. After reverting that refactor, DM and Channel both behave the same way they always did. No remaining spacing issue.)
 
 ## Process discipline (user-stated, 2026-05-24)
 
