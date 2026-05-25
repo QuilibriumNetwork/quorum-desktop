@@ -31,6 +31,8 @@ import { Button as ButtonBase } from '../primitives';
 const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
+import { useQueryClient } from '@tanstack/react-query';
+import { useScrollAnchor } from '../../hooks/ui/useScrollAnchor';
 
 export interface MessageListRef {
   scrollToBottom: () => void;
@@ -102,6 +104,11 @@ interface MessageListProps {
   reportRead?: (messageId: string, timestamp: number) => void;
   /** Snapshot of lastReadTimestamp at conversation load — for read receipt observer filtering */
   readReceiptBaseline?: number;
+  /** Scroll-anchor context. For DMs, spaceId === channelId === recipientAddress. */
+  anchorSpaceId?: string;
+  anchorChannelId?: string;
+  /** Explicit cache prefix for the scroll-anchor — needed by ThreadPanel (different key shape). */
+  anchorQueryKeyPrefix?: readonly unknown[];
 }
 
 function useWindowSize() {
@@ -171,9 +178,13 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       showReadReceipts,
       reportRead,
       readReceiptBaseline,
+      anchorSpaceId,
+      anchorChannelId,
+      anchorQueryKeyPrefix,
     } = props;
 
     const [_width, height] = useWindowSize();
+    const queryClient = useQueryClient();
     const [hoverTarget, setHoverTarget] = useState<string>();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
     const [emojiPickerPosition, setEmojiPickerPosition] = useState<{ x: number; y: number } | null>(null);
@@ -214,63 +225,61 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const [init, setInit] = useState(false);
     const location = useLocation();
 
-    // Ref for deletion state - must be a ref (not state) for synchronous updates
-    // This prevents followOutput from scrolling before React state updates propagate
+    // Ref (not state) so the suppression flag updates synchronously during deletion.
     const deletionInProgressRef = useRef(false);
 
-    // Track if we've jumped to an old message via hash navigation
-    // This disables auto-scroll during manual pagination
     const [hasJumpedToOldMessage, setHasJumpedToOldMessage] = useState(false);
+    // Ref mirror so useScrollAnchor's cache callback reads a fresh value.
+    const hasJumpedToOldMessageRef = useRef(false);
+    hasJumpedToOldMessageRef.current = hasJumpedToOldMessage;
 
-    // Message highlighting context - replaces direct DOM manipulation
+    // Replaces Virtuoso's followOutput — see docs/features/messages/scroll-anchoring.md.
+    const {
+      snapToBottom,
+      onAtBottomStateChange: anchorOnAtBottomStateChange,
+      setScrollerEl: setAnchorScrollerEl,
+    } = useScrollAnchor({
+      hasJumpedToOldMessageRef,
+      deletionInProgressRef,
+      queryClient,
+      spaceId: anchorSpaceId,
+      channelId: anchorChannelId,
+      queryKeyPrefix: anchorQueryKeyPrefix,
+    });
+
     const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
-    // Scroll tracking for jump to present button
     const { handleAtBottomStateChange, shouldShowJumpButton } =
       useScrollTracking({
         messageCount: messageList.length,
-        minMessageCount: 10, // Only show button if there are at least 10 messages
+        minMessageCount: 10,
       });
 
-    // Track if separator has been visible (for dismissal logic via Virtuoso rangeChanged)
     const [separatorWasVisible, setSeparatorWasVisible] = useState(false);
 
-    // Combined bottom state handler: manages both "Jump to Present" button and forward pagination
     const handleBottomStateChange = useCallback(
       (atBottom: boolean) => {
-        // Update jump button visibility
         handleAtBottomStateChange(atBottom);
-
-        // Fetch next page when scrolling to bottom (for loading newer messages after jumping to old message)
+        anchorOnAtBottomStateChange(atBottom);
         if (atBottom && init) {
           fetchNextPage();
         }
       },
-      [handleAtBottomStateChange, fetchNextPage, init]
+      [handleAtBottomStateChange, anchorOnAtBottomStateChange, fetchNextPage, init]
     );
 
-    // Jump to present handler
+    // Bypass Virtuoso's scrollToIndex — our snap writes scrollTop directly,
+    // which avoids re-triggering the measurement-callback bug.
     const handleJumpToPresent = useCallback(() => {
-      if (virtuoso.current && messageList.length > 0) {
-        virtuoso.current.scrollToIndex({
-          index: messageList.length - 1,
-          align: 'end',
-          behavior: 'auto',
-        });
-        // Re-enable auto-scroll when user explicitly jumps to present
+      if (messageList.length > 0) {
+        snapToBottom();
         setHasJumpedToOldMessage(false);
       }
-    }, [messageList.length]);
+    }, [messageList.length, snapToBottom]);
 
     useImperativeHandle(ref, () => ({
       scrollToBottom: () => {
-        if (virtuoso.current && messageList.length > 0) {
-          virtuoso.current.scrollToIndex({
-            index: messageList.length - 1,
-            align: 'end',
-            behavior: 'auto',
-          });
-        }
+        if (messageList.length > 0) snapToBottom();
       },
       getVirtuosoRef: () => virtuoso.current,
       setDeletionInProgress: (value: boolean) => {
@@ -295,7 +304,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       [members]
     );
 
-    // Memoize message display info (date separators, new messages separators, compact headers)
+    // Date separators, new-messages separators, and compact-header flags per row.
     const messageDisplayInfo = useMemo(() => {
       return messageList.map((message, index) => {
         const previousMessage = index > 0 ? messageList[index - 1] : null;
@@ -309,12 +318,19 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       });
     }, [messageList, newMessagesSeparator]);
 
+    // Refs let rowRenderer read current data without re-binding its identity on
+    // every cache update — otherwise Virtuoso re-evaluates every row.
+    const messageListRef = useRef(messageList);
+    const messageDisplayInfoRef = useRef(messageDisplayInfo);
+    messageListRef.current = messageList;
+    messageDisplayInfoRef.current = messageDisplayInfo;
+
     const rowRenderer = useCallback(
       (index: number) => {
-        const message = messageList[index];
-        const displayInfo = messageDisplayInfo[index];
+        const message = messageListRef.current[index];
+        const displayInfo = messageDisplayInfoRef.current[index];
+        if (!message || !displayInfo) return null;
 
-        // Gap class: first message or compact messages get no gap
         const gapClass = index === 0 || displayInfo.isCompact
           ? 'message-row message-row-first'
           : 'message-row';
@@ -339,7 +355,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               setEmojiPickerPosition={setEmojiPickerPosition}
               message={message}
               customEmoji={customEmoji}
-              messageList={messageList}
+              messageList={messageListRef.current}
               virtuosoRef={virtuoso.current}
               mapSenderToUser={mapSenderToUser}
               hoverTarget={hoverTarget}
@@ -382,9 +398,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           </div>
         );
       },
+      // Intentionally excludes messageList / messageDisplayInfo — read via refs above.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       [
-        messageList,
-        messageDisplayInfo,
         roles,
         stickers,
         emojiPickerOpen,
@@ -426,6 +442,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+
     // Track if we've already processed a hash navigation to prevent re-navigation on messageList changes
     const [hasProcessedHash, setHasProcessedHash] = useState(false);
     const [hasProcessedScrollTo, setHasProcessedScrollTo] = useState(false);
@@ -439,19 +456,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         const msgId = hash.replace('#msg-', '');
         const index = messageList.findIndex((m) => m.messageId === msgId);
         if (index !== -1) {
-          // Mark that we've processed this hash navigation
           setHasProcessedHash(true);
 
-          // Use the React state-based highlighting system instead of DOM manipulation
           setTimeout(() => {
-            // Scroll using the centralized scroll function
             scrollToMessage(msgId, virtuoso.current, messageList);
-
-            // Highlight using React state (this will trigger re-render with highlight class)
-            highlightMessage(msgId, { duration: 8000 }); // Match CSS animation duration (8s)
+            highlightMessage(msgId, { duration: 8000 });
           }, 200);
 
-          // Remove hash after highlight animation completes (8s matches CSS animation)
+          // 8s matches the CSS highlight animation duration.
           setTimeout(() => {
             history.replaceState(
               null,
@@ -460,16 +472,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             );
           }, 8000);
         } else {
-          // Message not found in current list
+          // Message not in current page — let parent paginate to find it.
           if (onHashMessageNotFound && !hasProcessedHash) {
-            setHasProcessedHash(true); // Prevent multiple calls
-            setHasJumpedToOldMessage(true); // Disable auto-scroll during pagination
+            setHasProcessedHash(true);
+            setHasJumpedToOldMessage(true);
             onHashMessageNotFound(msgId).catch((error) => {
               console.error('Failed to load hash message:', error);
-              // Hash will be removed by parent's error handling
             });
           } else if (!onHashMessageNotFound) {
-            // Fallback: silently mark as processed if no callback provided
             setHasProcessedHash(true);
             setTimeout(() => {
               history.replaceState(
@@ -481,14 +491,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           }
         }
       }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- hasProcessedHash intentionally excluded to prevent infinite loops
+    // hasProcessedHash excluded — including it would loop on each set.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [init, location.hash, scrollToMessage, highlightMessage, messageList, onHashMessageNotFound]);
 
-    // Handle programmatic scrollToMessageId (e.g., auto-jump to first unread)
+    // Programmatic scrollToMessageId (e.g. auto-jump to first unread).
     useEffect(() => {
       if (!init || messageList.length === 0 || !scrollToMessageId) return;
 
-      // Only process once per scrollToMessageId
       if (!hasProcessedScrollTo) {
         const index = messageList.findIndex(
           (m) => m.messageId === scrollToMessageId
@@ -496,13 +506,12 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
         if (index !== -1) {
           setHasProcessedScrollTo(true);
-          setHasJumpedToOldMessage(true); // Disable auto-scroll during pagination
+          setHasJumpedToOldMessage(true);
 
           setTimeout(() => {
             scrollToMessage(scrollToMessageId, virtuoso.current, messageList);
             if (highlightOnScroll) {
-              // Set URL hash to trigger Message component's hash-based highlight mechanism.
-              // Each Message listens to location.hash === `#msg-{id}` and highlights itself.
+              // Each Message listens for #msg-{id} and highlights itself.
               window.location.hash = `#msg-${scrollToMessageId}`;
             }
           }, 200);
@@ -517,39 +526,33 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       scrollToMessage,
     ]);
 
-    // Reset scrollTo processing flag when scrollToMessageId changes
     useEffect(() => {
       setHasProcessedScrollTo(false);
     }, [scrollToMessageId]);
 
-    // Reset hash processing flag when location.hash changes to a new value
     useEffect(() => {
       if (location.hash.startsWith('#msg-')) {
         setHasProcessedHash(false);
       }
     }, [location.hash]);
 
-    // Reset jump flag when navigating to a different channel
     useEffect(() => {
       setHasJumpedToOldMessage(false);
     }, [location.pathname]);
 
-    // Automatically reset jump flag when reaching the present (no more pages to load forward)
+    // Re-enable auto-scroll once we've paged forward to the present.
     useEffect(() => {
       if (hasJumpedToOldMessage && hasNextPage === false) {
         setHasJumpedToOldMessage(false);
       }
     }, [hasJumpedToOldMessage, hasNextPage]);
 
-    // Reset separator visibility tracking when separator changes
     useEffect(() => {
       if (!newMessagesSeparator) {
         setSeparatorWasVisible(false);
       }
     }, [newMessagesSeparator]);
 
-    // Memoize firstUnreadIndex to avoid O(n) search on every scroll event
-    // This moves the expensive findIndex out of the scroll callback
     const firstUnreadIndex = useMemo(() => {
       if (!newMessagesSeparator?.firstUnreadMessageId) return -1;
       return messageList.findIndex(
@@ -557,7 +560,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       );
     }, [messageList, newMessagesSeparator?.firstUnreadMessageId]);
 
-    // Handle separator dismissal via Virtuoso's rangeChanged callback
+    // Dismiss the separator once it has been visible and then scrolls out of view.
     const handleRangeChanged = useCallback(
       (range: { startIndex: number; endIndex: number }) => {
         if (firstUnreadIndex === -1 || !onDismissSeparator) {
@@ -569,17 +572,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           firstUnreadIndex <= range.endIndex;
 
         if (isVisible && !separatorWasVisible) {
-          // First time separator becomes visible
           setSeparatorWasVisible(true);
         } else if (!isVisible && separatorWasVisible) {
-          // Separator scrolled out of view - dismiss it
           onDismissSeparator();
         }
       },
       [firstUnreadIndex, onDismissSeparator, separatorWasVisible]
     );
 
-    // Stable computeItemKey to prevent unnecessary re-mounts
     const computeItemKey = React.useCallback(
       (index: number) => {
         const message = messageList[index];
@@ -592,10 +592,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       <>
         <Virtuoso
           ref={virtuoso}
+          scrollerRef={setAnchorScrollerEl}
           className="scrollbar-message-list"
           style={{ position: 'relative' }}
           overscan={{ main: height, reverse: height }}
-          increaseViewportBy={{ top: height, bottom: height }}
+          // Cap at 300px (~6 rows). Larger values made the rendered range span
+          // the whole list on short messages, causing big backward scroll jumps
+          // on cache updates. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md.
+          increaseViewportBy={{ top: 300, bottom: 300 }}
           atTopThreshold={0}
           atTopStateChange={(atTop) => {
             if (!init) {
@@ -616,34 +620,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 ? 0 // scroll to top initially, will override with scrollToIndex()
                 : messageList.length - 1
           }
-          followOutput={(isAtBottom: boolean) => {
-            if (deletionInProgressRef.current) return false;
-            if (hasJumpedToOldMessage) return false;
-            if (isAtBottom && hasNextPage === false) {
-              // Return 'auto' for Virtuoso's native scroll (works in channels).
-              // Additionally schedule a delayed correction for DMs where Virtuoso's
-              // internal measurement callback incorrectly resets scrollTop.
-              const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-              // Don't let Virtuoso scroll (its measurement callback resets
-              // scrollTop incorrectly in DMs). Snap to bottom every frame.
-              if (scroller) {
-                const s = scroller;
-                const snap = () => {
-                  s.scrollTop = s.scrollHeight - s.clientHeight;
-                };
-                let frameCount = 0;
-                const frameSnap = () => {
-                  snap();
-                  if (++frameCount < 10) requestAnimationFrame(frameSnap);
-                };
-                requestAnimationFrame(frameSnap);
-                setTimeout(snap, 300);
-                setTimeout(snap, 600);
-              }
-              return false;
-            }
-            return false;
-          }}
+          // useScrollAnchor owns auto-scroll on new messages — see scroll-anchoring.md.
+          followOutput={false}
           totalCount={messageList.length}
           computeItemKey={computeItemKey}
           itemContent={rowRenderer}

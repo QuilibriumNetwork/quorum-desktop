@@ -357,18 +357,8 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
-      // Jump to bottom after sending. Virtuoso's followOutput handles this for
-      // channels, but in DMs its internal measurement callback resets scrollTop.
-      // Delayed direct scrollTop correction works around this.
-      const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-      if (scroller) {
-        const snap = () => {
-          scroller.scrollTop = scroller.scrollHeight - scroller.clientHeight;
-        };
-        setTimeout(snap, 100);
-        setTimeout(snap, 300);
-        setTimeout(snap, 600);
-      }
+      // Snap on send so users sending from up in history land on their reply.
+      messageListRef.current?.scrollToBottom();
     },
     [
       address,
@@ -919,6 +909,8 @@ const DirectMessage: React.FC<{}> = () => {
               <MessageList
                 ref={messageListRef}
                 roles={[]}
+                anchorSpaceId={address}
+                anchorChannelId={address}
                 canDeleteMessages={canDeleteMessages}
                 editor={composer.editor}
                 messageList={messageList}

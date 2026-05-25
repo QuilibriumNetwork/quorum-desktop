@@ -347,8 +347,8 @@ const Channel: React.FC<ChannelProps> = ({
         parentMessage
       );
 
-      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
-      // Deletion flag is set via onBeforeDelete callback in MessageList
+      // Snap on send so users sending from up in history land on their reply.
+      messageListRef.current?.scrollToBottom();
     },
     [
       spaceId,
@@ -1582,6 +1582,8 @@ const Channel: React.FC<ChannelProps> = ({
                 canDeleteMessages={canDeleteMessages}
                 canPinMessages={canPinMessages}
                 channel={channel}
+                anchorSpaceId={channel?.spaceId}
+                anchorChannelId={channel?.channelId}
                 isSpaceOwner={isSpaceOwner}
                 editor={textareaRef}
                 messageList={messageList}
