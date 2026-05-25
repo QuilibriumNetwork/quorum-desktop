@@ -247,6 +247,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const { snapToBottom, onAtBottomStateChange: anchorOnAtBottomStateChange } = useScrollAnchor({
       hasJumpedToOldMessageRef,
       deletionInProgressRef,
+      queryClient,
+      spaceId: anchorSpaceId,
+      channelId: anchorChannelId,
     });
 
     // Message highlighting context - replaces direct DOM manipulation

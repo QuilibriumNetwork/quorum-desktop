@@ -347,8 +347,11 @@ const Channel: React.FC<ChannelProps> = ({
         parentMessage
       );
 
-      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
-      // Deletion flag is set via onBeforeDelete callback in MessageList
+      // Explicit snap on send — matches industry convention (Discord/Slack/
+      // Telegram all scroll to bottom on send regardless of current scroll
+      // position). Bypasses useScrollAnchor's anchor-gate which would
+      // otherwise suppress when user is scrolled up in history.
+      messageListRef.current?.scrollToBottom();
     },
     [
       spaceId,

@@ -23,8 +23,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { MessageList, MessageListRef } from '../message/MessageList';
-// TEMPORARY DEBUG — remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
-import { scrollDebug } from '../message/__scrollDebug';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -359,14 +357,11 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
-      // Scroll-to-bottom on send is now handled by useScrollAnchor in
-      // MessageList, which fires on the optimistic addMessage cache write.
-      // See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md.
-      // TEMPORARY DEBUG
-      scrollDebug.log({
-        kind: 'note',
-        note: 'DM handleSubmitMessage finished — anchoring handled by useScrollAnchor',
-      });
+      // Explicit snap on send — matches industry convention (Discord/Slack/
+      // Telegram all scroll to bottom on send regardless of current scroll
+      // position). Bypasses useScrollAnchor's anchor-gate which would
+      // otherwise suppress when user is scrolled up in history.
+      messageListRef.current?.scrollToBottom();
     },
     [
       address,
