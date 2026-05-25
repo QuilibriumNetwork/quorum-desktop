@@ -6,6 +6,7 @@ import { useMessageFormatting } from '../../hooks/business/messages/useMessageFo
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
 import { processMarkdownText } from '@quilibrium/quorum-shared';
+import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (
@@ -259,6 +260,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     if (contentData.type === 'post') {
       // Get full text content and apply smart markdown stripping
       const fullText = contentData.content.join('\n');
+      const hasText = fullText.trim().length > 0;
       const smartProcessedText = processMarkdownText(fullText, {
         preserveLineBreaks: true,     // Keep paragraph structure in previews
         preserveEmphasis: true,       // Keep bold/italic intent without syntax
@@ -268,18 +270,49 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       });
 
       // Process the text for mentions and links
-      const processedContent = renderPreviewTextWithSpecialTokens(
-        smartProcessedText,
-        formatting,
-        contentData.messageId,
-        disableMentionInteractivity,
-        onChannelClick,
-        onMessageLinkClick
-      );
+      const processedContent = hasText
+        ? renderPreviewTextWithSpecialTokens(
+            smartProcessedText,
+            formatting,
+            contentData.messageId,
+            disableMentionInteractivity,
+            onChannelClick,
+            onMessageLinkClick
+          )
+        : null;
+
+      // Collect embedded image keys (combined text+image messages)
+      const postContent = message.content.type === 'post' ? message.content : null;
+      const imageKeys: string[] = [];
+      if (postContent?.embeddedMedia) {
+        for (const entry of postContent.embeddedMedia) {
+          if (
+            (entry.type === 'image' || entry.type === 'image-thumbnail') &&
+            !imageKeys.includes(entry.key)
+          ) {
+            imageKeys.push(entry.key);
+          }
+        }
+      }
 
       return (
         <div className="message-preview-post text-sm font-normal">
           {processedContent}
+          {imageKeys.map((key) => {
+            const src =
+              getEmbeddedMediaSrc(postContent, 'image-thumbnail', key) ??
+              getEmbeddedMediaSrc(postContent, 'image', key);
+            if (!src) return null;
+            return (
+              <div key={key} className={hasText ? 'mt-2' : undefined}>
+                <img
+                  src={src}
+                  style={{ maxWidth: 200, maxHeight: 150, width: 'auto' }}
+                  className="rounded-lg"
+                />
+              </div>
+            );
+          })}
         </div>
       );
     }
