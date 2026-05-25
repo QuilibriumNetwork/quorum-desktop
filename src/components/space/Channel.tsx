@@ -347,10 +347,7 @@ const Channel: React.FC<ChannelProps> = ({
         parentMessage
       );
 
-      // Explicit snap on send — matches industry convention (Discord/Slack/
-      // Telegram all scroll to bottom on send regardless of current scroll
-      // position). Bypasses useScrollAnchor's anchor-gate which would
-      // otherwise suppress when user is scrolled up in history.
+      // Snap on send so users sending from up in history land on their reply.
       messageListRef.current?.scrollToBottom();
     },
     [

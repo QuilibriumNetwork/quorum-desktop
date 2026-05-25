@@ -60,9 +60,19 @@ export const ThreadPanel: React.FC = () => {
   const composerRef = useRef<MessageComposerRef>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Explicit snap on send — mirrors Channel/DirectMessage so users sending from
+  // up in thread history snap back to their reply (industry convention).
+  const handleSubmitMessage = useCallback(
+    async (message: string | object, inReplyTo?: string) => {
+      await submitMessage(message, inReplyTo);
+      messageListRef.current?.scrollToBottom();
+    },
+    [submitMessage]
+  );
+
   const composer = useMessageComposer({
     type: 'channel',
-    onSubmitMessage: submitMessage,
+    onSubmitMessage: handleSubmitMessage,
     onSubmitSticker: submitSticker,
     hasStickers: !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0,
   });
@@ -165,6 +175,13 @@ export const ThreadPanel: React.FC = () => {
     if (!rootMessage) return threadMessages;
     return [rootMessage, ...threadMessages];
   }, [rootMessage, threadMessages]);
+
+  // Thread messages use a different React Query key than channels/DMs, so
+  // we pass the prefix explicitly. See useThreadMessages.
+  const anchorQueryKeyPrefix = useMemo<readonly unknown[] | undefined>(() => {
+    if (!channelProps?.spaceId || !channelProps?.channelId || !threadId) return undefined;
+    return ['thread-messages', channelProps.spaceId, channelProps.channelId, threadId];
+  }, [channelProps?.spaceId, channelProps?.channelId, threadId]);
 
   const threadTitle = useMemo(() => getThreadTitle(rootMessage), [rootMessage]);
 
@@ -389,7 +406,7 @@ export const ThreadPanel: React.FC = () => {
             setInReplyTo={composer.setInReplyTo}
             customEmoji={channelProps.customEmoji}
             members={channelProps.members}
-            submitMessage={submitMessage}
+            submitMessage={handleSubmitMessage}
             onUserClick={channelProps.onUserClick}
             lastReadTimestamp={undefined}
             onChannelClick={channelProps.onChannelClick}
@@ -406,6 +423,7 @@ export const ThreadPanel: React.FC = () => {
             headerContent={listHeaderContent}
             scrollToMessageId={targetMessageId ?? undefined}
             highlightOnScroll={true}
+            anchorQueryKeyPrefix={anchorQueryKeyPrefix}
           />
         )}
       </div>
