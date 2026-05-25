@@ -1725,6 +1725,10 @@ export class MessageDB {
     this.dirtyIndices.add(indexKey);
     if (this.flushTimer) return;
     this.flushTimer = setTimeout(() => {
+      // Clear BEFORE flushing so a dirty mark during the async flush
+      // schedules a fresh window. Otherwise the stale (already-fired) timer
+      // ID would block every subsequent markIndexDirty from rescheduling.
+      this.flushTimer = null;
       this.flushDirtyIndices().catch((error) => {
         logger.warn('Failed to flush dirty search indices:', error);
       });
@@ -1746,9 +1750,14 @@ export class MessageDB {
   private async evictLeastRecentlyUsed(): Promise<void> {
     if (this.searchIndices.size <= MessageDB.MAX_IN_MEMORY_INDICES) return;
 
-    const entries = Array.from(this.indexAccessTimes.entries()).sort(
-      (a, b) => a[1] - b[1]
-    );
+    // Only consider keys actually loaded in memory. Without this filter,
+    // ghost entries in indexAccessTimes (e.g. from a future code path that
+    // drops a key from searchIndices without cleaning up accessTimes) would
+    // consume eviction slots without freeing any memory, leaving the cap
+    // unenforced.
+    const entries = Array.from(this.indexAccessTimes.entries())
+      .filter(([key]) => this.searchIndices.has(key))
+      .sort((a, b) => a[1] - b[1]);
     const evictCount = this.searchIndices.size - MessageDB.MAX_IN_MEMORY_INDICES;
     const toEvict = entries.slice(0, evictCount);
 
