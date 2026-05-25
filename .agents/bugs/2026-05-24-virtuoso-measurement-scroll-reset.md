@@ -748,3 +748,54 @@ The existing fix for this is the Virtuoso footer spacer (`<div className="messag
 ---
 
 *Last updated: 2026-05-25*
+
+---
+
+### Session 18 (2026-05-25): Hybrid implementation + iteration findings
+
+**Hybrid implemented.** Cache subscription path re-added to `useScrollAnchor.ts` alongside the scroll listener:
+- Scroll listener (reactive): absorbs Virtuoso's backward writes when user was anchored.
+- Cache subscription (proactive): on `updated` events with appended OR replaced last message in the messages query prefix, snaps to bottom if `wasAnchoredRef` true.
+
+Promoted `wasAnchored` from local closure variable to `wasAnchoredRef` so both effects share it.
+
+**Wiring:** `MessageList.tsx` now passes `queryClient` + `anchorSpaceId` + `anchorChannelId` into the hook. Channel.tsx and DirectMessage.tsx already supplied those props from prior commits.
+
+**Behavior after hybrid (user visual testing):**
+
+| Case | Sender | Receiver |
+|---|---|---|
+| Short channel | Mostly OK | Mostly OK |
+| Multi-line channel | Mostly OK | Mostly OK |
+| Multi-line + image channel | First send OK, second broken, third OK, fourth half-broken (sender OK, receiver broken) | Non-deterministic |
+| Short DM | Mostly OK (short messages fit anyway) | (sync issue prevented testing) |
+| Multi-line DM | Non-deterministic; sometimes works, sometimes message hidden | (sync issue) |
+
+The hybrid kills the "always broken" cases (DMs that previously never scrolled now do scroll). But a non-deterministic class remains: sometimes the snap lands correctly, sometimes the message is partially hidden.
+
+**Diagnostic capture (`dm-diagnostic`, multi-line DM, this run worked visually) revealed the remaining mechanism:**
+
+```
+t=9044  ABSORB → scrollTop=4010, gap=0   ← perfect anchored state
+t=9045  item-resize index=12 -86 (item disappeared above viewport)
+t=9063  item-added index=12, height=86 (item re-mounted, scrollHeight grew)
+t=9065  scroll cur=4010 prev=4010 delta=0 gap=24   ← GAP RE-OPENED, no scroll event fired
+        ← hook silent (no scroll event to absorb, no cache event to snap on)
+```
+
+**Mechanism:** After the hook's snap lands and the user is at `gap=0`, Virtuoso may perform a LATE `item-removed`+`item-added` cycle (caused by member-data resolving, image loading, or other measurement-callback re-runs). The re-mount grows `scrollHeight` without touching `scrollTop` — so the gap re-opens to ~24-50px, but no scroll event fires (because scrollTop didn't change) and no cache event fires (because the data didn't change). The hook has no trigger.
+
+Non-determinism = whether this late item-remount cycle happens or not on a given send. Race with member data / image load timing.
+
+**Next attempted fix (Session 19): ResizeObserver on the scroller content.** A third path:
+- Reactive scroll listener (existing): catches Virtuoso's scrollTop writes.
+- Proactive cache subscription (existing): catches data appends.
+- **NEW — ResizeObserver on scroller**: catches scrollHeight changes (item mount/unmount cycles), snaps if `wasAnchoredRef` true.
+
+Together these cover the three signals available: scrollTop change, data change, content-size change. Estimated ~20 lines added to the hook.
+
+If after Session 19 non-determinism remains, that's the signal we've hit Virtuoso's true limit and need to consider deeper structural work (different windowing approach, commercial @virtuoso.dev/message-list, custom virtualizer).
+
+---
+
+*Last updated: 2026-05-25*
