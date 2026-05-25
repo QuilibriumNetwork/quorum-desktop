@@ -62,8 +62,6 @@ import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
-// TEMPORARY DEBUG — remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
-import { scrollDebug } from '../components/message/__scrollDebug';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -1269,12 +1267,6 @@ export class MessageService {
     decryptedContent: Message,
     skipRateLimit = false
   ) {
-    // TEMPORARY DEBUG
-    scrollDebug.log({
-      kind: 'addMessage',
-      itemId: decryptedContent.messageId?.slice(0, 8),
-      note: `type=${decryptedContent.content?.type} sendStatus=${(decryptedContent as any).sendStatus ?? 'none'} channel=${channelId.slice(0, 8)}`,
-    });
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
       queryClient.setQueriesData(

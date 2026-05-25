@@ -1,42 +1,41 @@
 /**
- * TEMPORARY DEBUG INSTRUMENTATION — DO NOT SHIP
+ * scrollDebug — dev-only message-list scroll recorder.
  *
- * Comprehensive recorder for the Virtuoso scroll-jank bug.
- * See: .agents/bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
+ * NOT WIRED INTO PRODUCTION CODE. This file exists for ad-hoc debugging of
+ * the message-list scroll behavior. To use, temporarily import + call from
+ * MessageList, DirectMessage, MessageService, or wherever you need the
+ * signal during a debugging session:
  *
- * Self-contained. To remove, delete this file and revert the imports in:
- *   - src/components/message/MessageList.tsx
- *   - src/components/direct/DirectMessage.tsx
- *   - src/services/MessageService.ts
+ *   import { scrollDebug } from '../../dev/scrollDebug';
+ *   useEffect(() => {
+ *     const el = document.querySelector('[data-virtuoso-scroller]');
+ *     if (el) scrollDebug.attach(el as HTMLElement);
+ *   }, []);
+ *   // and/or sprinkle: scrollDebug.log({ kind: 'note', note: '...' });
  *
- * --- USAGE (recommended session) ---
+ * Then from DevTools console:
  *
- *   1. Open DevTools console. Filter the console with: SCROLL-DEBUG
- *   2. __scrollDebug.startSession('description here')
- *   3. Send 1 or 2 messages and let the jank happen
+ *   1. Filter the console for: SCROLL-DEBUG
+ *   2. __scrollDebug.startSession('what-you-are-testing')
+ *   3. Reproduce the behavior
  *   4. __scrollDebug.endSession()
- *      → automatically copies a Markdown report to your clipboard
- *      → also triggers a download of the same report as a .md file (backup)
- *      → prints a one-line summary
- *   5. Paste the Markdown into chat. Done.
+ *      → copies a Markdown report to clipboard + downloads as .md backup
  *
- * --- ADVANCED ---
+ * Captures: every scrollTop write (with stack trace), every item resize
+ * (with snapshot of which children were mounted at resize time), item
+ * add/remove, plus whatever .log() calls you sprinkle in. Auto-flags
+ * scrollTop drops larger than 30px from non-application code as suspect.
+ * SessionStorage persistence across page reloads.
  *
- *   __scrollDebug.snapEnabled = false   // disable rAF/setTimeout snap-back loops
- *                                       // (test raw Virtuoso behavior without our workarounds)
- *   __scrollDebug.snapEnabled = true    // re-enable (default)
+ * Built during the investigation documented in
+ * .agents/bugs/2026-05-24-virtuoso-measurement-scroll-reset.md. Architecture
+ * reference: .agents/docs/features/messages/scroll-anchoring.md.
  *
- *   __scrollDebug.verbose = true        // also print every event live to console
- *                                       // (default false; events always buffered)
- *
- *   __scrollDebug.dump()                // print buffer as console.table + detail log
- *   __scrollDebug.clear()               // clear buffer manually
- *
- * --- PERSISTENCE ---
- *
- * The buffer survives page reloads via sessionStorage. After a refresh,
- * __scrollDebug.endSession() will include events from before the refresh too.
- * Use __scrollDebug.clear() to wipe.
+ * API surface (via window.__scrollDebug):
+ *   startSession(label) / endSession() / clear() / dump()
+ *   attach(scrollerEl)
+ *   snapEnabled  — flag, gates legacy snap-loop call sites (kept for back-compat)
+ *   verbose      — also stream events to console live
  */
 
 type ScrollEventKind =

@@ -32,9 +32,7 @@ const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
 import { useQueryClient } from '@tanstack/react-query';
-import { useScrollAnchor } from './useScrollAnchor';
-// TEMPORARY DEBUG — remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
-import { scrollDebug } from './__scrollDebug';
+import { useScrollAnchor } from '../../hooks/ui/useScrollAnchor';
 
 export interface MessageListRef {
   scrollToBottom: () => void;
@@ -265,18 +263,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Track if separator has been visible (for dismissal logic via Virtuoso rangeChanged)
     const [separatorWasVisible, setSeparatorWasVisible] = useState(false);
 
-    // Combined bottom state handler: manages "Jump to Present" button,
-    // forward pagination, AND the useScrollAnchor readiness signal.
+    // Combined bottom state handler: manages "Jump to Present" button +
+    // forward pagination + forwards to useScrollAnchor.
     const handleBottomStateChange = useCallback(
       (atBottom: boolean) => {
-        // TEMPORARY DEBUG
-        scrollDebug.log({ kind: 'atBottomStateChange', note: `atBottom=${atBottom}` });
-
-        // Update jump button visibility
         handleAtBottomStateChange(atBottom);
-
-        // Signal scroll-anchor readiness on first atBottom=true after mount.
-        // (Virtuoso's initial scroll is imperative; no DOM scroll event fires.)
         anchorOnAtBottomStateChange(atBottom);
 
         // Fetch next page when scrolling to bottom (for loading newer messages after jumping to old message)
@@ -473,20 +464,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    // TEMPORARY DEBUG — attach scroll recorder once the Virtuoso scroller mounts.
-    // Remove with __scrollDebug.ts. See bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
-    useEffect(() => {
-      let attempts = 0;
-      const tryAttach = () => {
-        const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
-        if (scroller) {
-          scrollDebug.attach(scroller);
-          return;
-        }
-        if (++attempts < 20) setTimeout(tryAttach, 100);
-      };
-      tryAttach();
-    }, []);
 
     // Track if we've already processed a hash navigation to prevent re-navigation on messageList changes
     const [hasProcessedHash, setHasProcessedHash] = useState(false);
@@ -622,11 +599,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Handle separator dismissal via Virtuoso's rangeChanged callback
     const handleRangeChanged = useCallback(
       (range: { startIndex: number; endIndex: number }) => {
-        // TEMPORARY DEBUG
-        scrollDebug.log({
-          kind: 'rangeChanged',
-          note: `start=${range.startIndex} end=${range.endIndex}`,
-        });
         if (firstUnreadIndex === -1 || !onDismissSeparator) {
           return;
         }

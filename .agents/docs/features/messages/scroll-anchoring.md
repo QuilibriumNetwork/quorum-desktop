@@ -60,11 +60,11 @@ Imperative snap **also force-sets** `wasAnchoredRef.current = true` so any cache
 
 | File | Role |
 |---|---|
-| `src/components/message/useScrollAnchor.ts` | The hook. Owns scroll listener, cache subscription, snap function. |
+| `src/hooks/ui/useScrollAnchor.ts` | The hook. Owns scroll listener, cache subscription, snap function. |
 | `src/components/message/MessageList.tsx` | Mounts the hook. Passes `anchorSpaceId`/`anchorChannelId` from the consuming component (Channel/DirectMessage). Exposes `snapToBottom` on `MessageListRef`. `followOutput={false}` permanently. |
 | `src/components/space/Channel.tsx` | Calls `messageListRef.current?.scrollToBottom()` after submit. |
 | `src/components/direct/DirectMessage.tsx` | Same explicit snap call after submit. |
-| `src/components/message/MessageList.tsx:619` | `followOutput={false}` (the Virtuoso prop we deliberately disable). |
+| `src/dev/scrollDebug.ts` | Dev-only recorder for debugging this code path. Not wired into production. See file header for usage. |
 
 ## Suppression flags
 
@@ -129,7 +129,7 @@ In order of likelihood:
 4. **Did a new code path start writing the messages cache without going through `setQueriesData` with the messages key prefix?** The cache subscription filter wouldn't catch it.
 5. **Did `MessageList.tsx` start passing a different `MessageListRef` shape that lacks `scrollToBottom`?** TypeScript should catch this but worth verifying.
 
-Use the existing `__scrollDebug.ts` instrumentation (still in the codebase at the time of writing, will be removed before final PR — check git history if it's been removed) to capture telemetry of a failing scenario. Reports show every scroll event, every cache event the hook saw, and every snap fired.
+Use `src/dev/scrollDebug.ts` to capture telemetry of a failing scenario — temporarily import it from MessageList or wherever you need a signal, call `scrollDebug.attach()` on the Virtuoso scroller, then run a session from DevTools console (see file header for the exact procedure). Reports show every scroll event, every cache event, and every snap fired.
 
 ## Related
 

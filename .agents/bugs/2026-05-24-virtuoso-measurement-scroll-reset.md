@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Virtuoso measurement callback resets scrollTop on new messages — scroll jank in channels and DMs"
-status: fixed-pending-cleanup
+status: in-progress
 priority: high
 ai_generated: true
 created: 2026-05-24
@@ -17,7 +17,7 @@ branch: fix/virtuoso-scroll-jank
 
 When a message is sent or received in a channel or DM, the message list jumps the scroll position incorrectly: small jumps that snap back, or larger jumps that leave the new message off-screen. Root cause is in `react-virtuoso`'s internal measurement callback (multiple GitHub issues open since 2021, unfixed). Fix is at the application layer: our own scroll-anchoring hook (`useScrollAnchor`) replaces Virtuoso's `followOutput` and handles snap-to-bottom logic ourselves on three signals (scroll position, cache updates, imperative calls from send handlers).
 
-**Status as of 2026-05-25:** functional fix in place on branch `fix/virtuoso-scroll-jank`. Behavior is good across all tested scenarios (channels, DMs, single-line, multi-line, image, sender, receiver, scroll-up, send-from-up). Remaining residual: an occasional single-frame visual flash on some sends — telemetry-clean, settles within one frame. Cleanup + PR pending.
+**Status as of 2026-05-25:** functional fix in place on branch `fix/virtuoso-scroll-jank` for channels and DMs. Threads regressed and need a follow-up fix in a fresh session (see Session 22 below). Cleanup of instrumentation done. PR pending the threads fix.
 
 **For ongoing reference:** see [`docs/features/messages/scroll-anchoring.md`](../docs/features/messages/scroll-anchoring.md) — the canonical "how it works" doc for the scroll-anchoring system. That doc evolves with the code; this bug doc is the historical artifact.
 
@@ -38,6 +38,9 @@ When a message is sent or received in a channel or DM, the message list jumps th
 | Hash navigation `#msg-{id}` | Preserved — unaffected by the new anchoring |
 | Auto-jump to first unread | Preserved |
 | Jump-to-present button | Works via the hook's imperative `snapToBottom` |
+| **Thread panel: send reply** | **REGRESSED** — page does not scroll to show the reply (fix planned, see Session 22) |
+| **Thread panel: receive a reply while at bottom** | **REGRESSED** — page does not auto-scroll to the new reply |
+| Thread panel: scroll-up | Works |
 
 ## Two root causes diagnosed
 
@@ -188,7 +191,38 @@ User reported regression: hook fights user scroll-up (snap-back). Disabled the a
 Bug doc had grown to 800+ lines. Extracted the canonical "how it works" content to a new architecture doc at `.agents/docs/features/messages/scroll-anchoring.md`. Restructured this bug doc with TL;DR + current behavior + decisions + receipts at the top, collapsed session log at the bottom. Next: apply PR #153's composer-overlay treatment to DM, address the tight-spacing layout issue identified in Session 17 (Bug A).
 
 ### Session 21 (2026-05-25) — DM composer-overlay attempted + REVERTED (caused regression in BOTH layouts)
-Applied PR #153's composer-overlay pattern to DM: added `chat-area` class + `composerContainerRef` + ResizeObserver mirroring Channel.tsx; moved accept-chat warning inside `.message-editor-container` per Treatment A; changed DM's `.message-editor-container` SCSS from `position: sticky` to `position: absolute`. User immediately reported a regression: page content scrolls INTO the area below the composer in BOTH DMs and Channels (text peeks out below the composer pill). Bisect by `git stash` to commit `a01ad63e` confirmed: regression was introduced today. Found root cause: **the global `.message-editor-container { position: sticky }` rule in DirectMessage.scss was overriding Channel.scss's `position: absolute` rule due to CSS import order, meaning Channel had been silently using sticky positioning all along despite Channel.scss declaring absolute.** Channel's actual mechanism was sticky-in-flow + the bottom-spacer's `var(--composer-height, $s-16)` fallback to 64px providing comfortable bottom space. When my change made DM's rule identical to Channel's (both `absolute`), Channel switched to its actual SCSS-declared `absolute` behavior, exposing a layout that had never been tested. Reverted all DM JSX + SCSS overlay changes. Kept: explicit `messageListRef.current?.scrollToBottom()` on send in both Channel and DM submit handlers (industry-standard behavior). Final net change today: hybrid hook (cache subscription) + send-snap explicit call. **DM's tight bottom-spacing remains a separate issue** for a future session — applying the overlay treatment correctly requires also scoping Channel.scss's rule to avoid the global-cascade conflict, which is out of scope for this fix.
+Applied PR #153's composer-overlay pattern to DM: added `chat-area` class + `composerContainerRef` + ResizeObserver mirroring Channel.tsx; moved accept-chat warning inside `.message-editor-container` per Treatment A; changed DM's `.message-editor-container` SCSS from `position: sticky` to `position: absolute`. User immediately reported a regression: page content scrolls INTO the area below the composer in BOTH DMs and Channels (text peeks out below the composer pill). Bisect by `git stash` to commit `a01ad63e` confirmed: regression was introduced today. Found root cause: **the global `.message-editor-container { position: sticky }` rule in DirectMessage.scss was overriding Channel.scss's `position: absolute` rule due to CSS import order, meaning Channel had been silently using sticky positioning all along despite Channel.scss declaring absolute.** Channel's actual mechanism was sticky-in-flow + the bottom-spacer's `var(--composer-height, $s-16)` fallback to 64px providing comfortable bottom space. When my change made DM's rule identical to Channel's (both `absolute`), Channel switched to its actual SCSS-declared `absolute` behavior, exposing a layout that had never been tested. Reverted all DM JSX + SCSS overlay changes. Kept: explicit `messageListRef.current?.scrollToBottom()` on send in both Channel and DM submit handlers (industry-standard behavior). User then confirmed the "DM tight spacing" was actually the regression I'd caused, not a pre-existing condition. Once reverted, both layouts behave identically. No remaining DM spacing issue.
+
+### Session 22 (2026-05-25) — Cleanup + thread regression identified, fix deferred to next session
+
+**Cleanup done:**
+- Hook moved from `src/components/message/useScrollAnchor.ts` → `src/hooks/ui/useScrollAnchor.ts` (per project convention; siblings `useScrollTracking.ts`).
+- `__scrollDebug.ts` renamed and moved to `src/dev/scrollDebug.ts`. Header rewritten as a permanent dev tool (no longer "TEMPORARY DEBUG"). Documents how to wire it in temporarily for future debugging.
+- All production `TEMPORARY DEBUG` blocks removed: `MessageList.tsx` (3 blocks), `DirectMessage.tsx`, `MessageService.ts`.
+- All diagnostic `scrollDebug.log` calls inside the hook removed; dead code (commented-out absorb branch + unused `BACKWARD_JUMP_THRESHOLD_PX` constant) removed.
+- Architecture doc updated with new file paths + dev-tool location.
+
+**Thread regression found during pre-PR sanity check.** Visual test in threads:
+- Sending a reply in a thread does NOT scroll to show the reply.
+- Receiving a reply while at the bottom does NOT auto-scroll to it.
+- Scroll-up in threads still works (no snap-back).
+
+**Why it regressed:** ThreadPanel passes `alignToTop={false}` so it IS bottom-anchored (like Channel/DM). Previously, Virtuoso's `followOutput` handled the auto-scroll. We set `followOutput={false}` globally on MessageList. ThreadPanel does NOT pass `anchorSpaceId`/`anchorChannelId` props (thread messages live under a different query-key shape: `{ kind: 'thread', spaceId, channelId, threadId }` rather than `['Messages', spaceId, channelId]`), so the hook's cache subscription is inert in threads. ThreadPanel's submit handler does not call `messageListRef.current?.scrollToBottom()`. End result: no auto-snap path is active for threads.
+
+User explicitly chose to defer to a fresh session — current session is approaching compaction, threads fix deserves clean context.
+
+**Pickup plan for fresh session:**
+1. Read the bug doc TL;DR + this Session 22.
+2. Read [`docs/features/messages/scroll-anchoring.md`](../docs/features/messages/scroll-anchoring.md) for the architecture.
+3. Look at `src/hooks/queries/threads/` (and grep for how thread messages are queried) to find the thread-messages query-key shape.
+4. Two-part fix:
+   - **Extend `useScrollAnchor` options** to accept an optional `queryKeyPrefix?: readonly unknown[]`. If provided, use it directly. Otherwise derive from `spaceId`/`channelId` as today. Back-compat preserved for Channel/DirectMessage callers.
+   - **ThreadPanel** passes its `queryKeyPrefix` and adds `messageListRef.current?.scrollToBottom()` to its submit handler (mirror of what Channel.tsx and DirectMessage.tsx already do — see Session 19).
+5. Test: send-in-thread, receive-in-thread (if a second account is available), scroll-up-in-thread.
+6. If clean: open PR.
+7. If not clean: same diagnostic loop — `scrollDebug` is in `src/dev/` waiting; temporarily import + wire from ThreadPanel.
+
+**Note for whoever picks this up:** the prefix-passing approach was chosen over a higher-level callback because it keeps the hook's filter logic centralized. If you find that thread message updates have semantics meaningfully different from channel/DM updates (e.g. APPEND vs REPLACE definitions don't carry over), reconsider.
 
 ---
 
