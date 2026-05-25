@@ -713,3 +713,38 @@ db456a68 Revert "fix(message-service): stabilize InfiniteData ref on no-op write
 ---
 
 *Last updated: 2026-05-24 end-of-day*
+
+---
+
+### Session 17 (2026-05-25): Visual test matrix — TWO distinct remaining bugs identified
+
+User performed a visual-only matrix (no script) with the β checkpoint state (commit `64663d6d`). Findings:
+
+| Case | Sender symptom | Receiver symptom |
+|---|---|---|
+| Short channel | Message visible but slightly cut by composer at bottom | Fully visible |
+| Multi-line channel | Mostly visible; non-deterministic | Mostly visible; non-deterministic |
+| Image channel | Only first line of message visible | Image cut at bottom by composer |
+| Short DM | Page does not scroll at all → message may or may not be visible | n/a |
+| Multi-line DM | Page does not scroll at all → message never visible | n/a |
+
+**Two distinct bugs isolated:**
+
+**Bug A: Snap not snapping FAR ENOUGH (composer overlap).** When the hook computes `scrollTop = scrollHeight - clientHeight`, content bottom is flush with scroller bottom — but the composer is an absolute-positioned overlay at the bottom of the page (per PR #153, "feat(Channel): float composer as overlay so messages end flush above pill"). The composer occludes the last ~60-80px of the scroller. So our "perfect" snap to `scrollHeight - clientHeight` still leaves the message hidden behind the composer.
+
+The existing fix for this is the Virtuoso footer spacer (`<div className="message-list-bottom-spacer" />` in MessageList.tsx) which consumes the `--composer-height` CSS variable to pad the bottom of the list. Need to verify:
+- Does DirectMessage / ThreadPanel get the same spacer?
+- Is `--composer-height` set in all three contexts (channel, DM, thread)?
+- Or is this a `scrollHeight` calculation issue independent of the spacer?
+
+**Bug B: DMs never scroll at all.** Both DM tests (#5 short, #6 multi) showed ZERO scroll events from Virtuoso. The pure-reactive scroll listener has nothing to absorb because Virtuoso doesn't write scrollTop at all in DMs after a cache append. The hybrid architecture (cache subscription) is the direct fix — it proactively snaps regardless of whether Virtuoso scrolls.
+
+**Implementation order for Session 18:**
+
+1. Implement the hybrid (cache subscription). Fixes Bug B entirely + most edge cases of Bug A.
+2. Re-test. If Bug A residual remains, address composer offset / spacer in DM and thread contexts.
+3. Then cleanup → PR.
+
+---
+
+*Last updated: 2026-05-25*
