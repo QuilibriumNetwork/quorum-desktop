@@ -3,6 +3,7 @@ import { parse as parseEmoji } from '@twemoji/parser';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { Tooltip, Icon } from '../primitives';
 import { useQuickReactions, useFrequentEmojis } from '../../hooks/business/messages';
+import { useShiftKey } from '../../hooks/ui/useShiftKey';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import { t } from '@lingui/core/macro';
 
@@ -14,7 +15,33 @@ interface MessageActionsProps {
   onReply: () => void;
   onMoreReactions: (rect: DOMRect) => void;
   onDotsClick: (position: { x: number; y: number }) => void;
+
+  // Shift-mode quick actions. When Shift is held the toolbar swaps to a
+  // power-user variant that exposes the most common destructive/management
+  // actions directly, mirroring how Shift already bypasses confirmation
+  // modals for delete and pin elsewhere in the app.
+  onCopyLink?: () => void;
+  onCopyMessageText?: () => void;
+  onEdit?: () => void;
+  onPin?: (e: React.MouseEvent) => void;
+  onBookmarkToggle?: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
+  canEdit?: boolean;
+  canPinMessages?: boolean;
+  canDelete?: boolean;
+  isBookmarked?: boolean;
 }
+
+type ActionId =
+  | 'emoji'
+  | 'reply'
+  | 'dots'
+  | 'copy-link'
+  | 'copy-text'
+  | 'edit'
+  | 'pin'
+  | 'bookmark'
+  | 'delete';
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
   message,
@@ -23,9 +50,19 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   onReply,
   onMoreReactions,
   onDotsClick,
+  onCopyLink,
+  onCopyMessageText,
+  onEdit,
+  onPin,
+  onBookmarkToggle,
+  onDelete,
+  canEdit = false,
+  canPinMessages = false,
+  canDelete = false,
+  isBookmarked = false,
 }) => {
   // State for tracking which action is currently hovered
-  const [hoveredAction, setHoveredAction] = useState<string | null>(null);
+  const [hoveredAction, setHoveredAction] = useState<ActionId | null>(null);
 
   // Quick reactions hook
   const { handleQuickReaction } = useQuickReactions({
@@ -36,6 +73,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   // Dynamic frequent emojis from emoji picker usage history
   const frequentEmojis = useFrequentEmojis(3);
 
+  // Track Shift to swap toolbar to a quick-actions variant
+  const isShiftPressed = useShiftKey();
+
   // Get tooltip content based on current hovered action
   const getTooltipContent = () => {
     switch (hoveredAction) {
@@ -45,6 +85,18 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         return t`Reply`;
       case 'dots':
         return t`More actions`;
+      case 'copy-link':
+        return t`Copy link`;
+      case 'copy-text':
+        return t`Copy message`;
+      case 'edit':
+        return t`Edit`;
+      case 'pin':
+        return message.isPinned ? t`Unpin` : t`Pin`;
+      case 'bookmark':
+        return isBookmarked ? t`Remove bookmark` : t`Bookmark`;
+      case 'delete':
+        return t`Delete`;
       default:
         return '';
     }
@@ -56,8 +108,69 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   const iconButtonClass =
     'text-center text-surface-9 hover:text-surface-10 hover:scale-125 xl:hover:scale-150 transition duration-200 rounded-md flex items-center justify-center cursor-pointer';
   const iconButtonClassMr = `${iconButtonClass} mr-2`;
+  const dangerIconButtonClassMr =
+    'text-center text-surface-9 hover:text-danger hover:scale-125 xl:hover:scale-150 transition duration-200 rounded-md flex items-center justify-center cursor-pointer mr-2';
+  const dangerIconButtonClass =
+    'text-center text-surface-9 hover:text-danger hover:scale-125 xl:hover:scale-150 transition duration-200 rounded-md flex items-center justify-center cursor-pointer';
   const separatorClass =
     'w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5';
+
+  // Build the Shift-mode quick-action list. Each entry is rendered only if a
+  // handler is provided and the corresponding capability is granted.
+  const shiftActions: Array<{
+    id: ActionId;
+    icon: string;
+    onClick: (e: React.MouseEvent) => void;
+    danger?: boolean;
+  }> = [];
+
+  if (onCopyLink) {
+    shiftActions.push({
+      id: 'copy-link',
+      icon: 'link',
+      onClick: () => onCopyLink(),
+    });
+  }
+  if (onCopyMessageText) {
+    shiftActions.push({
+      id: 'copy-text',
+      icon: 'clipboard',
+      onClick: () => onCopyMessageText(),
+    });
+  }
+  if (canEdit && onEdit) {
+    shiftActions.push({
+      id: 'edit',
+      icon: 'edit',
+      onClick: () => onEdit(),
+    });
+  }
+  if (canPinMessages && onPin) {
+    shiftActions.push({
+      id: 'pin',
+      icon: message.isPinned ? 'pin-off' : 'pin',
+      onClick: (e) => onPin(e),
+    });
+  }
+  if (onBookmarkToggle) {
+    shiftActions.push({
+      id: 'bookmark',
+      icon: isBookmarked ? 'bookmark-off' : 'bookmark',
+      onClick: () => onBookmarkToggle(),
+    });
+  }
+  if (canDelete && onDelete) {
+    shiftActions.push({
+      id: 'delete',
+      icon: 'trash',
+      onClick: (e) => onDelete(e),
+      danger: true,
+    });
+  }
+
+  // Fall back to the standard toolbar if Shift is held but no shift-actions
+  // are available (e.g. a system message with no permitted actions).
+  const showShiftToolbar = isShiftPressed && shiftActions.length > 0;
 
   return (
     <>
@@ -75,80 +188,107 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           onMouseLeave={() => setHoveredAction(null)}
           className="absolute flex flex-row right-4 top-[-10px] px-2 py-1 xl:px-3 xl:py-1.5 bg-tooltip select-none rounded-lg -m-1 border dark:border-0"
         >
-          {/* Quick reactions - top 3 most frequently used emojis */}
-          {frequentEmojis.map(({ emoji, unified }) => {
-            // Resolve Twemoji image path from unified codepoint or native emoji
-            let twemojiSrc: string | null = null;
-            if (unified) {
-              twemojiSrc = `/twitter/64/${unified}.png`;
-            } else {
-              const entities = parseEmoji(emoji);
-              if (entities.length > 0) {
-                twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
-              }
-            }
+          {showShiftToolbar ? (
+            // Shift-mode: quick-action icons only
+            shiftActions.map((action, idx) => {
+              const isLast = idx === shiftActions.length - 1;
+              const baseClass = action.danger
+                ? isLast
+                  ? dangerIconButtonClass
+                  : dangerIconButtonClassMr
+                : isLast
+                  ? iconButtonClass
+                  : iconButtonClassMr;
+              return (
+                <div
+                  key={action.id}
+                  onClick={action.onClick}
+                  onMouseEnter={() => setHoveredAction(action.id)}
+                  className={baseClass}
+                >
+                  <Icon name={action.icon} size="md" className="xl:hidden" />
+                  <Icon name={action.icon} size="lg" className="hidden xl:block" />
+                </div>
+              );
+            })
+          ) : (
+            <>
+              {/* Quick reactions - top 3 most frequently used emojis */}
+              {frequentEmojis.map(({ emoji, unified }) => {
+                // Resolve Twemoji image path from unified codepoint or native emoji
+                let twemojiSrc: string | null = null;
+                if (unified) {
+                  twemojiSrc = `/twitter/64/${unified}.png`;
+                } else {
+                  const entities = parseEmoji(emoji);
+                  if (entities.length > 0) {
+                    twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
+                  }
+                }
 
-            return (
+                return (
+                  <div
+                    key={emoji}
+                    onClick={() => handleQuickReaction(message, emoji)}
+                    className={emojiButtonClass}
+                  >
+                    {twemojiSrc ? (
+                      <img
+                        src={twemojiSrc}
+                        alt={emoji}
+                        width={16}
+                        height={16}
+                        draggable={false}
+                        className="xl:w-[18px] xl:h-[18px]"
+                      />
+                    ) : (
+                      emoji
+                    )}
+                  </div>
+                );
+              })}
+
+              {/* Separator */}
+              <div className={separatorClass}></div>
+
+              {/* More reactions */}
               <div
-                key={emoji}
-                onClick={() => handleQuickReaction(message, emoji)}
-                className={emojiButtonClass}
+                onClick={(e: React.MouseEvent) => {
+                  onMoreReactions((e.currentTarget as HTMLElement).getBoundingClientRect());
+                }}
+                onMouseEnter={() => setHoveredAction('emoji')}
+                className={iconButtonClassMr}
               >
-                {twemojiSrc ? (
-                  <img
-                    src={twemojiSrc}
-                    alt={emoji}
-                    width={16}
-                    height={16}
-                    draggable={false}
-                    className="xl:w-[18px] xl:h-[18px]"
-                  />
-                ) : (
-                  emoji
-                )}
+                <Icon name="mood-happy" size="md" variant="filled" className="xl:hidden" />
+                <Icon name="mood-happy" size="lg" variant="filled" className="hidden xl:block" />
               </div>
-            );
-          })}
 
-          {/* Separator */}
-          <div className={separatorClass}></div>
+              {/* Reply */}
+              <div
+                onClick={onReply}
+                onMouseEnter={() => setHoveredAction('reply')}
+                className={iconButtonClassMr}
+              >
+                <Icon name="reply" size="md" className="xl:hidden" />
+                <Icon name="reply" size="lg" className="hidden xl:block" />
+              </div>
 
-          {/* More reactions */}
-          <div
-            onClick={(e: React.MouseEvent) => {
-              onMoreReactions((e.currentTarget as HTMLElement).getBoundingClientRect());
-            }}
-            onMouseEnter={() => setHoveredAction('emoji')}
-            className={iconButtonClassMr}
-          >
-            <Icon name="mood-happy" size="md" variant="filled" className="xl:hidden" />
-            <Icon name="mood-happy" size="lg" variant="filled" className="hidden xl:block" />
-          </div>
-
-          {/* Reply */}
-          <div
-            onClick={onReply}
-            onMouseEnter={() => setHoveredAction('reply')}
-            className={iconButtonClassMr}
-          >
-            <Icon name="reply" size="md" className="xl:hidden" />
-            <Icon name="reply" size="lg" className="hidden xl:block" />
-          </div>
-
-          {/* Dots — open context menu */}
-          <div
-            onClick={(e: React.MouseEvent) => {
-              e.stopPropagation();
-              // Open menu to the left of the dots icon
-              const dotsRect = e.currentTarget.getBoundingClientRect();
-              onDotsClick({ x: dotsRect.left - 10, y: dotsRect.top });
-            }}
-            onMouseEnter={() => setHoveredAction('dots')}
-            className={iconButtonClass}
-          >
-            <Icon name="dots" size="md" className="xl:hidden" />
-            <Icon name="dots" size="lg" className="hidden xl:block" />
-          </div>
+              {/* Dots — open context menu */}
+              <div
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation();
+                  // Open menu to the left of the dots icon
+                  const dotsRect = e.currentTarget.getBoundingClientRect();
+                  onDotsClick({ x: dotsRect.left - 10, y: dotsRect.top });
+                }}
+                onMouseEnter={() => setHoveredAction('dots')}
+                className={iconButtonClass}
+              >
+                <Icon name="dots" size="md" className="xl:hidden" />
+                <Icon name="dots" size="lg" className="hidden xl:block" />
+              </div>
+            </>
+          )}
         </div>
       </Tooltip>
     </>

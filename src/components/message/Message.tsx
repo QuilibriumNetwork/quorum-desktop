@@ -664,6 +664,26 @@ export const Message = React.memo(
                     if (Date.now() - contextMenuClosedAt.current < 200) return;
                     setContextMenu((prev) => prev ? null : position);
                   }}
+                  onCopyLink={messageActions.handleCopyLink}
+                  onCopyMessageText={messageActions.handleCopyMessageText}
+                  onEdit={
+                    messageActions.canUserEdit ? messageActions.handleEdit : undefined
+                  }
+                  onPin={
+                    pinnedMessages.canPinMessages
+                      ? (e: React.MouseEvent) => pinnedMessages.togglePin(e, message)
+                      : undefined
+                  }
+                  onBookmarkToggle={messageActions.handleBookmarkToggle}
+                  onDelete={
+                    messageActions.canUserDelete
+                      ? (e: React.MouseEvent) => messageActions.handleDelete(e)
+                      : undefined
+                  }
+                  canEdit={messageActions.canUserEdit}
+                  canPinMessages={pinnedMessages.canPinMessages}
+                  canDelete={messageActions.canUserDelete}
+                  isBookmarked={messageActions.isBookmarked}
                 />
               )}
 
