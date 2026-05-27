@@ -1,7 +1,7 @@
 ---
 type: spec
 title: Link Previews — Design
-status: design-complete-pending-browser-decision
+status: deferred
 created: 2026-05-27
 updated: 2026-05-27
 ---
