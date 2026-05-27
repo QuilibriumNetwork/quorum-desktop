@@ -12,7 +12,7 @@ updated: 2026-05-27
 
 **Design complete.** Implementation can start on the Electron path independently.
 
-One open blocker for browser support (see [Open Questions](#open-questions)). The Electron path is fully specified and can ship without resolving this; browser users see plain links until the open question is decided.
+One open blocker for **browser-side preview generation** (see [Open Questions](#open-questions)) — CORS prevents pure-client OG fetching. Receivers on the browser always render embedded previews fine, regardless of where the preview was generated, so the question is only about production. The Electron path is fully specified and can ship without resolving this; web users would consume previews but not produce them until the open question is decided.
 
 This spec deliberately defers two adjacent concerns to follow-up specs:
 
@@ -284,23 +284,54 @@ The follow-up "EditMessage feature parity" spec will solve this properly for all
 
 ## Open Questions
 
-### Browser support — BLOCKED, needs stakeholder input
+### Browser-side preview generation — DEFERRED, needs stakeholder input
 
-In pure browser JavaScript, CORS blocks JS from reading the response body of cross-origin HTML and image fetches for ~95% of websites. There is no client-only workaround.
+#### Background: why this is a blocker
 
-Four options preserved for review:
+CORS is a **browser-enforced policy**: when JS on origin A fetches origin B, the request goes out and the server responds, but the browser refuses to hand the response body to the JS unless `Access-Control-Allow-Origin` is set permissively. Almost no public website sends that header for its HTML pages — there's no reason for them to, since they don't want random sites scraping their content from users' browsers.
 
-**Option 1 — Electron-only feature.** Browser users see plain links. Toggle visible only in Electron build. Cleanest, no server changes, no new metadata leak. May push users toward Electron.
+What this rules out (confirmed):
 
-**Option 2 — Quilibrium-run dumb forward proxy.** `api.quorummessenger.com` adds a `/fetch-preview` endpoint that forwards an HTTP GET and returns raw bytes. Sender's client calls it, parses OG, embeds. Server sees URLs being previewed (metadata leak) but never sees message content or receivers. Browser parity with Electron. The leak is opt-in (preview toggle is off by default in the follow-up toggle spec).
+- Direct `fetch()` of cross-origin HTML from the renderer → body unreadable for ~95% of sites.
+- `<img>` + canvas readback for OG images → tainted canvas blocks `toDataURL` for cross-origin images without CORS headers.
+- `fetch(url, { mode: 'no-cors' })` → opaque response, unreadable.
+- Service Workers → same security model as the renderer, no help.
 
-**Option 3 — User-configurable proxy URL.** Setting field: "Preview fetch proxy URL". Empty by default = no previews. Users paste their own self-hosted or trusted public proxy. Maximally privacy-preserving, realistically near-zero adoption.
+Techniques that exist but aren't viable for v1:
 
-**Option 4 — Combined (Quilibrium default + user override).** Quilibrium proxy is the default; advanced users can swap. Disclosed in toggle help text.
+- **Browser extension** with cross-origin permissions could fetch and relay to the page. Rejected: install friction, multi-store distribution pain, undermines "just open the URL" simplicity.
+- **Tor / mix-network routing** for the fetch. Rejected: web can't reach SOCKS, even in Electron the latency blows the race budget, and many sites block Tor exit IPs.
+- **WebRTC peer relay** (web user asks an Electron peer to fetch on their behalf). Rejected: intra-network metadata leak, no result verification, reliability problems.
 
-**Who should weigh in:** Cassie (Q Founder) — was the lead on the YouTube facade privacy fix. The trade-off here (metadata visibility to Quilibrium-the-company in exchange for browser parity) is a product/policy call.
+#### Important framing: receivers always work
 
-**Implementation impact:** the fetch utility in the renderer is structured as a swappable interface so any of the four options can slot in later without rewrites. The Electron IPC path is implementation 1 of that interface; a future proxy fetch is implementation 2.
+Receive-side rendering is platform-agnostic in this design — receivers read embedded bytes, never make external fetches. So **web users always see rich previews for messages that arrived with embedded preview data**, regardless of where those previews were generated. The browser question is only about **production** of previews, not consumption.
+
+That means the worst-case scenario for web users isn't "feature doesn't exist" — it's "you see previews your Electron-using contacts share, you don't generate previews yourself."
+
+#### Options for review
+
+**Option 1 — Electron-only production.** Web users render embedded previews fine but don't generate them. The toggle in the follow-up spec is visible only in Electron, or visible-but-no-op in browser with explanatory help text. Cleanest, no server changes, no new metadata leak. Cost: web-only users can't share rich previews, only consume them.
+
+**Option 2 — Quilibrium-run stateless forward proxy.** `api.quorummessenger.com` adds a `/fetch-preview` endpoint that takes a sanitized URL, performs an HTTP GET with the same limits the Electron path uses, and returns raw bytes. Strict commitment: **no logs, no cache, no parsing, no enrichment** — the proxy forwards bytes and forgets. Source open and auditable. Sender's client calls the proxy, parses OG, embeds. Trust model is similar in shape to what a VPN or ISP sees: Quilibrium temporarily knows "IP X previewed URL Y at time T" — bounded, transparent, but real. The leak is opt-in (toggle off by default per follow-up spec).
+
+**Option 3 — User-configurable proxy URL.** Setting field: "Preview fetch proxy URL". Empty by default = no previews on web. Users paste their own self-hosted or trusted public proxy. Maximally privacy-preserving, realistically near-zero adoption. Documentation burden is high.
+
+**Option 4 — Combined (Quilibrium proxy default + user override).** Option 2 ships as default; advanced users can swap in their own proxy URL via Option 3's setting. Disclosed in toggle help text.
+
+#### Free supplement applicable to any option
+
+A small minority of sites (Wikipedia API, GitHub raw, some news APIs) **do** send permissive CORS headers and can be fetched directly from the browser. Whichever option above wins, the renderer can additionally attempt a direct `fetch()` for sanitized URLs and, on success (CORS allowed + valid OG parse), embed the preview locally with zero proxy/Electron involvement. On failure (CORS block or anything else), fall through to the chosen option's path or to "no preview" if that path is unavailable on this platform.
+
+Low effort, gives web-on-Option-1 users *some* previews for free, and reduces proxy load under Options 2/4.
+
+#### Who should weigh in
+
+Cassie (Q Founder) — was the lead on the YouTube facade privacy fix. The trade-off (metadata visibility to Quilibrium-the-company in exchange for browser-side production parity) is a product/policy call, not a technical one.
+
+#### Implementation impact
+
+The renderer's fetch utility is structured as a swappable interface so any of the four options can slot in later without rewrites. The Electron IPC path is implementation 1 of that interface; a future proxy fetch is implementation 2. The CORS-friendly-direct-fetch supplement is implementation 0 — it can wrap whichever implementation is active and try direct fetch first.
 
 ---
 
@@ -342,4 +373,4 @@ Four options preserved for review:
 
 ---
 
-*Last updated: 2026-05-27*
+*Last updated: 2026-05-27 — expanded Open Questions with CORS background, technique exploration (extensions, Tor, peer relay rejected with reasoning), "receivers always work" framing clarification, stateless commitment for Option 2, free CORS-friendly direct-fetch supplement.*
