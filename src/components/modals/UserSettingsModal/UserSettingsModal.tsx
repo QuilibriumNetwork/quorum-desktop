@@ -79,6 +79,8 @@ const UserSettingsModal: React.FunctionComponent<{
     setTypingIndicatorsDM,
     typingIndicatorsSpaces,
     setTypingIndicatorsSpaces,
+    generateYouTubePreviews,
+    setGenerateYouTubePreviews,
     spaceTagId,
     setSpaceTagId,
     saveChanges: saveUserChanges,
@@ -274,6 +276,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         setTypingIndicatorsDM={setTypingIndicatorsDM}
                         typingIndicatorsSpaces={typingIndicatorsSpaces}
                         setTypingIndicatorsSpaces={setTypingIndicatorsSpaces}
+                        generateYouTubePreviews={generateYouTubePreviews}
+                        setGenerateYouTubePreviews={setGenerateYouTubePreviews}
                       />
                     );
                   case 'notifications':

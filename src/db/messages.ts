@@ -94,6 +94,8 @@ export type UserConfig = {
   readReceipts?: boolean;
   typingIndicatorsDM?: boolean;
   typingIndicatorsSpaces?: boolean;
+  // Sender-side gate for fetching YouTube thumbnails (privacy: leaks sender IP to Google)
+  generateYouTubePreviews?: boolean;
   // The spaceId of the Space whose tag this user has selected to display globally
   spaceTagId?: string;
   // Snapshot of the last tag data broadcast so startup refresh can detect owner changes

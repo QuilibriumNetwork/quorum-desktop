@@ -47,14 +47,40 @@ export type UserConfig = {
   bookmarks?: Bookmark[];
   deletedBookmarkIds?: string[];      // Tombstones for deletion sync
 
-  nonRepudiable?: boolean;            // Message signing preference
+  // Privacy / messaging behaviour
+  nonRepudiable?: boolean;            // Always sign direct messages
+  deliveryReceipts?: boolean;         // Global default; per-conversation override on Conversation
+  readReceipts?: boolean;             // Global default; per-conversation override on Conversation
+  typingIndicatorsDM?: boolean;       // Show typing indicators in DMs
+  typingIndicatorsSpaces?: boolean;   // Show typing indicators in space channels
+  generateYouTubePreviews?: boolean;  // Sender-side gate for fetching YT thumbnails (leaks sender IP to Google when on)
+
+  // Profile fields synced across devices
+  name?: string;                      // Display name
+  profile_image?: string;             // PFP URL or data URI
+  bio?: string;                       // User bio (validated; see useUserSettings)
+  spaceTagId?: string;                // Currently-selected broadcast space tag
 
   // Device names: maps inbox_address → user-given label, synced across devices
   deviceNames?: { [inboxAddress: string]: string };
   // Tombstones for removed devices so names don't resurrect on sync
   deletedDeviceNameAddresses?: string[];
+
+  // User notes (per-address private annotations)
+  userNotes?: { targetAddress: string; note: string; updatedAt: number }[];
+  deletedUserNoteAddresses?: string[];
+
+  // DM ergonomics
+  mutedChannels?: { [spaceId: string]: string[] };
+  showMutedChannels?: boolean;
+  favoriteDMs?: string[];
+  mutedConversations?: string[];
+
+  lastBroadcastSpaceTag?: { letters: string; url: string };
 };
 ```
+
+> **Note**: every field above ships in [`quorum-shared`](../../../quorum-shared/src/types/user.ts) `UserConfig`. Anything the desktop reads or writes on the config object that's NOT in the shared type is silently invisible to mobile and gets no TypeScript safety. If you add a new field, add it to the shared type in the same PR.
 
 ## Architecture
 
@@ -248,7 +274,9 @@ Config is saved (and potentially synced) when:
 | Reorder spaces/folders | Drag handlers → modifies `items` array |
 | Add/remove bookmark | `useBookmarks.ts` → modifies `bookmarks` + `deletedBookmarkIds` |
 | Change notification settings | Settings UI → modifies `notificationSettings` |
-| Toggle privacy settings | Privacy UI → modifies `allowSync`, `nonRepudiable` |
+| Toggle privacy/security settings | Privacy UI → modifies `allowSync`, `nonRepudiable`, `deliveryReceipts`, `readReceipts`, `typingIndicatorsDM`, `typingIndicatorsSpaces`, `generateYouTubePreviews` |
+| Rename a device | Privacy UI → modifies `deviceNames` (also `deletedDeviceNameAddresses` on removal) |
+| Save user profile | Settings UI → modifies `name`, `profile_image`, `bio`, `spaceTagId` |
 
 ## Safety Mechanisms
 
@@ -369,4 +397,4 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 ---
 
 
-*Last updated: 2026-05-20 — staleness audit fixes*
+*Last updated: 2026-05-27 — synced `UserConfig` snippet with the real shared type (added 7 fields previously missing from the doc), expanded triggers table.*

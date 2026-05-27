@@ -9,6 +9,8 @@ import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
 import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE, SimpleRateLimiter, RATE_LIMITS, extractStandaloneYouTubeVideoIds, fetchYouTubeThumbnailAsBase64 } from '@quilibrium/quorum-shared';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useConfig } from '../../queries/config';
 import { useMessageValidation, getMessageCounterText } from '../validation';
 import { showWarning } from '../../../utils/toast';
 
@@ -29,6 +31,11 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     onSubmitSticker,
     hasStickers = false,
   } = options;
+
+  // Read user config to gate YouTube thumbnail fetching (sender-side privacy)
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const { data: userConfig } = useConfig({ userAddress: currentPasskeyInfo?.address || '' });
+  const generateYouTubePreviews = userConfig?.generateYouTubePreviews ?? false;
 
   // Message state
   const [pendingMessage, setPendingMessage] = useState('');
@@ -203,24 +210,27 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
           });
 
           // Also fetch YouTube thumbnails if text has standalone YouTube URLs
-          const videoIds = extractStandaloneYouTubeVideoIds(pendingMessage);
-          if (videoIds.length > 0) {
-            const results = await Promise.all(
-              videoIds.map(async (videoId) => {
-                const data = await fetchYouTubeThumbnailAsBase64(videoId);
-                if (!data) return null;
-                return {
-                  type: 'youtube-thumbnail',
-                  key: videoId,
-                  data,
-                  mimeType: 'image/jpeg',
-                };
-              })
-            );
-            const youtubeEntries = results.filter(
-              (r): r is NonNullable<typeof r> => r !== null
-            );
-            mediaEntries.push(...youtubeEntries);
+          // (gated by privacy setting — fetching leaks sender IP to Google)
+          if (generateYouTubePreviews) {
+            const videoIds = extractStandaloneYouTubeVideoIds(pendingMessage);
+            if (videoIds.length > 0) {
+              const results = await Promise.all(
+                videoIds.map(async (videoId) => {
+                  const data = await fetchYouTubeThumbnailAsBase64(videoId);
+                  if (!data) return null;
+                  return {
+                    type: 'youtube-thumbnail',
+                    key: videoId,
+                    data,
+                    mimeType: 'image/jpeg',
+                  };
+                })
+              );
+              const youtubeEntries = results.filter(
+                (r): r is NonNullable<typeof r> => r !== null
+              );
+              mediaEntries.push(...youtubeEntries);
+            }
           }
 
           await onSubmitMessage(
@@ -229,7 +239,10 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
           );
         } else if (pendingMessage) {
           // --- Text only ---
-          const videoIds = extractStandaloneYouTubeVideoIds(pendingMessage);
+          // YouTube thumbnail fetch is gated by privacy setting (leaks sender IP to Google)
+          const videoIds = generateYouTubePreviews
+            ? extractStandaloneYouTubeVideoIds(pendingMessage)
+            : [];
           if (videoIds.length > 0) {
             const results = await Promise.all(
               videoIds.map(async (videoId) => {
@@ -294,6 +307,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     inReplyTo,
     validateMentions,
     messageValidation.isOverLimit,
+    generateYouTubePreviews,
   ]);
 
   // Submit sticker
