@@ -186,3 +186,10 @@ While the `notificationSettings` decision is blocked, the following structural f
 *Created: 2026-05-27 — uncovered during YouTube previews toggle work. Reverted dedup attempt because NavItem and NotificationSettings shapes diverge structurally, not just on field presence. Needs dedicated investigation before any cleanup.*
 
 *Updated: 2026-05-27 (Phase 0) — confirmed desktop's NotificationSettings is fully shipped production code; mobile's is scaffolding-only. Recommendation is to promote desktop's shape to shared, but blocked on mobile codebase access (Kyn needs latest mobile build to verify no newer UI exists).*
+
+*Updated: 2026-05-27 (Phase 1 — unblocked work) — three small wins shipped on this branch:*
+- *`UserNote` dedup done. Lifted the inline object type in `UserConfig.userNotes` to a named `UserNote` export in `quorum-shared` (2.1.0-16, PR #17). Desktop now imports and re-exports it instead of maintaining a duplicate interface.*
+- *Defensive comment added to the local `UserConfig` in `src/db/messages.ts` noting it must stay aligned with shared. Trimmed during the comment-pruning pass to a two-line note.*
+- *Reassessed `NavItem` after the dedup attempt earlier in this session. Initially thought it was unblocked, but the desktop literal `IconName` / `IconColor` types are tighter than shared's `string`. Deduping by widening would downgrade desktop's type safety; the right fix is a design discussion that benefits from mobile context (do mobile folder UIs need icons too?). Reclassified as mobile-blocked.*
+
+*`NotificationSettings` structural alignment remains the main open item, still blocked on mobile codebase access.*
