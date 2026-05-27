@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread } from '@quilibrium/quorum-shared';
+import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
@@ -45,6 +45,8 @@ export type NavItem =
       modifiedDate: number;
     };
 
+// Local copy of `@quilibrium/quorum-shared` `UserConfig`. Any field added
+// here MUST also be added to the shared type, or it won't sync to other devices.
 export type UserConfig = {
   address: string;
   spaceIds: string[];               // KEPT for backwards compatibility (derived from items)
@@ -78,42 +80,33 @@ export type UserConfig = {
   deletedBookmarkIds?: string[];
   userNotes?: UserNote[];
   deletedUserNoteAddresses?: string[];
-  // Channel mute settings: maps spaceId to array of muted channelIds
   mutedChannels?: {
     [spaceId: string]: string[];
   };
-  // Global preference for showing muted channels in list (default: true = visible with 60% opacity)
+  // Default true; muted channels still visible at 60% opacity unless turned off.
   showMutedChannels?: boolean;
-  // Favorite DM conversation IDs for quick access filtering
   favoriteDMs?: string[];
-  // Muted DM conversation IDs (no unread indicators or notifications)
+  // Muted DMs — no unread indicators or notifications.
   mutedConversations?: string[];
-  // Delivery receipts: when ON, sends acks to senders and displays ✓ on own messages
   deliveryReceipts?: boolean;
-  // Read receipts: when ON, sends read acks and displays ✓✓ on own messages
   readReceipts?: boolean;
   typingIndicatorsDM?: boolean;
   typingIndicatorsSpaces?: boolean;
-  // Sender-side gate for fetching YouTube thumbnails (privacy: leaks sender IP to Google)
+  // Sender-side gate for fetching YouTube thumbnails — fetching leaks IP to Google.
   generateYouTubePreviews?: boolean;
-  // The spaceId of the Space whose tag this user has selected to display globally
   spaceTagId?: string;
-  // Snapshot of the last tag data broadcast so startup refresh can detect owner changes
+  // Snapshot of the last broadcast so startup refresh can detect owner changes.
   lastBroadcastSpaceTag?: {
     letters: string;
     url: string;
   };
-  // Device names: maps inbox_address → user-given label, synced across devices
+  // inbox_address → user-given label, synced.
   deviceNames?: { [inboxAddress: string]: string };
-  // Tombstones for removed devices so names don't resurrect on sync
+  // Tombstones so removed device names don't resurrect via sync.
   deletedDeviceNameAddresses?: string[];
 };
 
-export interface UserNote {
-  targetAddress: string;
-  note: string;
-  updatedAt: number;
-}
+export type { UserNote } from '@quilibrium/quorum-shared';
 
 export interface SearchableMessage {
   id: string;
@@ -479,7 +472,6 @@ export class MessageDB {
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
 
-      // Initial load - get latest messages
       const range = IDBKeyRange.bound(
         [spaceId, channelIds[0], 0],
         [spaceId, channelIds[channelIds.length - 1], Number.MAX_VALUE]
@@ -791,10 +783,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Save or update thread read time.
-   * Used when user opens a thread panel (2s delay) or marks all as read.
-   */
   async saveThreadReadTime({
     threadId,
     spaceId,
@@ -816,9 +804,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get read time for a single thread.
-   */
   async getThreadReadTime(threadId: string): Promise<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number } | undefined> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -830,11 +815,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get all thread read times for a channel.
-   * Returns a map of threadId → lastReadTimestamp for efficient lookup.
-   * Uses the by_channel compound index.
-   */
+  /** Returns a threadId → lastReadTimestamp map for the channel. */
   async getThreadReadTimesForChannel({
     spaceId,
     channelId,
@@ -860,10 +841,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Save thread read times in bulk (for "Mark All as Read").
-   * Uses a single transaction for efficiency.
-   */
+  /** Single-transaction bulk write for "Mark All as Read". */
   async bulkSaveThreadReadTimes(
     entries: Array<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number }>
   ): Promise<void> {
@@ -1529,7 +1507,6 @@ export class MessageDB {
     });
   }
 
-  // Search functionality
   private extractTextFromMessage(message: Message): string {
     if (message.content.type === 'post') {
       const content = message.content.text;
@@ -1884,7 +1861,6 @@ export class MessageDB {
       combineWith: 'OR',
     });
 
-    // Get full message objects and create results
     const results: SearchResult[] = [];
 
     for (const result of searchResults.slice(0, limit)) {
@@ -1917,8 +1893,6 @@ export class MessageDB {
       logger.warn('LRU eviction failed:', error);
     });
 
-    // Sort by relevance score (best match first)
-    // MiniSearch provides well-tuned relevance scoring
     return results.sort((a, b) => b.score - a.score);
   }
 
@@ -2180,9 +2154,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Update an existing message in IndexedDB (for optimistic updates)
-   */
+  /** For optimistic updates. */
   async updateMessage(message: Message): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2195,7 +2167,6 @@ export class MessageDB {
     });
   }
 
-  // Pinned Messages Methods
   async getPinnedMessages(
     spaceId: string,
     channelId: string
@@ -2217,11 +2188,10 @@ export class MessageDB {
 
       request.onsuccess = () => {
         const allMessages = request.result || [];
-        // Filter for pinned messages only
         const pinnedMessages = allMessages.filter(
           (msg) => msg.isPinned === true
         );
-        // Sort by pinned date (newest first), falling back to creation date
+        // Sort by pin time, falling back to createdDate for legacy records.
         pinnedMessages.sort((a, b) => {
           const aPinnedAt = a.pinnedAt || a.createdDate;
           const bPinnedAt = b.pinnedAt || b.createdDate;
@@ -2255,7 +2225,6 @@ export class MessageDB {
           return;
         }
 
-        // Update pin status
         message.isPinned = isPinned;
         if (isPinned) {
           message.pinnedAt = Date.now();
@@ -2303,7 +2272,6 @@ export class MessageDB {
 
       request.onsuccess = () => {
         const allMessages = request.result || [];
-        // Count pinned messages only
         const pinnedCount = allMessages.filter(
           (msg) => msg.isPinned === true
         ).length;
@@ -2316,24 +2284,9 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get unread messages that mention a specific user
-   *
-   * This is an optimized query for mention counting that:
-   * 1. Only retrieves messages after lastReadTimestamp
-   * 2. Filters for messages that mention the user
-   * 3. Supports early-exit with limit parameter
-   *
-   * Note: This implementation uses existing indexes and filters in memory.
-   * For optimal performance at scale, consider adding a dedicated compound index
-   * for [spaceId, channelId, mentionedUserId, createdDate] in a future DB migration.
-   *
-   * @param spaceId - The space ID
-   * @param channelId - The channel ID
-   * @param afterTimestamp - Only get messages created after this timestamp (typically lastReadTimestamp)
-   * @param limit - Maximum number of mention messages to return (default: 10 for early-exit optimization)
-   * @returns Array of messages mentioning the user
-   */
+  // No dedicated mention index — filters in memory after the timestamp range
+  // scan. A compound [spaceId, channelId, mentionedUserId, createdDate] index
+  // would scale better but needs a DB migration.
   async getUnreadMentions({
     spaceId,
     channelId,
@@ -2351,7 +2304,6 @@ export class MessageDB {
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
 
-      // Use existing index to get messages after timestamp
       const range = IDBKeyRange.bound(
         [spaceId, channelId, afterTimestamp],
         [spaceId, channelId, Number.MAX_VALUE],
@@ -2368,14 +2320,11 @@ export class MessageDB {
         if (cursor && messages.length < limit) {
           const message = cursor.value as Message;
 
-          // Only include messages with mentions
-          // Note: The calling code will still need to filter by userAddress
-          // since we don't have a dedicated mention index yet
+          // Caller still filters by userAddress since there's no mention index.
           if (message.mentions) {
             messages.push(message);
           }
 
-          // Continue only if we haven't reached the limit
           if (messages.length < limit) {
             cursor.continue();
           } else {
@@ -2390,24 +2339,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get unread messages that are replies to a specific user's messages
-   *
-   * This is an optimized query for reply notification counting that:
-   * 1. Only retrieves messages after lastReadTimestamp
-   * 2. Filters for messages with replyMetadata.parentAuthor matching the user
-   * 3. Supports early-exit with limit parameter
-   *
-   * Note: This implementation uses existing indexes and filters in memory.
-   * Reply notifications are stored in the message's replyMetadata field.
-   *
-   * @param spaceId - The space ID
-   * @param channelId - The channel ID
-   * @param userAddress - The user's address to check for replies
-   * @param afterTimestamp - Only get messages created after this timestamp (typically lastReadTimestamp)
-   * @param limit - Maximum number of reply messages to return (default: 10 for early-exit optimization)
-   * @returns Array of messages that are replies to the user
-   */
+  // Filters by replyMetadata.parentAuthor in memory after timestamp range scan.
   async getUnreadReplies({
     spaceId,
     channelId,
@@ -2444,12 +2376,10 @@ export class MessageDB {
         if (cursor && messages.length < limit) {
           const message = cursor.value as Message;
 
-          // Only include messages with replyMetadata that reply to the user
           if (message.replyMetadata?.parentAuthor === userAddress) {
             messages.push(message);
           }
 
-          // Continue only if we haven't reached the limit
           if (messages.length < limit) {
             cursor.continue();
           } else {
@@ -2464,35 +2394,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Check if there are any unread messages in a channel
-   *
-   * This is an optimized query for unread indicators that:
-   * 1. Only checks if ANY message exists after lastReadTimestamp
-   * 2. Returns immediately on finding the first unread message (early exit)
-   * 3. Much more efficient than counting all unread messages
-   *
-   * @param spaceId - The space ID
-   * @param channelId - The channel ID
-   * @param afterTimestamp - Only check messages created after this timestamp (typically lastReadTimestamp)
-   * @returns Promise<boolean> - true if there are unread messages, false otherwise
-   */
-  /**
-   * Get the first unread message in a channel
-   *
-   * This query is used for auto-jump navigation to help users land at the first
-   * unread message when entering a channel with unreads.
-   *
-   * The query:
-   * 1. Uses the existing by_conversation_time index
-   * 2. Gets the first message after lastReadTimestamp
-   * 3. Returns messageId and timestamp for cursor calculation
-   *
-   * @param spaceId - The space ID
-   * @param channelId - The channel ID
-   * @param afterTimestamp - Only get messages created after this timestamp (typically lastReadTimestamp)
-   * @returns Promise with messageId and timestamp, or null if no unread messages
-   */
+  /** First unread message for auto-jump navigation when entering a channel. */
   async getFirstUnreadMessage({
     spaceId,
     channelId,
@@ -2510,7 +2412,6 @@ export class MessageDB {
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
 
-      // Use existing index to get messages after timestamp
       const range = IDBKeyRange.bound(
         [spaceId, channelId, afterTimestamp],
         [spaceId, channelId, Number.MAX_VALUE],
@@ -2525,18 +2426,16 @@ export class MessageDB {
 
         if (cursor) {
           const message = cursor.value as Message;
-          // Skip thread replies — they shouldn't trigger unread navigation
+          // Thread replies shouldn't trigger unread navigation
           if (!includeThreadReplies && message.isThreadReply) {
             cursor.continue();
             return;
           }
-          // Return the first unread message
           resolve({
             messageId: message.messageId,
             timestamp: message.createdDate,
           });
         } else {
-          // No unread messages found
           resolve(null);
         }
       };
@@ -2545,7 +2444,6 @@ export class MessageDB {
     });
   }
 
-  // Bookmarks Methods
   async addBookmark(bookmark: Bookmark): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2613,12 +2511,10 @@ export class MessageDB {
       const store = transaction.objectStore('bookmarks');
       const index = store.index('by_created');
 
-      // Get all bookmarks sorted by creation date (newest first)
       const request = index.getAll();
 
       request.onsuccess = () => {
         const bookmarks = request.result || [];
-        // Sort newest first
         bookmarks.sort((a, b) => b.createdAt - a.createdAt);
         resolve(bookmarks);
       };
@@ -2825,11 +2721,6 @@ export class MessageDB {
     });
   }
 
-  // ===== Muted Users Methods =====
-
-  /**
-   * Get all muted users for a space
-   */
   async getMutedUsers(spaceId: string): Promise<MutedUserRecord[]> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2902,9 +2793,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Check if a mute action has already been processed (deduplication)
-   */
+  /** Used for mute-action deduplication. */
   async getMuteByMuteId(muteId: string): Promise<MutedUserRecord | undefined> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2920,9 +2809,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Mute a user in a space
-   */
   async muteUser(
     spaceId: string,
     targetUserId: string,
@@ -2952,9 +2838,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Unmute a user in a space
-   */
   async unmuteUser(spaceId: string, targetUserId: string): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2967,9 +2850,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Check if a user is muted in a space (considers expiration)
-   */
+  /** Considers expiration when determining mute status. */
   async isUserMuted(spaceId: string, targetUserId: string): Promise<boolean> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2994,11 +2875,6 @@ export class MessageDB {
     });
   }
 
-  // ===== Action Queue Methods =====
-
-  /**
-   * Add a task to the action queue
-   */
   async addQueueTask(task: Omit<QueueTask, 'id'>): Promise<number> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3011,10 +2887,7 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get pending tasks by dedup key.
-   * Used for deduplication - find existing pending tasks with same key.
-   */
+  /** Used to find existing pending tasks for dedup. */
   async getPendingTasksByKey(key: string): Promise<QueueTask[]> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3025,17 +2898,13 @@ export class MessageDB {
 
       request.onsuccess = () => {
         const tasks = (request.result || []) as QueueTask[];
-        // Filter to only pending tasks
         resolve(tasks.filter((t) => t.status === 'pending'));
       };
       request.onerror = () => reject(request.error);
     });
   }
 
-  /**
-   * Check if there's a currently processing task with the given key.
-   * Used to skip enqueueing new tasks while one is actively being processed.
-   */
+  /** Used to skip enqueueing while an identical task is already running. */
   async hasProcessingTaskWithKey(key: string): Promise<boolean> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3052,9 +2921,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get a single task by ID
-   */
   async getQueueTask(id: number): Promise<QueueTask | undefined> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3067,9 +2933,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get tasks by status with optional limit
-   */
   async getQueueTasksByStatus(
     status: TaskStatus,
     limit = 50
@@ -3086,9 +2949,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get all tasks in the queue
-   */
   async getAllQueueTasks(): Promise<QueueTask[]> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3101,9 +2961,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Update an existing task
-   */
   async updateQueueTask(task: QueueTask): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3116,9 +2973,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Delete a task from the queue
-   */
   async deleteQueueTask(id: number): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -3131,9 +2985,6 @@ export class MessageDB {
     });
   }
 
-  /**
-   * Get queue statistics
-   */
   async getQueueStats(): Promise<QueueStats> {
     await this.init();
     const all = await this.getAllQueueTasks();
@@ -3147,9 +2998,6 @@ export class MessageDB {
     };
   }
 
-  /**
-   * Prune completed tasks older than the specified age
-   */
   async pruneCompletedTasks(olderThanMs = 24 * 60 * 60 * 1000): Promise<number> {
     await this.init();
     const cutoff = Date.now() - olderThanMs;
@@ -3166,11 +3014,7 @@ export class MessageDB {
     return deleted;
   }
 
-  /**
-   * Reset tasks stuck in 'processing' state after crash.
-   * Only resets tasks that have been processing for longer than the timeout.
-   * Call this on app startup.
-   */
+  /** Call on app startup to recover tasks left in 'processing' by a crash. */
   async resetStuckProcessingTasks(stuckTimeoutMs = 60000): Promise<number> {
     await this.init();
     const cutoff = Date.now() - stuckTimeoutMs;

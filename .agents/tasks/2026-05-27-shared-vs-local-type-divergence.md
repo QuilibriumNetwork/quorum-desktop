@@ -123,4 +123,73 @@ The user (Kyn) noted this is surprising because we did extensive analysis during
 
 ---
 
+## Phase 0 findings (2026-05-27)
+
+### Mobile usage of `notificationSettings`
+
+Inspected via local clone of `quorum-mobile` (commit at the time of investigation):
+
+- `notificationSettings` is referenced in **3 files only**: `services/config/configService.ts`, `hooks/useUserConfig.ts`, and the architecture doc.
+- The mobile hook `useNotificationSettings()` returns `config?.notificationSettings ?? { enabled: true }` — treating the field as a single flat object, not a per-space map.
+- **No mobile UI consumer reads any specific field** (`enabled`, `mentions`, `replies`, `all` — or desktop's `isMuted`, `enabledNotificationTypes`). It's scaffolding only.
+- The fallback shape `{ enabled: true }` matches the placeholder shared type, suggesting mobile's hook was written against the shared type without an actual UI design behind it.
+
+**Implication**: there is NO active cross-device sync bug today. Mobile doesn't have a notifications UI yet (per Kyn's recollection — needs verification against the latest mobile build, which Kyn doesn't currently have access to).
+
+### Desktop usage of `NotificationSettings` (this codebase)
+
+**This is a real, fully-implemented feature in desktop, NOT scaffolding.** Evidence:
+
+- **19 files** reference `isMuted` or `enabledNotificationTypes`.
+- **9+ files** call `config?.notificationSettings?.[spaceId]?.isMuted` to gate space-level notification suppression — covering mention counters, reply counters, notification panel, and channel mute behavior.
+- The `NotificationTypeId` enum (`'mention-you'`, `'mention-everyone'`, `'mention-roles'`, `'reply'`) is consumed in 12 files, including:
+  - [`useChannelMentionCounts.ts:66-70`](../../src/hooks/business/mentions/useChannelMentionCounts.ts) — filters mentions by which types the user has enabled per-space
+  - [`useMentionNotificationSettings.ts:84-128`](../../src/hooks/business/mentions/useMentionNotificationSettings.ts) — loads/saves the array, drives a multi-select dropdown in the space settings modal
+  - [`NotificationPanel.tsx`](../../src/components/notifications/NotificationPanel.tsx) — uses the type discriminator to render mentions vs replies
+  - [`NotificationService.ts`](../../src/services/NotificationService.ts) — branches on `'reply'` for browser/OS notification text
+- Backed by a dedicated feature doc: [features/mention-notification-system.md](../docs/features/mention-notification-system.md), and the original implementation lives in `.done/mention-notification-settings-phase4.md`.
+
+### Conclusion on `notificationSettings`
+
+The two type shapes describe genuinely different products:
+
+| Question | Desktop | Shared (placeholder) |
+|---|---|---|
+| Per-space or global? | Per-space (`[spaceId]: { ... }`) | Global (flat object) |
+| Granularity | Enum array (4 trigger types: mention-you / mention-everyone / mention-roles / reply) | 3 booleans (mentions, replies, all) |
+| Mute | Yes, `isMuted` per-space | No equivalent |
+| Production use | Yes, deeply wired into UI | No (placeholder; mobile has hook scaffolding but no UI) |
+
+Desktop's design is the **only one that's actually shipped to users**. Mobile's hook code is scaffolding that hasn't been wired to UI yet.
+
+### Recommendation (pending mobile parity check)
+
+When mobile codebase access is unblocked, the path forward is most likely:
+
+1. **Promote desktop's `NotificationSettings` shape to `@quilibrium/quorum-shared`** (replacing the placeholder). The shape should be exactly `{ spaceId, isMuted?, enabledNotificationTypes: NotificationTypeId[] }`, plus the `NotificationTypeId` literal union.
+2. **Update mobile's `useNotificationSettings` hook** to use the new shape (low-impact since no UI consumes it).
+3. **Remove desktop's local `src/types/notifications.ts` and import from shared.**
+
+This is **not safe to do today** because we don't have visibility into whether mobile has a newer notifications UI that contradicts this assumption.
+
+### What IS safe to do today (no mobile access needed)
+
+While the `notificationSettings` decision is blocked, the following structural fixes are NOT blocked:
+
+- **`UserNote`**: shapes are identical between local (`src/db/messages.ts:UserNote`) and inline-in-`UserConfig` (shared). Can be deduplicated by lifting it to a named `UserNote` type in shared and importing it. Zero risk.
+- **`NavItem`**: desktop's stricter `icon: IconName` / `color: IconColor` are render-time refinements, not wire-format concerns. The shared `NavItem.icon: string` is the correct wire shape. Desktop should narrow at render boundaries, not maintain a duplicate type. Low risk.
+- **Defensive comments**: add a "this is a sync-critical local copy, keep aligned with quorum-shared `UserConfig`" header comment in `src/db/messages.ts` so future agents/devs notice the constraint. Trivial.
+- **Staleness audit of shared types**: check whether the placeholder `NotificationSettings` in `quorum-shared/src/types/user.ts` has been touched since the initial migration. If it's untouched, that's evidence it's a stub waiting for a real design.
+
+---
+
 *Created: 2026-05-27 — uncovered during YouTube previews toggle work. Reverted dedup attempt because NavItem and NotificationSettings shapes diverge structurally, not just on field presence. Needs dedicated investigation before any cleanup.*
+
+*Updated: 2026-05-27 (Phase 0) — confirmed desktop's NotificationSettings is fully shipped production code; mobile's is scaffolding-only. Recommendation is to promote desktop's shape to shared, but blocked on mobile codebase access (Kyn needs latest mobile build to verify no newer UI exists).*
+
+*Updated: 2026-05-27 (Phase 1 — unblocked work) — three small wins shipped on this branch:*
+- *`UserNote` dedup done. Lifted the inline object type in `UserConfig.userNotes` to a named `UserNote` export in `quorum-shared` (2.1.0-16, PR #17). Desktop now imports and re-exports it instead of maintaining a duplicate interface.*
+- *Defensive comment added to the local `UserConfig` in `src/db/messages.ts` noting it must stay aligned with shared. Trimmed during the comment-pruning pass to a two-line note.*
+- *Reassessed `NavItem` after the dedup attempt earlier in this session. Initially thought it was unblocked, but the desktop literal `IconName` / `IconColor` types are tighter than shared's `string`. Deduping by widening would downgrade desktop's type safety; the right fix is a design discussion that benefits from mobile context (do mobile folder UIs need icons too?). Reclassified as mobile-blocked.*
+
+*`NotificationSettings` structural alignment remains the main open item, still blocked on mobile codebase access.*

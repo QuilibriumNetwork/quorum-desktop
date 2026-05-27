@@ -167,7 +167,7 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 | Property | Value |
 |----------|-------|
 | **Package** | `@quilibrium/quorum-shared` |
-| **Version** | 2.1.0-13 |
+| **Version** | 2.1.0-16 |
 | **Peer Dependencies** | React 19+, TanStack React Query 5+ |
 | **Build Format** | Dual ESM/CJS with TypeScript declarations |
 
@@ -224,6 +224,7 @@ The types module provides all shared type definitions used across both apps.
 |------|-------------|
 | `UserProfile` | User display info (name, icon, status) |
 | `UserConfig` | User preferences, space memberships, bookmarks |
+| `UserNote` | Per-target private annotation (synced via `UserConfig.userNotes`) |
 | `SpaceMember` | User's membership in a space with roles |
 | `NavItem` | Navigation item (space or folder) |
 | `NotificationSettings` | Per-space notification preferences |
@@ -711,4 +712,6 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-05-20 — staleness audit fixes*
+*Last updated: 2026-05-27 — version bump to 2.1.0-16 (added seven privacy/device fields to `UserConfig` and promoted inline `UserNote` to a named export).*
+
+*Previously: 2026-05-20 — staleness audit fixes*
