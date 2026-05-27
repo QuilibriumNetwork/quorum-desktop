@@ -33,6 +33,8 @@ interface PrivacyProps {
   setTypingIndicatorsDM: (value: boolean) => void;
   typingIndicatorsSpaces: boolean;
   setTypingIndicatorsSpaces: (value: boolean) => void;
+  generateYouTubePreviews: boolean;
+  setGenerateYouTubePreviews: (value: boolean) => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -61,6 +63,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   setTypingIndicatorsDM,
   typingIndicatorsSpaces,
   setTypingIndicatorsSpaces,
+  generateYouTubePreviews,
+  setGenerateYouTubePreviews,
 }) => {
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
@@ -226,7 +230,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
-          <div className="flex flex-row items-center gap-3 mb-3">
+          <div className="flex flex-row items-center gap-3">
             <Switch value={nonRepudiable} onChange={setNonRepudiable} />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
@@ -245,6 +249,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
+          <div className="border-t border-dashed border-surface-7 my-5" />
           <div className="flex flex-row items-center gap-3">
             <Switch value={false} onChange={() => {}} disabled={true} />
             <div className="flex flex-row items-center">
@@ -352,6 +357,29 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               <Tooltip
                 id="settings-typing-indicators-spaces-tooltip"
                 content={t`When on, everyone in a space channel sees when you're typing, and you see when they're typing.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              value={generateYouTubePreviews}
+              onChange={setGenerateYouTubePreviews}
+              disabled={!isConfigLoaded}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Generate YouTube previews`}
+              </div>
+              <Tooltip
+                id="settings-generate-youtube-previews-tooltip"
+                content={t`When on, your device fetches thumbnails from YouTube for the links you send, which reveals your IP to Google. When off, recipients see a plain link instead.`}
                 place="bottom"
               >
                 <Icon

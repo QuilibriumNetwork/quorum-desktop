@@ -32,6 +32,8 @@ export interface UseUserSettingsReturn {
   setTypingIndicatorsDM: (value: boolean) => void;
   typingIndicatorsSpaces: boolean;
   setTypingIndicatorsSpaces: (value: boolean) => void;
+  generateYouTubePreviews: boolean;
+  setGenerateYouTubePreviews: (value: boolean) => void;
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
@@ -66,6 +68,7 @@ export const useUserSettings = (
   const [readReceipts, setReadReceipts] = useState(false);
   const [typingIndicatorsDM, setTypingIndicatorsDM] = useState(false);
   const [typingIndicatorsSpaces, setTypingIndicatorsSpaces] = useState(false);
+  const [generateYouTubePreviews, setGenerateYouTubePreviews] = useState(false);
   const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
@@ -106,6 +109,7 @@ export const useUserSettings = (
         setReadReceipts(config?.readReceipts ?? false);
         setTypingIndicatorsDM(config?.typingIndicatorsDM ?? false);
         setTypingIndicatorsSpaces(config?.typingIndicatorsSpaces ?? false);
+        setGenerateYouTubePreviews(config?.generateYouTubePreviews ?? false);
         setBio(config?.bio ?? '');
         setSpaceTagId(config?.spaceTagId ?? undefined);
         const loadedNames = config?.deviceNames ?? {};
@@ -305,6 +309,7 @@ export const useUserSettings = (
       readReceipts,
       typingIndicatorsDM,
       typingIndicatorsSpaces,
+      generateYouTubePreviews,
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
@@ -375,6 +380,8 @@ export const useUserSettings = (
     setTypingIndicatorsDM,
     typingIndicatorsSpaces,
     setTypingIndicatorsSpaces,
+    generateYouTubePreviews,
+    setGenerateYouTubePreviews,
     spaceTagId,
     setSpaceTagId,
     saveChanges,
