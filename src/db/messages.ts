@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote } from '@quilibrium/quorum-shared';
+import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
@@ -57,6 +57,8 @@ export type UserConfig = {
   name?: string;                    // User's display name (synced from profile)
   profile_image?: string;           // User's profile image as data URI (synced from profile)
   bio?: string;                     // User's bio/description (local-only for now)
+  isProfilePublic?: boolean;        // Whether the user's profile is discoverable; mirror of shared UserConfig.
+  farcasterLink?: FarcasterLink;    // Bidirectional FC ↔ Quorum identity link; mirror of shared UserConfig.
   spaceKeys?: {
     spaceId: string;
     encryptionState: {
