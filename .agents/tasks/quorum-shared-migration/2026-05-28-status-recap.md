@@ -47,17 +47,9 @@ Don't migrate these. They're tightly coupled to one platform's storage, crypto, 
 - MessageService (~2000 lines, deeply coupled)
 - ConfigService, EncryptionService, SpaceService, InvitationService, SyncService, NotificationService, ActionQueueHandlers
 
-## What I checked in mobile today (2026-05-28)
-
-Quick scan of the live `quorum-mobile` source. Not a full audit, just enough to confirm mobile codebase is real and reachable:
-
-- **`hooks/`** — 17 files. Almost entirely platform stuff (theme, color scheme, network, animations, Farcaster). Only ~3 share concerns with desktop's business hooks (`useUserConfig.ts`, `useFarcaster*`). Mobile clearly hasn't built out its own copy of desktop's 265-file hook tree.
-- **`services/`** — mobile has `api`, `config`, `crypto`, `media`, `miniapp`, `notifications`, `offline`, `onboarding`, `space`, `storage`. Roughly the same shape as desktop but smaller. No `actionQueue` folder visible. No `search` folder visible.
-- **`@quilibrium/quorum-shared@2.1.0`** in mobile vs **`2.1.0-16`** in desktop. Mobile is one minor behind. Not blocking.
-
-**Key takeaway from the scan:** mobile is *less built out* than I'd assumed. Many "duplicated" implementations the old design docs feared are probably **not duplicated** because mobile hasn't shipped them yet. This means more of the pending work might be "promote desktop's design to shared, mobile catches up later" rather than "negotiate between two existing designs."
-
 ## What I'd suggest as the next 2-3 sessions
+
+> **⚠️ Superseded — see "Evening update" below.** This was the morning's menu, based on a stale snapshot of mobile (working tree on a Jan 14 commit). By end of day, Option 1 shipped completely, the underlying assumptions about mobile turned out to be wrong (mobile is *more* built out than the morning thought, not less), and the recommendation has been replaced. Skip ahead to "Evening update" for the current state and the real next-session recommendation.
 
 **Not asking you to decide now — just laying out the menu.**
 

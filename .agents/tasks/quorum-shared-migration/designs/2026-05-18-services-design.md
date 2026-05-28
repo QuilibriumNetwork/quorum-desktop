@@ -11,7 +11,7 @@ related_docs:
 related_tasks:
   - .agents/tasks/quorum-shared-migration/2026-05-18-typing-shared-migration.md
   - .agents/tasks/quorum-shared-migration/2026-05-19-receipts-shared-migration.md
-  - .agents/tasks/quorum-shared-migration/designs/2026-03-19-hooks-design.md
+  - .agents/tasks/quorum-shared-migration/designs/2026-05-28-hooks-audit-refresh.md
   - .agents/tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md
 ---
 

@@ -34,7 +34,7 @@ quorum-shared-migration/
 │
 ├── designs/                                   ← audits, inventories, decision rationale
 │   ├── 2026-03-18-utils-design.md             (utils audit — migration done)
-│   ├── 2026-03-19-hooks-design.md             (hooks audit — needs refresh against live mobile)
+│   ├── 2026-05-28-hooks-audit-refresh.md      (hooks audit — current authoritative version)
 │   └── 2026-05-18-services-design.md          (per-service audit — partial migration ongoing)
 │
 ├── 2026-03-15-stacked-prs-workflow.md         ← older stacked-PR doc (secondary; use the 2026-05-28 workflow as primary)
@@ -71,7 +71,7 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | Notification types rename to `Space*` prefix + desktop dedup against shared | Types | ✅ Done (2026-05-28) | quorum-shared PR #18, quorum-desktop PR #160. Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
 | Per-space notification sync (desktop ↔ mobile) | Feature | ⏸️ Awaiting lead-dev confirmation on architecture | GitHub issue draft: [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
 | `NavItem.icon`/`.color` structural alignment | Types | ⏸️ Mobile uses only space-variant items (no folder UI yet); deferred until mobile builds folders | [2026-05-27-shared-vs-local-type-divergence.md](2026-05-27-shared-vs-local-type-divergence.md) |
-| Hooks (~265 hook files) | Logic | ⏸️ Audit needs refresh against the 2026-05-28 mobile public-repo dump (massive new files added) | [designs/2026-03-19-hooks-design.md](designs/2026-03-19-hooks-design.md) |
+| Hooks (276 hook files) | Logic | 🟢 Audit refreshed 2026-05-28. Next session: pick one small candidate from [2026-05-28-hooks-migration-next-pr-candidates.md](2026-05-28-hooks-migration-next-pr-candidates.md). | [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md) |
 | ActionQueueService | Service | ⏸️ Re-evaluate after mobile public-repo dump (2026-05-28); previously "no actionQueue folder on mobile" — verify still true | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §4 |
 | SearchService + SearchAdapter | Service | ⏸️ Re-evaluate after mobile public-repo dump (2026-05-28) | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §3 |
 | channelThreadHelpers | Helpers | ⏸️ Re-evaluate after mobile public-repo dump (2026-05-28) | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §5 |
@@ -89,11 +89,18 @@ State as of 2026-05-28 evening:
 - **Notifications track is now PAUSED** awaiting lead-dev confirmation. Discovery during the work: mobile has a fundamentally different notification preference architecture (local MMKV, three-level on/off tree, gates iOS NSE) than desktop (`UserConfig`-synced per-space settings with granular trigger filtering). Convergence is possible — verified to be small (~50 LOC mobile-side, no new shared types). But it's a design decision the lead owns. GitHub issue drafted at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md), to be filed against `quorum-mobile`. Full investigation: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md).
 - **Mobile got a massive public-repo dump on 2026-05-28** (commit `98d59a4`, "catching up public repo" by Cassandra Heart). Many earlier "blocked on mobile access" entries need re-evaluation against the new public state — what looked greenfield in March may have shipped on mobile since.
 
-**Recommended next move (when notifications gets a lead reply OR if we want to advance other tracks):**
+**Recommended next move:**
 
-The cleanest next workstream is **refreshing the hooks audit** against the current mobile public state. The original [hooks design doc](designs/2026-03-19-hooks-design.md) was written against a March mobile snapshot; the new public dump likely changes what's portable, what's duplicated, and what's already done. Refreshing the audit is 1 session of read-only analysis, no code, and sets up the next round of migration work cleanly.
+The hooks audit has been refreshed: [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md). Headline findings:
+- The `StorageAdapter` + `CryptoProvider` interfaces the March audit said were a blocker **already exist** in shared and are implemented on both platforms.
+- Mobile has **67 hooks** (not 17 as the morning recap thought) — full parallel implementations of `useChannelManagement`, `useRoleManagement`, `useUserKicking`, `useInviteManagement`.
+- Mobile structures business hooks as **thin TanStack mutation wrappers over stateless services**; desktop's monolithic-form-state pattern is NOT directly portable. Shared APIs should follow mobile's split-mutation shape (per the workflow's "follow mobile patterns" rule).
 
-**Alternative:** advance the smaller services (`ActionQueueService`, `SearchService`, `channelThreadHelpers`) — but only after verifying their current mobile state. Mobile may have built them already, or built parallel versions that look nothing like desktop's. Don't assume the old design docs are still accurate.
+The audit originally recommended migrating Category A2 query helpers as the first PR. That recommendation has been **withdrawn** (see the audit's "Withdrawn original recommendation" block) — desktop's `buildKey` factories conflict with shared's existing `queryKeys`, the fetchers reference desktop-specific `MessageDB`, and the invalidate hooks aren't a pattern mobile uses.
+
+**The actual next session task:** [2026-05-28-hooks-migration-next-pr-candidates.md](2026-05-28-hooks-migration-next-pr-candidates.md). Lists 3-5 narrow candidates (`useConfirmation`, validation hooks, `useKickConfirmation` extraction) with explicit verification questions for each. Goal: ship ONE small verified PR, or document why none passed verification.
+
+**Alternative:** advance the smaller services (`ActionQueueService`, `SearchService`, `channelThreadHelpers`) — but only after verifying their current mobile state. Mobile may have built parallel versions that look nothing like desktop's; the audit flagged mobile's `services/offline/mutationQueue.ts` as a real two-implementation case for ActionQueueService.
 
 ## What unblocks the rest
 
@@ -167,7 +174,9 @@ The mobile repo is a partially-public mirror, not the live internal dev tree. **
 
 ---
 
-*Last updated: 2026-05-28 (evening) — three PRs shipped this session: quorum-desktop #159 (UserConfig mirror catch-up for `isProfilePublic`/`farcasterLink`), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` prefix rename + desktop dedup against shared). Notifications track now PAUSED on lead-dev direction — full architecture investigation at [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md), GitHub issue draft at [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Also discovered the mobile public-repo had a massive 2026-05-28 catch-up dump (`98d59a4`) — the older design docs need refreshing against the new mobile state before driving more migration work. Status table refreshed to reflect this; "Next up" rewritten.*
+*Last updated: 2026-05-28 (late) — hooks audit refreshed against mobile `origin/master` (`98d59a4`) and shared `origin/master` (`fbbd48c`). Headline: the `StorageAdapter`/`CryptoProvider` abstractions the March audit said were blockers already exist; mobile has 67 hooks (not 17); shared API design should follow mobile's split-mutation pattern. The audit's first-PR recommendation (A2 query helpers) was withdrawn after spot-checking revealed type-coupling and casing conflicts with shared's existing `queryKeys`. Focused next-session task at [2026-05-28-hooks-migration-next-pr-candidates.md](2026-05-28-hooks-migration-next-pr-candidates.md) lists 3-5 narrow candidates to verify and ship one small PR.*
+
+*Previously: 2026-05-28 (evening) — three PRs shipped this session: quorum-desktop #159 (UserConfig mirror catch-up for `isProfilePublic`/`farcasterLink`), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` prefix rename + desktop dedup against shared). Notifications track now PAUSED on lead-dev direction — full architecture investigation at [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md), GitHub issue draft at [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Also discovered the mobile public-repo had a massive 2026-05-28 catch-up dump (`98d59a4`) — the older design docs need refreshing against the new mobile state before driving more migration work. Status table refreshed to reflect this; "Next up" rewritten.*
 
 *Previously: 2026-05-28 (morning) — mobile codebase access verified, upstream `quorum-shared` pulled (Farcaster module + new UserConfig fields landed). Status table updated, "Upstream changes 2026-05-28" section added, recap doc at [2026-05-28-status-recap.md](2026-05-28-status-recap.md).*
 
