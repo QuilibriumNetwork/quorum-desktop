@@ -1,10 +1,15 @@
 ---
 type: task
 title: Investigate and fix structural type divergence between quorum-shared and quorum-desktop
-status: in-progress
+status: partial-done
 created: 2026-05-27
 updated: 2026-05-28
 priority: high
+resolution_summary: |
+  NotificationSettings — DONE via quorum-shared#18 (Space* rename) + quorum-desktop#160 (dedup). Desktop now re-exports from shared.
+  Cross-device sync of notification prefs — moved to lead-dev decision; see reports/2026-05-28-notification-architecture-divergence.md and the GitHub issue draft in .temp/. Discovery: mobile uses a fundamentally different architecture (MMKV-based, not UserConfig-synced), not just a different shape.
+  NavItem — DEFERRED. Mobile has no folder UI yet (constructs only space-variant items), so the desktop icon/color literal types don't conflict in practice. Revisit when mobile builds folders.
+  UserNote — DONE in PR #17 (earlier).
 ---
 
 # Investigate and fix structural type divergence between quorum-shared and quorum-desktop
@@ -57,7 +62,7 @@ Structurally identical. Not a real divergence, just a stylistic difference (name
 
 ## Why didn't earlier migration work surface this?
 
-The user (Kyn) noted this is surprising because we did extensive analysis during prior `quorum-shared` migration work and nothing like this surfaced. Possible explanations:
+This is surprising because extensive analysis was done during prior `quorum-shared` migration work and nothing like this surfaced. Possible explanations:
 
 1. **Earlier migrations focused on *adding* shared types and consumers, not *replacing* local duplicates.** Adding doesn't fail at the type level because TypeScript happily allows two definitions of the same name in different modules. Drift only surfaces when you try to dedupe.
 
@@ -71,7 +76,7 @@ The user (Kyn) noted this is surprising because we did extensive analysis during
 
 ### Phase 0: investigation (read-only, no code change)
 1. Check mobile's actual usage of `notificationSettings`: does mobile read this field? What shape does it expect? `git grep` in `quorum-mobile`.
-2. Check on-wire JSON: dump a real synced config from production (Kyn's account) and inspect the shape of `notificationSettings` actually present in the encrypted blob.
+2. Check on-wire JSON: dump a real synced config from production and inspect the shape of `notificationSettings` actually present in the encrypted blob.
 3. Confirm whether the divergence is latent (mobile ignores) or active (mobile misreads).
 
 ### Phase 1: pick the canonical shape per type
@@ -135,7 +140,7 @@ Inspected via local clone of `quorum-mobile` (commit at the time of investigatio
 - **No mobile UI consumer reads any specific field** (`enabled`, `mentions`, `replies`, `all` — or desktop's `isMuted`, `enabledNotificationTypes`). It's scaffolding only.
 - The fallback shape `{ enabled: true }` matches the placeholder shared type, suggesting mobile's hook was written against the shared type without an actual UI design behind it.
 
-**Implication**: there is NO active cross-device sync bug today. Mobile doesn't have a notifications UI yet (per Kyn's recollection — needs verification against the latest mobile build, which Kyn doesn't currently have access to).
+**Implication**: there is NO active cross-device sync bug today. Mobile doesn't have a notifications UI yet (per recollection — needs verification against the latest mobile build, which is not currently accessible).
 
 ### Desktop usage of `NotificationSettings` (this codebase)
 
@@ -186,7 +191,7 @@ While the `notificationSettings` decision is blocked, the following structural f
 
 *Created: 2026-05-27 — uncovered during YouTube previews toggle work. Reverted dedup attempt because NavItem and NotificationSettings shapes diverge structurally, not just on field presence. Needs dedicated investigation before any cleanup.*
 
-*Updated: 2026-05-27 (Phase 0) — confirmed desktop's NotificationSettings is fully shipped production code; mobile's is scaffolding-only. Recommendation is to promote desktop's shape to shared, but blocked on mobile codebase access (Kyn needs latest mobile build to verify no newer UI exists).*
+*Updated: 2026-05-27 (Phase 0) — confirmed desktop's NotificationSettings is fully shipped production code; mobile's is scaffolding-only. Recommendation is to promote desktop's shape to shared, but blocked on mobile codebase access (needs latest mobile build to verify no newer UI exists).*
 
 *Updated: 2026-05-27 (Phase 1 — unblocked work) — three small wins shipped on this branch:*
 - *`UserNote` dedup done. Lifted the inline object type in `UserConfig.userNotes` to a named `UserNote` export in `quorum-shared` (2.1.0-16, PR #17). Desktop now imports and re-exports it instead of maintaining a duplicate interface.*
@@ -199,7 +204,7 @@ While the `notificationSettings` decision is blocked, the following structural f
 
 ## Phase 0 confirmation (2026-05-28) — mobile codebase access unblocked
 
-Kyn now has the latest `quorum-mobile` cloned locally at `D:\GitHub\Quilibrium\quorum-mobile`. Re-ran the Phase 0 grep against the real current source. Results below.
+The latest `quorum-mobile` is now cloned locally at `D:\GitHub\Quilibrium\quorum-mobile`. Re-ran the Phase 0 grep against the real current source. Results below.
 
 ### Shared package versions (current)
 - Desktop has `@quilibrium/quorum-shared@2.1.0-16` (from PR #17, with `UserNote` lift)
@@ -288,3 +293,34 @@ Shared changes are backward-wire-compatible (the shape was already what desktop 
 ---
 
 *Updated: 2026-05-28 — mobile codebase access unblocked. Re-ran Phase 0 grep against live `quorum-mobile` source. Confirmed: zero UI consumers of `notificationSettings` or `NavItem.icon`/`.color` on mobile. Both blockers cleared. Action plan above is executable.*
+
+---
+
+## What actually happened (2026-05-28 evening)
+
+The plan above shipped, but with corrections discovered along the way:
+
+### Shipped
+
+1. **`UserNote`** — already done in PR #17 (March 2026). No further work needed.
+2. **Notification settings dedup** — shipped as:
+   - **quorum-shared#18** — `Space*` prefix rename. Investigation surfaced that the *real* `NotificationSettings` types had been in shared all along (commit `e9ef224` from March, during the utils migration prep). The "placeholder" `NotificationSettings` in `user.ts` is vestigial. The actual settings types lived under different filenames in `quorum-shared/src/types/notifications.ts` and were renamed to be more accurate about their per-space scope (`SpaceNotificationSettings`, `SpaceNotificationTypeId`, `SpaceNotificationSettingOption`). `ReplyNotification` kept its name (it's an event payload, not a settings type).
+   - **quorum-desktop#160** — desktop's `src/types/notifications.ts` is now a re-export shim from shared. 21+ consumer files keep working unchanged.
+   - **No mobile PR opened** — verified mobile doesn't import any of the renamed symbols. Per the cross-repo workflow doc's Pattern B (breaking shared change with zero mobile consumers), no mobile PR is needed.
+3. **`UserConfig` mirror catch-up** (`isProfilePublic`, `farcasterLink`) — shipped as quorum-desktop#159 (separate warm-up PR).
+
+### Deferred or moved
+
+- **`NavItem.icon`/`.color`** — mobile only ever constructs `{ type: 'space', id }` items (no folder UI). Desktop's stricter `IconName`/`IconColor` literal types don't actually conflict in practice. **Deferred** — revisit when mobile builds folder UI.
+- **Legacy `NotificationSettings` placeholder in `user.ts`** — left in place. Removing it would touch `UserConfig.notificationSettings`'s declared inner type, which is the surface the lead-dev needs to decide architecture on. Pre-emptively removing it now risks conflicting with whatever direction comes back.
+
+### Big architectural discovery (NEW WORK, not part of this task's original scope)
+
+Once mobile code was readable, it became clear desktop and mobile have **fundamentally different notification preference architectures**, not just different shapes:
+
+- Desktop's per-space prefs live in `UserConfig.notificationSettings[spaceId]` (synced)
+- Mobile's per-space prefs live in local-only MMKV (intentional: the iOS NSE reads MMKV, can't access JS state at notification time)
+
+A cross-device sync of per-space mute is small in code terms (~50 LOC on mobile to bridge `UserConfig` ↔ MMKV) but is a real architectural decision the lead owns. Full investigation at [`reports/2026-05-28-notification-architecture-divergence.md`](../reports/2026-05-28-notification-architecture-divergence.md). GitHub issue drafted at [`../.temp/2026-05-28-notification-prefs-github-issue.md`](../.temp/2026-05-28-notification-prefs-github-issue.md).
+
+This is no longer this task's problem — it's tracked as a separate "Notifications preference sync" open follow-up in the migration README.

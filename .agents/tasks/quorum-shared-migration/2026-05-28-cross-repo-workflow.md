@@ -1,23 +1,23 @@
 ---
 type: reference
-title: Cross-repo PR workflow when Kyn can't merge mobile PRs
+title: Cross-repo PR workflow when mobile PRs need a different reviewer
 status: reference
 created: 2026-05-28
-audience: Kyn + future agents
+audience: future agents working on this migration
 ---
 
 # Cross-repo PR workflow for the quorum-shared migration
 
-> **The constraint that shapes everything:** Kyn merges his own PRs on `quorum-desktop` and `quorum-shared`, but `quorum-mobile` PRs go to the lead dev for review and merge. Lead is busy; mobile PRs can sit for weeks. This doc is how we work around that without blocking ourselves.
+> **The constraint that shapes everything:** PRs on `quorum-desktop` and `quorum-shared` are self-merged, but `quorum-mobile` PRs go to the lead dev for review and merge. The lead is busy; mobile PRs can sit for weeks. This doc is how we work around that without blocking ourselves.
 
 ## The mental model
 
 Three independent streams that occasionally touch:
 
 ```
-quorum-shared:    [Kyn pushes] → [Kyn merges] → [Kyn publishes]
-quorum-desktop:   [Kyn pushes] → [Kyn merges]
-quorum-mobile:    [Kyn pushes] → [lead reviews] → [lead merges]   ← potential bottleneck
+quorum-shared:    [push] → [self-merge] → [optionally publish]
+quorum-desktop:   [push] → [self-merge]
+quorum-mobile:    [push] → [lead reviews] → [lead merges]   ← potential bottleneck
 ```
 
 **The bottleneck only matters for work that has to ship on mobile.** Most migration work doesn't — mobile is usually the bystander, catching up to types/services that already shipped on shared and desktop. Notifications is the canonical example: shared and desktop ship the user-visible win, mobile catches up whenever it catches up.
@@ -37,8 +37,8 @@ Concrete sizing rule: **one job per PR**, ideally <50 lines diff. The smaller th
 
 For each cross-repo migration (e.g. `NotificationSettings` alignment):
 
-1. **Shared PR first.** Push to `quorum-shared`, open PR, Kyn merges, publish new version.
-2. **Desktop PR next.** Bumps shared dep to the new version, does the desktop-side dedup. Kyn merges.
+1. **Shared PR first.** Push to `quorum-shared`, open PR, self-merge, optionally publish new version.
+2. **Desktop PR next.** Bumps shared dep to the new version, does the desktop-side dedup. Self-merged.
 3. **Mobile PR last.** Bumps shared dep, does the mobile-side cleanup. Lead reviews and merges *whenever*.
 
 **Why mobile last:** if mobile is the bottleneck, you don't want shared or desktop sitting behind it. Mobile lagging is the *expected* state, not the failure state.
@@ -197,7 +197,7 @@ The second paragraph is the more important question — there's a real chance th
 
 ## Mobile testing constraint: we don't run the mobile app
 
-> **Hard rule established 2026-05-28:** Kyn does NOT run/test the mobile app as part of normal migration work. He *can* (Expo dev build is available locally), but it's time-consuming and not part of the default loop.
+> **Hard rule established 2026-05-28:** The mobile app is NOT run or tested as part of normal migration work. An Expo dev build is available locally if needed, but it's time-consuming and not part of the default loop.
 
 This shapes which mobile PRs are safe to open:
 
@@ -237,6 +237,64 @@ This is time-consuming (15-60 min for setup + test). **For migration work, prefe
 When picking next steps, **prefer mobile PRs that are statically verifiable.** Mobile PRs that require runtime testing become long-tail work — they get done when there's specific time allocated for mobile testing, not as part of the migration's normal flow.
 
 For each migration, ask early: *"What's the smallest possible mobile-side change here?"* If the answer involves "delete dead code" or "bump dep + adapt to additive type changes", that's a good migration to pick. If the answer involves "rewrite this hook's runtime behavior", deprioritize unless mobile UI work is the actual goal.
+
+## Patterns that already exist in mobile: follow, don't disrupt
+
+> **Rule established 2026-05-28:** Mobile is mostly written by the lead dev. They have an established style, structure, and set of patterns. When mobile has already shipped a working implementation of something we're about to design for shared, **the mobile pattern is the starting point**, not the desktop pattern.
+
+### Why this matters
+
+Desktop and mobile are *not* equal partners in shared. The lead is the primary mobile committer; they pull desktop's improvements into shared at their cadence. If shared's API doesn't match how mobile already structures things, the lead has to refactor mobile to adopt the migration — which is friction we want to avoid.
+
+The asymmetry runs in the other direction too: when desktop ships first and mobile catches up, we're in our own territory and can shape the API however we want. But when mobile got there first, **assume their shape is the canonical one** unless we have a strong technical reason to deviate.
+
+### Decision rule for shared API design
+
+When designing a shared module that will replace existing desktop code, **before writing any shared code**:
+
+1. **Check whether mobile already has a working implementation** of the same thing.
+   - `git fetch origin && git ls-tree -r origin/master --name-only | grep -i <feature>`
+   - Look at types, function signatures, storage shape, naming.
+
+2. **If mobile has it**:
+   - Default: shape the shared API to match mobile's pattern. Adapt desktop's code to fit.
+   - Only deviate if there's a concrete technical reason (mobile's pattern has a bug, or it's blocking something we need). Document the reason in the migration task.
+   - Don't propose mobile-side refactors as part of a desktop-driven migration unless we're also delivering a clear improvement that justifies the lead's review time.
+
+3. **If mobile doesn't have it yet**:
+   - Free to design shared around desktop's existing pattern.
+   - Note this is the "desktop ships first" case — mobile will catch up later, on their schedule.
+
+### Don't decide for the lead by assuming work is "not worth it"
+
+A common failure mode: a feature exists on one platform but not the other, and we conclude "mobile would have to build it, so let's skip." That's a decision the lead should make, not us.
+
+The right framing is: **surface the asymmetry as a question, not a recommendation.**
+
+- ❌ "Mobile doesn't have granular notification filtering, so we'll keep that desktop-only."
+- ✅ "Desktop has granular notification filtering; mobile doesn't. Want mobile to add it, want desktop to drop it, or want the asymmetry to stay?"
+
+The lead may say "yes, mobile will add it eventually." They may say "yes, drop it from desktop." They may say "the asymmetry is fine." All three are valid; we don't know which without asking.
+
+Implementation cost on the other platform is NEVER a reason to drop a question from the issue. It's the lead's call whether the cost is worth it.
+
+### What "real implementation optimization" looks like
+
+Not every divergence between desktop and mobile is grounds for changing mobile. Examples of when it IS worth proposing a change to mobile's pattern:
+
+- **Demonstrable bug** in mobile's current shape (data loss, sync inconsistency, race condition) — ship the fix in shared, mobile PR brings mobile in line.
+- **Mobile pattern blocks a feature** we need to ship that requires cross-platform consistency.
+- **Mobile pattern violates a wire-format invariant** — e.g. mobile writes a slightly different shape than desktop reads, causing sync mismatch in production.
+
+When in doubt, **ask the lead async** before designing around mobile's pattern. A 30-second message ("you have X in mobile that does Y — is the shape fixed or open to change?") saves days of redesign later.
+
+### The 2026-05-28 example
+
+The notifications investigation discovered late in the process that mobile has a fundamentally different notification storage model than desktop:
+- **Desktop**: per-space settings in `UserConfig.notificationSettings[spaceId]` with `enabledNotificationTypes[]`, synced cross-device.
+- **Mobile**: global/per-space/per-channel toggles in dedicated MMKV (`notificationPrefs.ts`), iOS NSE for lock-screen suppression, NOT synced via `UserConfig`.
+
+Earlier sessions wrote explainer docs assuming we'd "promote desktop's `NotificationSettings` shape to shared." That would have been wrong — mobile doesn't use the desktop model at all, and forcing it would mean asking the lead to rewire mobile's whole notification system to consume desktop's shape. Following this rule, the real shared migration question is "does shared need notification types at all, or do desktop and mobile keep parallel implementations indefinitely?" — open question, separate investigation.
 
 ## The most important rule: additive vs. breaking changes in shared
 
@@ -356,7 +414,7 @@ Does the change require a new type/function/service in @quilibrium/quorum-shared
     │   └── YES → Shared PR alone. No consumer changes needed.
     │
     └── Is the change consumer-only (using existing shared API)?
-        ├── Desktop only → Desktop PR, Kyn merges. Done.
+        ├── Desktop only → Desktop PR, self-merge. Done.
         ├── Mobile only → Mobile PR, lead reviews. Done (eventually).
         └── Both consumers → Open both PRs in parallel; they're independent.
 ```
@@ -377,12 +435,12 @@ To make this concrete, here's how the upcoming `NotificationSettings` alignment 
 
 | Step | Repo | Action | Reviewer | Status when done |
 |---|---|---|---|---|
-| 1 | shared | Replace placeholder `NotificationSettings` + add `NotificationTypeId` | Kyn self-review | ✅ merged, version bumped, published |
-| 2 | desktop | Bump shared dep, replace local types with re-exports from shared | Kyn self-review | ✅ merged |
+| 1 | shared | Replace placeholder `NotificationSettings` + add `NotificationTypeId` | self-review | ✅ merged, version bumped, published |
+| 2 | desktop | Bump shared dep, replace local types with re-exports from shared | self-review | ✅ merged |
 | 3 | mobile | Bump shared dep, delete or fix dead `useNotificationSettings` hook | Lead | 🟡 PR opened |
 
-**Total active work for Kyn:** steps 1 and 2 (~30-60 minutes combined). Step 3 is a 5-line mobile PR that ships when the lead gets to it. If lead never gets to it, nothing breaks — the user-visible migration already shipped via steps 1 and 2.
+**Total active work:** steps 1 and 2 (~30-60 minutes combined). Step 3 is a 5-line mobile PR that ships when the lead gets to it. If the lead never gets to it, nothing breaks — the user-visible migration already shipped via steps 1 and 2.
 
 ---
 
-*Created 2026-05-28 — written after Kyn flagged the realistic worry that mobile PRs sit unreviewed while the lead keeps pushing. Documents the workflow we'll use for the rest of the quorum-shared migration. Designed to be re-read at the start of any new migration session.*
+*Created 2026-05-28 — written after a realistic worry surfaced about mobile PRs sitting unreviewed while the lead keeps pushing. Documents the workflow for the rest of the quorum-shared migration. Designed to be re-read at the start of any new migration session.*

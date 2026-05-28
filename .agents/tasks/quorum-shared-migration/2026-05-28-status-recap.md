@@ -3,7 +3,7 @@ type: status-recap
 title: Quorum-shared migration — status recap (mobile access regained)
 status: reference
 created: 2026-05-28
-audience: Kyn (re-orienting after a break)
+audience: future agents re-orienting after a break
 ---
 
 # Where we are with the quorum-shared migration
@@ -94,7 +94,7 @@ This sequencing minimizes the chance of you losing track again — each session 
 
 ## Addendum (2026-05-28, same session): upstream `quorum-shared` also has new work
 
-After writing the recap above, Kyn flagged that the `quorum-shared` repo had probably been updated too. Verified by fetching `origin/master` on the local `quorum-shared` clone — confirmed **3 new commits ahead of local**:
+After writing the recap above, a question surfaced about whether the `quorum-shared` repo had also been updated. Verified by fetching `origin/master` on the local `quorum-shared` clone — confirmed **3 new commits ahead of local**:
 
 1. `2.1.0-2` version bump + small sync utility changes.
 2. **Big rollup commit** — adds a complete `src/farcaster/` module (16 files: hypersnap client, legacy fallback, signers, 11 React Query hooks for Farcaster casts/feeds/profiles), plus two new `UserConfig` fields: `isProfilePublic?: boolean` and `farcasterLink?: FarcasterLink` (new type).
@@ -127,6 +127,6 @@ This brings your local shared clone up to date and refreshes the `link:` symlink
 
 ---
 
-*Created: 2026-05-28 — after Kyn cloned latest quorum-mobile locally. Written as a re-orientation aid, not a decision document.*
+*Created: 2026-05-28 — after pulling latest quorum-mobile locally. Written as a re-orientation aid, not a decision document.*
 
-*Addendum 2026-05-28 (same session) — after Kyn flagged upstream shared activity. Confirmed 3 new commits on shared `origin/master` including the major Farcaster module addition and two new `UserConfig` fields. Notifications migration plan unaffected; one small desktop mirror catch-up added to the menu.*
+*Addendum 2026-05-28 (same session) — after upstream shared activity surfaced. Confirmed 3 new commits on shared `origin/master` including the major Farcaster module addition and two new `UserConfig` fields. Notifications migration plan unaffected; one small desktop mirror catch-up added to the menu.*
