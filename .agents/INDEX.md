@@ -32,6 +32,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Mention Pills UI System](docs/features/mention-pills-ui-system.md)
+- [Message Search Feature](docs/features/search-feature.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute Conversation System](docs/features/mute-conversation-system.md)
@@ -52,7 +53,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [User Config Sync on Existing Accounts](docs/features/user-config-sync.md)
 - [User Data Backup & Restore](docs/features/user-data-backup.md)
 - [User Notes](docs/features/user-notes.md)
-- [Message Search Feature](docs/features/search-feature.md)
 
 ### Features / Messages
 - [Auto-Jump to First Unread Message](docs/features/messages/auto-jump-first-unread.md)
@@ -68,6 +68,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Preview Rendering](docs/features/messages/message-preview-rendering.md)
 - [Message Sending Indicator](docs/features/messages/message-sending-indicator.md)
 - [Message Signing System](docs/features/messages/message-signing-system.md)
+- [Message-list scroll anchoring](docs/features/messages/scroll-anchoring.md)
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
 - [New Messages Separator](docs/features/messages/new-messages-separator.md)
 - [Pinned Messages Feature](docs/features/messages/pinned-messages.md)
@@ -92,25 +93,43 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
-- [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/display-name-input-layout-shift-on-error.md)
-- [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
-- [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
-- [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
-- [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
-- [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
-- [Kick User Button Remains Enabled After User is Kicked](bugs/kick-user-button-state-after-kick.md)
-- [Markdown Line Break Inconsistency](bugs/markdown-line-break-inconsistency.md)
-- [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
-- [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
-- [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
-- [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
-- [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
-- [Safari Passkey Session Loss - Random Logout on Browser Restart](bugs/safari-passkey-session-loss-random-logout.md)
-- [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
-- [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/userprofile-modal-positioning-viewport-boundary.md)
+- [Pinned Messages Panel Button Clicks Bug](bugs/2025-01-08-pinned-messages-panel-clicks-and-message-list-disappearing.md)
+- [Markdown Line Break Inconsistency](bugs/2025-01-21-markdown-line-break-inconsistency.md)
+- [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/2025-08-03-joinspacemodal-invalid-json-network-error.md)
+- [Message Hash Navigation Conflict Bug](bugs/2025-08-03-message-hash-navigation-conflict.md)
+- [Modal Gesture Handling Technical Debt](bugs/2025-08-10-modal-gesture-handling-technical-debt.md)
+- [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/2025-08-21-messagedb-cross-platform-storage-issue.md)
+- [Kick User Button Remains Enabled After User is Kicked](bugs/2025-09-16-kick-user-button-state-after-kick.md)
+- [Public Invite Link Intermittent Expiration Bug](bugs/2025-09-22-public-invite-link-intermittent-expiration.md)
+- [Expired Invite Card Validation Timing Issue](bugs/2025-11-09-expired-invite-card-validation-timing.md)
+- [Encryption State Evals Causing Config Sync Bloat](bugs/2025-12-09-encryption-state-evals-bloat.md)
+- [Config Sync Space Loss Race Condition](bugs/2026-01-09-config-sync-space-loss-race-condition.md)
+- [DirectMessage Invite Loading Performance Issue](bugs/2026-01-09-directmessage-invite-loading-performance.md)
+- [Safari Passkey Session Loss - Random Logout on Browser Restart](bugs/2026-01-09-safari-passkey-session-loss-random-logout.md)
+- [Space Owner Privacy Limitation](bugs/2026-01-09-space-owner-privacy-limitation.md)
+- [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/2026-01-09-userprofile-modal-positioning-viewport-boundary.md)
+- [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/2026-04-14-display-name-input-layout-shift-on-error.md)
+- [Virtuoso measurement callback resets scrollTop on new messages](bugs/2026-05-24-virtuoso-measurement-scroll-reset.md)
 
 ### Solved Issues
+- [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
+- [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/2025-01-19-newdirectmessage-modal-url-to-state-conversion.md)
+- [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/2025-01-20-react-hooks-violation-conditional-return.md)
+- [Kick User UX Improvements](bugs/.solved/2025-01-30-kick-user-ux-improvements.md)
+- [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/2025-08-11-android-file-download-huawei-p9-lite.md)
+- [2025 09 09 Search Results Page Refresh And Focus Stealing](bugs/.solved/2025-09-09-search-results-page-refresh-and-focus-stealing.md)
+- [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/2025-11-11-auto-jump-unread-virtuoso-scroll-conflict.md)
+- [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/2025-11-12-new-messages-separator-intersection-observer-issues.md)
+- [Deleted Messages Reappear After Peer Sync](bugs/.solved/2025-12-18-deleted-messages-reappear-via-sync.md)
+- [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/2025-12-18-dm-send-fails-address-undefined.md)
+- [DM Shows "Unknown User" After Conversation Starts](bugs/.solved/2025-12-18-dm-unknown-user-identity-not-revealed.md)
+- [Offline Navigation Issues](bugs/.solved/2025-12-19-offline-navigation-issues.md)
+- [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/2025-12-19-websocket-processqueue-stuck-blocking-outbound.md)
+- [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/2025-12-20-action-queue-plaintext-private-keys.md)
+- [Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll](bugs/.solved/2026-01-05-message-scroll-jank-on-send.md)
+- [Bug: Mention Dropdown Not Showing When Typing Just `@` or `#`](bugs/.solved/2026-01-11-mention-dropdown-not-showing-on-empty-query.md)
+- [Vite + moment-timezone dual-instance prevents locale loading](bugs/.solved/2026-02-10-vite-moment-timezone-dual-instance-locale-bug.md)
+- [Thread replies leak into main chat feed on page reload](bugs/.solved/2026-03-09-thread-replies-leak-into-main-feed-on-reload.md)
 - [Thread-Aware Navigation: Panel Doesn't Open and Message Not Highlighted](bugs/.solved/2026-03-11-thread-aware-navigation-broken.md)
 - [Thread title not updating in UI after pressing Enter](bugs/.solved/2026-03-11-thread-title-enter-not-saving.md)
 - [Moderator thread deletion resurfaces after optimistic removal](bugs/.solved/2026-03-13-moderator-thread-delete-resurfaces.md)
@@ -126,49 +145,32 @@ This is the main index for all documentation, bug reports, and task management.
 - [No visual feedback when dragging files onto dropzone areas](bugs/.solved/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Profile sync not triggered after key import in new onboarding flow](bugs/.solved/2026-04-13-profile-sync-not-triggered-after-key-import.md)
-- [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
-- [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
-- [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
-- [Bug: Mention Dropdown Not Showing When Typing Just `@` or `#`](bugs/.solved/mention-dropdown-not-showing-on-empty-query.md)
-- [Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll](bugs/.solved/message-scroll-jank-on-send.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
-- [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
 - [DM "Mark All as Read" Context Menu - UI Not Updating Immediately](bugs/.solved/dm-mark-all-read-no-immediate-ui-update.md)
 - [DM Offline Navigation Shows Empty View](bugs/.solved/dm-offline-navigation-empty.md)
-- [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/dm-send-fails-address-undefined.md)
-- [DM Shows "Unknown User" After Conversation Starts](bugs/.solved/dm-unknown-user-identity-not-revealed.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
 - [FolderEditorModal Race Condition on Auto-Open After Folder Creation](bugs/.solved/folder-editor-modal-race-condition.md)
 - [Ghost Message Appears After Deleting a Message](bugs/.solved/ghost-message-after-delete.md)
-- [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
-- [Kick User UX Improvements](bugs/.solved/kick-user-ux-improvements.md)
 - [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/.solved/mobiledrawer-virtuoso-double-scroller.md)
-- [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/new-messages-separator-intersection-observer-issues.md)
-- [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
-- [Offline Navigation Issues](bugs/.solved/offline-navigation-issues.md)
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/.solved/usersettingsmodal-scalability-performance.md)
-- [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
-- [Solved Search Results Page Refresh And Focus Stealing](bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md)
-- [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/SOLVED_fast-refresh-export-incompatibility.md)
-- [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
-- [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
+- [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/fast-refresh-export-incompatibility.md)
+- [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/modal-navmenu-zindex-stacking.md)
+- [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/right-sidebar-overlay.md)
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
-- [Thread replies leak into main chat feed on page reload](bugs/.solved/SOLVED_thread-replies-leak-into-main-feed-on-reload.md)
-- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
+- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [Triple Ratchet State Save Destroys Template/Evals Fields](bugs/.solved/triple-ratchet-state-save-destroys-invite-fields.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
-- [Vite + moment-timezone dual-instance prevents locale loading](bugs/.solved/vite-moment-timezone-dual-instance-locale-bug.md)
-- [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### .Archived
+- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/.archived/2025-07-30-brave-browser-react-hook-errors.md)
+- [Space Owner Delete Permissions Bug](bugs/.archived/2025-09-11-space-owner-delete-permissions-bug.md)
+- [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/2025-11-11-auto-jump-unread-breaks-message-sync.md)
 - [Leave Space - No Loading Feedback and UI Not Refreshing](bugs/.archived/2026-03-18-leave-space-no-feedback.md)
-- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/.archived/brave-browser-react-hook-errors.md)
-- [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
+- [Message list scroll jank on send — Virtuoso scroll position drift](bugs/.archived/2026-03-19-message-list-scroll-jank-on-send.md)
 - [Bug: Tabler Icon Overlapping Stroke Artifact in Dropzone Circles](bugs/.archived/tabler-icon-overlapping-stroke-artifact.md)
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
-- [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
 
 ## 📋 Tasks
 
@@ -180,6 +182,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Invite with Role — Design](tasks/2026-04-20-invite-with-role-design.md)
 - [Invite with Role Implementation Plan](tasks/2026-04-20-invite-with-role-implementation.md)
+- [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
+- [Link Previews — Design Spec](tasks/2026-05-27-link-previews-design.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -231,13 +235,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread List Panel: "Created by me" Filter](tasks/.todo/2026-03-14-thread-list-created-filter.md)
 
 ### Messagedb
-- [MessageDB README](tasks/messagedb/README.md) — folder index + master action plan
-- [MessageDB Refactoring - Current State](tasks/messagedb/current-state.md)
-- [MessageService Deep Dive](tasks/messagedb/messageservice-deep-dive.md)
-- [Low/Medium Risk Optimization Opportunities](tasks/messagedb/optimizations-low-risk.md)
+- [handleNewMessage Decomposition — Reconsidered](tasks/messagedb/handleNewMessage-reconsidered.md)
 - [High-Risk Optimization Opportunities](tasks/messagedb/optimizations-high-risk.md)
-- [handleNewMessage Reconsidered](tasks/messagedb/handleNewMessage-reconsidered.md)
-- [Shared-Migration Cross-Check](tasks/messagedb/shared-migration-cross-check.md)
+- [Low/Medium Risk Optimization Opportunities](tasks/messagedb/optimizations-low-risk.md)
+- [MessageDB Refactor — Cross-Check Against quorum-shared Architecture](tasks/messagedb/shared-migration-cross-check.md)
+- [MessageDB Refactor — Master Tracker](tasks/messagedb/README.md)
+- [MessageDB Refactoring - Current State](tasks/messagedb/current-state.md)
+- [MessageService.ts Analysis](tasks/messagedb/messageservice-deep-dive.md)
 
 ### Messagedb .Archived
 - [handleNewMessage Integration Tests Guide](tasks/messagedb/.archived/messageservice-handlenewmessage-tests.md)
@@ -274,22 +278,31 @@ This is the main index for all documentation, bug reports, and task management.
 ### Quorum Shared Migration
 - [Get npm Publish Access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/2026-03-15-npm-publish-access-quorum-shared.md)
 - [Stacked PRs Workflow](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
-- [Utilities Migration Design](tasks/quorum-shared-migration/2026-03-18-utils-migration-design.md)
-- [Hooks Migration to quorum-shared — Design & Inventory](tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
-- [Move Utility Tests to quorum-shared](tasks/quorum-shared-migration/2026-03-19-move-tests-to-quorum-shared.md)
+- [Structural type divergence between quorum-shared and quorum-desktop](tasks/quorum-shared-migration/2026-05-27-shared-vs-local-type-divergence.md)
+- [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-cross-repo-workflow.md)
+- [Where we are with the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-status-recap.md)
+- [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
 
 ### Quorum Shared Migration .Done
 - [Primitives Migration Prep](tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md)
 - [Utilities Migration Implementation Plan](tasks/quorum-shared-migration/.done/2026-03-18-utils-migration-plan.md)
+- [Typing Indicators — Migration to quorum-shared](tasks/quorum-shared-migration/.done/2026-05-18-typing-shared-migration.md)
+- [Delivery & Read Receipts — Migration to quorum-shared](tasks/quorum-shared-migration/.done/2026-05-19-receipts-shared-migration.md)
+- [Util Tests — Relocate to quorum-shared](tasks/quorum-shared-migration/.done/2026-05-19-tests-migration.md)
+
+### Quorum Shared Migration Designs
+- [Utilities Migration Design](tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md)
+- [Hooks Migration to quorum-shared — Design & Inventory](tasks/quorum-shared-migration/designs/2026-03-19-hooks-design.md)
+- [Services Layer — Migration Design for quorum-shared](tasks/quorum-shared-migration/designs/2026-05-18-services-design.md)
 
 ### Search Optimization
-- [Search Performance Optimization](tasks/search-optimization/README.md)
 - [Design Decisions & Rationale](tasks/search-optimization/decisions.md)
 - [Future Search Optimization Phases](tasks/search-optimization/future-phases.md)
-- [Phase 1.1 - Quick Wins](tasks/search-optimization/quick-wins.md)
-- [Phase 1.2 - Lazy Loading](tasks/search-optimization/phase-1.2-lazy-loading.md)
-- [Phase 1.3 - IndexedDB Persistence](tasks/search-optimization/phase-1.3-persistence.md)
-- [Phase 1.4 - LRU Memory Management](tasks/search-optimization/phase-1.4-lru-eviction.md)
+- [Phase 1.2 — Lazy Loading](tasks/search-optimization/phase-1.2-lazy-loading.md)
+- [Phase 1.3 — IndexedDB Persistence](tasks/search-optimization/phase-1.3-persistence.md)
+- [Phase 1.4 — LRU Memory Management](tasks/search-optimization/phase-1.4-lru-eviction.md)
+- [Quick Wins - Search Improvements](tasks/search-optimization/quick-wins.md)
+- [Search Performance Optimization](tasks/search-optimization/README.md)
 
 ## 📋 Completed Tasks
 
@@ -358,6 +371,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Investigate: Double Ratchet state advance on DM typing](tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md)
 - [Typing Indicators — Design Spec](tasks/.done/2026-05-18-typing-indicators-design.md)
 - [Typing Indicators Implementation Plan](tasks/.done/2026-05-18-typing-indicators-plan.md)
+- [Test Suite Review — Cleanup Before Migration](tasks/.done/2026-05-19-test-suite-review.md)
+- [Fix UserConfig type drift between quorum-shared and quorum-desktop](tasks/.done/2026-05-27-userconfig-type-drift.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -500,6 +515,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [Docs Staleness Audit — 2026-05-20](reports/2026-05-20-docs-staleness-audit.md)
+- [Notification preference architecture — desktop vs mobile](reports/2026-05-28-notification-architecture-divergence.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -545,4 +562,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-05-18 16:14:45
+**Last Updated**: 2026-05-28 18:46:47

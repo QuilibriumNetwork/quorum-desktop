@@ -6,7 +6,7 @@ created: 2026-05-27
 completed: 2026-05-27
 ---
 
-> **Status: resolved at field level.** Phase 1 (add 7 missing fields to shared `UserConfig`) shipped on branch `chore/userconfig-type-drift-and-yt-toggle`. The deeper structural problem found during dedup (NavItem and NotificationSettings have incompatible shapes) is now tracked in [2026-05-27-shared-vs-local-type-divergence.md](../2026-05-27-shared-vs-local-type-divergence.md).
+> **Status: resolved at field level.** Phase 1 (add 7 missing fields to shared `UserConfig`) shipped on branch `chore/userconfig-type-drift-and-yt-toggle`. The deeper structural problem found during dedup (NavItem and NotificationSettings have incompatible shapes) is now tracked in [`../quorum-shared-migration/2026-05-27-shared-vs-local-type-divergence.md`](../quorum-shared-migration/2026-05-27-shared-vs-local-type-divergence.md).
 
 # Fix UserConfig type drift between quorum-shared and quorum-desktop
 

@@ -63,7 +63,7 @@ Quick scan of the live `quorum-mobile` source. Not a full audit, just enough to 
 
 ### Option 1 — Finish the small thing we already unblocked
 
-Do the `NotificationSettings` + `NavItem` cleanup we walked through in [`2026-05-27-shared-vs-local-type-divergence.md`](../2026-05-27-shared-vs-local-type-divergence.md). It's contained, low-risk, and gets a "win" on the board. **~1-2 sessions.** Good warm-up before tackling hooks.
+Do the `NotificationSettings` + `NavItem` cleanup we walked through in [`2026-05-27-shared-vs-local-type-divergence.md`](2026-05-27-shared-vs-local-type-divergence.md). It's contained, low-risk, and gets a "win" on the board. **~1-2 sessions.** Good warm-up before tackling hooks.
 
 ### Option 2 — Refresh the hooks audit against current mobile
 
@@ -127,6 +127,58 @@ This brings your local shared clone up to date and refreshes the `link:` symlink
 
 ---
 
+## Evening update (2026-05-28) — what happened later that day
+
+The "Option 1, then Option 2" plan above was the morning's view. By end of day, Option 1 shipped completely AND a much bigger architectural discovery surfaced. Recap below.
+
+### Three PRs shipped
+
+1. **quorum-desktop #159** — `UserConfig` mirror catch-up: added `isProfilePublic`, `farcasterLink` to desktop's local mirror.
+2. **quorum-shared #18** — `Space*` prefix rename for the per-space notification settings types (the names were inaccurate — they're space-scoped, not general).
+3. **quorum-desktop #160** — desktop dedup: `src/types/notifications.ts` is now a thin re-export shim from shared. 4 consumer files updated.
+
+No mobile PR was needed for any of these (mobile didn't import any of the renamed symbols — verified by grep).
+
+### The bigger discovery: notification architectures genuinely differ
+
+The original "Option 1" framing was *"finish the type cleanup, ship it, move on."* That part went fine. But while preparing the deeper cleanup, investigation surfaced that **desktop and mobile have fundamentally different notification preference architectures**, not just different shapes for the same data.
+
+- Desktop's per-space prefs live in `UserConfig.notificationSettings[spaceId]`, which is synced cross-device.
+- Mobile's per-space prefs live in local-only MMKV. This is deliberate — the iOS Notification Service Extension needs to read prefs at lock-screen notification time, and can ONLY read MMKV (it can't access JS-runtime state like `UserConfig`).
+
+So today, muting a space on desktop does NOT propagate to mobile, and vice versa. The convergence is small in code terms (~50 LOC mobile-side to bridge `UserConfig` ↔ MMKV), but it's an architectural call the lead-dev owns.
+
+**Full investigation:** [`../../reports/2026-05-28-notification-architecture-divergence.md`](../../reports/2026-05-28-notification-architecture-divergence.md).
+
+### Where notifications stands now: WAITING ON LEAD-DEV REPLY
+
+A GitHub issue has been drafted at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md) and is to be filed against `quorum-mobile`. It asks the lead two questions:
+
+1. Is mirroring `UserConfig.notificationSettings[spaceId].isMuted` and `UserConfig.mutedChannels[spaceId]` into mobile's MMKV at config-load (and writing back on toggle) the convergence pattern you want?
+2. Desktop has granular trigger types (mention-you/everyone/roles/reply); mobile doesn't. Want mobile to add it, drop it from desktop, or keep the asymmetry?
+
+Until that issue gets a reply, **the notifications track is paused**. Don't ship more notification-shaped changes to shared, don't propose new `UserConfig` fields, don't touch the legacy `NotificationSettings` placeholder in `quorum-shared/src/types/user.ts`. Any of these would risk conflicting with whatever direction the lead picks.
+
+### Other status table changes since morning
+
+- `NavItem.icon`/`.color` — moved from "small ready item" to "deferred until mobile builds folder UI." Mobile only constructs `{ type: 'space', id }` items today.
+- Mobile's `origin/master` got a massive 2026-05-28 "catching up public repo" dump (commit `98d59a4`). The morning's claim *"mobile is less built out than I'd assumed"* is now wrong in the opposite direction — mobile has FULL notification stack (NSE, MMKV prefs, unified hook), Farcaster hooks, calling, wallet, etc. The hooks audit and small-services re-evaluation rows now need to account for this.
+
+### Revised recommendation for the next session
+
+Given that:
+- Option 1 (notifications type cleanup) shipped ✅
+- Per-space notification sync is paused waiting for lead reply ⏸️
+- Mobile's May 28 dump means the old design docs are stale
+
+The next move with most leverage is what was originally **Option 2: refresh the hooks audit against current mobile state.** Mobile has way more code than the old March audit covered. Refreshing it is ~1 session of read-only analysis, no code, and sets up the next round of migration work.
+
+Alternative if you don't want to start with the biggest unknown: **quickly re-verify ActionQueueService and SearchService against the May 28 mobile state.** ~15 min per service. Doesn't unblock much but cleans up status table accuracy.
+
+---
+
 *Created: 2026-05-28 — after pulling latest quorum-mobile locally. Written as a re-orientation aid, not a decision document.*
 
 *Addendum 2026-05-28 (same session) — after upstream shared activity surfaced. Confirmed 3 new commits on shared `origin/master` including the major Farcaster module addition and two new `UserConfig` fields. Notifications migration plan unaffected; one small desktop mirror catch-up added to the menu.*
+
+*Evening update 2026-05-28 — 3 PRs shipped, notifications track paused on lead-dev reply, mobile public-repo dump landed. See "Evening update" section above for the new state.*
