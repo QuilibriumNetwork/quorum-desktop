@@ -181,7 +181,7 @@ This sounds tedious but takes ~30 seconds per update and is invaluable when the 
 
 4. **If a PR sits >2 weeks, ping specifically.** Not "any updates?" but: *"PR #X has been open 2 weeks, blocking PR #Y and #Z on my side. Can you take 10 min today?"* Make the cost visible.
 
-5. **Don't stack desktop PRs on unmerged mobile PRs.** Each cross-repo migration: ship shared first → desktop second (Kyn merges) → mobile last (lead merges). Mobile lagging is fine.
+5. **Don't stack desktop PRs on unmerged mobile PRs.** Each cross-repo migration: ship shared first → desktop second → mobile last. Shared and desktop merges happen locally; mobile merge waits on lead review. Mobile lagging is fine.
 
 6. **Accept that some mobile PRs may sit indefinitely.** Cleanup PRs (deleting dead scaffolds) are low-value to the lead. If `useNotificationSettings` deletion sits 3 months, nothing breaks — the user-visible win already shipped on shared and desktop.
 
@@ -272,31 +272,55 @@ Mobile keeps building because nothing it currently uses has changed.
 - Changing a function signature in a non-additive way (param removal, return type change)
 - Adding a **required** field to a type (consumers that construct that type now fail to compile)
 
-For breaking changes, the standard pattern is a **same-session triplet**:
+For breaking changes, **first check what mobile actually imports**:
+
+```bash
+# In quorum-mobile, grep for every symbol the shared PR will rename/remove:
+cd D:\GitHub\Quilibrium\quorum-mobile
+grep -rE "\b(OldSymbolA|OldSymbolB|OldSymbolC)\b" --include="*.ts" --include="*.tsx" .
+```
+
+The answer determines the PR pattern.
+
+### Pattern A — Mobile imports at least one affected symbol → **same-session triplet**
 
 1. Shared PR (the breaking change)
 2. Desktop PR (fixes desktop's consumers — needed immediately because desktop's `link:` symlink sees shared changes instantly, so desktop's local build will break the moment shared changes land)
-3. Mobile PR (fixes mobile's consumers — can lag, mobile keeps using the old shared version until merged)
+3. Mobile PR (renames mobile's consumers to the new symbol names)
 
-You merge 1 and 2 in quick succession. Mobile PR sits until lead reviews.
+Merge 1 and 2 in quick succession; mobile PR can sit until lead reviews. Mobile keeps using the old shared version until the bump+rename PR merges, so nothing is broken in production.
 
-### Two important sub-cases
+### Pattern B — Mobile imports none of the affected symbols → **shared + desktop only**
+
+If grep returns zero hits in mobile, there is **nothing for a mobile PR to contain**.
+
+- ✅ Ship shared PR + desktop PR.
+- 🟥 Do NOT open an "empty" mobile PR. There's nothing to put in it; the only "change" would be a `package.json` version bump, which is the lead's territory and not something to drive from a migration PR.
+- **Document the breaking change in the shared PR description** — list the renamed/removed exports under a "Breaking changes" heading so when the lead bumps shared in mobile later, they see "X was renamed to Y, mobile didn't use X, no code change needed."
+- When the lead does bump shared in mobile, the mobile build will pass first try.
+
+This pattern came up during the 2026-05-28 notifications dedup: three settings types in shared got the `Space` prefix, but grep confirmed zero references in mobile, so no mobile PR was opened.
+
+### Sub-cases that look similar but route differently
 
 **Sub-case A: Additive shared change that mobile *should* eventually adopt**
 
 Example: shared gets a new `useFarcasterFeed` hook. Mobile has its own copy. Eventually mobile should switch.
 
-- ✅ Ship shared alone.
+- ✅ Ship shared alone (additive — see "additive vs. breaking" section).
 - 🟡 Open a mobile PR to switch over. Lead reviews whenever.
 - **Mobile is not broken if the PR sits.** Mobile keeps using its own implementation. The migration is just incomplete, not broken.
 
-**Sub-case B: "Technically breaking but practically harmless"**
+**Sub-case B: Technically breaking, mobile has *dead* consumer code**
 
-Example: the notifications migration replaces placeholder `NotificationSettings = { enabled?, mentions?, replies?, all? }` with the real shape `{ spaceId, enabledNotificationTypes[], isMuted? }`. Same name, different shape — technically breaking.
+Example: a placeholder shared type gets a different shape. Mobile imports it but only in scaffolding that's never called at runtime (verified by grep — the importer hook itself has zero callers).
 
-But Phase 0 investigation confirmed mobile has **zero actual consumers** of the inner fields. The only place a TypeScript error would surface is one dead-code fallback in `useNotificationSettings()` which is never called.
+This is the edge case to be careful about. Two interpretations:
 
-For these cases, treat as breaking anyway: open shared + mobile PRs together. The mobile PR is tiny (delete the dead hook or fix the fallback). Shared and desktop ship first; mobile catches up. Don't take shortcuts even if it "would probably work" — future bumps shouldn't surface a build error from your stale work.
+- **Treat as Pattern A** (open a mobile PR even though the dead code "would probably work"): cleanest. The mobile PR is tiny (delete or fix the dead scaffold). Stops future bumps from surfacing a build error in dead code.
+- **Treat as Pattern B** (skip the mobile PR): defensible if the dead code is so dead that no one would ever look at the build error. Cheaper.
+
+**Recommendation: default to Pattern A for this sub-case.** Dead code today can become live code tomorrow; a future contributor who tries to wire up the scaffold should find it compiling against current shared, not against a six-month-old API. The mobile PR cost is small, the future-clarity cost of skipping it can be larger.
 
 ### Decision summary
 
