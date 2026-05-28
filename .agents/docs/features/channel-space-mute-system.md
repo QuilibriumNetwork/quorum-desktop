@@ -39,19 +39,19 @@ export type UserConfig = {
 
   // Per-space notification settings (includes space-level muting)
   notificationSettings?: {
-    [spaceId: string]: NotificationSettings;
+    [spaceId: string]: SpaceNotificationSettings;
   };
 };
 ```
 
-**Space-level muting** uses the `isMuted` field in `NotificationSettings`:
+**Space-level muting** uses the `isMuted` field in `SpaceNotificationSettings`:
 
-**File**: [notifications.ts](src/types/notifications.ts)
+**File**: [notifications.ts](src/types/notifications.ts) (re-exports from `@quilibrium/quorum-shared`)
 
 ```typescript
-export interface NotificationSettings {
+export interface SpaceNotificationSettings {
   spaceId: string;
-  enabledNotificationTypes: NotificationTypeId[];
+  enabledNotificationTypes: SpaceNotificationTypeId[];
   isMuted?: boolean;  // When true, suppresses ALL notifications for this space
 }
 ```
@@ -373,7 +373,7 @@ React Query cache is updated immediately for instant UI feedback, while the actu
 Space-level mute checks happen first (O(1)) to avoid unnecessary channel iteration when the entire space is muted. Notification hooks also use early-exit thresholds (10 items) since UI shows "9+" for counts > 9.
 
 ### Separation of Concerns
-- `isMuted` in `NotificationSettings` represents **user intent** to mute a space
+- `isMuted` in `SpaceNotificationSettings` represents **user intent** to mute a space
 - `mutedChannels` represents **individual channel preferences**
 - `showMutedChannels` is a **UI preference** for visibility
 

@@ -2,7 +2,7 @@ import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
-import type { NotificationSettings } from '../types/notifications';
+import type { SpaceNotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
@@ -76,7 +76,7 @@ export type UserConfig = {
     }[];
   }[];
   notificationSettings?: {
-    [spaceId: string]: NotificationSettings;
+    [spaceId: string]: SpaceNotificationSettings;
   };
   bookmarks?: Bookmark[];
   deletedBookmarkIds?: string[];

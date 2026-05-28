@@ -12,7 +12,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { NotificationSettings, NotificationTypeId } from '../../../types/notifications';
+import type { SpaceNotificationSettings, SpaceNotificationTypeId } from '../../../types/notifications';
 import { getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
 
 interface UseMentionNotificationSettingsProps {
@@ -21,11 +21,11 @@ interface UseMentionNotificationSettingsProps {
 
 interface UseMentionNotificationSettingsReturn {
   /** Current settings for this space */
-  settings: NotificationSettings;
+  settings: SpaceNotificationSettings;
   /** Selected notification types (for multiselect control) */
-  selectedTypes: NotificationTypeId[];
+  selectedTypes: SpaceNotificationTypeId[];
   /** Update selected types (doesn't save until saveSettings called) */
-  setSelectedTypes: (types: NotificationTypeId[]) => void;
+  setSelectedTypes: (types: SpaceNotificationTypeId[]) => void;
   /** Whether settings are being loaded */
   isLoading: boolean;
   /** Save settings to IndexedDB */
@@ -63,10 +63,10 @@ export function useMentionNotificationSettings({
   const { currentPasskeyInfo } = usePasskeysContext();
   const userAddress = currentPasskeyInfo?.address;
 
-  const [settings, setSettings] = useState<NotificationSettings>(() =>
+  const [settings, setSettings] = useState<SpaceNotificationSettings>(() =>
     getDefaultNotificationSettings(spaceId)
   );
-  const [selectedTypes, setSelectedTypes] = useState<NotificationTypeId[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<SpaceNotificationTypeId[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 

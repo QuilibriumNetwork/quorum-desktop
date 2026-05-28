@@ -10,7 +10,7 @@ import { useAllMentions, useMentionNotificationSettings } from '../../hooks/busi
 import { useAllReplies } from '../../hooks/business/replies';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
-import type { NotificationTypeId } from '../../types/notifications';
+import type { SpaceNotificationTypeId } from '../../types/notifications';
 import './NotificationPanel.scss';
 
 interface NotificationPanelProps {
@@ -45,7 +45,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const { selectedTypes: savedTypes, isLoading: settingsLoading } = useMentionNotificationSettings({ spaceId });
 
   // Local filter state (syncs with saved settings)
-  const [selectedTypes, setSelectedTypes] = useState<NotificationTypeId[]>(savedTypes);
+  const [selectedTypes, setSelectedTypes] = useState<SpaceNotificationTypeId[]>(savedTypes);
 
   // Sync local state when saved settings change
   useEffect(() => {
@@ -81,20 +81,20 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   // Filter options for Select primitive
   const filterOptions = [
     {
-      value: 'mention-you' as NotificationTypeId,
+      value: 'mention-you' as SpaceNotificationTypeId,
       label: t`@you`,
     },
     {
-      value: 'mention-everyone' as NotificationTypeId,
+      value: 'mention-everyone' as SpaceNotificationTypeId,
       label: t`@everyone`,
     },
     {
-      value: 'mention-roles' as NotificationTypeId,
+      value: 'mention-roles' as SpaceNotificationTypeId,
       label: t`@roles`,
       disabled: false,
     },
     {
-      value: 'reply' as NotificationTypeId,
+      value: 'reply' as SpaceNotificationTypeId,
       label: t`Replies`,
     },
   ];
@@ -105,7 +105,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       // Don't allow deselecting all
       return;
     }
-    setSelectedTypes(newValues as NotificationTypeId[]);
+    setSelectedTypes(newValues as SpaceNotificationTypeId[]);
   }, []);
 
   // Handle navigation to message - uses hash-based highlighting (cross-component communication)

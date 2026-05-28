@@ -20,7 +20,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { useChannelMute } from '../../../hooks/business/channels';
 import type { Role } from '@quilibrium/quorum-shared';
-import type { NotificationTypeId } from '../../../types/notifications';
+import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
 
 interface AccountProps {
@@ -50,8 +50,8 @@ interface AccountProps {
   onClose: () => void;
   roles?: Role[];
   // Notification settings props (passed from parent)
-  selectedMentionTypes: NotificationTypeId[];
-  setSelectedMentionTypes: (types: NotificationTypeId[]) => void;
+  selectedMentionTypes: SpaceNotificationTypeId[];
+  setSelectedMentionTypes: (types: SpaceNotificationTypeId[]) => void;
   isMentionSettingsLoading: boolean;
 }
 
@@ -235,7 +235,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <Select
               value={selectedMentionTypes}
               onChange={(value: string | string[]) =>
-                setSelectedMentionTypes(value as NotificationTypeId[])
+                setSelectedMentionTypes(value as SpaceNotificationTypeId[])
               }
               multiple={true}
               placeholder={t`Select`}

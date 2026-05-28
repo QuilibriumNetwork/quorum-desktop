@@ -667,7 +667,7 @@ src/
 │   ├── notificationSettingsUtils.ts       # Settings helpers
 │   └── permissions.ts                     # Role permission utilities
 ├── types/
-│   └── notifications.ts                   # NotificationTypeId, NotificationSettings
+│   └── notifications.ts                   # Re-exports SpaceNotificationTypeId, SpaceNotificationSettings, etc. from quorum-shared
 ├── hooks/
 │   ├── business/
 │   │   ├── mentions/
