@@ -1,8 +1,9 @@
 ---
 type: task
 title: Investigate and fix structural type divergence between quorum-shared and quorum-desktop
-status: todo
+status: in-progress
 created: 2026-05-27
+updated: 2026-05-28
 priority: high
 ---
 
@@ -193,3 +194,97 @@ While the `notificationSettings` decision is blocked, the following structural f
 - *Reassessed `NavItem` after the dedup attempt earlier in this session. Initially thought it was unblocked, but the desktop literal `IconName` / `IconColor` types are tighter than shared's `string`. Deduping by widening would downgrade desktop's type safety; the right fix is a design discussion that benefits from mobile context (do mobile folder UIs need icons too?). Reclassified as mobile-blocked.*
 
 *`NotificationSettings` structural alignment remains the main open item, still blocked on mobile codebase access.*
+
+---
+
+## Phase 0 confirmation (2026-05-28) — mobile codebase access unblocked
+
+Kyn now has the latest `quorum-mobile` cloned locally at `D:\GitHub\Quilibrium\quorum-mobile`. Re-ran the Phase 0 grep against the real current source. Results below.
+
+### Shared package versions (current)
+- Desktop has `@quilibrium/quorum-shared@2.1.0-16` (from PR #17, with `UserNote` lift)
+- Mobile has `@quilibrium/quorum-shared@2.1.0` (one minor behind desktop, no functional gap for this investigation)
+
+### `notificationSettings` — mobile usage re-verified
+
+Re-grepped `quorum-mobile` for `notificationSettings | NotificationSettings | NotificationTypeId | isMuted | enabledNotificationTypes`. Hits:
+
+- `services/config/configService.ts` — only the default config initialiser: `notificationSettings: {}` (empty map). Never read, never branched on, never set elsewhere.
+- `hooks/useUserConfig.ts` — declares `useNotificationSettings()` and `updateNotificationSettings()`, exposed as part of the hook surface. Returns `config?.notificationSettings ?? { enabled: true }`.
+- `.agents/docs/quorum-shared-architecture.md` — docs only.
+
+Confirmed: **`useNotificationSettings` is not imported anywhere else in `quorum-mobile`.** Zero UI consumers. Pure scaffolding.
+
+The fallback `{ enabled: true }` is also wrong even against shared's *current* type: shared declares `notificationSettings?: { [spaceId: string]: NotificationSettings }` (a per-space map), so `{ enabled: true }` doesn't satisfy the map shape — it's reading the top level as if it were a single flat object. This is a long-dormant bug in the mobile hook; nothing depends on it being correct.
+
+### `NavItem` — mobile usage re-verified
+
+Mobile uses `NavItem` as a typed container in two places:
+- `services/config/configService.ts` — imports the type for `validateItems(items: NavItem[])` (folder/space count limits, no field access on `icon`/`color`).
+- `services/space/spaceService.ts` — constructs `const newSpaceItem: NavItem = { type: 'space', id: spaceAddress }` (space variant only, no folder fields).
+
+**Mobile never reads or writes `icon` or `color` on a folder `NavItem`.** No folder UI exists yet. The shared widened `string` shape causes mobile no harm today.
+
+(The `item.icon` hits in `components/Chat/DirectMessagesList.tsx` are unrelated — those refer to a chat-list item, not a `NavItem`.)
+
+### Conclusion: both blockers cleared
+
+| Type | Original status | New status |
+|---|---|---|
+| `NotificationSettings` | Blocked: "is mobile UI consuming this?" | **Unblocked.** Mobile has zero UI consumers. Scaffolding hook is the only touch point. |
+| `NavItem.icon` / `.color` | Blocked: "do mobile folder UIs need icons?" | **Unblocked.** Mobile has no folder UI; constructs space-variant items only. |
+
+### Action plan (now executable)
+
+#### `NotificationSettings` — promote desktop's shape to shared
+
+1. **Update `quorum-shared/src/types/user.ts`**: replace the placeholder `NotificationSettings` with desktop's shape:
+   ```ts
+   export type NotificationTypeId = 'mention-you' | 'mention-everyone' | 'mention-roles' | 'reply';
+
+   export type NotificationSettings = {
+     spaceId: string;
+     enabledNotificationTypes: NotificationTypeId[];
+     isMuted?: boolean;
+   };
+   ```
+   `UserConfig.notificationSettings?: { [spaceId: string]: NotificationSettings }` stays as-is (already a per-space map). Bump shared to 2.1.0-17 (or next).
+
+2. **Update `quorum-mobile`** in lockstep:
+   - Fix `useNotificationSettings()` fallback in `hooks/useUserConfig.ts` — currently returns `{ enabled: true }`, which is wrong against the current shared type *and* the new one. Return `{}` (empty per-space map) and let future mobile UI work read `config.notificationSettings?.[spaceId]`. Or remove the hook entirely until mobile has a real consumer — preferred, since it's dead code.
+   - `services/config/configService.ts` already initialises `notificationSettings: {}` — no change needed.
+
+3. **Update `quorum-desktop`**:
+   - Delete `src/types/notifications.ts`'s `NotificationSettings` and `NotificationTypeId` exports.
+   - Re-export both from `@quilibrium/quorum-shared` (preserve the export path so the 19 consumer files don't have to change imports — same pattern used for `UserNote` in PR #17).
+   - Keep desktop-only types in `src/types/notifications.ts`: `NotificationSettingOption`, `ReplyNotification` (UI concerns, not wire format).
+
+4. **No wire migration needed.** Desktop has been writing `{ spaceId, enabledNotificationTypes, isMuted }` to the encrypted blob the whole time. Mobile reads but never consumes it. Promoting to shared just makes the type system match what's already on the wire.
+
+#### `NavItem.icon` / `.color` — narrow shared, or narrow at boundary
+
+Two viable approaches:
+
+**Option A (preferred): lift `IconName` and folder `IconColor` literal unions into shared.**
+- Pro: single source of truth, mobile gets the same narrow types when it eventually adds folder UI.
+- Con: shared starts owning UI taxonomy (icon names). Worth doing only if the icon set is stable and shared between desktop and mobile.
+
+**Option B: keep shared `NavItem.icon: string`, narrow at desktop boundary.**
+- Pro: shared stays wire-format-only.
+- Con: desktop has to do `as IconName` casts (or a `parseNavItem()` validator) at every IndexedDB read.
+
+Given the icon set is already a stable, well-defined enum in desktop and mobile will likely consume the same icons when folder UI lands, **Option A is the cleaner long-term choice**. Lift `IconName` (the literal union of icon names) and folder `IconColor` into shared, then dedupe.
+
+If mobile devs prefer not to take on the icon taxonomy yet, fall back to Option B.
+
+### Suggested branch / PR sequencing
+
+1. **Shared PR**: promote `NotificationSettings` + (Option A) lift `IconName`/`IconColor`. Bump shared. Get reviewed by mobile dev.
+2. **Mobile PR**: bump shared dep, delete or fix `useNotificationSettings` fallback. Trivial change.
+3. **Desktop PR**: bump shared dep, replace local `NotificationSettings` / `NotificationTypeId` with re-exports from shared, dedup `NavItem`.
+
+Shared changes are backward-wire-compatible (the shape was already what desktop wrote), so PRs 1 and 3 can ship close together. Mobile PR is non-blocking since it has no consumer.
+
+---
+
+*Updated: 2026-05-28 — mobile codebase access unblocked. Re-ran Phase 0 grep against live `quorum-mobile` source. Confirmed: zero UI consumers of `notificationSettings` or `NavItem.icon`/`.color` on mobile. Both blockers cleared. Action plan above is executable.*

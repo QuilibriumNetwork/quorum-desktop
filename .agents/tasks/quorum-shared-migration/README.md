@@ -3,14 +3,21 @@ type: index
 title: "Quorum Shared Migration — Master Tracker"
 status: ongoing
 created: 2026-05-19
-updated: 2026-05-19
+updated: 2026-05-28
 ---
 
 # Quorum Shared Migration — Master Tracker
 
-> **Sibling workstreams in flight (2026-05-19):** [MessageDB refactor](../messagedb/README.md) and [test suite review](../2026-05-19-test-suite-review.md). The receipts PR here is coupled to MessageDB Tier 0 #3 and ReceiptService test cleanup — both flagged in the [receipts task prerequisite block](./2026-05-19-receipts-shared-migration.md).
+> **🔴 New session? Read these first, in order:**
+> 1. **[2026-05-28-status-recap.md](2026-05-28-status-recap.md)** — friendly re-orientation: what's done, what's pending, what's next. Read if you've been away from this for more than a week.
+> 2. **[2026-05-28-cross-repo-workflow.md](2026-05-28-cross-repo-workflow.md)** — how to ship work across three repos when Kyn merges shared+desktop but mobile PRs go to a different reviewer. Covers small-PR sizing, additive-vs-breaking changes, drift handling. **Re-read at the start of every migration session** — the cross-repo workflow is unintuitive and easy to get wrong.
+> 3. **[../../.temp/2026-05-28-notifications-explainer.md](../../.temp/2026-05-28-notifications-explainer.md)** — only if you're working on the notifications migration specifically. Junior-friendly explainer of what notifications are, what's shared, what's not, what the PR plan is.
+
+> **Sibling workstreams in flight (2026-05-19):** [MessageDB refactor](../messagedb/README.md) and [test suite review](../2026-05-19-test-suite-review.md). The receipts PR here is coupled to MessageDB Tier 0 #3 and ReceiptService test cleanup — both flagged in the [receipts task prerequisite block](./.done/2026-05-19-receipts-shared-migration.md).
 
 > **What this folder is.** Single source of truth for the multi-PR effort to move shareable code from `quorum-desktop` (and eventually `quorum-mobile`) into the `@quilibrium/quorum-shared` package. The migration is open-ended and runs PR by PR — this README is the bird's-eye view.
+
+> **Critical context Kyn established (2026-05-28):** Kyn does NOT merge mobile PRs himself — those go to the lead dev for review. Lead is often busy and mobile PRs can sit for weeks. This shapes the entire workflow. **Default mode: small granular PRs, shared + desktop ship promptly, mobile catches up whenever.** See the cross-repo workflow doc for the full picture and the additive-vs-breaking decision rule.
 
 ## Architecture principle
 
@@ -22,22 +29,28 @@ Code that participates in the P2P protocol (wire types, message-level state mach
 quorum-shared-migration/
 ├── README.md                                  ← this file (master tracker)
 │
+├── 2026-05-28-status-recap.md                 ← 🟢 START HERE if you've been away
+├── 2026-05-28-cross-repo-workflow.md          ← 🟢 READ EVERY SESSION (workflow rules)
+│
 ├── designs/                                   ← audits, inventories, decision rationale
 │   ├── 2026-03-18-utils-design.md             (utils audit — migration done)
-│   ├── 2026-03-19-hooks-design.md             (hooks audit — blocked on mobile access)
+│   ├── 2026-03-19-hooks-design.md             (hooks audit — needs refresh against live mobile)
 │   └── 2026-05-18-services-design.md          (per-service audit — partial migration ongoing)
 │
-├── 2026-03-15-stacked-prs-workflow.md         ← workflow reference for stacked PRs
+├── 2026-03-15-stacked-prs-workflow.md         ← older stacked-PR doc (secondary; use the 2026-05-28 workflow as primary)
 ├── 2026-03-15-npm-publish-access-quorum-shared.md  ← one-off setup task
 │
-├── 2026-05-18-typing-shared-migration.md      ← per-PR task: typing service + types + tests
-├── 2026-05-19-receipts-shared-migration.md    ← per-PR task: receipts service + new wire types + tests
-├── 2026-05-19-tests-migration.md              ← per-PR task: relocate util tests to shared
-│
 └── .done/                                     ← completed per-PR tasks land here
+    ├── 2026-05-18-typing-shared-migration.md  (typing service + types + tests)
+    ├── 2026-05-19-receipts-shared-migration.md (receipts service + new wire types + tests)
+    └── 2026-05-19-tests-migration.md          (relocated util tests to shared)
 ```
 
-**Convention.** Audits live in `designs/` and act as reference material that evolves slowly. Per-PR executable tasks live at the root, dated `YYYY-MM-DD-<slug>.md`, and move into `.done/` once merged.
+**Related cross-folder docs** (not in this folder but relevant):
+- [`../2026-05-27-shared-vs-local-type-divergence.md`](../2026-05-27-shared-vs-local-type-divergence.md) — the `NotificationSettings` / `NavItem` divergence investigation. Lives in `.agents/tasks/` because it started as a generic divergence task; the migration-specific execution plan is in the explainer below.
+- [`../../.temp/2026-05-28-notifications-explainer.md`](../../.temp/2026-05-28-notifications-explainer.md) — junior-friendly walk-through of notifications: what's shared, what's not, the 3-PR plan. (In `.temp/` because it's a personal-onboarding doc not part of the formal task tracking.)
+
+**Convention.** Audits live in `designs/` and act as reference material that evolves slowly. Per-PR executable tasks live at the root, dated `YYYY-MM-DD-<slug>.md`, and move into `.done/` once merged. Workflow/reference docs (like the cross-repo workflow and status recap) live at the root and don't move.
 
 ## Status table
 
@@ -59,23 +72,32 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | BackupService | Service | ⏸️ Blocked on shared symmetric crypto module | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §7 |
 | UserConfig privacy field consolidation (deliveryReceipts, readReceipts, typingIndicatorsDM/Spaces) | Types | ✅ Done (2026-05-27) | [.done/2026-05-27-userconfig-type-drift.md](../.done/2026-05-27-userconfig-type-drift.md) |
 | UserNote inline → named shared type | Types | ✅ Done (2026-05-27) | quorum-shared PR #17, version 2.1.0-16 |
-| NotificationSettings / NavItem structural alignment between local and shared | Types | ⏸️ Blocked on mobile codebase access | [2026-05-27-shared-vs-local-type-divergence.md](../2026-05-27-shared-vs-local-type-divergence.md) |
+| NotificationSettings / NavItem structural alignment between local and shared | Types | 🟢 Ready (mobile access verified 2026-05-28) | [2026-05-27-shared-vs-local-type-divergence.md](../2026-05-27-shared-vs-local-type-divergence.md), [explainer](../../.temp/2026-05-28-notifications-explainer.md) |
+| Farcaster module landed upstream (hypersnap client + legacy fallback + 11 hooks) | Feature | 📋 Upstream-only (not driven by this migration) | See "Upstream changes 2026-05-28" below |
+| `UserConfig.farcasterLink` + `isProfilePublic` upstream — desktop's local `UserConfig` mirror needs the same fields | Types | 🟢 Ready (small housekeeping) | See "Upstream changes 2026-05-28" below |
 | MessageService | Service | ❌ Per-app | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) Context |
 | ConfigService, EncryptionService, SpaceService, InvitationService, SyncService (desktop wrapper), NotificationService, ActionQueueHandlers | Services | ❌ Per-app | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §8–14 |
 
 ## Next up
 
-Every remaining row in the status table is blocked on mobile codebase access or related preconditions (hooks migration, shared symmetric crypto for BackupService, etc.). See "What unblocks the rest" below. Nothing else is mechanically ready to ship from desktop's side today.
+As of 2026-05-28, Kyn has the latest `quorum-mobile` cloned locally at `D:\GitHub\Quilibrium\quorum-mobile`. The "blocked on mobile access" rows are now unblockable in principle; see [2026-05-28-status-recap.md](2026-05-28-status-recap.md) for the friendly re-orientation and recommended sequencing.
+
+**Two rows are now ready to ship:**
+
+1. **`NotificationSettings` / `NavItem` structural alignment** — verified against live mobile code. Mobile has zero UI consumers of these types; promotion to shared is wire-compatible (desktop has been writing the desired shape all along). Plan: small shared PR → mobile catch-up PR → desktop dedup PR. Full explainer: [2026-05-28-notifications-explainer.md](../../.temp/2026-05-28-notifications-explainer.md).
+2. **Desktop `UserConfig` mirror catch-up for `isProfilePublic` + `farcasterLink`** — upstream pull on 2026-05-28 added these fields to shared. Desktop's `src/db/messages.ts` local `UserConfig` doesn't have them yet. Same drift pattern as the receipts/typing fields fixed in PR #16. Trivial.
+
+**Still mobile-coupled (need design refresh, not just access):** hooks migration, ActionQueueService, SearchService, channelThreadHelpers, ThreadService, BackupService. The hooks audit needs re-running against live mobile before a new abstraction-layer design.
 
 ## What unblocks the rest
 
-**Mobile codebase access** is the single highest-leverage unblock. It would:
+**Mobile codebase access (achieved 2026-05-28)** was the single highest-leverage unblock. With it we can now:
 
-- Move ActionQueueService, SearchService, channelThreadHelpers from "pending direction" to a real decision (port desktop's → shared, or use mobile's as baseline, or design a new shared interface based on both).
-- Unblock the hooks migration (which in turn unblocks ThreadService and the cache-coupled parts of other services).
-- Let the team verify that mobile's local utility implementations match shared's versions (validation, formatting, mentions).
+- Move ActionQueueService, SearchService, channelThreadHelpers from "pending direction" to a real decision. (Initial scan: mobile has no `actionQueue` or `search` folder yet, suggesting "promote desktop's → shared, mobile inherits" is the likely path for these.)
+- Re-audit the hooks tree against live mobile (the 2026-03-19 inventory predates the current state).
+- Verify that mobile's local utility implementations match shared's versions.
 
-Until then, only the three "ready" rows ship.
+**Sequencing now:** start with the small wins (`NotificationSettings` + `UserConfig` field catch-up) to build momentum, then refresh the hooks audit before tackling the big migration.
 
 ## Relationship to the MessageDB refactor
 
@@ -91,7 +113,10 @@ Net: doing the MessageDB refactor first does not expand or shrink the shared mig
 
 ## Branch / PR workflow
 
-See [2026-03-15-stacked-prs-workflow.md](2026-03-15-stacked-prs-workflow.md) for the stacked-branch convention and the `link:` / published-npm dependency dance. Earlier migrations used stacked branches (types → primitives → utils → hooks); ongoing per-feature migrations (typing, receipts, tests) are independent and branch from `main` on both repos.
+- **[2026-05-28-cross-repo-workflow.md](2026-05-28-cross-repo-workflow.md)** — **read this first.** How Kyn ships work when mobile PRs go to a different reviewer. Covers small-PR sizing, drift handling, when to stack vs. branch fresh, and the standard shared → desktop → mobile sequence.
+- [2026-03-15-stacked-prs-workflow.md](2026-03-15-stacked-prs-workflow.md) — older doc for the stacked-branch convention used during the original types → primitives → utils → hooks PR chain. Still useful when stacking is genuinely needed (Case 2 in the newer doc).
+
+Earlier migrations used stacked branches; ongoing per-feature migrations (typing, receipts, tests, notifications) are independent and branch fresh from `main` on each repo.
 
 ## Per-PR task template
 
@@ -113,9 +138,29 @@ The typing task is the reference example. Receipts and future migrations should 
 - **`isTypingControlMessage` / `isReceiptControlMessage` type guards** — optional small helpers that would let `MessageService` narrow incoming envelopes against the shared union types without inline string literals. Cosmetic improvement, not a blocker.
 - **NotificationSettings / NavItem structural alignment** — desktop has richer shapes (per-space muting, enum-array notification triggers, literal `IconName`/`IconColor`) than shared, which has placeholders/looser types. Investigation done; see [2026-05-27-shared-vs-local-type-divergence.md](../2026-05-27-shared-vs-local-type-divergence.md). Blocked on mobile codebase access (need to verify mobile hasn't independently shipped a contradicting notifications UI before promoting desktop's design to shared).
 
+## Upstream changes 2026-05-28
+
+Kyn cloned latest `quorum-mobile` and noted that `quorum-shared` had also seen upstream activity. Fetched `origin/master` on the local `quorum-shared` clone. Findings:
+
+**Local clone (`D:\GitHub\Quilibrium\quorum-shared`) was 3 commits behind `origin/master`:**
+
+| Commit | Summary | Impact on migration |
+|---|---|---|
+| `8c57a50` — `2.1.0-2` chore | Version bump + small changes to `src/sync/service.ts`, `src/sync/utils.ts` | Bookkeeping. |
+| `0bd2fa8` — `rollup public changes for quorum` | **Big one.** Adds full `src/farcaster/` module (16 files: hypersnap-first client, legacy fallback, signer lifecycle/storage, normalize/protoWire/messageBuilder, 11 React Query hooks for casts/feeds/profiles). Updates `src/types/user.ts` (`UserConfig` gains `isProfilePublic?` and `farcasterLink?`; new `FarcasterLink` type), `src/types/message.ts`, transports, and pins dep versions. | Two new `UserConfig` fields desktop's local mirror needs to catch up to. Farcaster module is a separate effort, not part of this migration. |
+| `3a8f10e` | Merge commit | None. |
+
+**`NotificationSettings` shape on `origin/master` is unchanged** (still the `{ enabled?, mentions?, replies?, all? }` placeholder), so the in-flight notifications type-alignment migration plan applies cleanly without any upstream conflict.
+
+**Action required before any migration PR:** `git pull` in `D:\GitHub\Quilibrium\quorum-shared` (and `yarn install` in desktop and mobile consumers), so the migration branches don't build on a stale base.
+
+**Mobile sync impact:** mobile already has its own `useFarcaster*` hooks under `quorum-mobile/hooks/`. With the shared `farcaster/` module landed, those should eventually point at shared instead — but that's a separate workstream, not part of the type-divergence cleanup.
+
 ---
 
-*Last updated: 2026-05-27 — two type-only PRs against `quorum-shared` (2.1.0-15 and 2.1.0-16): added 7 missing privacy/device fields to `UserConfig` (the receipts/typing-indicators consolidation flagged here as an open follow-up, plus a new `generateYouTubePreviews` field for the YouTube facade gate), and promoted `UserConfig.userNotes`'s inline object type to a named `UserNote` export so desktop could drop its local duplicate. Investigation also surfaced a deeper structural divergence in `NotificationSettings` and `NavItem` shapes between desktop and shared; tracked as a new mobile-blocked follow-up in [2026-05-27-shared-vs-local-type-divergence.md](../2026-05-27-shared-vs-local-type-divergence.md).*
+*Last updated: 2026-05-28 — mobile codebase access verified by reading `quorum-mobile` directly; two previously-blocked rows are now ready (`NotificationSettings`/`NavItem` alignment, plus `UserConfig.farcasterLink`/`isProfilePublic` mirror catch-up). Also pulled `origin/master` on `quorum-shared`: 3 new commits including the major `src/farcaster/` module addition. Status table updated, "Upstream changes 2026-05-28" section added, recap doc at [2026-05-28-status-recap.md](2026-05-28-status-recap.md) and explainer at [../../.temp/2026-05-28-notifications-explainer.md](../../.temp/2026-05-28-notifications-explainer.md).*
+
+*Previously: 2026-05-27 — two type-only PRs against `quorum-shared` (2.1.0-15 and 2.1.0-16): added 7 missing privacy/device fields to `UserConfig` (the receipts/typing-indicators consolidation flagged here as an open follow-up, plus a new `generateYouTubePreviews` field for the YouTube facade gate), and promoted `UserConfig.userNotes`'s inline object type to a named `UserNote` export so desktop could drop its local duplicate. Investigation also surfaced a deeper structural divergence in `NotificationSettings` and `NavItem` shapes between desktop and shared; tracked as a new mobile-blocked follow-up in [2026-05-27-shared-vs-local-type-divergence.md](../2026-05-27-shared-vs-local-type-divergence.md).*
 
 *Previously: 2026-05-20 (third update) — util tests migration done (2026-05-19 task moved to `.done/`). Three test files moved to `quorum-shared/src/utils/` (renamed to match shared's source filenames: `validation.test.ts`, `mentions.test.ts`, `messageGrouping.test.ts`). Found and fixed a real type-shape drift in the process: desktop's mocked `Message.mentions` used the wrong field names (`mentions/channels/roles` instead of shared's `memberIds/roleIds/channelIds`); the desktop test only passed because of `as any` casts. Shared's strict build caught it. No new shared dependencies. Status table updated, "Next up" now empty — everything remaining is mobile-blocked.*
 

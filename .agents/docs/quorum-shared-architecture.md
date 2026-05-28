@@ -3,7 +3,7 @@ type: doc
 title: Quorum Ecosystem Architecture
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-14T00:00:00.000Z
+updated: 2026-05-28T00:00:00.000Z
 ---
 
 # Quorum Ecosystem Architecture
@@ -167,8 +167,10 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 | Property | Value |
 |----------|-------|
 | **Package** | `@quilibrium/quorum-shared` |
-| **Version** | 2.1.0-16 |
-| **Peer Dependencies** | React 19+, TanStack React Query 5+ |
+| **Version (local desktop clone)** | `2.1.0-16` |
+| **Version (remote `origin/master`)** | `2.1.0-16` (HEAD commit `3a8f10e`, 3 commits ahead of local — see footer) |
+| **Version (mobile consumer)** | `2.1.0` (npm-published) |
+| **Peer Dependencies** | React 19+, TanStack React Query 5+, `@noble/curves` 2.0.1 |
 | **Build Format** | Dual ESM/CJS with TypeScript declarations |
 
 ---
@@ -179,12 +181,16 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 @quilibrium/quorum-shared/src/
 ├── api/           # API client interface and errors
 ├── crypto/        # E2E encryption (WASM-based)
-├── hooks/         # React Query hooks for data fetching
+├── farcaster/     # Hypersnap-first Farcaster client + signers + 11 React Query hooks
+├── hooks/         # React Query hooks for data fetching (core domain)
+├── primitives/    # Cross-platform UI components (22 components, web + native variants)
+├── receipts/      # ReceiptService (delivery / read acks)
 ├── signing/       # Ed448 signing (WASM-based)
 ├── storage/       # Platform-agnostic storage adapter interface
 ├── sync/          # Hash-based delta synchronization protocol
 ├── transport/     # HTTP and WebSocket communication
 ├── types/         # Comprehensive type definitions
+├── typing/        # TypingService (per-conversation indicators)
 └── utils/         # Formatting, validation, encoding, logging
 ```
 
@@ -223,11 +229,20 @@ The types module provides all shared type definitions used across both apps.
 | Type | Description |
 |------|-------------|
 | `UserProfile` | User display info (name, icon, status) |
-| `UserConfig` | User preferences, space memberships, bookmarks |
+| `UserConfig` | User preferences, space memberships, bookmarks, sync settings |
 | `UserNote` | Per-target private annotation (synced via `UserConfig.userNotes`) |
 | `SpaceMember` | User's membership in a space with roles |
 | `NavItem` | Navigation item (space or folder) |
-| `NotificationSettings` | Per-space notification preferences |
+| `NotificationSettings` | Per-space notification preferences (⚠️ on `origin/master` still the placeholder `{ enabled?, mentions?, replies?, all? }` — desktop writes a richer shape to the wire; alignment is the open migration task) |
+| `FarcasterLink` | Optional bidirectional Farcaster ↔ Quorum identity link (NEW on `origin/master`, not yet in local clone) |
+
+#### `UserConfig` fields most relevant to ongoing migration
+
+- `notificationSettings?: { [spaceId: string]: NotificationSettings }` — per-space map. The map shape is correct on shared; the inner `NotificationSettings` is the placeholder.
+- `bio?: string`
+- `isProfilePublic?: boolean` (NEW on `origin/master`)
+- `farcasterLink?: FarcasterLink` (NEW on `origin/master`)
+- Privacy/device fields added 2026-05-27 (PR #16): `deliveryReceipts`, `readReceipts`, `typingIndicatorsDM`, `typingIndicatorsSpaces`, `generateYouTubePreviews`, `deviceNames`, `deletedDeviceNameAddresses`.
 
 ### Other Types
 
@@ -712,6 +727,8 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-05-27 — version bump to 2.1.0-16 (added seven privacy/device fields to `UserConfig` and promoted inline `UserNote` to a named export).*
+*Last updated: 2026-05-28 — sync against `origin/master` after upstream pull. Local clone is 3 commits behind: a `2.1.0-2` chore bump touching `sync/service.ts` and `sync/utils.ts`, a "rollup public changes" commit adding a full `src/farcaster/` module (16 files: hypersnap-first client, legacy fallback, signer lifecycle, signer storage, 11 React Query hooks) plus two new `UserConfig` fields (`isProfilePublic`, `farcasterLink`) and a new `FarcasterLink` type, and a merge commit. `NotificationSettings` placeholder shape is unchanged on `origin/master`, so the in-flight notifications type-alignment migration plan still applies cleanly. Package Structure now lists `farcaster/`, `primitives/`, `receipts/`, `typing/` (previously omitted). Version table now distinguishes local clone, remote master, and the npm-published version mobile depends on.*
+
+*Previously: 2026-05-27 — version bump to 2.1.0-16 (added seven privacy/device fields to `UserConfig` and promoted inline `UserNote` to a named export).*
 
 *Previously: 2026-05-20 — staleness audit fixes*
