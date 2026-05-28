@@ -195,6 +195,49 @@ Before opening your first mobile PR, send the lead a short async message. Someth
 
 The second paragraph is the more important question — there's a real chance the lead is mid-Farcaster-integration on mobile, and you'd discover that the hard way otherwise.
 
+## Mobile testing constraint: we don't run the mobile app
+
+> **Hard rule established 2026-05-28:** Kyn does NOT run/test the mobile app as part of normal migration work. He *can* (Expo dev build is available locally), but it's time-consuming and not part of the default loop.
+
+This shapes which mobile PRs are safe to open:
+
+| Mobile change | Safe to open without running the app? | Why |
+|---|---|---|
+| Delete unused code (verified by grep — zero importers) | ✅ Yes | If nothing imports it, removing it can't break anything. |
+| Bump shared dep when shared change is purely additive | ✅ Yes | Mobile keeps using same APIs; new exports just become available. |
+| Fix a TypeScript-only error (`as any` removal, type narrowing) | ✅ Yes | TS errors don't affect runtime; if it builds clean, mobile behaves identically. |
+| Rename a field on a type that mobile reads | 🟥 No — test first | Runtime data shapes change; need to verify mobile UI still renders. |
+| Change a function mobile actually calls | 🟥 No — test first | Behavior change; need device verification. |
+| Add UI to mobile | 🟥 No — test first | New visual surface; needs eyes on real device. |
+| Touch any of mobile's runtime files (`*.tsx` screens, hooks that are imported) | 🟥 No — test first | Live code path. |
+
+### The pre-PR checklist for any mobile PR
+
+Before opening a mobile PR, answer all three:
+
+1. **Is this change verifiable by static analysis alone?** (TypeScript builds, lint passes, grep confirms no consumers.)
+2. **Does the change touch any code path that runs at app startup or on user interaction?** If yes, static analysis isn't enough.
+3. **If something this PR introduces was wrong at runtime, would I notice without running the app?** If no, runtime testing is required.
+
+**All three "static-analysis-only" → safe to open without testing the mobile app.**
+**Any "no" → must run the mobile app locally first, OR don't open the PR.**
+
+### When testing is required, the path is
+
+1. `cd D:\GitHub\Quilibrium\quorum-mobile && yarn install`
+2. `yarn start` (Expo dev server)
+3. Connect a physical device via Expo Go, or run `yarn ios` / `yarn android` for a simulator build
+4. Manually exercise the code path the PR touches
+5. Document the test result in the PR description
+
+This is time-consuming (15-60 min for setup + test). **For migration work, prefer PRs that don't require it.** The `useNotificationSettings` deletion fits the "safe without testing" pattern: grep confirms zero importers, so removing it cannot affect any code path.
+
+### Implication for migration sequencing
+
+When picking next steps, **prefer mobile PRs that are statically verifiable.** Mobile PRs that require runtime testing become long-tail work — they get done when there's specific time allocated for mobile testing, not as part of the migration's normal flow.
+
+For each migration, ask early: *"What's the smallest possible mobile-side change here?"* If the answer involves "delete dead code" or "bump dep + adapt to additive type changes", that's a good migration to pick. If the answer involves "rewrite this hook's runtime behavior", deprioritize unless mobile UI work is the actual goal.
+
 ## The most important rule: additive vs. breaking changes in shared
 
 **Mobile is naturally insulated from shared changes** because it depends on a published npm version (e.g. `^2.1.0`), not a symlink. Mobile doesn't see your shared changes until someone explicitly bumps that version number in mobile's `package.json`.
