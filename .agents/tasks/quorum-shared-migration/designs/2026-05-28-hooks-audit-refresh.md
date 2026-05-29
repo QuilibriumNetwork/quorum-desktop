@@ -378,7 +378,7 @@ The earlier version of this section recommended migrating all 55 A2 query helper
 
 ## Recommended migration roadmap (updated)
 
-Each step is one PR per repo. Cross-repo workflow rules from [2026-05-28-cross-repo-workflow.md](../2026-05-28-cross-repo-workflow.md) apply throughout.
+Each step is one PR per repo. Cross-repo workflow rules from [cross-repo-workflow.md](../cross-repo-workflow.md) apply throughout. **Note (2026-05-29)**: this audit's per-PR sequence has been superseded by the broader [roadmap.md](../roadmap.md) which orders ALL migration work (not just hooks) by risk. This audit remains authoritative for hook-specific findings (categorization, mobile parallels, abstraction analysis).
 
 1. **PR-set 1: ✅ SHIPPED 2026-05-28.** `useTwoStepConfirm` extracted to shared (`2.1.0-18`); desktop's `useUserKicking` + `useSpaceLeaving` refactored to consume it. Mobile keeps inlined version for now. See [`../2026-05-28-migrate-use-two-step-confirm.md`](../2026-05-28-migrate-use-two-step-confirm.md).
 2. **PR-set 2: A second small verified candidate** — e.g. extract `useKickConfirmation` from `useUserKicking` if the side-by-side comparison's "line-for-line identical" claim holds up under direct re-verification. Both platforms then adopt it.

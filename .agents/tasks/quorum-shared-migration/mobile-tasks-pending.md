@@ -24,4 +24,4 @@ audience: future sessions wanting to see what's queued on the mobile side
 
 ---
 
-*Created 2026-05-28. Workflow rationale in [2026-05-28-cross-repo-workflow.md](2026-05-28-cross-repo-workflow.md) section "Proactive mobile task drop".*
+*Created 2026-05-28. Workflow rationale in [cross-repo-workflow.md](cross-repo-workflow.md) section "Proactive mobile task drop".*

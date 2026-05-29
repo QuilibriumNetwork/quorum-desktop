@@ -158,7 +158,7 @@ Before implementing, read relevant docs:
 - [Primitives Introduction](docs/features/primitives/01-introduction-and-concepts.md)
 - [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md)
 - [API Reference Template](docs/features/primitives/API-REFERENCE.md)
-- [quorum-shared migration overview](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
+- [quorum-shared migration overview](tasks/quorum-shared-migration/README.md)
 
 ---
 

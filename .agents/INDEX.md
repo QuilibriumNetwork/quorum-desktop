@@ -276,14 +276,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
 
 ### Quorum Shared Migration
-- [Get npm Publish Access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/2026-03-15-npm-publish-access-quorum-shared.md)
-- [Stacked PRs Workflow](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
-- [Structural type divergence between quorum-shared and quorum-desktop](tasks/quorum-shared-migration/2026-05-27-shared-vs-local-type-divergence.md)
-- [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-cross-repo-workflow.md)
-- [Where we are with the quorum-shared migration](tasks/quorum-shared-migration/status-recap.md)
-- [useTwoStepConfirm — extract two-step confirmation primitive to shared](tasks/quorum-shared-migration/2026-05-28-migrate-use-two-step-confirm.md)
-- [Quorum Shared Migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
-- [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
+- [Quorum Shared Migration — Master Tracker (README)](tasks/quorum-shared-migration/README.md)
+- [Roadmap — phased plan, less risky to most risky](tasks/quorum-shared-migration/roadmap.md)
+- [Shipped log — chronological history + lessons](tasks/quorum-shared-migration/shipped-log.md)
+- [Cross-repo PR workflow](tasks/quorum-shared-migration/cross-repo-workflow.md)
+- [Mobile tasks pending](tasks/quorum-shared-migration/mobile-tasks-pending.md)
+- [Reference — stacked PRs workflow](tasks/quorum-shared-migration/reference/stacked-prs-workflow.md)
+- [Reference — npm publish access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/reference/npm-publish-access.md)
 
 ### Quorum Shared Migration .Done
 - [Primitives Migration Prep](tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md)

@@ -1,11 +1,15 @@
 ---
 type: task
 title: Investigate and fix structural type divergence between quorum-shared and quorum-desktop
-status: partial-done
+status: closed
 created: 2026-05-27
-updated: 2026-05-28
+updated: 2026-05-29
 priority: high
 ---
+
+> **Status note (2026-05-29)**: moved to `.done/` because the actionable parts of this task have all landed (`UserNote`, `NotificationSettings` rename + dedup). The deferred sub-items live in their authoritative homes:
+> - `NavItem.icon/.color` deferral → tracked as a row in the [README status table](../README.md).
+> - Cross-device notification preference sync → tracked in [`../../../reports/2026-05-28-notification-architecture-divergence.md`](../../../reports/2026-05-28-notification-architecture-divergence.md) and queued under "Paused tracks" in [`../roadmap.md`](../roadmap.md).
 
 # Structural type divergence between quorum-shared and quorum-desktop
 
