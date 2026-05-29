@@ -9,10 +9,13 @@ updated: 2026-05-28
 # Quorum Shared Migration — Master Tracker
 
 > **🔴 New session? Read these first, in order:**
-> 1. **[roadmap.md](roadmap.md)** — the master plan. Phased from less risky to most risky, with dependencies and current state. Pick the next task from here.
+> 1. **[roadmap.md](roadmap.md)** — the master plan. **Read the "🟢 Next session: start here" block at the top first** — it names the next concrete action to take. Then the rest of the doc gives phased context.
 > 2. **[cross-repo-workflow.md](cross-repo-workflow.md)** — how to ship work across three repos when shared+desktop are self-merged but mobile PRs go to a different reviewer. Covers small-PR sizing, additive-vs-breaking changes, drift handling, the "follow mobile patterns" rule, and the "don't decide for the lead" rule. **Re-read at the start of every migration session** — the cross-repo workflow is unintuitive and easy to get wrong.
-> 3. **[shipped-log.md](shipped-log.md)** — chronological history of what's landed + lessons. Skim recent entries to catch up on what changed.
+> 3. **[shipped-log.md](shipped-log.md)** — **read the "Top-level lessons" block at the top** (6-trap taxonomy + cross-cutting findings). Then skim the 5 recent entries below it to catch up on what changed.
 > 4. **[../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md)** — only if you're working on the notifications track specifically. Verified deep-dive into how desktop and mobile each handle notification preferences. Anchors the GitHub issue paused on a lead-dev reply.
+
+> **Cross-cutting work that touches this migration:**
+> - [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) — desktop drag-and-drop channel reordering feature. Touches the migration in two ways: (1) reorder hooks intentionally kept desktop-local (Option B decision recorded in task), (2) channel pinning removal is cross-repo (mobile + shared + desktop coordination).
 
 > **Sibling workstreams in flight (2026-05-19):** [MessageDB refactor](../messagedb/README.md) and [test suite review](../2026-05-19-test-suite-review.md). The receipts PR here is coupled to MessageDB Tier 0 #3 and ReceiptService test cleanup — both flagged in the [receipts task prerequisite block](./.done/2026-05-19-receipts-shared-migration.md).
 
@@ -30,7 +33,8 @@ Code that participates in the P2P protocol (wire types, message-level state mach
 quorum-shared-migration/
 ├── README.md                          ← this file (catalog: status table + pointers)
 ├── roadmap.md                         ← phased plan, less risky → most risky
-├── shipped-log.md                     ← chronological history + lessons learned
+├── shipped-log.md                     ← chronological history + lessons learned (top-level lessons block + 5 recent entries)
+├── shipped-log-archive.md             ← older entries (only read if you need historical context)
 ├── cross-repo-workflow.md             ← workflow rulebook (read every session)
 ├── mobile-tasks-pending.md            ← mobile-side queue (gitignored on mobile)
 ├── 2026-XX-XX-<slug>.md               ← active per-task files (date-prefixed)

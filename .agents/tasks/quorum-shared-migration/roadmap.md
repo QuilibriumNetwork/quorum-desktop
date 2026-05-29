@@ -13,10 +13,36 @@ audience: any agent or contributor planning the next migration move
 >
 > **Companion docs**:
 > - [README.md](README.md) — row-by-row status of every migration (catalog view).
-> - [shipped-log.md](shipped-log.md) — chronological history of what's landed + lessons learned.
+> - [shipped-log.md](shipped-log.md) — chronological history of what's landed + lessons learned (read the "Top-level lessons" block at top).
 > - [cross-repo-workflow.md](cross-repo-workflow.md) — workflow rulebook (cross-repo PR sequencing, i18n, mobile constraints).
 >
 > **This doc is the leverage-ordered plan view.** The README is the state-ordered catalog. The shipped-log is the time-ordered history. They overlap deliberately at no point.
+
+## 🟢 Next session: start here
+
+State at end of 2026-05-29 session: **investigation surface exhausted** for all 8 phases. Concrete next moves, in order of leverage:
+
+**1. Execute the role-mutation extraction** (highest-leverage ready-to-ship work).
+- Per-task file: [`2026-05-29-migrate-role-mutation-helpers.md`](2026-05-29-migrate-role-mutation-helpers.md). Fully scoped, ready to execute.
+- Three PRs in sequence: quorum-shared → quorum-desktop → mobile task drop (already written, sits in mobile's gitignored `.agents/`).
+- Estimated 1 session. No open questions to resolve.
+
+**2. (optional, depending on bandwidth) File the Phase 5 coordination issue.**
+- Draft at `.agents/.temp/2026-05-29-phase5-coordination-issue.md` (gitignored). User decision was to file whenever — no urgency.
+- After filing, update Phase 5 section in this roadmap to record the issue number.
+
+**3. (optional) Tackle one Paused-tracks item** if you want a low-risk warm-up before the role-mutation PRs:
+- **Desktop-internal AES-GCM config-decrypt dedup** — 4 inline copies → 1 helper. Pure desktop refactor, zero shared changes. ~30 min.
+- **Channel pinning removal** — only START if `2026-01-07-channel-ordering-feature.md` is the next desktop feature being implemented; otherwise leave as paused.
+
+**Do NOT pick up Phases 5, 7, or 8.** Phase 5 is filing-only (no investigation). Phase 7 is gated on Phase 5 answers. Phase 8 has no unblocked candidates.
+
+**Do NOT execute mobile task drops directly** — they're queued for runtime-test sessions (which we don't run). See [mobile-tasks-pending.md](mobile-tasks-pending.md) for what's queued; the lead reviews/merges on their schedule.
+
+**Do NOT re-investigate closed phases.** All 6 are closed with full rationale. Trap taxonomy in shipped-log "Top-level lessons" block consolidates the failure modes.
+
+**Cross-cutting work to be aware of**:
+- [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) — desktop drag-and-drop channel reordering feature. Touches the migration in two ways: (1) reorder hooks intentionally kept desktop-local (decision recorded in task + migration roadmap Paused tracks), (2) channel pinning removal is cross-repo (mobile + shared + desktop coordination).
 
 ## Pre-flight (before starting any session)
 
@@ -57,12 +83,35 @@ Every migration task fits one of these four shapes. Categorize the work explicit
 
 **Candidates** (each its own per-task file when picked up):
 
-- **`useKickConfirmation` extraction** — the audit's recommended PR-set 2. Side-by-side comparison flagged desktop's `useUserKicking` and mobile's `useUserKicking` as having a line-for-line identical confirmation state machine. Verify the claim under direct re-read, extract to shared, both platforms adopt. Reference: [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md) — "Smallest safe first migration PR" section.
-- **`useSpaceOrdering`** — Category A pure hook. Verify mobile parallel exists / would plausibly use it.
-- **`useFolderStates`** — Category A pure hook. Verify the same.
-- **`useEmojiPicker`** — pure UI state + frequent-emojis localStorage. If mobile uses AsyncStorage/MMKV for frequent emojis, the convergence is via a `StorageAdapter` abstraction. Worth a separate scoping decision.
+- ~~**`useKickConfirmation` extraction**~~ — **RESOLVED 2026-05-29.** Verified the audit's "line-for-line identical" claim. Finding: desktop's `useUserKicking` was already refactored to consume `useTwoStepConfirm` in the 2026-05-28 PR-set (so the audit's "extract `useKickConfirmation`" framing was obsolete the day it was written). Mobile is the only remaining inline holdout. No new shared hook needed — `useTwoStepConfirm` already IS the right abstraction. Mobile task dropped: [mobile #2026-05-29](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-useTwoStepConfirm-in-useUserKicking.md). Tracked in [mobile-tasks-pending.md](mobile-tasks-pending.md).
+- ~~**`useSpaceOrdering`**~~ — **RESOLVED 2026-05-29 — classification C (stays per-app).** Three independent reasons: (1) it's a legacy shim on desktop, only called when `config.items` is absent (the folder-aware path uses `useNavItems` instead); (2) mobile sorts spaces by most-recent activity timestamp, ignoring `config.spaceIds` for display order — fundamentally different model; (3) the entire logic is ~15 lines of dedup + ordered-join, too thin to warrant a shared hook even if it converged. Verified against mobile `app/(tabs)/spaces/index.tsx:~131`. Future-action note: candidate for desktop deletion once the legacy-config path is confirmed unreachable.
+- ~~**`useFolderStates`**~~ — **RESOLVED 2026-05-29 — classification D (defer).** Mobile has no folder UI: `configService.ts` validates `NavItem[]` for data integrity but no screen renders `type: 'folder'` items, no expand/collapse affordance, no folder-grouped nav tree. Mobile's spaces list is a flat `FlashList` over `Space[]`. Same blocker as the `NavItem.icon`/`.color` deferral already in the README status table: "deferred until mobile builds folders." Secondary blocker: `useFolderStates` uses `localStorage` directly; sharing it would require a `KeyValueAdapter` abstraction not yet designed (the existing `StorageAdapter` covers DB entities, not key-value UI prefs). Re-evaluate when mobile ships folder navigation.
+- ~~**`useEmojiPicker`**~~ — **RESOLVED 2026-05-29 — classification C (stays per-app).** Three independent divergences: (1) `useEmojiPicker` itself is DOM-coupled (`DOMRect`, `window.innerHeight`/`Width`) for floating-overlay positioning; mobile uses a bottom-sheet Modal — different UX paradigm. (2) Frecency algorithms differ: desktop tracks raw hit counts (`useFrequentlyUsed.ts`); mobile uses exponential decay (`services/emojiFrecency.ts`: `score * 0.95` per use + `0.5^(hoursSinceUse/24)` time decay). (3) Data units differ: desktop stores unified codepoints (`"1f60d"`) and converts via `unifiedToNative()`; mobile stores native characters (`"😀"`). A `KeyValueAdapter` would NOT unblock this — the divergence is algorithmic, not just storage. Note: if either platform ever wants to align frecency behavior, that's an algorithm-first decision, not a shared-util task. The only shared surface is the `Emoji` custom-emoji type, already exported.
 
-**Exit criteria:** all four candidates have either shipped or been formally classified as not-shareable with a brief verdict logged in the shipped-log.
+**Exit criteria:** ✅ **Phase 1 fully verified 2026-05-29.** All four named candidates resolved:
+- `useKickConfirmation` → mobile task drop (desktop already done same-day).
+- `useSpaceOrdering` → C (stays per-app: legacy on desktop + different mobile model).
+- `useFolderStates` → D (defer: mobile no folder UI + no `KeyValueAdapter`).
+- `useEmojiPicker` → C (stays per-app: algorithmic divergence, not just storage).
+
+Net Phase 1 yield: **1 mobile task drop, 0 shared promotions**.
+
+**Phase 1 wrap-up lessons:** four for four, "Category A pure on desktop" did not translate to shareable. The failure-mode taxonomy that emerged across this session (Phases 1-4) is below. This is the authoritative reference — apply as a checklist when verifying any candidate.
+
+### Failure-mode taxonomy (the 6 traps)
+
+- **Trap A — Already done same-day.** Audit framing went stale before publish. Example: `useKickConfirmation` extraction (desktop refactored to consume `useTwoStepConfirm` the same day the audit recommending the extraction was published).
+- **Trap B — Mobile doesn't have the feature.** Even if desktop's logic is pure, mobile has no UI / no parallel data path. Example: `useFolderStates` (mobile has the type but no folder UI).
+- **Trap C — Same data, different model.** Mobile's data layer uses the same shape but for a different purpose. Example: `useSpaceOrdering` (both platforms have `spaceIds` but desktop uses it for user-controlled drag-reorder; mobile uses it as a membership list and sorts spaces by activity).
+- **Trap D — Same feature, different algorithm.** Both platforms have the feature but evolved independent implementations with different semantics. Example: `useEmojiPicker` frecency (desktop raw counts, mobile exponential decay; even data units differ).
+- **Trap E — Platform-correct primitive divergence.** Both platforms use platform-appropriate primitives for the same algorithm; forcing convergence would regress one platform. Examples: AES-GCM config decrypt (Web Crypto vs `@noble/ciphers`, desktop would lose hardware acceleration + non-extractable keys); UUID generation (`crypto.randomUUID()` vs polyfill); Ed448 signing (`ch.js_sign_ed448` WASM vs `NativeCryptoProvider`).
+- **Trap F — Singleton bypass.** A platform has a context system (e.g. `StorageContext`), but the candidate hooks bypass it via a module-level singleton. The context's existence doesn't imply hooks consume it. Example: mobile's `useChannelManagement` uses `getMMKVAdapter()` directly, not `useStorageAdapter()`. Verify hooks actually use the context before assuming a "mirror the pattern" migration is supported by precedent.
+
+A candidate failing ANY of these traps is C (stays per-app) or D (defer). Use the taxonomy as a checklist during verification, not as a post-hoc rationalization.
+
+**Key architectural finding surfaced**: the `KeyValueAdapter` gap. Two candidates (`useFolderStates`, likely `useAccentColor`) hit the same blocker — localStorage-coupled UI prefs that mobile would persist via MMKV. Tracking as a sub-task of Phase 4 (see Phase 4 update below).
+
+**Recommended next move**: skip ahead to Phase 2 (pure-helper extraction from monoliths). Phase 1's bucket is exhausted; Phase 2 has known candidates that haven't been verified yet (the AES-GCM config-decryption block was the most-flagged in prior spot-checks).
 
 ---
 
@@ -75,11 +124,24 @@ Every migration task fits one of these four shapes. Categorize the work explicit
 
 **Known candidates** (each its own per-task file):
 
-- **AES-GCM config-decryption block** — duplicated verbatim between `useOnboardingFlowLogic.fetchUser` and `useUnifiedOnboardingFlow.syncImportedProfile`. Surfaced 2026-05-29 morning spot-check. Pure logic. Audit whether mobile has the same flow; if yes, promote to a shared `decryptUserConfig` utility.
-- **Role-mutation pure functions** — inside `useRoleManagement` (Category A on desktop, but the audit notes mobile has full mutation parallels). Functions like `updateRolePermission(role, permission, value)` are pure and trivially shareable. Extract them; desktop's stage-then-save and mobile's save-per-action UX both call into them.
-- **Manifest-construction helpers** — inside `useSpaceCreation`, `useInviteManagement`. Look for pure functions that build space manifests, parse invite link components, validate user-supplied fields before broadcast.
+- ~~**AES-GCM config-decryption block**~~ — **RESOLVED 2026-05-29 — classification C (stays per-app).** Investigation surfaced **4 desktop copies** (not 2 as morning spot-check thought): `useOnboardingFlowLogic.ts:194-224` + `useUnifiedOnboardingFlow.ts:219-242` + `useUnifiedOnboardingFlow.ts:342-371` + `ConfigService.ts:75-128`. Mobile has the equivalent at `services/config/configService.ts:192-232` — semantically identical algorithm (SHA-512 → first 32 bytes → AES-256-GCM, IV = last 24 hex chars), same wire format, same output type. **But the implementations are platform-correct in different ways:** desktop uses `window.crypto.subtle` (Web Crypto, non-extractable keys, hardware accel); mobile uses `@noble/ciphers` (pure JS, natural for RN). Forcing convergence would be a security regression for desktop (Web Crypto → noble means keys move from non-extractable to raw `Uint8Array`). Shape A (`CryptoProvider` DI) is also wrong — `CryptoProvider` is the message-layer Ratchet/Ed448 interface, semantically mismatched with symmetric config crypto. **The desktop-internal duplication (4 copies → 1 helper) is still worth fixing** as a desktop-only task; tracked in "Paused tracks" below.
+- **Role-mutation pure functions** — **🟢 SCOPED 2026-05-29 — recommendation B (partial set).** Per-task file: [`2026-05-29-migrate-role-mutation-helpers.md`](2026-05-29-migrate-role-mutation-helpers.md). Extracts `toggleRolePermission` + `setRolePermissions` to shared (~5 LOC each; both inlined byte-for-byte in desktop + mobile today). Scope-guardrails: do NOT extract UUID gen (Trap E), `toggleRolePublic` (tiny semantic divergence), per-field setters (too thin), or member assignment (desktop doesn't have it). **Bonus C1 finding surfaced**: mobile reimplements `useHasPermission`/`useUserPermissions`/`useUserRoles` as React hooks instead of using shared's existing `hasPermission`/`getUserPermissions`/`getUserRoles`. Mobile task dropped at [`2026-05-29-mobile-adopt-shared-permission-helpers.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-shared-permission-helpers.md). ~60 LOC mobile cleanup + correctness fix (mobile currently ignores `isSpaceOwner`, silently dropping owners' permissions).
+- ~~**Manifest-construction helpers**~~ — **RESOLVED 2026-05-29 — classification D (bonus C1 findings, no Phase 2 extraction).** Audit overestimated both hooks: `useSpaceCreation` is 101 LOC of orchestration (not ~500); `useInviteManagement` is 197 LOC (not ~520). Real logic lives in `SpaceService.ts` (explicitly stays-per-app per services design). The only pure-liftable candidate inside `SpaceService` (Space object factory, SC-1) is too thin to warrant extraction (~20 LOC inlined once per platform; the call sites are interleaved with crypto so the extraction yields zero net LOC savings at call site). Manifest-encryption + key-derivation are Trap E (platform-correct primitive divergence: `ch.js_sign_ed448` WASM vs `NativeCryptoProvider`). **Two strong bonus C1 findings surfaced**: (1) mobile reimplements `getInviteUrlBase`/`VALID_INVITE_PREFIXES`/`parseInviteLink` locally in 2 files (~80 LOC) — mobile task dropped at [`2026-05-29-mobile-rewire-invite-helpers-to-shared.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-rewire-invite-helpers-to-shared.md); includes a real correctness fix (mobile's `getInviteUrlBase` hardcodes prod domain, breaks staging/localhost builds). (2) Confirms the deferred desktop `useInviteManagement` 1-line nudge in Paused tracks (`length === 46` → `isValidIPFSCID`).
 
-**Exit criteria:** each known candidate has shipped or been verified as non-extractable. New monolith hooks investigated as Phase 7 starts will surface more candidates — those land here.
+**Exit criteria:** ✅ **Phase 2 fully verified 2026-05-29.** All three named candidates resolved:
+- AES-GCM config decrypt → C (Trap E platform-correct crypto). Desktop-internal cleanup queued in Paused tracks.
+- Role-mutation helpers → B (partial extraction scoped + bonus mobile C1 dropped).
+- Manifest helpers → D (bonus mobile C1 dropped + reinforces existing Paused-tracks 1-liner).
+
+Net Phase 2 yield: **1 scoped per-task file (role-mutation extraction, ready for execution), 2 mobile C1 tasks dropped, 1 desktop-internal cleanup queued, 1 Paused-tracks 1-liner reinforced**.
+
+New monolith hooks investigated as Phase 7 starts will surface more candidates — those land here.
+
+**Phase 2 lessons (2026-05-29):**
+1. **"Duplicated across platforms" ≠ "shareable"** when both platforms made platform-correct independent implementation choices (e.g. Web Crypto vs noble). Symmetric crypto is the canonical example — browser-vs-native primitives diverge for good reasons.
+2. **The audit overestimated hook LOC counts.** `useSpaceCreation` is 101 LOC (audit said ~500). `useInviteManagement` is 197 LOC (audit said ~520). The "fat monolith" framing was wrong for these two — they're orchestration shells. The real logic lives in `SpaceService.ts` which is explicitly stays-per-app.
+3. **Bonus C1 findings dominate the value capture.** Both Phase 2 candidates surfaced higher-yield mobile-side C1 (mobile reimplements shared utils) findings than the original C4 target was worth. Two mobile task drops this round (permission helpers + invite helpers) ~140 LOC of mobile cleanup + 2 real correctness fixes (isSpaceOwner + getInviteUrlBase hardcoded prod).
+4. **Recommended next move**: continue with Phase 3 (Cat A2 query infrastructure decision) OR start executing the scoped Phase 2 role-mutation extraction. Phase 3 is a judgment call (the Path A vs Path B decision); Phase 2 execution is straightforward but cross-repo coordination.
 
 ---
 
@@ -90,16 +152,20 @@ Every migration task fits one of these four shapes. Categorize the work explicit
 **Risk:** low. Pure desktop refactor either way. The judgment call is the decision itself.
 **Dependencies:** none.
 
-**Context.** The 2026-05-28 hooks audit originally recommended these 55 files as PR-set 1, then withdrew the recommendation:
-- Desktop's `buildSpacesKey() = ['Spaces']` (capital S) conflicts with shared's `queryKeys.spaces.all = ['spaces']` (lowercase). Same logical key, different cache slot.
-- `build*Fetcher` files reference desktop-specific `MessageDB` type.
-- `useInvalidate*` hooks aren't a pattern mobile uses (mobile inlines `queryClient.invalidateQueries`).
+**Exit criteria:** ✅ **Phase 3 resolved 2026-05-29 — Path B (formal closure).**
 
-**Two paths:**
-- **Path A.** Migrate desktop to use shared's `queryKeys` factory directly (rename desktop's cache keys to lowercase). One desktop-only refactor PR. Mobile already uses shared's keys. Then deprecate desktop's `build*Key` / `build*Fetcher` layer entirely.
-- **Path B.** Formally classify all 55 files as "desktop-internal infrastructure, will not migrate." Document why in the hooks audit. Don't revisit.
+The decision and full rationale are captured in [`designs/2026-05-28-hooks-audit-refresh.md`](designs/2026-05-28-hooks-audit-refresh.md) under "Phase 3 follow-up (2026-05-29) — formal closure" and reflected in the "Explicit non-goals" section of this roadmap.
 
-**Exit criteria:** decision made, documented, executed.
+**TL;DR of the decision**: four compounding grounds for closure:
+1. Cache key shapes are structurally divergent (messages key has different segment count + semantics, not just casing).
+2. `build*Fetcher` files are hard-typed to `MessageDB` and several reference DOM APIs.
+3. Mobile does NOT use `useInvalidate*` wrappers — inlines `queryClient.invalidateQueries` with shared's `queryKeys` directly.
+4. The real coupling surface is far larger than 55 files — it includes `MessageService.ts` (~5000 LOC, 15+ direct call sites), `SpaceService.ts`, `ConfigService.ts`, `EncryptionService.ts`, `InvitationService.ts`, `ActionQueueHandlers.ts`, `ThreadService.ts`, and several component files. All in the stays-per-app services layer.
+
+**Lessons codified**:
+- **"Pure on desktop = shareable" is wrong as a default**. The actual tests are: (a) does mobile use the pattern, and (b) is the data schema compatible with shared's existing exports. Both fail for A2.
+- **Audit estimates that count only the "obvious" files can dramatically undercount the real refactor surface.** The 55-file figure missed the services layer that consumes these factories directly. Future audits of cross-cutting infra should grep for ALL consumers, not just the obvious wrappers.
+- **Formal closure is a valid Phase outcome.** Path B is not failure — it's preventing future sessions from re-investigating the same files and hitting the same false-positive signal.
 
 ---
 
@@ -110,48 +176,98 @@ Every migration task fits one of these four shapes. Categorize the work explicit
 **Risk:** medium. No shared changes, no business-hook changes yet, but it introduces a new DI layer desktop will adopt incrementally.
 **Dependencies:** none. Can run in parallel with Phases 1-3.
 
-**What ships:**
-- `quorum-desktop/src/context/StorageContext.tsx` — provider wrapping `IndexedDBAdapter`.
-- `useStorageAdapter()` hook with the same shape as mobile's.
-- Provider wired into the app root.
-- No existing business hook touched.
+**Exit criteria:** ✅ **Phase 4 reclassified 2026-05-29 — recommendation C (wrong-shaped, not a Phase 6 prerequisite).**
 
-**Why this comes before Phase 6:** every Cat B "useMessageDB only" hook migration in Phase 6 will swap `useMessageDB()` for `useStorageAdapter()`. That swap can't happen until `useStorageAdapter()` exists on desktop.
+Verification this session demonstrated the audit's Phase 4 framing was wrong on three independent grounds:
 
-**Exit criteria:** `useStorageAdapter()` exists on desktop, returns a working `StorageAdapter` instance, type-checks against shared's interface.
+1. **`StorageAdapter` doesn't cover what most "useMessageDB only" hooks actually call.** Of the 14 hooks the audit named as Phase 6 candidates, only `useConversationPreviews` calls exclusively `StorageAdapter`-compatible methods (`messageDB.getMessage()`). The other 13 call `MessageDB`-specific richer methods (`addBookmark`, `removeBookmark`, `saveReadTime`, `getChannelThreads`, `getThreadStats`, `updateMessagePinStatus`, `muteUser`, `getAllEncryptionStates`, etc.) that are NOT in `StorageAdapter`. Routing them through `useStorageAdapter()` would leave them without the methods they need.
+2. **13 of 14 "useMessageDB only" hooks have no mobile parallel at all.** Only `useChannelManagement` has a mobile counterpart. The other 13 — `useBookmarks`, `useConversationPreviews`, `useUpdateReadTime`, `useUpdateThreadReadTime`, `useFolderDragAndDrop`, `useInviteProcessing`, `useTypingIndicator`, `useTypingNotifier`, `useSpaceDragAndDrop`, `useChannelThreads`, `useThreadMessages`, `useGroupManagement`, `useUserRoleManagement` — don't exist on mobile. Phase 6's premise ("swap to a `useStorageAdapter()`-routed shared hook") requires the shared hook to exist first. For 13/14 candidates, no such shared hook exists. Those are Phase 7 (design-new-shared-hook) candidates, not Phase 6 swap candidates.
+3. **The one hook with a mobile parallel bypasses mobile's own `StorageContext`.** Mobile's `useChannelManagement` uses `getMMKVAdapter()` (the module-level singleton) — not `useStorageAdapter()`. So even on the platform that HAS `StorageContext`, hooks that look like Phase 6 targets bypass the context entirely. Desktop adopting `StorageContext` wouldn't align with how mobile's actual hook works.
+
+**New trap (Trap F — singleton bypass)**: both platforms have module-level adapter singletons (`getIndexedDBAdapter`, `getMMKVAdapter`) that are used independently of the context system. The context isn't universally adopted even on the platform that has it.
+
+**Plus**: the original Phase 4 justification was half "unblock A2 query helpers" — and Phase 3 just formally closed A2 to stays-per-app. That half was already gone before this verification ran.
+
+**Net**: Phase 4 as originally framed is NOT a prerequisite for Phase 6. Phase 4 is at most a narrow infrastructure nice-to-have for the 3 thin-wrapper shared hooks (`useSpaces`/`useChannels`/`useSendMessage`) that already use `useStorageAdapter()` on mobile. Even there, a one-line `useMemo(() => getIndexedDBAdapter(messageDB), [messageDB])` inside the specific hook does the job without a full `StorageContext` provider.
+
+**Reshaping recommendation**:
+- **Phase 4 reclassified** from "prerequisite for Phase 6" to "narrow infrastructure nice-to-have, NOT a gate." If/when the 3 thin-wrapper hooks become Phase 6 targets, the singleton-via-useMemo approach works without a `StorageContext` PR.
+- **Phase 6 re-scope required**. The audit's 14-hook list was based on a false premise (that `StorageAdapter` covered their method needs). The actual Phase 6 surface is 1 hook (`useConversationPreviews`) plus possibly `useChannelManagement` if its mobile parallel's shape is adaptable. The other 12 are Phase 7 territory.
+- **Phase 4b (`KeyValueAdapter`) unaffected**. Stands on its own merits (independent of `StorageAdapter`).
+
+**Lessons codified**:
+- **Trap F — singleton bypass**: when a platform has a context system, verify whether the candidate hooks actually use the context or bypass it via a singleton. Mobile's `useChannelManagement` was the example.
+- **Audit Phase 6 list invalidated**: the "14 useMessageDB-only hooks" framing missed that 13/14 have no mobile parallel. Future Phase 6 planning needs hook-by-hook mobile parallel verification BEFORE classifying as Phase 6 candidates.
+- **Phase prerequisite chains can be ghosts**: the audit declared Phase 4 a Phase 6 prerequisite based on assumptions (StorageAdapter covers the hooks' needs, hooks have mobile parallels). Test prerequisite claims directly before treating them as dependencies.
+
+### Phase 4b — `KeyValueAdapter` (RECLASSIFIED 2026-05-29 — ghost prerequisite, close)
+
+**Exit criteria:** ✅ **Phase 4b closed 2026-05-29 — recommendation C.** Verification showed all candidates are blocked by larger traps than the storage-layer gap. Full hook-by-hook grep of `localStorage` usage surfaced 4 candidates; ALL fail an earlier trap before `KeyValueAdapter` would matter:
+
+- **`useFolderStates`**: Trap B (mobile has no folder UI; `git grep "folder" origin/master -- "*.tsx"` returned zero). `KeyValueAdapter` is the *second* gate; mobile building folders is the first gate. Designing gate 2 while gate 1 is shut produces zero value.
+- **`useAccentColor`**: Trap B + Trap D combined. Trap B: mobile's `ThemeProvider` has `setAccentColor` wired up but **zero callsites** anywhere in `app/**` — the feature exists in code but not in the UX (mobile is hardcoded to `defaultAccentColor="blue"`). Trap D: even if mobile shipped an accent picker, desktop's `useAccentColor` mutates `document.documentElement.classList` to apply CSS classes — DOM-only application logic. The persistence is half the divergence; the application is the other half.
+- **`useShowHomeScreen`**: Trap B. No mobile equivalent of the "empty DM home screen" UX feature.
+- **`useFrequentEmojis`**: already classified stays-per-app (Phase 1, Trap D — algorithmic divergence between raw count vs exponential decay). Explicitly NOT unblocked by `KeyValueAdapter`.
+
+Plus: mobile has NO shared "UI prefs" key-value abstraction. `MMKVAdapter` is for domain entities (implements `StorageAdapter`). `mirroredMMKV` is iOS-NSE-specific. Ad-hoc `createMMKV()` calls are per-feature singletons. The "mobile would implement `KeyValueAdapter` over MMKV" premise has no precedent on mobile to reference.
+
+Plus: extending `StorageAdapter` with `getPreference/setPreference` would be a semantic mismatch — `StorageAdapter` is sync-layer data store, not device-local prefs store. Different architectural concerns.
+
+**Re-evaluate trigger:** mobile ships folder navigation OR a user-facing accent color settings screen. At that point, check whether mobile uses MMKV for the preference, confirm the feature model matches desktop, then decide if `KeyValueAdapter` is still the right shape.
+
+**Lessons codified (echoing Phase 4)**: prerequisite chains can be ghosts when the candidate hooks have bigger blockers than the "missing abstraction." The audit's note "`KeyValueAdapter` would unblock `useFolderStates`" was true as a second-order observation but wrong as a first-order action item because the first-order blocker (mobile no folder UI) was still in effect.
 
 ---
 
 ## Phase 5 — Lead-dev coordination point
 
 **Category:** external dependency (not code work).
-**Goal:** file a GitHub issue against `quorum-mobile` asking the two architectural questions the audit identified, then wait for direction.
+**Goal:** file a GitHub issue against `quorum-mobile` asking two architectural questions — `CryptoProvider` DI pattern + broadcast pattern for shared mutation hooks. Then wait for direction.
 **Risk:** external — we don't control timing. Lead has limited bandwidth.
-**Dependencies:** wait until the existing notifications issue (mobile #65) gets a reply, OR until enough Phase 1-4 work has shipped to justify a second coordination ask. Don't double-load the lead's queue.
+**Status as of 2026-05-29:** issue drafted in `.agents/.temp/2026-05-29-phase5-coordination-issue.md` (gitignored). File whenever — the queue order doesn't matter; the lead reviews when convenient.
 
-**Two questions to file** (verbatim from [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md), "Crypto" and "Broadcast" sections):
+**Why this gates Phase 7:** Phase 7 (monolith convergence) needs them because the shareable mutation layer's shape depends on what the lead picks. Phase 6 was closed empty 2026-05-29 — no longer waits on Phase 5.
 
-1. **CryptoProvider DI.** Mobile instantiates `NativeCryptoProvider` ad-hoc at every space-crypto call site, plus a module-level singleton for DM crypto. Do we converge on a `CryptoContext` + `useCryptoProvider()` pattern (matching `StorageContext`), or stay ad-hoc?
-2. **Broadcast pattern for shared mutation hooks.** Should shared hooks return constructed WS envelopes (caller dispatches), or accept an `onBroadcast(envelope)` callback?
+**Exit criteria:** lead replies, decision documented, Phase 7 unblocked.
 
-**Why this gates Phases 6-7:** Phase 6 (useMessageDB-only hooks) doesn't need crypto or broadcast — it can ship without these answers. Phase 7 (monolith convergence) absolutely needs them, because the shareable mutation layer's shape depends on what the lead picks.
-
-**Exit criteria:** lead replies, decision documented, Phases 6-7 unblocked.
+**Phase 5 lesson** (refined this session): Phase 5's value scales with how many concretely-blocked candidates exist. Today's verifications closed many Phase 6/7 candidates (stays-per-app, mobile-feature-absent, etc.), so the queue of work actually blocked on Phase 5 is smaller than the audit assumed. The questions matter for FUTURE Phase 7 work but aren't urgent today.
 
 ---
 
 ## Phase 6 — Cat B "useMessageDB only" migration
 
 **Category:** C3 (refactor to converge).
-**Goal:** migrate the ~14 hooks that use `useMessageDB()` ONLY for storage operations (read/write spaces/messages/users, no broadcast, no crypto). They swap to `useStorageAdapter()`-routed shared hooks.
-**Risk:** medium-high per hook, but each is independent and bisect-able.
-**Dependencies:** Phase 4 (`useStorageAdapter()` exists on desktop). Independent of Phase 5.
+**Goal (REVISED 2026-05-29)**: migrate ONLY the desktop hooks that use `useMessageDB()` ONLY for storage operations AND have an existing matching shared hook to migrate INTO.
+**Risk:** low-medium per candidate (after rescoping). Each is independent and bisect-able.
+**Dependencies:** none (Phase 4 reclassified as nice-to-have, not a prerequisite — see Phase 4 verification 2026-05-29). Independent of Phase 5.
 
-**Hooks in scope** (from [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md), "useMessageDB only" sub-bucket): `useBookmarks`, `useChannelManagement` (storage portions), `useGroupManagement` (storage portions), `useConversationPreviews`, `useUpdateReadTime`, `useUpdateThreadReadTime`, `useFolderDragAndDrop`, `useInviteProcessing`, `useTypingIndicator`, `useTypingNotifier`, `useSpaceDragAndDrop`, `useChannelThreads`, `useThreadMessages`, `useUserRoleManagement`.
+### Audit's original 14-hook list — INVALIDATED 2026-05-29
 
-**Per-hook shape**: identify which `useMessageDB()` calls are pure storage operations; swap to `useStorageAdapter()` routed through a shared hook. The non-storage portions (broadcast, crypto) stay desktop-only behind callbacks until Phase 7.
+The Phase 4 verification this session also invalidated Phase 6's hook list. The audit named 14 hooks: `useBookmarks`, `useChannelManagement`, `useGroupManagement`, `useConversationPreviews`, `useUpdateReadTime`, `useUpdateThreadReadTime`, `useFolderDragAndDrop`, `useInviteProcessing`, `useTypingIndicator`, `useTypingNotifier`, `useSpaceDragAndDrop`, `useChannelThreads`, `useThreadMessages`, `useUserRoleManagement`. The audit's classification assumed they could "swap `useMessageDB()` for `useStorageAdapter()` routed through a shared hook." That assumption was wrong on three independent grounds (see Phase 4 above for full detail):
 
-**Exit criteria:** all in-scope hooks either migrated or formally re-classified.
+1. **`StorageAdapter` doesn't cover most of their method needs.** 13 of 14 hooks call `MessageDB`-specific richer methods (`addBookmark`, `saveReadTime`, `getChannelThreads`, etc.) NOT in `StorageAdapter`.
+2. **13 of 14 hooks have NO mobile parallel.** There's no shared hook to migrate them into. They are Phase 7 (design-new-shared-hook) candidates, not Phase 6 (swap-to-existing) candidates.
+3. **The one with a mobile parallel (`useChannelManagement`) bypasses mobile's own `StorageContext`** — uses `getMMKVAdapter()` singleton directly.
+
+### Phase 6 verification — empty (RESOLVED 2026-05-29)
+
+**Exit criteria: ✅ Phase 6 has zero candidates. Formal closure.**
+
+The Phase 4 invalidation identified `useConversationPreviews` as the single hook whose DB call (`getMessage`) fits in `StorageAdapter`. Phase 6 verification today confirmed that single fitness check was using the wrong test. The actual Phase 6 question is: **does a shared hook exist to migrate INTO?** Verification answered no on multiple grounds:
+
+1. **No shared hook for conversation previews exists.** `quorum-shared/src/hooks/` exports `useTwoStepConfirm`, `useSpaces`, `useChannels`, `useMessages`, and several mutation hooks — but no `useConversations`/`useConversationPreviews`/equivalent. The pure utility `generateMessagePreview` IS shared at `src/utils/messagePreview.ts`, but desktop's hook already imports and uses it. That's the only shared piece.
+2. **Mobile uses a different architectural model — Trap C.** Mobile stores `lastMessagePreview` directly on the `Conversation` record at write time (the `Conversation` extended type at `hooks/chat/useConversations.ts:14` includes `lastMessagePreview?: string`; `StorageAdapter.saveMessage`'s signature already accepts `conversationType`/`icon`/`displayName`, supporting write-time enrichment as the intended pattern). Desktop fetches messages at render time to compute previews. These are different write-path models, not different storage layers.
+3. **Spot-check confirms Phase 4 was correct on the other 13.** `useBookmarks` calls `addBookmark`/`removeBookmark`; `useUpdateReadTime` calls `saveReadTime`; `useChannelThreads` calls `getChannelThreads`. None of these are in `StorageAdapter`. Phase 4's sampling was accurate; the audit's 14-hook list does not contain Phase 6 candidates.
+
+**Net**: Phase 6 closes with 0 migrations executed. The audit's 14-hook list was based on a false premise that pure-import + `useMessageDB`-only equaled "ready to swap to shared." Future Phase 6-shaped work would need pre-existing shared hooks AND mobile actually using them — neither condition was met for any of the 14.
+
+**Architectural pointer surfaced (worth tracking for Phase 8)**: desktop's `useConversationPreviews` would become unnecessary if desktop's `saveMessage` path populated `Conversation.lastMessagePreview` at write time like mobile does. That's a write-path alignment task, not a hook migration. Listed under "Paused tracks" with the existing AES-GCM/channel-ordering helpers.
+
+**Phase 6 lessons codified**:
+- **The right Phase 6 test isn't "fits StorageAdapter" — it's "shared hook exists AND mobile uses it."** Both conditions must hold; either alone is misleading.
+- **Architectural divergence at the write path can masquerade as a read-path migration opportunity.** When desktop has a hook that exists to compensate for missing data, the migration target is the write-path that creates the data, not the read-path hook itself.
+- **Phase 7 absorbs what Phase 6 rejected.** The 13 hooks the audit named are not "stays per-app" — they're Phase 7 candidates (design new shared hooks) IF a future session decides convergence is worth the work. Most are gated on Phase 5 (broadcast/crypto DI answers).
+- **Trap F (singleton bypass) is real**: a hook using `getMMKVAdapter()` on mobile is NOT validating the `useStorageAdapter()` pattern, even though the context exists.
 
 ---
 
@@ -196,6 +312,10 @@ These run on their own clocks, independent of the phase sequence.
 - **Notifications convergence** — mobile GitHub issue #65, no replies as of 2026-05-29. Architecturally complex (mobile MMKV + iOS NSE vs desktop `UserConfig`-synced settings). Full investigation in [../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md). Includes the deferred `getMutedChannelsForSpace` + `isChannelMuted` migration (pure functions blocked because they're notification-shaped).
 - **Folder name length consistency** — 5-LOC opportunistic refactor, partly done (folder modal aligned to 50 chars; `useFolderNameValidation` still references the old 40-char constant). Pick up alongside any folder-touching task.
 - **`useInviteManagement` 1-line nudge** — `manualAddress?.length === 46` heuristic could tighten to `isValidIPFSCID`. Folds naturally into Phase 7c.
+- **Desktop-internal AES-GCM config-decrypt dedup** — 4 copies of the same Web Crypto decrypt block exist in `useOnboardingFlowLogic.ts:194-224`, `useUnifiedOnboardingFlow.ts:219-242`, `useUnifiedOnboardingFlow.ts:342-371`, `ConfigService.ts:75-128`. Surfaced by Phase 2 verification; ruled out for shared promotion (mobile uses `@noble/ciphers`, desktop uses Web Crypto — both platform-correct, convergence would be a regression). Desktop-internal extraction is still worth doing: collapse to one `decryptUserConfig(encryptedHex, privateKeyBytes)` helper in `src/utils/crypto/` or `src/services/crypto/`. Zero risk, ~4 call sites to refactor. Pick up alongside any onboarding-touching task or as standalone hygiene.
+- **Channel reorder pure helpers (future C4 candidate)** — desktop's upcoming channel-ordering feature ([`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md)) ships reorder hooks as **desktop-local** for now (avoids committing to a broadcast-DI pattern before lead-dev review). The pure `Space → Space` transforms underneath (`moveChannelInSpace`, `reorderGroupsInSpace`, `reorderChannelsInGroup`) are identical between desktop and mobile — clean C4 extraction candidate for a future session once the feature ships. Same shape as today's role-mutation extraction. Re-evaluate after the feature ships AND mobile addresses the broadcast gap ([mobile issue #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)).
+- **Channel pinning removal (cross-repo)** — separate from the migration; tracked in [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) section 6. Drops `Channel.isPinned`/`pinnedAt` from shared types + mobile's unused `usePinChannel` mutation + desktop's pin UI. Pattern A cross-repo sequencing (mobile first, then shared, then desktop). Discovery during Phase 4-b discussions: mobile DOES have `usePinChannel` mutation defined but with **zero UI callsites** (same Trap F pattern as `setAccentColor`). Not blocking the migration roadmap — listed here for cross-context awareness.
+- **Desktop `saveMessage` write-path conversation-preview enrichment** — surfaced by Phase 6 verification 2026-05-29. Desktop's `useConversationPreviews` exists because desktop's write path doesn't populate `Conversation.lastMessagePreview` at save time. Mobile already does (extended `Conversation` type at `hooks/chat/useConversations.ts:14`; shared's `StorageAdapter.saveMessage` signature already supports it via `conversationType`/`icon`/`displayName` params). Aligning desktop's `saveMessage` path to populate `lastMessagePreview` at write time would eliminate the entire `useConversationPreviews` hook as a side effect. Not high-priority — desktop's current pattern works — but worth keeping on the radar for Phase 8 services revisits.
 
 ## Explicit non-goals (don't re-debate)
 
@@ -205,7 +325,7 @@ These have been audited and classified as stays-per-app or out-of-scope. Surface
 - **ConfigService, EncryptionService, SpaceService, InvitationService, SyncService, NotificationService, ActionQueueHandlers** — all stays-per-app. Same doc §8-14.
 - **ActionQueueService** — re-audited 2026-05-28. Desktop is messaging reliability spine; mobile's `mutationQueue.ts` is a Farcaster-only stub with zero callers. [designs/2026-05-28-actionqueue-reaudit.md](designs/2026-05-28-actionqueue-reaudit.md).
 - **SearchService** — re-audited 2026-05-29. Same MiniSearch config across platforms but desktop persists in IndexedDB, mobile rebuilds in-memory. Different storage models. [designs/2026-05-29-searchservice-reaudit.md](designs/2026-05-29-searchservice-reaudit.md).
-- **Desktop's `build*Key` / `build*Fetcher` / `useInvalidate*` query helpers** (55 files) — currently unresolved. See Phase 3. Until Phase 3 closes, treat as "not a migration target by default" per the audit's withdrawn recommendation.
+- **Desktop's `build*Key` / `build*Fetcher` / `useInvalidate*` query helpers** (55 files) — **Phase 3 decision 2026-05-29: stays per-app. Will not migrate.** Four reasons: (1) cache key shapes structurally diverge from shared's `queryKeys` (not just casing — messages key has different segment count and semantics); (2) `build*Fetcher` files are typed to `MessageDB` and some reference DOM APIs; (3) mobile does NOT use `useInvalidate*` wrappers (inlines `queryClient.invalidateQueries` with shared's `queryKeys` directly); (4) the real coupling surface includes the stays-per-app services layer (`MessageService.ts` ~5000 LOC with 15+ direct call sites, plus 5 other services + several components). Refactor cost dwarfs any cross-platform value. Full rationale in [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md) under "Phase 3 follow-up (2026-05-29) — formal closure".
 
 ## Current state snapshot
 

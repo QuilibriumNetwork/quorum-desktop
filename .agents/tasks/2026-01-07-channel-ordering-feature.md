@@ -1,11 +1,11 @@
 ---
 type: task
 title: Implement Channel Ordering Feature
-status: on-hold
-complexity: high
+status: ready
+complexity: medium
 ai_generated: true
 created: 2026-01-07T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-05-29'
 ---
 
 # Implement Channel Ordering Feature
@@ -13,8 +13,71 @@ updated: '2026-01-09'
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
+**Unblocked 2026-05-29**: Mobile public repo now contains the channel ordering implementation. Reviewed at [quorum-mobile/hooks/chat/useChannelManagement.ts:446-636](../../../quorum-mobile/hooks/chat/useChannelManagement.ts) and [quorum-mobile/components/SpaceSettingsModal.tsx:1614-1822](../../../quorum-mobile/components/SpaceSettingsModal.tsx).
 
-**Blocked By**: Need to review mobile implementation (currently in private branch) to verify hook patterns and ensure cross-platform consistency before implementation
+## ⚠️ Findings from Investigation (2026-05-29)
+
+Resolved before implementation:
+
+### 1. Persistence — desktop-local via `SpaceService.updateSpace()` (revised 2026-05-29)
+
+**Earlier framing (now superseded)**: the original task suggested following shared's `StorageAdapter` pattern (`{ storage: StorageAdapter, ... }` options shape used by shared hooks like `useChannels`). That assumed the reorder hooks would ship to shared.
+
+**Revised approach**: see "Mutation Hooks — Desktop-local for now" section below. Desktop hooks call `SpaceService.updateSpace(modifiedSpace)` directly for persistence. No shared abstraction needed for this task. If the hooks ever consolidate into shared later, that's when the `StorageAdapter` / callback-pattern decision gets made.
+
+### 2. Mobile's reorder mutations don't broadcast — not a blocker for this task
+
+Mobile's `useMoveChannel` / `useReorderGroups` / `useReorderChannels` save to MMKV only — **no `broadcastSpaceUpdate` call**. Desktop's `SpaceService.updateSpace()` ([line 498](../../src/services/SpaceService.ts#L498)) does encrypt + sign + `postSpaceManifest` + `saveSpace` + invalidate.
+
+- **Mobile today**: reorders stay local, don't sync to other devices. Mobile already has `broadcastSpaceUpdate` in `services/space/broadcastSpaceUpdate.ts` and uses it in other mutations — the reorder ones just weren't wired to it.
+- **Cross-platform compatibility today**:
+  - Desktop reorders → mobile sees ✅ (desktop broadcasts)
+  - Mobile reorders → desktop sees ❌ (mobile doesn't broadcast, until they wire it up)
+
+**Tracked at [mobile issue #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)** for the mobile dev to fix on their schedule. Not a blocker for this task — desktop ships its own reorder UI and broadcasts correctly. Mobile receives and renders desktop's reorders fine.
+
+### 3. Collision detection — `closestCenter` (matches NavMenu)
+
+[NavMenu.tsx:574](../../src/components/navbar/NavMenu.tsx#L574) uses `closestCenter` for nested-sortables (spaces inside folders). Copy that. No rectIntersection.
+
+### 4. Drop position on group header / empty group — append to end
+
+When a channel is dragged onto a group header or onto an empty group's body (not onto a specific channel within it), `toPosition` should be `targetGroup.channels.length` (append). This is the most predictable behavior. Document via tooltip if needed.
+
+### 5. DragOverlay content
+
+- **Dragging a channel**: render a simplified `ChannelRow` (icon + name + badges, no buttons). Match NavMenu's overlay rendering for SpaceButton as a reference.
+- **Dragging a group**: render `GroupHeader` (drag handle icon + group name, no buttons or expanded channels). Keep it visually distinct from a channel ghost.
+
+### 6. Pinning feature — drop entirely, no migration
+
+**User decision (2026-05-29)**: drop channel pinning. With drag-and-drop reordering shipping, pinning becomes redundant (two ways to put a channel at the top is confusing UX). No migration logic, no first-load conversion. Any space that has pinned channels today will see them unpinned after the update — affecting near-zero spaces in practice (desktop usage minimal, feature rarely used).
+
+**Correction to earlier scoping (2026-05-29)**: the original task framing claimed "mobile has never had channel pinning." That's wrong — mobile DOES have a `usePinChannel` mutation at `quorum-mobile/hooks/chat/useChannelManagement.ts:250-280`, exported from the barrel at `index.ts:71`. BUT it has **zero UI callsites anywhere in mobile** (verified by grep across `origin/master`). Same Trap F pattern as mobile's `setAccentColor` (API wired but never invoked from UX). So the user-facing decision still holds — mobile users have never seen the feature — but the code-level cleanup is bigger than the task originally implied:
+
+- **Desktop**: drop "Pin to top" toggle, drop `isPinned`/`pinnedAt` from `ChannelData`, drop pin rendering.
+- **Mobile**: delete `usePinChannel` mutation from `hooks/chat/useChannelManagement.ts:250-280` AND remove the barrel re-export at `hooks/chat/index.ts:71`. This requires a small mobile PR.
+- **Shared types**: `Channel.isPinned`/`pinnedAt` exist at `quorum-shared/src/types/space.ts:58-59`. These get removed. **Critical: do NOT remove `Message.isPinned`/`pinnedAt` at `quorum-shared/src/types/message.ts:297-298` — that's a completely separate feature (message pinning) that mobile uses heavily in `usePinnedMessages`, `MessageActionSheet`, `MessagesList`, `SpaceChatArea`. Different fields, same names.**
+
+**Cross-repo sequencing required**: this is a breaking change to shared types. Per [cross-repo-workflow.md](quorum-shared-migration/cross-repo-workflow.md) Pattern A (mobile imports an affected symbol), all three repos coordinate. Order:
+1. quorum-mobile PR: delete `usePinChannel` mutation + barrel re-export. Low-risk for lead to review (zero UI callsites, so no behavior change).
+2. quorum-shared PR: remove `Channel.isPinned`/`pinnedAt`.
+3. quorum-desktop PR: drop the pin toggle/rendering, bump shared version.
+
+Mobile coordination is mandatory because shared's `Channel` type is referenced by mobile's `usePinChannel` even though mobile has no UI for it.
+
+### 7. Read-only badge
+
+Source: `Channel.isReadOnly: boolean` from shared types. Show 🔒 + "Read-only" label. Don't show which roles can post (that level of detail belongs in the channel editor modal). Mobile doesn't show this badge but desktop has more screen real estate, so it's a justified divergence.
+
+## Cross-Platform Approach
+
+**Desktop-local data layer for now, divergent UI layer.** After reviewing mobile and discussing trade-offs:
+
+- **Mutation hooks → desktop-local** (`useMoveChannel`, `useReorderChannels`, `useReorderGroups`). See revised "Mutation Hooks" section below. Match mobile's API surface for forward-compatibility; do NOT ship to `quorum-shared` yet (would commit to a broadcast-DI pattern before lead-dev review).
+- **Desktop UI: drag-and-drop**, reusing patterns from [NavMenu.tsx](../../src/components/navbar/NavMenu.tsx) and [useFolderDragAndDrop.ts](../../src/hooks/business/folders/useFolderDragAndDrop.ts). Better UX for mouse, discoverable, matches Discord/Slack/Notion conventions.
+- **Mobile UI: arrow buttons** (already shipped). Touch-friendly, avoids drag/scroll gesture conflicts.
+- **Sync compatibility**: confirmed. Both platforms render `space.groups` and `group.channels` in array order with no `sortOrder` field. Any reordering on either side produces a new `Space` manifest that the other side renders correctly with zero changes. Cross-group moves and group reordering done on desktop will reflect on mobile automatically — mobile just lacks the UI to *initiate* those operations.
 
 ## What & Why
 
@@ -126,26 +189,35 @@ Complete channel/group management hub with:
 
 ## Context
 
-- **Mobile app**: Has Channels tab with arrow buttons for reordering (code in private branch, not yet reviewed)
+- **Mobile app**: Has Channels tab with chevron up/down arrow buttons for in-group reordering only. No group reordering UI, no cross-group moves UI — but the underlying `useMoveChannel` hook already supports cross-group, and `useReorderGroups` exists unused. Desktop will surface these capabilities via DnD.
 - **Related report**: [channel-ordering-feature-analysis_2026-01-07.md](../reports/channel-ordering-feature-analysis_2026-01-07.md)
-- **Note**: Pinning feature exists only on desktop, rarely used - migration is low risk
+- **Pinning removal**: see section "6. Pinning feature — drop entirely" for the full cross-repo plan. Desktop has the UI, mobile has the mutation code but no UI, shared has the type fields. All three repos coordinate the removal.
 
-### What We Need From Mobile
+### Mobile Implementation Reference (reviewed 2026-05-29)
 
-Before implementing, review mobile's private branch for:
-1. **Hook implementation** - How does mobile's reorder hook work? (e.g., `useMoveChannel`, `useReorderChannels`)
-2. **Cross-group moves** - Does mobile support moving channels between groups? How?
-3. **Edge cases** - Any special handling for default channel, empty groups, etc.?
-4. **Sync validation** - Confirm `updateSpace()` with reordered arrays syncs correctly
+**Hooks** ([quorum-mobile/hooks/chat/useChannelManagement.ts](../../../quorum-mobile/hooks/chat/useChannelManagement.ts)):
 
-### Speculative Design (May Adjust After Mobile Review)
+| Hook | Params | Behavior |
+|------|--------|----------|
+| `useMoveChannel` | `{ spaceId, channelId, fromGroupIndex, toGroupIndex, toPosition }` | Same-group reorder OR cross-group move in one mutation. Detects same-group via `fromGroupIndex === toGroupIndex`. |
+| `useReorderGroups` | `{ spaceId, groupOrder: number[] }` | Index permutation array; validates uniqueness and bounds. |
+| `useReorderChannels` | `{ spaceId, groupIndex, channelOrder: string[] }` | Channel ID permutation array; alternative bulk form. |
 
-The technical specifications below are based on:
-- Observed mobile UI (screenshots showing arrow buttons, Channels tab)
-- Desktop's existing drag-and-drop patterns (NavMenu)
-- Shared types analysis (array-based ordering, no `sortOrder` field)
+All three invalidate `['channels', spaceId]`, `['spaces', spaceId]`, `['spaces']` on success.
 
-Once mobile code is available, compare and align implementations.
+**UI patterns mobile uses that desktop will NOT copy**:
+- Inline rename for group/channel names (input + check/cancel buttons in-row). Desktop keeps existing `ChannelEditorModal` / `GroupEditorModal` accessed via `[✎]` button — they support full options (read-only toggle, role selector, icon picker, topic) that mobile inlines piecemeal.
+- Inline icon picker on tap. Desktop opens IconPicker via the editor modals.
+
+**UI patterns mobile lacks that desktop WILL add**:
+- Group reordering (DnD on group containers).
+- Cross-group channel moves (DnD drop into different group).
+
+These are valid uses of capabilities mobile shipped in the hook layer but never wired into its UI. Not a divergence.
+
+### Sync Compatibility (confirmed)
+
+Both platforms render `space.groups.map(...)` and `group.channels.map(...)` with no sort step or override. The synced manifest *is* the order. Any reordering done on desktop — including group reordering and cross-group moves — broadcasts via the existing `updateSpace()` flow and renders correctly on mobile. Mobile users without DnD UI can still **see** desktop-initiated reorderings.
 
 ## Technical Specifications
 
@@ -180,79 +252,107 @@ All reordering operations work by modifying arrays and calling `updateSpace()`.
 | **2. Reorder channels in group** | `arrayMove(group.channels, fromIdx, toIdx)` | Simple |
 | **3. Move channel between groups** | Remove from source, insert into target | Simple |
 
-### Implementation Pattern (from NavMenu)
+### Mutation Hooks — Desktop-local for now (2026-05-29 revision)
+
+**Revised approach (2026-05-29)**: build `useMoveChannel`, `useReorderGroups`, `useReorderChannels` as **desktop-local hooks** for this task. Do NOT port them to `@quilibrium/quorum-shared` yet.
+
+**Why desktop-local instead of shared**:
+- Shipping shared hooks now would commit the codebase to a broadcast-DI pattern (callback vs adapter) before the lead-dev has weighed in on the broader question. Mobile coordinates broadcast differently than desktop, and the right shared-API shape isn't decided.
+- Mobile already has its own working reorder hooks at `quorum-mobile/hooks/chat/useChannelManagement.ts:446-636`. The mobile gap is the missing `broadcastSpaceUpdate` call (tracked at [quorum-mobile issue #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)), NOT the absence of shared hooks.
+- Per the migration roadmap's lessons (Phase 4 reclassification, Phase 4b closure): designing shared abstractions for hypothetical future shapes when the immediate use case doesn't need them is over-engineering. Ship the desktop feature; consolidate later if both platforms benefit.
+
+**What CAN be shared today**: the pure `Space → Space` transform functions underneath the hooks (e.g. `moveChannelInSpace(space, channelId, fromGroupIndex, toGroupIndex, toPosition): Space`). These are pure math, no side effects, identical algorithm on both platforms. Same shape as the role-mutation helpers extraction scoped today (see `quorum-shared-migration/2026-05-29-migrate-role-mutation-helpers.md`). **OPTIONAL future C4 refactor**, NOT a prerequisite for this task. Skip if it adds scope.
+
+**Desktop hook implementation**: build as React Query mutations in `src/hooks/business/channels/` calling `SpaceService.updateSpace(modifiedSpace)` for persistence (which already handles encrypt + sign + POST + broadcast + save). Match mobile's API surface for forward-compatibility:
 
 ```typescript
-import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
-import { SortableContext, useSortable, arrayMove } from '@dnd-kit/sortable';
-
-// Reorder groups
-const reorderGroups = (fromIndex: number, toIndex: number) => {
-  const newGroups = arrayMove(space.groups, fromIndex, toIndex);
-  updateSpace({ ...space, groups: newGroups });
-};
-
-// Reorder channels within a group
-const reorderChannelsInGroup = (groupIndex: number, fromIdx: number, toIdx: number) => {
-  const newGroups = space.groups.map((g, i) =>
-    i === groupIndex
-      ? { ...g, channels: arrayMove(g.channels, fromIdx, toIdx) }
-      : g
-  );
-  updateSpace({ ...space, groups: newGroups });
-};
-
-// Move channel between groups
-const moveChannelToGroup = (
-  channelId: string,
-  sourceGroupIdx: number,
-  targetGroupIdx: number,
-  targetPosition: number
-) => {
-  const channel = space.groups[sourceGroupIdx].channels.find(c => c.channelId === channelId);
-  const newGroups = space.groups.map((g, i) => {
-    if (i === sourceGroupIdx) {
-      return { ...g, channels: g.channels.filter(c => c.channelId !== channelId) };
-    }
-    if (i === targetGroupIdx) {
-      const channels = [...g.channels];
-      channels.splice(targetPosition, 0, channel!);
-      return { ...g, channels };
-    }
-    return g;
-  });
-  updateSpace({ ...space, groups: newGroups });
-};
+// Desktop-local hooks (src/hooks/business/channels/)
+useMoveChannel()    // { spaceId, channelId, fromGroupIndex, toGroupIndex, toPosition }
+useReorderGroups()  // { spaceId, groupOrder: number[] }
+useReorderChannels()// { spaceId, groupIndex, channelOrder: string[] }
 ```
 
-### Sync Flow (Already Works)
+The API shape mirrors mobile's so that if the hooks ever consolidate into shared later (with a `saveSpace` callback), the consumer call sites won't change.
 
-Changes automatically sync via existing `updateSpace()` flow:
-1. Modify `Space` object (reorder arrays)
-2. Call `updateSpace(modifiedSpace)`
-3. Encrypts with config key, signs with owner key
+**Mobile**: NOT touched by this task. Mobile already has these hooks (local-only persistence). The mobile broadcast gap is tracked in issue #66 and gets fixed on the mobile dev's schedule.
+
+**Desktop UI computes the params, hook does the mutation**. Example for the DnD `handleDragEnd`:
+
+```typescript
+// Reorder groups via index permutation
+const newOrder = arrayMove(
+  space.groups.map((_, i) => i),
+  fromIndex,
+  toIndex
+);
+reorderGroupsMutation.mutate({ spaceId, groupOrder: newOrder });
+
+// Reorder channels within a group via ID permutation
+const newOrder = arrayMove(
+  group.channels.map(c => c.channelId),
+  fromIdx,
+  toIdx
+);
+reorderChannelsMutation.mutate({ spaceId, groupIndex, channelOrder: newOrder });
+
+// Cross-group move
+moveChannelMutation.mutate({
+  spaceId,
+  channelId: activeData.channelId,
+  fromGroupIndex: activeData.parentGroupIndex,
+  toGroupIndex: overData.parentGroupIndex,
+  toPosition: overData.targetPosition,
+});
+```
+
+### Sync Flow (desktop's path works end-to-end)
+
+Desktop reorder → mobile sees the change:
+
+1. Desktop UI computes new `Space` object (reorder arrays via `arrayMove`)
+2. Desktop hook calls `SpaceService.updateSpace(modifiedSpace)`
+3. `SpaceService` encrypts with config key, signs with owner key
 4. POSTs to API via `postSpaceManifest()`
 5. Broadcasts via WebSocket to all members
 6. Saves locally to IndexedDB
+7. Mobile receives WS notification, refetches `Space`, re-renders with new order ✅
 
-### Reusable Patterns from NavMenu
+**Reverse direction (mobile reorder → desktop sees)**: not yet — mobile's reorder mutations save to MMKV but don't call `broadcastSpaceUpdate`. Tracked at [mobile issue #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66). Not a blocker for this task — desktop ships, mobile catches up on their schedule.
 
-| Pattern | File | What to Reuse |
-|---------|------|---------------|
-| DndContext setup | [NavMenu.tsx:550-675](../../src/components/navbar/NavMenu.tsx#L550-L675) | Sensors, collision detection, DragOverlay |
-| useSortable hook | [SpaceButton.tsx:99-103](../../src/components/navbar/SpaceButton.tsx#L99-L103) | Drag handle, isDragging state |
-| Drop indicators | [SpaceButton.tsx:151-155](../../src/components/navbar/SpaceButton.tsx#L151-L155) | Visual feedback lines |
-| Drag overlay ghost | [NavMenu.tsx:634-674](../../src/components/navbar/NavMenu.tsx#L634-L674) | Floating preview |
-| Sensor config | [useFolderDragAndDrop.ts:600-608](../../src/hooks/business/folders/useFolderDragAndDrop.ts#L600-L608) | Touch/mouse activation |
+**Cross-platform render confirmation**: both platforms render `space.groups.map(...)` and `group.channels.map(...)` with no sort step. Manifest order = display order.
+
+**Concurrency note**: the manifest model is last-write-wins. Same as existing add/delete operations — no new concurrency surface introduced.
+
+### NavMenu Reuse Guidance — Reference, Don't Subclass
+
+NavMenu is the most complex DnD surface in the codebase. **Channels reordering is a strict subset** — same library, simpler rules. Treat NavMenu as a paved-road reference, not a base to extend. Resist inheriting complexity that doesn't apply.
+
+**Directly reusable (copy as-is)**:
+
+| Pattern | Source | Action |
+|---------|--------|--------|
+| Sensor config | [useFolderDragAndDrop.ts:600-608](../../src/hooks/business/folders/useFolderDragAndDrop.ts#L600-L608) | Drop in unchanged. `PointerSensor` only (no separate `TouchSensor` — avoids race conditions). Touch: `delay: 100, tolerance: 5`. Mouse: `distance: 8`. |
+| Drop indicator styling | [SpaceButton.tsx:151-155](../../src/components/navbar/SpaceButton.tsx#L151-L155) | Reuse the same visual language so it feels consistent. |
+| DragOverlay portal pattern | [NavMenu.tsx:634-674](../../src/components/navbar/NavMenu.tsx#L634-L674) | Copy structure for floating preview. |
+| `useSortable` wiring shape | [SpaceButton.tsx:99-103](../../src/components/navbar/SpaceButton.tsx#L99-L103) | Reuse the *pattern* (attributes, listeners, isDragging) — write fresh components. |
+
+**Pattern-reusable, rewrite cleaner**:
+
+- `handleDragEnd` logic — NavMenu has ~10 branches because of folder creation on merge. Channels has **3**: group↔group, channel↔channel-same-group, channel↔channel-cross-group. Write fresh; don't fork NavMenu's switch.
+- Hook orchestration — NavMenu persists to UserConfig; channels persists to Space manifest. Similar shape, different persistence call.
+
+**Not reusable**: SpaceButton/NavMenu components themselves (wrong domain), folder-creation-on-merge logic (not applicable).
+
+**Red flag during implementation**: if you're porting NavMenu code and not deleting half of it, stop and rewrite. Channels should end up noticeably simpler than NavMenu.
 
 ### Key Differences from NavMenu
 
 | NavMenu | Channels Tab |
 |---------|--------------|
-| Creates folders from merging | No merging - just reorder |
-| 10 complex drag scenarios | 3 simple scenarios |
-| Persists to UserConfig | Persists to Space manifest |
-| Cross-container = folders | Cross-container = groups |
+| Creates folders from merging | No merging — just reorder |
+| ~10 complex drag scenarios | 3 simple scenarios |
+| Persists to UserConfig (local) | Persists to Space manifest (broadcast) |
+| Cross-container = create folders | Cross-container = move channel to other group |
 
 ### Nested Sortables Architecture
 
@@ -392,9 +492,14 @@ Alternatively, keep it simpler with inline components in Channels.tsx and extrac
 
 ## Implementation Phases
 
-### Phase 1: Data Layer
-- [ ] Create `useChannelReorder` hook with three functions above
-- [ ] Test sync works correctly with reordered arrays (manual test)
+### Phase 1: Data Layer (desktop-local)
+- [ ] Reference mobile's mutation logic at [quorum-mobile/hooks/chat/useChannelManagement.ts:446-636](../../../quorum-mobile/hooks/chat/useChannelManagement.ts#L446-L636) — adapt the same algorithm but for desktop's persistence path
+- [ ] Create `src/hooks/business/channels/useMoveChannel.ts` (React Query mutation)
+- [ ] Create `src/hooks/business/channels/useReorderGroups.ts`
+- [ ] Create `src/hooks/business/channels/useReorderChannels.ts`
+- [ ] Each calls `SpaceService.updateSpace(modifiedSpace)` for persistence (already handles encrypt + sign + POST + broadcast + save)
+- [ ] Use the same param shapes as mobile (see "Mutation Hooks" section above) for forward-compatibility
+- [ ] Manual sync test: reorder on desktop → confirm mobile updates (desktop's broadcast → mobile's WebSocket receive → mobile re-renders new order)
 
 ### Phase 2: Channels Tab UI
 - [ ] Create `src/components/modals/SpaceSettingsModal/Channels.tsx`
@@ -410,24 +515,50 @@ Alternatively, keep it simpler with inline components in Channels.tsx and extrac
 - [ ] Test collision detection works correctly with nested sortables (may need `rectIntersection` instead of `closestCenter`)
 - [ ] Wrap all user-visible strings with `<Trans>` or `` t`...` ``
 
-### Phase 3: Cleanup (Desktop-only, low risk)
-- [ ] Remove "Pin to top" toggle from ChannelEditorModal
-- [ ] Remove pin/unpin from channel context menus (if any)
-- [ ] Migrate existing pinned channels: On first load after update, if channel has `isPinned: true`, move to top of its group array (one-time migration)
-- [ ] Remove `isPinned`/`pinnedAt` fields from Channel type (desktop-only, mobile never had this)
-- [ ] Note: Pinning is rarely used, migration affects very few spaces
+### Phase 3: Pin Feature Removal (cross-repo)
+
+See section "6. Pinning feature — drop entirely, no migration" above for the full plan and sequencing. Summary checklist:
+
+**Step 1 — quorum-mobile PR (first):**
+- [ ] Delete `usePinChannel` mutation from `hooks/chat/useChannelManagement.ts:250-280`
+- [ ] Remove barrel re-export at `hooks/chat/index.ts:71`
+- [ ] Verify zero callers remain via grep
+- [ ] Open mobile PR for lead review (low-risk: zero UI callsites, no behavior change for users)
+
+**Step 2 — quorum-shared PR (after mobile merges):**
+- [ ] Remove `Channel.isPinned` / `Channel.pinnedAt` from `src/types/space.ts:58-59`
+- [ ] **Do NOT touch** `Message.isPinned` / `Message.pinnedAt` at `src/types/message.ts:297-298` (separate feature, mobile uses heavily)
+- [ ] Publish new shared version
+
+**Step 3 — quorum-desktop PR (after shared merges):**
+- [ ] Bump shared dependency to new version
+- [ ] Remove "Pin to top" toggle from [ChannelEditorModal.tsx:137-142](../../src/components/modals/ChannelEditorModal.tsx#L137-L142)
+- [ ] Remove `isPinned` / `pinnedAt` from `ChannelData` interface in [useChannelManagement.ts](../../src/hooks/business/channels/useChannelManagement.ts)
+- [ ] Remove pin-related rendering in [ChannelItem.tsx](../../src/components/space/ChannelItem.tsx), [ChannelGroup.tsx](../../src/components/space/ChannelGroup.tsx) (if any sorts/filters by pinned)
+- [ ] No migration logic — pinned channels simply lose their pinned status. Decision (2026-05-29): near-zero affected spaces. Document in changelog.
 
 ## Files to Create/Modify
 
-**New Files**:
+**New Files (desktop)**:
 - `src/components/modals/SpaceSettingsModal/Channels.tsx`
-- `src/hooks/business/spaces/useChannelReorder.ts`
+- `src/hooks/business/channels/useMoveChannel.ts`
+- `src/hooks/business/channels/useReorderGroups.ts`
+- `src/hooks/business/channels/useReorderChannels.ts`
 
-**Modified Files**:
-- `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` (add Channels tab)
-- `src/components/modals/SpaceSettingsModal/Navigation.tsx` (add Channels to nav)
-- `src/components/modals/ChannelEditorModal.tsx` (remove pin toggle)
-- `src/hooks/business/spaces/useChannelManagement.ts` (add move functions)
+**Modified Files (desktop)**:
+- `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` (add Channels tab case)
+- `src/components/modals/SpaceSettingsModal/Navigation.tsx` (add Channels nav entry, between General and Roles)
+- `src/components/modals/SpaceSettingsModal/index.ts` (export Channels)
+- `src/components/modals/ChannelEditorModal.tsx` (remove pin toggle at [line 137-142](../../src/components/modals/ChannelEditorModal.tsx#L137-L142))
+- `src/hooks/business/channels/useChannelManagement.ts` (remove `isPinned` / `pinnedAt` from `ChannelData`)
+- `package.json` (bump `@quilibrium/quorum-shared` version after the pin removal merges)
+
+**Modified Files (`quorum-shared`)** — pin removal only:
+- `src/types/space.ts` (remove `Channel.isPinned` and `Channel.pinnedAt` at lines 58-59)
+
+**Modified Files (`quorum-mobile`)** — pin removal only:
+- `hooks/chat/useChannelManagement.ts` (delete `usePinChannel` mutation at lines 250-280)
+- `hooks/chat/index.ts` (remove barrel re-export at line 71)
 
 ## Verification
 
@@ -451,9 +582,11 @@ Alternatively, keep it simpler with inline components in Channels.tsx and extrac
 - [ ] Empty groups show tooltip: "No channels - drag channels here or delete group"
 - [ ] Sidebar quick actions still work (add channel, edit channel, edit group)
 
-### Migration & Cleanup
-- [ ] Pinning feature removed without breaking existing spaces
-- [ ] Existing pinned channels migrated to top of group
+### Pin Feature Cross-Repo Removal
+- [ ] Mobile PR: `usePinChannel` mutation + barrel re-export deleted
+- [ ] Shared PR: `Channel.isPinned`/`pinnedAt` removed (kept `Message.isPinned`/`pinnedAt`)
+- [ ] Desktop PR: pin toggle/rendering removed, shared version bumped
+- [ ] Pinning UX removed without breaking existing spaces (pinned channels lose pinned status, no migration)
 
 ### Technical
 - [ ] TypeScript compiles: `npx tsc --noEmit`
@@ -465,7 +598,7 @@ Alternatively, keep it simpler with inline components in Channels.tsx and extrac
 - [ ] Channels tab implemented in SpaceSettingsModal
 - [ ] Drag-and-drop reordering works for channels and groups
 - [ ] Changes persist and sync correctly
-- [ ] Channel pinning removed (desktop-only migration complete)
+- [ ] Channel pinning removed across mobile + shared + desktop (cross-repo PRs merged in order)
 - [ ] Sidebar shortcuts preserved
 - [ ] All verification checks pass
 - [ ] No console errors
