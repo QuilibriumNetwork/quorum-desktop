@@ -22,11 +22,17 @@ This document provides a quick reference for all input and textarea validations 
 | Input Type | Limit | Threshold Display | Constant | Files |
 |------------|-------|------------------|----------|-------|
 | **Message Content** | 2500 chars | 80% (2000 chars) | `MAX_MESSAGE_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>`useMessageValidation.ts`<br>`MessageComposer.tsx`<br>`MessageComposer.native.tsx` |
-| **Display Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>`useDisplayNameValidation.ts`<br>Onboarding, User Settings & Space Settings modals |
-| **Space Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>`useSpaceNameValidation.ts`<br>`CreateSpaceModal.tsx` |
+| **Display Names** | max 50 chars (no min) | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation/displayName.ts`<br>`useDisplayNameValidation.ts`<br>Onboarding, User Settings & Space Settings modals |
+| **Space Names** | min 2 / max 50 chars | N/A | `MIN_NAME_LENGTH` / `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation/spaceName.ts`<br>`useSpaceNameValidation.ts`<br>`CreateSpaceModal.tsx` |
+| **Channel/Group Names** | max 50 chars (no min, accepts single-char) | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation/channelName.ts`, `validation/groupName.ts`<br>`useChannelValidation.ts`, `useGroupNameValidation.ts` |
+| **Device Names** | max 50 chars | N/A | `MAX_NAME_LENGTH` | `@quilibrium/quorum-shared` `validation/deviceName.ts`<br>`useDeviceNameValidation.ts` |
 | **Topics/Descriptions** | 80 chars | N/A | `MAX_TOPIC_LENGTH` | `@quilibrium/quorum-shared` `validation.ts`<br>Channel & Space settings |
+| **User Bio** | 160 chars | N/A | `MAX_BIO_LENGTH` | `@quilibrium/quorum-shared` `validation/userBio.ts` |
+| **User Note** | 256 chars | N/A | `MAX_USER_NOTE_LENGTH` | `@quilibrium/quorum-shared` `validation/userNote.ts` |
 | **Thread Titles** | 100 chars | N/A | `THREAD_TITLE_MAX_CHARS` | `ThreadSettingsModal.tsx` |
 | **Mention Display Names** | 200 chars | N/A | Hardcoded | `MessageMarkdownRenderer.tsx:203` |
+
+> **2026-05-28 — `MAX_NAME_LENGTH` raised from 40 to 50, `MIN_NAME_LENGTH = 2` added for Space names only.** Aligned to mobile's values per the cross-repo workflow's "follow mobile patterns" rule. Channel/group/display names keep no minimum to preserve existing behavior. See [shipped-log](../../tasks/quorum-shared-migration/shipped-log.md) for full migration context.
 
 ### Content Security Validation
 
@@ -138,7 +144,7 @@ src/hooks/business/validation/
 - **Files**: `OnboardingFlow.tsx`, `UserSettingsModal.tsx`, `SpaceSettingsModal/Account.tsx`, `useOnboardingFlowLogic.ts`, `useSpaceProfile.ts`
 - **Validations**:
   - XSS protection (blocks `< > " '`)
-  - Length limit (40 chars)
+  - Length limit (50 chars, no minimum)
   - Reserved name validation:
     - `everyone` - exact match only (mention conflict)
     - `admin`, `administrator`, `moderator`, `support` - with homoglyph + word boundary (anti-impersonation)
@@ -146,7 +152,7 @@ src/hooks/business/validation/
 
 #### Space Management
 - **Files**: `CreateSpaceModal.tsx`, `SpaceSettingsModal.tsx`, `useSpaceCreation.ts`
-- **Validations**: Space name XSS + length (40 chars)
+- **Validations**: Space name XSS + length (min 2, max 50 chars)
 - **UX**: Validation on blur and submit
 
 #### Thread Settings Modal
