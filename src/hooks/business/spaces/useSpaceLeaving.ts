@@ -1,27 +1,18 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useTwoStepConfirm } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 
 export const useSpaceLeaving = () => {
-  const [confirmationStep, setConfirmationStep] = useState(0); // 0: initial, 1: awaiting confirmation
-  const [confirmationTimeout, setConfirmationTimeout] =
-    useState<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { confirmationStep, armOrConfirm, resetConfirmation: resetTwoStep } =
+    useTwoStepConfirm();
   const navigate = useNavigate();
   const { deleteSpace, getConfig, actionQueueService, updateUserProfile } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
-
-  // Clean up timeout on unmount
-  useEffect(() => {
-    return () => {
-      if (confirmationTimeout) {
-        clearTimeout(confirmationTimeout);
-      }
-    };
-  }, [confirmationTimeout]);
 
   const leaveSpace = useCallback(
     async (spaceId: string, onSuccess?: () => void) => {
@@ -64,39 +55,25 @@ export const useSpaceLeaving = () => {
       } catch (err) {
         console.error('Failed to leave space:', err);
         setError(err instanceof Error ? err.message : 'Failed to leave space. Please try again.');
-        setConfirmationStep(0); // Reset confirmation state on error
+        resetTwoStep(); // Reset confirmation state on error
       }
     },
-    [deleteSpace, navigate, getConfig, actionQueueService, updateUserProfile, currentPasskeyInfo, keyset]
+    [deleteSpace, navigate, getConfig, actionQueueService, updateUserProfile, currentPasskeyInfo, keyset, resetTwoStep]
   );
 
   const handleLeaveClick = useCallback(
     (spaceId: string, onSuccess?: () => void) => {
-      if (confirmationStep === 0) {
-        setConfirmationStep(1);
-        // Reset confirmation after 5 seconds
-        const timeout = setTimeout(() => setConfirmationStep(0), 5000);
-        setConfirmationTimeout(timeout);
-      } else {
-        // Clear the timeout since we're confirming
-        if (confirmationTimeout) {
-          clearTimeout(confirmationTimeout);
-          setConfirmationTimeout(null);
-        }
+      armOrConfirm(() => {
         leaveSpace(spaceId, onSuccess);
-      }
+      });
     },
-    [confirmationStep, confirmationTimeout, leaveSpace]
+    [armOrConfirm, leaveSpace]
   );
 
   const resetConfirmation = useCallback(() => {
-    setConfirmationStep(0);
     setError(null);
-    if (confirmationTimeout) {
-      clearTimeout(confirmationTimeout);
-      setConfirmationTimeout(null);
-    }
-  }, [confirmationTimeout]);
+    resetTwoStep();
+  }, [resetTwoStep]);
 
   return {
     confirmationStep,

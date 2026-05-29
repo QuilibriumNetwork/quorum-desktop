@@ -355,7 +355,7 @@ The core mistake was treating "no context imports" as equivalent to "shareable."
 
 ### The actual next move
 
-Rather than picking a different first PR in this session (which would risk a second wrong call while fresh on the A2 mistake), the recommendation is: **write a focused next-session task doc** that lists 3–5 narrow candidate migrations and the verification steps for each. See [`../2026-05-28-hooks-migration-next-pr-candidates.md`](../2026-05-28-hooks-migration-next-pr-candidates.md) for that doc.
+Rather than picking a different first PR in this session (which would risk a second wrong call while fresh on the A2 mistake), the original recommendation was to write a focused candidates doc. **That approach has since been retired** (2026-05-28, same day) in favor of a per-task workflow: one candidate (or thematic bundle), one dated `2026-XX-XX-migrate-<thing>.md` task file at the migration folder root, verify-migrate-ship-log-move-to-.done. The first task using this workflow shipped `useTwoStepConfirm`: see [`../2026-05-28-migrate-use-two-step-confirm.md`](../2026-05-28-migrate-use-two-step-confirm.md) and [`../shipped-log.md`](../shipped-log.md).
 
 The candidates worth investigating in the next session (NOT yet verified — that's what the next session is for):
 
@@ -380,7 +380,7 @@ The earlier version of this section recommended migrating all 55 A2 query helper
 
 Each step is one PR per repo. Cross-repo workflow rules from [2026-05-28-cross-repo-workflow.md](../2026-05-28-cross-repo-workflow.md) apply throughout.
 
-1. **PR-set 1: One small verified candidate from the next-session task doc** ([`../2026-05-28-hooks-migration-next-pr-candidates.md`](../2026-05-28-hooks-migration-next-pr-candidates.md)) — most likely `useConfirmation` or the validation hooks, depending on what the verification pass turns up. Additive to shared, re-export in desktop, mobile PR ONLY if mobile has its own duplicate to delete.
+1. **PR-set 1: ✅ SHIPPED 2026-05-28.** `useTwoStepConfirm` extracted to shared (`2.1.0-18`); desktop's `useUserKicking` + `useSpaceLeaving` refactored to consume it. Mobile keeps inlined version for now. See [`../2026-05-28-migrate-use-two-step-confirm.md`](../2026-05-28-migrate-use-two-step-confirm.md).
 2. **PR-set 2: A second small verified candidate** — e.g. extract `useKickConfirmation` from `useUserKicking` if the side-by-side comparison's "line-for-line identical" claim holds up under direct re-verification. Both platforms then adopt it.
 3. **Lead-dev coordination point**: file a GitHub issue against `quorum-mobile` asking the two questions in the "Crypto" and "Broadcast" sections above. **Do not file this in parallel** — wait until PR-sets 1 and 2 have shipped, so the lead-dev's review queue isn't double-loaded on top of the existing notifications question.
 4. **PR-set 3: Introduce `StorageContext` on desktop** — define `quorum-desktop`'s `StorageProvider` wrapping the existing `IndexedDBAdapter`, expose `useStorageAdapter()`. No business-hook changes; just the plumbing. Lead-dev sees nothing on mobile. Standalone desktop refactor.
@@ -408,4 +408,6 @@ These notes do not expand the hooks-migration scope. They're flagged so the next
 
 *Created 2026-05-28 — full refresh of the hooks audit against live mobile `origin/master` (`98d59a4`) and shared `origin/master` (`fbbd48c`). Read-only investigation; no code changes. Anchored by three parallel deep-dives: desktop hooks re-inventory, mobile shared-consumption patterns, and side-by-side hook-by-hook comparison of 4 representative business hooks. Supersedes (and replaces) the older `2026-03-19-hooks-design.md`, which was deleted to keep the designs/ folder clean — the prior framing is available via git history if needed.*
 
-*Amended 2026-05-28 (same day) — withdrew the original recommendation to migrate Category A2 query helpers as the first PR. The recommendation was wrong: desktop's `build*Key` factories conflict with shared's existing `queryKeys` (different casing), `build*Fetcher` files reference desktop-specific `MessageDB`, and `useInvalidate*` hooks aren't a pattern mobile uses. Pure-import is not the same as shareable. The "Smallest safe first PR" section now points at [`../2026-05-28-hooks-migration-next-pr-candidates.md`](../2026-05-28-hooks-migration-next-pr-candidates.md) for the actual next-session investigation.*
+*Amended 2026-05-28 (same day) — withdrew the original recommendation to migrate Category A2 query helpers as the first PR. The recommendation was wrong: desktop's `build*Key` factories conflict with shared's existing `queryKeys` (different casing), `build*Fetcher` files reference desktop-specific `MessageDB`, and `useInvalidate*` hooks aren't a pattern mobile uses. Pure-import is not the same as shareable.*
+
+*Amended 2026-05-28 (later same day) — established the per-task migration workflow (one candidate or thematic bundle → one dated task file → ship → log → move to `.done/`). First task shipped: [`../2026-05-28-migrate-use-two-step-confirm.md`](../2026-05-28-migrate-use-two-step-confirm.md). The intermediate "candidates" doc was retired in favor of this workflow.*

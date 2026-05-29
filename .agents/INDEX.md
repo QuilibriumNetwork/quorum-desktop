@@ -281,6 +281,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Structural type divergence between quorum-shared and quorum-desktop](tasks/quorum-shared-migration/2026-05-27-shared-vs-local-type-divergence.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-cross-repo-workflow.md)
 - [Where we are with the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-status-recap.md)
+- [useTwoStepConfirm — extract two-step confirmation primitive to shared](tasks/quorum-shared-migration/2026-05-28-migrate-use-two-step-confirm.md)
+- [Quorum Shared Migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
 
 ### Quorum Shared Migration .Done
