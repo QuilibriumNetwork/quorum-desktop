@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { base58btc } from 'multiformats/bases/base58';
+import { isValidIPFSCID } from '@quilibrium/quorum-shared';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
@@ -89,10 +89,10 @@ export const useAddressValidation = (address: string) => {
       return;
     }
 
-    // Check base58 format
-    try {
-      base58btc.baseDecode(address);
-    } catch {
+    // Validate base58 format via shared utility (cross-platform safe — no
+    // multiformats Node-decode call needed; the precise flag uses regex-only
+    // alphabet validation backed by base58btc.baseDecode for final check).
+    if (!isValidIPFSCID(address, true)) {
       setValidationResult({
         isValid: false,
         error: t`Invalid address format. Addresses must use valid alphanumeric characters.`,
