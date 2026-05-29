@@ -61,6 +61,10 @@ Examples:
 
 The commit message itself can be terse — "doc: housekeeping across N audits" or "doc: re-audits + status updates" — since each individual change is already self-documenting in its file.
 
+**Code changes on main are a separate matter — they commit individually, even if small.** When a small code fix lands on main (a 1-line bump, a hygiene refactor, etc.), it gets its own commit. Doc edits that *describe* that specific code change (e.g. updating `.agents/docs/*.md` to reflect a new constant) ride with the code commit. Doc edits that are unrelated (re-audits, status-recaps, workflow rules, design docs) stay in the accumulating bundle and ship separately at the next transition point.
+
+Rationale for the split: code commits have bisect-value (`git bisect` and `git blame` need them to be discrete). Doc commits don't. So docs aggregate, code stays granular.
+
 This rule does NOT apply when committing on a feature branch as part of a PR — there, follow the per-migration ceremony (one logical commit per PR, which may include both code and docs).
 
 The rule also has an obvious safety release valve: if the doc work piles up enough that losing it would be costly (e.g. a week of uncommitted audits), commit it. Don't let "wait for the next code task" become "lose work to a disk failure."
@@ -222,6 +226,17 @@ Mobile PRs can sit weeks. Three things can shift underneath:
 3. **Lead changes things underneath you** (the real risk):
    - **Lead bumps shared on mobile while your mobile PR is open**: rebase, accept newer version, push. ~5-10 min per drift event.
    - **Lead touches the same mobile files**: rebase, resolve. Trivial conflicts are fast; full refactors can cost an hour. **This is why small PRs win** — a 3-line PR survives almost any refactor; a 300-line PR doesn't.
+
+### `.native.ts` files in `quorum-desktop` are vestigial
+
+This repo was originally designed to be cross-platform — desktop AND React Native consumers in a single codebase. The `.native.ts` variant of any file gets picked up by Metro's platform-extension resolver when the same file is imported from a React Native build. After the `quorum-shared` architecture landed (mobile lives in `quorum-mobile`, with shared as the bridge), the `.native.ts` files in `quorum-desktop` are mostly leftovers.
+
+When investigating a hook with a `.native.ts` variant:
+
+- If the only difference is the variant works around a Node-only import that shared has since absorbed (e.g. shared's `isValidIPFSCID` made the `multiformats.baseDecode` workaround in `useAddressValidation.native.ts` unnecessary), **safe to delete the `.native.ts`** during the refactor. Confirmed example: `useAddressValidation` (2026-05-29, commit `888d76ca`).
+- The reason we don't delete them in bulk: they're occasionally useful for spot-testing a mobile pattern locally before deciding whether to ship it to the `quorum-mobile` repo. But once a pattern converges (shared owns the cross-platform variant), the `.native.ts` has no reason to exist.
+
+Rule: when refactoring a hook that has both `.ts` and `.native.ts`, check whether the `.ts` change makes the `.native.ts` redundant. If yes, delete it in the same commit.
 
 ### Cross-linking PRs
 

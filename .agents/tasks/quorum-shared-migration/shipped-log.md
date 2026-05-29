@@ -16,6 +16,27 @@ audience: future sessions wanting a chronological view of what's been migrated
 
 ---
 
+## 2026-05-29 — Category B spot-check (no migration, finding logged)
+
+**Scope**: spot-check the 26 hooks in the "useMessageDB + usePasskeysContext" Category B sub-bucket for the "already-shared-util waiting to be used" pattern that `useAddressValidation` exhibited.
+**Result**: no Category C findings (no other hooks reimplementing what shared already exports). `useAddressValidation` was a genuine outlier — duplication happened because shared's `isValidIPFSCID` was added after the hook was originally written. Other Category B hooks correctly import existing shared utils (`isMentionedWithSettings`, `getDefaultNotificationSettings`, `hasPermission`, etc.).
+**Real future migration candidate flagged**: `getMutedChannelsForSpace` + `isChannelMuted` from desktop's `channelUtils.ts` are pure functions used by 7 hooks (mentions, replies, channel-mute domains), operating on the shared `UserConfig['mutedChannels']` type. Could move to shared once the paused notifications track unblocks (~25 LOC added to shared, 7 consumer imports updated). Deferred — adding now might conflict with whatever architecture the lead-dev picks for notifications.
+**Lessons**: (1) the `useAddressValidation` pattern doesn't generalize across the Category B bucket; Category B classification is correct for the other 25 hooks. (2) Spot-checks with subagents are a cheap way to test hypotheses about hook buckets — ~1 session, no code, ruled out a whole investigation thread.
+
+---
+
+## 2026-05-29 — `useAddressValidation` dedupe + folder length alignment
+
+**Scope**: two small desktop-only cleanups on main.
+**Shipped**:
+- `useAddressValidation.ts` refactored to call shared's existing `isValidIPFSCID(address, true)` instead of reimplementing the base58 format check. `useAddressValidation.native.ts` deleted (no longer needed — shared util is cross-platform safe). Public hook surface unchanged. Net `-123` LOC. Commit `888d76ca`.
+- `FolderEditorModal` `maxLength` 40 → 50, aligning with shared `MAX_NAME_LENGTH` (folder validation hook already used the shared constant; only the Input prop lagged). `space-folders.md` updated. Commit `6a7f7868`.
+**Lessons**: (1) some "Category B" hooks are actually "shared has this already, just rewire" — `useAddressValidation` looked context-coupled but the heavy logic was a duplicate of shared's `isValidIPFSCID`. (2) `.native.ts` variants in `quorum-desktop` are vestigial cross-platform leftovers — when their `.ts` counterpart converges on a shared util, delete the `.native.ts` in the same commit. Codified in the workflow doc.
+**Mobile**: not touched. Both are desktop-only refactors with no protocol or wire-format impact.
+**PRs**: none — direct main commits (small refactors, no review needed).
+
+---
+
 ## 2026-05-28 — Field validators (`validateSpaceName`, `validateDisplayName`, …)
 
 **Scope**: extract 9 pure field validators to shared with the `errorKey` i18n pattern; refactor 5 desktop validation hooks to thin Lingui-translating wrappers.
