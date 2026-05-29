@@ -1,7 +1,10 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
-import { getValidInvitePrefixes } from '@quilibrium/quorum-shared';
+import {
+  getValidInvitePrefixes,
+  parseInviteParams,
+} from '@quilibrium/quorum-shared';
 import type { Space } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { hexToSpreadArray } from '@/utils/crypto';
@@ -13,11 +16,6 @@ interface ValidatedSpace {
   description?: string;
 }
 
-interface InviteInfo {
-  spaceId: string;
-  configKey: string;
-}
-
 export const useInviteValidation = () => {
   const [validatedSpace, setValidatedSpace] = useState<
     ValidatedSpace | undefined
@@ -26,43 +24,6 @@ export const useInviteValidation = () => {
   const [isValidating, setIsValidating] = useState<boolean>(false);
   const { apiClient } = useQuorumApiClient();
 
-  const parseInviteLink = useCallback(
-    (inviteLink: string): InviteInfo | null => {
-      const validPrefixes = getValidInvitePrefixes();
-
-      const matchingPrefix = validPrefixes.find((prefix) =>
-        inviteLink.startsWith(prefix)
-      );
-      if (!matchingPrefix) {
-        return null;
-      }
-
-      const hashContent = inviteLink.split('#')[1];
-      if (!hashContent) {
-        return null;
-      }
-
-      const params = hashContent
-        .split('&')
-        .map((l) => {
-          const [key, value] = l.split('=');
-          if (!key || !value || (key !== 'spaceId' && key !== 'configKey')) {
-            return undefined;
-          }
-          return { [key]: value };
-        })
-        .filter((l) => !!l)
-        .reduce((prev, curr) => Object.assign(prev, curr), {});
-
-      if (params && params.spaceId && params.configKey) {
-        return params as unknown as InviteInfo;
-      }
-
-      return null;
-    },
-    []
-  );
-
   const validateInvite = useCallback(
     async (inviteLink: string) => {
       setValidationError(undefined);
@@ -70,11 +31,20 @@ export const useInviteValidation = () => {
       setIsValidating(true);
 
       try {
-        const inviteInfo = parseInviteLink(inviteLink);
-        if (!inviteInfo) {
+        const hasValidPrefix = getValidInvitePrefixes().some((prefix) =>
+          inviteLink.startsWith(prefix)
+        );
+        if (!hasValidPrefix) {
           setIsValidating(false);
           return;
         }
+
+        const params = parseInviteParams(inviteLink);
+        if (!params?.spaceId || !params.configKey) {
+          setIsValidating(false);
+          return;
+        }
+        const inviteInfo = { spaceId: params.spaceId, configKey: params.configKey };
 
         const manifest = await apiClient.getSpaceManifest(inviteInfo.spaceId);
         if (!manifest) {
@@ -113,7 +83,7 @@ export const useInviteValidation = () => {
         setIsValidating(false);
       }
     },
-    [apiClient, parseInviteLink]
+    [apiClient]
   );
 
   const clearValidation = useCallback(() => {
@@ -126,7 +96,6 @@ export const useInviteValidation = () => {
     validationError,
     isValidating,
     validateInvite,
-    parseInviteLink,
     clearValidation,
   };
 };
