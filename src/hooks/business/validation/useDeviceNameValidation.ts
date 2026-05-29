@@ -1,27 +1,12 @@
 import { useMemo } from 'react';
-import { t } from '@lingui/core/macro';
-import { validateNameForXSS, MAX_NAME_LENGTH } from '@quilibrium/quorum-shared';
-
-// Allowed: unicode letters, unicode digits, spaces, hyphens, parentheses, apostrophes
-const DEVICE_NAME_PATTERN = /^[\p{L}\p{N} \-()']+$/u;
+import { validateDeviceName as validateDeviceNameShared } from '@quilibrium/quorum-shared';
+import { translateValidationResult } from './errorTranslator';
 
 /**
  * Non-hook validator — usable in callbacks and async contexts.
  */
 export function validateDeviceName(name: string): string | undefined {
-  if (!name.trim()) {
-    return t`Device name cannot be empty`;
-  }
-  if (name.length > MAX_NAME_LENGTH) {
-    return t`Device name must be ${MAX_NAME_LENGTH} characters or less`;
-  }
-  if (!validateNameForXSS(name)) {
-    return t`Device name cannot contain HTML`;
-  }
-  if (!DEVICE_NAME_PATTERN.test(name)) {
-    return t`Device name can only contain letters, numbers, spaces, hyphens, and parentheses`;
-  }
-  return undefined;
+  return translateValidationResult(validateDeviceNameShared(name));
 }
 
 /**

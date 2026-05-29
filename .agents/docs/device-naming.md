@@ -120,7 +120,7 @@ See `config-sync-system.md` for full encryption details.
 `useDeviceNameValidation` / `validateDeviceName`:
 
 - Empty or whitespace-only: rejected
-- Over 40 characters (`MAX_NAME_LENGTH`): rejected
+- Over 50 characters (`MAX_NAME_LENGTH`): rejected (raised from 40 on 2026-05-28 to align with mobile)
 - HTML tag patterns (XSS check via `validateNameForXSS`): rejected
 - Allowed characters: unicode letters, unicode digits, spaces, hyphens, parentheses, apostrophes (regex `/^[\p{L}\p{N} \-()']+$/u`)
 

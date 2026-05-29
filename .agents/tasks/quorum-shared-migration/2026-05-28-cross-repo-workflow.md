@@ -35,6 +35,76 @@ Concrete sizing rule: **one job per PR**, ideally <50 lines diff. The smaller th
 
 > **Sizing escape hatch (2026-05-28):** the "<50 lines" target applies to migrations that have a real review audience or cross-repo coordination cost. For self-merged shared+desktop PRs with no mobile leg, **bundle by shape**: if multiple desktop hooks share the same inlined pattern, refactor them all at once. Example: `useTwoStepConfirm` (PR #19 + #161) bundled the extraction of one shared primitive + refactor of two desktop consumers (`useUserKicking` + `useSpaceLeaving`) in one PR pair. That's the right size — splitting one-hook-per-PR would have been ceremony, not safety.
 
+## i18n in shared (2026-05-28)
+
+> **Established when investigating the validation-hooks migration.** The desktop app uses Lingui extensively for UI text; mobile has no i18n system and uses hardcoded English strings. This shapes how shared modules deal with user-facing text.
+
+### The rule
+
+**Shared modules SHOULD NOT contain user-facing text.** Strong default. Shared returns data, state, codes, or structured violation info. The UI layer (components on each app, or thin platform wrappers around shared hooks) is where strings get materialized.
+
+This applies to:
+- Component labels, headings, tooltips, button text, status messages → live in each app's components, NOT in shared
+- Hook return values → return data + booleans + codes, NOT translated strings
+- Service responses → return structured results, NOT user-facing error messages
+
+### When shared MUST return error info (the `errorKey` pattern)
+
+For hooks/functions that genuinely produce errors needing user-facing display (validation hooks are the canonical case), use the `errorKey` + `errorVars` pattern:
+
+```ts
+// In shared
+export function validateSpaceName(name: string): { ok: true } | { ok: false; errorKey: string; errorVars?: Record<string, string | number> } {
+  if (!name.trim()) return { ok: false, errorKey: 'spaceName.required' };
+  if (name.length > MAX_NAME_LENGTH) return { ok: false, errorKey: 'spaceName.tooLong', errorVars: { max: MAX_NAME_LENGTH } };
+  // ...
+  return { ok: true };
+}
+```
+
+Then each platform owns a thin wrapper that maps codes to localized strings using whatever i18n system the platform uses:
+
+```ts
+// In desktop (uses Lingui)
+const errorMessages: Record<string, (vars?: any) => string> = {
+  'spaceName.required': () => t`Space name is required`,
+  'spaceName.tooLong': (vars) => t`Space name must be ${vars.max} characters or less`,
+};
+function useSpaceNameValidation(name: string) {
+  const result = validateSpaceName(name);
+  return result.ok
+    ? { isValid: true, error: undefined }
+    : { isValid: false, error: errorMessages[result.errorKey](result.errorVars) };
+}
+```
+
+```ts
+// In mobile (hardcoded English today; can swap for Lingui later by changing only this file)
+const errorMessages: Record<string, (vars?: any) => string> = {
+  'spaceName.required': () => 'Space name is required',
+  'spaceName.tooLong': (vars) => `Space name must be ${vars.max} characters or less`,
+};
+// Same wrapper shape
+```
+
+### Why this works
+
+- **Shared has zero i18n dependency.** No Lingui, no English assumption.
+- **Desktop keeps full multi-language support.** Lingui still operates exactly as it does today — just inside a thin wrapper rather than inside the validation function.
+- **Mobile keeps its current English-only state.** No Lingui adoption forced on the lead-dev.
+- **Future Lingui adoption on mobile is easy.** Only the mobile wrapper file changes; shared and every consumer keep working unchanged.
+
+### Naming convention for error keys
+
+- Format: `<domain>.<errorType>` (e.g. `spaceName.required`, `displayName.reserved`, `channel.topic.tooLong`)
+- Stable: once exported, additions are additive (safe), removals/renames are breaking (require platform-wrapper updates)
+- Variables for interpolation: simple `errorVars` object passed alongside, materialized by the wrapper
+
+### What this does NOT apply to
+
+- Component-level UI text (button labels, tooltips, headings, modal copy, etc.) — those live in each app's components, where Lingui (or mobile's hardcoded strings) already operates. Shared doesn't need to know about them.
+- Internal/debug strings (logger messages, error objects thrown for developer reading, etc.) — those can be plain English in shared. They're not user-facing.
+
 ## Per-migration ceremony (kept light, 2026-05-28)
 
 The per-task workflow established when shipping `useTwoStepConfirm`:
@@ -68,6 +138,60 @@ For each cross-repo migration (e.g. `NotificationSettings` alignment):
 **Why mobile last:** if mobile is the bottleneck, you don't want shared or desktop sitting behind it. Mobile lagging is the *expected* state, not the failure state.
 
 **While the shared PR is in review**, you can prep desktop and mobile branches locally using the `link:../quorum-shared` symlink — but don't open consumer PRs until shared merges and publishes (otherwise consumer PRs reference a non-existent npm version).
+
+## Proactive mobile task drop (2026-05-29)
+
+> **Established when working through hooks migration.** When a migration ships on shared + desktop and has a corresponding mobile-side change that we can't open as a PR immediately (needs runtime testing, batching with other mobile work, or just out of session time), drop a mobile task file inside the mobile repo so the work isn't forgotten and a future session can pick it up cold.
+
+### Where the tasks live
+
+`D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\`
+
+Mirrors the desktop convention (this folder). The mobile repo's `.agents/` is gitignored, so these tasks are local-only artifacts — no commits, no branches, no lead visibility through git. Pure session-to-session hand-off.
+
+### When to drop a task vs. skip
+
+| Situation | Action |
+|---|---|
+| Mobile imports affected symbols + we can open the PR same session | Open the mobile PR directly (Pattern A above). No task file. |
+| Mobile imports affected symbols + can't open PR this session (needs runtime testing, batching, out of time) | **Drop a task file.** |
+| Mobile imports affected symbols + shared change is additive (mobile keeps working, but should eventually adopt) | **Drop a task file** (Sub-case A above — adoption is real work that needs to happen, just not urgently). |
+| Mobile imports zero affected symbols (Pattern B) | No task file. Document in shared PR description as before. |
+| Mobile has dead consumer code (Sub-case B) | **Drop a task file** if defaulting to Pattern A (recommended). |
+
+### Task file contents (the checklist for a useful hand-off)
+
+The task must contain enough that a future session can execute without re-investigating shared and desktop. At minimum:
+
+1. **Frontmatter** with `status: open`, `created: YYYY-MM-DD`, links to the shared + desktop PRs that triggered it, and a `runtime-test: required | not-required` tag (per the static-analysis table above).
+2. **What shipped on shared + desktop** — the exports, types, hooks now available; the npm version of shared that contains them; the desktop PR that proves the migration pattern.
+3. **Concrete mobile file list** — actual paths in `quorum-mobile/` that need editing, gathered by grepping live during task creation:
+   ```bash
+   cd D:\GitHub\Quilibrium\quorum-mobile
+   grep -rE "\b(SymbolA|SymbolB)\b" --include="*.ts" --include="*.tsx" .
+   ```
+   Don't guess. Don't list paths from memory. Grep them.
+4. **Shape of the mobile change** — what to bump, what to delete, what to replace, with the exact symbols.
+5. **Static-analysis-only verification gates** — TS check command, lint command, grep that proves zero residual references. What "done" looks like without running the Expo app.
+6. **Runtime testing requirements** — if `runtime-test: required`, name the specific code paths to exercise (which screens, which user actions). If `not-required`, say why explicitly (e.g. "deleted code has zero importers by grep").
+7. **Pre-filled mobile PR description** using the template at line 235 of this doc, with cross-repo links already inserted. Future-you just copies it.
+
+### Workflow per migration
+
+After desktop PR is open and the mobile-side change is identified:
+
+1. **Use the docs-manager skill** to write `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\YYYY-MM-DD-<thing>.md`. Docs-manager produces the right frontmatter and structure. Pass it the checklist above as the body.
+2. **Run mobile's index update**: `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py`. Mobile's `update-index.py` was extended on 2026-05-29 to render subfolders inside `tasks/`, `bugs/`, `reports/`, `docs/` as their own `### Subfolder` sections under the parent heading, so `tasks/quorum-shared-migration/` shows up automatically with a status badge per file.
+3. **Update this folder's tracker.** Add a row to a `mobile-tasks-pending.md` file in `quorum-desktop/.agents/tasks/quorum-shared-migration/` (or extend [shipped-log.md](shipped-log.md)) so we can see at a glance which mobile tasks are queued. Mobile's gitignored — without a desktop-side tracker, we lose visibility.
+
+### Implication for "done"
+
+This extends the "What done means" section below. With the proactive drop, the terminal state for a cross-repo migration is one of:
+
+- ✅ Shared merged + desktop merged + **mobile PR opened** (when mobile is statically verifiable and we had time)
+- ✅ Shared merged + desktop merged + **mobile task dropped in `quorum-mobile/.agents/tasks/quorum-shared-migration/`** (when we couldn't open the PR this session)
+
+Both count as done from our side. The migration's mobile leg is owned by the next session that opens that folder.
 
 ## The three drift scenarios
 
@@ -449,9 +573,11 @@ A migration is **done from your perspective** when:
 
 1. ✅ Shared PR merged + published.
 2. ✅ Desktop PR merged.
-3. 🟡 Mobile PR **opened**. Not necessarily merged.
+3. 🟡 Mobile leg parked in one of two valid states:
+   - **Mobile PR opened** (statically-verifiable changes you could ship same session). Sitting in review queue is fine — not blocking.
+   - **Mobile task file dropped** in `quorum-mobile/.agents/tasks/quorum-shared-migration/` (when the change needs runtime testing, batching, or you ran out of session time). See the "Proactive mobile task drop" section above.
 
-Mobile sitting in review queue is **not** an open task on your side. Move on. Track the open PR in this folder's status table so future-you knows what's outstanding, but don't treat it as blocking.
+Both states count as done from your side. Track outstanding mobile PRs and pending mobile tasks in this folder's status table (or shipped-log) so future-you knows what's queued, but don't treat either as blocking.
 
 ## Worked example: the notifications migration sequence
 

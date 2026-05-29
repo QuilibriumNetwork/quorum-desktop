@@ -36,7 +36,7 @@ export type NavItem =
   | {
       type: 'folder';
       id: string;           // crypto.randomUUID()
-      name: string;         // User-defined (default: "Spaces", max 40 chars)
+      name: string;         // User-defined (default: "Spaces", max 40 chars — separate from MAX_NAME_LENGTH; see Limits table)
       spaceIds: string[];   // Ordered list of space IDs in folder
       icon?: IconName;      // Custom icon (rendered white on color bg)
       color?: FolderColor;  // Background color (reuses IconColor type)
@@ -652,7 +652,7 @@ When old native app writes `spaceIds` only, web app's `migrateToItems()` convert
 |-------|-------|-----------|
 | Max folders | 20 | Matches Telegram Premium |
 | Max spaces per folder | 100 | Matches Discord and Telegram |
-| Folder name max length | 40 chars | Consistent with space names |
+| Folder name max length | 40 chars | Originally chosen to match space names (which were also 40). ⚠️ Space names were raised to 50 on 2026-05-28 (align with mobile); folder names were NOT raised in that migration to keep scope tight. Future PR may want to bump folders to 50 for consistency. |
 
 ### Two-Layer Enforcement
 
