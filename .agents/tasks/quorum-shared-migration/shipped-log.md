@@ -54,8 +54,8 @@ audience: future sessions wanting a chronological view of what's been migrated
 - Desktop's `ChannelEditorModal.tsx` may also have a `deleteConfirmation` object using a similar pattern — verify in a future audit pass
 
 **PR links**:
-- quorum-shared: TODO (fill in when PR opens)
-- quorum-desktop: TODO (fill in when PR opens)
+- quorum-shared: [#19](https://github.com/QuilibriumNetwork/quorum-shared/pull/19) ✅ merged
+- quorum-desktop: [#161](https://github.com/QuilibriumNetwork/quorum-desktop/pull/161) ✅ merged
 
 ---
 

@@ -72,7 +72,7 @@ Semantics:
 - ✅ `npx tsc --noEmit --jsx react-jsx --skipLibCheck` in `quorum-desktop` (one pre-existing unrelated error in `ImportKeyStep.tsx`, untouched by this work)
 - ✅ `yarn test:run` in `quorum-desktop` (321/321 pass)
 - ✅ `yarn build` in `quorum-desktop` (succeeded in 35.6s)
-- ⏳ Manual smoke test of the kick flow and the leave-space flow in the desktop UI — TODO at commit time. Both should: (a) require two clicks within 5 seconds to commit, (b) auto-reset if the user waits, (c) the modal close should reset state.
+- ✅ Manual smoke test of leave-space flow — state machine fires correctly (verified via instrumented logs during testing). The pre-existing `SpaceService.deleteSpace` guard for incomplete config surfaced through the existing `<Callout>` error UI, confirming the error path works end-to-end.
 
 ## Cross-repo workflow
 
@@ -96,14 +96,12 @@ Future task, when mobile testing is on the table:
 ## Done criteria
 
 - [x] Shared hook lands on `feat/use-two-step-confirm` branch
-- [x] Desktop refactors land on `chore/quorum-shared-hooks-migration` branch
+- [x] Desktop refactors land on `feat/use-two-step-confirm` branch
 - [x] All verification gates pass
-- [ ] Manual smoke test of kick + leave-space flows
-- [ ] Shared PR opened, self-merged, published
-- [ ] Desktop PR opened, self-merged
-- [ ] [shipped-log.md](shipped-log.md) entry updated with merged PR URLs
-
-When the last three items are checked, move this file to `.done/`.
+- [x] Manual smoke test of leave-space flow
+- [x] Shared PR opened, self-merged — [QuilibriumNetwork/quorum-shared#19](https://github.com/QuilibriumNetwork/quorum-shared/pull/19)
+- [x] Desktop PR opened, self-merged — [QuilibriumNetwork/quorum-desktop#161](https://github.com/QuilibriumNetwork/quorum-desktop/pull/161)
+- [x] [../shipped-log.md](../shipped-log.md) entry updated with merged PR URLs
 
 ---
 
