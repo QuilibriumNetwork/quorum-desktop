@@ -9,7 +9,7 @@ updated: 2026-05-28
 # Quorum Shared Migration — Master Tracker
 
 > **🔴 New session? Read these first, in order:**
-> 1. **[2026-05-28-status-recap.md](2026-05-28-status-recap.md)** — friendly re-orientation: what's done, what's pending, what's next. Read if you've been away from this for more than a week.
+> 1. **[status-recap.md](status-recap.md)** — friendly re-orientation: what's done, what's pending, what's next. Read if you've been away from this for more than a week.
 > 2. **[2026-05-28-cross-repo-workflow.md](2026-05-28-cross-repo-workflow.md)** — how to ship work across three repos when shared+desktop are self-merged but mobile PRs go to a different reviewer. Covers small-PR sizing, additive-vs-breaking changes, drift handling, the "follow mobile patterns" rule, and the "don't decide for the lead" rule. **Re-read at the start of every migration session** — the cross-repo workflow is unintuitive and easy to get wrong.
 > 3. **[../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md)** — only if you're working on the notifications track specifically. Verified deep-dive into how desktop and mobile each handle notification preferences (storage, decision logic, OS delivery). Anchors the GitHub issue at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md) that's paused on a lead-dev reply.
 
@@ -29,7 +29,7 @@ Code that participates in the P2P protocol (wire types, message-level state mach
 quorum-shared-migration/
 ├── README.md                                  ← this file (master tracker)
 │
-├── 2026-05-28-status-recap.md                 ← 🟢 START HERE if you've been away
+├── status-recap.md                 ← 🟢 START HERE if you've been away
 ├── 2026-05-28-cross-repo-workflow.md          ← 🟢 READ EVERY SESSION (workflow rules)
 │
 ├── designs/                                   ← audits, inventories, decision rationale
@@ -75,7 +75,7 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | `useTwoStepConfirm` primitive (extracted from `useUserKicking` + `useSpaceLeaving`) | Hook | ✅ Done (2026-05-28) | shared `2.1.0-18`. See [shipped-log.md](shipped-log.md#2026-05-28--usetwostepconfirm) |
 | Hooks (276 hook files) | Logic | 🟢 6+ hooks/validators shipped. Audit refreshed 2026-05-28. Future per-candidate tasks at `2026-XX-XX-migrate-<hook>.md` as scoped. | [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md) |
 | ActionQueueService | Service | ❌ Stays per-app. Re-audited 2026-05-28: mobile's `mutationQueue.ts` is a Farcaster-only stub with zero active callers; the two systems solve different problems. | [designs/2026-05-28-actionqueue-reaudit.md](designs/2026-05-28-actionqueue-reaudit.md) |
-| SearchService + SearchAdapter | Service | ⏸️ Re-evaluate after mobile public-repo dump (2026-05-28) | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §3 |
+| SearchService + SearchAdapter | Service | ❌ Stays per-app. Re-audited 2026-05-29: same MiniSearch config across platforms but desktop persists in IndexedDB while mobile rebuilds in-memory per session. One micro-shareable (MiniSearch options constant) for opportunistic future bundling. | [designs/2026-05-29-searchservice-reaudit.md](designs/2026-05-29-searchservice-reaudit.md) |
 | channelThreadHelpers | Helpers | ⏸️ Re-evaluate after mobile public-repo dump (2026-05-28) | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §5 |
 | ThreadService | Service | ⏸️ Blocked on hooks migration | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §6 |
 | BackupService | Service | ⏸️ Blocked on shared symmetric crypto module | [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) §7 |
@@ -184,7 +184,7 @@ The mobile repo is a partially-public mirror, not the live internal dev tree. **
 
 *Previously: 2026-05-28 (evening) — three PRs shipped this session: quorum-desktop #159 (UserConfig mirror catch-up for `isProfilePublic`/`farcasterLink`), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` prefix rename + desktop dedup against shared). Notifications track now PAUSED on lead-dev direction — full architecture investigation at [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md), GitHub issue draft at [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Also discovered the mobile public-repo had a massive 2026-05-28 catch-up dump (`98d59a4`) — the older design docs need refreshing against the new mobile state before driving more migration work. Status table refreshed to reflect this; "Next up" rewritten.*
 
-*Previously: 2026-05-28 (morning) — mobile codebase access verified, upstream `quorum-shared` pulled (Farcaster module + new UserConfig fields landed). Status table updated, "Upstream changes 2026-05-28" section added, recap doc at [2026-05-28-status-recap.md](2026-05-28-status-recap.md).*
+*Previously: 2026-05-28 (morning) — mobile codebase access verified, upstream `quorum-shared` pulled (Farcaster module + new UserConfig fields landed). Status table updated, "Upstream changes 2026-05-28" section added, recap doc at [status-recap.md](status-recap.md).*
 
 *Previously: 2026-05-27 — two type-only PRs against `quorum-shared` (2.1.0-15 and 2.1.0-16): added 7 missing privacy/device fields to `UserConfig` (the receipts/typing-indicators consolidation flagged here as an open follow-up, plus a new `generateYouTubePreviews` field for the YouTube facade gate), and promoted `UserConfig.userNotes`'s inline object type to a named `UserNote` export so desktop could drop its local duplicate. Investigation also surfaced a deeper structural divergence in `NotificationSettings` and `NavItem` shapes between desktop and shared; tracked as a new mobile-blocked follow-up in [2026-05-27-shared-vs-local-type-divergence.md](2026-05-27-shared-vs-local-type-divergence.md).*
 

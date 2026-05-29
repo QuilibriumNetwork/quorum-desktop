@@ -280,7 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Stacked PRs Workflow](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
 - [Structural type divergence between quorum-shared and quorum-desktop](tasks/quorum-shared-migration/2026-05-27-shared-vs-local-type-divergence.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-cross-repo-workflow.md)
-- [Where we are with the quorum-shared migration](tasks/quorum-shared-migration/2026-05-28-status-recap.md)
+- [Where we are with the quorum-shared migration](tasks/quorum-shared-migration/status-recap.md)
 - [useTwoStepConfirm — extract two-step confirmation primitive to shared](tasks/quorum-shared-migration/2026-05-28-migrate-use-two-step-confirm.md)
 - [Quorum Shared Migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
@@ -296,6 +296,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Utilities Migration Design](tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md)
 - [Hooks Migration — Audit Refresh](tasks/quorum-shared-migration/designs/2026-05-28-hooks-audit-refresh.md)
 - [ActionQueueService re-audit (stays per-app)](tasks/quorum-shared-migration/designs/2026-05-28-actionqueue-reaudit.md)
+- [SearchService re-audit (stays per-app)](tasks/quorum-shared-migration/designs/2026-05-29-searchservice-reaudit.md)
 - [Services Layer — Migration Design for quorum-shared](tasks/quorum-shared-migration/designs/2026-05-18-services-design.md)
 
 ### Search Optimization

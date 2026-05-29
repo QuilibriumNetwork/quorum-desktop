@@ -50,16 +50,20 @@ What "same shape" means: the changes share a migration pattern (e.g. "extract in
 
 ## Docs-only work on main (2026-05-29)
 
-When working on docs **directly on `main`** (re-audits, design docs, status table updates, INDEX, README, workflow rule additions), batch ALL the doc work into **one commit**. Don't split granularly.
+When working on docs **directly on `main`** (re-audits, design docs, status table updates, INDEX, README, workflow rule additions), **don't commit per-session. Accumulate uncommitted across sessions. Ship as one big commit when the next code task is about to start.**
 
-The granular-commits guidance is for code work where bisect-ability matters. Doc work has no runtime behavior to bisect — splitting commits just creates more push events for no benefit.
+The rationale: doc work has no runtime behavior to bisect. Splitting commits gains nothing. Committing per-session just produces more push events. Accumulating until the natural transition point (the next code task) gives one clean "everything I learned/wrote up to here" commit that bookends the doc cycle.
 
-Examples of work that goes in one commit on main:
-- A re-audit doc + status table row update + INDEX entry → one commit
-- Multiple unrelated doc cleanups → one commit (titled "doc: housekeeping" or similar)
-- A workflow rule addition + the example that motivated it → one commit
+Examples:
+- Three re-audit sessions in a row → one commit when the next migration code task starts
+- A re-audit + a doc compaction + a status-recap rewrite → one commit
+- A workflow rule addition + the example that motivated it → folded into the next commit
+
+The commit message itself can be terse — "doc: housekeeping across N audits" or "doc: re-audits + status updates" — since each individual change is already self-documenting in its file.
 
 This rule does NOT apply when committing on a feature branch as part of a PR — there, follow the per-migration ceremony (one logical commit per PR, which may include both code and docs).
+
+The rule also has an obvious safety release valve: if the doc work piles up enough that losing it would be costly (e.g. a week of uncommitted audits), commit it. Don't let "wait for the next code task" become "lose work to a disk failure."
 
 ## Following mobile patterns (2026-05-28)
 
