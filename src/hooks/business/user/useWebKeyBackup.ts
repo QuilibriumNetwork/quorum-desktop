@@ -1,15 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 
 /**
  * Hook for web-specific key backup functionality
- * Handles key export and download with confirmation flow
- * Web-only implementation using DOM APIs
+ * Handles key export and download via DOM APIs
  */
 export const useWebKeyBackup = () => {
   const { currentPasskeyInfo, exportKey } = usePasskeysContext();
-  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] =
-    useState(0);
 
   // Download key file using web APIs
   const downloadKey = useCallback(async (): Promise<void> => {
@@ -39,35 +36,7 @@ export const useWebKeyBackup = () => {
     }
   }, [currentPasskeyInfo, exportKey]);
 
-  // Handle "I already saved mine" confirmation flow
-  const handleAlreadySaved = useCallback(() => {
-    if (alreadySavedConfirmationStep === 0) {
-      setAlreadySavedConfirmationStep(1);
-      // Reset confirmation after 5 seconds
-      setTimeout(() => setAlreadySavedConfirmationStep(0), 5000);
-    } else {
-      // User confirmed, return true to indicate they can proceed
-      return true;
-    }
-    return false;
-  }, [alreadySavedConfirmationStep]);
-
-  // Get appropriate button text for confirmation flow
-  const getConfirmationButtonText = useCallback(() => {
-    return alreadySavedConfirmationStep === 0
-      ? 'I already saved mine'
-      : 'Click again to confirm';
-  }, [alreadySavedConfirmationStep]);
-
   return {
-    // State
-    alreadySavedConfirmationStep,
-
-    // Actions
     downloadKey,
-    handleAlreadySaved,
-
-    // UI helpers
-    getConfirmationButtonText,
   };
 };
