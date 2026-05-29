@@ -295,6 +295,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Quorum Shared Migration Designs
 - [Utilities Migration Design](tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md)
 - [Hooks Migration — Audit Refresh](tasks/quorum-shared-migration/designs/2026-05-28-hooks-audit-refresh.md)
+- [ActionQueueService re-audit (stays per-app)](tasks/quorum-shared-migration/designs/2026-05-28-actionqueue-reaudit.md)
 - [Services Layer — Migration Design for quorum-shared](tasks/quorum-shared-migration/designs/2026-05-18-services-design.md)
 
 ### Search Optimization
