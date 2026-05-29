@@ -3,594 +3,261 @@ type: reference
 title: Cross-repo PR workflow when mobile PRs need a different reviewer
 status: reference
 created: 2026-05-28
+updated: 2026-05-29
 audience: future agents working on this migration
 ---
 
 # Cross-repo PR workflow for the quorum-shared migration
 
-> **The constraint that shapes everything:** PRs on `quorum-desktop` and `quorum-shared` are self-merged, but `quorum-mobile` PRs go to the lead dev for review and merge. The lead is busy; mobile PRs can sit for weeks. This doc is how we work around that without blocking ourselves.
+> **The constraint that shapes everything:** `quorum-desktop` and `quorum-shared` PRs are self-merged. `quorum-mobile` PRs go to the lead dev (often busy — PRs can sit for weeks). This doc is how we work around that without blocking ourselves.
 
-## The mental model
-
-Three independent streams that occasionally touch:
+## Mental model
 
 ```
-quorum-shared:    [push] → [self-merge] → [optionally publish]
+quorum-shared:    [push] → [self-merge]
 quorum-desktop:   [push] → [self-merge]
 quorum-mobile:    [push] → [lead reviews] → [lead merges]   ← potential bottleneck
 ```
 
-**The bottleneck only matters for work that has to ship on mobile.** Most migration work doesn't — mobile is usually the bystander, catching up to types/services that already shipped on shared and desktop. Notifications is the canonical example: shared and desktop ship the user-visible win, mobile catches up whenever it catches up.
+The bottleneck only matters for work that has to ship on mobile. Most migration work doesn't — mobile is usually the bystander, catching up to types/services that already shipped on shared and desktop.
 
-## Core rule: small, granular, independent PRs
+## The workflow at a glance
 
-Not one big bundled PR at the end. Reasons:
+For each cross-repo migration:
 
-1. **You can't ship desktop until lead merges mobile** if PRs are bundled.
-2. **Review fatigue** — small PRs get real review, big ones get a 5-minute skim.
-3. **Rebase pain** — mobile devs keep shipping while big PRs sit; every day = more conflicts.
-4. **Bisect-ability** — if mobile breaks after merge, small PRs make the cause obvious.
+1. **Investigate first.** Check what shared has, what desktop has, what mobile has (`git show origin/master:<path>` — mobile's working tree is stuck on a Jan 14 commit). Decide whether the migration is even viable per the rules below.
+2. **Create one task doc** at this folder root: `2026-XX-XX-migrate-<thing>.md`. Write it as the final record (frontmatter + what/why + files + verification checkboxes + done criteria + PR URL slots).
+3. **Branch** in shared (and desktop if needed). Branch name = what ships.
+4. **Code + verify.** Check verification boxes as gates pass.
+5. **Open shared PR first → self-merge → open desktop PR → self-merge.** Fill in PR URLs everywhere (task doc, shipped-log, status table, mobile task if applicable) **in the same feature-branch commit** before push.
+6. **Move task doc to `.done/`** in the same final commit.
+7. **Update [shipped-log.md](shipped-log.md)** with a tight entry (see existing entries for format).
+8. **Mobile leg**: open a mobile PR if statically verifiable, OR drop a mobile task file at `quorum-mobile/.agents/tasks/quorum-shared-migration/` and add a row to [mobile-tasks-pending.md](mobile-tasks-pending.md).
 
-Concrete sizing rule: **one job per PR**, ideally <50 lines diff. The smaller the PR, the more drift it survives.
+**Terminal state for a migration is one of:**
+- ✅ shared merged + desktop merged + mobile PR opened (lead reviews whenever)
+- ✅ shared merged + desktop merged + mobile task dropped
 
-> **Sizing escape hatch (2026-05-28):** the "<50 lines" target applies to migrations that have a real review audience or cross-repo coordination cost. For self-merged shared+desktop PRs with no mobile leg, **bundle by shape**: if multiple desktop hooks share the same inlined pattern, refactor them all at once. Example: `useTwoStepConfirm` (PR #19 + #161) bundled the extraction of one shared primitive + refactor of two desktop consumers (`useUserKicking` + `useSpaceLeaving`) in one PR pair. That's the right size — splitting one-hook-per-PR would have been ceremony, not safety.
+Both count as done. Mobile sitting in review is normal.
 
-## i18n in shared (2026-05-28)
+## Sizing and bundling
 
-> **Established when investigating the validation-hooks migration.** The desktop app uses Lingui extensively for UI text; mobile has no i18n system and uses hardcoded English strings. This shapes how shared modules deal with user-facing text.
+**Default rule:** one job per PR, ideally <50 lines diff. Smaller PRs survive drift, get real review, bisect cleanly.
 
-### The rule
+**Escape hatch:** for self-merged shared+desktop PRs with no mobile leg, **bundle by shape**. If multiple desktop hooks share an inlined pattern, refactor them all at once. The "<50 lines" target is about review fatigue and cross-repo coordination — when neither applies (self-merged, no lead-dev review), bundling 2-5 same-shape changes is fine. Example: `useTwoStepConfirm` (PR #19 + #161) bundled the shared primitive + two desktop consumer refactors.
 
-**Shared modules SHOULD NOT contain user-facing text.** Strong default. Shared returns data, state, codes, or structured violation info. The UI layer (components on each app, or thin platform wrappers around shared hooks) is where strings get materialized.
+What "same shape" means: the changes share a migration pattern (e.g. "extract inlined state machine X to shared, replace inline copies with shared import"). Different shapes = different PRs.
 
-This applies to:
-- Component labels, headings, tooltips, button text, status messages → live in each app's components, NOT in shared
-- Hook return values → return data + booleans + codes, NOT translated strings
-- Service responses → return structured results, NOT user-facing error messages
+## Docs-only work on main (2026-05-29)
 
-### When shared MUST return error info (the `errorKey` pattern)
+When working on docs **directly on `main`** (re-audits, design docs, status table updates, INDEX, README, workflow rule additions), batch ALL the doc work into **one commit**. Don't split granularly.
 
-For hooks/functions that genuinely produce errors needing user-facing display (validation hooks are the canonical case), use the `errorKey` + `errorVars` pattern:
+The granular-commits guidance is for code work where bisect-ability matters. Doc work has no runtime behavior to bisect — splitting commits just creates more push events for no benefit.
 
-```ts
-// In shared
-export function validateSpaceName(name: string): { ok: true } | { ok: false; errorKey: string; errorVars?: Record<string, string | number> } {
-  if (!name.trim()) return { ok: false, errorKey: 'spaceName.required' };
-  if (name.length > MAX_NAME_LENGTH) return { ok: false, errorKey: 'spaceName.tooLong', errorVars: { max: MAX_NAME_LENGTH } };
-  // ...
-  return { ok: true };
-}
-```
+Examples of work that goes in one commit on main:
+- A re-audit doc + status table row update + INDEX entry → one commit
+- Multiple unrelated doc cleanups → one commit (titled "doc: housekeeping" or similar)
+- A workflow rule addition + the example that motivated it → one commit
 
-Then each platform owns a thin wrapper that maps codes to localized strings using whatever i18n system the platform uses:
+This rule does NOT apply when committing on a feature branch as part of a PR — there, follow the per-migration ceremony (one logical commit per PR, which may include both code and docs).
 
-```ts
-// In desktop (uses Lingui)
-const errorMessages: Record<string, (vars?: any) => string> = {
-  'spaceName.required': () => t`Space name is required`,
-  'spaceName.tooLong': (vars) => t`Space name must be ${vars.max} characters or less`,
-};
-function useSpaceNameValidation(name: string) {
-  const result = validateSpaceName(name);
-  return result.ok
-    ? { isValid: true, error: undefined }
-    : { isValid: false, error: errorMessages[result.errorKey](result.errorVars) };
-}
-```
+## Following mobile patterns (2026-05-28)
 
-```ts
-// In mobile (hardcoded English today; can swap for Lingui later by changing only this file)
-const errorMessages: Record<string, (vars?: any) => string> = {
-  'spaceName.required': () => 'Space name is required',
-  'spaceName.tooLong': (vars) => `Space name must be ${vars.max} characters or less`,
-};
-// Same wrapper shape
-```
-
-### Why this works
-
-- **Shared has zero i18n dependency.** No Lingui, no English assumption.
-- **Desktop keeps full multi-language support.** Lingui still operates exactly as it does today — just inside a thin wrapper rather than inside the validation function.
-- **Mobile keeps its current English-only state.** No Lingui adoption forced on the lead-dev.
-- **Future Lingui adoption on mobile is easy.** Only the mobile wrapper file changes; shared and every consumer keep working unchanged.
-
-### Naming convention for error keys
-
-- Format: `<domain>.<errorType>` (e.g. `spaceName.required`, `displayName.reserved`, `channel.topic.tooLong`)
-- Stable: once exported, additions are additive (safe), removals/renames are breaking (require platform-wrapper updates)
-- Variables for interpolation: simple `errorVars` object passed alongside, materialized by the wrapper
-
-### What this does NOT apply to
-
-- Component-level UI text (button labels, tooltips, headings, modal copy, etc.) — those live in each app's components, where Lingui (or mobile's hardcoded strings) already operates. Shared doesn't need to know about them.
-- Internal/debug strings (logger messages, error objects thrown for developer reading, etc.) — those can be plain English in shared. They're not user-facing.
-
-## Per-migration ceremony (kept light, 2026-05-28)
-
-The per-task workflow established when shipping `useTwoStepConfirm`:
-
-1. **Create one task doc** at the migration folder root: `2026-XX-XX-migrate-<thing>.md`. Write it as if it's the final record — frontmatter, what/why, files, verification checkboxes, PR URL slots (blank to start), done criteria.
-2. **Do the work on a feature branch.** Branch name should describe what ships (rename if needed — e.g. a stale generic `chore/X` branch should become `feat/<specific-thing>`). If the branch name already matches what ships, leave it.
-3. **Check verification boxes as gates pass.** Don't write "TODO at commit time" — check them in real time.
-4. **One commit per logical unit.** Bundling the code change + task doc + shipped-log update + `.done/` move in a single feature-branch commit is fine — it's all one logical PR.
-5. **When opening PRs, fill PR URLs into the task doc + shipped-log + `git mv` the task doc to `.done/`** — all in the same feature-branch commit, before push. Don't do a separate "finalization" commit after merge.
-6. **Push, open PR, self-merge.** Done.
-
-What this avoids:
-- A "transition the doc through states (open → in-progress → done)" lifecycle. The doc IS the final record.
-- A separate `main`-branch commit after merge to backfill PR URLs.
-- Splitting code commits from doc commits within the same PR.
-
-What stays:
-- Shared PR first → desktop PR second (when both are needed).
-- Cross-link PRs in descriptions per the standard template below.
-- Update [shipped-log.md](shipped-log.md) chronologically.
-- Update [README.md](README.md) status table row.
-
-## Standard per-migration sequence
-
-For each cross-repo migration (e.g. `NotificationSettings` alignment):
-
-1. **Shared PR first.** Push to `quorum-shared`, open PR, self-merge, optionally publish new version.
-2. **Desktop PR next.** Bumps shared dep to the new version, does the desktop-side dedup. Self-merged.
-3. **Mobile PR last.** Bumps shared dep, does the mobile-side cleanup. Lead reviews and merges *whenever*.
-
-**Why mobile last:** if mobile is the bottleneck, you don't want shared or desktop sitting behind it. Mobile lagging is the *expected* state, not the failure state.
-
-**While the shared PR is in review**, you can prep desktop and mobile branches locally using the `link:../quorum-shared` symlink — but don't open consumer PRs until shared merges and publishes (otherwise consumer PRs reference a non-existent npm version).
-
-## Proactive mobile task drop (2026-05-29)
-
-> **Established when working through hooks migration.** When a migration ships on shared + desktop and has a corresponding mobile-side change that we can't open as a PR immediately (needs runtime testing, batching with other mobile work, or just out of session time), drop a mobile task file inside the mobile repo so the work isn't forgotten and a future session can pick it up cold.
-
-### Where the tasks live
-
-`D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\`
-
-Mirrors the desktop convention (this folder). The mobile repo's `.agents/` is gitignored, so these tasks are local-only artifacts — no commits, no branches, no lead visibility through git. Pure session-to-session hand-off.
-
-### When to drop a task vs. skip
-
-| Situation | Action |
-|---|---|
-| Mobile imports affected symbols + we can open the PR same session | Open the mobile PR directly (Pattern A above). No task file. |
-| Mobile imports affected symbols + can't open PR this session (needs runtime testing, batching, out of time) | **Drop a task file.** |
-| Mobile imports affected symbols + shared change is additive (mobile keeps working, but should eventually adopt) | **Drop a task file** (Sub-case A above — adoption is real work that needs to happen, just not urgently). |
-| Mobile imports zero affected symbols (Pattern B) | No task file. Document in shared PR description as before. |
-| Mobile has dead consumer code (Sub-case B) | **Drop a task file** if defaulting to Pattern A (recommended). |
-
-### Task file contents (the checklist for a useful hand-off)
-
-The task must contain enough that a future session can execute without re-investigating shared and desktop. At minimum:
-
-1. **Frontmatter** with `status: open`, `created: YYYY-MM-DD`, links to the shared + desktop PRs that triggered it, and a `runtime-test: required | not-required` tag (per the static-analysis table above).
-2. **What shipped on shared + desktop** — the exports, types, hooks now available; the npm version of shared that contains them; the desktop PR that proves the migration pattern.
-3. **Concrete mobile file list** — actual paths in `quorum-mobile/` that need editing, gathered by grepping live during task creation:
-   ```bash
-   cd D:\GitHub\Quilibrium\quorum-mobile
-   grep -rE "\b(SymbolA|SymbolB)\b" --include="*.ts" --include="*.tsx" .
-   ```
-   Don't guess. Don't list paths from memory. Grep them.
-4. **Shape of the mobile change** — what to bump, what to delete, what to replace, with the exact symbols.
-5. **Static-analysis-only verification gates** — TS check command, lint command, grep that proves zero residual references. What "done" looks like without running the Expo app.
-6. **Runtime testing requirements** — if `runtime-test: required`, name the specific code paths to exercise (which screens, which user actions). If `not-required`, say why explicitly (e.g. "deleted code has zero importers by grep").
-7. **Pre-filled mobile PR description** using the template at line 235 of this doc, with cross-repo links already inserted. Future-you just copies it.
-
-### Workflow per migration
-
-After desktop PR is open and the mobile-side change is identified:
-
-1. **Use the docs-manager skill** to write `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\YYYY-MM-DD-<thing>.md`. Docs-manager produces the right frontmatter and structure. Pass it the checklist above as the body.
-2. **Run mobile's index update**: `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py`. Mobile's `update-index.py` was extended on 2026-05-29 to render subfolders inside `tasks/`, `bugs/`, `reports/`, `docs/` as their own `### Subfolder` sections under the parent heading, so `tasks/quorum-shared-migration/` shows up automatically with a status badge per file.
-3. **Update this folder's tracker.** Add a row to a `mobile-tasks-pending.md` file in `quorum-desktop/.agents/tasks/quorum-shared-migration/` (or extend [shipped-log.md](shipped-log.md)) so we can see at a glance which mobile tasks are queued. Mobile's gitignored — without a desktop-side tracker, we lose visibility.
-
-### Implication for "done"
-
-This extends the "What done means" section below. With the proactive drop, the terminal state for a cross-repo migration is one of:
-
-- ✅ Shared merged + desktop merged + **mobile PR opened** (when mobile is statically verifiable and we had time)
-- ✅ Shared merged + desktop merged + **mobile task dropped in `quorum-mobile/.agents/tasks/quorum-shared-migration/`** (when we couldn't open the PR this session)
-
-Both count as done from our side. The migration's mobile leg is owned by the next session that opens that folder.
-
-## The three drift scenarios
-
-When a PR sits open, three things can change underneath it. Only one is genuinely risky.
-
-### Case 1: Your next work is independent of the unmerged PR ✅ safe
-
-Example: notifications mobile PR is stalled. You start the `UserConfig` mirror catch-up (different files, different scope). Branch from `mobile/main`, do the work, open a new PR.
-
-**No problem.** Lead can merge in any order.
-
-### Case 2: Your next work depends on the unmerged PR ⚠️ manageable
-
-Example: shared PR is unmerged; your next desktop PR needs the new type to exist. Stack: child branch is based on the parent unmerged branch.
-
-This is what the existing [stacked-PRs workflow doc](2026-03-15-stacked-prs-workflow.md) covers. It works, but:
-- When parent finally merges, **rebase** each child onto `main`.
-- If parent gets *changed* during review, every change ripples down.
-
-**Practical depth limit:** stack 2 deep without thinking, 3 deep with caution, never 4+. If at depth 3 and parent is still stalled, switch to Case 1 work.
-
-### Case 3: Lead changes things underneath you 🟥 the real risk
-
-#### 3a. Lead bumps shared on mobile while your mobile PR is open
-
-Example: your mobile PR bumps shared from `2.1.0` to `2.1.0-17`. Lead independently merges something that bumps shared to `2.1.0-18`. `mobile/main` is now at `-18`; your PR is at `-17`.
-
-**Resolution:**
-- Rebase your branch onto `mobile/main`.
-- Git will conflict in `package.json` (and likely `yarn.lock`).
-- Accept the newer version (`-18`), re-run `yarn install`, push.
-- Your PR's logic still works because shared versions are additive — your `NotificationSettings` change is still present in `-18`.
-
-**Cost:** ~5-10 minutes per drift event. Annoying, not blocking.
-
-#### 3b. Lead touches the same mobile files you're modifying
-
-Example: you delete `useNotificationSettings()`. Lead independently adds a new function nearby.
-
-**Trivial case:** small additions → rebase, resolve, push. Few minutes.
-
-**Bad case:** lead refactors `useUserConfig.ts` entirely. Your change has to be redone against the new structure. Could be 5 minutes, could be an hour.
-
-**This is why small PRs win.** A 3-line PR survives almost any refactor. A 300-line PR doesn't.
-
-## Cross-linking PRs
-
-Every PR in a cross-repo migration must reference the other repos' PRs in the description. This is non-negotiable — without it, reviewers (especially the lead on mobile) can't see the full context, and future-you can't reconstruct what shipped together.
-
-### Standard PR description template
-
-For **shared** PR (opened first):
-
-```markdown
-## What
-[one-line summary]
-
-## Cross-repo migration
-This is part of a 3-repo change:
-- **quorum-shared** (this PR): <description>
-- **quorum-desktop**: PR will follow once this merges and publishes
-- **quorum-mobile**: PR will follow — TBD link
-
-## Why
-[context]
-
-## Verification
-- [ ] `yarn test` in shared
-- [ ] Build succeeds
-```
-
-For **desktop** PR (opened after shared merges):
-
-```markdown
-## What
-[one-line summary]
-
-## Cross-repo migration
-This is part of a 3-repo change:
-- **quorum-shared**: ✅ MERGED — QuilibriumNetwork/quorum-shared#NN (version 2.1.0-XX)
-- **quorum-desktop** (this PR): <description>
-- **quorum-mobile**: open PR QuilibriumNetwork/quorum-mobile#NN (or "TBD")
-
-## Why
-[context]
-
-## Verification
-- [ ] `yarn test:run` in desktop
-- [ ] `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-- [ ] Manual QA: [what to test]
-```
-
-For **mobile** PR (opened last, to the lead):
-
-```markdown
-## What
-[one-line summary]
-
-## Cross-repo migration
-This is part of a 3-repo change, both already shipped:
-- **quorum-shared**: ✅ MERGED — QuilibriumNetwork/quorum-shared#NN (version 2.1.0-XX, available on npm)
-- **quorum-desktop**: ✅ MERGED — QuilibriumNetwork/quorum-desktop#NN
-- **quorum-mobile** (this PR): <description>
-
-## Why
-[context]
-
-## Why this is safe to merge whenever
-Mobile has been on the old shared version (`2.1.0`) the whole time and continues to work. This PR bumps mobile to the new shared version and adapts to any breaking changes. No production users affected by merge timing.
-
-## Verification
-- [ ] Build succeeds
-- [ ] [whatever else applies]
-```
-
-### Cross-link syntax
-
-GitHub auto-links across repos with `OrgName/RepoName#PRNumber`. Use that form, not bare URLs — it renders as a clickable badge and shows the PR's open/merged/closed state inline. Example: `QuilibriumNetwork/quorum-shared#18`.
-
-### When to update the cross-links
-
-- **Right after opening each PR**, edit the previously-opened PRs' descriptions to add the new PR's reference (so each PR points at all siblings, not just predecessors).
-- **When shared merges**, update desktop and mobile PR descriptions: change `quorum-shared` line from "open" to `✅ MERGED — link (version X.Y.Z-NN)`.
-- **When desktop merges**, update the mobile PR description similarly.
-
-This sounds tedious but takes ~30 seconds per update and is invaluable when the lead opens a mobile PR three weeks later and needs to reconstruct what shipped.
-
-## Operating rules
-
-1. **Always branch from current tip of `<repo>/main` before starting a new PR.** Don't branch from your last unmerged branch unless required (Case 2). Minimises drift exposure.
-
-2. **Watch `mobile/main` while a mobile PR is open.** Once a week run `git fetch && git log HEAD..origin/main` on your branch. If main has moved, rebase eagerly while conflicts are small. Don't wait for the lead to ping about merge conflicts.
-
-3. **Keep a buffer of 2-3 independent ready-to-push PRs.** If PR-A is stalled, push PR-B (independent). Don't gate yourself on lead's response time.
-
-4. **If a PR sits >2 weeks, ping specifically.** Not "any updates?" but: *"PR #X has been open 2 weeks, blocking PR #Y and #Z on my side. Can you take 10 min today?"* Make the cost visible.
-
-5. **Don't stack desktop PRs on unmerged mobile PRs.** Each cross-repo migration: ship shared first → desktop second → mobile last. Shared and desktop merges happen locally; mobile merge waits on lead review. Mobile lagging is fine.
-
-6. **Accept that some mobile PRs may sit indefinitely.** Cleanup PRs (deleting dead scaffolds) are low-value to the lead. If `useNotificationSettings` deletion sits 3 months, nothing breaks — the user-visible win already shipped on shared and desktop.
-
-## Communication: the one-time setup message
-
-Before opening your first mobile PR, send the lead a short async message. Something like:
-
-> *"I'm starting work on the quorum-shared migration items that need mobile-side changes. The first one is small (deleting an unused `useNotificationSettings` hook scaffold that's never imported anywhere). Setting expectations: I'll open PRs against `quorum-mobile` and tag you for review. Most will be small and focused. Any preferences on branch naming, PR template, or review cadence?*
->
-> *Also — I noticed quorum-shared now has a Farcaster module and `UserConfig` got `isProfilePublic` + `farcasterLink`. Mobile already has its own Farcaster hooks under `hooks/`. Is there work in flight to point mobile at the shared module? Don't want to step on toes."*
-
-The second paragraph is the more important question — there's a real chance the lead is mid-Farcaster-integration on mobile, and you'd discover that the hard way otherwise.
-
-## Mobile testing constraint: we don't run the mobile app
-
-> **Hard rule established 2026-05-28:** The mobile app is NOT run or tested as part of normal migration work. An Expo dev build is available locally if needed, but it's time-consuming and not part of the default loop.
-
-This shapes which mobile PRs are safe to open:
-
-| Mobile change | Safe to open without running the app? | Why |
-|---|---|---|
-| Delete unused code (verified by grep — zero importers) | ✅ Yes | If nothing imports it, removing it can't break anything. |
-| Bump shared dep when shared change is purely additive | ✅ Yes | Mobile keeps using same APIs; new exports just become available. |
-| Fix a TypeScript-only error (`as any` removal, type narrowing) | ✅ Yes | TS errors don't affect runtime; if it builds clean, mobile behaves identically. |
-| Rename a field on a type that mobile reads | 🟥 No — test first | Runtime data shapes change; need to verify mobile UI still renders. |
-| Change a function mobile actually calls | 🟥 No — test first | Behavior change; need device verification. |
-| Add UI to mobile | 🟥 No — test first | New visual surface; needs eyes on real device. |
-| Touch any of mobile's runtime files (`*.tsx` screens, hooks that are imported) | 🟥 No — test first | Live code path. |
-
-### The pre-PR checklist for any mobile PR
-
-Before opening a mobile PR, answer all three:
-
-1. **Is this change verifiable by static analysis alone?** (TypeScript builds, lint passes, grep confirms no consumers.)
-2. **Does the change touch any code path that runs at app startup or on user interaction?** If yes, static analysis isn't enough.
-3. **If something this PR introduces was wrong at runtime, would I notice without running the app?** If no, runtime testing is required.
-
-**All three "static-analysis-only" → safe to open without testing the mobile app.**
-**Any "no" → must run the mobile app locally first, OR don't open the PR.**
-
-### When testing is required, the path is
-
-1. `cd D:\GitHub\Quilibrium\quorum-mobile && yarn install`
-2. `yarn start` (Expo dev server)
-3. Connect a physical device via Expo Go, or run `yarn ios` / `yarn android` for a simulator build
-4. Manually exercise the code path the PR touches
-5. Document the test result in the PR description
-
-This is time-consuming (15-60 min for setup + test). **For migration work, prefer PRs that don't require it.** The `useNotificationSettings` deletion fits the "safe without testing" pattern: grep confirms zero importers, so removing it cannot affect any code path.
-
-### Implication for migration sequencing
-
-When picking next steps, **prefer mobile PRs that are statically verifiable.** Mobile PRs that require runtime testing become long-tail work — they get done when there's specific time allocated for mobile testing, not as part of the migration's normal flow.
-
-For each migration, ask early: *"What's the smallest possible mobile-side change here?"* If the answer involves "delete dead code" or "bump dep + adapt to additive type changes", that's a good migration to pick. If the answer involves "rewrite this hook's runtime behavior", deprioritize unless mobile UI work is the actual goal.
-
-## Patterns that already exist in mobile: follow, don't disrupt
-
-> **Rule established 2026-05-28:** Mobile is mostly written by the lead dev. They have an established style, structure, and set of patterns. When mobile has already shipped a working implementation of something we're about to design for shared, **the mobile pattern is the starting point**, not the desktop pattern.
-
-### Why this matters
-
-Desktop and mobile are *not* equal partners in shared. The lead is the primary mobile committer; they pull desktop's improvements into shared at their cadence. If shared's API doesn't match how mobile already structures things, the lead has to refactor mobile to adopt the migration — which is friction we want to avoid.
-
-The asymmetry runs in the other direction too: when desktop ships first and mobile catches up, we're in our own territory and can shape the API however we want. But when mobile got there first, **assume their shape is the canonical one** unless we have a strong technical reason to deviate.
+> Mobile is mostly written by the lead dev. When mobile has already shipped a working implementation of something we're about to design for shared, **mobile's pattern is the starting point**, not desktop's.
 
 ### Decision rule for shared API design
 
-When designing a shared module that will replace existing desktop code, **before writing any shared code**:
+Before writing any shared code:
 
-1. **Check whether mobile already has a working implementation** of the same thing.
-   - `git fetch origin && git ls-tree -r origin/master --name-only | grep -i <feature>`
-   - Look at types, function signatures, storage shape, naming.
+1. **Grep mobile** for the same feature/pattern. Mobile working tree is stale — use `git ls-tree -r origin/master --name-only | grep -i <feature>` and `git show origin/master:<path>`.
+2. **If mobile has it**: shape the shared API to match mobile's pattern. Adapt desktop to fit. Only deviate for a concrete technical reason (mobile pattern has a bug, blocks a needed feature, violates a wire-format invariant). Document the reason.
+3. **If mobile doesn't have it**: free to design shared around desktop's pattern. Mobile catches up later on their schedule.
 
-2. **If mobile has it**:
-   - Default: shape the shared API to match mobile's pattern. Adapt desktop's code to fit.
-   - Only deviate if there's a concrete technical reason (mobile's pattern has a bug, or it's blocking something we need). Document the reason in the migration task.
-   - Don't propose mobile-side refactors as part of a desktop-driven migration unless we're also delivering a clear improvement that justifies the lead's review time.
+### Don't decide for the lead
 
-3. **If mobile doesn't have it yet**:
-   - Free to design shared around desktop's existing pattern.
-   - Note this is the "desktop ships first" case — mobile will catch up later, on their schedule.
-
-### Don't decide for the lead by assuming work is "not worth it"
-
-A common failure mode: a feature exists on one platform but not the other, and we conclude "mobile would have to build it, so let's skip." That's a decision the lead should make, not us.
-
-The right framing is: **surface the asymmetry as a question, not a recommendation.**
+When desktop has a feature mobile lacks, don't conclude "mobile would have to build it, so let's skip." That's a decision the lead should make. Frame it as a question, not a recommendation:
 
 - ❌ "Mobile doesn't have granular notification filtering, so we'll keep that desktop-only."
 - ✅ "Desktop has granular notification filtering; mobile doesn't. Want mobile to add it, want desktop to drop it, or want the asymmetry to stay?"
 
-The lead may say "yes, mobile will add it eventually." They may say "yes, drop it from desktop." They may say "the asymmetry is fine." All three are valid; we don't know which without asking.
+Implementation cost on the other platform is NEVER a reason to drop the question.
 
-Implementation cost on the other platform is NEVER a reason to drop a question from the issue. It's the lead's call whether the cost is worth it.
+### Cautionary tale: notifications
 
-### What "real implementation optimization" looks like
+Earlier sessions assumed mobile would adopt desktop's `NotificationSettings` shape. Investigation found mobile has fundamentally different storage (MMKV-based, iOS NSE, NOT synced via `UserConfig`). Forcing convergence would mean asking the lead to rewire mobile's whole notification system. The real shared migration question became "does shared even need notification types?" — open, separate investigation. Track is paused on lead-dev reply.
 
-Not every divergence between desktop and mobile is grounds for changing mobile. Examples of when it IS worth proposing a change to mobile's pattern:
+## Additive vs. breaking changes
 
-- **Demonstrable bug** in mobile's current shape (data loss, sync inconsistency, race condition) — ship the fix in shared, mobile PR brings mobile in line.
-- **Mobile pattern blocks a feature** we need to ship that requires cross-platform consistency.
-- **Mobile pattern violates a wire-format invariant** — e.g. mobile writes a slightly different shape than desktop reads, causing sync mismatch in production.
-
-When in doubt, **ask the lead async** before designing around mobile's pattern. A 30-second message ("you have X in mobile that does Y — is the shape fixed or open to change?") saves days of redesign later.
-
-### The 2026-05-28 example
-
-The notifications investigation discovered late in the process that mobile has a fundamentally different notification storage model than desktop:
-- **Desktop**: per-space settings in `UserConfig.notificationSettings[spaceId]` with `enabledNotificationTypes[]`, synced cross-device.
-- **Mobile**: global/per-space/per-channel toggles in dedicated MMKV (`notificationPrefs.ts`), iOS NSE for lock-screen suppression, NOT synced via `UserConfig`.
-
-Earlier sessions wrote explainer docs assuming we'd "promote desktop's `NotificationSettings` shape to shared." That would have been wrong — mobile doesn't use the desktop model at all, and forcing it would mean asking the lead to rewire mobile's whole notification system to consume desktop's shape. Following this rule, the real shared migration question is "does shared need notification types at all, or do desktop and mobile keep parallel implementations indefinitely?" — open question, separate investigation.
-
-## The most important rule: additive vs. breaking changes in shared
-
-**Mobile is naturally insulated from shared changes** because it depends on a published npm version (e.g. `^2.1.0`), not a symlink. Mobile doesn't see your shared changes until someone explicitly bumps that version number in mobile's `package.json`.
-
-This means whether you need to coordinate with mobile depends entirely on whether your shared change is **additive** or **breaking**.
-
-### The gut-check question
-
-Before merging a shared PR alone, ask:
-
-> *"If a mobile dev bumped `@quilibrium/quorum-shared` in mobile's `package.json` right now without any other code changes, would mobile still build and work?"*
+**The gut-check question:** *"If a mobile dev bumped `@quilibrium/quorum-shared` in mobile's `package.json` right now without any other code changes, would mobile still build and work?"*
 
 - **Yes → ship shared alone.** Mobile catches up whenever.
-- **No → coordinate.** Open both shared and mobile PRs. Don't ship shared until the mobile PR is at least open and ready.
+- **No → coordinate.** Open shared + mobile in lockstep.
 
-That's the entire rule. The complexity collapses to one question.
-
-### What counts as additive (safe to ship shared alone)
-
-- Adding a new export (type, function, hook, constant)
-- Adding an **optional** field to a type (`foo?: string`)
-- Widening a type (`'a' | 'b'` → `string`) — old consumers still compile
-- Adding a new overload to a function
-
-Mobile keeps building because nothing it currently uses has changed.
-
-### What counts as breaking (coordinate with mobile)
-
-- Removing an export (function, type, constant)
-- Renaming a field on a type that consumers read
-- Narrowing a type (`string` → `'a' | 'b' | 'c'`) such that previously-valid values become invalid
-- Changing a function signature in a non-additive way (param removal, return type change)
-- Adding a **required** field to a type (consumers that construct that type now fail to compile)
-
-For breaking changes, **first check what mobile actually imports**:
-
-```bash
-# In quorum-mobile, grep for every symbol the shared PR will rename/remove:
-cd D:\GitHub\Quilibrium\quorum-mobile
-grep -rE "\b(OldSymbolA|OldSymbolB|OldSymbolC)\b" --include="*.ts" --include="*.tsx" .
-```
-
-The answer determines the PR pattern.
-
-### Pattern A — Mobile imports at least one affected symbol → **same-session triplet**
-
-1. Shared PR (the breaking change)
-2. Desktop PR (fixes desktop's consumers — needed immediately because desktop's `link:` symlink sees shared changes instantly, so desktop's local build will break the moment shared changes land)
-3. Mobile PR (renames mobile's consumers to the new symbol names)
-
-Merge 1 and 2 in quick succession; mobile PR can sit until lead reviews. Mobile keeps using the old shared version until the bump+rename PR merges, so nothing is broken in production.
-
-### Pattern B — Mobile imports none of the affected symbols → **shared + desktop only**
-
-If grep returns zero hits in mobile, there is **nothing for a mobile PR to contain**.
-
-- ✅ Ship shared PR + desktop PR.
-- 🟥 Do NOT open an "empty" mobile PR. There's nothing to put in it; the only "change" would be a `package.json` version bump, which is the lead's territory and not something to drive from a migration PR.
-- **Document the breaking change in the shared PR description** — list the renamed/removed exports under a "Breaking changes" heading so when the lead bumps shared in mobile later, they see "X was renamed to Y, mobile didn't use X, no code change needed."
-- When the lead does bump shared in mobile, the mobile build will pass first try.
-
-This pattern came up during the 2026-05-28 notifications dedup: three settings types in shared got the `Space` prefix, but grep confirmed zero references in mobile, so no mobile PR was opened.
-
-### Sub-cases that look similar but route differently
-
-**Sub-case A: Additive shared change that mobile *should* eventually adopt**
-
-Example: shared gets a new `useFarcasterFeed` hook. Mobile has its own copy. Eventually mobile should switch.
-
-- ✅ Ship shared alone (additive — see "additive vs. breaking" section).
-- 🟡 Open a mobile PR to switch over. Lead reviews whenever.
-- **Mobile is not broken if the PR sits.** Mobile keeps using its own implementation. The migration is just incomplete, not broken.
-
-**Sub-case B: Technically breaking, mobile has *dead* consumer code**
-
-Example: a placeholder shared type gets a different shape. Mobile imports it but only in scaffolding that's never called at runtime (verified by grep — the importer hook itself has zero callers).
-
-This is the edge case to be careful about. Two interpretations:
-
-- **Treat as Pattern A** (open a mobile PR even though the dead code "would probably work"): cleanest. The mobile PR is tiny (delete or fix the dead scaffold). Stops future bumps from surfacing a build error in dead code.
-- **Treat as Pattern B** (skip the mobile PR): defensible if the dead code is so dead that no one would ever look at the build error. Cheaper.
-
-**Recommendation: default to Pattern A for this sub-case.** Dead code today can become live code tomorrow; a future contributor who tries to wire up the scaffold should find it compiling against current shared, not against a six-month-old API. The mobile PR cost is small, the future-clarity cost of skipping it can be larger.
-
-### Decision summary
-
-| Type of shared change | Breaks mobile? | Can you merge shared alone? |
+| Type of shared change | Breaks mobile? | Ship shared alone? |
 |---|---|---|
-| Add new type / function / hook | No | ✅ Yes |
-| Add optional field to existing type | No | ✅ Yes |
-| Add new export | No | ✅ Yes |
-| Change existing type's shape | Maybe | ⚠️ Coordinate |
+| Add new type / function / hook / export | No | ✅ Yes |
+| Add **optional** field to type | No | ✅ Yes |
+| Widen a type (`'a' \| 'b'` → `string`) | No | ✅ Yes |
+| Change existing type's shape | Maybe | ⚠️ Check mobile imports first |
 | Rename / delete existing export | Yes | 🟥 Coordinate |
-| Change function signature | Yes | 🟥 Coordinate |
-| Add required field | Yes | 🟥 Coordinate |
+| Change function signature non-additively | Yes | 🟥 Coordinate |
+| Add **required** field to type | Yes | 🟥 Coordinate |
 
-## Versioning and the `link:` symlink
-
-During development, desktop's `node_modules/@quilibrium/quorum-shared` is a symlink to your local `D:\GitHub\Quilibrium\quorum-shared` clone (via `link:../quorum-shared` in `package.json`). This means:
-
-- Pulling shared instantly updates desktop's view of shared. No `yarn install` needed in desktop *for shared updates*.
-- But: if shared adds a new peer dependency (like `@noble/curves` did in the 2026-05-28 upstream pull), desktop won't have that dep installed unless you `yarn install`. Runtime crash if you import code that uses the new dep.
-- **Rule:** check shared's `package.json` diff after every `git pull`. If `peerDependencies` grew, `yarn install` in desktop. If only the dependencies of shared itself changed, skip it.
-
-For mobile, the relationship is different — mobile depends on a *published npm version* of shared (e.g. `^2.1.0`), not a symlink. So mobile PRs need an explicit version bump in `package.json` and a `yarn install` whenever shared publishes.
-
-## When in doubt: which repo do I push to first?
-
-A decision tree for new migration work:
-
-```
-Does the change require a new type/function/service in @quilibrium/quorum-shared?
-├── YES → Shared PR first. Wait for merge + publish. Then desktop, then mobile.
-└── NO
-    ├── Is the change shared-internal-only (e.g. fixing shared's own bug)?
-    │   └── YES → Shared PR alone. No consumer changes needed.
-    │
-    └── Is the change consumer-only (using existing shared API)?
-        ├── Desktop only → Desktop PR, self-merge. Done.
-        ├── Mobile only → Mobile PR, lead reviews. Done (eventually).
-        └── Both consumers → Open both PRs in parallel; they're independent.
+For breaking changes, grep mobile first:
+```bash
+cd D:\GitHub\Quilibrium\quorum-mobile
+git grep -E "\b(OldSymbolA|OldSymbolB)\b" origin/master -- "*.ts" "*.tsx"
 ```
 
-## What "done" means for a cross-repo migration
+### Two routing patterns for breaking changes
 
-A migration is **done from your perspective** when:
+**Pattern A — Mobile imports at least one affected symbol.** Open all three: shared + desktop (merge in quick succession) + mobile (sits with lead). Mobile keeps using old shared version until the rename PR merges.
 
-1. ✅ Shared PR merged + published.
-2. ✅ Desktop PR merged.
-3. 🟡 Mobile leg parked in one of two valid states:
-   - **Mobile PR opened** (statically-verifiable changes you could ship same session). Sitting in review queue is fine — not blocking.
-   - **Mobile task file dropped** in `quorum-mobile/.agents/tasks/quorum-shared-migration/` (when the change needs runtime testing, batching, or you ran out of session time). See the "Proactive mobile task drop" section above.
+**Pattern B — Mobile imports zero affected symbols.** Ship shared + desktop only. Do NOT open an empty mobile PR. Document the breaking change in the shared PR description under a "Breaking changes" heading so when the lead bumps shared in mobile later, they see context.
 
-Both states count as done from your side. Track outstanding mobile PRs and pending mobile tasks in this folder's status table (or shipped-log) so future-you knows what's queued, but don't treat either as blocking.
+**Sub-case (dead consumer code):** mobile imports the symbol but only in unused scaffolding. Default to Pattern A — open the mobile PR. Dead code today can become live tomorrow.
 
-## Worked example: the notifications migration sequence
+## Mobile-side work
 
-To make this concrete, here's how the upcoming `NotificationSettings` alignment maps to the workflow:
+### We don't run the mobile app (hard rule, 2026-05-28)
 
-| Step | Repo | Action | Reviewer | Status when done |
-|---|---|---|---|---|
-| 1 | shared | Replace placeholder `NotificationSettings` + add `NotificationTypeId` | self-review | ✅ merged, version bumped, published |
-| 2 | desktop | Bump shared dep, replace local types with re-exports from shared | self-review | ✅ merged |
-| 3 | mobile | Bump shared dep, delete or fix dead `useNotificationSettings` hook | Lead | 🟡 PR opened |
+The mobile app is NOT run or tested as part of normal migration sessions. Expo dev builds are available locally but time-consuming. Open mobile PRs that are **statically verifiable** (TypeScript builds + lint passes + grep confirms no consumers).
 
-**Total active work:** steps 1 and 2 (~30-60 minutes combined). Step 3 is a 5-line mobile PR that ships when the lead gets to it. If the lead never gets to it, nothing breaks — the user-visible migration already shipped via steps 1 and 2.
+| Mobile change | Statically verifiable? |
+|---|---|
+| Delete unused code (grep confirms zero importers) | ✅ Yes |
+| Bump shared dep when change is additive | ✅ Yes |
+| Fix TS-only error (`as any` removal, narrowing) | ✅ Yes |
+| Rename a field on a type mobile reads | 🟥 No — runtime test required |
+| Change a function mobile actually calls | 🟥 No — runtime test required |
+| Touch any mobile runtime file (screens, live hooks) | 🟥 No — runtime test required |
+
+### Proactive mobile task drop (2026-05-29)
+
+When a migration ships on shared + desktop and has a mobile-side change we can't open as a PR immediately (needs runtime testing, batching, or out of session time), drop a mobile task file inside `quorum-mobile` so a future session can pick it up cold.
+
+**Where**: `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\`. Mobile's `.agents/` is gitignored — these are local-only artifacts, no commits, no lead visibility through git.
+
+**When to drop** (vs. skip): if mobile imports affected symbols AND we can't open the PR this session, drop a task. If mobile imports zero affected symbols (Pattern B), skip — there's nothing to do.
+
+**Task file requirements** (so a future session can execute cold without re-investigating):
+
+1. **Frontmatter**: `status: open`, `created: YYYY-MM-DD`, links to shared + desktop PRs that triggered it, `runtime-test: required | not-required`.
+2. **What shipped on shared + desktop** — exports, types, hooks now available, npm version of shared.
+3. **Concrete mobile file list** — actual paths gathered by grepping live, NOT from memory.
+4. **Shape of mobile change** — what to bump/delete/replace, with exact symbols.
+5. **Static-analysis verification gates** — TS check, lint, grep that proves zero residual references. What "done" looks like without running the Expo app.
+6. **Runtime test requirements** — if `runtime-test: required`, name the specific code paths to exercise.
+7. **Pre-filled mobile PR description** (see template below).
+
+**After dropping**:
+1. Run `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py` to regenerate mobile's INDEX.
+2. Add a row to [mobile-tasks-pending.md](mobile-tasks-pending.md) so we can see queued tasks at a glance. Mobile is gitignored — without a desktop-side tracker, we lose visibility.
+
+## i18n in shared (2026-05-28)
+
+**Shared modules SHOULD NOT contain user-facing text.** Strong default. Shared returns data, state, codes, or structured violation info. The UI layer (components, or thin platform wrappers around shared hooks) materializes strings.
+
+Applies to:
+- Component labels, headings, tooltips, button text → live in each app's components
+- Hook return values → return data + booleans + codes, NOT translated strings
+- Service responses → structured results, NOT user-facing error messages
+
+Does NOT apply to:
+- Internal/debug strings (logger messages, dev-only error objects) — plain English in shared is fine.
+
+### The `errorKey` pattern (when shared MUST return error info)
+
+```ts
+// In shared
+export function validateSpaceName(name: string):
+  | { ok: true }
+  | { ok: false; errorKey: string; errorVars?: Record<string, string | number> } {
+  if (!name.trim()) return { ok: false, errorKey: 'spaceName.required' };
+  if (name.length > MAX_NAME_LENGTH)
+    return { ok: false, errorKey: 'spaceName.tooLong', errorVars: { max: MAX_NAME_LENGTH } };
+  return { ok: true };
+}
+```
+
+Each platform owns a thin wrapper that maps codes to localized strings:
+
+```ts
+// Desktop wrapper (Lingui)
+const errorMessages = {
+  'spaceName.required': () => t`Space name is required`,
+  'spaceName.tooLong': (vars) => t`Space name must be ${vars.max} characters or less`,
+};
+
+// Mobile wrapper (hardcoded English today; later: same shape, Lingui calls)
+const errorMessages = {
+  'spaceName.required': () => 'Space name is required',
+  'spaceName.tooLong': (vars) => `Space name must be ${vars.max} characters or less`,
+};
+```
+
+**Why this works**: shared has zero i18n dependency. Desktop keeps Lingui. Mobile keeps English. Mobile-Lingui adoption later changes only the wrapper file — no shared or consumer changes.
+
+**Error key naming**: `<domain>.<errorType>` (e.g. `spaceName.required`, `displayName.reservedImpersonation`). Stable once exported: additions are additive, removals/renames are breaking.
+
+## Operational notes
+
+### Versioning (the `link:` symlink)
+
+Desktop's `node_modules/@quilibrium/quorum-shared` is a symlink to the local clone (via `link:../quorum-shared`). Pulling shared instantly updates desktop's view — no `yarn install` needed *for shared updates themselves*. But:
+
+- If shared adds a new **peer dependency**, desktop won't have it installed → runtime crash. Check shared's `package.json` diff after `git pull`.
+- Mobile depends on a *published npm version* (`^2.1.0-NN`), not a symlink. Mobile PRs need explicit version bump + `yarn install`.
+
+### Drift while a mobile PR sits open
+
+Mobile PRs can sit weeks. Three things can shift underneath:
+
+1. **Your next work is independent of the unmerged PR**: no problem. Lead merges in any order.
+2. **Your next work depends on the unmerged PR**: stack (child branch from parent unmerged branch). See [stacked-PRs doc](2026-03-15-stacked-prs-workflow.md). Practical depth limit: 2 without thinking, 3 with caution, never 4+. If stalled at depth 3, switch to independent work.
+3. **Lead changes things underneath you** (the real risk):
+   - **Lead bumps shared on mobile while your mobile PR is open**: rebase, accept newer version, push. ~5-10 min per drift event.
+   - **Lead touches the same mobile files**: rebase, resolve. Trivial conflicts are fast; full refactors can cost an hour. **This is why small PRs win** — a 3-line PR survives almost any refactor; a 300-line PR doesn't.
+
+### Cross-linking PRs
+
+Use `OrgName/RepoName#PRNumber` syntax (e.g. `QuilibriumNetwork/quorum-shared#18`) — GitHub auto-links across repos and shows state inline. Update cross-links right after opening each PR so each sibling points at the others.
+
+### Operating rules
+
+1. Branch fresh from `<repo>/main` (not from your last unmerged branch, unless stacking).
+2. Watch `mobile/main` while a mobile PR is open — `git fetch && git log HEAD..origin/main` weekly. Rebase eagerly while conflicts are small.
+3. Keep 2-3 independent ready-to-push PRs as a buffer. Don't gate on lead's response time.
+4. If a PR sits >2 weeks, ping specifically: "PR #X has been open 2 weeks, blocking PR #Y and #Z. Can you take 10 min today?" Make the cost visible.
+5. Accept that some mobile PRs may sit indefinitely. Cleanup PRs (dead scaffolds) are low-value to the lead. Nothing breaks while they sit.
+
+## PR description template
+
+Single template with conditional sections:
+
+```markdown
+## What
+[one-line summary]
+
+## Cross-repo migration
+This is part of a multi-repo change:
+- **quorum-shared**: [✅ MERGED — Org/Repo#NN (version 2.1.0-XX) | THIS PR | open Org/Repo#NN]
+- **quorum-desktop**: [✅ MERGED — Org/Repo#NN | THIS PR | open Org/Repo#NN | not needed]
+- **quorum-mobile**: [✅ MERGED | THIS PR | open Org/Repo#NN | not needed (Pattern B) | task dropped — see mobile-tasks-pending.md]
+
+## Why
+[context]
+
+## Why this is safe to merge whenever (mobile PRs only)
+Mobile has been on the old shared version (`2.1.0-OLD`) the whole time and continues to work. This PR bumps mobile and adapts. No production users affected by merge timing.
+
+## Verification
+- [ ] [build/test/lint commands as applicable]
+- [ ] Manual QA: [what to test, if any]
+```
+
+**Update cadence**: edit previously-opened PR descriptions when later PRs open, and again when each merges. ~30s per update — invaluable for the lead reconstructing what shipped weeks later.
 
 ---
 
-*Created 2026-05-28 — written after a realistic worry surfaced about mobile PRs sitting unreviewed while the lead keeps pushing. Documents the workflow for the rest of the quorum-shared migration. Designed to be re-read at the start of any new migration session.*
+*Created 2026-05-28. Compacted 2026-05-29 — folded redundant sections (additive/breaking duplicated, three sub-rules on mobile patterns, two PR templates, two ceremony sections) into single sources of truth. Added "docs-only work on main" rule.*
