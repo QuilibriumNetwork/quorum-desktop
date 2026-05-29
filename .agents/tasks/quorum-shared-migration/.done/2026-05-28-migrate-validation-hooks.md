@@ -104,7 +104,7 @@ These are exported from `quorum-shared/src/utils/validation.ts`. Desktop hooks a
 - [x] All verification gates pass
 - [x] Manual smoke test of validation flows
 - [x] Shared PR opened, self-merged — PR #TBD (filled in at push time)
-- [x] Desktop PR opened, self-merged — PR #TBD
+- [x] Desktop PR opened, self-merged — [QuilibriumNetwork/quorum-desktop#162](https://github.com/QuilibriumNetwork/quorum-desktop/pull/162)
 - [x] [shipped-log.md](../shipped-log.md) entry added
 - [x] Mobile task file dropped at `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-28-adopt-shared-validators.md`
 - [x] Mobile-tasks tracker updated at [`../mobile-tasks-pending.md`](../mobile-tasks-pending.md)
@@ -114,5 +114,5 @@ These are exported from `quorum-shared/src/utils/validation.ts`. Desktop hooks a
 ## PR links
 
 - quorum-shared: [#20](https://github.com/QuilibriumNetwork/quorum-shared/pull/20) ✅ merged
-- quorum-desktop: TBD (fill at push time)
+- quorum-desktop: [#162](https://github.com/QuilibriumNetwork/quorum-desktop/pull/162) ✅ merged
 - quorum-mobile: dropped as local task — see [mobile-tasks-pending.md](../mobile-tasks-pending.md)
