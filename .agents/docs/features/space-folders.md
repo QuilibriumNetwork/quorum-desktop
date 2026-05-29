@@ -36,7 +36,7 @@ export type NavItem =
   | {
       type: 'folder';
       id: string;           // crypto.randomUUID()
-      name: string;         // User-defined (default: "Spaces", max 40 chars — separate from MAX_NAME_LENGTH; see Limits table)
+      name: string;         // User-defined (default: "Spaces", max 50 chars via shared MAX_NAME_LENGTH)
       spaceIds: string[];   // Ordered list of space IDs in folder
       icon?: IconName;      // Custom icon (rendered white on color bg)
       color?: FolderColor;  // Background color (reuses IconColor type)
@@ -201,7 +201,7 @@ const {
 
 **Validation rules**:
 - Name required (cannot be empty/whitespace)
-- Max 40 characters
+- Max 50 characters (shared `MAX_NAME_LENGTH`)
 - XSS validation (no special HTML characters)
 
 **Delete flow**:
@@ -652,7 +652,7 @@ When old native app writes `spaceIds` only, web app's `migrateToItems()` convert
 |-------|-------|-----------|
 | Max folders | 20 | Matches Telegram Premium |
 | Max spaces per folder | 100 | Matches Discord and Telegram |
-| Folder name max length | 40 chars | Originally chosen to match space names (which were also 40). ⚠️ Space names were raised to 50 on 2026-05-28 (align with mobile); folder names were NOT raised in that migration to keep scope tight. Future PR may want to bump folders to 50 for consistency. |
+| Folder name max length | 50 chars | Aligned with shared `MAX_NAME_LENGTH` (bumped 40 → 50 on 2026-05-28, folder modal `maxLength` followed on 2026-05-29). |
 
 ### Two-Layer Enforcement
 
@@ -778,7 +778,7 @@ const NavItemSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal('folder'),
     id: z.string(),
-    name: z.string().max(40),
+    name: z.string().max(50),
     spaceIds: z.array(z.string()).max(100),
     icon: z.string().optional(),
     color: z.string().optional(),

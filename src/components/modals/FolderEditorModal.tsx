@@ -81,7 +81,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
             labelType="static"
             error={!!validationError}
             errorMessage={validationError}
-            maxLength={40}
+            maxLength={50}
           />
         </div>
 
