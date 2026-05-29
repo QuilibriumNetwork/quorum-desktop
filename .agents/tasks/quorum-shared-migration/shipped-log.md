@@ -16,6 +16,39 @@ audience: future sessions wanting a chronological view of what's been migrated
 
 ---
 
+## 2026-05-29 — Cat B small-bucket sweep (no further migrations, dead code found)
+
+**Scope**: continue the small-bucket sweep after shipping `useInviteValidation`. Four more Cat B sub-buckets investigated via parallel subagents:
+- `useModalContext only` (3 hooks: `useGroupEditor`, `useSpacePermissions`, `useDirectMessageCreation`) — all correctly Cat B.
+- `useDragStateContext only` (2 hooks) — sub-bucket is **actually empty**: both drag hooks also use `useMessageDB`, so they belong in the bigger dual-context bucket. Audit correction. `useFolderDragAndDrop` + `useSpaceDragAndDrop` orchestrate `arrayMove` from `@dnd-kit` + folder/space-specific mutations — no shared util candidates.
+- `useClipboardAdapter only` (1 hook: `useCopyToClipboard`) — correctly Cat B. Shared exports `extractMessageRawText` (different concern — message text extraction for copy operations), not React-state clipboard logic.
+- `useMessageDB + usePasskeysContext + useRegistrationContext` (7 hooks: `useInviteManagement`, `useSpaceCreation`, `useSpaceLeaving`, `useSpaceManagement`, `useSpaceRecovery`, `useUserKicking`, `useUserSettings`) — all correctly Cat B. One borderline finding in `useInviteManagement` (line 97 uses `manualAddress?.length === 46` as an API-lookup trigger heuristic; tightening to `isValidIPFSCID` would avoid spurious calls but it's a 1-line UX nudge, not a duplication removal — classified C-leaning-A, not actioned).
+- `usePasskeysContext only` (7 hooks: `useChannelMessages`, `useDirectMessageData`, `useMutedConversationsSync`, `useKeyBackupLogic`, `useMessageComposer`, `useProfileImage`, `useWebKeyBackup`) — 5 correctly Cat B (including `useMessageComposer` which already correctly imports all its pure helpers from shared: `extractMentionsFromText`, `extractStandaloneYouTubeVideoIds`, `SimpleRateLimiter`, etc.). **2 surprise findings on the two-step-confirm pattern**: `useKeyBackupLogic` (lines 33-34, 90-109) and `useWebKeyBackup` (lines 11-13, 43-60) both inline the same two-step confirmation state machine that shared's `useTwoStepConfirm` (`2.1.0-18`) provides. The 2026-05-28 `useTwoStepConfirm` audit missed these.
+
+**Dead code discovered AND shipped**: investigation of the two-step-confirm finds revealed `handleAlreadySaved` + `getConfirmationButtonText` + `alreadySavedConfirmationStep` were **dead public surface** in BOTH hooks. The only consumer of `useKeyBackup` (`useUnifiedOnboardingFlow`) uses ONLY `keyBackup.downloadKey()`. No UI surface reads the confirmation fields. So while these hooks technically duplicated `useTwoStepConfirm`, refactoring them to use shared would gain nothing at runtime — and per the project's "don't design for hypothetical future requirements" rule, the action taken was **delete the dead two-step surface**, not rewire it. Net -71 LOC across both hooks. Commit `4e4f4d8d`. If a future UI needs two-step confirmation here, `useTwoStepConfirm` from `@quilibrium/quorum-shared` is the obvious primitive — no need for a breadcrumb in the code.
+
+**Tally for the Cat B sweep across two sessions** (2026-05-29 morning + afternoon): 17 + 26 = 43 Cat B hooks investigated across 6 sub-buckets. 2 actionable Cat A migrations shipped (`useAddressValidation`, `useInviteValidation`). Remaining hit rate is dropping. Remaining sub-buckets:
+- `useMessageDB only` (14 hooks) — not yet spot-checked.
+- `useMessageDB + usePasskeysContext` (26 hooks) — already done 2026-05-29 morning (0 hits).
+
+**Lessons**: (1) negative spot-check rounds are informative — they confirm Cat B classification is mostly correct and rule out whole investigation threads. (2) The "useDragStateContext only" sub-bucket was a phantom in the audit — the dual-context drag hooks were double-listed. Audit correction folded into this entry. (3) When investigating hooks with `useCallback`-shaped pure helpers, also check whether those helpers have any consumer. Dead public surface is its own finding, distinct from a migration opportunity.
+
+**Mobile**: not touched. None of the negative findings have a mobile coordination shape.
+**PRs**: none — investigation-only session after the morning's `useInviteValidation` ship.
+
+---
+
+## 2026-05-29 — `useInviteValidation` dedupe (Cat B "useQuorumApiClient only" spot-check)
+
+**Scope**: spot-check the 4 hooks in the "useQuorumApiClient only" Category B sub-bucket (`useInviteValidation`, `useAuthenticationFlow`, `useOnboardingFlowLogic`, `useUnifiedOnboardingFlow`) for the "already-shared-util waiting to be used" pattern. Same pattern that flagged `useAddressValidation` on 2026-05-29 morning.
+**Result — 1 Cat A hit**: `useInviteValidation` had an inline `parseInviteLink` (`useCallback`, ~36 LOC including its `InviteInfo` interface) duplicating shared's `parseInviteParams`. Desktop already uses `parseInviteParams` in `InvitationService.ts` (2x) and `AddSpaceModal.tsx` — this hook was the last inline holdout. The returned `parseInviteLink` was dead public surface (zero consumers). Refactored to call `getValidInvitePrefixes` for the prefix gate (already imported) + `parseInviteParams` for extraction. Net 132 → 102 LOC (-30). Commit `17e19b70`.
+**Other 3 hooks**: correctly Cat B. `useAuthenticationFlow` is thin state + one API call. `useOnboardingFlowLogic` and `useUnifiedOnboardingFlow` share a copy-pasted AES-GCM config-decryption block — internal desktop duplication, not a shared-util mismatch. Could become a desktop-internal helper; not in scope.
+**Lessons**: (1) the `useAddressValidation` pattern from this morning **generalized** — at least one more inline duplication lurked in the same small Cat B sub-bucket. The pattern: hooks written before a shared util landed often keep their inline implementations. (2) Spot-checks against small Cat B sub-buckets are higher-yield than the bigger ones. The 30-min subagent run paid for itself with a ship-able refactor.
+**Mobile**: not touched. Mobile's `services/space/inviteService.ts` has its OWN duplicate `VALID_INVITE_PREFIXES` array + parse logic — same convergence opportunity exists there. Not driven from this session: mobile-side adoption is a runtime-test change and the workflow's "we don't run the mobile app" rule applies. Could be a future mobile task drop if scope warrants.
+**PRs**: none — direct main commit (small desktop-only refactor, no review needed).
+
+---
+
 ## 2026-05-29 — Category B spot-check (no migration, finding logged)
 
 **Scope**: spot-check the 26 hooks in the "useMessageDB + usePasskeysContext" Category B sub-bucket for the "already-shared-util waiting to be used" pattern that `useAddressValidation` exhibited.

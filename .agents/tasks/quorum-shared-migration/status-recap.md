@@ -28,6 +28,9 @@ Hooks/validators (May 28–29 sessions):
 - **`useTwoStepConfirm`** — extracted from desktop's `useUserKicking` + `useSpaceLeaving` (shared #19, desktop #161). Mobile adoption deferred — runtime test required.
 - **Field validators** (`validateSpaceName`, `validateDisplayName`, `validateChannelName`, etc.) with the new **`errorKey` i18n pattern**. Codified as a workflow rule: shared returns codes, platforms translate. (shared #20, desktop #162.) Mobile task dropped at [mobile-tasks-pending.md](mobile-tasks-pending.md).
 - **Length alignment**: `MAX_NAME_LENGTH` 40 → 50, `MIN_NAME_LENGTH = 2` (matches mobile). Folder names still at 40 — flagged in `space-folders.md` for future PR.
+- **`useAddressValidation` dedupe** (2026-05-29 morning) — desktop hook's inline base58/IPFS-CID check replaced with shared's existing `isValidIPFSCID(address, true)`. `useAddressValidation.native.ts` deleted (no longer needed). Net `-123` LOC. Commit `888d76ca`.
+- **`useInviteValidation` dedupe** (2026-05-29 afternoon) — desktop hook's inline `parseInviteLink` callback (~30 LOC) replaced with shared's existing `parseInviteParams` + `getValidInvitePrefixes` (both already imported elsewhere in desktop). The returned `parseInviteLink` was dead public surface. Net `-30` LOC. Commit `17e19b70`.
+- **Key-backup dead-code cleanup** (2026-05-29 afternoon) — surfaced by the same spot-check pattern: `useKeyBackupLogic` + `useWebKeyBackup` both inlined a two-step-confirm state machine duplicating shared's `useTwoStepConfirm`, but the public fields (`handleAlreadySaved`, `getConfirmationButtonText`, `alreadySavedConfirmationStep`) were dead surface with zero consumers. Deleted rather than rewired (per "don't design for hypothetical future requirements" rule). Net `-71` LOC. Commit `4e4f4d8d`.
 
 ## Architectural findings (no code, but important)
 
@@ -51,9 +54,10 @@ Re-audited as not viable for migration:
 ## What's queued for future sessions
 
 - **Mobile validation adoption** ([mobile task](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-28-adopt-shared-validators.md)) — runtime test required. Drop in when mobile testing is on the table.
-- **`useAddressValidation`** — Category B (uses `useQuorumApiClient`). Worth checking if API client coupling can be loosened.
-- **More desktop hooks** — the [audit refresh](designs/2026-05-28-hooks-audit-refresh.md) inventory has Category A pure hooks worth case-by-case verification (e.g. `useSpaceOrdering`, `useFolderStates`). Each is its own per-task workflow.
-- **Folder name length consistency** — bump folder `maxLength` 40 → 50 to match space names. Pure desktop refactor, ~5 LOC, opportunistic.
+- **`useInviteManagement` minor nudge** — line 97 uses `manualAddress?.length === 46` as the API-lookup trigger heuristic; tightening to `isValidIPFSCID(manualAddress)` would avoid spurious calls for 46-char non-Qm strings. 1-line behavioral tightening, not a duplication removal. Worth folding into any future bigger refactor of this hook (which the audit flags as a "monolithic form-state controller" mobile has a split-mutation parallel for).
+- **Remaining Cat B sub-buckets** — `useMessageDB only` (14 hooks) still un-spot-checked. Hit rate has been dropping; this is the last small sub-bucket worth a sweep before concluding the bucket-mining phase.
+- **More desktop hooks (Cat A)** — pure hooks worth case-by-case verification: `useSpaceOrdering`, `useFolderStates`, `useEmojiPicker`. Each is its own per-task workflow. Not yet investigated.
+- **`getMutedChannelsForSpace` + `isChannelMuted`** (deferred candidate from 2026-05-29 morning) — pure functions in `channelUtils.ts`, used by 7 hooks. Operates on shared `UserConfig['mutedChannels']` type. **Blocked** on the notifications track unblocking (mobile issue #65 still has zero comments as of 2026-05-29). Moving these now risks baking in a notification architecture the lead-dev's reply could contradict.
 - **ThreadService, BackupService** — still blocked (ThreadService on hooks abstraction state, BackupService on shared symmetric crypto). Re-evaluate when their blockers clear.
 
 ## Pre-flight before any new session
@@ -75,5 +79,7 @@ cd D:\GitHub\Quilibrium\quorum-desktop && git status --short
 - Re-read this doc when coming back to the migration after a break, OR update it at the end of any migration session that materially changed status.
 
 ---
+
+*Updated 2026-05-29 (afternoon) — added `useInviteValidation` and `useAddressValidation` to the shipped list. "What's queued" reorganized to reflect the Cat B small-bucket sweep findings: 2 new entries (key-backup dead-code cleanup, useInviteManagement nudge), 1 promotion (remaining `useMessageDB only` 14-hook bucket is the only un-swept small Cat B sub-bucket left). Notifications track still paused — mobile GitHub issue #65 zero comments since filing.*
 
 *Created 2026-05-28 as a one-shot re-orientation doc. Rewritten 2026-05-29 to compress 177 → ~80 lines and reflect that the original "next session" recommendations (Option 1/2/3) all shipped or were re-audited. Now structured as a rolling status snapshot.*
