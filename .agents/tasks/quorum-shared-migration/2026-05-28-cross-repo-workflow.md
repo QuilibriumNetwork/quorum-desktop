@@ -33,6 +33,30 @@ Not one big bundled PR at the end. Reasons:
 
 Concrete sizing rule: **one job per PR**, ideally <50 lines diff. The smaller the PR, the more drift it survives.
 
+> **Sizing escape hatch (2026-05-28):** the "<50 lines" target applies to migrations that have a real review audience or cross-repo coordination cost. For self-merged shared+desktop PRs with no mobile leg, **bundle by shape**: if multiple desktop hooks share the same inlined pattern, refactor them all at once. Example: `useTwoStepConfirm` (PR #19 + #161) bundled the extraction of one shared primitive + refactor of two desktop consumers (`useUserKicking` + `useSpaceLeaving`) in one PR pair. That's the right size — splitting one-hook-per-PR would have been ceremony, not safety.
+
+## Per-migration ceremony (kept light, 2026-05-28)
+
+The per-task workflow established when shipping `useTwoStepConfirm`:
+
+1. **Create one task doc** at the migration folder root: `2026-XX-XX-migrate-<thing>.md`. Write it as if it's the final record — frontmatter, what/why, files, verification checkboxes, PR URL slots (blank to start), done criteria.
+2. **Do the work on a feature branch.** Branch name should describe what ships (rename if needed — e.g. a stale generic `chore/X` branch should become `feat/<specific-thing>`). If the branch name already matches what ships, leave it.
+3. **Check verification boxes as gates pass.** Don't write "TODO at commit time" — check them in real time.
+4. **One commit per logical unit.** Bundling the code change + task doc + shipped-log update + `.done/` move in a single feature-branch commit is fine — it's all one logical PR.
+5. **When opening PRs, fill PR URLs into the task doc + shipped-log + `git mv` the task doc to `.done/`** — all in the same feature-branch commit, before push. Don't do a separate "finalization" commit after merge.
+6. **Push, open PR, self-merge.** Done.
+
+What this avoids:
+- A "transition the doc through states (open → in-progress → done)" lifecycle. The doc IS the final record.
+- A separate `main`-branch commit after merge to backfill PR URLs.
+- Splitting code commits from doc commits within the same PR.
+
+What stays:
+- Shared PR first → desktop PR second (when both are needed).
+- Cross-link PRs in descriptions per the standard template below.
+- Update [shipped-log.md](shipped-log.md) chronologically.
+- Update [README.md](README.md) status table row.
+
 ## Standard per-migration sequence
 
 For each cross-repo migration (e.g. `NotificationSettings` alignment):
