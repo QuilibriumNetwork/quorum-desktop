@@ -31,16 +31,16 @@ msgid "No Role - {count}"
 msgstr "Không có vai trò - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1633
-msgid "Send a message to #{channel_name}"
-msgstr "Gửi tin nhắn đến #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr ""
 "Chào mừng đến với Quorum, {name}! Tài khoản của bạn đã được bảo mật và sẵn "
 "sàng để sử dụng."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1633
+msgid "Send a message to #{channel_name}"
+msgstr "Gửi tin nhắn đến #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -55,11 +55,6 @@ msgid "Reacted by"
 msgstr "Phản ứng bởi"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:715
-msgid "Replying to"
-msgstr "Đang trả lời"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Không thể xử lý hình ảnh"
@@ -68,6 +63,11 @@ msgstr "Không thể xử lý hình ảnh"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Đang trả lời {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:715
+msgid "Replying to"
+msgstr "Đang trả lời"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:354
@@ -307,15 +307,24 @@ msgstr "Thêm ảnh đại diện"
 msgid "Add a Space"
 msgstr "Thêm một Space"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:574
+msgid "Add channel"
+msgstr "Thêm kênh"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
 msgstr "Thêm Kênh"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:580
+msgid "Add channel to group"
+msgstr "Thêm kênh vào nhóm"
 
 #: src/components/direct/DirectMessages.tsx:65
 msgid "Add friend"
 msgstr "Thêm bạn"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/GroupEditorModal.tsx:58
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:346
 #: src/components/space/ChannelList.tsx:184
 msgid "Add Group"
 msgstr "Thêm Nhóm"
@@ -350,12 +359,10 @@ msgstr ""
 msgid "Adding..."
 msgstr "Đang thêm..."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
 msgstr "Địa chỉ phải dài chính xác 46 ký tự."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:83
 #: src/hooks/business/validation/useAddressValidation.ts:84
 msgid "Addresses start with \"Qm\"."
 msgstr "Địa chỉ bắt đầu bằng \"Qm\"."
@@ -373,7 +380,7 @@ msgid "Advanced Settings"
 msgstr "Cài đặt Nâng cao"
 
 #: src/components/direct/DirectMessageContactsList.tsx:290
-#: src/components/modals/ChannelEditorModal.tsx:211
+#: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 #: src/components/notifications/NotificationPanel.tsx:238
@@ -390,7 +397,7 @@ msgstr "Tất cả Dấu trang"
 msgid "All DMs"
 msgstr "Tất cả DM"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:62
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:63
 msgid "All kick records are up to date."
 msgstr "Tất cả các bản ghi bị kick đều được cập nhật."
 
@@ -400,12 +407,12 @@ msgstr "Tất cả các bản ghi bị kick đều được cập nhật."
 msgid "All Spaces"
 msgstr "Tất cả Spaces"
 
-#: src/components/modals/ChannelEditorModal.tsx:170
-#: src/components/modals/SpaceSettingsModal/General.tsx:356
+#: src/components/modals/ChannelEditorModal.tsx:152
+#: src/components/modals/SpaceSettingsModal/General.tsx:327
 msgid "Allow Threads"
 msgstr "Cho phép các chủ đề"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:149
 msgid "Allow threads in this channel"
 msgstr "Cho phép chủ đề trong kênh này"
 
@@ -426,7 +433,7 @@ msgstr "Luôn ký tin nhắn trực tiếp"
 msgid "Always sign messages"
 msgstr "Luôn ký tin nhắn"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:81
 msgid "An error occurred while deleting the Space. Please try again."
 msgstr "Đã xảy ra lỗi khi xóa Space. Vui lòng thử lại."
 
@@ -475,13 +482,20 @@ msgstr "Giao diện"
 msgid "are typing"
 msgstr "đang gõ"
 
-#: src/hooks/business/channels/useChannelManagement.ts:257
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:433
+#: src/hooks/business/channels/useChannelManagement.ts:238
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
 msgstr ""
 "Bạn có chắc chắn muốn xóa kênh này không? Tất cả tin nhắn sẽ bị mất. Hành "
 "động này không thể được hoàn tác."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:434
+msgid ""
+"Are you sure you want to delete this channel? This action cannot be undone."
+msgstr ""
+"Bạn có chắc muốn xóa kênh này không? Hành động này không thể hoàn tác."
 
 #: src/components/modals/ConversationSettingsModal.tsx:64
 msgid ""
@@ -492,11 +506,25 @@ msgstr ""
 "Bạn có chắc chắn muốn xóa cuộc trò chuyện này không?\n"
 "Bạn sẽ chỉ xóa cuộc trò chuyện khỏi thiết bị của bạn. Người tham gia khác vẫn sẽ có quyền truy cập vào lịch sử cuộc trò chuyện."
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:454
+msgid ""
+"Are you sure you want to delete this group? All channels inside it and their"
+" messages will be lost. This action cannot be undone."
+msgstr ""
+"Bạn có chắc muốn xóa nhóm này không? Tất cả các kênh bên trong và tin nhắn "
+"của chúng sẽ bị mất. Hành động này không thể hoàn tác."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:455
+msgid ""
+"Are you sure you want to delete this group? This action cannot be undone."
+msgstr ""
+"Bạn có chắc muốn xóa nhóm này không? Hành động này không thể hoàn tác."
+
 #: src/hooks/business/messages/useMessageActions.ts:423
 msgid "Are you sure you want to delete this message?"
 msgstr "Bạn có chắc chắn muốn xóa tin nhắn này không?"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:61
+#: src/hooks/business/spaces/useRoleManagement.ts:66
 msgid "Are you sure you want to delete this role?"
 msgstr "Bạn có chắc chắn muốn xóa vai trò này không?"
 
@@ -545,13 +573,14 @@ msgstr "Sao lưu không thành công"
 msgid "Bio"
 msgstr "Tiểu sử"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:87
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Bio cannot contain special characters"
 msgstr "Tiểu sử không thể chứa ký tự đặc biệt"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:91
-msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
-msgstr "Tiểu sử phải có {MAX_BIO_LENGTH} ký tự trở xuống"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:59
+msgid "Bio must be {0} characters or less"
+msgstr "Tiểu sử phải có {0} ký tự trở xuống"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Bold"
@@ -607,10 +636,10 @@ msgstr "Máy ảnh"
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:589
-#: src/hooks/business/channels/useChannelManagement.ts:263
+#: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:435
 #: src/hooks/business/messages/usePinnedMessages.ts:325
-#: src/hooks/business/spaces/useRoleManagement.ts:64
+#: src/hooks/business/spaces/useRoleManagement.ts:69
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "Hủy"
@@ -619,9 +648,9 @@ msgstr "Hủy"
 msgid "CANCEL"
 msgstr "HỦY"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:41
-msgid "Cannot delete Space with channels. Please delete all channels first."
-msgstr "Không thể xóa Space có kênh. Vui lòng xóa tất cả các kênh trước."
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:244
+msgid "Cannot delete a group containing the default channel."
+msgstr "Không thể xóa nhóm chứa kênh mặc định."
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
@@ -642,11 +671,11 @@ msgstr ""
 "Các thay đổi được thực hiện tự động, nhưng trang đang hoạt động có thể không"
 " được cập nhật. Làm mới trang để áp dụng ngôn ngữ mới."
 
-#: src/components/modals/ChannelEditorModal.tsx:128
+#: src/components/modals/ChannelEditorModal.tsx:138
 msgid "Channel Icon"
 msgstr "Biểu tượng Kênh"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:181
 msgid "Channel Managers"
 msgstr "Quản lý Kênh"
 
@@ -654,42 +683,44 @@ msgstr "Quản lý Kênh"
 msgid "Channel members"
 msgstr "Thành viên kênh"
 
-#: src/components/modals/ChannelEditorModal.tsx:101
+#: src/components/modals/ChannelEditorModal.tsx:111
 msgid "Channel Name"
 msgstr "Tên Kênh"
 
-#: src/hooks/business/validation/useChannelValidation.ts:18
-#: src/hooks/business/validation/useChannelValidation.ts:60
+#: src/hooks/business/validation/errorTranslator.ts:40
 msgid "Channel name cannot contain special characters"
 msgstr "Tên kênh không được chứa ký tự đặc biệt"
 
-#: src/hooks/business/validation/useChannelValidation.ts:12
-#: src/hooks/business/validation/useChannelValidation.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:38
 msgid "Channel name is required"
 msgstr "Tên kênh là bắt buộc"
 
-#: src/hooks/business/validation/useChannelValidation.ts:15
-#: src/hooks/business/validation/useChannelValidation.ts:57
-msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Tên kênh phải có {MAX_NAME_LENGTH} ký tự trở xuống"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:39
+msgid "Channel name must be {0} characters or less"
+msgstr "Tên kênh phải có {0} ký tự trở xuống"
 
-#: src/components/space/ChannelItem.tsx:204
+#: src/components/space/ChannelItem.tsx:187
 msgid "Channel Settings"
 msgstr "Cài đặt Kênh"
 
-#: src/components/modals/ChannelEditorModal.tsx:111
+#: src/components/modals/ChannelEditorModal.tsx:121
 msgid "Channel Topic"
 msgstr "Chủ đề Kênh"
 
-#: src/hooks/business/validation/useChannelValidation.ts:38
-#: src/hooks/business/validation/useChannelValidation.ts:74
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel topic cannot contain special characters"
 msgstr "Chủ đề kênh không được chứa ký tự đặc biệt"
 
-#: src/hooks/business/validation/useChannelValidation.ts:35
-#: src/hooks/business/validation/useChannelValidation.ts:71
-msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr "Chủ đề kênh phải có {MAX_TOPIC_LENGTH} ký tự trở xuống"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:43
+msgid "Channel topic must be {0} characters or less"
+msgstr "Chủ đề kênh phải có {0} ký tự trở xuống"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:338
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+msgid "Channels"
+msgstr "Các kênh"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -703,7 +734,7 @@ msgstr "Chọn cách bạn muốn thêm hình ảnh hồ sơ của mình"
 msgid "Choose your preferred theme for Quorum."
 msgstr "Chọn chủ đề ưa thích của bạn cho Quorum."
 
-#: src/components/modals/ChannelEditorModal.tsx:212
+#: src/components/modals/ChannelEditorModal.tsx:207
 #: src/components/modals/SpaceSettingsModal/Account.tsx:244
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 #: src/components/notifications/NotificationPanel.tsx:239
@@ -721,11 +752,10 @@ msgstr "Xóa thông báo với thẻ: {tag}"
 
 #: src/components/modals/ChannelEditorModal.tsx:240
 #: src/components/modals/FolderEditorModal.tsx:130
-#: src/components/modals/GroupEditorModal.tsx:127
+#: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Account.tsx:319
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Nhấn lại để xác nhận"
@@ -741,6 +771,10 @@ msgstr "Nhấp để sao chép"
 #: src/components/modals/ThreadSettingsModal.tsx:172
 msgid "Close thread"
 msgstr "Đóng chủ đề"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Collapse group"
+msgstr "Thu gọn nhóm"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
@@ -832,7 +866,7 @@ msgstr "Sao chép tin nhắn"
 msgid "Copy message link"
 msgstr "Sao chép liên kết tin nhắn"
 
-#: src/services/ConfigService.ts:292
+#: src/services/ConfigService.ts:264
 msgid "Could not add Space"
 msgstr "Không thể thêm Space"
 
@@ -841,16 +875,16 @@ msgstr "Không thể thêm Space"
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Không thể lấy thông tin Space. Vui lòng thử lại."
 
-#: src/services/ConfigService.ts:165
+#: src/services/ConfigService.ts:137
 msgid "Could not obtain manifest for Space"
 msgstr "Không thể lấy manifest cho Space"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:42
-#: src/hooks/business/spaces/useInviteValidation.ts:111
+#: src/hooks/business/spaces/useInviteValidation.ts:81
 msgid "Could not verify invite"
 msgstr "Không thể xác minh lời mời"
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:247
 msgid ""
 "Couldn't decrypt your saved profile. Please re-enter your name and profile "
 "image."
@@ -858,8 +892,8 @@ msgstr ""
 "Không thể giải mã hồ sơ đã lưu của bạn. Vui lòng nhập lại tên và hình ảnh hồ"
 " sơ của bạn."
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:252
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:360
 msgid ""
 "Couldn't load your saved profile. Please re-enter your name and profile "
 "image."
@@ -893,7 +927,7 @@ msgstr "Tạo tài khoản mới thay thế"
 msgid "Create Passkey"
 msgstr "Tạo Passkey"
 
-#: src/components/modals/ChannelEditorModal.tsx:180
+#: src/components/modals/ChannelEditorModal.tsx:175
 msgid "Create roles in Space Settings first."
 msgstr "Tạo vai trò trong Cài đặt Space trước."
 
@@ -934,17 +968,22 @@ msgstr "Khôi phục dữ liệu"
 msgid "days"
 msgstr "ngày"
 
-#: src/services/ConfigService.ts:144
+#: src/services/ConfigService.ts:116
 msgid "decrypted space with no known config key"
 msgstr "Space đã giải mã mà không có khóa cấu hình nào được biết"
 
-#: src/services/ConfigService.ts:150
+#: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
 msgstr "Space đã giải mã mà không có khóa hub nào được biết"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:275
-msgid "Default Channel"
-msgstr "Kênh Mặc định"
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:703
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:718
+msgid "Default channel"
+msgstr "Kênh mặc định"
+
+#: src/components/modals/ChannelEditorModal.tsx:230
+msgid "Default channels cannot be deleted."
+msgstr "Không thể xóa các kênh mặc định."
 
 #: src/components/modals/CreateSpaceModal.tsx:212
 msgid ""
@@ -963,16 +1002,28 @@ msgstr "xóa"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:442
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:463
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:105
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:107
-#: src/hooks/business/channels/useChannelManagement.ts:262
+#: src/hooks/business/channels/useChannelManagement.ts:243
 #: src/hooks/business/messages/useMessageActions.ts:434
-#: src/hooks/business/spaces/useRoleManagement.ts:63
+#: src/hooks/business/spaces/useRoleManagement.ts:68
 msgid "Delete"
 msgstr "Xóa"
 
+#: src/components/modals/GroupEditorModal.tsx:125
+msgid "Delete all channels in this group first."
+msgstr "Xóa tất cả các kênh trong nhóm này trước."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:743
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:751
+msgid "Delete channel"
+msgstr "Xóa kênh"
+
 #: src/components/modals/ChannelEditorModal.tsx:239
-#: src/hooks/business/channels/useChannelManagement.ts:256
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:430
+#: src/hooks/business/channels/useChannelManagement.ts:237
 msgid "Delete Channel"
 msgstr "Xóa Kênh"
 
@@ -987,7 +1038,14 @@ msgstr "Xóa Cuộc trò chuyện"
 msgid "Delete Folder"
 msgstr "Xóa Thư mục"
 
-#: src/components/modals/GroupEditorModal.tsx:126
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:587
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:593
+msgid "Delete group"
+msgstr "Xóa nhóm"
+
+#: src/components/modals/GroupEditorModal.tsx:133
+#: src/components/modals/GroupEditorModal.tsx:143
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:451
 msgid "Delete Group"
 msgstr "Xóa Nhóm"
 
@@ -1011,12 +1069,12 @@ msgstr "Xóa tin nhắn"
 msgid "Delete role"
 msgstr "Xóa vai trò"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:60
+#: src/hooks/business/spaces/useRoleManagement.ts:65
 msgid "Delete Role"
 msgstr "Xóa vai trò"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:66
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:100
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:28
 msgid "Delete Space"
 msgstr "Xóa Space"
 
@@ -1024,16 +1082,16 @@ msgstr "Xóa Space"
 #: src/components/modals/CreateSpaceModal.tsx:120
 #: src/components/modals/SpaceSettingsModal/Account.tsx:148
 #: src/components/modals/SpaceSettingsModal/Account.tsx:156
+#: src/components/modals/SpaceSettingsModal/General.tsx:133
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
-#: src/components/modals/SpaceSettingsModal/General.tsx:149
+#: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:232
 #: src/components/modals/UserSettingsModal/General.tsx:96
 #: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Delete this image"
 msgstr "Xóa hình ảnh này"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
 msgid "Delete this space"
 msgstr "Xóa Space này"
 
@@ -1041,7 +1099,7 @@ msgstr "Xóa Space này"
 msgid "Delete Thread"
 msgstr "Xóa chủ đề"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:437
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:426
 msgid "Deleting Space..."
 msgstr "Đang xóa Space..."
 
@@ -1054,21 +1112,22 @@ msgstr "Đang xóa..."
 msgid "Delivery receipts"
 msgstr "Biên lai giao"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:184
+#: src/components/modals/SpaceSettingsModal/General.tsx:176
 msgid "Describe what this Space is about..."
 msgstr "Mô tả về Space này..."
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:66
+#: src/hooks/business/validation/errorTranslator.ts:27
 msgid "Description cannot contain special characters"
 msgstr "Mô tả không được chứa ký tự đặc biệt"
+
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:28
+msgid "Description must be {0} characters or less"
+msgstr "Mô tả phải có {0} ký tự trở xuống"
 
 #: src/components/modals/CreateSpaceModal.tsx:182
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Mô tả phải có {MAX_DESCRIPTION_LENGTH} ký tự trở xuống"
-
-#: src/hooks/business/validation/useSpaceNameValidation.ts:70
-msgid "Description must be {maxLength} characters or less"
-msgstr "Mô tả phải có {maxLength} ký tự trở xuống"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
 msgid "Desktop Notifications"
@@ -1078,7 +1137,7 @@ msgstr "Thông báo trên máy tính"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Thông báo trên máy tính không được hỗ trợ trong trình duyệt này."
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:22
+#: src/hooks/business/validation/errorTranslator.ts:55
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1086,17 +1145,18 @@ msgstr ""
 "Tên thiết bị chỉ có thể chứa chữ cái, số, khoảng trắng, dấu gạch ngang và "
 "dấu ngoặc"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:13
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Device name cannot be empty"
 msgstr "Tên thiết bị không được để trống"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:19
+#: src/hooks/business/validation/errorTranslator.ts:54
 msgid "Device name cannot contain HTML"
 msgstr "Tên thiết bị không được chứa HTML"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:16
-msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Tên thiết bị phải có {MAX_NAME_LENGTH} ký tự hoặc ít hơn"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:53
+msgid "Device name must be {0} characters or less"
+msgstr "Tên thiết bị phải có {0} ký tự trở xuống"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:396
 msgid "Devices"
@@ -1128,20 +1188,18 @@ msgstr "Tên hiển thị"
 msgid "Display Name"
 msgstr "Tên hiển thị"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:29
-#: src/hooks/business/validation/useDisplayNameValidation.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:35
 msgid "Display name cannot contain special characters"
 msgstr "Tên hiển thị không được chứa ký tự đặc biệt"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:16
-#: src/hooks/business/validation/useDisplayNameValidation.ts:45
+#: src/hooks/business/validation/errorTranslator.ts:31
 msgid "Display name is required"
 msgstr "Tên hiển thị là bắt buộc"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:19
-#: src/hooks/business/validation/useDisplayNameValidation.ts:48
-msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Tên hiển thị phải có {MAX_NAME_LENGTH} ký tự trở xuống"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:32
+msgid "Display name must be {0} characters or less"
+msgstr "Tên hiển thị phải có {0} ký tự trở xuống"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:563
 msgid ""
@@ -1164,11 +1222,19 @@ msgstr "Tải xuống Sao lưu Khóa"
 msgid "Drag and drop or"
 msgstr "Kéo và thả hoặc"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:678
+msgid "Drag to reorder channel"
+msgstr "Kéo để sắp xếp lại kênh"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:532
+msgid "Drag to reorder group"
+msgstr "Kéo để sắp xếp lại nhóm"
+
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "Ngăn kéo"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:217
+#: src/components/modals/SpaceSettingsModal/General.tsx:209
 msgid "Drop here"
 msgstr "Thả vào đây"
 
@@ -1182,6 +1248,11 @@ msgstr "Chỉnh sửa"
 msgid "Edit {0}"
 msgstr "Chỉnh sửa {0}"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:727
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:733
+msgid "Edit channel"
+msgstr "Chỉnh sửa kênh"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Edit Channel"
 msgstr "Chỉnh sửa Kênh"
@@ -1191,7 +1262,12 @@ msgstr "Chỉnh sửa Kênh"
 msgid "Edit Folder"
 msgstr "Chỉnh sửa Thư mục"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:561
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:567
+msgid "Edit group"
+msgstr "Chỉnh sửa nhóm"
+
+#: src/components/modals/GroupEditorModal.tsx:58
 msgid "Edit Group"
 msgstr "Chỉnh sửa Nhóm"
 
@@ -1217,7 +1293,7 @@ msgstr "Bảng chọn emoji"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 #: src/components/space/Channel.tsx:1809
 #: src/components/thread/ThreadPanel.tsx:524
 msgid "Emojis"
@@ -1227,7 +1303,7 @@ msgstr "Emojis"
 msgid "Enable sync"
 msgstr "Bật đồng bộ"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:360
+#: src/components/modals/SpaceSettingsModal/General.tsx:331
 msgid "Enable threaded conversations in channels"
 msgstr "Kích hoạt cuộc trò chuyện theo chủ đề trong các kênh"
 
@@ -1321,6 +1397,10 @@ msgstr "Esc để"
 msgid "Existing Conversations"
 msgstr "Các cuộc trò chuyện hiện có"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Expand group"
+msgstr "Mở rộng nhóm"
+
 #: src/components/modals/UserSettingsModal/Privacy.tsx:547
 #: src/components/modals/UserSettingsModal/Privacy.tsx:650
 msgid "Export"
@@ -1368,7 +1448,7 @@ msgstr "Không thể chỉnh sửa tin nhắn"
 msgid "Failed to export backup"
 msgstr "Xuất bản sao lưu thất bại"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:692
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:678
 msgid "Failed to generate invite link. Please try again."
 msgstr "Không thể tạo liên kết mời. Vui lòng thử lại."
 
@@ -1401,7 +1481,7 @@ msgstr "Không thể ghim tin nhắn"
 msgid "Failed to restore spaces"
 msgstr "Không thể khôi phục các Space"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:300
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
 msgstr "Lưu cài đặt thông báo không thành công"
 
@@ -1438,7 +1518,7 @@ msgstr "Cập nhật hồ sơ không thành công"
 msgid "Favorites"
 msgstr "Yêu thích"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:296
+#: src/components/modals/SpaceSettingsModal/General.tsx:267
 msgid "Features"
 msgstr "Tính năng"
 
@@ -1484,15 +1564,15 @@ msgstr "Từ chối tệp. Sử dụng PNG, JPG hoặc GIF."
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
 msgstr "Tìm tài liệu, phím tắt và công cụ phục hồi."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:494
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:483
 msgid "Fix"
 msgstr "Sửa"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:378
+#: src/components/modals/SpaceSettingsModal/General.tsx:349
 msgid "Fixes"
 msgstr "Sửa chữa"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:397
+#: src/components/modals/SpaceSettingsModal/General.tsx:368
 msgid "Fixing..."
 msgstr "Đang sửa..."
 
@@ -1545,17 +1625,17 @@ msgstr "Chung"
 msgid "General Chat"
 msgstr "Trò chuyện chung"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate Link"
 msgstr "Tạo liên kết"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:465
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate New Link"
 msgstr "Tạo Liên kết Mới"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:413
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:677
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:663
 msgid "Generate Public Invite Link"
 msgstr "Tạo Liên Kết Mời Công Khai"
 
@@ -1580,28 +1660,26 @@ msgstr "Đi đến cuộc trò chuyện"
 msgid "Go to Home"
 msgstr "Đi đến Trang chủ"
 
-#: src/components/modals/GroupEditorModal.tsx:84
+#: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "Biểu tượng Nhóm (tùy chọn)"
 
-#: src/components/modals/GroupEditorModal.tsx:68
+#: src/components/modals/GroupEditorModal.tsx:70
 msgid "Group Name"
 msgstr "Tên nhóm"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:18
-#: src/hooks/business/validation/useGroupNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:49
 msgid "Group name cannot contain special characters"
 msgstr "Tên nhóm không được chứa ký tự đặc biệt"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:12
-#: src/hooks/business/validation/useGroupNameValidation.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Group name is required"
 msgstr "Tên nhóm là bắt buộc"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:15
-#: src/hooks/business/validation/useGroupNameValidation.ts:37
-msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Tên nhóm phải có {MAX_NAME_LENGTH} ký tự trở xuống"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:48
+msgid "Group name must be {0} characters or less"
+msgstr "Tên nhóm phải có {0} ký tự trở xuống"
 
 #: src/components/modals/ModalSaveOverlay.tsx:83
 msgid "Hang in there..."
@@ -1676,7 +1754,6 @@ msgstr "Mã nội tuyến"
 msgid "invalid address for signature"
 msgstr "địa chỉ không hợp lệ cho chữ ký"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
 msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
@@ -1698,7 +1775,7 @@ msgstr "liên kết không hợp lệ"
 msgid "Invalid message ID"
 msgstr "ID tin nhắn không hợp lệ"
 
-#: src/hooks/business/spaces/useInviteValidation.ts:81
+#: src/hooks/business/spaces/useInviteValidation.ts:51
 #: src/services/InvitationService.ts:527 src/services/InvitationService.ts:590
 msgid "invalid response"
 msgstr "phản hồi không hợp lệ"
@@ -1712,7 +1789,7 @@ msgid "Invite sent"
 msgstr "Lời mời đã được gửi"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:243
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
 msgid "Invites"
 msgstr "Các lời mời"
 
@@ -1884,6 +1961,10 @@ msgstr "Làm cho vai trò không hiển thị"
 msgid "Make role public"
 msgstr "Làm cho vai trò công khai"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:341
+msgid "Manage channel groups and channels. Drag to reorder."
+msgstr "Quản lý nhóm kênh và kênh. Kéo để sắp xếp lại."
+
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Quản lý sở thích thông báo trên máy tính cho các tin nhắn mới."
@@ -1930,7 +2011,7 @@ msgstr "thành viên"
 msgid "Members List"
 msgstr "Danh sách thành viên"
 
-#: src/components/modals/ChannelEditorModal.tsx:190
+#: src/components/modals/ChannelEditorModal.tsx:185
 msgid ""
 "Members of selected roles can post, delete, and pin messages in this read-"
 "only channel. Note: Space owners must also be in a manager role to post "
@@ -1992,7 +2073,7 @@ msgstr "Tắt tiếng"
 msgid "Mute all notifications from this space"
 msgstr "Tắt tất cả thông báo từ Space này"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Mute Channel"
 msgstr "Tắt Kênh"
 
@@ -2045,8 +2126,7 @@ msgstr "Tài Khoản Của Tôi"
 msgid "Name or Address"
 msgstr "Tên hoặc Địa chỉ"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:26
-#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:34
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr ""
 "Tên giống như quản trị viên, người điều hành hoặc hỗ trợ là đã được giữ lại."
@@ -2095,6 +2175,10 @@ msgstr "Không có dấu trang trong Space này"
 #: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "No bookmarks yet"
 msgstr "Chưa có dấu trang nào"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:608
+msgid "No channels - drag channels here or delete group."
+msgstr "Không có kênh - kéo các kênh vào đây hoặc xóa nhóm."
 
 #: src/components/direct/DirectMessageContactsList.tsx:375
 msgid "No contacts found"
@@ -2174,13 +2258,14 @@ msgstr "Không có gì"
 msgid "Note"
 msgstr "Ghi chú"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:104
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Note contains invalid content"
 msgstr "Ghi chú chứa nội dung không hợp lệ"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:108
-msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
-msgstr "Ghi chú phải có {MAX_USER_NOTE_LENGTH} ký tự hoặc ít hơn"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Note must be {0} characters or less"
+msgstr "Ghi chú phải có {0} ký tự trở xuống"
 
 #: src/services/NotificationService.ts:193
 msgid "Notification permission not granted"
@@ -2308,14 +2393,6 @@ msgstr "ghim"
 msgid "Pin"
 msgstr "Ghim"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Pin Channel"
-msgstr "Ghim Kênh"
-
-#: src/components/modals/ChannelEditorModal.tsx:139
-msgid "Pin channel to top"
-msgstr "Ghim kênh lên đầu"
-
 #: src/components/message/PinnedMessagesPanel.tsx:191
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Ghim các tin nhắn quan trọng để giữ chúng dễ dàng truy cập"
@@ -2336,10 +2413,6 @@ msgstr "Ghim Tin nhắn"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Pin Messages"
 msgstr "Ghim tin nhắn"
-
-#: src/components/modals/ChannelEditorModal.tsx:142
-msgid "Pin to top"
-msgstr "Ghim lên đầu"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:43
 msgid "Pin/Unpin without confirmation"
@@ -2438,11 +2511,11 @@ msgstr "Phản ứng"
 msgid "Read more about Quorum"
 msgstr "Đọc thêm về Quorum"
 
-#: src/components/modals/ChannelEditorModal.tsx:156
+#: src/components/modals/ChannelEditorModal.tsx:166
 msgid "Read only"
 msgstr "Chỉ đọc"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:163
 msgid "Read only channel"
 msgstr "Kênh chỉ đọc"
 
@@ -2450,6 +2523,10 @@ msgstr "Kênh chỉ đọc"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:308
 msgid "Read receipts"
 msgstr "Biên lai đọc"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:696
+msgid "Read-only"
+msgstr "Chỉ đọc"
 
 #: src/components/direct/DirectMessageContactsList.tsx:386
 msgid "Ready to start a truly private conversation?"
@@ -2459,7 +2536,7 @@ msgstr "Sẵn sàng để bắt đầu một cuộc trò chuyện thực sự ri
 msgid "Reauthorize"
 msgstr "Xác thực lại"
 
-#: src/services/ConfigService.ts:109
+#: src/services/ConfigService.ts:93
 msgid "received config with invalid signature!"
 msgstr "nhận cấu hình với chữ ký không hợp lệ!"
 
@@ -2515,7 +2592,7 @@ msgid "Reply in thread..."
 msgstr "Trả lời trong chủ đề..."
 
 #: src/components/modals/CreateSpaceModal.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:306
+#: src/components/modals/SpaceSettingsModal/General.tsx:277
 msgid "Require Message Signing"
 msgstr "Yêu cầu ký tin nhắn"
 
@@ -2572,7 +2649,7 @@ msgstr "Đang khôi phục..."
 msgid "Retry"
 msgstr "Thử lại"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
 msgstr "Các vai trò"
@@ -2585,10 +2662,10 @@ msgstr "Lưu"
 msgid "SAVE"
 msgstr "LƯU"
 
-#: src/components/modals/ChannelEditorModal.tsx:221
+#: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
-#: src/components/modals/GroupEditorModal.tsx:95
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
+#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:650
 #: src/components/modals/ThreadSettingsModal.tsx:184
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:345
 #: src/components/user/UserProfileEdit.tsx:158
@@ -2596,11 +2673,11 @@ msgid "Save Changes"
 msgstr "Lưu thay đổi"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
-#: src/components/modals/SpaceSettingsModal/General.tsx:331
+#: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "Lưu Lịch sử Chỉnh sửa"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:649
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:635
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:334
 msgid "Save Failed"
 msgstr "Lưu không thành công"
@@ -2623,7 +2700,7 @@ msgstr "cấu hình đã lưu đã lỗi thời"
 
 #: src/components/modals/ChannelEditorModal.tsx:94
 #: src/components/modals/FolderEditorModal.tsx:145
-#: src/components/modals/GroupEditorModal.tsx:135
+#: src/components/modals/GroupEditorModal.tsx:153
 #: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Đang lưu..."
@@ -2695,10 +2772,6 @@ msgstr "Chọn"
 msgid "Select conversation"
 msgstr "Chọn cuộc trò chuyện"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:290
-msgid "Select default channel"
-msgstr "Chọn kênh mặc định"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
 msgstr "Chọn hoặc kéo tệp khóa tài khoản của bạn để khôi phục tài khoản."
@@ -2711,7 +2784,7 @@ msgstr "Chọn quyền"
 msgid "Select Profile Image"
 msgstr "Chọn hình ảnh hồ sơ"
 
-#: src/components/modals/ChannelEditorModal.tsx:209
+#: src/components/modals/ChannelEditorModal.tsx:204
 msgid "Select Roles"
 msgstr "Chọn Vai trò"
 
@@ -2763,6 +2836,11 @@ msgstr "Đang gửi..."
 #: src/components/context/RegistrationPersister.tsx:262
 msgid "Session Encrypted"
 msgstr "Phiên đã được mã hóa"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:704
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:719
+msgid "Set as default channel"
+msgstr "Đặt làm kênh mặc định"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2827,11 +2905,11 @@ msgstr "Bỏ qua lúc này"
 msgid "Someone"
 msgstr "Một ai đó"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:204
+#: src/components/modals/SpaceSettingsModal/General.tsx:196
 msgid "Space Banner"
 msgstr "Biểu ngữ Space"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:178
+#: src/components/modals/SpaceSettingsModal/General.tsx:170
 msgid "Space Description"
 msgstr "Mô tả Space"
 
@@ -2839,32 +2917,35 @@ msgstr "Mô tả Space"
 msgid "Space ID"
 msgstr "ID Space"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:169
+#: src/components/modals/SpaceSettingsModal/General.tsx:161
 msgid "Space name"
 msgstr "Tên Space"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:24
-#: src/hooks/business/validation/useSpaceNameValidation.ts:46
+#: src/hooks/business/validation/errorTranslator.ts:24
 msgid "Space name cannot contain special characters"
 msgstr "Tên Space không được chứa ký tự đặc biệt"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:18
-#: src/hooks/business/validation/useSpaceNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:21
 msgid "Space name is required"
 msgstr "Tên Space là bắt buộc"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:21
-#: src/hooks/business/validation/useSpaceNameValidation.ts:43
-msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Tên Space phải có {MAX_NAME_LENGTH} ký tự trở xuống"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:23
+msgid "Space name must be {0} characters or less"
+msgstr "Tên Space phải ngắn hơn {0} ký tự"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:39
+#. placeholder {0}: vars!.min
+#: src/hooks/business/validation/errorTranslator.ts:22
+msgid "Space name must be at least {0} characters"
+msgstr "Tên Space phải dài ít nhất {0} ký tự"
+
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/navbar/NavMenu.tsx:260
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
 msgstr "Cài đặt Space"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
 #: src/components/modals/UserSettingsModal/General.tsx:197
 msgid "Space Tag"
@@ -2895,7 +2976,7 @@ msgid "Status goes here"
 msgstr "Trạng thái ở đây"
 
 #: src/components/message/EmojiPickerDrawer.tsx:72
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
 #: src/components/space/Channel.tsx:1815
 #: src/components/thread/ThreadPanel.tsx:530
@@ -2911,7 +2992,7 @@ msgstr "Gạch chéo"
 msgid "Successfully sent invite to {0}"
 msgstr "Đã gửi lời mời thành công đến {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid "Sync Kick Status"
 msgstr "Đồng bộ trạng thái đá"
 
@@ -2963,13 +3044,13 @@ msgstr ""
 "mà không cần khóa truy cập (vẫn an toàn, chỉ là không có bảo vệ phần cứng "
 "thiết bị)."
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:30
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
+"This action cannot be undone and will permanently delete this Space and all "
+"of its channels and messages."
 msgstr ""
-"Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn tất cả cài đặt của "
-"Space. Để xóa Space, bạn phải xóa tất cả các Kênh trước."
+"Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn Space cùng tất cả các "
+"kênh và tin nhắn của nó."
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "This bio will be visible to others when they view your profile."
@@ -2989,7 +3070,7 @@ msgstr ""
 "mức toàn cục\" để sử dụng tùy chọn toàn cục của bạn."
 
 #: src/components/modals/CreateSpaceModal.tsx:187
-#: src/components/modals/SpaceSettingsModal/General.tsx:197
+#: src/components/modals/SpaceSettingsModal/General.tsx:189
 msgid ""
 "This description will be visible on invites and shown to people when they "
 "look up or join your Space using an invite link."
@@ -3013,6 +3094,14 @@ msgstr ""
 "Đây là cách người khác sẽ thấy bạn trong Quorum. Bạn có thể thay đổi bất cứ "
 "lúc nào trong Cài Đặt."
 
+#: src/components/modals/ChannelEditorModal.tsx:100
+msgid ""
+"This is the default channel for the Space. To change it go to Space Settings"
+" → General."
+msgstr ""
+"Đây là kênh mặc định của Space. Để thay đổi, hãy đi đến Cài đặt Space → Tổng"
+" quan."
+
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
@@ -3029,8 +3118,7 @@ msgstr ""
 "Liên kết này sẽ không hết hạn, nhưng bạn có thể tạo một cái mới bất kỳ lúc "
 "nào, cái này sẽ làm cho liên kết cũ không còn hiệu lực."
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:23
-#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:33
 msgid "This name conflicts with mention keywords."
 msgstr "Tên này xung đột với các từ khóa đề cập."
 
@@ -3072,7 +3160,7 @@ msgstr "Người dùng này sẽ không còn có thể gửi tin nhắn trong Sp
 msgid "This user will not be able to send messages for {days} days."
 msgstr "Người dùng này sẽ không thể gửi tin nhắn trong {days} ngày."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:681
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:667
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -3092,7 +3180,7 @@ msgstr ""
 "phục. Hãy đảm bảo bạn đã xuất khóa bí mật của mình từ cài đặt Quyền riêng "
 "tư/Bảo mật. Hành động này không thể hoàn tác."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:680
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:666
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -3185,6 +3273,10 @@ msgstr ""
 "Tắt nó để xem trước và phê duyệt từng người trước khi họ có thể tham gia. "
 "Lưu ý: Liên kết công khai cung cấp quyền truy cập đầy đủ vào Space của bạn "
 "trong khi liên kết còn hoạt động."
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:89
+msgid "Type DELETE to confirm"
+msgstr "Nhập DELETE để xác nhận"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:67
 msgid "Type RESET to confirm"
@@ -3314,7 +3406,7 @@ msgstr "Người dùng không xác định"
 msgid "Unmute"
 msgstr "Bật tiếng"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Unmute Channel"
 msgstr "Bật Âm Thanh Kênh"
 
@@ -3340,10 +3432,6 @@ msgstr "bỏ ghim"
 msgid "Unpin"
 msgstr "Bỏ ghim"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Unpin Channel"
-msgstr "Bỏ Ghim Kênh"
-
 #: src/components/message/MessageActionsDrawer.tsx:257
 msgid "Unpin message"
 msgstr "Bỏ ghim tin nhắn"
@@ -3364,7 +3452,7 @@ msgstr ""
 "Cho đến khi bạn trả lời, người gửi này sẽ không thấy tên hiển thị hoặc ảnh "
 "đại diện của bạn"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -3372,7 +3460,7 @@ msgstr ""
 "Cập nhật hồ sơ bị đá cho tất cả các thành viên. Sử dụng điều này nếu người "
 "dùng bị đá vẫn xuất hiện là hoạt động với một số thành viên."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:242
+#: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 msgstr ""
 "Tải lên một banner cho Space của bạn - PNG hoặc JPG - Tỷ lệ tối ưu 3:1"
@@ -3388,7 +3476,7 @@ msgstr ""
 "Tải lên một ảnh đại diện cho hồ sơ của bạn - PNG hoặc JPG - Tỷ lệ tối ưu 1:1"
 
 #: src/components/modals/CreateSpaceModal.tsx:130
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
+#: src/components/modals/SpaceSettingsModal/General.tsx:151
 msgid "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
 msgstr ""
 "Tải lên một biểu tượng cho Space của bạn - PNG hoặc JPG - Tỷ lệ tối ưu 1:1"
@@ -3413,7 +3501,6 @@ msgstr "Sử dụng \"Lưu vào Tệp\" để lưu khóa riêng của bạn"
 msgid "User address here"
 msgstr "Địa chỉ người dùng ở đây"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:109
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Người dùng không tồn tại."
@@ -3489,7 +3576,7 @@ msgid "What's on your mind today?"
 msgstr "Hôm nay bạn đang nghĩ gì?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:351
-#: src/components/modals/SpaceSettingsModal/General.tsx:335
+#: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
 "disabled, only the current edited version is kept."
@@ -3517,7 +3604,7 @@ msgstr ""
 " liệu của tài khoản của bạn, điều này có thể tiết lộ khi bạn đã tham gia các"
 " Spaces mới, mặc dù không phải là các Spaces bạn đã tham gia."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:310
+#: src/components/modals/SpaceSettingsModal/General.tsx:281
 msgid ""
 "When messages are signed, senders confirm they come from their key. When "
 "messages aren't signed, senders have plausible deniability. This setting "
@@ -3671,7 +3758,7 @@ msgstr ""
 "không cần khóa truy cập (vẫn an toàn, chỉ là không có bảo vệ phần cứng thiết"
 " bị)."
 
-#: src/components/modals/GroupEditorModal.tsx:114
+#: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -3679,12 +3766,15 @@ msgstr ""
 "Bạn không thể xóa một nhóm chứa các kênh. Hãy xóa tất cả {channelCount} kênh"
 " trong nhóm này trước."
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:742
+msgid "You cannot delete the default channel."
+msgstr "Bạn không thể xóa kênh mặc định."
+
 #: src/components/message/MessageComposer.tsx:645
 #: src/components/space/Channel.tsx:1661
 msgid "You cannot post in this channel"
 msgstr "Bạn không thể đăng trong kênh này"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:59
 #: src/hooks/business/validation/useAddressValidation.ts:60
 msgid "You cannot send a direct message to yourself."
 msgstr "Bạn không thể gửi tin nhắn trực tiếp cho chính mình."
@@ -3733,7 +3823,7 @@ msgstr "Bạn đã theo kịp tất cả!"
 msgid "You're all set!"
 msgstr "Bạn đã hoàn tất!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:482
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -3927,14 +4017,26 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ "Là chủ không gian, bạn cần gán cho mình một vai trò có quyền xóa để xóa tin "
 #~ "nhắn của người dùng khác. <0><1>Tìm hiểu thêm</1></0>"
 
+#~ msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
+#~ msgstr "Tiểu sử phải có {MAX_BIO_LENGTH} ký tự trở xuống"
+
 #~ msgid "Bookmark limit reached"
 #~ msgstr "Đã đạt giới hạn dấu trang"
 
 #~ msgid "Camera permission is required to take photos"
 #~ msgstr "Cần có quyền truy cập máy ảnh để chụp ảnh"
 
+#~ msgid "Cannot delete Space with channels. Please delete all channels first."
+#~ msgstr "Không thể xóa Space có kênh. Vui lòng xóa tất cả các kênh trước."
+
 #~ msgid "Change your avatar and name for this Space."
 #~ msgstr "Thay đổi ảnh đại diện và tên của bạn cho Không gian này."
+
+#~ msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Tên kênh phải có {MAX_NAME_LENGTH} ký tự trở xuống"
+
+#~ msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
+#~ msgstr "Chủ đề kênh phải có {MAX_TOPIC_LENGTH} ký tự trở xuống"
 
 #~ msgid "Check "
 #~ msgstr "Kiểm tra"
@@ -3964,6 +4066,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgid "Copy Key & Continue"
 #~ msgstr "Sao chép Khóa & Tiếp tục"
 
+#~ msgid "Default Channel"
+#~ msgstr "Kênh Mặc định"
+
 #~ msgid "Delete Current Link"
 #~ msgstr "Xóa Liên kết Hiện tại"
 
@@ -3978,6 +4083,15 @@ msgstr "Hình thu nhỏ Video YouTube"
 
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "Mô tả phải có {maxDescriptionLength} ký tự trở xuống"
+
+#~ msgid "Description must be {maxLength} characters or less"
+#~ msgstr "Mô tả phải có {maxLength} ký tự trở xuống"
+
+#~ msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Tên thiết bị phải có {MAX_NAME_LENGTH} ký tự hoặc ít hơn"
+
+#~ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Tên hiển thị phải có {MAX_NAME_LENGTH} ký tự trở xuống"
 
 #~ msgid "DM Requests"
 #~ msgstr "Yêu cầu DM"
@@ -4023,6 +4137,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 
 #~ msgid "Folder Settings"
 #~ msgstr "Cài đặt Thư mục"
+
+#~ msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Tên nhóm phải có {MAX_NAME_LENGTH} ký tự trở xuống"
 
 #~ msgid "hide home screen"
 #~ msgstr "ẩn màn hình chính"
@@ -4111,6 +4228,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "Không có thông báo chưa đọc"
 
+#~ msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+#~ msgstr "Ghi chú phải có {MAX_USER_NOTE_LENGTH} ký tự hoặc ít hơn"
+
 #~ msgid "One of us, one of us!"
 #~ msgstr "Một trong chúng ta, một trong chúng ta!"
 
@@ -4131,6 +4251,15 @@ msgstr "Hình thu nhỏ Video YouTube"
 
 #~ msgid "Photo library permission is required to select images"
 #~ msgstr "Cần quyền truy cập thư viện ảnh để chọn hình ảnh"
+
+#~ msgid "Pin Channel"
+#~ msgstr "Ghim Kênh"
+
+#~ msgid "Pin channel to top"
+#~ msgstr "Ghim kênh lên đầu"
+
+#~ msgid "Pin to top"
+#~ msgstr "Ghim lên đầu"
 
 #~ msgid "Pinned!"
 #~ msgstr "Đã ghim!"
@@ -4203,6 +4332,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ "đăng, xóa và ghim trên BẤT KỲ tin nhắn nào theo mặc định. Nếu không có quản "
 #~ "lý nào được chọn, chỉ có chủ sở hữu Space mới có thể quản lý kênh."
 
+#~ msgid "Select default channel"
+#~ msgstr "Chọn kênh mặc định"
+
 #~ msgid "Select for which mentions you will receive notifications"
 #~ msgstr "Chọn cho những thông báo nào bạn sẽ nhận được"
 
@@ -4231,6 +4363,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgid "Space Name"
 #~ msgstr "Tên không gian"
 
+#~ msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Tên Space phải có {MAX_NAME_LENGTH} ký tự trở xuống"
+
 #~ msgid "Stay Connected, Stay Invisible"
 #~ msgstr "Giữ Kết nối, Giữ Vô hình"
 
@@ -4246,6 +4381,13 @@ msgstr "Hình thu nhỏ Video YouTube"
 
 #~ msgid "Tap to select"
 #~ msgstr "Nhấn để chọn"
+
+#~ msgid ""
+#~ "This action cannot be undone and will permanently remove all the Space "
+#~ "settings. To delete the Space, you must first delete all Channels."
+#~ msgstr ""
+#~ "Hành động này không thể hoàn tác và sẽ xóa vĩnh viễn tất cả cài đặt của "
+#~ "Space. Để xóa Space, bạn phải xóa tất cả các Kênh trước."
 
 #~ msgid "This information is only provided to the Spaces you join."
 #~ msgstr "Thông tin này chỉ được cung cấp cho các không gian mà bạn tham gia."
@@ -4276,6 +4418,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 
 #~ msgid "Too many files selected. Please select fewer files."
 #~ msgstr "Quá nhiều tệp được chọn. Vui lòng chọn ít tệp hơn."
+
+#~ msgid "Unpin Channel"
+#~ msgstr "Bỏ Ghim Kênh"
 
 #~ msgid "Unpinned!"
 #~ msgstr "Đã bỏ ghim!"

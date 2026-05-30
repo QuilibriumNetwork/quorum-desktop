@@ -139,19 +139,6 @@ export const useSpaceManagement = (
         );
       }
 
-      // Check if space has channels - prevent deletion if channels exist
-      if (space?.groups) {
-        const totalChannelCount = space.groups.reduce(
-          (total, group) => total + (group.channels?.length || 0),
-          0
-        );
-
-        if (totalChannelCount > 0) {
-          setDeleteError('channels-exist');
-          return;
-        }
-      }
-
       // Show deleting overlay before starting crypto operations
       setIsDeleting(true);
 

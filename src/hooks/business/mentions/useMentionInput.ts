@@ -205,12 +205,7 @@ export function useMentionInput({
           // Sort channels within the group by relevance
           const sortedChannels = matchingChannels.sort((a, b) => {
             if (!query) {
-              // No query: sort by pinned first, then creation date
-              if (a.isPinned && !b.isPinned) return -1;
-              if (!a.isPinned && b.isPinned) return 1;
-              if (a.isPinned && b.isPinned) {
-                return (b.pinnedAt || 0) - (a.pinnedAt || 0);
-              }
+              // No query: maintain manifest order (creation date as tie-breaker)
               return (a.createdDate || 0) - (b.createdDate || 0);
             } else {
               // With query: sort by relevance

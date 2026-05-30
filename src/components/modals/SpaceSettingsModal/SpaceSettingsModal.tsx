@@ -31,6 +31,7 @@ import { showToast } from '../../../utils/toast';
 import { useSpaceTag } from '../../../hooks/business/spaces/useSpaceTag';
 import Account from './Account';
 import General from './General';
+import Channels from './Channels';
 import Roles from './Roles';
 import SpaceTagSettings from './SpaceTagSettings';
 import Emojis from './Emojis';
@@ -113,13 +114,17 @@ const SpaceSettingsModal: React.FunctionComponent<{
     }
   }, [isSpaceOwner]);
 
-  // Default channel state
-  const [defaultChannel, setDefaultChannel] = React.useState<Channel | undefined>(
-    space?.groups
-      ?.find((g) =>
-        g.channels.find((c) => c.channelId === space.defaultChannelId)
-      )
-      ?.channels.find((c) => c.channelId === space.defaultChannelId)
+  // Default channel is now toggled inline in the Channels tab via the star
+  // button. Here it's only derived from the space manifest so the Invites
+  // hook can navigate to the right channel after generating a link.
+  const defaultChannel = React.useMemo<Channel | undefined>(
+    () =>
+      space?.groups
+        ?.find((g) =>
+          g.channels.find((c) => c.channelId === space.defaultChannelId)
+        )
+        ?.channels.find((c) => c.channelId === space.defaultChannelId),
+    [space?.groups, space?.defaultChannelId]
   );
 
   // Description state
@@ -303,9 +308,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
     }
   }, [mentionSettings, spaceProfile, queryClient, spaceId]);
 
-  // Delete confirmation state - kept local as it's UI-specific
-  const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
-
   // Role validation error state
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
@@ -327,19 +329,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const [generationSuccess, setGenerationSuccess] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [showGenerateModal, setShowGenerateModal] = React.useState(false);
-
-  // Helper functions for Select primitive
-  const getChannelGroups = React.useMemo(() => {
-    if (!space?.groups) return [];
-    return space.groups.map((group) => ({
-      groupLabel: group.groupName,
-      options: group.channels.map((channel) => ({
-        value: channel.channelId,
-        label: channel.channelName, // Channel name without # symbol
-        icon: '#', // Just the # symbol as icon
-      })),
-    }));
-  }, [space?.groups]);
 
   // Save changes function
   const saveChanges = React.useCallback(async () => {
@@ -375,11 +364,12 @@ const SpaceSettingsModal: React.FunctionComponent<{
         bannerUrl = space.bannerUrl || '';
       }
 
-      // Use the original updateSpace call with all our hook data
+      // Use the original updateSpace call with all our hook data.
+      // defaultChannelId is now managed inline in the Channels tab (star
+      // toggle), so it is not part of this General-tab save payload.
       await updateSpace({
         ...space,
         spaceName,
-        defaultChannelId: defaultChannel?.channelId || space.defaultChannelId,
         isRepudiable,
         saveEditHistory,
         allowThreads,
@@ -397,7 +387,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
     updateSpace,
     space,
     spaceName,
-    defaultChannel,
     isRepudiable,
     saveEditHistory,
     allowThreads,
@@ -515,9 +504,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           clearBannerFileError={clearBannerFileError}
                           bannerMarkedForDeletion={bannerMarkedForDeletion}
                           markBannerForDeletion={markBannerForDeletion}
-                          defaultChannel={defaultChannel}
-                          setDefaultChannel={setDefaultChannel}
-                          getChannelGroups={getChannelGroups}
                           isRepudiable={isRepudiable}
                           setIsRepudiable={setIsRepudiable}
                           saveEditHistory={saveEditHistory}
@@ -529,6 +515,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           hasValidationError={!!validateSpaceName(spaceName)}
                         />
                       );
+                    case 'channels':
+                      return <Channels spaceId={spaceId} />;
                     case 'roles':
                       return (
                         <Roles
@@ -617,8 +605,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
                         <Danger
                           space={space}
                           handleDeleteSpace={handleDeleteSpace}
-                          deleteConfirmationStep={deleteConfirmationStep}
-                          setDeleteConfirmationStep={setDeleteConfirmationStep}
                           deleteError={deleteError}
                           clearDeleteError={clearDeleteError}
                         />

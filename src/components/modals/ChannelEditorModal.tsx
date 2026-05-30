@@ -9,6 +9,7 @@ import {
   Switch,
   Select,
   Tooltip,
+  Callout,
 } from '../primitives';
 import { IconPicker } from '../space/IconPicker';
 import ConfirmationModal from './ConfirmationModal';
@@ -42,11 +43,11 @@ const ChannelEditorModal: React.FunctionComponent<{
     channelTopic,
     isReadOnly,
     managerRoleIds,
-    isPinned,
     icon,
     iconColor,
     iconVariant,
     isEditMode,
+    isDefaultChannel,
     availableRoles,
     channelNameValidationError,
     channelTopicValidationError,
@@ -55,7 +56,6 @@ const ChannelEditorModal: React.FunctionComponent<{
     handleChannelTopicChange,
     handleReadOnlyChange,
     handleManagerRolesChange,
-    handlePinChange,
     handleAllowThreadsChange,
     allowThreads,
     handleIconChange,
@@ -94,6 +94,16 @@ const ChannelEditorModal: React.FunctionComponent<{
         message={t`Saving...`}
       />
       <div style={{ textAlign: 'left' }}>
+        {isDefaultChannel && (
+          <div className="mb-4">
+            <Callout variant="info" size="sm">
+              <Trans>
+                This is the default channel for the Space. To change it
+                go to Space Settings → General.
+              </Trans>
+            </Callout>
+          </div>
+        )}
         <div className="mb-4 max-sm:mb-1">
           <Input
             value={channelName}
@@ -130,16 +140,16 @@ const ChannelEditorModal: React.FunctionComponent<{
           </Flex>
         </div>
 
-        {isEditMode && (
+        {space?.allowThreads && (
           <div className="mb-3">
             <Flex className="items-center gap-3">
               <Switch
-                value={isPinned}
-                onChange={handlePinChange}
-                accessibilityLabel={t`Pin channel to top`}
+                value={allowThreads !== false}
+                onChange={() => handleAllowThreadsChange(allowThreads === false ? undefined : false)}
+                accessibilityLabel={t`Allow threads in this channel`}
               />
               <div className="text-label-strong">
-                <Trans>Pin to top</Trans>
+                <Trans>Allow Threads</Trans>
               </div>
             </Flex>
           </div>
@@ -157,21 +167,6 @@ const ChannelEditorModal: React.FunctionComponent<{
             </div>
           </Flex>
         </div>
-
-        {space?.allowThreads && (
-          <div className="mb-3">
-            <Flex className="items-center gap-3">
-              <Switch
-                value={allowThreads !== false}
-                onChange={() => handleAllowThreadsChange(allowThreads === false ? undefined : false)}
-                accessibilityLabel={t`Allow threads in this channel`}
-              />
-              <div className="text-label-strong">
-                <Trans>Allow Threads</Trans>
-              </div>
-            </Flex>
-          </div>
-        )}
 
         {isReadOnly && (
           <div className="mb-4 max-sm:mb-1">
@@ -230,15 +225,21 @@ const ChannelEditorModal: React.FunctionComponent<{
               direction="vertical"
             />
             <Flex justify="center" align="center">
-              <Button
-                type="unstyled"
-                className="text-danger hover:text-danger-hover"
-                onClick={(e: React.MouseEvent) => handleDeleteClick(e)}
-              >
-                {deleteConfirmation.confirmationStep === 0
-                  ? t`Delete Channel`
-                  : t`Click again to confirm`}
-              </Button>
+              {isDefaultChannel ? (
+                <span className="text-muted text-sm">
+                  <Trans>Default channels cannot be deleted.</Trans>
+                </span>
+              ) : (
+                <Button
+                  type="unstyled"
+                  className="text-danger hover:text-danger-hover"
+                  onClick={(e: React.MouseEvent) => handleDeleteClick(e)}
+                >
+                  {deleteConfirmation.confirmationStep === 0
+                    ? t`Delete Channel`
+                    : t`Click again to confirm`}
+                </Button>
+              )}
             </Flex>
           </>
         )}

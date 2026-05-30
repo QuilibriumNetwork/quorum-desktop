@@ -6,6 +6,7 @@ import {
   Flex,
   Spacer,
   Callout,
+  Tooltip,
 } from '../primitives';
 import { IconPicker } from '../space/IconPicker';
 import ModalSaveOverlay from './ModalSaveOverlay';
@@ -26,6 +27,7 @@ const GroupEditorModal: React.FunctionComponent<{
     icon,
     iconColor,
     iconVariant,
+    hasChannels,
     channelCount,
     showChannelError,
     deleteConfirmationStep,
@@ -117,15 +119,31 @@ const GroupEditorModal: React.FunctionComponent<{
               </Callout>
             )}
             <Flex justify="center" align="center">
-              <Button
-                type="unstyled"
-                className="text-danger hover:text-danger-hover"
-                onClick={handleDeleteClick}
-              >
-                {deleteConfirmationStep === 0
-                  ? t`Delete Group`
-                  : t`Click again to confirm`}
-              </Button>
+              {hasChannels ? (
+                <Tooltip
+                  id="group-delete-block"
+                  content={t`Delete all channels in this group first.`}
+                  place="top"
+                >
+                  <Button
+                    type="unstyled"
+                    className="text-muted cursor-not-allowed"
+                    disabled
+                  >
+                    <Trans>Delete Group</Trans>
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button
+                  type="unstyled"
+                  className="text-danger hover:text-danger-hover"
+                  onClick={handleDeleteClick}
+                >
+                  {deleteConfirmationStep === 0
+                    ? t`Delete Group`
+                    : t`Click again to confirm`}
+                </Button>
+              )}
             </Flex>
           </>
         )}

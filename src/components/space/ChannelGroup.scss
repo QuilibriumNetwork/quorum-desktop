@@ -102,24 +102,6 @@ html.dark .channel-mentions-bubble {
   flex-shrink: 0;
 }
 
-.channel-pin-overlay {
-  position: absolute;
-  top: -$s-1;
-  right: $s-3;
-  width: $s-3;
-  height: $s-3;
-  z-index: 10;
-  border-radius: $rounded-full;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transform: rotate(-45deg);
-
-  .pin-icon {
-    font-size: $s-2;
-  }
-}
-
 // Channel unread dot indicator - defined in src/styles/_components.scss
 
 // Muted channel styling

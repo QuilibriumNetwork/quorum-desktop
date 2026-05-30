@@ -8,3 +8,6 @@ export * from './useSpaceGroups';
 export * from './useGroupEditor';
 export * from './useSpacePermissions';
 export * from './useSpaceHeader';
+export * from './useMoveChannel';
+export * from './useReorderGroups';
+export * from './useReorderChannels';

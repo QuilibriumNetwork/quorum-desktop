@@ -16,8 +16,6 @@ export interface ChannelData {
   channelTopic: string;
   isReadOnly: boolean;
   managerRoleIds: string[];
-  isPinned: boolean;
-  pinnedAt?: number;
   icon: IconName;  // Channels always have an icon (defaults to hashtag)
   iconColor?: IconColor;
   iconVariant?: IconVariant;
@@ -51,8 +49,6 @@ export function useChannelManagement({
     channelTopic: currentChannel?.channelTopic || '',
     isReadOnly: currentChannel?.isReadOnly || false,
     managerRoleIds: currentChannel?.managerRoleIds || [],
-    isPinned: currentChannel?.isPinned || false,
-    pinnedAt: currentChannel?.pinnedAt,
     icon: (currentChannel?.icon || 'hashtag') as IconName,
     iconColor: (currentChannel?.iconColor as IconColor) || 'default',
     iconVariant: (currentChannel?.iconVariant as IconVariant) || 'outline',
@@ -81,8 +77,6 @@ export function useChannelManagement({
           channelTopic: channel.channelTopic || '',
           isReadOnly: channel.isReadOnly || false,
           managerRoleIds: channel.managerRoleIds || [],
-          isPinned: channel.isPinned || false,
-          pinnedAt: channel.pinnedAt,
           icon: (channel.icon || 'hashtag') as IconName,
           iconColor: (channel.iconColor as IconColor) || 'default',
           iconVariant: (channel.iconVariant as IconVariant) || 'outline',
@@ -143,15 +137,6 @@ export function useChannelManagement({
     setChannelData((prev) => ({ ...prev, managerRoleIds: roleIds }));
   }, []);
 
-  // Handle pin toggle
-  const handlePinChange = useCallback((value: boolean) => {
-    setChannelData((prev) => ({
-      ...prev,
-      isPinned: value,
-      pinnedAt: value ? Date.now() : undefined,
-    }));
-  }, []);
-
   // Handle allow threads toggle (undefined = on/default, false = off)
   const handleAllowThreadsChange = useCallback((value: boolean | undefined) => {
     setChannelData((prev) => ({ ...prev, allowThreads: value }));
@@ -189,8 +174,6 @@ export function useChannelManagement({
                           channelTopic: channelData.channelTopic,
                           isReadOnly: channelData.isReadOnly,
                           managerRoleIds: channelData.managerRoleIds,
-                          isPinned: channelData.isPinned,
-                          pinnedAt: channelData.pinnedAt,
                           icon: channelData.icon,
                           iconColor: channelData.iconColor,
                           iconVariant: channelData.iconVariant,
@@ -222,8 +205,6 @@ export function useChannelManagement({
                       channelTopic: channelData.channelTopic,
                       isReadOnly: channelData.isReadOnly,
                       managerRoleIds: channelData.managerRoleIds,
-                      isPinned: channelData.isPinned,
-                      pinnedAt: channelData.pinnedAt,
                       icon: channelData.icon,
                       iconColor: channelData.iconColor,
                       iconVariant: channelData.iconVariant,
@@ -265,13 +246,20 @@ export function useChannelManagement({
     } : undefined,
   });
 
+  // Is this channel the space default? Used to block deletion everywhere.
+  const isDefaultChannel = !!channelId && space?.defaultChannelId === channelId;
+
   // Handle delete with smart escalation
   const handleDeleteClick = useCallback((e?: React.MouseEvent) => {
+    // Default channel cannot be deleted; the user must reassign it first
+    // in Space Settings → General.
+    if (isDefaultChannel) return;
+
     const performDelete = () => {
       deleteChannel();
       setDeleteConfirmationStep(0);
     };
-    
+
     if (e) {
       // Event-based call (from button click) - use new confirmation system
       deleteConfirmation.handleClick(e, performDelete);
@@ -285,7 +273,7 @@ export function useChannelManagement({
         performDelete();
       }
     }
-  }, [deleteConfirmation, deleteConfirmationStep]);
+  }, [isDefaultChannel, deleteConfirmation, deleteConfirmationStep]);
 
   // Delete channel
   const deleteChannel = useCallback(async () => {
@@ -365,8 +353,6 @@ export function useChannelManagement({
     channelTopic: channelData.channelTopic,
     isReadOnly: channelData.isReadOnly,
     managerRoleIds: channelData.managerRoleIds,
-    isPinned: channelData.isPinned,
-    pinnedAt: channelData.pinnedAt,
     icon: channelData.icon,
     iconColor: channelData.iconColor,
     iconVariant: channelData.iconVariant,
@@ -375,6 +361,7 @@ export function useChannelManagement({
     messageCount,
     deleteConfirmationStep,
     isEditMode: !!channelId,
+    isDefaultChannel,
     availableRoles: space?.roles || [],
     channelNameValidationError,
     channelTopicValidationError,
@@ -385,7 +372,6 @@ export function useChannelManagement({
     handleChannelTopicChange,
     handleReadOnlyChange,
     handleManagerRolesChange,
-    handlePinChange,
     handleAllowThreadsChange,
     handleIconChange,
     saveChanges,

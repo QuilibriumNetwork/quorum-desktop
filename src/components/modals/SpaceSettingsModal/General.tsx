@@ -1,7 +1,6 @@
 import * as React from 'react';
 import {
   Button,
-  Select,
   Switch,
   Input,
   Icon,
@@ -11,7 +10,6 @@ import {
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import type { Channel, Group } from '@quilibrium/quorum-shared';
 import { isFeatureEnabled } from '../../../utils/platform';
 import { validateSpaceName } from '../../../hooks/business/validation';
 import { ReactTooltip } from '../../ui';
@@ -51,9 +49,6 @@ interface GeneralProps {
   clearBannerFileError: () => void;
   bannerMarkedForDeletion: boolean;
   markBannerForDeletion: () => void;
-  defaultChannel: Channel | undefined;
-  setDefaultChannel: (channel: Channel) => void;
-  getChannelGroups: any;
   isRepudiable: boolean;
   setIsRepudiable: (value: boolean) => void;
   saveEditHistory: boolean;
@@ -94,9 +89,6 @@ const General: React.FunctionComponent<GeneralProps> = ({
   clearBannerFileError,
   bannerMarkedForDeletion,
   markBannerForDeletion,
-  defaultChannel,
-  setDefaultChannel,
-  getChannelGroups,
   isRepudiable,
   setIsRepudiable,
   saveEditHistory,
@@ -269,27 +261,6 @@ const General: React.FunctionComponent<GeneralProps> = ({
               )}
             </div>
           )}
-        </div>
-        <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2 mb-2">
-          <Trans>Default Channel</Trans>
-        </div>
-        <div className="modal-content-info">
-          <Select
-            fullWidth
-            groups={getChannelGroups}
-            value={defaultChannel?.channelId || ''}
-            onChange={(channelId: string) => {
-              const channel = space?.groups
-                ?.flatMap((g: Group) => g.channels)
-                ?.find((c: Channel) => c.channelId === channelId);
-              if (channel) {
-                setDefaultChannel(channel);
-              }
-            }}
-            placeholder={t`Select default channel`}
-            style={{ textAlign: 'left' }}
-          />
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2 mb-2">

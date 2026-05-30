@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "役割なし - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1633
-msgid "Send a message to #{channel_name}"
-msgstr "#{channel_name} にメッセージを送信"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Quorumへようこそ、{name}！アカウントは安全に設定され、使用準備ができています。"
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1633
+msgid "Send a message to #{channel_name}"
+msgstr "#{channel_name} にメッセージを送信"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -53,11 +53,6 @@ msgid "Reacted by"
 msgstr "リアクションしたユーザー"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:715
-msgid "Replying to"
-msgstr "返信中"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "画像の処理に失敗しました"
@@ -66,6 +61,11 @@ msgstr "画像の処理に失敗しました"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "{user} に返信中"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:715
+msgid "Replying to"
+msgstr "返信中"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:354
@@ -304,15 +304,24 @@ msgstr "プロフィール写真を追加"
 msgid "Add a Space"
 msgstr "スペースを追加"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:574
+msgid "Add channel"
+msgstr "チャンネルを追加"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
 msgstr "チャンネルを追加"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:580
+msgid "Add channel to group"
+msgstr "グループにチャンネルを追加"
 
 #: src/components/direct/DirectMessages.tsx:65
 msgid "Add friend"
 msgstr "友達を追加"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/GroupEditorModal.tsx:58
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:346
 #: src/components/space/ChannelList.tsx:184
 msgid "Add Group"
 msgstr "グループを追加"
@@ -343,12 +352,10 @@ msgstr ""
 msgid "Adding..."
 msgstr "追加中..."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
 msgstr "アドレスは正確に46文字でなければなりません。"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:83
 #: src/hooks/business/validation/useAddressValidation.ts:84
 msgid "Addresses start with \"Qm\"."
 msgstr "アドレスは「Qm」で始まります。"
@@ -365,7 +372,7 @@ msgid "Advanced Settings"
 msgstr "詳細設定"
 
 #: src/components/direct/DirectMessageContactsList.tsx:290
-#: src/components/modals/ChannelEditorModal.tsx:211
+#: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 #: src/components/notifications/NotificationPanel.tsx:238
@@ -382,7 +389,7 @@ msgstr "すべてのブックマーク"
 msgid "All DMs"
 msgstr "すべてのDM"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:62
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:63
 msgid "All kick records are up to date."
 msgstr "すべてのキック記録は最新です。"
 
@@ -392,12 +399,12 @@ msgstr "すべてのキック記録は最新です。"
 msgid "All Spaces"
 msgstr "すべてのスペース"
 
-#: src/components/modals/ChannelEditorModal.tsx:170
-#: src/components/modals/SpaceSettingsModal/General.tsx:356
+#: src/components/modals/ChannelEditorModal.tsx:152
+#: src/components/modals/SpaceSettingsModal/General.tsx:327
 msgid "Allow Threads"
 msgstr "スレッドを許可"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:149
 msgid "Allow threads in this channel"
 msgstr "このチャンネルでスレッドを許可"
 
@@ -418,7 +425,7 @@ msgstr "ダイレクトメッセージに常に署名する"
 msgid "Always sign messages"
 msgstr "メッセージに常に署名する"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:81
 msgid "An error occurred while deleting the Space. Please try again."
 msgstr "スペースの削除中にエラーが発生しました。もう一度お試しください。"
 
@@ -461,11 +468,17 @@ msgstr "外観"
 msgid "are typing"
 msgstr "入力中"
 
-#: src/hooks/business/channels/useChannelManagement.ts:257
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:433
+#: src/hooks/business/channels/useChannelManagement.ts:238
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
 msgstr "このチャンネルを削除してもよろしいですか？すべてのメッセージが失われます。この操作は元に戻せません。"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:434
+msgid ""
+"Are you sure you want to delete this channel? This action cannot be undone."
+msgstr "このチャンネルを削除してもよろしいですか？この操作は取り消せません。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:64
 msgid ""
@@ -476,11 +489,22 @@ msgstr ""
 "この会話を削除してもよろしいですか？\n"
 "この操作はあなたのデバイスからのみ会話を削除します。他の参加者は会話履歴にアクセスできます。"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:454
+msgid ""
+"Are you sure you want to delete this group? All channels inside it and their"
+" messages will be lost. This action cannot be undone."
+msgstr "このグループを削除してもよろしいですか？グループ内のすべてのチャンネルとメッセージが失われます。この操作は取り消せません。"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:455
+msgid ""
+"Are you sure you want to delete this group? This action cannot be undone."
+msgstr "このグループを削除してもよろしいですか？この操作は取り消せません。"
+
 #: src/hooks/business/messages/useMessageActions.ts:423
 msgid "Are you sure you want to delete this message?"
 msgstr "このメッセージを削除してもよろしいですか？"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:61
+#: src/hooks/business/spaces/useRoleManagement.ts:66
 msgid "Are you sure you want to delete this role?"
 msgstr "この役割を削除してもよろしいですか？"
 
@@ -527,13 +551,14 @@ msgstr "バックアップに失敗しました"
 msgid "Bio"
 msgstr "バイオ"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:87
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Bio cannot contain special characters"
 msgstr "バイオには特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:91
-msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
-msgstr "バイオは{MAX_BIO_LENGTH}文字以下でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:59
+msgid "Bio must be {0} characters or less"
+msgstr "自己紹介は {0} 文字以内でなければなりません"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Bold"
@@ -589,10 +614,10 @@ msgstr "カメラ"
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:589
-#: src/hooks/business/channels/useChannelManagement.ts:263
+#: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:435
 #: src/hooks/business/messages/usePinnedMessages.ts:325
-#: src/hooks/business/spaces/useRoleManagement.ts:64
+#: src/hooks/business/spaces/useRoleManagement.ts:69
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "キャンセル"
@@ -601,9 +626,9 @@ msgstr "キャンセル"
 msgid "CANCEL"
 msgstr "キャンセル"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:41
-msgid "Cannot delete Space with channels. Please delete all channels first."
-msgstr "チャンネルがあるスペースは削除できません。最初にすべてのチャンネルを削除してください。"
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:244
+msgid "Cannot delete a group containing the default channel."
+msgstr "デフォルトのチャンネルを含むグループは削除できません。"
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
@@ -622,11 +647,11 @@ msgid ""
 "Refresh the page to apply the new language."
 msgstr "変更は自動的に行われますが、アクティブなページが更新されない場合があります。新しい言語を適用するにはページを更新してください。"
 
-#: src/components/modals/ChannelEditorModal.tsx:128
+#: src/components/modals/ChannelEditorModal.tsx:138
 msgid "Channel Icon"
 msgstr "チャンネルアイコン"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:181
 msgid "Channel Managers"
 msgstr "チャンネルマネージャー"
 
@@ -634,42 +659,44 @@ msgstr "チャンネルマネージャー"
 msgid "Channel members"
 msgstr "チャンネルメンバー"
 
-#: src/components/modals/ChannelEditorModal.tsx:101
+#: src/components/modals/ChannelEditorModal.tsx:111
 msgid "Channel Name"
 msgstr "チャンネル名"
 
-#: src/hooks/business/validation/useChannelValidation.ts:18
-#: src/hooks/business/validation/useChannelValidation.ts:60
+#: src/hooks/business/validation/errorTranslator.ts:40
 msgid "Channel name cannot contain special characters"
 msgstr "チャンネル名には特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/useChannelValidation.ts:12
-#: src/hooks/business/validation/useChannelValidation.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:38
 msgid "Channel name is required"
 msgstr "チャンネル名は必須です"
 
-#: src/hooks/business/validation/useChannelValidation.ts:15
-#: src/hooks/business/validation/useChannelValidation.ts:57
-msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "チャンネル名は{MAX_NAME_LENGTH}文字以下でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:39
+msgid "Channel name must be {0} characters or less"
+msgstr "チャンネル名は {0} 文字以内でなければなりません"
 
-#: src/components/space/ChannelItem.tsx:204
+#: src/components/space/ChannelItem.tsx:187
 msgid "Channel Settings"
 msgstr "チャンネル設定"
 
-#: src/components/modals/ChannelEditorModal.tsx:111
+#: src/components/modals/ChannelEditorModal.tsx:121
 msgid "Channel Topic"
 msgstr "チャンネルトピック"
 
-#: src/hooks/business/validation/useChannelValidation.ts:38
-#: src/hooks/business/validation/useChannelValidation.ts:74
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel topic cannot contain special characters"
 msgstr "チャンネルのトピックには特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/useChannelValidation.ts:35
-#: src/hooks/business/validation/useChannelValidation.ts:71
-msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr "チャンネルのトピックは{MAX_TOPIC_LENGTH}文字以下でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:43
+msgid "Channel topic must be {0} characters or less"
+msgstr "チャンネルのトピックは {0} 文字以内でなければなりません"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:338
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+msgid "Channels"
+msgstr "チャンネル"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -683,7 +710,7 @@ msgstr "プロフィール画像を追加する方法を選択してください
 msgid "Choose your preferred theme for Quorum."
 msgstr "Quorumの好みのテーマを選択してください。"
 
-#: src/components/modals/ChannelEditorModal.tsx:212
+#: src/components/modals/ChannelEditorModal.tsx:207
 #: src/components/modals/SpaceSettingsModal/Account.tsx:244
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 #: src/components/notifications/NotificationPanel.tsx:239
@@ -701,11 +728,10 @@ msgstr "タグ {tag} の通知をクリア中"
 
 #: src/components/modals/ChannelEditorModal.tsx:240
 #: src/components/modals/FolderEditorModal.tsx:130
-#: src/components/modals/GroupEditorModal.tsx:127
+#: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Account.tsx:319
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "再度クリックして確認してください"
@@ -721,6 +747,10 @@ msgstr "コピーするにはクリック"
 #: src/components/modals/ThreadSettingsModal.tsx:172
 msgid "Close thread"
 msgstr "スレッドを閉じる"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Collapse group"
+msgstr "グループを折りたたむ"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
@@ -812,7 +842,7 @@ msgstr "メッセージをコピー"
 msgid "Copy message link"
 msgstr "メッセージリンクをコピー"
 
-#: src/services/ConfigService.ts:292
+#: src/services/ConfigService.ts:264
 msgid "Could not add Space"
 msgstr "スペースを追加できませんでした"
 
@@ -821,23 +851,23 @@ msgstr "スペースを追加できませんでした"
 msgid "Could not fetch the Space details. Please try again."
 msgstr "スペースの詳細を取得できませんでした。もう一度お試しください。"
 
-#: src/services/ConfigService.ts:165
+#: src/services/ConfigService.ts:137
 msgid "Could not obtain manifest for Space"
 msgstr "スペースのマニフェストを取得できませんでした"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:42
-#: src/hooks/business/spaces/useInviteValidation.ts:111
+#: src/hooks/business/spaces/useInviteValidation.ts:81
 msgid "Could not verify invite"
 msgstr "招待を確認できませんでした"
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:247
 msgid ""
 "Couldn't decrypt your saved profile. Please re-enter your name and profile "
 "image."
 msgstr "保存されたプロフィールを復号化できませんでした。名前とプロフィール画像を再入力してください。"
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:252
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:360
 msgid ""
 "Couldn't load your saved profile. Please re-enter your name and profile "
 "image."
@@ -867,7 +897,7 @@ msgstr "代わりに新しいアカウントを作成"
 msgid "Create Passkey"
 msgstr "パスキーを作成"
 
-#: src/components/modals/ChannelEditorModal.tsx:180
+#: src/components/modals/ChannelEditorModal.tsx:175
 msgid "Create roles in Space Settings first."
 msgstr "最初にスペース設定でロールを作成してください。"
 
@@ -908,17 +938,22 @@ msgstr "データ復旧"
 msgid "days"
 msgstr "日"
 
-#: src/services/ConfigService.ts:144
+#: src/services/ConfigService.ts:116
 msgid "decrypted space with no known config key"
 msgstr "既知の設定キーがない復号化されたスペース"
 
-#: src/services/ConfigService.ts:150
+#: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
 msgstr "既知のハブキーがない復号化されたスペース"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:275
-msgid "Default Channel"
-msgstr "デフォルトチャンネル"
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:703
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:718
+msgid "Default channel"
+msgstr "デフォルトのチャンネル"
+
+#: src/components/modals/ChannelEditorModal.tsx:230
+msgid "Default channels cannot be deleted."
+msgstr "デフォルトのチャンネルは削除できません。"
 
 #: src/components/modals/CreateSpaceModal.tsx:212
 msgid ""
@@ -936,16 +971,28 @@ msgstr "削除"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:442
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:463
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:105
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:107
-#: src/hooks/business/channels/useChannelManagement.ts:262
+#: src/hooks/business/channels/useChannelManagement.ts:243
 #: src/hooks/business/messages/useMessageActions.ts:434
-#: src/hooks/business/spaces/useRoleManagement.ts:63
+#: src/hooks/business/spaces/useRoleManagement.ts:68
 msgid "Delete"
 msgstr "削除"
 
+#: src/components/modals/GroupEditorModal.tsx:125
+msgid "Delete all channels in this group first."
+msgstr "このグループ内のすべてのチャンネルを最初に削除してください。"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:743
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:751
+msgid "Delete channel"
+msgstr "チャンネルを削除"
+
 #: src/components/modals/ChannelEditorModal.tsx:239
-#: src/hooks/business/channels/useChannelManagement.ts:256
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:430
+#: src/hooks/business/channels/useChannelManagement.ts:237
 msgid "Delete Channel"
 msgstr "チャンネルを削除"
 
@@ -960,7 +1007,14 @@ msgstr "会話を削除"
 msgid "Delete Folder"
 msgstr "フォルダーを削除"
 
-#: src/components/modals/GroupEditorModal.tsx:126
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:587
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:593
+msgid "Delete group"
+msgstr "グループを削除"
+
+#: src/components/modals/GroupEditorModal.tsx:133
+#: src/components/modals/GroupEditorModal.tsx:143
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:451
 msgid "Delete Group"
 msgstr "グループを削除"
 
@@ -984,12 +1038,12 @@ msgstr "メッセージを削除"
 msgid "Delete role"
 msgstr "役割を削除"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:60
+#: src/hooks/business/spaces/useRoleManagement.ts:65
 msgid "Delete Role"
 msgstr "ロールを削除"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:66
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:100
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:28
 msgid "Delete Space"
 msgstr "スペースを削除"
 
@@ -997,16 +1051,16 @@ msgstr "スペースを削除"
 #: src/components/modals/CreateSpaceModal.tsx:120
 #: src/components/modals/SpaceSettingsModal/Account.tsx:148
 #: src/components/modals/SpaceSettingsModal/Account.tsx:156
+#: src/components/modals/SpaceSettingsModal/General.tsx:133
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
-#: src/components/modals/SpaceSettingsModal/General.tsx:149
+#: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:232
 #: src/components/modals/UserSettingsModal/General.tsx:96
 #: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Delete this image"
 msgstr "この画像を削除"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
 msgid "Delete this space"
 msgstr "このスペースを削除"
 
@@ -1014,7 +1068,7 @@ msgstr "このスペースを削除"
 msgid "Delete Thread"
 msgstr "スレッドを削除"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:437
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:426
 msgid "Deleting Space..."
 msgstr "スペースを削除中..."
 
@@ -1027,21 +1081,22 @@ msgstr "削除中..."
 msgid "Delivery receipts"
 msgstr "配信確認"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:184
+#: src/components/modals/SpaceSettingsModal/General.tsx:176
 msgid "Describe what this Space is about..."
 msgstr "このSpaceについて説明してください..."
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:66
+#: src/hooks/business/validation/errorTranslator.ts:27
 msgid "Description cannot contain special characters"
 msgstr "説明には特殊文字を含めることはできません"
+
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:28
+msgid "Description must be {0} characters or less"
+msgstr "説明は {0} 文字以内でなければなりません"
 
 #: src/components/modals/CreateSpaceModal.tsx:182
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "説明は{MAX_DESCRIPTION_LENGTH}文字以内である必要があります"
-
-#: src/hooks/business/validation/useSpaceNameValidation.ts:70
-msgid "Description must be {maxLength} characters or less"
-msgstr "説明は{maxLength}文字以下でなければなりません"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
 msgid "Desktop Notifications"
@@ -1051,23 +1106,24 @@ msgstr "デスクトップ通知"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "このブラウザではデスクトップ通知はサポートされていません。"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:22
+#: src/hooks/business/validation/errorTranslator.ts:55
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
 msgstr "デバイス名には英数字、スペース、ハイフン、および括弧のみを使用できます"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:13
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Device name cannot be empty"
 msgstr "デバイス名を空にすることはできません"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:19
+#: src/hooks/business/validation/errorTranslator.ts:54
 msgid "Device name cannot contain HTML"
 msgstr "デバイス名にはHTMLを含めることはできません"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:16
-msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "デバイス名は{MAX_NAME_LENGTH}文字以内でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:53
+msgid "Device name must be {0} characters or less"
+msgstr "デバイス名は {0} 文字以内でなければなりません"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:396
 msgid "Devices"
@@ -1097,20 +1153,18 @@ msgstr "表示名"
 msgid "Display Name"
 msgstr "表示名"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:29
-#: src/hooks/business/validation/useDisplayNameValidation.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:35
 msgid "Display name cannot contain special characters"
 msgstr "表示名には特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:16
-#: src/hooks/business/validation/useDisplayNameValidation.ts:45
+#: src/hooks/business/validation/errorTranslator.ts:31
 msgid "Display name is required"
 msgstr "表示名は必須です"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:19
-#: src/hooks/business/validation/useDisplayNameValidation.ts:48
-msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "表示名は{MAX_NAME_LENGTH}文字以下でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:32
+msgid "Display name must be {0} characters or less"
+msgstr "表示名は {0} 文字以内でなければなりません"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:563
 msgid ""
@@ -1131,11 +1185,19 @@ msgstr "キーのバックアップをダウンロード"
 msgid "Drag and drop or"
 msgstr "ドラッグ＆ドロップまたは"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:678
+msgid "Drag to reorder channel"
+msgstr "チャンネルの順序を変更するにはドラッグ"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:532
+msgid "Drag to reorder group"
+msgstr "グループの順序を変更するにはドラッグ"
+
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "ドロワー"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:217
+#: src/components/modals/SpaceSettingsModal/General.tsx:209
 msgid "Drop here"
 msgstr "ここにドロップ"
 
@@ -1149,6 +1211,11 @@ msgstr "編集"
 msgid "Edit {0}"
 msgstr "{0}を編集"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:727
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:733
+msgid "Edit channel"
+msgstr "チャンネルを編集"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Edit Channel"
 msgstr "チャンネルを編集"
@@ -1158,7 +1225,12 @@ msgstr "チャンネルを編集"
 msgid "Edit Folder"
 msgstr "フォルダーを編集"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:561
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:567
+msgid "Edit group"
+msgstr "グループを編集"
+
+#: src/components/modals/GroupEditorModal.tsx:58
 msgid "Edit Group"
 msgstr "グループを編集"
 
@@ -1184,7 +1256,7 @@ msgstr "絵文字ピッカー"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 #: src/components/space/Channel.tsx:1809
 #: src/components/thread/ThreadPanel.tsx:524
 msgid "Emojis"
@@ -1194,7 +1266,7 @@ msgstr "Emojis"
 msgid "Enable sync"
 msgstr "同期を有効にする"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:360
+#: src/components/modals/SpaceSettingsModal/General.tsx:331
 msgid "Enable threaded conversations in channels"
 msgstr "チャンネルでスレッド形式の会話を有効化"
 
@@ -1284,6 +1356,10 @@ msgstr "Escで"
 msgid "Existing Conversations"
 msgstr "既存の会話"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Expand group"
+msgstr "グループを展開"
+
 #: src/components/modals/UserSettingsModal/Privacy.tsx:547
 #: src/components/modals/UserSettingsModal/Privacy.tsx:650
 msgid "Export"
@@ -1328,7 +1404,7 @@ msgstr "メッセージの編集に失敗しました"
 msgid "Failed to export backup"
 msgstr "バックアップのエクスポートに失敗しました"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:692
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:678
 msgid "Failed to generate invite link. Please try again."
 msgstr "招待リンクの生成に失敗しました。もう一度お試しください。"
 
@@ -1361,7 +1437,7 @@ msgstr "メッセージのピン留めに失敗しました"
 msgid "Failed to restore spaces"
 msgstr "スペースの復元に失敗しました"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:300
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
 msgstr "通知設定の保存に失敗しました"
 
@@ -1398,7 +1474,7 @@ msgstr "プロフィールの更新に失敗しました"
 msgid "Favorites"
 msgstr "お気に入り"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:296
+#: src/components/modals/SpaceSettingsModal/General.tsx:267
 msgid "Features"
 msgstr "機能"
 
@@ -1444,15 +1520,15 @@ msgstr "ファイルが拒否されました。PNG、JPG、またはGIFを使用
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
 msgstr "ドキュメント、キーボードショートカット、復旧ツールを見つけます。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:494
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:483
 msgid "Fix"
 msgstr "修正"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:378
+#: src/components/modals/SpaceSettingsModal/General.tsx:349
 msgid "Fixes"
 msgstr "修正"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:397
+#: src/components/modals/SpaceSettingsModal/General.tsx:368
 msgid "Fixing..."
 msgstr "修正中..."
 
@@ -1499,17 +1575,17 @@ msgstr "一般"
 msgid "General Chat"
 msgstr "一般チャット"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate Link"
 msgstr "リンクを生成"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:465
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate New Link"
 msgstr "新しいリンクを生成"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:413
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:677
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:663
 msgid "Generate Public Invite Link"
 msgstr "公開招待リンクを生成"
 
@@ -1533,28 +1609,26 @@ msgstr "会話に移動"
 msgid "Go to Home"
 msgstr "ホームに移動"
 
-#: src/components/modals/GroupEditorModal.tsx:84
+#: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "グループアイコン（オプション）"
 
-#: src/components/modals/GroupEditorModal.tsx:68
+#: src/components/modals/GroupEditorModal.tsx:70
 msgid "Group Name"
 msgstr "グループ名"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:18
-#: src/hooks/business/validation/useGroupNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:49
 msgid "Group name cannot contain special characters"
 msgstr "グループ名には特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:12
-#: src/hooks/business/validation/useGroupNameValidation.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Group name is required"
 msgstr "グループ名は必須です"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:15
-#: src/hooks/business/validation/useGroupNameValidation.ts:37
-msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "グループ名は{MAX_NAME_LENGTH}文字以下でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:48
+msgid "Group name must be {0} characters or less"
+msgstr "グループ名は {0} 文字以内でなければなりません"
 
 #: src/components/modals/ModalSaveOverlay.tsx:83
 msgid "Hang in there..."
@@ -1629,7 +1703,6 @@ msgstr "インラインコード"
 msgid "invalid address for signature"
 msgstr "署名用の無効なアドレス"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
 msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
@@ -1649,7 +1722,7 @@ msgstr "無効なリンク"
 msgid "Invalid message ID"
 msgstr "無効なメッセージID"
 
-#: src/hooks/business/spaces/useInviteValidation.ts:81
+#: src/hooks/business/spaces/useInviteValidation.ts:51
 #: src/services/InvitationService.ts:527 src/services/InvitationService.ts:590
 msgid "invalid response"
 msgstr "無効な応答"
@@ -1663,7 +1736,7 @@ msgid "Invite sent"
 msgstr "招待が送信されました"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:243
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
 msgid "Invites"
 msgstr "招待"
 
@@ -1833,6 +1906,10 @@ msgstr "役割を非表示にする"
 msgid "Make role public"
 msgstr "役割を公開する"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:341
+msgid "Manage channel groups and channels. Drag to reorder."
+msgstr "チャンネルグループとチャンネルを管理します。ドラッグして順序を変更します。"
+
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr "新しいメッセージのためのデスクトップ通知の設定を管理します。"
@@ -1876,7 +1953,7 @@ msgstr "メンバー"
 msgid "Members List"
 msgstr "メンバーリスト"
 
-#: src/components/modals/ChannelEditorModal.tsx:190
+#: src/components/modals/ChannelEditorModal.tsx:185
 msgid ""
 "Members of selected roles can post, delete, and pin messages in this read-"
 "only channel. Note: Space owners must also be in a manager role to post "
@@ -1936,7 +2013,7 @@ msgstr "ミュート"
 msgid "Mute all notifications from this space"
 msgstr "このスペースからのすべての通知をミュート"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Mute Channel"
 msgstr "チャンネルをミュート"
 
@@ -1989,8 +2066,7 @@ msgstr "マイアカウント"
 msgid "Name or Address"
 msgstr "名前またはアドレス"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:26
-#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:34
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "管理者、モデレーター、またはサポートに似た名前は予約されています。"
 
@@ -2038,6 +2114,10 @@ msgstr "このスペースにブックマークがありません"
 #: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "No bookmarks yet"
 msgstr "まだブックマークがありません"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:608
+msgid "No channels - drag channels here or delete group."
+msgstr "チャンネルなし - ここにチャンネルをドラッグするか、グループを削除します。"
 
 #: src/components/direct/DirectMessageContactsList.tsx:375
 msgid "No contacts found"
@@ -2113,13 +2193,14 @@ msgstr "なし"
 msgid "Note"
 msgstr "Note"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:104
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Note contains invalid content"
 msgstr "Note contains invalid content"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:108
-msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
-msgstr "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Note must be {0} characters or less"
+msgstr "メモは {0} 文字以内でなければなりません"
 
 #: src/services/NotificationService.ts:193
 msgid "Notification permission not granted"
@@ -2236,14 +2317,6 @@ msgstr "ピン"
 msgid "Pin"
 msgstr "ピン"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Pin Channel"
-msgstr "チャンネルをピン留め"
-
-#: src/components/modals/ChannelEditorModal.tsx:139
-msgid "Pin channel to top"
-msgstr "チャンネルを上部にピン留め"
-
 #: src/components/message/PinnedMessagesPanel.tsx:191
 msgid "Pin important messages to keep them easily accessible"
 msgstr "重要なメッセージをピン留めして簡単にアクセスできるようにする"
@@ -2264,10 +2337,6 @@ msgstr "メッセージをピン留め"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Pin Messages"
 msgstr "メッセージをピン留め"
-
-#: src/components/modals/ChannelEditorModal.tsx:142
-msgid "Pin to top"
-msgstr "上部にピン留め"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:43
 msgid "Pin/Unpin without confirmation"
@@ -2359,11 +2428,11 @@ msgstr "リアクション"
 msgid "Read more about Quorum"
 msgstr "Quorumについて詳しく読む"
 
-#: src/components/modals/ChannelEditorModal.tsx:156
+#: src/components/modals/ChannelEditorModal.tsx:166
 msgid "Read only"
 msgstr "読み取り専用"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:163
 msgid "Read only channel"
 msgstr "読み取り専用チャンネル"
 
@@ -2371,6 +2440,10 @@ msgstr "読み取り専用チャンネル"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:308
 msgid "Read receipts"
 msgstr "既読通知"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:696
+msgid "Read-only"
+msgstr "読み取り専用"
 
 #: src/components/direct/DirectMessageContactsList.tsx:386
 msgid "Ready to start a truly private conversation?"
@@ -2380,7 +2453,7 @@ msgstr "本当にプライベートな会話を始める準備はできていま
 msgid "Reauthorize"
 msgstr "再認証"
 
-#: src/services/ConfigService.ts:109
+#: src/services/ConfigService.ts:93
 msgid "received config with invalid signature!"
 msgstr "無効な署名の設定を受信しました！"
 
@@ -2436,7 +2509,7 @@ msgid "Reply in thread..."
 msgstr "スレッドに返信…"
 
 #: src/components/modals/CreateSpaceModal.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:306
+#: src/components/modals/SpaceSettingsModal/General.tsx:277
 msgid "Require Message Signing"
 msgstr "メッセージ署名を要求"
 
@@ -2489,7 +2562,7 @@ msgstr "復元中..."
 msgid "Retry"
 msgstr "再試行"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
 msgstr "役割"
@@ -2502,10 +2575,10 @@ msgstr "保存"
 msgid "SAVE"
 msgstr "保存"
 
-#: src/components/modals/ChannelEditorModal.tsx:221
+#: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
-#: src/components/modals/GroupEditorModal.tsx:95
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
+#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:650
 #: src/components/modals/ThreadSettingsModal.tsx:184
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:345
 #: src/components/user/UserProfileEdit.tsx:158
@@ -2513,11 +2586,11 @@ msgid "Save Changes"
 msgstr "変更を保存"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
-#: src/components/modals/SpaceSettingsModal/General.tsx:331
+#: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "編集履歴を保存"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:649
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:635
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:334
 msgid "Save Failed"
 msgstr "保存に失敗しました"
@@ -2540,7 +2613,7 @@ msgstr "保存された設定は古くなっています"
 
 #: src/components/modals/ChannelEditorModal.tsx:94
 #: src/components/modals/FolderEditorModal.tsx:145
-#: src/components/modals/GroupEditorModal.tsx:135
+#: src/components/modals/GroupEditorModal.tsx:153
 #: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "保存中..."
@@ -2612,10 +2685,6 @@ msgstr "選択"
 msgid "Select conversation"
 msgstr "会話を選択"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:290
-msgid "Select default channel"
-msgstr "デフォルトチャンネルを選択"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
 msgstr "アカウントキーのファイルを選択またはドラッグしてアカウントを復元します。"
@@ -2628,7 +2697,7 @@ msgstr "権限を選択"
 msgid "Select Profile Image"
 msgstr "プロフィール画像を選択"
 
-#: src/components/modals/ChannelEditorModal.tsx:209
+#: src/components/modals/ChannelEditorModal.tsx:204
 msgid "Select Roles"
 msgstr "役割を選択"
 
@@ -2678,6 +2747,11 @@ msgstr "送信中..."
 #: src/components/context/RegistrationPersister.tsx:262
 msgid "Session Encrypted"
 msgstr "セッションは暗号化されています"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:704
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:719
+msgid "Set as default channel"
+msgstr "デフォルトのチャンネルに設定"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2739,11 +2813,11 @@ msgstr "今はスキップ"
 msgid "Someone"
 msgstr "誰か"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:204
+#: src/components/modals/SpaceSettingsModal/General.tsx:196
 msgid "Space Banner"
 msgstr "スペースバナー"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:178
+#: src/components/modals/SpaceSettingsModal/General.tsx:170
 msgid "Space Description"
 msgstr "スペースの説明"
 
@@ -2751,32 +2825,35 @@ msgstr "スペースの説明"
 msgid "Space ID"
 msgstr "スペースID"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:169
+#: src/components/modals/SpaceSettingsModal/General.tsx:161
 msgid "Space name"
 msgstr "スペース名"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:24
-#: src/hooks/business/validation/useSpaceNameValidation.ts:46
+#: src/hooks/business/validation/errorTranslator.ts:24
 msgid "Space name cannot contain special characters"
 msgstr "スペース名には特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:18
-#: src/hooks/business/validation/useSpaceNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:21
 msgid "Space name is required"
 msgstr "スペース名は必須です"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:21
-#: src/hooks/business/validation/useSpaceNameValidation.ts:43
-msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "スペース名は{MAX_NAME_LENGTH}文字以下でなければなりません"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:23
+msgid "Space name must be {0} characters or less"
+msgstr "スペース名は{0}文字以下でなければなりません"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:39
+#. placeholder {0}: vars!.min
+#: src/hooks/business/validation/errorTranslator.ts:22
+msgid "Space name must be at least {0} characters"
+msgstr "スペース名は{0}文字以上でなければなりません"
+
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/navbar/NavMenu.tsx:260
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
 msgstr "スペース設定"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
 #: src/components/modals/UserSettingsModal/General.tsx:197
 msgid "Space Tag"
@@ -2807,7 +2884,7 @@ msgid "Status goes here"
 msgstr "ステータスはここに表示されます"
 
 #: src/components/message/EmojiPickerDrawer.tsx:72
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
 #: src/components/space/Channel.tsx:1815
 #: src/components/thread/ThreadPanel.tsx:530
@@ -2823,7 +2900,7 @@ msgstr "取り消し線"
 msgid "Successfully sent invite to {0}"
 msgstr "{0}への招待を正常に送信しました"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid "Sync Kick Status"
 msgstr "キックステータスを同期"
 
@@ -2871,11 +2948,11 @@ msgid ""
 msgstr ""
 "パスキーの設定がタイムアウトしました。再度試すか、パスキーなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:30
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
-msgstr "この操作は元に戻せず、すべてのスペース設定を永久に削除します。スペースを削除するには、最初にすべてのチャンネルを削除する必要があります。"
+"This action cannot be undone and will permanently delete this Space and all "
+"of its channels and messages."
+msgstr "この操作は取り消せません。これにより、このスペースとすべてのチャネルおよびメッセージが永久に削除されます。"
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "This bio will be visible to others when they view your profile."
@@ -2893,7 +2970,7 @@ msgid ""
 msgstr "この会話ではグローバル設定が上書きされています。「グローバル設定にリセット」をクリックして、グローバル設定を使用してください。"
 
 #: src/components/modals/CreateSpaceModal.tsx:187
-#: src/components/modals/SpaceSettingsModal/General.tsx:197
+#: src/components/modals/SpaceSettingsModal/General.tsx:189
 msgid ""
 "This description will be visible on invites and shown to people when they "
 "look up or join your Space using an invite link."
@@ -2913,6 +2990,12 @@ msgid ""
 "Settings."
 msgstr "これが Quorum で他のユーザーがあなたを見ることになります。設定でいつでも変更できます。"
 
+#: src/components/modals/ChannelEditorModal.tsx:100
+msgid ""
+"This is the default channel for the Space. To change it go to Space Settings"
+" → General."
+msgstr "これはスペースのデフォルトのチャネルです。変更するには、スペース設定 → 一般に移動してください。"
+
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
@@ -2925,8 +3008,7 @@ msgid ""
 " will invalidate the old link."
 msgstr "このリンクは期限切れになりませんが、いつでも新しいリンクを生成でき、古いリンクは無効になります。"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:23
-#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:33
 msgid "This name conflicts with mention keywords."
 msgstr "この名前はメンションキーワードと競合しています。"
 
@@ -2968,7 +3050,7 @@ msgstr "このユーザーはもはやこのスペースでメッセージを送
 msgid "This user will not be able to send messages for {days} days."
 msgstr "このユーザーは{days}日間メッセージを送信できません。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:681
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:667
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -2983,7 +3065,7 @@ msgid ""
 msgstr ""
 "これにより、このブラウザ上のすべてのデータが削除されます。秘密鍵やすべてのダイレクトメッセージも含まれます。ダイレクトメッセージは復元できません。プライバシー/セキュリティ設定から秘密鍵をエクスポートしていることを確認してください。この操作は取り消せません。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:680
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:666
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -3066,6 +3148,10 @@ msgid ""
 msgstr ""
 "これをオンにすると、招待リンクを持っている誰でも自動的に参加できるようになります。オフにすると、参加する前に各人をプレビューして承認することができます。注意:"
 " 公開リンクは、リンクがアクティブな間、あなたのSpaceへの完全な読み取りアクセスを提供します。"
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:89
+msgid "Type DELETE to confirm"
+msgstr "DELETEと入力して確認してください"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:67
 msgid "Type RESET to confirm"
@@ -3191,7 +3277,7 @@ msgstr "不明なユーザー"
 msgid "Unmute"
 msgstr "ミュート解除"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Unmute Channel"
 msgstr "チャンネルのミュートを解除"
 
@@ -3217,10 +3303,6 @@ msgstr "ピン解除"
 msgid "Unpin"
 msgstr "ピン解除"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Unpin Channel"
-msgstr "チャンネルのピン留めを解除"
-
 #: src/components/message/MessageActionsDrawer.tsx:257
 msgid "Unpin message"
 msgstr "メッセージのピン留めを解除"
@@ -3239,13 +3321,13 @@ msgid ""
 "picture"
 msgstr "あなたが返信するまで、この送信者はあなたの表示名やプロフィール写真を見ることができません"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
 msgstr "全メンバーのキック記録を更新します。キックされたユーザーがまだ一部のメンバーにアクティブとして表示される場合に使用してください。"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:242
+#: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 msgstr "あなたのスペースのバナーをアップロード - PNGまたはJPG - 最適な比率3:1"
 
@@ -3258,7 +3340,7 @@ msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr "あなたのプロフィールのアバターをアップロード - PNGまたはJPG - 最適な比率1:1"
 
 #: src/components/modals/CreateSpaceModal.tsx:130
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
+#: src/components/modals/SpaceSettingsModal/General.tsx:151
 msgid "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "あなたのスペースのアイコンをアップロード - PNGまたはJPG - 最適な比率1:1"
 
@@ -3282,7 +3364,6 @@ msgstr "プライベートキーを保存するには「ファイルに保存」
 msgid "User address here"
 msgstr "ユーザーアドレスはこちら"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:109
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "ユーザーは存在しません。"
@@ -3356,7 +3437,7 @@ msgid "What's on your mind today?"
 msgstr "今日は何を考えていますか？"
 
 #: src/components/modals/ConversationSettingsModal.tsx:351
-#: src/components/modals/SpaceSettingsModal/General.tsx:335
+#: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
 "disabled, only the current edited version is kept."
@@ -3377,7 +3458,7 @@ msgid ""
 msgstr ""
 "有効にすると、あなたのユーザーデータ、スペース、およびスペースキーがデバイス間で同期されます。これを有効にすると、あなたのアカウントのメタデータの可視性が向上し、新しいスペースに参加したときが明らかになる可能性がありますが、参加したスペース自体は明らかになりません。"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:310
+#: src/components/modals/SpaceSettingsModal/General.tsx:281
 msgid ""
 "When messages are signed, senders confirm they come from their key. When "
 "messages aren't signed, senders have plausible deniability. This setting "
@@ -3511,19 +3592,22 @@ msgid ""
 msgstr ""
 "パスキーの設定をキャンセルしました。再度試すか、パスキーなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
 
-#: src/components/modals/GroupEditorModal.tsx:114
+#: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
 msgstr ""
 "チャンネルを含むグループを削除することはできません。このグループ内のすべての{channelCount}チャンネルを最初に削除してください。"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:742
+msgid "You cannot delete the default channel."
+msgstr "デフォルトのチャネルを削除することはできません。"
+
 #: src/components/message/MessageComposer.tsx:645
 #: src/components/space/Channel.tsx:1661
 msgid "You cannot post in this channel"
 msgstr "このチャンネルに投稿することはできません"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:59
 #: src/hooks/business/validation/useAddressValidation.ts:60
 msgid "You cannot send a direct message to yourself."
 msgstr "自分自身にダイレクトメッセージを送信することはできません。"
@@ -3567,7 +3651,7 @@ msgstr "すべてのメッセージを確認しました！"
 msgid "You're all set!"
 msgstr "設定完了！"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:482
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -3743,14 +3827,26 @@ msgstr "YouTube動画サムネイル"
 #~ msgstr ""
 #~ "スペースのオーナーとして、他のユーザーのメッセージを削除するには、削除権限を持つ役割を自分に割り当てる必要があります。<0><1>詳細を学ぶ</1></0>"
 
+#~ msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
+#~ msgstr "バイオは{MAX_BIO_LENGTH}文字以下でなければなりません"
+
 #~ msgid "Bookmark limit reached"
 #~ msgstr "ブックマークの上限に達しました"
 
 #~ msgid "Camera permission is required to take photos"
 #~ msgstr "写真を撮るにはカメラの権限が必要です"
 
+#~ msgid "Cannot delete Space with channels. Please delete all channels first."
+#~ msgstr "チャンネルがあるスペースは削除できません。最初にすべてのチャンネルを削除してください。"
+
 #~ msgid "Change your avatar and name for this Space."
 #~ msgstr "このスペースのアバターと名前を変更します。"
+
+#~ msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "チャンネル名は{MAX_NAME_LENGTH}文字以下でなければなりません"
+
+#~ msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
+#~ msgstr "チャンネルのトピックは{MAX_TOPIC_LENGTH}文字以下でなければなりません"
 
 #~ msgid "Check "
 #~ msgstr "チェック"
@@ -3775,6 +3871,9 @@ msgstr "YouTube動画サムネイル"
 #~ msgid "Copy Key & Continue"
 #~ msgstr "キーをコピーして続行"
 
+#~ msgid "Default Channel"
+#~ msgstr "デフォルトチャンネル"
+
 #~ msgid "Delete Current Link"
 #~ msgstr "現在のリンクを削除"
 
@@ -3789,6 +3888,15 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "説明は{maxDescriptionLength}文字以内である必要があります"
+
+#~ msgid "Description must be {maxLength} characters or less"
+#~ msgstr "説明は{maxLength}文字以下でなければなりません"
+
+#~ msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "デバイス名は{MAX_NAME_LENGTH}文字以内でなければなりません"
+
+#~ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "表示名は{MAX_NAME_LENGTH}文字以下でなければなりません"
 
 #~ msgid "DM Requests"
 #~ msgstr "DMリクエスト"
@@ -3832,6 +3940,9 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Folder Settings"
 #~ msgstr "フォルダー設定"
+
+#~ msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "グループ名は{MAX_NAME_LENGTH}文字以下でなければなりません"
 
 #~ msgid "hide home screen"
 #~ msgstr "ホーム画面を隠す"
@@ -3910,6 +4021,9 @@ msgstr "YouTube動画サムネイル"
 #~ msgid "No unread mentions"
 #~ msgstr "未読メンションはありません"
 
+#~ msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+#~ msgstr "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+
 #~ msgid "One of us, one of us!"
 #~ msgstr "私たちの一員、私たちの一員！"
 
@@ -3928,6 +4042,15 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Photo library permission is required to select images"
 #~ msgstr "画像を選択するにはフォトライブラリの権限が必要です"
+
+#~ msgid "Pin Channel"
+#~ msgstr "チャンネルをピン留め"
+
+#~ msgid "Pin channel to top"
+#~ msgstr "チャンネルを上部にピン留め"
+
+#~ msgid "Pin to top"
+#~ msgstr "上部にピン留め"
 
 #~ msgid "Pinned!"
 #~ msgstr "ピン留めされました！"
@@ -3988,6 +4111,9 @@ msgstr "YouTube動画サムネイル"
 #~ msgstr ""
 #~ "このチャンネルの管理者として既存の役割を選択してください。管理者はデフォルトでANYメッセージに対して投稿、削除、ピン留めの権限を持ちます。管理者が選択されていない場合、スペースの所有者のみがチャンネルを管理できます。"
 
+#~ msgid "Select default channel"
+#~ msgstr "デフォルトチャンネルを選択"
+
 #~ msgid "Select for which mentions you will receive notifications"
 #~ msgstr "通知を受け取るメンションを選択してください"
 
@@ -4014,6 +4140,9 @@ msgstr "YouTube動画サムネイル"
 #~ msgid "Space Name"
 #~ msgstr "スペース名"
 
+#~ msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "スペース名は{MAX_NAME_LENGTH}文字以下でなければなりません"
+
 #~ msgid "Stay Connected, Stay Invisible"
 #~ msgstr "接続を維持し、見えないままでいましょう"
 
@@ -4027,6 +4156,11 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Tap to select"
 #~ msgstr "選択するにはタップしてください"
+
+#~ msgid ""
+#~ "This action cannot be undone and will permanently remove all the Space "
+#~ "settings. To delete the Space, you must first delete all Channels."
+#~ msgstr "この操作は元に戻せず、すべてのスペース設定を永久に削除します。スペースを削除するには、最初にすべてのチャンネルを削除する必要があります。"
 
 #~ msgid "This information is only provided to the Spaces you join."
 #~ msgstr "この情報は、参加するスペースにのみ提供されます。"
@@ -4053,6 +4187,9 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Too many files selected. Please select fewer files."
 #~ msgstr "選択されたファイルが多すぎます。より少ないファイルを選択してください。"
+
+#~ msgid "Unpin Channel"
+#~ msgstr "チャンネルのピン留めを解除"
 
 #~ msgid "Unpinned!"
 #~ msgstr "ピン留め解除されました！"

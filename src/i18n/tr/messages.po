@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "Rol Yok - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1633
-msgid "Send a message to #{channel_name}"
-msgstr "#{channel_name} kanalına bir mesaj gönder"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Hoş geldin Quorum'a, {name}! Hesabın güvenli ve hazır."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1633
+msgid "Send a message to #{channel_name}"
+msgstr "#{channel_name} kanalına bir mesaj gönder"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -53,11 +53,6 @@ msgid "Reacted by"
 msgstr "Tepki veren"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:715
-msgid "Replying to"
-msgstr "Yanıt veriliyor"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Görüntü işlenemedi"
@@ -66,6 +61,11 @@ msgstr "Görüntü işlenemedi"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "{user} ile yanıt veriliyor"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:715
+msgid "Replying to"
+msgstr "Yanıt veriliyor"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:354
@@ -309,15 +309,24 @@ msgstr "Bir profil fotoğrafı ekle"
 msgid "Add a Space"
 msgstr "Bir Space ekle"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:574
+msgid "Add channel"
+msgstr "Kanal ekle"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
 msgstr "Kanal Ekle"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:580
+msgid "Add channel to group"
+msgstr "Kanalı gruba ekle"
 
 #: src/components/direct/DirectMessages.tsx:65
 msgid "Add friend"
 msgstr "Arkadaş ekle"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/GroupEditorModal.tsx:58
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:346
 #: src/components/space/ChannelList.tsx:184
 msgid "Add Group"
 msgstr "Grup Ekle"
@@ -352,12 +361,10 @@ msgstr ""
 msgid "Adding..."
 msgstr "Ekleniyor..."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
 msgstr "Adresler tam olarak 46 karakter uzunluğunda olmalıdır."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:83
 #: src/hooks/business/validation/useAddressValidation.ts:84
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresler \"Qm\" ile başlar."
@@ -375,7 +382,7 @@ msgid "Advanced Settings"
 msgstr "Gelişmiş Ayarlar"
 
 #: src/components/direct/DirectMessageContactsList.tsx:290
-#: src/components/modals/ChannelEditorModal.tsx:211
+#: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 #: src/components/notifications/NotificationPanel.tsx:238
@@ -392,7 +399,7 @@ msgstr "Tüm İşaretler"
 msgid "All DMs"
 msgstr "Tüm DM'ler"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:62
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:63
 msgid "All kick records are up to date."
 msgstr "Tüm atma kayıtları güncel."
 
@@ -402,12 +409,12 @@ msgstr "Tüm atma kayıtları güncel."
 msgid "All Spaces"
 msgstr "Tüm Alanlar"
 
-#: src/components/modals/ChannelEditorModal.tsx:170
-#: src/components/modals/SpaceSettingsModal/General.tsx:356
+#: src/components/modals/ChannelEditorModal.tsx:152
+#: src/components/modals/SpaceSettingsModal/General.tsx:327
 msgid "Allow Threads"
 msgstr "Konulara İzin Ver"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:149
 msgid "Allow threads in this channel"
 msgstr "Bu kanalda konulara izin ver"
 
@@ -428,7 +435,7 @@ msgstr "Doğrudan Mesajları her zaman imzala"
 msgid "Always sign messages"
 msgstr "Mesajları her zaman imzala"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:81
 msgid "An error occurred while deleting the Space. Please try again."
 msgstr "Space'yu silerken bir hata oluştu. Lütfen tekrar deneyin."
 
@@ -478,13 +485,19 @@ msgstr "Görünüm"
 msgid "are typing"
 msgstr "yazıyor"
 
-#: src/hooks/business/channels/useChannelManagement.ts:257
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:433
+#: src/hooks/business/channels/useChannelManagement.ts:238
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
 msgstr ""
 "Bu kanalı silmek istediğinize emin misiniz? Tüm mesajlar kaybolacak. Bu "
 "işlem geri alınamaz."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:434
+msgid ""
+"Are you sure you want to delete this channel? This action cannot be undone."
+msgstr "Bu kanalı silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
 
 #: src/components/modals/ConversationSettingsModal.tsx:64
 msgid ""
@@ -496,11 +509,24 @@ msgstr ""
 "\n"
 "Bu, sohbeti yalnızca cihazınızdan silecektir. Diğer katılımcı sohbet geçmişine erişmeye devam edecektir."
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:454
+msgid ""
+"Are you sure you want to delete this group? All channels inside it and their"
+" messages will be lost. This action cannot be undone."
+msgstr ""
+"Bu grubu silmek istediğinize emin misiniz? İçerisindeki tüm kanallar ve "
+"mesajlar kaybedilecektir. Bu işlem geri alınamaz."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:455
+msgid ""
+"Are you sure you want to delete this group? This action cannot be undone."
+msgstr "Bu grubu silmek istediğinize emin misiniz? Bu işlem geri alınamaz."
+
 #: src/hooks/business/messages/useMessageActions.ts:423
 msgid "Are you sure you want to delete this message?"
 msgstr "Bu mesajı silmek istediğinize emin misiniz?"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:61
+#: src/hooks/business/spaces/useRoleManagement.ts:66
 msgid "Are you sure you want to delete this role?"
 msgstr "Bu rolü silmek istediğinize emin misiniz?"
 
@@ -549,13 +575,14 @@ msgstr "Yedekleme Başarısız"
 msgid "Bio"
 msgstr "Biyografi"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:87
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Bio cannot contain special characters"
 msgstr "Biyografi özel karakterler içeremez"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:91
-msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
-msgstr "Biyografi {MAX_BIO_LENGTH} karakterden az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:59
+msgid "Bio must be {0} characters or less"
+msgstr "Biyografi {0} karakter veya daha az olmalıdır"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Bold"
@@ -611,10 +638,10 @@ msgstr "Kamera"
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:589
-#: src/hooks/business/channels/useChannelManagement.ts:263
+#: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:435
 #: src/hooks/business/messages/usePinnedMessages.ts:325
-#: src/hooks/business/spaces/useRoleManagement.ts:64
+#: src/hooks/business/spaces/useRoleManagement.ts:69
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "İptal"
@@ -623,9 +650,9 @@ msgstr "İptal"
 msgid "CANCEL"
 msgstr "İPTAL"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:41
-msgid "Cannot delete Space with channels. Please delete all channels first."
-msgstr "Kanal olan Space'yu silemezsiniz. Lütfen önce tüm kanalları silin."
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:244
+msgid "Cannot delete a group containing the default channel."
+msgstr "Varsayılan kanal içeren bir grup silinemez."
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
@@ -647,11 +674,11 @@ msgstr ""
 "Değişiklikler otomatik olarak yapılır, ancak aktif sayfa güncellenmeyebilir."
 " Yeni dili uygulamak için sayfayı yenileyin."
 
-#: src/components/modals/ChannelEditorModal.tsx:128
+#: src/components/modals/ChannelEditorModal.tsx:138
 msgid "Channel Icon"
 msgstr "Kanal İkonu"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:181
 msgid "Channel Managers"
 msgstr "Kanal Yöneticileri"
 
@@ -659,42 +686,44 @@ msgstr "Kanal Yöneticileri"
 msgid "Channel members"
 msgstr "Kanal üyeleri"
 
-#: src/components/modals/ChannelEditorModal.tsx:101
+#: src/components/modals/ChannelEditorModal.tsx:111
 msgid "Channel Name"
 msgstr "Kanal Adı"
 
-#: src/hooks/business/validation/useChannelValidation.ts:18
-#: src/hooks/business/validation/useChannelValidation.ts:60
+#: src/hooks/business/validation/errorTranslator.ts:40
 msgid "Channel name cannot contain special characters"
 msgstr "Kanal adı özel karakterler içeremez"
 
-#: src/hooks/business/validation/useChannelValidation.ts:12
-#: src/hooks/business/validation/useChannelValidation.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:38
 msgid "Channel name is required"
 msgstr "Kanal adı gereklidir"
 
-#: src/hooks/business/validation/useChannelValidation.ts:15
-#: src/hooks/business/validation/useChannelValidation.ts:57
-msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Kanal adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:39
+msgid "Channel name must be {0} characters or less"
+msgstr "Kanal adı {0} karakter veya daha az olmalıdır"
 
-#: src/components/space/ChannelItem.tsx:204
+#: src/components/space/ChannelItem.tsx:187
 msgid "Channel Settings"
 msgstr "Kanal Ayarları"
 
-#: src/components/modals/ChannelEditorModal.tsx:111
+#: src/components/modals/ChannelEditorModal.tsx:121
 msgid "Channel Topic"
 msgstr "Kanal Konusu"
 
-#: src/hooks/business/validation/useChannelValidation.ts:38
-#: src/hooks/business/validation/useChannelValidation.ts:74
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel topic cannot contain special characters"
 msgstr "Kanal konusu özel karakterler içeremez"
 
-#: src/hooks/business/validation/useChannelValidation.ts:35
-#: src/hooks/business/validation/useChannelValidation.ts:71
-msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr "Kanal konusu {MAX_TOPIC_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:43
+msgid "Channel topic must be {0} characters or less"
+msgstr "Kanal konusu {0} karakter veya daha az olmalıdır"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:338
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+msgid "Channels"
+msgstr "Kanallar"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -708,7 +737,7 @@ msgstr "Profil resminizi nasıl eklemek istediğinizi seçin"
 msgid "Choose your preferred theme for Quorum."
 msgstr "Quorum için tercih ettiğiniz temayı seçin."
 
-#: src/components/modals/ChannelEditorModal.tsx:212
+#: src/components/modals/ChannelEditorModal.tsx:207
 #: src/components/modals/SpaceSettingsModal/Account.tsx:244
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 #: src/components/notifications/NotificationPanel.tsx:239
@@ -726,11 +755,10 @@ msgstr "Etiketle bildirimleri temizleme: {tag}"
 
 #: src/components/modals/ChannelEditorModal.tsx:240
 #: src/components/modals/FolderEditorModal.tsx:130
-#: src/components/modals/GroupEditorModal.tsx:127
+#: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Account.tsx:319
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Onaylamak için tekrar tıklayın"
@@ -746,6 +774,10 @@ msgstr "Kopyalamak için tıklayın"
 #: src/components/modals/ThreadSettingsModal.tsx:172
 msgid "Close thread"
 msgstr "Konuyu kapat"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Collapse group"
+msgstr "Grubu daralt"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
@@ -837,7 +869,7 @@ msgstr "Mesajı kopyala"
 msgid "Copy message link"
 msgstr "Mesaj bağlantısını kopyala"
 
-#: src/services/ConfigService.ts:292
+#: src/services/ConfigService.ts:264
 msgid "Could not add Space"
 msgstr "Alan eklenemedi"
 
@@ -846,16 +878,16 @@ msgstr "Alan eklenemedi"
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Space detaylarını almak mümkün olmadı. Lütfen tekrar deneyin."
 
-#: src/services/ConfigService.ts:165
+#: src/services/ConfigService.ts:137
 msgid "Could not obtain manifest for Space"
 msgstr "Alan için manifest alınamadı"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:42
-#: src/hooks/business/spaces/useInviteValidation.ts:111
+#: src/hooks/business/spaces/useInviteValidation.ts:81
 msgid "Could not verify invite"
 msgstr "Davet doğrulanamadı"
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:247
 msgid ""
 "Couldn't decrypt your saved profile. Please re-enter your name and profile "
 "image."
@@ -863,8 +895,8 @@ msgstr ""
 "Kaydedilmiş profilinizi şifreleyemedik. Lütfen adınızı ve profil resminizi "
 "tekrar girin."
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:252
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:360
 msgid ""
 "Couldn't load your saved profile. Please re-enter your name and profile "
 "image."
@@ -899,7 +931,7 @@ msgstr "Yeni hesap oluştur"
 msgid "Create Passkey"
 msgstr "Passkey Oluştur"
 
-#: src/components/modals/ChannelEditorModal.tsx:180
+#: src/components/modals/ChannelEditorModal.tsx:175
 msgid "Create roles in Space Settings first."
 msgstr "Önce Alan Ayarlarında roller oluşturun."
 
@@ -940,17 +972,22 @@ msgstr "Veri Kurtarma"
 msgid "days"
 msgstr "gün"
 
-#: src/services/ConfigService.ts:144
+#: src/services/ConfigService.ts:116
 msgid "decrypted space with no known config key"
 msgstr "bilinmeyen yapılandırma anahtarı ile şifrelenmiş alan"
 
-#: src/services/ConfigService.ts:150
+#: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
 msgstr "Bilinmeyen hub anahtarı ile şifrelenmiş Alan"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:275
-msgid "Default Channel"
-msgstr "Varsayılan Kanal"
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:703
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:718
+msgid "Default channel"
+msgstr "Varsayılan kanal"
+
+#: src/components/modals/ChannelEditorModal.tsx:230
+msgid "Default channels cannot be deleted."
+msgstr "Varsayılan kanallar silinemez."
 
 #: src/components/modals/CreateSpaceModal.tsx:212
 msgid ""
@@ -969,16 +1006,28 @@ msgstr "sil"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:442
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:463
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:105
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:107
-#: src/hooks/business/channels/useChannelManagement.ts:262
+#: src/hooks/business/channels/useChannelManagement.ts:243
 #: src/hooks/business/messages/useMessageActions.ts:434
-#: src/hooks/business/spaces/useRoleManagement.ts:63
+#: src/hooks/business/spaces/useRoleManagement.ts:68
 msgid "Delete"
 msgstr "Sil"
 
+#: src/components/modals/GroupEditorModal.tsx:125
+msgid "Delete all channels in this group first."
+msgstr "Öncelikle bu gruptaki tüm kanalları silin."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:743
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:751
+msgid "Delete channel"
+msgstr "Kanalı sil"
+
 #: src/components/modals/ChannelEditorModal.tsx:239
-#: src/hooks/business/channels/useChannelManagement.ts:256
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:430
+#: src/hooks/business/channels/useChannelManagement.ts:237
 msgid "Delete Channel"
 msgstr "Kanalı Sil"
 
@@ -993,7 +1042,14 @@ msgstr "Konuşmayı Sil"
 msgid "Delete Folder"
 msgstr "Klasörü Sil"
 
-#: src/components/modals/GroupEditorModal.tsx:126
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:587
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:593
+msgid "Delete group"
+msgstr "Grubu sil"
+
+#: src/components/modals/GroupEditorModal.tsx:133
+#: src/components/modals/GroupEditorModal.tsx:143
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:451
 msgid "Delete Group"
 msgstr "Grubu Sil"
 
@@ -1017,12 +1073,12 @@ msgstr "Mesajları Sil"
 msgid "Delete role"
 msgstr "Rolü sil"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:60
+#: src/hooks/business/spaces/useRoleManagement.ts:65
 msgid "Delete Role"
 msgstr "Rolü Sil"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:66
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:100
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:28
 msgid "Delete Space"
 msgstr "Space'yu sil"
 
@@ -1030,16 +1086,16 @@ msgstr "Space'yu sil"
 #: src/components/modals/CreateSpaceModal.tsx:120
 #: src/components/modals/SpaceSettingsModal/Account.tsx:148
 #: src/components/modals/SpaceSettingsModal/Account.tsx:156
+#: src/components/modals/SpaceSettingsModal/General.tsx:133
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
-#: src/components/modals/SpaceSettingsModal/General.tsx:149
+#: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:232
 #: src/components/modals/UserSettingsModal/General.tsx:96
 #: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Delete this image"
 msgstr "Bu resmi sil"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
 msgid "Delete this space"
 msgstr "Bu Space'i sil"
 
@@ -1047,7 +1103,7 @@ msgstr "Bu Space'i sil"
 msgid "Delete Thread"
 msgstr "Konuyu sil"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:437
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:426
 msgid "Deleting Space..."
 msgstr "Alan Siliniyor..."
 
@@ -1060,21 +1116,22 @@ msgstr "Siliniyor..."
 msgid "Delivery receipts"
 msgstr "Teslimat onayları"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:184
+#: src/components/modals/SpaceSettingsModal/General.tsx:176
 msgid "Describe what this Space is about..."
 msgstr "Bu Space'in ne hakkında olduğunu tanımlayın..."
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:66
+#: src/hooks/business/validation/errorTranslator.ts:27
 msgid "Description cannot contain special characters"
 msgstr "Açıklama özel karakterler içermemelidir"
+
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:28
+msgid "Description must be {0} characters or less"
+msgstr "Açıklama {0} karakter veya daha az olmalıdır"
 
 #: src/components/modals/CreateSpaceModal.tsx:182
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Açıklama {MAX_DESCRIPTION_LENGTH} karakterden az olmalıdır"
-
-#: src/hooks/business/validation/useSpaceNameValidation.ts:70
-msgid "Description must be {maxLength} characters or less"
-msgstr "Açıklama {maxLength} karakter veya daha az olmalıdır"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
 msgid "Desktop Notifications"
@@ -1084,7 +1141,7 @@ msgstr "Masaüstü Bildirimleri"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Bu tarayıcıda masaüstü bildirimleri desteklenmiyor."
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:22
+#: src/hooks/business/validation/errorTranslator.ts:55
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1092,17 +1149,18 @@ msgstr ""
 "Cihaz adı yalnızca harfler, rakamlar, boşluklar, tireler ve parantezler "
 "içerebilir"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:13
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Device name cannot be empty"
 msgstr "Cihaz adı boş olamaz"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:19
+#: src/hooks/business/validation/errorTranslator.ts:54
 msgid "Device name cannot contain HTML"
 msgstr "Cihaz adı HTML içeremez"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:16
-msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Cihaz adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:53
+msgid "Device name must be {0} characters or less"
+msgstr "Cihaz adı {0} karakter veya daha az olmalıdır"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:396
 msgid "Devices"
@@ -1134,20 +1192,18 @@ msgstr "Görünen ad"
 msgid "Display Name"
 msgstr "Görünen Ad"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:29
-#: src/hooks/business/validation/useDisplayNameValidation.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:35
 msgid "Display name cannot contain special characters"
 msgstr "Görüntü adı özel karakterler içermemelidir"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:16
-#: src/hooks/business/validation/useDisplayNameValidation.ts:45
+#: src/hooks/business/validation/errorTranslator.ts:31
 msgid "Display name is required"
 msgstr "Görüntü adı gereklidir"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:19
-#: src/hooks/business/validation/useDisplayNameValidation.ts:48
-msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Görünen ad {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:32
+msgid "Display name must be {0} characters or less"
+msgstr "Görünen ad {0} karakter veya daha az olmalıdır"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:563
 msgid ""
@@ -1170,11 +1226,19 @@ msgstr "Anahtar Yedeklemesini İndir"
 msgid "Drag and drop or"
 msgstr "Sürükle ve bırak veya"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:678
+msgid "Drag to reorder channel"
+msgstr "Kanalı yeniden sıralamak için sürükleyin"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:532
+msgid "Drag to reorder group"
+msgstr "Grubu yeniden sıralamak için sürükleyin"
+
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "Çekmece"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:217
+#: src/components/modals/SpaceSettingsModal/General.tsx:209
 msgid "Drop here"
 msgstr "Buraya bırak"
 
@@ -1188,6 +1252,11 @@ msgstr "Düzenle"
 msgid "Edit {0}"
 msgstr "{0}'ı düzenle"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:727
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:733
+msgid "Edit channel"
+msgstr "Kanala düzenlemeler yap"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Edit Channel"
 msgstr "Kanalı Düzenle"
@@ -1197,7 +1266,12 @@ msgstr "Kanalı Düzenle"
 msgid "Edit Folder"
 msgstr "Klasörü Düzenle"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:561
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:567
+msgid "Edit group"
+msgstr "Gruba düzenlemeler yap"
+
+#: src/components/modals/GroupEditorModal.tsx:58
 msgid "Edit Group"
 msgstr "Grubu Düzenle"
 
@@ -1223,7 +1297,7 @@ msgstr "Emoji seçici"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 #: src/components/space/Channel.tsx:1809
 #: src/components/thread/ThreadPanel.tsx:524
 msgid "Emojis"
@@ -1233,7 +1307,7 @@ msgstr "Emojiler"
 msgid "Enable sync"
 msgstr "Senkronizasyonu etkinleştir"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:360
+#: src/components/modals/SpaceSettingsModal/General.tsx:331
 msgid "Enable threaded conversations in channels"
 msgstr "Kanallarda konu bazlı konuşmaları etkinleştir"
 
@@ -1328,6 +1402,10 @@ msgstr "Çıkmak için"
 msgid "Existing Conversations"
 msgstr "Mevcut Görüşmeler"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Expand group"
+msgstr "Grubu genişlet"
+
 #: src/components/modals/UserSettingsModal/Privacy.tsx:547
 #: src/components/modals/UserSettingsModal/Privacy.tsx:650
 msgid "Export"
@@ -1376,7 +1454,7 @@ msgstr "Mesaj düzenlenemedi"
 msgid "Failed to export backup"
 msgstr "Yedekleme dışa aktarılamadı"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:692
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:678
 msgid "Failed to generate invite link. Please try again."
 msgstr "Davet bağlantısı oluşturulamadı. Lütfen tekrar deneyin."
 
@@ -1409,7 +1487,7 @@ msgstr "Mesaj sabitlenemedi"
 msgid "Failed to restore spaces"
 msgstr "Alanları geri yükleme başarısız"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:300
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
 msgstr "Bildirim ayarlarını kaydetme başarısız oldu."
 
@@ -1446,7 +1524,7 @@ msgstr "Profil güncellenemedi"
 msgid "Favorites"
 msgstr "Favoriler"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:296
+#: src/components/modals/SpaceSettingsModal/General.tsx:267
 msgid "Features"
 msgstr "Özellikler"
 
@@ -1493,15 +1571,15 @@ msgid "Find documentation, keyboard shortcuts, and recovery tools."
 msgstr ""
 "Dokümantasyonu, klavye kısayollarını ve kurtarma araçlarını bulabilirsiniz."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:494
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:483
 msgid "Fix"
 msgstr "Düzelt"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:378
+#: src/components/modals/SpaceSettingsModal/General.tsx:349
 msgid "Fixes"
 msgstr "Düzeltmeler"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:397
+#: src/components/modals/SpaceSettingsModal/General.tsx:368
 msgid "Fixing..."
 msgstr "Düzeltiliyor..."
 
@@ -1553,17 +1631,17 @@ msgstr "Genel"
 msgid "General Chat"
 msgstr "Genel Sohbet"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate Link"
 msgstr "Bağlantı Oluştur"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:465
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate New Link"
 msgstr "Yeni Bağlantı Oluştur"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:413
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:677
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:663
 msgid "Generate Public Invite Link"
 msgstr "Kamu Davet Bağlantısı Oluştur"
 
@@ -1589,28 +1667,26 @@ msgstr "Sohbete git"
 msgid "Go to Home"
 msgstr "Ana Sayfaya git"
 
-#: src/components/modals/GroupEditorModal.tsx:84
+#: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "Grup İkonu (isteğe bağlı)"
 
-#: src/components/modals/GroupEditorModal.tsx:68
+#: src/components/modals/GroupEditorModal.tsx:70
 msgid "Group Name"
 msgstr "Grup Adı"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:18
-#: src/hooks/business/validation/useGroupNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:49
 msgid "Group name cannot contain special characters"
 msgstr "Grup adı özel karakterler içeremez"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:12
-#: src/hooks/business/validation/useGroupNameValidation.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Group name is required"
 msgstr "Grup adı gereklidir"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:15
-#: src/hooks/business/validation/useGroupNameValidation.ts:37
-msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Grup adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:48
+msgid "Group name must be {0} characters or less"
+msgstr "Grup adı {0} karakter veya daha az olmalıdır"
 
 #: src/components/modals/ModalSaveOverlay.tsx:83
 msgid "Hang in there..."
@@ -1685,7 +1761,6 @@ msgstr "Satır İçi Kod"
 msgid "invalid address for signature"
 msgstr "imza için geçersiz adres"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
 msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
@@ -1707,7 +1782,7 @@ msgstr "geçersiz bağlantı"
 msgid "Invalid message ID"
 msgstr "Geçersiz mesaj ID'si"
 
-#: src/hooks/business/spaces/useInviteValidation.ts:81
+#: src/hooks/business/spaces/useInviteValidation.ts:51
 #: src/services/InvitationService.ts:527 src/services/InvitationService.ts:590
 msgid "invalid response"
 msgstr "geçersiz yanıt"
@@ -1721,7 +1796,7 @@ msgid "Invite sent"
 msgstr "Davet gönderildi"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:243
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
 msgid "Invites"
 msgstr "Davetler"
 
@@ -1893,6 +1968,11 @@ msgstr "Rolü görünmez yap"
 msgid "Make role public"
 msgstr "Rolü herkese açık yap"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:341
+msgid "Manage channel groups and channels. Drag to reorder."
+msgstr ""
+"Kanal gruplarını ve kanalları yönetin. Yeniden sıralamak için sürükleyin."
+
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Yeni mesajlar için masaüstü bildirim tercihlerini yönet."
@@ -1940,7 +2020,7 @@ msgstr "üyeler"
 msgid "Members List"
 msgstr "Üyeler Listesi"
 
-#: src/components/modals/ChannelEditorModal.tsx:190
+#: src/components/modals/ChannelEditorModal.tsx:185
 msgid ""
 "Members of selected roles can post, delete, and pin messages in this read-"
 "only channel. Note: Space owners must also be in a manager role to post "
@@ -2001,7 +2081,7 @@ msgstr "Sustur"
 msgid "Mute all notifications from this space"
 msgstr "Bu alandan tüm bildirimleri sustur"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Mute Channel"
 msgstr "Kanalı Sustur"
 
@@ -2054,8 +2134,7 @@ msgstr "Hesabım"
 msgid "Name or Address"
 msgstr "İsim veya Adres"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:26
-#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:34
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Yönetici, moderatör veya destek gibi isimler ayrılmıştır."
 
@@ -2103,6 +2182,10 @@ msgstr "Bu alanda hiç yer işareti yok"
 #: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "No bookmarks yet"
 msgstr "Henüz hiç yer işareti yok"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:608
+msgid "No channels - drag channels here or delete group."
+msgstr "Kanallar yok - kanalları buraya sürükleyin veya grubu silin."
 
 #: src/components/direct/DirectMessageContactsList.tsx:375
 msgid "No contacts found"
@@ -2182,13 +2265,14 @@ msgstr "Hiçbiri"
 msgid "Note"
 msgstr "Not"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:104
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Note contains invalid content"
 msgstr "Not geçersiz içerik içeriyor"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:108
-msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
-msgstr "Not {MAX_USER_NOTE_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Note must be {0} characters or less"
+msgstr "Not {0} karakter veya daha az olmalıdır"
 
 #: src/services/NotificationService.ts:193
 msgid "Notification permission not granted"
@@ -2313,14 +2397,6 @@ msgstr "sabitle"
 msgid "Pin"
 msgstr "Sabitle"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Pin Channel"
-msgstr "Kanalı Sabitle"
-
-#: src/components/modals/ChannelEditorModal.tsx:139
-msgid "Pin channel to top"
-msgstr "Kanalı en üste sabitle"
-
 #: src/components/message/PinnedMessagesPanel.tsx:191
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Önemli mesajları sabitleyerek kolayca erişilebilir hale getirin"
@@ -2341,10 +2417,6 @@ msgstr "Mesajı sabitle"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Pin Messages"
 msgstr "Mesajları Sabitle"
-
-#: src/components/modals/ChannelEditorModal.tsx:142
-msgid "Pin to top"
-msgstr "En üste sabitle"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:43
 msgid "Pin/Unpin without confirmation"
@@ -2441,11 +2513,11 @@ msgstr "Tepkiler"
 msgid "Read more about Quorum"
 msgstr "Quorum hakkında daha fazla bilgi edin"
 
-#: src/components/modals/ChannelEditorModal.tsx:156
+#: src/components/modals/ChannelEditorModal.tsx:166
 msgid "Read only"
 msgstr "Sadece okunur"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:163
 msgid "Read only channel"
 msgstr "Sadece okunur kanal"
 
@@ -2453,6 +2525,10 @@ msgstr "Sadece okunur kanal"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:308
 msgid "Read receipts"
 msgstr "Okundu onayları"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:696
+msgid "Read-only"
+msgstr "Sadece okuma"
 
 #: src/components/direct/DirectMessageContactsList.tsx:386
 msgid "Ready to start a truly private conversation?"
@@ -2462,7 +2538,7 @@ msgstr "Gerçekten özel bir sohbete başlamaya hazır mısınız?"
 msgid "Reauthorize"
 msgstr "Yeniden Yetkilendir"
 
-#: src/services/ConfigService.ts:109
+#: src/services/ConfigService.ts:93
 msgid "received config with invalid signature!"
 msgstr "geçersiz imzaya sahip yapılandırma alındı!"
 
@@ -2518,7 +2594,7 @@ msgid "Reply in thread..."
 msgstr "Konuya yanıt ver..."
 
 #: src/components/modals/CreateSpaceModal.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:306
+#: src/components/modals/SpaceSettingsModal/General.tsx:277
 msgid "Require Message Signing"
 msgstr "Mesaj İmzalamayı Gerektir"
 
@@ -2575,7 +2651,7 @@ msgstr "Geri Yükleniyor..."
 msgid "Retry"
 msgstr "Tekrar dene"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
 msgstr "Roller"
@@ -2588,10 +2664,10 @@ msgstr "Kaydet"
 msgid "SAVE"
 msgstr "KAYDET"
 
-#: src/components/modals/ChannelEditorModal.tsx:221
+#: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
-#: src/components/modals/GroupEditorModal.tsx:95
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
+#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:650
 #: src/components/modals/ThreadSettingsModal.tsx:184
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:345
 #: src/components/user/UserProfileEdit.tsx:158
@@ -2599,11 +2675,11 @@ msgid "Save Changes"
 msgstr "Değişiklikleri Kaydet"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
-#: src/components/modals/SpaceSettingsModal/General.tsx:331
+#: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "Düzenleme Geçmişini Kaydet"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:649
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:635
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:334
 msgid "Save Failed"
 msgstr "Kaydetme Başarısız"
@@ -2626,7 +2702,7 @@ msgstr "kaydedilen yapılandırma güncel değil"
 
 #: src/components/modals/ChannelEditorModal.tsx:94
 #: src/components/modals/FolderEditorModal.tsx:145
-#: src/components/modals/GroupEditorModal.tsx:135
+#: src/components/modals/GroupEditorModal.tsx:153
 #: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Kaydediliyor..."
@@ -2698,10 +2774,6 @@ msgstr "Seç"
 msgid "Select conversation"
 msgstr "Sohbeti seç"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:290
-msgid "Select default channel"
-msgstr "Varsayılan kanalı seçin"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
 msgstr ""
@@ -2715,7 +2787,7 @@ msgstr "İzinleri seçin"
 msgid "Select Profile Image"
 msgstr "Profil Resmini Seçin"
 
-#: src/components/modals/ChannelEditorModal.tsx:209
+#: src/components/modals/ChannelEditorModal.tsx:204
 msgid "Select Roles"
 msgstr "Rolleri Seç"
 
@@ -2767,6 +2839,11 @@ msgstr "Gönderiliyor..."
 #: src/components/context/RegistrationPersister.tsx:262
 msgid "Session Encrypted"
 msgstr "Oturum Şifreli"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:704
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:719
+msgid "Set as default channel"
+msgstr "Varsayılan kanal olarak ayarla"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2830,11 +2907,11 @@ msgstr "Şimdi Atla"
 msgid "Someone"
 msgstr "Birisi"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:204
+#: src/components/modals/SpaceSettingsModal/General.tsx:196
 msgid "Space Banner"
 msgstr "Alan Afişi"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:178
+#: src/components/modals/SpaceSettingsModal/General.tsx:170
 msgid "Space Description"
 msgstr "Alan Açıklaması"
 
@@ -2842,32 +2919,35 @@ msgstr "Alan Açıklaması"
 msgid "Space ID"
 msgstr "Space ID'si"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:169
+#: src/components/modals/SpaceSettingsModal/General.tsx:161
 msgid "Space name"
 msgstr "Space adı"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:24
-#: src/hooks/business/validation/useSpaceNameValidation.ts:46
+#: src/hooks/business/validation/errorTranslator.ts:24
 msgid "Space name cannot contain special characters"
 msgstr "Alan adı özel karakterler içermemelidir"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:18
-#: src/hooks/business/validation/useSpaceNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:21
 msgid "Space name is required"
 msgstr "Alan adı gereklidir"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:21
-#: src/hooks/business/validation/useSpaceNameValidation.ts:43
-msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "Space adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:23
+msgid "Space name must be {0} characters or less"
+msgstr "Alan adı {0} karakter veya daha az olmalıdır"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:39
+#. placeholder {0}: vars!.min
+#: src/hooks/business/validation/errorTranslator.ts:22
+msgid "Space name must be at least {0} characters"
+msgstr "Alan adı en az {0} karakter olmalıdır"
+
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/navbar/NavMenu.tsx:260
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
 msgstr "Space Ayarları"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
 #: src/components/modals/UserSettingsModal/General.tsx:197
 msgid "Space Tag"
@@ -2898,7 +2978,7 @@ msgid "Status goes here"
 msgstr "Durum buraya gelecek"
 
 #: src/components/message/EmojiPickerDrawer.tsx:72
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
 #: src/components/space/Channel.tsx:1815
 #: src/components/thread/ThreadPanel.tsx:530
@@ -2914,7 +2994,7 @@ msgstr "Üstü Çizili"
 msgid "Successfully sent invite to {0}"
 msgstr "{0} için davet başarıyla gönderildi"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid "Sync Kick Status"
 msgstr "Atma Durumunu Senkronize Et"
 
@@ -2965,13 +3045,13 @@ msgstr ""
 "olmadan devam edebilirsiniz (yine de güvenli, sadece cihaz donanım koruması "
 "olmadan)."
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:30
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
+"This action cannot be undone and will permanently delete this Space and all "
+"of its channels and messages."
 msgstr ""
-"Bu işlem geri alınamaz ve tüm Space ayarlarını kalıcı olarak kaldıracaktır. "
-"Space'yu silmek için önce tüm Kanalları silmelisiniz."
+"Bu işlem geri alınamaz ve bu Alan'ı, tüm kanallarını ve mesajlarını kalıcı "
+"olarak silecektir."
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "This bio will be visible to others when they view your profile."
@@ -2991,7 +3071,7 @@ msgstr ""
 "\"Genel ayara sıfırla\" seçeneğine tıklayın."
 
 #: src/components/modals/CreateSpaceModal.tsx:187
-#: src/components/modals/SpaceSettingsModal/General.tsx:197
+#: src/components/modals/SpaceSettingsModal/General.tsx:189
 msgid ""
 "This description will be visible on invites and shown to people when they "
 "look up or join your Space using an invite link."
@@ -3015,6 +3095,14 @@ msgstr ""
 "Diğerlerinin Quorum'da sizi nasıl göreceğini belirler. Bu ayarı her zaman "
 "Ayarlar'dan değiştirebilirsiniz."
 
+#: src/components/modals/ChannelEditorModal.tsx:100
+msgid ""
+"This is the default channel for the Space. To change it go to Space Settings"
+" → General."
+msgstr ""
+"Bu, Alan'ın varsayılan kanalıdır. Değiştirmek için Alan Ayarları → Genel'e "
+"gidin."
+
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
@@ -3031,8 +3119,7 @@ msgstr ""
 "Bu bağlantı süresiz geçerli olacaktır, ancak istediğiniz zaman yeni bir tane"
 " oluşturabilirsiniz, bu da eski bağlantıyı geçersiz kılacaktır."
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:23
-#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:33
 msgid "This name conflicts with mention keywords."
 msgstr "Bu isim, bahsetme anahtar kelimeleriyle çelişiyor."
 
@@ -3074,7 +3161,7 @@ msgstr "Bu kullanıcı, bu Alan'da artık mesaj gönderemeyecek."
 msgid "This user will not be able to send messages for {days} days."
 msgstr "Bu kullanıcı {days} gün boyunca mesaj gönderemeyecek."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:681
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:667
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -3094,7 +3181,7 @@ msgstr ""
 "Gizlilik/Güvenlik ayarlarından dışa aktığınızdan emin olun. Bu eylem geri "
 "alınamaz."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:680
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:666
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -3187,6 +3274,10 @@ msgstr ""
 "katılabilir. Kapatırsanız, katılmadan önce her kişiyi önizleyip "
 "onaylayabilirsiniz. Not: Kamu bağlantıları, bağlantı aktifken Alanınıza tam "
 "okuma erişimi verir."
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:89
+msgid "Type DELETE to confirm"
+msgstr "Silmek için DELETE yazın"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:67
 msgid "Type RESET to confirm"
@@ -3321,7 +3412,7 @@ msgstr "Bilinmeyen Kullanıcı"
 msgid "Unmute"
 msgstr "Susturmayı Kaldır"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Unmute Channel"
 msgstr "Kanalı Susturmayı Kaldır"
 
@@ -3347,10 +3438,6 @@ msgstr "sabitlemeyi kaldır"
 msgid "Unpin"
 msgstr "Sabitlemeyi kaldır"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Unpin Channel"
-msgstr "Kanalı Sabitlemeyi Kaldır"
-
 #: src/components/message/MessageActionsDrawer.tsx:257
 msgid "Unpin message"
 msgstr "Mesajı sabitlemeyi kaldır"
@@ -3371,7 +3458,7 @@ msgstr ""
 "Cevap verene kadar, bu gönderici sizin görüntü adınızı veya profil resminizi"
 " göremeyecek"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -3379,7 +3466,7 @@ msgstr ""
 "Tüm üyeler için atma kayıtlarını güncelleyin. Atılan kullanıcılar bazı "
 "üyeler için hala aktif görünüyorsa bunu kullanın."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:242
+#: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 msgstr "Alanınız için bir afiş yükleyin - PNG veya JPG - Optimal oran 3:1"
 
@@ -3392,7 +3479,7 @@ msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr "Profiliniz için bir avatar yükleyin - PNG veya JPG - Optimal oran 1:1"
 
 #: src/components/modals/CreateSpaceModal.tsx:130
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
+#: src/components/modals/SpaceSettingsModal/General.tsx:151
 msgid "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Alanınız için bir simge yükleyin - PNG veya JPG - Optimal oran 1:1"
 
@@ -3416,7 +3503,6 @@ msgstr "Özel anahtarınızı kaydetmek için \"Dosyalara Kaydet\" seçeneğini 
 msgid "User address here"
 msgstr "Kullanıcı adresi burada"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:109
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Kullanıcı mevcut değil."
@@ -3492,7 +3578,7 @@ msgid "What's on your mind today?"
 msgstr "Bugün aklınızda ne var?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:351
-#: src/components/modals/SpaceSettingsModal/General.tsx:335
+#: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
 "disabled, only the current edited version is kept."
@@ -3521,7 +3607,7 @@ msgstr ""
 "verilerinin görünürlüğünü artırır, bu da yeni Spaces'e katıldığınızda bunu "
 "açığa çıkarabilir, ancak katıldığınız Spaces'leri göstermez."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:310
+#: src/components/modals/SpaceSettingsModal/General.tsx:281
 msgid ""
 "When messages are signed, senders confirm they come from their key. When "
 "messages aren't signed, senders have plausible deniability. This setting "
@@ -3674,7 +3760,7 @@ msgstr ""
 "devam edebilirsiniz (yine de güvenli, sadece cihaz donanım koruması "
 "olmadan)."
 
-#: src/components/modals/GroupEditorModal.tsx:114
+#: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -3682,12 +3768,15 @@ msgstr ""
 "Kanal içeren bir grubu silemezsiniz. Önce bu gruptaki tüm {channelCount} "
 "kanalları silin."
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:742
+msgid "You cannot delete the default channel."
+msgstr "Varsayılan kanalı silemezsiniz."
+
 #: src/components/message/MessageComposer.tsx:645
 #: src/components/space/Channel.tsx:1661
 msgid "You cannot post in this channel"
 msgstr "Bu kanalda paylaşım yapamazsınız"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:59
 #: src/hooks/business/validation/useAddressValidation.ts:60
 msgid "You cannot send a direct message to yourself."
 msgstr "Kendinize doğrudan mesaj gönderemezsiniz."
@@ -3737,7 +3826,7 @@ msgstr "Her şey yolunda!"
 msgid "You're all set!"
 msgstr "Her şey tamam!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:482
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -3935,14 +4024,26 @@ msgstr "YouTube Video Küçültmesi"
 #~ "kendinize silme izinleri olan bir rol atamanız gerekir. <0><1>Daha fazla "
 #~ "bilgi edinin</1></0>"
 
+#~ msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
+#~ msgstr "Biyografi {MAX_BIO_LENGTH} karakterden az olmalıdır"
+
 #~ msgid "Bookmark limit reached"
 #~ msgstr "Yer işaretleri limiti aşıldı"
 
 #~ msgid "Camera permission is required to take photos"
 #~ msgstr "Fotoğraf çekmek için kamera izni gereklidir"
 
+#~ msgid "Cannot delete Space with channels. Please delete all channels first."
+#~ msgstr "Kanal olan Space'yu silemezsiniz. Lütfen önce tüm kanalları silin."
+
 #~ msgid "Change your avatar and name for this Space."
 #~ msgstr "Bu Alan için avatarınızı ve adınızı değiştirin."
+
+#~ msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Kanal adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+
+#~ msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
+#~ msgstr "Kanal konusu {MAX_TOPIC_LENGTH} karakter veya daha az olmalıdır"
 
 #~ msgid "Check "
 #~ msgstr "Kontrol Et"
@@ -3972,6 +4073,9 @@ msgstr "YouTube Video Küçültmesi"
 #~ msgid "Copy Key & Continue"
 #~ msgstr "Anahtarı Kopyala & Devam Et"
 
+#~ msgid "Default Channel"
+#~ msgstr "Varsayılan Kanal"
+
 #~ msgid "Delete Current Link"
 #~ msgstr "Mevcut Bağlantıyı Sil"
 
@@ -3986,6 +4090,15 @@ msgstr "YouTube Video Küçültmesi"
 
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "Açıklama {maxDescriptionLength} karakterden az olmalıdır"
+
+#~ msgid "Description must be {maxLength} characters or less"
+#~ msgstr "Açıklama {maxLength} karakter veya daha az olmalıdır"
+
+#~ msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Cihaz adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+
+#~ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Görünen ad {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 
 #~ msgid "DM Requests"
 #~ msgstr "DM Talepleri"
@@ -4031,6 +4144,9 @@ msgstr "YouTube Video Küçültmesi"
 
 #~ msgid "Folder Settings"
 #~ msgstr "Klasör Ayarları"
+
+#~ msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Grup adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 
 #~ msgid "hide home screen"
 #~ msgstr "ana ekranı gizle"
@@ -4120,6 +4236,9 @@ msgstr "YouTube Video Küçültmesi"
 #~ msgid "No unread mentions"
 #~ msgstr "Okunmamış bahsetme yok"
 
+#~ msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+#~ msgstr "Not {MAX_USER_NOTE_LENGTH} karakter veya daha az olmalıdır"
+
 #~ msgid "One of us, one of us!"
 #~ msgstr "Bizden biri, bizden biri!"
 
@@ -4140,6 +4259,15 @@ msgstr "YouTube Video Küçültmesi"
 
 #~ msgid "Photo library permission is required to select images"
 #~ msgstr "Görüntüleri seçmek için fotoğraf kütüphanesi izni gereklidir"
+
+#~ msgid "Pin Channel"
+#~ msgstr "Kanalı Sabitle"
+
+#~ msgid "Pin channel to top"
+#~ msgstr "Kanalı en üste sabitle"
+
+#~ msgid "Pin to top"
+#~ msgstr "En üste sabitle"
 
 #~ msgid "Pinned!"
 #~ msgstr "Sabitlenmiş!"
@@ -4213,6 +4341,9 @@ msgstr "YouTube Video Küçültmesi"
 #~ "sabitleme izinleri vardır. Hiçbir yönetici seçilmezse, yalnızca Alan sahibi "
 #~ "kanalı yönetebilir."
 
+#~ msgid "Select default channel"
+#~ msgstr "Varsayılan kanalı seçin"
+
 #~ msgid "Select for which mentions you will receive notifications"
 #~ msgstr "Hangi bahsetmeler için bildirim alacağınızı seçin"
 
@@ -4241,6 +4372,9 @@ msgstr "YouTube Video Küçültmesi"
 #~ msgid "Space Name"
 #~ msgstr "Alan Adı"
 
+#~ msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "Space adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
+
 #~ msgid "Stay Connected, Stay Invisible"
 #~ msgstr "Bağlı kal, görünmez kal"
 
@@ -4256,6 +4390,13 @@ msgstr "YouTube Video Küçültmesi"
 
 #~ msgid "Tap to select"
 #~ msgstr "Seçmek için dokunun"
+
+#~ msgid ""
+#~ "This action cannot be undone and will permanently remove all the Space "
+#~ "settings. To delete the Space, you must first delete all Channels."
+#~ msgstr ""
+#~ "Bu işlem geri alınamaz ve tüm Space ayarlarını kalıcı olarak kaldıracaktır. "
+#~ "Space'yu silmek için önce tüm Kanalları silmelisiniz."
 
 #~ msgid "This information is only provided to the Spaces you join."
 #~ msgstr "Bu bilgi yalnızca katıldığınız Alanlar için sağlanmaktadır."
@@ -4286,6 +4427,9 @@ msgstr "YouTube Video Küçültmesi"
 
 #~ msgid "Too many files selected. Please select fewer files."
 #~ msgstr "Çok fazla dosya seçildi. Lütfen daha az dosya seçin."
+
+#~ msgid "Unpin Channel"
+#~ msgstr "Kanalı Sabitlemeyi Kaldır"
 
 #~ msgid "Unpinned!"
 #~ msgstr "Sabitlenmemiş!"

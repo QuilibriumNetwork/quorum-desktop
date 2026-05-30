@@ -3,7 +3,7 @@ type: doc
 title: Quorum Ecosystem Architecture
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-05-28T00:00:00.000Z
+updated: 2026-05-30T00:00:00.000Z
 ---
 
 # Quorum Ecosystem Architecture
@@ -167,8 +167,8 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 | Property | Value |
 |----------|-------|
 | **Package** | `@quilibrium/quorum-shared` |
-| **Version (local desktop clone)** | `2.1.0-16` |
-| **Version (remote `origin/master`)** | `2.1.0-16` (HEAD commit `3a8f10e`, 3 commits ahead of local — see footer) |
+| **Version (local desktop clone)** | `2.1.0-21` |
+| **Version (remote `origin/master`)** | `2.1.0-21` (HEAD commit `a1de28f`) |
 | **Version (mobile consumer)** | `2.1.0` (npm-published) |
 | **Peer Dependencies** | React 19+, TanStack React Query 5+, `@noble/curves` 2.0.1 |
 | **Build Format** | Dual ESM/CJS with TypeScript declarations |
@@ -181,8 +181,8 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 @quilibrium/quorum-shared/src/
 ├── api/           # API client interface and errors
 ├── crypto/        # E2E encryption (WASM-based)
-├── farcaster/     # Hypersnap-first Farcaster client + signers + 11 React Query hooks
-├── hooks/         # React Query hooks for data fetching (core domain)
+├── farcaster/     # Hypersnap-first Farcaster client + signers + ~15 React Query hooks (expanded 2026-05-30)
+├── hooks/         # React Query hooks + useTwoStepConfirm (cross-platform UI primitive)
 ├── primitives/    # Cross-platform UI components (22 components, web + native variants)
 ├── receipts/      # ReceiptService (delivery / read acks)
 ├── signing/       # Ed448 signing (WASM-based)
@@ -191,7 +191,8 @@ The `@quilibrium/quorum-shared` package provides cross-platform functionality sh
 ├── transport/     # HTTP and WebSocket communication
 ├── types/         # Comprehensive type definitions
 ├── typing/        # TypingService (per-conversation indicators)
-└── utils/         # Formatting, validation, encoding, logging
+├── utils/         # Formatting, encoding, logging, permissions, role mutations, message preview, etc.
+└── validation/    # Field validators with errorKey i18n pattern (validateSpaceName, etc.)
 ```
 
 ---
@@ -208,7 +209,7 @@ The types module provides all shared type definitions used across both apps.
 | `Channel` | Channel within a group (with permissions, icons, pinning) |
 | `Group` | Group containing channels |
 | `Role` | Role with permissions and member list |
-| `Permission` | `'message:delete' \| 'message:pin' \| 'user:kick' \| 'mention:everyone'` |
+| `Permission` | `'message:delete' \| 'message:pin' \| 'mention:everyone' \| 'user:mute'` |
 | `Emoji` | Custom emoji definition |
 | `Sticker` | Custom sticker definition |
 
@@ -233,8 +234,8 @@ The types module provides all shared type definitions used across both apps.
 | `UserNote` | Per-target private annotation (synced via `UserConfig.userNotes`) |
 | `SpaceMember` | User's membership in a space with roles |
 | `NavItem` | Navigation item (space or folder) |
-| `NotificationSettings` | Per-space notification preferences (⚠️ on `origin/master` still the placeholder `{ enabled?, mentions?, replies?, all? }` — desktop writes a richer shape to the wire; alignment is the open migration task) |
-| `FarcasterLink` | Optional bidirectional Farcaster ↔ Quorum identity link (NEW on `origin/master`, not yet in local clone) |
+| `SpaceNotificationSettings` | Per-space notification preferences (renamed from `NotificationSettings` with `Space*` prefix in PR #18 2026-05-28). Inner shape still placeholder `{ enabled?, mentions?, replies?, all? }` — desktop writes a richer shape; alignment is the open migration track (mobile issue #65). |
+| `FarcasterLink` | Optional bidirectional Farcaster ↔ Quorum identity link. Significantly expanded 2026-05-30 (Cassandra's commits added Hypersnap-first client + 4 new Farcaster hooks). |
 
 #### `UserConfig` fields most relevant to ongoing migration
 
@@ -401,6 +402,7 @@ The hooks module provides TanStack Query hooks for data fetching.
 | `useChannels` | Fetch channels for a space |
 | `useMessages` | Infinite query for paginated messages |
 | `useInvalidateMessages` | Invalidate message cache |
+| `useTwoStepConfirm` | Two-step confirmation state machine (cross-platform UI primitive, added in 2.1.0-18) |
 
 ### Query Keys
 
@@ -469,13 +471,40 @@ import {
 
 ### Validation
 
+Shared exposes field validators under the `errorKey` i18n pattern — validators return codes, consuming apps translate to localized strings. Lets shared stay i18n-free while supporting any locale at the app layer.
+
 ```typescript
 import {
-  validateDisplayName,
+  // Single-result validators (return { ok: true } | { ok: false; errorKey; errorVars? })
   validateSpaceName,
-  isValidCID
+  validateDisplayName,
+  validateChannelName,
+  validateChannelTopic,
+  validateGroupName,
+  validateDeviceName,
+  // Multi-result validators (return FieldValidationResult[])
+  validateSpaceDescription,
+  validateUserBio,
+  validateUserNote,
+  // Result types + helper
+  type FieldValidationResult,
+  isValidField,
+  // XSS check (used inside the validators; also exported for direct use)
+  validateNameForXSS,
+  // Constants
+  MAX_NAME_LENGTH,        // 50
+  MIN_NAME_LENGTH,        // 2
+  MAX_TOPIC_LENGTH,
+  MAX_BIO_LENGTH,         // 160
+  MAX_USER_NOTE_LENGTH,   // 256
+  DEVICE_NAME_PATTERN,
+  // CID validation
+  isValidIPFSCID,
+  createIPFSCIDRegex,
 } from '@quilibrium/quorum-shared';
 ```
+
+Desktop wraps each validator with a `errorKey → Lingui string` lookup in `src/hooks/business/validation/errorTranslator.ts`. Mobile does the same with plain English strings. The `errorKey` pattern is documented in `.agents/tasks/quorum-shared-migration/cross-repo-workflow.md`.
 
 ### Encoding
 
@@ -494,6 +523,40 @@ import {
 import {
   parseMentions,
   extractMentionedUsers
+} from '@quilibrium/quorum-shared';
+```
+
+### Permissions and Role Mutations
+
+Pure helpers for working with `Role` + `Permission`. Use these instead of inlining the math at call sites.
+
+```typescript
+import {
+  // Read-side
+  hasPermission,        // (userAddress, permission, space, isSpaceOwner) => boolean
+  getUserPermissions,   // (userAddress, space, isSpaceOwner) => Permission[]
+  getUserRoles,         // (userAddress, space) => Role[]
+  // Channel permission narrowing (read-only channels, etc.)
+  canManageReadOnlyChannel,
+  createChannelPermissionChecker,
+  findChannelByName,
+  // Role mutation (immutable; returns new Role objects)
+  toggleRolePermission, // (role, permission) => Role (added 2.1.0-21)
+  setRolePermissions,   // (role, permissions) => Role  (added 2.1.0-21)
+} from '@quilibrium/quorum-shared';
+```
+
+### Invite Domain Helpers
+
+Environment-aware URL/prefix generation for invite links. Replaces hardcoded `qm.one`/`app.quorummessenger.com` regex literals.
+
+```typescript
+import {
+  getInviteBaseDomain,       // env-aware: prod/staging/localhost
+  getInviteUrlBase,          // (isPublicInvite: boolean) => string
+  getInviteDisplayDomain,
+  getValidInvitePrefixes,    // env-aware: prefix list for link detection
+  parseInviteParams,         // parse an invite URL into structured parts
 } from '@quilibrium/quorum-shared';
 ```
 
@@ -727,8 +790,4 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-05-28 — sync against `origin/master` after upstream pull. Local clone is 3 commits behind: a `2.1.0-2` chore bump touching `sync/service.ts` and `sync/utils.ts`, a "rollup public changes" commit adding a full `src/farcaster/` module (16 files: hypersnap-first client, legacy fallback, signer lifecycle, signer storage, 11 React Query hooks) plus two new `UserConfig` fields (`isProfilePublic`, `farcasterLink`) and a new `FarcasterLink` type, and a merge commit. `NotificationSettings` placeholder shape is unchanged on `origin/master`, so the in-flight notifications type-alignment migration plan still applies cleanly. Package Structure now lists `farcaster/`, `primitives/`, `receipts/`, `typing/` (previously omitted). Version table now distinguishes local clone, remote master, and the npm-published version mobile depends on.*
-
-*Previously: 2026-05-27 — version bump to 2.1.0-16 (added seven privacy/device fields to `UserConfig` and promoted inline `UserNote` to a named export).*
-
-*Previously: 2026-05-20 — staleness audit fixes*
+*Last updated: 2026-05-30*
