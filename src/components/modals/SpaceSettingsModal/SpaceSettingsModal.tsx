@@ -114,13 +114,17 @@ const SpaceSettingsModal: React.FunctionComponent<{
     }
   }, [isSpaceOwner]);
 
-  // Default channel state
-  const [defaultChannel, setDefaultChannel] = React.useState<Channel | undefined>(
-    space?.groups
-      ?.find((g) =>
-        g.channels.find((c) => c.channelId === space.defaultChannelId)
-      )
-      ?.channels.find((c) => c.channelId === space.defaultChannelId)
+  // Default channel is now toggled inline in the Channels tab via the star
+  // button. Here it's only derived from the space manifest so the Invites
+  // hook can navigate to the right channel after generating a link.
+  const defaultChannel = React.useMemo<Channel | undefined>(
+    () =>
+      space?.groups
+        ?.find((g) =>
+          g.channels.find((c) => c.channelId === space.defaultChannelId)
+        )
+        ?.channels.find((c) => c.channelId === space.defaultChannelId),
+    [space?.groups, space?.defaultChannelId]
   );
 
   // Description state
@@ -326,19 +330,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const [errorMessage, setErrorMessage] = React.useState('');
   const [showGenerateModal, setShowGenerateModal] = React.useState(false);
 
-  // Helper functions for Select primitive
-  const getChannelGroups = React.useMemo(() => {
-    if (!space?.groups) return [];
-    return space.groups.map((group) => ({
-      groupLabel: group.groupName,
-      options: group.channels.map((channel) => ({
-        value: channel.channelId,
-        label: channel.channelName, // Channel name without # symbol
-        icon: '#', // Just the # symbol as icon
-      })),
-    }));
-  }, [space?.groups]);
-
   // Save changes function
   const saveChanges = React.useCallback(async () => {
     if (!space) return;
@@ -373,11 +364,12 @@ const SpaceSettingsModal: React.FunctionComponent<{
         bannerUrl = space.bannerUrl || '';
       }
 
-      // Use the original updateSpace call with all our hook data
+      // Use the original updateSpace call with all our hook data.
+      // defaultChannelId is now managed inline in the Channels tab (star
+      // toggle), so it is not part of this General-tab save payload.
       await updateSpace({
         ...space,
         spaceName,
-        defaultChannelId: defaultChannel?.channelId || space.defaultChannelId,
         isRepudiable,
         saveEditHistory,
         allowThreads,
@@ -395,7 +387,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
     updateSpace,
     space,
     spaceName,
-    defaultChannel,
     isRepudiable,
     saveEditHistory,
     allowThreads,
@@ -513,9 +504,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           clearBannerFileError={clearBannerFileError}
                           bannerMarkedForDeletion={bannerMarkedForDeletion}
                           markBannerForDeletion={markBannerForDeletion}
-                          defaultChannel={defaultChannel}
-                          setDefaultChannel={setDefaultChannel}
-                          getChannelGroups={getChannelGroups}
                           isRepudiable={isRepudiable}
                           setIsRepudiable={setIsRepudiable}
                           saveEditHistory={saveEditHistory}
