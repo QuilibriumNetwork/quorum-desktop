@@ -57,6 +57,26 @@ Apply as a checklist when verifying any candidate. A hook failing ANY of these i
 
 ## Recent entries (most recent first)
 
+## 2026-05-30 — AES-GCM config-decrypt dedup (desktop-internal Paused track)
+
+**Scope**: collapse the 4 inline copies of the AES-GCM UserConfig decrypt block into a single helper. Pulled from Paused tracks (was queued there because Phase 2 verification ruled it out for shared promotion — mobile uses `@noble/ciphers`, desktop uses Web Crypto; Trap E platform-correct divergence). Desktop-internal cleanup only — no shared / mobile coordination.
+
+**Shipped**:
+- `src/utils/crypto.ts` + `src/utils/crypto.web.ts` gain `decryptUserConfig(encryptedHex, privateKeyBytes): Promise<unknown>`. Helper does SHA-512 → first 32 bytes → AES-256-GCM import → split iv (last 24 hex) from ciphertext → decrypt → JSON.parse. Signature verification stays at call sites (it's a separate concern; only `ConfigService` does it).
+- 4 consumer sites collapsed: `useOnboardingFlowLogic.ts:194-224`, `useUnifiedOnboardingFlow.ts` (two occurrences at ~219-242 and ~342-371), `ConfigService.ts:75-128`. Net -47 LOC across consumers, +48 LOC helper (one-time).
+
+**Gotcha worth knowing**: Vite's platform-extension resolver picks `.web.ts` over `.ts` when both exist. Initially added the helper only to `crypto.ts` — Vite errored at runtime ("does not provide an export named 'decryptUserConfig'"). Fix: helper added to BOTH `crypto.ts` (so tsc resolves it) AND `crypto.web.ts` (so Vite resolves it at runtime). The pattern follows what the file already does for `sha256`/`base58btc`.
+
+**Smoke testing**:
+- Fresh-login profile decrypt path → confirmed display name + profile image load correctly. Covers `useUnifiedOnboardingFlow` site.
+- Existing-session config sync after page refresh → confirmed space-moved-out-of-folder change picked up. Covers `ConfigService` site.
+- (Pre-existing, unrelated bug logged: UserSettingsModal shows stale display name without refresh — see `.agents/bugs/2026-05-30-user-settings-modal-stale-display-name.md`. NOT caused by this refactor; channel-message rendering reflects the new value correctly.)
+
+**Mobile**: not touched. Mobile uses `@noble/ciphers` — different primitive, intentionally divergent.
+**PRs**: bundled into the session-branch PR alongside the workflow rule updates.
+
+---
+
 ## 2026-05-30 — Role-mutation helpers extracted (Phase 2 C4)
 
 **Scope**: ship the per-task plan from 2026-05-29 (`2026-05-29-migrate-role-mutation-helpers.md`). Extract two pure role-mutation helpers (`toggleRolePermission`, `setRolePermissions`) duplicated byte-for-byte between desktop and mobile.

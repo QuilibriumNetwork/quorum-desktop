@@ -13,6 +13,7 @@ import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { useKeyBackup } from '../../useKeyBackup';
 import { validateDisplayName } from '../validation';
 import { DefaultImages } from '../../../utils';
+import { decryptUserConfig } from '../../../utils/crypto';
 import { t } from '@lingui/core/macro';
 import { showWarning } from '../../../utils/toast';
 
@@ -216,30 +217,11 @@ export function useUnifiedOnboardingFlow(
           return;
         }
 
-        const derived = await crypto.subtle.digest(
-          'SHA-512',
-          Buffer.from(new Uint8Array(inner.identity.user_key.private_key))
-        );
-        const subtleKey = await window.crypto.subtle.importKey(
-          'raw',
-          derived.slice(0, 32),
-          { name: 'AES-GCM', length: 256 },
-          false,
-          ['decrypt']
-        );
-
-        const iv = savedConfig.user_config.substring(savedConfig.user_config.length - 24);
-        const ciphertext = savedConfig.user_config.substring(0, savedConfig.user_config.length - 24);
-
-        const decryptedConfig = JSON.parse(
-          Buffer.from(
-            await window.crypto.subtle.decrypt(
-              { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-              subtleKey,
-              Buffer.from(ciphertext, 'hex')
-            )
-          ).toString('utf-8')
-        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const decryptedConfig = (await decryptUserConfig(
+          savedConfig.user_config,
+          new Uint8Array(inner.identity.user_key.private_key)
+        )) as any;
 
         const rawName = decryptedConfig?.name;
         const nameError = rawName ? validateDisplayName(rawName) : 'empty';
@@ -338,37 +320,11 @@ export function useUnifiedOnboardingFlow(
           return;
         }
 
-        // Derive decryption key
-        const derived = await crypto.subtle.digest(
-          'SHA-512',
-          Buffer.from(new Uint8Array(inner.identity.user_key.private_key))
-        );
-        const subtleKey = await window.crypto.subtle.importKey(
-          'raw',
-          derived.slice(0, 32),
-          { name: 'AES-GCM', length: 256 },
-          false,
-          ['decrypt']
-        );
-
-        // Decrypt config
-        const iv = savedConfig.user_config.substring(
-          savedConfig.user_config.length - 24
-        );
-        const ciphertext = savedConfig.user_config.substring(
-          0,
-          savedConfig.user_config.length - 24
-        );
-
-        const decryptedConfig = JSON.parse(
-          Buffer.from(
-            await window.crypto.subtle.decrypt(
-              { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-              subtleKey,
-              Buffer.from(ciphertext, 'hex')
-            )
-          ).toString('utf-8')
-        );
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const decryptedConfig = (await decryptUserConfig(
+          savedConfig.user_config,
+          new Uint8Array(inner.identity.user_key.private_key)
+        )) as any;
 
         // Validate remote profile
         const rawName = decryptedConfig?.name;

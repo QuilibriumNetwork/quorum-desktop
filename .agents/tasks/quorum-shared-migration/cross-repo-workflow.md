@@ -86,13 +86,24 @@ What "same shape" means: the changes share a migration pattern (e.g. "extract in
 
 > **New default for this repo (and other multi-author Quilibrium repos — `quorum-shared`, `quorum-mobile`, `www-dev`): never commit directly to `main`. Every session opens a branch, squash-merges back when the work is worth merging.** Applies to code, docs, analyses, reports, audits, and any combination thereof. Solo Quilibrium repos (e.g. `quily-chatbot`) are exempt — direct-to-main is fine when no other maintainers exist.
 
-### Rule
+### Session-branch workflow
 
-- Start each session by branching off `main` (or off an existing in-progress branch if continuing one).
-- Branch name describes the rough scope: `analysis/<topic>`, `doc/<topic>`, `refactor/<thing>`, `feat/<thing>`. Specificity matches the work — a single migration task gets a tight name; a "doc housekeeping + a few small tweaks" session gets a broad name like `doc/housekeeping-2026-05-30`.
-- Commit freely on the branch (per-session, per-logical-chunk, whatever feels natural).
-- When the work is worth landing, **open a PR and squash-merge into `main`**. Even for solo desktop work — the PR gives one clean commit on `main`, captures the diff in GitHub's UI, and keeps `main` linear.
-- Long-running branches are fine. An analysis branch can sit for a week as multiple sessions build on it; it merges when the analysis is done.
+The goal is "avoid `main` divergence with other maintainers", NOT "open a PR for every change."
+
+1. **Start of session**: `git checkout -b session/YYYY-MM-DD` (or `session/YYYY-MM-DD-2` if today's name is taken). Generic on purpose — you don't yet know what the session will become.
+2. **During the session**: commit freely. Docs, code, mixed work, loosely-related changes — all fine on the same branch.
+3. **When ready to ship** a real chunk (not a 1-line tweak): rename the branch to describe what was actually done, push, open PR, squash-merge.
+   ```bash
+   git branch -m feat/role-mutation-helpers
+   git push -u origin feat/role-mutation-helpers
+   gh pr create --title "..." --body "..."
+   gh pr merge --squash --delete-branch
+   ```
+4. **After merge**: `git checkout main && git pull`, then start the next session branch.
+
+### Don't fragment into micro-PRs
+
+If you're about to open a second PR in 10 minutes for another 1-line doc tweak, stop — keep adding to the current session branch instead. PR-per-tiny-tweak is exactly the kind of process noise this workflow exists to prevent. One session = one PR is the default; multiple PRs per session only when the work genuinely splits into unrelated big chunks.
 
 ### What this replaces
 
