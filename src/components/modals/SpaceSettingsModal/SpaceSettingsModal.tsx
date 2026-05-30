@@ -31,6 +31,7 @@ import { showToast } from '../../../utils/toast';
 import { useSpaceTag } from '../../../hooks/business/spaces/useSpaceTag';
 import Account from './Account';
 import General from './General';
+import Channels from './Channels';
 import Roles from './Roles';
 import SpaceTagSettings from './SpaceTagSettings';
 import Emojis from './Emojis';
@@ -529,6 +530,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           hasValidationError={!!validateSpaceName(spaceName)}
                         />
                       );
+                    case 'channels':
+                      return <Channels spaceId={spaceId} />;
                     case 'roles':
                       return (
                         <Roles
