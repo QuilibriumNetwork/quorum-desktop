@@ -33,6 +33,7 @@ import { getIconColorHex } from '../../space/IconPicker/types';
 import ChannelEditorModal from '../ChannelEditorModal';
 import GroupEditorModal from '../GroupEditorModal';
 import ConfirmationModal from '../ConfirmationModal';
+import ChannelPreview from '../../space/ChannelPreview';
 import { showToast } from '../../../utils/toast';
 
 interface ChannelsProps {
@@ -97,7 +98,7 @@ type DragData =
 
 const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
-  const { updateSpace } = useMessageDB();
+  const { updateSpace, messageDB } = useMessageDB();
   const moveChannelMutation = useMoveChannel(spaceId);
   const reorderGroupsMutation = useReorderGroups(spaceId);
   const reorderChannelsMutation = useReorderChannels(spaceId);
@@ -105,8 +106,14 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
   const [activeDrag, setActiveDrag] = React.useState<DragData | null>(null);
   const { collapsed, toggle: toggleCollapsed } = useCollapsedGroups(spaceId);
   const [pendingDelete, setPendingDelete] = React.useState<
-    | { kind: 'group'; groupName: string }
-    | { kind: 'channel'; groupName: string; channelId: string; channelName: string }
+    | { kind: 'group'; groupName: string; channelCount: number }
+    | {
+        kind: 'channel';
+        groupName: string;
+        channelId: string;
+        channelName: string;
+        messageCount: number;
+      }
     | null
   >(null);
   const [groupEditor, setGroupEditor] = React.useState<
@@ -235,23 +242,31 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
       showToast(t`Cannot delete a group containing the default channel.`, 'error');
       return;
     }
-    if (group.channels.length > 0) {
-      showToast(t`Group must be empty before it can be deleted.`, 'error');
-      return;
-    }
-    setPendingDelete({ kind: 'group', groupName: group.groupName });
+    setPendingDelete({
+      kind: 'group',
+      groupName: group.groupName,
+      channelCount: group.channels.length,
+    });
   };
 
-  const handleDeleteChannel = (group: Group, channel: ChannelType) => {
-    if (channel.channelId === defaultChannelId) {
-      showToast(t`The default channel cannot be deleted.`, 'error');
-      return;
+  const handleDeleteChannel = async (group: Group, channel: ChannelType) => {
+    let messageCount = 0;
+    try {
+      const result = await messageDB.getMessages({
+        spaceId,
+        channelId: channel.channelId,
+        limit: 50,
+      });
+      messageCount = result.messages.length;
+    } catch (error) {
+      console.error('Error checking channel messages:', error);
     }
     setPendingDelete({
       kind: 'channel',
       groupName: group.groupName,
       channelId: channel.channelId,
       channelName: channel.channelName,
+      messageCount,
     });
   };
 
@@ -388,14 +403,41 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
           />,
           document.body
         )}
-      {pendingDelete && (
+      {pendingDelete && pendingDelete.kind === 'channel' && (
         <ConfirmationModal
           visible={true}
-          title={pendingDelete.kind === 'group' ? t`Delete group?` : t`Delete channel?`}
+          title={t`Delete Channel`}
           message={
-            pendingDelete.kind === 'group'
-              ? t`Are you sure you want to delete the group "${pendingDelete.groupName}"?`
-              : t`Are you sure you want to delete #${pendingDelete.channelName}?`
+            pendingDelete.messageCount > 0
+              ? t`Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone.`
+              : t`Are you sure you want to delete this channel? This action cannot be undone.`
+          }
+          preview={
+            <ChannelPreview
+              channelName={pendingDelete.channelName}
+              messageCount={pendingDelete.messageCount}
+            />
+          }
+          confirmText={t`Delete`}
+          variant="danger"
+          onConfirm={confirmDelete}
+          onCancel={() => setPendingDelete(null)}
+        />
+      )}
+      {pendingDelete && pendingDelete.kind === 'group' && (
+        <ConfirmationModal
+          visible={true}
+          title={t`Delete Group`}
+          message={
+            pendingDelete.channelCount > 0
+              ? t`Are you sure you want to delete this group? All channels inside it and their messages will be lost. This action cannot be undone.`
+              : t`Are you sure you want to delete this group? This action cannot be undone.`
+          }
+          preview={
+            <GroupPreview
+              groupName={pendingDelete.groupName}
+              channelCount={pendingDelete.channelCount}
+            />
           }
           confirmText={t`Delete`}
           variant="danger"
@@ -648,7 +690,11 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
         </Tooltip>
         <Tooltip
           id={`channel-delete-${channel.channelId}`}
-          content={t`Delete channel`}
+          content={
+            isDefault
+              ? t`You cannot delete the default channel.`
+              : t`Delete channel`
+          }
           place="top"
         >
           <button
@@ -677,6 +723,26 @@ const ChannelRowGhost: React.FunctionComponent<{
         <Trans>Default</Trans>
       </span>
     )}
+  </div>
+);
+
+const GroupPreview: React.FunctionComponent<{
+  groupName: string;
+  channelCount: number;
+}> = ({ groupName, channelCount }) => (
+  <div className="p-3 bg-chat rounded">
+    <div className="flex flex-col gap-2">
+      <div className="flex items-center gap-1.5">
+        <Icon name="folder" size="xs" />
+        <span className="text-label-strong">{groupName}</span>
+      </div>
+      <div className="flex items-center gap-1.5">
+        <Icon name="hashtag" size="xs" />
+        <span className="text-label-strong">
+          {channelCount} {channelCount === 1 ? 'channel' : 'channels'}
+        </span>
+      </div>
+    </div>
   </div>
 );
 

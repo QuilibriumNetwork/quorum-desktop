@@ -46,6 +46,7 @@ const ChannelEditorModal: React.FunctionComponent<{
     iconColor,
     iconVariant,
     isEditMode,
+    isDefaultChannel,
     availableRoles,
     channelNameValidationError,
     channelTopicValidationError,
@@ -213,15 +214,31 @@ const ChannelEditorModal: React.FunctionComponent<{
               direction="vertical"
             />
             <Flex justify="center" align="center">
-              <Button
-                type="unstyled"
-                className="text-danger hover:text-danger-hover"
-                onClick={(e: React.MouseEvent) => handleDeleteClick(e)}
-              >
-                {deleteConfirmation.confirmationStep === 0
-                  ? t`Delete Channel`
-                  : t`Click again to confirm`}
-              </Button>
+              {isDefaultChannel ? (
+                <Tooltip
+                  id="channel-default-delete-block"
+                  content={t`You cannot delete the default channel.`}
+                  place="top"
+                >
+                  <Button
+                    type="unstyled"
+                    className="text-muted cursor-not-allowed"
+                    disabled
+                  >
+                    <Trans>Delete Channel</Trans>
+                  </Button>
+                </Tooltip>
+              ) : (
+                <Button
+                  type="unstyled"
+                  className="text-danger hover:text-danger-hover"
+                  onClick={(e: React.MouseEvent) => handleDeleteClick(e)}
+                >
+                  {deleteConfirmation.confirmationStep === 0
+                    ? t`Delete Channel`
+                    : t`Click again to confirm`}
+                </Button>
+              )}
             </Flex>
           </>
         )}

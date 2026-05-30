@@ -1,8 +1,5 @@
 import React from 'react';
-import {
-  Icon,
-  Flex,
-} from '../primitives';
+import { Icon } from '../primitives';
 
 interface ChannelPreviewProps {
   channelName: string;
@@ -14,24 +11,20 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
   messageCount,
 }) => {
   return (
-    <div style={{ padding: 'var(--space-sm)', backgroundColor: 'var(--color-bg-chat)' }}>
-      <Flex direction="column" gap="sm">
-        {/* Channel name with icon */}
-        <Flex align="center" gap="xs">
+    <div className="p-3 bg-chat rounded">
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-1.5">
           <Icon name="hashtag" size="xs" />
-          <span className="text-label-strong">
-            {channelName}
-          </span>
-        </Flex>
+          <span className="text-label-strong">{channelName}</span>
+        </div>
 
-        {/* Message count */}
-        <Flex align="center" gap="xs">
+        <div className="flex items-center gap-1.5">
           <Icon name="message" size="xs" />
           <span className="text-label-strong">
             {messageCount} message{messageCount !== 1 ? 's' : ''}
           </span>
-        </Flex>
-      </Flex>
+        </div>
+      </div>
     </div>
   );
 };

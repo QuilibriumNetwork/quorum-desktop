@@ -246,13 +246,20 @@ export function useChannelManagement({
     } : undefined,
   });
 
+  // Is this channel the space default? Used to block deletion everywhere.
+  const isDefaultChannel = !!channelId && space?.defaultChannelId === channelId;
+
   // Handle delete with smart escalation
   const handleDeleteClick = useCallback((e?: React.MouseEvent) => {
+    // Default channel cannot be deleted; the user must reassign it first
+    // in Space Settings → General.
+    if (isDefaultChannel) return;
+
     const performDelete = () => {
       deleteChannel();
       setDeleteConfirmationStep(0);
     };
-    
+
     if (e) {
       // Event-based call (from button click) - use new confirmation system
       deleteConfirmation.handleClick(e, performDelete);
@@ -266,7 +273,7 @@ export function useChannelManagement({
         performDelete();
       }
     }
-  }, [deleteConfirmation, deleteConfirmationStep]);
+  }, [isDefaultChannel, deleteConfirmation, deleteConfirmationStep]);
 
   // Delete channel
   const deleteChannel = useCallback(async () => {
@@ -354,6 +361,7 @@ export function useChannelManagement({
     messageCount,
     deleteConfirmationStep,
     isEditMode: !!channelId,
+    isDefaultChannel,
     availableRoles: space?.roles || [],
     channelNameValidationError,
     channelTopicValidationError,

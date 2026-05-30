@@ -1,12 +1,11 @@
 import * as React from 'react';
-import { Button, Callout } from '../../primitives';
+import { Button, Callout, Input } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
 
 interface DangerProps {
   space: any;
   handleDeleteSpace: () => void;
-  deleteConfirmationStep: number;
-  setDeleteConfirmationStep: (step: number) => void;
   deleteError: string | null;
   clearDeleteError: () => void;
 }
@@ -14,11 +13,12 @@ interface DangerProps {
 const Danger: React.FunctionComponent<DangerProps> = ({
   space,
   handleDeleteSpace,
-  deleteConfirmationStep,
-  setDeleteConfirmationStep,
   deleteError,
   clearDeleteError,
 }) => {
+  const [confirmInput, setConfirmInput] = React.useState('');
+  const isConfirmed = confirmInput.trim().toLowerCase() === 'delete';
+
   return (
     <>
       <div className="modal-content-header">
@@ -27,7 +27,10 @@ const Danger: React.FunctionComponent<DangerProps> = ({
             <Trans>Delete this space</Trans>
           </div>
           <div className="pt-2 text-body">
-            <Trans>This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels.</Trans>
+            <Trans>
+              This action cannot be undone and will permanently delete this Space and
+              all of its channels and messages.
+            </Trans>
           </div>
           {deleteError && (
             <div className="pt-4">
@@ -37,36 +40,26 @@ const Danger: React.FunctionComponent<DangerProps> = ({
                 dismissible
                 onClose={clearDeleteError}
               >
-                {deleteError === 'channels-exist' ? (
-                  <Trans>Cannot delete Space with channels. Please delete all channels first.</Trans>
-                ) : (
-                  <Trans>An error occurred while deleting the Space. Please try again.</Trans>
-                )}
+                <Trans>An error occurred while deleting the Space. Please try again.</Trans>
               </Callout>
             </div>
           )}
           <div className="pt-6">
+            <Input
+              value={confirmInput}
+              onChange={setConfirmInput}
+              placeholder={t`Type DELETE to confirm`}
+              variant="bordered"
+            />
+          </div>
+          <div className="pt-4">
             <Button
               type="danger"
               className="!w-auto !inline-flex"
-              onClick={() => {
-                if (deleteConfirmationStep === 0) {
-                  setDeleteConfirmationStep(1);
-                  // Reset confirmation after 5 seconds
-                  setTimeout(
-                    () => setDeleteConfirmationStep(0),
-                    5000
-                  );
-                } else {
-                  handleDeleteSpace();
-                }
-              }}
+              disabled={!isConfirmed}
+              onClick={handleDeleteSpace}
             >
-              {deleteConfirmationStep === 0 ? (
-                <Trans>Delete Space</Trans>
-              ) : (
-                <Trans>Click again to confirm</Trans>
-              )}
+              <Trans>Delete Space</Trans>
             </Button>
           </div>
         </div>

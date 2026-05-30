@@ -304,9 +304,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
     }
   }, [mentionSettings, spaceProfile, queryClient, spaceId]);
 
-  // Delete confirmation state - kept local as it's UI-specific
-  const [deleteConfirmationStep, setDeleteConfirmationStep] = React.useState(0);
-
   // Role validation error state
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
@@ -620,8 +617,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
                         <Danger
                           space={space}
                           handleDeleteSpace={handleDeleteSpace}
-                          deleteConfirmationStep={deleteConfirmationStep}
-                          setDeleteConfirmationStep={setDeleteConfirmationStep}
                           deleteError={deleteError}
                           clearDeleteError={clearDeleteError}
                         />
