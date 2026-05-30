@@ -8,7 +8,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { useConversations, useRegistration } from '../../queries';
-import type { Conversation, Channel } from '@quilibrium/quorum-shared';
+import { isValidIPFSCID, type Conversation, type Channel } from '@quilibrium/quorum-shared';
 import { getAddressSuffix } from '../../../utils';
 import { t } from '@lingui/core/macro';
 
@@ -94,7 +94,7 @@ export const useInviteManagement = (
   // Resolve manual address input
   useEffect(() => {
     (async () => {
-      if (manualAddress?.length === 46) {
+      if (manualAddress && isValidIPFSCID(manualAddress)) {
         try {
           const reg = await apiClient.getUser(manualAddress);
           if (reg.data) {
