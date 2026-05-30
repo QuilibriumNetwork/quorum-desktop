@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1633
-msgid "Send a message to #{channel_name}"
-msgstr "שלח הודעה ל-#{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "ברוך הבא ל-Quorum, {name}! החשבון שלך מאובטח ומוכן לשימוש."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1633
+msgid "Send a message to #{channel_name}"
+msgstr "שלח הודעה ל-#{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -53,11 +53,6 @@ msgid "Reacted by"
 msgstr "הגיב על ידי"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:715
-msgid "Replying to"
-msgstr "מגיב ל"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "לא הצלחנו לעבד את התמונה"
@@ -66,6 +61,11 @@ msgstr "לא הצלחנו לעבד את התמונה"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "עונה ל-{user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:715
+msgid "Replying to"
+msgstr "מגיב ל"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:354
@@ -304,15 +304,24 @@ msgstr "הוסף תמונה של פרופיל"
 msgid "Add a Space"
 msgstr "הוסף מרחב"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:574
+msgid "Add channel"
+msgstr "הוסף ערוץ"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Add Channel"
 msgstr "הוסף ערוץ"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:580
+msgid "Add channel to group"
+msgstr "הוסף ערוץ לקבוצה"
 
 #: src/components/direct/DirectMessages.tsx:65
 msgid "Add friend"
 msgstr "הוסף חבר"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/GroupEditorModal.tsx:58
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:346
 #: src/components/space/ChannelList.tsx:184
 msgid "Add Group"
 msgstr "הוסף קבוצה"
@@ -345,12 +354,10 @@ msgstr ""
 msgid "Adding..."
 msgstr "מוסיף..."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
 msgstr "כתובות חייבות להיות באורך של 46 תווים בדיוק."
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:83
 #: src/hooks/business/validation/useAddressValidation.ts:84
 msgid "Addresses start with \"Qm\"."
 msgstr "כתובות מתחילות ב-\"Qm\"."
@@ -368,7 +375,7 @@ msgid "Advanced Settings"
 msgstr "הגדרות מתקדמות"
 
 #: src/components/direct/DirectMessageContactsList.tsx:290
-#: src/components/modals/ChannelEditorModal.tsx:211
+#: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 #: src/components/notifications/NotificationPanel.tsx:238
@@ -385,7 +392,7 @@ msgstr "כל הסימנים"
 msgid "All DMs"
 msgstr "כל ההודעות הפרטיות"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:62
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:63
 msgid "All kick records are up to date."
 msgstr "כל רישומי ההדחה מעודכנים."
 
@@ -395,12 +402,12 @@ msgstr "כל רישומי ההדחה מעודכנים."
 msgid "All Spaces"
 msgstr "כל המרחבים"
 
-#: src/components/modals/ChannelEditorModal.tsx:170
-#: src/components/modals/SpaceSettingsModal/General.tsx:356
+#: src/components/modals/ChannelEditorModal.tsx:152
+#: src/components/modals/SpaceSettingsModal/General.tsx:327
 msgid "Allow Threads"
 msgstr "אפשר שרשורים"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:149
 msgid "Allow threads in this channel"
 msgstr "אפשר שרשורים בערוץ זה"
 
@@ -421,7 +428,7 @@ msgstr "תמיד חתום על הודעות ישירות"
 msgid "Always sign messages"
 msgstr "תמיד חתום על הודעות"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:81
 msgid "An error occurred while deleting the Space. Please try again."
 msgstr "אירעה שגיאה בעת מחיקת המרחב. אנא נסה שוב."
 
@@ -469,13 +476,20 @@ msgstr "מראה"
 msgid "are typing"
 msgstr "מקלידים"
 
-#: src/hooks/business/channels/useChannelManagement.ts:257
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:433
+#: src/hooks/business/channels/useChannelManagement.ts:238
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
 msgstr ""
 "האם אתה בטוח שאתה רוצה למחוק את הערוץ הזה? כל ההודעות יאבדו. פעולה זו אינה "
 "ניתנת לביטול."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:434
+msgid ""
+"Are you sure you want to delete this channel? This action cannot be undone."
+msgstr ""
+"האם אתה בטוח שאתה רוצה למחוק את הערוץ הזה? פעולה זו לא תוכל להיעשה חזרה."
 
 #: src/components/modals/ConversationSettingsModal.tsx:64
 msgid ""
@@ -487,11 +501,25 @@ msgstr ""
 "\n"
 "זה ימחק את השיחה מהמכשיר שלך בלבד. למשתתף השני עדיין תהיה גישה להיסטוריית השיחה."
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:454
+msgid ""
+"Are you sure you want to delete this group? All channels inside it and their"
+" messages will be lost. This action cannot be undone."
+msgstr ""
+"האם אתה בטוח שאתה רוצה למחוק את הקבוצה הזו? כל הערוצים בתוכה וההודעות שלהם "
+"יאבדו. פעולה זו לא תוכל להיעשה חזרה."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:455
+msgid ""
+"Are you sure you want to delete this group? This action cannot be undone."
+msgstr ""
+"האם אתה בטוח שאתה רוצה למחוק את הקבוצה הזו? פעולה זו לא תוכל להיעשה חזרה."
+
 #: src/hooks/business/messages/useMessageActions.ts:423
 msgid "Are you sure you want to delete this message?"
 msgstr "האם אתה בטוח שאתה רוצה למחוק את ההודעה הזו?"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:61
+#: src/hooks/business/spaces/useRoleManagement.ts:66
 msgid "Are you sure you want to delete this role?"
 msgstr "האם אתה בטוח שאתה רוצה למחוק את התפקיד הזה?"
 
@@ -540,13 +568,14 @@ msgstr "גיבוי נכשל"
 msgid "Bio"
 msgstr "ביוגרפיה"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:87
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Bio cannot contain special characters"
 msgstr "ביוגרפיה לא יכולה להכיל תווים מיוחדים"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:91
-msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
-msgstr "הביוגרפיה חייבת להיות באורך של {MAX_BIO_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:59
+msgid "Bio must be {0} characters or less"
+msgstr "הביוגרפיה חייבת להיות {0} תווים או פחות"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Bold"
@@ -602,10 +631,10 @@ msgstr "מצלמה"
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:589
-#: src/hooks/business/channels/useChannelManagement.ts:263
+#: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:435
 #: src/hooks/business/messages/usePinnedMessages.ts:325
-#: src/hooks/business/spaces/useRoleManagement.ts:64
+#: src/hooks/business/spaces/useRoleManagement.ts:69
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "ביטול"
@@ -614,9 +643,9 @@ msgstr "ביטול"
 msgid "CANCEL"
 msgstr "ביטול"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:41
-msgid "Cannot delete Space with channels. Please delete all channels first."
-msgstr "לא ניתן למחוק מרחב עם ערוצים. אנא מחק את כל הערוצים קודם."
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:244
+msgid "Cannot delete a group containing the default channel."
+msgstr "לא ניתן למחוק קבוצה שמכילה את הערוץ המוגדר כברירת מחדל."
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
@@ -637,11 +666,11 @@ msgstr ""
 "שינויים מתבצעים אוטומטית, אך הדף הפעיל עשוי לא להתעדכן. רענן את הדף כדי "
 "להחיל את השפה החדשה."
 
-#: src/components/modals/ChannelEditorModal.tsx:128
+#: src/components/modals/ChannelEditorModal.tsx:138
 msgid "Channel Icon"
 msgstr "אייקון ערוץ"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:181
 msgid "Channel Managers"
 msgstr "מנהלי ערוץ"
 
@@ -649,42 +678,44 @@ msgstr "מנהלי ערוץ"
 msgid "Channel members"
 msgstr "חברי ערוץ"
 
-#: src/components/modals/ChannelEditorModal.tsx:101
+#: src/components/modals/ChannelEditorModal.tsx:111
 msgid "Channel Name"
 msgstr "שם ערוץ"
 
-#: src/hooks/business/validation/useChannelValidation.ts:18
-#: src/hooks/business/validation/useChannelValidation.ts:60
+#: src/hooks/business/validation/errorTranslator.ts:40
 msgid "Channel name cannot contain special characters"
 msgstr "שם הערוץ לא יכול להכיל תווים מיוחדים"
 
-#: src/hooks/business/validation/useChannelValidation.ts:12
-#: src/hooks/business/validation/useChannelValidation.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:38
 msgid "Channel name is required"
 msgstr "שם הערוץ נדרש"
 
-#: src/hooks/business/validation/useChannelValidation.ts:15
-#: src/hooks/business/validation/useChannelValidation.ts:57
-msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "שם הערוץ חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:39
+msgid "Channel name must be {0} characters or less"
+msgstr "שם הערוץ חייב להיות {0} תווים או פחות"
 
-#: src/components/space/ChannelItem.tsx:204
+#: src/components/space/ChannelItem.tsx:187
 msgid "Channel Settings"
 msgstr "הגדרות ערוץ"
 
-#: src/components/modals/ChannelEditorModal.tsx:111
+#: src/components/modals/ChannelEditorModal.tsx:121
 msgid "Channel Topic"
 msgstr "נושא ערוץ"
 
-#: src/hooks/business/validation/useChannelValidation.ts:38
-#: src/hooks/business/validation/useChannelValidation.ts:74
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel topic cannot contain special characters"
 msgstr "נושא הערוץ לא יכול להכיל תווים מיוחדים"
 
-#: src/hooks/business/validation/useChannelValidation.ts:35
-#: src/hooks/business/validation/useChannelValidation.ts:71
-msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr "נושא הערוץ חייב להיות באורך של {MAX_TOPIC_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:43
+msgid "Channel topic must be {0} characters or less"
+msgstr "נושא הערוץ חייב להיות {0} תווים או פחות"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:338
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+msgid "Channels"
+msgstr "ערוצים"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -698,7 +729,7 @@ msgstr "בחר כיצד תרצה להוסיף את תמונת הפרופיל ש�
 msgid "Choose your preferred theme for Quorum."
 msgstr "בחר את הנושא המועדף שלך עבור Quorum."
 
-#: src/components/modals/ChannelEditorModal.tsx:212
+#: src/components/modals/ChannelEditorModal.tsx:207
 #: src/components/modals/SpaceSettingsModal/Account.tsx:244
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 #: src/components/notifications/NotificationPanel.tsx:239
@@ -716,11 +747,10 @@ msgstr "ניקוי התראות עם תג: {tag}"
 
 #: src/components/modals/ChannelEditorModal.tsx:240
 #: src/components/modals/FolderEditorModal.tsx:130
-#: src/components/modals/GroupEditorModal.tsx:127
+#: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Account.tsx:319
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "לחץ שוב כדי לאשר"
@@ -736,6 +766,10 @@ msgstr "לחץ כדי להעתיק"
 #: src/components/modals/ThreadSettingsModal.tsx:172
 msgid "Close thread"
 msgstr "סגור שרשור"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Collapse group"
+msgstr "הצג קבוצה"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
@@ -827,7 +861,7 @@ msgstr "העתק הודעה"
 msgid "Copy message link"
 msgstr "העתק קישור הודעה"
 
-#: src/services/ConfigService.ts:292
+#: src/services/ConfigService.ts:264
 msgid "Could not add Space"
 msgstr "לא ניתן להוסיף מרחב"
 
@@ -836,24 +870,24 @@ msgstr "לא ניתן להוסיף מרחב"
 msgid "Could not fetch the Space details. Please try again."
 msgstr "לא ניתן לשלוף את פרטי המרחב. אנא נסה שוב."
 
-#: src/services/ConfigService.ts:165
+#: src/services/ConfigService.ts:137
 msgid "Could not obtain manifest for Space"
 msgstr "לא ניתן להשיג מניפסט עבור מרחב"
 
 #: src/hooks/business/invites/useInviteProcessing.ts:42
-#: src/hooks/business/spaces/useInviteValidation.ts:111
+#: src/hooks/business/spaces/useInviteValidation.ts:81
 msgid "Could not verify invite"
 msgstr "לא ניתן לאמת הזמנה"
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:247
 msgid ""
 "Couldn't decrypt your saved profile. Please re-enter your name and profile "
 "image."
 msgstr ""
 "לא ניתן לפענח את הפרופיל השמור שלך. אנא הזן מחדש את שמך ודמות הפרופיל שלך."
 
-#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:404
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:252
+#: src/hooks/business/user/useUnifiedOnboardingFlow.ts:360
 msgid ""
 "Couldn't load your saved profile. Please re-enter your name and profile "
 "image."
@@ -886,7 +920,7 @@ msgstr "צור חשבון חדש במקום זאת"
 msgid "Create Passkey"
 msgstr "צור passkey"
 
-#: src/components/modals/ChannelEditorModal.tsx:180
+#: src/components/modals/ChannelEditorModal.tsx:175
 msgid "Create roles in Space Settings first."
 msgstr "צור תפקידים בהגדרות ה-Space קודם."
 
@@ -927,17 +961,22 @@ msgstr "שחזור נתונים"
 msgid "days"
 msgstr "ימים"
 
-#: src/services/ConfigService.ts:144
+#: src/services/ConfigService.ts:116
 msgid "decrypted space with no known config key"
 msgstr "מרחב מפוענח ללא מפתח קונפיגורציה ידוע"
 
-#: src/services/ConfigService.ts:150
+#: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
 msgstr "מרחב מפוענח ללא מפתח מרכז ידוע"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:275
-msgid "Default Channel"
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:703
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:718
+msgid "Default channel"
 msgstr "ערוץ ברירת מחדל"
+
+#: src/components/modals/ChannelEditorModal.tsx:230
+msgid "Default channels cannot be deleted."
+msgstr "לא ניתן למחוק ערוצים ברירת מחדל."
 
 #: src/components/modals/CreateSpaceModal.tsx:212
 msgid ""
@@ -956,16 +995,28 @@ msgstr "מחק"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:442
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:463
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:105
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:107
-#: src/hooks/business/channels/useChannelManagement.ts:262
+#: src/hooks/business/channels/useChannelManagement.ts:243
 #: src/hooks/business/messages/useMessageActions.ts:434
-#: src/hooks/business/spaces/useRoleManagement.ts:63
+#: src/hooks/business/spaces/useRoleManagement.ts:68
 msgid "Delete"
 msgstr "מחק"
 
+#: src/components/modals/GroupEditorModal.tsx:125
+msgid "Delete all channels in this group first."
+msgstr "מחק את כל הערוצים בקבוצה זו תחילה."
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:743
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:751
+msgid "Delete channel"
+msgstr "מחק ערוץ"
+
 #: src/components/modals/ChannelEditorModal.tsx:239
-#: src/hooks/business/channels/useChannelManagement.ts:256
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:430
+#: src/hooks/business/channels/useChannelManagement.ts:237
 msgid "Delete Channel"
 msgstr "מחק ערוץ"
 
@@ -980,7 +1031,14 @@ msgstr "מחק שיחה"
 msgid "Delete Folder"
 msgstr "מחק תיקייה"
 
-#: src/components/modals/GroupEditorModal.tsx:126
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:587
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:593
+msgid "Delete group"
+msgstr "מחק קבוצה"
+
+#: src/components/modals/GroupEditorModal.tsx:133
+#: src/components/modals/GroupEditorModal.tsx:143
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:451
 msgid "Delete Group"
 msgstr "מחק קבוצה"
 
@@ -1004,12 +1062,12 @@ msgstr "מחק הודעות"
 msgid "Delete role"
 msgstr "מחק תפקיד"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:60
+#: src/hooks/business/spaces/useRoleManagement.ts:65
 msgid "Delete Role"
 msgstr "מחק תפקיד"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:66
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:100
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:28
 msgid "Delete Space"
 msgstr "מחק Space"
 
@@ -1017,16 +1075,16 @@ msgstr "מחק Space"
 #: src/components/modals/CreateSpaceModal.tsx:120
 #: src/components/modals/SpaceSettingsModal/Account.tsx:148
 #: src/components/modals/SpaceSettingsModal/Account.tsx:156
+#: src/components/modals/SpaceSettingsModal/General.tsx:133
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
-#: src/components/modals/SpaceSettingsModal/General.tsx:149
+#: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:232
 #: src/components/modals/UserSettingsModal/General.tsx:96
 #: src/components/modals/UserSettingsModal/General.tsx:104
 msgid "Delete this image"
 msgstr "מחק תמונה זו"
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:27
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
 msgid "Delete this space"
 msgstr "מחק את ה-Space הזה"
 
@@ -1034,7 +1092,7 @@ msgstr "מחק את ה-Space הזה"
 msgid "Delete Thread"
 msgstr "מחיקת שרשור"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:437
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:426
 msgid "Deleting Space..."
 msgstr "מוחק את המרחב..."
 
@@ -1047,21 +1105,22 @@ msgstr "מוחק..."
 msgid "Delivery receipts"
 msgstr "אישורי מסירה"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:184
+#: src/components/modals/SpaceSettingsModal/General.tsx:176
 msgid "Describe what this Space is about..."
 msgstr "תאר על מה ה-Space הזה..."
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:66
+#: src/hooks/business/validation/errorTranslator.ts:27
 msgid "Description cannot contain special characters"
 msgstr "תיאור לא יכול להכיל תווים מיוחדים"
+
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:28
+msgid "Description must be {0} characters or less"
+msgstr "תיאור חייב להיות {0} תווים או פחות"
 
 #: src/components/modals/CreateSpaceModal.tsx:182
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "התיאור חייב להיות באורך של {MAX_DESCRIPTION_LENGTH} תווים או פחות"
-
-#: src/hooks/business/validation/useSpaceNameValidation.ts:70
-msgid "Description must be {maxLength} characters or less"
-msgstr "התיאור חייב להיות {maxLength} תווים או פחות"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
 msgid "Desktop Notifications"
@@ -1071,23 +1130,24 @@ msgstr "התראות שולחן עבודה"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "התראות שולחן עבודה אינן נתמכות בדפדפן הזה."
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:22
+#: src/hooks/business/validation/errorTranslator.ts:55
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
 msgstr "שם המכשיר יכול להכיל רק אותיות, מספרים, רווחים, מקפים וסוגריים"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:13
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Device name cannot be empty"
 msgstr "שם המכשיר לא יכול להיות ריק"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:19
+#: src/hooks/business/validation/errorTranslator.ts:54
 msgid "Device name cannot contain HTML"
 msgstr "שם המכשיר לא יכול להכיל HTML"
 
-#: src/hooks/business/validation/useDeviceNameValidation.ts:16
-msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "שם המכשיר חייב להיות {MAX_NAME_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:53
+msgid "Device name must be {0} characters or less"
+msgstr "שם המכשיר חייב להיות {0} תווים או פחות"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:396
 msgid "Devices"
@@ -1117,20 +1177,18 @@ msgstr "שם תצוגה"
 msgid "Display Name"
 msgstr "שם תצוגה"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:29
-#: src/hooks/business/validation/useDisplayNameValidation.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:35
 msgid "Display name cannot contain special characters"
 msgstr "שם התצוגה לא יכול להכיל תווים מיוחדים"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:16
-#: src/hooks/business/validation/useDisplayNameValidation.ts:45
+#: src/hooks/business/validation/errorTranslator.ts:31
 msgid "Display name is required"
 msgstr "שם תצוגה נדרש"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:19
-#: src/hooks/business/validation/useDisplayNameValidation.ts:48
-msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "שם התצוגה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:32
+msgid "Display name must be {0} characters or less"
+msgstr "שם התצוגה חייב להיות {0} תווים או פחות"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:563
 msgid ""
@@ -1152,11 +1210,19 @@ msgstr "הורד גיבוי מפתח"
 msgid "Drag and drop or"
 msgstr "גרור ושחרר או"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:678
+msgid "Drag to reorder channel"
+msgstr "גרור כדי להסדר את הערוץ"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:532
+msgid "Drag to reorder group"
+msgstr "גרור כדי להסדר את הקבוצה"
+
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "מגירה"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:217
+#: src/components/modals/SpaceSettingsModal/General.tsx:209
 msgid "Drop here"
 msgstr "שחרר כאן"
 
@@ -1170,6 +1236,11 @@ msgstr "ערוך"
 msgid "Edit {0}"
 msgstr "ערוך {0}"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:727
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:733
+msgid "Edit channel"
+msgstr "ערוך ערוץ"
+
 #: src/components/modals/ChannelEditorModal.tsx:84
 msgid "Edit Channel"
 msgstr "ערוך ערוץ"
@@ -1179,7 +1250,12 @@ msgstr "ערוך ערוץ"
 msgid "Edit Folder"
 msgstr "ערוך תיקייה"
 
-#: src/components/modals/GroupEditorModal.tsx:56
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:561
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:567
+msgid "Edit group"
+msgstr "ערוך קבוצה"
+
+#: src/components/modals/GroupEditorModal.tsx:58
 msgid "Edit Group"
 msgstr "ערוך קבוצה"
 
@@ -1205,7 +1281,7 @@ msgstr "בוחר אמוג'י"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 #: src/components/space/Channel.tsx:1809
 #: src/components/thread/ThreadPanel.tsx:524
 msgid "Emojis"
@@ -1215,7 +1291,7 @@ msgstr "Emojis"
 msgid "Enable sync"
 msgstr "הפעל סנכרון"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:360
+#: src/components/modals/SpaceSettingsModal/General.tsx:331
 msgid "Enable threaded conversations in channels"
 msgstr "אפשר שיחות בשרשורים בערוצים"
 
@@ -1305,6 +1381,10 @@ msgstr "Esc ל"
 msgid "Existing Conversations"
 msgstr "שיחות קיימות"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:539
+msgid "Expand group"
+msgstr "הרחיב קבוצה"
+
 #: src/components/modals/UserSettingsModal/Privacy.tsx:547
 #: src/components/modals/UserSettingsModal/Privacy.tsx:650
 msgid "Export"
@@ -1351,7 +1431,7 @@ msgstr "נכשל לערוך הודעה"
 msgid "Failed to export backup"
 msgstr "ייצוא הגיבוי נכשל"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:692
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:678
 msgid "Failed to generate invite link. Please try again."
 msgstr "נכשל ביצירת קישור הזמנה. אנא נסה שוב."
 
@@ -1384,7 +1464,7 @@ msgstr "נכשל להדביק הודעה"
 msgid "Failed to restore spaces"
 msgstr "נכשל בשחזור מרחבים"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:300
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
 msgstr "שגיאה בשמירת הגדרות ההודעות"
 
@@ -1421,7 +1501,7 @@ msgstr "נכשל בעדכון הפרופיל"
 msgid "Favorites"
 msgstr "מועדפים"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:296
+#: src/components/modals/SpaceSettingsModal/General.tsx:267
 msgid "Features"
 msgstr "תכונות"
 
@@ -1467,15 +1547,15 @@ msgstr "הקובץ נדחה. השתמש ב-PNG, JPG או GIF."
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
 msgstr "מצא תיעוד, קיצורי מקלדת וכלי שחזור."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:494
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:483
 msgid "Fix"
 msgstr "תיקון"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:378
+#: src/components/modals/SpaceSettingsModal/General.tsx:349
 msgid "Fixes"
 msgstr "תיקונים"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:397
+#: src/components/modals/SpaceSettingsModal/General.tsx:368
 msgid "Fixing..."
 msgstr "מתקן..."
 
@@ -1526,17 +1606,17 @@ msgstr "כללי"
 msgid "General Chat"
 msgstr "שיחת צ'אט כללית"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate Link"
 msgstr "צור קישור"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:465
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:683
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:669
 msgid "Generate New Link"
 msgstr "ייצר קישור חדש"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:413
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:677
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:663
 msgid "Generate Public Invite Link"
 msgstr "ייצר קישור הזמנה ציבורי"
 
@@ -1561,28 +1641,26 @@ msgstr "לך לשיחה"
 msgid "Go to Home"
 msgstr "עבור לדף הבית"
 
-#: src/components/modals/GroupEditorModal.tsx:84
+#: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "אייקון קבוצה (אופציונלי)"
 
-#: src/components/modals/GroupEditorModal.tsx:68
+#: src/components/modals/GroupEditorModal.tsx:70
 msgid "Group Name"
 msgstr "שם הקבוצה"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:18
-#: src/hooks/business/validation/useGroupNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:49
 msgid "Group name cannot contain special characters"
 msgstr "שם הקבוצה לא יכול להכיל תווים מיוחדים"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:12
-#: src/hooks/business/validation/useGroupNameValidation.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Group name is required"
 msgstr "שם הקבוצה נדרש"
 
-#: src/hooks/business/validation/useGroupNameValidation.ts:15
-#: src/hooks/business/validation/useGroupNameValidation.ts:37
-msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "שם הקבוצה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:48
+msgid "Group name must be {0} characters or less"
+msgstr "שם הקבוצה חייב להיות {0} תווים או פחות"
 
 #: src/components/modals/ModalSaveOverlay.tsx:83
 msgid "Hang in there..."
@@ -1657,7 +1735,6 @@ msgstr "קוד אינליין"
 msgid "invalid address for signature"
 msgstr "כתובת לא חוקית לחתימה"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
 msgid ""
 "Invalid address format. Addresses must use valid alphanumeric characters."
@@ -1677,7 +1754,7 @@ msgstr "קישור לא חוקי"
 msgid "Invalid message ID"
 msgstr "מזהה הודעה לא תקין"
 
-#: src/hooks/business/spaces/useInviteValidation.ts:81
+#: src/hooks/business/spaces/useInviteValidation.ts:51
 #: src/services/InvitationService.ts:527 src/services/InvitationService.ts:590
 msgid "invalid response"
 msgstr "תשובה לא חוקית"
@@ -1691,7 +1768,7 @@ msgid "Invite sent"
 msgstr "הזמנה נשלחה"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:243
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:27
 msgid "Invites"
 msgstr "הזמנות"
 
@@ -1863,6 +1940,10 @@ msgstr "הפוך תפקיד לבלתי נראה"
 msgid "Make role public"
 msgstr "הפוך תפקיד לציבורי"
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:341
+msgid "Manage channel groups and channels. Drag to reorder."
+msgstr "נהל קבוצות ערוצים וערוצים. גרור כדי להסדר."
+
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr "נהל את העדפות ההתראות של שולחן העבודה עבור הודעות חדשות."
@@ -1906,7 +1987,7 @@ msgstr "חברים"
 msgid "Members List"
 msgstr "רשימת חברים"
 
-#: src/components/modals/ChannelEditorModal.tsx:190
+#: src/components/modals/ChannelEditorModal.tsx:185
 msgid ""
 "Members of selected roles can post, delete, and pin messages in this read-"
 "only channel. Note: Space owners must also be in a manager role to post "
@@ -1966,7 +2047,7 @@ msgstr "השתקה"
 msgid "Mute all notifications from this space"
 msgstr "השקט את כל ההתראות מהמרחב הזה"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Mute Channel"
 msgstr "השקט ערוץ"
 
@@ -2019,8 +2100,7 @@ msgstr "החשבון שלי"
 msgid "Name or Address"
 msgstr "שם או כתובת"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:26
-#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:34
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "שמות הדומים לאדמין, מודרטור או תמיכה שמורים."
 
@@ -2068,6 +2148,10 @@ msgstr "אין סימנים במרחב הזה"
 #: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "No bookmarks yet"
 msgstr "עדיין אין סימנים"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:608
+msgid "No channels - drag channels here or delete group."
+msgstr "אין ערוצים - גרור ערוצים לכאן או מחק קבוצה."
 
 #: src/components/direct/DirectMessageContactsList.tsx:375
 msgid "No contacts found"
@@ -2147,13 +2231,14 @@ msgstr "אף אחד"
 msgid "Note"
 msgstr "הערה"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:104
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Note contains invalid content"
 msgstr "ההערה מכילה תוכן לא תקין"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:108
-msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
-msgstr "ההערה חייבת להיות {MAX_USER_NOTE_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Note must be {0} characters or less"
+msgstr "הערה חייבת להיות {0} תווים או פחות"
 
 #: src/services/NotificationService.ts:193
 msgid "Notification permission not granted"
@@ -2275,14 +2360,6 @@ msgstr "סיכה"
 msgid "Pin"
 msgstr "סיכה"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Pin Channel"
-msgstr "נעץ ערוץ"
-
-#: src/components/modals/ChannelEditorModal.tsx:139
-msgid "Pin channel to top"
-msgstr "נעץ ערוץ למעלה"
-
 #: src/components/message/PinnedMessagesPanel.tsx:191
 msgid "Pin important messages to keep them easily accessible"
 msgstr "הצמד הודעות חשובות כדי לשמור עליהן נגישות בקלות"
@@ -2303,10 +2380,6 @@ msgstr "הצמד הודעה"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Pin Messages"
 msgstr "הצמד הודעות"
-
-#: src/components/modals/ChannelEditorModal.tsx:142
-msgid "Pin to top"
-msgstr "נעץ למעלה"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:43
 msgid "Pin/Unpin without confirmation"
@@ -2401,11 +2474,11 @@ msgstr "תגובות"
 msgid "Read more about Quorum"
 msgstr "קרא עוד על Quorum"
 
-#: src/components/modals/ChannelEditorModal.tsx:156
+#: src/components/modals/ChannelEditorModal.tsx:166
 msgid "Read only"
 msgstr "קריאה בלבד"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:163
 msgid "Read only channel"
 msgstr "ערוץ קריאה בלבד"
 
@@ -2413,6 +2486,10 @@ msgstr "ערוץ קריאה בלבד"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:308
 msgid "Read receipts"
 msgstr "אישורי קריאה"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:696
+msgid "Read-only"
+msgstr "רק קריאה"
 
 #: src/components/direct/DirectMessageContactsList.tsx:386
 msgid "Ready to start a truly private conversation?"
@@ -2422,7 +2499,7 @@ msgstr "מוכן להתחיל שיחה פרטית באמת?"
 msgid "Reauthorize"
 msgstr "אשר מחדש"
 
-#: src/services/ConfigService.ts:109
+#: src/services/ConfigService.ts:93
 msgid "received config with invalid signature!"
 msgstr "קיבל קונפיגורציה עם חתימה לא תקפה!"
 
@@ -2478,7 +2555,7 @@ msgid "Reply in thread..."
 msgstr "תגובה בשרשור..."
 
 #: src/components/modals/CreateSpaceModal.tsx:224
-#: src/components/modals/SpaceSettingsModal/General.tsx:306
+#: src/components/modals/SpaceSettingsModal/General.tsx:277
 msgid "Require Message Signing"
 msgstr "דרוש חתימת הודעות"
 
@@ -2532,7 +2609,7 @@ msgstr "שחזור..."
 msgid "Retry"
 msgstr "נסה שוב"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
 msgstr "תפקידים"
@@ -2545,10 +2622,10 @@ msgstr "שמור"
 msgid "SAVE"
 msgstr "שמור"
 
-#: src/components/modals/ChannelEditorModal.tsx:221
+#: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
-#: src/components/modals/GroupEditorModal.tsx:95
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
+#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:650
 #: src/components/modals/ThreadSettingsModal.tsx:184
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:345
 #: src/components/user/UserProfileEdit.tsx:158
@@ -2556,11 +2633,11 @@ msgid "Save Changes"
 msgstr "שמור שינויים"
 
 #: src/components/modals/ConversationSettingsModal.tsx:347
-#: src/components/modals/SpaceSettingsModal/General.tsx:331
+#: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "שמור היסטוריית עריכה"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:649
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:635
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:334
 msgid "Save Failed"
 msgstr "שימור נכשל"
@@ -2583,7 +2660,7 @@ msgstr "הגדרת הקונפיגורציה שהושמרה אינה עדכנית
 
 #: src/components/modals/ChannelEditorModal.tsx:94
 #: src/components/modals/FolderEditorModal.tsx:145
-#: src/components/modals/GroupEditorModal.tsx:135
+#: src/components/modals/GroupEditorModal.tsx:153
 #: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "שומר..."
@@ -2655,10 +2732,6 @@ msgstr "בחר"
 msgid "Select conversation"
 msgstr "בחר שיחה"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:290
-msgid "Select default channel"
-msgstr "בחר ערוץ ברירת מחדל"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:34
 msgid "Select or drag your account key file to restore your account."
 msgstr "בחר או גרור את קובץ מפתח החשבון שלך כדי לשחזר את החשבון שלך."
@@ -2671,7 +2744,7 @@ msgstr "בחר הרשאות"
 msgid "Select Profile Image"
 msgstr "בחר תמונת פרופיל"
 
-#: src/components/modals/ChannelEditorModal.tsx:209
+#: src/components/modals/ChannelEditorModal.tsx:204
 msgid "Select Roles"
 msgstr "בחר תפקידים"
 
@@ -2721,6 +2794,11 @@ msgstr "שולח..."
 #: src/components/context/RegistrationPersister.tsx:262
 msgid "Session Encrypted"
 msgstr "המפגש מוצפן"
+
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:704
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:719
+msgid "Set as default channel"
+msgstr "קבע כערוץ ברירת מחדל"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
@@ -2782,11 +2860,11 @@ msgstr "דלג עכשיו"
 msgid "Someone"
 msgstr "מישהו"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:204
+#: src/components/modals/SpaceSettingsModal/General.tsx:196
 msgid "Space Banner"
 msgstr "באנר מרחב"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:178
+#: src/components/modals/SpaceSettingsModal/General.tsx:170
 msgid "Space Description"
 msgstr "תיאור המרחב"
 
@@ -2794,32 +2872,35 @@ msgstr "תיאור המרחב"
 msgid "Space ID"
 msgstr "מזהה מרחב"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:169
+#: src/components/modals/SpaceSettingsModal/General.tsx:161
 msgid "Space name"
 msgstr "שם ה-Space"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:24
-#: src/hooks/business/validation/useSpaceNameValidation.ts:46
+#: src/hooks/business/validation/errorTranslator.ts:24
 msgid "Space name cannot contain special characters"
 msgstr "שם ה-Space לא יכול להכיל תווים מיוחדים"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:18
-#: src/hooks/business/validation/useSpaceNameValidation.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:21
 msgid "Space name is required"
 msgstr "שם המרחב נדרש"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:21
-#: src/hooks/business/validation/useSpaceNameValidation.ts:43
-msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr "שם ה-Space חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
+#. placeholder {0}: vars!.max
+#: src/hooks/business/validation/errorTranslator.ts:23
+msgid "Space name must be {0} characters or less"
+msgstr "שם המרחב חייב להיות {0} תווים או פחות"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:39
+#. placeholder {0}: vars!.min
+#: src/hooks/business/validation/errorTranslator.ts:22
+msgid "Space name must be at least {0} characters"
+msgstr "שם המרחב חייב להיות לפחות {0} תווים"
+
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/navbar/NavMenu.tsx:260
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
 msgstr "הגדרות מרחב"
 
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:23
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:52
 #: src/components/modals/UserSettingsModal/General.tsx:197
 msgid "Space Tag"
@@ -2850,7 +2931,7 @@ msgid "Status goes here"
 msgstr "סטטוס הולך כאן"
 
 #: src/components/message/EmojiPickerDrawer.tsx:72
-#: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
+#: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
 #: src/components/space/Channel.tsx:1815
 #: src/components/thread/ThreadPanel.tsx:530
@@ -2866,7 +2947,7 @@ msgstr "קו חוצה"
 msgid "Successfully sent invite to {0}"
 msgstr "הזמנה נשלחה בהצלחה ל-{0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid "Sync Kick Status"
 msgstr "סנכרן מצב הדחה"
 
@@ -2915,13 +2996,13 @@ msgstr ""
 "הגדרת ה-passkey פגה. ניתן לנסות שוב, או להמשיך ללא passkey (עדיין מאובטח, רק"
 " ללא הגנת חומרה של המכשיר)."
 
-#: src/components/modals/SpaceSettingsModal/Danger.tsx:30
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
+"This action cannot be undone and will permanently delete this Space and all "
+"of its channels and messages."
 msgstr ""
-"פעולה זו אינה ניתנת לביטול ותסיר לצמיתות את כל הגדרות ה-מרחב. כדי למחוק את "
-"ה-מרחב, עליך קודם למחוק את כל הערוצים."
+"פעולה זו לא ניתנת לביטול ותמחק באופן קבוע את המרחב זה ואת כל ערוציו "
+"והודעותיו."
 
 #: src/components/modals/UserSettingsModal/General.tsx:139
 msgid "This bio will be visible to others when they view your profile."
@@ -2941,7 +3022,7 @@ msgstr ""
 "להשתמש בהעדפה הגלובלית שלך."
 
 #: src/components/modals/CreateSpaceModal.tsx:187
-#: src/components/modals/SpaceSettingsModal/General.tsx:197
+#: src/components/modals/SpaceSettingsModal/General.tsx:189
 msgid ""
 "This description will be visible on invites and shown to people when they "
 "look up or join your Space using an invite link."
@@ -2964,6 +3045,13 @@ msgid ""
 msgstr ""
 "זה איך אחרים יראו אותך ב-Quorum. אתה יכול לשנות את זה בכל זמן בהגדרות."
 
+#: src/components/modals/ChannelEditorModal.tsx:100
+msgid ""
+"This is the default channel for the Space. To change it go to Space Settings"
+" → General."
+msgstr ""
+"זה הוא ערוץ ברירת המחדל של המרחב. כדי לשנות את זה הכנס להגדרות המרחב → כללי."
+
 #: src/components/modals/UserSettingsModal/General.tsx:175
 msgid ""
 "This is your public address and is safe to share with anyone you want to "
@@ -2978,8 +3066,7 @@ msgid ""
 msgstr ""
 "הקישור הזה לא יפוג, אבל אתה יכול ליצור חדש בכל עת, מה שיבטל את הקישור הישן."
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:23
-#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:33
 msgid "This name conflicts with mention keywords."
 msgstr "שם זה מתנגש עם מילות מפתח להזכרה."
 
@@ -3021,7 +3108,7 @@ msgstr "משתמש זה לא יוכל עוד לשלוח הודעות ב-Space ז
 msgid "This user will not be able to send messages for {days} days."
 msgstr "משתמש זה לא יוכל לשלוח הודעות במשך {days} ימים."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:681
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:667
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -3040,7 +3127,7 @@ msgstr ""
 "ההודעות הישירות. לא ניתן לשחזר הודעות ישירות. ודא שייצאת את המפתח הפרטי שלך "
 "מהגדרות הפרטיות/אבטחה. לא ניתן לבטל פעולה זו."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:680
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:666
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -3130,6 +3217,10 @@ msgstr ""
 "הפעל זאת כדי לאפשר לכל מי שיש לו את קישור ההזמנה להצטרף אוטומטית. כבה זאת "
 "כדי לצפות ולאשר כל אדם לפני שהוא יכול להצטרף. הערה: קישורים ציבוריים נותנים "
 "גישה מלאה לקריאה ל-Space שלך כל עוד הקישור פעיל."
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:89
+msgid "Type DELETE to confirm"
+msgstr "הקלד DELETE כדי לאשר"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:67
 msgid "Type RESET to confirm"
@@ -3257,7 +3348,7 @@ msgstr "משתמש לא ידוע"
 msgid "Unmute"
 msgstr "ביטול השתקה"
 
-#: src/components/space/ChannelItem.tsx:225
+#: src/components/space/ChannelItem.tsx:196
 msgid "Unmute Channel"
 msgstr "הסר השתקה מערוץ"
 
@@ -3283,10 +3374,6 @@ msgstr "הסר סיכה"
 msgid "Unpin"
 msgstr "הסר סיכה"
 
-#: src/components/space/ChannelItem.tsx:212
-msgid "Unpin Channel"
-msgstr "הסר נעיצה מערוץ"
-
 #: src/components/message/MessageActionsDrawer.tsx:257
 msgid "Unpin message"
 msgstr "הסר הצמדה מההודעה"
@@ -3305,7 +3392,7 @@ msgid ""
 "picture"
 msgstr "עד שתשיב, השולח הזה לא יראה את שם התצוגה או את תמונת הפרופיל שלך"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:497
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:486
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -3313,7 +3400,7 @@ msgstr ""
 "עדכן את רשומות ההדחה עבור כל החברים. השתמש בזה אם משתמשים שהודחו עדיין "
 "מופיעים פעילים לחלק מהחברים."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:242
+#: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 msgstr "העלה באנר למרחב שלך - PNG או JPG - יחס אופטימלי 3:1"
 
@@ -3326,7 +3413,7 @@ msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr "העלה תמונת פרופיל - PNG או JPG - יחס אופטימלי 1:1"
 
 #: src/components/modals/CreateSpaceModal.tsx:130
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
+#: src/components/modals/SpaceSettingsModal/General.tsx:151
 msgid "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "העלה אייקון למרחב שלך - PNG או JPG - יחס אופטימלי 1:1"
 
@@ -3350,7 +3437,6 @@ msgstr "השתמש ב\"שמור לקבצים\" כדי לשמור את המפתח
 msgid "User address here"
 msgstr "כתובת משתמש כאן"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:109
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "המשתמש אינו קיים."
@@ -3424,7 +3510,7 @@ msgid "What's on your mind today?"
 msgstr "מה על דעתך היום?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:351
-#: src/components/modals/SpaceSettingsModal/General.tsx:335
+#: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
 "disabled, only the current edited version is kept."
@@ -3451,7 +3537,7 @@ msgstr ""
 "הפעלת זה מגדילה את הנראות של מטא-נתונים של החשבון שלך, מה שיכול לחשוף מתי "
 "הצטרפת לSpaces חדשים, אם כי לא לSpaces שהצטרפת אליהם."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:310
+#: src/components/modals/SpaceSettingsModal/General.tsx:281
 msgid ""
 "When messages are signed, senders confirm they come from their key. When "
 "messages aren't signed, senders have plausible deniability. This setting "
@@ -3596,7 +3682,7 @@ msgstr ""
 "ביטלת את הגדרת ה-passkey. ניתן לנסות שוב, או להמשיך ללא passkey (עדיין "
 "מאובטח, רק ללא הגנת חומרה של המכשיר)."
 
-#: src/components/modals/GroupEditorModal.tsx:114
+#: src/components/modals/GroupEditorModal.tsx:116
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -3604,12 +3690,15 @@ msgstr ""
 "אינך יכול למחוק קבוצה שמכילה ערוצים. מחק קודם את כל {channelCount} הערוצים "
 "בקבוצה זו."
 
+#: src/components/modals/SpaceSettingsModal/Channels.tsx:742
+msgid "You cannot delete the default channel."
+msgstr "אתה לא יכול למחוק את ערוץ ברירת המחדל."
+
 #: src/components/message/MessageComposer.tsx:645
 #: src/components/space/Channel.tsx:1661
 msgid "You cannot post in this channel"
 msgstr "אינך יכול לפרסם בערוץ זה"
 
-#: src/hooks/business/validation/useAddressValidation.native.ts:59
 #: src/hooks/business/validation/useAddressValidation.ts:60
 msgid "You cannot send a direct message to yourself."
 msgstr "אינך יכול לשלוח הודעה ישירה לעצמך."
@@ -3655,7 +3744,7 @@ msgstr "אתה מעודכן!"
 msgid "You're all set!"
 msgstr "אתה מוכן!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:493
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:482
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -3843,14 +3932,26 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ "כמנהל של המרחב, עליך להעניק לעצמך תפקיד עם הרשאות מחיקה כדי למחוק הודעות של "
 #~ "משתמשים אחרים. <0><1>למד עוד</1></0>"
 
+#~ msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
+#~ msgstr "הביוגרפיה חייבת להיות באורך של {MAX_BIO_LENGTH} תווים או פחות"
+
 #~ msgid "Bookmark limit reached"
 #~ msgstr "הגעת למגבלת הסימנים"
 
 #~ msgid "Camera permission is required to take photos"
 #~ msgstr "דרושה הרשאת מצלמה כדי לצלם תמונות"
 
+#~ msgid "Cannot delete Space with channels. Please delete all channels first."
+#~ msgstr "לא ניתן למחוק מרחב עם ערוצים. אנא מחק את כל הערוצים קודם."
+
 #~ msgid "Change your avatar and name for this Space."
 #~ msgstr "שנה את התמונה שלך ואת השם עבור המרחב הזה."
+
+#~ msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "שם הערוץ חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
+
+#~ msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
+#~ msgstr "נושא הערוץ חייב להיות באורך של {MAX_TOPIC_LENGTH} תווים או פחות"
 
 #~ msgid "Check "
 #~ msgstr "בדוק"
@@ -3878,6 +3979,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgid "Copy Key & Continue"
 #~ msgstr "העתק מפתח והמשך"
 
+#~ msgid "Default Channel"
+#~ msgstr "ערוץ ברירת מחדל"
+
 #~ msgid "Delete Current Link"
 #~ msgstr "מחק קישור נוכחי"
 
@@ -3892,6 +3996,15 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "התיאור חייב להיות באורך של {maxDescriptionLength} תווים או פחות"
+
+#~ msgid "Description must be {maxLength} characters or less"
+#~ msgstr "התיאור חייב להיות {maxLength} תווים או פחות"
+
+#~ msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "שם המכשיר חייב להיות {MAX_NAME_LENGTH} תווים או פחות"
+
+#~ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "שם התצוגה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
 #~ msgid "DM Requests"
 #~ msgstr "בקשות DM"
@@ -3936,6 +4049,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "Folder Settings"
 #~ msgstr "הגדרות תיקייה"
+
+#~ msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "שם הקבוצה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
 #~ msgid "hide home screen"
 #~ msgstr "הסתר מסך בית"
@@ -4022,6 +4138,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "אין אזכורים שלא נקראו"
 
+#~ msgid "Note must be {MAX_USER_NOTE_LENGTH} characters or less"
+#~ msgstr "ההערה חייבת להיות {MAX_USER_NOTE_LENGTH} תווים או פחות"
+
 #~ msgid "One of us, one of us!"
 #~ msgstr "אחד מאיתנו, אחד מאיתנו!"
 
@@ -4040,6 +4159,15 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "Photo library permission is required to select images"
 #~ msgstr "הרשאת ספריית תמונות נדרשת לבחירת תמונות"
+
+#~ msgid "Pin Channel"
+#~ msgstr "נעץ ערוץ"
+
+#~ msgid "Pin channel to top"
+#~ msgstr "נעץ ערוץ למעלה"
+
+#~ msgid "Pin to top"
+#~ msgstr "נעץ למעלה"
 
 #~ msgid "Pinned!"
 #~ msgstr "מוצמד!"
@@ -4107,6 +4235,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ " הודעות בכל הודעה כברירת מחדל. אם לא נבחרו מנהלים, רק בעל ה-Space יכול לנהל "
 #~ "את הערוץ."
 
+#~ msgid "Select default channel"
+#~ msgstr "בחר ערוץ ברירת מחדל"
+
 #~ msgid "Select for which mentions you will receive notifications"
 #~ msgstr "בחר עבור אילו אזכורים תקבל הודעות"
 
@@ -4134,6 +4265,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgid "Space Name"
 #~ msgstr "שם חלל"
 
+#~ msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
+#~ msgstr "שם ה-Space חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
+
 #~ msgid "Stay Connected, Stay Invisible"
 #~ msgstr "שמור מחובר, שמור בלתי נראה"
 
@@ -4149,6 +4283,13 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "Tap to select"
 #~ msgstr "הקש כדי לבחור"
+
+#~ msgid ""
+#~ "This action cannot be undone and will permanently remove all the Space "
+#~ "settings. To delete the Space, you must first delete all Channels."
+#~ msgstr ""
+#~ "פעולה זו אינה ניתנת לביטול ותסיר לצמיתות את כל הגדרות ה-מרחב. כדי למחוק את "
+#~ "ה-מרחב, עליך קודם למחוק את כל הערוצים."
 
 #~ msgid "This information is only provided to the Spaces you join."
 #~ msgstr "מידע זה מסופק רק לחללים שאתה מצטרף אליהם."
@@ -4178,6 +4319,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "Too many files selected. Please select fewer files."
 #~ msgstr "נבחרו יותר מדי קבצים. אנא בחר קבצים פחותים."
+
+#~ msgid "Unpin Channel"
+#~ msgstr "הסר נעיצה מערוץ"
 
 #~ msgid "Unpinned!"
 #~ msgstr "הוסר הצמדה!"
