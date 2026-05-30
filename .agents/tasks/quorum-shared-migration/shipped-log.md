@@ -57,6 +57,28 @@ Apply as a checklist when verifying any candidate. A hook failing ANY of these i
 
 ## Recent entries (most recent first)
 
+## 2026-05-30 — Desktop bonus C1 sweep + useMessageFormatting dead code removal
+
+**Scope**: mirror of yesterday's mobile sweep, against desktop. Investigate `src/hooks/business/**`, `src/services/**`, `src/utils/**` for "desktop inlines what shared already exports."
+
+**Result**: 1 actionable finding (turned into dead-code cleanup). Other candidates were Trap D (`extractTextFromMessage` in `db/messages.ts` + `SearchService.ts` joins with `' '` for indexing vs shared's `'\n'` for clipboard — intentionally different consumers; `canManageReadOnlyChannel` has inverted return contract for non-read-only case; `formatFileSize` in image errors uses compact `"50MB"` vs shared's verbose `"50.0 MB"` for inline UI). All correctly skipped.
+
+**Action shipped — `useMessageFormatting.ts` cleanup**:
+- Removed `InviteRegex` legacy hardcoded regex (`qm.one|app.quorummessenger.com` only — would silently skip staging/local domains). Zero external consumers (grepped + tsc clean).
+- Removed `YTRegex = YOUTUBE_URL_REGEX` re-export — pure pass-through, zero external consumers.
+- Removed `markdownPatterns` (15-regex array) + `hasMarkdownPatterns` helper — only call site was commented out at line 98.
+- Removed both dead names from the hook's return object.
+- Cleaned up the now-unused `YOUTUBE_URL_REGEX` import.
+
+Net **-35 LOC of pure dead surface**. tsc clean. Smoke tested: messages render normally, YouTube embeds work, invite links work (the live `isInviteLink()` path using shared's `getValidInvitePrefixes()` was untouched).
+
+**Cleared stale Paused track**: "Folder name length consistency" entry was stale — `useFolderManagement.ts` already imports `MAX_NAME_LENGTH` from shared (50). The `useFolderNameValidation` hook the entry referenced doesn't exist. Marked resolved in roadmap.
+
+**Mobile**: not touched.
+**PRs**: bundled into the session-branch PR.
+
+---
+
 ## 2026-05-30 — AES-GCM config-decrypt dedup (desktop-internal Paused track)
 
 **Scope**: collapse the 4 inline copies of the AES-GCM UserConfig decrypt block into a single helper. Pulled from Paused tracks (was queued there because Phase 2 verification ruled it out for shared promotion — mobile uses `@noble/ciphers`, desktop uses Web Crypto; Trap E platform-correct divergence). Desktop-internal cleanup only — no shared / mobile coordination.
