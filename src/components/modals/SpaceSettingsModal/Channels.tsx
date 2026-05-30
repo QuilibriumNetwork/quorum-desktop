@@ -121,7 +121,7 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: isTouchDevice()
-        ? { delay: 100, tolerance: 5 }
+        ? { distance: 15 } // Touch: 15px movement, no delay (matches NavMenu pattern)
         : { distance: 8 },
     })
   );
@@ -314,7 +314,7 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
         </div>
       </div>
 
-      <div className="px-6 pb-6">
+      <div className="px-6 pb-6" style={{ touchAction: 'pan-y' }}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -453,6 +453,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.4 : 1,
+        touchAction: 'none',
       }}
       {...attributes}
     >
@@ -600,6 +601,7 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.4 : 1,
+        touchAction: 'none',
       }}
       {...attributes}
     >
