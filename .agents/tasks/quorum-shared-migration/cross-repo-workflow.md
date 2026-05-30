@@ -40,6 +40,40 @@ For each cross-repo migration:
 
 Both count as done. Mobile sitting in review is normal.
 
+## Visual smoke test before self-merge (2026-05-30)
+
+> **Self-merging shared + desktop is the default, but it is NOT a substitute for verifying behavior.** Before clicking merge on a desktop PR (or pushing shared changes desktop actually consumes), check whether the change can affect user-visible behavior — and if so, run a visual smoke test in dev first.
+
+### When a visual smoke test is required
+
+Skip the smoke test only when the change is **100% safe**: pure-utility additive shared exports with no desktop consumer change, dead-code deletions, docs-only edits, build-config tweaks that don't change runtime, type-only widening with no implementation change.
+
+Run the smoke test when ANY of these apply:
+- Desktop component, hook, or service code changes (even pure refactors — refactors can break call sites in subtle ways).
+- Shared util that desktop imports gets replaced or its behavior is touched.
+- Type changes desktop reads (could compile but misbehave at runtime).
+- Anything touching mutation flows, persistence, decryption, sync, or UI state.
+
+A pure mechanical "extract inline logic to shared util" refactor (e.g. `toggleRolePermission`) IS in scope — same logic moves places, but a regression in the import wiring or a stale lockfile can still break the feature at runtime.
+
+### What the smoke test looks like
+
+1. Open the affected feature in the dev environment (e.g. `yarn dev`).
+2. Exercise the golden path: the primary user action the change touches.
+3. Exercise one obvious edge case: empty state, error state, or "already in state X" path.
+4. If the smoke passes, self-merge. If not, fix and re-test.
+
+### Coordination with the user
+
+The agent does NOT self-merge a desktop PR that requires smoke testing until the user confirms the smoke passed. Workflow:
+
+1. Agent opens shared PR, self-merges (shared is library-only, smoke happens via desktop).
+2. Agent opens desktop PR, posts the smoke-test steps in the PR description, **waits**.
+3. User runs the smoke test (or asks the agent to run it via `browser-debug` / `Claude_Preview`).
+4. Once green, agent self-merges desktop.
+
+The agent MAY self-merge desktop without waiting only when the change is in the "100% safe" list above. Default to waiting; ask if unsure.
+
 ## Sizing and bundling
 
 **Default rule:** one job per PR, ideally <50 lines diff. Smaller PRs survive drift, get real review, bisect cleanly.
@@ -48,26 +82,47 @@ Both count as done. Mobile sitting in review is normal.
 
 What "same shape" means: the changes share a migration pattern (e.g. "extract inlined state machine X to shared, replace inline copies with shared import"). Different shapes = different PRs.
 
-## Docs-only work on main (2026-05-29)
+## Always work on a branch (2026-05-30 — SUPERSEDES "docs-only work on main")
 
-When working on docs **directly on `main`** (re-audits, design docs, status table updates, INDEX, README, workflow rule additions), **don't commit per-session. Accumulate uncommitted across sessions. Ship as one big commit when the next code task is about to start.**
+> **New default for this repo (and other multi-author Quilibrium repos — `quorum-shared`, `quorum-mobile`, `www-dev`): never commit directly to `main`. Every session opens a branch, squash-merges back when the work is worth merging.** Applies to code, docs, analyses, reports, audits, and any combination thereof. Solo Quilibrium repos (e.g. `quily-chatbot`) are exempt — direct-to-main is fine when no other maintainers exist.
 
-The rationale: doc work has no runtime behavior to bisect. Splitting commits gains nothing. Committing per-session just produces more push events. Accumulating until the natural transition point (the next code task) gives one clean "everything I learned/wrote up to here" commit that bookends the doc cycle.
+### Rule
 
-Examples:
-- Three re-audit sessions in a row → one commit when the next migration code task starts
-- A re-audit + a doc compaction + a roadmap update → one commit
-- A workflow rule addition + the example that motivated it → folded into the next commit
+- Start each session by branching off `main` (or off an existing in-progress branch if continuing one).
+- Branch name describes the rough scope: `analysis/<topic>`, `doc/<topic>`, `refactor/<thing>`, `feat/<thing>`. Specificity matches the work — a single migration task gets a tight name; a "doc housekeeping + a few small tweaks" session gets a broad name like `doc/housekeeping-2026-05-30`.
+- Commit freely on the branch (per-session, per-logical-chunk, whatever feels natural).
+- When the work is worth landing, **open a PR and squash-merge into `main`**. Even for solo desktop work — the PR gives one clean commit on `main`, captures the diff in GitHub's UI, and keeps `main` linear.
+- Long-running branches are fine. An analysis branch can sit for a week as multiple sessions build on it; it merges when the analysis is done.
 
-The commit message itself can be terse — "doc: housekeeping across N audits" or "doc: re-audits + status updates" — since each individual change is already self-documenting in its file.
+### What this replaces
 
-**Code changes on main are a separate matter — they commit individually, even if small.** When a small code fix lands on main (a 1-line bump, a hygiene refactor, etc.), it gets its own commit. Doc edits that *describe* that specific code change (e.g. updating `.agents/docs/*.md` to reflect a new constant) ride with the code commit. Doc edits that are unrelated (re-audits, roadmap updates, workflow rules, design docs) stay in the accumulating bundle and ship separately at the next transition point.
+The prior rule said "docs go directly on main, accumulate across sessions, code commits individually." That worked while only one person was on the repo. Now `main` is shared and direct commits create coordination problems (the 2026-05-30 role-mutation session hit a 5-commits-ahead/1-commit-behind divergence because yesterday's docs went straight to local `main` and a parallel PR squash-merged on top). Branches fix this:
 
-Rationale for the split: code commits have bisect-value (`git bisect` and `git blame` need them to be discrete). Doc commits don't. So docs aggregate, code stays granular.
+- Local `main` always mirrors `origin/main`.
+- Concurrent work doesn't collide.
+- Doc edits get a PR description that contextualizes them.
+- Any session's work is reviewable as a single GitHub diff if questions come up later.
 
-This rule does NOT apply when committing on a feature branch as part of a PR — there, follow the per-migration ceremony (one logical commit per PR, which may include both code and docs).
+### Sizing inside the branch
 
-The rule also has an obvious safety release valve: if the doc work piles up enough that losing it would be costly (e.g. a week of uncommitted audits), commit it. Don't let "wait for the next code task" become "lose work to a disk failure."
+- One branch can hold mixed work (analysis + a small doc tweak + a 5-LOC code fix). Doesn't need to be one-thing-per-branch.
+- The branch becomes one squash commit. The commit message summarizes the bundle ("analysis: phase 7 readiness + small docs cleanup").
+- For genuinely independent code work (a real refactor, a feature), use a tight branch with a tight name — same as the migration ceremony described elsewhere in this doc.
+
+### Exceptions
+
+Trivial one-liners that obviously belong on `main` and need no review (typo fixes, comment cleanups, `.gitignore` additions) can still go direct. Default to a branch when unsure.
+
+### Mechanics
+
+```bash
+git checkout -b doc/<topic>
+# work, commit, work, commit
+git push -u origin doc/<topic>
+gh pr create --title "..." --body "..."
+gh pr merge <num> --squash --delete-branch
+git checkout main && git pull
+```
 
 ## Following mobile patterns (2026-05-28)
 

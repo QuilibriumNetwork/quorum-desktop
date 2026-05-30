@@ -57,6 +57,25 @@ Apply as a checklist when verifying any candidate. A hook failing ANY of these i
 
 ## Recent entries (most recent first)
 
+## 2026-05-30 — Role-mutation helpers extracted (Phase 2 C4)
+
+**Scope**: ship the per-task plan from 2026-05-29 (`2026-05-29-migrate-role-mutation-helpers.md`). Extract two pure role-mutation helpers (`toggleRolePermission`, `setRolePermissions`) duplicated byte-for-byte between desktop and mobile.
+
+**Shipped**:
+- [quorum-shared#21](https://github.com/QuilibriumNetwork/quorum-shared/pull/21) — adds `src/utils/roleUtils.ts` + tests + barrel re-export. Version `2.1.0-21`.
+- [quorum-desktop#163](https://github.com/QuilibriumNetwork/quorum-desktop/pull/163) — `useRoleManagement.ts` swaps inline include/filter/spread + spread-with-new-array blocks for shared imports. Net -7 LOC.
+- Mobile task dropped: [`2026-05-30-mobile-adopt-shared-role-mutation-helpers.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-30-mobile-adopt-shared-role-mutation-helpers.md). Static-only verification, runtime test not required (pure mechanical refactor).
+
+**Version coordination note**: Cassandra pushed a `2.1.0-17` bump (`20934044`) from an older base while our work had progressed to `2.1.0-20`. Her merge resolved correctly — master stayed at `2.1.0-20` (highest-version-wins). Our PR continues to `2.1.0-21`. Worth flagging if it happens again: she may not be tracking the latest version when branching.
+
+**Workflow rule added**: `cross-repo-workflow.md` now has a "Visual smoke test before self-merge" section (2026-05-30). Self-merging desktop is the default, but for changes that can affect runtime behavior (refactors included), the agent must wait for user smoke confirmation before merging. Triggered by this PR: shipped #163 without a manual smoke, user flagged it as a workflow gap.
+
+**Mobile**: task dropped, queued for static-verification session.
+
+**PRs**: shared #21 merged, desktop #163 merged.
+
+---
+
 ## 2026-05-29 — Phase 5 issue drafted (not filed)
 
 **Scope**: draft the Phase 5 coordination issue text for filing against `quorum-mobile`. Two architectural questions: CryptoProvider DI pattern + broadcast pattern for shared mutation hooks.

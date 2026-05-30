@@ -3,7 +3,7 @@ type: roadmap
 title: Quorum-shared migration — phased roadmap (less risky to most risky)
 status: living
 created: 2026-05-29
-updated: 2026-05-29
+updated: 2026-05-30
 audience: any agent or contributor planning the next migration move
 ---
 
@@ -20,20 +20,19 @@ audience: any agent or contributor planning the next migration move
 
 ## 🟢 Next session: start here
 
-State at end of 2026-05-29 session: **investigation surface exhausted** for all 8 phases. Concrete next moves, in order of leverage:
+State at end of 2026-05-30 session: **role-mutation extraction shipped** (shared #21 + desktop #163 merged; mobile task queued). Phase 2 candidates exhausted. Concrete next moves, in order of leverage:
 
-**1. Execute the role-mutation extraction** (highest-leverage ready-to-ship work).
-- Per-task file: [`2026-05-29-migrate-role-mutation-helpers.md`](2026-05-29-migrate-role-mutation-helpers.md). Fully scoped, ready to execute.
-- Three PRs in sequence: quorum-shared → quorum-desktop → mobile task drop (already written, sits in mobile's gitignored `.agents/`).
-- Estimated 1 session. No open questions to resolve.
-
-**2. (optional, depending on bandwidth) File the Phase 5 coordination issue.**
+**1. (optional, depending on bandwidth) File the Phase 5 coordination issue.**
 - Draft at `.agents/.temp/2026-05-29-phase5-coordination-issue.md` (gitignored). User decision was to file whenever — no urgency.
 - After filing, update Phase 5 section in this roadmap to record the issue number.
+- Filing unblocks Phase 7 (monolith convergence — `useRoleManagement`, `useChannelManagement`, `useInviteManagement`, `useUserKicking` form-state-vs-mutation question).
 
-**3. (optional) Tackle one Paused-tracks item** if you want a low-risk warm-up before the role-mutation PRs:
+**2. Tackle one Paused-tracks item** as a low-risk warm-up:
 - **Desktop-internal AES-GCM config-decrypt dedup** — 4 inline copies → 1 helper. Pure desktop refactor, zero shared changes. ~30 min.
+- **`useInviteManagement` 1-line nudge** — tighten `manualAddress?.length === 46` to `isValidIPFSCID`. Folds naturally into Phase 7c when that lands; can also be a standalone tweak.
 - **Channel pinning removal** — only START if `2026-01-07-channel-ordering-feature.md` is the next desktop feature being implemented; otherwise leave as paused.
+
+**3. Run a fresh small-bucket sweep**. The Phase 2 verifications surfaced bonus C1 findings (mobile reimplements shared utils). A targeted sweep across mobile's `hooks/chat/*` and `services/*` for "what does mobile inline that shared exports" could surface more.
 
 **Do NOT pick up Phases 5, 7, or 8.** Phase 5 is filing-only (no investigation). Phase 7 is gated on Phase 5 answers. Phase 8 has no unblocked candidates.
 
@@ -125,7 +124,7 @@ A candidate failing ANY of these traps is C (stays per-app) or D (defer). Use th
 **Known candidates** (each its own per-task file):
 
 - ~~**AES-GCM config-decryption block**~~ — **RESOLVED 2026-05-29 — classification C (stays per-app).** Investigation surfaced **4 desktop copies** (not 2 as morning spot-check thought): `useOnboardingFlowLogic.ts:194-224` + `useUnifiedOnboardingFlow.ts:219-242` + `useUnifiedOnboardingFlow.ts:342-371` + `ConfigService.ts:75-128`. Mobile has the equivalent at `services/config/configService.ts:192-232` — semantically identical algorithm (SHA-512 → first 32 bytes → AES-256-GCM, IV = last 24 hex chars), same wire format, same output type. **But the implementations are platform-correct in different ways:** desktop uses `window.crypto.subtle` (Web Crypto, non-extractable keys, hardware accel); mobile uses `@noble/ciphers` (pure JS, natural for RN). Forcing convergence would be a security regression for desktop (Web Crypto → noble means keys move from non-extractable to raw `Uint8Array`). Shape A (`CryptoProvider` DI) is also wrong — `CryptoProvider` is the message-layer Ratchet/Ed448 interface, semantically mismatched with symmetric config crypto. **The desktop-internal duplication (4 copies → 1 helper) is still worth fixing** as a desktop-only task; tracked in "Paused tracks" below.
-- **Role-mutation pure functions** — **🟢 SCOPED 2026-05-29 — recommendation B (partial set).** Per-task file: [`2026-05-29-migrate-role-mutation-helpers.md`](2026-05-29-migrate-role-mutation-helpers.md). Extracts `toggleRolePermission` + `setRolePermissions` to shared (~5 LOC each; both inlined byte-for-byte in desktop + mobile today). Scope-guardrails: do NOT extract UUID gen (Trap E), `toggleRolePublic` (tiny semantic divergence), per-field setters (too thin), or member assignment (desktop doesn't have it). **Bonus C1 finding surfaced**: mobile reimplements `useHasPermission`/`useUserPermissions`/`useUserRoles` as React hooks instead of using shared's existing `hasPermission`/`getUserPermissions`/`getUserRoles`. Mobile task dropped at [`2026-05-29-mobile-adopt-shared-permission-helpers.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-shared-permission-helpers.md). ~60 LOC mobile cleanup + correctness fix (mobile currently ignores `isSpaceOwner`, silently dropping owners' permissions).
+- ~~**Role-mutation pure functions**~~ — **✅ SHIPPED 2026-05-30.** Per-task file moved to `.done/`. Shared 2.1.0-21 ([quorum-shared#21](https://github.com/QuilibriumNetwork/quorum-shared/pull/21)) added `toggleRolePermission` + `setRolePermissions`. Desktop ([quorum-desktop#163](https://github.com/QuilibriumNetwork/quorum-desktop/pull/163)) consumes them in `useRoleManagement.ts`. Mobile task dropped at [`2026-05-30-mobile-adopt-shared-role-mutation-helpers.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-30-mobile-adopt-shared-role-mutation-helpers.md) — static-only verification, runtime test not required. The original bonus C1 finding (`useHasPermission`/`useUserPermissions`/`useUserRoles` mobile rewire) remains its own queued mobile task at [`2026-05-29-mobile-adopt-shared-permission-helpers.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-shared-permission-helpers.md).
 - ~~**Manifest-construction helpers**~~ — **RESOLVED 2026-05-29 — classification D (bonus C1 findings, no Phase 2 extraction).** Audit overestimated both hooks: `useSpaceCreation` is 101 LOC of orchestration (not ~500); `useInviteManagement` is 197 LOC (not ~520). Real logic lives in `SpaceService.ts` (explicitly stays-per-app per services design). The only pure-liftable candidate inside `SpaceService` (Space object factory, SC-1) is too thin to warrant extraction (~20 LOC inlined once per platform; the call sites are interleaved with crypto so the extraction yields zero net LOC savings at call site). Manifest-encryption + key-derivation are Trap E (platform-correct primitive divergence: `ch.js_sign_ed448` WASM vs `NativeCryptoProvider`). **Two strong bonus C1 findings surfaced**: (1) mobile reimplements `getInviteUrlBase`/`VALID_INVITE_PREFIXES`/`parseInviteLink` locally in 2 files (~80 LOC) — mobile task dropped at [`2026-05-29-mobile-rewire-invite-helpers-to-shared.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-rewire-invite-helpers-to-shared.md); includes a real correctness fix (mobile's `getInviteUrlBase` hardcodes prod domain, breaks staging/localhost builds). (2) Confirms the deferred desktop `useInviteManagement` 1-line nudge in Paused tracks (`length === 46` → `isValidIPFSCID`).
 
 **Exit criteria:** ✅ **Phase 2 fully verified 2026-05-29.** All three named candidates resolved:
