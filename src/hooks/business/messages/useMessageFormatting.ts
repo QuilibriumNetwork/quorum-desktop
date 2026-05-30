@@ -3,19 +3,12 @@ import * as linkify from 'linkifyjs';
 import {
   isYouTubeURL,
   extractYouTubeVideoId,
-  YOUTUBE_URL_REGEX,
   getValidInvitePrefixes,
   parseMessageLink,
   createIPFSCIDRegex,
 } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../../utils/embeddedMedia';
-
-// Legacy export for backward compatibility
-export const YTRegex = YOUTUBE_URL_REGEX;
-export const InviteRegex = new RegExp(
-  /^((?:https?:)?\/\/?)?((?:www\.)?(?:qm\.one|app\.quorummessenger\.com))(\/(invite\/)?#(.*))$/
-);
 
 interface UseMessageFormattingOptions {
   message: MessageType;
@@ -26,30 +19,6 @@ interface UseMessageFormattingOptions {
   spaceChannels?: Channel[];
   disableMentionInteractivity?: boolean;
   currentSpaceId?: string;
-}
-
-// Detect if text contains markdown patterns
-const markdownPatterns = [
-  /\*\*[^*]+\*\*/,        // Bold **text**
-  /\*[^*]+\*/,            // Italic *text*
-  /~~[^~]+~~/,            // Strikethrough ~~text~~
-  /`[^`]+`/,              // Inline code `code`
-  /```[\s\S]*?```/,       // Closed code blocks ```code```
-  /```[\s\S]*$/,          // Unclosed code blocks ```code (at end)
-  /^#{1,3}\s/m,           // H1, H2, H3 headers (all converted to H3)
-  /^>\s/m,                // Blockquotes > text
-  /^\s*[-*+]\s/m,         // Unordered lists - item
-  /^\s*\d+\.\s/m,         // Ordered lists 1. item
-  /\|[^|]+\|/,            // Tables |col|
-  /^---+$/m,              // Horizontal rule ---
-  /\[[^\]]+\]\([^)]+\)/,  // Markdown links [text](url)
-  /<[^>]+>/,              // Angle bracket autolinks <url> or <email>
-  /\|\|[^|]+\|\|/,        // Spoiler content ||text||
-];
-
-function hasMarkdownPatterns(text: string): boolean {
-  if (!text) return false;
-  return markdownPatterns.some(pattern => pattern.test(text));
 }
 
 // Check if a token is an invite link using dynamic domain validation
@@ -296,9 +265,5 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
     isMentioned,
     handleImageClick,
     shouldUseMarkdown,
-
-    // Regex patterns
-    YTRegex,
-    InviteRegex,
   };
 }
