@@ -145,19 +145,6 @@ const ChannelEditorModal: React.FunctionComponent<{
           </div>
         )}
 
-        <div className="mb-3">
-          <Flex className="items-center gap-3">
-            <Switch
-              value={isReadOnly}
-              onChange={handleReadOnlyChange}
-              accessibilityLabel={t`Read only channel`}
-            />
-            <div className="text-label-strong">
-              <Trans>Read only</Trans>
-            </div>
-          </Flex>
-        </div>
-
         {space?.allowThreads && (
           <div className="mb-3">
             <Flex className="items-center gap-3">
@@ -172,6 +159,19 @@ const ChannelEditorModal: React.FunctionComponent<{
             </Flex>
           </div>
         )}
+
+        <div className="mb-3">
+          <Flex className="items-center gap-3">
+            <Switch
+              value={isReadOnly}
+              onChange={handleReadOnlyChange}
+              accessibilityLabel={t`Read only channel`}
+            />
+            <div className="text-label-strong">
+              <Trans>Read only</Trans>
+            </div>
+          </Flex>
+        </div>
 
         {isReadOnly && (
           <div className="mb-4 max-sm:mb-1">
