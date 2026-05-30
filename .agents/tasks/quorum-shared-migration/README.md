@@ -9,9 +9,13 @@ updated: 2026-05-28
 # Quorum Shared Migration — Master Tracker
 
 > **🔴 New session? Read these first, in order:**
-> 1. **[status-recap.md](status-recap.md)** — friendly re-orientation: what's done, what's pending, what's next. Read if you've been away from this for more than a week.
-> 2. **[2026-05-28-cross-repo-workflow.md](2026-05-28-cross-repo-workflow.md)** — how to ship work across three repos when shared+desktop are self-merged but mobile PRs go to a different reviewer. Covers small-PR sizing, additive-vs-breaking changes, drift handling, the "follow mobile patterns" rule, and the "don't decide for the lead" rule. **Re-read at the start of every migration session** — the cross-repo workflow is unintuitive and easy to get wrong.
-> 3. **[../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md)** — only if you're working on the notifications track specifically. Verified deep-dive into how desktop and mobile each handle notification preferences (storage, decision logic, OS delivery). Anchors the GitHub issue at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md) that's paused on a lead-dev reply.
+> 1. **[roadmap.md](roadmap.md)** — the master plan. **Read the "🟢 Next session: start here" block at the top first** — it names the next concrete action to take. Then the rest of the doc gives phased context.
+> 2. **[cross-repo-workflow.md](cross-repo-workflow.md)** — how to ship work across three repos when shared+desktop are self-merged but mobile PRs go to a different reviewer. Covers small-PR sizing, additive-vs-breaking changes, drift handling, the "follow mobile patterns" rule, and the "don't decide for the lead" rule. **Re-read at the start of every migration session** — the cross-repo workflow is unintuitive and easy to get wrong.
+> 3. **[shipped-log.md](shipped-log.md)** — **read the "Top-level lessons" block at the top** (6-trap taxonomy + cross-cutting findings). Then skim the 5 recent entries below it to catch up on what changed.
+> 4. **[../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md)** — only if you're working on the notifications track specifically. Verified deep-dive into how desktop and mobile each handle notification preferences. Anchors the GitHub issue paused on a lead-dev reply.
+
+> **Cross-cutting work that touches this migration:**
+> - [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) — desktop drag-and-drop channel reordering feature. Touches the migration in two ways: (1) reorder hooks intentionally kept desktop-local (Option B decision recorded in task), (2) channel pinning removal is cross-repo (mobile + shared + desktop coordination).
 
 > **Sibling workstreams in flight (2026-05-19):** [MessageDB refactor](../messagedb/README.md) and [test suite review](../2026-05-19-test-suite-review.md). The receipts PR here is coupled to MessageDB Tier 0 #3 and ReceiptService test cleanup — both flagged in the [receipts task prerequisite block](./.done/2026-05-19-receipts-shared-migration.md).
 
@@ -27,31 +31,44 @@ Code that participates in the P2P protocol (wire types, message-level state mach
 
 ```
 quorum-shared-migration/
-├── README.md                                  ← this file (master tracker)
+├── README.md                          ← this file (catalog: status table + pointers)
+├── roadmap.md                         ← phased plan, less risky → most risky
+├── shipped-log.md                     ← chronological history + lessons learned (top-level lessons block + 5 recent entries)
+├── shipped-log-archive.md             ← older entries (only read if you need historical context)
+├── cross-repo-workflow.md             ← workflow rulebook (read every session)
+├── mobile-tasks-pending.md            ← mobile-side queue (gitignored on mobile)
+├── 2026-XX-XX-<slug>.md               ← active per-task files (date-prefixed)
 │
-├── status-recap.md                 ← 🟢 START HERE if you've been away
-├── 2026-05-28-cross-repo-workflow.md          ← 🟢 READ EVERY SESSION (workflow rules)
+├── designs/                           ← audits, inventories, decision rationale
+│   ├── 2026-03-18-utils-design.md
+│   ├── 2026-05-18-services-design.md
+│   ├── 2026-05-28-actionqueue-reaudit.md
+│   ├── 2026-05-28-hooks-audit-refresh.md   ← current authoritative hooks audit
+│   └── 2026-05-29-searchservice-reaudit.md
 │
-├── designs/                                   ← audits, inventories, decision rationale
-│   ├── 2026-03-18-utils-design.md             (utils audit — migration done)
-│   ├── 2026-05-28-hooks-audit-refresh.md      (hooks audit — current authoritative version)
-│   └── 2026-05-18-services-design.md          (per-service audit — partial migration ongoing)
+├── reference/                         ← older / one-off docs kept for context
+│   ├── stacked-prs-workflow.md        (older PR-stacking pattern, secondary)
+│   └── npm-publish-access.md          (one-off setup task)
 │
-├── 2026-03-15-stacked-prs-workflow.md         ← older stacked-PR doc (secondary; use the 2026-05-28 workflow as primary)
-├── 2026-03-15-npm-publish-access-quorum-shared.md  ← one-off setup task
-│
-└── .done/                                     ← completed per-PR tasks land here
-    ├── 2026-05-18-typing-shared-migration.md  (typing service + types + tests)
-    ├── 2026-05-19-receipts-shared-migration.md (receipts service + new wire types + tests)
-    └── 2026-05-19-tests-migration.md          (relocated util tests to shared)
+└── .done/                             ← completed per-task files land here
+    ├── 2026-05-18-typing-shared-migration.md
+    ├── 2026-05-19-receipts-shared-migration.md
+    ├── 2026-05-19-tests-migration.md
+    ├── 2026-05-27-shared-vs-local-type-divergence.md
+    ├── 2026-05-28-migrate-use-two-step-confirm.md
+    └── 2026-05-28-migrate-validation-hooks.md
 ```
 
-**Related cross-folder docs** (not in this folder but relevant):
-- [`2026-05-27-shared-vs-local-type-divergence.md`](2026-05-27-shared-vs-local-type-divergence.md) — the `NotificationSettings` / `NavItem` divergence investigation (now lives in this folder). Status: `partial-done` — the notification settings rename shipped (PR #18 + #160), `NavItem` deferred until mobile builds folder UI, the bigger architectural question moved to a separate workstream (see report below).
-- [`../../reports/2026-05-28-notification-architecture-divergence.md`](../../reports/2026-05-28-notification-architecture-divergence.md) — verified deep-dive into how desktop and mobile each handle notification preferences. **This is the authoritative doc** on the notifications architecture question. Anchors the GitHub issue at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md), which is paused on a lead-dev reply.
-- [`../../.temp/2026-05-28-notifications-explainer.md`](../../.temp/2026-05-28-notifications-explainer.md) and [`../../.temp/2026-05-28-notifications-investigation-correction.md`](../../.temp/2026-05-28-notifications-investigation-correction.md) — earlier-in-the-day conversation artifacts. The explainer's "Step 1 — Update quorum-shared" plan was wrong (corrected by the investigation doc, then superseded entirely by the architecture report). Kept around for context but NOT authoritative.
+**Three-doc separation of concerns** (no overlap):
+- **README.md** = catalog. Status table per migration row + pointers. What exists.
+- **roadmap.md** = plan. Phases ordered by risk/leverage + dependencies + queued work. What's next.
+- **shipped-log.md** = history. Chronological entries per migration + lessons learned. What changed and why.
 
-**Convention.** Audits live in `designs/` and act as reference material that evolves slowly. Per-PR executable tasks live at the root, dated `YYYY-MM-DD-<slug>.md`, and move into `.done/` once merged. Workflow/reference docs (like the cross-repo workflow and status recap) live at the root and don't move.
+**Related cross-folder docs:**
+- [`../../reports/2026-05-28-notification-architecture-divergence.md`](../../reports/2026-05-28-notification-architecture-divergence.md) — authoritative deep-dive on the notifications architecture question. Anchors the GitHub issue paused on a lead-dev reply.
+- [`../../.temp/2026-05-28-notifications-explainer.md`](../../.temp/2026-05-28-notifications-explainer.md) and [`../../.temp/2026-05-28-notifications-investigation-correction.md`](../../.temp/2026-05-28-notifications-investigation-correction.md) — earlier-session conversation artifacts. NOT authoritative; kept for context.
+
+**Convention.** Audits live in `designs/` and act as reference material that evolves slowly. Per-PR executable tasks live at the root, dated `YYYY-MM-DD-<slug>.md`, and move into `.done/` once merged. Evergreen workflow/reference docs (like the cross-repo workflow, roadmap, shipped-log, README) live at the root WITHOUT date prefixes — dates are for time-bound work only. One-off setup docs go in `reference/`.
 
 ## Status table
 
@@ -70,7 +87,7 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | Desktop `UserConfig` mirror catch-up (`isProfilePublic`, `farcasterLink`) | Types | ✅ Done (2026-05-28) | quorum-desktop PR #159 |
 | Notification types rename to `Space*` prefix + desktop dedup against shared | Types | ✅ Done (2026-05-28) | quorum-shared PR #18, quorum-desktop PR #160. Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
 | Per-space notification sync (desktop ↔ mobile) | Feature | ⏸️ Awaiting lead-dev confirmation on architecture | GitHub issue draft: [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
-| `NavItem.icon`/`.color` structural alignment | Types | ⏸️ Mobile uses only space-variant items (no folder UI yet); deferred until mobile builds folders | [2026-05-27-shared-vs-local-type-divergence.md](2026-05-27-shared-vs-local-type-divergence.md) |
+| `NavItem.icon`/`.color` structural alignment | Types | ⏸️ Mobile uses only space-variant items (no folder UI yet); deferred until mobile builds folders | [.done/2026-05-27-shared-vs-local-type-divergence.md](.done/2026-05-27-shared-vs-local-type-divergence.md) |
 | Field validators (`validateSpaceName`, `validateDisplayName`, `validateChannelName`, …) with errorKey i18n pattern | Hooks/Logic | ✅ Done (2026-05-28) | shared `2.1.0-19`. Mobile adoption queued — see [mobile-tasks-pending.md](mobile-tasks-pending.md). [shipped-log entry](shipped-log.md#2026-05-28--field-validators-validatespacename-validatedisplayname-) |
 | `useTwoStepConfirm` primitive (extracted from `useUserKicking` + `useSpaceLeaving`) | Hook | ✅ Done (2026-05-28) | shared `2.1.0-18`. See [shipped-log.md](shipped-log.md#2026-05-28--usetwostepconfirm) |
 | Hooks (276 hook files) | Logic | 🟢 6+ hooks/validators shipped. Audit refreshed 2026-05-28. Future per-candidate tasks at `2026-XX-XX-migrate-<hook>.md` as scoped. | [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md) |
@@ -85,26 +102,9 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 
 ## Next up
 
-State as of 2026-05-28 evening:
+See [roadmap.md](roadmap.md) for the leverage-ordered plan. The roadmap names the next-to-pick task, the phase it belongs to, and what unblocks the higher-leverage phases. This README's job is to track per-row state, not to plan.
 
-- **Three PRs shipped this session:** #159 (UserConfig mirror catch-up), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` rename + dedup). See status table.
-- **Notifications track is now PAUSED** awaiting lead-dev confirmation. Discovery during the work: mobile has a fundamentally different notification preference architecture (local MMKV, three-level on/off tree, gates iOS NSE) than desktop (`UserConfig`-synced per-space settings with granular trigger filtering). Convergence is possible — verified to be small (~50 LOC mobile-side, no new shared types). But it's a design decision the lead owns. GitHub issue drafted at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md), to be filed against `quorum-mobile`. Full investigation: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md).
-- **Mobile got a massive public-repo dump on 2026-05-28** (commit `98d59a4`, "catching up public repo" by Cassandra Heart). Many earlier "blocked on mobile access" entries need re-evaluation against the new public state — what looked greenfield in March may have shipped on mobile since.
-
-**Recommended next move:**
-
-The hooks audit has been refreshed: [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md). Headline findings:
-- The `StorageAdapter` + `CryptoProvider` interfaces the March audit said were a blocker **already exist** in shared and are implemented on both platforms.
-- Mobile has **67 hooks** (not 17 as the morning recap thought) — full parallel implementations of `useChannelManagement`, `useRoleManagement`, `useUserKicking`, `useInviteManagement`.
-- Mobile structures business hooks as **thin TanStack mutation wrappers over stateless services**; desktop's monolithic-form-state pattern is NOT directly portable. Shared APIs should follow mobile's split-mutation shape (per the workflow's "follow mobile patterns" rule).
-
-The audit originally recommended migrating Category A2 query helpers as the first PR. That recommendation has been **withdrawn** (see the audit's "Withdrawn original recommendation" block) — desktop's `buildKey` factories conflict with shared's existing `queryKeys`, the fetchers reference desktop-specific `MessageDB`, and the invalidate hooks aren't a pattern mobile uses.
-
-**Per-task workflow (established 2026-05-28):** for each hook (or thematic bundle), create a granular `2026-XX-XX-migrate-<thing>.md` task file at this folder root. Verify, migrate, ship, log in [shipped-log.md](shipped-log.md), move the task file to `.done/`. Don't maintain a long-lived "candidates" doc — the audit IS the candidate menu. First task using this workflow: [2026-05-28-migrate-use-two-step-confirm.md](2026-05-28-migrate-use-two-step-confirm.md).
-
-**Next session**: pick the next candidate from the audit. Strong candidates worth verifying first: validation hooks (6 files, blocked on the i18n question — does shared take a Lingui peer dep, or do validation hooks return `errorKey` strings?), or auditing `ChannelEditorModal.tsx`'s `deleteConfirmation` object as a third consumer of `useTwoStepConfirm`.
-
-**Alternative:** advance the smaller services (`ActionQueueService`, `SearchService`, `channelThreadHelpers`) — but only after verifying their current mobile state. Mobile may have built parallel versions that look nothing like desktop's; the audit flagged mobile's `services/offline/mutationQueue.ts` as a real two-implementation case for ActionQueueService.
+**Per-task workflow** (established 2026-05-28): for each hook or thematic bundle, create a granular `2026-XX-XX-migrate-<slug>.md` task file at this folder's root. Verify, migrate, ship, log in [shipped-log.md](shipped-log.md), move the task file to `.done/`. Full workflow in [cross-repo-workflow.md](cross-repo-workflow.md).
 
 ## What unblocks the rest
 
@@ -130,8 +130,8 @@ Net: doing the MessageDB refactor first does not expand or shrink the shared mig
 
 ## Branch / PR workflow
 
-- **[2026-05-28-cross-repo-workflow.md](2026-05-28-cross-repo-workflow.md)** — **read this first.** How to ship work when mobile PRs go to a different reviewer. Covers small-PR sizing, drift handling, when to stack vs. branch fresh, the "follow mobile patterns" rule, the "don't decide for the lead" rule, and the standard shared → desktop → mobile sequence.
-- [2026-03-15-stacked-prs-workflow.md](2026-03-15-stacked-prs-workflow.md) — older doc for the stacked-branch convention used during the original types → primitives → utils → hooks PR chain. Still useful when stacking is genuinely needed (Case 2 in the newer doc).
+- **[cross-repo-workflow.md](cross-repo-workflow.md)** — **read this first.** How to ship work when mobile PRs go to a different reviewer. Covers small-PR sizing, drift handling, when to stack vs. branch fresh, the "follow mobile patterns" rule, the "don't decide for the lead" rule, and the standard shared → desktop → mobile sequence.
+- [reference/stacked-prs-workflow.md](reference/stacked-prs-workflow.md) — older doc for the stacked-branch convention used during the original types → primitives → utils → hooks PR chain. Still useful when stacking is genuinely needed (Case 2 in the newer doc).
 
 Earlier migrations used stacked branches; ongoing per-feature migrations (typing, receipts, tests, notifications) are independent and branch fresh from `main` on each repo.
 
@@ -184,9 +184,9 @@ The mobile repo is a partially-public mirror, not the live internal dev tree. **
 
 *Previously: 2026-05-28 (evening) — three PRs shipped this session: quorum-desktop #159 (UserConfig mirror catch-up for `isProfilePublic`/`farcasterLink`), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` prefix rename + desktop dedup against shared). Notifications track now PAUSED on lead-dev direction — full architecture investigation at [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md), GitHub issue draft at [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Also discovered the mobile public-repo had a massive 2026-05-28 catch-up dump (`98d59a4`) — the older design docs need refreshing against the new mobile state before driving more migration work. Status table refreshed to reflect this; "Next up" rewritten.*
 
-*Previously: 2026-05-28 (morning) — mobile codebase access verified, upstream `quorum-shared` pulled (Farcaster module + new UserConfig fields landed). Status table updated, "Upstream changes 2026-05-28" section added, recap doc at [status-recap.md](status-recap.md).*
+*Previously: 2026-05-28 (morning) — mobile codebase access verified, upstream `quorum-shared` pulled (Farcaster module + new UserConfig fields landed). Status table updated, "Upstream changes 2026-05-28" section added.*
 
-*Previously: 2026-05-27 — two type-only PRs against `quorum-shared` (2.1.0-15 and 2.1.0-16): added 7 missing privacy/device fields to `UserConfig` (the receipts/typing-indicators consolidation flagged here as an open follow-up, plus a new `generateYouTubePreviews` field for the YouTube facade gate), and promoted `UserConfig.userNotes`'s inline object type to a named `UserNote` export so desktop could drop its local duplicate. Investigation also surfaced a deeper structural divergence in `NotificationSettings` and `NavItem` shapes between desktop and shared; tracked as a new mobile-blocked follow-up in [2026-05-27-shared-vs-local-type-divergence.md](2026-05-27-shared-vs-local-type-divergence.md).*
+*Previously: 2026-05-27 — two type-only PRs against `quorum-shared` (2.1.0-15 and 2.1.0-16): added 7 missing privacy/device fields to `UserConfig` (the receipts/typing-indicators consolidation flagged here as an open follow-up, plus a new `generateYouTubePreviews` field for the YouTube facade gate), and promoted `UserConfig.userNotes`'s inline object type to a named `UserNote` export so desktop could drop its local duplicate. Investigation also surfaced a deeper structural divergence in `NotificationSettings` and `NavItem` shapes between desktop and shared; tracked at [.done/2026-05-27-shared-vs-local-type-divergence.md](.done/2026-05-27-shared-vs-local-type-divergence.md).*
 
 *Previously: 2026-05-20 (third update) — util tests migration done (2026-05-19 task moved to `.done/`). Three test files moved to `quorum-shared/src/utils/` (renamed to match shared's source filenames: `validation.test.ts`, `mentions.test.ts`, `messageGrouping.test.ts`). Found and fixed a real type-shape drift in the process: desktop's mocked `Message.mentions` used the wrong field names (`mentions/channels/roles` instead of shared's `memberIds/roleIds/channelIds`); the desktop test only passed because of `as any` casts. Shared's strict build caught it. No new shared dependencies. Status table updated, "Next up" now empty — everything remaining is mobile-blocked.*
 

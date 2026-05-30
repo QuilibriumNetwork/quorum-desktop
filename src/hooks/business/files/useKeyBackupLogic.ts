@@ -2,17 +2,8 @@ import { useState, useCallback } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 
 /**
- * SHARED BUSINESS LOGIC: Key Backup Functionality
- * ===============================================
- *
- * Contains all business logic for key backup operations:
- * - Key export state management
- * - Validation logic
- * - Error handling
- * - Confirmation flow logic
- *
- * Platform-specific file operations are handled by adapters.
- * This hook is 100% shared between web and mobile.
+ * Key backup business logic. Platform-specific file operations are handled
+ * by adapters; this hook owns export state and error handling.
  */
 
 export interface KeyBackupAdapter {
@@ -30,8 +21,6 @@ export const useKeyBackupLogic = (adapter: KeyBackupAdapter) => {
   // Shared state management
   const [isExporting, setIsExporting] = useState(false);
   const [exportError, setExportError] = useState<string | null>(null);
-  const [alreadySavedConfirmationStep, setAlreadySavedConfirmationStep] =
-    useState(0);
 
   // Business logic: Generate key data for export
   const generateKeyData = useCallback(async (): Promise<{
@@ -86,28 +75,6 @@ export const useKeyBackupLogic = (adapter: KeyBackupAdapter) => {
     }
   }, [generateKeyData, adapter]);
 
-  // Business logic: Handle "I already saved mine" confirmation flow
-  const handleAlreadySaved = useCallback((): boolean => {
-    if (alreadySavedConfirmationStep === 0) {
-      // First click - show confirmation
-      setAlreadySavedConfirmationStep(1);
-      // Reset confirmation after 5 seconds
-      setTimeout(() => setAlreadySavedConfirmationStep(0), 5000);
-      return false; // Don't proceed yet
-    } else {
-      // Second click - user confirmed
-      setAlreadySavedConfirmationStep(0);
-      return true; // Proceed with onboarding
-    }
-  }, [alreadySavedConfirmationStep]);
-
-  // Business logic: Get appropriate button text for confirmation flow
-  const getConfirmationButtonText = useCallback((): string => {
-    return alreadySavedConfirmationStep === 0
-      ? 'I already saved mine'
-      : 'Click again to confirm';
-  }, [alreadySavedConfirmationStep]);
-
   // Business logic: Clear error state
   const clearError = useCallback(() => {
     setExportError(null);
@@ -122,15 +89,12 @@ export const useKeyBackupLogic = (adapter: KeyBackupAdapter) => {
     // State (business logic)
     isExporting,
     exportError,
-    alreadySavedConfirmationStep,
 
     // Actions (business logic)
     downloadKey,
-    handleAlreadySaved,
     clearError,
 
     // Helpers (business logic)
-    getConfirmationButtonText,
     canExportKey,
 
     // Data (from SDK context)

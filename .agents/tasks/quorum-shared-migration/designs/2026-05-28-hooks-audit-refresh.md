@@ -374,11 +374,24 @@ The candidates worth investigating in the next session (NOT yet verified — tha
 
 The earlier version of this section recommended migrating all 55 A2 query helpers as one additive PR. That recommendation reused the framing from the typing/receipts service migrations. It was wrong for the reasons enumerated above. Keeping this note here so a future session re-reading the audit doesn't reach the same conclusion from the same false-positive signal ("subagent classified them as pure, therefore shareable").
 
+### Phase 3 follow-up (2026-05-29) — formal closure
+
+The Phase 3 investigation (see [`../shipped-log.md`](../shipped-log.md) 2026-05-29 entry and [`../roadmap.md`](../roadmap.md) Phase 3 section) verified the three original concerns and surfaced a fourth:
+
+1. **The cache key shapes are structurally divergent**, not just casing. The messages domain uses `['Messages', spaceId, channelId, 'with-threads'|'no-threads']` on desktop vs `['messages', 'infinite', spaceId, channelId]` in shared. Migrating would require either dropping desktop's thread-variant isolation OR adding a mobile-unused key variant to shared. Not a rename — a structural refactor.
+2. **`build*Fetcher` files import `MessageDB`** and several reference `isWeb()` + `window.location.hash` — doubly desktop-specific. Retyping to `StorageAdapter` would require verifying every method call; `MessageDB` exposes richer methods than `StorageAdapter` (e.g. `getFirstUnreadMessage`, `getConversation`, pagination helpers).
+3. **Mobile does NOT use `useInvalidate*` wrapper hooks** (confirmed by grepping `origin/master`, not assumed). Mobile inlines `queryClient.invalidateQueries({ queryKey: queryKeys.<domain>... })` at the call site. The one exception (`useInvalidateMessages`) is re-exported directly from shared's `src/hooks/useMessages.ts`, not hand-rolled.
+4. **The real coupling surface is NOT 55 files** — it's 55 query helper files PLUS the stays-per-app services layer (`MessageService.ts` ~5000 LOC with 15+ direct call sites, `SpaceService.ts`, `ConfigService.ts`, `EncryptionService.ts`, `InvitationService.ts`, `ActionQueueHandlers.ts`, `ThreadService.ts`) and several component files that directly import `buildMessagesKey` / `buildSpacesKey` for `setQueryData` calls. The 55-file estimate dramatically undercounted the true refactor scope.
+
+**Decision: Path B — formally stays per-app. Do not revisit.**
+
+Future sessions reading the "pure, no context imports" audit classification for these files should treat it as insufficient evidence for shareability — the actual tests are (a) does mobile use the pattern, and (b) is the cache key schema compatible with shared's existing keys. Both tests fail for the A2 query helpers.
+
 ---
 
 ## Recommended migration roadmap (updated)
 
-Each step is one PR per repo. Cross-repo workflow rules from [2026-05-28-cross-repo-workflow.md](../2026-05-28-cross-repo-workflow.md) apply throughout.
+Each step is one PR per repo. Cross-repo workflow rules from [cross-repo-workflow.md](../cross-repo-workflow.md) apply throughout. **Note (2026-05-29)**: this audit's per-PR sequence has been superseded by the broader [roadmap.md](../roadmap.md) which orders ALL migration work (not just hooks) by risk. This audit remains authoritative for hook-specific findings (categorization, mobile parallels, abstraction analysis).
 
 1. **PR-set 1: ✅ SHIPPED 2026-05-28.** `useTwoStepConfirm` extracted to shared (`2.1.0-18`); desktop's `useUserKicking` + `useSpaceLeaving` refactored to consume it. Mobile keeps inlined version for now. See [`../2026-05-28-migrate-use-two-step-confirm.md`](../2026-05-28-migrate-use-two-step-confirm.md).
 2. **PR-set 2: A second small verified candidate** — e.g. extract `useKickConfirmation` from `useUserKicking` if the side-by-side comparison's "line-for-line identical" claim holds up under direct re-verification. Both platforms then adopt it.

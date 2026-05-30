@@ -56,12 +56,12 @@ The rationale: doc work has no runtime behavior to bisect. Splitting commits gai
 
 Examples:
 - Three re-audit sessions in a row → one commit when the next migration code task starts
-- A re-audit + a doc compaction + a status-recap rewrite → one commit
+- A re-audit + a doc compaction + a roadmap update → one commit
 - A workflow rule addition + the example that motivated it → folded into the next commit
 
 The commit message itself can be terse — "doc: housekeeping across N audits" or "doc: re-audits + status updates" — since each individual change is already self-documenting in its file.
 
-**Code changes on main are a separate matter — they commit individually, even if small.** When a small code fix lands on main (a 1-line bump, a hygiene refactor, etc.), it gets its own commit. Doc edits that *describe* that specific code change (e.g. updating `.agents/docs/*.md` to reflect a new constant) ride with the code commit. Doc edits that are unrelated (re-audits, status-recaps, workflow rules, design docs) stay in the accumulating bundle and ship separately at the next transition point.
+**Code changes on main are a separate matter — they commit individually, even if small.** When a small code fix lands on main (a 1-line bump, a hygiene refactor, etc.), it gets its own commit. Doc edits that *describe* that specific code change (e.g. updating `.agents/docs/*.md` to reflect a new constant) ride with the code commit. Doc edits that are unrelated (re-audits, roadmap updates, workflow rules, design docs) stay in the accumulating bundle and ship separately at the next transition point.
 
 Rationale for the split: code commits have bisect-value (`git bisect` and `git blame` need them to be discrete). Doc commits don't. So docs aggregate, code stays granular.
 
@@ -222,7 +222,7 @@ Desktop's `node_modules/@quilibrium/quorum-shared` is a symlink to the local clo
 Mobile PRs can sit weeks. Three things can shift underneath:
 
 1. **Your next work is independent of the unmerged PR**: no problem. Lead merges in any order.
-2. **Your next work depends on the unmerged PR**: stack (child branch from parent unmerged branch). See [stacked-PRs doc](2026-03-15-stacked-prs-workflow.md). Practical depth limit: 2 without thinking, 3 with caution, never 4+. If stalled at depth 3, switch to independent work.
+2. **Your next work depends on the unmerged PR**: stack (child branch from parent unmerged branch). See [stacked-PRs doc](reference/stacked-prs-workflow.md). Practical depth limit: 2 without thinking, 3 with caution, never 4+. If stalled at depth 3, switch to independent work.
 3. **Lead changes things underneath you** (the real risk):
    - **Lead bumps shared on mobile while your mobile PR is open**: rebase, accept newer version, push. ~5-10 min per drift event.
    - **Lead touches the same mobile files**: rebase, resolve. Trivial conflicts are fast; full refactors can cost an hour. **This is why small PRs win** — a 3-line PR survives almost any refactor; a 300-line PR doesn't.
