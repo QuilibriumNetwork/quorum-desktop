@@ -1,6 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import React from 'react';
-import type { Role, Permission } from '@quilibrium/quorum-shared';
+import {
+  setRolePermissions,
+  toggleRolePermission as toggleRolePermissionShared,
+  type Permission,
+  type Role,
+} from '@quilibrium/quorum-shared';
 import { useConfirmation } from '../../ui/useConfirmation';
 import RolePreview from '../../../components/space/RolePreview';
 import { t } from '@lingui/core/macro';
@@ -96,16 +101,7 @@ export const useRoleManagement = (
   const toggleRolePermission = useCallback(
     (index: number, permission: Permission) => {
       setRoles((prev) =>
-        prev.map((role, i) => {
-          if (i !== index) return role;
-
-          const hasPermission = role.permissions.includes(permission);
-          const newPermissions = hasPermission
-            ? role.permissions.filter((p) => p !== permission)
-            : [...role.permissions, permission];
-
-          return { ...role, permissions: newPermissions };
-        })
+        prev.map((role, i) => (i === index ? toggleRolePermissionShared(role, permission) : role))
       );
     },
     []
@@ -114,10 +110,7 @@ export const useRoleManagement = (
   const updateRolePermissions = useCallback(
     (index: number, permissions: Permission[]) => {
       setRoles((prev) =>
-        prev.map((role, i) => {
-          if (i !== index) return role;
-          return { ...role, permissions };
-        })
+        prev.map((role, i) => (i === index ? setRolePermissions(role, permissions) : role))
       );
     },
     []
