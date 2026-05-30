@@ -21,7 +21,8 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import type { Channel as ChannelType, Group } from '@quilibrium/quorum-shared';
 import { Button, Icon, Tooltip } from '../../primitives';
-import { useSpace } from '../../../hooks';
+import { useQueryClient } from '@tanstack/react-query';
+import { useSpace, buildSpaceKey } from '../../../hooks';
 import { isTouchDevice } from '../../../utils/platform';
 import { useMessageDB } from '../../context/useMessageDB';
 import {
@@ -99,6 +100,7 @@ type DragData =
 const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
   const { updateSpace, messageDB } = useMessageDB();
+  const queryClient = useQueryClient();
   const moveChannelMutation = useMoveChannel(spaceId);
   const reorderGroupsMutation = useReorderGroups(spaceId);
   const reorderChannelsMutation = useReorderChannels(spaceId);
@@ -270,6 +272,24 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
     });
   };
 
+  const handleSetDefault = async (channelId: string) => {
+    if (!space || space.defaultChannelId === channelId) return;
+    const updatedSpace = {
+      ...space,
+      defaultChannelId: channelId,
+      modifiedDate: Date.now(),
+    };
+    // Optimistic cache flip so the star UI swaps instantly; updateSpace
+    // persists in the background (encrypt + sign + POST + broadcast + save).
+    queryClient.setQueryData(buildSpaceKey({ spaceId }), updatedSpace);
+    try {
+      await updateSpace(updatedSpace);
+    } catch (err) {
+      queryClient.setQueryData(buildSpaceKey({ spaceId }), space);
+      throw err;
+    }
+  };
+
   const confirmDelete = async () => {
     if (!pendingDelete || !space) return;
     if (pendingDelete.kind === 'group') {
@@ -362,6 +382,7 @@ const Channels: React.FunctionComponent<ChannelsProps> = ({ spaceId }) => {
                       })
                     }
                     onDeleteChannel={(channel) => handleDeleteChannel(group, channel)}
+                    onSetDefaultChannel={(channelId) => handleSetDefault(channelId)}
                   />
                 ))}
               </div>
@@ -460,6 +481,7 @@ interface SortableGroupProps {
   onDeleteGroup: () => void;
   onEditChannel: (channelId: string) => void;
   onDeleteChannel: (channel: ChannelType) => void;
+  onSetDefaultChannel: (channelId: string) => void;
 }
 
 const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
@@ -473,6 +495,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
   onDeleteGroup,
   onEditChannel,
   onDeleteChannel,
+  onSetDefaultChannel,
 }) => {
   const id = `group:${group.groupName}`;
   const {
@@ -593,6 +616,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
                   isDefault={channel.channelId === defaultChannelId}
                   onEdit={() => onEditChannel(channel.channelId)}
                   onDelete={() => onDeleteChannel(channel)}
+                  onSetDefault={() => onSetDefaultChannel(channel.channelId)}
                 />
               ))
             )}
@@ -609,6 +633,7 @@ interface SortableChannelProps {
   isDefault: boolean;
   onEdit: () => void;
   onDelete: () => void;
+  onSetDefault: () => void;
 }
 
 const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
@@ -617,6 +642,7 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
   isDefault,
   onEdit,
   onDelete,
+  onSetDefault,
 }) => {
   const id = `channel:${channel.channelId}`;
   const {
@@ -664,17 +690,38 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
           }}
         />
         <span className="flex-1 truncate">{channel.channelName}</span>
-        {isDefault && (
-          <span className="text-xs px-2 py-0.5 bg-surface-5 rounded uppercase tracking-wide text-muted">
-            <Trans>Default</Trans>
-          </span>
-        )}
         {channel.isReadOnly && (
           <span className="text-xs px-2 py-0.5 bg-surface-5 rounded flex items-center gap-1 text-muted">
             <Icon name="lock" />
             <Trans>Read-only</Trans>
           </span>
         )}
+        <Tooltip
+          id={`channel-default-${channel.channelId}`}
+          content={
+            isDefault
+              ? t`Default channel`
+              : t`Set as default channel`
+          }
+          place="top"
+        >
+          <button
+            onClick={isDefault ? undefined : onSetDefault}
+            disabled={isDefault}
+            className={
+              isDefault
+                ? 'p-1 text-warning cursor-default'
+                : 'cursor-pointer p-1 text-muted hover:text-warning'
+            }
+            aria-label={
+              isDefault
+                ? t`Default channel`
+                : t`Set as default channel`
+            }
+          >
+            <Icon name="star" variant={isDefault ? 'filled' : 'outline'} />
+          </button>
+        </Tooltip>
         <Tooltip
           id={`channel-edit-${channel.channelId}`}
           content={t`Edit channel`}
@@ -719,9 +766,7 @@ const ChannelRowGhost: React.FunctionComponent<{
     <Icon name={(channel.icon || 'hashtag') as any} className="text-muted" />
     <span className="font-medium">{channel.channelName}</span>
     {isDefault && (
-      <span className="text-xs px-2 py-0.5 bg-surface-5 rounded uppercase">
-        <Trans>Default</Trans>
-      </span>
+      <Icon name="star" variant="filled" className="text-warning" />
     )}
   </div>
 );
