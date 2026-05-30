@@ -124,6 +124,14 @@ gh pr merge <num> --squash --delete-branch
 git checkout main && git pull
 ```
 
+### No date prefixes in commit / PR titles
+
+Don't prefix commit messages or PR titles with the date (e.g. `doc: 2026-05-30 role-mutation extraction shipped`). GitHub already shows the authored/merged date next to every commit, so the prefix is redundant noise that makes the commit list harder to scan.
+
+Write `doc: role-mutation extraction shipped + workflow updates`, not `doc: 2026-05-30 role-mutation extraction shipped + workflow updates`.
+
+The date-prefix convention still applies to **file names** inside `.agents/tasks/`, `.agents/bugs/`, `.agents/reports/` — that's a separate convention (file dating for chronological sort + temporal context). Commit titles and PR titles are not file names.
+
 ## Following mobile patterns (2026-05-28)
 
 > Mobile is mostly written by the lead dev. When mobile has already shipped a working implementation of something we're about to design for shared, **mobile's pattern is the starting point**, not desktop's.
