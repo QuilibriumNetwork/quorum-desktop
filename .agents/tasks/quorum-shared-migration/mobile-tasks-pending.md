@@ -11,6 +11,8 @@ audience: future sessions wanting to see what's queued on the mobile side
 > Mobile's `.agents/` is gitignored, so mobile task files have no GitHub visibility. This table is the desktop-side bookkeeping: a list of mobile tasks dropped during our migration sessions, so we don't lose track of work that's been handed off.
 >
 > **Maintenance**: when a mobile task file moves to `.done/` (or is closed), update the row here. Append new rows at the BOTTOM (chronological by drop date).
+>
+> **Shared version note for executors**: task files written before today may pin older shared versions (e.g. `2.1.0-18`, `2.1.0-19`). Those are "available since" floors, not exact pins. When picking up any task, bump mobile's `@quilibrium/quorum-shared` to the **latest published version** (currently `2.1.0-21` as of 2026-05-30 — check npm for newer). All APIs referenced by these tasks were verified present in `2.1.0-21` on 2026-05-30.
 
 ## Currently queued
 
