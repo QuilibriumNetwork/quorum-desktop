@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { passkey } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
+import { decryptUserConfig } from '../../../utils/crypto';
 import { showWarning } from '../../../utils/toast';
 import { validateDisplayName, validateProfileImage } from '../validation';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
@@ -190,38 +191,11 @@ export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
       }
       hasRemoteConfig = true;
 
-      // Derive decryption key from user's private key (same as ConfigService)
-      const derived = await crypto.subtle.digest(
-        'SHA-512',
-        Buffer.from(new Uint8Array(inner.identity.user_key.private_key))
-      );
-
-      const subtleKey = await window.crypto.subtle.importKey(
-        'raw',
-        derived.slice(0, 32),
-        { name: 'AES-GCM', length: 256 },
-        false,
-        ['decrypt']
-      );
-
-      // Decrypt the config (same format as ConfigService)
-      const iv = savedConfig.user_config.substring(
-        savedConfig.user_config.length - 24
-      );
-      const ciphertext = savedConfig.user_config.substring(
-        0,
-        savedConfig.user_config.length - 24
-      );
-
-      const decryptedConfig = JSON.parse(
-        Buffer.from(
-          await window.crypto.subtle.decrypt(
-            { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-            subtleKey,
-            Buffer.from(ciphertext, 'hex')
-          )
-        ).toString('utf-8')
-      );
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const decryptedConfig = (await decryptUserConfig(
+        savedConfig.user_config,
+        new Uint8Array(inner.identity.user_key.private_key)
+      )) as any;
 
       // SECURITY: Zero-trust validation of remote config data
       // Re-validate all fields after decryption to prevent XSS/injection attacks

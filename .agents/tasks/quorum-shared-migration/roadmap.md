@@ -22,17 +22,13 @@ audience: any agent or contributor planning the next migration move
 
 State at end of 2026-05-30 session: **role-mutation extraction shipped** (shared #21 + desktop #163 merged; mobile task queued). Phase 2 candidates exhausted. Concrete next moves, in order of leverage:
 
-**1. (optional, depending on bandwidth) File the Phase 5 coordination issue.**
-- Draft at `.agents/.temp/2026-05-29-phase5-coordination-issue.md` (gitignored). User decision was to file whenever — no urgency.
-- After filing, update Phase 5 section in this roadmap to record the issue number.
-- Filing unblocks Phase 7 (monolith convergence — `useRoleManagement`, `useChannelManagement`, `useInviteManagement`, `useUserKicking` form-state-vs-mutation question).
-
-**2. Tackle one Paused-tracks item** as a low-risk warm-up:
-- **Desktop-internal AES-GCM config-decrypt dedup** — 4 inline copies → 1 helper. Pure desktop refactor, zero shared changes. ~30 min.
+**1. Tackle one remaining Paused-tracks item** as a low-risk warm-up:
 - **`useInviteManagement` 1-line nudge** — tighten `manualAddress?.length === 46` to `isValidIPFSCID`. Folds naturally into Phase 7c when that lands; can also be a standalone tweak.
 - **Channel pinning removal** — only START if `2026-01-07-channel-ordering-feature.md` is the next desktop feature being implemented; otherwise leave as paused.
 
-**3. Run a fresh small-bucket sweep**. The Phase 2 verifications surfaced bonus C1 findings (mobile reimplements shared utils). A targeted sweep across mobile's `hooks/chat/*` and `services/*` for "what does mobile inline that shared exports" could surface more.
+**2. Run a fresh small-bucket sweep**. The Phase 2 verifications surfaced bonus C1 findings (mobile reimplements shared utils). A targeted sweep across mobile's `hooks/chat/*` and `services/*` for "what does mobile inline that shared exports" could surface more.
+
+**3. Wait on Phase 5 reply.** Issue [quorum-mobile#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67) filed 2026-05-30. Lead reply unblocks Phase 7 (monolith convergence).
 
 **Do NOT pick up Phases 5, 7, or 8.** Phase 5 is filing-only (no investigation). Phase 7 is gated on Phase 5 answers. Phase 8 has no unblocked candidates.
 
@@ -223,7 +219,7 @@ Plus: extending `StorageAdapter` with `getPreference/setPreference` would be a s
 **Category:** external dependency (not code work).
 **Goal:** file a GitHub issue against `quorum-mobile` asking two architectural questions — `CryptoProvider` DI pattern + broadcast pattern for shared mutation hooks. Then wait for direction.
 **Risk:** external — we don't control timing. Lead has limited bandwidth.
-**Status as of 2026-05-29:** issue drafted in `.agents/.temp/2026-05-29-phase5-coordination-issue.md` (gitignored). File whenever — the queue order doesn't matter; the lead reviews when convenient.
+**Status as of 2026-05-30:** filed as [quorum-mobile#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67). Awaiting lead reply. Original draft kept at `.temp/2026-05-29-phase5-coordination-issue.md` (gitignored) for reference.
 
 **Why this gates Phase 7:** Phase 7 (monolith convergence) needs them because the shareable mutation layer's shape depends on what the lead picks. Phase 6 was closed empty 2026-05-29 — no longer waits on Phase 5.
 
@@ -311,7 +307,7 @@ These run on their own clocks, independent of the phase sequence.
 - **Notifications convergence** — mobile GitHub issue #65, no replies as of 2026-05-29. Architecturally complex (mobile MMKV + iOS NSE vs desktop `UserConfig`-synced settings). Full investigation in [../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md). Includes the deferred `getMutedChannelsForSpace` + `isChannelMuted` migration (pure functions blocked because they're notification-shaped).
 - **Folder name length consistency** — 5-LOC opportunistic refactor, partly done (folder modal aligned to 50 chars; `useFolderNameValidation` still references the old 40-char constant). Pick up alongside any folder-touching task.
 - **`useInviteManagement` 1-line nudge** — `manualAddress?.length === 46` heuristic could tighten to `isValidIPFSCID`. Folds naturally into Phase 7c.
-- **Desktop-internal AES-GCM config-decrypt dedup** — 4 copies of the same Web Crypto decrypt block exist in `useOnboardingFlowLogic.ts:194-224`, `useUnifiedOnboardingFlow.ts:219-242`, `useUnifiedOnboardingFlow.ts:342-371`, `ConfigService.ts:75-128`. Surfaced by Phase 2 verification; ruled out for shared promotion (mobile uses `@noble/ciphers`, desktop uses Web Crypto — both platform-correct, convergence would be a regression). Desktop-internal extraction is still worth doing: collapse to one `decryptUserConfig(encryptedHex, privateKeyBytes)` helper in `src/utils/crypto/` or `src/services/crypto/`. Zero risk, ~4 call sites to refactor. Pick up alongside any onboarding-touching task or as standalone hygiene.
+- ~~**Desktop-internal AES-GCM config-decrypt dedup**~~ — ✅ SHIPPED 2026-05-30 on `session/2026-05-30` branch. `decryptUserConfig(encryptedHex, privateKeyBytes)` helper added to `src/utils/crypto.ts` + `src/utils/crypto.web.ts`. Replaces 4 inline copies (`useOnboardingFlowLogic`, two in `useUnifiedOnboardingFlow`, `ConfigService`). Net -47 LOC. Smoke tested: fresh-login decrypt + after-refresh sync both work.
 - **Channel reorder pure helpers (future C4 candidate)** — desktop's upcoming channel-ordering feature ([`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md)) ships reorder hooks as **desktop-local** for now (avoids committing to a broadcast-DI pattern before lead-dev review). The pure `Space → Space` transforms underneath (`moveChannelInSpace`, `reorderGroupsInSpace`, `reorderChannelsInGroup`) are identical between desktop and mobile — clean C4 extraction candidate for a future session once the feature ships. Same shape as today's role-mutation extraction. Re-evaluate after the feature ships AND mobile addresses the broadcast gap ([mobile issue #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)).
 - **Channel pinning removal (cross-repo)** — separate from the migration; tracked in [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) section 6. Drops `Channel.isPinned`/`pinnedAt` from shared types + mobile's unused `usePinChannel` mutation + desktop's pin UI. Pattern A cross-repo sequencing (mobile first, then shared, then desktop). Discovery during Phase 4-b discussions: mobile DOES have `usePinChannel` mutation defined but with **zero UI callsites** (same Trap F pattern as `setAccentColor`). Not blocking the migration roadmap — listed here for cross-context awareness.
 - **Desktop `saveMessage` write-path conversation-preview enrichment** — surfaced by Phase 6 verification 2026-05-29. Desktop's `useConversationPreviews` exists because desktop's write path doesn't populate `Conversation.lastMessagePreview` at save time. Mobile already does (extended `Conversation` type at `hooks/chat/useConversations.ts:14`; shared's `StorageAdapter.saveMessage` signature already supports it via `conversationType`/`icon`/`displayName` params). Aligning desktop's `saveMessage` path to populate `lastMessagePreview` at write time would eliminate the entire `useConversationPreviews` hook as a side effect. Not high-priority — desktop's current pattern works — but worth keeping on the radar for Phase 8 services revisits.

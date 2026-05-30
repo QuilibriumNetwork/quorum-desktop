@@ -6,7 +6,7 @@ import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import type { Bookmark, Space } from '@quilibrium/quorum-shared';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
-import { sha256, base58btc } from '../utils/crypto';
+import { sha256, base58btc, decryptUserConfig } from '../utils/crypto';
 import { getDefaultUserConfig } from '../utils';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
@@ -72,22 +72,6 @@ export class ConfigService {
       return storedConfig;
     }
 
-    const derived = await crypto.subtle.digest(
-      'SHA-512',
-      Buffer.from(new Uint8Array(userKey.user_key.private_key))
-    );
-
-    const subtleKey = await window.crypto.subtle.importKey(
-      'raw',
-      derived.slice(0, 32),
-      {
-        name: 'AES-GCM',
-        length: 256,
-      },
-      false,
-      ['decrypt']
-    );
-
     if (
       !JSON.parse(
         ch.js_verify_ed448(
@@ -110,22 +94,10 @@ export class ConfigService {
       return storedConfig;
     }
 
-    const iv = savedConfig.user_config.substring(
-      savedConfig.user_config.length - 24
-    );
-    const ciphertext = savedConfig.user_config.substring(
-      0,
-      savedConfig.user_config.length - 24
-    );
-    const config = JSON.parse(
-      Buffer.from(
-        await window.crypto.subtle.decrypt(
-          { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-          subtleKey,
-          Buffer.from(ciphertext, 'hex')
-        )
-      ).toString('utf-8')
-    ) as UserConfig;
+    const config = (await decryptUserConfig(
+      savedConfig.user_config,
+      new Uint8Array(userKey.user_key.private_key)
+    )) as UserConfig;
     if (!config) {
       return storedConfig;
     }

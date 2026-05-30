@@ -79,3 +79,51 @@ export function hexToSpreadArray(hex: string): number[] {
 export function uint8ArrayToHex(arr: Uint8Array): string {
   return Buffer.from(arr).toString('hex');
 }
+
+/**
+ * Decrypts an AES-GCM-encrypted UserConfig blob using a user's private key.
+ *
+ * Wire format (encryptedUserConfig string):
+ * - ciphertext (hex) | iv (last 24 hex chars = 12 bytes)
+ *
+ * Key derivation:
+ * - SHA-512(privateKeyBytes), take first 32 bytes, import as AES-GCM key.
+ *
+ * Caller responsibilities:
+ * - Verify any signature BEFORE calling this helper (this helper does
+ *   symmetric decrypt only).
+ * - Validate the returned object (treated as unknown — caller must check
+ *   shape, sanitize strings, etc.).
+ *
+ * @param encryptedUserConfig The `user_config` field from a SavedConfig.
+ * @param privateKeyBytes The user's Ed448 private key as raw bytes.
+ * @returns The decrypted, JSON-parsed object. Caller validates shape.
+ */
+export async function decryptUserConfig(
+  encryptedUserConfig: string,
+  privateKeyBytes: ArrayBuffer | Uint8Array
+): Promise<unknown> {
+  const derived = await window.crypto.subtle.digest(
+    'SHA-512',
+    Buffer.from(new Uint8Array(privateKeyBytes))
+  );
+
+  const subtleKey = await window.crypto.subtle.importKey(
+    'raw',
+    derived.slice(0, 32),
+    { name: 'AES-GCM', length: 256 },
+    false,
+    ['decrypt']
+  );
+
+  const iv = encryptedUserConfig.substring(encryptedUserConfig.length - 24);
+  const ciphertext = encryptedUserConfig.substring(0, encryptedUserConfig.length - 24);
+
+  const plaintext = await window.crypto.subtle.decrypt(
+    { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
+    subtleKey,
+    Buffer.from(ciphertext, 'hex')
+  );
+
+  return JSON.parse(Buffer.from(plaintext).toString('utf-8'));
+}
