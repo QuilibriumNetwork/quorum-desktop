@@ -15,8 +15,6 @@ interface Channel {
   unreads?: number;
   mentionCount?: number;
   isReadOnly?: boolean;
-  isPinned?: boolean;
-  pinnedAt?: number;
   createdDate?: number;
   icon?: string;
   iconColor?: string;
@@ -42,7 +40,6 @@ interface ChannelItemProps {
     channelId: string
   ) => void;
   onToggleMute?: (channelId: string) => Promise<void>;
-  onTogglePin?: (channelId: string, isPinned: boolean) => Promise<void>;
 }
 
 const ChannelContent: React.FC<{
@@ -90,21 +87,8 @@ const ChannelContent: React.FC<{
             }}
             title={`${channel.channelName}`}
           />
-          {channel.isPinned && isSpaceOwner && (
-            <div className="channel-pin-overlay">
-              <Icon
-                name="pin"
-                variant="filled"
-                className="pin-icon text-subtle hover:text-main"
-                title="Pinned channel"
-              />
-            </div>
-          )}
         </div>
-        <span
-          className="truncate-channel-name flex-shrink min-w-0"
-          title={channel.isPinned ? 'Pinned channel' : undefined}
-        >
+        <span className="truncate-channel-name flex-shrink min-w-0">
           {channel.channelName}
         </span>
         {!!channel.mentionCount && (
@@ -151,7 +135,6 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   closeLeftSidebar,
   openChannelEditor,
   onToggleMute,
-  onTogglePin,
 }) => {
   const navigate = useNavigate();
 
@@ -203,18 +186,6 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
       icon: 'settings',
       label: t`Channel Settings`,
       onClick: () => openChannelEditor(spaceId, groupName, channel.channelId),
-    });
-
-    // Pin/Unpin option (owners only)
-    contextMenuItems.push({
-      id: 'toggle-pin',
-      icon: channel.isPinned ? 'pin-off' : 'pin',
-      label: channel.isPinned ? t`Unpin Channel` : t`Pin Channel`,
-      onClick: async () => {
-        if (onTogglePin) {
-          await onTogglePin(channel.channelId, !channel.isPinned);
-        }
-      },
     });
   }
 

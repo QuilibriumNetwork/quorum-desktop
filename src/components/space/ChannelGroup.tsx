@@ -12,8 +12,6 @@ import { hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
 import ChannelItem from './ChannelItem';
 import { useChannelMute } from '../../hooks/business/channels';
-import { useSpace } from '../../hooks';
-import { useMessageDB } from '../context/useMessageDB';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
@@ -28,8 +26,6 @@ const ChannelGroup: React.FunctionComponent<{
       mentionCount?: number;
       mentions?: string;
       isReadOnly?: boolean;
-      isPinned?: boolean;
-      pinnedAt?: number;
       createdDate?: number;
       icon?: string;
       iconColor?: string;
@@ -50,27 +46,6 @@ const ChannelGroup: React.FunctionComponent<{
 
   // Channel mute functionality
   const { isChannelMuted, toggleMute } = useChannelMute({ spaceId: spaceId! });
-
-  // Space data for pin toggle
-  const { data: space } = useSpace({ spaceId: spaceId! });
-  const { updateSpace } = useMessageDB();
-
-  // Sort channels: pinned first (newest pin on top), then unpinned (by creation date)
-  const sortedChannels = React.useMemo(() => {
-    return [...props.group.channels].sort((a, b) => {
-      // Pinned channels go first
-      if (a.isPinned && !b.isPinned) return -1;
-      if (!a.isPinned && b.isPinned) return 1;
-      
-      // Among pinned: newer pins first (DESC)
-      if (a.isPinned && b.isPinned) {
-        return (b.pinnedAt || 0) - (a.pinnedAt || 0);
-      }
-      
-      // Among unpinned: maintain original order (ASC by createdDate)
-      return (a.createdDate || 0) - (b.createdDate || 0);
-    });
-  }, [props.group.channels]);
 
   // Long press handler for group name (touch devices)
   const groupLongPressHandlers = useLongPressWithDefaults({
@@ -102,31 +77,6 @@ const ChannelGroup: React.FunctionComponent<{
       closeLeftSidebar();
     }
   }, [isMobile, isTablet, closeLeftSidebar]);
-
-  // Handle pin toggle from context menu
-  const handleTogglePin = React.useCallback(
-    async (channelId: string, isPinned: boolean) => {
-      if (!space) return;
-
-      await updateSpace({
-        ...space,
-        groups: space.groups.map((g) => ({
-          ...g,
-          channels: g.channels.map((c) =>
-            c.channelId === channelId
-              ? {
-                  ...c,
-                  isPinned,
-                  pinnedAt: isPinned ? Date.now() : undefined,
-                  modifiedDate: Date.now(),
-                }
-              : c
-          ),
-        })),
-      });
-    },
-    [space, updateSpace]
-  );
 
   return (
     <div className="channel-group">
@@ -177,7 +127,7 @@ const ChannelGroup: React.FunctionComponent<{
           </div>
         )}
       </div>
-      {sortedChannels.map((channel) => (
+      {props.group.channels.map((channel) => (
         <ChannelItem
           key={channel.channelId}
           channel={channel}
@@ -194,7 +144,6 @@ const ChannelGroup: React.FunctionComponent<{
           closeLeftSidebar={closeLeftSidebar}
           openChannelEditor={openChannelEditor}
           onToggleMute={toggleMute}
-          onTogglePin={handleTogglePin}
         />
       ))}
     </div>

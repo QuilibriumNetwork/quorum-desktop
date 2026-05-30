@@ -42,7 +42,6 @@ const ChannelEditorModal: React.FunctionComponent<{
     channelTopic,
     isReadOnly,
     managerRoleIds,
-    isPinned,
     icon,
     iconColor,
     iconVariant,
@@ -55,7 +54,6 @@ const ChannelEditorModal: React.FunctionComponent<{
     handleChannelTopicChange,
     handleReadOnlyChange,
     handleManagerRolesChange,
-    handlePinChange,
     handleAllowThreadsChange,
     allowThreads,
     handleIconChange,
@@ -129,21 +127,6 @@ const ChannelEditorModal: React.FunctionComponent<{
             </div>
           </Flex>
         </div>
-
-        {isEditMode && (
-          <div className="mb-3">
-            <Flex className="items-center gap-3">
-              <Switch
-                value={isPinned}
-                onChange={handlePinChange}
-                accessibilityLabel={t`Pin channel to top`}
-              />
-              <div className="text-label-strong">
-                <Trans>Pin to top</Trans>
-              </div>
-            </Flex>
-          </div>
-        )}
 
         {space?.allowThreads && (
           <div className="mb-3">
