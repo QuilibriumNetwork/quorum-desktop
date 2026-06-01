@@ -55,12 +55,14 @@ export const DiscoverTab: React.FC = () => {
           value={search}
           onChange={setSearch}
           placeholder={t`Search public spaces...`}
+          variant="bordered"
         />
         <Select
           value={category ?? 'all'}
           onChange={handleCategoryChange}
           options={categoryOptions}
           size="medium"
+          variant="bordered"
         />
       </div>
 

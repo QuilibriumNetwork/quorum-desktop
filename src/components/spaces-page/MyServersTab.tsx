@@ -109,12 +109,14 @@ export const MyServersTab: React.FC = () => {
           value={search}
           onChange={setSearch}
           placeholder={t`Find a server...`}
+          variant="bordered"
         />
         <Select
           value={folderId}
           onChange={(value: string | string[]) => setFolderId(value as string)}
           options={folderOptions}
           size="medium"
+          variant="bordered"
         />
         <label className="my-servers-tab__toggle">
           <Switch value={hideMutedSpaces} onChange={() => toggleHideMutedSpaces()} />

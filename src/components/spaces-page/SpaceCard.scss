@@ -4,10 +4,10 @@
   display: flex;
   gap: $s-4;
   padding: $s-4;
-  border-radius: 0.75rem;
-  background: var(--surface-1);
-  border: 1px solid var(--color-border-subtle);
-  transition: background 150ms ease;
+  border-radius: $rounded-xl;
+  background: var(--surface-2);
+  border: $border solid var(--color-border-default);
+  transition: background $duration-150 ease, border-color $duration-150 ease;
 
   &__icon {
     flex-shrink: 0;
@@ -65,9 +65,11 @@
 
   &--my-server {
     align-items: center;
+    cursor: pointer;
 
     &:hover {
-      background: var(--surface-2);
+      background: var(--surface-3);
+      border-color: var(--color-border-default);
     }
   }
 
