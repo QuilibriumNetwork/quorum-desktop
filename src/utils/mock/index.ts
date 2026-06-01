@@ -25,3 +25,9 @@ export {
   getMockConversationCount,
   type MockConversation,
 } from './mockConversations';
+
+export {
+  generateMockSpaces,
+  isMockSpacesEnabled,
+  getMockSpacesCount,
+} from './mockSpaces';
