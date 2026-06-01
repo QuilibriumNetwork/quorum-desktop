@@ -129,21 +129,23 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color $duration-100 linear;
+    transition: background-color $duration-100 linear, color $duration-100 linear;
     cursor: pointer;
+    color: var(--color-text-subtle);
 
     svg {
       width: $s-8;
       height: $s-8;
-      color: white;
     }
 
     &:hover {
       background-color: var(--surface-5);
+      color: white;
     }
 
     &--selected {
       background-color: var(--surface-7);
+      color: white;
     }
   }
 
