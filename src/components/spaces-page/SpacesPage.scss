@@ -1,0 +1,47 @@
+@import '../../styles/variables';
+
+.spaces-page {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--surface-00);
+
+  &__tabs {
+    display: flex;
+    gap: $s-4;
+    padding: $s-4 $s-6 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+  }
+
+  &__tab {
+    padding: $s-2 $s-4;
+    font-weight: 600;
+    color: var(--color-text-subtle);
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    cursor: pointer;
+    transition: color 150ms ease, border-color 150ms ease;
+
+    &:hover {
+      color: rgb(var(--color-text-main));
+    }
+
+    &--active {
+      color: var(--color-text-strong);
+      border-bottom-color: var(--accent);
+    }
+  }
+
+  &__content {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  &__loading {
+    padding: $s-8;
+    text-align: center;
+    color: var(--color-text-subtle);
+  }
+}
