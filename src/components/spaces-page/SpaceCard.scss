@@ -25,7 +25,8 @@
     justify-content: center;
     background-color: var(--surface-2);
     border-radius: $rounded-full;
-    z-index: 10;
+    // SpaceIcon's internals reach z-index 1001 (mention bubble); sit above it.
+    z-index: 1100;
     color: var(--color-text-subtle);
     pointer-events: none;
   }
