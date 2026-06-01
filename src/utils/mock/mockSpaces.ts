@@ -96,11 +96,18 @@ export function generateMockSpaces(count: number): DirectoryEntry[] {
     const memberCountSeed = seededInt(i + 7, 5000);
     const memberCount = memberCountSeed < 50 ? memberCountSeed + 5 : memberCountSeed;
 
+    // Roughly two-thirds get a Dicebear "shapes" SVG seeded by name (colorful,
+    // deterministic, no auth); the rest stay empty to exercise the initials fallback.
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const icon = i % 3 === 0
+      ? ''
+      : `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(slug)}`;
+
     result.push({
       space_address: `mock_space_${i.toString().padStart(4, '0')}`,
       name,
       description,
-      icon: '',
+      icon,
       invite_link: `https://app.quorummessenger.com/invite/mock_${i}`,
       category,
       status: 'active',
