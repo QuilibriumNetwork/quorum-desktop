@@ -11,6 +11,23 @@
 
   &__icon {
     flex-shrink: 0;
+    position: relative;
+  }
+
+  &__muted-badge {
+    position: absolute;
+    top: -$s-1;
+    left: -$s-1;
+    width: $s-5;
+    height: $s-5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-2);
+    border-radius: $rounded-full;
+    z-index: 10;
+    color: var(--color-text-subtle);
+    pointer-events: none;
   }
 
   &__body {

@@ -18,6 +18,7 @@ interface SpaceCardMySpaceProps {
   spaceName: string;
   memberCount: number;
   isOwner: boolean;
+  isMuted?: boolean;
   onClick: () => void;
   onContextMenu?: (e: React.MouseEvent) => void;
 }
@@ -70,6 +71,11 @@ const MySpaceCardView: React.FC<SpaceCardMySpaceProps> = (props) => (
         noTooltip={true}
         noToggle={true}
       />
+      {props.isMuted && (
+        <div className="space-card__muted-badge" title={t`Muted`}>
+          <Icon name="bell-off" size="sm" />
+        </div>
+      )}
     </div>
     <div className="space-card__body">
       <div className="space-card__name-row">

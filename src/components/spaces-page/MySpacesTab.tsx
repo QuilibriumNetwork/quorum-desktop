@@ -17,9 +17,10 @@ import './MySpacesTab.scss';
 const MySpaceCard: React.FC<{
   space: Space;
   isOwner: boolean;
+  isMuted: boolean;
   onClick: () => void;
   onContextMenu: (e: React.MouseEvent) => void;
-}> = ({ space, isOwner, onClick, onContextMenu }) => {
+}> = ({ space, isOwner, isMuted, onClick, onContextMenu }) => {
   const { data: members } = useSpaceMembers({ spaceId: space.spaceId });
   return (
     <SpaceCard
@@ -29,6 +30,7 @@ const MySpaceCard: React.FC<{
       spaceName={space.spaceName}
       memberCount={members?.length ?? 0}
       isOwner={isOwner}
+      isMuted={isMuted}
       onClick={onClick}
       onContextMenu={onContextMenu}
     />
@@ -137,6 +139,7 @@ export const MySpacesTab: React.FC = () => {
           </div>
         ) : (
           filteredSpaces.map((space) => {
+            const isMuted = config?.notificationSettings?.[space.spaceId]?.isMuted ?? false;
             const handleContextMenu = (e: React.MouseEvent) =>
               openContextMenu({
                 spaceId: space.spaceId,
@@ -155,6 +158,7 @@ export const MySpacesTab: React.FC = () => {
                     spaceName={space.spaceName}
                     memberCount={0}
                     isOwner={ownerMap[space.spaceId] ?? false}
+                    isMuted={isMuted}
                     onClick={() => {}}
                     onContextMenu={handleContextMenu}
                   />
@@ -163,6 +167,7 @@ export const MySpacesTab: React.FC = () => {
                 <MySpaceCard
                   space={space}
                   isOwner={ownerMap[space.spaceId] ?? false}
+                  isMuted={isMuted}
                   onClick={() => {
                     const firstChannel = space.groups?.[0]?.channels?.[0]?.channelId;
                     if (firstChannel) {
