@@ -71,7 +71,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
                 content={t`You are the owner of this Space`}
                 place="top"
               >
-                <Icon name="shield-check" size="sm" className="space-card__owner-badge" />
+                <Icon name="crown" size="sm" className="space-card__owner-badge" />
               </Tooltip>
             )}
           </div>
