@@ -9,6 +9,7 @@ import DirectMessages from '@/components/direct/DirectMessages';
 import Connecting from '@/components/Connecting';
 import InviteRoute from '@/components/InviteRoute';
 import NotFound from '@/components/NotFound';
+import { SpacesPage } from '@/components/spaces-page';
 
 class RouteErrorBoundary extends React.Component<
   { fallback: React.ReactNode; children: React.ReactNode },
@@ -130,6 +131,22 @@ export function Router({ user, setUser }: RouterProps) {
               <SidebarProvider>
                 <Layout>
                   <DirectMessages />
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      <Route
+        path="/spaces"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <SpacesPage />
+                  </RouteErrorBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
