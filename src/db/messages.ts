@@ -87,6 +87,7 @@ export type UserConfig = {
   };
   // Default true; muted channels still visible at 60% opacity unless turned off.
   showMutedChannels?: boolean;
+  hideMutedSpacesFromSidebar?: boolean;
   favoriteDMs?: string[];
   // Muted DMs — no unread indicators or notifications.
   mutedConversations?: string[];
