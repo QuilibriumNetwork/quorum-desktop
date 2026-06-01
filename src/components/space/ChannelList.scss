@@ -95,10 +95,23 @@ html:not(.dark) {
   background-size: cover;
   background-position: center;
   border-top-left-radius: $rounded-xl;
+  overflow: hidden; // Contain the blurred inner fill when banner is generated
 
   @media (max-width: 1023px) {
     border-top-left-radius: 0;
   }
+}
+
+// Inner fill used only when the banner is generated from the Space icon.
+// The icon is enlarged + blurred to fill the header strip; the outer
+// .space-header-bg's overflow:hidden clips the blur fringe.
+.space-header-bg-fill {
+  position: absolute;
+  inset: 0;
+  background-size: 200%;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: blur(28px) saturate(1.3);
 }
 
 // No-banner: match chat-header height ($header-height) for visual alignment
