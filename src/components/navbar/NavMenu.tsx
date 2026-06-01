@@ -590,7 +590,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           <div
             role="link"
             tabIndex={0}
-            className={`block cursor-pointer ${location.pathname === '/spaces' ? 'space-icon-toggle--selected-wrap' : ''}`}
+            className="block cursor-pointer"
             onClick={() => navigate('/spaces')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
@@ -600,8 +600,19 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
             }}
             aria-label={t`Open Spaces page`}
           >
-            <div className={`${location.pathname === '/spaces' ? 'space-icon-selected' : 'space-icon'} spaces-hub-icon`}>
-              <Icon name="layout-grid-add" size="2xl" />
+            <div className="relative z-[999]">
+              <div
+                className={`space-icon-toggle ${
+                  location.pathname === '/spaces' ? 'space-icon-toggle--selected' : ''
+                }`}
+              />
+              <div
+                className={`spaces-hub-icon ${
+                  location.pathname === '/spaces' ? 'spaces-hub-icon--selected' : ''
+                }`}
+              >
+                <Icon name="layout-grid-add" size="2xl" />
+              </div>
             </div>
           </div>
         </Tooltip>
