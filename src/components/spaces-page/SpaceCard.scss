@@ -181,6 +181,10 @@
 
       &--less {
         align-self: flex-start;
+        // Match the description's text size (this button is a sibling of the
+        // description, not a child, so `font: inherit` above picks up the
+        // body's default $text-base instead of $text-sm).
+        font-size: $text-sm;
       }
     }
 
