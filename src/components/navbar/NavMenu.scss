@@ -70,16 +70,8 @@ header {
     svg {
       width: $s-8; // 32px on desktop
       height: $s-8;
-      // Dark theme: white on dark grey bg. Light theme overrides below.
+      // White in both themes (light theme bg is lighter — accepted contrast tradeoff)
       color: white;
-    }
-  }
-
-  // Light theme: bg is lighter (--surface-7), so use a dark icon for contrast.
-  html:not(.dark) & {
-    .space-icon.dm-icon svg,
-    .space-icon-selected.dm-icon svg {
-      color: rgb(var(--color-text-main));
     }
   }
 
@@ -139,7 +131,7 @@ header {
     justify-content: center;
     transition: background-color $duration-100 linear, color $duration-100 linear;
     cursor: pointer;
-    color: var(--surface-4);
+    color: var(--color-text-subtle);
 
     svg {
       width: $s-8;
@@ -157,20 +149,10 @@ header {
     }
   }
 
-  // Light theme: base bg is lighter (--surface-7), so flip hover/selected bg
-  // direction (go DARKER to stay prominent) and use a dark foreground throughout.
+  // Light theme: --color-text-subtle (#818181) reads too dim against the
+  // lighter --surface-7 bg. Use --surface-5 (#d5d5db) for better contrast.
   html:not(.dark) & .spaces-hub-icon {
-    color: rgb(var(--color-text-main));
-
-    &:hover {
-      background-color: var(--surface-8);
-      color: rgb(var(--color-text-main));
-    }
-
-    &--selected {
-      background-color: var(--surface-9);
-      color: rgb(var(--color-text-main));
-    }
+    color: var(--surface-5);
   }
 
   @media (max-width: $screen-xs) {
