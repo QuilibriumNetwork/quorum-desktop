@@ -19,6 +19,7 @@ interface SpaceCardMySpaceProps {
   memberCount: number;
   isOwner: boolean;
   onClick: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
 }
 
 interface SpaceCardPublicProps {
@@ -49,6 +50,7 @@ const MySpaceCardView: React.FC<SpaceCardMySpaceProps> = (props) => (
     role="button"
     tabIndex={0}
     onClick={props.onClick}
+    onContextMenu={props.onContextMenu}
     onKeyDown={(e) => {
       if (e.key === 'Enter' || e.key === ' ') {
         e.preventDefault();

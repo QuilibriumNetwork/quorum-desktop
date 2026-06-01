@@ -7,6 +7,7 @@ import { useSpaces } from '../../hooks/queries/spaces/useSpaces';
 import { useConfig } from '../../hooks/queries/config';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useHideMutedSpaces } from '../../hooks/business/user/useHideMutedSpaces';
+import { useSpaceContextMenu } from '../../hooks/business/spaces';
 import { useMessageDB } from '../context/useMessageDB';
 import { Input, Select, Switch } from '../primitives';
 import { SpaceCard } from './SpaceCard';
@@ -17,7 +18,8 @@ const MySpaceCard: React.FC<{
   space: Space;
   isOwner: boolean;
   onClick: () => void;
-}> = ({ space, isOwner, onClick }) => {
+  onContextMenu: (e: React.MouseEvent) => void;
+}> = ({ space, isOwner, onClick, onContextMenu }) => {
   const { data: members } = useSpaceMembers({ spaceId: space.spaceId });
   return (
     <SpaceCard
@@ -28,6 +30,7 @@ const MySpaceCard: React.FC<{
       memberCount={members?.length ?? 0}
       isOwner={isOwner}
       onClick={onClick}
+      onContextMenu={onContextMenu}
     />
   );
 };
@@ -40,6 +43,7 @@ export const MySpacesTab: React.FC = () => {
   const { data: config } = useConfig({ userAddress });
   const { hideMutedSpaces, toggleHideMutedSpaces } = useHideMutedSpaces();
   const { messageDB } = useMessageDB();
+  const { openContextMenu, contextMenu } = useSpaceContextMenu();
 
   const [search, setSearch] = React.useState('');
   const [folderId, setFolderId] = React.useState<string>('all');
@@ -132,37 +136,49 @@ export const MySpacesTab: React.FC = () => {
               : t`No Spaces yet — discover public Spaces or paste an invite link.`}
           </div>
         ) : (
-          filteredSpaces.map((space) => (
-            <React.Suspense
-              key={space.spaceId}
-              fallback={
-                <SpaceCard
-                  variant="my-space"
-                  iconUrl={space.iconUrl}
-                  spaceId={space.spaceId}
-                  spaceName={space.spaceName}
-                  memberCount={0}
+          filteredSpaces.map((space) => {
+            const handleContextMenu = (e: React.MouseEvent) =>
+              openContextMenu({
+                spaceId: space.spaceId,
+                spaceName: space.spaceName,
+                iconUrl: space.iconUrl,
+                event: e,
+              });
+            return (
+              <React.Suspense
+                key={space.spaceId}
+                fallback={
+                  <SpaceCard
+                    variant="my-space"
+                    iconUrl={space.iconUrl}
+                    spaceId={space.spaceId}
+                    spaceName={space.spaceName}
+                    memberCount={0}
+                    isOwner={ownerMap[space.spaceId] ?? false}
+                    onClick={() => {}}
+                    onContextMenu={handleContextMenu}
+                  />
+                }
+              >
+                <MySpaceCard
+                  space={space}
                   isOwner={ownerMap[space.spaceId] ?? false}
-                  onClick={() => {}}
+                  onClick={() => {
+                    const firstChannel = space.groups?.[0]?.channels?.[0]?.channelId;
+                    if (firstChannel) {
+                      navigate(`/spaces/${space.spaceId}/${firstChannel}`);
+                    } else {
+                      navigate(`/spaces/${space.spaceId}`);
+                    }
+                  }}
+                  onContextMenu={handleContextMenu}
                 />
-              }
-            >
-              <MySpaceCard
-                space={space}
-                isOwner={ownerMap[space.spaceId] ?? false}
-                onClick={() => {
-                  const firstChannel = space.groups?.[0]?.channels?.[0]?.channelId;
-                  if (firstChannel) {
-                    navigate(`/spaces/${space.spaceId}/${firstChannel}`);
-                  } else {
-                    navigate(`/spaces/${space.spaceId}`);
-                  }
-                }}
-              />
-            </React.Suspense>
-          ))
+              </React.Suspense>
+            );
+          })
         )}
       </div>
+      {contextMenu}
     </div>
   );
 };
