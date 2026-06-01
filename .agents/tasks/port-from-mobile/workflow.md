@@ -10,6 +10,8 @@ audience: any agent working on the port-from-mobile effort
 # Workflow for porting features from mobile to desktop
 
 > **The mental model:** desktop is the only repo we're shipping runtime code to. Mobile is read-only context. Shared is touched only when a port surfaces portable logic.
+>
+> **Note (2026-06-01):** this folder is conceptually a **two-way feature diff** between desktop and mobile, not just a one-way port log. The active port effort runs through [candidates.md](candidates.md) (features mobile has that desktop is missing). When the inverse surfaces — capabilities where desktop's implementation is materially better than mobile's — log it in [desktop-better-than-mobile.md](desktop-better-than-mobile.md). We do NOT push to mobile, but the lead dev can use that doc as a curated list of convergence candidates.
 
 ```
 quorum-mobile:    [read-only context — pull, inspect, never push]
@@ -54,11 +56,42 @@ quorum-mobile/
 
 When inspecting, start with `app/` to see what screens exist (= what user-facing features ship), then drill into `components/`, `hooks/`, `services/` for each feature.
 
+## Capability verification — mandatory before drafting a task
+
+> **Hard-learned 2026-06-01.** Symbol-grep for the mobile hook name is NOT enough. The same capability can exist on desktop under a different name and a fundamentally different architecture. Two candidates were knocked off the list this way in one session: #2 Message search (mobile uses MiniSearch over loaded messages; desktop uses `GlobalSearch` scoped to current conversation via `SearchService` over IndexedDB) and #3 Reply tracking (mobile uses MMKV counter; desktop uses `useReplyNotificationCounts` derived from `MessageDB` with read-state tracking).
+
+Before drafting a `YYYY-MM-DD-port-<slug>.md` task file, run a structured capability check on desktop, NOT a name-grep:
+
+1. **State the capability in plain terms.** Not "port `useFooBar`" — "let the user X". E.g. "let the user browse a public directory of spaces and join one without an invite link." If you can't state it in plain terms, you don't understand the feature yet.
+2. **Grep desktop for the capability concept, not the mobile name.** For "browse a directory of spaces": search for `directory`, `discover`, `explore`, `browseSpaces`, `publicSpaces`, `catalog`. For "report abuse": `report`, `abuse`, `moderation`, `flag`. For "public profile": `publicProfile`, `isProfilePublic`, `profileFetch`, `MembersWithFallback`.
+3. **Check the relevant component / hook folders directly.** Desktop's tree is well-organized — `src/components/<area>/`, `src/hooks/business/<area>/`. If the capability is "abuse reporting", look in `components/modals/`, `services/`, `hooks/business/`. Don't rely on grep alone.
+4. **Read at least one adjacent file in full.** For #3 we'd have found `useReplyNotificationCounts` immediately by reading `src/hooks/business/replies/`. Cheap.
+5. **If the capability is present** — log the finding in [candidates.md](candidates.md) per-candidate notes and consider whether to add an entry in [desktop-better-than-mobile.md](desktop-better-than-mobile.md). Don't draft a task file.
+6. **If the capability is genuinely missing** — proceed to drafting the task file.
+
+This rule is non-optional. It costs 5 minutes; skipping it costs a task file written for nothing.
+
+## Port the capability, not the mobile UX pattern
+
+> **From 2026-06-01 discussion.** When porting a mobile feature, port the *capability*, not the mobile UX pattern. Mobile UX choices reflect mobile chrome (tab bars, full-screen lists, activity-driven sort, telegram-style unified inbox) and mobile constraints (cold boot, app suspension, MMKV instead of IndexedDB). Desktop has different chrome (sidebars, multi-panel layout, modal overlays) and a different UX model.
+
+A feature being shipped on mobile means the *capability* is real. Whether the *UX pattern* fits desktop is a separate judgment.
+
+**Worked example: desktop is intentionally Discord-style, not Telegram-style.**
+- Desktop treats spaces as *commitments* (communities the user chose, manually ordered, foldered). No auto-sort by activity.
+- Desktop treats DMs as *inbox* (recency-sorted with favorites pinning to top).
+- The split is deliberate and matches Discord/Slack — not Telegram.
+- Mobile's `useSpaceActivity` (sort spaces by recency + show last-message preview under each) fits Telegram's unified-list model. Trying to port it would regress desktop's UX without an obvious win — desktop's icon-only sidebar has no room for a preview snippet and auto-sort would shuffle the user's anchor communities every time they go quiet.
+
+**Default to desktop's existing UX language.** Don't replicate mobile widgets just because they exist. When in doubt, ask the user — UX choices are product decisions, not engineering ones. "Mobile ships X" is data, not a directive.
+
+**Don't decide for the lead.** When desktop has an implementation that's deliberately different from mobile (and arguably better), record that observation in [desktop-better-than-mobile.md](desktop-better-than-mobile.md) so it can inform mobile's future convergence. Don't try to "fix" desktop to match mobile.
+
 ## The workflow at a glance
 
 For each feature port:
 
-1. **Candidate selected** from [candidates.md](candidates.md). Confirm feature still doesn't exist on desktop (grep desktop for obvious symbols).
+1. **Candidate selected** from [candidates.md](candidates.md). Run the [Capability verification](#capability-verification--mandatory-before-drafting-a-task) pass — NOT a symbol-grep. Confirm the *capability* (stated in plain terms) is genuinely missing on desktop.
 2. **Create task doc** at this folder root: `YYYY-MM-DD-port-<slug>.md`. Frontmatter + what/why + mobile files referenced + desktop files to create or modify + shared promotion candidates + verification checkboxes.
 3. **Rename session branch** to describe what ships (`feat/port-<slug>` or similar).
 4. **Code + verify.**
@@ -169,4 +202,4 @@ Port the [feature name] from `quorum-mobile` to `quorum-desktop`.
 
 ---
 
-*Last updated: 2026-06-01 — folder created.*
+*Last updated: 2026-06-01 — added mandatory "Capability verification" step (symbol-grep is not enough) and the "Port the capability, not the mobile UX pattern" rule with the Discord-vs-Telegram model worked example. Introduced two-way diff framing — sibling [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md) tracks capabilities where desktop is materially better than mobile.*
