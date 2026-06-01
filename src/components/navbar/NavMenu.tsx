@@ -590,7 +590,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           <div
             role="link"
             tabIndex={0}
-            className={`block cursor-pointer ${location.pathname === '/spaces' || location.pathname.startsWith('/spaces?') ? 'space-icon-toggle--selected-wrap' : ''}`}
+            className={`block cursor-pointer ${location.pathname === '/spaces' ? 'space-icon-toggle--selected-wrap' : ''}`}
             onClick={() => navigate('/spaces')}
             onKeyDown={(e) => {
               if (e.key === 'Enter' || e.key === ' ') {
