@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .space-card {
   display: flex;
@@ -86,7 +86,60 @@
     }
   }
 
+  // Public/Discover variant: vertical layout, icon centered on top, roughly squared.
   &--public {
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: $s-2;
+    padding: $s-4;
+
+    .space-card__icon {
+      margin-top: $s-1;
+    }
+
+    .space-card__name-row {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .space-card__name {
+      font-size: $text-base;
+    }
+
+    .space-card__meta {
+      justify-content: center;
+    }
+
+    .space-card__description {
+      text-align: center;
+    }
+
+    .space-card__more {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-size: inherit;
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+
+      &:hover {
+        color: var(--accent-600);
+      }
+
+      &--less {
+        align-self: center;
+        font-size: $text-xs;
+      }
+    }
+
+    .space-card__actions {
+      width: 100%;
+      justify-content: stretch;
+      margin-top: auto;
+      padding-top: $s-2;
+    }
   }
+
 }

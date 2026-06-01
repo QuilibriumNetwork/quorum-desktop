@@ -1,4 +1,4 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
 .discover-tab {
   display: flex;
@@ -18,12 +18,14 @@
     flex: 1 1 auto;
   }
 
+  // Squared cards: target ~18rem (288px) per cell. On 1600px+ desktops you get
+  // 4-5 columns; collapses progressively on smaller screens.
   &__grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
     gap: $s-4;
 
-    @media (max-width: 768px) {
+    @media (max-width: 480px) {
       grid-template-columns: 1fr;
     }
   }

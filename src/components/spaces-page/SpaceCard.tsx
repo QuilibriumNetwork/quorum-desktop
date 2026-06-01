@@ -30,6 +30,7 @@ interface SpaceCardPublicProps {
   description: string;
   onJoin: () => void;
   isJoining?: boolean;
+  alreadyJoined?: boolean;
 }
 
 type SpaceCardProps = SpaceCardMyServerProps | SpaceCardPublicProps;
@@ -88,8 +89,24 @@ export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
     );
   }
 
+  const joinLabel = props.alreadyJoined
+    ? t`Already joined`
+    : props.isJoining
+      ? t`Joining...`
+      : t`Join`;
+
+  const [expanded, setExpanded] = React.useState(false);
+
+  // Threshold roughly matches what fits in 2 lines on the squared card width.
+  // Above this, "More" is rendered inline after a truncated preview.
+  const TRUNCATE_AT = 110;
+  const needsTruncation = props.description.length > TRUNCATE_AT;
+  const truncated = needsTruncation
+    ? props.description.slice(0, TRUNCATE_AT).trimEnd() + '…'
+    : props.description;
+
   return (
-    <div className="space-card space-card--public">
+    <div className={`space-card space-card--public ${expanded ? 'space-card--expanded' : ''}`}>
       <div className="space-card__icon">
         <SpaceIcon
           iconUrl={props.iconUrl}
@@ -102,25 +119,49 @@ export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
           noToggle={true}
         />
       </div>
-      <div className="space-card__body">
-        <div className="space-card__name-row">
-          <span className="space-card__name">{props.spaceName}</span>
-        </div>
-        <span className="space-card__meta">
-          <span className="space-card__category">{props.category}</span>
-          <span aria-hidden="true">·</span>
-          <MemberCount count={props.memberCount} />
-        </span>
-        <p className="space-card__description">{props.description}</p>
-        <div className="space-card__actions">
-          <Button
-            type="primary"
-            onClick={props.onJoin}
-            disabled={props.isJoining}
-          >
-            {props.isJoining ? t`Joining...` : t`Join`}
-          </Button>
-        </div>
+      <div className="space-card__name-row">
+        <span className="space-card__name">{props.spaceName}</span>
+      </div>
+      <span className="space-card__meta">
+        <span className="space-card__category">{props.category}</span>
+        <span aria-hidden="true">·</span>
+        <MemberCount count={props.memberCount} />
+      </span>
+      {props.description && (
+        <p className="space-card__description">
+          {expanded || !needsTruncation ? props.description : truncated}
+          {needsTruncation && !expanded && (
+            <>
+              {' '}
+              <button
+                type="button"
+                className="space-card__more cursor-pointer"
+                onClick={() => setExpanded(true)}
+              >
+                {t`More`}
+              </button>
+            </>
+          )}
+        </p>
+      )}
+      {needsTruncation && expanded && (
+        <button
+          type="button"
+          className="space-card__more space-card__more--less cursor-pointer"
+          onClick={() => setExpanded(false)}
+        >
+          {t`Show less`}
+        </button>
+      )}
+      <div className="space-card__actions">
+        <Button
+          type="secondary"
+          onClick={props.onJoin}
+          disabled={props.isJoining || props.alreadyJoined}
+          fullWidth
+        >
+          {joinLabel}
+        </Button>
       </div>
     </div>
   );

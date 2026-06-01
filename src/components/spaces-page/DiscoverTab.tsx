@@ -2,6 +2,7 @@ import * as React from 'react';
 import { t } from '@lingui/core/macro';
 import { useExploreSpaces, SPACE_CATEGORIES } from '../../hooks/business/spaces';
 import { useSpaceJoining } from '../../hooks/business/spaces/useSpaceJoining';
+import { useSpaces } from '../../hooks/queries/spaces/useSpaces';
 import { Input, Select, Button, Icon, Callout } from '../primitives';
 import { SpaceCard } from './SpaceCard';
 import type { SpaceCategory } from '@quilibrium/quorum-shared';
@@ -24,6 +25,12 @@ export const DiscoverTab: React.FC = () => {
   } = useExploreSpaces();
   const { joinSpace, joining } = useSpaceJoining();
   const [joiningEntry, setJoiningEntry] = React.useState<string | null>(null);
+
+  const { data: joinedSpaces } = useSpaces({});
+  const joinedIds = React.useMemo(
+    () => new Set((joinedSpaces ?? []).map((s) => s.spaceId)),
+    [joinedSpaces]
+  );
 
   const categoryOptions = React.useMemo(() => {
     const allCount = categoryCounts
@@ -107,6 +114,7 @@ export const DiscoverTab: React.FC = () => {
               category={entry.category}
               description={entry.description}
               isJoining={joiningEntry === entry.space_address && joining}
+              alreadyJoined={joinedIds.has(entry.space_address)}
               onJoin={() => handleJoin(entry.invite_link, entry.space_address)}
             />
           ))
