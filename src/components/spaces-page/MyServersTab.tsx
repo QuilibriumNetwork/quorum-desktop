@@ -80,6 +80,8 @@ export const MyServersTab: React.FC = () => {
     };
   }, [spaces, messageDB]);
 
+  // Intentionally NOT filtering by hideMutedSpaces here — the toggle is scoped
+  // to the sidebar (see Switch label). My Servers tab is the full inventory.
   const filteredSpaces = React.useMemo(() => {
     let result: Space[] = spaces ?? [];
 
