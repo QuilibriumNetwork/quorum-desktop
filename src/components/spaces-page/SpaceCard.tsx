@@ -108,17 +108,21 @@ const PublicSpaceCardView: React.FC<SpaceCardPublicProps> = (props) => {
   // otherwise a solid colour derived from the space name (same hash used by
   // SpaceIcon for initials backgrounds, so the hero and the icon agree).
   const heroFallbackColor = getColorFromDisplayName(props.spaceName);
-  const heroStyle: React.CSSProperties = props.iconUrl
-    ? { backgroundImage: `url(${props.iconUrl})` }
-    : { backgroundColor: heroFallbackColor };
 
   return (
     <div className={`space-card space-card--public ${expanded ? 'space-card--expanded' : ''}`}>
       <div
-        className={`space-card__hero ${props.iconUrl ? 'space-card__hero--image' : ''}`}
-        style={heroStyle}
+        className="space-card__hero"
+        style={props.iconUrl ? undefined : { backgroundColor: heroFallbackColor }}
         aria-hidden="true"
-      />
+      >
+        {props.iconUrl && (
+          <div
+            className="space-card__hero-fill"
+            style={{ backgroundImage: `url(${props.iconUrl})` }}
+          />
+        )}
+      </div>
       <div className="space-card__icon">
         <SpaceIcon
           iconUrl={props.iconUrl}

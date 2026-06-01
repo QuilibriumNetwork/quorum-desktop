@@ -86,7 +86,7 @@
     }
   }
 
-  // Discord-style Discover card: hero strip on top, square icon overlapping
+  // Discover card: hero strip on top, square icon overlapping
   // the hero bottom-left, body below. Hero uses blurred enlarged icon image
   // when available, solid color from name hash otherwise.
   &--public {
@@ -98,48 +98,39 @@
 
     .space-card__hero {
       width: 100%;
-      height: 6.5rem; // 104px - matches Discord proportions vs the icon
+      height: 8rem; // 128px — taller hero, icon midline still lands at hero bottom (-$s-6 margin = 24px overlap on a 48px icon)
       flex-shrink: 0;
       position: relative;
       overflow: hidden;
+      background-position: center;
+      background-repeat: no-repeat;
+      isolation: isolate; // Contain the blur filter to this element's box
+    }
 
-      // Solid-color (no image) case gets a top-down gradient overlay for depth.
-      // The base color set via inline style sits underneath this overlay.
-      &::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-          to bottom,
-          rgb(255 255 255 / 0.08),
-          rgb(0 0 0 / 0.18)
-        );
-        pointer-events: none;
-      }
-
-      &--image {
-        // Render the icon image as a centered, enlarged + blurred fill.
-        background-size: cover !important;
-        background-position: center;
-        background-repeat: no-repeat;
-        filter: blur(20px) saturate(1.3);
-        transform: scale(1.25); // Hide the blur edge fringe
-        transform-origin: center;
-
-        // Hide the gradient overlay on image heroes — blur already provides depth
-        &::after {
-          display: none;
-        }
-      }
+    .space-card__hero-fill {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 200%;
+      filter: blur(18px) saturate(1.3);
     }
 
     .space-card__icon {
-      // Overlap the hero bottom-left, flush (no halo)
+      // Overlap the hero so its vertical center sits ON the hero's bottom edge.
+      // Icon is 48px tall → translate up by half (24px = $s-6) so center hits hero edge.
       margin-top: -$s-6;
       margin-left: $s-4;
       align-self: flex-start;
       position: relative;
       z-index: 1;
+
+      // Ring around the icon: a thicker border in the card surface colour so
+      // the icon visually "punches through" the hero (Discord pattern).
+      .space-icon,
+      .space-icon-selected {
+        box-shadow: 0 0 0 $s-1 var(--surface-2);
+      }
     }
 
     .space-card__body {
