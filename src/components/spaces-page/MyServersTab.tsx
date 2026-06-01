@@ -1,0 +1,164 @@
+import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
+import { t } from '@lingui/core/macro';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import type { Space } from '@quilibrium/quorum-shared';
+import { useSpaces } from '../../hooks/queries/spaces/useSpaces';
+import { useConfig } from '../../hooks/queries/config';
+import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
+import { useHideMutedSpaces } from '../../hooks/business/user/useHideMutedSpaces';
+import { useMessageDB } from '../context/useMessageDB';
+import { Input, Select, Switch } from '../primitives';
+import { SpaceCard } from './SpaceCard';
+import type { NavItem } from '../../db/messages';
+import './MyServersTab.scss';
+
+const MyServerCard: React.FC<{
+  space: Space;
+  isOwner: boolean;
+  onClick: () => void;
+}> = ({ space, isOwner, onClick }) => {
+  const { data: members } = useSpaceMembers({ spaceId: space.spaceId });
+  return (
+    <SpaceCard
+      variant="my-server"
+      iconUrl={space.iconUrl}
+      spaceId={space.spaceId}
+      spaceName={space.spaceName}
+      memberCount={members?.length ?? 0}
+      isOwner={isOwner}
+      onClick={onClick}
+    />
+  );
+};
+
+export const MyServersTab: React.FC = () => {
+  const navigate = useNavigate();
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const userAddress = currentPasskeyInfo?.address || '';
+  const { data: spaces } = useSpaces({});
+  const { data: config } = useConfig({ userAddress });
+  const { hideMutedSpaces, toggleHideMutedSpaces } = useHideMutedSpaces();
+  const { messageDB } = useMessageDB();
+
+  const [search, setSearch] = React.useState('');
+  const [folderId, setFolderId] = React.useState<string>('all');
+
+  const folders = React.useMemo(() => {
+    const items = config?.items || [];
+    return items.filter(
+      (item): item is Extract<NavItem, { type: 'folder' }> => item.type === 'folder'
+    );
+  }, [config?.items]);
+
+  const folderOptions = React.useMemo(() => {
+    return [
+      { label: t`All folders`, value: 'all' },
+      ...folders.map((f) => ({ label: f.name, value: f.id })),
+    ];
+  }, [folders]);
+
+  const [ownerMap, setOwnerMap] = React.useState<Record<string, boolean>>({});
+
+  React.useEffect(() => {
+    if (!spaces || spaces.length === 0) return;
+    let cancelled = false;
+    (async () => {
+      const result: Record<string, boolean> = {};
+      for (const space of spaces) {
+        try {
+          const ownerKey = await messageDB.getSpaceKey(space.spaceId, 'owner');
+          result[space.spaceId] = !!ownerKey;
+        } catch {
+          result[space.spaceId] = false;
+        }
+      }
+      if (!cancelled) setOwnerMap(result);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [spaces, messageDB]);
+
+  const filteredSpaces = React.useMemo(() => {
+    let result: Space[] = spaces ?? [];
+
+    if (folderId !== 'all') {
+      const folder = folders.find((f) => f.id === folderId);
+      if (folder) {
+        const ids = new Set(folder.spaceIds);
+        result = result.filter((s) => ids.has(s.spaceId));
+      }
+    }
+
+    if (search.trim()) {
+      const needle = search.toLowerCase().trim();
+      result = result.filter((s) => s.spaceName.toLowerCase().includes(needle));
+    }
+
+    return result;
+  }, [spaces, folderId, folders, search]);
+
+  return (
+    <div className="my-servers-tab">
+      <div className="my-servers-tab__header">
+        <Input
+          className="my-servers-tab__search"
+          value={search}
+          onChange={setSearch}
+          placeholder={t`Find a server...`}
+        />
+        <Select
+          value={folderId}
+          onChange={(value: string | string[]) => setFolderId(value as string)}
+          options={folderOptions}
+          size="medium"
+        />
+        <label className="my-servers-tab__toggle">
+          <Switch value={hideMutedSpaces} onChange={() => toggleHideMutedSpaces()} />
+          <span>{t`Hide muted servers from sidebar`}</span>
+        </label>
+      </div>
+
+      <div className="my-servers-tab__grid">
+        {filteredSpaces.length === 0 ? (
+          <div className="my-servers-tab__empty">
+            {search.trim() || folderId !== 'all'
+              ? t`No servers match the current filters.`
+              : t`No servers yet — discover public spaces or paste an invite link.`}
+          </div>
+        ) : (
+          filteredSpaces.map((space) => (
+            <React.Suspense
+              key={space.spaceId}
+              fallback={
+                <SpaceCard
+                  variant="my-server"
+                  iconUrl={space.iconUrl}
+                  spaceId={space.spaceId}
+                  spaceName={space.spaceName}
+                  memberCount={0}
+                  isOwner={ownerMap[space.spaceId] ?? false}
+                  onClick={() => {}}
+                />
+              }
+            >
+              <MyServerCard
+                space={space}
+                isOwner={ownerMap[space.spaceId] ?? false}
+                onClick={() => {
+                  const firstChannel = space.groups?.[0]?.channels?.[0]?.channelId;
+                  if (firstChannel) {
+                    navigate(`/spaces/${space.spaceId}/${firstChannel}`);
+                  } else {
+                    navigate(`/spaces/${space.spaceId}`);
+                  }
+                }}
+              />
+            </React.Suspense>
+          ))
+        )}
+      </div>
+    </div>
+  );
+};

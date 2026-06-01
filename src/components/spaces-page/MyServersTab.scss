@@ -1,0 +1,55 @@
+@import '../../styles/variables';
+
+.my-servers-tab {
+  display: flex;
+  flex-direction: column;
+  gap: $s-4;
+  padding: $s-4;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $s-4;
+    flex-wrap: wrap;
+  }
+
+  &__search {
+    max-width: 28rem;
+    flex: 1 1 auto;
+  }
+
+  &__toggle {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    font-size: $text-sm;
+    color: rgb(var(--color-text-main));
+    cursor: pointer;
+    user-select: none;
+
+    span {
+      white-space: nowrap;
+    }
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: $s-4;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    @media (max-width: 640px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__empty {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: $s-8;
+    color: var(--color-text-subtle);
+  }
+}
