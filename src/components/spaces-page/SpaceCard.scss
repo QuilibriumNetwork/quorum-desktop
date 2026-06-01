@@ -98,33 +98,52 @@
 
     .space-card__hero {
       width: 100%;
-      height: $s-20; // 80px hero strip
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
+      height: 6.5rem; // 104px - matches Discord proportions vs the icon
       flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+
+      // Solid-color (no image) case gets a top-down gradient overlay for depth.
+      // The base color set via inline style sits underneath this overlay.
+      &::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(
+          to bottom,
+          rgb(255 255 255 / 0.08),
+          rgb(0 0 0 / 0.18)
+        );
+        pointer-events: none;
+      }
 
       &--image {
-        // Enlarge the icon image then blur it for a soft hero look.
-        background-size: 200%;
-        filter: blur(18px) saturate(1.2);
-        transform: scale(1.15); // Hide blur edges
+        // Render the icon image as a centered, enlarged + blurred fill.
+        background-size: cover !important;
+        background-position: center;
+        background-repeat: no-repeat;
+        filter: blur(20px) saturate(1.3);
+        transform: scale(1.25); // Hide the blur edge fringe
         transform-origin: center;
+
+        // Hide the gradient overlay on image heroes — blur already provides depth
+        &::after {
+          display: none;
+        }
       }
     }
 
     .space-card__icon {
-      // Overlap the hero bottom-left
+      // Overlap the hero bottom-left, flush (no halo)
       margin-top: -$s-6;
       margin-left: $s-4;
-      padding: $s-1;
-      background: var(--surface-2);
-      border-radius: $rounded-lg;
       align-self: flex-start;
+      position: relative;
+      z-index: 1;
     }
 
     .space-card__body {
-      padding: $s-2 $s-4 $s-4;
+      padding: $s-3 $s-4 $s-4;
       gap: $s-1-5;
     }
 
