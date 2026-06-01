@@ -113,5 +113,6 @@ export function getMockSpacesCount(): number {
   if (typeof window === 'undefined') return 30;
   const urlValue = new URLSearchParams(window.location?.search || '').get('spaces');
   const lsValue = localStorage?.getItem('debug_mock_spaces_count');
-  return parseInt(urlValue || lsValue || '30', 10);
+  const n = parseInt(urlValue || lsValue || '30', 10);
+  return isNaN(n) || n <= 0 ? 30 : n;
 }
