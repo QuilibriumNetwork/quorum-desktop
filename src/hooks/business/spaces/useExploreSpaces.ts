@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import type { DirectoryEntry, DirectoryResponse, SpaceCategory } from '@quilibrium/quorum-shared';
 import { QuorumApiClient } from '../../../api/baseTypes';
 import {
@@ -34,7 +34,6 @@ interface UseExploreSpacesReturn {
   setCategory: (value: SpaceCategory | null) => void;
   loadMore: () => void;
   refetch: () => void;
-  offset: number;
 }
 
 function filterMockEntries(
@@ -57,18 +56,18 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
   const [search, setSearch] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [category, setCategory] = useState<SpaceCategory | null>(null);
-  const [offset, setOffset] = useState(0);
+  const [mockOffset, setMockOffset] = useState(0);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(search);
-      setOffset(0);
+      setMockOffset(0);
     }, DEBOUNCE_MS);
     return () => clearTimeout(timer);
   }, [search]);
 
   useEffect(() => {
-    setOffset(0);
+    setMockOffset(0);
   }, [category]);
 
   const mockEnabled = useMemo(() => isMockSpacesEnabled(), []);
@@ -78,20 +77,27 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
     [mockEnabled, mockCount]
   );
 
-  const queryKey = useMemo(
-    () => ['exploreSpaces', debouncedSearch, category, offset, mockEnabled],
-    [debouncedSearch, category, offset, mockEnabled]
-  );
-
-  const { data, isLoading, error, refetch } = useQuery<DirectoryResponse>({
-    queryKey,
+  const {
+    data,
+    isLoading,
+    error,
+    refetch,
+    fetchNextPage,
+    hasNextPage,
+  } = useInfiniteQuery<DirectoryResponse, Error>({
+    queryKey: ['exploreSpaces', debouncedSearch, category, mockEnabled],
     enabled: !mockEnabled,
-    queryFn: async () => {
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, allPages) => {
+      if (!lastPage.has_more) return undefined;
+      return allPages.reduce((sum, p) => sum + p.entries.length, 0);
+    },
+    queryFn: async ({ pageParam }) => {
       const apiClient = new QuorumApiClient();
       const response = await apiClient.exploreSpaces({
         search: debouncedSearch || undefined,
         category: category || undefined,
-        offset,
+        offset: pageParam as number,
         limit: PAGE_SIZE,
       });
       return response.data;
@@ -102,23 +108,32 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
   const result = useMemo<{ entries: DirectoryEntry[]; total: number; has_more: boolean }>(() => {
     if (mockEnabled) {
       const filtered = filterMockEntries(mockAll, debouncedSearch, category);
-      const page = filtered.slice(0, offset + PAGE_SIZE);
+      const page = filtered.slice(0, mockOffset + PAGE_SIZE);
       return {
         entries: page,
         total: filtered.length,
         has_more: page.length < filtered.length,
       };
     }
+    const pages = data?.pages ?? [];
+    const entries = pages.flatMap((p) => p.entries);
+    const total = pages[0]?.total ?? 0;
     return {
-      entries: data?.entries ?? [],
-      total: data?.total ?? 0,
-      has_more: data?.has_more ?? false,
+      entries,
+      total,
+      has_more: hasNextPage ?? false,
     };
-  }, [mockEnabled, mockAll, debouncedSearch, category, offset, data]);
+  }, [mockEnabled, mockAll, debouncedSearch, category, mockOffset, data, hasNextPage]);
 
   const loadMore = () => {
-    if (result.has_more) {
-      setOffset((prev) => prev + PAGE_SIZE);
+    if (mockEnabled) {
+      if (result.has_more) {
+        setMockOffset((prev) => prev + PAGE_SIZE);
+      }
+      return;
+    }
+    if (hasNextPage) {
+      void fetchNextPage();
     }
   };
 
@@ -127,13 +142,12 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
     total: result.total,
     hasMore: result.has_more,
     isLoading: mockEnabled ? false : isLoading,
-    error: error as Error | null,
+    error,
     search,
     setSearch,
     category,
     setCategory,
     loadMore,
     refetch,
-    offset,
   };
 }
