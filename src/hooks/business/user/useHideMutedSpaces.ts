@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { buildConfigKey, buildConfigFetcher } from '../../queries/config';
+import { useConfig, buildConfigKey } from '../../queries/config';
 
 interface UseHideMutedSpacesReturn {
   hideMutedSpaces: boolean;
@@ -15,14 +15,9 @@ export function useHideMutedSpaces(): UseHideMutedSpacesReturn {
   const userAddress = currentPasskeyInfo?.address;
   const queryClient = useQueryClient();
 
-  // useQuery (not useSuspenseQuery) so callers don't need a Suspense boundary
-  // to read just this single preference field.
-  const { data: config } = useQuery({
-    queryKey: buildConfigKey({ userAddress: userAddress || '' }),
-    queryFn: buildConfigFetcher({ messageDB, userAddress: userAddress || '' }),
-    enabled: !!userAddress,
-    networkMode: 'always',
-  });
+  // Canonical config subscription — same hook the navbar and useChannelMute use,
+  // so optimistic cache writes propagate to all subscribers in one render.
+  const { data: config } = useConfig({ userAddress: userAddress || '' });
 
   const hideMutedSpaces = config?.hideMutedSpacesFromSidebar ?? false;
 
