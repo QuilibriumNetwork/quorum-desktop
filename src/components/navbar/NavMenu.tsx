@@ -389,8 +389,19 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   // Always use folder drag - it handles both legacy and new formats via migrateToItems
   const { handleDragStart, handleDragMove, handleDragEnd, sensors } = folderDrag;
 
+  // Filter the navbar by mute state when the user has enabled "Hide muted servers".
+  // The filter applies BEFORE useNavItems — its empty-folder cascade then hides
+  // folders containing only muted spaces automatically.
+  const hideMutedSpacesFromSidebar = config?.hideMutedSpacesFromSidebar ?? false;
+  const filteredSpaces = React.useMemo(() => {
+    if (!hideMutedSpacesFromSidebar) return spaces;
+    return spaces.filter(
+      (s) => !(config?.notificationSettings?.[s.spaceId]?.isMuted ?? false)
+    );
+  }, [spaces, hideMutedSpacesFromSidebar, config?.notificationSettings]);
+
   // New: Use nav items hook for folders support
-  const { navItems, allSpaces } = useNavItems(spaces, config);
+  const { navItems, allSpaces } = useNavItems(filteredSpaces, config);
   const { isExpanded, toggleFolder } = useFolderStates();
   const { activeItem } = useDragStateContext();
 
@@ -567,6 +578,33 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
             </Tooltip>
           );
         })()}
+      </div>
+      <div className="nav-menu-spaces-hub">
+        <Tooltip
+          id="spaces-hub-nav-icon"
+          content={t`Spaces`}
+          place="right"
+          showOnTouch={false}
+          className="tooltip-text-large"
+        >
+          <div
+            role="link"
+            tabIndex={0}
+            className={`block cursor-pointer ${location.pathname === '/spaces' || location.pathname.startsWith('/spaces?') ? 'space-icon-toggle--selected-wrap' : ''}`}
+            onClick={() => navigate('/spaces')}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                navigate('/spaces');
+              }
+            }}
+            aria-label={t`Open Spaces page`}
+          >
+            <div className={`${location.pathname === '/spaces' ? 'space-icon-selected' : 'space-icon'} spaces-hub-icon`}>
+              <Icon name="layout-grid-add" size="2xl" />
+            </div>
+          </div>
+        </Tooltip>
       </div>
       <nav className="nav-menu-spaces grow" aria-label={t`Spaces`}>
         <DndContext
