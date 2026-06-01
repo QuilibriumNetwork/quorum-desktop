@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Ship a new `/spaces` top-level route on `quorum-desktop` with two browsing tabs (My Servers + Discover), a navbar entry point, mock data for dev testing, and a "Hide muted servers from sidebar" toggle that filters the navbar.
+**Goal:** Ship a new `/spaces` top-level route on `quorum-desktop` with two browsing tabs (My Spaces + Discover), a navbar entry point, mock data for dev testing, and a "Hide muted Spaces from sidebar" toggle that filters the navbar.
 
-**Architecture:** Add new wire-shape types (`DirectoryEntry`, `DirectoryResponse`, `SpaceCategory`) and a new `UserConfig.hideMutedSpacesFromSidebar` field to `@quilibrium/quorum-shared` as an additive PR. Add a new method to desktop's `QuorumApiClient` for the `/directory` endpoint. Add a new React Query hook (`useExploreSpaces`) that supports a dev-only mock mode. Build a page component with a 2-tab shell (My Servers + Discover), each tab using the same search-input + Select-filter chrome but with different card layouts (3-col compact vs 2-col side-by-side with descriptions). Wire the navbar `icon-layout-grid-add` entry point and filter the navbar space list by `!isSpaceMuted(spaceId)` when the new UserConfig field is true.
+**Architecture:** Add new wire-shape types (`DirectoryEntry`, `DirectoryResponse`, `SpaceCategory`) and a new `UserConfig.hideMutedSpacesFromSidebar` field to `@quilibrium/quorum-shared` as an additive PR. Add a new method to desktop's `QuorumApiClient` for the `/directory` endpoint. Add a new React Query hook (`useExploreSpaces`) that supports a dev-only mock mode. Build a page component with a 2-tab shell (My Spaces + Discover), each tab using the same search-input + Select-filter chrome but with different card layouts (3-col compact vs 2-col side-by-side with descriptions). Wire the navbar `icon-layout-grid-add` entry point and filter the navbar space list by `!isSpaceMuted(spaceId)` when the new UserConfig field is true.
 
 **Tech Stack:** React 18, TypeScript, react-router v6, TanStack React Query v5, `@lingui/core` for i18n, SCSS with `_variables.scss` tokens, existing primitives from `@quilibrium/quorum-shared`, Vitest for tests.
 
@@ -1111,7 +1111,7 @@ import './SpaceCard.scss';
 /**
  * Shared card for the /spaces page. Two visual variants:
  *
- * - "my-server": compact, used in the 3-column grid on My Servers.
+ * - "my-space": compact, used in the 3-column grid on My Spaces.
  *   Shows icon + name + member count + owner badge. Whole card is
  *   clickable to navigate into the space.
  *
@@ -1122,8 +1122,8 @@ import './SpaceCard.scss';
  *   the server adds banners, this variant gets a hero-card redesign.
  */
 
-interface SpaceCardMyServerProps {
-  variant: 'my-server';
+interface SpaceCardMySpaceProps {
+  variant: 'my-space';
   iconUrl?: string;
   spaceId: string;
   spaceName: string;
@@ -1144,13 +1144,13 @@ interface SpaceCardPublicProps {
   isJoining?: boolean;
 }
 
-type SpaceCardProps = SpaceCardMyServerProps | SpaceCardPublicProps;
+type SpaceCardProps = SpaceCardMySpaceProps | SpaceCardPublicProps;
 
 export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
-  if (props.variant === 'my-server') {
+  if (props.variant === 'my-space') {
     return (
       <div
-        className="space-card space-card--my-server"
+        className="space-card space-card--my-space"
         role="button"
         tabIndex={0}
         onClick={props.onClick}
@@ -1310,7 +1310,7 @@ Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpaceCard
   }
 
   // Variants
-  &--my-server {
+  &--my-space {
     cursor: pointer;
     align-items: center;
 
@@ -1338,20 +1338,20 @@ Expected: no errors. If `formatMemberCount` import fails, check the exact shared
 
 ```bash
 git add src/components/spaces-page/SpaceCard.tsx src/components/spaces-page/SpaceCard.scss
-git commit -m "feat(spaces-page): add SpaceCard component (my-server + public variants)"
+git commit -m "feat(spaces-page): add SpaceCard component (my-space + public variants)"
 ```
 
 ---
 
-## Task 12: Build `MyServersTab` component
+## Task 12: Build `MySpacesTab` component
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MyServersTab.tsx`
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MyServersTab.scss`
+- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.tsx`
+- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.scss`
 
 - [ ] **Step 1: Create the component**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MyServersTab.tsx`:
+Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.tsx`:
 
 ```typescript
 import * as React from 'react';
@@ -1364,24 +1364,24 @@ import { useMessageDB } from '../context/useMessageDB';
 import { Input, Select, Switch } from '../primitives';
 import { SpaceCard } from './SpaceCard';
 import type { NavItem } from '../../db/messages';
-import './MyServersTab.scss';
+import './MySpacesTab.scss';
 
 /**
- * "My Servers" tab — grid of the user's joined spaces.
+ * "My Spaces" tab — grid of the user's joined Spaces.
  *
- * UX: search input + folder filter Select dropdown + "Hide muted servers
+ * UX: search input + folder filter Select dropdown + "Hide muted Spaces
  * from sidebar" toggle in the header row. 3-column compact grid.
  *
  * Note: the folder dropdown is a READ-ONLY filter. Folder creation, edit,
  * reorder all stay in the navbar (canonical organize surface). Selecting
  * a folder filters the grid to that folder's spaces.
  *
- * "Hide muted servers from sidebar" toggle writes UserConfig — the navbar
+ * "Hide muted Spaces from sidebar" toggle writes UserConfig — the navbar
  * reads the same field and filters itself accordingly. This grid is NEVER
  * filtered by mute state; the toggle ONLY affects the navbar.
  */
 
-export const MyServersTab: React.FC = () => {
+export const MySpacesTab: React.FC = () => {
   const navigate = useNavigate();
   const user = usePasskeysContext();
   const userAddress = user.currentPasskeyInfo?.address || '';
@@ -1453,13 +1453,13 @@ export const MyServersTab: React.FC = () => {
   }, [spaces, folderId, folders, search]);
 
   return (
-    <div className="my-servers-tab">
-      <div className="my-servers-tab__header">
+    <div className="my-spaces-tab">
+      <div className="my-spaces-tab__header">
         <Input
-          className="my-servers-tab__search"
+          className="my-spaces-tab__search"
           value={search}
           onChange={setSearch}
-          placeholder={t`Find a server...`}
+          placeholder={t`Find a Space...`}
           clearable={true}
         />
         <Select
@@ -1468,27 +1468,27 @@ export const MyServersTab: React.FC = () => {
           options={folderOptions}
           size="medium"
         />
-        <label className="my-servers-tab__toggle">
+        <label className="my-spaces-tab__toggle">
           <Switch
             value={hideMutedSpaces}
             onChange={() => toggleHideMutedSpaces()}
           />
-          <span>{t`Hide muted servers from sidebar`}</span>
+          <span>{t`Hide muted Spaces from sidebar`}</span>
         </label>
       </div>
 
-      <div className="my-servers-tab__grid">
+      <div className="my-spaces-tab__grid">
         {filteredSpaces.length === 0 ? (
-          <div className="my-servers-tab__empty">
+          <div className="my-spaces-tab__empty">
             {search.trim() || folderId !== 'all'
-              ? t`No servers match the current filters.`
-              : t`No servers yet — discover public spaces or paste an invite link.`}
+              ? t`No Spaces match the current filters.`
+              : t`No Spaces yet — discover public spaces or paste an invite link.`}
           </div>
         ) : (
           filteredSpaces.map((space) => (
             <SpaceCard
               key={space.spaceId}
-              variant="my-server"
+              variant="my-space"
               iconUrl={space.iconUrl}
               spaceId={space.spaceId}
               spaceName={space.spaceName}
@@ -1513,15 +1513,15 @@ export const MyServersTab: React.FC = () => {
 
 - [ ] **Step 2: Resolve the `memberCount` placeholder**
 
-The `memberCount={0}` placeholder in step 1 is intentional — `useSpaceMembers` is per-space and can't be called in a loop. Replace it with a per-card lookup using a small helper component. Update `MyServersTab.tsx`: add this component above the main `export const MyServersTab` declaration:
+The `memberCount={0}` placeholder in step 1 is intentional — `useSpaceMembers` is per-space and can't be called in a loop. Replace it with a per-card lookup using a small helper component. Update `MySpacesTab.tsx`: add this component above the main `export const MySpacesTab` declaration:
 
 ```typescript
 /**
- * Per-card member-count resolver. Each SpaceCardMyServer needs its own
+ * Per-card member-count resolver. Each SpaceCardMySpace needs its own
  * useSpaceMembers call, which violates the rules-of-hooks if done in a
  * loop. This sub-component lets each card resolve independently.
  */
-const MyServerCard: React.FC<{
+const MySpaceCard: React.FC<{
   space: ReturnType<typeof useSpaces>['data'] extends Array<infer T> ? T : never;
   isOwner: boolean;
   onClick: () => void;
@@ -1532,7 +1532,7 @@ const MyServerCard: React.FC<{
 
   return (
     <SpaceCard
-      variant="my-server"
+      variant="my-space"
       iconUrl={space.iconUrl}
       spaceId={space.spaceId}
       spaceName={space.spaceName}
@@ -1548,7 +1548,7 @@ Then replace the `filteredSpaces.map((space) => ( <SpaceCard ... />))` block wit
 
 ```typescript
 filteredSpaces.map((space) => (
-  <MyServerCard
+  <MySpaceCard
     key={space.spaceId}
     space={space}
     isOwner={ownerMap[space.spaceId] ?? false}
@@ -1564,16 +1564,16 @@ filteredSpaces.map((space) => (
 ))
 ```
 
-NOTE: the `require()` inside `MyServerCard` is a workaround if direct top-of-file import causes circular-import issues. If a normal top-of-file import works, use that instead. Verify both approaches during implementation; pick the simpler one.
+NOTE: the `require()` inside `MySpaceCard` is a workaround if direct top-of-file import causes circular-import issues. If a normal top-of-file import works, use that instead. Verify both approaches during implementation; pick the simpler one.
 
 - [ ] **Step 3: Create the SCSS**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MyServersTab.scss`:
+Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.scss`:
 
 ```scss
 @import '../../styles/variables';
 
-.my-servers-tab {
+.my-spaces-tab {
   display: flex;
   flex-direction: column;
   gap: $spacing-md;
@@ -1635,13 +1635,13 @@ cd "D:/GitHub/Quilibrium/quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
-Expected: no errors. If type errors surface around the `MyServerCard` props typing, simplify by directly typing `space: Space` (import from `@quilibrium/quorum-shared`) instead of the inferred type expression.
+Expected: no errors. If type errors surface around the `MySpaceCard` props typing, simplify by directly typing `space: Space` (import from `@quilibrium/quorum-shared`) instead of the inferred type expression.
 
 - [ ] **Step 5: Commit**
 
 ```bash
-git add src/components/spaces-page/MyServersTab.tsx src/components/spaces-page/MyServersTab.scss
-git commit -m "feat(spaces-page): add MyServersTab component"
+git add src/components/spaces-page/MySpacesTab.tsx src/components/spaces-page/MySpacesTab.scss
+git commit -m "feat(spaces-page): add MySpacesTab component"
 ```
 
 ---
@@ -1897,36 +1897,36 @@ import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { Button } from '../primitives';
-import { MyServersTab } from './MyServersTab';
+import { MySpacesTab } from './MySpacesTab';
 import { DiscoverTab } from './DiscoverTab';
 import './SpacesPage.scss';
 
 /**
  * Top-level route component for /spaces.
  *
- * Renders a 2-tab shell in PR 1 (My Servers + Discover). PR 2 will add
+ * Renders a 2-tab shell in PR 1 (My Spaces + Discover). PR 2 will add
  * Join via link + Create space tabs and retire AddSpaceModal +
  * CreateSpaceModal.
  *
  * Active tab is persisted in the URL query param (?tab=discover) so the
- * route is deep-linkable and survives page reload. Default: "my-servers".
+ * route is deep-linkable and survives page reload. Default: "my-spaces".
  */
 
-type TabId = 'my-servers' | 'discover';
+type TabId = 'my-spaces' | 'discover';
 
 const TABS: { id: TabId; label: () => string }[] = [
-  { id: 'my-servers', label: () => t`My Servers` },
+  { id: 'my-spaces', label: () => t`My Spaces` },
   { id: 'discover', label: () => t`Discover` },
 ];
 
 export const SpacesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const activeTab: TabId = tabParam === 'discover' ? 'discover' : 'my-servers';
+  const activeTab: TabId = tabParam === 'discover' ? 'discover' : 'my-spaces';
 
   const setActiveTab = (id: TabId) => {
     const next = new URLSearchParams(searchParams);
-    if (id === 'my-servers') {
+    if (id === 'my-spaces') {
       next.delete('tab');
     } else {
       next.set('tab', id);
@@ -1952,7 +1952,7 @@ export const SpacesPage: React.FC = () => {
       </nav>
 
       <div className="spaces-page__content" role="tabpanel">
-        {activeTab === 'my-servers' && <MyServersTab />}
+        {activeTab === 'my-spaces' && <MySpacesTab />}
         {activeTab === 'discover' && <DiscoverTab />}
       </div>
     </div>
@@ -2014,7 +2014,7 @@ Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/index.ts`
 
 ```typescript
 export { SpacesPage } from './SpacesPage';
-export { MyServersTab } from './MyServersTab';
+export { MySpacesTab } from './MySpacesTab';
 export { DiscoverTab } from './DiscoverTab';
 export { SpaceCard } from './SpaceCard';
 ```
@@ -2144,7 +2144,7 @@ Find line 393:
 Replace it with:
 
 ```typescript
-  // Filter the navbar by mute state when the user has enabled "Hide muted servers".
+  // Filter the navbar by mute state when the user has enabled "Hide muted Spaces".
   // The filter applies HERE — before useNavItems — so its empty-folder cascade
   // (useNavItems.ts:69) automatically hides folders containing only muted spaces.
   const hideMutedSpacesFromSidebar = config?.hideMutedSpacesFromSidebar ?? false;
@@ -2213,13 +2213,13 @@ Open the dev URL in a browser with `?spaces=30` appended (e.g. `http://localhost
 
 - [ ] Navbar shows the new `icon-layout-grid-add` icon at the top of the space list (above the existing space icons; below the DM icon)
 - [ ] Clicking it navigates to `/spaces`
-- [ ] `/spaces` opens on "My Servers" tab by default
-- [ ] My Servers shows the test account's actual spaces (could be zero or many)
-- [ ] "Find a server" search filters the My Servers grid by name (case-insensitive substring)
+- [ ] `/spaces` opens on "My Spaces" tab by default
+- [ ] My Spaces shows the test account's actual spaces (could be zero or many)
+- [ ] "Find a Space" search filters the My Spaces grid by name (case-insensitive substring)
 - [ ] Folder filter dropdown lists "All folders" + the user's existing folders. Selecting a folder filters the grid to that folder's spaces.
 - [ ] Owner badge appears on spaces the user owns (verify with a known owned space)
-- [ ] "Hide muted servers from sidebar" toggle starts in OFF state for a fresh user
-- [ ] Muting a space via the existing navbar context menu (right-click → Mute Space) keeps it visible in My Servers (full inventory) regardless of toggle
+- [ ] "Hide muted Spaces from sidebar" toggle starts in OFF state for a fresh user
+- [ ] Muting a space via the existing navbar context menu (right-click → Mute Space) keeps it visible in My Spaces (full inventory) regardless of toggle
 - [ ] Turning the toggle ON immediately hides that muted space from the navbar (no reload)
 - [ ] Turning the toggle OFF makes the muted space reappear in the navbar
 - [ ] Toggle state persists across page reload (synced via `UserConfig`)
@@ -2423,7 +2423,7 @@ Open `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/shipped
 ```markdown
 ## 2026-06-01 (later) — Unified /spaces page PR 1 shipped
 
-Shipped the foundation of the unified `/spaces` page: new route, two tabs (My Servers + Discover), navbar entry, mock fixture, and the "Hide muted servers from sidebar" toggle.
+Shipped the foundation of the unified `/spaces` page: new route, two tabs (My Spaces + Discover), navbar entry, mock fixture, and the "Hide muted Spaces from sidebar" toggle.
 
 - Shared PR: `quorum-shared@2.1.0-22` — adds DirectoryEntry, DirectoryResponse, SpaceCategory, UserConfig.hideMutedSpacesFromSidebar (purely additive)
 - Desktop PR: <fill in PR URL>
@@ -2466,15 +2466,15 @@ Run this checklist after the plan is complete and saved. Fix any issues inline.
 - [x] Decision 8 (skip reportSpace): not in scope; no task
 - [x] Decision 9 (mock semantics replace): Task 9 (mockEnabled branch)
 - [x] Decision 10 (search + Select filter pattern, both tabs): Task 12 + Task 13
-- [x] Decision 11 (My Servers bare grid + search + folder filter): Task 12
+- [x] Decision 11 (My Spaces bare grid + search + folder filter): Task 12
 - [x] Decision 12 (side-by-side card design): Task 11
-- [x] Decision 13 (hide muted servers feature): Task 2 + Task 5 + Task 10 + Task 12 + Task 16
+- [x] Decision 13 (hide muted Spaces feature): Task 2 + Task 5 + Task 10 + Task 12 + Task 16
 - [x] Decision 14 (banner field server request): Task 18
 
 **2. Placeholder scan:** Search the plan for red flags.
 
 Known intentional escapes:
-- Task 12 `MyServerCard` inner component uses `require()` — flagged as a fallback if normal import causes circular issues. Replace at implementation time with a top-of-file import if it works.
+- Task 12 `MySpaceCard` inner component uses `require()` — flagged as a fallback if normal import causes circular issues. Replace at implementation time with a top-of-file import if it works.
 - Task 17 (smoke test) has no exact bash commands for "click X in the UI" — this is intentional (smoke tests are visual, not CLI).
 - Task 18 references "fill in PR URL after desktop PR opens" — those are inherently late-binding fields that can't be resolved at plan-time.
 - Task 19 has a gate: "if the PR is still in review, STOP." This is intentional — the task is post-merge cleanup.

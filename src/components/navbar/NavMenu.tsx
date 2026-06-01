@@ -389,7 +389,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   // Always use folder drag - it handles both legacy and new formats via migrateToItems
   const { handleDragStart, handleDragMove, handleDragEnd, sensors } = folderDrag;
 
-  // Filter the navbar by mute state when the user has enabled "Hide muted servers".
+  // Filter the navbar by mute state when the user has enabled "Hide muted Spaces".
   // The filter applies BEFORE useNavItems — its empty-folder cascade then hides
   // folders containing only muted spaces automatically.
   const hideMutedSpacesFromSidebar = config?.hideMutedSpacesFromSidebar ?? false;

@@ -10,8 +10,8 @@ function formatMemberCount(n: number): string {
   return `${(n / 1_000_000).toFixed(1)}M`;
 }
 
-interface SpaceCardMyServerProps {
-  variant: 'my-server';
+interface SpaceCardMySpaceProps {
+  variant: 'my-space';
   iconUrl?: string;
   spaceId: string;
   spaceName: string;
@@ -33,7 +33,7 @@ interface SpaceCardPublicProps {
   alreadyJoined?: boolean;
 }
 
-type SpaceCardProps = SpaceCardMyServerProps | SpaceCardPublicProps;
+type SpaceCardProps = SpaceCardMySpaceProps | SpaceCardPublicProps;
 
 const MemberCount: React.FC<{ count: number }> = ({ count }) => (
   <span className="space-card__members">
@@ -43,10 +43,10 @@ const MemberCount: React.FC<{ count: number }> = ({ count }) => (
 );
 
 export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
-  if (props.variant === 'my-server') {
+  if (props.variant === 'my-space') {
     return (
       <div
-        className="space-card space-card--my-server cursor-pointer"
+        className="space-card space-card--my-space cursor-pointer"
         role="button"
         tabIndex={0}
         onClick={props.onClick}

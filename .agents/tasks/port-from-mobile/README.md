@@ -58,7 +58,7 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 | Feature | Mobile location | Status | Reference |
 |---|---|---|---|
-| Unified /spaces page — PR 1 (My Servers + Discover) (#1) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts` (Discover only); My Servers tab is desktop-original | 🟢 ready to start | [Task file](2026-06-01-port-discover-spaces.md) · [candidates.md `### #1`](candidates.md#1-discover-spaces--first-pick) |
+| Unified /spaces page — PR 1 (My Spaces + Discover) (#1) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts` (Discover only); My Spaces tab is desktop-original | 🟢 ready to start | [Task file](2026-06-01-port-discover-spaces.md) · [candidates.md `### #1`](candidates.md#1-discover-spaces--first-pick) |
 | Unified /spaces page — PR 2 (Join via link + Create space tabs + retire old modals) | Lifts from desktop's existing `AddSpaceModal` + `CreateSpaceModal` | ⏸️ deferred (depends on PR 1 shipping) | [Task file](2026-06-01-port-discover-spaces-pr2.md) |
 | Public profile UI (#6) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts` | 🟢 ready (queued behind #1) | [candidates.md `### #6`](candidates.md#6-public-profile-ui) |
 | Reporting (#5) | `services/reporting/reportService.ts`, `components/ReportModal.tsx` | ⏸️ deprioritized | [candidates.md `### #5`](candidates.md#5-reporting--deprioritized) |
@@ -69,7 +69,7 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 ## Next up
 
-**Task file drafted (2026-06-01) — ready to implement.** [2026-06-01-port-discover-spaces.md](2026-06-01-port-discover-spaces.md) contains PR 1 of a committed two-PR plan for a unified `/spaces` page. Scope grew significantly from the original "port Discover" framing after design discussion: PR 1 ships My Servers tab + Discover tab in a new top-level route at `/spaces` with a `icon-layout-grid-add` navbar entry point. PR 2 (committed within 2-4 weeks of PR 1) adds Join via link + Create space tabs and retires `AddSpaceModal` + `CreateSpaceModal` + the navbar `+` button. Next session: rename session branch when Phase 1 (shared additive PR) starts.
+**Task file drafted (2026-06-01) — ready to implement.** [2026-06-01-port-discover-spaces.md](2026-06-01-port-discover-spaces.md) contains PR 1 of a committed two-PR plan for a unified `/spaces` page. Scope grew significantly from the original "port Discover" framing after design discussion: PR 1 ships My Spaces tab + Discover tab in a new top-level route at `/spaces` with a `icon-layout-grid-add` navbar entry point. PR 2 (committed within 2-4 weeks of PR 1) adds Join via link + Create space tabs and retires `AddSpaceModal` + `CreateSpaceModal` + the navbar `+` button. Next session: rename session branch when Phase 1 (shared additive PR) starts.
 
 ## Branch / session workflow
 

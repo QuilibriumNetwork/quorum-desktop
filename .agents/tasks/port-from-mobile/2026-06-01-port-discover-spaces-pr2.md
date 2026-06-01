@@ -10,7 +10,7 @@ depends-on: "2026-06-01-port-discover-spaces.md (PR 1) — must ship and be in r
 
 # Unified `/spaces` page — PR 2 of 2
 
-> **Status: deferred.** This task is committed but not picked up until PR 1 ([`2026-06-01-port-discover-spaces.md`](2026-06-01-port-discover-spaces.md)) ships and has been in real use for a window (~1-2 weeks). The "real use" delay matters — some PR 2 decisions (paste-invite placement, sort/filter options on My Servers, layout adjustments) benefit from observing how PR 1 actually feels in practice.
+> **Status: deferred.** This task is committed but not picked up until PR 1 ([`2026-06-01-port-discover-spaces.md`](2026-06-01-port-discover-spaces.md)) ships and has been in real use for a window (~1-2 weeks). The "real use" delay matters — some PR 2 decisions (paste-invite placement, sort/filter options on My Spaces, layout adjustments) benefit from observing how PR 1 actually feels in practice.
 
 > **Commitment window:** PR 2 ships within ~2-4 weeks of PR 1 (user confirmed 2026-06-01). The half-shipped state (new page exists, legacy modals also exist) should be short-lived — keeping both around long-term would be worse UX than either extreme.
 
@@ -35,7 +35,7 @@ After PR 2 merges, `/spaces` is the canonical hub for everything space-related f
 These were locked in PR 1's task file and apply unchanged to PR 2:
 
 - **Route:** `/spaces` (already exists from PR 1)
-- **Tab IA:** 4 tabs (My Servers · Discover · Join via link · Create space)
+- **Tab IA:** 4 tabs (My Spaces · Discover · Join via link · Create space)
 - **Navbar entry:** `icon-layout-grid-add` at top of space list (already exists from PR 1; PR 2 removes the `+` button alongside)
 - **Architectural commitment:** "the page is the hub for everything" → no tab routes to a modal
 - **JoinSpaceModal + InviteRoute:** permanently kept for deep-link `#join=...` URL handling. Not touched.
@@ -65,11 +65,11 @@ Removing the `+` button in PR 1 would leave users without create/paste-invite ac
 
 ### 5. PR 2 also revisits a few PR 1 deferrals ✅
 Items PR 1 marked as "decide during PR 2 with the page in real use":
-- Sort options on My Servers (alphabetical / by member count / etc.) — based on PR 1 feedback
+- Sort options on My Spaces (alphabetical / by member count / etc.) — based on PR 1 feedback
 - Discover layout adjustment if "search + dropdown" feels wrong in practice (could swap to chip row or sidebar)
 - Tab state persistence in URL (`/spaces?tab=create`) if not done in PR 1
 
-Note: "Hide muted servers from sidebar" originally deferred but pulled into PR 1 during design discussion (2026-06-01). Already shipped by the time PR 2 starts.
+Note: "Hide muted Spaces from sidebar" originally deferred but pulled into PR 1 during design discussion (2026-06-01). Already shipped by the time PR 2 starts.
 
 These are NOT scope additions to PR 2 by default — they're "while we're in the file, consider these" notes. Each is independently small enough to defer further if PR 2 grows too large.
 
@@ -91,7 +91,7 @@ These are NOT scope additions to PR 2 by default — they're "while we're in the
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐
-│ [ My Servers ]  [ Discover ]  [ Join via link ]  [ Create space ]        │  ← all 4 tabs populated
+│ [ My Spaces ]  [ Discover ]  [ Join via link ]  [ Create space ]        │  ← all 4 tabs populated
 ├──────────────────────────────────────────────────────────────────────────┤
 │                                                                           │
 │  Active tab content (one of four)                                        │
@@ -208,7 +208,7 @@ When someone clicks `app.quorummessenger.com#join=...` outside the app, `InviteR
 - [ ] Extend `SpacesPage.tsx` to render 4 tab buttons instead of 2
 - [ ] Add `<JoinViaLinkTab />` and `<CreateSpaceTab />` to the active-tab content routing
 - [ ] Consider URL query param sync (`?tab=create`) if not done in PR 1 — this is also the point at which deep-link to `/spaces?tab=create` becomes useful (e.g. for "create your first space" empty-state CTAs elsewhere)
-- [ ] Keep tab order consistent: My Servers · Discover · Join via link · Create space
+- [ ] Keep tab order consistent: My Spaces · Discover · Join via link · Create space
 
 ### Phase 6 — Retire legacy modals
 
@@ -230,7 +230,7 @@ When someone clicks `app.quorummessenger.com#join=...` outside the app, `InviteR
 
 These are not required for PR 2 but the file change is already open. Add per-item, skip per-item:
 
-- [ ] If decided: add sort dropdown to My Servers tab (alphabetical / by member count)
+- [ ] If decided: add sort dropdown to My Spaces tab (alphabetical / by member count)
 - [ ] If real use shows Discover layout (search + dropdown) feels wrong: swap to chip row or sidebar
 - [ ] If not done in PR 1: tab state persistence via URL query param
 
@@ -246,7 +246,7 @@ These are not required for PR 2 but the file change is already open. Add per-ite
   - [ ] Create space tab: fill form → space created → user lands in new space
   - [ ] Deep-link `#join=...` URLs still work via `InviteRoute` + `JoinSpaceModal`
   - [ ] Navbar shows only `icon-layout-grid-add`, no `+` button
-  - [ ] No regressions in My Servers + Discover tabs (PR 1 functionality intact)
+  - [ ] No regressions in My Spaces + Discover tabs (PR 1 functionality intact)
   - [ ] No regressions in existing space-list, channel views, DM views
   - [ ] Modals confirmed deleted (grep for `AddSpaceModal` returns no imports)
 - [ ] Check for any in-app help / onboarding copy referencing the old `+` button
@@ -265,7 +265,7 @@ These are not required for PR 2 but the file change is already open. Add per-ite
 ## What this PR explicitly does NOT cover
 
 - **`reportSpace` directory-level abuse flag.** Still out of scope (Reporting deprioritization).
-- **Per-space online count / last-seen on My Servers.** Still out of scope; new infrastructure required.
+- **Per-space online count / last-seen on My Spaces.** Still out of scope; new infrastructure required.
 - **`InviteRoute` deep-link flow.** Untouched permanently.
 - **Discover tab layout overhaul** unless PR 1 feedback explicitly demands it.
 - **#6 Public profile UI port.** Separate candidate, separate task file when picked up.
@@ -279,4 +279,4 @@ These are not required for PR 2 but the file change is already open. Add per-ite
 
 ---
 
-*Last updated: 2026-06-01 — task file created immediately after PR 1's task file to preserve the design discussion. Removed "Hide muted servers from sidebar" from PR 2's deferred-items list — feature was pulled into PR 1 during design discussion. Status `deferred` until PR 1 ships.*
+*Last updated: 2026-06-01 — task file created immediately after PR 1's task file to preserve the design discussion. Removed "Hide muted Spaces from sidebar" from PR 2's deferred-items list — feature was pulled into PR 1 during design discussion. Status `deferred` until PR 1 ships.*

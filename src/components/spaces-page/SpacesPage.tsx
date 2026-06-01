@@ -2,25 +2,25 @@ import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { Button } from '../primitives';
-import { MyServersTab } from './MyServersTab';
+import { MySpacesTab } from './MySpacesTab';
 import { DiscoverTab } from './DiscoverTab';
 import './SpacesPage.scss';
 
-type TabId = 'my-servers' | 'discover';
+type TabId = 'my-spaces' | 'discover';
 
 const TABS: { id: TabId; label: () => string }[] = [
-  { id: 'my-servers', label: () => t`My Servers` },
+  { id: 'my-spaces', label: () => t`My Spaces` },
   { id: 'discover', label: () => t`Discover` },
 ];
 
 export const SpacesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const activeTab: TabId = tabParam === 'discover' ? 'discover' : 'my-servers';
+  const activeTab: TabId = tabParam === 'discover' ? 'discover' : 'my-spaces';
 
   const setActiveTab = (id: TabId) => {
     const next = new URLSearchParams(searchParams);
-    if (id === 'my-servers') {
+    if (id === 'my-spaces') {
       next.delete('tab');
     } else {
       next.set('tab', id);
@@ -46,7 +46,7 @@ export const SpacesPage: React.FC = () => {
 
       <div className="spaces-page__content" role="tabpanel">
         <React.Suspense fallback={<div className="spaces-page__loading">{t`Loading...`}</div>}>
-          {activeTab === 'my-servers' && <MyServersTab />}
+          {activeTab === 'my-spaces' && <MySpacesTab />}
           {activeTab === 'discover' && <DiscoverTab />}
         </React.Suspense>
       </div>

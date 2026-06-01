@@ -1,6 +1,6 @@
 ---
 type: task
-title: "Unified /spaces page (PR 1 of 2) — My Servers tab + Discover tab"
+title: "Unified /spaces page (PR 1 of 2) — My Spaces tab + Discover tab"
 status: ready
 created: 2026-06-01
 updated: 2026-06-01
@@ -11,7 +11,7 @@ shared-source: quorum-shared master 9d1c08f (2026-05-30)
 
 # Unified `/spaces` page — PR 1 of 2
 
-> **PR 1 of a committed two-PR plan.** Ship a new top-level `/spaces` route with the four-tab IA in place but only the two browsing tabs populated: **My Servers** + **Discover**. PR 2 (next session, committed within ~2-4 weeks of PR 1) fills in the **Join via link** + **Create space** tabs and retires `AddSpaceModal`, `CreateSpaceModal`, and the navbar `+` button.
+> **PR 1 of a committed two-PR plan.** Ship a new top-level `/spaces` route with the four-tab IA in place but only the two browsing tabs populated: **My Spaces** + **Discover**. PR 2 (next session, committed within ~2-4 weeks of PR 1) fills in the **Join via link** + **Create space** tabs and retires `AddSpaceModal`, `CreateSpaceModal`, and the navbar `+` button.
 
 ## Mobile source (for Discover tab)
 
@@ -32,7 +32,7 @@ PR 1 ships the foundation + the browsing experience. PR 2 ships creation/join-by
 
 - No `directory`, `discover`, `explore`, `browseSpaces`, `publicSpaces`, `catalog`, `exploreSpaces`, `DirectoryEntry`, or `getDirectory` references in `src/` outside i18n files.
 - `JoinSpaceModal` + `AddSpaceModal` both flow through `useInviteValidation` → `useSpaceJoining`. No alternative discovery entry point exists.
-- "My Servers" grid view (your spaces shown as cards) does not exist anywhere on desktop today — the navbar sidebar is the only existing list.
+- "My Spaces" grid view (your spaces shown as cards) does not exist anywhere on desktop today — the navbar sidebar is the only existing list.
 
 ## Locked decisions
 
@@ -45,12 +45,12 @@ Not a modal. Page needs real estate for grid + tabs + filters; modal would be cr
 Already exported from `@quilibrium/quorum-shared`. **PR 1: added alongside the existing `+` button** (both coexist). PR 2: the `+` button is removed and this becomes the sole entry point.
 
 ### 3. Tab IA: four tabs ✅
-`My Servers` (default) · `Discover` · `Join via link` · `Create space`
+`My Spaces` (default) · `Discover` · `Join via link` · `Create space`
 
 Reasoning: once we commit to "the page is the hub for everything", routing buttons to legacy modals is a half-measure. All four major space actions should live as page-level destinations. 4 tabs is at the upper bound of "still scannable" but is the right cardinality given the commitment.
 
 ### 4. PR 1 ships tabs 1 + 2 only ✅
-**My Servers** + **Discover** ship in PR 1. **Join via link** + **Create space** are NOT in PR 1 — neither the tabs nor the tab content. (No "Coming soon" stubs either.)
+**My Spaces** + **Discover** ship in PR 1. **Join via link** + **Create space** are NOT in PR 1 — neither the tabs nor the tab content. (No "Coming soon" stubs either.)
 
 ### 5. PR 2 commitment ✅
 PR 2 ships within ~2-4 weeks of PR 1 and adds the remaining two tabs + retires `AddSpaceModal` and `CreateSpaceModal` + removes the navbar `+` button. User confirmed commitment 2026-06-01.
@@ -71,15 +71,15 @@ When `?spaces=N` URL param OR `localStorage.debug_mock_spaces === 'true'` is set
 
 Both tabs share an identical header row: search input on the left, a `<Select>` filter dropdown on the right. The filter's content is what differs:
 - **Discover:** category dropdown (8 entries: "All categories" + 7 server-defined categories)
-- **My Servers:** folder dropdown (1 + N entries: "All folders" + user's existing navbar folders)
+- **My Spaces:** folder dropdown (1 + N entries: "All folders" + user's existing navbar folders)
 
 Rationale: matches the established desktop pattern used in `BookmarksPanel.tsx` and `DirectMessageContactsList.tsx` (both use `<Select>` for filtering alongside a search input). Multiple alternatives were considered and rejected:
 - Chip row below tabs: visual collision (two stacked pill-rows look alike)
-- Left-rail sidebar (Discord-style): inconsistent across tabs because the dimensions are different scales; adds chrome that the existing app doesn't use; creates a "two folder UIs" risk on My Servers
+- Left-rail sidebar (Discord-style): inconsistent across tabs because the dimensions are different scales; adds chrome that the existing app doesn't use; creates a "two folder UIs" risk on My Spaces
 - Search-only with no filter: 7 categories + folders are real filter dimensions worth surfacing
 - Filter-icon button: less discoverable for first-time users; existing app pattern is actually `<Select>`, not filter-icon
 
-**Folder dropdown semantics on My Servers** (important to avoid the two-UI confusion the user raised):
+**Folder dropdown semantics on My Spaces** (important to avoid the two-UI confusion the user raised):
 - Folder dropdown is **READ-ONLY** filter view. It lists folders for filtering only.
 - Folder creation, edit, reorder, drag-and-drop all stay in the navbar — the canonical organize surface.
 - Selecting a folder filters the grid to spaces in that folder. Selecting "All folders" shows all.
@@ -88,12 +88,12 @@ Rationale: matches the established desktop pattern used in `BookmarksPanel.tsx` 
 
 Marked as "play with it a bit"; if discovery / find-a-server feels awkward in practice, swap to a different filter affordance in a follow-up.
 
-### 11. "My Servers" tab in PR 1: search + folder filter dropdown ✅
+### 11. "My Spaces" tab in PR 1: search + folder filter dropdown ✅
 - Grid of cards (icon, name, member count, owner badge if applicable)
-- "Find a server" client-side search input + folder filter dropdown (see decision #10)
+- "Find a Space" client-side search input + folder filter dropdown (see decision #10)
 - No "Sort by Last active" (desktop has no per-space last-activity data)
 - No online-count badge per card (desktop has no per-space presence aggregation)
-- No "Hide muted servers" filter — covered by the folder dropdown structure if needed later, otherwise out of scope
+- No "Hide muted Spaces" filter — covered by the folder dropdown structure if needed later, otherwise out of scope
 
 ### 12. Card design — side-by-side layout, no hero / banner area in PR 1 ✅
 
@@ -110,9 +110,9 @@ Card design resolved after iterating through hero-block options without a banner
 │                          [Join]   │
 └──────────────────────────────────┘
 ```
-Side-by-side layout (icon on the left, content on the right). No hero area, no banner placeholder. Cards are visually substantial because they carry meaningful content (description + category + member count + Join action) — that's enough differentiation from My Servers without inventing chrome.
+Side-by-side layout (icon on the left, content on the right). No hero area, no banner placeholder. Cards are visually substantial because they carry meaningful content (description + category + member count + Join action) — that's enough differentiation from My Spaces without inventing chrome.
 
-**My Servers cards** (3-column grid at desktop widths):
+**My Spaces cards** (3-column grid at desktop widths):
 ```
 ┌──────────────────────────┐
 │ ┌──┐ Space Name [👑]     │
@@ -126,17 +126,17 @@ Compact side-by-side. No description (we don't track per-space metadata users ca
 - We rejected color-hero-block (option 1) because the user's gut said it would look tacky
 - We rejected naive icon enlargement because space icons are small symbol/logo assets that don't enlarge gracefully
 - We rejected blocking on server-side banner field because that's external dependency with unknown timing
-- Side-by-side layout is honest about the data we have. Content asymmetry between Discover (rich) and My Servers (compact) IS the visual differentiation; we don't need invented chrome
+- Side-by-side layout is honest about the data we have. Content asymmetry between Discover (rich) and My Spaces (compact) IS the visual differentiation; we don't need invented chrome
 
 **Banner deferred for iteration after PR 1.** When the server adds a `banner` field to `DirectoryEntry` (see Phase 12 — mobile task drop), the Discover card design will be revisited. Banner could replace the side-by-side layout entirely (Discord-style hero card). Until then, side-by-side is the working design.
 
-### 13. "Hide muted servers from sidebar" feature — bundled into PR 1 ✅
+### 13. "Hide muted Spaces from sidebar" feature — bundled into PR 1 ✅
 
 Desktop-original feature inspired by a Discord screenshot. Not a port from mobile (mobile has no "sidebar" to hide things from — flat tab-bar IA).
 
 **Mental model shift this enables:**
 - Navbar = high-priority view (your active spaces only, when the toggle is on)
-- My Servers tab = full inventory (everything you've joined, including muted)
+- My Spaces tab = full inventory (everything you've joined, including muted)
 
 Reframes the relationship between the two surfaces from "same data, different layout" to "different signal density." Real product win.
 
@@ -150,20 +150,20 @@ Reframes the relationship between the two surfaces from "same data, different la
 
 1. **New `UserConfig` field** (shared additive PR — same PR as `DirectoryEntry` etc., or its own — decide during Phase 1):
    - `hideMutedSpacesFromSidebar?: boolean` (optional, defaults to `false` when unset)
-2. **UI toggle** in the My Servers header — inline checkbox-style, mirroring the Discord screenshot pattern ("✓ Hide muted servers from sidebar")
+2. **UI toggle** in the My Spaces header — inline checkbox-style, mirroring the Discord screenshot pattern ("✓ Hide muted Spaces from sidebar")
 3. **Navbar filter logic** — when toggle is on, filter the navbar's space list to exclude any space where `notificationSettings[spaceId]?.isMuted === true`
 4. **Empty-state handling** in the navbar — if filter removes all spaces, the navbar still renders cleanly (just the `icon-layout-grid-add` button at top, no space icons)
 
 **Why bundling into PR 1 makes sense even though PR 1 is already big:**
-- The toggle naturally lives on the My Servers tab (which PR 1 already ships)
+- The toggle naturally lives on the My Spaces tab (which PR 1 already ships)
 - All infrastructure exists — this is a config-field + UI-toggle + filter-condition addition, not new architecture
-- Without this feature, My Servers and the navbar are visually redundant. WITH this feature, they have distinct purposes that justify both surfaces existing
+- Without this feature, My Spaces and the navbar are visually redundant. WITH this feature, they have distinct purposes that justify both surfaces existing
 - Estimated additional scope: ~150-200 LOC (shared field, toggle UI, navbar filter), spread across already-modified files
 
-**Toggle UI placement on My Servers header:**
+**Toggle UI placement on My Spaces header:**
 
 ```
-🔍 Find a server...   [ All folders  ▾ ]   ✓ Hide muted servers from sidebar
+🔍 Find a Space...   [ All folders  ▾ ]   ✓ Hide muted Spaces from sidebar
 ```
 
 Inline at the right edge of the header row. Right-aligned. Persistent visual indicator of which mode the user is in.
@@ -213,7 +213,7 @@ Phase 12 includes dropping a mobile task in shared-migration's `mobile-tasks-pen
 
                 Page at /spaces:
                 ┌────────────────────────────────────────────────────────────┐
-                │ [ My Servers ]  [ Discover ]                                │  ← tabs (only 2 in PR 1)
+                │ [ My Spaces ]  [ Discover ]                                │  ← tabs (only 2 in PR 1)
                 ├────────────────────────────────────────────────────────────┤
                 │                                                             │
                 │  Tab content (see Tab content layouts below)                │
@@ -223,10 +223,10 @@ Phase 12 includes dropping a mobile task in shared-migration's `mobile-tasks-pen
 
 ### Tab content layouts
 
-**My Servers tab** (3-column compact grid):
+**My Spaces tab** (3-column compact grid):
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
-│ 🔍 Find a server...  [ All folders ▾ ]  ✓ Hide muted servers from sidebar│
+│ 🔍 Find a Space...  [ All folders ▾ ]  ✓ Hide muted Spaces from sidebar│
 ├────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │ ┌──┐ Space A         ┌──┐ Space B [👑]   ┌──┐ Space C                  │
@@ -264,12 +264,12 @@ Phase 12 includes dropping a mobile task in shared-migration's `mobile-tasks-pen
 └────────────────────────────────────────────────────────────────────────┘
 ```
 
-The visual asymmetry between tabs is intentional: compact 3-col for utility (My Servers) vs richer 2-col side-by-side for browsing (Discover). Same chrome (search + filter Select), different card density per tab.
+The visual asymmetry between tabs is intentional: compact 3-col for utility (My Spaces) vs richer 2-col side-by-side for browsing (Discover). Same chrome (search + filter Select), different card density per tab.
 
 ### Architecture diagram (data path)
 
 ```
-                Discover tab                            My Servers tab
+                Discover tab                            My Spaces tab
                      │                                       │
                      ▼                                       ▼
         useExploreSpaces()                           useSpaces() (existing)
@@ -303,7 +303,7 @@ User confirmed (2026-06-01) this UX divergence is intentional and aligned with d
 | `quorum-shared/src/types/directory.ts` (in shared) | `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` |
 | `src/hooks/business/spaces/useExploreSpaces.ts` | Port of mobile's hook. Mock-mode aware. |
 | `src/components/spaces-page/SpacesPage.tsx` (+ `.scss`) | Top-level route component. Tab shell + active-tab content router. |
-| `src/components/spaces-page/MyServersTab.tsx` (+ `.scss`) | Grid of user's spaces + find-server search. |
+| `src/components/spaces-page/MySpacesTab.tsx` (+ `.scss`) | Grid of user's spaces + find-server search. |
 | `src/components/spaces-page/DiscoverTab.tsx` (+ `.scss`) | Search input + category dropdown + results grid + Load more. |
 | `src/components/spaces-page/SpaceCard.tsx` (+ `.scss`) | Shared card component used by both tabs. Variants for "my server" vs "public space". |
 | `src/components/spaces-page/index.ts` | Barrel |
@@ -391,18 +391,18 @@ Will be a separate task file in a later session.
 
 - [ ] Create `src/components/spaces-page/SpacesPage.tsx` — top-level route component:
   - [ ] Tab state managed locally with `useState` (or URL query param like `?tab=discover` if we want deep-linkable tabs — consider during implementation)
-  - [ ] Two tab buttons rendered: "My Servers" (default active) + "Discover"
-  - [ ] Active tab content rendered below: `<MyServersTab />` or `<DiscoverTab />`
+  - [ ] Two tab buttons rendered: "My Spaces" (default active) + "Discover"
+  - [ ] Active tab content rendered below: `<MySpacesTab />` or `<DiscoverTab />`
 - [ ] Use existing primitives (no new tab component if `<Button>` or existing nav components suffice; otherwise add a minimal `<Tabs>` primitive — coordinate with primitives barrel)
 - [ ] Page-level header / title, Lingui-localized
 
 ### Phase 6 — SpaceCard shared component
 
 - [ ] Create `src/components/spaces-page/SpaceCard.tsx` — shared card with two variants:
-  - [ ] `variant="my-server"` (compact, side-by-side icon + content):
+  - [ ] `variant="my-space"` (compact, side-by-side icon + content):
     - Icon (left), name + member count + owner badge (right)
     - Whole card clickable to navigate into the space
-    - Used in 3-column grid on My Servers tab
+    - Used in 3-column grid on My Spaces tab
   - [ ] `variant="public"` (richer, side-by-side icon + content with description):
     - Icon (left), name + category badge + member count + 2-line description excerpt + Join button (right)
     - Join wires to `useSpaceJoining`
@@ -412,30 +412,30 @@ Will be a separate task file in a later session.
 - [ ] Description truncation: 2 lines max, CSS line-clamp + ellipsis. Tooltip with full description on hover (existing `<Tooltip>` primitive).
 - [ ] **No hero area, no banner placeholder in PR 1** — side-by-side layout for both variants. When server adds `banner` field to `DirectoryEntry`, revisit the `variant="public"` shape (likely promote to a Discord-style hero card).
 
-### Phase 7 — My Servers tab
+### Phase 7 — My Spaces tab
 
-- [ ] Create `src/components/spaces-page/MyServersTab.tsx`
+- [ ] Create `src/components/spaces-page/MySpacesTab.tsx`
 - [ ] Data: existing `useSpaces()` for the spaces list. For each card: `useSpaceOwner` + `useSpaceMembers` (or whatever existing hook gives the count cheaply)
-- [ ] Top row layout: "Find a server" `<Input>` (max-width matches Discover's search) on the left, `<Select>` folder filter dropdown in the middle, `<Switch>` or checkbox-style toggle "Hide muted servers from sidebar" on the right
+- [ ] Top row layout: "Find a Space" `<Input>` (max-width matches Discover's search) on the left, `<Select>` folder filter dropdown in the middle, `<Switch>` or checkbox-style toggle "Hide muted Spaces from sidebar" on the right
 - [ ] Folder filter dropdown options:
   - Top entry: "All folders" (no filter applied)
   - Then user's existing folders from `useFolderManagement` / `useFolderStates` (whichever exposes the folder list cleanly)
   - **Read-only filter view** — folder creation/edit/reorder still happens in the navbar; this dropdown only filters the grid
   - If user has no folders, dropdown renders with just "All folders" entry (still rendered for layout consistency)
-- [ ] "Hide muted servers from sidebar" toggle:
+- [ ] "Hide muted Spaces from sidebar" toggle:
   - Reads `UserConfig.hideMutedSpacesFromSidebar` (defaults to `false` when unset)
   - On toggle, writes back to `UserConfig` via the existing config-save flow (find the existing pattern by reading how other `UserConfig` fields are mutated — e.g. `notificationSettings`, `mutedChannels`)
   - Lingui-localized label
   - State change immediately reflects in the navbar (Phase 9)
-- [ ] Client-side filter: combine name-match from search + folder match from filter dropdown (the "hide muted" toggle doesn't filter this grid — only the navbar; My Servers tab is the full inventory)
-- [ ] Grid: 3 columns at desktop widths (xl+), 2 at medium (md-lg), 1 at narrow (sm). Use `SpaceCard variant="my-server"`.
+- [ ] Client-side filter: combine name-match from search + folder match from filter dropdown (the "hide muted" toggle doesn't filter this grid — only the navbar; My Spaces tab is the full inventory)
+- [ ] Grid: 3 columns at desktop widths (xl+), 2 at medium (md-lg), 1 at narrow (sm). Use `SpaceCard variant="my-space"`.
 - [ ] Empty state if no spaces ("No spaces yet — discover public spaces or paste an invite link" — but no buttons routing to those tabs in PR 1 since they don't exist yet)
 - [ ] Lingui i18n on all copy
 
 ### Phase 8 — Discover tab
 
 - [ ] Create `src/components/spaces-page/DiscoverTab.tsx`
-- [ ] Top row mirrors My Servers structurally: search `<Input>` (max-width ~`max-w-md`) on the left, category `<Select>` dropdown on the right
+- [ ] Top row mirrors My Spaces structurally: search `<Input>` (max-width ~`max-w-md`) on the left, category `<Select>` dropdown on the right
 - [ ] Category dropdown options: "All categories" + the 7 categories (use the shared `SpaceCategory` enum, Lingui-localize the labels)
 - [ ] Results grid: 2 columns at desktop widths (xl+), 1 at medium/narrow. Use `SpaceCard variant="public"`.
 - [ ] "Load more" button at the bottom of the grid when `hasMore` is true
@@ -453,16 +453,16 @@ Will be a separate task file in a later session.
 - [ ] Selected state when on `/spaces`
 - [ ] Style to match existing space-icon sizing/spacing
 - [ ] DO NOT remove the existing `+` button — it stays in PR 1
-- [ ] **Navbar mute filter wiring** (the "Hide muted servers from sidebar" feature):
+- [ ] **Navbar mute filter wiring** (the "Hide muted Spaces from sidebar" feature):
   - [ ] Read `UserConfig.hideMutedSpacesFromSidebar` (defaults to `false` when unset)
   - [ ] When `true`, filter the rendered space list in the navbar to exclude any space where `notificationSettings[spaceId]?.isMuted === true`. Use `useChannelMute`'s `isSpaceMuted(spaceId)` helper if it's exported, or inline the check
   - [ ] Empty-state in navbar: if filter removes all spaces, navbar still renders cleanly (icon-layout-grid-add + `+` button + folders structure, just no space icons in between). Avoid a "broken-looking" empty navbar by not removing any chrome — only the space icons go
   - [ ] Folders containing only muted spaces: hide the folder entirely (don't show empty folders). Verify folder rendering logic handles a zero-children folder gracefully
-  - [ ] Live update: toggling the My Servers checkbox immediately reflects in the navbar (no page reload). React Query / `UserConfig` reactivity should handle this if existing patterns are followed
+  - [ ] Live update: toggling the My Spaces checkbox immediately reflects in the navbar (no page reload). React Query / `UserConfig` reactivity should handle this if existing patterns are followed
 
 ### Phase 10 — Styling pass
 
-- [ ] SCSS files for `SpacesPage`, `MyServersTab`, `DiscoverTab`, `SpaceCard` use the project's `_variables.scss` tokens
+- [ ] SCSS files for `SpacesPage`, `MySpacesTab`, `DiscoverTab`, `SpaceCard` use the project's `_variables.scss` tokens
 - [ ] No `@apply` per project styling rules (use raw CSS where Tailwind utilities are insufficient)
 - [ ] No em dashes in user-facing copy (Italian/English/Lingui copy applies)
 - [ ] Mobile-first sizing: minimum 44px touch targets, `text-sm` minimum for descriptions
@@ -478,13 +478,13 @@ Will be a separate task file in a later session.
   - [ ] Activate mocks via `?spaces=30` URL param
   - [ ] Navbar shows `icon-layout-grid-add` at top of space list
   - [ ] Clicking it navigates to `/spaces`
-  - [ ] `/spaces` opens on "My Servers" tab by default
-  - [ ] My Servers shows the user's actual spaces (zero or more — verify with multiple accounts if possible)
-  - [ ] Find-server search filters the My Servers grid by name
+  - [ ] `/spaces` opens on "My Spaces" tab by default
+  - [ ] My Spaces shows the user's actual spaces (zero or more — verify with multiple accounts if possible)
+  - [ ] Find-server search filters the My Spaces grid by name
   - [ ] Folder filter dropdown lists user's existing folders + "All folders" entry. Selecting a folder filters the grid.
   - [ ] Owner badge appears on spaces the user owns (if any in the test account)
-  - [ ] "Hide muted servers from sidebar" toggle starts in OFF state for a fresh user
-  - [ ] Muting a space in `SpaceSettingsModal` → My Servers grid still shows it (My Servers is full inventory regardless of toggle state)
+  - [ ] "Hide muted Spaces from sidebar" toggle starts in OFF state for a fresh user
+  - [ ] Muting a space in `SpaceSettingsModal` → My Spaces grid still shows it (My Spaces is full inventory regardless of toggle state)
   - [ ] Turning the toggle ON → navbar immediately hides that muted space (live update, no reload)
   - [ ] Turning the toggle OFF → muted space reappears in navbar
   - [ ] Toggle state persists across page reload (synced via `UserConfig`)
@@ -535,7 +535,7 @@ Will be a separate task file in a later session.
 - **`reportSpace` directory-level abuse flag.** Out of scope per Reporting deprioritization.
 - **Per-space online count.** Desktop has no presence aggregation; would be its own feature.
 - **Per-space "last seen / last active".** Would require adding per-space activity tracking similar to mobile's `useSpaceActivity` (which we ruled out in the navbar context — would need re-evaluation if added here later).
-- **Sort options on My Servers** (by last active / member count / alphabetical). Skipped in PR 1; revisit if useful in PR 2 or later.
+- **Sort options on My Spaces** (by last active / member count / alphabetical). Skipped in PR 1; revisit if useful in PR 2 or later.
 - **`InviteRoute` deep-link flow.** Untouched permanently.
 - **Mobile-side type swap.** Dropped as a task for the lead dev; not part of this PR.
 - **Search ranking / fuzzy matching for Discover.** Server returns ranked results; we trust the server. Mock mode does naive substring match.
@@ -552,4 +552,4 @@ Will be a separate task file in a later session.
 
 ---
 
-*Last updated: 2026-06-01 — extended to 14 locked decisions. Card design resolved (side-by-side, no hero, banner deferred via server-side task drop). Both tabs share the "search + `<Select>` filter" header pattern (Discover: category filter; My Servers: read-only folder filter). Card density asymmetry between tabs (2-col side-by-side on Discover, 3-col compact on My Servers) carries the visual differentiation. **"Hide muted servers from sidebar" feature bundled into PR 1** — new `UserConfig.hideMutedSpacesFromSidebar` field + toggle in My Servers header + navbar filter. Reframes navbar = high-priority view vs My Servers = full inventory. Capability fully verified: `notificationSettings[spaceId].isMuted` exists today, `useChannelMute` exposes the helpers. Ready to start Phase 1 in the next session.*
+*Last updated: 2026-06-01 — extended to 14 locked decisions. Card design resolved (side-by-side, no hero, banner deferred via server-side task drop). Both tabs share the "search + `<Select>` filter" header pattern (Discover: category filter; My Spaces: read-only folder filter). Card density asymmetry between tabs (2-col side-by-side on Discover, 3-col compact on My Spaces) carries the visual differentiation. **"Hide muted Spaces from sidebar" feature bundled into PR 1** — new `UserConfig.hideMutedSpacesFromSidebar` field + toggle in My Spaces header + navbar filter. Reframes navbar = high-priority view vs My Spaces = full inventory. Capability fully verified: `notificationSettings[spaceId].isMuted` exists today, `useChannelMute` exposes the helpers. Ready to start Phase 1 in the next session.*

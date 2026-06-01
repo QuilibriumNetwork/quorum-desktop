@@ -11,9 +11,9 @@ import { useMessageDB } from '../context/useMessageDB';
 import { Input, Select, Switch } from '../primitives';
 import { SpaceCard } from './SpaceCard';
 import type { NavItem } from '../../db/messages';
-import './MyServersTab.scss';
+import './MySpacesTab.scss';
 
-const MyServerCard: React.FC<{
+const MySpaceCard: React.FC<{
   space: Space;
   isOwner: boolean;
   onClick: () => void;
@@ -21,7 +21,7 @@ const MyServerCard: React.FC<{
   const { data: members } = useSpaceMembers({ spaceId: space.spaceId });
   return (
     <SpaceCard
-      variant="my-server"
+      variant="my-space"
       iconUrl={space.iconUrl}
       spaceId={space.spaceId}
       spaceName={space.spaceName}
@@ -32,7 +32,7 @@ const MyServerCard: React.FC<{
   );
 };
 
-export const MyServersTab: React.FC = () => {
+export const MySpacesTab: React.FC = () => {
   const navigate = useNavigate();
   const { currentPasskeyInfo } = usePasskeysContext();
   const userAddress = currentPasskeyInfo?.address || '';
@@ -81,7 +81,7 @@ export const MyServersTab: React.FC = () => {
   }, [spaces, messageDB]);
 
   // Intentionally NOT filtering by hideMutedSpaces here — the toggle is scoped
-  // to the sidebar (see Switch label). My Servers tab is the full inventory.
+  // to the sidebar (see Switch label). My Spaces tab is the full inventory.
   const filteredSpaces = React.useMemo(() => {
     let result: Space[] = spaces ?? [];
 
@@ -102,13 +102,13 @@ export const MyServersTab: React.FC = () => {
   }, [spaces, folderId, folders, search]);
 
   return (
-    <div className="my-servers-tab">
-      <div className="my-servers-tab__header">
+    <div className="my-spaces-tab">
+      <div className="my-spaces-tab__header">
         <Input
-          className="my-servers-tab__search"
+          className="my-spaces-tab__search"
           value={search}
           onChange={setSearch}
-          placeholder={t`Find a server...`}
+          placeholder={t`Find a Space...`}
           variant="bordered"
         />
         <Select
@@ -118,18 +118,18 @@ export const MyServersTab: React.FC = () => {
           size="medium"
           variant="bordered"
         />
-        <label className="my-servers-tab__toggle">
+        <label className="my-spaces-tab__toggle">
           <Switch value={hideMutedSpaces} onChange={() => toggleHideMutedSpaces()} />
-          <span>{t`Hide muted servers from sidebar`}</span>
+          <span>{t`Hide muted Spaces from sidebar`}</span>
         </label>
       </div>
 
-      <div className="my-servers-tab__grid">
+      <div className="my-spaces-tab__grid">
         {filteredSpaces.length === 0 ? (
-          <div className="my-servers-tab__empty">
+          <div className="my-spaces-tab__empty">
             {search.trim() || folderId !== 'all'
-              ? t`No servers match the current filters.`
-              : t`No servers yet — discover public spaces or paste an invite link.`}
+              ? t`No Spaces match the current filters.`
+              : t`No Spaces yet — discover public Spaces or paste an invite link.`}
           </div>
         ) : (
           filteredSpaces.map((space) => (
@@ -137,7 +137,7 @@ export const MyServersTab: React.FC = () => {
               key={space.spaceId}
               fallback={
                 <SpaceCard
-                  variant="my-server"
+                  variant="my-space"
                   iconUrl={space.iconUrl}
                   spaceId={space.spaceId}
                   spaceName={space.spaceName}
@@ -147,7 +147,7 @@ export const MyServersTab: React.FC = () => {
                 />
               }
             >
-              <MyServerCard
+              <MySpaceCard
                 space={space}
                 isOwner={ownerMap[space.spaceId] ?? false}
                 onClick={() => {
