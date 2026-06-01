@@ -34,6 +34,13 @@ interface SpaceCardPublicProps {
 
 type SpaceCardProps = SpaceCardMyServerProps | SpaceCardPublicProps;
 
+const MemberCount: React.FC<{ count: number }> = ({ count }) => (
+  <span className="space-card__members">
+    <Icon name="users" size="sm" />
+    {formatMemberCount(count)}
+  </span>
+);
+
 export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
   if (props.variant === 'my-server') {
     return (
@@ -75,9 +82,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
               </Tooltip>
             )}
           </div>
-          <span className="space-card__meta">
-            {formatMemberCount(props.memberCount)}
-          </span>
+          <MemberCount count={props.memberCount} />
         </div>
       </div>
     );
@@ -102,15 +107,11 @@ export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
           <span className="space-card__name">{props.spaceName}</span>
         </div>
         <span className="space-card__meta">
-          {props.category} · {formatMemberCount(props.memberCount)}
+          <span className="space-card__category">{props.category}</span>
+          <span aria-hidden="true">·</span>
+          <MemberCount count={props.memberCount} />
         </span>
-        <Tooltip
-          id={`desc-${props.spaceAddress}`}
-          content={props.description}
-          place="top"
-        >
-          <p className="space-card__description">{props.description}</p>
-        </Tooltip>
+        <p className="space-card__description">{props.description}</p>
         <div className="space-card__actions">
           <Button
             type="primary"

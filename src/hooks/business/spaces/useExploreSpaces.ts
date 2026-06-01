@@ -34,6 +34,8 @@ interface UseExploreSpacesReturn {
   setCategory: (value: SpaceCategory | null) => void;
   loadMore: () => void;
   refetch: () => void;
+  /** Per-category counts when the full set is known (mock mode); null when paginating against the real server. */
+  categoryCounts: Record<string, number> | null;
 }
 
 function filterMockEntries(
@@ -137,6 +139,15 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
     }
   };
 
+  const categoryCounts = useMemo<Record<string, number> | null>(() => {
+    if (!mockEnabled) return null;
+    const counts: Record<string, number> = {};
+    for (const entry of mockAll) {
+      counts[entry.category] = (counts[entry.category] ?? 0) + 1;
+    }
+    return counts;
+  }, [mockEnabled, mockAll]);
+
   return {
     entries: result.entries,
     total: result.total,
@@ -149,5 +160,6 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
     setCategory,
     loadMore,
     refetch,
+    categoryCounts,
   };
 }

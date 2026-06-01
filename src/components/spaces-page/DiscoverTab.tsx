@@ -20,18 +20,24 @@ export const DiscoverTab: React.FC = () => {
     setCategory,
     loadMore,
     refetch,
+    categoryCounts,
   } = useExploreSpaces();
   const { joinSpace, joining } = useSpaceJoining();
   const [joiningEntry, setJoiningEntry] = React.useState<string | null>(null);
 
-  const categoryOptions = React.useMemo(
-    () =>
-      SPACE_CATEGORIES.map((c) => ({
-        label: c.value === null ? t`All categories` : c.label,
+  const categoryOptions = React.useMemo(() => {
+    const allCount = categoryCounts
+      ? Object.values(categoryCounts).reduce((a, b) => a + b, 0)
+      : null;
+    return SPACE_CATEGORIES.map((c) => {
+      const baseLabel = c.value === null ? t`All categories` : c.label;
+      const count = c.value === null ? allCount : categoryCounts?.[c.value];
+      return {
+        label: count !== null && count !== undefined ? `${baseLabel} (${count})` : baseLabel,
         value: c.value ?? 'all',
-      })),
-    []
-  );
+      };
+    });
+  }, [categoryCounts]);
 
   const handleCategoryChange = (value: string | string[]) => {
     const v = value as string;

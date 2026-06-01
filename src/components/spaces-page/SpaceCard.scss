@@ -43,17 +43,30 @@
   &__meta {
     font-size: $text-sm;
     color: var(--color-text-subtle);
+    display: inline-flex;
+    align-items: center;
+    gap: $s-1-5;
+  }
+
+  &__category {
+    text-transform: capitalize;
+  }
+
+  &__members {
+    display: inline-flex;
+    align-items: center;
+    gap: $s-1;
+    font-size: $text-sm;
+    color: var(--color-text-subtle);
   }
 
   &__description {
     font-size: $text-sm;
     color: rgb(var(--color-text-main));
     margin: 0;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    line-height: 1.4;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
   }
 
   &__actions {

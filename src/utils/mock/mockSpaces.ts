@@ -38,19 +38,33 @@ const MOCK_SPACE_NAMES = [
   'Open Source Weekly',
 ];
 
+// Mix of lengths to stress-test the card layout — from ~50 chars up to the
+// 300-character ceiling enforced by SpaceSettingsModal / CreateSpaceModal.
 const MOCK_SPACE_DESCRIPTIONS = [
-  'A community for builders and tinkerers shipping things together.',
-  'Discuss the latest in cryptography, privacy, and decentralized systems.',
-  'Share your favorite indie games and find people to play with.',
-  'Espacio para entusiastas de la criptografía y la privacidad.',
-  'Un lieu pour les développeurs web3 et les passionnés de blockchain.',
-  'Treffpunkt für selbst-gehostete Dienste und Open-Source-Software.',
-  '自己ホスティングと分散型ネットワークについて話し合うコミュニティ',
-  'A friendly book club. We meet weekly to discuss what we are reading.',
+  // ~60 chars — short
+  'Quiet space for daily group meditation. All welcome.',
+  // ~90 chars — short-medium
+  'A community for builders and tinkerers shipping interesting things together every week.',
+  // ~140 chars — medium
+  'Discuss the latest in cryptography, privacy, and decentralized systems. New to the space? Lurk first, ask questions whenever you want.',
+  // ~180 chars — medium-long (Spanish)
+  'Espacio para entusiastas de la criptografía y la privacidad. Compartimos artículos, herramientas, y experiencias sobre redes descentralizadas y autosoberanía digital.',
+  // ~220 chars — long (French)
+  'Un lieu pour les développeurs web3 et les passionnés de blockchain. Nous partageons des ressources, des projets en cours, et organisons des sessions de pair-programming chaque semaine. Bienvenue à tous les niveaux.',
+  // ~260 chars — very long (German)
+  'Treffpunkt für selbst-gehostete Dienste und Open-Source-Software. Wir diskutieren über Server-Setup, Hardware-Empfehlungen, Backup-Strategien, und teilen Erfahrungen mit verschiedenen Distributionen. Anfänger sind herzlich willkommen, wir helfen gerne weiter beim Einstieg.',
+  // ~300 chars — max length (Japanese mixed)
+  '自己ホスティングと分散型ネットワークについて話し合うコミュニティです。サーバーのセットアップ、バックアップ戦略、プライバシー保護のためのツールやサービスについて情報を交換しています。初心者から経験者まで、すべてのレベルの方を歓迎します。週に一度オンラインミーティングを開催しており、新しいメンバーは自由に参加できます。お気軽にどうぞ。',
+  // ~110 chars — medium-short, book club
+  'A friendly book club. We meet weekly to discuss what we are reading. Currently working through sci-fi classics.',
+  // ~75 chars — short
   'Math help and tutoring. Bring your problems, we will help solve them.',
-  'Trade tips, charts, and analysis. Not financial advice.',
-  'Build the web you want to live in. Open source, decentralized, free.',
-  'Quiet meditation space. Daily group sits, all traditions welcome.',
+  // ~150 chars — medium
+  'Trade tips, charts, and analysis. Not financial advice. Welcoming environment for new traders learning the ropes alongside experienced market watchers.',
+  // ~200 chars — long
+  'Build the web you want to live in. Open source, decentralized, free. We share project updates, code reviews, and host weekly office hours for anyone working on independent web tools and protocols.',
+  // ~50 chars — very short
+  'Daily group sits, all traditions welcome.',
 ];
 
 const CATEGORY_CYCLE: SpaceCategory[] = [
