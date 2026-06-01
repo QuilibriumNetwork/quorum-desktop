@@ -35,14 +35,14 @@ Legend: 🟢 ready to pick · 🚧 in progress · ✅ shipped · ⏸️ paused �
 
 | # | Feature | Mobile location | Class | Status | Notes |
 |---|---|---|---|---|---|
-| **1** | **Discover/Explore spaces** (public space directory, search, categories, member counts, join from list) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts`, `services/api/quorumClient.ts` (`DirectoryEntry`, `getDirectory`) | A | 🟢 | Big UX gap — desktop has no space discovery UI. Hooks pure, no native deps. Likely some shareable logic (`DirectoryEntry` type, search/filter algorithm). |
-| **2** | **Message search inside a space/DM** | `hooks/chat/useMessageSearch.ts` + UI surfaces | A | 🟢 | Desktop has `SearchService.ts` + `components/search/` for global search but no in-conversation `useMessageSearch` hook. Verify what desktop's `SearchService` actually does vs mobile's pattern. |
-| **3** | **Reply tracking** (per-user inbox of @replies to your messages, with read state) | `hooks/chat/useReplyTracking.ts` | A | 🟢 | Desktop has no equivalent. Could be a real UX win — "who replied to me" inbox. |
-| **4** | **Space activity feed** (per-space recent activity feed) | `hooks/chat/useSpaceActivity.ts` | A | 🟢 | Desktop has no equivalent. Probably small. |
-| **5** | **Reporting / abuse flag** (`report user`, `report message`, `report space` workflow) | `services/reporting/reportService.ts` | A | 🟢 | Trust/safety primitive — desktop has nothing. Likely fully portable; logic might fit shared. |
-| **6** | **Public profile** (opt-in profile visible to non-members; bio, links, etc.) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts` | B | 🟢 | The `UserConfig.isProfilePublic` field already landed in shared (PR #159, 2026-05-28) but desktop has no UI/hooks to consume it. **Strong B candidate** — finish what the type-only PR started. |
+| **1** | **Discover/Explore spaces** (public space directory, search, categories, member counts, join from list) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts`, `services/api/quorumClient.ts` (`DirectoryEntry`, `getDirectory`) | A | 🟢 | **Shipped on mobile** (`discover.tsx` screen reachable from spaces tab). Big UX gap — desktop has no space discovery UI. Hooks pure, no native deps. Likely some shareable logic (`DirectoryEntry` type, search/filter algorithm). |
+| **2** | **Message search inside a space/DM** | `hooks/chat/useMessageSearch.ts` + UI surfaces | E | ❌ | **Already on desktop, different implementation.** Desktop embeds `<GlobalSearch>` directly in `DirectMessage.tsx` + `Channel.tsx` headers, scoped to the current conversation. Mobile uses in-memory MiniSearch over loaded messages; desktop uses `SearchService` over IndexedDB-persisted history (arguably better — full history, not just loaded scroll). Different impl, same UX. Not a port. |
+| **3** | **Reply tracking** (unread badges on spaces list + channel list, clears on enter) | `hooks/chat/useReplyTracking.ts`, used in `app/(tabs)/spaces/index.tsx`, `app/(tabs)/spaces/[id]/index.tsx`, `app/(tabs)/spaces/[id]/[channelId].tsx`, `context/WebSocketContext.tsx` | A | 🟢 | **Shipped on mobile.** Desktop has no per-channel unread-replies-to-me badge. WebSocket handler bumps the count when someone replies to the user; clears when entering the channel; suppresses while user is already on the channel. |
+| **4** | **Last-message-preview + spaces-list sort (was: "space activity feed")** | `hooks/chat/useSpaceActivity.ts`, used in `app/(tabs)/spaces/index.tsx`, `context/WebSocketContext.tsx` | A | 🟢 | **Shipped on mobile but NOT a "feed page".** The hook's name is misleading. It's a per-space last-message tracker — WebSocket writes `{timestamp, preview, senderName}` on new messages; spaces list reads it to sort by recency + show the preview under each space name. Sibling of #3 — same storage pattern, same WebSocket integration. |
+| **5** | **Reporting / abuse flag** (`report cast`, `report message` workflow with E2E-respecting per-report key) | `services/reporting/reportService.ts`, `components/ReportModal.tsx`, used from `DMChatArea`, `SpaceChatArea`, `CastThreadModal`, `SocialFeedModal`, `ProfileModal` | A | 🟢 | **Shipped on mobile.** Trust/safety primitive — desktop has nothing. Logic: encrypt reported plaintext under a fresh AES-GCM key (only known to reporter + server), sign with Ed448 inbox key. Server endpoint exists. Reasonable shared-promotion candidate (the canonicalize/sign helpers are pure). |
+| **6** | **Public profile** (opt-in profile visible to non-members; bio, links, etc.) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts`, used in `ProfileModal.tsx`, `app/(tabs)/messages/dm/[id].tsx` | B | 🟢 | **Shipped on mobile.** The `UserConfig.isProfilePublic` field already landed in shared (PR #159, 2026-05-28) but desktop has no UI/hooks to consume it. **Strong B candidate** — finish what the type-only PR started. |
 | **7** | **Profile prefs** (extra profile settings: visibility, defaults) | `services/profile/profilePrefs.ts` | C | ❔ | Sub-feature of #6, scope to that effort. |
-| **8** | **OG metadata previews** (link unfurl on messages — show og:title, og:image when a URL is pasted) | `hooks/useOgMetadata.ts` | A | 🟢 | Desktop has `YouTubeEmbed` / `YouTubeFacade` only. Generic link preview is a real UX gain. Logic largely portable (HTTP fetch + HTML parse). |
+| **8** | **OG metadata previews** (link unfurl: og:title, og:image when a URL is pasted) | `hooks/useOgMetadata.ts`, used in `components/SocialFeedModal.tsx` | A | ⚠️ | **Only shipped in mobile's Farcaster feed (SocialFeedModal), NOT in space chat or DM chat.** If we don't port Farcaster (#9, product-scope decision), this becomes a desktop-only extension into chat surfaces rather than a port of a shipped chat feature. Plus the CORS-bypass-via-Electron-IPC caveat. Demote unless Farcaster is in scope. |
 | **9** | **Farcaster integration** (full social-feed bridge: feed, channel, profile, search, submit cast, thread, notifications, signer lifecycle) | `hooks/useFarcaster*.ts` (~10 hooks), `services/farcaster/*` (~9 files), `services/farcasterClient.ts`, `components/SocialFeed/` | C | ❔ | Shared already has a Farcaster module (`@quilibrium/quorum-shared/src/farcaster/`, 2026-05-30 dump). Mobile uses some of it + its own hooks. **Ask user**: do we want a Farcaster surface on desktop at all? If yes, this is multi-week. |
 | **10** | **DM ↔ Farcaster direct casts unification** (`useFarcasterDirectCasts`, `useUnifiedConversations`) | `hooks/chat/useFarcasterDirectCasts.ts`, `hooks/chat/useUnifiedConversations.ts` | C | ❔ | Sub-feature of #9. Mobile presents native DMs and Farcaster direct casts in one list. Only meaningful if #9 ships first. |
 | **11** | **Scam filter / spam filter** | `services/farcaster/scamFilter.ts` | C | ❔ | Likely Farcaster-specific. Re-evaluate after #9 decision. |
@@ -64,19 +64,22 @@ Legend: 🟢 ready to pick · 🚧 in progress · ✅ shipped · ⏸️ paused �
 
 ## Complexity ranking (engineering risk, not product value)
 
-Re-ranked 2026-06-01 after spot-reading the mobile sources. Order is safest/smallest first. LOC estimates are mobile-side sources only — the desktop port often needs comparable but not identical surface.
+Re-ranked 2026-06-01 after spot-reading the mobile sources AND verifying each is actually wired into a live mobile screen (not just code-without-UI). Order is safest/smallest first.
 
-| Rank | # | Feature | LOC (mobile) | Why this rank |
-|---|---|---|---|---|
-| **1** | **#4** | **Space activity feed** | ~80 | **Safest start.** Pure key-value tracker. One storage-swap point (`react-native-mmkv` → IndexedDB or `localStorage`), zero crypto, zero network. Standalone reader/writer mirroring the desktop pattern. |
-| **2** | **#3** | **Reply tracking** | ~115 | Same shape as #4 — literally a sibling pattern in mobile. Same MMKV→web-storage swap. Slightly more state (per-user counts). **Recommended to bundle with #4 in one PR**: one storage-adapter decision made once, used twice; sets the precedent for future "MMKV-keyed hooks" ports. |
-| **3** | **#2** | **Message search (in conversation)** | ~150 + UI | Pure MiniSearch. Drop RN's `InteractionManager` wrapping (use `requestIdleCallback` or just synchronous build). **Verify first**: confirm desktop's existing `SearchService` is global, NOT per-conversation. Adds a search bar UI to chat. No crypto, no network. |
-| **4** | **#5** | **Reporting** | ~195 service + UI | Standalone trust/safety surface. Touches Ed448 signing (`NativeCryptoProvider` → desktop's `WasmSigningProvider`) + AES-GCM via `@noble/ciphers` (web-compatible). Single API call (`postReport`); server endpoint already exists. Moderate. |
-| **5** | **#6** | **Public profile UI** | ~150 svc + ~130 hooks + new UI | **Higher value, larger surface.** Closes a known migration loose end (shared has the `isProfilePublic` + `farcasterLink` field since 2026-05-28; desktop has zero consumer). Needs: publish flow, fetch flow, own-profile UI, viewing-others UI, fallback resolver in member lists. Same Ed448 signing swap as #5. |
-| **6** | **#8** | **OG metadata previews** | ~225 | **Hidden caveat that bumps this up the list:** mobile uses RN's no-CORS `fetch`. Desktop is Electron — browsers enforce CORS, killing direct in-renderer fetch for arbitrary URLs. Safe path: renderer → main-process IPC fetch (or a tiny Electron-main HTTP fetcher). Logic is trivial once that path is wired up. Cross-cutting because it adds a new IPC surface. |
-| **7** | **#1** | **Discover spaces** | ~85 hook + ~280 screen | **Largest UI lift, no architectural rabbit holes.** Pure data view + join, but lots of UI surface: category chips, debounced search, pagination, member-count formatting, empty states, join flow. Hook itself is tiny; the screen is where the work lives. |
+**Verification rule (kept as a standing rule for future inventory passes):** before ranking, grep that the hook/service is actually rendered in `app/` or `components/` (not just defined). If it's defined but not used by any UI, it's not really a shipped feature — flag it instead of porting blind.
 
-**Recommended first port:** bundle **#4 + #3** in one PR. Lowest possible risk, immediate UX win, establishes the storage-adapter pattern for MMKV-keyed hooks that will repeat for similar features later.
+LOC estimates are mobile-side sources only — the desktop port often needs comparable but not identical surface.
+
+| Rank | # | Feature | LOC (mobile) | Live on mobile? | Why this rank |
+|---|---|---|---|---|---|
+| **1** | **#3 + #4** (bundle) | **Reply tracking + last-message-preview spaces-list** | ~115 + ~80 | ✅ both | **Safest start.** Both are pure key-value trackers with the same MMKV→web-storage swap pattern. Both are written by WebSocket handlers and read by the spaces list. Same shape, same integration point — bundle into one PR, make the storage-adapter decision once, use twice. Zero crypto, zero network. |
+| **2** | **#5** | **Reporting (ReportModal + reportService)** | ~195 svc + ~250 modal | ✅ | Standalone trust/safety surface, accessible from message menus and profile menus. Touches Ed448 signing (`NativeCryptoProvider` → desktop's `WasmSigningProvider`) + AES-GCM via `@noble/ciphers` (web-compatible). Single API call (`postReport`); server endpoint already exists. Pure logic candidate for shared promotion. |
+| **3** | **#6** | **Public profile UI** | ~150 svc + ~130 hooks + new UI | ✅ | **Higher value, larger surface.** Closes a known migration loose end (shared has the `isProfilePublic` + `farcasterLink` field since 2026-05-28; desktop has zero consumer). Needs: publish flow, fetch flow, own-profile UI, viewing-others UI, fallback resolver in member lists. Same Ed448 signing swap as #5. |
+| **4** | **#1** | **Discover spaces** | ~85 hook + ~280 screen | ✅ | **Largest UI lift, no architectural rabbit holes.** Pure data view + join, but lots of UI surface: category chips, debounced search, pagination, member-count formatting, empty states, join flow. Hook itself is tiny; the screen is where the work lives. |
+| — | **#2** | ~~Message search (in conversation)~~ | — | E (already shipped) | **Removed from ranking.** Desktop already has this — `<GlobalSearch>` is embedded directly in `DirectMessage.tsx` and `Channel.tsx` headers, scoped to the current conversation. Different impl (IndexedDB-indexed vs in-memory MiniSearch), same UX. Not a port. |
+| — | **#8** | ~~OG metadata previews~~ | — | ⚠️ Farcaster-only on mobile | **Demoted from "🟢 ready to pick".** Mobile only uses OG metadata in `SocialFeedModal` (Farcaster feed). Not a chat feature. Re-pick only if Farcaster (#9) goes in scope. |
+
+**Recommended first port:** bundle **#3 + #4** in one PR. Lowest possible risk, immediate UX win (unread badges + spaces-list activity sort), establishes the storage-adapter pattern for MMKV-keyed hooks that will repeat for similar features later.
 
 ## Original "first picks" (by leverage, not complexity)
 
@@ -92,6 +95,73 @@ Kept for reference. Use the complexity ranking above to decide what to *start*; 
 
 The "❔ needs UX call" rows (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio Spaces, #16 Miniapps, #17 Governance) are product decisions, not engineering decisions. They should be discussed before scoping.
 
+## Per-candidate notes & decisions
+
+Lightweight running notes per candidate — user comments, dev concerns, scope clarifications, "why we changed our mind" moments. Add a dated bullet under the relevant `### #N` heading whenever we make a call or surface a concern. Keep it short; if something gets big, promote it into a task file.
+
+This is the durable place for "we decided X about candidate N" so it survives session boundaries.
+
+### #1 Discover spaces
+
+- _(no notes yet)_
+
+### #2 Message search ❌ ruled out
+
+- **2026-06-01** — Desktop already has this. `<GlobalSearch>` is embedded in `DirectMessage.tsx` (line ~844) and `Channel.tsx` (line ~1529) headers, scoped to the current conversation context. Mobile uses in-memory MiniSearch, desktop uses IndexedDB-persisted `SearchService`. Same UX, different impl. Not a port.
+
+### #3 Reply tracking
+
+- _(no notes yet — add comments here)_
+
+### #4 Last-message-preview + spaces-list sort (was "space activity feed")
+
+- **2026-06-01** — Original name "space activity feed" was misleading. There's no activity-feed page on mobile. The hook tracks per-space `{timestamp, preview, senderName}` and the spaces-tab list reads it to sort spaces by recency and show the last-message preview under each space name.
+- _(add Kyn's comments here as we discuss scope)_
+
+### #5 Reporting
+
+- _(no notes yet)_
+
+### #6 Public profile UI
+
+- _(no notes yet)_
+
+### #7 Profile prefs
+
+- _(no notes yet — sub-feature of #6)_
+
+### #8 OG metadata ⚠️ Farcaster-only on mobile
+
+- **2026-06-01** — Mobile only uses `useOgMetadata` in `SocialFeedModal.tsx` (the Farcaster feed view). NOT used in `SpaceChatArea` or `DMChatArea`. So this isn't a port of a live chat feature — it'd be a desktop-only extension into chat surfaces. Plus the CORS-bypass-via-Electron-IPC caveat. Demoted from "🟢 ready to pick". Re-pick only if Farcaster (#9) goes in scope.
+
+### #9 Farcaster integration
+
+- _(no notes yet — needs UX-scope decision)_
+
+### #12 QNS marketplace
+
+- _(no notes yet — needs UX-scope decision)_
+
+### #13 Multi-chain wallet
+
+- _(no notes yet — needs UX-scope decision)_
+
+### #14 Calling
+
+- _(no notes yet — needs UX-scope decision)_
+
+### #15 Audio spaces
+
+- _(no notes yet — needs UX-scope decision)_
+
+### #16 Mini-apps + browser
+
+- _(no notes yet — needs UX-scope decision)_
+
+### #17 Governance
+
+- _(no notes yet — needs UX-scope decision)_
+
 ## Notes from the 2026-06-01 inventory pass
 
 - Mobile uses an Expo Router structure (`app/` with route folders), NOT `src/`. When inspecting a screen, follow the route folder structure: tabs live in `(tabs)/`, onboarding in `(onboarding)/`.
@@ -103,4 +173,4 @@ The "❔ needs UX call" rows (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #1
 
 ---
 
-*Last updated: 2026-06-01 — initial broad inventory pass + complexity ranking added.*
+*Last updated: 2026-06-01 — verified shipped-status per candidate (live in mobile UI vs. code-only). #2 ruled out (desktop already has in-conversation search via `GlobalSearch`). #4 reframed (not a feed page; it's the spaces-list last-message-preview + sort). #8 demoted (Farcaster-only on mobile). Added "Per-candidate notes & decisions" section so commentary survives sessions.*
