@@ -8,6 +8,7 @@ import { useConfig } from '../../hooks/queries/config';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useHideMutedSpaces } from '../../hooks/business/user/useHideMutedSpaces';
 import { useSpaceContextMenu } from '../../hooks/business/spaces';
+import { useNavItems } from '../../hooks/business/folders/useNavItems';
 import { useMessageDB } from '../context/useMessageDB';
 import { Input, Select, Switch } from '../primitives';
 import { SpaceCard } from './SpaceCard';
@@ -46,6 +47,23 @@ export const MySpacesTab: React.FC = () => {
   const { hideMutedSpaces, toggleHideMutedSpaces } = useHideMutedSpaces();
   const { messageDB } = useMessageDB();
   const { openContextMenu, contextMenu } = useSpaceContextMenu();
+
+  // Order spaces the same way the navbar does (folder structure + manual ordering).
+  // `allSpaces` is a flat list in navbar declaration order; spaces not in config.items
+  // (newly joined, not yet placed) get appended at the end.
+  const { allSpaces } = useNavItems(spaces, config);
+  const orderedSpaces = React.useMemo<Space[]>(() => {
+    if (!spaces || spaces.length === 0) return [];
+    const orderedIds = new Set(allSpaces.map((s) => s.spaceId));
+    const inOrder: Space[] = allSpaces.map((s) => {
+      // Strip the synthetic `id` field that useNavItems adds
+      const { id: _id, ...rest } = s;
+      void _id;
+      return rest as Space;
+    });
+    const trailing = spaces.filter((s) => !orderedIds.has(s.spaceId));
+    return [...inOrder, ...trailing];
+  }, [spaces, allSpaces]);
 
   const [search, setSearch] = React.useState('');
   const [folderId, setFolderId] = React.useState<string>('all');
@@ -89,7 +107,7 @@ export const MySpacesTab: React.FC = () => {
   // Intentionally NOT filtering by hideMutedSpaces here — the toggle is scoped
   // to the sidebar (see Switch label). My Spaces tab is the full inventory.
   const filteredSpaces = React.useMemo(() => {
-    let result: Space[] = spaces ?? [];
+    let result: Space[] = orderedSpaces;
 
     if (folderId !== 'all') {
       const folder = folders.find((f) => f.id === folderId);
@@ -105,7 +123,7 @@ export const MySpacesTab: React.FC = () => {
     }
 
     return result;
-  }, [spaces, folderId, folders, search]);
+  }, [orderedSpaces, folderId, folders, search]);
 
   return (
     <div className="my-spaces-tab">

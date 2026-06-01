@@ -9,18 +9,18 @@ import './SpacesPage.scss';
 type TabId = 'my-spaces' | 'discover';
 
 const TABS: { id: TabId; label: () => string }[] = [
-  { id: 'my-spaces', label: () => t`My Spaces` },
   { id: 'discover', label: () => t`Discover` },
+  { id: 'my-spaces', label: () => t`My Spaces` },
 ];
 
 export const SpacesPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
-  const activeTab: TabId = tabParam === 'discover' ? 'discover' : 'my-spaces';
+  const activeTab: TabId = tabParam === 'my-spaces' ? 'my-spaces' : 'discover';
 
   const setActiveTab = (id: TabId) => {
     const next = new URLSearchParams(searchParams);
-    if (id === 'my-spaces') {
+    if (id === 'discover') {
       next.delete('tab');
     } else {
       next.set('tab', id);
