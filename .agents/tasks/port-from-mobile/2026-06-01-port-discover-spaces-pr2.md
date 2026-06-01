@@ -66,9 +66,10 @@ Removing the `+` button in PR 1 would leave users without create/paste-invite ac
 ### 5. PR 2 also revisits a few PR 1 deferrals ✅
 Items PR 1 marked as "decide during PR 2 with the page in real use":
 - Sort options on My Servers (alphabetical / by member count / etc.) — based on PR 1 feedback
-- "Hide muted servers" filter on My Servers — based on PR 1 feedback
 - Discover layout adjustment if "search + dropdown" feels wrong in practice (could swap to chip row or sidebar)
 - Tab state persistence in URL (`/spaces?tab=create`) if not done in PR 1
+
+Note: "Hide muted servers from sidebar" originally deferred but pulled into PR 1 during design discussion (2026-06-01). Already shipped by the time PR 2 starts.
 
 These are NOT scope additions to PR 2 by default — they're "while we're in the file, consider these" notes. Each is independently small enough to defer further if PR 2 grows too large.
 
@@ -230,7 +231,6 @@ When someone clicks `app.quorummessenger.com#join=...` outside the app, `InviteR
 These are not required for PR 2 but the file change is already open. Add per-item, skip per-item:
 
 - [ ] If decided: add sort dropdown to My Servers tab (alphabetical / by member count)
-- [ ] If decided: add "Hide muted servers" filter to My Servers tab
 - [ ] If real use shows Discover layout (search + dropdown) feels wrong: swap to chip row or sidebar
 - [ ] If not done in PR 1: tab state persistence via URL query param
 
@@ -279,4 +279,4 @@ These are not required for PR 2 but the file change is already open. Add per-ite
 
 ---
 
-*Last updated: 2026-06-01 — task file created immediately after PR 1's task file to preserve the design discussion. Status `deferred` until PR 1 ships.*
+*Last updated: 2026-06-01 — task file created immediately after PR 1's task file to preserve the design discussion. Removed "Hide muted servers from sidebar" from PR 2's deferred-items list — feature was pulled into PR 1 during design discussion. Status `deferred` until PR 1 ships.*
