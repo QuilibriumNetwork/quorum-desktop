@@ -149,10 +149,9 @@ header {
     }
   }
 
-  // Light theme: --color-text-subtle (#818181) reads too dim against the
-  // lighter --surface-7 bg. Use --surface-5 (#d5d5db) for better contrast.
+  // Light theme: match the DM icon (white) for visual consistency.
   html:not(.dark) & .spaces-hub-icon {
-    color: var(--surface-5);
+    color: white;
   }
 
   @media (max-width: $screen-xs) {
