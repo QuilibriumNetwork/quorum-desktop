@@ -130,6 +130,11 @@
       .space-icon,
       .space-icon-selected {
         box-shadow: 0 0 0 $s-1 var(--surface-2);
+
+        // Discover-card icons are decorative — suppress the navbar hover dim.
+        &:hover {
+          opacity: 1;
+        }
       }
     }
 
