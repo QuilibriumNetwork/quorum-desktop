@@ -1,252 +1,410 @@
 ---
 type: task
-title: "Port: Discover Spaces (public space directory) from mobile to desktop"
+title: "Unified /spaces page (PR 1 of 2) — My Servers tab + Discover tab"
 status: ready
 created: 2026-06-01
 updated: 2026-06-01
 candidate: "#1 (port-from-mobile)"
 mobile-source: quorum-mobile master 0fa63d4 (2026-05-30)
+shared-source: quorum-shared master 9d1c08f (2026-05-30)
 ---
 
-# Port: Discover Spaces
+# Unified `/spaces` page — PR 1 of 2
 
-> Port mobile's public space directory ("Discover spaces") to desktop. Lets the user browse curated public spaces by category, search by name, and join without an invite link.
+> **PR 1 of a committed two-PR plan.** Ship a new top-level `/spaces` route with the four-tab IA in place but only the two browsing tabs populated: **My Servers** + **Discover**. PR 2 (next session, committed within ~2-4 weeks of PR 1) fills in the **Join via link** + **Create space** tabs and retires `AddSpaceModal`, `CreateSpaceModal`, and the navbar `+` button.
 
-## Mobile source
+## Mobile source (for Discover tab)
 
 - [`app/(tabs)/spaces/discover.tsx`](../../../../quorum-mobile/app/(tabs)/spaces/discover.tsx) — screen, ~284 LOC
 - [`hooks/chat/useExploreSpaces.ts`](../../../../quorum-mobile/hooks/chat/useExploreSpaces.ts) — hook, ~85 LOC
-- [`services/api/quorumClient.ts`](../../../../quorum-mobile/services/api/quorumClient.ts) lines 67-84 (`DirectoryEntry`, `DirectoryResponse` types) + lines 869-891 (`exploreSpaces`, `reportSpace` methods)
+- [`services/api/quorumClient.ts`](../../../../quorum-mobile/services/api/quorumClient.ts) lines 67-84 (`DirectoryEntry`, `DirectoryResponse` types) + lines 869-884 (`exploreSpaces` method)
 
 ## Why
 
-Capability gap: desktop currently has no way to discover spaces. `JoinSpaceModal` and `AddSpaceModal` are invite-link-only (paste link → validate → join). New users have nothing to do until they receive an invite. Mobile already ships a browse-by-category directory view that calls a server endpoint Quorum runs.
+Two intertwined motivations:
+
+1. **Capability gap:** desktop has no public space directory. `JoinSpaceModal` (used by `InviteRoute` for deep-link invite URLs) and `AddSpaceModal` (paste-invite + create combo, opened from navbar `+`) are invite-link-only. New users have nothing to do until they receive an invite.
+2. **Surface consolidation:** desktop's space management is fragmented across three modals (`AddSpaceModal`, `JoinSpaceModal`, `CreateSpaceModal`) producing a confusing "which modal do I want?" mental model. A unified `/spaces` page becomes the single canonical hub for everything space-related from outside-a-space.
+
+PR 1 ships the foundation + the browsing experience. PR 2 ships creation/join-by-link inside the same page and cleans up the legacy modals.
 
 ## Capability verification (done 2026-06-01)
 
-Confirmed missing on desktop:
-- No `directory`, `discover`, `explore`, `browseSpaces`, `publicSpaces`, `catalog`, `exploreSpaces`, `DirectoryEntry`, or `getDirectory` references anywhere in `src/` outside i18n files
-- `src/components/modals/JoinSpaceModal.tsx` + `src/components/modals/AddSpaceModal.tsx` both flow through `useInviteValidation` → `useSpaceJoining`. No alternative entry point.
+- No `directory`, `discover`, `explore`, `browseSpaces`, `publicSpaces`, `catalog`, `exploreSpaces`, `DirectoryEntry`, or `getDirectory` references in `src/` outside i18n files.
+- `JoinSpaceModal` + `AddSpaceModal` both flow through `useInviteValidation` → `useSpaceJoining`. No alternative discovery entry point exists.
+- "My Servers" grid view (your spaces shown as cards) does not exist anywhere on desktop today — the navbar sidebar is the only existing list.
+
+## Locked decisions
+
+All decisions resolved across 2026-06-01 design conversation.
+
+### 1. Architecture: dedicated route at `/spaces` ✅
+Not a modal. Page needs real estate for grid + tabs + filters; modal would be cramped.
+
+### 2. Navbar entry point: `icon-layout-grid-add` button at top of space list ✅
+Already exported from `@quilibrium/quorum-shared`. **PR 1: added alongside the existing `+` button** (both coexist). PR 2: the `+` button is removed and this becomes the sole entry point.
+
+### 3. Tab IA: four tabs ✅
+`My Servers` (default) · `Discover` · `Join via link` · `Create space`
+
+Reasoning: once we commit to "the page is the hub for everything", routing buttons to legacy modals is a half-measure. All four major space actions should live as page-level destinations. 4 tabs is at the upper bound of "still scannable" but is the right cardinality given the commitment.
+
+### 4. PR 1 ships tabs 1 + 2 only ✅
+**My Servers** + **Discover** ship in PR 1. **Join via link** + **Create space** are NOT in PR 1 — neither the tabs nor the tab content. (No "Coming soon" stubs either.)
+
+### 5. PR 2 commitment ✅
+PR 2 ships within ~2-4 weeks of PR 1 and adds the remaining two tabs + retires `AddSpaceModal` and `CreateSpaceModal` + removes the navbar `+` button. User confirmed commitment 2026-06-01.
+
+### 6. Category list: verbatim from mobile (7 categories) ✅
+`community`, `gaming`, `tech`, `crypto`, `social`, `education`, `other`. Server already supports these.
+
+### 7. Shared promotion of wire types: yes ✅
+`DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` to `@quilibrium/quorum-shared`. Additive only. Mobile keeps working unchanged. Drop a mobile task in `mobile-tasks-pending.md` for the lead dev to swap mobile's local types when convenient.
+
+### 8. `reportSpace` directory-level abuse flag: skip ✅
+Out of scope per the broader reporting deprioritization.
+
+### 9. Mock data semantics: replace real data when mocks active ✅
+When `?spaces=N` URL param OR `localStorage.debug_mock_spaces === 'true'` is set in dev, the `/directory` fetch is skipped entirely and `useExploreSpaces` returns generated mocks (with client-side filtering by `search` + `category` so the UI behaves identically). Matches the existing `?users=N` pattern in `DirectMessageContactsList`.
+
+### 10. Discover tab layout: search + category dropdown (no chip row, no sidebar) ✅
+
+Three options were considered. Resolved as: **search input (compressed, ~`max-w-md`) on the left, category `<Select>` dropdown on the right of the same row.**
+
+Rationale: chip row below tabs created visual collision (two stacked pill-rows look alike); left-rail sidebar costs a card-per-row of grid density without enough categories to justify; dropdown gives sensible use of horizontal space at desktop widths and matches the universal "search + filter" pattern. Trade-off accepted: one extra click to switch categories.
+
+Marked as "play with it a bit to understand if there's a better option" — if discovery feels awkward in practice, swap to chip row or sidebar in a follow-up.
+
+### 11. "My Servers" tab in PR 1: bare grid + find-server search, no sort/filter ✅
+- Grid of cards (icon, name, member count, owner badge)
+- "Find a server" client-side search input
+- No "Sort by Last active" (desktop has no per-space last-activity data)
+- No online-count badge per card (desktop has no per-space presence aggregation)
+- No "Hide muted servers" filter (different chrome from navbar; doesn't fit cleanly here)
 
 ## Cross-repo summary
 
-- **quorum-shared**: ⚠️ decision pending — `DirectoryEntry` + `DirectoryResponse` + `SpaceCategory` are good shared-promotion candidates (pure wire-shape types, both apps consume the same server endpoint). See [Open decisions](#open-decisions) #4.
-- **quorum-desktop**: this PR (or PR stack if shared promotion happens)
-- **quorum-mobile**: not touched directly. If shared promotion happens, drop a mobile task in [`../quorum-shared-migration/mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) so the lead dev can swap mobile's local type for the shared one later.
+- **quorum-shared**: additive PR (new exports: `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory`). Self-merge after build verification.
+- **quorum-desktop**: PR 1 — this task file. Consumes the shared types.
+- **quorum-mobile**: not touched. Task drop in shared-migration's `mobile-tasks-pending.md` so the lead can swap mobile's local types for shared ones.
 
 ## Architecture
 
-### Mobile pattern (reference)
+### Mobile pattern (reference, Discover only)
 
 ```
                   GET /directory?search=…&category=…&offset=…&limit=…
                                   │
-                                  ▼
               QuorumMobileClient.exploreSpaces(params)
                                   │
-                                  ▼
         useExploreSpaces() — React Query, 60s staleTime, 300ms debounce
                                   │
-        ┌─────────────────────────┼──────────────────────────┐
-        │                         │                          │
-   { search, setSearch }   { category, setCategory }   { entries, hasMore, loadMore, refetch }
-                                  │
-                                  ▼
       DiscoverSpacesScreen (search input + category chips + FlatList + Join button)
-                                  │
-                                  ▼
-                       useJoinSpace mutation
 ```
 
-### Desktop port
-
-Same overall shape, adapted to desktop conventions:
+### Desktop port (PR 1)
 
 ```
-        getDirectoryUrl(params) — new URL builder in src/api/quorumApi.ts
-                                  │
-                                  ▼
-        QuorumApiClient.exploreSpaces() — new method in src/api/baseTypes.ts
-                                  │
-                                  ▼
-        useExploreSpaces() — React Query, 60s staleTime, 300ms debounce
-                                  │
-                                  ▼
-        DiscoverSpacesModal | DiscoverSpacesRoute (UX call — see Open decisions #1)
-                                  │
-                                  ▼
-        useSpaceJoining (already exists) — join action
+                Navbar (existing chrome unchanged in PR 1):
+                ┌──────────────────────────────┐
+                │  [icon-layout-grid-add]      │  ← NEW: links to /spaces
+                │  ──────────────────          │
+                │   [Space icon 1]              │
+                │   [Space icon 2]              │
+                │   ...                         │
+                │   [Space icon N]              │
+                │  ──────────────────          │
+                │  [+ Add space]               │  ← UNCHANGED in PR 1 (opens AddSpaceModal)
+                └──────────────────────────────┘
+
+                Page at /spaces:
+                ┌────────────────────────────────────────────────────────────┐
+                │ [ My Servers ]  [ Discover ]                                │  ← tabs (only 2 in PR 1)
+                ├────────────────────────────────────────────────────────────┤
+                │                                                             │
+                │  Tab content (see Tab content layouts below)                │
+                │                                                             │
+                └────────────────────────────────────────────────────────────┘
 ```
+
+### Tab content layouts
+
+**My Servers tab:**
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ 🔍 Find a server...                                                     │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│ ┌──┐ Space A             ┌──┐ Space B [👑]      ┌──┐ Space C            │
+│ │ic│ 1.2K members        │ic│ 800 members        │ic│ 5.3K members       │
+│ └──┘                     └──┘                    └──┘                    │
+│                                                                         │
+│ ┌──┐ Space D             ┌──┐ Space E             ┌──┐ Space F           │
+│ │ic│ 234 members         │ic│ 12K members         │ic│ 567 members        │
+│ └──┘                     └──┘                     └──┘                    │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+**Discover tab:**
+```
+┌────────────────────────────────────────────────────────────────────────┐
+│ 🔍 Search public spaces...          [ All categories         ▾ ]        │
+├────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│ ┌──┐ Space A             ┌──┐ Space B             ┌──┐ Space C           │
+│ │ic│ Gaming · 1.2K       │ic│ Tech · 800          │ic│ Crypto · 5.3K     │
+│ └──┘ [Join]              └──┘ [Join]              └──┘ [Join]            │
+│                                                                         │
+│ ┌──┐ Space D             ┌──┐ Space E             ┌──┐ Space F           │
+│ │ic│ Community · 234     │ic│ Education · 12K     │ic│ Social · 567      │
+│ └──┘ [Join]              └──┘ [Join]              └──┘ [Join]            │
+│                                                                         │
+│                          [ Load more ]                                  │
+└────────────────────────────────────────────────────────────────────────┘
+```
+
+### Architecture diagram (data path)
+
+```
+                Discover tab                            My Servers tab
+                     │                                       │
+                     ▼                                       ▼
+        useExploreSpaces()                           useSpaces() (existing)
+        ↳ mock mode (dev): generateMockSpaces        ↳ also: useSpaceOwner per card
+        ↳ real: QuorumApiClient.exploreSpaces                useSpaceMembers per card (count)
+                     │                                       │
+                     ▼                                       ▼
+        getDirectoryUrl(params)                       (existing data only)
+                     │
+                     ▼
+        GET /directory?...
+```
+
+## UX redesign rationale
+
+Deliberate divergence from mobile UX. Mobile has a 5-tab bottom-nav where "Spaces" is one tab containing a `discover.tsx` screen. Desktop's existing space management is fragmented across three modals. The unified `/spaces` page is desktop's better fit because:
+
+- Desktop has persistent sidebar chrome → a dedicated page works naturally; mobile's full-screen-list pattern doesn't translate
+- Three currently-fragmented modals (`AddSpaceModal`, `JoinSpaceModal`, `CreateSpaceModal`) create a confusing mental model — a single page with sections is clearer
+- A page hosts real list + filter chrome; modals would be cramped at this many features
+- The `icon-layout-grid-add` icon at the top of the navbar gives discovery a stable, discoverable home
+
+User confirmed (2026-06-01) this UX divergence is intentional and aligned with desktop product direction. No lead-dev coordination needed.
 
 ## File plan
 
-### New files
+### New files (PR 1)
 
-- `src/hooks/business/spaces/useExploreSpaces.ts` — port of mobile's hook
-- `src/components/modals/DiscoverSpacesModal.tsx` + `.scss` (if decision is modal — see Open decisions #1)
-  - OR `src/routes/DiscoverSpaces.tsx` (if dedicated route)
-
-### Modified files
-
-- `src/api/quorumApi.ts` — add `getDirectoryUrl` URL builder (mirrors `getSpaceUrl` pattern)
-- `src/api/baseTypes.ts` — add `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` types + `exploreSpaces` method on `QuorumApiClient` (mirrors `getSpace`, `getInbox` method patterns at lines 350, 360, 382, 443)
-- `src/hooks/business/spaces/index.ts` — barrel export
-- Wherever the discovery entry point lives (sidebar button / `AddSpaceModal` / navbar) — wire the trigger
-
-### Possibly modified (if shared promotion happens)
-
-- `quorum-shared/src/types/directory.ts` — new file with `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory`
-- `quorum-shared/src/types/index.ts` — barrel export
-- `quorum-shared/src/index.ts` — top-level export
-- Desktop's `src/api/baseTypes.ts` then imports from `@quilibrium/quorum-shared` instead of defining locally
-
-## Open decisions
-
-These need answers before drafting the UI half of the port. Capture the answers here once decided.
-
-### 1. Modal vs dedicated route on desktop
-
-Mobile uses a dedicated screen (`discover.tsx`). Desktop's existing space-management surfaces are all modals (`JoinSpaceModal`, `AddSpaceModal`, `CreateSpaceModal`).
-
-| Option | Pros | Cons |
-|---|---|---|
-| Modal | Matches existing desktop patterns. No router work. Easy to dismiss back to current context. | Modal real estate is limited; long lists feel cramped. |
-| Dedicated route (`/discover` or similar) | More space for the directory list + filters. Sharable URL. | Router plumbing. Inconsistent with rest of space management. |
-| Modal with "expand to full view" affordance | Hybrid — start small, escalate if needed. | Two UI states to maintain. |
-
-**Recommendation:** modal, matching existing patterns. Discover the directory in a familiar shape; if it grows enough to need its own route, that's a future refinement.
-
-**Decision:** _(pending user input)_
-
-### 2. Entry point on desktop
-
-Where does the user trigger discovery? Options:
-
-- Button inside `AddSpaceModal` ("Browse public spaces" tab alongside "Paste invite link")
-- New button in the navbar/sidebar (next to the existing "+" or space list)
-- Empty-state CTA when user has zero spaces
-- All of the above
-
-**Recommendation:** start with the button in `AddSpaceModal` — it's the canonical "I want to add a space" entry point on desktop today, and it naturally extends the existing flow. Empty-state CTA can be added as a v2 polish.
-
-**Decision:** _(pending user input)_
-
-### 3. Category list
-
-Mobile ships 7 categories: `community`, `gaming`, `tech`, `crypto`, `social`, `education`, `other`. Keep them verbatim?
-
-| Option | Notes |
+| File | Purpose |
 |---|---|
-| Use mobile's list verbatim | Server already supports these categories. No new server-side work. Consistent UX across apps. |
-| Subset (drop e.g. `gaming` or `social` if they don't match desktop user base) | Cleaner list, but introduces an artificial desktop/mobile divergence with no server enforcement. |
-| Add categories | Requires server changes + mobile coordination. Out of scope. |
+| `quorum-shared/src/types/directory.ts` (in shared) | `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` |
+| `src/hooks/business/spaces/useExploreSpaces.ts` | Port of mobile's hook. Mock-mode aware. |
+| `src/components/spaces-page/SpacesPage.tsx` (+ `.scss`) | Top-level route component. Tab shell + active-tab content router. |
+| `src/components/spaces-page/MyServersTab.tsx` (+ `.scss`) | Grid of user's spaces + find-server search. |
+| `src/components/spaces-page/DiscoverTab.tsx` (+ `.scss`) | Search input + category dropdown + results grid + Load more. |
+| `src/components/spaces-page/SpaceCard.tsx` (+ `.scss`) | Shared card component used by both tabs. Variants for "my server" vs "public space". |
+| `src/components/spaces-page/index.ts` | Barrel |
+| `src/utils/mock/mockSpaces.ts` | `generateMockSpaces(count)`, `isMockSpacesEnabled()`, `getMockSpacesCount()`. Matches `mockConversations.ts` / `mockUsers.ts` pattern. |
 
-**Recommendation:** verbatim. Anything else is a separate product conversation.
+### Modified files (PR 1)
 
-**Decision:** _(pending user input)_
+| File | Change |
+|---|---|
+| `quorum-shared/src/types/index.ts` | Barrel export of `directory.ts` |
+| `quorum-shared/src/index.ts` | Top-level export |
+| `src/api/quorumApi.ts` | Add `getDirectoryUrl(params)` URL builder (mirrors `getSpaceUrl` pattern) |
+| `src/api/baseTypes.ts` | Add `async exploreSpaces(params): Promise<DirectoryResponse>` method on `QuorumApiClient`. Import types from `@quilibrium/quorum-shared`. |
+| `src/hooks/business/spaces/index.ts` | Barrel export for `useExploreSpaces` |
+| `src/components/Router/Router.web.tsx` | Add `<Route path="/spaces" element={<SpacesPage />} />` |
+| `src/components/Router/Router.native.tsx` | Equivalent route (TBD — confirm during implementation; likely vestigial) |
+| `src/components/navbar/NavMenu.tsx` (or wherever the navbar renders) | Add `icon-layout-grid-add` button at top of space list. DO NOT remove existing `+` button. |
+| `src/utils/mock/index.ts` | Export the new `mockSpaces` module |
 
-### 4. Shared promotion of types
+### Untouched in PR 1 (retired in PR 2)
 
-`DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` are pure wire-shape types from the server, used identically by both apps. Strong shared promotion candidate.
+- `src/components/modals/AddSpaceModal.tsx` — left alone (retired PR 2)
+- `src/components/modals/CreateSpaceModal.tsx` — left alone (retired PR 2, content lifted into Create space tab)
+- `src/components/modals/JoinSpaceModal.tsx` — left alone (kept permanently for `InviteRoute` deep-link handling)
+- `src/components/InviteRoute.tsx` — left alone permanently
+- The existing navbar `+` button — left alone (removed in PR 2)
 
-| Option | What ships | Risk |
-|---|---|---|
-| Promote to shared in this PR | One shared PR (additive — new exports) + this desktop PR consuming the shared types + mobile task drop for the lead to swap mobile's local types later | Standard additive shared PR. Low risk. Follows the existing shared-migration workflow. |
-| Define locally on desktop now, promote later if mobile converges | Just this desktop PR. Simpler scope. | Two-source-of-truth situation. Easy to drift. Lead dev sees the same wire shape redefined in two places. |
+## Deep-link `InviteRoute` boundary
 
-**Recommendation:** promote to shared. The types are unambiguous wire shapes. The shared PR is additive; mobile keeps working unchanged. Drop a mobile task so the lead can swap mobile's local definitions when convenient.
+Explicit non-goal: PR 1 and PR 2 both do NOT touch the deep-link invite-URL handler (`src/components/InviteRoute.tsx` + `JoinSpaceModal`). When someone clicks `app.quorummessenger.com#join=...` outside the app, that flow still works exactly as today via `InviteRoute`. The "paste an invite link" surface that migrates into the `/spaces` page in PR 2 is specifically the in-app paste-invite tab inside `AddSpaceModal` — a different code path from the deep-link handler.
 
-**Decision:** _(pending user input — if yes, this becomes a 2-PR stack: shared additive PR first, then desktop PR consuming it)_
+## PR 2 scope (NOT this PR — committed for follow-up)
 
-### 5. `reportSpace` method
+Will be a separate task file in a later session.
 
-Mobile's `quorumClient.ts` line 886 also defines `reportSpace(spaceAddress, reason)` — a directory-level abuse flag, separate from the message/profile reporting in `services/reporting/reportService.ts`. Reporting overall has been deprioritized for desktop (see [`candidates.md` `### #5`](candidates.md#5-reporting--deprioritized)), but the directory has its own "Report this space" affordance that's UX-adjacent to the discovery flow.
+1. Build **Join via link** tab — lift validation + join logic from `AddSpaceModal`'s paste-invite section
+2. Build **Create space** tab — lift the full creation form from `CreateSpaceModal` (form rendered directly on the tab; no intermediate landing card)
+3. Retire `AddSpaceModal` (the combo paste-invite + create modal)
+4. Retire `CreateSpaceModal` (content lifted into Create space tab)
+5. Remove the navbar `+` button (now redundant — `icon-layout-grid-add` is the canonical entry point)
+6. Keep `JoinSpaceModal` and `InviteRoute` alive permanently for deep-link handling
 
-**Recommendation:** skip `reportSpace` in this PR. Don't add the wire method until we have a UI for it. Note it in this task file for follow-up.
+## Implementation phases
 
-**Decision:** _(pending user input — if you want it in scope, scope creeps slightly but stays small)_
+### Phase 1 — Shared types (additive shared PR)
 
-## Implementation steps
-
-(Order assumes Modal + AddSpaceModal entry + verbatim categories + shared-promotion = yes. Adjust once Open decisions are answered.)
-
-### Phase 1 — shared types (only if shared promotion = yes)
-
-- [ ] Create `quorum-shared/src/types/directory.ts` with `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` (verbatim from mobile's `quorumClient.ts` lines 67-84 + the `SPACE_CATEGORIES` enum from mobile's `useExploreSpaces.ts` lines 13-24)
-- [ ] Add barrel exports: `quorum-shared/src/types/index.ts` + `quorum-shared/src/index.ts`
-- [ ] Verify build on shared: `yarn build` in `quorum-shared/`
-- [ ] Bump shared version, publish locally via `link:` symlink (desktop picks up automatically)
+- [ ] Create `quorum-shared/src/types/directory.ts` with `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` (verbatim from mobile's `quorumClient.ts` lines 67-84 + `SPACE_CATEGORIES` enum from mobile's `useExploreSpaces.ts` lines 13-24)
+- [ ] Barrel exports: `quorum-shared/src/types/index.ts` + `quorum-shared/src/index.ts`
+- [ ] `yarn build` in `quorum-shared/`; confirm types emitted in `dist/`
+- [ ] Bump shared version (next `2.1.0-NN`)
 - [ ] Open shared PR (additive — see [shared-migration cross-repo-workflow.md](../quorum-shared-migration/cross-repo-workflow.md))
-- [ ] Self-merge shared PR (library-only changes, no smoke test needed per shared workflow)
+- [ ] Self-merge shared PR (library-only changes; no smoke test required)
+- [ ] Verify desktop picks up new exports via `link:` symlink
 
-### Phase 2 — desktop API surface
+### Phase 2 — Desktop API surface
 
 - [ ] Add `getDirectoryUrl(params)` to `src/api/quorumApi.ts`, mirroring `getSpaceUrl` pattern with query-string assembly
-- [ ] Add `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` types to `src/api/baseTypes.ts` (or import from shared if Phase 1 ran)
-- [ ] Add `async exploreSpaces(params): Promise<DirectoryResponse>` method on `QuorumApiClient` in `src/api/baseTypes.ts`, mirroring the GET-with-typed-response pattern at line 350 / 360
-- [ ] TypeScript check: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
+- [ ] Add `async exploreSpaces(params): Promise<DirectoryResponse>` method on `QuorumApiClient` in `src/api/baseTypes.ts`, mirroring `getSpace` / `getInbox` patterns at lines 350/360
+- [ ] Import `DirectoryEntry` / `DirectoryResponse` / `SpaceCategory` from `@quilibrium/quorum-shared`
+- [ ] `npx tsc --noEmit --jsx react-jsx --skipLibCheck` clean
 
-### Phase 3 — hook port
+### Phase 3 — Mock fixture
 
-- [ ] Create `src/hooks/business/spaces/useExploreSpaces.ts` — port from mobile, dropping any RN imports
-- [ ] Hook signature should match mobile's: returns `{ entries, total, hasMore, isLoading, error, search, setSearch, category, setCategory, loadMore, refetch, offset }`
-- [ ] Use desktop's existing React Query setup + 300ms debounce + 60s staleTime
+- [ ] Create `src/utils/mock/mockSpaces.ts` matching the established pattern (`mockConversations.ts` / `mockUsers.ts`):
+  - [ ] Cycling arrays: `MOCK_SPACE_NAMES` (~25 entries with realistic variety), `MOCK_SPACE_DESCRIPTIONS` (~15 entries multi-language like `MOCK_PREVIEWS`), `MOCK_SPACE_ICONS` (small set of placeholder data URLs or empty strings to trigger initials fallback in `SpaceIcon`)
+  - [ ] `generateMockSpaces(count)` returns `DirectoryEntry[]` with cycling name/description, deterministic per-index category assignment (cycle through all 7 categories so each is represented), random member counts in realistic ranges (5-5000)
+  - [ ] `isMockSpacesEnabled()` checks `NODE_ENV === 'development'` AND (`localStorage.debug_mock_spaces === 'true'` OR `?spaces=N` URL param present)
+  - [ ] `getMockSpacesCount()` reads `?spaces=N` or `localStorage.debug_mock_spaces_count`, default 30
+- [ ] Export from `src/utils/mock/index.ts`
+- [ ] TypeScript check clean
+
+### Phase 4 — useExploreSpaces hook
+
+- [ ] Create `src/hooks/business/spaces/useExploreSpaces.ts`
+- [ ] Port from mobile's hook. Drop RN imports.
+- [ ] Mock-mode integration: when `isMockSpacesEnabled()`, skip the React Query fetch entirely and return generated mocks. Apply `search` + `category` filters client-side over the mock list so UI behaves identically to real mode.
+- [ ] Match mobile's return shape: `{ entries, total, hasMore, isLoading, error, search, setSearch, category, setCategory, loadMore, refetch, offset }`
+- [ ] 300ms search debounce, 60s React Query staleTime
 - [ ] Add to `src/hooks/business/spaces/index.ts` barrel
-- [ ] TypeScript check
+- [ ] TypeScript check clean
 
-### Phase 4 — UI (assuming Modal + AddSpaceModal entry)
+### Phase 5 — Spaces page shell + tab navigation
 
-- [ ] Create `src/components/modals/DiscoverSpacesModal.tsx` + `.scss`
-- [ ] Layout: header with search input, category chip row, results list (`SpaceIcon` + name + member count + description + Join button), empty state, loading state, "Load more" or infinite scroll
-- [ ] Use existing primitives (`Modal`, `Input`, `Button`, `Flex`) and existing `SpaceIcon` component
-- [ ] Use `formatMemberCount` helper (port mobile's inline formatter to `src/utils/` or shared if portable)
-- [ ] Wire Join action through existing `useSpaceJoining`
-- [ ] Add Lingui i18n strings (no plain English in user-facing copy)
-- [ ] Accessibility baseline: `aria-label` on search input + chips, keyboard navigation through results
+- [ ] Create `src/components/spaces-page/SpacesPage.tsx` — top-level route component:
+  - [ ] Tab state managed locally with `useState` (or URL query param like `?tab=discover` if we want deep-linkable tabs — consider during implementation)
+  - [ ] Two tab buttons rendered: "My Servers" (default active) + "Discover"
+  - [ ] Active tab content rendered below: `<MyServersTab />` or `<DiscoverTab />`
+- [ ] Use existing primitives (no new tab component if `<Button>` or existing nav components suffice; otherwise add a minimal `<Tabs>` primitive — coordinate with primitives barrel)
+- [ ] Page-level header / title, Lingui-localized
+
+### Phase 6 — SpaceCard shared component
+
+- [ ] Create `src/components/spaces-page/SpaceCard.tsx` — shared card with two variants:
+  - [ ] `variant="my-server"`: icon, name, member count, owner badge (if `useSpaceOwner` returns true). Whole card clickable to navigate into the space.
+  - [ ] `variant="public"`: icon, name, category label, member count, description (truncated), Join button. Join wires to `useSpaceJoining`.
+- [ ] Use existing `SpaceIcon` component for the icon area
+- [ ] Use `formatMemberCount` from `@quilibrium/quorum-shared` (don't reimplement; mobile reimplements it inline at line 30 of `discover.tsx`)
+
+### Phase 7 — My Servers tab
+
+- [ ] Create `src/components/spaces-page/MyServersTab.tsx`
+- [ ] Data: existing `useSpaces()` for the spaces list. For each card: `useSpaceOwner` + `useSpaceMembers` (or whatever existing hook gives the count cheaply)
+- [ ] "Find a server" `<Input>` at the top (left-aligned, max-width matches Discover's search for visual consistency)
+- [ ] Client-side filter by name match (case-insensitive substring)
+- [ ] Grid layout (CSS grid or flex-wrap, responsive: 3 columns at wide, 2 at medium, 1 at narrow)
+- [ ] Empty state if no spaces ("No spaces yet — discover public spaces or paste an invite link" with link/CTA hint — but no buttons routing to those tabs in PR 1 since they don't exist yet)
+- [ ] Lingui i18n on all copy
+
+### Phase 8 — Discover tab
+
+- [ ] Create `src/components/spaces-page/DiscoverTab.tsx`
+- [ ] Top row: search `<Input>` (max-width ~`max-w-md`) on the left, category `<Select>` dropdown on the right
+- [ ] Category dropdown options: "All categories" + the 7 categories (use the shared `SpaceCategory` enum, Lingui-localize the labels)
+- [ ] Results grid using `<SpaceCard variant="public" />`
+- [ ] "Load more" button at the bottom of the grid when `hasMore` is true
+- [ ] Join action wired through existing `useSpaceJoining`
+- [ ] Empty state ("No spaces match your search")
+- [ ] Loading state (skeleton cards or spinner)
+- [ ] Error state with retry
+- [ ] Accessibility: `aria-label` on search + dropdown, focus management, keyboard navigation
+
+### Phase 9 — Router + navbar entry point
+
+- [ ] Add `<Route path="/spaces" element={<SpacesPage />} />` in `src/components/Router/Router.web.tsx`
+- [ ] Check `Router.native.tsx` — if vestigial (per workflow doc), skip; otherwise mirror
+- [ ] Add `icon-layout-grid-add` button at top of navbar space list — wire as a `<Link to="/spaces">` (or whatever navigation primitive desktop uses elsewhere)
+- [ ] Selected state when on `/spaces`
+- [ ] Style to match existing space-icon sizing/spacing
+- [ ] DO NOT remove the existing `+` button — it stays in PR 1
+
+### Phase 10 — Styling pass
+
+- [ ] SCSS files for `SpacesPage`, `MyServersTab`, `DiscoverTab`, `SpaceCard` use the project's `_variables.scss` tokens
+- [ ] No `@apply` per project styling rules (use raw CSS where Tailwind utilities are insufficient)
+- [ ] No em dashes in user-facing copy (Italian/English/Lingui copy applies)
 - [ ] Mobile-first sizing: minimum 44px touch targets, `text-sm` minimum for descriptions
+- [ ] Run `style-guide` skill or load it before any new SCSS to confirm token usage
 
-### Phase 5 — wire entry point
-
-- [ ] Add "Browse public spaces" button / tab inside `AddSpaceModal`, opening `DiscoverSpacesModal`
-- [ ] Handle the back-stack: closing discover modal should return to whichever modal/state was open before, or to neutral context
-
-### Phase 6 — verification
+### Phase 11 — Verification
 
 - [ ] TypeScript clean: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
 - [ ] Lint clean: `yarn lint`
 - [ ] Format check: `yarn format`
+- [ ] Build clean: `yarn build`
 - [ ] Smoke test in dev (`yarn dev`):
-  - [ ] Open `AddSpaceModal` → click "Browse public spaces" → directory modal opens
-  - [ ] Empty search shows full directory
-  - [ ] Typing a search query debounces, results update after ~300ms
-  - [ ] Selecting a category filters the list
-  - [ ] Pagination: "Load more" works, exhausts at `has_more = false`
-  - [ ] Joining a space from the list triggers `useSpaceJoining` and the space appears in the user's space list
-  - [ ] Network error → graceful error UI, retry works
-  - [ ] Closing the modal returns to expected previous state
+  - [ ] Activate mocks via `?spaces=30` URL param
+  - [ ] Navbar shows `icon-layout-grid-add` at top of space list
+  - [ ] Clicking it navigates to `/spaces`
+  - [ ] `/spaces` opens on "My Servers" tab by default
+  - [ ] My Servers shows the user's actual spaces (zero or more — verify with multiple accounts if possible)
+  - [ ] Find-server search filters the My Servers grid by name
+  - [ ] Owner badge appears on spaces the user owns (if any in the test account)
+  - [ ] Clicking the Discover tab switches to Discover content
+  - [ ] Discover shows 30 mock spaces spread across categories
+  - [ ] Discover search debounces, filters mocks by name
+  - [ ] Category dropdown filters mocks to selected category
+  - [ ] "Load more" appears and works if mock count exceeds page size
+  - [ ] Clicking "Join" on a public-space card triggers `useSpaceJoining` (may fail gracefully on mock data — verify error path is reasonable)
+  - [ ] Existing navbar `+` button still works exactly as before (opens `AddSpaceModal`, both paste-invite and create flows unchanged)
+  - [ ] Existing deep-link invite URL handler still works (`#join=...` URL → `InviteRoute` opens `JoinSpaceModal`)
+  - [ ] Direct navigation to `/spaces#discover` or `?tab=discover` (if implemented) lands on Discover
+  - [ ] Tab switching is keyboard-accessible
+  - [ ] No regressions in existing space list, channel views, DM views
 
-## Done criteria
+### Phase 12 — Mobile task drop (shared promotion follow-up)
 
-- [ ] All implementation steps above checked
-- [ ] Smoke test passed in dev
+- [ ] Create task file at `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-XX-XX-adopt-shared-directory-types.md` (gitignored — local artifact for the lead dev)
+- [ ] Add a row to [`../quorum-shared-migration/mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md): "Adopt shared `DirectoryEntry` / `DirectoryResponse` / `SpaceCategory` (shared `2.1.0-NN`)"
+- [ ] Run `python .agents/update-index.py` in mobile to regenerate INDEX
+- [ ] Task should describe: swap mobile's local `DirectoryEntry`/`DirectoryResponse` types in `services/api/quorumClient.ts` lines 67-84 for imports from `@quilibrium/quorum-shared`. Pure swap, no behavior change, statically verifiable.
+
+## Done criteria (PR 1)
+
+- [ ] All implementation phases above complete
+- [ ] Smoke test passed in dev (with `?spaces=N` mock mode)
 - [ ] User confirmed smoke test in PR review
-- [ ] PR self-merged
+- [ ] Shared PR self-merged before desktop PR opens
+- [ ] Desktop PR self-merged (after user smoke-test confirmation)
+- [ ] Mobile task dropped in `mobile-tasks-pending.md`
 - [ ] Task file moved to `.done/`
-- [ ] `shipped-log.md` updated with entry
-- [ ] If shared promotion happened: mobile task dropped at `quorum-mobile/.agents/tasks/quorum-shared-migration/` AND row added to [`../quorum-shared-migration/mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md)
+- [ ] `shipped-log.md` updated with PR 1 entry
+- [ ] PR 2 task file drafted before merging PR 1 (so the follow-up commitment has a concrete next step)
+- [ ] Existing add/join/create flows still work unchanged (no regression)
 
-## What this task explicitly does NOT cover
+## What this PR explicitly does NOT cover
 
-- **`reportSpace` directory-level abuse flag.** Logged for follow-up; not in this PR.
-- **Empty-state CTA on the spaces sidebar.** v2 polish if discovery sees adoption.
-- **Mobile-side changes.** Mobile is read-only for this effort. Any mobile-side benefit from shared promotion is a future task drop, not part of this work.
-- **Search ranking / fuzzy matching.** Server returns ranked results; we don't re-rank client-side. If mobile does any client-side filtering on top, we keep it.
+- **PR 2 work**: Join via link tab + Create space tab + retire `AddSpaceModal` + retire `CreateSpaceModal` + remove navbar `+` button.
+- **`reportSpace` directory-level abuse flag.** Out of scope per Reporting deprioritization.
+- **Per-space online count.** Desktop has no presence aggregation; would be its own feature.
+- **Per-space "last seen / last active".** Would require adding per-space activity tracking similar to mobile's `useSpaceActivity` (which we ruled out in the navbar context — would need re-evaluation if added here later).
+- **Sort options on My Servers** (by last active / member count / alphabetical). Skipped in PR 1; revisit if useful in PR 2 or later.
+- **"Hide muted servers" filter on My Servers.** Skipped in PR 1.
+- **`InviteRoute` deep-link flow.** Untouched permanently.
+- **Mobile-side type swap.** Dropped as a task for the lead dev; not part of this PR.
+- **Search ranking / fuzzy matching for Discover.** Server returns ranked results; we trust the server. Mock mode does naive substring match.
+- **Real public spaces seeded on the server.** Out of our control; mocks make PR 1 testable without it.
 
 ## Open follow-ups surfaced during scoping
 
-- Mobile's `useExploreSpaces` returns `total` but the screen doesn't seem to display it. Worth showing on desktop ("234 public spaces") or skip it.
-- Mobile's `discover.tsx` does its own `formatMemberCount` (1K / 1M). Desktop already has `formatMemberCount` exported from shared (`@quilibrium/quorum-shared`) — use that, don't reimplement.
+- Mobile's `useExploreSpaces` returns `total` but the screen doesn't display it. Decide during UI build whether to show "234 public spaces" header text or skip it.
+- `Router.native.tsx` is likely vestigial (per the workflow doc, `.native.ts*` files in desktop are leftovers from when this repo was meant to be cross-platform). Confirm or skip during implementation.
+- Tab state persistence: should the active tab be reflected in the URL (`/spaces?tab=discover`) so it's deep-linkable and survives reload? Probably yes — decide during Phase 5.
+- Discover layout chosen as "search + dropdown" but flagged as "play with it a bit"; if it feels wrong in practice, swap to chip row or sidebar in a follow-up.
 
 ---
 
-*Last updated: 2026-06-01 — initial draft. Ready for user review of the 5 Open decisions before implementation starts.*
+*Last updated: 2026-06-01 — all 11 design decisions locked. Task file restructured around the full 4-tab IA, PR 1/PR 2 split with committed follow-up, layout choices baked in. Ready to start Phase 1 in the next session.*
