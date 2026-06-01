@@ -146,10 +146,11 @@
       background: transparent;
       border: none;
       padding: 0;
-      font-size: inherit;
+      font: inherit; // Override the UA <button> font reset so it matches surrounding text
       color: var(--accent);
       text-decoration: underline;
       text-underline-offset: 2px;
+      cursor: pointer;
 
       &:hover {
         color: var(--accent-600);
@@ -157,7 +158,6 @@
 
       &--less {
         align-self: flex-start;
-        font-size: $text-xs;
       }
     }
 
