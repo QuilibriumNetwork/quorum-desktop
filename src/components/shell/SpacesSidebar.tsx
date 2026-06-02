@@ -93,6 +93,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
                       selected={false}
                       size="regular"
                       noTooltip
+                      noToggle
                     />
                     {unread > 0 && <span className="spaces-sidebar__strip-unread-dot" />}
                   </div>
@@ -149,6 +150,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
                 selected={false}
                 size="regular"
                 noTooltip
+                noToggle
               />
               <div className="spaces-sidebar__row-meta">
                 <div className="spaces-sidebar__row-name">{space.spaceName}</div>

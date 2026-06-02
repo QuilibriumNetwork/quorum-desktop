@@ -83,8 +83,14 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
       return;
     }
     if (item.id === 'spaces') {
-      // Within a session, return to the last visited space + channel.
-      // Outside that, show the empty hint in main while the sidebar lists own spaces.
+      // If already inside a space, re-clicking the rail item returns to the
+      // spaces list (sidebar shows all spaces, main shows empty hint).
+      const insideSpace = /^\/spaces\/[^/]+\/[^/]+/.test(location.pathname);
+      if (insideSpace) {
+        navigate('/spaces');
+        return;
+      }
+      // Otherwise, restore the last visited space + channel if we have one.
       const lastSpaceId = sessionStorage.getItem('lastSpaceId');
       const lastChannelId = sessionStorage.getItem('lastChannelId');
       if (lastSpaceId && lastChannelId) {
