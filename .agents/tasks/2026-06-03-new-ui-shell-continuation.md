@@ -102,15 +102,72 @@ These came up during the session, never finalized:
 
 ---
 
-## 5 · Post-launch (out of scope until shell is merged)
+## 5 · Drag-to-resize/collapse sidebar — replaces the collapse icons
 
-- **Drag-to-resize sidebar edge** — Discord/VSCode/Slack pattern. Adds a draggable right edge on the sidebar slot for custom widths. Snap zones: snap to 72px below ~130px, free width 200-400px otherwise. Persist actual pixel width in localStorage. Composes cleanly with the existing collapse toggle (toggle = primary affordance, drag = spatial fine-tuning).
+**Remove** the explicit collapse/expand icon buttons **from the sidebars only** (DM list, Spaces list). The NavRail collapse toggle (the bottom row that flips the rail between 72px and 236px) **stays** — the rail is binary and doesn't need a drag interaction. The sidebars get a draggable border between themselves and the main content area, replacing both the in-header collapse button (expanded mode) and the centered expand button (collapsed strip mode). The pattern:
+
+- Hovering the vertical border changes the cursor (`col-resize`)
+- After ~1 second hover, the border **thickens** AND gets a soft accent tint
+- Light theme tint: try `--accent-300` (light enough to look like an invitation, not a hard line)
+- Dark theme tint: try `--accent-700` (subtle but visible against the dark surface)
+- **No** strong `--accent-500` — we want a discoverable affordance, not a button
+- Dragging changes the sidebar width in real time
+- Drag below a threshold (~130px) → snaps to the 72px collapsed avatar strip
+- Drag above the threshold → free width within sane bounds (200-400px? TBD)
+- Persist actual pixel width in localStorage (replaces / supersedes the `sidebar.sidebarCollapsed` boolean)
+
+### Implementation notes
+
+**Mount the drag handle** on the right edge of `.app-shell__sidebar` (and the rail's right edge too if we want rail-resize). A 6px-wide invisible hit area extending slightly into the main column, absolutely positioned, with `cursor: col-resize`.
+
+**Hover state with 1s delay**:
+- `:hover` on the hit area immediately updates the cursor and shows a 1px outline in `--color-border-default` (subtle baseline)
+- A separate React state `borderHighlighted` flips to `true` after a 1000ms `setTimeout` cleared on `mouseleave` — when true, the border thickens to 3px and uses the theme-aware accent tint via a CSS var (e.g. `--shell-drag-handle-hover-color`)
+- The CSS var defaults to `var(--accent-300)` and is overridden under `html.dark` to `var(--accent-700)`
+
+**Dragging**:
+- `mousedown` captures pointer + sets `dragging=true`
+- `mousemove` updates the sidebar width (clamped to bounds, snap-zone aware)
+- `mouseup` releases the pointer + writes the final width to localStorage
+- During drag, suppress text selection across the entire app (`body { user-select: none }`)
+
+**State migration**:
+- New localStorage key `shell.sidebarWidth` (number, px). When set, takes precedence over `sidebarCollapsed`.
+- When width drops below ~130px on drag, write `sidebarCollapsed=true` AND clear `sidebarWidth` (so the avatar strip uses its fixed 72px)
+- When the user expands again from the strip (drag rightward), restore the most recent freely-dragged width
+- Keep `sidebarCollapsed` as the effective boolean consumers read; remove `toggleSidebarCollapsed` from the UI but keep the function for programmatic use (e.g. mobile drawer forcing expanded)
+
+**Touch handling**:
+- Drag-to-resize is a desktop affordance. On phone the drawer pattern is unchanged. On tablet the rail and sidebar are still viewport-forced — the drag handle should be hidden via `pointer-events: none` at non-desktop viewports.
+
+**Channels sidebar**: never resizable per the original handoff. The drag handle should not render when `sidebarMode === 'channels'`.
+
+**Where to remove the collapse buttons** (sidebar only — NavRail untouched):
+- `SpacesSidebar.tsx` — the collapse `<button>` in the header (and the corresponding expand button in the collapsed-strip header)
+- `DirectMessageContactsList.tsx` — the `Tooltip`-wrapped collapse `Button` in the header (and the expand button in the collapsed-strip header)
+
+The `shell.sidebarCollapsed` localStorage state stays — it just becomes drag-driven instead of click-driven. `shell.railCollapsed` and the NavRail's bottom collapse-toggle row are unchanged.
+
+### Acceptance
+
+- No collapse icons in the DM or Spaces sidebar headers (rail collapse toggle stays)
+- Hovering the sidebar→main border for 1s reveals a soft accent-tinted ribbon
+- Dragging works smoothly without jank
+- Width persists across reloads
+- Avatar-strip snap works at low widths
+- Channel sidebar (inside a space) is non-resizable
+- Phone/tablet behavior unchanged
+- Theme-aware accent colors verified in both light and dark
+
+---
+
+## 6 · Other post-launch (out of scope until shell is merged)
 
 - **DragStateProvider scope review** — when SpacesSidebar adopts folders+DnD, the existing `DragStateProvider` is mounted inside the old `NavMenu` (now deleted). It needs to be re-mounted somewhere persistent — likely AppShell or a dedicated `SpacesSidebar` internal wrapper. Don't double-mount it across DM and Spaces sidebars unless they share a drop-target plane.
 
 ---
 
-## 6 · Definition of done before merging `feat/new-UI`
+## 7 · Definition of done before merging `feat/new-UI`
 
 - [ ] quorum-shared PR #28 merged + this repo's `yarn install --force` to pick up the new icons
 - [ ] Code review findings #6 (a11y focus management) addressed
