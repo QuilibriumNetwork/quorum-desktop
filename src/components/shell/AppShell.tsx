@@ -7,6 +7,67 @@ import { NavRail } from './NavRail';
 import { Sidebar } from './Sidebar';
 import './AppShell.scss';
 
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',');
+
+// Focus trap for the phone drawer. Autofocuses the first focusable element on
+// mount, cycles Tab/Shift+Tab within the dialog, and calls onEscape on Esc.
+const useDrawerFocusTrap = (
+  ref: React.RefObject<HTMLElement | null>,
+  active: boolean,
+  onEscape: () => void
+) => {
+  React.useEffect(() => {
+    if (!active) return;
+    const node = ref.current;
+    if (!node) return;
+
+    const focusables = () =>
+      Array.from(node.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)).filter(
+        (el) => !el.hasAttribute('inert') && el.offsetParent !== null
+      );
+
+    const first = focusables()[0];
+    first?.focus();
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        onEscape();
+        return;
+      }
+      if (e.key !== 'Tab') return;
+      const items = focusables();
+      if (items.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const firstEl = items[0];
+      const lastEl = items[items.length - 1];
+      const activeEl = document.activeElement as HTMLElement | null;
+      if (e.shiftKey) {
+        if (activeEl === firstEl || !node.contains(activeEl)) {
+          e.preventDefault();
+          lastEl.focus();
+        }
+      } else {
+        if (activeEl === lastEl || !node.contains(activeEl)) {
+          e.preventDefault();
+          firstEl.focus();
+        }
+      }
+    };
+    node.addEventListener('keydown', onKeyDown);
+    return () => node.removeEventListener('keydown', onKeyDown);
+  }, [ref, active, onEscape]);
+};
+
 interface AppShellProps {
   children: React.ReactNode;
   onAddSpace: () => void;
@@ -25,6 +86,8 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
   const sidebarHidden = sidebarMode === 'hidden';
   const isPhone = viewport === 'phone';
   const location = useLocation();
+  const drawerRef = React.useRef<HTMLDivElement>(null);
+  useDrawerFocusTrap(drawerRef, isPhone && drawerOpen, closeDrawer);
 
   // Channels mode never collapses — channel names need full width to be readable.
   // The collapse preference still persists in the background for DM/Spaces modes.
@@ -84,7 +147,13 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
             onClick={closeDrawer}
             aria-hidden="true"
           />
-          <div className="app-shell__drawer" role="dialog" aria-label={t`Navigation`}>
+          <div
+            ref={drawerRef}
+            className="app-shell__drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label={t`Navigation`}
+          >
             <div className="app-shell__drawer-rail">
               <NavRail collapsed={true} onToggleCollapse={null} />
             </div>

@@ -76,6 +76,9 @@ const useShellStateInternal = (): ShellState => {
   const [railCollapsedPref, setRailCollapsedState] = useState<boolean>(DEFAULT_RAIL_COLLAPSED);
   const [sidebarCollapsedPref, setSidebarCollapsedState] = useState<boolean>(DEFAULT_SIDEBAR_COLLAPSED);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
+  // Element focused before the drawer opened — restored on close so keyboard
+  // and AT users return to the hamburger that triggered the drawer.
+  const drawerTriggerRef = React.useRef<HTMLElement | null>(null);
   const viewport = useViewport();
 
   useEffect(() => {
@@ -114,8 +117,23 @@ const useShellStateInternal = (): ShellState => {
     });
   }, []);
 
-  const openDrawer = useCallback(() => setDrawerOpen(true), []);
-  const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+  const openDrawer = useCallback(() => {
+    if (typeof document !== 'undefined') {
+      const active = document.activeElement;
+      drawerTriggerRef.current = active instanceof HTMLElement ? active : null;
+    }
+    setDrawerOpen(true);
+  }, []);
+  const closeDrawer = useCallback(() => {
+    setDrawerOpen(false);
+    const trigger = drawerTriggerRef.current;
+    drawerTriggerRef.current = null;
+    if (trigger && typeof document !== 'undefined' && document.contains(trigger)) {
+      // Defer to next frame so the drawer DOM is gone before we move focus,
+      // otherwise the browser may scroll the closing drawer into view.
+      requestAnimationFrame(() => trigger.focus());
+    }
+  }, []);
 
   // Effective collapse state: tablet forces both rail and sidebar to collapsed
   // visual state regardless of the user's persisted desktop preference. Desktop
@@ -124,18 +142,35 @@ const useShellStateInternal = (): ShellState => {
   const railCollapsed = viewport === 'desktop' ? railCollapsedPref : true;
   const sidebarCollapsed = viewport === 'desktop' ? sidebarCollapsedPref : true;
 
-  return {
-    railCollapsed,
-    sidebarCollapsed,
-    setRailCollapsed,
-    toggleRailCollapsed,
-    setSidebarCollapsed,
-    toggleSidebarCollapsed,
-    viewport,
-    drawerOpen,
-    openDrawer,
-    closeDrawer,
-  };
+  // Memoize so context consumers (NavRail, Sidebar, etc.) don't re-render on
+  // every parent render. Setters/togglers are stable via useCallback([]); only
+  // the value-typed fields need to be deps.
+  return React.useMemo(
+    () => ({
+      railCollapsed,
+      sidebarCollapsed,
+      setRailCollapsed,
+      toggleRailCollapsed,
+      setSidebarCollapsed,
+      toggleSidebarCollapsed,
+      viewport,
+      drawerOpen,
+      openDrawer,
+      closeDrawer,
+    }),
+    [
+      railCollapsed,
+      sidebarCollapsed,
+      viewport,
+      drawerOpen,
+      setRailCollapsed,
+      toggleRailCollapsed,
+      setSidebarCollapsed,
+      toggleSidebarCollapsed,
+      openDrawer,
+      closeDrawer,
+    ]
+  );
 };
 
 const ShellStateContext = React.createContext<ShellState | null>(null);

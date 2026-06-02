@@ -105,9 +105,7 @@
 /* === space-header overlay layout ===
    Action buttons (back-arrow, settings) are anchored to the banner corners
    over a translucent pill background; the space name is anchored to the
-   bottom-left over a bottom-up gradient. Activated by the .space-header--overlay
-   modifier. After the legacy layout is removed (step 13), the --overlay
-   modifier is dropped and these rules are merged into the base .space-header. */
+   bottom-left over a bottom-up gradient.*/
 .space-header--overlay {
   position: relative;
 
@@ -139,6 +137,10 @@
 
       span {
         color: var(--color-text-strong) !important;
+        // Subtle shadow boosts contrast over photo banners without changing
+        // the typographic weight. Uses surface-00 (theme bg) so the halo
+        // matches the gradient beneath rather than fighting it.
+        text-shadow: 0 1px 2px rgba(var(--surface-00-rgb), 0.45);
       }
     }
   }

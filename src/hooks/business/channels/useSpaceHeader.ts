@@ -1,9 +1,13 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
-// Header height constants — HEADER_MIN_HEIGHT must match $header-height in _variables.scss
+// Header height constants. HEADER_MIN_HEIGHT is the floor for the collapsing
+// banner at full scroll — bumped to 72 so the overlay layout (back arrow,
+// settings, name over the bottom gradient) stays readable when shrunk. This
+// no longer mirrors $header-height (49px); the chat-header next to the banner
+// keeps its own height, producing a small step at full scroll by design.
 const HEADER_MAX_HEIGHT = 132
 const HEADER_MAX_HEIGHT_2XL = 144
-const HEADER_MIN_HEIGHT = 48
+const HEADER_MIN_HEIGHT = 72
 const SCREEN_2XL = 1536 // Very large screens
 
 /**

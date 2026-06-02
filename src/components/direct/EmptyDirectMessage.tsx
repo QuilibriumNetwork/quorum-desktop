@@ -22,6 +22,7 @@ export const EmptyDirectMessage = () => {
               onClick={shell.openDrawer}
               className="header-icon-button"
               iconName="menu"
+              iconSize="lg"
               iconOnly
               ariaLabel={t`Open navigation`}
             />

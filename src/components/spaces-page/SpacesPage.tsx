@@ -21,6 +21,7 @@ const PhoneHeader: React.FC = () => {
         onClick={shell.openDrawer}
         className="header-icon-button"
         iconName="menu"
+        iconSize="lg"
         iconOnly
         ariaLabel={t`Open navigation`}
       />
