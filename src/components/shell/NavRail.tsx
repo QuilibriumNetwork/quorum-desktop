@@ -15,8 +15,6 @@ interface RailItemConfig {
   icon: IconName;
   label: string;
   route: string;
-  /** Predicate matched against `location.pathname` to mark this item active. */
-  isActive: (pathname: string) => boolean;
 }
 
 const buildItems = (): RailItemConfig[] => [
@@ -25,21 +23,18 @@ const buildItems = (): RailItemConfig[] => [
     icon: 'message',
     label: t`Direct messages`,
     route: '/messages',
-    isActive: (p) => p.startsWith('/messages'),
   },
   {
     id: 'spaces',
     icon: 'users-group',
     label: t`Spaces`,
     route: '/spaces',
-    isActive: (p) => p.startsWith('/spaces') && !p.includes('tab=discover'),
   },
   {
     id: 'public',
     icon: 'compass',
     label: t`Public spaces`,
     route: '/spaces?tab=discover',
-    isActive: (p) => false, // refined when we read search params below
   },
   // TODO: 'farcaster' (icon: 'world') and 'wallet' (icon: 'wallet') — features not ready
   // TODO: FAVORITES section — depends on favorites feature
@@ -55,7 +50,10 @@ interface NavRailProps {
 export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onToggleCollapse }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const items = React.useMemo(buildItems, []);
+  // Rebuild on every render so the Lingui `t` macro re-evaluates with the
+  // current locale (dynamicActivate doesn't break i18n strings memoized with
+  // an empty deps array).
+  const items = buildItems();
   const user = usePasskeysContext();
   const { openUserSettings } = useModalContext();
 

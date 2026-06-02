@@ -87,7 +87,9 @@
   max-width: 92vw;
   display: flex;
   flex-direction: row;
-  z-index: 1001;
+  // 1002 keeps the drawer above the OfflineBanner (1001) so the panel
+  // appears on top when both are visible.
+  z-index: 1002;
   background: var(--color-bg-rail);
   box-shadow: 4px 0 16px rgba(0, 0, 0, 0.25);
   animation: app-shell-drawer-in $duration-200 $ease-out;

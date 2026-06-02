@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Icon } from '../primitives';
 import { getIconColorHex, IconColor } from './IconPicker/types';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
@@ -130,8 +129,6 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   openChannelEditor,
   onToggleMute,
 }) => {
-  const navigate = useNavigate();
-
   // Context menu state
   const [contextMenuPosition, setContextMenuPosition] = useState<{
     x: number;
@@ -272,16 +269,17 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
       <div
         role="link"
         tabIndex={0}
+        aria-label={channel.channelName}
         className={`cursor-pointer ${mutedClassName}`}
         onClick={() => {
           onChannelClick?.();
-          navigate(`/spaces/${spaceId}/${channel.channelId}`);
+          onChannelNavigate(channel.channelId);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             onChannelClick?.();
-            navigate(`/spaces/${spaceId}/${channel.channelId}`);
+            onChannelNavigate(channel.channelId);
           }
         }}
         onContextMenu={handleContextMenu}

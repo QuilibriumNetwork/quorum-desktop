@@ -45,9 +45,17 @@ $offline-banner-height: 32px;
 }
 
 // Push the AppShell down when the offline banner is visible so it doesn't
-// sit underneath the banner strip.
+// sit underneath the banner strip. The phone drawer + scrim are
+// position:fixed and not children of .app-shell in the layout sense, so they
+// need their own offset.
 body.offline-banner-visible {
   .app-shell {
+    top: $offline-banner-height;
+    height: calc(100% - #{$offline-banner-height});
+  }
+
+  .app-shell__drawer,
+  .app-shell__drawer-scrim {
     top: $offline-banner-height;
     height: calc(100% - #{$offline-banner-height});
   }
