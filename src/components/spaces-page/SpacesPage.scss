@@ -1,57 +1,34 @@
 @use '../../styles/variables' as *;
 
+.spaces-page__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $s-4;
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg-chat);
+  color: var(--color-text-subtle);
+  text-align: center;
+  padding: $s-8;
+
+  p {
+    margin: 0;
+    font-size: $text-sm;
+    max-width: 280px;
+    line-height: 1.5;
+  }
+}
+
 .spaces-page {
   display: flex;
   flex-direction: column;
   width: 100%;
-  height: calc(100vh - $layout-top-offset);
-  @supports (height: 100dvh) {
-    height: calc(100dvh - $layout-top-offset);
-  }
-
+  height: 100%;
   background: var(--color-bg-chat);
   min-width: 0;
-
-  // Match the Space page layout: rounded top-left corner + top/left borders.
-  @media (min-width: 1024px) {
-    border-top-left-radius: $rounded-xl;
-    border-top: $border solid var(--color-border-subtle);
-    overflow: hidden;
-  }
-
-  html:not(.dark) & {
-    @media (min-width: 1024px) {
-      border-left: $border solid var(--color-border-subtle);
-    }
-  }
-
-  html.dark & {
-    @media (min-width: 1024px) {
-      border-top-color: var(--color-border-muted);
-    }
-  }
-
-  @media (max-width: 1023px) {
-    width: 100%;
-    max-width: 100%;
-    border-top-left-radius: $rounded-xl;
-  }
-
-  @media (max-width: $screen-xs) {
-    border-top-left-radius: 0;
-    margin-top: -14px;
-    padding-top: $s-2;
-    height: 100vh;
-    @supports (height: 100dvh) {
-      height: 100dvh;
-    }
-
-    .electron & {
-      margin-top: -38px;
-      padding-top: 38px;
-      height: 100vh;
-    }
-  }
+  overflow: hidden;
 
   &__tabs {
     display: flex;

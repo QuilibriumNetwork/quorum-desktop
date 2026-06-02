@@ -1,53 +1,57 @@
 import * as React from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { Button } from '../primitives';
-import { MySpacesTab } from './MySpacesTab';
+import { Button, Icon } from '../primitives';
 import { DiscoverTab } from './DiscoverTab';
+import { useOptionalShellState } from '../shell/useShellState';
 import './SpacesPage.scss';
 
-type TabId = 'my-spaces' | 'discover';
+/**
+ * Phone-only header strip with the drawer trigger. Empty-hint and Discover
+ * views don't have their own chat-header, so this gives the user a way to
+ * reach the navigation drawer on phone widths.
+ */
+const PhoneHeader: React.FC = () => {
+  const shell = useOptionalShellState();
+  if (!shell || shell.viewport !== 'phone') return null;
+  return (
+    <div className="chat-header text-main">
+      <Button
+        type="unstyled"
+        onClick={shell.openDrawer}
+        className="header-icon-button"
+        iconName="menu"
+        iconOnly
+        ariaLabel={t`Open navigation`}
+      />
+    </div>
+  );
+};
 
-const TABS: { id: TabId; label: () => string }[] = [
-  { id: 'discover', label: () => t`Discover` },
-  { id: 'my-spaces', label: () => t`My Spaces` },
-];
+const EmptyHint: React.FC = () => (
+  <>
+    <PhoneHeader />
+    <div className="spaces-page__empty">
+      <Icon name="users-group" size="3xl" />
+      <p>{t`Select a space from the sidebar to start chatting.`}</p>
+    </div>
+  </>
+);
 
 export const SpacesPage: React.FC = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const tabParam = searchParams.get('tab');
-  const activeTab: TabId = tabParam === 'my-spaces' ? 'my-spaces' : 'discover';
+  const [searchParams] = useSearchParams();
+  const isDiscover = searchParams.get('tab') === 'discover';
 
-  const setActiveTab = (id: TabId) => {
-    const next = new URLSearchParams(searchParams);
-    if (id === 'discover') {
-      next.delete('tab');
-    } else {
-      next.set('tab', id);
-    }
-    setSearchParams(next, { replace: true });
-  };
+  if (!isDiscover) {
+    return <EmptyHint />;
+  }
 
   return (
     <div className="spaces-page">
-      <nav className="spaces-page__tabs" role="tablist" aria-label={t`Spaces`}>
-        {TABS.map((tab) => (
-          <Button
-            key={tab.id}
-            type="unstyled"
-            className={`spaces-page__tab ${activeTab === tab.id ? 'spaces-page__tab--active' : ''}`}
-            ariaLabel={tab.label()}
-            onClick={() => setActiveTab(tab.id)}
-          >
-            {tab.label()}
-          </Button>
-        ))}
-      </nav>
-
+      <PhoneHeader />
       <div className="spaces-page__content" role="tabpanel">
         <React.Suspense fallback={<div className="spaces-page__loading">{t`Loading...`}</div>}>
-          {activeTab === 'my-spaces' && <MySpacesTab />}
-          {activeTab === 'discover' && <DiscoverTab />}
+          <DiscoverTab />
         </React.Suspense>
       </div>
     </div>
