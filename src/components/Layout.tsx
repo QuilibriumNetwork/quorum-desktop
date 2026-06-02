@@ -1,8 +1,7 @@
 import * as React from 'react';
-import NavMenu from './navbar/NavMenu';
+import { AppShell } from './shell/AppShell';
 import { CloseButton } from './ui';
 import { Callout, Portal } from './primitives';
-import { useResponsiveLayoutContext } from './context/ResponsiveLayoutProvider';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import AddSpaceModal from './modals/AddSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
@@ -49,9 +48,9 @@ const Layout: React.FunctionComponent<{
     hideThreadSettingsModal,
   } = useModalManagement();
   const { isElectron } = useElectronDetection();
-  const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
-    useSidebar();
-  const { navMenuOpen } = useResponsiveLayoutContext();
+  // Mounted for its side-effects (right-sidebar context). The destructured
+  // values aren't read here but the hook still needs to run.
+  useSidebar();
   useNavigationHotkeys();
 
   // Sync muted conversations to NotificationService for desktop notification filtering
@@ -76,13 +75,8 @@ const Layout: React.FunctionComponent<{
       persistent?: boolean,
       bottomFixed?: boolean
     ) => {
-      // Clear any existing timer
       clearTimeout(toastTimerRef.current);
-
-      // Show new toast
       setToast({ id, message, variant, persistent, bottomFixed });
-
-      // Only set auto-dismiss timer for non-persistent toasts
       if (!persistent) {
         toastTimerRef.current = setTimeout(() => setToast(null), 5000);
       }
@@ -117,7 +111,6 @@ const Layout: React.FunctionComponent<{
     (window as any).addEventListener('quorum:toast-dismiss', dismissHandler);
 
     return () => {
-      // Clean up timer on unmount
       clearTimeout(toastTimerRef.current);
       (window as any).removeEventListener('quorum:kick-toast', kickHandler);
       (window as any).removeEventListener('quorum:toast', genericHandler);
@@ -145,7 +138,6 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
-      {/* Confirmation Modal */}
       {confirmationModal.visible && confirmationModal.config && (
         <ConfirmationModal
           visible={confirmationModal.visible}
@@ -164,7 +156,6 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
-      {/* Image Modal */}
       {imageModal.visible && (
         <ImageModal
           visible={imageModal.visible}
@@ -173,7 +164,6 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
-      {/* Edit History Modal */}
       {editHistoryModal.visible && editHistoryModal.message && (
         <EditHistoryModal
           visible={editHistoryModal.visible}
@@ -182,7 +172,6 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
-      {/* Reactions Modal */}
       {reactionsModal.visible && reactionsModal.reactions.length > 0 && (
         <ReactionsModal
           visible={reactionsModal.visible}
@@ -193,7 +182,6 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
-      {/* Thread Settings Modal */}
       {threadSettingsModal.visible && threadSettingsModal.config && (
         <ThreadSettingsModal
           visible={threadSettingsModal.visible}
@@ -209,44 +197,38 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
-      {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <OfflineBanner />
-      <NavMenu
-        showCreateSpaceModal={showAddSpaceModal}
-        showJoinSpaceModal={() => {}}
-      />
       <div>{isElectron && <CloseButton />}</div>
       <ThreadSettingsModalProvider openThreadSettings={showThreadSettingsModal}>
-      <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
-        <ImageModalProvider showImageModal={showImageModal}>
-          <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
-            <ReactionsModalProvider showReactionsModal={showReactionsModal}>
-              <main className={`main-content${!navMenuOpen ? ' nav-hidden' : ''}`}>
-            {props.children}
-            {toast && (
-              <Portal>
-                <div className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`} role="status" aria-live="polite">
-                  <Callout
-                    variant={toast.variant || 'info'}
-                    size="sm"
-                    dismissible
-                    autoClose={0}
-                    onClose={() => {
-                      // Clear timer when manually dismissed
-                      clearTimeout(toastTimerRef.current);
-                      setToast(null);
-                    }}
-                  >
-                    {toast.message}
-                  </Callout>
-                </div>
-              </Portal>
-            )}
-              </main>
-            </ReactionsModalProvider>
-          </EditHistoryModalProvider>
-        </ImageModalProvider>
-      </ConfirmationModalProvider>
+        <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
+          <ImageModalProvider showImageModal={showImageModal}>
+            <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
+              <ReactionsModalProvider showReactionsModal={showReactionsModal}>
+                <AppShell onAddSpace={showAddSpaceModal}>
+                  {props.children}
+                  {toast && (
+                    <Portal>
+                      <div className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`} role="status" aria-live="polite">
+                        <Callout
+                          variant={toast.variant || 'info'}
+                          size="sm"
+                          dismissible
+                          autoClose={0}
+                          onClose={() => {
+                            clearTimeout(toastTimerRef.current);
+                            setToast(null);
+                          }}
+                        >
+                          {toast.message}
+                        </Callout>
+                      </div>
+                    </Portal>
+                  )}
+                </AppShell>
+              </ReactionsModalProvider>
+            </EditHistoryModalProvider>
+          </ImageModalProvider>
+        </ConfirmationModalProvider>
       </ThreadSettingsModalProvider>
     </React.Suspense>
   );
