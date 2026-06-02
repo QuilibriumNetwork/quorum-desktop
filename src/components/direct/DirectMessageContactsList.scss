@@ -3,13 +3,8 @@
 .direct-messages-list-wrapper {
   display: flex;
   flex-direction: column;
-  height: calc(100% - 48px); // Account for UserStatus height
+  height: 100%;
   overflow: hidden;
-
-  // On mobile, UserStatus is hidden so expand to full height
-  @media (max-width: 1023px) {
-    height: 100%;
-  }
 }
 
 .direct-messages-header {
@@ -17,7 +12,75 @@
   top: 0;
   background-color: var(--color-bg-sidebar);
   z-index: 10;
-  border-top-left-radius: $rounded-xl;
+}
+
+/* === Collapsed 72px avatar strip === */
+.direct-messages-list-wrapper--collapsed {
+  align-items: stretch;
+}
+
+.direct-messages-header--collapsed {
+  justify-content: center;
+  padding: 0;
+}
+
+.direct-messages-list-strip {
+  flex: 1;
+  min-height: 0;
+}
+
+.direct-messages-strip-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+
+  &:hover {
+    background: var(--color-bg-sidebar-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  &--active {
+    background: var(--color-bg-sidebar-active-accent);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: $rail-accent-bar-width;
+      height: 32px;
+      background: var(--accent);
+      border-radius: 0 $rounded-sm $rounded-sm 0;
+    }
+  }
+}
+
+.direct-messages-strip-avatar {
+  position: relative;
+}
+
+.direct-messages-strip-unread-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--accent);
+  border: 2px solid var(--color-bg-sidebar);
+  box-sizing: border-box;
 }
 
 .direct-messages-list {

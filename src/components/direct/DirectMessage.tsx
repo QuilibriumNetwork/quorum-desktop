@@ -37,6 +37,7 @@ import { isTouchDevice } from '../../utils/platform';
 
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useOptionalShellState } from '../shell/useShellState';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import {
@@ -56,8 +57,10 @@ const LazyEmojiPicker = React.lazy(() =>
 );
 
 const DirectMessage: React.FC<{}> = () => {
-  const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isTablet } =
     useResponsiveLayoutContext();
+  const shell = useOptionalShellState();
+  const isPhone = shell?.viewport === 'phone';
 
   const { openConversationSettings } = useModalContext();
   const { openMobileEmojiDrawer } = useMobile();
@@ -710,26 +713,17 @@ const DirectMessage: React.FC<{}> = () => {
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
-            {/* Mobile controls - burger + NavMenu toggle */}
-            {(isMobile || isTablet) && (
-              <Flex className="gap-3 sm:gap-2">
-                <Button
-                  type="unstyled"
-                  onClick={toggleNavMenu}
-                  className="header-icon-button lg:hidden"
-                  iconName={navMenuOpen ? 'chevron-left' : 'menu'}
-                  iconOnly
-                  iconSize={headerIconSize}
-                />
-                <Button
-                  type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="header-icon-button lg:hidden"
-                  iconName="sidebar-left-expand"
-                  iconOnly
-                  iconSize={headerIconSize}
-                />
-              </Flex>
+            {/* Phone-only drawer trigger */}
+            {isPhone && shell && (
+              <Button
+                type="unstyled"
+                onClick={shell.openDrawer}
+                className="header-icon-button"
+                iconName="menu"
+                iconOnly
+                iconSize={headerIconSize}
+                ariaLabel={t`Open navigation`}
+              />
             )}
 
             {/* User info - hidden on mobile first row, shown on desktop */}

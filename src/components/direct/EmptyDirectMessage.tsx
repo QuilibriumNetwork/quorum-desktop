@@ -1,11 +1,12 @@
 import './DirectMessage.scss';
 // import { useShowHomeScreen } from '../../hooks';
 import { t } from '@lingui/core/macro';
-import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { Flex, Icon } from '../primitives';
+import { Button, Flex, Icon } from '../primitives';
+import { useOptionalShellState } from '../shell/useShellState';
 
 export const EmptyDirectMessage = () => {
-  const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const shell = useOptionalShellState();
+  const isPhone = shell?.viewport === 'phone';
   // Home screen feature commented out for now
   // const { showHomeScreen, hideHomeScreen, showHomeScreenView } =
   //   useShowHomeScreen();
@@ -13,18 +14,19 @@ export const EmptyDirectMessage = () => {
   return (
     <div className="chat-container">
       <Flex direction="column">
-        {/* Header with hamburger menu for mobile */}
-        <div className="mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
-          <Flex className="items-center gap-2">
-            {!isDesktop && (
-              <Icon
-                name="menu"
-                onClick={toggleLeftSidebar}
-                className="cursor-pointer text-subtle hover:text-strong"
-              />
-            )}
-          </Flex>
-        </div>
+        {/* Phone-only drawer trigger row — matches chat-header padding */}
+        {isPhone && shell && (
+          <div className="chat-header text-main">
+            <Button
+              type="unstyled"
+              onClick={shell.openDrawer}
+              className="header-icon-button"
+              iconName="menu"
+              iconOnly
+              ariaLabel={t`Open navigation`}
+            />
+          </div>
+        )}
 
         {/* Main content */}
         <div className="flex w-full flex-col justify-around flex-1">

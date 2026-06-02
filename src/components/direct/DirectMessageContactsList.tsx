@@ -13,6 +13,7 @@ import {
   Select,
   Tooltip,
 } from '../primitives';
+import { UserAvatar } from '../user/UserAvatar';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
@@ -20,6 +21,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
 import { useDmReadState } from '../../context/DmReadStateContext';
+import { useOptionalShellState } from '../shell/useShellState';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_CONVERSATIONS =
@@ -46,7 +48,13 @@ interface ContextMenuState {
   position: { x: number; y: number };
 }
 
-const DirectMessageContactsList: React.FC = () => {
+interface DirectMessageContactsListProps {
+  /** When true, force the expanded list view regardless of the global
+   *  collapse preference. Used when rendered inside the phone drawer. */
+  forceExpanded?: boolean;
+}
+
+const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ forceExpanded } = {}) => {
   const { conversations: conversationsList } = useConversationPolling();
   const { data: conversationsWithPreviews = conversationsList } =
     useConversationPreviews(conversationsList);
@@ -66,6 +74,12 @@ const DirectMessageContactsList: React.FC = () => {
 
   // DM read state context (for immediate UI updates on "mark all as read")
   const { markAllReadTimestamp } = useDmReadState();
+
+  // Shell state — null when rendered outside the AppShell tree (legacy fallback).
+  const shell = useOptionalShellState();
+  const sidebarCollapsed = shell?.sidebarCollapsed ?? false;
+  const renderCollapsed = sidebarCollapsed && !forceExpanded;
+  const showCollapseToggle = shell !== null && shell.viewport === 'desktop';
 
   // Load mock utilities dynamically in development only
   React.useEffect(() => {
@@ -306,9 +320,78 @@ const DirectMessageContactsList: React.FC = () => {
     }
   }, [filter, hasMuted, hasFavorites, hasUnknown]);
 
+  if (renderCollapsed && shell) {
+    return (
+      <div className="direct-messages-list-wrapper direct-messages-list-wrapper--collapsed flex flex-col h-full z-0 flex-grow select-none">
+        <Flex justify="center" className="direct-messages-header direct-messages-header--collapsed py-2 flex-shrink-0">
+          {showCollapseToggle && (
+            <Button
+              type="unstyled"
+              iconName="sidebar-left-expand"
+              iconOnly
+              onClick={shell.toggleSidebarCollapsed}
+              className="header-icon-button"
+              ariaLabel={t`Expand sidebar`}
+            />
+          )}
+        </Flex>
+        <div className="direct-messages-list-strip flex flex-col overflow-y-auto overflow-x-hidden">
+          {filteredConversations.map((c) => {
+            const isActive = currentAddress === c.address;
+            const effectiveReadTimestamp = markAllReadTimestamp
+              ? Math.max(c.lastReadTimestamp ?? 0, markAllReadTimestamp)
+              : (c.lastReadTimestamp ?? 0);
+            const unread = effectiveReadTimestamp < c.timestamp && !mutedSet.has(c.conversationId);
+            return (
+              <Tooltip
+                key={'dmc-strip-' + c.address}
+                id={`dm-strip-${c.address}`}
+                content={c.displayName || c.address}
+                place="right"
+                showOnTouch={false}
+              >
+                <button
+                  type="button"
+                  className={`direct-messages-strip-row ${isActive ? 'direct-messages-strip-row--active' : ''}`}
+                  onClick={() => navigate(`/messages/${c.address}`)}
+                  onContextMenu={handleContextMenu(c.address, c.conversationId)}
+                  aria-label={c.displayName || c.address}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  <div className="direct-messages-strip-avatar">
+                    <UserAvatar
+                      displayName={c.displayName || ''}
+                      userIcon={c.icon}
+                      address={c.address}
+                      size={40}
+                    />
+                    {unread && <span className="direct-messages-strip-unread-dot" />}
+                  </div>
+                </button>
+              </Tooltip>
+            );
+          })}
+        </div>
+        {contextMenu && contextMenuContact && (
+          <ContextMenu
+            header={{
+              type: 'user',
+              address: contextMenu.address,
+              displayName: contextMenuContact.displayName,
+              userIcon: contextMenuContact.icon,
+            }}
+            items={getContextMenuItems(contextMenu.address, contextMenu.conversationId)}
+            position={contextMenu.position}
+            onClose={handleCloseContextMenu}
+          />
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
-      <Flex justify="between" className="direct-messages-header px-4 pt-4 pb-2 lg:py-2 font-semibold flex-shrink-0">
+      <Flex justify="between" className="direct-messages-header px-4 pt-4 pb-2 lg:pt-3 lg:pb-2 font-semibold flex-shrink-0">
         <div>
           <Trans>Direct Messages</Trans>
         </div>
@@ -335,6 +418,23 @@ const DirectMessageContactsList: React.FC = () => {
               onClick={openNewDirectMessage}
             />
           </Tooltip>
+          {showCollapseToggle && shell && (
+            <Tooltip
+              id="dm-sidebar-collapse"
+              content={t`Collapse sidebar`}
+              place="bottom"
+              showOnTouch={false}
+            >
+              <Button
+                type="unstyled"
+                iconName="sidebar-left-collapse"
+                iconOnly
+                onClick={shell.toggleSidebarCollapsed}
+                className="header-icon-button ml-1"
+                ariaLabel={t`Collapse sidebar`}
+              />
+            </Tooltip>
+          )}
         </Flex>
       </Flex>
 

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getAddressSuffix } from '../../utils';
-import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { Icon } from '../primitives';
 import { formatConversationTime } from '../../utils/dateFormatting';
@@ -25,16 +24,12 @@ const DirectMessageContact: React.FunctionComponent<{
 }> = (props) => {
   const navigate = useNavigate();
   const { address } = useParams<{ address: string }>();
-  const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
   const [isNavigating, setIsNavigating] = React.useState(false);
   const isTouch = isTouchDevice();
 
   const handleContactClick = () => {
     // Set navigating state to maintain accent color during transition
     setIsNavigating(true);
-    if (isMobile || isTablet) {
-      closeLeftSidebar();
-    }
     navigate(`/messages/${props.address}`);
   };
 
