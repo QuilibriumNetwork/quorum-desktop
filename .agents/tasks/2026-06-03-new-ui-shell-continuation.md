@@ -63,9 +63,17 @@ Member count comes from `useSpaceMembers({ spaceId }).data?.length ?? 0` (alread
 
 Last-message preview + timestamps will need a per-space data fetch — check what `useConversationPreviews` does for DMs and adapt.
 
-### Hide-muted-spaces filter
+### Hide-muted-spaces filter — DROP this feature
 
-Existing `config.hideMutedSpacesFromSidebar` setting (read via `useConfig`) — apply same filter the old `NavMenu` used at line 256-262.
+The legacy `NavMenu` had a "Hide muted Spaces from sidebar" toggle in user settings. With the old UI this was safe because the **My Spaces** screen always listed every joined space, so muted-and-hidden spaces remained discoverable there.
+
+In the new shell the sidebar is the **only** view of joined spaces. Hiding muted spaces from it would make them effectively invisible — the user has no way to find them, unmute them, or even remember they exist. That's a worse UX than the legacy behaviour it was designed to improve.
+
+**Plan**:
+- Remove the toggle from `UserSettingsModal` (find the setting row and delete; check `Privacy.tsx` / `Notifications.tsx` / wherever it lives)
+- Don't apply the filter in `SpacesSidebar`
+- Leave `config.hideMutedSpacesFromSidebar` in the shared types for now (quorum-mobile may still use it; removing the field would be a sync-breaking change). Mark it deprecated in a follow-up shared PR if mobile also drops it.
+- Muted spaces should render as before but with the standard muted styling (lower opacity / muted icon) so they're visually distinct without being hidden.
 
 ### Mock data already in place
 
