@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useNavigate } from 'react-router-dom';
 import ChannelGroup from './ChannelGroup';
 import './ChannelList.scss';
 import { useSpace } from '../../hooks';
@@ -33,6 +34,15 @@ type GroupWithMentionCounts = Group & {
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
   const user = usePasskeysContext();
+  const navigate = useNavigate();
+
+  // New-shell back-to-spaces-list handler: clears the "last visited" pointers
+  // so the rail Spaces button doesn't bounce the user right back here.
+  const handleBackToSpaces = React.useCallback(() => {
+    sessionStorage.removeItem('lastSpaceId');
+    sessionStorage.removeItem('lastChannelId');
+    navigate('/spaces');
+  }, [navigate]);
 
   // Channel mute settings
   const { getMutedChannelIds, showMutedChannels } = useChannelMute({ spaceId });
@@ -48,7 +58,6 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     bannerStyle,
     hasBanner,
     isGeneratedBanner,
-    gradientOverlayStyle,
     spaceName,
   } = useSpaceHeader(space);
 
@@ -133,7 +142,10 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   return (
     <div className="channels-list-wrapper list-bottom-fade">
-      <div className={headerClassName} style={collapsingHeaderStyle}>
+      <div
+        className={`${headerClassName} space-header--overlay`}
+        style={collapsingHeaderStyle}
+      >
         {hasBanner && (
           <>
             <div
@@ -144,20 +156,36 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
                 <div className="space-header-bg-fill" style={bannerStyle} />
               )}
             </div>
+            {/* Bottom-up gradient keeps the space name legible against any banner image */}
             <div
-              className="absolute inset-x-0 top-0 pointer-events-none z-1"
-              style={{ ...gradientOverlayStyle, ...backgroundLayerStyle }}
+              className="space-header-bottom-gradient absolute inset-x-0 bottom-0 pointer-events-none z-1"
             />
           </>
         )}
 
+        <button
+          type="button"
+          className="space-header-back-button z-10"
+          onClick={handleBackToSpaces}
+          aria-label={t`Back to spaces list`}
+        >
+          <Tooltip
+            id="space-back-to-spaces"
+            content={t`Back to spaces list`}
+            place="right"
+            showOnTouch={false}
+            highlighted
+          >
+            <Icon name="arrow-left" />
+          </Tooltip>
+        </button>
         <div className="space-header-name truncate-space-name relative z-10 flex-1 min-w-0">
           <span className="font-bold text-strong 2xl:text-xl">
             {spaceName}
           </span>
         </div>
         <div
-          className="space-context-menu-toggle-button relative z-10"
+          className="space-context-menu-toggle-button z-10"
           onClick={handleSpaceContextAction}
         >
           <Tooltip

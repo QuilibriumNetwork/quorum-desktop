@@ -23,6 +23,7 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useOptionalShellState } from '../shell/useShellState';
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Tooltip, Icon } from '../primitives';
 import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
@@ -101,8 +102,10 @@ const Channel: React.FC<ChannelProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isMobile, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isDesktop } =
     useResponsiveLayoutContext();
+  const shell = useOptionalShellState();
+  const isPhone = shell?.viewport === 'phone';
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const { showRightSidebar: showUsers, setShowRightSidebar: setShowUsers } =
@@ -1305,26 +1308,17 @@ const Channel: React.FC<ChannelProps> = ({
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
-            {/* Mobile controls - burger + NavMenu toggle */}
-            {!isDesktop && (
-              <div className="flex items-center gap-2">
-                <Button
-                  type="unstyled"
-                  onClick={toggleNavMenu}
-                  className="header-icon-button lg:hidden"
-                  iconName={navMenuOpen ? 'chevron-left' : 'menu'}
-                  iconSize={headerIconSize}
-                  iconOnly
-                />
-                <Button
-                  type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="header-icon-button lg:hidden"
-                  iconName="sidebar-left-expand"
-                  iconSize={headerIconSize}
-                  iconOnly
-                />
-              </div>
+            {/* Phone-only drawer trigger */}
+            {isPhone && shell && (
+              <Button
+                type="unstyled"
+                onClick={shell.openDrawer}
+                className="header-icon-button"
+                iconName="menu"
+                iconSize={headerIconSize}
+                iconOnly
+                ariaLabel={t`Open navigation`}
+              />
             )}
 
             {/* Channel name - hidden on mobile first row, shown on desktop */}

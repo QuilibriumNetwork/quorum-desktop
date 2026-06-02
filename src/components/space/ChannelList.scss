@@ -3,20 +3,15 @@
 .channels-list-wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%; // If UserStatus is added back, use calc(100% - [status height])
-  width: var(--sidebar-left-width);
-
-  @media (max-width: 1023px) {
-    height: 100%;
-  }
+  height: 100%;
+  width: 100%;
 }
 
 .channels-list {
   overflow-y: auto;
   overflow-x: hidden;
-  width: var(--sidebar-left-width);
+  width: 100%;
   z-index: 0;
-  margin-right: -$s-2-5;
   scrollbar-width: none;
   flex-grow: 1;
 
@@ -31,30 +26,6 @@
   user-select: none;
 }
 
-html:not(.dark) {
-  // Channels list always has left border and rounded top-left corner
-  .channels-list {
-    border-left: $border solid var(--color-border-subtle);
-
-    @media (max-width: 1023px) {
-      border-left: none;
-    }
-  }
-
-  // Space header only has borders when there's no banner
-  .space-header-no-banner {
-    border-top: $border solid var(--color-border-subtle);
-    border-left: $border solid var(--color-border-subtle);
-    border-top-left-radius: $rounded-xl;
-
-    @media (max-width: 1023px) {
-      border-top: none;
-      border-left: none;
-      border-top-left-radius: 0;
-    }
-  }
-}
-
 .channels-list::-webkit-scrollbar {
   width: 0;
   background: transparent;
@@ -64,10 +35,8 @@ html:not(.dark) {
   padding: $s-3 $s-6 $s-2 $s-4; // 12px top centers text-lg in $header-height when collapsed
   font-weight: $font-bold;
   font-size: $text-lg;
-  border-top-left-radius: $rounded-xl;
-  margin-right: -$s-2-5;
   height: 132px;
-  width: var(--sidebar-left-width);
+  width: 100%;
   color: var(--color-text-main);
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
@@ -81,7 +50,6 @@ html:not(.dark) {
   transition: height 50ms ease-out; // Smooth height changes on scroll
 
   @media (max-width: 1023px) {
-    border-top-left-radius: 0;
     padding-top: $s-3;
   }
 
@@ -94,12 +62,7 @@ html:not(.dark) {
 .space-header-bg {
   background-size: cover;
   background-position: center;
-  border-top-left-radius: $rounded-xl;
   overflow: hidden; // Contain the blurred inner fill when banner is generated
-
-  @media (max-width: 1023px) {
-    border-top-left-radius: 0;
-  }
 }
 
 // Inner fill used only when the banner is generated from the Space icon.
@@ -136,5 +99,124 @@ html:not(.dark) {
     &:active {
       outline: none !important;
     }
+  }
+}
+
+/* === space-header overlay layout ===
+   Action buttons (back-arrow, settings) are anchored to the banner corners
+   over a translucent pill background; the space name is anchored to the
+   bottom-left over a bottom-up gradient. Activated by the .space-header--overlay
+   modifier. After the legacy layout is removed (step 13), the --overlay
+   modifier is dropped and these rules are merged into the base .space-header. */
+.space-header--overlay {
+  position: relative;
+
+  // Banner-driven layout only applies when there's an actual banner image.
+  // The no-banner variant keeps the original simple flex row (height = $header-height).
+  &:not(.space-header-no-banner) {
+    // Suppress the row-based layout from the base .space-header rule
+    align-items: stretch;
+    justify-content: flex-start;
+
+    .space-header-back-button {
+      position: absolute;
+      top: $s-2-5;
+      left: $s-2-5;
+    }
+
+    .space-context-menu-toggle-button {
+      position: absolute;
+      top: $s-2-5;
+      right: $s-2-5;
+    }
+
+    .space-header-name {
+      position: absolute;
+      left: $s-4;
+      right: $s-4;
+      bottom: $s-2-5;
+      flex: none;
+
+      span {
+        color: var(--color-text-strong) !important;
+      }
+    }
+  }
+}
+
+/* Theme-aware bottom-up gradient behind the space name */
+.space-header-bottom-gradient {
+  height: 75%;
+  background: linear-gradient(
+    to top,
+    rgba(var(--surface-00-rgb), 0.92) 0%,
+    rgba(var(--surface-00-rgb), 0.65) 30%,
+    rgba(var(--surface-00-rgb), 0) 100%
+  );
+}
+
+/* Theme-aware frosted pill for back-arrow + settings buttons */
+.space-header--overlay {
+  .space-header-back-button,
+  .space-context-menu-toggle-button {
+    width: 32px;
+    height: 32px;
+    border-radius: $rounded-md;
+    background: rgba(var(--surface-00-rgb), 0.65);
+    color: var(--color-text-strong);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    transition: background 120ms ease;
+    cursor: pointer;
+    padding: 0;
+    filter: none;
+
+    &:hover {
+      background: rgba(var(--surface-00-rgb), 0.85);
+    }
+
+    svg {
+      color: var(--color-text-strong);
+    }
+  }
+}
+
+/* No-banner fallback — keep the back-arrow + settings inline in the row, no pill bg */
+.space-header--overlay.space-header-no-banner {
+  .space-header-back-button {
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    padding: 0;
+    margin-right: $s-2;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
+
+    &,
+    & * {
+      outline: none !important;
+    }
+  }
+}
+
+/* Base .space-header-back-button — minimal styling for fallback contexts where
+   the .space-header--overlay modifier is absent (e.g. no-banner header). */
+.space-header-back-button {
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  color: inherit;
+  display: flex;
+  align-items: center;
+
+  &,
+  & * {
+    outline: none !important;
   }
 }

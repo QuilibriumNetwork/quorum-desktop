@@ -27,13 +27,10 @@ interface ChannelItemProps {
   currentChannelId: string;
   isSpaceOwner: boolean;
   isTouch: boolean;
-  isMobile: boolean;
-  isTablet: boolean;
   groupName: string;
   isMuted?: boolean;
   onChannelClick?: () => void;
   onChannelNavigate: (channelId: string) => void;
-  closeLeftSidebar: () => void;
   openChannelEditor: (
     spaceId: string,
     groupName: string,
@@ -126,13 +123,10 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   currentChannelId,
   isSpaceOwner,
   isTouch,
-  isMobile,
-  isTablet,
   groupName,
   isMuted = false,
   onChannelClick,
   onChannelNavigate,
-  closeLeftSidebar,
   openChannelEditor,
   onToggleMute,
 }) => {
@@ -213,14 +207,10 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
       }
     },
     onTap: () => {
-      // Navigate to channel and close sidebar on mobile/tablet
       if (isTouch) {
         hapticLight();
       }
       onChannelNavigate(channel.channelId);
-      if (isMobile || isTablet) {
-        closeLeftSidebar();
-      }
     },
     shouldPreventDefault: true,
     threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,
