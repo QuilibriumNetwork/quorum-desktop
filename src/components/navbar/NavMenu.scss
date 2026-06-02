@@ -70,7 +70,7 @@ header {
     svg {
       width: $s-8; // 32px on desktop
       height: $s-8;
-      // Always white since background is dark (#373036) on both themes
+      // White in both themes (light theme bg is lighter — accepted contrast tradeoff)
       color: white;
     }
   }
@@ -109,6 +109,60 @@ header {
       width: $nav-space-icon-size-mobile;
       height: $nav-space-icon-size-mobile;
       border-radius: $rounded-lg;
+    }
+  }
+}
+
+.nav-menu-spaces-hub {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-bottom: $s-2-5;
+
+  .spaces-hub-icon {
+    width: $nav-space-icon-size;
+    height: $nav-space-icon-size;
+    box-sizing: border-box;
+    border-radius: $rounded-lg;
+    background-color: var(--color-bg-dm-icon);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color $duration-100 linear, color $duration-100 linear;
+    cursor: pointer;
+    color: var(--color-text-subtle);
+
+    svg {
+      width: $s-8;
+      height: $s-8;
+    }
+
+    &:hover {
+      background-color: var(--surface-5);
+      color: white;
+    }
+
+    &--selected {
+      background-color: var(--surface-7);
+      color: white;
+    }
+  }
+
+  // Light theme: match the DM icon (white) for visual consistency.
+  html:not(.dark) & .spaces-hub-icon {
+    color: white;
+  }
+
+  @media (max-width: $screen-xs) {
+    .spaces-hub-icon {
+      width: $nav-space-icon-size-mobile;
+      height: $nav-space-icon-size-mobile;
+
+      svg {
+        width: $s-7;
+        height: $s-7;
+      }
     }
   }
 }

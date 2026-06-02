@@ -7,28 +7,37 @@ const HEADER_MIN_HEIGHT = 48
 const SCREEN_2XL = 1536 // Very large screens
 
 /**
- * Custom hook for space header styling and banner logic
- * Handles dynamic styling based on banner presence and background image logic
+ * Custom hook for space header styling and banner logic.
+ *
+ * Treats the icon as a fallback banner: when a Space has no `bannerUrl` but has
+ * an `iconUrl`, the icon image is rendered enlarged + blurred as a synthetic
+ * banner (matches the Discover-card placeholder pattern). Spaces with neither
+ * keep the slim no-image header variant.
  */
 export const useSpaceHeader = (space: any) => {
-  const hasBanner = Boolean(space?.bannerUrl)
+  const hasRealBanner = Boolean(space?.bannerUrl)
+  const hasIconFallback = !hasRealBanner && Boolean(space?.iconUrl)
+  const hasBanner = hasRealBanner || hasIconFallback
 
   const headerClassName = useMemo(() => {
     const baseClasses = 'space-header relative flex flex-row justify-between'
-    const bannerClasses = hasBanner
-      ? ''
+    const variantClass = hasBanner
+      ? hasIconFallback
+        ? ' space-header-generated-banner'
+        : ''
       : ' space-header-no-banner'
-    return baseClasses + bannerClasses
-  }, [hasBanner])
+    return baseClasses + variantClass
+  }, [hasBanner, hasIconFallback])
 
   const bannerStyle = useMemo(() => {
     if (!hasBanner) return {}
+    const sourceUrl = hasRealBanner ? space.bannerUrl : space.iconUrl
     return {
-      backgroundImage: `url('${space.bannerUrl}')`,
+      backgroundImage: `url('${sourceUrl}')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
     }
-  }, [hasBanner, space?.bannerUrl])
+  }, [hasBanner, hasRealBanner, space?.bannerUrl, space?.iconUrl])
 
   const gradientOverlayStyle = useMemo(() => {
     if (!hasBanner) return {}
@@ -42,6 +51,7 @@ export const useSpaceHeader = (space: any) => {
     headerClassName,
     bannerStyle,
     hasBanner,
+    isGeneratedBanner: hasIconFallback,
     gradientOverlayStyle,
     spaceName: space?.spaceName,
   }

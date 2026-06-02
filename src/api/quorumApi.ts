@@ -47,3 +47,22 @@ export const getHubDeleteUrl: () => `/${string}` = () => `/hub/delete`;
 export const getSpaceInviteEvalsUrl: () => `/${string}` = () => `/invite/evals`;
 
 export const getSpaceInviteEvalUrl: () => `/${string}` = () => `/invite/eval`;
+
+export type ExploreSpacesParams = {
+  search?: string;
+  category?: string;
+  offset?: number;
+  limit?: number;
+};
+
+export const getDirectoryUrl = (params?: ExploreSpacesParams): `/${string}` => {
+  if (!params) return `/directory`;
+  const queryParts: string[] = [];
+  if (params.search) queryParts.push(`search=${encodeURIComponent(params.search)}`);
+  if (params.category) queryParts.push(`category=${encodeURIComponent(params.category)}`);
+  if (params.offset !== undefined) queryParts.push(`offset=${params.offset}`);
+  if (params.limit !== undefined) queryParts.push(`limit=${params.limit}`);
+  return queryParts.length > 0
+    ? (`/directory?${queryParts.join('&')}` as `/${string}`)
+    : `/directory`;
+};

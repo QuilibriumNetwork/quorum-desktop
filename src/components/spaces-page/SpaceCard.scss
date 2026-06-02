@@ -1,0 +1,198 @@
+@use '../../styles/variables' as *;
+
+.space-card {
+  display: flex;
+  gap: $s-4;
+  padding: $s-4;
+  border-radius: $rounded-xl;
+  background: var(--surface-2);
+  border: $border solid var(--color-border-default);
+  transition: background $duration-150 ease, border-color $duration-150 ease;
+
+  &__icon {
+    flex-shrink: 0;
+    position: relative;
+  }
+
+  &__muted-badge {
+    position: absolute;
+    top: -$s-1;
+    left: -$s-1;
+    width: $s-5;
+    height: $s-5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--surface-2);
+    border-radius: $rounded-full;
+    // SpaceIcon's internals reach z-index 1001 (mention bubble); sit above it.
+    z-index: 1100;
+    color: var(--color-text-subtle);
+    pointer-events: none;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s-1;
+  }
+
+  &__name-row {
+    display: flex;
+    align-items: center;
+    gap: $s-1;
+  }
+
+  &__name {
+    font-weight: 600;
+    color: var(--color-text-strong);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__owner-badge {
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  &__meta {
+    font-size: $text-sm;
+    color: var(--color-text-subtle);
+    display: inline-flex;
+    align-items: center;
+    gap: $s-1-5;
+  }
+
+  &__category {
+    text-transform: capitalize;
+  }
+
+  &__members {
+    display: inline-flex;
+    align-items: center;
+    gap: $s-1;
+    font-size: $text-sm;
+    color: var(--color-text-subtle);
+  }
+
+  &__description {
+    font-size: $text-sm;
+    color: rgb(var(--color-text-main));
+    margin: 0;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  &__actions {
+    margin-top: auto;
+    padding-top: $s-2;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  &--my-space {
+    align-items: center;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--surface-3);
+      border-color: var(--color-border-default);
+    }
+  }
+
+  // Discover card: hero strip on top, square icon overlapping
+  // the hero bottom-left, body below. Hero uses blurred enlarged icon image
+  // when available, solid color from name hash otherwise.
+  &--public {
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+
+    .space-card__hero {
+      width: 100%;
+      height: 8rem; // 128px — taller hero, icon midline still lands at hero bottom (-$s-6 margin = 24px overlap on a 48px icon)
+      flex-shrink: 0;
+      position: relative;
+      overflow: hidden;
+      background-position: center;
+      background-repeat: no-repeat;
+      isolation: isolate; // Contain the blur filter to this element's box
+    }
+
+    .space-card__hero-fill {
+      position: absolute;
+      inset: 0;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: 200%;
+      filter: blur(18px) saturate(1.3);
+    }
+
+    .space-card__icon {
+      // Overlap the hero so its vertical center sits ON the hero's bottom edge.
+      // Icon is 48px tall → translate up by half (24px = $s-6) so center hits hero edge.
+      margin-top: -$s-6;
+      margin-left: $s-4;
+      align-self: flex-start;
+      position: relative;
+      z-index: 1;
+
+      // Ring around the icon: a thicker border in the card surface colour so
+      // the icon visually "punches through" the hero (Discord pattern).
+      .space-icon,
+      .space-icon-selected {
+        box-shadow: 0 0 0 $s-1 var(--surface-2);
+
+        // Discover-card icons are decorative — suppress the navbar hover dim.
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+
+    .space-card__body {
+      padding: $s-3 $s-4 $s-4;
+      gap: $s-1-5;
+    }
+
+    .space-card__name {
+      font-size: $text-base;
+    }
+
+    .space-card__more {
+      background: transparent;
+      border: none;
+      padding: 0;
+      font: inherit; // Override the UA <button> font reset so it matches surrounding text
+      color: var(--accent);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+      cursor: pointer;
+
+      &:hover {
+        color: var(--accent-600);
+      }
+
+      &--less {
+        align-self: flex-start;
+        // Match the description's text size (this button is a sibling of the
+        // description, not a child, so `font: inherit` above picks up the
+        // body's default $text-base instead of $text-sm).
+        font-size: $text-sm;
+      }
+    }
+
+    .space-card__actions {
+      width: 100%;
+      justify-content: stretch;
+      margin-top: auto;
+      padding-top: $s-3;
+    }
+  }
+}

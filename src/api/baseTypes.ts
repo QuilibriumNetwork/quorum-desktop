@@ -1,6 +1,7 @@
 import qs from 'qs';
 import { getConfig } from '../config/config';
 import {
+  getDirectoryUrl,
   getHubAddUrl,
   getHubDeleteUrl,
   getHubUrl,
@@ -14,6 +15,8 @@ import {
   getUserRegistrationUrl,
   getUserSettingsUrl,
 } from './quorumApi';
+import type { ExploreSpacesParams } from './quorumApi';
+import type { DirectoryResponse } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 
 abstract class AbstractQuorumApiClient {
@@ -466,6 +469,16 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
       headers,
       timeout,
       body: manifest,
+    });
+  }
+
+  exploreSpaces(
+    params?: ExploreSpacesParams,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<DirectoryResponse>(getDirectoryUrl(params), {
+      headers,
+      timeout,
     });
   }
 

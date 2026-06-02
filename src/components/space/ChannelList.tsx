@@ -47,6 +47,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     headerClassName,
     bannerStyle,
     hasBanner,
+    isGeneratedBanner,
     gradientOverlayStyle,
     spaceName,
   } = useSpaceHeader(space);
@@ -55,10 +56,12 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { handleScroll, collapsingHeaderStyle, backgroundLayerStyle } =
     useCollapsingHeader(hasBanner);
 
-  // Background layer style (fixed height, gets clipped by parent)
-  const combinedBackgroundStyle = React.useMemo(
-    () => ({ ...bannerStyle, ...backgroundLayerStyle }),
-    [bannerStyle, backgroundLayerStyle]
+  // For real banners the image goes directly on .space-header-bg. For generated
+  // (icon-fallback) banners we put the image on an inner fill div so the blur
+  // fringe is clipped to the header rect (same pattern as SpaceCard__hero-fill).
+  const realBannerBackgroundStyle = React.useMemo(
+    () => (isGeneratedBanner ? backgroundLayerStyle : { ...bannerStyle, ...backgroundLayerStyle }),
+    [isGeneratedBanner, bannerStyle, backgroundLayerStyle]
   );
 
   const { groups } = useSpaceGroups(space ?? undefined);
@@ -135,8 +138,12 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           <>
             <div
               className="space-header-bg absolute inset-x-0 top-0 pointer-events-none z-0"
-              style={combinedBackgroundStyle}
-            />
+              style={realBannerBackgroundStyle}
+            >
+              {isGeneratedBanner && (
+                <div className="space-header-bg-fill" style={bannerStyle} />
+              )}
+            </div>
             <div
               className="absolute inset-x-0 top-0 pointer-events-none z-1"
               style={{ ...gradientOverlayStyle, ...backgroundLayerStyle }}
