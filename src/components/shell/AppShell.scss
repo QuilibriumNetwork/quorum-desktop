@@ -1,0 +1,138 @@
+@use '@/styles/variables' as *;
+
+.app-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  user-select: none;
+}
+
+.app-shell__rail {
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--color-bg-rail);
+  border-right: 1px solid var(--color-border-muted);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: width $duration-150 $ease-out;
+
+  &--collapsed {
+    width: $rail-width-collapsed;
+  }
+
+  &--expanded {
+    width: $rail-width-expanded;
+  }
+
+  &--hidden {
+    width: 0;
+    border-right: none;
+    overflow: hidden;
+  }
+}
+
+.app-shell__sidebar {
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--color-bg-sidebar);
+  border-right: 1px solid var(--color-border-muted);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: width $duration-150 $ease-out;
+
+  &--collapsed {
+    width: $sidebar-width-collapsed;
+  }
+
+  &--expanded {
+    width: $sidebar-width;
+  }
+
+  &--hidden {
+    width: 0;
+    border-right: none;
+  }
+}
+
+.app-shell__main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: var(--color-bg-chat);
+  overflow: hidden;
+  position: relative;
+}
+
+/* === Phone-only slide-in drawer === */
+.app-shell__drawer-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  animation: app-shell-scrim-in $duration-150 $ease-out;
+}
+
+.app-shell__drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc($rail-width-collapsed + $sidebar-width);
+  max-width: 92vw;
+  display: flex;
+  flex-direction: row;
+  z-index: 1001;
+  background: var(--color-bg-rail);
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.25);
+  animation: app-shell-drawer-in $duration-200 $ease-out;
+}
+
+.app-shell__drawer-rail {
+  width: $rail-width-collapsed;
+  flex-shrink: 0;
+  background: var(--color-bg-rail);
+  border-right: 1px solid var(--color-border-muted);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell__drawer-sidebar {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@keyframes app-shell-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes app-shell-drawer-in {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* Step 3 — placeholder visuals so the empty columns are recognisable.
+   Removed in step 4+ when real content lands. */
+.app-shell__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  height: 100%;
+  width: 100%;
+}
+

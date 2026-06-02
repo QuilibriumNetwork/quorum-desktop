@@ -1,0 +1,66 @@
+@use '@/styles/variables' as *;
+
+.app-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg-sidebar);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.app-sidebar__header {
+  height: $sidebar-header-height;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding: 0 $s-3-5;
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.app-sidebar__title {
+  flex: 1;
+  font-family: inherit;
+  font-weight: $font-bold;
+  font-size: $text-base;
+  color: var(--color-text-strong);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.app-sidebar__action {
+  width: 32px;
+  height: 32px;
+  border-radius: $rounded-md;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--color-text-subtle);
+  background: transparent;
+  border: none;
+  padding: 0;
+
+  &:hover {
+    background: var(--color-bg-rail-hover);
+    color: var(--color-text-strong);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}
+
+.app-sidebar__body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
