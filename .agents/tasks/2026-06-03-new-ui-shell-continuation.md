@@ -71,7 +71,9 @@ Tracks marked **TODO: write plan** need a dedicated planning step (use `feature-
 
 ---
 
-## Track D — SpacesSidebar polish (folders + DnD + rows) · **TODO: write plan**
+## Track D — SpacesSidebar polish (folders + DnD + rows) · plan written
+
+**Plan**: [2026-06-03-spaces-sidebar-polish-plan.md](./2026-06-03-spaces-sidebar-polish-plan.md)
 
 **Severity**: medium — the current `SpacesSidebar` is the "minimal-first" version. The handoff design calls for folders, drag-and-drop reordering, member counts, timestamps, last-message previews.
 
@@ -98,7 +100,9 @@ Tracks marked **TODO: write plan** need a dedicated planning step (use `feature-
 
 ---
 
-## Track E — Drag-to-resize sidebar (replaces collapse buttons) · **TODO: write plan**
+## Track E — Drag-to-resize sidebar (replaces collapse buttons) · plan written
+
+**Plan**: [2026-06-03-drag-resize-sidebar-plan.md](./2026-06-03-drag-resize-sidebar-plan.md)
 
 **Severity**: medium — UX iteration on the sidebar collapse interaction. The explicit collapse/expand icons are removed and replaced with a draggable border between sidebar and main content. The NavRail collapse toggle is **NOT** affected.
 
