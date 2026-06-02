@@ -8,7 +8,7 @@
  * Both gates require NODE_ENV === 'development'. Production builds tree-shake.
  */
 
-import type { DirectoryEntry, SpaceCategory } from '@quilibrium/quorum-shared';
+import type { DirectoryEntry, Space, SpaceCategory } from '@quilibrium/quorum-shared';
 
 const MOCK_SPACE_NAMES = [
   'Quilibrium Dev',
@@ -136,4 +136,47 @@ export function getMockSpacesCount(): number {
   const lsValue = localStorage?.getItem('debug_mock_spaces_count');
   const n = parseInt(urlValue || lsValue || '30', 10);
   return isNaN(n) || n <= 0 ? 30 : n;
+}
+
+/**
+ * Mock joined-spaces generation for stress-testing the left-rail Spaces sidebar
+ * ({@link ../../components/shell/SpacesSidebar.tsx}).
+ *
+ * Shares the same gate as the Discover screen mock ({@link isMockSpacesEnabled}
+ * / `?spaces=N` / `debug_mock_spaces`), so a single switch fills both surfaces.
+ */
+export function generateMockJoinedSpaces(count: number): Space[] {
+  const result: Space[] = [];
+  const now = Date.now();
+
+  for (let i = 0; i < count; i++) {
+    const name = MOCK_SPACE_NAMES[i % MOCK_SPACE_NAMES.length];
+    const description = MOCK_SPACE_DESCRIPTIONS[i % MOCK_SPACE_DESCRIPTIONS.length];
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const iconUrl = i % 3 === 0
+      ? ''
+      : `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(slug)}`;
+
+    result.push({
+      spaceId: `mock_joined_space_${i.toString().padStart(4, '0')}`,
+      spaceName: `${name} ${i + 1}`,
+      description,
+      vanityUrl: '',
+      inviteUrl: '',
+      iconUrl,
+      bannerUrl: '',
+      defaultChannelId: 'general',
+      hubAddress: '',
+      createdDate: now - i * 24 * 60 * 60 * 1000,
+      modifiedDate: now - i * 24 * 60 * 60 * 1000,
+      isRepudiable: false,
+      isPublic: false,
+      groups: [],
+      roles: [],
+      emojis: [],
+      stickers: [],
+    });
+  }
+
+  return result;
 }

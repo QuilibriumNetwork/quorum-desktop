@@ -30,4 +30,5 @@ export {
   generateMockSpaces,
   isMockSpacesEnabled,
   getMockSpacesCount,
+  generateMockJoinedSpaces,
 } from './mockSpaces';
