@@ -30,15 +30,15 @@ These indicators appear on:
 
 ### Indicator Types by Location
 
-| Location | Unread Indicator | Notification Bubble |
-|----------|------------------|---------------------|
-| **NavRail "Messages"** | `.icon-unread-dot` on the Messages icon | — (count not surfaced on the rail) |
-| **SpacesSidebar row** (expanded) | `.spaces-sidebar__row-badge` secondary text badge (count or `99+`) | Top-right `space-icon-mention-bubble` on the avatar |
-| **SpacesSidebar row** (compact / strip) | `space-icon-toggle--unread` accent dot on the avatar wrapper | Top-right `space-icon-mention-bubble` on the avatar |
-| **SpacesSidebar folder header** | `space-icon-toggle--unread` dot on the folder tile | `folder-button-mention-bubble` (sum of nested space counts) |
-| **Channel Item** | `.icon-unread-dot` next to the channel icon | `.icon-mention-bubble` (mention + reply count) |
-| **DM Contact row** | `.icon-unread-dot` on the avatar + bold name | — |
-| **DM Contact** (collapsed strip) | `.direct-messages-strip-unread-dot` on the avatar | — |
+| Location | Unread | Mention bubble |
+|----------|--------|----------------|
+| NavRail "Messages" | `.icon-unread-dot` | — |
+| Spaces row (expanded) | `.spaces-sidebar__row-badge` | `space-icon-mention-bubble` |
+| Spaces row (strip) | `space-icon-toggle--unread` | `space-icon-mention-bubble` |
+| Folder header (collapsed) | `space-icon-toggle--unread` | `folder-button-mention-bubble` |
+| Channel item | `.icon-unread-dot` | `.icon-mention-bubble` |
+| DM row | `.icon-unread-dot` + bold name | — |
+| DM strip | `.direct-messages-strip-unread-dot` | — |
 
 Shared dot/bubble visuals (`.icon-unread-dot`, `.icon-mention-bubble`) live in [_components.scss](src/styles/_components.scss). The avatar wrapper must be `position: relative` for the dot's negative-left offset to anchor.
 
@@ -80,41 +80,24 @@ This provides O(1) unread status per conversation.
 
 ### Spaces Sidebar Row
 
-**Files**: [SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx), [SpacesSidebarRow.tsx](src/components/space/SpacesSidebarRow.tsx), [SpaceIcon.tsx](src/components/space/SpaceIcon.tsx)
+[SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx) merges mention + reply counts into `spaceMentionPlusReplyCounts` and passes the per-space subset to each row.
 
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| `.spaces-sidebar__row-badge` (expanded) | `unread` prop = `spaceUnreadCounts[spaceId]` | Any channel has unread messages (shows `99+` above 99) |
-| `space-icon-toggle--unread` (compact / strip) | `notifs` prop on `SpaceIcon` (= `unread > 0`) | Any channel has unread messages |
-| `space-icon-mention-bubble` | `mentionCount` prop = `spaceMentionPlusReplyCounts[spaceId]` (mentions + replies, merged in `SpacesSidebar`) | Mentions or replies exist |
-| `muted-badge` | `mutedSpacesSet.has(spaceId)` | Space is muted (overrides notification noise) |
+| Indicator | Data | Condition |
+|-----------|------|-----------|
+| `.spaces-sidebar__row-badge` (expanded) | `spaceUnreadCounts[spaceId]` | Any unread (`99+` above 99) |
+| `space-icon-toggle--unread` (strip) | same | same |
+| `space-icon-mention-bubble` | `spaceMentionPlusReplyCounts[spaceId]` | Mention/reply exists |
+| `muted-badge` | `mutedSpacesSet.has(spaceId)` | Space muted |
 
-The merge of mentions and replies into a single "needs attention" number happens in [SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx) (`spaceMentionPlusReplyCounts` memo). Each row receives the per-space subset via props; it does not query counts itself.
-
-**Context Menu**: Right-click opens [useSpaceContextMenu](src/hooks/business/spaces/useSpaceContextMenu.tsx), which exposes "Mark All as Read" when the row was flagged with `hasNotifications` (`unread > 0` at the call site).
+Right-click opens [useSpaceContextMenu](src/hooks/business/spaces/useSpaceContextMenu.tsx); "Mark All as Read" appears when the row was flagged `hasNotifications`.
 
 ### Spaces Sidebar Folder Header
 
-**Files**: [SpacesSidebarFolder.tsx](src/components/space/SpacesSidebarFolder.tsx), [FolderButton.tsx](src/components/space/FolderButton.tsx)
-
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| `space-icon-toggle--unread` on the folder tile | `hasUnread = spaces.some(s => spaceUnreadCounts[s.spaceId] > 0)` | Any space in the folder has unreads |
-| `folder-button-mention-bubble` | `folderMentionCount = sum(spaceMentionCounts[child])` | Any nested space has mentions/replies |
-
-When the folder is expanded, `FolderButton` sets `showIndicators = !isExpanded` and suppresses both indicators — nested rows surface their own.
+In [SpacesSidebarFolder.tsx](src/components/space/SpacesSidebarFolder.tsx), `hasUnread = spaces.some(...)` and `folderMentionCount = sum(spaceMentionCounts[child])` drive the folder tile's dot and mention bubble. Both suppressed when `isExpanded` (nested rows surface their own).
 
 ### NavRail DM Dot
 
-**Files**: [NavRail.tsx](src/components/shell/NavRail.tsx) (driven by [useDirectMessageUnreadCount.ts](src/hooks/business/messages/useDirectMessageUnreadCount.ts))
-
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| `.icon-unread-dot` on the Messages item | `dmUnreadCount > 0` | Any non-muted DM has unread messages |
-
-The rail does NOT render a numeric mention/unread bubble — it's an at-a-glance "you have unread DMs" cue. The full per-conversation count lives on each DM row inside the sidebar.
-
-The DM rail item has no dedicated "Mark All as Read" trigger anymore; per-conversation context menus (right-click on a DM row) still surface mute/favorite/delete actions.
+[NavRail.tsx](src/components/shell/NavRail.tsx) renders `.icon-unread-dot` on the Messages item when [useDirectMessageUnreadCount](src/hooks/business/messages/useDirectMessageUnreadCount.ts) returns > 0.
 
 ### Channel Item (ChannelList)
 
@@ -127,13 +110,7 @@ The DM rail item has no dedicated "Mark All as Read" trigger anymore; per-conver
 
 ### DM Contact (DirectMessageContactsList)
 
-**Files**: [DirectMessageContact.tsx](src/components/direct/DirectMessageContact.tsx), [DirectMessageContactsList.tsx](src/components/direct/DirectMessageContactsList.tsx)
-
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| Bold name + `.icon-unread-dot` on avatar | `unread = effectiveReadTimestamp < c.timestamp && !mutedSet.has(c.conversationId)` | Unread messages exist and conversation is not muted |
-| `.dm-muted-badge` on avatar (bell-off icon) | `props.isMuted` | Conversation is muted |
-| Strip-mode (collapsed sidebar): `.direct-messages-strip-unread-dot` | Same `unread` calculation | Same |
+In [DirectMessageContact.tsx](src/components/direct/DirectMessageContact.tsx) the avatar carries `.icon-unread-dot` when `unread && !muted`, plus `.dm-muted-badge` when muted. The collapsed strip uses `.direct-messages-strip-unread-dot` on the same condition.
 
 ---
 

@@ -54,20 +54,7 @@ const MOCK_SPACES_COUNT = parseInt(
 const LAST_SPACE_KEY = 'lastSpaceId';
 const LAST_CHANNEL_KEY = 'lastChannelId';
 
-/**
- * Spaces sidebar — mounted by AppShell's Sidebar slot when the route is /spaces.
- *
- * Renders the user's spaces (folders interleaved with standalones via
- * `navItems`) with the active row highlighted. Clicking a space navigates to
- * its default channel and updates sessionStorage so the rail's Spaces button
- * can return the user to the same place next click.
- *
- * Owns the DragStateProvider + DndContext + SortableContext + DragOverlay
- * stack, the folder right-click context menu, and the per-space context menu
- * (via `useSpaceContextMenu`). Iterates `navItems` and dispatches to
- * `SpacesSidebarFolder` or `SpacesSidebarRow` per item type. In compact mode
- * (sidebar collapsed strip) the same components render their narrower layouts.
- */
+/** Spaces sidebar — folders + standalone spaces, with DnD and right-click menus. */
 interface SpacesSidebarProps {
   /** Opens the "Join a space" modal (paste invite link). */
   onAddSpace: () => void;

@@ -90,62 +90,14 @@ Forked from the old `navbar/NavMenu` + `navbar/FolderContainer` tree. DnD wiring
 
 ### Component Files
 
-| Component | File | Purpose |
-|-----------|------|---------|
-| `SpacesSidebar` | [src/components/space/SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx) | Mounts `DragStateProvider + DndContext + SortableContext + DragOverlay`. Iterates `navItems` (folders + standalone spaces). Merges mention + reply counts into `spaceMentionPlusReplyCounts`. Owns the folder right-click context menu. |
-| `SpacesSidebarRow` | [src/components/space/SpacesSidebarRow.tsx](src/components/space/SpacesSidebarRow.tsx) | Per-space row. Two-line layout in expanded mode; 56px icon strip in compact mode. Wires `useSortable`, lazy `useSpaceMembers` + `useSpaceOwner` via Suspense. Surfaces unread badge, owner crown, muted bell. |
-| `SpacesSidebarFolder` | [src/components/space/SpacesSidebarFolder.tsx](src/components/space/SpacesSidebarFolder.tsx) | Folder wrapper. Renders `FolderButton` for the header and nested `SpacesSidebarRow`s. Handles `useSortable`, long-press for the folder editor (touch), expand/collapse, and folder-level mention aggregation. `collapsed` prop switches between the strip and row layouts. |
-| `FolderButton` | [src/components/space/FolderButton.tsx](src/components/space/FolderButton.tsx) | Colored folder tile (icon on a folder-color background). Renders the folder's mention bubble. Stateless visual primitive — does NOT own DnD, expand/collapse, or context-menu wiring (those live in `SpacesSidebarFolder`). |
-| `SpaceIcon` | [src/components/space/SpaceIcon.tsx](src/components/space/SpaceIcon.tsx) | Avatar primitive used by every row. `notifs` prop controls the small accent dot to the left of the avatar; `mentionCount` prop renders the top-right number bubble. |
-| `FolderEditorModal` | [src/components/modals/FolderEditorModal.tsx](src/components/modals/FolderEditorModal.tsx) | Modal for editing folder name, icon, and color. |
-
-### SpacesSidebarRow Props
-
-```typescript
-interface SpacesSidebarRowProps {
-  space: Space;
-  active: boolean;
-  /** Total unread messages — drives the row's secondary badge. */
-  unread: number;
-  /** Mentions + replies (the "needs attention" count) — drives SpaceIcon's mention bubble. */
-  mentionCount?: number;
-  isMuted?: boolean;
-  /** If this row sits inside a folder, the parent folder's id. Passed in dnd data. */
-  parentFolderId?: string;
-  /** Compact mode: 56px icon-only strip layout used in the collapsed sidebar. */
-  compact?: boolean;
-  onClick: () => void;
-  onContextMenu?: (e: React.MouseEvent) => void;
-}
-```
-
-### SpacesSidebarFolder Props
-
-```typescript
-interface SpacesSidebarFolderProps {
-  folder: NavItem & { type: 'folder' };
-  spaces: Space[];
-  isExpanded: boolean;
-  /** Compact mode = 72px icon strip layout (rail-like). */
-  collapsed?: boolean;
-  currentSpaceId?: string;
-  spaceUnreadCounts: Record<string, number>;
-  /** Mentions + replies per space — drives both nested-row bubbles and the folder's aggregate bubble. */
-  spaceMentionCounts: Record<string, number>;
-  mutedSpacesSet: Set<string>;
-  onToggleExpand: () => void;
-  onEdit: () => void;
-  onSpaceClick: (spaceId: string, defaultChannelId: string | undefined) => void;
-  onContextMenu?: (e: React.MouseEvent) => void;
-  onSpaceContextMenu?: (
-    spaceId: string,
-    spaceName: string,
-    iconUrl: string | undefined,
-    e: React.MouseEvent,
-    hasNotifications: boolean
-  ) => void;
-}
-```
+| Component | File | Role |
+|-----------|------|------|
+| `SpacesSidebar` | [SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx) | Mounts the DnD stack; merges mention + reply counts; folder context menu. |
+| `SpacesSidebarRow` | [SpacesSidebarRow.tsx](src/components/space/SpacesSidebarRow.tsx) | Per-space row, row + strip layouts. |
+| `SpacesSidebarFolder` | [SpacesSidebarFolder.tsx](src/components/space/SpacesSidebarFolder.tsx) | Folder wrapper: header + nested rows, long-press, expand/collapse. |
+| `FolderButton` | [FolderButton.tsx](src/components/space/FolderButton.tsx) | Colored folder tile (visual primitive). |
+| `SpaceIcon` | [SpaceIcon.tsx](src/components/space/SpaceIcon.tsx) | Avatar primitive: unread dot + mention bubble. |
+| `FolderEditorModal` | [FolderEditorModal.tsx](src/components/modals/FolderEditorModal.tsx) | Edit folder name, icon, color. |
 
 ---
 
