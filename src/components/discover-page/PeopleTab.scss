@@ -60,23 +60,4 @@
     }
   }
 
-  &__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: $s-3;
-    flex: 1;
-    padding: $s-8;
-    text-align: center;
-    color: var(--color-text-subtle);
-
-    p {
-      margin: 0;
-      font-size: $text-sm;
-      max-width: 320px;
-      line-height: 1.5;
-    }
-  }
-
 }

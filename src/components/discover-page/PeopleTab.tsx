@@ -29,9 +29,11 @@ export const PeopleTab: React.FC = () => {
         </div>
       </div>
 
-      <div className="people-tab__empty">
-        <Icon name="users" size="3xl" />
-        <p>{t`Public profiles aren't searchable yet.`}</p>
+      <div className="empty-state empty-state--fill">
+        <Icon name="users" size="5xl" className="empty-state__icon" />
+        <p className="empty-state__title">
+          {t`Public profiles aren't searchable yet.`}
+        </p>
       </div>
     </div>
   );

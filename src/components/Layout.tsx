@@ -15,6 +15,7 @@ import { ImageModalProvider } from './context/ImageModalProvider';
 import { EditHistoryModalProvider } from './context/EditHistoryModalProvider';
 import { ReactionsModalProvider } from './context/ReactionsModalProvider';
 import { ThreadSettingsModalProvider } from './context/ThreadSettingsModalProvider';
+import { SpaceModalsProvider } from './context/SpaceModalsProvider';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
@@ -201,28 +202,40 @@ const Layout: React.FunctionComponent<{
           <ImageModalProvider showImageModal={showImageModal}>
             <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
               <ReactionsModalProvider showReactionsModal={showReactionsModal}>
-                <AppShell onAddSpace={showAddSpaceModal} onCreateSpace={showCreateSpaceModal}>
-                  <StartupEffects />
-                  {props.children}
-                  {toast && (
-                    <Portal>
-                      <div className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`} role="status" aria-live="polite">
-                        <Callout
-                          variant={toast.variant || 'info'}
-                          size="sm"
-                          dismissible
-                          autoClose={0}
-                          onClose={() => {
-                            clearTimeout(toastTimerRef.current);
-                            setToast(null);
-                          }}
+                <SpaceModalsProvider
+                  showAddSpaceModal={showAddSpaceModal}
+                  showCreateSpaceModal={showCreateSpaceModal}
+                >
+                  <AppShell
+                    onAddSpace={showAddSpaceModal}
+                    onCreateSpace={showCreateSpaceModal}
+                  >
+                    <StartupEffects />
+                    {props.children}
+                    {toast && (
+                      <Portal>
+                        <div
+                          className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`}
+                          role="status"
+                          aria-live="polite"
                         >
-                          {toast.message}
-                        </Callout>
-                      </div>
-                    </Portal>
-                  )}
-                </AppShell>
+                          <Callout
+                            variant={toast.variant || 'info'}
+                            size="sm"
+                            dismissible
+                            autoClose={0}
+                            onClose={() => {
+                              clearTimeout(toastTimerRef.current);
+                              setToast(null);
+                            }}
+                          >
+                            {toast.message}
+                          </Callout>
+                        </div>
+                      </Portal>
+                    )}
+                  </AppShell>
+                </SpaceModalsProvider>
               </ReactionsModalProvider>
             </EditHistoryModalProvider>
           </ImageModalProvider>

@@ -30,64 +30,13 @@ export const EmptyDirectMessage = () => {
         )}
 
         {/* Main content */}
-        <div className="flex w-full flex-col justify-around flex-1">
-          <div className="w-full">
-            {/* Home screen with animated gif - commented out for now
-            {showHomeScreen ? (
-              <>
-                <Flex className="justify-around">
-                  <img
-                    src="/stay-connected-stay-invisible.gif"
-                    alt="Stay connected, stay invisible"
-                    className="w-[250px] sm:w-[300px] md:w-[400px] lg:w-[500px] max-w-full"
-                  />
-                </Flex>
-                <Flex className="justify-center text-lg sm:text-2xl pt-4">
-                  <div className="max-w-[500px] text-center mt-8">
-                    <Text className="text-lg sm:text-2xl">{t`Stay Connected, Stay Invisible`}</Text>
-                  </div>
-                </Flex>
-                <Flex className="justify-center pt-8">
-                  <Flex
-                    onClick={hideHomeScreen}
-                    className="items-center gap-2 cursor-pointer"
-                  >
-                    <Icon
-                      name="eye-off"
-                      className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
-                    />
-                    <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`hide home screen`}</Text>
-                  </Flex>
-                </Flex>
-              </>
-            ) : (
-            */}
-            <Flex direction="column" className="items-center justify-center pt-8 w-full">
-              <Icon
-                name="message-dots"
-                size={128}
-                className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
-              />
-              <div className="text-lg sm:text-2xl text-center mb-8">
-                <span className="text-lg sm:text-2xl text-center">{t`What's on your mind today?`}</span>
-              </div>
-              {/* Show home screen link - commented out for now
-              <Flex className="justify-center w-full">
-                <Flex
-                  onClick={showHomeScreenView}
-                  className="items-center gap-2 cursor-pointer"
-                >
-                  <Icon
-                    name="eye"
-                    className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
-                  />
-                  <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`show home screen`}</Text>
-                </Flex>
-              </Flex>
-              */}
-            </Flex>
-            {/* End of home screen conditional */}
-          </div>
+        <div className="empty-state empty-state--fill">
+          <Icon
+            name="message-dots"
+            size="5xl"
+            className="empty-state__icon"
+          />
+          <p className="empty-state__title">{t`What's on your mind today?`}</p>
         </div>
       </Flex>
     </div>

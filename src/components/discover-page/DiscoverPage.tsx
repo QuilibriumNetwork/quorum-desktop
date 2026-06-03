@@ -1,10 +1,12 @@
 import * as React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { Button, Icon } from '../primitives';
 import { DiscoverTab } from './DiscoverTab';
 import { PeopleTab } from './PeopleTab';
 import { useOptionalShellState } from '../shell/useShellState';
+import { useSpaceModals } from '../context/SpaceModalsProvider';
+import type { IconName } from '@quilibrium/quorum-shared';
 import './DiscoverPage.scss';
 
 /**
@@ -30,15 +32,72 @@ const PhoneHeader: React.FC = () => {
   );
 };
 
-const EmptyHint: React.FC = () => (
-  <>
-    <PhoneHeader />
-    <div className="discover-page__empty">
-      <Icon name="users-group" size="3xl" />
-      <p>{t`Select a space from the sidebar to start chatting.`}</p>
-    </div>
-  </>
+interface SpacesEmptyCardProps {
+  icon: IconName;
+  title: string;
+  description: string;
+  cta: string;
+  onClick: () => void;
+}
+
+const SpacesEmptyCard: React.FC<SpacesEmptyCardProps> = ({
+  icon,
+  title,
+  description,
+  cta,
+  onClick,
+}) => (
+  <button
+    type="button"
+    className="spaces-empty__card"
+    onClick={onClick}
+    aria-label={title}
+  >
+    <Icon name={icon} size="4xl" className="spaces-empty__card-icon" />
+    <span className="spaces-empty__card-title">{title}</span>
+    <span className="spaces-empty__card-description">{description}</span>
+    <span className="spaces-empty__card-cta">
+      {cta}
+      <Icon name="arrow-right" size="sm" />
+    </span>
+  </button>
 );
+
+const SpacesEmpty: React.FC = () => {
+  const navigate = useNavigate();
+  const { showAddSpaceModal, showCreateSpaceModal } = useSpaceModals();
+
+  return (
+    <>
+      <PhoneHeader />
+      <div className="spaces-empty">
+        <div className="spaces-empty__cards">
+          <SpacesEmptyCard
+            icon="compass"
+            title={t`Discover spaces`}
+            description={t`Browse public spaces and find a community to join.`}
+            cta={t`Explore`}
+            onClick={() => navigate('/discover/spaces')}
+          />
+          <SpacesEmptyCard
+            icon="link"
+            title={t`Join a space`}
+            description={t`Got an invite link? Hop straight in.`}
+            cta={t`Join`}
+            onClick={showAddSpaceModal}
+          />
+          <SpacesEmptyCard
+            icon="plus"
+            title={t`Create a space`}
+            description={t`Start your own private or public community.`}
+            cta={t`Create`}
+            onClick={showCreateSpaceModal}
+          />
+        </div>
+      </div>
+    </>
+  );
+};
 
 /**
  * Discover surface. Sub-pages are real routes:
@@ -54,7 +113,7 @@ export const DiscoverPage: React.FC<{ mode?: 'discover' | 'spaces-empty' }> = ({
   const location = useLocation();
 
   if (mode === 'spaces-empty') {
-    return <EmptyHint />;
+    return <SpacesEmpty />;
   }
 
   const isPeople = location.pathname.startsWith('/discover/people');

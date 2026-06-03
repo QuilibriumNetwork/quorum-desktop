@@ -66,28 +66,6 @@
     }
   }
 
-  // Empty state — centered icon + single message, same treatment as
-  // .people-tab__empty. Flexes to fill the remaining vertical space below
-  // the header so it sits in the middle of the page.
-  &__empty {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: $s-3;
-    padding: $s-8;
-    text-align: center;
-    color: var(--color-text-subtle);
-
-    p {
-      margin: 0;
-      font-size: $text-sm;
-      max-width: 320px;
-      line-height: 1.5;
-    }
-  }
-
   &__loading {
     grid-column: 1 / -1;
     text-align: center;
