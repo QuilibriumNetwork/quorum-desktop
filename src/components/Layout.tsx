@@ -131,10 +131,6 @@ const Layout: React.FunctionComponent<{
         <AddSpaceModal
           visible={addSpaceVisible}
           onClose={hideAddSpaceModal}
-          onCreateSpace={() => {
-            hideAddSpaceModal();
-            showCreateSpaceModal();
-          }}
         />
       )}
 

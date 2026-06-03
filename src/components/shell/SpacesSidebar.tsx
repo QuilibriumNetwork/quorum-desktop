@@ -222,12 +222,9 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
           className={`header-icon-button ${searchOpen ? 'active--accent' : ''}`}
           ariaLabel={t`Search spaces`}
         />
-        <Tooltip
-          id="spaces-add"
-          content={t`Add a space`}
-          place="bottom"
-          showOnTouch={false}
-        >
+        {addMenuPosition ? (
+          // Tooltip is unmounted while the context menu is open so the two
+          // popovers don't overlap on top of each other.
           <Button
             type="secondary"
             iconName="plus"
@@ -237,7 +234,24 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
             className="sidebar-header-action"
             ariaLabel={t`Add a space`}
           />
-        </Tooltip>
+        ) : (
+          <Tooltip
+            id="spaces-add"
+            content={t`Add a space`}
+            place="bottom"
+            showOnTouch={false}
+          >
+            <Button
+              type="secondary"
+              iconName="plus"
+              iconSize="lg"
+              iconOnly
+              onClick={handleOpenAddMenu}
+              className="sidebar-header-action"
+              ariaLabel={t`Add a space`}
+            />
+          </Tooltip>
+        )}
       </div>
       {addMenuPosition && (
         <ContextMenu
