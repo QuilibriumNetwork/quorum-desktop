@@ -17,6 +17,13 @@ import './AppShell.scss';
 const HOVER_ARM_DELAY_MS = 500;
 const KEYBOARD_RESIZE_STEP = 16;
 
+// Channels mode pins the sidebar at a fixed width regardless of the user's
+// persisted collapse/resize preference for the other modes. Channel names
+// need a predictable amount of horizontal space to stay readable, and the
+// sidebar isn't user-resizable here (drag handle is suppressed below).
+// Mirrors $sidebar-width in _variables.scss.
+const CHANNELS_SIDEBAR_WIDTH = 300;
+
 const FOCUSABLE_SELECTOR = [
   'a[href]',
   'button:not([disabled])',
@@ -248,9 +255,15 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search]);
 
+  // Channels sidebar is a fixed width — overrides whatever the user dragged or
+  // collapsed the Spaces/DM sidebar to before opening a channel. The persisted
+  // width is left untouched so leaving the channel restores the user's value.
+  const effectiveSidebarWidth =
+    sidebarMode === 'channels' ? CHANNELS_SIDEBAR_WIDTH : sidebarWidth;
+
   const shellStyle = React.useMemo(
-    () => ({ ['--shell-sidebar-width' as string]: `${sidebarWidth}px` }),
-    [sidebarWidth]
+    () => ({ ['--shell-sidebar-width' as string]: `${effectiveSidebarWidth}px` }),
+    [effectiveSidebarWidth]
   );
   const shellClass = `app-shell${isDragging ? ' app-shell--dragging' : ''}`;
 
