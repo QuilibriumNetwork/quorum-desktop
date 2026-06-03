@@ -379,7 +379,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
   return (
     <div className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
       <div className="sidebar-header">
-        <span className="sidebar-header__title">{t`Direct Messages`}</span>
+        <span className="sidebar-header__title">{t`Messages`}</span>
         <Button
           type="unstyled"
           iconName="search"

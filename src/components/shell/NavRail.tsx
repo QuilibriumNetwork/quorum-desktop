@@ -21,7 +21,7 @@ const buildItems = (): RailItemConfig[] => [
   {
     id: 'dm',
     icon: 'message',
-    label: t`Direct messages`,
+    label: t`Messages`,
     route: '/messages',
   },
   {
