@@ -2,11 +2,15 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import type { Space } from '@quilibrium/quorum-shared';
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Flex, Select, Tooltip } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { ListSearchInput } from '../ui';
 import ContextMenu, { type MenuItem } from '../ui/ContextMenu';
 import { SpacesSidebarRow } from './SpacesSidebarRow';
+import { SpacesSidebarFolder } from './SpacesSidebarFolder';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
 import {
@@ -14,6 +18,12 @@ import {
   useSpaceContextMenu,
   useSpaceFavorites,
 } from '../../hooks/business/spaces';
+import { useNavItems } from '../../hooks/business/folders/useNavItems';
+import { useFolderStates } from '../../hooks/business/folders/useFolderStates';
+import { useFolderDragAndDrop } from '../../hooks/business/folders/useFolderDragAndDrop';
+import { useConfig } from '../../hooks/queries/config';
+import { useModals } from '../context/ModalProvider';
+import { DragStateProvider, useOptionalDragStateContext } from '../../context/DragStateContext';
 import { useShellState } from './useShellState';
 import './SpacesSidebar.scss';
 
@@ -61,7 +71,18 @@ interface SpacesSidebarProps {
   forceExpanded?: boolean;
 }
 
-export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onAddSpace, onCreateSpace, forceExpanded }) => {
+export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = (props) => {
+  // DragStateProvider must wrap everything that reads dnd state (FolderContainer,
+  // SpacesSidebarRow, useFolderDragAndDrop). Mounted here so DM/Channels sidebars
+  // never see the provider.
+  return (
+    <DragStateProvider>
+      <SpacesSidebarInner {...props} />
+    </DragStateProvider>
+  );
+};
+
+const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAddSpace, onCreateSpace, forceExpanded }) => {
   const navigate = useNavigate();
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
   const { data: realSpaces = [] } = useSpaces({});
@@ -112,6 +133,40 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
   const { mutedSpacesSet } = useMutedSpacesSet();
   const { favoritesSet: favoriteSpacesSet } = useSpaceFavorites();
   const { openContextMenu: openRowContextMenu, contextMenu: rowContextMenu } = useSpaceContextMenu();
+
+  // Folder + DnD wiring. Config drives navItems (folders interleaved with
+  // standalone spaces). Folder-states keep expand/collapse in localStorage.
+  // useFolderDragAndDrop handles all 9 drag scenarios + optimistic config save.
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const userAddress = currentPasskeyInfo?.address;
+  const { data: config } = useConfig({ userAddress: userAddress || '' });
+  const { navItems } = useNavItems(spaces, config);
+  const { isExpanded, toggleFolder } = useFolderStates();
+  const { openFolderEditor } = useModals();
+  const dragState = useOptionalDragStateContext();
+  const activeDragItem = dragState?.activeItem ?? null;
+
+  const { handleDragStart, handleDragMove, handleDragEnd, sensors } = useFolderDragAndDrop({
+    config,
+    onFolderCreated: (folderId) => openFolderEditor(folderId),
+  });
+
+  // Sortable IDs flatten folders + standalone spaces in render order. SortableContext
+  // needs this list so it can match dragging IDs to their position in the layout.
+  const sortableIds = React.useMemo(() => {
+    const ids: string[] = [];
+    for (const nav of navItems) {
+      ids.push(nav.item.id);
+      if (nav.item.type === 'folder' && nav.spaces) {
+        for (const s of nav.spaces) ids.push(s.spaceId);
+      }
+    }
+    return ids;
+  }, [navItems]);
+
+  // Flat view kicks in for any filter / search state. Folders don't make sense
+  // when the list is filtered: showing partial folders would be confusing and
+  // showing all folders would defeat the filter.
 
   // Search + filter: closing search clears both. The filter chip only appears
   // when at least one bucket (muted / favorites) has rows to show.
@@ -165,6 +220,9 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
     }
     return list;
   }, [spaces, searchInput, filter, mutedSpacesSet, favoriteSpacesSet]);
+
+  // Folders are hidden when any filter or search query is active.
+  const isFlatView = filter !== 'all' || searchInput.trim().length > 0;
 
   // "+" button context menu: anchored to the button's bounding rect so it
   // appears below the trigger regardless of how it was activated (click,
@@ -344,32 +402,118 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
         </div>
       )}
 
-      <div className="spaces-sidebar__list">
-        {filteredSpaces.map((space) => {
-          const unread = spaceUnreadCounts[space.spaceId] || 0;
-          const active = space.spaceId === currentSpaceId;
-          return (
-            <SpacesSidebarRow
-              key={space.spaceId}
-              space={space}
-              active={active}
-              unread={unread}
-              isMuted={mutedSpacesSet.has(space.spaceId)}
-              isFavorite={favoriteSpacesSet.has(space.spaceId)}
-              onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
-              onContextMenu={(e) => {
-                void openRowContextMenu({
-                  spaceId: space.spaceId,
-                  spaceName: space.spaceName,
-                  iconUrl: space.iconUrl,
-                  event: e,
-                  hasNotifications: unread > 0,
-                });
-              }}
-            />
-          );
-        })}
-      </div>
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
+        onDragMove={handleDragMove}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+          <div className="spaces-sidebar__list">
+            {isFlatView ? (
+              // Filter / search active: render a flat list, folders collapsed away.
+              filteredSpaces.map((space) => {
+                const unread = spaceUnreadCounts[space.spaceId] || 0;
+                const active = space.spaceId === currentSpaceId;
+                return (
+                  <SpacesSidebarRow
+                    key={space.spaceId}
+                    space={space}
+                    active={active}
+                    unread={unread}
+                    isMuted={mutedSpacesSet.has(space.spaceId)}
+                    isFavorite={favoriteSpacesSet.has(space.spaceId)}
+                    onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
+                    onContextMenu={(e) => {
+                      void openRowContextMenu({
+                        spaceId: space.spaceId,
+                        spaceName: space.spaceName,
+                        iconUrl: space.iconUrl,
+                        event: e,
+                        hasNotifications: unread > 0,
+                      });
+                    }}
+                  />
+                );
+              })
+            ) : (
+              navItems.map((nav) => {
+                if (nav.item.type === 'folder') {
+                  return (
+                    <SpacesSidebarFolder
+                      key={nav.item.id}
+                      folder={nav.item}
+                      spaces={nav.spaces ?? []}
+                      isExpanded={isExpanded(nav.item.id)}
+                      currentSpaceId={currentSpaceId}
+                      spaceUnreadCounts={spaceUnreadCounts}
+                      mutedSpacesSet={mutedSpacesSet}
+                      favoriteSpacesSet={favoriteSpacesSet}
+                      onToggleExpand={() => toggleFolder(nav.item.id)}
+                      onEdit={() => openFolderEditor(nav.item.id)}
+                      onSpaceClick={handleRowClick}
+                      onSpaceContextMenu={(spaceId, spaceName, iconUrl, e, hasNotifications) => {
+                        void openRowContextMenu({
+                          spaceId,
+                          spaceName,
+                          iconUrl,
+                          event: e,
+                          hasNotifications,
+                        });
+                      }}
+                    />
+                  );
+                }
+                const space = spaces.find((s) => s.spaceId === nav.item.id);
+                if (!space) return null;
+                const unread = spaceUnreadCounts[space.spaceId] || 0;
+                const active = space.spaceId === currentSpaceId;
+                return (
+                  <SpacesSidebarRow
+                    key={space.spaceId}
+                    space={space}
+                    active={active}
+                    unread={unread}
+                    isMuted={mutedSpacesSet.has(space.spaceId)}
+                    isFavorite={favoriteSpacesSet.has(space.spaceId)}
+                    onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
+                    onContextMenu={(e) => {
+                      void openRowContextMenu({
+                        spaceId: space.spaceId,
+                        spaceName: space.spaceName,
+                        iconUrl: space.iconUrl,
+                        event: e,
+                        hasNotifications: unread > 0,
+                      });
+                    }}
+                  />
+                );
+              })
+            )}
+          </div>
+        </SortableContext>
+        <DragOverlay>
+          {activeDragItem ? (
+            (() => {
+              const space = spaces.find((s) => s.spaceId === activeDragItem.id);
+              if (!space) return null;
+              return (
+                <div className="spaces-sidebar__drag-overlay">
+                  <SpacesSidebarRow
+                    space={space}
+                    active={false}
+                    unread={spaceUnreadCounts[space.spaceId] || 0}
+                    isMuted={mutedSpacesSet.has(space.spaceId)}
+                    isFavorite={favoriteSpacesSet.has(space.spaceId)}
+                    onClick={() => {}}
+                  />
+                </div>
+              );
+            })()
+          ) : null}
+        </DragOverlay>
+      </DndContext>
       {rowContextMenu}
     </div>
   );
