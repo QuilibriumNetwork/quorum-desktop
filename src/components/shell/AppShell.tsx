@@ -14,7 +14,7 @@ import { NavRail } from './NavRail';
 import { Sidebar } from './Sidebar';
 import './AppShell.scss';
 
-const HOVER_ARM_DELAY_MS = 1000;
+const HOVER_ARM_DELAY_MS = 500;
 const KEYBOARD_RESIZE_STEP = 16;
 
 const FOCUSABLE_SELECTOR = [
@@ -88,7 +88,11 @@ const useHoverArm = (ref: React.RefObject<HTMLElement | null>, suppress: boolean
     if (!node) return;
     if (suppress) {
       node.setAttribute('data-hover-armed', 'true');
-      return;
+      // Clear on cleanup so the ribbon disappears when suppress flips off,
+      // even if the cursor never leaves the handle (e.g. drag-end at max width).
+      return () => {
+        node.removeAttribute('data-hover-armed');
+      };
     }
     let timer: number | undefined;
     const arm = () => {
