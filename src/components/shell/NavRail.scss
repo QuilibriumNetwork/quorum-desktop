@@ -67,6 +67,27 @@
     justify-content: flex-start;
     padding: 0 $s-4-5;
   }
+
+  /* Collapse toggle at the bottom of the rail — visually muted so it sits
+     quietly under the primary section nav. Icon + label both pick up the
+     subtle text color; hover still uses the shared rail-hover background
+     from the base rule. */
+  &--collapse-toggle {
+    color: var(--color-text-muted);
+
+    .nav-rail__item-label {
+      color: var(--color-text-muted);
+      font-weight: $font-medium;
+    }
+
+    &:hover {
+      color: var(--color-text-main);
+
+      .nav-rail__item-label {
+        color: var(--color-text-main);
+      }
+    }
+  }
 }
 
 .nav-rail__item-label {

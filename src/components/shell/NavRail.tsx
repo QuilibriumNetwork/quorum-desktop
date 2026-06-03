@@ -146,7 +146,8 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
 
       <div className="nav-rail__spacer" />
 
-      {/* Collapse toggle — only when the rail width is user-controllable (desktop) */}
+      {/* Collapse toggle — only when the rail width is user-controllable (desktop).
+          `--collapse-toggle` keeps it visually muted vs the primary nav above. */}
       {onToggleCollapse && (collapsed ? (
         <Tooltip
           id="nav-rail-collapse-toggle"
@@ -156,7 +157,7 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
         >
           <button
             type="button"
-            className="nav-rail__item nav-rail__item--collapsed"
+            className="nav-rail__item nav-rail__item--collapsed nav-rail__item--collapse-toggle"
             onClick={onToggleCollapse}
             aria-label={t`Expand sidebar`}
           >
@@ -166,7 +167,7 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
       ) : (
         <button
           type="button"
-          className="nav-rail__item nav-rail__item--expanded"
+          className="nav-rail__item nav-rail__item--expanded nav-rail__item--collapse-toggle"
           onClick={onToggleCollapse}
           aria-label={t`Collapse sidebar`}
         >
