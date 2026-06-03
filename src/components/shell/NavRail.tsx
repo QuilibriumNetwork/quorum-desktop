@@ -6,9 +6,10 @@ import type { IconName } from '@quilibrium/quorum-shared';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
+import { useDirectMessageUnreadCount } from '../../hooks/business/messages';
 import './NavRail.scss';
 
-type RailSectionId = 'dm' | 'spaces' | 'public';
+type RailSectionId = 'dm' | 'spaces' | 'discover';
 
 interface RailItemConfig {
   id: RailSectionId;
@@ -31,10 +32,10 @@ const buildItems = (): RailItemConfig[] => [
     route: '/spaces',
   },
   {
-    id: 'public',
+    id: 'discover',
     icon: 'compass',
-    label: t`Public spaces`,
-    route: '/spaces?tab=discover',
+    label: t`Discover`,
+    route: '/discover/spaces',
   },
   // TODO: 'farcaster' (icon: 'world') and 'wallet' (icon: 'wallet') — features not ready
   // TODO: FAVORITES section — depends on favorites feature
@@ -55,23 +56,21 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   // an empty deps array).
   const items = buildItems();
   const user = usePasskeysContext();
+  const dmUnreadCount = useDirectMessageUnreadCount();
   const { openUserSettings } = useModalContext();
 
   const displayName = user?.currentPasskeyInfo?.displayName || 'User';
   const userIcon = user?.currentPasskeyInfo?.pfpUrl;
   const userAddress = user?.currentPasskeyInfo?.address || '';
 
-  // Compute active section from pathname + search params.
-  // /spaces?tab=discover → "public"; /spaces or /spaces?tab=my-spaces or /spaces/:id/:id → "spaces"
+  // Compute active section from pathname.
+  // /discover/* → "discover"; /spaces or /spaces/:id/:id → "spaces"; /messages → "dm".
   const activeId: RailSectionId | null = React.useMemo(() => {
-    const search = new URLSearchParams(location.search);
-    const tab = search.get('tab');
     if (location.pathname.startsWith('/messages')) return 'dm';
-    if (location.pathname.startsWith('/spaces')) {
-      return tab === 'discover' ? 'public' : 'spaces';
-    }
+    if (location.pathname.startsWith('/discover')) return 'discover';
+    if (location.pathname.startsWith('/spaces')) return 'spaces';
     return null;
-  }, [location.pathname, location.search]);
+  }, [location.pathname]);
 
   const onItemClick = (item: RailItemConfig) => {
     if (item.id === 'dm') {
@@ -106,6 +105,7 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
       <div className="nav-rail__items">
         {items.map((item) => {
           const active = activeId === item.id;
+          const hasUnread = item.id === 'dm' && dmUnreadCount > 0;
           const buttonContent = (
             <button
               key={item.id}
@@ -115,7 +115,12 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
               aria-label={item.label}
               aria-current={active ? 'page' : undefined}
             >
-              <Icon name={item.icon} size="xl" />
+              <span className="relative flex-shrink-0">
+                <Icon name={item.icon} size="xl" />
+                {hasUnread && (
+                  <span className="icon-unread-dot" title={t`Unread direct messages`} />
+                )}
+              </span>
               {!collapsed && (
                 <span className="nav-rail__item-label">{item.label}</span>
               )}

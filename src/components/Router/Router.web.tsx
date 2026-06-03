@@ -9,7 +9,7 @@ import DirectMessages from '@/components/direct/DirectMessages';
 import Connecting from '@/components/Connecting';
 import InviteRoute from '@/components/InviteRoute';
 import NotFound from '@/components/NotFound';
-import { SpacesPage } from '@/components/spaces-page';
+import { DiscoverPage } from '@/components/discover-page';
 
 class RouteErrorBoundary extends React.Component<
   { fallback: React.ReactNode; children: React.ReactNode },
@@ -145,7 +145,25 @@ export function Router({ user, setUser }: RouterProps) {
               <SidebarProvider>
                 <Layout>
                   <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
-                    <SpacesPage />
+                    <DiscoverPage mode="spaces-empty" />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      {/* Discover: redirect bare /discover to its default sub-page. */}
+      <Route path="/discover" element={<Navigate to="/discover/spaces" replace />} />
+      <Route
+        path="/discover/:section"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <DiscoverPage />
                   </RouteErrorBoundary>
                 </Layout>
               </SidebarProvider>

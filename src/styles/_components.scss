@@ -91,12 +91,63 @@ div[role='presentation'] {
 /* This provides a consistent visual indicator across all conversation types */
 .unread-dot {
   position: absolute;
-  width: $s-1; 
+  width: $s-1;
   height: $s-1;
   border-radius: $rounded-full;
   background: var(--accent);
   z-index: 10;
   transition: all $duration-100 linear;
+}
+
+/* === Sidebar avatar indicators (shared) ===
+   These two classes are the canonical visuals used across all avatar rows in
+   sidebars (Spaces, DM contacts, NavRail). Apply to a child of any
+   position:relative avatar wrapper.
+
+   - .icon-unread-dot: 6px accent dot just to the left of the avatar, vertically
+     centered. In compact (rail / strip) layouts it's partially clipped by the
+     sidebar edge — that "peek" is intentional.
+   - .icon-mention-bubble: top-right corner numeric badge ("@" or replies).
+
+   SpaceIcon's older .space-icon-toggle--unread / .space-icon-mention-bubble
+   selectors are aliases that @extend these. */
+.icon-unread-dot {
+  position: absolute;
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-full;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.icon-mention-bubble {
+  position: absolute;
+  top: -$s-0-5;
+  right: -$s-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+  z-index: 1001;
+  pointer-events: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.dark .icon-mention-bubble {
+  background-color: var(--accent-600);
 }
 
 /* Channel-specific positioning */
@@ -346,7 +397,10 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
 }
 
 /* Shared row chrome: hover bg + accent left bar. Shared by space rows
-   and folder headers. */
+   and folder headers. Focus reuses the hover background (no outline ring,
+   no accent left bar) — the left bar is reserved for hover and active so
+   it stays a clear "this row is interactive right now" signal. The nav
+   rail uses its own focus styling because it has no hover-bg fallback. */
 .sidebar-row-chrome {
   position: relative;
 
@@ -371,6 +425,11 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
       opacity: 1;
     }
   }
+
+  &:focus-visible {
+    outline: none;
+    background: var(--color-bg-sidebar-hover);
+  }
 }
 
 .sidebar-row-chrome--merge-target {
@@ -380,3 +439,4 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
     opacity: 1 !important;
   }
 }
+

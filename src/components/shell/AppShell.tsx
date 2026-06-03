@@ -288,7 +288,7 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
 
       {/* Phone-only: off-canvas drawer that hosts the rail + sidebar.
           The drawer trigger lives inside each view's chat header on phone
-          (see DirectMessage, Channel, EmptyDirectMessage, SpacesPage). */}
+          (see DirectMessage, Channel, EmptyDirectMessage, DiscoverPage). */}
       {isPhone && drawerOpen && (
         <>
           <div

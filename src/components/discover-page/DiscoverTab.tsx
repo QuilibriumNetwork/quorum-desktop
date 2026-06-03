@@ -63,18 +63,19 @@ export const DiscoverTab: React.FC = () => {
   return (
     <div className="discover-tab">
       <div className="discover-tab__header">
-        <Input
-          className="discover-tab__search"
-          value={search}
-          onChange={setSearch}
-          placeholder={t`Search public spaces...`}
-          variant="bordered"
-        />
+        <div className="discover-tab__search">
+          <Input
+            value={search}
+            onChange={setSearch}
+            placeholder={t`Search public spaces...`}
+            variant="bordered"
+          />
+        </div>
         <Select
+          className="discover-tab__category"
           value={category ?? 'all'}
           onChange={handleCategoryChange}
           options={categoryOptions}
-          size="medium"
           variant="bordered"
         />
       </div>
@@ -90,20 +91,23 @@ export const DiscoverTab: React.FC = () => {
         </Callout>
       )}
 
-      <div className="discover-tab__grid">
-        {isLoading && entries.length === 0 ? (
-          <div className="discover-tab__loading">
-            <Icon name="spinner" className="icon-spin" />
-            <span>{t`Loading public spaces...`}</span>
-          </div>
-        ) : entries.length === 0 && !error ? (
-          <div className="discover-tab__empty">
+      {isLoading && entries.length === 0 ? (
+        <div className="discover-tab__loading">
+          <Icon name="spinner" className="icon-spin" />
+          <span>{t`Loading public spaces...`}</span>
+        </div>
+      ) : entries.length === 0 && !error ? (
+        <div className="discover-tab__empty">
+          <Icon name="users-group" size="3xl" />
+          <p>
             {search.trim() || category
-              ? t`No public spaces match the current filters.`
-              : t`No public spaces available yet.`}
-          </div>
-        ) : (
-          entries.map((entry) => (
+              ? t`No public spaces match your filters.`
+              : t`No public spaces yet.`}
+          </p>
+        </div>
+      ) : (
+        <div className="discover-tab__grid">
+          {entries.map((entry) => (
             <SpaceCard
               key={entry.space_address}
               variant="public"
@@ -117,9 +121,9 @@ export const DiscoverTab: React.FC = () => {
               alreadyJoined={joinedIds.has(entry.space_address)}
               onJoin={() => handleJoin(entry.invite_link, entry.space_address)}
             />
-          ))
-        )}
-      </div>
+          ))}
+        </div>
+      )}
 
       {hasMore && !isLoading && entries.length > 0 && (
         <div className="discover-tab__load-more">
