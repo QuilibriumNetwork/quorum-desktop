@@ -31,15 +31,15 @@ msgid "No Role - {count}"
 msgstr "Geen rol - {count}"
 
 #. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1627
+msgid "Send a message to #{channel_name}"
+msgstr "Stuur een bericht naar #{channel_name}"
+
+#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr ""
 "Welkom bij Quorum, {name}! Je account is beveiligd en klaar om te gaan."
-
-#. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1633
-msgid "Send a message to #{channel_name}"
-msgstr "Stuur een bericht naar #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -64,7 +64,7 @@ msgid "Replying to {user}"
 msgstr "Beantwoorden aan {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:715
+#: src/components/message/MessageComposer.tsx:718
 msgid "Replying to"
 msgstr "Beantwoorden aan"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "is eruit gegooid"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:994
+#: src/components/direct/DirectMessage.tsx:999
 msgid "Send a message to {user}"
 msgstr "Stuur een bericht naar {user}"
 
@@ -221,7 +221,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:393
+#: src/components/direct/DirectMessageContactsList.tsx:463
 msgid "+ Add a friend"
 msgstr "Voeg een vriend toe"
 
@@ -287,7 +287,8 @@ msgstr "Accountinstellingen"
 msgid "actions queued"
 msgstr "Acties in de wachtrij"
 
-#: src/components/direct/DirectMessageContactsList.tsx:325
+#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:405
 msgid "Add a friend"
 msgstr "Voeg een vriend toe"
 
@@ -305,10 +306,11 @@ msgstr "Voeg een persoonlijke notitie toe..."
 msgid "Add a profile photo"
 msgstr "Voeg een profielfoto toe"
 
-#: src/components/modals/AddSpaceModal.tsx:121
-#: src/components/navbar/ExpandableNavMenu.tsx:30
-msgid "Add a Space"
-msgstr "Voeg een Space toe"
+#: src/components/space/SpacesSidebar.tsx:489
+#: src/components/space/SpacesSidebar.tsx:494
+#: src/components/space/SpacesSidebar.tsx:505
+msgid "Add a space"
+msgstr "Voeg een ruimte toe"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:574
 msgid "Add channel"
@@ -322,13 +324,13 @@ msgstr "Kanaal toevoegen"
 msgid "Add channel to group"
 msgstr "Kanaal aan groep toevoegen"
 
-#: src/components/direct/DirectMessages.tsx:65
+#: src/components/direct/DirectMessages.tsx:24
 msgid "Add friend"
 msgstr "Vriend toevoegen"
 
 #: src/components/modals/GroupEditorModal.tsx:58
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:346
-#: src/components/space/ChannelList.tsx:184
+#: src/components/space/ChannelList.tsx:219
 msgid "Add Group"
 msgstr "Groep toevoegen"
 
@@ -336,7 +338,7 @@ msgstr "Groep toevoegen"
 msgid "Add Role"
 msgstr "Rol toevoegen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:232
+#: src/components/direct/DirectMessageContactsList.tsx:245
 msgid "Add to Favorites"
 msgstr "Toevoegen aan Favorieten"
 
@@ -382,7 +384,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Geavanceerde instellingen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:290
+#: src/components/direct/DirectMessageContactsList.tsx:303
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
@@ -393,6 +395,10 @@ msgstr "Alles"
 #: src/components/bookmarks/BookmarksPanel.tsx:56
 msgid "All Bookmarks"
 msgstr "Alle bladwijzers"
+
+#: src/components/discover-page/DiscoverTab.tsx:40
+msgid "All categories"
+msgstr "Alle categorieën"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:63
 #: src/components/bookmarks/BookmarksPanel.tsx:71
@@ -423,7 +429,11 @@ msgstr "Threads toestaan in deze channel"
 msgid "Almost done..."
 msgstr "Bijna klaar..."
 
-#: src/components/modals/AddSpaceModal.tsx:258
+#: src/components/discover-page/SpaceCard.tsx:110
+msgid "Already joined"
+msgstr "Al lid"
+
+#: src/components/modals/AddSpaceModal.tsx:257
 msgid "Already Joined"
 msgstr "Al lid"
 
@@ -555,7 +565,7 @@ msgstr "Weet je zeker dat je dit bericht wilt vastpinnen?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Weet je zeker dat je dit bericht wilt losmaken?"
 
-#: src/components/message/MessageComposer.tsx:793
+#: src/components/message/MessageComposer.tsx:796
 msgid "attach image"
 msgstr "afbeelding bijvoegen"
 
@@ -567,9 +577,14 @@ msgstr "Automatisch sluiten na"
 msgid "Away"
 msgstr "Afwezig"
 
-#: src/components/modals/AddSpaceModal.tsx:216
+#: src/components/modals/AddSpaceModal.tsx:215
 msgid "Back to invite link"
 msgstr "Terug naar uitnodigingslink"
+
+#: src/components/space/ChannelList.tsx:170
+#: src/components/space/ChannelList.tsx:174
+msgid "Back to spaces list"
+msgstr "Terug naar de lijst met ruimtes"
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
@@ -630,10 +645,15 @@ msgstr "Afbeelding als bladwijzer opgeslagen"
 msgid "Bookmarked sticker"
 msgstr "Sticker als bladwijzer opgeslagen"
 
-#: src/components/direct/DirectMessage.tsx:788
-#: src/components/space/Channel.tsx:1470
+#: src/components/direct/DirectMessage.tsx:782
+#: src/components/space/Channel.tsx:1464
 msgid "Bookmarks"
 msgstr "Bladwijzers"
+
+#: src/components/discover-page/DiscoverPage.tsx:78
+msgid "Browse public spaces and find a community to join."
+msgstr ""
+"Blader door openbare ruimtes en vind een gemeenschap om bij te joinen."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
@@ -694,7 +714,7 @@ msgstr "Kanaalicoon"
 msgid "Channel Managers"
 msgstr "Kanaalbeheerders"
 
-#: src/components/space/Channel.tsx:1896
+#: src/components/space/Channel.tsx:1890
 msgid "Channel members"
 msgstr "Kanaalleden"
 
@@ -715,7 +735,7 @@ msgstr "Kanaalnaam is verplicht"
 msgid "Channel name must be {0} characters or less"
 msgstr "Kanaalnaam moet {0} tekens of minder zijn"
 
-#: src/components/space/ChannelItem.tsx:187
+#: src/components/space/ChannelItem.tsx:178
 msgid "Channel Settings"
 msgstr "Kanaalinstellingen"
 
@@ -787,24 +807,32 @@ msgstr "Klik om te kopiëren"
 msgid "Close thread"
 msgstr "Draad sluiten"
 
+#: src/components/shell/NavRail.tsx:175
+msgid "Collapse"
+msgstr "Inklappen"
+
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:539
 msgid "Collapse group"
 msgstr "Groep inklappen"
+
+#: src/components/shell/NavRail.tsx:172
+msgid "Collapse sidebar"
+msgstr "Sidebar inklappen"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
 msgstr "Komt binnenkort"
 
-#: src/components/modals/AddSpaceModal.tsx:181
+#: src/components/modals/AddSpaceModal.tsx:180
 msgid "Config Key"
 msgstr "Configuratiesleutel"
 
-#: src/components/direct/DirectMessageContactsList.tsx:257
-#: src/components/navbar/NavMenu.tsx:164
+#: src/components/direct/DirectMessageContactsList.tsx:270
+#: src/components/space/SpacesSidebar.tsx:195
 msgid "Confirm Delete"
 msgstr "Bevestig verwijderen"
 
-#: src/components/navbar/NavMenu.tsx:283
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:215
 msgid "Confirm Leave"
 msgstr "Bevestig verlaten"
 
@@ -825,11 +853,11 @@ msgstr "Doorgaan"
 msgid "Continue without passkey"
 msgstr "Doorgaan zonder passkey"
 
-#: src/components/direct/DirectMessage.tsx:771
+#: src/components/direct/DirectMessage.tsx:765
 msgid "Conversation settings"
 msgstr "Gespreksinstellingen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:248
+#: src/components/direct/DirectMessageContactsList.tsx:261
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Gespreksinstellingen"
@@ -843,14 +871,12 @@ msgstr "Gespreksinstellingen"
 msgid "Copied!"
 msgstr "Gekopieerd!"
 
-#: src/components/direct/DirectMessage.tsx:753
-#: src/components/direct/DirectMessage.tsx:872
-#: src/components/direct/DirectMessage.tsx:890
+#: src/components/direct/DirectMessage.tsx:747
+#: src/components/direct/DirectMessage.tsx:866
+#: src/components/direct/DirectMessage.tsx:884
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:187
-#: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Kopieer adres"
 
@@ -916,7 +942,15 @@ msgstr ""
 "Je opgeslagen profiel kon niet worden geladen. Voer alsjeblieft opnieuw je "
 "naam en profielfoto in."
 
-#: src/components/modals/AddSpaceModal.tsx:293
+#: src/components/discover-page/DiscoverPage.tsx:93
+msgid "Create"
+msgstr "Creëren"
+
+#: src/components/discover-page/DiscoverPage.tsx:91
+#: src/components/space/SpacesSidebar.tsx:263
+msgid "Create a space"
+msgstr "Maak een ruimte aan"
+
 #: src/components/modals/CreateSpaceModal.tsx:83
 msgid "Create a Space"
 msgstr "Maak een Space"
@@ -1043,14 +1077,14 @@ msgstr "Kanaal verwijderen"
 msgid "Delete Channel"
 msgstr "Verwijder Kanaal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:256
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
 msgstr "Gesprek Verwijderen"
 
 #: src/components/modals/FolderEditorModal.tsx:129
-#: src/components/navbar/NavMenu.tsx:163
+#: src/components/space/SpacesSidebar.tsx:194
 msgid "Delete Folder"
 msgstr "Map Verwijderen"
 
@@ -1184,10 +1218,14 @@ msgstr "Apparaten"
 msgid "Direct Message"
 msgstr "Directe Berichten"
 
-#: src/components/direct/DirectMessageContactsList.tsx:313
-#: src/components/navbar/NavMenu.tsx:561 src/components/navbar/NavMenu.tsx:739
-msgid "Direct Messages"
-msgstr "Directe Berichten"
+#: src/components/shell/DiscoverSidebar.tsx:97
+#: src/components/shell/NavRail.tsx:37
+msgid "Discover"
+msgstr "Ontdek"
+
+#: src/components/discover-page/DiscoverPage.tsx:77
+msgid "Discover spaces"
+msgstr "Ontdek ruimtes"
 
 #: src/components/modals/UserSettingsModal/General.tsx:200
 msgid ""
@@ -1273,7 +1311,7 @@ msgid "Edit Channel"
 msgstr "Kanaal bewerken"
 
 #: src/components/modals/FolderEditorModal.tsx:68
-#: src/components/navbar/NavMenu.tsx:157
+#: src/components/space/SpacesSidebar.tsx:185
 msgid "Edit Folder"
 msgstr "Map Bewerken"
 
@@ -1298,7 +1336,7 @@ msgstr "Bewerkgeschiedenis"
 msgid "Edit message"
 msgstr "Bewerk bericht"
 
-#: src/components/message/MessageComposer.tsx:841
+#: src/components/message/MessageComposer.tsx:846
 msgid "emoji & stickers"
 msgstr "emoji & stickers"
 
@@ -1307,9 +1345,10 @@ msgid "Emoji picker"
 msgstr "Emoji-kiezer"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
+#: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
-#: src/components/space/Channel.tsx:1809
+#: src/components/space/Channel.tsx:1803
 #: src/components/thread/ThreadPanel.tsx:524
 msgid "Emojis"
 msgstr "Emojis"
@@ -1359,11 +1398,11 @@ msgstr ""
 msgid "Enter Address Manually"
 msgstr "Voer adres handmatig in"
 
-#: src/components/modals/AddSpaceModal.tsx:168
+#: src/components/modals/AddSpaceModal.tsx:167
 msgid "Enter both Space ID and Config Key to validate"
 msgstr "Voer zowel Space ID als Configuratiesleutel in om te valideren"
 
-#: src/components/modals/AddSpaceModal.tsx:160
+#: src/components/modals/AddSpaceModal.tsx:159
 msgid "Enter details manually"
 msgstr "Voer details handmatig in"
 
@@ -1416,6 +1455,14 @@ msgstr "Bestaande gesprekken"
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:539
 msgid "Expand group"
 msgstr "Groep uitklappen"
+
+#: src/components/shell/NavRail.tsx:154 src/components/shell/NavRail.tsx:162
+msgid "Expand sidebar"
+msgstr "Sidebar uitklappen"
+
+#: src/components/discover-page/DiscoverPage.tsx:79
+msgid "Explore"
+msgstr "Verkennen"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:547
 #: src/components/modals/UserSettingsModal/Privacy.tsx:650
@@ -1482,6 +1529,10 @@ msgstr "Gebruiker kon niet worden verwijderd"
 msgid "Failed to load bookmarks"
 msgstr "Kon bladwijzers niet laden"
 
+#: src/components/discover-page/DiscoverTab.tsx:87
+msgid "Failed to load public spaces."
+msgstr "Het laden van openbare ruimtes is mislukt."
+
 #: src/components/modals/MuteUserModal.tsx:55
 #: src/services/ActionQueueHandlers.ts:189
 msgid "Failed to mute user"
@@ -1532,7 +1583,7 @@ msgstr "Bericht kon niet worden losgemaakt"
 msgid "Failed to update profile"
 msgstr "Het is niet gelukt om het profiel bij te werken"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:305
 msgid "Favorites"
 msgstr "Favorieten"
 
@@ -1678,6 +1729,10 @@ msgstr "Ga naar gesprek"
 msgid "Go to Home"
 msgstr "Ga naar Start"
 
+#: src/components/discover-page/DiscoverPage.tsx:85
+msgid "Got an invite link? Hop straight in."
+msgstr "Heb je een uitnodigingslink? Spring er direct in."
+
 #: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "Groepicoon (optioneel)"
@@ -1719,7 +1774,7 @@ msgstr "Verbergen"
 msgid "Hide muted channels"
 msgstr "Verberg gemuteerde kanalen"
 
-#: src/components/navbar/NavMenu.tsx:234
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:167
 msgid "Hide Muted Channels"
 msgstr "Verberg gemuteerde kanalen"
 
@@ -1798,7 +1853,7 @@ msgstr "Ongeldig bericht-ID"
 msgid "invalid response"
 msgstr "ongeldige reactie"
 
-#: src/components/navbar/NavMenu.tsx:267
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:199
 msgid "Invite Members"
 msgstr "Nodig leden uit"
 
@@ -1819,11 +1874,22 @@ msgstr "is aan het typen"
 msgid "Italic"
 msgstr "Cursief"
 
+#: src/components/discover-page/DiscoverPage.tsx:86
+#: src/components/discover-page/SpaceCard.tsx:113
 #: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Deelnemen"
 
-#: src/components/modals/AddSpaceModal.tsx:258
+#: src/components/discover-page/DiscoverPage.tsx:84
+#: src/components/space/SpacesSidebar.tsx:254
+msgid "Join a space"
+msgstr "Join een ruimte"
+
+#: src/components/modals/AddSpaceModal.tsx:120
+msgid "Join a Space"
+msgstr "Join een Ruimte"
+
+#: src/components/modals/AddSpaceModal.tsx:257
 #: src/components/modals/JoinSpaceModal.tsx:71
 #: src/components/modals/JoinSpaceModal.tsx:90
 #: src/components/modals/JoinSpaceModal.tsx:166
@@ -1835,11 +1901,12 @@ msgstr "Space joinen"
 msgid "Joined"
 msgstr "Verbonden"
 
-#: src/components/modals/AddSpaceModal.tsx:130
+#: src/components/modals/AddSpaceModal.tsx:129
 #: src/components/modals/JoinSpaceModal.tsx:100
 msgid "Joining Space..."
 msgstr "Deelnemen aan Space..."
 
+#: src/components/discover-page/SpaceCard.tsx:112
 #: src/components/modals/JoinSpaceModal.tsx:69
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
@@ -1910,7 +1977,7 @@ msgstr "Verlaat {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
 #: src/components/modals/SpaceSettingsModal/Account.tsx:317
-#: src/components/navbar/NavMenu.tsx:281
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Space verlaten"
 
@@ -1926,6 +1993,10 @@ msgstr "Alleen letters A–Z en cijfers 0–9. Automatisch hoofdletters."
 #: src/components/ui/ThemeRadioGroup.tsx:19
 msgid "Light"
 msgstr "Licht"
+
+#: src/components/discover-page/DiscoverTab.tsx:132
+msgid "Load more"
+msgstr "Laad meer"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:173
 msgid "Loading bookmarks..."
@@ -1943,6 +2014,10 @@ msgstr "Meldingen laden..."
 msgid "Loading pinned messages..."
 msgstr "Vastgezette berichten laden..."
 
+#: src/components/discover-page/DiscoverTab.tsx:98
+msgid "Loading public spaces..."
+msgstr "Openbare ruimtes laden..."
+
 #: src/components/thread/ThreadPanel.tsx:393
 msgid "Loading thread..."
 msgstr "Draad laden..."
@@ -1951,6 +2026,7 @@ msgstr "Draad laden..."
 msgid "Loading your profile..."
 msgstr "Je profiel wordt geladen..."
 
+#: src/components/discover-page/DiscoverPage.tsx:126
 #: src/components/modals/UserSettingsModal/Privacy.tsx:597
 msgid "Loading..."
 msgstr "Laden..."
@@ -1959,13 +2035,9 @@ msgstr "Laden..."
 msgid "Looking up user..."
 msgstr "Zoekt gebruiker..."
 
-#: src/components/modals/AddSpaceModal.tsx:206
+#: src/components/modals/AddSpaceModal.tsx:205
 msgid "Lookup"
 msgstr "Zoeken"
-
-#: src/components/navbar/NavMenu.tsx:480
-msgid "Main navigation"
-msgstr "Hoofdnavigatie"
 
 #: src/components/Maintenance.tsx:17
 msgid "Maintenance in Progress"
@@ -2001,7 +2073,7 @@ msgstr ""
 "Beheer uitnodigingslinks en stuur uitnodigingen naar mensen met wie je "
 "eerder gesprekken hebt gehad."
 
-#: src/components/navbar/NavMenu.tsx:273
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:205
 msgid "Manage Roles"
 msgstr "Beheer rollen"
 
@@ -2013,7 +2085,7 @@ msgstr "Beheer je instellingen voor <0>{spaceName}</0>."
 msgid "Mark all as read"
 msgstr "Markeer alles als gelezen"
 
-#: src/components/navbar/NavMenu.tsx:250 src/components/navbar/NavMenu.tsx:335
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:182
 msgid "Mark All as Read"
 msgstr "Markeer alles als gelezen"
 
@@ -2025,7 +2097,7 @@ msgstr "lid"
 msgid "members"
 msgstr "leden"
 
-#: src/components/space/Channel.tsx:1496
+#: src/components/space/Channel.tsx:1490
 msgid "Members List"
 msgstr "Ledenlijst"
 
@@ -2056,21 +2128,30 @@ msgstr ""
 "Bericht heeft geen geldige handtekening, dit is mogelijk niet van de "
 "afzender"
 
-#: src/components/message/MessageComposer.tsx:170
+#: src/components/message/MessageComposer.tsx:173
 msgid "Message..."
 msgstr "Bericht..."
 
-#: src/components/message/MessageComposer.tsx:858
+#: src/components/direct/DirectMessageContactsList.tsx:382
+#: src/components/shell/NavRail.tsx:25
+msgid "Messages"
+msgstr "Berichten"
+
+#: src/components/message/MessageComposer.tsx:866
 msgid "Messages are NOT signed!"
 msgstr "Berichten zijn NIET ondertekend!"
 
-#: src/components/message/MessageComposer.tsx:859
+#: src/components/message/MessageComposer.tsx:867
 msgid "Messages are signed!"
 msgstr "Berichten zijn ondertekend!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:556
 msgid "Mobile Import"
 msgstr "Mobiele import"
+
+#: src/components/discover-page/SpaceCard.tsx:166
+msgid "More"
+msgstr "Meer"
 
 #: src/components/message/MessageActions.tsx:87
 msgid "More actions"
@@ -2092,7 +2173,7 @@ msgstr "Muten"
 msgid "Mute all notifications from this space"
 msgstr "Alle meldingen van deze Space dempen"
 
-#: src/components/space/ChannelItem.tsx:196
+#: src/components/space/ChannelItem.tsx:187
 msgid "Mute Channel"
 msgstr "Kanaal dempen"
 
@@ -2100,7 +2181,7 @@ msgstr "Kanaal dempen"
 msgid "Mute conversation"
 msgstr "Gesprek dempen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:240
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Mute Conversation"
 msgstr "Conversatie dempen"
 
@@ -2116,7 +2197,7 @@ msgstr "Dempen voor {days} dagen"
 msgid "Mute Forever"
 msgstr "Voor altijd dempen"
 
-#: src/components/navbar/NavMenu.tsx:240
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:173
 msgid "Mute Space"
 msgstr "Space dempen"
 
@@ -2132,16 +2213,17 @@ msgstr "Gebruiker muten"
 msgid "Mute Users"
 msgstr "Gebruikers muten"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Gedempt"
 
-#: src/components/navbar/NavMenu.tsx:228
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:161
 msgid "My Account"
 msgstr "Mijn account"
 
-#: src/components/direct/DirectMessageContactsList.tsx:359
-#: src/components/space/Channel.tsx:1679
+#: src/components/direct/DirectMessageContactsList.tsx:429
+#: src/components/space/Channel.tsx:1673
 msgid "Name or Address"
 msgstr "Naam of Adres"
 
@@ -2149,6 +2231,10 @@ msgstr "Naam of Adres"
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr ""
 "Namen die lijken op admin, moderator of ondersteuning zijn gereserveerd."
+
+#: src/components/shell/AppShell.tsx:351
+msgid "Navigation"
+msgstr "Navigatie"
 
 #: src/services/ActionQueueHandlers.ts:1042
 msgid "Network error"
@@ -2199,7 +2285,7 @@ msgstr "Nog geen bladwijzers"
 msgid "No channels - drag channels here or delete group."
 msgstr "Geen kanalen - sleep kanalen hierheen of verwijder groep."
 
-#: src/components/direct/DirectMessageContactsList.tsx:375
+#: src/components/direct/DirectMessageContactsList.tsx:445
 msgid "No contacts found"
 msgstr "Geen contacten gevonden"
 
@@ -2220,7 +2306,7 @@ msgstr ""
 "worden geïnitialiseerd of je moet eerst een openbare uitnodigingslink "
 "genereren."
 
-#: src/components/direct/DirectMessageContactsList.tsx:369
+#: src/components/direct/DirectMessageContactsList.tsx:439
 msgid "No favorites yet"
 msgstr "Nog geen favorieten"
 
@@ -2241,13 +2327,25 @@ msgstr "Geen berichten gevonden"
 msgid "No missing spaces found"
 msgstr "Geen ontbrekende Spaces gevonden"
 
-#: src/components/direct/DirectMessageContactsList.tsx:373
+#: src/components/direct/DirectMessageContactsList.tsx:443
 msgid "No muted conversations"
 msgstr "Geen gedempte gesprekken"
 
 #: src/components/message/PinnedMessagesPanel.tsx:188
 msgid "No pinned messages yet"
 msgstr "Nog geen vastgezette berichten"
+
+#: src/components/discover-page/DiscoverTab.tsx:105
+msgid "No public spaces match your filters."
+msgstr "Geen openbare ruimtes die voldoen aan je filters."
+
+#: src/components/discover-page/DiscoverTab.tsx:106
+msgid "No public spaces yet."
+msgstr "Nog geen openbare ruimtes."
+
+#: src/components/space/SpacesSidebar.tsx:534
+msgid "No spaces found"
+msgstr "Geen ruimtes gevonden"
 
 #: src/components/thread/ThreadsListPanel.tsx:131
 msgid "No threads match your search"
@@ -2257,7 +2355,7 @@ msgstr "Geen draden gevonden"
 msgid "No threads yet"
 msgstr "Nog geen draden"
 
-#: src/components/direct/DirectMessageContactsList.tsx:371
+#: src/components/direct/DirectMessageContactsList.tsx:441
 msgid "No unknown contacts"
 msgstr "Geen onbekende contacten"
 
@@ -2265,7 +2363,7 @@ msgstr "Geen onbekende contacten"
 msgid "No unread notifications"
 msgstr "Geen ongelezen meldingen"
 
-#: src/components/space/Channel.tsx:1687 src/components/space/Channel.tsx:1916
+#: src/components/space/Channel.tsx:1681 src/components/space/Channel.tsx:1910
 msgid "No users found!"
 msgstr "Geen gebruikers gevonden!"
 
@@ -2295,7 +2393,7 @@ msgstr "Meldingsrechten niet verleend"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:1435
+#: src/components/space/Channel.tsx:1429
 msgid "Notifications"
 msgstr "Meldingen"
 
@@ -2335,6 +2433,22 @@ msgstr "OK"
 msgid "Online"
 msgstr "Online"
 
+#. placeholder {0}: props.spaceName
+#: src/components/discover-page/SpaceCard.tsx:61
+msgid "Open {0}"
+msgstr "Open {0}"
+
+#: src/components/direct/DirectMessage.tsx:725
+#: src/components/direct/EmptyDirectMessage.tsx:27
+#: src/components/discover-page/DiscoverPage.tsx:29
+#: src/components/space/Channel.tsx:1320
+msgid "Open navigation"
+msgstr "Open navigatie"
+
+#: src/components/shell/NavRail.tsx:193 src/components/shell/NavRail.tsx:208
+msgid "Open user settings"
+msgstr "Open gebruikersinstellingen"
+
 #: src/components/ui/YouTubeFacade.tsx:164
 msgid "Open video on YouTube"
 msgstr "Open video op YouTube"
@@ -2342,10 +2456,6 @@ msgstr "Open video op YouTube"
 #: src/components/modals/CreateSpaceModal.tsx:32
 msgid "Operation timed out. Please try again."
 msgstr "De bewerking is verlopen. Probeer het opnieuw."
-
-#: src/components/modals/AddSpaceModal.tsx:282
-msgid "OR"
-msgstr "OF"
 
 #: src/components/modals/EditHistoryModal.tsx:90
 msgid "Original"
@@ -2381,7 +2491,7 @@ msgstr ""
 "account te beveiligen. Dit vereist twee snelle bevestigingen via je "
 "apparaat."
 
-#: src/components/modals/AddSpaceModal.tsx:146
+#: src/components/modals/AddSpaceModal.tsx:145
 msgid "Paste an invite link"
 msgstr "Plak een uitnodigingslink"
 
@@ -2392,6 +2502,10 @@ msgstr "In afwachting"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:500
 msgid "Pending removal - click Save to confirm"
 msgstr "In afwachting van verwijdering - klik op Opslaan om te bevestigen"
+
+#: src/components/shell/DiscoverSidebar.tsx:28
+msgid "People"
+msgstr "Mensen"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:141
 #: src/components/space/RolePreview.tsx:34
@@ -2450,7 +2564,7 @@ msgstr "Vastgezet"
 msgid "Pinned by {0}"
 msgstr "Vastgezet door {0}"
 
-#: src/components/space/Channel.tsx:1367
+#: src/components/space/Channel.tsx:1361
 msgid "Pinned Messages"
 msgstr "Vastgezette Berichten"
 
@@ -2458,9 +2572,13 @@ msgstr "Vastgezette Berichten"
 msgid "Preview"
 msgstr "Voorbeeld"
 
-#: src/components/modals/UserSettingsModal/General.tsx:228
+#: src/components/modals/UserSettingsModal/General.tsx:227
 msgid "Preview:"
 msgstr "Voorbeeld:"
+
+#: src/components/shell/NavRail.tsx:104
+msgid "Primary navigation"
+msgstr "Primaire navigatie"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
 #: src/components/modals/UserSettingsModal/Privacy.tsx:200
@@ -2471,7 +2589,7 @@ msgstr "Privacy/Beveiliging"
 msgid "Private key saved to selected folder"
 msgstr "Privésleutel opgeslagen in de geselecteerde map"
 
-#: src/components/message/MessageComposer.tsx:666
+#: src/components/message/MessageComposer.tsx:669
 msgid "Processing image... This may take a moment for large files."
 msgstr "Beeld aan het verwerken... Dit kan even duren voor grote bestanden."
 
@@ -2491,6 +2609,14 @@ msgstr ""
 "Openbare uitnodigingslinks stellen iedereen met toegang tot de link in staat"
 " om je Space te joinen. Overweeg met wie je de link deelt en waar je deze "
 "plaatst."
+
+#: src/components/discover-page/PeopleTab.tsx:35
+msgid "Public profiles aren't searchable yet."
+msgstr "Openbare profielen zijn nog niet doorzoekbaar."
+
+#: src/components/shell/DiscoverSidebar.tsx:22
+msgid "Public spaces"
+msgstr "Openbare ruimtes"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:614
 msgid "QR code will auto-hide in 60 seconds"
@@ -2547,7 +2673,7 @@ msgstr "Leesbevestigingen"
 msgid "Read-only"
 msgstr "Alleen-lezen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:386
+#: src/components/direct/DirectMessageContactsList.tsx:456
 msgid "Ready to start a truly private conversation?"
 msgstr "Klaar om een echt privégesprek te beginnen?"
 
@@ -2579,7 +2705,7 @@ msgstr "Verwijderen"
 msgid "Remove bookmark"
 msgstr "Verwijder bladwijzer"
 
-#: src/components/direct/DirectMessageContactsList.tsx:232
+#: src/components/direct/DirectMessageContactsList.tsx:245
 msgid "Remove from Favorites"
 msgstr "Verwijder uit Favorieten"
 
@@ -2624,7 +2750,7 @@ msgstr ""
 " ondertekend. Technisch gezien maakt dit de berichten in deze Space niet-"
 "ontkenbaar."
 
-#: src/components/modals/AddSpaceModal.tsx:265
+#: src/components/modals/AddSpaceModal.tsx:264
 msgid "Reset"
 msgstr "Reset"
 
@@ -2636,6 +2762,10 @@ msgstr "App-gegevens resetten"
 #: src/components/modals/ConversationSettingsModal.tsx:319
 msgid "Reset to global"
 msgstr "Resetten naar globaal"
+
+#: src/components/shell/AppShell.tsx:324
+msgid "Resize sidebar"
+msgstr "Zijbalk aanpassen"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:83
 msgid "Restore"
@@ -2664,6 +2794,7 @@ msgstr "{0} Space(s) hersteld"
 msgid "Restoring..."
 msgstr "Herstellen..."
 
+#: src/components/discover-page/DiscoverTab.tsx:89
 #: src/components/message/Message.tsx:1369
 msgid "Retry"
 msgstr "Opnieuw proberen"
@@ -2724,6 +2855,14 @@ msgstr "opgeslagen configuratie is verouderd"
 msgid "Saving..."
 msgstr "Opslaan..."
 
+#: src/components/discover-page/PeopleTab.tsx:26
+msgid "Search by name or address..."
+msgstr "Zoeken op naam of adres..."
+
+#: src/components/direct/DirectMessageContactsList.tsx:390
+msgid "Search direct messages"
+msgstr "Zoek directe berichten"
+
 #: src/components/emoji-picker/EmojiPicker.tsx:263
 msgid "Search emoji..."
 msgstr "Zoek emoji..."
@@ -2745,8 +2884,8 @@ msgstr "Zoeken in deze Space"
 msgid "Search in this Space..."
 msgstr "Zoeken in deze Space..."
 
-#: src/components/direct/DirectMessage.tsx:830
-#: src/components/space/Channel.tsx:1515
+#: src/components/direct/DirectMessage.tsx:824
+#: src/components/space/Channel.tsx:1509
 msgid "Search Messages"
 msgstr "Berichten Zoeken"
 
@@ -2754,9 +2893,17 @@ msgstr "Berichten Zoeken"
 msgid "Search messages..."
 msgstr "Berichten zoeken..."
 
+#: src/components/discover-page/DiscoverTab.tsx:70
+msgid "Search public spaces..."
+msgstr "Zoek openbare ruimtes..."
+
 #: src/components/search/SearchResults.tsx:120
 msgid "Search Results"
 msgstr "Zoekresultaten"
+
+#: src/components/space/SpacesSidebar.tsx:477
+msgid "Search spaces"
+msgstr "Zoek ruimtes"
 
 #: src/components/thread/ThreadsListPanel.tsx:101
 msgid "Search threads…"
@@ -2766,7 +2913,7 @@ msgstr "Zoek draden…"
 msgid "Search username or address"
 msgstr "Zoek gebruikersnaam of adres"
 
-#: src/components/space/Channel.tsx:1907
+#: src/components/space/Channel.tsx:1901
 msgid "Search Username or Address"
 msgstr "Zoek gebruikersnaam of adres"
 
@@ -2863,6 +3010,7 @@ msgid "Set as default channel"
 msgstr "Stel in als standaardkanaal"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
+#: src/components/shell/NavRail.tsx:218
 msgid "Settings"
 msgstr "Instellingen"
 
@@ -2893,7 +3041,11 @@ msgstr ""
 " op de achtergrond is. Je browser vraagt om toestemming wanneer je deze "
 "functie inschakelt."
 
-#: src/components/navbar/NavMenu.tsx:234
+#: src/components/discover-page/SpaceCard.tsx:178
+msgid "Show less"
+msgstr "Toon minder"
+
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:167
 msgid "Show Muted Channels"
 msgstr "Toon gemuteerde kanalen"
 
@@ -2904,6 +3056,11 @@ msgstr "Toon Online Status"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:571
 msgid "Show QR"
 msgstr "Toon QR"
+
+#. placeholder {0}: entries.length
+#: src/components/discover-page/DiscoverTab.tsx:139
+msgid "Showing {0} of {total} spaces"
+msgstr "Toon {0} van {total} ruimtes"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:217
@@ -2933,11 +3090,12 @@ msgstr "Space Banner"
 msgid "Space Description"
 msgstr "Space Beschrijving"
 
-#: src/components/modals/AddSpaceModal.tsx:175
+#: src/components/modals/AddSpaceModal.tsx:174
 msgid "Space ID"
 msgstr "Space ID"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
+#: src/components/space/SpacesSidebar.tsx:526
 msgid "Space name"
 msgstr "Space-naam"
 
@@ -2960,8 +3118,8 @@ msgid "Space name must be at least {0} characters"
 msgstr "De naam van de Space moet minstens {0} tekens zijn"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
-#: src/components/navbar/NavMenu.tsx:260
-#: src/components/space/ChannelList.tsx:158
+#: src/components/space/ChannelList.tsx:193
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:192
 msgid "Space Settings"
 msgstr "Space Instellingen"
 
@@ -2971,7 +3129,8 @@ msgstr "Space Instellingen"
 msgid "Space Tag"
 msgstr "Space Tag"
 
-#: src/components/navbar/NavMenu.tsx:571
+#: src/components/shell/NavRail.tsx:31
+#: src/components/space/SpacesSidebar.tsx:469
 msgid "Spaces"
 msgstr "Spaces"
 
@@ -2987,6 +3146,10 @@ msgstr "Start draad"
 msgid "Start typing to search messages..."
 msgstr "Begin met typen om berichten te zoeken..."
 
+#: src/components/discover-page/DiscoverPage.tsx:92
+msgid "Start your own private or public community."
+msgstr "Start je eigen privé- of openbare gemeenschap."
+
 #: src/components/thread/ThreadPanel.tsx:315
 msgid "Started by"
 msgstr "Gestart door"
@@ -2998,7 +3161,7 @@ msgstr "Status gaat hier"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
-#: src/components/space/Channel.tsx:1815
+#: src/components/space/Channel.tsx:1809
 #: src/components/thread/ThreadPanel.tsx:530
 msgid "Stickers"
 msgstr "Stickers"
@@ -3038,7 +3201,7 @@ msgid "Tell us about yourself..."
 msgstr "Vertel ons over jezelf..."
 
 #: src/components/message/InviteLink.tsx:34
-#: src/components/modals/AddSpaceModal.tsx:72
+#: src/components/modals/AddSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteProcessing.ts:44
 msgid "The invite link format is invalid."
 msgstr "Het formaat van de uitnodigingslink is ongeldig."
@@ -3229,7 +3392,7 @@ msgstr "Draadinstellingen"
 msgid "Thread title"
 msgstr "Draadtitel"
 
-#: src/components/space/Channel.tsx:1408
+#: src/components/space/Channel.tsx:1402
 #: src/components/thread/ThreadsListPanel.tsx:97
 msgid "Threads"
 msgstr "Draden"
@@ -3370,7 +3533,7 @@ msgstr ""
 msgid "Unable to restore: not logged in"
 msgstr "Kon niet herstellen: niet ingelogd"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:306
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2711 src/services/MessageService.ts:4254
 msgid "Unknown"
@@ -3387,12 +3550,12 @@ msgid "Unknown time"
 msgstr "Onbekende tijd"
 
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:209
-#: src/components/direct/DirectMessage.tsx:216
-#: src/components/direct/DirectMessage.tsx:223
-#: src/components/direct/DirectMessage.tsx:287
-#: src/components/direct/DirectMessage.tsx:637
-#: src/components/direct/DirectMessageContactsList.tsx:40
+#: src/components/direct/DirectMessage.tsx:212
+#: src/components/direct/DirectMessage.tsx:219
+#: src/components/direct/DirectMessage.tsx:226
+#: src/components/direct/DirectMessage.tsx:290
+#: src/components/direct/DirectMessage.tsx:640
+#: src/components/direct/DirectMessageContactsList.tsx:42
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3431,15 +3594,15 @@ msgstr "Onbekende gebruiker"
 msgid "Unmute"
 msgstr "Demuten"
 
-#: src/components/space/ChannelItem.tsx:196
+#: src/components/space/ChannelItem.tsx:187
 msgid "Unmute Channel"
 msgstr "Kanaal dempen opheffen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:240
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Unmute Conversation"
 msgstr "Gesprek dempen opheffen"
 
-#: src/components/navbar/NavMenu.tsx:240
+#: src/hooks/business/spaces/useSpaceContextMenu.tsx:173
 msgid "Unmute Space"
 msgstr "Space dempen opheffen"
 
@@ -3469,7 +3632,11 @@ msgstr "Bericht Losmaken"
 msgid "Unpin this post"
 msgstr "Dit bericht losmaken"
 
-#: src/components/direct/DirectMessage.tsx:949
+#: src/components/shell/NavRail.tsx:121
+msgid "Unread direct messages"
+msgstr "Ongelezen directe berichten"
+
+#: src/components/direct/DirectMessage.tsx:943
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3535,11 +3702,11 @@ msgstr "Gebruiker bestaat niet."
 msgid "User not authenticated"
 msgstr "Gebruiker niet geverifieerd"
 
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "User profile"
 msgstr "Gebruikerprofiel"
 
-#: src/components/direct/DirectMessage.tsx:812
+#: src/components/direct/DirectMessage.tsx:806
 msgid "User Profile"
 msgstr "Gebruikerprofiel"
 
@@ -3559,7 +3726,7 @@ msgstr "useWebSocket moet binnen een WebSocketProvider worden gebruikt"
 msgid "Valid code"
 msgstr "Geldige code"
 
-#: src/components/modals/AddSpaceModal.tsx:188
+#: src/components/modals/AddSpaceModal.tsx:187
 msgid "Validating invite..."
 msgstr "Uitnodiging valideren..."
 
@@ -3596,7 +3763,7 @@ msgstr "Wat is de accountsleutel?"
 msgid "What should we call you?"
 msgstr "Hoe moeten we je noemen?"
 
-#: src/components/direct/EmptyDirectMessage.tsx:69
+#: src/components/direct/EmptyDirectMessage.tsx:39
 msgid "What's on your mind today?"
 msgstr "Wat gaat er vandaag door je hoofd?"
 
@@ -3753,14 +3920,19 @@ msgstr "Gisteren om {timeFormatted}"
 msgid "You"
 msgstr "Jij"
 
-#: src/components/modals/AddSpaceModal.tsx:117
+#: src/components/modals/AddSpaceModal.tsx:116
 msgid "You are already a member of this Space."
 msgstr "Je bent al lid van deze Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1658
+#: src/components/space/Channel.tsx:1652
 msgid "You are muted for {0}"
 msgstr "Je bent gedempt voor {0}"
+
+#: src/components/discover-page/SpaceCard.tsx:86
+#: src/components/space/SpacesSidebarRow.tsx:26
+msgid "You are the owner of this Space"
+msgstr "Je bent de eigenaar van deze Ruimte"
 
 #: src/components/modals/NewDirectMessageModal.tsx:153
 msgid ""
@@ -3798,8 +3970,8 @@ msgstr ""
 msgid "You cannot delete the default channel."
 msgstr "Je kunt het standaardkanaal niet verwijderen."
 
-#: src/components/message/MessageComposer.tsx:645
-#: src/components/space/Channel.tsx:1661
+#: src/components/message/MessageComposer.tsx:648
+#: src/components/space/Channel.tsx:1655
 msgid "You cannot post in this channel"
 msgstr "Je kunt niet posten in dit kanaal"
 
@@ -3811,7 +3983,7 @@ msgstr "Je kunt geen direct bericht naar jezelf sturen."
 msgid "You have a new unread message"
 msgstr "Je hebt een nieuw ongelezen bericht"
 
-#: src/components/space/Channel.tsx:1659
+#: src/components/space/Channel.tsx:1653
 msgid "You have been muted in this Space"
 msgstr "Je bent gedempt in deze Space"
 
@@ -3865,17 +4037,15 @@ msgstr ""
 msgid "You're offline"
 msgstr "Je bent offline"
 
-#: src/components/modals/AddSpaceModal.tsx:137
-msgid ""
-"You're offline. Adding or creating a Space requires an internet connection."
-msgstr ""
-"Je bent offline. Het toevoegen of creëren van een Space vereist een "
-"internetverbinding."
-
 #: src/components/modals/CreateSpaceModal.tsx:88
 msgid "You're offline. Creating a Space requires an internet connection."
 msgstr ""
 "Je bent offline. Het creëren van een Space vereist een internetverbinding."
+
+#: src/components/modals/AddSpaceModal.tsx:136
+msgid "You're offline. Joining a Space requires an internet connection."
+msgstr ""
+"Je bent offline. Lid worden van een Ruimte vereist een internetverbinding."
 
 #: src/components/modals/NewDirectMessageModal.tsx:98
 msgid "You're offline. Looking up new users requires an internet connection."
@@ -4022,6 +4192,9 @@ msgstr "YouTube-video-thumbnail"
 #~ msgid "Account Settings for This Space"
 #~ msgstr "Accountinstellingen voor deze Space"
 
+#~ msgid "Add a Space"
+#~ msgstr "Voeg een Space toe"
+
 #~ msgid "add sticker"
 #~ msgstr "sticker toevoegen"
 
@@ -4122,6 +4295,9 @@ msgstr "YouTube-video-thumbnail"
 
 #~ msgid "Device name must be {MAX_NAME_LENGTH} characters or less"
 #~ msgstr "Apparaatnaam moet {MAX_NAME_LENGTH} tekens of minder zijn"
+
+#~ msgid "Direct Messages"
+#~ msgstr "Directe Berichten"
 
 #~ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 #~ msgstr "Weergavenaam moet {MAX_NAME_LENGTH} tekens of minder zijn"
@@ -4233,6 +4409,9 @@ msgstr "YouTube-video-thumbnail"
 #~ msgid "Let's gooooooooo"
 #~ msgstr "Laten we gaan!"
 
+#~ msgid "Main navigation"
+#~ msgstr "Hoofdnavigatie"
+
 #~ msgid ""
 #~ "Make your account uniquely yours – set a contact photo. This information is "
 #~ "only provided to the Spaces you join."
@@ -4275,6 +4454,9 @@ msgstr "YouTube-video-thumbnail"
 
 #~ msgid "optional"
 #~ msgstr "optioneel"
+
+#~ msgid "OR"
+#~ msgstr "OF"
 
 #~ msgid "Personalize your account"
 #~ msgstr "Personaliseer je account"
@@ -4520,6 +4702,12 @@ msgstr "YouTube-video-thumbnail"
 
 #~ msgid "You're all set. Welcome to Quorum!"
 #~ msgstr "Je bent helemaal klaar. Welkom bij Quorum!"
+
+#~ msgid ""
+#~ "You're offline. Adding or creating a Space requires an internet connection."
+#~ msgstr ""
+#~ "Je bent offline. Het toevoegen of creëren van een Space vereist een "
+#~ "internetverbinding."
 
 #~ msgid ""
 #~ "Your device doesn't support automatic file downloads. Your private key will "
