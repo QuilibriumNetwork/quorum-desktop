@@ -6,6 +6,7 @@ import type { IconName } from '@quilibrium/quorum-shared';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
+import { getAddressSuffix } from '../../utils';
 import { useDirectMessageUnreadCount } from '../../hooks/business/messages';
 import './NavRail.scss';
 
@@ -215,7 +216,9 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
           />
           <div className="nav-rail__user-meta">
             <div className="nav-rail__user-name">{displayName}</div>
-            <div className="nav-rail__user-hint">{t`Settings`}</div>
+            <div className="nav-rail__user-hint">
+              {userAddress ? getAddressSuffix(userAddress) : t`Settings`}
+            </div>
           </div>
         </button>
       )}

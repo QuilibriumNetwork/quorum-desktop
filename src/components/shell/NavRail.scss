@@ -29,9 +29,12 @@
   padding: 0;
   gap: $s-3;
 
-  /* Hover: full-bleed gray, no radius, no inset */
-  &:hover {
-    background: var(--color-bg-rail-hover);
+  /* Hover: no background change — the icon (and muted-toggle label) brightens
+     to --color-text-main via `color` cascading through `currentColor`. The
+     active item is skipped: its accent color is the dominant signal and
+     shouldn't be replaced on hover. */
+  &:hover:not(.nav-rail__item--active) {
+    color: var(--color-text-main);
   }
 
   &:focus-visible {
@@ -116,6 +119,7 @@
 }
 
 .nav-rail__user {
+  position: relative;
   display: flex;
   align-items: center;
   height: 52px;
@@ -129,8 +133,32 @@
   padding: 0;
   gap: $s-3;
 
-  &:hover {
+  /* Hover paints an inset rounded pill via ::before so the bg leaves
+     a small gutter on the left/right edges and reads as a contained
+     surface rather than a full-bleed bar. */
+  /* Pill inset: tighter gutter from the rail edge so the pill grows around
+     the content, leaving visible padding on all four sides of the
+     avatar + meta block. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 $s-1-5;
+    border-radius: $rounded-md;
     background: var(--color-bg-rail-hover);
+    opacity: 0;
+    transition: opacity $duration-150 $ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  /* Keep avatar + label above the pseudo background. */
+  > * {
+    position: relative;
+    z-index: 1;
   }
 
   &:focus-visible {
