@@ -471,7 +471,7 @@ const MyDraggableComponent = ({ onEdit }) => {
 
 ### Reference
 - See: `.agents/reports/dnd-kit-touch-best-practices_2025-12-11.md`
-- Implementation: `src/components/navbar/FolderContainer.tsx`
+- Implementation: [`src/components/space/SpacesSidebarFolder.tsx`](../../src/components/space/SpacesSidebarFolder.tsx) (fork of the deleted `navbar/FolderContainer.tsx`)
 
 ## Architecture Files
 

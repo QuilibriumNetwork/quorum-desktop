@@ -220,7 +220,7 @@ This ensures other members stop seeing the tag immediately on leave, rather than
 
 ### Startup Tag Refresh (`src/hooks/business/spaces/useSpaceTagStartupRefresh.ts`)
 
-Runs once per session inside `NavMenuContent` (behind the Suspense boundary where both `spaces` and `config` are loaded). Guarded by `hasRun = useRef(false)` — fires exactly once regardless of re-renders.
+Runs once per session inside [`StartupEffects`](../../src/components/StartupEffects.tsx) (behind the Suspense boundary where both `spaces` and `config` are loaded). Guarded by `hasRun = useRef(false)` — fires exactly once regardless of re-renders.
 
 **Logic**:
 1. Returns early if `config.spaceTagId` is not set
