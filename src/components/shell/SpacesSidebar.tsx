@@ -5,7 +5,7 @@ import type { Space } from '@quilibrium/quorum-shared';
 import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Flex, Select, Tooltip } from '../primitives';
+import { Button, Tooltip } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { ListSearchInput } from '../ui';
 import ContextMenu, { type MenuItem } from '../ui/ContextMenu';
@@ -16,11 +16,13 @@ import { useSpaceUnreadCounts } from '../../hooks/business/messages';
 import {
   useMutedSpacesSet,
   useSpaceContextMenu,
-  useSpaceFavorites,
 } from '../../hooks/business/spaces';
 import { useNavItems } from '../../hooks/business/folders/useNavItems';
 import { useFolderStates } from '../../hooks/business/folders/useFolderStates';
 import { useFolderDragAndDrop } from '../../hooks/business/folders/useFolderDragAndDrop';
+import { useDeleteFolder } from '../../hooks/business/folders';
+import type { NavItem } from '../../db/messages';
+import type { IconColor } from '../space/IconPicker/types';
 import { useConfig } from '../../hooks/queries/config';
 import { useModals } from '../context/ModalProvider';
 import { DragStateProvider, useOptionalDragStateContext } from '../../context/DragStateContext';
@@ -131,7 +133,6 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   const { sidebarCollapsed } = useShellState();
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
   const { mutedSpacesSet } = useMutedSpacesSet();
-  const { favoritesSet: favoriteSpacesSet } = useSpaceFavorites();
   const { openContextMenu: openRowContextMenu, contextMenu: rowContextMenu } = useSpaceContextMenu();
 
   // Folder + DnD wiring. Config drives navItems (folders interleaved with
@@ -151,6 +152,53 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     onFolderCreated: (folderId) => openFolderEditor(folderId),
   });
 
+  // Folder right-click context menu. Mirrors the original NavMenu behaviour:
+  // Edit Folder + Delete Folder. Position follows the click coordinates.
+  const { deleteFolder } = useDeleteFolder();
+  const [folderContextMenu, setFolderContextMenu] = React.useState<{
+    folder: (NavItem & { type: 'folder' }) | null;
+    position: { x: number; y: number };
+  }>({ folder: null, position: { x: 0, y: 0 } });
+  const closeFolderContextMenu = React.useCallback(() => {
+    setFolderContextMenu({ folder: null, position: { x: 0, y: 0 } });
+  }, []);
+  const handleFolderContextMenu = React.useCallback(
+    (folder: NavItem & { type: 'folder' }, e: React.MouseEvent) => {
+      e.preventDefault();
+      setFolderContextMenu({
+        folder,
+        position: { x: e.clientX, y: e.clientY },
+      });
+    },
+    []
+  );
+  const folderContextMenuItems = React.useMemo<MenuItem[]>(() => {
+    const f = folderContextMenu.folder;
+    if (!f) return [];
+    return [
+      {
+        id: 'edit',
+        icon: 'settings',
+        label: t`Edit Folder`,
+        onClick: () => {
+          openFolderEditor(f.id);
+          closeFolderContextMenu();
+        },
+      },
+      {
+        id: 'delete',
+        icon: 'trash',
+        label: t`Delete Folder`,
+        confirmLabel: t`Confirm Delete`,
+        danger: true,
+        onClick: async () => {
+          closeFolderContextMenu();
+          await deleteFolder(f.id);
+        },
+      },
+    ];
+  }, [folderContextMenu.folder, openFolderEditor, closeFolderContextMenu, deleteFolder]);
+
   // Sortable IDs flatten folders + standalone spaces in render order. SortableContext
   // needs this list so it can match dragging IDs to their position in the layout.
   const sortableIds = React.useMemo(() => {
@@ -168,61 +216,23 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   // when the list is filtered: showing partial folders would be confusing and
   // showing all folders would defeat the filter.
 
-  // Search + filter: closing search clears both. The filter chip only appears
-  // when at least one bucket (muted / favorites) has rows to show.
-  type SpacesFilter = 'all' | 'muted' | 'favorites';
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [searchInput, setSearchInput] = React.useState('');
-  const [filter, setFilter] = React.useState<SpacesFilter>('all');
   const handleToggleSearch = React.useCallback(() => {
     setSearchOpen((prev) => {
-      if (prev) {
-        setSearchInput('');
-        setFilter('all');
-      }
+      if (prev) setSearchInput('');
       return !prev;
     });
   }, []);
-  const handleFilterChange = React.useCallback((value: string | string[]) => {
-    setFilter(value as SpacesFilter);
-  }, []);
-
-  const hasMutedSpaces = mutedSpacesSet.size > 0;
-  const hasFavoriteSpaces = favoriteSpacesSet.size > 0;
-  const hasAnyFilter = hasMutedSpaces || hasFavoriteSpaces;
-
-  const filterOptions = React.useMemo(() => {
-    const options: { value: string; label: string; icon?: string }[] = [
-      { value: 'all', label: t`All`, icon: 'users-group' },
-    ];
-    if (hasFavoriteSpaces) options.push({ value: 'favorites', label: t`Favorites`, icon: 'star' });
-    if (hasMutedSpaces) options.push({ value: 'muted', label: t`Muted`, icon: 'bell-off' });
-    return options;
-  }, [hasFavoriteSpaces, hasMutedSpaces]);
-
-  // Reset the filter chip when its source bucket disappears (e.g. user unmutes
-  // the last muted space while "Muted" is selected).
-  React.useEffect(() => {
-    if (filter === 'muted' && !hasMutedSpaces) setFilter('all');
-    if (filter === 'favorites' && !hasFavoriteSpaces) setFilter('all');
-  }, [filter, hasMutedSpaces, hasFavoriteSpaces]);
 
   const filteredSpaces = React.useMemo(() => {
-    let list = spaces;
-    if (filter === 'muted') {
-      list = list.filter((s) => mutedSpacesSet.has(s.spaceId));
-    } else if (filter === 'favorites') {
-      list = list.filter((s) => favoriteSpacesSet.has(s.spaceId));
-    }
     const q = searchInput.trim().toLowerCase();
-    if (q) {
-      list = list.filter((s) => s.spaceName.toLowerCase().includes(q));
-    }
-    return list;
-  }, [spaces, searchInput, filter, mutedSpacesSet, favoriteSpacesSet]);
+    if (!q) return spaces;
+    return spaces.filter((s) => s.spaceName.toLowerCase().includes(q));
+  }, [spaces, searchInput]);
 
-  // Folders are hidden when any filter or search query is active.
-  const isFlatView = filter !== 'all' || searchInput.trim().length > 0;
+  // Folders are hidden when a search query is active.
+  const isFlatView = searchInput.trim().length > 0;
 
   // "+" button context menu: anchored to the button's bounding rect so it
   // appears below the trigger regardless of how it was activated (click,
@@ -271,8 +281,45 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     return (
       <div className="spaces-sidebar spaces-sidebar--collapsed list-bottom-fade">
         <div className="spaces-sidebar__header spaces-sidebar__header--collapsed" />
-        <div className="spaces-sidebar__list list-fade-content">
-          {spaces.map((space) => {
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+            <div className="spaces-sidebar__list list-fade-content">
+              {navItems.map((nav) => {
+            if (nav.item.type === 'folder') {
+              return (
+                <SpacesSidebarFolder
+                  key={nav.item.id}
+                  folder={nav.item}
+                  spaces={nav.spaces ?? []}
+                  isExpanded={isExpanded(nav.item.id)}
+                  collapsed
+                  currentSpaceId={currentSpaceId}
+                  spaceUnreadCounts={spaceUnreadCounts}
+                  mutedSpacesSet={mutedSpacesSet}
+                  onToggleExpand={() => toggleFolder(nav.item.id)}
+                  onEdit={() => openFolderEditor(nav.item.id)}
+                  onSpaceClick={handleRowClick}
+                  onContextMenu={(e) => handleFolderContextMenu(nav.item as NavItem & { type: 'folder' }, e)}
+                  onSpaceContextMenu={(spaceId, spaceName, iconUrl, e, hasNotifications) => {
+                    void openRowContextMenu({
+                      spaceId,
+                      spaceName,
+                      iconUrl,
+                      event: e,
+                      hasNotifications,
+                    });
+                  }}
+                />
+              );
+            }
+            const space = spaces.find((s) => s.spaceId === nav.item.id);
+            if (!space) return null;
             const unread = spaceUnreadCounts[space.spaceId] || 0;
             const active = space.spaceId === currentSpaceId;
             return (
@@ -283,31 +330,64 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                 place="right"
                 showOnTouch={false}
               >
-                <button
-                  type="button"
-                  className={`spaces-sidebar__strip-row ${active ? 'spaces-sidebar__strip-row--active' : ''}`}
+                <SpacesSidebarRow
+                  space={space}
+                  active={active}
+                  unread={unread}
+                  isMuted={mutedSpacesSet.has(space.spaceId)}
+                  compact
                   onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
-                  aria-label={space.spaceName}
-                  aria-current={active ? 'page' : undefined}
-                >
-                  <div className="spaces-sidebar__strip-avatar">
-                    <SpaceIcon
-                      spaceId={space.spaceId}
-                      spaceName={space.spaceName}
-                      iconUrl={space.iconUrl}
-                      notifs={false}
-                      selected={false}
-                      size="regular"
-                      noTooltip
-                      noToggle
-                    />
-                    {unread > 0 && <span className="spaces-sidebar__strip-unread-dot" />}
-                  </div>
-                </button>
+                  onContextMenu={(e) => {
+                    void openRowContextMenu({
+                      spaceId: space.spaceId,
+                      spaceName: space.spaceName,
+                      iconUrl: space.iconUrl,
+                      event: e,
+                      hasNotifications: unread > 0,
+                    });
+                  }}
+                />
               </Tooltip>
             );
           })}
-        </div>
+            </div>
+          </SortableContext>
+          <DragOverlay>
+            {activeDragItem ? (
+              (() => {
+                const space = spaces.find((s) => s.spaceId === activeDragItem.id);
+                if (!space) return null;
+                return (
+                  <div className="spaces-sidebar__drag-overlay">
+                    <SpacesSidebarRow
+                      space={space}
+                      active={false}
+                      unread={spaceUnreadCounts[space.spaceId] || 0}
+                      isMuted={mutedSpacesSet.has(space.spaceId)}
+                          compact
+                      onClick={() => {}}
+                    />
+                  </div>
+                );
+              })()
+            ) : null}
+          </DragOverlay>
+        </DndContext>
+        {rowContextMenu}
+        {folderContextMenu.folder && (
+          <ContextMenu
+            header={{
+              type: 'folder',
+              icon: folderContextMenu.folder.icon || 'folder',
+              iconVariant: folderContextMenu.folder.iconVariant || 'outline',
+              iconColor: (folderContextMenu.folder.color as IconColor) || 'default',
+              name: folderContextMenu.folder.name,
+            }}
+            items={folderContextMenuItems}
+            position={folderContextMenu.position}
+            onClose={closeFolderContextMenu}
+          />
+        )}
       </div>
     );
   }
@@ -367,17 +447,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
 
       {searchOpen && (
         <div className="px-3.5 pt-2 pb-3">
-          <Flex className="sidebar-search-row items-center">
-            {hasAnyFilter && (
-              <Select
-                value={filter}
-                onChange={handleFilterChange}
-                options={filterOptions}
-                compactMode={true}
-                compactIcon="filter"
-                size="small"
-              />
-            )}
+          <div className="sidebar-search-row">
             <div className="flex-1">
               <ListSearchInput
                 value={searchInput}
@@ -387,16 +457,10 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                 showSearchIcon={false}
               />
             </div>
-          </Flex>
-          {filteredSpaces.length === 0 && (filter !== 'all' || searchInput) && (
+          </div>
+          {filteredSpaces.length === 0 && searchInput && (
             <div className="text-xs text-subtle mt-2">
-              {filter === 'favorites' ? (
-                t`No favorite spaces`
-              ) : filter === 'muted' ? (
-                t`No muted spaces`
-              ) : (
-                t`No spaces found`
-              )}
+              {t`No spaces found`}
             </div>
           )}
         </div>
@@ -423,8 +487,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     active={active}
                     unread={unread}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
-                    isFavorite={favoriteSpacesSet.has(space.spaceId)}
-                    onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
+                      onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
                     onContextMenu={(e) => {
                       void openRowContextMenu({
                         spaceId: space.spaceId,
@@ -449,10 +512,10 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                       currentSpaceId={currentSpaceId}
                       spaceUnreadCounts={spaceUnreadCounts}
                       mutedSpacesSet={mutedSpacesSet}
-                      favoriteSpacesSet={favoriteSpacesSet}
-                      onToggleExpand={() => toggleFolder(nav.item.id)}
+                          onToggleExpand={() => toggleFolder(nav.item.id)}
                       onEdit={() => openFolderEditor(nav.item.id)}
                       onSpaceClick={handleRowClick}
+                      onContextMenu={(e) => handleFolderContextMenu(nav.item as NavItem & { type: 'folder' }, e)}
                       onSpaceContextMenu={(spaceId, spaceName, iconUrl, e, hasNotifications) => {
                         void openRowContextMenu({
                           spaceId,
@@ -476,8 +539,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     active={active}
                     unread={unread}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
-                    isFavorite={favoriteSpacesSet.has(space.spaceId)}
-                    onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
+                      onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
                     onContextMenu={(e) => {
                       void openRowContextMenu({
                         spaceId: space.spaceId,
@@ -505,8 +567,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     active={false}
                     unread={spaceUnreadCounts[space.spaceId] || 0}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
-                    isFavorite={favoriteSpacesSet.has(space.spaceId)}
-                    onClick={() => {}}
+                      onClick={() => {}}
                   />
                 </div>
               );
@@ -515,6 +576,20 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
         </DragOverlay>
       </DndContext>
       {rowContextMenu}
+      {folderContextMenu.folder && (
+        <ContextMenu
+          header={{
+            type: 'folder',
+            icon: folderContextMenu.folder.icon || 'folder',
+            iconVariant: folderContextMenu.folder.iconVariant || 'outline',
+            iconColor: (folderContextMenu.folder.color as IconColor) || 'default',
+            name: folderContextMenu.folder.name,
+          }}
+          items={folderContextMenuItems}
+          position={folderContextMenu.position}
+          onClose={closeFolderContextMenu}
+        />
+      )}
     </div>
   );
 };

@@ -296,6 +296,36 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
   .quorum-input--minimal {
     padding-left: 0 !important;
   }
+
+  /* Compact filter Select: no hover background "square" — icon-only color
+     change on hover; accent color when the dropdown is open (active). */
+  .quorum-select--compact {
+    .quorum-select__trigger {
+      background-color: transparent;
+      border-radius: $rounded;
+      padding: $s-1-5;
+
+      &:hover:not(:disabled) {
+        background-color: transparent;
+
+        .quorum-select__compact-icon {
+          color: var(--color-text-main);
+        }
+      }
+
+      &:focus {
+        background-color: transparent;
+      }
+    }
+
+    &.quorum-select--open .quorum-select__trigger {
+      background-color: transparent;
+
+      .quorum-select__compact-icon {
+        color: var(--accent);
+      }
+    }
+  }
 }
 
 /* 32px square tile, overrides Button's icon-only 40px pill. */
@@ -315,3 +345,38 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
   }
 }
 
+/* Shared row chrome: hover bg + accent left bar. Shared by space rows
+   and folder headers. */
+.sidebar-row-chrome {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: $rail-accent-bar-width;
+    height: 38px;
+    background: var(--accent);
+    border-radius: 0 $rounded-sm $rounded-sm 0;
+    opacity: 0;
+    transition: opacity $duration-150 $ease-in-out;
+  }
+
+  &:hover {
+    background: var(--color-bg-sidebar-hover);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.sidebar-row-chrome--merge-target {
+  background-color: color-mix(in srgb, var(--accent) 14%, transparent) !important;
+
+  &::before {
+    opacity: 1 !important;
+  }
+}

@@ -1,24 +1,26 @@
 import * as React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import type { Space } from '@quilibrium/quorum-shared';
+import { Icon, Tooltip, useTheme } from '../primitives';
 import FolderButton from '../navbar/FolderButton';
+import SpaceIcon from '../navbar/SpaceIcon';
 import { useDragStateContext } from '../../context/DragStateContext';
 import { getFolderColorHex, IconColor } from '../space/IconPicker/types';
 import { NavItem } from '../../db/messages';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
-import { useTheme } from '../primitives';
 import { SpacesSidebarRow } from './SpacesSidebarRow';
 
 interface SpacesSidebarFolderProps {
   folder: NavItem & { type: 'folder' };
   spaces: Space[];
   isExpanded: boolean;
+  /** Compact mode = 72px icon strip layout (rail-like). */
+  collapsed?: boolean;
   currentSpaceId?: string;
   spaceUnreadCounts: Record<string, number>;
   mutedSpacesSet: Set<string>;
-  favoriteSpacesSet: Set<string>;
   onToggleExpand: () => void;
   onEdit: () => void;
   onSpaceClick: (spaceId: string, defaultChannelId: string | undefined) => void;
@@ -42,10 +44,10 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
   folder,
   spaces,
   isExpanded,
+  collapsed = false,
   currentSpaceId,
   spaceUnreadCounts,
   mutedSpacesSet,
-  favoriteSpacesSet,
   onToggleExpand,
   onEdit,
   onSpaceClick,
@@ -142,6 +144,19 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
     }
   };
 
+  // Source-of-truth for the dragging source — same workaround as the row.
+  const isDraggingSource =
+    isDragging || activeItem?.id === folder.id;
+
+  const containerClass = [
+    'folder-container',
+    collapsed ? 'folder-container--strip' : 'folder-container--row',
+    isExpanded ? 'folder-container--expanded' : '',
+    isDraggingSource ? 'folder-container--dragging' : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <>
       {showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
@@ -158,38 +173,154 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onTouchCancel={handleTouchEnd}
-        className={`folder-container ${isExpanded ? 'folder-container--expanded' : ''}`}
+        className={containerClass}
       >
-        {isDragging ? (
+        {isDraggingSource && collapsed ? (
+          // Strip mode shows the 48px square placeholder where the folder was.
+          // Row mode ghosts the real content via .folder-container--dragging.
           <div className="space-icon-drag-placeholder" />
         ) : (
           <>
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={handleClick}
-              onContextMenu={handleContextMenu}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
-                  onToggleExpand();
-                }
-              }}
-              className="folder-header cursor-pointer"
-            >
-              <FolderButton
-                folder={folder}
-                hasUnread={hasUnread}
-                isExpanded={isExpanded}
-                showWiggle={showWiggle}
-              />
-            </div>
+            {collapsed ? (
+              <Tooltip
+                id={`spaces-sidebar-folder-${folder.id}`}
+                content={folder.name}
+                place="right"
+                showOnTouch={false}
+              >
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={handleClick}
+                  onContextMenu={handleContextMenu}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                      e.preventDefault();
+                      onToggleExpand();
+                    }
+                  }}
+                  className={[
+                    'folder-header',
+                    'folder-header--strip',
+                    'sidebar-row-chrome',
+                    showWiggle && 'sidebar-row-chrome--merge-target',
+                    'cursor-pointer',
+                  ]
+                    .filter(Boolean)
+                    .join(' ')}
+                  aria-label={folder.name}
+                  aria-expanded={isExpanded}
+                >
+                  <FolderButton
+                    folder={folder}
+                    hasUnread={hasUnread}
+                    isExpanded={isExpanded}
+                    showWiggle={showWiggle}
+                  />
+                </div>
+              </Tooltip>
+            ) : (
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={handleClick}
+                onContextMenu={handleContextMenu}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onToggleExpand();
+                  }
+                }}
+                className={[
+                  'folder-header',
+                  'folder-header--row',
+                  'sidebar-row-chrome',
+                  showWiggle && 'sidebar-row-chrome--merge-target',
+                  'cursor-pointer',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                aria-expanded={isExpanded}
+              >
+                <div className="folder-header__icon">
+                  <FolderButton
+                    folder={folder}
+                    hasUnread={hasUnread}
+                    isExpanded={isExpanded}
+                    showWiggle={showWiggle}
+                  />
+                </div>
+                <div className="folder-header__meta">
+                  <div className="folder-header__name">{folder.name}</div>
+                  <div className="folder-header__count">
+                    <Icon name="user" size="sm" />
+                    <span>{spaces.length}</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="folder-spaces-wrapper">
-              <div className="folder-spaces">
+              <div
+                className={`folder-spaces ${collapsed ? 'folder-spaces--strip' : 'folder-spaces--row'}`}
+              >
                 {spaces.map((space) => {
                   const unread = spaceUnreadCounts[space.spaceId] || 0;
                   const active = space.spaceId === currentSpaceId;
+
+                  if (collapsed) {
+                    return (
+                      <Tooltip
+                        key={space.spaceId}
+                        id={`spaces-sidebar-folder-${folder.id}-${space.spaceId}`}
+                        content={space.spaceName}
+                        place="right"
+                        showOnTouch={false}
+                      >
+                        <button
+                          type="button"
+                          className={`spaces-sidebar__strip-row ${
+                            active ? 'spaces-sidebar__strip-row--active' : ''
+                          }`}
+                          onClick={() =>
+                            onSpaceClick(space.spaceId, space.defaultChannelId)
+                          }
+                          onContextMenu={
+                            onSpaceContextMenu
+                              ? (e) => {
+                                  onSpaceContextMenu(
+                                    space.spaceId,
+                                    space.spaceName,
+                                    space.iconUrl,
+                                    e,
+                                    unread > 0
+                                  );
+                                }
+                              : undefined
+                          }
+                          aria-label={space.spaceName}
+                          aria-current={active ? 'page' : undefined}
+                        >
+                          <div className="spaces-sidebar__strip-avatar">
+                            <SpaceIcon
+                              spaceId={space.spaceId}
+                              spaceName={space.spaceName}
+                              iconUrl={space.iconUrl}
+                              notifs={false}
+                              selected={false}
+                              size="regular"
+                              noTooltip
+                              noToggle
+                            />
+                            {unread > 0 && (
+                              <span className="spaces-sidebar__strip-unread-dot" />
+                            )}
+                          </div>
+                        </button>
+                      </Tooltip>
+                    );
+                  }
+
                   return (
                     <SpacesSidebarRow
                       key={space.spaceId}
@@ -197,7 +328,6 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                       active={active}
                       unread={unread}
                       isMuted={mutedSpacesSet.has(space.spaceId)}
-                      isFavorite={favoriteSpacesSet.has(space.spaceId)}
                       parentFolderId={folder.id}
                       onClick={() => onSpaceClick(space.spaceId, space.defaultChannelId)}
                       onContextMenu={

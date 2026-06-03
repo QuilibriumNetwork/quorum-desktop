@@ -69,7 +69,6 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  border-radius: $rounded-xl;
   // No padding when collapsed - padding only applied when expanded
   transition:
     background-color $duration-300 $ease-in-out,
@@ -77,10 +76,43 @@
   // Allow toggle indicators to overflow to the left
   overflow: visible;
 
-  // Expanded state - show colored background and add padding
+  // Strip variant (72px rail). Stretch so nested rows go edge-to-edge,
+  // letting their accent bar sit at the rail's far-left like top-level rows.
+  &--strip {
+    align-items: stretch;
+
+    &.folder-container--expanded {
+      background-color: color-mix(in srgb, var(--folder-color) 20%, transparent);
+    }
+  }
+
+  // Row variant (expanded sidebar). Header is a left-aligned row, expanded
+  // state paints a non-rounded translucent backdrop matching the folder color.
+  &--row {
+    align-items: stretch;
+
+    &.folder-container--expanded {
+      background-color: color-mix(in srgb, var(--folder-color) 12%, transparent);
+      border-radius: 0;
+      padding: 0;
+    }
+  }
+
+  // Dragging ghost. Chained selector beats --expanded.
+  &.folder-container--dragging.folder-container--row {
+    opacity: 0.25;
+    background: transparent !important;
+  }
+
+  // When the folder is expanded, the folder's own backdrop tints the whole
+  // area. To make per-row hover legible, each row paints a slightly stronger
+  // tint of the folder color on top — same hue, just more opaque, so the
+  // hovered row reads as a single highlighted element instead of revealing
+  // the neutral sidebar bg underneath. Accent left bar still appears on hover.
   &--expanded {
-    background-color: color-mix(in srgb, var(--folder-color) 25%, transparent);
-    padding: $s-1;
+    .sidebar-row-chrome:hover {
+      background: color-mix(in srgb, var(--folder-color) 22%, transparent);
+    }
   }
 }
 
@@ -88,7 +120,56 @@
 .folder-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+
+  // Strip variant: centered icon tile matching .spaces-sidebar__strip-row.
+  &--strip {
+    justify-content: center;
+    width: 100%;
+    height: 56px;
+  }
+
+  // Row variant: left-aligned, mirrors .spaces-sidebar__row layout.
+  // Chrome (hover, accent bar, merge-target) → .sidebar-row-chrome.
+  &--row {
+    width: 100%;
+    gap: $s-3;
+    padding: $s-2 $s-4;
+    min-height: 60px;
+    text-align: left;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s-0-5;
+  }
+
+  &__name {
+    font-size: $text-sm;
+    font-weight: $font-bold;
+    color: var(--color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    gap: $s-1;
+    font-size: $text-xs;
+    color: var(--color-text-muted);
+  }
 }
 
 // Wrapper for spaces - uses CSS grid trick to animate height from 0 to auto
@@ -115,21 +196,21 @@
 .folder-spaces {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: $s-2-5; // Same gap as nav-menu-spaces (10px)
   // min-height: 0 is required for the grid animation to work
   min-height: 0;
   // Allow toggle indicators to overflow to the left
   overflow: visible;
 
-  // First space gets top margin for spacing from folder header
-  > :first-child {
-    margin-top: $s-2;
+  // Strip variant: spaces inside an expanded folder sit edge-to-edge like
+  // top-level strip rows — no gap, no extra margins.
+  &--strip {
+    align-items: stretch;
   }
 
-  // Last space gets bottom margin
-  > :last-child {
-    margin-bottom: $s-1;
+  // Row variant: spaces inside an expanded folder line up exactly like
+  // top-level rows in the sidebar — left-aligned, no centering, same spacing.
+  &--row {
+    align-items: stretch;
   }
 
   // Selected space inside folder: no glow, just the left toggle indicator

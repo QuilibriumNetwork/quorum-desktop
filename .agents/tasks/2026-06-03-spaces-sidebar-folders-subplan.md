@@ -101,4 +101,61 @@ Order matters — each step ends with a working app:
 
 ---
 
+---
+
+## Mid-stream design-feedback addendum (2026-06-03, evening session)
+
+A second session received screenshot feedback on the shipped folder UI before steps 7–9 were polished. Changes landed in this branch as uncommitted edits, then handed back so the original session can resume. Summary of what's in the working tree and the rationale:
+
+### What changed
+
+1. **Folder header (expanded sidebar) — centered tile → left-aligned row.** Before: `FolderButton` centered with no name visible. After: left-aligned small `FolderButton` (`size="small"`) + folder name (top) + member icon with space count (bottom), mirroring `SpacesSidebarRow`'s two-line layout. Driven by the screenshot: folder rows now align flush with space rows in the same sidebar.
+   - New CSS: `.folder-header--row`, `.folder-header__icon/__meta/__name/__count` in [Folder.scss](../../src/components/navbar/Folder.scss).
+   - Old centered layout preserved as `.folder-header--strip` for the collapsed (72px rail) variant.
+
+2. **Folder expanded background — less rounded, more transparent.**
+   - Was: `border-radius: $rounded-xl`, `color-mix(..., 25%, transparent)`, `padding: $s-1`.
+   - Now (row variant): `border-radius: 0`, `color-mix(..., 12%, transparent)`, no padding.
+   - Strip variant keeps the rounded tile but drops to 12% opacity for consistency.
+
+3. **Nested spaces inside expanded folder — alignment matches top-level rows.**
+   - `.folder-spaces--row`: `align-items: stretch`, no centering. Nested rows now visually line up exactly like top-level spaces (left edge, name, badge column).
+   - `.folder-spaces--strip` keeps the original centered/gap layout for the rail.
+
+4. **Drop-target highlight on rows — jiggle removed.**
+   - Was: `.spaces-sidebar__row--drop-target { animation: wiggle ...; outline: 2px solid var(--accent); }` — too aggressive at row scale (looked fine on 72px tiles, wrong on full-width rows). The sub-plan flagged this exact risk: "Drop indicators on full-width rows look different from icon-tile rows."
+   - Now: `background-color: color-mix(in srgb, var(--accent) 14%, transparent)` + accent left-bar (`::before` opacity 1). Calmer, theme-aware.
+
+5. **Folder right-click context menu wired into `SpacesSidebar`.** Mirrors the old NavMenu pattern (`Edit Folder` + `Delete Folder` with confirm). State + handlers live in `SpacesSidebarInner`; `ContextMenu` rendered in both expanded and collapsed branches. Uses `useDeleteFolder` from the existing folders hook bundle.
+
+6. **Collapsed strip now renders folders too** (closes step 7's "Collapsed strip" item — partial).
+   - Old behavior: collapsed branch iterated a flat `spaces` list, folders were invisible.
+   - New behavior: iterates `navItems`. Folder items render via `SpacesSidebarFolder` with a new `collapsed` prop that switches to a centered-tile layout (`folder-header--strip` + `folder-spaces--strip`). Clicking expands inline showing nested space icons.
+   - **DnD is NOT wired in the collapsed strip** — matches pre-change behavior. Sub-plan step 7 leaves this open ("Make the 72px strip rows sortable too" — not done).
+
+### Files touched (uncommitted)
+
+- `src/components/shell/SpacesSidebar.tsx` — folder context menu state/handlers, `IconColor`+`NavItem` type imports, `useDeleteFolder`, collapsed branch switched to `navItems` + `SpacesSidebarFolder`, expanded branch passes `onContextMenu` to folders, both branches render the folder `ContextMenu`.
+- `src/components/shell/SpacesSidebarFolder.tsx` — `collapsed` prop, conditional strip vs row layout for header and nested rendering, `Tooltip` wrapper for strip mode.
+- `src/components/navbar/Folder.scss` — split `.folder-container`, `.folder-header`, `.folder-spaces` into `--row` and `--strip` modifiers. New `.folder-header__icon/__meta/__name/__count` rules.
+- `src/components/shell/SpacesSidebar.scss` — `.spaces-sidebar__row--drop-target` rewritten (no wiggle, translucent tint).
+
+Also two unrelated fixes shipped earlier in the session (out of scope for this plan, but in the same working tree):
+- Search-box filter icon hover unified between Spaces and DMs (`src/styles/_components.scss`, `src/components/direct/DirectMessageContactsList.{tsx,scss}`).
+
+### What's still open vs the sub-plan DoD
+
+- [ ] **Collapsed-strip DnD** — folders render but can't be reordered/dragged in the strip. Decision deferred again. Probably wants its own follow-up: either fork into `SpacesSidebarStripRow` or extend the existing wiring conditionally.
+- [ ] **Touch long-press for folder edit in the strip** — exists in `SpacesSidebarFolder` already (preserved verbatim); should work in collapsed mode too since the same component is rendered, but not verified.
+- [ ] **Auto-expand collapsed folder when dragging a space over it** — untested in either expanded or collapsed mode after these visual changes.
+- [ ] **Verify all 9 DnD scenarios** still work after the drop-target visual change. The behavior wiring wasn't touched, only the CSS — but worth a smoke test.
+- [ ] **Visual states across light + dark** — none of the new CSS was checked in dark mode.
+- [ ] **Browser smoke test** — none of the above changes have been verified in a running app yet. TypeScript clean (`tsc --noEmit` passes, ignoring one pre-existing unrelated error in `ImportKeyStep.tsx`).
+
+### Risk notes for whoever resumes
+
+- The `FolderButton` `size="small"` (40px) inside the row-variant header is smaller than the 48px default; verify it doesn't look cramped next to the 42px space avatars.
+- `Folder.scss` is only consumed by `SpacesSidebarFolder` on this branch (`FolderContainer.tsx` exists as dead code — only `NavMenu` on `origin/main` imports it). Edits are safe here, but if the old UI ever comes back as a reference, the SCSS split will need awareness.
+- Folder member-count in the header shows `spaces.length` (the number of spaces inside the folder), not a sum of members across those spaces. Matches the screenshot request ("user's icon ... number of the spaces that are inside the folder").
+
 *Last updated: 2026-06-03*

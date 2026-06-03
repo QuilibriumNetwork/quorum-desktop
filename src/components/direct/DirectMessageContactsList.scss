@@ -96,31 +96,3 @@
   }
 }
 
-// DM-only Select tweaks inside the shared .sidebar-search-row.
-.dm-search-row {
-  // Adjust compact Select styling inside the search row
-  .quorum-select--compact {
-    .quorum-select__trigger {
-      background-color: transparent;
-      border-radius: $rounded;
-      padding: $s-1-5;
-
-      &:hover:not(:disabled) {
-        background-color: transparent;
-
-        .quorum-select__compact-icon {
-          color: var(--color-text-main);
-        }
-      }
-    }
-  }
-
-  // Remove ListSearchInput's own border styling since parent provides it
-  .list-search-input {
-    border-bottom: none;
-
-    &--focused {
-      border-bottom: none;
-    }
-  }
-}

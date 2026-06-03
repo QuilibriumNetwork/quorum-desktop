@@ -410,7 +410,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
       {/* Search row */}
       {searchOpen && (
         <div className="px-3.5 pt-2 pb-3">
-          <Flex className="sidebar-search-row dm-search-row items-center">
+          <Flex className="sidebar-search-row items-center">
             {hasAnyFilter && (
               <Select
                 value={filter}

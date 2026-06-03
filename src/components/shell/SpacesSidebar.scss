@@ -17,8 +17,8 @@
   padding-top: $s-1-5;
 }
 
+// Hover / accent-bar / merge-target chrome → .sidebar-row-chrome in _components.scss.
 .spaces-sidebar__row {
-  position: relative;
   display: flex;
   align-items: center;
   gap: $s-3;
@@ -32,27 +32,6 @@
   color: var(--color-text-main);
   min-height: 60px;
 
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: $rail-accent-bar-width;
-    height: 38px;
-    background: var(--accent);
-    border-radius: 0 $rounded-sm $rounded-sm 0;
-    opacity: 0;
-  }
-
-  &:hover {
-    background: var(--color-bg-sidebar-hover);
-
-    &::before {
-      opacity: 1;
-    }
-  }
-
   &:focus-visible {
     outline: 2px solid var(--accent);
     outline-offset: -2px;
@@ -65,7 +44,6 @@
       opacity: 1;
     }
   }
-
 }
 
 .spaces-sidebar__row-meta {
@@ -103,28 +81,26 @@
   color: var(--accent);
 }
 
-// Favorite indicator on space avatars. Mirrors .dm-favorite-avatar but
-// targets SpaceIcon's inner avatar element so the border inherits the
-// rounded-square shape rather than going pill.
-.spaces-sidebar__row-avatar--favorite {
-  .space-icon,
-  .space-icon-selected,
-  .user-initials {
-    border: $s-0-5 solid var(--accent);
-  }
-}
-
-// === Drag-and-drop visuals ===
-.spaces-sidebar__row--dragging {
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-.spaces-sidebar__row--drop-target {
+// Wiggle the avatar on merge-target — same keyframes the folder uses.
+.spaces-sidebar__row-avatar--wiggle {
   animation: wiggle 0.25s ease-in-out infinite;
-  outline: 2px solid var(--accent);
-  outline-offset: -2px;
-  border-radius: $rounded-sm;
+}
+
+// Strip FolderButton's accent outline on merge-target — wiggle stays.
+.spaces-sidebar__list .folder-button.drop-target-wiggle {
+  outline: none;
+}
+
+// Ghost left in the list. Chained selectors beat --active.
+.spaces-sidebar__row.spaces-sidebar__row--dragging,
+.spaces-sidebar__strip-row.spaces-sidebar__row--dragging {
+  opacity: 0.25;
+  background: transparent !important;
+  pointer-events: none;
+
+  &::before {
+    opacity: 0 !important;
+  }
 }
 
 .spaces-sidebar__row-drop-indicator {
@@ -133,6 +109,29 @@
   background: var(--accent);
   border-radius: $rounded-full;
   pointer-events: none;
+}
+
+// Floating clone that follows the cursor.
+.spaces-sidebar__drag-overlay {
+  background: color-mix(in srgb, var(--color-bg-sidebar) 30%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: $rounded-md;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  cursor: grabbing;
+
+  .spaces-sidebar__row,
+  .spaces-sidebar__strip-row,
+  .folder-container {
+    opacity: 1 !important;
+    background: transparent !important;
+  }
+
+  // Hide the accent left bar inside the clone — the chrome only makes sense
+  // on rows sitting in the list, not on the floating drag visual.
+  .sidebar-row-chrome::before {
+    opacity: 0 !important;
+  }
 }
 
 .spaces-sidebar__row-members {
