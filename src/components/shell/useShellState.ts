@@ -4,9 +4,19 @@ import { logger } from '@quilibrium/quorum-shared';
 
 const STORAGE_KEY_RAIL = 'shell.railCollapsed';
 const STORAGE_KEY_SIDEBAR = 'shell.sidebarCollapsed';
+const STORAGE_KEY_SIDEBAR_WIDTH = 'shell.sidebarWidth';
+const STORAGE_KEY_LAST_FREE_WIDTH = 'shell.lastFreeWidth';
 
 const DEFAULT_RAIL_COLLAPSED = true;
 const DEFAULT_SIDEBAR_COLLAPSED = false;
+
+// Sidebar width bounds. SIDEBAR_COLLAPSED_WIDTH must match $sidebar-width-collapsed
+// in _variables.scss; DEFAULT_SIDEBAR_WIDTH should match $sidebar-width.
+export const SIDEBAR_COLLAPSED_WIDTH = 72;
+export const SIDEBAR_MIN_WIDTH = 240;
+export const SIDEBAR_MAX_WIDTH = 480;
+export const SIDEBAR_SNAP_THRESHOLD = 200;
+const DEFAULT_SIDEBAR_WIDTH = 300;
 
 // Viewport breakpoints — mirror $screen-md / $screen-lg in _variables.scss.
 const PHONE_MAX = 767;
@@ -16,11 +26,16 @@ export type ShellViewport = 'phone' | 'tablet' | 'desktop';
 
 export interface ShellState {
   railCollapsed: boolean;
+  /** Derived: true when sidebarWidth <= SIDEBAR_COLLAPSED_WIDTH. */
   sidebarCollapsed: boolean;
+  /** Effective sidebar width in px. SIDEBAR_COLLAPSED_WIDTH (72) means collapsed strip. */
+  sidebarWidth: number;
   setRailCollapsed: (v: boolean) => void;
   toggleRailCollapsed: () => void;
   setSidebarCollapsed: (v: boolean) => void;
   toggleSidebarCollapsed: () => void;
+  /** Set sidebar width directly (used by the drag handle). Caller clamps; this persists. */
+  setSidebarWidth: (px: number) => void;
 
   /** Derived viewport bucket — recomputed on resize. */
   viewport: ShellViewport;
@@ -51,6 +66,39 @@ const writeBool = (key: string, value: boolean) => {
   }
 };
 
+const readNumber = (key: string): number | null => {
+  if (typeof window === 'undefined') return null;
+  try {
+    const raw = localStorage.getItem(key);
+    if (raw === null) return null;
+    const n = parseInt(raw, 10);
+    return Number.isFinite(n) ? n : null;
+  } catch (e) {
+    logger.warn(`useShellState: failed to read ${key}`, e);
+    return null;
+  }
+};
+
+const writeNumber = (key: string, value: number) => {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem(key, String(value));
+  } catch (e) {
+    logger.warn(`useShellState: failed to write ${key}`, e);
+  }
+};
+
+// Resolve initial sidebar width: prefer the new shell.sidebarWidth key; fall
+// back to migrating the legacy shell.sidebarCollapsed boolean; default to
+// DEFAULT_SIDEBAR_WIDTH. Legacy key is left in place for one release so a
+// rollback still finds a valid value.
+const resolveInitialSidebarWidth = (): number => {
+  const direct = readNumber(STORAGE_KEY_SIDEBAR_WIDTH);
+  if (direct !== null) return direct;
+  const legacyCollapsed = readBool(STORAGE_KEY_SIDEBAR, DEFAULT_SIDEBAR_COLLAPSED);
+  return legacyCollapsed ? SIDEBAR_COLLAPSED_WIDTH : DEFAULT_SIDEBAR_WIDTH;
+};
+
 const computeViewport = (width: number): ShellViewport => {
   if (width <= PHONE_MAX) return 'phone';
   if (width <= TABLET_MAX) return 'tablet';
@@ -73,17 +121,25 @@ const useViewport = (): ShellViewport => {
 };
 
 const useShellStateInternal = (): ShellState => {
-  const [railCollapsedPref, setRailCollapsedState] = useState<boolean>(DEFAULT_RAIL_COLLAPSED);
-  const [sidebarCollapsedPref, setSidebarCollapsedState] = useState<boolean>(DEFAULT_SIDEBAR_COLLAPSED);
+  // Initialize synchronously from localStorage so we don't paint the default
+  // width and then jump to the saved one on first render.
+  const [railCollapsedPref, setRailCollapsedState] = useState<boolean>(() =>
+    readBool(STORAGE_KEY_RAIL, DEFAULT_RAIL_COLLAPSED)
+  );
+  const [sidebarWidthPref, setSidebarWidthState] = useState<number>(() => resolveInitialSidebarWidth());
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   // Element focused before the drawer opened — restored on close so keyboard
   // and AT users return to the hamburger that triggered the drawer.
   const drawerTriggerRef = React.useRef<HTMLElement | null>(null);
   const viewport = useViewport();
 
+  // Persist the migrated value so the legacy boolean can be retired safely.
   useEffect(() => {
-    setRailCollapsedState(readBool(STORAGE_KEY_RAIL, DEFAULT_RAIL_COLLAPSED));
-    setSidebarCollapsedState(readBool(STORAGE_KEY_SIDEBAR, DEFAULT_SIDEBAR_COLLAPSED));
+    if (readNumber(STORAGE_KEY_SIDEBAR_WIDTH) === null) {
+      writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, sidebarWidthPref);
+    }
+    // Run once on mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Auto-close the drawer when the viewport grows above phone.
@@ -104,15 +160,40 @@ const useShellStateInternal = (): ShellState => {
     });
   }, []);
 
-  const setSidebarCollapsed = useCallback((v: boolean) => {
-    setSidebarCollapsedState(v);
-    writeBool(STORAGE_KEY_SIDEBAR, v);
+  const setSidebarWidth = useCallback((px: number) => {
+    setSidebarWidthState(px);
+    writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, px);
+    // Mirror to the legacy boolean so a rollback still picks the right state.
+    writeBool(STORAGE_KEY_SIDEBAR, px <= SIDEBAR_COLLAPSED_WIDTH);
   }, []);
 
+  const setSidebarCollapsed = useCallback((v: boolean) => {
+    if (v) {
+      // Going collapsed: stash the current width as lastFreeWidth so the next
+      // expand restores it, then snap to the collapsed strip.
+      const current = readNumber(STORAGE_KEY_SIDEBAR_WIDTH) ?? DEFAULT_SIDEBAR_WIDTH;
+      if (current > SIDEBAR_COLLAPSED_WIDTH) {
+        writeNumber(STORAGE_KEY_LAST_FREE_WIDTH, current);
+      }
+      setSidebarWidth(SIDEBAR_COLLAPSED_WIDTH);
+    } else {
+      const restored = readNumber(STORAGE_KEY_LAST_FREE_WIDTH) ?? DEFAULT_SIDEBAR_WIDTH;
+      setSidebarWidth(restored);
+    }
+  }, [setSidebarWidth]);
+
   const toggleSidebarCollapsed = useCallback(() => {
-    setSidebarCollapsedState((prev) => {
-      const next = !prev;
-      writeBool(STORAGE_KEY_SIDEBAR, next);
+    setSidebarWidthState((prev) => {
+      const isCollapsed = prev <= SIDEBAR_COLLAPSED_WIDTH;
+      let next: number;
+      if (isCollapsed) {
+        next = readNumber(STORAGE_KEY_LAST_FREE_WIDTH) ?? DEFAULT_SIDEBAR_WIDTH;
+      } else {
+        writeNumber(STORAGE_KEY_LAST_FREE_WIDTH, prev);
+        next = SIDEBAR_COLLAPSED_WIDTH;
+      }
+      writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, next);
+      writeBool(STORAGE_KEY_SIDEBAR, next <= SIDEBAR_COLLAPSED_WIDTH);
       return next;
     });
   }, []);
@@ -135,12 +216,13 @@ const useShellStateInternal = (): ShellState => {
     }
   }, []);
 
-  // Effective collapse state: tablet forces both rail and sidebar to collapsed
-  // visual state regardless of the user's persisted desktop preference. Desktop
-  // honours the user pref. Phone collapses both into the drawer (handled by
-  // AppShell using the `viewport === 'phone'` flag, not these booleans).
+  // Effective collapse state: tablet forces sidebar to collapsed visual state
+  // regardless of the user's persisted desktop preference. Desktop honours the
+  // user pref. Phone collapses both into the drawer (handled by AppShell using
+  // the `viewport === 'phone'` flag, not these booleans).
   const railCollapsed = viewport === 'desktop' ? railCollapsedPref : true;
-  const sidebarCollapsed = viewport === 'desktop' ? sidebarCollapsedPref : true;
+  const sidebarWidth = viewport === 'desktop' ? sidebarWidthPref : SIDEBAR_COLLAPSED_WIDTH;
+  const sidebarCollapsed = sidebarWidth <= SIDEBAR_COLLAPSED_WIDTH;
 
   // Memoize so context consumers (NavRail, Sidebar, etc.) don't re-render on
   // every parent render. Setters/togglers are stable via useCallback([]); only
@@ -149,10 +231,12 @@ const useShellStateInternal = (): ShellState => {
     () => ({
       railCollapsed,
       sidebarCollapsed,
+      sidebarWidth,
       setRailCollapsed,
       toggleRailCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,
+      setSidebarWidth,
       viewport,
       drawerOpen,
       openDrawer,
@@ -161,12 +245,14 @@ const useShellStateInternal = (): ShellState => {
     [
       railCollapsed,
       sidebarCollapsed,
+      sidebarWidth,
       viewport,
       drawerOpen,
       setRailCollapsed,
       toggleRailCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,
+      setSidebarWidth,
       openDrawer,
       closeDrawer,
     ]

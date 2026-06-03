@@ -79,7 +79,6 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
   const shell = useOptionalShellState();
   const sidebarCollapsed = shell?.sidebarCollapsed ?? false;
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
-  const showCollapseToggle = shell !== null && shell.viewport === 'desktop';
 
   // Load mock utilities dynamically in development only
   React.useEffect(() => {
@@ -323,18 +322,6 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
   if (renderCollapsed && shell) {
     return (
       <div className="direct-messages-list-wrapper direct-messages-list-wrapper--collapsed flex flex-col h-full z-0 flex-grow select-none">
-        <Flex justify="center" className="direct-messages-header direct-messages-header--collapsed py-2 flex-shrink-0">
-          {showCollapseToggle && (
-            <Button
-              type="unstyled"
-              iconName="sidebar-left-expand"
-              iconOnly
-              onClick={shell.toggleSidebarCollapsed}
-              className="header-icon-button"
-              ariaLabel={t`Expand sidebar`}
-            />
-          )}
-        </Flex>
         <div className="direct-messages-list-strip flex flex-col overflow-y-auto overflow-x-hidden">
           {filteredConversations.map((c) => {
             const isActive = currentAddress === c.address;
@@ -418,23 +405,6 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
               onClick={openNewDirectMessage}
             />
           </Tooltip>
-          {showCollapseToggle && shell && (
-            <Tooltip
-              id="dm-sidebar-collapse"
-              content={t`Collapse sidebar`}
-              place="bottom"
-              showOnTouch={false}
-            >
-              <Button
-                type="unstyled"
-                iconName="sidebar-left-collapse"
-                iconOnly
-                onClick={shell.toggleSidebarCollapsed}
-                className="header-icon-button ml-1"
-                ariaLabel={t`Collapse sidebar`}
-              />
-            </Tooltip>
-          )}
         </Flex>
       </Flex>
 

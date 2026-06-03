@@ -96,8 +96,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
     }
     return overlay;
   }, [realSpaceUnreadCounts, mockSpaces]);
-  const { sidebarCollapsed, toggleSidebarCollapsed, viewport } = useShellState();
-  const showCollapseToggle = viewport === 'desktop';
+  const { sidebarCollapsed } = useShellState();
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
 
   const handleRowClick = (
@@ -113,18 +112,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
   if (renderCollapsed) {
     return (
       <div className="spaces-sidebar spaces-sidebar--collapsed list-bottom-fade">
-        <div className="spaces-sidebar__header spaces-sidebar__header--collapsed">
-          {showCollapseToggle && (
-            <button
-              type="button"
-              className="spaces-sidebar__action"
-              aria-label={t`Expand sidebar`}
-              onClick={toggleSidebarCollapsed}
-            >
-              <Icon name="sidebar-left-expand" size="md" />
-            </button>
-          )}
-        </div>
+        <div className="spaces-sidebar__header spaces-sidebar__header--collapsed" />
         <div className="spaces-sidebar__list list-fade-content">
           {spaces.map((space) => {
             const unread = spaceUnreadCounts[space.spaceId] || 0;
@@ -178,16 +166,6 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
         >
           <Icon name="plus" size="md" />
         </button>
-        {showCollapseToggle && (
-          <button
-            type="button"
-            className="spaces-sidebar__action"
-            aria-label={t`Collapse sidebar`}
-            onClick={toggleSidebarCollapsed}
-          >
-            <Icon name="sidebar-left-collapse" size="md" />
-          </button>
-        )}
       </div>
 
       <div className="spaces-sidebar__list">

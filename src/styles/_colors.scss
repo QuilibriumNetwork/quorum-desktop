@@ -151,6 +151,9 @@
 
   /* general */
   --unknown-icon: url('/unknown-light.png');
+
+  /* shell — drag-to-resize sidebar handle ribbon */
+  --shell-drag-handle-hover-color: var(--accent-300);
 }
 
 /* === DARK THEME ===*/
@@ -205,6 +208,9 @@ html.dark {
   --info: 38 123 158; /* #267b9e */
 
   --unknown-icon: url('/unknown-dark.png');
+
+  /* shell — drag-to-resize sidebar handle ribbon */
+  --shell-drag-handle-hover-color: var(--accent-700);
 }
 
 /* === ACCENT THEMES === */

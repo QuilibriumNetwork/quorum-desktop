@@ -44,6 +44,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  position: relative; // anchor for .app-shell__drag-handle
   transition: width $duration-150 $ease-out;
 
   &--collapsed {
@@ -51,12 +52,62 @@
   }
 
   &--expanded {
-    width: $sidebar-width;
+    // Width driven by JS via --shell-sidebar-width; SCSS var is the fallback.
+    width: var(--shell-sidebar-width, $sidebar-width);
   }
 
   &--hidden {
     width: 0;
     border-right: none;
+  }
+}
+
+// During active drag, suppress the width transition so the sidebar tracks the
+// cursor frame-for-frame instead of lagging behind.
+.app-shell--dragging .app-shell__sidebar {
+  transition: none;
+}
+
+// Drag handle sits on the sidebar's right edge. The hit zone is 6px wide and
+// straddles the border; a thin ribbon appears after 1s of hover (or while
+// dragging) via data-hover-armed.
+.app-shell__drag-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -3px;
+  width: 6px;
+  cursor: col-resize;
+  z-index: 5;
+  // Avoid focus outline overflowing the handle silhouette.
+  outline: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    transform: translateX(-50%);
+    background: var(--shell-drag-handle-hover-color, var(--color-link));
+    border-radius: 2px;
+    transition: width 120ms $ease-out, opacity 120ms $ease-out;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &[data-hover-armed='true']::after,
+  &:focus-visible::after {
+    width: 3px;
+    opacity: 1;
+  }
+
+  // Touch devices: hide the handle entirely. Phone/tablet are already gated in
+  // React (handle isn't rendered), but a desktop user with a touchscreen would
+  // still see it; disable interaction without disrupting visual layout.
+  @media (hover: none) {
+    pointer-events: none;
   }
 }
 

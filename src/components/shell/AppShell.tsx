@@ -1,11 +1,21 @@
 import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { ShellStateProvider, useShellState } from './useShellState';
+import {
+  ShellStateProvider,
+  useShellState,
+  SIDEBAR_COLLAPSED_WIDTH,
+  SIDEBAR_MIN_WIDTH,
+  SIDEBAR_MAX_WIDTH,
+  SIDEBAR_SNAP_THRESHOLD,
+} from './useShellState';
 import { useSidebarMode } from './useSidebarMode';
 import { NavRail } from './NavRail';
 import { Sidebar } from './Sidebar';
 import './AppShell.scss';
+
+const HOVER_ARM_DELAY_MS = 1000;
+const KEYBOARD_RESIZE_STEP = 16;
 
 const FOCUSABLE_SELECTOR = [
   'a[href]',
@@ -68,6 +78,43 @@ const useDrawerFocusTrap = (
   }, [ref, active, onEscape]);
 };
 
+// Hover-arm: after the cursor stays over the drag handle for HOVER_ARM_DELAY_MS,
+// set data-hover-armed="true" so CSS can reveal the tinted ribbon. Movement
+// resets the timer; leaving clears it. The "armed" state is exposed as a DOM
+// attribute (not React state) so it doesn't trigger re-renders.
+const useHoverArm = (ref: React.RefObject<HTMLElement | null>, suppress: boolean) => {
+  React.useEffect(() => {
+    const node = ref.current;
+    if (!node) return;
+    if (suppress) {
+      node.setAttribute('data-hover-armed', 'true');
+      return;
+    }
+    let timer: number | undefined;
+    const arm = () => {
+      window.clearTimeout(timer);
+      timer = window.setTimeout(() => {
+        node.setAttribute('data-hover-armed', 'true');
+      }, HOVER_ARM_DELAY_MS);
+    };
+    const disarm = () => {
+      window.clearTimeout(timer);
+      node.removeAttribute('data-hover-armed');
+    };
+    node.addEventListener('mousemove', arm);
+    node.addEventListener('mouseleave', disarm);
+    return () => {
+      window.clearTimeout(timer);
+      node.removeAttribute('data-hover-armed');
+      node.removeEventListener('mousemove', arm);
+      node.removeEventListener('mouseleave', disarm);
+    };
+  }, [ref, suppress]);
+};
+
+const clampWidth = (px: number): number =>
+  Math.max(SIDEBAR_MIN_WIDTH, Math.min(SIDEBAR_MAX_WIDTH, px));
+
 interface AppShellProps {
   children: React.ReactNode;
   onAddSpace: () => void;
@@ -77,6 +124,8 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
   const {
     railCollapsed,
     sidebarCollapsed,
+    sidebarWidth,
+    setSidebarWidth,
     toggleRailCollapsed,
     viewport,
     drawerOpen,
@@ -87,12 +136,86 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
   const isPhone = viewport === 'phone';
   const location = useLocation();
   const drawerRef = React.useRef<HTMLDivElement>(null);
+  const dragHandleRef = React.useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = React.useState(false);
   useDrawerFocusTrap(drawerRef, isPhone && drawerOpen, closeDrawer);
+  useHoverArm(dragHandleRef, isDragging);
 
   // Channels mode never collapses — channel names need full width to be readable.
   // The collapse preference still persists in the background for DM/Spaces modes.
   const effectiveCollapsed = sidebarMode === 'channels' ? false : sidebarCollapsed;
   const railToggleHandler = viewport === 'desktop' ? toggleRailCollapsed : null;
+  // Drag handle is rendered only on desktop, only when the sidebar is actually
+  // visible. Channels sidebar is non-resizable per the handoff; phone/tablet
+  // bypass the resizable layout entirely.
+  const showDragHandle =
+    viewport === 'desktop' && !sidebarHidden && sidebarMode !== 'channels';
+
+  const onDragHandleMouseDown = React.useCallback(
+    (e: React.MouseEvent<HTMLDivElement>) => {
+      if (e.button !== 0) return;
+      e.preventDefault();
+      const startX = e.clientX;
+      const startWidth = sidebarWidth;
+      setIsDragging(true);
+      document.body.style.cursor = 'col-resize';
+      document.body.style.userSelect = 'none';
+
+      const onMove = (ev: MouseEvent) => {
+        const candidate = startWidth + (ev.clientX - startX);
+        // Visual feedback during drag: clamp to bounds but allow values below
+        // SIDEBAR_MIN_WIDTH down to SIDEBAR_SNAP_THRESHOLD so the user can see
+        // they're approaching the snap zone before releasing.
+        const next =
+          candidate <= SIDEBAR_SNAP_THRESHOLD
+            ? Math.max(SIDEBAR_COLLAPSED_WIDTH, candidate)
+            : clampWidth(candidate);
+        setSidebarWidth(next);
+      };
+      const onUp = (ev: MouseEvent) => {
+        const finalCandidate = startWidth + (ev.clientX - startX);
+        // Snap-to-collapsed when released below the threshold.
+        const final =
+          finalCandidate <= SIDEBAR_SNAP_THRESHOLD
+            ? SIDEBAR_COLLAPSED_WIDTH
+            : clampWidth(finalCandidate);
+        setSidebarWidth(final);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+        window.removeEventListener('mousemove', onMove);
+        window.removeEventListener('mouseup', onUp);
+        setIsDragging(false);
+      };
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+    },
+    [sidebarWidth, setSidebarWidth]
+  );
+
+  const onDragHandleKeyDown = React.useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      let next: number | null = null;
+      switch (e.key) {
+        case 'ArrowLeft':
+          next = clampWidth(sidebarWidth - KEYBOARD_RESIZE_STEP);
+          break;
+        case 'ArrowRight':
+          next = clampWidth(sidebarWidth + KEYBOARD_RESIZE_STEP);
+          break;
+        case 'Home':
+          next = SIDEBAR_MIN_WIDTH;
+          break;
+        case 'End':
+          next = SIDEBAR_MAX_WIDTH;
+          break;
+        default:
+          return;
+      }
+      e.preventDefault();
+      setSidebarWidth(next);
+    },
+    [sidebarWidth, setSidebarWidth]
+  );
 
   // Phone: rail + sidebar are hidden inline; their content lives in the drawer.
   const railSlotClass = isPhone
@@ -120,8 +243,14 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search]);
 
+  const shellStyle = React.useMemo(
+    () => ({ ['--shell-sidebar-width' as string]: `${sidebarWidth}px` }),
+    [sidebarWidth]
+  );
+  const shellClass = `app-shell${isDragging ? ' app-shell--dragging' : ''}`;
+
   return (
-    <div className="app-shell">
+    <div className={shellClass} style={shellStyle}>
       <aside
         className={`app-shell__rail ${railSlotClass}`}
         aria-hidden={isPhone}
@@ -134,6 +263,21 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
         aria-hidden={isPhone || sidebarHidden}
       >
         {!isPhone && !sidebarHidden && <Sidebar onAddSpace={onAddSpace} />}
+        {showDragHandle && (
+          <div
+            ref={dragHandleRef}
+            className="app-shell__drag-handle"
+            role="separator"
+            aria-orientation="vertical"
+            aria-label={t`Resize sidebar`}
+            aria-valuenow={sidebarWidth}
+            aria-valuemin={SIDEBAR_COLLAPSED_WIDTH}
+            aria-valuemax={SIDEBAR_MAX_WIDTH}
+            tabIndex={0}
+            onMouseDown={onDragHandleMouseDown}
+            onKeyDown={onDragHandleKeyDown}
+          />
+        )}
       </aside>
       <div className="app-shell__main">{children}</div>
 
