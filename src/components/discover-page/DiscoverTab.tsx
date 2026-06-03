@@ -77,6 +77,7 @@ export const DiscoverTab: React.FC = () => {
           onChange={handleCategoryChange}
           options={categoryOptions}
           variant="bordered"
+          borderedDropdown
         />
       </div>
 
@@ -97,9 +98,9 @@ export const DiscoverTab: React.FC = () => {
           <span>{t`Loading public spaces...`}</span>
         </div>
       ) : entries.length === 0 && !error ? (
-        <div className="discover-tab__empty">
-          <Icon name="users-group" size="3xl" />
-          <p>
+        <div className="empty-state empty-state--fill">
+          <Icon name="users-group" size="5xl" className="empty-state__icon" />
+          <p className="empty-state__title">
             {search.trim() || category
               ? t`No public spaces match your filters.`
               : t`No public spaces yet.`}

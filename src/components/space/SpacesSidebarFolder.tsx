@@ -258,7 +258,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                 <div className="folder-header__meta">
                   <div className="folder-header__name">{folder.name}</div>
                   <div className="folder-header__count">
-                    <Icon name="user" size="sm" />
+                    <Icon name="layout-grid" size="sm" />
                     <span>{spaces.length}</span>
                   </div>
                 </div>

@@ -419,6 +419,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
                 compactMode={true}
                 compactIcon="filter"
                 size="small"
+                borderedDropdown
               />
             )}
             <div className="flex-1">
