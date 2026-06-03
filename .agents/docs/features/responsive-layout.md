@@ -10,101 +10,101 @@ updated: 2026-01-09T00:00:00.000Z
 
 ## Overview
 
-The Quorum Desktop application has been enhanced with a comprehensive responsive layout system to provide optimal user experience across desktop, tablet, and mobile devices. The system transforms the multi-sidebar desktop layout into a mobile-friendly overlay system while maintaining full desktop functionality.
+The Quorum Desktop application uses a 3-column shell (NavRail + Sidebar + main content) that adapts to phone, tablet, and desktop viewports. On desktop the rail and sidebar are inline and the sidebar is user-resizable via a drag handle; on tablet they shrink to fixed-collapsed widths; on phone both collapse into an off-canvas drawer that opens from a per-view hamburger button.
 
 ## Breakpoint Strategy
 
-### Primary Breakpoint: 1024px
+The current shell uses three viewport buckets, computed from `window.innerWidth` in [useShellState.ts](src/components/shell/useShellState.ts) and mirrored in `_variables.scss`:
 
-- **Desktop**: ≥1024px - Full sidebar layout with fixed positioning
-- **Mobile/Tablet**: <1024px - Overlay system with hidden left sidebar
+| Bucket | Width range | Source |
+|--------|-------------|--------|
+| `phone` | ≤ 767px | `PHONE_MAX = 767` |
+| `tablet` | 768–1023px | `TABLET_MAX = 1023` |
+| `desktop` | ≥ 1024px | (default) |
 
-### Phone-specific Optimization: 480px
+The shell exposes `viewport: 'phone' | 'tablet' | 'desktop'` from `useShellState()`. Components that need to branch on viewport read this value rather than running their own `matchMedia` queries.
 
-- **Phones**: ≤480px - Additional optimizations for very small screens
-- NavMenu width reduction (74px → 50px)
-- Icon size reduction (48px → 32px)
+> A legacy `useResponsiveLayout` hook still exists in `src/hooks/useResponsiveLayout.ts` and is consumed by a handful of feature components (Channel header, DirectMessage header, ThreadPanel, MessageComposer, the Appearance settings tab). New code should prefer `useShellState().viewport`.
 
 ## Core Components
 
-### 1. Responsive Layout Context (`src/hooks/useResponsiveLayout.ts`)
+### 1. Shell state (`src/components/shell/useShellState.ts`)
 
 ```typescript
-interface ResponsiveLayoutState {
-  isMobile: boolean; // Screen width < 1024px
-  leftSidebarOpen: boolean; // Left sidebar overlay state
-  toggleLeftSidebar: () => void;
-  closeLeftSidebar: () => void;
+export interface ShellState {
+  railCollapsed: boolean;
+  sidebarCollapsed: boolean;       // derived: sidebarWidth <= SIDEBAR_COLLAPSED_WIDTH
+  sidebarWidth: number;            // px; persisted in localStorage as shell.sidebarWidth
+  setSidebarWidth: (px: number) => void;
+  toggleRailCollapsed: () => void;
+  toggleSidebarCollapsed: () => void;
+
+  viewport: 'phone' | 'tablet' | 'desktop';
+  drawerOpen: boolean;             // phone-only off-canvas drawer
+  openDrawer: () => void;
+  closeDrawer: () => void;
 }
 ```
 
-**Key Features:**
+**Key behaviours:**
 
-- Automatic screen size detection using `window.matchMedia`
-- Centralized sidebar state management
-- Auto-close on desktop transition
+- Mounted by `ShellStateProvider` inside `AppShell`; every consumer (NavRail, Sidebar, SpacesSidebar, etc.) reads from the same instance.
+- On tablet/phone the effective `sidebarWidth` is forced to `SIDEBAR_COLLAPSED_WIDTH` regardless of the persisted desktop preference.
+- Drawer auto-closes whenever the viewport grows past phone.
 
-### 2. Context Provider (`src/components/context/ResponsiveLayoutProvider.tsx`)
+### 2. AppShell (`src/components/shell/AppShell.tsx`)
 
-Wraps the entire application in `App.tsx` to provide global responsive state access.
+The shell renders three slots — `app-shell__rail`, `app-shell__sidebar`, `app-shell__main` — plus a drag handle and (on phone, when `drawerOpen`) a focus-trapped off-canvas drawer that mounts NavRail + Sidebar.
 
 ## Layout Behavior
 
-### Desktop (≥1024px)
+### Desktop (≥ 1024px)
 
-- **Left Sidebar**: Always visible, fixed position
-- **Right Sidebar**: Pushes content when open
-- **NavMenu**: Full width (74px)
-- **Search Bar**: Full width available
-- **Layout**: `lg:relative lg:flex-row lg:justify-between`
+- **NavRail**: inline left rail. Collapsed (`$rail-width-collapsed: 72px`) or expanded (`$rail-width-expanded: 236px`) per the user's persisted preference (`shell.railCollapsed`).
+- **Sidebar**: inline, user-resizable. Width persisted as `shell.sidebarWidth`. Range: `SIDEBAR_COLLAPSED_WIDTH` (72px) up to `SIDEBAR_MAX_WIDTH` (480px). Default `300px`.
+- **Drag handle**: a thin separator on the sidebar's right edge. Hover-arms after 500ms to reveal the accent tint (`--shell-drag-handle-hover-color`). Releasing below `SIDEBAR_SNAP_THRESHOLD` (200px) snaps to the collapsed strip; releasing above snaps to `SIDEBAR_MIN_WIDTH` (240px). Keyboard: arrow keys nudge by 16px, Home/End jump to min/max.
+- **Channels mode**: when the route matches `/spaces/:spaceId/:channelId`, the sidebar is pinned to a fixed 300px (`CHANNELS_SIDEBAR_WIDTH` in `AppShell.tsx`) and the drag handle is suppressed. The user's persisted width is left untouched and restored when leaving the channel.
+- **Main**: receives `--shell-sidebar-width` as a CSS variable on the shell root.
 
-### Mobile/Tablet (<1024px)
+### Tablet (768–1023px)
 
-- **Left Sidebar**: Hidden by default, overlay when open
-- **Right Sidebar**: Overlay system with backdrop
-- **NavMenu**: Compact width (50px on phones)
-- **Search Bar**: Limited width with responsive constraints
-- **Layout**: `flex-col` stacking with hamburger navigation
+- **NavRail**: forced collapsed (`72px`).
+- **Sidebar**: forced collapsed (`72px`) — the user's persisted desktop width is preserved but not applied.
+- **Drag handle**: not rendered.
+
+### Phone (≤ 767px)
+
+- **NavRail** and **Sidebar**: hidden from the inline layout (`app-shell__rail--hidden`, `app-shell__sidebar--hidden`).
+- **Drawer**: when `drawerOpen` is true, a slide-in panel mounts both the rail and the sidebar (with `forceExpanded` so avatars-only would be useless inside the drawer). The drawer is `role="dialog"` with a focus trap and an Escape handler; the previously-focused element is restored on close.
+- **Drawer trigger**: lives in each view's chat header (`DirectMessage`, `Channel`, `EmptyDirectMessage`, `DiscoverPage`) — it's not part of the shell itself.
+- **Auto-close**: navigating to a "leaf" route (a DM conversation, a channel, or Public Spaces) closes the drawer automatically.
 
 ## Key Implementation Files
 
-### NavMenu Optimization (`src/components/navbar/NavMenu.scss`)
+### NavRail layout (`src/components/shell/NavRail.scss`, sizes in `_variables.scss`)
 
 ```scss
-// Mobile optimization for phones
-@media (max-width: 480px) {
-  .nav-menu {
-    width: 50px; // Reduced from 74px
-  }
-  .nav-icon {
-    width: 32px; // Reduced from 48px
-    height: 32px;
-  }
-}
+$rail-width-collapsed: 72px;
+$rail-width-expanded: 236px;
 ```
 
-### Left Sidebar Responsive Behavior
+The rail does not have its own breakpoint logic — its width follows the shell's `railCollapsed` / `viewport` state via the `app-shell__rail--collapsed | --expanded | --hidden` slot classes.
 
-**Space.scss / DirectMessages.scss:**
+### Sidebar width (`_variables.scss` + `useShellState.ts`)
 
 ```scss
-@media (max-width: 1023px) {
-  .left-sidebar {
-    display: none; // Hidden by default
-
-    &.open {
-      display: flex;
-      position: fixed;
-      left: 74px; // After NavMenu (50px on phones)
-      width: 250px; // 220px on phones
-      height: 100vh;
-      z-index: 60;
-      transform: translateX(0);
-      transition: transform 0.3s ease-in-out;
-    }
-  }
-}
+$sidebar-width: 300px;          // default expanded width
+$sidebar-width-collapsed: 72px; // strip layout
 ```
+
+```typescript
+export const SIDEBAR_COLLAPSED_WIDTH = 72;
+export const SIDEBAR_MIN_WIDTH = 240;
+export const SIDEBAR_MAX_WIDTH = 480;
+export const SIDEBAR_SNAP_THRESHOLD = 200;
+```
+
+`shell.sidebarWidth` in localStorage holds the user's last free-drag width. The legacy `shell.sidebarCollapsed` boolean is read once on first load for migration and kept mirrored on write so a rollback still picks up a sensible state.
 
 ### Chat Content Width Fix (`src/styles/_chat.scss`)
 
@@ -200,20 +200,19 @@ Both mobile and desktop use a consistent overlay system:
 - `lg:relative lg:top-auto lg:right-auto` - Desktop static positioning
 - `translate-x-0` / `translate-x-full` - Slide animations
 
-## Container Width Calculations
+## Container Width
+
+The shell exposes the current sidebar width as a CSS variable on the AppShell root:
 
 ```scss
-// Container.scss responsive width
-.container {
-  @media (max-width: 1023px) {
-    width: calc(100vw - 74px); // Tablet
-  }
-
-  @media (max-width: 480px) {
-    width: calc(100vw - 50px); // Phone
-  }
+.app-shell {
+  // --shell-sidebar-width is set inline in AppShell.tsx (defaults to the
+  // user's persisted shell.sidebarWidth, or CHANNELS_SIDEBAR_WIDTH when
+  // the channels sidebar is mounted).
 }
 ```
+
+Downstream features can read `var(--shell-sidebar-width)` if they need to size relative to the sidebar, instead of hard-coding pixel widths. On phone the rail and sidebar are absent from the inline flow, so main occupies 100%.
 
 ## Common Issues & Solutions
 
@@ -248,9 +247,10 @@ Both mobile and desktop use a consistent overlay system:
 
 ### Breakpoint Testing
 
-1. Test at 1024px boundary (desktop ↔ mobile transition)
-2. Test at 480px boundary (tablet ↔ phone transition)
-3. Verify sidebar behavior at each breakpoint
+1. Test at 1024px boundary (tablet ↔ desktop) — rail/sidebar should switch from forced-collapsed to user-controlled width.
+2. Test at 768px boundary (phone ↔ tablet) — drawer should disappear from the layout in favour of the inline collapsed strip.
+3. Verify the drag handle is present on desktop and absent on tablet/phone.
+4. Verify channels mode pins the sidebar at 300px on desktop regardless of the user's persisted width.
 
 ### Interaction Testing
 
@@ -338,4 +338,4 @@ A comprehensive modal system has been implemented with consistent responsive beh
 
 ---
 
-_Verified: 2025-12-09 - File paths confirmed current_
+*Last updated: 2026-06-04*
