@@ -15,7 +15,7 @@ updated: 2026-01-09T00:00:00.000Z
 
 The DM conversation mute feature allows users to mute individual direct message conversations. When muted, conversations:
 - Don't show unread indicators (blue dot)
-- Don't count toward the NavMenu DM badge
+- Don't count toward the NavRail DM unread dot
 - Don't trigger desktop notifications
 
 This is useful for low-priority contacts, noisy conversations, or bot accounts where users want to keep the conversation but don't need immediate alerts.
@@ -67,12 +67,14 @@ The hook follows the exact same pattern as `useDMFavorites`:
    - Switch toggle for mute status
    - Tooltip explains the effect of muting
 
-3. **Unread Indicators** ([DirectMessageContactsList.tsx](src/components/direct/DirectMessageContactsList.tsx))
-   - Visual unread dot suppressed for muted conversations
-   - `unread` prop excludes muted: `!mutedSet.has(c.conversationId)`
+3. **Per-row Unread Dot** ([DirectMessageContact.tsx](src/components/direct/DirectMessageContact.tsx))
+   - Rendered on the avatar wrapper via the shared `.icon-unread-dot` class
+   - Suppressed for muted conversations: the `unread` prop excludes muted via `!mutedSet.has(c.conversationId)` in [DirectMessageContactsList.tsx](src/components/direct/DirectMessageContactsList.tsx)
+   - Per-row muted state shows a `.dm-muted-badge` (bell-off icon) on the avatar wrapper
 
-4. **NavMenu Badge** ([useDirectMessageUnreadCount.ts](src/hooks/business/messages/useDirectMessageUnreadCount.ts))
-   - Muted conversations excluded from unread count
+4. **NavRail DM Unread Dot** ([NavRail.tsx](src/components/shell/NavRail.tsx), driven by [useDirectMessageUnreadCount.ts](src/hooks/business/messages/useDirectMessageUnreadCount.ts))
+   - Small accent dot rendered on the rail's Messages item when `dmUnreadCount > 0`
+   - Muted conversations are excluded from the count inside the hook itself
    - Cache invalidation ensures immediate updates on mute/unmute
 
 5. **Desktop Notifications** ([NotificationService.ts](src/services/NotificationService.ts), [MessageService.ts](src/services/MessageService.ts))
@@ -174,3 +176,5 @@ The notification filtering is implemented in NotificationService rather than pas
 Unlike channel mute which shows muted channels at 60% opacity, muted DM conversations have no visual distinction. This was a deliberate choice to keep the UI clean - users can use the "Muted" filter to find muted conversations when needed.
 
 ---
+
+*Last updated: 2026-06-04*
