@@ -49,6 +49,8 @@ interface MessageComposerProps {
   onSubmitMessage: () => void;
   onShowStickers: () => void;
   hasStickers?: boolean;
+  /** When true, the trigger opens an emoji-only picker (no stickers tab). Drives the tooltip label. */
+  emojiOnly?: boolean;
 
   // Reply-to and error handling
   inReplyTo?: any;
@@ -115,6 +117,7 @@ export const MessageComposer = forwardRef<
       onSubmitMessage,
       onShowStickers,
       hasStickers = true,
+      emojiOnly = false,
       inReplyTo,
       fileError,
       mentionError,
@@ -838,7 +841,12 @@ export const MessageComposer = forwardRef<
           </div>
 
           {hasStickers && (
-            <Tooltip id="add-emoji" content={t`emoji & stickers`} place="top" showOnTouch={false}>
+            <Tooltip
+              id="add-emoji"
+              content={emojiOnly ? t`Emojis` : t`emoji & stickers`}
+              place="top"
+              showOnTouch={false}
+            >
               <Button
                 type="unstyled"
                 className="message-composer-sticker-btn"

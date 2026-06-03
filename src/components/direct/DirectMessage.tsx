@@ -945,7 +945,7 @@ const DirectMessage: React.FC<{}> = () => {
               </Flex>
             )}
 
-            {/* Emoji panel for DMs (emoji-only, no stickers tab) */}
+            {/* Emoji panel for DMs (emoji-only, no stickers tab). */}
             {showEmojiPanel && (
               <>
                 <div
@@ -954,6 +954,17 @@ const DirectMessage: React.FC<{}> = () => {
                 />
                 <div
                   className="stickers-panel-wrapper"
+                  style={{
+                    right: (() => {
+                      let offset = 24; // base padding
+                      if (showProfile && !isMobile && !isTablet) {
+                        const val = getComputedStyle(document.documentElement)
+                          .getPropertyValue('--sidebar-right-width');
+                        offset += parseInt(val, 10) || 260;
+                      }
+                      return `${offset}px`;
+                    })(),
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Escape') {
                       setShowEmojiPanel(false);
@@ -996,6 +1007,7 @@ const DirectMessage: React.FC<{}> = () => {
                 onSubmitMessage={composer.submitMessage}
                 onShowStickers={handleShowEmojiPanel}
                 hasStickers={true}
+                emojiOnly={true}
                 inReplyTo={composer.inReplyTo}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}
