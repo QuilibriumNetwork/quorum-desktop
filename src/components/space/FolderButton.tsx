@@ -15,6 +15,7 @@ interface FolderButtonProps {
   size?: 'small' | 'regular';
   isExpanded?: boolean;
   showWiggle?: boolean;
+  noTooltip?: boolean;
 }
 
 const FolderButton: React.FC<FolderButtonProps> = ({
@@ -23,6 +24,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   size = 'regular',
   isExpanded = false,
   showWiggle = false,
+  noTooltip = false,
 }) => {
   const isTouch = isTouchDevice();
   const { resolvedTheme } = useTheme();
@@ -62,7 +64,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
     </div>
   );
 
-  if (isTouch || shouldHideTooltip) {
+  if (isTouch || shouldHideTooltip || noTooltip) {
     return buttonElement;
   }
 

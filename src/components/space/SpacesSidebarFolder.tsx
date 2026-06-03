@@ -252,6 +252,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                     mentionCount={folderMentionCount}
                     isExpanded={isExpanded}
                     showWiggle={showWiggle}
+                    noTooltip
                   />
                 </div>
                 <div className="folder-header__meta">

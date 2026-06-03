@@ -26,6 +26,17 @@
   left: -12px;
 }
 
+// Row chrome already shows hover/active — suppress the legacy icon-side
+// hover bar and the unread-dot hover-grow inside rows.
+.spaces-sidebar__row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target) {
+  opacity: 0 !important;
+}
+@media (hover: hover) {
+  .spaces-sidebar__row .relative:hover .space-icon-toggle--unread {
+    height: $s-1-5;
+  }
+}
+
 // Hover / accent-bar / merge-target chrome → .sidebar-row-chrome in _components.scss.
 .spaces-sidebar__row {
   display: flex;
@@ -40,11 +51,6 @@
   font-family: inherit;
   color: var(--color-text-main);
   min-height: 60px;
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
-  }
 
   &--active {
     background: var(--color-bg-sidebar-active-accent);
@@ -210,8 +216,8 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: -2px;
+    outline: none;
+    background: var(--color-bg-sidebar-hover);
   }
 
   &--active {
