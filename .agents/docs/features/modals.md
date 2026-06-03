@@ -18,10 +18,10 @@ The app uses **two modal rendering systems** - this is intentional, not a tempor
 
 | System | Location | Modals | Best For |
 |--------|----------|--------|----------|
-| **ModalProvider** | Router level | 10 modals | Top-level triggers (NavMenu, menus) |
+| **ModalProvider** | Router level | 10 modals | Top-level triggers (NavRail / SpacesSidebar / context menus) |
 | **Layout-Level** | Layout.tsx | 6 modals | Deep triggers (Message.tsx) - context providers avoid prop drilling |
 
-> ⚠️ **Never render modals at component level** (e.g., inside Message.tsx). This causes z-index issues where NavMenu appears above the modal overlay.
+> ⚠️ **Never render modals at component level** (e.g., inside Message.tsx). This causes z-index issues where the AppShell chrome (NavRail / Sidebar) and the `ContextMenu` floating layer appear above the modal overlay.
 
 ### Why Two Systems?
 
@@ -37,7 +37,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 
 | Criteria | → System |
 |----------|----------|
-| Triggered from NavMenu, space menus, context menus | ModalProvider |
+| Triggered from NavRail, SpacesSidebar header, space/folder context menus | ModalProvider |
 | Needs to open from multiple unrelated components | ModalProvider |
 | Multi-section interface (settings) | ModalProvider |
 | Triggered deep in component tree (Message.tsx) | Layout-Level |
@@ -176,4 +176,19 @@ All modals must use: `Button`, `Input`, `Switch`, `Icon`, `Tooltip`, `Select` fr
 
 ---
 
-_Last updated: 2026-05-20 — staleness audit fixes_
+### Where the common triggers live
+
+The new shell distributes triggers across a few surfaces — there is no single "menu" surface anymore:
+
+- **AddSpaceModal / CreateSpaceModal** — `+` button in the [SpacesSidebar](src/components/space/SpacesSidebar.tsx) header opens a `ContextMenu` with two items that route to `onAddSpace` (join via invite) and `onCreateSpace` (create from scratch).
+- **UserSettingsModal** — user avatar button at the bottom of [NavRail](src/components/shell/NavRail.tsx) (`openUserSettings`).
+- **SpaceSettingsModal / LeaveSpaceModal** — items inside the space context menu built by [useSpaceContextMenu](src/hooks/business/spaces/useSpaceContextMenu.tsx), mounted by `SpacesSidebar` on row right-click.
+- **FolderEditorModal** — opened from the SpacesSidebar folder context menu, or by long-press on a folder header on touch devices.
+- **ConversationSettingsModal / NewDirectMessageModal** — DM list ([DirectMessageContactsList](src/components/direct/DirectMessageContactsList.tsx)) row context menu and header `+` button.
+- **ImageModal / EditHistoryModal / ConfirmationModal** — still triggered from chat messages, unchanged.
+
+The z-index guidance above is unchanged in spirit: any popover (ContextMenu, Tooltip) must stack above the floating modal layer so that opening a modal from a menu item never leaves the menu painted on top of the modal scrim.
+
+---
+
+*Last updated: 2026-06-04*
