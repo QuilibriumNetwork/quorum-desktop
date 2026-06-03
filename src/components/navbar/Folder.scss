@@ -16,14 +16,6 @@
   touch-action: none;
   // margin-top removed - container uses gap for consistent spacing
 
-  // Hover state (desktop only)
-  @media (hover: hover) {
-    &:hover {
-      opacity: 0.85;
-      transform: scale(1.02);
-    }
-  }
-
   // Small size for spaces inside folders
   &--small {
     width: 40px;
@@ -106,12 +98,19 @@
 
   // When the folder is expanded, the folder's own backdrop tints the whole
   // area. To make per-row hover legible, each row paints a slightly stronger
-  // tint of the folder color on top — same hue, just more opaque, so the
-  // hovered row reads as a single highlighted element instead of revealing
-  // the neutral sidebar bg underneath. Accent left bar still appears on hover.
-  &--expanded {
+  // tint of the folder color on top — same hue, just a touch more opaque.
+  // Bump is tuned per variant: row rests at 12%, strip rests at 20%, so the
+  // strip needs a smaller delta to avoid overpowering. Accent left bar still
+  // appears on hover.
+  &--row.folder-container--expanded {
     .sidebar-row-chrome:hover {
-      background: color-mix(in srgb, var(--folder-color) 22%, transparent);
+      background: color-mix(in srgb, var(--folder-color) 17%, transparent);
+    }
+  }
+
+  &--strip.folder-container--expanded {
+    .sidebar-row-chrome:hover {
+      background: color-mix(in srgb, var(--folder-color) 24%, transparent);
     }
   }
 }

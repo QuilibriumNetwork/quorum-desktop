@@ -182,43 +182,38 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
         ) : (
           <>
             {collapsed ? (
-              <Tooltip
-                id={`spaces-sidebar-folder-${folder.id}`}
-                content={folder.name}
-                place="right"
-                showOnTouch={false}
+              // FolderButton self-wraps in a Tooltip; no outer one here
+              // (avoids the double-tooltip on right-click).
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={handleClick}
+                onContextMenu={handleContextMenu}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onToggleExpand();
+                  }
+                }}
+                className={[
+                  'folder-header',
+                  'folder-header--strip',
+                  'sidebar-row-chrome',
+                  showWiggle && 'sidebar-row-chrome--merge-target',
+                  'cursor-pointer',
+                ]
+                  .filter(Boolean)
+                  .join(' ')}
+                aria-label={folder.name}
+                aria-expanded={isExpanded}
               >
-                <div
-                  role="button"
-                  tabIndex={0}
-                  onClick={handleClick}
-                  onContextMenu={handleContextMenu}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault();
-                      onToggleExpand();
-                    }
-                  }}
-                  className={[
-                    'folder-header',
-                    'folder-header--strip',
-                    'sidebar-row-chrome',
-                    showWiggle && 'sidebar-row-chrome--merge-target',
-                    'cursor-pointer',
-                  ]
-                    .filter(Boolean)
-                    .join(' ')}
-                  aria-label={folder.name}
-                  aria-expanded={isExpanded}
-                >
-                  <FolderButton
-                    folder={folder}
-                    hasUnread={hasUnread}
-                    isExpanded={isExpanded}
-                    showWiggle={showWiggle}
-                  />
-                </div>
-              </Tooltip>
+                <FolderButton
+                  folder={folder}
+                  hasUnread={hasUnread}
+                  isExpanded={isExpanded}
+                  showWiggle={showWiggle}
+                />
+              </div>
             ) : (
               <div
                 role="button"
@@ -306,15 +301,12 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                               spaceId={space.spaceId}
                               spaceName={space.spaceName}
                               iconUrl={space.iconUrl}
-                              notifs={false}
+                              notifs={unread > 0}
                               selected={false}
                               size="regular"
                               noTooltip
-                              noToggle
+                              mentionCount={unread > 0 ? unread : undefined}
                             />
-                            {unread > 0 && (
-                              <span className="spaces-sidebar__strip-unread-dot" />
-                            )}
                           </div>
                         </button>
                       </Tooltip>

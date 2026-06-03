@@ -93,60 +93,74 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
         spaceId={space.spaceId}
         spaceName={space.spaceName}
         iconUrl={space.iconUrl}
-        notifs={false}
+        notifs={unread > 0}
         selected={false}
         size="regular"
         noTooltip
-        noToggle
+        mentionCount={compact && unread > 0 ? unread : undefined}
       />
       {isMuted && (
         <div className="muted-badge" title="Muted">
           <Icon name="bell-off" size="sm" />
         </div>
       )}
-      {compact && unread > 0 && <span className="spaces-sidebar__strip-unread-dot" />}
     </div>
+  );
+
+  const button = (
+    <button
+      ref={setNodeRef}
+      type="button"
+      className={rowClass}
+      onClick={onClick}
+      onContextMenu={onContextMenu}
+      aria-current={active ? 'page' : undefined}
+      aria-label={compact ? space.spaceName : undefined}
+      {...attributes}
+      {...listeners}
+    >
+      {avatar}
+      {!compact && (
+        <div className="spaces-sidebar__row-meta">
+          <div className="spaces-sidebar__row-line spaces-sidebar__row-line--primary">
+            <span className="spaces-sidebar__row-name">{space.spaceName}</span>
+            <React.Suspense fallback={null}>
+              <OwnerCrown spaceId={space.spaceId} />
+            </React.Suspense>
+          </div>
+          <div className="spaces-sidebar__row-line spaces-sidebar__row-line--secondary">
+            <span className="spaces-sidebar__row-members">
+              <Icon name="user" size="sm" />
+              <React.Suspense fallback={<span>0</span>}>
+                <MemberCount spaceId={space.spaceId} />
+              </React.Suspense>
+            </span>
+            {unread > 0 && (
+              <span className="spaces-sidebar__row-badge">
+                {unread > 99 ? '99+' : unread}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+    </button>
   );
 
   return (
     <>
       {showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
-      <button
-        ref={setNodeRef}
-        type="button"
-        className={rowClass}
-        onClick={onClick}
-        onContextMenu={onContextMenu}
-        aria-current={active ? 'page' : undefined}
-        aria-label={compact ? space.spaceName : undefined}
-        {...attributes}
-        {...listeners}
-      >
-        {avatar}
-        {!compact && (
-          <div className="spaces-sidebar__row-meta">
-            <div className="spaces-sidebar__row-line spaces-sidebar__row-line--primary">
-              <span className="spaces-sidebar__row-name">{space.spaceName}</span>
-              <React.Suspense fallback={null}>
-                <OwnerCrown spaceId={space.spaceId} />
-              </React.Suspense>
-            </div>
-            <div className="spaces-sidebar__row-line spaces-sidebar__row-line--secondary">
-              <span className="spaces-sidebar__row-members">
-                <Icon name="user" size="sm" />
-                <React.Suspense fallback={<span>0</span>}>
-                  <MemberCount spaceId={space.spaceId} />
-                </React.Suspense>
-              </span>
-              {unread > 0 && (
-                <span className="spaces-sidebar__row-badge">
-                  {unread > 99 ? '99+' : unread}
-                </span>
-              )}
-            </div>
-          </div>
-        )}
-      </button>
+      {compact ? (
+        <Tooltip
+          id={`spaces-sidebar-strip-${space.spaceId}`}
+          content={space.spaceName}
+          place="right"
+          showOnTouch={false}
+        >
+          {button}
+        </Tooltip>
+      ) : (
+        button
+      )}
       {showDropAfter && <div className="spaces-sidebar__row-drop-indicator" />}
     </>
   );

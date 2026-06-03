@@ -17,6 +17,15 @@
   padding-top: $s-1-5;
 }
 
+// In the expanded sidebar, recenter the unread dot in the gap between the
+// sidebar edge and the space icon (row padding = $s-4 = 16px, icon is 48px
+// wide, dot is 6px). Collapsed strip keeps its default off-edge position.
+// .space-icon-toggle is positioned relative to the SpaceIcon's .relative
+// wrapper at `left: -15px`; bumping to -11px centers a 6px dot in a 16px gap.
+.spaces-sidebar__row .space-icon-toggle {
+  left: -12px;
+}
+
 // Hover / accent-bar / merge-target chrome → .sidebar-row-chrome in _components.scss.
 .spaces-sidebar__row {
   display: flex;
@@ -218,14 +227,3 @@
   position: relative;
 }
 
-.spaces-sidebar__strip-unread-dot {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--color-bg-sidebar);
-  box-sizing: border-box;
-}

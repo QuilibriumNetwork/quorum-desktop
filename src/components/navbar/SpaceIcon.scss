@@ -36,9 +36,8 @@
   height: 114px !important;
 }
 
-.space-icon:hover {
-  opacity: 0.8;
-}
+// Hover feedback comes from the parent .sidebar-row-chrome background, not
+// from dimming the icon itself.
 
 // Toggle indicator - single element with state-based modifiers for smooth transitions
 // States: default (hidden) → hover → unread (small dot) → selected (tall bar)
@@ -72,10 +71,12 @@
     left: -18px;
   }
 
-  // Unread state: small dot, always visible
+  // Unread state: small dot, always visible. Override the shared pill radius
+  // with a true circle so it doesn't read as a soft square at 6×6.
   &--unread {
     height: $s-1-5; // 6px - small dot
     opacity: 1;
+    border-radius: $rounded-full;
   }
 
   // Selected state: tall bar, always visible
@@ -154,7 +155,7 @@
 // Light theme: accent-400, Dark theme: accent-600
 .space-icon-mention-bubble {
   position: absolute;
-  bottom: -$s-0-5;
+  top: -$s-0-5;
   right: -$s-1;
   display: flex;
   align-items: center;
