@@ -361,7 +361,7 @@ await createSpaceAPI(name, iconData, ...);
 
 ### In Navbar (SpaceIcon)
 
-**File**: `src/components/navbar/SpaceIcon.tsx`
+**File**: `src/components/space/SpaceIcon.tsx`
 
 ```typescript
 const hasValidImage = backgroundImage &&
@@ -592,7 +592,7 @@ border-radius: 50%;
 - `src/components/user/UserInitials/` - Generic initials renderer
 - `src/components/user/UserAvatar/` - User profile avatars
 - `src/components/space/SpaceAvatar/` - Space icon avatars
-- `src/components/navbar/SpaceIcon.tsx` - Navbar space icons with initials fallback
+- `src/components/space/SpaceIcon.tsx` - Space sidebar icons with initials fallback
 
 ### Utilities
 - [`@quilibrium/quorum-shared` `src/utils/avatar.ts`](../../../../quorum-shared/src/utils/avatar.ts) - Color generation and initials extraction (moved to quorum-shared)
