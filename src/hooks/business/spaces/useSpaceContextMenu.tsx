@@ -7,7 +7,6 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useChannelMute } from '../channels/useChannelMute';
 import { useSpaceLeaving } from './useSpaceLeaving';
 import { useSpaceFavorites } from './useSpaceFavorites';
-import { useHideMutedSpaces } from './useHideMutedSpaces';
 import { useSpaces } from '../../queries/spaces/useSpaces';
 
 interface SpaceContextMenuState {
@@ -68,7 +67,6 @@ export function useSpaceContextMenu(
   const { showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute } =
     useChannelMute({ spaceId: state.spaceId || '' });
   const { isFavorite, toggleFavorite } = useSpaceFavorites();
-  const { hideMutedSpaces, toggleHideMutedSpaces } = useHideMutedSpaces();
 
   const openContextMenu = React.useCallback<UseSpaceContextMenuReturn['openContextMenu']>(
     async ({ spaceId, spaceName, iconUrl, event, hasNotifications = false }) => {
@@ -182,12 +180,6 @@ export function useSpaceContextMenu(
         onClick: () => toggleShowMutedChannels(),
       },
       {
-        id: 'toggle-hide-muted-spaces',
-        icon: hideMutedSpaces ? 'eye' : 'eye-off',
-        label: hideMutedSpaces ? t`Show Muted Spaces` : t`Hide Muted Spaces`,
-        onClick: () => toggleHideMutedSpaces(),
-      },
-      {
         id: 'toggle-space-mute',
         icon: isSpaceMuted ? 'bell' : 'bell-off',
         label: isSpaceMuted ? t`Unmute Space` : t`Mute Space`,
@@ -254,8 +246,6 @@ export function useSpaceContextMenu(
     handleMarkSpaceAsRead,
     isFavorite,
     toggleFavorite,
-    hideMutedSpaces,
-    toggleHideMutedSpaces,
   ]);
 
   const contextMenu = state.spaceId ? (
