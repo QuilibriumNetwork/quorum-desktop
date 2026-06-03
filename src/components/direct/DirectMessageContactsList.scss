@@ -96,21 +96,8 @@
   }
 }
 
-// Combined search row with filter + input as one bordered element
+// DM-only Select tweaks inside the shared .sidebar-search-row.
 .dm-search-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  background-color: var(--color-field-bg);
-  border: $border solid var(--color-field-border);
-  border-radius: $rounded-lg;
-  padding-left: $s-1;
-  transition: border-color $duration-150 $ease-in-out;
-
-  &:focus-within {
-    border-color: var(--color-field-border-focus);
-  }
-
   // Adjust compact Select styling inside the search row
   .quorum-select--compact {
     .quorum-select__trigger {

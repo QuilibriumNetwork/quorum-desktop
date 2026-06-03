@@ -2,8 +2,9 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import type { Space } from '@quilibrium/quorum-shared';
-import { Icon, Tooltip } from '../primitives';
+import { Button, Tooltip } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
+import { ListSearchInput } from '../ui';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
 import { useShellState } from './useShellState';
@@ -99,6 +100,23 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
   const { sidebarCollapsed } = useShellState();
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
 
+  // Search: same UX as the DM sidebar — toggle reveals an input row, closing
+  // it clears the query so the next open starts fresh.
+  const [searchOpen, setSearchOpen] = React.useState(false);
+  const [searchInput, setSearchInput] = React.useState('');
+  const handleToggleSearch = React.useCallback(() => {
+    setSearchOpen((prev) => {
+      if (prev) setSearchInput('');
+      return !prev;
+    });
+  }, []);
+
+  const filteredSpaces = React.useMemo(() => {
+    const q = searchInput.trim().toLowerCase();
+    if (!q) return spaces;
+    return spaces.filter((s) => s.spaceName.toLowerCase().includes(q));
+  }, [spaces, searchInput]);
+
   const handleRowClick = (
     spaceId: string,
     defaultChannelId: string | undefined
@@ -156,20 +174,58 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
 
   return (
     <div className="spaces-sidebar list-bottom-fade">
-      <div className="spaces-sidebar__header">
-        <span className="spaces-sidebar__title">{t`Spaces`}</span>
-        <button
-          type="button"
-          className="spaces-sidebar__action"
-          aria-label={t`Add a space`}
-          onClick={onAddSpace}
+      <div className="sidebar-header">
+        <span className="sidebar-header__title">{t`Spaces`}</span>
+        <Button
+          type="unstyled"
+          iconName="search"
+          iconSize="lg"
+          iconOnly
+          onClick={handleToggleSearch}
+          className={`header-icon-button ${searchOpen ? 'active--accent' : ''}`}
+          ariaLabel={t`Search spaces`}
+        />
+        <Tooltip
+          id="spaces-add"
+          content={t`Add a space`}
+          place="bottom"
+          showOnTouch={false}
         >
-          <Icon name="plus" size="md" />
-        </button>
+          <Button
+            type="secondary"
+            iconName="plus"
+            iconSize="lg"
+            iconOnly
+            onClick={onAddSpace}
+            className="sidebar-header-action"
+            ariaLabel={t`Add a space`}
+          />
+        </Tooltip>
       </div>
 
+      {searchOpen && (
+        <div className="px-3.5 pt-2 pb-3">
+          <div className="sidebar-search-row">
+            <div className="flex-1">
+              <ListSearchInput
+                value={searchInput}
+                onChange={setSearchInput}
+                placeholder={t`Space name`}
+                variant="minimal"
+                showSearchIcon={false}
+              />
+            </div>
+          </div>
+          {filteredSpaces.length === 0 && searchInput && (
+            <div className="text-xs text-subtle mt-2">
+              {t`No spaces found`}
+            </div>
+          )}
+        </div>
+      )}
+
       <div className="spaces-sidebar__list">
-        {spaces.map((space) => {
+        {filteredSpaces.map((space) => {
           const unread = spaceUnreadCounts[space.spaceId] || 0;
           const active = space.spaceId === currentSpaceId;
           return (

@@ -378,40 +378,39 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
 
   return (
     <div className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
-      <Flex justify="between" className="direct-messages-header px-4 pt-4 pb-2 lg:pt-3 lg:pb-2 font-semibold flex-shrink-0">
-        <div>
-          <Trans>Direct Messages</Trans>
-        </div>
-        <Flex className="gap-1">
-            <Button
-              type="unstyled"
-              iconName="search"
-              iconOnly
-              onClick={handleToggleSearch}
-              className="header-icon-button mr-1"
-            />
-          <Tooltip
-            id="dm-add-friend"
-            content={t`Add a friend`}
-            place="bottom"
-            showOnTouch={false}
-          >
-            <Button
-              type="primary"
-              size="small"
-              iconName="user-plus"
-              iconSize="lg"
-              iconOnly
-              onClick={openNewDirectMessage}
-            />
-          </Tooltip>
-        </Flex>
-      </Flex>
+      <div className="sidebar-header">
+        <span className="sidebar-header__title">{t`Direct Messages`}</span>
+        <Button
+          type="unstyled"
+          iconName="search"
+          iconSize="lg"
+          iconOnly
+          onClick={handleToggleSearch}
+          className={`header-icon-button ${searchOpen ? 'active--accent' : ''}`}
+          ariaLabel={t`Search direct messages`}
+        />
+        <Tooltip
+          id="dm-add-friend"
+          content={t`Add a friend`}
+          place="bottom"
+          showOnTouch={false}
+        >
+          <Button
+            type="secondary"
+            iconName="user-plus"
+            iconSize="lg"
+            iconOnly
+            onClick={openNewDirectMessage}
+            className="sidebar-header-action"
+            ariaLabel={t`Add a friend`}
+          />
+        </Tooltip>
+      </div>
 
       {/* Search row */}
       {searchOpen && (
-        <div className="px-4 pt-2 pb-3">
-          <Flex className="dm-search-row items-center">
+        <div className="px-3.5 pt-2 pb-3">
+          <Flex className="sidebar-search-row dm-search-row items-center">
             {hasAnyFilter && (
               <Select
                 value={filter}
