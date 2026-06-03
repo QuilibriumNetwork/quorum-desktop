@@ -5,12 +5,14 @@ import type { Space } from '@quilibrium/quorum-shared';
 import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Tooltip } from '../primitives';
+import { Button, Icon, Tooltip, useTheme } from '../primitives';
 import SpaceIcon from './SpaceIcon';
 import { ListSearchInput } from '../ui';
 import ContextMenu, { type MenuItem } from '../ui/ContextMenu';
 import { SpacesSidebarRow } from './SpacesSidebarRow';
 import { SpacesSidebarFolder } from './SpacesSidebarFolder';
+import FolderButton from './FolderButton';
+import { getFolderColorHex } from './IconPicker/types';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
@@ -291,6 +293,90 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     navigate(`/spaces/${spaceId}/${channelId}`);
   };
 
+  // Floating clone that follows the cursor during drag. Spaces show a row,
+  // folders show their colored tile (collapsed strip) or tile + name + count
+  // (expanded list) — same visual the user dragged from, so the ghost reads
+  // as "the thing they grabbed."
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
+  const renderDragOverlay = (variant: 'compact' | 'expanded') => {
+    if (!activeDragItem) return null;
+
+    if (activeDragItem.type === 'folder') {
+      const nav = navItems.find(
+        (n) => n.item.type === 'folder' && n.item.id === activeDragItem.id
+      );
+      if (!nav || nav.item.type !== 'folder') return null;
+      const folder = nav.item;
+      const folderSpaces = nav.spaces ?? [];
+      const hasUnread = folderSpaces.some(
+        (s) => (spaceUnreadCounts[s.spaceId] || 0) > 0
+      );
+      const mentionCount = folderSpaces.reduce(
+        (sum, s) => sum + (spaceMentionPlusReplyCounts[s.spaceId] || 0),
+        0
+      );
+      const folderColor = getFolderColorHex(folder.color, isDarkTheme);
+
+      if (variant === 'compact') {
+        return (
+          <div
+            className="spaces-sidebar__drag-overlay"
+            style={{ ['--folder-color' as string]: folderColor } as React.CSSProperties}
+          >
+            <FolderButton
+              folder={folder}
+              hasUnread={hasUnread}
+              mentionCount={mentionCount}
+            />
+          </div>
+        );
+      }
+
+      return (
+        <div
+          className="spaces-sidebar__drag-overlay"
+          style={{ ['--folder-color' as string]: folderColor } as React.CSSProperties}
+        >
+          <div className="folder-header folder-header--row">
+            <div className="folder-header__icon">
+              <FolderButton
+                folder={folder}
+                hasUnread={hasUnread}
+                mentionCount={mentionCount}
+                size="small"
+              />
+            </div>
+            <div className="folder-header__meta">
+              <div className="folder-header__name">{folder.name}</div>
+              <div className="folder-header__count">
+                <Icon name="user" size="sm" />
+                <span>{folderSpaces.length}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    // Space
+    const space = spaces.find((s) => s.spaceId === activeDragItem.id);
+    if (!space) return null;
+    return (
+      <div className="spaces-sidebar__drag-overlay">
+        <SpacesSidebarRow
+          space={space}
+          active={false}
+          unread={spaceUnreadCounts[space.spaceId] || 0}
+          mentionCount={spaceMentionPlusReplyCounts[space.spaceId] || 0}
+          isMuted={mutedSpacesSet.has(space.spaceId)}
+          compact={variant === 'compact'}
+          onClick={() => {}}
+        />
+      </div>
+    );
+  };
+
   if (renderCollapsed) {
     return (
       <div className="spaces-sidebar spaces-sidebar--collapsed list-bottom-fade">
@@ -369,27 +455,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
           })}
             </div>
           </SortableContext>
-          <DragOverlay>
-            {activeDragItem ? (
-              (() => {
-                const space = spaces.find((s) => s.spaceId === activeDragItem.id);
-                if (!space) return null;
-                return (
-                  <div className="spaces-sidebar__drag-overlay">
-                    <SpacesSidebarRow
-                      space={space}
-                      active={false}
-                      unread={spaceUnreadCounts[space.spaceId] || 0}
-                      mentionCount={spaceMentionPlusReplyCounts[space.spaceId] || 0}
-                      isMuted={mutedSpacesSet.has(space.spaceId)}
-                          compact
-                      onClick={() => {}}
-                    />
-                  </div>
-                );
-              })()
-            ) : null}
-          </DragOverlay>
+          <DragOverlay>{renderDragOverlay('compact')}</DragOverlay>
         </DndContext>
         {rowContextMenu}
         {folderContextMenu.folder && (
@@ -578,26 +644,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
             )}
           </div>
         </SortableContext>
-        <DragOverlay>
-          {activeDragItem ? (
-            (() => {
-              const space = spaces.find((s) => s.spaceId === activeDragItem.id);
-              if (!space) return null;
-              return (
-                <div className="spaces-sidebar__drag-overlay">
-                  <SpacesSidebarRow
-                    space={space}
-                    active={false}
-                    unread={spaceUnreadCounts[space.spaceId] || 0}
-                    mentionCount={spaceMentionPlusReplyCounts[space.spaceId] || 0}
-                    isMuted={mutedSpacesSet.has(space.spaceId)}
-                    onClick={() => {}}
-                  />
-                </div>
-              );
-            })()
-          ) : null}
-        </DragOverlay>
+        <DragOverlay>{renderDragOverlay('expanded')}</DragOverlay>
       </DndContext>
       {rowContextMenu}
       {folderContextMenu.folder && (
