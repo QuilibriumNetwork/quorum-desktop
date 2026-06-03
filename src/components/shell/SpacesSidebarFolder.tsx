@@ -1,0 +1,229 @@
+import * as React from 'react';
+import { useSortable } from '@dnd-kit/sortable';
+import type { Space } from '@quilibrium/quorum-shared';
+import FolderButton from '../navbar/FolderButton';
+import { useDragStateContext } from '../../context/DragStateContext';
+import { getFolderColorHex, IconColor } from '../space/IconPicker/types';
+import { NavItem } from '../../db/messages';
+import { isTouchDevice } from '../../utils/platform';
+import { hapticMedium } from '../../utils/haptic';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import { useTheme } from '../primitives';
+import { SpacesSidebarRow } from './SpacesSidebarRow';
+
+interface SpacesSidebarFolderProps {
+  folder: NavItem & { type: 'folder' };
+  spaces: Space[];
+  isExpanded: boolean;
+  currentSpaceId?: string;
+  spaceUnreadCounts: Record<string, number>;
+  mutedSpacesSet: Set<string>;
+  favoriteSpacesSet: Set<string>;
+  onToggleExpand: () => void;
+  onEdit: () => void;
+  onSpaceClick: (spaceId: string, defaultChannelId: string | undefined) => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  onSpaceContextMenu?: (
+    spaceId: string,
+    spaceName: string,
+    iconUrl: string | undefined,
+    e: React.MouseEvent,
+    hasNotifications: boolean
+  ) => void;
+}
+
+/**
+ * Folder render for the new SpacesSidebar — fork of navbar/FolderContainer
+ * that renders nested rows via `SpacesSidebarRow` (two-line layout) instead
+ * of `SpaceButton` (72px icon tile). DnD wiring, expand/collapse animation,
+ * and touch long-press are preserved verbatim from the original.
+ */
+export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
+  folder,
+  spaces,
+  isExpanded,
+  currentSpaceId,
+  spaceUnreadCounts,
+  mutedSpacesSet,
+  favoriteSpacesSet,
+  onToggleExpand,
+  onEdit,
+  onSpaceClick,
+  onContextMenu,
+  onSpaceContextMenu,
+}) => {
+  const isTouch = isTouchDevice();
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
+
+  // Long press for touch devices — opens editor.
+  const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+  const touchStartPos = React.useRef<{ x: number; y: number } | null>(null);
+  const { threshold: MOVEMENT_THRESHOLD, delay: LONG_PRESS_DELAY } =
+    TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
+
+  const clearLongPressTimer = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    touchStartPos.current = null;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isTouch && e.touches.length === 1) {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+      longPressTimer.current = setTimeout(() => {
+        hapticMedium();
+        onEdit();
+        clearLongPressTimer();
+      }, LONG_PRESS_DELAY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartPos.current && longPressTimer.current && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStartPos.current.x;
+      const dy = touch.clientY - touchStartPos.current.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance > MOVEMENT_THRESHOLD) {
+        clearLongPressTimer();
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    clearLongPressTimer();
+  };
+
+  const { attributes, listeners, setNodeRef, isDragging } = useSortable({
+    id: folder.id,
+    data: { type: 'folder', targetId: folder.id },
+  });
+
+  React.useEffect(() => {
+    if (isDragging) clearLongPressTimer();
+  }, [isDragging]);
+
+  const hasUnread = spaces.some((s) => (spaceUnreadCounts[s.spaceId] || 0) > 0);
+
+  const { setIsDragging, dropTarget, activeItem } = useDragStateContext();
+
+  const isDropTarget = dropTarget?.id === folder.id;
+  const isDraggingSpace = activeItem?.type === 'space';
+  const showWiggle =
+    isDropTarget && dropTarget?.intent === 'merge' && !isExpanded && isDraggingSpace;
+  const showDropBefore =
+    isDropTarget &&
+    (dropTarget?.intent === 'reorder-before' ||
+      (dropTarget?.intent === 'merge' && isExpanded));
+  const showDropAfter = isDropTarget && dropTarget?.intent === 'reorder-after';
+
+  React.useEffect(() => {
+    setIsDragging(isDragging);
+  }, [isDragging, setIsDragging]);
+
+  const dragStyle: React.CSSProperties = {
+    pointerEvents: isDragging ? 'none' : 'auto',
+  };
+
+  const folderColor = getFolderColorHex(folder.color as IconColor, isDarkTheme);
+
+  const handleClick = () => {
+    onToggleExpand();
+  };
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!isTouch && onContextMenu) {
+      e.preventDefault();
+      onContextMenu(e);
+    }
+  };
+
+  return (
+    <>
+      {showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
+      <div
+        ref={setNodeRef}
+        style={{
+          ...dragStyle,
+          ['--folder-color' as string]: folderColor,
+          touchAction: 'none',
+        } as React.CSSProperties}
+        {...attributes}
+        {...listeners}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
+        className={`folder-container ${isExpanded ? 'folder-container--expanded' : ''}`}
+      >
+        {isDragging ? (
+          <div className="space-icon-drag-placeholder" />
+        ) : (
+          <>
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleClick}
+              onContextMenu={handleContextMenu}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onToggleExpand();
+                }
+              }}
+              className="folder-header cursor-pointer"
+            >
+              <FolderButton
+                folder={folder}
+                hasUnread={hasUnread}
+                isExpanded={isExpanded}
+                showWiggle={showWiggle}
+              />
+            </div>
+
+            <div className="folder-spaces-wrapper">
+              <div className="folder-spaces">
+                {spaces.map((space) => {
+                  const unread = spaceUnreadCounts[space.spaceId] || 0;
+                  const active = space.spaceId === currentSpaceId;
+                  return (
+                    <SpacesSidebarRow
+                      key={space.spaceId}
+                      space={space}
+                      active={active}
+                      unread={unread}
+                      isMuted={mutedSpacesSet.has(space.spaceId)}
+                      isFavorite={favoriteSpacesSet.has(space.spaceId)}
+                      parentFolderId={folder.id}
+                      onClick={() => onSpaceClick(space.spaceId, space.defaultChannelId)}
+                      onContextMenu={
+                        onSpaceContextMenu
+                          ? (e) => {
+                              onSpaceContextMenu(
+                                space.spaceId,
+                                space.spaceName,
+                                space.iconUrl,
+                                e,
+                                unread > 0
+                              );
+                            }
+                          : undefined
+                      }
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+      {showDropAfter && <div className="spaces-sidebar__row-drop-indicator" />}
+    </>
+  );
+};
+
+export default SpacesSidebarFolder;

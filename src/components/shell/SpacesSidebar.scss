@@ -114,6 +114,27 @@
   }
 }
 
+// === Drag-and-drop visuals ===
+.spaces-sidebar__row--dragging {
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.spaces-sidebar__row--drop-target {
+  animation: wiggle 0.25s ease-in-out infinite;
+  outline: 2px solid var(--accent);
+  outline-offset: -2px;
+  border-radius: $rounded-sm;
+}
+
+.spaces-sidebar__row-drop-indicator {
+  height: 2px;
+  margin: $s-0-5 $s-4;
+  background: var(--accent);
+  border-radius: $rounded-full;
+  pointer-events: none;
+}
+
 .spaces-sidebar__row-members {
   display: inline-flex;
   align-items: center;
