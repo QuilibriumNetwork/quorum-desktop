@@ -217,7 +217,6 @@ const General: React.FunctionComponent<GeneralProps> = ({
                 setSpaceTagId(v === '' ? undefined : v);
               }}
               size="medium"
-              variant="bordered"
               className="w-full md:w-80"
             />
             {spaceTagId && (() => {
