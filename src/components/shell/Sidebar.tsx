@@ -10,6 +10,7 @@ const SPACE_ROUTE_PATTERN = /^\/spaces\/([^/]+)\/[^/]+$/;
 
 interface SidebarProps {
   onAddSpace: () => void;
+  onCreateSpace: () => void;
   /** When true, force the expanded list view regardless of the global
    *  collapse preference. Used when the sidebar is rendered inside the
    *  phone drawer, where avatars-only would be useless. */
@@ -17,7 +18,7 @@ interface SidebarProps {
 }
 
 /** Route-driven dispatcher for sidebar contents. */
-export const Sidebar: React.FunctionComponent<SidebarProps> = ({ onAddSpace, forceExpanded }) => {
+export const Sidebar: React.FunctionComponent<SidebarProps> = ({ onAddSpace, onCreateSpace, forceExpanded }) => {
   const mode = useSidebarMode();
   const location = useLocation();
 
@@ -30,7 +31,7 @@ export const Sidebar: React.FunctionComponent<SidebarProps> = ({ onAddSpace, for
       return spaceId ? <ChannelList spaceId={spaceId} /> : null;
     }
     case 'spaces':
-      return <SpacesSidebar onAddSpace={onAddSpace} forceExpanded={forceExpanded} />;
+      return <SpacesSidebar onAddSpace={onAddSpace} onCreateSpace={onCreateSpace} forceExpanded={forceExpanded} />;
     case 'hidden':
     default:
       return null;

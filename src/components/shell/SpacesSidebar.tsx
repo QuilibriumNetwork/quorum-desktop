@@ -5,6 +5,7 @@ import type { Space } from '@quilibrium/quorum-shared';
 import { Button, Tooltip } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { ListSearchInput } from '../ui';
+import ContextMenu, { type MenuItem } from '../ui/ContextMenu';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
 import { useShellState } from './useShellState';
@@ -47,11 +48,14 @@ const LAST_CHANNEL_KEY = 'lastChannelId';
  *  - "+" header button wired to AddSpaceModal (currently no-op)
  */
 interface SpacesSidebarProps {
+  /** Opens the "Join a space" modal (paste invite link). */
   onAddSpace: () => void;
+  /** Opens the "Create a space" modal (new space from scratch). */
+  onCreateSpace: () => void;
   forceExpanded?: boolean;
 }
 
-export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onAddSpace, forceExpanded }) => {
+export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onAddSpace, onCreateSpace, forceExpanded }) => {
   const navigate = useNavigate();
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
   const { data: realSpaces = [] } = useSpaces({});
@@ -116,6 +120,39 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
     if (!q) return spaces;
     return spaces.filter((s) => s.spaceName.toLowerCase().includes(q));
   }, [spaces, searchInput]);
+
+  // "+" button context menu: anchored to the button's bounding rect so it
+  // appears below the trigger regardless of how it was activated (click,
+  // keyboard). ContextMenu auto-flips if it would overflow the viewport.
+  const [addMenuPosition, setAddMenuPosition] = React.useState<{ x: number; y: number } | null>(null);
+  const handleOpenAddMenu = React.useCallback((e: React.MouseEvent<HTMLElement>) => {
+    const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
+    setAddMenuPosition({ x: rect.left, y: rect.bottom + 4 });
+  }, []);
+  const handleCloseAddMenu = React.useCallback(() => setAddMenuPosition(null), []);
+  const addMenuItems = React.useMemo<MenuItem[]>(
+    () => [
+      {
+        id: 'join-space',
+        icon: 'link',
+        label: t`Join a space`,
+        onClick: () => {
+          handleCloseAddMenu();
+          onAddSpace();
+        },
+      },
+      {
+        id: 'create-space',
+        icon: 'plus',
+        label: t`Create a space`,
+        onClick: () => {
+          handleCloseAddMenu();
+          onCreateSpace();
+        },
+      },
+    ],
+    [onAddSpace, onCreateSpace, handleCloseAddMenu]
+  );
 
   const handleRowClick = (
     spaceId: string,
@@ -196,12 +233,20 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
             iconName="plus"
             iconSize="lg"
             iconOnly
-            onClick={onAddSpace}
+            onClick={handleOpenAddMenu}
             className="sidebar-header-action"
             ariaLabel={t`Add a space`}
           />
         </Tooltip>
       </div>
+      {addMenuPosition && (
+        <ContextMenu
+          items={addMenuItems}
+          position={addMenuPosition}
+          onClose={handleCloseAddMenu}
+          width={200}
+        />
+      )}
 
       {searchOpen && (
         <div className="px-3.5 pt-2 pb-3">

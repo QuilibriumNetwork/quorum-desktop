@@ -122,9 +122,10 @@ const clampWidth = (px: number): number =>
 interface AppShellProps {
   children: React.ReactNode;
   onAddSpace: () => void;
+  onCreateSpace: () => void;
 }
 
-const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAddSpace }) => {
+const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAddSpace, onCreateSpace }) => {
   const {
     railCollapsed,
     sidebarCollapsed,
@@ -266,7 +267,7 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
         aria-label="Section sidebar"
         aria-hidden={isPhone || sidebarHidden}
       >
-        {!isPhone && !sidebarHidden && <Sidebar onAddSpace={onAddSpace} />}
+        {!isPhone && !sidebarHidden && <Sidebar onAddSpace={onAddSpace} onCreateSpace={onCreateSpace} />}
         {showDragHandle && (
           <div
             ref={dragHandleRef}
@@ -306,7 +307,7 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
               <NavRail collapsed={true} onToggleCollapse={null} />
             </div>
             <div className="app-shell__drawer-sidebar">
-              {!sidebarHidden && <Sidebar onAddSpace={onAddSpace} forceExpanded />}
+              {!sidebarHidden && <Sidebar onAddSpace={onAddSpace} onCreateSpace={onCreateSpace} forceExpanded />}
             </div>
           </div>
         </>

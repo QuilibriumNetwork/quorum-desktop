@@ -204,7 +204,7 @@ const Layout: React.FunctionComponent<{
           <ImageModalProvider showImageModal={showImageModal}>
             <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
               <ReactionsModalProvider showReactionsModal={showReactionsModal}>
-                <AppShell onAddSpace={showAddSpaceModal}>
+                <AppShell onAddSpace={showAddSpaceModal} onCreateSpace={showCreateSpaceModal}>
                   {props.children}
                   {toast && (
                     <Portal>
