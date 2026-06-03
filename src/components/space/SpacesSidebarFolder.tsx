@@ -20,6 +20,8 @@ interface SpacesSidebarFolderProps {
   collapsed?: boolean;
   currentSpaceId?: string;
   spaceUnreadCounts: Record<string, number>;
+  /** Mentions + replies per space — drives both nested-row bubbles and the folder's aggregate bubble. */
+  spaceMentionCounts: Record<string, number>;
   mutedSpacesSet: Set<string>;
   onToggleExpand: () => void;
   onEdit: () => void;
@@ -47,6 +49,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
   collapsed = false,
   currentSpaceId,
   spaceUnreadCounts,
+  spaceMentionCounts,
   mutedSpacesSet,
   onToggleExpand,
   onEdit,
@@ -110,6 +113,10 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
   }, [isDragging]);
 
   const hasUnread = spaces.some((s) => (spaceUnreadCounts[s.spaceId] || 0) > 0);
+  const folderMentionCount = spaces.reduce(
+    (sum, s) => sum + (spaceMentionCounts[s.spaceId] || 0),
+    0
+  );
 
   const { setIsDragging, dropTarget, activeItem } = useDragStateContext();
 
@@ -210,6 +217,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                 <FolderButton
                   folder={folder}
                   hasUnread={hasUnread}
+                  mentionCount={folderMentionCount}
                   isExpanded={isExpanded}
                   showWiggle={showWiggle}
                 />
@@ -241,6 +249,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                   <FolderButton
                     folder={folder}
                     hasUnread={hasUnread}
+                    mentionCount={folderMentionCount}
                     isExpanded={isExpanded}
                     showWiggle={showWiggle}
                   />
@@ -261,6 +270,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
               >
                 {spaces.map((space) => {
                   const unread = spaceUnreadCounts[space.spaceId] || 0;
+                  const mention = spaceMentionCounts[space.spaceId] || 0;
                   const active = space.spaceId === currentSpaceId;
 
                   if (collapsed) {
@@ -305,7 +315,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                               selected={false}
                               size="regular"
                               noTooltip
-                              mentionCount={unread > 0 ? unread : undefined}
+                              mentionCount={mention > 0 ? mention : undefined}
                             />
                           </div>
                         </button>
@@ -319,6 +329,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                       space={space}
                       active={active}
                       unread={unread}
+                      mentionCount={mention}
                       isMuted={mutedSpacesSet.has(space.spaceId)}
                       parentFolderId={folder.id}
                       onClick={() => onSpaceClick(space.spaceId, space.defaultChannelId)}

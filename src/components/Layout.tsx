@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { AppShell } from './shell/AppShell';
+import { StartupEffects } from './StartupEffects';
 import { CloseButton } from './ui';
 import { Callout, Portal } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
@@ -201,6 +202,7 @@ const Layout: React.FunctionComponent<{
             <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
               <ReactionsModalProvider showReactionsModal={showReactionsModal}>
                 <AppShell onAddSpace={showAddSpaceModal} onCreateSpace={showCreateSpaceModal}>
+                  <StartupEffects />
                   {props.children}
                   {toast && (
                     <Portal>

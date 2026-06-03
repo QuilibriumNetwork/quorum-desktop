@@ -34,7 +34,10 @@ const OwnerCrown: React.FunctionComponent<SuspenseChildProps> = ({ spaceId }) =>
 export interface SpacesSidebarRowProps {
   space: Space;
   active: boolean;
+  /** Total unread messages — drives the row's secondary badge. */
   unread: number;
+  /** Mentions + replies (the "needs attention" count) — drives SpaceIcon's mention bubble. */
+  mentionCount?: number;
   isMuted?: boolean;
   /** If this row sits inside a folder, the parent folder's id. Passed in dnd data. */
   parentFolderId?: string;
@@ -48,6 +51,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
   space,
   active,
   unread,
+  mentionCount = 0,
   isMuted,
   parentFolderId,
   compact = false,
@@ -97,7 +101,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
         selected={false}
         size="regular"
         noTooltip
-        mentionCount={compact && unread > 0 ? unread : undefined}
+        mentionCount={mentionCount > 0 ? mentionCount : undefined}
       />
       {isMuted && (
         <div className="muted-badge" title="Muted">

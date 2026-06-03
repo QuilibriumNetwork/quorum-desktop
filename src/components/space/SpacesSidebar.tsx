@@ -13,6 +13,8 @@ import { SpacesSidebarRow } from './SpacesSidebarRow';
 import { SpacesSidebarFolder } from './SpacesSidebarFolder';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
+import { useSpaceMentionCounts } from '../../hooks/business/mentions';
+import { useSpaceReplyCounts } from '../../hooks/business/replies';
 import {
   useMutedSpacesSet,
   useSpaceContextMenu,
@@ -112,6 +114,19 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   );
 
   const realSpaceUnreadCounts = useSpaceUnreadCounts({ spaces });
+  const spaceMentionCounts = useSpaceMentionCounts({ spaces });
+  const spaceReplyCounts = useSpaceReplyCounts({ spaces });
+  // Mentions + replies are merged for the badge — that's the "needs attention"
+  // count distinct from generic unreads.
+  const spaceMentionPlusReplyCounts = React.useMemo<Record<string, number>>(() => {
+    const result: Record<string, number> = {};
+    const keys = new Set([...Object.keys(spaceMentionCounts), ...Object.keys(spaceReplyCounts)]);
+    keys.forEach((spaceId) => {
+      const total = (spaceMentionCounts[spaceId] || 0) + (spaceReplyCounts[spaceId] || 0);
+      if (total > 0) result[spaceId] = total;
+    });
+    return result;
+  }, [spaceMentionCounts, spaceReplyCounts]);
 
   // Dev-only: deterministically tag a slice of mock spaces with unread counts so
   // the badge / dot / 99+ paths are all exercised. Three buckets: no unreads,
@@ -301,6 +316,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                   collapsed
                   currentSpaceId={currentSpaceId}
                   spaceUnreadCounts={spaceUnreadCounts}
+                  spaceMentionCounts={spaceMentionPlusReplyCounts}
                   mutedSpacesSet={mutedSpacesSet}
                   onToggleExpand={() => toggleFolder(nav.item.id)}
                   onEdit={() => openFolderEditor(nav.item.id)}
@@ -321,6 +337,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
             const space = spaces.find((s) => s.spaceId === nav.item.id);
             if (!space) return null;
             const unread = spaceUnreadCounts[space.spaceId] || 0;
+            const mention = spaceMentionPlusReplyCounts[space.spaceId] || 0;
             const active = space.spaceId === currentSpaceId;
             return (
               <Tooltip
@@ -334,6 +351,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                   space={space}
                   active={active}
                   unread={unread}
+                  mentionCount={mention}
                   isMuted={mutedSpacesSet.has(space.spaceId)}
                   compact
                   onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
@@ -363,6 +381,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                       space={space}
                       active={false}
                       unread={spaceUnreadCounts[space.spaceId] || 0}
+                      mentionCount={spaceMentionPlusReplyCounts[space.spaceId] || 0}
                       isMuted={mutedSpacesSet.has(space.spaceId)}
                           compact
                       onClick={() => {}}
@@ -479,6 +498,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
               // Filter / search active: render a flat list, folders collapsed away.
               filteredSpaces.map((space) => {
                 const unread = spaceUnreadCounts[space.spaceId] || 0;
+                const mention = spaceMentionPlusReplyCounts[space.spaceId] || 0;
                 const active = space.spaceId === currentSpaceId;
                 return (
                   <SpacesSidebarRow
@@ -486,6 +506,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     space={space}
                     active={active}
                     unread={unread}
+                    mentionCount={mention}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
                       onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
                     onContextMenu={(e) => {
@@ -511,6 +532,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                       isExpanded={isExpanded(nav.item.id)}
                       currentSpaceId={currentSpaceId}
                       spaceUnreadCounts={spaceUnreadCounts}
+                      spaceMentionCounts={spaceMentionPlusReplyCounts}
                       mutedSpacesSet={mutedSpacesSet}
                           onToggleExpand={() => toggleFolder(nav.item.id)}
                       onEdit={() => openFolderEditor(nav.item.id)}
@@ -531,6 +553,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                 const space = spaces.find((s) => s.spaceId === nav.item.id);
                 if (!space) return null;
                 const unread = spaceUnreadCounts[space.spaceId] || 0;
+                const mention = spaceMentionPlusReplyCounts[space.spaceId] || 0;
                 const active = space.spaceId === currentSpaceId;
                 return (
                   <SpacesSidebarRow
@@ -538,6 +561,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     space={space}
                     active={active}
                     unread={unread}
+                    mentionCount={mention}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
                       onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
                     onContextMenu={(e) => {
@@ -566,8 +590,9 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     space={space}
                     active={false}
                     unread={spaceUnreadCounts[space.spaceId] || 0}
+                    mentionCount={spaceMentionPlusReplyCounts[space.spaceId] || 0}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
-                      onClick={() => {}}
+                    onClick={() => {}}
                   />
                 </div>
               );

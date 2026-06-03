@@ -76,11 +76,7 @@ const DirectMessageContact: React.FunctionComponent<{
   // Common content for both touch and desktop
   const contactContent = (
     <>
-      {/* Show unread dot (left side of row) */}
-      {props.unread && address !== props.address && (
-        <div className="dm-unread-dot" title="Unread messages" />
-      )}
-      {/* Avatar with optional muted badge overlay and favorite border */}
+      {/* Avatar with optional unread dot, muted badge, favorite border */}
       <div className="relative flex-shrink-0">
         <UserAvatar
           userIcon={props.userIcon}
@@ -92,6 +88,9 @@ const DirectMessageContact: React.FunctionComponent<{
             (props.isFavorite ? ' dm-favorite-avatar' : '')
           }
         />
+        {props.unread && address !== props.address && (
+          <div className="icon-unread-dot" title="Unread messages" />
+        )}
         {props.isMuted && (
           <div
             className="dm-muted-badge"
