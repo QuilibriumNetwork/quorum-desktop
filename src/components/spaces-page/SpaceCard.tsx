@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
 import { getColorFromDisplayName } from '@quilibrium/quorum-shared';
-import SpaceIcon from '../navbar/SpaceIcon';
+import SpaceIcon from '../space/SpaceIcon';
 import { Button, Icon, Tooltip } from '../primitives';
 import './SpaceCard.scss';
 

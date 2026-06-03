@@ -7,7 +7,7 @@ import {
   Callout,
   Icon,
 } from '../primitives';
-import SpaceIcon from '../navbar/SpaceIcon';
+import SpaceIcon from '../space/SpaceIcon';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import './JoinSpaceModal.scss';
 import { t } from '@lingui/core/macro';

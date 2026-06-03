@@ -6,7 +6,7 @@ import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Tooltip } from '../primitives';
-import SpaceIcon from '../navbar/SpaceIcon';
+import SpaceIcon from './SpaceIcon';
 import { ListSearchInput } from '../ui';
 import ContextMenu, { type MenuItem } from '../ui/ContextMenu';
 import { SpacesSidebarRow } from './SpacesSidebarRow';
@@ -22,11 +22,11 @@ import { useFolderStates } from '../../hooks/business/folders/useFolderStates';
 import { useFolderDragAndDrop } from '../../hooks/business/folders/useFolderDragAndDrop';
 import { useDeleteFolder } from '../../hooks/business/folders';
 import type { NavItem } from '../../db/messages';
-import type { IconColor } from '../space/IconPicker/types';
+import type { IconColor } from './IconPicker/types';
 import { useConfig } from '../../hooks/queries/config';
 import { useModals } from '../context/ModalProvider';
 import { DragStateProvider, useOptionalDragStateContext } from '../../context/DragStateContext';
-import { useShellState } from './useShellState';
+import { useShellState } from '../shell/useShellState';
 import './SpacesSidebar.scss';
 
 // Dev-only stress-test injection for the joined-spaces list. Shares the same

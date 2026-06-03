@@ -3,7 +3,7 @@ import { t } from '@lingui/core/macro';
 import type { Space } from '@quilibrium/quorum-shared';
 import { useSortable } from '@dnd-kit/sortable';
 import { Icon, Tooltip } from '../primitives';
-import SpaceIcon from '../navbar/SpaceIcon';
+import SpaceIcon from './SpaceIcon';
 import { useSpaceMembers } from '../../hooks/queries/spaceMembers/useSpaceMembers';
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner/useSpaceOwner';
 import { useOptionalDragStateContext } from '../../context/DragStateContext';

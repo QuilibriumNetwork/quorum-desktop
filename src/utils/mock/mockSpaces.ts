@@ -140,7 +140,7 @@ export function getMockSpacesCount(): number {
 
 /**
  * Mock joined-spaces generation for stress-testing the left-rail Spaces sidebar
- * ({@link ../../components/shell/SpacesSidebar.tsx}).
+ * ({@link ../../components/space/SpacesSidebar.tsx}).
  *
  * Shares the same gate as the Discover screen mock ({@link isMockSpacesEnabled}
  * / `?spaces=N` / `debug_mock_spaces`), so a single switch fills both surfaces.

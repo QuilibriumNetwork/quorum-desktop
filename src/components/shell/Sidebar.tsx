@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useLocation } from 'react-router-dom';
 import DirectMessageContactsList from '../direct/DirectMessageContactsList';
 import ChannelList from '../space/ChannelList';
-import { SpacesSidebar } from './SpacesSidebar';
+import { SpacesSidebar } from '../space/SpacesSidebar';
 import { useSidebarMode } from './useSidebarMode';
 import './Sidebar.scss';
 

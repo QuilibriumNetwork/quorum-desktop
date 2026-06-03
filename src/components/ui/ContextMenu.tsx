@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { Portal, Icon, useTheme } from '../primitives';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { UserAvatar } from '../user/UserAvatar';
-import SpaceIcon from '../navbar/SpaceIcon';
+import SpaceIcon from '../space/SpaceIcon';
 import { getFolderColorHex, IconColor } from '../space/IconPicker/types';
 import type { IconName, IconVariant } from '../primitives';
 import './ContextMenu.scss';
