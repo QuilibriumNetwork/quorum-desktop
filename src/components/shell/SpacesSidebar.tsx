@@ -10,6 +10,7 @@ import { SpacesSidebarRow } from './SpacesSidebarRow';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
 import {
+  useHideMutedSpaces,
   useMutedSpacesSet,
   useSpaceContextMenu,
   useSpaceFavorites,
@@ -111,6 +112,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
   const { mutedSpacesSet } = useMutedSpacesSet();
   const { favoritesSet: favoriteSpacesSet } = useSpaceFavorites();
+  const { hideMutedSpaces } = useHideMutedSpaces();
   const { openContextMenu: openRowContextMenu, contextMenu: rowContextMenu } = useSpaceContextMenu();
 
   // Search + filter: closing search clears both. The filter chip only appears
@@ -154,6 +156,11 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
 
   const filteredSpaces = React.useMemo(() => {
     let list = spaces;
+    // Persistent "hide muted spaces" preference — overridden when the user
+    // explicitly asks for the muted bucket via the search filter chip.
+    if (hideMutedSpaces && filter !== 'muted') {
+      list = list.filter((s) => !mutedSpacesSet.has(s.spaceId));
+    }
     if (filter === 'muted') {
       list = list.filter((s) => mutedSpacesSet.has(s.spaceId));
     } else if (filter === 'favorites') {
@@ -164,7 +171,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
       list = list.filter((s) => s.spaceName.toLowerCase().includes(q));
     }
     return list;
-  }, [spaces, searchInput, filter, mutedSpacesSet, favoriteSpacesSet]);
+  }, [spaces, searchInput, filter, mutedSpacesSet, favoriteSpacesSet, hideMutedSpaces]);
 
   // "+" button context menu: anchored to the button's bounding rect so it
   // appears below the trigger regardless of how it was activated (click,
@@ -355,6 +362,7 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
               active={active}
               unread={unread}
               isMuted={mutedSpacesSet.has(space.spaceId)}
+              isFavorite={favoriteSpacesSet.has(space.spaceId)}
               onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
               onContextMenu={(e) => {
                 void openRowContextMenu({

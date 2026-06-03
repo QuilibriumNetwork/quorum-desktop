@@ -37,6 +37,7 @@ export interface SpacesSidebarRowProps {
   active: boolean;
   unread: number;
   isMuted?: boolean;
+  isFavorite?: boolean;
   onClick: () => void;
   onContextMenu?: (e: React.MouseEvent) => void;
 }
@@ -46,6 +47,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
   active,
   unread,
   isMuted,
+  isFavorite,
   onClick,
   onContextMenu,
 }) => {
@@ -64,7 +66,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
       onContextMenu={onContextMenu}
       aria-current={active ? 'page' : undefined}
     >
-      <div className="relative flex-shrink-0">
+      <div className={`relative flex-shrink-0${isFavorite ? ' spaces-sidebar__row-avatar--favorite' : ''}`}>
         <SpaceIcon
           spaceId={space.spaceId}
           spaceName={space.spaceName}

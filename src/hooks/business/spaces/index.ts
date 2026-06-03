@@ -13,3 +13,4 @@ export { useExploreSpaces, SPACE_CATEGORIES } from './useExploreSpaces';
 export { useSpaceContextMenu } from './useSpaceContextMenu';
 export { useSpaceFavorites } from './useSpaceFavorites';
 export { useMutedSpacesSet } from './useMutedSpacesSet';
+export { useHideMutedSpaces } from './useHideMutedSpaces';

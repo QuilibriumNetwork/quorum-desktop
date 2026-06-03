@@ -139,11 +139,18 @@ div[role='presentation'] {
   color: var(--color-text-muted);
 }
 
-/* Favorite indicator for DM conversations */
-/* Accent border around the avatar */
+/* Favorite indicator for sidebar avatars (DMs + Spaces).
+   Accent border around the avatar. DM-specific selector keeps the
+   round avatar's pill radius; the shared selector inherits whatever
+   border-radius the wrapped avatar already has. */
 .dm-favorite-avatar {
   border: $s-0-5 solid var(--accent);
   border-radius: $rounded-full;
+}
+
+.favorite-avatar {
+  border: $s-0-5 solid var(--accent);
+  border-radius: inherit;
 }
 
 /* === LIST FADE EFFECTS === */

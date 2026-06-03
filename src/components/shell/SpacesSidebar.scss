@@ -103,6 +103,17 @@
   color: var(--accent);
 }
 
+// Favorite indicator on space avatars. Mirrors .dm-favorite-avatar but
+// targets SpaceIcon's inner avatar element so the border inherits the
+// rounded-square shape rather than going pill.
+.spaces-sidebar__row-avatar--favorite {
+  .space-icon,
+  .space-icon-selected,
+  .user-initials {
+    border: $s-0-5 solid var(--accent);
+  }
+}
+
 .spaces-sidebar__row-members {
   display: inline-flex;
   align-items: center;
