@@ -89,6 +89,7 @@ export type UserConfig = {
   showMutedChannels?: boolean;
   hideMutedSpacesFromSidebar?: boolean;
   favoriteDMs?: string[];
+  favoriteSpaces?: string[];
   // Muted DMs — no unread indicators or notifications.
   mutedConversations?: string[];
   deliveryReceipts?: boolean;

@@ -6,6 +6,7 @@ import { useModals } from '../../../components/context/ModalProvider';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useChannelMute } from '../channels/useChannelMute';
 import { useSpaceLeaving } from './useSpaceLeaving';
+import { useSpaceFavorites } from './useSpaceFavorites';
 import { useSpaces } from '../../queries/spaces/useSpaces';
 
 interface SpaceContextMenuState {
@@ -65,6 +66,7 @@ export function useSpaceContextMenu(
 
   const { showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute } =
     useChannelMute({ spaceId: state.spaceId || '' });
+  const { isFavorite, toggleFavorite } = useSpaceFavorites();
 
   const openContextMenu = React.useCallback<UseSpaceContextMenuReturn['openContextMenu']>(
     async ({ spaceId, spaceName, iconUrl, event, hasNotifications = false }) => {
@@ -154,12 +156,22 @@ export function useSpaceContextMenu(
   const items = React.useMemo<MenuItem[]>(() => {
     if (!state.spaceId) return [];
 
+    const favorited = isFavorite(state.spaceId);
+
     const result: MenuItem[] = [
       {
         id: 'account',
         icon: 'user',
         label: t`My Account`,
         onClick: () => openSpaceEditor(state.spaceId!, 'account'),
+      },
+      {
+        id: 'favorite',
+        icon: favorited ? 'star-off' : 'star',
+        label: favorited ? t`Remove from Favorites` : t`Add to Favorites`,
+        onClick: () => {
+          if (state.spaceId) toggleFavorite(state.spaceId);
+        },
       },
       {
         id: 'toggle-muted-channels',
@@ -232,6 +244,8 @@ export function useSpaceContextMenu(
     isSpaceMuted,
     toggleSpaceMute,
     handleMarkSpaceAsRead,
+    isFavorite,
+    toggleFavorite,
   ]);
 
   const contextMenu = state.spaceId ? (

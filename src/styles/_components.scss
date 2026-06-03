@@ -118,9 +118,11 @@ div[role='presentation'] {
   margin-top: $s-1; // Fine-tune vertical alignment for DM layout
 }
 
-/* Muted badge for DM conversations */
-/* Positioned at top-left corner of avatar with circular background */
-.dm-muted-badge {
+/* Muted badge for sidebar avatars (DMs + Spaces).
+   Positioned at top-left corner with a circular background that punches
+   through the sidebar bg so the icon reads clearly. */
+.dm-muted-badge,
+.muted-badge {
   position: absolute;
   top: -$s-1;
   left: -$s-1;
@@ -131,7 +133,9 @@ div[role='presentation'] {
   justify-content: center;
   background-color: var(--color-bg-sidebar);
   border-radius: $rounded-full;
-  z-index: 10;
+  // SpaceIcon wraps the avatar in a `relative z-[999]` div, so the badge has
+  // to sit above that stacking context to be visible on space rows.
+  z-index: 1000;
   color: var(--color-text-muted);
 }
 

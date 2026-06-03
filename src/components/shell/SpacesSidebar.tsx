@@ -2,12 +2,18 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import type { Space } from '@quilibrium/quorum-shared';
-import { Button, Tooltip } from '../primitives';
+import { Button, Flex, Select, Tooltip } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { ListSearchInput } from '../ui';
 import ContextMenu, { type MenuItem } from '../ui/ContextMenu';
+import { SpacesSidebarRow } from './SpacesSidebarRow';
 import { useSpaces } from '../../hooks';
 import { useSpaceUnreadCounts } from '../../hooks/business/messages';
+import {
+  useMutedSpacesSet,
+  useSpaceContextMenu,
+  useSpaceFavorites,
+} from '../../hooks/business/spaces';
 import { useShellState } from './useShellState';
 import './SpacesSidebar.scss';
 
@@ -103,23 +109,62 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
   }, [realSpaceUnreadCounts, mockSpaces]);
   const { sidebarCollapsed } = useShellState();
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
+  const { mutedSpacesSet } = useMutedSpacesSet();
+  const { favoritesSet: favoriteSpacesSet } = useSpaceFavorites();
+  const { openContextMenu: openRowContextMenu, contextMenu: rowContextMenu } = useSpaceContextMenu();
 
-  // Search: same UX as the DM sidebar — toggle reveals an input row, closing
-  // it clears the query so the next open starts fresh.
+  // Search + filter: closing search clears both. The filter chip only appears
+  // when at least one bucket (muted / favorites) has rows to show.
+  type SpacesFilter = 'all' | 'muted' | 'favorites';
   const [searchOpen, setSearchOpen] = React.useState(false);
   const [searchInput, setSearchInput] = React.useState('');
+  const [filter, setFilter] = React.useState<SpacesFilter>('all');
   const handleToggleSearch = React.useCallback(() => {
     setSearchOpen((prev) => {
-      if (prev) setSearchInput('');
+      if (prev) {
+        setSearchInput('');
+        setFilter('all');
+      }
       return !prev;
     });
   }, []);
+  const handleFilterChange = React.useCallback((value: string | string[]) => {
+    setFilter(value as SpacesFilter);
+  }, []);
+
+  const hasMutedSpaces = mutedSpacesSet.size > 0;
+  const hasFavoriteSpaces = favoriteSpacesSet.size > 0;
+  const hasAnyFilter = hasMutedSpaces || hasFavoriteSpaces;
+
+  const filterOptions = React.useMemo(() => {
+    const options: { value: string; label: string; icon?: string }[] = [
+      { value: 'all', label: t`All`, icon: 'users-group' },
+    ];
+    if (hasFavoriteSpaces) options.push({ value: 'favorites', label: t`Favorites`, icon: 'star' });
+    if (hasMutedSpaces) options.push({ value: 'muted', label: t`Muted`, icon: 'bell-off' });
+    return options;
+  }, [hasFavoriteSpaces, hasMutedSpaces]);
+
+  // Reset the filter chip when its source bucket disappears (e.g. user unmutes
+  // the last muted space while "Muted" is selected).
+  React.useEffect(() => {
+    if (filter === 'muted' && !hasMutedSpaces) setFilter('all');
+    if (filter === 'favorites' && !hasFavoriteSpaces) setFilter('all');
+  }, [filter, hasMutedSpaces, hasFavoriteSpaces]);
 
   const filteredSpaces = React.useMemo(() => {
+    let list = spaces;
+    if (filter === 'muted') {
+      list = list.filter((s) => mutedSpacesSet.has(s.spaceId));
+    } else if (filter === 'favorites') {
+      list = list.filter((s) => favoriteSpacesSet.has(s.spaceId));
+    }
     const q = searchInput.trim().toLowerCase();
-    if (!q) return spaces;
-    return spaces.filter((s) => s.spaceName.toLowerCase().includes(q));
-  }, [spaces, searchInput]);
+    if (q) {
+      list = list.filter((s) => s.spaceName.toLowerCase().includes(q));
+    }
+    return list;
+  }, [spaces, searchInput, filter, mutedSpacesSet, favoriteSpacesSet]);
 
   // "+" button context menu: anchored to the button's bounding rect so it
   // appears below the trigger regardless of how it was activated (click,
@@ -264,7 +309,17 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
 
       {searchOpen && (
         <div className="px-3.5 pt-2 pb-3">
-          <div className="sidebar-search-row">
+          <Flex className="sidebar-search-row items-center">
+            {hasAnyFilter && (
+              <Select
+                value={filter}
+                onChange={handleFilterChange}
+                options={filterOptions}
+                compactMode={true}
+                compactIcon="filter"
+                size="small"
+              />
+            )}
             <div className="flex-1">
               <ListSearchInput
                 value={searchInput}
@@ -274,10 +329,16 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
                 showSearchIcon={false}
               />
             </div>
-          </div>
-          {filteredSpaces.length === 0 && searchInput && (
+          </Flex>
+          {filteredSpaces.length === 0 && (filter !== 'all' || searchInput) && (
             <div className="text-xs text-subtle mt-2">
-              {t`No spaces found`}
+              {filter === 'favorites' ? (
+                t`No favorite spaces`
+              ) : filter === 'muted' ? (
+                t`No muted spaces`
+              ) : (
+                t`No spaces found`
+              )}
             </div>
           )}
         </div>
@@ -288,35 +349,27 @@ export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = ({ onA
           const unread = spaceUnreadCounts[space.spaceId] || 0;
           const active = space.spaceId === currentSpaceId;
           return (
-            <button
+            <SpacesSidebarRow
               key={space.spaceId}
-              type="button"
-              className={`spaces-sidebar__row ${active ? 'spaces-sidebar__row--active' : ''}`}
+              space={space}
+              active={active}
+              unread={unread}
+              isMuted={mutedSpacesSet.has(space.spaceId)}
               onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
-              aria-current={active ? 'page' : undefined}
-            >
-              <SpaceIcon
-                spaceId={space.spaceId}
-                spaceName={space.spaceName}
-                iconUrl={space.iconUrl}
-                notifs={unread > 0}
-                selected={false}
-                size="regular"
-                noTooltip
-                noToggle
-              />
-              <div className="spaces-sidebar__row-meta">
-                <div className="spaces-sidebar__row-name">{space.spaceName}</div>
-              </div>
-              {unread > 0 && (
-                <span className="spaces-sidebar__row-badge">
-                  {unread > 99 ? '99+' : unread}
-                </span>
-              )}
-            </button>
+              onContextMenu={(e) => {
+                void openRowContextMenu({
+                  spaceId: space.spaceId,
+                  spaceName: space.spaceName,
+                  iconUrl: space.iconUrl,
+                  event: e,
+                  hasNotifications: unread > 0,
+                });
+              }}
+            />
           );
         })}
       </div>
+      {rowContextMenu}
     </div>
   );
 };

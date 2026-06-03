@@ -11,3 +11,5 @@ export * from './useSpaceDragAndDrop';
 export * from './useSpaceProfile';
 export { useExploreSpaces, SPACE_CATEGORIES } from './useExploreSpaces';
 export { useSpaceContextMenu } from './useSpaceContextMenu';
+export { useSpaceFavorites } from './useSpaceFavorites';
+export { useMutedSpacesSet } from './useMutedSpacesSet';
