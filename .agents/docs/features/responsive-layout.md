@@ -58,26 +58,10 @@ The shell renders three slots — `app-shell__rail`, `app-shell__sidebar`, `app-
 
 ## Layout Behavior
 
-### Desktop (≥ 1024px)
-
-- **NavRail**: inline left rail. Collapsed (`$rail-width-collapsed: 72px`) or expanded (`$rail-width-expanded: 236px`) per the user's persisted preference (`shell.railCollapsed`).
-- **Sidebar**: inline, user-resizable. Width persisted as `shell.sidebarWidth`. Range: `SIDEBAR_COLLAPSED_WIDTH` (72px) up to `SIDEBAR_MAX_WIDTH` (480px). Default `300px`.
-- **Drag handle**: a thin separator on the sidebar's right edge. Hover-arms after 500ms to reveal the accent tint (`--shell-drag-handle-hover-color`). Releasing below `SIDEBAR_SNAP_THRESHOLD` (200px) snaps to the collapsed strip; releasing above snaps to `SIDEBAR_MIN_WIDTH` (240px). Keyboard: arrow keys nudge by 16px, Home/End jump to min/max.
-- **Channels mode**: when the route matches `/spaces/:spaceId/:channelId`, the sidebar is pinned to a fixed 300px (`CHANNELS_SIDEBAR_WIDTH` in `AppShell.tsx`) and the drag handle is suppressed. The user's persisted width is left untouched and restored when leaving the channel.
-- **Main**: receives `--shell-sidebar-width` as a CSS variable on the shell root.
-
-### Tablet (768–1023px)
-
-- **NavRail**: forced collapsed (`72px`).
-- **Sidebar**: forced collapsed (`72px`) — the user's persisted desktop width is preserved but not applied.
-- **Drag handle**: not rendered.
-
-### Phone (≤ 767px)
-
-- **NavRail** and **Sidebar**: hidden from the inline layout (`app-shell__rail--hidden`, `app-shell__sidebar--hidden`).
-- **Drawer**: when `drawerOpen` is true, a slide-in panel mounts both the rail and the sidebar (with `forceExpanded` so avatars-only would be useless inside the drawer). The drawer is `role="dialog"` with a focus trap and an Escape handler; the previously-focused element is restored on close.
-- **Drawer trigger**: lives in each view's chat header (`DirectMessage`, `Channel`, `EmptyDirectMessage`, `DiscoverPage`) — it's not part of the shell itself.
-- **Auto-close**: navigating to a "leaf" route (a DM conversation, a channel, or Public Spaces) closes the drawer automatically.
+- **Desktop**: rail and sidebar are inline. Sidebar is user-resizable via a drag handle on its right edge (hover-arms after 500ms; arrow keys nudge by 16px). Releasing below `SIDEBAR_SNAP_THRESHOLD` snaps to the collapsed strip.
+- **Channels mode** (route `/spaces/:spaceId/:channelId`): the sidebar has a 300px floor (`CHANNELS_SIDEBAR_WIDTH`). Drag handle stays available but cannot shrink below the floor and snap-to-collapsed is disabled.
+- **Tablet**: rail and sidebar are forced collapsed (72px). Drag handle not rendered.
+- **Phone**: rail and sidebar are removed from the inline flow. A focus-trapped off-canvas drawer mounts them on demand; the drawer trigger lives in each view's chat header. The drawer auto-closes when the route lands on a leaf (DM conversation, channel, Public Spaces).
 
 ## Key Implementation Files
 

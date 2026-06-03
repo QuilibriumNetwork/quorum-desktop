@@ -86,7 +86,7 @@ SpacesSidebar.tsx                                   (sits inside AppShell's Side
 └── FolderEditorModal                               (via ModalProvider)
 ```
 
-**Historical context**: this tree is a fork of the older `navbar/NavMenu` + `navbar/FolderContainer` architecture that lived in `src/components/navbar/` before the new-UI shell migration. The DnD wiring, the 9 drag scenarios in `useFolderDragAndDrop`, the expand/collapse animation, and the touch long-press are kept verbatim from that architecture. What changed: nested rows render as two-line `SpacesSidebarRow` cards (with name, member count, optional unread badge) instead of 72px `SpaceButton` icon tiles. The folder header in row mode is the colored `FolderButton` tile on the left plus a `folder-header__meta` block with the folder name and a member-count chip on the right.
+Forked from the old `navbar/NavMenu` + `navbar/FolderContainer` tree. DnD wiring, expand/collapse animation, and touch long-press are unchanged. Rows render as two-line cards instead of 72px icon tiles.
 
 ### Component Files
 
@@ -413,30 +413,9 @@ The `detectScenario()` function (`useFolderDragAndDrop.ts:102-187`) analyzes the
 
 ### Visual Feedback
 
-**Merge intent** (row mode): the entire row gets a translucent accent background and an accent left bar via `.sidebar-row-chrome--merge-target` (defined in [_components.scss](src/styles/_components.scss)). The inner avatar wiggles via `.spaces-sidebar__row-avatar--wiggle`. This replaces the old icon-tile pulse-border, which read fine on 72px tiles but looked oversized on full-width rows.
-
-**Merge intent** (compact / strip mode and folder headers): keeps the legacy wiggle animation applied to the `FolderButton` itself (`drop-target-wiggle`) and to `SpaceIcon` avatars inside the strip — same animation, narrower target.
-
-```scss
-// src/styles/_components.scss
-.sidebar-row-chrome--merge-target {
-  background: ...; // translucent accent
-  &::before { ... } // accent left bar
-}
-
-// src/components/space/SpacesSidebar.scss
-.spaces-sidebar__row-avatar--wiggle {
-  animation: drop-target-wiggle 0.4s ease-in-out infinite;
-}
-```
-
-**Reorder intent** (row and folder header): a thin accent bar rendered above or below the row depending on `dropTarget.intent`:
-
-```tsx
-{showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
-{/* ...row content... */}
-{showDropAfter && <div className="spaces-sidebar__row-drop-indicator" />}
-```
+- **Merge intent** (row mode): `.sidebar-row-chrome--merge-target` paints the row with a translucent accent background + left bar; the inner avatar wiggles via `.spaces-sidebar__row-avatar--wiggle`.
+- **Merge intent** (strip mode and folder headers): keeps the legacy `drop-target-wiggle` animation on the `FolderButton` / `SpaceIcon`.
+- **Reorder intent**: `.spaces-sidebar__row-drop-indicator` — a thin accent bar rendered above or below the row depending on `dropTarget.intent`.
 
 ### DragOverlay (Ghost Element)
 

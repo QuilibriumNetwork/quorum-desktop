@@ -176,19 +176,6 @@ All modals must use: `Button`, `Input`, `Switch`, `Icon`, `Tooltip`, `Select` fr
 
 ---
 
-### Where the common triggers live
-
-The new shell distributes triggers across a few surfaces — there is no single "menu" surface anymore:
-
-- **AddSpaceModal / CreateSpaceModal** — `+` button in the [SpacesSidebar](src/components/space/SpacesSidebar.tsx) header opens a `ContextMenu` with two items that route to `onAddSpace` (join via invite) and `onCreateSpace` (create from scratch).
-- **UserSettingsModal** — user avatar button at the bottom of [NavRail](src/components/shell/NavRail.tsx) (`openUserSettings`).
-- **SpaceSettingsModal / LeaveSpaceModal** — items inside the space context menu built by [useSpaceContextMenu](src/hooks/business/spaces/useSpaceContextMenu.tsx), mounted by `SpacesSidebar` on row right-click.
-- **FolderEditorModal** — opened from the SpacesSidebar folder context menu, or by long-press on a folder header on touch devices.
-- **ConversationSettingsModal / NewDirectMessageModal** — DM list ([DirectMessageContactsList](src/components/direct/DirectMessageContactsList.tsx)) row context menu and header `+` button.
-- **ImageModal / EditHistoryModal / ConfirmationModal** — still triggered from chat messages, unchanged.
-
-The z-index guidance above is unchanged in spirit: any popover (ContextMenu, Tooltip) must stack above the floating modal layer so that opening a modal from a menu item never leaves the menu painted on top of the modal scrim.
-
 ---
 
 *Last updated: 2026-06-04*

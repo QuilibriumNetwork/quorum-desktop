@@ -40,7 +40,7 @@ These indicators appear on:
 | **DM Contact row** | `.icon-unread-dot` on the avatar + bold name | — |
 | **DM Contact** (collapsed strip) | `.direct-messages-strip-unread-dot` on the avatar | — |
 
-CSS for the shared dot/bubble visuals lives in [_components.scss](src/styles/_components.scss) (`.icon-unread-dot` ≈ line 114, `.icon-mention-bubble` ≈ line 127). The avatar wrapper must be `position: relative` for the dot's negative-left offset to anchor correctly.
+Shared dot/bubble visuals (`.icon-unread-dot`, `.icon-mention-bubble`) live in [_components.scss](src/styles/_components.scss). The avatar wrapper must be `position: relative` for the dot's negative-left offset to anchor.
 
 ### Data Flow
 
@@ -270,48 +270,6 @@ For immediate UI updates when marking all DMs as read, a React Context provides 
 ### 2-Second Reading Delay
 **Decision**: Wait 2 seconds before marking content as read
 **Rationale**: Prevents false positives when quickly scrolling through channels
-
----
-
-## File Reference
-
-```
-src/
-├── context/
-│   └── DmReadStateContext.tsx              # DM bulk read state
-├── hooks/
-│   └── business/
-│       ├── conversations/
-│       │   └── useUpdateReadTime.ts        # Read time mutation + invalidation
-│       ├── mentions/
-│       │   ├── useChannelMentionCounts.ts  # Channel mention counts
-│       │   └── useSpaceMentionCounts.ts    # Space mention counts
-│       ├── replies/
-│       │   ├── useReplyNotificationCounts.ts # Channel reply counts
-│       │   └── useSpaceReplyCounts.ts      # Space reply counts
-│       └── messages/
-│           ├── useChannelUnreadCounts.ts   # Channel unread status
-│           ├── useSpaceUnreadCounts.ts     # Space unread status
-│           └── useDirectMessageUnreadCount.ts # DM unread count
-├── components/
-│   ├── shell/
-│   │   └── NavRail.tsx                     # Rail-level DM unread dot
-│   ├── space/
-│   │   ├── SpacesSidebar.tsx               # Wires per-space counts (merges mentions + replies)
-│   │   ├── SpacesSidebarRow.tsx            # Space row: badge + mention bubble + muted badge
-│   │   ├── SpacesSidebarFolder.tsx         # Folder aggregation: hasUnread + folderMentionCount
-│   │   ├── SpaceIcon.tsx                   # Avatar primitive: notifs dot + mentionCount bubble
-│   │   ├── FolderButton.tsx                # Folder tile: notifs dot + mention bubble
-│   │   ├── ChannelList.tsx                 # Wires channel indicators
-│   │   └── ChannelItem.tsx                 # Channel item with indicators
-│   ├── notifications/
-│   │   └── NotificationPanel.tsx           # Mark all read button
-│   └── direct/
-│       ├── DirectMessageContactsList.tsx   # DM list (unread calc + filter)
-│       └── DirectMessageContact.tsx        # DM contact row: avatar dot + muted badge
-└── services/
-    └── MessageService.ts                   # Cache invalidation on new messages
-```
 
 ---
 
