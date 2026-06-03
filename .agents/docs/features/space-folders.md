@@ -72,50 +72,78 @@ export type FolderColor = IconColor;  // Reuses existing color palette
 ## Component Architecture
 
 ```
-NavMenu.tsx
-├── DndContext (from @dnd-kit/core)
-│   ├── SortableContext
-│   │   ├── FolderContainer.tsx (for folder items)
-│   │   │   ├── FolderButton.tsx (clickable folder icon)
-│   │   │   └── SpaceButton.tsx[] (spaces inside, with parentFolderId)
-│   │   └── SpaceButton.tsx (for standalone space items)
-│   └── DragOverlay (floating ghost during drag)
-├── FolderContextMenu.tsx (right-click menu, desktop only)
-└── FolderEditorModal.tsx (via ModalProvider)
+SpacesSidebar.tsx                                   (sits inside AppShell's Sidebar slot)
+├── DragStateProvider                               (visual feedback state)
+│   └── DndContext (from @dnd-kit/core)
+│       ├── SortableContext
+│       │   ├── SpacesSidebarFolder.tsx             (for folder items)
+│       │   │   ├── FolderButton.tsx                (the colored folder tile)
+│       │   │   └── SpacesSidebarRow.tsx[]          (nested spaces, parentFolderId set)
+│       │   └── SpacesSidebarRow.tsx                (for standalone space items)
+│       └── DragOverlay                             (floating ghost during drag)
+├── ContextMenu                                     (folder right-click: Edit / Delete)
+├── useSpaceContextMenu()                           (per-space right-click)
+└── FolderEditorModal                               (via ModalProvider)
 ```
+
+**Historical context**: this tree is a fork of the older `navbar/NavMenu` + `navbar/FolderContainer` architecture that lived in `src/components/navbar/` before the new-UI shell migration. The DnD wiring, the 9 drag scenarios in `useFolderDragAndDrop`, the expand/collapse animation, and the touch long-press are kept verbatim from that architecture. What changed: nested rows render as two-line `SpacesSidebarRow` cards (with name, member count, optional unread badge) instead of 72px `SpaceButton` icon tiles. The folder header in row mode is the colored `FolderButton` tile on the left plus a `folder-header__meta` block with the folder name and a member-count chip on the right.
 
 ### Component Files
 
 | Component | File | Purpose |
 |-----------|------|---------|
-| `FolderButton` | `src/components/navbar/FolderButton.tsx` | Folder icon with tooltip, unread indicator, mention badge |
-| `FolderContainer` | `src/components/navbar/FolderContainer.tsx` | Wrapper handling expand/collapse, drag source, visual feedback |
-| `FolderContextMenu` | `src/components/navbar/FolderContextMenu.tsx` | Desktop right-click menu with "Folder Settings" and "Delete" |
-| `FolderEditorModal` | `src/components/modals/FolderEditorModal.tsx` | Modal for editing folder name, icon, and color |
+| `SpacesSidebar` | [src/components/space/SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx) | Mounts `DragStateProvider + DndContext + SortableContext + DragOverlay`. Iterates `navItems` (folders + standalone spaces). Merges mention + reply counts into `spaceMentionPlusReplyCounts`. Owns the folder right-click context menu. |
+| `SpacesSidebarRow` | [src/components/space/SpacesSidebarRow.tsx](src/components/space/SpacesSidebarRow.tsx) | Per-space row. Two-line layout in expanded mode; 56px icon strip in compact mode. Wires `useSortable`, lazy `useSpaceMembers` + `useSpaceOwner` via Suspense. Surfaces unread badge, owner crown, muted bell. |
+| `SpacesSidebarFolder` | [src/components/space/SpacesSidebarFolder.tsx](src/components/space/SpacesSidebarFolder.tsx) | Folder wrapper. Renders `FolderButton` for the header and nested `SpacesSidebarRow`s. Handles `useSortable`, long-press for the folder editor (touch), expand/collapse, and folder-level mention aggregation. `collapsed` prop switches between the strip and row layouts. |
+| `FolderButton` | [src/components/space/FolderButton.tsx](src/components/space/FolderButton.tsx) | Colored folder tile (icon on a folder-color background). Renders the folder's mention bubble. Stateless visual primitive — does NOT own DnD, expand/collapse, or context-menu wiring (those live in `SpacesSidebarFolder`). |
+| `SpaceIcon` | [src/components/space/SpaceIcon.tsx](src/components/space/SpaceIcon.tsx) | Avatar primitive used by every row. `notifs` prop controls the small accent dot to the left of the avatar; `mentionCount` prop renders the top-right number bubble. |
+| `FolderEditorModal` | [src/components/modals/FolderEditorModal.tsx](src/components/modals/FolderEditorModal.tsx) | Modal for editing folder name, icon, and color. |
 
-### FolderButton Props
+### SpacesSidebarRow Props
 
 ```typescript
-interface FolderButtonProps {
-  folder: NavItem & { type: 'folder' };
-  hasUnread: boolean;        // Any space in folder has unread messages
-  mentionCount?: number;     // Total mentions across all spaces
-  size?: 'small' | 'regular'; // 40px or 48px
-  isExpanded?: boolean;      // Hides indicators when expanded
+interface SpacesSidebarRowProps {
+  space: Space;
+  active: boolean;
+  /** Total unread messages — drives the row's secondary badge. */
+  unread: number;
+  /** Mentions + replies (the "needs attention" count) — drives SpaceIcon's mention bubble. */
+  mentionCount?: number;
+  isMuted?: boolean;
+  /** If this row sits inside a folder, the parent folder's id. Passed in dnd data. */
+  parentFolderId?: string;
+  /** Compact mode: 56px icon-only strip layout used in the collapsed sidebar. */
+  compact?: boolean;
+  onClick: () => void;
+  onContextMenu?: (e: React.MouseEvent) => void;
 }
 ```
 
-### FolderContainer Props
+### SpacesSidebarFolder Props
 
 ```typescript
-interface FolderContainerProps {
+interface SpacesSidebarFolderProps {
   folder: NavItem & { type: 'folder' };
-  spaces: Space[];           // Resolved Space objects from folder.spaceIds
+  spaces: Space[];
   isExpanded: boolean;
+  /** Compact mode = 72px icon strip layout (rail-like). */
+  collapsed?: boolean;
+  currentSpaceId?: string;
+  spaceUnreadCounts: Record<string, number>;
+  /** Mentions + replies per space — drives both nested-row bubbles and the folder's aggregate bubble. */
+  spaceMentionCounts: Record<string, number>;
+  mutedSpacesSet: Set<string>;
   onToggleExpand: () => void;
+  onEdit: () => void;
+  onSpaceClick: (spaceId: string, defaultChannelId: string | undefined) => void;
   onContextMenu?: (e: React.MouseEvent) => void;
-  onEdit: () => void;        // Opens FolderEditorModal
-  spaceMentionCounts?: Record<string, number>;
+  onSpaceContextMenu?: (
+    spaceId: string,
+    spaceName: string,
+    iconUrl: string | undefined,
+    e: React.MouseEvent,
+    hasNotifications: boolean
+  ) => void;
 }
 ```
 
@@ -231,7 +259,7 @@ const {
 } = useFolderDragAndDrop({ config, onFolderCreated });
 ```
 
-**Usage in NavMenu**:
+**Usage in SpacesSidebar**:
 
 ```typescript
 <DndContext
@@ -241,7 +269,10 @@ const {
   onDragMove={handleDragMove}
   onDragEnd={handleDragEnd}
 >
-  {/* ... */}
+  <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+    {/* SpacesSidebarFolder / SpacesSidebarRow */}
+  </SortableContext>
+  <DragOverlay>{/* ... */}</DragOverlay>
 </DndContext>
 ```
 
@@ -314,11 +345,11 @@ interface DragStateContextType {
 Components read `dropTarget` to show visual feedback:
 
 ```typescript
-// In SpaceButton.tsx or FolderContainer.tsx
+// In SpacesSidebarRow.tsx or SpacesSidebarFolder.tsx
 const { dropTarget } = useDragStateContext();
 
 const isDropTarget = dropTarget?.id === myId;
-const showWiggle = isDropTarget && dropTarget.intent === 'merge';
+const showMergeWiggle = isDropTarget && dropTarget.intent === 'merge';
 const showDropBefore = isDropTarget && dropTarget.intent === 'reorder-before';
 const showDropAfter = isDropTarget && dropTarget.intent === 'reorder-after';
 ```
@@ -382,53 +413,58 @@ The `detectScenario()` function (`useFolderDragAndDrop.ts:102-187`) analyzes the
 
 ### Visual Feedback
 
-**Merge intent** (pulsing dashed border):
+**Merge intent** (row mode): the entire row gets a translucent accent background and an accent left bar via `.sidebar-row-chrome--merge-target` (defined in [_components.scss](src/styles/_components.scss)). The inner avatar wiggles via `.spaces-sidebar__row-avatar--wiggle`. This replaces the old icon-tile pulse-border, which read fine on 72px tiles but looked oversized on full-width rows.
+
+**Merge intent** (compact / strip mode and folder headers): keeps the legacy wiggle animation applied to the `FolderButton` itself (`drop-target-wiggle`) and to `SpaceIcon` avatars inside the strip — same animation, narrower target.
+
 ```scss
-// src/components/navbar/SpaceIcon.scss
-.drop-target-wiggle::after {
-  content: '';
-  position: absolute;
-  inset: -3px;
-  border: 3px dashed var(--accent);
-  border-radius: $rounded-xl;
-  animation: pulse-border 1s ease-in-out infinite;
+// src/styles/_components.scss
+.sidebar-row-chrome--merge-target {
+  background: ...; // translucent accent
+  &::before { ... } // accent left bar
+}
+
+// src/components/space/SpacesSidebar.scss
+.spaces-sidebar__row-avatar--wiggle {
+  animation: drop-target-wiggle 0.4s ease-in-out infinite;
 }
 ```
 
-**Reorder intent** (horizontal line):
+**Reorder intent** (row and folder header): a thin accent bar rendered above or below the row depending on `dropTarget.intent`:
+
 ```tsx
-{showDropBefore && (
-  <div className="flex justify-center py-1">
-    <div className="w-12 h-1 bg-accent-500 rounded-full" />
-  </div>
-)}
+{showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
+{/* ...row content... */}
+{showDropAfter && <div className="spaces-sidebar__row-drop-indicator" />}
 ```
 
 ### DragOverlay (Ghost Element)
 
-During drag, the original item becomes invisible and a ghost copy follows the cursor:
+During drag, the original item is hidden via `.spaces-sidebar__row--dragging` / `.folder-container--dragging` and a ghost copy follows the cursor. The overlay is mounted inside `SpacesSidebar` and reuses the live `SpacesSidebarRow` for spaces (so the overlay looks identical to the row it came from):
 
-```typescript
-// NavMenu.tsx
-<DragOverlay dropAnimation={dropAnimation}>
-  {activeItem && (
-    <div className="drag-overlay-ghost">
-      {activeItem.type === 'folder' ? (
-        <FolderButton folder={...} />
-      ) : (
-        <SpaceIcon space={...} />
-      )}
+```tsx
+// SpacesSidebar.tsx
+<DragOverlay>
+  {activeDragItem ? (
+    <div className="spaces-sidebar__drag-overlay">
+      <SpacesSidebarRow
+        space={space}
+        active={false}
+        unread={...}
+        mentionCount={...}
+        isMuted={...}
+        onClick={() => {}}
+      />
     </div>
-  )}
+  ) : null}
 </DragOverlay>
 ```
 
 ```scss
-// NavMenu.scss
-.drag-overlay-ghost {
-  opacity: 0.9;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-  transform: scale(1.05);
+// src/components/space/SpacesSidebar.scss
+.spaces-sidebar__drag-overlay {
+  opacity: 0.95;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
   cursor: grabbing;
 }
 ```
@@ -459,13 +495,13 @@ const sensors = useSensors(
 #### CSS Requirements
 
 ```scss
-// Draggable elements (SpaceIcon, FolderButton)
-.space-icon, .folder-button {
-  touch-action: none;  // Required for iOS Safari
+// Draggable elements
+.spaces-sidebar__row, .folder-container {
+  touch-action: none;  // Required for iOS Safari; also applied inline in SpacesSidebarFolder
 }
 
 // Scrollable container
-.nav-menu-spaces {
+.spaces-sidebar__list {
   touch-action: pan-y;  // Allow scroll, prevent pull-to-refresh
 }
 ```
@@ -475,20 +511,22 @@ const sensors = useSensors(
 Since drag uses distance-based activation (not delay), long-press is handled separately with raw touch events:
 
 ```typescript
-// FolderContainer.tsx - simplified
-const { threshold, delay } = TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
+// SpacesSidebarFolder.tsx - simplified
+const { threshold: MOVEMENT_THRESHOLD, delay: LONG_PRESS_DELAY } =
+  TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
 
 const handleTouchStart = (e: React.TouchEvent) => {
   touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
   longPressTimer.current = setTimeout(() => {
-    hapticLight();
+    hapticMedium();
     onEdit();  // Opens FolderEditorModal
-  }, delay);  // 500ms
+    clearLongPressTimer();
+  }, LONG_PRESS_DELAY);  // 500ms
 };
 
 const handleTouchMove = (e: React.TouchEvent) => {
   // Cancel if moved > 15px (user wants to drag, not long-press)
-  if (distance > threshold) clearLongPressTimer();
+  if (distance > MOVEMENT_THRESHOLD) clearLongPressTimer();
 };
 ```
 
@@ -500,11 +538,9 @@ See: `.agents/reports/dnd-kit-touch-best-practices_2025-12-11.md`
 
 ## CSS Animation: Expand/Collapse
 
-The expand/collapse animation uses the CSS Grid trick for animating to unknown heights:
+The expand/collapse animation uses the CSS Grid trick for animating to unknown heights, defined in [src/components/space/Folder.scss](src/components/space/Folder.scss):
 
 ```scss
-// src/components/navbar/Folder.scss
-
 .folder-spaces-wrapper {
   display: grid;
   grid-template-rows: 0fr;  // Collapsed: 0 fraction
@@ -521,6 +557,8 @@ The expand/collapse animation uses the CSS Grid trick for animating to unknown h
 }
 ```
 
+The `--row` and `--strip` modifier suffixes (`.folder-container--row`, `.folder-container--strip`, `.folder-header--row`, `.folder-header--strip`, `.folder-spaces--row`, `.folder-spaces--strip`) carry the layout-mode-specific spacing and sizing.
+
 **Why this works**: The grid fractional unit (`fr`) can animate from `0fr` to `1fr`, and the child's `min-height: 0` allows it to collapse to zero height. This is superior to `max-height` hacks because it doesn't require knowing the content height.
 
 **Clip-path handling**: During collapse animation, `clip-path: inset(0 -100px 0 -100px)` clips vertically while allowing horizontal overflow (for toggle indicators). When expanded, `clip-path: none` allows tooltips to show.
@@ -534,18 +572,24 @@ The expand/collapse animation uses the CSS Grid trick for animating to unknown h
 The modal is opened via the ModalProvider system:
 
 ```typescript
-// NavMenu.tsx
+// SpacesSidebar.tsx
 const { openFolderEditor } = useModals();
 
-// From context menu
-const handleFolderSettings = () => {
-  openFolderEditor(contextMenu.folder.id);
-  closeContextMenu();
-};
+// From the folder context menu items (Edit Folder)
+{
+  id: 'edit',
+  icon: 'settings',
+  label: t`Edit Folder`,
+  onClick: () => {
+    openFolderEditor(f.id);
+    closeFolderContextMenu();
+  },
+}
 
-// From FolderContainer long-press (touch)
-<FolderContainer
-  onEdit={() => openFolderEditor(folder.id)}
+// From SpacesSidebarFolder long-press (touch)
+<SpacesSidebarFolder
+  // ...
+  onEdit={() => openFolderEditor(nav.item.id)}
 />
 ```
 
@@ -581,7 +625,8 @@ Here's the complete data flow when a user drags Space A onto Space B:
    │
    ├─► handleDragMove() detects dropIntent = 'merge'
    │   └─► setDropTarget({ id: B, intent: 'merge' })
-   │       └─► SpaceButton B renders with .drop-target-wiggle
+   │       └─► SpacesSidebarRow B renders with .sidebar-row-chrome--merge-target
+   │           and its inner avatar gets .spaces-sidebar__row-avatar--wiggle
    │
 2. User releases drag
    │
@@ -594,7 +639,7 @@ Here's the complete data flow when a user drags Space A onto Space B:
    │   │
    │   ├─► Optimistic update:
    │   │   queryClient.setQueryData(buildConfigKey(...), newConfig)
-   │   │   └─► NavMenu re-renders immediately with folder
+   │   │   └─► SpacesSidebar re-renders immediately with folder
    │   │
    │   └─► saveConfig() persists to IndexedDB + syncs to server
    │
@@ -798,3 +843,5 @@ const NavItemSchema = z.discriminatedUnion('type', [
 - [Task: Space Folders Discord-Style](../../tasks/done/space-folders-discord-style.md) - Implementation task with phase details
 
 ---
+
+*Last updated: 2026-06-04*
