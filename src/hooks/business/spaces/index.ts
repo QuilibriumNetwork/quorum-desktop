@@ -7,7 +7,6 @@ export * from './useSpaceJoining';
 export * from './useInviteValidation';
 export * from './useSpaceLeaving';
 export * from './useSpaceOrdering';
-export * from './useSpaceDragAndDrop';
 export * from './useSpaceProfile';
 export { useExploreSpaces, SPACE_CATEGORIES } from './useExploreSpaces';
 export { useSpaceContextMenu } from './useSpaceContextMenu';
