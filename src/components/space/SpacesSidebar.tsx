@@ -53,19 +53,18 @@ const LAST_SPACE_KEY = 'lastSpaceId';
 const LAST_CHANNEL_KEY = 'lastChannelId';
 
 /**
- * Spaces sidebar — minimal first pass (step 8).
+ * Spaces sidebar — mounted by AppShell's Sidebar slot when the route is /spaces.
  *
- * Renders a flat list of the user's spaces with the active row highlighted.
- * Clicking a space navigates to its default channel and updates sessionStorage
- * so the rail's Spaces button can return the user to the same place next click.
+ * Renders the user's spaces (folders interleaved with standalones via
+ * `navItems`) with the active row highlighted. Clicking a space navigates to
+ * its default channel and updates sessionStorage so the rail's Spaces button
+ * can return the user to the same place next click.
  *
- * Deferred for step 8b polish (not yet implemented):
- *  - folders + DnD reordering (reuse useFolderDragAndDrop / FolderContainer)
- *  - timestamps + last message previews
- *  - member count via useSpaceMembers
- *  - unread + mention badges with full styling
- *  - hide-muted-spaces filter
- *  - "+" header button wired to AddSpaceModal (currently no-op)
+ * Owns the DragStateProvider + DndContext + SortableContext + DragOverlay
+ * stack, the folder right-click context menu, and the per-space context menu
+ * (via `useSpaceContextMenu`). Iterates `navItems` and dispatches to
+ * `SpacesSidebarFolder` or `SpacesSidebarRow` per item type. In compact mode
+ * (sidebar collapsed strip) the same components render their narrower layouts.
  */
 interface SpacesSidebarProps {
   /** Opens the "Join a space" modal (paste invite link). */
@@ -76,9 +75,9 @@ interface SpacesSidebarProps {
 }
 
 export const SpacesSidebar: React.FunctionComponent<SpacesSidebarProps> = (props) => {
-  // DragStateProvider must wrap everything that reads dnd state (FolderContainer,
-  // SpacesSidebarRow, useFolderDragAndDrop). Mounted here so DM/Channels sidebars
-  // never see the provider.
+  // DragStateProvider must wrap everything that reads dnd state
+  // (SpacesSidebarFolder, SpacesSidebarRow, useFolderDragAndDrop). Mounted here
+  // so DM/Channels sidebars never see the provider.
   return (
     <DragStateProvider>
       <SpacesSidebarInner {...props} />
@@ -167,8 +166,8 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     onFolderCreated: (folderId) => openFolderEditor(folderId),
   });
 
-  // Folder right-click context menu. Mirrors the original NavMenu behaviour:
-  // Edit Folder + Delete Folder. Position follows the click coordinates.
+  // Folder right-click context menu: Edit Folder + Delete Folder.
+  // Position follows the click coordinates.
   const { deleteFolder } = useDeleteFolder();
   const [folderContextMenu, setFolderContextMenu] = React.useState<{
     folder: (NavItem & { type: 'folder' }) | null;
