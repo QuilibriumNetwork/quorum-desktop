@@ -285,7 +285,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                       >
                         <button
                           type="button"
-                          className={`spaces-sidebar__strip-row ${
+                          className={`spaces-sidebar__strip-row sidebar-row-chrome ${
                             active ? 'spaces-sidebar__strip-row--active' : ''
                           }`}
                           onClick={() =>
