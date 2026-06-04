@@ -8,9 +8,10 @@ import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { getAddressSuffix } from '../../utils';
 import { useDirectMessageUnreadCount } from '../../hooks/business/messages';
+import { useOptionalShellState } from './useShellState';
 import './NavRail.scss';
 
-type RailSectionId = 'dm' | 'spaces' | 'discover';
+type RailSectionId = 'dm' | 'spaces' | 'bookmarks' | 'discover';
 
 interface RailItemConfig {
   id: RailSectionId;
@@ -31,6 +32,12 @@ const buildItems = (): RailItemConfig[] => [
     icon: 'users-group',
     label: t`Spaces`,
     route: '/spaces',
+  },
+  {
+    id: 'bookmarks',
+    icon: 'bookmark',
+    label: t`Bookmarks`,
+    route: '/bookmarks',
   },
   {
     id: 'discover',
@@ -59,6 +66,12 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   const user = usePasskeysContext();
   const dmUnreadCount = useDirectMessageUnreadCount();
   const { openUserSettings } = useModalContext();
+  // On phone the rail lives inside the drawer; tapping a section should swap
+  // what the sidebar shows (DM list, spaces list) rather than navigate to the
+  // last visited leaf, which would close the drawer via the leaf-route
+  // auto-close in AppShell.
+  const shell = useOptionalShellState();
+  const isPhone = shell?.viewport === 'phone';
 
   const displayName = user?.currentPasskeyInfo?.displayName || 'User';
   const userIcon = user?.currentPasskeyInfo?.pfpUrl;
@@ -69,18 +82,31 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   const activeId: RailSectionId | null = React.useMemo(() => {
     if (location.pathname.startsWith('/messages')) return 'dm';
     if (location.pathname.startsWith('/discover')) return 'discover';
+    if (location.pathname.startsWith('/bookmarks')) return 'bookmarks';
     if (location.pathname.startsWith('/spaces')) return 'spaces';
     return null;
   }, [location.pathname]);
 
   const onItemClick = (item: RailItemConfig) => {
     if (item.id === 'dm') {
-      // Preserve last-visited DM if available, matching legacy NavMenu behavior
+      // On phone the rail lives in the drawer — land on the DM list so the
+      // sidebar swaps content and the drawer stays open. On desktop/tablet
+      // restore the last visited DM, matching legacy NavMenu behavior.
+      if (isPhone) {
+        navigate('/messages');
+        return;
+      }
       const lastAddress = sessionStorage.getItem('lastDmAddress');
       navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
       return;
     }
     if (item.id === 'spaces') {
+      // Phone: always land on the spaces list so the drawer keeps showing the
+      // sidebar. Desktop/tablet: restore last visited space + channel.
+      if (isPhone) {
+        navigate('/spaces');
+        return;
+      }
       // If already inside a space, re-clicking the rail item returns to the
       // spaces list (sidebar shows all spaces, main shows empty hint).
       const insideSpace = /^\/spaces\/[^/]+\/[^/]+/.test(location.pathname);

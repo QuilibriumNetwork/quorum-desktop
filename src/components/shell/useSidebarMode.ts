@@ -17,6 +17,8 @@ export const useSidebarMode = (): SidebarMode => {
 
   if (location.pathname.startsWith('/discover')) return 'discover';
 
+  if (location.pathname.startsWith('/bookmarks')) return 'hidden';
+
   if (location.pathname.startsWith('/spaces')) {
     if (SPACE_ROUTE_PATTERN.test(location.pathname)) return 'channels';
     return 'spaces';

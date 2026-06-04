@@ -40,6 +40,7 @@
 // Use shared header styling with bookmark-specific class names
 // Custom margin and padding to make room for .result-source
 .bookmarks-panel .result-header,
+.bookmarks-page .result-header,
 .mobile-drawer .bookmark-item .result-header {
   @extend .dropdown-result-header;
   margin-bottom: $s-2;
@@ -69,6 +70,7 @@
 
 // Result source styling for both desktop (bookmarks-panel) and mobile (mobile-drawer) contexts
 .bookmarks-panel .result-source,
+.bookmarks-page .result-source,
 .mobile-drawer .bookmark-item .result-source {
   padding: 0 $s-4 $s-2 0;
 
