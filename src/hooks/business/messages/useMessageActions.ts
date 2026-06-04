@@ -477,10 +477,10 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     };
 
 
-    // Get sender name for bookmark preview
-    const senderName = mapSenderToUser ?
-      mapSenderToUser(message.content.senderId)?.displayName || 'Unknown User' :
-      'Unknown User';
+    // Get sender name + icon for bookmark preview
+    const senderInfo = mapSenderToUser ? mapSenderToUser(message.content.senderId) : undefined;
+    const senderName = senderInfo?.displayName || 'Unknown User';
+    const senderIcon = senderInfo?.userIcon;
 
     // Use provided sourceName or derive it
     const bookmarkSourceName = sourceName ||
@@ -491,7 +491,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       sourceType,
       context,
       senderName,
-      bookmarkSourceName
+      bookmarkSourceName,
+      senderIcon
     );
   }, [message, bookmarks, conversationId, spaceId, channelId, mapSenderToUser, sourceName]);
 
