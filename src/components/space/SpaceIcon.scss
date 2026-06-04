@@ -17,12 +17,6 @@
   // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
   // See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
   touch-action: none;
-
-  // Mobile phone optimization
-  @media (max-width: $screen-xs) {
-    width: $nav-space-icon-size-mobile !important;
-    height: $nav-space-icon-size-mobile !important;
-  }
 }
 
 .space-icon-small {
@@ -121,14 +115,6 @@
   transition: all $duration-100 linear;
   // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
   touch-action: none;
-
-  // Mobile phone optimization
-  @media (max-width: $screen-xs) {
-    width: $nav-space-icon-size-mobile !important;
-    height: $nav-space-icon-size-mobile !important;
-    border-radius: $rounded-lg;
-  }
-
 }
 
 // Drag placeholder - shows where the dragged item was
@@ -142,12 +128,6 @@
   &.space-icon-small {
     width: 40px;
     height: 40px;
-  }
-
-  // Mobile phone optimization
-  @media (max-width: $screen-xs) {
-    width: $nav-space-icon-size-mobile;
-    height: $nav-space-icon-size-mobile;
   }
 }
 

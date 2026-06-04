@@ -295,8 +295,9 @@ $container-2xl: 1536px;      /* Container max-width at 2xl breakpoint */
    ============================================ */
 
 /* === SPACE ICON SIZES === */
-$nav-space-icon-size: $s-12;          /* Space icon size (desktop) - 48px - used in SpaceIcon, UserInitials */
-$nav-space-icon-size-mobile: $s-12;   /* Space icon size (mobile) - 40px - used in SpaceIcon, UserInitials */
+/* 48px on all viewports — matches Material's 48px touch-target floor and
+   keeps folder buttons (also $s-12) visually consistent across breakpoints. */
+$nav-space-icon-size: $s-12;          /* 48px - used in SpaceIcon, UserInitials */
 
 /* === HEADER HEIGHT === */
 /* Shared min-height for all single-row headers (channel, DM, thread, space no-banner) */
@@ -327,7 +328,6 @@ $sidebar-width:          300px;
 $sidebar-width-collapsed: 72px;
 $sidebar-header-height:   56px;
 $rail-item-height:        46px;
-$rail-fav-item-height:    38px;  /* reserved for FAVORITES section (not yet shipped) */
 $rail-accent-bar-width:    3px;
 $rail-accent-bar-height:  24px;
 

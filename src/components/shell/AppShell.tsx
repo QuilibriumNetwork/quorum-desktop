@@ -274,14 +274,15 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
 
   // Auto-close the drawer when the user lands on a destination that doesn't
   // need further browsing inside the drawer: a specific DM conversation, a
-  // space channel, or Public spaces (which renders its own full-page content).
-  // Section-level navigation (DM list, Spaces list) keeps the drawer open.
+  // space channel, or one of the Discover tabs. Section-level navigation
+  // (DM list, Spaces list) keeps the drawer open so the user can keep picking.
   React.useEffect(() => {
     if (!drawerOpen) return;
     const isDmLeaf = /^\/messages\/[^/]+/.test(location.pathname);
     const isSpaceLeaf = /^\/spaces\/[^/]+\/[^/]+/.test(location.pathname);
-    const isPublicSpaces = sidebarMode === 'hidden';
-    if (isDmLeaf || isSpaceLeaf || isPublicSpaces) closeDrawer();
+    const isDiscoverLeaf = /^\/discover\/(spaces|people)/.test(location.pathname);
+    const isHiddenSidebar = sidebarMode === 'hidden';
+    if (isDmLeaf || isSpaceLeaf || isDiscoverLeaf || isHiddenSidebar) closeDrawer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search]);
 
