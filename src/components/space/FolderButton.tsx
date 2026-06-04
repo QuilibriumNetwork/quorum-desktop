@@ -16,15 +16,22 @@ interface FolderButtonProps {
   isExpanded?: boolean;
   showWiggle?: boolean;
   noTooltip?: boolean;
+  /**
+   * Suppresses the corner mention bubble on the button itself. Used in row
+   * layout where the bubble lives on the far right of the row instead.
+   */
+  hideMentionBubble?: boolean;
 }
 
 const FolderButton: React.FC<FolderButtonProps> = ({
   folder,
+  hasUnread = false,
   mentionCount = 0,
   size = 'regular',
   isExpanded = false,
   showWiggle = false,
   noTooltip = false,
+  hideMentionBubble = false,
 }) => {
   const isTouch = isTouchDevice();
   const { resolvedTheme } = useTheme();
@@ -42,6 +49,17 @@ const FolderButton: React.FC<FolderButtonProps> = ({
 
   const buttonElement = (
     <div className="relative">
+      {(!shouldHideTooltip || showWiggle) && showIndicators && (
+        <div
+          className={`space-icon-toggle ${
+            showWiggle
+              ? 'space-icon-toggle--drop-target'
+              : hasUnread
+                ? 'space-icon-toggle--unread'
+                : ''
+          }`}
+        />
+      )}
       <div
         className={`folder-button ${sizeClass} ${showWiggle ? 'drop-target-wiggle' : ''}`}
         style={{ backgroundColor }}
@@ -52,7 +70,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
           size={size === 'small' ? 'lg' : 'xl'}
           variant={folder.iconVariant || 'outline'}
         />
-        {showIndicators && mentionCount > 0 && (
+        {showIndicators && !hideMentionBubble && mentionCount > 0 && (
           <span
             className="folder-button-mention-bubble"
             style={{ backgroundColor }}

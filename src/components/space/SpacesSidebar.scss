@@ -18,17 +18,23 @@
 }
 
 // Recenter unread dot in the row's 16px left gutter (default -15px overshoots).
-.spaces-sidebar__row .space-icon-toggle {
+// Row layout puts the dot 12px (not the default 15px) from the icon edge —
+// applies to standalone space rows AND folder header rows so the dot lines up
+// vertically across the whole list.
+.spaces-sidebar__row .space-icon-toggle,
+.folder-header--row .space-icon-toggle {
   left: -12px;
 }
 
 // Row chrome already shows hover/active — suppress the legacy icon-side
 // hover bar and the unread-dot hover-grow inside rows.
-.spaces-sidebar__row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target) {
+.spaces-sidebar__row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target),
+.folder-header--row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target) {
   opacity: 0 !important;
 }
 @media (hover: hover) {
-  .spaces-sidebar__row .relative:hover .space-icon-toggle--unread {
+  .spaces-sidebar__row .relative:hover .space-icon-toggle--unread,
+  .folder-header--row .relative:hover .space-icon-toggle--unread {
     height: $s-1-5;
   }
 }

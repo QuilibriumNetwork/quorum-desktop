@@ -253,13 +253,21 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                     isExpanded={isExpanded}
                     showWiggle={showWiggle}
                     noTooltip
+                    hideMentionBubble
                   />
                 </div>
                 <div className="folder-header__meta">
                   <div className="folder-header__name">{folder.name}</div>
-                  <div className="folder-header__count">
-                    <Icon name="layout-grid" size="sm" />
-                    <span>{spaces.length}</span>
+                  <div className="folder-header__secondary">
+                    <div className="folder-header__count">
+                      <Icon name="layout-grid" size="sm" />
+                      <span>{spaces.length}</span>
+                    </div>
+                    {!isExpanded && folderMentionCount > 0 && (
+                      <span className="spaces-sidebar__row-badge">
+                        {folderMentionCount > 99 ? '99+' : folderMentionCount}
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -282,6 +290,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                         content={space.spaceName}
                         place="right"
                         showOnTouch={false}
+                        className="tooltip-text-large"
                       >
                         <button
                           type="button"
@@ -333,6 +342,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                       mentionCount={mention}
                       isMuted={mutedSpacesSet.has(space.spaceId)}
                       parentFolderId={folder.id}
+                      hideCornerMentionBubble
                       onClick={() => onSpaceClick(space.spaceId, space.defaultChannelId)}
                       onContextMenu={
                         onSpaceContextMenu

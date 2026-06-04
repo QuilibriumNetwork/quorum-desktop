@@ -80,9 +80,18 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   const { data: realSpaces = [] } = useSpaces({});
 
   // Dev-only: lazy-load and append mock joined spaces so the production bundle
-  // never imports the mock module.
+  // never imports the mock module. The mock also synthesises a demo folder
+  // (with mention + unread overlay) so the folder UI — aggregate bubble and
+  // left-side unread dot — is always visible for visual verification.
   const [mockUtils, setMockUtils] = React.useState<{
     generateMockJoinedSpaces: (count: number) => Space[];
+    generateMockFolderSpaces: () => Space[];
+    generateMockFolderNavItem: () => NavItem & { type: 'folder' };
+    getMockFolderCounts: () => {
+      unread: Record<string, number>;
+      mention: Record<string, number>;
+    };
+    MOCK_FOLDER_ID: string;
   } | null>(null);
   React.useEffect(() => {
     if (ENABLE_MOCK_SPACES) {
@@ -96,16 +105,37 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
       ? mockUtils.generateMockJoinedSpaces(MOCK_SPACES_COUNT)
       : [];
   }, [mockUtils]);
+  const mockFolderSpaces = React.useMemo<Space[]>(() => {
+    return ENABLE_MOCK_SPACES && mockUtils
+      ? mockUtils.generateMockFolderSpaces()
+      : [];
+  }, [mockUtils]);
+  const mockFolderNavItem = React.useMemo<(NavItem & { type: 'folder' }) | null>(
+    () =>
+      ENABLE_MOCK_SPACES && mockUtils ? mockUtils.generateMockFolderNavItem() : null,
+    [mockUtils]
+  );
+  const mockFolderCounts = React.useMemo(
+    () =>
+      ENABLE_MOCK_SPACES && mockUtils
+        ? mockUtils.getMockFolderCounts()
+        : { unread: {}, mention: {} },
+    [mockUtils]
+  );
   const spaces = React.useMemo<Space[]>(
-    () => (mockSpaces.length > 0 ? [...realSpaces, ...mockSpaces] : realSpaces),
-    [realSpaces, mockSpaces]
+    () =>
+      mockSpaces.length > 0 || mockFolderSpaces.length > 0
+        ? [...realSpaces, ...mockSpaces, ...mockFolderSpaces]
+        : realSpaces,
+    [realSpaces, mockSpaces, mockFolderSpaces]
   );
 
   const realSpaceUnreadCounts = useSpaceUnreadCounts({ spaces });
   const spaceMentionCounts = useSpaceMentionCounts({ spaces });
   const spaceReplyCounts = useSpaceReplyCounts({ spaces });
   // Mentions + replies are merged for the badge — that's the "needs attention"
-  // count distinct from generic unreads.
+  // count distinct from generic unreads. Demo-folder spaces get a deterministic
+  // overlay so the folder mention bubble always shows in dev.
   const spaceMentionPlusReplyCounts = React.useMemo<Record<string, number>>(() => {
     const result: Record<string, number> = {};
     const keys = new Set([...Object.keys(spaceMentionCounts), ...Object.keys(spaceReplyCounts)]);
@@ -113,14 +143,19 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
       const total = (spaceMentionCounts[spaceId] || 0) + (spaceReplyCounts[spaceId] || 0);
       if (total > 0) result[spaceId] = total;
     });
+    for (const [spaceId, count] of Object.entries(mockFolderCounts.mention)) {
+      result[spaceId] = (result[spaceId] || 0) + count;
+    }
     return result;
-  }, [spaceMentionCounts, spaceReplyCounts]);
+  }, [spaceMentionCounts, spaceReplyCounts, mockFolderCounts]);
 
   // Dev-only: deterministically tag a slice of mock spaces with unread counts so
   // the badge / dot / 99+ paths are all exercised. Three buckets: no unreads,
   // small count (1–9), and overflow (>99).
   const spaceUnreadCounts = React.useMemo<Record<string, number>>(() => {
-    if (mockSpaces.length === 0) return realSpaceUnreadCounts;
+    if (mockSpaces.length === 0 && mockFolderSpaces.length === 0) {
+      return realSpaceUnreadCounts;
+    }
     const overlay: Record<string, number> = { ...realSpaceUnreadCounts };
     for (let i = 0; i < mockSpaces.length; i++) {
       const bucket = i % 4;
@@ -131,8 +166,11 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
         overlay[mockSpaces[i].spaceId] = (i % 9) + 1; // 1..9
       }
     }
+    for (const [spaceId, count] of Object.entries(mockFolderCounts.unread)) {
+      overlay[spaceId] = (overlay[spaceId] || 0) + count;
+    }
     return overlay;
-  }, [realSpaceUnreadCounts, mockSpaces]);
+  }, [realSpaceUnreadCounts, mockSpaces, mockFolderSpaces, mockFolderCounts]);
   const { sidebarCollapsed } = useShellState();
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
   const { mutedSpacesSet } = useMutedSpacesSet();
@@ -144,7 +182,17 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   const { currentPasskeyInfo } = usePasskeysContext();
   const userAddress = currentPasskeyInfo?.address;
   const { data: config } = useConfig({ userAddress: userAddress || '' });
-  const { navItems } = useNavItems(spaces, config);
+  const { navItems: realNavItems } = useNavItems(spaces, config);
+  // Dev-only: prepend the demo folder so the folder UI (aggregate bubble + unread
+  // dot) is always visible regardless of the user's real config.
+  const navItems = React.useMemo(() => {
+    if (!mockFolderNavItem || mockFolderSpaces.length === 0) return realNavItems;
+    const folderEntry = {
+      item: mockFolderNavItem,
+      spaces: mockFolderSpaces.map((s) => ({ ...s, id: s.spaceId })),
+    };
+    return [folderEntry, ...realNavItems];
+  }, [realNavItems, mockFolderNavItem, mockFolderSpaces]);
   const { isExpanded, toggleFolder } = useFolderStates();
   const { openFolderEditor } = useModals();
   const dragState = useOptionalDragStateContext();
@@ -418,6 +466,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                 content={space.spaceName}
                 place="right"
                 showOnTouch={false}
+                className="tooltip-text-large"
               >
                 <SpacesSidebarRow
                   space={space}
@@ -560,6 +609,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     unread={unread}
                     mentionCount={mention}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
+                    hideCornerMentionBubble
                       onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
                     onContextMenu={(e) => {
                       void openRowContextMenu({
@@ -615,6 +665,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                     unread={unread}
                     mentionCount={mention}
                     isMuted={mutedSpacesSet.has(space.spaceId)}
+                    hideCornerMentionBubble
                       onClick={() => handleRowClick(space.spaceId, space.defaultChannelId)}
                     onContextMenu={(e) => {
                       void openRowContextMenu({

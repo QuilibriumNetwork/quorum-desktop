@@ -18,16 +18,6 @@
     width: 40px;
     height: 40px;
   }
-
-  @media (max-width: $screen-xs) {
-    width: 40px;
-    height: 40px;
-
-    &--small {
-      width: 36px;
-      height: 36px;
-    }
-  }
 }
 
 // Folder color passed via inline style
@@ -150,6 +140,21 @@
     gap: $s-1;
     font-size: $text-xs;
     color: var(--color-text-muted);
+  }
+
+  // Bottom line of the folder header — mirrors SpacesSidebarRow's secondary
+  // line so the mention badge sits in the same bottom-right slot as the row
+  // badge on a space (instead of floating in the vertical middle, which
+  // collides with long folder names).
+  &__secondary {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    min-width: 0;
+
+    .spaces-sidebar__row-badge {
+      margin-left: auto;
+    }
   }
 }
 

@@ -43,6 +43,13 @@ export interface SpacesSidebarRowProps {
   parentFolderId?: string;
   /** Compact mode: 56px icon-only strip layout used in the collapsed sidebar. */
   compact?: boolean;
+  /**
+   * Suppresses the corner mention bubble on the avatar in row layout. The row
+   * already renders the "needs attention" count as a far-right badge, so the
+   * icon-corner bubble is redundant — same pattern used by standalone rows.
+   * Ignored when `compact` (collapsed sidebar still needs the corner bubble).
+   */
+  hideCornerMentionBubble?: boolean;
   onClick: () => void;
   onContextMenu?: (e: React.MouseEvent) => void;
 }
@@ -55,6 +62,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
   isMuted,
   parentFolderId,
   compact = false,
+  hideCornerMentionBubble = false,
   onClick,
   onContextMenu,
 }) => {
@@ -101,7 +109,13 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
         selected={false}
         size="regular"
         noTooltip
-        mentionCount={mentionCount > 0 ? mentionCount : undefined}
+        mentionCount={
+          !compact && hideCornerMentionBubble
+            ? undefined
+            : mentionCount > 0
+              ? mentionCount
+              : undefined
+        }
       />
       {isMuted && (
         <div className="muted-badge" title="Muted">
@@ -139,9 +153,9 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
                 <MemberCount spaceId={space.spaceId} />
               </React.Suspense>
             </span>
-            {unread > 0 && (
+            {mentionCount > 0 && (
               <span className="spaces-sidebar__row-badge">
-                {unread > 99 ? '99+' : unread}
+                {mentionCount > 99 ? '99+' : mentionCount}
               </span>
             )}
           </div>
@@ -159,6 +173,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
           content={space.spaceName}
           place="right"
           showOnTouch={false}
+          className="tooltip-text-large"
         >
           {button}
         </Tooltip>
