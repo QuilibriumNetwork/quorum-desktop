@@ -41,6 +41,7 @@ import { useThreadMessages } from '../../hooks/business/threads';
 import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
+import { useBookmarks } from '../../hooks/business/bookmarks';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -299,6 +300,11 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
+
+  // Only show the bookmark icon when there's at least one bookmark in this
+  // space. Global view lives on /bookmarks.
+  const { filterByCurrentSpace } = useBookmarks({ userAddress });
+  const hasContextBookmarks = !!spaceId && filterByCurrentSpace(spaceId).length > 0;
 
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
@@ -1457,33 +1463,35 @@ const Channel: React.FC<ChannelProps> = ({
                 />
               </div>
 
-              {/* Bookmarks */}
-              <div className="relative">
-                <Tooltip
-                  id={`bookmarks-${channelId}`}
-                  content={t`Bookmarks`}
-                  showOnTouch={false}
-                >
-                  <Button
-                    type="unstyled"
-                    onClick={() => setActivePanel('bookmarks')}
-                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
-                    iconName="bookmark"
-                    iconSize={headerIconSize}
-                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
-                    iconOnly
-                  />
-                </Tooltip>
+              {/* Bookmarks — only when there's something in this space.
+                  Empty state lives on /bookmarks. */}
+              {hasContextBookmarks && (
+                <div className="relative">
+                  <Tooltip
+                    id={`bookmarks-${channelId}`}
+                    content={t`Bookmarks in this space`}
+                    showOnTouch={false}
+                  >
+                    <Button
+                      type="unstyled"
+                      onClick={() => setActivePanel('bookmarks')}
+                      className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
+                      iconName="bookmark"
+                      iconSize={headerIconSize}
+                      iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
+                      iconOnly
+                    />
+                  </Tooltip>
 
-                {/* Bookmarks Panel */}
-                <BookmarksPanel
-                  isOpen={activePanel === 'bookmarks'}
-                  onClose={() => setActivePanel(null)}
-                  userAddress={userAddress}
-                  stickers={stickers}
-                  mapSenderToUser={mapSenderToUser}
-                />
-              </div>
+                  <BookmarksPanel
+                    isOpen={activePanel === 'bookmarks'}
+                    onClose={() => setActivePanel(null)}
+                    userAddress={userAddress}
+                    stickers={stickers}
+                    mapSenderToUser={mapSenderToUser}
+                  />
+                </div>
+              )}
 
               <Tooltip
                 id={`members-list-${channelId}`}

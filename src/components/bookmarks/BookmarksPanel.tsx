@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
@@ -8,7 +8,6 @@ import { BookmarkItem } from './BookmarkItem';
 import {
   Flex,
   Icon,
-  Select,
 } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { useBookmarks } from '../../hooks/business/bookmarks';
@@ -34,76 +33,29 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  // Get current route context for filtering
+  // Panel is always scoped to the current route's context (this space or this
+  // conversation). The global "all bookmarks" view lives on the /bookmarks page.
   const searchContext = useSearchContext();
 
-  // Bookmark data
   const {
-    bookmarkCount,
     isLoading,
     error,
     removeBookmark,
-    filterBySourceType,
     filterByConversation,
     filterByCurrentSpace,
   } = useBookmarks({ userAddress });
 
-  // Filter state - single value like NotificationPanel
-  const [selectedFilter, setSelectedFilter] = useState<string>('all');
-
-  // Dynamic filter options ordering based on context
-  const filterOptions = useMemo(() => {
-    const options = [{ value: 'all', label: t`All Bookmarks` }];
-
-    // Dynamic ordering based on current context
-    if (searchContext.type === 'dm' && searchContext.conversationId && searchContext.conversationId !== 'general') {
-      // DM context: prioritize current conversation
-      options.push(
-        { value: `conversation:${searchContext.conversationId}`, label: t`This conversation` },
-        { value: 'dms', label: t`All DMs` },
-        { value: 'spaces', label: t`All Spaces` }
-      );
-    } else if (searchContext.type === 'space' && searchContext.spaceId && searchContext.spaceId !== 'default') {
-      // Space context: prioritize current space
-      options.push(
-        { value: `currentSpace:${searchContext.spaceId}`, label: t`This Space` },
-        { value: 'spaces', label: t`All Spaces` },
-        { value: 'dms', label: t`All DMs` }
-      );
-    } else {
-      // General context: standard ordering
-      options.push(
-        { value: 'dms', label: t`All DMs` },
-        { value: 'spaces', label: t`All Spaces` }
-      );
-    }
-
-    return options;
-  }, [searchContext]);
-
-  // Get filtered bookmarks with context-aware filtering
   const filteredBookmarks = useMemo(() => {
-    if (selectedFilter.startsWith('conversation:')) {
-      const conversationId = selectedFilter.replace('conversation:', '');
-      return filterByConversation(conversationId);
-    } else if (selectedFilter.startsWith('currentSpace:')) {
-      const spaceId = selectedFilter.replace('currentSpace:', '');
-      return filterByCurrentSpace(spaceId, searchContext.channelId);
+    if (searchContext.type === 'dm' && searchContext.conversationId && searchContext.conversationId !== 'general') {
+      return filterByConversation(searchContext.conversationId);
     }
+    if (searchContext.type === 'space' && searchContext.spaceId && searchContext.spaceId !== 'default') {
+      return filterByCurrentSpace(searchContext.spaceId);
+    }
+    return [];
+  }, [searchContext, filterByConversation, filterByCurrentSpace]);
 
-    // Handle standard filter types
-    switch (selectedFilter) {
-      case 'all':
-        return filterBySourceType('all');
-      case 'dms':
-        return filterBySourceType('dm');
-      case 'spaces':
-        return filterBySourceType('channel');
-      default:
-        // Fallback to show all bookmarks
-        return filterBySourceType('all');
-    }
-  }, [selectedFilter, searchContext, filterBySourceType, filterByConversation, filterByCurrentSpace]);
+  const contextCount = filteredBookmarks.length;
 
   // Handle navigation to bookmark - uses hash-based highlighting (cross-component communication)
   const handleJumpToMessage = useCallback((bookmark: Bookmark) => {
@@ -132,39 +84,15 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     }, 8000);
   }, [navigate, onClose]);
 
-  // Handle bookmark removal
   const handleRemoveBookmark = useCallback((bookmarkId: string) => {
     removeBookmark(bookmarkId);
   }, [removeBookmark]);
 
-  // Handle filter change (like NotificationPanel)
-  const handleFilterChange = useCallback((value: string) => {
-    setSelectedFilter(value);
-  }, []);
+  const handleSeeAll = useCallback(() => {
+    onClose();
+    navigate('/bookmarks');
+  }, [navigate, onClose]);
 
-  // Render filter controls (like NotificationPanel)
-  const renderFilterControls = useCallback(() => {
-    if (bookmarkCount === 0) return null;
-
-    return (
-      <div className="bookmarks-panel__controls">
-        <Flex className="items-center justify-between gap-2">
-          <Select
-            value={selectedFilter}
-            onChange={handleFilterChange}
-            options={filterOptions}
-            compactMode={true}
-            compactIcon="filter"
-            showSelectionCount={false}
-            size="medium"
-            dropdownClassName="panel-select-dropdown"
-          />
-        </Flex>
-      </div>
-    );
-  }, [bookmarkCount, selectedFilter, handleFilterChange, filterOptions]);
-
-  // Render empty state
   const renderEmptyState = useCallback(() => {
     if (isLoading) {
       return (
@@ -184,35 +112,8 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
       );
     }
 
-    if (bookmarkCount === 0) {
-      return (
-        <Flex justify="center" align="center" className="bookmark-empty-state">
-          <Icon name="bookmark" size="3xl" className="empty-icon" />
-          <span className="empty-message">{t`No bookmarks yet`}</span>
-          <span className="empty-hint">
-            {t`Bookmark messages to save them for later reference`}
-          </span>
-        </Flex>
-      );
-    }
-
-    // Filtered results are empty
-    return (
-      <Flex justify="center" align="center" className="bookmark-empty-state">
-        <Icon name="filter" className="empty-icon" />
-        <span className="empty-message">
-          {selectedFilter === 'spaces'
-            ? t`No bookmarks in spaces`
-            : selectedFilter === 'dms'
-            ? t`No bookmarks in DMs`
-            : selectedFilter !== 'all'
-            ? t`No bookmarks in this space`
-            : t`No bookmarks found`
-          }
-        </span>
-      </Flex>
-    );
-  }, [isLoading, error, bookmarkCount, selectedFilter]);
+    return null;
+  }, [isLoading, error]);
 
   // Render bookmark list
   const renderBookmarkList = useCallback(() => {
@@ -275,15 +176,22 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
       maxWidth={500}
       maxHeight={Math.min(window.innerHeight * 0.8, 600)}
       title={
-        bookmarkCount === 1
-          ? t`${bookmarkCount} bookmark`
-          : t`${bookmarkCount} bookmarks`
+        contextCount === 1
+          ? t`${contextCount} bookmark here`
+          : t`${contextCount} bookmarks here`
       }
       className="bookmarks-panel"
       showCloseButton={true}
     >
-      {renderFilterControls()}
       {renderBookmarkList()}
+      <button
+        type="button"
+        className="bookmarks-panel__see-all"
+        onClick={handleSeeAll}
+      >
+        {t`See all bookmarks`}
+        <Icon name="arrow-right" size="sm" />
+      </button>
     </DropdownPanel>
   );
 };

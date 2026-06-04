@@ -46,6 +46,7 @@ import {
   Tooltip,
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
+import { useBookmarks } from '../../hooks/business/bookmarks';
 import { MobileDrawer } from '../ui';
 import { DMUserProfileSidebar } from './DMUserProfileSidebar';
 import { useMobile } from '../context/MobileProvider';
@@ -142,6 +143,11 @@ const DirectMessage: React.FC<{}> = () => {
 
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
+
+  // Only show the bookmark icon when there's at least one bookmark in this
+  // DM. Global view lives on /bookmarks.
+  const { filterByConversation } = useBookmarks({ userAddress });
+  const hasContextBookmarks = filterByConversation(conversationId).length > 0;
 
   // Refs for tracking visible message timestamps (for read-time updates)
   const latestTimestampRef = useRef<number>(0);
@@ -775,32 +781,34 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               </Tooltip>
-              {/* Bookmarks */}
-              <div className="relative">
-                <Tooltip
-                  id="dm-bookmarks"
-                  content={t`Bookmarks`}
-                  showOnTouch={false}
-                >
-                  <Button
-                    type="unstyled"
-                    onClick={() => setActivePanel('bookmarks')}
-                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
-                    iconName="bookmark"
-                    iconSize={headerIconSize}
-                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
-                    iconOnly
-                  />
-                </Tooltip>
+              {/* Bookmarks — only when there's something in this conversation.
+                  Empty state lives on /bookmarks. */}
+              {hasContextBookmarks && (
+                <div className="relative">
+                  <Tooltip
+                    id="dm-bookmarks"
+                    content={t`Bookmarks in this conversation`}
+                    showOnTouch={false}
+                  >
+                    <Button
+                      type="unstyled"
+                      onClick={() => setActivePanel('bookmarks')}
+                      className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
+                      iconName="bookmark"
+                      iconSize={headerIconSize}
+                      iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
+                      iconOnly
+                    />
+                  </Tooltip>
 
-                {/* Bookmarks Panel */}
-                <BookmarksPanel
-                  isOpen={activePanel === 'bookmarks'}
-                  onClose={() => setActivePanel(null)}
-                  userAddress={userAddress}
-                  mapSenderToUser={mapSenderToUser}
-                />
-              </div>
+                  <BookmarksPanel
+                    isOpen={activePanel === 'bookmarks'}
+                    onClose={() => setActivePanel(null)}
+                    userAddress={userAddress}
+                    mapSenderToUser={mapSenderToUser}
+                  />
+                </div>
+              )}
               <Tooltip
                 id="dm-profile-toggle"
                 content={t`User Profile`}
