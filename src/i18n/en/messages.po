@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1627
-msgid "Send a message to #{channel_name}"
-msgstr "Send a message to #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Welcome to Quorum, {name}! Your account is secured and ready to go."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1635
+msgid "Send a message to #{channel_name}"
+msgstr "Send a message to #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -68,22 +68,22 @@ msgid "Replying to"
 msgstr "Replying to"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:354
+#: src/components/message/Message.tsx:360
 msgid "has joined"
 msgstr "has joined"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:362
+#: src/components/message/Message.tsx:368
 msgid "has left"
 msgstr "has left"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:370
+#: src/components/message/Message.tsx:376
 msgid "has been kicked"
 msgstr "has been kicked"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:999
+#: src/components/direct/DirectMessage.tsx:1007
 msgid "Send a message to {user}"
 msgstr "Send a message to {user}"
 
@@ -125,8 +125,8 @@ msgstr "Send a message to {user}"
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'everyone' is a reserved name."
 
-#: src/components/message/Message.tsx:824
-#: src/components/message/Message.tsx:837
+#: src/components/message/Message.tsx:830
+#: src/components/message/Message.tsx:843
 msgid "(edited)"
 msgstr "(edited)"
 
@@ -139,11 +139,13 @@ msgstr "(empty)"
 msgid "(only visible to you)"
 msgstr "(only visible to you)"
 
+#: src/components/bookmarks/BookmarkCard.tsx:184
 #: src/components/bookmarks/BookmarkItem.tsx:80
 #: src/components/message/MessagePreview.tsx:207
 msgid "[Empty message]"
 msgstr "[Empty message]"
 
+#: src/components/bookmarks/BookmarkCard.tsx:177
 #: src/components/bookmarks/BookmarkItem.tsx:57
 msgid "[Image]"
 msgstr "[Image]"
@@ -161,8 +163,8 @@ msgstr "[Image]"
 msgid "[Message]"
 msgstr "[Message]"
 
-#: src/components/message/Message.tsx:568
-#: src/components/message/Message.tsx:958
+#: src/components/message/Message.tsx:574
+#: src/components/message/Message.tsx:964
 msgid "[Original message was deleted]"
 msgstr "[Original message was deleted]"
 
@@ -170,6 +172,7 @@ msgstr "[Original message was deleted]"
 #~ msgid "[Sticker: {0}]"
 #~ msgstr "[Sticker: {0}]"
 
+#: src/components/bookmarks/BookmarkCard.tsx:180
 #: src/components/bookmarks/BookmarkItem.tsx:74
 msgid "[Sticker]"
 msgstr "[Sticker]"
@@ -245,13 +248,21 @@ msgstr "{0} results"
 #~ msgid "{0} unread mentions"
 #~ msgstr "{0} unread mentions"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:279
+#: src/components/bookmarks/BookmarksPage.tsx:174
 msgid "{bookmarkCount} bookmark"
 msgstr "{bookmarkCount} bookmark"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:280
+#: src/components/bookmarks/BookmarksPage.tsx:175
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} bookmarks"
+
+#: src/components/bookmarks/BookmarksPanel.tsx:180
+msgid "{contextCount} bookmark here"
+msgstr "{contextCount} bookmark here"
+
+#: src/components/bookmarks/BookmarksPanel.tsx:181
+msgid "{contextCount} bookmarks here"
+msgstr "{contextCount} bookmarks here"
 
 #: src/services/NotificationService.ts:314
 msgid "{count} new notifications"
@@ -391,9 +402,9 @@ msgstr "Add a personal note..."
 msgid "Add a profile photo"
 msgstr "Add a profile photo"
 
-#: src/components/space/SpacesSidebar.tsx:489
-#: src/components/space/SpacesSidebar.tsx:494
-#: src/components/space/SpacesSidebar.tsx:505
+#: src/components/space/SpacesSidebar.tsx:538
+#: src/components/space/SpacesSidebar.tsx:543
+#: src/components/space/SpacesSidebar.tsx:554
 msgid "Add a space"
 msgstr "Add a space"
 
@@ -472,9 +483,13 @@ msgstr "Advanced Settings"
 msgid "All"
 msgstr "All"
 
+#: src/components/bookmarks/BookmarksPage.tsx:58
+msgid "All bookmarks"
+msgstr "All bookmarks"
+
 #: src/components/bookmarks/BookmarksPanel.tsx:56
-msgid "All Bookmarks"
-msgstr "All Bookmarks"
+#~ msgid "All Bookmarks"
+#~ msgstr "All Bookmarks"
 
 #: src/components/discover-page/DiscoverTab.tsx:40
 msgid "All categories"
@@ -483,8 +498,8 @@ msgstr "All categories"
 #: src/components/bookmarks/BookmarksPanel.tsx:63
 #: src/components/bookmarks/BookmarksPanel.tsx:71
 #: src/components/bookmarks/BookmarksPanel.tsx:76
-msgid "All DMs"
-msgstr "All DMs"
+#~ msgid "All DMs"
+#~ msgstr "All DMs"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:63
 msgid "All kick records are up to date."
@@ -493,8 +508,8 @@ msgstr "All kick records are up to date."
 #: src/components/bookmarks/BookmarksPanel.tsx:64
 #: src/components/bookmarks/BookmarksPanel.tsx:70
 #: src/components/bookmarks/BookmarksPanel.tsx:77
-msgid "All Spaces"
-msgstr "All Spaces"
+#~ msgid "All Spaces"
+#~ msgstr "All Spaces"
 
 #: src/components/modals/ChannelEditorModal.tsx:152
 #: src/components/modals/SpaceSettingsModal/General.tsx:327
@@ -680,8 +695,8 @@ msgstr "Bookmark"
 #~ msgid "Bookmark limit reached"
 #~ msgstr "Bookmark limit reached"
 
-#: src/hooks/business/bookmarks/useBookmarks.ts:169
-#: src/hooks/business/bookmarks/useBookmarks.ts:249
+#: src/hooks/business/bookmarks/useBookmarks.ts:172
+#: src/hooks/business/bookmarks/useBookmarks.ts:253
 msgid "Bookmark limit reached! Remove some to add new ones."
 msgstr "Bookmark limit reached! Remove some to add new ones."
 
@@ -690,11 +705,11 @@ msgid "Bookmark message"
 msgstr "Bookmark message"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:193
-msgid "Bookmark messages to save them for later reference"
-msgstr "Bookmark messages to save them for later reference"
+#~ msgid "Bookmark messages to save them for later reference"
+#~ msgstr "Bookmark messages to save them for later reference"
 
-#: src/components/message/Message.tsx:776
-#: src/components/message/Message.tsx:870
+#: src/components/message/Message.tsx:782
+#: src/components/message/Message.tsx:876
 msgid "Bookmarked"
 msgstr "Bookmarked"
 
@@ -706,10 +721,18 @@ msgstr "Bookmarked image"
 msgid "Bookmarked sticker"
 msgstr "Bookmarked sticker"
 
-#: src/components/direct/DirectMessage.tsx:782
-#: src/components/space/Channel.tsx:1464
+#: src/components/bookmarks/BookmarksPage.tsx:170
+#: src/components/shell/NavRail.tsx:39
 msgid "Bookmarks"
 msgstr "Bookmarks"
+
+#: src/components/direct/DirectMessage.tsx:790
+msgid "Bookmarks in this conversation"
+msgstr "Bookmarks in this conversation"
+
+#: src/components/space/Channel.tsx:1472
+msgid "Bookmarks in this space"
+msgstr "Bookmarks in this space"
 
 #: src/components/discover-page/DiscoverPage.tsx:78
 msgid "Browse public spaces and find a community to join."
@@ -779,7 +802,7 @@ msgstr "Channel Icon"
 msgid "Channel Managers"
 msgstr "Channel Managers"
 
-#: src/components/space/Channel.tsx:1890
+#: src/components/space/Channel.tsx:1898
 msgid "Channel members"
 msgstr "Channel members"
 
@@ -898,7 +921,7 @@ msgstr "Click to copy"
 msgid "Close thread"
 msgstr "Close thread"
 
-#: src/components/shell/NavRail.tsx:175
+#: src/components/shell/NavRail.tsx:202
 msgid "Collapse"
 msgstr "Collapse"
 
@@ -906,7 +929,7 @@ msgstr "Collapse"
 msgid "Collapse group"
 msgstr "Collapse group"
 
-#: src/components/shell/NavRail.tsx:172
+#: src/components/shell/NavRail.tsx:199
 msgid "Collapse sidebar"
 msgstr "Collapse sidebar"
 
@@ -923,7 +946,7 @@ msgstr "Config Key"
 #~ msgstr "Confirm"
 
 #: src/components/direct/DirectMessageContactsList.tsx:270
-#: src/components/space/SpacesSidebar.tsx:195
+#: src/components/space/SpacesSidebar.tsx:243
 msgid "Confirm Delete"
 msgstr "Confirm Delete"
 
@@ -948,7 +971,7 @@ msgstr "Continue"
 msgid "Continue without passkey"
 msgstr "Continue without passkey"
 
-#: src/components/direct/DirectMessage.tsx:765
+#: src/components/direct/DirectMessage.tsx:771
 msgid "Conversation settings"
 msgstr "Conversation settings"
 
@@ -966,9 +989,9 @@ msgstr "Conversation Settings"
 msgid "Copied!"
 msgstr "Copied!"
 
-#: src/components/direct/DirectMessage.tsx:747
-#: src/components/direct/DirectMessage.tsx:866
-#: src/components/direct/DirectMessage.tsx:884
+#: src/components/direct/DirectMessage.tsx:753
+#: src/components/direct/DirectMessage.tsx:874
+#: src/components/direct/DirectMessage.tsx:892
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
 #: src/components/user/UserProfile.tsx:187
@@ -1038,7 +1061,7 @@ msgid "Create"
 msgstr "Create"
 
 #: src/components/discover-page/DiscoverPage.tsx:91
-#: src/components/space/SpacesSidebar.tsx:263
+#: src/components/space/SpacesSidebar.tsx:311
 msgid "Create a space"
 msgstr "Create a space"
 
@@ -1174,7 +1197,7 @@ msgstr "Delete Conversation"
 #~ msgstr "Delete Current Link"
 
 #: src/components/modals/FolderEditorModal.tsx:129
-#: src/components/space/SpacesSidebar.tsx:194
+#: src/components/space/SpacesSidebar.tsx:242
 msgid "Delete Folder"
 msgstr "Delete Folder"
 
@@ -1328,6 +1351,14 @@ msgstr "Devices"
 msgid "Direct Message"
 msgstr "Direct Message"
 
+#: src/components/bookmarks/BookmarkCard.tsx:92
+msgid "Direct message with {counterpartLabel}"
+msgstr "Direct message with {counterpartLabel}"
+
+#: src/components/bookmarks/BookmarksPage.tsx:59
+msgid "Direct messages"
+msgstr "Direct messages"
+
 #: src/components/direct/DirectMessageContactsList.tsx:313
 #: src/components/navbar/NavMenu.tsx:561
 #: src/components/navbar/NavMenu.tsx:739
@@ -1335,7 +1366,7 @@ msgstr "Direct Message"
 #~ msgstr "Direct Messages"
 
 #: src/components/shell/DiscoverSidebar.tsx:97
-#: src/components/shell/NavRail.tsx:37
+#: src/components/shell/NavRail.tsx:45
 msgid "Discover"
 msgstr "Discover"
 
@@ -1434,7 +1465,7 @@ msgid "Edit Channel"
 msgstr "Edit Channel"
 
 #: src/components/modals/FolderEditorModal.tsx:68
-#: src/components/space/SpacesSidebar.tsx:185
+#: src/components/space/SpacesSidebar.tsx:233
 msgid "Edit Folder"
 msgstr "Edit Folder"
 
@@ -1471,7 +1502,7 @@ msgstr "Emoji picker"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:43
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
-#: src/components/space/Channel.tsx:1803
+#: src/components/space/Channel.tsx:1811
 #: src/components/thread/ThreadPanel.tsx:524
 msgid "Emojis"
 msgstr "Emojis"
@@ -1578,8 +1609,8 @@ msgstr "Existing Conversations"
 msgid "Expand group"
 msgstr "Expand group"
 
-#: src/components/shell/NavRail.tsx:154
-#: src/components/shell/NavRail.tsx:162
+#: src/components/shell/NavRail.tsx:181
+#: src/components/shell/NavRail.tsx:189
 msgid "Expand sidebar"
 msgstr "Expand sidebar"
 
@@ -1646,7 +1677,8 @@ msgstr "Failed to import backup"
 msgid "Failed to kick user"
 msgstr "Failed to kick user"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:182
+#: src/components/bookmarks/BookmarksPage.tsx:117
+#: src/components/bookmarks/BookmarksPanel.tsx:110
 msgid "Failed to load bookmarks"
 msgstr "Failed to load bookmarks"
 
@@ -1695,7 +1727,7 @@ msgstr "Failed to save space settings"
 msgid "Failed to send invite. Please try again."
 msgstr "Failed to send invite. Please try again."
 
-#: src/components/message/Message.tsx:1361
+#: src/components/message/Message.tsx:1368
 msgid "Failed to send."
 msgstr "Failed to send."
 
@@ -1945,8 +1977,8 @@ msgstr "I understand"
 msgid "I Understand, Show QR"
 msgstr "I Understand, Show QR"
 
-#: src/components/message/Message.tsx:791
-#: src/components/message/Message.tsx:885
+#: src/components/message/Message.tsx:797
+#: src/components/message/Message.tsx:891
 msgid "I'm new!"
 msgstr "I'm new!"
 
@@ -2070,7 +2102,7 @@ msgid "Join"
 msgstr "Join"
 
 #: src/components/discover-page/DiscoverPage.tsx:84
-#: src/components/space/SpacesSidebar.tsx:254
+#: src/components/space/SpacesSidebar.tsx:302
 msgid "Join a space"
 msgstr "Join a space"
 
@@ -2101,12 +2133,13 @@ msgstr "Joining Space..."
 msgid "Joining..."
 msgstr "Joining..."
 
+#: src/components/bookmarks/BookmarkCard.tsx:209
 #: src/components/bookmarks/BookmarkItem.tsx:134
 #: src/components/message/PinnedMessagesPanel.tsx:92
 msgid "Jump"
 msgstr "Jump"
 
-#: src/components/message/MessageList.tsx:642
+#: src/components/message/MessageList.tsx:657
 msgid "Jump to present"
 msgstr "Jump to present"
 
@@ -2205,11 +2238,12 @@ msgstr "Light"
 msgid "Load more"
 msgstr "Load more"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:173
+#: src/components/bookmarks/BookmarksPage.tsx:108
+#: src/components/bookmarks/BookmarksPanel.tsx:101
 msgid "Loading bookmarks..."
 msgstr "Loading bookmarks..."
 
-#: src/components/message/MessageList.tsx:653
+#: src/components/message/MessageList.tsx:668
 msgid "Loading message..."
 msgstr "Loading message..."
 
@@ -2315,7 +2349,7 @@ msgstr "member"
 msgid "members"
 msgstr "members"
 
-#: src/components/space/Channel.tsx:1490
+#: src/components/space/Channel.tsx:1498
 msgid "Members List"
 msgstr "Members List"
 
@@ -2335,9 +2369,9 @@ msgstr "Message actions"
 #~ msgid "Message deleted"
 #~ msgstr "Message deleted"
 
-#: src/components/message/Message.tsx:734
-#: src/components/message/Message.tsx:807
-#: src/components/message/Message.tsx:901
+#: src/components/message/Message.tsx:740
+#: src/components/message/Message.tsx:813
+#: src/components/message/Message.tsx:907
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
@@ -2346,7 +2380,7 @@ msgid "Message..."
 msgstr "Message..."
 
 #: src/components/direct/DirectMessageContactsList.tsx:382
-#: src/components/shell/NavRail.tsx:25
+#: src/components/shell/NavRail.tsx:27
 msgid "Messages"
 msgstr "Messages"
 
@@ -2436,7 +2470,7 @@ msgid "My Account"
 msgstr "My Account"
 
 #: src/components/direct/DirectMessageContactsList.tsx:429
-#: src/components/space/Channel.tsx:1673
+#: src/components/space/Channel.tsx:1681
 msgid "Name or Address"
 msgstr "Name or Address"
 
@@ -2444,7 +2478,7 @@ msgstr "Name or Address"
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Names resembling admin, moderator, or support are reserved."
 
-#: src/components/shell/AppShell.tsx:351
+#: src/components/shell/AppShell.tsx:352
 msgid "Navigation"
 msgstr "Navigation"
 
@@ -2478,24 +2512,44 @@ msgid "No bio yet."
 msgstr "No bio yet."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:210
-msgid "No bookmarks found"
-msgstr "No bookmarks found"
+#~ msgid "No bookmarks found"
+#~ msgstr "No bookmarks found"
+
+#: src/components/bookmarks/BookmarksPage.tsx:144
+msgid "No bookmarks found."
+msgstr "No bookmarks found."
+
+#: src/components/bookmarks/BookmarksPage.tsx:141
+msgid "No bookmarks in direct messages."
+msgstr "No bookmarks in direct messages."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:207
-msgid "No bookmarks in DMs"
-msgstr "No bookmarks in DMs"
+#~ msgid "No bookmarks in DMs"
+#~ msgstr "No bookmarks in DMs"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:205
-msgid "No bookmarks in spaces"
-msgstr "No bookmarks in spaces"
+#~ msgid "No bookmarks in spaces"
+#~ msgstr "No bookmarks in spaces"
+
+#: src/components/bookmarks/BookmarksPage.tsx:143
+msgid "No bookmarks in spaces."
+msgstr "No bookmarks in spaces."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:209
-msgid "No bookmarks in this space"
-msgstr "No bookmarks in this space"
+#~ msgid "No bookmarks in this space"
+#~ msgstr "No bookmarks in this space"
+
+#: src/components/bookmarks/BookmarksPage.tsx:139
+msgid "No bookmarks match your search."
+msgstr "No bookmarks match your search."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:191
-msgid "No bookmarks yet"
-msgstr "No bookmarks yet"
+#~ msgid "No bookmarks yet"
+#~ msgstr "No bookmarks yet"
+
+#: src/components/bookmarks/BookmarksPage.tsx:127
+msgid "No bookmarks yet. Bookmark messages to save them for later reference."
+msgstr "No bookmarks yet. Bookmark messages to save them for later reference."
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:608
 msgid "No channels - drag channels here or delete group."
@@ -2553,7 +2607,7 @@ msgstr "No public spaces match your filters."
 msgid "No public spaces yet."
 msgstr "No public spaces yet."
 
-#: src/components/space/SpacesSidebar.tsx:534
+#: src/components/space/SpacesSidebar.tsx:583
 msgid "No spaces found"
 msgstr "No spaces found"
 
@@ -2581,8 +2635,8 @@ msgstr "No unknown contacts"
 msgid "No unread notifications"
 msgstr "No unread notifications"
 
-#: src/components/space/Channel.tsx:1681
-#: src/components/space/Channel.tsx:1910
+#: src/components/space/Channel.tsx:1689
+#: src/components/space/Channel.tsx:1918
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -2616,7 +2670,7 @@ msgstr "Notification permission not granted"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:1429
+#: src/components/space/Channel.tsx:1435
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -2665,15 +2719,16 @@ msgstr "Online"
 msgid "Open {0}"
 msgstr "Open {0}"
 
-#: src/components/direct/DirectMessage.tsx:725
+#: src/components/bookmarks/BookmarksPage.tsx:29
+#: src/components/direct/DirectMessage.tsx:731
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:29
-#: src/components/space/Channel.tsx:1320
+#: src/components/space/Channel.tsx:1326
 msgid "Open navigation"
 msgstr "Open navigation"
 
-#: src/components/shell/NavRail.tsx:193
-#: src/components/shell/NavRail.tsx:208
+#: src/components/shell/NavRail.tsx:220
+#: src/components/shell/NavRail.tsx:235
 msgid "Open user settings"
 msgstr "Open user settings"
 
@@ -2799,18 +2854,18 @@ msgstr "Pin Messages"
 msgid "Pin/Unpin without confirmation"
 msgstr "Pin/Unpin without confirmation"
 
-#: src/components/message/Message.tsx:760
-#: src/components/message/Message.tsx:854
+#: src/components/message/Message.tsx:766
+#: src/components/message/Message.tsx:860
 msgid "Pinned"
 msgstr "Pinned"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:759
-#: src/components/message/Message.tsx:853
+#: src/components/message/Message.tsx:765
+#: src/components/message/Message.tsx:859
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
-#: src/components/space/Channel.tsx:1361
+#: src/components/space/Channel.tsx:1367
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
@@ -2835,7 +2890,7 @@ msgstr "Preview"
 msgid "Preview:"
 msgstr "Preview:"
 
-#: src/components/shell/NavRail.tsx:104
+#: src/components/shell/NavRail.tsx:131
 msgid "Primary navigation"
 msgstr "Primary navigation"
 
@@ -2955,6 +3010,7 @@ msgstr "Refresh"
 msgid "Remove"
 msgstr "Remove"
 
+#: src/components/bookmarks/BookmarkCard.tsx:213
 #: src/components/bookmarks/BookmarkItem.tsx:138
 #: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActionsDrawer.tsx:267
@@ -3019,7 +3075,7 @@ msgstr "Reset App Data"
 msgid "Reset to global"
 msgstr "Reset to global"
 
-#: src/components/shell/AppShell.tsx:324
+#: src/components/shell/AppShell.tsx:325
 msgid "Resize sidebar"
 msgstr "Resize sidebar"
 
@@ -3051,7 +3107,7 @@ msgid "Restoring..."
 msgstr "Restoring..."
 
 #: src/components/discover-page/DiscoverTab.tsx:89
-#: src/components/message/Message.tsx:1369
+#: src/components/message/Message.tsx:1376
 msgid "Retry"
 msgstr "Retry"
 
@@ -3121,6 +3177,10 @@ msgstr "saved config is out of date"
 msgid "Saving..."
 msgstr "Saving..."
 
+#: src/components/bookmarks/BookmarksPage.tsx:185
+msgid "Search bookmarks..."
+msgstr "Search bookmarks..."
+
 #: src/components/discover-page/PeopleTab.tsx:26
 msgid "Search by name or address..."
 msgstr "Search by name or address..."
@@ -3152,8 +3212,8 @@ msgstr "Search in this Space"
 msgid "Search in this Space..."
 msgstr "Search in this Space..."
 
-#: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:1509
+#: src/components/direct/DirectMessage.tsx:832
+#: src/components/space/Channel.tsx:1517
 msgid "Search Messages"
 msgstr "Search Messages"
 
@@ -3169,7 +3229,7 @@ msgstr "Search public spaces..."
 msgid "Search Results"
 msgstr "Search Results"
 
-#: src/components/space/SpacesSidebar.tsx:477
+#: src/components/space/SpacesSidebar.tsx:526
 msgid "Search spaces"
 msgstr "Search spaces"
 
@@ -3181,7 +3241,7 @@ msgstr "Search threads…"
 msgid "Search username or address"
 msgstr "Search username or address"
 
-#: src/components/space/Channel.tsx:1901
+#: src/components/space/Channel.tsx:1909
 msgid "Search Username or Address"
 msgstr "Search Username or Address"
 
@@ -3200,6 +3260,10 @@ msgstr "Security"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
 #~ msgid "Security Warning"
 #~ msgstr "Security Warning"
+
+#: src/components/bookmarks/BookmarksPanel.tsx:192
+msgid "See all bookmarks"
+msgstr "See all bookmarks"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid "Select"
@@ -3288,7 +3352,7 @@ msgstr "Send Private Invite"
 msgid "Send your public invite link directly to someone via DM."
 msgstr "Send your public invite link directly to someone via DM."
 
-#: src/components/message/Message.tsx:1354
+#: src/components/message/Message.tsx:1361
 msgid "Sending..."
 msgstr "Sending..."
 
@@ -3307,7 +3371,7 @@ msgstr "Set as default channel"
 #~ msgstr "Set Display Name"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:27
-#: src/components/shell/NavRail.tsx:218
+#: src/components/shell/NavRail.tsx:246
 msgid "Settings"
 msgstr "Settings"
 
@@ -3383,6 +3447,10 @@ msgstr "Skip for now"
 msgid "Someone"
 msgstr "Someone"
 
+#: src/components/bookmarks/BookmarkCard.tsx:81
+msgid "Space"
+msgstr "Space"
+
 #: src/components/modals/SpaceSettingsModal/General.tsx:196
 msgid "Space Banner"
 msgstr "Space Banner"
@@ -3396,7 +3464,7 @@ msgid "Space ID"
 msgstr "Space ID"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
-#: src/components/space/SpacesSidebar.tsx:526
+#: src/components/space/SpacesSidebar.tsx:575
 msgid "Space name"
 msgstr "Space name"
 
@@ -3439,8 +3507,9 @@ msgstr "Space Settings"
 msgid "Space Tag"
 msgstr "Space Tag"
 
-#: src/components/shell/NavRail.tsx:31
-#: src/components/space/SpacesSidebar.tsx:469
+#: src/components/bookmarks/BookmarksPage.tsx:60
+#: src/components/shell/NavRail.tsx:33
+#: src/components/space/SpacesSidebar.tsx:518
 msgid "Spaces"
 msgstr "Spaces"
 
@@ -3475,7 +3544,7 @@ msgstr "Status goes here"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:26
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:43
-#: src/components/space/Channel.tsx:1809
+#: src/components/space/Channel.tsx:1817
 #: src/components/thread/ThreadPanel.tsx:530
 msgid "Stickers"
 msgstr "Stickers"
@@ -3557,8 +3626,8 @@ msgid "This bio will be visible to others when they view your profile."
 msgstr "This bio will be visible to others when they view your profile."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:62
-msgid "This conversation"
-msgstr "This conversation"
+#~ msgid "This conversation"
+#~ msgstr "This conversation"
 
 #: src/components/modals/ConversationSettingsModal.tsx:287
 #: src/components/modals/ConversationSettingsModal.tsx:326
@@ -3618,8 +3687,8 @@ msgid "This public invite link is no longer valid."
 msgstr "This public invite link is no longer valid."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:69
-msgid "This Space"
-msgstr "This Space"
+#~ msgid "This Space"
+#~ msgstr "This Space"
 
 #: src/components/modals/ThreadSettingsModal.tsx:196
 msgid "This thread cannot be deleted because it contains messages from other users."
@@ -3683,7 +3752,7 @@ msgstr "Thread Settings"
 msgid "Thread title"
 msgstr "Thread title"
 
-#: src/components/space/Channel.tsx:1402
+#: src/components/space/Channel.tsx:1408
 #: src/components/thread/ThreadsListPanel.tsx:97
 msgid "Threads"
 msgstr "Threads"
@@ -3806,6 +3875,7 @@ msgstr "Unable to process sticker image. Please use a smaller image."
 msgid "Unable to restore: not logged in"
 msgstr "Unable to restore: not logged in"
 
+#: src/components/bookmarks/BookmarkCard.tsx:87
 #: src/components/direct/DirectMessageContactsList.tsx:306
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2711
@@ -3823,12 +3893,13 @@ msgstr "Unknown Space"
 msgid "Unknown time"
 msgstr "Unknown time"
 
+#: src/components/bookmarks/BookmarkCard.tsx:48
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:212
-#: src/components/direct/DirectMessage.tsx:219
-#: src/components/direct/DirectMessage.tsx:226
-#: src/components/direct/DirectMessage.tsx:290
-#: src/components/direct/DirectMessage.tsx:640
+#: src/components/direct/DirectMessage.tsx:218
+#: src/components/direct/DirectMessage.tsx:225
+#: src/components/direct/DirectMessage.tsx:232
+#: src/components/direct/DirectMessage.tsx:296
+#: src/components/direct/DirectMessage.tsx:646
 #: src/components/direct/DirectMessageContactsList.tsx:42
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
@@ -3919,11 +3990,11 @@ msgstr "Unpin this post"
 #~ msgid "Unpinned!"
 #~ msgstr "Unpinned!"
 
-#: src/components/shell/NavRail.tsx:121
+#: src/components/shell/NavRail.tsx:148
 msgid "Unread direct messages"
 msgstr "Unread direct messages"
 
-#: src/components/direct/DirectMessage.tsx:943
+#: src/components/direct/DirectMessage.tsx:951
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Until you reply, this sender will not see your display name or profile picture"
 
@@ -3997,11 +4068,11 @@ msgstr "User does not exist."
 msgid "User not authenticated"
 msgstr "User not authenticated"
 
-#: src/components/direct/DirectMessage.tsx:1044
+#: src/components/direct/DirectMessage.tsx:1052
 msgid "User profile"
 msgstr "User profile"
 
-#: src/components/direct/DirectMessage.tsx:806
+#: src/components/direct/DirectMessage.tsx:814
 msgid "User Profile"
 msgstr "User Profile"
 
@@ -4175,7 +4246,7 @@ msgid "You are already a member of this Space."
 msgstr "You are already a member of this Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1652
+#: src/components/space/Channel.tsx:1660
 msgid "You are muted for {0}"
 msgstr "You are muted for {0}"
 
@@ -4205,7 +4276,7 @@ msgid "You cannot delete the default channel."
 msgstr "You cannot delete the default channel."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1655
+#: src/components/space/Channel.tsx:1663
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 
@@ -4217,7 +4288,7 @@ msgstr "You cannot send a direct message to yourself."
 msgid "You have a new unread message"
 msgstr "You have a new unread message"
 
-#: src/components/space/Channel.tsx:1653
+#: src/components/space/Channel.tsx:1661
 msgid "You have been muted in this Space"
 msgstr "You have been muted in this Space"
 
