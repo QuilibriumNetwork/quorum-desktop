@@ -99,7 +99,8 @@ All navigation sources use hash-based highlighting:
 |--------|------|---------|
 | Reply snippet click | `Message.tsx:436-456` | `navigate(path#msg-{id})` + 8s cleanup |
 | Pinned message click | `PinnedMessagesPanel.tsx:155-175` | `navigate(path#msg-{id})` + 8s cleanup |
-| Bookmark click | `BookmarksPanel.tsx:110-132` | `navigate(path#msg-{id})` + 8s cleanup |
+| Bookmark click (panel) | `BookmarksPanel.tsx` `handleJumpToMessage` | `navigate(path#msg-{id})` (or `#thread-{tid}-msg-{id}` for thread replies) + 8s cleanup |
+| Bookmark click (page) | `BookmarksPage.tsx` `handleJumpToMessage` | same as above |
 | Notification click | `NotificationPanel.tsx:110-126` | `navigate(path#msg-{id})` + 8s cleanup |
 | Search result click | `useGlobalSearchNavigation.ts:20-44` | `navigate(path#msg-{id})` + 8s cleanup |
 | URL hash on load | `MessageList.tsx:314-337` | Hash detection + 8s cleanup |

@@ -4,19 +4,27 @@ title: Bookmarks Feature
 status: done
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-02T00:00:00.000Z
+updated: 2026-06-04T00:00:00.000Z
 ---
 
 # Bookmarks Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: feature-analyzer and security-analyst agents
 
 ## Overview
 
-The Bookmarks feature allows users to privately save important messages from both Spaces (Channels) and Direct Messages for later reference. Unlike pinned messages which are shared across all space members, bookmarks are **personal and private** to each user.
+Bookmarks let users privately save messages from Spaces (Channels) and Direct Messages for later reference. Unlike pinned messages (shared across all space members), bookmarks are **personal and private** to each user and sync across that user's devices via the encrypted UserConfig channel.
 
-**Key Value Proposition**: Provides a personal reference system for important information across all conversations, increasing user productivity without requiring special permissions or affecting other users.
+## Surfaces
+
+Two surfaces consume the same `useBookmarks` data layer:
+
+| Surface | Component | Purpose | Filters |
+|---------|-----------|---------|---------|
+| **Global page** | `BookmarksPage` at `/bookmarks` | Full-area page reached from a dedicated NavRail item between Spaces and Discover. Shows every bookmark across the app, with text search and source-type filter. Renders each bookmark as a `BookmarkCard` with the original message body via `MessageMarkdownRenderer`. | Text search (sender, snippet, source) + `all` / `dm` / `channel` |
+| **Context panel** | `BookmarksPanel` (chat-header dropdown) | Scoped to the current route — "what's bookmarked HERE". Title reads "N bookmarks here". Footer link `See all bookmarks →` navigates to `/bookmarks`. | No filter dropdown. Channel header uses `filterByCurrentSpace(spaceId)`; DM header uses `filterByConversation(conversationId)`. |
+
+The chat-header bookmark icon is only rendered when the current context has at least one bookmark. When empty, users discover bookmarks via the NavRail entry.
 
 ## Architecture
 
@@ -28,7 +36,7 @@ The Bookmarks feature allows users to privately save important messages from bot
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ Message → MessageActions → useMessageActions → useBookmarks → MessageDB     │
 │    ↑                                                              ↓         │
-│ BookmarksPanel ← BookmarkItem ← filteredBookmarks ← React Query ← IndexedDB │
+│ BookmarksPage / BookmarksPanel ← BookmarkCard/Item ← React Query ← IndexedDB│
 └─────────────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -47,34 +55,35 @@ The Bookmarks feature allows users to privately save important messages from bot
 ### Key Components
 
 **Data Layer**:
-- `src/api/quorumApi.ts:242+` - `Bookmark` type definition and `BOOKMARKS_CONFIG`
-- `src/db/messages.ts:50-51` - UserConfig type with sync fields (`bookmarks?`, `deletedBookmarkIds?`)
-- `src/db/messages.ts:205-218` - `getMessageById()` for context-free message resolution
-- `src/db/messages.ts:1577-1696` - CRUD operations in MessageDB class
+- `@quilibrium/quorum-shared` — `Bookmark` type and `BOOKMARKS_CONFIG` constants
+- `src/db/messages.ts` — UserConfig sync fields (`bookmarks?`, `deletedBookmarkIds?`) and `MessageDB` CRUD operations
+- `src/db/messages.ts` — `getMessageById()` for context-free message resolution
 
 **Business Logic**:
-- `src/hooks/business/bookmarks/useBookmarks.ts` - Main business hook with React Query integration
-- `src/hooks/queries/bookmarks/useResolvedBookmark.ts` - Message resolution for hybrid MessagePreview rendering
-- `src/hooks/queries/bookmarks/` - React Query hooks for data fetching and caching
-- `src/hooks/business/messages/useMessageActions.ts` - Action integration and context handling
+- `src/hooks/business/bookmarks/useBookmarks.ts` — main business hook with React Query integration
+- `src/hooks/queries/bookmarks/useResolvedBookmark.ts` — message resolution for hybrid preview rendering
+- `src/hooks/queries/bookmarks/` — React Query hooks for data fetching and caching
+- `src/hooks/business/messages/useMessageActions.ts` — bookmark action handler, threads `senderIcon` through `mapSenderToUser`
 
 **Sync Layer**:
-- `src/services/ConfigService.ts:377-379` - Bookmark collection before encryption
-- `src/services/ConfigService.ts:289-325` - Differential sync with error recovery
-- `src/services/ConfigService.ts:453-490` - Merge algorithm with deduplication
-- `src/utils.ts:17-18` - Default UserConfig with empty bookmark arrays
+- `src/services/ConfigService.ts` — bookmark collection, differential sync, and merge with deduplication
+- `src/utils.ts` — default UserConfig with empty bookmark arrays
 
 **UI Components**:
-- `src/components/bookmarks/BookmarksPanel.tsx` - Dropdown panel with filtering and virtualization
-- `src/components/bookmarks/BookmarkItem.tsx` - Individual bookmark item with actions
-- `src/components/bookmarks/BookmarksPanel.scss` - Responsive styling
+- `src/components/bookmarks/BookmarksPage.tsx` / `.scss` — global page with search and source filter
+- `src/components/bookmarks/BookmarkCard.tsx` — full-message card used on the page; renders the message body via `MessageMarkdownRenderer`
+- `src/components/bookmarks/BookmarksPanel.tsx` / `.scss` — context-scoped dropdown panel
+- `src/components/bookmarks/BookmarkItem.tsx` — compact item used inside the panel (hybrid `MessagePreview` + cached fallback)
 
 **Integration Points**:
-- `src/components/message/MessageActions.tsx` - Desktop hover actions
-- `src/components/message/MessageActionsDrawer.tsx` - Mobile touch drawer
-- `src/components/space/Channel.tsx` - Channel header bookmark button
-- `src/components/direct/DirectMessage.tsx` - DM header bookmark button
-- `src/components/message/Message.tsx` - Visual bookmark indicators in message headers
+- `src/components/shell/NavRail.tsx` — Bookmarks rail item (route `/bookmarks`)
+- `src/components/shell/useSidebarMode.ts` — returns `'hidden'` for `/bookmarks` so the page spans the full main area
+- `src/components/Router/Router.web.tsx` — `/bookmarks` route registration
+- `src/components/message/MessageActions.tsx` — desktop hover bookmark toggle
+- `src/components/message/MessageActionsDrawer.tsx` — mobile touch drawer toggle
+- `src/components/space/Channel.tsx` — channel-scoped panel + header icon (conditional on `filterByCurrentSpace` count)
+- `src/components/direct/DirectMessage.tsx` — DM-scoped panel + header icon (conditional on `filterByConversation` count)
+- `src/components/message/Message.tsx` — visual bookmark indicators in message headers
 
 ### Data Structure
 
@@ -82,6 +91,7 @@ The Bookmarks feature allows users to privately save important messages from bot
 export type Bookmark = {
   bookmarkId: string;           // crypto.randomUUID()
   messageId: string;            // Reference to original message
+  threadId?: string;            // Set when the bookmarked message is a thread reply
   spaceId?: string;             // For space messages (undefined for DMs)
   channelId?: string;           // For channel messages (undefined for DMs)
   conversationId?: string;      // For DM messages (undefined for channels)
@@ -90,6 +100,7 @@ export type Bookmark = {
 
   cachedPreview: {
     senderName: string;         // Display name at bookmark time
+    senderIcon?: string;        // Avatar URL captured at bookmark time (snapshot)
     textSnippet: string;        // First ~150 chars, plain text (empty for media-only)
     messageDate: number;        // Original message timestamp
     sourceName: string;         // "Space Name > #channel" or empty for DMs
@@ -103,7 +114,7 @@ export type Bookmark = {
 };
 ```
 
-**Configuration**:
+**Configuration** (`@quilibrium/quorum-shared`):
 ```typescript
 const BOOKMARKS_CONFIG = {
   MAX_BOOKMARKS: 200,           // Maximum bookmarks per user
@@ -125,8 +136,8 @@ export type UserConfig = {
 **IndexedDB Object Store**: `bookmarks`
 - **keyPath**: `bookmarkId`
 - **Indices**:
-  - `by_message` on `messageId` - O(1) isBookmarked checks
-  - `by_created` on `createdAt` - Chronological sorting
+  - `by_message` on `messageId` — O(1) `isBookmarked` checks
+  - `by_created` on `createdAt` — chronological sorting
 
 All bookmarks are loaded into memory with a memoized Set for O(1) lookup during message rendering.
 
@@ -230,7 +241,7 @@ for (const bookmark of [...toAdd, ...toUpdate]) {
 
 ### Error Recovery
 
-The sync includes transaction safety with rollback capability. If sync fails partway through, the system attempts to restore the original local bookmarks to prevent data loss.
+The sync includes transaction safety with rollback. If sync fails partway through, the system restores the original local bookmarks to prevent data loss.
 
 ### Security & Privacy
 
@@ -238,100 +249,84 @@ The sync includes transaction safety with rollback capability. If sync fails par
 - **Signing**: Ed448 signature for integrity verification
 - **Privacy Control**: Only syncs when `allowSync=true` in Privacy settings
 - **User Control**: Disable sync anytime via Privacy settings toggle
-- **Limit Enforcement**: 200 bookmark limit enforced with defense-in-depth (UI + database-layer atomic validation to prevent client-side bypass, see [messages.ts:1656-1679](../../../src/db/messages.ts#L1656-L1679))
+- **Limit Enforcement**: 200 bookmark limit enforced with defense-in-depth (UI + database-layer atomic validation to prevent client-side bypass)
 
 ## Usage Examples
 
 ### Basic Bookmark Operations
 
 ```typescript
-const { isBookmarked, toggleBookmark, canAddBookmark } = useBookmarks(userAddress);
+const { isBookmarked, toggleBookmark, canAddBookmark } = useBookmarks({ userAddress });
 
 // Check if message is bookmarked (O(1))
 const bookmarked = isBookmarked(message.messageId);
 
-// Toggle bookmark with context
-const handleToggle = () => {
-  toggleBookmark(
-    message,
-    'channel',
-    {
-      spaceId: 'space-123',
-      channelId: 'channel-456',
-      conversationId: undefined
-    },
-    'User Display Name',
-    'Space Name > #channel-name'
-  );
-};
+// Toggle bookmark with context (senderIcon is captured from mapSenderToUser)
+toggleBookmark(
+  message,
+  'channel',
+  { spaceId, channelId, conversationId: undefined },
+  'User Display Name',
+  'Space Name > #channel-name',
+  senderIconUrl
+);
 ```
 
-### Opening Bookmarks Panel
+### Opening the Context Panel
 
 ```typescript
 const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+const { filterByCurrentSpace } = useBookmarks({ userAddress });
+const contextCount = filterByCurrentSpace(spaceId).length;
 
-<Button
-  onClick={() => setActivePanel('bookmarks')}
-  iconName="bookmark"
-  iconOnly
-/>
-
-<BookmarksPanel
-  isOpen={activePanel === 'bookmarks'}
-  onClose={() => setActivePanel(null)}
-  userAddress={userAddress}
-/>
+{contextCount > 0 && (
+  <>
+    <Button
+      onClick={() => setActivePanel('bookmarks')}
+      iconName="bookmark"
+      iconOnly
+    />
+    <BookmarksPanel
+      isOpen={activePanel === 'bookmarks'}
+      onClose={() => setActivePanel(null)}
+      userAddress={userAddress}
+    />
+  </>
+)}
 ```
 
-### Context-Aware Filtering
+### Page-Level Filtering
+
+`BookmarksPage` exposes a single source-type filter and a text search:
 
 ```typescript
-const {
-  filterBySourceType,      // 'all' | 'channel' | 'dm'
-  filterByConversation,    // Filter DMs by conversationId
-  filterByCurrentSpace,    // Filter by spaceId + optional channelId
-} = useBookmarks(userAddress);
+const { filterBySourceType } = useBookmarks({ userAddress });
 
-// Dynamic filter options based on current route
-const filterOptions = useMemo(() => {
-  const options = [{ value: 'all', label: 'All Bookmarks' }];
+// 'all' | 'channel' | 'dm'
+const base = filterBySourceType(sourceFilter);
 
-  if (searchContext.type === 'dm' && searchContext.conversationId) {
-    options.push(
-      { value: `conversation:${searchContext.conversationId}`, label: 'This conversation' },
-      { value: 'dms', label: 'All DMs' },
-      { value: 'spaces', label: 'All Spaces' }
-    );
-  } else if (searchContext.type === 'space' && searchContext.spaceId) {
-    options.push(
-      { value: `currentSpace:${searchContext.spaceId}`, label: 'This Space' },
-      { value: 'spaces', label: 'All Spaces' },
-      { value: 'dms', label: 'All DMs' }
-    );
-  } else {
-    options.push(
-      { value: 'dms', label: 'All DMs' },
-      { value: 'spaces', label: 'All Spaces' }
-    );
-  }
-
-  return options;
-}, [searchContext]);
+const filtered = base.filter(({ cachedPreview }) =>
+  cachedPreview.senderName?.toLowerCase().includes(query) ||
+  cachedPreview.textSnippet?.toLowerCase().includes(query) ||
+  cachedPreview.sourceName?.toLowerCase().includes(query)
+);
 ```
 
-### Cross-Context Navigation
+### Cross-Context Navigation (Thread-Aware)
 
-Navigation uses hash-based highlighting (cross-component communication via URL state):
+Navigation uses hash-based highlighting via `buildMessageHash`, which produces a compound hash when the bookmarked message lives in a thread:
 
 ```typescript
+import { buildMessageHash } from '../../utils/messageHashNavigation';
+
 const handleJumpToMessage = (bookmark: Bookmark) => {
-  // Navigate with hash - destination MessageList handles scroll, Message detects hash for highlighting
+  const hash = buildMessageHash(bookmark.messageId, bookmark.threadId);
+
   if (bookmark.sourceType === 'channel') {
-    navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}#msg-${bookmark.messageId}`);
+    navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}${hash}`);
   } else {
     const dmAddress = bookmark.conversationId?.split('/')[0];
-    navigate(`/messages/${dmAddress}#msg-${bookmark.messageId}`);
+    navigate(`/messages/${dmAddress}${hash}`);
   }
 
   // Clean up hash after highlight animation completes (8s matches CSS animation)
@@ -341,40 +336,43 @@ const handleJumpToMessage = (bookmark: Bookmark) => {
 };
 ```
 
-See `.agents/docs/features/messages/message-highlight-system.md` for the full highlighting architecture.
+For thread replies the hash format is `#thread-{threadId}-msg-{messageId}`; the destination Channel opens the thread panel and scrolls to the reply. See [thread-panel.md](thread-panel.md) and [message-highlight-system.md](message-highlight-system.md).
 
 ## Technical Decisions
 
 ### Database Integration
-Bookmark CRUD is integrated into the existing `MessageDB` class rather than a separate `BookmarkDB`. This allows bookmarks to benefit from shared DB connection and transaction patterns.
+Bookmark CRUD lives in `MessageDB` rather than a separate `BookmarkDB`, sharing the DB connection and transaction patterns.
 
 ### Sync via ConfigService
-Bookmark sync is integrated into ConfigService rather than a separate BookmarkService because:
+Bookmark sync is integrated into ConfigService rather than a separate BookmarkService:
 - UserConfig is the natural sync boundary for user-private data
-- Leverages existing AES-GCM encryption and Ed448 signing infrastructure
-- Provides atomic consistency with other user settings
-- Avoids duplicating complex crypto code
+- Reuses AES-GCM encryption and Ed448 signing
+- Atomic consistency with other user settings
+- Avoids duplicating crypto code
 
 ### Differential Sync
-The system calculates and applies only changed bookmarks rather than replacing all. This provides 20-40x faster sync (~10ms vs ~400ms for 200 bookmarks) and eliminates UI flickering.
+The system applies only changed bookmarks rather than replacing all, providing faster sync and no UI flickering.
 
 ### Conflict Resolution Strategy
-Last-write-wins with tombstone tracking is simple, deterministic, and sufficient for bookmarks (which don't require collaborative editing). Operational Transform or CRDTs would be over-engineered for this use case.
+Last-write-wins with tombstone tracking is deterministic and sufficient for bookmarks. CRDTs would be over-engineered.
 
 ### MessageId Deduplication
-The merge algorithm prevents multiple bookmarks pointing to the same message, ensuring a clean UI when the same message is bookmarked on different devices.
+The merge prevents multiple bookmarks pointing to the same message, ensuring a clean UI when the same message is bookmarked on different devices.
 
 ### Tombstone Reset Timing
 `deletedBookmarkIds` resets only after successful sync to prevent resurrection of deleted bookmarks during network failures.
 
-### Context-Aware Filtering
-Filter options dynamically reorder based on current route (DM vs Space context), surfacing the most relevant filters first.
+### Two-Surface Split
+The page handles the global view (search + cross-source filter). The panel handles the in-context view (no filter dropdown, scoped to the current space or DM). This avoids two surfaces offering the same filters and keeps the chat header uncluttered.
+
+### Sender Icon Snapshot
+The sender avatar URL is captured at bookmark time and stored in `cachedPreview.senderIcon`, so cards render the real avatar even when the original message isn't in local IndexedDB. Bookmarks created before this field existed fall back to the default avatar.
 
 ### Performance Architecture
-All bookmarks are loaded into a memoized Set for O(1) status checking. With a 200 bookmark limit, memory cost is negligible compared to the query cost of database lookups per message.
+All bookmarks are loaded into a memoized Set for O(1) status checking. With a 200 bookmark limit, memory cost is negligible.
 
 ### Visual Indicators
-Filled bookmark icons appear in message headers when bookmarked, providing immediate visual feedback without cluttering the UI.
+Filled bookmark icons appear in message headers when bookmarked.
 
 ## Performance Characteristics
 
@@ -382,6 +380,7 @@ Filled bookmark icons appear in message headers when bookmarked, providing immed
 |-----------|------------|----------------|
 | `isBookmarked()` check | O(1) | Memoized Set lookup |
 | Panel rendering | O(visible) | Virtuoso virtualization |
+| Page rendering | O(n) | Direct map (no virtualization) |
 | Message resolution | O(uncached) | React Query cache |
 | Filter by space | O(n) | In-memory filtering |
 | Add/remove bookmark | O(1) + invalidate | Optimistic updates |
@@ -393,25 +392,25 @@ Race conditions from rapid clicking are prevented via pending state tracking tha
 ## Integration Patterns
 
 ### Message Actions
-- Desktop: Hover reveals bookmark button after copy message, before separator
-- Mobile: Drawer action between copy and edit
+- Desktop: hover reveals bookmark button after copy message, before separator
+- Mobile: drawer action between copy and edit
 - Icon changes based on bookmark state; no permission checking required
 
 ### Panel State Management
 - Follows existing `activePanel` state pattern for mutual exclusion
 - Each header manages its own panel state (no global context needed)
-- Mobile: Automatic drawer conversion via `isTouchDevice()` detection
+- Mobile: automatic drawer conversion via `isTouchDevice()` detection
+- Header icon and panel are mounted only when the current context has at least one bookmark
 
-### Styling
-- Uses `@extend` patterns from shared dropdown styles
-- Responsive design with mobile breakpoint at 639px
-- Consistent with NotificationPanel and PinnedMessagesPanel patterns
+### Page Rendering
+- `BookmarksPage` uses `BookmarkCard`, which renders the original message body in full via `MessageMarkdownRenderer` (no truncation), with sender avatar, name, timestamp, and a source line (`#channel > Space Name` or DM counterpart).
+- When the original message is not in local IndexedDB (cross-device sync), the card falls back to the bookmark's cached preview snippet.
 
-### Hybrid Message Preview (Like PinnedMessagesPanel)
-BookmarkItem uses a hybrid rendering approach:
+### Hybrid Message Preview (Panel)
+`BookmarkItem` uses a hybrid rendering approach inside the panel:
 
-1. **Full MessagePreview** (preferred): If message exists in local IndexedDB, render with `MessagePreview` component (same as PinnedMessagesPanel) - supports full markdown, mentions, images, stickers
-2. **Cached Preview** (fallback): If message not found locally (cross-device sync, unloaded channel), render using `cachedPreview` data stored in the bookmark
+1. **Full `MessagePreview`** (preferred): if the message exists in local IndexedDB, render with `MessagePreview` (same component used by `PinnedMessagesPanel`) — supports markdown, mentions, images, stickers.
+2. **Cached Preview** (fallback): if the message is not found locally, render using `cachedPreview` stored in the bookmark.
 
 Resolution flow:
 ```
@@ -429,36 +428,41 @@ useResolvedBookmark(bookmark) → messageDB.getMessageById(messageId)
 
 ### Media Content Support (Cached Fallback)
 When using cached preview fallback:
-- Images (embeds): Displayed as thumbnails (200x120 max)
-- Stickers: Displayed visually (80x80 max) with sticker lookup at render time
-- Fallback text: `[Image]` or `[Sticker]` shown if media URL unavailable
+- Images (embeds): displayed as thumbnails
+- Stickers: displayed visually with sticker lookup at render time
+- Fallback text: `[Image]` or `[Sticker]` shown if the media URL is unavailable
+
+### Styling
+- `BookmarksPage.scss` defines the page chrome and extends `.bookmarks-panel` selectors to also scope under `.bookmarks-page`, so shared item styling applies in both surfaces without duplication.
+- The panel uses `@extend` patterns from shared dropdown styles and the mobile breakpoint at 639px.
+- Consistent with `NotificationPanel` and `PinnedMessagesPanel` patterns.
 
 ## Known Limitations
 
 ### Bookmark Count Badge
-Header icons don't show bookmark count. This is by design to avoid header clutter.
+The header icon doesn't show a bookmark count.
 
 ### Cross-Device Message Availability
-When viewing bookmarks on a different device, messages may not exist in local IndexedDB (not synced). In this case, the cached preview is shown instead of full MessagePreview. This is expected behavior - the cached preview ensures bookmarks always display something useful.
+When viewing bookmarks on a different device, messages may not exist in local IndexedDB. Cached preview (and `senderIcon` snapshot) ensure bookmarks always display something useful.
 
 ### Deleted Message Handling
-When a message is deleted, any bookmark pointing to it is automatically removed (cascade deletion). This prevents orphaned bookmarks with stale cached data.
+When a message is deleted, any bookmark pointing to it is automatically removed (cascade deletion).
 
 ### Offline Sync
 Sync requires network connectivity. Local changes are preserved but won't sync until online. Tombstones accumulate during offline periods and reset on successful sync.
 
 ## Related Documentation
 
-- [Message Preview Rendering](message-preview-rendering.md) - Overview of all preview rendering systems
-- [Markdown Stripping](markdown-stripping.md) - Text processing utilities
-- [Markdown Renderer](markdown-renderer.md) - Full message rendering (dual system)
-- `src/components/message/PinnedMessagesPanel.tsx` - Similar panel structure and navigation
-- `src/components/notifications/NotificationPanel.tsx` - Filter patterns and UI reference
-- `src/components/ui/DropdownPanel.tsx` - Container component architecture
-- `src/services/ConfigService.ts` - Sync infrastructure patterns
-- [Message Bookmarking Feature Task](../../tasks/message-bookmarking-feature.md) - Original implementation specification
+- [Message Preview Rendering](message-preview-rendering.md) — overview of all preview rendering systems
+- [Markdown Stripping](markdown-stripping.md) — text processing utilities
+- [Markdown Renderer](markdown-renderer.md) — full message rendering (used by `BookmarkCard`)
+- [Message Highlight System](message-highlight-system.md) — hash-based jump-and-highlight flow
+- [Thread Panel](thread-panel.md) — thread-aware navigation
+- `src/components/message/PinnedMessagesPanel.tsx` — similar panel structure
+- `src/components/notifications/NotificationPanel.tsx` — filter and UI reference
+- `src/components/ui/DropdownPanel.tsx` — shared panel container
+- `src/services/ConfigService.ts` — sync infrastructure
 
 ---
 
-
-*Verified: 2025-12-09 - File paths confirmed current*
+*Last updated: 2026-06-04*
