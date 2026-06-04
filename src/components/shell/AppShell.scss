@@ -119,6 +119,10 @@
   height: 100%;
   background: var(--color-bg-chat);
   overflow: hidden;
+  // Re-enable text selection inside the main content area — the shell-wide
+  // `user-select: none` exists to protect nav/resize chrome from accidental
+  // text drag, not to lock message text.
+  user-select: text;
   position: relative;
 }
 
