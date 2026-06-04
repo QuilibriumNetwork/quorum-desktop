@@ -304,6 +304,20 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       [members]
     );
 
+    // Strict variant — returns null when the address isn't a current, active
+    // member of this space. Kicked members are explicitly treated as
+    // unresolved so their mentions render as non-interactive truncated-address
+    // pills rather than as clickable pills that would open a profile of a
+    // user no longer reachable. Forwarded to Message → MessageMarkdownRenderer.
+    const resolveSender = useCallback(
+      (senderId: string) => {
+        const m = members[senderId];
+        if (!m || (m as any).isKicked) return null;
+        return m;
+      },
+      [members]
+    );
+
     // Date separators, new-messages separators, and compact-header flags per row.
     const messageDisplayInfo = useMemo(() => {
       return messageList.map((message, index) => {
@@ -358,6 +372,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               messageList={messageListRef.current}
               virtuosoRef={virtuoso.current}
               mapSenderToUser={mapSenderToUser}
+              resolveSender={resolveSender}
               hoverTarget={hoverTarget}
               setHoverTarget={setHoverTarget}
               setInReplyTo={setInReplyTo}

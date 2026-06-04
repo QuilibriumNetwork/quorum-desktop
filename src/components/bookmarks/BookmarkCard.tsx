@@ -14,6 +14,13 @@ export interface BookmarkCardProps {
   bookmark: Bookmark;
   onJumpToMessage: (bookmark: Bookmark) => void;
   onRemoveBookmark: (bookmarkId: string) => void;
+  /** Opens the user profile modal. Only invoked for resolved mentions —
+   *  the renderer gates the click on its own resolution check. */
+  onUserClick?: (
+    user: { address: string; displayName?: string; userIcon?: string },
+    event: React.MouseEvent,
+    context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }
+  ) => void;
 }
 
 const getEmbeddedImageKeys = (content: MessageContent | undefined): string[] => {
@@ -31,6 +38,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   bookmark,
   onJumpToMessage,
   onRemoveBookmark,
+  onUserClick,
 }) => {
   const { cachedPreview, sourceType } = bookmark;
   const { data: resolvedMessage } = useResolvedBookmark(bookmark, true);
@@ -50,6 +58,16 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       address: senderAddress,
     }),
     [senderName, senderIcon, senderAddress]
+  );
+
+  // Strict resolver — we only "know" one user at this surface: the bookmark's
+  // sender. Any other address (mentions in the message body) returns null,
+  // and the renderer treats those as unresolved (truncated, non-interactive).
+  const resolveSender = React.useCallback(
+    (id: string) => (id === senderAddress
+      ? { displayName: senderName, userIcon: senderIcon, address: senderAddress }
+      : null),
+    [senderAddress, senderName, senderIcon]
   );
 
   const renderSourceLine = () => {
@@ -94,6 +112,8 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
             <MessageMarkdownRenderer
               content={fullText}
               mapSenderToUser={mapSenderToUser}
+              resolveSender={resolveSender}
+              onUserClick={onUserClick}
               embeddedMedia={postContent.embeddedMedia}
             />
           )}

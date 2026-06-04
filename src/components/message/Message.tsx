@@ -80,6 +80,11 @@ type MessageProps = {
   canPinMessages?: boolean;
   channel?: Channel;
   mapSenderToUser: (senderId: string) => any;
+  /** Strict variant: returns null when the address isn't a known member.
+   *  Forwarded to MessageMarkdownRenderer so unknown user mentions render
+   *  as non-interactive truncated-address pills instead of clickable
+   *  stand-ins. Falls back to legacy behavior when not provided. */
+  resolveSender?: (senderId: string) => any | null;
   virtuosoRef?: any;
   emojiPickerOpen: string | undefined;
   setEmojiPickerOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -133,6 +138,7 @@ export const Message = React.memo(
     canPinMessages,
     channel,
     mapSenderToUser,
+    resolveSender,
     virtuosoRef,
     emojiPickerOpen,
     setEmojiPickerOpen,
@@ -997,6 +1003,7 @@ export const Message = React.memo(
                         <MessageMarkdownRenderer
                           content={contentData.fullText}
                           mapSenderToUser={mapSenderToUser}
+                          resolveSender={resolveSender}
                           onUserClick={onUserClick}
                           onChannelClick={onChannelClick}
                           onMessageLinkClick={(channelId, messageId) => {

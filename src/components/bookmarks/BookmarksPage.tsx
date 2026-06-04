@@ -8,6 +8,8 @@ import { BookmarkCard } from './BookmarkCard';
 import { useBookmarks } from '../../hooks/business/bookmarks';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { useOptionalShellState } from '../shell/useShellState';
+import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
+import UserProfile from '../user/UserProfile';
 import './BookmarksPage.scss';
 
 type SourceFilter = 'all' | 'channel' | 'dm';
@@ -45,6 +47,11 @@ export const BookmarksPage: React.FC = () => {
 
   const [search, setSearch] = React.useState('');
   const [sourceFilter, setSourceFilter] = React.useState<SourceFilter>('all');
+
+  // Mention click → open user profile modal. Cards only invoke this for
+  // resolved mentions (BookmarkCard's resolveSender restricts that to the
+  // bookmark's own sender), so the modal always has real cached data.
+  const userProfileModal = useUserProfileModal();
 
   const sourceOptions = React.useMemo(
     () => [
@@ -148,6 +155,7 @@ export const BookmarksPage: React.FC = () => {
             bookmark={bookmark}
             onJumpToMessage={handleJumpToMessage}
             onRemoveBookmark={removeBookmark}
+            onUserClick={userProfileModal.handleUserClick}
           />
         ))}
       </div>
@@ -192,6 +200,38 @@ export const BookmarksPage: React.FC = () => {
 
         {renderBody()}
       </div>
+
+      {/* User profile overlay — opened from mention clicks inside cards.
+          No spaceId/roles since bookmarks are cross-surface; UserProfile
+          gracefully degrades to display name + address + send-message. */}
+      {userProfileModal.isOpen &&
+        userProfileModal.selectedUser &&
+        userProfileModal.modalPosition && (
+          <>
+            <div
+              className="fixed inset-0 z-[9990]"
+              onClick={userProfileModal.handleClose}
+            />
+            <div
+              className="fixed z-[9999] pointer-events-none"
+              style={{
+                top: `${userProfileModal.modalPosition.top}px`,
+                left:
+                  userProfileModal.modalPosition.left !== undefined
+                    ? `${userProfileModal.modalPosition.left}px`
+                    : `calc(100vw - 320px)`,
+              }}
+            >
+              <div className="pointer-events-auto">
+                <UserProfile
+                  key={userProfileModal.selectedUser.address}
+                  user={userProfileModal.selectedUser}
+                  dismiss={userProfileModal.handleClose}
+                />
+              </div>
+            </div>
+          </>
+        )}
     </div>
   );
 };
