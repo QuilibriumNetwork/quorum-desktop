@@ -104,7 +104,7 @@ export const BookmarksPage: React.FC = () => {
     if (isLoading) {
       return (
         <div className="empty-state empty-state--fill">
-          <Icon name="loader" size="5xl" className="empty-state__icon animate-spin" />
+          <Icon name="spinner" size="5xl" className="empty-state__icon animate-spin" />
           <p className="empty-state__title">{t`Loading bookmarks...`}</p>
         </div>
       );
