@@ -29,40 +29,25 @@
   min-height: 0;
 }
 
+// Hover/active chrome (accent bar + bg) comes from the shared
+// .sidebar-row-chrome utility — keep this rule structural only.
 .direct-messages-strip-row {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 56px;
+  height: 60px;
+  flex-shrink: 0;
   cursor: pointer;
   background: transparent;
   border: none;
   padding: 0;
 
-  &:hover {
-    background: var(--color-bg-sidebar-hover);
-  }
-
-  &:focus-visible {
-    outline: none;
-    background: var(--color-bg-sidebar-hover);
-  }
-
   &--active {
     background: var(--color-bg-sidebar-active-accent);
 
     &::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: $rail-accent-bar-width;
-      height: 32px;
-      background: var(--accent);
-      border-radius: 0 $rounded-sm $rounded-sm 0;
+      opacity: 1;
     }
   }
 }
@@ -71,16 +56,24 @@
   position: relative;
 }
 
-.direct-messages-strip-unread-dot {
-  position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--accent);
-  border: 2px solid var(--color-bg-sidebar);
-  box-sizing: border-box;
+// Center the unread dot in the gutter between sidebar edge and avatar
+// (default .icon-unread-dot uses left: -15px to peek past the edge in non-strip
+// layouts; the centered 48px strip leaves only a 6px gutter, so center the dot
+// inside it instead).
+.direct-messages-strip-row .icon-unread-dot {
+  left: -8px;
+}
+
+// Expanded contact row has 16px left padding (px-4); center the dot in that
+// gutter instead of letting it peek past the sidebar edge.
+.direct-messages-contact .icon-unread-dot {
+  left: -11px;
+}
+
+// Expanded contact row — pairs with .sidebar-row-chrome on the same element.
+// Keeps the accent bar visible while the row is the active conversation.
+.direct-messages-contact--active::before {
+  opacity: 1;
 }
 
 .direct-messages-list {

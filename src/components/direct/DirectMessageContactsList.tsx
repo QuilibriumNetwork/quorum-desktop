@@ -339,7 +339,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
               >
                 <button
                   type="button"
-                  className={`direct-messages-strip-row ${isActive ? 'direct-messages-strip-row--active' : ''}`}
+                  className={`direct-messages-strip-row sidebar-row-chrome ${isActive ? 'direct-messages-strip-row--active' : ''}`}
                   onClick={() => navigate(`/messages/${c.address}`)}
                   onContextMenu={handleContextMenu(c.address, c.conversationId)}
                   aria-label={c.displayName || c.address}
@@ -350,9 +350,9 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
                       displayName={c.displayName || ''}
                       userIcon={c.icon}
                       address={c.address}
-                      size={40}
+                      size={44}
                     />
-                    {unread && <span className="direct-messages-strip-unread-dot" />}
+                    {unread && <span className="icon-unread-dot" />}
                   </div>
                 </button>
               </Tooltip>

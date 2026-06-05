@@ -164,8 +164,8 @@ const DirectMessageContact: React.FunctionComponent<{
       <div
         {...longPressHandlers}
         className={
-          'relative flex flex-row items-center py-3 px-4 cursor-pointer' +
-          (isActive ? ' !bg-sidebar-active-accent' : '') +
+          'direct-messages-contact sidebar-row-chrome flex flex-row items-center py-3 px-4 cursor-pointer' +
+          (isActive ? ' !bg-sidebar-active-accent direct-messages-contact--active' : '') +
           (longPressHandlers.className ? ` ${longPressHandlers.className}` : '')
         }
         style={longPressHandlers.style}
@@ -181,10 +181,10 @@ const DirectMessageContact: React.FunctionComponent<{
       role="link"
       tabIndex={0}
       className={
-        'relative flex flex-row items-center py-3 px-4 cursor-pointer' +
+        'direct-messages-contact sidebar-row-chrome flex flex-row items-center py-3 px-4 cursor-pointer' +
         (isActive || isPressed
-          ? ' !bg-sidebar-active-accent'
-          : ' hover:bg-sidebar-hover')
+          ? ' !bg-sidebar-active-accent direct-messages-contact--active'
+          : '')
       }
       onClick={handleContactClick}
       onContextMenu={handleContextMenu}

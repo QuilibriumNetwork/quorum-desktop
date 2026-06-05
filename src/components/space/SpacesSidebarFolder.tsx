@@ -323,7 +323,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                               iconUrl={space.iconUrl}
                               notifs={unread > 0}
                               selected={false}
-                              size="regular"
+                              size="compact"
                               noTooltip
                               mentionCount={mention > 0 ? mention : undefined}
                             />

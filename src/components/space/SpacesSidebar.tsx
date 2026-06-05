@@ -183,16 +183,23 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   const userAddress = currentPasskeyInfo?.address;
   const { data: config } = useConfig({ userAddress: userAddress || '' });
   const { navItems: realNavItems } = useNavItems(spaces, config);
-  // Dev-only: prepend the demo folder so the folder UI (aggregate bubble + unread
-  // dot) is always visible regardless of the user's real config.
+  // Dev-only: prepend the demo folder + the mock joined-spaces so the sidebar
+  // shows them without needing entries in the user's real config (useNavItems
+  // drops any space that isn't referenced in config.items). Folder first, then
+  // the flat list of mock joined-spaces.
   const navItems = React.useMemo(() => {
-    if (!mockFolderNavItem || mockFolderSpaces.length === 0) return realNavItems;
-    const folderEntry = {
-      item: mockFolderNavItem,
-      spaces: mockFolderSpaces.map((s) => ({ ...s, id: s.spaceId })),
-    };
-    return [folderEntry, ...realNavItems];
-  }, [realNavItems, mockFolderNavItem, mockFolderSpaces]);
+    const extras: typeof realNavItems = [];
+    if (mockFolderNavItem && mockFolderSpaces.length > 0) {
+      extras.push({
+        item: mockFolderNavItem,
+        spaces: mockFolderSpaces.map((s) => ({ ...s, id: s.spaceId })),
+      });
+    }
+    for (const s of mockSpaces) {
+      extras.push({ item: { type: 'space', id: s.spaceId } });
+    }
+    return extras.length > 0 ? [...extras, ...realNavItems] : realNavItems;
+  }, [realNavItems, mockFolderNavItem, mockFolderSpaces, mockSpaces]);
   const { isExpanded, toggleFolder } = useFolderStates();
   const { openFolderEditor } = useModals();
   const dragState = useOptionalDragStateContext();

@@ -107,7 +107,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
         iconUrl={space.iconUrl}
         notifs={unread > 0}
         selected={false}
-        size="regular"
+        size={compact ? 'compact' : 'regular'}
         noTooltip
         mentionCount={
           !compact && hideCornerMentionBubble

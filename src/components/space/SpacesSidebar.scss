@@ -26,6 +26,12 @@
   left: -12px;
 }
 
+// Center the unread dot in the gutter between sidebar edge and icon in the
+// collapsed strip (default -15px would peek past the edge).
+.spaces-sidebar__strip-row .space-icon-toggle {
+  left: -10px;
+}
+
 // Row chrome already shows hover/active — suppress the legacy icon-side
 // hover bar and the unread-dot hover-grow inside rows.
 .spaces-sidebar__row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target),
@@ -184,43 +190,19 @@
   padding: 0;
 }
 
+// Hover/active chrome (accent bar + bg) comes from the shared
+// .sidebar-row-chrome utility — keep this rule structural only.
 .spaces-sidebar__strip-row {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 56px;
+  height: 60px;
+  flex-shrink: 0;
   cursor: pointer;
   background: transparent;
   border: none;
   padding: 0;
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: $rail-accent-bar-width;
-    height: 38px;
-    background: var(--accent);
-    border-radius: 0 $rounded-sm $rounded-sm 0;
-    opacity: 0;
-  }
-
-  &:hover {
-    background: var(--color-bg-sidebar-hover);
-
-    &::before {
-      opacity: 1;
-    }
-  }
-
-  &:focus-visible {
-    outline: none;
-    background: var(--color-bg-sidebar-hover);
-  }
 
   &--active {
     background: var(--color-bg-sidebar-active-accent);
