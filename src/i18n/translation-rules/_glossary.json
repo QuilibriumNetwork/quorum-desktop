@@ -9,7 +9,9 @@
       "YouTube",
       "Farcaster"
     ],
-    "keep_english_endings": [".key", ".png", ".jpg", ".jpeg", ".mp4", ".gif"]
+    "keep_english_endings": [".key", ".png", ".jpg", ".jpeg", ".mp4", ".gif"],
+    "_brand_casing_note": "Brand preservation is case-insensitive in the audit. Languages that capitalize nouns (German: 'Passkey') or use title case at start are accepted. Contamination via native translation (e.g. 'klucz dostępowy', 'パスキー', '通行密钥') is still flagged.",
+    "_proper_nouns": "Treat 'Space' and 'Spaces' as proper nouns — preserve capitalization in the target language whether translated (Espace, Spazio, スペース) or kept English (Space). Never lowercase mid-sentence in source-language compatible scripts."
   },
 
   "el": {
