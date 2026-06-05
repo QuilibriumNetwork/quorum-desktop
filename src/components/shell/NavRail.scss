@@ -52,7 +52,9 @@
       left: 0;
       top: 50%;
       transform: translateY(-50%);
-      width: $rail-accent-bar-width;
+      // Rail bar is slightly thicker than the sidebar-row chrome bar so it
+      // reads clearly at the rail's larger row height.
+      width: $rail-accent-bar-width + 1px;
       height: $rail-accent-bar-height;
       background: var(--accent);
       border-radius: 0 $rounded-sm $rounded-sm 0;

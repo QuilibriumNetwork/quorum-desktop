@@ -194,6 +194,11 @@ html.dark {
   --color-link-mention: var(--accent-400);
   --color-link-mention-hover: var(--accent-150);
 
+  /* nav rail — active icon brightens to match dark-mode link contrast
+     (--accent-500 reads too dim against dark surfaces, same reason links
+     shift to --accent-400). */
+  --color-rail-icon-active: var(--accent-400);
+
   /* Field semantic - dark theme override */
   --color-field-placeholder: var(--color-text-muted);
 
