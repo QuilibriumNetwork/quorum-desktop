@@ -1,0 +1,197 @@
+@use '@/styles/variables' as *;
+
+.app-shell {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: row;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  user-select: none;
+}
+
+.app-shell__rail {
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--color-bg-rail);
+  border-right: 1px solid var(--color-border-muted);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  transition: width $duration-150 $ease-out;
+
+  &--collapsed {
+    width: $rail-width-collapsed;
+  }
+
+  &--expanded {
+    width: $rail-width-expanded;
+  }
+
+  &--hidden {
+    width: 0;
+    border-right: none;
+    overflow: hidden;
+  }
+}
+
+.app-shell__sidebar {
+  flex-shrink: 0;
+  height: 100%;
+  background: var(--color-bg-sidebar);
+  border-right: 1px solid var(--color-border-muted);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative; // anchor for .app-shell__drag-handle
+  transition: width $duration-150 $ease-out;
+
+  &--collapsed {
+    width: $sidebar-width-collapsed;
+  }
+
+  &--expanded {
+    // Width driven by JS via --shell-sidebar-width; SCSS var is the fallback.
+    width: var(--shell-sidebar-width, $sidebar-width);
+  }
+
+  &--hidden {
+    width: 0;
+    border-right: none;
+  }
+}
+
+// During active drag, suppress the width transition so the sidebar tracks the
+// cursor frame-for-frame instead of lagging behind.
+.app-shell--dragging .app-shell__sidebar {
+  transition: none;
+}
+
+// Drag handle sits on the sidebar's right edge. The hit zone is 6px wide and
+// straddles the border; a thin ribbon appears after 1s of hover (or while
+// dragging) via data-hover-armed.
+.app-shell__drag-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: -3px;
+  width: 6px;
+  cursor: col-resize;
+  // Sits above the sticky .sidebar-header (z-index: 10) so the ribbon
+  // paints uniformly along the full sidebar edge, not clipped at the top.
+  z-index: 11;
+  // Avoid focus outline overflowing the handle silhouette.
+  outline: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    transform: translateX(-50%);
+    background: var(--shell-drag-handle-hover-color, var(--color-link));
+    border-radius: 2px;
+    transition: width 120ms $ease-out, opacity 120ms $ease-out;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &[data-hover-armed='true']::after,
+  &:focus-visible::after {
+    width: 3px;
+    opacity: 1;
+  }
+
+  // Touch devices: hide the handle entirely. Phone/tablet are already gated in
+  // React (handle isn't rendered), but a desktop user with a touchscreen would
+  // still see it; disable interaction without disrupting visual layout.
+  @media (hover: none) {
+    pointer-events: none;
+  }
+}
+
+.app-shell__main {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: var(--color-bg-chat);
+  overflow: hidden;
+  // Re-enable text selection inside the main content area — the shell-wide
+  // `user-select: none` exists to protect nav/resize chrome from accidental
+  // text drag, not to lock message text.
+  user-select: text;
+  position: relative;
+}
+
+/* === Phone-only slide-in drawer === */
+.app-shell__drawer-scrim {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1000;
+  animation: app-shell-scrim-in $duration-150 $ease-out;
+}
+
+.app-shell__drawer {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: calc($rail-width-collapsed + $sidebar-width);
+  max-width: 92vw;
+  display: flex;
+  flex-direction: row;
+  // 1002 keeps the drawer above the OfflineBanner (1001) so the panel
+  // appears on top when both are visible.
+  z-index: 1002;
+  background: var(--color-bg-rail);
+  box-shadow: 4px 0 16px rgba(0, 0, 0, 0.25);
+  animation: app-shell-drawer-in $duration-200 $ease-out;
+}
+
+.app-shell__drawer-rail {
+  width: $rail-width-collapsed;
+  flex-shrink: 0;
+  background: var(--color-bg-rail);
+  border-right: 1px solid var(--color-border-muted);
+  display: flex;
+  flex-direction: column;
+}
+
+.app-shell__drawer-sidebar {
+  flex: 1;
+  min-width: 0;
+  background: var(--color-bg-sidebar);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+@keyframes app-shell-scrim-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes app-shell-drawer-in {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* Step 3 — placeholder visuals so the empty columns are recognisable.
+   Removed in step 4+ when real content lands. */
+.app-shell__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  height: 100%;
+  width: 100%;
+}
+

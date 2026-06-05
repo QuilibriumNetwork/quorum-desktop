@@ -9,7 +9,10 @@ import DirectMessages from '@/components/direct/DirectMessages';
 import Connecting from '@/components/Connecting';
 import InviteRoute from '@/components/InviteRoute';
 import NotFound from '@/components/NotFound';
-import { SpacesPage } from '@/components/spaces-page';
+import { DiscoverPage } from '@/components/discover-page';
+import { BookmarksPage } from '@/components/bookmarks';
+import { FarcasterPage } from '@/components/farcaster';
+import { WalletPage } from '@/components/wallet';
 
 class RouteErrorBoundary extends React.Component<
   { fallback: React.ReactNode; children: React.ReactNode },
@@ -145,7 +148,73 @@ export function Router({ user, setUser }: RouterProps) {
               <SidebarProvider>
                 <Layout>
                   <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
-                    <SpacesPage />
+                    <DiscoverPage mode="spaces-empty" />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      {/* Discover: redirect bare /discover to its default sub-page. */}
+      <Route path="/discover" element={<Navigate to="/discover/spaces" replace />} />
+      <Route
+        path="/discover/:section"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <DiscoverPage />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      <Route
+        path="/bookmarks"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <BookmarksPage />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      <Route
+        path="/farcaster"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <FarcasterPage />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      <Route
+        path="/wallet"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <WalletPage />
                   </RouteErrorBoundary>
                 </Layout>
               </SidebarProvider>

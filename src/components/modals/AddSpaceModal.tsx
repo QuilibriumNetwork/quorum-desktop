@@ -7,7 +7,7 @@ import {
   Callout,
   Icon,
 } from '../primitives';
-import SpaceIcon from '../navbar/SpaceIcon';
+import SpaceIcon from '../space/SpaceIcon';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import './JoinSpaceModal.scss';
 import { t } from '@lingui/core/macro';
@@ -24,7 +24,6 @@ import {
 type AddSpaceModalProps = {
   visible: boolean;
   onClose: () => void;
-  onCreateSpace: () => void;
 };
 
 const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
@@ -118,7 +117,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
 
   return (
     <Modal
-      title={t`Add a Space`}
+      title={t`Join a Space`}
       visible={props.visible}
       onClose={isSaving ? undefined : props.onClose}
       closeOnBackdropClick={false}
@@ -134,7 +133,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
       <div>
         {!isOnline && (
           <Callout variant="warning" size="sm" className="mb-4">
-            <Trans>You're offline. Adding or creating a Space requires an internet connection.</Trans>
+            <Trans>You're offline. Joining a Space requires an internet connection.</Trans>
           </Callout>
         )}
         <div className="flex flex-col gap-3">
@@ -268,33 +267,6 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
             </div>
           )}
 
-          {!(
-            manualMode ||
-            lookup ||
-            manualSpaceId ||
-            manualConfigKey ||
-            isValidating ||
-            validatedSpace
-          ) && (
-            <>
-              <div className="relative flex items-center my-6">
-                <div className="flex-grow border-t border-default"></div>
-                <span className="px-3 text-subtle text-sm">{t`OR`}</span>
-                <div className="flex-grow border-t border-default"></div>
-              </div>
-
-              <div className="modal-join-space-actions !pt-0">
-                <Button
-                  type="primary"
-                  className="w-full sm:w-auto sm:inline-block sm:px-8"
-                  onClick={() => props.onCreateSpace()}
-                  disabled={!isOnline}
-                >
-                  {t`Create a Space`}
-                </Button>
-              </div>
-            </>
-          )}
         </div>
       </div>
     </Modal>

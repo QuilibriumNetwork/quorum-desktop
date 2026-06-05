@@ -1,0 +1,239 @@
+@use '@/styles/variables' as *;
+
+.folder-button {
+  width: $s-12;
+  height: $s-12;
+  border-radius: $rounded-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $duration-150 $ease-in-out;
+  position: relative;
+  // Required for PointerSensor touch drag on iOS Safari
+  // See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
+  touch-action: none;
+
+  &--small {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// Folder color passed via inline style
+.folder-button-mention-bubble {
+  position: absolute;
+  bottom: -$s-0-5;
+  right: -$s-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  border: 2px solid var(--color-bg-sidebar);
+  z-index: 1001;
+  pointer-events: none;
+}
+
+.folder-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition:
+    background-color $duration-300 $ease-in-out,
+    padding $duration-300 $ease-in-out;
+  overflow: visible;
+
+  // Strip variant: 72px collapsed rail.
+  &--strip {
+    align-items: stretch;
+
+    &.folder-container--expanded {
+      background-color: color-mix(in srgb, var(--folder-color) 20%, transparent);
+    }
+  }
+
+  // Row variant: expanded sidebar.
+  &--row {
+    align-items: stretch;
+
+    &.folder-container--expanded {
+      background-color: color-mix(in srgb, var(--folder-color) 12%, transparent);
+      border-radius: 0;
+      padding: 0;
+    }
+  }
+
+  &.folder-container--dragging.folder-container--row {
+    opacity: 0.25;
+    background: transparent !important;
+  }
+
+  // Hover values are intentionally lower than the rest backdrop so the hovered
+  // row recedes slightly instead of popping. Accent left bar still fades in.
+  &--row.folder-container--expanded {
+    .sidebar-row-chrome:hover {
+      background: color-mix(in srgb, var(--folder-color) 8%, transparent);
+    }
+  }
+
+  &--strip.folder-container--expanded {
+    .sidebar-row-chrome:hover {
+      background: color-mix(in srgb, var(--folder-color) 16%, transparent);
+    }
+  }
+}
+
+.folder-header {
+  display: flex;
+  align-items: center;
+
+  &--strip {
+    justify-content: center;
+    width: 100%;
+    height: 56px;
+  }
+
+  &--row {
+    width: 100%;
+    gap: $s-3;
+    padding: $s-2 $s-4;
+    min-height: 60px;
+    text-align: left;
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__meta {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s-0-5;
+  }
+
+  &__name {
+    font-size: $text-sm;
+    font-weight: $font-bold;
+    color: var(--color-text-strong);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    gap: $s-1;
+    font-size: $text-xs;
+    color: var(--color-text-muted);
+  }
+
+  // Bottom line of the folder header — mirrors SpacesSidebarRow's secondary
+  // line so the mention badge sits in the same bottom-right slot as the row
+  // badge on a space (instead of floating in the vertical middle, which
+  // collides with long folder names).
+  &__secondary {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    min-width: 0;
+
+    .spaces-sidebar__row-badge {
+      margin-left: auto;
+    }
+  }
+}
+
+// Grid-rows trick animates height between 0fr and 1fr.
+.folder-spaces-wrapper {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows $duration-300 $ease-in-out;
+  // Clip vertically while letting toggle indicators overflow horizontally.
+  clip-path: inset(0 -100px 0 -100px);
+  overflow: visible;
+
+  // Expanded: drop clip so tooltips aren't clipped.
+  .folder-container--expanded & {
+    grid-template-rows: 1fr;
+    clip-path: none;
+  }
+}
+
+.folder-spaces {
+  display: flex;
+  flex-direction: column;
+  // Required for the grid-rows animation.
+  min-height: 0;
+  overflow: visible;
+
+  &--strip {
+    align-items: stretch;
+  }
+
+  &--row {
+    align-items: stretch;
+  }
+
+  .space-icon-selected {
+    box-shadow: none;
+  }
+
+  .space-icon-drag-placeholder {
+    background-color: color-mix(in srgb, var(--folder-color) 25%, transparent);
+  }
+}
+
+.folder-toggle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.folder-has-unread-toggle {
+  content: ' ';
+  position: absolute;
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-sm;
+  margin-left: -15px;
+  margin-top: 28px;
+  z-index: 1000;
+  background: var(--accent);
+  transition: all $duration-100 linear;
+
+  @media (max-width: $screen-xs) {
+    margin-left: -8px;
+    margin-top: 22px;
+  }
+}
+
+.folder-collapsed-count {
+  position: absolute;
+  bottom: -$s-0-5;
+  right: -$s-0-5;
+  min-width: $s-4;
+  height: $s-4;
+  padding: 0 $s-0-5;
+  border-radius: $rounded-full;
+  font-size: 10px;
+  font-weight: $font-medium;
+  line-height: $s-4;
+  text-align: center;
+  color: var(--text-main);
+  background-color: var(--surface-4);
+  border: 1px solid var(--surface-border);
+}

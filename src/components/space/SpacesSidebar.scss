@@ -1,0 +1,237 @@
+@use '@/styles/variables' as *;
+
+.spaces-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: var(--color-bg-sidebar);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.spaces-sidebar__list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-top: $s-1-5;
+}
+
+// Recenter unread dot in the row's 16px left gutter (default -15px overshoots).
+// Row layout puts the dot 12px (not the default 15px) from the icon edge —
+// applies to standalone space rows AND folder header rows so the dot lines up
+// vertically across the whole list.
+.spaces-sidebar__row .space-icon-toggle,
+.folder-header--row .space-icon-toggle {
+  left: -12px;
+}
+
+// Row chrome already shows hover/active — suppress the legacy icon-side
+// hover bar and the unread-dot hover-grow inside rows.
+.spaces-sidebar__row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target),
+.folder-header--row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected):not(.space-icon-toggle--drop-target) {
+  opacity: 0 !important;
+}
+@media (hover: hover) {
+  .spaces-sidebar__row .relative:hover .space-icon-toggle--unread,
+  .folder-header--row .relative:hover .space-icon-toggle--unread {
+    height: $s-1-5;
+  }
+}
+
+// Hover / accent-bar / merge-target chrome → .sidebar-row-chrome in _components.scss.
+.spaces-sidebar__row {
+  display: flex;
+  align-items: center;
+  gap: $s-3;
+  width: 100%;
+  padding: $s-2 $s-4;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-family: inherit;
+  color: var(--color-text-main);
+  min-height: 60px;
+
+  &--active {
+    background: var(--color-bg-sidebar-active-accent);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.spaces-sidebar__row-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: $s-0-5;
+}
+
+.spaces-sidebar__row-line {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  min-width: 0;
+
+  &--secondary {
+    color: var(--color-text-muted);
+  }
+}
+
+.spaces-sidebar__row-name {
+  flex: 1;
+  font-size: $text-sm;
+  font-weight: $font-bold;
+  color: var(--color-text-strong);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.spaces-sidebar__row-crown {
+  flex-shrink: 0;
+  color: var(--accent);
+}
+
+// Wiggle the avatar on merge-target — same keyframes the folder uses.
+.spaces-sidebar__row-avatar--wiggle {
+  animation: wiggle 0.25s ease-in-out infinite;
+}
+
+// Strip FolderButton's accent outline on merge-target — wiggle stays.
+.spaces-sidebar__list .folder-button.drop-target-wiggle {
+  outline: none;
+}
+
+// Ghost left in the list. Chained selectors beat --active.
+.spaces-sidebar__row.spaces-sidebar__row--dragging,
+.spaces-sidebar__strip-row.spaces-sidebar__row--dragging {
+  opacity: 0.25;
+  background: transparent !important;
+  pointer-events: none;
+
+  &::before {
+    opacity: 0 !important;
+  }
+}
+
+.spaces-sidebar__row-drop-indicator {
+  height: 2px;
+  margin: $s-0-5 $s-4;
+  background: var(--accent);
+  border-radius: $rounded-full;
+  pointer-events: none;
+}
+
+// Floating clone that follows the cursor.
+.spaces-sidebar__drag-overlay {
+  background: color-mix(in srgb, var(--color-bg-sidebar) 30%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: $rounded-md;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  cursor: grabbing;
+
+  .spaces-sidebar__row,
+  .spaces-sidebar__strip-row,
+  .folder-container {
+    opacity: 1 !important;
+    background: transparent !important;
+  }
+
+  // Hide the accent left bar inside the clone — the chrome only makes sense
+  // on rows sitting in the list, not on the floating drag visual.
+  .sidebar-row-chrome::before {
+    opacity: 0 !important;
+  }
+}
+
+.spaces-sidebar__row-members {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-1;
+  font-size: $text-xs;
+  color: var(--color-text-muted);
+  flex: 1;
+  min-width: 0;
+}
+
+.spaces-sidebar__row-badge {
+  margin-left: $s-2;
+  background: var(--accent);
+  color: #fff;
+  font-size: 11px;
+  font-weight: $font-bold;
+  border-radius: 9px;
+  padding: 1px 6px;
+  min-width: 18px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+/* === 72px collapsed avatar strip === */
+.spaces-sidebar--collapsed {
+  align-items: stretch;
+}
+
+.spaces-sidebar__header--collapsed {
+  justify-content: center;
+  padding: 0;
+}
+
+.spaces-sidebar__strip-row {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 56px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: $rail-accent-bar-width;
+    height: 38px;
+    background: var(--accent);
+    border-radius: 0 $rounded-sm $rounded-sm 0;
+    opacity: 0;
+  }
+
+  &:hover {
+    background: var(--color-bg-sidebar-hover);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    background: var(--color-bg-sidebar-hover);
+  }
+
+  &--active {
+    background: var(--color-bg-sidebar-active-accent);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.spaces-sidebar__strip-avatar {
+  position: relative;
+}
+

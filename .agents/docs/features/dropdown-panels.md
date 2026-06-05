@@ -12,6 +12,8 @@ updated: 2026-04-08T00:00:00.000Z
 
 Dropdown panels are the desktop overlay UI for Search, Notifications, Bookmarks, Pinned Messages, and Threads. On mobile they render inside `MobileDrawer` (bottom sheet). On desktop they render as floating `DropdownPanel` cards with a shared visual design: elevated surface, bordered item cards, and panel-scoped field styles.
 
+The Bookmarks dropdown is the context-scoped surface ("what's bookmarked in this space / DM") and only mounts when the current context has at least one bookmark. The global cross-context view is a full-area page at `/bookmarks` (`BookmarksPage`), not a dropdown — see [messages/bookmarks.md](messages/bookmarks.md).
+
 ---
 
 ## Key Files
@@ -155,4 +157,4 @@ On touch devices (`isTouchDevice() === true`) each panel renders its items insid
 
 ---
 
-_Last updated: 2026-04-08_
+_Last updated: 2026-06-04_

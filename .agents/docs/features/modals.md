@@ -18,10 +18,10 @@ The app uses **two modal rendering systems** - this is intentional, not a tempor
 
 | System | Location | Modals | Best For |
 |--------|----------|--------|----------|
-| **ModalProvider** | Router level | 10 modals | Top-level triggers (NavMenu, menus) |
+| **ModalProvider** | Router level | 10 modals | Top-level triggers (NavRail / SpacesSidebar / context menus) |
 | **Layout-Level** | Layout.tsx | 6 modals | Deep triggers (Message.tsx) - context providers avoid prop drilling |
 
-> ⚠️ **Never render modals at component level** (e.g., inside Message.tsx). This causes z-index issues where NavMenu appears above the modal overlay.
+> ⚠️ **Never render modals at component level** (e.g., inside Message.tsx). This causes z-index issues where the AppShell chrome (NavRail / Sidebar) and the `ContextMenu` floating layer appear above the modal overlay.
 
 ### Why Two Systems?
 
@@ -37,7 +37,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 
 | Criteria | → System |
 |----------|----------|
-| Triggered from NavMenu, space menus, context menus | ModalProvider |
+| Triggered from NavRail, SpacesSidebar header, space/folder context menus | ModalProvider |
 | Needs to open from multiple unrelated components | ModalProvider |
 | Multi-section interface (settings) | ModalProvider |
 | Triggered deep in component tree (Message.tsx) | Layout-Level |
@@ -176,4 +176,6 @@ All modals must use: `Button`, `Input`, `Switch`, `Icon`, `Tooltip`, `Select` fr
 
 ---
 
-_Last updated: 2026-05-20 — staleness audit fixes_
+---
+
+*Last updated: 2026-06-04*

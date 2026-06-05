@@ -7,6 +7,28 @@
   // Title font size inherited from DropdownPanel ($text-sm)
 }
 
+// Footer link to the global bookmarks page
+.bookmarks-panel__see-all {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $s-2;
+  width: 100%;
+  padding: $s-2 $s-4;
+  border: 0;
+  border-top: $border solid var(--color-border-panel);
+  background: transparent;
+  color: var(--color-link);
+  font-size: $text-sm;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  &:hover {
+    background: var(--color-bg-panel-item-hover);
+    color: var(--color-link-hover);
+  }
+}
+
 // Controls styling for both desktop (bookmarks-panel) and mobile (mobile-drawer) contexts
 .bookmarks-panel .bookmarks-panel__controls,
 .mobile-drawer .bookmarks-panel__controls {
@@ -40,6 +62,7 @@
 // Use shared header styling with bookmark-specific class names
 // Custom margin and padding to make room for .result-source
 .bookmarks-panel .result-header,
+.bookmarks-page .result-header,
 .mobile-drawer .bookmark-item .result-header {
   @extend .dropdown-result-header;
   margin-bottom: $s-2;
@@ -69,6 +92,7 @@
 
 // Result source styling for both desktop (bookmarks-panel) and mobile (mobile-drawer) contexts
 .bookmarks-panel .result-source,
+.bookmarks-page .result-source,
 .mobile-drawer .bookmark-item .result-source {
   padding: 0 $s-4 $s-2 0;
 

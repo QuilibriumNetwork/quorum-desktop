@@ -11,6 +11,7 @@ import { extractMessageRawText } from '@quilibrium/quorum-shared';
 import { useCopyToClipboard } from '../ui';
 import { useBookmarks } from '../bookmarks';
 import { buildMessagesKey } from '../../queries/messages/buildMessagesKey';
+import { getThreadTitle } from '../../../utils/threadTitle';
 import { t } from '@lingui/core/macro';
 import { ENABLE_DM_ACTION_QUEUE } from '../../../config/features';
 
@@ -467,7 +468,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   }, [canViewEditHistory, message, onViewEditHistory]);
 
   // Handle bookmark toggle action
-  const handleBookmarkToggle = useCallback(() => {
+  const handleBookmarkToggle = useCallback(async () => {
     // Determine source type and context
     const sourceType = conversationId ? 'dm' : 'channel';
     const context = {
@@ -477,23 +478,51 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     };
 
 
-    // Get sender name for bookmark preview
-    const senderName = mapSenderToUser ?
-      mapSenderToUser(message.content.senderId)?.displayName || 'Unknown User' :
-      'Unknown User';
+    // Get sender name + icon for bookmark preview
+    const senderInfo = mapSenderToUser ? mapSenderToUser(message.content.senderId) : undefined;
+    const senderName = senderInfo?.displayName || 'Unknown User';
+    const senderIcon = senderInfo?.userIcon;
 
     // Use provided sourceName or derive it
     const bookmarkSourceName = sourceName ||
       (sourceType === 'dm' ? 'Direct Message' : `#${channelId || 'unknown'}`);
+
+    // Resolve thread title for the bookmark breadcrumb. Tries channel_threads
+    // first (canonical, survives root pruning), then message.threadMeta, then
+    // the root message itself. Failures are swallowed — chip just omits.
+    let threadName: string | undefined;
+    if (message.threadId) {
+      try {
+        const thread = await messageDB.getChannelThread(message.threadId);
+        if (thread) {
+          threadName = thread.customTitle || thread.titleSnapshot || undefined;
+        }
+      } catch (err) {
+        logger.warn('Failed to resolve channel thread for bookmark', err);
+      }
+    }
+    if (!threadName && message.threadMeta) {
+      threadName = getThreadTitle(message);
+    }
+    if (!threadName && message.threadId) {
+      try {
+        const root = await messageDB.getMessageById(message.threadId);
+        if (root) threadName = getThreadTitle(root);
+      } catch (err) {
+        logger.warn('Failed to resolve thread root for bookmark', err);
+      }
+    }
 
     bookmarks.toggleBookmark(
       message,
       sourceType,
       context,
       senderName,
-      bookmarkSourceName
+      bookmarkSourceName,
+      senderIcon,
+      threadName
     );
-  }, [message, bookmarks, conversationId, spaceId, channelId, mapSenderToUser, sourceName]);
+  }, [message, bookmarks, conversationId, spaceId, channelId, mapSenderToUser, sourceName, messageDB]);
 
   // Get bookmark status for this message
   const isBookmarked = bookmarks.isBookmarked(message.messageId);

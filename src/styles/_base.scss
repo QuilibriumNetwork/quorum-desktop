@@ -83,6 +83,18 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* === TEXT SELECTION === */
+/* Visible highlight on both light and dark themes — browser default can be
+   near-invisible on our dark surfaces. */
+::selection {
+  background-color: rgb(var(--accent-rgb) / 0.35);
+  color: inherit;
+}
+::-moz-selection {
+  background-color: rgb(var(--accent-rgb) / 0.35);
+  color: inherit;
+}
+
 /* === KEYBOARD FOCUS INDICATORS === */
 /* Only visible on keyboard navigation (Tab), not mouse clicks */
 :focus-visible {
@@ -330,31 +342,3 @@ html.dark .error-label {
   height: 6px;
 }
 
-/* === APP LAYOUT === */
-/* Main content area - offset from fixed NavMenu */
-.main-content {
-  position: fixed;
-  width: calc(100vw - $nav-header-width);
-  height: calc(100vh - 14px);
-  left: $nav-header-width;
-  top: 14px;
-  border-top-left-radius: 0.75rem;
-  background-color: var(--color-bg-sidebar);
-
-  .electron & {
-    top: 38px;
-    height: calc(100vh - 38px);
-  }
-
-  @media (max-width: 480px) {
-    width: calc(100vw - $nav-header-width-mobile);
-    left: $nav-header-width-mobile;
-  }
-
-  &.nav-hidden {
-    @media (max-width: 1023px) {
-      width: 100vw;
-      left: 0;
-    }
-  }
-}

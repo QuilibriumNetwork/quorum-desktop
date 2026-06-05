@@ -44,7 +44,9 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     sourceType: 'channel' | 'dm',
     context: BookmarkContext,
     senderName: string,
-    sourceName: string
+    sourceName: string,
+    senderIcon?: string,
+    threadName?: string
   ): Bookmark => {
     // Determine content type and extract relevant data
     let contentType: 'text' | 'image' | 'sticker' = 'text';
@@ -94,6 +96,8 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       cachedPreview: {
         senderAddress: message.content.senderId,
         senderName,
+        senderIcon,
+        threadName,
         textSnippet,
         messageDate: message.createdDate,
         sourceName,
@@ -162,7 +166,9 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     sourceType: 'channel' | 'dm',
     context: BookmarkContext,
     senderName: string = 'Unknown User',
-    sourceName: string = 'Unknown Source'
+    sourceName: string = 'Unknown Source',
+    senderIcon?: string,
+    threadName?: string
   ) => {
     // Validate bookmark limit
     if (!canAddBookmark) {
@@ -186,7 +192,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       return;
     }
 
-    const bookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName);
+    const bookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName, senderIcon, threadName);
     addBookmarkMutation.mutate(bookmark);
   }, [canAddBookmark, createBookmarkFromMessage, addBookmarkMutation]);
 
@@ -201,7 +207,9 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     sourceType: 'channel' | 'dm',
     context: BookmarkContext,
     senderName: string = 'Unknown User',
-    sourceName: string = 'Unknown Source'
+    sourceName: string = 'Unknown Source',
+    senderIcon?: string,
+    threadName?: string
   ) => {
     // Validate message structure first (before accessing messageId)
     if (!message || !message.messageId || !message.content) {
@@ -250,7 +258,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
         return;
       }
 
-      const newBookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName);
+      const newBookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName, senderIcon, threadName);
       addBookmarkMutation.mutate(newBookmark, {
         onSettled: () => {
           setPendingToggles(prev => {

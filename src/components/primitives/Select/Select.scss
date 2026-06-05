@@ -249,8 +249,10 @@
     }
   }
 
-  // Bordered variant dropdown - has border
-  &--bordered &__dropdown {
+  // Dropdown border is opt-in via `borderedDropdown`, applied as a class on the
+  // portaled dropdown itself — the trigger's `--bordered` modifier can't reach
+  // here because the dropdown is rendered outside the Select's DOM subtree.
+  &__dropdown--bordered {
     border: $border solid var(--color-field-border);
   }
 

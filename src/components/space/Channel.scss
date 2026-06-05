@@ -9,24 +9,11 @@
   }
 }
 
-// No rounded border with Space Image visible and above 1023px
-// Scope to Channel component only to avoid affecting DirectMessage
+// Chat container sits full-bleed inside the AppShell main slot.
 .space-container .chat-container {
   border-top-left-radius: 0;
 
-  // Mobile: add rounded border (but will be overridden by _chat.scss for phones)
-  @media (max-width: 1023px) {
-    border-top-left-radius: $rounded-xl;
-  }
-
-  // When thread panel is open, add top-right radius to visually separate from thread sidebar
-  // Desktop only — on small screens the thread is a full-width overlay
   &.thread-open {
-    @media (min-width: $screen-md) {
-      border-top-right-radius: $rounded-xl;
-      overflow: hidden;
-    }
-
     // Hide search field when thread panel is a full-width overlay (≤md)
     // The thread panel covers the chat area entirely, so the search is irrelevant
     @media (max-width: $screen-md) {

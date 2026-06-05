@@ -1,0 +1,92 @@
+@use '../../styles/variables' as *;
+
+.discover-tab {
+  display: flex;
+  flex-direction: column;
+  gap: $s-4;
+  padding: $s-4;
+  min-height: 100%;
+
+  &__header {
+    display: flex;
+    align-items: stretch; // search + select share the same height
+    justify-content: flex-start;
+    gap: $s-3;
+
+    // Below 640px the search + select stack vertically, both full-width.
+    @media (max-width: 640px) {
+      flex-direction: column;
+      align-items: stretch;
+      gap: $s-2;
+    }
+
+    // Force a consistent control height across the input + select so they
+    // read as a single search/filter pair. Targets the rendered elements
+    // so the override survives any primitive padding/border tweaks.
+    .quorum-input,
+    .quorum-select__trigger {
+      height: $s-10; // 40px — shared control height
+      box-sizing: border-box;
+    }
+
+    .quorum-input {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  // Search takes ~2/3 of available width up to a sensible cap, doesn't grow
+  // beyond it. Select then sits immediately to the right (not floated to the
+  // far edge of the page).
+  &__search {
+    flex: 0 1 auto;
+    width: 100%;
+    max-width: 20rem; // ~320px — was 28rem (448px); cap tightened so the
+    // category select sits visibly next to it instead of feeling adrift.
+    min-width: 0;
+
+    @media (max-width: 640px) {
+      max-width: none;
+    }
+  }
+
+  &__category {
+    flex: 0 0 auto;
+  }
+
+  // Squared cards: target ~18rem (288px) per cell. On 1600px+ desktops you get
+  // 4-5 columns; collapses progressively on smaller screens.
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+    gap: $s-4;
+
+    @media (max-width: 480px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  &__loading {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: $s-8;
+    color: var(--color-text-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: $s-2;
+  }
+
+  &__load-more {
+    display: flex;
+    justify-content: center;
+    padding: $s-4 0;
+  }
+
+  &__footer {
+    text-align: center;
+    font-size: $text-sm;
+    color: var(--color-text-subtle);
+    padding: $s-2 0;
+  }
+}

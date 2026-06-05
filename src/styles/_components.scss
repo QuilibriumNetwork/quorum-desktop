@@ -79,6 +79,11 @@ div[role='presentation'] {
   &.active .quorum-button-icon-element {
     color: var(--color-text-main) !important;
   }
+
+  /* Accent-active: search toggle when its row is open. */
+  &.active--accent .quorum-button-icon-element {
+    color: var(--accent) !important;
+  }
 }
 
 /* === UNREAD MESSAGE INDICATORS === */
@@ -86,12 +91,63 @@ div[role='presentation'] {
 /* This provides a consistent visual indicator across all conversation types */
 .unread-dot {
   position: absolute;
-  width: $s-1; 
+  width: $s-1;
   height: $s-1;
   border-radius: $rounded-full;
   background: var(--accent);
   z-index: 10;
   transition: all $duration-100 linear;
+}
+
+/* === Sidebar avatar indicators (shared) ===
+   These two classes are the canonical visuals used across all avatar rows in
+   sidebars (Spaces, DM contacts, NavRail). Apply to a child of any
+   position:relative avatar wrapper.
+
+   - .icon-unread-dot: 6px accent dot just to the left of the avatar, vertically
+     centered. In compact (rail / strip) layouts it's partially clipped by the
+     sidebar edge — that "peek" is intentional.
+   - .icon-mention-bubble: top-right corner numeric badge ("@" or replies).
+
+   SpaceIcon's older .space-icon-toggle--unread / .space-icon-mention-bubble
+   selectors are aliases that @extend these. */
+.icon-unread-dot {
+  position: absolute;
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-full;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--accent);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.icon-mention-bubble {
+  position: absolute;
+  top: -$s-0-5;
+  right: -$s-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+  z-index: 1001;
+  pointer-events: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.dark .icon-mention-bubble {
+  background-color: var(--accent-600);
 }
 
 /* Channel-specific positioning */
@@ -113,9 +169,11 @@ div[role='presentation'] {
   margin-top: $s-1; // Fine-tune vertical alignment for DM layout
 }
 
-/* Muted badge for DM conversations */
-/* Positioned at top-left corner of avatar with circular background */
-.dm-muted-badge {
+/* Muted badge for sidebar avatars (DMs + Spaces).
+   Positioned at top-left corner with a circular background that punches
+   through the sidebar bg so the icon reads clearly. */
+.dm-muted-badge,
+.muted-badge {
   position: absolute;
   top: -$s-1;
   left: -$s-1;
@@ -126,15 +184,24 @@ div[role='presentation'] {
   justify-content: center;
   background-color: var(--color-bg-sidebar);
   border-radius: $rounded-full;
-  z-index: 10;
+  // SpaceIcon wraps the avatar in a `relative z-[999]` div, so the badge has
+  // to sit above that stacking context to be visible on space rows.
+  z-index: 1000;
   color: var(--color-text-muted);
 }
 
-/* Favorite indicator for DM conversations */
-/* Accent border around the avatar */
+/* Favorite indicator for sidebar avatars (DMs + Spaces).
+   Accent border around the avatar. DM-specific selector keeps the
+   round avatar's pill radius; the shared selector inherits whatever
+   border-radius the wrapped avatar already has. */
 .dm-favorite-avatar {
   border: $s-0-5 solid var(--accent);
   border-radius: $rounded-full;
+}
+
+.favorite-avatar {
+  border: $s-0-5 solid var(--accent);
+  border-radius: inherit;
 }
 
 /* === LIST FADE EFFECTS === */
@@ -228,3 +295,188 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
     bottom: $s-4;
   }
 }
+
+/* === Shared sidebar header (DM + Spaces) === */
+.sidebar-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: $sidebar-header-height;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding: $s-2 $s-3-5 0;
+  background-color: var(--color-bg-sidebar);
+  border-bottom: 1px solid var(--color-border-muted);
+}
+
+.sidebar-header__title {
+  flex: 1;
+  font-family: inherit;
+  font-weight: $font-bold;
+  font-size: $text-base;
+  color: var(--color-text-strong);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+/* Search row: bottom border spans filter + input. ListSearchInput inside
+   must use variant="minimal" to avoid a double underline. */
+.sidebar-search-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid var(--color-border-default);
+  border-radius: 0;
+  padding: 0 0 $s-1-5 0;
+  transition: border-bottom-color $duration-150 $ease-in-out;
+
+  &:focus-within {
+    border-bottom-color: var(--accent);
+  }
+
+  /* Strip the inner ListSearchInput / Input padding so text starts at the
+     row's left edge (which the consumer aligns with the sidebar title). */
+  .list-search-input,
+  .quorum-input--minimal {
+    padding-left: 0 !important;
+  }
+
+  /* Compact filter Select: no hover background "square" — icon-only color
+     change on hover; accent color when the dropdown is open (active). */
+  .quorum-select--compact {
+    .quorum-select__trigger {
+      background-color: transparent;
+      border-radius: $rounded;
+      padding: $s-1-5;
+
+      &:hover:not(:disabled) {
+        background-color: transparent;
+
+        .quorum-select__compact-icon {
+          color: var(--color-text-main);
+        }
+      }
+
+      &:focus {
+        background-color: transparent;
+      }
+    }
+
+    &.quorum-select--open .quorum-select__trigger {
+      background-color: transparent;
+
+      .quorum-select__compact-icon {
+        color: var(--accent);
+      }
+    }
+  }
+}
+
+/* 32px square tile, overrides Button's icon-only 40px pill. */
+.sidebar-header-action {
+  width: $s-8 !important;
+  height: $s-8 !important;
+  border-radius: $rounded-md !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+}
+
+/* Shared row chrome: hover bg + accent left bar. Shared by space rows
+   and folder headers. Focus reuses the hover background (no outline ring,
+   no accent left bar) — the left bar is reserved for hover and active so
+   it stays a clear "this row is interactive right now" signal. The nav
+   rail uses its own focus styling because it has no hover-bg fallback. */
+.sidebar-row-chrome {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: $rail-accent-bar-width;
+    height: 38px;
+    background: var(--accent);
+    border-radius: 0 $rounded-sm $rounded-sm 0;
+    opacity: 0;
+    transition: opacity $duration-150 $ease-in-out;
+  }
+
+  &:hover {
+    background: var(--color-bg-sidebar-hover);
+
+    &::before {
+      opacity: 1;
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    background: var(--color-bg-sidebar-hover);
+  }
+}
+
+.sidebar-row-chrome--merge-target {
+  background-color: color-mix(in srgb, var(--accent) 14%, transparent) !important;
+
+  &::before {
+    opacity: 1 !important;
+  }
+}
+
+/* === EMPTY STATE === */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $s-4;
+  padding: $s-8;
+  text-align: center;
+
+  &--fill {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &--page {
+    width: 100%;
+    height: 100%;
+    background: var(--color-bg-chat);
+  }
+
+  &__icon {
+    color: var(--accent);
+    opacity: 0.6;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: $text-lg;
+    line-height: $text-lg-lh;
+    color: var(--color-text-subtle);
+    max-width: 32rem;
+
+    @media (min-width: 640px) {
+      font-size: $text-2xl;
+      line-height: $text-2xl-lh;
+    }
+  }
+}
+

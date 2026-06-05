@@ -30,4 +30,9 @@ export {
   generateMockSpaces,
   isMockSpacesEnabled,
   getMockSpacesCount,
+  generateMockJoinedSpaces,
+  generateMockFolderSpaces,
+  generateMockFolderNavItem,
+  getMockFolderCounts,
+  MOCK_FOLDER_ID,
 } from './mockSpaces';

@@ -8,7 +8,7 @@ import { useDmReadState } from '../../../context/DmReadStateContext';
  * Hook to get total count of unread Direct Message conversations
  *
  * Returns the number of DM conversations that have unread messages.
- * This count is used for the NavMenu Direct Messages icon indicator.
+ * Drives NavRail's DM unread dot.
  *
  * Uses the existing DM unread logic: (c.lastReadTimestamp ?? 0) < c.timestamp
  * where c.timestamp represents the last message timestamp in the conversation.

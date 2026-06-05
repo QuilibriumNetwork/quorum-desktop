@@ -1,0 +1,203 @@
+@use '@/styles/variables' as *;
+
+.nav-rail {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  box-sizing: border-box;
+  padding: $s-2 0;
+}
+
+.nav-rail__items {
+  display: flex;
+  flex-direction: column;
+}
+
+.nav-rail__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: $rail-item-height;
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--color-rail-icon);
+  text-align: left;
+  font-family: inherit;
+  padding: 0;
+  gap: $s-3;
+
+  /* Hover: no background change — the icon (and muted-toggle label) brightens
+     to --color-text-main via `color` cascading through `currentColor`. The
+     active item is skipped: its accent color is the dominant signal and
+     shouldn't be replaced on hover. */
+  &:hover:not(.nav-rail__item--active) {
+    color: var(--color-text-main);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  /* Active state: vertical accent bar + tinted icon. NO background fill. */
+  &--active {
+    color: var(--color-rail-icon-active);
+
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: $rail-accent-bar-width;
+      height: $rail-accent-bar-height;
+      background: var(--accent);
+      border-radius: 0 $rounded-sm $rounded-sm 0;
+    }
+  }
+
+  /* Collapsed: icon centered, no label, no horizontal padding */
+  &--collapsed {
+    justify-content: center;
+    padding: 0;
+  }
+
+  /* Expanded: icon + label with horizontal padding */
+  &--expanded {
+    justify-content: flex-start;
+    padding: 0 $s-4-5;
+  }
+
+  /* Collapse toggle at the bottom of the rail — visually muted so it sits
+     quietly under the primary section nav. Icon + label both pick up the
+     subtle text color; hover still uses the shared rail-hover background
+     from the base rule. */
+  &--collapse-toggle {
+    color: var(--color-text-muted);
+
+    .nav-rail__item-label {
+      color: var(--color-text-muted);
+      font-weight: $font-medium;
+    }
+
+    &:hover {
+      color: var(--color-text-main);
+
+      .nav-rail__item-label {
+        color: var(--color-text-main);
+      }
+    }
+  }
+}
+
+.nav-rail__item-label {
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
+
+  .nav-rail__item--active & {
+    font-weight: $font-bold;
+  }
+}
+
+.nav-rail__spacer {
+  flex: 1;
+}
+
+.nav-rail__divider {
+  height: 1px;
+  background: var(--color-border-muted);
+  margin: $s-1-5 $s-3-5;
+}
+
+.nav-rail__user {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 52px;
+  width: 100%;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--color-text-main);
+  text-align: left;
+  font-family: inherit;
+  padding: 0;
+  gap: $s-3;
+
+  /* Hover paints an inset rounded pill via ::before so the bg leaves
+     a small gutter on the left/right edges and reads as a contained
+     surface rather than a full-bleed bar. */
+  /* Pill inset: tighter gutter from the rail edge so the pill grows around
+     the content, leaving visible padding on all four sides of the
+     avatar + meta block. */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 $s-1-5;
+    border-radius: $rounded-md;
+    background: var(--color-bg-rail-hover);
+    opacity: 0;
+    transition: opacity $duration-150 $ease-in-out;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  &:hover::before {
+    opacity: 1;
+  }
+
+  /* Keep avatar + label above the pseudo background. */
+  > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -2px;
+  }
+
+  &--collapsed {
+    justify-content: center;
+    padding: 0;
+  }
+
+  &--expanded {
+    justify-content: flex-start;
+    padding: 0 $s-4;
+  }
+}
+
+.nav-rail__user-meta {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.nav-rail__user-name {
+  font-size: $text-sm;
+  font-weight: $font-bold;
+  color: var(--color-text-main);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-rail__user-hint {
+  font-size: $text-xs;
+  color: var(--color-text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

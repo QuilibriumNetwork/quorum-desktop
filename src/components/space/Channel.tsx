@@ -23,6 +23,7 @@ import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useOptionalShellState } from '../shell/useShellState';
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Tooltip, Icon } from '../primitives';
 import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
@@ -40,6 +41,7 @@ import { useThreadMessages } from '../../hooks/business/threads';
 import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
+import { useBookmarks } from '../../hooks/business/bookmarks';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -101,8 +103,10 @@ const Channel: React.FC<ChannelProps> = ({
 }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { isMobile, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isDesktop } =
     useResponsiveLayoutContext();
+  const shell = useOptionalShellState();
+  const isPhone = shell?.viewport === 'phone';
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const { showRightSidebar: showUsers, setShowRightSidebar: setShowUsers } =
@@ -296,6 +300,11 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
+
+  // Only show the bookmark icon when there's at least one bookmark in this
+  // space. Global view lives on /bookmarks.
+  const { filterByCurrentSpace } = useBookmarks({ userAddress });
+  const hasContextBookmarks = !!spaceId && filterByCurrentSpace(spaceId).length > 0;
 
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
@@ -1305,26 +1314,17 @@ const Channel: React.FC<ChannelProps> = ({
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
-            {/* Mobile controls - burger + NavMenu toggle */}
-            {!isDesktop && (
-              <div className="flex items-center gap-2">
-                <Button
-                  type="unstyled"
-                  onClick={toggleNavMenu}
-                  className="header-icon-button lg:hidden"
-                  iconName={navMenuOpen ? 'chevron-left' : 'menu'}
-                  iconSize={headerIconSize}
-                  iconOnly
-                />
-                <Button
-                  type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="header-icon-button lg:hidden"
-                  iconName="sidebar-left-expand"
-                  iconSize={headerIconSize}
-                  iconOnly
-                />
-              </div>
+            {/* Phone-only drawer trigger */}
+            {isPhone && shell && (
+              <Button
+                type="unstyled"
+                onClick={shell.openDrawer}
+                className="header-icon-button"
+                iconName="menu"
+                iconSize={headerIconSize}
+                iconOnly
+                ariaLabel={t`Open navigation`}
+              />
             )}
 
             {/* Channel name - hidden on mobile first row, shown on desktop */}
@@ -1463,33 +1463,35 @@ const Channel: React.FC<ChannelProps> = ({
                 />
               </div>
 
-              {/* Bookmarks */}
-              <div className="relative">
-                <Tooltip
-                  id={`bookmarks-${channelId}`}
-                  content={t`Bookmarks`}
-                  showOnTouch={false}
-                >
-                  <Button
-                    type="unstyled"
-                    onClick={() => setActivePanel('bookmarks')}
-                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
-                    iconName="bookmark"
-                    iconSize={headerIconSize}
-                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
-                    iconOnly
-                  />
-                </Tooltip>
+              {/* Bookmarks — only when there's something in this space.
+                  Empty state lives on /bookmarks. */}
+              {hasContextBookmarks && (
+                <div className="relative">
+                  <Tooltip
+                    id={`bookmarks-${channelId}`}
+                    content={t`Bookmarks in this space`}
+                    showOnTouch={false}
+                  >
+                    <Button
+                      type="unstyled"
+                      onClick={() => setActivePanel('bookmarks')}
+                      className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
+                      iconName="bookmark"
+                      iconSize={headerIconSize}
+                      iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
+                      iconOnly
+                    />
+                  </Tooltip>
 
-                {/* Bookmarks Panel */}
-                <BookmarksPanel
-                  isOpen={activePanel === 'bookmarks'}
-                  onClose={() => setActivePanel(null)}
-                  userAddress={userAddress}
-                  stickers={stickers}
-                  mapSenderToUser={mapSenderToUser}
-                />
-              </div>
+                  <BookmarksPanel
+                    isOpen={activePanel === 'bookmarks'}
+                    onClose={() => setActivePanel(null)}
+                    userAddress={userAddress}
+                    stickers={stickers}
+                    mapSenderToUser={mapSenderToUser}
+                  />
+                </div>
+              )}
 
               <Tooltip
                 id={`members-list-${channelId}`}

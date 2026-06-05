@@ -59,29 +59,8 @@
   width: 100%;
   height: 100%;
   background: var(--color-bg-chat);
-  border-left: none;
   position: relative;
-  border-top-left-radius: $rounded-xl;
   overflow: hidden;
-
-  // Borders only on desktop (matches chat-container pattern from _chat.scss)
-  @media (min-width: 1024px) {
-    border-top: $border solid var(--color-border-subtle);
-    border-left: $border solid var(--color-border-subtle);
-  }
-
-  // Phone: remove radius (matches chat-container phone pattern)
-  @media (max-width: $screen-xs) {
-    border-top-left-radius: 0;
-  }
-
-  // Dark theme: more muted external borders (desktop only)
-  html.dark & {
-    @media (min-width: 1024px) {
-      border-top-color: var(--color-border-muted);
-      border-left-color: var(--color-border-muted);
-    }
-  }
 
   &__header {
     // Spacing, border, typography, and responsive margins come from .chat-header (_chat.scss).

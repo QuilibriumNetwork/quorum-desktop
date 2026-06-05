@@ -8,7 +8,8 @@
  * Both gates require NODE_ENV === 'development'. Production builds tree-shake.
  */
 
-import type { DirectoryEntry, SpaceCategory } from '@quilibrium/quorum-shared';
+import type { DirectoryEntry, Space, SpaceCategory } from '@quilibrium/quorum-shared';
+import type { NavItem } from '../../db/messages';
 
 const MOCK_SPACE_NAMES = [
   'Quilibrium Dev',
@@ -136,4 +137,133 @@ export function getMockSpacesCount(): number {
   const lsValue = localStorage?.getItem('debug_mock_spaces_count');
   const n = parseInt(urlValue || lsValue || '30', 10);
   return isNaN(n) || n <= 0 ? 30 : n;
+}
+
+/**
+ * Mock joined-spaces generation for stress-testing the left-rail Spaces sidebar
+ * ({@link ../../components/space/SpacesSidebar.tsx}).
+ *
+ * Shares the same gate as the Discover screen mock ({@link isMockSpacesEnabled}
+ * / `?spaces=N` / `debug_mock_spaces`), so a single switch fills both surfaces.
+ */
+/**
+ * Mock folder used to visually verify the SpacesSidebar folder UI:
+ * aggregated mention bubble + unread dot indicator. Always present when
+ * `?spaces=N` / `debug_mock_spaces` is on. The folder ID is stable so
+ * expand/collapse persists across reloads.
+ */
+export const MOCK_FOLDER_ID = 'mock_folder_demo';
+const MOCK_FOLDER_SPACE_PREFIX = 'mock_folder_space_';
+/** How many spaces live inside the demo folder. */
+const MOCK_FOLDER_SPACE_COUNT = 4;
+
+export function generateMockFolderSpaces(): Space[] {
+  const result: Space[] = [];
+  const now = Date.now();
+  for (let i = 0; i < MOCK_FOLDER_SPACE_COUNT; i++) {
+    // Offset name index so they don't collide with the flat mock list.
+    const name = MOCK_SPACE_NAMES[(i + 5) % MOCK_SPACE_NAMES.length];
+    const description =
+      MOCK_SPACE_DESCRIPTIONS[(i + 2) % MOCK_SPACE_DESCRIPTIONS.length];
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    result.push({
+      spaceId: `${MOCK_FOLDER_SPACE_PREFIX}${i}`,
+      spaceName: name,
+      description,
+      vanityUrl: '',
+      inviteUrl: '',
+      iconUrl: `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(`folder-${slug}`)}`,
+      bannerUrl: '',
+      defaultChannelId: 'general',
+      hubAddress: '',
+      createdDate: now - i * 24 * 60 * 60 * 1000,
+      modifiedDate: now - i * 24 * 60 * 60 * 1000,
+      isRepudiable: false,
+      isPublic: false,
+      groups: [],
+      roles: [],
+      emojis: [],
+      stickers: [],
+    });
+  }
+  return result;
+}
+
+export function generateMockFolderNavItem(): NavItem & { type: 'folder' } {
+  const now = Date.now();
+  return {
+    type: 'folder',
+    id: MOCK_FOLDER_ID,
+    name: 'Demo Folder',
+    spaceIds: Array.from(
+      { length: MOCK_FOLDER_SPACE_COUNT },
+      (_, i) => `${MOCK_FOLDER_SPACE_PREFIX}${i}`
+    ),
+    icon: 'folder',
+    iconVariant: 'outline',
+    color: 'blue',
+    createdDate: now,
+    modifiedDate: now,
+  };
+}
+
+/**
+ * Deterministic unread / mention counts for the demo folder's spaces. Guarantees
+ * the aggregate mention bubble is non-zero (so it renders) and at least one
+ * space has unreads (so the folder unread dot renders).
+ */
+export function getMockFolderCounts(): {
+  unread: Record<string, number>;
+  mention: Record<string, number>;
+} {
+  const unread: Record<string, number> = {};
+  const mention: Record<string, number> = {};
+  for (let i = 0; i < MOCK_FOLDER_SPACE_COUNT; i++) {
+    const id = `${MOCK_FOLDER_SPACE_PREFIX}${i}`;
+    // First two have mentions (sum = 3 + 5 = 8, visible bubble).
+    if (i === 0) mention[id] = 3;
+    if (i === 1) mention[id] = 5;
+    // Third has plain unreads only — exercises the dot without mentions.
+    if (i === 2) unread[id] = 7;
+    // Mentions also count as unreads.
+    if (i === 0) unread[id] = 3;
+    if (i === 1) unread[id] = 5;
+  }
+  return { unread, mention };
+}
+
+export function generateMockJoinedSpaces(count: number): Space[] {
+  const result: Space[] = [];
+  const now = Date.now();
+
+  for (let i = 0; i < count; i++) {
+    const name = MOCK_SPACE_NAMES[i % MOCK_SPACE_NAMES.length];
+    const description = MOCK_SPACE_DESCRIPTIONS[i % MOCK_SPACE_DESCRIPTIONS.length];
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    const iconUrl = i % 3 === 0
+      ? ''
+      : `https://api.dicebear.com/9.x/shapes/svg?seed=${encodeURIComponent(slug)}`;
+
+    result.push({
+      spaceId: `mock_joined_space_${i.toString().padStart(4, '0')}`,
+      spaceName: `${name} ${i + 1}`,
+      description,
+      vanityUrl: '',
+      inviteUrl: '',
+      iconUrl,
+      bannerUrl: '',
+      defaultChannelId: 'general',
+      hubAddress: '',
+      createdDate: now - i * 24 * 60 * 60 * 1000,
+      modifiedDate: now - i * 24 * 60 * 60 * 1000,
+      isRepudiable: false,
+      isPublic: false,
+      groups: [],
+      roles: [],
+      emojis: [],
+      stickers: [],
+    });
+  }
+
+  return result;
 }

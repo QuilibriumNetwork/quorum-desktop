@@ -36,9 +36,9 @@ Mobile's `useMoveChannel` / `useReorderGroups` / `useReorderChannels` save to MM
 
 **Tracked at [mobile issue #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)** for the mobile dev to fix on their schedule. Not a blocker for this task — desktop ships its own reorder UI and broadcasts correctly. Mobile receives and renders desktop's reorders fine.
 
-### 3. Collision detection — `closestCenter` (matches NavMenu)
+### 3. Collision detection — `closestCenter` (matches SpacesSidebar)
 
-[NavMenu.tsx:574](../../src/components/navbar/NavMenu.tsx#L574) uses `closestCenter` for nested-sortables (spaces inside folders). Copy that. No rectIntersection.
+[SpacesSidebar.tsx](../../src/components/space/SpacesSidebar.tsx) uses `closestCenter` (see its `DndContext`) for nested-sortables (spaces inside folders). Copy that. No rectIntersection. (This pattern moved here from the deleted `navbar/NavMenu.tsx`.)
 
 ### 4. Drop position on group header / empty group — append to end
 
@@ -46,7 +46,7 @@ When a channel is dragged onto a group header or onto an empty group's body (not
 
 ### 5. DragOverlay content
 
-- **Dragging a channel**: render a simplified `ChannelRow` (icon + name + badges, no buttons). Match NavMenu's overlay rendering for SpaceButton as a reference.
+- **Dragging a channel**: render a simplified `ChannelRow` (icon + name + badges, no buttons). Match the SpacesSidebar overlay rendering (`SpacesSidebar.tsx` reuses `SpacesSidebarRow` inside `DragOverlay`) as a reference.
 - **Dragging a group**: render `GroupHeader` (drag handle icon + group name, no buttons or expanded channels). Keep it visually distinct from a channel ghost.
 
 ### 6. Pinning feature — drop entirely, no migration
@@ -75,7 +75,7 @@ Source: `Channel.isReadOnly: boolean` from shared types. Show 🔒 + "Read-only"
 **Desktop-local data layer for now, divergent UI layer.** After reviewing mobile and discussing trade-offs:
 
 - **Mutation hooks → desktop-local** (`useMoveChannel`, `useReorderChannels`, `useReorderGroups`). See revised "Mutation Hooks" section below. Match mobile's API surface for forward-compatibility; do NOT ship to `quorum-shared` yet (would commit to a broadcast-DI pattern before lead-dev review).
-- **Desktop UI: drag-and-drop**, reusing patterns from [NavMenu.tsx](../../src/components/navbar/NavMenu.tsx) and [useFolderDragAndDrop.ts](../../src/hooks/business/folders/useFolderDragAndDrop.ts). Better UX for mouse, discoverable, matches Discord/Slack/Notion conventions.
+- **Desktop UI: drag-and-drop**, reusing patterns from [SpacesSidebar.tsx](../../src/components/space/SpacesSidebar.tsx) and [useFolderDragAndDrop.ts](../../src/hooks/business/folders/useFolderDragAndDrop.ts). Better UX for mouse, discoverable, matches Discord/Slack/Notion conventions. (Pattern moved from the deleted `navbar/NavMenu`.)
 - **Mobile UI: arrow buttons** (already shipped). Touch-friendly, avoids drag/scroll gesture conflicts.
 - **Sync compatibility**: confirmed. Both platforms render `space.groups` and `group.channels` in array order with no `sortOrder` field. Any reordering on either side produces a new `Space` manifest that the other side renders correctly with zero changes. Cross-group moves and group reordering done on desktop will reflect on mobile automatically — mobile just lacks the UI to *initiate* those operations.
 
@@ -242,7 +242,7 @@ All reordering operations work by modifying arrays and calling `updateSpace()`.
 
 **Already installed**: `@dnd-kit/core` ^6.3.1, `@dnd-kit/sortable` ^10.0.0, `@dnd-kit/modifiers` ^9.0.0
 
-**Reference implementation**: [NavMenu.tsx](../../src/components/navbar/NavMenu.tsx) - uses same library for space/folder reordering.
+**Reference implementation**: [SpacesSidebar.tsx](../../src/components/space/SpacesSidebar.tsx) - uses the same library for space/folder reordering. (The previous reference, `navbar/NavMenu.tsx`, was deleted in the new-UI shell migration; this is its successor.)
 
 ### Three Drag Operations
 
@@ -323,32 +323,34 @@ Desktop reorder → mobile sees the change:
 
 **Concurrency note**: the manifest model is last-write-wins. Same as existing add/delete operations — no new concurrency surface introduced.
 
-### NavMenu Reuse Guidance — Reference, Don't Subclass
+### SpacesSidebar Reuse Guidance — Reference, Don't Subclass
 
-NavMenu is the most complex DnD surface in the codebase. **Channels reordering is a strict subset** — same library, simpler rules. Treat NavMenu as a paved-road reference, not a base to extend. Resist inheriting complexity that doesn't apply.
+> Historical note: the references in this section originally pointed at the deleted `navbar/NavMenu` / `navbar/SpaceButton` tree. The successor — `SpacesSidebar` + `SpacesSidebarRow` + `SpacesSidebarFolder` — is a fork of that tree with the same DnD wiring, so the guidance below still applies, just against the new component paths.
+
+The SpacesSidebar is the most complex DnD surface in the codebase. **Channels reordering is a strict subset** — same library, simpler rules. Treat SpacesSidebar as a paved-road reference, not a base to extend. Resist inheriting complexity that doesn't apply.
 
 **Directly reusable (copy as-is)**:
 
 | Pattern | Source | Action |
 |---------|--------|--------|
-| Sensor config | [useFolderDragAndDrop.ts:600-608](../../src/hooks/business/folders/useFolderDragAndDrop.ts#L600-L608) | Drop in unchanged. `PointerSensor` only (no separate `TouchSensor` — avoids race conditions). Touch: `delay: 100, tolerance: 5`. Mouse: `distance: 8`. |
-| Drop indicator styling | [SpaceButton.tsx:151-155](../../src/components/navbar/SpaceButton.tsx#L151-L155) | Reuse the same visual language so it feels consistent. |
-| DragOverlay portal pattern | [NavMenu.tsx:634-674](../../src/components/navbar/NavMenu.tsx#L634-L674) | Copy structure for floating preview. |
-| `useSortable` wiring shape | [SpaceButton.tsx:99-103](../../src/components/navbar/SpaceButton.tsx#L99-L103) | Reuse the *pattern* (attributes, listeners, isDragging) — write fresh components. |
+| Sensor config | [useFolderDragAndDrop.ts](../../src/hooks/business/folders/useFolderDragAndDrop.ts) (`sensors` export) | Drop in unchanged. `PointerSensor` only (no separate `TouchSensor` — avoids race conditions). Touch: `delay: 100, tolerance: 5`. Mouse: `distance: 8`. |
+| Drop indicator styling | [SpacesSidebarRow.tsx](../../src/components/space/SpacesSidebarRow.tsx) (`spaces-sidebar__row-drop-indicator` block at the bottom of the component) | Reuse the same visual language so it feels consistent. |
+| DragOverlay portal pattern | [SpacesSidebar.tsx](../../src/components/space/SpacesSidebar.tsx) (`<DragOverlay>` inside `DndContext`) | Copy structure for floating preview. |
+| `useSortable` wiring shape | [SpacesSidebarRow.tsx](../../src/components/space/SpacesSidebarRow.tsx) (the `useSortable` call at the top of the component) | Reuse the *pattern* (attributes, listeners, isDragging) — write fresh components. |
 
 **Pattern-reusable, rewrite cleaner**:
 
-- `handleDragEnd` logic — NavMenu has ~10 branches because of folder creation on merge. Channels has **3**: group↔group, channel↔channel-same-group, channel↔channel-cross-group. Write fresh; don't fork NavMenu's switch.
-- Hook orchestration — NavMenu persists to UserConfig; channels persists to Space manifest. Similar shape, different persistence call.
+- `handleDragEnd` logic — SpacesSidebar's `useFolderDragAndDrop` has ~10 branches because of folder creation on merge. Channels has **3**: group↔group, channel↔channel-same-group, channel↔channel-cross-group. Write fresh; don't fork that switch.
+- Hook orchestration — `useFolderDragAndDrop` persists to UserConfig; channels persists to Space manifest. Similar shape, different persistence call.
 
-**Not reusable**: SpaceButton/NavMenu components themselves (wrong domain), folder-creation-on-merge logic (not applicable).
+**Not reusable**: SpacesSidebarRow / SpacesSidebarFolder components themselves (wrong domain), folder-creation-on-merge logic (not applicable).
 
-**Red flag during implementation**: if you're porting NavMenu code and not deleting half of it, stop and rewrite. Channels should end up noticeably simpler than NavMenu.
+**Red flag during implementation**: if you're porting SpacesSidebar code and not deleting half of it, stop and rewrite. Channels should end up noticeably simpler than the spaces sidebar.
 
-### Key Differences from NavMenu
+### Key Differences from SpacesSidebar
 
-| NavMenu | Channels Tab |
-|---------|--------------|
+| SpacesSidebar | Channels Tab |
+|---------------|--------------|
 | Creates folders from merging | No merging — just reorder |
 | ~10 complex drag scenarios | 3 simple scenarios |
 | Persists to UserConfig (local) | Persists to Space manifest (broadcast) |

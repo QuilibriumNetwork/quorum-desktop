@@ -37,6 +37,7 @@ import { isTouchDevice } from '../../utils/platform';
 
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useOptionalShellState } from '../shell/useShellState';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import {
@@ -45,6 +46,7 @@ import {
   Tooltip,
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
+import { useBookmarks } from '../../hooks/business/bookmarks';
 import { MobileDrawer } from '../ui';
 import { DMUserProfileSidebar } from './DMUserProfileSidebar';
 import { useMobile } from '../context/MobileProvider';
@@ -56,8 +58,10 @@ const LazyEmojiPicker = React.lazy(() =>
 );
 
 const DirectMessage: React.FC<{}> = () => {
-  const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isTablet } =
     useResponsiveLayoutContext();
+  const shell = useOptionalShellState();
+  const isPhone = shell?.viewport === 'phone';
 
   const { openConversationSettings } = useModalContext();
   const { openMobileEmojiDrawer } = useMobile();
@@ -139,6 +143,11 @@ const DirectMessage: React.FC<{}> = () => {
 
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
+
+  // Only show the bookmark icon when there's at least one bookmark in this
+  // DM. Global view lives on /bookmarks.
+  const { filterByConversation } = useBookmarks({ userAddress });
+  const hasContextBookmarks = filterByConversation(conversationId).length > 0;
 
   // Refs for tracking visible message timestamps (for read-time updates)
   const latestTimestampRef = useRef<number>(0);
@@ -710,26 +719,17 @@ const DirectMessage: React.FC<{}> = () => {
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
-            {/* Mobile controls - burger + NavMenu toggle */}
-            {(isMobile || isTablet) && (
-              <Flex className="gap-3 sm:gap-2">
-                <Button
-                  type="unstyled"
-                  onClick={toggleNavMenu}
-                  className="header-icon-button lg:hidden"
-                  iconName={navMenuOpen ? 'chevron-left' : 'menu'}
-                  iconOnly
-                  iconSize={headerIconSize}
-                />
-                <Button
-                  type="unstyled"
-                  onClick={toggleLeftSidebar}
-                  className="header-icon-button lg:hidden"
-                  iconName="sidebar-left-expand"
-                  iconOnly
-                  iconSize={headerIconSize}
-                />
-              </Flex>
+            {/* Phone-only drawer trigger */}
+            {isPhone && shell && (
+              <Button
+                type="unstyled"
+                onClick={shell.openDrawer}
+                className="header-icon-button"
+                iconName="menu"
+                iconOnly
+                iconSize={headerIconSize}
+                ariaLabel={t`Open navigation`}
+              />
             )}
 
             {/* User info - hidden on mobile first row, shown on desktop */}
@@ -781,32 +781,34 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               </Tooltip>
-              {/* Bookmarks */}
-              <div className="relative">
-                <Tooltip
-                  id="dm-bookmarks"
-                  content={t`Bookmarks`}
-                  showOnTouch={false}
-                >
-                  <Button
-                    type="unstyled"
-                    onClick={() => setActivePanel('bookmarks')}
-                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
-                    iconName="bookmark"
-                    iconSize={headerIconSize}
-                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
-                    iconOnly
-                  />
-                </Tooltip>
+              {/* Bookmarks — only when there's something in this conversation.
+                  Empty state lives on /bookmarks. */}
+              {hasContextBookmarks && (
+                <div className="relative">
+                  <Tooltip
+                    id="dm-bookmarks"
+                    content={t`Bookmarks in this conversation`}
+                    showOnTouch={false}
+                  >
+                    <Button
+                      type="unstyled"
+                      onClick={() => setActivePanel('bookmarks')}
+                      className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
+                      iconName="bookmark"
+                      iconSize={headerIconSize}
+                      iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
+                      iconOnly
+                    />
+                  </Tooltip>
 
-                {/* Bookmarks Panel */}
-                <BookmarksPanel
-                  isOpen={activePanel === 'bookmarks'}
-                  onClose={() => setActivePanel(null)}
-                  userAddress={userAddress}
-                  mapSenderToUser={mapSenderToUser}
-                />
-              </div>
+                  <BookmarksPanel
+                    isOpen={activePanel === 'bookmarks'}
+                    onClose={() => setActivePanel(null)}
+                    userAddress={userAddress}
+                    mapSenderToUser={mapSenderToUser}
+                  />
+                </div>
+              )}
               <Tooltip
                 id="dm-profile-toggle"
                 content={t`User Profile`}
@@ -951,7 +953,7 @@ const DirectMessage: React.FC<{}> = () => {
               </Flex>
             )}
 
-            {/* Emoji panel for DMs (emoji-only, no stickers tab) */}
+            {/* Emoji panel for DMs (emoji-only, no stickers tab). */}
             {showEmojiPanel && (
               <>
                 <div
@@ -960,6 +962,17 @@ const DirectMessage: React.FC<{}> = () => {
                 />
                 <div
                   className="stickers-panel-wrapper"
+                  style={{
+                    right: (() => {
+                      let offset = 24; // base padding
+                      if (showProfile && !isMobile && !isTablet) {
+                        const val = getComputedStyle(document.documentElement)
+                          .getPropertyValue('--sidebar-right-width');
+                        offset += parseInt(val, 10) || 260;
+                      }
+                      return `${offset}px`;
+                    })(),
+                  }}
                   onKeyDown={(e) => {
                     if (e.key === 'Escape') {
                       setShowEmojiPanel(false);
@@ -1002,6 +1015,7 @@ const DirectMessage: React.FC<{}> = () => {
                 onSubmitMessage={composer.submitMessage}
                 onShowStickers={handleShowEmojiPanel}
                 hasStickers={true}
+                emojiOnly={true}
                 inReplyTo={composer.inReplyTo}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}

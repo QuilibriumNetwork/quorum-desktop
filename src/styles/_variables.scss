@@ -294,20 +294,14 @@ $container-2xl: 1536px;      /* Container max-width at 2xl breakpoint */
 
    ============================================ */
 
-/* === NAVIGATION MENU SIZES === */
-/* Coupled sizes that must stay in sync across multiple files */
-$nav-header-width: 74px;              /* NavMenu header width on desktop - used in layout calculations across multiple files */
-$nav-header-width-mobile: 54px;       /* NavMenu header width on mobile - used in layout calculations across multiple files */
-$nav-space-icon-size: $s-12;          /* Space icon size (desktop) - 48px - used in NavMenu, SpaceIcon, ExpandableNavMenu */
-$nav-space-icon-size-mobile: $s-12;   /* Space icon size (mobile) - 40px - used in NavMenu, SpaceIcon, ExpandableNavMenu */
+/* === SPACE ICON SIZES === */
+/* 48px on all viewports — matches Material's 48px touch-target floor and
+   keeps folder buttons (also $s-12) visually consistent across breakpoints. */
+$nav-space-icon-size: $s-12;          /* 48px - used in SpaceIcon, UserInitials */
 
 /* === HEADER HEIGHT === */
 /* Shared min-height for all single-row headers (channel, DM, thread, space no-banner) */
 $header-height: 49px;
-
-/* === LAYOUT TOP OFFSET === */
-/* Space between top of screen and main content areas - keeps NavMenu logo aligned with chat header */
-$layout-top-offset: 14px;             /* Used in: _chat.scss (chat-container height), NavMenu.scss (logo positioning) */
 
 /* === MESSAGE COMPOSER SIZES === */
 /* Semantic variables for MessageComposer dimensions - keeps toast positioning in sync */
@@ -324,4 +318,16 @@ $toast-gap: $s-3;                         /* 12px - space between toast and comp
 /* Coupled sizes for message sender avatar and compact spacer */
 $message-avatar-size: $s-11;              /* 44px - desktop avatar size */
 $message-avatar-size-mobile: $s-9;        /* 36px - mobile avatar size (≤480px) */
+
+/* === NEW UI SHELL === */
+/* Sizes for the new 3-column shell (NavRail + Sidebar + main). */
+/* Used across src/components/shell/ and its child components. */
+$rail-width-collapsed:    72px;
+$rail-width-expanded:    236px;
+$sidebar-width:          300px;
+$sidebar-width-collapsed: 72px;
+$sidebar-header-height:   56px;
+$rail-item-height:        46px;
+$rail-accent-bar-width:    3px;
+$rail-accent-bar-height:  24px;
 

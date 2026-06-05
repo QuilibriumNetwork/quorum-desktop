@@ -1,58 +1,17 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
-import DirectMessageContactsList from './DirectMessageContactsList';
 import DirectMessage from './DirectMessage';
 import { EmptyDirectMessage } from './EmptyDirectMessage';
-import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './DirectMessages.scss';
-import { useRegistrationContext } from '../context/useRegistrationContext';
 import { ReactTooltip } from '../ui';
 import { t } from '@lingui/core/macro';
 
 const DirectMessages: React.FunctionComponent = () => {
   const { address } = useParams<{ address: string }>();
-  const { keyset } = useRegistrationContext();
-  const {
-    isMobile,
-    isTablet,
-    leftSidebarOpen,
-    closeLeftSidebar,
-    openLeftSidebar,
-    navMenuOpen,
-  } = useResponsiveLayoutContext();
-
-  // Simple context-aware sidebar: set initial state based on route, only on route changes
-  React.useEffect(() => {
-    // Only manage sidebar state for mobile/tablet - desktop shows sidebar always
-    if (isMobile || isTablet) {
-      if (!address) {
-        // On /messages (no specific conversation) - show sidebar
-        openLeftSidebar();
-      } else {
-        // On /messages/:address (specific conversation) - hide sidebar
-        closeLeftSidebar();
-      }
-    }
-  }, [address, isMobile, isTablet]); // Removed leftSidebarOpen from deps to avoid fighting manual toggles
 
   return (
     <div className="direct-messages-container">
-      {/* Mobile backdrop overlay - show when sidebar is visible */}
-      {(isMobile || isTablet) && leftSidebarOpen && (
-        <div
-          className={`fixed inset-y-0 right-0 bg-overlay z-[997] left-sidebar-backdrop ${!navMenuOpen ? 'nav-menu-hidden' : ''}`}
-          onClick={closeLeftSidebar}
-        />
-      )}
-
-      <div
-        className={`direct-messages-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''} ${!navMenuOpen ? 'nav-menu-hidden' : ''}`}
-      >
-        <React.Suspense>
-          {keyset?.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
-        </React.Suspense>
-      </div>
       <React.Suspense>
         {address ? (
           <DirectMessage key={'messages-' + address} />

@@ -1,9 +1,16 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
-// Header height constants — HEADER_MIN_HEIGHT must match $header-height in _variables.scss
+// Header height constants. HEADER_MIN_HEIGHT is the floor for the collapsing
+// banner at full scroll. The overlay layout pins the 32px back/settings
+// buttons at top:10 and the title at bottom:10, so the floor needs enough
+// vertical room for: button (32 + 10) + breathing gap + title baseline +
+// bottom padding (10). At 72px the title slid up under the buttons; 92px
+// keeps a visible gap. Does not mirror $header-height (49px) — the
+// chat-header next to the banner keeps its own height; the small step
+// at full scroll is by design.
 const HEADER_MAX_HEIGHT = 132
 const HEADER_MAX_HEIGHT_2XL = 144
-const HEADER_MIN_HEIGHT = 48
+const HEADER_MIN_HEIGHT = 92
 const SCREEN_2XL = 1536 // Very large screens
 
 /**

@@ -41,3 +41,7 @@ export const useDragStateContext = (): DragStateContextType => {
   }
   return context;
 };
+
+/** Non-throwing variant for components that may render outside the provider. */
+export const useOptionalDragStateContext = (): DragStateContextType | undefined =>
+  useContext(DragStateContext);

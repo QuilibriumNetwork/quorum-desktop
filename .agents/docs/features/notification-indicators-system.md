@@ -19,9 +19,10 @@ Discord-style visual notification system providing feedback about unread content
 2. **Notification Bubbles**: Numbered badges showing mention + reply counts
 
 These indicators appear on:
-- **NavMenu**: Space icons, folder icons, DM icon
-- **ChannelList**: Individual channel items
-- **DirectMessageContactsList**: Individual DM contacts
+- **NavRail** (top-level shell rail): the Messages item carries a small DM unread dot
+- **SpacesSidebar**: every space row, every folder header, and every nested space-in-folder row
+- **ChannelList**: individual channel items inside a space
+- **DirectMessageContactsList**: individual DM contacts
 
 ---
 
@@ -29,13 +30,17 @@ These indicators appear on:
 
 ### Indicator Types by Location
 
-| Location | Unread Indicator | Notification Bubble |
-|----------|------------------|---------------------|
-| **Space Icon** | White toggle bar on left | Accent-colored count badge |
-| **Folder Icon** | White toggle bar on left | Sum of space counts |
-| **DM Icon** | White toggle bar on left | Unread conversation count |
-| **Channel Item** | Dot next to icon | Combined mention+reply count |
-| **DM Contact** | Bold name + dot | N/A |
+| Location | Unread | Mention bubble |
+|----------|--------|----------------|
+| NavRail "Messages" | `.icon-unread-dot` | — |
+| Spaces row (expanded) | `.spaces-sidebar__row-badge` | `space-icon-mention-bubble` |
+| Spaces row (strip) | `space-icon-toggle--unread` | `space-icon-mention-bubble` |
+| Folder header (collapsed) | `space-icon-toggle--unread` | `folder-button-mention-bubble` |
+| Channel item | `.icon-unread-dot` | `.icon-mention-bubble` |
+| DM row | `.icon-unread-dot` + bold name | — |
+| DM strip | `.direct-messages-strip-unread-dot` | — |
+
+Shared dot/bubble visuals (`.icon-unread-dot`, `.icon-mention-bubble`) live in [_components.scss](src/styles/_components.scss). The avatar wrapper must be `position: relative` for the dot's negative-left offset to anchor.
 
 ### Data Flow
 
@@ -73,38 +78,26 @@ This provides O(1) unread status per conversation.
 
 ## Key Components
 
-### Space Icon (NavMenu)
+### Spaces Sidebar Row
 
-**Files**: `src/components/navbar/SpaceIcon.tsx`, `NavMenu.tsx`
+[SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx) merges mention + reply counts into `spaceMentionPlusReplyCounts` and passes the per-space subset to each row.
 
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| Toggle bar | `spaceUnreadCounts[spaceId]` | Any channel has unread messages |
-| Count bubble | `spaceMentionCounts + spaceReplyCounts` | Mentions or replies exist |
+| Indicator | Data | Condition |
+|-----------|------|-----------|
+| `.spaces-sidebar__row-badge` (expanded) | `spaceUnreadCounts[spaceId]` | Any unread (`99+` above 99) |
+| `space-icon-toggle--unread` (strip) | same | same |
+| `space-icon-mention-bubble` | `spaceMentionPlusReplyCounts[spaceId]` | Mention/reply exists |
+| `muted-badge` | `mutedSpacesSet.has(spaceId)` | Space muted |
 
-**Context Menu**: Right-click (desktop) or long-press (touch) shows "Mark All as Read" when any notifications exist (unread messages, mentions, or replies). This marks ALL channels in the space as read, including muted channels.
+Right-click opens [useSpaceContextMenu](src/hooks/business/spaces/useSpaceContextMenu.tsx); "Mark All as Read" appears when the row was flagged `hasNotifications`.
 
-### Folder Icon (NavMenu)
+### Spaces Sidebar Folder Header
 
-**Files**: `src/components/navbar/FolderButton.tsx`, `FolderContainer.tsx`
+In [SpacesSidebarFolder.tsx](src/components/space/SpacesSidebarFolder.tsx), `hasUnread = spaces.some(...)` and `folderMentionCount = sum(spaceMentionCounts[child])` drive the folder tile's dot and mention bubble. Both suppressed when `isExpanded` (nested rows surface their own).
 
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| Toggle bar | `spaces.some(s => s.notifs > 0)` | Any space in folder has unreads |
-| Count bubble | Sum of all `spaceMentionCounts` in folder | Any space has mentions/replies |
+### NavRail DM Dot
 
-When folder is expanded, indicators hide (individual space icons show their own).
-
-### DM Icon (NavMenu)
-
-**File**: `src/components/navbar/NavMenu.tsx`
-
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| Toggle bar | `dmUnreadCount > 0` | Any DM has unread messages |
-| Count bubble | `useDirectMessageUnreadCount()` | Unread conversations exist |
-
-**Context Menu**: Right-click (desktop) or long-press (touch) shows "Mark All as Read" when unread DMs exist.
+[NavRail.tsx](src/components/shell/NavRail.tsx) renders `.icon-unread-dot` on the Messages item when [useDirectMessageUnreadCount](src/hooks/business/messages/useDirectMessageUnreadCount.ts) returns > 0.
 
 ### Channel Item (ChannelList)
 
@@ -117,11 +110,7 @@ When folder is expanded, indicators hide (individual space icons show their own)
 
 ### DM Contact (DirectMessageContactsList)
 
-**Files**: `src/components/direct/DirectMessageContact.tsx`, `DirectMessageContactsList.tsx`
-
-| Indicator | Data Source | Condition |
-|-----------|-------------|-----------|
-| Bold name + dot | `lastReadTimestamp < timestamp` | Unread messages exist |
+In [DirectMessageContact.tsx](src/components/direct/DirectMessageContact.tsx) the avatar carries `.icon-unread-dot` when `unread && !muted`, plus `.dm-muted-badge` when muted. The collapsed strip uses `.direct-messages-strip-unread-dot` on the same condition.
 
 ---
 
@@ -191,7 +180,7 @@ After user stays in channel/DM for 2+ seconds:
 
 ### Space "Mark All as Read" (Context Menu)
 
-**File**: `src/components/navbar/NavMenu.tsx` (`handleMarkSpaceAsRead`)
+**File**: [useSpaceContextMenu.tsx](src/hooks/business/spaces/useSpaceContextMenu.tsx) (`handleMarkSpaceAsRead`)
 
 When "Mark All as Read" is selected from a Space Icon context menu:
 
@@ -261,46 +250,6 @@ For immediate UI updates when marking all DMs as read, a React Context provides 
 
 ---
 
-## File Reference
-
-```
-src/
-├── context/
-│   └── DmReadStateContext.tsx              # DM bulk read state
-├── hooks/
-│   └── business/
-│       ├── conversations/
-│       │   └── useUpdateReadTime.ts        # Read time mutation + invalidation
-│       ├── mentions/
-│       │   ├── useChannelMentionCounts.ts  # Channel mention counts
-│       │   └── useSpaceMentionCounts.ts    # Space mention counts
-│       ├── replies/
-│       │   ├── useReplyNotificationCounts.ts # Channel reply counts
-│       │   └── useSpaceReplyCounts.ts      # Space reply counts
-│       └── messages/
-│           ├── useChannelUnreadCounts.ts   # Channel unread status
-│           ├── useSpaceUnreadCounts.ts     # Space unread status
-│           └── useDirectMessageUnreadCount.ts # DM unread count
-├── components/
-│   ├── navbar/
-│   │   ├── SpaceIcon.tsx                   # Space icon with indicators
-│   │   ├── FolderButton.tsx                # Folder icon with indicators
-│   │   ├── FolderContainer.tsx             # Folder aggregation logic
-│   │   └── NavMenu.tsx                     # Wires all NavMenu indicators
-│   ├── notifications/
-│   │   └── NotificationPanel.tsx           # Mark all read button
-│   ├── space/
-│   │   ├── ChannelList.tsx                 # Wires channel indicators
-│   │   └── ChannelItem.tsx                 # Channel item with indicators
-│   └── direct/
-│       ├── DirectMessageContactsList.tsx   # DM list with indicators
-│       └── DirectMessageContact.tsx        # DM contact with indicators
-└── services/
-    └── MessageService.ts                   # Cache invalidation on new messages
-```
-
----
-
 ## Related Documentation
 
 - [Mention Notification System](./mention-notification-system.md) - Mention detection, extraction, rendering
@@ -308,3 +257,5 @@ src/
 - [Space Folders](./space-folders.md) - Folder aggregation behavior
 
 ---
+
+*Last updated: 2026-06-04*

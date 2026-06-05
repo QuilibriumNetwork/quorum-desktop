@@ -11,7 +11,6 @@ export * from './useKeyBackup';
 export * from './useFileUpload';
 export * from './useAuthenticationFlow';
 export * from './useSpaceRecovery';
-export { useHideMutedSpaces } from './useHideMutedSpaces';
 export {
   useUnifiedOnboardingFlow,
   type OnboardingStep,

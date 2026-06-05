@@ -21,11 +21,21 @@ import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
 import type { Role, Channel, PostMessage } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
+import { truncateAddress } from '../../utils';
 
 interface MessageMarkdownRendererProps {
   content: string;
   className?: string;
   mapSenderToUser?: (senderId: string) => { displayName?: string; userIcon?: string };
+  /**
+   * Strict variant of `mapSenderToUser`. Returns null when the address is not
+   * a known member, so the renderer can distinguish a real user from a
+   * fallback. When provided, user mentions to unknown addresses render as
+   * non-interactive truncated-address pills (no display name, no click).
+   * When not provided, the renderer falls back to the legacy behavior
+   * (everything is interactive whenever `onUserClick` is set).
+   */
+  resolveSender?: (senderId: string) => { displayName?: string; userIcon?: string } | null;
   onUserClick?: (user: {
     address: string;
     displayName?: string;
@@ -225,6 +235,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   content,
   className = '',
   mapSenderToUser,
+  resolveSender,
   onUserClick,
   onChannelClick,
   onMessageLinkClick,
@@ -610,24 +621,54 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         );
       } else if (match[3]) {
         // User mention: <<<MENTION_USER:address>>>
+        //
+        // Rendering rule:
+        //   - resolveSender(address) returns a real user → pill shows the
+        //     display name and is interactive (clickable, hover cursor).
+        //   - resolveSender(address) returns null (or isn't provided and
+        //     mapSenderToUser also yields nothing useful) → pill shows
+        //     `truncateAddress(address)` and is non-interactive (no hover
+        //     cursor, no click). Communicates "this is a mention" without
+        //     lying about what clicking it will do.
+        //
+        // Legacy fallback: when neither resolveSender nor mapSenderToUser
+        // is wired, we render the raw token as plain text (the pre-existing
+        // behavior for surfaces that haven't opted in).
         const address = match[3];
-        if (mapSenderToUser && onUserClick) {
-          const user = mapSenderToUser(address);
-          const displayName = user?.displayName || address.substring(0, 8) + '...';
+        if (resolveSender || mapSenderToUser) {
+          // Two independent signals:
+          //   isResolved → "did the lookup actually find a real user?"
+          //     Used for interactivity (only interactive when we have a user
+          //     the click can actually navigate to).
+          //   has-display-name → "do we have a name we can show?"
+          //     Used purely for the label. A resolved user with no display
+          //     name still gets the truncated address as a fallback label,
+          //     but stays interactive because the click still has a target.
+          //
+          // TODO: once all callsites of mapSenderToUser have migrated to
+          // resolveSender, drop the legacy branch — until then unknown users
+          // in legacy contexts still resolve to the slice-of-address fallback
+          // and remain interactive, matching pre-existing behavior.
+          const resolvedUser = resolveSender
+            ? resolveSender(address)
+            : (mapSenderToUser ? mapSenderToUser(address) : null);
+          const isResolved = resolvedUser != null;
+          const displayName = resolvedUser?.displayName || truncateAddress(address, 4, 4);
+          const interactive = isResolved && !!onUserClick;
 
           parts.push(
             <span
               key={`mention-${match.index}`}
-              className="message-mentions-user interactive"
+              className={`message-mentions-user ${interactive ? 'interactive' : 'non-interactive'}`}
               data-user-address={address}
               data-user-display-name={displayName}
-              data-user-icon={user?.userIcon || ''}
+              data-user-icon={resolvedUser?.userIcon || ''}
             >
               @{displayName}
             </span>
           );
         } else {
-          // Fallback if handlers not available
+          // No lookup available — render the raw token as plain text
           parts.push(match[0]);
         }
       } else if (match[4] && match[5]) {
@@ -711,7 +752,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     }
 
     return parts;
-  }, [mapSenderToUser, onUserClick]);
+  }, [mapSenderToUser, resolveSender, onUserClick]);
 
   // Simplified processing pipeline with stable dependencies
   // NOTE: processMessageLinks BEFORE processURLs to prevent double-processing
@@ -1030,13 +1071,20 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   const handleClick = useCallback((event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
 
-    // Handle user mention clicks
-    if (target.classList.contains('message-mentions-user') && onUserClick) {
+    // Handle user mention clicks. Non-interactive pills (unresolved senders)
+    // intentionally swallow the click so the cursor and behavior match.
+    if (
+      target.classList.contains('message-mentions-user') &&
+      target.classList.contains('interactive') &&
+      onUserClick
+    ) {
       const address = target.dataset.userAddress;
 
       if (address) {
         // SECURITY: Always do fresh user lookup for UserProfile modal to prevent impersonation
-        const user = mapSenderToUser ? mapSenderToUser(address) : null;
+        const user = resolveSender
+          ? resolveSender(address)
+          : (mapSenderToUser ? mapSenderToUser(address) : null);
         onUserClick({
           address,
           displayName: user?.displayName,
@@ -1060,7 +1108,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       const channelId = target.dataset.channelId;
       onChannelClick(channelId);
     }
-  }, [onUserClick, onChannelClick, onMessageLinkClick, mapSenderToUser]);
+  }, [onUserClick, onChannelClick, onMessageLinkClick, mapSenderToUser, resolveSender]);
 
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${suffix ? 'has-inline-suffix' : ''} ${className || ''}`} onClick={handleClick}>

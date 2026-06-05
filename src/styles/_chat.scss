@@ -7,55 +7,16 @@
   z-index: auto; /* Let tooltips (z-index: 10002) appear above */
   display: flex;
   flex-direction: row;
-  height: calc(100vh - $layout-top-offset);
-  @supports (height: 100dvh) {
-    height: calc(100dvh - $layout-top-offset);
-  }
-
-  // Electron-specific height adjustment for titlebar
-  .electron & {
-    height: calc(100vh - 38px); /* Account for titlebar */
-  }
-
-  // Mobile layout - ensure full width usage
-  @media (max-width: 1023px) {
-    width: 100%;
-    max-width: 100%;
-    flex: 1;
-    border-top-left-radius: $rounded-xl;
-  }
-
-  // Phone layout - move to top, remove rounded border
-  @media (max-width: $screen-xs) {
-    border-top-left-radius: 0; // Remove rounded border on phones
-    margin-top: -14px; // Pull up to eliminate black stripe
-    padding-top: $s-2; // Maintain inner spacing
-    height: calc(100vh); // Full viewport height
-    @supports (height: 100dvh) {
-      height: calc(100dvh);
-    }
-
-    // Electron-specific adjustment for titlebar
-    .electron & {
-      margin-top: -38px; // Pull up for Electron (14px base + 24px titlebar)
-      padding-top: 38px;
-      height: calc(100vh);
-    }
-  }
+  height: 100%;
+  width: 100%;
+  max-width: 100%;
 
   // Ensure the main flex child (chat content) takes full available space
   > .flex.flex-col {
     flex: 1;
-    min-width: 0; // Allow shrinking
+    min-width: 0;
     min-height: 0; // Allow vertical shrinking so footer doesn't get pushed out
     width: 100%;
-  }
-}
-
-// Override Channel's specific rounded border rule for phones
-.space-container .chat-container {
-  @media (max-width: $screen-xs) {
-    border-top-left-radius: 0 !important; // Force remove rounded border on phones
   }
 }
 
@@ -67,20 +28,16 @@
   border-bottom: $border solid var(--color-border-default);
   // Guaranteed minimum height so all single-row headers (channel, DM, thread)
   // are pixel-identical. Channel header may grow taller on mobile via flex-wrap.
-  min-height: $header-height;
+  min-height: calc($header-height + $s-2);
   display: flex;
   align-items: center;
 
-  padding: $s-2 11px; // 8px top/bottom, 11px left/right
+  // Extra top padding gives icons breathing room from the viewport edge.
+  padding: $s-3 11px $s-2; // 12px top, 8px bottom, 11px left/right
 
   // Desktop spacing
   @media (min-width: 1024px) {
-    padding: $s-2 $s-4; // 8px top/bottom, 16px left/right
-  }
-
-  // Phone: extra top padding to push content down slightly
-  @media (max-width: $screen-xs) {
-    padding-top: $s-3; // 12px top on phone
+    padding: $s-3 $s-4 $s-2; // 12px top, 8px bottom, 16px left/right
   }
 
   // Responsive layout for mobile/tablet
@@ -94,35 +51,11 @@
   }
 }
 
-// Both themes - add top border to chat-container on desktop
-.chat-container {
-  @media (min-width: 1024px) {
-    border-top: $border solid var(--color-border-subtle);
-  }
-}
-
-// Light theme only - add left border to chat-container on desktop
-html:not(.dark) .chat-container {
-  @media (min-width: 1024px) {
-    border-left: $border solid var(--color-border-subtle);
-  }
-}
-
-// Both themes - add right border when thread panel is open
+// Thread-panel separator: when the right-hand thread panel is open, draw a 1px
+// line between the chat and the thread so they read as distinct columns.
 .chat-container.thread-open {
   @media (min-width: 1024px) {
-    border-right: $border solid var(--color-border-subtle);
-  }
-}
-
-// Dark theme - use more muted borders for external layout borders
-html.dark .chat-container {
-  @media (min-width: 1024px) {
-    border-top-color: var(--color-border-muted);
-  }
-
-  &.thread-open {
-    border-right-color: var(--color-border-muted);
+    border-right: $border solid var(--color-border-muted);
   }
 }
 

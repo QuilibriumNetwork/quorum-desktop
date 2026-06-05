@@ -1,5 +1,4 @@
 import React, { useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Icon } from '../primitives';
 import { getIconColorHex, IconColor } from './IconPicker/types';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
@@ -27,13 +26,10 @@ interface ChannelItemProps {
   currentChannelId: string;
   isSpaceOwner: boolean;
   isTouch: boolean;
-  isMobile: boolean;
-  isTablet: boolean;
   groupName: string;
   isMuted?: boolean;
   onChannelClick?: () => void;
   onChannelNavigate: (channelId: string) => void;
-  closeLeftSidebar: () => void;
   openChannelEditor: (
     spaceId: string,
     groupName: string,
@@ -126,18 +122,13 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   currentChannelId,
   isSpaceOwner,
   isTouch,
-  isMobile,
-  isTablet,
   groupName,
   isMuted = false,
   onChannelClick,
   onChannelNavigate,
-  closeLeftSidebar,
   openChannelEditor,
   onToggleMute,
 }) => {
-  const navigate = useNavigate();
-
   // Context menu state
   const [contextMenuPosition, setContextMenuPosition] = useState<{
     x: number;
@@ -213,14 +204,10 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
       }
     },
     onTap: () => {
-      // Navigate to channel and close sidebar on mobile/tablet
       if (isTouch) {
         hapticLight();
       }
       onChannelNavigate(channel.channelId);
-      if (isMobile || isTablet) {
-        closeLeftSidebar();
-      }
     },
     shouldPreventDefault: true,
     threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,
@@ -282,16 +269,17 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
       <div
         role="link"
         tabIndex={0}
+        aria-label={channel.channelName}
         className={`cursor-pointer ${mutedClassName}`}
         onClick={() => {
           onChannelClick?.();
-          navigate(`/spaces/${spaceId}/${channel.channelId}`);
+          onChannelNavigate(channel.channelId);
         }}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             onChannelClick?.();
-            navigate(`/spaces/${spaceId}/${channel.channelId}`);
+            onChannelNavigate(channel.channelId);
           }
         }}
         onContextMenu={handleContextMenu}

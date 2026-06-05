@@ -63,7 +63,7 @@ export interface SpaceNotificationSettings {
 | Main Hook | [useChannelMute.ts](src/hooks/business/channels/useChannelMute.ts) | Provides mute/unmute functions and state |
 | Utility Functions | [channelUtils.ts](src/utils/channelUtils.ts) | Helper functions for mute checking |
 | Channel Item UI | [ChannelItem.tsx](src/components/space/ChannelItem.tsx) | Context menu for channel muting |
-| Space Context Menu | [NavMenu.tsx](src/components/navbar/NavMenu.tsx) | Space-level mute toggle |
+| Space Context Menu | [useSpaceContextMenu.tsx](src/hooks/business/spaces/useSpaceContextMenu.tsx) | Space-level mute toggle as a `MenuItem` (rendered when right-clicking a row in [SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx)) |
 | Account Settings | [Account.tsx](src/components/modals/SpaceSettingsModal/Account.tsx) | Settings toggles for mute preferences |
 | CSS Styling | [ChannelGroup.scss](src/components/space/ChannelGroup.scss) | Visual treatment for muted channels |
 
@@ -219,9 +219,9 @@ contextMenuItems.push({
 
 ### Space Context Menu
 
-**File**: [NavMenu.tsx](src/components/navbar/NavMenu.tsx)
+**File**: [useSpaceContextMenu.tsx](src/hooks/business/spaces/useSpaceContextMenu.tsx)
 
-Right-click on a space icon shows space-level options:
+The space context menu (right-click on a row in [SpacesSidebar.tsx](src/components/space/SpacesSidebar.tsx)) shows a "Mute Space" / "Unmute Space" toggle alongside the other space-level options. The menu items are built by `useSpaceContextMenu` and rendered through the shared `ContextMenu` primitive; `SpacesSidebar` mounts the hook and calls `openContextMenu(...)` from each row's `onContextMenu` handler.
 
 ```typescript
 const items: MenuItem[] = [
@@ -229,7 +229,7 @@ const items: MenuItem[] = [
     id: 'account',
     icon: 'user',
     label: t`My Account`,
-    onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'account'),
+    onClick: () => openSpaceEditor(state.spaceId!, 'account'),
   },
   {
     id: 'toggle-muted-channels',
@@ -246,7 +246,7 @@ const items: MenuItem[] = [
 ];
 
 // Separator before owner/leave options
-if (spaceContextMenu.isOwner) {
+if (state.isOwner) {
   items.push(
     { id: 'settings', icon: 'settings', label: t`Space Settings`, separator: true, ... },
     { id: 'invites', icon: 'user-plus', label: t`Invite Members`, ... },
@@ -390,4 +390,4 @@ Space-level mute checks happen first (O(1)) to avoid unnecessary channel iterati
 - [Config Sync System](../config-sync-system.md)
 
 ---
-_Last updated: 2026-05-20 — staleness audit: all paths verified current_
+_Last updated: 2026-06-04_

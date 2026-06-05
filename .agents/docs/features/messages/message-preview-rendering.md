@@ -189,11 +189,11 @@ Uses `MessagePreview` directly with full message objects (always available local
 />
 ```
 
-### BookmarksPanel / BookmarkItem
+### BookmarksPanel / BookmarkItem (context panel)
 
 **Location**: `src/components/bookmarks/BookmarkItem.tsx`
 
-Uses **hybrid rendering**: `MessagePreview` when message exists locally, cached preview fallback otherwise.
+The context-scoped dropdown panel (`BookmarksPanel`) uses `BookmarkItem` with **hybrid rendering**: `MessagePreview` when message exists locally, cached preview fallback otherwise.
 
 ```typescript
 // Try to resolve message from local IndexedDB
@@ -207,6 +207,8 @@ return renderCachedPreview();  // Uses bookmark.cachedPreview
 ```
 
 **Why hybrid?** Bookmarks are cross-context (can bookmark messages from any space/DM). When viewing bookmarks on a different device or for unloaded channels, the message may not exist in local IndexedDB.
+
+The global `/bookmarks` page (`BookmarksPage` + `BookmarkCard`) renders the full message body via `MessageMarkdownRenderer` instead of `MessagePreview`, and falls back to the bookmark's `cachedPreview.textSnippet` (with the snapshotted `senderIcon`) when the message isn't in local IndexedDB.
 
 ### SearchResultItem
 
@@ -258,7 +260,8 @@ Documents the **bookmarks feature** including the hybrid MessagePreview approach
 | `src/components/message/MessagePreview.tsx` | Core preview component |
 | `@quilibrium/quorum-shared` (`src/utils/markdownStripping.ts`) | Text processing utilities (moved to shared package) |
 | `src/components/message/PinnedMessagesPanel.tsx` | Pinned messages consumer |
-| `src/components/bookmarks/BookmarkItem.tsx` | Bookmarks consumer (hybrid) |
+| `src/components/bookmarks/BookmarkItem.tsx` | Bookmarks context-panel consumer (hybrid) |
+| `src/components/bookmarks/BookmarkCard.tsx` | Bookmarks page consumer (full `MessageMarkdownRenderer` + cached fallback) |
 | `src/components/search/SearchResultItem.tsx` | Search consumer (plain text) |
 | `src/hooks/queries/bookmarks/useResolvedBookmark.ts` | Message resolution for bookmarks |
 

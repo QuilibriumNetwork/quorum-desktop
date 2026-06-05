@@ -1,0 +1,194 @@
+@use '@/styles/variables' as *;
+
+.space-icon {
+  width: $nav-space-icon-size;
+  height: $nav-space-icon-size;
+  box-sizing: border-box;
+  border-radius: $rounded-lg; // Consistent rounded square shape
+  background-position: center;
+  background-size: cover;
+  background-color: var(--surface-2);
+  background-repeat: no-repeat;
+  // margin-top removed - container uses gap for consistent spacing
+  // Use block instead of inline-block to avoid baseline alignment gap
+  display: block;
+  transition: all $duration-100 linear;
+  border: $border-2 none var(--surface-border);
+  // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
+  // See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
+  touch-action: none;
+}
+
+.space-icon-small {
+  width: 40px !important;
+  height: 40px !important;
+  // margin-top removed - container uses gap for consistent spacing
+}
+
+.space-icon-large {
+  width: 114px !important;
+  height: 114px !important;
+}
+
+// Hover feedback comes from the parent .sidebar-row-chrome background, not
+// from dimming the icon itself.
+
+// Toggle indicator - single element with state-based modifiers for smooth transitions
+// States: default (hidden) → hover → unread (small dot) → selected (tall bar)
+.space-icon-toggle {
+  position: absolute;
+  width: $s-1-5;
+  border-radius: $rounded-sm;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  background: var(--accent);
+  pointer-events: none;
+
+  // Smooth transitions for height and opacity changes
+  transition:
+    height $duration-200 $ease-out,
+    opacity $duration-150 $ease-out;
+
+  // Default state: invisible, but with hover height ready
+  height: $s-5; // 20px - hover size
+  opacity: 0;
+
+  // Mobile phone optimization - adjust horizontal position for narrower NavMenu
+  @media (max-width: $screen-xs) {
+    left: -8px;
+  }
+
+  // Tablet/larger mobile optimization
+  @media (min-width: #{$screen-xs + 1px}) and (max-width: $screen-md) {
+    left: -18px;
+  }
+
+  // Unread state: small dot, always visible. Override the shared pill radius
+  // with a true circle so it doesn't read as a soft square at 6×6.
+  &--unread {
+    height: $s-1-5; // 6px - small dot
+    opacity: 1;
+    border-radius: $rounded-full;
+  }
+
+  // Selected state: tall bar, always visible
+  &--selected {
+    height: $s-10; // 40px - tall bar
+    opacity: 1;
+    background: var(--accent-500);
+  }
+
+  // Drop target state: hover-size bar, visible during drag merge
+  &--drop-target {
+    height: $s-5; // 20px - same as hover size
+    opacity: 1;
+  }
+}
+
+// Show toggle on hover (desktop only) - only when not already in a visible state
+@media (hover: hover) {
+  .relative:hover .space-icon-toggle:not(.space-icon-toggle--selected):not(.space-icon-toggle--unread) {
+    opacity: 1;
+  }
+
+  // When hovering over unread, grow to hover size
+  .relative:hover .space-icon-toggle--unread {
+    height: $s-5; // Grow from dot to hover bar
+  }
+}
+
+.space-icon-selected {
+  width: $nav-space-icon-size;
+  height: $nav-space-icon-size;
+  box-sizing: border-box;
+  background-position: center;
+  background-size: cover;
+  background-color: var(--accent-500);
+  background-repeat: no-repeat;
+  // margin-top removed - container uses gap for consistent spacing
+  // Use block instead of inline-block to avoid baseline alignment gap
+  display: block;
+  border: none;
+  border-radius: $rounded-lg;
+  transition: all $duration-100 linear;
+  // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
+  touch-action: none;
+}
+
+// Drag placeholder - shows where the dragged item was
+.space-icon-drag-placeholder {
+  width: $nav-space-icon-size;
+  height: $nav-space-icon-size;
+  border-radius: $rounded-lg;
+  background-color: var(--surface-2);
+
+  // Size variants
+  &.space-icon-small {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+// Mention count bubble for space icons
+// Light theme: accent-400, Dark theme: accent-600
+.space-icon-mention-bubble {
+  position: absolute;
+  top: -$s-0-5;
+  right: -$s-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+  z-index: 1001;
+  pointer-events: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+
+  // Mobile phone optimization - adjust for larger icons
+  @media (max-width: $screen-xs) {
+    min-width: $s-4-5;
+    height: $s-4-5;
+    font-size: 11px;
+    bottom: 0;
+    right: -$s-0-5;
+    // Ensure centering is maintained on mobile
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+html.dark .space-icon-mention-bubble {
+  background-color: var(--accent-600);
+}
+
+// Drop target indicator for merge action
+// Shows when dragging to center of a space/folder (will create or add to folder)
+.drop-target-wiggle {
+  animation: wiggle 0.25s ease-in-out infinite;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: $rounded-lg;
+}
+
+@keyframes wiggle {
+  0%, 100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}

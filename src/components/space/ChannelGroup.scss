@@ -12,7 +12,8 @@
 }
 
 .channel-group .channel {
-  padding: 0 0 0 $s-2-5;
+  // No extra horizontal inset — keeps the row centered within the group's
+  // symmetric $s-4 padding (matches the header above and Add Group below).
 }
 
 .channel-group .channel-name {
@@ -27,13 +28,15 @@
   justify-content: center;
 }
 
+.channel-group .channel-name {
+  padding: 0 $s-3;
+  border-radius: $rounded-lg;
+}
+
 // Only apply hover styles on devices with true hover capability (mouse/trackpad)
 @media (hover: hover) and (pointer: fine) {
   .channel-group .channel-name:hover {
     background: var(--color-bg-sidebar-hover);
-    padding: 0 $s-4;
-    margin: 0 0 0 (-$s-4);
-    border-radius: $rounded-lg;
     color: var(--color-text-main);
 
     .channel-configure {
@@ -45,10 +48,7 @@
 .channel-group .channel-name-focused {
   font-weight: $font-bold;
   background: var(--color-bg-sidebar-active);
-  padding: 0 $s-4;
-  margin: 0 0 0 (-$s-4);
   color: var(--color-text-main);
-  border-radius: $rounded-lg;
 }
 
 @media (hover: hover) and (pointer: fine) {

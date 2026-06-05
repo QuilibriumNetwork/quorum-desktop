@@ -1,14 +1,16 @@
 ---
 type: task
 title: "Unified /spaces page (PR 2 of 2) — Join via link tab + Create space tab + retire legacy modals"
-status: deferred
+status: likely-obsolete
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-03
 candidate: "#1 (port-from-mobile) — PR 2"
 depends-on: "2026-06-01-port-discover-spaces.md (PR 1) — must ship and be in real use before PR 2 starts"
 ---
 
 # Unified `/spaces` page — PR 2 of 2
+
+> **2026-06-03 update — likely obsolete after new UI shell.** The new sidebar shell (shipped on `feat/new-UI`) makes the SpacesSidebar `+` button the canonical entry point for "join or create a space", with a context menu surfacing both options and routing each to `AddSpaceModal` / `CreateSpaceModal` directly. The premise of this PR — retiring those modals in favor of tabs on `/spaces` and removing the navbar `+` button — is invalidated: the `+` button is now a deliberate fixture of the sidebar UI, and the modals are part of its flow. The `/spaces` page itself remains useful for browsing My Spaces and Discover, but the "Join via link" and "Create space" tabs proposed here are no longer needed. Revisit only if the user redesigns the sidebar away from this pattern.
 
 > **Status: deferred.** This task is committed but not picked up until PR 1 ([`2026-06-01-port-discover-spaces.md`](2026-06-01-port-discover-spaces.md)) ships and has been in real use for a window (~1-2 weeks). The "real use" delay matters — some PR 2 decisions (paste-invite placement, sort/filter options on My Spaces, layout adjustments) benefit from observing how PR 1 actually feels in practice.
 

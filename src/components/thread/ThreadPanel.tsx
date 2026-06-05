@@ -1,5 +1,5 @@
 import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react';
-import type { PostMessage, TypingScope } from '@quilibrium/quorum-shared';
+import type { TypingScope } from '@quilibrium/quorum-shared';
 import { Button, Icon, Tooltip } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';
@@ -11,32 +11,13 @@ import { useUpdateThreadReadTime } from '../../hooks/business/conversations/useU
 import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { getThreadTitle } from '../../utils/threadTitle';
 import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
 const LazyEmojiPicker = React.lazy(() =>
   import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
 );
-
-const THREAD_TITLE_MAX_CHARS = 100;
-
-/**
- * Derive display title from root message.
- * Resolution order: customTitle → first 100 chars of message text → "Thread" fallback.
- */
-function getThreadTitle(rootMessage: { content?: any; threadMeta?: { customTitle?: string } } | null): string {
-  if (!rootMessage) return 'Thread';
-  if (rootMessage.threadMeta?.customTitle) return rootMessage.threadMeta.customTitle;
-  if (!rootMessage?.content) return 'Thread';
-  const content = rootMessage.content as PostMessage;
-  if (!content.text) return 'Thread';
-  const text = Array.isArray(content.text) ? content.text.join(' ') : content.text;
-  const clean = text.replace(/[*_~`#>[\]()!]/g, '').trim();
-  if (!clean) return 'Thread';
-  return clean.length > THREAD_TITLE_MAX_CHARS
-    ? clean.substring(0, THREAD_TITLE_MAX_CHARS)
-    : clean;
-}
 
 export const ThreadPanel: React.FC = () => {
   const {
