@@ -11,7 +11,7 @@ import { useDirectMessageUnreadCount } from '../../hooks/business/messages';
 import { useOptionalShellState } from './useShellState';
 import './NavRail.scss';
 
-type RailSectionId = 'dm' | 'spaces' | 'bookmarks' | 'discover';
+type RailSectionId = 'dm' | 'spaces' | 'bookmarks' | 'discover' | 'farcaster' | 'wallet';
 
 interface RailItemConfig {
   id: RailSectionId;
@@ -45,7 +45,18 @@ const buildItems = (): RailItemConfig[] => [
     label: t`Discover`,
     route: '/discover/spaces',
   },
-  // TODO: 'farcaster' (icon: 'world') and 'wallet' (icon: 'wallet') — features not ready
+  {
+    id: 'farcaster',
+    icon: 'globe',
+    label: t`Farcaster`,
+    route: '/farcaster',
+  },
+  {
+    id: 'wallet',
+    icon: 'wallet',
+    label: t`Wallet`,
+    route: '/wallet',
+  },
   // TODO: FAVORITES section — depends on favorites feature
 ];
 
@@ -83,6 +94,8 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
     if (location.pathname.startsWith('/messages')) return 'dm';
     if (location.pathname.startsWith('/discover')) return 'discover';
     if (location.pathname.startsWith('/bookmarks')) return 'bookmarks';
+    if (location.pathname.startsWith('/farcaster')) return 'farcaster';
+    if (location.pathname.startsWith('/wallet')) return 'wallet';
     if (location.pathname.startsWith('/spaces')) return 'spaces';
     return null;
   }, [location.pathname]);

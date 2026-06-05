@@ -11,6 +11,8 @@ import InviteRoute from '@/components/InviteRoute';
 import NotFound from '@/components/NotFound';
 import { DiscoverPage } from '@/components/discover-page';
 import { BookmarksPage } from '@/components/bookmarks';
+import { FarcasterPage } from '@/components/farcaster';
+import { WalletPage } from '@/components/wallet';
 
 class RouteErrorBoundary extends React.Component<
   { fallback: React.ReactNode; children: React.ReactNode },
@@ -181,6 +183,38 @@ export function Router({ user, setUser }: RouterProps) {
                 <Layout>
                   <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
                     <BookmarksPage />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      <Route
+        path="/farcaster"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <FarcasterPage />
+                  </RouteErrorBoundary>
+                </Layout>
+              </SidebarProvider>
+            </MobileProvider>
+          </ModalProvider>
+        }
+      />
+      <Route
+        path="/wallet"
+        element={
+          <ModalProvider user={user} setUser={setUser}>
+            <MobileProvider>
+              <SidebarProvider>
+                <Layout>
+                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                    <WalletPage />
                   </RouteErrorBoundary>
                 </Layout>
               </SidebarProvider>
