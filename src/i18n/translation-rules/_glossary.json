@@ -1,0 +1,233 @@
+{
+  "_comment": "Machine-readable translation rules. Drives both prompt injection AND post-hoc validation. Add per-language entries as patterns are discovered.",
+
+  "_global": {
+    "keep_english": [
+      "Quorum",
+      "Quilibrium",
+      "passkey",
+      "YouTube"
+    ],
+    "keep_english_endings": [".key", ".png", ".jpg", ".jpeg", ".mp4", ".gif"]
+  },
+
+  "el": {
+    "register": "informal",
+    "register_description": "Use informal singular εσύ family throughout. Greek has both formal and informal — use ONLY informal.",
+    "forbidden_tokens": ["Είστε", "Έχετε", "Στέλνετε", "Παρακαλώ περιμένετε", "σας ", " σας."],
+    "preferred_tokens": ["Είσαι", "Έχεις", "Στέλνεις", "σου"],
+    "examples": [
+      ["Your account", "ο λογαριασμός σου"],
+      ["You're offline", "Είσαι εκτός σύνδεσης"],
+      ["Please wait", "Παρακαλώ περίμενε"]
+    ]
+  },
+
+  "id": {
+    "register": "formal",
+    "register_description": "Use formal 'Anda' throughout. Indonesian has formal (Anda) and informal (Kamu) — we use ONLY Anda.",
+    "forbidden_tokens": ["Kamu "],
+    "preferred_tokens": ["Anda"],
+    "examples": [
+      ["Your communities", "Komunitas Anda"],
+      ["You have a new message", "Anda memiliki pesan baru"]
+    ]
+  },
+
+  "ko": {
+    "register": "semi-formal-dangsin",
+    "register_description": "Use 당신의/당신 form for 'your/you'. Korean has multiple registers — avoid both the honorific 귀하의 and the informal 너의.",
+    "forbidden_tokens": ["귀하의", "귀하를", "귀하가", "너의 "],
+    "preferred_tokens": ["당신의", "당신을", "당신이"],
+    "examples": [
+      ["Your account", "당신의 계정"]
+    ]
+  },
+
+  "zh-CN": {
+    "register": "formal-nin",
+    "register_description": "Use 您 throughout for 'you'. Do NOT drop to informal 你 mid-batch.",
+    "forbidden_tokens": ["你已", "你的", "你是", "你可以"],
+    "preferred_tokens": ["您已", "您的", "您是", "您可以"]
+  },
+
+  "zh-TW": {
+    "register": "formal-nin",
+    "register_description": "Use 您 throughout for 'you'. Do NOT drop to informal 你 mid-batch.",
+    "forbidden_tokens": ["你已", "你的", "你是", "你可以"],
+    "preferred_tokens": ["您已", "您的", "您是", "您可以"]
+  },
+
+  "sr": {
+    "register": "formal",
+    "register_description": "Use formal Vy/vaš/vaše throughout. Serbian has T/V distinction — never drop to ti/tvoj mid-batch.",
+    "forbidden_tokens": [" si ", " ti ", "tvoj", "tvoja", "tvoje", "tvog", "Zamisli ", "Možeš ", "Čuvaj "],
+    "preferred_tokens": ["vi", "vaš", "vaše", "Zamislite", "Možete", "Čuvajte"]
+  },
+
+  "hr": {
+    "register": "formal",
+    "register_description": "Use formal Vy/vaš throughout.",
+    "forbidden_tokens": [" si ", " ti ", "tvoj", "tvoja", "tvoje"],
+    "preferred_tokens": ["vi", "vaš", "vaše"]
+  },
+
+  "sk": {
+    "register": "formal",
+    "register_description": "Use formal Vy/váš throughout. Do not mix with informal ty/tvoj or singular imperatives like 'posielaš'.",
+    "forbidden_tokens": ["posielaš", "počkaj ", " ti ", "tvoj"],
+    "preferred_tokens": ["posielate", "počkajte", "vám", "váš"]
+  },
+
+  "cs": {
+    "register": "formal",
+    "register_description": "Use formal Vy/váš throughout.",
+    "forbidden_tokens": [" ti ", "tvoj"],
+    "preferred_tokens": ["vy", "váš"]
+  },
+
+  "sl": {
+    "register": "formal",
+    "register_description": "Use formal Vy/vaš throughout. Avoid imperatives like 'Misli' (informal); use 'Mislite/Predstavljajte si'.",
+    "forbidden_tokens": ["Misli ", "Glej ", " ti "],
+    "preferred_tokens": ["Mislite", "Glejte", "vam"]
+  },
+
+  "ru": {
+    "register": "formal",
+    "register_description": "Use formal Вы/ваш throughout. Verify grammatical case after prepositions: 'к' takes dative ('к Пространству' NOT 'к Пространство').",
+    "forbidden_tokens": [" ты ", " тебя ", " тебе "],
+    "preferred_tokens": ["Вы", "Вас", "Вам", "Ваш"],
+    "case_check": "к + dative ending"
+  },
+
+  "uk": {
+    "register": "formal",
+    "register_description": "Use formal Ви/ваш throughout.",
+    "forbidden_tokens": [" ти ", " тебе "],
+    "preferred_tokens": ["Ви", "Вас", "Ваш"]
+  },
+
+  "pl": {
+    "register": "informal",
+    "register_description": "Use informal ty/twój throughout. Verify all diacritics: 'Jesteś' NOT 'Jestes'.",
+    "forbidden_tokens": ["Jestes ", " Pana ", " Pani "],
+    "preferred_tokens": ["Jesteś", "Ty", "twój"]
+  },
+
+  "it": {
+    "register": "informal",
+    "register_description": "Use informal tu/tuo throughout. Do not mix with 'Lei' or impersonal infinitive imperatives ('Attendere' is wrong; use 'Attendi').",
+    "forbidden_tokens": ["Attendere ", "Cliccare ", "Selezionare ", "Lei "],
+    "preferred_tokens": ["tu", "tuo", "Attendi", "Clicca", "Seleziona"]
+  },
+
+  "de": {
+    "register": "informal",
+    "register_description": "Use informal du/dein throughout. Avoid Sie-form. Do not hyphenate native compounds (Kontoadresse NOT Konto-adresse).",
+    "forbidden_tokens": [" Sie ", "Ihr ", "Ihre "],
+    "preferred_tokens": ["du", "dein"]
+  },
+
+  "fr": {
+    "register": "formal",
+    "register_description": "Use formal vous/votre throughout (French software UIs conventionally use formal vous). Channel='canal' (NOT 'chaîne').",
+    "forbidden_tokens": ["chaîne", "chaînes", " tu ", " ton ", " ta ", " tes "],
+    "preferred_tokens": ["vous", "votre", "vos", "canal"]
+  },
+
+  "es": {
+    "register": "informal",
+    "register_description": "Use informal tú/tu throughout. Avoid usted/ustedes form.",
+    "forbidden_tokens": ["usted ", "ustedes ", "Usted "],
+    "preferred_tokens": ["tú", "tu", "vosotros"]
+  },
+
+  "pt": {
+    "register": "informal-voce",
+    "register_description": "Use 'você/seu' throughout (Brazilian Portuguese convention). Mute='Silenciar' / Unmute='Reativar som'. Bookmark='Marcador'.",
+    "forbidden_tokens": ["Favorito", "Favoritos", "Desmutar"],
+    "preferred_tokens": ["você", "seu", "Marcador", "Silenciar", "Reativar som"]
+  },
+
+  "tr": {
+    "register": "informal",
+    "register_description": "Use informal -sin/-in endings throughout (Turkish messaging apps default to informal).",
+    "forbidden_tokens": [],
+    "preferred_tokens": ["sin", "in"]
+  },
+
+  "he": {
+    "register": "informal-singular-masc",
+    "register_description": "Use informal singular masculine שלך throughout. Avoid formal plural שלכם.",
+    "forbidden_tokens": ["שלכם", "אתם "],
+    "preferred_tokens": ["שלך", "אתה"]
+  },
+
+  "ar": {
+    "register": "informal-singular",
+    "register_description": "Use informal singular forms throughout. Verify accusative case after verbs (اتصالاً NOT اتصال when object).",
+    "forbidden_tokens": [],
+    "preferred_tokens": []
+  },
+
+  "fi": {
+    "register": "informal",
+    "register_description": "Use sinä/sinun throughout. Use possessive suffixes ('yhteisösi' NOT 'sinun yhteisöt').",
+    "forbidden_tokens": ["sinun yhteisöt", "sinun säännöt"],
+    "preferred_tokens": ["sinä", "yhteisösi", "sääntösi"]
+  },
+
+  "sv": {
+    "register": "informal",
+    "register_description": "Use du/din throughout. Stickers='Klistermärken' (NOT 'Klippor').",
+    "forbidden_tokens": ["Klippor"],
+    "preferred_tokens": ["Klistermärken", "du", "din"]
+  },
+
+  "no": {
+    "register": "informal",
+    "register_description": "Use du/din throughout. Do not hyphenate native compounds (kontonøkkel NOT konto-nøkkel). 'Oppbevar' NOT 'Behold' for safekeeping.",
+    "forbidden_tokens": ["konto-", "Behold den trygt"],
+    "preferred_tokens": ["du", "Oppbevar"]
+  },
+
+  "da": {
+    "register": "informal",
+    "register_description": "Use du/din throughout. 'Opbevar' NOT 'Behandl forsigtigt'. 'bandlyse' NOT 'bannelyse'.",
+    "forbidden_tokens": ["bannelyse", "Behandl den forsigtigt", "internettforbindelse"],
+    "preferred_tokens": ["bandlyse", "Opbevar", "internetforbindelse"]
+  },
+
+  "nl": {
+    "register": "informal",
+    "register_description": "Use je/jouw throughout.",
+    "forbidden_tokens": [],
+    "_note": "uw and u are too substring-prone for token-based forbidden list (nieuw, jouw, etc. would false-match). Validation must use word-boundary regex if reintroduced.",
+    "preferred_tokens": ["je", "jouw"]
+  },
+
+  "ja": {
+    "register": "polite-desu-masu",
+    "register_description": "Use polite desu/masu form throughout."
+  },
+
+  "ro": {
+    "register": "informal",
+    "register_description": "Use informal tu/tău throughout. Watch word order with object pronouns: 'Îl poți descărca' NOT 'Poți descărca-l'.",
+    "forbidden_tokens": ["dumneavoastră", "Vă rugăm"],
+    "preferred_tokens": ["tu", "tău", "Te rugăm"]
+  },
+
+  "th": {
+    "register": "polite",
+    "register_description": "Thai doesn't have strong T/V distinction. Use คุณ throughout."
+  },
+
+  "vi": {
+    "register": "informal-ban",
+    "register_description": "Use 'bạn' throughout. Brand: passkey stays as 'passkey' (not 'khóa truy cập').",
+    "forbidden_tokens": ["khóa truy cập"],
+    "preferred_tokens": ["passkey", "bạn"]
+  }
+}

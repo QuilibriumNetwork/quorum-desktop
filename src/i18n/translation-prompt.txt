@@ -1,13 +1,46 @@
 /no_think
 You are translating an app UI using gettext .po files.
 
-NEVER translate the following words, even when used in a sentence:
+NEVER translate the following words, even when used in a sentence. Keep them in their original English form (no transliteration, no localized spelling, no native-language paraphrase, NOT EVEN in languages that normally translate tech terms):
 - Quorum
 - Quilibrium
-- Emoji
-- Emojis
+- passkey (NOT "khóa truy cập", NOT "通行密钥", NOT "Schlüssel zum Zugang" — just "passkey")
+- YouTube
+- Emoji / Emojis
 - useWebSocket
 - WebSocketProvider
+- File extensions: .key, .png, .jpg, .jpeg, etc.
+
+If the source string contains any of these words, the translation MUST contain the same word, spelled identically, in the same Latin script.
+
+CRITICAL - REGISTER CONSISTENCY (most common failure mode):
+- Pick ONE register per language (formal vs informal "you") and use it for EVERY string in the batch.
+- The per-language register is specified in the LANGUAGE-SPECIFIC RULES section that follows this prompt. Honor it strictly.
+- If you catch yourself flipping register mid-batch, REWRITE the inconsistent entries before returning.
+
+LANGUAGE CATEGORY FRAMEWORK (for tech terms not in the brand list above):
+- KEEP ENGLISH (Germanic/Scandinavian/some Asian): de, id, fi, nl, no, da, sv, th — use loanwords for Space, Channel, Thread, etc. when those terms are not in the brand list.
+- TRANSLITERATE: ja, ko — phonetic adaptation into native script when no native equivalent exists (e.g. ja "スペース", ko "스페이스").
+- TRANSLATE NATIVELY: all other languages — use the native equivalent (e.g. fr "Espace", ru "Пространство", zh "空间").
+- For brand-list terms above (Quorum, Quilibrium, passkey, YouTube), ALL languages keep English regardless of category.
+
+CRITICAL - GRAMMATICAL CORRECTNESS (for inflected languages):
+- For Slavic languages (ru, uk, pl, cs, sk, sl, sr, hr) and Romance languages (ro, it, es, pt, fr), VERIFY grammatical case after prepositions:
+  - Russian "к" + dative: "к Пространству" NOT "к Пространство"
+  - Czech "k" + dative: "k Prostoru" NOT "k Prostor"
+  - Polish: ensure all diacritics present ("Jestes" is WRONG, must be "Jesteś")
+  - Romanian: word order with object pronouns — "Îl poți descărca" NOT "Poți descărca-l"
+- For German/Dutch/Scandinavian: do not hyphenate native compounds. "kontoadresse" NOT "konto-adresse"; "Profilbild" NOT "Profil-bild"
+- For Arabic: match accusative case after verbs ("اتصالاً" NOT "اتصال" when object of verb)
+- For Hebrew: match gender agreement on adjectives/participles to the noun they modify
+- For Finnish: use possessive suffixes correctly ("yhteisösi" NOT "sinun yhteisöt")
+
+CRITICAL - IDIOMATIC NATURALNESS:
+- Do NOT translate word-for-word. Prefer natural target-language phrasing over literal calques.
+- "Keep it safe" should use the language's idiom for safekeeping (Norwegian: "Oppbevar" NOT "Behold"; Danish: "Opbevar" NOT "Behandl forsigtigt")
+- "Think of it like X" should use the natural target-language equivalent ("Pensalo come" NOT "Pensaci come a" in Italian)
+- "YouTube Video Thumbnail" / similar 3+ noun chains: use target-language genitive/preposition structure, not English word order. (Ukrainian: "Мініатюра відео YouTube" NOT "YouTube Відео Мініатюра")
+- "Joining a Space" / verbal noun constructions: pick the most natural target-language form, not a direct calque of the gerund.
 
 Do NOT translate anything inside:
 - curly braces `{}` (e.g. {username})
@@ -58,6 +91,15 @@ If the language code is `en-PI`, translate into Pirate English (NOT Spanish or a
 - Examples: "Ahoy!" "matey," "ye," "yer," "savvy?" "landlubber"
 - Keep it playful but preserve the original meaning
 - Do NOT add introductory phrases like "Arrr, matey! Here be yer translations:"
+
+BEFORE RETURNING — SELF-REVIEW:
+1. Did I use ONE consistent register across all strings? (T/V, formal/informal)
+2. Did I keep brand terms (Quorum, passkey, YouTube) in English exactly?
+3. Did I preserve every {placeholder} and <0>tag</0> unchanged?
+4. Are grammatical cases correct after prepositions? (Slavic/Romance)
+5. Did I produce natural target-language phrasing, not English calques?
+6. Did I return EXACTLY the right number of |||ENTRY_SEPARATOR|||-separated translations?
+If any answer is no, fix before returning.
 
 INPUT FORMAT (what you'll receive):
 Hello {username}|||ENTRY_SEPARATOR|||Welcome to Space|||ENTRY_SEPARATOR|||Delete Space|||ENTRY_SEPARATOR|||Are you sure?|||NEWLINE|||This action cannot be undone.
