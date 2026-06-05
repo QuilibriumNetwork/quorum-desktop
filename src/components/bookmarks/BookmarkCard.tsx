@@ -72,14 +72,22 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
 
   const renderSourceLine = () => {
     if (sourceType === 'channel') {
-      // cachedPreview.sourceName is typically "Space Name > #channel-name".
-      // Render with an explicit hash icon for the channel feel.
+      // sourceName is "Space > #channel"; the thread chip trails it when set.
       return (
         <Flex align="center" className="bookmark-card__source">
           <Icon name="hashtag" size="sm" className="bookmark-card__source-icon" />
           <span className="bookmark-card__source-name truncate">
             {cachedPreview.sourceName || t`Space`}
           </span>
+          {cachedPreview.threadName && (
+            <>
+              <Icon name="chevron-right" size="xs" className="bookmark-card__source-separator" />
+              <Icon name="messages" size="sm" className="bookmark-card__source-icon" />
+              <span className="bookmark-card__source-name truncate">
+                {cachedPreview.threadName}
+              </span>
+            </>
+          )}
         </Flex>
       );
     }
@@ -89,7 +97,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       <Flex align="center" className="bookmark-card__source">
         <Icon name="message" size="sm" className="bookmark-card__source-icon" />
         <span className="bookmark-card__source-name truncate">
-          {t`Direct message with ${counterpartLabel}`}
+          {t`Conversation with ${counterpartLabel}`}
         </span>
       </Flex>
     );

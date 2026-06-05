@@ -106,6 +106,19 @@
 
   &__source-name {
     min-width: 0;
+    flex-shrink: 1;
+  }
+
+  // Two-chip layout (channel + thread): cap each name at half-width.
+  &__source-name:has(~ &__source-name),
+  &__source-name ~ &__source-name {
+    max-width: 50%;
+  }
+
+  &__source-separator {
+    flex-shrink: 0;
+    color: var(--color-text-subtle);
+    opacity: 0.6;
   }
 
   &__body {
