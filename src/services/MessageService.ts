@@ -4346,7 +4346,7 @@ export class MessageService {
               notificationService.addPendingNotification({
                 type: isMentioned ? 'mention' : 'reply',
                 senderName,
-                spaceName: space?.spaceName ?? t`a space`,
+                spaceName: space?.spaceName ?? t`a Space`,
                 mentionType,
                 roleName,
               });

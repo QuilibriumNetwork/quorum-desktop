@@ -306,7 +306,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
       {
         id: 'join-space',
         icon: 'link',
-        label: t`Join a space`,
+        label: t`Join a Space`,
         onClick: () => {
           handleCloseAddMenu();
           onAddSpace();
@@ -315,7 +315,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
       {
         id: 'create-space',
         icon: 'plus',
-        label: t`Create a space`,
+        label: t`Create a Space`,
         onClick: () => {
           handleCloseAddMenu();
           onCreateSpace();
@@ -530,7 +530,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
           iconOnly
           onClick={handleToggleSearch}
           className={`header-icon-button ${searchOpen ? 'active--accent' : ''}`}
-          ariaLabel={t`Search spaces`}
+          ariaLabel={t`Search Spaces`}
         />
         {addMenuPosition ? (
           // Tooltip is unmounted while the context menu is open so the two
@@ -542,12 +542,12 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
             iconOnly
             onClick={handleOpenAddMenu}
             className="sidebar-header-action"
-            ariaLabel={t`Add a space`}
+            ariaLabel={t`Add a Space`}
           />
         ) : (
           <Tooltip
             id="spaces-add"
-            content={t`Add a space`}
+            content={t`Add a Space`}
             place="bottom"
             showOnTouch={false}
           >
@@ -558,7 +558,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
               iconOnly
               onClick={handleOpenAddMenu}
               className="sidebar-header-action"
-              ariaLabel={t`Add a space`}
+              ariaLabel={t`Add a Space`}
             />
           </Tooltip>
         )}
@@ -587,7 +587,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
           </div>
           {filteredSpaces.length === 0 && searchInput && (
             <div className="text-xs text-subtle mt-2">
-              {t`No spaces found`}
+              {t`No Spaces found`}
             </div>
           )}
         </div>

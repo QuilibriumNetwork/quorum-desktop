@@ -66,7 +66,7 @@ export class InvitationService {
     });
 
     if (!response || response.length === 0) {
-      throw new Error(t`No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first.`);
+      throw new Error(t`No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first.`);
     }
 
     const sets = response.map((e) => JSON.parse(e.state));
@@ -76,7 +76,7 @@ export class InvitationService {
     }
 
     if (!sets[0].evals || sets[0].evals.length === 0) {
-      throw new Error(t`No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized.`);
+      throw new Error(t`No invite evaluations available. Please generate a public invite link or ensure the Space encryption state is properly initialized.`);
     }
 
     const state = sets[0].template;

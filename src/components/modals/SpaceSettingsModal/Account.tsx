@@ -274,7 +274,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <Switch
               value={isSpaceMuted}
               onChange={toggleSpaceMute}
-              accessibilityLabel={t`Mute all notifications from this space`}
+              accessibilityLabel={t`Mute all notifications from this Space`}
             />
             <div className="text-label-strong">
               <Trans>Mute this Space</Trans>
@@ -298,7 +298,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <Spacer size="xl" direction="vertical" />
             <Callout variant="error" size="md">
               <div className="text-md">
-                <Trans>Leave this space</Trans>
+                <Trans>Leave this Space</Trans>
               </div>
               <div className="pt-2 text-sm">
                 <Trans>

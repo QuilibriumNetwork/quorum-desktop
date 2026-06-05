@@ -140,7 +140,7 @@ export const BookmarksPage: React.FC = () => {
               : sourceFilter === 'dm'
                 ? t`No bookmarks in direct messages.`
                 : sourceFilter === 'channel'
-                  ? t`No bookmarks in spaces.`
+                  ? t`No bookmarks in Spaces.`
                   : t`No bookmarks found.`}
           </p>
         </div>

@@ -74,21 +74,21 @@ const SpacesEmpty: React.FC = () => {
         <div className="spaces-empty__cards">
           <SpacesEmptyCard
             icon="compass"
-            title={t`Discover spaces`}
-            description={t`Browse public spaces and find a community to join.`}
+            title={t`Discover Spaces`}
+            description={t`Browse public Spaces and find a community to join.`}
             cta={t`Explore`}
             onClick={() => navigate('/discover/spaces')}
           />
           <SpacesEmptyCard
             icon="link"
-            title={t`Join a space`}
+            title={t`Join a Space`}
             description={t`Got an invite link? Hop straight in.`}
             cta={t`Join`}
             onClick={showAddSpaceModal}
           />
           <SpacesEmptyCard
             icon="plus"
-            title={t`Create a space`}
+            title={t`Create a Space`}
             description={t`Start your own private or public community.`}
             cta={t`Create`}
             onClick={showCreateSpaceModal}

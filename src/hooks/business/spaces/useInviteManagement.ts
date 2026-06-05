@@ -125,7 +125,7 @@ export const useInviteManagement = (
             && existingMember.inbox_address !== ''
             && !existingMember.isKicked
         ) {
-          setMembershipWarning(t`This user is already a member of this space.`);
+          setMembershipWarning(t`This user is already a member of this Space.`);
           return;
         }
 

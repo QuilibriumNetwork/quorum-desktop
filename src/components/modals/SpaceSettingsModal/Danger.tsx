@@ -37,7 +37,7 @@ const Danger: React.FunctionComponent<DangerProps> = ({
       <div className="modal-content-header">
         <div className="modal-text-section">
           <div className="text-title text-danger">
-            <Trans>Delete this space</Trans>
+            <Trans>Delete this Space</Trans>
           </div>
           <div className="pt-2 text-body">
             <Trans>

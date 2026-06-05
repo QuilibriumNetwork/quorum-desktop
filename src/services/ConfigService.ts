@@ -113,7 +113,7 @@ export class ConfigService {
         try {
           const config = space.keys.find((k) => k.keyId == 'config');
           if (!config) {
-            logger.warn(t`decrypted space with no known config key`);
+            logger.warn(t`Decrypted Space with no known config key`);
             continue;
           }
 

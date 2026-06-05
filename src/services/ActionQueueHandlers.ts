@@ -116,7 +116,7 @@ export class ActionQueueHandlers {
       );
     },
     successMessage: undefined, // Silent success
-    failureMessage: t`Failed to save space settings`,
+    failureMessage: t`Failed to save Space settings`,
   };
 
   // === MODERATION ACTIONS ===
