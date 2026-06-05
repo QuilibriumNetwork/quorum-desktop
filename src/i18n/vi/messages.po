@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "Không có vai trò - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Chào mừng đến với Quorum, {name}! Tài khoản của bạn đã được bảo mật và sẵn sàng để sử dụng."
-
-#. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1635
 msgid "Send a message to #{channel_name}"
 msgstr "Gửi tin nhắn đến #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Chào mừng đến với Quorum, {name}! Tài khoản của bạn đã được bảo mật và sẵn sàng để sử dụng."
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -68,6 +68,11 @@ msgid "Replying to"
 msgstr "Đang trả lời"
 
 #. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:1007
+msgid "Send a message to {user}"
+msgstr "Gửi tin nhắn cho {user}"
+
+#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:360
 msgid "has joined"
 msgstr "đã tham gia"
@@ -81,11 +86,6 @@ msgstr "đã rời khỏi"
 #: src/components/message/Message.tsx:376
 msgid "has been kicked"
 msgstr "đã bị đá"
-
-#. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1007
-msgid "Send a message to {user}"
-msgstr "Gửi tin nhắn cho {user}"
 
 #: src/components/message/Message.tsx:830
 #: src/components/message/Message.tsx:843
@@ -265,8 +265,14 @@ msgstr "một vai trò"
 #: src/services/MessageService.ts:4349
 #: src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
-msgid "a space"
-msgstr "một Space"
+#~ msgid "a space"
+#~ msgstr "một Space"
+
+#: src/services/MessageService.ts:4349
+#: src/services/NotificationService.ts:296
+#: src/services/NotificationService.ts:309
+msgid "a Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Account"
@@ -311,8 +317,14 @@ msgstr "Thêm ảnh đại diện"
 #: src/components/space/SpacesSidebar.tsx:538
 #: src/components/space/SpacesSidebar.tsx:543
 #: src/components/space/SpacesSidebar.tsx:554
-msgid "Add a space"
-msgstr "Thêm một không gian"
+#~ msgid "Add a space"
+#~ msgstr "Thêm một không gian"
+
+#: src/components/space/SpacesSidebar.tsx:545
+#: src/components/space/SpacesSidebar.tsx:550
+#: src/components/space/SpacesSidebar.tsx:561
+msgid "Add a Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:574
 msgid "Add channel"
@@ -521,8 +533,13 @@ msgstr "Quay lại liên kết mời"
 
 #: src/components/space/ChannelList.tsx:170
 #: src/components/space/ChannelList.tsx:174
-msgid "Back to spaces list"
-msgstr "Quay lại danh sách không gian"
+#~ msgid "Back to spaces list"
+#~ msgstr "Quay lại danh sách không gian"
+
+#: src/components/space/ChannelList.tsx:170
+#: src/components/space/ChannelList.tsx:174
+msgid "Back to Spaces list"
+msgstr ""
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
@@ -587,12 +604,20 @@ msgid "Bookmarks in this conversation"
 msgstr "Marcadores trong cuộc trò chuyện này"
 
 #: src/components/space/Channel.tsx:1472
-msgid "Bookmarks in this space"
-msgstr "Marcadores trong không gian này"
+#~ msgid "Bookmarks in this space"
+#~ msgstr "Marcadores trong không gian này"
+
+#: src/components/space/Channel.tsx:1472
+msgid "Bookmarks in this Space"
+msgstr ""
 
 #: src/components/discover-page/DiscoverPage.tsx:78
-msgid "Browse public spaces and find a community to join."
-msgstr "Duyệt các không gian công cộng và tìm một cộng đồng để tham gia."
+#~ msgid "Browse public spaces and find a community to join."
+#~ msgstr "Duyệt các không gian công cộng và tìm một cộng đồng để tham gia."
+
+#: src/components/discover-page/DiscoverPage.tsx:78
+msgid "Browse public Spaces and find a community to join."
+msgstr ""
 
 #: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
@@ -762,7 +787,7 @@ msgid "Config Key"
 msgstr "Khóa cấu hình"
 
 #: src/components/direct/DirectMessageContactsList.tsx:270
-#: src/components/space/SpacesSidebar.tsx:243
+#: src/components/space/SpacesSidebar.tsx:250
 msgid "Confirm Delete"
 msgstr "Xác nhận Xóa"
 
@@ -878,10 +903,12 @@ msgstr "Tạo"
 
 #: src/components/discover-page/DiscoverPage.tsx:91
 #: src/components/space/SpacesSidebar.tsx:311
-msgid "Create a space"
-msgstr "Tạo một không gian"
+#~ msgid "Create a space"
+#~ msgstr "Tạo một không gian"
 
+#: src/components/discover-page/DiscoverPage.tsx:91
 #: src/components/modals/CreateSpaceModal.tsx:83
+#: src/components/space/SpacesSidebar.tsx:318
 msgid "Create a Space"
 msgstr "Tạo một Space"
 
@@ -944,8 +971,12 @@ msgid "days"
 msgstr "ngày"
 
 #: src/services/ConfigService.ts:116
-msgid "decrypted space with no known config key"
-msgstr "Space đã giải mã mà không có khóa cấu hình nào được biết"
+#~ msgid "decrypted space with no known config key"
+#~ msgstr "Space đã giải mã mà không có khóa cấu hình nào được biết"
+
+#: src/services/ConfigService.ts:116
+msgid "Decrypted Space with no known config key"
+msgstr ""
 
 #: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
@@ -1005,7 +1036,7 @@ msgid "Delete Conversation"
 msgstr "Xóa Cuộc trò chuyện"
 
 #: src/components/modals/FolderEditorModal.tsx:129
-#: src/components/space/SpacesSidebar.tsx:242
+#: src/components/space/SpacesSidebar.tsx:249
 msgid "Delete Folder"
 msgstr "Xóa Thư mục"
 
@@ -1063,8 +1094,12 @@ msgid "Delete this image"
 msgstr "Xóa hình ảnh này"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:40
-msgid "Delete this space"
-msgstr "Xóa Space này"
+#~ msgid "Delete this space"
+#~ msgstr "Xóa Space này"
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
+msgid "Delete this Space"
+msgstr ""
 
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Delete Thread"
@@ -1148,8 +1183,12 @@ msgid "Discover"
 msgstr "Khám phá"
 
 #: src/components/discover-page/DiscoverPage.tsx:77
-msgid "Discover spaces"
-msgstr "Khám phá các không gian"
+#~ msgid "Discover spaces"
+#~ msgstr "Khám phá các không gian"
+
+#: src/components/discover-page/DiscoverPage.tsx:77
+msgid "Discover Spaces"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/General.tsx:200
 msgid "Display a tag from one of your Spaces next to your username in messages."
@@ -1228,7 +1267,7 @@ msgid "Edit Channel"
 msgstr "Chỉnh sửa Kênh"
 
 #: src/components/modals/FolderEditorModal.tsx:68
-#: src/components/space/SpacesSidebar.tsx:233
+#: src/components/space/SpacesSidebar.tsx:240
 msgid "Edit Folder"
 msgstr "Chỉnh sửa Thư mục"
 
@@ -1391,8 +1430,12 @@ msgid "Exporting..."
 msgstr "Đang xuất bản..."
 
 #: src/components/modals/CreateSpaceModal.tsx:29
-msgid "Failed to create space. Please try again."
-msgstr "Tạo Space thất bại. Vui lòng thử lại."
+#~ msgid "Failed to create space. Please try again."
+#~ msgstr "Tạo Space thất bại. Vui lòng thử lại."
+
+#: src/components/modals/CreateSpaceModal.tsx:29
+msgid "Failed to create Space. Please try again."
+msgstr ""
 
 #: src/services/MessageService.ts:2738
 msgid "Failed to decrypt message with any known state"
@@ -1430,8 +1473,12 @@ msgid "Failed to load bookmarks"
 msgstr "Không thể tải dấu trang"
 
 #: src/components/discover-page/DiscoverTab.tsx:87
-msgid "Failed to load public spaces."
-msgstr "Không thể tải các không gian công cộng."
+#~ msgid "Failed to load public spaces."
+#~ msgstr "Không thể tải các không gian công cộng."
+
+#: src/components/discover-page/DiscoverTab.tsx:87
+msgid "Failed to load public Spaces."
+msgstr ""
 
 #: src/components/modals/MuteUserModal.tsx:55
 #: src/services/ActionQueueHandlers.ts:189
@@ -1447,8 +1494,12 @@ msgid "Failed to pin message"
 msgstr "Không thể ghim tin nhắn"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:102
-msgid "Failed to restore spaces"
-msgstr "Không thể khôi phục các Space"
+#~ msgid "Failed to restore spaces"
+#~ msgstr "Không thể khôi phục các Space"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:102
+msgid "Failed to restore Spaces"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
@@ -1459,8 +1510,12 @@ msgid "Failed to save settings"
 msgstr "Không thể lưu cài đặt"
 
 #: src/services/ActionQueueHandlers.ts:119
-msgid "Failed to save space settings"
-msgstr "Không thể lưu cài đặt Space"
+#~ msgid "Failed to save space settings"
+#~ msgstr "Không thể lưu cài đặt Space"
+
+#: src/services/ActionQueueHandlers.ts:119
+msgid "Failed to save Space settings"
+msgstr ""
 
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
@@ -1774,10 +1829,12 @@ msgstr "Tham gia"
 
 #: src/components/discover-page/DiscoverPage.tsx:84
 #: src/components/space/SpacesSidebar.tsx:302
-msgid "Join a space"
-msgstr "Tham gia một không gian"
+#~ msgid "Join a space"
+#~ msgstr "Tham gia một không gian"
 
+#: src/components/discover-page/DiscoverPage.tsx:84
 #: src/components/modals/AddSpaceModal.tsx:120
+#: src/components/space/SpacesSidebar.tsx:309
 msgid "Join a Space"
 msgstr "Tham gia một Không gian"
 
@@ -1871,8 +1928,12 @@ msgid "Leave Space"
 msgstr "Rời khỏi Space"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:301
-msgid "Leave this space"
-msgstr "Rời khỏi Space này"
+#~ msgid "Leave this space"
+#~ msgstr "Rời khỏi Space này"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:301
+msgid "Leave this Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1905,8 +1966,12 @@ msgid "Loading pinned messages..."
 msgstr "Đang tải tin nhắn đã ghim..."
 
 #: src/components/discover-page/DiscoverTab.tsx:98
-msgid "Loading public spaces..."
-msgstr "Đang tải các không gian công cộng..."
+#~ msgid "Loading public spaces..."
+#~ msgstr "Đang tải các không gian công cộng..."
+
+#: src/components/discover-page/DiscoverTab.tsx:98
+msgid "Loading public Spaces..."
+msgstr ""
 
 #: src/components/thread/ThreadPanel.tsx:374
 msgid "Loading thread..."
@@ -2045,8 +2110,12 @@ msgid "Mute"
 msgstr "Tắt tiếng"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:277
-msgid "Mute all notifications from this space"
-msgstr "Tắt tất cả thông báo từ Space này"
+#~ msgid "Mute all notifications from this space"
+#~ msgstr "Tắt tất cả thông báo từ Space này"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:277
+msgid "Mute all notifications from this Space"
+msgstr ""
 
 #: src/components/space/ChannelItem.tsx:187
 msgid "Mute Channel"
@@ -2144,8 +2213,12 @@ msgid "No bookmarks in direct messages."
 msgstr "Không có marcadores trong tin nhắn trực tiếp."
 
 #: src/components/bookmarks/BookmarksPage.tsx:143
-msgid "No bookmarks in spaces."
-msgstr "Không có marcadores trong không gian."
+#~ msgid "No bookmarks in spaces."
+#~ msgstr "Không có marcadores trong không gian."
+
+#: src/components/bookmarks/BookmarksPage.tsx:143
+msgid "No bookmarks in Spaces."
+msgstr ""
 
 #: src/components/bookmarks/BookmarksPage.tsx:139
 msgid "No bookmarks match your search."
@@ -2172,24 +2245,36 @@ msgid "No emoji found"
 msgstr "Không tìm thấy emoji"
 
 #: src/services/InvitationService.ts:69
-msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
-msgstr "Không tìm thấy trạng thái mã hóa cho space này. Space có thể cần được khởi tạo hoặc bạn có thể cần tạo liên kết mời công khai trước."
+#~ msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
+#~ msgstr "Không tìm thấy trạng thái mã hóa cho space này. Space có thể cần được khởi tạo hoặc bạn có thể cần tạo liên kết mời công khai trước."
+
+#: src/services/InvitationService.ts:69
+msgid "No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first."
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:439
 msgid "No favorites yet"
 msgstr "Chưa có yêu thích nào"
 
 #: src/services/InvitationService.ts:79
-msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
-msgstr "Không có đánh giá lời mời nào. Vui lòng tạo liên kết mời công khai hoặc đảm bảo trạng thái mã hóa của space được khởi tạo đúng cách."
+#~ msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
+#~ msgstr "Không có đánh giá lời mời nào. Vui lòng tạo liên kết mời công khai hoặc đảm bảo trạng thái mã hóa của space được khởi tạo đúng cách."
+
+#: src/services/InvitationService.ts:79
+msgid "No invite evaluations available. Please generate a public invite link or ensure the Space encryption state is properly initialized."
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
 msgstr "Không tìm thấy tin nhắn"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:77
-msgid "No missing spaces found"
-msgstr "Không tìm thấy Space nào bị thiếu"
+#~ msgid "No missing spaces found"
+#~ msgstr "Không tìm thấy Space nào bị thiếu"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:77
+msgid "No missing Spaces found"
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:443
 msgid "No muted conversations"
@@ -2200,16 +2285,28 @@ msgid "No pinned messages yet"
 msgstr "Chưa có tin nhắn nào được ghim"
 
 #: src/components/discover-page/DiscoverTab.tsx:105
-msgid "No public spaces match your filters."
-msgstr "Không có không gian công cộng nào phù hợp với bộ lọc của bạn."
+#~ msgid "No public spaces match your filters."
+#~ msgstr "Không có không gian công cộng nào phù hợp với bộ lọc của bạn."
+
+#: src/components/discover-page/DiscoverTab.tsx:105
+msgid "No public Spaces match your filters."
+msgstr ""
 
 #: src/components/discover-page/DiscoverTab.tsx:106
-msgid "No public spaces yet."
-msgstr "Chưa có không gian công cộng."
+#~ msgid "No public spaces yet."
+#~ msgstr "Chưa có không gian công cộng."
 
-#: src/components/space/SpacesSidebar.tsx:583
-msgid "No spaces found"
-msgstr "Không tìm thấy không gian"
+#: src/components/discover-page/DiscoverTab.tsx:106
+msgid "No public Spaces yet."
+msgstr ""
+
+#: src/components/space/SpacesSidebar.tsx:590
+#~ msgid "No spaces found"
+#~ msgstr "Không tìm thấy không gian"
+
+#: src/components/space/SpacesSidebar.tsx:590
+msgid "No Spaces found"
+msgstr ""
 
 #: src/components/thread/ThreadsListPanel.tsx:131
 msgid "No threads match your search"
@@ -2606,10 +2703,14 @@ msgstr "Khôi phục các Space tồn tại trên thiết bị này nhưng bị 
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Đã khôi phục {0} tin nhắn và {1} cuộc trò chuyện."
 
+#: src/hooks/business/user/useSpaceRecovery.ts:99
+#~ msgid "Restored {0} space(s)"
+#~ msgstr "Đã khôi phục {0} Space"
+
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:99
-msgid "Restored {0} space(s)"
-msgstr "Đã khôi phục {0} Space"
+msgid "Restored {0} Space(s)"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Help.tsx:83
 msgid "Restoring..."
@@ -2721,16 +2822,24 @@ msgid "Search messages..."
 msgstr "Tìm kiếm tin nhắn..."
 
 #: src/components/discover-page/DiscoverTab.tsx:70
-msgid "Search public spaces..."
-msgstr "Tìm kiếm các không gian công cộng..."
+#~ msgid "Search public spaces..."
+#~ msgstr "Tìm kiếm các không gian công cộng..."
+
+#: src/components/discover-page/DiscoverTab.tsx:70
+msgid "Search public Spaces..."
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:120
 msgid "Search Results"
 msgstr "Kết quả tìm kiếm"
 
-#: src/components/space/SpacesSidebar.tsx:526
-msgid "Search spaces"
-msgstr "Tìm kiếm các không gian"
+#: src/components/space/SpacesSidebar.tsx:533
+#~ msgid "Search spaces"
+#~ msgstr "Tìm kiếm các không gian"
+
+#: src/components/space/SpacesSidebar.tsx:533
+msgid "Search Spaces"
+msgstr ""
 
 #: src/components/thread/ThreadsListPanel.tsx:101
 msgid "Search threads…"
@@ -2877,10 +2986,14 @@ msgstr "Hiển Thị Trạng Thái Trực Tuyến"
 msgid "Show QR"
 msgstr "Hiển thị QR"
 
+#: src/components/discover-page/DiscoverTab.tsx:139
+#~ msgid "Showing {0} of {total} spaces"
+#~ msgstr "Đang hiển thị {0} trong tổng số {total} không gian"
+
 #. placeholder {0}: entries.length
 #: src/components/discover-page/DiscoverTab.tsx:139
-msgid "Showing {0} of {total} spaces"
-msgstr "Đang hiển thị {0} trong tổng số {total} không gian"
+msgid "Showing {0} of {total} Spaces"
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:217
@@ -2916,7 +3029,7 @@ msgid "Space ID"
 msgstr "ID Space"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
-#: src/components/space/SpacesSidebar.tsx:575
+#: src/components/space/SpacesSidebar.tsx:582
 msgid "Space name"
 msgstr "Tên Space"
 
@@ -2952,7 +3065,7 @@ msgstr "Space Tag"
 
 #: src/components/bookmarks/BookmarksPage.tsx:60
 #: src/components/shell/NavRail.tsx:33
-#: src/components/space/SpacesSidebar.tsx:518
+#: src/components/space/SpacesSidebar.tsx:525
 msgid "Spaces"
 msgstr "Spaces"
 
@@ -3100,8 +3213,12 @@ msgid "This thread has been closed"
 msgstr "Chủ đề này đã được đóng"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
-msgid "This user is already a member of this space."
-msgstr "Người dùng này đã là thành viên của Space này."
+#~ msgid "This user is already a member of this space."
+#~ msgstr "Người dùng này đã là thành viên của Space này."
+
+#: src/hooks/business/spaces/useInviteManagement.ts:128
+msgid "This user is already a member of this Space."
+msgstr ""
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
@@ -3212,8 +3329,12 @@ msgid "Typing indicators in DMs"
 msgstr "Chỉ báo đang gõ trong tin nhắn riêng"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:355
-msgid "Typing indicators in spaces"
-msgstr "Chỉ báo đang gõ trong không gian"
+#~ msgid "Typing indicators in spaces"
+#~ msgstr "Chỉ báo đang gõ trong không gian"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:355
+msgid "Typing indicators in Spaces"
+msgstr ""
 
 #: src/hooks/business/ui/useCustomAssets.ts:198
 msgid "Unable to compress emoji images. Please use smaller images."
@@ -3237,8 +3358,12 @@ msgid "Unable to copy to clipboard"
 msgstr "Không thể sao chép vào clipboard"
 
 #: src/services/SpaceService.ts:561
-msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
-msgstr "Không thể rời khỏi Space do cấu hình chưa hoàn chỉnh. Dữ liệu không gian có thể bị hỏng."
+#~ msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
+#~ msgstr "Không thể rời khỏi Space do cấu hình chưa hoàn chỉnh. Dữ liệu không gian có thể bị hỏng."
+
+#: src/services/SpaceService.ts:561
+msgid "Unable to leave Space due to incomplete configuration. The Space data may be corrupted."
+msgstr ""
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
 msgid "Unable to load user config"
@@ -3518,8 +3643,12 @@ msgid "When muted, new messages won't show unread indicators or desktop notifica
 msgstr "Khi bị tắt tiếng, các tin nhắn mới sẽ không hiển thị chỉ báo chưa đọc hoặc thông báo trên máy tính."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:359
-msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
-msgstr "Khi bật, mọi người trong kênh không gian sẽ thấy khi bạn đang gõ, và bạn sẽ thấy khi họ đang gõ."
+#~ msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
+#~ msgstr "Khi bật, mọi người trong kênh không gian sẽ thấy khi bạn đang gõ, và bạn sẽ thấy khi họ đang gõ."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:359
+msgid "When on, everyone in a Space channel sees when you're typing, and you see when they're typing."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:288
 msgid "When on, senders see when their messages reach your device, and you see when yours reach theirs."

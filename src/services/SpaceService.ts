@@ -558,7 +558,7 @@ export class SpaceService {
         hubKey,
       });
       throw new Error(
-        t`Unable to leave space due to incomplete configuration. The space data may be corrupted.`
+        t`Unable to leave Space due to incomplete configuration. The Space data may be corrupted.`
       );
     }
 

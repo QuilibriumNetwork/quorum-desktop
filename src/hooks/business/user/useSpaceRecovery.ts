@@ -74,7 +74,7 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
       logger.log(`[SpaceRecovery] Found ${orphaned.length} orphaned, ${recoverable.length} recoverable`);
 
       if (recoverable.length === 0) {
-        showToast(t`No missing spaces found`, { variant: 'info', bottomFixed: true });
+        showToast(t`No missing Spaces found`, { variant: 'info', bottomFixed: true });
         return;
       }
 
@@ -96,10 +96,10 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
       // 7. Invalidate React Query cache (nav menu updates automatically)
       await invalidateConfig({ userAddress: currentPasskeyInfo.address });
 
-      showToast(t`Restored ${recoverable.length} space(s)`, { variant: 'success', bottomFixed: true });
+      showToast(t`Restored ${recoverable.length} Space(s)`, { variant: 'success', bottomFixed: true });
     } catch (error) {
       console.error('[SpaceRecovery] Error:', error);
-      showToast(t`Failed to restore spaces`, { variant: 'error', bottomFixed: true });
+      showToast(t`Failed to restore Spaces`, { variant: 'error', bottomFixed: true });
     } finally {
       setIsRestoring(false);
     }

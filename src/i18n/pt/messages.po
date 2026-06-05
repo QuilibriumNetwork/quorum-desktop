@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "Sem Papel - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Bem-vindo ao Quorum, {name}! Sua conta está segura e pronta para ser usada."
-
-#. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1635
 msgid "Send a message to #{channel_name}"
 msgstr "Enviar uma mensagem para #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Bem-vindo ao Quorum, {name}! Sua conta está segura e pronta para ser usada."
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -68,6 +68,11 @@ msgid "Replying to"
 msgstr "Respondendo a"
 
 #. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:1007
+msgid "Send a message to {user}"
+msgstr "Enviar uma mensagem para {user}"
+
+#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:360
 msgid "has joined"
 msgstr "entrou"
@@ -81,11 +86,6 @@ msgstr "saiu"
 #: src/components/message/Message.tsx:376
 msgid "has been kicked"
 msgstr "foi expulso"
-
-#. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1007
-msgid "Send a message to {user}"
-msgstr "Enviar uma mensagem para {user}"
 
 #: src/components/message/Message.tsx:830
 #: src/components/message/Message.tsx:843
@@ -265,8 +265,14 @@ msgstr "um papel"
 #: src/services/MessageService.ts:4349
 #: src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
-msgid "a space"
-msgstr "um espaço"
+#~ msgid "a space"
+#~ msgstr "um espaço"
+
+#: src/services/MessageService.ts:4349
+#: src/services/NotificationService.ts:296
+#: src/services/NotificationService.ts:309
+msgid "a Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Account"
@@ -311,8 +317,14 @@ msgstr "Adicionar uma foto de perfil"
 #: src/components/space/SpacesSidebar.tsx:538
 #: src/components/space/SpacesSidebar.tsx:543
 #: src/components/space/SpacesSidebar.tsx:554
-msgid "Add a space"
-msgstr "Adicionar um espaço"
+#~ msgid "Add a space"
+#~ msgstr "Adicionar um espaço"
+
+#: src/components/space/SpacesSidebar.tsx:545
+#: src/components/space/SpacesSidebar.tsx:550
+#: src/components/space/SpacesSidebar.tsx:561
+msgid "Add a Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:574
 msgid "Add channel"
@@ -521,8 +533,13 @@ msgstr "Voltar para o link de convite"
 
 #: src/components/space/ChannelList.tsx:170
 #: src/components/space/ChannelList.tsx:174
-msgid "Back to spaces list"
-msgstr "Voltar à lista de espaços"
+#~ msgid "Back to spaces list"
+#~ msgstr "Voltar à lista de espaços"
+
+#: src/components/space/ChannelList.tsx:170
+#: src/components/space/ChannelList.tsx:174
+msgid "Back to Spaces list"
+msgstr ""
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
@@ -587,12 +604,20 @@ msgid "Bookmarks in this conversation"
 msgstr "Marcadores nesta conversa"
 
 #: src/components/space/Channel.tsx:1472
-msgid "Bookmarks in this space"
-msgstr "Marcadores neste espaço"
+#~ msgid "Bookmarks in this space"
+#~ msgstr "Marcadores neste espaço"
+
+#: src/components/space/Channel.tsx:1472
+msgid "Bookmarks in this Space"
+msgstr ""
 
 #: src/components/discover-page/DiscoverPage.tsx:78
-msgid "Browse public spaces and find a community to join."
-msgstr "Navegue por espaços públicos e encontre uma comunidade para participar."
+#~ msgid "Browse public spaces and find a community to join."
+#~ msgstr "Navegue por espaços públicos e encontre uma comunidade para participar."
+
+#: src/components/discover-page/DiscoverPage.tsx:78
+msgid "Browse public Spaces and find a community to join."
+msgstr ""
 
 #: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
@@ -762,7 +787,7 @@ msgid "Config Key"
 msgstr "Chave de Configuração"
 
 #: src/components/direct/DirectMessageContactsList.tsx:270
-#: src/components/space/SpacesSidebar.tsx:243
+#: src/components/space/SpacesSidebar.tsx:250
 msgid "Confirm Delete"
 msgstr "Confirmar Exclusão"
 
@@ -878,10 +903,12 @@ msgstr "Criar"
 
 #: src/components/discover-page/DiscoverPage.tsx:91
 #: src/components/space/SpacesSidebar.tsx:311
-msgid "Create a space"
-msgstr "Criar um espaço"
+#~ msgid "Create a space"
+#~ msgstr "Criar um espaço"
 
+#: src/components/discover-page/DiscoverPage.tsx:91
 #: src/components/modals/CreateSpaceModal.tsx:83
+#: src/components/space/SpacesSidebar.tsx:318
 msgid "Create a Space"
 msgstr "Criar um Espaço"
 
@@ -944,8 +971,12 @@ msgid "days"
 msgstr "dias"
 
 #: src/services/ConfigService.ts:116
-msgid "decrypted space with no known config key"
-msgstr "space descriptografado sem chave de configuração conhecida"
+#~ msgid "decrypted space with no known config key"
+#~ msgstr "space descriptografado sem chave de configuração conhecida"
+
+#: src/services/ConfigService.ts:116
+msgid "Decrypted Space with no known config key"
+msgstr ""
 
 #: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
@@ -1005,7 +1036,7 @@ msgid "Delete Conversation"
 msgstr "Excluir Conversa"
 
 #: src/components/modals/FolderEditorModal.tsx:129
-#: src/components/space/SpacesSidebar.tsx:242
+#: src/components/space/SpacesSidebar.tsx:249
 msgid "Delete Folder"
 msgstr "Excluir Pasta"
 
@@ -1063,8 +1094,12 @@ msgid "Delete this image"
 msgstr "Excluir esta imagem"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:40
-msgid "Delete this space"
-msgstr "Excluir este espaço"
+#~ msgid "Delete this space"
+#~ msgstr "Excluir este espaço"
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
+msgid "Delete this Space"
+msgstr ""
 
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Delete Thread"
@@ -1148,8 +1183,12 @@ msgid "Discover"
 msgstr "Descobrir"
 
 #: src/components/discover-page/DiscoverPage.tsx:77
-msgid "Discover spaces"
-msgstr "Descobrir espaços"
+#~ msgid "Discover spaces"
+#~ msgstr "Descobrir espaços"
+
+#: src/components/discover-page/DiscoverPage.tsx:77
+msgid "Discover Spaces"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/General.tsx:200
 msgid "Display a tag from one of your Spaces next to your username in messages."
@@ -1228,7 +1267,7 @@ msgid "Edit Channel"
 msgstr "Editar Canal"
 
 #: src/components/modals/FolderEditorModal.tsx:68
-#: src/components/space/SpacesSidebar.tsx:233
+#: src/components/space/SpacesSidebar.tsx:240
 msgid "Edit Folder"
 msgstr "Editar Pasta"
 
@@ -1391,8 +1430,12 @@ msgid "Exporting..."
 msgstr "Exportando..."
 
 #: src/components/modals/CreateSpaceModal.tsx:29
-msgid "Failed to create space. Please try again."
-msgstr "Falha ao criar o Espaço. Por favor, tente novamente."
+#~ msgid "Failed to create space. Please try again."
+#~ msgstr "Falha ao criar o Espaço. Por favor, tente novamente."
+
+#: src/components/modals/CreateSpaceModal.tsx:29
+msgid "Failed to create Space. Please try again."
+msgstr ""
 
 #: src/services/MessageService.ts:2738
 msgid "Failed to decrypt message with any known state"
@@ -1430,8 +1473,12 @@ msgid "Failed to load bookmarks"
 msgstr "Falha ao carregar marcadores"
 
 #: src/components/discover-page/DiscoverTab.tsx:87
-msgid "Failed to load public spaces."
-msgstr "Falha ao carregar espaços públicos."
+#~ msgid "Failed to load public spaces."
+#~ msgstr "Falha ao carregar espaços públicos."
+
+#: src/components/discover-page/DiscoverTab.tsx:87
+msgid "Failed to load public Spaces."
+msgstr ""
 
 #: src/components/modals/MuteUserModal.tsx:55
 #: src/services/ActionQueueHandlers.ts:189
@@ -1447,8 +1494,12 @@ msgid "Failed to pin message"
 msgstr "Falha ao fixar a mensagem"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:102
-msgid "Failed to restore spaces"
-msgstr "Falha ao restaurar espaços"
+#~ msgid "Failed to restore spaces"
+#~ msgstr "Falha ao restaurar espaços"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:102
+msgid "Failed to restore Spaces"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
@@ -1459,8 +1510,12 @@ msgid "Failed to save settings"
 msgstr "Falha ao salvar as configurações"
 
 #: src/services/ActionQueueHandlers.ts:119
-msgid "Failed to save space settings"
-msgstr "Falha ao salvar as configurações do espaço"
+#~ msgid "Failed to save space settings"
+#~ msgstr "Falha ao salvar as configurações do espaço"
+
+#: src/services/ActionQueueHandlers.ts:119
+msgid "Failed to save Space settings"
+msgstr ""
 
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
@@ -1774,10 +1829,12 @@ msgstr "Junte-se"
 
 #: src/components/discover-page/DiscoverPage.tsx:84
 #: src/components/space/SpacesSidebar.tsx:302
-msgid "Join a space"
-msgstr "Participar de um espaço"
+#~ msgid "Join a space"
+#~ msgstr "Participar de um espaço"
 
+#: src/components/discover-page/DiscoverPage.tsx:84
 #: src/components/modals/AddSpaceModal.tsx:120
+#: src/components/space/SpacesSidebar.tsx:309
 msgid "Join a Space"
 msgstr "Participar de um Espaço"
 
@@ -1871,8 +1928,12 @@ msgid "Leave Space"
 msgstr "Sair do Espaço"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:301
-msgid "Leave this space"
-msgstr "Sair deste espaço"
+#~ msgid "Leave this space"
+#~ msgstr "Sair deste espaço"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:301
+msgid "Leave this Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1905,8 +1966,12 @@ msgid "Loading pinned messages..."
 msgstr "Carregando mensagens fixadas..."
 
 #: src/components/discover-page/DiscoverTab.tsx:98
-msgid "Loading public spaces..."
-msgstr "Carregando espaços públicos..."
+#~ msgid "Loading public spaces..."
+#~ msgstr "Carregando espaços públicos..."
+
+#: src/components/discover-page/DiscoverTab.tsx:98
+msgid "Loading public Spaces..."
+msgstr ""
 
 #: src/components/thread/ThreadPanel.tsx:374
 msgid "Loading thread..."
@@ -2045,8 +2110,12 @@ msgid "Mute"
 msgstr "Silenciar"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:277
-msgid "Mute all notifications from this space"
-msgstr "Silenciar todas as notificações deste espaço"
+#~ msgid "Mute all notifications from this space"
+#~ msgstr "Silenciar todas as notificações deste espaço"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:277
+msgid "Mute all notifications from this Space"
+msgstr ""
 
 #: src/components/space/ChannelItem.tsx:187
 msgid "Mute Channel"
@@ -2144,8 +2213,12 @@ msgid "No bookmarks in direct messages."
 msgstr "Nenhum marcador em mensagens diretas."
 
 #: src/components/bookmarks/BookmarksPage.tsx:143
-msgid "No bookmarks in spaces."
-msgstr "Nenhum marcador em espaços."
+#~ msgid "No bookmarks in spaces."
+#~ msgstr "Nenhum marcador em espaços."
+
+#: src/components/bookmarks/BookmarksPage.tsx:143
+msgid "No bookmarks in Spaces."
+msgstr ""
 
 #: src/components/bookmarks/BookmarksPage.tsx:139
 msgid "No bookmarks match your search."
@@ -2172,24 +2245,36 @@ msgid "No emoji found"
 msgstr "Nenhum emoji encontrado"
 
 #: src/services/InvitationService.ts:69
-msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
-msgstr "Nenhum estado de criptografia encontrado para este space. O space pode precisar ser inicializado ou você pode precisar gerar um link de convite público primeiro."
+#~ msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
+#~ msgstr "Nenhum estado de criptografia encontrado para este space. O space pode precisar ser inicializado ou você pode precisar gerar um link de convite público primeiro."
+
+#: src/services/InvitationService.ts:69
+msgid "No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first."
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:439
 msgid "No favorites yet"
 msgstr "Nenhum favorito ainda"
 
 #: src/services/InvitationService.ts:79
-msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
-msgstr "Nenhuma avaliação de convite disponível. Por favor, gere um link de convite público ou certifique-se de que o estado de criptografia do space esteja devidamente inicializado."
+#~ msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
+#~ msgstr "Nenhuma avaliação de convite disponível. Por favor, gere um link de convite público ou certifique-se de que o estado de criptografia do space esteja devidamente inicializado."
+
+#: src/services/InvitationService.ts:79
+msgid "No invite evaluations available. Please generate a public invite link or ensure the Space encryption state is properly initialized."
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
 msgstr "Nenhuma mensagem encontrada"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:77
-msgid "No missing spaces found"
-msgstr "Nenhum espaço ausente encontrado"
+#~ msgid "No missing spaces found"
+#~ msgstr "Nenhum espaço ausente encontrado"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:77
+msgid "No missing Spaces found"
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:443
 msgid "No muted conversations"
@@ -2200,16 +2285,28 @@ msgid "No pinned messages yet"
 msgstr "Nenhuma mensagem fixada ainda"
 
 #: src/components/discover-page/DiscoverTab.tsx:105
-msgid "No public spaces match your filters."
-msgstr "Nenhum espaço público corresponde aos seus filtros."
+#~ msgid "No public spaces match your filters."
+#~ msgstr "Nenhum espaço público corresponde aos seus filtros."
+
+#: src/components/discover-page/DiscoverTab.tsx:105
+msgid "No public Spaces match your filters."
+msgstr ""
 
 #: src/components/discover-page/DiscoverTab.tsx:106
-msgid "No public spaces yet."
-msgstr "Ainda não há espaços públicos."
+#~ msgid "No public spaces yet."
+#~ msgstr "Ainda não há espaços públicos."
 
-#: src/components/space/SpacesSidebar.tsx:583
-msgid "No spaces found"
-msgstr "Nenhum espaço encontrado"
+#: src/components/discover-page/DiscoverTab.tsx:106
+msgid "No public Spaces yet."
+msgstr ""
+
+#: src/components/space/SpacesSidebar.tsx:590
+#~ msgid "No spaces found"
+#~ msgstr "Nenhum espaço encontrado"
+
+#: src/components/space/SpacesSidebar.tsx:590
+msgid "No Spaces found"
+msgstr ""
 
 #: src/components/thread/ThreadsListPanel.tsx:131
 msgid "No threads match your search"
@@ -2606,10 +2703,14 @@ msgstr "Restaurar Espaços que existem neste dispositivo, mas estão ausentes no
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Restaurado {0} mensagens e {1} conversas."
 
+#: src/hooks/business/user/useSpaceRecovery.ts:99
+#~ msgid "Restored {0} space(s)"
+#~ msgstr "Restaurado {0} espaço(s)"
+
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:99
-msgid "Restored {0} space(s)"
-msgstr "Restaurado {0} espaço(s)"
+msgid "Restored {0} Space(s)"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Help.tsx:83
 msgid "Restoring..."
@@ -2721,16 +2822,24 @@ msgid "Search messages..."
 msgstr "Pesquisar mensagens..."
 
 #: src/components/discover-page/DiscoverTab.tsx:70
-msgid "Search public spaces..."
-msgstr "Pesquisar espaços públicos..."
+#~ msgid "Search public spaces..."
+#~ msgstr "Pesquisar espaços públicos..."
+
+#: src/components/discover-page/DiscoverTab.tsx:70
+msgid "Search public Spaces..."
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:120
 msgid "Search Results"
 msgstr "Resultados da Pesquisa"
 
-#: src/components/space/SpacesSidebar.tsx:526
-msgid "Search spaces"
-msgstr "Pesquisar espaços"
+#: src/components/space/SpacesSidebar.tsx:533
+#~ msgid "Search spaces"
+#~ msgstr "Pesquisar espaços"
+
+#: src/components/space/SpacesSidebar.tsx:533
+msgid "Search Spaces"
+msgstr ""
 
 #: src/components/thread/ThreadsListPanel.tsx:101
 msgid "Search threads…"
@@ -2877,10 +2986,14 @@ msgstr "Mostrar Status Online"
 msgid "Show QR"
 msgstr "Mostrar QR"
 
+#: src/components/discover-page/DiscoverTab.tsx:139
+#~ msgid "Showing {0} of {total} spaces"
+#~ msgstr "Mostrando {0} de {total} espaços"
+
 #. placeholder {0}: entries.length
 #: src/components/discover-page/DiscoverTab.tsx:139
-msgid "Showing {0} of {total} spaces"
-msgstr "Mostrando {0} de {total} espaços"
+msgid "Showing {0} of {total} Spaces"
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:217
@@ -2916,7 +3029,7 @@ msgid "Space ID"
 msgstr "ID do Espaço"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
-#: src/components/space/SpacesSidebar.tsx:575
+#: src/components/space/SpacesSidebar.tsx:582
 msgid "Space name"
 msgstr "Nome do space"
 
@@ -2952,7 +3065,7 @@ msgstr "Tag do Espaço"
 
 #: src/components/bookmarks/BookmarksPage.tsx:60
 #: src/components/shell/NavRail.tsx:33
-#: src/components/space/SpacesSidebar.tsx:518
+#: src/components/space/SpacesSidebar.tsx:525
 msgid "Spaces"
 msgstr "Espaços"
 
@@ -3100,8 +3213,12 @@ msgid "This thread has been closed"
 msgstr "Este tópico foi fechado"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
-msgid "This user is already a member of this space."
-msgstr "Este usuário já é membro deste Espaço."
+#~ msgid "This user is already a member of this space."
+#~ msgstr "Este usuário já é membro deste Espaço."
+
+#: src/hooks/business/spaces/useInviteManagement.ts:128
+msgid "This user is already a member of this Space."
+msgstr ""
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
@@ -3212,8 +3329,12 @@ msgid "Typing indicators in DMs"
 msgstr "Indicadores de digitação em mensagens diretas"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:355
-msgid "Typing indicators in spaces"
-msgstr "Indicadores de digitação em espaços"
+#~ msgid "Typing indicators in spaces"
+#~ msgstr "Indicadores de digitação em espaços"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:355
+msgid "Typing indicators in Spaces"
+msgstr ""
 
 #: src/hooks/business/ui/useCustomAssets.ts:198
 msgid "Unable to compress emoji images. Please use smaller images."
@@ -3237,8 +3358,12 @@ msgid "Unable to copy to clipboard"
 msgstr "Não foi possível copiar para a área de transferência"
 
 #: src/services/SpaceService.ts:561
-msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
-msgstr "Incapaz de sair do espaço devido a configuração incompleta. Os dados do espaço podem estar corrompidos."
+#~ msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
+#~ msgstr "Incapaz de sair do espaço devido a configuração incompleta. Os dados do espaço podem estar corrompidos."
+
+#: src/services/SpaceService.ts:561
+msgid "Unable to leave Space due to incomplete configuration. The Space data may be corrupted."
+msgstr ""
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
 msgid "Unable to load user config"
@@ -3518,8 +3643,12 @@ msgid "When muted, new messages won't show unread indicators or desktop notifica
 msgstr "Quando silenciado, novas mensagens não mostrarão indicadores de não lidas ou notificações de desktop."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:359
-msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
-msgstr "Quando ligado, todos em um canal de espaço veem quando você está digitando, e você vê quando eles estão digitando."
+#~ msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
+#~ msgstr "Quando ligado, todos em um canal de espaço veem quando você está digitando, e você vê quando eles estão digitando."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:359
+msgid "When on, everyone in a Space channel sees when you're typing, and you see when they're typing."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:288
 msgid "When on, senders see when their messages reach your device, and you see when yours reach theirs."

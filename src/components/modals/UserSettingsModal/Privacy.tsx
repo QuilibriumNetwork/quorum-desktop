@@ -352,11 +352,11 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
-                {t`Typing indicators in spaces`}
+                {t`Typing indicators in Spaces`}
               </div>
               <Tooltip
                 id="settings-typing-indicators-spaces-tooltip"
-                content={t`When on, everyone in a space channel sees when you're typing, and you see when they're typing.`}
+                content={t`When on, everyone in a Space channel sees when you're typing, and you see when they're typing.`}
                 place="bottom"
               >
                 <Icon

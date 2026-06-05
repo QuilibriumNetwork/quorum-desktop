@@ -52,11 +52,16 @@ CRITICAL FORMATTING RULES:
 - Only curly braces {} are allowed for placeholders
 - Return clean, unquoted text only
 
-CRITICAL TRANSLATION RULE - "Space":
-- "Space" refers to a special app feature like Discord servers
-- KEEP "Space" in English for: da, de, fi, id, nl, no, sv, th, vi
-- TRANSLATE "Space" for: ar, cs, el, es, fr, he, it, ja, ko, pl, pt, ro, ru, sk, sl, sr, tr, uk, zh-CN, zh-TW
-  Examples: fr="Espace", es="Espacio", it="Spazio", pt="Espaco", ru="Ространство", pl="Przestrzen", cs="Prostor", sk="Priestor", uk="Простiр", ja="スペース", ko="공간", zh-CN="空间", zh-TW="空間", ar="الفضاء", tr="Alan", he="מרחב", el="Χώρος", ro="Spatiu", sl="Prostor", sr="Prostor"
+CRITICAL TRANSLATION RULE - "Space" / "Spaces":
+- "Space" refers to a special app feature like Discord servers — treat it as a proper noun
+- ALWAYS capitalize the translated term (singular and plural) in running text, exactly as the source does. Do NOT lowercase it mid-sentence.
+  Source: "Add a Space", "Bookmarks in this Space", "No public Spaces yet"
+  Target (it): "Aggiungi uno Spazio", "Segnalibri in questo Spazio", "Ancora nessuno Spazio pubblico"
+  Target (fr): "Ajouter un Espace", "Signets dans cet Espace", "Aucun Espace public pour le moment"
+- KEEP "Space"/"Spaces" in English for: da, de, fi, id, nl, no, sv, th, vi
+- TRANSLATE "Space"/"Spaces" for: ar, cs, el, es, fr, he, it, ja, ko, pl, pt, ro, ru, sk, sl, sr, tr, uk, zh-CN, zh-TW
+  Singular examples: fr="Espace", es="Espacio", it="Spazio", pt="Espaco", ru="Ространство", pl="Przestrzen", cs="Prostor", sk="Priestor", uk="Простiр", ja="スペース", ko="공간", zh-CN="空间", zh-TW="空間", ar="الفضاء", tr="Alan", he="מרחב", el="Χώρος", ro="Spatiu", sl="Prostor", sr="Prostor"
+  Plural: use the natural plural form of the singular (fr="Espaces", it="Spazi", es="Espacios", ru="Пространства", etc.); for languages where the noun is invariant in plural (ja, ko, zh, ar in this context), reuse the singular form.
 
 CRITICAL TRANSLATION RULE - "Channel":
 - "Channel" refers to a chat channel within a Space

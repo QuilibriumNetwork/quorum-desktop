@@ -1469,7 +1469,7 @@ const Channel: React.FC<ChannelProps> = ({
                 <div className="relative">
                   <Tooltip
                     id={`bookmarks-${channelId}`}
-                    content={t`Bookmarks in this space`}
+                    content={t`Bookmarks in this Space`}
                     showOnTouch={false}
                   >
                     <Button

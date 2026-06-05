@@ -26,7 +26,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     onSaveComplete: props.onClose,
     onSaveError: (error) => {
       console.error('Create space error:', error);
-      setCreateError(error.message || t`Failed to create space. Please try again.`);
+      setCreateError(error.message || t`Failed to create Space. Please try again.`);
     },
     onTimeout: () => {
       setCreateError(t`Operation timed out. Please try again.`);

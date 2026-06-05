@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "Nema uloge - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Dobrodošli u Quorum, {name}! Vaš nalog je zaštićen i spreman za korišćenje."
-
-#. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1635
 msgid "Send a message to #{channel_name}"
 msgstr "Pošalji poruku #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Dobrodošli u Quorum, {name}! Vaš nalog je zaštićen i spreman za korišćenje."
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -68,6 +68,11 @@ msgid "Replying to"
 msgstr "Odgovara se"
 
 #. js-lingui-explicit-id
+#: src/components/direct/DirectMessage.tsx:1007
+msgid "Send a message to {user}"
+msgstr "Pošalji poruku {user}"
+
+#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:360
 msgid "has joined"
 msgstr "pridružio se"
@@ -81,11 +86,6 @@ msgstr "napustio je"
 #: src/components/message/Message.tsx:376
 msgid "has been kicked"
 msgstr "bio je izbačen"
-
-#. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1007
-msgid "Send a message to {user}"
-msgstr "Pošalji poruku {user}"
 
 #: src/components/message/Message.tsx:830
 #: src/components/message/Message.tsx:843
@@ -265,8 +265,14 @@ msgstr "uloga"
 #: src/services/MessageService.ts:4349
 #: src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
-msgid "a space"
-msgstr "prostor"
+#~ msgid "a space"
+#~ msgstr "prostor"
+
+#: src/services/MessageService.ts:4349
+#: src/services/NotificationService.ts:296
+#: src/services/NotificationService.ts:309
+msgid "a Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Account"
@@ -311,8 +317,14 @@ msgstr "Dodaj profilnu fotografiju"
 #: src/components/space/SpacesSidebar.tsx:538
 #: src/components/space/SpacesSidebar.tsx:543
 #: src/components/space/SpacesSidebar.tsx:554
-msgid "Add a space"
-msgstr "Dodajte prostor"
+#~ msgid "Add a space"
+#~ msgstr "Dodajte prostor"
+
+#: src/components/space/SpacesSidebar.tsx:545
+#: src/components/space/SpacesSidebar.tsx:550
+#: src/components/space/SpacesSidebar.tsx:561
+msgid "Add a Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:574
 msgid "Add channel"
@@ -521,8 +533,13 @@ msgstr "Nazad na link za poziv"
 
 #: src/components/space/ChannelList.tsx:170
 #: src/components/space/ChannelList.tsx:174
-msgid "Back to spaces list"
-msgstr "Nazad na listu prostora"
+#~ msgid "Back to spaces list"
+#~ msgstr "Nazad na listu prostora"
+
+#: src/components/space/ChannelList.tsx:170
+#: src/components/space/ChannelList.tsx:174
+msgid "Back to Spaces list"
+msgstr ""
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:17
 msgid "Back Up Your Account Key"
@@ -587,12 +604,20 @@ msgid "Bookmarks in this conversation"
 msgstr "Marakari u ovoj konverzaciji"
 
 #: src/components/space/Channel.tsx:1472
-msgid "Bookmarks in this space"
-msgstr "Marakari u ovom prostoru"
+#~ msgid "Bookmarks in this space"
+#~ msgstr "Marakari u ovom prostoru"
+
+#: src/components/space/Channel.tsx:1472
+msgid "Bookmarks in this Space"
+msgstr ""
 
 #: src/components/discover-page/DiscoverPage.tsx:78
-msgid "Browse public spaces and find a community to join."
-msgstr "Pretražite javne prostore i pridružite se zajednici."
+#~ msgid "Browse public spaces and find a community to join."
+#~ msgstr "Pretražite javne prostore i pridružite se zajednici."
+
+#: src/components/discover-page/DiscoverPage.tsx:78
+msgid "Browse public Spaces and find a community to join."
+msgstr ""
 
 #: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
@@ -762,7 +787,7 @@ msgid "Config Key"
 msgstr "Ključ konfiguracije"
 
 #: src/components/direct/DirectMessageContactsList.tsx:270
-#: src/components/space/SpacesSidebar.tsx:243
+#: src/components/space/SpacesSidebar.tsx:250
 msgid "Confirm Delete"
 msgstr "Potvrdi brisanje"
 
@@ -878,10 +903,12 @@ msgstr "Kreirajte"
 
 #: src/components/discover-page/DiscoverPage.tsx:91
 #: src/components/space/SpacesSidebar.tsx:311
-msgid "Create a space"
-msgstr "Kreirajte prostor"
+#~ msgid "Create a space"
+#~ msgstr "Kreirajte prostor"
 
+#: src/components/discover-page/DiscoverPage.tsx:91
 #: src/components/modals/CreateSpaceModal.tsx:83
+#: src/components/space/SpacesSidebar.tsx:318
 msgid "Create a Space"
 msgstr "Kreiraj Prostor"
 
@@ -944,8 +971,12 @@ msgid "days"
 msgstr "dana"
 
 #: src/services/ConfigService.ts:116
-msgid "decrypted space with no known config key"
-msgstr "dekriptovani space bez poznatog konfiguracionog ključa"
+#~ msgid "decrypted space with no known config key"
+#~ msgstr "dekriptovani space bez poznatog konfiguracionog ključa"
+
+#: src/services/ConfigService.ts:116
+msgid "Decrypted Space with no known config key"
+msgstr ""
 
 #: src/services/ConfigService.ts:122
 msgid "Decrypted Space with no known hub key"
@@ -1005,7 +1036,7 @@ msgid "Delete Conversation"
 msgstr "Obriši razgovor"
 
 #: src/components/modals/FolderEditorModal.tsx:129
-#: src/components/space/SpacesSidebar.tsx:242
+#: src/components/space/SpacesSidebar.tsx:249
 msgid "Delete Folder"
 msgstr "Obriši fasciklu"
 
@@ -1063,8 +1094,12 @@ msgid "Delete this image"
 msgstr "Obriši ovu sliku"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:40
-msgid "Delete this space"
-msgstr "Obriši ovaj Space"
+#~ msgid "Delete this space"
+#~ msgstr "Obriši ovaj Space"
+
+#: src/components/modals/SpaceSettingsModal/Danger.tsx:40
+msgid "Delete this Space"
+msgstr ""
 
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Delete Thread"
@@ -1148,8 +1183,12 @@ msgid "Discover"
 msgstr "Otkrijte"
 
 #: src/components/discover-page/DiscoverPage.tsx:77
-msgid "Discover spaces"
-msgstr "Otkrijte prostore"
+#~ msgid "Discover spaces"
+#~ msgstr "Otkrijte prostore"
+
+#: src/components/discover-page/DiscoverPage.tsx:77
+msgid "Discover Spaces"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/General.tsx:200
 msgid "Display a tag from one of your Spaces next to your username in messages."
@@ -1228,7 +1267,7 @@ msgid "Edit Channel"
 msgstr "Uredi kanal"
 
 #: src/components/modals/FolderEditorModal.tsx:68
-#: src/components/space/SpacesSidebar.tsx:233
+#: src/components/space/SpacesSidebar.tsx:240
 msgid "Edit Folder"
 msgstr "Izmeni fasciklu"
 
@@ -1391,8 +1430,12 @@ msgid "Exporting..."
 msgstr "Izvoz..."
 
 #: src/components/modals/CreateSpaceModal.tsx:29
-msgid "Failed to create space. Please try again."
-msgstr "Nije uspelo da se kreira prostor. Pokušajte ponovo."
+#~ msgid "Failed to create space. Please try again."
+#~ msgstr "Nije uspelo da se kreira prostor. Pokušajte ponovo."
+
+#: src/components/modals/CreateSpaceModal.tsx:29
+msgid "Failed to create Space. Please try again."
+msgstr ""
 
 #: src/services/MessageService.ts:2738
 msgid "Failed to decrypt message with any known state"
@@ -1430,8 +1473,12 @@ msgid "Failed to load bookmarks"
 msgstr "Nije moguće učitati oznake"
 
 #: src/components/discover-page/DiscoverTab.tsx:87
-msgid "Failed to load public spaces."
-msgstr "Neuspeh u učitavanju javnih prostora."
+#~ msgid "Failed to load public spaces."
+#~ msgstr "Neuspeh u učitavanju javnih prostora."
+
+#: src/components/discover-page/DiscoverTab.tsx:87
+msgid "Failed to load public Spaces."
+msgstr ""
 
 #: src/components/modals/MuteUserModal.tsx:55
 #: src/services/ActionQueueHandlers.ts:189
@@ -1447,8 +1494,12 @@ msgid "Failed to pin message"
 msgstr "Nije uspelo zakačiti poruku"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:102
-msgid "Failed to restore spaces"
-msgstr "Nije uspelo obnavljanje prostora"
+#~ msgid "Failed to restore spaces"
+#~ msgstr "Nije uspelo obnavljanje prostora"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:102
+msgid "Failed to restore Spaces"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:305
 msgid "Failed to save notification settings"
@@ -1459,8 +1510,12 @@ msgid "Failed to save settings"
 msgstr "Nije uspelo sačuvati podešavanja"
 
 #: src/services/ActionQueueHandlers.ts:119
-msgid "Failed to save space settings"
-msgstr "Nije uspelo sačuvati podešavanja prostora"
+#~ msgid "Failed to save space settings"
+#~ msgstr "Nije uspelo sačuvati podešavanja prostora"
+
+#: src/services/ActionQueueHandlers.ts:119
+msgid "Failed to save Space settings"
+msgstr ""
 
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
@@ -1774,10 +1829,12 @@ msgstr "Pridruži se"
 
 #: src/components/discover-page/DiscoverPage.tsx:84
 #: src/components/space/SpacesSidebar.tsx:302
-msgid "Join a space"
-msgstr "Pridružite se prostoru"
+#~ msgid "Join a space"
+#~ msgstr "Pridružite se prostoru"
 
+#: src/components/discover-page/DiscoverPage.tsx:84
 #: src/components/modals/AddSpaceModal.tsx:120
+#: src/components/space/SpacesSidebar.tsx:309
 msgid "Join a Space"
 msgstr "Pridružite se Prostoru"
 
@@ -1871,8 +1928,12 @@ msgid "Leave Space"
 msgstr "Napusti prostor"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:301
-msgid "Leave this space"
-msgstr "Napustite ovaj space"
+#~ msgid "Leave this space"
+#~ msgstr "Napustite ovaj space"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:301
+msgid "Leave this Space"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:157
 msgid "Letters A–Z and numbers 0–9 only. Auto-uppercase."
@@ -1905,8 +1966,12 @@ msgid "Loading pinned messages..."
 msgstr "Učitavanje zakačenih poruka..."
 
 #: src/components/discover-page/DiscoverTab.tsx:98
-msgid "Loading public spaces..."
-msgstr "Učitavanje javnih prostora..."
+#~ msgid "Loading public spaces..."
+#~ msgstr "Učitavanje javnih prostora..."
+
+#: src/components/discover-page/DiscoverTab.tsx:98
+msgid "Loading public Spaces..."
+msgstr ""
 
 #: src/components/thread/ThreadPanel.tsx:374
 msgid "Loading thread..."
@@ -2045,8 +2110,12 @@ msgid "Mute"
 msgstr "Isključi zvuk"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:277
-msgid "Mute all notifications from this space"
-msgstr "Isključi sve obaveštenja iz ovog prostora"
+#~ msgid "Mute all notifications from this space"
+#~ msgstr "Isključi sve obaveštenja iz ovog prostora"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:277
+msgid "Mute all notifications from this Space"
+msgstr ""
 
 #: src/components/space/ChannelItem.tsx:187
 msgid "Mute Channel"
@@ -2144,8 +2213,12 @@ msgid "No bookmarks in direct messages."
 msgstr "Nema marakara u direktnim porukama."
 
 #: src/components/bookmarks/BookmarksPage.tsx:143
-msgid "No bookmarks in spaces."
-msgstr "Nema marakara u prostorima."
+#~ msgid "No bookmarks in spaces."
+#~ msgstr "Nema marakara u prostorima."
+
+#: src/components/bookmarks/BookmarksPage.tsx:143
+msgid "No bookmarks in Spaces."
+msgstr ""
 
 #: src/components/bookmarks/BookmarksPage.tsx:139
 msgid "No bookmarks match your search."
@@ -2172,24 +2245,36 @@ msgid "No emoji found"
 msgstr "Nema emoji-a"
 
 #: src/services/InvitationService.ts:69
-msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
-msgstr "Nema pronađenog stanja enkripcije za ovaj space. Space možda treba da bude inicijalizovan ili možda treba da generišete javnu pozivnicu prvo."
+#~ msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
+#~ msgstr "Nema pronađenog stanja enkripcije za ovaj space. Space možda treba da bude inicijalizovan ili možda treba da generišete javnu pozivnicu prvo."
+
+#: src/services/InvitationService.ts:69
+msgid "No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first."
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:439
 msgid "No favorites yet"
 msgstr "Nema omiljenih još"
 
 #: src/services/InvitationService.ts:79
-msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
-msgstr "Nema dostupnih evaluacija pozivnica. Molimo generiši javnu pozivnicu ili osiguraj da je stanje enkripcije prostora pravilno inicijalizovano."
+#~ msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
+#~ msgstr "Nema dostupnih evaluacija pozivnica. Molimo generiši javnu pozivnicu ili osiguraj da je stanje enkripcije prostora pravilno inicijalizovano."
+
+#: src/services/InvitationService.ts:79
+msgid "No invite evaluations available. Please generate a public invite link or ensure the Space encryption state is properly initialized."
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
 msgstr "Nema poruka"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:77
-msgid "No missing spaces found"
-msgstr "Nema nedostajućih prostora"
+#~ msgid "No missing spaces found"
+#~ msgstr "Nema nedostajućih prostora"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:77
+msgid "No missing Spaces found"
+msgstr ""
 
 #: src/components/direct/DirectMessageContactsList.tsx:443
 msgid "No muted conversations"
@@ -2200,16 +2285,28 @@ msgid "No pinned messages yet"
 msgstr "Još nema zakačenih poruka"
 
 #: src/components/discover-page/DiscoverTab.tsx:105
-msgid "No public spaces match your filters."
-msgstr "Nema javnih prostora koji odgovaraju vašim filterima."
+#~ msgid "No public spaces match your filters."
+#~ msgstr "Nema javnih prostora koji odgovaraju vašim filterima."
+
+#: src/components/discover-page/DiscoverTab.tsx:105
+msgid "No public Spaces match your filters."
+msgstr ""
 
 #: src/components/discover-page/DiscoverTab.tsx:106
-msgid "No public spaces yet."
-msgstr "Još nema javnih prostora."
+#~ msgid "No public spaces yet."
+#~ msgstr "Još nema javnih prostora."
 
-#: src/components/space/SpacesSidebar.tsx:583
-msgid "No spaces found"
-msgstr "Nema pronađenih prostora"
+#: src/components/discover-page/DiscoverTab.tsx:106
+msgid "No public Spaces yet."
+msgstr ""
+
+#: src/components/space/SpacesSidebar.tsx:590
+#~ msgid "No spaces found"
+#~ msgstr "Nema pronađenih prostora"
+
+#: src/components/space/SpacesSidebar.tsx:590
+msgid "No Spaces found"
+msgstr ""
 
 #: src/components/thread/ThreadsListPanel.tsx:131
 msgid "No threads match your search"
@@ -2606,10 +2703,14 @@ msgstr "Obnovite prostore koji postoje na ovom uređaju, ali nedostaju iz vašeg
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Vraćeno je {0} poruka i {1} razgovora."
 
+#: src/hooks/business/user/useSpaceRecovery.ts:99
+#~ msgid "Restored {0} space(s)"
+#~ msgstr "Obnovljeno {0} prostor(a)"
+
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:99
-msgid "Restored {0} space(s)"
-msgstr "Obnovljeno {0} prostor(a)"
+msgid "Restored {0} Space(s)"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Help.tsx:83
 msgid "Restoring..."
@@ -2721,16 +2822,24 @@ msgid "Search messages..."
 msgstr "Pretraga poruka..."
 
 #: src/components/discover-page/DiscoverTab.tsx:70
-msgid "Search public spaces..."
-msgstr "Pretraži javne prostore..."
+#~ msgid "Search public spaces..."
+#~ msgstr "Pretraži javne prostore..."
+
+#: src/components/discover-page/DiscoverTab.tsx:70
+msgid "Search public Spaces..."
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:120
 msgid "Search Results"
 msgstr "Rezultati pretrage"
 
-#: src/components/space/SpacesSidebar.tsx:526
-msgid "Search spaces"
-msgstr "Pretraži prostore"
+#: src/components/space/SpacesSidebar.tsx:533
+#~ msgid "Search spaces"
+#~ msgstr "Pretraži prostore"
+
+#: src/components/space/SpacesSidebar.tsx:533
+msgid "Search Spaces"
+msgstr ""
 
 #: src/components/thread/ThreadsListPanel.tsx:101
 msgid "Search threads…"
@@ -2877,10 +2986,14 @@ msgstr "Prikaži online status"
 msgid "Show QR"
 msgstr "Prikaži QR"
 
+#: src/components/discover-page/DiscoverTab.tsx:139
+#~ msgid "Showing {0} of {total} spaces"
+#~ msgstr "Prikazano {0} od {total} prostoza"
+
 #. placeholder {0}: entries.length
 #: src/components/discover-page/DiscoverTab.tsx:139
-msgid "Showing {0} of {total} spaces"
-msgstr "Prikazano {0} od {total} prostoza"
+msgid "Showing {0} of {total} Spaces"
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:217
@@ -2916,7 +3029,7 @@ msgid "Space ID"
 msgstr "ID Space"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
-#: src/components/space/SpacesSidebar.tsx:575
+#: src/components/space/SpacesSidebar.tsx:582
 msgid "Space name"
 msgstr "Ime Space-a"
 
@@ -2952,7 +3065,7 @@ msgstr "Space Tag"
 
 #: src/components/bookmarks/BookmarksPage.tsx:60
 #: src/components/shell/NavRail.tsx:33
-#: src/components/space/SpacesSidebar.tsx:518
+#: src/components/space/SpacesSidebar.tsx:525
 msgid "Spaces"
 msgstr "Prostori"
 
@@ -3100,8 +3213,12 @@ msgid "This thread has been closed"
 msgstr "Ova nit je zatvorena"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
-msgid "This user is already a member of this space."
-msgstr "Ovaj korisnik je već član ovog prostora."
+#~ msgid "This user is already a member of this space."
+#~ msgstr "Ovaj korisnik je već član ovog prostora."
+
+#: src/hooks/business/spaces/useInviteManagement.ts:128
+msgid "This user is already a member of this Space."
+msgstr ""
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
@@ -3212,8 +3329,12 @@ msgid "Typing indicators in DMs"
 msgstr "Indikatori pisanja u privatnim porukama"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:355
-msgid "Typing indicators in spaces"
-msgstr "Indikatori pisanja u prostorima"
+#~ msgid "Typing indicators in spaces"
+#~ msgstr "Indikatori pisanja u prostorima"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:355
+msgid "Typing indicators in Spaces"
+msgstr ""
 
 #: src/hooks/business/ui/useCustomAssets.ts:198
 msgid "Unable to compress emoji images. Please use smaller images."
@@ -3237,8 +3358,12 @@ msgid "Unable to copy to clipboard"
 msgstr "Nije moguće kopirati u međuspremnik"
 
 #: src/services/SpaceService.ts:561
-msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
-msgstr "Nije moguće napustiti space zbog nepotpune konfiguracije. Podaci o space-u mogu biti oštećeni."
+#~ msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
+#~ msgstr "Nije moguće napustiti space zbog nepotpune konfiguracije. Podaci o space-u mogu biti oštećeni."
+
+#: src/services/SpaceService.ts:561
+msgid "Unable to leave Space due to incomplete configuration. The Space data may be corrupted."
+msgstr ""
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
 msgid "Unable to load user config"
@@ -3518,8 +3643,12 @@ msgid "When muted, new messages won't show unread indicators or desktop notifica
 msgstr "Kada je isključeno, nove poruke neće prikazivati nepročitane indikatore ili desktop obaveštenja."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:359
-msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
-msgstr "Kada je uključeno, svi u kanalu prostora vide kada pišete, a vi vidite kada oni pišu."
+#~ msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
+#~ msgstr "Kada je uključeno, svi u kanalu prostora vide kada pišete, a vi vidite kada oni pišu."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:359
+msgid "When on, everyone in a Space channel sees when you're typing, and you see when they're typing."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:288
 msgid "When on, senders see when their messages reach your device, and you see when yours reach theirs."

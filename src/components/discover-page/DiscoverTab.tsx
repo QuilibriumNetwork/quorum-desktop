@@ -67,7 +67,7 @@ export const DiscoverTab: React.FC = () => {
           <Input
             value={search}
             onChange={setSearch}
-            placeholder={t`Search public spaces...`}
+            placeholder={t`Search public Spaces...`}
             variant="bordered"
           />
         </div>
@@ -84,7 +84,7 @@ export const DiscoverTab: React.FC = () => {
       {error && (
         <Callout variant="error" size="sm">
           <div className="flex items-center justify-between gap-2">
-            <span>{t`Failed to load public spaces.`}</span>
+            <span>{t`Failed to load public Spaces.`}</span>
             <Button type="secondary" onClick={() => refetch()}>
               {t`Retry`}
             </Button>
@@ -95,15 +95,15 @@ export const DiscoverTab: React.FC = () => {
       {isLoading && entries.length === 0 ? (
         <div className="discover-tab__loading">
           <Icon name="spinner" className="icon-spin" />
-          <span>{t`Loading public spaces...`}</span>
+          <span>{t`Loading public Spaces...`}</span>
         </div>
       ) : entries.length === 0 && !error ? (
         <div className="empty-state empty-state--fill">
           <Icon name="users-group" size="5xl" className="empty-state__icon" />
           <p className="empty-state__title">
             {search.trim() || category
-              ? t`No public spaces match your filters.`
-              : t`No public spaces yet.`}
+              ? t`No public Spaces match your filters.`
+              : t`No public Spaces yet.`}
           </p>
         </div>
       ) : (
@@ -136,7 +136,7 @@ export const DiscoverTab: React.FC = () => {
 
       {total > 0 && entries.length > 0 && (
         <div className="discover-tab__footer">
-          {t`Showing ${entries.length} of ${total} spaces`}
+          {t`Showing ${entries.length} of ${total} Spaces`}
         </div>
       )}
     </div>

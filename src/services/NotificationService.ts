@@ -293,7 +293,7 @@ export class NotificationService {
         return t`New message from ${metadata.senderName}`;
       }
       if (metadata.type === 'mention') {
-        const spaceName = metadata.spaceName ?? t`a space`;
+        const spaceName = metadata.spaceName ?? t`a Space`;
         const roleName = metadata.roleName ?? t`a role`;
         if (metadata.mentionType === 'user') {
           return t`${metadata.senderName} mentioned you in ${spaceName}`;
@@ -306,7 +306,7 @@ export class NotificationService {
         }
       }
       if (metadata.type === 'reply') {
-        const spaceName = metadata.spaceName ?? t`a space`;
+        const spaceName = metadata.spaceName ?? t`a Space`;
         return t`${metadata.senderName} replied to your message in ${spaceName}`;
       }
     }

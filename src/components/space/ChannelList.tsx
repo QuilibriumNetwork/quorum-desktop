@@ -167,11 +167,11 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           type="button"
           className="space-header-back-button z-10"
           onClick={handleBackToSpaces}
-          aria-label={t`Back to spaces list`}
+          aria-label={t`Back to Spaces list`}
         >
           <Tooltip
             id="space-back-to-spaces"
-            content={t`Back to spaces list`}
+            content={t`Back to Spaces list`}
             place="right"
             showOnTouch={false}
             highlighted
