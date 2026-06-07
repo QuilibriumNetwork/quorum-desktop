@@ -239,7 +239,6 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <Trans>Notifications</Trans>
           </div>
 
-          {/* Master toggle: Space notifications on/off */}
           <Flex className="items-center gap-3 mt-4">
             <Switch
               value={!isSpaceMuted}
@@ -251,15 +250,11 @@ const Account: React.FunctionComponent<AccountProps> = ({
             </div>
           </Flex>
 
-          {/* Sub-controls. Visually associated with the master toggle via the
-              section heading and the muted state cascading from above; no
-              left indent so dense channel lists don't waste horizontal space. */}
           <div
             className={`mt-3 ${
               isSpaceMuted ? 'opacity-50 pointer-events-none' : ''
             }`}
           >
-            {/* Event-type sub-control */}
             <div className="text-label">
               <Trans>Notify me for:</Trans>
             </div>
@@ -303,7 +298,6 @@ const Account: React.FunctionComponent<AccountProps> = ({
               />
             </div>
 
-            {/* Per-channel notifications list, organised by group */}
             {space?.groups?.some((g) => g.channels.length > 0) && (
               <div className="flex flex-col gap-4 pt-5">
                 {space.groups
@@ -350,7 +344,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             )}
           </div>
 
-          {/* Sidebar display preference — separate concept */}
+          {/* Sidebar display preference: independent of mute state above. */}
           <Spacer
             spaceBefore="lg"
             spaceAfter="md"

@@ -388,11 +388,7 @@ export class ConfigService {
     // produce delayed "phantom" reverts after queue completion.
     const config: UserConfig = JSON.parse(JSON.stringify(configInput));
 
-    // Snapshot the time we started persisting. The tail-end cache write is
-    // guarded against this so that newer optimistic updates from rapid user
-    // actions are not clobbered by an old queue task completing.
-    const writeStartedAt = Date.now();
-    const ts = writeStartedAt;
+    const ts = Date.now();
     config.timestamp = ts;
 
     if (config.allowSync) {
@@ -525,18 +521,13 @@ export class ConfigService {
     await this.messageDB.saveUserConfig(config);
     logger.log('[ConfigService] Config saved to local DB');
 
-    // Update React Query cache to prevent stale reads — but only if no newer
-    // optimistic write has happened during this task's processing window.
-    // Without the guard, an old queue task finishing would overwrite newer
-    // optimistic state set by rapid user clicks, producing visible "phantom"
-    // reverts. The dataUpdatedAt field is set by setQueryData and reflects
-    // the most recent cache mutation; if it postdates writeStartedAt the
-    // cache is already newer than what we just persisted, so we leave it
-    // alone (a later queue task will reconcile the DB with the new state).
+    // Skip the cache write if a newer optimistic update arrived while this
+    // queue task was processing. A later queue task will reconcile DB and
+    // cache; without this guard we'd overwrite the user's latest state.
     const cacheKey = buildConfigKey({ userAddress: config.address! });
     const cacheUpdatedAt =
       this.queryClient.getQueryState(cacheKey)?.dataUpdatedAt ?? 0;
-    if (cacheUpdatedAt <= writeStartedAt) {
+    if (cacheUpdatedAt <= ts) {
       this.queryClient.setQueryData(cacheKey, config);
     }
   }
