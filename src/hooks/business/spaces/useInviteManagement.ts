@@ -11,6 +11,7 @@ import { useConversations, useRegistration } from '../../queries';
 import { isValidIPFSCID, type Conversation, type Channel } from '@quilibrium/quorum-shared';
 import { getAddressSuffix } from '../../../utils';
 import { t } from '@lingui/core/macro';
+import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
 
 export interface UseInviteManagementOptions {
   spaceId: string;
@@ -31,7 +32,29 @@ export interface UseInviteManagementReturn {
   sendingInvite: boolean;
   success: boolean;
   membershipWarning: string | undefined;
-  invite: (address: string) => Promise<void>;
+  // True when this space's local invite-evals pool is empty — typically a
+  // legacy state from before the 2026-06-07 consolidation. UI uses this to
+  // render a friendly banner instead of throwing on the next operation.
+  poolExhausted: boolean;
+  // `mode` selects what link to send:
+  //  - 'one-time' (default): generate a fresh link from the pool, consume one eval.
+  //  - 'public': forward the space's existing public inviteUrl.
+  //  - 'reuse': send the explicit `presetLink` (e.g. a one-time link the user
+  //    already generated via the Generate Invite Link button); no eval is
+  //    consumed.
+  invite: (
+    address: string,
+    mode?: 'one-time' | 'public' | 'reuse',
+    presetLink?: string
+  ) => Promise<void>;
+  // Generate a fresh one-time invite URL and return it (no DM send). Consumes
+  // one eval from the local pool. The UI uses this for the "I want the link
+  // to share outside Quorum" case.
+  generateOneTimeLink: () => Promise<string | null>;
+  generatedOneTimeLink: string | null;
+  clearGeneratedOneTimeLink: () => void;
+  generatingOneTimeLink: boolean;
+  generateOneTimeLinkError: string | undefined;
 
   // Public invite link
   publicInvite: boolean;
@@ -58,6 +81,10 @@ export const useInviteManagement = (
   const [publicInvite, setPublicInvite] = useState<boolean>(
     space?.isPublic || false
   );
+  const [poolExhausted, setPoolExhausted] = useState<boolean>(false);
+  const [generatedOneTimeLink, setGeneratedOneTimeLink] = useState<string | null>(null);
+  const [generatingOneTimeLink, setGeneratingOneTimeLink] = useState<boolean>(false);
+  const [generateOneTimeLinkError, setGenerateOneTimeLinkError] = useState<string | undefined>();
 
   // Hooks
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -66,6 +93,7 @@ export const useInviteManagement = (
     ensureKeyForSpace,
     sendInviteToUser,
     generateNewInviteLink: generateInviteLink,
+    constructInviteLink,
   } = useMessageDB();
   const { keyset } = useRegistrationContext();
   const { data: registration } = useRegistration({
@@ -109,9 +137,41 @@ export const useInviteManagement = (
     })();
   }, [manualAddress, apiClient]);
 
+  // Proactively detect a depleted local evals pool so the UI can warn the
+  // user up-front instead of failing mid-operation. Same check that
+  // InvitationService runs internally.
+  useEffect(() => {
+    if (!spaceId || !messageDB) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const states = await messageDB.getEncryptionStates({
+          conversationId: spaceId + '/' + spaceId,
+        });
+        if (cancelled) return;
+        if (!states || states.length === 0) {
+          setPoolExhausted(false);
+          return;
+        }
+        const sets = JSON.parse(states[0].state);
+        const exhausted = !sets?.evals || sets.evals.length === 0;
+        setPoolExhausted(exhausted);
+      } catch {
+        if (!cancelled) setPoolExhausted(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [spaceId, messageDB]);
+
   // Send invite function
   const invite = useCallback(
-    async (address: string) => {
+    async (
+      address: string,
+      mode: 'one-time' | 'public' | 'reuse' = 'one-time',
+      presetLink?: string
+    ) => {
       setSendingInvite(true);
       setSuccess(false);
       setMembershipWarning(undefined);
@@ -137,11 +197,15 @@ export const useInviteManagement = (
           navigate('/spaces/' + spaceAddress + '/' + defaultChannel.channelId);
         }
 
-        await sendInviteToUser(address, spaceAddress, currentPasskeyInfo!);
+        await sendInviteToUser(address, spaceAddress, currentPasskeyInfo!, mode, presetLink);
         setSuccess(true);
       } catch (error) {
         console.error('Invite error:', error);
-        setMembershipWarning(t`Failed to send invite. Please try again.`);
+        if (error instanceof InviteEvalsExhaustedError) {
+          setPoolExhausted(true);
+        } else {
+          setMembershipWarning(t`Failed to send invite. Please try again.`);
+        }
       } finally {
         setSendingInvite(false);
       }
@@ -176,6 +240,41 @@ export const useInviteManagement = (
     }
   }, [space, registration, keyset, generateInviteLink]);
 
+  // Generate a fresh one-time invite URL without sending. Used by the
+  // "Generate Link" action in one-time mode for the share-outside-Quorum
+  // case. Each call consumes one local eval, just like sending one.
+  const generateOneTimeLink = useCallback(async () => {
+    if (!space) return null;
+    setGeneratingOneTimeLink(true);
+    setGenerateOneTimeLinkError(undefined);
+    try {
+      const spaceAddress = await ensureKeyForSpace(
+        currentPasskeyInfo!.address,
+        space
+      );
+      const link = await constructInviteLink(spaceAddress);
+      setGeneratedOneTimeLink(link);
+      return link;
+    } catch (error) {
+      console.error('Generate one-time link error:', error);
+      if (error instanceof InviteEvalsExhaustedError) {
+        setPoolExhausted(true);
+      } else {
+        setGenerateOneTimeLinkError(
+          t`Failed to generate invite link. Please try again.`
+        );
+      }
+      return null;
+    } finally {
+      setGeneratingOneTimeLink(false);
+    }
+  }, [space, ensureKeyForSpace, currentPasskeyInfo, constructInviteLink]);
+
+  const clearGeneratedOneTimeLink = useCallback(() => {
+    setGeneratedOneTimeLink(null);
+    setGenerateOneTimeLinkError(undefined);
+  }, []);
+
   return {
     selectedUser,
     setSelectedUser,
@@ -187,7 +286,14 @@ export const useInviteManagement = (
     sendingInvite,
     success,
     membershipWarning,
+    poolExhausted,
     invite,
+
+    generateOneTimeLink,
+    generatedOneTimeLink,
+    clearGeneratedOneTimeLink,
+    generatingOneTimeLink,
+    generateOneTimeLinkError,
 
     publicInvite,
     setPublicInvite,

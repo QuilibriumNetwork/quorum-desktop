@@ -186,7 +186,9 @@ type MessageDBContextValue = {
       displayName?: string;
       pfpUrl?: string;
       completedOnboarding: boolean;
-    }
+    },
+    mode?: 'one-time' | 'public' | 'reuse',
+    presetLink?: string
   ) => Promise<void>;
   generateNewInviteLink: (
     spaceId: string,
@@ -194,6 +196,7 @@ type MessageDBContextValue = {
     device_keyset: secureChannel.DeviceKeyset,
     registration: secureChannel.UserRegistration
   ) => Promise<void>;
+  constructInviteLink: (spaceId: string) => Promise<string>;
   processInviteLink: (inviteLink: string) => Promise<Space>;
   joinInviteLink: (
     inviteLink: string,
@@ -753,9 +756,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         displayName?: string;
         pfpUrl?: string;
         completedOnboarding: boolean;
-      }
+      },
+      mode: 'one-time' | 'public' | 'reuse' = 'one-time',
+      presetLink?: string
     ) => {
-      return invitationService.sendInviteToUser(address, spaceId, currentPasskeyInfo, keyset, submitMessage);
+      return invitationService.sendInviteToUser(address, spaceId, currentPasskeyInfo, keyset, submitMessage, mode, presetLink);
     },
     [invitationService, keyset, submitMessage]
   );
@@ -768,6 +773,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       registration: secureChannel.UserRegistration
     ) => {
       return invitationService.generateNewInviteLink(spaceId, user_keyset, device_keyset, registration);
+    },
+    [invitationService]
+  );
+
+  const constructInviteLink = React.useCallback(
+    async (spaceId: string) => {
+      return invitationService.constructInviteLink(spaceId);
     },
     [invitationService]
   );
@@ -1401,6 +1413,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         ensureKeyForSpace,
         sendInviteToUser,
         generateNewInviteLink,
+        constructInviteLink,
         processInviteLink,
         joinInviteLink,
         deleteSpace,
@@ -1440,6 +1453,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   ensureKeyForSpace: () => undefined as never,
   sendInviteToUser: () => undefined as never,
   generateNewInviteLink: () => undefined as never,
+  constructInviteLink: () => undefined as never,
   processInviteLink: () => undefined as never,
   joinInviteLink: () => undefined as never,
   deleteSpace: () => undefined as never,

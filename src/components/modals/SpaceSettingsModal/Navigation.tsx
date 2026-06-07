@@ -24,7 +24,7 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
     { id: 'space-tag', icon: 'tag', label: t`Space Tag`, className: '' },
     { id: 'emojis', icon: 'smile', label: t`Emojis`, className: '' },
     { id: 'stickers', icon: 'image', label: t`Stickers`, className: '' },
-    { id: 'invites', icon: 'user-plus', label: t`Invites`, className: '' },
+    { id: 'invites', icon: 'share', label: t`Invites`, className: '' },
     { id: 'danger', icon: 'warning', label: t`Delete Space`, className: 'text-danger' },
   ];
 

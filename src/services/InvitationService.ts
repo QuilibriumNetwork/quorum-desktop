@@ -14,6 +14,33 @@ import { isQuorumApiError } from '../api/baseTypes';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap } from '../types/spaceRefs';
 
+// Mobile generates invite URLs with the long prod domain (app.quorummessenger.com).
+// Shared's getInviteUrlBase still emits qm.one for the prod browser case; override
+// here so desktop matches mobile until shared is updated in a separate cross-repo PR.
+// Acceptance of qm.one links keeps working via getValidInvitePrefixes().
+function buildInviteBase(isPublic: boolean): string {
+  return getInviteUrlBase(isPublic).replace('://qm.one/', '://app.quorummessenger.com/');
+}
+
+const MAX_PUBLIC_EVALS = 1;
+
+/**
+ * Thrown when a space's local invite-evals pool is empty. This typically
+ * happens on spaces where the legacy (pre-2026-06-07) `generateNewInviteLink`
+ * was run, since that path drained the entire pool into the server-side eval
+ * batch. New spaces start with ~10K evals and lose one per invite, so they
+ * won't hit this in practice.
+ *
+ * Callers catch this specifically to render a friendly UI instead of the raw
+ * error message.
+ */
+export class InviteEvalsExhaustedError extends Error {
+  constructor() {
+    super('Invite evaluations exhausted for this Space.');
+    this.name = 'InviteEvalsExhaustedError';
+  }
+}
+
 export class InvitationService {
   private messageDB: MessageDB;
   private apiClient: QuorumApiClient;
@@ -52,13 +79,12 @@ export class InvitationService {
 
   /**
    * Constructs one-time invite link with embedded template/secret (consumes one eval).
+   *
+   * Matches mobile (`quorum-mobile/services/space/inviteService.ts` -> `generatePrivateInviteLink`):
+   * always builds a fresh one-time link from the local evals pool, even when the
+   * space already has a public `inviteUrl`. Public and one-time invites coexist.
    */
   async constructInviteLink(spaceId: string) {
-    const space = await this.messageDB.getSpace(spaceId);
-    if (space?.inviteUrl) {
-      return space.inviteUrl;
-    }
-
     const config_key = await this.messageDB.getSpaceKey(spaceId, 'config');
     const hub_key = await this.messageDB.getSpaceKey(spaceId, 'hub');
     const response = await this.messageDB.getEncryptionStates({
@@ -76,10 +102,13 @@ export class InvitationService {
     }
 
     if (!sets[0].evals || sets[0].evals.length === 0) {
-      throw new Error(t`No invite evaluations available. Please generate a public invite link or ensure the Space encryption state is properly initialized.`);
+      throw new InviteEvalsExhaustedError();
     }
 
-    const state = sets[0].template;
+    // Deep-copy the template so we don't mutate the shared object that gets
+    // persisted back to the DB. Mirrors mobile's defensive pattern
+    // (`quorum-mobile/services/space/inviteService.ts` line 148).
+    const state = JSON.parse(JSON.stringify(sets[0].template));
     const ratchet = JSON.parse(state.dkg_ratchet);
     ratchet.id = 10001 - sets[0].evals.length;
 
@@ -101,12 +130,22 @@ export class InvitationService {
       { ...response[0], state: JSON.stringify(sets[0]) },
       true
     );
-    const link = `${getInviteUrlBase(false)}#spaceId=${spaceId}&configKey=${config_key.privateKey}&template=${template}&secret=${secret}&hubKey=${hub_key.privateKey}`;
+    const link = `${buildInviteBase(false)}#spaceId=${spaceId}&configKey=${config_key.privateKey}&template=${template}&secret=${secret}&hubKey=${hub_key.privateKey}`;
     return link;
   }
 
   /**
-   * Sends invite link to user via DM.
+   * Sends an invite link to a user via DM.
+   *
+   * `mode` selects the kind of link sent:
+   *  - `'one-time'` (default): generates a fresh one-time link from the local
+   *    evals pool. Each call consumes one eval.
+   *  - `'public'`: reuses the space's existing `inviteUrl` (the persistent
+   *    public link). Throws if no public link exists yet — caller should
+   *    generate one first.
+   *  - `'reuse'`: sends the explicit `presetLink` argument. The caller is
+   *    responsible for having generated it already (e.g. via the Generate
+   *    Invite Link button). No eval is consumed by this call.
    */
   async sendInviteToUser(
     address: string,
@@ -120,9 +159,28 @@ export class InvitationService {
       completedOnboarding: boolean;
     },
     keyset: any,
-    submitMessage: any
+    submitMessage: any,
+    mode: 'one-time' | 'public' | 'reuse' = 'one-time',
+    presetLink?: string
   ) {
-    const link = await this.constructInviteLink(spaceId);
+    let link: string;
+    if (mode === 'reuse') {
+      if (!presetLink) {
+        throw new Error('sendInviteToUser called with mode=reuse but no presetLink');
+      }
+      link = presetLink;
+    } else if (mode === 'public') {
+      const space = await this.messageDB.getSpace(spaceId);
+      if (!space?.inviteUrl) {
+        throw new Error(
+          t`No public invite link exists yet. Generate one before sharing.`
+        );
+      }
+      link = space.inviteUrl;
+    } else {
+      link = await this.constructInviteLink(spaceId);
+    }
+
     const self = await this.apiClient.getUser(currentPasskeyInfo.address);
     const recipient = await this.apiClient.getUser(address);
     await submitMessage(
@@ -137,366 +195,255 @@ export class InvitationService {
   }
 
   /**
-   * Generates public invite system with 200+ one-time invites, sends rekey to members.
+   * Generate (or regenerate) the public invite link for a space.
+   *
+   * Mirrors mobile (`quorum-mobile/services/space/inviteService.ts` ->
+   * `generatePublicInviteLink`): reuses the EXISTING space config key (no new
+   * keypair, no member rekey), uploads exactly ONE encrypted eval to the
+   * server, and re-publishes the manifest. Private/one-time invites continue
+   * to work in parallel — the old "system switch" behavior is gone.
+   *
+   * The `user_keyset`/`device_keyset`/`registration` parameters are kept on the
+   * method signature for compatibility with existing callers (MessageDB ->
+   * useInviteManagement); they are unused under the mobile-aligned model
+   * because there is no triple-ratchet rekey loop.
    */
   async generateNewInviteLink(
     spaceId: string,
-    user_keyset: secureChannel.UserKeyset,
-    device_keyset: secureChannel.DeviceKeyset,
-    registration: secureChannel.UserRegistration
+    _user_keyset: secureChannel.UserKeyset,
+    _device_keyset: secureChannel.DeviceKeyset,
+    _registration: secureChannel.UserRegistration
   ) {
     try {
       const space = await this.messageDB.getSpace(spaceId);
-      const spaceKey = await this.messageDB.getSpaceKey(spaceId, spaceId);
+      if (!space) {
+        throw new Error(t`Space not found`);
+      }
+
       const ownerKey = await this.messageDB.getSpaceKey(spaceId, 'owner');
+      if (!ownerKey?.privateKey) {
+        throw new Error(
+          t`Only space owners can generate public invite links.`
+        );
+      }
+
       const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
-      const cp = ch.js_generate_x448();
-      const configPair = JSON.parse(cp);
+      if (!hubKey?.privateKey) {
+        throw new Error(t`Hub key not found for this Space.`);
+      }
 
-      await this.messageDB.saveSpaceKey({
-        spaceId: spaceId,
-        keyId: 'config',
-        publicKey: Buffer.from(
-          new Uint8Array(configPair.public_key)
-        ).toString('hex'),
-        privateKey: Buffer.from(
-          new Uint8Array(configPair.private_key)
-        ).toString('hex'),
-      });
+      // Reuse the EXISTING config key — do not generate a new keypair.
+      // This is what keeps private one-time invites working alongside public:
+      // the local DKG template/evals stay valid because the config key is
+      // unchanged.
+      const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
+      if (!configKey?.privateKey || !configKey?.publicKey) {
+        throw new Error(t`Config key not found for this Space.`);
+      }
 
-      const ts = Date.now();
-      const ownerPayload = Buffer.from(
-        new Uint8Array([
-          ...hexToSpreadArray(spaceKey.publicKey),
-          ...configPair.public_key,
-          ...hexToSpreadArray(ownerKey.publicKey),
-          ...int64ToBytes(ts),
-        ])
-      ).toString('base64');
-      const spacePayload = Buffer.from(
-        new Uint8Array([
-          ...hexToSpreadArray(spaceKey.publicKey),
-          ...configPair.public_key,
-          ...hexToSpreadArray(ownerKey.publicKey),
-          ...int64ToBytes(ts),
-        ])
-      ).toString('base64');
-      const spaceSignature = JSON.parse(
-        ch.js_sign_ed448(
-          Buffer.from(spaceKey.privateKey, 'hex').toString('base64'),
-          spacePayload
-        )
-      );
-      const ownerSignature = JSON.parse(
-        ch.js_sign_ed448(
-          Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
-          ownerPayload
-        )
-      );
-      this.spaceInfo.current[spaceId] = {
-        space_address: spaceId,
-        space_public_key: spaceKey.publicKey,
-        space_signature: Buffer.from(spaceSignature, 'base64').toString(
-          'hex'
-        ),
-        config_public_key: Buffer.from(
-          new Uint8Array(configPair.public_key)
-        ).toString('hex'),
-        owner_public_keys: [ownerKey.publicKey],
-        owner_signatures: [
-          Buffer.from(ownerSignature, 'base64').toString('hex'),
-        ],
-        timestamp: ts,
-      } as secureChannel.SpaceRegistration;
-      const ephemeral_key = JSON.parse(
-        ch.js_generate_x448()
-      ) as secureChannel.X448Keypair;
-      const members = await this.messageDB.getSpaceMembers(spaceId);
-      const filteredMembers = members.filter(
-        (m) => m.inbox_address !== '' && m.user_address != this.selfAddress
-      );
+      const configPublicKeyBytes = hexToSpreadArray(configKey.publicKey);
+
+      // Load encryption state for the space's own conversation. The template
+      // and evals pool we use here are identical to the ones used for private
+      // invite generation in constructInviteLink.
       const encryptionStates = await this.messageDB.getEncryptionStates({
         conversationId: spaceId + '/' + spaceId,
       });
-      const state = encryptionStates[0];
-      const trState = JSON.parse(JSON.parse(state.state).state);
-      const session =
-        await secureChannel.EstablishTripleRatchetSessionForSpace(
-          user_keyset,
-          device_keyset,
-          registration,
-          filteredMembers.length + 200
+      if (!encryptionStates || encryptionStates.length === 0) {
+        throw new Error(
+          t`No encryption state found for this Space. Cannot generate public invite.`
         );
-
-      logger.log('new link session', session);
-      const outbounds: string[] = [];
-      let newPeerIdSet = {
-        [trState.id_peer_map[1].public_key]: 1,
-      };
-      let newIdPeerSet = {
-        [1]: trState.id_peer_map[1],
-      } as { [key: number]: any };
-      let idCounter = 2;
-      for (const member of filteredMembers) {
-        const user = await this.apiClient.getUser(member.user_address);
-        const device = user.data.device_registrations.find(
-          (d: any) =>
-            trState.peer_id_map[
-              Buffer.from(
-                d.inbox_registration.inbox_encryption_public_key,
-                'hex'
-              ).toString('base64')
-            ]
-        );
-        if (!device) {
-          idCounter++;
-          continue;
-        }
-        const inboxKey = Buffer.from(
-          device!.inbox_registration.inbox_encryption_public_key,
-          'hex'
-        ).toString('base64');
-        newPeerIdSet = {
-          ...newPeerIdSet,
-          [inboxKey]: idCounter,
-        };
-        newIdPeerSet = {
-          ...newIdPeerSet,
-          [idCounter]: trState.id_peer_map[trState.peer_id_map[inboxKey]],
-        };
-        idCounter++;
       }
-      const ownRatchet = JSON.parse(session.state);
-      ownRatchet.peer_id_map = newPeerIdSet;
-      ownRatchet.id_peer_map = newIdPeerSet;
-      session.state = JSON.stringify(ownRatchet);
+      const stateRow = encryptionStates[0];
+      const session = JSON.parse(stateRow.state);
 
-      idCounter = 2;
-      for (const member of filteredMembers) {
-        if (!newIdPeerSet[idCounter]) {
-          continue;
-        }
-        const sendState = session.template;
-        const ratchet = JSON.parse(sendState.dkg_ratchet);
-        sendState.peer_id_map = newPeerIdSet;
-        sendState.id_peer_map = newIdPeerSet;
-        ratchet.id = filteredMembers.length + 201 - session.evals.length;
-        sendState.root_key = JSON.parse(session.state).root_key;
-        const index_secret_raw = session.evals.shift();
-        const secret_pair = JSON.parse(ch.js_generate_x448());
-        const eph_pair = JSON.parse(ch.js_generate_x448());
-        ratchet.total = Object.keys(ownRatchet.peer_id_map).length;
-        ratchet.secret = Buffer.from(
-          new Uint8Array(secret_pair.private_key)
-        ).toString('base64');
-        ratchet.scalar = Buffer.from(
-          new Uint8Array(index_secret_raw!)
-        ).toString('base64');
-        ratchet.point = JSON.parse(
-          ch.js_get_pubkey_x448(
-            Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
-          )
+      if (!session.template) {
+        throw new Error(
+          t`Encryption state is missing required template data. The invite pool was not initialized.`
         );
-        ratchet.random_commitment_point = JSON.parse(
-          ch.js_get_pubkey_x448(
-            Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
-          )
-        );
-        sendState.dkg_ratchet = JSON.stringify(ratchet);
-        sendState.next_dkg_ratchet = JSON.stringify(ratchet);
-        sendState.ephemeral_private_key = Buffer.from(
-          new Uint8Array(eph_pair.private_key)
-        ).toString('base64');
-        const template = JSON.stringify(sendState);
-
-        const innerEnvelope = await secureChannel.SealInboxEnvelope(
-          newIdPeerSet[idCounter].public_key,
-          JSON.stringify({
-            configKey: Buffer.from(
-              new Uint8Array(configPair.private_key)
-            ).toString('hex'),
-            state: template,
-          })
-        );
-        const envelope = await secureChannel.SealSyncEnvelope(
-          member.inbox_address,
-          hubKey.address!,
-          {
-            type: 'ed448',
-            private_key: hexToSpreadArray(hubKey.privateKey),
-            public_key: hexToSpreadArray(hubKey.publicKey),
-          },
-          {
-            type: 'ed448',
-            private_key: hexToSpreadArray(ownerKey.privateKey),
-            public_key: hexToSpreadArray(ownerKey.publicKey),
-          },
-          JSON.stringify({
-            type: 'control',
-            message: {
-              type: 'rekey',
-              info: JSON.stringify(innerEnvelope),
-            },
-          })
-        );
-        outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-        idCounter++;
+      }
+      if (!session.evals || session.evals.length === 0) {
+        throw new InviteEvalsExhaustedError();
+      }
+      if (!session.state) {
+        throw new Error(t`Encryption state is missing state data.`);
       }
 
-      const space_evals = [] as string[];
-      for (
-        let e = session.evals.shift();
-        e != undefined;
-        e = session.evals.shift()
-      ) {
-        const sendState = session.template;
+      // Ephemeral keypair used to encrypt both the eval and the manifest.
+      const ephemeralKey = JSON.parse(
+        ch.js_generate_x448()
+      ) as secureChannel.X448Keypair;
+
+      // Build a single eval payload (MAX_PUBLIC_EVALS = 1). Matches mobile.
+      const evalsToProcess = session.evals.slice(0, MAX_PUBLIC_EVALS);
+      const spaceEvals: string[] = [];
+      let idCounter = 10001 - session.evals.length;
+
+      const parsedState =
+        typeof session.state === 'string'
+          ? JSON.parse(session.state)
+          : session.state;
+
+      for (const evalData of evalsToProcess) {
+        // Deep-copy the template so we don't mutate the shared template that
+        // private invites also use.
+        const sendState = JSON.parse(JSON.stringify(session.template));
         const ratchet = JSON.parse(sendState.dkg_ratchet);
-        sendState.peer_id_map = newPeerIdSet;
-        sendState.id_peer_map = newIdPeerSet;
+
         ratchet.id = idCounter;
-        sendState.root_key = JSON.parse(session.state).root_key;
-        const index_secret_raw = e;
-        const secret_pair = JSON.parse(ch.js_generate_x448());
-        const eph_pair = JSON.parse(ch.js_generate_x448());
-        ratchet.total = Object.keys(ownRatchet.peer_id_map).length;
+        sendState.root_key = parsedState.root_key;
+
+        const secretPair = JSON.parse(ch.js_generate_x448());
+        const ephPair = JSON.parse(ch.js_generate_x448());
+
+        const evalSecretBase64 = Buffer.from(
+          new Uint8Array(evalData)
+        ).toString('base64');
+
         ratchet.secret = Buffer.from(
-          new Uint8Array(secret_pair.private_key)
+          new Uint8Array(secretPair.private_key)
         ).toString('base64');
-        ratchet.scalar = Buffer.from(
-          new Uint8Array(index_secret_raw!)
+        ratchet.scalar = evalSecretBase64;
+        const evalPoint = JSON.parse(ch.js_get_pubkey_x448(evalSecretBase64));
+        ratchet.point = evalPoint;
+        ratchet.random_commitment_point = Buffer.from(
+          new Uint8Array(secretPair.public_key)
         ).toString('base64');
-        ratchet.point = JSON.parse(
-          ch.js_get_pubkey_x448(
-            Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
-          )
-        );
-        ratchet.random_commitment_point = JSON.parse(
-          ch.js_get_pubkey_x448(
-            Buffer.from(new Uint8Array(index_secret_raw!)).toString('base64')
-          )
-        );
+
         sendState.dkg_ratchet = JSON.stringify(ratchet);
         sendState.next_dkg_ratchet = JSON.stringify(ratchet);
         sendState.ephemeral_private_key = Buffer.from(
-          new Uint8Array(eph_pair.private_key)
+          new Uint8Array(ephPair.private_key)
         ).toString('base64');
+
         const template = JSON.stringify(sendState);
+
+        const evalPayload = {
+          id: idCounter,
+          template: template,
+          secret: Buffer.from(new Uint8Array(evalData)).toString('hex'),
+          hubKey: hubKey.privateKey,
+        };
+
         const ciphertext = ch.js_encrypt_inbox_message(
           JSON.stringify({
-            inbox_public_key: [...new Uint8Array(configPair.public_key)],
-            ephemeral_private_key: ephemeral_key.private_key,
+            inbox_public_key: configPublicKeyBytes,
+            ephemeral_private_key: ephemeralKey.private_key,
             plaintext: [
               ...new Uint8Array(
-                Buffer.from(
-                  JSON.stringify({
-                    id: idCounter,
-                    template: template,
-                    secret: Buffer.from(new Uint8Array(e)).toString('hex'),
-                    hubKey: hubKey.privateKey,
-                  }),
-                  'utf-8'
-                )
+                Buffer.from(JSON.stringify(evalPayload), 'utf-8')
               ),
             ],
           } as secureChannel.SealedInboxMessageEncryptRequest)
         );
 
-        space_evals.push(ciphertext);
+        spaceEvals.push(ciphertext);
         idCounter++;
       }
 
-      const out = {
-        config_public_key: Buffer.from(
-          new Uint8Array(configPair.public_key)
-        ).toString('hex'),
-        space_address: space!.spaceId,
-        space_evals: space_evals,
-        ephemeral_public_key: Buffer.from(
-          new Uint8Array(ephemeral_key.public_key)
-        ).toString('hex'),
-        owner_public_key: ownerKey.publicKey,
-        owner_signature: Buffer.from(
-          JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
-              Buffer.from(
-                new Uint8Array([
-                  ...space_evals.flatMap((s) => [
-                    ...new Uint8Array(Buffer.from(s, 'utf-8')),
-                  ]),
-                ])
-              ).toString('base64')
-            )
-          ),
-          'base64'
-        ).toString('hex'),
-      };
+      // Signature payload is all eval ciphertexts concatenated as utf-8 bytes.
+      const evalsPayloadBase64 = Buffer.from(
+        new Uint8Array(
+          spaceEvals.flatMap((s) => [
+            ...new Uint8Array(Buffer.from(s, 'utf-8')),
+          ])
+        )
+      ).toString('base64');
+      const evalsSignatureBase64 = JSON.parse(
+        ch.js_sign_ed448(
+          Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
+          evalsPayloadBase64
+        )
+      );
 
-      space!.inviteUrl = `${getInviteUrlBase(true)}#spaceId=${space!.spaceId}&configKey=${Buffer.from(new Uint8Array(configPair.private_key)).toString('hex')}`;
-      const ciphertext = ch.js_encrypt_inbox_message(
+      // Build the new public invite URL using the EXISTING config private key.
+      // The URL string is therefore deterministic per space — regenerating
+      // produces the same URL, only the server-side eval and manifest change.
+      const inviteLink = `${buildInviteBase(true)}#spaceId=${spaceId}&configKey=${configKey.privateKey}`;
+      space.inviteUrl = inviteLink;
+
+      // Re-publish the manifest encrypted with the existing config key. This
+      // is what gives new joiners a current snapshot (name, members, channels)
+      // when they fetch via the public link.
+      const manifestCiphertext = ch.js_encrypt_inbox_message(
         JSON.stringify({
-          inbox_public_key: [...new Uint8Array(configPair.public_key)],
-          ephemeral_private_key: ephemeral_key.private_key,
+          inbox_public_key: configPublicKeyBytes,
+          ephemeral_private_key: ephemeralKey.private_key,
           plaintext: [
             ...new Uint8Array(Buffer.from(JSON.stringify(space), 'utf-8')),
           ],
         } as secureChannel.SealedInboxMessageEncryptRequest)
       );
 
-      const manifest = {
+      const ts = Date.now();
+      const manifestSignaturePayloadBase64 = Buffer.from(
+        new Uint8Array([
+          ...new Uint8Array(Buffer.from(manifestCiphertext, 'utf-8')),
+          ...int64ToBytes(ts),
+        ])
+      ).toString('base64');
+      const manifestSignatureBase64 = JSON.parse(
+        ch.js_sign_ed448(
+          Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
+          manifestSignaturePayloadBase64
+        )
+      );
+
+      const ephemeralPublicKeyHex = Buffer.from(
+        new Uint8Array(ephemeralKey.public_key)
+      ).toString('hex');
+
+      // Upload the single eval to the server keyed by config_public_key.
+      await this.apiClient.postSpaceInviteEvals({
+        config_public_key: configKey.publicKey,
         space_address: spaceId,
-        space_manifest: ciphertext,
-        ephemeral_public_key: Buffer.from(
-          new Uint8Array(ephemeral_key.public_key)
+        space_evals: spaceEvals,
+        ephemeral_public_key: ephemeralPublicKeyHex,
+        owner_public_key: ownerKey.publicKey,
+        owner_signature: Buffer.from(
+          evalsSignatureBase64,
+          'base64'
         ).toString('hex'),
+      });
+
+      // Re-publish the manifest.
+      await this.apiClient.postSpaceManifest(spaceId, {
+        space_address: spaceId,
+        space_manifest: manifestCiphertext,
+        ephemeral_public_key: ephemeralPublicKeyHex,
         timestamp: ts,
         owner_public_key: ownerKey.publicKey,
         owner_signature: Buffer.from(
-          JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(ownerKey.privateKey, 'hex').toString('base64'),
-              Buffer.from(
-                new Uint8Array([
-                  ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                  ...int64ToBytes(ts),
-                ])
-              ).toString('base64')
-            )
-          ),
+          manifestSignatureBase64,
           'base64'
         ).toString('hex'),
-      };
+      });
 
-      await this.apiClient.postSpace(spaceId, {
-        space_address: spaceId,
-        space_public_key: spaceKey.publicKey,
-        space_signature: Buffer.from(spaceSignature, 'base64').toString(
-          'hex'
-        ),
-        config_public_key: Buffer.from(
-          new Uint8Array(configPair.public_key)
-        ).toString('hex'),
-        owner_public_keys: [ownerKey.publicKey],
-        owner_signatures: [
-          Buffer.from(ownerSignature, 'base64').toString('hex'),
-        ],
-        timestamp: ts,
-      } as secureChannel.SpaceRegistration);
-      await this.apiClient.postSpaceInviteEvals(out);
-      await this.apiClient.postSpaceManifest(spaceId, manifest);
-      await this.messageDB.saveSpace(space!);
+      // Persist the new inviteUrl locally.
+      await this.messageDB.saveSpace(space);
       await this.queryClient.setQueryData(
-        buildSpaceKey({ spaceId: space?.spaceId! }),
+        buildSpaceKey({ spaceId: space.spaceId }),
         space
       );
 
+      // Pop the consumed evals from the local pool and persist. We do this
+      // AFTER successful upload so a failed network request doesn't leak
+      // pool slots.
+      session.evals = session.evals.slice(MAX_PUBLIC_EVALS);
       await this.messageDB.saveEncryptionState(
-        { ...state, state: JSON.stringify(session) },
+        { ...stateRow, state: JSON.stringify(session) },
         true
       );
-      this.enqueueOutbound(async () => {
-        return outbounds;
+
+      logger.log('[invite] public link generated', {
+        spaceId: spaceId.slice(0, 12),
+        remainingEvals: session.evals.length,
       });
+
+      // Silence unused-parameter warnings — see method docblock.
+      void _user_keyset;
+      void _device_keyset;
+      void _registration;
     } catch (e) {
       console.error(e);
       throw e;
