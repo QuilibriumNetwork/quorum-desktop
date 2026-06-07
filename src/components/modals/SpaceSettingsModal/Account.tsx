@@ -300,38 +300,53 @@ const Account: React.FunctionComponent<AccountProps> = ({
               />
             </div>
 
-            {/* Per-channel notifications list */}
+            {/* Per-channel notifications list, organised by group */}
             {space?.groups?.some((g) => g.channels.length > 0) && (
               <>
                 <div className="text-label pt-4 pb-2">
                   <Trans>Channels:</Trans>
                 </div>
-                <div className="flex flex-col gap-2">
-                  {space.groups.flatMap((group) =>
-                    group.channels.map((channel) => (
-                      <Flex
-                        key={channel.channelId}
-                        className="items-center gap-3"
+                <div className="flex flex-col gap-4">
+                  {space.groups
+                    .filter((group) => group.channels.length > 0)
+                    .map((group) => (
+                      <div
+                        key={group.groupName}
+                        className="flex flex-col gap-2"
                       >
-                        <Switch
-                          value={!isChannelMuted(channel.channelId)}
-                          onChange={() => toggleMute(channel.channelId)}
-                          disabled={isSpaceMuted}
-                          accessibilityLabel={t`Notifications for #${channel.channelName}`}
-                        />
-                        <div className="text-label-strong">
-                          # {channel.channelName}
+                        <div className="text-label text-muted">
+                          {group.groupName}
                         </div>
-                      </Flex>
-                    ))
-                  )}
+                        {group.channels.map((channel) => (
+                          <Flex
+                            key={channel.channelId}
+                            className="items-center gap-3"
+                          >
+                            <Switch
+                              value={!isChannelMuted(channel.channelId)}
+                              onChange={() => toggleMute(channel.channelId)}
+                              disabled={isSpaceMuted}
+                              accessibilityLabel={t`Notifications for #${channel.channelName}`}
+                            />
+                            <div className="text-label-strong">
+                              # {channel.channelName}
+                            </div>
+                          </Flex>
+                        ))}
+                      </div>
+                    ))}
                 </div>
               </>
             )}
           </div>
 
           {/* Sidebar display preference — separate concept */}
-          <Spacer size="md" direction="vertical" borderTop={true} />
+          <Spacer
+            spaceBefore="lg"
+            spaceAfter="md"
+            border
+            direction="vertical"
+          />
           <Flex className="items-center gap-3">
             <Switch
               value={!showMutedChannels}
