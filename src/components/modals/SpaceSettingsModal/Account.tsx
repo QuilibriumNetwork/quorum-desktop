@@ -20,6 +20,7 @@ import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving'
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { useChannelMute } from '../../../hooks/business/channels';
+import { getIconColorHex, IconColor } from '../../space/IconPicker/types';
 import type { Role } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
@@ -322,11 +323,23 @@ const Account: React.FunctionComponent<AccountProps> = ({
                             value={!isChannelMuted(channel.channelId)}
                             onChange={() => toggleMute(channel.channelId)}
                             disabled={isSpaceMuted}
-                            accessibilityLabel={t`Notifications for #${channel.channelName}`}
+                            accessibilityLabel={t`Notifications for ${channel.channelName}`}
                           />
-                          <div className="text-label-strong">
-                            # {channel.channelName}
-                          </div>
+                          <Flex className="items-center gap-2 min-w-0">
+                            <Icon
+                              name={(channel.icon as any) || 'hashtag'}
+                              size="sm"
+                              variant={channel.iconVariant || 'outline'}
+                              style={{
+                                color: getIconColorHex(
+                                  channel.iconColor as IconColor
+                                ),
+                              }}
+                            />
+                            <div className="text-label-strong truncate">
+                              {channel.channelName}
+                            </div>
+                          </Flex>
                         </Flex>
                       ))}
                     </div>
