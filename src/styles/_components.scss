@@ -433,10 +433,20 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
 }
 
 .sidebar-row-chrome--merge-target {
-  background-color: color-mix(in srgb, var(--accent) 14%, transparent) !important;
+  background-color: color-mix(in srgb, var(--accent) 18%, transparent) !important;
+  // Inset shadow draws a 2px accent ring around the row without affecting
+  // layout — visible at the edges even when the drag ghost covers the center.
+  box-shadow: inset 0 0 0 2px var(--accent);
+  border-radius: $rounded-md;
 
+  // Suppress both left-edge indicators — the ring around the whole row is
+  // the only signal we need. The chrome's ::before accent rail and the
+  // icon-adjacent .space-icon-toggle would otherwise read as duplicate bars.
   &::before {
-    opacity: 1 !important;
+    opacity: 0 !important;
+  }
+  .space-icon-toggle {
+    opacity: 0 !important;
   }
 }
 

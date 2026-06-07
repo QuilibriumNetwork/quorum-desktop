@@ -10,9 +10,10 @@ export const MAX_FOLDERS = 20;
 export const MAX_SPACES_PER_FOLDER = 100;
 
 // Drop zone thresholds for drag intent detection (as fraction of element height)
-// Top 25% = reorder-before, middle 50% = merge, bottom 25% = reorder-after
-export const DROP_ZONE_TOP_THRESHOLD = 0.25;
-export const DROP_ZONE_BOTTOM_THRESHOLD = 0.75;
+// Top 40% = reorder-before, middle 20% = merge, bottom 40% = reorder-after.
+// Reorder is the dominant gesture; merge needs deliberate vertical aim.
+export const DROP_ZONE_TOP_THRESHOLD = 0.4;
+export const DROP_ZONE_BOTTOM_THRESHOLD = 0.6;
 
 // Delay before opening folder editor modal after folder creation
 // Allows React Query optimistic update to propagate before modal reads state

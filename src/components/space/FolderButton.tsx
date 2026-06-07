@@ -14,7 +14,6 @@ interface FolderButtonProps {
   mentionCount?: number;
   size?: 'small' | 'regular';
   isExpanded?: boolean;
-  showWiggle?: boolean;
   noTooltip?: boolean;
   /**
    * Suppresses the corner mention bubble on the button itself. Used in row
@@ -29,7 +28,6 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   mentionCount = 0,
   size = 'regular',
   isExpanded = false,
-  showWiggle = false,
   noTooltip = false,
   hideMentionBubble = false,
 }) => {
@@ -49,19 +47,13 @@ const FolderButton: React.FC<FolderButtonProps> = ({
 
   const buttonElement = (
     <div className="relative">
-      {(!shouldHideTooltip || showWiggle) && showIndicators && (
+      {!shouldHideTooltip && showIndicators && (
         <div
-          className={`space-icon-toggle ${
-            showWiggle
-              ? 'space-icon-toggle--drop-target'
-              : hasUnread
-                ? 'space-icon-toggle--unread'
-                : ''
-          }`}
+          className={`space-icon-toggle ${hasUnread ? 'space-icon-toggle--unread' : ''}`}
         />
       )}
       <div
-        className={`folder-button ${sizeClass} ${showWiggle ? 'drop-target-wiggle' : ''}`}
+        className={`folder-button ${sizeClass}`}
         style={{ backgroundColor }}
       >
         <Icon

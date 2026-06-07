@@ -20,6 +20,13 @@
   }
 }
 
+// In the collapsed strip the folder button has to match SpaceIcon's
+// compact size (44px) so both items in the rail look equally weighted.
+.folder-header--strip .folder-button {
+  width: 44px;
+  height: 44px;
+}
+
 // Folder color passed via inline style
 .folder-button-mention-bubble {
   position: absolute;

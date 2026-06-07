@@ -211,6 +211,11 @@ const {
 } = useFolderDragAndDrop({ config, onFolderCreated });
 ```
 
+The hook also returns `sortingStrategy` — a no-op strategy (`() => null`) so items stay
+stationary during drag. Visual feedback comes from the drop indicator and the merge ring,
+not from item shifting. `zIndex` on the `DragOverlay` is bumped to `1100` so the ghost
+sits above `.muted-badge` (`z-index: 1000`) and other absolutely-positioned chrome.
+
 **Usage in SpacesSidebar**:
 
 ```typescript
@@ -221,10 +226,12 @@ const {
   onDragMove={handleDragMove}
   onDragEnd={handleDragEnd}
 >
-  <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+  {/* Outer context: folders + standalone spaces. Each expanded folder
+      mounts its own inner SortableContext for folder-internal spaces. */}
+  <SortableContext items={topLevelIds} strategy={sortingStrategy}>
     {/* SpacesSidebarFolder / SpacesSidebarRow */}
   </SortableContext>
-  <DragOverlay>{/* ... */}</DragOverlay>
+  <DragOverlay zIndex={1100}>{/* ... */}</DragOverlay>
 </DndContext>
 ```
 
@@ -316,13 +323,11 @@ The drag system uses cursor position within the target to determine the action:
 
 ```
 ┌─────────────────────┐
-│   Top 25%           │ → reorder-before (insert above)
+│   Top 40%           │ → reorder-before (insert above)
 ├─────────────────────┤
-│                     │
-│   Middle 50%        │ → merge (create folder / add to folder)
-│                     │
+│   Middle 20%        │ → merge (create folder / add to folder)
 ├─────────────────────┤
-│   Bottom 25%        │ → reorder-after (insert below)
+│   Bottom 40%        │ → reorder-after (insert below)
 └─────────────────────┘
 ```
 
@@ -330,8 +335,8 @@ The drag system uses cursor position within the target to determine the action:
 
 ```typescript
 // Constants from folderUtils.ts
-const DROP_ZONE_TOP_THRESHOLD = 0.25;    // Top 25% = reorder-before
-const DROP_ZONE_BOTTOM_THRESHOLD = 0.75; // Bottom 25% = reorder-after
+const DROP_ZONE_TOP_THRESHOLD = 0.4;    // Top 40% = reorder-before
+const DROP_ZONE_BOTTOM_THRESHOLD = 0.6; // Bottom 40% = reorder-after
 
 const topThreshold = overRect.top + overRect.height * DROP_ZONE_TOP_THRESHOLD;
 const bottomThreshold = overRect.top + overRect.height * DROP_ZONE_BOTTOM_THRESHOLD;
@@ -365,9 +370,9 @@ The `detectScenario()` function (`useFolderDragAndDrop.ts:102-187`) analyzes the
 
 ### Visual Feedback
 
-- **Merge intent** (row mode): `.sidebar-row-chrome--merge-target` paints the row with a translucent accent background + left bar; the inner avatar wiggles via `.spaces-sidebar__row-avatar--wiggle`.
-- **Merge intent** (strip mode and folder headers): keeps the legacy `drop-target-wiggle` animation on the `FolderButton` / `SpaceIcon`.
-- **Reorder intent**: `.spaces-sidebar__row-drop-indicator` — a thin accent bar rendered above or below the row depending on `dropTarget.intent`.
+- **Merge intent**: `.sidebar-row-chrome--merge-target` paints a 2px accent inset ring around the whole row plus a tinted background. The chrome's `::before` accent rail and the icon-side `.space-icon-toggle` are both suppressed while the ring is showing, so the ring is the single signal. No wiggle / icon animation — the old `.spaces-sidebar__row-avatar--wiggle` and `.drop-target-wiggle` are gone.
+- **Merge intent guards**: the ring is suppressed when the target row is inside a folder (no folders-in-folders) and when the dragged item is a folder (a folder can't be merged into a space).
+- **Reorder intent**: `.spaces-sidebar__row-drop-indicator` — a 3px full-width accent bar rendered above or below the target row depending on `dropTarget.intent`. Sits in the document flow with no extra z-index so the drag ghost reads as on top of it.
 
 ### DragOverlay (Ghost Element)
 
@@ -375,30 +380,38 @@ During drag, the original item is hidden via `.spaces-sidebar__row--dragging` / 
 
 ```tsx
 // SpacesSidebar.tsx
-<DragOverlay>
+<DragOverlay zIndex={1100}>
   {activeDragItem ? (
-    <div className="spaces-sidebar__drag-overlay">
-      <SpacesSidebarRow
-        space={space}
-        active={false}
-        unread={...}
-        mentionCount={...}
-        isMuted={...}
-        onClick={() => {}}
-      />
+    <div className={overlayClass /* `--compact` modifier in collapsed mode */}>
+      <SpacesSidebarRow ... />
     </div>
   ) : null}
 </DragOverlay>
 ```
 
+`zIndex={1100}` is required so the ghost sits above `.muted-badge` (`z-index: 1000`) and other absolutely-positioned chrome on the rows. The default dnd-kit DragOverlay z-index of 999 isn't enough.
+
 ```scss
 // src/components/space/SpacesSidebar.scss
 .spaces-sidebar__drag-overlay {
-  opacity: 0.95;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  background: color-mix(in srgb, var(--color-bg-sidebar) 5%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: $rounded-md;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   cursor: grabbing;
 }
+
+// Collapsed rail: dragged icon floats with no panel at all.
+.spaces-sidebar__drag-overlay--compact {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
 ```
+
+The small `blur(4px)` is intentional: larger blur radii read as opaque frost regardless of background alpha, defeating the translucency.
 
 ### Touch Support
 
@@ -557,11 +570,15 @@ Here's the complete data flow when a user drags Space A onto Space B:
    ├─► handleDragMove() detects dropIntent = 'merge'
    │   └─► setDropTarget({ id: B, intent: 'merge' })
    │       └─► SpacesSidebarRow B renders with .sidebar-row-chrome--merge-target
-   │           and its inner avatar gets .spaces-sidebar__row-avatar--wiggle
+   │           (2px accent inset ring + tinted bg; left-side indicators suppressed)
    │
 2. User releases drag
    │
    ├─► handleDragEnd() fires
+   │   ├─► Reads latest config from React Query cache (NOT the closure's
+   │   │   `config` prop). Rapid drags can land before React re-renders,
+   │   │   so the closure may be stale by one operation. Cache-first
+   │   │   keeps successive diffs composable.
    │   ├─► detectScenario() returns 'SPACE_TO_SPACE'
    │   ├─► canCreateFolder() checks MAX_FOLDERS limit
    │   ├─► createFolder('Spaces', [B, A]) generates new folder
@@ -572,7 +589,14 @@ Here's the complete data flow when a user drags Space A onto Space B:
    │   │   queryClient.setQueryData(buildConfigKey(...), newConfig)
    │   │   └─► SpacesSidebar re-renders immediately with folder
    │   │
-   │   └─► saveConfig() persists to IndexedDB + syncs to server
+   │   └─► actionQueueService.enqueue('save-user-config', ...) — fire-and-forget.
+   │       The queue's dedup key (`config:${address}`) collapses rapid drags into
+   │       the latest in-flight + one pending task. ConfigService.saveConfig
+   │       deep-clones the input (so in-place mutations can't corrupt the cache)
+   │       and the tail-end cache write is guarded by a Date.now() timestamp —
+   │       skipped if a newer optimistic update arrived during processing.
+   │       This is what stops queue completions from "rewinding" the cache to a
+   │       frozen-in-time state and silently undoing the user's latest drag.
    │
 3. Other devices receive sync
    │
@@ -655,8 +679,8 @@ When old native app writes `spaceIds` only, web app's `migrateToItems()` convert
 |----------|-------|---------|
 | `MAX_FOLDERS` | 20 | Maximum folders per user |
 | `MAX_SPACES_PER_FOLDER` | 100 | Maximum spaces per folder |
-| `DROP_ZONE_TOP_THRESHOLD` | 0.25 | Top 25% of element = reorder-before |
-| `DROP_ZONE_BOTTOM_THRESHOLD` | 0.75 | Bottom 25% of element = reorder-after |
+| `DROP_ZONE_TOP_THRESHOLD` | 0.4 | Top 40% of element = reorder-before |
+| `DROP_ZONE_BOTTOM_THRESHOLD` | 0.6 | Bottom 40% of element = reorder-after (middle 20% = merge) |
 | `FOLDER_MODAL_OPEN_DELAY_MS` | 100 | Delay before opening modal after folder creation |
 
 ### Functions
@@ -775,4 +799,4 @@ const NavItemSchema = z.discriminatedUnion('type', [
 
 ---
 
-*Last updated: 2026-06-04*
+*Last updated: 2026-06-07*

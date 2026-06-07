@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useSortable } from '@dnd-kit/sortable';
+import { SortableContext, useSortable, type SortingStrategy } from '@dnd-kit/sortable';
 import type { Space } from '@quilibrium/quorum-shared';
 import { Icon, Tooltip, useTheme } from '../primitives';
 import FolderButton from './FolderButton';
@@ -34,6 +34,8 @@ interface SpacesSidebarFolderProps {
     e: React.MouseEvent,
     hasNotifications: boolean
   ) => void;
+  /** Sorting strategy for the nested folder-internal SortableContext. */
+  sortingStrategy: SortingStrategy;
 }
 
 /**
@@ -56,7 +58,12 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
   onSpaceClick,
   onContextMenu,
   onSpaceContextMenu,
+  sortingStrategy,
 }) => {
+  const innerSortableIds = React.useMemo(
+    () => spaces.map((s) => s.spaceId),
+    [spaces]
+  );
   const isTouch = isTouchDevice();
   const { resolvedTheme } = useTheme();
   const isDarkTheme = resolvedTheme === 'dark';
@@ -122,8 +129,17 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
 
   const isDropTarget = dropTarget?.id === folder.id;
   const isDraggingSpace = activeItem?.type === 'space';
+  // Merge feedback (add space to folder) is shown on the closed folder header.
+  // Reorder feedback comes from dnd-kit shifting surrounding items — no
+  // separate horizontal indicator. An expanded folder being "merge-targeted"
+  // by a space drop is a no-op visually; the inner row will get the merge
+  // feedback when the cursor reaches it.
   const showWiggle =
     isDropTarget && dropTarget?.intent === 'merge' && !isExpanded && isDraggingSpace;
+  // Reorder indicators on the outer folder boundary. An expanded folder being
+  // merge-targeted by a space is handled visually by the inner row that gets
+  // the cursor — at the folder boundary, treat merge-on-expanded as a
+  // reorder-before indicator (the space will land before the folder spaces).
   const showDropBefore =
     isDropTarget &&
     (dropTarget?.intent === 'reorder-before' ||
@@ -219,7 +235,6 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                   hasUnread={hasUnread}
                   mentionCount={folderMentionCount}
                   isExpanded={isExpanded}
-                  showWiggle={showWiggle}
                 />
               </div>
             ) : (
@@ -251,7 +266,6 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                     hasUnread={hasUnread}
                     mentionCount={folderMentionCount}
                     isExpanded={isExpanded}
-                    showWiggle={showWiggle}
                     noTooltip
                     hideMentionBubble
                   />
@@ -277,6 +291,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
               <div
                 className={`folder-spaces ${collapsed ? 'folder-spaces--strip' : 'folder-spaces--row'}`}
               >
+                <SortableContext items={innerSortableIds} strategy={sortingStrategy}>
                 {spaces.map((space) => {
                   const unread = spaceUnreadCounts[space.spaceId] || 0;
                   const mention = spaceMentionCounts[space.spaceId] || 0;
@@ -360,6 +375,7 @@ export const SpacesSidebarFolder: React.FC<SpacesSidebarFolderProps> = ({
                     />
                   );
                 })}
+                </SortableContext>
               </div>
             </div>
           </>

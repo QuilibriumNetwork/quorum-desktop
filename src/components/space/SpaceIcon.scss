@@ -85,11 +85,6 @@
     background: var(--accent-500);
   }
 
-  // Drop target state: hover-size bar, visible during drag merge
-  &--drop-target {
-    height: $s-5; // 20px - same as hover size
-    opacity: 1;
-  }
 }
 
 // Show toggle on hover (desktop only) - only when not already in a visible state
@@ -177,23 +172,3 @@ html.dark .space-icon-mention-bubble {
   background-color: var(--accent-600);
 }
 
-// Drop target indicator for merge action
-// Shows when dragging to center of a space/folder (will create or add to folder)
-.drop-target-wiggle {
-  animation: wiggle 0.25s ease-in-out infinite;
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
-  border-radius: $rounded-lg;
-}
-
-@keyframes wiggle {
-  0%, 100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(-5deg);
-  }
-  75% {
-    transform: rotate(5deg);
-  }
-}
