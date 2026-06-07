@@ -239,7 +239,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
           </div>
 
           {/* Master toggle: Space notifications on/off */}
-          <Flex className="items-center gap-3 mt-4 mb-3">
+          <Flex className="items-center gap-3 mt-4">
             <Switch
               value={!isSpaceMuted}
               onChange={toggleSpaceMute}
@@ -250,14 +250,15 @@ const Account: React.FunctionComponent<AccountProps> = ({
             </div>
           </Flex>
 
-          {/* Event-type sub-control: disabled when master is off */}
+          {/* Sub-controls indented under the master toggle */}
           <div
-            className={
+            className={`pl-12 mt-3 ${
               isSpaceMuted ? 'opacity-50 pointer-events-none' : ''
-            }
+            }`}
           >
-            <div className="text-label pt-2">
-              <Trans>When enabled, notify me for:</Trans>
+            {/* Event-type sub-control */}
+            <div className="text-label">
+              <Trans>Notify me for:</Trans>
             </div>
             <div className="pt-2">
               <Select
@@ -298,50 +299,47 @@ const Account: React.FunctionComponent<AccountProps> = ({
                 disabled={isSpaceMuted || isMentionSettingsLoading}
               />
             </div>
+
+            {/* Per-channel notifications list */}
+            {space?.groups?.some((g) => g.channels.length > 0) && (
+              <>
+                <div className="text-label pt-4 pb-2">
+                  <Trans>Channels:</Trans>
+                </div>
+                <div className="flex flex-col gap-2">
+                  {space.groups.flatMap((group) =>
+                    group.channels.map((channel) => (
+                      <Flex
+                        key={channel.channelId}
+                        className="items-center gap-3"
+                      >
+                        <Switch
+                          value={!isChannelMuted(channel.channelId)}
+                          onChange={() => toggleMute(channel.channelId)}
+                          disabled={isSpaceMuted}
+                          accessibilityLabel={t`Notifications for #${channel.channelName}`}
+                        />
+                        <div className="text-label-strong">
+                          # {channel.channelName}
+                        </div>
+                      </Flex>
+                    ))
+                  )}
+                </div>
+              </>
+            )}
           </div>
 
-          {/* Per-channel notifications list */}
-          {space?.groups?.some((g) => g.channels.length > 0) && (
-            <>
-              <div className="text-label pt-4 pb-2">
-                <Trans>Channels</Trans>
-              </div>
-              <div
-                className={`flex flex-col gap-2 ${
-                  isSpaceMuted ? 'opacity-50 pointer-events-none' : ''
-                }`}
-              >
-                {space.groups.flatMap((group) =>
-                  group.channels.map((channel) => (
-                    <Flex
-                      key={channel.channelId}
-                      className="items-center gap-3"
-                    >
-                      <Switch
-                        value={!isChannelMuted(channel.channelId)}
-                        onChange={() => toggleMute(channel.channelId)}
-                        disabled={isSpaceMuted}
-                        accessibilityLabel={t`Notifications for #${channel.channelName}`}
-                      />
-                      <div className="text-label-strong">
-                        # {channel.channelName}
-                      </div>
-                    </Flex>
-                  ))
-                )}
-              </div>
-            </>
-          )}
-
-          {/* Hide muted channels — visibility preference, unchanged */}
-          <Flex className="items-center gap-3 mt-4">
+          {/* Sidebar display preference — separate concept */}
+          <Spacer size="md" direction="vertical" borderTop={true} />
+          <Flex className="items-center gap-3">
             <Switch
               value={!showMutedChannels}
               onChange={handleShowMutedToggle}
-              accessibilityLabel={t`Hide muted channels in list`}
+              accessibilityLabel={t`Hide muted channels from sidebar`}
             />
             <div className="text-label-strong">
-              <Trans>Hide muted channels</Trans>
+              <Trans>Hide muted channels from sidebar</Trans>
             </div>
           </Flex>
           <Spacer size="lg" direction="vertical" borderBottom={true} />
