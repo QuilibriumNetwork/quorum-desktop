@@ -4293,9 +4293,12 @@ export class MessageService {
           const spaceId = conversationId.split('/')[0];
           const config = await this.messageDB.getUserConfig({ address: self_address });
           const settings = config?.notificationSettings?.[spaceId];
+          const channelId = decryptedContent.channelId;
+          const isChannelMuted = !!channelId &&
+            !!config?.mutedChannels?.[spaceId]?.includes(channelId);
 
-          // Don't notify if space is muted
-          if (settings?.isMuted !== true) {
+          // Don't notify if space is muted or this specific channel is muted
+          if (settings?.isMuted !== true && !isChannelMuted) {
             const enabledTypes = settings?.enabledNotificationTypes ??
               ['mention-you', 'mention-everyone', 'mention-roles', 'reply'];
 
