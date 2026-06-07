@@ -110,6 +110,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/2026-01-09-userprofile-modal-positioning-viewport-boundary.md)
 - [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/2026-04-14-display-name-input-layout-shift-on-error.md)
 - [Virtuoso measurement callback resets scrollTop on new messages](bugs/2026-05-24-virtuoso-measurement-scroll-reset.md)
+- [UserSettingsModal shows stale display name after remote UserConfig sync](bugs/2026-05-30-user-settings-modal-stale-display-name.md)
+- [Action queue errors silently swallowed across all config-writing hooks](bugs/2026-06-07-action-queue-errors-swallowed.md)
+- [Per-space mention-type filter doesn't sync across devices](bugs/2026-06-07-mention-type-filter-not-synced.md)
+- [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/2026-06-07-space-profile-save-missing-inbox.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -184,6 +188,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Invite with Role Implementation Plan](tasks/2026-04-20-invite-with-role-implementation.md)
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Link Previews — Design Spec](tasks/2026-05-27-link-previews-design.md)
+- [Polls in Spaces — Design Spec](tasks/2026-06-01-polls-design.md)
+- [Polls in Spaces — v1 Implementation Plan](tasks/2026-06-01-polls-plan.md)
+- [Spaces Highlights Feed — Design Spec](tasks/2026-06-04-spaces-highlights-feed-design.md)
+- [Spaces Highlights Feed Implementation Plan](tasks/2026-06-04-spaces-highlights-feed-plan.md)
+- [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
+- [Implementation plan — Notification settings UX alignment](tasks/2026-06-07-align-notification-settings-with-mobile-plan.md)
+- [Align notification settings UX between desktop and mobile](tasks/2026-06-07-align-notification-settings-with-mobile.md)
+- [`useDMMute` and `useDMFavorites` read stale config from messageDB](tasks/2026-06-07-dm-mute-cache-read.md)
+- [Add a real global notifications mute to desktop](tasks/2026-06-07-global-notifications-mute.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -217,7 +230,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
 
 ### .Todo
-- [Add User Bio Field to UserSettingsModal General Tab](tasks/.todo/2025-01-06-add-user-bio-field.md)
 - [User Status Feature Implementation Plan](tasks/.todo/2025-01-20-user-status.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/.todo/2025-11-16-message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/.todo/2025-11-19-notification-mention-context-extraction.md)
@@ -275,14 +287,25 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/docs/mobile-desktop-audit.md)
 - [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
 
+### Port From Mobile
+- [Cross-app feature diff (port-from-mobile) — Master Tracker](tasks/port-from-mobile/README.md)
+- [Desktop-better-than-mobile inventory](tasks/port-from-mobile/desktop-better-than-mobile.md)
+- [Mobile features not on desktop — candidate list](tasks/port-from-mobile/candidates.md)
+- [Port-from-mobile shipped log](tasks/port-from-mobile/shipped-log.md)
+- [Workflow for porting features from mobile to desktop](tasks/port-from-mobile/workflow.md)
+
+### Port From Mobile .Done
+- [Unified `/spaces` Page (PR 1 of 2) — Implementation Plan](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-plan.md)
+- [Unified `/spaces` page — PR 2 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-pr2.md)
+- [Unified `/spaces` page — PR 1 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces.md)
+
 ### Quorum Shared Migration
-- [Quorum Shared Migration — Master Tracker (README)](tasks/quorum-shared-migration/README.md)
-- [Roadmap — phased plan, less risky to most risky](tasks/quorum-shared-migration/roadmap.md)
-- [Shipped log — chronological history + lessons](tasks/quorum-shared-migration/shipped-log.md)
-- [Cross-repo PR workflow](tasks/quorum-shared-migration/cross-repo-workflow.md)
+- [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
 - [Mobile tasks pending](tasks/quorum-shared-migration/mobile-tasks-pending.md)
-- [Reference — stacked PRs workflow](tasks/quorum-shared-migration/reference/stacked-prs-workflow.md)
-- [Reference — npm publish access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/reference/npm-publish-access.md)
+- [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
+- [Quorum-shared migration — roadmap](tasks/quorum-shared-migration/roadmap.md)
+- [Quorum-shared migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
+- [Shipped-log archive — older entries](tasks/quorum-shared-migration/shipped-log-archive.md)
 
 ### Quorum Shared Migration .Done
 - [Primitives Migration Prep](tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md)
@@ -290,13 +313,21 @@ This is the main index for all documentation, bug reports, and task management.
 - [Typing Indicators — Migration to quorum-shared](tasks/quorum-shared-migration/.done/2026-05-18-typing-shared-migration.md)
 - [Delivery & Read Receipts — Migration to quorum-shared](tasks/quorum-shared-migration/.done/2026-05-19-receipts-shared-migration.md)
 - [Util Tests — Relocate to quorum-shared](tasks/quorum-shared-migration/.done/2026-05-19-tests-migration.md)
+- [Structural type divergence between quorum-shared and quorum-desktop](tasks/quorum-shared-migration/.done/2026-05-27-shared-vs-local-type-divergence.md)
+- [useTwoStepConfirm — extract two-step confirmation primitive to shared](tasks/quorum-shared-migration/.done/2026-05-28-migrate-use-two-step-confirm.md)
+- [Validation hooks — move logic to shared with errorKey i18n pattern](tasks/quorum-shared-migration/.done/2026-05-28-migrate-validation-hooks.md)
+- [Extract role-mutation pure helpers to `@quilibrium/quorum-shared`](tasks/quorum-shared-migration/.done/2026-05-29-migrate-role-mutation-helpers.md)
 
 ### Quorum Shared Migration Designs
 - [Utilities Migration Design](tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md)
-- [Hooks Migration — Audit Refresh](tasks/quorum-shared-migration/designs/2026-05-28-hooks-audit-refresh.md)
-- [ActionQueueService re-audit (stays per-app)](tasks/quorum-shared-migration/designs/2026-05-28-actionqueue-reaudit.md)
-- [SearchService re-audit (stays per-app)](tasks/quorum-shared-migration/designs/2026-05-29-searchservice-reaudit.md)
 - [Services Layer — Migration Design for quorum-shared](tasks/quorum-shared-migration/designs/2026-05-18-services-design.md)
+- [ActionQueueService re-audit (2026-05-28)](tasks/quorum-shared-migration/designs/2026-05-28-actionqueue-reaudit.md)
+- [Hooks Migration — Audit (2026-05-28)](tasks/quorum-shared-migration/designs/2026-05-28-hooks-audit-refresh.md)
+- [SearchService re-audit (2026-05-29)](tasks/quorum-shared-migration/designs/2026-05-29-searchservice-reaudit.md)
+
+### Quorum Shared Migration Reference
+- [Get npm Publish Access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/reference/npm-publish-access.md)
+- [Stacked PRs Workflow](tasks/quorum-shared-migration/reference/stacked-prs-workflow.md)
 
 ### Search Optimization
 - [Design Decisions & Rationale](tasks/search-optimization/decisions.md)
@@ -309,6 +340,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📋 Completed Tasks
 
+- [Add User Bio Field to UserSettingsModal General Tab](tasks/.done/2025-01-06-add-user-bio-field.md)
 - [Design: Discord-style Thread Panel Layout with Resize](tasks/.done/2025-03-09-thread-panel-discord-layout-design.md)
 - [Discord-style Thread Panel Layout Implementation Plan](tasks/.done/2025-03-09-thread-panel-discord-layout.md)
 - [Space Tags](tasks/.done/2025-12-30-space-tags.md)
@@ -376,7 +408,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Typing Indicators Implementation Plan](tasks/.done/2026-05-18-typing-indicators-plan.md)
 - [Test Suite Review — Cleanup Before Migration](tasks/.done/2026-05-19-test-suite-review.md)
 - [Fix UserConfig type drift between quorum-shared and quorum-desktop](tasks/.done/2026-05-27-userconfig-type-drift.md)
-- [Consolidate Desktop Invite System with Mobile](tasks/.done/2026-06-07-consolidate-invite-system-with-mobile.md)
+- [New UI Shell Implementation Plan](tasks/.done/2026-06-02-new-ui-shell-implementation.md)
+- [Drag-to-Resize Sidebar — Implementation Plan (Track E)](tasks/.done/2026-06-03-drag-resize-sidebar-plan.md)
+- [New UI Shell — Continuation Dispatcher](tasks/.done/2026-06-03-new-ui-shell-continuation.md)
+- [SpacesSidebar — Folders + DnD (sub-plan)](tasks/.done/2026-06-03-spaces-sidebar-folders-subplan.md)
+- [SpacesSidebar Polish — Implementation Plan (Track D, expanded)](tasks/.done/2026-06-03-spaces-sidebar-polish-plan.md)
+- [Bookmarks page in NavRail](tasks/.done/2026-06-04-bookmarks-page.md)
+- [Docs refresh after new-UI shell migration](tasks/.done/2026-06-04-docs-refresh-after-new-ui-shell.md)
+- [Consolidate desktop invite system with mobile](tasks/.done/2026-06-07-consolidate-invite-system-with-mobile.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -566,4 +605,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-05-28 18:46:47
+**Last Updated**: 2026-06-07 17:48:27

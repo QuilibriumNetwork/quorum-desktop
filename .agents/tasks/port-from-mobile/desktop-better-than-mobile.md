@@ -3,7 +3,7 @@ type: inventory
 title: Capabilities where desktop's implementation is better than mobile's
 status: living
 created: 2026-06-01
-updated: 2026-06-01
+updated: 2026-06-07
 ---
 
 # Desktop-better-than-mobile inventory
@@ -76,4 +76,49 @@ If a "desktop-better" finding eventually becomes a concrete shared-promotion tas
 
 ---
 
-*Last updated: 2026-06-01 — file created; first entry: reply notification counts.*
+## 2. Per-space notification preferences — model richness, sync, and gating fidelity
+
+**Mobile:** [`quorum-mobile/services/notifications/notificationPrefs.ts`](../../../../quorum-mobile/services/notifications/notificationPrefs.ts) — three-level boolean tree in MMKV (`global:enabled`, `space:<id>`, `channel:<spaceId>:<channelId>`), AND-resolved by `shouldNotifyForContext()`. Local-only, mirrored to iOS App Group for the NSE to read. No event-type granularity.
+
+**Desktop:** [`src/hooks/business/channels/useChannelMute.ts`](../../../src/hooks/business/channels/useChannelMute.ts) + [`UserConfig.notificationSettings`](../../../../quorum-shared/src/types/user.ts) — per-space `SpaceNotificationSettings` with `isMuted: boolean` AND `enabledNotificationTypes: SpaceNotificationTypeId[]` (`'mention-you' | 'mention-everyone' | 'mention-roles' | 'reply'`). Channel mute lives in separate `mutedChannels[spaceId]: string[]`. Stored in encrypted `UserConfig` blob, synced across devices via `apiClient.postUserSettings()`.
+
+**Why desktop is better:**
+
+1. **Event-type granularity.** Desktop users can opt out of `@everyone` while keeping `@you` notifications on — a real preference in busy spaces. Mobile has no equivalent; it's all-or-nothing per space/channel.
+2. **Cross-device sync.** A user who mutes a noisy space on their desktop has it muted on their phone too. Mobile prefs are local to each device, so muting on phone doesn't carry to desktop or to a second phone. This is a real ongoing pain point for multi-device users.
+3. **Settings are part of identity-encrypted user config.** Desktop's prefs survive reinstall (they're on the server, key-derived). Mobile's prefs are wiped on app reinstall / device change.
+4. **Uses the existing shared type.** `SpaceNotificationSettings` and `SpaceNotificationTypeId` already live in `@quilibrium/quorum-shared/src/types/notifications.ts` — desktop consumes them, mobile imports the types but doesn't use them in UI. The shared schema is the natural target for convergence.
+
+**Why mobile is currently better in two narrow ways (honest accounting):**
+- Mobile's NSE-level (Swift) suppression means muted-channel pushes don't even reach the OS notification center on iOS — a privacy + battery win. Desktop's suppression happens in JS only.
+- Mobile's simpler model is easier for casual users; the desktop event-type multi-select is denser UI. Convergence has to keep the master toggle prominent and the type filter as progressive disclosure.
+
+**Mobile-port cost:** **HIGH.**
+- Mobile would need to write to `UserConfig.notificationSettings` (synced config), replacing or supplementing the MMKV store.
+- The iOS NSE currently reads MMKV via App Group mirror. Switching to `UserConfig` means either (a) the NSE reads the encrypted config (heavy; the NSE process needs key access), or (b) the synced settings get mirrored back into the same MMKV store that the NSE already reads. Option (b) is the realistic path: `UserConfig` is the source of truth and writes propagate to MMKV for the NSE.
+- New mobile UI to expose the event-type filter (currently doesn't exist as a control on mobile).
+- The May 28 architecture report records that mobile's local-only choice was **intentional**, not unfinished — convergence requires revisiting that decision with the lead dev, not just porting.
+
+**Shared-package involvement:** **additive.** The types already exist. What's missing is a shared hook (`useNotificationSettings`) that both apps could consume, plus possibly a shared `shouldNotifyForContext`-equivalent utility that knows about both `isMuted` and `enabledNotificationTypes`. These would replace mobile's `notificationPrefs.ts` and parts of desktop's `useChannelMute.ts`.
+
+**Status:** noted (2026-06-07).
+
+**Related desktop infrastructure (for context):**
+- [`quorum-shared/src/types/notifications.ts`](../../../../quorum-shared/src/types/notifications.ts) — shared types already exist (`SpaceNotificationSettings`, `SpaceNotificationTypeId`)
+- [`quorum-shared/src/types/user.ts`](../../../../quorum-shared/src/types/user.ts) — `UserConfig.notificationSettings` shape
+- [`src/hooks/business/channels/useChannelMute.ts`](../../../src/hooks/business/channels/useChannelMute.ts) — full desktop hook (read sites + writers)
+- [`src/hooks/business/mentions/useMentionNotificationSettings.ts`](../../../src/hooks/business/mentions/useMentionNotificationSettings.ts) — event-type filter persistence (has its own sync bug — see [`2026-06-07-mention-type-filter-not-synced.md`](../../bugs/2026-06-07-mention-type-filter-not-synced.md))
+- [`.agents/reports/2026-05-28-notification-architecture-divergence.md`](../../reports/2026-05-28-notification-architecture-divergence.md) — full architectural divergence analysis
+- [`.agents/tasks/2026-06-07-align-notification-settings-with-mobile.md`](../2026-06-07-align-notification-settings-with-mobile.md) — desktop-side UX rename that left this convergence work deferred to this entry
+
+**Suggested approach when this gets picked up:**
+1. Decide the source-of-truth question with the lead dev: `UserConfig.notificationSettings` (cross-device sync) vs. status-quo MMKV (local-only). Recommend the former.
+2. If sync is in: mirror `UserConfig` writes into the existing MMKV store so the iOS NSE keeps working without changes to the Swift code.
+3. Add event-type filter UI to mobile space settings (progressive disclosure under the master toggle).
+4. Promote `useChannelMute` and friends to `quorum-shared` once both apps consume the same shape.
+
+---
+
+*Last updated: 2026-06-07 — added entry #2: per-space notification preferences (richness + sync + gating fidelity).*
+
+*Previously: 2026-06-01 — file created; first entry: reply notification counts.*
