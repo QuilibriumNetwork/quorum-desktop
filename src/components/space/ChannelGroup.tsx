@@ -69,11 +69,20 @@ const ChannelGroup: React.FunctionComponent<{
   // Handle channel navigation. Closes the phone drawer (if open) so the user
   // sees the channel they just picked, even when re-tapping the current channel.
   // Also records the last-visited space + channel so the rail's Spaces button
-  // can restore the user's position next session click.
+  // and the sidebar space rows can restore the user's position next time.
+  // localStorage (not sessionStorage) so the pointer survives tab close — mobile
+  // browsers aggressively kill background tabs.
   const handleChannelNavigate = React.useCallback((channelId: string) => {
     if (spaceId) {
-      sessionStorage.setItem('lastSpaceId', spaceId);
-      sessionStorage.setItem('lastChannelId', channelId);
+      try {
+        localStorage.setItem('lastSpaceId', spaceId);
+        const raw = localStorage.getItem('lastChannelBySpace');
+        const map = raw ? JSON.parse(raw) : {};
+        map[spaceId] = channelId;
+        localStorage.setItem('lastChannelBySpace', JSON.stringify(map));
+      } catch {
+        // localStorage unavailable / quota / parse error — non-fatal.
+      }
     }
     shell?.closeDrawer();
     navigate(`/spaces/${spaceId}/${channelId}`);
