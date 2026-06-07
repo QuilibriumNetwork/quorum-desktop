@@ -29,6 +29,7 @@ import {
 import { useMentionNotificationSettings } from '../../../hooks/business/mentions';
 import { showToast } from '../../../utils/toast';
 import { useSpaceTag } from '../../../hooks/business/spaces/useSpaceTag';
+import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
 import Account from './Account';
 import General from './General';
 import Channels from './Channels';
@@ -257,7 +258,11 @@ const SpaceSettingsModal: React.FunctionComponent<{
     sendingInvite,
     success,
     membershipWarning,
+    poolExhausted,
     invite,
+    generateOneTimeLink,
+    clearGeneratedOneTimeLink,
+    generateOneTimeLinkError,
     publicInvite,
     setPublicInvite,
     generating,
@@ -327,6 +332,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
 
   // Public invite link state management
   const [generationSuccess, setGenerationSuccess] = React.useState(false);
+  const [refreshSuccess, setRefreshSuccess] = React.useState(false);
   const [errorMessage, setErrorMessage] = React.useState('');
   const [showGenerateModal, setShowGenerateModal] = React.useState(false);
 
@@ -598,6 +604,30 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           generationSuccess={generationSuccess}
                           errorMessage={errorMessage}
                           setShowGenerateModal={setShowGenerateModal}
+                          refreshSuccess={refreshSuccess}
+                          generateOneTimeLink={generateOneTimeLink}
+                          clearGeneratedOneTimeLink={clearGeneratedOneTimeLink}
+                          generateOneTimeLinkError={generateOneTimeLinkError}
+                          refreshInviteLink={async () => {
+                            // Refresh = same URL, fresh server eval + manifest.
+                            // Nothing to confirm — old link stays valid.
+                            setErrorMessage('');
+                            try {
+                              await generateNewInviteLink();
+                              setRefreshSuccess(true);
+                              setTimeout(() => setRefreshSuccess(false), 3000);
+                            } catch (error) {
+                              if (error instanceof InviteEvalsExhaustedError) {
+                                // Pool-exhausted state is surfaced via the
+                                // hook's `poolExhausted` flag + banner, not
+                                // as a transient error.
+                                return;
+                              }
+                              setErrorMessage(t`Failed to update join preview. Please try again.`);
+                            }
+                          }}
+                          poolExhausted={poolExhausted}
+                          isSpaceOwner={!!isSpaceOwner}
                         />
                       );
                     case 'danger':
@@ -656,17 +686,16 @@ const SpaceSettingsModal: React.FunctionComponent<{
         </div>
       </Modal>
 
-      {/* Confirmation modals for invite management */}
+      {/* First-time public-invite generation is gated by a confirmation modal
+          because it's the moment a space becomes publicly joinable. Subsequent
+          refreshes go through `refreshInviteLink` (no confirm — same URL,
+          old link keeps working). */}
       {showGenerateModal && (
         <ConfirmationModal
           visible={showGenerateModal}
           title={t`Generate Public Invite Link`}
-          message={
-            space?.inviteUrl
-              ? t`This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it.`
-              : t`This will create a public invite link that anyone can use to join your Space. Consider who you share this link with.`
-          }
-          confirmText={space?.inviteUrl ? t`Generate New Link` : t`Generate Link`}
+          message={t`This will create a public invite link that anyone can use to join your Space. Consider who you share this link with.`}
+          confirmText={t`Generate Link`}
           onConfirm={async () => {
             setShowGenerateModal(false);
             setErrorMessage('');
@@ -675,6 +704,10 @@ const SpaceSettingsModal: React.FunctionComponent<{
               setGenerationSuccess(true);
               setTimeout(() => setGenerationSuccess(false), 3000);
             } catch (error) {
+              if (error instanceof InviteEvalsExhaustedError) {
+                // Surfaced via the persistent banner; no transient error.
+                return;
+              }
               setErrorMessage(t`Failed to generate invite link. Please try again.`);
             }
           }}

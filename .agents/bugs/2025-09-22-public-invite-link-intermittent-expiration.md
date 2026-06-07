@@ -1,10 +1,16 @@
 ---
 type: bug
 title: Public Invite Link Intermittent Expiration Bug
-status: open
+status: likely-resolved-by-consolidation
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-06-07T00:00:00.000Z
 ---
+
+> **2026-06-07 update:** the invite-system consolidation (see `tasks/2026-06-07-consolidate-invite-system-with-mobile.md`) likely makes this no longer reproducible. The original behavior — first 1-2 joiners succeed, later ones fail — is the exact failure mode of the old "one server eval per join" model: the eval pool drained on the server side after a few joins.
+>
+> Under the new model, the server serves the same single eval to every joiner instead of popping one per join (confirmed by the comment at `quorum-mobile/services/space/inviteService.ts` lines 352-356: *"server now serves the same eval to every joiner instead of popping one per join"*). Concurrent joins should no longer cause expiration.
+>
+> Not closed as `solved` because we haven't reproduced the original failure end-to-end after the consolidation — but the architectural cause is gone. To verify: in a fresh space, generate a public link, then have 5+ users join in quick succession. If all succeed, mark solved and move to `.solved/`.
 
 # Public Invite Link Intermittent Expiration Bug
 

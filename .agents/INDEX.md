@@ -376,6 +376,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Typing Indicators Implementation Plan](tasks/.done/2026-05-18-typing-indicators-plan.md)
 - [Test Suite Review — Cleanup Before Migration](tasks/.done/2026-05-19-test-suite-review.md)
 - [Fix UserConfig type drift between quorum-shared and quorum-desktop](tasks/.done/2026-05-27-userconfig-type-drift.md)
+- [Consolidate Desktop Invite System with Mobile](tasks/.done/2026-06-07-consolidate-invite-system-with-mobile.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)

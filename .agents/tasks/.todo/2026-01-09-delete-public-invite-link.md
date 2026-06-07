@@ -4,7 +4,7 @@ title: 'Task: Implement Delete Public Invite Link Feature'
 status: open
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-06-07'
 related_issues:
   - '#101'
 ---
@@ -16,6 +16,8 @@ related_issues:
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/101
 
 Enable space owners to delete public invite links, removing server-side invite evals and returning to private-only mode.
+
+> **2026-06-07 context update:** the invite-system consolidation (`tasks/2026-06-07-consolidate-invite-system-with-mobile.md`) removed the "system switch is permanent" framing — one-time and public invites now coexist on the same space and don't conflict. However, the underlying limitation this task addresses still applies: there is no backend endpoint to remove server-side evals, so a public link cannot be truly revoked even after the consolidation. Owners can refresh the link to rotate the server-side eval, but the URL remains resolvable. This task is still legitimate, just narrower in scope.
 
 ## Prerequisites
 
