@@ -78,9 +78,20 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
   const isDraggingSource =
     isDragging || dragState?.activeItem?.id === space.spaceId;
   const isDropTarget = !!dropTarget && dropTarget.id === space.spaceId;
-  const showDropBefore = isDropTarget && dropTarget!.intent === 'reorder-before';
-  const showDropAfter = isDropTarget && dropTarget!.intent === 'reorder-after';
-  const showMergeWiggle = isDropTarget && dropTarget!.intent === 'merge';
+  // Merge isn't valid when:
+  // - the target sits inside a folder (no folders-in-folders), or
+  // - the dragged item is a folder (can't merge a folder into a space).
+  // Reorder still works in both cases; just no merge feedback.
+  const isDraggingFolder = dragState?.activeItem?.type === 'folder';
+  const showMergeWiggle =
+    isDropTarget &&
+    dropTarget!.intent === 'merge' &&
+    !parentFolderId &&
+    !isDraggingFolder;
+  const showDropBefore =
+    isDropTarget && dropTarget!.intent === 'reorder-before';
+  const showDropAfter =
+    isDropTarget && dropTarget!.intent === 'reorder-after';
 
   const rowClass = [
     compact ? 'spaces-sidebar__strip-row' : 'spaces-sidebar__row',
@@ -93,14 +104,7 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
     .join(' ');
 
   const avatar = (
-    <div
-      className={[
-        'relative flex-shrink-0',
-        showMergeWiggle && 'spaces-sidebar__row-avatar--wiggle',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
+    <div className="relative flex-shrink-0">
       <SpaceIcon
         spaceId={space.spaceId}
         spaceName={space.spaceName}
@@ -164,10 +168,10 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
     </button>
   );
 
-  return (
-    <>
-      {showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
-      {compact ? (
+  if (compact) {
+    return (
+      <>
+        {showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
         <Tooltip
           id={`spaces-sidebar-strip-${space.spaceId}`}
           content={space.spaceName}
@@ -177,9 +181,15 @@ export const SpacesSidebarRow: React.FunctionComponent<SpacesSidebarRowProps> = 
         >
           {button}
         </Tooltip>
-      ) : (
-        button
-      )}
+        {showDropAfter && <div className="spaces-sidebar__row-drop-indicator" />}
+      </>
+    );
+  }
+
+  return (
+    <>
+      {showDropBefore && <div className="spaces-sidebar__row-drop-indicator" />}
+      {button}
       {showDropAfter && <div className="spaces-sidebar__row-drop-indicator" />}
     </>
   );

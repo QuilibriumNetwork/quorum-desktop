@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import type { Space } from '@quilibrium/quorum-shared';
 import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext } from '@dnd-kit/sortable';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Button, Icon, Tooltip, useTheme } from '../primitives';
 import SpaceIcon from './SpaceIcon';
@@ -205,7 +205,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   const dragState = useOptionalDragStateContext();
   const activeDragItem = dragState?.activeItem ?? null;
 
-  const { handleDragStart, handleDragMove, handleDragEnd, sensors } = useFolderDragAndDrop({
+  const { handleDragStart, handleDragMove, handleDragEnd, sensors, sortingStrategy } = useFolderDragAndDrop({
     config,
     onFolderCreated: (folderId) => openFolderEditor(folderId),
   });
@@ -257,18 +257,15 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     ];
   }, [folderContextMenu.folder, openFolderEditor, closeFolderContextMenu, deleteFolder]);
 
-  // Sortable IDs flatten folders + standalone spaces in render order. SortableContext
-  // needs this list so it can match dragging IDs to their position in the layout.
-  const sortableIds = React.useMemo(() => {
-    const ids: string[] = [];
-    for (const nav of navItems) {
-      ids.push(nav.item.id);
-      if (nav.item.type === 'folder' && nav.spaces) {
-        for (const s of nav.spaces) ids.push(s.spaceId);
-      }
-    }
-    return ids;
-  }, [navItems]);
+  // Top-level sortable IDs: folders + standalone spaces only. Spaces inside a
+  // folder get their own nested SortableContext inside SpacesSidebarFolder so
+  // dnd-kit's "make space" shifting stays within the folder boundary — without
+  // nesting, a flat list would shift folder-internal spaces out of the folder
+  // visual when dragging across the boundary.
+  const sortableIds = React.useMemo(
+    () => navItems.map((nav) => nav.item.id),
+    [navItems]
+  );
 
   // Flat view kicks in for any filter / search state. Folders don't make sense
   // when the list is filtered: showing partial folders would be confusing and
@@ -362,6 +359,10 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
   const isDarkTheme = resolvedTheme === 'dark';
   const renderDragOverlay = (variant: 'compact' | 'expanded') => {
     if (!activeDragItem) return null;
+    const overlayClass =
+      variant === 'compact'
+        ? 'spaces-sidebar__drag-overlay spaces-sidebar__drag-overlay--compact'
+        : 'spaces-sidebar__drag-overlay';
 
     if (activeDragItem.type === 'folder') {
       const nav = navItems.find(
@@ -382,7 +383,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
       if (variant === 'compact') {
         return (
           <div
-            className="spaces-sidebar__drag-overlay"
+            className={overlayClass}
             style={{ ['--folder-color' as string]: folderColor } as React.CSSProperties}
           >
             <FolderButton
@@ -396,7 +397,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
 
       return (
         <div
-          className="spaces-sidebar__drag-overlay"
+          className={overlayClass}
           style={{ ['--folder-color' as string]: folderColor } as React.CSSProperties}
         >
           <div className="folder-header folder-header--row">
@@ -405,7 +406,6 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                 folder={folder}
                 hasUnread={hasUnread}
                 mentionCount={mentionCount}
-                size="small"
               />
             </div>
             <div className="folder-header__meta">
@@ -424,7 +424,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     const space = spaces.find((s) => s.spaceId === activeDragItem.id);
     if (!space) return null;
     return (
-      <div className="spaces-sidebar__drag-overlay">
+      <div className={overlayClass}>
         <SpacesSidebarRow
           space={space}
           active={false}
@@ -449,7 +449,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
           onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         >
-          <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+          <SortableContext items={sortableIds} strategy={sortingStrategy}>
             <div className="spaces-sidebar__list list-fade-content">
               {navItems.map((nav) => {
             if (nav.item.type === 'folder') {
@@ -477,6 +477,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                       hasNotifications,
                     });
                   }}
+                  sortingStrategy={sortingStrategy}
                 />
               );
             }
@@ -517,7 +518,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
           })}
             </div>
           </SortableContext>
-          <DragOverlay>{renderDragOverlay('compact')}</DragOverlay>
+          <DragOverlay zIndex={1100}>{renderDragOverlay('compact')}</DragOverlay>
         </DndContext>
         {rowContextMenu}
         {folderContextMenu.folder && (
@@ -619,7 +620,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
         onDragMove={handleDragMove}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext items={sortableIds} strategy={verticalListSortingStrategy}>
+        <SortableContext items={sortableIds} strategy={sortingStrategy}>
           <div className="spaces-sidebar__list">
             {isFlatView ? (
               // Filter / search active: render a flat list, folders collapsed away.
@@ -675,6 +676,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
                           hasNotifications,
                         });
                       }}
+                      sortingStrategy={sortingStrategy}
                     />
                   );
                 }
@@ -708,7 +710,7 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
             )}
           </div>
         </SortableContext>
-        <DragOverlay>{renderDragOverlay('expanded')}</DragOverlay>
+        <DragOverlay zIndex={1100}>{renderDragOverlay('expanded')}</DragOverlay>
       </DndContext>
       {rowContextMenu}
       {folderContextMenu.folder && (

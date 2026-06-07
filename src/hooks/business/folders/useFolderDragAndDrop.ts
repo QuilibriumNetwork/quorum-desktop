@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import {
   DragEndEvent,
   DragMoveEvent,
@@ -7,7 +7,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import { arrayMove } from '@dnd-kit/sortable';
+import { arrayMove, type SortingStrategy } from '@dnd-kit/sortable';
 import { useQueryClient } from '@tanstack/react-query';
 import { useDragStateContext } from '../../../context/DragStateContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
@@ -21,9 +21,9 @@ import {
   migrateToItems,
   MAX_FOLDERS,
   MAX_SPACES_PER_FOLDER,
+  FOLDER_MODAL_OPEN_DELAY_MS,
   DROP_ZONE_TOP_THRESHOLD,
   DROP_ZONE_BOTTOM_THRESHOLD,
-  FOLDER_MODAL_OPEN_DELAY_MS,
 } from '../../../utils/folderUtils';
 import { isTouchDevice } from '../../../utils/platform';
 import { showWarning } from '../../../utils/toast';
@@ -60,6 +60,9 @@ interface UseFolderDragAndDropReturn {
   handleDragMove: (e: DragMoveEvent) => void;
   handleDragEnd: (e: DragEndEvent) => void;
   sensors: ReturnType<typeof useSensors>;
+  /** No-op strategy — items stay stationary during drag; feedback comes
+   * from the horizontal drop indicator and the merge accent ring. */
+  sortingStrategy: SortingStrategy;
 }
 
 /**
@@ -199,7 +202,6 @@ export const useFolderDragAndDrop = ({
   const handleDragStart = useCallback(
     (e: DragStartEvent) => {
       setIsDragging(true);
-      // Track the active drag item for DragOverlay rendering
       const data = e.active.data.current as { type: 'space' | 'folder' } | undefined;
       if (data) {
         setActiveItem({ id: String(e.active.id), type: data.type });
@@ -230,19 +232,18 @@ export const useFolderDragAndDrop = ({
         return;
       }
 
-      // Get the over element's bounding rect
-      const overRect = e.over.rect;
-      // Get the pointer position from the collision
+      // Y-band detection: top 40% = reorder-before, middle 20% = merge,
+      // bottom 40% = reorder-after. Items don't shift during drag, so the
+      // active item's vertical center reflects the cursor position closely.
       const pointerY = e.active.rect.current.translated?.top ?? 0;
       const activeHeight = e.active.rect.current.translated?.height ?? 48;
       const pointerCenter = pointerY + activeHeight / 2;
 
-      // Calculate zones: top 25% = reorder-before, middle 50% = merge, bottom 25% = reorder-after
+      const overRect = e.over.rect;
       const topThreshold = overRect.top + overRect.height * DROP_ZONE_TOP_THRESHOLD;
       const bottomThreshold = overRect.top + overRect.height * DROP_ZONE_BOTTOM_THRESHOLD;
 
       let intent: 'merge' | 'reorder-before' | 'reorder-after';
-
       if (pointerCenter < topThreshold) {
         intent = 'reorder-before';
       } else if (pointerCenter > bottomThreshold) {
@@ -607,10 +608,16 @@ export const useFolderDragAndDrop = ({
     })
   );
 
+  // No shifting during drag. The visual feedback is a horizontal indicator
+  // for reorder and an accent ring for merge — keeps target rows stable so
+  // the user can land their cursor on the icon to merge without conflict.
+  const sortingStrategy = useMemo<SortingStrategy>(() => () => null, []);
+
   return {
     handleDragStart,
     handleDragMove,
     handleDragEnd,
     sensors,
+    sortingStrategy,
   };
 };
