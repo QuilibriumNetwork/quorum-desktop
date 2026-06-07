@@ -373,7 +373,7 @@ export class ConfigService {
    * Saves config to local DB and optionally syncs to remote (encrypted with AES-GCM, signed with Ed448).
    */
   async saveConfig({
-    config,
+    config: configInput,
     keyset,
   }: {
     config: UserConfig;
@@ -382,6 +382,12 @@ export class ConfigService {
       deviceKeyset: secureChannel.DeviceKeyset;
     };
   }) {
+    // Deep-clone before mutating: callers (e.g. useChannelMute's optimistic
+    // update) may pass the same object reference held by the React Query
+    // cache. In-place mutations below would silently corrupt the cache and
+    // produce delayed "phantom" reverts after queue completion.
+    const config: UserConfig = JSON.parse(JSON.stringify(configInput));
+
     const ts = Date.now();
     config.timestamp = ts;
 
