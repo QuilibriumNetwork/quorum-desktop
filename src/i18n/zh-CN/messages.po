@@ -700,7 +700,6 @@ msgstr "频道主题不能包含特殊字符"
 msgid "Channel topic must be {0} characters or less"
 msgstr "频道主题必须少于或等于 {0} 个字符"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
@@ -743,7 +742,7 @@ msgstr "清除标签为: {tag} 的通知"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:386
+#: src/components/modals/SpaceSettingsModal/Account.tsx:381
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "再次点击以确认"
@@ -1712,8 +1711,8 @@ msgstr "隐藏"
 msgid "Hide Muted Channels"
 msgstr "隐藏静音频道"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:354
-#: src/components/modals/SpaceSettingsModal/Account.tsx:357
+#: src/components/modals/SpaceSettingsModal/Account.tsx:349
+#: src/components/modals/SpaceSettingsModal/Account.tsx:352
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1912,7 +1911,7 @@ msgid "Leave {0}"
 msgstr "离开 {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:384
+#: src/components/modals/SpaceSettingsModal/Account.tsx:379
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "留出空间"
@@ -1920,7 +1919,7 @@ msgstr "留出空间"
 #~ msgid "Leave this space"
 #~ msgstr "离开此空间"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:368
+#: src/components/modals/SpaceSettingsModal/Account.tsx:363
 msgid "Leave this Space"
 msgstr "离开此空间"
 
@@ -2349,7 +2348,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "此浏览器不支持通知"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:329
+#: src/components/modals/SpaceSettingsModal/Account.tsx:325
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3762,7 +3761,7 @@ msgstr "您有新的未读消息"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "您必须为管理操作分配一个角色（踢出除外）。谨慎授予删除和静音权限。<0><1>了解更多</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:366
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "除非您被重新邀请，否则您将无法重新加入。您现有的消息将不会被删除。"
 

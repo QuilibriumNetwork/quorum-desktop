@@ -302,41 +302,36 @@ const Account: React.FunctionComponent<AccountProps> = ({
 
             {/* Per-channel notifications list, organised by group */}
             {space?.groups?.some((g) => g.channels.length > 0) && (
-              <>
-                <div className="pt-5 pb-2 text-xs font-bold uppercase tracking-wider text-muted">
-                  <Trans>Channels</Trans>
-                </div>
-                <div className="flex flex-col gap-4">
-                  {space.groups
-                    .filter((group) => group.channels.length > 0)
-                    .map((group) => (
-                      <div
-                        key={group.groupName}
-                        className="flex flex-col gap-2"
-                      >
-                        <div className="small-caps font-bold text-subtle">
-                          {group.groupName}
-                        </div>
-                        {group.channels.map((channel) => (
-                          <Flex
-                            key={channel.channelId}
-                            className="items-center gap-3"
-                          >
-                            <Switch
-                              value={!isChannelMuted(channel.channelId)}
-                              onChange={() => toggleMute(channel.channelId)}
-                              disabled={isSpaceMuted}
-                              accessibilityLabel={t`Notifications for #${channel.channelName}`}
-                            />
-                            <div className="text-label-strong">
-                              # {channel.channelName}
-                            </div>
-                          </Flex>
-                        ))}
+              <div className="flex flex-col gap-4 pt-5">
+                {space.groups
+                  .filter((group) => group.channels.length > 0)
+                  .map((group) => (
+                    <div
+                      key={group.groupName}
+                      className="flex flex-col gap-2"
+                    >
+                      <div className="small-caps font-bold text-subtle">
+                        {group.groupName}
                       </div>
-                    ))}
-                </div>
-              </>
+                      {group.channels.map((channel) => (
+                        <Flex
+                          key={channel.channelId}
+                          className="items-center gap-3"
+                        >
+                          <Switch
+                            value={!isChannelMuted(channel.channelId)}
+                            onChange={() => toggleMute(channel.channelId)}
+                            disabled={isSpaceMuted}
+                            accessibilityLabel={t`Notifications for #${channel.channelName}`}
+                          />
+                          <div className="text-label-strong">
+                            # {channel.channelName}
+                          </div>
+                        </Flex>
+                      ))}
+                    </div>
+                  ))}
+              </div>
             )}
           </div>
 

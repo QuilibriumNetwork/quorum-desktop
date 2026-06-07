@@ -699,7 +699,6 @@ msgstr "Le sujet du canal ne peut pas contenir de caractères spéciaux"
 msgid "Channel topic must be {0} characters or less"
 msgstr "Le sujet du canal doit faire {0} caractères ou moins"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
@@ -742,7 +741,7 @@ msgstr "Effacement des notifications avec le tag : {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:386
+#: src/components/modals/SpaceSettingsModal/Account.tsx:381
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Cliquez à nouveau pour confirmer"
@@ -1711,8 +1710,8 @@ msgstr "Cacher"
 msgid "Hide Muted Channels"
 msgstr "Masquer les canaux muets"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:354
-#: src/components/modals/SpaceSettingsModal/Account.tsx:357
+#: src/components/modals/SpaceSettingsModal/Account.tsx:349
+#: src/components/modals/SpaceSettingsModal/Account.tsx:352
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1911,7 +1910,7 @@ msgid "Leave {0}"
 msgstr "Quitter {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:384
+#: src/components/modals/SpaceSettingsModal/Account.tsx:379
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Quitter l'Espace"
@@ -1919,7 +1918,7 @@ msgstr "Quitter l'Espace"
 #~ msgid "Leave this space"
 #~ msgstr "Quitter cet Espace"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:368
+#: src/components/modals/SpaceSettingsModal/Account.tsx:363
 msgid "Leave this Space"
 msgstr "Quitter cet Espace"
 
@@ -2348,7 +2347,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "Les notifications ne sont pas prises en charge dans ce navigateur"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:329
+#: src/components/modals/SpaceSettingsModal/Account.tsx:325
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3761,7 +3760,7 @@ msgstr "Vous avez de nouveaux messages non lus"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "Vous devez vous attribuer un rôle pour les actions de modération (sauf pour expulser). Accordez les permissions de suppression et de mise en sourdine avec précaution. <0><1>En savoir plus</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:366
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Vous ne pourrez pas rejoindre à nouveau à moins d'être réinvité. Vos messages existants NE seront PAS supprimés."
 
