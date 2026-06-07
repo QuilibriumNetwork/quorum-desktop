@@ -282,8 +282,20 @@ export const useFolderDragAndDrop = ({
         return;
       }
 
+      // Cache-first read: rapid drags can land before React re-renders, so the
+      // closure's `config` may be stale by one operation. Mirrors the pattern
+      // useChannelMute switched to in 25364df6 — without this, the second of a
+      // pair of rapid drags computes its diff from the pre-first-drag state
+      // and silently drops the first drag's change.
+      const latestConfig: UserConfig =
+        (config.address
+          ? queryClient.getQueryData<UserConfig>(
+              buildConfigKey({ userAddress: config.address })
+            )
+          : undefined) ?? config;
+
       // Ensure config has items format
-      const workingConfig = migrateToItems(config);
+      const workingConfig = migrateToItems(latestConfig);
       const items = workingConfig.items || [];
 
       // Parse what's being dragged and what it's over
