@@ -111,7 +111,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/2026-04-14-display-name-input-layout-shift-on-error.md)
 - [Virtuoso measurement callback resets scrollTop on new messages](bugs/2026-05-24-virtuoso-measurement-scroll-reset.md)
 - [UserSettingsModal shows stale display name after remote UserConfig sync](bugs/2026-05-30-user-settings-modal-stale-display-name.md)
+- [Action queue errors silently swallowed across all config-writing hooks](bugs/2026-06-07-action-queue-errors-swallowed.md)
 - [Per-space mention-type filter doesn't sync across devices](bugs/2026-06-07-mention-type-filter-not-synced.md)
+- [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/2026-06-07-space-profile-save-missing-inbox.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -190,7 +192,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Polls in Spaces — v1 Implementation Plan](tasks/2026-06-01-polls-plan.md)
 - [Spaces Highlights Feed — Design Spec](tasks/2026-06-04-spaces-highlights-feed-design.md)
 - [Spaces Highlights Feed Implementation Plan](tasks/2026-06-04-spaces-highlights-feed-plan.md)
+- [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
+- [Implementation plan — Notification settings UX alignment](tasks/2026-06-07-align-notification-settings-with-mobile-plan.md)
 - [Align notification settings UX between desktop and mobile](tasks/2026-06-07-align-notification-settings-with-mobile.md)
+- [`useDMMute` and `useDMFavorites` read stale config from messageDB](tasks/2026-06-07-dm-mute-cache-read.md)
+- [Add a real global notifications mute to desktop](tasks/2026-06-07-global-notifications-mute.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -282,14 +288,16 @@ This is the main index for all documentation, bug reports, and task management.
 - [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
 
 ### Port From Mobile
-- [Unified `/spaces` Page (PR 1 of 2) — Implementation Plan](tasks/port-from-mobile/2026-06-01-port-discover-spaces-plan.md)
-- [Unified `/spaces` page — PR 2 of 2](tasks/port-from-mobile/2026-06-01-port-discover-spaces-pr2.md)
-- [Unified `/spaces` page — PR 1 of 2](tasks/port-from-mobile/2026-06-01-port-discover-spaces.md)
 - [Cross-app feature diff (port-from-mobile) — Master Tracker](tasks/port-from-mobile/README.md)
 - [Desktop-better-than-mobile inventory](tasks/port-from-mobile/desktop-better-than-mobile.md)
 - [Mobile features not on desktop — candidate list](tasks/port-from-mobile/candidates.md)
 - [Port-from-mobile shipped log](tasks/port-from-mobile/shipped-log.md)
 - [Workflow for porting features from mobile to desktop](tasks/port-from-mobile/workflow.md)
+
+### Port From Mobile .Done
+- [Unified `/spaces` Page (PR 1 of 2) — Implementation Plan](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-plan.md)
+- [Unified `/spaces` page — PR 2 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-pr2.md)
+- [Unified `/spaces` page — PR 1 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces.md)
 
 ### Quorum Shared Migration
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
@@ -400,7 +408,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Typing Indicators Implementation Plan](tasks/.done/2026-05-18-typing-indicators-plan.md)
 - [Test Suite Review — Cleanup Before Migration](tasks/.done/2026-05-19-test-suite-review.md)
 - [Fix UserConfig type drift between quorum-shared and quorum-desktop](tasks/.done/2026-05-27-userconfig-type-drift.md)
-- [Consolidate Desktop Invite System with Mobile](tasks/.done/2026-06-07-consolidate-invite-system-with-mobile.md)
 - [New UI Shell Implementation Plan](tasks/.done/2026-06-02-new-ui-shell-implementation.md)
 - [Drag-to-Resize Sidebar — Implementation Plan (Track E)](tasks/.done/2026-06-03-drag-resize-sidebar-plan.md)
 - [New UI Shell — Continuation Dispatcher](tasks/.done/2026-06-03-new-ui-shell-continuation.md)
@@ -408,6 +415,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SpacesSidebar Polish — Implementation Plan (Track D, expanded)](tasks/.done/2026-06-03-spaces-sidebar-polish-plan.md)
 - [Bookmarks page in NavRail](tasks/.done/2026-06-04-bookmarks-page.md)
 - [Docs refresh after new-UI shell migration](tasks/.done/2026-06-04-docs-refresh-after-new-ui-shell.md)
+- [Consolidate desktop invite system with mobile](tasks/.done/2026-06-07-consolidate-invite-system-with-mobile.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -597,4 +605,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-07 12:24:35
+**Last Updated**: 2026-06-07 17:48:27
