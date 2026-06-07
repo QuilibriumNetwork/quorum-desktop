@@ -52,7 +52,7 @@ const MOCK_SPACES_COUNT = parseInt(
 );
 
 const LAST_SPACE_KEY = 'lastSpaceId';
-const LAST_CHANNEL_KEY = 'lastChannelId';
+const LAST_CHANNEL_BY_SPACE_KEY = 'lastChannelBySpace';
 
 /** Spaces sidebar — folders + standalone spaces, with DnD and right-click menus. */
 interface SpacesSidebarProps {
@@ -329,9 +329,28 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     spaceId: string,
     defaultChannelId: string | undefined
   ) => {
-    const channelId = defaultChannelId || 'general';
-    sessionStorage.setItem(LAST_SPACE_KEY, spaceId);
-    sessionStorage.setItem(LAST_CHANNEL_KEY, channelId);
+    // Prefer the channel the user was last on in this space, so re-entering a
+    // space lands them where they left off (matches mobile-app expectation).
+    let lastChannelId: string | undefined;
+    try {
+      const raw = localStorage.getItem(LAST_CHANNEL_BY_SPACE_KEY);
+      if (raw) {
+        const map = JSON.parse(raw) as Record<string, string>;
+        lastChannelId = map[spaceId];
+      }
+    } catch {
+      // ignore parse / storage errors
+    }
+    const channelId = lastChannelId || defaultChannelId || 'general';
+    try {
+      localStorage.setItem(LAST_SPACE_KEY, spaceId);
+      const raw = localStorage.getItem(LAST_CHANNEL_BY_SPACE_KEY);
+      const map = raw ? (JSON.parse(raw) as Record<string, string>) : {};
+      map[spaceId] = channelId;
+      localStorage.setItem(LAST_CHANNEL_BY_SPACE_KEY, JSON.stringify(map));
+    } catch {
+      // ignore
+    }
     navigate(`/spaces/${spaceId}/${channelId}`);
   };
 

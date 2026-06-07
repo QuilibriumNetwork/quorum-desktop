@@ -7,7 +7,6 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { getAddressSuffix } from '../../utils';
-import { useDirectMessageUnreadCount } from '../../hooks/business/messages';
 import { useOptionalShellState } from './useShellState';
 import './NavRail.scss';
 
@@ -75,7 +74,6 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   // an empty deps array).
   const items = buildItems();
   const user = usePasskeysContext();
-  const dmUnreadCount = useDirectMessageUnreadCount();
   const { openUserSettings } = useModalContext();
   // On phone the rail lives inside the drawer; tapping a section should swap
   // what the sidebar shows (DM list, spaces list) rather than navigate to the
@@ -128,8 +126,21 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
         return;
       }
       // Otherwise, restore the last visited space + channel if we have one.
-      const lastSpaceId = sessionStorage.getItem('lastSpaceId');
-      const lastChannelId = sessionStorage.getItem('lastChannelId');
+      // localStorage so it survives tab close (mobile browsers kill background tabs).
+      let lastSpaceId: string | null = null;
+      let lastChannelId: string | undefined;
+      try {
+        lastSpaceId = localStorage.getItem('lastSpaceId');
+        if (lastSpaceId) {
+          const raw = localStorage.getItem('lastChannelBySpace');
+          if (raw) {
+            const map = JSON.parse(raw) as Record<string, string>;
+            lastChannelId = map[lastSpaceId];
+          }
+        }
+      } catch {
+        // ignore
+      }
       if (lastSpaceId && lastChannelId) {
         navigate(`/spaces/${lastSpaceId}/${lastChannelId}`);
         return;
@@ -145,7 +156,6 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
       <div className="nav-rail__items">
         {items.map((item) => {
           const active = activeId === item.id;
-          const hasUnread = item.id === 'dm' && dmUnreadCount > 0;
           const buttonContent = (
             <button
               key={item.id}
@@ -157,9 +167,6 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
             >
               <span className="relative flex-shrink-0">
                 <Icon name={item.icon} size="xl" />
-                {hasUnread && (
-                  <span className="icon-unread-dot" title={t`Unread direct messages`} />
-                )}
               </span>
               {!collapsed && (
                 <span className="nav-rail__item-label">{item.label}</span>

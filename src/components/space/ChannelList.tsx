@@ -36,11 +36,16 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const user = usePasskeysContext();
   const navigate = useNavigate();
 
-  // New-shell back-to-spaces-list handler: clears the "last visited" pointers
-  // so the rail Spaces button doesn't bounce the user right back here.
+  // New-shell back-to-spaces-list handler: clears the "last visited" space
+  // pointer so the rail Spaces button doesn't bounce the user right back here.
+  // Per-space last-channel map is preserved so re-entering a space still lands
+  // on the right channel.
   const handleBackToSpaces = React.useCallback(() => {
-    sessionStorage.removeItem('lastSpaceId');
-    sessionStorage.removeItem('lastChannelId');
+    try {
+      localStorage.removeItem('lastSpaceId');
+    } catch {
+      // ignore
+    }
     navigate('/spaces');
   }, [navigate]);
 
