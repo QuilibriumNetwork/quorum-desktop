@@ -699,14 +699,15 @@ msgstr "チャンネルのトピックには特殊文字を含めることはで
 msgid "Channel topic must be {0} characters or less"
 msgstr "チャンネルのトピックは {0} 文字以内でなければなりません"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "チャンネル"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:307
-msgid "Channels:"
-msgstr ""
+#~ msgid "Channels:"
+#~ msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -741,7 +742,7 @@ msgstr "タグ {tag} の通知をクリア中"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:386
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "再度クリックして確認してください"
@@ -1710,8 +1711,8 @@ msgstr "非表示"
 msgid "Hide Muted Channels"
 msgstr "ミュートされたチャンネルを非表示"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:339
-#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+#: src/components/modals/SpaceSettingsModal/Account.tsx:354
+#: src/components/modals/SpaceSettingsModal/Account.tsx:357
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1910,7 +1911,7 @@ msgid "Leave {0}"
 msgstr "{0}を離れる"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:384
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "スペースを離れる"
@@ -1918,7 +1919,7 @@ msgstr "スペースを離れる"
 #~ msgid "Leave this space"
 #~ msgstr "このスペースを離れる"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Leave this Space"
 msgstr "このスペースを退出"
 
@@ -2347,7 +2348,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "このブラウザでは通知はサポートされていません"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:320
+#: src/components/modals/SpaceSettingsModal/Account.tsx:329
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3760,7 +3761,7 @@ msgstr "新しい未読メッセージがあります"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "モデレーションアクション（キックを除く）を行うには、自分に役割を割り当てる必要があります。削除およびミュート権限は慎重に付与してください。<0><1>詳細を学ぶ</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:356
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "再招待されない限り再参加できません。既存のメッセージは削除されません。"
 

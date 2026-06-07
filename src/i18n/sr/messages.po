@@ -699,14 +699,15 @@ msgstr "Tema kanala ne može sadržati specijalne karaktere"
 msgid "Channel topic must be {0} characters or less"
 msgstr "Tema kanala mora da bude {0} karaktera ili manje"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "Kanali"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:307
-msgid "Channels:"
-msgstr ""
+#~ msgid "Channels:"
+#~ msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -741,7 +742,7 @@ msgstr "Čišćenje obaveštenja sa oznakom: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:386
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Klikni ponovo da potvrdiš"
@@ -1710,8 +1711,8 @@ msgstr "Sakrij"
 msgid "Hide Muted Channels"
 msgstr "Sakrij tihe kanale"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:339
-#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+#: src/components/modals/SpaceSettingsModal/Account.tsx:354
+#: src/components/modals/SpaceSettingsModal/Account.tsx:357
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1910,7 +1911,7 @@ msgid "Leave {0}"
 msgstr "Napusti {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:384
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Napusti prostor"
@@ -1918,7 +1919,7 @@ msgstr "Napusti prostor"
 #~ msgid "Leave this space"
 #~ msgstr "Napustite ovaj space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Leave this Space"
 msgstr "Napustite ovaj Prostor"
 
@@ -2347,7 +2348,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "Obaveštenja nisu podržana u ovom pretraživaču"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:320
+#: src/components/modals/SpaceSettingsModal/Account.tsx:329
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3760,7 +3761,7 @@ msgstr "Imate nove nepročitane poruke"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "Morate sebi dodeliti ulogu za moderacione akcije (osim izbacivanja). Pažljivo dodeljujte dozvole za brisanje i utišavanje. <0><1>Saznajte više</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:356
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Nećeš moći da se ponovo pridružiš osim ako ne budeš ponovo pozvan. Vaše postojeće poruke NEĆE biti obrisane."
 

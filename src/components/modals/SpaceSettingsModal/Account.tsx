@@ -252,7 +252,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
 
           {/* Sub-controls indented under the master toggle */}
           <div
-            className={`pl-12 mt-3 ${
+            className={`pl-6 mt-3 ${
               isSpaceMuted ? 'opacity-50 pointer-events-none' : ''
             }`}
           >
@@ -303,8 +303,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
             {/* Per-channel notifications list, organised by group */}
             {space?.groups?.some((g) => g.channels.length > 0) && (
               <>
-                <div className="text-label pt-4 pb-2">
-                  <Trans>Channels:</Trans>
+                <div className="text-subtitle-2 pt-5 pb-2">
+                  <Trans>Channels</Trans>
                 </div>
                 <div className="flex flex-col gap-4">
                   {space.groups
@@ -314,7 +314,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
                         key={group.groupName}
                         className="flex flex-col gap-2"
                       >
-                        <div className="text-label text-muted">
+                        <div className="small-caps font-bold text-subtle">
                           {group.groupName}
                         </div>
                         {group.channels.map((channel) => (

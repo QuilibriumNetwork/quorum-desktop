@@ -700,14 +700,15 @@ msgstr "Kanalämnet får inte innehålla specialtecken"
 msgid "Channel topic must be {0} characters or less"
 msgstr "Kanaltemat får vara {0} tecken eller färre"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "Kanaler"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:307
-msgid "Channels:"
-msgstr ""
+#~ msgid "Channels:"
+#~ msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -742,7 +743,7 @@ msgstr "Rensar aviseringar med tagg: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:386
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Klicka igen för att bekräfta"
@@ -1711,8 +1712,8 @@ msgstr "Dölj"
 msgid "Hide Muted Channels"
 msgstr "Dölj tysta kanaler"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:339
-#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+#: src/components/modals/SpaceSettingsModal/Account.tsx:354
+#: src/components/modals/SpaceSettingsModal/Account.tsx:357
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1911,7 +1912,7 @@ msgid "Leave {0}"
 msgstr "Lämna {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:384
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Lämna Space"
@@ -1919,7 +1920,7 @@ msgstr "Lämna Space"
 #~ msgid "Leave this space"
 #~ msgstr "Lämna detta Space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Leave this Space"
 msgstr "Lämna detta Space"
 
@@ -2348,7 +2349,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "Aviseringar stöds inte i den här webbläsaren"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:320
+#: src/components/modals/SpaceSettingsModal/Account.tsx:329
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3761,7 +3762,7 @@ msgstr "Du har nya olästa meddelanden"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "Du måste tilldela dig själv en roll för modereringsåtgärder (utom att sparka). Ge raderings- och ljudavstängningsbehörigheter noggrant. <0><1>Lär dig mer</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:356
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Du kommer inte att kunna återansluta om du inte blir återinbjuden. Dina befintliga meddelanden kommer INTE att raderas."
 

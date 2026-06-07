@@ -700,14 +700,15 @@ msgstr "Kanalemne må ikke indeholde specialtegn"
 msgid "Channel topic must be {0} characters or less"
 msgstr "Kanalens emne må ikke være længere end {0} tegn"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "Kanaler"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:307
-msgid "Channels:"
-msgstr ""
+#~ msgid "Channels:"
+#~ msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -742,7 +743,7 @@ msgstr "Rydder meddelelser med tag: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:386
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Klik igen for at bekræfte"
@@ -1711,8 +1712,8 @@ msgstr "Skjul"
 msgid "Hide Muted Channels"
 msgstr "Skjul dæmpede kanaler"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:339
-#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+#: src/components/modals/SpaceSettingsModal/Account.tsx:354
+#: src/components/modals/SpaceSettingsModal/Account.tsx:357
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1911,7 +1912,7 @@ msgid "Leave {0}"
 msgstr "Forlad {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:384
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Efterlad plads"
@@ -1919,7 +1920,7 @@ msgstr "Efterlad plads"
 #~ msgid "Leave this space"
 #~ msgstr "Forlad dette space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Leave this Space"
 msgstr "Forlad denne Space"
 
@@ -2348,7 +2349,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "Meddelelser understøttes ikke i denne browser"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:320
+#: src/components/modals/SpaceSettingsModal/Account.tsx:329
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3761,7 +3762,7 @@ msgstr "Du har nye ulæste beskeder"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "Du skal tildele dig selv en rolle for moderationshandlinger (undtagen at smide ud). Tildel slet- og tavshedstilladelser med forsigtighed. <0><1>Læs mere</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:356
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Du vil ikke kunne genindtræde, medmindre du bliver geninviteret. Dine eksisterende beskeder vil IKKE blive slettet."
 

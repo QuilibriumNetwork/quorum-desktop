@@ -700,14 +700,15 @@ msgstr "Téma kanála nemôže obsahovať špeciálne znaky"
 msgid "Channel topic must be {0} characters or less"
 msgstr "Téma kanálu musí mať {0} znakov alebo menej"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "Kanály"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:307
-msgid "Channels:"
-msgstr ""
+#~ msgid "Channels:"
+#~ msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -742,7 +743,7 @@ msgstr "Vymazanie oznámení s tagom: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:386
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Kliknite znova na potvrdenie"
@@ -1711,8 +1712,8 @@ msgstr "Skryť"
 msgid "Hide Muted Channels"
 msgstr "Skryť ztlmené kanály"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:339
-#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+#: src/components/modals/SpaceSettingsModal/Account.tsx:354
+#: src/components/modals/SpaceSettingsModal/Account.tsx:357
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1911,7 +1912,7 @@ msgid "Leave {0}"
 msgstr "Opustiť {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:384
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Opusti Priestor"
@@ -1919,7 +1920,7 @@ msgstr "Opusti Priestor"
 #~ msgid "Leave this space"
 #~ msgstr "Opustiť tento space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Leave this Space"
 msgstr "Opustiť tento Priestor"
 
@@ -2348,7 +2349,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "Oznámenia nie sú v tomto prehliadači podporované"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:320
+#: src/components/modals/SpaceSettingsModal/Account.tsx:329
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3761,7 +3762,7 @@ msgstr "Máte nové neprečítané správy"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "Musíte si priradiť rolu na vykonávanie moderátorských akcií (okrem vyhadzovania). Oprávnenia na vymazanie a ztlmenie dávajte opatrne. <0><1>Dozvedieť sa viac</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:356
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Nebudete sa môcť znovu pripojiť, pokiaľ nebudete znovu pozvaní. Vaše existujúce správy NEBUDÚ vymazané."
 

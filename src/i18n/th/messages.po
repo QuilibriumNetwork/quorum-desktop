@@ -699,14 +699,15 @@ msgstr "หัวข้อช่องไม่สามารถมีอัก
 msgid "Channel topic must be {0} characters or less"
 msgstr "หัวข้อช่องต้องมีไม่เกิน {0} ตัวอักษร"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "ช่อง"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:307
-msgid "Channels:"
-msgstr ""
+#~ msgid "Channels:"
+#~ msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -741,7 +742,7 @@ msgstr "ล้างการแจ้งเตือนที่มีแท็
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:386
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "คลิกอีกครั้งเพื่อยืนยัน"
@@ -1710,8 +1711,8 @@ msgstr "ซ่อน"
 msgid "Hide Muted Channels"
 msgstr "ซ่อนช่องที่ปิดเสียง"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:339
-#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+#: src/components/modals/SpaceSettingsModal/Account.tsx:354
+#: src/components/modals/SpaceSettingsModal/Account.tsx:357
 msgid "Hide muted channels from sidebar"
 msgstr ""
 
@@ -1910,7 +1911,7 @@ msgid "Leave {0}"
 msgstr "ออกจาก {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:369
+#: src/components/modals/SpaceSettingsModal/Account.tsx:384
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "ออกจาก Space"
@@ -1918,7 +1919,7 @@ msgstr "ออกจาก Space"
 #~ msgid "Leave this space"
 #~ msgstr "ออกจาก Space นี้"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Leave this Space"
 msgstr "ออกจาก Space นี้"
 
@@ -2347,7 +2348,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "การแจ้งเตือนไม่รองรับในเบราว์เซอร์นี้"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:320
+#: src/components/modals/SpaceSettingsModal/Account.tsx:329
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -3760,7 +3761,7 @@ msgstr "คุณมีข้อความใหม่ที่ยังไม
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "คุณต้องกำหนดบทบาทให้กับตัวเองสำหรับการดำเนินการจัดการ (ยกเว้นการเตะ) มอบสิทธิ์การลบและปิดเสียงอย่างระมัดระวัง <0><1>เรียนรู้เพิ่มเติม</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:356
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "คุณจะไม่สามารถเข้าร่วมใหม่ได้ เว้นแต่จะได้รับเชิญอีกครั้ง ข้อความที่มีอยู่ของคุณจะไม่ถูกลบ"
 
