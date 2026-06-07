@@ -31,24 +31,14 @@ msgid "No Role - {count}"
 msgstr "Geen rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1635
-msgid "Send a message to #{channel_name}"
-msgstr "Stuur een bericht naar #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Welkom bij Quorum, {name}! Je account is beveiligd en klaar om te gaan."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:161
-msgid "Failed to process image"
-msgstr "Kon het beeld niet verwerken"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:314
-msgid "Replying to {user}"
-msgstr "Beantwoorden aan {user}"
+#: src/components/space/Channel.tsx:1635
+msgid "Send a message to #{channel_name}"
+msgstr "Stuur een bericht naar #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -61,6 +51,21 @@ msgstr "meer"
 #: src/components/message/ReactionsList.tsx:124
 msgid "Reacted by"
 msgstr "Reactie van"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:161
+msgid "Failed to process image"
+msgstr "Kon het beeld niet verwerken"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:314
+msgid "Replying to {user}"
+msgstr "Beantwoorden aan {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:718
+msgid "Replying to"
+msgstr "Beantwoorden aan"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:360
@@ -76,11 +81,6 @@ msgstr "is vertrokken"
 #: src/components/message/Message.tsx:376
 msgid "has been kicked"
 msgstr "is eruit gegooid"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:718
-msgid "Replying to"
-msgstr "Beantwoorden aan"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:1007
@@ -214,17 +214,17 @@ msgstr "{hours} uren"
 msgid "{replyCount} replies"
 msgstr "{replyCount} reacties"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:281
+#: src/components/modals/SpaceSettingsModal/Account.tsx:282
 #: src/components/notifications/NotificationPanel.tsx:89
 msgid "@everyone"
 msgstr "@everyone"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:286
+#: src/components/modals/SpaceSettingsModal/Account.tsx:287
 #: src/components/notifications/NotificationPanel.tsx:93
 msgid "@roles"
 msgstr "@roles"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:276
+#: src/components/modals/SpaceSettingsModal/Account.tsx:277
 #: src/components/notifications/NotificationPanel.tsx:85
 msgid "@you"
 msgstr "@you"
@@ -380,7 +380,7 @@ msgstr "Geavanceerde instellingen"
 
 #: src/components/direct/DirectMessageContactsList.tsx:303
 #: src/components/modals/ChannelEditorModal.tsx:206
-#: src/components/modals/SpaceSettingsModal/Account.tsx:271
+#: src/components/modals/SpaceSettingsModal/Account.tsx:272
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 #: src/components/notifications/NotificationPanel.tsx:238
 msgid "All"
@@ -700,11 +700,14 @@ msgstr "Kanaalonderwerp mag geen speciale tekens bevatten"
 msgid "Channel topic must be {0} characters or less"
 msgstr "Kanaalonderwerp moet {0} tekens of minder zijn"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:307
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:338
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 msgid "Channels"
 msgstr "Kanalen"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:307
+msgid "Channels:"
+msgstr ""
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:54
 msgid "choose file"
@@ -719,7 +722,7 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "Kies je voorkeursthema voor Quorum."
 
 #: src/components/modals/ChannelEditorModal.tsx:207
-#: src/components/modals/SpaceSettingsModal/Account.tsx:272
+#: src/components/modals/SpaceSettingsModal/Account.tsx:273
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 #: src/components/notifications/NotificationPanel.tsx:239
 #: src/components/space/IconPicker/IconPicker.web.tsx:209
@@ -739,7 +742,7 @@ msgstr "Meldingen met tag wissen: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:373
+#: src/components/modals/SpaceSettingsModal/Account.tsx:371
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "Klik opnieuw om te bevestigen"
@@ -1701,16 +1704,21 @@ msgid "Hide"
 msgstr "Verbergen"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:344
-msgid "Hide muted channels"
-msgstr "Verberg gemuteerde kanalen"
+#~ msgid "Hide muted channels"
+#~ msgstr "Verberg gemuteerde kanalen"
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:167
 msgid "Hide Muted Channels"
 msgstr "Verberg gemuteerde kanalen"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:339
+#: src/components/modals/SpaceSettingsModal/Account.tsx:342
+msgid "Hide muted channels from sidebar"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:341
-msgid "Hide muted channels in list"
-msgstr "Verberg gemuteerde kanalen in lijst"
+#~ msgid "Hide muted channels in list"
+#~ msgstr "Verberg gemuteerde kanalen in lijst"
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:32
 msgid "I already have an account"
@@ -1903,7 +1911,7 @@ msgid "Leave {0}"
 msgstr "Verlaat {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:371
+#: src/components/modals/SpaceSettingsModal/Account.tsx:369
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:213
 msgid "Leave Space"
 msgstr "Space verlaten"
@@ -1911,7 +1919,7 @@ msgstr "Space verlaten"
 #~ msgid "Leave this space"
 #~ msgstr "Verlaat deze Space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:355
+#: src/components/modals/SpaceSettingsModal/Account.tsx:353
 msgid "Leave this Space"
 msgstr "Deze Space verlaten"
 
@@ -2340,7 +2348,7 @@ msgid "Notifications are not supported in this browser"
 msgstr "Meldingen worden niet ondersteund in deze browser"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:324
+#: src/components/modals/SpaceSettingsModal/Account.tsx:320
 msgid "Notifications for #{0}"
 msgstr ""
 
@@ -2351,6 +2359,10 @@ msgstr ""
 #: src/components/message/MentionDropdown.tsx:257
 msgid "Notify all members"
 msgstr "Alle leden informeren"
+
+#: src/components/modals/SpaceSettingsModal/Account.tsx:261
+msgid "Notify me for:"
+msgstr ""
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
 msgid "Now let's store your account key inside your passkey. One more confirmation needed."
@@ -2628,7 +2640,7 @@ msgstr "Hernoem dit apparaat"
 msgid "Reopen"
 msgstr "Opnieuw openen"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:292
+#: src/components/modals/SpaceSettingsModal/Account.tsx:293
 #: src/components/notifications/NotificationPanel.tsx:98
 msgid "Replies"
 msgstr "Antwoorden"
@@ -2846,7 +2858,7 @@ msgstr "Beveiliging"
 msgid "See all bookmarks"
 msgstr "Bekijk alle markeerders"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:269
+#: src/components/modals/SpaceSettingsModal/Account.tsx:270
 msgid "Select"
 msgstr "Selecteer"
 
@@ -3604,8 +3616,8 @@ msgid "When enabled, all previous versions of edited messages will be saved. Whe
 msgstr "Wanneer ingeschakeld, worden alle eerdere versies van bewerkte berichten opgeslagen. Wanneer uitgeschakeld, wordt alleen de huidige bewerkte versie bewaard."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:260
-msgid "When enabled, notify me for:"
-msgstr ""
+#~ msgid "When enabled, notify me for:"
+#~ msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:261
 msgid "When enabled, other users can see when you are active. This feature is not yet available."
@@ -3646,19 +3658,19 @@ msgstr "Wanneer aan, haalt je apparaat miniatuurafbeeldingen van YouTube op voor
 msgid "When on, your DM contacts see when you're typing, and you see when they're typing."
 msgstr "Wanneer aan, zien je DM-contacten wanneer je aan het typen bent, en jij ziet wanneer zij aan het typen zijn."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:282
+#: src/components/modals/SpaceSettingsModal/Account.tsx:283
 msgid "When someone mentions @everyone"
 msgstr "Wanneer iemand @everyone vermeldt"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:287
+#: src/components/modals/SpaceSettingsModal/Account.tsx:288
 msgid "When someone mentions a role you have"
 msgstr "Wanneer iemand een rol noemt die je hebt"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:277
+#: src/components/modals/SpaceSettingsModal/Account.tsx:278
 msgid "When someone mentions you directly"
 msgstr "Wanneer iemand jou direct vermeldt"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:293
+#: src/components/modals/SpaceSettingsModal/Account.tsx:294
 msgid "When someone replies to your messages"
 msgstr "Wanneer iemand op je berichten reageert"
 
@@ -3749,7 +3761,7 @@ msgstr "Je hebt nieuwe ongelezen berichten"
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "Je moet jezelf een rol toewijzen voor moderatie-acties (behalve schoppen). Verleen verwijder- en mute-rechten zorgvuldig. <0><1>Leer meer</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:358
+#: src/components/modals/SpaceSettingsModal/Account.tsx:356
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Je kunt niet opnieuw deelnemen tenzij je opnieuw wordt uitgenodigd. Je bestaande berichten zullen NIET worden verwijderd."
 
