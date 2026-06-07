@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useRegistration } from '../../queries';
+import { useRegistration, buildConfigKey } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
@@ -78,6 +79,7 @@ export const useUserSettings = (
   });
   const { keyset } = useRegistrationContext();
   const { messageDB, actionQueueService, getConfig, updateUserProfile, setTypingConfig } = useMessageDB();
+  const queryClient = useQueryClient();
   const uploadRegistration = useUploadRegistration();
 
   const [stagedRegistration, setStagedRegistration] = useState(
@@ -325,6 +327,16 @@ export const useUserSettings = (
         ...pendingTombstones,
       ],
     };
+
+    // Optimistically update the React Query cache so the saved settings are
+    // visible to any concurrent reader before the queue task drains. Without
+    // this, code paths that read config from the cache (e.g. folder ops) can
+    // pick up stale state during the queue's processing window.
+    queryClient.setQueryData(
+      buildConfigKey({ userAddress: currentPasskeyInfo.address }),
+      newConfig
+    );
+
     await actionQueueService.enqueue(
       'save-user-config',
       { config: newConfig },

@@ -14,11 +14,13 @@ import {
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
+import { useSpace } from '../../../hooks';
 import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { useChannelMute } from '../../../hooks/business/channels';
+import { getIconColorHex, IconColor } from '../../space/IconPicker/types';
 import type { Role } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
@@ -97,8 +99,18 @@ const Account: React.FunctionComponent<AccountProps> = ({
     true
   );
 
+  // Space data (for per-channel notifications list)
+  const { data: space } = useSpace({ spaceId });
+
   // Channel mute settings
-  const { showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute } = useChannelMute({
+  const {
+    showMutedChannels,
+    toggleShowMutedChannels,
+    isSpaceMuted,
+    toggleSpaceMute,
+    isChannelMuted,
+    toggleMute,
+  } = useChannelMute({
     spaceId,
   });
 
@@ -226,68 +238,127 @@ const Account: React.FunctionComponent<AccountProps> = ({
           <div className="text-subtitle-2">
             <Trans>Notifications</Trans>
           </div>
-          <div className="text-label pt-1">
-            <Trans>
-              Select which types of notifications you want to receive
-            </Trans>
-          </div>
-          <div className="pt-4">
-            <Select
-              value={selectedMentionTypes}
-              onChange={(value: string | string[]) =>
-                setSelectedMentionTypes(value as SpaceNotificationTypeId[])
-              }
-              multiple={true}
-              placeholder={t`Select`}
-              showSelectAllOption={true}
-              selectAllLabel={t`All`}
-              clearAllLabel={t`Clear`}
-              options={[
-                {
-                  value: 'mention-you',
-                  label: t`@you`,
-                  subtitle: t`When someone mentions you directly`,
-                },
-                {
-                  value: 'mention-everyone',
-                  label: t`@everyone`,
-                  subtitle: t`When someone mentions @everyone`,
-                },
-                {
-                  value: 'mention-roles',
-                  label: t`@roles`,
-                  subtitle: t`When someone mentions a role you have`,
-                  disabled: false,
-                },
-                {
-                  value: 'reply',
-                  label: t`Replies`,
-                  subtitle: t`When someone replies to your messages`,
-                },
-              ]}
-              size="medium"
-              fullWidth={true}
-              disabled={isMentionSettingsLoading}
-            />
-          </div>
-          <Flex className="items-center gap-3 mt-4 mb-3">
+
+          <Flex className="items-center gap-3 mt-4">
             <Switch
-              value={isSpaceMuted}
+              value={!isSpaceMuted}
               onChange={toggleSpaceMute}
-              accessibilityLabel={t`Mute all notifications from this Space`}
+              accessibilityLabel={t`Notifications for this Space`}
             />
             <div className="text-label-strong">
-              <Trans>Mute this Space</Trans>
+              <Trans>Space notifications</Trans>
             </div>
           </Flex>
+
+          <div
+            className={`mt-3 ${
+              isSpaceMuted ? 'opacity-50 pointer-events-none' : ''
+            }`}
+          >
+            <div className="text-label">
+              <Trans>Notify me for:</Trans>
+            </div>
+            <div className="pt-2">
+              <Select
+                value={selectedMentionTypes}
+                onChange={(value: string | string[]) =>
+                  setSelectedMentionTypes(value as SpaceNotificationTypeId[])
+                }
+                multiple={true}
+                placeholder={t`Select`}
+                showSelectAllOption={true}
+                selectAllLabel={t`All`}
+                clearAllLabel={t`Clear`}
+                options={[
+                  {
+                    value: 'mention-you',
+                    label: t`@you`,
+                    subtitle: t`When someone mentions you directly`,
+                  },
+                  {
+                    value: 'mention-everyone',
+                    label: t`@everyone`,
+                    subtitle: t`When someone mentions @everyone`,
+                  },
+                  {
+                    value: 'mention-roles',
+                    label: t`@roles`,
+                    subtitle: t`When someone mentions a role you have`,
+                    disabled: false,
+                  },
+                  {
+                    value: 'reply',
+                    label: t`Replies`,
+                    subtitle: t`When someone replies to your messages`,
+                  },
+                ]}
+                size="medium"
+                fullWidth={true}
+                disabled={isSpaceMuted || isMentionSettingsLoading}
+              />
+            </div>
+
+            {space?.groups?.some((g) => g.channels.length > 0) && (
+              <div className="flex flex-col gap-4 pt-5">
+                {space.groups
+                  .filter((group) => group.channels.length > 0)
+                  .map((group) => (
+                    <div
+                      key={group.groupName}
+                      className="flex flex-col gap-2"
+                    >
+                      <div className="small-caps font-bold text-subtle">
+                        {group.groupName}
+                      </div>
+                      {group.channels.map((channel) => (
+                        <Flex
+                          key={channel.channelId}
+                          className="items-center gap-3"
+                        >
+                          <Switch
+                            value={!isChannelMuted(channel.channelId)}
+                            onChange={() => toggleMute(channel.channelId)}
+                            disabled={isSpaceMuted}
+                            accessibilityLabel={t`Notifications for ${channel.channelName}`}
+                          />
+                          <Flex className="items-center gap-2 min-w-0">
+                            <Icon
+                              name={(channel.icon as any) || 'hashtag'}
+                              size="sm"
+                              variant={channel.iconVariant || 'outline'}
+                              style={{
+                                color: getIconColorHex(
+                                  channel.iconColor as IconColor
+                                ),
+                              }}
+                            />
+                            <div className="text-label-strong truncate">
+                              {channel.channelName}
+                            </div>
+                          </Flex>
+                        </Flex>
+                      ))}
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
+
+          {/* Sidebar display preference: independent of mute state above. */}
+          <Spacer
+            spaceBefore="lg"
+            spaceAfter="md"
+            border
+            direction="vertical"
+          />
           <Flex className="items-center gap-3">
             <Switch
               value={!showMutedChannels}
               onChange={handleShowMutedToggle}
-              accessibilityLabel={t`Hide muted channels in list`}
+              accessibilityLabel={t`Hide muted channels from sidebar`}
             />
             <div className="text-label-strong">
-              <Trans>Hide muted channels</Trans>
+              <Trans>Hide muted channels from sidebar</Trans>
             </div>
           </Flex>
           <Spacer size="lg" direction="vertical" borderBottom={true} />
