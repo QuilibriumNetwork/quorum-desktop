@@ -380,30 +380,38 @@ During drag, the original item is hidden via `.spaces-sidebar__row--dragging` / 
 
 ```tsx
 // SpacesSidebar.tsx
-<DragOverlay>
+<DragOverlay zIndex={1100}>
   {activeDragItem ? (
-    <div className="spaces-sidebar__drag-overlay">
-      <SpacesSidebarRow
-        space={space}
-        active={false}
-        unread={...}
-        mentionCount={...}
-        isMuted={...}
-        onClick={() => {}}
-      />
+    <div className={overlayClass /* `--compact` modifier in collapsed mode */}>
+      <SpacesSidebarRow ... />
     </div>
   ) : null}
 </DragOverlay>
 ```
 
+`zIndex={1100}` is required so the ghost sits above `.muted-badge` (`z-index: 1000`) and other absolutely-positioned chrome on the rows. The default dnd-kit DragOverlay z-index of 999 isn't enough.
+
 ```scss
 // src/components/space/SpacesSidebar.scss
 .spaces-sidebar__drag-overlay {
-  opacity: 0.95;
-  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.15));
+  background: color-mix(in srgb, var(--color-bg-sidebar) 5%, transparent);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  border-radius: $rounded-md;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   cursor: grabbing;
 }
+
+// Collapsed rail: dragged icon floats with no panel at all.
+.spaces-sidebar__drag-overlay--compact {
+  background: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  box-shadow: none !important;
+}
 ```
+
+The small `blur(4px)` is intentional: larger blur radii read as opaque frost regardless of background alpha, defeating the translucency.
 
 ### Touch Support
 
@@ -567,6 +575,10 @@ Here's the complete data flow when a user drags Space A onto Space B:
 2. User releases drag
    │
    ├─► handleDragEnd() fires
+   │   ├─► Reads latest config from React Query cache (NOT the closure's
+   │   │   `config` prop). Rapid drags can land before React re-renders,
+   │   │   so the closure may be stale by one operation. Cache-first
+   │   │   keeps successive diffs composable.
    │   ├─► detectScenario() returns 'SPACE_TO_SPACE'
    │   ├─► canCreateFolder() checks MAX_FOLDERS limit
    │   ├─► createFolder('Spaces', [B, A]) generates new folder
@@ -577,7 +589,14 @@ Here's the complete data flow when a user drags Space A onto Space B:
    │   │   queryClient.setQueryData(buildConfigKey(...), newConfig)
    │   │   └─► SpacesSidebar re-renders immediately with folder
    │   │
-   │   └─► saveConfig() persists to IndexedDB + syncs to server
+   │   └─► actionQueueService.enqueue('save-user-config', ...) — fire-and-forget.
+   │       The queue's dedup key (`config:${address}`) collapses rapid drags into
+   │       the latest in-flight + one pending task. ConfigService.saveConfig
+   │       deep-clones the input (so in-place mutations can't corrupt the cache)
+   │       and the tail-end cache write is guarded by a Date.now() timestamp —
+   │       skipped if a newer optimistic update arrived during processing.
+   │       This is what stops queue completions from "rewinding" the cache to a
+   │       frozen-in-time state and silently undoing the user's latest drag.
    │
 3. Other devices receive sync
    │
