@@ -303,7 +303,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             {/* Per-channel notifications list, organised by group */}
             {space?.groups?.some((g) => g.channels.length > 0) && (
               <>
-                <div className="text-subtitle-2 pt-5 pb-2">
+                <div className="pt-5 pb-2 text-xs font-bold uppercase tracking-wider text-muted">
                   <Trans>Channels</Trans>
                 </div>
                 <div className="flex flex-col gap-4">
