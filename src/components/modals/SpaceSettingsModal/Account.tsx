@@ -251,9 +251,11 @@ const Account: React.FunctionComponent<AccountProps> = ({
             </div>
           </Flex>
 
-          {/* Sub-controls indented under the master toggle */}
+          {/* Sub-controls. Visually associated with the master toggle via the
+              section heading and the muted state cascading from above; no
+              left indent so dense channel lists don't waste horizontal space. */}
           <div
-            className={`pl-6 mt-3 ${
+            className={`mt-3 ${
               isSpaceMuted ? 'opacity-50 pointer-events-none' : ''
             }`}
           >
