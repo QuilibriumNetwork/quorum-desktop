@@ -38,15 +38,27 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
   onConfirm,
   onCancel,
 }) => {
+  // Map variant -> Button type. Button only supports 'danger' as a
+  // destructive style; 'warning' and 'info' have no Button type and would
+  // render unstyled if passed through. Coerce non-danger variants to
+  // 'primary' so the confirm button still renders correctly.
+  const confirmButtonType = variant === 'danger' ? 'danger' : 'primary';
+
+  // Always tag the modal with `confirmation-modal` so the title-unhide
+  // CSS rule in `_modal_common.scss` (which un-hides the title inside
+  // `.modal-complex-wrapper`) takes effect. Add a `-with-preview`
+  // modifier when there's a preview block, for any preview-specific
+  // styling overrides.
+  const modalClassName = `confirmation-modal${preview ? ' confirmation-modal-with-preview' : ''}`;
+
   return (
     <Modal
       visible={visible}
       onClose={onCancel}
       title={title}
       size={size}
-      className={preview ? 'confirmation-modal-with-preview' : ''}
+      className={modalClassName}
       hideClose={true} // Hide X button to prevent conflicts with parent modals
-      swipeToClose={false} // Keep swipe disabled for consistency
     >
       {busyMessage && <ModalSaveOverlay visible={busy} message={busyMessage} />}
       <div>
@@ -96,7 +108,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
             {cancelText}
           </Button>
           <Button
-            type={variant}
+            type={confirmButtonType}
             onClick={onConfirm}
             hapticFeedback={true}
             fullWidth={true}

@@ -6,7 +6,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { truncateAddress, getDeviceName } from '../../../utils/deviceInfo';
 import { useDeviceNameValidation } from '../../../hooks/business/validation';
 import { ClickToCopyContent } from '../../ui';
-import { useConfirmationModal } from '../../context/ConfirmationModalProvider';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface PrivacyProps {
   allowSync: boolean;
@@ -71,12 +71,16 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isProfilePublic,
   setIsProfilePublic,
 }) => {
-  const { showConfirmationModal } = useConfirmationModal();
+  // Public-profile confirmation. Local state because the global
+  // ConfirmationModalProvider lives below UserSettingsModal in the tree
+  // (it's a child of Layout, while UserSettingsModal renders from a
+  // sibling ModalProvider). Using ConfirmationModal directly avoids the
+  // out-of-scope context error.
+  const [isPublicProfileConfirmOpen, setIsPublicProfileConfirmOpen] = React.useState(false);
 
-  // Public-profile toggle: turning ON publishes your name/avatar/bio to a
-  // public endpoint, so require explicit confirmation the first time.
-  // Turning OFF unpublishes silently — that's the user reducing exposure,
-  // no confirmation needed.
+  // Turning ON publishes your name/avatar/bio to a public endpoint, so
+  // require explicit confirmation the first time. Turning OFF unpublishes
+  // silently — the user is reducing exposure, no confirmation needed.
   const handleTogglePublicProfile = React.useCallback(
     (next: boolean) => {
       if (!next) {
@@ -84,16 +88,9 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         return;
       }
       if (isProfilePublic) return; // Already on; no-op.
-      showConfirmationModal({
-        title: t`Make profile public?`,
-        message: t`Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time.`,
-        variant: 'warning',
-        confirmText: t`Make Public`,
-        cancelText: t`Cancel`,
-        onConfirm: () => setIsProfilePublic(true),
-      });
+      setIsPublicProfileConfirmOpen(true);
     },
-    [isProfilePublic, setIsProfilePublic, showConfirmationModal]
+    [isProfilePublic, setIsProfilePublic]
   );
 
   // QR code display state - requires explicit user confirmation
@@ -733,6 +730,21 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         </div>
 
       </div>
+
+      <ConfirmationModal
+        visible={isPublicProfileConfirmOpen}
+        title={t`Make profile public?`}
+        message={t`Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time.`}
+        variant="danger"
+        confirmText={t`Make Public`}
+        cancelText={t`Cancel`}
+        showProtip={false}
+        onConfirm={() => {
+          setIsProfilePublic(true);
+          setIsPublicProfileConfirmOpen(false);
+        }}
+        onCancel={() => setIsPublicProfileConfirmOpen(false)}
+      />
     </>
   );
 };
