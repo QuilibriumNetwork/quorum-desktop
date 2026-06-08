@@ -1,14 +1,16 @@
 import { useState, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { t } from '@lingui/core/macro';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useRegistration, buildConfigKey } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
+import { type BroadcastSpaceTag, logger } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
 import { getDeviceName } from '../../../utils/deviceInfo';
+import { showError } from '../../../utils/toast';
 
 export interface UseUserSettingsOptions {
   onSave?: () => void;
@@ -125,11 +127,18 @@ export const useUserSettings = (
           const updatedNames = { ...loadedNames, [inboxAddress]: autoName };
           const updatedConfig = { ...config, deviceNames: updatedNames };
           setDeviceNames(updatedNames);
-          actionQueueService.enqueue(
-            'save-user-config',
-            { config: updatedConfig },
-            `config:${currentPasskeyInfo.address}`
-          );
+          // Log-only on failure: this is a one-shot first-run autoname with no
+          // user action behind it. Toast would be confusing; the next session
+          // start will re-attempt since loadedNames still won't have the entry.
+          actionQueueService
+            .enqueue(
+              'save-user-config',
+              { config: updatedConfig },
+              `config:${currentPasskeyInfo.address}`
+            )
+            .catch((err) => {
+              logger.error('[UserSettings] enqueue failed for auto-device-name', err);
+            });
         }
       })();
     }
@@ -337,11 +346,23 @@ export const useUserSettings = (
       newConfig
     );
 
-    await actionQueueService.enqueue(
-      'save-user-config',
-      { config: newConfig },
-      `config:${currentPasskeyInfo.address}` // Dedup key
-    );
+    // Fire-and-forget with rollback: the optimistic cache update above already
+    // surfaced the new config to readers. If enqueue rejects (queue full, IDB
+    // write failure), restore the pre-update snapshot and toast the user.
+    actionQueueService
+      .enqueue(
+        'save-user-config',
+        { config: newConfig },
+        `config:${currentPasskeyInfo.address}` // Dedup key
+      )
+      .catch((err) => {
+        logger.error('[UserSettings] enqueue failed for saveChanges, rolling back', err);
+        queryClient.setQueryData(
+          buildConfigKey({ userAddress: currentPasskeyInfo.address }),
+          freshConfig
+        );
+        showError(t`Failed to save settings`);
+      });
 
     // Update TypingService gate immediately so toggle-OFF doesn't wait for
     // the action queue / IndexedDB round-trip. On ON→OFF transitions this
