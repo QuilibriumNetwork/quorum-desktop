@@ -86,7 +86,7 @@ No ports shipped this session. #29 is queued for the next session.
 
 - **Branch**: `feat/port-per-space-bio`.
 - **Task file**: [`.done/2026-06-08-port-per-space-bio.md`](.done/2026-06-08-port-per-space-bio.md) (moved to `.done/` as part of the merge).
-- **PR**: TBD (filled in after PR opens).
+- **PR**: [#185](https://github.com/QuilibriumNetwork/quorum-desktop/pull/185).
 - **Repos touched**: `quorum-desktop` only. `quorum-shared` was untouched (all types already exported: `UpdateProfileMessage.bio?`, `UserProfile.bio?`, `validateUserBio`, `MAX_BIO_LENGTH=160`). A mobile follow-up task was dropped — see Mobile-side follow-up below.
 
 ### What shipped
