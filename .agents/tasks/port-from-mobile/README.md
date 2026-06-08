@@ -68,19 +68,20 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 | OG metadata (#8) | — | ⚠️ Farcaster-only on mobile | [candidates.md `### #8`](candidates.md#8-og-metadata---farcaster-only-on-mobile) |
 | Skins / custom themes (#27) | `components/skins/*`, `services/skins/*`, `theme/skins/*` | ❔ needs UX call | [candidates.md `### #27`](candidates.md#27-skins-custom-themes--needs-ux-call) |
 | On-device translation (#28) | `modules/quorum-translation/*`, `services/translation/*`, `components/translation/*` | ❔ needs UX call | [candidates.md `### #28`](candidates.md#28-on-device-translation--needs-ux-call) |
-| Non-owner read-only access to public invite URL (#29) | `app/(tabs)/spaces/[id]/index.tsx` (header), `components/InviteModal.tsx` | 🟢 ready to start | [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick) |
+| Non-owner read-only access to public invite URL (#29) | `app/(tabs)/spaces/[id]/index.tsx` (header), `components/InviteModal.tsx` | ✅ shipped (PR #182, 2026-06-08) | [Task file](.done/2026-06-08-port-non-owner-invite-view.md) · [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--shipped-2026-06-08) |
 
 ## Next up
 
-**Three new candidates surfaced in the 2026-06-08 re-audit of mobile (`session-2026-06-08-2`):**
+**No port in flight.** #29 shipped 2026-06-08 (PR #182, see [shipped-log.md](shipped-log.md) and [task file in `.done/`](.done/2026-06-08-port-non-owner-invite-view.md)). The remaining new candidates from the 2026-06-08 re-audit both need a product-scope decision:
 
-- 🟢 **#29 Non-owner read-only access to the existing public invite URL** — smallest port in the table. The owner's public invite URL is already replicated to every member via the encrypted space manifest (`space.inviteUrl` lives in shared and is populated on every member's local Space record), but desktop only exposes it via the owner-only Invites tab in SpaceSettings. The port = a lightweight read-only modal that lets any member see/copy/share the link the owner already published. No generate/regenerate for non-owners (would error). Framing took three rounds to land — see [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick) for the full back-and-forth.
 - ❔ **#27 Skins (custom themes)** — full skin engine on mobile (color tokens, geometry scale, fonts, wallpaper, icon substitution, server gallery with Ed448-signed publishes, ~2000+ LOC). Desktop's `Appearance.tsx` only ships theme + 6 accent swatches. **Needs product-scope call**: is "user-customizable themes + gallery" in desktop's roadmap?
 - ❔ **#28 On-device translation** — native iOS/Android modules (Apple Translation + ML Kit). Re-implementation rather than a port: desktop has no equivalent engine, options are cloud (privacy regression) or WASM (size cost). **Needs product-scope call.**
 
-#5 Reporting is still deprioritized. #6 Public profile shipped 2026-06-08 (see [shipped-log.md](shipped-log.md)). Everything else is ❌ already-on-desktop, ⚠️ Farcaster-coupled, or ❔ awaiting a product-scope decision (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance).
+#5 Reporting is still deprioritized. Everything else is ❌ already-on-desktop, ⚠️ Farcaster-coupled, or ❔ awaiting a product-scope decision (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance).
 
-When picking up next session: start from [candidates.md](candidates.md), run the capability-verification step from [workflow.md](workflow.md#capability-verification--mandatory-before-drafting-a-task), and consider also running the new "check service-layer gate + manifest replication before scoping any 'non-owner can X' candidate" sub-step described inline in [`### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick).
+**Known follow-up surfaced while shipping #29**: the `InvitationService.joinInviteLink` path on desktop crashes with `"[object Object]" is not valid JSON` at [line 593](../../../src/services/InvitationService.ts#L593). Root cause is unrelated to #29 — the server response shape for `getSpaceInviteEval` changed and desktop's join path never updated. Pre-existing bugs `2025-08-03-joinspacemodal-invalid-json-network-error.md` and `2025-09-22-public-invite-link-intermittent-expiration.md` describe related symptoms. **In flight as a separate fix PR on `session-2026-06-08-3`.**
+
+When picking up the next port-from-mobile session: start from [candidates.md](candidates.md), run the capability-verification step from [workflow.md](workflow.md#capability-verification--mandatory-before-drafting-a-task), and consider also running the new "check service-layer gate + manifest replication before scoping any 'non-owner can X' candidate" sub-step described inline in [`### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--shipped-2026-06-08).
 
 ## Branch / session workflow
 
@@ -92,7 +93,9 @@ When picking up next session: start from [candidates.md](candidates.md), run the
 
 ---
 
-*Last updated: 2026-06-08 — `session-2026-06-08-2` re-audited mobile against the previous baseline (`0fa63d4` 2026-05-30 → `ccd69e6` 2026-06-02). Three new candidates added: **#27 Skins**, **#28 On-device translation**, **#29 Non-owner read-only access to public invite URL**. #29 is ready to pick; #27/#28 need product-scope calls. #29's framing took three rounds with the user — original assumption ("non-owners can generate") was wrong; the real model is "owner publishes once → manifest sync replicates the URL to every member's local Space → non-owners read-only display." Captured the lesson inline at the bottom of [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick). No new ships this session.*
+*Last updated: 2026-06-08 — **#29 Non-owner read-only access to the public invite URL shipped** (PR #182). Branch `feat/port-non-owner-invite-view-from-mobile`. Task file moved to `.done/`. Smoke test surfaced a pre-existing crash in `InvitationService.joinInviteLink` (line 593) — unrelated to this port; recorded as the next follow-up and in flight on `session-2026-06-08-3`. Status table flipped to ✅ shipped; "Next up" reset to "no port in flight".*
+
+*Previously: 2026-06-08 — `session-2026-06-08-2` re-audited mobile against the previous baseline (`0fa63d4` 2026-05-30 → `ccd69e6` 2026-06-02). Three new candidates added: **#27 Skins**, **#28 On-device translation**, **#29 Non-owner read-only access to public invite URL**. #29's framing took three rounds with the user — original assumption ("non-owners can generate") was wrong; the real model is "owner publishes once → manifest sync replicates the URL to every member's local Space → non-owners read-only display."*
 
 *Previously: 2026-06-08 — #6 Public profile UI shipped. Branch `feat/port-public-profile-from-mobile`. Task file moved to `.done/`. Status table flipped to ✅ shipped; `Next up` reset to "no port in flight". Code-review pass during shipping caught a publish/rollback consistency hole new to desktop (post PR #180's fire-and-forget enqueue) and fixed it before merge. Captured the lesson in shipped-log.*
 
