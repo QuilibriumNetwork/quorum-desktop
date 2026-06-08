@@ -19,6 +19,42 @@ Chronological history of features ported from `quorum-mobile` to `quorum-desktop
 - **Rebase, don't merge — and read what landed on main.** During #6's shipping, three commits landed on `main` mid-session, including PR #180 (`fix(action-queue): roll back optimistic state and surface error toasts on enqueue failure`) which changed the save-config enqueue from blocking-`await` to fire-and-forget with rollback. Rebasing surfaced this in a clean conflict block. The fire-and-forget rollback introduced a new consistency hole specific to our port (publish-then-rollback could leave server-published but local-off); a code-review pass before shipping caught it and we added a best-effort revert in the same `.catch` path. Lesson: when shipping over a base that's moving, rebase + read the new commits + re-run code review.
 - **"Non-owner can X" needs three checks, not one.** New rule from #29's three-round framing back-and-forth. When a candidate's framing implies "non-owners can do X", verify all three before scoping: (a) **service-layer gate** — grep the service for owner-key checks or role gates (`Only space owners can…`, `requires owner`, key-existence checks like mobile's `getSpaceKey(spaceId, 'owner')`); (b) **manifest-replication** — check whether the field the UI shows is part of the synced/encrypted manifest, in which case non-owners hold the *data* an owner published, not the ability to *do* the thing; (c) **UI is "do" or "view"** — distinguish "this control generates" from "this control reads a synced field". Mobile's InviteModal looks like a generator to a non-owner but is actually a viewer of the owner-published `space.inviteUrl`. A single grep on the service file would have shortcut to the right framing.
 
+## 2026-06-08 — #29 Non-owner read-only access to the public invite URL shipped (+ joinInviteLink follow-up identified)
+
+- **Branch**: `feat/port-non-owner-invite-view-from-mobile` (renamed from `session-2026-06-08-2` on `session-2026-06-08-2`).
+- **Task file**: [`.done/2026-06-08-port-non-owner-invite-view.md`](.done/2026-06-08-port-non-owner-invite-view.md).
+- **PR**: [#182](https://github.com/QuilibriumNetwork/quorum-desktop/pull/182) (merged 2026-06-08).
+- **Repos touched**: `quorum-desktop` only. `quorum-shared` was untouched (the `Space.inviteUrl` field has lived in shared for months); `quorum-mobile` is read-only.
+
+### What shipped
+
+| Layer | What |
+|---|---|
+| Navigation | Invites tab icon `share` → `user-plus`. Non-owner filter loosened to include `'invites'` when `space.inviteUrl` is set (otherwise unchanged — still only `'account'`). |
+| Invites tab | When `!isSpaceOwner`, render a stripped-down read-only variant: URL display (`ClickToCopyContent`) + "Send via DM" button expanding the existing `DmPicker` + `Send Link` calling `invite(address, 'public')`. The header now matches Account's typography pattern (`text-title` + `pt-2 text-body`) per inline user feedback. Owner UI completely unchanged. |
+| Send mechanics | Reuses `InvitationService.sendInviteToUser` with `mode: 'public'` — forwards `space.inviteUrl` as-is, does NOT consume the eval pool, no owner privilege required. |
+| Modal redirect | `SpaceSettingsModal`'s "redirect non-owners off owner-only tabs" effect rewritten to allow `'invites'` when `space.inviteUrl` is set; otherwise bounces to `'account'` as before. |
+| Sidebar context menu | `useSpaceContextMenu` now resolves `space.inviteUrl` alongside owner status; "Invite Members" entry shows for non-owners when `hasPublicInvite` and deep-links to the Invites tab. Owner path unchanged. |
+
+### What changed scope mid-stream
+
+- **Lightweight standalone modal vs. reuse the existing Invites tab.** First sketch was a separate read-only modal triggered from a new channel-header invite button. User pushed back: same UI for owners and non-owners, since a user is owner of some spaces and member of others — fragmenting the affordance is confusing. Final decision: reuse `SpaceSettings > Invites` tab and branch internally on `isSpaceOwner`.
+- **Whether to port mobile's `ShareInviteSheet`** (slide-up contact-picker sheet, mobile's "share to a DM" UX). Compared side-by-side with desktop's existing `SearchableConversationSelect` + `DmPicker`: desktop's pattern has search, is keyboard-friendly, already polished. Mobile's pattern exists because mobile didn't have an in-tab picker. Decision: do NOT port `ShareInviteSheet`; reuse desktop's picker for non-owners too.
+- **Whether non-owners get a generate path at all.** Initial framing in candidates.md said yes (one-time invites work for non-owners at the service layer). User pushback + screenshot inspection + reading `services/space/inviteService.ts:303-305` revealed mobile's actual UX: non-owners only see/share the link the owner already published (replicated via the encrypted manifest). The shipped UI is read-only for non-owners. See [`### #29` notes](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--shipped-2026-06-08) for the full back-and-forth.
+
+### Lessons (also in the top-level block above)
+
+- **"Non-owner can X" needs three checks**: service-layer gate, manifest-replication, "do" vs "view". A single grep on the relevant service file would have shortcut to the right framing for #29.
+
+### Pre-existing JOIN-path crash surfaced during smoke (not introduced by this PR)
+
+Smoke testing #29 led the user to try joining via a public invite link, which fired `"[object Object]" is not valid JSON` at [`InvitationService.ts:593`](../../../src/services/InvitationService.ts#L593). Two independent bugs in `joinInviteLink`:
+
+1. **Response-shape mismatch** at line 593: the server now returns the invite eval as a JSON object `{ciphertext, ephemeral_public_key}` but desktop still does `JSON.parse(inviteEval.data)` expecting a JSON-encoded string. Mobile's `getInviteEval` ([`quorum-mobile/services/api/quorumClient.ts:710-738`](../../../../quorum-mobile/services/api/quorumClient.ts)) defensively handles BOTH shapes.
+2. **Wrong ephemeral key used for decryption** at line 587-594: desktop uses the manifest's `ephemeral_public_key`. Mobile uses the eval's OWN ephemeral key when the server provides it ([`quorum-mobile/hooks/chat/useSpaceActions.ts:271-279`](../../../../quorum-mobile/hooks/chat/useSpaceActions.ts) explicitly documents this: every `broadcastSpaceUpdate` re-encrypts the manifest with a fresh ephemeral key but leaves the eval untouched).
+
+Bug 1 causes the hard crash. Bug 2 causes the long-standing "intermittent expiration" behavior tracked at [`2025-09-22-public-invite-link-intermittent-expiration.md`](../../bugs/2025-09-22-public-invite-link-intermittent-expiration.md) (which was over-optimistically marked `likely-resolved-by-consolidation` on the assumption that mobile's server-side eval-reuse fix was sufficient — it wasn't, because desktop's client code never picked up the eval-side ephemeral key change). Both fixed together in a follow-up PR on `session-2026-06-08-3`. The 2026-06-07 invite-consolidation explicitly skipped the join path (§4 of that task file: *"The join path already handles both public ... and private ... correctly"* — that assumption was wrong on the response shape and on the ephemeral key).
+
 ## 2026-06-08 — re-audit (no ports shipped; three new candidates added)
 
 Session: `session-2026-06-08-2` in the primary clone.
@@ -95,4 +131,6 @@ No ports shipped this session. #29 is queued for the next session.
 
 ---
 
-*Last updated: 2026-06-08 — re-audit entry added (no ships). Three new candidates: #27 Skins, #28 On-device translation, #29 Non-owner read-only access to the existing public invite URL. New top-level lesson recorded: "non-owner can X" needs three checks (service-layer gate, manifest replication, UI is "do" or "view").*
+*Last updated: 2026-06-08 — **#29 Non-owner read-only access to the public invite URL shipped** (PR #182). Reused the existing `SpaceSettings > Invites` tab + sidebar context menu instead of a new modal, per user feedback ("don't fragment the affordance between owners and non-owners — same user is owner of some spaces and member of others"). Smoke test surfaced a pre-existing crash on the JOIN path (`InvitationService.joinInviteLink` line 593, `"[object Object]" is not valid JSON`) — addressed separately on `session-2026-06-08-3`.*
+
+*Previously: 2026-06-08 — re-audit entry added (no ships). Three new candidates: #27 Skins, #28 On-device translation, #29 Non-owner read-only access to the existing public invite URL. New top-level lesson recorded: "non-owner can X" needs three checks (service-layer gate, manifest replication, UI is "do" or "view").*
