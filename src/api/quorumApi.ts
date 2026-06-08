@@ -34,6 +34,10 @@ export const getUserSettingsUrl: (address: string) => `/${string}` = (
   address: string
 ) => `/users/${address}/config`;
 
+export const getPublicProfileUrl: (address: string) => `/${string}` = (
+  address: string
+) => `/users/${address}/public-profile`;
+
 export const getSpaceManifestUrl: (spaceAddress: string) => `/${string}` = (
   spaceAddress: string
 ) => `/spaces/${spaceAddress}/manifest`;
