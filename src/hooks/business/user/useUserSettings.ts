@@ -353,30 +353,6 @@ export const useUserSettings = (
       newConfig
     );
 
-    // Fire-and-forget with rollback: the optimistic cache update above already
-    // surfaced the new config to readers. If enqueue rejects (queue full, IDB
-    // write failure), restore the pre-update snapshot and toast the user.
-    actionQueueService
-      .enqueue(
-        'save-user-config',
-        { config: newConfig },
-        `config:${currentPasskeyInfo.address}` // Dedup key
-      )
-      .catch((err) => {
-        logger.error('[UserSettings] enqueue failed for saveChanges, rolling back', err);
-        queryClient.setQueryData(
-          buildConfigKey({ userAddress: currentPasskeyInfo.address }),
-          freshConfig
-        );
-        showError(t`Failed to save settings`);
-      });
-
-    // Update TypingService gate immediately so toggle-OFF doesn't wait for
-    // the action queue / IndexedDB round-trip. On ON→OFF transitions this
-    // also clears any active outbound typing sessions and received typists
-    // of the affected kind.
-    setTypingConfig(typingIndicatorsDM, typingIndicatorsSpaces);
-
     // Public profile publish/unpublish: best-effort. The local
     // isProfilePublic setting is the source of truth — server publish
     // success/failure does not gate it (mirrors mobile's pattern).
@@ -385,7 +361,15 @@ export const useUserSettings = (
     //   isProfilePublic=true  → publish/republish with the new fields.
     //   isProfilePublic=false AND was previously true → unpublish (delete).
     //   isProfilePublic=false AND was previously false → no-op.
+    //
+    // Run BEFORE the fire-and-forget enqueue so the rollback `.catch`
+    // below can observe whether the public-profile call already went
+    // through and undo it if the local save then fails. Otherwise we'd
+    // get an inconsistent state: the server has a published profile but
+    // the local toggle says off, with no UI surfaced to fix it.
     const wasProfilePublic = freshConfig?.isProfilePublic === true;
+    let publishedThisSave = false;
+    let unpublishedThisSave = false;
     if (keyset?.userKeyset) {
       const publicProfileService = new PublicProfileService({
         apiClient: new QuorumApiClient(),
@@ -401,6 +385,7 @@ export const useUserSettings = (
             },
             { userKeyset: keyset.userKeyset }
           );
+          publishedThisSave = true;
         } catch (error) {
           logger.warn('[useUserSettings] publishPublicProfile failed', error);
         }
@@ -409,11 +394,66 @@ export const useUserSettings = (
           await publicProfileService.unpublish(currentPasskeyInfo.address, {
             userKeyset: keyset.userKeyset,
           });
+          unpublishedThisSave = true;
         } catch (error) {
           logger.warn('[useUserSettings] unpublishPublicProfile failed', error);
         }
       }
     }
+
+    // Fire-and-forget enqueue with rollback: the optimistic cache update
+    // earlier already surfaced the new config to readers. If enqueue
+    // rejects (queue full, IDB write failure), restore the pre-update
+    // snapshot, toast the user, and — critically — also revert any
+    // public-profile mutation we just made above. Without that revert,
+    // we'd leave the server with a published profile (or a missing one)
+    // that no longer matches what the local source of truth shows,
+    // with no UI surfaced to fix it.
+    actionQueueService
+      .enqueue(
+        'save-user-config',
+        { config: newConfig },
+        `config:${currentPasskeyInfo.address}` // Dedup key
+      )
+      .catch((err) => {
+        logger.error('[UserSettings] enqueue failed for saveChanges, rolling back', err);
+        queryClient.setQueryData(
+          buildConfigKey({ userAddress: currentPasskeyInfo.address }),
+          freshConfig
+        );
+        showError(t`Failed to save settings`);
+
+        // Best-effort revert of the public-profile mutation that already
+        // succeeded against the server. We deliberately do NOT await this;
+        // failure here is logged but doesn't escalate (we've already
+        // surfaced the primary error to the user via the toast above).
+        if (keyset?.userKeyset && (publishedThisSave || unpublishedThisSave)) {
+          const svc = new PublicProfileService({ apiClient: new QuorumApiClient() });
+          const revert = publishedThisSave
+            ? svc.unpublish(currentPasskeyInfo.address, { userKeyset: keyset.userKeyset })
+            : svc.publish(
+                {
+                  address: currentPasskeyInfo.address,
+                  displayName: freshConfig?.name ?? '',
+                  profileImage: freshConfig?.profile_image ?? '',
+                  bio: (freshConfig?.bio ?? '').trim(),
+                },
+                { userKeyset: keyset.userKeyset }
+              );
+          revert.catch((revertErr) => {
+            logger.warn(
+              '[useUserSettings] public-profile revert after enqueue failure also failed',
+              revertErr
+            );
+          });
+        }
+      });
+
+    // Update TypingService gate immediately so toggle-OFF doesn't wait for
+    // the action queue / IndexedDB round-trip. On ON→OFF transitions this
+    // also clears any active outbound typing sessions and received typists
+    // of the affected kind.
+    setTypingConfig(typingIndicatorsDM, typingIndicatorsSpaces);
 
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {
