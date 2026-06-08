@@ -66,10 +66,21 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 | Reply tracking (#3) | — | ❌ desktop strictly better | [desktop-better-than-mobile.md #1](desktop-better-than-mobile.md#1-reply-notification-counts) |
 | Last-message-preview / spaces sort (#4) | — | ❌ UX-pattern conflict | [candidates.md `### #4`](candidates.md#4-last-message-preview--spaces-list-sort--wont-port) |
 | OG metadata (#8) | — | ⚠️ Farcaster-only on mobile | [candidates.md `### #8`](candidates.md#8-og-metadata---farcaster-only-on-mobile) |
+| Skins / custom themes (#27) | `components/skins/*`, `services/skins/*`, `theme/skins/*` | ❔ needs UX call | [candidates.md `### #27`](candidates.md#27-skins-custom-themes--needs-ux-call) |
+| On-device translation (#28) | `modules/quorum-translation/*`, `services/translation/*`, `components/translation/*` | ❔ needs UX call | [candidates.md `### #28`](candidates.md#28-on-device-translation--needs-ux-call) |
+| Non-owner read-only access to public invite URL (#29) | `app/(tabs)/spaces/[id]/index.tsx` (header), `components/InviteModal.tsx` | 🟢 ready to start | [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick) |
 
 ## Next up
 
-**No port in flight.** #6 Public profile shipped 2026-06-08 (see [shipped-log.md](shipped-log.md) and [task file in `.done/`](.done/2026-06-08-port-public-profile.md)). Remaining viable candidates after #6: #5 Reporting is deprioritized (capability still missing on desktop, not a product priority); everything else is either ❌ already-on-desktop, ⚠️ Farcaster-coupled, or ❔ needs a product-scope decision (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance). When you pick up the next session, start from [candidates.md](candidates.md) and run the capability-verification step from [workflow.md](workflow.md#capability-verification--mandatory-before-drafting-a-task) before drafting.
+**Three new candidates surfaced in the 2026-06-08 re-audit of mobile (`session-2026-06-08-2`):**
+
+- 🟢 **#29 Non-owner read-only access to the existing public invite URL** — smallest port in the table. The owner's public invite URL is already replicated to every member via the encrypted space manifest (`space.inviteUrl` lives in shared and is populated on every member's local Space record), but desktop only exposes it via the owner-only Invites tab in SpaceSettings. The port = a lightweight read-only modal that lets any member see/copy/share the link the owner already published. No generate/regenerate for non-owners (would error). Framing took three rounds to land — see [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick) for the full back-and-forth.
+- ❔ **#27 Skins (custom themes)** — full skin engine on mobile (color tokens, geometry scale, fonts, wallpaper, icon substitution, server gallery with Ed448-signed publishes, ~2000+ LOC). Desktop's `Appearance.tsx` only ships theme + 6 accent swatches. **Needs product-scope call**: is "user-customizable themes + gallery" in desktop's roadmap?
+- ❔ **#28 On-device translation** — native iOS/Android modules (Apple Translation + ML Kit). Re-implementation rather than a port: desktop has no equivalent engine, options are cloud (privacy regression) or WASM (size cost). **Needs product-scope call.**
+
+#5 Reporting is still deprioritized. #6 Public profile shipped 2026-06-08 (see [shipped-log.md](shipped-log.md)). Everything else is ❌ already-on-desktop, ⚠️ Farcaster-coupled, or ❔ awaiting a product-scope decision (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance).
+
+When picking up next session: start from [candidates.md](candidates.md), run the capability-verification step from [workflow.md](workflow.md#capability-verification--mandatory-before-drafting-a-task), and consider also running the new "check service-layer gate + manifest replication before scoping any 'non-owner can X' candidate" sub-step described inline in [`### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick).
 
 ## Branch / session workflow
 
@@ -81,7 +92,9 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 ---
 
-*Last updated: 2026-06-08 — #6 Public profile UI shipped. Branch `feat/port-public-profile-from-mobile`. Task file moved to `.done/`. Status table flipped to ✅ shipped; `Next up` reset to "no port in flight". Code-review pass during shipping caught a publish/rollback consistency hole new to desktop (post PR #180's fire-and-forget enqueue) and fixed it before merge. Captured the lesson in shipped-log.*
+*Last updated: 2026-06-08 — `session-2026-06-08-2` re-audited mobile against the previous baseline (`0fa63d4` 2026-05-30 → `ccd69e6` 2026-06-02). Three new candidates added: **#27 Skins**, **#28 On-device translation**, **#29 Non-owner read-only access to public invite URL**. #29 is ready to pick; #27/#28 need product-scope calls. #29's framing took three rounds with the user — original assumption ("non-owners can generate") was wrong; the real model is "owner publishes once → manifest sync replicates the URL to every member's local Space → non-owners read-only display." Captured the lesson inline at the bottom of [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick). No new ships this session.*
+
+*Previously: 2026-06-08 — #6 Public profile UI shipped. Branch `feat/port-public-profile-from-mobile`. Task file moved to `.done/`. Status table flipped to ✅ shipped; `Next up` reset to "no port in flight". Code-review pass during shipping caught a publish/rollback consistency hole new to desktop (post PR #180's fire-and-forget enqueue) and fixed it before merge. Captured the lesson in shipped-log.*
 
 *Previously: 2026-06-08 — #6 Public profile UI picked up on `session-2026-06-08`. Scope clarified during pickup: backend has no user-enumeration endpoint, so neither app has a profile directory. The port = publish toggle + DM-header resolve-by-address + member fallback resolver. Bundled: removal of speculative `/discover/people` + simplified Discover chrome. Status table updated to reflect #1 shipped and PR 2 obsolete.*
 

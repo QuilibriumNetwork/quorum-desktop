@@ -7,12 +7,15 @@ interface NavigationProps {
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
   spaceId: string;
+  /** True when `space.inviteUrl` is set; gates the Invites tab for non-owners. */
+  hasPublicInvite: boolean;
 }
 
 const Navigation: React.FunctionComponent<NavigationProps> = ({
   selectedCategory,
   setSelectedCategory,
   spaceId,
+  hasPublicInvite,
 }) => {
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
 
@@ -24,14 +27,19 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
     { id: 'space-tag', icon: 'tag', label: t`Space Tag`, className: '' },
     { id: 'emojis', icon: 'smile', label: t`Emojis`, className: '' },
     { id: 'stickers', icon: 'image', label: t`Stickers`, className: '' },
-    { id: 'invites', icon: 'share', label: t`Invites`, className: '' },
+    { id: 'invites', icon: 'user-plus', label: t`Invites`, className: '' },
     { id: 'danger', icon: 'warning', label: t`Delete Space`, className: 'text-danger' },
   ];
 
-  // Filter categories based on ownership
+  // Owners see everything. Non-owners see Account always + Invites only when
+  // the owner has published a public invite link (the link is replicated to
+  // every member's local Space record via the encrypted manifest, so this is
+  // a real read non-owners can do — see #29 in port-from-mobile/candidates.md).
   const categories = isSpaceOwner
     ? allCategories
-    : allCategories.filter(cat => cat.id === 'account');
+    : allCategories.filter(
+        (cat) => cat.id === 'account' || (cat.id === 'invites' && hasPublicInvite)
+      );
 
   return (
     <>

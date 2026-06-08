@@ -13,6 +13,10 @@ interface SpaceContextMenuState {
   spaceName: string;
   iconUrl?: string;
   isOwner: boolean;
+  /** True when `space.inviteUrl` is set. Non-owners only see the
+   *  "Invite Members" entry when this is true (it deep-links to the
+   *  read-only Invites tab — see #29 in port-from-mobile/candidates.md). */
+  hasPublicInvite: boolean;
   position: { x: number; y: number };
   hasNotifications: boolean;
 }
@@ -22,6 +26,7 @@ const EMPTY_STATE: SpaceContextMenuState = {
   spaceName: '',
   iconUrl: undefined,
   isOwner: false,
+  hasPublicInvite: false,
   position: { x: 0, y: 0 },
   hasNotifications: false,
 };
@@ -79,11 +84,21 @@ export function useSpaceContextMenu(
         // Treat as non-owner if the lookup fails
       }
 
+      let hasPublicInvite = false;
+      try {
+        const space = await messageDB.getSpace(spaceId);
+        hasPublicInvite = !!space?.inviteUrl;
+      } catch {
+        // If the lookup fails, conservatively hide the Invite Members entry
+        // for non-owners (owners see it unconditionally).
+      }
+
       setState({
         spaceId,
         spaceName,
         iconUrl,
         isOwner,
+        hasPublicInvite,
         position: { x: event.clientX, y: event.clientY },
         hasNotifications,
       });
@@ -207,13 +222,24 @@ export function useSpaceContextMenu(
         }
       );
     } else {
+      // Non-owners get "Invite Members" only when the owner has published a
+      // public invite link. The entry deep-links to the read-only Invites tab.
+      if (state.hasPublicInvite) {
+        result.push({
+          id: 'invites',
+          icon: 'user-plus',
+          label: t`Invite Members`,
+          separator: true,
+          onClick: () => openSpaceEditor(state.spaceId!, 'invites'),
+        });
+      }
       result.push({
         id: 'leave',
         icon: 'logout',
         label: t`Leave Space`,
         danger: true,
         confirmLabel: t`Confirm Leave`,
-        separator: true,
+        separator: !state.hasPublicInvite,
         onClick: () => {
           if (state.spaceId) leaveSpace(state.spaceId);
         },
@@ -224,6 +250,7 @@ export function useSpaceContextMenu(
   }, [
     state.spaceId,
     state.isOwner,
+    state.hasPublicInvite,
     state.hasNotifications,
     openSpaceEditor,
     leaveSpace,
