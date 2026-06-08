@@ -9,9 +9,10 @@ Best practices for AI-assisted development on the Quorum Desktop project.
 1. [Before Starting Any Task](#before-starting-any-task)
 2. [Common Workflows](#common-workflows)
 3. [Key Resources by Task Type](#key-resources-by-task-type)
-4. [Documentation Guidelines](#documentation-guidelines)
-5. [Tips for Effective AI Development](#tips-for-effective-ai-development)
-6. [Common Pitfalls](#common-pitfalls)
+4. [PR & Commit Workflow](#pr--commit-workflow)
+5. [Documentation Guidelines](#documentation-guidelines)
+6. [Tips for Effective AI Development](#tips-for-effective-ai-development)
+7. [Common Pitfalls](#common-pitfalls)
 
 ---
 
@@ -217,6 +218,38 @@ Before implementing, read relevant docs:
 | Testing primitives | [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md) |
 | Repository structure | [Web/Native Repo Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md) |
 | Platform detection | [Quick Reference - Platform Detection](../AGENTS.md#mobile-first-development) |
+
+---
+
+## PR & Commit Workflow
+
+### Bundle doc commits into the next feature/fix PR
+
+**Don't open a doc-only PR for every small doc update.** Squash-merging is expensive (push → `gh pr create` → squash → pull → `git checkout main`) and most doc edits are small enough that a separate PR is overkill. Instead, commit doc changes locally on the current working branch and let the **next feature/fix PR from this workspace** carry them as part of its diff.
+
+Why this matters:
+
+- **Doc commits get free PR-number context.** Shipped-log / history entries written during a session can reference a just-merged PR number directly, no follow-up patch needed. (Example: when port-from-mobile's #6 Public Profile shipped as PR #181, the shipped-log line referencing "PR #181" was easy to get right because the doc edit happened *after* the merge but *before* the next session's commits closed.)
+- **Cheaper.** No push/create/merge cycle per typo, naming convention tweak, or workflow clarification.
+- **Self-consistent across worktrees.** Each worktree accumulates its own doc edits on its own branch. Both eventually reach main via their own next-feature PRs. Conflicts only arise if both edit the same doc — handled the normal git-conflict way at rebase.
+
+**Procedure during a session:**
+
+1. Make the doc edit. Commit it on the current branch (session branch, `feat/...`, `fix/...`, whatever). No push, no PR.
+2. Continue with the actual code work in the same session — the doc commit will ship alongside the code commits in one squashed PR.
+3. If the session ends without any code PR (pure doc / inventory / scoping session), squash-merge the branch into main as a doc-only PR. Standard ship.
+
+**When to break the rule** (rare):
+
+- The doc IS the work this session (capability investigation, scope reframing, retiring a candidate, architecture decision write-up, etc.) → ship as a doc-only PR.
+- Something in the docs would urgently mislead the *next* session if left until then → patch direct to main.
+- Pure typo / link rot with zero informational bundling value → patch direct to main.
+
+For everything else (the common case): commit locally, let the next code PR sweep it up.
+
+### Where this rule lives in the per-effort workflows
+
+The `.agents/tasks/<effort>/` folders may have their own workflow docs that elaborate on this for their specific context (e.g. [`tasks/port-from-mobile/workflow.md`](tasks/port-from-mobile/workflow.md) describes how the rule interacts with session-branch naming across multiple worktrees). The general principle above always applies; effort-specific workflows only extend it.
 
 ---
 

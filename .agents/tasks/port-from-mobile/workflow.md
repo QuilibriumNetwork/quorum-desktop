@@ -123,7 +123,7 @@ Sub-50-line discipline only applies to:
 
 Same as the shared-migration's "Always work on a branch" rule, with one tweak: session branch first, rename when the work crystallizes.
 
-1. **Start of session**: `git checkout -b session-YYYY-MM-DD` (already done if you're reading this mid-session). Generic on purpose — you don't yet know what the session will become. (Note: format is `session-YYYY-MM-DD` for this effort, matching what the user described; the shared-migration's docs use `session/YYYY-MM-DD` — both work, this effort uses the dash form.)
+1. **Start of session**: create a session branch using the naming rule below. Generic on purpose — you don't yet know what the session will become.
 2. **During inventory / scoping**: commit freely to the session branch. Docs, candidate-list updates, all fine.
 3. **When a feature port crystallizes**: rename the branch to `feat/port-<slug>` (or `chore/port-<slug>` for non-feature work).
    ```bash
@@ -133,6 +133,35 @@ Same as the shared-migration's "Always work on a branch" rule, with one tweak: s
 5. **After merge**: `git checkout main && git pull`, new session = new branch.
 
 If a session's work doesn't crystallize into a shippable PR (e.g. inventory-only), still squash-merge the session branch into main when the docs are worth keeping — that's the existing "doc-bundle PR" pattern from the shared-migration workflow.
+
+### Doc commits piggy-back on the next feature PR
+
+This is a **repo-wide rule** documented in [`.agents/agents-workflow.md` → "PR & Commit Workflow"](../../agents-workflow.md#pr--commit-workflow). Summary: commit doc edits locally on the current session branch and let the next feature PR carry them. Don't open doc-only PRs for small updates. See the canonical version for the full rationale, procedure, and exceptions.
+
+Specific to this effort: when a session's doc commits include shipped-log entries that need a PR number, write them *after* the feature PR merges (and before the session's other commits ship). The merge commit + your in-progress doc commits naturally line up so the PR number is known.
+
+### Session branch naming
+
+The repo has a **primary working tree** at the repo root (`D:/GitHub/Quilibrium/quorum-desktop`) plus one or more **named worktrees** at `.worktrees/<name>/` (currently `.worktrees/secondary/`; could grow to `tertiary/` etc). All worktrees share `.git`, so branch names must be unique across them — naming has to encode where the session is happening.
+
+Naming rule:
+
+| Workspace | First session of the day | Second+ session same day |
+|---|---|---|
+| Primary clone (repo root) | `session-YYYY-MM-DD` | `session-YYYY-MM-DD-2`, `-3`, … |
+| `.worktrees/<name>/` | `session-<name>-YYYY-MM-DD` | `session-<name>-YYYY-MM-DD-2`, `-3`, … |
+
+Examples on 2026-06-08:
+- `session-2026-06-08` — first session in the primary clone
+- `session-2026-06-08-2` — second session same day, primary clone
+- `session-secondary-2026-06-08` — first session in `.worktrees/secondary/`
+- `session-secondary-2026-06-08-2` — second session same day in the secondary worktree
+
+**To detect which workspace you're in:** run `git rev-parse --show-toplevel`. If the path matches `.worktrees/<name>$`, you're in that named worktree (capture `<name>`). Otherwise you're in the primary clone (no qualifier).
+
+**To check what's already taken before picking a counter:** `git branch -a | grep "^[* ]*session-"` lists every existing session branch across all worktrees. Pick the next available suffix.
+
+The counter (`-2`, `-3`, ...) is only appended when the un-suffixed name is already taken — keeps the common case (one session per workspace per day) short.
 
 ## When to promote to shared
 
@@ -202,4 +231,6 @@ Port the [feature name] from `quorum-mobile` to `quorum-desktop`.
 
 ---
 
-*Last updated: 2026-06-01 — added mandatory "Capability verification" step (symbol-grep is not enough) and the "Port the capability, not the mobile UX pattern" rule with the Discord-vs-Telegram model worked example. Introduced two-way diff framing — sibling [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md) tracks capabilities where desktop is materially better than mobile.*
+*Last updated: 2026-06-08 — added session-branch naming rule for multi-worktree setups (primary clone vs `.worktrees/<name>/`); slimmed the "Doc commits piggy-back on the next feature PR" section to defer to the new repo-wide canonical version in [`agents-workflow.md`](../../agents-workflow.md#pr--commit-workflow).*
+
+*Previously: 2026-06-01 — added mandatory "Capability verification" step (symbol-grep is not enough) and the "Port the capability, not the mobile UX pattern" rule with the Discord-vs-Telegram model worked example. Introduced two-way diff framing — sibling [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md) tracks capabilities where desktop is materially better than mobile.*
