@@ -112,11 +112,6 @@ export const useUserSettings = (
           address: currentPasskeyInfo.address,
           userKey: keyset.userKeyset,
         });
-        logger.log('[useUserSettings] init from config', {
-          isProfilePublic: config?.isProfilePublic,
-          bio: config?.bio,
-          configKeys: config ? Object.keys(config) : null,
-        });
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
         setDeliveryReceipts(config?.deliveryReceipts ?? false);
@@ -358,11 +353,6 @@ export const useUserSettings = (
       newConfig
     );
 
-    logger.log('[useUserSettings] enqueueing save-user-config', {
-      isProfilePublic: newConfig.isProfilePublic,
-      bio: newConfig.bio,
-      name: newConfig.name,
-    });
     // Fire-and-forget with rollback: the optimistic cache update above already
     // surfaced the new config to readers. If enqueue rejects (queue full, IDB
     // write failure), restore the pre-update snapshot and toast the user.
@@ -396,18 +386,11 @@ export const useUserSettings = (
     //   isProfilePublic=false AND was previously true → unpublish (delete).
     //   isProfilePublic=false AND was previously false → no-op.
     const wasProfilePublic = freshConfig?.isProfilePublic === true;
-    logger.log('[useUserSettings] public-profile branch', {
-      isProfilePublic,
-      wasProfilePublic,
-      hasKeyset: !!keyset?.userKeyset,
-      address: currentPasskeyInfo.address,
-    });
     if (keyset?.userKeyset) {
       const publicProfileService = new PublicProfileService({
         apiClient: new QuorumApiClient(),
       });
       if (isProfilePublic) {
-        logger.log('[useUserSettings] -> publishing public profile');
         try {
           await publicProfileService.publish(
             {
@@ -418,25 +401,18 @@ export const useUserSettings = (
             },
             { userKeyset: keyset.userKeyset }
           );
-          logger.log('[useUserSettings] publish success');
         } catch (error) {
           logger.warn('[useUserSettings] publishPublicProfile failed', error);
         }
       } else if (wasProfilePublic) {
-        logger.log('[useUserSettings] -> unpublishing public profile');
         try {
           await publicProfileService.unpublish(currentPasskeyInfo.address, {
             userKeyset: keyset.userKeyset,
           });
-          logger.log('[useUserSettings] unpublish success');
         } catch (error) {
           logger.warn('[useUserSettings] unpublishPublicProfile failed', error);
         }
-      } else {
-        logger.log('[useUserSettings] no public-profile action needed');
       }
-    } else {
-      logger.warn('[useUserSettings] no keyset.userKeyset — skipping public-profile publish');
     }
 
     // If devices were removed, reconstruct and upload the registration
