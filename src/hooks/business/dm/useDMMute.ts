@@ -8,9 +8,12 @@
 
 import { useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { t } from '@lingui/core/macro';
+import { logger } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConfig, buildConfigKey } from '../../queries/config';
+import { showError } from '../../../utils/toast';
 
 interface UseDMMuteReturn {
   /** Array of muted conversation IDs */
@@ -102,11 +105,20 @@ export function useDMMute(): UseDMMuteReturn {
         // Fire-and-forget: the optimistic cache update already gave the UI
         // its instant feedback. Awaiting would block the next toggle's read
         // and widen the race window.
-        void actionQueueService.enqueue(
-          'save-user-config',
-          { config: updatedConfig },
-          `config:${userAddress}` // Dedup key - collapses rapid toggles
-        );
+        actionQueueService
+          .enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${userAddress}` // Dedup key - collapses rapid toggles
+          )
+          .catch((err) => {
+            logger.error('[DMMute] enqueue failed for muteConversation, rolling back', err);
+            queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+            queryClient.invalidateQueries({
+              queryKey: ['unread-counts', 'direct-messages', userAddress],
+            });
+            showError(t`Failed to save mute setting`);
+          });
       } catch (error) {
         console.error('[DMMute] Error muting conversation:', error);
         throw error;
@@ -155,11 +167,20 @@ export function useDMMute(): UseDMMuteReturn {
         // Fire-and-forget: the optimistic cache update already gave the UI
         // its instant feedback. Awaiting would block the next toggle's read
         // and widen the race window.
-        void actionQueueService.enqueue(
-          'save-user-config',
-          { config: updatedConfig },
-          `config:${userAddress}` // Dedup key - collapses rapid toggles
-        );
+        actionQueueService
+          .enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${userAddress}` // Dedup key - collapses rapid toggles
+          )
+          .catch((err) => {
+            logger.error('[DMMute] enqueue failed for unmuteConversation, rolling back', err);
+            queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+            queryClient.invalidateQueries({
+              queryKey: ['unread-counts', 'direct-messages', userAddress],
+            });
+            showError(t`Failed to save mute setting`);
+          });
       } catch (error) {
         console.error('[DMMute] Error unmuting conversation:', error);
         throw error;

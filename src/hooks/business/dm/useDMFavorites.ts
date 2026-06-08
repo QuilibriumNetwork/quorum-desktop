@@ -8,9 +8,12 @@
 
 import { useCallback, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { t } from '@lingui/core/macro';
+import { logger } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConfig, buildConfigKey } from '../../queries/config';
+import { showError } from '../../../utils/toast';
 
 interface UseDMFavoritesReturn {
   /** Array of favorite conversation IDs */
@@ -97,11 +100,17 @@ export function useDMFavorites(): UseDMFavoritesReturn {
         // Fire-and-forget: the optimistic cache update already gave the UI
         // its instant feedback. Awaiting would block the next toggle's read
         // and widen the race window.
-        void actionQueueService.enqueue(
-          'save-user-config',
-          { config: updatedConfig },
-          `config:${userAddress}` // Dedup key - collapses rapid toggles
-        );
+        actionQueueService
+          .enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${userAddress}` // Dedup key - collapses rapid toggles
+          )
+          .catch((err) => {
+            logger.error('[DMFavorites] enqueue failed for addFavorite, rolling back', err);
+            queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+            showError(t`Failed to save favorite`);
+          });
       } catch (error) {
         console.error('[DMFavorites] Error adding favorite:', error);
         throw error;
@@ -145,11 +154,17 @@ export function useDMFavorites(): UseDMFavoritesReturn {
         // Fire-and-forget: the optimistic cache update already gave the UI
         // its instant feedback. Awaiting would block the next toggle's read
         // and widen the race window.
-        void actionQueueService.enqueue(
-          'save-user-config',
-          { config: updatedConfig },
-          `config:${userAddress}` // Dedup key - collapses rapid toggles
-        );
+        actionQueueService
+          .enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${userAddress}` // Dedup key - collapses rapid toggles
+          )
+          .catch((err) => {
+            logger.error('[DMFavorites] enqueue failed for removeFavorite, rolling back', err);
+            queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+            showError(t`Failed to save favorite`);
+          });
       } catch (error) {
         console.error('[DMFavorites] Error removing favorite:', error);
         throw error;
