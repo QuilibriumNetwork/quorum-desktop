@@ -26,8 +26,10 @@ import {
   DROP_ZONE_BOTTOM_THRESHOLD,
 } from '../../../utils/folderUtils';
 import { isTouchDevice } from '../../../utils/platform';
-import { showWarning } from '../../../utils/toast';
+import { showError, showWarning } from '../../../utils/toast';
 import { buildConfigKey } from '../../queries';
+import { t } from '@lingui/core/macro';
+import { logger } from '@quilibrium/quorum-shared';
 
 /**
  * Drag scenario types for folder operations
@@ -593,6 +595,9 @@ export const useFolderDragAndDrop = ({
       }
 
       // Queue config save in background - no more UI blocking!
+      // If enqueue rejects, roll the cache back to the pre-drop snapshot
+      // (latestConfig) and toast — otherwise the sidebar would visually
+      // reflect a drag that didn't persist and silently revert on next sync.
       actionQueueService
         .enqueue(
           'save-user-config',
@@ -600,7 +605,14 @@ export const useFolderDragAndDrop = ({
           `config:${newConfig.address}` // Dedup key - only latest config matters
         )
         .catch((err) => {
-          console.error('[FolderDragAndDrop] Failed to queue config save:', err);
+          logger.error('[FolderDragAndDrop] enqueue failed, rolling back', err);
+          if (config.address) {
+            queryClient.setQueryData(
+              buildConfigKey({ userAddress: config.address }),
+              latestConfig
+            );
+          }
+          showError(t`Failed to save layout`);
         });
     },
     [config, actionQueueService, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]

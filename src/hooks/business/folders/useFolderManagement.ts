@@ -8,8 +8,9 @@ import { NavItem, UserConfig } from '../../../db/messages';
 import type { IconName, IconVariant } from '../../../components/primitives';
 import { IconColor } from '../../../components/space/IconPicker/types';
 import { createFolder, deriveSpaceIds } from '../../../utils/folderUtils';
-import { validateNameForXSS, MAX_NAME_LENGTH } from '@quilibrium/quorum-shared';
+import { validateNameForXSS, MAX_NAME_LENGTH, logger } from '@quilibrium/quorum-shared';
 import { useDeleteFolder } from './useDeleteFolder';
+import { showError } from '../../../utils/toast';
 
 interface UseFolderManagementProps {
   folderId?: string;
@@ -142,12 +143,26 @@ export const useFolderManagement = ({
       );
     }
 
-    // Queue config save in background
-    await actionQueueService.enqueue(
-      'save-user-config',
-      { config: newConfig },
-      `config:${config.address}` // Dedup key
-    );
+    // Queue config save in background. Fire-and-forget: if enqueue rejects,
+    // roll the cache back to the pre-update snapshot (config) and toast.
+    // The modal's saveUntilComplete wrapper won't see the failure but the
+    // toast + rollback satisfy the user-facing contract.
+    actionQueueService
+      .enqueue(
+        'save-user-config',
+        { config: newConfig },
+        `config:${config.address}` // Dedup key
+      )
+      .catch((err) => {
+        logger.error('[FolderManagement] enqueue failed for saveChanges, rolling back', err);
+        if (config.address) {
+          queryClient.setQueryData(
+            buildConfigKey({ userAddress: config.address }),
+            config
+          );
+        }
+        showError(t`Failed to save folder`);
+      });
   }, [
     config,
     keyset,
