@@ -4,8 +4,10 @@ title: Consolidate desktop invite system with mobile (cryptographic logic + UX)
 status: in-progress
 branch: feat/consolidate-invite-system-with-mobile
 created: 2026-06-07
-updated: 2026-06-07
+updated: 2026-06-08
 ---
+
+> **2026-06-08 follow-up note.** The §4 statement that "The join path already handles both public ... and private ... correctly" turned out to be wrong on **two** counts. Bug 1: the server response shape for `/invite/eval` had changed from a JSON-encoded string to a plain object, and desktop's `JSON.parse(inviteEval.data)` crashed on every public-invite join with `"[object Object]" is not valid JSON`. Bug 2: desktop was using the manifest's `ephemeral_public_key` to decrypt the eval, but the manifest's key gets rotated on every space update (kick/role/settings/channel) while the eval's doesn't — so any post-publish space update silently broke joining for everyone with the existing link. Mobile's join path handled both correctly already; we just didn't read it. Both bugs fixed in **PR #183** (task [`2026-06-08-fix-join-invite-link.md`](../2026-06-08-fix-join-invite-link.md)). Lesson for future "scope out the join path" decisions: actually diff desktop's `joinInviteLink` against mobile's equivalent before assuming parity.
 
 # Consolidate desktop invite system with mobile
 
