@@ -12,11 +12,13 @@
 
 import { useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { t } from '@lingui/core/macro';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { isChannelMuted, getMutedChannelsForSpace } from '../../../utils/channelUtils';
-import { getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
+import { getDefaultNotificationSettings, logger } from '@quilibrium/quorum-shared';
 import { useConfig, buildConfigKey } from '../../queries/config';
+import { showError } from '../../../utils/toast';
 
 interface UseChannelMuteProps {
   spaceId: string;
@@ -163,11 +165,18 @@ export function useChannelMute({
         // Fire-and-forget: the optimistic cache update already gave the UI
         // its instant feedback. Awaiting would block the next toggle's read
         // and widen the race window.
-        void actionQueueService.enqueue(
-          'save-user-config',
-          { config: updatedConfig },
-          `config:${userAddress}` // Dedup key - collapses rapid toggles
-        );
+        actionQueueService
+          .enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${userAddress}` // Dedup key - collapses rapid toggles
+          )
+          .catch((err) => {
+            logger.error('[ChannelMute] enqueue failed for muteChannel, rolling back', err);
+            queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+            invalidateNotificationQueries();
+            showError(t`Failed to save notification setting`);
+          });
       } catch (error) {
         console.error('[ChannelMute] Error muting channel:', error);
         throw error;
@@ -216,11 +225,18 @@ export function useChannelMute({
         // Fire-and-forget: the optimistic cache update already gave the UI
         // its instant feedback. Awaiting would block the next toggle's read
         // and widen the race window.
-        void actionQueueService.enqueue(
-          'save-user-config',
-          { config: updatedConfig },
-          `config:${userAddress}` // Dedup key - collapses rapid toggles
-        );
+        actionQueueService
+          .enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${userAddress}` // Dedup key - collapses rapid toggles
+          )
+          .catch((err) => {
+            logger.error('[ChannelMute] enqueue failed for unmuteChannel, rolling back', err);
+            queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+            invalidateNotificationQueries();
+            showError(t`Failed to save notification setting`);
+          });
       } catch (error) {
         console.error('[ChannelMute] Error unmuting channel:', error);
         throw error;
@@ -270,11 +286,17 @@ export function useChannelMute({
       // Fire-and-forget: the optimistic cache update already gave the UI
       // its instant feedback. Awaiting would block the next toggle's read
       // and widen the race window.
-      void actionQueueService.enqueue(
-        'save-user-config',
-        { config: updatedConfig },
-        `config:${userAddress}` // Dedup key
-      );
+      actionQueueService
+        .enqueue(
+          'save-user-config',
+          { config: updatedConfig },
+          `config:${userAddress}` // Dedup key
+        )
+        .catch((err) => {
+          logger.error('[ChannelMute] enqueue failed for toggleShowMutedChannels, rolling back', err);
+          queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+          showError(t`Failed to save notification setting`);
+        });
     } catch (error) {
       console.error('[ChannelMute] Error toggling showMutedChannels:', error);
       throw error;
@@ -326,11 +348,18 @@ export function useChannelMute({
       // Fire-and-forget: the optimistic cache update already gave the UI
       // its instant feedback. Awaiting would block the next toggle's read
       // and widen the race window.
-      void actionQueueService.enqueue(
-        'save-user-config',
-        { config: updatedConfig },
-        `config:${userAddress}` // Dedup key
-      );
+      actionQueueService
+        .enqueue(
+          'save-user-config',
+          { config: updatedConfig },
+          `config:${userAddress}` // Dedup key
+        )
+        .catch((err) => {
+          logger.error('[ChannelMute] enqueue failed for muteSpace, rolling back', err);
+          queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+          invalidateNotificationQueries();
+          showError(t`Failed to save notification setting`);
+        });
     } catch (error) {
       console.error('[ChannelMute] Error muting space:', error);
       throw error;
@@ -379,11 +408,18 @@ export function useChannelMute({
       // Fire-and-forget: the optimistic cache update already gave the UI
       // its instant feedback. Awaiting would block the next toggle's read
       // and widen the race window.
-      void actionQueueService.enqueue(
-        'save-user-config',
-        { config: updatedConfig },
-        `config:${userAddress}` // Dedup key
-      );
+      actionQueueService
+        .enqueue(
+          'save-user-config',
+          { config: updatedConfig },
+          `config:${userAddress}` // Dedup key
+        )
+        .catch((err) => {
+          logger.error('[ChannelMute] enqueue failed for unmuteSpace, rolling back', err);
+          queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+          invalidateNotificationQueries();
+          showError(t`Failed to save notification setting`);
+        });
     } catch (error) {
       console.error('[ChannelMute] Error unmuting space:', error);
       throw error;
