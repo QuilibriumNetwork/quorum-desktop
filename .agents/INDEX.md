@@ -44,6 +44,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
+- [Sidebar Drag & Minimize UX](docs/features/sidebar-drag-ux.md)
 - [Space Folders](docs/features/space-folders.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
 - [Space Tags](docs/features/space-tags.md)

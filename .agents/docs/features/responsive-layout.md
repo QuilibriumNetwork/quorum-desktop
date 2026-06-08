@@ -59,7 +59,7 @@ The shell renders three slots — `app-shell__rail`, `app-shell__sidebar`, `app-
 ## Layout Behavior
 
 - **Desktop**: rail and sidebar are inline. Sidebar is user-resizable via a drag handle on its right edge (hover-arms after 500ms; arrow keys nudge by 16px). Releasing below `SIDEBAR_SNAP_THRESHOLD` snaps to the collapsed strip.
-- **Channels mode** (route `/spaces/:spaceId/:channelId`): the sidebar has a 300px floor (`CHANNELS_SIDEBAR_WIDTH`). Drag handle stays available but cannot shrink below the floor and snap-to-collapsed is disabled.
+- **Channels mode** (route `/spaces/:spaceId/:channelId`): floor is 144px (`CHANNELS_SIDEBAR_FLOOR`); channels never fully collapses to the 72px strip. Channels shares the same persisted `sidebarWidth` as DM/Spaces. The full spec — including cross-mode minimize propagation rules and a scenario table — lives in [`sidebar-drag-ux.md`](./sidebar-drag-ux.md).
 - **Tablet**: rail and sidebar are forced collapsed (72px). Drag handle not rendered.
 - **Phone**: rail and sidebar are removed from the inline flow. A focus-trapped off-canvas drawer mounts them on demand; the drawer trigger lives in each view's chat header. The drawer auto-closes when the route lands on a leaf (DM conversation, channel, Public Spaces).
 
@@ -77,7 +77,7 @@ The rail does not have its own breakpoint logic — its width follows the shell'
 ### Sidebar width (`_variables.scss` + `useShellState.ts`)
 
 ```scss
-$sidebar-width: 300px;          // default expanded width
+$sidebar-width: 280px;          // default expanded width
 $sidebar-width-collapsed: 72px; // strip layout
 ```
 
@@ -86,9 +86,10 @@ export const SIDEBAR_COLLAPSED_WIDTH = 72;
 export const SIDEBAR_MIN_WIDTH = 240;
 export const SIDEBAR_MAX_WIDTH = 480;
 export const SIDEBAR_SNAP_THRESHOLD = 200;
+export const CHANNELS_SIDEBAR_FLOOR = 144;
 ```
 
-`shell.sidebarWidth` in localStorage holds the user's last free-drag width. The legacy `shell.sidebarCollapsed` boolean is read once on first load for migration and kept mirrored on write so a rollback still picks up a sensible state.
+`shell.sidebarWidth` holds the user's "free width" (the width when not minimized). `shell.sidebarCollapsed` holds whether DM/Spaces is currently in the collapsed (72px) state. `shell.channelsFloored` holds whether channels is currently at the 144px floor. These flags are independent per mode but cross-coupled: setting `channelsFloored=true` also sets `sidebarCollapsed=true`. `shell.lastFreeWidth` mirrors `shell.sidebarWidth` for backwards compatibility.
 
 ### Chat Content Width Fix (`src/styles/_chat.scss`)
 
@@ -190,9 +191,10 @@ The shell exposes the current sidebar width as a CSS variable on the AppShell ro
 
 ```scss
 .app-shell {
-  // --shell-sidebar-width is set inline in AppShell.tsx (defaults to the
-  // user's persisted shell.sidebarWidth, or CHANNELS_SIDEBAR_WIDTH when
-  // the channels sidebar is mounted).
+  // --shell-sidebar-width is set inline in AppShell.tsx. Value is the live
+  // drag-tracked width while dragging, otherwise the "resting" width:
+  //   channels mode: channelsFloored ? 144 : max(sidebarWidth, 144)
+  //   DM/Spaces:     sidebarCollapsed ? 72 : sidebarWidth
 }
 ```
 
@@ -234,7 +236,7 @@ Downstream features can read `var(--shell-sidebar-width)` if they need to size r
 1. Test at 1024px boundary (tablet ↔ desktop) — rail/sidebar should switch from forced-collapsed to user-controlled width.
 2. Test at 768px boundary (phone ↔ tablet) — drawer should disappear from the layout in favour of the inline collapsed strip.
 3. Verify the drag handle is present on desktop and absent on tablet/phone.
-4. Verify channels mode pins the sidebar at 300px on desktop regardless of the user's persisted width.
+4. Verify width is unified across modes when expanded (drag wider in channels → DM/Spaces is also wider when you switch), and minimize-intent propagates one-way (channels at 144 → DM/Spaces collapsed to 72; collapsing DM/Spaces does NOT floor channels).
 
 ### Interaction Testing
 
@@ -322,4 +324,4 @@ A comprehensive modal system has been implemented with consistent responsive beh
 
 ---
 
-*Last updated: 2026-06-04*
+*Last updated: 2026-06-08*

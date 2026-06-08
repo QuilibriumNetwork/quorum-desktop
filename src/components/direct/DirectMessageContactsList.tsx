@@ -76,8 +76,10 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
   const { markAllReadTimestamp } = useDmReadState();
 
   // Shell state — null when rendered outside the AppShell tree (legacy fallback).
+  // sidebarLiveCollapsed follows the on-screen width during drag so the layout
+  // re-renders as the user crosses the snap threshold.
   const shell = useOptionalShellState();
-  const sidebarCollapsed = shell?.sidebarCollapsed ?? false;
+  const sidebarCollapsed = shell?.sidebarLiveCollapsed ?? false;
   const renderCollapsed = sidebarCollapsed && !forceExpanded;
 
   // Load mock utilities dynamically in development only
