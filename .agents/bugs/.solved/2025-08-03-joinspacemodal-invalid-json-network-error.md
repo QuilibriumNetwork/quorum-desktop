@@ -1,21 +1,20 @@
 ---
 type: bug
 title: "JoinSpaceModal \"Invalid JSON\" Error Due to Network Issues"
-status: fix-in-flight-awaiting-verification
+status: solved
 created: 2026-01-09
 updated: 2026-06-08
-fix-attempted-by: task `2026-06-08-fix-join-invite-link.md`
+solved-by: PR #183 (task `2026-06-08-fix-join-invite-link.md`)
+verified-by: user end-to-end smoke test, 2026-06-08
 ---
 
-> **2026-06-08 — fix in flight, NOT yet verified.** Root cause appears to have been misattributed in the original report: investigation suggests this is NOT a network/JSON-parsing flakiness issue. The actual cause appears to be a server-side response-shape change for `/invite/eval` (object instead of legacy JSON-string) that desktop's `InvitationService.joinInviteLink` never accounted for. Every public-invite join attempt now fires `"[object Object]" is not valid JSON` at line 593 because `JSON.parse(inviteEval.data)` coerces an object to its string representation.
+> **2026-06-08 — solved.** Root cause was misattributed in the original report: this was NOT a network/JSON-parsing flakiness issue. The actual cause was a server-side response-shape change for `/invite/eval` (object instead of legacy JSON-string) that desktop's `InvitationService.joinInviteLink` never accounted for. Every public-invite join attempt fired `"[object Object]" is not valid JSON` at line 593 because `JSON.parse(inviteEval.data)` coerced an object to its string representation.
 >
-> The "regenerate the public link" workaround likely worked intermittently because regenerating re-uploads the manifest, which briefly aligns ephemeral keys (separate root cause — see [`2025-09-22-public-invite-link-intermittent-expiration.md`](2025-09-22-public-invite-link-intermittent-expiration.md)).
+> The "regenerate the public link" workaround appeared to work intermittently because regenerating re-uploads the manifest, which briefly aligned ephemeral keys (separate root cause — see the sibling bug report [`2025-09-22-public-invite-link-intermittent-expiration.md`](2025-09-22-public-invite-link-intermittent-expiration.md)).
 >
-> Proposed fix: normalize the server response at the API client layer in [`src/api/baseTypes.ts#getSpaceInviteEval`](../../src/api/baseTypes.ts) (handles both legacy string and current object shapes — same defensive pattern as `quorum-mobile/services/api/quorumClient.ts:710-738`). The consumer in `InvitationService.joinInviteLink` now reads `inviteEval.data.ciphertext` cleanly. No retry logic needed — the original proposal in this report would have been treating a symptom.
+> Fix: normalize the server response at the API client layer in [`src/api/baseTypes.ts#getSpaceInviteEval`](../../../src/api/baseTypes.ts) (handles both legacy string and current object shapes — same defensive pattern as `quorum-mobile/services/api/quorumClient.ts:710-738`). The consumer in `InvitationService.joinInviteLink` now reads `inviteEval.data.ciphertext` cleanly. No retry logic needed — the proposed "retry on JSON parse error" in the original report would have been treating a symptom.
 >
-> **Will only be moved to `.solved/` after end-to-end smoke testing confirms the fix.** Specifically:
-> - As a non-owner, click a public-invite link, click Join, confirm a space is added to the sidebar with no error.
-> - Repeat against a space the owner has updated (kicked a member, renamed a channel, etc.) since publishing the public invite — the previously-failing path covered by the sibling bug report.
+> Verified by user smoke test, 2026-06-08: joining via a public invite link now succeeds, including against a space the owner had updated since publishing the link (the path the sibling bug report covers).
 
 # JoinSpaceModal "Invalid JSON" Error Due to Network Issues
 

@@ -4,7 +4,7 @@ title: Invite System Documentation
 status: done
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-06-07T00:00:00.000Z
+updated: 2026-06-08T00:00:00.000Z
 ---
 
 # Invite System Documentation
@@ -183,12 +183,42 @@ https://app.quorummessenger.com/invite/#spaceId={SPACE_ID}&configKey={CONFIG_PRI
 1. Load `owner_key`, `hub_key`, `config_key` from local storage.
 2. Load the space's encryption state.
 3. Verify the local pool has at least `MAX_PUBLIC_EVALS = 1` eval; throw if exhausted.
-4. Generate an ephemeral X448 keypair (used for both eval and manifest encryption).
+4. Generate an ephemeral X448 keypair (used for both the eval and the manifest at THIS publish moment — but see "The eval's ephemeral key is NOT the manifest's" below: subsequent space updates rotate the manifest's key while leaving the eval's untouched, so joiners must use the eval's own key on the consumer side).
 5. Take the first eval (slice, don't mutate yet), build one encrypted eval payload using the existing config public key.
-6. Sign the eval payload with `owner_key`, POST to `apiClient.postSpaceInviteEvals`.
+6. Sign the eval payload with `owner_key`, POST to `apiClient.postSpaceInviteEvals`. The server stores the eval's ephemeral public key alongside the ciphertext so the joiner can decrypt with the right key later.
 7. Re-encrypt the local space manifest with the same config key + ephemeral key, sign with `owner_key`, POST to `apiClient.postSpaceManifest`.
 8. Set `space.inviteUrl = "{base}/invite/#spaceId={..}&configKey={..}"` using the EXISTING config private key. Save via `saveSpace`.
 9. Decrement the local pool (`session.evals.slice(MAX_PUBLIC_EVALS)`), persist via `saveEncryptionState`. This happens AFTER successful network calls so a failed upload doesn't leak a pool slot.
+
+**Joining via a Link (`InvitationService.joinInviteLink`):**
+
+Same function handles both one-time and public links; the branch is whether the URL carries `secret`, `template`, and `hubKey` directly (one-time) or just `spaceId` + `configKey` (public).
+
+1. Parse the URL via `parseInviteParams`.
+2. Fetch the space manifest from `apiClient.getSpaceManifest(spaceId)`. The response carries the encrypted manifest ciphertext PLUS the manifest's `ephemeral_public_key`. Decrypt with the URL's `configKey` and the manifest's ephemeral key to recover the `Space` record.
+3. **Public-link branch only** (no `secret`/`template`/`hubKey` in the URL):
+   - Derive `configPublicKey` from the URL's `configKey`.
+   - Fetch the eval from `apiClient.getSpaceInviteEval(configPublicKey)`. The response carries the encrypted eval ciphertext PLUS **the eval's own `ephemeral_public_key`** — which is a SEPARATE key from the manifest's.
+   - Decrypt the eval ciphertext with the URL's `configKey` and **the eval's own ephemeral public key**, falling back to the manifest's only on legacy servers that don't yet return the eval's. (Critical: see "The eval's ephemeral key is NOT the manifest's" below.)
+   - Recover `secret`, `template`, `hubKey` from the decrypted eval payload.
+4. From here both branches converge: generate the joiner's inbox keypair, derive hub/inbox addresses, build the joiner's encryption state from the template (advancing the ratchet by one), save via `saveEncryptionState`, register inbox + hub via `apiClient.postHubAdd`, send the join message into `spaceId/spaceId`.
+5. The joiner's local `Space` record is built from the decrypted manifest. Subsequent real-time updates arrive via WebSocket.
+
+> **The eval's ephemeral key is NOT the manifest's** — read this if you're touching the join path.
+>
+> When the owner generates a public link, the server stores TWO encrypted artifacts under the same `configPublicKey`: the **eval** (the joiner's onboarding payload) and the **manifest** (the space record). At generation time, both happen to share the same ephemeral X448 keypair (see "Public Links" step 4-7 above).
+>
+> But every subsequent `broadcastSpaceUpdate` — kicking a member, granting a role, editing settings, binding a channel — re-encrypts the **manifest** with a fresh ephemeral key while leaving the **eval** untouched. So after any post-publish space update, the two ephemeral keys diverge.
+>
+> The server-side response for `getSpaceInviteEval` carries the eval's own ephemeral key separately. The joiner MUST use that key (not the manifest's) when decrypting the eval. The fallback to the manifest's key only exists for legacy servers that don't yet return the eval's key. This was the root cause of the long-standing intermittent "expired/invalid public invite link" reports — fixed in PR #183 (task [`2026-06-08-fix-join-invite-link.md`](../../tasks/2026-06-08-fix-join-invite-link.md)).
+>
+> Mobile's equivalent in [`quorum-mobile/hooks/chat/useSpaceActions.ts:271-279`](../../../../quorum-mobile/hooks/chat/useSpaceActions.ts) documents the same thing.
+
+> **`getSpaceInviteEval` response shape — handle both string and object** — read this if you're touching `baseTypes.ts`.
+>
+> The server has shipped two response shapes for `/invite/eval` over its lifetime: a legacy JSON-encoded string of the sealed envelope (`"{\"ciphertext\":\"...\",...}"`), and a current plain JSON object `{ciphertext: "<json-string>", ephemeral_public_key: "<hex>"}`. The base API client at `baseTypes.ts:341-343` auto-parses the response via `response.json()` when `Content-Type: application/json`, so a JSON-string returns as a string and a JSON-object returns as an object.
+>
+> `getSpaceInviteEval` normalizes both into `{ciphertext: string, ephemeralPublicKey: string | null}` for the consumer. Assuming either shape unconditionally is a bug — the legacy variant fails `'ciphertext' in response`, the current variant breaks `JSON.parse(response)` with `"[object Object]" is not valid JSON`. Mirrored from mobile's [`quorum-mobile/services/api/quorumClient.ts:710-738`](../../../../quorum-mobile/services/api/quorumClient.ts).
 
 ### Database Operations
 
@@ -245,8 +275,9 @@ Both invite formats coexist on the same space, sharing one config keypair:
 1. **One-time invites consume finite secrets** — each generation permanently uses one secret from the local `evals` pool.
 2. **Public-link generation is cheap** — 1 server-side eval upload + 1 manifest re-publish, no member rekey, no new keypair.
 3. **Public-link URL is deterministic per space** — regenerating produces the same string; the server-side eval is what gets refreshed.
-4. **"Expiration" errors are validation failures** — typically eval pool exhaustion or stale links from before the 2026-06-07 consolidation.
-5. **No persistent user blocking** — kicked users can still receive invites and click public links.
+4. **The eval has its own ephemeral key, separate from the manifest's** — every space update rotates the manifest's ephemeral key while the eval's stays put. The joiner must decrypt the eval with the eval's own ephemeral key, not the manifest's (see "The eval's ephemeral key is NOT the manifest's" callout in Cryptographic Flow). Getting this wrong manifests as "expired/invalid public invite link" errors that mysteriously disappear after the owner republishes.
+5. **"Expiration" errors are cryptographic validation failures** — typically eval pool exhaustion or stale legacy links. Pre-PR-#183, the dominant cause was the joiner-side ephemeral-key bug above.
+6. **No persistent user blocking** — kicked users can still receive invites and click public links.
 
 ## Frequently Asked Questions
 
@@ -258,9 +289,11 @@ Both invite formats coexist on the same space, sharing one config keypair:
 
 These are cryptographic validation failures, not time-based expirations. Common causes:
 
-- **Eval pool exhaustion**: the space has used up its local pool.
+- **Eval pool exhaustion**: the space has used up its local pool. (Resolved before invite-time by the UI's `poolExhausted` callout; only joiners hit this directly when no eval has been published.)
 - **Stale public links from before 2026-06-07**: spaces that had a public link generated under the old desktop logic embedded a freshly-minted configKey in the URL. After the consolidation, regenerating the public link on the new build emits a URL built from the original space configKey instead — the old URL becomes a dead pointer. Owners can regenerate to get the new (current) URL.
 - **Missing or corrupted space configuration** in local storage.
+
+> **Historical: was the dominant cause for months.** Before PR #183 (2026-06-08), most "expired" errors weren't expirations at all — they were the joiner-side bug described in "The eval's ephemeral key is NOT the manifest's" above. Owners' "Republish to fix it" workaround happened to work because republishing re-uploaded the manifest with a fresh ephemeral key that briefly aligned with the (separately re-uploaded) eval's key. The desktop client now uses the eval's own ephemeral key directly, so the workaround is no longer needed and post-publish space updates don't break joins.
 
 ### Can kicked users rejoin via public invite links?
 
@@ -326,4 +359,4 @@ The invite system now dynamically detects the environment and uses appropriate d
 
 _Covers: SpaceSettingsModal/Invites.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_
 
-_Last updated: 2026-06-07_
+_Last updated: 2026-06-08_
