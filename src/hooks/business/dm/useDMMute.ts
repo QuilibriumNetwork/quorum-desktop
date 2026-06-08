@@ -66,8 +66,14 @@ export function useDMMute(): UseDMMuteReturn {
       if (!userAddress || !keyset) return;
 
       try {
-        // Get current config
-        const currentConfig = await messageDB.getUserConfig({ address: userAddress });
+        // Get current config — read from React Query cache to see in-flight
+        // optimistic updates from any prior toggle that hasn't yet persisted
+        // to IndexedDB. Falls back to messageDB if the cache is cold.
+        const currentConfig =
+          queryClient.getQueryData<typeof config>(
+            buildConfigKey({ userAddress })
+          ) ?? (await messageDB.getUserConfig({ address: userAddress }));
+
         const currentMuted = currentConfig?.mutedConversations || [];
 
         // Skip if already muted
@@ -93,7 +99,10 @@ export function useDMMute(): UseDMMuteReturn {
         });
 
         // Queue config save in background (offline support, crash recovery)
-        await actionQueueService.enqueue(
+        // Fire-and-forget: the optimistic cache update already gave the UI
+        // its instant feedback. Awaiting would block the next toggle's read
+        // and widen the race window.
+        void actionQueueService.enqueue(
           'save-user-config',
           { config: updatedConfig },
           `config:${userAddress}` // Dedup key - collapses rapid toggles
@@ -112,8 +121,12 @@ export function useDMMute(): UseDMMuteReturn {
       if (!userAddress || !keyset) return;
 
       try {
-        // Get current config
-        const currentConfig = await messageDB.getUserConfig({ address: userAddress });
+        // Cache-first read (same pattern as muteConversation above).
+        const currentConfig =
+          queryClient.getQueryData<typeof config>(
+            buildConfigKey({ userAddress })
+          ) ?? (await messageDB.getUserConfig({ address: userAddress }));
+
         const currentMuted = currentConfig?.mutedConversations || [];
 
         // Skip if not muted
@@ -139,7 +152,10 @@ export function useDMMute(): UseDMMuteReturn {
         });
 
         // Queue config save in background (offline support, crash recovery)
-        await actionQueueService.enqueue(
+        // Fire-and-forget: the optimistic cache update already gave the UI
+        // its instant feedback. Awaiting would block the next toggle's read
+        // and widen the race window.
+        void actionQueueService.enqueue(
           'save-user-config',
           { config: updatedConfig },
           `config:${userAddress}` // Dedup key - collapses rapid toggles
