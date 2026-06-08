@@ -192,11 +192,14 @@ export const useSpaceProfile = (
 
     setIsSaving(true);
     try {
-      // Validate inbox address exists
+      // Load the local space_members record only for its cached user_icon
+      // fallback. submitChannelMessage does not require this record — when
+      // it's missing, the icon falls back to the global pfpUrl. The previous
+      // `if (!member?.inbox_address)` guard rejected the save before this
+      // point, but `inbox_address` is never consumed by the update-profile
+      // submit path and the message format is explicitly designed to
+      // tolerate inbox key rotation (see MessageService.ts ~line 3033).
       const member = await messageDB.getSpaceMember(spaceId, currentPasskeyInfo.address);
-      if (!member?.inbox_address) {
-        throw new Error('Cannot update profile: missing inbox configuration');
-      }
 
       // Prepare user icon - handle deletion, new upload, or keep existing
       let userIcon: string;
@@ -205,7 +208,7 @@ export const useSpaceProfile = (
       } else if (fileData && currentFile) {
         userIcon = `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
       } else {
-        userIcon = member.user_icon || currentPasskeyInfo.pfpUrl || '';
+        userIcon = member?.user_icon || currentPasskeyInfo.pfpUrl || '';
       }
 
       // Get space's default channel

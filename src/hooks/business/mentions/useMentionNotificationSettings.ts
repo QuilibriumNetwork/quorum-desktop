@@ -10,10 +10,12 @@
  */
 
 import { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { SpaceNotificationSettings, SpaceNotificationTypeId } from '../../../types/notifications';
 import { getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
+import { buildConfigKey } from '../../queries/config';
 
 interface UseMentionNotificationSettingsProps {
   spaceId: string;
@@ -59,9 +61,10 @@ interface UseMentionNotificationSettingsReturn {
 export function useMentionNotificationSettings({
   spaceId,
 }: UseMentionNotificationSettingsProps): UseMentionNotificationSettingsReturn {
-  const { messageDB } = useMessageDB();
+  const { messageDB, actionQueueService, keyset } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const userAddress = currentPasskeyInfo?.address;
+  const queryClient = useQueryClient();
 
   const [settings, setSettings] = useState<SpaceNotificationSettings>(() =>
     getDefaultNotificationSettings(spaceId)
@@ -106,48 +109,69 @@ export function useMentionNotificationSettings({
     loadSettings();
   }, [spaceId, userAddress, messageDB]);
 
-  // Save settings to IndexedDB (called by Save button in modal)
+  // Save settings via action queue (encrypts, signs, syncs cross-device, persists locally).
+  // Mirrors useChannelMute.muteSpace so per-space settings stay on a single sync path.
   const saveSettings = useCallback(async () => {
-    if (!userAddress) return;
+    if (!userAddress || !keyset) return;
 
     try {
       setIsSaving(true);
 
-      // Get current config
-      const config = await messageDB.getUserConfig({ address: userAddress });
+      // Cache-first read so we see in-flight optimistic updates from other
+      // hooks writing the same config (e.g. muteSpace flipping isMuted).
+      const currentConfig =
+        queryClient.getQueryData<Awaited<ReturnType<typeof messageDB.getUserConfig>>>(
+          buildConfigKey({ userAddress })
+        ) ?? (await messageDB.getUserConfig({ address: userAddress }));
 
-      // Update notification settings for this space
+      // Preserve any other fields already in notificationSettings[spaceId]
+      // (most importantly isMuted, written by useChannelMute.muteSpace).
+      const currentSettings =
+        currentConfig?.notificationSettings?.[spaceId] ||
+        getDefaultNotificationSettings(spaceId);
+
       const updatedConfig = {
-        ...config,
-        address: userAddress, // Ensure address is set
-        spaceIds: config?.spaceIds || [], // Preserve spaceIds
+        ...currentConfig,
+        address: userAddress,
+        spaceIds: currentConfig?.spaceIds || [],
         notificationSettings: {
-          ...(config?.notificationSettings || {}),
+          ...(currentConfig?.notificationSettings || {}),
           [spaceId]: {
+            ...currentSettings,
             spaceId,
             enabledNotificationTypes: selectedTypes,
           },
         },
       };
 
-      // Save back to IndexedDB
-      await messageDB.saveUserConfig(updatedConfig);
+      // Optimistically update React Query cache for instant UI feedback
+      queryClient.setQueryData(
+        buildConfigKey({ userAddress }),
+        updatedConfig
+      );
 
-      // Update local state
+      // Update local state to reflect the saved values
       setSettings({
+        ...currentSettings,
         spaceId,
         enabledNotificationTypes: selectedTypes,
       });
 
-      // Note: Query invalidation should be done by the modal after calling saveSettings()
-      // This allows the modal to batch invalidations if needed
+      // Queue config save in background (encrypt + sign + post + IndexedDB).
+      // Fire-and-forget keeps the modal responsive; the optimistic cache update
+      // already gave the UI its instant feedback.
+      void actionQueueService.enqueue(
+        'save-user-config',
+        { config: updatedConfig },
+        `config:${userAddress}` // Dedup key - collapses with other config writes
+      );
     } catch (error) {
       console.error('[NotificationSettings] Error saving settings:', error);
       throw error; // Re-throw so modal can show error
     } finally {
       setIsSaving(false);
     }
-  }, [spaceId, userAddress, selectedTypes, messageDB]);
+  }, [spaceId, userAddress, keyset, selectedTypes, messageDB, queryClient, actionQueueService]);
 
   return {
     settings,
