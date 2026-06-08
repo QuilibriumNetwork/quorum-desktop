@@ -16,6 +16,7 @@ updated: 2026-05-28
 
 > **Cross-cutting work that touches this migration:**
 > - [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) — desktop drag-and-drop channel reordering feature. Touches the migration in two ways: (1) reorder hooks intentionally kept desktop-local (Option B decision recorded in task), (2) channel pinning removal is cross-repo (mobile + shared + desktop coordination).
+> - [`../port-from-mobile/`](../port-from-mobile/) — port-from-mobile effort. **Opportunistic shared promotions discovered during port work are tracked per-candidate** in [`../port-from-mobile/candidates.md`](../port-from-mobile/candidates.md). When a candidate's notes flag a shared-promotion opportunity that's been *deferred* (typically because only one consumer exists so far), that's a real piece of pending shared-migration work — check `candidates.md` periodically for "Shared-promotion opportunity" / "TODO(shared-promotion)" markers. Example: signing-payload helpers (`int64BE`, `concatBytes`, canonicalize-then-sign) flagged under `### #6` (public profile, 2026-06-08) — to be extracted once `### #5` (Reporting) is also picked up and we have two call sites locking in the API shape.
 
 > **Sibling workstreams in flight (2026-05-19):** [MessageDB refactor](../messagedb/README.md) and [test suite review](../2026-05-19-test-suite-review.md). The receipts PR here is coupled to MessageDB Tier 0 #3 and ReceiptService test cleanup — both flagged in the [receipts task prerequisite block](./.done/2026-05-19-receipts-shared-migration.md).
 

@@ -58,9 +58,9 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 | Feature | Mobile location | Status | Reference |
 |---|---|---|---|
-| Unified /spaces page — PR 1 (My Spaces + Discover) (#1) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts` (Discover only); My Spaces tab is desktop-original | 🟢 ready to start | [Task file](2026-06-01-port-discover-spaces.md) · [candidates.md `### #1`](candidates.md#1-discover-spaces--first-pick) |
-| Unified /spaces page — PR 2 (Join via link + Create space tabs + retire old modals) | Lifts from desktop's existing `AddSpaceModal` + `CreateSpaceModal` | ⏸️ deferred (depends on PR 1 shipping) | [Task file](2026-06-01-port-discover-spaces-pr2.md) |
-| Public profile UI (#6) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts` | 🟢 ready (queued behind #1) | [candidates.md `### #6`](candidates.md#6-public-profile-ui) |
+| Unified /spaces page — PR 1 (My Spaces + Discover) (#1) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts` (Discover only); My Spaces tab is desktop-original | ✅ shipped (PR #170, 2026-06-04) | [Task file](.done/2026-06-01-port-discover-spaces.md) · [candidates.md `### #1`](candidates.md#1-discover-spaces--shipped) |
+| Unified /spaces page — PR 2 (Join via link + Create space tabs + retire old modals) | Obsoleted by new UI shell (PR #171, 2026-06-03) | ❌ obsolete | [Task file](.done/2026-06-01-port-discover-spaces-pr2.md) |
+| Public profile + remove `/discover/people` (#6) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts` | 🚧 in progress (2026-06-08) | [Task file](2026-06-08-port-public-profile.md) · [candidates.md `### #6`](candidates.md#6-public-profile-ui--in-progress-2026-06-08) |
 | Reporting (#5) | `services/reporting/reportService.ts`, `components/ReportModal.tsx` | ⏸️ deprioritized | [candidates.md `### #5`](candidates.md#5-reporting--deprioritized) |
 | Message search (#2) | — | ❌ already on desktop | [candidates.md `### #2`](candidates.md#2-message-search--ruled-out) |
 | Reply tracking (#3) | — | ❌ desktop strictly better | [desktop-better-than-mobile.md #1](desktop-better-than-mobile.md#1-reply-notification-counts) |
@@ -69,7 +69,7 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 ## Next up
 
-**Task file drafted (2026-06-01) — ready to implement.** [2026-06-01-port-discover-spaces.md](2026-06-01-port-discover-spaces.md) contains PR 1 of a committed two-PR plan for a unified `/spaces` page. Scope grew significantly from the original "port Discover" framing after design discussion: PR 1 ships My Spaces tab + Discover tab in a new top-level route at `/spaces` with a `icon-layout-grid-add` navbar entry point. PR 2 (committed within 2-4 weeks of PR 1) adds Join via link + Create space tabs and retires `AddSpaceModal` + `CreateSpaceModal` + the navbar `+` button. Next session: rename session branch when Phase 1 (shared additive PR) starts.
+**🚧 In progress (2026-06-08, branch `session-2026-06-08`).** [2026-06-08-port-public-profile.md](2026-06-08-port-public-profile.md) — port what mobile actually ships of the public-profile capability (publish toggle, DM-header resolve-by-address, member fallback resolver) and remove the speculative `/discover/people` People tab + the now-degenerate `DiscoverSidebar`. The NavRail "Discover" entry becomes "Public spaces" pointing directly at `/discover/spaces`. Scope clarified during pickup: the server exposes no user-enumeration endpoint, so a profile directory isn't viable on either app — see [`candidates.md` #6 notes](candidates.md#6-public-profile-ui--in-progress-2026-06-08).
 
 ## Branch / session workflow
 
@@ -81,6 +81,8 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 ---
 
-*Last updated: 2026-06-01 — discover-spaces port scoped up to a unified `/spaces` page; PR 1 task file drafted with all 11 design decisions locked; PR 2 task file drafted alongside it (deferred status) to preserve the same-session design context.*
+*Last updated: 2026-06-08 — #6 Public profile UI picked up on `session-2026-06-08`. Scope clarified during pickup: backend has no user-enumeration endpoint, so neither app has a profile directory. The port = publish toggle + DM-header resolve-by-address + member fallback resolver. Bundled: removal of speculative `/discover/people` + simplified Discover chrome. Status table updated to reflect #1 shipped and PR 2 obsolete.*
+
+*Previously: 2026-06-01 — discover-spaces port scoped up to a unified `/spaces` page; PR 1 task file drafted with all 11 design decisions locked; PR 2 task file drafted alongside it (deferred status) to preserve the same-session design context.*
 
 *Previously: 2026-06-01 — reframed as a two-way feature diff after several "same capability under different names" discoveries. Added [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md). Capability-verified #6 and #1 missing on desktop; user picked #1 as first port. #2, #3, #4, #8 ruled out for various reasons (see status table).*
