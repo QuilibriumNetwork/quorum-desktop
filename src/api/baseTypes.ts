@@ -611,15 +611,50 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
     });
   }
 
-  getSpaceInviteEval(
+  /**
+   * Fetch the encrypted invite evaluation for a public-invite join.
+   *
+   * The server response shape changed over time:
+   *  - Legacy: a JSON-encoded string of the sealed envelope (e.g.
+   *    `"{\"ciphertext\":\"...\",...}"`).
+   *  - Current: an object `{ciphertext: "<json-string>", ephemeral_public_key: "<hex>"}`
+   *    where the eval has its own ephemeral pubkey, separate from the manifest's.
+   *
+   * We normalize both into `{ciphertext: string, ephemeralPublicKey: string | null}`
+   * so the consumer doesn't have to branch. Mirrors mobile's
+   * `quorum-mobile/services/api/quorumClient.ts#getInviteEval`. See the
+   * comment in `InvitationService.joinInviteLink` for why the eval's own
+   * ephemeral pubkey matters (the manifest's gets rotated on every space
+   * update; the eval's doesn't).
+   */
+  async getSpaceInviteEval(
     configPublicKey: string,
     { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.post<string>(getSpaceInviteEvalUrl(), {
+  ): Promise<
+    FetchResponse<{ ciphertext: string; ephemeralPublicKey: string | null }>
+  > {
+    const raw = await this.post<unknown>(getSpaceInviteEvalUrl(), {
       headers,
       timeout,
       body: configPublicKey,
     });
+
+    if (typeof raw.data === 'string') {
+      return { data: { ciphertext: raw.data, ephemeralPublicKey: null }, status: raw.status };
+    }
+    if (raw.data && typeof raw.data === 'object' && 'ciphertext' in raw.data) {
+      const obj = raw.data as { ciphertext: string; ephemeral_public_key?: string };
+      return {
+        data: {
+          ciphertext: obj.ciphertext,
+          ephemeralPublicKey: obj.ephemeral_public_key ?? null,
+        },
+        status: raw.status,
+      };
+    }
+    // Server returned something we don't recognize — surface as a parse error
+    // for the caller to handle the same way it would handle a malformed response.
+    throw new Error('Malformed invite eval response');
   }
 
   // LOCALIZATION API:

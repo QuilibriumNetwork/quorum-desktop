@@ -1,10 +1,21 @@
 ---
 type: bug
 title: "JoinSpaceModal \"Invalid JSON\" Error Due to Network Issues"
-status: open
+status: fix-in-flight-awaiting-verification
 created: 2026-01-09
-updated: 2025-01-08
+updated: 2026-06-08
+fix-attempted-by: task `2026-06-08-fix-join-invite-link.md`
 ---
+
+> **2026-06-08 — fix in flight, NOT yet verified.** Root cause appears to have been misattributed in the original report: investigation suggests this is NOT a network/JSON-parsing flakiness issue. The actual cause appears to be a server-side response-shape change for `/invite/eval` (object instead of legacy JSON-string) that desktop's `InvitationService.joinInviteLink` never accounted for. Every public-invite join attempt now fires `"[object Object]" is not valid JSON` at line 593 because `JSON.parse(inviteEval.data)` coerces an object to its string representation.
+>
+> The "regenerate the public link" workaround likely worked intermittently because regenerating re-uploads the manifest, which briefly aligns ephemeral keys (separate root cause — see [`2025-09-22-public-invite-link-intermittent-expiration.md`](2025-09-22-public-invite-link-intermittent-expiration.md)).
+>
+> Proposed fix: normalize the server response at the API client layer in [`src/api/baseTypes.ts#getSpaceInviteEval`](../../src/api/baseTypes.ts) (handles both legacy string and current object shapes — same defensive pattern as `quorum-mobile/services/api/quorumClient.ts:710-738`). The consumer in `InvitationService.joinInviteLink` now reads `inviteEval.data.ciphertext` cleanly. No retry logic needed — the original proposal in this report would have been treating a symptom.
+>
+> **Will only be moved to `.solved/` after end-to-end smoke testing confirms the fix.** Specifically:
+> - As a non-owner, click a public-invite link, click Join, confirm a space is added to the sidebar with no error.
+> - Repeat against a space the owner has updated (kicked a member, renamed a channel, etc.) since publishing the public invite — the previously-failing path covered by the sibling bug report.
 
 # JoinSpaceModal "Invalid JSON" Error Due to Network Issues
 

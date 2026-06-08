@@ -581,16 +581,27 @@ export class InvitationService {
           }
           throw e;
         }
+
+        // Prefer the eval's own ephemeral pubkey when the server provides it.
+        // The manifest's ephemeral key gets rotated on every space update
+        // (kick, role grant, settings edit, channel binding) but the eval's
+        // ephemeral key stays put — so decrypting with the manifest's key
+        // fails as soon as the owner does anything to the space after
+        // publishing the public invite. Mobile's join path does the same
+        // (quorum-mobile/hooks/chat/useSpaceActions.ts:271-279). The fallback
+        // to manifest.data.ephemeral_public_key is for legacy servers that
+        // don't yet return the eval's own ephemeral pubkey.
+        const evalEphemeralPublicKey =
+          inviteEval.data.ephemeralPublicKey ?? manifest.data.ephemeral_public_key;
+
         const invite = JSON.parse(
           Buffer.from(
             JSON.parse(
               ch.js_decrypt_inbox_message(
                 JSON.stringify({
                   inbox_private_key: hexToSpreadArray(info.configKey),
-                  ephemeral_public_key: hexToSpreadArray(
-                    manifest.data.ephemeral_public_key
-                  ),
-                  ciphertext: JSON.parse(inviteEval.data),
+                  ephemeral_public_key: hexToSpreadArray(evalEphemeralPublicKey),
+                  ciphertext: JSON.parse(inviteEval.data.ciphertext),
                 })
               )
             )

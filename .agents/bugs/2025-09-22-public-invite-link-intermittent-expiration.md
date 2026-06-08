@@ -1,16 +1,22 @@
 ---
 type: bug
 title: Public Invite Link Intermittent Expiration Bug
-status: likely-resolved-by-consolidation
+status: fix-in-flight-awaiting-verification
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-06-07T00:00:00.000Z
+updated: 2026-06-08
+fix-attempted-by: task `2026-06-08-fix-join-invite-link.md`
 ---
 
-> **2026-06-07 update:** the invite-system consolidation (see `tasks/2026-06-07-consolidate-invite-system-with-mobile.md`) likely makes this no longer reproducible. The original behavior — first 1-2 joiners succeed, later ones fail — is the exact failure mode of the old "one server eval per join" model: the eval pool drained on the server side after a few joins.
+> **2026-06-08 — fix in flight, NOT yet verified.** The 2026-06-07 `likely-resolved-by-consolidation` marker (below) was over-optimistic: the mobile-side server change to "serve the same eval to every joiner" was necessary but not sufficient. Re-analysis suggests the actual desktop-side bug is that `InvitationService.joinInviteLink` decrypts the invite eval using the manifest's `ephemeral_public_key`, but every `broadcastSpaceUpdate` (kick, role grant, settings edit, channel binding) re-encrypts the MANIFEST with a fresh ephemeral key while leaving the EVAL untouched. After any space update post-publish, the manifest's ephemeral key no longer matches the eval's — eval decryption fails — joiner sees "expired/invalid".
 >
-> Under the new model, the server serves the same single eval to every joiner instead of popping one per join (confirmed by the comment at `quorum-mobile/services/space/inviteService.ts` lines 352-356: *"server now serves the same eval to every joiner instead of popping one per join"*). Concurrent joins should no longer cause expiration.
+> Mobile's join code at [`quorum-mobile/hooks/chat/useSpaceActions.ts:271-279`](../../../quorum-mobile/hooks/chat/useSpaceActions.ts) handles this by using the eval's OWN ephemeral pubkey when the server provides it, falling back to the manifest's only on legacy servers. Desktop's proposed fix in [task `2026-06-08-fix-join-invite-link.md`](../tasks/2026-06-08-fix-join-invite-link.md) does the same.
 >
-> Not closed as `solved` because we haven't reproduced the original failure end-to-end after the consolidation — but the architectural cause is gone. To verify: in a fresh space, generate a public link, then have 5+ users join in quick succession. If all succeed, mark solved and move to `.solved/`.
+> The original "first 1-2 joiners succeed, later ones fail" pattern is consistent with this model: the owner's actions (kicking spammers, granting moderator roles, renaming a channel) interleave with concurrent join attempts. The "regenerate the public link" workaround likely worked because regenerating re-uploads the manifest with a fresh ephemeral key, briefly aligning with the new eval.
+>
+> **Will only be moved to `.solved/` after end-to-end smoke testing confirms the fix.** Specifically:
+> - Owner publishes a public invite, then performs a space update (kick/role/channel rename/settings edit). A non-owner clicks the same link and joins successfully — the previously-failing path.
+
+> **Original 2026-06-07 marker (kept for history)**: the invite-system consolidation (see `tasks/2026-06-07-consolidate-invite-system-with-mobile.md`) likely makes this no longer reproducible. [...] To verify: in a fresh space, generate a public link, then have 5+ users join in quick succession. If all succeed, mark solved and move to `.solved/`. **— That verification was never run, and turned out to be insufficient anyway because the failure mode wasn't about concurrency, it was about post-publish space updates rotating the manifest ephemeral key.**
 
 # Public Invite Link Intermittent Expiration Bug
 
