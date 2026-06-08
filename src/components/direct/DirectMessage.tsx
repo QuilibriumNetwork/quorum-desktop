@@ -47,6 +47,7 @@ import {
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
+import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { MobileDrawer } from '../ui';
 import { DMUserProfileSidebar } from './DMUserProfileSidebar';
 import { useMobile } from '../context/MobileProvider';
@@ -202,8 +203,17 @@ const DirectMessage: React.FC<{}> = () => {
     canDeleteMessages,
   } = useDirectMessagesList();
 
-  // Build members with fallback chain: conversation (IndexedDB) > registration (network) > defaults
-  // This allows the component to render offline using cached conversation data
+  // Fetch the recipient's public profile as a back-fill. The local
+  // Conversation row often has an empty displayName/icon when no message
+  // has been received yet (or for a fresh stranger DM). If the recipient
+  // has opted in to a public profile, we use it to fill the gaps.
+  // 1h cache; 404 = no public profile, treated as null.
+  const { data: recipientPublicProfile } = useUserPublicProfile(address);
+
+  // Build members with fallback chain: conversation (IndexedDB) > registration
+  // (network) > public profile (server) > defaults. Local fields always win
+  // when present — the public profile only fills explicit empties.
+  // Offline-friendly: conversation data renders without a network round-trip.
   const members = useMemo(() => {
     const m = {} as {
       [address: string]: {
@@ -212,25 +222,38 @@ const DirectMessage: React.FC<{}> = () => {
         address: string;
       };
     };
+    const pubName = recipientPublicProfile?.display_name || undefined;
+    const pubIcon = recipientPublicProfile?.profile_image || undefined;
     if (conversation?.conversation) {
-      // Priority 1: Use conversation data from IndexedDB (available offline)
+      // Priority 1: Use conversation data from IndexedDB (available offline).
+      // Fall through to public profile only when local fields are empty/unknown.
+      const localName = conversation.conversation.displayName;
+      const localIcon = conversation.conversation.icon;
       m[address!] = {
-        displayName: conversation.conversation!.displayName ?? t`Unknown User`,
-        userIcon: conversation.conversation!.icon ?? DefaultImages.UNKNOWN_USER,
+        displayName:
+          localName && localName !== t`Unknown User`
+            ? localName
+            : pubName ?? t`Unknown User`,
+        userIcon:
+          localIcon && localIcon !== DefaultImages.UNKNOWN_USER
+            ? localIcon
+            : pubIcon ?? DefaultImages.UNKNOWN_USER,
         address: address!,
       };
     } else if (registration?.registration) {
-      // Priority 2: Use registration data from network API
+      // Priority 2: Use registration data from network API.
+      // Registration has no display name; public profile is the only naming
+      // source available at this priority.
       m[registration.registration.user_address] = {
-        displayName: t`Unknown User`,
-        userIcon: DefaultImages.UNKNOWN_USER,
+        displayName: pubName ?? t`Unknown User`,
+        userIcon: pubIcon ?? DefaultImages.UNKNOWN_USER,
         address: registration.registration.user_address,
       };
     } else {
-      // Priority 3: Offline fallback - use address as identifier
+      // Priority 3: Offline fallback - use address as identifier.
       m[address!] = {
-        displayName: t`Unknown User`,
-        userIcon: DefaultImages.UNKNOWN_USER,
+        displayName: pubName ?? t`Unknown User`,
+        userIcon: pubIcon ?? DefaultImages.UNKNOWN_USER,
         address: address!,
       };
     }
@@ -241,7 +264,7 @@ const DirectMessage: React.FC<{}> = () => {
       displayName: user.currentPasskeyInfo!.displayName,
     };
     return m;
-  }, [registration, conversation, address, user.currentPasskeyInfo]);
+  }, [registration, conversation, address, user.currentPasskeyInfo, recipientPublicProfile]);
 
   // Clean up stale encryption states when registration data changes
   // This fixes the DM inbox mismatch bug where Action Queue encrypts to old inboxes
@@ -291,12 +314,20 @@ const DirectMessage: React.FC<{}> = () => {
     cleanupStaleEncryptionStates();
   }, [self?.registration, registration?.registration, address, messageDB]);
 
-  // Helper for compatibility
-  const otherUser = members[address!] || {
-    displayName: t`Unknown User`,
-    userIcon: DefaultImages.UNKNOWN_USER,
-    address: address!,
-  };
+  // Helper for compatibility. `bio` is sourced from the public profile —
+  // the local Conversation row doesn't carry it, and DMUserProfileSidebar
+  // is the only place that reads it today.
+  const otherUser = useMemo(() => {
+    const base = members[address!] || {
+      displayName: t`Unknown User`,
+      userIcon: DefaultImages.UNKNOWN_USER,
+      address: address!,
+    };
+    return {
+      ...base,
+      bio: recipientPublicProfile?.bio || undefined,
+    };
+  }, [members, address, recipientPublicProfile]);
 
   // Icon size for header icons
   const headerIconSize = 'lg';

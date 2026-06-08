@@ -1,4 +1,5 @@
 export * from './useUserSettings';
+export * from './useUserPublicProfile';
 export * from './useProfileImage';
 export * from './useLocaleSettings';
 export * from './useNotificationSettings';
