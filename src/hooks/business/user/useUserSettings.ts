@@ -9,6 +9,9 @@ import { type BroadcastSpaceTag, logger } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
+import { PublicProfileService } from '../../../services/PublicProfileService';
+import { QuorumApiClient } from '../../../api/baseTypes';
+import { logger } from '@quilibrium/quorum-shared';
 import { getDeviceName } from '../../../utils/deviceInfo';
 import { showError } from '../../../utils/toast';
 
@@ -37,6 +40,8 @@ export interface UseUserSettingsReturn {
   setTypingIndicatorsSpaces: (value: boolean) => void;
   generateYouTubePreviews: boolean;
   setGenerateYouTubePreviews: (value: boolean) => void;
+  isProfilePublic: boolean;
+  setIsProfilePublic: (value: boolean) => void;
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
@@ -72,6 +77,7 @@ export const useUserSettings = (
   const [typingIndicatorsDM, setTypingIndicatorsDM] = useState(false);
   const [typingIndicatorsSpaces, setTypingIndicatorsSpaces] = useState(false);
   const [generateYouTubePreviews, setGenerateYouTubePreviews] = useState(false);
+  const [isProfilePublic, setIsProfilePublic] = useState(false);
   const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
@@ -115,6 +121,7 @@ export const useUserSettings = (
         setTypingIndicatorsSpaces(config?.typingIndicatorsSpaces ?? false);
         setGenerateYouTubePreviews(config?.generateYouTubePreviews ?? false);
         setBio(config?.bio ?? '');
+        setIsProfilePublic(config?.isProfilePublic ?? false);
         setSpaceTagId(config?.spaceTagId ?? undefined);
         const loadedNames = config?.deviceNames ?? {};
         setDeviceNames(loadedNames);
@@ -321,6 +328,7 @@ export const useUserSettings = (
       typingIndicatorsDM,
       typingIndicatorsSpaces,
       generateYouTubePreviews,
+      isProfilePublic,
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
@@ -370,6 +378,44 @@ export const useUserSettings = (
     // of the affected kind.
     setTypingConfig(typingIndicatorsDM, typingIndicatorsSpaces);
 
+    // Public profile publish/unpublish: best-effort. The local
+    // isProfilePublic setting is the source of truth — server publish
+    // success/failure does not gate it (mirrors mobile's pattern).
+    //
+    // Cases:
+    //   isProfilePublic=true  → publish/republish with the new fields.
+    //   isProfilePublic=false AND was previously true → unpublish (delete).
+    //   isProfilePublic=false AND was previously false → no-op.
+    const wasProfilePublic = freshConfig?.isProfilePublic === true;
+    if (keyset?.userKeyset) {
+      const publicProfileService = new PublicProfileService({
+        apiClient: new QuorumApiClient(),
+      });
+      if (isProfilePublic) {
+        try {
+          await publicProfileService.publish(
+            {
+              address: currentPasskeyInfo.address,
+              displayName: displayName,
+              profileImage: profileImageUrl,
+              bio: bio.trim(),
+            },
+            { userKeyset: keyset.userKeyset }
+          );
+        } catch (error) {
+          logger.warn('[useUserSettings] publishPublicProfile failed', error);
+        }
+      } else if (wasProfilePublic) {
+        try {
+          await publicProfileService.unpublish(currentPasskeyInfo.address, {
+            userKeyset: keyset.userKeyset,
+          });
+        } catch (error) {
+          logger.warn('[useUserSettings] unpublishPublicProfile failed', error);
+        }
+      }
+    }
+
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {
       // Reconstruct the registration with the updated device list
@@ -415,6 +461,8 @@ export const useUserSettings = (
     setTypingIndicatorsSpaces,
     generateYouTubePreviews,
     setGenerateYouTubePreviews,
+    isProfilePublic,
+    setIsProfilePublic,
     spaceTagId,
     setSpaceTagId,
     saveChanges,
