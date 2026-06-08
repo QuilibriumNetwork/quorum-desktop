@@ -11,11 +11,13 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { t } from '@lingui/core/macro';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { SpaceNotificationSettings, SpaceNotificationTypeId } from '../../../types/notifications';
-import { getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
+import { getDefaultNotificationSettings, logger } from '@quilibrium/quorum-shared';
 import { buildConfigKey } from '../../queries/config';
+import { showError } from '../../../utils/toast';
 
 interface UseMentionNotificationSettingsProps {
   spaceId: string;
@@ -144,6 +146,9 @@ export function useMentionNotificationSettings({
         },
       };
 
+      // Capture pre-update snapshots for rollback before mutating either.
+      const previousSettings = settings;
+
       // Optimistically update React Query cache for instant UI feedback
       queryClient.setQueryData(
         buildConfigKey({ userAddress }),
@@ -159,12 +164,20 @@ export function useMentionNotificationSettings({
 
       // Queue config save in background (encrypt + sign + post + IndexedDB).
       // Fire-and-forget keeps the modal responsive; the optimistic cache update
-      // already gave the UI its instant feedback.
-      void actionQueueService.enqueue(
-        'save-user-config',
-        { config: updatedConfig },
-        `config:${userAddress}` // Dedup key - collapses with other config writes
-      );
+      // already gave the UI its instant feedback. On failure, restore both the
+      // cache and the local hook state so the UI matches what actually persisted.
+      actionQueueService
+        .enqueue(
+          'save-user-config',
+          { config: updatedConfig },
+          `config:${userAddress}` // Dedup key - collapses with other config writes
+        )
+        .catch((err) => {
+          logger.error('[NotificationSettings] enqueue failed for saveSettings, rolling back', err);
+          queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
+          setSettings(previousSettings);
+          showError(t`Failed to save notification setting`);
+        });
     } catch (error) {
       console.error('[NotificationSettings] Error saving settings:', error);
       throw error; // Re-throw so modal can show error
