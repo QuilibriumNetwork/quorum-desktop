@@ -42,6 +42,7 @@ import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
+import { useMembersWithPublicProfileFallback } from '../../hooks/business/user/useMembersWithPublicProfileFallback';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -267,9 +268,49 @@ const Channel: React.FC<ChannelProps> = ({
     hasNextPage,
     canDeleteMessages,
     canPinMessages,
-    mapSenderToUser,
+    mapSenderToUser: mapSenderToUserBase,
     isSpaceOwner,
   } = useChannelMessages({ spaceId, channelId, roles, members, channel, threadsEnabled });
+
+  // Compute the set of sender addresses currently rendered and back-fill
+  // missing displayName/userIcon from each sender's public profile (when
+  // they've opted in). Only the visible senders are looked up — the
+  // member-list sidebar still uses the original `members` map and does
+  // not trigger a fetch storm for the whole space roster.
+  const visibleSenderAddresses = useMemo(() => {
+    const set = new Set<string>();
+    for (const msg of messageList) {
+      const sid = msg.content?.senderId;
+      if (sid) set.add(sid);
+    }
+    return Array.from(set);
+  }, [messageList]);
+
+  const effectiveMembers = useMembersWithPublicProfileFallback(
+    members,
+    visibleSenderAddresses
+  );
+
+  // Override the sender lookup used by message rendering with the
+  // back-filled member map. mapSenderToUserBase is kept private — never
+  // passed downstream — so all message-path consumers see the enriched
+  // data, while role/sidebar paths continue to use the original `members`.
+  const mapSenderToUser = useCallback(
+    (senderId: string) => {
+      const member = effectiveMembers[senderId];
+      if (member) {
+        return {
+          ...member,
+          displayName: member.displayName || senderId.slice(-6),
+        };
+      }
+      // Fall back to whatever the original lookup would return — keeps
+      // the "show address suffix" behavior for senders neither in the
+      // member roster nor in a public profile.
+      return mapSenderToUserBase(senderId);
+    },
+    [effectiveMembers, mapSenderToUserBase]
+  );
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
@@ -1190,7 +1231,10 @@ const Channel: React.FC<ChannelProps> = ({
     threadCtx.setChannelProps({
       spaceId,
       channelId,
-      members,
+      // Threads render messages too — pass the back-filled member map so
+      // sender displayName/avatar resolution is consistent with the
+      // channel view. Role/sidebar paths above still use raw `members`.
+      members: effectiveMembers,
       roles,
       stickers,
       customEmoji: space?.emojis,
@@ -1214,7 +1258,7 @@ const Channel: React.FC<ChannelProps> = ({
       currentUserAddress: user.currentPasskeyInfo?.address,
     });
   }, [
-    spaceId, channelId, members, roles, stickers, space?.emojis,
+    spaceId, channelId, effectiveMembers, members, roles, stickers, space?.emojis,
     mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
     channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
     space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
