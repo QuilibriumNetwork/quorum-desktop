@@ -6,6 +6,7 @@ const STORAGE_KEY_RAIL = 'shell.railCollapsed';
 const STORAGE_KEY_SIDEBAR = 'shell.sidebarCollapsed';
 const STORAGE_KEY_SIDEBAR_WIDTH = 'shell.sidebarWidth';
 const STORAGE_KEY_LAST_FREE_WIDTH = 'shell.lastFreeWidth';
+const STORAGE_KEY_CHANNELS_FLOORED = 'shell.channelsFloored';
 
 const DEFAULT_RAIL_COLLAPSED = true;
 const DEFAULT_SIDEBAR_COLLAPSED = false;
@@ -16,7 +17,12 @@ export const SIDEBAR_COLLAPSED_WIDTH = 72;
 export const SIDEBAR_MIN_WIDTH = 240;
 export const SIDEBAR_MAX_WIDTH = 480;
 export const SIDEBAR_SNAP_THRESHOLD = 200;
-const DEFAULT_SIDEBAR_WIDTH = 300;
+const DEFAULT_SIDEBAR_WIDTH = 280;
+
+// Channels mode has a narrower minimum than DM/Spaces — at this width channel
+// names truncate heavily but the list is still navigable. Channels cannot
+// fully collapse (would defeat the purpose of being in a channel).
+export const CHANNELS_SIDEBAR_FLOOR = 144;
 
 // Viewport breakpoints — mirror $screen-md / $screen-lg in _variables.scss.
 const PHONE_MAX = 767;
@@ -26,16 +32,32 @@ export type ShellViewport = 'phone' | 'tablet' | 'desktop';
 
 export interface ShellState {
   railCollapsed: boolean;
-  /** Derived: true when sidebarWidth <= SIDEBAR_COLLAPSED_WIDTH. */
+  /** Persisted: true when DM/Spaces sidebar is in its collapsed (72px) state. */
   sidebarCollapsed: boolean;
-  /** Effective sidebar width in px. SIDEBAR_COLLAPSED_WIDTH (72) means collapsed strip. */
+  /** Persisted "free width" — what the sidebar shows when not minimized.
+   *  Range: [SIDEBAR_MIN_WIDTH, SIDEBAR_MAX_WIDTH]. Same value used by all modes. */
   sidebarWidth: number;
+  /** Persisted: true when the user has dragged the channels sidebar down to the
+   *  floor (CHANNELS_SIDEBAR_FLOOR). Setting true also collapses DM/Spaces. */
+  channelsFloored: boolean;
+  /** Live drag width (null when not dragging). Sidebar consumers should derive
+   *  their layout from `sidebarLiveCollapsed` instead of `sidebarCollapsed` so
+   *  they re-render the expanded layout as the user drags past the threshold. */
+  dragWidth: number | null;
+  /** Live "should I render the collapsed (icons-only) layout?" — during drag,
+   *  this follows the on-screen width; at rest, it equals `sidebarCollapsed`. */
+  sidebarLiveCollapsed: boolean;
   setRailCollapsed: (v: boolean) => void;
   toggleRailCollapsed: () => void;
   setSidebarCollapsed: (v: boolean) => void;
   toggleSidebarCollapsed: () => void;
-  /** Set sidebar width directly (used by the drag handle). Caller clamps; this persists. */
+  /** Set the shared "free width". Caller clamps. Persists across all modes. */
   setSidebarWidth: (px: number) => void;
+  /** Set the channels-floored flag. true also collapses DM/Spaces; false does
+   *  NOT auto-expand DM/Spaces (asymmetric — see docs/responsive-layout.md). */
+  setChannelsFloored: (v: boolean) => void;
+  /** Set the live drag width. AppShell calls this from its drag handlers. */
+  setDragWidth: (px: number | null) => void;
 
   /** Derived viewport bucket — recomputed on resize. */
   viewport: ShellViewport;
@@ -88,15 +110,34 @@ const writeNumber = (key: string, value: number) => {
   }
 };
 
-// Resolve initial sidebar width: prefer the new shell.sidebarWidth key; fall
-// back to migrating the legacy shell.sidebarCollapsed boolean; default to
-// DEFAULT_SIDEBAR_WIDTH. Legacy key is left in place for one release so a
-// rollback still finds a valid value.
-const resolveInitialSidebarWidth = (): number => {
+// Resolve initial state from storage. The model used to write SIDEBAR_COLLAPSED_WIDTH (72)
+// into shell.sidebarWidth when collapsed; the new model keeps shell.sidebarWidth as the
+// "free width" (>= SIDEBAR_MIN_WIDTH) and tracks collapse separately via STORAGE_KEY_SIDEBAR.
+// So if we read a value <= SIDEBAR_COLLAPSED_WIDTH (or below the min), we treat the user
+// as collapsed, lift the width to lastFreeWidth (or default), and mark them collapsed.
+interface InitialState {
+  width: number;
+  othersCollapsed: boolean;
+}
+const resolveInitialState = (): InitialState => {
   const direct = readNumber(STORAGE_KEY_SIDEBAR_WIDTH);
-  if (direct !== null) return direct;
+  if (direct !== null) {
+    if (direct <= SIDEBAR_COLLAPSED_WIDTH) {
+      // Old format: width was being set to 72 to represent collapsed. Restore
+      // the user's prior free width from STORAGE_KEY_LAST_FREE_WIDTH.
+      const lastFree = readNumber(STORAGE_KEY_LAST_FREE_WIDTH);
+      const restored = lastFree && lastFree >= SIDEBAR_MIN_WIDTH ? lastFree : DEFAULT_SIDEBAR_WIDTH;
+      return { width: restored, othersCollapsed: true };
+    }
+    if (direct < SIDEBAR_MIN_WIDTH) {
+      // Stale value between the snap threshold and the min — bring it to the floor.
+      return { width: SIDEBAR_MIN_WIDTH, othersCollapsed: false };
+    }
+    return { width: direct, othersCollapsed: false };
+  }
+  // No persisted width — migrate from legacy boolean.
   const legacyCollapsed = readBool(STORAGE_KEY_SIDEBAR, DEFAULT_SIDEBAR_COLLAPSED);
-  return legacyCollapsed ? SIDEBAR_COLLAPSED_WIDTH : DEFAULT_SIDEBAR_WIDTH;
+  return { width: DEFAULT_SIDEBAR_WIDTH, othersCollapsed: legacyCollapsed };
 };
 
 const computeViewport = (width: number): ShellViewport => {
@@ -123,22 +164,27 @@ const useViewport = (): ShellViewport => {
 const useShellStateInternal = (): ShellState => {
   // Initialize synchronously from localStorage so we don't paint the default
   // width and then jump to the saved one on first render.
+  const initial = React.useMemo(() => resolveInitialState(), []);
   const [railCollapsedPref, setRailCollapsedState] = useState<boolean>(() =>
     readBool(STORAGE_KEY_RAIL, DEFAULT_RAIL_COLLAPSED)
   );
-  const [sidebarWidthPref, setSidebarWidthState] = useState<number>(() => resolveInitialSidebarWidth());
+  const [sidebarWidthPref, setSidebarWidthState] = useState<number>(initial.width);
+  const [othersCollapsedPref, setOthersCollapsedState] = useState<boolean>(initial.othersCollapsed);
+  const [channelsFlooredPref, setChannelsFlooredState] = useState<boolean>(
+    () => readBool(STORAGE_KEY_CHANNELS_FLOORED, false)
+  );
+  // Live drag width (not persisted). null = not dragging. AppShell sets this.
+  const [dragWidth, setDragWidthState] = useState<number | null>(null);
   const [drawerOpen, setDrawerOpen] = useState<boolean>(false);
   // Element focused before the drawer opened — restored on close so keyboard
   // and AT users return to the hamburger that triggered the drawer.
   const drawerTriggerRef = React.useRef<HTMLElement | null>(null);
   const viewport = useViewport();
 
-  // Persist the migrated value so the legacy boolean can be retired safely.
+  // Persist the resolved initial state so subsequent loads find a clean shape.
   useEffect(() => {
-    if (readNumber(STORAGE_KEY_SIDEBAR_WIDTH) === null) {
-      writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, sidebarWidthPref);
-    }
-    // Run once on mount.
+    writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, initial.width);
+    writeBool(STORAGE_KEY_SIDEBAR, initial.othersCollapsed);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -160,40 +206,45 @@ const useShellStateInternal = (): ShellState => {
     });
   }, []);
 
+  // setSidebarWidth: update the shared "free width." This is what every mode
+  // uses when not minimized. Caller is responsible for clamping to a sensible
+  // range; this just persists.
   const setSidebarWidth = useCallback((px: number) => {
     setSidebarWidthState(px);
     writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, px);
-    // Mirror to the legacy boolean so a rollback still picks the right state.
-    writeBool(STORAGE_KEY_SIDEBAR, px <= SIDEBAR_COLLAPSED_WIDTH);
+    writeNumber(STORAGE_KEY_LAST_FREE_WIDTH, px);
+  }, []);
+
+  const setOthersCollapsed = useCallback((v: boolean) => {
+    setOthersCollapsedState(v);
+    writeBool(STORAGE_KEY_SIDEBAR, v);
+  }, []);
+
+  // setChannelsFloored: toggle the channels-mode minimize flag. Setting it true
+  // also collapses DM/Spaces (cross-mode "minimize" intent). Setting it false
+  // does NOT auto-expand DM/Spaces — each "expand" action is local to its mode.
+  // See docs/features/responsive-layout.md for the full rationale.
+  const setDragWidth = useCallback((px: number | null) => {
+    setDragWidthState(px);
+  }, []);
+
+  const setChannelsFloored = useCallback((v: boolean) => {
+    setChannelsFlooredState(v);
+    writeBool(STORAGE_KEY_CHANNELS_FLOORED, v);
+    if (v) {
+      setOthersCollapsedState(true);
+      writeBool(STORAGE_KEY_SIDEBAR, true);
+    }
   }, []);
 
   const setSidebarCollapsed = useCallback((v: boolean) => {
-    if (v) {
-      // Going collapsed: stash the current width as lastFreeWidth so the next
-      // expand restores it, then snap to the collapsed strip.
-      const current = readNumber(STORAGE_KEY_SIDEBAR_WIDTH) ?? DEFAULT_SIDEBAR_WIDTH;
-      if (current > SIDEBAR_COLLAPSED_WIDTH) {
-        writeNumber(STORAGE_KEY_LAST_FREE_WIDTH, current);
-      }
-      setSidebarWidth(SIDEBAR_COLLAPSED_WIDTH);
-    } else {
-      const restored = readNumber(STORAGE_KEY_LAST_FREE_WIDTH) ?? DEFAULT_SIDEBAR_WIDTH;
-      setSidebarWidth(restored);
-    }
-  }, [setSidebarWidth]);
+    setOthersCollapsed(v);
+  }, [setOthersCollapsed]);
 
   const toggleSidebarCollapsed = useCallback(() => {
-    setSidebarWidthState((prev) => {
-      const isCollapsed = prev <= SIDEBAR_COLLAPSED_WIDTH;
-      let next: number;
-      if (isCollapsed) {
-        next = readNumber(STORAGE_KEY_LAST_FREE_WIDTH) ?? DEFAULT_SIDEBAR_WIDTH;
-      } else {
-        writeNumber(STORAGE_KEY_LAST_FREE_WIDTH, prev);
-        next = SIDEBAR_COLLAPSED_WIDTH;
-      }
-      writeNumber(STORAGE_KEY_SIDEBAR_WIDTH, next);
-      writeBool(STORAGE_KEY_SIDEBAR, next <= SIDEBAR_COLLAPSED_WIDTH);
+    setOthersCollapsedState((prev) => {
+      const next = !prev;
+      writeBool(STORAGE_KEY_SIDEBAR, next);
       return next;
     });
   }, []);
@@ -216,13 +267,21 @@ const useShellStateInternal = (): ShellState => {
     }
   }, []);
 
-  // Effective collapse state: tablet forces sidebar to collapsed visual state
-  // regardless of the user's persisted desktop preference. Desktop honours the
-  // user pref. Phone collapses both into the drawer (handled by AppShell using
-  // the `viewport === 'phone'` flag, not these booleans).
+  // Effective state: tablet forces collapsed visual state regardless of
+  // persisted desktop preference. Desktop honours the user prefs. Phone
+  // collapses both into the drawer (handled by AppShell using `viewport`).
   const railCollapsed = viewport === 'desktop' ? railCollapsedPref : true;
-  const sidebarWidth = viewport === 'desktop' ? sidebarWidthPref : SIDEBAR_COLLAPSED_WIDTH;
-  const sidebarCollapsed = sidebarWidth <= SIDEBAR_COLLAPSED_WIDTH;
+  const sidebarCollapsed = viewport === 'desktop' ? othersCollapsedPref : true;
+  const sidebarWidth = sidebarWidthPref;
+  const channelsFloored = viewport === 'desktop' ? channelsFlooredPref : false;
+  // Live collapsed flag for sidebar content. While dragging, content switches
+  // to the expanded layout as soon as the sidebar is wider than the collapsed
+  // strip — the user expects to see the expanded list the moment they start
+  // pulling. At rest, this equals sidebarCollapsed. (On release, if the user
+  // landed in the snap zone, sidebarCollapsed flips back to true and the
+  // content returns to the collapsed strip.)
+  const sidebarLiveCollapsed =
+    dragWidth !== null ? dragWidth <= SIDEBAR_COLLAPSED_WIDTH : sidebarCollapsed;
 
   // Memoize so context consumers (NavRail, Sidebar, etc.) don't re-render on
   // every parent render. Setters/togglers are stable via useCallback([]); only
@@ -232,11 +291,16 @@ const useShellStateInternal = (): ShellState => {
       railCollapsed,
       sidebarCollapsed,
       sidebarWidth,
+      channelsFloored,
+      dragWidth,
+      sidebarLiveCollapsed,
       setRailCollapsed,
       toggleRailCollapsed,
       setSidebarCollapsed,
       toggleSidebarCollapsed,
       setSidebarWidth,
+      setChannelsFloored,
+      setDragWidth,
       viewport,
       drawerOpen,
       openDrawer,
@@ -246,6 +310,9 @@ const useShellStateInternal = (): ShellState => {
       railCollapsed,
       sidebarCollapsed,
       sidebarWidth,
+      channelsFloored,
+      dragWidth,
+      sidebarLiveCollapsed,
       viewport,
       drawerOpen,
       setRailCollapsed,
@@ -253,6 +320,8 @@ const useShellStateInternal = (): ShellState => {
       setSidebarCollapsed,
       toggleSidebarCollapsed,
       setSidebarWidth,
+      setChannelsFloored,
+      setDragWidth,
       openDrawer,
       closeDrawer,
     ]

@@ -8,6 +8,7 @@ import {
   SIDEBAR_MIN_WIDTH,
   SIDEBAR_MAX_WIDTH,
   SIDEBAR_SNAP_THRESHOLD,
+  CHANNELS_SIDEBAR_FLOOR,
 } from './useShellState';
 import { useSidebarMode } from './useSidebarMode';
 import { NavRail } from './NavRail';
@@ -16,13 +17,6 @@ import './AppShell.scss';
 
 const HOVER_ARM_DELAY_MS = 500;
 const KEYBOARD_RESIZE_STEP = 16;
-
-// Channels mode pins the sidebar at a fixed width regardless of the user's
-// persisted collapse/resize preference for the other modes. Channel names
-// need a predictable amount of horizontal space to stay readable, and the
-// sidebar isn't user-resizable here (drag handle is suppressed below).
-// Mirrors $sidebar-width in _variables.scss.
-const CHANNELS_SIDEBAR_WIDTH = 300;
 
 const FOCUSABLE_SELECTOR = [
   'a[href]',
@@ -137,7 +131,12 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
     railCollapsed,
     sidebarCollapsed,
     sidebarWidth,
+    channelsFloored,
+    dragWidth,
     setSidebarWidth,
+    setChannelsFloored,
+    setSidebarCollapsed,
+    setDragWidth,
     toggleRailCollapsed,
     viewport,
     drawerOpen,
@@ -149,94 +148,97 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
   const location = useLocation();
   const drawerRef = React.useRef<HTMLDivElement>(null);
   const dragHandleRef = React.useRef<HTMLDivElement>(null);
-  const [isDragging, setIsDragging] = React.useState(false);
+  const isDragging = dragWidth !== null;
   useDrawerFocusTrap(drawerRef, isPhone && drawerOpen, closeDrawer);
   useHoverArm(dragHandleRef, isDragging);
 
-  // Channels mode never collapses — channel names need a readable floor width.
-  // The collapse preference still persists in the background for DM/Spaces modes.
-  const effectiveCollapsed = sidebarMode === 'channels' ? false : sidebarCollapsed;
-  // Effective floor for the sidebar in the current mode. Channels mode raises
-  // the floor to CHANNELS_SIDEBAR_WIDTH; everything else uses SIDEBAR_MIN_WIDTH.
-  // Used for drag clamping AND for the rendered width (via effectiveSidebarWidth
-  // below) so a previously-shrunk sidebar grows up to the floor on entry.
-  const minSidebarWidth =
-    sidebarMode === 'channels' ? CHANNELS_SIDEBAR_WIDTH : SIDEBAR_MIN_WIDTH;
+  const isChannels = sidebarMode === 'channels';
   const railToggleHandler = viewport === 'desktop' ? toggleRailCollapsed : null;
-  // Drag handle is rendered on desktop whenever the sidebar is visible. In
-  // channels mode the drag is clamped to the channels floor so the user can
-  // expand the channels sidebar but never shrink it below the floor; the
-  // snap-to-collapsed behaviour is also disabled in channels mode.
-  const showDragHandle =
-    viewport === 'desktop' && !sidebarHidden;
+  const showDragHandle = viewport === 'desktop' && !sidebarHidden;
+
+  // Resting (non-drag) effective width: channels uses CHANNELS_SIDEBAR_FLOOR
+  // when floored and sidebarWidth (lifted to the channels floor) otherwise.
+  // DM/Spaces uses SIDEBAR_COLLAPSED_WIDTH when collapsed and sidebarWidth otherwise.
+  const restingSidebarWidth = isChannels
+    ? channelsFloored
+      ? CHANNELS_SIDEBAR_FLOOR
+      : Math.max(sidebarWidth, CHANNELS_SIDEBAR_FLOOR)
+    : sidebarCollapsed
+      ? SIDEBAR_COLLAPSED_WIDTH
+      : sidebarWidth;
+  // While dragging, the on-screen width follows the cursor (via dragWidth);
+  // otherwise it's the resting width from the model.
+  const effectiveSidebarWidth = dragWidth ?? restingSidebarWidth;
+  // Floor for the drag handle ARIA attributes (the lowest width this mode can render).
+  const minSidebarWidth = isChannels ? CHANNELS_SIDEBAR_FLOOR : SIDEBAR_COLLAPSED_WIDTH;
 
   const onDragHandleMouseDown = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement>) => {
       if (e.button !== 0) return;
       e.preventDefault();
-      const isChannels = sidebarMode === 'channels';
       const startX = e.clientX;
-      // In channels mode the drag starts from the visible (floor-clamped)
-      // width, not from the persisted sidebarWidth. Otherwise a user landing
-      // in channels at the 300 floor with a saved 72 would have their first
-      // drag pixel jump straight back to 72.
-      const startWidth = isChannels
-        ? Math.max(sidebarWidth, CHANNELS_SIDEBAR_WIDTH)
-        : sidebarWidth;
-      const minFloor = isChannels ? CHANNELS_SIDEBAR_WIDTH : SIDEBAR_MIN_WIDTH;
-      setIsDragging(true);
+      const startWidth = restingSidebarWidth;
+      setDragWidth(startWidth);
       document.body.style.cursor = 'col-resize';
       document.body.style.userSelect = 'none';
 
+      // During drag we maintain dragWidth (local state) so the sidebar tracks
+      // the cursor in real time. We don't touch sidebarWidth / flags during
+      // drag — those get committed on release based on where the user lands.
       const onMove = (ev: MouseEvent) => {
         const candidate = startWidth + (ev.clientX - startX);
-        let next: number;
         if (isChannels) {
-          // Channels: no snap-to-collapsed; clamp at the channels floor.
-          next = clampWidth(candidate, CHANNELS_SIDEBAR_WIDTH);
+          // Channels: clamp at the channels floor for visual feedback.
+          setDragWidth(clampWidth(candidate, CHANNELS_SIDEBAR_FLOOR));
         } else {
-          // Non-channels: existing snap-zone feedback below SIDEBAR_MIN_WIDTH.
-          next =
-            candidate <= SIDEBAR_SNAP_THRESHOLD
-              ? Math.max(SIDEBAR_COLLAPSED_WIDTH, candidate)
-              : clampWidth(candidate);
+          // DM/Spaces: below the snap threshold, visual width follows down to
+          // the collapsed strip (clamped to >= SIDEBAR_COLLAPSED_WIDTH).
+          // Above the threshold, clamp to [SIDEBAR_MIN_WIDTH, MAX].
+          if (candidate <= SIDEBAR_SNAP_THRESHOLD) {
+            setDragWidth(Math.max(SIDEBAR_COLLAPSED_WIDTH, candidate));
+          } else {
+            setDragWidth(clampWidth(candidate));
+          }
         }
-        setSidebarWidth(next);
       };
       const onUp = (ev: MouseEvent) => {
         const finalCandidate = startWidth + (ev.clientX - startX);
-        let final: number;
         if (isChannels) {
-          final = clampWidth(finalCandidate, CHANNELS_SIDEBAR_WIDTH);
+          const clamped = clampWidth(finalCandidate, CHANNELS_SIDEBAR_FLOOR);
+          if (clamped <= CHANNELS_SIDEBAR_FLOOR) {
+            // Landed at the floor — flip the floor flag (which also collapses DM/Spaces).
+            setChannelsFloored(true);
+          } else {
+            // Landed above the floor — clear floor flag and persist as free width.
+            setChannelsFloored(false);
+            setSidebarWidth(clamped);
+          }
         } else {
-          final =
-            finalCandidate <= SIDEBAR_SNAP_THRESHOLD
-              ? SIDEBAR_COLLAPSED_WIDTH
-              : clampWidth(finalCandidate);
+          if (finalCandidate <= SIDEBAR_SNAP_THRESHOLD) {
+            // Snap to collapsed; preserve the persisted "free width" untouched.
+            setSidebarCollapsed(true);
+          } else {
+            setSidebarCollapsed(false);
+            setSidebarWidth(clampWidth(finalCandidate));
+          }
         }
-        setSidebarWidth(final);
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
         window.removeEventListener('mousemove', onMove);
         window.removeEventListener('mouseup', onUp);
-        setIsDragging(false);
+        setDragWidth(null);
       };
       window.addEventListener('mousemove', onMove);
       window.addEventListener('mouseup', onUp);
     },
-    [sidebarWidth, setSidebarWidth, sidebarMode]
+    [restingSidebarWidth, isChannels, setSidebarWidth, setChannelsFloored, setSidebarCollapsed, setDragWidth]
   );
 
   const onDragHandleKeyDown = React.useCallback(
     (e: React.KeyboardEvent<HTMLDivElement>) => {
-      const isChannels = sidebarMode === 'channels';
-      const floor = isChannels ? CHANNELS_SIDEBAR_WIDTH : SIDEBAR_MIN_WIDTH;
-      // Operate on the visible width so the first keypress matches what the
-      // user sees, even when the persisted sidebarWidth sits below the floor.
-      const baseWidth = isChannels
-        ? Math.max(sidebarWidth, CHANNELS_SIDEBAR_WIDTH)
-        : sidebarWidth;
-      let next: number | null = null;
+      const floor = isChannels ? CHANNELS_SIDEBAR_FLOOR : SIDEBAR_MIN_WIDTH;
+      const baseWidth = effectiveSidebarWidth;
+      let next: number;
       switch (e.key) {
         case 'ArrowLeft':
           next = clampWidth(baseWidth - KEYBOARD_RESIZE_STEP, floor);
@@ -254,9 +256,21 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
           return;
       }
       e.preventDefault();
-      setSidebarWidth(next);
+      if (isChannels) {
+        if (next <= CHANNELS_SIDEBAR_FLOOR) {
+          setChannelsFloored(true);
+        } else {
+          setChannelsFloored(false);
+          setSidebarWidth(next);
+        }
+      } else {
+        // Keyboard never snap-to-collapses (no SIDEBAR_SNAP_THRESHOLD logic);
+        // SIDEBAR_MIN_WIDTH is the keyboard floor for DM/Spaces.
+        setSidebarCollapsed(false);
+        setSidebarWidth(next);
+      }
     },
-    [sidebarWidth, setSidebarWidth, sidebarMode]
+    [effectiveSidebarWidth, isChannels, setSidebarWidth, setChannelsFloored, setSidebarCollapsed]
   );
 
   // Phone: rail + sidebar are hidden inline; their content lives in the drawer.
@@ -266,9 +280,13 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
       ? 'app-shell__rail--collapsed'
       : 'app-shell__rail--expanded';
 
+  // --collapsed class is only used by DM/Spaces (it locks width to 72px in CSS).
+  // Channels mode renders via --expanded with --shell-sidebar-width = CHANNELS_SIDEBAR_FLOOR
+  // when floored, so the slot picks up the floor width from the CSS variable.
+  // During drag we always use --expanded so the live dragWidth drives the slot.
   const sidebarSlotClass = (isPhone || sidebarHidden)
     ? 'app-shell__sidebar--hidden'
-    : effectiveCollapsed
+    : (!isChannels && sidebarCollapsed && !isDragging)
       ? 'app-shell__sidebar--collapsed'
       : 'app-shell__sidebar--expanded';
 
@@ -285,16 +303,6 @@ const AppShellInner: React.FunctionComponent<AppShellProps> = ({ children, onAdd
     if (isDmLeaf || isSpaceLeaf || isDiscoverLeaf || isHiddenSidebar) closeDrawer();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.search]);
-
-  // Channels sidebar has a hard *floor* but no hard ceiling vs other modes:
-  // if the user already has the sidebar dragged wider than the channels floor,
-  // we keep that width when they enter a channel (no jump). If it's narrower
-  // or collapsed, we float it up to the floor so channel names stay readable.
-  // Drag below the floor is blocked while in channels (see onDragHandleMouseDown).
-  const effectiveSidebarWidth =
-    sidebarMode === 'channels'
-      ? Math.max(sidebarWidth, CHANNELS_SIDEBAR_WIDTH)
-      : sidebarWidth;
 
   const shellStyle = React.useMemo(
     () => ({ ['--shell-sidebar-width' as string]: `${effectiveSidebarWidth}px` }),

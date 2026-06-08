@@ -45,8 +45,10 @@ interface DiscoverSidebarProps {
 export const DiscoverSidebar: React.FC<DiscoverSidebarProps> = ({ forceExpanded }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { sidebarCollapsed } = useShellState();
-  const renderCollapsed = sidebarCollapsed && !forceExpanded;
+  // sidebarLiveCollapsed reflects the on-screen width during drag so the
+  // expanded layout appears as soon as the user crosses the snap threshold.
+  const { sidebarLiveCollapsed } = useShellState();
+  const renderCollapsed = sidebarLiveCollapsed && !forceExpanded;
   const sections = buildSections();
 
   const activeId: DiscoverSectionId = location.pathname.startsWith('/discover/people')

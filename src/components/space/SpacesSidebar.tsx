@@ -171,8 +171,10 @@ const SpacesSidebarInner: React.FunctionComponent<SpacesSidebarProps> = ({ onAdd
     }
     return overlay;
   }, [realSpaceUnreadCounts, mockSpaces, mockFolderSpaces, mockFolderCounts]);
-  const { sidebarCollapsed } = useShellState();
-  const renderCollapsed = sidebarCollapsed && !forceExpanded;
+  // sidebarLiveCollapsed reflects the on-screen width during drag so the
+  // expanded layout appears as soon as the user crosses the snap threshold.
+  const { sidebarLiveCollapsed } = useShellState();
+  const renderCollapsed = sidebarLiveCollapsed && !forceExpanded;
   const { mutedSpacesSet } = useMutedSpacesSet();
   const { openContextMenu: openRowContextMenu, contextMenu: rowContextMenu } = useSpaceContextMenu();
 
