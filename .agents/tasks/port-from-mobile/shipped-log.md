@@ -22,7 +22,7 @@ Chronological history of features ported from `quorum-mobile` to `quorum-desktop
 
 - **Branch**: `feat/port-public-profile-from-mobile`.
 - **Task file**: [`.done/2026-06-08-port-public-profile.md`](.done/2026-06-08-port-public-profile.md) (moved to `.done/` as part of the merge).
-- **PR**: # — (to be filled after merge).
+- **PR**: [#181](https://github.com/QuilibriumNetwork/quorum-desktop/pull/181) (merged 2026-06-08).
 - **Repos touched**: `quorum-desktop` only. `quorum-shared` was untouched (everything needed already exported, including `int64ToBytes`, `UserConfig.isProfilePublic`, `UserConfig.bio`). `quorum-mobile` is read-only context for this effort.
 
 ### What shipped
