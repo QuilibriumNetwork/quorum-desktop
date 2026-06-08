@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { Button, Icon } from '../primitives';
 import { DiscoverTab } from './DiscoverTab';
-import { PeopleTab } from './PeopleTab';
 import { useOptionalShellState } from '../shell/useShellState';
 import { useSpaceModals } from '../context/SpaceModalsProvider';
 import type { IconName } from '@quilibrium/quorum-shared';
@@ -100,23 +99,21 @@ const SpacesEmpty: React.FC = () => {
 };
 
 /**
- * Discover surface. Sub-pages are real routes:
- *  - `/discover/spaces` (default): browse public spaces
- *  - `/discover/people`: browse public user profiles
+ * Public Spaces discovery surface — the `/discover/spaces` route.
  *
  * Legacy: when mounted via `mode='spaces-empty'` (from `/spaces` route),
  * renders the spaces empty hint — preserves what the SpacesPage used to do.
+ *
+ * A People tab previously lived at `/discover/people`; removed 2026-06-08
+ * after verification that no profile-enumeration backend endpoint exists.
+ * See `.agents/tasks/port-from-mobile/candidates.md` #6.
  */
 export const DiscoverPage: React.FC<{ mode?: 'discover' | 'spaces-empty' }> = ({
   mode = 'discover',
 }) => {
-  const location = useLocation();
-
   if (mode === 'spaces-empty') {
     return <SpacesEmpty />;
   }
-
-  const isPeople = location.pathname.startsWith('/discover/people');
 
   return (
     <div className="discover-page">
@@ -125,7 +122,7 @@ export const DiscoverPage: React.FC<{ mode?: 'discover' | 'spaces-empty' }> = ({
         <React.Suspense
           fallback={<div className="discover-page__loading">{t`Loading...`}</div>}
         >
-          {isPeople ? <PeopleTab /> : <DiscoverTab />}
+          <DiscoverTab />
         </React.Suspense>
       </div>
     </div>

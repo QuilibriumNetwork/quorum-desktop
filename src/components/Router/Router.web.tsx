@@ -156,10 +156,13 @@ export function Router({ user, setUser }: RouterProps) {
           </ModalProvider>
         }
       />
-      {/* Discover: redirect bare /discover to its default sub-page. */}
+      {/* Discover: redirect bare /discover to its default sub-page.
+          /discover/people was retired 2026-06-08 (no backend enumeration);
+          redirect for stale bookmarks. */}
       <Route path="/discover" element={<Navigate to="/discover/spaces" replace />} />
+      <Route path="/discover/people" element={<Navigate to="/discover/spaces" replace />} />
       <Route
-        path="/discover/:section"
+        path="/discover/spaces"
         element={
           <ModalProvider user={user} setUser={setUser}>
             <MobileProvider>

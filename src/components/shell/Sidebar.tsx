@@ -3,7 +3,6 @@ import { useLocation } from 'react-router-dom';
 import DirectMessageContactsList from '../direct/DirectMessageContactsList';
 import ChannelList from '../space/ChannelList';
 import { SpacesSidebar } from '../space/SpacesSidebar';
-import { DiscoverSidebar } from './DiscoverSidebar';
 import { useSidebarMode } from './useSidebarMode';
 import './Sidebar.scss';
 
@@ -33,8 +32,6 @@ export const Sidebar: React.FunctionComponent<SidebarProps> = ({ onAddSpace, onC
     }
     case 'spaces':
       return <SpacesSidebar onAddSpace={onAddSpace} onCreateSpace={onCreateSpace} forceExpanded={forceExpanded} />;
-    case 'discover':
-      return <DiscoverSidebar forceExpanded={forceExpanded} />;
     case 'hidden':
     default:
       return null;

@@ -41,7 +41,7 @@ const buildItems = (): RailItemConfig[] => [
   {
     id: 'discover',
     icon: 'compass',
-    label: t`Discover`,
+    label: t`Public spaces`,
     route: '/discover/spaces',
   },
   {
