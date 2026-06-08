@@ -1,14 +1,55 @@
 ---
 type: bug
 title: Action queue errors silently swallowed across all config-writing hooks
-status: open
+status: solved
 severity: medium-high
 scope: desktop
 created: 2026-06-07
+solved: 2026-06-08
+solved_by: PR #180
 related:
   - .agents/tasks/2026-06-07-account-tab-defer-save-unification.md
   - .agents/tasks/2026-06-07-align-notification-settings-with-mobile.md
 ---
+
+## Resolution (2026-06-08, PR #180)
+
+Interim minimal fix per the "Suggested fix" section below: a `.catch`
+shim added to all 14 enqueue sites across the 8 affected hook files
+(useChannelMute ×5, useUserSettings ×2, useDMMute ×2, useDMFavorites
+×2, useFolderManagement ×1, useFolderDragAndDrop ×1, useDeleteFolder
+×1, useMentionNotificationSettings ×1). Each shim logs via
+`logger.error`, rolls the React Query cache back to the pre-update
+snapshot, and surfaces a `showError` toast.
+
+Notable per-site decisions:
+- The 3 sites that previously `await`ed enqueue (useUserSettings
+  saveChanges, useFolderManagement saveChanges, useDeleteFolder)
+  were converted to fire-and-forget. The hook handles all user
+  feedback (toast + rollback); modals close as if the save
+  succeeded. Caller-side `onSaveError` paths became defensive nets
+  for non-enqueue errors only.
+- The auto-device-name useEffect at lines 128-136 of useUserSettings
+  got a log-only shim — no toast, no rollback. The write is a
+  one-shot first-run autoname with no user action behind it; next
+  session start re-attempts since `loadedNames` still won't have the
+  entry.
+- The useMentionNotificationSettings shim rolls back both the React
+  Query cache and a local React state (`settings`).
+
+Manual verification: temporarily threw from
+`actionQueueService.enqueue` for type `'save-user-config'`, then
+exercised two representative sites (toggle "Show muted channels" in
+channel-mute settings; User Settings modal Save). Toast appeared on
+both; the channel-mute toggle visually never committed (optimistic
+update + rollback batched into a single render); the User Settings
+modal closed normally per the agreed swallow contract. Throw was
+reverted before commit.
+
+The shared `useUserConfigMutation` refactor mentioned below remains
+the long-term clean home for this pattern and will replace the
+duplicated catch-shims in one pass when the defer-vs-instant
+unification task is tackled.
 
 # Action queue errors silently swallowed across all config-writing hooks
 
