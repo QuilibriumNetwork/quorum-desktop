@@ -40,6 +40,7 @@ interface MessageMarkdownRendererProps {
     address: string;
     displayName?: string;
     userIcon?: string;
+    bio?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
   onChannelClick?: (channelId: string) => void;
   onMessageLinkClick?: (channelId: string, messageId: string) => void;
@@ -1089,6 +1090,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           address,
           displayName: user?.displayName,
           userIcon: user?.userIcon,
+          bio: (user as { bio?: string } | null)?.bio,
         }, event, { type: 'mention', element: target });
       }
     }

@@ -232,7 +232,8 @@ type MessageDBContextValue = {
       pfpUrl?: string;
       completedOnboarding: boolean;
     },
-    spaceTag?: BroadcastSpaceTag
+    spaceTag?: BroadcastSpaceTag,
+    bio?: string
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
   sendVerifyKickedStatuses: (spaceId: string) => Promise<number>;
@@ -429,10 +430,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         pfpUrl?: string;
         completedOnboarding: boolean;
       },
-      spaceTag?: BroadcastSpaceTag
+      spaceTag?: BroadcastSpaceTag,
+      bio?: string
     ) => {
       const spaces = await messageDB.getSpaces();
       for (const space of spaces) {
+        // Per-space bio overrides are applied via useSpaceProfile; the global
+        // bio is broadcast here so members of every space pick up the
+        // current global value. Receivers use upsert-aware merge — an
+        // explicit empty string clears the bio (matches what the user did
+        // in the User Settings → General editor); undefined leaves the
+        // receiver's stored bio untouched.
         submitChannelMessage(
           space.spaceId,
           space.defaultChannelId,
@@ -441,6 +449,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             displayName,
             userIcon,
             senderId: currentPasskeyInfo.address,
+            ...(bio !== undefined ? { bio } : {}),
             ...(spaceTag ? { spaceTag } : {}),
           } as UpdateProfileMessage,
           queryClient,

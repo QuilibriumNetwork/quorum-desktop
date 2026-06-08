@@ -70,6 +70,9 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
               ? undefined
               : curr.user_icon,
             displayName: curr.display_name,
+            // Per-space bio override; flows into UserProfile's "About"
+            // section. Empty string means the user explicitly cleared it.
+            bio: (curr as any).bio as string | undefined,
             isKicked: curr.isKicked || false,
             spaceTag: (curr as any).spaceTag as BroadcastSpaceTag | undefined,
             joinedAt: curr.joinedAt,
@@ -80,6 +83,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           address: string;
           userIcon?: string;
           displayName?: string;
+          bio?: string;
           isKicked?: boolean;
           spaceTag?: BroadcastSpaceTag;
           joinedAt?: number;
@@ -188,7 +192,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
       // Flatten pre-computed sections into virtualization format
       const flattenedItems: Array<
         | { type: 'header'; title: string; isCollapsed: boolean }
-        | { type: 'user'; address: string; userIcon?: string; displayName?: string; joinedAt?: number }
+        | { type: 'user'; address: string; userIcon?: string; displayName?: string; bio?: string; joinedAt?: number }
       > = [];
 
       // When searching (3+ chars), ignore collapsed state to show all matches
@@ -210,6 +214,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
                 address: member.address,
                 userIcon: member.userIcon,
                 displayName: member.displayName,
+                bio: member.bio,
                 joinedAt: member.joinedAt,
               });
             });
@@ -242,6 +247,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
                 address: member.address,
                 userIcon: member.userIcon,
                 displayName: member.displayName,
+                bio: member.bio,
                 joinedAt: member.joinedAt,
               });
             });

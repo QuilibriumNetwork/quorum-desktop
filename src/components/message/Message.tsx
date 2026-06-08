@@ -101,6 +101,7 @@ type MessageProps = {
       address: string;
       displayName?: string;
       userIcon?: string;
+      bio?: string;
     },
     event: React.MouseEvent,
     context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }
@@ -643,6 +644,7 @@ export const Message = React.memo(
                               address: sender.address,
                               displayName: sender.displayName,
                               userIcon: sender.userIcon,
+                              bio: sender.bio,
                             },
                             event,
                             {

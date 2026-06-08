@@ -474,9 +474,10 @@ export class MessageService {
       ? { ...currentTag, spaceId: space.spaceId }
       : undefined;
 
-    // 7. Read display name + icon from config
+    // 7. Read display name + icon + bio from config
     const displayName = config.name ?? '';
     const userIcon = config.profile_image ?? DefaultImages.UNKNOWN_USER;
+    const bio = config.bio;
 
     // 8. Broadcast update-profile to all spaces
     const allSpaces = await this.messageDB.getSpaces();
@@ -491,6 +492,15 @@ export class MessageService {
             displayName,
             userIcon,
             senderId: selfAddress,
+            // Carry the global bio along on tag-rotation rebroadcasts so
+            // receivers who joined after the user last edited still pick
+            // it up. Only included when the user has a bio set —
+            // omitting it lets each receiver keep whatever bio it already
+            // has (the receive-side upsert merge treats absent fields as
+            // "no change"). An explicit empty-string bio here would
+            // instead CLEAR the receiver's stored bio, which is the
+            // wrong semantic for an incidental tag-rotation event.
+            ...(bio ? { bio } : {}),
             ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
           };
 
@@ -1171,8 +1181,22 @@ export class MessageService {
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
       // block profile updates after any key rotation.
-      participant.display_name = decryptedContent.content.displayName;
-      participant.user_icon = decryptedContent.content.userIcon;
+      //
+      // Upsert-aware merge (mirrors mobile WebSocketContext.tsx:1841-1854):
+      // only apply fields that the sender actually included. Skipping
+      // empty-string displayName / userIcon avoids clobbering receivers'
+      // stored values when the sender broadcasts a partial update (e.g. a
+      // bio-only edit). Bio uses `!== undefined` so an explicit empty
+      // string deliberately clears the bio.
+      if (decryptedContent.content.displayName) {
+        participant.display_name = decryptedContent.content.displayName;
+      }
+      if (decryptedContent.content.userIcon) {
+        participant.user_icon = decryptedContent.content.userIcon;
+      }
+      if (decryptedContent.content.bio !== undefined) {
+        participant.bio = decryptedContent.content.bio;
+      }
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -1673,8 +1697,18 @@ export class MessageService {
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
       // block profile updates after any key rotation.
-      participant.display_name = decryptedContent.content.displayName;
-      participant.user_icon = decryptedContent.content.userIcon;
+      //
+      // Upsert-aware merge (mirrors mobile WebSocketContext.tsx:1841-1854):
+      // see the same block in saveMessage above for the full rationale.
+      if (decryptedContent.content.displayName) {
+        participant.display_name = decryptedContent.content.displayName;
+      }
+      if (decryptedContent.content.userIcon) {
+        participant.user_icon = decryptedContent.content.userIcon;
+      }
+      if (decryptedContent.content.bio !== undefined) {
+        participant.bio = decryptedContent.content.bio;
+      }
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;

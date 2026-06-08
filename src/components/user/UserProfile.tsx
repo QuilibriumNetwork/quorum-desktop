@@ -21,6 +21,8 @@ import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useQueryClient } from '@tanstack/react-query';
+import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
+import { buildConfigFetcher } from '../../hooks/queries/config/buildConfigFetcher';
 import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
 
 const UserProfile: React.FunctionComponent<{
@@ -85,6 +87,30 @@ const UserProfile: React.FunctionComponent<{
 
   const { data: userNoteData } = useUserNote({ targetAddress: props.user.address });
   const queryClient = useQueryClient();
+
+  // Bio resolution for the visible card:
+  //   1. Per-space override on SpaceMember (props.user.bio) wins when set.
+  //   2. For the current user's own profile, fall back to UserConfig.bio
+  //      (the global bio) so deleting the per-space override reveals the
+  //      global one again instead of leaving an empty section.
+  //   3. For other members, useMembersWithPublicProfileFallback already
+  //      surfaces their public-profile bio when their per-space override
+  //      is empty AND they've opted into public profile.
+  //
+  // Subscribed via useQuery (not a getQueryData snapshot) so the card
+  // re-renders if the global bio changes while it's open (e.g. user saves
+  // global settings in another modal). Same key as useConfig + useUserSettings,
+  // so all three paths share one cached value.
+  const { data: ownConfig } = useQuery({
+    queryKey: buildConfigKey({ userAddress: currentPasskeyInfo?.address ?? '' }),
+    queryFn: buildConfigFetcher({
+      messageDB,
+      userAddress: currentPasskeyInfo?.address ?? '',
+    }),
+    enabled: isOwnProfile && !!currentPasskeyInfo?.address,
+    networkMode: 'always',
+  });
+  const resolvedBio = (props.user.bio as string | undefined) || ownConfig?.bio;
   const [noteValue, setNoteValue] = React.useState('');
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
@@ -266,6 +292,12 @@ const UserProfile: React.FunctionComponent<{
                   </div>
                 ))}
             </div>
+          </div>
+        )}
+        {resolvedBio && (
+          <div className="user-profile-bio-section">
+            <div className="user-profile-bio-label">{t`About`}</div>
+            <p className="user-profile-bio-text">{resolvedBio}</p>
           </div>
         )}
         {!isOwnProfile && (

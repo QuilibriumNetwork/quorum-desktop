@@ -10,6 +10,7 @@ import {
   Switch,
   Flex,
   Tooltip,
+  TextArea,
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -20,6 +21,7 @@ import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving'
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { useChannelMute } from '../../../hooks/business/channels';
+import { MAX_BIO_LENGTH } from '../../../hooks/business/validation';
 import { getIconColorHex, IconColor } from '../../space/IconPicker/types';
 import type { Role } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
@@ -30,6 +32,9 @@ interface AccountProps {
   spaceName: string;
   displayName: string;
   setDisplayName: (value: string) => void;
+  bio: string;
+  setBio: (value: string) => void;
+  bioErrors: string[];
   currentPasskeyInfo: {
     pfpUrl?: string;
     address: string;
@@ -62,6 +67,9 @@ const Account: React.FunctionComponent<AccountProps> = ({
   spaceName,
   displayName,
   setDisplayName,
+  bio,
+  setBio,
+  bioErrors,
   currentPasskeyInfo,
   fileData,
   currentFile,
@@ -136,7 +144,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
           <Trans>Your Details</Trans>
         </div>
         <div className="text-label pt-1">
-          <Trans>Change your avatar and name for this Space</Trans>
+          <Trans>Override your display name, avatar, and bio for this Space. Other Spaces and your global profile are unaffected.</Trans>
         </div>
         <div className="flex items-start gap-4 pt-4">
           {(() => {
@@ -191,10 +199,31 @@ const Account: React.FunctionComponent<AccountProps> = ({
               onChange={setDisplayName}
               placeholder={t`Display Name`}
               labelType="static"
-              error={hasValidationError}
+              error={!!displayNameError}
               errorMessage={displayNameError}
             />
           </div>
+        </div>
+        <Spacer size="md" direction="vertical" />
+        <div className="text-subtitle-2 mb-3">
+          <Trans>Bio</Trans>
+        </div>
+        <div className="w-full mb-2">
+          <TextArea
+            value={bio}
+            onChange={setBio}
+            placeholder={t`Tell people about yourself in this Space...`}
+            rows={3}
+            variant="filled"
+            className="w-full"
+            maxLength={MAX_BIO_LENGTH}
+            error={bioErrors.length > 0}
+            errorMessage={
+              bioErrors.length > 0
+                ? bioErrors.join('. ')
+                : undefined
+            }
+          />
         </div>
         <Spacer size="lg" direction="vertical" />
         {avatarFileError && (

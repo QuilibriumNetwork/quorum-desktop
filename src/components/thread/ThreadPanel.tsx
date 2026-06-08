@@ -173,7 +173,7 @@ export const ThreadPanel: React.FC = () => {
     if (!creatorId) return null;
     const user = channelProps.mapSenderToUser(creatorId);
     if (!user) return null;
-    return { address: creatorId, displayName: user.displayName, userIcon: user.userIcon };
+    return { address: creatorId, displayName: user.displayName, userIcon: user.userIcon, bio: user.bio };
   }, [rootMessage, channelProps]);
 
   const starterName = starterUser?.displayName || null;
