@@ -9,6 +9,8 @@ import { type BroadcastSpaceTag, logger } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
+import { PublicProfileService } from '../../../services/PublicProfileService';
+import { QuorumApiClient } from '../../../api/baseTypes';
 import { getDeviceName } from '../../../utils/deviceInfo';
 import { showError } from '../../../utils/toast';
 
@@ -37,6 +39,8 @@ export interface UseUserSettingsReturn {
   setTypingIndicatorsSpaces: (value: boolean) => void;
   generateYouTubePreviews: boolean;
   setGenerateYouTubePreviews: (value: boolean) => void;
+  isProfilePublic: boolean;
+  setIsProfilePublic: (value: boolean) => void;
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
@@ -72,6 +76,7 @@ export const useUserSettings = (
   const [typingIndicatorsDM, setTypingIndicatorsDM] = useState(false);
   const [typingIndicatorsSpaces, setTypingIndicatorsSpaces] = useState(false);
   const [generateYouTubePreviews, setGenerateYouTubePreviews] = useState(false);
+  const [isProfilePublic, setIsProfilePublic] = useState(false);
   const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
@@ -115,6 +120,7 @@ export const useUserSettings = (
         setTypingIndicatorsSpaces(config?.typingIndicatorsSpaces ?? false);
         setGenerateYouTubePreviews(config?.generateYouTubePreviews ?? false);
         setBio(config?.bio ?? '');
+        setIsProfilePublic(config?.isProfilePublic ?? false);
         setSpaceTagId(config?.spaceTagId ?? undefined);
         const loadedNames = config?.deviceNames ?? {};
         setDeviceNames(loadedNames);
@@ -321,6 +327,7 @@ export const useUserSettings = (
       typingIndicatorsDM,
       typingIndicatorsSpaces,
       generateYouTubePreviews,
+      isProfilePublic,
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
@@ -346,9 +353,62 @@ export const useUserSettings = (
       newConfig
     );
 
-    // Fire-and-forget with rollback: the optimistic cache update above already
-    // surfaced the new config to readers. If enqueue rejects (queue full, IDB
-    // write failure), restore the pre-update snapshot and toast the user.
+    // Public profile publish/unpublish: best-effort. The local
+    // isProfilePublic setting is the source of truth — server publish
+    // success/failure does not gate it (mirrors mobile's pattern).
+    //
+    // Cases:
+    //   isProfilePublic=true  → publish/republish with the new fields.
+    //   isProfilePublic=false AND was previously true → unpublish (delete).
+    //   isProfilePublic=false AND was previously false → no-op.
+    //
+    // Run BEFORE the fire-and-forget enqueue so the rollback `.catch`
+    // below can observe whether the public-profile call already went
+    // through and undo it if the local save then fails. Otherwise we'd
+    // get an inconsistent state: the server has a published profile but
+    // the local toggle says off, with no UI surfaced to fix it.
+    const wasProfilePublic = freshConfig?.isProfilePublic === true;
+    let publishedThisSave = false;
+    let unpublishedThisSave = false;
+    if (keyset?.userKeyset) {
+      const publicProfileService = new PublicProfileService({
+        apiClient: new QuorumApiClient(),
+      });
+      if (isProfilePublic) {
+        try {
+          await publicProfileService.publish(
+            {
+              address: currentPasskeyInfo.address,
+              displayName: displayName,
+              profileImage: profileImageUrl,
+              bio: bio.trim(),
+            },
+            { userKeyset: keyset.userKeyset }
+          );
+          publishedThisSave = true;
+        } catch (error) {
+          logger.warn('[useUserSettings] publishPublicProfile failed', error);
+        }
+      } else if (wasProfilePublic) {
+        try {
+          await publicProfileService.unpublish(currentPasskeyInfo.address, {
+            userKeyset: keyset.userKeyset,
+          });
+          unpublishedThisSave = true;
+        } catch (error) {
+          logger.warn('[useUserSettings] unpublishPublicProfile failed', error);
+        }
+      }
+    }
+
+    // Fire-and-forget enqueue with rollback: the optimistic cache update
+    // earlier already surfaced the new config to readers. If enqueue
+    // rejects (queue full, IDB write failure), restore the pre-update
+    // snapshot, toast the user, and — critically — also revert any
+    // public-profile mutation we just made above. Without that revert,
+    // we'd leave the server with a published profile (or a missing one)
+    // that no longer matches what the local source of truth shows,
+    // with no UI surfaced to fix it.
     actionQueueService
       .enqueue(
         'save-user-config',
@@ -362,6 +422,31 @@ export const useUserSettings = (
           freshConfig
         );
         showError(t`Failed to save settings`);
+
+        // Best-effort revert of the public-profile mutation that already
+        // succeeded against the server. We deliberately do NOT await this;
+        // failure here is logged but doesn't escalate (we've already
+        // surfaced the primary error to the user via the toast above).
+        if (keyset?.userKeyset && (publishedThisSave || unpublishedThisSave)) {
+          const svc = new PublicProfileService({ apiClient: new QuorumApiClient() });
+          const revert = publishedThisSave
+            ? svc.unpublish(currentPasskeyInfo.address, { userKeyset: keyset.userKeyset })
+            : svc.publish(
+                {
+                  address: currentPasskeyInfo.address,
+                  displayName: freshConfig?.name ?? '',
+                  profileImage: freshConfig?.profile_image ?? '',
+                  bio: (freshConfig?.bio ?? '').trim(),
+                },
+                { userKeyset: keyset.userKeyset }
+              );
+          revert.catch((revertErr) => {
+            logger.warn(
+              '[useUserSettings] public-profile revert after enqueue failure also failed',
+              revertErr
+            );
+          });
+        }
       });
 
     // Update TypingService gate immediately so toggle-OFF doesn't wait for
@@ -415,6 +500,8 @@ export const useUserSettings = (
     setTypingIndicatorsSpaces,
     generateYouTubePreviews,
     setGenerateYouTubePreviews,
+    isProfilePublic,
+    setIsProfilePublic,
     spaceTagId,
     setSpaceTagId,
     saveChanges,

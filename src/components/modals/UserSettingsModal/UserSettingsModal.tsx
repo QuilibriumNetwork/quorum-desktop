@@ -81,6 +81,8 @@ const UserSettingsModal: React.FunctionComponent<{
     setTypingIndicatorsSpaces,
     generateYouTubePreviews,
     setGenerateYouTubePreviews,
+    isProfilePublic,
+    setIsProfilePublic,
     spaceTagId,
     setSpaceTagId,
     saveChanges: saveUserChanges,
@@ -278,6 +280,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         setTypingIndicatorsSpaces={setTypingIndicatorsSpaces}
                         generateYouTubePreviews={generateYouTubePreviews}
                         setGenerateYouTubePreviews={setGenerateYouTubePreviews}
+                        isProfilePublic={isProfilePublic}
+                        setIsProfilePublic={setIsProfilePublic}
                       />
                     );
                   case 'notifications':

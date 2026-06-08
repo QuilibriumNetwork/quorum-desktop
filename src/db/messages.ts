@@ -56,7 +56,7 @@ export type UserConfig = {
   allowSync?: boolean;
   name?: string;                    // User's display name (synced from profile)
   profile_image?: string;           // User's profile image as data URI (synced from profile)
-  bio?: string;                     // User's bio/description (local-only for now)
+  bio?: string;                     // User's bio; synced cross-device via UserConfig and included in the public-profile payload when isProfilePublic=true.
   isProfilePublic?: boolean;        // Whether the user's profile is discoverable; mirror of shared UserConfig.
   farcasterLink?: FarcasterLink;    // Bidirectional FC ↔ Quorum identity link; mirror of shared UserConfig.
   spaceKeys?: {

@@ -6,6 +6,7 @@ import { QRCodeSVG } from 'qrcode.react';
 import { truncateAddress, getDeviceName } from '../../../utils/deviceInfo';
 import { useDeviceNameValidation } from '../../../hooks/business/validation';
 import { ClickToCopyContent } from '../../ui';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface PrivacyProps {
   allowSync: boolean;
@@ -35,6 +36,8 @@ interface PrivacyProps {
   setTypingIndicatorsSpaces: (value: boolean) => void;
   generateYouTubePreviews: boolean;
   setGenerateYouTubePreviews: (value: boolean) => void;
+  isProfilePublic: boolean;
+  setIsProfilePublic: (value: boolean) => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -65,7 +68,31 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   setTypingIndicatorsSpaces,
   generateYouTubePreviews,
   setGenerateYouTubePreviews,
+  isProfilePublic,
+  setIsProfilePublic,
 }) => {
+  // Public-profile confirmation. Local state because the global
+  // ConfirmationModalProvider lives below UserSettingsModal in the tree
+  // (it's a child of Layout, while UserSettingsModal renders from a
+  // sibling ModalProvider). Using ConfirmationModal directly avoids the
+  // out-of-scope context error.
+  const [isPublicProfileConfirmOpen, setIsPublicProfileConfirmOpen] = React.useState(false);
+
+  // Turning ON publishes your name/avatar/bio to a public endpoint, so
+  // require explicit confirmation the first time. Turning OFF unpublishes
+  // silently — the user is reducing exposure, no confirmation needed.
+  const handleTogglePublicProfile = React.useCallback(
+    (next: boolean) => {
+      if (!next) {
+        setIsProfilePublic(false);
+        return;
+      }
+      if (isProfilePublic) return; // Already on; no-op.
+      setIsPublicProfileConfirmOpen(true);
+    },
+    [isProfilePublic, setIsProfilePublic]
+  );
+
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
   const [showQRCode, setShowQRCode] = React.useState(false);
@@ -251,6 +278,29 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
           </div>
           <div className="border-t border-dashed border-surface-7 my-5" />
           <div className="flex flex-row items-center gap-3">
+            <Switch
+              value={isProfilePublic}
+              onChange={handleTogglePublicProfile}
+              disabled={!isConfigLoaded}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Public profile`}
+              </div>
+              <Tooltip
+                id="settings-public-profile-tooltip"
+                content={t`When on, anyone with your Quorum address can see your display name, avatar, and bio, even outside the Spaces you share. Useful when someone DMs you and you want them to recognize who you are. Off by default.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          <div className="flex flex-row items-center gap-3 mt-3">
             <Switch value={false} onChange={() => {}} disabled={true} />
             <div className="flex flex-row items-center">
               <div className="text-label-strong text-muted">
@@ -680,6 +730,21 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         </div>
 
       </div>
+
+      <ConfirmationModal
+        visible={isPublicProfileConfirmOpen}
+        title={t`Make profile public?`}
+        message={t`Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time.`}
+        variant="danger"
+        confirmText={t`Make Public`}
+        cancelText={t`Cancel`}
+        showProtip={false}
+        onConfirm={() => {
+          setIsProfilePublic(true);
+          setIsPublicProfileConfirmOpen(false);
+        }}
+        onCancel={() => setIsPublicProfileConfirmOpen(false)}
+      />
     </>
   );
 };

@@ -8,6 +8,7 @@ import {
   getInboxDeleteUrl,
   getInboxFetchUrl,
   getInboxUrl,
+  getPublicProfileUrl,
   getSpaceInviteEvalsUrl,
   getSpaceInviteEvalUrl,
   getSpaceManifestUrl,
@@ -18,6 +19,46 @@ import {
 import type { ExploreSpacesParams } from './quorumApi';
 import type { DirectoryResponse } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
+
+// Public profile wire types. Mirrors the body shape mobile uses against
+// `GET/POST/DELETE /users/:addr/public-profile`. v2 fields (primary_username)
+// are server-supported but desktop doesn't have QNS yet, so we publish v1
+// payloads only. farcaster is also server-supported but unused on desktop
+// pending a Farcaster product decision (candidate #9).
+export interface PublicProfileResponse {
+  display_name: string;
+  profile_image: string;
+  bio: string;
+  primary_username?: string;
+  timestamp: number;
+  signature: string;
+  farcaster?: {
+    fid: number;
+    custodyAddress: string;
+    farcasterSignature: string;
+    quorumSignature: string;
+  };
+}
+
+export interface PublishPublicProfileBody {
+  display_name: string;
+  profile_image: string;
+  bio: string;
+  primary_username?: string;
+  timestamp: number;
+  signature: string;
+  farcaster?: {
+    fid: number;
+    custodyAddress: string;
+    farcasterSignature: string;
+    quorumSignature: string;
+  };
+}
+
+export interface DeletePublicProfileBody {
+  timestamp: number;
+  signature: string;
+}
 
 abstract class AbstractQuorumApiClient {
   options: QuorumApiClientOptions;
@@ -479,6 +520,43 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
     return this.get<DirectoryResponse>(getDirectoryUrl(params), {
       headers,
       timeout,
+    });
+  }
+
+  // Public profile — resolve-by-known-address only. The server exposes no
+  // enumeration endpoint, so this is a key-value lookup, not a search.
+  // 404 indicates "user hasn't opted in"; callers handle by mapping to null.
+  getPublicProfile(
+    address: string,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.get<PublicProfileResponse>(getPublicProfileUrl(address), {
+      headers,
+      timeout,
+    });
+  }
+
+  postPublicProfile(
+    address: string,
+    body: PublishPublicProfileBody,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.post<{ status: string }>(getPublicProfileUrl(address), {
+      headers,
+      timeout,
+      body,
+    });
+  }
+
+  deletePublicProfile(
+    address: string,
+    body: DeletePublicProfileBody,
+    { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
+  ) {
+    return this.delete<{ status: string }>(getPublicProfileUrl(address), {
+      headers,
+      timeout,
+      body,
     });
   }
 
