@@ -1770,6 +1770,7 @@ const Channel: React.FC<ChannelProps> = ({
                                 address: item.address,
                                 displayName: item.displayName,
                                 userIcon: item.userIcon,
+                                bio: item.bio,
                               },
                               event
                             )
@@ -1998,6 +1999,7 @@ const Channel: React.FC<ChannelProps> = ({
                         address: item.address,
                         displayName: item.displayName,
                         userIcon: item.userIcon,
+                        bio: (item as { bio?: string }).bio,
                       },
                       { stopPropagation: () => {} } as React.MouseEvent
                     );

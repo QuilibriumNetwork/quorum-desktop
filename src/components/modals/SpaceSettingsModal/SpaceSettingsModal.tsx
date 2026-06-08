@@ -458,6 +458,9 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           spaceName={spaceName}
                           displayName={spaceProfile.displayName}
                           setDisplayName={spaceProfile.setDisplayName}
+                          bio={spaceProfile.bio}
+                          setBio={spaceProfile.setBio}
+                          bioErrors={spaceProfile.bioErrors}
                           currentPasskeyInfo={user?.currentPasskeyInfo || null}
                           fileData={spaceProfile.fileData}
                           currentFile={spaceProfile.currentFile}

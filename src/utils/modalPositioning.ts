@@ -25,15 +25,23 @@ export const calculateModalPosition = (config: ModalPositionConfig): ModalPositi
   const {
     elementRect,
     modalWidth = MODAL_DIMENSIONS.USER_PROFILE_WIDTH,
+    modalHeight = MODAL_DIMENSIONS.USER_PROFILE_HEIGHT,
     viewportWidth = window.innerWidth,
+    viewportHeight = window.innerHeight,
     rightSidebarWidth = 0,
     context
   } = config;
 
   const position: ModalPosition = { top: 0 };
 
-  // Use simple vertical positioning (top of element)
-  position.top = elementRect.top;
+  // Default vertical position: align the modal's top with the trigger's top.
+  // Then clamp so the modal stays inside the viewport — without this,
+  // triggers near the bottom of the screen produce a card whose bottom
+  // edge runs off-screen (UserProfile can grow when the user has a bio
+  // and/or many roles + an open note).
+  const maxTop = viewportHeight - modalHeight - SPACING.VIEWPORT_BOTTOM_PADDING;
+  const minTop = SPACING.MODAL_EDGE_PADDING;
+  position.top = Math.max(minTop, Math.min(elementRect.top, maxTop));
 
   // Calculate horizontal position based on context
   if (context?.type === 'mention' || context?.type === 'message-avatar') {

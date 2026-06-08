@@ -6,6 +6,7 @@ import { useRegistration, buildConfigKey } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { type BroadcastSpaceTag, logger } from '@quilibrium/quorum-shared';
+import type { UserConfig } from '../../../db/messages';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
@@ -107,11 +108,19 @@ export const useUserSettings = (
   useEffect(() => {
     if (!init && currentPasskeyInfo) {
       setInit(true);
-      (async () => {
-        const config = await getConfig({
-          address: currentPasskeyInfo.address,
-          userKey: keyset.userKeyset,
-        });
+
+      // Prefer the React Query cache snapshot when present. The cache is
+      // updated optimistically on every save (see saveChanges below), and
+      // saves are queued through the action queue — between enqueue and
+      // the queue draining to IndexedDB there is a window where getConfig
+      // would return stale data. Reading the cache first eliminates that
+      // window for the common case (reopen the modal right after a save).
+      // On cold start the cache is empty and we fall back to getConfig.
+      const cachedConfig = queryClient.getQueryData<UserConfig>(
+        buildConfigKey({ userAddress: currentPasskeyInfo.address })
+      );
+
+      const applyConfig = (config: UserConfig | undefined) => {
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
         setDeliveryReceipts(config?.deliveryReceipts ?? false);
@@ -125,9 +134,23 @@ export const useUserSettings = (
         const loadedNames = config?.deviceNames ?? {};
         setDeviceNames(loadedNames);
         setIsConfigLoaded(true);
+      };
+
+      if (cachedConfig) {
+        applyConfig(cachedConfig);
+        return;
+      }
+
+      (async () => {
+        const config = await getConfig({
+          address: currentPasskeyInfo.address,
+          userKey: keyset.userKeyset,
+        });
+        applyConfig(config);
 
         // Auto-name this device if it doesn't have a name yet
         const inboxAddress = keyset.deviceKeyset?.inbox_keyset?.inbox_address;
+        const loadedNames = config?.deviceNames ?? {};
         if (inboxAddress && !loadedNames[inboxAddress]) {
           const autoName = await getDeviceName();
           const updatedNames = { ...loadedNames, [inboxAddress]: autoName };
@@ -148,7 +171,7 @@ export const useUserSettings = (
         }
       })();
     }
-  }, [init, currentPasskeyInfo, getConfig, keyset, actionQueueService]);
+  }, [init, currentPasskeyInfo, getConfig, keyset, actionQueueService, queryClient]);
 
   const removeDevice = (identityKey: string) => {
     // Find inbox address before removing from staged registration
@@ -305,19 +328,28 @@ export const useUserSettings = (
       }
     }
 
-    // Update user profile in message DB
-    updateUserProfile(
-      displayName,
-      profileImageUrl ?? DefaultImages.UNKNOWN_USER,
-      currentPasskeyInfo,
-      resolvedSpaceTag
-    );
-
-    // Fetch fresh config to avoid overwriting changes from other devices
+    // Fetch fresh config to avoid overwriting changes from other devices.
+    // Reading this BEFORE the update-profile broadcast lets us compare the
+    // current bio against the new one so we only re-broadcast bio when the
+    // user actually edited it — otherwise an unrelated save (e.g. toggling
+    // a notification preference) would re-broadcast the global bio to
+    // every space, clobbering any per-space bio override the user has set.
     const freshConfig = await getConfig({
       address: currentPasskeyInfo.address,
       userKey: keyset.userKeyset,
     });
+
+    // Update user profile in message DB
+    const trimmedBio = bio.trim();
+    const previousBio = (freshConfig?.bio ?? '').trim();
+    const bioChanged = trimmedBio !== previousBio;
+    updateUserProfile(
+      displayName,
+      profileImageUrl ?? DefaultImages.UNKNOWN_USER,
+      currentPasskeyInfo,
+      resolvedSpaceTag,
+      bioChanged ? trimmedBio : undefined
+    );
     const newConfig = {
       ...freshConfig,
       allowSync,

@@ -6,6 +6,8 @@ created: 2026-06-01
 updated: 2026-06-08
 ---
 
+
+
 # Port-from-mobile shipped log
 
 Chronological history of features ported from `quorum-mobile` to `quorum-desktop`, with lessons learned at the top.
@@ -79,6 +81,44 @@ Folded Farcaster-cluster additions in the same mobile delta under existing `❔ 
 Channel-management hooks (`hooks/chat/useChannelManagement.ts` on mobile) confirmed already on desktop as the full `src/hooks/business/channels/*` tree — Class E, not a candidate.
 
 No ports shipped this session. #29 is queued for the next session.
+
+## 2026-06-08 — #30 Per-space profile bio override shipped (+ receive-handler upsert fix + UserProfile bio render)
+
+- **Branch**: `feat/port-per-space-bio`.
+- **Task file**: [`.done/2026-06-08-port-per-space-bio.md`](.done/2026-06-08-port-per-space-bio.md) (moved to `.done/` as part of the merge).
+- **PR**: TBD (filled in after PR opens).
+- **Repos touched**: `quorum-desktop` only. `quorum-shared` was untouched (all types already exported: `UpdateProfileMessage.bio?`, `UserProfile.bio?`, `validateUserBio`, `MAX_BIO_LENGTH=160`). A mobile follow-up task was dropped — see Mobile-side follow-up below.
+
+### What shipped
+
+| Layer | What |
+|---|---|
+| Editor | Bio TextArea added to Space Settings → Account tab. Section copy rewritten to mobile's framing ("Override your display name, avatar, and bio for this Space. Other Spaces and your global profile are unaffected."). Display name Input error narrowed to `displayNameError` only so bio errors don't visually red-flag the wrong field. |
+| Hook | `useSpaceProfile` gained `bio`, `setBio`, `bioErrors` + a `baseline` snapshot captured on load. `onSave` builds a change-only payload (only includes fields that differ from baseline) and skips the broadcast entirely when nothing changed. Mirrors mobile's `SpaceSettingsModal.tsx:459-467` sender-side gate. |
+| Wire format | Bio threaded into the `update-profile` payload via the existing `UpdateProfileMessage.bio?: string` shared field. Tag-rotation rebroadcast in `MessageService.ts` also carries the global bio along (when set) so members of every space pick up the current value. |
+| Receive | Both receive sites in `MessageService.ts` (`saveMessage` ~L1153 and `addMessage` ~L1655) switched from unconditional overwrite to mobile's upsert-aware merge: truthy check for displayName/userIcon (skip empty strings — wire shape never sends them empty intentionally), `!== undefined` for bio (explicit empty string is a deliberate clear). This was a latent bug — partial profile updates were clobbering receivers' stored fields. |
+| Render | "About" section added to `UserProfile.tsx` (the in-channel user-click card). Renders only when bio is non-empty so users without a bio see no empty section. Bio resolution: per-space `member.bio` wins; for own profile, falls back to `UserConfig.bio` via `useQuery` (reactive, not a snapshot); for others with public profile, `useMembersWithPublicProfileFallback` already surfaces `pub.bio`. |
+| Data flow | Bio plumbed through 6 intermediate files: `useChannelData.members` map, `useMembersWithPublicProfileFallback` merge, `generateVirtualizedUserList` shape, `UserProfileModalUser` type, `Message.tsx onUserClick` payload, `ThreadPanel.tsx starterUser`, `MessageMarkdownRenderer.tsx` mention click. Without this chain the editor would have no visible effect on the space side. |
+| Global bio broadcast | `MessageDB.updateUserProfile` gained a `bio?: string` parameter. `useUserSettings.saveChanges` reads `freshConfig` BEFORE calling `updateUserProfile` and passes bio only when it differs from `freshConfig.bio` — avoids clobbering per-space overrides on unrelated saves (e.g. toggling a notification preference). |
+| Cache-first init | `useUserSettings` init effect now reads from React Query cache synchronously first, falls back to `getConfig` (IndexedDB + decryption) only on cache miss. Fixes a race where reopening User Settings right after a save showed stale bio (action queue write hadn't flushed). For warm cache, eliminates the 1-2s "fields flash empty" issue too. |
+| Positioning clamp | `calculateModalPosition` now bounds `position.top` against the viewport so the now-taller UserProfile card doesn't clip past the bottom edge. Defense patch; the proper Floating UI refactor is filed as a follow-up task. |
+| Drive-bys | (1) `db/messages.ts`: `SpaceMember` intersection in `getSpaceMember` / `getSpaceMembers` / `saveSpaceMember` now declares `bio?: string` (was missing from the type even though it was stored at runtime). (2) Code-review pass during shipping caught + fixed: non-reactive `getQueryData` snapshot in `UserProfile.tsx` swapped for `useQuery` subscription so the card re-renders if the global bio changes while it's open. |
+
+### What changed scope during shipping
+
+- **Scope grew from "just the editor" to "editor + receive fix + render + plumbing".** Initial scope was the textarea. Verification pass showed (a) no space-side surface rendered `member.bio` (the feature would have been invisible without `UserProfile.tsx` render), (b) the receive handlers had a latent clobber bug bundled fix, (c) data flow gaps in 6 files. All bundled rather than split because the editor alone would have shipped a non-functional feature.
+- **Bio length cap stays at shared `MAX_BIO_LENGTH=160`.** Mobile has three inconsistent caps (160 onboarding / 256 global / 280 per-space) and ignores the shared validator. User's call was to stay aligned with the shared constant; mobile convergence dropped as a follow-up task.
+- **Three follow-up tasks filed.** `2026-06-08-userprofile-positioning-floating-ui.md` (proper architectural fix for the positioning clamp), `2026-06-08-userprofile-card-layout-polish.md` (UI design pass surfaced by the bio addition but with pre-existing roots), `bugs/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md` (cold-start residual after the cache-read fix mitigates the warm-cache case).
+
+### Mobile-side follow-up dropped
+
+- **`2026-06-08-mobile-converge-bio-length-to-shared.md`** — converge mobile's three bio editors (160/256/280) to shared `MAX_BIO_LENGTH=160` + adopt `validateUserBio` (XSS check). Tracker row added to `mobile-tasks-pending.md`. Runtime test required (cap reduction is user-visible for any existing 161–280 char bios on mobile).
+
+### Lessons captured
+
+- **A feature port can have a hidden multiplier.** Shipping the bio editor alone would have shipped a feature with zero visible effect — no space-side surface rendered `member.bio`. Verification pass before drafting the task file caught this; an editor-only port would have been worse than no port (latent invisible data). When scoping a port, grep for the rendering surface, not just the data path.
+- **Pre-existing latent bugs adjacent to a port are often worth bundling.** The receive-handler overwrite bug existed before bio; it would have been a clobber problem for any partial profile update. Fixing it in the bio PR is in scope because the new bio-only edit pattern relies on the fix; deferring would have shipped bio + a known bug that bio exposes. Drive-by fixes are fine when the alternative is shipping a known-broken interaction.
+- **Code review pre-PR catches subtle staleness issues.** The reviewer flagged a `getQueryData` snapshot vs `useQuery` subscription — a pattern that "works in practice but stops working at the edge." Both fixes from the review were 10 lines combined; both would have been bug reports after merge if not caught. Worth the review pass cost.
 
 ## 2026-06-08 — #6 Public profile UI shipped (+ retired speculative `/discover/people`)
 

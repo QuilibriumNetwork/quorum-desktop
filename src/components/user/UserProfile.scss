@@ -147,6 +147,26 @@
   background: rgb(var(--success) / 0.7);
 }
 
+.user-profile-bio-section {
+  padding: $s-2 $s-2 0;
+}
+
+.user-profile-bio-label {
+  font-size: $text-sm;
+  color: var(--color-text-subtle);
+  font-weight: $font-medium;
+  padding-bottom: $s-1;
+}
+
+.user-profile-bio-text {
+  font-size: $text-sm;
+  color: var(--color-text-main);
+  line-height: $text-sm-lh;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  padding-bottom: $s-2;
+}
+
 .user-profile-note-section {
   padding: $s-2 $s-2 0;
 }

@@ -6,6 +6,7 @@ export interface UserProfileModalUser {
   address: string;
   displayName?: string;
   userIcon?: string;
+  bio?: string;
 }
 
 export interface UserProfileModalContext {

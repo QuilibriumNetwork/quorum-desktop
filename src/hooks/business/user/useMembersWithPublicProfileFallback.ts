@@ -121,6 +121,10 @@ export function useMembersWithPublicProfileFallback(
         ...(local ?? { address: addr }),
         displayName: local?.displayName || pub.display_name || undefined,
         userIcon: local?.userIcon || pub.profile_image || undefined,
+        // Bio uses the same per-field merge — a populated per-space bio
+        // wins, otherwise we surface the global public-profile bio so
+        // users we don't share a space with still show an About section.
+        bio: (local?.bio as string | undefined) || pub.bio || undefined,
       };
     });
     result = merged;

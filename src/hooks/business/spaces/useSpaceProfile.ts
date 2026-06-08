@@ -7,7 +7,7 @@ import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProces
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { showError } from '../../../utils/toast';
-import { useDisplayNameValidation } from '../validation';
+import { useDisplayNameValidation, validateUserBio } from '../validation';
 
 export interface UseSpaceProfileOptions {
   spaceId: string;
@@ -17,6 +17,9 @@ export interface UseSpaceProfileOptions {
 export interface UseSpaceProfileReturn {
   displayName: string;
   setDisplayName: (name: string) => void;
+  bio: string;
+  setBio: (bio: string) => void;
+  bioErrors: string[];
   fileData: ArrayBuffer | undefined;
   currentFile: File | undefined;
   avatarFileError: string | null;
@@ -46,16 +49,27 @@ export const useSpaceProfile = (
 
   const [currentMember, setCurrentMember] = useState<any>(null);
   const [displayName, setDisplayName] = useState('');
+  const [bio, setBio] = useState('');
   const [fileData, setFileData] = useState<ArrayBuffer | undefined>();
   const [currentFile, setCurrentFile] = useState<File | undefined>();
   const [avatarFileError, setAvatarFileError] = useState<string | null>(null);
   const [isAvatarUploading, setIsAvatarUploading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
   const [markedForDeletion, setMarkedForDeletion] = useState<boolean>(false);
+  // Snapshot of the loaded SpaceMember fields. Used by onSave to send only
+  // fields that actually changed, so partial edits don't broadcast empty/stale
+  // values that would clobber receivers' stored fields (mirrors mobile's
+  // SpaceSettingsModal sender-side gate).
+  const [baseline, setBaseline] = useState<{
+    displayName: string;
+    bio: string;
+    userIcon: string;
+  }>({ displayName: '', bio: '', userIcon: '' });
 
   // Use proper display name validation (replaces basic validation)
   const displayNameValidation = useDisplayNameValidation(displayName);
-  const hasValidationError = !!displayNameValidation.error;
+  const bioErrors = validateUserBio(bio);
+  const hasValidationError = !!displayNameValidation.error || bioErrors.length > 0;
 
   // Load current member data
   useEffect(() => {
@@ -66,11 +80,22 @@ export const useSpaceProfile = (
         const member = await messageDB.getSpaceMember(spaceId, currentPasskeyInfo.address);
         setCurrentMember(member);
         // Initialize display name from member or fallback to global
-        setDisplayName(member?.display_name || currentPasskeyInfo.displayName || '');
+        const initialDisplayName = member?.display_name || currentPasskeyInfo.displayName || '';
+        const initialBio = member?.bio ?? '';
+        const initialUserIcon = member?.user_icon ?? '';
+        setDisplayName(initialDisplayName);
+        setBio(initialBio);
+        setBaseline({
+          displayName: initialDisplayName,
+          bio: initialBio,
+          userIcon: initialUserIcon,
+        });
       } catch (error) {
         console.error('Failed to load space member:', error);
         // Fallback to global profile
         setDisplayName(currentPasskeyInfo.displayName || '');
+        setBio('');
+        setBaseline({ displayName: currentPasskeyInfo.displayName || '', bio: '', userIcon: '' });
       }
     })();
   }, [spaceId, currentPasskeyInfo?.address, messageDB]);
@@ -186,29 +211,54 @@ export const useSpaceProfile = (
   }, [fileData, currentFile, currentMember, currentPasskeyInfo, markedForDeletion]);
 
   const onSave = useCallback(async () => {
-    if (!currentPasskeyInfo || displayNameValidation.error) {
+    if (!currentPasskeyInfo || displayNameValidation.error || bioErrors.length > 0) {
       return;
     }
 
     setIsSaving(true);
     try {
-      // Load the local space_members record only for its cached user_icon
-      // fallback. submitChannelMessage does not require this record — when
-      // it's missing, the icon falls back to the global pfpUrl. The previous
-      // `if (!member?.inbox_address)` guard rejected the save before this
-      // point, but `inbox_address` is never consumed by the update-profile
-      // submit path and the message format is explicitly designed to
-      // tolerate inbox key rotation (see MessageService.ts ~line 3033).
-      const member = await messageDB.getSpaceMember(spaceId, currentPasskeyInfo.address);
-
-      // Prepare user icon - handle deletion, new upload, or keep existing
-      let userIcon: string;
+      // Resolve the new userIcon from local state: a fresh upload becomes the
+      // new value, a deletion becomes the empty string, otherwise the existing
+      // baseline is kept untouched. We compare against baseline.userIcon below
+      // to decide whether to broadcast it.
+      let nextUserIcon: string;
       if (markedForDeletion) {
-        userIcon = ''; // Empty string signals deletion
+        nextUserIcon = '';
       } else if (fileData && currentFile) {
-        userIcon = `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
+        nextUserIcon = `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
       } else {
-        userIcon = member?.user_icon || currentPasskeyInfo.pfpUrl || '';
+        nextUserIcon = baseline.userIcon;
+      }
+
+      // Build a change-only payload: include each field only when it differs
+      // from the loaded baseline. This matches mobile's sender-side gate
+      // (SpaceSettingsModal.tsx:459-467) so a bio-only edit doesn't broadcast
+      // displayName/userIcon and clobber receivers' stored values on builds
+      // without the receive-side upsert merge.
+      const trimmedDisplayName = displayName.trim();
+      const trimmedBio = bio.trim();
+      const changed: {
+        displayName?: string;
+        userIcon?: string;
+        bio?: string;
+      } = {};
+      if (trimmedDisplayName !== baseline.displayName) {
+        changed.displayName = trimmedDisplayName;
+      }
+      if (nextUserIcon !== baseline.userIcon) {
+        changed.userIcon = nextUserIcon;
+      }
+      if (trimmedBio !== baseline.bio) {
+        // Bio uses presence-aware semantics on the receiver: an explicit empty
+        // string is a deliberate clear, undefined means "no change".
+        changed.bio = trimmedBio;
+      }
+
+      // Nothing actually changed — skip the broadcast and the modal-close
+      // callback fires as if a save happened (matches mobile UX).
+      if (Object.keys(changed).length === 0) {
+        onSaveCallback?.();
+        return;
       }
 
       // Get space's default channel
@@ -217,15 +267,23 @@ export const useSpaceProfile = (
         throw new Error('Space not found');
       }
 
-      // Send update-profile message
+      // Send update-profile message. `submitChannelMessage` requires the
+      // `update-profile` payload to satisfy the UpdateProfileMessage type,
+      // which today types displayName and userIcon as required strings.
+      // The wire shape tolerates omitting them (mobile already does, and
+      // canonicalize() over a partial object is well-defined); fall back to
+      // baseline values for the typed fields when we're not actually
+      // broadcasting them so the type-check passes and a receiver running
+      // an older build still has something to overwrite-with-same.
       await submitChannelMessage(
         spaceId,
         space.defaultChannelId,
         {
           type: 'update-profile',
           senderId: currentPasskeyInfo.address,
-          displayName: displayName.trim(),
-          userIcon: userIcon,
+          displayName: changed.displayName ?? baseline.displayName,
+          userIcon: changed.userIcon ?? baseline.userIcon,
+          ...(changed.bio !== undefined ? { bio: changed.bio } : {}),
         },
         queryClient,
         currentPasskeyInfo,
@@ -233,6 +291,14 @@ export const useSpaceProfile = (
         false, // skipSigning - must sign for security
         undefined // isSpaceOwner - not needed for profile updates
       );
+
+      // Refresh the baseline so subsequent saves in the same modal session
+      // compare against the just-broadcast values.
+      setBaseline({
+        displayName: trimmedDisplayName,
+        bio: trimmedBio,
+        userIcon: nextUserIcon,
+      });
 
       // Note: Cache is updated optimistically by MessageService.submitChannelMessage
       // No need to invalidate here - that would cause unnecessary refetch
@@ -250,6 +316,8 @@ export const useSpaceProfile = (
   }, [
     currentPasskeyInfo,
     displayName,
+    bio,
+    baseline,
     fileData,
     currentFile,
     spaceId,
@@ -258,12 +326,16 @@ export const useSpaceProfile = (
     queryClient,
     onSaveCallback,
     displayNameValidation.error,
+    bioErrors.length,
     markedForDeletion,
   ]);
 
   return {
     displayName,
     setDisplayName,
+    bio,
+    setBio,
+    bioErrors,
     fileData,
     currentFile,
     avatarFileError,
