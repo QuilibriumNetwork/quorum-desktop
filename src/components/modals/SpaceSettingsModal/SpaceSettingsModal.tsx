@@ -108,13 +108,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
     }
   }, [messageDB, queryClient, spaceId, user?.currentPasskeyInfo]);
 
-  // Set default tab based on ownership
-  React.useEffect(() => {
-    if (selectedCategory === 'general' && isSpaceOwner === false) {
-      setSelectedCategory('account');
-    }
-  }, [isSpaceOwner]);
-
   // Default channel is now toggled inline in the Channels tab via the star
   // button. Here it's only derived from the space manifest so the Invites
   // hook can navigate to the right channel after generating a link.
@@ -163,6 +156,21 @@ const SpaceSettingsModal: React.FunctionComponent<{
     onClose: dismiss,
     initialCategory: initialTab,
   });
+
+  // Set default tab based on ownership.
+  // Non-owners can land on 'invites' when the space has a published public
+  // invite link (#29 port-from-mobile/candidates.md); otherwise bounce them
+  // off any owner-only tab to 'account'.
+  React.useEffect(() => {
+    if (isSpaceOwner === false) {
+      const nonOwnerAllowed =
+        selectedCategory === 'account' ||
+        (selectedCategory === 'invites' && !!space?.inviteUrl);
+      if (!nonOwnerAllowed) {
+        setSelectedCategory('account');
+      }
+    }
+  }, [isSpaceOwner, selectedCategory, space?.inviteUrl, setSelectedCategory]);
 
   // Role management hook
   const {
@@ -437,6 +445,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                 selectedCategory={selectedCategory}
                 setSelectedCategory={setSelectedCategory}
                 spaceId={spaceId}
+                hasPublicInvite={!!space?.inviteUrl}
               />
 
               <div className="modal-complex-content-with-footer">
