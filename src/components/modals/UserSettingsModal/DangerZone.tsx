@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Callout, Input } from '../../primitives';
+import { Button, Callout, Icon, Input } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { useQueryClient } from '@tanstack/react-query';
@@ -42,7 +42,8 @@ const DangerZone: React.FunctionComponent = () => {
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title text-danger">
+          <div className="text-title text-danger flex items-center gap-2">
+            <Icon name="warning" size="lg" />
             <Trans>Reset App Data</Trans>
           </div>
           <div className="pt-2 text-label">

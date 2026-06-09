@@ -288,6 +288,27 @@
   margin-bottom: $s-3;
 }
 
+// Sidebar header used when the modal can be opened from outside the context
+// it configures, so the user knows which Space (or which account) they're
+// editing. Renders as a row with an optional small icon + the name.
+.modal-nav-title-block {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  margin-bottom: $s-3;
+  min-width: 0;
+  font-size: $text-base;
+  font-weight: $font-bold;
+  color: var(--color-text-strong);
+}
+
+.modal-nav-title-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
 .modal-nav-category {
   display: flex;
   align-items: center;
@@ -347,43 +368,156 @@
   }
 }
 
-.modal-nav-mobile-2col {
+// Mobile header above the pills nav. On SpaceSettings: shows a small space icon
+// + space name in natural casing. On UserSettings: shows "Account Settings".
+// Sits above the pills row and pads enough to give the pills breathing room.
+.modal-nav-mobile-header {
   display: none;
 
   @media (max-width: $screen-md) {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: $s-10 $s-4 $s-2 $s-4;
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    padding: $s-10 $s-4 $s-4 $s-4;
+    background: var(--color-bg-modal-sidebar);
+    font-size: $text-base;
+    font-weight: $font-bold;
+    color: var(--color-text-strong);
+    min-width: 0;
+
+    // Truncation lives on the inner text span so the icon stays at full size.
+    .modal-nav-mobile-header-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+  }
+}
+
+// Small round space icon used inside the header. Renders the iconUrl as a
+// background image; falls back to a coloured circle with the first character.
+.modal-nav-mobile-header-icon,
+.modal-nav-sidebar-header-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 9999px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--color-bg-modal-cat-hover);
+  color: var(--color-text-strong);
+  font-size: $text-sm;
+  font-weight: $font-bold;
+  flex-shrink: 0;
+  text-transform: uppercase;
+  user-select: none;
+}
+
+// Wrapper that hosts the scrollable pills + a right-edge fade overlay.
+// The fade lives outside the scroll container so it never overlaps the pills
+// themselves — it just sits over the modal's right edge as a visual hint.
+.modal-nav-mobile-pills-wrapper {
+  display: none;
+
+  @media (max-width: $screen-md) {
+    display: block;
+    position: relative;
     background: var(--color-bg-modal-sidebar);
     border-bottom: $border solid var(--color-border-default);
-    border-radius: $rounded-lg $rounded-lg 0 0;
-    gap: $s-0-5 $s-4;
+
+    // Edge fade hint that more content is scrollable to the right.
+    // Pointer-events: none means it never blocks clicks on the pill underneath.
+    &::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: $s-6;
+      background: linear-gradient(
+        to right,
+        transparent,
+        var(--color-bg-modal-sidebar)
+      );
+      pointer-events: none;
+    }
+  }
+}
+
+// Horizontal pill nav for mobile. Scrollable when the labels overflow.
+// Each pill scrolls itself into view when activated (handled in JS).
+.modal-nav-mobile-pills {
+  display: none;
+
+  @media (max-width: $screen-md) {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: $s-2;
+    // Larger horizontal padding so the first pill clearly stands apart from
+    // the modal edge. Vertical padding gives some breathing room from the
+    // header above and the content below. Extra top padding (2px) leaves
+    // room for the 1px accent border on the active pill without clipping.
+    padding: calc(#{$s-2} + 2px) $s-5 $s-4 $s-5;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scroll-snap-type: x proximity;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     .modal-nav-category {
-      font-weight: $font-medium;
-      cursor: pointer;
-      padding: $s-1-5 $s-2;
-      margin: $s-0-5 0;
-      border-radius: $rounded-md;
+      flex-shrink: 0;
+      scroll-snap-align: start;
+      display: inline-flex;
+      align-items: center;
+      gap: $s-1-5;
+      // Subtract 1px from vertical padding to compensate for the 1px transparent
+      // border applied below — keeps default and active pill heights identical.
+      padding: calc(#{$s-1-5} - 1px) $s-3;
+      margin: 0;
+      border-radius: 9999px;
       font-size: $text-sm;
-      text-align: center;
-      border-left: $border-2 solid transparent;
+      font-weight: $font-medium;
+      white-space: nowrap;
+      background-color: var(--color-bg-modal-cat-hover);
+      color: var(--color-text-main);
+      // Transparent border on the default state keeps the layout stable when
+      // the accent border appears on the active pill.
+      border: 1px solid transparent;
 
       &:hover {
-        background-color: var(--color-bg-modal-cat-hover);
+        background-color: var(--color-bg-modal-cat-active);
       }
 
       &.active {
-        background-color: var(--color-bg-modal-cat-active);
-        border-left-color: var(--accent);
-      }
-
-      @media (max-width: $screen-xs) {
-        font-size: $text-sm;
-        padding: $s-1 $s-1-5;
+        background-color: rgb(var(--accent-rgb) / 0.12);
+        border-color: var(--accent);
+        color: var(--color-text-strong);
       }
     }
+
+    // Trailing spacer that pushes the last pill clear of the right-edge fade.
+    // Wider than the fade ($s-6) so the last pill is fully readable even when
+    // scrolled all the way to the end.
+    .modal-nav-mobile-pills-end-spacer {
+      flex-shrink: 0;
+      width: $s-8;
+      height: 1px;
+    }
   }
+}
+
+// Keep the 2col mobile nav class as a hidden no-op so legacy references don't
+// blow up the layout if anything still references it. Old class — replace with
+// `.modal-nav-mobile-pills` going forward.
+.modal-nav-mobile-2col {
+  display: none;
 }
 
 // Content Section Classes

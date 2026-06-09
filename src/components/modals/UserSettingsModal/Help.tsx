@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Spacer } from '../../primitives';
+import { Button, Icon, Spacer } from '../../primitives';
 import { t } from '@lingui/core/macro';
 
 interface HelpProps {
@@ -15,7 +15,10 @@ const Help: React.FunctionComponent<HelpProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title">{t`Get Help Using Quorum`}</div>
+          <div className="text-title flex items-center gap-2">
+            <Icon name="support" size="lg" />
+            {t`Get Help Using Quorum`}
+          </div>
           <div className="pt-2 text-body">
             {t`Find documentation, keyboard shortcuts, and recovery tools.`}
           </div>

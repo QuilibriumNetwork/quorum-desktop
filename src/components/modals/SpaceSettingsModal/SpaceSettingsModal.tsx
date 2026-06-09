@@ -446,6 +446,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                 setSelectedCategory={setSelectedCategory}
                 spaceId={spaceId}
                 hasPublicInvite={!!space?.inviteUrl}
+                spaceName={spaceName}
+                spaceIconUrl={space?.iconUrl}
               />
 
               <div className="modal-complex-content-with-footer">

@@ -21,7 +21,10 @@ const Notifications: React.FunctionComponent<NotificationsProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title">{t`Notifications`}</div>
+          <div className="text-title flex items-center gap-2">
+            <Icon name="bell" size="lg" />
+            {t`Notifications`}
+          </div>
           <div className="pt-2 text-body">
             {t`Manage desktop notification preferences for new messages.`}
           </div>

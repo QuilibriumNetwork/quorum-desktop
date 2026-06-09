@@ -39,7 +39,8 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title">
+          <div className="text-title flex items-center gap-2">
+            <Icon name="image" size="lg" />
             <Trans>Stickers</Trans>
           </div>
           <div className="pt-2 text-body">

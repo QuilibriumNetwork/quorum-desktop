@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, Button, Tooltip, Spacer, ColorSwatch, Flex, useTheme } from '../../primitives';
+import { Select, Button, Tooltip, Spacer, ColorSwatch, Flex, Icon, useTheme } from '../../primitives';
 import type { AccentColor } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { ThemeRadioGroup } from '../../ui';
@@ -37,7 +37,10 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title">{t`Appearance`}</div>
+          <div className="text-title flex items-center gap-2">
+            <Icon name="palette" size="lg" />
+            {t`Appearance`}
+          </div>
           <div className="pt-2 text-body">
             {t`Choose your preferred theme for Quorum.`}
           </div>
