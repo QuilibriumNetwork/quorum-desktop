@@ -32,7 +32,9 @@ import type {
   ThreadMessage,
   ThreadMeta,
   UpdateProfileMessage,
+  DMUpdateProfileMessage,
   BroadcastSpaceTag,
+  Conversation,
 } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
@@ -274,6 +276,57 @@ export class MessageService {
     }
   }
 
+  // Broadcasts the sender's current profile to every DM partner over their
+  // existing session, so receivers can refresh their stored displayName /
+  // icon / bio. Per-partner failures (no established session yet, etc.) are
+  // logged and skipped — never block the user-facing profile save.
+  async broadcastProfileToAllDMs(
+    displayName: string,
+    userIcon: string,
+    bio: string | undefined,
+    selfUserAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): Promise<void> {
+    let conversations: Conversation[];
+    try {
+      const result = await this.messageDB.getConversations({ type: 'direct' });
+      conversations = result.conversations;
+    } catch (err) {
+      logger.warn('[DMProfile] Failed to enumerate DM conversations', { err });
+      return;
+    }
+
+    for (const conv of conversations) {
+      const partnerAddress = conv.address;
+      if (!partnerAddress || partnerAddress === selfUserAddress) continue;
+
+      const msg: DMUpdateProfileMessage = {
+        type: 'dm-update-profile',
+        senderId: selfUserAddress,
+        displayName,
+        userIcon,
+        ...(bio !== undefined ? { bio } : {}),
+      };
+
+      try {
+        await this.encryptAndSendDm(
+          partnerAddress,
+          msg as unknown as Record<string, unknown>,
+          selfUserAddress,
+          keyset,
+        );
+      } catch (err) {
+        logger.warn('[DMProfile] broadcast to partner failed', {
+          err,
+          partner: partnerAddress.slice(0, 16),
+        });
+      }
+    }
+  }
+
   /**
    * Attach piggybacked delivery + read receipt acks to an outgoing DM message.
    * Called before encryption so the ack data is included in the encrypted payload.
@@ -328,6 +381,7 @@ export class MessageService {
     selfAddress: string,
     deliveryReceiptsEnabled: boolean,
     readReceiptsEnabled: boolean,
+    queryClient?: QueryClient,
   ): boolean {
     const raw = decryptedContent as any;
 
@@ -372,6 +426,25 @@ export class MessageService {
       return true; // Signal: intercept this message — never reaches saveMessage
     }
 
+    // 1d. Intercept dm-update-profile — broadcast by a DM partner when they
+    // change their global profile. Upsert the conversation row so the next
+    // render shows the new identity. senderId must match the envelope's
+    // sender address (anti-spoofing); mismatched messages are dropped.
+    if (raw.type === 'dm-update-profile') {
+      const profileMsg = raw as DMUpdateProfileMessage;
+      if (profileMsg.senderId === senderAddress) {
+        this.handleDMProfileUpdate(senderAddress, profileMsg, queryClient).catch((err) => {
+          logger.warn('[DMProfile] handleDMProfileUpdate failed', { err, sender: senderAddress.slice(0, 16) });
+        });
+      } else {
+        logger.warn('[DMProfile] Rejected dm-update-profile with mismatched senderId', {
+          envelopeSender: senderAddress.slice(0, 16),
+          claimedSender: profileMsg.senderId?.slice(0, 16),
+        });
+      }
+      return true;
+    }
+
     // 2. Extract piggybacked ackMessageIds, process, then strip
     const ackMessageIds = raw.ackMessageIds;
     if (ackMessageIds && this.receiptService && deliveryReceiptsEnabled) {
@@ -401,6 +474,32 @@ export class MessageService {
     }
 
     return false; // Signal: continue with normal saveMessage pipeline
+  }
+
+  // Upsert-aware merge: non-empty fields overwrite, absent fields preserve.
+  // Bio accepts empty string as "clear" to match space update-profile.
+  private async handleDMProfileUpdate(
+    senderAddress: string,
+    profileMsg: DMUpdateProfileMessage,
+    queryClient?: QueryClient,
+  ): Promise<void> {
+    const conversationId = senderAddress + '/' + senderAddress;
+    const existing = await this.messageDB.getConversation({ conversationId });
+    if (!existing?.conversation) return;
+
+    const merged = {
+      ...existing.conversation,
+      ...(profileMsg.displayName ? { displayName: profileMsg.displayName } : {}),
+      ...(profileMsg.userIcon ? { icon: profileMsg.userIcon } : {}),
+      ...(profileMsg.bio !== undefined ? { bio: profileMsg.bio } : {}),
+    };
+
+    await this.messageDB.saveConversation(merged);
+
+    if (queryClient) {
+      queryClient.invalidateQueries({ queryKey: buildConversationsKey({ type: 'direct' }) });
+      queryClient.invalidateQueries({ queryKey: buildConversationKey({ conversationId }) });
+    }
   }
 
   /**
@@ -1161,15 +1260,9 @@ export class MessageService {
         },
       });
     } else if (decryptedContent.content.type === 'update-profile') {
-      const participant = await messageDB.getSpaceMember(
-        spaceId,
-        decryptedContent.content.senderId
-      );
-      if (
-        !participant ||
-        !decryptedContent.publicKey ||
-        !decryptedContent.signature
-      ) {
+      // Drop unsigned messages — we can't validate authenticity or derive
+      // the inbox address without the signing key material.
+      if (!decryptedContent.publicKey || !decryptedContent.signature) {
         return;
       }
 
@@ -1177,6 +1270,20 @@ export class MessageService {
         Buffer.from(decryptedContent.publicKey, 'hex')
       );
       const inboxAddress = base58btc.baseEncode(sh.bytes);
+
+      // UPSERT: if we don't have a member record yet (joined the space after
+      // the sender sent their update, or join control was missed), create one
+      // from the profile data itself. Mirrors mobile WebSocketContext.tsx:1841-1854.
+      // Without this, every update-profile from an unknown sender was silently
+      // dropped, leaving messages with no displayable name or avatar.
+      const existing = await messageDB.getSpaceMember(
+        spaceId,
+        decryptedContent.content.senderId
+      );
+      const participant = existing ?? ({
+        user_address: decryptedContent.content.senderId,
+        inbox_address: inboxAddress,
+      } as secureChannel.UserProfile & { inbox_address: string; isKicked?: boolean });
 
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
@@ -2716,7 +2823,7 @@ export class MessageService {
           });
           const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
           const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
-          if (this.interceptControlMessages(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
+          if (this.interceptControlMessages(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts, queryClient)) {
             // delivery-ack control message — encryption state saved, but don't save/display the message
             return;
           }
@@ -4261,7 +4368,7 @@ export class MessageService {
         const senderAddress = conversationId.split('/')[0];
         const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
         const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
-        if (this.interceptControlMessages(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
+        if (this.interceptControlMessages(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts, effectiveReadReceipts, queryClient)) {
           // delivery-ack control message — encryption state saved, but don't save/display the message
           return;
         }

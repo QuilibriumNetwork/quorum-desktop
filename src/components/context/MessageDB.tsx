@@ -459,6 +459,17 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           undefined  // isSpaceOwner - not needed for profile updates
         );
       }
+
+      // DM equivalent: push the new profile to every existing DM partner.
+      // Fire-and-forget; per-partner failures are logged inside the service.
+      const ks = actionQueueServiceRef.current?.getUserKeyset();
+      if (ks) {
+        messageServiceRef.current
+          ?.broadcastProfileToAllDMs(displayName, userIcon, bio, currentPasskeyInfo.address, ks)
+          .catch((err) => {
+            logger.warn('[DMProfile] broadcastProfileToAllDMs failed', { err });
+          });
+      }
     },
     []
   );

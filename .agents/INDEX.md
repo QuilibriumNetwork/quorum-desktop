@@ -91,6 +91,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Permissions Architecture](docs/space-permissions/space-permissions-architecture.md)
 - [Space Roles System](docs/space-permissions/space-roles-system.md)
 
+### Debugging
+- [DM Architecture and Debug Playbook](docs/debugging/dm-architecture-and-debug-playbook.md) — DM identity flow, known sync gaps, debug ladder. Read before any DM investigation.
+
+## 🛠 Tools
+
+- [DM debug snippets](tools/dm-debug/README.md) — copy-paste console scripts for diagnosing DM identity / sync issues.
+
 ## 🐛 Bug Reports
 
 ### Active Issues

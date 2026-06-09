@@ -314,20 +314,20 @@ const DirectMessage: React.FC<{}> = () => {
     cleanupStaleEncryptionStates();
   }, [self?.registration, registration?.registration, address, messageDB]);
 
-  // Helper for compatibility. `bio` is sourced from the public profile —
-  // the local Conversation row doesn't carry it, and DMUserProfileSidebar
-  // is the only place that reads it today.
+  // Bio priority: local conversation row (broadcast via dm-update-profile)
+  // wins; public-profile bio is the fallback for users who opted in.
   const otherUser = useMemo(() => {
     const base = members[address!] || {
       displayName: t`Unknown User`,
       userIcon: DefaultImages.UNKNOWN_USER,
       address: address!,
     };
+    const localBio = conversation?.conversation?.bio;
     return {
       ...base,
-      bio: recipientPublicProfile?.bio || undefined,
+      bio: localBio || recipientPublicProfile?.bio || undefined,
     };
-  }, [members, address, recipientPublicProfile]);
+  }, [members, address, conversation, recipientPublicProfile]);
 
   // Icon size for header icons
   const headerIconSize = 'lg';
