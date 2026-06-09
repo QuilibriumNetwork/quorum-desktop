@@ -156,7 +156,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
             }
           />
         </div>
-        <Spacer size="md" direction="vertical" borderTop={true} />
+        <Spacer size="md" direction="vertical" borderTop={true} className="mt-4" />
         {userIconFileError && (
           <div className="mb-4">
             <div className="error-label flex items-center justify-between">

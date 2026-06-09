@@ -25,6 +25,7 @@ import { validateDisplayName, validateUserBio } from '../../../hooks/business/va
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import General from './General';
 import Privacy from './Privacy';
+import Security from './Security';
 import Notifications from './Notifications';
 import Appearance from './Appearance';
 import Help from './Help';
@@ -194,7 +195,10 @@ const UserSettingsModal: React.FunctionComponent<{
   }, [saveUntilComplete, saveUserChanges, fileData, currentFile, setUser, displayName, currentPasskeyInfo, markedForDeletion]);
 
   // Determine if current category needs save button
-  const categoryNeedsSave = selectedCategory === 'general' || selectedCategory === 'privacy';
+  const categoryNeedsSave =
+    selectedCategory === 'general' ||
+    selectedCategory === 'privacy' ||
+    selectedCategory === 'security';
 
   return (
     <Modal
@@ -257,19 +261,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         setAllowSync={setAllowSync}
                         nonRepudiable={nonRepudiable}
                         setNonRepudiable={setNonRepudiable}
-                        stagedRegistration={stagedRegistration}
-                        keyset={keyset}
-                        removeDevice={removeDevice}
-                        downloadKey={downloadKey}
-                        exportBackup={exportBackup}
-                        importBackup={importBackup}
-                        getPrivateKeyHex={getPrivateKeyHex}
-                        onSave={saveChanges}
-                        isSaving={isSaving}
-                        removedDevices={removedDevices}
                         isConfigLoaded={isConfigLoaded}
-                        deviceNames={deviceNames}
-                        saveDeviceName={saveDeviceName}
                         deliveryReceipts={deliveryReceipts}
                         setDeliveryReceipts={setDeliveryReceipts}
                         readReceipts={readReceipts}
@@ -282,6 +274,21 @@ const UserSettingsModal: React.FunctionComponent<{
                         setGenerateYouTubePreviews={setGenerateYouTubePreviews}
                         isProfilePublic={isProfilePublic}
                         setIsProfilePublic={setIsProfilePublic}
+                      />
+                    );
+                  case 'security':
+                    return (
+                      <Security
+                        stagedRegistration={stagedRegistration}
+                        keyset={keyset}
+                        removeDevice={removeDevice}
+                        downloadKey={downloadKey}
+                        exportBackup={exportBackup}
+                        importBackup={importBackup}
+                        getPrivateKeyHex={getPrivateKeyHex}
+                        removedDevices={removedDevices}
+                        deviceNames={deviceNames}
+                        saveDeviceName={saveDeviceName}
                       />
                     );
                   case 'notifications':
