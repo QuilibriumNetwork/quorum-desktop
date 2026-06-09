@@ -1161,15 +1161,9 @@ export class MessageService {
         },
       });
     } else if (decryptedContent.content.type === 'update-profile') {
-      const participant = await messageDB.getSpaceMember(
-        spaceId,
-        decryptedContent.content.senderId
-      );
-      if (
-        !participant ||
-        !decryptedContent.publicKey ||
-        !decryptedContent.signature
-      ) {
+      // Drop unsigned messages — we can't validate authenticity or derive
+      // the inbox address without the signing key material.
+      if (!decryptedContent.publicKey || !decryptedContent.signature) {
         return;
       }
 
@@ -1177,6 +1171,20 @@ export class MessageService {
         Buffer.from(decryptedContent.publicKey, 'hex')
       );
       const inboxAddress = base58btc.baseEncode(sh.bytes);
+
+      // UPSERT: if we don't have a member record yet (joined the space after
+      // the sender sent their update, or join control was missed), create one
+      // from the profile data itself. Mirrors mobile WebSocketContext.tsx:1841-1854.
+      // Without this, every update-profile from an unknown sender was silently
+      // dropped, leaving messages with no displayable name or avatar.
+      const existing = await messageDB.getSpaceMember(
+        spaceId,
+        decryptedContent.content.senderId
+      );
+      const participant = existing ?? ({
+        user_address: decryptedContent.content.senderId,
+        inbox_address: inboxAddress,
+      } as secureChannel.UserProfile & { inbox_address: string; isKicked?: boolean });
 
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
