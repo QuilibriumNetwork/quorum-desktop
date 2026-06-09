@@ -224,7 +224,10 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title">{t`Privacy/Security`}</div>
+          <div className="text-title flex items-center gap-2">
+            <Icon name="shield" size="lg" />
+            {t`Privacy/Security`}
+          </div>
           <div className="pt-2 text-body">
             {t`Manage devices, and privacy conditions for messaging and synchronization.`}
           </div>

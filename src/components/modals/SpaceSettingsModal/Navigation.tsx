@@ -23,7 +23,7 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
     { id: 'account', icon: 'user', label: t`Account`, className: '' },
     { id: 'general', icon: 'settings', label: t`General`, className: '' },
     { id: 'channels', icon: 'hashtag', label: t`Channels`, className: '' },
-    { id: 'roles', icon: 'users', label: t`Roles`, className: '' },
+    { id: 'roles', icon: 'shield', label: t`Roles`, className: '' },
     { id: 'space-tag', icon: 'tag', label: t`Space Tag`, className: '' },
     { id: 'emojis', icon: 'smile', label: t`Emojis`, className: '' },
     { id: 'stickers', icon: 'image', label: t`Stickers`, className: '' },

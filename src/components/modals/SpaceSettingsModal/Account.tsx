@@ -131,7 +131,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-title">
+          <div className="text-title flex items-center gap-2">
+            <Icon name="user" size="lg" />
             <Trans>Account Settings</Trans>
           </div>
           <div className="pt-2 text-body">
