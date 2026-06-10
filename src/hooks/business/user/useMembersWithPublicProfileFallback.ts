@@ -141,5 +141,41 @@ export function useMembersWithPublicProfileFallback(
   }
 
   cacheRef.current = { members, addressesToFetch, dataRefs, result };
+
+  // Gated diagnostic (ship-safe; off unless explicitly enabled). Enable with:
+  //   localStorage.setItem('debug_profile_fallback', 'true'); location.reload();
+  // For each address we tried to back-fill, prints whether a public profile
+  // was found and what name/icon it yielded — so we can tell "wiring bug"
+  // (profile exists, render still shows address) from "no public profile"
+  // (404 -> null -> nothing to fill). Disable with removeItem + reload.
+  try {
+    if (
+      typeof localStorage !== 'undefined' &&
+      localStorage.getItem('debug_profile_fallback') === 'true' &&
+      addressesToFetch.length > 0
+    ) {
+      console.table(
+        addressesToFetch.map((addr, i) => {
+          const pub = dataRefs[i];
+          const local = members[addr];
+          return {
+            address: addr.slice(0, 18) + '…',
+            inMemberMap: !!local,
+            localName: local?.displayName ?? '(none)',
+            localIcon: local?.userIcon ? 'has' : '(none)',
+            publicProfile: pub ? 'FOUND' : 'none/404',
+            pubName: pub?.display_name || '(empty)',
+            pubImage: pub?.profile_image ? 'YES' : 'no',
+            verdict: pub
+              ? 'fillable'
+              : 'NO public profile (not client-recoverable)',
+          };
+        })
+      );
+    }
+  } catch {
+    // localStorage access can throw in some sandboxed contexts — ignore.
+  }
+
   return result;
 }

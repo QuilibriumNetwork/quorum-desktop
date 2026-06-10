@@ -45,6 +45,16 @@ interface MessageListProps {
   messageList: MessageType[];
   stickers?: { [stickerId: string]: Sticker };
   members: any;
+  /** Optional sender->identity resolver. When provided (e.g. Channel's
+   *  public-profile-backfilled mapper, or DirectMessage's own), it is used
+   *  instead of the internal one built from the raw `members` map. This is how
+   *  the public-profile fallback reaches per-message name/avatar rendering. */
+  mapSenderToUser?: (senderId: string) => {
+    address?: string;
+    displayName?: string;
+    userIcon?: string;
+    [extra: string]: unknown;
+  };
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
   editor: React.RefObject<HTMLTextAreaElement | null>;
   submitMessage: (message: any) => Promise<void>;
@@ -142,6 +152,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       messageList,
       stickers,
       members,
+      mapSenderToUser: mapSenderToUserProp,
       setInReplyTo,
       editor,
       submitMessage,
@@ -287,7 +298,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       },
     }));
 
-    const mapSenderToUser = useCallback(
+    // Internal resolver from the raw `members` map — used only when the caller
+    // doesn't supply its own mapper. Space channels and DMs both pass an
+    // enriched mapper (with public-profile fallback) via the prop; this is the
+    // bare fallback for any caller that doesn't.
+    const mapSenderToUserInternal = useCallback(
       (senderId: string) => {
         const member = members[senderId];
         if (member) {
@@ -303,6 +318,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       },
       [members]
     );
+
+    const mapSenderToUser = mapSenderToUserProp ?? mapSenderToUserInternal;
 
     // Strict variant — returns null when the address isn't a current, active
     // member of this space. Kicked members are explicitly treated as
