@@ -204,6 +204,14 @@ const UserProfile: React.FunctionComponent<{
           <div className="user-profile-username">
             <span>{props.user.displayName}</span>
           </div>
+          {props.user.primaryUsername && (
+            // Verified QNS handle. The ".q" suffix is render-time only and
+            // protected from spoofing by the shared dot-validation, so its
+            // presence here is a trust signal: this is a registered QNS name.
+            <div className="text-accent text-xs">
+              {props.user.primaryUsername}.q
+            </div>
+          )}
           <Flex className="py-1 text-subtle">
             <span className="text-xs text-subtle">
               {getAddressSuffix(props.user.address)}

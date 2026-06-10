@@ -19,9 +19,16 @@
 // The server uses the `UserPublicKey` already on file (from the user
 // registration) to verify the signature.
 //
-// v2 payload format adds an optional `primary_username` (QNS name) — desktop
-// has no QNS plumbing (see candidates.md #12), so we always publish v1.
-// `farcasterLink` is also server-supported but unused on desktop until a
+// v2 payload format adds an optional `primary_username` (QNS name). Desktop
+// READS `primary_username` from other users' public profiles (to render their
+// verified "name.q" handle), but does NOT publish it: there is no desktop UI
+// or local config for a user to claim/set their own QNS primary name (that
+// needs the QNS registration surface — candidates.md #12, out of scope). With
+// no source to publish, v2-publish would be dead code, so we always sign v1.
+// If a primary_username ever reaches desktop (e.g. future config sync from
+// mobile), add the v2 branch then — mobile's format is
+// `public-profile-v2:addr:displayName:profileImage:bio:primaryUsername:` + ts.
+// `farcasterLink` is similarly server-supported but unused on desktop until a
 // Farcaster product decision (candidates.md #9).
 //
 // TODO(shared-promotion): mobile's `services/profile/publicProfile.ts` has a

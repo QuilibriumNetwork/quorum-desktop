@@ -60,11 +60,11 @@ Once a user has a QNS name, the **global display-name field becomes the fallback
 
 ### Validation (what makes `.q` unspoofable)
 
-Custom display names — **both** the global one (`UserSettingsModal/General.tsx`) and the per-space override (`SpaceSettingsModal/Account.tsx`) — must be rejected if, **after normalization**, they contain a dot.
+Custom display names — **both** the global one (`UserSettingsModal/General.tsx`) and the per-space override (`SpaceSettingsModal/Account.tsx`) — must be rejected if, **after normalization**, they end in `.q`.
 
-- **The rule is: reject any dot in a custom name** (not merely the `.q` suffix). QNS names are dotless, so a dot in stored custom text is never legitimate. Forbidding all dots reserves the dotted namespace entirely for verified names and is visually clean ("only verified names have dots"). (Forbidding only the `.q` suffix would be the bare minimum, but this spec adopts the stronger all-dots rule. The only thing the plan still confirms is that there is no legitimate desktop use of dots in display names — none is known.)
-- **Normalization before the check is mandatory** (else trivially bypassed): trim whitespace, and fold Unicode confusables (lookalike dots like `﹒`, `．`, full-width chars) to ASCII before testing. A naive `endsWith('.q')` on raw input is theater.
-- This validation is **net-new** (mobile has none). It hooks into the existing validation pattern — `SpaceSettingsModal/Account.tsx` already imports `MAX_BIO_LENGTH` from `hooks/business/validation` and already surfaces a `displayNameError` prop; the global field in `General.tsx` gets the equivalent.
+- **The rule is: reject names ending in `.q`** (not any dot anywhere). The only string that can be mistaken for a verified handle is one that renders like `<name>.q`, and `<name>` is dotless (QNS forbids dots in names), so the spoofable shape is precisely a `.q` ending. A mid-name dot like `jane.doe` is harmless — it can't look like a verified handle — and was a *legitimate, previously-allowed* display name on both apps, so we don't break it. (An earlier draft of this spec banned all dots; that was over-broad — it regressed names like `jane.doe` for no spoofing-protection gain. Narrowed to the `.q` suffix.)
+- **Normalization before the check is mandatory** (else trivially bypassed): trim whitespace, lowercase, and fold Unicode confusables (lookalike dots like `﹒`, `．`, full-width chars) to ASCII before testing the suffix. A naive `endsWith('.q')` on raw input is theater.
+- This validation is **net-new** (mobile has none — and neither app validated dots before, so `.q` was previously settable as a display name). It hooks into the existing validation pattern — `SpaceSettingsModal/Account.tsx` already imports `MAX_BIO_LENGTH` from `hooks/business/validation` and already surfaces a `displayNameError` prop; the global field in `General.tsx` gets the equivalent.
 
 ## Per-surface behavior
 

@@ -38,6 +38,10 @@ interface MemberRecord {
   address: string;
   userIcon?: string;
   displayName?: string;
+  /** QNS primary username (no ".q" suffix — that's render-time). Sourced from
+   *  the public-profile fallback so members we don't share fresh data with
+   *  still show their verified name. */
+  primaryUsername?: string;
   // Additional fields preserved opaquely (isKicked, spaceTag, joinedAt, etc).
   [extra: string]: unknown;
 }
@@ -125,6 +129,12 @@ export function useMembersWithPublicProfileFallback(
         // wins, otherwise we surface the global public-profile bio so
         // users we don't share a space with still show an About section.
         bio: (local?.bio as string | undefined) || pub.bio || undefined,
+        // QNS primary username: only the public profile carries it, so the
+        // fallback is the only source. Rendered as "name.q" by the UI.
+        primaryUsername:
+          (local?.primaryUsername as string | undefined) ||
+          pub.primary_username ||
+          undefined,
       };
     });
     result = merged;
