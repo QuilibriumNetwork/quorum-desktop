@@ -99,7 +99,7 @@ const NewDirectMessageModal: React.FunctionComponent<
           </Callout>
         )}
         <p className="text-body text-subtle mb-4">
-          {t`Enter a user's address to start messaging them.`}
+          {t`Enter a user's address or @username to start messaging them.`}
         </p>
         <div>
           <Input
@@ -111,7 +111,7 @@ const NewDirectMessageModal: React.FunctionComponent<
                 handleSubmitWithSettings();
               }
             }}
-            placeholder={t`User address here`}
+            placeholder={t`User address or @username`}
             error={!!error}
             errorMessage={error || undefined}
             autoFocus={true}
