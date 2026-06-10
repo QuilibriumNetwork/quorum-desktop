@@ -103,14 +103,48 @@ wiring the existing `effectiveMembers`/`mapSenderToUser` into MessageList does
 **not** introduce a roster-wide fetch storm. (The member-list *sidebar* — a
 separate surface — still uses raw `members` by design and is out of scope here.)
 
+## Decision: render-only, do NOT write-through to `space_members` (2026-06-10)
+
+The DM fix (`useConversationsWithProfileBackfill`) writes the pulled public
+profile back into the `conversations` row (a write-through cache). We considered
+mirroring that for spaces and **deliberately decided against it.** Keep the
+space fallback **render-only**.
+
+Why the DM write-through does NOT transfer to spaces:
+
+1. **Weaker benefit.** The DM write-back killed a visible per-open 1-2s avatar
+   flash. The space fetch is already bounded to visible senders AND cached 1h in
+   React Query, so there's no comparable flash to eliminate — only a marginal
+   re-fetch saving.
+2. **Correctness risk (the dealbreaker).** `conversations` is the user's own
+   per-partner contact card — safe to enrich. `space_members` is **canonical,
+   shared protocol state** written by space sync/join + `update-profile`
+   broadcasts. Writing the *global* public profile into it could (a) clobber a
+   per-space identity/bio override, (b) persist a stale global value that then
+   suppresses a fresh `update-profile` merge, and (c) for `inMemberMap: false`
+   users, fabricate `space_members` rows for people the protocol never reported
+   as members — polluting membership state with derived data.
+3. **Masks the real bug.** The `inMemberMap: false` users exist because member
+   profile data isn't syncing into `space_members` (the deeper desktop/mobile
+   sync gap). Write-through would paper over that for the minority who published
+   a public profile, while hiding the underlying sync issue.
+
+If re-fetch cost ever becomes a measured problem, the safe option is a
+**separate derived cache** (own IndexedDB store keyed by address, never touching
+`space_members`), not write-through. Don't reintroduce write-through to
+`space_members`.
+
 ## Out of scope
 
 - The space **member-list sidebar** (the `users` panel toggled by the people
   icon) deliberately uses raw `members` to avoid fetching the whole roster.
   Fixing that needs a virtualization-aware bounded fetch — separate task.
-- DM surfaces — already fixed (branch `fix/dm-sidebar-profile-fallback`,
-  2026-06-10).
-- Users with no public profile — not client-side recoverable.
+- DM surfaces — already fixed (branch
+  `fix/profile-identity-fallback-dm-and-spaces`, 2026-06-10).
+- Users with no public profile (`404`) and `inMemberMap: false` users — not
+  client-side recoverable; root cause is the member-profile sync gap, a
+  separate network/sync investigation.
+- Write-through to `space_members` — explicitly rejected (see Decision above).
 
 ## Verification
 
@@ -121,6 +155,15 @@ separate surface — still uses raw `members` by design and is out of scope here
 - No fetch storm: Network tab shows public-profile calls only for visible
   senders, not the full roster.
 - `npx tsc --noEmit --skipLibCheck` clean; `yarn lint` clean.
+
+## Status
+
+Implemented (render-only) on branch `fix/profile-identity-fallback-dm-and-spaces`:
+- `MessageList` accepts optional `mapSenderToUser`; Channel passes its enriched
+  one (commit `3f2cfe08`).
+- `UserAvatar` falls back to initials on empty/broken image (commit `1dd64b84`).
+- Verified by user: names show in space messages + member sidebar; users with no
+  usable picture show initials; previously-blank avatars now show initials.
 
 ---
 *Last updated: 2026-06-10*
