@@ -3,7 +3,7 @@ type: doc
 title: DM Architecture and Debug Playbook
 status: living
 created: 2026-06-09
-updated: 2026-06-09
+updated: 2026-06-10
 audience: future agents debugging DM-related bugs (delivery, identity, sync)
 ---
 
@@ -15,9 +15,28 @@ audience: future agents debugging DM-related bugs (delivery, identity, sync)
 
 - DM identity (name, icon, bio) lives in `conversations` (IndexedDB). One row per partner, keyed by `conversationId = partnerAddress + '/' + partnerAddress`.
 - DM identity is captured **at session-init time** from the encrypted envelope's `user_profile`. Established sessions (`DoubleRatchetInboxDecrypt`) do NOT carry profile data on subsequent messages.
-- A change to a DM partner's pfp/name/bio is propagated by a **`dm-update-profile` control message** sent over the existing DM session whenever the partner saves their global profile in User Settings → General. This is intercepted on receive (never persisted as a chat post) and upserts the conversation row.
+- A change to a DM partner's pfp/name/bio is propagated by a **`dm-update-profile` control message** sent over the existing DM session whenever the partner saves their global profile in User Settings → General. This is intercepted on receive (never persisted as a chat post) and upserts the conversation row. This is the **push** path.
+- There is also a **pull/back-fill** path for identity the push never delivered (older contacts, missed messages): `useConversationsWithProfileBackfill` fetches the partner's server-side public profile and **writes it through to the `conversations` row**. See "Identity sources & the three sync paths" below. This is what makes the sidebar and the no-flash conversation open work for legacy contacts (added 2026-06-10).
 - Per-space profile saves (Space Settings → Account) are independent — they only touch `space_members`, never DMs.
 - **Network sync between two clients is not reliable.** Regular DMs from B to A sometimes never arrive. This is an open issue, not a code bug we've identified.
+
+## Identity sources & the three sync paths
+
+A DM partner's name/avatar/bio can reach you three ways. Knowing which one a given symptom belongs to is the whole game.
+
+**The durable source of truth is the local `conversations` row.** Every render surface (sidebar, header, per-message avatar) is *supposed* to read from it. A user has exactly **one** avatar/name; the routes below are just different ways that one value gets into your row. There is no separate "public-profile picture" distinct from the normal one.
+
+| # | Path | When it fires | Writes to row? | Notes |
+|---|------|---------------|----------------|-------|
+| 1 | **Session-init capture** | First incoming DM from a partner (`NewDoubleRatchetRecipientSession`) | Yes | Captures `display_name` + `user_icon` from the envelope once. Frozen after that. |
+| 2 | **`dm-update-profile` push** | Partner saves their global profile while you have an active session | Yes (upsert) | The privacy-preserving path — travels inside the encrypted DM channel, no server sees it. Only reaches active sessions, only going forward. |
+| 3 | **Public-profile pull + write-back** | You render a contact whose row still holds the `"Unknown User"` / default-icon placeholder | Yes (back-fill, placeholder fields only) | `useConversationsWithProfileBackfill`. Centralized HTTP `GET /users/:addr/public-profile`. Only works if the partner opted into a public profile. Heals legacy contacts that predate path 2. |
+
+**Read-after-write, never read-from-network-at-render.** Once any path has written the row, all surfaces read it locally — fast, offline, no flash. We do **not** poll the network on every conversation open. Path 3's fetch has a 1h React Query `staleTime` and only targets rows still on the placeholder, so it's effectively one-time-per-contact, then silent.
+
+**Why path 3 exists (the bug it fixed, 2026-06-10).** The sidebar read the raw row with no fallback, while the conversation view fell back to the public profile *in memory only* (`DirectMessage.tsx` `members` memo) and never persisted it. Result: header/messages showed the avatar, sidebar showed the default, and the conversation view re-fetched on every open (the 1-2s flash). Path 3 gives the sidebar the same fallback **and writes it through**, so the row is correct everywhere and the flash disappears. Safety: it only overwrites a field still holding the placeholder, so a path-2 value is never clobbered by a (possibly stale) public profile.
+
+**The honest gaps.** If a partner changes their avatar and you have no active session (or the message is missed), path 2 won't reach you; path 3 only helps if they also published a public profile. A contact with neither an active exchange nor a public profile (e.g. `@3` in testing) stays on the default until they actually send you data. That's a property of the model, not a bug.
 
 ## Architecture map
 
@@ -32,11 +51,14 @@ audience: future agents debugging DM-related bugs (delivery, identity, sync)
 
 ### Read paths (who shows DM identity)
 
-1. **DM list sidebar** — reads `conversations` via React Query `useConversations`. Cache key: `buildConversationsKey({ type: 'direct' })`.
+1. **DM list sidebar** — reads `conversations` via React Query `useConversations`. Cache key: `buildConversationsKey({ type: 'direct' })`. Enriched by `useConversationsWithProfileBackfill` (path 3 above): placeholder rows get the public profile merged in for render AND written back to the row.
 2. **DM chat header** — `useConversation` for the open conversation. Cache key: `buildConversationKey({ conversationId })`.
 3. **DM UserProfile sidebar** (the inline profile panel in DM view) — reads `conversation.bio` first, then falls back to `recipientPublicProfile?.bio` (server-side public profile, only present if the partner opted in). See [`DirectMessage.tsx`](src/components/direct/DirectMessage.tsx) `otherUser` memo.
 4. **DM message list per-message header** — reads `members` map produced by `useChannelData`-like logic; for DMs the map has one entry.
-5. **Public-profile fallback** — `useMembersWithPublicProfileFallback` fills missing/empty fields from `GET /users/:addr/public-profile`. 404 (user opted out) → no fallback data, the UI stays empty.
+5. **Public-profile fallback** — two hooks, same endpoint (`GET /users/:addr/public-profile`), different consumers:
+   - `useMembersWithPublicProfileFallback` — space message surfaces. Render-only fallback; fires only when a member has **neither** name **nor** icon (so it does NOT trigger for a row whose name is the literal `"Unknown User"`).
+   - `useConversationsWithProfileBackfill` — DM sidebar (path 3). Per-field (`"Unknown User"` / default icon each count as empty), and **writes the result back** to the `conversations` row.
+   - 404 (user opted out) → no fallback data; the field stays on its placeholder.
 
 ### Receive paths (where identity gets written)
 
@@ -108,10 +130,11 @@ Run the diagnostic scripts (`.agents/tools/dm-debug/`). Get both clients' `conve
 
 | Symptom | Look at |
 |---|---|
-| Initials + truncated address everywhere | `conversations.displayName` / `icon` — was identity ever captured? |
-| Name shows, pfp missing | `conversations.icon` is `null` or empty string. The init envelope arrived with no icon. |
-| Pfp shows but bio doesn't | `conversations.bio` field. If null, the user never broadcast `dm-update-profile`, or the broadcast didn't arrive. |
-| Stale identity (old pfp shown after partner changed it) | Same as bio — needs a `dm-update-profile` broadcast from partner. |
+| Initials + truncated address everywhere | `conversations.displayName` / `icon` — was identity ever captured? If the partner has a public profile, path 3 (`useConversationsWithProfileBackfill`) should fill it; run `.agents/tools/dm-debug/05-profile-sources.js` to confirm a source exists. |
+| Name shows, pfp missing | `conversations.icon` is the default / empty. Path 3 recovers it **if** the partner published a public-profile image; otherwise needs a `dm-update-profile` push. Use `05-profile-sources.js`: `storedIconIsDefault: true` + `pubHasImage: YES` = path 3 should fill it. |
+| Shows in conversation header/messages but NOT sidebar | Classic path-3 gap (the 2026-06-10 bug). The conversation view fell back to the public profile in memory; the row was never written. Should be fixed now — if it recurs, check that `useConversationsWithProfileBackfill` is wired into `DirectMessageContactsList` and that the write-back isn't erroring (look for `[DMProfileBackfill]` warnings). |
+| Pfp shows but bio doesn't | `conversations.bio` field. If null, the user never broadcast `dm-update-profile`, or the broadcast didn't arrive. (Bio is NOT back-filled to the row by path 3 — only name/icon are.) |
+| Stale identity (old pfp shown after partner changed it) | Needs a `dm-update-profile` broadcast from partner. Path 3 won't overwrite a non-placeholder value, so a stale-but-real pfp is intentionally left alone until path 2 updates it. |
 
 ### Step 3: add debug logs at three layers
 
@@ -145,7 +168,7 @@ If the send fires but receive is silent:
 - The transport-level reason DMs sometimes don't deliver. We have no theory yet.
 - The cause of asymmetric `conversations` tables between two clients in the same dev environment.
 - Whether the action queue or websocket processQueue has a starvation / dropped-message mode for DM-control payloads specifically.
-- Should we ship a "request profile from partner" pull mechanism for stuck-missing cases? Open design question.
+- ~~Should we ship a "request profile from partner" pull mechanism for stuck-missing cases?~~ **Partially done (2026-06-10):** `useConversationsWithProfileBackfill` pulls from the server-side *public profile* (not a P2P request to the partner) and writes it back to the row. A true peer-to-peer "request your profile" message is still unbuilt and would cover partners who never published a public profile.
 
 ## Files of interest
 
@@ -153,7 +176,9 @@ If the send fires but receive is silent:
 - [`src/components/context/MessageDB.tsx`](src/components/context/MessageDB.tsx) — `updateUserProfile` callback (line ~421).
 - [`src/hooks/business/user/useUserSettings.ts`](src/hooks/business/user/useUserSettings.ts) — `saveChanges` (the global profile save).
 - [`src/hooks/business/spaces/useSpaceProfile.ts`](src/hooks/business/spaces/useSpaceProfile.ts) — per-space profile save (does NOT touch DMs).
-- [`src/components/direct/DirectMessage.tsx`](src/components/direct/DirectMessage.tsx) — DM render path, `otherUser` memo for sidebar identity.
+- [`src/components/direct/DirectMessage.tsx`](src/components/direct/DirectMessage.tsx) — DM render path, `members` + `otherUser` memos (the in-memory public-profile fallback that path 3 makes durable).
+- [`src/hooks/business/conversations/useConversationsWithProfileBackfill.ts`](src/hooks/business/conversations/useConversationsWithProfileBackfill.ts) — path 3: sidebar public-profile pull + write-through to the `conversations` row.
+- [`src/components/direct/DirectMessageContactsList.tsx`](src/components/direct/DirectMessageContactsList.tsx) — DM sidebar; wires in path 3 after `useConversationPreviews`.
 - [`src/components/user/UserProfile.tsx`](src/components/user/UserProfile.tsx) — UserProfile modal used in spaces.
 - [`@quilibrium/quorum-shared/src/types/message.ts`](../../../../quorum-shared/src/types/message.ts) — `UpdateProfileMessage`, `DMUpdateProfileMessage`.
 - [`@quilibrium/quorum-shared/src/types/conversation.ts`](../../../../quorum-shared/src/types/conversation.ts) — `Conversation`.
@@ -166,4 +191,4 @@ If the send fires but receive is silent:
 - [DM Sync Non-Deterministic Failures](../../reports/action-queue/005-dm-sync-non-deterministic-failures.md) — known sync gap.
 
 ---
-*Last updated: 2026-06-09*
+*Last updated: 2026-06-10*
