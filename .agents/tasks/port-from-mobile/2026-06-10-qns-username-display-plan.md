@@ -6,7 +6,45 @@
 
 **Architecture:** A single pure name-resolution helper in `@quilibrium/quorum-shared` is the spine (per-space override → QNS username → display name → address). A minimal QNS resolver (one endpoint, `GET /resolve/:name`, plus ed448-pubkey→address derivation) also lives in shared. Desktop consumes both; mobile keeps its own QNS client and is insulated by its published-version pin. The `.q` suffix is render-time only; dot-validation in the shared display-name validator makes it unspoofable.
 
-**Tech Stack:** TypeScript, React, vitest (shared tests), React Query, `@quilibrium/quorum-shared` (consumed via `link:` on desktop, published version on mobile), `@noble/hashes` (sha256), `multihashes` + `bs58` (address derivation, already mobile deps).
+**Tech Stack:** TypeScript, React, vitest (shared tests), React Query, `@quilibrium/quorum-shared` (consumed via `link:` on desktop, published version on mobile), `@noble/hashes` (sha256), `multiformats` base58btc (address derivation — NOT `multihashes`/`bs58`; shared lacks those, see Task 1 note below).
+
+---
+
+## PROGRESS — where we are (updated 2026-06-10)
+
+**Branch:** `feat/qns-usernames` (desktop). Safety snapshot: `feat/qns-usernames-snapshot-2026-06-10`. Rebased onto `origin/main` (incl. #189 Farcaster byte-limits). Builds clean against shared `2.1.0-28` (only the 1 pre-existing `ImportKeyStep.tsx` tsc error, inherited from main).
+
+**Shared (merged):** PR **#35** (resolver + `resolveDisplayName` helper + initial `.q` validation), PR **#36** (narrowed validation to `.q`-suffix-only — `hasReservedQnsSuffix`, NOT all-dots; `jane.doe` is valid). Both on `master`, `2.1.0-27`; subsequent unrelated #37 → `2.1.0-28`.
+
+| Stage | What | Status |
+|---|---|---|
+| **1** | Shared: `deriveAddress` (via `multiformats`, not mobile's deps), minimal `resolveName` (defines a local `QnsNameRecord` — shared had no `NameRecord`), `resolveDisplayName` helper, `.q`-suffix validation. | ✅ done, merged (#35/#36), 261 shared tests pass |
+| **2** | DM search by `@username` (`useResolveQnsName` + `useDirectMessageCreation` + modal). **`@` is optional** (auto-detect: starts-with-`Qm` = address, else username). | ✅ done + **verified live** (`lamat` → `QmVYRWmquW98yaymeRv7aLn6bqRYr9PAtWcG87Kj25YvPY`, matches LaMat's real address). Model-independent. |
+| **3** | Profile `.q` display + `.q`-suffix validation in both settings inputs. | ⚠️ **built as Model A (secondary handle), BLOCKED on lead-dev Model A-vs-B decision** — see below. Validation + plumbing are keep-regardless; only the *render* is model-dependent. |
+| **4** | Mentions by QNS name (autocomplete + pill). | ❌ NOT started. Blocked on the same A-vs-B decision (mentions show a name; which name depends on the model). |
+
+### 🔴 THE BLOCKING DECISION: Model A vs Model B (awaiting lead dev, asked via Telegram 2026-06-10)
+
+The plan/design originally specified the resolution rule `per-space override → QNS primary_username → display name → address` (**Model B** — QNS name IS the name). But Stage 3 was **built as Model A** (mobile's pattern): the typed display name stays primary, and `.q` is appended as a small secondary handle, only in the profile card.
+
+- **Model A (current build):** display name primary everywhere; `.q` as a secondary accent handle in profile surfaces only. Matches (inconsistent) mobile.
+- **Model B (user's preference + original design):** the elected `primary_username` is shown as the name **everywhere** (`name.q`), overriding the typed display name; **per-space override still wins locally**; typed display name is the fallback for users with no primary QNS name. Guardrail: `primary_username` must always be explicitly user-set, never auto-assigned (else B surfaces a name the user didn't choose).
+
+**User leans Model B and messaged the lead dev.** When the answer comes:
+- **If Model B:** rework Stage 3 render — route every name-render surface through the existing `resolveDisplayName` helper (it already returns `{name, isQnsVerified}`) instead of appending a handle. Surfaces to convert: `UserProfile.tsx`, `DMUserProfileSidebar.tsx` (NOT currently wired — it's a separate component from `UserProfile`), the DM header in `DirectMessage.tsx`, the space member list (`Channel.tsx` — note it uses the RAW `members` map, not the enriched `effectiveMembers`, deliberately for perf), and message-author names. Then do Stage 4 mentions with the same rule.
+- **If Model A:** Stage 3 stays as-is; just extend the `.q` handle to the surfaces missing it (DM sidebar, etc.), then Stage 4.
+
+### Verification reality (why `.q` can't be seen live yet)
+
+The `.q` render **works** (confirmed via temp-injection in the DM sidebar — a distinct test value rendered correctly in accent color, then reverted). But it can't be seen with REAL data because **no user's published profile currently carries `primary_username`** — two mobile bugs block it (both filed in `quorum-mobile/.agents/bugs/`, 2026-06-10):
+1. `primary-username-not-synced-or-published.md` — mobile's `updateProfile` never copies `primaryUsername` into the synced config (shared `UserConfig` has no such field), and the publish reads possibly-stale in-memory state, so `primary_username` doesn't reach the server.
+2. `isprofilepublic-not-syncing-mobile-to-desktop.md` — `isProfilePublic` toggle set on mobile doesn't propagate to the same user's desktop (config-sync gap).
+
+These are mobile-side / read-only for this effort. The desktop feature ships correct; `.q` lights up for real once mobile publishes the field. Separately, the user wants to raise (Telegram) whether `primaryUsername` should ride in the **profile broadcast** (sent with messages) so it shows without requiring a published public profile at all — see [[project_qns_username_broadcast_pending]] in memory.
+
+### Decision to ship NOW
+
+Ship the whole `feat/qns-usernames` branch as one PR (Stages 1+2+3). Rationale: the only model-dependent content is ~25 lines of `.q` *render* (Model A) that is **dormant** anyway (no real data shows it yet), so carrying it costs nothing and surgically removing it risks losing proven work. If Model B lands, the render conversion is a clean follow-up (per the bullet above). PR is opened for review, NOT auto-merged.
 
 ---
 
@@ -856,4 +894,4 @@ git commit -m "feat(qns): usernames across DM search, profiles, mentions; .q pro
 
 ---
 
-*Last updated: 2026-06-10*
+*Last updated: 2026-06-10 — added the "PROGRESS — where we are" section at the top: Stages 1+2 done (Stage 2 verified live), Stage 3 built as Model A and blocked on the lead-dev Model A-vs-B decision, Stage 4 not started. Shared #35/#36 merged. Two mobile bugs block live `.q` verification. Shipping Stages 1+2+3 as one PR; Model-B render conversion + Stage 4 are the resume points.*
