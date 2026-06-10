@@ -58,30 +58,35 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 
 | Feature | Mobile location | Status | Reference |
 |---|---|---|---|
-| Unified /spaces page — PR 1 (My Spaces + Discover) (#1) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts` (Discover only); My Spaces tab is desktop-original | ✅ shipped (PR #170, 2026-06-04) | [Task file](.done/2026-06-01-port-discover-spaces.md) · [candidates.md `### #1`](candidates.md#1-discover-spaces--shipped) |
+| Unified /spaces page — PR 1 (My Spaces + Discover) (#1) | `app/(tabs)/spaces/discover.tsx`, `hooks/chat/useExploreSpaces.ts` (Discover only); My Spaces tab is desktop-original | ✅ shipped (PR #170, 2026-06-04) | [Task file](.done/2026-06-01-port-discover-spaces.md) · [candidates.md `#1`](candidates.md#1-discover-spaces--shipped-pr-170-2026-06-04) |
 | Unified /spaces page — PR 2 (Join via link + Create space tabs + retire old modals) | Obsoleted by new UI shell (PR #171, 2026-06-03) | ❌ obsolete | [Task file](.done/2026-06-01-port-discover-spaces-pr2.md) |
-| Public profile + remove `/discover/people` (#6) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts` | ✅ shipped (2026-06-08) | [Task file](.done/2026-06-08-port-public-profile.md) · [candidates.md `### #6`](candidates.md#6-public-profile-ui--shipped-2026-06-08) |
-| Reporting (#5) | `services/reporting/reportService.ts`, `components/ReportModal.tsx` | ⏸️ deprioritized | [candidates.md `### #5`](candidates.md#5-reporting--deprioritized) |
-| Message search (#2) | — | ❌ already on desktop | [candidates.md `### #2`](candidates.md#2-message-search--ruled-out) |
+| Public profile + remove `/discover/people` (#6) | `services/profile/publicProfile.ts`, `hooks/useUserPublicProfile.ts`, `hooks/useMembersWithPublicProfileFallback.ts` | ✅ shipped (2026-06-08) | [Task file](.done/2026-06-08-port-public-profile.md) · [candidates.md `#6`](candidates.md#6-public-profile-ui--shipped-2026-06-08) |
+| Per-space profile bio override (#30) | `components/SpaceSettingsModal.tsx`, `services/space/spaceMessageService.ts` | ✅ shipped (PR #185, 2026-06-08) | [Task file](.done/2026-06-08-port-per-space-bio.md) · [candidates.md `#30`](candidates.md#30-per-space-profile-bio-override--shipped-pr-185-2026-06-08) |
+| Reporting (#5) | `services/reporting/reportService.ts`, `components/ReportModal.tsx` | ⏸️ deprioritized | [candidates.md `#5`](candidates.md#5-reporting---deprioritized-but-engineering-ready) |
+| Message search (#2) | — | ❌ already on desktop | [candidates.md `#2`](candidates.md#2-message-search--ruled-out-class-e) |
 | Reply tracking (#3) | — | ❌ desktop strictly better | [desktop-better-than-mobile.md #1](desktop-better-than-mobile.md#1-reply-notification-counts) |
-| Last-message-preview / spaces sort (#4) | — | ❌ UX-pattern conflict | [candidates.md `### #4`](candidates.md#4-last-message-preview--spaces-list-sort--wont-port) |
-| OG metadata (#8) | — | ⚠️ Farcaster-only on mobile | [candidates.md `### #8`](candidates.md#8-og-metadata---farcaster-only-on-mobile) |
-| Skins / custom themes (#27) | `components/skins/*`, `services/skins/*`, `theme/skins/*` | ❔ needs UX call | [candidates.md `### #27`](candidates.md#27-skins-custom-themes--needs-ux-call) |
-| On-device translation (#28) | `modules/quorum-translation/*`, `services/translation/*`, `components/translation/*` | ❔ needs UX call | [candidates.md `### #28`](candidates.md#28-on-device-translation--needs-ux-call) |
-| Non-owner read-only access to public invite URL (#29) | `app/(tabs)/spaces/[id]/index.tsx` (header), `components/InviteModal.tsx` | ✅ shipped (PR #182, 2026-06-08) | [Task file](.done/2026-06-08-port-non-owner-invite-view.md) · [candidates.md `### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--shipped-2026-06-08) |
+| Last-message-preview / spaces sort (#4) | — | ❌ UX-pattern conflict | [candidates.md `#4`](candidates.md#4-last-message-preview--spaces-list-sort--wont-port) |
+| OG metadata (#8) | — | ⚠️ Farcaster-only on mobile | [candidates.md `#8`](candidates.md#8-og-metadata--farcaster-only-on-mobile) |
+| Skins / custom themes (#27) | `components/skins/*`, `services/skins/*`, `theme/skins/*` | ❔ needs UX call | [candidates.md `#27`](candidates.md#27-skins-custom-themes---needs-ux-call-low-priority-2026-06-10) |
+| On-device translation (#28) | `modules/quorum-translation/*`, `services/translation/*`, `components/translation/*` | ❔ needs UX call | [candidates.md `#28`](candidates.md#28-on-device-translation---needs-ux-call) |
+| Non-owner read-only access to public invite URL (#29) | `app/(tabs)/spaces/[id]/index.tsx` (header), `components/InviteModal.tsx` | ✅ shipped (PR #182, 2026-06-08) | [Task file](.done/2026-06-08-port-non-owner-invite-view.md) · [candidates.md `#29`](candidates.md#29-non-owner-read-only-access-to-public-invite-url--shipped-pr-182-2026-06-08) |
 
 ## Next up
 
-**No port in flight.** #29 shipped 2026-06-08 (PR #182, see [shipped-log.md](shipped-log.md) and [task file in `.done/`](.done/2026-06-08-port-non-owner-invite-view.md)). The remaining new candidates from the 2026-06-08 re-audit both need a product-scope decision:
+**No port in flight, and the actionable list is intentionally empty (user call, 2026-06-10).** The only engineering-ready candidate (#5 Reporting) and the next-biggest opportunity (#27 Skins) are both low priority right now. See [candidates.md → Actionable now](candidates.md#actionable-now) for the always-current pick-next view.
 
-- ❔ **#27 Skins (custom themes)** — full skin engine on mobile (color tokens, geometry scale, fonts, wallpaper, icon substitution, server gallery with Ed448-signed publishes, ~2000+ LOC). Desktop's `Appearance.tsx` only ships theme + 6 accent swatches. **Needs product-scope call**: is "user-customizable themes + gallery" in desktop's roadmap?
-- ❔ **#28 On-device translation** — native iOS/Android modules (Apple Translation + ML Kit). Re-implementation rather than a port: desktop has no equivalent engine, options are cloud (privacy regression) or WASM (size cost). **Needs product-scope call.**
+State of the remaining candidates:
 
-#5 Reporting is still deprioritized. Everything else is ❌ already-on-desktop, ⚠️ Farcaster-coupled, or ❔ awaiting a product-scope decision (#9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance).
+- ⏸️ **#5 Reporting** — engineering-ready (capability-verified missing, ~195 LOC + a modal), but deprioritized. Cleanest pick-up if trust/safety moves up. Bundles the deferred Ed448 signing-helper shared-promotion (second call site).
+- ❔ **#27 Skins (custom themes)** — full skin engine on mobile (~2000+ LOC, gallery with Ed448-signed publishes). Low priority + needs a product-scope call (app-wide vs per-space, editor parity, gallery on day one).
+- ❔ **#28 On-device translation** — native iOS/Android modules; a re-implementation, not a port (cloud = privacy regression, WASM = size cost). Needs a product-scope call.
+- ❔ **Big-surface cluster** — #9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance. Each needs a yes/no/later before engineering. See [candidates.md → Awaiting a product-scope call](candidates.md#awaiting-a-product-scope-call).
 
-**Known follow-up surfaced while shipping #29**: the `InvitationService.joinInviteLink` path on desktop crashes with `"[object Object]" is not valid JSON` at [line 593](../../../src/services/InvitationService.ts#L593). Root cause is unrelated to #29 — the server response shape for `getSpaceInviteEval` changed and desktop's join path never updated. Pre-existing bugs `2025-08-03-joinspacemodal-invalid-json-network-error.md` and `2025-09-22-public-invite-link-intermittent-expiration.md` describe related symptoms. **In flight as a separate fix PR on `session-2026-06-08-3`.**
+Everything else is ❌ already-on-desktop / won't-port — see [candidates.md → Resolved archive](candidates.md#resolved-archive).
 
-When picking up the next port-from-mobile session: start from [candidates.md](candidates.md), run the capability-verification step from [workflow.md](workflow.md#capability-verification--mandatory-before-drafting-a-task), and consider also running the new "check service-layer gate + manifest replication before scoping any 'non-owner can X' candidate" sub-step described inline in [`### #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--shipped-2026-06-08).
+**Follow-up from #29 — resolved.** The `InvitationService.joinInviteLink` crash (`"[object Object]" is not valid JSON`) surfaced while smoke-testing #29 was fixed in PR #183 (`fix(invites): joinInviteLink handles new eval response shape + uses eval's ephemeral key`) and the related invite bugs were closed out in PR #184.
+
+When picking up the next port-from-mobile session: start from [candidates.md → Actionable now](candidates.md#actionable-now), run the capability-verification step from [workflow.md](workflow.md#capability-verification--mandatory-before-drafting-a-task), and for any "non-owner can X" candidate run the service-layer-gate + manifest-replication check (lesson recorded in [candidates.md `#29`](candidates.md#29-non-owner-read-only-access-to-public-invite-url--shipped-pr-182-2026-06-08)).
 
 ## Branch / session workflow
 
@@ -93,7 +98,9 @@ When picking up the next port-from-mobile session: start from [candidates.md](ca
 
 ---
 
-*Last updated: 2026-06-08 — **#29 Non-owner read-only access to the public invite URL shipped** (PR #182). Branch `feat/port-non-owner-invite-view-from-mobile`. Task file moved to `.done/`. Smoke test surfaced a pre-existing crash in `InvitationService.joinInviteLink` (line 593) — unrelated to this port; recorded as the next follow-up and in flight on `session-2026-06-08-3`. Status table flipped to ✅ shipped; "Next up" reset to "no port in flight".*
+*Last updated: 2026-06-10 — **candidates.md reorganized** by actionability (status board → actionable → awaiting product call → resolved archive → reference); README status table + "Next up" + cross-anchor links updated to match. Added the #30 per-space-bio row (shipped PR #185) to the table. Marked the #29 join-bug follow-up resolved (PR #183 + #184). Per-candidate decision notes were preserved (moved, not deleted). User call: #5 Reporting and #27 Skins both low priority — no port in flight, actionable list intentionally empty.*
+
+*Previously: 2026-06-08 — **#29 Non-owner read-only access to the public invite URL shipped** (PR #182). Branch `feat/port-non-owner-invite-view-from-mobile`. Task file moved to `.done/`. Smoke test surfaced a pre-existing crash in `InvitationService.joinInviteLink` (line 593) — unrelated to this port; fixed separately in PR #183. Status table flipped to ✅ shipped.*
 
 *Previously: 2026-06-08 — `session-2026-06-08-2` re-audited mobile against the previous baseline (`0fa63d4` 2026-05-30 → `ccd69e6` 2026-06-02). Three new candidates added: **#27 Skins**, **#28 On-device translation**, **#29 Non-owner read-only access to public invite URL**. #29's framing took three rounds with the user — original assumption ("non-owners can generate") was wrong; the real model is "owner publishes once → manifest sync replicates the URL to every member's local Space → non-owners read-only display."*
 
