@@ -113,6 +113,7 @@ No ports shipped this session. #29 is queued for the next session.
 ### Mobile-side follow-up dropped
 
 - **`2026-06-08-mobile-converge-bio-length-to-shared.md`** — converge mobile's three bio editors (160/256/280) to shared `MAX_BIO_LENGTH=160` + adopt `validateUserBio` (XSS check). Tracker row added to `mobile-tasks-pending.md`. Runtime test required (cap reduction is user-visible for any existing 161–280 char bios on mobile).
+  - **Superseded 2026-06-10:** shared [#37](https://github.com/QuilibriumNetwork/quorum-shared/pull/37) made the bio validator **byte-based to match Farcaster** (≤ 256 **bytes** via `MAX_BIO_BYTES`, not 160 chars) and **removed `MAX_BIO_LENGTH`**. The convergence target changed accordingly: the global bio cap now *rises* to 256B (only the per-space 280 editor shrinks), and the task was merged with the display-name convergence (also now 32-byte Farcaster-capped) into a single tracker row 2. See `mobile-tasks-pending.md` row 2 for the corrected scope, which also adds a Farcaster publish-boundary hard-block. The original `MAX_BIO_LENGTH=160` framing in this historical entry is left as-written (it was accurate on 2026-06-08).
 
 ### Lessons captured
 
