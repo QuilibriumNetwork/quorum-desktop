@@ -20,6 +20,7 @@ import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
+import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { buildConfigFetcher } from '../../hooks/queries/config/buildConfigFetcher';
@@ -87,6 +88,22 @@ const UserProfile: React.FunctionComponent<{
 
   const { data: userNoteData } = useUserNote({ targetAddress: props.user.address });
   const queryClient = useQueryClient();
+
+  // QNS verified name ("name.q"). Enriched member paths (message senders, DM
+  // header) already pass `primaryUsername`. The member-list sidebar uses the
+  // raw roster (no per-member public-profile fetch, to avoid a roster-wide
+  // fetch storm), so it arrives without it. Fall back to a single on-demand
+  // public-profile fetch — only when the profile is actually open and the name
+  // isn't already present — so every surface shows the handle without the storm.
+  const needsUsernameFetch = !props.user.primaryUsername && !isOwnProfile;
+  const { data: openedUserPublicProfile } = useUserPublicProfile(
+    props.user.address,
+    { enabled: needsUsernameFetch }
+  );
+  const primaryUsername =
+    props.user.primaryUsername ||
+    openedUserPublicProfile?.primary_username ||
+    undefined;
 
   // Bio resolution for the visible card:
   //   1. Per-space override on SpaceMember (props.user.bio) wins when set.
@@ -204,12 +221,12 @@ const UserProfile: React.FunctionComponent<{
           <div className="user-profile-username">
             <span>{props.user.displayName}</span>
           </div>
-          {props.user.primaryUsername && (
+          {primaryUsername && (
             // Verified QNS handle. The ".q" suffix is render-time only and
             // protected from spoofing by the shared dot-validation, so its
             // presence here is a trust signal: this is a registered QNS name.
             <div className="text-accent text-xs">
-              {props.user.primaryUsername}.q
+              {primaryUsername}.q
             </div>
           )}
           <Flex className="py-1 text-subtle">
