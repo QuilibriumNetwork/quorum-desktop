@@ -17,6 +17,7 @@ import { UserAvatar } from '../user/UserAvatar';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
+import { useConversationsWithProfileBackfill } from '../../hooks/business/conversations/useConversationsWithProfileBackfill';
 import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
@@ -56,8 +57,13 @@ interface DirectMessageContactsListProps {
 
 const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ forceExpanded } = {}) => {
   const { conversations: conversationsList } = useConversationPolling();
-  const { data: conversationsWithPreviews = conversationsList } =
-    useConversationPreviews(conversationsList);
+  // Back-fill displayName / icon from the public profile for contacts whose
+  // local row still holds the "Unknown User" / default-avatar placeholder,
+  // and write the result through to IndexedDB so later loads are instant.
+  const conversationsBackfilled =
+    useConversationsWithProfileBackfill(conversationsList);
+  const { data: conversationsWithPreviews = conversationsBackfilled } =
+    useConversationPreviews(conversationsBackfilled);
   const { openNewDirectMessage, openConversationSettings } = useModalContext();
   const [mockUtils, setMockUtils] = React.useState<any>(null);
 

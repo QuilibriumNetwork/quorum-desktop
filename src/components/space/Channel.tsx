@@ -1636,6 +1636,11 @@ const Channel: React.FC<ChannelProps> = ({
                 setInReplyTo={composer.setInReplyTo}
                 customEmoji={space?.emojis}
                 members={members}
+                // Enriched resolver (public-profile back-fill for senders whose
+                // space_members row has no name/avatar). Without this, the
+                // message list rendered raw `members` and fell back to the
+                // 6-char address suffix for those senders.
+                mapSenderToUser={mapSenderToUser}
                 submitMessage={handleSubmitMessage}
                 onUserClick={userProfileModal.handleUserClick}
                 lastReadTimestamp={lastReadTimestamp}
