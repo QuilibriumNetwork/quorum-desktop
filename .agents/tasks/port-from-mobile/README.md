@@ -70,17 +70,25 @@ Legend: ✅ done · 🟢 ready to start · 🚧 in progress · ⏸️ deprioriti
 | Skins / custom themes (#27) | `components/skins/*`, `services/skins/*`, `theme/skins/*` | ❔ needs UX call | [candidates.md `#27`](candidates.md#27-skins-custom-themes---needs-ux-call-low-priority-2026-06-10) |
 | On-device translation (#28) | `modules/quorum-translation/*`, `services/translation/*`, `components/translation/*` | ❔ needs UX call | [candidates.md `#28`](candidates.md#28-on-device-translation---needs-ux-call) |
 | Non-owner read-only access to public invite URL (#29) | `app/(tabs)/spaces/[id]/index.tsx` (header), `components/InviteModal.tsx` | ✅ shipped (PR #182, 2026-06-08) | [Task file](.done/2026-06-08-port-non-owner-invite-view.md) · [candidates.md `#29`](candidates.md#29-non-owner-read-only-access-to-public-invite-url--shipped-pr-182-2026-06-08) |
+| QNS usernames — DM search + profile `.q` + `.q`-suffix validation (scoped slice of #12) | `services/api/qnsClient.ts` (resolution only), `hooks/useQNS.ts`, `components/NewConversationModal.tsx`, `UnifiedProfileHeader.tsx` | ✅ shipped (PR #190, 2026-06-10) — 🚧 display model (A vs B) + mentions pending lead-dev call | [Design](2026-06-10-qns-username-display-design.md) · [Plan](2026-06-10-qns-username-display-plan.md) (PROGRESS section) · [candidates.md `#12`](candidates.md#12-qns-marketplace--auctions) |
 
 ## Next up
 
-**No port in flight, and the actionable list is intentionally empty (user call, 2026-06-10).** The only engineering-ready candidate (#5 Reporting) and the next-biggest opportunity (#27 Skins) are both low priority right now. See [candidates.md → Actionable now](candidates.md#actionable-now) for the always-current pick-next view.
+**🚧 One port in flight (blocked on a lead-dev call): QNS usernames.** PR #190 shipped the model-independent core (DM search by `@username`, `.q`-suffix validation, and a Model-A profile `.q` render). Two pieces remain, both gated on the lead dev's reply to the **display-model question** (asked via Telegram 2026-06-10 — "should a user's primary QNS name override their display name everywhere, except per-space overrides?"):
+1. **Display-model rework** — if the answer is "primary name everywhere" (Model B, the author's preference), route every name-render through the shared `resolveDisplayName` helper instead of the current secondary-handle treatment.
+2. **Mentions by QNS name (Stage 4)** — not started; same decision gates it.
+
+Resume point + full state: [`2026-06-10-qns-username-display-plan.md`](2026-06-10-qns-username-display-plan.md) → "PROGRESS" section. Note: live `.q` display is also blocked by two **mobile** bugs (primary_username not synced/published; isProfilePublic not syncing) — filed in mobile's `.agents/bugs/`; desktop render is correct and lights up once mobile publishes the field.
+
+Otherwise the actionable list is intentionally empty (user call, 2026-06-10): #5 Reporting and #27 Skins are both low priority. See [candidates.md → Actionable now](candidates.md#actionable-now) for the always-current pick-next view.
 
 State of the remaining candidates:
 
 - ⏸️ **#5 Reporting** — engineering-ready (capability-verified missing, ~195 LOC + a modal), but deprioritized. Cleanest pick-up if trust/safety moves up. Bundles the deferred Ed448 signing-helper shared-promotion (second call site).
 - ❔ **#27 Skins (custom themes)** — full skin engine on mobile (~2000+ LOC, gallery with Ed448-signed publishes). Low priority + needs a product-scope call (app-wide vs per-space, editor parity, gallery on day one).
 - ❔ **#28 On-device translation** — native iOS/Android modules; a re-implementation, not a port (cloud = privacy regression, WASM = size cost). Needs a product-scope call.
-- ❔ **Big-surface cluster** — #9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance. Each needs a yes/no/later before engineering. See [candidates.md → Awaiting a product-scope call](candidates.md#awaiting-a-product-scope-call).
+- ❔ **Big-surface cluster** — #9 Farcaster, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance. Each needs a yes/no/later before engineering. See [candidates.md → Awaiting a product-scope call](candidates.md#awaiting-a-product-scope-call).
+- 🚧 **#12 QNS** — the full marketplace (registration/auctions/pricing) is still ❔ a product call, but a **scoped slice shipped** (PR #190): resolution-only, powering DM-search-by-`@username` + verified-name display. The full marketplace remains unscoped.
 
 Everything else is ❌ already-on-desktop / won't-port — see [candidates.md → Resolved archive](candidates.md#resolved-archive).
 
@@ -98,7 +106,9 @@ When picking up the next port-from-mobile session: start from [candidates.md →
 
 ---
 
-*Last updated: 2026-06-10 — **candidates.md reorganized** by actionability (status board → actionable → awaiting product call → resolved archive → reference); README status table + "Next up" + cross-anchor links updated to match. Added the #30 per-space-bio row (shipped PR #185) to the table. Marked the #29 join-bug follow-up resolved (PR #183 + #184). Per-candidate decision notes were preserved (moved, not deleted). User call: #5 Reporting and #27 Skins both low priority — no port in flight, actionable list intentionally empty.*
+*Last updated: 2026-06-10 — **QNS usernames shipped** (PR #190, scoped slice of #12): DM search by `@username` (verified live), `.q`-suffix display-name validation, and a Model-A profile `.q` render. Added a status-table row; rewrote "Next up" to reflect the in-flight follow-up (display-model A-vs-B decision + Stage 4 mentions, both blocked on a lead-dev Telegram call) instead of "no port in flight"; reframed the #12 cluster line (full marketplace still unscoped, slice shipped). Two mobile bugs block live `.q` (filed in mobile `.agents/bugs/`). Resume point: `2026-06-10-qns-username-display-plan.md` PROGRESS section.*
+
+*Previously: 2026-06-10 — **candidates.md reorganized** by actionability (status board → actionable → awaiting product call → resolved archive → reference); README status table + "Next up" + cross-anchor links updated to match. Added the #30 per-space-bio row (shipped PR #185) to the table. Marked the #29 join-bug follow-up resolved (PR #183 + #184). Per-candidate decision notes were preserved (moved, not deleted). User call: #5 Reporting and #27 Skins both low priority — no port in flight, actionable list intentionally empty.*
 
 *Previously: 2026-06-08 — **#29 Non-owner read-only access to the public invite URL shipped** (PR #182). Branch `feat/port-non-owner-invite-view-from-mobile`. Task file moved to `.done/`. Smoke test surfaced a pre-existing crash in `InvitationService.joinInviteLink` (line 593) — unrelated to this port; fixed separately in PR #183. Status table flipped to ✅ shipped.*
 

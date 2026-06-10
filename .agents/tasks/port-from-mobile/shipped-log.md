@@ -3,7 +3,7 @@ type: log
 title: Port-from-mobile shipped log
 status: living
 created: 2026-06-01
-updated: 2026-06-08
+updated: 2026-06-10
 ---
 
 
@@ -20,6 +20,44 @@ Chronological history of features ported from `quorum-mobile` to `quorum-desktop
 - **Verify backend assumptions before scoping UI.** #6 was originally framed as "Public profile UI" — implying a directory/browse surface. Investigation against the mobile API client (the source of truth for what the server exposes) showed the server has NO user-enumeration endpoint at all. Neither app can ship a directory without backend work. The same investigation revealed mobile's `NewConversationModal` accepts `@username` via QNS that desktop's `NewDirectMessageModal` doesn't — that's a separable mini-candidate logged under `#12`. The lesson: when a candidate's framing implies a surface (directory, search, browse), check the backend client surface FIRST, not the mobile UI; a single grep against the API client can rule out an entire feature.
 - **Rebase, don't merge — and read what landed on main.** During #6's shipping, three commits landed on `main` mid-session, including PR #180 (`fix(action-queue): roll back optimistic state and surface error toasts on enqueue failure`) which changed the save-config enqueue from blocking-`await` to fire-and-forget with rollback. Rebasing surfaced this in a clean conflict block. The fire-and-forget rollback introduced a new consistency hole specific to our port (publish-then-rollback could leave server-published but local-off); a code-review pass before shipping caught it and we added a best-effort revert in the same `.catch` path. Lesson: when shipping over a base that's moving, rebase + read the new commits + re-run code review.
 - **"Non-owner can X" needs three checks, not one.** New rule from #29's three-round framing back-and-forth. When a candidate's framing implies "non-owners can do X", verify all three before scoping: (a) **service-layer gate** — grep the service for owner-key checks or role gates (`Only space owners can…`, `requires owner`, key-existence checks like mobile's `getSpaceKey(spaceId, 'owner')`); (b) **manifest-replication** — check whether the field the UI shows is part of the synced/encrypted manifest, in which case non-owners hold the *data* an owner published, not the ability to *do* the thing; (c) **UI is "do" or "view"** — distinguish "this control generates" from "this control reads a synced field". Mobile's InviteModal looks like a generator to a non-owner but is actually a viewer of the owner-published `space.inviteUrl`. A single grep on the service file would have shortcut to the right framing.
+- **A capability can have multiple independent enabling steps — "mobile has it" doesn't mean one switch.** From QNS usernames (#12 slice): a user's verified `name.q` only displays if THREE separate things are true — (1) they registered a QNS name, (2) they *elected it as primary* (`updateProfile({primaryUsername})`, a distinct UI action — registering ≠ setting-as-primary), and (3) their published public profile actually carries `primary_username`. Each is a separate code path with its own bug surface. We burned a lot of test time assuming "LaMat has a QNS name" was enough. Lesson: when a display feature depends on remote data, enumerate every step that has to fire for the data to *arrive*, and probe the actual server payload (`curl` the endpoint) before assuming desktop is at fault. The server response is ground truth; both apps' toggles can lie.
+- **Distinguish "the code is wrong" from "I can't see it work."** Most of the QNS-slice session was spent unable to *see* `.q` render — which felt like a bug but was three unrelated test-visibility problems (no real data published it; the test value collided with the display name; the render was in a different component than the one being viewed). The fix was a clean temp-injection with a *distinct* value in the *exact* component on screen, then revert. Lesson: when "it's not showing," separate render-correctness (provable in isolation in ~2 min) from data-availability (a separate, often-upstream problem) before debugging the wrong layer. And never test a render with a value that looks identical to an adjacent field.
+- **Build at the right altitude, not just to spec — but record drift.** The QNS design specified a resolution rule (QNS name as the primary name, via `resolveDisplayName`), but the implementation drifted to mobile's secondary-handle treatment. That drift surfaced a real product fork (Model A vs B) the user then had to escalate to the lead dev. Lesson: when an implementation diverges from the spec's intent, flag it explicitly rather than quietly shipping the easier version — the divergence is often a decision in disguise.
+
+## 2026-06-10 — #12 slice: QNS usernames (DM search + profile `.q` + validation) shipped (partial; display model + mentions in flight)
+
+- **PR**: [#190](https://github.com/QuilibriumNetwork/quorum-desktop/pull/190) (squash-merged to `main`, 2026-06-10).
+- **Shared support**: [quorum-shared #35](https://github.com/QuilibriumNetwork/quorum-shared/pull/35) (resolver + `resolveDisplayName` helper + initial `.q` validation) + [#36](https://github.com/QuilibriumNetwork/quorum-shared/pull/36) (narrowed validation to `.q`-suffix-only). Landed at `2.1.0-27`.
+- **Safety snapshot**: `feat/qns-usernames-snapshot-2026-06-10` (local) — the Model-B resume point.
+- **Status**: PARTIAL ship. The model-independent core landed; the display model and mentions are blocked on a lead-dev call.
+
+### What shipped
+
+| Piece | State |
+|---|---|
+| **DM search by `@username`** | ✅ Done + verified live. `useResolveQnsName` → shared `resolveName` (`GET /resolve/:name`) → `deriveAddress` (ed448 pubkey → `Qm…`). `@` is optional (auto-detect: `Qm`-prefix = address, else username). Verified `lamat` → `QmVYRWmquW98yaymeRv7aLn6bqRYr9PAtWcG87Kj25YvPY` (real account). |
+| **`.q`-suffix validation** | ✅ Done. Display-name inputs (global `UserSettingsModal` + per-space `SpaceSettingsModal`) reject names ending in `.q` (normalized: trim + lowercase + confusable-dot fold). Mid-name dots (`jane.doe`) stay valid. New shared `hasReservedQnsSuffix` + `'qns-suffix'` reserved type + `displayName.reservedQnsSuffix` errorKey. |
+| **Profile `.q` display** | ⚠️ Built as **Model A** (secondary handle in profile card). Render confirmed via temp-injection; dormant with real data (see mobile bugs). |
+
+### In flight (blocked on lead-dev call, asked via Telegram 2026-06-10)
+
+- **Display model A vs B.** A = secondary handle (shipped, mirrors mobile). B = elected primary QNS name overrides the typed display name everywhere, per-space override wins locally (the author's preference + the original design intent). If B: route every name-render through `resolveDisplayName` across `UserProfile`, `DMUserProfileSidebar` (separate component, not currently wired), the DM header, the member list (uses raw `members`, not enriched `effectiveMembers`, for perf), and message authors. Guardrail: `primary_username` must be explicitly user-set, never auto-assigned, or B surfaces a name the user didn't choose.
+- **Mentions (Stage 4)** — not started, same decision gates it.
+
+### Why live `.q` can't be seen yet (two MOBILE bugs, filed in mobile `.agents/bugs/`)
+
+1. `primaryUsername` isn't synced to config (shared `UserConfig` has no field for it) and the publish reads a **stale-closure** `user.primaryUsername` → published profile omits `primary_username`. Confirmed by `curl`-ing the server profile (only `display_name`/`profile_image`/`bio`/`timestamp`/`signature`).
+2. `isProfilePublic` toggled on mobile doesn't propagate to the same user's desktop (config-sync gap).
+
+Desktop's read/render is correct; it lights up once mobile publishes the field.
+
+### Decision implications surfaced (parked for lead dev)
+
+- Should `primaryUsername` ride in the **profile broadcast** (sent with messages) rather than only the published public profile? That would show the verified name without requiring a separate public-profile toggle — better UX, but a signed-payload change. Raised via Telegram; tracked in memory (`project_qns_username_broadcast_pending`).
+
+### Notes
+
+- `deriveAddress` was implemented with `multiformats` base58btc + `@noble/hashes` (already shared deps) rather than mobile's `bs58`/`multihashes` (not shared deps) — same `Qm…` output, no new dependency. `NameRecord` doesn't exist in shared, so the resolver defines a slim local `QnsNameRecord`.
 
 ## 2026-06-08 — #29 Non-owner read-only access to the public invite URL shipped (+ joinInviteLink follow-up identified)
 
