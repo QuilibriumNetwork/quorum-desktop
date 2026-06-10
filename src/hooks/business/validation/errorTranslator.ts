@@ -35,6 +35,7 @@ const messages: Record<string, (vars: Vars) => string> = {
   'displayName.tooLong': () => t`Display name is too long`,
   'displayName.reservedMention': () => t`This name conflicts with mention keywords.`,
   'displayName.reservedImpersonation': () => t`Names resembling admin, moderator, or support are reserved.`,
+  'displayName.reservedQnsSuffix': () => t`Names can't end in ".q" — that suffix is reserved for verified Quilibrium names.`,
   'displayName.invalidChars': () => t`Display name cannot contain special characters`,
 
   // Channel name

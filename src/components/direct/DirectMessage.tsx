@@ -326,6 +326,12 @@ const DirectMessage: React.FC<{}> = () => {
     return {
       ...base,
       bio: localBio || recipientPublicProfile?.bio || undefined,
+      // QNS verified name: only the public profile carries it. Rendered as
+      // "name.q" by UserProfile when present.
+      primaryUsername:
+        (base as { primaryUsername?: string }).primaryUsername ||
+        recipientPublicProfile?.primary_username ||
+        undefined,
     };
   }, [members, address, conversation, recipientPublicProfile]);
 
