@@ -20,6 +20,7 @@ For background on the architecture and the debug ladder, read [`../../docs/debug
 | `02-dm-pairs.js` | Lists each client's DM partners. Quick check for asymmetric conversation rows. |
 | `03-encryption-states.js` | Shows the Double Ratchet state per conversation. Tells you whether a DM session actually exists. |
 | `04-stores.js` | Lists all IndexedDB object store names. Use when a snippet errors with "object store not found" — store names have drifted between builds. |
+| `05-profile-sources.js` | Per-DM, compares the stored conversation row's name/icon against the live public-profile API. Use to diagnose why an avatar/name shows in the open conversation (public-profile fallback, in-memory) but not in the sidebar (reads the stored row). A `data:image/...` stored icon means the avatar has been persisted to the row. |
 
 ## Workflow
 
@@ -38,4 +39,4 @@ For background on the architecture and the debug ladder, read [`../../docs/debug
 - **No output at all.** Console filter is hiding info-level. Set log level to "All levels" or "Verbose".
 
 ---
-*Last updated: 2026-06-09*
+*Last updated: 2026-06-10*
