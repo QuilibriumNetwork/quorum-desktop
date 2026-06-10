@@ -21,7 +21,7 @@ import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving'
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { useChannelMute } from '../../../hooks/business/channels';
-import { MAX_BIO_LENGTH } from '../../../hooks/business/validation';
+import { MAX_BIO_INPUT_CHARS } from '../../../hooks/business/validation';
 import { getIconColorHex, IconColor } from '../../space/IconPicker/types';
 import type { Role } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
@@ -216,7 +216,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             rows={3}
             variant="filled"
             className="w-full"
-            maxLength={MAX_BIO_LENGTH}
+            maxLength={MAX_BIO_INPUT_CHARS}
             error={bioErrors.length > 0}
             errorMessage={
               bioErrors.length > 0
