@@ -12,12 +12,20 @@ export const useDirectMessageCreation = () => {
   const navigate = useNavigate();
   const { closeNewDirectMessage } = useModalContext();
 
-  // QNS path: when the input is an @username, resolve it to a Qm… address.
-  const isUsername = input.startsWith('@');
-  const usernameQuery = isUsername ? input.slice(1).trim() : '';
+  // Distinguish an address from a QNS username without requiring the user to
+  // type a leading '@'. Addresses have a rigid shape (start with "Qm", base58),
+  // so anything that does NOT start with "Qm" is treated as a username. An
+  // explicit leading '@' is still accepted (and stripped) for users who type it.
+  // Gating the username path on "doesn't start with Qm" also avoids firing a
+  // doomed QNS lookup while a Qm… address is mid-paste.
+  const looksLikeAddress = input.startsWith('Qm');
+  const isUsername = input.length > 0 && !looksLikeAddress;
+  const usernameQuery = isUsername
+    ? (input.startsWith('@') ? input.slice(1) : input).trim()
+    : '';
   const { data: qns, isFetching: isResolvingName } = useResolveQnsName(
     usernameQuery,
-    { enabled: isUsername }
+    { enabled: isUsername && usernameQuery.length >= 1 }
   );
 
   // The address used by everything downstream: the resolved Qm… for @usernames,

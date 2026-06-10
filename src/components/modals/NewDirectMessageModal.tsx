@@ -111,7 +111,7 @@ const NewDirectMessageModal: React.FunctionComponent<
                 handleSubmitWithSettings();
               }
             }}
-            placeholder={t`User address or @username`}
+            placeholder={t`Address (Qm...) or @username`}
             error={!!error}
             errorMessage={error || undefined}
             autoFocus={true}
