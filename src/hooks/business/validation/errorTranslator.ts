@@ -29,7 +29,10 @@ const messages: Record<string, (vars: Vars) => string> = {
 
   // Display name
   'displayName.required': () => t`Display name is required`,
-  'displayName.tooLong': (vars) => t`Display name must be ${vars!.max} characters or less`,
+  // Bio and display name are byte-limited (Farcaster USER_DATA), not
+  // character-limited. A byte count is meaningless to show a user, so the
+  // message is intentionally generic with no number.
+  'displayName.tooLong': () => t`Display name is too long`,
   'displayName.reservedMention': () => t`This name conflicts with mention keywords.`,
   'displayName.reservedImpersonation': () => t`Names resembling admin, moderator, or support are reserved.`,
   'displayName.invalidChars': () => t`Display name cannot contain special characters`,
@@ -56,7 +59,7 @@ const messages: Record<string, (vars: Vars) => string> = {
 
   // User bio
   'userBio.invalidChars': () => t`Bio cannot contain special characters`,
-  'userBio.tooLong': (vars) => t`Bio must be ${vars!.max} characters or less`,
+  'userBio.tooLong': () => t`Bio is too long`,
 
   // User note
   'userNote.invalidContent': () => t`Note contains invalid content`,

@@ -4,7 +4,7 @@ import {
   validateSpaceDescription as validateSpaceDescriptionShared,
   validateUserBio as validateUserBioShared,
   validateUserNote as validateUserNoteShared,
-  MAX_BIO_LENGTH,
+  MAX_BIO_BYTES,
   MAX_USER_NOTE_LENGTH,
 } from '@quilibrium/quorum-shared';
 import {
@@ -14,7 +14,18 @@ import {
 
 // Re-export shared constants so existing consumers that import them from
 // this module continue to work.
-export { MAX_BIO_LENGTH, MAX_USER_NOTE_LENGTH };
+export { MAX_BIO_BYTES, MAX_USER_NOTE_LENGTH };
+
+/**
+ * Coarse character cap for the bio <textarea maxLength>. The real limit is
+ * MAX_BIO_BYTES (256 UTF-8 bytes), which a single `maxLength` number can't
+ * express — one emoji is up to 4 bytes. We set the input's hard cap to the
+ * byte budget interpreted as characters: for ASCII it matches exactly, and for
+ * multi-byte text it's a generous upper bound that never blocks valid input —
+ * validateUserBio surfaces the real byte-overflow error first. It only stops a
+ * user from typing an absurdly long all-ASCII bio.
+ */
+export const MAX_BIO_INPUT_CHARS = MAX_BIO_BYTES;
 
 /**
  * Centralized space name validation logic
