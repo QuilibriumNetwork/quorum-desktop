@@ -191,6 +191,7 @@ Mobile sources: `components/skins/SkinsModal.tsx` + `SkinEditor.tsx`, `services/
   2. Editor parity: ship an in-app editor (mobile has one) or import-only via JSON?
   3. Gallery: ship publish/install on day one or save for v2?
   4. Wallpaper feasibility on Electron with the existing chrome (sidebars/modals on `surface*` layers — wallpaper would need to opt out of opaque surface defaults to be visible).
+- **🔗 Ties into the mobile icon-primitive migration (2026-06-10).** Mobile is migrating its `IconSymbol` onto shared's `Icon` primitive (`quorum-mobile/.agents/tasks/2026-06-09-migrate-iconsymbol-to-shared-icon-primitive.md`). The blocker there is that shared's `Icon` has **no skin icon-substitution path**, which is part of *this* skin engine. Mobile's interim plan is a thin local `Icon` wrapper that keeps the `activeSkin.icons[name]` lookup and delegates rendering to shared's `Icon`. **If #27 is ever taken on, the icon-substitution layer should move into shared's `Icon` (skin-aware rendering driven by shared theme/skin context) at the same time** — that lets mobile delete its wrapper and gives desktop icon-skinning for free. Conversely, if #27 is never done, the mobile wrapper is the permanent home for icon-skinning and shared's `Icon` stays skin-agnostic. Either way the mobile migration is unblocked; this note records that the icon-primitive rework rides along with the skin port.
 
 ### #28 On-device translation — ❔ needs UX call
 
