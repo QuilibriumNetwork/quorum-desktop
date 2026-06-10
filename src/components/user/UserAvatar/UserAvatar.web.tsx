@@ -3,18 +3,28 @@ import { UserInitials } from '../UserInitials';
 import { DefaultImages } from '../../../utils';
 import { getColorFromDisplayName } from '@quilibrium/quorum-shared';
 
-// A userIcon string can be truthy but not actually a renderable image:
-// an empty/whitespace data URI, a malformed value, or a record whose image
-// payload never synced. Treat those as "no image" so we fall back to initials
-// instead of rendering a blank box.
+// A userIcon string can be truthy but not actually renderable on web:
+// an empty/whitespace data URI, the default placeholder, or a non-web URL
+// scheme. The last case is real: mobile sometimes stores an avatar as a
+// local `file:///var/mobile/.../ImagePicker/xxx.jpg` path, which is
+// meaningless (and blocked) on web — it must NOT be attempted as an <img>
+// src or it renders a blank box. Treat all of these as "no image" so we fall
+// back to initials.
 const isLikelyRenderableImage = (icon?: string): boolean => {
   if (!icon) return false;
   const trimmed = icon.trim();
   if (!trimmed) return false;
   if (trimmed.includes(DefaultImages.UNKNOWN_USER)) return false;
   // A data URI with no payload after the comma (e.g. "data:image/png;base64,")
-  // is present-but-empty — the most common broken case.
+  // is present-but-empty — a common broken case.
   if (/^data:[^,]*,\s*$/.test(trimmed)) return false;
+  // Only web-renderable schemes. Relative/path-less values (no scheme) are
+  // allowed through for back-compat with app-relative asset paths; explicit
+  // non-web schemes (file:, content:, etc.) are rejected.
+  const scheme = /^([a-zA-Z][a-zA-Z0-9+.-]*):/.exec(trimmed)?.[1]?.toLowerCase();
+  if (scheme && !['data', 'http', 'https', 'blob'].includes(scheme)) {
+    return false;
+  }
   return true;
 };
 

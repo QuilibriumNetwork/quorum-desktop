@@ -4,10 +4,12 @@ import { UserInitials } from '../UserInitials';
 import { DefaultImages } from '../../../utils';
 import { getColorFromDisplayName } from '@quilibrium/quorum-shared';
 
-// A userIcon string can be truthy but not actually a renderable image:
-// an empty/whitespace data URI, a malformed value, or a record whose image
-// payload never synced. Treat those as "no image" so we fall back to initials
-// instead of rendering a blank box.
+// A userIcon string can be truthy but not actually renderable: an
+// empty/whitespace data URI, the default placeholder, or an empty payload.
+// Treat those as "no image" so we fall back to initials instead of a blank
+// box. (Native CAN render a local file:// path from this device, so unlike
+// web we do NOT reject the file: scheme here — a synced file:// from another
+// device simply fails to load and hits onError.)
 const isLikelyRenderableImage = (icon?: string): boolean => {
   if (!icon) return false;
   const trimmed = icon.trim();
