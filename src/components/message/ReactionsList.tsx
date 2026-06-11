@@ -5,6 +5,7 @@ import { Flex, Tooltip } from '../primitives';
 import { useReactionsModal } from '../context/ReactionsModalProvider';
 import { isTouchDevice } from '../../utils/platform';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
+import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../emoji-picker/types';
 import type { MemberInfo } from '../modals/ReactionsModal';
@@ -36,7 +37,7 @@ interface ReactionsListProps {
   message: MessageType;
   userAddress: string;
   customEmojis: CustomEmoji[];
-  mapSenderToUser: (senderId: string) => { displayName?: string; userIcon?: string } | undefined;
+  mapSenderToUser: (senderId: string) => NameResolvableUser | undefined;
   onReactionClick: (emojiId: string) => void;
 }
 
@@ -60,6 +61,8 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
           const user = mapSenderToUser(id);
           memberRecord[id] = {
             displayName: user?.displayName,
+            primaryUsername: user?.primaryUsername,
+            globalDisplayName: user?.globalDisplayName,
             userIcon: user?.userIcon,
             address: id,
           };
@@ -97,7 +100,18 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
         const maxNames = 3;
         const reactorNames = r.memberIds
           .map((id) => {
-            const name = mapSenderToUser(id)?.displayName || id.slice(0, 8) + '...';
+            const u = mapSenderToUser(id);
+            const resolved = u
+              ? formatResolvedName(
+                  resolveSpaceMemberName({
+                    address: u.address ?? id,
+                    displayName: u.displayName,
+                    primaryUsername: u.primaryUsername,
+                    globalDisplayName: u.globalDisplayName,
+                  }),
+                )
+              : id.slice(0, 8) + '...';
+            const name = resolved;
             // Truncate long names in tooltip (max ~20 chars)
             return name.length > 20 ? name.slice(0, 18) + '...' : name;
           })

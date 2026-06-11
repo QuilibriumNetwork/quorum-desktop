@@ -8,6 +8,7 @@
  */
 
 import type { MentionOption } from '../hooks/business/mentions/useMentionInput';
+import { resolveSpaceMemberName, formatResolvedName } from './resolveMemberName';
 
 /**
  * Type of mention pill
@@ -49,9 +50,18 @@ export const MENTION_PILL_CLASSES = {
  */
 export function extractPillDataFromOption(option: MentionOption): PillData {
   if (option.type === 'user') {
+    // Model B: the pill shows the resolved name (name.q when QNS-verified). The
+    // ".q" is display-only — storage stays @<address> via dataset.mentionAddress
+    // in extractStorageTextFromEditor, so the wire format is unchanged.
+    const resolved = resolveSpaceMemberName({
+      address: option.data.address,
+      displayName: option.data.displayName,
+      primaryUsername: option.data.primaryUsername,
+      globalDisplayName: option.data.globalDisplayName,
+    });
     return {
       type: 'user',
-      displayName: option.data.displayName || 'Unknown User',
+      displayName: formatResolvedName(resolved) || 'Unknown User',
       address: option.data.address,
     };
   } else if (option.type === 'role') {

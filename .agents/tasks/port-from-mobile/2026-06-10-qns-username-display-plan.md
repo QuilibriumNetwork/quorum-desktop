@@ -23,7 +23,11 @@
 | **3** | Profile `.q` display + `.q`-suffix validation in both settings inputs. | ⚠️ **built as Model A (secondary handle), BLOCKED on lead-dev Model A-vs-B decision** — see below. Validation + plumbing are keep-regardless; only the *render* is model-dependent. |
 | **4** | Mentions by QNS name (autocomplete + pill). | ❌ NOT started. Blocked on the same A-vs-B decision (mentions show a name; which name depends on the model). |
 
-### 🔴 THE BLOCKING DECISION: Model A vs Model B (awaiting lead dev, asked via Telegram 2026-06-10)
+### ✅ RESOLVED 2026-06-11 — Model B confirmed by lead dev (Cassie: "Agree")
+
+The Model A-vs-B decision below is **settled: Model B.** Cassie agreed the QNS primary username overrides the display name everywhere, except where a per-space custom name is set. The override conversion (Model A → Model B) across all name-render surfaces + Stage 4 mentions is now tracked in a dedicated plan: **`2026-06-11-qns-username-overrides-display-name-plan.md`** (branch `feat/qns-username-overrides-display-name`). That work is implemented and verified (tsc/lint/build green); only manual smoke remains (live `.q` still dormant pending the two mobile bugs). The historical decision context is preserved below.
+
+### 🔴 (HISTORICAL) THE BLOCKING DECISION: Model A vs Model B (awaiting lead dev, asked via Telegram 2026-06-10)
 
 The plan/design originally specified the resolution rule `per-space override → QNS primary_username → display name → address` (**Model B** — QNS name IS the name). But Stage 3 was **built as Model A** (mobile's pattern): the typed display name stays primary, and `.q` is appended as a small secondary handle, only in the profile card.
 

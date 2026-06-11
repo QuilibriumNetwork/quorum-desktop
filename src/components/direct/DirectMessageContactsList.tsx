@@ -14,6 +14,7 @@ import {
   Tooltip,
 } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
+import { resolveMemberName, formatResolvedName } from '../../utils/resolveMemberName';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
@@ -62,8 +63,19 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
   // and write the result through to IndexedDB so later loads are instant.
   const conversationsBackfilled =
     useConversationsWithProfileBackfill(conversationsList);
-  const { data: conversationsWithPreviews = conversationsBackfilled } =
+  const { data: conversationsWithPreviewsRaw = conversationsBackfilled } =
     useConversationPreviews(conversationsBackfilled);
+  // useConversationPreviews caches rows by message ID, dropping primaryUsername
+  // attached after it resolved — re-attach it here (by address) so name.q sticks.
+  const conversationsWithPreviews = React.useMemo(() => {
+    const qnsByAddress = new Map(
+      conversationsBackfilled.map((c) => [c.address, c.primaryUsername])
+    );
+    return conversationsWithPreviewsRaw.map((c) => {
+      const primaryUsername = qnsByAddress.get(c.address);
+      return primaryUsername ? { ...c, primaryUsername } : c;
+    });
+  }, [conversationsWithPreviewsRaw, conversationsBackfilled]);
   const { openNewDirectMessage, openConversationSettings } = useModalContext();
   const [mockUtils, setMockUtils] = React.useState<any>(null);
 
@@ -341,7 +353,13 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
               <Tooltip
                 key={'dmc-strip-' + c.address}
                 id={`dm-strip-${c.address}`}
-                content={c.displayName || c.address}
+                content={formatResolvedName(
+                  resolveMemberName({
+                    address: c.address,
+                    displayName: c.displayName,
+                    primaryUsername: (c as { primaryUsername?: string }).primaryUsername,
+                  }),
+                )}
                 place="right"
                 showOnTouch={false}
               >
@@ -350,7 +368,13 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
                   className={`direct-messages-strip-row sidebar-row-chrome ${isActive ? 'direct-messages-strip-row--active' : ''}`}
                   onClick={() => navigate(`/messages/${c.address}`)}
                   onContextMenu={handleContextMenu(c.address, c.conversationId)}
-                  aria-label={c.displayName || c.address}
+                  aria-label={formatResolvedName(
+                    resolveMemberName({
+                      address: c.address,
+                      displayName: c.displayName,
+                      primaryUsername: (c as { primaryUsername?: string }).primaryUsername,
+                    }),
+                  )}
                   aria-current={isActive ? 'page' : undefined}
                 >
                   <div className="direct-messages-strip-avatar">
@@ -485,6 +509,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
                   address={c.address}
                   userIcon={c.icon}
                   displayName={c.displayName}
+                  primaryUsername={(c as { primaryUsername?: string }).primaryUsername}
                   lastMessagePreview={c.preview}
                   previewIcon={c.previewIcon}
                   timestamp={c.timestamp}

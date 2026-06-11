@@ -40,6 +40,11 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { useOptionalShellState } from '../shell/useShellState';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
+import { ResolvedName } from '../user/ResolvedName';
+import {
+  resolveMemberName,
+  formatResolvedName,
+} from '../../utils/resolveMemberName';
 import {
   Button,
   Flex,
@@ -219,11 +224,14 @@ const DirectMessage: React.FC<{}> = () => {
       [address: string]: {
         displayName?: string;
         userIcon?: string;
+        /** QNS primary username, for in-DM author name resolution. */
+        primaryUsername?: string;
         address: string;
       };
     };
     const pubName = recipientPublicProfile?.display_name || undefined;
     const pubIcon = recipientPublicProfile?.profile_image || undefined;
+    const pubQns = recipientPublicProfile?.primary_username || undefined;
     if (conversation?.conversation) {
       // Priority 1: Use conversation data from IndexedDB (available offline).
       // Fall through to public profile only when local fields are empty/unknown.
@@ -238,6 +246,7 @@ const DirectMessage: React.FC<{}> = () => {
           localIcon && localIcon !== DefaultImages.UNKNOWN_USER
             ? localIcon
             : pubIcon ?? DefaultImages.UNKNOWN_USER,
+        primaryUsername: pubQns,
         address: address!,
       };
     } else if (registration?.registration) {
@@ -247,6 +256,7 @@ const DirectMessage: React.FC<{}> = () => {
       m[registration.registration.user_address] = {
         displayName: pubName ?? t`Unknown User`,
         userIcon: pubIcon ?? DefaultImages.UNKNOWN_USER,
+        primaryUsername: pubQns,
         address: registration.registration.user_address,
       };
     } else {
@@ -254,6 +264,7 @@ const DirectMessage: React.FC<{}> = () => {
       m[address!] = {
         displayName: pubName ?? t`Unknown User`,
         userIcon: pubIcon ?? DefaultImages.UNKNOWN_USER,
+        primaryUsername: pubQns,
         address: address!,
       };
     }
@@ -334,6 +345,18 @@ const DirectMessage: React.FC<{}> = () => {
         undefined,
     };
   }, [members, address, conversation, recipientPublicProfile]);
+
+  // DM: QNS name (when published) wins over the display name.
+  const resolvedOtherName = useMemo(
+    () =>
+      resolveMemberName({
+        address: otherUser.address,
+        displayName: otherUser.displayName,
+        primaryUsername: otherUser.primaryUsername,
+      }),
+    [otherUser.address, otherUser.displayName, otherUser.primaryUsername],
+  );
+  const otherNameString = formatResolvedName(resolvedOtherName);
 
   // Icon size for header icons
   const headerIconSize = 'lg';
@@ -781,9 +804,10 @@ const DirectMessage: React.FC<{}> = () => {
                   />
                 </Flex>
                 <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
-                  <span className="font-semibold truncate-user-name-chat flex-shrink min-w-0">
-                    {otherUser.displayName ?? otherUser.address}
-                  </span>
+                  <ResolvedName
+                    resolved={resolvedOtherName}
+                    className="font-semibold truncate-user-name-chat flex-shrink min-w-0"
+                  />
                   <span className="text-subtle flex-shrink-0 hidden xs:block">|</span>
                   <ClickToCopyContent
                     text={address ?? ''}
@@ -902,9 +926,10 @@ const DirectMessage: React.FC<{}> = () => {
               </Flex>
               {/* xs and up: horizontal layout with separator */}
               <div className="pl-2 hidden xs:flex items-center gap-2 overflow-hidden min-w-0">
-                <span className="font-semibold truncate-user-name-chat">
-                  {otherUser.displayName ?? otherUser.address}
-                </span>
+                <ResolvedName
+                  resolved={resolvedOtherName}
+                  className="font-semibold truncate-user-name-chat"
+                />
                 <span className="text-subtle flex-shrink-0">|</span>
                 <ClickToCopyContent
                   text={address ?? ''}
@@ -921,9 +946,10 @@ const DirectMessage: React.FC<{}> = () => {
               </div>
               {/* Below xs: vertical layout - name above address */}
               <div className="pl-2 flex xs:hidden flex-col min-w-0">
-                <span className="text-label font-semibold truncate">
-                  {otherUser.displayName ?? otherUser.address}
-                </span>
+                <ResolvedName
+                  resolved={resolvedOtherName}
+                  className="text-label font-semibold truncate"
+                />
                 <ClickToCopyContent
                   text={address ?? ''}
                   tooltipText={t`Copy address`}
@@ -1033,7 +1059,7 @@ const DirectMessage: React.FC<{}> = () => {
               <TypingIndicator
                 scope={typingScope}
                 resolveName={(addr) =>
-                  addr === otherUser.address ? otherUser.displayName : undefined
+                  addr === otherUser.address ? otherNameString : undefined
                 }
               />
               <MessageComposer
@@ -1042,7 +1068,7 @@ const DirectMessage: React.FC<{}> = () => {
                 onChange={composer.setPendingMessage}
                 onKeyDown={composer.handleKeyDown}
                 placeholder={i18n._('Send a message to {user}', {
-                  user: otherUser.displayName ?? otherUser.address,
+                  user: otherNameString,
                 })}
                 calculateRows={composer.calculateRows}
                 getRootProps={composer.getRootProps}

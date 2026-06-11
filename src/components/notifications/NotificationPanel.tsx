@@ -5,6 +5,7 @@ import { Flex, Icon, Button, Tooltip, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
+import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
 import { NotificationItem } from './NotificationItem';
 import { useAllMentions, useMentionNotificationSettings } from '../../hooks/business/mentions';
 import { useAllReplies } from '../../hooks/business/replies';
@@ -276,7 +277,18 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                     <NotificationItem
                       notification={notification}
                       onNavigate={handleNavigate}
-                      displayName={sender?.displayName || t`Unknown User`}
+                      displayName={
+                        sender
+                          ? formatResolvedName(
+                              resolveSpaceMemberName({
+                                address: sender.address ?? notification.message.content?.senderId ?? '',
+                                displayName: sender.displayName,
+                                primaryUsername: sender.primaryUsername,
+                                globalDisplayName: sender.globalDisplayName,
+                              }),
+                            )
+                          : t`Unknown User`
+                      }
                       mapSenderToUser={mapSenderToUser}
                       spaceRoles={spaceRoles}
                       spaceChannels={spaceChannels}
@@ -299,7 +311,18 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                     <NotificationItem
                       notification={notification}
                       onNavigate={handleNavigate}
-                      displayName={sender?.displayName || t`Unknown User`}
+                      displayName={
+                        sender
+                          ? formatResolvedName(
+                              resolveSpaceMemberName({
+                                address: sender.address ?? notification.message.content?.senderId ?? '',
+                                displayName: sender.displayName,
+                                primaryUsername: sender.primaryUsername,
+                                globalDisplayName: sender.globalDisplayName,
+                              }),
+                            )
+                          : t`Unknown User`
+                      }
                       mapSenderToUser={mapSenderToUser}
                       spaceRoles={spaceRoles}
                       spaceChannels={spaceChannels}

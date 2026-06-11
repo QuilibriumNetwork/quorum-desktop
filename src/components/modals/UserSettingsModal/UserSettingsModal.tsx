@@ -21,6 +21,7 @@ import { useQuery } from '@tanstack/react-query';
 import { buildSpacesFetcher } from '../../../hooks/queries/spaces/buildSpacesFetcher';
 import { buildSpacesKey } from '../../../hooks/queries/spaces/buildSpacesKey';
 import { useMessageDB } from '../../context/useMessageDB';
+import { useUserPublicProfile } from '../../../hooks/business/user/useUserPublicProfile';
 import { validateDisplayName, validateUserBio } from '../../../hooks/business/validation';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import General from './General';
@@ -101,6 +102,11 @@ const UserSettingsModal: React.FunctionComponent<{
     removedDevices,
     isConfigLoaded,
   } = useUserSettings();
+
+  // The user's own QNS primary name (if any) — drives the override notice in
+  // General. Sourced from their public profile, same hook used elsewhere.
+  const { data: ownPublicProfile } = useUserPublicProfile(currentPasskeyInfo?.address);
+  const primaryUsername = ownPublicProfile?.primary_username || undefined;
 
   // Spaces for Space Tag selector (using useQuery to avoid Suspense requirement)
   const { messageDB } = useMessageDB();
@@ -231,6 +237,7 @@ const UserSettingsModal: React.FunctionComponent<{
                       <General
                         displayName={displayName}
                         setDisplayName={setDisplayName}
+                        primaryUsername={primaryUsername}
                         bio={bio}
                         setBio={setBio}
                         bioErrors={bioErrors}

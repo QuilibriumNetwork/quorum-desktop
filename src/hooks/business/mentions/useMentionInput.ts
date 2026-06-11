@@ -1,9 +1,16 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Channel, Group } from '@quilibrium/quorum-shared';
+import { resolveSpaceMemberName } from '../../../utils/resolveMemberName';
 
 interface User {
   address: string;
   displayName?: string;
+  /** QNS primary username (no ".q" suffix). Matched in autocomplete so typing
+   *  "@ali" finds "alice"; the pill renders the resolved name.q. */
+  primaryUsername?: string;
+  /** The member's global display name — lets the space resolver tell a custom
+   *  per-space name apart from the global default. */
+  globalDisplayName?: string;
   userIcon?: string;
 }
 
@@ -13,6 +20,18 @@ interface Role {
   roleTag: string;
   color: string;
 }
+
+// The name a user candidate is shown and matched by in the picker. Mentions
+// are a space feature, so the space rule applies: a custom per-space name
+// (roster name differing from the global name) wins; otherwise the QNS name
+// wins over the global name; then display name; then address.
+const mentionCandidateName = (u: User): string =>
+  resolveSpaceMemberName({
+    address: u.address,
+    displayName: u.displayName,
+    primaryUsername: u.primaryUsername,
+    globalDisplayName: u.globalDisplayName,
+  }).name;
 
 // Discriminated union for display
 export type MentionOption =
@@ -106,15 +125,16 @@ export function useMentionInput({
 
       const queryLower = query.toLowerCase();
 
-      // Filter users whose displayName or address matches the query
+      // Filter users whose QNS name, displayName, or address matches the query.
       const matches = users.filter(user => {
         const name = user.displayName?.toLowerCase() || '';
+        const qns = user.primaryUsername?.toLowerCase() || '';
         const addr = user.address.toLowerCase();
-        return name.includes(queryLower) || addr.includes(queryLower);
+        return name.includes(queryLower) || qns.includes(queryLower) || addr.includes(queryLower);
       });
 
-      // Sort by relevance and limit results
-      const sorted = sortByRelevance(matches, query, u => u.displayName || '');
+      // Sort by relevance against the name the user is shown as (QNS wins).
+      const sorted = sortByRelevance(matches, query, mentionCandidateName);
       return sorted.slice(0, maxDisplayResults);
     },
     [users, minQueryLength, maxDisplayResults, sortByRelevance]
@@ -127,15 +147,16 @@ export function useMentionInput({
 
       const queryLower = query.toLowerCase();
 
-      // Filter users whose displayName or address matches the query
+      // Filter users whose QNS name, displayName, or address matches the query.
       const matches = users.filter(user => {
         const name = user.displayName?.toLowerCase() || '';
+        const qns = user.primaryUsername?.toLowerCase() || '';
         const addr = user.address.toLowerCase();
-        return name.includes(queryLower) || addr.includes(queryLower);
+        return name.includes(queryLower) || qns.includes(queryLower) || addr.includes(queryLower);
       });
 
-      // Sort by relevance and limit results
-      const sorted = sortByRelevance(matches, query, u => u.displayName || '');
+      // Sort by relevance against the name the user is shown as (QNS wins).
+      const sorted = sortByRelevance(matches, query, mentionCandidateName);
       return sorted.slice(0, maxDisplayResults);
     },
     [users, maxDisplayResults, sortByRelevance]
@@ -279,7 +300,7 @@ export function useMentionInput({
       // User/role mentions with tiered filtering
       if (!query || query.length === 0) {
         // TIER 1: Empty query - show alphabetical users (first 10)
-        const alphabeticalUsers = sortByRelevance(users, '', u => u.displayName || '');
+        const alphabeticalUsers = sortByRelevance(users, '', mentionCandidateName);
         options = alphabeticalUsers
           .slice(0, 10)
           .map(u => ({ type: 'user' as const, data: u }));

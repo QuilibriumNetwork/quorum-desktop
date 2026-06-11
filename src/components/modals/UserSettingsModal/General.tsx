@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Icon, Spacer, Tooltip, TextArea, Select } from '../../primitives';
+import { Input, Icon, Spacer, Tooltip, TextArea, Select, Callout } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { ClickToCopyContent } from '../../ui';
@@ -19,6 +19,8 @@ interface EligibleSpaceTag {
 interface GeneralProps {
   displayName: string;
   setDisplayName: (value: string) => void;
+  /** The user's QNS primary name, if set — shows an override notice. */
+  primaryUsername?: string;
   bio: string;
   setBio: (value: string) => void;
   bioErrors: string[];
@@ -48,6 +50,7 @@ interface GeneralProps {
 const General: React.FunctionComponent<GeneralProps> = ({
   displayName,
   setDisplayName,
+  primaryUsername,
   bio,
   setBio,
   bioErrors,
@@ -129,6 +132,15 @@ const General: React.FunctionComponent<GeneralProps> = ({
           />
         </div>
       </div>
+      {primaryUsername && (
+        <div className="mt-4 px-5 max-md:px-4">
+          <Callout variant="info" size="sm" className="w-full">
+            <Trans>
+              Your QNS name <strong>{primaryUsername}.q</strong> is shown as your name.
+            </Trans>
+          </Callout>
+        </div>
+      )}
       <div className="modal-content-section">
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">

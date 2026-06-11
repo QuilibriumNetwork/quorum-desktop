@@ -50,22 +50,30 @@ const isPlaceholderName = (name?: string): boolean =>
 const isPlaceholderIcon = (icon?: string): boolean =>
   !icon || icon === DefaultImages.UNKNOWN_USER;
 
+/**
+ * A conversation row augmented with the partner's QNS primary username, sourced
+ * from the same public-profile fetch this hook already performs. Additive and
+ * desktop-only — the shared `Conversation` type is untouched, so mobile is
+ * unaffected. The DM sidebar resolves `name.q` (Model B) from this field.
+ */
+export type ConversationWithQns = Conversation & { primaryUsername?: string };
+
 export function useConversationsWithProfileBackfill(
   conversations: Conversation[]
-): Conversation[] {
+): ConversationWithQns[] {
   const { messageDB } = useMessageDB();
   const queryClient = useQueryClient();
 
-  // Addresses whose row is missing a real name and/or a real avatar.
+  // Fetch every distinct DM partner (small N, unlike a space roster): placeholder
+  // rows need name/icon backfill, established rows need primary_username for
+  // name.q. Cached 1h, shared with the open-conversation view's query key.
   const addressesToFetch = useMemo(() => {
     const out: string[] = [];
     const seen = new Set<string>();
     for (const c of conversations) {
       if (!c.address || seen.has(c.address)) continue;
-      if (isPlaceholderName(c.displayName) || isPlaceholderIcon(c.icon)) {
-        seen.add(c.address);
-        out.push(c.address);
-      }
+      seen.add(c.address);
+      out.push(c.address);
     }
     return out;
   }, [conversations]);
@@ -101,24 +109,27 @@ export function useConversationsWithProfileBackfill(
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addressesToFetch, queries.map((q) => q?.data ?? null).join('|')]);
 
-  // Merged list for rendering: placeholder fields fall back to the public
-  // profile, real fields are preserved.
-  const merged = useMemo(() => {
-    if (addressesToFetch.length === 0) return conversations;
+  // Placeholder name/icon fall back to the public profile; real values kept.
+  // primary_username is attached whenever the profile was fetched.
+  const merged = useMemo((): ConversationWithQns[] => {
     return conversations.map((c) => {
       const pub = profileByAddress[c.address];
       if (!pub) return c;
       const nameNeedsFill = isPlaceholderName(c.displayName);
       const iconNeedsFill = isPlaceholderIcon(c.icon);
-      if (!nameNeedsFill && !iconNeedsFill) return c;
+      const primaryUsername = pub.primary_username || undefined;
+      if (!nameNeedsFill && !iconNeedsFill) {
+        return primaryUsername ? { ...c, primaryUsername } : c;
+      }
       return {
         ...c,
         displayName:
           nameNeedsFill && pub.display_name ? pub.display_name : c.displayName,
         icon: iconNeedsFill && pub.profile_image ? pub.profile_image : c.icon,
+        primaryUsername,
       };
     });
-  }, [conversations, profileByAddress, addressesToFetch]);
+  }, [conversations, profileByAddress]);
 
   // Write-through: persist resolved values back to IndexedDB so the next load
   // is instant and the conversation view stops flashing. Guard against

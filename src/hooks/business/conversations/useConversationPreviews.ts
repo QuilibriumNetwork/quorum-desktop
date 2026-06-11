@@ -4,7 +4,12 @@ import { useMemo } from 'react';
 import type { Conversation } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 
-export function useConversationPreviews(conversations: Conversation[]) {
+// Generic over the conversation shape so extra fields carried by callers
+// (e.g. the QNS `primaryUsername` added by useConversationsWithProfileBackfill)
+// survive in the returned type — the runtime already spreads `...conv`.
+export function useConversationPreviews<T extends Conversation>(
+  conversations: T[]
+) {
   const { messageDB } = useMessageDB();
 
   // Create a stable reference for the query key - only changes when lastMessageIds change

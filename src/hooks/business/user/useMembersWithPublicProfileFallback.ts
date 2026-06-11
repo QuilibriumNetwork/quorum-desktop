@@ -1,14 +1,16 @@
 // useMembersWithPublicProfileFallback
 //
 // Takes a member map (address -> { displayName?, userIcon?, ... }) plus a
-// list of addresses currently rendered, and back-fills missing/empty
-// entries by fetching the public-profile endpoint for each address.
+// list of addresses currently rendered, and enriches each visible member by
+// fetching the public-profile endpoint for their address.
 //
-// Resolution rule (matches mobile's behavior):
-//   - If the local member has a populated displayName or userIcon, keep it.
-//   - If the local member has neither, fill from the public profile when
-//     available. Per-field merge: a field that's populated locally wins;
-//     a field that's empty locally falls back to the public profile.
+// Resolution rule:
+//   - Per-field merge for displayName/userIcon/bio: a field that's populated
+//     locally wins; an empty local field falls back to the public profile.
+//   - primaryUsername (QNS) and globalDisplayName come ONLY from the public
+//     profile, so every visible member is fetched — even fully-populated ones.
+//     (globalDisplayName is what lets resolveSpaceMemberName tell a custom
+//     per-space name apart from the global default echoed into the roster.)
 //   - Members not appearing in `visibleAddresses` are passed through
 //     untouched — we don't fetch profiles for the entire space roster.
 //
@@ -42,6 +44,11 @@ interface MemberRecord {
    *  the public-profile fallback so members we don't share fresh data with
    *  still show their verified name. */
   primaryUsername?: string;
+  /** The member's GLOBAL display name from their public profile (as opposed to
+   *  `displayName`, which is the roster name and may be a per-space custom
+   *  name). resolveSpaceMemberName compares the two to decide whether the
+   *  roster name was deliberately set for the space. */
+  globalDisplayName?: string;
   // Additional fields preserved opaquely (isKicked, spaceTag, joinedAt, etc).
   [extra: string]: unknown;
 }
@@ -52,22 +59,19 @@ export function useMembersWithPublicProfileFallback(
   members: MemberMap,
   visibleAddresses: string[]
 ): MemberMap {
-  // Determine which addresses need a public-profile query — addresses
-  // where we have no local record, OR the record exists but has neither
-  // displayName nor userIcon. Fully-populated members aren't queried.
+  // Fetch every visible sender's public profile (the only source of
+  // primary_username + globalDisplayName), not just members missing a name.
+  // Bounded to visible senders, never the whole roster; cached 1h.
   const addressesToFetch = useMemo(() => {
     const out: string[] = [];
     const seen = new Set<string>();
     for (const addr of visibleAddresses) {
       if (!addr || seen.has(addr)) continue;
       seen.add(addr);
-      const m = members[addr];
-      if (!m || (!m.displayName && !m.userIcon)) {
-        out.push(addr);
-      }
+      out.push(addr);
     }
     return out;
-  }, [members, visibleAddresses]);
+  }, [visibleAddresses]);
 
   const queries = useQueries({
     queries: addressesToFetch.map((address) => ({
@@ -135,6 +139,9 @@ export function useMembersWithPublicProfileFallback(
           (local?.primaryUsername as string | undefined) ||
           pub.primary_username ||
           undefined,
+        // The member's global display name, kept SEPARATE from the roster
+        // `displayName` so the space resolver can compare the two.
+        globalDisplayName: pub.display_name || undefined,
       };
     });
     result = merged;

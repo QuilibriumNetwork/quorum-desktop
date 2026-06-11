@@ -22,11 +22,12 @@ import { Icon } from '../primitives';
 import type { Role, Channel, PostMessage } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { truncateAddress } from '../../utils';
+import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
 
 interface MessageMarkdownRendererProps {
   content: string;
   className?: string;
-  mapSenderToUser?: (senderId: string) => { displayName?: string; userIcon?: string };
+  mapSenderToUser?: (senderId: string) => NameResolvableUser | undefined;
   /**
    * Strict variant of `mapSenderToUser`. Returns null when the address is not
    * a known member, so the renderer can distinguish a real user from a
@@ -35,7 +36,7 @@ interface MessageMarkdownRendererProps {
    * When not provided, the renderer falls back to the legacy behavior
    * (everything is interactive whenever `onUserClick` is set).
    */
-  resolveSender?: (senderId: string) => { displayName?: string; userIcon?: string } | null;
+  resolveSender?: (senderId: string) => NameResolvableUser | null;
   onUserClick?: (user: {
     address: string;
     displayName?: string;
@@ -654,7 +655,19 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             ? resolveSender(address)
             : (mapSenderToUser ? mapSenderToUser(address) : null);
           const isResolved = resolvedUser != null;
-          const displayName = resolvedUser?.displayName || truncateAddress(address, 4, 4);
+          // Model B: a mentioned user shows their QNS name (name.q) unless they
+          // have a per-space name. The mention's stored token stays the address;
+          // only the displayed label changes.
+          const displayName = resolvedUser
+            ? formatResolvedName(
+                resolveSpaceMemberName({
+                  address: resolvedUser.address ?? address,
+                  displayName: resolvedUser.displayName,
+                  primaryUsername: resolvedUser.primaryUsername,
+                  globalDisplayName: resolvedUser.globalDisplayName,
+                }),
+              )
+            : truncateAddress(address, 4, 4);
           const interactive = isResolved && !!onUserClick;
 
           parts.push(

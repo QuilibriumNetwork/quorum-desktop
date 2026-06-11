@@ -12,6 +12,7 @@ import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { getThreadTitle } from '../../utils/threadTitle';
+import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
 import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
@@ -173,10 +174,26 @@ export const ThreadPanel: React.FC = () => {
     if (!creatorId) return null;
     const user = channelProps.mapSenderToUser(creatorId);
     if (!user) return null;
-    return { address: creatorId, displayName: user.displayName, userIcon: user.userIcon, bio: user.bio };
+    return {
+      address: creatorId,
+      displayName: user.displayName,
+      primaryUsername: user.primaryUsername,
+      globalDisplayName: user.globalDisplayName,
+      userIcon: user.userIcon,
+      bio: user.bio,
+    };
   }, [rootMessage, channelProps]);
 
-  const starterName = starterUser?.displayName || null;
+  const starterName = starterUser
+    ? formatResolvedName(
+        resolveSpaceMemberName({
+          address: starterUser.address,
+          displayName: starterUser.displayName,
+          primaryUsername: starterUser.primaryUsername,
+          globalDisplayName: starterUser.globalDisplayName,
+        }),
+      )
+    : null;
 
   const isThreadAuthor = useMemo(() => {
     if (!rootMessage?.threadMeta?.createdBy || !channelProps?.currentUserAddress) return false;
@@ -413,7 +430,17 @@ export const ThreadPanel: React.FC = () => {
       <div className="thread-panel__composer">
         <TypingIndicator
           scope={typingScope}
-          resolveName={(addr) => channelProps.mapSenderToUser(addr).displayName}
+          resolveName={(addr) => {
+            const u = channelProps.mapSenderToUser(addr);
+            return formatResolvedName(
+              resolveSpaceMemberName({
+                address: u?.address ?? addr,
+                displayName: u?.displayName,
+                primaryUsername: u?.primaryUsername,
+                globalDisplayName: u?.globalDisplayName,
+              }),
+            );
+          }}
         />
         {isClosed ? (
           <div className="message-composer-container">

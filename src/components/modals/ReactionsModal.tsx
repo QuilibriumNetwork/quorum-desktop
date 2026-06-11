@@ -3,12 +3,19 @@ import { t } from '@lingui/core/macro';
 import { parse as parseEmoji } from '@twemoji/parser';
 import { Modal, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
+import { ResolvedName } from '../user/ResolvedName';
+import { resolveSpaceMemberName } from '../../utils/resolveMemberName';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Reaction } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../emoji-picker/types';
 
 export interface MemberInfo {
   displayName?: string;
+  /** QNS primary username (no ".q" suffix — render-time). */
+  primaryUsername?: string;
+  /** Global display name from the public profile — distinguishes a custom
+   *  per-space name from the global default in resolveSpaceMemberName. */
+  globalDisplayName?: string;
   userIcon?: string;
   address: string;
 }
@@ -44,6 +51,8 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
     const member = members[memberId];
     return {
       displayName: member?.displayName || memberId.slice(0, 8) + '...',
+      primaryUsername: member?.primaryUsername,
+      globalDisplayName: member?.globalDisplayName,
       userIcon: member?.userIcon,
       address: memberId,
     };
@@ -128,7 +137,15 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
                   address={user.address}
                   size={24}
                 />
-                <span className="truncate-user-name flex-1 min-w-0">{user.displayName}</span>
+                <ResolvedName
+                  resolved={resolveSpaceMemberName({
+                    address: user.address,
+                    displayName: user.displayName,
+                    primaryUsername: user.primaryUsername,
+                    globalDisplayName: user.globalDisplayName,
+                  })}
+                  className="truncate-user-name flex-1 min-w-0"
+                />
               </Flex>
             ))}
           </Flex>
