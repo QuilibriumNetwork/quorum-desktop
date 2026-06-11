@@ -73,69 +73,51 @@ const CustomTitlebar = () => {
     );
   };
   const controls = () => {
-    const isDark = resolvedTheme === 'dark';
+    // Square hover backgrounds, no permanent fill. Transparent at rest; a
+    // subtle surface-tinted square appears on hover. Close is the exception:
+    // it stays transparent until hover, then turns danger-red. All colours
+    // come from _colors.scss tokens (theme-aware), never raw Tailwind grays.
+    const baseButton =
+      'flex items-center justify-center w-7 h-7 rounded-md transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0';
+    const buttonStyle = { border: 'none', outline: 'none', boxShadow: 'none' };
 
+    // gap-1 + pr-2 keeps each hover square from touching its neighbour or the
+    // window's right edge; items-center floats them inside the 36px bar.
     return (
       <div className="flex flex-row items-center gap-1 pr-2">
         <button
           onClick={handleMinimize}
-          className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0 text-main ${
-            isDark
-              ? 'bg-gray-700 hover:bg-gray-600'
-              : 'bg-gray-200 hover:bg-gray-300'
-          }`}
-          style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+          className={`${baseButton} text-subtle hover:bg-surface-2 hover:text-main`}
+          style={buttonStyle}
         >
-          <Icon name="minus" size="xs" color="currentColor" />
+          <Icon name="minus" size="sm" color="currentColor" />
         </button>
 
         <button
           onClick={handleMaximize}
-          className={`flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0 text-main ${
-            isDark
-              ? 'bg-gray-700 hover:bg-gray-600'
-              : 'bg-gray-200 hover:bg-gray-300'
-          }`}
-          style={{ border: 'none', outline: 'none', boxShadow: 'none' }}
+          className={`${baseButton} text-subtle hover:bg-surface-2 hover:text-main`}
+          style={buttonStyle}
         >
-          <Icon name="compress-alt" size="xs" color="currentColor" />
+          <Icon name="square" size="sm" color="currentColor" />
         </button>
 
         <button
           onClick={handleClose}
-          className="flex items-center justify-center w-6 h-6 rounded-full transition-colors cursor-pointer text-white focus:outline-none focus:ring-0 border-0 focus:border-0 hover:border-0"
-          style={{
-            border: 'none',
-            outline: 'none',
-            boxShadow: 'none',
-            backgroundColor: '#ef4444',
-            color: 'white',
-          }}
-          onMouseEnter={(e) => {
-            e.target.style.backgroundColor = '#dc2626';
-          }}
-          onMouseLeave={(e) => {
-            e.target.style.backgroundColor = '#ef4444';
-          }}
+          className={`${baseButton} text-subtle hover:bg-danger hover:text-white`}
+          style={buttonStyle}
         >
-          <Icon name="close" size="xs" color="white" />
+          <Icon name="close" size="sm" color="currentColor" />
         </button>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-row items-center justify-between h-9 select-none z-[3000] bg-surface-00 flex-shrink-0 pt-0.5">
+    <div className="flex flex-row items-center justify-between h-9 select-none z-[3000] bg-app flex-shrink-0 border-b border-subtle">
       {window.electron.platform === 'darwin' ? macControls() : <></>}
-      {/* App title/icon area */}
-      <div
-        className={
-          'flex-row -webkit-app-region-drag text-center items-center grow px-4 ' +
-          (window.electron.platform === 'darwin' ? 'pr-24' : 'pl-24')
-        }
-      >
-        <span className="text-sm font-bold text-main">Quorum</span>
-      </div>
+      {/* Draggable region — empty (no title), fills the space between the
+          mac dots (left) or window controls (right). */}
+      <div className="flex-row -webkit-app-region-drag items-center grow h-full" />
       {window.electron.platform !== 'darwin' ? controls() : <></>}
     </div>
   );

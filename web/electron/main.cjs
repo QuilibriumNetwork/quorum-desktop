@@ -88,11 +88,20 @@ ipcMain.handle('clipboard:copy-secret', (_event, text) => {
 // Don't leave a secret on the clipboard when the app exits before the timer fires.
 app.on('before-quit', clearSensitiveClipboardIfUnchanged);
 
+// App/taskbar icon. In dev the asset lives in public/; in a packaged build
+// Vite copies public/ into dist/web/. Used for the runtime window + taskbar
+// (packaged installer/exe icons come from electron-builder's build.icon).
+const windowIcon = path.join(
+  __dirname,
+  isDev ? '../../public/icon-512.png' : '../../dist/web/icon-512.png'
+);
+
 function createWindow() {
   const mainWindow = new BrowserWindow({
     width: 1200,
     height: 800,
     frame: false,
+    icon: windowIcon,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -134,6 +143,13 @@ function createWindow() {
       }
     );
   }
+}
+
+// Windows groups taskbar entries by AppUserModelID. Without an explicit ID,
+// Electron apps show the generic Electron icon in the taskbar even when the
+// BrowserWindow icon is set. Must match electron-builder's appId.
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.quilibrium.quorum');
 }
 
 app.whenReady().then(createWindow);

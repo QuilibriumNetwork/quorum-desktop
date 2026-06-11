@@ -9,10 +9,22 @@
   "type": "module",
   "build": {
     "extends": null,
+    "appId": "com.quilibrium.quorum",
+    "productName": "Quorum",
+    "icon": "public/icon-512.png",
     "files": [
       "dist/**/*",
       "web/electron/**/*"
-    ]
+    ],
+    "win": {
+      "icon": "public/icon-512.png"
+    },
+    "mac": {
+      "icon": "public/icon-512.png"
+    },
+    "linux": {
+      "icon": "public/icon-512.png"
+    }
   },
   "scripts": {
     "dev": "vite --config web/vite.config.ts",
