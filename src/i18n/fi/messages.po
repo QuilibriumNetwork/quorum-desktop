@@ -37,7 +37,7 @@ msgstr ""
 "Tervetuloa Quorumiin, {name}! Tili on turvattu ja valmis käytettäväksi."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Lähetä viesti #{channel_name}:lle"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "on potkittu"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Lähetä viesti {user}:lle"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(tyhjää)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(vain sinulle näkyvä)"
 
@@ -232,7 +232,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Lisää ystävä"
 
@@ -285,7 +285,7 @@ msgstr "rooli"
 msgid "a Space"
 msgstr "Space"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "Tietoja"
 
@@ -312,18 +312,18 @@ msgstr "Tilin asetukset"
 msgid "actions queued"
 msgstr "Toiminnot jonossa"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Lisää ystävä"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Lisää muistiinpano"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Lisää henkilökohtainen muistiinpano..."
 
@@ -363,7 +363,7 @@ msgstr "Lisää ryhmä"
 msgid "Add Role"
 msgstr "Lisää Rooli"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Lisää suosikkeihin"
 
@@ -385,9 +385,13 @@ msgstr ""
 "Spacessa. Voit ladata PNG-, JPG- tai GIF-tiedostoja, enintään 25MB "
 "(automaattisesti optimoitu)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Lisätään..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Osoite (Qm...) tai @käyttäjänimi"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -401,7 +405,7 @@ msgstr "Osoitteet alkavat \"Qm\"."
 msgid "Advanced Settings"
 msgstr "Lisäasetukset"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -601,14 +605,13 @@ msgstr "Varmuuskopiointi epäonnistui"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Bio ei voi sisältää erikoismerkkejä"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Biokuvateksti on oltava {0} merkkiä tai vähemmän"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Bio on liian pitkä"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -646,7 +649,7 @@ msgstr "Kirjanmerkitty tarra"
 msgid "Bookmarks"
 msgstr "Kirjanmerkit"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Kirjanmerkit tässä keskustelussa"
 
@@ -713,7 +716,7 @@ msgstr "Kanavan kuvake"
 msgid "Channel Managers"
 msgstr "Kanavan hallinnoijat"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Kanavan jäsenet"
 
@@ -721,16 +724,16 @@ msgstr "Kanavan jäsenet"
 msgid "Channel Name"
 msgstr "Kanavan Nimi"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Kanavan nimi ei voi sisältää erikoismerkkejä"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Kanavan nimi on pakollinen"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Kanavan nimi on oltava {0} merkkiä tai vähemmän"
 
@@ -742,12 +745,12 @@ msgstr "Kanavan asetukset"
 msgid "Channel Topic"
 msgstr "Kanavan aihe"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Kanavan aihe ei voi sisältää erikoismerkkejä"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Kanavan aihe on oltava {0} merkkiä tai vähemmän"
 
@@ -832,7 +835,7 @@ msgstr "Konfiguraatioavain"
 msgid "Config key not found for this Space."
 msgstr "Tämän Spacen määritysavainta ei löydy."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Vahvista poisto"
@@ -845,7 +848,7 @@ msgstr "Vahvista lähtö"
 msgid "Confirm Reset"
 msgstr "Vahvista palautus"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Yhdistetään"
 
@@ -864,11 +867,11 @@ msgid ""
 msgstr ""
 "Hallitse, mitä muut voivat nähdä sinusta ja miten käyttäytymisesi jaetaan."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Keskustelun asetukset"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Keskustelun Asetukset"
@@ -890,12 +893,12 @@ msgstr "Kopioitu!"
 msgid "Copy a link"
 msgstr "Kopioi linkki"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Kopioi osoite"
 
@@ -1095,7 +1098,7 @@ msgstr "Poista kanava"
 msgid "Delete Channel"
 msgstr "Poista kanava"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1205,7 +1208,7 @@ msgstr "Työpöydän ilmoitukset"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Työpöydän ilmoituksia ei tueta tässä selaimessa."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1213,16 +1216,16 @@ msgstr ""
 "Laiteen nimi voi sisältää vain kirjaimia, numeroita, välilyöntejä, "
 "vinoviivoja ja sulkeita"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Laiteen nimi ei voi olla tyhjä"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Laiteen nimi ei voi sisältää HTML-koodia"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Laiteen nimi on oltava {0} merkkiä tai vähemmän"
 
@@ -1264,7 +1267,7 @@ msgstr "Näyttönimi"
 msgid "Display Name"
 msgstr "Näyttönimi"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Näyttönimi ei voi sisältää erikoismerkkejä"
 
@@ -1272,10 +1275,9 @@ msgstr "Näyttönimi ei voi sisältää erikoismerkkejä"
 msgid "Display name is required"
 msgstr "Näyttönimi on pakollinen"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Näyttönimi on oltava {0} merkkiä tai vähemmän"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Näyttönimi on liian pitkä"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1371,7 +1373,7 @@ msgstr "Emoji-valitsin"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojit"
@@ -1422,8 +1424,8 @@ msgid "Enter a name for your Space"
 msgstr "Anna nimi Space-lle"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Syötä käyttäjän osoite aloittaaksesi viestinnän heidän kanssaan."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr "Aloita viestittely syöttämällä käyttäjän osoite tai @käyttäjänimi."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1651,7 +1653,7 @@ msgstr "Profiilin päivittäminen epäonnistui"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Suosikit"
 
@@ -1802,7 +1804,7 @@ msgstr ""
 "GIF-tiedostot eivät voi olla suurempia kuin {maxSize}. Käytä pienempää "
 "GIFiä."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Siirry keskusteluun"
 
@@ -1822,16 +1824,16 @@ msgstr "Ryhmän kuvake (valinnainen)"
 msgid "Group Name"
 msgstr "Ryhmän nimi"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Ryhmän nimi ei voi sisältää erikoismerkkejä"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Ryhmän nimi on pakollinen"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Ryhmän nimi on oltava {0} merkkiä tai vähemmän"
 
@@ -2017,7 +2019,7 @@ msgstr "Liitytään..."
 msgid "Jump"
 msgstr "Hyppää"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Hyppää nykyhetkeen"
 
@@ -2050,7 +2052,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Näppäinoikotiet"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Potkaise"
 
@@ -2058,7 +2060,7 @@ msgstr "Potkaise"
 msgid "Kick User"
 msgstr "Potkaise käyttäjä"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Potkittu!"
 
@@ -2109,7 +2111,7 @@ msgstr "Lataa lisää"
 msgid "Loading bookmarks..."
 msgstr "Ladataan kirjanmerkkejä..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Ladataan viestiä..."
 
@@ -2138,7 +2140,11 @@ msgstr "Ladataan profiiliasi..."
 msgid "Loading..."
 msgstr "Ladataan..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Haetaan käyttäjää @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Etsitään käyttäjää..."
 
@@ -2241,7 +2247,7 @@ msgstr ""
 msgid "Message..."
 msgstr "Viesti..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Viestit"
@@ -2274,7 +2280,7 @@ msgstr "Lisää reaktioita"
 msgid "Must be exactly 4 characters"
 msgstr "Tasan 4 merkkiä"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Mykistä"
 
@@ -2286,7 +2292,7 @@ msgstr "Mykistä kanava"
 msgid "Mute conversation"
 msgstr "Mykistä keskustelu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Mykistä Keskustelu"
 
@@ -2314,7 +2320,7 @@ msgstr "Mykistä käyttäjä"
 msgid "Mute Users"
 msgstr "Mykistä käyttäjät"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Mykistetty"
@@ -2323,12 +2329,20 @@ msgstr "Mykistetty"
 msgid "My Account"
 msgstr "Oma tili"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Nimi tai osoite"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Nimet eivät voi päättyä \".q\"-päätteeseen – se on varattu vahvistetuille "
+"Quilibrium-nimille."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr ""
 "Nimiä, jotka muistuttavat adminia, moderaattoria tai tukea, on varattu."
@@ -2417,7 +2431,7 @@ msgstr ""
 msgid "No channels - drag channels here or delete group."
 msgstr "Ei kanavia - vedä kanavat tänne tai poista ryhmä."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Ei kontakteja löytynyt"
 
@@ -2446,7 +2460,7 @@ msgstr ""
 "Tälle Spacelle ei löytynyt salaustilaa. Space on ehkä alustettava tai sinun "
 "on ehkä luotava julkinen kutsulinkki ensin."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Ei vielä suosikkeja"
 
@@ -2458,7 +2472,7 @@ msgstr "Ei viestejä löytynyt"
 msgid "No missing Spaces found"
 msgstr "Puuttuvia Spaces-tiloja ei löytynyt"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Ei mykistettyjä keskusteluja"
 
@@ -2491,7 +2505,7 @@ msgstr "Ei ketjuja, jotka vastaavat etsintääsi"
 msgid "No threads yet"
 msgstr "Ketjuja ei vielä ole"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Ei tuntemattomia kontakteja"
 
@@ -2499,7 +2513,11 @@ msgstr "Ei tuntemattomia kontakteja"
 msgid "No unread notifications"
 msgstr "Ei lukemattomia ilmoituksia"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Käyttäjää @{usernameQuery} ei löytynyt."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Käyttäjiä ei löytynyt!"
 
@@ -2509,16 +2527,16 @@ msgid "None"
 msgstr "Ei mitään"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Muistiinpano"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Muistiinpanossa on virheellistä sisältöä"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Muistutus on oltava {0} merkkiä tai vähemmän"
 
@@ -2595,7 +2613,7 @@ msgid "Open {0}"
 msgstr "Avaa {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2829,7 +2847,7 @@ msgstr "Lukemavahvistukset"
 msgid "Read-only"
 msgstr "Vain lukeminen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Valmis aloittamaan todella yksityinen keskustelu?"
 
@@ -2862,11 +2880,11 @@ msgstr "Poista"
 msgid "Remove bookmark"
 msgstr "Poista kirjanmerkki"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Poista suosikeista"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Poistetaan..."
 
@@ -3020,7 +3038,7 @@ msgstr "Tallennetaan..."
 msgid "Search bookmarks..."
 msgstr "Hae kirjanmerkkejä..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Hae suoria viestejä"
 
@@ -3045,7 +3063,7 @@ msgstr "Hae tässä Tilassa"
 msgid "Search in this Space..."
 msgstr "Etsi tästä Space..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Etsi viestejä"
@@ -3074,7 +3092,7 @@ msgstr "Etsi ketjuja…"
 msgid "Search username or address"
 msgstr "Etsi käyttäjänimeä tai osoitetta"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Hae käyttäjänimeä tai osoitetta"
 
@@ -3119,7 +3137,7 @@ msgstr "Valitse roolit"
 msgid "Select skin tone"
 msgstr "Valitse ihonväri"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Lähetä"
 
@@ -3143,7 +3161,7 @@ msgstr "Lähetä kutsu"
 msgid "Send Link"
 msgstr "Lähetä linkki"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Lähetä viesti"
 
@@ -3332,7 +3350,7 @@ msgstr "Tila menee tänne"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Tarrat"
@@ -3466,7 +3484,7 @@ msgstr "Tämä linkki ei vanhene. Kuka tahansa sen omaava voi liittyä Spaceesi.
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Tämän linkin on luonut Spacen omistaja. Se ei vanhene."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Tämä nimi on ristiriidassa mainintakoodien kanssa."
 
@@ -3686,7 +3704,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Palauttaminen epäonnistui: et ole kirjautunut sisään"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3709,8 +3727,8 @@ msgstr "Tuntematon aika"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3745,7 +3763,7 @@ msgid "Unknown User"
 msgstr "Tuntematon käyttäjä"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Poista mykistys"
 
@@ -3753,7 +3771,7 @@ msgstr "Poista mykistys"
 msgid "Unmute Channel"
 msgstr "Poista mykistys kanavalta"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Poista mykistys keskustelusta"
 
@@ -3787,7 +3805,7 @@ msgstr "Poista viestin kiinnitys"
 msgid "Unpin this post"
 msgstr "Poista tämän postauksen kiinnitys"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3835,10 +3853,6 @@ msgstr "Lataa tarra"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Käytä \"Tallenna tiedostoihin\" tallentaaksesi yksityisen avaimen"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Käyttäjän osoite täällä"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Käyttäjää ei ole olemassa."
@@ -3848,11 +3862,11 @@ msgstr "Käyttäjää ei ole olemassa."
 msgid "User not authenticated"
 msgstr "Käyttäjää ei ole todennettu"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Käyttäjäprofiili"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Käyttäjäprofiili"
 
@@ -4084,7 +4098,7 @@ msgid "You are already a member of this Space."
 msgstr "Olet jo tämän Tilan jäsen."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Olet mykistetty {0}"
 
@@ -4127,7 +4141,7 @@ msgid "You cannot delete the default channel."
 msgstr "Et voi poistaa oletuskanavaa."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Et voi julkaista tässä kanavassa"
 
@@ -4139,7 +4153,7 @@ msgstr "Et voi lähettää suoraa viestiä itsellesi."
 msgid "You have a new unread message"
 msgstr "Sinulla on uusi lukematon viesti"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Olet mykistetty tässä Space:ssa"
 
@@ -4306,6 +4320,9 @@ msgstr "YouTube-videon pikkukuva"
 #~ msgid "Back to spaces list"
 #~ msgstr "Takaisin tilojen luetteloon"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Biokuvateksti on oltava {0} merkkiä tai vähemmän"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Kirjanmerkit tässä tilassa"
 
@@ -4338,6 +4355,12 @@ msgstr "YouTube-videon pikkukuva"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Löydä tiloja"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Näyttönimi on oltava {0} merkkiä tai vähemmän"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Syötä käyttäjän osoite aloittaaksesi viestinnän heidän kanssaan."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Olemassa olevat keskustelut"
@@ -4520,6 +4543,9 @@ msgstr "YouTube-videon pikkukuva"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Luettuja suoria viestejä"
+
+#~ msgid "User address here"
+#~ msgstr "Käyttäjän osoite täällä"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Kun käytössä, ilmoita minulle:"

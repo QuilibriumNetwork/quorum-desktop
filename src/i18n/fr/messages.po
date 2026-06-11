@@ -37,7 +37,7 @@ msgstr ""
 "Bienvenue à Quorum, {name} ! Votre compte est sécurisé et prêt à l'emploi."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Envoyer un message à #{channel_name}"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "a été expulsé"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Envoyer un message à {user}"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(vide)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(seulement visible par vous)"
 
@@ -232,7 +232,7 @@ msgstr "@rôles"
 msgid "@you"
 msgstr "@toi"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Ajouter un ami"
 
@@ -285,7 +285,7 @@ msgstr "un rôle"
 msgid "a Space"
 msgstr "un Espace"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "À propos"
 
@@ -312,18 +312,18 @@ msgstr "Paramètres du compte"
 msgid "actions queued"
 msgstr "actions en attente"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Ajouter un ami"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Ajouter une note"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Ajouter une note personnelle..."
 
@@ -363,7 +363,7 @@ msgstr "Ajouter un groupe"
 msgid "Add Role"
 msgstr "Ajouter un rôle"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Ajouter aux Favoris"
 
@@ -385,9 +385,13 @@ msgstr ""
 "personnalisés ne peuvent être utilisés que dans un Espace. Vous pouvez "
 "télécharger des PNG, JPG ou GIF, max 25 Mo (optimisé automatiquement)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Ajout en cours..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Adresse (Qm...) ou @nomdutilisateur"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -401,7 +405,7 @@ msgstr "Les adresses commencent par «\\u00a0Qm\\u00a0»."
 msgid "Advanced Settings"
 msgstr "Paramètres avancés"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -607,14 +611,13 @@ msgstr "Sauvegarde échouée"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Le bio ne peut pas contenir de caractères spéciaux"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "La biographie doit faire {0} caractères ou moins"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "La biographie est trop longue"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -654,7 +657,7 @@ msgstr "Autocollant enregistré"
 msgid "Bookmarks"
 msgstr "Signets"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Marquages dans cette conversation"
 
@@ -723,7 +726,7 @@ msgstr "Icône de canal"
 msgid "Channel Managers"
 msgstr "Gestionnaires de canal"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Membres du canal"
 
@@ -731,16 +734,16 @@ msgstr "Membres du canal"
 msgid "Channel Name"
 msgstr "Nom du canal"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Le nom du canal ne peut pas contenir de caractères spéciaux"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Le nom du canal est requis"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Le nom du canal doit faire {0} caractères ou moins"
 
@@ -752,12 +755,12 @@ msgstr "Paramètres du canal"
 msgid "Channel Topic"
 msgstr "Sujet du canal"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Le sujet du canal ne peut pas contenir de caractères spéciaux"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Le sujet du canal doit faire {0} caractères ou moins"
 
@@ -842,7 +845,7 @@ msgstr "Clé de configuration"
 msgid "Config key not found for this Space."
 msgstr "Clé de configuration introuvable pour cet Espace."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Confirmer la suppression"
@@ -855,7 +858,7 @@ msgstr "Confirmer le départ"
 msgid "Confirm Reset"
 msgstr "Confirmer la réinitialisation"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Connexion en cours"
 
@@ -875,11 +878,11 @@ msgstr ""
 "Contrôlez ce que les autres peuvent voir de vous et comment votre "
 "comportement est partagé."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Paramètres de conversation"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Paramètres de conversation"
@@ -901,12 +904,12 @@ msgstr "Copié !"
 msgid "Copy a link"
 msgstr "Copier un lien"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Copier l'adresse"
 
@@ -1107,7 +1110,7 @@ msgstr "Supprimer le canal"
 msgid "Delete Channel"
 msgstr "Supprimer le canal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1219,7 +1222,7 @@ msgid "Desktop notifications are not supported in this browser."
 msgstr ""
 "Les notifications de bureau ne sont pas prises en charge dans ce navigateur."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1227,16 +1230,16 @@ msgstr ""
 "Le nom de l'appareil ne peut contenir que des lettres, des chiffres, des "
 "espaces, des tirets et des parenthèses"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Le nom de l'appareil ne peut pas être vide"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Le nom de l'appareil ne peut pas contenir de HTML"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Le nom de l'appareil doit faire {0} caractères ou moins"
 
@@ -1280,7 +1283,7 @@ msgstr "Nom d'affichage"
 msgid "Display Name"
 msgstr "Nom d'affichage"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Le nom d'affichage ne peut pas contenir de caractères spéciaux"
 
@@ -1288,10 +1291,9 @@ msgstr "Le nom d'affichage ne peut pas contenir de caractères spéciaux"
 msgid "Display name is required"
 msgstr "Le nom d'affichage est requis"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Le nom d'affichage doit faire {0} caractères ou moins"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Le nom d'affichage est trop long"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1387,7 +1389,7 @@ msgstr "Sélecteur d'emoji"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1441,9 +1443,10 @@ msgid "Enter a name for your Space"
 msgstr "Entrez un nom pour votre Espace"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
+msgid "Enter a user's address or @username to start messaging them."
 msgstr ""
-"Entrez l'adresse d'un utilisateur pour commencer à lui envoyer des messages."
+"Saisissez l'adresse d'un utilisateur ou son @nomdutilisateur pour commencer "
+"à lui envoyer des messages."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1674,7 +1677,7 @@ msgstr "Échec de la mise à jour du profil"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Favoris"
 
@@ -1829,7 +1832,7 @@ msgstr ""
 "Les fichiers GIF ne peuvent pas dépasser {maxSize}. Veuillez utiliser un GIF"
 " plus petit."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Aller à la conversation"
 
@@ -1849,16 +1852,16 @@ msgstr "Icône de groupe (optionnel)"
 msgid "Group Name"
 msgstr "Nom du groupe"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Le nom du groupe ne peut pas contenir de caractères spéciaux"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Le nom du groupe est requis"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Le nom du groupe doit faire {0} caractères ou moins"
 
@@ -2045,7 +2048,7 @@ msgstr "En cours de connexion..."
 msgid "Jump"
 msgstr "Sauter"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Aller au présent"
 
@@ -2078,7 +2081,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Raccourcis clavier"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Expulser"
 
@@ -2086,7 +2089,7 @@ msgstr "Expulser"
 msgid "Kick User"
 msgstr "Expulser un utilisateur"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Expulsé !"
 
@@ -2137,7 +2140,7 @@ msgstr "Charger plus"
 msgid "Loading bookmarks..."
 msgstr "Chargement des signets..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Chargement du message..."
 
@@ -2166,7 +2169,11 @@ msgstr "Chargement de votre profil..."
 msgid "Loading..."
 msgstr "Chargement..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Recherche de @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Recherche de l'utilisateur..."
 
@@ -2272,7 +2279,7 @@ msgstr ""
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Messages"
@@ -2305,7 +2312,7 @@ msgstr "Plus de réactions"
 msgid "Must be exactly 4 characters"
 msgstr "Doit faire exactement 4 caractères"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Mettre en sourdine"
 
@@ -2317,7 +2324,7 @@ msgstr "Couper le canal"
 msgid "Mute conversation"
 msgstr "Mettre en sourdine la conversation"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Mettre en sourdine la conversation"
 
@@ -2345,7 +2352,7 @@ msgstr "Mettre en sourdine l'utilisateur"
 msgid "Mute Users"
 msgstr "Mettre en sourdine les utilisateurs"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Réduit au silence"
@@ -2354,12 +2361,20 @@ msgstr "Réduit au silence"
 msgid "My Account"
 msgstr "Mon compte"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Nom ou Adresse"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Les noms ne peuvent pas se terminer par \".q\" — ce suffixe est réservé aux "
+"noms Quilibrium vérifiés."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Les noms ressemblant à admin, modérateur ou support sont réservés."
 
@@ -2449,7 +2464,7 @@ msgstr ""
 msgid "No channels - drag channels here or delete group."
 msgstr "Aucun canal - faites glisser les canaux ici ou supprimez le groupe."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Aucun contact trouvé"
 
@@ -2480,7 +2495,7 @@ msgstr ""
 "Aucun état de chiffrement trouvé pour cet Espace. L'Espace doit peut-être "
 "être initialisé ou vous devez d'abord générer un lien d'invitation public."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Pas encore de favoris"
 
@@ -2492,7 +2507,7 @@ msgstr "Aucun message trouvé"
 msgid "No missing Spaces found"
 msgstr "Aucun Espace manquant trouvé"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Aucune conversation mise en sourdine"
 
@@ -2526,7 +2541,7 @@ msgstr "Aucun fil ne correspond à votre recherche"
 msgid "No threads yet"
 msgstr "Aucun fil pour l’instant"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Aucun contact inconnu"
 
@@ -2534,7 +2549,11 @@ msgstr "Aucun contact inconnu"
 msgid "No unread notifications"
 msgstr "Aucune notification non lue"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Aucun utilisateur trouvé pour @{usernameQuery}."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Aucun utilisateur trouvé !"
 
@@ -2544,16 +2563,16 @@ msgid "None"
 msgstr "Aucun"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Note"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "La note contient du contenu invalide"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "La note doit faire {0} caractères ou moins"
 
@@ -2635,7 +2654,7 @@ msgid "Open {0}"
 msgstr "Ouvrir {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2873,7 +2892,7 @@ msgstr "Accusés de lecture"
 msgid "Read-only"
 msgstr "Lecture seule"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Prêt à commencer une conversation vraiment privée ?"
 
@@ -2906,11 +2925,11 @@ msgstr "Supprimer"
 msgid "Remove bookmark"
 msgstr "Supprimer le signet"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Retirer des Favoris"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Suppression en cours..."
 
@@ -3064,7 +3083,7 @@ msgstr "Enregistrement..."
 msgid "Search bookmarks..."
 msgstr "Rechercher des marquages..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Rechercher les messages directs"
 
@@ -3089,7 +3108,7 @@ msgstr "Rechercher dans cet Espace"
 msgid "Search in this Space..."
 msgstr "Rechercher dans cet Espacio..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Rechercher des messages"
@@ -3118,7 +3137,7 @@ msgstr "Rechercher des fils…"
 msgid "Search username or address"
 msgstr "Rechercher un nom d'utilisateur ou une adresse"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Rechercher un nom d'utilisateur ou une adresse"
 
@@ -3165,7 +3184,7 @@ msgstr "Sélectionner des rôles"
 msgid "Select skin tone"
 msgstr "Sélectionner la teinte de peau"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Envoyer"
 
@@ -3189,7 +3208,7 @@ msgstr "Envoyer l'invitation"
 msgid "Send Link"
 msgstr "Envoyer le lien"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Envoyer un message"
 
@@ -3379,7 +3398,7 @@ msgstr "Le statut va ici"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Autocollants"
@@ -3518,7 +3537,7 @@ msgstr ""
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Ce lien a été généré par un propriétaire d'Espace. Il n'expire pas."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Ce nom entre en conflit avec des mots-clés de mention."
 
@@ -3752,7 +3771,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Impossible de restaurer : non connecté"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3775,8 +3794,8 @@ msgstr "Temps inconnu"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3811,7 +3830,7 @@ msgid "Unknown User"
 msgstr "Utilisateur inconnu"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Désactiver la mise en sourdine"
 
@@ -3819,7 +3838,7 @@ msgstr "Désactiver la mise en sourdine"
 msgid "Unmute Channel"
 msgstr "Réactiver le canal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Annuler la mise en sourdine de la conversation"
 
@@ -3853,7 +3872,7 @@ msgstr "Détacher le message"
 msgid "Unpin this post"
 msgstr "Déépingler ce message"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3909,10 +3928,6 @@ msgstr ""
 "Utilisez «\\u00a0Enregistrer dans les fichiers\\u00a0» pour enregistrer "
 "votre clé privée"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Adresse de l'utilisateur ici"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "L'utilisateur n'existe pas."
@@ -3922,11 +3937,11 @@ msgstr "L'utilisateur n'existe pas."
 msgid "User not authenticated"
 msgstr "Utilisateur non authentifié"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Profil utilisateur"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Profil utilisateur"
 
@@ -4162,7 +4177,7 @@ msgid "You are already a member of this Space."
 msgstr "Vous êtes déjà membre de cet Espace."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Vous êtes muet pour {0}"
 
@@ -4207,7 +4222,7 @@ msgid "You cannot delete the default channel."
 msgstr "Vous ne pouvez pas supprimer le canal par défaut."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Vous ne pouvez pas publier dans ce canal"
 
@@ -4219,7 +4234,7 @@ msgstr "Vous ne pouvez pas vous envoyer de message direct."
 msgid "You have a new unread message"
 msgstr "Vous avez un nouveau message non lu"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Vous avez été mis en sourdine dans cet Espace"
 
@@ -4394,6 +4409,9 @@ msgstr "Miniature de vidéo YouTube"
 #~ msgid "Back to spaces list"
 #~ msgstr "Retour à la liste des espaces"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "La biographie doit faire {0} caractères ou moins"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Marquages dans cet espace"
 
@@ -4426,6 +4444,13 @@ msgstr "Miniature de vidéo YouTube"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Découvrir des espaces"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Le nom d'affichage doit faire {0} caractères ou moins"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr ""
+#~ "Entrez l'adresse d'un utilisateur pour commencer à lui envoyer des messages."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Conversations existantes"
@@ -4614,6 +4639,9 @@ msgstr "Miniature de vidéo YouTube"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Messages directs non lus"
+
+#~ msgid "User address here"
+#~ msgstr "Adresse de l'utilisateur ici"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Lorsque activé, me notifier pour :"

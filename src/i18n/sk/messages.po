@@ -37,7 +37,7 @@ msgstr ""
 "Vitajte v Quorum, {name}! Váš účet je zabezpečený a pripravený na použitie."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Poslať správu #{channel_name}"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "bol vykopnutý"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Poslať správu {user}"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(prázdny)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(je viditeľné len vám)"
 
@@ -232,7 +232,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Pridať priateľa"
 
@@ -285,7 +285,7 @@ msgstr "rolu"
 msgid "a Space"
 msgstr "Priestor"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "O aplikácii"
 
@@ -312,18 +312,18 @@ msgstr "Nastavenia účtu"
 msgid "actions queued"
 msgstr "akcie sú v poradí"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Pridať priateľa"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Pridať poznámku"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Pridať osobnú poznámku..."
 
@@ -363,7 +363,7 @@ msgstr "Pridať skupinu"
 msgid "Add Role"
 msgstr "Pridať úlohu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Pridať do obľúbených"
 
@@ -384,9 +384,13 @@ msgstr ""
 "Space. Môžete nahrať PNG, JPG alebo GIF, max 25MB (automaticky "
 "optimalizované)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Pridávanie..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Adresa (Qm...) alebo @používateľské meno"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -400,7 +404,7 @@ msgstr "Adresy začínajú na \"Qm\"."
 msgid "Advanced Settings"
 msgstr "Pokročilé nastavenia"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -604,14 +608,13 @@ msgstr "Zálohovanie zlyhalo"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Bio nemôže obsahovať špeciálne znaky"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Biografia musí mať {0} znakov alebo menej"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Popis je príliš dlhý"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -650,7 +653,7 @@ msgstr "Uložená nálepka"
 msgid "Bookmarks"
 msgstr "Záložky"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Záložky v tejto konverzácii"
 
@@ -719,7 +722,7 @@ msgstr "Ikona kanála"
 msgid "Channel Managers"
 msgstr "Správcovia kanála"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Členovia kanála"
 
@@ -727,16 +730,16 @@ msgstr "Členovia kanála"
 msgid "Channel Name"
 msgstr "Názov kanála"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Názov kanála nemôže obsahovať špeciálne znaky"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Názov kanála je povinný"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Názov kanálu musí mať {0} znakov alebo menej"
 
@@ -748,12 +751,12 @@ msgstr "Nastavenia kanála"
 msgid "Channel Topic"
 msgstr "Téma kanála"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Téma kanála nemôže obsahovať špeciálne znaky"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Téma kanálu musí mať {0} znakov alebo menej"
 
@@ -838,7 +841,7 @@ msgstr "Konfiguračný kľúč"
 msgid "Config key not found for this Space."
 msgstr "Konfiguračný kľúč pre tento Space sa nenašiel."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Potvrdiť odstránenie"
@@ -851,7 +854,7 @@ msgstr "Potvrdiť odchod"
 msgid "Confirm Reset"
 msgstr "Potvrď obnovenie"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Pripájanie"
 
@@ -870,11 +873,11 @@ msgid ""
 msgstr ""
 "Kontrolujte, čo o vás môžu vidieť ostatní a ako sa zdieľa vaše správanie."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Nastavenia konverzácie"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Nastavenia konverzácie"
@@ -896,12 +899,12 @@ msgstr "Skopírované!"
 msgid "Copy a link"
 msgstr "Kopírovať odkaz"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Kopírovať adresu"
 
@@ -1100,7 +1103,7 @@ msgstr "Zmazať kanál"
 msgid "Delete Channel"
 msgstr "Vymazať kanál"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1210,7 +1213,7 @@ msgstr "Oznámenia na pracovnej ploche"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Oznámenia na pracovnej ploche nie sú v tomto prehliadači podporované."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1218,16 +1221,16 @@ msgstr ""
 "Názov zariadenia môže obsahovať len písmená, čísla, medzery, pomlčky a "
 "zátvorky"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Názov zariadenia nemôže byť prázdny"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Názov zariadenia nemôže obsahovať HTML"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Názov zariadenia musí mať {0} znakov alebo menej"
 
@@ -1268,7 +1271,7 @@ msgstr "Zobrazované meno"
 msgid "Display Name"
 msgstr "Zobrazované meno"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Zobrazované meno nemôže obsahovať špeciálne znaky"
 
@@ -1276,10 +1279,9 @@ msgstr "Zobrazované meno nemôže obsahovať špeciálne znaky"
 msgid "Display name is required"
 msgstr "Zobrazovacie meno je povinné"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Zobrazované meno musí mať {0} znakov alebo menej"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Zobrazované meno je príliš dlhé"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1375,7 +1377,7 @@ msgstr "Výber emoji"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1429,8 +1431,10 @@ msgid "Enter a name for your Space"
 msgstr "Zadajte názov pre váš Space"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Zadajte adresu používateľa, aby ste s ním mohli začať komunikovať."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr ""
+"Zadajte adresu používateľa alebo @používateľské meno, aby ste mu mohli začať"
+" posielať správy."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1658,7 +1662,7 @@ msgstr "Nepodarilo sa aktualizovať profil"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Obľúbené"
 
@@ -1808,7 +1812,7 @@ msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
 msgstr ""
 "GIF súbory nemôžu byť väčšie ako {maxSize}. Prosím, použite menší GIF."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Prejdite na konverzáciu"
 
@@ -1828,16 +1832,16 @@ msgstr "Ikona skupiny (voliteľné)"
 msgid "Group Name"
 msgstr "Názov skupiny"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Názov skupiny nemôže obsahovať špeciálne znaky"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Názov skupiny je povinný"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Názov skupiny musí mať {0} znakov alebo menej"
 
@@ -2022,7 +2026,7 @@ msgstr "Pripojovanie..."
 msgid "Jump"
 msgstr "Skákať"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Preskočiť na prítomnosť"
 
@@ -2055,7 +2059,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Klávesové skratky"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Vyhodiť"
 
@@ -2063,7 +2067,7 @@ msgstr "Vyhodiť"
 msgid "Kick User"
 msgstr "Vykopni používateľa"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Vykopnutý!"
 
@@ -2112,7 +2116,7 @@ msgstr "Načítať viac"
 msgid "Loading bookmarks..."
 msgstr "Načítavam záložky..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Načítavam správu..."
 
@@ -2141,7 +2145,11 @@ msgstr "Načítavam váš profil..."
 msgid "Loading..."
 msgstr "Načítava sa..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Vyhľadávam @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Hľadám používateľa..."
 
@@ -2242,7 +2250,7 @@ msgstr "Správa nemá platný podpis, nemusí byť od odosielateľa"
 msgid "Message..."
 msgstr "Správa..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Správy"
@@ -2275,7 +2283,7 @@ msgstr "Viac reakcií"
 msgid "Must be exactly 4 characters"
 msgstr "Musí mať presne 4 znaky"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Ztlmiť"
 
@@ -2287,7 +2295,7 @@ msgstr "Ztlmiť kanál"
 msgid "Mute conversation"
 msgstr "Stlmiť konverzáciu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Stlmiť Konverzáciu"
 
@@ -2315,7 +2323,7 @@ msgstr "Ztlmiť používateľa"
 msgid "Mute Users"
 msgstr "Ztlmiť používateľov"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Stlmené"
@@ -2324,12 +2332,20 @@ msgstr "Stlmené"
 msgid "My Account"
 msgstr "Môj účet"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Meno alebo adresa"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Mená nemôžu končiť na „.q“ – táto prípona je vyhradená pre overené mená "
+"Quilibrium."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Mená podobné admin, moderátor alebo podpora sú rezervované."
 
@@ -2417,7 +2433,7 @@ msgstr ""
 msgid "No channels - drag channels here or delete group."
 msgstr "Žiadne kanály - ťahajte kanály sem alebo zmazať skupinu."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Žiadne kontakty nenájdené"
 
@@ -2449,7 +2465,7 @@ msgstr ""
 "potrebné inicializovať alebo možno budete musieť najprv vygenerovať verejný "
 "odkaz na pozvánku."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Zatiaľ žiadne obľúbené"
 
@@ -2461,7 +2477,7 @@ msgstr "Žiadne správy nenájdené"
 msgid "No missing Spaces found"
 msgstr "Nenašli sa žiadne chýbajúce Priestory"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Žiadne stlmené konverzácie"
 
@@ -2495,7 +2511,7 @@ msgstr "Žiadne vlákna nezodpovedajú vašej vyhľadávacej otázke"
 msgid "No threads yet"
 msgstr "Zatiaľ žiadne vlákna"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Žiadne neznáme kontakty"
 
@@ -2503,7 +2519,11 @@ msgstr "Žiadne neznáme kontakty"
 msgid "No unread notifications"
 msgstr "Žiadne neprečítané oznámenia"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Pre @{usernameQuery} nebol nájdený žiadny používateľ."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Žiadni používatelia nenájdení!"
 
@@ -2513,16 +2533,16 @@ msgid "None"
 msgstr "Žiadny"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Poznámka"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Poznámka obsahuje neplatný obsah"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Poznámka musí mať {0} znakov alebo menej"
 
@@ -2602,7 +2622,7 @@ msgid "Open {0}"
 msgstr "Otvoriť {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2835,7 +2855,7 @@ msgstr "Potvrdenia o prečítaní"
 msgid "Read-only"
 msgstr "Iba na čítanie"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Pripravení začať naozaj súkromnú konverzáciu?"
 
@@ -2868,11 +2888,11 @@ msgstr "Odstrániť"
 msgid "Remove bookmark"
 msgstr "Odstrániť záložku"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Odstrániť z obľúbených"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Odstraňovanie..."
 
@@ -3026,7 +3046,7 @@ msgstr "Ukladám..."
 msgid "Search bookmarks..."
 msgstr "Vyhľadať záložky..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Vyhľadať priame správy"
 
@@ -3051,7 +3071,7 @@ msgstr "Vyhľadávanie v tomto Priestore"
 msgid "Search in this Space..."
 msgstr "Hľadať v tomto Space..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Hľadať správy"
@@ -3080,7 +3100,7 @@ msgstr "Vyhľadávať vlákna…"
 msgid "Search username or address"
 msgstr "Hľadať používateľské meno alebo adresu"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Hľadať používateľské meno alebo adresu"
 
@@ -3126,7 +3146,7 @@ msgstr "Vybrať role"
 msgid "Select skin tone"
 msgstr "Vybrať odtenok pleti"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Odoslať"
 
@@ -3150,7 +3170,7 @@ msgstr "Odoslať pozvánku"
 msgid "Send Link"
 msgstr "Odoslať odkaz"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Odoslať správu"
 
@@ -3340,7 +3360,7 @@ msgstr "Tu napíš svôj stav"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Nálepky"
@@ -3474,7 +3494,7 @@ msgstr "Tento odkaz nevyprší. Ktokoľvek s ním sa môže pripojiť k vášmu 
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Tento odkaz bol vygenerovaný vlastníkom Space. Nevyprší."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Toto meno sa konfliktuje s kľúčovými slovami zmienky."
 
@@ -3694,7 +3714,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Nepodarilo sa obnoviť: nie ste prihlásený"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3717,8 +3737,8 @@ msgstr "Neznámy čas"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3753,7 +3773,7 @@ msgid "Unknown User"
 msgstr "Neznámy používateľ"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Odtlmiť"
 
@@ -3761,7 +3781,7 @@ msgstr "Odtlmiť"
 msgid "Unmute Channel"
 msgstr "Zrušiť ztlmenie kanála"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Zrušiť stlmenie konverzácie"
 
@@ -3795,7 +3815,7 @@ msgstr "Odpripnúť správu"
 msgid "Unpin this post"
 msgstr "Odpripnúť tento príspevok"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3845,10 +3865,6 @@ msgstr "Nahraj Nálepku"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Použite \"Uložiť do súborov\" na uloženie svojho súkromného kľúča"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Adresa používateľa tu"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Používateľ neexistuje."
@@ -3858,11 +3874,11 @@ msgstr "Používateľ neexistuje."
 msgid "User not authenticated"
 msgstr "Používateľ nie je autentifikovaný"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Profil používateľa"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Profil používateľa"
 
@@ -4092,7 +4108,7 @@ msgid "You are already a member of this Space."
 msgstr "Už ste členom tohto Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Si stlmený na {0}"
 
@@ -4137,7 +4153,7 @@ msgid "You cannot delete the default channel."
 msgstr "Nemôžete vymazať predvolený kanál."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Nemôžete prispievať v tomto kanáli"
 
@@ -4149,7 +4165,7 @@ msgstr "Nemôžete si poslať priamu správu."
 msgid "You have a new unread message"
 msgstr "Máte novú neprečítanú správu"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Boli ste ztlmení v tomto priestore"
 
@@ -4317,6 +4333,9 @@ msgstr "Miniatúra YouTube videa"
 #~ msgid "Back to spaces list"
 #~ msgstr "Späť na zoznam priestorov"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Biografia musí mať {0} znakov alebo menej"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Záložky v tomto priestore"
 
@@ -4349,6 +4368,12 @@ msgstr "Miniatúra YouTube videa"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Objavovať priestory"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Zobrazované meno musí mať {0} znakov alebo menej"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Zadajte adresu používateľa, aby ste s ním mohli začať komunikovať."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Existujúce konverzácie"
@@ -4536,6 +4561,9 @@ msgstr "Miniatúra YouTube videa"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Neprečítané priame správy"
+
+#~ msgid "User address here"
+#~ msgstr "Adresa používateľa tu"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Keď je povolené, upozorniť ma na:"

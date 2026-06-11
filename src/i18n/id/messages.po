@@ -37,7 +37,7 @@ msgstr ""
 "Selamat datang di Quorum, {name}! Akun Anda sudah aman dan siap digunakan."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Kirim pesan ke #{channel_name}"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "telah dikeluarkan"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Kirim pesan ke {user}"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(kosong)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(hanya terlihat oleh Anda)"
 
@@ -232,7 +232,7 @@ msgstr "@peran"
 msgid "@you"
 msgstr "@Anda"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Tambahkan teman"
 
@@ -285,7 +285,7 @@ msgstr "sebuah peran"
 msgid "a Space"
 msgstr "sebuah Space"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "Tentang"
 
@@ -312,18 +312,18 @@ msgstr "Pengaturan Akun"
 msgid "actions queued"
 msgstr "tindakan tertunda"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Tambahkan teman"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Tambahkan catatan"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Tambahkan catatan pribadi..."
 
@@ -363,7 +363,7 @@ msgstr "Tambahkan Grup"
 msgid "Add Role"
 msgstr "Tambahkan Peran"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Tambahkan ke Favorit"
 
@@ -385,9 +385,13 @@ msgstr ""
 " Space. Anda dapat mengunggah PNG, JPG, atau GIF, maksimal 25MB "
 "(dioptimalkan secara otomatis)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Menambahkan..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Alamat (Qm...) atau @username"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -401,7 +405,7 @@ msgstr "Alamat dimulai dengan \"Qm\"."
 msgid "Advanced Settings"
 msgstr "Pengaturan Lanjutan"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -604,14 +608,13 @@ msgstr "Cadangan Gagal"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Bio tidak boleh mengandung karakter khusus"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Bio harus {0} karakter atau kurang"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Bio terlalu panjang"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -650,7 +653,7 @@ msgstr "Stiker yang dibookmark"
 msgid "Bookmarks"
 msgstr "Bookmark"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Marcador dalam percakapan ini"
 
@@ -718,7 +721,7 @@ msgstr "Ikon Saluran"
 msgid "Channel Managers"
 msgstr "Manajer Saluran"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Anggota saluran"
 
@@ -726,16 +729,16 @@ msgstr "Anggota saluran"
 msgid "Channel Name"
 msgstr "Nama Saluran"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Nama saluran tidak boleh mengandung karakter khusus"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Nama saluran diperlukan"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Nama saluran harus {0} karakter atau kurang"
 
@@ -747,12 +750,12 @@ msgstr "Pengaturan Saluran"
 msgid "Channel Topic"
 msgstr "Topik Saluran"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Topik saluran tidak boleh mengandung karakter khusus"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Topik saluran harus {0} karakter atau kurang"
 
@@ -837,7 +840,7 @@ msgstr "Kunci Konfigurasi"
 msgid "Config key not found for this Space."
 msgstr "Kunci konfigurasi tidak ditemukan untuk Space ini."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Konfirmasi Hapus"
@@ -850,7 +853,7 @@ msgstr "Konfirmasi Tinggalkan"
 msgid "Confirm Reset"
 msgstr "Konfirmasi Reset"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Sedang Menghubungkan"
 
@@ -870,11 +873,11 @@ msgstr ""
 "Kontrol apa yang dapat dilihat orang lain tentang Anda dan bagaimana "
 "perilaku Anda dibagikan."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Pengaturan percakapan"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Pengaturan Percakapan"
@@ -896,12 +899,12 @@ msgstr "Disalin!"
 msgid "Copy a link"
 msgstr "Salin tautan"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Salin alamat"
 
@@ -1102,7 +1105,7 @@ msgstr "Hapus saluran"
 msgid "Delete Channel"
 msgstr "Hapus Saluran"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1212,7 +1215,7 @@ msgstr "Notifikasi Desktop"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Notifikasi desktop tidak didukung di browser ini."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1220,16 +1223,16 @@ msgstr ""
 "Nama perangkat hanya dapat berisi huruf, angka, spasi, tanda hubung, dan "
 "tanda kurung"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Nama perangkat tidak boleh kosong"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Nama perangkat tidak boleh mengandung HTML"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Nama perangkat harus {0} karakter atau kurang"
 
@@ -1272,7 +1275,7 @@ msgstr "Nama tampilan"
 msgid "Display Name"
 msgstr "Nama Tampilan"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Nama tampilan tidak boleh mengandung karakter khusus"
 
@@ -1280,10 +1283,9 @@ msgstr "Nama tampilan tidak boleh mengandung karakter khusus"
 msgid "Display name is required"
 msgstr "Nama tampilan diperlukan"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Nama tampilan harus {0} karakter atau kurang"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Nama tampilan terlalu panjang"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1379,7 +1381,7 @@ msgstr "Pemilih emoji"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1433,8 +1435,10 @@ msgid "Enter a name for your Space"
 msgstr "Masukkan nama untuk Space Anda"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Masukkan alamat pengguna untuk mulai mengirim pesan kepada mereka."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr ""
+"Masukkan alamat pengguna atau @username untuk mulai mengirim pesan kepada "
+"mereka."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1662,7 +1666,7 @@ msgstr "Gagal memperbarui profil"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Favorit"
 
@@ -1813,7 +1817,7 @@ msgstr ""
 "File GIF tidak boleh lebih besar dari {maxSize}. Silakan gunakan GIF yang "
 "lebih kecil."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Pergi ke percakapan"
 
@@ -1833,16 +1837,16 @@ msgstr "Ikon Grup (opsional)"
 msgid "Group Name"
 msgstr "Nama Grup"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Nama grup tidak boleh mengandung karakter khusus"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Nama grup diperlukan"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Nama grup harus {0} karakter atau kurang"
 
@@ -2028,7 +2032,7 @@ msgstr "Bergabung..."
 msgid "Jump"
 msgstr "Lompat"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Lompat ke saat ini"
 
@@ -2061,7 +2065,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Pintasan Keyboard"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Tendang"
 
@@ -2069,7 +2073,7 @@ msgstr "Tendang"
 msgid "Kick User"
 msgstr "Usir Pengguna"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Dikeluarkan!"
 
@@ -2118,7 +2122,7 @@ msgstr "Muat lebih banyak"
 msgid "Loading bookmarks..."
 msgstr "Memuat bookmark..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Memuat pesan..."
 
@@ -2147,7 +2151,11 @@ msgstr "Memuat profil Anda..."
 msgid "Loading..."
 msgstr "Memuat..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Mencari @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Mencari pengguna..."
 
@@ -2250,7 +2258,7 @@ msgstr ""
 msgid "Message..."
 msgstr "Pesan..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Pesan"
@@ -2283,7 +2291,7 @@ msgstr "Lebih banyak reaksi"
 msgid "Must be exactly 4 characters"
 msgstr "Harus tepat 4 karakter"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Bisu"
 
@@ -2295,7 +2303,7 @@ msgstr "Bisukan Saluran"
 msgid "Mute conversation"
 msgstr "Bisukan percakapan"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Bisukan Percakapan"
 
@@ -2323,7 +2331,7 @@ msgstr "Bisu Pengguna"
 msgid "Mute Users"
 msgstr "Bisu Pengguna"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Dibisukan"
@@ -2332,12 +2340,20 @@ msgstr "Dibisukan"
 msgid "My Account"
 msgstr "Akun Saya"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Nama atau Alamat"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Nama tidak boleh diakhiri dengan \".q\" — akhiran tersebut dicadangkan untuk"
+" nama Quilibrium yang terverifikasi."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr ""
 "Nama yang mirip dengan admin, moderator, atau dukungan adalah cadangan."
@@ -2425,7 +2441,7 @@ msgstr ""
 msgid "No channels - drag channels here or delete group."
 msgstr "Tidak ada saluran - seret saluran ke sini atau hapus grup."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Tidak ada kontak ditemukan"
 
@@ -2457,7 +2473,7 @@ msgstr ""
 "perlu diinisialisasi atau Anda mungkin perlu membuat tautan undangan publik "
 "terlebih dahulu."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Belum ada favorit"
 
@@ -2469,7 +2485,7 @@ msgstr "Tidak ada pesan yang ditemukan"
 msgid "No missing Spaces found"
 msgstr "Tidak ada Space yang hilang ditemukan"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Tidak ada percakapan yang dibisukan"
 
@@ -2501,7 +2517,7 @@ msgstr "Tidak ada thread yang cocok dengan pencarian Anda"
 msgid "No threads yet"
 msgstr "Belum ada thread"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Tidak ada kontak yang tidak dikenal"
 
@@ -2509,7 +2525,11 @@ msgstr "Tidak ada kontak yang tidak dikenal"
 msgid "No unread notifications"
 msgstr "Tidak ada notifikasi yang belum dibaca"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Tidak ada pengguna yang ditemukan untuk @{usernameQuery}."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Tidak ada pengguna yang ditemukan!"
 
@@ -2519,16 +2539,16 @@ msgid "None"
 msgstr "Tidak ada"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Catatan"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Catatan mengandung konten yang tidak valid"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Catatan harus {0} karakter atau kurang"
 
@@ -2606,7 +2626,7 @@ msgid "Open {0}"
 msgstr "Buka {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2839,7 +2859,7 @@ msgstr "Bukti baca"
 msgid "Read-only"
 msgstr "Hanya-baca"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Siap untuk memulai percakapan yang benar-benar pribadi?"
 
@@ -2872,11 +2892,11 @@ msgstr "Hapus"
 msgid "Remove bookmark"
 msgstr "Hapus bookmark"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Hapus dari Favorit"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Menghapus..."
 
@@ -3030,7 +3050,7 @@ msgstr "Menyimpan..."
 msgid "Search bookmarks..."
 msgstr "Cari marcador..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Cari pesan langsung"
 
@@ -3055,7 +3075,7 @@ msgstr "Cari di Space ini"
 msgid "Search in this Space..."
 msgstr "Cari di Space ini..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Cari Pesan"
@@ -3084,7 +3104,7 @@ msgstr "Cari thread…"
 msgid "Search username or address"
 msgstr "Cari nama pengguna atau alamat"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Cari Nama Pengguna atau Alamat"
 
@@ -3129,7 +3149,7 @@ msgstr "Pilih Peran"
 msgid "Select skin tone"
 msgstr "Pilih warna kulit"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Kirim"
 
@@ -3153,7 +3173,7 @@ msgstr "Kirim Undangan"
 msgid "Send Link"
 msgstr "Kirim Tautan"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Kirim Pesan"
 
@@ -3343,7 +3363,7 @@ msgstr "Tulis status Anda di sini"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Stiker"
@@ -3482,7 +3502,7 @@ msgstr ""
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Tautan ini dibuat oleh pemilik Space. Tautan ini tidak kedaluwarsa."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Nama ini bertentangan dengan kata kunci sebutan."
 
@@ -3711,7 +3731,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Tidak dapat memulihkan: tidak masuk"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3734,8 +3754,8 @@ msgstr "Waktu tidak diketahui"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3770,7 +3790,7 @@ msgid "Unknown User"
 msgstr "Pengguna Tidak Dikenal"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Batalkan bisu"
 
@@ -3778,7 +3798,7 @@ msgstr "Batalkan bisu"
 msgid "Unmute Channel"
 msgstr "Batalkan Bisukan Saluran"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Batalkan Bisukan Percakapan"
 
@@ -3812,7 +3832,7 @@ msgstr "Unpin Pesan"
 msgid "Unpin this post"
 msgstr "Lepaskan pos ini"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3861,10 +3881,6 @@ msgstr "Unggah Stiker"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Gunakan \"Simpan ke File\" untuk menyimpan kunci pribadi Anda"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Alamat pengguna di sini"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Pengguna tidak ada."
@@ -3874,11 +3890,11 @@ msgstr "Pengguna tidak ada."
 msgid "User not authenticated"
 msgstr "Pengguna tidak terautentikasi"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Profil pengguna"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Profil Pengguna"
 
@@ -4113,7 +4129,7 @@ msgid "You are already a member of this Space."
 msgstr "Anda sudah menjadi anggota Space ini."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Anda dibisukan selama {0}"
 
@@ -4159,7 +4175,7 @@ msgid "You cannot delete the default channel."
 msgstr "Anda tidak dapat menghapus saluran default."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Anda tidak dapat memposting di saluran ini"
 
@@ -4171,7 +4187,7 @@ msgstr "Anda tidak dapat mengirim pesan langsung kepada diri sendiri."
 msgid "You have a new unread message"
 msgstr "Anda memiliki pesan baru yang belum dibaca"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Anda telah dibisukan di Space ini"
 
@@ -4341,6 +4357,9 @@ msgstr "Thumbnail Video YouTube"
 #~ msgid "Back to spaces list"
 #~ msgstr "Kembali ke daftar ruang"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Bio harus {0} karakter atau kurang"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Marcador dalam ruang ini"
 
@@ -4373,6 +4392,12 @@ msgstr "Thumbnail Video YouTube"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Temukan ruang"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Nama tampilan harus {0} karakter atau kurang"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Masukkan alamat pengguna untuk mulai mengirim pesan kepada mereka."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Percakapan yang Ada"
@@ -4557,6 +4582,9 @@ msgstr "Thumbnail Video YouTube"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Pesan langsung yang belum dibaca"
+
+#~ msgid "User address here"
+#~ msgstr "Alamat pengguna di sini"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Saat diaktifkan, beri tahu saya untuk:"

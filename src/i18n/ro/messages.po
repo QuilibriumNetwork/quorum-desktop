@@ -37,7 +37,7 @@ msgstr ""
 "Bun venit la Quorum, {name}! Contul tău este securizat și gata de utilizare."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "a fost dat afară"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Trimite un mesaj lui {user}"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(gol)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(doar tu îl vezi)"
 
@@ -232,7 +232,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Adaugă un prieten"
 
@@ -285,7 +285,7 @@ msgstr "un rol"
 msgid "a Space"
 msgstr "un Spațiu"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "Despre"
 
@@ -312,18 +312,18 @@ msgstr "Setări cont"
 msgid "actions queued"
 msgstr "acțiuni în așteptare"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Adaugă un prieten"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Adaugă o notă"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Adaugă o notă personală..."
 
@@ -363,7 +363,7 @@ msgstr "Adaugă grup"
 msgid "Add Role"
 msgstr "Adaugă rol"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Adaugă la Favorite"
 
@@ -385,9 +385,13 @@ msgstr ""
 " folosite doar în cadrul unui Spațiu. Poți încărca PNG, JPG sau GIF, max "
 "25MB (optimizat automat)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Adăugare..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Adresă (Qm...) sau @nume_utilizator"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -401,7 +405,7 @@ msgstr "Adresele încep cu \"Qm\"."
 msgid "Advanced Settings"
 msgstr "Setări avansate"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -605,14 +609,13 @@ msgstr "Backup eșuat"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Bio nu poate conține caractere speciale"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Biografia trebuie să aibă {0} caractere sau mai puține"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Biografia este prea lungă"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -650,7 +653,7 @@ msgstr "Sticker marcat"
 msgid "Bookmarks"
 msgstr "Marcaje"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Marcatoare în această conversație"
 
@@ -719,7 +722,7 @@ msgstr "Icon canal"
 msgid "Channel Managers"
 msgstr "Manageri de canal"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Membrii canalului"
 
@@ -727,16 +730,16 @@ msgstr "Membrii canalului"
 msgid "Channel Name"
 msgstr "Numele canalului"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Numele canalului nu poate conține caractere speciale"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Numele canalului este necesar"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Numele canalului trebuie să aibă {0} caractere sau mai puține"
 
@@ -748,12 +751,12 @@ msgstr "Setări Canal"
 msgid "Channel Topic"
 msgstr "Subiectul canalului"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Subiectul canalului nu poate conține caractere speciale"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Subiectul canalului trebuie să aibă {0} caractere sau mai puține"
 
@@ -838,7 +841,7 @@ msgstr "Cheia de configurare"
 msgid "Config key not found for this Space."
 msgstr "Cheia de configurare nu a fost găsită pentru acest Spațiu."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Confirmare Ștergere"
@@ -851,7 +854,7 @@ msgstr "Confirmare Părăsire"
 msgid "Confirm Reset"
 msgstr "Confirmă resetarea"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Conectare"
 
@@ -871,11 +874,11 @@ msgstr ""
 "Controlează ce pot vedea alții despre tine și cum este partajat "
 "comportamentul tău."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Setările conversației"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Setările conversației"
@@ -897,12 +900,12 @@ msgstr "Copiat!"
 msgid "Copy a link"
 msgstr "Copiază un link"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Copiază adresa"
 
@@ -1104,7 +1107,7 @@ msgstr "Șterge canal"
 msgid "Delete Channel"
 msgstr "Șterge canal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1215,7 +1218,7 @@ msgstr "Notificări pe desktop"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Notificările pe desktop nu sunt acceptate în acest browser."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1223,16 +1226,16 @@ msgstr ""
 "Numele dispozitivului poate conține doar litere, cifre, spații, cratime și "
 "paranteze"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Numele dispozitivului nu poate fi gol"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Numele dispozitivului nu poate conține HTML"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Numele dispozitivului trebuie să aibă {0} caractere sau mai puține"
 
@@ -1275,7 +1278,7 @@ msgstr "Nume de afișare"
 msgid "Display Name"
 msgstr "Nume de afișare"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Numele de afișare nu poate conține caractere speciale"
 
@@ -1283,10 +1286,9 @@ msgstr "Numele de afișare nu poate conține caractere speciale"
 msgid "Display name is required"
 msgstr "Numele de afișare este necesar"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Numele afișat trebuie să aibă {0} caractere sau mai puține"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Numele afișat este prea lung"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1382,7 +1384,7 @@ msgstr "Selector de emoji"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1436,8 +1438,10 @@ msgid "Enter a name for your Space"
 msgstr "Introdu un nume pentru Spațiul tău"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Introdu adresa unui utilizator pentru a începe să le trimiti mesaje."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr ""
+"Introdu adresa unui utilizator sau @numele_utilizatorului pentru a începe "
+"să-i trimiți mesaje."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1670,7 +1674,7 @@ msgstr "Actualizarea profilului a eșuat"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Favorite"
 
@@ -1823,7 +1827,7 @@ msgstr ""
 "Fișierele GIF nu pot fi mai mari de {maxSize}. Te rugăm să folosești un GIF "
 "mai mic."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Mergi la conversație"
 
@@ -1843,16 +1847,16 @@ msgstr "Icon grup (opțional)"
 msgid "Group Name"
 msgstr "Numele grupului"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Numele grupului nu poate conține caractere speciale"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Numele grupului este necesar"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Numele grupului trebuie să aibă {0} caractere sau mai puține"
 
@@ -2039,7 +2043,7 @@ msgstr "Se alătură..."
 msgid "Jump"
 msgstr "Sari"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Sari la prezent"
 
@@ -2072,7 +2076,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Scurtături de tastatură"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Îndepărtează"
 
@@ -2080,7 +2084,7 @@ msgstr "Îndepărtează"
 msgid "Kick User"
 msgstr "Excludere utilizator"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Dat afară!"
 
@@ -2129,7 +2133,7 @@ msgstr "Încărcați mai multe"
 msgid "Loading bookmarks..."
 msgstr "Încărcare marcaje..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Se încarcă mesajul..."
 
@@ -2158,7 +2162,11 @@ msgstr "Încărcarea profilului tău..."
 msgid "Loading..."
 msgstr "Se încarcă..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Căutare @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Caut utilizator..."
 
@@ -2261,7 +2269,7 @@ msgstr ""
 msgid "Message..."
 msgstr "Mesaj..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Mesaje"
@@ -2294,7 +2302,7 @@ msgstr "Mai multe reacții"
 msgid "Must be exactly 4 characters"
 msgstr "Trebuie să aibă exact 4 caractere"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Dezactivează"
 
@@ -2306,7 +2314,7 @@ msgstr "Dezactivează Canalul"
 msgid "Mute conversation"
 msgstr "Pune conversația pe silențios"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Pune Conversația pe silențios"
 
@@ -2334,7 +2342,7 @@ msgstr "Dezactivează utilizatorul"
 msgid "Mute Users"
 msgstr "Dezactivează utilizatorii"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Pe silențios"
@@ -2343,12 +2351,20 @@ msgstr "Pe silențios"
 msgid "My Account"
 msgstr "Contul Meu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Nume sau Adresă"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Numele nu se pot termina cu \".q\" — acest sufix este rezervat pentru numele"
+" Quilibrium verificate."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Numele care seamănă cu admin, moderator sau suport sunt rezervate."
 
@@ -2437,7 +2453,7 @@ msgstr ""
 msgid "No channels - drag channels here or delete group."
 msgstr "Fără canale - trageți canale aici sau ștergeți grupul."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Nu au fost găsite contacte"
 
@@ -2469,7 +2485,7 @@ msgstr ""
 "necesita inițializare sau ar putea fi necesar să generezi mai întâi un link "
 "de invitație public."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Nu ai favorite încă"
 
@@ -2481,7 +2497,7 @@ msgstr "Niciun mesaj găsit"
 msgid "No missing Spaces found"
 msgstr "Nu s-au găsit Spații lipsă"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Nicio conversație pe silențios"
 
@@ -2515,7 +2531,7 @@ msgstr "Nu există fire care să corespundă căutării tale"
 msgid "No threads yet"
 msgstr "Niciun fir încă"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Niciun contact necunoscut"
 
@@ -2523,7 +2539,11 @@ msgstr "Niciun contact necunoscut"
 msgid "No unread notifications"
 msgstr "Nu sunt notificări necitite"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Niciun utilizator găsit pentru @{usernameQuery}."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
@@ -2533,16 +2553,16 @@ msgid "None"
 msgstr "Niciunul"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Notă"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Notă conține conținut invalid"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Notă trebuie să aibă {0} caractere sau mai puține"
 
@@ -2622,7 +2642,7 @@ msgid "Open {0}"
 msgstr "Deschideți {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2859,7 +2879,7 @@ msgstr "Confirmări de citire"
 msgid "Read-only"
 msgstr "Doar citire"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Ești gata să începi o conversație cu adevărat privată?"
 
@@ -2892,11 +2912,11 @@ msgstr "Elimină"
 msgid "Remove bookmark"
 msgstr "Șterge marcajul"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Elimină din Favorite"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Eliminare..."
 
@@ -3050,7 +3070,7 @@ msgstr "Se salvează..."
 msgid "Search bookmarks..."
 msgstr "Caută marcatoare..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Căutare mesaje directe"
 
@@ -3075,7 +3095,7 @@ msgstr "Caută în acest Spațiu"
 msgid "Search in this Space..."
 msgstr "Caută în acest Spațiu..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Caută Mesaje"
@@ -3104,7 +3124,7 @@ msgstr "Caută fire…"
 msgid "Search username or address"
 msgstr "Caută numele de utilizator sau adresa"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Caută numele de utilizator sau adresa"
 
@@ -3150,7 +3170,7 @@ msgstr "Selectează Roluri"
 msgid "Select skin tone"
 msgstr "Selectează tonul pielii"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Trimite"
 
@@ -3174,7 +3194,7 @@ msgstr "Trimite invitație"
 msgid "Send Link"
 msgstr "Trimite link"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Trimite mesaj"
 
@@ -3364,7 +3384,7 @@ msgstr "Starea merge aici"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Autocolante"
@@ -3500,7 +3520,7 @@ msgstr "Acest link nu expiră. Oricine îl are se poate alătura Spațiului tău
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Acest link a fost generat de un proprietar de Spațiu. Nu expiră."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Acest nume intră în conflict cu cuvintele cheie de mențiune."
 
@@ -3729,7 +3749,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Imposibil de restaurat: nu ești conectat"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3752,8 +3772,8 @@ msgstr "Timp necunoscut"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3788,7 +3808,7 @@ msgid "Unknown User"
 msgstr "Utilizator necunoscut"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Reactivează"
 
@@ -3796,7 +3816,7 @@ msgstr "Reactivează"
 msgid "Unmute Channel"
 msgstr "Reactivează Canalul"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Dezactivează silențios Conversația"
 
@@ -3830,7 +3850,7 @@ msgstr "Defixează Mesajul"
 msgid "Unpin this post"
 msgstr "Dezfixează această postare"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3882,10 +3902,6 @@ msgstr "Încarcă Sticker"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Folosește \"Salvează în Fișiere\" pentru a-ți salva cheia privată"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Adresa utilizatorului aici"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Utilizatorul nu există."
@@ -3895,11 +3911,11 @@ msgstr "Utilizatorul nu există."
 msgid "User not authenticated"
 msgstr "Utilizator neautentificat"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Profil utilizator"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Profil Utilizator"
 
@@ -4130,7 +4146,7 @@ msgid "You are already a member of this Space."
 msgstr "Ești deja membru al acestui Spațiu."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Ești în silențiu pentru {0}"
 
@@ -4175,7 +4191,7 @@ msgid "You cannot delete the default channel."
 msgstr "Nu poți șterge canalul implicit."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 
@@ -4187,7 +4203,7 @@ msgstr "Nu poți trimite un mesaj direct ție însuți."
 msgid "You have a new unread message"
 msgstr "Ai un mesaj nou necitit"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Ai fost dezactivat în acest Spațiu"
 
@@ -4358,6 +4374,9 @@ msgstr "Miniatură video YouTube"
 #~ msgid "Back to spaces list"
 #~ msgstr "Înapoi la lista spațiilor"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Biografia trebuie să aibă {0} caractere sau mai puține"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Marcatoare în acest spațiu"
 
@@ -4390,6 +4409,12 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Descoperiți spațiile"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Numele afișat trebuie să aibă {0} caractere sau mai puține"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Introdu adresa unui utilizator pentru a începe să le trimiti mesaje."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Conversații existente"
@@ -4576,6 +4601,9 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Mesaje directe necitite"
+
+#~ msgid "User address here"
+#~ msgstr "Adresa utilizatorului aici"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Când este activat, notifică-mă pentru:"

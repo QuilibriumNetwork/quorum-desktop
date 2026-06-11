@@ -38,7 +38,7 @@ msgstr ""
 "användning."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Skicka ett meddelande till #{channel_name}"
 
@@ -85,7 +85,7 @@ msgid "has been kicked"
 msgstr "har blivit utkickad"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Skicka ett meddelande till {user}"
 
@@ -99,7 +99,7 @@ msgid "(empty)"
 msgstr "(tom)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(endast synlig för dig)"
 
@@ -233,7 +233,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Lägg till en vän"
 
@@ -286,7 +286,7 @@ msgstr "en roll"
 msgid "a Space"
 msgstr "ett Space"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "Om"
 
@@ -313,18 +313,18 @@ msgstr "Kontoinställningar"
 msgid "actions queued"
 msgstr "Åtgärder i kö"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Lägg till en vän"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Lägg till en anteckning"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Lägg till en personlig anteckning..."
 
@@ -364,7 +364,7 @@ msgstr "Lägg till grupp"
 msgid "Add Role"
 msgstr "Lägg till roll"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Lägg till i favoriter"
 
@@ -386,9 +386,13 @@ msgstr ""
 "endast användas inom ett Space. Du kan ladda upp PNG, JPG eller GIF, max "
 "25MB (automatiskt optimerad)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Lägger till..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Adress (Qm...) eller @användarnamn"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -402,7 +406,7 @@ msgstr "Adresser börjar med \"Qm\"."
 msgid "Advanced Settings"
 msgstr "Avancerade inställningar"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -605,14 +609,13 @@ msgstr "Säkerhetskopiering misslyckades"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Bio får inte innehålla specialtecken"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Biografi måste vara {0} tecken eller färre"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Biografin är för lång"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -650,7 +653,7 @@ msgstr "Bokmärkt klistermärke"
 msgid "Bookmarks"
 msgstr "Bokmärken"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Marke i detta samtal"
 
@@ -717,7 +720,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanalansvariga"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Kanalmedlemmar"
 
@@ -725,16 +728,16 @@ msgstr "Kanalmedlemmar"
 msgid "Channel Name"
 msgstr "Kanalnamn"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Kanalnamn får inte innehålla specialtecken"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Kanalnamn är obligatoriskt"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Kanalnamnet får vara {0} tecken eller färre"
 
@@ -746,12 +749,12 @@ msgstr "Kanalinställningar"
 msgid "Channel Topic"
 msgstr "Kanalämne"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Kanalämnet får inte innehålla specialtecken"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Kanaltemat får vara {0} tecken eller färre"
 
@@ -836,7 +839,7 @@ msgstr "Konfigurationsnyckel"
 msgid "Config key not found for this Space."
 msgstr "Konfigurationsnyckel hittades inte för denna Space."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Bekräfta radering"
@@ -849,7 +852,7 @@ msgstr "Bekräfta avhopp"
 msgid "Confirm Reset"
 msgstr "Bekräfta återställning"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Ansluter"
 
@@ -867,11 +870,11 @@ msgid ""
 "Control what others can see about you and how your behaviour is shared."
 msgstr "Kontrollera vad andra kan se om dig och hur ditt beteende delas."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Konversationsinställningar"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Konversationsinställningar"
@@ -893,12 +896,12 @@ msgstr "Kopierad!"
 msgid "Copy a link"
 msgstr "Kopiera en länk"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Kopiera adress"
 
@@ -1098,7 +1101,7 @@ msgstr "Ta bort kanal"
 msgid "Delete Channel"
 msgstr "Ta bort kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1208,7 +1211,7 @@ msgstr "Skrivbordsaviseringar"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Skrivbordsaviseringar stöds inte i den här webbläsaren."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1216,16 +1219,16 @@ msgstr ""
 "Enhetsnamnet får bara innehålla bokstäver, siffror, mellanslag, bindestreck "
 "och parenteser"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Enhetsnamnet får inte vara tomt"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Enhetsnamnet får inte innehålla HTML"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Enhetsnamnet får vara {0} tecken eller färre"
 
@@ -1268,7 +1271,7 @@ msgstr "Visningsnamn"
 msgid "Display Name"
 msgstr "Visningsnamn"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Visningsnamn får inte innehålla specialtecken"
 
@@ -1276,10 +1279,9 @@ msgstr "Visningsnamn får inte innehålla specialtecken"
 msgid "Display name is required"
 msgstr "Visningsnamn krävs"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Visningsnamnet får vara {0} tecken eller färre"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Visningsnamnet är för långt"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1375,7 +1377,7 @@ msgstr "Emoji-väljare"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1429,8 +1431,10 @@ msgid "Enter a name for your Space"
 msgstr "Ange ett namn för din Space"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Ange en användares adress för att börja skicka meddelanden till dem."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr ""
+"Ange en användares adress eller @användarnamn för att börja skicka "
+"meddelanden till dem."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1661,7 +1665,7 @@ msgstr "Misslyckades med att uppdatera profilen"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Favoriter"
 
@@ -1811,7 +1815,7 @@ msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
 msgstr ""
 "GIF-filer får inte vara större än {maxSize}. Vänligen använd en mindre GIF."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Gå till konversation"
 
@@ -1831,16 +1835,16 @@ msgstr "Gruppikon (valfritt)"
 msgid "Group Name"
 msgstr "Gruppnamn"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Gruppnamn får inte innehålla specialtecken"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Gruppnamn är obligatoriskt"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Gruppnamnet får vara {0} tecken eller färre"
 
@@ -2025,7 +2029,7 @@ msgstr "Går med..."
 msgid "Jump"
 msgstr "Hoppa"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Hoppa till nuet"
 
@@ -2058,7 +2062,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Tangentbordsgenvägar"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Sparka"
 
@@ -2066,7 +2070,7 @@ msgstr "Sparka"
 msgid "Kick User"
 msgstr "Kicka användare"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Utkastad!"
 
@@ -2115,7 +2119,7 @@ msgstr "Läs in mer"
 msgid "Loading bookmarks..."
 msgstr "Laddar bokmärken..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Laddar meddelande..."
 
@@ -2144,7 +2148,11 @@ msgstr "Laddar din profil..."
 msgid "Loading..."
 msgstr "Laddar..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Söker efter @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Letar upp användare..."
 
@@ -2247,7 +2255,7 @@ msgstr ""
 msgid "Message..."
 msgstr "Meddelande..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Meddelanden"
@@ -2280,7 +2288,7 @@ msgstr "Fler reaktioner"
 msgid "Must be exactly 4 characters"
 msgstr "Måste vara exakt 4 tecken"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Stänga av ljudet"
 
@@ -2292,7 +2300,7 @@ msgstr "Tysta kanal"
 msgid "Mute conversation"
 msgstr "Tysta konversation"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Tysta Konversation"
 
@@ -2320,7 +2328,7 @@ msgstr "Stäng av ljudet för användare"
 msgid "Mute Users"
 msgstr "Stäng av ljudet för användare"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Tyst"
@@ -2329,12 +2337,20 @@ msgstr "Tyst"
 msgid "My Account"
 msgstr "Mitt konto"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Namn eller adress"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Namn får inte sluta med \".q\" – det suffixet är reserverat för verifierade "
+"Quilibrium-namn."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Namn som liknar admin, moderator eller support är reserverade."
 
@@ -2421,7 +2437,7 @@ msgstr ""
 msgid "No channels - drag channels here or delete group."
 msgstr "Inga kanaler - dra kanaler hit eller ta bort grupp."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Inga kontakter hittades"
 
@@ -2452,7 +2468,7 @@ msgstr ""
 "Inget krypteringsläge hittades för detta Space. Space kan behöva initieras "
 "eller så kan du behöva generera en offentlig inbjudningslänk först."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Inga favoriter ännu"
 
@@ -2464,7 +2480,7 @@ msgstr "Inga meddelanden hittades"
 msgid "No missing Spaces found"
 msgstr "Inga saknade Spaces hittades"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Inga tysta konversationer"
 
@@ -2497,7 +2513,7 @@ msgstr "Inga trådar matchar din sökning"
 msgid "No threads yet"
 msgstr "Inga trådar ännu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Inga okända kontakter"
 
@@ -2505,7 +2521,11 @@ msgstr "Inga okända kontakter"
 msgid "No unread notifications"
 msgstr "Inga olästa aviseringar"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Ingen användare hittades för @{usernameQuery}."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Inga användare hittades!"
 
@@ -2515,16 +2535,16 @@ msgid "None"
 msgstr "Ingen"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Anteckning"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Anteckningen innehåller ogiltigt innehåll"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Anteckningen får vara {0} tecken eller färre"
 
@@ -2602,7 +2622,7 @@ msgid "Open {0}"
 msgstr "Öppna {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2834,7 +2854,7 @@ msgstr "Läsningsbekräftelser"
 msgid "Read-only"
 msgstr "Skrivskyddad"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Redo att börja en verkligt privat konversation?"
 
@@ -2867,11 +2887,11 @@ msgstr "Ta bort"
 msgid "Remove bookmark"
 msgstr "Ta bort bokmärke"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Ta bort från favoriter"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Tar bort..."
 
@@ -3024,7 +3044,7 @@ msgstr "Sparar..."
 msgid "Search bookmarks..."
 msgstr "Sök marke..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Sök privata meddelanden"
 
@@ -3049,7 +3069,7 @@ msgstr "Sök i detta Space"
 msgid "Search in this Space..."
 msgstr "Sök i detta Space..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Sök Meddelanden"
@@ -3078,7 +3098,7 @@ msgstr "Sök trådar…"
 msgid "Search username or address"
 msgstr "Sök användarnamn eller adress"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Sök användarnamn eller adress"
 
@@ -3124,7 +3144,7 @@ msgstr "Välj roller"
 msgid "Select skin tone"
 msgstr "Välj hudton"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Skicka"
 
@@ -3148,7 +3168,7 @@ msgstr "Skicka inbjudan"
 msgid "Send Link"
 msgstr "Skicka länk"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Skicka meddelande"
 
@@ -3338,7 +3358,7 @@ msgstr "Status går här"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Klistermärken"
@@ -3472,7 +3492,7 @@ msgstr "Denna länk går inte ut. Vem som helst med den kan gå med i din Space.
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Denna länk genererades av en Space-ägare. Den går inte ut."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Detta namn krockar med nämningsnyckelord."
 
@@ -3697,7 +3717,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Kunde inte återställa: inte inloggad"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3720,8 +3740,8 @@ msgstr "Okänd tid"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3756,7 +3776,7 @@ msgid "Unknown User"
 msgstr "Okänd användare"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Slå på ljudet"
 
@@ -3764,7 +3784,7 @@ msgstr "Slå på ljudet"
 msgid "Unmute Channel"
 msgstr "Avtysta kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Avtysta Konversation"
 
@@ -3798,7 +3818,7 @@ msgstr "Avnåla meddelande"
 msgid "Unpin this post"
 msgstr "Avfäst detta inlägg"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3852,10 +3872,6 @@ msgstr "Ladda upp klistermärke"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Använd \"Spara till Filer\" för att spara din privata nyckel"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Användaradress här"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Användaren existerar inte."
@@ -3865,11 +3881,11 @@ msgstr "Användaren existerar inte."
 msgid "User not authenticated"
 msgstr "Användare inte autentiserad"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Användarprofil"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Användarprofil"
 
@@ -4103,7 +4119,7 @@ msgid "You are already a member of this Space."
 msgstr "Du är redan medlem i detta Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Du är dämpad i {0}"
 
@@ -4146,7 +4162,7 @@ msgid "You cannot delete the default channel."
 msgstr "Du kan inte radera den standardkanalen."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Du kan inte posta i denna kanal"
 
@@ -4158,7 +4174,7 @@ msgstr "Du kan inte skicka ett direktmeddelande till dig själv."
 msgid "You have a new unread message"
 msgstr "Du har ett nytt oläst meddelande"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Du har blivit stängd av ljudet i denna Space"
 
@@ -4326,6 +4342,9 @@ msgstr "YouTube Video Miniatyr"
 #~ msgid "Back to spaces list"
 #~ msgstr "Tillbaka till Space-listan"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Biografi måste vara {0} tecken eller färre"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Marke i detta rum"
 
@@ -4358,6 +4377,12 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Upptäck Spaces"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Visningsnamnet får vara {0} tecken eller färre"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Ange en användares adress för att börja skicka meddelanden till dem."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Existerande konversationer"
@@ -4544,6 +4569,9 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Olästa privata meddelanden"
+
+#~ msgid "User address here"
+#~ msgstr "Användaradress här"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "När aktiverat, meddela mig för:"

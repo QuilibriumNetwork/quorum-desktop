@@ -37,7 +37,7 @@ msgstr ""
 "Dobrodošli v Quorum, {name}! Vaš račun je varovan in pripravljen za uporabo."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Pošlji sporočilo #{channel_name}"
 
@@ -84,7 +84,7 @@ msgid "has been kicked"
 msgstr "je bil izgnan"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "Pošlji sporočilo {user}"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(prazno)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(lečno vidno tebi)"
 
@@ -232,7 +232,7 @@ msgstr "@vloge"
 msgid "@you"
 msgstr "@vi"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Dodaj prijatelja"
 
@@ -285,7 +285,7 @@ msgstr "vloga"
 msgid "a Space"
 msgstr "prostor"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "O nas"
 
@@ -312,18 +312,18 @@ msgstr "Nastavitve računa"
 msgid "actions queued"
 msgstr "Dejanja v čakanju"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Dodaj prijatelja"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "Dodaj opombe"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "Dodaj osebno opombo..."
 
@@ -363,7 +363,7 @@ msgstr "Dodaj skupino"
 msgid "Add Role"
 msgstr "Dodaj vlogo"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Dodaj med priljubljene"
 
@@ -385,9 +385,13 @@ msgstr ""
 "samo znotraj Space. Naložite lahko PNG, JPG ali GIF, največ 25MB (samodejno "
 "optimizirano)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Dodajanje..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Naslov (Qm...) ali @uporabniško ime"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -401,7 +405,7 @@ msgstr "Naslovi se začnejo z \"Qm\"."
 msgid "Advanced Settings"
 msgstr "Napredne nastavitve"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -605,14 +609,13 @@ msgstr "Varnostno kopiranje ni uspelo"
 msgid "Bio"
 msgstr "Bio"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Bio ne more vsebovati posebnih znakov"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Biografija mora biti {0} znakov ali manj"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Biografija je predolga"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -650,7 +653,7 @@ msgstr "Zaznamek nalepke"
 msgid "Bookmarks"
 msgstr "Zaznamki"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Markec v tej pogovori"
 
@@ -720,7 +723,7 @@ msgstr "Ikona kanala"
 msgid "Channel Managers"
 msgstr "Upravitelji kanalov"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Člani kanala"
 
@@ -728,16 +731,16 @@ msgstr "Člani kanala"
 msgid "Channel Name"
 msgstr "Ime kanala"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Ime kanala ne more vsebovati posebnih znakov"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Ime kanala je obvezno"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Ime kanala mora biti {0} znakov ali manj"
 
@@ -749,12 +752,12 @@ msgstr "Nastavitve kanala"
 msgid "Channel Topic"
 msgstr "Tematika kanala"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Tema kanala ne more vsebovati posebnih znakov"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Tema kanala mora biti {0} znakov ali manj"
 
@@ -839,7 +842,7 @@ msgstr "Ključ za konfiguracijo"
 msgid "Config key not found for this Space."
 msgstr "Konfiguracijski ključ ni najden za ta Space."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Potrdite izbris"
@@ -852,7 +855,7 @@ msgstr "Potrdite odhod"
 msgid "Confirm Reset"
 msgstr "Potrdi ponastavitev"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Povezovanje"
 
@@ -871,11 +874,11 @@ msgid ""
 msgstr ""
 "Nadzorujte, kaj lahko drugi vidijo o vas in kako se deli vaše vedenje."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Nastavitve pogovora"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Nastavitve pogovora"
@@ -897,12 +900,12 @@ msgstr "Kopirano!"
 msgid "Copy a link"
 msgstr "Kopirajte povezavo"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Kopiraj naslov"
 
@@ -1102,7 +1105,7 @@ msgstr "Izbriši kanal"
 msgid "Delete Channel"
 msgstr "Izbriši kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1212,7 +1215,7 @@ msgstr "Namizna obvestila"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Namizna obvestila v tem brskalniku niso podprta."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1220,16 +1223,16 @@ msgstr ""
 "Ime naprave lahko vsebuje le črke, številke, presledke, pomišljaje in "
 "oklepaje"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Ime naprave ne more biti prazno"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Ime naprave ne more vsebovati HTML"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Ime naprave mora biti {0} znakov ali manj"
 
@@ -1272,7 +1275,7 @@ msgstr "Prikazno ime"
 msgid "Display Name"
 msgstr "Ime za prikaz"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Ime za prikaz ne more vsebovati posebnih znakov"
 
@@ -1280,10 +1283,9 @@ msgstr "Ime za prikaz ne more vsebovati posebnih znakov"
 msgid "Display name is required"
 msgstr "Prikazno ime je obvezno"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Prikazno ime mora biti {0} znakov ali manj"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Prikazno ime je predolgo"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1379,7 +1381,7 @@ msgstr "Izbirnik emoji"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1432,8 +1434,9 @@ msgid "Enter a name for your Space"
 msgstr "Vnesite ime za vaš prostor"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Vnesite naslov uporabnika, da začnete z njim komunicirati."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr ""
+"Vnesite naslov uporabnika ali @uporabniško ime, da začnete z njim sporočati."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1662,7 +1665,7 @@ msgstr "Posodobitev profila ni uspela"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Priljubljene"
 
@@ -1813,7 +1816,7 @@ msgstr ""
 "GIF datoteke ne morejo biti večje od {maxSize}. Prosimo, uporabite manjši "
 "GIF."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Pojdi na pogovor"
 
@@ -1833,16 +1836,16 @@ msgstr "Ikona skupine (neobvezno)"
 msgid "Group Name"
 msgstr "Ime skupine"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Ime skupine ne more vsebovati posebnih znakov"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Ime skupine je obvezno"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Ime skupine mora biti {0} znakov ali manj"
 
@@ -2028,7 +2031,7 @@ msgstr "Pridružujem se..."
 msgid "Jump"
 msgstr "Preskoči"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Preskoči na sedanjost"
 
@@ -2061,7 +2064,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Bližnjice na tipkovnici"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "Izključi"
 
@@ -2069,7 +2072,7 @@ msgstr "Izključi"
 msgid "Kick User"
 msgstr "Izključi uporabnika"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Izgnan!"
 
@@ -2118,7 +2121,7 @@ msgstr "Naloži več"
 msgid "Loading bookmarks..."
 msgstr "Nalaganje zaznamkov..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Nalagam sporočilo..."
 
@@ -2147,7 +2150,11 @@ msgstr "Nalaganje vašega profila..."
 msgid "Loading..."
 msgstr "Nalagam..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "Iščem @{usernameQuery}..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Iščem uporabnika..."
 
@@ -2250,7 +2257,7 @@ msgstr "Sporočilo nima veljavnega podpisa, morda ni od pošiljatelja"
 msgid "Message..."
 msgstr "Sporočilo..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Sporočila"
@@ -2283,7 +2290,7 @@ msgstr "Več reakcij"
 msgid "Must be exactly 4 characters"
 msgstr "Zahtevan je točno 4-znakovni kod"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Utišaj"
 
@@ -2295,7 +2302,7 @@ msgstr "Utišaj kanal"
 msgid "Mute conversation"
 msgstr "Utišaj pogovor"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Utišaj pogovor"
 
@@ -2323,7 +2330,7 @@ msgstr "Utišaj uporabnika"
 msgid "Mute Users"
 msgstr "Utišaj uporabnike"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Utišano"
@@ -2332,12 +2339,20 @@ msgstr "Utišano"
 msgid "My Account"
 msgstr "Moj račun"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "Ime ali naslov"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"Imena se ne smejo končati z \".q\" – ta pripona je rezervirana za preverjena"
+" imena Quilibrium."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Imena, ki spominjajo na admin, moderator ali podporo, so rezervirana."
 
@@ -2423,7 +2438,7 @@ msgstr "Še ni markec. Markec sporočil, da jih lahko kasneje skrbno preučite."
 msgid "No channels - drag channels here or delete group."
 msgstr "Ni kanalov - vlečite kanale sem ali izbrišite skupino."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Ni najdenih stikov"
 
@@ -2455,7 +2470,7 @@ msgstr ""
 "inicializirati ali pa boste morali najprej ustvariti javno povezavo za "
 "povabilo."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Še ni priljubljenih"
 
@@ -2467,7 +2482,7 @@ msgstr "Ni najdenih sporočil"
 msgid "No missing Spaces found"
 msgstr "Ni najdenih manjkajočih Prostorov"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Brez utišanih pogovorov"
 
@@ -2500,7 +2515,7 @@ msgstr "Ni nit, ki bi ustrezale vašemu iskanju"
 msgid "No threads yet"
 msgstr "Še ni nit"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Brez neznanih stikov"
 
@@ -2508,7 +2523,11 @@ msgstr "Brez neznanih stikov"
 msgid "No unread notifications"
 msgstr "Brez neprebranih obvestil"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "Za @{usernameQuery} ni bil najden noben uporabnik."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Ni uporabnikov!"
 
@@ -2518,16 +2537,16 @@ msgid "None"
 msgstr "Noben"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Opomba"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Opomba vsebuje neveljavno vsebino"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Opomba mora biti {0} znakov ali manj"
 
@@ -2606,7 +2625,7 @@ msgid "Open {0}"
 msgstr "Odpri {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2839,7 +2858,7 @@ msgstr "Potrdila o branju"
 msgid "Read-only"
 msgstr "Samo za branje"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Pripravljen na začetek resnično zasebnega pogovora?"
 
@@ -2872,11 +2891,11 @@ msgstr "Odstrani"
 msgid "Remove bookmark"
 msgstr "Odstrani zaznamek"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Odstrani iz priljubljenih"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Odstranjevanje..."
 
@@ -3030,7 +3049,7 @@ msgstr "Shranjujem..."
 msgid "Search bookmarks..."
 msgstr "Išči markec..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Išči zasebna sporočila"
 
@@ -3055,7 +3074,7 @@ msgstr "Išči v tem Prostoru-u"
 msgid "Search in this Space..."
 msgstr "Išči v tem prostoru..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Išči sporočila"
@@ -3084,7 +3103,7 @@ msgstr "Išči niti…"
 msgid "Search username or address"
 msgstr "Išči uporabniško ime ali naslov"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Išči uporabniško ime ali naslov"
 
@@ -3129,7 +3148,7 @@ msgstr "Izberi vloge"
 msgid "Select skin tone"
 msgstr "Izberi barvo kože"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Pošlji"
 
@@ -3153,7 +3172,7 @@ msgstr "Pošlji povabilo"
 msgid "Send Link"
 msgstr "Pošlji povezavo"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Pošlji sporočilo"
 
@@ -3342,7 +3361,7 @@ msgstr "Status gre sem"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Nalepke"
@@ -3476,7 +3495,7 @@ msgstr "Ta povezava ne poteče. Vsakdo z njo se lahko pridruži vašemu Spaceu."
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "To povezavo je ustvaril lastnik Spacea. Ne poteče."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "To ime se prekriva z ključnimi besedami omembe."
 
@@ -3694,7 +3713,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Ni mogoče obnoviti: niste prijavljeni"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3717,8 +3736,8 @@ msgstr "Neznan čas"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3753,7 +3772,7 @@ msgid "Unknown User"
 msgstr "Neznan uporabnik"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Razutišaj"
 
@@ -3761,7 +3780,7 @@ msgstr "Razutišaj"
 msgid "Unmute Channel"
 msgstr "Povrnite zvok kanala"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Razutišaj pogovor"
 
@@ -3795,7 +3814,7 @@ msgstr "Odpni sporočilo"
 msgid "Unpin this post"
 msgstr "Odpripni to objavo"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3844,10 +3863,6 @@ msgstr "Naloži nalepko"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Uporabite \"Shrani v datoteke\" za shranjevanje vašega zasebnega ključa"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Naslov uporabnika tukaj"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Uporabnik ne obstaja."
@@ -3857,11 +3872,11 @@ msgstr "Uporabnik ne obstaja."
 msgid "User not authenticated"
 msgstr "Uporabnik ni avtentificiran"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Uporabniški profil"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Uporabniški profil"
 
@@ -4091,7 +4106,7 @@ msgid "You are already a member of this Space."
 msgstr "Že ste član tega Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "Onemogočeni ste za {0}"
 
@@ -4136,7 +4151,7 @@ msgid "You cannot delete the default channel."
 msgstr "Privzete kanale ni mogoče izbrisati."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Ne moreš objaviti v tem kanalu"
 
@@ -4148,7 +4163,7 @@ msgstr "Sebi ne moreš poslati neposrednega sporočila."
 msgid "You have a new unread message"
 msgstr "Imaš novo neprebrano sporočilo"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Bili ste utišani v tem Space"
 
@@ -4315,6 +4330,9 @@ msgstr "Miniatura YouTube videa"
 #~ msgid "Back to spaces list"
 #~ msgstr "Nazaj na seznam prostorov"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Biografija mora biti {0} znakov ali manj"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Markec v tem prostoru"
 
@@ -4348,6 +4366,12 @@ msgstr "Miniatura YouTube videa"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Odkrij prostore"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Prikazno ime mora biti {0} znakov ali manj"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Vnesite naslov uporabnika, da začnete z njim komunicirati."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Obstoječe pogovore"
@@ -4531,6 +4555,9 @@ msgstr "Miniatura YouTube videa"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Neprebrana zasebna sporočila"
+
+#~ msgid "User address here"
+#~ msgstr "Naslov uporabnika tukaj"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Ko je omogočeno, me obvesti za:"

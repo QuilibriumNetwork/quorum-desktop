@@ -36,7 +36,7 @@ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Quorumへようこそ、{name}！アカウントは安全に設定され、使用準備ができています。"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} にメッセージを送信"
 
@@ -83,7 +83,7 @@ msgid "has been kicked"
 msgstr "がキックされました"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "{user} にメッセージを送信"
 
@@ -97,7 +97,7 @@ msgid "(empty)"
 msgstr "(空)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(あなただけに表示)"
 
@@ -229,7 +229,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "友達を追加"
 
@@ -277,7 +277,7 @@ msgstr "役割"
 msgid "a Space"
 msgstr "スペース"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "について"
 
@@ -304,18 +304,18 @@ msgstr "アカウント設定"
 msgid "actions queued"
 msgstr "アクションがキューに入れられました"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "友達を追加"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "メモを追加"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "個人用メモを追加..."
 
@@ -355,7 +355,7 @@ msgstr "グループを追加"
 msgid "Add Role"
 msgstr "役割を追加"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "お気に入りに追加"
 
@@ -373,9 +373,13 @@ msgid ""
 msgstr ""
 "最大50個のカスタムステッカーを追加できます。カスタムステッカーはSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大25MB（自動最適化）。"
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "追加中..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "アドレス (Qm...) または @ユーザー名"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -389,7 +393,7 @@ msgstr "アドレスは「Qm」で始まります。"
 msgid "Advanced Settings"
 msgstr "詳細設定"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -575,14 +579,13 @@ msgstr "バックアップに失敗しました"
 msgid "Bio"
 msgstr "バイオ"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "バイオには特殊文字を含めることはできません"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "自己紹介は {0} 文字以内でなければなりません"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "自己紹介が長すぎます"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -620,7 +623,7 @@ msgstr "ブックマーク済みのステッカー"
 msgid "Bookmarks"
 msgstr "ブックマーク"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "この会話のマーカー"
 
@@ -684,7 +687,7 @@ msgstr "チャンネルアイコン"
 msgid "Channel Managers"
 msgstr "チャンネルマネージャー"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "チャンネルメンバー"
 
@@ -692,16 +695,16 @@ msgstr "チャンネルメンバー"
 msgid "Channel Name"
 msgstr "チャンネル名"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "チャンネル名には特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "チャンネル名は必須です"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "チャンネル名は {0} 文字以内でなければなりません"
 
@@ -713,12 +716,12 @@ msgstr "チャンネル設定"
 msgid "Channel Topic"
 msgstr "チャンネルトピック"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "チャンネルのトピックには特殊文字を含めることはできません"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "チャンネルのトピックは {0} 文字以内でなければなりません"
 
@@ -803,7 +806,7 @@ msgstr "設定キー"
 msgid "Config key not found for this Space."
 msgstr "このスペースのConfigキーが見つかりません。"
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "削除を確認"
@@ -816,7 +819,7 @@ msgstr "退出を確認"
 msgid "Confirm Reset"
 msgstr "リセットを確認"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "接続中"
 
@@ -834,11 +837,11 @@ msgid ""
 "Control what others can see about you and how your behaviour is shared."
 msgstr "他のユーザーがあなたについて何を見ることができるか、そしてあなたの行動がどのように共有されるかを制御します。"
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "会話設定"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "会話設定"
@@ -860,12 +863,12 @@ msgstr "コピーしました！"
 msgid "Copy a link"
 msgstr "リンクをコピー"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "アドレスをコピー"
 
@@ -1057,7 +1060,7 @@ msgstr "チャンネルを削除"
 msgid "Delete Channel"
 msgstr "チャンネルを削除"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1167,22 +1170,22 @@ msgstr "デスクトップ通知"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "このブラウザではデスクトップ通知はサポートされていません。"
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
 msgstr "デバイス名には英数字、スペース、ハイフン、および括弧のみを使用できます"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "デバイス名を空にすることはできません"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "デバイス名にはHTMLを含めることはできません"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "デバイス名は {0} 文字以内でなければなりません"
 
@@ -1221,7 +1224,7 @@ msgstr "表示名"
 msgid "Display Name"
 msgstr "表示名"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "表示名には特殊文字を含めることはできません"
 
@@ -1229,10 +1232,9 @@ msgstr "表示名には特殊文字を含めることはできません"
 msgid "Display name is required"
 msgstr "表示名は必須です"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "表示名は {0} 文字以内でなければなりません"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "表示名が長すぎます"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1326,7 +1328,7 @@ msgstr "絵文字ピッカー"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojis"
@@ -1374,8 +1376,8 @@ msgid "Enter a name for your Space"
 msgstr "Spaceの名前を入力してください"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "ユーザーのアドレスを入力して、メッセージを送信します。"
+msgid "Enter a user's address or @username to start messaging them."
+msgstr "ユーザーのアドレスまたは@ユーザー名を入力して、メッセージを開始してください。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1600,7 +1602,7 @@ msgstr "プロフィールの更新に失敗しました"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "お気に入り"
 
@@ -1742,7 +1744,7 @@ msgstr "Quorumの使い方をヘルプ"
 msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
 msgstr "GIFファイルは{maxSize}を超えることはできません。より小さいGIFを使用してください。"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "会話に移動"
 
@@ -1762,16 +1764,16 @@ msgstr "グループアイコン（オプション）"
 msgid "Group Name"
 msgstr "グループ名"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "グループ名には特殊文字を含めることはできません"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "グループ名は必須です"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "グループ名は {0} 文字以内でなければなりません"
 
@@ -1953,7 +1955,7 @@ msgstr "参加中..."
 msgid "Jump"
 msgstr "ジャンプ"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "現在にジャンプ"
 
@@ -1984,7 +1986,7 @@ msgid "Keyboard Shortcuts"
 msgstr "キーボードショートカット"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "キック"
 
@@ -1992,7 +1994,7 @@ msgstr "キック"
 msgid "Kick User"
 msgstr "ユーザーをキック"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "キックされました！"
 
@@ -2041,7 +2043,7 @@ msgstr "さらに読み込む"
 msgid "Loading bookmarks..."
 msgstr "ブックマークを読み込んでいます..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "メッセージを読み込んでいます..."
 
@@ -2070,7 +2072,11 @@ msgstr "プロフィールを読み込んでいます..."
 msgid "Loading..."
 msgstr "読み込み中..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "@{usernameQuery} を検索しています..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "ユーザーを検索中..."
 
@@ -2168,7 +2174,7 @@ msgstr "メッセージには有効な署名がありません。これは送信
 msgid "Message..."
 msgstr "メッセージ..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "メッセージ"
@@ -2201,7 +2207,7 @@ msgstr "もっとリアクション"
 msgid "Must be exactly 4 characters"
 msgstr "正確に4文字でなければなりません"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "ミュート"
 
@@ -2213,7 +2219,7 @@ msgstr "チャンネルをミュート"
 msgid "Mute conversation"
 msgstr "会話をミュート"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "会話をミュート"
 
@@ -2241,7 +2247,7 @@ msgstr "ユーザーをミュート"
 msgid "Mute Users"
 msgstr "ユーザーをミュート"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "ミュート済み"
@@ -2250,12 +2256,18 @@ msgstr "ミュート済み"
 msgid "My Account"
 msgstr "マイアカウント"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "名前またはアドレス"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr "名前は「.q」で終わることはできません。この接尾辞は、認証済みの Quilibrium 名のために予約されています。"
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "管理者、モデレーター、またはサポートに似た名前は予約されています。"
 
@@ -2335,7 +2347,7 @@ msgstr "まだマーカーがありません。後で参照できるようにメ
 msgid "No channels - drag channels here or delete group."
 msgstr "チャンネルなし - ここにチャンネルをドラッグするか、グループを削除します。"
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "連絡先が見つかりません"
 
@@ -2362,7 +2374,7 @@ msgid ""
 "initialized or you may need to generate a public invite link first."
 msgstr "このスペースの暗号化状態が見つかりません。スペースを初期化する必要があるか、最初に公開招待リンクを生成する必要があるかもしれません。"
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "お気に入りはまだありません"
 
@@ -2374,7 +2386,7 @@ msgstr "メッセージが見つかりませんでした"
 msgid "No missing Spaces found"
 msgstr "見つからないスペースはありません"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "ミュートされた会話はありません"
 
@@ -2406,7 +2418,7 @@ msgstr "検索に一致するスレッドはありません"
 msgid "No threads yet"
 msgstr "スレッドはありません"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "不明な連絡先はありません"
 
@@ -2414,7 +2426,11 @@ msgstr "不明な連絡先はありません"
 msgid "No unread notifications"
 msgstr "未読の通知はありません"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "@{usernameQuery} のユーザーは見つかりませんでした。"
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "ユーザーが見つかりません！"
 
@@ -2424,16 +2440,16 @@ msgid "None"
 msgstr "なし"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Note"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "メモに無効な内容が含まれています"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "メモは {0} 文字以内でなければなりません"
 
@@ -2509,7 +2525,7 @@ msgid "Open {0}"
 msgstr "{0} を開く"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2732,7 +2748,7 @@ msgstr "既読通知"
 msgid "Read-only"
 msgstr "読み取り専用"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "本当にプライベートな会話を始める準備はできていますか？"
 
@@ -2765,11 +2781,11 @@ msgstr "削除"
 msgid "Remove bookmark"
 msgstr "ブックマークを削除"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "お気に入りから削除"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "削除中..."
 
@@ -2919,7 +2935,7 @@ msgstr "保存中..."
 msgid "Search bookmarks..."
 msgstr "マーカーを検索..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "ダイレクトメッセージを検索"
 
@@ -2944,7 +2960,7 @@ msgstr "このスペースで検索"
 msgid "Search in this Space..."
 msgstr "このスペースで検索..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "メッセージを検索"
@@ -2973,7 +2989,7 @@ msgstr "スレッドを検索…"
 msgid "Search username or address"
 msgstr "ユーザー名またはアドレスを検索"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "ユーザー名またはアドレスを検索"
 
@@ -3018,7 +3034,7 @@ msgstr "役割を選択"
 msgid "Select skin tone"
 msgstr "肌色を選択"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "送信"
 
@@ -3040,7 +3056,7 @@ msgstr "招待を送信"
 msgid "Send Link"
 msgstr "リンクを送信"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "メッセージを送信"
 
@@ -3225,7 +3241,7 @@ msgstr "ステータスはここに表示されます"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "ステッカー"
@@ -3344,7 +3360,7 @@ msgstr "このリンクは期限切れになりません。このリンクを持
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "このリンクはスペースの所有者によって生成されました。期限切れになりません。"
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "この名前はメンションキーワードと競合しています。"
 
@@ -3547,7 +3563,7 @@ msgid "Unable to restore: not logged in"
 msgstr "復元できません: ログインしていません"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3570,8 +3586,8 @@ msgstr "不明な時間"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3606,7 +3622,7 @@ msgid "Unknown User"
 msgstr "不明なユーザー"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "ミュート解除"
 
@@ -3614,7 +3630,7 @@ msgstr "ミュート解除"
 msgid "Unmute Channel"
 msgstr "チャンネルのミュートを解除"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "会話のミュートを解除"
 
@@ -3648,7 +3664,7 @@ msgstr "メッセージのピン解除"
 msgid "Unpin this post"
 msgstr "この投稿のピン留めを解除"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3693,10 +3709,6 @@ msgstr "ステッカーをアップロード"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "プライベートキーを保存するには「ファイルに保存」を使用してください"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "ユーザーアドレスはこちら"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "ユーザーは存在しません。"
@@ -3706,11 +3718,11 @@ msgstr "ユーザーは存在しません。"
 msgid "User not authenticated"
 msgstr "ユーザーが認証されていません"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "User profile"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "User Profile"
 
@@ -3912,7 +3924,7 @@ msgid "You are already a member of this Space."
 msgstr "あなたはすでにこのスペースのメンバーです。"
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "あなたは{0}の間ミュートされています。"
 
@@ -3951,7 +3963,7 @@ msgid "You cannot delete the default channel."
 msgstr "デフォルトのチャネルを削除することはできません。"
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "このチャンネルに投稿することはできません"
 
@@ -3963,7 +3975,7 @@ msgstr "自分自身にダイレクトメッセージを送信することはで
 msgid "You have a new unread message"
 msgstr "新しい未読メッセージがあります"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "あなたはこのスペースでミュートされました"
 
@@ -4112,6 +4124,9 @@ msgstr "YouTube動画サムネイル"
 #~ msgid "Back to spaces list"
 #~ msgstr "スペース一覧に戻る"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "自己紹介は {0} 文字以内でなければなりません"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "このスペースのマーカー"
 
@@ -4144,6 +4159,12 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Discover spaces"
 #~ msgstr "スペースを見つける"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "表示名は {0} 文字以内でなければなりません"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "ユーザーのアドレスを入力して、メッセージを送信します。"
 
 #~ msgid "Existing Conversations"
 #~ msgstr "既存の会話"
@@ -4308,6 +4329,9 @@ msgstr "YouTube動画サムネイル"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "未読のダイレクトメッセージ"
+
+#~ msgid "User address here"
+#~ msgstr "ユーザーアドレスはこちら"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "有効にすると、以下について通知します。"

@@ -36,7 +36,7 @@ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Hoş geldin Quorum'a, {name}! Hesabın güvenli ve hazır."
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1679
+#: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} kanalına bir mesaj gönder"
 
@@ -83,7 +83,7 @@ msgid "has been kicked"
 msgstr "atıldı"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1038
+#: src/components/direct/DirectMessage.tsx:1044
 msgid "Send a message to {user}"
 msgstr "{user} ile bir mesaj gönder"
 
@@ -97,7 +97,7 @@ msgid "(empty)"
 msgstr "(boş)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "(only visible to you)"
 msgstr "(sadece sizin için görünür)"
 
@@ -231,7 +231,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:465
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "+ Add a friend"
 msgstr "Bir arkadaş ekle"
 
@@ -284,7 +284,7 @@ msgstr "bir rol"
 msgid "a Space"
 msgstr "bir Alan"
 
-#: src/components/user/UserProfile.tsx:299
+#: src/components/user/UserProfile.tsx:324
 msgid "About"
 msgstr "Hakkında"
 
@@ -311,18 +311,18 @@ msgstr "Hesap Ayarları"
 msgid "actions queued"
 msgstr "Eylemler sıraya alındı"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
-#: src/components/direct/DirectMessageContactsList.tsx:407
+#: src/components/direct/DirectMessageContactsList.tsx:402
+#: src/components/direct/DirectMessageContactsList.tsx:413
 msgid "Add a friend"
 msgstr "Arkadaş ekle"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:335
+#: src/components/user/UserProfile.tsx:360
 msgid "Add a note"
 msgstr "bir not ekleyin"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:311
+#: src/components/user/UserProfile.tsx:336
 msgid "Add a personal note..."
 msgstr "kişisel bir not ekleyin..."
 
@@ -362,7 +362,7 @@ msgstr "Grup Ekle"
 msgid "Add Role"
 msgstr "Rol Ekle"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Add to Favorites"
 msgstr "Favorilere ekle"
 
@@ -384,9 +384,13 @@ msgstr ""
 "kullanılabilir. PNG, JPG veya GIF yükleyebilirsiniz, maksimum 25MB (otomatik"
 " olarak optimize edilir)."
 
-#: src/components/user/UserProfile.tsx:290
+#: src/components/user/UserProfile.tsx:315
 msgid "Adding..."
 msgstr "Ekleniyor..."
+
+#: src/components/modals/NewDirectMessageModal.tsx:114
+msgid "Address (Qm...) or @username"
+msgstr "Adres (Qm...) veya @kullanıcıadı"
 
 #: src/hooks/business/validation/useAddressValidation.ts:72
 msgid "Addresses must be exactly 46 characters long."
@@ -400,7 +404,7 @@ msgstr "Adresler \"Qm\" ile başlar."
 msgid "Advanced Settings"
 msgstr "Gelişmiş Ayarlar"
 
-#: src/components/direct/DirectMessageContactsList.tsx:305
+#: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
@@ -600,14 +604,13 @@ msgstr "Yedekleme Başarısız"
 msgid "Bio"
 msgstr "Biyografi"
 
-#: src/hooks/business/validation/errorTranslator.ts:58
+#: src/hooks/business/validation/errorTranslator.ts:62
 msgid "Bio cannot contain special characters"
 msgstr "Biyografi özel karakterler içeremez"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Bio must be {0} characters or less"
-msgstr "Biyografi {0} karakter veya daha az olmalıdır"
+#: src/hooks/business/validation/errorTranslator.ts:63
+msgid "Bio is too long"
+msgstr "Biyografi çok uzun"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -645,7 +648,7 @@ msgstr "Yer işareti çıkartması"
 msgid "Bookmarks"
 msgstr "Yer işaretleri"
 
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:827
 msgid "Bookmarks in this conversation"
 msgstr "Bu konuşmadaki marcörler"
 
@@ -712,7 +715,7 @@ msgstr "Kanal İkonu"
 msgid "Channel Managers"
 msgstr "Kanal Yöneticileri"
 
-#: src/components/space/Channel.tsx:1943
+#: src/components/space/Channel.tsx:1948
 msgid "Channel members"
 msgstr "Kanal üyeleri"
 
@@ -720,16 +723,16 @@ msgstr "Kanal üyeleri"
 msgid "Channel Name"
 msgstr "Kanal Adı"
 
-#: src/hooks/business/validation/errorTranslator.ts:40
+#: src/hooks/business/validation/errorTranslator.ts:44
 msgid "Channel name cannot contain special characters"
 msgstr "Kanal adı özel karakterler içeremez"
 
-#: src/hooks/business/validation/errorTranslator.ts:38
+#: src/hooks/business/validation/errorTranslator.ts:42
 msgid "Channel name is required"
 msgstr "Kanal adı gereklidir"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:39
+#: src/hooks/business/validation/errorTranslator.ts:43
 msgid "Channel name must be {0} characters or less"
 msgstr "Kanal adı {0} karakter veya daha az olmalıdır"
 
@@ -741,12 +744,12 @@ msgstr "Kanal Ayarları"
 msgid "Channel Topic"
 msgstr "Kanal Konusu"
 
-#: src/hooks/business/validation/errorTranslator.ts:44
+#: src/hooks/business/validation/errorTranslator.ts:48
 msgid "Channel topic cannot contain special characters"
 msgstr "Kanal konusu özel karakterler içeremez"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:43
+#: src/hooks/business/validation/errorTranslator.ts:47
 msgid "Channel topic must be {0} characters or less"
 msgstr "Kanal konusu {0} karakter veya daha az olmalıdır"
 
@@ -831,7 +834,7 @@ msgstr "Yapılandırma Anahtarı"
 msgid "Config key not found for this Space."
 msgstr "Bu Alan için yapılandırma anahtarı bulunamadı."
 
-#: src/components/direct/DirectMessageContactsList.tsx:272
+#: src/components/direct/DirectMessageContactsList.tsx:278
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Silme Onayı"
@@ -844,7 +847,7 @@ msgstr "Ayrılma Onayı"
 msgid "Confirm Reset"
 msgstr "Sıfırlamayı Onayla"
 
-#: src/components/Connecting.tsx:14
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
@@ -864,11 +867,11 @@ msgstr ""
 "Başkalarının senin hakkında ne görebileceğini ve davranışlarının nasıl "
 "paylaşıldığını kontrol et."
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Conversation settings"
 msgstr "Konuşma ayarları"
 
-#: src/components/direct/DirectMessageContactsList.tsx:263
+#: src/components/direct/DirectMessageContactsList.tsx:269
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Konuşma Ayarları"
@@ -890,12 +893,12 @@ msgstr "Kopyalandı!"
 msgid "Copy a link"
 msgstr "Bir bağlantıyı kopyala"
 
-#: src/components/direct/DirectMessage.tsx:784
-#: src/components/direct/DirectMessage.tsx:905
-#: src/components/direct/DirectMessage.tsx:923
+#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:911
+#: src/components/direct/DirectMessage.tsx:929
 #: src/components/direct/DMUserProfileSidebar.tsx:88
 #: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:213
+#: src/components/user/UserProfile.tsx:238
 msgid "Copy address"
 msgstr "Adresi kopyala"
 
@@ -1095,7 +1098,7 @@ msgstr "Kanalı sil"
 msgid "Delete Channel"
 msgstr "Kanalı Sil"
 
-#: src/components/direct/DirectMessageContactsList.tsx:271
+#: src/components/direct/DirectMessageContactsList.tsx:277
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1205,7 +1208,7 @@ msgstr "Masaüstü Bildirimleri"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Bu tarayıcıda masaüstü bildirimleri desteklenmiyor."
 
-#: src/hooks/business/validation/errorTranslator.ts:55
+#: src/hooks/business/validation/errorTranslator.ts:59
 msgid ""
 "Device name can only contain letters, numbers, spaces, hyphens, and "
 "parentheses"
@@ -1213,16 +1216,16 @@ msgstr ""
 "Cihaz adı yalnızca harfler, rakamlar, boşluklar, tireler ve parantezler "
 "içerebilir"
 
-#: src/hooks/business/validation/errorTranslator.ts:52
+#: src/hooks/business/validation/errorTranslator.ts:56
 msgid "Device name cannot be empty"
 msgstr "Cihaz adı boş olamaz"
 
-#: src/hooks/business/validation/errorTranslator.ts:54
+#: src/hooks/business/validation/errorTranslator.ts:58
 msgid "Device name cannot contain HTML"
 msgstr "Cihaz adı HTML içeremez"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:53
+#: src/hooks/business/validation/errorTranslator.ts:57
 msgid "Device name must be {0} characters or less"
 msgstr "Cihaz adı {0} karakter veya daha az olmalıdır"
 
@@ -1265,7 +1268,7 @@ msgstr "Görünen ad"
 msgid "Display Name"
 msgstr "Görünen Ad"
 
-#: src/hooks/business/validation/errorTranslator.ts:35
+#: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
 msgstr "Görüntü adı özel karakterler içermemelidir"
 
@@ -1273,10 +1276,9 @@ msgstr "Görüntü adı özel karakterler içermemelidir"
 msgid "Display name is required"
 msgstr "Görüntü adı gereklidir"
 
-#. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:32
-msgid "Display name must be {0} characters or less"
-msgstr "Görünen ad {0} karakter veya daha az olmalıdır"
+#: src/hooks/business/validation/errorTranslator.ts:35
+msgid "Display name is too long"
+msgstr "Görünen ad çok uzun"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
 msgid ""
@@ -1372,7 +1374,7 @@ msgstr "Emoji seçici"
 #: src/components/message/MessageComposer.tsx:846
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1856
+#: src/components/space/Channel.tsx:1861
 #: src/components/thread/ThreadPanel.tsx:505
 msgid "Emojis"
 msgstr "Emojiler"
@@ -1426,8 +1428,10 @@ msgid "Enter a name for your Space"
 msgstr "Space'iniz için bir ad girin"
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
-msgid "Enter a user's address to start messaging them."
-msgstr "Mesajlaşmaya başlamak için bir kullanıcının adresini girin."
+msgid "Enter a user's address or @username to start messaging them."
+msgstr ""
+"Mesajlaşmaya başlamak için bir kullanıcının adresini veya @kullanıcı adını "
+"gir."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
@@ -1657,7 +1661,7 @@ msgstr "Profil güncellenemedi"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:307
+#: src/components/direct/DirectMessageContactsList.tsx:313
 msgid "Favorites"
 msgstr "Favoriler"
 
@@ -1809,7 +1813,7 @@ msgstr ""
 "GIF dosyaları {maxSize}'den büyük olamaz. Lütfen daha küçük bir GIF "
 "kullanın."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:35
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:64
 msgid "Go to conversation"
 msgstr "Sohbete git"
 
@@ -1829,16 +1833,16 @@ msgstr "Grup İkonu (isteğe bağlı)"
 msgid "Group Name"
 msgstr "Grup Adı"
 
-#: src/hooks/business/validation/errorTranslator.ts:49
+#: src/hooks/business/validation/errorTranslator.ts:53
 msgid "Group name cannot contain special characters"
 msgstr "Grup adı özel karakterler içeremez"
 
-#: src/hooks/business/validation/errorTranslator.ts:47
+#: src/hooks/business/validation/errorTranslator.ts:51
 msgid "Group name is required"
 msgstr "Grup adı gereklidir"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:48
+#: src/hooks/business/validation/errorTranslator.ts:52
 msgid "Group name must be {0} characters or less"
 msgstr "Grup adı {0} karakter veya daha az olmalıdır"
 
@@ -2024,7 +2028,7 @@ msgstr "Katılıyor..."
 msgid "Jump"
 msgstr "Atla"
 
-#: src/components/message/MessageList.tsx:657
+#: src/components/message/MessageList.tsx:674
 msgid "Jump to present"
 msgstr "Şu ana atla"
 
@@ -2057,7 +2061,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Klavye Kısayolları"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kick"
 msgstr "At"
 
@@ -2065,7 +2069,7 @@ msgstr "At"
 msgid "Kick User"
 msgstr "Kullanıcıyı At"
 
-#: src/components/user/UserProfile.tsx:398
+#: src/components/user/UserProfile.tsx:423
 msgid "Kicked!"
 msgstr "Atıldınız!"
 
@@ -2114,7 +2118,7 @@ msgstr "Daha fazla yükle"
 msgid "Loading bookmarks..."
 msgstr "Yer işaretleri yükleniyor..."
 
-#: src/components/message/MessageList.tsx:668
+#: src/components/message/MessageList.tsx:685
 msgid "Loading message..."
 msgstr "Mesaj yükleniyor..."
 
@@ -2143,7 +2147,11 @@ msgstr "Profilinizi yüklüyoruz..."
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:32
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:58
+msgid "Looking up @{usernameQuery}..."
+msgstr "@{usernameQuery} aranıyor..."
+
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:61
 msgid "Looking up user..."
 msgstr "Kullanıcıyı arıyor..."
 
@@ -2245,7 +2253,7 @@ msgstr "Mesajın geçerli bir imzası yok, bu gönderenden gelmiyor olabilir"
 msgid "Message..."
 msgstr "Mesaj..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:384
+#: src/components/direct/DirectMessageContactsList.tsx:390
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Mesajlar"
@@ -2278,7 +2286,7 @@ msgstr "Daha fazla tepki"
 msgid "Must be exactly 4 characters"
 msgstr "Kod tam olarak 4 karakter olmalıdır"
 
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Mute"
 msgstr "Sustur"
 
@@ -2290,7 +2298,7 @@ msgstr "Kanalı Sustur"
 msgid "Mute conversation"
 msgstr "Sohbeti sessize al"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Mute Conversation"
 msgstr "Sohbeti Sessize Al"
 
@@ -2318,7 +2326,7 @@ msgstr "Kullanıcıyı Sustur"
 msgid "Mute Users"
 msgstr "Kullanıcıları Sustur"
 
-#: src/components/direct/DirectMessageContactsList.tsx:309
+#: src/components/direct/DirectMessageContactsList.tsx:315
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Sessize alındı"
@@ -2327,12 +2335,20 @@ msgstr "Sessize alındı"
 msgid "My Account"
 msgstr "Hesabım"
 
-#: src/components/direct/DirectMessageContactsList.tsx:431
-#: src/components/space/Channel.tsx:1725
+#: src/components/direct/DirectMessageContactsList.tsx:437
+#: src/components/space/Channel.tsx:1730
 msgid "Name or Address"
 msgstr "İsim veya Adres"
 
-#: src/hooks/business/validation/errorTranslator.ts:34
+#: src/hooks/business/validation/errorTranslator.ts:38
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
+msgstr ""
+"İsimler \".q\" ile bitemez — bu sonek doğrulanmış Quilibrium isimleri için "
+"ayrılmıştır."
+
+#: src/hooks/business/validation/errorTranslator.ts:37
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Yönetici, moderatör veya destek gibi isimler ayrılmıştır."
 
@@ -2418,7 +2434,7 @@ msgstr "Henüz marcör yok. Daha sonra başvurmak için mesajları marcörleyin.
 msgid "No channels - drag channels here or delete group."
 msgstr "Kanallar yok - kanalları buraya sürükleyin veya grubu silin."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:453
 msgid "No contacts found"
 msgstr "Hiçbir kişi bulunamadı"
 
@@ -2448,7 +2464,7 @@ msgstr ""
 "Bu Alan için şifreleme durumu bulunamadı. Alanın başlatılması gerekebilir "
 "veya önce herkese açık bir davet bağlantısı oluşturman gerekebilir."
 
-#: src/components/direct/DirectMessageContactsList.tsx:441
+#: src/components/direct/DirectMessageContactsList.tsx:447
 msgid "No favorites yet"
 msgstr "Henüz favori yok"
 
@@ -2460,7 +2476,7 @@ msgstr "Mesaj bulunamadı"
 msgid "No missing Spaces found"
 msgstr "Eksik Alan bulunamadı"
 
-#: src/components/direct/DirectMessageContactsList.tsx:445
+#: src/components/direct/DirectMessageContactsList.tsx:451
 msgid "No muted conversations"
 msgstr "Sessize alınmış sohbet yok"
 
@@ -2494,7 +2510,7 @@ msgstr "Arama kriterlerinize uyan konu yok"
 msgid "No threads yet"
 msgstr "Henüz konu yok"
 
-#: src/components/direct/DirectMessageContactsList.tsx:443
+#: src/components/direct/DirectMessageContactsList.tsx:449
 msgid "No unknown contacts"
 msgstr "Bilinmeyen kişiler yok"
 
@@ -2502,7 +2518,11 @@ msgstr "Bilinmeyen kişiler yok"
 msgid "No unread notifications"
 msgstr "Yeni okunmamış bildirim yok"
 
-#: src/components/space/Channel.tsx:1733 src/components/space/Channel.tsx:1963
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:97
+msgid "No user found for @{usernameQuery}."
+msgstr "@{usernameQuery} için kullanıcı bulunamadı."
+
+#: src/components/space/Channel.tsx:1738 src/components/space/Channel.tsx:1968
 msgid "No users found!"
 msgstr "Kullanıcı bulunamadı!"
 
@@ -2512,16 +2532,16 @@ msgid "None"
 msgstr "Hiçbiri"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:307
+#: src/components/user/UserProfile.tsx:332
 msgid "Note"
 msgstr "Not"
 
-#: src/hooks/business/validation/errorTranslator.ts:62
+#: src/hooks/business/validation/errorTranslator.ts:66
 msgid "Note contains invalid content"
 msgstr "Not geçersiz içerik içeriyor"
 
 #. placeholder {0}: vars!.max
-#: src/hooks/business/validation/errorTranslator.ts:63
+#: src/hooks/business/validation/errorTranslator.ts:67
 msgid "Note must be {0} characters or less"
 msgstr "Not {0} karakter veya daha az olmalıdır"
 
@@ -2600,7 +2620,7 @@ msgid "Open {0}"
 msgstr "{0} aç"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:762
+#: src/components/direct/DirectMessage.tsx:768
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2833,7 +2853,7 @@ msgstr "Okundu onayları"
 msgid "Read-only"
 msgstr "Sadece okuma"
 
-#: src/components/direct/DirectMessageContactsList.tsx:458
+#: src/components/direct/DirectMessageContactsList.tsx:464
 msgid "Ready to start a truly private conversation?"
 msgstr "Gerçekten özel bir sohbete başlamaya hazır mısınız?"
 
@@ -2866,11 +2886,11 @@ msgstr "Kaldır"
 msgid "Remove bookmark"
 msgstr "Yer işaretini kaldır"
 
-#: src/components/direct/DirectMessageContactsList.tsx:247
+#: src/components/direct/DirectMessageContactsList.tsx:253
 msgid "Remove from Favorites"
 msgstr "Favorilerden kaldır"
 
-#: src/components/user/UserProfile.tsx:262
+#: src/components/user/UserProfile.tsx:287
 msgid "Removing..."
 msgstr "Kaldırılıyor..."
 
@@ -3024,7 +3044,7 @@ msgstr "Kaydediliyor..."
 msgid "Search bookmarks..."
 msgstr "Marcörleri ara..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:392
+#: src/components/direct/DirectMessageContactsList.tsx:398
 msgid "Search direct messages"
 msgstr "Doğrudan mesajları ara"
 
@@ -3049,7 +3069,7 @@ msgstr "bu Alan'da ara"
 msgid "Search in this Space..."
 msgstr "Bu Alanda Ara..."
 
-#: src/components/direct/DirectMessage.tsx:863
+#: src/components/direct/DirectMessage.tsx:869
 #: src/components/space/Channel.tsx:1561
 msgid "Search Messages"
 msgstr "Mesajları Ara"
@@ -3078,7 +3098,7 @@ msgstr "Konuları ara…"
 msgid "Search username or address"
 msgstr "Kullanıcı adı veya adres ara"
 
-#: src/components/space/Channel.tsx:1954
+#: src/components/space/Channel.tsx:1959
 msgid "Search Username or Address"
 msgstr "Kullanıcı Adı veya Adres Ara"
 
@@ -3124,7 +3144,7 @@ msgstr "Rolleri Seç"
 msgid "Select skin tone"
 msgstr "Cilt tonu seç"
 
-#: src/hooks/business/conversations/useDirectMessageCreation.ts:37
+#: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Gönder"
 
@@ -3148,7 +3168,7 @@ msgstr "Davet Gönder"
 msgid "Send Link"
 msgstr "Bağlantı Gönder"
 
-#: src/components/user/UserProfile.tsx:351
+#: src/components/user/UserProfile.tsx:376
 msgid "Send Message"
 msgstr "Mesaj Gönder"
 
@@ -3337,7 +3357,7 @@ msgstr "Durum buraya gelecek"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1862
+#: src/components/space/Channel.tsx:1867
 #: src/components/thread/ThreadPanel.tsx:511
 msgid "Stickers"
 msgstr "Çıkartmalar"
@@ -3472,7 +3492,7 @@ msgstr ""
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Bu bağlantı bir Alan sahibi tarafından oluşturuldu. Süresi dolmaz."
 
-#: src/hooks/business/validation/errorTranslator.ts:33
+#: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
 msgstr "Bu isim, bahsetme anahtar kelimeleriyle çelişiyor."
 
@@ -3697,7 +3717,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Geri yüklenemiyor: giriş yapılmadı"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:308
+#: src/components/direct/DirectMessageContactsList.tsx:314
 #: src/components/modals/JoinSpaceModal.tsx:110
 #: src/services/MessageService.ts:2852 src/services/MessageService.ts:4395
 msgid "Unknown"
@@ -3720,8 +3740,8 @@ msgstr "Bilinmeyen zaman"
 #: src/components/direct/DirectMessage.tsx:248
 #: src/components/direct/DirectMessage.tsx:255
 #: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:677
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessage.tsx:683
+#: src/components/direct/DirectMessageContactsList.tsx:43
 #: src/components/message/MentionDropdown.tsx:190
 #: src/components/message/MentionDropdown.tsx:197
 #: src/components/message/MessageEditTextarea.tsx:531
@@ -3756,7 +3776,7 @@ msgid "Unknown User"
 msgstr "Bilinmeyen Kullanıcı"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:379
+#: src/components/user/UserProfile.tsx:404
 msgid "Unmute"
 msgstr "Susturmayı Kaldır"
 
@@ -3764,7 +3784,7 @@ msgstr "Susturmayı Kaldır"
 msgid "Unmute Channel"
 msgstr "Kanalı Susturmayı Kaldır"
 
-#: src/components/direct/DirectMessageContactsList.tsx:255
+#: src/components/direct/DirectMessageContactsList.tsx:261
 msgid "Unmute Conversation"
 msgstr "Sohbeti aç"
 
@@ -3798,7 +3818,7 @@ msgstr "Mesajı sabitlemeyi kaldır"
 msgid "Unpin this post"
 msgstr "Bu gönderiyi sabitlemeyi kaldır"
 
-#: src/components/direct/DirectMessage.tsx:982
+#: src/components/direct/DirectMessage.tsx:988
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -3847,10 +3867,6 @@ msgstr "Çıkartma Yükle"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Özel anahtarınızı kaydetmek için \"Dosyalara Kaydet\" seçeneğini kullanın"
 
-#: src/components/modals/NewDirectMessageModal.tsx:114
-msgid "User address here"
-msgstr "Kullanıcı adresi burada"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Kullanıcı mevcut değil."
@@ -3860,11 +3876,11 @@ msgstr "Kullanıcı mevcut değil."
 msgid "User not authenticated"
 msgstr "Kullanıcı kimliği doğrulanmadı"
 
-#: src/components/direct/DirectMessage.tsx:1083
+#: src/components/direct/DirectMessage.tsx:1089
 msgid "User profile"
 msgstr "Kullanıcı profili"
 
-#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:851
 msgid "User Profile"
 msgstr "Kullanıcı Profili"
 
@@ -4097,7 +4113,7 @@ msgid "You are already a member of this Space."
 msgstr "Zaten bu Space'nun bir üyesisiniz."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1704
+#: src/components/space/Channel.tsx:1709
 msgid "You are muted for {0}"
 msgstr "{0} süreyle susturuldun"
 
@@ -4141,7 +4157,7 @@ msgid "You cannot delete the default channel."
 msgstr "Varsayılan kanalı silemezsiniz."
 
 #: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1707
+#: src/components/space/Channel.tsx:1712
 msgid "You cannot post in this channel"
 msgstr "Bu kanalda paylaşım yapamazsınız"
 
@@ -4153,7 +4169,7 @@ msgstr "Kendinize doğrudan mesaj gönderemezsiniz."
 msgid "You have a new unread message"
 msgstr "Yeni okunmamış bir mesajınız var"
 
-#: src/components/space/Channel.tsx:1705
+#: src/components/space/Channel.tsx:1710
 msgid "You have been muted in this Space"
 msgstr "Bu Alan'da susturuldunuz"
 
@@ -4320,6 +4336,9 @@ msgstr "YouTube Video Küçük Resmi"
 #~ msgid "Back to spaces list"
 #~ msgstr "Alanlar listesine dön"
 
+#~ msgid "Bio must be {0} characters or less"
+#~ msgstr "Biyografi {0} karakter veya daha az olmalıdır"
+
 #~ msgid "Bookmarks in this space"
 #~ msgstr "Bu alanındaki marcörler"
 
@@ -4352,6 +4371,12 @@ msgstr "YouTube Video Küçük Resmi"
 
 #~ msgid "Discover spaces"
 #~ msgstr "Alanları keşfet"
+
+#~ msgid "Display name must be {0} characters or less"
+#~ msgstr "Görünen ad {0} karakter veya daha az olmalıdır"
+
+#~ msgid "Enter a user's address to start messaging them."
+#~ msgstr "Mesajlaşmaya başlamak için bir kullanıcının adresini girin."
 
 #~ msgid "Existing Conversations"
 #~ msgstr "Mevcut Görüşmeler"
@@ -4537,6 +4562,9 @@ msgstr "YouTube Video Küçük Resmi"
 
 #~ msgid "Unread direct messages"
 #~ msgstr "Okunmamış doğrudan mesajlar"
+
+#~ msgid "User address here"
+#~ msgstr "Kullanıcı adresi burada"
 
 #~ msgid "When enabled, notify me for:"
 #~ msgstr "Etkinleştirildiğinde, beni şunlar için bilgilendir:"
