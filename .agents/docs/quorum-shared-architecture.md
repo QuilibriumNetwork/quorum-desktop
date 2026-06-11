@@ -3,7 +3,7 @@ type: doc
 title: Quorum Ecosystem Architecture
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-05-30T00:00:00.000Z
+updated: 2026-06-11T00:00:00.000Z
 ---
 
 # Quorum Ecosystem Architecture
@@ -319,6 +319,8 @@ export class IndexedDBAdapter implements StorageAdapter {
 
 ## Sync Protocol
 
+> **⚠️ Client divergence (verified 2026-06-11).** The hash-based delta sync protocol described below is **active on desktop only**. **Mobile has removed peer-to-peer mesh sync entirely** and replaced it with a server-side per-hub log transport (`listen-hub` + `log-since` WebSocket frames). On mobile, the `sync-request`/`sync-info`/`sync-initiate`/`sync-manifest`/`sync-delta` handlers are gone (imports remain as dead stubs; the code comments confirm "peer-to-peer mesh sync is gone"). The two clients therefore behave differently when catching up on space history — see [Cross-client divergence](#cross-client-divergence-desktop-p2p-vs-mobile-hub-log) below. This `quorum-shared` `sync` module is consumed by desktop; mobile does not instantiate `SharedSyncService`.
+
 The sync module implements hash-based delta synchronization for efficient data transfer between peers.
 
 ### Protocol Flow
@@ -385,6 +387,24 @@ const syncService = new SyncService({
   requestExpiry: 30000,
 });
 ```
+
+### Cross-client divergence: desktop P2P vs. mobile hub-log
+
+As of 2026-06-11, desktop and mobile use **different transports** for delivering space chat messages and for catching up on history. This is verified against both repos' source, not inferred.
+
+| Aspect | Desktop (this repo) | Mobile (`quorum-mobile`) |
+|---|---|---|
+| Live message transport | Hub WebSocket broadcast | Hub WebSocket (`log-append` / `log-update`) |
+| History catch-up on join/reconnect | **P2P sync** — `sync-request` → `sync-info` → `sync-initiate` → `sync-manifest` → `sync-delta`, served by an **online peer** | **Server-side hub log** — `listen-hub` + `log-since` replays the server-retained log from a stored cursor |
+| Requires another member online to backfill history | **Yes** — no online peer means no backfill | **No** — the server replays its hub log even if no peer is online |
+| `SharedSyncService` (this module) instantiated? | Yes (`src/services/SyncService.ts`) | No — handlers removed; sync types imported only as dead stubs |
+| Background / push-driven fetch | No | Yes (silent push + periodic background task) |
+
+**What is NOT part of this divergence (verified, to avoid confusion):** the mobile **hub log carries chat messages** (post, embed, sticker, reaction, edit/remove, and `join`/`leave`/`kick`/`rekey`/`update-profile` control messages) — it is the primary chat transport, not a side-channel. The separate **public-profile** feature (`POST`/`GET /users/:addr/public-profile`) is plain HTTP REST on **both** clients and does **not** ride the hub log. The hub-log `update-profile` message (in-space member presence) is a different mechanism from the global public-profile endpoint.
+
+**Shared cold-start behavior (both clients):** joining a space starts with an empty local DB — no messages, only the joiner in the member list (the space manifest carries neither). What differs is only *how* history then backfills (peer-dependent P2P on desktop; server hub-log on mobile). See the desktop-side detail in [data-management-architecture-guide.md → Cold-start when joining a Space](data-management-architecture-guide.md#cold-start-when-joining-a-space-expected-no-messages-only-me).
+
+> Whether desktop is intended to migrate to the hub-log transport (converging with mobile) is a product decision not recorded in code — confirm with the lead dev before treating either model as the permanent end state.
 
 ---
 
@@ -790,4 +810,4 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-05-30*
+*Last updated: 2026-06-11*

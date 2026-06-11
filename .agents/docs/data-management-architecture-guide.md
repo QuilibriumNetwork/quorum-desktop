@@ -529,6 +529,8 @@ The sync protocol uses manifest hashes to efficiently identify what data needs t
 
 #### Cold-start when joining a Space (expected: "no messages, only me")
 
+> **Desktop-specific backfill.** This section describes the **desktop** client, which backfills history via the P2P sync protocol above. **Mobile diverges:** it has removed P2P sync and uses a server-side hub-log transport, so a mobile joiner can receive history even with no peer online. The empty-on-join cold start is the same on both; only the backfill mechanism differs. See [quorum-shared-architecture.md → Cross-client divergence](quorum-shared-architecture.md#cross-client-divergence-desktop-p2p-vs-mobile-hub-log).
+
 When a user joins a Space, they start with an **empty local database for that Space**, and history/members backfill **only if another peer is online to provide them**. A freshly joined Space showing no messages and only the joiner in the member list is the **correct cold-start state, not a bug**.
 
 Why this happens:
