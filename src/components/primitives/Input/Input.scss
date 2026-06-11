@@ -51,6 +51,45 @@
   }
 }
 
+/* Icon slots (leftIcon / rightIcon): positioned inside the field, vertically
+   centered, with the input padded to make room. Mirrors the clear-button. */
+.input-icon {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-subtle);
+  pointer-events: none; // decorative by default; interactive children re-enable below
+
+  &--left {
+    left: $s-3;
+  }
+
+  &--right {
+    right: $s-3;
+  }
+
+  // Let interactive icon content (buttons, role="button") receive clicks/focus
+  button,
+  [role='button'],
+  a {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+}
+
+.input-has-left-icon .quorum-input,
+.input-has-left-icon .onboarding-input {
+  padding-left: $s-9;
+}
+
+.input-has-right-icon .quorum-input,
+.input-has-right-icon .onboarding-input {
+  padding-right: $s-9;
+}
+
 .input-label {
   font-size: $text-sm;
   line-height: $text-sm-lh;

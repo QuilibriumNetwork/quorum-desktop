@@ -18,6 +18,8 @@ export const InputExamples: React.FC = () => {
       { name: "Email Type", props: { placeholder: "email@example.com", type: "email" }, children: null },
       { name: "Password", props: { placeholder: "Password", type: "password" }, children: null },
       { name: "With Error", props: { placeholder: "Invalid input", error: true, errorMessage: "This field is required" }, children: null },
+      { name: "Left Icon", props: { placeholder: "Search...", leftIcon: <Icon name="search" size="sm" /> }, children: null },
+      { name: "Right Icon", props: { placeholder: "Password", type: "password", rightIcon: <Icon name="eye" size="sm" /> }, children: null },
       { name: "Disabled", props: { placeholder: "Disabled input", disabled: true }, children: null }
     ],
     quickTips: [

@@ -6,6 +6,11 @@ import { QRCodeSVG } from 'qrcode.react';
 import { truncateAddress, getDeviceName } from '../../../utils/deviceInfo';
 import { useDeviceNameValidation } from '../../../hooks/business/validation';
 import { ClickToCopyContent } from '../../ui';
+import {
+  copySensitiveText,
+  SENSITIVE_CLIPBOARD_CLEAR_MS,
+  type SensitiveCopyMode,
+} from '../../../utils/clipboardSecurity';
 
 interface SecurityProps {
   stagedRegistration: any;
@@ -37,6 +42,19 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   const [showQRCode, setShowQRCode] = React.useState(false);
   const [privateKeyHex, setPrivateKeyHex] = React.useState<string | null>(null);
   const [isLoadingKey, setIsLoadingKey] = React.useState(false);
+
+  // Copy-private-key state - requires explicit user confirmation, mirrors the QR reveal.
+  // copyMode records HOW the copy was performed: 'auto-clear' (Electron main
+  // process guarantees the 60s clear) vs 'best-effort' (plain web build, where
+  // an unfocused page cannot touch the clipboard) — the success message
+  // adapts so we never promise a clear we can't deliver.
+  const [showCopyConfirmation, setShowCopyConfirmation] = React.useState(false);
+  const [isCopyingKey, setIsCopyingKey] = React.useState(false);
+  const [copyMode, setCopyMode] = React.useState<SensitiveCopyMode | null>(null);
+  const [copyError, setCopyError] = React.useState<string | null>(null);
+  // Purely cosmetic: hides the success callout; the actual clipboard clearing
+  // is owned by copySensitiveText (main process or module-level web fallback).
+  const copySuccessHideTimerRef = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Backup state
   const [isExportingBackup, setIsExportingBackup] = React.useState(false);
@@ -81,6 +99,49 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     setShowQRCode(false);
     setPrivateKeyHex(null);
     setShowQRConfirmation(false);
+  };
+
+  // Hide the copy-success callout timer on unmount (the clipboard clearing
+  // itself lives outside this component and is unaffected).
+  React.useEffect(() => {
+    return () => {
+      if (copySuccessHideTimerRef.current) clearTimeout(copySuccessHideTimerRef.current);
+    };
+  }, []);
+
+  const handleCopyKeyClick = () => {
+    setCopyMode(null);
+    setCopyError(null);
+    setShowCopyConfirmation(true);
+  };
+
+  const handleConfirmCopyKey = async () => {
+    if (!getPrivateKeyHex) return;
+
+    setIsCopyingKey(true);
+    setCopyError(null);
+    try {
+      const keyHex = await getPrivateKeyHex();
+      const mode = await copySensitiveText(keyHex);
+      setShowCopyConfirmation(false);
+      setCopyMode(mode);
+
+      // Hide the success callout when the auto-clear window elapses.
+      if (copySuccessHideTimerRef.current) clearTimeout(copySuccessHideTimerRef.current);
+      copySuccessHideTimerRef.current = setTimeout(() => {
+        setCopyMode(null);
+      }, SENSITIVE_CLIPBOARD_CLEAR_MS);
+    } catch (error: any) {
+      console.error('Failed to copy private key:', error);
+      setCopyError(error?.message || t`Failed to copy private key`);
+      setShowCopyConfirmation(false);
+    } finally {
+      setIsCopyingKey(false);
+    }
+  };
+
+  const handleCancelCopy = () => {
+    setShowCopyConfirmation(false);
   };
 
   // Device rename state
@@ -325,105 +386,141 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         </ScrollContainer>
 
         <Spacer size="md" direction="vertical" borderTop={true} className="mt-4" />
-        <div className="text-subtitle-2 mb-2">{t`Key Export`}</div>
+        <div className="text-subtitle-2 mb-2">{t`Account Key`}</div>
         <div className="modal-content-info">
-          <div className="flex flex-col gap-2">
-            <div className="flex items-start justify-between gap-3 p-3 rounded-md border">
-              <div className="text-sm" style={{ lineHeight: 1.3 }}>
-                {t`Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
-              </div>
+          <div className="flex flex-col gap-3 p-3 rounded-md border">
+            <div className="text-sm" style={{ lineHeight: 1.3 }}>
+              {t`Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it.`}
+            </div>
+
+            {/* Action row: download to file · copy hex · show QR for mobile import */}
+            <div className="flex flex-wrap gap-2">
               <Button
-                type="danger"
+                type="danger-outline"
                 size="small"
                 className="whitespace-nowrap"
                 onClick={downloadKey}
               >
-                {t`Export`}
+                <Icon name="download" size="sm" className="mr-1" />
+                {t`Download file`}
               </Button>
+              {getPrivateKeyHex && (
+                <Button
+                  type="danger-outline"
+                  size="small"
+                  className="whitespace-nowrap"
+                  onClick={handleCopyKeyClick}
+                  disabled={isCopyingKey}
+                >
+                  <Icon name="copy" size="sm" className="mr-1" />
+                  {t`Copy key`}
+                </Button>
+              )}
+              {getPrivateKeyHex && (
+                <Button
+                  type="danger-outline"
+                  size="small"
+                  className="whitespace-nowrap"
+                  onClick={handleShowQRClick}
+                >
+                  <Icon name="qrcode" size="sm" className="mr-1" />
+                  {t`Show QR`}
+                </Button>
+              )}
             </div>
+
+            <div className="text-xs onboarding-label-muted">
+              {t`Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app.`}
+            </div>
+
+            {/* Copy confirmation */}
+            {showCopyConfirmation && (
+              <>
+                <Callout variant="error" size="sm">
+                  <div className="text-sm">
+                    {t`This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards.`}
+                  </div>
+                </Callout>
+                <div className="flex gap-2 justify-end">
+                  <Button type="secondary" size="small" onClick={handleCancelCopy}>
+                    {t`Cancel`}
+                  </Button>
+                  <Button
+                    type="danger"
+                    size="small"
+                    onClick={handleConfirmCopyKey}
+                    disabled={isCopyingKey}
+                  >
+                    {isCopyingKey ? t`Copying...` : t`I Understand, Copy`}
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {copyMode && (
+              <Callout variant="success" size="sm">
+                <div className="text-sm">
+                  {copyMode === 'auto-clear'
+                    ? t`Private key copied. It will be cleared from your clipboard automatically in 60 seconds.`
+                    : t`Private key copied. Store it securely and clear your clipboard when you're done.`}
+                </div>
+              </Callout>
+            )}
+
+            {copyError && (
+              <Callout variant="error" size="sm">
+                <div className="text-sm">{copyError}</div>
+              </Callout>
+            )}
+
+            {/* QR confirmation */}
+            {showQRConfirmation && !showQRCode && (
+              <>
+                <Callout variant="error" size="sm">
+                  <div className="text-sm">
+                    {t`Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately.`}
+                  </div>
+                </Callout>
+                <div className="flex gap-2 justify-end">
+                  <Button
+                    type="secondary"
+                    size="small"
+                    onClick={() => setShowQRConfirmation(false)}
+                  >
+                    {t`Cancel`}
+                  </Button>
+                  <Button
+                    type="danger"
+                    size="small"
+                    onClick={handleConfirmShowQR}
+                    disabled={isLoadingKey}
+                  >
+                    {isLoadingKey ? t`Loading...` : t`I Understand, Show QR`}
+                  </Button>
+                </div>
+              </>
+            )}
+
+            {/* QR display */}
+            {showQRCode && privateKeyHex && (
+              <>
+                <div className="flex flex-col items-center">
+                  <div className="bg-white p-4 rounded-lg">
+                    <QRCodeSVG value={privateKeyHex} size={200} level="M" />
+                  </div>
+                  <div className="text-xs text-muted text-center mt-3">
+                    {t`QR code will auto-hide in 60 seconds`}
+                  </div>
+                </div>
+                <div className="flex justify-end">
+                  <Button type="secondary" size="small" onClick={handleHideQR}>
+                    {t`Hide`}
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </div>
-
-        {getPrivateKeyHex && (
-          <>
-            <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="text-subtitle-2 mb-2">{t`Mobile Import`}</div>
-            <div className="modal-content-info">
-              <div className="flex flex-col gap-2">
-                <div className="flex flex-col gap-3 p-3 rounded-md border">
-                  {!showQRConfirmation && !showQRCode && (
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="text-sm" style={{ lineHeight: 1.3 }}>
-                        {t`Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key.`}
-                      </div>
-                      <Button
-                        type="danger"
-                        size="small"
-                        className="whitespace-nowrap"
-                        onClick={handleShowQRClick}
-                      >
-                        {t`Show QR`}
-                      </Button>
-                    </div>
-                  )}
-
-                  {showQRConfirmation && !showQRCode && (
-                    <>
-                      <Callout variant="error" size="sm">
-                        <div className="text-sm">
-                          {t`Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately.`}
-                        </div>
-                      </Callout>
-                      <div className="flex gap-2 justify-end">
-                        <Button
-                          type="secondary"
-                          size="small"
-                          onClick={() => setShowQRConfirmation(false)}
-                        >
-                          {t`Cancel`}
-                        </Button>
-                        <Button
-                          type="danger"
-                          size="small"
-                          onClick={handleConfirmShowQR}
-                          disabled={isLoadingKey}
-                        >
-                          {isLoadingKey ? t`Loading...` : t`I Understand, Show QR`}
-                        </Button>
-                      </div>
-                    </>
-                  )}
-
-                  {showQRCode && privateKeyHex && (
-                    <>
-                      <div className="flex flex-col items-center">
-                        <div className="bg-white p-4 rounded-lg">
-                          <QRCodeSVG
-                            value={privateKeyHex}
-                            size={200}
-                            level="M"
-                          />
-                        </div>
-                        <div className="text-xs text-muted text-center mt-3">
-                          {t`QR code will auto-hide in 60 seconds`}
-                        </div>
-                      </div>
-                      <div className="flex justify-end">
-                        <Button
-                          type="secondary"
-                          size="small"
-                          onClick={handleHideQR}
-                        >
-                          {t`Hide`}
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </>
-        )}
 
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2 mb-2">{t`Data Backup`}</div>

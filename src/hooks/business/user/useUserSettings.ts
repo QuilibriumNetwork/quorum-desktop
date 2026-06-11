@@ -14,6 +14,7 @@ import { PublicProfileService } from '../../../services/PublicProfileService';
 import { QuorumApiClient } from '../../../api/baseTypes';
 import { getDeviceName } from '../../../utils/deviceInfo';
 import { showError } from '../../../utils/toast';
+import { normalizePrivateKeyHex } from '../../../utils/privateKey';
 
 export interface UseUserSettingsOptions {
   onSave?: () => void;
@@ -246,7 +247,8 @@ export const useUserSettings = (
 
   const getPrivateKeyHex = async (): Promise<string> => {
     if (!currentPasskeyInfo) throw new Error('No passkey info available');
-    return await exportKey(currentPasskeyInfo.address);
+    const raw = await exportKey(currentPasskeyInfo.address);
+    return normalizePrivateKeyHex(raw);
   };
 
   const exportBackup = async () => {

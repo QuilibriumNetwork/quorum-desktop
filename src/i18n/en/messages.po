@@ -31,14 +31,14 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Welcome to Quorum, {name}! Your account is secured and ready to go."
-
-#. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1684
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+msgstr "Welcome to Quorum, {name}! Your account is secured and ready to go."
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:117
@@ -53,6 +53,11 @@ msgid "Reacted by"
 msgstr "Reacted by"
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:718
+msgid "Replying to"
+msgstr "Replying to"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Failed to process image"
@@ -61,11 +66,6 @@ msgstr "Failed to process image"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Replying to {user}"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:718
-msgid "Replying to"
-msgstr "Replying to"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:361
@@ -128,7 +128,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Security.tsx:196
+#: src/components/modals/UserSettingsModal/Security.tsx:257
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 
@@ -241,7 +241,7 @@ msgstr "0 = forever"
 msgid "0 hours"
 msgstr "0 hours"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:195
+#: src/components/modals/UserSettingsModal/Security.tsx:256
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 device marked for removal. Click \"Save Changes\" to confirm."
 
@@ -294,6 +294,10 @@ msgstr "Account address"
 #: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Account Address"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:389
+msgid "Account Key"
+msgstr "Account Key"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:136
 #: src/components/modals/UserSettingsModal/Navigation.tsx:31
@@ -469,7 +473,7 @@ msgstr "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GI
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:374
+#: src/components/modals/UserSettingsModal/Security.tsx:481
 msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
 msgstr "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
 
@@ -534,7 +538,7 @@ msgstr "Are you sure you want to unpin this message?"
 msgid "attach image"
 msgstr "attach image"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:178
+#: src/components/modals/UserSettingsModal/Security.tsx:239
 msgid "Authorized Devices"
 msgstr "Authorized Devices"
 
@@ -656,7 +660,8 @@ msgstr "Camera"
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:293
-#: src/components/modals/UserSettingsModal/Security.tsx:383
+#: src/components/modals/UserSettingsModal/Security.tsx:446
+#: src/components/modals/UserSettingsModal/Security.tsx:490
 #: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:436
 #: src/hooks/business/messages/usePinnedMessages.ts:325
@@ -742,7 +747,7 @@ msgstr "Channels"
 #~ msgid "Channels:"
 #~ msgstr "Channels:"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:54
+#: src/components/onboarding/steps/ImportKeyStep.tsx:132
 msgid "choose file"
 msgstr "choose file"
 
@@ -888,7 +893,7 @@ msgstr "Copy address"
 msgid "Copy Failed"
 msgstr "Copy Failed"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:271
+#: src/components/modals/UserSettingsModal/Security.tsx:332
 msgid "Copy full address"
 msgstr "Copy full address"
 
@@ -896,6 +901,10 @@ msgstr "Copy full address"
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:771
 msgid "Copy invite link to clipboard"
 msgstr "Copy invite link to clipboard"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:416
+msgid "Copy key"
+msgstr "Copy key"
 
 #: src/components/message/MessageActions.tsx:89
 #: src/components/message/MessageActionsMenu.tsx:270
@@ -912,6 +921,10 @@ msgstr "Copy message"
 msgid "Copy message link"
 msgstr "Copy message link"
 
+#: src/components/modals/UserSettingsModal/Security.tsx:454
+msgid "Copying..."
+msgstr "Copying..."
+
 #: src/services/ConfigService.ts:264
 msgid "Could not add Space"
 msgstr "Could not add Space"
@@ -920,6 +933,10 @@ msgstr "Could not add Space"
 #: src/hooks/business/invites/useInviteProcessing.ts:46
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Could not fetch the Space details. Please try again."
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:186
+msgid "Could not import key"
+msgstr "Could not import key"
 
 #: src/services/ConfigService.ts:137
 msgid "Could not obtain manifest for Space"
@@ -962,7 +979,7 @@ msgstr "Create a tag that members can display next to their username in messages
 msgid "Create New Account"
 msgstr "Create New Account"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:81
+#: src/components/onboarding/steps/ImportKeyStep.tsx:193
 msgid "Create new account instead"
 msgstr "Create new account instead"
 
@@ -1001,7 +1018,7 @@ msgstr "Danger Zone"
 msgid "Dark"
 msgstr "Dark"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:429
+#: src/components/modals/UserSettingsModal/Security.tsx:526
 msgid "Data Backup"
 msgstr "Data Backup"
 
@@ -1207,7 +1224,7 @@ msgstr "Device name must be {0} characters or less"
 #~ msgid "Devices"
 #~ msgstr "Devices"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:181
+#: src/components/modals/UserSettingsModal/Security.tsx:242
 msgid "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
 msgstr "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
 
@@ -1267,18 +1284,26 @@ msgstr "Display name is too long"
 #~ msgstr "Display name must be {0} characters or less"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:357
-msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
+#~ msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
+#~ msgstr "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Documentation"
 msgstr "Documentation"
 
+#: src/components/modals/UserSettingsModal/Security.tsx:405
+msgid "Download file"
+msgstr "Download file"
+
 #: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
 msgstr "Download Key Backup"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:52
+#: src/components/modals/UserSettingsModal/Security.tsx:433
+msgid "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
+msgstr "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:130
 msgid "Drag and drop or"
 msgstr "Drag and drop or"
 
@@ -1424,6 +1449,10 @@ msgstr "Enter Quorum"
 msgid "Enter to"
 msgstr "Enter to"
 
+#: src/components/onboarding/steps/ImportKeyStep.tsx:177
+#~ msgid "Enter your ed448 private key as 114 hexadecimal characters."
+#~ msgstr "Enter your ed448 private key as 114 hexadecimal characters."
+
 #: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
 msgstr "Enter your name"
@@ -1475,22 +1504,25 @@ msgstr "Expand sidebar"
 msgid "Explore"
 msgstr "Explore"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:341
-#: src/components/modals/UserSettingsModal/Security.tsx:444
+#: src/components/modals/UserSettingsModal/Security.tsx:541
 msgid "Export"
 msgstr "Export"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:435
+#: src/components/modals/UserSettingsModal/Security.tsx:532
 msgid "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
 msgstr "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:333
-msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+#~ msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+#~ msgstr "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:444
+#: src/components/modals/UserSettingsModal/Security.tsx:541
 msgid "Exporting..."
 msgstr "Exporting..."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:136
+msgid "Failed to copy private key"
+msgstr "Failed to copy private key"
 
 #: src/components/modals/CreateSpaceModal.tsx:29
 #~ msgid "Failed to create space. Please try again."
@@ -1518,7 +1550,7 @@ msgstr "Failed to delete message"
 msgid "Failed to edit message"
 msgstr "Failed to edit message"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:133
+#: src/components/modals/UserSettingsModal/Security.tsx:194
 msgid "Failed to export backup"
 msgstr "Failed to export backup"
 
@@ -1527,7 +1559,7 @@ msgstr "Failed to export backup"
 msgid "Failed to generate invite link. Please try again."
 msgstr "Failed to generate invite link. Please try again."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:156
+#: src/components/modals/UserSettingsModal/Security.tsx:217
 msgid "Failed to import backup"
 msgstr "Failed to import backup"
 
@@ -1600,7 +1632,7 @@ msgstr "Failed to save notification setting"
 msgid "Failed to save notification settings"
 msgstr "Failed to save notification settings"
 
-#: src/hooks/business/user/useUserSettings.ts:456
+#: src/hooks/business/user/useUserSettings.ts:458
 #: src/services/ActionQueueHandlers.ts:93
 msgid "Failed to save settings"
 msgstr "Failed to save settings"
@@ -1825,9 +1857,13 @@ msgstr "Help"
 msgid "Help others recognize you with a profile picture."
 msgstr "Help others recognize you with a profile picture."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:417
+#: src/components/modals/UserSettingsModal/Security.tsx:517
 msgid "Hide"
 msgstr "Hide"
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:159
+msgid "Hide key"
+msgstr "Hide key"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:344
 #~ msgid "Hide muted channels"
@@ -1858,7 +1894,11 @@ msgstr "I already have an account"
 msgid "I understand"
 msgstr "I understand"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:391
+#: src/components/modals/UserSettingsModal/Security.tsx:454
+msgid "I Understand, Copy"
+msgstr "I Understand, Copy"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:498
 msgid "I Understand, Show QR"
 msgstr "I Understand, Show QR"
 
@@ -1875,11 +1915,19 @@ msgstr "I've already saved my key"
 msgid "If users report that this invite link isn't working, click to republish it. The link URL stays the same."
 msgstr "If users report that this invite link isn't working, click to republish it. The link URL stays the same."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:453
+#: src/components/modals/UserSettingsModal/Security.tsx:550
 msgid "Import a backup instead"
 msgstr "Import a backup instead"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:32
+#: src/components/onboarding/steps/ImportKeyStep.tsx:172
+msgid "Import account"
+msgstr "Import account"
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:91
+msgid "Import method"
+msgstr "Import method"
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:85
 msgid "Import your account key"
 msgstr "Import your account key"
 
@@ -1887,7 +1935,7 @@ msgstr "Import your account key"
 msgid "Important messages will be pinned here"
 msgstr "Important messages will be pinned here"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:453
+#: src/components/modals/UserSettingsModal/Security.tsx:550
 msgid "Importing..."
 msgstr "Importing..."
 
@@ -1904,8 +1952,8 @@ msgid "Invalid address format. Addresses must use valid alphanumeric characters.
 msgstr "Invalid address format. Addresses must use valid alphanumeric characters."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:71
-msgid "Invalid Key File"
-msgstr "Invalid Key File"
+#~ msgid "Invalid Key File"
+#~ msgstr "Invalid Key File"
 
 #: src/services/InvitationService.ts:458
 #: src/services/InvitationService.ts:469
@@ -2016,9 +2064,18 @@ msgstr "Keep the file you downloaded safe and private! Anyone with this file can
 msgid "Keep your Key Safe!"
 msgstr "Keep your Key Safe!"
 
+#: src/components/onboarding/steps/ImportKeyStep.tsx:52
+msgid "Key contains non-hexadecimal characters."
+msgstr "Key contains non-hexadecimal characters."
+
 #: src/components/modals/UserSettingsModal/Security.tsx:328
-msgid "Key Export"
-msgstr "Key Export"
+#~ msgid "Key Export"
+#~ msgstr "Key Export"
+
+#. placeholder {0}: cleanHex.length
+#: src/components/onboarding/steps/ImportKeyStep.tsx:55
+msgid "Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
+msgstr "Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:107
 msgid "Key Ready"
@@ -2123,7 +2180,7 @@ msgid "Loading your profile..."
 msgstr "Loading your profile..."
 
 #: src/components/discover-page/DiscoverPage.tsx:123
-#: src/components/modals/UserSettingsModal/Security.tsx:391
+#: src/components/modals/UserSettingsModal/Security.tsx:498
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -2159,7 +2216,7 @@ msgstr "Make role invisible"
 msgid "Make role public"
 msgstr "Make role public"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:171
+#: src/components/modals/UserSettingsModal/Security.tsx:232
 msgid "Manage authorized devices, key export, mobile import, and encrypted message backups."
 msgstr "Manage authorized devices, key export, mobile import, and encrypted message backups."
 
@@ -2243,8 +2300,8 @@ msgid "Messages are signed!"
 msgstr "Messages are signed!"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:350
-msgid "Mobile Import"
-msgstr "Mobile Import"
+#~ msgid "Mobile Import"
+#~ msgstr "Mobile Import"
 
 #: src/components/discover-page/SpaceCard.tsx:166
 msgid "More"
@@ -2660,11 +2717,27 @@ msgstr "Passkeys use your device's built-in security to protect your account. Th
 msgid "Paste an invite link"
 msgstr "Paste an invite link"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:308
+#: src/components/onboarding/steps/ImportKeyStep.tsx:108
+msgid "Paste key"
+msgstr "Paste key"
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:153
+#~ msgid "Paste your 114-character private key"
+#~ msgstr "Paste your 114-character private key"
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:149
+msgid "Paste your private key"
+msgstr "Paste your private key"
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:89
+#~ msgid "Paste your private key to restore your account."
+#~ msgstr "Paste your private key to restore your account."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "Pending"
 msgstr "Pending"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:294
+#: src/components/modals/UserSettingsModal/Security.tsx:355
 msgid "Pending removal - click Save to confirm"
 msgstr "Pending removal - click Save to confirm"
 
@@ -2753,6 +2826,23 @@ msgstr "Privacy"
 #~ msgid "Privacy/Security"
 #~ msgstr "Privacy/Security"
 
+#: src/components/onboarding/steps/ImportKeyStep.tsx:143
+#: src/components/onboarding/steps/ImportKeyStep.tsx:153
+msgid "Private key (hex)"
+msgstr "Private key (hex)"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:464
+msgid "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
+msgstr "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:465
+msgid "Private key copied. Store it securely and clear your clipboard when you're done."
+msgstr "Private key copied. Store it securely and clear your clipboard when you're done."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:461
+#~ msgid "Private key copied. Store it securely and clear your clipboard. It will be cleared automatically in 60 seconds."
+#~ msgstr "Private key copied. Store it securely and clear your clipboard. It will be cleared automatically in 60 seconds."
+
 #: src/hooks/platform/files/useFileDownload.native.ts:88
 msgid "Private key saved to selected folder"
 msgstr "Private key saved to selected folder"
@@ -2793,7 +2883,7 @@ msgstr "Public profile"
 msgid "Public spaces"
 msgstr "Public spaces"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:408
+#: src/components/modals/UserSettingsModal/Security.tsx:512
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR code will auto-hide in 60 seconds"
 
@@ -2855,7 +2945,7 @@ msgstr "Recipient has no devices"
 msgid "Refresh"
 msgstr "Refresh"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:308
+#: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "Remove"
 msgstr "Remove"
 
@@ -2875,7 +2965,7 @@ msgstr "Remove from Favorites"
 msgid "Removing..."
 msgstr "Removing..."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:279
+#: src/components/modals/UserSettingsModal/Security.tsx:340
 msgid "Rename this device"
 msgstr "Rename this device"
 
@@ -2936,9 +3026,13 @@ msgstr "Restore"
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "Restore Spaces that exist on this device but are missing from your navigation menu."
 
+#: src/components/onboarding/steps/ImportKeyStep.tsx:87
+msgid "Restore your account from your private key — upload the key file or paste the key directly."
+msgstr "Restore your account from your private key — upload the key file or paste the key directly."
+
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
-#: src/components/modals/UserSettingsModal/Security.tsx:152
+#: src/components/modals/UserSettingsModal/Security.tsx:213
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Restored {0} messages and {1} conversations."
 
@@ -3101,7 +3195,7 @@ msgid "Searching..."
 msgstr "Searching..."
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:20
-#: src/components/modals/UserSettingsModal/Security.tsx:168
+#: src/components/modals/UserSettingsModal/Security.tsx:229
 msgid "Security"
 msgstr "Security"
 
@@ -3118,9 +3212,9 @@ msgstr "Select"
 #~ msgid "Select conversation"
 #~ msgstr "Select conversation"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:34
-msgid "Select or drag your account key file to restore your account."
-msgstr "Select or drag your account key file to restore your account."
+#: src/components/onboarding/steps/ImportKeyStep.tsx:88
+#~ msgid "Select or drag your account key file to restore your account."
+#~ msgstr "Select or drag your account key file to restore your account."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 msgid "Select permissions"
@@ -3228,6 +3322,10 @@ msgstr "Shift+Enter for new line"
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
 msgstr "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
 
+#: src/components/onboarding/steps/ImportKeyStep.tsx:159
+msgid "Show key"
+msgstr "Show key"
+
 #: src/components/discover-page/SpaceCard.tsx:178
 msgid "Show less"
 msgstr "Show less"
@@ -3240,7 +3338,7 @@ msgstr "Show Muted Channels"
 msgid "Show Online Status"
 msgstr "Show Online Status"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:365
+#: src/components/modals/UserSettingsModal/Security.tsx:427
 msgid "Show QR"
 msgstr "Show QR"
 
@@ -3436,12 +3534,16 @@ msgstr "This bio will be visible to others when they view your profile."
 msgid "This conversation overrides your global setting. Click \"Reset to global\" to use your global preference."
 msgstr "This conversation overrides your global setting. Click \"Reset to global\" to use your global preference."
 
+#: src/components/modals/UserSettingsModal/Security.tsx:441
+msgid "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
+msgstr "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
+
 #: src/components/modals/CreateSpaceModal.tsx:187
 #: src/components/modals/SpaceSettingsModal/General.tsx:189
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:317
+#: src/components/modals/UserSettingsModal/Security.tsx:378
 msgid "This device"
 msgstr "This device"
 
@@ -3812,6 +3914,10 @@ msgstr "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
 msgid "Upload Emoji"
 msgstr "Upload Emoji"
 
+#: src/components/onboarding/steps/ImportKeyStep.tsx:99
+msgid "Upload file"
+msgstr "Upload file"
+
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:92
 msgid "Upload Image"
 msgstr "Upload Image"
@@ -3884,7 +3990,7 @@ msgstr "Wallet"
 msgid "What is a Passkey?"
 msgstr "What is a Passkey?"
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:63
+#: src/components/onboarding/steps/ImportKeyStep.tsx:178
 msgid "What is an account key?"
 msgstr "What is an account key?"
 
@@ -4110,8 +4216,12 @@ msgid "Your account address is a unique public identifier derived from your acco
 msgstr "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:64
-msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
-msgstr "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+#~ msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+#~ msgstr "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
+
+#: src/components/onboarding/steps/ImportKeyStep.tsx:179
+msgid "Your account key is a private key that proves ownership of your account. You can download it as a file (.key) or copy it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "Your account key is a private key that proves ownership of your account. You can download it as a file (.key) or copy it from your account settings. Keep it safe — whoever has it can access your account."
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
@@ -4128,6 +4238,10 @@ msgstr "Your Details"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:290
 msgid "Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time."
 msgstr "Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:393
+msgid "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
+msgstr "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
