@@ -4,6 +4,7 @@ export { default as CloseButton } from './CloseButton';
 export { default as DropdownPanel } from './DropdownPanel';
 export { default as ListSearchInput } from './ListSearchInput';
 export { default as MobileDrawer } from './MobileDrawer';
+export { default as QuorumLoader } from './QuorumLoader';
 export { default as ReactTooltip } from './ReactTooltip';
 export { default as ThemeRadioGroup } from './ThemeRadioGroup';
 export { TouchAwareListItem } from './TouchAwareListItem';

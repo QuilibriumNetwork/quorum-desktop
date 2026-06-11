@@ -1,18 +1,16 @@
 import * as React from 'react';
-import { Trans } from '@lingui/react/macro';
+import { t } from '@lingui/core/macro';
+import QuorumLoader from './ui/QuorumLoader';
 
 const Connecting = () => {
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-app text-subtle text-center text-2xl" role="status" aria-live="polite" aria-busy="true">
-      <div
-        className="w-[100px] h-[100px] bg-contain bg-no-repeat bg-center mb-5 animate-[pulse-zoom_2s_ease-in-out_infinite]"
-        style={{ backgroundImage: "url('/quorum-symbol.png')" }}
-        role="img"
-        aria-label="Quorum"
-      ></div>
-      <div className="font-medium opacity-90">
-        <Trans>Connecting</Trans>
-      </div>
+    <div
+      className="flex flex-col items-center justify-center min-h-screen bg-app"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <QuorumLoader text={t`Connecting`} />
     </div>
   );
 };
