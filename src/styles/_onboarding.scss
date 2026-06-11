@@ -25,8 +25,13 @@
   --color-text-muted: #84788b;
   --color-field-bg: var(--surface-1);
   --color-field-bg-focus: var(--surface-3);
-  --color-field-text: var(--surface-9);
-  --color-field-placeholder: var(--surface-9);
+  --color-field-text: rgb(var(--color-text-main));
+  --color-field-placeholder: var(--surface-10);
+  // Focus ring tokens (the Input primitive reads these for its accent focus
+  // glow; without them the focus state is invisible on the onboarding bg).
+  // Additive — other onboarding steps use variant="filled" too and benefit.
+  --color-field-border-focus: var(--accent);
+  --color-field-focus-shadow: rgb(var(--accent-rgb) / 0.35);
 
   background-color: var(--surface-1);
   background-image:
@@ -270,6 +275,66 @@ html.dark .bg-onboarding .btn-secondary {
   &--active {
     border-color: var(--accent);
     background-color: rgb(var(--accent-rgb) / 0.05);
+  }
+}
+
+// Segmented toggle (e.g. import method: Upload file / Paste key).
+// Bordered pill with an accent-tinted active segment, to read as intentional
+// against the blue-tinted onboarding backdrop (a flat gray fill looked washed out).
+// Sized to match .onboarding-input-wrapper / .onboarding-action so the toggle,
+// the field, and the button all share the same width.
+.onboarding-segmented {
+  display: flex;
+  min-width: 17rem;
+  max-width: 22rem;
+  width: fit-content;
+  gap: $s-1;
+  padding: $s-1;
+  margin-bottom: $s-5;
+  border: 1px solid var(--surface-5);
+  border-radius: $rounded-full;
+  background-color: rgb(var(--accent-rgb) / 0.04);
+}
+
+.onboarding-segmented__option {
+  flex: 1;
+  padding: $s-2 $s-3;
+  border: none;
+  border-radius: $rounded-full;
+  background: transparent;
+  color: var(--surface-9);
+  font-size: $text-sm;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 150ms ease, color 150ms ease;
+
+  &:hover:not(.onboarding-segmented__option--active) {
+    color: rgb(var(--color-text-main));
+    background-color: var(--surface-4);
+  }
+
+  &--active {
+    background-color: rgb(var(--accent-rgb) / 0.18);
+    color: rgb(var(--color-text-main));
+    box-shadow: inset 0 0 0 1px rgb(var(--accent-rgb) / 0.45);
+  }
+}
+
+// Eye reveal toggle, rendered inside the Input primitive's rightIcon slot
+// (the primitive handles positioning + input padding via .input-icon--right).
+.onboarding-input-reveal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+  color: var(--surface-8);
+  cursor: pointer;
+  transition: color 150ms ease;
+
+  &:hover {
+    color: rgb(var(--color-text-main));
   }
 }
 
