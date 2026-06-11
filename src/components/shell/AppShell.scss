@@ -11,6 +11,16 @@
   user-select: none;
 }
 
+// In Electron, CustomTitlebar (h-9 = 36px) is rendered above the shell in
+// normal flow, but `position: fixed; inset: 0` pins the shell to the viewport
+// top — overlapping the titlebar and clipping the sticky .sidebar-header behind
+// it. Offset the shell below the titlebar and shrink its height to match.
+// `body.electron` is toggled by CustomTitlebar on mount.
+body.electron .app-shell {
+  top: $titlebar-height;
+  height: calc(100vh - #{$titlebar-height});
+}
+
 .app-shell__rail {
   flex-shrink: 0;
   height: 100%;
