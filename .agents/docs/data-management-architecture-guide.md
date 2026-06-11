@@ -527,6 +527,28 @@ The sync protocol uses manifest hashes to efficiently identify what data needs t
 
 **Storage Adapter**: The `IndexedDBAdapter` (`src/adapters/indexedDbAdapter.ts`) wraps MessageDB to provide a platform-agnostic storage interface, enabling shared sync logic across desktop and other platforms.
 
+#### Cold-start when joining a Space (expected: "no messages, only me")
+
+When a user joins a Space, they start with an **empty local database for that Space**, and history/members backfill **only if another peer is online to provide them**. A freshly joined Space showing no messages and only the joiner in the member list is the **correct cold-start state, not a bug**.
+
+Why this happens:
+
+- There is **no server-side message history store**. The server relays live messages and hosts the encrypted Space *manifest* (channels, roles, emojis) plus invite evals, but does not warehouse past messages or an authoritative member roster. The `Space` type has **no `messages` and no `members` field**, so the manifest fetched at join time carries neither.
+- At join time, `InvitationService.joinInviteLink()` writes **only the joiner** to the local `space_members` store (`saveSpaceMember(self)`), saves the Space metadata, broadcasts a `join` control message, and calls `requestSync(spaceId)`. The UI then renders immediately from IndexedDB, which contains only the joiner.
+- The member list is read straight from local IndexedDB (`buildSpaceMembersFetcher` → `getSpaceMembers`). It grows as `join`/profile broadcasts arrive live, or as a peer's `sync-delta` (member deltas) lands.
+- History and the full roster backfill **only via the sync protocol above** (`sync-request` → … → `sync-delta`), which requires at least one other member to be **online, subscribed to the hub, and responding within the ~30s window**. If no peer responds, nothing backfills and the joiner accumulates data only from the moment they joined forward.
+
+Practical summary:
+
+| Joiner sees | When |
+|---|---|
+| Only themselves, no messages | No other member online (or none responds to `sync-request`) — correct cold start |
+| History + roster fill in | An online peer with the data responds; backfill is async, peer-dependent, typically 1–30s |
+
+**Genuinely bug-adjacent case worth investigating:** an existing member with history was demonstrably online and subscribed to the same hub when the user joined, yet no backfill arrived after ~30s. Possible causes: `buildSyncInfo()` returning `null`, the `sync-request` not routing, or the peer not subscribed to that hub. The blank-slate-on-cold-join state itself is by design.
+
+Source trace: `src/services/InvitationService.ts` (`joinInviteLink`), `src/services/SyncService.ts` (`requestSync`, `initiateSync`), `quorum-shared/src/sync/service.ts` (`buildSyncInfo`), `src/hooks/queries/spaceMembers/buildSpaceMembersFetcher.ts`.
+
 ---
 
 ## Real-time Communication
@@ -1028,4 +1050,4 @@ class ErrorBoundary extends React.Component {
 
 ---
 
-*Last updated: 2026-05-20 — staleness audit fixes*
+*Last updated: 2026-06-11*
