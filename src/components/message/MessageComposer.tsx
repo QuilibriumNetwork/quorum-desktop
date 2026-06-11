@@ -4,6 +4,8 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
+import { ResolvedName } from '../user/ResolvedName';
+import { resolveSpaceMemberName, type NameResolvableUser } from '../../utils/resolveMemberName';
 import type { Group } from '@quilibrium/quorum-shared';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { isTouchDevice } from '../../utils/platform';
@@ -57,7 +59,7 @@ interface MessageComposerProps {
   fileError?: string | null;
   mentionError?: string | null;
   isProcessingImage?: boolean;
-  mapSenderToUser?: (senderId: string) => { displayName?: string };
+  mapSenderToUser?: (senderId: string) => NameResolvableUser | undefined;
   setInReplyTo?: (inReplyTo: any) => void;
 
   // Message validation props
@@ -716,9 +718,17 @@ export const MessageComposer = forwardRef<
               >
                 <span className="message-composer-reply-text flex items-center min-w-0 flex-1">
                   <span className="flex-shrink-0">{i18n._('Replying to')}</span>
-                  <span className="ml-1 truncate-user-name-chat">
-                    {mapSenderToUser(inReplyTo.content.senderId).displayName}
-                  </span>
+                  <ResolvedName
+                    resolved={resolveSpaceMemberName({
+                      address:
+                        mapSenderToUser(inReplyTo.content.senderId)?.address ??
+                        inReplyTo.content.senderId,
+                      displayName: mapSenderToUser(inReplyTo.content.senderId)?.displayName,
+                      primaryUsername: mapSenderToUser(inReplyTo.content.senderId)?.primaryUsername,
+                      globalDisplayName: mapSenderToUser(inReplyTo.content.senderId)?.globalDisplayName,
+                    })}
+                    className="ml-1 truncate-user-name-chat"
+                  />
                 </span>
                 <Icon
                   name="close"

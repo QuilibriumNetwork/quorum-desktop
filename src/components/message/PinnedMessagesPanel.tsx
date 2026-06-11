@@ -14,6 +14,8 @@ import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { isTouchDevice } from '../../utils/platform';
 import { formatMessageDate } from '../../utils';
+import { ResolvedName } from '../user/ResolvedName';
+import { resolveSpaceMemberName } from '../../utils/resolveMemberName';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import './PinnedMessagesPanel.scss';
 
@@ -71,9 +73,21 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
         <Flex justify="between" className="result-meta-container">
           <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
-            <span className="result-sender mr-2 truncate flex-shrink min-w-0">
-              {sender?.displayName || t`Unknown User`}
-            </span>
+            {sender ? (
+              <ResolvedName
+                resolved={resolveSpaceMemberName({
+                  address: sender.address ?? message.content?.senderId ?? '',
+                  displayName: sender.displayName,
+                  primaryUsername: sender.primaryUsername,
+                  globalDisplayName: sender.globalDisplayName,
+                })}
+                className="result-sender mr-2 truncate flex-shrink min-w-0"
+              />
+            ) : (
+              <span className="result-sender mr-2 truncate flex-shrink min-w-0">
+                {t`Unknown User`}
+              </span>
+            )}
             <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
             <span className="result-date flex-shrink-0 whitespace-nowrap ml-1">
               {formatMessageDate(message.createdDate, compactDate)}

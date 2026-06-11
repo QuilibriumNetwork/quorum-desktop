@@ -7,6 +7,8 @@ import { Icon } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { ClickToCopyContent } from '../ui';
 import { getAddressSuffix } from '../../utils';
+import { ResolvedName } from '../user/ResolvedName';
+import { resolveMemberName } from '../../utils/resolveMemberName';
 import { useMessageDB } from '../context/useMessageDB';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
@@ -16,6 +18,9 @@ interface DMUserProfileSidebarProps {
   user: {
     address: string;
     displayName?: string;
+    /** QNS primary username (no ".q" suffix — render-time). In a DM the QNS
+     *  name overrides the display name (Model B). */
+    primaryUsername?: string;
     userIcon?: string;
     bio?: string;
   };
@@ -79,9 +84,14 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
           address={user.address}
           size={96}
         />
-        <span className="dm-profile-name truncate text-main font-semibold text-base">
-          {user.displayName ?? user.address}
-        </span>
+        <ResolvedName
+          resolved={resolveMemberName({
+            address: user.address,
+            displayName: user.displayName,
+            primaryUsername: user.primaryUsername,
+          })}
+          className="dm-profile-name truncate text-main font-semibold text-base"
+        />
         <div className="dm-profile-address">
           <ClickToCopyContent
             text={user.address}

@@ -5,6 +5,8 @@ import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import type { MentionOption } from '../../hooks/business/mentions';
 import { getAddressSuffix } from '../../utils';
+import { ResolvedName } from '../user/ResolvedName';
+import { resolveSpaceMemberName } from '../../utils/resolveMemberName';
 import './MentionDropdown.scss';
 
 interface CaretPosition {
@@ -193,9 +195,15 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
               className="mention-dropdown__avatar"
             />
             <div className="mention-dropdown__info">
-              <span className="mention-dropdown__name">
-                {option.data.displayName || t`Unknown User`}
-              </span>
+              <ResolvedName
+                resolved={resolveSpaceMemberName({
+                  address: option.data.address,
+                  displayName: option.data.displayName,
+                  primaryUsername: option.data.primaryUsername,
+                  globalDisplayName: option.data.globalDisplayName,
+                })}
+                className="mention-dropdown__name"
+              />
               <span className="mention-dropdown__subtitle">
                 {getAddressSuffix(option.data.address)}
               </span>

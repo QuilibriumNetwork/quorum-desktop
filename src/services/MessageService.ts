@@ -1289,13 +1289,10 @@ export class MessageService {
       // Signature was already verified upstream; rejecting on mismatch would permanently
       // block profile updates after any key rotation.
       //
-      // Upsert-aware merge (mirrors mobile WebSocketContext.tsx:1841-1854):
-      // only apply fields that the sender actually included. Skipping
-      // empty-string displayName / userIcon avoids clobbering receivers'
-      // stored values when the sender broadcasts a partial update (e.g. a
-      // bio-only edit). Bio uses `!== undefined` so an explicit empty
-      // string deliberately clears the bio.
-      if (decryptedContent.content.displayName) {
+      // Upsert-aware merge: omitted field = no change, empty string = clear.
+      // displayName + bio use `!== undefined` (clearing propagates); userIcon
+      // keeps the truthy guard.
+      if (decryptedContent.content.displayName !== undefined) {
         participant.display_name = decryptedContent.content.displayName;
       }
       if (decryptedContent.content.userIcon) {
@@ -1807,7 +1804,8 @@ export class MessageService {
       //
       // Upsert-aware merge (mirrors mobile WebSocketContext.tsx:1841-1854):
       // see the same block in saveMessage above for the full rationale.
-      if (decryptedContent.content.displayName) {
+      // Presence semantics: omitted = no change, explicit empty = clear.
+      if (decryptedContent.content.displayName !== undefined) {
         participant.display_name = decryptedContent.content.displayName;
       }
       if (decryptedContent.content.userIcon) {

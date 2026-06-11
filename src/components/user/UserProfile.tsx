@@ -19,6 +19,11 @@ import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
+import { ResolvedName } from './ResolvedName';
+import {
+  resolveMemberName,
+  resolveSpaceMemberName,
+} from '../../utils/resolveMemberName';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { useQueryClient } from '@tanstack/react-query';
@@ -104,6 +109,24 @@ const UserProfile: React.FunctionComponent<{
     props.user.primaryUsername ||
     openedUserPublicProfile?.primary_username ||
     undefined;
+  // Global name (for the space resolver's custom-vs-default comparison).
+  const globalDisplayName =
+    (props.user.globalDisplayName as string | undefined) ||
+    openedUserPublicProfile?.display_name ||
+    undefined;
+
+  const resolvedName = props.spaceId
+    ? resolveSpaceMemberName({
+        address: props.user.address,
+        displayName: props.user.displayName,
+        primaryUsername,
+        globalDisplayName,
+      })
+    : resolveMemberName({
+        address: props.user.address,
+        displayName: props.user.displayName,
+        primaryUsername,
+      });
 
   // Bio resolution for the visible card:
   //   1. Per-space override on SpaceMember (props.user.bio) wins when set.
@@ -219,16 +242,8 @@ const UserProfile: React.FunctionComponent<{
         />
         <div className="user-profile-text">
           <div className="user-profile-username">
-            <span>{props.user.displayName}</span>
+            <ResolvedName resolved={resolvedName} />
           </div>
-          {primaryUsername && (
-            // Verified QNS handle. The ".q" suffix is render-time only and
-            // protected from spoofing by the shared dot-validation, so its
-            // presence here is a trust signal: this is a registered QNS name.
-            <div className="text-accent text-xs">
-              {primaryUsername}.q
-            </div>
-          )}
           <Flex className="py-1 text-subtle">
             <span className="text-xs text-subtle">
               {getAddressSuffix(props.user.address)}

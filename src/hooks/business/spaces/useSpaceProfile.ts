@@ -66,10 +66,13 @@ export const useSpaceProfile = (
     userIcon: string;
   }>({ displayName: '', bio: '', userIcon: '' });
 
-  // Use proper display name validation (replaces basic validation)
   const displayNameValidation = useDisplayNameValidation(displayName);
+  // Per-space name is optional, so empty is valid here (the "required" error
+  // doesn't apply); all other rules still do.
+  const displayNameError =
+    displayName.trim().length === 0 ? undefined : displayNameValidation.error;
   const bioErrors = validateUserBio(bio);
-  const hasValidationError = !!displayNameValidation.error || bioErrors.length > 0;
+  const hasValidationError = !!displayNameError || bioErrors.length > 0;
 
   // Load current member data
   useEffect(() => {
@@ -79,8 +82,10 @@ export const useSpaceProfile = (
       try {
         const member = await messageDB.getSpaceMember(spaceId, currentPasskeyInfo.address);
         setCurrentMember(member);
-        // Initialize display name from member or fallback to global
-        const initialDisplayName = member?.display_name || currentPasskeyInfo.displayName || '';
+        // Per-space name is an optional override: init from the member's name
+        // only, NOT the global name (that made an unset override look set and
+        // defeated clearing). Empty = use my global / QNS name here.
+        const initialDisplayName = member?.display_name ?? '';
         const initialBio = member?.bio ?? '';
         const initialUserIcon = member?.user_icon ?? '';
         setDisplayName(initialDisplayName);
@@ -211,7 +216,7 @@ export const useSpaceProfile = (
   }, [fileData, currentFile, currentMember, currentPasskeyInfo, markedForDeletion]);
 
   const onSave = useCallback(async () => {
-    if (!currentPasskeyInfo || displayNameValidation.error || bioErrors.length > 0) {
+    if (!currentPasskeyInfo || displayNameError || bioErrors.length > 0) {
       return;
     }
 
@@ -267,21 +272,18 @@ export const useSpaceProfile = (
         throw new Error('Space not found');
       }
 
-      // Send update-profile message. `submitChannelMessage` requires the
-      // `update-profile` payload to satisfy the UpdateProfileMessage type,
-      // which today types displayName and userIcon as required strings.
-      // The wire shape tolerates omitting them (mobile already does, and
-      // canonicalize() over a partial object is well-defined); fall back to
-      // baseline values for the typed fields when we're not actually
-      // broadcasting them so the type-check passes and a receiver running
-      // an older build still has something to overwrite-with-same.
+      // Include a field only when changed (mirrors bio): omitted displayName =
+      // no change, empty = clear the per-space name. userIcon stays required by
+      // the type, so fall back to baseline (overwrite-with-same is harmless).
       await submitChannelMessage(
         spaceId,
         space.defaultChannelId,
         {
           type: 'update-profile',
           senderId: currentPasskeyInfo.address,
-          displayName: changed.displayName ?? baseline.displayName,
+          ...(changed.displayName !== undefined
+            ? { displayName: changed.displayName }
+            : {}),
           userIcon: changed.userIcon ?? baseline.userIcon,
           ...(changed.bio !== undefined ? { bio: changed.bio } : {}),
         },
@@ -325,7 +327,7 @@ export const useSpaceProfile = (
     submitChannelMessage,
     queryClient,
     onSaveCallback,
-    displayNameValidation.error,
+    displayNameError,
     bioErrors.length,
     markedForDeletion,
   ]);
@@ -351,7 +353,7 @@ export const useSpaceProfile = (
     onSave,
     isSaving,
     hasValidationError,
-    displayNameError: displayNameValidation.error,
+    displayNameError,
     currentMember,
   };
 };

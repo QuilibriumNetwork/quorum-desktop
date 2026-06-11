@@ -30,6 +30,8 @@ import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { parseMessageHash } from '../../utils/messageHashNavigation';
+import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
+import { ResolvedName } from '../user/ResolvedName';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -299,10 +301,10 @@ const Channel: React.FC<ChannelProps> = ({
     (senderId: string) => {
       const member = effectiveMembers[senderId];
       if (member) {
-        return {
-          ...member,
-          displayName: member.displayName || senderId.slice(-6),
-        };
+        // Pass through unchanged, including an empty displayName. The name
+        // resolvers own the fallback; substituting the address-suffix here
+        // would look like a deliberate per-space name and suppress the QNS name.
+        return member;
       }
       // Fall back to whatever the original lookup would return — keeps
       // the "show address suffix" behavior for senders neither in the
@@ -310,6 +312,19 @@ const Channel: React.FC<ChannelProps> = ({
       return mapSenderToUserBase(senderId);
     },
     [effectiveMembers, mapSenderToUserBase]
+  );
+
+  // Mention autocomplete candidates: the raw roster members, cheaply enriched
+  // with primaryUsername from the sender-enriched map (same no-fetch-storm
+  // policy as the member sidebar). Lets the picker match + render QNS names.
+  const mentionUsers = useMemo(
+    () =>
+      (Object.values(members) as Array<{ address: string; displayName?: string; userIcon?: string }>).map((m) => ({
+        ...m,
+        primaryUsername: effectiveMembers[m.address]?.primaryUsername,
+        globalDisplayName: effectiveMembers[m.address]?.globalDisplayName,
+      })),
+    [members, effectiveMembers]
   );
 
   // Get pinned messages
@@ -1250,7 +1265,7 @@ const Channel: React.FC<ChannelProps> = ({
       isRepudiable: space?.isRepudiable,
       skipSigning,
       onSigningToggle: () => setSkipSigning(!skipSigning),
-      users: Object.values(members),
+      users: mentionUsers,
       mentionRoles: roles?.filter(role => role.isPublic !== false),
       spaceGroups,
       canUseEveryone,
@@ -1258,7 +1273,7 @@ const Channel: React.FC<ChannelProps> = ({
       currentUserAddress: user.currentPasskeyInfo?.address,
     });
   }, [
-    spaceId, channelId, effectiveMembers, members, roles, stickers, space?.emojis,
+    spaceId, channelId, effectiveMembers, members, mentionUsers, roles, stickers, space?.emojis,
     mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
     channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
     space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
@@ -1660,7 +1675,7 @@ const Channel: React.FC<ChannelProps> = ({
                 hasNextPage={hasNextPage}
                 spaceName={space?.spaceName}
                 onRetryMessage={handleRetryMessage}
-                users={Object.values(members)}
+                users={mentionUsers}
                 mentionRoles={roles?.filter(role => role.isPublic !== false)}
                 groups={spaceGroups}
                 canUseEveryone={canUseEveryone}
@@ -1671,7 +1686,17 @@ const Channel: React.FC<ChannelProps> = ({
             <div className="message-editor-container" ref={composerContainerRef}>
               <TypingIndicator
                 scope={typingScope}
-                resolveName={(addr) => mapSenderToUser(addr).displayName}
+                resolveName={(addr) => {
+                  const u = mapSenderToUser(addr) as NameResolvableUser | undefined;
+                  return formatResolvedName(
+                    resolveSpaceMemberName({
+                      address: u?.address ?? addr,
+                      displayName: u?.displayName,
+                      primaryUsername: u?.primaryUsername,
+                      globalDisplayName: u?.globalDisplayName,
+                    }),
+                  );
+                }}
               />
               <MessageComposer
                 canUseEveryone={canUseEveryone}
@@ -1692,7 +1717,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onSubmitMessage={composer.submitMessage}
                 onShowStickers={handleShowEmojiPanel}
                 inReplyTo={composer.inReplyTo}
-                users={Object.values(members)}
+                users={mentionUsers}
                 roles={roles?.filter(role => role.isPublic !== false)}
                 groups={spaceGroups}
                 fileError={composer.fileError}
@@ -1789,9 +1814,18 @@ const Channel: React.FC<ChannelProps> = ({
                             className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
                           />
                           <div className="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
-                            <span className="text-md font-bold truncate-user-name">
-                              {item.displayName ?? item.address}
-                            </span>
+                            <ResolvedName
+                              resolved={resolveSpaceMemberName({
+                                address: item.address,
+                                displayName: item.displayName,
+                                // QNS/global names merged from the sender map
+                                // (no roster-wide fetch); non-posters lack .q
+                                // until they post or their profile is opened.
+                                primaryUsername: effectiveMembers[item.address]?.primaryUsername,
+                                globalDisplayName: effectiveMembers[item.address]?.globalDisplayName,
+                              })}
+                              className="text-md font-bold truncate-user-name"
+                            />
                             {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
                               <Icon
                                 name="seedling"
@@ -2018,9 +2052,15 @@ const Channel: React.FC<ChannelProps> = ({
                     className="opacity-80 flex-shrink-0"
                   />
                   <div className="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1">
-                    <span className="text-md font-bold truncate-user-name">
-                      {item.displayName ?? item.address}
-                    </span>
+                    <ResolvedName
+                      resolved={resolveSpaceMemberName({
+                        address: item.address,
+                        displayName: item.displayName,
+                        primaryUsername: effectiveMembers[item.address]?.primaryUsername,
+                        globalDisplayName: effectiveMembers[item.address]?.globalDisplayName,
+                      })}
+                      className="text-md font-bold truncate-user-name"
+                    />
                     {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
                       <Icon
                         name="seedling"

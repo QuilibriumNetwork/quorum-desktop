@@ -35,6 +35,12 @@ import { i18n } from '@lingui/core';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { useMobile } from '../context/MobileProvider';
 import { UserAvatar } from '../user/UserAvatar';
+import { ResolvedName } from '../user/ResolvedName';
+import {
+  resolveMemberName,
+  resolveSpaceMemberName,
+  formatResolvedName,
+} from '../../utils/resolveMemberName';
 import {
   useMessageActions,
   useEmojiPicker,
@@ -344,6 +350,34 @@ export const Message = React.memo(
     );
 
     const sender = mapSenderToUser(message.content?.senderId);
+
+    // Space messages use the override-aware resolver; DMs (spaceId===channelId)
+    // let the QNS name win over the plain displayName.
+    const isDmMessage = message.spaceId === message.channelId;
+    const resolveSenderName = useCallback(
+      (u: {
+        displayName?: string | null;
+        primaryUsername?: string | null;
+        globalDisplayName?: string | null;
+        address?: string;
+        userAddress?: string;
+      }) =>
+        isDmMessage
+          ? resolveMemberName({
+              address: u.address ?? u.userAddress ?? '',
+              displayName: u.displayName,
+              primaryUsername: u.primaryUsername,
+            })
+          : resolveSpaceMemberName({
+              address: u.address ?? u.userAddress ?? '',
+              displayName: u.displayName,
+              primaryUsername: u.primaryUsername,
+              globalDisplayName: u.globalDisplayName,
+            }),
+      [isDmMessage],
+    );
+    const resolvedSender = resolveSenderName({ ...sender, address: sender?.address ?? message.content?.senderId });
+
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
     const isNewMember = sender?.joinedAt != null &&
       Date.now() - sender.joinedAt < SEVEN_DAYS_MS &&
@@ -558,9 +592,15 @@ export const Message = React.memo(
                     size={32}
                     className="message-reply-sender-icon flex-shrink-0"
                   />
-                  <span className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat">
-                    {mapSenderToUser(reply.content.senderId).displayName}
-                  </span>
+                  <ResolvedName
+                    resolved={resolveSenderName({
+                      ...mapSenderToUser(reply.content.senderId),
+                      address:
+                        mapSenderToUser(reply.content.senderId)?.address ??
+                        reply.content.senderId,
+                    })}
+                    className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat"
+                  />
                   <span className="message-reply-text flex-1 min-w-0">
                     {replyTextWithNames}
                   </span>
@@ -586,7 +626,7 @@ export const Message = React.memo(
             <span
               className={`flex items-center min-w-0 flex-1 ${message.content.type === 'kick' ? 'text-danger' : 'text-subtle'}`}
             >
-              {formatEventMessage(sender.displayName, message.content.type)}
+              {formatEventMessage(formatResolvedName(resolvedSender), message.content.type)}
             </span>
           </Flex>
         )}
@@ -755,16 +795,17 @@ export const Message = React.memo(
                 <>
                   {/* Desktop layout: horizontal row with username and timestamp */}
                   <Flex align="center" className="items-center min-w-0 hidden xs:flex">
-                    <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
-                      {sender.displayName}
-                    </span>
+                    <ResolvedName
+                      resolved={resolvedSender}
+                      className="message-sender-name truncate-user-name-chat flex-shrink min-w-0"
+                    />
                     {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" className="ml-1.5" />}
                     {message.isPinned && (
                       <Tooltip
                         id={`pin-indicator-${message.messageId}`}
                         content={
                           message.pinnedBy
-                            ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                            ? t`Pinned by ${formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))}`
                             : t`Pinned`
                         }
                         showOnTouch={true}
@@ -849,16 +890,17 @@ export const Message = React.memo(
 
                     {/* Username row on mobile */}
                     <Flex align="center" className="items-center min-w-0">
-                      <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
-                        {sender.displayName}
-                      </span>
+                      <ResolvedName
+                        resolved={resolvedSender}
+                        className="message-sender-name truncate-user-name-chat flex-shrink min-w-0"
+                      />
                       {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" className="ml-1.5" />}
                       {message.isPinned && (
                         <Tooltip
                           id={`pin-indicator-mobile-${message.messageId}`}
                           content={
                             message.pinnedBy
-                              ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                              ? t`Pinned by ${formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))}`
                               : t`Pinned`
                           }
                           showOnTouch={true}
