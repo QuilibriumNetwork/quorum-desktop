@@ -319,6 +319,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Quorum Shared Migration
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
 - [Mobile tasks pending](tasks/quorum-shared-migration/mobile-tasks-pending.md)
+- [Promote icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
 - [Quorum-shared migration — roadmap](tasks/quorum-shared-migration/roadmap.md)
 - [Quorum-shared migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
