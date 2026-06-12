@@ -1,9 +1,9 @@
 ---
 type: task
 title: Fix joinInviteLink — handle new server response shape + use eval's ephemeral key
-status: in-progress
+status: done
 created: 2026-06-08
-updated: 2026-06-08
+updated: 2026-06-12
 branch: session-2026-06-08-3 (rename to feat/fix-join-invite-link on commit)
 ---
 
@@ -130,4 +130,12 @@ Cross-cutting:
 
 ---
 
-*Last updated: 2026-06-08*
+## Resolution (2026-06-12)
+
+Done and merged to `main`. Both bugs fixed as planned:
+- `baseTypes.ts` `getSpaceInviteEval` normalizes both response shapes into `{ciphertext, ephemeralPublicKey}` (`baseTypes.ts:630`).
+- `joinInviteLink` consumes the normalized shape, prefers the eval's ephemeral key with manifest fallback (`InvitationService.ts:595`), parses `ciphertext` once (`:604`), throws a friendly "no longer valid" error on missing eval (`:580`).
+- Merged via PR #183 (code) and PR #184 (docs + bug closeout).
+- Both bug reports moved to `.agents/bugs/.solved/`: `2025-08-03-joinspacemodal-invalid-json-network-error.md`, `2025-09-22-public-invite-link-intermittent-expiration.md`.
+
+*Last updated: 2026-06-12*

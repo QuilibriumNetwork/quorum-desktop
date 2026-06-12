@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Space message list: missing name/avatar (public-profile fallback not applied)"
-status: planned
+status: done
 created: 2026-06-10
 related_docs:
   - ".agents/docs/debugging/dm-architecture-and-debug-playbook.md"
@@ -164,6 +164,9 @@ Implemented (render-only) on branch `fix/profile-identity-fallback-dm-and-spaces
 - `UserAvatar` falls back to initials on empty/broken image (commit `1dd64b84`).
 - Verified by user: names show in space messages + member sidebar; users with no
   usable picture show initials; previously-blank avatars now show initials.
+- Merged to `main` via PR #191 (`fix: profile identity fallback (DM + spaces)`,
+  squash commit `29630104`). Confirmed present in code:
+  `MessageList.tsx:322` (`mapSenderToUserProp ?? mapSenderToUserInternal`).
 
 ---
-*Last updated: 2026-06-10*
+*Last updated: 2026-06-12*
