@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Promote + expand the icon-picker vocabulary (icon set + colors + filled-variant) to quorum-shared"
-status: open
+status: in-progress
 created: 2026-06-12
 runtime-test: not-required (data move; visual smoke on both apps)
 priority: medium (unblocks mobile channel/group icon parity — port-to-mobile rows 31/32)
@@ -83,5 +83,18 @@ A bigger `ICON_OPTIONS` will overflow the current desktop picker (it's sized for
 - **Tiers help:** keep `ICON_OPTIONS` tiered/sectioned (it already is) so the scrollable list has visual grouping rather than one flat wall of icons.
 
 Decide scroll-only vs scroll+search based on the final list size — scroll-only is fine up to ~60-80; add search beyond that.
+
+## Implementation status (2026-06-12)
+
+In progress on branch `promote-icon-picker-vocabulary-to-shared`. Full sequencing + the pending import-swap are in [2026-06-12-icon-picker-PR-notes.md](2026-06-12-icon-picker-PR-notes.md). Summary of resolved decisions:
+
+- **Icon set: 49 → 92.** 43 added from the already-renderable set (Layer A; zero mapping work, no Layer-B icons needed). User-curated via the browsable preview; `trash` + `close` dropped (UI-action confusion). `FILLED_ICONS` 33 → 61 (every added entry's `…Filled` variant verified to exist in Tabler).
+- **Layout: sticky header + scroll grid + search.** Header (variant toggle + colors + search box) pinned; only the grid scrolls. Width/columns unchanged (320px / 8-col). Search filters by name/category; empty-state included. Category menu rejected as overkill at 92.
+- **Color storage: named enum** (confirmed recommendation). Mobile converges to named, resolves via shared `getIconColorHex`. Tracked in [mobile-tasks-pending.md](mobile-tasks-pending.md) row 7.3.
+- **Shared side prepped:** `quorum-shared/src/primitives/Icon/pickerVocabulary.ts` + barrel re-exports written and typecheck-clean. User drives the shared PR + version bump.
+- **Desktop:** import-swap **DONE** — shared PR [#39](https://github.com/QuilibriumNetwork/quorum-shared/pull/39) merged, shared `dist/` rebuilt, desktop `types.ts` now re-exports the vocabulary from `@quilibrium/quorum-shared` (keeps `IconPickerProps` local). tsc + lint clean. Web picker layout/search done.
+- **`.native.tsx` left unchanged** — dead in desktop (`index.ts` hardcodes `.web`; not in the tsc program; no react-native dep). Native parity is the mobile task's job.
+
+**Checklist status:** shared vocab exported + merged (#39) ✓ · desktop import-swap done (re-exports from shared) ✓ · desktop tsc + lint clean ✓ · expanded picker renders (data validated; layout preview generated) ✓ · picker layout holds (sticky header + scroll + search) ✓ · mobile-tasks-pending row present (7.3, updated for 92 + named-enum) ✓. Remaining: live in-app visual smoke; mobile consumption (row 7.3).
 
 *Last updated: 2026-06-12*
