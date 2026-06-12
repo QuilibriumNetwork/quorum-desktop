@@ -124,6 +124,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action queue errors silently swallowed across all config-writing hooks](bugs/2026-06-07-action-queue-errors-swallowed.md)
 - [Per-space mention-type filter doesn't sync across devices](bugs/2026-06-07-mention-type-filter-not-synced.md)
 - [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/2026-06-07-space-profile-save-missing-inbox.md)
+- [@everyone owner-bypass propagates (send-side-only enforcement) — spans shared/desktop/mobile](bugs/2026-06-12-everyone-mention-owner-bypass-send-side-only.md) 🔴 cross-repo; extends #111
+- [Read-only channel receive-side enforcement incomplete (sticker/embed bypass; cache-only for posts)](bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md) 🟡 receive-side gaps
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
