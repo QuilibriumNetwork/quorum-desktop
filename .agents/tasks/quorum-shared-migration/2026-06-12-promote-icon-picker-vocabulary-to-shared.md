@@ -1,6 +1,6 @@
 ---
 type: task
-title: "Promote the icon-picker vocabulary (icon set + colors + filled-variant) to quorum-shared"
+title: "Promote + expand the icon-picker vocabulary (icon set + colors + filled-variant) to quorum-shared"
 status: open
 created: 2026-06-12
 runtime-test: not-required (data move; visual smoke on both apps)
@@ -32,6 +32,24 @@ Move the **data + pure helpers** (the bulleted items above) from `quorum-desktop
 
 **Pure-data move = low risk.** `ICON_OPTIONS`/`ICON_COLORS`/`FILLED_ICONS` are constant arrays/sets; the helpers are pure functions. No platform APIs involved.
 
+## Expand the icon set (do while moving it — user request 2026-06-12)
+
+Since `ICON_OPTIONS` is being lifted into shared anyway, expand it in the same PR (one review of the new list). There are **three layers** — keep them distinct:
+
+| Layer | Count today | What it is |
+|---|---|---|
+| Tabler library (`@tabler/icons-react`) | ~5,900 | The universe of available icons |
+| Shared `IconName` whitelist + `iconComponentMap` (`quorum-shared/src/primitives/Icon/`) | **232** | Names the shared `Icon` primitive can actually render |
+| `ICON_OPTIONS` (the picker's curated list) | **49** | What the channel/group picker offers users |
+
+**Layer A — grow the picker from the already-renderable set (cheap, primary).** 183 of the 232 whitelisted names are NOT yet in the picker, so they can be added with **zero mapping work** — pure data. BUT ~half of those 183 are **UI-chrome** icons (`arrow-*`, `chevron-*`, `check`, `circle`, `2xl`/`3xl`, `at`, `bold`, etc.) that exist for the app interface, not as decorative channel/group icons. **The work is curation, not counting:** pick the thematic/decorative ones a user would actually want next to a channel name (more shapes, objects, symbols, categories), tier them sensibly in `ICON_OPTIONS`, and add any with a Tabler filled variant to `FILLED_ICONS`. Run `git diff` on `IconName` vs `ICON_OPTIONS` to see the candidate pool (the 183).
+
+**Layer B — add genuinely new icons to the map (targeted, as needed).** When a desired icon isn't in the 232-name whitelist yet (the user notes we've done this before), add it: a member to the `IconName` union (`types.ts`) + an entry to `iconComponentMap` (`iconMapping.ts`, mapping the semantic name → the `IconXxx` Tabler component) + the picker entry + (if it has one) `FILLED_ICONS`. Verify the Tabler component name exists in `@tabler/icons-react` (and that both the outline `IconXxx` and filled `IconXxxFilled` exist if you want the variant). This grows the bundle slightly per icon (tree-shaken to what's mapped), so add deliberately, not wholesale.
+
+**Do NOT** open the whitelist to arbitrary runtime Tabler names — that was considered and rejected (loses type-safety, complicates `.native`/bundle). Keep `IconName` a closed, curated union.
+
+**Sequencing within this task:** (1) move the vocabulary to shared as-is (the low-risk part); (2) in the same PR or a tight follow-up, expand `ICON_OPTIONS` (Layer A curation) and add any new Layer-B icons the team wants. Get a quick sign-off on the proposed expanded list before finalizing — it's a product/design choice which decorative icons ship.
+
 ## The color-storage decision (resolve before mobile consumes)
 
 Desktop stores `iconColor` as a **named enum** (`'blue'`); mobile stores **raw hex** (`'#3b82f6'`). They must converge or cross-device icon colors mismatch. **Recommended: named enum** (desktop's format) — it's theme-aware (`getIconColorHex` resolves to the right hex per theme) and already what the shared `Channel`/`Group` types carry from desktop writes. Mobile should migrate its picker to write named values and resolve to hex at render time via the shared `getIconColorHex`. Confirm with lead (it's a stored-data format question; existing desktop-written values are already named, so aligning mobile to named is also the lower-migration path).
@@ -50,8 +68,20 @@ Mobile task `2026-06-09-migrate-iconsymbol-to-shared-icon-primitive.md` Phase 2b
 ## Verification
 
 - [ ] quorum-shared: vocabulary + helpers exported from root; `yarn build` + tests clean.
-- [ ] quorum-desktop: `IconPicker` imports from shared; tsc + lint clean; picker renders 49 icons, outline/filled toggle, 8 colors (visual smoke).
-- [ ] No behavior change on desktop (same icons, same colors, same variant toggle).
+- [ ] quorum-desktop: `IconPicker` imports from shared; tsc + lint clean; picker renders the (expanded) icon set, outline/filled toggle, 8 colors (visual smoke).
+- [ ] No regression on desktop (existing icons/colors/variant still work); the expanded list renders.
+- [ ] **Picker layout holds with the larger set** — see "Picker layout" below: scroll container in place, picker doesn't overflow the viewport on web at common widths/heights, mobile picker scrolls cleanly.
 - [ ] `mobile-tasks-pending.md` row added for the mobile consumption leg.
+
+## Picker layout with the expanded set (user note 2026-06-12)
+
+A bigger `ICON_OPTIONS` will overflow the current desktop picker (it's sized for ~49 in a grid). Address in the same desktop PR that expands the list:
+
+- **Primary: cap the grid height + scroll.** Give the icon grid in `IconPicker.web.tsx` (`IconPicker.scss`) a `max-height` + `overflow-y: auto` (a `ScrollContainer`, which the project already uses — the `.native.tsx` picker already imports `ScrollContainer`). The grid stays a fixed footprint regardless of icon count; users scroll. Lowest-risk, scales to any size.
+- **Consider alongside:** a wider/repositioned popover so more icons fit per row before scrolling (the picker is a popover/dropdown — check it doesn't clip off-screen at the edges; the project uses floating-ui elsewhere for edge-aware positioning), and/or **search/filter** within the picker if the set gets large enough that scrolling alone is tedious (a small text filter over icon names — high value once the list is, say, 80+).
+- **Mobile:** `IconPicker.native.tsx` already wraps in `ScrollContainer`, so it largely handles growth — just verify the sheet height + scroll behavior with the bigger set.
+- **Tiers help:** keep `ICON_OPTIONS` tiered/sectioned (it already is) so the scrollable list has visual grouping rather than one flat wall of icons.
+
+Decide scroll-only vs scroll+search based on the final list size — scroll-only is fine up to ~60-80; add search beyond that.
 
 *Last updated: 2026-06-12*
