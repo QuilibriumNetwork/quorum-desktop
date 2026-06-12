@@ -4,20 +4,22 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
-- [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
-- [Component Management & Development Guide](docs/component-management-guide.md)
+- [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md) — multi-repo banner added (philosophy current; `.native.tsx` go in quorum-mobile)
+- [Component Management & Development Guide](docs/component-management-guide.md) — multi-repo banner added
 - [Config Sync System](docs/config-sync-system.md)
-- [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
+- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md) — ⚠️ deprecated (in-repo `mobile/` playground; use quorum-mobile)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
-- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
+- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md) — canonical current architecture
 - [Styling Guidelines](docs/styling-guidelines.md)
 
+#### Archived docs (`.archived/`)
+- [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md) — ⚰️ ABANDONED single-repo build plan; kept as history only
+
 ### Development
-- [Android Build Workflow](docs/development/android-build-workflow.md)
+- [Android Build Workflow](docs/development/android-build-workflow.md) — ⚠️ deprecated (in-repo `mobile/` playground; use quorum-mobile)
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 
 ### Features

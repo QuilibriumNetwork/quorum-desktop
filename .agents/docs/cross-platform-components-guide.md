@@ -8,9 +8,11 @@ updated: 2026-02-10T00:00:00.000Z
 
 # Complete Guide: Cross-Platform React Components for Web + Native
 
+> **🏛️ Architecture status (2026-06-12 — multi-repo).** This repo (`quorum-desktop`) builds **web + Electron only**. The mobile app lives in a **separate repo, `quorum-mobile`**; shared types/hooks/sync/primitives live in the **`quorum-shared`** npm package. So when this guide shows a `.native.tsx` file: that file belongs in **`quorum-mobile`** (or, for a primitive, in `quorum-shared`), **NOT** in `quorum-desktop/src/`. Likewise the old `yarn mobile` / `mobile/` test-playground references below are dead — native testing happens in `quorum-mobile`. The component-architecture *philosophy* (primitives vs business logic, the decision framework, logic extraction) remains correct; only the "all in one repo" framing is stale. Canonical doc: [`quorum-shared-architecture.md`](quorum-shared-architecture.md).
+
 **Auto-reviewed and corrected against .agents/docs/component-management-guide.md - still needs human review : _Last review: 2026-02-10 UTC_**
 
-This guide provides architectural patterns and practical examples specific to this Quilibrium desktop/mobile app. All examples use our actual primitives, utilities, and file structure.
+This guide provides architectural patterns and practical examples for the Quilibrium apps. All examples use our actual primitives, utilities, and file structure.
 
 ## Table of Contents
 
@@ -37,7 +39,7 @@ Building cross-platform React applications for both web and React Native require
 
 **📊 Code Sharing Reality**: We achieve ~90% code sharing by extracting business logic to hooks in `src/hooks/` and using shared primitives for UI consistency.
 
-**🏗️ Architecture Philosophy**: Three platform targets (web, desktop Electron, mobile React Native) share the same component architecture and business logic while adapting UI automatically through primitives.
+**🏗️ Architecture Philosophy**: Two apps (`quorum-desktop` = web + Electron; `quorum-mobile` = React Native) share the same component architecture and business logic via the `quorum-shared` package, adapting UI automatically through primitives. (Historically this was framed as "three targets in one repo" — that single-repo model was abandoned; the *philosophy* is unchanged, the apps are now separate repos.)
 
 > **⚠️ Web vs Native Text Handling**
 >
@@ -859,10 +861,7 @@ export class ChannelErrorBoundary extends React.Component {
 
 **Mobile Testing (When Needed):**
 
-1. Run `yarn mobile` to start mobile test playground
-2. Use Expo Go app to test on real device
-3. Navigate through test screens to verify mobile behavior
-4. Test touch interactions and native platform integration
+> Native testing happens in the **`quorum-mobile`** repo, not here. `quorum-desktop` no longer has a `mobile/` workspace or a `yarn mobile` script (that was the abandoned single-repo playground). To test native behavior of shared code (a primitive or hook in `quorum-shared`), run it through `quorum-mobile`'s own dev environment (Expo).
 
 ### 1. Testing Pure Business Functions
 
