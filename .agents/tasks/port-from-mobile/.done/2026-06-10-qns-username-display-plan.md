@@ -1,5 +1,8 @@
 # QNS Usernames on Desktop — Implementation Plan
 
+> **STATUS (moved to .done 2026-06-12) — stages 1-3 SHIPPED (PR #190), desktop COMPLETE.**
+> This plan covered the shared resolver + DM search + Model-A profile `.q` + `.q`-suffix validation. The Model-A→B conversion + Stage 4 mentions moved to a follow-up plan, also shipped: [2026-06-11-qns-username-overrides-display-name-plan.md](2026-06-11-qns-username-overrides-display-name-plan.md) (PR #195). **All desktop work is merged.** Live `.q` is dormant pending two **mobile** bugs (publishing `primary_username`) — tracked in `quorum-mobile/.agents/bugs/`, not desktop. Privacy call (broadcast vs public-profile-only) pending lead dev, non-blocking — see `project_qns_username_broadcast_pending` in memory.
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Let desktop users be found/DMed by their QNS `@username`, see verified QNS names (`name.q`) in profiles and mentions, and prevent custom names from spoofing the `.q` trust marker — all without changing any `quorum-mobile` behavior.

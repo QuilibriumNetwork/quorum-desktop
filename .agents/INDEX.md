@@ -297,7 +297,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Port From Mobile
 - [Cross-app feature diff (port-from-mobile) — Master Tracker](tasks/port-from-mobile/README.md)
-- [Desktop-better-than-mobile inventory](tasks/port-from-mobile/desktop-better-than-mobile.md)
 - [Mobile features not on desktop — candidate list](tasks/port-from-mobile/candidates.md)
 - [Port-from-mobile shipped log](tasks/port-from-mobile/shipped-log.md)
 - [Workflow for porting features from mobile to desktop](tasks/port-from-mobile/workflow.md)
@@ -306,6 +305,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unified `/spaces` Page (PR 1 of 2) — Implementation Plan](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-plan.md)
 - [Unified `/spaces` page — PR 2 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-pr2.md)
 - [Unified `/spaces` page — PR 1 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces.md)
+- [QNS usernames on desktop — design](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-design.md)
+- [QNS Usernames on Desktop — Implementation Plan (stages 1-3)](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-plan.md)
+- [QNS username overrides display name everywhere + mentions](tasks/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md)
+
+### Port To Mobile
+- [Port-to-mobile — Master Tracker](tasks/port-to-mobile/README.md)
+- [Port-to-mobile candidates (feature-ports + convergence)](tasks/port-to-mobile/candidates.md)
 
 ### Quorum Shared Migration
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)

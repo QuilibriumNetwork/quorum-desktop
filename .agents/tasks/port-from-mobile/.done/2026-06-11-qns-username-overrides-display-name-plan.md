@@ -1,12 +1,16 @@
 ---
 type: task
 title: "QNS username overrides display name everywhere (Model B) + mentions"
-status: ready
+status: done
 created: 2026-06-11
+completed: 2026-06-11
 branch: feat/qns-username-overrides-display-name
 supersedes-progress-in: 2026-06-10-qns-username-display-plan.md (the "Model A vs B" block)
 related-design: 2026-06-10-qns-username-display-design.md
 ---
+
+> **STATUS (moved to .done 2026-06-12) — SHIPPED in PR #195, desktop COMPLETE.**
+> Model A→B override across all name-render surfaces + Stage 4 mentions. Merged to `main` (commit `612b70a5`). Search results + bookmarks card deliberately deferred (logged in §3, different data source, low value). **All desktop display logic is done and verified** (tsc/build/lint green, 10/10 unit tests, render confirmed by temp-injection). Live `.q` stays dormant until **mobile** publishes `primary_username` — two mobile bugs in `quorum-mobile/.agents/bugs/`, NOT desktop work. Privacy call (broadcast vs public-profile-only) pending lead dev, non-blocking — `project_qns_username_broadcast_pending` in memory.
 
 # QNS username overrides display name everywhere + mentions by QNS name
 

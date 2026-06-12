@@ -1,52 +1,66 @@
 ---
 type: inventory
-title: Capabilities where desktop's implementation is better than mobile's
+title: "Port to Mobile — candidates (features + convergence)"
 status: living
-created: 2026-06-01
-updated: 2026-06-07
+created: 2026-06-12
+updated: 2026-06-12
 ---
 
-# Desktop-better-than-mobile inventory
+# Port-to-mobile candidates
 
-This folder is conceptually a two-way feature diff between `quorum-desktop` and `quorum-mobile`. The sibling [candidates.md](candidates.md) tracks features mobile has and desktop is missing. **This file tracks the inverse**: capabilities where both apps have the feature, but desktop's implementation is materially better and could inform a future mobile rewrite.
+> The inverse of [port-from-mobile/candidates.md](../port-from-mobile/candidates.md). This is the running list of **desktop → mobile** work: things mobile should get from desktop, not yet turned into a task.
 
-## Why this exists
+> **What we do NOT do here.** We do **not** push code to `quorum-mobile`. Mobile is read-only context for this effort (same rule as [port-from-mobile/workflow.md](../port-from-mobile/workflow.md)). This doc is a curated reference for the lead dev + future sessions. When a candidate becomes a concrete dropped task, it graduates into the unified tracker → [quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) (see [Lifecycle](#lifecycle) below).
 
-Several rounds of "is this missing on desktop?" verification surfaced that the same *capability* often exists on both sides under different names and different architectures. When desktop's version is meaningfully better — better design, more correct, more maintainable, respects more user settings — that's not a dead end; it's a candidate for a future port-to-mobile effort. Recording it here gives the lead dev (and future sessions) a curated list of "things mobile could converge toward when there's bandwidth", separate from the active shared-package migration work.
+## The two kinds of candidate (the `Type` column)
 
-## Scope boundary vs. shared-migration's `mobile-tasks-pending.md`
+This doc deliberately merges what used to be two separate files (the old `desktop-better-than-mobile.md` was folded in here on 2026-06-12). The distinction is now a **column, not a file**:
 
-Two adjacent docs, different abstractions:
-
-| Doc | What it tracks | Shape |
+| Type | Meaning | Example |
 |---|---|---|
-| [quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) | Shared has new exports; mobile needs to adopt them. Concrete swap tasks. | Bounded, task-shaped, often a small import-swap PR. |
-| **This file** | Desktop's *implementation of a capability* is materially better than mobile's. Mobile could converge architecturally. | Broader, capability-shaped. May require new infrastructure on mobile (storage layer, type system, etc.) before any swap is possible. |
+| **feature-port** | Mobile lacks the capability entirely. A true port. | Desktop has X; mobile has nothing equivalent. |
+| **convergence** | Both apps have the capability, but desktop's implementation is materially better (more correct, more maintainable, respects more settings). Mobile could converge architecturally. | Both have reply counts; desktop's is derived-from-store, mobile's is a drift-prone cache. |
 
-If a "desktop-better" finding eventually becomes a concrete shared-promotion task (e.g. desktop's helper goes to shared, then mobile swaps), that's the point where it graduates into a `mobile-tasks-pending.md` row in the shared-migration folder. Until then it lives here as an architectural observation.
+The line between them matters for **cost**: a `feature-port` is net-new mobile code; a `convergence` often needs mobile to *replace* working infrastructure (storage layer, type system), so it usually carries a lead-dev architecture call.
 
-## What we do NOT do from this list
+## Lifecycle
 
-- We do NOT push code to `quorum-mobile`. Mobile remains read-only for this effort (same rule as in [workflow.md](workflow.md)).
-- We do NOT open mobile PRs based on this inventory. It's a reference doc for the lead dev, not an action list for us.
-- We do NOT block on these findings. Desktop-side work proceeds based on [candidates.md](candidates.md).
+```
+candidate (here)  →  concrete task dropped on mobile  →  row in mobile-tasks-pending.md  →  mobile PR  →  done
+   feature-port /         (mobile task file +              (the unified tracker;
+   convergence            desktop-side bookkeeping)         Category = feature-port / convergence /
+   observation                                              shared-migration)
+```
+
+A candidate lives here as an **observation**. The moment it becomes a concrete, scoped task we've handed to the mobile side, it gets a row in the [unified tracker](../quorum-shared-migration/mobile-tasks-pending.md) with `Category` matching its `Type` here. The two docs use the same vocabulary on purpose.
+
+## Status board
+
+Legend: 📋 noted (observation only) · 🟢 ready to scope · 🚧 task dropped (now tracked) · ⏸️ deprioritized · ❌ won't port
+
+| # | Capability | Type | Cost | Shared involvement | Status |
+|---|---|---|---|---|---|
+| 1 | Reply notification counts (derived, settings-aware, thread-aware) | convergence | HIGH | none short-term | 📋 noted (2026-06-01) |
+| 2 | Per-space notification preferences (event-type granularity + cross-device sync + reinstall-survival) | convergence | HIGH | additive (types exist) | 📋 noted (2026-06-07) |
+
+*(feature-port candidates go here as they're identified — e.g. desktop-only features mobile lacks. None catalogued yet; add rows as the desktop→mobile diff surfaces them.)*
 
 ## Format for each entry
 
 ```
-### N. <Capability name>
+### N. <Capability name>  — [feature-port | convergence]
 
-**Mobile:** `path/to/mobile/file.ts` — one-line summary of mobile's approach
+**Mobile:** `path/to/mobile/file.ts` — one-line summary of mobile's approach (or "absent" for feature-port)
 **Desktop:** `path/to/desktop/file.ts` — one-line summary of desktop's approach
-**Why desktop is better:** the concrete reasons
-**Mobile-port cost:** low / medium / high — what mobile would need to change to converge
+**Why desktop is better / why mobile needs it:** the concrete reasons
+**Mobile cost:** low / medium / high — what mobile would need to change
 **Shared-package involvement:** none / additive / would need new exports
-**Status:** noted / shared-promotion-queued / mobile-PR-opened
+**Status:** noted / task-dropped (→ tracker row) / deprioritized
 ```
 
 ---
 
-## 1. Reply notification counts
+## 1. Reply notification counts — convergence
 
 **Mobile:** [`quorum-mobile/hooks/chat/useReplyTracking.ts`](../../../../quorum-mobile/hooks/chat/useReplyTracking.ts) — MMKV-backed counter. WebSocket handler calls `incrementReplyCount` on every incoming reply where `replyMetadata.parentAuthor === currentUser`. A separate "active channel" module-level singleton suppresses bumps while the user is viewing the channel; `clearReplyCount` is called on entry.
 
@@ -59,7 +73,7 @@ If a "desktop-better" finding eventually becomes a concrete shared-promotion tas
 4. **No active-channel side-channel.** Desktop doesn't need mobile's module-level `activeChannelKey` singleton + `setActiveChannel`/`clearActiveChannel` API surface; "did the user read this" is a property of the canonical store, not an ephemeral RAM flag.
 5. **Bounded display.** Desktop caps at `DISPLAY_THRESHOLD = 10` ("9+" in UI); mobile counts unboundedly.
 
-**Mobile-port cost:** **HIGH.** Desktop's implementation assumes a persisted message store with `lastReadTimestamp` per conversation + per-thread read times. Mobile's storage layer (MMKV + `messagesDb.ts`) would need to gain equivalent indexes / queries. The mobile choice to skip a heavier IndexedDB-style store was likely deliberate for mobile constraints (cold boot, app suspension) — convergence requires reconsidering that.
+**Mobile cost:** **HIGH.** Desktop's implementation assumes a persisted message store with `lastReadTimestamp` per conversation + per-thread read times. Mobile's storage layer (MMKV + `messagesDb.ts`) would need to gain equivalent indexes / queries. The mobile choice to skip a heavier IndexedDB-style store was likely deliberate for mobile constraints (cold boot, app suspension) — convergence requires reconsidering that.
 
 **Shared-package involvement:** none in the short term. Desktop's hook is tightly coupled to its `MessageDB` interface (which is desktop-specific). If a shared `StorageAdapter` ever grows the methods desktop's hook calls (`getUnreadReplies`, `getThreadReadTimesForChannel`, `getConversation` with `lastReadTimestamp`), then the *logic* of the hook could become shareable — but that's downstream of substantial shared-storage work.
 
@@ -76,7 +90,7 @@ If a "desktop-better" finding eventually becomes a concrete shared-promotion tas
 
 ---
 
-## 2. Per-space notification preferences — model richness, sync, and gating fidelity
+## 2. Per-space notification preferences — model richness, sync, and gating fidelity — convergence
 
 **Mobile:** [`quorum-mobile/services/notifications/notificationPrefs.ts`](../../../../quorum-mobile/services/notifications/notificationPrefs.ts) — three-level boolean tree in MMKV (`global:enabled`, `space:<id>`, `channel:<spaceId>:<channelId>`), AND-resolved by `shouldNotifyForContext()`. Local-only, mirrored to iOS App Group for the NSE to read. No event-type granularity.
 
@@ -93,7 +107,7 @@ If a "desktop-better" finding eventually becomes a concrete shared-promotion tas
 - Mobile's NSE-level (Swift) suppression means muted-channel pushes don't even reach the OS notification center on iOS — a privacy + battery win. Desktop's suppression happens in JS only.
 - Mobile's simpler model is easier for casual users; the desktop event-type multi-select is denser UI. Convergence has to keep the master toggle prominent and the type filter as progressive disclosure.
 
-**Mobile-port cost:** **HIGH.**
+**Mobile cost:** **HIGH.**
 - Mobile would need to write to `UserConfig.notificationSettings` (synced config), replacing or supplementing the MMKV store.
 - The iOS NSE currently reads MMKV via App Group mirror. Switching to `UserConfig` means either (a) the NSE reads the encrypted config (heavy; the NSE process needs key access), or (b) the synced settings get mirrored back into the same MMKV store that the NSE already reads. Option (b) is the realistic path: `UserConfig` is the source of truth and writes propagate to MMKV for the NSE.
 - New mobile UI to expose the event-type filter (currently doesn't exist as a control on mobile).
@@ -119,6 +133,4 @@ If a "desktop-better" finding eventually becomes a concrete shared-promotion tas
 
 ---
 
-*Last updated: 2026-06-07 — added entry #2: per-space notification preferences (richness + sync + gating fidelity).*
-
-*Previously: 2026-06-01 — file created; first entry: reply notification counts.*
+*Last updated: 2026-06-12 — file created. Folded in the two entries from the former `port-from-mobile/desktop-better-than-mobile.md` (reply notification counts; per-space notification preferences) as `convergence`-type candidates, and reframed the doc to also hold `feature-port` candidates via a `Type` column. The standalone `desktop-better-than-mobile.md` was retired in the same change — its distinction is now a column here, not a separate file.*
