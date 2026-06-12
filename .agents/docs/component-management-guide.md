@@ -8,6 +8,8 @@ updated: 2025-08-14T00:00:00.000Z
 
 # Component Management & Development Guide
 
+> **🏛️ Architecture status (2026-06-12 — multi-repo).** `quorum-desktop` builds **web + Electron only**. The mobile app is a **separate repo (`quorum-mobile`)**; shared primitives/types/hooks/sync live in the **`quorum-shared`** npm package. `quorum-desktop`'s `src/components/primitives/` is now just a **local barrel re-exporting from `quorum-shared`** (it is not the source of truth). There is **no `mobile/` workspace and no `yarn mobile` script** in this repo anymore (that was the abandoned single-repo playground). The component-management *principles* below are correct; treat any "builds three apps / mobile in this repo / yarn mobile" wording as historical. Canonical doc: [`quorum-shared-architecture.md`](quorum-shared-architecture.md).
+
 **READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
 
 This guide helps developers manage existing components and create new ones in our cross-platform architecture.
@@ -16,16 +18,16 @@ This guide helps developers manage existing components and create new ones in ou
 
 ### The Golden Rule
 
-**This is a shared codebase that builds three separate apps: web (browser), desktop (Electron), and mobile (React Native).** We maximize code reuse by sharing business logic, components, and primitives between all platforms. Every component decision must consider all build targets.
+**Two apps share one component architecture via `quorum-shared`: `quorum-desktop` (web browser + Electron) and `quorum-mobile` (React Native, a separate repo).** We maximize code reuse by putting business logic, shared components, and primitives in `quorum-shared`; each app consumes them. Every component decision in a shared layer must consider both apps.
 
 ### What We Have
 
-- **Primitives Collection**: `src/components/primitives/` - Cross-platform UI building blocks
+- **Primitives Collection**: `@quilibrium/quorum-shared` — cross-platform UI building blocks (this repo's `src/components/primitives/` is a re-export barrel + SCSS, not the source)
 - **Theming System**: `@quilibrium/quorum-shared` — `useTheme`, `ThemeProvider`, and color tokens (previously `src/components/primitives/theme/colors.ts`, now in quorum-shared)
-- **Dev Playground**: Test primitives on both web (`/playground`) and mobile (React Native via Expo)
-- **Platform Files**: `.web.tsx` for browser, `.native.tsx` for React Native
-- **Mobile Testing**: `/mobile` workspace with test screens for real device testing
-- **Components Audit**: `/src/dev` audit of all components (WIP) accessible via `/dev/audit` in forntend
+- **Dev Playground**: Test primitives on web here (`/playground`); native testing happens in the `quorum-mobile` repo (Expo)
+- **Platform Files**: `.web.tsx` for browser (here/shared), `.native.tsx` for React Native (in `quorum-mobile` or `quorum-shared`, NOT in `quorum-desktop/src/`)
+- **Mobile Testing**: in the **`quorum-mobile`** repo (Expo) — there is no `/mobile` workspace in this repo
+- **Components Audit**: `/src/dev` audit of all components (WIP) accessible via `/dev/audit` in frontend
 
 ## Quick Decision Framework
 
@@ -296,9 +298,7 @@ From [component-development-guide.md](./component-development-guide.md#web-styli
 
 ### Mobile Testing (When Needed)
 
-1. Run `yarn mobile` to start the mobile test playground
-2. Use Expo Go app to test on real device
-3. Navigate through test screens in the mobile app to test your primitive
+> Native testing happens in the **`quorum-mobile`** repo (Expo), not here. If your change is to a shared primitive/hook, publish/link `quorum-shared` and exercise it through `quorum-mobile`'s dev environment. There is no `yarn mobile` or `mobile/` playground in `quorum-desktop` anymore.
 
 ### Testing Checklist
 
@@ -499,8 +499,8 @@ import { Button } from '../primitives/Button';
 
 **Mobile testing issues**
 
-- Use `--tunnel` flag for Expo from WSL2
-- Test primitives on mobile: `yarn mobile`
+- Use `--tunnel` flag for Expo from WSL2 (in the `quorum-mobile` repo)
+- Test primitives on mobile via the `quorum-mobile` repo (Expo) — no `yarn mobile` here
 - Ensure touch targets are minimum 44dp
 
 **Performance problems**
@@ -513,7 +513,7 @@ import { Button } from '../primitives/Button';
 
 1. Check existing primitives first - don't reinvent
 2. Review [when-to-use-primitives.md](./features/primitives/03-when-to-use-primitives.md) for guidance
-3. Test with web playground (`/playground`) and mobile testing (`yarn mobile`) before implementing in main app
+3. Test with web playground (`/playground`) here, and for shared code coordinate native testing in `quorum-mobile`, before implementing in main app
 4. Follow existing patterns from similar components
 
 ## Best Practices Summary
@@ -523,7 +523,7 @@ import { Button } from '../primitives/Button';
 - Think mobile-first for every component
 - Use existing primitives for UI consistency
 - Follow the styling hierarchy (Tailwind → @apply → raw CSS)
-- Test with both web playground and mobile testing before shipping
+- Test on web playground here; for shared code, also verify in `quorum-mobile` before shipping
 - Use semantic color variables for consistency
 - Keep business logic separate from UI primitives
 

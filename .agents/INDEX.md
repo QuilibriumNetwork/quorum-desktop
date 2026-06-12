@@ -4,20 +4,22 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
-- [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
-- [Component Management & Development Guide](docs/component-management-guide.md)
+- [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md) — multi-repo banner added (philosophy current; `.native.tsx` go in quorum-mobile)
+- [Component Management & Development Guide](docs/component-management-guide.md) — multi-repo banner added
 - [Config Sync System](docs/config-sync-system.md)
-- [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
+- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md) — ⚠️ deprecated (in-repo `mobile/` playground; use quorum-mobile)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
-- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
+- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md) — canonical current architecture
 - [Styling Guidelines](docs/styling-guidelines.md)
 
+#### Archived docs (`.archived/`)
+- [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md) — ⚰️ ABANDONED single-repo build plan; kept as history only
+
 ### Development
-- [Android Build Workflow](docs/development/android-build-workflow.md)
+- [Android Build Workflow](docs/development/android-build-workflow.md) — ⚠️ deprecated (in-repo `mobile/` playground; use quorum-mobile)
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 
 ### Features
@@ -271,17 +273,15 @@ This is the main index for all documentation, bug reports, and task management.
 ### Messagedb .Done
 - [Extract encryptAndSendToSpace() Helper](tasks/messagedb/.done/messageservice-extract-encrypt-helper.md)
 
-### Mobile Dev
+### Mobile Dev (historical reference — single-repo era; see README)
+- [README — folder status + cleanup pass](tasks/mobile-dev/README.md)
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/2025-08-01-business-logic-extraction-plan.md)
 - [Quilibrium SDK Mobile Integration Issue](tasks/mobile-dev/2025-08-08-mobile-sdk-integration-issue.md)
 - [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/mobile-dev/2026-01-09-components-shared-arch-masterplan.md)
-- [Cross-Platform Hooks Refactoring Plan](tasks/mobile-dev/2026-01-09-cross-platform-hooks-refactoring-plan.md)
-- [CSS to Mobile Colors Sync Script](tasks/mobile-dev/2026-01-09-css-to-mobile-colors-sync.md)
-- [File Upload Hooks Consolidation Task](tasks/mobile-dev/2026-01-09-file-upload-hooks-consolidation.md)
-- [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/2026-01-09-internationalization-i18n-implementation-plan.md)
-- [Mobile Image Compression Implementation](tasks/mobile-dev/2026-01-09-mobile-image-compression.md)
 - [Mobile/Touch Implementation Transition Plan](tasks/mobile-dev/2026-01-09-mobile-touch-transition-plan.md)
-- [React Native Upgrade Risk Assessment](tasks/mobile-dev/2026-01-09-upgrade-to-react-80.md)
+
+### Mobile Dev Docs
+- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
 
 ### Mobile Dev .Archived
 - [Cross-Platform Development : Revised Plan](tasks/mobile-dev/.archived/plan-quick-recap.md)
@@ -289,15 +289,17 @@ This is the main index for all documentation, bug reports, and task management.
 - [Native Business Components Implementation Plan](tasks/mobile-dev/.archived/native-business-components-plan.md)
 - [Primitive Migration Audit Report](tasks/mobile-dev/.archived/primitive-migration-audit.md)
 - [Sdk Shim Temporary Solutions](tasks/mobile-dev/.archived/sdk-shim-temporary-solutions.md)
-
-### Mobile Dev Docs
-- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
-- [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/docs/mobile-desktop-audit.md)
-- [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
+- [Cross-Platform Hooks Refactoring Plan](tasks/mobile-dev/.archived/2026-01-09-cross-platform-hooks-refactoring-plan.md)
+- [CSS to Mobile Colors Sync Script](tasks/mobile-dev/.archived/2026-01-09-css-to-mobile-colors-sync.md)
+- [File Upload Hooks Consolidation Task](tasks/mobile-dev/.archived/2026-01-09-file-upload-hooks-consolidation.md)
+- [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md)
+- [Mobile Image Compression Implementation](tasks/mobile-dev/.archived/2026-01-09-mobile-image-compression.md)
+- [React Native Upgrade Risk Assessment](tasks/mobile-dev/.archived/2026-01-09-upgrade-to-react-80.md)
+- [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/.archived/mobile-desktop-audit.md)
+- [Third-Party Component Migration Report](tasks/mobile-dev/.archived/third-party-component-migration-report.md)
 
 ### Port From Mobile
 - [Cross-app feature diff (port-from-mobile) — Master Tracker](tasks/port-from-mobile/README.md)
-- [Desktop-better-than-mobile inventory](tasks/port-from-mobile/desktop-better-than-mobile.md)
 - [Mobile features not on desktop — candidate list](tasks/port-from-mobile/candidates.md)
 - [Port-from-mobile shipped log](tasks/port-from-mobile/shipped-log.md)
 - [Workflow for porting features from mobile to desktop](tasks/port-from-mobile/workflow.md)
@@ -306,10 +308,18 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unified `/spaces` Page (PR 1 of 2) — Implementation Plan](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-plan.md)
 - [Unified `/spaces` page — PR 2 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-pr2.md)
 - [Unified `/spaces` page — PR 1 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces.md)
+- [QNS usernames on desktop — design](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-design.md)
+- [QNS Usernames on Desktop — Implementation Plan (stages 1-3)](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-plan.md)
+- [QNS username overrides display name everywhere + mentions](tasks/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md)
+
+### Port To Mobile
+- [Port-to-mobile — Master Tracker](tasks/port-to-mobile/README.md)
+- [Port-to-mobile candidates (feature-ports + convergence)](tasks/port-to-mobile/candidates.md)
 
 ### Quorum Shared Migration
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
 - [Mobile tasks pending](tasks/quorum-shared-migration/mobile-tasks-pending.md)
+- [Promote icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
 - [Quorum-shared migration — roadmap](tasks/quorum-shared-migration/roadmap.md)
 - [Quorum-shared migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)

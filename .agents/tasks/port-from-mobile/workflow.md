@@ -11,7 +11,7 @@ audience: any agent working on the port-from-mobile effort
 
 > **The mental model:** desktop is the only repo we're shipping runtime code to. Mobile is read-only context. Shared is touched only when a port surfaces portable logic.
 >
-> **Note (2026-06-01):** this folder is conceptually a **two-way feature diff** between desktop and mobile, not just a one-way port log. The active port effort runs through [candidates.md](candidates.md) (features mobile has that desktop is missing). When the inverse surfaces — capabilities where desktop's implementation is materially better than mobile's — log it in [desktop-better-than-mobile.md](desktop-better-than-mobile.md). We do NOT push to mobile, but the lead dev can use that doc as a curated list of convergence candidates.
+> **Note (updated 2026-06-12):** this effort is conceptually a **two-way feature diff** between desktop and mobile, split across two sibling folders. This folder (`port-from-mobile/`) is the active port direction (features mobile has that desktop is missing — run through [candidates.md](candidates.md)). When the inverse surfaces — a desktop feature mobile lacks, or a capability where desktop's implementation is materially better — log it in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md) (the `feature-port` / `convergence` lanes). We do NOT push to mobile, but the lead dev uses that doc as a curated convergence list. When a desktop→mobile item becomes a concrete dropped task, it graduates into the unified tracker [../quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md).
 
 ```
 quorum-mobile:    [read-only context — pull, inspect, never push]
@@ -66,7 +66,7 @@ Before drafting a `YYYY-MM-DD-port-<slug>.md` task file, run a structured capabi
 2. **Grep desktop for the capability concept, not the mobile name.** For "browse a directory of spaces": search for `directory`, `discover`, `explore`, `browseSpaces`, `publicSpaces`, `catalog`. For "report abuse": `report`, `abuse`, `moderation`, `flag`. For "public profile": `publicProfile`, `isProfilePublic`, `profileFetch`, `MembersWithFallback`.
 3. **Check the relevant component / hook folders directly.** Desktop's tree is well-organized — `src/components/<area>/`, `src/hooks/business/<area>/`. If the capability is "abuse reporting", look in `components/modals/`, `services/`, `hooks/business/`. Don't rely on grep alone.
 4. **Read at least one adjacent file in full.** For #3 we'd have found `useReplyNotificationCounts` immediately by reading `src/hooks/business/replies/`. Cheap.
-5. **If the capability is present** — log the finding in [candidates.md](candidates.md) per-candidate notes and consider whether to add an entry in [desktop-better-than-mobile.md](desktop-better-than-mobile.md). Don't draft a task file.
+5. **If the capability is present** — log the finding in [candidates.md](candidates.md) per-candidate notes and consider whether to add an entry in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md) (`convergence` type). Don't draft a task file.
 6. **If the capability is genuinely missing** — proceed to drafting the task file.
 
 This rule is non-optional. It costs 5 minutes; skipping it costs a task file written for nothing.
@@ -85,7 +85,7 @@ A feature being shipped on mobile means the *capability* is real. Whether the *U
 
 **Default to desktop's existing UX language.** Don't replicate mobile widgets just because they exist. When in doubt, ask the user — UX choices are product decisions, not engineering ones. "Mobile ships X" is data, not a directive.
 
-**Don't decide for the lead.** When desktop has an implementation that's deliberately different from mobile (and arguably better), record that observation in [desktop-better-than-mobile.md](desktop-better-than-mobile.md) so it can inform mobile's future convergence. Don't try to "fix" desktop to match mobile.
+**Don't decide for the lead.** When desktop has an implementation that's deliberately different from mobile (and arguably better), record that observation in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md) (`convergence` type) so it can inform mobile's future convergence. Don't try to "fix" desktop to match mobile.
 
 ## The workflow at a glance
 

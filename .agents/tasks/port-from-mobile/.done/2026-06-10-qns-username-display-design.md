@@ -1,10 +1,18 @@
 ---
 type: design
 title: "QNS usernames on desktop — display, search, mention & trust model"
-status: draft
+status: done
 created: 2026-06-10
+completed: 2026-06-11
 related-candidate: "#12 (QNS marketplace) — this is a scoped slice; see candidates.md"
 ---
+
+> **STATUS (moved to .done 2026-06-12) — desktop COMPLETE, live `.q` dormant pending mobile.**
+> All four surfaces shipped: DM search (PR #190), profile `.q` + validation (PR #190), Model-B override + mentions (PR #195). **Desktop renders `name.q` correctly the moment a `primary_username` arrives.** It can't be seen with real data yet because the *producing* side is mobile, and two **mobile** bugs block publishing the field (these are NOT desktop work):
+> - `quorum-mobile/.agents/bugs/...primary-username-not-synced-or-published.md`
+> - `quorum-mobile/.agents/bugs/...isprofilepublic-not-syncing-mobile-to-desktop.md`
+>
+> Also open (non-blocking, lead-dev call): whether `primary_username` rides in the message broadcast vs public-profile-only. See `project_qns_username_broadcast_pending` in memory. Implementation plans: [display-plan (stages 1-3)](2026-06-10-qns-username-display-plan.md) · [override-plan (Model B + mentions)](2026-06-11-qns-username-overrides-display-name-plan.md).
 
 # QNS usernames on desktop — design
 

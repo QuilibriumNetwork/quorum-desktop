@@ -1,10 +1,19 @@
 ---
 type: doc
 title: Cross-Platform Repository Implementation
-status: done
+status: archived
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-08-07T00:00:00.000Z
+archived: 2026-06-12
 ---
+
+> # ⚰️ ARCHIVED — ABANDONED APPROACH (do not follow)
+>
+> This document describes the **single-repo** cross-platform plan: building the mobile app **inside `quorum-desktop`** via Yarn Workspaces (`workspaces: ["mobile"]`), a `mobile/` folder, a Metro bundler watching `../src`, and `mobile:dev`/`mobile:android`/`mobile:ios` scripts in this repo's `package.json`. **That approach was abandoned.** None of this exists anymore.
+>
+> The current architecture is **multi-repo**: `quorum-desktop` (web/Electron only), `quorum-mobile` (a SEPARATE RN/Expo repo), and `quorum-shared` (npm package — shared types/hooks/sync/primitives). **Do NOT** re-add a `mobile/` workspace, Metro config, or `mobile:*` scripts to this repo from anything below.
+>
+> Canonical current doc: [`../quorum-shared-architecture.md`](../quorum-shared-architecture.md). Kept only as a historical record of build-config work that was undone.
 
 # Cross-Platform Repository Implementation
 

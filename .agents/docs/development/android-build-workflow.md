@@ -11,6 +11,8 @@ related_docs:
 
 # Android Build Workflow
 
+> **⚠️ Deprecated — targets the in-repo `mobile/` playground (single-repo era).** The `yarn mobile:android` / `yarn mobile:clear` / `yarn mobile:connect` commands below drive the **`quorum-desktop/mobile/` test playground**, a leftover from the abandoned single-repo cross-platform plan. The real Android build for the shipping mobile app lives in the separate **`quorum-mobile`** repo (`yarn android` / `expo run:android` there). This guide remains only until the stale `mobile/` folder + `mobile:*` scripts are removed from this repo (follow-up code/config cleanup). **For real Android builds, use `quorum-mobile`.**
+
 > **AI-Generated**: May contain errors. Verify before use.
 
 ## Quick Start (TL;DR)
