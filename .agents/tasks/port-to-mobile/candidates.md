@@ -60,7 +60,7 @@ Legend: 📋 noted (observation only) · 🟢 ready to scope · 🚧 task droppe
 | 16 | **Global typing-indicator toggles** (send in DMs / Spaces) | SMALL | `typingIndicatorsDM`/`typingIndicatorsSpaces` ALREADY-EXIST | 📋 noted (pairs with #7) |
 | 17 | **Space Settings "Fixes" section** (auto-repair tools, conditional) | SMALL | NONE | 📋 noted (low value) |
 | 18 | **Emoji skin-tone preference** (remembered Fitzpatrick modifier) | SMALL-MED | NONE | 📋 noted (low value) |
-| 19 | **In-app language/locale switcher** (UI i18n, not message translation) | MED | NONE (app-level i18n) | 📋 noted (verify mobile doesn't just follow system locale) |
+| 19 | **In-app i18n / language switcher** (full Lingui 26-lang support + locale picker; mobile has ZERO i18n) | MED | NONE (app-level i18n) | 📋 noted — detailed plan exists (see entry below) |
 | 20 | **"Restore Missing Spaces" recovery tool** | SMALL | NONE | 📋 noted (mobile's hub-log sync may reduce need) |
 | 21 | **Per-message signing toggle** (lock button in composer when repudiable mode on) | LOW | NONE (UI-only) | 📋 noted |
 
@@ -350,6 +350,16 @@ Full parity deep-dive 2026-06-12. **Mobile's role CRUD is fine; enforcement is n
 **#29 Link-jump highlight — convergence (mobile PARTIAL):** `MessagesList.tsx:374-383` `scrollToMessageWithHighlight` exists for pinned (`SpaceChatArea:756`) + bookmark (`:770`, DM `:496`) nav. But: searches only the loaded window (silent no-op if target not loaded — see lower-confidence note), ~1.7s blurple Reanimated fade (NOT desktop's 8s yellow), no notification deep-link path, no pagination-to-find fallback. Fix: align color/duration, add notification deep-link, add load-more-until-found. Cost LOW-MED. Shared NONE.
 
 **#30 Mention viewport highlight — feature-port (ABSENT):** no viewport-entry trigger, no `IntersectionObserver`/`onViewableItemsChanged` equivalent, no `lastReadTimestamp` at list level. RN path: `onViewableItemsChanged` on the FlashList + `isMentioned && isUnread` per item → existing Reanimated highlight. Cost MED (animation infra exists; trigger missing). Shared NONE. Pairs with #28 (both need `lastReadTimestamp` plumbed) and #23.
+
+### 19. Mobile i18n / language switcher — feature-port (detailed plan exists)
+
+**Mobile:** ABSENT entirely — `quorum-mobile` has no `@lingui/react` dependency and no i18n directory; the app is English-only.
+**Desktop:** fully shipped — `@lingui/react ^5.3.3`, 32 `.po` locale files in `src/i18n/`, `dynamicActivate()` loading, `useLocaleSettings` hook, locale picker in `Appearance.tsx:67-93`.
+**Why mobile needs it:** full language parity (26+ langs) with the web app; non-English users get an English-only mobile app today.
+**Mobile cost:** MED (4-6h estimate in the original plan). RN-specific concerns: Metro dynamic-import handling (3 options: `@lingui/metro-transformer` / static import map / native dynamic imports), `AsyncStorage` for the locale pref (vs web `localStorage`), `react-native-localize` for device-locale detection, a `LanguageSelector.native` + settings entry.
+**Shared:** NONE (app-level i18n; the `.po` translation *content* is shared by copying the same keys, not by an npm export).
+**Detailed plan:** preserved at [`../mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md`](../mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md) (written 2026-01-09 for the old single-repo playground, but the technical substance — Metro options, AsyncStorage, locale detection, the 3 loading strategies, success criteria — maps directly onto standalone `quorum-mobile`; ignore its `mobile/` playground path references).
+**Status:** noted (2026-06-12) — should be re-homed as a `quorum-mobile` task when picked up.
 
 ### Theme tab items (rows 10/11 in the settings sweep) — scaffolded, tiny
 

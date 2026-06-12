@@ -271,17 +271,15 @@ This is the main index for all documentation, bug reports, and task management.
 ### Messagedb .Done
 - [Extract encryptAndSendToSpace() Helper](tasks/messagedb/.done/messageservice-extract-encrypt-helper.md)
 
-### Mobile Dev
+### Mobile Dev (historical reference — single-repo era; see README)
+- [README — folder status + cleanup pass](tasks/mobile-dev/README.md)
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/2025-08-01-business-logic-extraction-plan.md)
 - [Quilibrium SDK Mobile Integration Issue](tasks/mobile-dev/2025-08-08-mobile-sdk-integration-issue.md)
 - [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/mobile-dev/2026-01-09-components-shared-arch-masterplan.md)
-- [Cross-Platform Hooks Refactoring Plan](tasks/mobile-dev/2026-01-09-cross-platform-hooks-refactoring-plan.md)
-- [CSS to Mobile Colors Sync Script](tasks/mobile-dev/2026-01-09-css-to-mobile-colors-sync.md)
-- [File Upload Hooks Consolidation Task](tasks/mobile-dev/2026-01-09-file-upload-hooks-consolidation.md)
-- [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/2026-01-09-internationalization-i18n-implementation-plan.md)
-- [Mobile Image Compression Implementation](tasks/mobile-dev/2026-01-09-mobile-image-compression.md)
 - [Mobile/Touch Implementation Transition Plan](tasks/mobile-dev/2026-01-09-mobile-touch-transition-plan.md)
-- [React Native Upgrade Risk Assessment](tasks/mobile-dev/2026-01-09-upgrade-to-react-80.md)
+
+### Mobile Dev Docs
+- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
 
 ### Mobile Dev .Archived
 - [Cross-Platform Development : Revised Plan](tasks/mobile-dev/.archived/plan-quick-recap.md)
@@ -289,11 +287,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Native Business Components Implementation Plan](tasks/mobile-dev/.archived/native-business-components-plan.md)
 - [Primitive Migration Audit Report](tasks/mobile-dev/.archived/primitive-migration-audit.md)
 - [Sdk Shim Temporary Solutions](tasks/mobile-dev/.archived/sdk-shim-temporary-solutions.md)
-
-### Mobile Dev Docs
-- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
-- [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/docs/mobile-desktop-audit.md)
-- [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
+- [Cross-Platform Hooks Refactoring Plan](tasks/mobile-dev/.archived/2026-01-09-cross-platform-hooks-refactoring-plan.md)
+- [CSS to Mobile Colors Sync Script](tasks/mobile-dev/.archived/2026-01-09-css-to-mobile-colors-sync.md)
+- [File Upload Hooks Consolidation Task](tasks/mobile-dev/.archived/2026-01-09-file-upload-hooks-consolidation.md)
+- [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md)
+- [Mobile Image Compression Implementation](tasks/mobile-dev/.archived/2026-01-09-mobile-image-compression.md)
+- [React Native Upgrade Risk Assessment](tasks/mobile-dev/.archived/2026-01-09-upgrade-to-react-80.md)
+- [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/.archived/mobile-desktop-audit.md)
+- [Third-Party Component Migration Report](tasks/mobile-dev/.archived/third-party-component-migration-report.md)
 
 ### Port From Mobile
 - [Cross-app feature diff (port-from-mobile) — Master Tracker](tasks/port-from-mobile/README.md)
