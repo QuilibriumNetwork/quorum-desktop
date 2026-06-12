@@ -31,31 +31,26 @@ msgid "No Role - {count}"
 msgstr "Nema uloge - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1684
-msgid "Send a message to #{channel_name}"
-msgstr "Pošalji poruku #{channel_name}"
-
-#. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Dobrodošli u Quorum, {name}! Vaš nalog je zaštićen i spreman za korišćenje."
 
 #. js-lingui-explicit-id
-#: src/components/message/ReactionsList.tsx:117
+#: src/components/space/Channel.tsx:1709
+msgid "Send a message to #{channel_name}"
+msgstr "Pošalji poruku #{channel_name}"
+
+#. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:131
+#: src/components/message/ReactionsList.tsx:145
 msgid "more"
 msgstr "Više"
 
 #. js-lingui-explicit-id
-#: src/components/message/ReactionsList.tsx:119
-#: src/components/message/ReactionsList.tsx:124
+#: src/components/message/ReactionsList.tsx:133
+#: src/components/message/ReactionsList.tsx:138
 msgid "Reacted by"
 msgstr "Reagovao"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:718
-msgid "Replying to"
-msgstr "Odgovara se"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
@@ -68,27 +63,32 @@ msgid "Replying to {user}"
 msgstr "Odgovaram {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:361
+#: src/components/message/MessageComposer.tsx:720
+msgid "Replying to"
+msgstr "Odgovara se"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:395
 msgid "has joined"
 msgstr "pridružio se"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:369
+#: src/components/message/Message.tsx:403
 msgid "has left"
 msgstr "napustio je"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:377
+#: src/components/message/Message.tsx:411
 msgid "has been kicked"
 msgstr "bio je izbačen"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1044
+#: src/components/direct/DirectMessage.tsx:1070
 msgid "Send a message to {user}"
 msgstr "Pošalji poruku {user}"
 
-#: src/components/message/Message.tsx:832
-#: src/components/message/Message.tsx:845
+#: src/components/message/Message.tsx:873
+#: src/components/message/Message.tsx:886
 msgid "(edited)"
 msgstr "(izmenjeno)"
 
@@ -96,8 +96,8 @@ msgstr "(izmenjeno)"
 msgid "(empty)"
 msgstr "(prazno)"
 
-#: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:332
+#: src/components/direct/DMUserProfileSidebar.tsx:128
+#: src/components/user/UserProfile.tsx:347
 msgid "(only visible to you)"
 msgstr "(vidljivo samo vama)"
 
@@ -117,8 +117,8 @@ msgstr "[Slika]"
 msgid "[Message]"
 msgstr "[Poruka]"
 
-#: src/components/message/Message.tsx:575
-#: src/components/message/Message.tsx:966
+#: src/components/message/Message.tsx:615
+#: src/components/message/Message.tsx:1008
 msgid "[Original message was deleted]"
 msgstr "[Original poruka je obrisana]"
 
@@ -148,22 +148,22 @@ msgid "{0} mentioned you in {spaceName}"
 msgstr "{0} vas je pomenuo u {spaceName}"
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:219
+#: src/components/notifications/NotificationPanel.tsx:220
 msgid "{0} notification"
 msgstr "{0} obaveštenje"
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:220
+#: src/components/notifications/NotificationPanel.tsx:221
 msgid "{0} notifications"
 msgstr "{0} obaveštenja"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:208
+#: src/components/message/PinnedMessagesPanel.tsx:222
 msgid "{0} pinned message in this Channel"
 msgstr "{0} zakačena poruka u ovom Kanalu"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:209
+#: src/components/message/PinnedMessagesPanel.tsx:223
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} zakačene poruke u ovom Kanalu"
 
@@ -215,21 +215,21 @@ msgid "{replyCount} replies"
 msgstr "{replyCount} odgovora"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:310
-#: src/components/notifications/NotificationPanel.tsx:89
+#: src/components/notifications/NotificationPanel.tsx:90
 msgid "@everyone"
 msgstr "@everyone"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:315
-#: src/components/notifications/NotificationPanel.tsx:93
+#: src/components/notifications/NotificationPanel.tsx:94
 msgid "@roles"
 msgstr "@roles"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:305
-#: src/components/notifications/NotificationPanel.tsx:85
+#: src/components/notifications/NotificationPanel.tsx:86
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:471
+#: src/components/direct/DirectMessageContactsList.tsx:495
 msgid "+ Add a friend"
 msgstr "Dodaj prijatelja"
 
@@ -261,21 +261,18 @@ msgstr "Passkey koristi sigurnosne funkcije vašeg uređaja (Face ID, otisak prs
 msgid "A reusable link anyone can use to join. Share it on social media or your website."
 msgstr "Link za višekratnu upotrebu koji svako može koristiti za pridruživanje. Podelite ga na društvenim mrežama ili na vašem veb-sajtu."
 
-#: src/services/MessageService.ts:4483
+#: src/services/MessageService.ts:4481
 #: src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "uloga"
 
-#~ msgid "a space"
-#~ msgstr "prostor"
-
-#: src/services/MessageService.ts:4493
+#: src/services/MessageService.ts:4491
 #: src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "Prostor"
 
-#: src/components/user/UserProfile.tsx:324
+#: src/components/user/UserProfile.tsx:339
 msgid "About"
 msgstr "O nama"
 
@@ -287,14 +284,14 @@ msgstr "Nalog"
 msgid "Account address"
 msgstr "Adresa naloga"
 
-#: src/components/modals/UserSettingsModal/General.tsx:173
+#: src/components/modals/UserSettingsModal/General.tsx:185
 #: src/components/onboarding/steps/DisplayNameStep.tsx:37
 msgid "Account Address"
 msgstr "Adresa naloga"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:389
 msgid "Account Key"
-msgstr ""
+msgstr "Ključ naloga"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:136
 #: src/components/modals/UserSettingsModal/Navigation.tsx:31
@@ -306,27 +303,24 @@ msgstr "Podešavanja naloga"
 msgid "actions queued"
 msgstr "akcije su u redu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:402
-#: src/components/direct/DirectMessageContactsList.tsx:413
+#: src/components/direct/DirectMessageContactsList.tsx:426
+#: src/components/direct/DirectMessageContactsList.tsx:437
 msgid "Add a friend"
 msgstr "Dodaj prijatelja"
 
-#: src/components/direct/DMUserProfileSidebar.tsx:143
-#: src/components/user/UserProfile.tsx:360
+#: src/components/direct/DMUserProfileSidebar.tsx:153
+#: src/components/user/UserProfile.tsx:375
 msgid "Add a note"
 msgstr "Dodajte napomenu"
 
-#: src/components/direct/DMUserProfileSidebar.tsx:122
-#: src/components/user/UserProfile.tsx:336
+#: src/components/direct/DMUserProfileSidebar.tsx:132
+#: src/components/user/UserProfile.tsx:351
 msgid "Add a personal note..."
 msgstr "Dodajte ličnu napomenu..."
 
 #: src/components/onboarding/steps/ProfilePhotoStep.tsx:49
 msgid "Add a profile photo"
 msgstr "Dodaj profilnu fotografiju"
-
-#~ msgid "Add a space"
-#~ msgstr "Dodajte prostor"
 
 #: src/components/space/SpacesSidebar.tsx:567
 #: src/components/space/SpacesSidebar.tsx:572
@@ -360,7 +354,7 @@ msgstr "Dodaj grupu"
 msgid "Add Role"
 msgstr "Dodaj ulogu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:253
+#: src/components/direct/DirectMessageContactsList.tsx:265
 msgid "Add to Favorites"
 msgstr "Dodaj u omiljene"
 
@@ -372,7 +366,7 @@ msgstr "Dodajte do 50 prilagođenih emojija. Prilagođeni emojiji mogu se korist
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr "Dodajte do 50 prilagođenih nalepnica. Prilagođene nalepnice mogu se koristiti samo unutar Space-a. Možete otpremiti PNG, JPG ili GIF, maksimalno 25MB (automatski optimizovano)."
 
-#: src/components/user/UserProfile.tsx:315
+#: src/components/user/UserProfile.tsx:330
 msgid "Adding..."
 msgstr "Dodavanje..."
 
@@ -388,18 +382,15 @@ msgstr "Adrese moraju biti tačno 46 karaktera duge."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adrese počinju sa \"Qm\"."
 
-#~ msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
-#~ msgstr "Prilagodi bezbednosna podešavanja, koja mogu uticati na korisničko iskustvo, ali povećavaju bezbednost vašeg Quorum naloga."
-
 #: src/components/modals/CreateSpaceModal.tsx:200
 msgid "Advanced Settings"
 msgstr "Napredne postavke"
 
-#: src/components/direct/DirectMessageContactsList.tsx:311
+#: src/components/direct/DirectMessageContactsList.tsx:323
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:300
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
-#: src/components/notifications/NotificationPanel.tsx:238
+#: src/components/notifications/NotificationPanel.tsx:239
 msgid "All"
 msgstr "Sve"
 
@@ -526,7 +517,7 @@ msgstr "Da li ste siguran da želiš da zakačiš ovu poruku?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Da li ste siguran da želiš da otkačiš ovu poruku?"
 
-#: src/components/message/MessageComposer.tsx:796
+#: src/components/message/MessageComposer.tsx:806
 msgid "attach image"
 msgstr "prikači sliku"
 
@@ -546,9 +537,6 @@ msgstr "Odsutan"
 msgid "Back to invite link"
 msgstr "Nazad na link za poziv"
 
-#~ msgid "Back to spaces list"
-#~ msgstr "Nazad na listu prostora"
-
 #: src/components/space/ChannelList.tsx:175
 #: src/components/space/ChannelList.tsx:179
 msgid "Back to Spaces list"
@@ -562,9 +550,9 @@ msgstr "Napravite rezervnu kopiju ključa naloga"
 msgid "Backup Failed"
 msgstr "Backup nije uspeo"
 
-#: src/components/direct/DMUserProfileSidebar.tsx:104
+#: src/components/direct/DMUserProfileSidebar.tsx:114
 #: src/components/modals/SpaceSettingsModal/Account.tsx:210
-#: src/components/modals/UserSettingsModal/General.tsx:135
+#: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Bio"
 msgstr "Bio"
 
@@ -575,9 +563,6 @@ msgstr "Bio ne može sadržati specijalne karaktere"
 #: src/hooks/business/validation/errorTranslator.ts:63
 msgid "Bio is too long"
 msgstr "Biografija je predugačka"
-
-#~ msgid "Bio must be {0} characters or less"
-#~ msgstr "Biografija mora da bude {0} karaktera ili manje"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:50
 msgid "Bold"
@@ -597,8 +582,8 @@ msgstr "Dostignut limit obeleživača! Uklonite neke da dodate nove."
 msgid "Bookmark message"
 msgstr "Obeleži poruku"
 
-#: src/components/message/Message.tsx:784
-#: src/components/message/Message.tsx:878
+#: src/components/message/Message.tsx:825
+#: src/components/message/Message.tsx:920
 msgid "Bookmarked"
 msgstr "Označeno"
 
@@ -615,19 +600,13 @@ msgstr "Označeni stikeri"
 msgid "Bookmarks"
 msgstr "Oznake"
 
-#: src/components/direct/DirectMessage.tsx:827
+#: src/components/direct/DirectMessage.tsx:851
 msgid "Bookmarks in this conversation"
 msgstr "Marakari u ovoj konverzaciji"
 
-#~ msgid "Bookmarks in this space"
-#~ msgstr "Marakari u ovom prostoru"
-
-#: src/components/space/Channel.tsx:1516
+#: src/components/space/Channel.tsx:1531
 msgid "Bookmarks in this Space"
 msgstr "Obeleživači u ovom Prostoru"
-
-#~ msgid "Browse public spaces and find a community to join."
-#~ msgstr "Pretražite javne prostore i pridružite se zajednici."
 
 #: src/components/discover-page/DiscoverPage.tsx:77
 msgid "Browse public Spaces and find a community to join."
@@ -671,9 +650,6 @@ msgstr "Ne možete obrisati grupu koja sadrži podrazumevani kanal."
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "Ne možete da otpremite više od {0} datoteka odjednom ({remaining} slobodnih mesta preostalih)"
 
-#~ msgid "Change your avatar and name for this Space"
-#~ msgstr "Promenite svoj avatar i ime za ovaj Space"
-
 #: src/components/modals/UserSettingsModal/Appearance.tsx:82
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "Promene se automatski primenjuju, ali aktivna stranica možda nije ažurirana. Osveži stranicu da bi primenio novi jezik."
@@ -686,7 +662,7 @@ msgstr "Ikona kanala"
 msgid "Channel Managers"
 msgstr "Menadžeri kanala"
 
-#: src/components/space/Channel.tsx:1948
+#: src/components/space/Channel.tsx:1982
 msgid "Channel members"
 msgstr "Članovi kanala"
 
@@ -729,9 +705,6 @@ msgstr "Tema kanala mora da bude {0} karaktera ili manje"
 msgid "Channels"
 msgstr "Kanali"
 
-#~ msgid "Channels:"
-#~ msgstr "Kanali:"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:132
 msgid "choose file"
 msgstr "izaberite datoteku"
@@ -747,7 +720,7 @@ msgstr "Odaberite svoj omiljeni izgled za Quorum."
 #: src/components/modals/ChannelEditorModal.tsx:207
 #: src/components/modals/SpaceSettingsModal/Account.tsx:301
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:160
-#: src/components/notifications/NotificationPanel.tsx:239
+#: src/components/notifications/NotificationPanel.tsx:240
 #: src/components/space/IconPicker/IconPicker.web.tsx:209
 msgid "Clear"
 msgstr "Obriši"
@@ -808,7 +781,7 @@ msgstr "Ključ konfiguracije"
 msgid "Config key not found for this Space."
 msgstr "Konfiguracioni ključ nije pronađen za ovaj Prostor."
 
-#: src/components/direct/DirectMessageContactsList.tsx:278
+#: src/components/direct/DirectMessageContactsList.tsx:290
 #: src/components/space/SpacesSidebar.tsx:252
 msgid "Confirm Delete"
 msgstr "Potvrdi brisanje"
@@ -839,11 +812,11 @@ msgstr "Nastavite bez passkey-a"
 msgid "Control what others can see about you and how your behaviour is shared."
 msgstr "Kontrolišite šta drugi mogu da vide o Vama i kako se Vaše ponašanje deli."
 
-#: src/components/direct/DirectMessage.tsx:808
+#: src/components/direct/DirectMessage.tsx:832
 msgid "Conversation settings"
 msgstr "Podešavanja razgovora"
 
-#: src/components/direct/DirectMessageContactsList.tsx:269
+#: src/components/direct/DirectMessageContactsList.tsx:281
 #: src/components/modals/ConversationSettingsModal.tsx:207
 msgid "Conversation Settings"
 msgstr "Podešavanja razgovora"
@@ -865,12 +838,12 @@ msgstr "Kopirano!"
 msgid "Copy a link"
 msgstr "Kopirajte link"
 
-#: src/components/direct/DirectMessage.tsx:790
-#: src/components/direct/DirectMessage.tsx:911
-#: src/components/direct/DirectMessage.tsx:929
-#: src/components/direct/DMUserProfileSidebar.tsx:88
-#: src/components/modals/UserSettingsModal/General.tsx:183
-#: src/components/user/UserProfile.tsx:238
+#: src/components/direct/DirectMessage.tsx:814
+#: src/components/direct/DirectMessage.tsx:936
+#: src/components/direct/DirectMessage.tsx:955
+#: src/components/direct/DMUserProfileSidebar.tsx:98
+#: src/components/modals/UserSettingsModal/General.tsx:195
+#: src/components/user/UserProfile.tsx:253
 msgid "Copy address"
 msgstr "Kopiraj adresu"
 
@@ -889,7 +862,7 @@ msgstr "Kopiraj link za poziv u međuspremnik"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:416
 msgid "Copy key"
-msgstr ""
+msgstr "Kopirajte ključ"
 
 #: src/components/message/MessageActions.tsx:89
 #: src/components/message/MessageActionsMenu.tsx:270
@@ -908,7 +881,7 @@ msgstr "Kopiraj link poruke"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:454
 msgid "Copying..."
-msgstr ""
+msgstr "Kopiranje..."
 
 #: src/services/ConfigService.ts:264
 msgid "Could not add Space"
@@ -921,7 +894,7 @@ msgstr "Nije moguće preuzeti detalje o Space. Pokušajte ponovo."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:186
 msgid "Could not import key"
-msgstr ""
+msgstr "Nije moguće uvesti ključ"
 
 #: src/services/ConfigService.ts:137
 msgid "Could not obtain manifest for Space"
@@ -944,9 +917,6 @@ msgstr "Nije moguće učitati vaš sačuvani profil. Molimo ponovo unesite svoje
 #: src/components/discover-page/DiscoverPage.tsx:92
 msgid "Create"
 msgstr "Kreirajte"
-
-#~ msgid "Create a space"
-#~ msgstr "Kreirajte prostor"
 
 #: src/components/discover-page/DiscoverPage.tsx:90
 #: src/components/modals/CreateSpaceModal.tsx:83
@@ -1013,9 +983,6 @@ msgstr "Obnova podataka"
 msgid "days"
 msgstr "dana"
 
-#~ msgid "decrypted space with no known config key"
-#~ msgstr "dekriptovani space bez poznatog konfiguracionog ključa"
-
 #: src/services/ConfigService.ts:116
 msgid "Decrypted Space with no known config key"
 msgstr "Dekriptovan Prostor bez poznatog konfiguracionog ključa"
@@ -1071,7 +1038,7 @@ msgstr "Obriši kanal"
 msgid "Delete Channel"
 msgstr "Obriši kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:277
+#: src/components/direct/DirectMessageContactsList.tsx:289
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/ConversationSettingsModal.tsx:380
 msgid "Delete Conversation"
@@ -1130,13 +1097,10 @@ msgstr "Obriši Space"
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
 #: src/components/modals/SpaceSettingsModal/General.tsx:224
-#: src/components/modals/UserSettingsModal/General.tsx:96
-#: src/components/modals/UserSettingsModal/General.tsx:104
+#: src/components/modals/UserSettingsModal/General.tsx:99
+#: src/components/modals/UserSettingsModal/General.tsx:107
 msgid "Delete this image"
 msgstr "Obriši ovu sliku"
-
-#~ msgid "Delete this space"
-#~ msgstr "Obriši ovaj Space"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Delete this Space"
@@ -1201,9 +1165,6 @@ msgstr "Naziv uređaja ne može sadržati HTML"
 msgid "Device name must be {0} characters or less"
 msgstr "Naziv uređaja mora da bude {0} karaktera ili manje"
 
-#~ msgid "Devices"
-#~ msgstr "Uređaji"
-
 #: src/components/modals/UserSettingsModal/Security.tsx:242
 msgid "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
 msgstr "Uređaji koji su trenutno autorizovani za primanje novih poruka na Vašem nalogu. Uklanjanje uređaja sprečava da nove poruke stignu do njega. Ne odjavljuje uređaj niti briše njegove lokalne podatke."
@@ -1214,28 +1175,19 @@ msgstr "Uređaji koji su trenutno autorizovani za primanje novih poruka na Vaše
 msgid "Direct Message"
 msgstr "Direktna poruka"
 
-#~ msgid "Direct message with {counterpartLabel}"
-#~ msgstr "Direktna poruka sa {counterpartLabel}"
-
 #: src/components/bookmarks/BookmarksPage.tsx:59
 msgid "Direct messages"
 msgstr "Direktne poruke"
-
-#~ msgid "Discover"
-#~ msgstr "Otkrijte"
-
-#~ msgid "Discover spaces"
-#~ msgstr "Otkrijte prostore"
 
 #: src/components/discover-page/DiscoverPage.tsx:76
 msgid "Discover Spaces"
 msgstr "Otkrijte Prostore"
 
-#: src/components/modals/UserSettingsModal/General.tsx:200
+#: src/components/modals/UserSettingsModal/General.tsx:212
 msgid "Display a tag from one of your Spaces next to your username in messages."
 msgstr "Prikaz oznake iz jednog od vaših prostora pored vašeg korisničkog imena u porukama."
 
-#: src/components/modals/UserSettingsModal/General.tsx:125
+#: src/components/modals/UserSettingsModal/General.tsx:128
 msgid "Display name"
 msgstr "Prikazano ime"
 
@@ -1255,20 +1207,13 @@ msgstr "Ime za prikaz je obavezno"
 msgid "Display name is too long"
 msgstr "Ime za prikaz je predugačko"
 
-#~ msgid "Display name must be {0} characters or less"
-#~ msgstr "Prikazni naziv mora da bude {0} karaktera ili manje"
-
-#: src/components/modals/UserSettingsModal/Security.tsx:357
-#~ msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-#~ msgstr "Prikažite svoj privatni ključ kao QR kod za skeniranje Quorum mobilnom aplikacijom. Ovo vam omogućava da uvezete nalog na mobilnom bez kucanja ključa."
-
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Documentation"
 msgstr "Dokumentacija"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:405
 msgid "Download file"
-msgstr ""
+msgstr "Preuzmite datoteku"
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:27
 msgid "Download Key Backup"
@@ -1276,7 +1221,7 @@ msgstr "Preuzmi kopiju ključa"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:433
 msgid "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
-msgstr ""
+msgstr "Preuzimanjem se čuva .key datoteka. Kopiranjem se sirovi ključ (heksadecimalni) stavlja u vaš međuspremnik. Prikaz QR koda je za uvoz u Quorum mobilnu aplikaciju."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:130
 msgid "Drag and drop or"
@@ -1343,7 +1288,7 @@ msgstr "Istorija izmena"
 msgid "Edit message"
 msgstr "Izmeni poruku"
 
-#: src/components/message/MessageComposer.tsx:846
+#: src/components/message/MessageComposer.tsx:856
 msgid "emoji & stickers"
 msgstr "emoji i nalepnice"
 
@@ -1352,11 +1297,11 @@ msgid "Emoji picker"
 msgstr "Birač emoji"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
-#: src/components/message/MessageComposer.tsx:846
+#: src/components/message/MessageComposer.tsx:856
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1861
-#: src/components/thread/ThreadPanel.tsx:505
+#: src/components/space/Channel.tsx:1895
+#: src/components/thread/ThreadPanel.tsx:532
 msgid "Emojis"
 msgstr "Emojis"
 
@@ -1400,9 +1345,6 @@ msgstr "Unesite ime za vaš Space"
 msgid "Enter a user's address or @username to start messaging them."
 msgstr "Unesite adresu korisnika ili @korisničkoime da biste im poslali poruku."
 
-#~ msgid "Enter a user's address to start messaging them."
-#~ msgstr "Unesite adresu korisnika da biste započeli razgovor s njim."
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:255
 msgid "Enter Address Manually"
 msgstr "Unesite adresu ručno"
@@ -1422,10 +1364,6 @@ msgstr "Uđite u Quorum"
 #: src/components/message/MessageEditTextarea.tsx:727
 msgid "Enter to"
 msgstr "Pritisnite Enter za"
-
-#: src/components/onboarding/steps/ImportKeyStep.tsx:177
-#~ msgid "Enter your ed448 private key as 114 hexadecimal characters."
-#~ msgstr ""
 
 #: src/components/onboarding/steps/DisplayNameStep.tsx:29
 msgid "Enter your name"
@@ -1461,9 +1399,6 @@ msgstr "Greška prilikom prikazivanja obaveštenja:"
 msgid "Esc to"
 msgstr "Pritisnite Esc za"
 
-#~ msgid "Existing Conversations"
-#~ msgstr "Postojeći razgovori"
-
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:540
 msgid "Expand group"
 msgstr "Proširite grupu"
@@ -1485,26 +1420,19 @@ msgstr "Izvezi"
 msgid "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
 msgstr "Izvezi šifriranu rezervnu kopiju vaših direktnih poruka da biste ih obnovili u slučaju da izgubite pristup ovom uređaju."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:333
-#~ msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-#~ msgstr "Izvezi svoj ključ u datoteku. Ne deli ovu datoteku ni sa kim jer bi mogli da se lažno predstavljaju kao vi ili ukradu Apex zaradu vašeg prostora."
-
 #: src/components/modals/UserSettingsModal/Security.tsx:541
 msgid "Exporting..."
 msgstr "Izvoz..."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:136
 msgid "Failed to copy private key"
-msgstr ""
-
-#~ msgid "Failed to create space. Please try again."
-#~ msgstr "Nije uspelo da se kreira prostor. Pokušajte ponovo."
+msgstr "Nije uspelo kopiranje privatnog ključa"
 
 #: src/components/modals/CreateSpaceModal.tsx:29
 msgid "Failed to create Space. Please try again."
 msgstr "Kreiranje Prostora nije uspelo. Molimo pokušajte ponovo."
 
-#: src/services/MessageService.ts:2879
+#: src/services/MessageService.ts:2877
 msgid "Failed to decrypt message with any known state"
 msgstr "Neuspešno dešifrovanje poruke sa bilo kojim poznatim stanjem"
 
@@ -1544,9 +1472,6 @@ msgstr "Nije uspelo izbacivanje korisnika"
 msgid "Failed to load bookmarks"
 msgstr "Nije moguće učitati oznake"
 
-#~ msgid "Failed to load public spaces."
-#~ msgstr "Neuspeh u učitavanju javnih prostora."
-
 #: src/components/discover-page/DiscoverTab.tsx:87
 msgid "Failed to load public Spaces."
 msgstr "Učitavanje javnih Prostora nije uspelo."
@@ -1563,9 +1488,6 @@ msgstr "Neuspešno parsiranje WebSocket poruke:"
 #: src/services/ActionQueueHandlers.ts:262
 msgid "Failed to pin message"
 msgstr "Nije uspelo zakačiti poruku"
-
-#~ msgid "Failed to restore spaces"
-#~ msgstr "Nije uspelo obnavljanje prostora"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:102
 msgid "Failed to restore Spaces"
@@ -1607,9 +1529,6 @@ msgstr "Nije uspelo čuvanje podešavanja obaveštenja"
 msgid "Failed to save settings"
 msgstr "Nije uspelo sačuvati podešavanja"
 
-#~ msgid "Failed to save space settings"
-#~ msgstr "Nije uspelo sačuvati podešavanja prostora"
-
 #: src/services/ActionQueueHandlers.ts:119
 msgid "Failed to save Space settings"
 msgstr "Čuvanje podešavanja Prostora nije uspelo"
@@ -1618,7 +1537,7 @@ msgstr "Čuvanje podešavanja Prostora nije uspelo"
 msgid "Failed to send invite. Please try again."
 msgstr "Slanje pozivnice nije uspelo. Pokušajte ponovo."
 
-#: src/components/message/Message.tsx:1370
+#: src/components/message/Message.tsx:1412
 msgid "Failed to send."
 msgstr "Slanje nije uspelo."
 
@@ -1635,7 +1554,7 @@ msgstr "Nije uspelo odkačiti poruku"
 msgid "Failed to update join preview. Please try again."
 msgstr "Ažuriranje pregleda pridruživanja nije uspelo. Molimo Vas pokušajte ponovo."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:312
+#: src/hooks/business/spaces/useSpaceProfile.ts:314
 msgid "Failed to update profile"
 msgstr "Neuspešno ažuriranje profila"
 
@@ -1644,7 +1563,7 @@ msgstr "Neuspešno ažuriranje profila"
 msgid "Farcaster"
 msgstr "Farcaster"
 
-#: src/components/direct/DirectMessageContactsList.tsx:313
+#: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "Favorites"
 msgstr "Omiljeni"
 
@@ -1656,7 +1575,7 @@ msgstr "Funkcije"
 msgid "File cannot be larger than {maxSize}"
 msgstr "Datoteka ne može biti veća od {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:115
+#: src/hooks/business/spaces/useSpaceProfile.ts:120
 #: src/hooks/business/ui/useCustomAssets.ts:142
 #: src/hooks/business/ui/useFileUpload.ts:57
 #: src/hooks/business/ui/useSpaceFileUploads.ts:76
@@ -1675,7 +1594,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "Datoteka ne može biti veća od 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:96
-#: src/hooks/business/spaces/useSpaceProfile.ts:117
+#: src/hooks/business/spaces/useSpaceProfile.ts:122
 #: src/hooks/business/ui/useCustomAssets.ts:107
 #: src/hooks/business/ui/useCustomAssets.ts:153
 #: src/hooks/business/ui/useFileUpload.ts:59
@@ -1750,9 +1669,6 @@ msgstr "Generišite svež jednokratni pozivni link i kopirajte ga u vaš clipboa
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:712
 msgid "Generate Link"
 msgstr "Generiši link"
-
-#~ msgid "Generate New Link"
-#~ msgstr "Generiši novu vezu"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:864
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:710
@@ -1830,10 +1746,7 @@ msgstr "Sakrij"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Hide key"
-msgstr ""
-
-#~ msgid "Hide muted channels"
-#~ msgstr "Sakrij tihe kanale"
+msgstr "Sakrij ključ"
 
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:182
 msgid "Hide Muted Channels"
@@ -1843,9 +1756,6 @@ msgstr "Sakrij tihe kanale"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:391
 msgid "Hide muted channels from sidebar"
 msgstr "Sakrij isključene kanale sa bočne trake"
-
-#~ msgid "Hide muted channels in list"
-#~ msgstr "Sakrij tihe kanale na listi"
 
 #: src/services/InvitationService.ts:232
 msgid "Hub key not found for this Space."
@@ -1861,14 +1771,14 @@ msgstr "Razumem"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:454
 msgid "I Understand, Copy"
-msgstr ""
+msgstr "Razumem, kopiraj"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:498
 msgid "I Understand, Show QR"
 msgstr "Razumem, prikaži QR"
 
-#: src/components/message/Message.tsx:799
-#: src/components/message/Message.tsx:893
+#: src/components/message/Message.tsx:840
+#: src/components/message/Message.tsx:935
 msgid "I'm new!"
 msgstr "Ja sam nov!"
 
@@ -1886,17 +1796,17 @@ msgstr "Uvezi rezervnu kopiju"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:172
 msgid "Import account"
-msgstr ""
+msgstr "Uvezite nalog"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:91
 msgid "Import method"
-msgstr ""
+msgstr "Metoda uvoza"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:85
 msgid "Import your account key"
 msgstr "Uvezi svoj ključ naloga"
 
-#: src/components/message/PinnedMessagesPanel.tsx:192
+#: src/components/message/PinnedMessagesPanel.tsx:206
 msgid "Important messages will be pinned here"
 msgstr "Važne poruke će biti zakačene ovde"
 
@@ -1908,17 +1818,13 @@ msgstr "Uvoz..."
 msgid "Inline Code"
 msgstr "Inline kod"
 
-#: src/services/MessageService.ts:3187
+#: src/services/MessageService.ts:3185
 msgid "invalid address for signature"
 msgstr "nevažeća adresa za potpis"
 
 #: src/hooks/business/validation/useAddressValidation.ts:98
 msgid "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "Nevažeći format adrese. Adrese moraju koristiti važeće alfanumeričke karaktere."
-
-#: src/components/onboarding/steps/ImportKeyStep.tsx:71
-#~ msgid "Invalid Key File"
-#~ msgstr "Nevalidna datoteka ključa"
 
 #: src/services/InvitationService.ts:458
 #: src/services/InvitationService.ts:469
@@ -1973,9 +1879,6 @@ msgstr "Kurziv"
 msgid "Join"
 msgstr "Pridruži se"
 
-#~ msgid "Join a space"
-#~ msgstr "Pridružite se prostoru"
-
 #: src/components/discover-page/DiscoverPage.tsx:83
 #: src/components/modals/AddSpaceModal.tsx:120
 #: src/components/space/SpacesSidebar.tsx:308
@@ -2011,7 +1914,7 @@ msgstr "Pridruživanje..."
 
 #: src/components/bookmarks/BookmarkCard.tsx:217
 #: src/components/bookmarks/BookmarkItem.tsx:134
-#: src/components/message/PinnedMessagesPanel.tsx:92
+#: src/components/message/PinnedMessagesPanel.tsx:106
 msgid "Jump"
 msgstr "Skoči"
 
@@ -2029,16 +1932,12 @@ msgstr "Čuvajte svoj ključ bezbedno!"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:52
 msgid "Key contains non-hexadecimal characters."
-msgstr ""
-
-#: src/components/modals/UserSettingsModal/Security.tsx:328
-#~ msgid "Key Export"
-#~ msgstr "Izvoz ključeva"
+msgstr "Ključ sadrži neheksadecimalne znakove."
 
 #. placeholder {0}: cleanHex.length
 #: src/components/onboarding/steps/ImportKeyStep.tsx:55
 msgid "Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
-msgstr ""
+msgstr "Ključ mora imati {ED448_PRIVATE_KEY_HEX_LENGTH} znakova ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:107
 msgid "Key Ready"
@@ -2053,7 +1952,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Prečice na tastaturi"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:423
+#: src/components/user/UserProfile.tsx:438
 msgid "Kick"
 msgstr "Izbacivanje"
 
@@ -2061,7 +1960,7 @@ msgstr "Izbacivanje"
 msgid "Kick User"
 msgstr "Isključi korisnika"
 
-#: src/components/user/UserProfile.tsx:423
+#: src/components/user/UserProfile.tsx:438
 msgid "Kicked!"
 msgstr "Izbačen!"
 
@@ -2083,9 +1982,6 @@ msgstr "Napusti {0}"
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:239
 msgid "Leave Space"
 msgstr "Napusti prostor"
-
-#~ msgid "Leave this space"
-#~ msgstr "Napustite ovaj space"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:402
 msgid "Leave this Space"
@@ -2117,22 +2013,19 @@ msgstr "Učitavanje oznaka..."
 msgid "Loading message..."
 msgstr "Učitavanje poruke..."
 
-#: src/components/notifications/NotificationPanel.tsx:193
+#: src/components/notifications/NotificationPanel.tsx:194
 msgid "Loading notifications..."
 msgstr "Učitavanje obaveštenja..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:180
+#: src/components/message/PinnedMessagesPanel.tsx:194
 msgid "Loading pinned messages..."
 msgstr "Učitavanje zakačenih poruka..."
-
-#~ msgid "Loading public spaces..."
-#~ msgstr "Učitavanje javnih prostora..."
 
 #: src/components/discover-page/DiscoverTab.tsx:98
 msgid "Loading public Spaces..."
 msgstr "Učitavanje javnih Prostora..."
 
-#: src/components/thread/ThreadPanel.tsx:374
+#: src/components/thread/ThreadPanel.tsx:391
 msgid "Loading thread..."
 msgstr "Učitavanje niti..."
 
@@ -2189,12 +2082,6 @@ msgstr "Upravljajte grupama kanala i kanalima. Prevucite da biste preuredili."
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Upravljaj podešavanjima obaveštenja na radnoj površini za nove poruke."
 
-#~ msgid "Manage devices, and privacy conditions for messaging and synchronization."
-#~ msgstr "Upravljaj uređajima i uslovima privatnosti za poruke i sinhronizaciju."
-
-#~ msgid "Manage Inivte links and send invites to people you've previously had conversations with."
-#~ msgstr "Upravljajte pozivnim linkovima i šaljite pozivnice ljudima sa kojima ste prethodno razgovarali."
-
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:220
 msgid "Manage Roles"
 msgstr "Upravljaj ulogama"
@@ -2203,7 +2090,7 @@ msgstr "Upravljaj ulogama"
 msgid "Manage your settings for <0>{spaceName}</0>."
 msgstr "Upravljaj svojim podešavanjima za <0>{spaceName}</0>."
 
-#: src/components/notifications/NotificationPanel.tsx:246
+#: src/components/notifications/NotificationPanel.tsx:247
 msgid "Mark all as read"
 msgstr "Označi sve kao pročitano"
 
@@ -2219,7 +2106,7 @@ msgstr "član"
 msgid "members"
 msgstr "članovi"
 
-#: src/components/space/Channel.tsx:1542
+#: src/components/space/Channel.tsx:1557
 msgid "Members List"
 msgstr "Lista članova"
 
@@ -2235,32 +2122,28 @@ msgstr "Pomeni sve"
 msgid "Message actions"
 msgstr "Akcije poruka"
 
-#: src/components/message/Message.tsx:742
-#: src/components/message/Message.tsx:815
-#: src/components/message/Message.tsx:909
+#: src/components/message/Message.tsx:782
+#: src/components/message/Message.tsx:856
+#: src/components/message/Message.tsx:951
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Poruka nema važeći potpis, ovo možda nije od pošiljaoca"
 
-#: src/components/message/MessageComposer.tsx:173
+#: src/components/message/MessageComposer.tsx:175
 msgid "Message..."
 msgstr "Poruka..."
 
-#: src/components/direct/DirectMessageContactsList.tsx:390
+#: src/components/direct/DirectMessageContactsList.tsx:414
 #: src/components/shell/NavRail.tsx:26
 msgid "Messages"
 msgstr "Poruke"
 
-#: src/components/message/MessageComposer.tsx:866
+#: src/components/message/MessageComposer.tsx:876
 msgid "Messages are NOT signed!"
 msgstr "Poruke NISU potpisane!"
 
-#: src/components/message/MessageComposer.tsx:867
+#: src/components/message/MessageComposer.tsx:877
 msgid "Messages are signed!"
 msgstr "Poruke su potpisane!"
-
-#: src/components/modals/UserSettingsModal/Security.tsx:350
-#~ msgid "Mobile Import"
-#~ msgstr "Mobilni uvoz"
 
 #: src/components/discover-page/SpaceCard.tsx:166
 msgid "More"
@@ -2278,15 +2161,9 @@ msgstr "Više reakcija"
 msgid "Must be exactly 4 characters"
 msgstr "Mora da ima tačno 4 znaka"
 
-#: src/components/user/UserProfile.tsx:404
+#: src/components/user/UserProfile.tsx:419
 msgid "Mute"
 msgstr "Isključi zvuk"
-
-#~ msgid "Mute all notifications from this space"
-#~ msgstr "Isključi sve obaveštenja iz ovog prostora"
-
-#~ msgid "Mute all notifications from this Space"
-#~ msgstr "Isključite sva obaveštenja iz ovog Prostora"
 
 #: src/components/space/ChannelItem.tsx:187
 msgid "Mute Channel"
@@ -2296,7 +2173,7 @@ msgstr "Isključi kanal"
 msgid "Mute conversation"
 msgstr "Isključi razgovor"
 
-#: src/components/direct/DirectMessageContactsList.tsx:261
+#: src/components/direct/DirectMessageContactsList.tsx:273
 msgid "Mute Conversation"
 msgstr "Isključi Razgovor"
 
@@ -2316,9 +2193,6 @@ msgstr "Isključi zvuk zauvek"
 msgid "Mute Space"
 msgstr "Isključi prostor"
 
-#~ msgid "Mute this Space"
-#~ msgstr "Isključi ovaj prostor"
-
 #: src/components/modals/MuteUserModal.tsx:67
 msgid "Mute User"
 msgstr "Isključi korisnika"
@@ -2327,7 +2201,7 @@ msgstr "Isključi korisnika"
 msgid "Mute Users"
 msgstr "Isključi korisnike"
 
-#: src/components/direct/DirectMessageContactsList.tsx:315
+#: src/components/direct/DirectMessageContactsList.tsx:327
 #: src/components/discover-page/SpaceCard.tsx:75
 msgid "Muted"
 msgstr "Isključeno"
@@ -2336,8 +2210,8 @@ msgstr "Isključeno"
 msgid "My Account"
 msgstr "Moj nalog"
 
-#: src/components/direct/DirectMessageContactsList.tsx:437
-#: src/components/space/Channel.tsx:1730
+#: src/components/direct/DirectMessageContactsList.tsx:461
+#: src/components/space/Channel.tsx:1755
 msgid "Name or Address"
 msgstr "Ime ili adresa"
 
@@ -2386,7 +2260,7 @@ msgstr "Nova poruka od {0}"
 msgid "New one-time invites can't be issued from this device for this Space. The public invite link still works — switch to <0>Public Link</0> above to copy it or send it via DM."
 msgstr "Nove jednokratne pozivnice se ne mogu izdati sa ovog uređaja za ovaj Prostor. Javni pozivni link i dalje radi — prebacite se na <0>Javni link</0> iznad da biste ga kopirali ili poslali putem DM-a."
 
-#: src/components/direct/DMUserProfileSidebar.tsx:109
+#: src/components/direct/DMUserProfileSidebar.tsx:119
 msgid "No bio yet."
 msgstr "Još nema biografije."
 
@@ -2397,9 +2271,6 @@ msgstr "Nema marakara."
 #: src/components/bookmarks/BookmarksPage.tsx:141
 msgid "No bookmarks in direct messages."
 msgstr "Nema marakara u direktnim porukama."
-
-#~ msgid "No bookmarks in spaces."
-#~ msgstr "Nema marakara u prostorima."
 
 #: src/components/bookmarks/BookmarksPage.tsx:143
 msgid "No bookmarks in Spaces."
@@ -2417,7 +2288,7 @@ msgstr "Još nema marakara. Marakirajte poruke kako biste ih kasnije koristili k
 msgid "No channels - drag channels here or delete group."
 msgstr "Nema kanala - prevucite kanale ovde ili obrišite grupu."
 
-#: src/components/direct/DirectMessageContactsList.tsx:453
+#: src/components/direct/DirectMessageContactsList.tsx:477
 msgid "No contacts found"
 msgstr "Nema pronađenih kontakata"
 
@@ -2437,39 +2308,27 @@ msgstr "Nema emoji-a"
 msgid "No encryption state found for this Space. Cannot generate public invite."
 msgstr "Nije pronađeno stanje enkripcije za ovaj Prostor. Nije moguće generisati javnu pozivnicu."
 
-#~ msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
-#~ msgstr "Nema pronađenog stanja enkripcije za ovaj space. Space možda treba da bude inicijalizovan ili možda treba da generišete javnu pozivnicu prvo."
-
 #: src/services/InvitationService.ts:95
 msgid "No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first."
 msgstr "Nije pronađeno stanje enkripcije za ovaj Prostor. Prostor će možda morati da se inicijalizuje ili ćete možda morati prvo da generišete javni pozivni link."
 
-#: src/components/direct/DirectMessageContactsList.tsx:447
+#: src/components/direct/DirectMessageContactsList.tsx:471
 msgid "No favorites yet"
 msgstr "Nema omiljenih još"
-
-#~ msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
-#~ msgstr "Nema dostupnih evaluacija pozivnica. Molimo generiši javnu pozivnicu ili osiguraj da je stanje enkripcije prostora pravilno inicijalizovano."
-
-#~ msgid "No invite evaluations available. Please generate a public invite link or ensure the Space encryption state is properly initialized."
-#~ msgstr "Nema dostupnih procena pozivnica. Molimo generišite javni pozivni link ili se uverite da je stanje enkripcije Prostora pravilno inicijalizovano."
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
 msgstr "Nema poruka"
 
-#~ msgid "No missing spaces found"
-#~ msgstr "Nema nedostajućih prostora"
-
 #: src/hooks/business/user/useSpaceRecovery.ts:77
 msgid "No missing Spaces found"
 msgstr "Nije pronađen nijedan nedostajući Prostor"
 
-#: src/components/direct/DirectMessageContactsList.tsx:451
+#: src/components/direct/DirectMessageContactsList.tsx:475
 msgid "No muted conversations"
 msgstr "Nema isključenih razgovora"
 
-#: src/components/message/PinnedMessagesPanel.tsx:188
+#: src/components/message/PinnedMessagesPanel.tsx:202
 msgid "No pinned messages yet"
 msgstr "Još nema zakačenih poruka"
 
@@ -2477,40 +2336,31 @@ msgstr "Još nema zakačenih poruka"
 msgid "No public invite link exists yet. Generate one before sharing."
 msgstr "Javni pozivni link još uvek ne postoji. Generišite ga pre deljenja."
 
-#~ msgid "No public spaces match your filters."
-#~ msgstr "Nema javnih prostora koji odgovaraju vašim filterima."
-
 #: src/components/discover-page/DiscoverTab.tsx:105
 msgid "No public Spaces match your filters."
 msgstr "Nijedan javni Prostor ne odgovara vašim filterima."
-
-#~ msgid "No public spaces yet."
-#~ msgstr "Još nema javnih prostora."
 
 #: src/components/discover-page/DiscoverTab.tsx:106
 msgid "No public Spaces yet."
 msgstr "Još uvek nema javnih Prostora."
 
-#~ msgid "No spaces found"
-#~ msgstr "Nema pronađenih prostora"
-
 #: src/components/space/SpacesSidebar.tsx:612
 msgid "No Spaces found"
 msgstr "Nije pronađen nijedan Prostor"
 
-#: src/components/thread/ThreadsListPanel.tsx:131
+#: src/components/thread/ThreadsListPanel.tsx:147
 msgid "No threads match your search"
 msgstr "Nema niti koje odgovaraju vašoj pretrazi"
 
-#: src/components/thread/ThreadsListPanel.tsx:121
+#: src/components/thread/ThreadsListPanel.tsx:137
 msgid "No threads yet"
 msgstr "Još uvek nema niti"
 
-#: src/components/direct/DirectMessageContactsList.tsx:449
+#: src/components/direct/DirectMessageContactsList.tsx:473
 msgid "No unknown contacts"
 msgstr "Nema nepoznatih kontakata"
 
-#: src/components/notifications/NotificationPanel.tsx:201
+#: src/components/notifications/NotificationPanel.tsx:202
 msgid "No unread notifications"
 msgstr "Nema nepročitanih obaveštenja"
 
@@ -2518,18 +2368,18 @@ msgstr "Nema nepročitanih obaveštenja"
 msgid "No user found for @{usernameQuery}."
 msgstr "Nije pronađen korisnik za @{usernameQuery}."
 
-#: src/components/space/Channel.tsx:1738
-#: src/components/space/Channel.tsx:1968
+#: src/components/space/Channel.tsx:1763
+#: src/components/space/Channel.tsx:2002
 msgid "No users found!"
 msgstr "Nema korisnika!"
 
-#: src/components/modals/UserSettingsModal/General.tsx:207
+#: src/components/modals/UserSettingsModal/General.tsx:219
 #: src/components/space/RolePreview.tsx:39
 msgid "None"
 msgstr "Nema"
 
-#: src/components/direct/DMUserProfileSidebar.tsx:118
-#: src/components/user/UserProfile.tsx:332
+#: src/components/direct/DMUserProfileSidebar.tsx:128
+#: src/components/user/UserProfile.tsx:347
 msgid "Note"
 msgstr "Napomena"
 
@@ -2549,7 +2399,7 @@ msgstr "Dozvola za obaveštenja nije odobrena"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:269
 #: src/components/modals/UserSettingsModal/Navigation.tsx:21
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
-#: src/components/space/Channel.tsx:1479
+#: src/components/space/Channel.tsx:1494
 msgid "Notifications"
 msgstr "Obaveštenja"
 
@@ -2567,14 +2417,11 @@ msgstr "Obaveštenja nisu podržana u ovom pretraživaču"
 msgid "Notifications for {0}"
 msgstr "Obaveštenja za {0}"
 
-#~ msgid "Notifications for #{0}"
-#~ msgstr "Obaveštenja za #{0}"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:276
 msgid "Notifications for this Space"
 msgstr "Obaveštenja za ovaj Prostor"
 
-#: src/components/message/MentionDropdown.tsx:257
+#: src/components/message/MentionDropdown.tsx:265
 msgid "Notify all members"
 msgstr "Obavesti sve članove"
 
@@ -2614,11 +2461,11 @@ msgid "Open {0}"
 msgstr "Otvorite {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:29
-#: src/components/direct/DirectMessage.tsx:768
+#: src/components/direct/DirectMessage.tsx:791
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
-#: src/components/space/Channel.tsx:1370
+#: src/components/space/Channel.tsx:1385
 #: src/components/wallet/WalletPage.tsx:19
 msgid "Open navigation"
 msgstr "Otvorite navigaciju"
@@ -2666,19 +2513,11 @@ msgstr "Nalepi link za poziv"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:108
 msgid "Paste key"
-msgstr ""
-
-#: src/components/onboarding/steps/ImportKeyStep.tsx:153
-#~ msgid "Paste your 114-character private key"
-#~ msgstr ""
+msgstr "Zalepite ključ"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:149
 msgid "Paste your private key"
-msgstr ""
-
-#: src/components/onboarding/steps/ImportKeyStep.tsx:89
-#~ msgid "Paste your private key to restore your account."
-#~ msgstr ""
+msgstr "Zalepite vaš privatni ključ"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "Pending"
@@ -2687,9 +2526,6 @@ msgstr "Na čekanju"
 #: src/components/modals/UserSettingsModal/Security.tsx:355
 msgid "Pending removal - click Save to confirm"
 msgstr "Na čekanju za uklanjanje - kliknite Sačuvaj da potvrdite"
-
-#~ msgid "People"
-#~ msgstr "Ljudi"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:142
 #: src/components/space/RolePreview.tsx:34
@@ -2710,7 +2546,7 @@ msgstr "zakači"
 msgid "Pin"
 msgstr "Zakači"
 
-#: src/components/message/PinnedMessagesPanel.tsx:191
+#: src/components/message/PinnedMessagesPanel.tsx:205
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Zakačite važne poruke da ih lako pronađete"
 
@@ -2735,18 +2571,18 @@ msgstr "Zakači poruke"
 msgid "Pin/Unpin without confirmation"
 msgstr "Prikvači/otkači bez potvrde"
 
-#: src/components/message/Message.tsx:768
-#: src/components/message/Message.tsx:862
+#: src/components/message/Message.tsx:809
+#: src/components/message/Message.tsx:904
 msgid "Pinned"
 msgstr "Zakačeno"
 
-#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:767
-#: src/components/message/Message.tsx:861
+#. placeholder {0}: formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))
+#: src/components/message/Message.tsx:808
+#: src/components/message/Message.tsx:903
 msgid "Pinned by {0}"
 msgstr "Zakačeno od {0}"
 
-#: src/components/space/Channel.tsx:1411
+#: src/components/space/Channel.tsx:1426
 msgid "Pinned Messages"
 msgstr "Zakačene poruke"
 
@@ -2754,7 +2590,7 @@ msgstr "Zakačene poruke"
 msgid "Preview"
 msgstr "Pregled"
 
-#: src/components/modals/UserSettingsModal/General.tsx:227
+#: src/components/modals/UserSettingsModal/General.tsx:239
 msgid "Preview:"
 msgstr "Pregled:"
 
@@ -2767,31 +2603,24 @@ msgstr "Glavna navigacija"
 msgid "Privacy"
 msgstr "Privatnost"
 
-#~ msgid "Privacy/Security"
-#~ msgstr "Privatnost/Bezbednost"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:143
 #: src/components/onboarding/steps/ImportKeyStep.tsx:153
 msgid "Private key (hex)"
-msgstr ""
+msgstr "Privatni ključ (heksadecimalni)|"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:464
 msgid "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
-msgstr ""
+msgstr "Privatni ključ je kopiran. Automatski će biti obrisan iz vašeg međuspremnika za 60 sekundi."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:465
 msgid "Private key copied. Store it securely and clear your clipboard when you're done."
-msgstr ""
-
-#: src/components/modals/UserSettingsModal/Security.tsx:461
-#~ msgid "Private key copied. Store it securely and clear your clipboard. It will be cleared automatically in 60 seconds."
-#~ msgstr ""
+msgstr "Privatni ključ je kopiran. Čuvajte ga bezbedno i obrišite vaš međuspremnik kada završite."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:88
 msgid "Private key saved to selected folder"
 msgstr "Privatni ključ je sačuvan u izabranom folderu"
 
-#: src/components/message/MessageComposer.tsx:669
+#: src/components/message/MessageComposer.tsx:671
 msgid "Processing image... This may take a moment for large files."
 msgstr "Obrada slike... Ovo može potrajati trenutak za velike datoteke."
 
@@ -2803,12 +2632,6 @@ msgstr "Obrada..."
 msgid "Public invite link generated successfully."
 msgstr "Javni pozivni link uspešno generisan."
 
-#~ msgid "Public Invite Links"
-#~ msgstr "Javni pozivni linkovi"
-
-#~ msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
-#~ msgstr "Javni pozivni linkovi omogućavaju svakome ko ima pristup linku da se pridruži vašem Space. Razmislite s kim delite link i gde ga objavljujete."
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:205
 msgid "Public Link"
 msgstr "Javni link"
@@ -2816,9 +2639,6 @@ msgstr "Javni link"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:128
 msgid "Public profile"
 msgstr "Javni profil"
-
-#~ msgid "Public profiles aren't searchable yet."
-#~ msgstr "Javna profila još uvek nisu pretraživa."
 
 #: src/components/shell/NavRail.tsx:44
 msgid "Public spaces"
@@ -2840,7 +2660,7 @@ msgstr "Quorum je decentralizovana platforma za razmenu poruka gde vi kontroliš
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum je učitan dok pretraživač nije bio u fokusu ili je zahtev za passkey odbijen. Ponovo se autorizuj da pristupiš porukama."
 
-#: src/components/modals/ReactionsModal.tsx:89
+#: src/components/modals/ReactionsModal.tsx:98
 msgid "Reactions"
 msgstr "Reakcije"
 
@@ -2865,7 +2685,7 @@ msgstr "Potvrde o čitanju"
 msgid "Read-only"
 msgstr "Samo za čitanje"
 
-#: src/components/direct/DirectMessageContactsList.tsx:464
+#: src/components/direct/DirectMessageContactsList.tsx:488
 msgid "Ready to start a truly private conversation?"
 msgstr "Spremni za započinjanje zaista privatnog razgovora?"
 
@@ -2898,11 +2718,11 @@ msgstr "Ukloni"
 msgid "Remove bookmark"
 msgstr "Ukloni oznaku"
 
-#: src/components/direct/DirectMessageContactsList.tsx:253
+#: src/components/direct/DirectMessageContactsList.tsx:265
 msgid "Remove from Favorites"
 msgstr "Ukloni iz omiljenih"
 
-#: src/components/user/UserProfile.tsx:287
+#: src/components/user/UserProfile.tsx:302
 msgid "Removing..."
 msgstr "Uklanjanje..."
 
@@ -2910,12 +2730,12 @@ msgstr "Uklanjanje..."
 msgid "Rename this device"
 msgstr "Preimenujte ovaj uređaj"
 
-#: src/components/thread/ThreadPanel.tsx:438
+#: src/components/thread/ThreadPanel.tsx:465
 msgid "Reopen"
 msgstr "Ponovo otvori"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:321
-#: src/components/notifications/NotificationPanel.tsx:98
+#: src/components/notifications/NotificationPanel.tsx:99
 msgid "Replies"
 msgstr "Odgovori"
 
@@ -2925,7 +2745,7 @@ msgstr "Odgovori"
 msgid "Reply"
 msgstr "Odgovori"
 
-#: src/components/thread/ThreadPanel.tsx:450
+#: src/components/thread/ThreadPanel.tsx:477
 msgid "Reply in thread..."
 msgstr "Odgovori u niti..."
 
@@ -2969,16 +2789,13 @@ msgstr "Obnovite prostore koji postoje na ovom uređaju, ali nedostaju iz vašeg
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:87
 msgid "Restore your account from your private key — upload the key file or paste the key directly."
-msgstr ""
+msgstr "Vratite svoj nalog pomoću vašeg privatnog ključa — otpremite datoteku ključa ili zalepite ključ direktno."
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
 #: src/components/modals/UserSettingsModal/Security.tsx:213
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Vraćeno je {0} poruka i {1} razgovora."
-
-#~ msgid "Restored {0} space(s)"
-#~ msgstr "Obnovljeno {0} prostor(a)"
 
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:99
@@ -2990,7 +2807,7 @@ msgid "Restoring..."
 msgstr "Obnavljanje..."
 
 #: src/components/discover-page/DiscoverTab.tsx:89
-#: src/components/message/Message.tsx:1378
+#: src/components/message/Message.tsx:1420
 msgid "Retry"
 msgstr "Pokušaj ponovo"
 
@@ -3012,7 +2829,7 @@ msgstr "SAČUVAJ"
 #: src/components/modals/GroupEditorModal.tsx:97
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:694
 #: src/components/modals/ThreadSettingsModal.tsx:184
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:356
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:363
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Sačuvaj promene"
@@ -3023,7 +2840,7 @@ msgid "Save Edit History"
 msgstr "Sačuvaj istoriju izmena"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:679
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:345
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:352
 msgid "Save Failed"
 msgstr "Čuvanje nije uspelo"
 
@@ -3054,10 +2871,7 @@ msgstr "Čuvanje..."
 msgid "Search bookmarks..."
 msgstr "Pretraži marakare..."
 
-#~ msgid "Search by name or address..."
-#~ msgstr "Pretraži po imenu ili adresi..."
-
-#: src/components/direct/DirectMessageContactsList.tsx:398
+#: src/components/direct/DirectMessageContactsList.tsx:422
 msgid "Search direct messages"
 msgstr "Pretraži direktnu poruke"
 
@@ -3084,17 +2898,14 @@ msgstr "Pretraga u ovom Prostoru"
 msgid "Search in this Space..."
 msgstr "Pretraži u ovom prostoru..."
 
-#: src/components/direct/DirectMessage.tsx:869
-#: src/components/space/Channel.tsx:1561
+#: src/components/direct/DirectMessage.tsx:893
+#: src/components/space/Channel.tsx:1576
 msgid "Search Messages"
 msgstr "Pretraži poruke"
 
 #: src/components/search/SearchBar.tsx:33
 msgid "Search messages..."
 msgstr "Pretraga poruka..."
-
-#~ msgid "Search public spaces..."
-#~ msgstr "Pretraži javne prostore..."
 
 #: src/components/discover-page/DiscoverTab.tsx:70
 msgid "Search public Spaces..."
@@ -3104,14 +2915,11 @@ msgstr "Pretražite javne Prostore..."
 msgid "Search Results"
 msgstr "Rezultati pretrage"
 
-#~ msgid "Search spaces"
-#~ msgstr "Pretraži prostore"
-
 #: src/components/space/SpacesSidebar.tsx:555
 msgid "Search Spaces"
 msgstr "Pretražite Prostore"
 
-#: src/components/thread/ThreadsListPanel.tsx:101
+#: src/components/thread/ThreadsListPanel.tsx:117
 msgid "Search threads…"
 msgstr "Pretraži niti…"
 
@@ -3119,7 +2927,7 @@ msgstr "Pretraži niti…"
 msgid "Search username or address"
 msgstr "Pretraži korisničko ime ili adresu"
 
-#: src/components/space/Channel.tsx:1959
+#: src/components/space/Channel.tsx:1993
 msgid "Search Username or Address"
 msgstr "Pretraži korisničko ime ili adresu"
 
@@ -3144,13 +2952,6 @@ msgstr "Pogledaj sve marakare"
 msgid "Select"
 msgstr "Izaberi"
 
-#~ msgid "Select conversation"
-#~ msgstr "Izaberi razgovor"
-
-#: src/components/onboarding/steps/ImportKeyStep.tsx:88
-#~ msgid "Select or drag your account key file to restore your account."
-#~ msgstr "Izaberite ili prevucite datoteku ključa naloga kako biste vratili nalog."
-
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:158
 msgid "Select permissions"
 msgstr "Izaberite dozvole"
@@ -3167,9 +2968,6 @@ msgstr "Izaberite uloge"
 msgid "Select skin tone"
 msgstr "Izaberi boju kože"
 
-#~ msgid "Select which types of notifications you want to receive"
-#~ msgstr "Izaberite koje vrste obaveštenja želite da primate"
-
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:66
 msgid "Send"
 msgstr "Pošalji"
@@ -3177,9 +2975,6 @@ msgstr "Pošalji"
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:517
 msgid "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "Pošaljite jednokratnu pozivnicu direktno nekome. Svaki link se može koristiti samo jednom."
-
-#~ msgid "Send a unique invite link directly to someone. Each invite can only be used once."
-#~ msgstr "Pošaljite jedinstveni pozivni link direktno nekome. Svaki poziv može se koristiti samo jednom."
 
 #: src/services/ActionQueueHandlers.ts:1050
 msgid "Send failed"
@@ -3194,12 +2989,9 @@ msgstr "Pošalji pozivnicu"
 msgid "Send Link"
 msgstr "Pošalji link"
 
-#: src/components/user/UserProfile.tsx:376
+#: src/components/user/UserProfile.tsx:391
 msgid "Send Message"
 msgstr "Pošalji poruku"
-
-#~ msgid "Send Private Invite"
-#~ msgstr "Pošaljite privatni poziv"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:434
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:604
@@ -3207,10 +2999,7 @@ msgstr "Pošalji poruku"
 msgid "Send via DM"
 msgstr "Pošalji putem DM-a"
 
-#~ msgid "Send your public invite link directly to someone via DM."
-#~ msgstr "Pošaljite svoj javni pozivni link direktno nekome putem DM-a."
-
-#: src/components/message/Message.tsx:1363
+#: src/components/message/Message.tsx:1405
 msgid "Sending..."
 msgstr "Šaljem..."
 
@@ -3231,9 +3020,6 @@ msgstr "Podešavanja"
 msgid "Several people are typing"
 msgstr "Nekoliko ljudi piše"
 
-#~ msgid "Share Public Link"
-#~ msgstr "Podelite javni link"
-
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:386
 msgid "Share this Space's public invite link. Anyone with the link can join."
 msgstr "Podelite javni pozivni link ovog Prostora. Svako ko ima link može se pridružiti."
@@ -3253,7 +3039,7 @@ msgstr "Prikazuj obaveštenja na radnoj površini kada primiš nove poruke dok j
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Show key"
-msgstr ""
+msgstr "Prikaži ključ"
 
 #: src/components/discover-page/SpaceCard.tsx:178
 msgid "Show less"
@@ -3270,9 +3056,6 @@ msgstr "Prikaži online status"
 #: src/components/modals/UserSettingsModal/Security.tsx:427
 msgid "Show QR"
 msgstr "Prikaži QR"
-
-#~ msgid "Showing {0} of {total} spaces"
-#~ msgstr "Prikazano {0} od {total} prostoza"
 
 #. placeholder {0}: entries.length
 #: src/components/discover-page/DiscoverTab.tsx:139
@@ -3292,7 +3075,7 @@ msgstr "Prijavi se u Quorum"
 msgid "Skip for now"
 msgstr "Preskoči sada"
 
-#: src/services/MessageService.ts:4466
+#: src/services/MessageService.ts:4464
 msgid "Someone"
 msgstr "Neko"
 
@@ -3352,7 +3135,7 @@ msgstr "Podešavanja Space"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:40
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:53
-#: src/components/modals/UserSettingsModal/General.tsx:197
+#: src/components/modals/UserSettingsModal/General.tsx:209
 msgid "Space Tag"
 msgstr "Space Tag"
 
@@ -3362,7 +3145,7 @@ msgstr "Space Tag"
 msgid "Spaces"
 msgstr "Prostori"
 
-#: src/components/thread/ThreadsListPanel.tsx:122
+#: src/components/thread/ThreadsListPanel.tsx:138
 msgid "Start a thread from any message"
 msgstr "Započnite nit iz bilo koje poruke"
 
@@ -3378,7 +3161,7 @@ msgstr "Počni da kucaš da pretražiš poruke..."
 msgid "Start your own private or public community."
 msgstr "Započni svoju vlastitu privatnu ili javnu zajednicu."
 
-#: src/components/thread/ThreadPanel.tsx:296
+#: src/components/thread/ThreadPanel.tsx:313
 msgid "Started by"
 msgstr "Započeo"
 
@@ -3389,17 +3172,14 @@ msgstr "Status ide ovde"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1867
-#: src/components/thread/ThreadPanel.tsx:511
+#: src/components/space/Channel.tsx:1901
+#: src/components/thread/ThreadPanel.tsx:538
 msgid "Stickers"
 msgstr "Stiker"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:58
 msgid "Strikethrough"
 msgstr "Precrtano"
-
-#~ msgid "Successfully sent invite to {0}"
-#~ msgstr "Uspešno poslata pozivnica {0}"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:506
 msgid "Sync Kick Status"
@@ -3426,7 +3206,7 @@ msgstr "Dodirnite da kopirate"
 msgid "Tell people about yourself in this Space..."
 msgstr "Recite ljudima nešto o sebi u ovom Prostoru..."
 
-#: src/components/modals/UserSettingsModal/General.tsx:147
+#: src/components/modals/UserSettingsModal/General.tsx:159
 msgid "Tell us about yourself..."
 msgstr "Reci nam nešto o sebi..."
 
@@ -3452,7 +3232,7 @@ msgstr "Postavljanje passkey-a je isteklo. Možete pokušati ponovo ili nastavit
 msgid "This action cannot be undone and will permanently delete this Space and all of its channels and messages."
 msgstr "Ova akcija ne može da se poništi i trajno će obrisati ovaj Prostor i sve njegove kanale i poruke."
 
-#: src/components/modals/UserSettingsModal/General.tsx:139
+#: src/components/modals/UserSettingsModal/General.tsx:151
 msgid "This bio will be visible to others when they view your profile."
 msgstr "Ova biografija će biti vidljiva drugima kada pogledaju vaš profil."
 
@@ -3463,7 +3243,7 @@ msgstr "Ovaj razgovor nadjačava tvoju globalnu postavku. Klikni \"Resetuj na gl
 
 #: src/components/modals/UserSettingsModal/Security.tsx:441
 msgid "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
-msgstr ""
+msgstr "Ovo kopira vaš privatni ključ u međuspremnik u čistom tekstu. Svako ko ima pristup vašem međuspremniku može preuzeti potpunu kontrolu nad vašim nalogom. Čuvajte ga na sigurnom mestu i obrišite vaš međuspremnik nakon toga."
 
 #: src/components/modals/CreateSpaceModal.tsx:187
 #: src/components/modals/SpaceSettingsModal/General.tsx:189
@@ -3486,7 +3266,7 @@ msgstr "Ovako će vas drugi videti u Quorum. Možete promeniti ovo u svakom tren
 msgid "This is the default channel for the Space. To change it go to Space Settings → General."
 msgstr "Ovo je podrazumevani kanal za Prostor. Da biste ga promenili, idi na Podešavanja Prostora → Opšte."
 
-#: src/components/modals/UserSettingsModal/General.tsx:175
+#: src/components/modals/UserSettingsModal/General.tsx:187
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Ovo je vaša javna adresa i sigurno je deliti je sa bilo kim s kim želite da komunicirate."
 
@@ -3497,9 +3277,6 @@ msgstr "Ovaj link ne ističe. Svako ko ga ima može se pridružiti vašem Prosto
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:402
 msgid "This link was generated by a Space owner. It does not expire."
 msgstr "Ovaj link je generisao vlasnik Prostora. Ne ističe."
-
-#~ msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
-#~ msgstr "Ovaj link neće isteći, ali možete generisati novi u bilo kojem trenutku, što će poništiti stari link."
 
 #: src/hooks/business/validation/errorTranslator.ts:36
 msgid "This name conflicts with mention keywords."
@@ -3514,12 +3291,9 @@ msgstr "Ova javna pozivnica više nije važeća."
 msgid "This thread cannot be deleted because it contains messages from other users."
 msgstr "Ova nit ne može biti obrisana jer sadrži poruke drugih korisnika."
 
-#: src/components/thread/ThreadPanel.tsx:429
+#: src/components/thread/ThreadPanel.tsx:456
 msgid "This thread has been closed"
 msgstr "Ova nit je zatvorena"
-
-#~ msgid "This user is already a member of this space."
-#~ msgstr "Ovaj korisnik je već član ovog prostora."
 
 #: src/hooks/business/spaces/useInviteManagement.ts:188
 msgid "This user is already a member of this Space."
@@ -3549,16 +3323,13 @@ msgstr "Ovo će kreirati javni pozivni link koji svako može koristiti da se pri
 msgid "This will delete all your data from this browser, including your private keys and all direct messages. Direct messages cannot be recovered. Make sure you have exported your private key from the Privacy/Security settings. This action cannot be undone."
 msgstr "Ovo će obrisati sve vaše podatke iz ovog pretraživača, uključujući privatne ključeve i sve direktne poruke. Direktne poruke ne mogu biti oporavljene. Obavezno izvezi privatni ključ iz podešavanja Privatnost/Bezbednost. Ova akcija ne može biti poništena."
 
-#~ msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
-#~ msgstr "Ovo će generisati novi javni pozivni link i poništiti trenutni. Svako ko ima stari link više neće moći da ga koristi."
-
 #: src/components/notifications/NotificationItem.tsx:139
 #: src/components/search/SearchResultItem.tsx:140
 msgid "Thread"
 msgstr "Nit"
 
-#: src/components/thread/ThreadPanel.tsx:337
-#: src/components/thread/ThreadPanel.tsx:351
+#: src/components/thread/ThreadPanel.tsx:354
+#: src/components/thread/ThreadPanel.tsx:368
 msgid "Thread settings"
 msgstr "Podešavanja niti"
 
@@ -3570,8 +3341,8 @@ msgstr "Podešavanja niti"
 msgid "Thread title"
 msgstr "Naslov niti"
 
-#: src/components/space/Channel.tsx:1452
-#: src/components/thread/ThreadsListPanel.tsx:97
+#: src/components/space/Channel.tsx:1467
+#: src/components/thread/ThreadsListPanel.tsx:113
 msgid "Threads"
 msgstr "Niti"
 
@@ -3636,9 +3407,6 @@ msgstr "Unesite adresu korisnika kome želite da pošaljete"
 msgid "Typing indicators in DMs"
 msgstr "Indikatori pisanja u privatnim porukama"
 
-#~ msgid "Typing indicators in spaces"
-#~ msgstr "Indikatori pisanja u prostorima"
-
 #: src/components/modals/UserSettingsModal/Privacy.tsx:246
 msgid "Typing indicators in Spaces"
 msgstr "Indikatori kucanja u Prostorima"
@@ -3647,7 +3415,7 @@ msgstr "Indikatori kucanja u Prostorima"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Nije moguće kompresovati slike emojija. Molimo koristite manje slike."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:157
+#: src/hooks/business/spaces/useSpaceProfile.ts:162
 #: src/hooks/business/ui/useFileUpload.ts:100
 #: src/hooks/business/ui/useSpaceFileUploads.ts:170
 #: src/hooks/business/ui/useSpaceFileUploads.ts:193
@@ -3663,9 +3431,6 @@ msgstr "Nije moguće kompresovati slike stikera. Molimo koristite manje slike."
 #: src/components/ui/ClickToCopyContent.native.tsx:166
 msgid "Unable to copy to clipboard"
 msgstr "Nije moguće kopirati u međuspremnik"
-
-#~ msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
-#~ msgstr "Nije moguće napustiti space zbog nepotpune konfiguracije. Podaci o space-u mogu biti oštećeni."
 
 #: src/services/SpaceService.ts:561
 msgid "Unable to leave Space due to incomplete configuration. The Space data may be corrupted."
@@ -3696,10 +3461,10 @@ msgid "Unable to restore: not logged in"
 msgstr "Nije moguće obnoviti: niste prijavljeni"
 
 #: src/components/bookmarks/BookmarkCard.tsx:95
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:326
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:2852
-#: src/services/MessageService.ts:4395
+#: src/services/MessageService.ts:2850
+#: src/services/MessageService.ts:4393
 msgid "Unknown"
 msgstr "Nepoznato"
 
@@ -3715,26 +3480,25 @@ msgstr "Nepoznat vreme"
 
 #: src/components/bookmarks/BookmarkCard.tsx:48
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:234
-#: src/components/direct/DirectMessage.tsx:236
-#: src/components/direct/DirectMessage.tsx:248
-#: src/components/direct/DirectMessage.tsx:255
-#: src/components/direct/DirectMessage.tsx:321
-#: src/components/direct/DirectMessage.tsx:683
-#: src/components/direct/DirectMessageContactsList.tsx:43
-#: src/components/message/MentionDropdown.tsx:190
-#: src/components/message/MentionDropdown.tsx:197
+#: src/components/direct/DirectMessage.tsx:242
+#: src/components/direct/DirectMessage.tsx:244
+#: src/components/direct/DirectMessage.tsx:257
+#: src/components/direct/DirectMessage.tsx:265
+#: src/components/direct/DirectMessage.tsx:332
+#: src/components/direct/DirectMessage.tsx:706
+#: src/components/direct/DirectMessageContactsList.tsx:44
+#: src/components/message/MentionDropdown.tsx:192
 #: src/components/message/MessageEditTextarea.tsx:531
 #: src/components/message/MessageEditTextarea.tsx:563
 #: src/components/message/MessageEditTextarea.tsx:570
 #: src/components/message/MessageEditTextarea.tsx:574
 #: src/components/message/MessageEditTextarea.tsx:580
 #: src/components/message/MessagePreview.tsx:197
-#: src/components/message/PinnedMessagesPanel.tsx:75
+#: src/components/message/PinnedMessagesPanel.tsx:88
 #: src/components/modals/ConversationSettingsModal.tsx:118
 #: src/components/modals/NewDirectMessageModal.tsx:72
-#: src/components/notifications/NotificationPanel.tsx:279
-#: src/components/notifications/NotificationPanel.tsx:302
+#: src/components/notifications/NotificationPanel.tsx:290
+#: src/components/notifications/NotificationPanel.tsx:324
 #: src/hooks/business/channels/useChannelMessages.ts:160
 #: src/hooks/business/conversations/useDirectMessageData.ts:51
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
@@ -3748,20 +3512,20 @@ msgstr "Nepoznat vreme"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:2502
-#: src/services/MessageService.ts:2690
-#: src/services/MessageService.ts:2840
-#: src/services/MessageService.ts:2869
-#: src/services/MessageService.ts:4872
-#: src/services/MessageService.ts:4984
-#: src/services/MessageService.ts:5069
-#: src/services/MessageService.ts:5285
-#: src/services/MessageService.ts:5483
+#: src/services/MessageService.ts:2500
+#: src/services/MessageService.ts:2688
+#: src/services/MessageService.ts:2838
+#: src/services/MessageService.ts:2867
+#: src/services/MessageService.ts:4870
+#: src/services/MessageService.ts:4982
+#: src/services/MessageService.ts:5067
+#: src/services/MessageService.ts:5283
+#: src/services/MessageService.ts:5481
 msgid "Unknown User"
 msgstr "Nepoznati korisnik"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:404
+#: src/components/user/UserProfile.tsx:419
 msgid "Unmute"
 msgstr "Ponovo uključi zvuk"
 
@@ -3769,7 +3533,7 @@ msgstr "Ponovo uključi zvuk"
 msgid "Unmute Channel"
 msgstr "Ponovo uključi kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:261
+#: src/components/direct/DirectMessageContactsList.tsx:273
 msgid "Unmute Conversation"
 msgstr "Ponovo uključi razgovor"
 
@@ -3799,14 +3563,11 @@ msgstr "Ukloni zakačenu poruku"
 msgid "Unpin Message"
 msgstr "Ukloni poruku"
 
-#: src/components/message/PinnedMessagesPanel.tsx:97
+#: src/components/message/PinnedMessagesPanel.tsx:111
 msgid "Unpin this post"
 msgstr "Ukloni ovu objavu"
 
-#~ msgid "Unread direct messages"
-#~ msgstr "Nepročitane direktna poruke"
-
-#: src/components/direct/DirectMessage.tsx:988
+#: src/components/direct/DirectMessage.tsx:1014
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Dok ne odgovorite, ovaj pošiljalac neće videti vaše ime ili profilnu sliku"
 
@@ -3822,7 +3583,7 @@ msgstr "Otpremi baner za vaš prostor - PNG ili JPG - Optimalan odnos 3:1"
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Otpremite avatar za ovaj Space - PNG ili JPG - Optimalan odnos 1:1"
 
-#: src/components/modals/UserSettingsModal/General.tsx:114
+#: src/components/modals/UserSettingsModal/General.tsx:117
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
 msgstr "Otpremi avatar za svoj profil - PNG ili JPG - Optimalan odnos 1:1"
 
@@ -3837,7 +3598,7 @@ msgstr "Otpremi Emoji"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:99
 msgid "Upload file"
-msgstr ""
+msgstr "Otpremite datoteku"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:92
 msgid "Upload Image"
@@ -3851,9 +3612,6 @@ msgstr "Otpremi nalepnicu"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Koristi \"Sačuvaj u datoteke\" da sačuvaš privatni ključ"
 
-#~ msgid "User address here"
-#~ msgstr "Adresa korisnika ovde"
-
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "Korisnik ne postoji."
@@ -3863,11 +3621,11 @@ msgstr "Korisnik ne postoji."
 msgid "User not authenticated"
 msgstr "Korisnik nije autentifikovan"
 
-#: src/components/direct/DirectMessage.tsx:1089
+#: src/components/direct/DirectMessage.tsx:1115
 msgid "User profile"
 msgstr "Korisnički profil"
 
-#: src/components/direct/DirectMessage.tsx:851
+#: src/components/direct/DirectMessage.tsx:875
 msgid "User Profile"
 msgstr "Korisnički profil"
 
@@ -3935,9 +3693,6 @@ msgstr "Šta vam je danas na umu?"
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "Kada je omogućeno, sve prethodne verzije izmenjenih poruka će biti sačuvane. Kada je onemogućeno, samo trenutna izmenjena verzija se čuva."
 
-#~ msgid "When enabled, notify me for:"
-#~ msgstr "Kada je omogućeno, obavesti me za:"
-
 #: src/components/modals/UserSettingsModal/Privacy.tsx:152
 msgid "When enabled, other users can see when you are active. This feature is not yet available."
 msgstr "Kada je omogućeno, drugi korisnici mogu videti kada ste aktivni. Ova funkcija još nije dostupna."
@@ -3957,9 +3712,6 @@ msgstr "Kada je isključeno, nove poruke neće prikazivati nepročitane indikato
 #: src/components/modals/UserSettingsModal/Privacy.tsx:132
 msgid "When on, anyone with your Quorum address can see your display name, avatar, and bio, even outside the Spaces you share. Useful when someone DMs you and you want them to recognize who you are. Off by default."
 msgstr "Kada je uključeno, svako ko ima vašu Quorum adresu može videti vaše ime za prikaz, avatar i biografiju, čak i izvan Prostora koje delite. Korisno kada vam neko pošalje direktnu poruku i želite da vas prepozna. Podrazumevano je isključeno."
-
-#~ msgid "When on, everyone in a space channel sees when you're typing, and you see when they're typing."
-#~ msgstr "Kada je uključeno, svi u kanalu prostora vide kada pišete, a vi vidite kada oni pišu."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "When on, everyone in a Space channel sees when you're typing, and you see when they're typing."
@@ -4030,7 +3782,7 @@ msgid "You are already a member of this Space."
 msgstr "Već ste član ovog Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1709
+#: src/components/space/Channel.tsx:1734
 msgid "You are muted for {0}"
 msgstr "Ti ste isključen za {0}"
 
@@ -4059,8 +3811,8 @@ msgstr "Ne možete obrisati grupu koja sadrži kanale. Prvo obrišite svih {chan
 msgid "You cannot delete the default channel."
 msgstr "Ne možete obrisati podrazumevani kanal."
 
-#: src/components/message/MessageComposer.tsx:648
-#: src/components/space/Channel.tsx:1712
+#: src/components/message/MessageComposer.tsx:650
+#: src/components/space/Channel.tsx:1737
 msgid "You cannot post in this channel"
 msgstr "Ne možete postaviti u ovom kanalu"
 
@@ -4072,7 +3824,7 @@ msgstr "Ne možete poslati direktnu poruku sebi."
 msgid "You have a new unread message"
 msgstr "Imate novu nepročitanu poruku"
 
-#: src/components/space/Channel.tsx:1710
+#: src/components/space/Channel.tsx:1735
 msgid "You have been muted in this Space"
 msgstr "Utišani ste u ovom prostoru"
 
@@ -4092,7 +3844,7 @@ msgstr "Nećeš moći da se ponovo pridružiš osim ako ne budeš ponovo pozvan.
 msgid "You'll need this file to recover your account if you lose access to your device."
 msgstr "Trebaće vam ova datoteka da oporaviš nalog ako izgubiš pristup uređaju."
 
-#: src/components/notifications/NotificationPanel.tsx:203
+#: src/components/notifications/NotificationPanel.tsx:204
 msgid "You're all caught up!"
 msgstr "Sve ste pratio!"
 
@@ -4133,13 +3885,9 @@ msgstr "Pozvani ste da se pridružite Prostoru"
 msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
 msgstr "Adresa vašeg naloga je jedinstveni javni identifikator izveden iz ključa vašeg naloga. Drugi ga mogu koristiti da vas pronađu i pošalju vam poruku. Zamislite to kao korisničko ime koje se nikada ne može promeniti."
 
-#: src/components/onboarding/steps/ImportKeyStep.tsx:64
-#~ msgid "Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account."
-#~ msgstr "Ključ vašeg naloga je datoteka privatnog ključa (.key) koja dokazuje vlasništvo nad vašim nalogom. Možete je preuzeti iz podešavanja naloga. Čuvajte je – ko god je ima, može pristupiti vašem nalogu."
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:179
 msgid "Your account key is a private key that proves ownership of your account. You can download it as a file (.key) or copy it from your account settings. Keep it safe — whoever has it can access your account."
-msgstr ""
+msgstr "Ključ vašeg naloga je privatni ključ koji dokazuje vlasništvo nad vašim nalogom. Možete ga preuzeti kao datoteku (.key) ili ga kopirati iz podešavanja vašeg naloga. Čuvajte ga bezbedno — ko god ga ima, može pristupiti vašem nalogu."
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
 msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
@@ -4159,11 +3907,15 @@ msgstr "Vaše ime za prikaz, profilna slika i biografija biće čitljivi svima k
 
 #: src/components/modals/UserSettingsModal/Security.tsx:393
 msgid "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
-msgstr ""
+msgstr "Vaš privatni ključ je jedini dokaz vlasništva nad vašim nalogom. Svako ko ga ima može vas lažno predstavljati i ukrasti Apex zaradu vašeg Prostora. Nikada ga ne delite."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Veličina vaše profilne slike mora biti {maxSize} ili manja i mora biti PNG, JPG ili JPEG ekstenzije."
+
+#: src/components/modals/UserSettingsModal/General.tsx:138
+msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
+msgstr "Vaše QNS ime <0>{primaryUsername}.q</0> je prikazano kao vaše ime."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:246
 msgid "Your Roles"
