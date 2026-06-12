@@ -1,6 +1,16 @@
 // IconPicker component styles
 @use '@/styles/variables' as *;
 
+// Icon grid region — its own scroll area so every icon is reachable even though
+// the grid is taller than the popover. Capped so a few rows sit below the fold
+// (scroll is meaningful, not a one-row orphan).
+.icon-picker-grid-scroll {
+  margin-top: $s-2;
+  max-height: 248px; // ~7-8 rows visible of the 12-row grid
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
 // Variant toggle buttons (outline/filled circle icons)
 .icon-picker-variant-btn {
   width: $s-7;

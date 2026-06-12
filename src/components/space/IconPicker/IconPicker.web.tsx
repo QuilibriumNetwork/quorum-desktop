@@ -164,7 +164,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         onClose={() => setIsOpen(false)}
         position="fixed"
         maxWidth={320}
-        maxHeight={340}
+        maxHeight={420}
         showCloseButton={false}
         useMobileBottomSheet={false}
         style={{
@@ -174,8 +174,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           backgroundColor: 'var(--color-bg-sidebar)',
         }}
       >
-        {/* Header with variant toggle and clear button */}
-        <div className="p-3 border-b border-surface-3">
+        {/* Header with variant toggle, clear button, and colors */}
+        <div className="p-3">
           {/* Top row: Variant toggle (left) and Clear button (right) */}
           <div className="flex justify-between items-center mb-3">
             {/* Variant toggle - styled to match icon grid */}
@@ -253,9 +253,9 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           </Flex>
         </div>
 
-        {/* Scrollable Icon Grid */}
-        <div className="p-2 mt-2">
-          <div className="grid grid-cols-8 gap-1">
+        {/* Icon grid — own scroll area so all icons are reachable regardless of popover height */}
+        <div className="icon-picker-grid-scroll px-2 pb-3">
+          <div className="grid grid-cols-8 gap-1 px-1">
             {filteredIcons.map((iconOption) => (
               <button
                 key={iconOption.name}
