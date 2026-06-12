@@ -77,6 +77,9 @@ Legend: 📋 noted (observation only) · 🟢 ready to scope · 🚧 task droppe
 | 28 | **Scroll-to-first-unread on channel/DM entry** (desktop jumps to first unread if ≥5 unread or ≥5min old; mobile always lands at bottom) | MED | NONE (UI/scroll; reads shared `Conversation.lastReadTimestamp`) | 📋 noted (pairs with #10 separator) |
 | 29 | **Message highlight on link/notification/bookmark jump** (scroll + timed flash; mobile PARTIAL — only pinned/bookmark, loaded-window only, wrong color/duration, no notification deep-link, no pagination fallback) | LOW-MED | NONE | 📋 noted |
 | 30 | **Mention viewport highlight** (unread @-you messages auto-flash on entry, 61s vs 8s link-jump timing; mobile ABSENT) | MED | NONE (needs `lastReadTimestamp` plumbed to list) | 📋 noted (pairs with #23/#30) |
+| 31 | **Channel icon picker — feature parity** (mobile has it but: 20 icons vs desktop's 50; NO outline/filled variant toggle; raw-hex vs named-color storage) | LOW-MED | icon-SET + color-palette are NOT shared (desktop-local); promoting them is the real fix (ADDITIVE) | 📋 noted — picker exists, under-featured |
+| 32 | **GROUP icon + color** (desktop `GroupEditorModal` has full picker; mobile group header has NO icon affordance — `updateGroup` accepts `icon`/`iconColor` but UI never calls it) | LOW | `Group.icon`/`iconColor`/`iconVariant` ALREADY in shared | 📋 noted — entirely absent on mobile |
+| 33 | **🐛 Channel-list icons render default** (BUG — see bug section) | LOW | none | 🐛 live bug |
 
 ### 🔴 Correctness / permission bugs on mobile (not "missing features" — broken invariants)
 
@@ -92,6 +95,18 @@ These surfaced during the 2026-06-12 parity deep-dive. Mobile reimplements permi
 | 26c | **Owner-permission masking** (latent) — mobile's `useHasPermission`/`useUserPermissions`/`useUserRoles` omit the `isSpaceOwner` short-circuit; masked at the one current caller, breaks any future caller | `useRoleManagement.ts:56-111` | partial open task `2026-05-29-mobile-adopt-shared-permission-helpers.md` (doesn't cover 26a/26b/27) | delegating to shared fixes it |
 
 **Roles CRUD parity** (separate from enforcement): mobile's role create/edit/delete/assign/permission-toggle UI is substantially COMPLETE and matches desktop (neither has role color-picker or reordering). The gap is purely enforcement (26a–c, 27), not management.
+
+### 🐛 Channel-list icons render the default (live bug, row 33)
+
+**Symptom (user-reported 2026-06-12):** a channel's icon is set in mobile settings (saves correctly, shows in the settings modal), but the **channels list** always shows the default hashtag icon.
+
+**Root cause (verified):** `quorum-mobile/app/(tabs)/spaces/[id]/index.tsx:118` hardcodes the icon in the channel-list row:
+```tsx
+<IconSymbol name="number" size={18} color={theme.colors.textMuted} />
+```
+`channel` is in scope (the same row uses `channel.channelId` / `channel.channelName`) but `channel.icon` / `channel.iconColor` are never read. So even a correctly-saved mobile icon won't appear here.
+
+**Fix (one line):** `name={channel.icon || 'number'}` + `color={channel.iconColor || theme.colors.textMuted}`. Independent of the Tabler/SF icon-set mismatch (row 31) — that's a *separate* reason a desktop-set icon name may not resolve on mobile, but THIS bug hits even mobile-set icons. **Cost: trivial.** Worth fixing alongside row 31/32 (the icon-parity work).
 
 ## Recommended sequencing (2026-06-12, with user priorities)
 
@@ -306,9 +321,34 @@ Each verified against desktop source + mobile state; full evidence in the 2026-0
 - **#20 "Restore Missing Spaces"** (feature-port, SMALL) — desktop `Help.tsx:68-92`; mobile ABSENT (hub-log sync may reduce need).
 - **#21 Per-message signing toggle** (feature-port, LOW) — desktop composer lock button (`skipSigning`); mobile has conversation/space-level repudiable toggles but no per-message override. Shared NONE (UI-only).
 - **#24 Channel mute → hide/dim** (convergence, LOW-MED) — desktop `useChannelMute.ts` `showMutedChannels` + dimmed rows; mobile mutes notifications only, never reads `showMutedChannels` (ALREADY in shared `UserConfig`).
-- **#25 Space folders UI** (convergence/feature-port hybrid, HIGH) — mobile's `configService.ts` round-trips the `items`/`NavItem` data correctly but the Spaces tab renders a flat list ignoring folders; no `FolderEditorModal`, no DnD. Types + `validateItems` ALREADY in shared. Folders synced from desktop are silently flattened on mobile.
+- **#25 Space folders UI** (convergence/feature-port hybrid, HIGH) — see the detailed entry below (UX needs a decision: port desktop's DnD vs a Telegram-style pill bar).
+- **#31 Channel icon picker parity** / **#32 group icon+color** / **#33 channel-list icon bug** — see the "Channel & group icons" detailed entry below.
 
 **Lower-confidence (flagged for manual check, not yet rows):** (a) bidirectional deep-link message loading — mobile `scrollToMessage` only searches the loaded window, so bookmarks/pins to old messages may silently no-op (this is the cause of the #29 partial state); (b) explicit "jump to present" button — present on desktop, not found on mobile.
+
+## 25. Space folders — detailed (UX decision needed)
+
+**Desktop:** `src/components/space/SpacesSidebar.tsx` + `SpacesSidebarFolder.tsx` + `FolderButton.tsx`; `src/hooks/business/folders/` (`useFolderDragAndDrop`, `useFolderManagement`, `useDeleteFolder`, `useFolderStates`); `src/components/modals/FolderEditorModal.tsx`. Create-by-drag (drop a space onto another), collapsible named+colored folders, reorder within/across folders.
+**Mobile:** data layer round-trips correctly (`configService.ts` validates + reads/writes the `items`/`NavItem` array; `validateItems`, MAX_FOLDERS, MAX_SPACES_PER_FOLDER all enforced), but the Spaces tab (`app/(tabs)/spaces/index.tsx`) renders a **flat sorted list that ignores the `items` field** — folders synced from desktop are silently flattened. No folder UI, no editor, no DnD.
+**Shared:** `NavItem`, `FolderColor`, `validateItems` ALREADY-EXIST. No new shared work for the data; this is purely a mobile UX build.
+
+**UX decision (the crux — raised by user 2026-06-12):** desktop's create-by-drag-and-drop is questionable on touch. Two directions:
+- **Option A — Telegram-style pill bar (recommended to evaluate first).** A horizontally-scrolling row of folder "pills" at the top of the Spaces list; tapping a pill filters the list to that folder's spaces. Add/remove a space to a folder via a long-press menu or an edit sheet (no drag). Far more native/usable on touch, much less to build than DnD, and it reads the SAME `items` data desktop writes — so cross-device folders Just Work. Trade-off: not 1:1 with desktop's nested-collapsible model (it's filter-by-folder, not show-all-grouped), and a space in multiple folders / "uncategorized" needs a defined behavior.
+- **Option B — port desktop's DnD model.** Collapsible folder groups + drag-to-create/reorder. Full parity but DnD on mobile lists is finicky (gesture conflicts with scroll, accessibility), higher build cost, arguably worse UX than the pill bar.
+**Recommendation:** prototype Option A; it's the lower-cost, more-native path and still honors the shared data model. Confirm the multi-folder / uncategorized semantics with the lead before building. **Not yet scoped — needs the UX call.**
+
+## Channel & group icons — detailed (rows 31/32 + bug 33)
+
+**Desktop:** both `ChannelEditorModal.tsx:130-140` and `GroupEditorModal.tsx:79-86` use a shared-on-desktop `<IconPicker>` (`src/components/space/IconPicker/`) with: **50 Tabler icons** (9 tiers), an **`iconVariant: 'outline' | 'filled'` toggle** (34 icons have filled variants), and an **8-color named palette** stored as enum strings (`'blue'`, `'green'`, …). Fields live on both `Channel` and `Group`.
+**Shared:** `Channel.icon`/`iconColor`/`iconVariant` AND `Group.icon`/`iconColor`/`iconVariant` ALREADY-EXIST (`quorum-shared/src/types/space.ts`). BUT the icon SET + color palette are **desktop-local** (`IconPicker/types.ts`), not shared — that's why mobile drifted.
+
+**#31 Channel icon picker — PARTIAL (under-featured).** Mobile HAS a channel icon picker (`components/ui/IconPicker.tsx`, used in `SpaceSettingsModal.tsx`), but: only **20 icons** (old SF-Symbol names like `star.fill`, not Tabler names), **no outline/filled variant** concept at all, and colors stored as **raw hex** (`'#3b82f6'`) instead of desktop's named enums → a color/icon set on one platform may not match the other. The icon-set drift is already noted in mobile task `2026-06-09-migrate-iconsymbol-to-shared-icon-primitive.md` (deferred Phase 2b). **Real fix = promote the icon SET + color palette + variant concept into `quorum-shared`** so both apps offer the same picker vocabulary (ADDITIVE shared work).
+
+**#32 Group icon + color — ABSENT on mobile.** Desktop has a full group picker (`GroupEditorModal`). Mobile's group header row (`SpaceSettingsModal.tsx:1824-1879`) has **no icon affordance** — and the `useUpdateGroup` mutation already *accepts* `icon`/`iconColor` (interface lines ~389-394, honored in the mutation fn), the UI just never calls that path. Low cost to wire once an icon picker exists.
+
+**#33 Channel-list icon bug — LIVE.** `app/(tabs)/spaces/[id]/index.tsx:118` hardcodes `<IconSymbol name="number" …>` and ignores `channel.icon`/`channel.iconColor`. One-line fix. See the bug callout above. (This is why icons "show default in the channels list" even when set.)
+
+> **Mobile settings UX note (user, 2026-06-12):** mobile currently crams all channel/group settings into the inline channels list, which is tight. Worth considering a **per-item mobile drawer** (open a drawer for a given channel OR group → all its settings inside, including the icon picker, read-only toggle, rename, delete). This would give the icon picker (and the read-only SET UI from #27, and group icon #32) a proper home instead of inline affordances on a cramped row. A design call, not yet scoped — but it's the natural container for several of these channel/group gaps at once.
 
 ## 🔴 Permission enforcement bugs (rows 26–27) — detailed
 
@@ -367,7 +407,9 @@ Mobile's `ThemeProvider` already exposes `setAccentColor` and `setIsDark`/`toggl
 
 ---
 
-*Last updated: 2026-06-12 (pass 2) — added a parity deep-dive on 5 user-flagged items: roles/permissions (found 3 live enforcement bugs 26a–c + read-only-channels #27, all rooted in mobile not consuming shared permission helpers), scroll-to-first-unread (#28), message highlighting (#29 link-jump convergence + #30 mention-viewport feature-port). Added a **Recommended sequencing** section (Wave 0 permission fix → Wave 1 mentions → Wave 2 standalone ports → Wave 3 rest). **Image+caption single-message: verified NO PORT NEEDED** — mobile already sends one message (logged as minor wire-format convergence only).*
+*Last updated: 2026-06-12 (pass 3) — channel/group icon parity + space-folders UX. Added rows 31 (channel icon picker under-featured: 20 vs 50 icons, no outline/filled variant, hex-vs-named-color), 32 (group icon+color entirely absent on mobile), and 🐛 33 (LIVE BUG — `app/(tabs)/spaces/[id]/index.tsx:118` hardcodes the default channel-list icon, ignoring `channel.icon`; root cause of "icons show default in the list"). Enriched the #25 space-folders entry with a UX decision: Telegram-style pill bar (recommended to prototype) vs porting desktop's drag-and-drop. Added a mobile-settings-UX note: consider per-channel/per-group drawers (cramped inline settings today). NOTE on read-only channels (#27): only a TASK PLAN exists (Wave 0) — no mobile code written yet.*
+
+*Previously: 2026-06-12 (pass 2) — added a parity deep-dive on 5 user-flagged items: roles/permissions (found 3 live enforcement bugs 26a–c + read-only-channels #27, all rooted in mobile not consuming shared permission helpers), scroll-to-first-unread (#28), message highlighting (#29 link-jump convergence + #30 mention-viewport feature-port). Added a **Recommended sequencing** section (Wave 0 permission fix → Wave 1 mentions → Wave 2 standalone ports → Wave 3 rest). **Image+caption single-message: verified NO PORT NEEDED** — mobile already sends one message (logged as minor wire-format convergence only).*
 
 *Previously: 2026-06-12 (pass 1) — added rows 3–25 + the cross-cutting mention-format finding + 5 detailed named-feature entries (threads, markdown, YouTube facade + setting, typing indicators, mentions cluster) from a structured cross-repo audit. Verified the uncertain `UserConfig` fields directly against shared `2.1.0-29` source (all present). Cross-referenced two findings already tracked as mobile tasks (DM profile sync; config read-back). Recorded desktop-chrome-specific exclusions.*
 
