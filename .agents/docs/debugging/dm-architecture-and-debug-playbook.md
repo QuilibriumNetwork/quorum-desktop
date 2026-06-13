@@ -163,6 +163,44 @@ If the send fires but receive is silent:
 - **Using `?? fallback` against possibly-empty-string envelope fields.** `??` only catches null/undefined. Use `||` or explicit `value && value.length > 0` when you're guarding against empty string.
 - **`React.useCallback([])` for the broadcast trigger.** Stale closures via HMR look exactly like "my new log isn't printing" and waste hours.
 
+## The "fetch-once-at-startup" pattern and the hub-log migration (2026-06-13)
+
+A recurring desktop architecture flaw underlies a whole cluster of bugs: **desktop
+fetches state once at startup (or on a one-shot event) and never reconciles after.**
+There is no durable, replay-on-reconnect catch-up. Whatever you miss while offline — or
+whatever changes on another device after your startup fetch — stays stale until a
+restart. Mobile does NOT have this problem: it uses a per-hub **durable log**, replayed
+via `log-since` on every reconnect/foreground (`quorum-mobile`
+`context/WebSocketContext.tsx:4121-4248`, `services/space/hubLogSync.ts`,
+`hubLogCursor.ts`), so missed `join` / `update-profile` / config-sync messages are caught
+up automatically.
+
+Confirmed instances of the pattern (all desktop):
+
+| Bug | What's fetched once and never reconciled |
+|---|---|
+| [space-members-missing-no-join-row](../../bugs/2026-06-13-space-members-missing-no-join-row.md) | Member roster — `join` is an ephemeral fire-and-forget broadcast; miss it and the row never appears (~52% missing in a live test). |
+| [config-not-refetched-stale-until-restart](../../bugs/2026-06-13-config-not-refetched-stale-until-restart.md) | Synced `UserConfig` — only server-fetched at startup; cross-device changes invisible until restart. |
+| [config-sync-space-loss-race-condition](../../bugs/2026-01-09-config-sync-space-loss-race-condition.md) | Space sync as a fragile one-shot startup loop (this also has a separate destructive `saveConfig` bug). |
+| [user-settings-modal-stale-display-name](../../bugs/2026-05-30-user-settings-modal-stale-display-name.md) | Settings modal reads a cached source not invalidated on incoming sync (same family, modal-local). |
+
+**The hub log is the general fix for this whole class.** The lead dev is bringing mobile's
+hub log to desktop. Rather than build per-bug refetch triggers (window-focus, polling,
+on-reconnect `requestSync`), the durable replay gives every one of these a single,
+reliable catch-up path. Implication for anyone touching these bugs: **don't build a
+bespoke refetch band-aid ahead of the migration** — sequence the fix WITH the hub log.
+
+**Two prerequisites the hub log needs on the receive side** (replay re-runs every handler
+on every reconnect, so any handler that bails or null-derefs on missing state silently
+drops or resurrects content):
+1. Control-message receive handlers must be upsert-safe / null-safe. Audit lives in
+   [space-members-missing-no-join-row](../../bugs/2026-06-13-space-members-missing-no-join-row.md)
+   ("Control-handler replay audit"). `update-profile` + non-repudiability fixed in PR #199;
+   `verify-kicked`, `leave`, and several `space!` derefs still need it.
+2. Durable-path enforcement must match cache-path enforcement, or replay resurrects blocked
+   content — see [readonly-channel-receive-side-enforcement-gaps](../../bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
+   (read-only check is cache-only; replay re-persists the offending message every reconnect).
+
 ## What still needs investigation
 
 - The transport-level reason DMs sometimes don't deliver. We have no theory yet.
@@ -191,4 +229,4 @@ If the send fires but receive is silent:
 - [DM Sync Non-Deterministic Failures](../../reports/action-queue/005-dm-sync-non-deterministic-failures.md) — known sync gap.
 
 ---
-*Last updated: 2026-06-10*
+*Last updated: 2026-06-13*

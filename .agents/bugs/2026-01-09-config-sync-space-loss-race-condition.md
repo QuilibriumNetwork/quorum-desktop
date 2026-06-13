@@ -151,6 +151,22 @@ The filtering logic **cannot simply be removed** - it was added to fix a differe
 
 See: [.agents/bugs/.solved/space-creation-config-save-race-condition.md](.agents/bugs/.solved/space-creation-config-save-race-condition.md)
 
+## Hub-log migration impact (2026-06-13)
+
+The incoming desktop **hub log** (mobile's durable, replay-on-reconnect transport;
+see [2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md)
+and [2026-06-13-config-not-refetched-stale-until-restart.md](2026-06-13-config-not-refetched-stale-until-restart.md))
+**does NOT fix the core of this bug.** The destructive part is `saveConfig`'s
+filter-and-overwrite logic, which drops spaces lacking complete local encryption state —
+that needs the merge/tombstone fix (Option A below) regardless of transport.
+
+What the hub log *does* change: it narrows the failure surface. This race partly depends
+on space sync being a fragile one-shot at startup ("space sync can fail silently mid-loop").
+A durable, replayable log makes the *delivery* of space-sync data more robust and retryable,
+shrinking the window in which a space is left "partially synced" and therefore filtered out.
+So the hub log reduces how often the race fires, but the `saveConfig` merge fix is still
+required to make it non-destructive. Do not treat the hub log as a substitute for Option A.
+
 ## Solution Options
 
 **Not yet implemented.** Requires architectural decision:

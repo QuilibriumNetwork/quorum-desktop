@@ -210,6 +210,12 @@ The mnemonic half of #31 (see #31a in [Actionable now](#actionable-now) for the 
 - **Two unknowns that must be confirmed before any work (not answerable from desktop source):** (1) is the server-side hub-log transport **enrolled for desktop's hub addresses**? A mobile code comment says the server already dual-writes legacy `group` messages into the log, which suggests yes — but confirm at the infra layer. (2) Is hub-log the **intended convergence target**? Both are lead-dev/infra questions.
 - **Class C** (architectural shift + new transport + lead-dev coordination). Not engineering-ready until the two unknowns and the privacy tradeoff are resolved.
 - **History:** 2026-06-11 surfaced during the cold-start investigation; user explicitly won't self-pick, parked for the lead dev.
+- **2026-06-13 — this migration is the fix for a cluster of open bugs.** Confirmed (lead dev intends to bring the hub log to desktop) that #32 resolves the recurring desktop "fetch-once-at-startup, never reconcile" pattern. Bugs that depend on or are reframed by it:
+  - [space-members-missing-no-join-row](../../bugs/2026-06-13-space-members-missing-no-join-row.md) — ~52% of members have no roster row because `join` is an ephemeral one-shot broadcast (this candidate's exact P2P weakness). Includes a **control-handler replay audit** listing the receive handlers (`verify-kicked`, `leave`, several `space!` derefs) that must be made upsert/null-safe **before** the log replays every message on reconnect. PR #199 already hardened the `update-profile` + non-repudiability paths as groundwork.
+  - [config-not-refetched-stale-until-restart](../../bugs/2026-06-13-config-not-refetched-stale-until-restart.md) — hub-log replay of config-sync signals IS the websocket-driven refetch that bug needs.
+  - [config-sync-space-loss-race-condition](../../bugs/2026-01-09-config-sync-space-loss-race-condition.md) — narrows the failure surface (still needs its own `saveConfig` merge fix).
+  - [readonly-channel-receive-side-enforcement-gaps](../../bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md) — **prerequisite**: replay re-persists blocked content every reconnect unless durable-path enforcement is added first.
+  - Meta-pattern + the two receive-side prerequisites documented in [dm-architecture-and-debug-playbook.md](../../docs/debugging/dm-architecture-and-debug-playbook.md) ("fetch-once-at-startup pattern").
 
 ### #27 Skins (custom themes) — ❔ needs UX call (low priority 2026-06-10)
 

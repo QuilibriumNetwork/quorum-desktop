@@ -49,3 +49,15 @@ The 2026-05-30 AES-GCM config-decrypt dedup refactor (commit on `session/2026-05
 ## Priority
 
 Low — cosmetic on the modal, doesn't block messaging or sync. But it's confusing UX (user thinks their change didn't propagate).
+
+## Hub-log migration impact (2026-06-13)
+
+Same "stale until something forces a re-read" family as
+[2026-06-13-config-not-refetched-stale-until-restart.md](2026-06-13-config-not-refetched-stale-until-restart.md).
+Here the synced value already reaches this client (channel views render it), so the hub
+log does NOT fix this bug — the gap is a missing React-Query invalidation on the modal's
+source. BUT the fix is likely shared: a hub-log-driven `invalidateQueries(buildConfigKey)`
+on an incoming config-sync signal would re-read the modal's source at the same time it
+fixes the stale-config bug. Worth fixing the two together once the config-refetch trigger
+exists, rather than patching the modal in isolation. Cross-link:
+[config-not-refetched-stale](2026-06-13-config-not-refetched-stale-until-restart.md).
