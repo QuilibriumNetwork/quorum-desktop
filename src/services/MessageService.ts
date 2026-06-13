@@ -3321,38 +3321,44 @@ export class MessageService {
                 const space = await this.messageDB.getSpace(
                   conversationId.split('/')[0]
                 );
-                const messageId = await crypto.subtle.digest(
-                  'SHA-256',
-                  Buffer.from('join' + participant.inboxAddress, 'utf-8')
-                );
-                const msg = {
-                  channelId: space!.defaultChannelId,
-                  spaceId: conversationId.split('/')[0],
-                  messageId: Buffer.from(messageId).toString('hex'),
-                  digestAlgorithm: 'SHA-256',
-                  nonce: Buffer.from(messageId).toString('hex'),
-                  createdDate: participant.joinedAt ?? Date.now(),
-                  modifiedDate: participant.joinedAt ?? Date.now(),
-                  lastModifiedHash: '',
-                  content: {
-                    senderId: participant.address,
-                    type: 'join',
-                  } as JoinMessage,
-                } as Message;
-                await this.saveMessage(
-                  msg,
-                  this.messageDB,
-                  conversationId.split('/')[0],
-                  space!.defaultChannelId,
-                  'group',
-                  {}
-                );
-                await this.addMessage(
-                  queryClient,
-                  conversationId.split('/')[0],
-                  space!.defaultChannelId,
-                  msg
-                );
+                // Member row + ratchet state are already persisted above. The
+                // "X joined" system message needs the space's default channel, so
+                // skip it if the space row is missing (guards a null-deref under
+                // replay) rather than throwing past the rest of the handler.
+                if (space) {
+                  const messageId = await crypto.subtle.digest(
+                    'SHA-256',
+                    Buffer.from('join' + participant.inboxAddress, 'utf-8')
+                  );
+                  const msg = {
+                    channelId: space.defaultChannelId,
+                    spaceId: conversationId.split('/')[0],
+                    messageId: Buffer.from(messageId).toString('hex'),
+                    digestAlgorithm: 'SHA-256',
+                    nonce: Buffer.from(messageId).toString('hex'),
+                    createdDate: participant.joinedAt ?? Date.now(),
+                    modifiedDate: participant.joinedAt ?? Date.now(),
+                    lastModifiedHash: '',
+                    content: {
+                      senderId: participant.address,
+                      type: 'join',
+                    } as JoinMessage,
+                  } as Message;
+                  await this.saveMessage(
+                    msg,
+                    this.messageDB,
+                    conversationId.split('/')[0],
+                    space.defaultChannelId,
+                    'group',
+                    {}
+                  );
+                  await this.addMessage(
+                    queryClient,
+                    conversationId.split('/')[0],
+                    space.defaultChannelId,
+                    msg
+                  );
+                }
               }
             } else {
               console.error(pointResult);
@@ -3613,8 +3619,11 @@ export class MessageService {
                     conversationId.split('/')[0]
                   );
 
-                  // Remove leaving user from all roles
+                  // No space row locally → tombstone above already applied; we
+                  // can't build the "X left" system message without the space's
+                  // default channel, so skip it (guards a null-deref under replay).
                   if (space) {
+                    // Remove leaving user from all roles
                     space.roles = space.roles.map((role) => ({
                       ...role,
                       members: role.members.filter(
@@ -3622,40 +3631,40 @@ export class MessageService {
                       ),
                     }));
                     await this.messageDB.saveSpace(space);
-                  }
 
-                  const messageId = await crypto.subtle.digest(
-                    'SHA-256',
-                    Buffer.from('leave' + member.inbox_address, 'utf-8')
-                  );
-                  const msg = {
-                    channelId: space!.defaultChannelId,
-                    spaceId: conversationId.split('/')[0],
-                    messageId: Buffer.from(messageId).toString('hex'),
-                    digestAlgorithm: 'SHA-256',
-                    nonce: Buffer.from(messageId).toString('hex'),
-                    createdDate: Date.now(),
-                    modifiedDate: Date.now(),
-                    lastModifiedHash: '',
-                    content: {
-                      senderId: member.user_address,
-                      type: 'leave',
-                    } as LeaveMessage,
-                  } as Message;
-                  await this.saveMessage(
-                    msg,
-                    this.messageDB,
-                    conversationId.split('/')[0],
-                    space!.defaultChannelId,
-                    'group',
-                    {}
-                  );
-                  await this.addMessage(
-                    queryClient,
-                    conversationId.split('/')[0],
-                    space!.defaultChannelId,
-                    msg
-                  );
+                    const messageId = await crypto.subtle.digest(
+                      'SHA-256',
+                      Buffer.from('leave' + member.inbox_address, 'utf-8')
+                    );
+                    const msg = {
+                      channelId: space.defaultChannelId,
+                      spaceId: conversationId.split('/')[0],
+                      messageId: Buffer.from(messageId).toString('hex'),
+                      digestAlgorithm: 'SHA-256',
+                      nonce: Buffer.from(messageId).toString('hex'),
+                      createdDate: Date.now(),
+                      modifiedDate: Date.now(),
+                      lastModifiedHash: '',
+                      content: {
+                        senderId: member.user_address,
+                        type: 'leave',
+                      } as LeaveMessage,
+                    } as Message;
+                    await this.saveMessage(
+                      msg,
+                      this.messageDB,
+                      conversationId.split('/')[0],
+                      space.defaultChannelId,
+                      'group',
+                      {}
+                    );
+                    await this.addMessage(
+                      queryClient,
+                      conversationId.split('/')[0],
+                      space.defaultChannelId,
+                      msg
+                    );
+                  }
                   break;
                 }
               }
@@ -3727,13 +3736,16 @@ export class MessageService {
                 const space = await this.messageDB.getSpace(
                   conversationId.split('/')[0]
                 );
-                if (envelope.message.kick) {
+                // The "X was kicked" system message needs the space's default
+                // channel; require space so a missing row doesn't null-deref
+                // under replay (matches the space?.inviteUrl guard just below).
+                if (envelope.message.kick && space) {
                   const messageId = await crypto.subtle.digest(
                     'SHA-256',
                     Buffer.from('kick' + envelope.message.kick, 'utf-8')
                   );
                   const msg = {
-                    channelId: space!.defaultChannelId,
+                    channelId: space.defaultChannelId,
                     spaceId: conversationId.split('/')[0],
                     messageId: Buffer.from(messageId).toString('hex'),
                     digestAlgorithm: 'SHA-256',
@@ -3750,14 +3762,14 @@ export class MessageService {
                     msg,
                     this.messageDB,
                     conversationId.split('/')[0],
-                    space!.defaultChannelId,
+                    space.defaultChannelId,
                     'group',
                     {}
                   );
                   await this.addMessage(
                     queryClient,
                     conversationId.split('/')[0],
-                    space!.defaultChannelId,
+                    space.defaultChannelId,
                     msg
                   );
                 }
@@ -3912,27 +3924,27 @@ export class MessageService {
                     spaceId,
                     kickedAddress
                   );
-                  if (kicked) {
-                    await this.messageDB.saveSpaceMember(spaceId, {
-                      ...kicked,
-                      inbox_address: '',
-                    });
-                    await queryClient.setQueryData(
-                      buildSpaceMembersKey({ spaceId }),
-                      (
-                        oldData: (secureChannel.UserProfile & {
-                          inbox_address: string;
-                        })[]
-                      ) => {
-                        const previous = oldData ?? [];
-                        return previous.map((m) =>
-                          m.user_address === kickedAddress
-                            ? { ...m, inbox_address: '' }
-                            : m
-                        );
-                      }
-                    );
-                  }
+                  // Upsert: persist the inactive tombstone even if we never had a
+                  // row for them, so a replayed kick can't leave them renderable.
+                  await this.messageDB.saveSpaceMember(spaceId, {
+                    ...(kicked ?? { user_address: kickedAddress }),
+                    inbox_address: '',
+                  });
+                  await queryClient.setQueryData(
+                    buildSpaceMembersKey({ spaceId }),
+                    (
+                      oldData: (secureChannel.UserProfile & {
+                        inbox_address: string;
+                      })[]
+                    ) => {
+                      const previous = oldData ?? [];
+                      return previous.map((m) =>
+                        m.user_address === kickedAddress
+                          ? { ...m, inbox_address: '' }
+                          : m
+                      );
+                    }
+                  );
                 }
               }
             }
@@ -4094,12 +4106,16 @@ export class MessageService {
                   spaceId,
                   address
                 );
-                if (member) {
-                  await this.messageDB.saveSpaceMember(spaceId, {
-                    ...member,
-                    isKicked: true,
-                  });
-                }
+                // Upsert: if we have no row for this address (e.g. they were
+                // kicked before we ever saw their join), still persist a kicked
+                // tombstone so they can't later render as an active member.
+                await this.messageDB.saveSpaceMember(spaceId, {
+                  ...(member ?? {
+                    user_address: address,
+                    inbox_address: '',
+                  }),
+                  isKicked: true,
+                });
               }
               await queryClient.setQueryData(
                 buildSpaceMembersKey({ spaceId }),

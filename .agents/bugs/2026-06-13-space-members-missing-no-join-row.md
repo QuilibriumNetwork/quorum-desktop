@@ -247,27 +247,38 @@ new-session (`:1262`) + established (`:1783`, fixed here), `sync-members`
 (`:4023`), `sync-delta` member section (`:4325`), non-repudiability check
 (`:3178`, fixed here).
 
-**Must fix for the hub-log migration:**
-- `verify-kicked` (`:4093`) — `if (member)` guard means `isKicked: true` is never
-  persisted for a member with no row → a kicked member can appear live after
-  replay. Upsert `{ user_address, isKicked: true, inbox_address: '' }` when null.
-- `leave` (`:3585`) — searches `getSpaceMembers()` by `inbox_address`; if the
-  leaver has no row, the whole handler (incl. the "X left" system message) is
-  skipped. Also `space!` deref at `:3632` is unguarded.
+**Fixed directly (2nd batch, branch `fix/control-handler-replay-safety`):**
+- `verify-kicked` — now upserts a kicked tombstone (`isKicked: true`,
+  `inbox_address: ''`) when no row exists, so an address kicked before we saw
+  their join can't render as active after replay.
+- `kick` other-member path — now upserts the inactive tombstone
+  (`inbox_address: ''`) when no row exists.
+- `join` / `leave` / `rekey` — the "X joined/left/was kicked" system-message
+  emission is now guarded behind a `space` null-check instead of `space!`
+  assertions (which threw, and were swallowed, when the space row was absent).
+- Verified: tsc + eslint clean.
 
-**Should fix (defensive):**
-- `kick` other-member path (`:3911`) — `if (kicked)` guard skips the tombstone
-  when no row exists; a kicked member could render live after replay.
-- `space!` non-null assertions in `join` (`:3329`), `rekey` (`:3736/3753/3760`),
-  `leave` (`:3632`) — throw if the space row is missing locally (swallowed by the
-  outer catch `:4372`). Guard with an early `if (!space) return`.
+**Attempted then reverted (code review):** durable-path read-only enforcement.
+A fail-secure reject on the durable path could permanently drop legitimate
+manager messages that arrive before their space row during sync replay — worse
+than the bug it fixed. Deferred to the hub-log migration (#32), where replay
+ordering is deterministic. See
+2026-06-12-readonly-channel-receive-side-enforcement-gaps.
+
+**Known limitation (pre-existing, not fixed here):** the `sync-members` cache
+merge reads `isKicked` from the React Query cache, not IndexedDB. A tombstone
+upserted this session for a previously-unknown member is correct in IndexedDB
+but may render as active in the *same session* until reload (the upsert's
+`setQueryData` maps existing entries only). Self-heals on reload. Belongs to the
+`sync-members` handler, untouched here.
 
 **Fine to leave bailing:** `mute`/`unmute`, `pin`/`unpin`, `reaction`,
 `edit`/`remove-message` — these depend on the target message or `space.roles`,
 not a member row (their replay concern is message ordering, a separate matter).
 
-This audit is read-only context for the hub-log work; none of these are changed
-by the current PR (#199), which scopes only `update-profile` + the null-guard.
+With these in, the membership handlers (kick/leave/verify-kicked/join/rekey) are
+replay-safe against missing rows and null space data. Read-only durable
+enforcement remains for #32.
 
 ## How to reproduce / diagnose
 
