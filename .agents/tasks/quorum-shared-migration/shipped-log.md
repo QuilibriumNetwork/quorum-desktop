@@ -3,7 +3,7 @@ type: log
 title: Quorum-shared migration — shipped log
 status: ongoing
 created: 2026-05-28
-updated: 2026-05-29
+updated: 2026-06-13
 audience: read recent entries to catch up on what's changed and why
 ---
 
@@ -56,6 +56,29 @@ Apply as a checklist when verifying any candidate. A hook failing ANY of these i
 ---
 
 ## Recent entries (most recent first)
+
+## 2026-06-13 — Desktop image-only sends converged onto `post` + `embeddedMedia` (desktop half of image+caption convergence)
+
+**Scope**: desktop side of the cross-repo image+caption convergence. Image-only-no-caption messages were sent as `type:'embed'`, while image+caption already used `type:'post'` + `embeddedMedia`. Two carriers for the same content; mobile only reads `embeddedMedia` on posts, so the `embed` path caused cross-platform image loss. Converge image-only onto `post` + `embeddedMedia` (empty text) so there is ONE canonical image carrier. `embed` is now receive-only legacy.
+
+**Shipped (PR [#201](https://github.com/QuilibriumNetwork/quorum-desktop/pull/201), squash-merged to main)**:
+- **Send** (`useMessageComposer.ts`): image-only branch builds `embeddedMedia` (thumbnail entry when present, then full image, shared `key` UUID, raw base64 in `data`) and sends `{ type:'post', text:'', embeddedMedia }` instead of an `EmbedMessage`. Removed the now-unused `EmbedMessage` import.
+- **Render** (`Message.tsx`): new self-contained `EmbeddedImage` child component owns its own `isShowingGifAnimation` state (so multiple images animate independently), and replicates the legacy embed GIF behavior in the `post`/`embeddedMedia` render paths (both the markdown and the token-fallback `imageKeys.map`). Static image → modal on click; small GIF → animates immediately; large GIF → static poster + ▶ overlay, click swaps to the animated full GIF in place (no modal).
+- **Send button** (`MessageComposer.tsx` + `.scss`): the active accent style now triggers on sendable content (`value.length > 0 || processedImage`), not just while typing. An image with no caption is sendable, so the button must look active. Added a `.message-composer-send-btn.active` SCSS rule mirroring the existing `.typing &` active style; left `isTyping` / the row's `typing` class untouched (it also drives mobile button-hiding).
+
+**Key decision — GIF flag derived, no shared change (Option B)**: `isLargeGif` is NOT sent on the wire. It's derived at render from the `embeddedMedia` shape: a GIF whose `image` entry is `image/gif` AND has a separate `image-thumbnail` entry under the same key. So no `@quilibrium/quorum-shared` type change and no version bump. The desktop `createGifDetector` already derived GIF-ness from the data URI / extension; the only unique signal `isLargeGif` carried ("a thumbnail was generated") is structural in the array.
+
+**Caveat B (payload size) ruled out before shipping**: desktop's old `embed` path already inlined base64 (`imageUrl` was a `data:` URI, not a CDN URL), so moving image-only to `embeddedMedia` is a ~30-byte (data-URI prefix) difference, not a size regression. There is no CDN-upload-then-reference flow anywhere in the image send path.
+
+**Verification**: `tsc --noEmit` clean; `eslint` clean (one pre-existing unused-import warning removed, zero new). Manual smoke test (user-confirmed "all systems go"): image-only static (modal), small GIF (animates immediately), large GIF (poster + click-to-animate), image+caption still works, send button lights up on image attach.
+
+**Note**: multiple images per message is not reachable in the UI yet; the per-image `EmbeddedImage` state is forward-safe for when it is, no current regression.
+
+**Mobile status — STILL OPEN**: this is only the desktop half. The mobile half (read `embeddedMedia` on render so desktop photos become visible on mobile + send `post`+`embeddedMedia`) remains as mobile task `2026-06-13-converge-image-caption-to-post-embeddedmedia.md` and tracker row 1.7. The end-user bug "desktop photos invisible on mobile" is fixed only when the mobile render change ships.
+
+**PRs**: [#201](https://github.com/QuilibriumNetwork/quorum-desktop/pull/201).
+
+---
 
 ## 2026-05-30 — Desktop bonus C1 sweep + useMessageFormatting dead code removal
 
