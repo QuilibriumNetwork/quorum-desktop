@@ -2,7 +2,6 @@ import { useState, useRef, useCallback, useEffect } from 'react';
 import { FileWithPath, useDropzone } from 'react-dropzone';
 import type {
   Message as MessageType,
-  EmbedMessage,
   StickerMessage,
 } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
@@ -271,23 +270,39 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
             await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
           }
         } else if (processedImage) {
-          // --- Image only (EmbedMessage path) ---
-          const fullImageBuffer = await processedImage.full.file.arrayBuffer();
-          const fullImageUrl = `data:${processedImage.full.file.type};base64,${Buffer.from(fullImageBuffer).toString('base64')}`;
+          // --- Image only → PostMessage with embeddedMedia (empty text) ---
+          // Converged onto the same wire shape as text+image so there is one
+          // canonical image carrier. `embed` is now receive-only legacy.
+          // The large-GIF "show poster, animate on click" behavior is derived at
+          // render time from the presence of a separate thumbnail entry, so no
+          // isLargeGif flag travels on the wire.
+          const key = crypto.randomUUID();
 
-          let thumbnailUrl: string | undefined;
+          const fullBuffer = await processedImage.full.file.arrayBuffer();
+          const fullData = Buffer.from(fullBuffer).toString('base64');
+
+          const mediaEntries: Array<{ type: string; key: string; data: string; mimeType: string }> = [];
           if (processedImage.thumbnail) {
-            const thumbnailBuffer = await processedImage.thumbnail.file.arrayBuffer();
-            thumbnailUrl = `data:${processedImage.thumbnail.file.type};base64,${Buffer.from(thumbnailBuffer).toString('base64')}`;
+            const thumbBuffer = await processedImage.thumbnail.file.arrayBuffer();
+            const thumbData = Buffer.from(thumbBuffer).toString('base64');
+            mediaEntries.push({
+              type: 'image-thumbnail',
+              key,
+              data: thumbData,
+              mimeType: processedImage.thumbnail.file.type,
+            });
           }
+          mediaEntries.push({
+            type: 'image',
+            key,
+            data: fullData,
+            mimeType: processedImage.full.file.type,
+          });
 
-          const embedMessage: EmbedMessage = {
-            type: 'embed',
-            imageUrl: fullImageUrl,
-            thumbnailUrl,
-            isLargeGif: processedImage.isLargeGif,
-          } as EmbedMessage;
-          await onSubmitMessage(embedMessage, inReplyTo?.messageId);
+          await onSubmitMessage(
+            { type: 'post' as const, text: '', embeddedMedia: mediaEntries },
+            inReplyTo?.messageId
+          );
         }
 
         // Clear state after successful submission
