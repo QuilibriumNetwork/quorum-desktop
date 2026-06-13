@@ -119,6 +119,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserSettingsModal fields flash empty on open](bugs/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md)
 - [@everyone owner-bypass is a real propagating bug (send-side-only enforcement)](bugs/2026-06-12-everyone-mention-owner-bypass-send-side-only.md)
 - [Read-only channel receive-side enforcement is incomplete](bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
+- [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 
 ### Solved Issues
@@ -635,4 +636,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-13 11:53:23
+**Last Updated**: 2026-06-13 12:21:41
