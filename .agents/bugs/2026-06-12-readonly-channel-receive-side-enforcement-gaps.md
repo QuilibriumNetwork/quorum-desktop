@@ -52,6 +52,24 @@ if (!isDM && isPostMessage) {
 2. **Enforce in BOTH paths.** Add the read-only validation to `saveMessage` (disk) as well as `addMessage` (cache), so a dropped message doesn't resurrect on refetch. Factor the check into a shared helper to avoid drift between the two paths — ideally reuse `quorum-shared`'s `canManageReadOnlyChannel` / `createChannelPermissionChecker(...).canPostMessage()` (no owner bypass, exactly this rule).
 3. Keep fail-secure semantics (no space/channel data → drop).
 
+## Hub-log migration impact (2026-06-13) — RAISES PRIORITY
+
+The incoming desktop **hub log** (mobile's durable transport, replayed via `log-since` on
+every reconnect/foreground; see
+[2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md))
+makes this bug **worse and more urgent**, not better. Today the "reappears on the next
+refetch from storage" resurrection is intermittent (remount/invalidate/navigate). Under a
+hub log that **replays every message on every reconnect**, the offending sticker/embed/post
+is re-delivered and — because the durable `saveMessage` path has no read-only check — re-
+persisted on each reconnect. The gap goes from occasional to reliably exercised.
+
+This puts the bug in the same "make receive handlers replay-safe before the hub log lands"
+category as the control-handler audit in
+[2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md).
+The fix (enforce in BOTH `addMessage` and `saveMessage`, cover all postable content types)
+is effectively a **prerequisite** for the hub-log migration to be safe. Consider bumping
+this above its current implicit priority and sequencing it with the migration prep.
+
 ## Note
 
 Mobile is being implemented WITHOUT these gaps (all content types, both live + batch receive paths, durable). This desktop bug should be brought to parity — ideally both consume the same shared `canManageReadOnlyChannel` check on receipt so the rule can't drift per-type or per-path.
