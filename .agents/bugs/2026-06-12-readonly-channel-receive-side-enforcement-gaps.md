@@ -70,6 +70,16 @@ The fix (enforce in BOTH `addMessage` and `saveMessage`, cover all postable cont
 is effectively a **prerequisite** for the hub-log migration to be safe. Consider bumping
 this above its current implicit priority and sequencing it with the migration prep.
 
+## Fixed (2026-06-13, branch `fix/control-handler-replay-safety`)
+
+Both gaps closed. A shared `isReadOnlyViolation` helper in `MessageService.ts`
+now reuses quorum-shared `canManageReadOnlyChannel` and is called from BOTH the
+cache path (`addMessage`) and the durable path (`saveMessage`), covering
+`post`/`embed`/`sticker` (no longer post-only). Fail-secure on missing
+space/channel; no owner bypass. tsc + eslint clean. Done as part of the
+receive-handler replay-safety hardening for the hub-log migration prep — see
+[2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md).
+
 ## Note
 
 Mobile is being implemented WITHOUT these gaps (all content types, both live + batch receive paths, durable). This desktop bug should be brought to parity — ideally both consume the same shared `canManageReadOnlyChannel` check on receipt so the rule can't drift per-type or per-path.
