@@ -4,22 +4,25 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
-- [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md) — multi-repo banner added (philosophy current; `.native.tsx` go in quorum-mobile)
-- [Component Management & Development Guide](docs/component-management-guide.md) — multi-repo banner added
+- [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
+- [Component Management & Development Guide](docs/component-management-guide.md)
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md) — ⚠️ deprecated (in-repo `mobile/` playground; use quorum-mobile)
+- [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
-- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md) — canonical current architecture
+- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
-#### Archived docs (`.archived/`)
-- [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md) — ⚰️ ABANDONED single-repo build plan; kept as history only
+### .Archived
+- [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)
+
+### Debugging
+- [DM Architecture and Debug Playbook](docs/debugging/dm-architecture-and-debug-playbook.md)
 
 ### Development
-- [Android Build Workflow](docs/development/android-build-workflow.md) — ⚠️ deprecated (in-repo `mobile/` playground; use quorum-mobile)
+- [Android Build Workflow](docs/development/android-build-workflow.md)
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 
 ### Features
@@ -43,6 +46,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Offline Support](docs/features/offline-support.md)
 - [Onboarding Flow](docs/features/onboarding-flow.md)
 - [Profile Sync on Returning User Login](docs/features/profile-sync-returning-user-login.md)
+- [QNS Username Display (name resolution)](docs/features/qns-username-display.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
@@ -93,24 +97,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Permissions Architecture](docs/space-permissions/space-permissions-architecture.md)
 - [Space Roles System](docs/space-permissions/space-roles-system.md)
 
-### Debugging
-- [DM Architecture and Debug Playbook](docs/debugging/dm-architecture-and-debug-playbook.md) — DM identity flow, known sync gaps, debug ladder. Read before any DM investigation.
-
-## 🛠 Tools
-
-- [DM debug snippets](tools/dm-debug/README.md) — copy-paste console scripts for diagnosing DM identity / sync issues.
-
 ## 🐛 Bug Reports
 
 ### Active Issues
 - [Pinned Messages Panel Button Clicks Bug](bugs/2025-01-08-pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Markdown Line Break Inconsistency](bugs/2025-01-21-markdown-line-break-inconsistency.md)
-- [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/2025-08-03-joinspacemodal-invalid-json-network-error.md)
 - [Message Hash Navigation Conflict Bug](bugs/2025-08-03-message-hash-navigation-conflict.md)
 - [Modal Gesture Handling Technical Debt](bugs/2025-08-10-modal-gesture-handling-technical-debt.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/2025-08-21-messagedb-cross-platform-storage-issue.md)
 - [Kick User Button Remains Enabled After User is Kicked](bugs/2025-09-16-kick-user-button-state-after-kick.md)
-- [Public Invite Link Intermittent Expiration Bug](bugs/2025-09-22-public-invite-link-intermittent-expiration.md)
 - [Expired Invite Card Validation Timing Issue](bugs/2025-11-09-expired-invite-card-validation-timing.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/2025-12-09-encryption-state-evals-bloat.md)
 - [Config Sync Space Loss Race Condition](bugs/2026-01-09-config-sync-space-loss-race-condition.md)
@@ -121,19 +116,20 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/2026-04-14-display-name-input-layout-shift-on-error.md)
 - [Virtuoso measurement callback resets scrollTop on new messages](bugs/2026-05-24-virtuoso-measurement-scroll-reset.md)
 - [UserSettingsModal shows stale display name after remote UserConfig sync](bugs/2026-05-30-user-settings-modal-stale-display-name.md)
-- [Action queue errors silently swallowed across all config-writing hooks](bugs/2026-06-07-action-queue-errors-swallowed.md)
-- [Per-space mention-type filter doesn't sync across devices](bugs/2026-06-07-mention-type-filter-not-synced.md)
-- [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/2026-06-07-space-profile-save-missing-inbox.md)
-- [@everyone owner-bypass propagates (send-side-only enforcement) — spans shared/desktop/mobile](bugs/2026-06-12-everyone-mention-owner-bypass-send-side-only.md) 🔴 cross-repo; extends #111
-- [Read-only channel receive-side enforcement incomplete (sticker/embed bypass; cache-only for posts)](bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md) 🟡 receive-side gaps
+- [UserSettingsModal fields flash empty on open](bugs/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md)
+- [@everyone owner-bypass is a real propagating bug (send-side-only enforcement)](bugs/2026-06-12-everyone-mention-owner-bypass-send-side-only.md)
+- [Read-only channel receive-side enforcement is incomplete](bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
+- [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/2025-01-19-newdirectmessage-modal-url-to-state-conversion.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/2025-01-20-react-hooks-violation-conditional-return.md)
 - [Kick User UX Improvements](bugs/.solved/2025-01-30-kick-user-ux-improvements.md)
+- [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/.solved/2025-08-03-joinspacemodal-invalid-json-network-error.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/2025-08-11-android-file-download-huawei-p9-lite.md)
 - [2025 09 09 Search Results Page Refresh And Focus Stealing](bugs/.solved/2025-09-09-search-results-page-refresh-and-focus-stealing.md)
+- [Public Invite Link Intermittent Expiration Bug](bugs/.solved/2025-09-22-public-invite-link-intermittent-expiration.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/2025-11-11-auto-jump-unread-virtuoso-scroll-conflict.md)
 - [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/2025-11-12-new-messages-separator-intersection-observer-issues.md)
 - [Deleted Messages Reappear After Peer Sync](bugs/.solved/2025-12-18-deleted-messages-reappear-via-sync.md)
@@ -161,6 +157,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [No visual feedback when dragging files onto dropzone areas](bugs/.solved/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Profile sync not triggered after key import in new onboarding flow](bugs/.solved/2026-04-13-profile-sync-not-triggered-after-key-import.md)
+- [Action queue errors silently swallowed across all config-writing hooks](bugs/.solved/2026-06-07-action-queue-errors-swallowed.md)
+- [Per-space mention-type filter doesn't sync across devices](bugs/.solved/2026-06-07-mention-type-filter-not-synced.md)
+- [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/.solved/2026-06-07-space-profile-save-missing-inbox.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -205,10 +204,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Spaces Highlights Feed — Design Spec](tasks/2026-06-04-spaces-highlights-feed-design.md)
 - [Spaces Highlights Feed Implementation Plan](tasks/2026-06-04-spaces-highlights-feed-plan.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
-- [Implementation plan — Notification settings UX alignment](tasks/2026-06-07-align-notification-settings-with-mobile-plan.md)
-- [Align notification settings UX between desktop and mobile](tasks/2026-06-07-align-notification-settings-with-mobile.md)
-- [`useDMMute` and `useDMFavorites` read stale config from messageDB](tasks/2026-06-07-dm-mute-cache-read.md)
-- [Add a real global notifications mute to desktop](tasks/2026-06-07-global-notifications-mute.md)
+- [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
+- [Migrate UserProfile card positioning to @floating-ui/react](tasks/2026-06-08-userprofile-positioning-floating-ui.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -275,32 +272,34 @@ This is the main index for all documentation, bug reports, and task management.
 ### Messagedb .Done
 - [Extract encryptAndSendToSpace() Helper](tasks/messagedb/.done/messageservice-extract-encrypt-helper.md)
 
-### Mobile Dev (historical reference — single-repo era; see README)
-- [README — folder status + cleanup pass](tasks/mobile-dev/README.md)
+### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/2025-08-01-business-logic-extraction-plan.md)
 - [Quilibrium SDK Mobile Integration Issue](tasks/mobile-dev/2025-08-08-mobile-sdk-integration-issue.md)
 - [Component Architecture Masterplan - Desktop/Mobile Unification](tasks/mobile-dev/2026-01-09-components-shared-arch-masterplan.md)
 - [Mobile/Touch Implementation Transition Plan](tasks/mobile-dev/2026-01-09-mobile-touch-transition-plan.md)
-
-### Mobile Dev Docs
-- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
+- [mobile-dev — historical cross-platform planning](tasks/mobile-dev/README.md)
 
 ### Mobile Dev .Archived
-- [Cross-Platform Development : Revised Plan](tasks/mobile-dev/.archived/plan-quick-recap.md)
-- [Mobile Development Plan - Improved Version](tasks/mobile-dev/.archived/mobile-dev-plan.md)
-- [Native Business Components Implementation Plan](tasks/mobile-dev/.archived/native-business-components-plan.md)
-- [Primitive Migration Audit Report](tasks/mobile-dev/.archived/primitive-migration-audit.md)
-- [Sdk Shim Temporary Solutions](tasks/mobile-dev/.archived/sdk-shim-temporary-solutions.md)
 - [Cross-Platform Hooks Refactoring Plan](tasks/mobile-dev/.archived/2026-01-09-cross-platform-hooks-refactoring-plan.md)
 - [CSS to Mobile Colors Sync Script](tasks/mobile-dev/.archived/2026-01-09-css-to-mobile-colors-sync.md)
 - [File Upload Hooks Consolidation Task](tasks/mobile-dev/.archived/2026-01-09-file-upload-hooks-consolidation.md)
 - [Mobile Internationalization (i18n) Implementation Plan](tasks/mobile-dev/.archived/2026-01-09-internationalization-i18n-implementation-plan.md)
 - [Mobile Image Compression Implementation](tasks/mobile-dev/.archived/2026-01-09-mobile-image-compression.md)
 - [React Native Upgrade Risk Assessment](tasks/mobile-dev/.archived/2026-01-09-upgrade-to-react-80.md)
+- [Cross-Platform Development : Revised Plan](tasks/mobile-dev/.archived/plan-quick-recap.md)
+- [Mobile Development Plan - Improved Version](tasks/mobile-dev/.archived/mobile-dev-plan.md)
 - [Mobile/Desktop Behavioral Differences Audit Plan](tasks/mobile-dev/.archived/mobile-desktop-audit.md)
+- [Native Business Components Implementation Plan](tasks/mobile-dev/.archived/native-business-components-plan.md)
+- [Primitive Migration Audit Report](tasks/mobile-dev/.archived/primitive-migration-audit.md)
+- [Sdk Shim Temporary Solutions](tasks/mobile-dev/.archived/sdk-shim-temporary-solutions.md)
 - [Third-Party Component Migration Report](tasks/mobile-dev/.archived/third-party-component-migration-report.md)
 
+### Mobile Dev Docs
+- [Component Architecture Workflow - Detailed Explanation](tasks/mobile-dev/docs/component-architecture-workflow-explained.md)
+
 ### Port From Mobile
+- [Port skins — Phase 0 + Phase 1](tasks/port-from-mobile/2026-06-11-port-skins-phase-0-1.md)
+- [Skins (custom themes) — deep dive (candidate #27)](tasks/port-from-mobile/2026-06-11-skins-deep-dive.md)
 - [Cross-app feature diff (port-from-mobile) — Master Tracker](tasks/port-from-mobile/README.md)
 - [Mobile features not on desktop — candidate list](tasks/port-from-mobile/candidates.md)
 - [Port-from-mobile shipped log](tasks/port-from-mobile/shipped-log.md)
@@ -310,18 +309,23 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unified `/spaces` Page (PR 1 of 2) — Implementation Plan](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-plan.md)
 - [Unified `/spaces` page — PR 2 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces-pr2.md)
 - [Unified `/spaces` page — PR 1 of 2](tasks/port-from-mobile/.done/2026-06-01-port-discover-spaces.md)
+- [Port #29 — Non-owner read-only view of the public invite URL](tasks/port-from-mobile/.done/2026-06-08-port-non-owner-invite-view.md)
+- [Port per-space profile bio override](tasks/port-from-mobile/.done/2026-06-08-port-per-space-bio.md)
+- [Port public profile from mobile + remove speculative `/discover/people`](tasks/port-from-mobile/.done/2026-06-08-port-public-profile.md)
 - [QNS usernames on desktop — design](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-design.md)
-- [QNS Usernames on Desktop — Implementation Plan (stages 1-3)](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-plan.md)
-- [QNS username overrides display name everywhere + mentions](tasks/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md)
+- [QNS Usernames on Desktop — Implementation Plan](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-plan.md)
+- [Port — paste private key on import + copy private key in settings](tasks/port-from-mobile/.done/2026-06-11-port-key-paste-import-and-copy-export.md)
+- [QNS username overrides display name everywhere + mentions by QNS name](tasks/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md)
 
 ### Port To Mobile
-- [Port-to-mobile — Master Tracker](tasks/port-to-mobile/README.md)
-- [Port-to-mobile candidates (feature-ports + convergence)](tasks/port-to-mobile/candidates.md)
+- [Port-to-mobile candidates](tasks/port-to-mobile/candidates.md)
+- [Port-to-mobile — desktop → mobile feature diff](tasks/port-to-mobile/README.md)
 
 ### Quorum Shared Migration
+- [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/2026-06-12-icon-picker-PR-notes.md)
+- [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
-- [Mobile tasks pending](tasks/quorum-shared-migration/mobile-tasks-pending.md)
-- [Promote icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
+- [Mobile tasks pending — the unified tracker](tasks/quorum-shared-migration/mobile-tasks-pending.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
 - [Quorum-shared migration — roadmap](tasks/quorum-shared-migration/roadmap.md)
 - [Quorum-shared migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
@@ -435,7 +439,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [SpacesSidebar Polish — Implementation Plan (Track D, expanded)](tasks/.done/2026-06-03-spaces-sidebar-polish-plan.md)
 - [Bookmarks page in NavRail](tasks/.done/2026-06-04-bookmarks-page.md)
 - [Docs refresh after new-UI shell migration](tasks/.done/2026-06-04-docs-refresh-after-new-ui-shell.md)
+- [Implementation plan — Notification settings UX alignment](tasks/.done/2026-06-07-align-notification-settings-with-mobile-plan.md)
+- [Align notification settings UX between desktop and mobile](tasks/.done/2026-06-07-align-notification-settings-with-mobile.md)
 - [Consolidate desktop invite system with mobile](tasks/.done/2026-06-07-consolidate-invite-system-with-mobile.md)
+- [`useDMMute` and `useDMFavorites` read stale config from messageDB](tasks/.done/2026-06-07-dm-mute-cache-read.md)
+- [Add a real global notifications mute to desktop](tasks/.done/2026-06-07-global-notifications-mute.md)
+- [Fix `joinInviteLink` — public invite join is broken end-to-end](tasks/.done/2026-06-08-fix-join-invite-link.md)
+- [Space message list: missing name/avatar](tasks/.done/2026-06-10-space-message-list-public-profile-fallback.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -625,4 +635,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-07 17:48:27
+**Last Updated**: 2026-06-13 11:05:15

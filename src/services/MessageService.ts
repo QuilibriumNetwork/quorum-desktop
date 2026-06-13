@@ -1781,15 +1781,9 @@ export class MessageService {
         queryClient,
       });
     } else if (decryptedContent.content.type === 'update-profile') {
-      const participant = await this.messageDB.getSpaceMember(
-        spaceId,
-        decryptedContent.content.senderId
-      );
-      if (
-        !participant ||
-        !decryptedContent.publicKey ||
-        !decryptedContent.signature
-      ) {
+      // Drop unsigned messages — we can't validate authenticity or derive
+      // the inbox address without the signing key material.
+      if (!decryptedContent.publicKey || !decryptedContent.signature) {
         return;
       }
 
@@ -1797,6 +1791,28 @@ export class MessageService {
         Buffer.from(decryptedContent.publicKey, 'hex')
       );
       const inboxAddress = base58btc.baseEncode(sh.bytes);
+
+      // UPSERT: if we don't have a member record yet (joined the space after
+      // the sender sent their update, or join control was missed), create one
+      // from the profile data itself. Mirrors the new-session path above
+      // (saveMessage) and mobile WebSocketContext.tsx:1925-1985. Without this,
+      // an update-profile from a sender whose join broadcast never arrived was
+      // silently dropped, leaving every one of their messages on a truncated
+      // address with no path to recovery. See
+      // .agents/bugs/2026-06-13-space-members-missing-no-join-row.md.
+      const existing = await this.messageDB.getSpaceMember(
+        spaceId,
+        decryptedContent.content.senderId
+      );
+      const participant =
+        existing ??
+        ({
+          user_address: decryptedContent.content.senderId,
+          inbox_address: inboxAddress,
+        } as secureChannel.UserProfile & {
+          inbox_address: string;
+          isKicked?: boolean;
+        });
 
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
@@ -3173,10 +3189,18 @@ export class MessageService {
               // The message IS the key rotation announcement, so skip inbox mismatch check.
               // For all other types: inbox mismatch invalidates the signature.
               const isUpdateProfile = decryptedContent.content.type === 'update-profile';
+              // participant may be null: the sender's join broadcast never
+              // reached us, so there is no space_members row yet (common — see
+              // .agents/bugs/2026-06-13-space-members-missing-no-join-row.md).
+              // Optional-chain the deref; a missing inbox_address means we have
+              // nothing to compare against, so there is no mismatch to flag and
+              // the signature is verified below as normal. Without the guard
+              // this threw a TypeError that the outer catch swallowed, silently
+              // dropping the message on non-repudiable spaces.
               const inboxMismatch =
                 !isUpdateProfile &&
-                participant.inbox_address !== inboxAddress &&
-                participant.inbox_address;
+                participant?.inbox_address !== inboxAddress &&
+                participant?.inbox_address;
               const messageIdMismatch =
                 decryptedContent.messageId !==
                 Buffer.from(messageId).toString('hex');
