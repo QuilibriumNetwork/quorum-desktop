@@ -145,13 +145,47 @@ does not do desktop's inbox-from-publicKey derivation in the receive path.
 
 ### Fix 3 (deeper, needs design + lead-dev input): reliable `join`/roster delivery
 
-The root cause is that ~half the `join` broadcasts never arrive — the unsolved
-control-message transport gap (same cluster as the DM non-delivery issue). The
-robust fix is making join/`sync-members` delivery reliable, OR an owner-side
-periodic roster re-broadcast, OR a peer "request roster" pull. This is the only
-fix that recovers name+avatar for a silent member who never re-saves their
-profile. It is NOT client-render-side and should be raised with the lead dev
-(Telegram, per project convention) rather than patched unilaterally.
+Root cause now characterized (investigation 2026-06-13): **desktop and mobile
+use different transports for space control messages, and mobile's is
+self-healing while desktop's is not.**
+
+**Desktop (broken):** `join` / `update-profile` are ephemeral hub *group
+broadcasts*, fire-and-forget (`InvitationService.ts:848`, sealed via
+`SpaceService.ts:1201`). No durable replay. An existing member offline at
+broadcast time misses the `join` permanently. The only recovery is a one-shot
+`requestSync` (`SyncService.ts`) with a **30-second** acceptance window
+(`MessageService.ts:3961`), fired only on join (`InvitationService.ts:860`) and
+once on startup with a 10s delay (`MessageDB.tsx:528`). Miss that window and the
+rosters never reconcile. There is no `getHub` poll, no periodic re-sync, and
+`join`/`requestSync` are NOT in the durable ActionQueue (they use ephemeral
+`enqueueOutbound`, `WebsocketProvider.tsx:222`, lost on refresh). Secondary
+silent-failure: `js_verify_point` on a stale ratchet drops a received `join`
+with only `console.error` (`MessageService.ts:3243`), and non-owner
+`sync-members` is dropped unless an active 30s sync session exists
+(`MessageService.ts:4024`).
+
+**Mobile (self-healing):** uses a durable **hub log**. On every reconnect /
+foreground (`AppState` active), it issues `log-since` from a stored cursor and
+replays ALL missed `join`/`update-profile` control messages through the same
+member-writing pipeline (`WebSocketContext.tsx:4121-4248`, `hubLogSync.ts`,
+`hubLogCursor.ts`). It also re-broadcasts `update-profile` on every connect
+(`WebSocketContext.tsx:4270-4345`), and its receive handler upserts a row even
+with no prior `join` (`:1953-2023`). A mobile client that missed a join heals on
+next connect; desktop has no equivalent.
+
+So this is NOT a "mirror the DM fix" tweak and NOT a small client patch — it is
+adopting (a slice of) mobile's durable hub-log catch-up on desktop, OR adding a
+desktop periodic/on-reconnect re-sync, OR an owner periodic roster re-broadcast.
+Each is an architecture decision with a cross-platform / wire-format dimension.
+**Raise with the lead dev (Telegram, per project convention) before building.**
+Candidate approaches, by risk:
+- Desktop on-reconnect `requestSync` (re-fire the existing mechanism on every
+  WS (re)connect, not just join+startup) — smallest change, stays within the
+  existing sync protocol, no new wire type. Likely the safest first step.
+- Desktop `update-profile` re-broadcast on connect (mirrors mobile F2) — pairs
+  with Fix 1's upsert to heal rosters without a new transport.
+- Full hub-log catch-up parity with mobile — largest, most robust, biggest blast
+  radius.
 
 ### Explicitly NOT doing: upsert `space_members` from raw message traffic
 
@@ -161,6 +195,30 @@ Considered (would seed an inbox-only row from a verified post) and rejected:
 correctness risk the PR #191 task already rejected for write-through;
 (c) it only seeds inbox+address, still no name/avatar from a `post`, so the
 user-visible win is marginal over Fix 1 + the existing public-profile fallback.
+
+## Implementation status
+
+**Partial mitigation landed** on branch `fix/space-member-upsert-and-null-guard`
+(commit `05f04c8c`):
+
+- **Fix 1 (done):** `update-profile` established-session handler
+  (`MessageService.ts:1783`) now upserts a missing `space_members` row instead
+  of bailing on `!participant`. Mirrors the new-session handler (`:1262`) and
+  mobile (`WebSocketContext.tsx:1925`).
+- **Fix 2 (done):** null-guarded `participant?.inbox_address` at
+  `MessageService.ts:3178`, preventing the silent message-drop on non-repudiable
+  spaces.
+- Verified: `npx tsc --noEmit --skipLibCheck` clean; `eslint` on the file clean
+  (0 errors; 2 pre-existing warnings unrelated to the change).
+
+**Bug remains `open`** — Fixes 1+2 are correct and ship-worthy but do NOT resolve
+the reported symptom. Fix 1 only recovers identity when a missing member *next
+saves their profile*, and desktop (unlike mobile) does not re-broadcast profiles
+on reconnect, so a silent member's row still never appears. The headline symptom
+(joined + posted members showing as truncated addresses) is caused by the
+transport divergence in Fix 3, which is unaddressed pending lead-dev input.
+Do not move to `.solved/` until the symptom no longer reproduces via the
+diagnostic below.
 
 ## How to reproduce / diagnose
 
