@@ -256,20 +256,29 @@ new-session (`:1262`) + established (`:1783`, fixed here), `sync-members`
 - `join` / `leave` / `rekey` — the "X joined/left/was kicked" system-message
   emission is now guarded behind a `space` null-check instead of `space!`
   assertions (which threw, and were swallowed, when the space row was absent).
-- Read-only enforcement — extracted a shared `isReadOnlyViolation` helper
-  (reuses quorum-shared `canManageReadOnlyChannel`) enforced on BOTH the cache
-  path (`addMessage`) and the durable path (`saveMessage`), covering
-  `post`/`embed`/`sticker` (was post-only + cache-only — see
-  2026-06-12-readonly-channel-receive-side-enforcement-gaps). Verified: tsc +
-  eslint clean.
+- Verified: tsc + eslint clean.
+
+**Attempted then reverted (code review):** durable-path read-only enforcement.
+A fail-secure reject on the durable path could permanently drop legitimate
+manager messages that arrive before their space row during sync replay — worse
+than the bug it fixed. Deferred to the hub-log migration (#32), where replay
+ordering is deterministic. See
+2026-06-12-readonly-channel-receive-side-enforcement-gaps.
+
+**Known limitation (pre-existing, not fixed here):** the `sync-members` cache
+merge reads `isKicked` from the React Query cache, not IndexedDB. A tombstone
+upserted this session for a previously-unknown member is correct in IndexedDB
+but may render as active in the *same session* until reload (the upsert's
+`setQueryData` maps existing entries only). Self-heals on reload. Belongs to the
+`sync-members` handler, untouched here.
 
 **Fine to leave bailing:** `mute`/`unmute`, `pin`/`unpin`, `reaction`,
 `edit`/`remove-message` — these depend on the target message or `space.roles`,
 not a member row (their replay concern is message ordering, a separate matter).
 
-With these in, the receive side is replay-safe: the hub-log migration (#32) can
-adopt the durable log without resurfacing blocked content, dropping kick/leave
-events, or null-deref'ing on a missing space row.
+With these in, the membership handlers (kick/leave/verify-kicked/join/rekey) are
+replay-safe against missing rows and null space data. Read-only durable
+enforcement remains for #32.
 
 ## How to reproduce / diagnose
 

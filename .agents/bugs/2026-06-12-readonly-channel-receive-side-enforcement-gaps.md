@@ -70,15 +70,25 @@ The fix (enforce in BOTH `addMessage` and `saveMessage`, cover all postable cont
 is effectively a **prerequisite** for the hub-log migration to be safe. Consider bumping
 this above its current implicit priority and sequencing it with the migration prep.
 
-## Fixed (2026-06-13, branch `fix/control-handler-replay-safety`)
+## Attempted then reverted (2026-06-13) — defer to the hub-log migration
 
-Both gaps closed. A shared `isReadOnlyViolation` helper in `MessageService.ts`
-now reuses quorum-shared `canManageReadOnlyChannel` and is called from BOTH the
-cache path (`addMessage`) and the durable path (`saveMessage`), covering
-`post`/`embed`/`sticker` (no longer post-only). Fail-secure on missing
-space/channel; no owner bypass. tsc + eslint clean. Done as part of the
-receive-handler replay-safety hardening for the hub-log migration prep — see
-[2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md).
+A first attempt added a shared `isReadOnlyViolation` helper enforcing read-only
+on BOTH the cache and durable paths for `post`/`embed`/`sticker`. **Code review
+caught a worse failure mode and it was reverted:** the durable-path fail-secure
+reject could *permanently drop legitimate manager messages*. During sync replay
+a message can arrive before its space/channel row is loaded; the check then sees
+"no space → reject" and discards it from IndexedDB with no recovery — strictly
+worse than the resurface-on-replay bug being fixed. It also created a
+thread-reply asymmetry (`addMessage` short-circuits thread replies before the
+check; the durable path did not).
+
+**Conclusion:** the durable-path read-only enforcement must NOT fail-secure on
+not-yet-loaded space data. It belongs with the hub-log migration (#32), where
+sync/replay ordering is handled deterministically (you know when the log is
+caught up), so "space absent" can be distinguished from "genuinely not a
+manager." The cache-path enforcement remains as-is on `main` (unchanged). This
+bug stays **open** for the durable-path + sticker/embed coverage, to be done as
+part of #32.
 
 ## Note
 
