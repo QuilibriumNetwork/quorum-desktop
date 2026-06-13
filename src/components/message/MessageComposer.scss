@@ -250,6 +250,18 @@ html:not(.dark) .message-composer-row {
     }
   }
 
+  /* Active state when there is sendable content (text OR an attached image).
+     An image with no caption is sendable, so the button must look active even
+     when the row is not in the `typing` state. */
+  &.active {
+    background-color: var(--accent);
+    opacity: 1;
+
+    &:hover {
+      background-color: var(--accent-400);
+    }
+  }
+
   /* Disabled state */
   &.disabled {
     background-color: var(--surface-6) !important;

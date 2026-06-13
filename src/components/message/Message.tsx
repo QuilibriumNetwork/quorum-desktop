@@ -75,6 +75,85 @@ const createGifDetector = (url: string, isLargeGif?: boolean) => {
   );
 };
 
+// Renders a single embedded image with GIF-aware behavior, owning its own
+// animation state so multiple images in one message animate independently.
+// Behavior mirrors the legacy embed renderer:
+//   - static image      -> click opens the full-resolution modal
+//   - small GIF          -> the src IS the GIF, so it animates immediately; click is a no-op
+//   - large GIF          -> shows the static thumbnail + a play overlay; clicking swaps the
+//                           src to the full GIF (animates in place, no modal)
+// `isLargeGif` is derived by the caller from the embeddedMedia shape (a GIF that has a
+// separate thumbnail entry), not from a wire flag.
+const EmbeddedImage = ({
+  thumbnailSrc,
+  fullSrc,
+  isGif,
+  isLargeGif,
+  onOpenModal,
+}: {
+  thumbnailSrc: string;
+  fullSrc: string;
+  isGif: boolean;
+  isLargeGif: boolean;
+  onOpenModal: (
+    e: React.MouseEvent<HTMLImageElement>,
+    fullSrc: string,
+    hasThumbnail?: boolean
+  ) => void;
+}) => {
+  const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
+  const hasPlayOverlay = isLargeGif && thumbnailSrc !== fullSrc && !isShowingGifAnimation;
+
+  return (
+    <div className="relative inline-block mt-1">
+      <img
+        src={isShowingGifAnimation ? fullSrc : thumbnailSrc}
+        className={`message-image rounded-lg transition-opacity duration-200 ${
+          isGif
+            ? hasPlayOverlay
+              ? 'cursor-pointer' // Pointer cursor for GIF static thumbnails
+              : 'cursor-auto' // No pointer cursor for animating / small GIFs
+            : 'cursor-pointer hover:opacity-80' // Clickable for non-GIFs
+        }`}
+        onClick={(e) => {
+          if (isGif) {
+            // For GIFs: animate in-place, don't open modal.
+            // Large GIF with a separate thumbnail: swap to the full GIF on click.
+            // Small GIF: already animating, do nothing.
+            if (isLargeGif && thumbnailSrc !== fullSrc && !isShowingGifAnimation) {
+              const img = e.target as HTMLImageElement;
+              const originalSrc = img.src;
+              const handleError = () => {
+                logger.warn('Failed to load full GIF, reverting to thumbnail');
+                img.src = originalSrc;
+                img.removeEventListener('error', handleError);
+                setIsShowingGifAnimation(false);
+              };
+              img.addEventListener('error', handleError);
+              setIsShowingGifAnimation(true);
+            }
+          } else {
+            // For static images: open the full-resolution modal as usual.
+            onOpenModal(e, fullSrc, thumbnailSrc !== fullSrc);
+          }
+        }}
+        onError={(e) => {
+          (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+        }}
+      />
+      {hasPlayOverlay && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="bg-black/50 rounded-full p-2">
+            <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M8 5v14l11-7z" />
+            </svg>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 type MessageProps = {
   customEmoji?: Emoji[];
   stickers?: { [key: string]: Sticker };
@@ -1072,17 +1151,19 @@ export const Message = React.memo(
                             getEmbeddedMediaSrc(message.content as any, 'image', key);
                           const fullSrc = getEmbeddedMediaSrc(message.content as any, 'image', key);
                           if (!thumbnailSrc || !fullSrc) return null;
+                          // Derive GIF behavior from the embeddedMedia shape (no wire flag):
+                          // a GIF with a distinct thumbnail entry is the "large GIF" case.
+                          const isGif = createGifDetector(fullSrc);
+                          const isLargeGif = isGif && thumbnailSrc !== fullSrc;
                           return (
-                            <div key={key} className="relative inline-block mt-1">
-                              <img
-                                src={thumbnailSrc}
-                                className="message-image rounded-lg cursor-pointer hover:opacity-80"
-                                onClick={() => showImageModal(fullSrc)}
-                                onError={(e) => {
-                                  (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
-                                }}
-                              />
-                            </div>
+                            <EmbeddedImage
+                              key={key}
+                              thumbnailSrc={thumbnailSrc}
+                              fullSrc={fullSrc}
+                              isGif={isGif}
+                              isLargeGif={isLargeGif}
+                              onOpenModal={formatting.handleImageClick}
+                            />
                           );
                         })}
                       </div>
@@ -1248,17 +1329,17 @@ export const Message = React.memo(
                       getEmbeddedMediaSrc(message.content as any, 'image', key);
                     const fullSrc = getEmbeddedMediaSrc(message.content as any, 'image', key);
                     if (!thumbnailSrc || !fullSrc) return null;
+                    const isGif = createGifDetector(fullSrc);
+                    const isLargeGif = isGif && thumbnailSrc !== fullSrc;
                     return (
-                      <div key={key} className="relative inline-block mt-1">
-                        <img
-                          src={thumbnailSrc}
-                          className="message-image rounded-lg cursor-pointer hover:opacity-80"
-                          onClick={() => showImageModal(fullSrc)}
-                          onError={(e) => {
-                            (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
-                          }}
-                        />
-                      </div>
+                      <EmbeddedImage
+                        key={key}
+                        thumbnailSrc={thumbnailSrc}
+                        fullSrc={fullSrc}
+                        isGif={isGif}
+                        isLargeGif={isLargeGif}
+                        onOpenModal={formatting.handleImageClick}
+                      />
                     );
                   })}
                   </>
