@@ -178,6 +178,17 @@ adopting (a slice of) mobile's durable hub-log catch-up on desktop, OR adding a
 desktop periodic/on-reconnect re-sync, OR an owner periodic roster re-broadcast.
 Each is an architecture decision with a cross-platform / wire-format dimension.
 **Raise with the lead dev (Telegram, per project convention) before building.**
+
+**Already tracked:** this is candidate **#32 "Hub-log sync transport (replace
+desktop P2P)"** in
+[port-from-mobile/candidates.md](../tasks/port-from-mobile/candidates.md) —
+surfaced 2026-06-11, parked as a lead-dev call, with a verified ~4-8 eng-day
+scope (port `buildListenHubFrame`/`buildLogSinceFrame` + cursor store + ingest;
+delete `SyncService.ts` + the 7 sync-* handlers + the `requestSync` loop), the
+privacy tradeoff (server retains the sealed log vs P2P device-only history), and
+two infra unknowns. This bug is the concrete user-facing symptom that motivates
+#32. The control-handler replay audit below is the receive-side prep that #32
+needs regardless of direction.
 Candidate approaches, by risk:
 - Desktop on-reconnect `requestSync` (re-fire the existing mechanism on every
   WS (re)connect, not just join+startup) — smallest change, stays within the
