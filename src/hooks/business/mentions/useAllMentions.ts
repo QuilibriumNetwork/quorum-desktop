@@ -136,6 +136,7 @@ export function useAllMentions({
               userAddress,
               enabledTypes: typesToCheck,
               userRoles: userRoleIds,
+              space: space ?? undefined,
             });
           });
 

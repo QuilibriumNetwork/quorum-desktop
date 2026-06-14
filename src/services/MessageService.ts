@@ -4487,11 +4487,13 @@ export class MessageService {
               ?.filter(role => role.members?.includes(self_address))
               ?.map(role => role.roleId) ?? [];
 
-            // Check for mentions
+            // Check for mentions ('space' lets isMentionedWithSettings verify
+            // the SENDER held mention:everyone before honoring @everyone)
             const isMentioned = isMentionedWithSettings(decryptedContent, {
               userAddress: self_address,
               enabledTypes,
               userRoles,
+              space: space ?? undefined,
             });
 
             // Check for reply to user's message

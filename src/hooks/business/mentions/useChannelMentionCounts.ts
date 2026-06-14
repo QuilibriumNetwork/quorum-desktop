@@ -77,6 +77,10 @@ export function useChannelMentionCounts({
         // Get muted channels to exclude from counts
         const mutedChannelIds = getMutedChannelsForSpace(spaceId, config?.mutedChannels);
 
+        // Space data lets isMentionedWithSettings verify the sender's
+        // mention:everyone permission before counting an @everyone.
+        const space = await messageDB.getSpace(spaceId);
+
         // Process each channel (excluding muted ones)
         for (const channelId of channelIds) {
           // Skip muted channels - they shouldn't contribute to notification counts
@@ -123,6 +127,7 @@ export function useChannelMentionCounts({
               userAddress,
               enabledTypes: mentionTypes,
               userRoles: userRoleIds,
+              space: space ?? undefined,
             })) {
               channelMentionCount++;
 
