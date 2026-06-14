@@ -131,6 +131,7 @@ export function useSpaceMentionCounts({
                 userAddress,
                 enabledTypes: mentionTypes,
                 userRoles: userRoleIds,
+                space,
               })) {
                 spaceTotal++;
 
