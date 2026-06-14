@@ -514,7 +514,7 @@ export type Role = {
 ### Testing Considerations
 
 - **Multi-role scenarios**: Test users with multiple overlapping roles
-- **Space owner behavior**: Verify owners always have all permissions
+- **Space owner behavior**: Verify owners get NO implicit permissions except kick — owners must self-assign a role for delete/pin/mute/@everyone (matches the Design Decision above; the old "owners always have all permissions" wording contradicted it and was wrong — receivers can't verify ownership, so only kick, which is Ed448 protocol-verified, works owner-only)
 - **Permission boundaries**: Test regular vs read-only channel isolation
 - **Security**: Verify space owner protection cannot be bypassed
 - **Role visibility**: Test visibility filtering for different user contexts (self, others, space owners)
@@ -527,6 +527,6 @@ export type Role = {
 
 ---
 
-_Last Updated: 2026-05-20 — staleness audit fixes_
+_Last Updated: 2026-06-14 — fixed a stale Testing Considerations bullet that contradicted the design ("owners always have all permissions" → owners get nothing implicit except kick). Previously 2026-05-20 — staleness audit fixes._
 _Implementation Status: Core features complete, user:mute added, user:kick removed_
 _Security Update: Space owners must join roles for delete/pin/mute (kick is space-owner only via protocol)_
