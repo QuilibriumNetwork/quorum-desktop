@@ -9,15 +9,17 @@ audience: future agents working on this migration
 
 # Cross-repo PR workflow for the quorum-shared migration
 
-> **The constraint that shapes everything:** `quorum-desktop` and `quorum-shared` PRs are self-merged. `quorum-mobile` PRs go to the lead dev (often busy — PRs can sit for weeks). This doc is how we work around that without blocking ourselves.
+> **The constraint that shapes everything:** all three repos are self-merged when we're confident — usually via the `/ship-pr` skill (push → squash-merge PR → delete branch → back to base, unattended). What differs is the **bar to decide to ship**: desktop is low (we own it), shared is low-but-bump-the-version, mobile is high (it's the lead's territory, complex, unfamiliar — be *very* sure). The lead reviews mobile PRs *after the fact* on their own schedule; we don't block waiting for them. This doc is how we work across the three without blocking ourselves.
 
 ## Mental model
 
 ```
-quorum-shared:    [push] → [self-merge]
+quorum-shared:    [push] → [self-merge, bump version]
 quorum-desktop:   [push] → [self-merge]
-quorum-mobile:    [push] → [lead reviews] → [lead merges]   ← potential bottleneck
+quorum-mobile:    [push] → [self-merge when very confident; lead reviews after]
 ```
+
+> **Updated 2026-06-14:** the old model said mobile PRs go to the lead to *merge* (a bottleneck). In practice we self-merge mobile too when we're confident (most of the time — if we wrote the code, we're usually confident enough to ship). The lead reviews after merge. The mobile *bar* is still high: prefer statically-verifiable changes, drop a task instead of shipping blind when a runtime test is needed.
 
 The bottleneck only matters for work that has to ship on mobile. Most migration work doesn't — mobile is usually the bystander, catching up to types/services that already shipped on shared and desktop.
 
@@ -25,7 +27,7 @@ The bottleneck only matters for work that has to ship on mobile. Most migration 
 
 For each cross-repo migration:
 
-1. **Investigate first.** Check what shared has, what desktop has, what mobile has (`git show origin/master:<path>` — mobile's working tree is stuck on a Jan 14 commit). Decide whether the migration is even viable per the rules below.
+1. **Investigate first.** Check what shared has, what desktop has, what mobile has. Mobile's working tree is usable (pull + `git log -1 origin/master` to confirm freshness; if it ever looks wildly stale, fall back to `git show origin/master:<path>`). Decide whether the migration is even viable per the rules below.
 2. **Create one task doc** at this folder root: `2026-XX-XX-migrate-<thing>.md`. Write it as the final record (frontmatter + what/why + files + verification checkboxes + done criteria + PR URL slots).
 3. **Branch** in shared (and desktop if needed). Branch name = what ships.
 4. **Code + verify.** Check verification boxes as gates pass.
@@ -63,16 +65,19 @@ A pure mechanical "extract inline logic to shared util" refactor (e.g. `toggleRo
 3. Exercise one obvious edge case: empty state, error state, or "already in state X" path.
 4. If the smoke passes, self-merge. If not, fix and re-test.
 
-### Coordination with the user
+### Smoke test is a precondition, not a merge-time pause (updated 2026-06-14)
 
-The agent does NOT self-merge a desktop PR that requires smoke testing until the user confirms the smoke passed. Workflow:
+> **Model change:** the smoke test now happens *before* shipping, as a gate you satisfy — not as a pause inside the ship. When you say `/ship-pr`, you've already decided to ship, and the command runs unattended (push → squash-merge → delete branch → back to base). So the ordering is:
 
-1. Agent opens shared PR, self-merges (shared is library-only, smoke happens via desktop).
-2. Agent opens desktop PR, posts the smoke-test steps in the PR description, **waits**.
-3. User runs the smoke test (or asks the agent to run it via `browser-debug` / `Claude_Preview`).
-4. Once green, agent self-merges desktop.
+1. **Before shipping a runtime-touching change:** run the smoke test (golden path + one edge case) in dev. The agent may run it itself via `browser-debug` / `Claude_Preview`, or the user runs it.
+2. **If the smoke passes**, ship: `/ship-pr` runs end-to-end, no confirmation pause.
+3. **If it fails**, fix and re-smoke before shipping.
 
-The agent MAY self-merge desktop without waiting only when the change is in the "100% safe" list above. Default to waiting; ask if unsure.
+For a multi-repo change: open + self-merge the shared PR first (library-only, the smoke happens via desktop), then smoke-test desktop, then `/ship-pr` desktop.
+
+The smoke test is **skipped entirely** for the "100% safe" list above (pure additive shared exports, docs-only, dead-code deletions, type-only widening, build-config with no runtime change) — those ship straight through.
+
+The agent should still **flag** to the user when it's about to ship something runtime-touching it hasn't been able to smoke-test itself, rather than shipping blind — but the default is act, not wait.
 
 ## Sizing and bundling
 
@@ -90,7 +95,7 @@ What "same shape" means: the changes share a migration pattern (e.g. "extract in
 
 The goal is "avoid `main` divergence with other maintainers", NOT "open a PR for every change."
 
-1. **Start of session**: `git checkout -b session/YYYY-MM-DD` (or `session/YYYY-MM-DD-2` if today's name is taken). Generic on purpose — you don't yet know what the session will become.
+1. **Start of session**: `git checkout -b session-YYYY-MM-DD` (or `session-YYYY-MM-DD-2` if today's name is taken). Generic on purpose — you don't yet know what the session will become. (Hyphen, not slash — matches the canonical naming rule in [`../port-from-mobile/workflow.md`](../port-from-mobile/workflow.md#session-branch-naming), which also covers worktree-qualified names.)
 2. **During the session**: commit freely. Docs, code, mixed work, loosely-related changes — all fine on the same branch.
 3. **When ready to ship** a real chunk (not a 1-line tweak): rename the branch to describe what was actually done, push, open PR, squash-merge.
    ```bash
@@ -151,7 +156,7 @@ The date-prefix convention still applies to **file names** inside `.agents/tasks
 
 Before writing any shared code:
 
-1. **Grep mobile** for the same feature/pattern. Mobile working tree is stale — use `git ls-tree -r origin/master --name-only | grep -i <feature>` and `git show origin/master:<path>`.
+1. **Grep mobile** for the same feature/pattern. Mobile's working tree is usable, so you can read files directly after a `git pull` — but `git ls-tree -r origin/master --name-only | grep -i <feature>` and `git show origin/master:<path>` still work if you want to query the remote branch without checking it out. (Mobile's default branch is `master`.)
 2. **If mobile has it**: shape the shared API to match mobile's pattern. Adapt desktop to fit. Only deviate for a concrete technical reason (mobile pattern has a bug, blocks a needed feature, violates a wire-format invariant). Document the reason.
 3. **If mobile doesn't have it**: free to design shared around desktop's pattern. Mobile catches up later on their schedule.
 
@@ -353,4 +358,6 @@ Mobile has been on the old shared version (`2.1.0-OLD`) the whole time and conti
 
 ---
 
-*Created 2026-05-28. Compacted 2026-05-29 — folded redundant sections (additive/breaking duplicated, three sub-rules on mobile patterns, two PR templates, two ceremony sections) into single sources of truth. Added "docs-only work on main" rule.*
+*Last updated: 2026-06-14 — updated the ship model: all three repos are self-merged when confident (mobile too, when very sure — old "lead merges mobile" framing was a bottleneck we no longer hit); smoke test reframed as a precondition before `/ship-pr` rather than a merge-time wait-for-confirmation pause; fixed the stale "mobile working tree stuck on Jan 14" warning (tree is current); session-branch format corrected to hyphen (`session-YYYY-MM-DD`) to match the canonical port-from-mobile rule.*
+
+*Previously: Created 2026-05-28. Compacted 2026-05-29 — folded redundant sections (additive/breaking duplicated, three sub-rules on mobile patterns, two PR templates, two ceremony sections) into single sources of truth. Added "docs-only work on main" rule.*

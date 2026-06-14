@@ -98,8 +98,8 @@ For each feature port:
    - Read mobile implementation thoroughly. Don't blindly copy — desktop has its own conventions (Lingui i18n, SCSS, primitives barrel).
    - Adapt to desktop's component conventions ([CLAUDE.md](../../../CLAUDE.md), [docs/quorum-shared-architecture.md](../../docs/quorum-shared-architecture.md)).
    - If you spot logic that belongs in shared, follow the [shared-migration cross-repo workflow](../quorum-shared-migration/cross-repo-workflow.md) for that piece.
-5. **Smoke test desktop in dev** before opening the PR. Visual smoke test rules from the shared-migration workflow apply — see "Visual smoke test" section there.
-6. **Open desktop PR.** Feature-scoped is fine, doesn't need to be <50 lines. Post smoke-test steps in PR description. Wait for user confirmation before self-merge.
+5. **Smoke test desktop in dev** before shipping. Visual smoke test rules from the shared-migration workflow apply — see "Visual smoke test" section there. The smoke test is a **precondition you satisfy before shipping**, not a pause inside the ship (model updated 2026-06-14 — see the cross-repo-workflow "Smoke test is a precondition" section).
+6. **Ship the desktop PR.** Feature-scoped is fine, doesn't need to be <50 lines. Once the smoke test passes, `/ship-pr` runs unattended (push → squash-merge → delete branch → back to base). No confirmation pause. Flag to the user if you're shipping something runtime-touching you couldn't smoke-test yourself.
 7. **Move task doc to `.done/`** in the same commit.
 8. **Update [shipped-log.md](shipped-log.md).**
 9. **If shared was touched**: add a row to the shared-migration's [mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) if mobile would benefit from consuming the shared version.
@@ -231,6 +231,8 @@ Port the [feature name] from `quorum-mobile` to `quorum-desktop`.
 
 ---
 
-*Last updated: 2026-06-08 — added session-branch naming rule for multi-worktree setups (primary clone vs `.worktrees/<name>/`); slimmed the "Doc commits piggy-back on the next feature PR" section to defer to the new repo-wide canonical version in [`agents-workflow.md`](../../agents-workflow.md#pr--commit-workflow).*
+*Last updated: 2026-06-14 — reframed the desktop ship step: smoke test is a precondition satisfied before shipping, then `/ship-pr` runs unattended (no wait-for-confirmation pause); aligned with the cross-repo-workflow "Smoke test is a precondition" model change.*
+
+*Previously: 2026-06-08 — added session-branch naming rule for multi-worktree setups (primary clone vs `.worktrees/<name>/`); slimmed the "Doc commits piggy-back on the next feature PR" section to defer to the new repo-wide canonical version in [`agents-workflow.md`](../../agents-workflow.md#pr--commit-workflow).*
 
 *Previously: 2026-06-01 — added mandatory "Capability verification" step (symbol-grep is not enough) and the "Port the capability, not the mobile UX pattern" rule with the Discord-vs-Telegram model worked example. Introduced two-way diff framing — sibling [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md) tracks capabilities where desktop is materially better than mobile.*
