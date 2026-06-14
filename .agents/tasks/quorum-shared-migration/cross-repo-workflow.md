@@ -34,7 +34,7 @@ For each cross-repo migration:
 5. **Open shared PR first → self-merge → open desktop PR → self-merge.** Fill in PR URLs everywhere (task doc, shipped-log, status table, mobile task if applicable) **in the same feature-branch commit** before push.
 6. **Move task doc to `.done/`** in the same final commit.
 7. **Update [shipped-log.md](shipped-log.md)** with a tight entry (see existing entries for format).
-8. **Mobile leg**: open a mobile PR if statically verifiable, OR drop a mobile task file at `quorum-mobile/.agents/tasks/quorum-shared-migration/` and add a row to [mobile-tasks-pending.md](mobile-tasks-pending.md).
+8. **Mobile leg**: open a mobile PR if statically verifiable, OR drop a mobile task file at `quorum-mobile/.agents/tasks/quorum-shared-migration/` and triage it in mobile's `STATUS.md`. (Don't add a row to [mobile-tasks-pending.md](mobile-tasks-pending.md) — it's a signpost to the mobile-side homes, not a list; see step 4 of "Proactive mobile task drop" below.)
 
 **Terminal state for a migration is one of:**
 - ✅ shared merged + desktop merged + mobile PR opened (lead reviews whenever)
@@ -237,9 +237,11 @@ When a migration ships on shared + desktop and has a mobile-side change we can't
 6. **Runtime test requirements** — if `runtime-test: required`, name the specific code paths to exercise.
 7. **Pre-filled mobile PR description** (see template below).
 
-**After dropping**:
-1. Run `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py` to regenerate mobile's INDEX.
-2. Add a row to [mobile-tasks-pending.md](mobile-tasks-pending.md) so we can see queued tasks at a glance. Mobile is gitignored — without a desktop-side tracker, we lose visibility.
+**After dropping** — record the task in its **mobile-side home**, where the next session will look (the status lives where the work happens):
+1. The mobile task file you just wrote IS the record — set its frontmatter `status` and keep it current there.
+2. If it's a shared-migration task, add/triage it in mobile's `quorum-shared-migration/STATUS.md`.
+3. Run `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py` to regenerate mobile's INDEX.
+4. **Do NOT add a status row to [mobile-tasks-pending.md](mobile-tasks-pending.md)** — as of 2026-06-14 that file is a **signpost, not a list** (a hand-maintained desktop-side list of mobile tasks rots, because status changes in mobile sessions). It already points future sessions at the mobile-side homes above; that's all the visibility needed.
 
 ## i18n in shared (2026-05-28)
 
@@ -358,6 +360,6 @@ Mobile has been on the old shared version (`2.1.0-OLD`) the whole time and conti
 
 ---
 
-*Last updated: 2026-06-14 — updated the ship model: all three repos are self-merged when confident (mobile too, when very sure — old "lead merges mobile" framing was a bottleneck we no longer hit); smoke test reframed as a precondition before `/ship-pr` rather than a merge-time wait-for-confirmation pause; fixed the stale "mobile working tree stuck on Jan 14" warning (tree is current); session-branch format corrected to hyphen (`session-YYYY-MM-DD`) to match the canonical port-from-mobile rule.*
+*Last updated: 2026-06-14 — updated the ship model: all three repos are self-merged when confident (mobile too, when very sure — old "lead merges mobile" framing was a bottleneck we no longer hit); smoke test reframed as a precondition before `/ship-pr` rather than a merge-time wait-for-confirmation pause; fixed the stale "mobile working tree stuck on Jan 14" warning (tree is current); session-branch format corrected to hyphen (`session-YYYY-MM-DD`) to match the canonical port-from-mobile rule; updated the "Proactive mobile task drop" step — `mobile-tasks-pending.md` is now a thin index (slug + pointer), with live status living in the mobile-side home (`STATUS.md` / the task file), not restated desktop-side.*
 
 *Previously: Created 2026-05-28. Compacted 2026-05-29 — folded redundant sections (additive/breaking duplicated, three sub-rules on mobile patterns, two PR templates, two ceremony sections) into single sources of truth. Added "docs-only work on main" rule.*

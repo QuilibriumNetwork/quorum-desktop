@@ -10,7 +10,7 @@ updated: 2026-06-12
 
 > The inverse of [port-from-mobile/candidates.md](../port-from-mobile/candidates.md). This is the running list of **desktop → mobile** work: things mobile should get from desktop, not yet turned into a task.
 
-> **What we do NOT do here.** We do **not** push code to `quorum-mobile`. Mobile is read-only context for this effort (same rule as [port-from-mobile/workflow.md](../port-from-mobile/workflow.md)). This doc is a curated reference for the lead dev + future sessions. When a candidate becomes a concrete dropped task, it graduates into the unified tracker → [quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) (see [Lifecycle](#lifecycle) below).
+> **What we do NOT do here.** We do **not** push code to `quorum-mobile`. Mobile is read-only context for this effort (same rule as [port-from-mobile/workflow.md](../port-from-mobile/workflow.md)). This doc is a curated reference for the lead dev + future sessions. When a candidate becomes a concrete dropped task, write the task file in the **mobile** repo and track it there (mobile's `STATUS.md` / the file's frontmatter); [quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) is just a signpost to those homes (see [Lifecycle](#lifecycle) below).
 
 ## The two kinds of candidate (the `Type` column)
 
@@ -26,13 +26,13 @@ The line between them matters for **cost**: a `feature-port` is net-new mobile c
 ## Lifecycle
 
 ```
-candidate (here)  →  concrete task dropped on mobile  →  row in mobile-tasks-pending.md  →  mobile PR  →  done
-   feature-port /         (mobile task file +              (the unified tracker;
-   convergence            desktop-side bookkeeping)         Category = feature-port / convergence /
-   observation                                              shared-migration)
+candidate (here)  →  concrete task dropped on mobile  →  mobile PR  →  done
+   feature-port /         (task file in the mobile repo,
+   convergence            tracked in mobile's STATUS.md /
+   observation            its own frontmatter)
 ```
 
-A candidate lives here as an **observation**. The moment it becomes a concrete, scoped task we've handed to the mobile side, it gets a row in the [unified tracker](../quorum-shared-migration/mobile-tasks-pending.md) with `Category` matching its `Type` here. The two docs use the same vocabulary on purpose.
+A candidate lives here as an **observation**. The moment it becomes a concrete, scoped task, write the task file in the **mobile** repo (`quorum-mobile/.agents/tasks/…`) and track its status there (frontmatter + mobile's `STATUS.md`). The desktop [`mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) is a signpost to those mobile-side homes — it's not a list you add the task to.
 
 ## Status board
 
@@ -80,6 +80,7 @@ Legend: 📋 noted (observation only) · 🟢 ready to scope · 🚧 task droppe
 | 31 | **Channel icon picker — feature parity + EXPAND the set** (mobile: 20 icons vs desktop's 49; NO outline/filled variant; raw-hex vs named-color) — and the shared task also EXPANDS the curated set beyond 49 (183 whitelisted icons eligible; new ones can be added to the map) + needs a picker scroll/layout fix so it doesn't overflow | LOW-MED | promote + expand `ICON_OPTIONS` in shared (ADDITIVE) | 🚧 task-dropped (mobile 7.2 + shared task) |
 | 32 | **GROUP icon + color** (desktop `GroupEditorModal` has full picker; mobile group header has NO icon affordance — `updateGroup` accepts `icon`/`iconColor` but UI never calls it) | LOW | `Group.icon`/`iconColor`/`iconVariant` ALREADY in shared | 🚧 task-dropped (mobile 7.2) |
 | 33 | **🐛 Channel-list icons render default** (BUG — see bug section) | LOW | none | 🚧 task-dropped (mobile 7.1, bug) |
+| 34 | **Avatar initials — display-name-based + shared logic** (mobile derives initials from the raw ADDRESS → opaque "AC"; desktop derives from the display name, emoji-aware, deterministic color — and the logic is ALREADY in shared) | MED | NONE — `getInitials` + `getColorFromDisplayName` ALREADY in `@quilibrium/quorum-shared` (`src/utils/avatar.ts`); mobile just never imports them | 🚧 task-dropped (mobile task file written 2026-06-14) |
 
 ### 🔴 Correctness / permission bugs on mobile (not "missing features" — broken invariants)
 
@@ -391,6 +392,23 @@ Full parity deep-dive 2026-06-12. **Mobile's role CRUD is fine; enforcement is n
 
 **#30 Mention viewport highlight — feature-port (ABSENT):** no viewport-entry trigger, no `IntersectionObserver`/`onViewableItemsChanged` equivalent, no `lastReadTimestamp` at list level. RN path: `onViewableItemsChanged` on the FlashList + `isMentioned && isUnread` per item → existing Reanimated highlight. Cost MED (animation infra exists; trigger missing). Shared NONE. Pairs with #28 (both need `lastReadTimestamp` plumbed) and #23.
 
+## 34. Avatar initials — display-name-based + shared logic — convergence
+
+**Mobile:** [`quorum-mobile/components/ui/DefaultAvatar.tsx`](../../../../quorum-mobile/components/ui/DefaultAvatar.tsx) — derives initials from the **address** string, not the display name: `address.startsWith('@') ? address.slice(1,3) : address.slice(0,2)`, uppercased (lines ~32-42). So a user's fallback avatar shows an opaque hex/base58 prefix like `"AC"` — meaningless to a human. Background color is a local djb2 hash over the address (`hashToColor`). Used at ~13 call sites (DM lists, message bubbles, call screens, profile/reaction modals, space lists). Space avatars are inconsistent: two list screens pass the *space address* into `DefaultAvatar` (→ address-prefix initials), three other spots inline their own `space.name.charAt(0)` monogram (`ApexSubscribeModal.tsx:361`, `InviteLinkCard.tsx:197`), and a couple show an SF Symbol instead.
+
+**Desktop:** initials + color logic lives in **`quorum-shared/src/utils/avatar.ts`** (`getInitials`, `getColorFromDisplayName`, `lightenColor`/`darkenColor`) — pure, exported publicly. `getInitials(displayName)` = first letters of the first two whitespace words, uppercased; emoji-aware (returns the leading emoji); `''`/`"Unknown User"` → `'?'`. Both **user** avatars (`src/components/user/UserAvatar`) and **space** avatars (`src/components/space/SpaceAvatar`, `SpaceIcon.tsx`) route through ONE `UserInitials` component that calls these shared functions — zero duplication. A `UserInitials.native.tsx` already exists in the shared component stack (uses `expo-linear-gradient` + RN `<Text>`).
+
+**Why desktop is better / why mobile needs it:**
+1. **Meaningful initials.** Desktop shows `NA` for "Niccolò Angeli"; mobile shows address junk (`AC`). The desktop fallback is human-recognizable.
+2. **One system for users AND spaces.** Desktop's space avatars reuse the exact same logic; mobile's space monograms are scattered across 3 inline copies + 2 address-based + 2 icon-only — inconsistent and drift-prone.
+3. **The logic is already shared and battle-tested.** `getInitials`/`getColorFromDisplayName` are pure, in the published dist mobile already pins, emoji-aware, with a stable color palette. Mobile reimplements a worse version locally for no reason.
+
+**Mobile cost:** **MED.** The algorithm ports for free (already in shared) — the work is component-side: (a) `DefaultAvatar` gains a `displayName` prop and calls shared `getInitials`/`getColorFromDisplayName` instead of its local address logic; (b) ~13 call sites pass a display name (in addition to / instead of the address); (c) extract a `SpaceIcon` to replace the scattered `charAt(0)` space monograms + address-based space avatars; (d) one RN wrinkle — `expo-image` (mobile's photo loader, `CachedAvatar.tsx`) can't fall back to a React node on load-error the way web `<img onError>` can, so the "show initials when the photo fails" path needs a small `useState`+`onError` wrapper (mobile's generic `Avatar.tsx` already implements this pattern correctly — copy it).
+
+**Shared-package involvement:** **NONE.** `getInitials`, `getColorFromDisplayName`, `lightenColor`, `darkenColor` all already export from `@quilibrium/quorum-shared` (`src/utils/avatar.ts` → `utils/index.ts` → `index.ts`) and are in the dist mobile pins. No shared work, no version bump.
+
+**Status:** 🚧 task-dropped (2026-06-14) — mobile task file `quorum-mobile/.agents/tasks/2026-06-14-avatar-initials-display-name-from-shared.md`. Also fixes two existing mobile inconsistencies (address-junk initials; scattered space monograms) as a side effect, so it's a cleanup win on top of the parity win.
+
 ### 19. Mobile i18n / language switcher — feature-port (detailed plan exists)
 
 **Mobile:** ABSENT entirely — `quorum-mobile` has no `@lingui/react` dependency and no i18n directory; the app is English-only.
@@ -407,7 +425,9 @@ Mobile's `ThemeProvider` already exposes `setAccentColor` and `setIsDark`/`toggl
 
 ---
 
-*Last updated: 2026-06-12 (pass 3b) — dropped tasks for the icon cluster. Rows 31/32/33 → 🚧 task-dropped: mobile task `quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md` (sub-task 0 = the bug fix; 1 = per-item settings drawer + gear-opens-channel-drawer; 2 = channel icon parity; 3 = group icon+color; 4 = DnD reorder, second pass) + shared task `quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md` (move `ICON_OPTIONS`/`ICON_COLORS`/`FILLED_ICONS`/`getIconColorHex` into quorum-shared so both apps share one picker vocabulary). Tracker rows 7.1/7.2/7.3 added.*
+*Last updated: 2026-06-14 — added row **34** (Avatar initials, convergence): mobile derives avatar initials from the raw address (opaque "AC") while desktop derives from the display name (emoji-aware, deterministic color) using `getInitials`/`getColorFromDisplayName` that ALREADY live in `@quilibrium/quorum-shared` (`src/utils/avatar.ts`) — both user AND space avatars route through one shared `UserInitials`, no duplication. Mobile never imports them. MED cost (component rewire: `DefaultAvatar` + ~13 call sites + extract `SpaceIcon` + an `expo-image` error-fallback wrapper), NONE shared (logic already published). Also fixes two existing mobile inconsistencies (address-junk initials; scattered `charAt(0)` space monograms). Task-dropped: mobile task file `2026-06-14-avatar-initials-display-name-from-shared.md`.*
+
+*Previously: 2026-06-12 (pass 3b) — dropped tasks for the icon cluster. Rows 31/32/33 → 🚧 task-dropped: mobile task `quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md` (sub-task 0 = the bug fix; 1 = per-item settings drawer + gear-opens-channel-drawer; 2 = channel icon parity; 3 = group icon+color; 4 = DnD reorder, second pass) + shared task `quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md` (move `ICON_OPTIONS`/`ICON_COLORS`/`FILLED_ICONS`/`getIconColorHex` into quorum-shared so both apps share one picker vocabulary). Tracker rows 7.1/7.2/7.3 added.*
 
 *Previously: 2026-06-12 (pass 3) — channel/group icon parity + space-folders UX. Added rows 31 (channel icon picker under-featured: 20 vs 50 icons, no outline/filled variant, hex-vs-named-color), 32 (group icon+color entirely absent on mobile), and 🐛 33 (LIVE BUG — `app/(tabs)/spaces/[id]/index.tsx:118` hardcodes the default channel-list icon, ignoring `channel.icon`; root cause of "icons show default in the list"). Enriched the #25 space-folders entry with a UX decision: Telegram-style pill bar (recommended to prototype) vs porting desktop's drag-and-drop. Added a mobile-settings-UX note: consider per-channel/per-group drawers (cramped inline settings today). NOTE on read-only channels (#27): only a TASK PLAN exists (Wave 0) — no mobile code written yet.*
 

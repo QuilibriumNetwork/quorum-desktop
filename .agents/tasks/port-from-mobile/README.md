@@ -21,7 +21,7 @@ updated: 2026-06-01
 
 > **What we do NOT do.** We do NOT push code to `quorum-mobile`. Mobile is read-only context.
 
-> **Relationship to the other folders.** [quorum-shared-migration/](../quorum-shared-migration/) moves existing code into shared. This folder ports mobile → desktop; [../port-to-mobile/](../port-to-mobile/) is the inverse (desktop → mobile). They overlap when a port surfaces shareable logic — in that case, follow the shared-migration's [cross-repo-workflow.md](../quorum-shared-migration/cross-repo-workflow.md) for the shared piece. Anything that needs mobile to act (a concrete swap task) goes as a row in the single unified tracker, [quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md); broader desktop→mobile observations (not yet a task) go in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md).
+> **Relationship to the other folders.** [quorum-shared-migration/](../quorum-shared-migration/) moves existing code into shared. This folder ports mobile → desktop; [../port-to-mobile/](../port-to-mobile/) is the inverse (desktop → mobile). They overlap when a port surfaces shareable logic — in that case, follow the shared-migration's [cross-repo-workflow.md](../quorum-shared-migration/cross-repo-workflow.md) for the shared piece. Anything that needs mobile to act (a concrete swap task) goes as a task file in the **mobile** repo, tracked in mobile's `STATUS.md` ([quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) is a signpost to those mobile-side homes, not a list); broader desktop→mobile observations (not yet a task) go in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md).
 
 ## Architecture principle
 

@@ -11,7 +11,7 @@ audience: any agent working on the port-from-mobile effort
 
 > **The mental model:** desktop is the only repo we're shipping runtime code to. Mobile is read-only context. Shared is touched only when a port surfaces portable logic.
 >
-> **Note (updated 2026-06-12):** this effort is conceptually a **two-way feature diff** between desktop and mobile, split across two sibling folders. This folder (`port-from-mobile/`) is the active port direction (features mobile has that desktop is missing — run through [candidates.md](candidates.md)). When the inverse surfaces — a desktop feature mobile lacks, or a capability where desktop's implementation is materially better — log it in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md) (the `feature-port` / `convergence` lanes). We do NOT push to mobile, but the lead dev uses that doc as a curated convergence list. When a desktop→mobile item becomes a concrete dropped task, it graduates into the unified tracker [../quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md).
+> **Note (updated 2026-06-12):** this effort is conceptually a **two-way feature diff** between desktop and mobile, split across two sibling folders. This folder (`port-from-mobile/`) is the active port direction (features mobile has that desktop is missing — run through [candidates.md](candidates.md)). When the inverse surfaces — a desktop feature mobile lacks, or a capability where desktop's implementation is materially better — log it in [../port-to-mobile/candidates.md](../port-to-mobile/candidates.md) (the `feature-port` / `convergence` lanes). We do NOT push to mobile, but the lead dev uses that doc as a curated convergence list. When a desktop→mobile item becomes a concrete dropped task, write the task file in the **mobile** repo and track it in mobile's `STATUS.md` ([../quorum-shared-migration/mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) is a signpost to those homes).
 
 ```
 quorum-mobile:    [read-only context — pull, inspect, never push]
@@ -102,7 +102,7 @@ For each feature port:
 6. **Ship the desktop PR.** Feature-scoped is fine, doesn't need to be <50 lines. Once the smoke test passes, `/ship-pr` runs unattended (push → squash-merge → delete branch → back to base). No confirmation pause. Flag to the user if you're shipping something runtime-touching you couldn't smoke-test yourself.
 7. **Move task doc to `.done/`** in the same commit.
 8. **Update [shipped-log.md](shipped-log.md).**
-9. **If shared was touched**: add a row to the shared-migration's [mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) if mobile would benefit from consuming the shared version.
+9. **If shared was touched**: if mobile would benefit from consuming the shared version, drop a task file in the **mobile** repo (`quorum-mobile/.agents/tasks/…`) and triage it in mobile's `quorum-shared-migration/STATUS.md`. ([mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md) is just a signpost to those mobile-side homes — don't add a status row there.)
 
 **Terminal state for a feature port:**
 - ✅ desktop PR merged + (optionally) shared PR merged + (optionally) mobile task dropped if mobile should consume the shared version.
@@ -173,7 +173,7 @@ The opportunistic-shared-promotion rule. When porting a mobile feature, you'll o
 4. **All three yes?** Promote to shared as part of the same effort. Follow [shared-migration's cross-repo workflow](../quorum-shared-migration/cross-repo-workflow.md):
    - Open shared PR (additive only — never break mobile while it's a bystander).
    - Open desktop PR consuming the new shared export.
-   - Drop a mobile task in [`mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) so the lead dev sees mobile could simplify by consuming shared too.
+   - Drop a mobile task file in the **mobile** repo (and triage it in mobile's `quorum-shared-migration/STATUS.md`) so the lead dev sees mobile could simplify by consuming shared too. ([`mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) is a signpost to those mobile-side homes, not a place to add rows.)
    - We do NOT open a mobile PR for this — mobile work stays read-only in this effort.
 
 ## Following mobile patterns

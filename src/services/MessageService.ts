@@ -4186,7 +4186,7 @@ export class MessageService {
                       'SHA-256',
                       Buffer.from(
                         message.nonce +
-                          'post' +
+                          message.content.type +
                           message.content.senderId +
                           canonicalize(message.content as any),
                         'utf-8'

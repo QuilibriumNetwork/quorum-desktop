@@ -43,6 +43,6 @@ Moved here 2026-06-12 (joining the 5 already archived):
 
 Plus the 5 pre-existing archives (`mobile-dev-plan.md`, `native-business-components-plan.md`, `plan-quick-recap.md`, `primitive-migration-audit.md`, `sdk-shim-temporary-solutions.md`) — all the original single-repo execution plans + their snapshots.
 
-> **For new mobile work, don't start here.** Use [`port-to-mobile/candidates.md`](../port-to-mobile/candidates.md) (what to port) and [`mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) (the task queue). This folder is history + a few still-useful reference reads.
+> **For new mobile work, don't start here.** Use [`port-to-mobile/candidates.md`](../port-to-mobile/candidates.md) (what to port) and [`mobile-tasks-pending.md`](../quorum-shared-migration/mobile-tasks-pending.md) (a signpost to mobile's live trackers — `STATUS.md` / `RECAP.md` in the mobile repo). This folder is history + a few still-useful reference reads.
 
 *Last updated: 2026-06-12 — folder created/cleaned: archived 8 obsolete-or-shipped docs, kept 5 reference docs, re-homed the i18n plan into current tracking.*
