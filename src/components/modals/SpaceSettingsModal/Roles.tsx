@@ -3,6 +3,7 @@ import { Button, Select, Icon, Tooltip, ScrollContainer, Callout } from '../../p
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import type { Permission } from '@quilibrium/quorum-shared';
+import { getRoleColorHex } from '@quilibrium/quorum-shared';
 
 interface Role {
   roleTag: string;
@@ -90,30 +91,12 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                 <div
                   className="flex flex-col gap-4 py-4 sm:grid sm:grid-cols-[1fr_1fr_auto_auto]"
                 >
-                  {/* Cell 1: Role tag and name */}
+                  {/* Cell 1: Role name and tag */}
                   <div className="flex flex-col">
                     <div>
-                      @
-                      <input
-                        className="border-0 bg-transparent outline-none font-mono"
-                        style={{
-                          width:
-                            (roles.find((_, pi) => i == pi)
-                              ?.roleTag.length ?? 0) *
-                              11 +
-                            11 +
-                            'px',
-                        }}
-                        onChange={(e) =>
-                          updateRoleTag(i, e.target.value)
-                        }
-                        value={r.roleTag}
-                      />
-                    </div>
-                    <div className="mt-1">
                       <span
                         className="font-mono modal-role"
-                        style={{ backgroundColor: r.color }}
+                        style={{ backgroundColor: getRoleColorHex(r.color) }}
                       >
                         <input
                           className="border-0 bg-transparent outline-none"
@@ -133,6 +116,24 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                           value={r.displayName}
                         />
                       </span>
+                    </div>
+                    <div className="mt-1">
+                      @
+                      <input
+                        className="border-0 bg-transparent outline-none font-mono"
+                        style={{
+                          width:
+                            (roles.find((_, pi) => i == pi)
+                              ?.roleTag.length ?? 0) *
+                              11 +
+                            11 +
+                            'px',
+                        }}
+                        onChange={(e) =>
+                          updateRoleTag(i, e.target.value)
+                        }
+                        value={r.roleTag}
+                      />
                     </div>
                   </div>
 

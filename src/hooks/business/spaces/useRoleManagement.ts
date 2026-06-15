@@ -3,6 +3,8 @@ import React from 'react';
 import {
   setRolePermissions,
   toggleRolePermission as toggleRolePermissionShared,
+  getDefaultRoleColor,
+  getUniqueRoleDefaults,
   type Permission,
   type Role,
 } from '@quilibrium/quorum-shared';
@@ -44,18 +46,25 @@ export const useRoleManagement = (
   }, [initialRoles]);
 
   const addRole = useCallback(() => {
-    const newRole: Role = {
-      roleId: crypto.randomUUID(),
-      roleTag: 'role-tag',
-      displayName: 'Role Name',
-      color: 'rgb(var(--success))',
-      members: [],
-      permissions: [],
-      isPublic: true, // New roles are public by default
-    };
-
-    setRoles((prev) => [...prev, newRole]);
-  }, [roles.length]);
+    setRoles((prev) => {
+      const roleId = crypto.randomUUID();
+      // Auto-number the tag/name against existing roles so repeatedly hitting
+      // "Add Role" never produces duplicates ("New Role 2" / "newrole-2", …).
+      const { displayName, roleTag } = getUniqueRoleDefaults(prev);
+      const newRole: Role = {
+        roleId,
+        roleTag,
+        displayName,
+        // Deterministic palette token (resolved to hex at render); syncs across
+        // platforms, unlike the legacy 'rgb(var(--success))' css-var.
+        color: getDefaultRoleColor(roleId),
+        members: [],
+        permissions: [],
+        isPublic: true, // New roles are public by default
+      };
+      return [...prev, newRole];
+    });
+  }, []);
 
   // Confirmation hook for role delete action
   const deleteConfirmation = useConfirmation({
