@@ -12,6 +12,7 @@ import { useSpace } from '../../../hooks';
 import { useMessageDB } from '../../context/useMessageDB';
 import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import type { Channel } from '@quilibrium/quorum-shared';
+import { findRoleConflict } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient } from '@tanstack/react-query';
@@ -321,9 +322,32 @@ const SpaceSettingsModal: React.FunctionComponent<{
     }
   }, [mentionSettings, spaceProfile, queryClient, spaceId]);
 
-  // Role validation error state
+  // Role validation error state — derived from `roles`. Roles save in a batch
+  // via the explicit Save button (not autosave), so we surface the first
+  // tag/name collision inline and block Save while any conflict exists.
   const [roleValidationError, setRoleValidationError] =
     React.useState<string>('');
+
+  React.useEffect(() => {
+    for (let i = 0; i < roles.length; i++) {
+      const role = roles[i];
+      // Compare each role against the roles before it; the first duplicate
+      // (by tag or name, case-insensitive) is the one we report.
+      const conflict = findRoleConflict(
+        roles.slice(0, i),
+        { roleTag: role.roleTag, displayName: role.displayName }
+      );
+      if (conflict) {
+        setRoleValidationError(
+          conflict.field === 'roleTag'
+            ? t`Two roles can't share the tag @${role.roleTag.trim()}.`
+            : t`Two roles can't share the name "${role.displayName.trim()}".`
+        );
+        return;
+      }
+    }
+    setRoleValidationError('');
+  }, [roles]);
 
   // Save error state
   const [saveError, setSaveError] = React.useState<string>('');
@@ -688,7 +712,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                     disabled={
                       selectedCategory === 'account'
                         ? spaceProfile.isSaving || spaceProfile.hasValidationError || mentionSettings.isSaving
-                        : isSaving || (!!validateSpaceName(spaceName) && selectedCategory === 'general') || (descriptionErrors.length > 0 && selectedCategory === 'general')
+                        : isSaving || (!!validateSpaceName(spaceName) && selectedCategory === 'general') || (descriptionErrors.length > 0 && selectedCategory === 'general') || (!!roleValidationError && selectedCategory === 'roles')
                     }
                   >
                     {t`Save Changes`}

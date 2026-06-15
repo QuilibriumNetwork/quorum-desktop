@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react';
 import { Icon } from '../primitives';
 import { Portal } from '../primitives';
+import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import type { MentionOption } from '../../hooks/business/mentions';
@@ -216,7 +217,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
           <>
             <div
               className="mention-dropdown__badge mention-dropdown__badge--role"
-              style={{ backgroundColor: option.data.color }}
+              style={{ backgroundColor: getRoleColorHex(option.data.color) }}
             >
               <Icon name="users" size="sm" />
             </div>

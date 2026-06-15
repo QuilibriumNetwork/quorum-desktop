@@ -4,7 +4,7 @@ import { Button, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
-import { createChannelPermissionChecker, logger } from '@quilibrium/quorum-shared';
+import { createChannelPermissionChecker, getRoleColorHex, logger } from '@quilibrium/quorum-shared';
 import type { Role } from '@quilibrium/quorum-shared';
 import {
   useUserRoleManagement,
@@ -288,6 +288,7 @@ const UserProfile: React.FunctionComponent<{
                   <span
                     key={'user-profile-role-' + r.roleId}
                     className={'user-profile-role-tag'}
+                    style={{ backgroundColor: getRoleColorHex(r.color) }}
                   >
                     {r.displayName}
                   </span>
@@ -297,6 +298,7 @@ const UserProfile: React.FunctionComponent<{
                   <span
                     key={'user-profile-role-' + r.roleId}
                     className={'user-profile-role-tag'}
+                    style={{ backgroundColor: getRoleColorHex(r.color) }}
                   >
                     {loadingRoles.has(r.roleId) ? (
                       <span className="text-xs">{t`Removing...`}</span>

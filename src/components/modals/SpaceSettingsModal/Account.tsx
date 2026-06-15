@@ -24,6 +24,7 @@ import { useChannelMute } from '../../../hooks/business/channels';
 import { MAX_BIO_INPUT_CHARS } from '../../../hooks/business/validation';
 import { getIconColorHex, IconColor } from '../../space/IconPicker/types';
 import type { Role } from '@quilibrium/quorum-shared';
+import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
 
@@ -249,9 +250,9 @@ const Account: React.FunctionComponent<AccountProps> = ({
               {userRoles.map((r) => (
                 <Text
                   key={'user-role-' + r.roleId}
-                  className="inline-flex items-center py-[3px] px-3 rounded-full font-medium text-xs text-center select-none bg-success text-white"
+                  className="inline-flex items-center py-[3px] px-3 rounded-full font-medium text-xs text-center select-none text-white"
                   style={{
-                    background: 'rgb(var(--success))',
+                    backgroundColor: getRoleColorHex(r.color),
                   }}
                 >
                   {r.displayName}

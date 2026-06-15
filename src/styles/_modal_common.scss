@@ -947,6 +947,9 @@
   padding: $s-0-5 $s-2-5;
   border-radius: $s-2;
   color: var(--color-text-main);
+  // Fallback only — the resolved role color is applied via inline
+  // backgroundColor (getRoleColorHex). Must stay overridable, so no !important
+  // here or in the .dark variant below.
   background: rgb(var(--success) / 0.5);
   display: inline-block;
   margin-right: $s-2;
@@ -954,7 +957,7 @@
 }
 
 .dark .modal-role {
-  background: rgb(var(--success) / 0.7) !important;
+  background: rgb(var(--success) / 0.7);
 }
 
 // Avatar + Name Layout Classes
