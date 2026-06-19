@@ -163,7 +163,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         isOpen={isOpen}
         onClose={() => setIsOpen(false)}
         position="fixed"
-        maxWidth={320}
+        maxWidth={414}
         maxHeight={420}
         showCloseButton={false}
         useMobileBottomSheet={false}
@@ -211,7 +211,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           </div>
 
           {/* Color swatches row */}
-          <Flex gap={3} justify="between">
+          <Flex gap={2} wrap>
             {isBackgroundColorMode ? (
               // Background-color mode: show colored circles with white icon inside (using dimmed folder colors)
               FOLDER_COLORS.map((colorOption) => (
@@ -246,7 +246,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   size="small"
                   showCheckmark={false}
                   className="icon-picker-color-swatch"
-                  style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
+                  style={{ backgroundColor: colorOption.hex }}
                 />
               ))
             )}
@@ -255,7 +255,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
         {/* Icon grid — own scroll area so all icons are reachable regardless of popover height */}
         <div className="icon-picker-grid-scroll px-2 pb-3">
-          <div className="grid grid-cols-8 gap-1 px-1">
+          <div className="grid grid-cols-11 gap-2 px-1">
             {filteredIcons.map((iconOption) => (
               <button
                 key={iconOption.name}
