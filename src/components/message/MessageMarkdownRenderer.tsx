@@ -46,8 +46,6 @@ interface MessageMarkdownRendererProps {
   onChannelClick?: (channelId: string) => void;
   onMessageLinkClick?: (channelId: string, messageId: string) => void;
   hasEveryoneMention?: boolean;
-  roleMentions?: string[];
-  channelMentions?: string[];
   spaceRoles?: Role[];
   spaceChannels?: Channel[];
   messageSenderId?: string;
@@ -242,8 +240,6 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   onChannelClick,
   onMessageLinkClick,
   hasEveryoneMention = false,
-  roleMentions = [],
-  channelMentions = [],
   spaceRoles = [],
   spaceChannels = [],
   messageSenderId,
@@ -362,20 +358,22 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return processedText;
   }, [mapSenderToUser, hasEveryoneMention]);
 
-  // Process role mentions - only render if role exists
-  // Only process mentions that have word boundaries AND are not inside protected regions
+  // Process role mentions - render a pill for any @roleTag that names a role
+  // that actually exists in the space (resolved directly from spaceRoles).
+  // Only process mentions that have word boundaries AND are not inside protected regions.
   const processRoleMentions = useCallback((text: string): string => {
-    if (!roleMentions || roleMentions.length === 0 || !spaceRoles || spaceRoles.length === 0) {
+    if (!spaceRoles || spaceRoles.length === 0) {
       return text;
     }
 
-    // Get role data for existing roles only
-    const roleData = roleMentions
-      .map(roleId => {
-        const role = spaceRoles.find(r => r.roleId === roleId);
-        return role ? { roleTag: role.roleTag, displayName: role.displayName } : null;
-      })
-      .filter(Boolean) as Array<{ roleTag: string; displayName: string }>;
+    // Tokenize every existing role's tag. We no longer gate on a pre-extracted
+    // message.mentions.roleIds set: identical @roleTag text renders consistently
+    // regardless of whether it was picked from the @ menu. (Pill = "names a real
+    // role", not "pinged that role" — the notification path is separate.)
+    const roleData = spaceRoles.map(role => ({
+      roleTag: role.roleTag,
+      displayName: role.displayName,
+    }));
 
     // Replace @roleTag with safe placeholder (only if it has word boundaries and not in protected region)
     // NOTE: Must re-match and recalculate protected regions after each role replacement
@@ -405,22 +403,22 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     });
 
     return processed;
-  }, [roleMentions, spaceRoles]);
+  }, [spaceRoles]);
 
-  // Process channel mentions - only render if channel exists
-  // Only process mentions that have word boundaries AND are not inside protected regions
+  // Process channel mentions - render a pill for any #<channelId> that names a
+  // channel that actually exists in the space (resolved directly from spaceChannels).
+  // Only process mentions that have word boundaries AND are not inside protected regions.
   const processChannelMentions = useCallback((text: string): string => {
-    if (!channelMentions || channelMentions.length === 0 || !spaceChannels || spaceChannels.length === 0) {
+    if (!spaceChannels || spaceChannels.length === 0) {
       return text;
     }
 
-    // Get channel data for existing channels only
-    const channelData = channelMentions
-      .map(channelId => {
-        const channel = spaceChannels.find(c => c.channelId === channelId);
-        return channel ? { channelId: channel.channelId, channelName: channel.channelName } : null;
-      })
-      .filter(Boolean) as Array<{ channelId: string; channelName: string }>;
+    // Tokenize every existing channel id. No longer gated on a pre-extracted
+    // message.mentions.channelIds set (see processRoleMentions for the rationale).
+    const channelData = spaceChannels.map(channel => ({
+      channelId: channel.channelId,
+      channelName: channel.channelName,
+    }));
 
     // Replace #<channelId> with safe placeholder (only if it has word boundaries and not in protected region)
     // NOTE: Must re-match and recalculate protected regions after each channel replacement
@@ -453,7 +451,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     });
 
     return processed;
-  }, [channelMentions, spaceChannels]);
+  }, [spaceChannels]);
 
   // Process message links to convert them to styled tokens (same-space only)
   // IMPORTANT: Skip processing inside code blocks and markdown link syntax

@@ -1135,8 +1135,6 @@ export const Message = React.memo(
                             }
                           }}
                           hasEveryoneMention={message.mentions?.everyone}
-                          roleMentions={message.mentions?.roleIds}
-                          channelMentions={message.mentions?.channelIds}
                           spaceRoles={spaceRoles}
                           spaceChannels={spaceChannels}
                           messageSenderId={message.content?.senderId}

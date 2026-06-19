@@ -121,6 +121,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Read-only channel receive-side enforcement is incomplete](bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
+- [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -161,6 +162,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action queue errors silently swallowed across all config-writing hooks](bugs/.solved/2026-06-07-action-queue-errors-swallowed.md)
 - [Per-space mention-type filter doesn't sync across devices](bugs/.solved/2026-06-07-mention-type-filter-not-synced.md)
 - [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/.solved/2026-06-07-space-profile-save-missing-inbox.md)
+- [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -207,6 +209,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
 - [Migrate UserProfile card positioning to @floating-ui/react](tasks/2026-06-08-userprofile-positioning-floating-ui.md)
+- [Desktop role parity: shared color tokens + uniqueness + remove-from-user confirm](tasks/2026-06-15-role-color-and-uniqueness-parity.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -238,6 +241,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/.archived/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
+
+### .Deferred
+- [Implement @here mention (all space members, channel-context notification)](tasks/.deferred/2026-06-18-implement-here-mention.md)
 
 ### .Todo
 - [User Status Feature Implementation Plan](tasks/.todo/2025-01-20-user-status.md)
@@ -326,7 +332,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/2026-06-12-icon-picker-PR-notes.md)
 - [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
-- [Mobile tasks pending — the unified tracker](tasks/quorum-shared-migration/mobile-tasks-pending.md)
+- [Mobile tasks — where to find them](tasks/quorum-shared-migration/mobile-tasks-pending.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
 - [Quorum-shared migration — roadmap](tasks/quorum-shared-migration/roadmap.md)
 - [Quorum-shared migration — shipped log](tasks/quorum-shared-migration/shipped-log.md)
@@ -636,4 +642,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-13 14:57:45
+**Last Updated**: 2026-06-18 09:08:27
