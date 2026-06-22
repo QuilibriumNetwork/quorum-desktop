@@ -15,6 +15,15 @@ export interface KickUserTarget {
   userIcon?: string;
 }
 
+// Block target interface (personal viewer-side block — per space)
+export interface BlockUserTarget {
+  address: string;
+  displayName: string;
+  userIcon?: string;
+  spaceId: string;
+  isUnblocking?: boolean;
+}
+
 // Modal state interface
 export interface ModalState {
   userSettings: {
@@ -51,6 +60,10 @@ export interface ModalState {
     isOpen: boolean;
     target?: MuteUserTarget;
   };
+  blockUser: {
+    isOpen: boolean;
+    target?: BlockUserTarget;
+  };
   conversationSettings: {
     isOpen: boolean;
     conversationId?: string;
@@ -84,6 +97,8 @@ type ModalAction =
   | { type: 'CLOSE_KICK_USER' }
   | { type: 'OPEN_MUTE_USER'; target: MuteUserTarget }
   | { type: 'CLOSE_MUTE_USER' }
+  | { type: 'OPEN_BLOCK_USER'; target: BlockUserTarget }
+  | { type: 'CLOSE_BLOCK_USER' }
   | { type: 'OPEN_CONVERSATION_SETTINGS'; conversationId: string }
   | { type: 'CLOSE_CONVERSATION_SETTINGS' }
   | { type: 'OPEN_FOLDER_EDITOR'; folderId?: string }
@@ -99,6 +114,7 @@ const initialModalState: ModalState = {
   newDirectMessage: { isOpen: false },
   kickUser: { isOpen: false },
   muteUser: { isOpen: false },
+  blockUser: { isOpen: false },
   conversationSettings: { isOpen: false },
   folderEditor: { isOpen: false },
 };
@@ -172,6 +188,14 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
       };
     case 'CLOSE_MUTE_USER':
       return { ...state, muteUser: { isOpen: false } };
+
+    case 'OPEN_BLOCK_USER':
+      return {
+        ...state,
+        blockUser: { isOpen: true, target: action.target },
+      };
+    case 'CLOSE_BLOCK_USER':
+      return { ...state, blockUser: { isOpen: false } };
 
     case 'OPEN_CONVERSATION_SETTINGS':
       return {
@@ -280,6 +304,15 @@ export const useModalState = () => {
     dispatch({ type: 'CLOSE_MUTE_USER' });
   }, []);
 
+  // Block User Modal
+  const openBlockUser = useCallback((target: BlockUserTarget) => {
+    dispatch({ type: 'OPEN_BLOCK_USER', target });
+  }, []);
+
+  const closeBlockUser = useCallback(() => {
+    dispatch({ type: 'CLOSE_BLOCK_USER' });
+  }, []);
+
   // Conversation Settings Modal
   const openConversationSettings = useCallback((conversationId: string) => {
     dispatch({ type: 'OPEN_CONVERSATION_SETTINGS', conversationId });
@@ -333,6 +366,10 @@ export const useModalState = () => {
     // Mute User
     openMuteUser,
     closeMuteUser,
+
+    // Block User
+    openBlockUser,
+    closeBlockUser,
 
     // Conversation Settings
     openConversationSettings,
