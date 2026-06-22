@@ -26,7 +26,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { useOptionalShellState } from '../shell/useShellState';
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Tooltip, Icon } from '../primitives';
-import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
+import { MobileDrawer, ListSearchInput, TouchAwareListItem, FloatingPopover } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { parseMessageHash } from '../../utils/messageHashNavigation';
@@ -155,7 +155,7 @@ const Channel: React.FC<ChannelProps> = ({
   }, [isThreadOpen, activeThreadId, activeThreadRootMessage, threadMessages, isLoadingThread]);
 
   // User profile modal state and logic
-  const userProfileModal = useUserProfileModal({ showUsers });
+  const userProfileModal = useUserProfileModal();
 
   // Emoji/stickers panel tab state
   const [panelTab, setPanelTab] = useState<'emojis' | 'stickers'>('emojis');
@@ -861,10 +861,12 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [activeThreadRootMessage, isThreadOpen]);
 
-  // Handle user profile modal close
+  // Handle user profile modal close. Depend on the stable inner handleClose
+  // (useCallback([]) in the hook), not the whole hook object — otherwise this
+  // re-creates every render and re-arms FloatingPopover's listeners.
   const handleUserProfileClose = useCallback(() => {
     userProfileModal.handleClose();
-  }, [userProfileModal]);
+  }, [userProfileModal.handleClose]);
 
   // Handle hash navigation to messages not in current list
   const handleHashMessageNotFound = useCallback(
@@ -1932,45 +1934,36 @@ const Channel: React.FC<ChannelProps> = ({
         </>
       )}
 
-      {/* User Profile Modal - desktop only (≥1024px) */}
-      {userProfileModal.isOpen &&
-        userProfileModal.selectedUser &&
-        userProfileModal.modalPosition &&
-        isDesktop && (
-          <>
-            {/* Background click area - excludes sidebar to allow user switching */}
-            <div
-              className="fixed inset-0 z-[9990]"
-              style={{
-                right: showUsers ? `${getSidebarRightWidth()}px` : '0px',
-              }}
-              onClick={handleUserProfileClose}
+      {/* User Profile card - desktop only (≥1024px).
+          Placement + scroll behaviour depend on where it was opened:
+          - sidebar member row → opens left over the chat, follows the row.
+          - message avatar / mention → lives in the virtualized message list,
+            so it opens to the right and closes on scroll (the list moves items
+            via transforms that JS positioning can't track in lockstep). */}
+      {isDesktop && (
+        <FloatingPopover
+          open={userProfileModal.isOpen && !!userProfileModal.selectedUser}
+          onClose={handleUserProfileClose}
+          anchor={userProfileModal.anchorElement}
+          placement={
+            userProfileModal.anchorContext === 'sidebar'
+              ? 'left-start'
+              : 'right-start'
+          }
+          closeOnScroll={userProfileModal.anchorContext !== 'sidebar'}
+        >
+          {userProfileModal.selectedUser && (
+            <UserProfile
+              key={userProfileModal.selectedUser.address}
+              spaceId={spaceId}
+              canEditRoles={isSpaceOwner}
+              roles={roles || []}
+              user={userProfileModal.selectedUser}
+              dismiss={handleUserProfileClose}
             />
-            <div
-              className="fixed z-[9999] pointer-events-none"
-              style={{
-                top: `${userProfileModal.modalPosition.top}px`,
-                left:
-                  userProfileModal.modalPosition.left !== undefined
-                    ? `${userProfileModal.modalPosition.left}px`
-                    : showUsers
-                      ? `calc(100vw - ${getSidebarRightWidth()}px - 320px)`
-                      : `calc(100vw - 320px)`,
-              }}
-            >
-              <div className="pointer-events-auto">
-                <UserProfile
-                  key={userProfileModal.selectedUser.address}
-                  spaceId={spaceId}
-                  canEditRoles={isSpaceOwner}
-                  roles={roles || []}
-                  user={userProfileModal.selectedUser}
-                  dismiss={handleUserProfileClose}
-                />
-              </div>
-            </div>
-          </>
-        )}
+          )}
+        </FloatingPopover>
+      )}
 
       {/* Mobile drawer for user list below 1024px */}
       {!isDesktop && (

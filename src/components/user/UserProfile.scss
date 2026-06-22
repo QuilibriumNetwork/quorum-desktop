@@ -1,8 +1,12 @@
 @use '@/styles/variables' as *;
 
 .user-profile {
-  position: absolute;
-  z-index: 3000;
+  // Positioning is owned by the <FloatingPopover> wrapper (position: fixed +
+  // computed coords). The card must NOT position itself — a stray
+  // position: absolute here (from the old hand-rolled system) would break it
+  // out of the wrapper and re-anchor to the nearest positioned ancestor,
+  // landing it in the wrong place (e.g. over the members sidebar).
+  position: relative;
   width: 330px;
   // Use the same semantic modal surface as UserSettings/SpaceSettings/confirmation
   // modals (var(--color-bg-modal)) so the card matches the app's modal scheme
