@@ -161,7 +161,21 @@ export default defineConfig(({ command }): UserConfig => ({
     include: [
       '@dnd-kit/core',
       '@dnd-kit/sortable',
+      // The SDK's crypto deps (@noble/*) are imported lazily at runtime, so the
+      // scanner misses them in pass 1. They get discovered on first crypto call,
+      // triggering a mid-session re-optimize that regenerates every optimized
+      // chunk hash; in-flight requests for old chunks then 404 ("Pre-transform
+      // error", stale bundle). Listing them here pre-bundles them in the initial
+      // pass so that disruptive reload never happens.
+      // - @noble/hashes is hoisted to the root, so resolves directly.
+      // - @noble/curves lives under quorum-shared's node_modules (not hoisted),
+      //   so it needs the documented 'parent > child' chain syntax to resolve in
+      //   that package's context. See Vite optimizeDeps.include docs.
       '@noble/hashes/sha2',
+      '@noble/hashes/blake3.js',
+      '@noble/hashes/sha3.js',
+      '@quilibrium/quorum-shared > @noble/curves/ed25519.js',
+      '@quilibrium/quorum-shared > @noble/curves/secp256k1.js',
       '@quilibrium/quorum-shared > @tabler/icons-react',
       'remark-parse',
       'remark-stringify',

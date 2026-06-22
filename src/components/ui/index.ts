@@ -2,6 +2,8 @@
 export { default as ClickToCopyContent } from './ClickToCopyContent';
 export { default as CloseButton } from './CloseButton';
 export { default as DropdownPanel } from './DropdownPanel';
+export { default as FloatingPopover } from './FloatingPopover';
+export type { FloatingPopoverProps } from './FloatingPopover';
 export { default as ListSearchInput } from './ListSearchInput';
 export { default as MobileDrawer } from './MobileDrawer';
 export { default as QuorumLoader } from './QuorumLoader';

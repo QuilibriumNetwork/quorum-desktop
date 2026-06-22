@@ -9,6 +9,7 @@ import { useBookmarks } from '../../hooks/business/bookmarks';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { useOptionalShellState } from '../shell/useShellState';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
+import { FloatingPopover } from '../ui';
 import UserProfile from '../user/UserProfile';
 import './BookmarksPage.scss';
 
@@ -201,37 +202,24 @@ export const BookmarksPage: React.FC = () => {
         {renderBody()}
       </div>
 
-      {/* User profile overlay — opened from mention clicks inside cards.
-          No spaceId/roles since bookmarks are cross-surface; UserProfile
-          gracefully degrades to display name + address + send-message. */}
-      {userProfileModal.isOpen &&
-        userProfileModal.selectedUser &&
-        userProfileModal.modalPosition && (
-          <>
-            <div
-              className="fixed inset-0 z-[9990]"
-              onClick={userProfileModal.handleClose}
-            />
-            <div
-              className="fixed z-[9999] pointer-events-none"
-              style={{
-                top: `${userProfileModal.modalPosition.top}px`,
-                left:
-                  userProfileModal.modalPosition.left !== undefined
-                    ? `${userProfileModal.modalPosition.left}px`
-                    : `calc(100vw - 320px)`,
-              }}
-            >
-              <div className="pointer-events-auto">
-                <UserProfile
-                  key={userProfileModal.selectedUser.address}
-                  user={userProfileModal.selectedUser}
-                  dismiss={userProfileModal.handleClose}
-                />
-              </div>
-            </div>
-          </>
+      {/* User profile card — opened from mention clicks inside cards.
+          Anchored to the clicked mention via @floating-ui. No spaceId/roles
+          since bookmarks are cross-surface; UserProfile gracefully degrades
+          to display name + address + send-message. */}
+      <FloatingPopover
+        open={userProfileModal.isOpen && !!userProfileModal.selectedUser}
+        onClose={userProfileModal.handleClose}
+        anchor={userProfileModal.anchorElement}
+        closeOnScroll
+      >
+        {userProfileModal.selectedUser && (
+          <UserProfile
+            key={userProfileModal.selectedUser.address}
+            user={userProfileModal.selectedUser}
+            dismiss={userProfileModal.handleClose}
+          />
         )}
+      </FloatingPopover>
     </div>
   );
 };

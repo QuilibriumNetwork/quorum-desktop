@@ -390,86 +390,94 @@ const UserProfile: React.FunctionComponent<{
             are role-gated moderation actions and sit last. */}
         {(!isOwnProfile || canMuteUsers || canKickUsers) && (
           <div className="user-profile-action-footer rounded-b-xl p-2">
-            <div className="user-profile-action-list">
-              {/* Send Message - only when viewing others' profiles */}
-              {!isOwnProfile && (
-                <div
-                  className="user-profile-action-item is-primary"
-                  onClick={() => sendMessage(props.user.address)}
-                >
-                  <Icon name="message" className="user-profile-action-icon" />
-                  <span>{t`Send Message`}</span>
-                </div>
-              )}
+            {/* Send Message — primary full-width button on its own line. */}
+            {!isOwnProfile && (
+              <Button
+                type="secondary"
+                fullWidth
+                iconName="message"
+                onClick={() => sendMessage(props.user.address)}
+              >
+                {t`Send Message`}
+              </Button>
+            )}
 
-              {/* Personal Block - viewer-side hide, scoped to this space.
-                  Available to everyone; requires a space context. */}
-              {!isOwnProfile && props.spaceId && (
-                <div
-                  className="user-profile-action-item"
-                  onClick={() => {
-                    openBlockUser({
-                      address: props.user.address,
-                      displayName: props.user.displayName,
-                      userIcon: props.user.userIcon,
-                      spaceId: props.spaceId!,
-                      isUnblocking: isUserBlocked,
-                    });
-                    props.dismiss?.();
-                  }}
-                >
-                  <Icon
-                    name={isUserBlocked ? 'hand-off' : 'hand-stop'}
-                    className="user-profile-action-icon"
-                  />
-                  <span>{isUserBlocked ? t`Unblock` : t`Block`}</span>
-                </div>
-              )}
+            {/* Moderation / block actions — compact row beneath the primary
+                button to reclaim the previously-wasted vertical space. */}
+            {(
+              (!isOwnProfile && props.spaceId) ||
+              (canMuteUsers && (!isOwnProfile || isUserMuted)) ||
+              (canKickUsers && !isOwnProfile)
+            ) && (
+              <div className="user-profile-action-row">
+                {/* Personal Block - viewer-side hide, scoped to this space.
+                    Available to everyone; requires a space context. */}
+                {!isOwnProfile && props.spaceId && (
+                  <Button
+                    type="subtle-outline"
+                    size="compact"
+                    fullWidth
+                    iconName={isUserBlocked ? 'hand-off' : 'hand-stop'}
+                    onClick={() => {
+                      openBlockUser({
+                        address: props.user.address,
+                        displayName: props.user.displayName,
+                        userIcon: props.user.userIcon,
+                        spaceId: props.spaceId!,
+                        isUnblocking: isUserBlocked,
+                      });
+                      props.dismiss?.();
+                    }}
+                  >
+                    {isUserBlocked ? t`Unblock` : t`Block`}
+                  </Button>
+                )}
 
-              {/* Moderation actions - role-gated. Mute: on own profile only show
-                  Unmute if muted (prevent self-muting). Kick: hidden on own profile. */}
-              {canMuteUsers && (!isOwnProfile || isUserMuted) && (
-                <div
-                  className="user-profile-action-item"
-                  onClick={() => {
-                    openMuteUser({
-                      address: props.user.address,
-                      displayName: props.user.displayName,
-                      userIcon: props.user.userIcon,
-                      isUnmuting: isUserMuted,
-                    });
-                    props.dismiss?.();
-                  }}
-                >
-                  <Icon
-                    name={isUserMuted ? 'volume' : 'volume-off'}
-                    className="user-profile-action-icon"
-                  />
-                  <span>{isUserMuted ? t`Unmute` : t`Mute`}</span>
-                </div>
-              )}
+                {/* Moderation actions - role-gated. Mute: on own profile only
+                    show Unmute if muted (prevent self-muting). Kick: hidden on
+                    own profile. */}
+                {canMuteUsers && (!isOwnProfile || isUserMuted) && (
+                  <Button
+                    type="subtle-outline"
+                    size="compact"
+                    fullWidth
+                    iconName={isUserMuted ? 'volume' : 'volume-off'}
+                    onClick={() => {
+                      openMuteUser({
+                        address: props.user.address,
+                        displayName: props.user.displayName,
+                        userIcon: props.user.userIcon,
+                        isUnmuting: isUserMuted,
+                      });
+                      props.dismiss?.();
+                    }}
+                  >
+                    {isUserMuted ? t`Unmute` : t`Mute`}
+                  </Button>
+                )}
 
-              {canKickUsers && !isOwnProfile && (
-                <div
-                  className={
-                    'user-profile-action-item is-danger' +
-                    (props.user.isKicked ? ' is-disabled' : '')
-                  }
-                  onClick={() => {
-                    if (props.user.isKicked) return;
-                    openKickUser({
-                      address: props.user.address,
-                      displayName: props.user.displayName,
-                      userIcon: props.user.userIcon,
-                    });
-                    props.dismiss?.();
-                  }}
-                >
-                  <Icon name="ban" className="user-profile-action-icon" />
-                  <span>{props.user.isKicked ? t`Kicked!` : t`Kick`}</span>
-                </div>
-              )}
-            </div>
+                {canKickUsers && !isOwnProfile && (
+                  <Button
+                    type="danger-outline"
+                    size="compact"
+                    fullWidth
+                    disabled={props.user.isKicked}
+                    iconName="ban"
+                    onClick={() => {
+                      if (props.user.isKicked) return;
+                      openKickUser({
+                        address: props.user.address,
+                        displayName: props.user.displayName,
+                        userIcon: props.user.userIcon,
+                      });
+                      props.dismiss?.();
+                    }}
+                  >
+                    {props.user.isKicked ? t`Kicked!` : t`Kick`}
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         )}
       </div>

@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react';
-import { calculateModalPosition, ModalPosition } from '../../../utils/modalPositioning';
-import { MODAL_DIMENSIONS } from '../../../constants/ui';
 
 export interface UserProfileModalUser {
   address: string;
@@ -14,15 +12,18 @@ export interface UserProfileModalContext {
   element?: HTMLElement;
 }
 
-export interface UseUserProfileModalOptions {
-  showUsers?: boolean; // For right sidebar width calculation
-}
-
 export interface UseUserProfileModalReturn {
   // State
   isOpen: boolean;
   selectedUser: UserProfileModalUser | null;
-  modalPosition: ModalPosition | null;
+  /** The trigger element the profile card anchors to (for FloatingPopover). */
+  anchorElement: HTMLElement | null;
+  /**
+   * How the card was opened — drives placement and scroll behaviour:
+   * 'message-avatar'/'mention' live in the virtualized message list (close on
+   * scroll, open to the right); 'sidebar' opens left over the chat.
+   */
+  anchorContext: UserProfileModalContext['type'];
 
   // Actions
   handleUserClick: (
@@ -34,20 +35,23 @@ export interface UseUserProfileModalReturn {
 }
 
 /**
- * Custom hook for managing user profile modal state and positioning
- * Extracts modal logic from components for better separation of concerns
+ * Custom hook for managing user profile modal state.
+ *
+ * Positioning is delegated to <FloatingPopover> (@floating-ui/react): this
+ * hook only tracks which user is open and which DOM element to anchor the
+ * card to. The previous hand-rolled top/left computation (modalPositioning.ts)
+ * and the per-context discriminator have been removed — flip/shift middleware
+ * handles edge cases generically.
  */
-export const useUserProfileModal = (
-  options: UseUserProfileModalOptions = {}
-): UseUserProfileModalReturn => {
-  const { showUsers = false } = options;
-
+export const useUserProfileModal = (): UseUserProfileModalReturn => {
   // Modal state
   const [isOpen, setIsOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState<UserProfileModalUser | null>(null);
-  const [modalPosition, setModalPosition] = useState<ModalPosition | null>(null);
+  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
+  const [anchorContext, setAnchorContext] =
+    useState<UserProfileModalContext['type']>('sidebar');
 
-  // Handle user profile click with smart positioning
+  // Handle user profile click — capture the trigger element to anchor to.
   const handleUserClick = useCallback((
     user: UserProfileModalUser,
     event: React.MouseEvent,
@@ -55,56 +59,33 @@ export const useUserProfileModal = (
   ) => {
     event.stopPropagation(); // Prevent background click from closing modal
 
-    // Determine positioning based on context
-    const contextType = context?.type || 'sidebar';
+    // Prefer an explicitly provided element (mention/message-avatar pass the
+    // resolved node), otherwise fall back to the click target. Guard
+    // currentTarget: some callers pass a synthetic event with no DOM node, or
+    // React nulls currentTarget once a synthetic event is handled async.
+    const anchor =
+      context?.element ??
+      (event.currentTarget instanceof HTMLElement ? event.currentTarget : null);
 
-    if ((contextType === 'mention' || contextType === 'message-avatar') && context?.element) {
-      // For mentions and message avatars, calculate relative position
-      const elementRect = context.element.getBoundingClientRect();
-      const rightSidebarWidth = showUsers ? MODAL_DIMENSIONS.RIGHT_SIDEBAR_WIDTH : 0;
-
-      const position = calculateModalPosition({
-        elementRect,
-        rightSidebarWidth,
-        context: { type: contextType }
-      });
-
-      setModalPosition(position);
-    } else if (event.currentTarget && typeof event.currentTarget.getBoundingClientRect === 'function') {
-      // For sidebar clicks, calculate fixed right-side positioning with vertical boundary check.
-      // Guard currentTarget: some callers (e.g. the member-list TouchAwareListItem, which
-      // opens the profile in a drawer) pass a synthetic event with no DOM node, and React
-      // also nulls currentTarget once a synthetic event is handled asynchronously. In those
-      // cases skip positioning — the drawer / CSS handles layout.
-      const elementRect = event.currentTarget.getBoundingClientRect();
-
-      const position = calculateModalPosition({
-        elementRect,
-        context: { type: 'sidebar' }
-      });
-
-      setModalPosition({ top: position.top }); // Only set top for sidebar (left is handled by CSS)
-    } else {
-      // No positionable element — open without a computed position.
-      setModalPosition(null);
-    }
-
+    setAnchorElement(anchor);
+    setAnchorContext(context?.type ?? 'sidebar');
     setSelectedUser(user);
     setIsOpen(true);
-  }, [showUsers]);
+  }, []);
 
   // Handle modal close
   const handleClose = useCallback(() => {
     setIsOpen(false);
     setSelectedUser(null);
-    setModalPosition(null);
+    setAnchorElement(null);
   }, []);
 
   return {
     // State
     isOpen,
     selectedUser,
-    modalPosition,
+    anchorElement,
+    anchorContext,
 
     // Actions
     handleUserClick,

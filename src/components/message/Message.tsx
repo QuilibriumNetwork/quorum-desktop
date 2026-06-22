@@ -17,6 +17,7 @@ const EmojiPicker = React.lazy(() =>
 );
 import type { EmojiData } from '../emoji-picker/types';
 import UserProfile from '../user/UserProfile';
+import { FloatingPopover } from '../ui';
 import { SpaceTag } from '../space/SpaceTag';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
@@ -280,7 +281,8 @@ export const Message = React.memo(
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
     const contextMenuClosedAt = useRef(0);
     const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
-    const [userProfileDirection, setUserProfileDirection] = useState<'upwards' | 'downwards'>('downwards');
+    // Anchor for the touch-path UserProfile card (positioned via FloatingPopover).
+    const userProfileAnchorRef = useRef<HTMLElement | null>(null);
 
     // Modal contexts
     const { showImageModal } = useImageModal();
@@ -366,7 +368,7 @@ export const Message = React.memo(
         });
       },
       onEmojiPickerUserProfileClick: (clientY: number, onProfileClick: () => void) => {
-        setUserProfileDirection(clientY / window.innerHeight > 0.5 ? 'upwards' : 'downwards');
+        // Direction is now handled by FloatingPopover's flip() middleware.
         emojiPicker.handleUserProfileClick(clientY, onProfileClick);
       },
       onReply: messageActions.handleReply,
@@ -713,31 +715,24 @@ export const Message = React.memo(
           <Flex
             className="message-body w-full font-[11pt] px-[16px] items-start"
           >
-            {showUserProfile && spaceId && (
-              <Flex
-                onClick={interactions.handleUserProfileBackgroundClick}
-                className={
-                  'absolute left-0 top-0 w-full mt-[-1000px] pb-[200px] pt-[1000px] z-[1000]'
-                }
+            {spaceId && (
+              <FloatingPopover
+                open={showUserProfile}
+                onClose={() => setShowUserProfile(false)}
+                anchor={userProfileAnchorRef.current}
+                placement="right-start"
+                closeOnScroll
               >
-                <div
-                  className={
-                    userProfileDirection === 'upwards'
-                      ? 'ml-[10px] mt-[-220px]'
-                      : 'ml-[10px]'
-                  }
-                >
-                  <UserProfile
-                    spaceId={message.spaceId}
-                    canEditRoles={canEditRoles}
-                    roles={senderRoles}
-                    user={sender}
-                    dismiss={() => {
-                      setShowUserProfile(false);
-                    }}
-                  />
-                </div>
-              </Flex>
+                <UserProfile
+                  spaceId={message.spaceId}
+                  canEditRoles={canEditRoles}
+                  roles={senderRoles}
+                  user={sender}
+                  dismiss={() => {
+                    setShowUserProfile(false);
+                  }}
+                />
+              </FloatingPopover>
             )}
             {isCompact ? (
               <div className="message-sender-spacer">
@@ -754,7 +749,13 @@ export const Message = React.memo(
                 className="message-sender-icon"
                 onClick={
                   isTouchDevice()
-                    ? interactions.handleUserProfileClick
+                    ? (event: React.MouseEvent) => {
+                        // Capture the avatar element so FloatingPopover can
+                        // anchor the touch-path profile card to it.
+                        userProfileAnchorRef.current =
+                          event.currentTarget as HTMLElement;
+                        interactions.handleUserProfileClick(event);
+                      }
                     : (event: React.MouseEvent) => {
                         event.stopPropagation();
                         if (onUserClick) {

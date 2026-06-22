@@ -1,8 +1,12 @@
 @use '@/styles/variables' as *;
 
 .user-profile {
-  position: absolute;
-  z-index: 3000;
+  // Positioning is owned by the <FloatingPopover> wrapper (position: fixed +
+  // computed coords). The card must NOT position itself — a stray
+  // position: absolute here (from the old hand-rolled system) would break it
+  // out of the wrapper and re-anchor to the nearest positioned ancestor,
+  // landing it in the wrong place (e.g. over the members sidebar).
+  position: relative;
   width: 330px;
   // Use the same semantic modal surface as UserSettings/SpaceSettings/confirmation
   // modals (var(--color-bg-modal)) so the card matches the app's modal scheme
@@ -249,74 +253,29 @@
 // full-width buttons so the card reads as a calm menu, not competing CTAs.
 // Footer holding the action list — same surface as the card body so the rows
 // blend into the card instead of sitting on a contrasting block.
+// Footer stacks the primary Send Message button over the moderation row.
+// Button styling itself comes from the shared <Button> primitive (btn-*).
 .user-profile-action-footer {
   background: var(--color-bg-modal);
-}
-
-.user-profile-action-list {
   display: flex;
   flex-direction: column;
-  // Rows sit flush on the modal surface and are delineated by dividers + hover,
-  // matching the panel-item / mobile-drawer-item convention (no elevated fill).
-  border-radius: $rounded-lg;
-  overflow: hidden; // keep row hovers inside the rounded corners
+  gap: $s-2;
 }
 
-.user-profile-action-item {
+// Block / Mute / Kick share a row. They sit 3-across when labels are short
+// (English), but the row WRAPS for longer translations (e.g. German
+// "Stummschalten") so buttons reflow to the next line instead of truncating —
+// i18n-safe without sacrificing the compact common case.
+.user-profile-action-row {
   display: flex;
-  align-items: center;
-  gap: $s-2-5;
-  padding: $s-2-5 $s-3;
-  font-size: $text-sm;
-  font-weight: $font-medium;
-  color: var(--color-text-main);
-  cursor: pointer;
-  user-select: none;
-  transition: background-color 120ms ease-in-out, color 120ms ease-in-out;
-  border-bottom: $border solid var(--color-border-default);
+  flex-wrap: wrap;
+  gap: $s-2;
 
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background: var(--color-bg-panel-item-hover);
-  }
-
-  .user-profile-action-icon {
-    flex-shrink: 0;
-    color: var(--color-text-subtle);
-  }
-
-  // Primary action (Send Message) — keep the main CTA legible without making
-  // it a loud filled button: accent the icon + label, not the whole row.
-  &.is-primary {
-    color: var(--accent);
-
-    .user-profile-action-icon {
-      color: var(--accent);
-    }
-  }
-
-  // Destructive moderation action (Kick) — danger via text, not a red fill.
-  &.is-danger {
-    color: rgb(var(--danger));
-
-    .user-profile-action-icon {
-      color: rgb(var(--danger));
-    }
-
-    &:hover {
-      background: rgb(var(--danger) / 0.1);
-    }
-  }
-
-  &.is-disabled {
-    opacity: 0.5;
-    cursor: default;
-
-    &:hover {
-      background: transparent;
-    }
+  // grow to fill, but never shrink below a legible width — once a label needs
+  // more than this, the button wraps to the next line rather than ellipsising.
+  > button {
+    flex: 1 1 5rem;
+    min-width: 5rem;
   }
 }
+
