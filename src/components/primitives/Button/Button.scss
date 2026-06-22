@@ -35,7 +35,7 @@
 .btn-primary {
   @extend %btn-base;
   background-color: var(--accent);
-  border: $border-2 solid var(--accent);
+  border: $border solid var(--accent);
   cursor: pointer;
 
   &:hover {
@@ -48,7 +48,7 @@
 .btn-secondary {
   @extend %btn-base;
   background-color: rgb(var(--accent-rgb) / 0.3);
-  border: $border-2 solid transparent;
+  border: $border solid transparent;
   cursor: pointer;
   color: var(--accent-600);
 
@@ -70,7 +70,7 @@ html.dark .btn-secondary {
 .btn-subtle {
   @extend %btn-base;
   background-color: var(--surface-7);
-  border: $border-2 solid transparent;
+  border: $border solid transparent;
   cursor: pointer;
   color: rgb(var(--color-text-main));
 
@@ -83,25 +83,27 @@ html.dark .btn-secondary {
 .btn-subtle-outline {
   @extend %btn-base;
   background-color: transparent;
-  border: $border-2 solid var(--surface-6);
+  border: $border solid var(--surface-6);
   cursor: pointer;
   color: var(--color-text-subtle);
 
+  // Gentle hover: a soft surface tint close to the resting background and a
+  // slightly firmer border. Text keeps its resting colour — no jarring full
+  // fill or colour change.
   &:hover {
-    background-color: var(--surface-6);
+    background-color: var(--surface-5);
     border-color: var(--surface-6);
-    color: rgb(var(--color-text-main));
   }
 }
 
 .btn-danger {
   @extend %btn-base;
-  border: $border-2 solid transparent;
+  border: $border solid transparent;
   cursor: pointer;
   background-color: rgb(var(--danger) / 0.8);
 
   &:hover {
-    border: $border-2 solid transparent;
+    border: $border solid transparent;
     background-color: rgb(var(--danger));
   }
 }
@@ -109,10 +111,13 @@ html.dark .btn-secondary {
 .btn-danger-outline {
   @extend %btn-base;
   background-color: transparent;
-  border: $border-2 solid rgb(var(--danger));
+  border: $border solid rgb(var(--danger));
   cursor: pointer;
   color: rgb(var(--danger));
 
+  // Loud fill on hover is intentional — this variant is for high-stakes,
+  // irreversible actions (delete account, leave space). For low-stakes
+  // destructive actions (e.g. Kick) use subtle-outline with a danger override.
   &:hover {
     background-color: rgb(var(--danger));
     border-color: rgb(var(--danger));
@@ -123,7 +128,7 @@ html.dark .btn-secondary {
 .btn-disabled {
   @extend %btn-base;
   background-color: var(--surface-8);
-  border: $border-2 solid transparent;
+  border: $border solid transparent;
   color: var(--surface-2);
   cursor: default;
   pointer-events: none;

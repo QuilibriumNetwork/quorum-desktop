@@ -129,7 +129,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
             {t`Cancel`}
           </Button>
           <Button
-            type={isUnmuting ? 'primary' : 'danger'}
+            type={isUnmuting ? 'primary' : 'secondary'}
             onClick={handleConfirm}
             hapticFeedback={true}
             fullWidth={true}
