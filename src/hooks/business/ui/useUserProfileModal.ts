@@ -70,8 +70,12 @@ export const useUserProfileModal = (
       });
 
       setModalPosition(position);
-    } else {
-      // For sidebar clicks, calculate fixed right-side positioning with vertical boundary check
+    } else if (event.currentTarget && typeof event.currentTarget.getBoundingClientRect === 'function') {
+      // For sidebar clicks, calculate fixed right-side positioning with vertical boundary check.
+      // Guard currentTarget: some callers (e.g. the member-list TouchAwareListItem, which
+      // opens the profile in a drawer) pass a synthetic event with no DOM node, and React
+      // also nulls currentTarget once a synthetic event is handled asynchronously. In those
+      // cases skip positioning — the drawer / CSS handles layout.
       const elementRect = event.currentTarget.getBoundingClientRect();
 
       const position = calculateModalPosition({
@@ -80,6 +84,9 @@ export const useUserProfileModal = (
       });
 
       setModalPosition({ top: position.top }); // Only set top for sidebar (left is handled by CSS)
+    } else {
+      // No positionable element — open without a computed position.
+      setModalPosition(null);
     }
 
     setSelectedUser(user);

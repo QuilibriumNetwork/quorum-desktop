@@ -6,6 +6,7 @@ import GroupEditorModal from '../modals/GroupEditorModal';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
 import KickUserModal from '../modals/KickUserModal';
 import MuteUserModal from '../modals/MuteUserModal';
+import BlockUserModal from '../modals/BlockUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 import ConversationSettingsModal from '../modals/ConversationSettingsModal';
 import FolderEditorModal from '../modals/FolderEditorModal';
@@ -14,8 +15,10 @@ import {
   type ModalState,
   type MuteUserTarget,
   type KickUserTarget,
+  type BlockUserTarget,
 } from '../../hooks/business/ui/useModalState';
 import { useUserMuting } from '../../hooks/business/user/useUserMuting';
+import { useBlockUser } from '../../hooks/business/user/useBlockUser';
 
 // Context interface
 interface ModalContextType {
@@ -40,6 +43,8 @@ interface ModalContextType {
   closeKickUser: () => void;
   openMuteUser: (target: MuteUserTarget) => void;
   closeMuteUser: () => void;
+  openBlockUser: (target: BlockUserTarget) => void;
+  closeBlockUser: () => void;
   openConversationSettings: (conversationId: string) => void;
   closeConversationSettings: () => void;
   openFolderEditor: (folderId?: string) => void;
@@ -76,6 +81,33 @@ interface ModalProviderProps {
   setUser?: any;
 }
 
+/**
+ * Renders the personal Block/Unblock confirm modal. Extracted so it can call
+ * the per-space `useBlockUser` hook with the target's spaceId (hooks can't be
+ * called conditionally inside the provider's render-when-open block).
+ */
+const BlockUserModalContainer: React.FC<{
+  target: BlockUserTarget;
+  onClose: () => void;
+}> = ({ target, onClose }) => {
+  const { blockUser, unblockUser } = useBlockUser(target.spaceId);
+  return (
+    <BlockUserModal
+      visible={true}
+      onClose={onClose}
+      onConfirm={() =>
+        target.isUnblocking
+          ? unblockUser(target.address)
+          : blockUser(target.address)
+      }
+      userName={target.displayName}
+      userIcon={target.userIcon}
+      userAddress={target.address}
+      isUnblocking={target.isUnblocking}
+    />
+  );
+};
+
 // Provider component
 export const ModalProvider: React.FC<ModalProviderProps> = ({
   children,
@@ -102,6 +134,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeKickUser: modalState.closeKickUser,
     openMuteUser: modalState.openMuteUser,
     closeMuteUser: modalState.closeMuteUser,
+    openBlockUser: modalState.openBlockUser,
+    closeBlockUser: modalState.closeBlockUser,
     openConversationSettings: modalState.openConversationSettings,
     closeConversationSettings: modalState.closeConversationSettings,
     openFolderEditor: modalState.openFolderEditor,
@@ -183,6 +217,14 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
             userIcon={modalState.state.muteUser.target.userIcon}
             userAddress={modalState.state.muteUser.target.address}
             isUnmuting={modalState.state.muteUser.target.isUnmuting}
+          />
+        )}
+
+      {modalState.state.blockUser.isOpen &&
+        modalState.state.blockUser.target && (
+          <BlockUserModalContainer
+            target={modalState.state.blockUser.target}
+            onClose={modalState.closeBlockUser}
           />
         )}
 

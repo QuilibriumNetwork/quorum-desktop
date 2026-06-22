@@ -4,19 +4,33 @@
   position: absolute;
   z-index: 3000;
   width: 330px;
-  background: var(--surface-3);
+  // Use the same semantic modal surface as UserSettings/SpaceSettings/confirmation
+  // modals (var(--color-bg-modal)) so the card matches the app's modal scheme
+  // instead of sitting a surface-step lighter via a raw --surface-N.
+  background: var(--color-bg-modal);
   border-radius: $rounded-xl;
+  // Define the card silhouette against the page — same border token floating
+  // panels use (DropdownPanel etc.). Without it, the card surface bleeds into
+  // the chat background wherever the two surfaces are close in value.
+  border: $border solid var(--color-border-panel);
   color: var(--color-text-main);
   user-select: none;
   box-shadow:  $shadow-md;
 
+  // On narrow screens fill the viewport (minus a comfortable gutter) instead of
+  // a cramped fixed width, but never grow past the desktop width. The card is
+  // left-anchored ~10px from the message, so the gutter accounts for that.
   @media screen and (max-width: $screen-xs) {
-    width: 240px;
+    width: min(330px, calc(100vw - #{$s-6}));
   }
 }
 
 .user-profile-header {
-  background: var(--surface-5);
+  // Subtle header band, offset from the card body (--color-bg-modal = surface-2).
+  // This resolves to surface-1 which matches the chat background, but the card's
+  // border (above) now defines the silhouette against the page, so the header no
+  // longer bleeds into it — the band reads correctly inside the bordered card.
+  background: var(--color-bg-modal-sidebar);
   min-height: $s-20;
   border-top-left-radius: $rounded-xl;
   border-top-right-radius: $s-2-5;
@@ -86,7 +100,7 @@
 .user-profile-icon-editable::after {
   width: $s-6;
   height: $s-6;
-  background: var(--surface-3);
+  background: var(--color-bg-modal);
   color: var(--accent-200);
   content: '+';
   display: block;
@@ -100,7 +114,7 @@
 
 .user-profile-content-section-header {
   font-weight: $font-medium;
-  border-top: $border solid var(--surface-6);
+  border-top: $border solid var(--color-border-strong);
   padding: $s-2 0 $s-1 0;
   margin-top: $s-2;
 }
@@ -228,4 +242,81 @@
   font-size: $text-xs;
   color: var(--color-error);
   padding: $s-1 0 $s-2;
+}
+
+// Action list — desktop-tuned take on the mobile drawer's action rows
+// (icon + label, quiet row, danger via text colour). Replaces the stack of
+// full-width buttons so the card reads as a calm menu, not competing CTAs.
+// Footer holding the action list — same surface as the card body so the rows
+// blend into the card instead of sitting on a contrasting block.
+.user-profile-action-footer {
+  background: var(--color-bg-modal);
+}
+
+.user-profile-action-list {
+  display: flex;
+  flex-direction: column;
+  // Rows sit flush on the modal surface and are delineated by dividers + hover,
+  // matching the panel-item / mobile-drawer-item convention (no elevated fill).
+  border-radius: $rounded-lg;
+  overflow: hidden; // keep row hovers inside the rounded corners
+}
+
+.user-profile-action-item {
+  display: flex;
+  align-items: center;
+  gap: $s-2-5;
+  padding: $s-2-5 $s-3;
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  color: var(--color-text-main);
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 120ms ease-in-out, color 120ms ease-in-out;
+  border-bottom: $border solid var(--color-border-default);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    background: var(--color-bg-panel-item-hover);
+  }
+
+  .user-profile-action-icon {
+    flex-shrink: 0;
+    color: var(--color-text-subtle);
+  }
+
+  // Primary action (Send Message) — keep the main CTA legible without making
+  // it a loud filled button: accent the icon + label, not the whole row.
+  &.is-primary {
+    color: var(--accent);
+
+    .user-profile-action-icon {
+      color: var(--accent);
+    }
+  }
+
+  // Destructive moderation action (Kick) — danger via text, not a red fill.
+  &.is-danger {
+    color: rgb(var(--danger));
+
+    .user-profile-action-icon {
+      color: rgb(var(--danger));
+    }
+
+    &:hover {
+      background: rgb(var(--danger) / 0.1);
+    }
+  }
+
+  &.is-disabled {
+    opacity: 0.5;
+    cursor: default;
+
+    &:hover {
+      background: transparent;
+    }
+  }
 }

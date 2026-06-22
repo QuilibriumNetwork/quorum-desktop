@@ -91,6 +91,13 @@ export type UserConfig = {
   favoriteDMs?: string[];
   // Muted DMs — no unread indicators or notifications.
   mutedConversations?: string[];
+  // Personal "block user", scoped per space: addresses whose messages the
+  // viewer hides from their OWN stream. Viewer-side only (no moderation effect,
+  // no permission needed) — distinct from the role-gated moderation mute
+  // (muted_users / MuteMessage). Synced cross-device via the UserConfig blob.
+  blockedUsers?: {
+    [spaceId: string]: string[];
+  };
   deliveryReceipts?: boolean;
   readReceipts?: boolean;
   typingIndicatorsDM?: boolean;

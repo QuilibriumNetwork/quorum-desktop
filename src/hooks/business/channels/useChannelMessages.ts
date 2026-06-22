@@ -7,6 +7,7 @@ import { hasPermission } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Channel, Role } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
+import { useBlockUser } from '../user/useBlockUser';
 
 interface UseChannelMessagesProps {
   spaceId: string;
@@ -39,6 +40,12 @@ export function useChannelMessages({
   });
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const { data: space } = useSpace({ spaceId });
+
+  // Personal block (viewer-side hide): blocked senders' messages are filtered
+  // from the rendered list for this space only, for this viewer only. This is a
+  // local, reversible render filter — unblocking instantly restores past + new
+  // messages. Distinct from the receive-time moderation mute in MessageService.
+  const { blockedSet } = useBlockUser(spaceId);
 
   // Helper function to check if user can manage read-only channel
   // NOTE: Space owners must explicitly join a manager role to manage read-only channels.
@@ -75,10 +82,15 @@ export function useChannelMessages({
     return allMessages.filter((msg) => {
       if (seen.has(msg.messageId)) return false;
       if (msg.isThreadReply && threadsEnabled) return false;
+      // Personal block: hide blocked senders' messages from this viewer's stream.
+      // Optional-chain content to match every other consumer of this list (e.g.
+      // Channel.tsx reads msg.content?.senderId off the same filtered array) and
+      // guard against any raw/partial message that bypasses getMessages().
+      if (msg.content?.senderId && blockedSet.has(msg.content.senderId)) return false;
       seen.add(msg.messageId);
       return true;
     });
-  }, [messages, threadsEnabled]);
+  }, [messages, threadsEnabled, blockedSet]);
 
   const canDeleteMessages = useCallback(
     (message: MessageType) => {
