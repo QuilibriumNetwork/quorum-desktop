@@ -25,9 +25,10 @@ export async function fetchSpaceMentions(
     enabledTypes?: ('mention-you' | 'mention-everyone' | 'mention-roles')[];
     userRoleIds?: string[];
     config: UserConfig | undefined;
+    perChannelLimit?: number;
   },
 ): Promise<MentionNotification[]> {
-  const { enabledTypes, userRoleIds = [], config } = opts;
+  const { enabledTypes, userRoleIds = [], config, perChannelLimit = 1000 } = opts;
   const settings = config?.notificationSettings?.[space.spaceId];
   if (settings?.isMuted) return [];
 
@@ -60,7 +61,7 @@ export async function fetchSpaceMentions(
       spaceId: space.spaceId,
       channelId,
       afterTimestamp: lastReadTimestamp,
-      limit: 1000,
+      limit: perChannelLimit,
     });
     const channel = allChannels.find((c) => c.channelId === channelId);
 
