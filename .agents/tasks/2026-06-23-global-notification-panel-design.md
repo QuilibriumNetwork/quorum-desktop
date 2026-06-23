@@ -109,6 +109,31 @@ useAllRepliesGlobal({ spaces, enabled })         // loops fetchSpaceReplies over
 > Optional: a single `useGlobalNotifications` composing both hooks + the merged
 > sorted list, to keep the panel component thin. Decided during planning.
 
+### Performance: bounded global fetch (decided 2026-06-23)
+
+Opening the global panel fans out per-channel IndexedDB reads across ALL spaces
+(`getConversation` + `getThreadReadTimesForChannel` + `getUnreadMentions`/
+`getUnreadReplies` per channel). This is local (no network) and React-Query-cached
+(30s stale), and it is the SAME per-channel query the per-space panel already runs.
+For typical users (a few spaces, modest unread) it is a non-issue. The worst case
+(many large spaces, heavy unread) is bounded as follows so we never pull thousands
+of message objects to render a panel that shows a few dozen:
+
+- **Lower the per-channel limit** for the global path from `1000` to `GLOBAL_PER_CHANNEL_LIMIT = 50`.
+  No single channel realistically contributes more than ~50 of the newest visible
+  rows. (The per-space header bell keeps its existing `1000` — unchanged.)
+- **Still fetch every space** (skipping spaces would drop newer items from
+  later-iterated spaces), but each channel's contribution is bounded by the limit.
+- **Sort the merged set newest-first, then slice to `GLOBAL_DISPLAY_CAP = 100`.**
+  Slicing AFTER the global sort is order-independent — no bias toward
+  whichever space was iterated first.
+- **No silent truncation:** when the merged count exceeds the cap, the panel shows
+  a subtle "Showing 100 most recent" footer/affordance rather than implying the
+  list is exhaustive.
+- The **unread dot** stays cheap: it reads the existing early-exit count hooks
+  (`useSpaceMentionCounts`/`useSpaceReplyCounts`, capped at 10), NOT the panel
+  fetch. So the always-on indicator cost is unchanged from today.
+
 ### Cache invalidation
 
 `MessageService.ts` (new message) and `useUpdateReadTime` (channel read) already

@@ -85,8 +85,9 @@ export async function fetchSpaceMentions(
   userAddress: string,
   opts: {
     enabledTypes?: ('mention-you' | 'mention-everyone' | 'mention-roles')[];
-    userRoleIds: string[];
+    userRoleIds?: string[];
     config: UserConfig | undefined; // pre-fetched user config (avoids N getUserConfig calls)
+    perChannelLimit?: number; // default 1000 (per-space); global path passes 50
   },
 ): Promise<MentionNotification[]>
 
@@ -98,13 +99,34 @@ export async function fetchSpaceReplies(
   opts: {
     enabled: boolean;
     config: UserConfig | undefined;
+    perChannelLimit?: number; // default 1000 (per-space); global path passes 50
   },
 ): Promise<ReplyNotification[]>
 ```
 
-Both set `spaceId: space.spaceId` and `spaceName: space.name` on every row they return.
+Both set `spaceId: space.spaceId` and `spaceName: space.spaceName` on every row they return.
 
-> **Note on `space.name`:** verify the field name on `Space` during Task 1 (`Space` type from `quorum-shared`). `useSpaceReplyCounts` uses `space.spaceId`; the human name field is referenced as `space.name` in this plan — if the type uses a different key (e.g. `spaceName`), use that and keep it consistent across all tasks.
+### Performance cap constants (locked — global path only)
+
+Defined in a STANDALONE module to avoid a circular import (the global hooks in
+`mentions/`/`replies/` import the per-channel limit; `useGlobalNotifications`
+imports those hooks — so the constants must NOT live in `useGlobalNotifications.ts`):
+
+```typescript
+// src/hooks/business/notifications/constants.ts
+export const GLOBAL_PER_CHANNEL_LIMIT = 50;  // passed as perChannelLimit to the fetch fns
+export const GLOBAL_DISPLAY_CAP = 100;        // max rows shown after global sort
+```
+
+Rationale (see design doc "Performance" section): the global fetch fans out per-channel
+reads across ALL spaces. Lowering the per-channel `limit` from 1000→50 and slicing the
+globally-sorted result to 100 bounds memory without biasing by space iteration order
+(slice happens AFTER the merge+sort). The per-space header bell keeps `limit: 1000`
+(its default) and is unaffected. The composition hook exposes a `truncated` flag when
+the merged count exceeds the cap so the UI can show "Showing 100 most recent" (no silent
+truncation).
+
+> **RESOLVED (Task 1):** the `Space` human-name field is **`space.spaceName`** (NOT `space.name`). Use `space.spaceName` everywhere.
 
 ---
 
@@ -407,7 +429,7 @@ const ME = 'QmMeAddr0000000000000000000000000000000000';
 function makeSpace() {
   return {
     spaceId: 'space-1',
-    name: 'Test Space',
+    spaceName: 'Test Space',
     roles: [],
     members: {},
     groups: [{ channels: [{ channelId: 'chan-1', channelName: 'general' }] }],
@@ -472,21 +494,33 @@ Expected: FAIL — cannot resolve module `fetchSpaceReplies`.
 
 - [ ] **Step 3: Implement `fetchSpaceReplies`**
 
+> **Apply the Task 1 review lessons here from the start** (so this file doesn't
+> repeat them): type `messageDB` as the full `MessageDB` (not `Pick<>`), type
+> `config` as `UserConfig | undefined` (imported from `../../../db/messages`), and
+> hoist the channel list once (`const allChannels = space.groups.flatMap(...)`)
+> instead of re-flatMapping inside the loop. Add a JSDoc note that output is
+> unsorted (caller sorts).
+
 ```typescript
 // src/hooks/business/replies/fetchSpaceReplies.ts
 import { isNotificationTypeEnabled } from '@quilibrium/quorum-shared';
 import type { Space } from '@quilibrium/quorum-shared';
 import type { ReplyNotification } from '../../../types/notifications';
 import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
-import type { MessageDB } from '../../../db/messages';
+import type { MessageDB, UserConfig } from '../../../db/messages';
 
+/**
+ * Fetch unread replies for ONE space (pure; no React). Replicates the per-space
+ * gating from `useAllReplies`. Returns rows in channel-iteration order — the
+ * CALLER sorts (the global hook sorts after merging across all spaces).
+ */
 export async function fetchSpaceReplies(
   messageDB: MessageDB,
   space: Space,
   userAddress: string,
-  opts: { enabled: boolean; config: any },
+  opts: { enabled: boolean; config: UserConfig | undefined; perChannelLimit?: number },
 ): Promise<(ReplyNotification & { spaceId: string; spaceName: string })[]> {
-  const { enabled, config } = opts;
+  const { enabled, config, perChannelLimit = 1000 } = opts;
   const settings = config?.notificationSettings?.[space.spaceId];
   if (settings?.isMuted) return [];
 
@@ -495,7 +529,8 @@ export async function fetchSpaceReplies(
   if (!shouldFetch) return [];
 
   const mutedChannelIds = getMutedChannelsForSpace(space.spaceId, config?.mutedChannels);
-  const channelIds = space.groups.flatMap((g) => g.channels.map((c) => c.channelId));
+  const allChannels = space.groups.flatMap((g) => g.channels);
+  const channelIds = allChannels.map((c) => c.channelId);
   const out: (ReplyNotification & { spaceId: string; spaceName: string })[] = [];
 
   for (const channelId of channelIds) {
@@ -505,9 +540,9 @@ export async function fetchSpaceReplies(
     const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
     const threadReadTimes = await messageDB.getThreadReadTimesForChannel({ spaceId: space.spaceId, channelId });
     const messages = await messageDB.getUnreadReplies({
-      spaceId: space.spaceId, channelId, userAddress, afterTimestamp: lastReadTimestamp, limit: 1000,
+      spaceId: space.spaceId, channelId, userAddress, afterTimestamp: lastReadTimestamp, limit: perChannelLimit,
     });
-    const channel = space.groups.flatMap((g) => g.channels).find((c) => c.channelId === channelId);
+    const channel = allChannels.find((c) => c.channelId === channelId);
 
     for (const message of messages) {
       if (message.isThreadReply && message.threadId) {
@@ -520,7 +555,7 @@ export async function fetchSpaceReplies(
         channelName: channel?.channelName || 'Unknown Channel',
         type: 'reply',
         spaceId: space.spaceId,
-        spaceName: space.name,
+        spaceName: space.spaceName,
       });
     }
   }
@@ -588,10 +623,33 @@ git commit -m "feat(notifications): extract fetchSpaceReplies, useAllReplies del
 ### Task 4: Global aggregation hooks
 
 **Files:**
+- Create: `src/hooks/business/notifications/constants.ts` (cap constants — standalone to avoid circular import)
+- Modify: `src/hooks/business/mentions/fetchSpaceMentions.ts` (add `perChannelLimit` param)
 - Create: `src/hooks/business/mentions/useAllMentionsGlobal.ts`
 - Create: `src/hooks/business/replies/useAllRepliesGlobal.ts`
 - Modify: `src/hooks/business/mentions/index.ts`
 - Modify: `src/hooks/business/replies/index.ts`
+
+- [ ] **Step 0a: Create the cap constants module**
+
+```typescript
+// src/hooks/business/notifications/constants.ts
+export const GLOBAL_PER_CHANNEL_LIMIT = 50;  // per-channel getUnreadMentions/Replies cap (global path)
+export const GLOBAL_DISPLAY_CAP = 100;        // max rows shown after the global newest-first sort
+```
+
+- [ ] **Step 0b: Retrofit `perChannelLimit` into `fetchSpaceMentions`**
+
+Task 1 created `fetchSpaceMentions` with a hardcoded `limit: 1000` in the
+`getUnreadMentions` call. `fetchSpaceReplies` (Task 3) already takes
+`perChannelLimit?: number` (default 1000). Make `fetchSpaceMentions` symmetric:
+- Add `perChannelLimit?: number;` to its `opts` type.
+- Destructure with default: `const { enabledTypes, userRoleIds = [], config, perChannelLimit = 1000 } = opts;`
+- Change the `getUnreadMentions` call's `limit: 1000` → `limit: perChannelLimit`.
+This is additive — the per-space `useAllMentions` (which doesn't pass it) keeps `1000`.
+
+Run: `yarn vitest src/dev/tests/hooks/fetchSpaceMentions.unit.test.ts --run`
+Expected: still 3 PASS (default unchanged).
 
 - [ ] **Step 1: Implement `useAllMentionsGlobal`**
 
@@ -604,6 +662,7 @@ import type { Space } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { fetchSpaceMentions } from './fetchSpaceMentions';
 import type { MentionNotification } from './useAllMentions';
+import { GLOBAL_PER_CHANNEL_LIMIT } from '../notifications/constants';
 
 interface Props {
   spaces: Space[];
@@ -623,7 +682,9 @@ export function useAllMentionsGlobal({ spaces, enabledTypes }: Props) {
       const all: MentionNotification[] = [];
       for (const space of spaces) {
         const userRoleIds = getUserRoles(userAddress, space).map((r) => r.roleId);
-        const rows = await fetchSpaceMentions(messageDB, space, userAddress, { enabledTypes, userRoleIds, config });
+        const rows = await fetchSpaceMentions(messageDB, space, userAddress, {
+          enabledTypes, userRoleIds, config, perChannelLimit: GLOBAL_PER_CHANNEL_LIMIT,
+        });
         all.push(...rows);
       }
       all.sort((a, b) => b.message.createdDate - a.message.createdDate);
@@ -648,6 +709,7 @@ import type { Space } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { fetchSpaceReplies } from './fetchSpaceReplies';
 import type { ReplyNotification } from '../../../types/notifications';
+import { GLOBAL_PER_CHANNEL_LIMIT } from '../notifications/constants';
 
 interface Props {
   spaces: Space[];
@@ -666,7 +728,9 @@ export function useAllRepliesGlobal({ spaces, enabled }: Props) {
       const config = await messageDB.getUserConfig({ address: userAddress });
       const all: (ReplyNotification & { spaceId: string; spaceName: string })[] = [];
       for (const space of spaces) {
-        const rows = await fetchSpaceReplies(messageDB, space, userAddress, { enabled, config });
+        const rows = await fetchSpaceReplies(messageDB, space, userAddress, {
+          enabled, config, perChannelLimit: GLOBAL_PER_CHANNEL_LIMIT,
+        });
         all.push(...rows);
       }
       all.sort((a, b) => b.message.createdDate - a.message.createdDate);
@@ -789,6 +853,10 @@ git commit -m "fix(notifications): broaden inbox invalidations to cover the glob
 
 - [ ] **Step 1: Implement the composition hook**
 
+The composition hook merges + sorts, then applies the global display cap and
+exposes a `truncated` flag (so the UI can say "Showing N most recent" — no silent
+truncation, per the design's perf section).
+
 ```typescript
 // src/hooks/business/notifications/useGlobalNotifications.ts
 import { useMemo } from 'react';
@@ -797,6 +865,7 @@ import { useAllMentionsGlobal } from '../mentions/useAllMentionsGlobal';
 import { useAllRepliesGlobal } from '../replies/useAllRepliesGlobal';
 import type { MentionNotification } from '../mentions/useAllMentions';
 import type { ReplyNotification } from '../../../types/notifications';
+import { GLOBAL_DISPLAY_CAP } from './constants';
 
 export type GlobalMentionNotification = MentionNotification & { spaceId: string; spaceName: string };
 export type GlobalReplyNotification = ReplyNotification & { spaceId: string; spaceName: string };
@@ -812,12 +881,18 @@ export function useGlobalNotifications({ spaces, enabledTypes, replyEnabled }: P
   const { mentions, isLoading: mLoading } = useAllMentionsGlobal({ spaces, enabledTypes });
   const { replies, isLoading: rLoading } = useAllRepliesGlobal({ spaces, enabled: replyEnabled });
 
-  const notifications = useMemo<GlobalNotification[]>(() => {
-    return [...(mentions as GlobalMentionNotification[]), ...(replies as GlobalReplyNotification[])]
+  const { notifications, truncated } = useMemo(() => {
+    const merged = [...(mentions as GlobalMentionNotification[]), ...(replies as GlobalReplyNotification[])]
       .sort((a, b) => b.message.createdDate - a.message.createdDate);
+    // Slice AFTER the global sort so the cap is order-independent (no bias toward
+    // whichever space was iterated first).
+    return {
+      notifications: merged.slice(0, GLOBAL_DISPLAY_CAP) as GlobalNotification[],
+      truncated: merged.length > GLOBAL_DISPLAY_CAP,
+    };
   }, [mentions, replies]);
 
-  return { notifications, isLoading: mLoading || rLoading };
+  return { notifications, truncated, isLoading: mLoading || rLoading };
 }
 ```
 
@@ -826,6 +901,7 @@ export function useGlobalNotifications({ spaces, enabledTypes, replyEnabled }: P
 ```typescript
 // src/hooks/business/notifications/index.ts
 export { useGlobalNotifications } from './useGlobalNotifications';
+export { GLOBAL_DISPLAY_CAP, GLOBAL_PER_CHANNEL_LIMIT } from './constants';
 export type {
   GlobalNotification,
   GlobalMentionNotification,
@@ -1040,7 +1116,7 @@ Replace the current `useAllMentions`/`useAllReplies` calls with a conditional. B
   });
 
   // Global path — pass empty spaces in per-space mode to disable.
-  const { notifications: globalNotifications, isLoading: gLoading } = useGlobalNotifications({
+  const { notifications: globalNotifications, truncated: globalTruncated, isLoading: gLoading } = useGlobalNotifications({
     spaces: global ? (spaces ?? []) : [],
     enabledTypes: mentionTypes,
     replyEnabled,
@@ -1054,6 +1130,22 @@ Replace the current `useAllMentions`/`useAllReplies` calls with a conditional. B
 ```
 
 (Both hooks have `enabled: spaces.length > 0` / `channelIds.length > 0` already, so the disabled side does no work.)
+
+**Truncation affordance (global only):** when `global && globalTruncated`, render a
+subtle footer below the list, e.g.:
+
+```tsx
+      {global && globalTruncated && (
+        <div className="notification-panel__truncation-note">
+          {t`Showing the ${GLOBAL_DISPLAY_CAP} most recent notifications`}
+        </div>
+      )}
+```
+
+Import `GLOBAL_DISPLAY_CAP` from `../../hooks/business/notifications`. Add a muted
+small-text style for `.notification-panel__truncation-note` in `NotificationPanel.scss`
+(use an existing muted-text token; `text-sm`-equivalent, centered, padded). This
+satisfies the "no silent caps" rule — the user is told the list is capped.
 
 - [ ] **Step 3: Pass `spaceName` + global sender resolver to rows**
 
