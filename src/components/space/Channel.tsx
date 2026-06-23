@@ -1203,12 +1203,17 @@ const Channel: React.FC<ChannelProps> = ({
     }));
   }, [space?.emojis]);
 
+  // Whether this space has any stickers. When it doesn't, the composer's
+  // emoji/sticker panel opens emoji-only (no empty Stickers tab) — same as DMs,
+  // which never have stickers.
+  const hasStickers = !!space?.stickers && space.stickers.length > 0;
+
   // Message composer hook
   const composer = useMessageComposer({
     type: 'channel',
     onSubmitMessage: handleSubmitMessage,
     onSubmitSticker: handleSubmitSticker,
-    hasStickers: true,
+    hasStickers,
   });
 
   useEffect(() => {
@@ -1887,25 +1892,28 @@ const Channel: React.FC<ChannelProps> = ({
               }
             }}
           >
-            <div className="stickers-panel">
-              {/* Tab navigation */}
-              <div className="stickers-panel-tabs">
-                <button
-                  className={`stickers-panel-tab ${panelTab === 'emojis' ? 'active' : ''}`}
-                  onClick={() => setPanelTab('emojis')}
-                >
-                  {t`Emojis`}
-                </button>
-                <button
-                  className={`stickers-panel-tab ${panelTab === 'stickers' ? 'active' : ''}`}
-                  onClick={() => setPanelTab('stickers')}
-                >
-                  {t`Stickers`}
-                </button>
-              </div>
+            <div className={`stickers-panel${hasStickers ? '' : ' stickers-panel--emoji-only'}`}>
+              {/* Tab navigation — only when the space actually has stickers.
+                  With none, the panel is emoji-only (no empty Stickers tab). */}
+              {hasStickers && (
+                <div className="stickers-panel-tabs">
+                  <button
+                    className={`stickers-panel-tab ${panelTab === 'emojis' ? 'active' : ''}`}
+                    onClick={() => setPanelTab('emojis')}
+                  >
+                    {t`Emojis`}
+                  </button>
+                  <button
+                    className={`stickers-panel-tab ${panelTab === 'stickers' ? 'active' : ''}`}
+                    onClick={() => setPanelTab('stickers')}
+                  >
+                    {t`Stickers`}
+                  </button>
+                </div>
+              )}
 
-              {/* Tab content */}
-              {panelTab === 'emojis' ? (
+              {/* Tab content — force the emoji view when there are no stickers. */}
+              {!hasStickers || panelTab === 'emojis' ? (
                 <div className="stickers-panel-emoji-content">
                   <Suspense fallback={<div className="emoji-picker-loading" />}>
                     <LazyEmojiPicker

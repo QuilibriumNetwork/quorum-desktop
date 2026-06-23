@@ -52,11 +52,16 @@ export const ThreadPanel: React.FC = () => {
     [submitMessage]
   );
 
+  // Whether the parent channel has any stickers. When it doesn't, the composer's
+  // emoji/sticker panel opens emoji-only (no empty Stickers tab) — same as DMs.
+  const hasStickers =
+    !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0;
+
   const composer = useMessageComposer({
     type: 'channel',
     onSubmitMessage: handleSubmitMessage,
     onSubmitSticker: submitSticker,
-    hasStickers: !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0,
+    hasStickers,
   });
 
   const { openThreadSettings } = useThreadSettingsModal();
@@ -523,23 +528,26 @@ export const ThreadPanel: React.FC = () => {
               }
             }}
           >
-            <div className="stickers-panel">
-              <div className="stickers-panel-tabs">
-                <button
-                  className={`stickers-panel-tab ${panelTab === 'emojis' ? 'active' : ''}`}
-                  onClick={() => setPanelTab('emojis')}
-                >
-                  {t`Emojis`}
-                </button>
-                <button
-                  className={`stickers-panel-tab ${panelTab === 'stickers' ? 'active' : ''}`}
-                  onClick={() => setPanelTab('stickers')}
-                >
-                  {t`Stickers`}
-                </button>
-              </div>
+            <div className={`stickers-panel${hasStickers ? '' : ' stickers-panel--emoji-only'}`}>
+              {/* Tabs only when the channel has stickers; otherwise emoji-only. */}
+              {hasStickers && (
+                <div className="stickers-panel-tabs">
+                  <button
+                    className={`stickers-panel-tab ${panelTab === 'emojis' ? 'active' : ''}`}
+                    onClick={() => setPanelTab('emojis')}
+                  >
+                    {t`Emojis`}
+                  </button>
+                  <button
+                    className={`stickers-panel-tab ${panelTab === 'stickers' ? 'active' : ''}`}
+                    onClick={() => setPanelTab('stickers')}
+                  >
+                    {t`Stickers`}
+                  </button>
+                </div>
+              )}
 
-              {panelTab === 'emojis' ? (
+              {!hasStickers || panelTab === 'emojis' ? (
                 <div className="stickers-panel-emoji-content">
                   <Suspense fallback={<div className="emoji-picker-loading" />}>
                     <LazyEmojiPicker
