@@ -1,6 +1,41 @@
 @use '../../styles/variables' as *;
 @use '../../styles/dropdown-result-item';
 
+// Global (modal) variant: the Modal primitive's title is a tall section heading
+// ($text-2xl, margin-bottom $s-6) meant to sit above form fields. For the
+// notification list it reads as an oversized, floating band. Reshape it into a
+// compact header bar that flows into the controls row below.
+.notification-panel--global {
+  // Title bar: $s-4 (16px) vertical padding + $text-lg line-height (28px) = 60px
+  // tall. Keep these in sync with the close-button centering below.
+  .quorum-modal-title {
+    font-size: $text-lg;
+    line-height: $text-lg-lh;
+    font-weight: $font-bold;
+    margin-bottom: 0;
+    padding: $s-4 $s-12 $s-4 $s-4; // right padding leaves room for the close button
+    border-bottom: $border solid var(--color-border-panel);
+  }
+
+  // Vertically center the close button on the title bar (half of the 60px bar =
+  // 30px), regardless of the button's own box size. translateY(-50%) makes this
+  // self-correcting instead of pixel-guessing against the primitive's top: $s-3.
+  .quorum-modal-close {
+    top: 30px !important;
+    right: $s-4;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Controls sit directly under the title with no extra top gap; the title's
+  // border already separates them, so drop the controls' own top border.
+  .notification-panel__controls {
+    border-top: none;
+  }
+}
+
 // Notification Panel styling
 
 .notification-panel__header {
