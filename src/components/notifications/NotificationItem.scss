@@ -92,6 +92,15 @@
   flex-shrink: 0;
 }
 
+// Global panel: space name leads the breadcrumb ("Space › #channel"). Uses the
+// prominent text token (channel/sender use the subtle one) so the space reads as
+// the breadcrumb root.
+.notification-space {
+  color: rgb(var(--color-text-main));
+  font-weight: $font-medium;
+  margin-right: $s-1;
+}
+
 // Mobile drawer responsive layout: Let date flow naturally to second row when needed
 .mobile-drawer__item-box {
   .notification-item {

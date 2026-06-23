@@ -17,6 +17,7 @@ interface NotificationItemProps {
   spaceRoles?: any[]; // Space roles for mention formatting
   spaceChannels?: any[]; // Space channels for mention formatting
   compactDate?: boolean; // Compact date format (omit time for today/yesterday)
+  spaceName?: string; // When set (global panel), renders a "Space › #channel" breadcrumb
 }
 
 // Helper function to render message content with proper mention formatting
@@ -86,6 +87,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   spaceRoles = [],
   spaceChannels = [],
   compactDate = false,
+  spaceName,
 }) => {
   const { message, channelName } = notification;
 
@@ -131,6 +133,12 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     >
       <Flex justify="between" className="notification-header">
         <Flex className="notification-meta min-w-0">
+          {spaceName && (
+            <>
+              <span className="notification-space truncate-channel-name flex-shrink min-w-0">{spaceName}</span>
+              <span className="notification-thread-chevron">›</span>
+            </>
+          )}
           <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
           <span className={`notification-channel ${isThread ? '' : 'mr-2'} truncate-channel-name flex-shrink min-w-0`}>{channelName}</span>
           {isThread && (
