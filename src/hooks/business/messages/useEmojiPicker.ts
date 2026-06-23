@@ -2,11 +2,23 @@ import { useState, useCallback, useMemo } from 'react';
 import type { Emoji } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../../../components/emoji-picker/types';
 
+/**
+ * The "more reactions" trigger rect the desktop emoji picker anchors to.
+ * Stored verbatim (not a pre-computed popover position): FloatingPopover does
+ * the flip-up / viewport clamp the hook used to compute by hand.
+ */
+export interface EmojiPickerAnchorRect {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 interface UseEmojiPickerOptions {
   customEmoji?: Emoji[];
   onEmojiClick: (emoji: string) => void;
   onSetEmojiPickerOpen: (messageId: string | undefined) => void;
-  onSetEmojiPickerPosition: (pos: { x: number; y: number } | null) => void;
+  onSetEmojiPickerPosition: (rect: EmojiPickerAnchorRect | null) => void;
 }
 
 export function useEmojiPicker(options: UseEmojiPickerOptions) {
@@ -52,20 +64,18 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
     [onEmojiClick]
   );
 
-  // Open desktop emoji picker with fixed position calculation from DOMRect
+  // Open desktop emoji picker, anchored to the "more reactions" trigger rect.
+  // FloatingPopover handles flip-up + viewport clamp (previously hand-rolled
+  // here against magic pickerHeight/pickerWidth constants).
   const openDesktopEmojiPicker = useCallback(
     (messageId: string, rect: DOMRect) => {
       onSetEmojiPickerOpen(messageId);
-      // These match .emoji-picker max dimensions in EmojiPicker.scss (clamp values)
-      // Update here if the SCSS clamp values change
-      const pickerHeight = 480;
-      const pickerWidth = 380;
-      const spaceBelow = window.innerHeight - rect.bottom;
-      const y = spaceBelow < pickerHeight + 16
-        ? Math.max(8, rect.top - pickerHeight - 4) // flip upward, clamp to viewport top
-        : rect.bottom + 4;                          // open downward
-      const x = Math.max(8, Math.min(rect.left, window.innerWidth - pickerWidth - 8));
-      onSetEmojiPickerPosition({ x, y });
+      onSetEmojiPickerPosition({
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height,
+      });
     },
     [onSetEmojiPickerOpen, onSetEmojiPickerPosition]
   );

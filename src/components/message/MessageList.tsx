@@ -31,6 +31,7 @@ import { Button as ButtonBase } from '../primitives';
 const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
+import type { EmojiPickerAnchorRect } from '../../hooks/business/messages/useEmojiPicker';
 import { useQueryClient } from '@tanstack/react-query';
 import { useScrollAnchor } from '../../hooks/ui/useScrollAnchor';
 
@@ -198,7 +199,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const queryClient = useQueryClient();
     const [hoverTarget, setHoverTarget] = useState<string>();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
-    const [emojiPickerPosition, setEmojiPickerPosition] = useState<{ x: number; y: number } | null>(null);
+    const [emojiPickerPosition, setEmojiPickerPosition] = useState<EmojiPickerAnchorRect | null>(null);
 
     // Reset emoji picker position when picker closes
     useEffect(() => {
