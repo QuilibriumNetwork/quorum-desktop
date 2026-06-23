@@ -595,6 +595,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [App Lock / Password Gate — at-rest encryption, mobile, duress-wipe](reports/2026-06-22-app-lock-password-gate-research.md)
 - [Docs Staleness Audit — 2026-05-20](reports/2026-05-20-docs-staleness-audit.md)
 - [Notification preference architecture — desktop vs mobile](reports/2026-05-28-notification-architecture-divergence.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
