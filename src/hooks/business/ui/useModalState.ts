@@ -72,6 +72,9 @@ export interface ModalState {
     isOpen: boolean;
     folderId?: string;
   };
+  notifications: {
+    isOpen: boolean;
+  };
 }
 
 // Modal actions
@@ -102,7 +105,9 @@ type ModalAction =
   | { type: 'OPEN_CONVERSATION_SETTINGS'; conversationId: string }
   | { type: 'CLOSE_CONVERSATION_SETTINGS' }
   | { type: 'OPEN_FOLDER_EDITOR'; folderId?: string }
-  | { type: 'CLOSE_FOLDER_EDITOR' };
+  | { type: 'CLOSE_FOLDER_EDITOR' }
+  | { type: 'OPEN_NOTIFICATIONS' }
+  | { type: 'CLOSE_NOTIFICATIONS' };
 
 // Initial state
 const initialModalState: ModalState = {
@@ -117,6 +122,7 @@ const initialModalState: ModalState = {
   blockUser: { isOpen: false },
   conversationSettings: { isOpen: false },
   folderEditor: { isOpen: false },
+  notifications: { isOpen: false },
 };
 
 // Modal reducer
@@ -215,6 +221,11 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
       };
     case 'CLOSE_FOLDER_EDITOR':
       return { ...state, folderEditor: { isOpen: false } };
+
+    case 'OPEN_NOTIFICATIONS':
+      return { ...state, notifications: { isOpen: true } };
+    case 'CLOSE_NOTIFICATIONS':
+      return { ...state, notifications: { isOpen: false } };
 
     default:
       return state;
@@ -331,6 +342,15 @@ export const useModalState = () => {
     dispatch({ type: 'CLOSE_FOLDER_EDITOR' });
   }, []);
 
+  // Global Notifications Panel
+  const openNotifications = useCallback(() => {
+    dispatch({ type: 'OPEN_NOTIFICATIONS' });
+  }, []);
+
+  const closeNotifications = useCallback(() => {
+    dispatch({ type: 'CLOSE_NOTIFICATIONS' });
+  }, []);
+
   return {
     // State
     state,
@@ -378,6 +398,10 @@ export const useModalState = () => {
     // Folder Editor
     openFolderEditor,
     closeFolderEditor,
+
+    // Global Notifications Panel
+    openNotifications,
+    closeNotifications,
 
     // Legacy compatibility
     isNewDirectMessageOpen: state.newDirectMessage.isOpen,

@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { Flex, Icon, Button, Tooltip, Select } from '../primitives';
+import { Flex, Icon, Button, Tooltip, Select, Modal } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
@@ -233,23 +233,13 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     );
   };
 
-  return (
-    <>
-      <DropdownPanel
-        isOpen={isOpen}
-        onClose={onClose}
-        position="absolute"
-        positionStyle={global ? 'centered' : 'right-aligned'}
-        maxWidth={500}
-        maxHeight={Math.min(window.innerHeight * 0.8, 600)}
-        title={
-          allNotifications.length === 1
-            ? t`${allNotifications.length} notification`
-            : t`${allNotifications.length} notifications`
-        }
-        className={`notification-panel ${className || ''}`}
-        showCloseButton={true}
-      >
+  const panelTitle =
+    allNotifications.length === 1
+      ? t`${allNotifications.length} notification`
+      : t`${allNotifications.length} notifications`;
+
+  const panelBody = (
+      <>
         {/* Filter controls - only show when there are notifications */}
         {!isLoading && allNotifications.length > 0 && (
           <div className="notification-panel__controls">
@@ -378,7 +368,42 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             {t`Showing the ${GLOBAL_DISPLAY_CAP} most recent notifications`}
           </div>
         )}
-      </DropdownPanel>
+      </>
+  );
+
+  return (
+    <>
+      {global ? (
+        // Global mode: top-level centered Modal (backdrop + blur + correct
+        // z-index above the AppShell chrome — see .agents/docs/features/modals.md).
+        <Modal
+          visible={isOpen}
+          onClose={onClose}
+          title={panelTitle}
+          size="medium"
+          closeOnBackdropClick
+          closeOnEscape
+          noPadding
+          className={`notification-panel notification-panel--global ${className || ''}`}
+        >
+          {panelBody}
+        </Modal>
+      ) : (
+        // Per-space mode: anchored right-aligned dropdown (unchanged).
+        <DropdownPanel
+          isOpen={isOpen}
+          onClose={onClose}
+          position="absolute"
+          positionStyle="right-aligned"
+          maxWidth={500}
+          maxHeight={Math.min(window.innerHeight * 0.8, 600)}
+          title={panelTitle}
+          className={`notification-panel ${className || ''}`}
+          showCloseButton={true}
+        >
+          {panelBody}
+        </DropdownPanel>
+      )}
 
       {confirm?.modalConfig && (
         <ConfirmationModal

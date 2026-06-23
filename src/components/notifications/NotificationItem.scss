@@ -50,6 +50,27 @@
   @extend .dropdown-result-meta;
 }
 
+// Global panel: two-line meta. Line 1 = location breadcrumb, line 2 = sender +
+// date. Each line is its own flex row so fields truncate independently.
+.notification-header--stacked {
+  @extend .dropdown-result-header;
+  display: flex;
+  flex-direction: column;
+  gap: $s-1;
+
+  .notification-meta--location,
+  .notification-meta--sender {
+    @extend .dropdown-result-meta;
+    width: 100%;
+    align-items: center;
+  }
+
+  // The sender line lays sender (truncating) against the date (fixed).
+  .notification-meta--sender {
+    justify-content: space-between;
+  }
+}
+
 .notification-channel-icon {
   @extend .dropdown-result-type-icon;
 }

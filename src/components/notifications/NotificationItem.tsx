@@ -131,30 +131,55 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       onClick={handleClick}
       tabIndex={0}
     >
-      <Flex justify="between" className="notification-header">
-        <Flex className="notification-meta min-w-0">
-          {spaceName && (
-            <>
-              <span className="notification-space truncate-channel-name flex-shrink min-w-0">{spaceName}</span>
-              <span className="notification-thread-chevron">›</span>
-            </>
-          )}
-          <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
-          <span className={`notification-channel ${isThread ? '' : 'mr-2'} truncate-channel-name flex-shrink min-w-0`}>{channelName}</span>
-          {isThread && (
-            <>
-              <span className="notification-thread-chevron">›</span>
-              <span className="notification-thread-label mr-2">{t`Thread`}</span>
-            </>
-          )}
-          <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
-          <span className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
+      {spaceName ? (
+        // Global panel: two-line meta. Line 1 is the location breadcrumb
+        // (Space › #channel [› Thread]); line 2 is sender + date. Gives each
+        // field room and truncates independently on narrow viewports.
+        <div className="notification-header notification-header--stacked">
+          <Flex className="notification-meta notification-meta--location min-w-0">
+            <span className="notification-space truncate-channel-name flex-shrink min-w-0">{spaceName}</span>
+            <span className="notification-thread-chevron">›</span>
+            <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
+            <span className="notification-channel truncate-channel-name flex-shrink min-w-0">{channelName}</span>
+            {isThread && (
+              <>
+                <span className="notification-thread-chevron">›</span>
+                <span className="notification-thread-label">{t`Thread`}</span>
+              </>
+            )}
+          </Flex>
+          <Flex justify="between" className="notification-meta notification-meta--sender min-w-0">
+            <Flex className="min-w-0">
+              <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
+              <span className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
+            </Flex>
+            <Flex className="flex-shrink-0 whitespace-nowrap">
+              <Icon name="calendar-alt" className="notification-date-icon flex-shrink-0" />
+              <span className="notification-date">{formattedDate}</span>
+            </Flex>
+          </Flex>
+        </div>
+      ) : (
+        // Per-space panel: original single-line meta (unchanged).
+        <Flex justify="between" className="notification-header">
+          <Flex className="notification-meta min-w-0">
+            <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
+            <span className={`notification-channel ${isThread ? '' : 'mr-2'} truncate-channel-name flex-shrink min-w-0`}>{channelName}</span>
+            {isThread && (
+              <>
+                <span className="notification-thread-chevron">›</span>
+                <span className="notification-thread-label mr-2">{t`Thread`}</span>
+              </>
+            )}
+            <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
+            <span className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
+          </Flex>
+          <Flex className="notification-meta flex-shrink-0 whitespace-nowrap">
+            <Icon name="calendar-alt" className="notification-date-icon flex-shrink-0" />
+            <span className="notification-date">{formattedDate}</span>
+          </Flex>
         </Flex>
-        <Flex className="notification-meta flex-shrink-0 whitespace-nowrap">
-          <Icon name="calendar-alt" className="notification-date-icon flex-shrink-0" />
-          <span className="notification-date">{formattedDate}</span>
-        </Flex>
-      </Flex>
+      )}
 
       <div className="notification-content">
         <div className="notification-text">
