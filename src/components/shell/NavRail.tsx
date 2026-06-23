@@ -8,9 +8,14 @@ import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { getAddressSuffix } from '../../utils';
 import { useOptionalShellState } from './useShellState';
+import { useSpaces } from '../../hooks/queries/spaces';
+import { useSpaceMentionCounts } from '../../hooks/business/mentions';
+import { useSpaceReplyCounts } from '../../hooks/business/replies';
+import { useGlobalSenderResolver } from '../../hooks/business/notifications';
+import { NotificationPanel } from '../notifications/NotificationPanel';
 import './NavRail.scss';
 
-type RailSectionId = 'dm' | 'spaces' | 'bookmarks' | 'discover' | 'farcaster' | 'wallet';
+type RailSectionId = 'dm' | 'spaces' | 'notifications' | 'bookmarks' | 'discover' | 'farcaster' | 'wallet';
 
 interface RailItemConfig {
   id: RailSectionId;
@@ -31,6 +36,12 @@ const buildItems = (): RailItemConfig[] => [
     icon: 'users-group',
     label: t`Spaces`,
     route: '/spaces',
+  },
+  {
+    id: 'notifications',
+    icon: 'bell',
+    label: t`Notifications`,
+    route: '', // not navigated — opens the global panel
   },
   {
     id: 'bookmarks',
@@ -86,6 +97,17 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   const userIcon = user?.currentPasskeyInfo?.pfpUrl;
   const userAddress = user?.currentPasskeyInfo?.address || '';
 
+  // Global notifications: bell opens a centered panel aggregating across spaces.
+  // `useSpaces` is suspense-backed, matching the sibling SpacesSidebar under the
+  // app-level Suspense boundary (App.tsx) — the cached query won't re-suspend.
+  const [notifOpen, setNotifOpen] = React.useState(false);
+  const { data: spaces = [] } = useSpaces();
+  const mentionCounts = useSpaceMentionCounts({ spaces });
+  const replyCounts = useSpaceReplyCounts({ spaces });
+  const hasUnreadNotifications =
+    Object.keys(mentionCounts).length > 0 || Object.keys(replyCounts).length > 0;
+  const resolveGlobalSender = useGlobalSenderResolver(spaces);
+
   // Compute active section from pathname.
   // /discover/* → "discover"; /spaces or /spaces/:id/:id → "spaces"; /messages → "dm".
   const activeId: RailSectionId | null = React.useMemo(() => {
@@ -99,6 +121,10 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   }, [location.pathname]);
 
   const onItemClick = (item: RailItemConfig) => {
+    if (item.id === 'notifications') {
+      setNotifOpen(true);
+      return;
+    }
     if (item.id === 'dm') {
       // On phone the rail lives in the drawer — land on the DM list so the
       // sidebar swaps content and the drawer stays open. On desktop/tablet
@@ -167,6 +193,9 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
             >
               <span className="relative flex-shrink-0">
                 <Icon name={item.icon} size="xl" />
+                {item.id === 'notifications' && hasUnreadNotifications && (
+                  <span className="icon-unread-dot nav-rail__notif-dot" aria-hidden="true" />
+                )}
               </span>
               {!collapsed && (
                 <span className="nav-rail__item-label">{item.label}</span>
@@ -268,6 +297,19 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
           </div>
         </button>
       )}
+
+      {/* Global notifications panel (centered). spaceId/channelIds/mapSenderToUser
+          are required by the shared props but unused in global mode. */}
+      <NotificationPanel
+        global
+        isOpen={notifOpen}
+        onClose={() => setNotifOpen(false)}
+        spaces={spaces}
+        resolveGlobalSender={resolveGlobalSender}
+        spaceId=""
+        channelIds={[]}
+        mapSenderToUser={() => undefined}
+      />
     </nav>
   );
 };

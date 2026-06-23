@@ -203,3 +203,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+// Unread dot on the notifications bell. Overrides the base .icon-unread-dot
+// (which positions left-of-an-avatar) to sit at the bell icon's top-right.
+.nav-rail__notif-dot {
+  top: -2px;
+  right: -2px;
+  left: auto;
+  transform: none;
+}

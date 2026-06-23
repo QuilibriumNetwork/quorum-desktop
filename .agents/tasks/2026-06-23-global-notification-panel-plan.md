@@ -1287,6 +1287,19 @@ git commit -m "feat(notifications): NotificationPanel global mode (centered, bre
 - Modify: `src/components/shell/NavRail.tsx`
 - Modify: `src/components/shell/NavRail.scss`
 
+> **DEVIATION FROM ORIGINAL SPEC (2026-06-23).** Two corrections vs the steps below:
+> 1. The sender resolver is the `useGlobalSenderResolver(spaces)` HOOK (Task 6
+>    deviation), NOT `makeResolveGlobalSender(spaces)` + `useMemo`. Import it from
+>    `../../hooks/business/notifications`. The steps below referencing
+>    `makeResolveGlobalSender` are obsolete.
+> 2. Suspense: verified NavRail renders under the app-level `<Suspense>` in
+>    `App.tsx` (line ~120), same boundary the sibling `SpacesSidebar` relies on for
+>    its own `useSpaces()` call. So `useSpaces()` is called directly in NavRail (no
+>    extra local boundary needed); the cached query won't re-suspend.
+> 3. The `.nav-rail__notif-dot` SCSS must also reset the base `.icon-unread-dot`'s
+>    `left: -15px` / `top: 50%` / `transform` (which position it left-of-an-avatar):
+>    `top: -2px; right: -2px; left: auto; transform: none;`.
+
 - [ ] **Step 1: Add the notifications rail item**
 
 In `RailSectionId` add `'notifications'`. In `buildItems()` insert after the `spaces` entry:
