@@ -517,34 +517,6 @@ export const MessageComposer = forwardRef<
       }
     }, []);
 
-    // Hide the markdown toolbar when the user interacts outside the editor.
-    // mouseup only fires on the editor, so a click elsewhere (which doesn't
-    // collapse a textarea's retained selection) would otherwise leave the
-    // toolbar lingering. Use a capture-phase pointerdown: if the press is not
-    // on the editor and not on the toolbar itself (whose buttons must still
-    // work), close it. Runs only while the toolbar is open.
-    useEffect(() => {
-      if (!showMarkdownToolbar) return;
-
-      const onPointerDownOutside = (e: PointerEvent) => {
-        const target = e.target as Node | null;
-        const editor = ENABLE_MENTION_PILLS
-          ? editorRef.current
-          : textareaRef.current;
-        const insideEditor = !!target && !!editor && editor.contains(target);
-        const insideToolbar =
-          target instanceof Element &&
-          !!target.closest('.markdown-toolbar');
-        if (!insideEditor && !insideToolbar) {
-          setShowMarkdownToolbar(false);
-        }
-      };
-
-      document.addEventListener('pointerdown', onPointerDownOutside, true);
-      return () =>
-        document.removeEventListener('pointerdown', onPointerDownOutside, true);
-    }, [showMarkdownToolbar]);
-
     // Handle markdown formatting
     const handleMarkdownFormat = useCallback(
       (formatFn: FormatFunction) => {
