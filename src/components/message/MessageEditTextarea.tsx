@@ -4,7 +4,8 @@ import { InfiniteData } from '@tanstack/react-query';
 import { Flex } from '../primitives';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { MentionDropdown } from './MentionDropdown';
-import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
+import { getTextareaSelectionRect } from '../../utils/toolbarPositioning';
+import { rectAnchor, type VirtualElement } from '../ui';
 import type { FormatFunction } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, PostMessage, Role, Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
@@ -82,9 +83,10 @@ export function MessageEditTextarea({
   });
   const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
 
-  // Markdown toolbar state
+  // Markdown toolbar state. Anchor is a virtual element over the selection
+  // rect; FloatingPopover centers/flips/clamps it.
   const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
-  const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
+  const [toolbarAnchor, setToolbarAnchor] = useState<VirtualElement | null>(null);
   const [selectionRange, setSelectionRange] = useState({ start: 0, end: 0 });
 
   // Mention autocomplete state
@@ -107,10 +109,10 @@ export function MessageEditTextarea({
       // Text is selected
       setSelectionRange({ start, end });
 
-      // Calculate smart position centered above selection
-      const position = calculateToolbarPosition(textarea);
-      if (position) {
-        setToolbarPosition(position);
+      // Measure the selection rect (mirror-div) and anchor the toolbar to it
+      const rect = getTextareaSelectionRect(textarea);
+      if (rect) {
+        setToolbarAnchor(rectAnchor(rect));
         setShowMarkdownToolbar(true);
       } else {
         setShowMarkdownToolbar(false);
@@ -652,7 +654,7 @@ export function MessageEditTextarea({
       {/* Markdown Toolbar */}
       <MarkdownToolbar
         visible={showMarkdownToolbar}
-        position={toolbarPosition}
+        anchor={toolbarAnchor}
         onFormat={handleMarkdownFormat}
       />
 

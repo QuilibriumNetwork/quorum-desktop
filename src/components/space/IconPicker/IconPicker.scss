@@ -1,6 +1,26 @@
 // IconPicker component styles
 @use '@/styles/variables' as *;
 
+// Popover container — previously the .dropdown-panel box from DropdownPanel.
+// Now the IconPicker is anchored by <FloatingPopover> (which is unstyled), so
+// the panel chrome (background, radius, shadow, border, sizing) lives here.
+.icon-picker-panel {
+  width: min(414px, calc(100vw - 40px));
+  max-width: min(414px, calc(100vw - 40px));
+  max-height: 420px;
+  overflow: hidden;
+  background: var(--color-bg-sidebar);
+  border-radius: $rounded-lg;
+  box-shadow: $shadow-lg;
+  border: $border solid var(--color-border-panel);
+  font-weight: normal;
+
+  // Input/Select fields inside the panel blend with the panel background
+  // (mirrors the tokens DropdownPanel set on .dropdown-panel).
+  --color-field-bg: var(--color-bg-panel-item);
+  --color-field-bg-focus: var(--color-bg-panel-item-hover);
+}
+
 // Icon grid region — its own scroll area so every icon is reachable even though
 // the grid is taller than the popover. Capped so a few rows sit below the fold
 // (scroll is meaningful, not a one-row orphan).

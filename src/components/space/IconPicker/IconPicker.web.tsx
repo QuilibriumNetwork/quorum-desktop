@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { Button, Icon, Flex, ColorSwatch, useTheme } from '../../primitives';
-import { DropdownPanel } from '../../ui';
+import { FloatingPopover } from '../../ui';
 import {
   IconPickerProps,
   ICON_OPTIONS,
@@ -29,7 +29,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
   const [selectedVariant, setSelectedVariant] = useState<IconVariant>(selectedIconVariant);
-  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLDivElement>(null);
   const { resolvedTheme } = useTheme();
   const isDarkTheme = resolvedTheme === 'dark';
@@ -62,18 +61,6 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   useEffect(() => {
     setSelectedVariant(selectedIconVariant);
   }, [selectedIconVariant]);
-
-  // Calculate dropdown position when opened
-  useEffect(() => {
-    if (isOpen && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
-      setDropdownPosition({
-        top: rect.bottom + 4, // 4px below button
-        left: rect.left, // Align with button left edge
-      });
-    }
-  }, [isOpen]);
-
 
   const handleIconClick = (iconName: IconName) => {
     onIconSelect(iconName, selectedColor, selectedVariant);
@@ -159,20 +146,19 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         )}
       </div>
 
-      <DropdownPanel
-        isOpen={isOpen}
+      <FloatingPopover
+        open={isOpen}
         onClose={() => setIsOpen(false)}
-        position="fixed"
-        maxWidth={414}
-        maxHeight={420}
-        showCloseButton={false}
-        useMobileBottomSheet={false}
-        style={{
-          top: `${dropdownPosition.top}px`,
-          left: `${dropdownPosition.left}px`,
-          zIndex: 15000, // Higher than modal z-index (3000)
-          backgroundColor: 'var(--color-bg-sidebar)',
-        }}
+        anchor={buttonRef.current}
+        // Below the trigger, left edges aligned (matches the previous
+        // rect.bottom + 4 / rect.left manual placement). flip() now lifts the
+        // panel above the trigger when it would clip the viewport bottom —
+        // the latent clip the old fixed-offset code had.
+        placement="bottom-start"
+        gap={4}
+        zIndex={15000} // Higher than modal z-index (3000)
+        role="dialog"
+        className="icon-picker-panel"
       >
         {/* Header with variant toggle, clear button, and colors */}
         <div className="p-3">
@@ -283,7 +269,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             ))}
           </div>
         </div>
-      </DropdownPanel>
+      </FloatingPopover>
     </>
   );
 };

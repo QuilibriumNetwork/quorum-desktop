@@ -1,8 +1,9 @@
 ---
 type: task
 title: Adopt FloatingPopover across the remaining trigger-anchored surfaces
-status: open
+status: done
 created: 2026-06-22
+completed: 2026-06-23
 scope: desktop
 priority: medium
 related:
@@ -84,7 +85,59 @@ individually than one big sweep.
 - Each migrated surface smoke-tested near viewport edges (the flip/shift the
   hand-rolled code got wrong in places now comes for free).
 
+## Completion notes (2026-06-23)
+
+Done on branch `feat/adopt-floatingpopover-anchored-surfaces` (one branch, per
+commit below). All 6 surfaces migrated; project typechecks, lints (no new
+warnings), and builds.
+
+What shipped:
+
+1. **Primitive extension** — `FloatingPopover.anchor` accepts
+   `HTMLElement | VirtualElement | null`; added `positionViaLayout` (top/left
+   positioning so surfaces whose open animation scales via transform don't
+   fight floating-ui), a `style` prop (dynamic width), and a `rectAnchor()`
+   helper + exported `VirtualElement` type.
+2. **Icon picker (5)** → FloatingPopover (`bottom-start`); `flip()` fixes the
+   latent bottom-clip. Panel chrome moved to `.icon-picker-panel`.
+3. **Message actions menu (3)** and **Context menu (4)** → virtual reference at
+   the click point; `closeOnScroll` + `positionViaLayout`. Deleted their
+   `calculatePosition()` / item-count height estimates and hand-rolled
+   click-outside/escape/scroll listeners.
+4. **Mention dropdown (2)** → portal mode anchors to the caret rect
+   (`top-start` + flip/shift). Inline (non-portal) mode unchanged.
+5. **Markdown toolbar (6)** → selection-anchored FloatingPopover (`top`,
+   centered). Deleted the duplicate positioning in `MessageComposer` and the
+   matching block in `MessageEditTextarea`.
+6. **Emoji picker (1)** → anchors to the stored "more reactions" trigger rect
+   (`bottom-start`, flips up); `closeOnScroll`. Deleted the magic
+   `pickerHeight`/`pickerWidth` flip math.
+
+### Deviation from the "delete the bespoke utils" goal
+
+`caretCoordinates.ts` and `toolbarPositioning.ts` were **not** deleted, because
+each does two things: (a) compute a popover position — now floating-ui's job,
+deleted — and (b) **measure** a caret/selection rect in a textarea via a mirror
+div, which has no native equivalent (the Selection API only exposes rects for
+contentEditable). FloatingPopover still needs that rect to build its virtual
+element. So:
+- `toolbarPositioning.ts` was rewritten down to `getTextareaSelectionRect()`
+  (measurement only; placement constants removed).
+- `caretCoordinates.ts` was left as-is (still the textarea caret measurement
+  for the mention dropdown; contentEditable uses the native Range directly).
+
+The positioning math the task wanted gone is gone; the irreducible DOM
+measurement stays.
+
+### Not yet smoke-tested in-browser
+
+Typecheck + build pass, but the viewport-edge flip/shift behaviour for each
+surface hasn't been manually verified in a running app yet. Worth a pass near
+all four viewport edges per surface before merge.
+
 ---
 
 *Created 2026-06-22 after shipping the UserProfile FloatingPopover migration.
 Source: the codebase audit run during that migration.*
+
+*Last updated: 2026-06-23*

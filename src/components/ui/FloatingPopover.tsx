@@ -13,6 +13,7 @@ import {
   FloatingFocusManager,
   type Placement,
   type ReferenceType,
+  type VirtualElement,
 } from '@floating-ui/react';
 
 /**
@@ -42,10 +43,15 @@ export interface FloatingPopoverProps {
   /** Called whenever the popover should close (outside press, escape). */
   onClose: () => void;
   /**
-   * The trigger element the popover is anchored to. Provide this when the
-   * caller already has the DOM node (e.g. captured from a click event).
+   * The trigger the popover is anchored to. Either a real DOM node (e.g.
+   * captured from a click event) or a floating-ui *virtual element* — any
+   * object exposing `getBoundingClientRect()`. Virtual elements let surfaces
+   * anchor to a point or a measured rect that has no backing element, e.g. a
+   * right-click position, a text-caret rect, or a text-selection rect. The
+   * value is passed straight through to floating-ui's `elements.reference`,
+   * which supports both natively.
    */
-  anchor?: HTMLElement | null;
+  anchor?: HTMLElement | VirtualElement | null;
   /** Preferred placement; flips automatically when it doesn't fit. */
   placement?: Placement;
   /** Gap in px between the anchor and the floating element. */
@@ -77,7 +83,34 @@ export interface FloatingPopoverProps {
    * entirely. Defaults to false (other surfaces follow the anchor instead).
    */
   closeOnScroll?: boolean;
+  /**
+   * Position the floating element via `top`/`left` instead of floating-ui's
+   * default `transform: translate(...)`. Set this when the popover's own CSS
+   * animates `transform` (e.g. a `scale()` open animation): a transform-based
+   * keyframe would otherwise override floating-ui's positioning transform and
+   * the element would animate from the viewport origin (0,0). Defaults to
+   * false (transform positioning — slightly cheaper, fine for opacity-only or
+   * non-animated surfaces). See floating-ui `useFloating({ transform })`.
+   */
+  positionViaLayout?: boolean;
+  /**
+   * Whether the popover dismisses itself on outside-press / Escape (floating-ui
+   * useDismiss). Defaults to true. Set false when the caller fully owns
+   * visibility (e.g. a composer that shows the surface based on selection/caret
+   * state): useDismiss not only calls onClose but also calls
+   * stopPropagation() on the Escape keydown, which would swallow Escape from
+   * other handlers even though the caller's onClose is a no-op. Disabling it
+   * leaves Escape/outside-press to the caller.
+   */
+  dismissable?: boolean;
   className?: string;
+  /**
+   * Extra inline styles merged onto the floating element. Use for sizing the
+   * surface (e.g. a dynamic `width`); positioning and `zIndex` are owned by
+   * the primitive and applied first, so avoid overriding `position`/`top`/
+   * `left`/`transform` here.
+   */
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }
 
@@ -96,7 +129,10 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   role = 'dialog',
   closeWhenAnchorHidden = true,
   closeOnScroll = false,
+  positionViaLayout = false,
+  dismissable = true,
   className,
+  style,
   children,
 }) => {
   // Keep onClose identity-stable inside effects/callbacks: callers often pass
@@ -117,9 +153,17 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
     // body-portalled popover (immune to transformed/positioned ancestors and
     // to page scroll affecting the offset parent).
     strategy: 'fixed',
+    // When the floating element animates its own transform, position via
+    // top/left so the keyframe doesn't clobber floating-ui's translate.
+    transform: !positionViaLayout,
     // Reference held in state (reactive) — the critical fix vs. setReference
     // in an effect. floating-ui sees the anchor the same render open flips.
-    elements: { reference: anchor ?? null },
+    // The controlled `elements.reference` option is typed `Element` but
+    // floating-ui supports virtual elements (any { getBoundingClientRect })
+    // here at runtime — it only calls getBoundingClientRect for positioning.
+    // Cast through the option's narrower type; `anchor` is validated as
+    // HTMLElement | VirtualElement | null by the prop type.
+    elements: { reference: (anchor ?? null) as Element | null },
     middleware: [
       offset(gap),
       // Flip handles BOTH axes:
@@ -148,6 +192,10 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   });
 
   const dismiss = useDismiss(context, {
+    // Gate both interceptions on `dismissable`: when the caller owns
+    // visibility, useDismiss must not intercept (and stopPropagation) Escape /
+    // outside-press — those belong to the caller's own handlers.
+    enabled: dismissable,
     outsidePress: true,
     escapeKey: true,
   });
@@ -177,10 +225,21 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
 
   if (!open || !anchor) return null;
 
+  // FloatingFocusManager inspects the reference element (isTypeableCombobox
+  // calls getAttribute on it), so it only works with a real, connected DOM
+  // element. A *virtual* element (point/caret/selection rect) has no
+  // getAttribute and would crash it; a detached node would also misbehave.
+  // Virtual-anchored surfaces have no real trigger to trap/return focus to
+  // anyway, so use the focus manager only for connected DOM elements —
+  // matching the pre-migration behaviour of the virtual-anchored surfaces.
+  // (`anchor` is non-null here: the guard above already returned on !anchor.)
+  const anchorIsElement = anchor instanceof Element && anchor.isConnected;
+  const useFocusManager = manageFocus && anchorIsElement;
+
   const floating = (
     <div
       ref={refs.setFloating}
-      style={{ ...floatingStyles, zIndex }}
+      style={{ ...floatingStyles, zIndex, ...style }}
       className={className}
       {...getFloatingProps()}
     >
@@ -190,7 +249,7 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
 
   return (
     <FloatingPortal>
-      {manageFocus ? (
+      {useFocusManager ? (
         // returnFocus={false}: returning focus to the previous trigger on
         // close fights with switching to a new trigger and can re-open the
         // card (floating-ui issue #3366).
@@ -208,6 +267,33 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   );
 };
 
-export type { Placement, ReferenceType };
+/**
+ * Build a floating-ui virtual element that anchors to a fixed rect — a point
+ * (right-click, caret) or a measured region (text selection). Pass the result
+ * as <FloatingPopover anchor>. The rect is captured by value, so callers should
+ * memoize the call when the point/region is stable across renders.
+ */
+export function rectAnchor(rect: {
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+}): VirtualElement {
+  const { x, y, width = 0, height = 0 } = rect;
+  return {
+    getBoundingClientRect: () => ({
+      x,
+      y,
+      top: y,
+      left: x,
+      right: x + width,
+      bottom: y + height,
+      width,
+      height,
+    }),
+  };
+}
+
+export type { Placement, ReferenceType, VirtualElement };
 
 export default FloatingPopover;

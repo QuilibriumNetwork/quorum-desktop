@@ -1,18 +1,16 @@
-import React, { useRef, useEffect, useState, useMemo } from 'react';
-import { Portal, Icon, useTheme } from '../primitives';
-import { useClickOutside } from '../../hooks/useClickOutside';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Icon, useTheme } from '../primitives';
+import { FloatingPopover, rectAnchor } from './FloatingPopover';
 import { UserAvatar } from '../user/UserAvatar';
 import SpaceIcon from '../space/SpaceIcon';
 import { getFolderColorHex, IconColor } from '../space/IconPicker/types';
 import type { IconName, IconVariant } from '../primitives';
 import './ContextMenu.scss';
 
-// Fixed dimensions for viewport edge detection
 const DEFAULT_MENU_WIDTH = 240;
-const ITEM_HEIGHT = 36; // Approximate height per item
-const HEADER_HEIGHT = 44; // Approximate height for header
-const SEPARATOR_HEIGHT = 9; // Height for separator (1px line + 8px margin)
-const PADDING = 8;
+// The menu opens slightly to the right of the cursor (matches the previous
+// hand-rolled OFFSET_RIGHT nudge). flip()/shift() handle the edge cases the
+// old estimated-height calculatePosition() did by hand.
 const OFFSET_RIGHT = 12;
 
 // Header configuration types
@@ -70,28 +68,6 @@ export interface ContextMenuProps {
   width?: number;
 }
 
-function calculatePosition(
-  clickX: number,
-  clickY: number,
-  menuWidth: number,
-  menuHeight: number
-) {
-  const viewportW = window.innerWidth;
-  const viewportH = window.innerHeight;
-
-  const offsetClickX = clickX + OFFSET_RIGHT;
-  const flipX = offsetClickX + menuWidth + PADDING > viewportW;
-  const flipY = clickY + menuHeight + PADDING > viewportH;
-
-  return {
-    x: flipX ? Math.max(PADDING, clickX - menuWidth) : offsetClickX,
-    // When flipping Y, position menu bottom slightly above cursor
-    y: flipY
-      ? Math.max(PADDING, clickY - menuHeight)
-      : clickY,
-  };
-}
-
 const ContextMenu: React.FC<ContextMenuProps> = ({
   header,
   items,
@@ -99,7 +75,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   onClose,
   width = DEFAULT_MENU_WIDTH,
 }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
   const [confirmingItem, setConfirmingItem] = useState<string | null>(null);
 
   // Filter out hidden items
@@ -108,16 +83,12 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
     [items]
   );
 
-  // Calculate menu height based on items
-  const menuHeight = useMemo(() => {
-    const itemsHeight = visibleItems.length * ITEM_HEIGHT;
-    const separatorsHeight = visibleItems.filter((item) => item.separator).length * SEPARATOR_HEIGHT;
-    const headerHeight = header ? HEADER_HEIGHT : 0;
-    return itemsHeight + separatorsHeight + headerHeight + PADDING * 2;
-  }, [visibleItems, header]);
-
-  const [adjustedPosition, setAdjustedPosition] = useState(() =>
-    calculatePosition(position.x, position.y, width, menuHeight)
+  // Virtual reference at the click point, nudged right by OFFSET_RIGHT to match
+  // the previous placement. FloatingPopover's flip()/shift() keep the menu in
+  // the viewport (the old code estimated height from item count to do this).
+  const reference = useMemo(
+    () => rectAnchor({ x: position.x + OFFSET_RIGHT, y: position.y }),
+    [position.x, position.y]
   );
 
   const { resolvedTheme } = useTheme();
@@ -132,40 +103,6 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
       return () => clearTimeout(timeout);
     }
   }, [confirmingItem]);
-
-  // Click outside to close
-  useClickOutside(menuRef, onClose, true);
-
-  // Escape key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
-
-  // Close on scroll (with close-once guard)
-  useEffect(() => {
-    let hasClosed = false;
-    const handleScroll = () => {
-      if (hasClosed) return;
-      hasClosed = true;
-      onClose();
-    };
-    window.addEventListener('scroll', handleScroll, { capture: true });
-    return () =>
-      window.removeEventListener('scroll', handleScroll, { capture: true });
-  }, [onClose]);
-
-  // Recalculate position if it changes
-  useEffect(() => {
-    setAdjustedPosition(
-      calculatePosition(position.x, position.y, width, menuHeight)
-    );
-  }, [position.x, position.y, width, menuHeight]);
 
   const handleItemClick = (item: MenuItem) => {
     if (item.confirmLabel && confirmingItem !== item.id) {
@@ -268,17 +205,23 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   };
 
   return (
-    <Portal>
-      <div
-        ref={menuRef}
-        className="context-menu"
-        style={{
-          left: adjustedPosition.x,
-          top: adjustedPosition.y,
-          width,
-        }}
-      >
-        {renderHeader()}
+    <FloatingPopover
+      open
+      onClose={onClose}
+      anchor={reference}
+      placement="bottom-start"
+      gap={0}
+      role="menu"
+      // Spaces/folders/DM contacts/channels live in scrollable sidebars; the
+      // old code closed the menu on any scroll. closeOnScroll keeps that.
+      closeOnScroll
+      // .context-menu animates a transform scale on open — position via
+      // top/left so the keyframe doesn't fight floating-ui's transform.
+      positionViaLayout
+      className="context-menu"
+      style={{ width }}
+    >
+      {renderHeader()}
 
         {visibleItems.map((item) => (
           <React.Fragment key={item.id}>
@@ -296,8 +239,7 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             </button>
           </React.Fragment>
         ))}
-      </div>
-    </Portal>
+    </FloatingPopover>
   );
 };
 

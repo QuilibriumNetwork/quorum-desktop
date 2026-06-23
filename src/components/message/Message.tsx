@@ -17,7 +17,7 @@ const EmojiPicker = React.lazy(() =>
 );
 import type { EmojiData } from '../emoji-picker/types';
 import UserProfile from '../user/UserProfile';
-import { FloatingPopover } from '../ui';
+import { FloatingPopover, rectAnchor } from '../ui';
 import { SpaceTag } from '../space/SpaceTag';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
@@ -26,7 +26,6 @@ import {
   Flex,
   Icon,
   Tooltip,
-  Portal,
 } from '../primitives';
 import { useImageModal } from '../context/ImageModalProvider';
 import { ReactionsList } from './ReactionsList';
@@ -50,6 +49,7 @@ import {
   usePinnedMessages,
 } from '../../hooks';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
+import type { EmojiPickerAnchorRect } from '../../hooks/business/messages/useEmojiPicker';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import { useReadReceipt } from '../../hooks/business/messages/useReadReceipt';
@@ -174,8 +174,8 @@ type MessageProps = {
   virtuosoRef?: any;
   emojiPickerOpen: string | undefined;
   setEmojiPickerOpen: React.Dispatch<React.SetStateAction<string | undefined>>;
-  emojiPickerPosition: { x: number; y: number } | null;
-  setEmojiPickerPosition: React.Dispatch<React.SetStateAction<{ x: number; y: number } | null>>;
+  emojiPickerPosition: EmojiPickerAnchorRect | null;
+  setEmojiPickerPosition: React.Dispatch<React.SetStateAction<EmojiPickerAnchorRect | null>>;
   hoverTarget: string | undefined;
   setHoverTarget: React.Dispatch<React.SetStateAction<string | undefined>>;
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
@@ -564,6 +564,16 @@ export const Message = React.memo(
       []
     );
 
+    // Virtual anchor for the desktop emoji picker — the stored "more reactions"
+    // trigger rect. FloatingPopover flips it up / clamps it to the viewport.
+    const emojiPickerAnchor = useMemo(
+      () =>
+        emojiPickerPosition
+          ? rectAnchor(emojiPickerPosition)
+          : null,
+      [emojiPickerPosition]
+    );
+
     // Returns unique keys for embedded image entries (combined text+image messages)
     const getEmbeddedImageKeys = (content: MessageContent | undefined): string[] => {
       if (content?.type !== 'post' || !content.embeddedMedia) return [];
@@ -815,17 +825,24 @@ export const Message = React.memo(
                 />
               )}
 
-              {/* Fixed position emoji picker — always renders via Portal */}
-              {emojiPickerOpen === message.messageId && emojiPickerPosition && (
-                <Portal>
-                  <div
-                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                    className="fixed z-[10002] bg-modal border border-default rounded-lg shadow-lg overflow-hidden"
-                    style={{
-                      left: emojiPickerPosition.x,
-                      top: emojiPickerPosition.y,
-                    }}
-                  >
+              {/* Desktop emoji picker — anchored to the "more reactions" trigger */}
+              {emojiPickerOpen === message.messageId && (
+                <FloatingPopover
+                  open
+                  onClose={() => emojiPicker.closeEmojiPickers()}
+                  anchor={emojiPickerAnchor}
+                  // Opens below the trigger and flips up when it would clip the
+                  // viewport bottom (replaces the hand-rolled pickerHeight flip).
+                  placement="bottom-start"
+                  gap={4}
+                  viewportPadding={8}
+                  zIndex={10002}
+                  // Inside the virtualized message list — close on scroll like
+                  // the other in-list surfaces.
+                  closeOnScroll
+                  className="emoji-picker-popover bg-modal border border-default rounded-lg shadow-lg overflow-hidden"
+                >
+                  <div onClick={(e: React.MouseEvent) => e.stopPropagation()}>
                     <Suspense fallback={<div className="emoji-picker-loading" />}>
                       <EmojiPicker
                         customEmojis={emojiPicker.customEmojis}
@@ -833,7 +850,7 @@ export const Message = React.memo(
                       />
                     </Suspense>
                   </div>
-                </Portal>
+                </FloatingPopover>
               )}
 
               {/* Mobile Emoji Picker */}
@@ -1548,7 +1565,14 @@ export const Message = React.memo(
               // Use setTimeout to ensure context menu is closed before opening emoji picker
               setTimeout(() => {
                 if (menuPosition) {
-                  setEmojiPickerPosition(menuPosition);
+                  // From the actions menu the picker anchors to the menu's
+                  // click point — a zero-size rect at (x, y).
+                  setEmojiPickerPosition({
+                    x: menuPosition.x,
+                    y: menuPosition.y,
+                    width: 0,
+                    height: 0,
+                  });
                 }
                 messageActions.handleMoreReactions();
               }, 0);

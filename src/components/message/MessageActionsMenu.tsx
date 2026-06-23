@@ -1,17 +1,12 @@
-import React, { useCallback, useRef, useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
-import { Portal, Button, Icon } from '../primitives';
-import { useClickOutside } from '../../hooks/useClickOutside';
+import { Button, Icon } from '../primitives';
+import { FloatingPopover, rectAnchor } from '../ui';
 import { useFrequentEmojis } from '../../hooks/business/messages';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import './MessageActionsMenu.scss';
-
-// Fixed dimensions for viewport edge detection
-const MENU_WIDTH = 240;
-const MENU_HEIGHT = 320;
-const PADDING = 16;
 
 // Delay for copy actions to show "Copied!" feedback
 const COPY_CLOSE_DELAY = 500;
@@ -42,20 +37,6 @@ export interface MessageActionsMenuProps {
   onStartThread?: () => void;
 }
 
-function calculatePosition(clickX: number, clickY: number, actualHeight?: number, actualWidth?: number) {
-  const viewportW = window.innerWidth;
-  const viewportH = window.innerHeight;
-
-  const menuWidth = actualWidth || MENU_WIDTH;
-  const menuHeight = actualHeight || MENU_HEIGHT;
-  const flipX = clickX + menuWidth + PADDING > viewportW;
-  return {
-    x: flipX ? Math.max(PADDING, clickX - menuWidth) : clickX,
-    // Keep menu close to click point, but shift up the minimum needed to fit in viewport
-    y: Math.max(PADDING, Math.min(clickY, viewportH - menuHeight - PADDING)),
-  };
-}
-
 const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   message,
   position,
@@ -81,38 +62,16 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   hasThread = false,
   onStartThread,
 }) => {
-  const menuRef = useRef<HTMLDivElement | null>(null);
-  const [adjustedPosition, setAdjustedPosition] = useState<{ x: number; y: number } | null>(null);
-
-  // Callback ref to measure and position immediately when element mounts
-  const setMenuRef = useCallback(
-    (node: HTMLDivElement | null) => {
-      menuRef.current = node;
-      if (node) {
-        const rect = node.getBoundingClientRect();
-        setAdjustedPosition(calculatePosition(position.x, position.y, rect.height, rect.width));
-      }
-    },
+  // Virtual reference at the click point. FloatingPopover's flip()/shift()
+  // handle the edge cases the old calculatePosition() did by hand (flip-left on
+  // right overflow, clamp-up on bottom overflow) — against the real menu size.
+  const reference = useMemo(
+    () => rectAnchor({ x: position.x, y: position.y }),
     [position.x, position.y]
   );
 
   // Dynamic frequent emojis from emoji picker usage history
   const frequentEmojis = useFrequentEmojis(3);
-
-  // Click outside to close
-  useClickOutside(menuRef, onClose, true);
-
-  // Escape key to close
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        onClose();
-      }
-    };
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
-  }, [onClose]);
-
 
   // Check if the user has reacted with a specific emoji
   const hasReacted = (emoji: string) => {
@@ -193,17 +152,23 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   };
 
   return (
-    <Portal>
-      <div
-        ref={setMenuRef}
-        className="message-actions-menu"
-        style={{
-          left: adjustedPosition?.x ?? 0,
-          top: adjustedPosition?.y ?? 0,
-          visibility: adjustedPosition ? 'visible' : 'hidden',
-        }}
-      >
-        {/* Quick reactions row */}
+    <FloatingPopover
+      open
+      onClose={onClose}
+      anchor={reference}
+      // Opens down-and-right from the click point; flips left/up near edges.
+      placement="bottom-start"
+      gap={0}
+      role="menu"
+      // Anchored to a fixed point inside the virtualized message list — close
+      // on scroll like the other in-list surfaces rather than chase the point.
+      closeOnScroll
+      // The menu's open animation scales via transform — position via top/left
+      // so it doesn't fight floating-ui's positioning transform.
+      positionViaLayout
+      className="message-actions-menu"
+    >
+      {/* Quick reactions row */}
         <div className="message-actions-menu__reactions">
           {frequentEmojis.map(({ emoji, unified }) => {
             let twemojiSrc: string | null = null;
@@ -313,8 +278,7 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
             </button>
           )}
         </div>
-      </div>
-    </Portal>
+    </FloatingPopover>
   );
 };
 
