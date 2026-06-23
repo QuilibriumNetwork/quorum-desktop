@@ -122,6 +122,30 @@ export function MessageEditTextarea({
     }
   }, []);
 
+  // Hide the toolbar when the user presses outside the editor / toolbar.
+  // mouseup only fires on the textarea, so a click elsewhere (which leaves a
+  // textarea's selection intact) would otherwise leave the toolbar lingering.
+  useEffect(() => {
+    if (!showMarkdownToolbar) return;
+
+    const onPointerDownOutside = (e: PointerEvent) => {
+      const target = e.target as Node | null;
+      const editor = ENABLE_MENTION_PILLS
+        ? editorRef.current
+        : editTextareaRef.current;
+      const insideEditor = !!target && !!editor && editor.contains(target);
+      const insideToolbar =
+        target instanceof Element && !!target.closest('.markdown-toolbar');
+      if (!insideEditor && !insideToolbar) {
+        setShowMarkdownToolbar(false);
+      }
+    };
+
+    document.addEventListener('pointerdown', onPointerDownOutside, true);
+    return () =>
+      document.removeEventListener('pointerdown', onPointerDownOutside, true);
+  }, [showMarkdownToolbar]);
+
   // Handle markdown formatting
   const handleMarkdownFormat = useCallback(
     (formatFn: FormatFunction) => {
