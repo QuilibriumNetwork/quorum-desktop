@@ -34,14 +34,24 @@
 
 // Row chrome already shows hover/active — suppress the legacy icon-side
 // hover bar inside rows (expanded rows, folder headers, and collapsed strip).
+// Without --strip here, a collapsed (closed) folder header would show TWO
+// accent bars on hover: the chrome's tall ::before bar plus this shorter
+// icon-side toggle peeking out from the FolderButton.
 .spaces-sidebar__row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected),
 .folder-header--row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected),
+.folder-header--strip .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected),
 .spaces-sidebar__strip-row .space-icon-toggle:not(.space-icon-toggle--unread):not(.space-icon-toggle--selected) {
   opacity: 0 !important;
 }
+// Keep the unread dot a dot on hover everywhere — the default SpaceIcon rule
+// grows it to the 20px hover bar, which is wrong in the collapsed strip and
+// in folder headers (standalone strip rows, folder-internal strip rows, and
+// closed folder headers all need the dot to stay 6px).
 @media (hover: hover) {
   .spaces-sidebar__row .relative:hover .space-icon-toggle--unread,
-  .folder-header--row .relative:hover .space-icon-toggle--unread {
+  .folder-header--row .relative:hover .space-icon-toggle--unread,
+  .folder-header--strip .relative:hover .space-icon-toggle--unread,
+  .spaces-sidebar__strip-row .relative:hover .space-icon-toggle--unread {
     height: $s-1-5;
   }
 }
