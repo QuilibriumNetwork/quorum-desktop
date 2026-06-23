@@ -210,6 +210,15 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
 
   if (!open || !anchor) return null;
 
+  // FloatingFocusManager inspects the reference element (isTypeableCombobox
+  // calls getAttribute on it). A *virtual* element (point/caret/selection rect)
+  // has no getAttribute, which crashes the focus manager. Virtual-anchored
+  // surfaces have no real trigger to trap/return focus to anyway, so skip it
+  // for them — matching the pre-migration behaviour of those surfaces.
+  const anchorIsVirtual =
+    !anchor || typeof (anchor as Partial<Element>).getAttribute !== 'function';
+  const useFocusManager = manageFocus && !anchorIsVirtual;
+
   const floating = (
     <div
       ref={refs.setFloating}
@@ -223,7 +232,7 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
 
   return (
     <FloatingPortal>
-      {manageFocus ? (
+      {useFocusManager ? (
         // returnFocus={false}: returning focus to the previous trigger on
         // close fights with switching to a new trigger and can re-open the
         // card (floating-ui issue #3366).
