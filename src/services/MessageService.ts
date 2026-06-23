@@ -2102,9 +2102,11 @@ export class MessageService {
       await queryClient.invalidateQueries({
         queryKey: ['mention-counts', 'channel', spaceId],
       });
-      // Also invalidate notification inbox query
+      // Also invalidate notification inbox query (per-space AND global panels).
+      // Bare prefix matches both ['mention-notifications', spaceId] and
+      // ['mention-notifications', 'global', ...].
       await queryClient.invalidateQueries({
-        queryKey: ['mention-notifications', spaceId],
+        queryKey: ['mention-notifications'],
       });
       // Invalidate unread message counts when new messages arrive
       await queryClient.invalidateQueries({
@@ -2126,8 +2128,9 @@ export class MessageService {
       await queryClient.invalidateQueries({
         queryKey: ['reply-counts', 'channel', spaceId],
       });
+      // Per-space AND global panels (bare prefix matches both).
       await queryClient.invalidateQueries({
-        queryKey: ['reply-notifications', spaceId],
+        queryKey: ['reply-notifications'],
       });
     }
 

@@ -64,6 +64,13 @@ export function useUpdateReadTime({
         queryKey: ['reply-counts', 'space'],
       });
 
+      // 5b. Invalidate notification inbox lists (per-space + global panels).
+      // Bare prefixes match both ['*-notifications', spaceId] and
+      // ['*-notifications', 'global', ...], so reading a channel refreshes the
+      // global panel too.
+      queryClient.invalidateQueries({ queryKey: ['mention-notifications'] });
+      queryClient.invalidateQueries({ queryKey: ['reply-notifications'] });
+
       // 6. Invalidate channel-level unread counts (updates channel unread dots)
       queryClient.invalidateQueries({
         queryKey: ['unread-counts', 'channel', spaceId],
