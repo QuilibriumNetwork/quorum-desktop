@@ -14,7 +14,8 @@ import { MarkdownToolbar } from './MarkdownToolbar';
 import { MentionDropdown } from './MentionDropdown';
 import type { FormatFunction } from '@quilibrium/quorum-shared';
 import { toggleBold, toggleItalic, toggleStrikethrough, wrapCode } from '@quilibrium/quorum-shared';
-import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
+import { getTextareaSelectionRect } from '../../utils/toolbarPositioning';
+import { rectAnchor, type VirtualElement } from '../ui';
 import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 import { useTypingNotifier } from '../../hooks/business/messages/useTypingNotifier';
@@ -163,9 +164,10 @@ export const MessageComposer = forwardRef<
     });
     const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
 
-    // Markdown toolbar state
+    // Markdown toolbar state. The anchor is a virtual element over the current
+    // selection rect; FloatingPopover handles centering/flip/clamp.
     const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
-    const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
+    const [toolbarAnchor, setToolbarAnchor] = useState<VirtualElement | null>(null);
     const [selectionRange, setSelectionRange] = useState({ start: 0, end: 0 });
 
     // Update placeholder for extra small screens (< 480px)
@@ -453,10 +455,10 @@ export const MessageComposer = forwardRef<
         // Text is selected
         setSelectionRange({ start, end });
 
-        // Calculate smart position centered above selection
-        const position = calculateToolbarPosition(textarea);
-        if (position) {
-          setToolbarPosition(position);
+        // Measure the selection rect (mirror-div) and anchor the toolbar to it
+        const rect = getTextareaSelectionRect(textarea);
+        if (rect) {
+          setToolbarAnchor(rectAnchor(rect));
           setShowMarkdownToolbar(true);
         } else {
           setShowMarkdownToolbar(false);
@@ -493,27 +495,19 @@ export const MessageComposer = forwardRef<
 
         setSelectionRange({ start, end });
 
-        // Calculate position using native Selection API (works for contentEditable)
+        // Native Selection API gives the selection rect directly for
+        // contentEditable; anchor the toolbar to it and let FloatingPopover
+        // center/flip/clamp (no hand-rolled width math or above/below clamp).
         const rangeRect = range.getBoundingClientRect();
-        const editorRect = editor.getBoundingClientRect();
-
-        // Calculate centered position above the selection
-        const TOOLBAR_OFFSET = 52;
-        const TOOLBAR_WIDTH = 240;
-        const VIEWPORT_PADDING = 16;
-
-        const selectionCenterX = rangeRect.left + (rangeRect.width / 2);
-        let toolbarLeft = selectionCenterX - (TOOLBAR_WIDTH / 2);
-
-        // Clamp to viewport boundaries
-        const maxLeft = window.innerWidth - TOOLBAR_WIDTH - VIEWPORT_PADDING;
-        toolbarLeft = Math.max(VIEWPORT_PADDING, Math.min(toolbarLeft, maxLeft));
-
-        const toolbarTop = rangeRect.top - TOOLBAR_OFFSET;
-
-        // Only show if there's enough space above
-        if (toolbarTop > 10) {
-          setToolbarPosition({ top: toolbarTop, left: toolbarLeft });
+        if (rangeRect.width > 0 || rangeRect.height > 0) {
+          setToolbarAnchor(
+            rectAnchor({
+              x: rangeRect.left,
+              y: rangeRect.top,
+              width: rangeRect.width,
+              height: rangeRect.height,
+            })
+          );
           setShowMarkdownToolbar(true);
         } else {
           setShowMarkdownToolbar(false);
@@ -794,7 +788,7 @@ export const MessageComposer = forwardRef<
         {/* Markdown Toolbar */}
         <MarkdownToolbar
           visible={showMarkdownToolbar}
-          position={toolbarPosition}
+          anchor={toolbarAnchor}
           onFormat={handleMarkdownFormat}
         />
 

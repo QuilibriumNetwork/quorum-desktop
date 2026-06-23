@@ -241,6 +241,33 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   );
 };
 
+/**
+ * Build a floating-ui virtual element that anchors to a fixed rect — a point
+ * (right-click, caret) or a measured region (text selection). Pass the result
+ * as <FloatingPopover anchor>. The rect is captured by value, so callers should
+ * memoize the call when the point/region is stable across renders.
+ */
+export function rectAnchor(rect: {
+  x: number;
+  y: number;
+  width?: number;
+  height?: number;
+}): VirtualElement {
+  const { x, y, width = 0, height = 0 } = rect;
+  return {
+    getBoundingClientRect: () => ({
+      x,
+      y,
+      top: y,
+      left: x,
+      right: x + width,
+      bottom: y + height,
+      width,
+      height,
+    }),
+  };
+}
+
 export type { Placement, ReferenceType, VirtualElement };
 
 export default FloatingPopover;

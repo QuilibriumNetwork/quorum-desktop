@@ -1,4 +1,5 @@
 import { Button } from '../primitives';
+import { FloatingPopover, type VirtualElement } from '../ui';
 import {
   insertHeading,
   toggleBold,
@@ -13,7 +14,12 @@ import './MarkdownToolbar.scss';
 
 export interface MarkdownToolbarProps {
   visible: boolean;
-  position: { top: number; left: number };
+  /**
+   * The text selection the toolbar points at, as a floating-ui virtual element
+   * (a `{ getBoundingClientRect }` over the selection rect). FloatingPopover
+   * centers the toolbar above it and flips/clamps near viewport edges.
+   */
+  anchor: VirtualElement | null;
   onFormat: (formatFn: FormatFunction) => void;
 }
 
@@ -23,15 +29,26 @@ export interface MarkdownToolbarProps {
  */
 export function MarkdownToolbar({
   visible,
-  position,
+  anchor,
   onFormat,
 }: MarkdownToolbarProps) {
-  if (!visible) return null;
-
   return (
-    <div
+    <FloatingPopover
+      open={visible}
+      onClose={() => {}}
+      anchor={anchor}
+      // Centered above the selection; flips below near the viewport top.
+      placement="top"
+      gap={12}
+      role="tooltip"
+      // The composer owns visibility (selection / blur / format); the toolbar
+      // must not steal focus from the editor or self-dismiss on interactions.
+      manageFocus={false}
+      closeWhenAnchorHidden={false}
+      // The toolbar's fade-in animates transform — position via top/left so it
+      // doesn't fight floating-ui's positioning transform.
+      positionViaLayout
       className="markdown-toolbar"
-      style={{ top: position.top, left: position.left }}
     >
       <Button
         type="unstyled"
@@ -82,6 +99,6 @@ export function MarkdownToolbar({
         iconOnly
         onClick={() => onFormat(toggleSpoiler)}
       />
-    </div>
+    </FloatingPopover>
   );
 }

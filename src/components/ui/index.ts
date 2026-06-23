@@ -2,7 +2,7 @@
 export { default as ClickToCopyContent } from './ClickToCopyContent';
 export { default as CloseButton } from './CloseButton';
 export { default as DropdownPanel } from './DropdownPanel';
-export { default as FloatingPopover } from './FloatingPopover';
+export { default as FloatingPopover, rectAnchor } from './FloatingPopover';
 export type {
   FloatingPopoverProps,
   VirtualElement,
