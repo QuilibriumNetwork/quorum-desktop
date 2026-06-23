@@ -43,7 +43,10 @@ export function MarkdownToolbar({
       role="tooltip"
       // The composer owns visibility (selection / blur / format); the toolbar
       // must not steal focus from the editor or self-dismiss on interactions.
+      // dismissable=false so useDismiss doesn't swallow Escape/outside-press
+      // (onClose is a no-op — those events belong to the composer).
       manageFocus={false}
+      dismissable={false}
       closeWhenAnchorHidden={false}
       // The toolbar's fade-in animates transform — position via top/left so it
       // doesn't fight floating-ui's positioning transform.

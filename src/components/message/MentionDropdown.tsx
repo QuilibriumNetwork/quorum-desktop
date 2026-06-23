@@ -259,7 +259,10 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
         // The composer owns open/close (typing, selection, escape); the
         // dropdown follows the caret while open and shouldn't self-dismiss on
         // outside interactions or close itself when the caret stays visible.
+        // dismissable=false so useDismiss doesn't swallow the composer's Escape
+        // (which selects the highlighted mention / closes the dropdown).
         manageFocus={false}
+        dismissable={false}
         closeWhenAnchorHidden={false}
         className={dropdownClassName}
       >

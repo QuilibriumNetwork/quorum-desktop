@@ -93,6 +93,16 @@ export interface FloatingPopoverProps {
    * non-animated surfaces). See floating-ui `useFloating({ transform })`.
    */
   positionViaLayout?: boolean;
+  /**
+   * Whether the popover dismisses itself on outside-press / Escape (floating-ui
+   * useDismiss). Defaults to true. Set false when the caller fully owns
+   * visibility (e.g. a composer that shows the surface based on selection/caret
+   * state): useDismiss not only calls onClose but also calls
+   * stopPropagation() on the Escape keydown, which would swallow Escape from
+   * other handlers even though the caller's onClose is a no-op. Disabling it
+   * leaves Escape/outside-press to the caller.
+   */
+  dismissable?: boolean;
   className?: string;
   /**
    * Extra inline styles merged onto the floating element. Use for sizing the
@@ -120,6 +130,7 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   closeWhenAnchorHidden = true,
   closeOnScroll = false,
   positionViaLayout = false,
+  dismissable = true,
   className,
   style,
   children,
@@ -181,6 +192,10 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   });
 
   const dismiss = useDismiss(context, {
+    // Gate both interceptions on `dismissable`: when the caller owns
+    // visibility, useDismiss must not intercept (and stopPropagation) Escape /
+    // outside-press — those belong to the caller's own handlers.
+    enabled: dismissable,
     outsidePress: true,
     escapeKey: true,
   });
@@ -211,13 +226,15 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   if (!open || !anchor) return null;
 
   // FloatingFocusManager inspects the reference element (isTypeableCombobox
-  // calls getAttribute on it). A *virtual* element (point/caret/selection rect)
-  // has no getAttribute, which crashes the focus manager. Virtual-anchored
-  // surfaces have no real trigger to trap/return focus to anyway, so skip it
-  // for them — matching the pre-migration behaviour of those surfaces.
-  const anchorIsVirtual =
-    !anchor || typeof (anchor as Partial<Element>).getAttribute !== 'function';
-  const useFocusManager = manageFocus && !anchorIsVirtual;
+  // calls getAttribute on it), so it only works with a real, connected DOM
+  // element. A *virtual* element (point/caret/selection rect) has no
+  // getAttribute and would crash it; a detached node would also misbehave.
+  // Virtual-anchored surfaces have no real trigger to trap/return focus to
+  // anyway, so use the focus manager only for connected DOM elements —
+  // matching the pre-migration behaviour of the virtual-anchored surfaces.
+  // (`anchor` is non-null here: the guard above already returned on !anchor.)
+  const anchorIsElement = anchor instanceof Element && anchor.isConnected;
+  const useFocusManager = manageFocus && anchorIsElement;
 
   const floating = (
     <div
