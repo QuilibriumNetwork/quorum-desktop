@@ -73,3 +73,10 @@
 .empty-hint {
   @extend .dropdown-empty-hint;
 }
+
+.notification-panel__truncation-note {
+  text-align: center;
+  padding: $s-2 $s-4;
+  font-size: $text-sm;
+  color: var(--color-text-subtle);
+}
