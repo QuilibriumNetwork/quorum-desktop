@@ -1,6 +1,6 @@
-import React, { useRef, useEffect, useLayoutEffect, useState, useCallback } from 'react';
+import React, { useMemo } from 'react';
 import { Icon } from '../primitives';
-import { Portal } from '../primitives';
+import { FloatingPopover, type VirtualElement } from '../ui';
 import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
@@ -44,81 +44,34 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
   showEveryoneDescription = true,
   className,
 }) => {
-  const dropdownRef = useRef<HTMLDivElement>(null);
-  const [portalPosition, setPortalPosition] = useState<{ top: number; left: number } | null>(null);
-
-  // Calculate position when using portal mode
-  const updatePosition = useCallback(() => {
-    if (!usePortal || !portalTargetRef?.current || !dropdownRef.current) return;
-
-    const targetRect = portalTargetRef.current.getBoundingClientRect();
-    const dropdownHeight = dropdownRef.current.offsetHeight;
-    const dropdownWidth = dropdownRef.current.offsetWidth;
-
-    // Only set position if we have actual height (dropdown is rendered)
-    if (dropdownHeight > 0) {
-      let top: number;
-      let left: number;
-
-      if (caretPosition) {
-        // Position relative to caret (Slack-style)
-        top = caretPosition.y - dropdownHeight - 8; // 8px gap above caret
-        left = caretPosition.x;
-      } else {
-        // Fallback: position relative to target element
-        top = targetRect.top - dropdownHeight - 8;
-        left = targetRect.left;
-      }
-
-      // Clamp left position to prevent overflow
-      const viewportWidth = window.innerWidth;
-      const minLeft = 8; // 8px margin from left edge
-      const maxLeft = viewportWidth - dropdownWidth - 8; // 8px margin from right edge
-
-      left = Math.max(minLeft, Math.min(left, maxLeft));
-
-      // Clamp top position - if not enough space above, show below caret
-      if (top < 8) {
-        if (caretPosition) {
-          top = caretPosition.y + caretPosition.height + 8; // Below caret
-        } else {
-          top = targetRect.bottom + 8; // Below target
-        }
-      }
-
-      setPortalPosition({ top, left });
+  // Portal mode: anchor to the caret as a floating-ui virtual element. The
+  // dropdown opens above the caret (top-start) and flip()/shift() move it
+  // below or clamp it horizontally near the edges — the placement math that
+  // used to live in updatePosition()/scroll+resize listeners. Falls back to
+  // the target element's rect when the caret position isn't known yet.
+  const portalAnchor = useMemo<VirtualElement | null>(() => {
+    if (!usePortal) return null;
+    if (caretPosition) {
+      const { x, y, height } = caretPosition;
+      return {
+        getBoundingClientRect: () => ({
+          x,
+          y,
+          top: y,
+          left: x,
+          right: x,
+          bottom: y + height,
+          width: 0,
+          height,
+        }),
+      };
     }
-  }, [usePortal, portalTargetRef, caretPosition]);
-
-  // Reset position when dropdown closes
-  useEffect(() => {
-    if (!isOpen) {
-      setPortalPosition(null);
+    const target = portalTargetRef?.current;
+    if (target) {
+      return { getBoundingClientRect: () => target.getBoundingClientRect() };
     }
-  }, [isOpen]);
-
-  // Scroll/resize listeners
-  useEffect(() => {
-    if (!usePortal || !isOpen) return;
-
-    window.addEventListener('scroll', updatePosition, true);
-    window.addEventListener('resize', updatePosition);
-
-    return () => {
-      window.removeEventListener('scroll', updatePosition, true);
-      window.removeEventListener('resize', updatePosition);
-    };
-  }, [usePortal, isOpen, updatePosition]);
-
-  // Calculate position after dropdown renders
-  useLayoutEffect(() => {
-    if (usePortal && isOpen && dropdownRef.current) {
-      // Use requestAnimationFrame to ensure DOM has painted
-      requestAnimationFrame(() => {
-        updatePosition();
-      });
-    }
-  }, [usePortal, isOpen, filteredOptions, caretPosition, updatePosition]);
+    return null;
+  }, [usePortal, caretPosition, portalTargetRef]);
 
   if (!isOpen || filteredOptions.length === 0) {
     return null;
@@ -280,57 +233,56 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
     .filter(Boolean)
     .join(' ');
 
-  const dropdownContent = (
-    <div
-      ref={dropdownRef}
-      className={dropdownClassName}
-      style={
-        usePortal && portalPosition
-          ? {
-              position: 'fixed',
-              top: portalPosition.top,
-              left: portalPosition.left,
-              zIndex: 1000,
+  const optionsList = (
+    <div className="mention-dropdown__container">
+      {filteredOptions.map((option, index) => (
+        <div
+          key={getOptionKey(option)}
+          className={getOptionClassName(option, index)}
+          onMouseDown={(e) => {
+            // Prevent focus loss from contentEditable when clicking dropdown
+            e.preventDefault();
+          }}
+          onClick={() => {
+            if (option.type !== 'group-header') {
+              onSelectOption(option);
             }
-          : usePortal
-            ? {
-                // Render off-screen while measuring height
-                position: 'fixed',
-                top: -100000,
-                left: -100000,
-                zIndex: 1000,
-              }
-            : undefined
-      }
-    >
-      <div className="mention-dropdown__container">
-        {filteredOptions.map((option, index) => (
-          <div
-            key={getOptionKey(option)}
-            className={getOptionClassName(option, index)}
-            onMouseDown={(e) => {
-              // Prevent focus loss from contentEditable when clicking dropdown
-              e.preventDefault();
-            }}
-            onClick={() => {
-              if (option.type !== 'group-header') {
-                onSelectOption(option);
-              }
-            }}
-          >
-            {renderOptionContent(option)}
-          </div>
-        ))}
-      </div>
+          }}
+        >
+          {renderOptionContent(option)}
+        </div>
+      ))}
     </div>
   );
 
-  // Render with or without portal
+  // Portal mode: caret-anchored via FloatingPopover (top-start + flip/shift).
   if (usePortal) {
-    return <Portal>{dropdownContent}</Portal>;
+    return (
+      <FloatingPopover
+        open={isOpen}
+        onClose={() => {}}
+        anchor={portalAnchor}
+        placement="top-start"
+        gap={8}
+        viewportPadding={8}
+        zIndex={1000}
+        role="listbox"
+        // The composer owns open/close (typing, selection, escape); the
+        // dropdown follows the caret while open and shouldn't self-dismiss on
+        // outside interactions or close itself when the caret stays visible.
+        manageFocus={false}
+        closeWhenAnchorHidden={false}
+        className={dropdownClassName}
+      >
+        {optionsList}
+      </FloatingPopover>
+    );
   }
 
-  return dropdownContent;
+  // Inline mode: CSS-positioned by the parent container (not trigger-anchored).
+  return (
+    <div className={dropdownClassName}>{optionsList}</div>
+  );
 };
 
 export default MentionDropdown;
