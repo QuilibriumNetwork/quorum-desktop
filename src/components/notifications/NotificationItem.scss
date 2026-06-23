@@ -53,20 +53,29 @@
   height: $s-9;
   border-radius: $rounded-full;
   background-color: color-mix(in srgb, var(--accent) 16%, transparent);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 0; // kill inline-SVG baseline whitespace
+  // Center the icon with grid place-items: more reliable than flex for a single
+  // child, and immune to inline-SVG baseline/whitespace shifts.
+  display: grid;
+  place-items: center;
+  line-height: 0;
 
-  // Center whatever the Icon renders (svg or wrapper) both axes, with no
-  // intrinsic margins, so the glyph sits dead-center regardless of its viewBox.
-  > * {
-    display: block;
-    margin: 0;
-  }
-
+  // Force the rendered SVG to an exact 18px square, centered, no intrinsic
+  // margin/alignment — so the glyph sits dead-center regardless of how Icon
+  // wraps or sizes it. `svg` reaches the glyph at any nesting depth.
   svg {
     display: block;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  // Any wrapper Icon renders around the svg: shrink to content, no margin, so it
+  // can't introduce its own offset within the grid cell.
+  > * {
+    display: grid;
+    place-items: center;
+    margin: 0;
   }
 }
 

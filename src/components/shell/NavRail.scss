@@ -204,19 +204,12 @@
   text-overflow: ellipsis;
 }
 
-// Unread badge on the notifications bell. The base .icon-unread-dot positions
-// left-of-an-avatar (left: -15px; top: 50%; translateY) and is a tiny 6px dot
-// that blends in with the other unread dots around the app. Here we make it a
-// deliberate badge: larger, sitting OVER the bell's top-right (partially
-// covering the glyph), with a ring in the rail background so it reads as a
-// distinct badge rather than part of the icon. Scoped under .nav-rail to win on
-// specificity regardless of stylesheet load order.
+// Unread badge on the notifications bell.
 .nav-rail .nav-rail__notif-dot {
-  width: $s-2-5;   // 10px — bigger than the base 6px dot
-  height: $s-2-5;
-  // Sit on the bell's RIGHT side (not the top): lower it toward the vertical
-  // middle and push it right so it overlaps only the right edge of the glyph.
-  top: 4px;
+  width: $s-2;   // bigger than the base 6px dot
+  height: $s-2;
+  // Sit on the bell's RIGHT side
+  top: 1px;
   right: 1px;
   left: auto;
   transform: none;
