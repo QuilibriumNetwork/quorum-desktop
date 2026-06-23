@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { Icon } from '../primitives';
-import { FloatingPopover, type VirtualElement } from '../ui';
+import { FloatingPopover, rectAnchor, type VirtualElement } from '../ui';
 import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
@@ -53,18 +53,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
     if (!usePortal) return null;
     if (caretPosition) {
       const { x, y, height } = caretPosition;
-      return {
-        getBoundingClientRect: () => ({
-          x,
-          y,
-          top: y,
-          left: x,
-          right: x,
-          bottom: y + height,
-          width: 0,
-          height,
-        }),
-      };
+      return rectAnchor({ x, y, height });
     }
     const target = portalTargetRef?.current;
     if (target) {

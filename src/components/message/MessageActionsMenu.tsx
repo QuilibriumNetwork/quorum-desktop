@@ -3,7 +3,7 @@ import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { Button, Icon } from '../primitives';
-import { FloatingPopover, type VirtualElement } from '../ui';
+import { FloatingPopover, rectAnchor } from '../ui';
 import { useFrequentEmojis } from '../../hooks/business/messages';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import './MessageActionsMenu.scss';
@@ -62,23 +62,11 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   hasThread = false,
   onStartThread,
 }) => {
-  // Virtual reference at the click point: a zero-size rect at (x, y).
-  // FloatingPopover's flip()/shift() handle the edge cases the old
-  // calculatePosition() did by hand (flip-left on right overflow, clamp-up on
-  // bottom overflow) — for free, against the real measured menu size.
-  const reference = useMemo<VirtualElement>(
-    () => ({
-      getBoundingClientRect: () => ({
-        x: position.x,
-        y: position.y,
-        top: position.y,
-        left: position.x,
-        right: position.x,
-        bottom: position.y,
-        width: 0,
-        height: 0,
-      }),
-    }),
+  // Virtual reference at the click point. FloatingPopover's flip()/shift()
+  // handle the edge cases the old calculatePosition() did by hand (flip-left on
+  // right overflow, clamp-up on bottom overflow) — against the real menu size.
+  const reference = useMemo(
+    () => rectAnchor({ x: position.x, y: position.y }),
     [position.x, position.y]
   );
 

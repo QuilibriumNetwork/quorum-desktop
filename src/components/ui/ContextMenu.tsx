@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo } from 'react';
 import { Icon, useTheme } from '../primitives';
-import { FloatingPopover, type VirtualElement } from '../ui';
+import { FloatingPopover, rectAnchor } from './FloatingPopover';
 import { UserAvatar } from '../user/UserAvatar';
 import SpaceIcon from '../space/SpaceIcon';
 import { getFolderColorHex, IconColor } from '../space/IconPicker/types';
@@ -86,22 +86,10 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   // Virtual reference at the click point, nudged right by OFFSET_RIGHT to match
   // the previous placement. FloatingPopover's flip()/shift() keep the menu in
   // the viewport (the old code estimated height from item count to do this).
-  const reference = useMemo<VirtualElement>(() => {
-    const x = position.x + OFFSET_RIGHT;
-    const y = position.y;
-    return {
-      getBoundingClientRect: () => ({
-        x,
-        y,
-        top: y,
-        left: x,
-        right: x,
-        bottom: y,
-        width: 0,
-        height: 0,
-      }),
-    };
-  }, [position.x, position.y]);
+  const reference = useMemo(
+    () => rectAnchor({ x: position.x + OFFSET_RIGHT, y: position.y }),
+    [position.x, position.y]
+  );
 
   const { resolvedTheme } = useTheme();
   const isDarkTheme = resolvedTheme === 'dark';
