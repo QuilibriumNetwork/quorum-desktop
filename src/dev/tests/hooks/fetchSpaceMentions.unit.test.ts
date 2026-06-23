@@ -26,8 +26,6 @@ function makeMessage(overrides: any = {}) {
 
 function makeDB(over: any = {}) {
   return {
-    getUserConfig: vi.fn().mockResolvedValue({ notificationSettings: {}, mutedChannels: {} }),
-    getSpace: vi.fn().mockResolvedValue(makeSpace()),
     getConversation: vi.fn().mockResolvedValue({ conversation: { lastReadTimestamp: 0 } }),
     getThreadReadTimesForChannel: vi.fn().mockResolvedValue({}),
     getUnreadMentions: vi.fn().mockResolvedValue([makeMessage()]),

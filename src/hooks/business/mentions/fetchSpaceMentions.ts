@@ -1,7 +1,7 @@
 import { isMentionedWithSettings, getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
 import type { Message, Space } from '@quilibrium/quorum-shared';
 import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
-import type { MessageDB } from '../../../db/messages';
+import type { MessageDB, UserConfig } from '../../../db/messages';
 import type { MentionNotification } from './useAllMentions';
 
 function getMentionType(message: Message, userAddress: string): 'you' | 'everyone' | 'roles' {
@@ -11,17 +11,23 @@ function getMentionType(message: Message, userAddress: string): 'you' | 'everyon
   return 'you';
 }
 
+/**
+ * Fetch unread mentions for ONE space (pure; no React).
+ * Replicates the per-space gating from `useAllMentions`. Returns rows in
+ * channel-iteration order — the CALLER sorts (the global hook sorts after
+ * merging across all spaces, so sorting here would be wasted work).
+ */
 export async function fetchSpaceMentions(
-  messageDB: Pick<MessageDB, 'getConversation' | 'getThreadReadTimesForChannel' | 'getUnreadMentions'>,
+  messageDB: MessageDB,
   space: Space,
   userAddress: string,
   opts: {
     enabledTypes?: ('mention-you' | 'mention-everyone' | 'mention-roles')[];
-    userRoleIds: string[];
-    config: any; // UserConfig | undefined
+    userRoleIds?: string[];
+    config: UserConfig | undefined;
   },
 ): Promise<MentionNotification[]> {
-  const { enabledTypes, userRoleIds, config } = opts;
+  const { enabledTypes, userRoleIds = [], config } = opts;
   const settings = config?.notificationSettings?.[space.spaceId];
   if (settings?.isMuted) return [];
 
@@ -37,7 +43,8 @@ export async function fetchSpaceMentions(
   if (typesToCheck.length === 0) return [];
 
   const mutedChannelIds = getMutedChannelsForSpace(space.spaceId, config?.mutedChannels);
-  const channelIds = space.groups.flatMap((g) => g.channels.map((c) => c.channelId));
+  const allChannels = space.groups.flatMap((g) => g.channels);
+  const channelIds = allChannels.map((c) => c.channelId);
   const out: MentionNotification[] = [];
 
   for (const channelId of channelIds) {
@@ -55,9 +62,7 @@ export async function fetchSpaceMentions(
       afterTimestamp: lastReadTimestamp,
       limit: 1000,
     });
-    const channel = space.groups
-      .flatMap((g) => g.channels)
-      .find((c) => c.channelId === channelId);
+    const channel = allChannels.find((c) => c.channelId === channelId);
 
     const unread = messages.filter((message: Message) => {
       if (message.isThreadReply && message.threadId) {
