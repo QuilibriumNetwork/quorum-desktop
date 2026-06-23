@@ -1,9 +1,13 @@
 @use '../../styles/dropdown-result-item';
 @use '../../styles/variables' as *;
 
-// Notification item uses shared dropdown result item styling
+// Notification item: leading type badge + a 3-line body (location, author +
+// preview, relative time). Mirrors the mobile notifications screen so the type
+// is scannable at a glance.
 .notification-item {
-  // Base styles from dropdown-result-item (manually applied to avoid @extend across media queries)
+  display: flex;
+  align-items: flex-start;
+  gap: $s-3;
   padding: $s-4 $s-5;
   border-bottom: $border solid var(--surface-3);
   cursor: pointer;
@@ -41,99 +45,81 @@
   }
 }
 
-// Use shared styling for notification components
-.notification-header {
-  @extend .dropdown-result-header;
+// Leading circular type badge (36px), muted fill, accent-colored icon.
+.notification-badge {
+  width: $s-9;
+  height: $s-9;
+  border-radius: $rounded-full;
+  background-color: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.notification-meta {
-  @extend .dropdown-result-meta;
+.notification-badge-icon {
+  font-size: $text-lg;
+  color: var(--accent);
 }
 
-// Global panel: two-line meta. Line 1 = location breadcrumb, line 2 = sender +
-// date. Each line is its own flex row so fields truncate independently.
-.notification-header--stacked {
-  @extend .dropdown-result-header;
+// Body: vertical stack of the three lines, allowed to shrink + truncate.
+.notification-body {
+  flex: 1 1 auto;
   display: flex;
   flex-direction: column;
-  gap: $s-1;
+  gap: $s-0-5;
+}
 
-  .notification-meta--location,
-  .notification-meta--sender {
-    @extend .dropdown-result-meta;
-    width: 100%;
-    align-items: center;
-  }
-
-  // The sender line lays sender (truncating) against the date (fixed).
-  .notification-meta--sender {
-    justify-content: space-between;
-  }
+// Line 1 — location breadcrumb ([Space ›] #channel [› Thread]).
+.notification-location {
+  @extend .dropdown-result-meta;
+  align-items: center;
 }
 
 .notification-channel-icon {
   @extend .dropdown-result-type-icon;
 }
 
-.notification-mention-type-icon {
-  @extend .dropdown-result-user-icon;
-}
-
-.notification-date-icon {
-  @extend .dropdown-result-date-icon;
-}
-
-.notification-date {
-  @extend .dropdown-result-date;
-}
-
-.notification-channel,
-.notification-sender {
+.notification-channel {
   @extend .dropdown-result-channel;
 }
 
-.notification-content {
-  @extend .dropdown-result-content;
-}
-
-.notification-text {
-  @extend .dropdown-result-text;
-}
-
-.notification-thread-chevron {
-  color: var(--text-3);
-  font-size: $text-xs;
-  margin: 0 $s-1;
-  flex-shrink: 0;
-}
-
-.notification-thread-label {
-  color: var(--text-3);
-  font-size: $text-xs;
-  flex-shrink: 0;
-}
-
-// Global panel: space name leads the breadcrumb ("Space › #channel"). Uses the
-// prominent text token (channel/sender use the subtle one) so the space reads as
-// the breadcrumb root.
+// Space name leads the breadcrumb in global mode; prominent text token so it
+// reads as the breadcrumb root (channel uses the subtle token).
 .notification-space {
   color: rgb(var(--color-text-main));
   font-weight: $font-medium;
   margin-right: $s-1;
 }
 
-// Mobile drawer responsive layout: Let date flow naturally to second row when needed
-.mobile-drawer__item-box {
-  .notification-item {
-    .notification-header {
-      flex-wrap: wrap; // Allow wrapping when content doesn't fit
-      gap: $s-1; // Add gap between wrapped items
-      align-items: flex-start; // Align items to top when wrapped
+.notification-thread-chevron {
+  color: var(--color-text-subtle);
+  font-size: $text-xs;
+  margin: 0 $s-1;
+  flex-shrink: 0;
+}
 
-      // When items wrap, they should align to the left
-      .notification-meta:last-child {
-        justify-content: flex-start; // Align left instead of right when wrapped
-      }
-    }
-  }
+.notification-thread-label {
+  color: var(--color-text-subtle);
+  font-size: $text-xs;
+  flex-shrink: 0;
+}
+
+// Line 2 — author prefix + message preview (clamped to two lines).
+.notification-text {
+  @extend .dropdown-result-text;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.notification-author {
+  font-weight: $font-medium;
+  color: var(--color-text-subtle);
+}
+
+// Line 3 — relative time.
+.notification-date {
+  @extend .dropdown-result-date;
+  color: var(--color-text-subtle);
 }

@@ -215,7 +215,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const renderEmptyState = () => {
     if (isLoading) {
       return (
-        <Flex justify="center" align="center" className="notification-loading-state">
+        <Flex direction="column" justify="center" align="center" className="notification-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
           <span className="loading-message">{t`Loading notifications...`}</span>
         </Flex>
@@ -223,7 +223,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     }
 
     return (
-      <Flex justify="center" align="center" className="notification-empty-state">
+      <Flex direction="column" justify="center" align="center" className="notification-empty-state">
         <Icon name="bell" size="3xl" className="empty-icon" />
         <span className="empty-message">{t`No unread notifications`}</span>
         <span className="empty-hint">
@@ -233,10 +233,15 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     );
   };
 
-  const panelTitle =
-    allNotifications.length === 1
+  // Per-space panel makes the scope explicit in the title; the global panel
+  // (across all spaces) keeps the plain count.
+  const panelTitle = global
+    ? allNotifications.length === 1
       ? t`${allNotifications.length} notification`
-      : t`${allNotifications.length} notifications`;
+      : t`${allNotifications.length} notifications`
+    : allNotifications.length === 1
+      ? t`${allNotifications.length} Notification in this Space`
+      : t`${allNotifications.length} Notifications in this Space`;
 
   const panelBody = (
       <>
