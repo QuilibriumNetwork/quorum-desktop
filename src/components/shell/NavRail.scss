@@ -214,8 +214,10 @@
 .nav-rail .nav-rail__notif-dot {
   width: $s-2-5;   // 10px — bigger than the base 6px dot
   height: $s-2-5;
-  top: -1px;
-  right: 3px;      // pull inward so it overlaps the bell's top-right corner
+  // Sit on the bell's RIGHT side (not the top): lower it toward the vertical
+  // middle and push it right so it overlaps only the right edge of the glyph.
+  top: 4px;
+  right: 1px;
   left: auto;
   transform: none;
   // Ring lifts the badge off the icon strokes underneath it.

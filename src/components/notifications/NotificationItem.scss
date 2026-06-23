@@ -45,21 +45,34 @@
   }
 }
 
-// Leading circular type badge (36px), muted fill, accent-colored icon.
+// Leading circular type badge (36px): a soft accent-tinted chip with the
+// accent-colored type icon. The tint reads clearly against the panel surface
+// (plain --surface-3 was nearly invisible in dark mode).
 .notification-badge {
   width: $s-9;
   height: $s-9;
   border-radius: $rounded-full;
-  background-color: var(--surface-3);
+  background-color: color-mix(in srgb, var(--accent) 16%, transparent);
   display: flex;
   align-items: center;
   justify-content: center;
-  line-height: 0; // kill inline-SVG baseline whitespace so the icon centers
+  line-height: 0; // kill inline-SVG baseline whitespace
+
+  // Center whatever the Icon renders (svg or wrapper) both axes, with no
+  // intrinsic margins, so the glyph sits dead-center regardless of its viewBox.
+  > * {
+    display: block;
+    margin: 0;
+  }
+
+  svg {
+    display: block;
+  }
 }
 
 .notification-badge-icon {
   color: var(--accent);
-  display: block; // block SVG centers exactly within the flex badge (no baseline shift)
+  display: block;
 }
 
 // Body: vertical stack of the three lines, allowed to shrink + truncate.
