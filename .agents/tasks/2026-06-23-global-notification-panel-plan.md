@@ -925,9 +925,32 @@ git commit -m "feat(notifications): add useGlobalNotifications composition hook"
 
 **Files:**
 - Create: `src/utils/resolveGlobalSender.ts`
+- Create: `src/hooks/business/notifications/useGlobalSenderResolver.ts`
 - Create: `src/dev/tests/utils/resolveGlobalSender.unit.test.ts`
+- Modify: `src/hooks/business/notifications/index.ts`
 
 The global panel can't use `Channel`'s `mapSenderToUser` (it's per-space and built from enriched members). It resolves a sender's name from the sender's own space data.
+
+> **DEVIATION FROM ORIGINAL SPEC (2026-06-23).** The original spec read
+> `space.members[senderId]`, assuming `Space.members` was a `Record<address, member>`.
+> Verified false: `Space.members` is `string[]` (addresses only); enriched member
+> objects (`display_name`, `user_icon`) come from `messageDB.getSpaceMembers(spaceId)`
+> (returns `channel.UserProfile[]`). Corrected design (approved by user — "Async map
+> via getSpaceMembers"):
+> - `resolveGlobalSender.ts` exports a PURE core `buildGlobalSenderMap(membersBySpace)`
+>   → `(spaceId, senderId) => ResolvedGlobalSender`, mapping `user_address`→`address`,
+>   `display_name`→`displayName`, `user_icon`→`userIcon`. Unknown → `{ address: senderId }`.
+> - `useGlobalSenderResolver(spaces)` hook fetches each space's roster via
+>   `messageDB.getSpaceMembers` (React Query, 30s stale) and returns the sync resolver,
+>   with an address-only fallback until rosters load.
+> - `primaryUsername`/`globalDisplayName` are NOT on the roster (they come from the
+>   public-profile fetch), so they're optional — parity with the per-space path when
+>   unenriched. Output shape feeds the existing `resolveSpaceMemberName(...)` call in
+>   `NotificationPanel` unchanged.
+> - Import `UserProfile` via the `channel` namespace (`import type { channel }` →
+>   `channel.UserProfile`); it is NOT exported from the package root.
+> The code blocks below are the ORIGINAL (broken) spec, kept for history. See the
+> shipped files for the real implementation.
 
 - [ ] **Step 1: Write the failing test**
 
