@@ -13,6 +13,7 @@ import {
   FloatingFocusManager,
   type Placement,
   type ReferenceType,
+  type VirtualElement,
 } from '@floating-ui/react';
 
 /**
@@ -42,10 +43,15 @@ export interface FloatingPopoverProps {
   /** Called whenever the popover should close (outside press, escape). */
   onClose: () => void;
   /**
-   * The trigger element the popover is anchored to. Provide this when the
-   * caller already has the DOM node (e.g. captured from a click event).
+   * The trigger the popover is anchored to. Either a real DOM node (e.g.
+   * captured from a click event) or a floating-ui *virtual element* — any
+   * object exposing `getBoundingClientRect()`. Virtual elements let surfaces
+   * anchor to a point or a measured rect that has no backing element, e.g. a
+   * right-click position, a text-caret rect, or a text-selection rect. The
+   * value is passed straight through to floating-ui's `elements.reference`,
+   * which supports both natively.
    */
-  anchor?: HTMLElement | null;
+  anchor?: HTMLElement | VirtualElement | null;
   /** Preferred placement; flips automatically when it doesn't fit. */
   placement?: Placement;
   /** Gap in px between the anchor and the floating element. */
@@ -77,7 +83,24 @@ export interface FloatingPopoverProps {
    * entirely. Defaults to false (other surfaces follow the anchor instead).
    */
   closeOnScroll?: boolean;
+  /**
+   * Position the floating element via `top`/`left` instead of floating-ui's
+   * default `transform: translate(...)`. Set this when the popover's own CSS
+   * animates `transform` (e.g. a `scale()` open animation): a transform-based
+   * keyframe would otherwise override floating-ui's positioning transform and
+   * the element would animate from the viewport origin (0,0). Defaults to
+   * false (transform positioning — slightly cheaper, fine for opacity-only or
+   * non-animated surfaces). See floating-ui `useFloating({ transform })`.
+   */
+  positionViaLayout?: boolean;
   className?: string;
+  /**
+   * Extra inline styles merged onto the floating element. Use for sizing the
+   * surface (e.g. a dynamic `width`); positioning and `zIndex` are owned by
+   * the primitive and applied first, so avoid overriding `position`/`top`/
+   * `left`/`transform` here.
+   */
+  style?: React.CSSProperties;
   children: React.ReactNode;
 }
 
@@ -96,7 +119,9 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   role = 'dialog',
   closeWhenAnchorHidden = true,
   closeOnScroll = false,
+  positionViaLayout = false,
   className,
+  style,
   children,
 }) => {
   // Keep onClose identity-stable inside effects/callbacks: callers often pass
@@ -117,9 +142,17 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
     // body-portalled popover (immune to transformed/positioned ancestors and
     // to page scroll affecting the offset parent).
     strategy: 'fixed',
+    // When the floating element animates its own transform, position via
+    // top/left so the keyframe doesn't clobber floating-ui's translate.
+    transform: !positionViaLayout,
     // Reference held in state (reactive) — the critical fix vs. setReference
     // in an effect. floating-ui sees the anchor the same render open flips.
-    elements: { reference: anchor ?? null },
+    // The controlled `elements.reference` option is typed `Element` but
+    // floating-ui supports virtual elements (any { getBoundingClientRect })
+    // here at runtime — it only calls getBoundingClientRect for positioning.
+    // Cast through the option's narrower type; `anchor` is validated as
+    // HTMLElement | VirtualElement | null by the prop type.
+    elements: { reference: (anchor ?? null) as Element | null },
     middleware: [
       offset(gap),
       // Flip handles BOTH axes:
@@ -180,7 +213,7 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   const floating = (
     <div
       ref={refs.setFloating}
-      style={{ ...floatingStyles, zIndex }}
+      style={{ ...floatingStyles, zIndex, ...style }}
       className={className}
       {...getFloatingProps()}
     >
@@ -208,6 +241,6 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   );
 };
 
-export type { Placement, ReferenceType };
+export type { Placement, ReferenceType, VirtualElement };
 
 export default FloatingPopover;
