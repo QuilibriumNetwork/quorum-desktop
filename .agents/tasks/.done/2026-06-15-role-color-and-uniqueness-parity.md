@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Bring desktop roles to parity: shared color tokens + tag/name uniqueness + remove-from-user confirm"
-status: in-progress
+status: done
 created: 2026-06-15
 shared_dependency: "@quilibrium/quorum-shared 2.1.0-30 (merged to shared master; desktop sees it via link: on a local build; NOT yet published to npm — that's the mobile blocker, not desktop's)"
 mobile_status: "shipped to mobile (branch held for the -30 publish); desktop is the remaining client"
