@@ -54,11 +54,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  line-height: 0; // kill inline-SVG baseline whitespace so the icon centers
 }
 
 .notification-badge-icon {
-  font-size: $text-lg;
   color: var(--accent);
+  display: block; // block SVG centers exactly within the flex badge (no baseline shift)
 }
 
 // Body: vertical stack of the three lines, allowed to shrink + truncate.

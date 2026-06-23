@@ -143,7 +143,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       {/* Leading type badge — conveys notification kind at a glance (mirrors the
           mobile notifications screen). */}
       <div className="notification-badge flex-shrink-0" aria-hidden="true">
-        <Icon name={typeIcon} className="notification-badge-icon" />
+        <Icon name={typeIcon} size={18} className="notification-badge-icon" />
       </div>
 
       <div className="notification-body min-w-0">
