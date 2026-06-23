@@ -6,24 +6,37 @@
 // notification list it reads as an oversized, floating band. Reshape it into a
 // compact header bar that flows into the controls row below.
 .notification-panel--global {
-  // Title bar: $s-4 (16px) vertical padding + $text-lg line-height (28px) = 60px
-  // tall. Keep these in sync with the close-button centering below.
+  // Title bar: fixed height so the close button can center against it exactly
+  // ($s-4 vertical padding + $text-lg line-height). Box-sizing keeps the height
+  // honest regardless of padding.
+  $title-bar-height: 60px;
+
   .quorum-modal-title {
+    box-sizing: border-box;
+    height: $title-bar-height;
+    display: flex;
+    align-items: center;
     font-size: $text-lg;
     line-height: $text-lg-lh;
     font-weight: $font-bold;
     margin-bottom: 0;
-    padding: $s-4 $s-12 $s-4 $s-4; // right padding leaves room for the close button
+    padding: 0 $s-12 0 $s-4; // vertical centering handled by flex; right pad clears the close button
     border-bottom: $border solid var(--color-border-panel);
   }
 
-  // Vertically center the close button on the title bar (half of the 60px bar =
-  // 30px), regardless of the button's own box size. translateY(-50%) makes this
-  // self-correcting instead of pixel-guessing against the primitive's top: $s-3.
+  // Center the close button on the title bar. Fixed square button (so the hover
+  // circle stays compact) positioned at the bar's vertical center:
+  // top = (bar - button) / 2. Symmetric gap, no guessing against the icon box.
+  $close-size: 32px;
+
   .quorum-modal-close {
-    top: 30px !important;
-    right: $s-4;
-    transform: translateY(-50%);
+    // Equal distance from the top border and the right edge of the bar.
+    top: calc((#{$title-bar-height} - #{$close-size}) / 2) !important;
+    right: calc((#{$title-bar-height} - #{$close-size}) / 2);
+    width: $close-size;
+    height: $close-size;
+    margin: 0;
+    padding: 0;
     display: flex;
     align-items: center;
     justify-content: center;
