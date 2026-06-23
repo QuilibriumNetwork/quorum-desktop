@@ -1,7 +1,6 @@
 // @ts-ignore - Will be available after installing vitest
 import '@testing-library/jest-dom';
-// @ts-ignore - Will be available after installing vitest
-import { beforeAll, afterEach, afterAll, vi } from 'vitest';
+import { vi } from 'vitest';
 // @ts-ignore - Will be available after installing testing library
 import { cleanup } from '@testing-library/react';
 

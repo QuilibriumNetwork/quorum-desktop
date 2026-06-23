@@ -10,6 +10,8 @@ export interface MentionNotification {
   channelId: string;
   channelName: string;
   mentionType: 'you' | 'everyone' | 'roles';
+  spaceId?: string;
+  spaceName?: string;
 }
 
 interface UseAllMentionsProps {
