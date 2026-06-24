@@ -19,6 +19,14 @@ interface UseMessageFormattingOptions {
   spaceChannels?: Channel[];
   disableMentionInteractivity?: boolean;
   currentSpaceId?: string;
+  /**
+   * Whether this message's `@everyone` was authorized — the wire flag is set AND
+   * the sender actually held `mention:everyone` (role-based, no owner bypass).
+   * When false/omitted, `@everyone` is treated as plain text and does not
+   * highlight the viewer, matching the trust rule the notification path enforces.
+   * Computed by the caller (Message.tsx) where the space roles are in scope.
+   */
+  everyoneAuthorized?: boolean;
 }
 
 // Check if a token is an invite link using dynamic domain validation
@@ -28,7 +36,7 @@ function isInviteLink(token: string): boolean {
 }
 
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
-  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false, currentSpaceId } = options;
+  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false, currentSpaceId, everyoneAuthorized = false } = options;
 
 
   // Handle image click with size checking
@@ -44,12 +52,19 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
     [onImageClick]
   );
 
-  // Check if message mentions current user
+  // Check if message mentions current user.
+  // @everyone only counts when it was authorized (sender held mention:everyone),
+  // so an unauthorized/spoofed @everyone doesn't trigger the viewport highlight —
+  // same trust rule the styled pill and notification path enforce.
   const isMentioned = useCallback(
     (userAddress: string) => {
-      return message.mentions?.memberIds.includes(userAddress) || message.mentions?.everyone || false;
+      return (
+        message.mentions?.memberIds.includes(userAddress) ||
+        (message.mentions?.everyone === true && everyoneAuthorized) ||
+        false
+      );
     },
-    [message.mentions]
+    [message.mentions, everyoneAuthorized]
   );
 
   // Check if message content should be rendered with markdown
@@ -115,8 +130,10 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
       lineIndex: number,
       tokenIndex: number
     ) => {
-      // Check for @everyone mention (only style if message has everyone mention)
-      if (token.match(/^@everyone$/i) && message.mentions?.everyone) {
+      // Check for @everyone mention. Style it only when the wire flag is set AND
+      // the sender was authorized (everyoneAuthorized) — an unauthorized/spoofed
+      // @everyone stays plain text, matching the notification trust rule.
+      if (token.match(/^@everyone$/i) && message.mentions?.everyone && everyoneAuthorized) {
         return {
           type: 'mention' as const,
           key: `${messageId}-${lineIndex}-${tokenIndex}`,
@@ -253,7 +270,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         text: token,
       };
     },
-    [mapSenderToUser, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity, currentSpaceId]
+    [mapSenderToUser, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity, currentSpaceId, everyoneAuthorized]
   );
 
   return {

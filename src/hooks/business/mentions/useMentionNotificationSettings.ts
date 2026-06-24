@@ -9,15 +9,25 @@
  * @see .agents/tasks/reply-notification-system.md
  */
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { t } from '@lingui/core/macro';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { SpaceNotificationSettings, SpaceNotificationTypeId } from '../../../types/notifications';
 import { getDefaultNotificationSettings, logger } from '@quilibrium/quorum-shared';
-import { buildConfigKey } from '../../queries/config';
+import { useConfig, buildConfigKey } from '../../queries/config';
 import { showError } from '../../../utils/toast';
+
+/** Order-insensitive equality for two notification-type selections. */
+function sameTypes(
+  a: SpaceNotificationTypeId[],
+  b: SpaceNotificationTypeId[]
+): boolean {
+  if (a.length !== b.length) return false;
+  const setB = new Set(b);
+  return a.every((type) => setB.has(type));
+}
 
 interface UseMentionNotificationSettingsProps {
   spaceId: string;
@@ -68,48 +78,53 @@ export function useMentionNotificationSettings({
   const userAddress = currentPasskeyInfo?.address;
   const queryClient = useQueryClient();
 
-  const [settings, setSettings] = useState<SpaceNotificationSettings>(() =>
-    getDefaultNotificationSettings(spaceId)
+  // Read config reactively from React Query (IndexedDB-backed), the same source
+  // the notification panel hooks use. This replaces the previous one-shot mount
+  // read that could capture desktop's stale local default before a cross-device
+  // config sync had landed in IndexedDB — making the modal display (and worse,
+  // a no-op Save) clobber a value another device had already set.
+  // See .agents/tasks/.todo/2026-06-23-notification-settings-stale-read-and-clobber.md
+  const { data: config } = useConfig({ userAddress: userAddress || '' });
+
+  // The persisted settings for this space, derived from the live config.
+  // Falls back to all-types-enabled defaults for a space with no stored value.
+  const settings = useMemo<SpaceNotificationSettings>(
+    () =>
+      config?.notificationSettings?.[spaceId] ??
+      getDefaultNotificationSettings(spaceId),
+    [config?.notificationSettings, spaceId]
   );
-  const [selectedTypes, setSelectedTypes] = useState<SpaceNotificationTypeId[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+
+  // Local edit state for the multiselect. Seeded from the persisted settings
+  // and re-synced whenever the persisted value changes (e.g. a config sync
+  // lands while the modal is open) UNLESS the user has a pending unsaved edit.
+  const [selectedTypes, setSelectedTypes] = useState<SpaceNotificationTypeId[]>(
+    () => settings.enabledNotificationTypes
+  );
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load settings from IndexedDB on mount
+  // Tracks whether the user has locally changed the selection since it was last
+  // synced from config. While dirty, incoming config changes don't overwrite
+  // the in-progress edit; a successful Save resets this.
+  const isDirtyRef = useRef(false);
+  const handleSetSelectedTypes = useCallback(
+    (types: SpaceNotificationTypeId[]) => {
+      isDirtyRef.current = true;
+      setSelectedTypes(types);
+    },
+    []
+  );
+
+  // Re-sync local selection from the persisted value when config updates and the
+  // user has no pending edit. Keeps the displayed selection fresh after a
+  // cross-device sync without stomping an in-progress local change.
+  const persistedTypes = settings.enabledNotificationTypes;
   useEffect(() => {
-    const loadSettings = async () => {
-      if (!userAddress) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        setIsLoading(true);
-        const config = await messageDB.getUserConfig({ address: userAddress });
-        const settings = config?.notificationSettings?.[spaceId];
-
-        if (settings) {
-          setSettings(settings);
-          setSelectedTypes(settings.enabledNotificationTypes);
-        } else {
-          // Use defaults for new space
-          const defaults = getDefaultNotificationSettings(spaceId);
-          setSettings(defaults);
-          setSelectedTypes(defaults.enabledNotificationTypes);
-        }
-      } catch (error) {
-        console.error('[NotificationSettings] Error loading settings:', error);
-        // Use defaults on error
-        const defaults = getDefaultNotificationSettings(spaceId);
-        setSettings(defaults);
-        setSelectedTypes(defaults.enabledNotificationTypes);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    loadSettings();
-  }, [spaceId, userAddress, messageDB]);
+    if (isDirtyRef.current) return;
+    setSelectedTypes((prev) =>
+      sameTypes(prev, persistedTypes) ? prev : persistedTypes
+    );
+  }, [persistedTypes]);
 
   // Save settings via action queue (encrypts, signs, syncs cross-device, persists locally).
   // Mirrors useChannelMute.muteSpace so per-space settings stay on a single sync path.
@@ -132,6 +147,16 @@ export function useMentionNotificationSettings({
         currentConfig?.notificationSettings?.[spaceId] ||
         getDefaultNotificationSettings(spaceId);
 
+      // Clobber guard: if the selection matches what's already persisted, there
+      // is nothing to write. This protects against the no-op Save that would
+      // otherwise POST the current (now always-fresh) value back. Combined with
+      // the reactive read above, a Save can no longer overwrite a value set on
+      // another device with a stale desktop default.
+      if (sameTypes(selectedTypes, currentSettings.enabledNotificationTypes)) {
+        isDirtyRef.current = false;
+        return;
+      }
+
       const updatedConfig = {
         ...currentConfig,
         address: userAddress,
@@ -146,26 +171,22 @@ export function useMentionNotificationSettings({
         },
       };
 
-      // Capture pre-update snapshots for rollback before mutating either.
-      const previousSettings = settings;
-
-      // Optimistically update React Query cache for instant UI feedback
+      // Optimistically update React Query cache for instant UI feedback. The
+      // derived `settings` value re-reads from this cache, so the UI reflects
+      // the save immediately without separate local state.
       queryClient.setQueryData(
         buildConfigKey({ userAddress }),
         updatedConfig
       );
 
-      // Update local state to reflect the saved values
-      setSettings({
-        ...currentSettings,
-        spaceId,
-        enabledNotificationTypes: selectedTypes,
-      });
+      // The local selection now matches what we just persisted optimistically;
+      // clear the dirty flag so future config syncs are free to re-seed it.
+      isDirtyRef.current = false;
 
       // Queue config save in background (encrypt + sign + post + IndexedDB).
       // Fire-and-forget keeps the modal responsive; the optimistic cache update
-      // already gave the UI its instant feedback. On failure, restore both the
-      // cache and the local hook state so the UI matches what actually persisted.
+      // already gave the UI its instant feedback. On failure, restore the cache
+      // (which reverts the derived `settings`) so the UI matches what persisted.
       actionQueueService
         .enqueue(
           'save-user-config',
@@ -175,7 +196,6 @@ export function useMentionNotificationSettings({
         .catch((err) => {
           logger.error('[NotificationSettings] enqueue failed for saveSettings, rolling back', err);
           queryClient.setQueryData(buildConfigKey({ userAddress }), currentConfig);
-          setSettings(previousSettings);
           showError(t`Failed to save notification setting`);
         });
     } catch (error) {
@@ -189,8 +209,11 @@ export function useMentionNotificationSettings({
   return {
     settings,
     selectedTypes,
-    setSelectedTypes,
-    isLoading,
+    setSelectedTypes: handleSetSelectedTypes,
+    // Config is read via a suspense query, so by the time this hook's consumer
+    // renders the value is already resolved — there is no separate loading
+    // phase. Kept in the return for API compatibility with the modal.
+    isLoading: false,
     saveSettings,
     isSaving,
   };
