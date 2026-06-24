@@ -231,7 +231,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           {!isBannerUploading && !isBannerDragActive && !hasBanner && (
             <ReactTooltip
               id="space-banner-tooltip"
-              content={t`Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1`}
+              content={t`Upload a banner for your Space - PNG or JPG - Optimal ratio 2:1`}
               place="top"
               className="!w-[400px]"
               anchorSelect="#space-banner-tooltip-target"
