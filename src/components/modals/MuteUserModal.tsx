@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { showError } from '../../utils/toast';
 
 interface MuteUserModalProps {
@@ -81,7 +81,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
               {userName}
             </span>
             <span className="text-small">
-              {getAddressSuffix(userAddress)}
+              {formatAddress(userAddress)}
             </span>
           </div>
         </Flex>

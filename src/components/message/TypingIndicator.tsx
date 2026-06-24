@@ -2,6 +2,7 @@ import { t } from '@lingui/core/macro';
 import { Fragment } from 'react';
 import { useTypingIndicator } from '../../hooks/business/messages/useTypingIndicator';
 import type { TypingScope } from '@quilibrium/quorum-shared';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import './TypingIndicator.scss';
 
 export interface TypingIndicatorProps {
@@ -17,11 +18,6 @@ export interface TypingIndicatorProps {
 
 const MAX_NAME_LEN = 20;
 
-function truncateAddress(address: string): string {
-  if (address.length <= 12) return address;
-  return `${address.slice(0, 6)}...${address.slice(-4)}`;
-}
-
 function truncateName(name: string): string {
   if (name.length <= MAX_NAME_LEN) return name;
   return `${name.slice(0, MAX_NAME_LEN - 1)}…`;
@@ -32,7 +28,7 @@ export function TypingIndicator({ scope, resolveName }: TypingIndicatorProps) {
 
   const names = typists.map((addr) => {
     const resolved = resolveName?.(addr);
-    return resolved ? truncateName(resolved) : truncateAddress(addr);
+    return resolved ? truncateName(resolved) : formatAddress(addr);
   });
 
   let content: React.ReactNode = null;

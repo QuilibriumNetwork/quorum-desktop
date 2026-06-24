@@ -21,7 +21,7 @@ import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
 import type { Role, Channel, PostMessage } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
-import { truncateAddress } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
 
 interface MessageMarkdownRendererProps {
@@ -627,7 +627,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         //     display name and is interactive (clickable, hover cursor).
         //   - resolveSender(address) returns null (or isn't provided and
         //     mapSenderToUser also yields nothing useful) → pill shows
-        //     `truncateAddress(address)` and is non-interactive (no hover
+        //     `formatAddress(address)` and is non-interactive (no hover
         //     cursor, no click). Communicates "this is a mention" without
         //     lying about what clicking it will do.
         //
@@ -665,7 +665,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
                   globalDisplayName: resolvedUser.globalDisplayName,
                 }),
               )
-            : truncateAddress(address, 4, 4);
+            : formatAddress(address);
           const interactive = isResolved && !!onUserClick;
 
           parts.push(

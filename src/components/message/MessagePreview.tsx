@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
-import { processMarkdownText } from '@quilibrium/quorum-shared';
+import { processMarkdownText, formatAddress } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
@@ -193,7 +193,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
   const getDisplayName = () => {
     if (sender?.displayName) return sender.displayName;
     if (sender?.username) return sender.username;
-    if (senderId) return senderId.slice(-8);
+    if (senderId) return formatAddress(senderId);
     return t`Unknown User`;
   };
 

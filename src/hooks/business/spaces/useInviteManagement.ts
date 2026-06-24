@@ -8,8 +8,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { useConversations, useRegistration } from '../../queries';
-import { isValidIPFSCID, type Conversation, type Channel } from '@quilibrium/quorum-shared';
-import { getAddressSuffix } from '../../../utils';
+import { isValidIPFSCID, formatAddress, type Conversation, type Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
 
@@ -115,7 +114,7 @@ export const useInviteManagement = (
         avatar: conversation.icon,
         displayName: conversation.displayName,  // For user initials fallback
         userAddress: conversation.address,      // For deterministic color generation
-        subtitle: getAddressSuffix(conversation.address),
+        subtitle: formatAddress(conversation.address),
       }));
   }, [conversations]);
 

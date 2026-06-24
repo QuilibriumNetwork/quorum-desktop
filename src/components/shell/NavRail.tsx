@@ -6,7 +6,7 @@ import type { IconName } from '@quilibrium/quorum-shared';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { useOptionalShellState } from './useShellState';
 import { useSpaces } from '../../hooks/queries/spaces';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
@@ -290,7 +290,7 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
           <div className="nav-rail__user-meta">
             <div className="nav-rail__user-name">{displayName}</div>
             <div className="nav-rail__user-hint">
-              {userAddress ? getAddressSuffix(userAddress) : t`Settings`}
+              {userAddress ? formatAddress(userAddress) : t`Settings`}
             </div>
           </div>
         </button>
