@@ -1,11 +1,11 @@
 ---
 type: task
 title: Implement Channel Ordering Feature
-status: ready
+status: done
 complexity: medium
 ai_generated: true
 created: 2026-01-07T00:00:00.000Z
-updated: '2026-05-29'
+updated: '2026-06-24'
 ---
 
 # Implement Channel Ordering Feature

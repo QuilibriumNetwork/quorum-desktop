@@ -194,7 +194,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Implement Channel Ordering Feature](tasks/2026-01-07-channel-ordering-feature.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
@@ -374,6 +373,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Design: Discord-style Thread Panel Layout with Resize](tasks/.done/2025-03-09-thread-panel-discord-layout-design.md)
 - [Discord-style Thread Panel Layout Implementation Plan](tasks/.done/2025-03-09-thread-panel-discord-layout.md)
 - [Space Tags](tasks/.done/2025-12-30-space-tags.md)
+- [Implement Channel Ordering Feature](tasks/.done/2026-01-07-channel-ordering-feature.md)
 - [Dependency Updates Audit](tasks/.done/2026-02-24-dependency-updates-audit.md)
 - [Simplified Message Actions Toolbar](tasks/.done/2026-03-09-simplified-message-actions-design.md)
 - [Simplified Message Actions Toolbar — Implementation Plan](tasks/.done/2026-03-09-simplified-message-actions-plan.md)
@@ -650,4 +650,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-24 09:54:58
+**Last Updated**: 2026-06-24 10:02:52
