@@ -8,7 +8,7 @@
 import { extractGifFirstFrame } from './gifUtils';
 import { ProcessedImage } from './types';
 import { IMAGE_ERRORS, formatFileSize } from './errors';
-import { ImageConfig } from './config';
+import { ImageConfig, FILE_SIZE_LIMITS } from './config';
 
 /**
  * Validates GIF file size against configuration limits
@@ -22,9 +22,9 @@ export const validateGifSize = (file: File, config: ImageConfig): void => {
     const maxSize = formatFileSize(config.gifSizeLimit);
 
     // Use specific error messages based on the size limit
-    if (config.gifSizeLimit === 100 * 1024) { // Emoji GIFs
+    if (config.gifSizeLimit === FILE_SIZE_LIMITS.MAX_EMOJI_GIF_SIZE) { // Emoji GIFs (100KB)
       throw new Error(IMAGE_ERRORS.ANIMATED_EMOJI_GIF_TOO_LARGE());
-    } else if (config.gifSizeLimit === 500 * 1024) { // Sticker GIFs
+    } else if (config.gifSizeLimit === FILE_SIZE_LIMITS.MAX_STICKER_GIF_SIZE) { // Sticker GIFs (750KB)
       throw new Error(IMAGE_ERRORS.ANIMATED_STICKER_GIF_TOO_LARGE());
     } else {
       throw new Error(IMAGE_ERRORS.GIF_TOO_LARGE(maxSize));

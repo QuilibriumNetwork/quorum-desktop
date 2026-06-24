@@ -1,49 +1,63 @@
 /**
- * Unified Image Processor
+ * Unified Image Processor (desktop).
  *
- * Replaces the 6 specialized processor files with a single configuration-driven
- * approach. Handles all image types (avatars, banners, attachments, emojis, stickers)
- * with consistent logic and centralized error handling.
+ * Thin desktop binding over the platform-agnostic orchestration in
+ * `orchestration.ts`. This file provides the desktop `ImagePlatform` adapter
+ * (compressorjs + canvas) and maps the orchestrator's typed error codes back to
+ * the existing localized messages, so the public API and behavior are unchanged.
  */
 
 import { compressImage } from './compressor';
 import { getImageDimensions } from './gifUtils';
 import { processGifFile, shouldGenerateGifThumbnail, generateGifThumbnail } from './gifProcessor';
 import { ProcessedImage } from './types';
-import { IMAGE_CONFIGS, ImageConfigType, ImageConfig, FILE_SIZE_LIMITS } from './config';
+import { ImageConfigType, ImageConfig } from './config';
 import { IMAGE_ERRORS, formatFileSize } from './errors';
+import {
+  ImagePlatform,
+  ImageProcessingError,
+  processImageWithConfig,
+  processAttachmentWithConfig,
+  AttachmentResult,
+} from './orchestration';
 
 /**
- * Result from processing message attachments with optional thumbnail
- * (Only used for message attachments with thumbnail support)
+ * Result from processing message attachments with optional thumbnail.
+ * (Only used for message attachments with thumbnail support.)
  */
-export interface AttachmentProcessingResult {
-  thumbnail?: ProcessedImage;
-  full: ProcessedImage;
-  isLargeGif?: boolean;
+export type AttachmentProcessingResult = AttachmentResult<ProcessedImage>;
+
+/**
+ * Desktop platform adapter: compressorjs for static images, canvas for GIF
+ * dimensions, and the existing GIF passthrough.
+ */
+const desktopPlatform: ImagePlatform<File, ProcessedImage> = {
+  compress: (file, opts) => compressImage(file, opts),
+  passthroughGif: (file, config) => processGifFile(file, config),
+  getDimensions: (file) => getImageDimensions(file),
+};
+
+/** Map orchestrator error codes to the existing localized messages. */
+function toLocalizedError(error: unknown): Error {
+  if (error instanceof ImageProcessingError) {
+    switch (error.code) {
+      case 'FILE_TOO_LARGE':
+        return new Error(IMAGE_ERRORS.FILE_TOO_LARGE(formatFileSize(error.limitBytes ?? 0)));
+      case 'EMOJI_COMPRESSION_FAILED':
+        return new Error(IMAGE_ERRORS.EMOJI_COMPRESSION_FAILED());
+      case 'STICKER_COMPRESSION_FAILED':
+        return new Error(IMAGE_ERRORS.STICKER_COMPRESSION_FAILED());
+      case 'GIF_TOO_LARGE':
+      case 'COMPRESSION_FAILED':
+      default:
+        return new Error(IMAGE_ERRORS.COMPRESSION_FAILED());
+    }
+  }
+  return error instanceof Error ? error : new Error(String(error));
 }
 
 /**
- * Validates input file size against general limits
- */
-const validateInputFileSize = (file: File, config: ImageConfig): void => {
-  let maxInputSize: number;
-
-  // Determine appropriate input size limit based on image type
-  if (config === IMAGE_CONFIGS.emoji) {
-    maxInputSize = FILE_SIZE_LIMITS.MAX_EMOJI_INPUT_SIZE; // 5MB for emojis
-  } else {
-    maxInputSize = FILE_SIZE_LIMITS.MAX_INPUT_SIZE; // 25MB for everything else
-  }
-
-  if (file.size > maxInputSize) {
-    const maxSize = formatFileSize(maxInputSize);
-    throw new Error(IMAGE_ERRORS.FILE_TOO_LARGE(maxSize));
-  }
-};
-
-/**
- * Main unified image processor
+ * Main unified image processor.
  *
  * @param file - Image file to process
  * @param type - Configuration type (avatar, emoji, sticker, etc.)
@@ -51,111 +65,39 @@ const validateInputFileSize = (file: File, config: ImageConfig): void => {
  */
 export const processImage = async (
   file: File,
-  type: ImageConfigType
+  type: ImageConfigType,
 ): Promise<ProcessedImage> => {
-  const config = IMAGE_CONFIGS[type];
-
-  // Validate input file size
-  validateInputFileSize(file, config);
-
-  // Handle GIFs specially
-  if (file.type === 'image/gif') {
-    return processGifFile(file, config);
-  }
-
-  // Process static images (PNG, JPG, WebP, etc.)
   try {
-    return await compressImage(file, {
-      maxWidth: config.maxWidth,
-      maxHeight: config.maxHeight,
-      quality: config.quality,
-      cropToFit: config.cropToFit,
-      maintainAspectRatio: config.maintainAspectRatio,
-      skipCompressionThreshold: config.skipCompressionThreshold,
-    });
+    return await processImageWithConfig(file, type, desktopPlatform);
   } catch (error) {
-    // Provide specific error messages based on image type
-    if (config === IMAGE_CONFIGS.emoji) {
-      throw new Error(IMAGE_ERRORS.EMOJI_COMPRESSION_FAILED());
-    } else if (config === IMAGE_CONFIGS.sticker) {
-      throw new Error(IMAGE_ERRORS.STICKER_COMPRESSION_FAILED());
-    } else {
-      throw new Error(IMAGE_ERRORS.COMPRESSION_FAILED());
-    }
+    throw toLocalizedError(error);
   }
 };
 
 /**
- * Specialized processor for message attachments with thumbnail support
+ * Specialized processor for message attachments with thumbnail support.
  *
  * @param file - Image file to process
  * @returns AttachmentProcessingResult with optional thumbnail
  */
 export const processAttachmentImage = async (
-  file: File
+  file: File,
 ): Promise<AttachmentProcessingResult> => {
-  const config = IMAGE_CONFIGS.messageAttachment;
+  // GIF poster-frame extraction is desktop-specific (canvas); inject it.
+  const generateThumb = (f: File, config: ImageConfig): Promise<ProcessedImage> =>
+    // `generateGifThumbnail` already encapsulates the canvas extraction; the
+    // shared layer only decides *whether* to call it via shouldGenerateGifThumbnail.
+    generateGifThumbnail(f, config);
 
-  // Validate input file size
-  validateInputFileSize(file, config);
-
-  // Handle GIFs with thumbnail generation
-  if (file.type === 'image/gif') {
-    if (shouldGenerateGifThumbnail(file, config)) {
-      const thumbnail = await generateGifThumbnail(file, config);
-      const full = await processGifFile(file, config);
-
-      return {
-        thumbnail,
-        full,
-        isLargeGif: true,
-      };
-    } else {
-      // Small GIF - no thumbnail needed
-      const full = await processGifFile(file, config);
-      return { full };
-    }
+  try {
+    return await processAttachmentWithConfig(file, desktopPlatform, generateThumb);
+  } catch (error) {
+    throw toLocalizedError(error);
   }
-
-  // Handle static images with thumbnail generation
-  const dimensions = await getImageDimensions(file);
-
-  if (config.thumbnailConfig &&
-      (dimensions.width > config.thumbnailConfig.threshold ||
-       dimensions.height > config.thumbnailConfig.threshold)) {
-
-    // Generate both thumbnail and full image
-    const [thumbnail, full] = await Promise.all([
-      compressImage(file, {
-        maxWidth: config.thumbnailConfig.maxWidth,
-        maxHeight: config.thumbnailConfig.maxHeight,
-        quality: config.thumbnailConfig.quality,
-        maintainAspectRatio: true,
-        skipCompressionThreshold: config.skipCompressionThreshold,
-      }),
-      compressImage(file, {
-        maxWidth: config.maxWidth,
-        maxHeight: config.maxHeight,
-        quality: config.quality,
-        maintainAspectRatio: true,
-        skipCompressionThreshold: config.skipCompressionThreshold,
-      }),
-    ]);
-
-    return { thumbnail, full };
-  }
-
-  // Small image - single version only
-  const full = await compressImage(file, {
-    maxWidth: config.maxWidth,
-    maxHeight: config.maxHeight,
-    quality: config.quality,
-    maintainAspectRatio: true,
-    skipCompressionThreshold: config.skipCompressionThreshold,
-  });
-
-  return { full };
 };
+
+// Re-export so existing imports of this symbol from unifiedProcessor keep working.
+export { shouldGenerateGifThumbnail };
 
 // Export convenient type-specific processors
 export const processAvatarImage = (file: File) => processImage(file, 'avatar');

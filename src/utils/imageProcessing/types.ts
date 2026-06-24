@@ -1,23 +1,12 @@
 /**
- * Image processing types and interfaces
+ * Image processing types and interfaces.
+ *
+ * `ImageProcessingOptions` is platform-agnostic and now lives in
+ * `sharedConfig.ts` (re-exported here for back-compat). `ProcessedImage` and
+ * `ImageProcessor` reference the DOM `File` type, so they stay desktop-only.
  */
 
-export interface ImageProcessingOptions {
-  /** Maximum width in pixels */
-  maxWidth?: number;
-  /** Maximum height in pixels */
-  maxHeight?: number;
-  /** Compression quality (0-1) */
-  quality?: number;
-  /** Whether to maintain aspect ratio when resizing */
-  maintainAspectRatio?: boolean;
-  /** Whether to crop to exact dimensions or fit within bounds */
-  cropToFit?: boolean;
-  /** Skip compression for files smaller than this size (bytes) */
-  skipCompressionThreshold?: number;
-  /** Force compression of GIFs (they are normally skipped to preserve animation) */
-  forceGifCompression?: boolean;
-}
+export type { ImageProcessingOptions } from './sharedConfig';
 
 export interface ProcessedImage {
   /** Compressed file */
