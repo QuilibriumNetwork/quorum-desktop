@@ -121,6 +121,28 @@ export default defineConfig(({ command }): UserConfig => ({
       // Allow serving .agents folder in development (entire dev folder already excluded from prod)
       allow: ['..', '.agents'],
     },
+    // Dev-only CORS workaround. The browser blocks direct calls from this dev
+    // server (localhost) to api.quorummessenger.com because that API doesn't
+    // send CORS headers for localhost. Instead of disabling browser security,
+    // we proxy: the app calls same-origin paths (/quorum-api, /quorum-ws) and
+    // Vite forwards them server-side. `changeOrigin` rewrites the Host/Origin
+    // so the upstream accepts the request. Production and Electron builds are
+    // unaffected — they hit the API directly (see src/config/config.quorum.ts).
+    proxy: {
+      '/quorum-api': {
+        target: 'https://api.quorummessenger.com',
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/quorum-api/, ''),
+      },
+      '/quorum-ws': {
+        target: 'wss://api.quorummessenger.com',
+        changeOrigin: true,
+        secure: true,
+        ws: true,
+        rewrite: (path) => path.replace(/^\/quorum-ws/, '/ws'),
+      },
+    },
   },
   resolve: {
     alias: {
