@@ -24,26 +24,4 @@ export const getDefaultUserConfig = (address: string): UserConfig => {
   };
 };
 
-export const truncateAddress = (
-  address: string,
-  startChars: number = 4,
-  endChars: number = 4
-): string => {
-  if (!address || address.length <= startChars + endChars) {
-    return address;
-  }
-
-  return `${address.slice(0, startChars)}...${address.slice(-endChars)}`;
-};
-
-export const getAddressSuffix = (address: string, chars: number = 6): string => {
-  if (!address) {
-    return '';
-  }
-
-  if (address.length <= chars) {
-    return `#${address}`;
-  }
-
-  return `#${address.slice(-chars)}`;
-};
+// Address truncation moved to formatAddress in @quilibrium/quorum-shared.

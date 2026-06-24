@@ -18,7 +18,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useModals } from '../context/ModalProvider';
 import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from './UserAvatar';
 import { ResolvedName } from './ResolvedName';
 import {
@@ -251,7 +251,7 @@ const UserProfile: React.FunctionComponent<{
           </div>
           <Flex className="py-1 text-subtle">
             <span className="text-xs text-subtle">
-              {getAddressSuffix(props.user.address)}
+              {formatAddress(props.user.address)}
             </span>
             <ClickToCopyContent
               className="ml-2"

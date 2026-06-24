@@ -1,4 +1,4 @@
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, formatAddress } from '@quilibrium/quorum-shared';
 import React, {
   useEffect,
   useRef,
@@ -32,7 +32,7 @@ import type { TypingScope } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { ClickToCopyContent } from '../ui';
-import { DefaultImages, getAddressSuffix } from '../../utils';
+import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 
 import { GlobalSearch } from '../search';
@@ -819,7 +819,7 @@ const DirectMessage: React.FC<{}> = () => {
                     iconSize="xs"
                     textSize="xs"
                   >
-                    {getAddressSuffix(address ?? '')}
+                    {formatAddress(address ?? '')}
                   </ClickToCopyContent>
                 </div>
               </Flex>
@@ -941,7 +941,7 @@ const DirectMessage: React.FC<{}> = () => {
                   iconSize="xs"
                   textSize="xs"
                 >
-                  {getAddressSuffix(address ?? '')}
+                  {formatAddress(address ?? '')}
                 </ClickToCopyContent>
               </div>
               {/* Below xs: vertical layout - name above address */}
@@ -959,7 +959,7 @@ const DirectMessage: React.FC<{}> = () => {
                   iconClassName="text-subtle hover:text-main"
                   iconSize="xs"
                 >
-                  {getAddressSuffix(address ?? '')}
+                  {formatAddress(address ?? '')}
                 </ClickToCopyContent>
               </div>
             </Flex>

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { ResolvedName } from '../user/ResolvedName';
 import { resolveMemberName } from '../../utils/resolveMemberName';
@@ -92,7 +92,7 @@ const DirectMessageContact: React.FunctionComponent<{
       <div className="relative flex-shrink-0">
         <UserAvatar
           userIcon={props.userIcon}
-          displayName={props.displayName || getAddressSuffix(props.address)}
+          displayName={props.displayName || formatAddress(props.address)}
           address={props.address}
           size={44}
           className={
@@ -162,7 +162,7 @@ const DirectMessageContact: React.FunctionComponent<{
               (isActive ? 'text-subtle' : 'text-muted')
             }
           >
-            {getAddressSuffix(props.address)}
+            {formatAddress(props.address)}
           </div>
         ) : null}
       </div>

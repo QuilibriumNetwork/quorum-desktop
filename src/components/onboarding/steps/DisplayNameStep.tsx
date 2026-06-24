@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Input } from '../../primitives';
 import { t } from '@lingui/core/macro';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { validateDisplayName } from '../../../hooks/business/validation';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
 import { OnboardingInfoLink } from '../OnboardingInfoLink';
@@ -37,11 +38,7 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
           <span className="text-xs onboarding-label-muted mb-1">{t`Account Address`}</span>
           <Input
             variant="filled"
-            value={
-              flow.address.length > 20
-                ? `${flow.address.slice(0, 10)}...${flow.address.slice(-8)}`
-                : flow.address
-            }
+            value={formatAddress(flow.address, 10, 8)}
             placeholder={t`Account address`}
             disabled
           />

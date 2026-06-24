@@ -5,7 +5,7 @@ import { useUserKicking } from '../../hooks';
 import { useModalSaveState } from '../../hooks';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import { t } from '@lingui/core/macro';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 
 type KickUserModalProps = {
   visible: boolean;
@@ -75,7 +75,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
               {props.userName}
             </span>
             <span className="text-small">
-              {getAddressSuffix(props.userAddress)}
+              {formatAddress(props.userAddress)}
             </span>
           </div>
         </Flex>

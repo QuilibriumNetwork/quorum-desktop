@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { showError } from '../../utils/toast';
 
 interface BlockUserModalProps {
@@ -69,7 +69,7 @@ const BlockUserModal: React.FunctionComponent<BlockUserModalProps> = ({
             <span className="text-body font-semibold truncate-user-name">
               {userName}
             </span>
-            <span className="text-small">{getAddressSuffix(userAddress)}</span>
+            <span className="text-small">{formatAddress(userAddress)}</span>
           </div>
         </Flex>
 

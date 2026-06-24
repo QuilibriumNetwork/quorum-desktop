@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
 import type { Bookmark, MessageContent, PostMessage } from '@quilibrium/quorum-shared';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { Flex, Button, Icon, Tooltip } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { MessageMarkdownRenderer } from '../message/MessageMarkdownRenderer';
 import { useResolvedBookmark } from '../../hooks/queries/bookmarks';
-import { formatMessageDate, getAddressSuffix, DefaultImages } from '../../utils';
+import { formatMessageDate, DefaultImages } from '../../utils';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { useImageModal } from '../context/ImageModalProvider';
 import { isTouchDevice } from '../../utils/platform';
@@ -92,7 +93,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       );
     }
     // DM: cachedPreview.sourceName is usually empty.
-    const counterpartLabel = senderName || (senderAddress ? getAddressSuffix(senderAddress) : t`Unknown`);
+    const counterpartLabel = senderName || (senderAddress ? formatAddress(senderAddress) : t`Unknown`);
     return (
       <Flex align="center" className="bookmark-card__source">
         <Icon name="message" size="sm" className="bookmark-card__source-icon" />

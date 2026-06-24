@@ -63,11 +63,4 @@ export async function getDeviceName(): Promise<string> {
   return `${browser} (${os})`;
 }
 
-/**
- * Truncates an inbox address for display: first 4 chars + ... + last 4 chars.
- * Returns the address unchanged if it is 8 characters or shorter.
- */
-export function truncateAddress(address: string): string {
-  if (address.length <= 8) return address;
-  return `${address.slice(0, 4)}...${address.slice(-4)}`;
-}
+// Address truncation moved to formatAddress in @quilibrium/quorum-shared.

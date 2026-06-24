@@ -3,7 +3,8 @@ import { Button, Icon, Tooltip, Spacer, ScrollContainer, Callout } from '../../p
 import { t } from '@lingui/core/macro';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QRCodeSVG } from 'qrcode.react';
-import { truncateAddress, getDeviceName } from '../../../utils/deviceInfo';
+import { getDeviceName } from '../../../utils/deviceInfo';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { useDeviceNameValidation } from '../../../hooks/business/validation';
 import { ClickToCopyContent } from '../../ui';
 import {
@@ -332,7 +333,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
                           tooltipText={t`Copy full address`}
                           tooltipLocation="top"
                         >
-                          {truncateAddress(inboxAddress)}
+                          {formatAddress(inboxAddress)}
                         </ClickToCopyContent>
                         {isThisDevice && saveDeviceName && (
                           <Tooltip

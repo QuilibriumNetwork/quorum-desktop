@@ -3,7 +3,7 @@ import { useMessages } from '../../queries/messages/useMessages';
 import { useSpaceOwner } from '../../queries/spaceOwner/useSpaceOwner';
 import { useSpace } from '../../queries/space/useSpace';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { hasPermission } from '@quilibrium/quorum-shared';
+import { hasPermission, formatAddress } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Channel, Role } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
@@ -165,11 +165,11 @@ export function useChannelMessages({
       if (member) {
         return {
           ...member,
-          displayName: member.displayName || senderId.slice(-6),
+          displayName: member.displayName || formatAddress(senderId),
         };
       }
       return {
-        displayName: senderId?.slice(-6) || t`Unknown User`,
+        displayName: senderId ? formatAddress(senderId) : t`Unknown User`,
         userIcon: DefaultImages.UNKNOWN_USER,
       };
     },

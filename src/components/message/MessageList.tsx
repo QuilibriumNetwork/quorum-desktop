@@ -24,7 +24,7 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
-import { shouldShowDateSeparator, shouldShowCompactHeader } from '@quilibrium/quorum-shared';
+import { shouldShowDateSeparator, shouldShowCompactHeader, formatAddress } from '@quilibrium/quorum-shared';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
 import { Button as ButtonBase } from '../primitives';
 // Cast to work around React type version mismatch between quorum-shared and quorum-desktop
@@ -309,11 +309,11 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         if (member) {
           return {
             ...member,
-            displayName: member.displayName || senderId.slice(-6),
+            displayName: member.displayName || formatAddress(senderId),
           };
         }
         return {
-          displayName: senderId?.slice(-6) || 'Unknown User',
+          displayName: senderId ? formatAddress(senderId) : 'Unknown User',
           userIcon: DefaultImages.UNKNOWN_USER,
         };
       },

@@ -1,11 +1,10 @@
 import React, { useMemo } from 'react';
 import { Icon } from '../primitives';
 import { FloatingPopover, rectAnchor, type VirtualElement } from '../ui';
-import { getRoleColorHex } from '@quilibrium/quorum-shared';
+import { getRoleColorHex, formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import type { MentionOption } from '../../hooks/business/mentions';
-import { getAddressSuffix } from '../../utils';
 import { ResolvedName } from '../user/ResolvedName';
 import { resolveSpaceMemberName } from '../../utils/resolveMemberName';
 import './MentionDropdown.scss';
@@ -148,7 +147,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
                 className="mention-dropdown__name"
               />
               <span className="mention-dropdown__subtitle">
-                {getAddressSuffix(option.data.address)}
+                {formatAddress(option.data.address)}
               </span>
             </div>
           </>

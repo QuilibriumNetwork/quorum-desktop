@@ -6,7 +6,7 @@ import { logger } from '@quilibrium/quorum-shared';
 import { Icon } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { ClickToCopyContent } from '../ui';
-import { getAddressSuffix } from '../../utils';
+import { formatAddress } from '@quilibrium/quorum-shared';
 import { ResolvedName } from '../user/ResolvedName';
 import { resolveMemberName } from '../../utils/resolveMemberName';
 import { useMessageDB } from '../context/useMessageDB';
@@ -103,7 +103,7 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
             iconSize="xs"
             textSize="xs"
           >
-            {getAddressSuffix(user.address)}
+            {formatAddress(user.address)}
           </ClickToCopyContent>
         </div>
       </div>
