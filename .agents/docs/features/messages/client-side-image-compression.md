@@ -3,7 +3,7 @@ type: doc
 title: Client-Side Image Compression & Thumbnail System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-09-21T00:00:00.000Z
+updated: 2026-06-24T00:00:00.000Z
 ---
 
 # Client-Side Image Compression & Thumbnail System
@@ -16,17 +16,29 @@ Unified image compression system with smart thumbnail generation for bandwidth o
 
 ### Core Files
 
+The platform-agnostic config + orchestration now live in **quorum-shared**; desktop keeps only the compressorjs engine and a thin binding that injects it.
+
 ```
-src/utils/imageProcessing/
-├── compressor.ts               # Main compression engine (web)
-├── gifUtils.ts                 # GIF frame extraction utilities
-├── types.ts                    # Shared interfaces
-├── index.ts                    # Public API exports
-├── config.ts                   # Unified configuration system
-├── errors.ts                   # Centralized error messages
-├── gifProcessor.ts             # Consolidated GIF handling
-└── unifiedProcessor.ts         # Single processor for all image types
+quorum-shared/src/utils/
+├── imageConfig.ts              # Single source of truth: FILE_SIZE_LIMITS, IMAGE_CONFIGS,
+│                               #   ImageConfig, ImageConfigType, ImageProcessingOptions (pure, no DOM/native)
+└── imageOrchestration.ts       # Platform-agnostic: input validation, GIF/static routing,
+                                #   thumbnail decisions; compressor injected via ImagePlatform adapter
+
+src/utils/imageProcessing/      (desktop)
+├── compressor.ts               # Compression engine (compressorjs, web)
+├── gifUtils.ts                 # GIF frame extraction utilities (canvas)
+├── gifProcessor.ts             # Desktop GIF passthrough/validation
+├── unifiedProcessor.ts         # Desktop binding: provides the compressorjs ImagePlatform
+│                               #   adapter + maps shared error codes to localized (Lingui) messages
+├── errors.ts                   # Centralized localized error messages
+├── sharedConfig.ts             # Re-exports config from @quilibrium/quorum-shared
+├── orchestration.ts            # Re-exports orchestration from @quilibrium/quorum-shared
+├── config.ts / types.ts        # Thin re-export shims (back-compat for existing importers)
+└── index.ts                    # Public API exports
 ```
+
+Mobile consumes the same `imageConfig` / `imageOrchestration` from the published shared package and provides its own expo-image-manipulator adapter.
 
 ### Integration Points
 
@@ -45,14 +57,18 @@ src/utils/imageProcessing/
 
 ## Compression Targets & GIF Handling
 
+Canonical dimensions decided 2026-06-24 for cross-platform consistency (sized ~display-size × peak device pixel ratio, capped for storage). Defined once in `quorum-shared/src/utils/imageConfig.ts`.
+
 | Use Case | Input Limit | Static Output | Animated GIF Limit | Display Size |
 |----------|-------------|---------------|-------------------|--------------|
-| **User Avatars** | 25MB | 123×123px | N/A (static only) | 82×82px |
-| **Space Icons** | 25MB | 123×123px | N/A (static only) | 82×82px |
-| **Space Banners** | 25MB | 450×253px | N/A (static only) | 300×120px |
+| **User Avatars** | 25MB | 256×256px | N/A (static only) | ~40–82px |
+| **Space Icons** | 25MB | 256×256px | N/A (static only) | ~82px |
+| **Space Banners** | 25MB | 1600×900px bounding box, `cover`-cropped at render | N/A (static only) | wide ~2:1 strip (upload hint: ratio 2:1) |
 | **Message Attachments** | 25MB | 300px + 1200px | 2MB (animation preserved) | 300×300px max |
-| **Custom Emojis** | 5MB | 36×36px | 100KB (animation preserved) | 24×24px |
-| **Custom Stickers** | 25MB | 400px width (600px max height) | 750KB (animation preserved) | 300px max width (600px max height) |
+| **Custom Emojis** | 5MB | 96×96px | 100KB (animation preserved) | 24×24px |
+| **Custom Stickers** | 25MB | 512px (longest axis) | 750KB (animation preserved) | 300px max width |
+
+> **Space banner note:** `maintainAspectRatio` is used (no hard crop at upload); 1600×900 is a bounding box, not a target shape. Each surface `cover`-crops at render to its own wide ~2:1 strip (desktop channel-list header ~260–300×132, mobile header full-width×180, future discover hero). The upload UI hints "optimal ratio 2:1" to match what is shown.
 
 ### Smart Thumbnail System (Message Attachments)
 
@@ -116,9 +132,9 @@ const result = await processImage(file, 'emoji');
 const stickerResult = await processImage(file, 'sticker');
 
 // Or use convenient type-specific processors
-const emojiResult = await processEmojiImage(file);   // 36px, 100KB GIF limit
-const stickerResult = await processStickerImage(file); // 400px width, 750KB GIF limit
-const avatarResult = await processAvatarImage(file);   // 123px, no GIFs
+const emojiResult = await processEmojiImage(file);   // 96px, 100KB GIF limit
+const stickerResult = await processStickerImage(file); // 512px longest axis, 750KB GIF limit
+const avatarResult = await processAvatarImage(file);   // 256px, no GIFs
 ```
 
 ### Error Handling with Centralized Messages
@@ -144,7 +160,7 @@ try {
 - **Message GIFs**: 2MB hard limit (animation preserved)
 - **Sticker GIFs**: 750KB hard limit (animation preserved)
 - **Emoji GIFs**: 100KB hard limit (animation preserved)
-- **Emojis (static)**: 5MB (compressed to 36×36px)
+- **Emojis (static)**: 5MB (compressed to 96×96px)
 
 ### Output Results (After Processing)
 - **Static images**: 50KB - 500KB typical range
@@ -168,6 +184,8 @@ try {
 
 ## Platform Support
 
+Both platforms share the same `imageConfig` + `imageOrchestration` from quorum-shared; only the compression engine differs (injected via the `ImagePlatform` adapter).
+
 ### Web (✅ Implemented)
 - Uses **compressorjs** library for static compression
 - **Canvas API** for GIF frame extraction
@@ -175,11 +193,10 @@ try {
 - **PNG transparency**: Preserved for files ≤750KB, converted to JPEG for larger files
 - **GIF animation**: Always preserved within size limits
 
-### Mobile (📱 Planned)
-- Will use **expo-image-manipulator** for static compression
-- **React Native Image** for GIF frame extraction
-- Same compression targets and behavior
-- See: `.agents/tasks/mobile-dev/mobile-image-compression.md`
+### Mobile (🔜 Pending shared adoption)
+- Uses **expo-image-manipulator** for static compression
+- Same shared config + orchestration; mobile provides its own `ImagePlatform` adapter
+- Blocked on the published shared package + version bump; see the mobile task `quorum-mobile/.agents/tasks/2026-06-24-plug-mobile-into-shared-image-config.md`
 
 ## Development Notes
 
@@ -191,7 +208,7 @@ try {
 5. Update hooks to use new processor
 
 ### Configuration System Benefits
-- **Single source of truth**: All compression settings in one place
+- **Single source of truth**: all compression settings live once in `quorum-shared` (`imageConfig.ts`), shared by desktop and mobile
 - **Type safety**: TypeScript ensures valid configurations
 - **Consistency**: Same logic applied across all image types
 - **Maintainability**: Easy to adjust compression targets
@@ -238,4 +255,4 @@ console.log(`Animation preserved: ${!result.thumbnail || result.isLargeGif}`);
 ---
 
 
-*Verified: 2025-12-09 - All file paths and architecture confirmed current*
+*Verified: 2026-06-24 — config + orchestration moved to quorum-shared; canonical dimensions updated (avatar 256, space icon 256, emoji 96, sticker 512, banner 1600×900 / ~2:1, message attachment 1200).*
