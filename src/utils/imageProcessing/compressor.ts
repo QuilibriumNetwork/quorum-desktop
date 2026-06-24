@@ -74,7 +74,10 @@ export const compressImage = async (
 
   const originalSize = file.size;
 
-  // Skip compression for GIFs (preserve animation) unless forced
+  // Skip compression for GIFs (preserve animation) unless forced.
+  // GIFs are passed through raw; re-encoding would flatten the animation.
+  // This is an accepted privacy non-gap: the GIF format has no standardized
+  // GPS EXIF field (unlike JPEG), so the location-leak risk does not apply.
   if (file.type === 'image/gif' && !forceGifCompression) {
     return {
       file,
@@ -83,8 +86,12 @@ export const compressImage = async (
     };
   }
 
-  // Skip compression if file is already small and within dimensions
-  if (file.size < skipCompressionThreshold) {
+  // Skip compression if file is already small and within dimensions.
+  // EXIF metadata (incl. GPS) lives in JPEG/TIFF, not PNG/WebP — so JPEGs must
+  // never take the skip path, or a small geotagged photo would upload with its
+  // location intact. Forcing JPEGs through the re-encode below strips it.
+  const carriesExif = file.type === 'image/jpeg' || file.type === 'image/tiff';
+  if (file.size < skipCompressionThreshold && !carriesExif) {
     const withinDimensions = await isWithinDimensions(file, maxWidth, maxHeight);
     if (withinDimensions) {
       return {
@@ -101,6 +108,12 @@ export const compressImage = async (
       quality,
       convertSize: Infinity,
       retainExif: false,
+      // strict:false forces compressorjs to always return the re-encoded canvas
+      // output, even if it ends up marginally larger than the input. With the
+      // default strict:true, an already-compressed JPEG whose re-encode grows
+      // is handed back AS THE ORIGINAL FILE — EXIF (incl. GPS) intact. We always
+      // want the stripped re-encode for privacy. (compressorjs 1.3.0)
+      strict: false,
       mimeType: file.type,
       success(result: Blob) {
         // Convert to File with original name
