@@ -10,6 +10,7 @@ import BlockUserModal from '../modals/BlockUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 import ConversationSettingsModal from '../modals/ConversationSettingsModal';
 import FolderEditorModal from '../modals/FolderEditorModal';
+import { GlobalNotificationsModal } from '../notifications/GlobalNotificationsModal';
 import {
   useModalState,
   type ModalState,
@@ -49,6 +50,8 @@ interface ModalContextType {
   closeConversationSettings: () => void;
   openFolderEditor: (folderId?: string) => void;
   closeFolderEditor: () => void;
+  openNotifications: () => void;
+  closeNotifications: () => void;
   // Legacy compatibility with existing useModalContext
   isNewDirectMessageOpen: boolean;
 }
@@ -140,6 +143,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeConversationSettings: modalState.closeConversationSettings,
     openFolderEditor: modalState.openFolderEditor,
     closeFolderEditor: modalState.closeFolderEditor,
+    openNotifications: modalState.openNotifications,
+    closeNotifications: modalState.closeNotifications,
     // Legacy compatibility
     isNewDirectMessageOpen: modalState.isNewDirectMessageOpen,
   };
@@ -252,6 +257,11 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
           onClose={modalState.closeFolderEditor}
         />
       )}
+
+      <GlobalNotificationsModal
+        isOpen={modalState.state.notifications.isOpen}
+        onClose={modalState.closeNotifications}
+      />
 
       {children}
     </ModalContext.Provider>

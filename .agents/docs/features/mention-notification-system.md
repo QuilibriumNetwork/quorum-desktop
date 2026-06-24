@@ -543,6 +543,93 @@ Thread reply messages can contain @mentions that trigger notifications just like
 
 ---
 
+## Global Notification Panel
+
+A single, app-level notification panel that aggregates unread mentions and replies across **all** the user's spaces, opened from a bell in the `NavRail`. It complements the existing per-space header bell (which stays scoped to one space) without changing it.
+
+### Entry point and presentation
+
+- **NavRail bell** — `NavRail` has a `notifications` rail item (bell icon) as the **last** item in the rail. It is not a route; clicking it calls `openNotifications()` from the `ModalProvider` context. It never shows an "active" pathname state because it opens a modal rather than navigating.
+- **Modal presentation** — `NotificationPanel` has an opt-in `global` prop. In global mode it renders its content inside the **`Modal` primitive** (`size="medium"`, 600px wide) rather than the per-space `DropdownPanel`. This gives the dimmed/blurred backdrop, escape/click-outside, focus management, and correct z-index above the AppShell chrome for free — the architecturally correct home for a top-level-triggered centered panel (see `.agents/docs/features/modals.md`). It is mounted via the **ModalProvider system** (router level), not inside NavRail, so its backdrop stacks above the rail/sidebar. A Suspense-isolated container `GlobalNotificationsModal` owns the suspense-backed `useSpaces` / `useGlobalSenderResolver` calls and renders the panel.
+- **Taller, longer preview (global only)** — `.notification-panel--global` makes the modal taller (`max-height: 85vh`, `min-height: min(85vh, 560px)`) without widening it, and is a flex column whose inner list is the single scroll region (the modal root is `overflow: hidden` so there's exactly one scrollbar). Global rows also show a longer message preview (char cap 400 vs 200; `-webkit-line-clamp: 5` vs 2). The per-space panel keeps its compact 350px list, 200-char cap, and 2-line clamp.
+- **Presence dot** — the bell shows an unread **badge** (`.nav-rail__notif-dot`, scoped under `.nav-rail`) when `useSpaceMentionCounts` or `useSpaceReplyCounts` (driven by all spaces) report any unread. These are the existing early-exit count hooks (cheap; they cap at "9+"), so the dot costs no extra panel fetch. It is positioned over the bell's right side with a ring in the rail background. The dot clears once the relevant channels are read.
+
+### Data flow (Approach A: live aggregation)
+
+The panel does not maintain a separate notification store. It aggregates live from the same IndexedDB reads the per-space panel uses:
+
+- `useGlobalNotifications({ spaces, enabledTypes, replyEnabled })` composes two global hooks and returns `{ notifications, truncated, isLoading }`.
+  - `useAllMentionsGlobal` loops every space and calls the pure `fetchSpaceMentions(messageDB, space, userAddress, { ..., perChannelLimit })`.
+  - `useAllRepliesGlobal` loops every space and calls the pure `fetchSpaceReplies(messageDB, space, userAddress, { enabled, config, perChannelLimit })`.
+  - Both pure functions are the SAME source of truth the per-space `useAllMentions`/`useAllReplies` delegate to (each per-space hook scopes the space's channels to its `channelIds` and calls the same function). This guarantees the per-space bell and the global panel can never disagree on gating (mute, settings, read-state, thread read times).
+- Rows are merged and sorted newest-first across spaces; each row carries `spaceId` + `spaceName`.
+
+### Bounded fetch (performance cap)
+
+To keep memory bounded for heavy users (many large spaces, lots of unread), the global path caps per-channel fetches:
+
+- `GLOBAL_PER_CHANNEL_LIMIT = 50` — passed as `perChannelLimit` to `fetchSpaceMentions`/`fetchSpaceReplies` in global mode (the per-space path keeps the default `1000`, so per-space behavior is unchanged).
+- `GLOBAL_DISPLAY_CAP = 100` — applied as a slice **after** the global newest-first sort (order-independent, so no bias toward whichever space iterated first).
+- When the merged set exceeds the cap, `useGlobalNotifications` returns `truncated: true` and the panel renders a "Showing the 100 most recent notifications" note (no silent truncation).
+
+Constants live in `src/hooks/business/notifications/constants.ts` (standalone to avoid a circular import between the mention/reply global hooks and the composition hook).
+
+### Sender name resolution
+
+The per-space panel uses `Channel`'s `mapSenderToUser` (built from one space's enriched members). The global panel spans spaces, so it uses `useGlobalSenderResolver(spaces)`:
+
+- It pre-fetches each space's roster via `messageDB.getSpaceMembers(spaceId)` (React Query, 30s stale) and builds a synchronous resolver `(spaceId, senderId) => { address, displayName, userIcon }`, with an address-only fallback until rosters load or for unknown senders.
+- The pure core `buildGlobalSenderMap(membersBySpace)` in `src/utils/resolveGlobalSender.ts` is unit-tested in isolation.
+- Note: `Space.members` is `string[]` (addresses only); enriched member objects come from `getSpaceMembers` (`channel.UserProfile[]`). `primaryUsername`/`globalDisplayName` are not on the roster (they come from the public-profile fetch), so they are optional — parity with the per-space path when unenriched. The resolver output feeds the existing `resolveSpaceMemberName(...)` call in `NotificationPanel` unchanged.
+
+### Row layout (mobile-style, both panels)
+
+`NotificationItem` was redesigned to mirror the mobile notifications screen so the notification type is scannable at a glance. Each row is a **leading circular type badge** + a **3-line body**:
+
+- **Badge** — a 36px circle (soft accent tint via `color-mix(in srgb, var(--accent) 16%, transparent)`) holding the type icon (accent-colored, 18px). Icon by type: `@you → at`, `@everyone → bullhorn`, role mention → `shield`, reply → `reply`. The badge is centered with `display: grid; place-items: center` and the SVG forced to an exact 18px square.
+- **Line 1 — location**: `#channel` (per-space) or `Space › #channel` (global), with `› Thread` appended for thread replies. Driven by the optional `spaceName` prop, which is set only in global mode (`isGlobal = !!spaceName`); per-space rows omit the space name.
+- **Line 2 — author + preview**: `Author:` (medium weight) followed by the message preview with mention formatting, clamped (2 lines per-space, 5 global).
+- **Line 3 — relative time**: `dayjs(message.createdDate).fromNow()` (e.g. "8 minutes ago"). The old calendar icon + formatted date were removed.
+
+The previous single-line meta (channel · inline-type-icon · sender · calendar-date) was replaced entirely. `spaceName` doubles as the global-mode signal (it also drives the taller layout and longer preview).
+
+### Panel title
+
+- **Per-space**: "X Notification(s) in this Space" (makes the scope explicit).
+- **Global**: plain "X notification(s)".
+- The title is computed in `NotificationPanel` from `global` + `allNotifications.length`.
+
+### Loading / empty state
+
+Both the loading spinner and empty state render as a vertical stack (`Flex direction="column"`): icon on top, text below, centered.
+
+### Mark-all-read (cross-space, confirm-gated)
+
+`handleMarkAllReadCore` builds the set of `(spaceId, channelId)` pairs present in the visible notifications — in global mode each row supplies its own `spaceId`; in per-space mode it uses the panel `spaceId` — and writes read times (channel + thread) for each pair. Because the global action has a large blast radius, it is gated behind a `useConfirmation` modal (`variant: 'warning'`): "This marks mentions and replies as read across all your spaces." The per-space path calls the core directly (no confirm), unchanged.
+
+### Cache invalidation
+
+The global hooks use keys `['mention-notifications', 'global', ...]` / `['reply-notifications', 'global', ...]`. React Query prefix-matching requires the prefix to match in order, so the previously space-scoped invalidations (`['mention-notifications', spaceId]`) would NOT reach the global keys. `MessageService` (on new mention/reply) and `useUpdateReadTime` (on read) were broadened to the bare prefixes `['mention-notifications']` / `['reply-notifications']`, which match BOTH the per-space and the global variants. So a new notification or reading a channel refreshes the global panel too.
+
+### Per-space header bell vs global panel
+
+The per-space bell inside a space still uses the anchored right-aligned `DropdownPanel`, current-space scope, an unconfirmed mark-all, and the compact list (350px cap, 2-line clamp, 200-char preview). Global behavior — Modal shell, cross-space aggregation, taller layout, longer preview, space breadcrumb, confirm-gated mark-all — is gated behind the `global` prop. NOTE: the **row redesign (leading type badge + 3-line layout + relative time) applies to BOTH panels** — it is not global-only. The per-space-only differences are the breadcrumb space name, the list height/preview length, and the title ("…in this Space"). The per-space mark-all now invalidates channel-count keys at the bare-channel prefix instead of the space-scoped one (still correct).
+
+### Key files
+
+- `src/hooks/business/mentions/fetchSpaceMentions.ts`, `src/hooks/business/replies/fetchSpaceReplies.ts` — pure per-space fetchers (shared source of truth).
+- `src/hooks/business/mentions/useAllMentionsGlobal.ts`, `src/hooks/business/replies/useAllRepliesGlobal.ts` — per-space loops.
+- `src/hooks/business/notifications/useGlobalNotifications.ts` — composition + cap + `truncated`.
+- `src/hooks/business/notifications/useGlobalSenderResolver.ts`, `src/utils/resolveGlobalSender.ts` — cross-space sender names.
+- `src/hooks/business/notifications/constants.ts` — `GLOBAL_PER_CHANNEL_LIMIT`, `GLOBAL_DISPLAY_CAP`.
+- `src/components/notifications/GlobalNotificationsModal.tsx` — Suspense-isolated container rendered by ModalProvider; owns `useSpaces`/`useGlobalSenderResolver` and mounts the panel in global mode.
+- `src/components/notifications/NotificationPanel.tsx` — `global` mode (Modal shell vs DropdownPanel; context-aware title; cross-space confirm mark-all).
+- `src/components/notifications/NotificationItem.tsx` / `.scss` — leading type badge + 3-line row (location / author+preview / relative time); `spaceName` drives global breadcrumb, taller layout, longer preview.
+- `src/components/shell/NavRail.tsx` / `.scss` — bell entry (last item), `openNotifications()` trigger, presence-dot badge.
+- `src/hooks/business/ui/useModalState.ts` + `src/components/context/ModalProvider.tsx` — `notifications` modal state + `openNotifications`/`closeNotifications`.
+
+---
+
 ## Key Design Decisions
 
 ### 1. Unified Notification Type System
@@ -750,3 +837,7 @@ All mention components use `tokenData.isInteractive` flag to determine CSS class
 *Verified: 2026-01-09 - Removed references to unsupported enhanced mention formats*
 
 _Updated: 2026-03-14 (added Thread Mentions section documenting thread-aware notification behavior: `thread_read_times` IndexedDB store, `channel › Thread` breadcrumb in NotificationPanel, navigation hash format, and persistence rules)_
+
+_Updated: 2026-06-23 (added Global Notification Panel section: NavRail bell, centered presentation, live cross-space aggregation via `useGlobalNotifications` → shared `fetchSpaceMentions`/`fetchSpaceReplies`, bounded-fetch cap, `useGlobalSenderResolver`, `Space › #channel` breadcrumb, broadened cache invalidations, confirm-gated cross-space mark-all; per-space bell unchanged)_
+
+_Updated: 2026-06-24 (Global Notification Panel refinements: moved to the Modal primitive via ModalProvider + `GlobalNotificationsModal` container for a proper backdrop/z-index; bell moved to last rail item + overlapping presence badge; mobile-style row redesign across BOTH panels (leading type badge with at/bullhorn/shield/reply icons + 3-line location/author-preview/relative-time layout, calendar icon removed); per-space title "…in this Space"; taller global modal with longer preview and single scroll region; vertical loading/empty state)_

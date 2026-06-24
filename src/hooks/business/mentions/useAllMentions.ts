@@ -1,15 +1,16 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { isMentionedWithSettings, getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
-import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
 import type { Message } from '@quilibrium/quorum-shared';
+import { fetchSpaceMentions } from './fetchSpaceMentions';
 
 export interface MentionNotification {
   message: Message;
   channelId: string;
   channelName: string;
   mentionType: 'you' | 'everyone' | 'roles';
+  spaceId?: string;
+  spaceName?: string;
 }
 
 interface UseAllMentionsProps {
@@ -46,119 +47,33 @@ export function useAllMentions({
     queryKey: ['mention-notifications', spaceId, userAddress, ...channelIds.sort(), ...(enabledTypes?.sort() || [])],
     queryFn: async () => {
       if (!userAddress) return [];
-
-      const allMentions: MentionNotification[] = [];
-
       try {
-        // Load user's notification settings for this space
         const config = await messageDB.getUserConfig({ address: userAddress });
-        const settings = config?.notificationSettings?.[spaceId];
-
-        // Check if entire space is muted (takes precedence over individual settings)
-        if (settings?.isMuted) {
-          return []; // Space is muted - no notifications
-        }
-
-        // Determine which mention types to check (unified format)
-        // If enabledTypes provided, use it; otherwise get from settings
-        let typesToCheck: string[];
-        if (enabledTypes) {
-          typesToCheck = enabledTypes;
-        } else {
-          const allTypes = settings?.enabledNotificationTypes || getDefaultNotificationSettings(spaceId).enabledNotificationTypes;
-          // Filter to only mention types (exclude 'reply')
-          typesToCheck = allTypes.filter(t => t.startsWith('mention-'));
-        }
-
-        // If no mention types enabled, return empty
-        if (typesToCheck.length === 0) {
-          return [];
-        }
-
-        // Get muted channels to exclude from notifications
-        const mutedChannelIds = getMutedChannelsForSpace(spaceId, config?.mutedChannels);
-
-        // Get space data to access channel names
         const space = await messageDB.getSpace(spaceId);
+        if (!space) return [];
 
-        // Process each channel (excluding muted ones)
-        for (const channelId of channelIds) {
-          // Skip muted channels - they shouldn't show in notification panel
-          if (mutedChannelIds.includes(channelId)) {
-            continue;
-          }
-          const conversationId = `${spaceId}/${channelId}`;
+        // Preserve the explicit channelIds contract: scope the space's channels
+        // down to the channelIds the caller passed (may be a subset).
+        const allowed = new Set(channelIds);
+        const scoped = {
+          ...space,
+          groups: space.groups.map((g) => ({
+            ...g,
+            channels: g.channels.filter((c) => allowed.has(c.channelId)),
+          })),
+        };
 
-          // Get conversation to find last read timestamp
-          const { conversation } = await messageDB.getConversation({
-            conversationId,
-          });
-
-          const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
-
-          // Fetch thread read times for this channel
-          const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
-            spaceId,
-            channelId,
-          });
-
-          // Use optimized query that returns messages with mentions
-          // (includes thread replies, unlike getMessages which filters them)
-          const messages = await messageDB.getUnreadMentions({
-            spaceId,
-            channelId,
-            afterTimestamp: lastReadTimestamp,
-            limit: 1000,
-          });
-
-          // Get channel name from space data
-          const channel = space?.groups
-            ?.flatMap(g => g.channels)
-            ?.find(c => c.channelId === channelId);
-
-          // Filter messages that mention the user and are unread
-          // Thread replies check against thread read time, not channel read time
-          const unreadMentions = messages.filter((message: Message) => {
-            // Determine the effective read timestamp for this message
-            if (message.isThreadReply && message.threadId) {
-              const threadReadTime = threadReadTimes[message.threadId];
-              // If thread has been read and message is older, skip it
-              if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
-                return false;
-              }
-              // If no thread read time exists, message is unread (fall through to mention check)
-            } else {
-              // Regular channel message — use channel read time (already filtered by afterTimestamp)
-              if (message.createdDate <= lastReadTimestamp) return false;
-            }
-
-            return isMentionedWithSettings(message, {
-              userAddress,
-              enabledTypes: typesToCheck,
-              userRoles: userRoleIds,
-              space: space ?? undefined,
-            });
-          });
-
-          // Add to results with metadata
-          unreadMentions.forEach((message) => {
-            allMentions.push({
-              message,
-              channelId,
-              channelName: channel?.channelName || 'Unknown Channel',
-              mentionType: getMentionType(message, userAddress),
-            });
-          });
-        }
-
-        // Sort by date (newest first)
-        allMentions.sort((a, b) => b.message.createdDate - a.message.createdDate);
+        const rows = await fetchSpaceMentions(messageDB, scoped, userAddress, {
+          enabledTypes,
+          userRoleIds,
+          config,
+        });
+        rows.sort((a, b) => b.message.createdDate - a.message.createdDate);
+        return rows;
       } catch (error) {
         console.error('[AllMentions] Error fetching mentions:', error);
         return [];
       }
-
-      return allMentions;
     },
     enabled: !!userAddress && channelIds.length > 0,
     staleTime: 30000, // 30 seconds - matches useChannelMentionCounts
@@ -169,12 +84,4 @@ export function useAllMentions({
     mentions: data || [],
     isLoading,
   };
-}
-
-// Helper to determine mention type
-function getMentionType(message: Message, userAddress: string): 'you' | 'everyone' | 'roles' {
-  if (message.mentions?.everyone) return 'everyone';
-  if (message.mentions?.roleIds?.length && message.mentions.roleIds.length > 0) return 'roles';
-  if (message.mentions?.memberIds?.includes(userAddress)) return 'you';
-  return 'you'; // fallback
 }

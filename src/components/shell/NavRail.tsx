@@ -8,9 +8,12 @@ import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { getAddressSuffix } from '../../utils';
 import { useOptionalShellState } from './useShellState';
+import { useSpaces } from '../../hooks/queries/spaces';
+import { useSpaceMentionCounts } from '../../hooks/business/mentions';
+import { useSpaceReplyCounts } from '../../hooks/business/replies';
 import './NavRail.scss';
 
-type RailSectionId = 'dm' | 'spaces' | 'bookmarks' | 'discover' | 'farcaster' | 'wallet';
+type RailSectionId = 'dm' | 'spaces' | 'notifications' | 'bookmarks' | 'discover' | 'farcaster' | 'wallet';
 
 interface RailItemConfig {
   id: RailSectionId;
@@ -56,6 +59,12 @@ const buildItems = (): RailItemConfig[] => [
     label: t`Wallet`,
     route: '/wallet',
   },
+  {
+    id: 'notifications',
+    icon: 'bell',
+    label: t`Notifications`,
+    route: '', // not navigated — opens the global panel
+  },
   // TODO: FAVORITES section — depends on favorites feature
 ];
 
@@ -74,7 +83,7 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   // an empty deps array).
   const items = buildItems();
   const user = usePasskeysContext();
-  const { openUserSettings } = useModalContext();
+  const { openUserSettings, openNotifications } = useModalContext();
   // On phone the rail lives inside the drawer; tapping a section should swap
   // what the sidebar shows (DM list, spaces list) rather than navigate to the
   // last visited leaf, which would close the drawer via the leaf-route
@@ -85,6 +94,17 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   const displayName = user?.currentPasskeyInfo?.displayName || 'User';
   const userIcon = user?.currentPasskeyInfo?.pfpUrl;
   const userAddress = user?.currentPasskeyInfo?.address || '';
+
+  // Global notifications: the bell opens a centered Modal (rendered by
+  // ModalProvider). NavRail only needs the unread-presence dot — the panel and
+  // its sender resolver live in GlobalNotificationsModal. `useSpaces` is
+  // suspense-backed, matching the sibling SpacesSidebar under the Layout-level
+  // Suspense boundary; the cached query won't re-suspend.
+  const { data: spaces = [] } = useSpaces();
+  const mentionCounts = useSpaceMentionCounts({ spaces });
+  const replyCounts = useSpaceReplyCounts({ spaces });
+  const hasUnreadNotifications =
+    Object.keys(mentionCounts).length > 0 || Object.keys(replyCounts).length > 0;
 
   // Compute active section from pathname.
   // /discover/* → "discover"; /spaces or /spaces/:id/:id → "spaces"; /messages → "dm".
@@ -99,6 +119,10 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   }, [location.pathname]);
 
   const onItemClick = (item: RailItemConfig) => {
+    if (item.id === 'notifications') {
+      openNotifications();
+      return;
+    }
     if (item.id === 'dm') {
       // On phone the rail lives in the drawer — land on the DM list so the
       // sidebar swaps content and the drawer stays open. On desktop/tablet
@@ -167,6 +191,9 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
             >
               <span className="relative flex-shrink-0">
                 <Icon name={item.icon} size="xl" />
+                {item.id === 'notifications' && hasUnreadNotifications && (
+                  <span className="icon-unread-dot nav-rail__notif-dot" aria-hidden="true" />
+                )}
               </span>
               {!collapsed && (
                 <span className="nav-rail__item-label">{item.label}</span>

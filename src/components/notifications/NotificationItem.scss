@@ -1,9 +1,13 @@
 @use '../../styles/dropdown-result-item';
 @use '../../styles/variables' as *;
 
-// Notification item uses shared dropdown result item styling
+// Notification item: leading type badge + a 3-line body (location, author +
+// preview, relative time). Mirrors the mobile notifications screen so the type
+// is scannable at a glance.
 .notification-item {
-  // Base styles from dropdown-result-item (manually applied to avoid @extend across media queries)
+  display: flex;
+  align-items: flex-start;
+  gap: $s-3;
   padding: $s-4 $s-5;
   border-bottom: $border solid var(--surface-3);
   cursor: pointer;
@@ -41,69 +45,110 @@
   }
 }
 
-// Use shared styling for notification components
-.notification-header {
-  @extend .dropdown-result-header;
+// Leading circular type badge (36px): a soft accent-tinted chip with the
+// accent-colored type icon. The tint reads clearly against the panel surface
+// (plain --surface-3 was nearly invisible in dark mode).
+.notification-badge {
+  width: $s-9;
+  height: $s-9;
+  border-radius: $rounded-full;
+  background-color: color-mix(in srgb, var(--accent) 16%, transparent);
+  // Center the icon with grid place-items: more reliable than flex for a single
+  // child, and immune to inline-SVG baseline/whitespace shifts.
+  display: grid;
+  place-items: center;
+  line-height: 0;
+
+  // Force the rendered SVG to an exact 18px square, centered, no intrinsic
+  // margin/alignment — so the glyph sits dead-center regardless of how Icon
+  // wraps or sizes it. `svg` reaches the glyph at any nesting depth.
+  svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    margin: 0;
+    vertical-align: middle;
+  }
+
+  // Any wrapper Icon renders around the svg: shrink to content, no margin, so it
+  // can't introduce its own offset within the grid cell.
+  > * {
+    display: grid;
+    place-items: center;
+    margin: 0;
+  }
 }
 
-.notification-meta {
+.notification-badge-icon {
+  color: var(--accent);
+  display: block;
+}
+
+// Body: vertical stack of the three lines, allowed to shrink + truncate.
+.notification-body {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: $s-0-5;
+}
+
+// Line 1 — location breadcrumb ([Space ›] #channel [› Thread]).
+.notification-location {
   @extend .dropdown-result-meta;
+  align-items: center;
 }
 
 .notification-channel-icon {
   @extend .dropdown-result-type-icon;
 }
 
-.notification-mention-type-icon {
-  @extend .dropdown-result-user-icon;
-}
-
-.notification-date-icon {
-  @extend .dropdown-result-date-icon;
-}
-
-.notification-date {
-  @extend .dropdown-result-date;
-}
-
-.notification-channel,
-.notification-sender {
+.notification-channel {
   @extend .dropdown-result-channel;
 }
 
-.notification-content {
-  @extend .dropdown-result-content;
-}
-
-.notification-text {
-  @extend .dropdown-result-text;
+// Space name leads the breadcrumb in global mode; prominent text token so it
+// reads as the breadcrumb root (channel uses the subtle token).
+.notification-space {
+  color: rgb(var(--color-text-main));
+  font-weight: $font-medium;
+  margin-right: $s-1;
 }
 
 .notification-thread-chevron {
-  color: var(--text-3);
+  color: var(--color-text-subtle);
   font-size: $text-xs;
   margin: 0 $s-1;
   flex-shrink: 0;
 }
 
 .notification-thread-label {
-  color: var(--text-3);
+  color: var(--color-text-subtle);
   font-size: $text-xs;
   flex-shrink: 0;
 }
 
-// Mobile drawer responsive layout: Let date flow naturally to second row when needed
-.mobile-drawer__item-box {
-  .notification-item {
-    .notification-header {
-      flex-wrap: wrap; // Allow wrapping when content doesn't fit
-      gap: $s-1; // Add gap between wrapped items
-      align-items: flex-start; // Align items to top when wrapped
+// Line 2 — author prefix + message preview (clamped to two lines).
+.notification-text {
+  @extend .dropdown-result-text;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
 
-      // When items wrap, they should align to the left
-      .notification-meta:last-child {
-        justify-content: flex-start; // Align left instead of right when wrapped
-      }
-    }
-  }
+// Global panel: taller rows show a longer preview before clamping.
+.notification-item--global .notification-text {
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
+.notification-author {
+  font-weight: $font-medium;
+  color: var(--color-text-subtle);
+}
+
+// Line 3 — relative time.
+.notification-date {
+  @extend .dropdown-result-date;
+  color: var(--color-text-subtle);
 }

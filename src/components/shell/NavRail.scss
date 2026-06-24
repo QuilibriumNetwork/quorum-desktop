@@ -203,3 +203,17 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+// Unread badge on the notifications bell.
+.nav-rail .nav-rail__notif-dot {
+  width: $s-2;   // bigger than the base 6px dot
+  height: $s-2;
+  // Sit on the bell's RIGHT side
+  top: 1px;
+  right: 1px;
+  left: auto;
+  transform: none;
+  // Ring lifts the badge off the icon strokes underneath it.
+  border: 2px solid var(--color-bg-rail);
+  box-sizing: content-box;
+}

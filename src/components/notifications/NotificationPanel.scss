@@ -1,6 +1,85 @@
 @use '../../styles/variables' as *;
 @use '../../styles/dropdown-result-item';
 
+// Global (modal) variant: the Modal primitive's title is a tall section heading
+// ($text-2xl, margin-bottom $s-6) meant to sit above form fields. For the
+// notification list it reads as an oversized, floating band. Reshape it into a
+// compact header bar that flows into the controls row below.
+.notification-panel--global {
+  // Taller than the default medium modal (70vh) so more notifications are
+  // visible at once. Width stays at the medium 600px — only height grows.
+  max-height: 85vh;
+  min-height: min(85vh, 560px);
+
+  // The modal root must NOT scroll — only the inner list does. Otherwise the
+  // modal's own overflow:auto plus the list's overflow:auto produce two nested
+  // scrollbars. Make it a flex column and clip its overflow; the list flex-grows
+  // and owns the single scrollbar.
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .quorum-modal-container {
+    flex: 1 1 auto;
+    min-height: 0; // allow the flex child to shrink so its inner scroll works
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  // Title bar: fixed height so the close button can center against it exactly
+  // ($s-4 vertical padding + $text-lg line-height). Box-sizing keeps the height
+  // honest regardless of padding.
+  $title-bar-height: 60px;
+
+  .quorum-modal-title {
+    box-sizing: border-box;
+    height: $title-bar-height;
+    display: flex;
+    align-items: center;
+    font-size: $text-lg;
+    line-height: $text-lg-lh;
+    font-weight: $font-bold;
+    margin-bottom: 0;
+    padding: 0 $s-12 0 $s-4; // vertical centering handled by flex; right pad clears the close button
+    border-bottom: $border solid var(--color-border-panel);
+  }
+
+  // Center the close button on the title bar. Fixed square button (so the hover
+  // circle stays compact) positioned at the bar's vertical center:
+  // top = (bar - button) / 2. Symmetric gap, no guessing against the icon box.
+  $close-size: 32px;
+
+  .quorum-modal-close {
+    // Equal distance from the top border and the right edge of the bar.
+    top: calc((#{$title-bar-height} - #{$close-size}) / 2) !important;
+    right: calc((#{$title-bar-height} - #{$close-size}) / 2);
+    width: $close-size;
+    height: $close-size;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Controls sit directly under the title with no extra top gap; the title's
+  // border already separates them, so drop the controls' own top border.
+  .notification-panel__controls {
+    border-top: none;
+  }
+
+  // The list is the single scroll region: it flex-grows to fill the taller
+  // modal and owns the only scrollbar (the per-space 350px cap is removed here).
+  .notification-panel__list {
+    @media (hover: hover) and (pointer: fine) {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+    }
+  }
+}
+
 // Notification Panel styling
 
 .notification-panel__header {
@@ -72,4 +151,11 @@
 
 .empty-hint {
   @extend .dropdown-empty-hint;
+}
+
+.notification-panel__truncation-note {
+  text-align: center;
+  padding: $s-2 $s-4;
+  font-size: $text-sm;
+  color: var(--color-text-subtle);
 }

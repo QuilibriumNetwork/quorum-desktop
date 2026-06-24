@@ -1,9 +1,11 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
+import type { IconName } from '@quilibrium/quorum-shared';
 import { Icon, Flex } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import { useSearchResultFormatting } from '../../hooks/business/search';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
+import dayjs from '../../utils/dayjs';
 import type { MentionNotification } from '../../hooks/business/mentions';
 import type { ReplyNotification } from '../../types/notifications';
 import './NotificationItem.scss';
@@ -17,6 +19,7 @@ interface NotificationItemProps {
   spaceRoles?: any[]; // Space roles for mention formatting
   spaceChannels?: any[]; // Space channels for mention formatting
   compactDate?: boolean; // Compact date format (omit time for today/yesterday)
+  spaceName?: string; // When set (global panel), renders a "Space › #channel" breadcrumb
 }
 
 // Helper function to render message content with proper mention formatting
@@ -86,6 +89,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   spaceRoles = [],
   spaceChannels = [],
   compactDate = false,
+  spaceName,
 }) => {
   const { message, channelName } = notification;
 
@@ -100,58 +104,79 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     disableMentionInteractivity: true, // Non-interactive in notifications
   });
 
-  const { formattedDate, handleClick } = useSearchResultFormatting({
+  // We render relative time (dayjs fromNow) rather than the formatted date, but
+  // still pass compactDate through for API compatibility with callers.
+  const { handleClick } = useSearchResultFormatting({
     message,
     onNavigate,
     compactDate,
   });
 
-  // Determine notification type and icon
+  // Leading badge icon by notification type (mirrors the mobile notifications
+  // screen so the type is scannable at a glance): @you → at, @everyone →
+  // bullhorn, role mention → shield, reply → reply arrow.
   const isReply = 'type' in notification && notification.type === 'reply';
   const mentionType = 'mentionType' in notification ? notification.mentionType : null;
-  const notificationIcon = isReply
+  const typeIcon: IconName = isReply
     ? 'reply'
     : mentionType === 'everyone'
     ? 'bullhorn'
     : mentionType === 'roles'
-    ? 'users'
-    : 'user';
+    ? 'shield'
+    : 'at';
+
+  // The global panel (spaceName present) is taller and shows a longer preview;
+  // the per-space panel stays compact.
+  const isGlobal = !!spaceName;
 
   // Render message content with proper mention formatting
-  const renderedContent = renderMessageContent(message, formatting, 200);
+  const renderedContent = renderMessageContent(message, formatting, isGlobal ? 400 : 200);
 
   // Detect if this notification came from a thread
   const isThread = !!(message.threadId || message.isThreadReply);
 
+  // Relative time ("a few seconds ago", "8 minutes ago", …) via dayjs.
+  const relativeTime = dayjs(message.createdDate).fromNow();
+
   return (
     <TouchAwareListItem
-      className={`notification-item ${className || ''}`}
+      className={`notification-item ${isGlobal ? 'notification-item--global' : ''} ${className || ''}`}
       onClick={handleClick}
       tabIndex={0}
     >
-      <Flex justify="between" className="notification-header">
-        <Flex className="notification-meta min-w-0">
+      {/* Leading type badge — conveys notification kind at a glance (mirrors the
+          mobile notifications screen). */}
+      <div className="notification-badge flex-shrink-0" aria-hidden="true">
+        <Icon name={typeIcon} size={18} className="notification-badge-icon" />
+      </div>
+
+      <div className="notification-body min-w-0">
+        {/* Line 1 — location: [Space ›] #channel [› Thread] */}
+        <Flex className="notification-location min-w-0">
+          {spaceName && (
+            <>
+              <span className="notification-space truncate-channel-name flex-shrink min-w-0">{spaceName}</span>
+              <span className="notification-thread-chevron">›</span>
+            </>
+          )}
           <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
-          <span className={`notification-channel ${isThread ? '' : 'mr-2'} truncate-channel-name flex-shrink min-w-0`}>{channelName}</span>
+          <span className="notification-channel truncate-channel-name flex-shrink min-w-0">{channelName}</span>
           {isThread && (
             <>
               <span className="notification-thread-chevron">›</span>
-              <span className="notification-thread-label mr-2">{t`Thread`}</span>
+              <span className="notification-thread-label">{t`Thread`}</span>
             </>
           )}
-          <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
-          <span className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
         </Flex>
-        <Flex className="notification-meta flex-shrink-0 whitespace-nowrap">
-          <Icon name="calendar-alt" className="notification-date-icon flex-shrink-0" />
-          <span className="notification-date">{formattedDate}</span>
-        </Flex>
-      </Flex>
 
-      <div className="notification-content">
+        {/* Line 2 — author + message preview */}
         <div className="notification-text">
+          <span className="notification-author">{displayName}: </span>
           {renderedContent}
         </div>
+
+        {/* Line 3 — relative time */}
+        <div className="notification-date">{relativeTime}</div>
       </div>
     </TouchAwareListItem>
   );
