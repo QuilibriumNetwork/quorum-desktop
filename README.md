@@ -86,7 +86,9 @@ localStorage.removeItem('debug_mock_conversations')
 
 ### Prerequisites
 
-Requires Node.js and `quilibrium-js-sdk-channels` cloned alongside this repository. Running locally in a browser against prod Quorum API requires CORS to be disabled, consult your extensions or settings to perform this (if you disable CORS in your browser, remember to re-enable it as soon as you have finished testing).
+Requires Node.js and `quilibrium-js-sdk-channels` cloned alongside this repository.
+
+When running locally in a browser, calls to the prod Quorum API are routed through the Vite dev server proxy (see `web/vite.config.ts` → `server.proxy`), so the browser only ever talks same-origin and no CORS workaround is needed. You do **not** need to disable browser CORS or install a CORS-unblocking extension. The proxy is dev-only; production and Electron builds call the API directly and are unaffected.
 
 ### Initial Setup
 
@@ -163,4 +165,4 @@ Both apps share code via the `@quilibrium/quorum-shared` package. See [Quorum Ec
 
 ---
 
-_Updated: 2026-01-06_
+_Updated: 2026-06-24_
