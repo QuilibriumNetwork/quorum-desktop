@@ -1942,12 +1942,14 @@ const Channel: React.FC<ChannelProps> = ({
         </>
       )}
 
-      {/* User Profile card - desktop only (≥1024px).
-          Placement + scroll behaviour depend on where it was opened:
-          - sidebar member row → opens left over the chat, follows the row.
-          - message avatar / mention → lives in the virtualized message list,
-            so it opens to the right and closes on scroll (the list moves items
-            via transforms that JS positioning can't track in lockstep). */}
+      {/* User Profile card - desktop only (≥1024px). Placement depends on where
+          it was opened: a sidebar member row opens the card to the left (over the
+          chat); a message avatar / mention opens it to the right.
+          closeOnScroll is on for BOTH: the member sidebar and the message list
+          are each virtualized (react-virtuoso), so scrolling recycles/detaches
+          the anchored row's DOM node — a popover that tried to follow the anchor
+          would stick to a stale node and then fail to reopen. Closing on scroll
+          (Discord/Slack-style) avoids that. */}
       {isDesktop && (
         <FloatingPopover
           open={userProfileModal.isOpen && !!userProfileModal.selectedUser}
@@ -1958,7 +1960,7 @@ const Channel: React.FC<ChannelProps> = ({
               ? 'left-start'
               : 'right-start'
           }
-          closeOnScroll={userProfileModal.anchorContext !== 'sidebar'}
+          closeOnScroll
         >
           {userProfileModal.selectedUser && (
             <UserProfile
