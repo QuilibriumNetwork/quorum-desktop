@@ -194,22 +194,11 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Implement Role-Based Channel Visibility](tasks/2025-12-26-channel-role-visibility.md)
-- [Full Markdown Support Inside Spoilers](tasks/2026-01-06-spoiler-full-markdown-support.md)
 - [Implement Channel Ordering Feature](tasks/2026-01-07-channel-ordering-feature.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
-- [Invite with Role — Design](tasks/2026-04-20-invite-with-role-design.md)
-- [Invite with Role Implementation Plan](tasks/2026-04-20-invite-with-role-implementation.md)
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
-- [Link Previews — Design Spec](tasks/2026-05-27-link-previews-design.md)
-- [Polls in Spaces — Design Spec](tasks/2026-06-01-polls-design.md)
-- [Polls in Spaces — v1 Implementation Plan](tasks/2026-06-01-polls-plan.md)
-- [Spaces Highlights Feed — Design Spec](tasks/2026-06-04-spaces-highlights-feed-design.md)
-- [Spaces Highlights Feed Implementation Plan](tasks/2026-06-04-spaces-highlights-feed-plan.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
-- [Migrate UserProfile card positioning to @floating-ui/react](tasks/2026-06-08-userprofile-positioning-floating-ui.md)
-- [Desktop role parity: shared color tokens + uniqueness + remove-from-user confirm](tasks/2026-06-15-role-color-and-uniqueness-parity.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -243,6 +232,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
 
 ### .Deferred
+- [Accessibility Features — Remaining Work](tasks/.deferred/2026-01-06-accessibility-features-implementation.md)
+- [Decentralized GIF Library on Quilibrium](tasks/.deferred/2026-02-24-gifs-library-integration.md)
+- [Link Previews — Design Spec](tasks/.deferred/2026-05-27-link-previews-design.md)
 - [Implement @here mention (all space members, channel-context notification)](tasks/.deferred/2026-06-18-implement-here-mention.md)
 
 ### .Todo
@@ -251,16 +243,22 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/.todo/2025-11-19-notification-mention-context-extraction.md)
 - [Service Worker for App Update Detection](tasks/.todo/2025-12-14-service-worker-app-updates.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/.todo/2025-12-18-tombstone-cleanup-strategy.md)
+- [Implement Role-Based Channel Visibility](tasks/.todo/2025-12-26-channel-role-visibility.md)
 - [Public Space Directory Feature](tasks/.todo/2025-12-30-public-space-directory.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/.todo/2026-01-04-fix-lingui-uncompiled-message-warning.md)
-- [Accessibility Features — Remaining Work](tasks/.todo/2026-01-06-accessibility-features-implementation.md)
+- [Full Markdown Support Inside Spoilers](tasks/.todo/2026-01-06-spoiler-full-markdown-support.md)
 - [Conversation Deletion State Synchronization](tasks/.todo/2026-01-09-conversation-deletion-state-sync.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/.todo/2026-01-09-delete-public-invite-link.md)
 - [Multi-User Invite Selection Enhancement](tasks/.todo/2026-01-09-multi-user-invite-selection.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/.todo/2026-01-09-test-suite-plan.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/.todo/2026-02-16-auto-save-settings-modals.md)
-- [Decentralized GIF Library on Quilibrium](tasks/.todo/2026-02-24-gifs-library-integration.md)
 - [Thread List Panel: "Created by me" Filter](tasks/.todo/2026-03-14-thread-list-created-filter.md)
+- [Invite with Role — Design](tasks/.todo/2026-04-20-invite-with-role-design.md)
+- [Invite with Role Implementation Plan](tasks/.todo/2026-04-20-invite-with-role-implementation.md)
+- [Polls in Spaces — Design Spec](tasks/.todo/2026-06-01-polls-design.md)
+- [Polls in Spaces — v1 Implementation Plan](tasks/.todo/2026-06-01-polls-plan.md)
+- [Spaces Highlights Feed — Design Spec](tasks/.todo/2026-06-04-spaces-highlights-feed-design.md)
+- [Spaces Highlights Feed Implementation Plan](tasks/.todo/2026-06-04-spaces-highlights-feed-plan.md)
 
 ### Messagedb
 - [handleNewMessage Decomposition — Reconsidered](tasks/messagedb/handleNewMessage-reconsidered.md)
@@ -331,6 +329,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Quorum Shared Migration
 - [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/2026-06-12-icon-picker-PR-notes.md)
 - [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
+- [Promote the message-preprocessing pipeline to quorum-shared](tasks/quorum-shared-migration/2026-06-18-promote-message-preprocessing-to-shared.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
 - [Mobile tasks — where to find them](tasks/quorum-shared-migration/mobile-tasks-pending.md)
 - [Quorum Shared Migration — Master Tracker](tasks/quorum-shared-migration/README.md)
@@ -452,7 +451,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [`useDMMute` and `useDMFavorites` read stale config from messageDB](tasks/.done/2026-06-07-dm-mute-cache-read.md)
 - [Add a real global notifications mute to desktop](tasks/.done/2026-06-07-global-notifications-mute.md)
 - [Fix `joinInviteLink` — public invite join is broken end-to-end](tasks/.done/2026-06-08-fix-join-invite-link.md)
+- [Migrate UserProfile card positioning to @floating-ui/react](tasks/.done/2026-06-08-userprofile-positioning-floating-ui.md)
 - [Space message list: missing name/avatar](tasks/.done/2026-06-10-space-message-list-public-profile-fallback.md)
+- [Desktop role parity: shared color tokens + uniqueness + remove-from-user confirm](tasks/.done/2026-06-15-role-color-and-uniqueness-parity.md)
+- [Adopt FloatingPopover across the remaining trigger-anchored surfaces](tasks/.done/2026-06-22-adopt-floatingpopover-across-anchored-surfaces.md)
+- [Consolidate address formatting/truncation into `@quilibrium/quorum-shared`](tasks/.done/2026-06-23-consolidate-address-formatting-to-shared.md)
+- [Gate @everyone pill styling on sender permission](tasks/.done/2026-06-23-everyone-pill-styling-permission-gate.md)
+- [Global Notification Panel (Desktop) — Design](tasks/.done/2026-06-23-global-notification-panel-design.md)
+- [Global Notification Panel (Desktop) Implementation Plan](tasks/.done/2026-06-23-global-notification-panel-plan.md)
+- [Notification-type settings: stale read in the settings modal (+ clobber-on-save)](tasks/.done/2026-06-23-notification-settings-stale-read-and-clobber.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -595,9 +602,9 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
-- [App Lock / Password Gate — at-rest encryption, mobile, duress-wipe](reports/2026-06-22-app-lock-password-gate-research.md)
 - [Docs Staleness Audit — 2026-05-20](reports/2026-05-20-docs-staleness-audit.md)
 - [Notification preference architecture — desktop vs mobile](reports/2026-05-28-notification-architecture-divergence.md)
+- [App Lock / Password Gate — Feasibility Research](reports/2026-06-22-app-lock-password-gate-research.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -643,4 +650,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-18 09:08:27
+**Last Updated**: 2026-06-24 09:54:58
