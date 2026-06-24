@@ -1,11 +1,11 @@
 import React from 'react';
-import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
+import type { Message as MessageType, Sticker, Role, Channel, Space } from '@quilibrium/quorum-shared';
 import { Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
-import { processMarkdownText, formatAddress } from '@quilibrium/quorum-shared';
+import { processMarkdownText, formatAddress, hasPermission } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
@@ -177,6 +177,16 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
   const senderId = message.content?.senderId || '';
   const sender = mapSenderToUser && senderId ? mapSenderToUser(senderId) : null;
 
+  // Gate the @everyone pill on sender authorization (sender held mention:everyone,
+  // role-based, no owner bypass) — same trust rule as the message list. When the
+  // caller doesn't supply space roles (e.g. bookmarks), @everyone safely falls
+  // back to plain text rather than rendering an unverifiable pill.
+  const everyoneAuthorized = React.useMemo(() => {
+    if (message.mentions?.everyone !== true) return false;
+    if (!senderId) return false;
+    return hasPermission(senderId, 'mention:everyone', { roles: spaceRoles } as Space);
+  }, [message.mentions?.everyone, senderId, spaceRoles]);
+
   // Message formatting logic - no image modal needed for preview
   const formatting = useMessageFormatting({
     message,
@@ -187,6 +197,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     spaceChannels,
     disableMentionInteractivity,
     currentSpaceId,
+    everyoneAuthorized,
   });
 
   // Get display name - prefer sender displayName, fallback to username, then senderId

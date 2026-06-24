@@ -1,4 +1,4 @@
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, hasPermission } from '@quilibrium/quorum-shared';
 import React, { useMemo, useState, useCallback, useRef, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -10,6 +10,7 @@ import type {
   Role,
   Sticker,
   Channel,
+  Space,
 } from '@quilibrium/quorum-shared';
 // Lazy-load EmojiPicker — Message renders for every visible chat item; eager import parses the full emoji dataset on page load
 const EmojiPicker = React.lazy(() =>
@@ -375,6 +376,24 @@ export const Message = React.memo(
       isEditing: editingMessageId === message.messageId,
     });
 
+    // @everyone is only rendered as a styled pill when the SENDER actually held
+    // mention:everyone (role-based, no owner bypass) AND the wire flag is set —
+    // the same trust rule the notification path already enforces
+    // (isMentionedWithSettings in shared). Otherwise it renders as plain text,
+    // so a spoofed/unauthorized @everyone can't fake an all-call pill.
+    // hasPermission only reads space.roles, so a { roles } shim is sufficient.
+    // Mirrors quorum-mobile c144d3c.
+    const everyoneAuthorized = useMemo(() => {
+      if (message.mentions?.everyone !== true) return false;
+      const senderId = message.content?.senderId;
+      if (!senderId) return false;
+      return hasPermission(
+        senderId,
+        'mention:everyone',
+        { roles: spaceRoles } as Space
+      );
+    }, [message.mentions?.everyone, message.content?.senderId, spaceRoles]);
+
     // Message formatting logic
     const formatting = useMessageFormatting({
       message,
@@ -384,6 +403,7 @@ export const Message = React.memo(
       spaceRoles,
       spaceChannels,
       currentSpaceId: spaceId,
+      everyoneAuthorized,
     });
 
     // Pinned messages logic
@@ -1152,7 +1172,7 @@ export const Message = React.memo(
                               navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
                             }
                           }}
-                          hasEveryoneMention={message.mentions?.everyone}
+                          hasEveryoneMention={everyoneAuthorized}
                           spaceRoles={spaceRoles}
                           spaceChannels={spaceChannels}
                           messageSenderId={message.content?.senderId}

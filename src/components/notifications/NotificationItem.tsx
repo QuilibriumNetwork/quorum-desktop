@@ -1,6 +1,7 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
-import type { IconName } from '@quilibrium/quorum-shared';
+import { hasPermission } from '@quilibrium/quorum-shared';
+import type { IconName, Space } from '@quilibrium/quorum-shared';
 import { Icon, Flex } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import { useSearchResultFormatting } from '../../hooks/business/search';
@@ -93,6 +94,17 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 }) => {
   const { message, channelName } = notification;
 
+  // Gate the @everyone pill on sender authorization, same as the message list.
+  // A notification only exists because the sender was authorized (the mention
+  // path already enforces this), but recompute here so the preview text matches
+  // the message-list trust rule rather than trusting the raw @everyone token.
+  const everyoneAuthorized = React.useMemo(() => {
+    if (message.mentions?.everyone !== true) return false;
+    const senderId = message.content?.senderId;
+    if (!senderId) return false;
+    return hasPermission(senderId, 'mention:everyone', { roles: spaceRoles } as Space);
+  }, [message.mentions?.everyone, message.content?.senderId, spaceRoles]);
+
   // Use proper message formatting (same as PinnedMessagesPanel)
   const formatting = useMessageFormatting({
     message,
@@ -102,6 +114,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     spaceRoles,
     spaceChannels,
     disableMentionInteractivity: true, // Non-interactive in notifications
+    everyoneAuthorized,
   });
 
   // We render relative time (dayjs fromNow) rather than the formatted date, but
