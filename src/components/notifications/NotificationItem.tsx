@@ -125,8 +125,12 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     ? 'shield'
     : 'at';
 
+  // The global panel (spaceName present) is taller and shows a longer preview;
+  // the per-space panel stays compact.
+  const isGlobal = !!spaceName;
+
   // Render message content with proper mention formatting
-  const renderedContent = renderMessageContent(message, formatting, 200);
+  const renderedContent = renderMessageContent(message, formatting, isGlobal ? 400 : 200);
 
   // Detect if this notification came from a thread
   const isThread = !!(message.threadId || message.isThreadReply);
@@ -136,7 +140,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
   return (
     <TouchAwareListItem
-      className={`notification-item ${className || ''}`}
+      className={`notification-item ${isGlobal ? 'notification-item--global' : ''} ${className || ''}`}
       onClick={handleClick}
       tabIndex={0}
     >

@@ -136,6 +136,12 @@
   overflow: hidden;
 }
 
+// Global panel: taller rows show a longer preview before clamping.
+.notification-item--global .notification-text {
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
+}
+
 .notification-author {
   font-weight: $font-medium;
   color: var(--color-text-subtle);

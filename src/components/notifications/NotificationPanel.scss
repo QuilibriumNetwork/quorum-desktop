@@ -6,6 +6,27 @@
 // notification list it reads as an oversized, floating band. Reshape it into a
 // compact header bar that flows into the controls row below.
 .notification-panel--global {
+  // Taller than the default medium modal (70vh) so more notifications are
+  // visible at once. Width stays at the medium 600px — only height grows.
+  max-height: 85vh;
+  min-height: min(85vh, 560px);
+
+  // The modal root must NOT scroll — only the inner list does. Otherwise the
+  // modal's own overflow:auto plus the list's overflow:auto produce two nested
+  // scrollbars. Make it a flex column and clip its overflow; the list flex-grows
+  // and owns the single scrollbar.
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+
+  .quorum-modal-container {
+    flex: 1 1 auto;
+    min-height: 0; // allow the flex child to shrink so its inner scroll works
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
   // Title bar: fixed height so the close button can center against it exactly
   // ($s-4 vertical padding + $text-lg line-height). Box-sizing keeps the height
   // honest regardless of padding.
@@ -46,6 +67,16 @@
   // border already separates them, so drop the controls' own top border.
   .notification-panel__controls {
     border-top: none;
+  }
+
+  // The list is the single scroll region: it flex-grows to fill the taller
+  // modal and owns the only scrollbar (the per-space 350px cap is removed here).
+  .notification-panel__list {
+    @media (hover: hover) and (pointer: fine) {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-height: none;
+    }
   }
 }
 
