@@ -176,9 +176,13 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
       maxWidth={500}
       maxHeight={Math.min(window.innerHeight * 0.8, 600)}
       title={
-        contextCount === 1
-          ? t`${contextCount} bookmark here`
-          : t`${contextCount} bookmarks here`
+        searchContext.type === 'dm'
+          ? contextCount === 1
+            ? t`${contextCount} bookmark in this conversation`
+            : t`${contextCount} bookmarks in this conversation`
+          : contextCount === 1
+            ? t`${contextCount} bookmark in this Space`
+            : t`${contextCount} bookmarks in this Space`
       }
       className="bookmarks-panel"
       showCloseButton={true}
