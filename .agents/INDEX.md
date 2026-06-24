@@ -200,6 +200,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
 - [Close EXIF/metadata stripping gaps on image uploads](tasks/2026-06-24-strip-image-exif-metadata-gaps.md)
 
+### Done Tasks
+- [Move image compression config + orchestration into quorum-shared (desktop side)](tasks/.done/2026-06-24-share-image-compression-config-with-shared.md)
+
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
 - [Passkey Import UX Issue](tasks/.archived/2025-11-13-passkey-import-ux-issue.md)
