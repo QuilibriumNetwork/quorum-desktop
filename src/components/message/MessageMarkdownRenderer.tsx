@@ -790,7 +790,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [content, processMentions, processRoleMentions, processChannelMentions, processMessageLinks]);
 
   // "Jumbo emoji": when a message is nothing but emoji, render them larger.
-  // 1 emoji → largest, 2-3 → smaller-but-large, 4+ → normal inline size.
+  // 1 emoji → 64px, 2-3 → 48px, 4+ → normal inline size (sizes set in _chat.scss).
   // Computed from the raw content (before token processing) so mentions, links,
   // and other text correctly disqualify the message.
   const emojiOnlySize = useMemo(() => getEmojiOnlySize(content), [content]);
