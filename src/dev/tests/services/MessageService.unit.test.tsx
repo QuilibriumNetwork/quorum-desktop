@@ -87,6 +87,8 @@ describe('MessageService - Unit Tests', () => {
         }),
         getSpaceMember: vi.fn().mockResolvedValue(null),
         isUserMuted: vi.fn().mockResolvedValue(false),
+        getConversation: vi.fn().mockResolvedValue({ conversation: null }),
+        updateMessage: vi.fn().mockResolvedValue(undefined),
       } as any,
       enqueueOutbound: vi.fn(),
       addOrUpdateConversation: vi.fn(),
@@ -371,6 +373,166 @@ describe('MessageService - Unit Tests', () => {
 
       // ✅ VERIFY: deleteMessage called
       expect(mockDeps.messageDB.deleteMessage).toHaveBeenCalledWith('msg-to-remove');
+    });
+  });
+
+  // SECURITY: DM control-message authorization must anchor to the session-
+  // authenticated sender (the conversation owner == spaceId for a DM), NOT the
+  // spoofable plaintext content.senderId. See
+  // .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md
+  describe('3b. saveMessage() - DM remove-message authorization (anti-spoofing)', () => {
+    // For a DM, spaceId === channelId === the proven conversation partner address.
+    const PEER = 'peer-address';
+    const SELF = 'my-own-address';
+
+    const makeTarget = (authorSenderId: string) => ({
+      messageId: 'target-msg',
+      spaceId: PEER,
+      channelId: PEER,
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      content: { senderId: authorSenderId, type: 'post' as const, text: 'msg' },
+    });
+
+    const makeRemove = (claimedSenderId: string) => ({
+      messageId: 'remove-req',
+      spaceId: PEER,
+      channelId: PEER,
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      content: {
+        senderId: claimedSenderId,
+        type: 'remove-message' as const,
+        removeMessageId: 'target-msg',
+      },
+    });
+
+    it('(a) honors a peer deleting a message the peer authored', async () => {
+      // Target authored by PEER; delete claims PEER. Both === spaceId (PEER).
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(makeTarget(PEER));
+
+      await messageService.saveMessage(
+        makeRemove(PEER) as any,
+        mockDeps.messageDB,
+        PEER, // spaceId === channelId → DM
+        PEER,
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      expect(mockDeps.messageDB.deleteMessage).toHaveBeenCalledWith('target-msg');
+    });
+
+    it('(b) DROPS a peer trying to delete YOUR message by spoofing senderId=you', async () => {
+      // Target authored by SELF (you). Attacker (the peer) sends a delete with
+      // content.senderId spoofed to SELF. The old code compared the two plaintext
+      // fields (SELF === SELF) and deleted. The fix anchors to spaceId (PEER):
+      // SELF !== PEER → unauthorized → must NOT delete.
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(makeTarget(SELF));
+
+      await messageService.saveMessage(
+        makeRemove(SELF) as any, // spoofed claim
+        mockDeps.messageDB,
+        PEER,
+        PEER,
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      expect(mockDeps.messageDB.deleteMessage).not.toHaveBeenCalled();
+    });
+
+    it('(b2) DROPS a peer deleting a message authored by a third party', async () => {
+      // Defense-in-depth: even if the claim matched spaceId, a target not authored
+      // by the proven owner must not be deletable.
+      mockDeps.messageDB.getMessage = vi
+        .fn()
+        .mockResolvedValue(makeTarget('someone-else'));
+
+      await messageService.saveMessage(
+        makeRemove(PEER) as any,
+        mockDeps.messageDB,
+        PEER,
+        PEER,
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      expect(mockDeps.messageDB.deleteMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('3c. saveMessage() - DM edit-message authorization (anti-spoofing)', () => {
+    const PEER = 'peer-address';
+    const SELF = 'my-own-address';
+
+    const makeTarget = (authorSenderId: string) => ({
+      messageId: 'target-msg',
+      spaceId: PEER,
+      channelId: PEER,
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'orig-nonce',
+      lastModifiedHash: 'orig-nonce',
+      content: { senderId: authorSenderId, type: 'post' as const, text: 'original' },
+    });
+
+    const makeEdit = (claimedSenderId: string) => ({
+      messageId: 'edit-req',
+      spaceId: PEER,
+      channelId: PEER,
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      content: {
+        senderId: claimedSenderId,
+        type: 'edit-message' as const,
+        originalMessageId: 'target-msg',
+        editedText: 'EDITED',
+        editedAt: Date.now(),
+        editNonce: 'edit-nonce',
+      },
+    });
+
+    it('(a) honors a peer editing a message the peer authored', async () => {
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(makeTarget(PEER));
+
+      await messageService.saveMessage(
+        makeEdit(PEER) as any,
+        mockDeps.messageDB,
+        PEER,
+        PEER,
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      // An applied edit persists the updated message via saveMessage.
+      expect(mockDeps.messageDB.saveMessage).toHaveBeenCalled();
+    });
+
+    it('(b) DROPS a peer trying to edit YOUR message by spoofing senderId=you', async () => {
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(makeTarget(SELF));
+
+      await messageService.saveMessage(
+        makeEdit(SELF) as any, // spoofed claim
+        mockDeps.messageDB,
+        PEER,
+        PEER,
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      // Unauthorized edit returns early before persisting any change.
+      expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
     });
   });
 

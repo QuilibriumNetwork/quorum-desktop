@@ -988,10 +988,44 @@ export class MessageService {
         }
       };
 
-      // For DMs (spaceId == channelId): Always honor deletion if sender owns the target message
-      if (
+      // DM authorization (spaceId == channelId).
+      //
+      // SECURITY: `decryptedContent.content.senderId` is plaintext the sender's
+      // client writes — it is NOT proven by the Double Ratchet. A peer running a
+      // modified client could set it to YOUR address to delete a message you
+      // authored. So we authorize against the session-authenticated sender
+      // instead: for a DM, `spaceId` (== channelId) IS the cryptographically
+      // proven conversation owner (the address whose session decrypted this
+      // message). A DM is two-party, so the only legitimate deleter of the target
+      // is its author, and the author can only be the proven conversation owner.
+      // We require BOTH: the payload claim matches the proven owner AND the target
+      // was authored by that proven owner. A spoofed "senderId = you" fails the
+      // second clause (your message's author != the peer).
+      //
+      // Self-sync note: when your OWN delete reaches your OTHER device, `spaceId`
+      // is the partner but the target's author is you — so this check does not
+      // auto-apply your own cross-device deletes (they reconcile on next load).
+      // This is the accepted trade-off of the "safe version": we block the spoof
+      // fully and tolerate a cosmetic self-sync lag, because desktop's JS SDK does
+      // not expose the per-message authenticated sender that would let us tell a
+      // genuine self-echo from a peer spoofing your address. See
+      // .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md.
+      const isDM = spaceId === channelId;
+      if (isDM) {
+        const authorized =
+          decryptedContent.content.senderId === spaceId &&
+          targetMessage.content.senderId === spaceId;
+        if (authorized) {
+          await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
+          // Don't return early - allow addMessage() to update React Query cache
+        }
+        // Unauthorized DM delete: drop silently (do not honor).
+      } else if (
         targetMessage.content.senderId === decryptedContent.content.senderId
       ) {
+        // Space "own message" delete — unchanged (space path is out of scope;
+        // tracked separately). Still uses payload senderId by design parity with
+        // mobile until the space path is fixed in tandem.
         await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
         // Don't return early - allow addMessage() to update React Query cache
       } else if (spaceId != channelId) {
@@ -1046,8 +1080,24 @@ export class MessageService {
         return;
       }
 
-      // Only original sender can edit their message
-      if (targetMessage.content.senderId !== editMessage.senderId) {
+      // Only original sender can edit their message.
+      //
+      // SECURITY: `editMessage.senderId` is spoofable plaintext (same shape as the
+      // remove-message bug). For a DM, authorize against the session-authenticated
+      // sender — `spaceId` (== channelId) is the cryptographically proven
+      // conversation owner — and require the target to have been authored by that
+      // proven owner. A peer spoofing `senderId = you` to edit your message fails
+      // this check. Space path keeps the legacy payload check (out of scope,
+      // tracked in .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md).
+      const isDM = spaceId === channelId;
+      if (isDM) {
+        if (
+          editMessage.senderId !== spaceId ||
+          targetMessage.content.senderId !== spaceId
+        ) {
+          return;
+        }
+      } else if (targetMessage.content.senderId !== editMessage.senderId) {
         return;
       }
 
@@ -1080,7 +1130,7 @@ export class MessageService {
       }
 
       // Check if saveEditHistory is enabled for this conversation/space
-      const isDM = spaceId === channelId;
+      // (isDM already computed above for the authorization check)
       let saveEditHistoryEnabled: boolean;
 
       if (isDM) {
@@ -1509,6 +1559,10 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
+      // DM edits authorize against the session-authenticated sender (spaceId ==
+      // the proven conversation owner), not the spoofable payload senderId. Mirrors
+      // the saveMessage edit handler. Space path unchanged (out of scope).
+      const isDM = spaceId === channelId;
 
       queryClient.setQueriesData(
         { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
@@ -1523,8 +1577,17 @@ export class MessageService {
                 messages: [
                   ...page.messages.map((m: Message) => {
                     if (m.messageId === editMessage.originalMessageId) {
-                      // Only update if the sender matches (permission check)
-                      if (m.content.senderId !== editMessage.senderId) {
+                      // Only update if the sender matches (permission check).
+                      // DM: authorize against the proven conversation owner
+                      // (spaceId), not the spoofable payload senderId.
+                      if (isDM) {
+                        if (
+                          editMessage.senderId !== spaceId ||
+                          m.content.senderId !== spaceId
+                        ) {
+                          return m;
+                        }
+                      } else if (m.content.senderId !== editMessage.senderId) {
                         return m;
                       }
                       // Only allow editing post messages
@@ -1582,11 +1645,27 @@ export class MessageService {
       // Check if this delete request should be honored
       let shouldHonorDelete = false;
 
+      const isDM = spaceId === channelId;
+
       if (!targetMessage) {
-        // If target message doesn't exist, always remove from UI
+        // If target message doesn't exist, always remove from UI.
+        // (Unchanged: this is a no-op removal of a message we don't have — not the
+        // attack surface. The attack targets a message that DOES exist, handled
+        // by the DM branch below.)
         shouldHonorDelete = true;
+      } else if (isDM) {
+        // DM authorization — authorize against the session-authenticated sender,
+        // NOT the spoofable payload `senderId`. For a DM, `spaceId` (== channelId)
+        // is the cryptographically proven conversation owner. Require BOTH: the
+        // payload claim matches the proven owner AND the target was authored by
+        // that proven owner. A peer spoofing `senderId = you` to delete your
+        // message fails the second clause. (Same check as the saveMessage handler;
+        // see .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md.)
+        shouldHonorDelete =
+          decryptedContent.content.senderId === spaceId &&
+          targetMessage.content.senderId === spaceId;
       } else {
-        // If target message exists, check permissions
+        // Space path — unchanged (out of scope, tracked separately).
 
         // 1. Users can always delete their own messages
         if (
