@@ -24,6 +24,43 @@ function emojiToUnified(emoji: string): string {
 export { emojiToUnified };
 
 /**
+ * Size tier for "jumbo emoji" rendering. When a message contains only emoji
+ * (no other visible text), they render larger than inline size:
+ *   - 'single' (1 emoji)      → largest
+ *   - 'few' (2-3 emoji)       → smaller than single, still large
+ *   - null                    → normal inline size (4+ emoji, or any non-emoji text)
+ */
+export type EmojiOnlySize = 'single' | 'few' | null;
+
+/**
+ * Inspect a raw message string and decide whether it should render with
+ * enlarged ("jumbo") emoji. Returns the size tier, or null when the message
+ * is not emoji-only.
+ *
+ * Emoji-only means: after removing every emoji and all whitespace, nothing
+ * remains. The count drives the tier (1 → 'single', 2-3 → 'few', 4+ → null).
+ */
+export function getEmojiOnlySize(content: string): EmojiOnlySize {
+  if (!content) return null;
+
+  const entities = parseEmoji(content);
+  if (entities.length === 0) return null;
+
+  // Strip every emoji from the text, then check whether only whitespace is left.
+  // Walk entities from the end so the indices stay valid as we splice.
+  let remainder = content;
+  for (let i = entities.length - 1; i >= 0; i--) {
+    const [start, end] = entities[i].indices;
+    remainder = remainder.slice(0, start) + remainder.slice(end);
+  }
+  if (remainder.trim().length > 0) return null;
+
+  if (entities.length === 1) return 'single';
+  if (entities.length <= 3) return 'few';
+  return null;
+}
+
+/**
  * Custom remark plugin that replaces emoji unicode characters with image nodes
  * pointing to self-hosted Twemoji PNGs at /twitter/64/{unified}.png.
  *

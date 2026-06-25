@@ -49,7 +49,7 @@ const buildItems = (): RailItemConfig[] => [
   },
   {
     id: 'farcaster',
-    icon: 'globe',
+    icon: 'world-map',
     label: t`Farcaster`,
     route: '/farcaster',
   },

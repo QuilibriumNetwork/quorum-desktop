@@ -16,7 +16,7 @@ import {
   getValidInvitePrefixes,
   getValidMessageLinkPrefixes,
 } from '@quilibrium/quorum-shared';
-import { remarkTwemoji } from '../../utils/remarkTwemoji';
+import { remarkTwemoji, getEmojiOnlySize } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
 import type { Role, Channel, PostMessage } from '@quilibrium/quorum-shared';
@@ -789,6 +789,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     );
   }, [content, processMentions, processRoleMentions, processChannelMentions, processMessageLinks]);
 
+  // "Jumbo emoji": when a message is nothing but emoji, render them larger.
+  // 1 emoji → 64px, 2-3 → 48px, 4+ → normal inline size (sizes set in _chat.scss).
+  // Computed from the raw content (before token processing) so mentions, links,
+  // and other text correctly disqualify the message.
+  const emojiOnlySize = useMemo(() => getEmojiOnlySize(content), [content]);
+  const emojiSizeClass = emojiOnlySize ? `twemoji-jumbo twemoji-jumbo--${emojiOnlySize}` : '';
+
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({
     // Handle text nodes to render mentions safely
@@ -1124,7 +1131,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [onUserClick, onChannelClick, onMessageLinkClick, mapSenderToUser, resolveSender]);
 
   return (
-    <div className={`break-words min-w-0 max-w-full overflow-hidden ${suffix ? 'has-inline-suffix' : ''} ${className || ''}`} onClick={handleClick}>
+    <div className={`break-words min-w-0 max-w-full overflow-hidden ${emojiSizeClass} ${suffix ? 'has-inline-suffix' : ''} ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks, remarkTwemoji]}
         rehypePlugins={[]}
