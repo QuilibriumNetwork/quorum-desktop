@@ -154,7 +154,9 @@ you what is OPEN vs DONE so nothing gets lost.
 | **DONE** | `.done/2026-06-25-desktop-dm-control-msg-auth-fix-plan.md` (desktop) | The desktop DM delete+edit fix implemented on this branch. Complete: code + tests. |
 | **DONE** | mobile commit `18cc7dc` (branch `feature/dm-delete-own-message-sync`) | The mobile DM delete fix. The reference desktop mirrored. |
 | **OPEN** | `2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md` (desktop) | Original DM bug write-up. DM part now DONE. (Space portion redacted — see private issue.) |
-| **OPEN** | **PRIVATE:** quorum-app-prod#1 + quorum-mobile gitignored `.agents/` | **Group-chat (space) authorization — the remaining work.** Detail is kept OUT of this public repo. |
+| **OPEN** | **PRIVATE:** quorum-app-prod#1 + quorum-mobile gitignored `.agents/` (`2026-06-25-space-control-msg-auth-signature-design.md` + `2026-06-25-space-auth-leaddev-message.md`) | **Group-chat (space) authorization — the remaining work.** Design doc + lead-dev message live here. Detail kept OUT of this public repo. |
+| **OPEN (private detail)** | `2026-06-25-space-remove-message-auth-uses-payload-senderid.md` (mobile, gitignored) | The mobile-side space bug report this design answers. Mobile-local only. |
+| **REFERENCE** | `2026-06-25-control-message-auth-audit-senderid-spoofing.md` (mobile, gitignored) | The full per-handler audit matrix (DM + space + reactions). Detailed reference; THIS recap is the live tracker. |
 
 ### Adjacent work (related topic, NOT the spoofing fix — don't confuse)
 
@@ -163,6 +165,11 @@ you what is OPEN vs DONE so nothing gets lost.
 | OPEN | `2026-06-17-delete-own-message-in-dm.md` (mobile) | The mobile DM-delete *feature* (where this fix originated). |
 | OPEN | `2026-06-25-dm-delete-conversation-signal-and-self-sync.md` (mobile) | Deleting a WHOLE conversation — different feature, blocked on a new shared wire type. |
 | OPEN | `2026-06-25-port-message-signing-controls.md` (mobile) | The "Always sign messages" toggle UI — unrelated to spoofing auth. |
+
+**See also (same "don't trust the sender's client on receive" family, separate efforts):**
+`2026-06-13-harden-unsupported-message-type-handling.md` and
+`2026-06-13-dm-receive-path-default-deny.md` (mobile) — receive-side default-deny
+hardening. Not part of this fix, but adjacent if a broader receive-side audit happens.
 
 ### The one open follow-up this recap itself owns
 
