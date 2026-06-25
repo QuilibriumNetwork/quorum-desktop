@@ -53,6 +53,7 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 
 - `src/components/message/MessageMarkdownRenderer.tsx` - Main renderer component
 - `src/components/message/MarkdownToolbar.tsx` - Discord-style formatting toolbar
+- `@quilibrium/quorum-shared` (`src/utils/messagePreprocessing.ts`) - **Shared message-preprocessing pipeline** (moved to shared 2026-06-25, single source of truth with mobile): `processMentions`, `processRoleMentions`, `processChannelMentions`, `processURLs`, `convertHeadersToH3`, `fixUnclosedCodeBlocks`, `getProtectedRegions`/`isInProtectedRegion`, `hasMarkdown`, `prepareMessageContent`. Desktop imports the individual functions; mobile uses the `prepareMessageContent` orchestrator.
 - `@quilibrium/quorum-shared` (`src/utils/youtubeUtils.ts`) - Centralized YouTube URL utilities (moved to shared package)
 - `src/utils/codeFormatting.ts` - Code block analysis utilities
 - `src/utils/markdownFormatting.ts` - Markdown formatting functions for toolbar
@@ -74,13 +75,18 @@ The message rendering system maintains **two independent rendering paths** for r
 
 **Supported Features**:
 - ✅ Markdown formatting (`**bold**`, `*italic*`, code blocks, tables, etc.)
-- ✅ User mentions (`@<address>`) via safe placeholder tokens with display name lookup
-- ✅ Role mentions (`@role`) via safe placeholder tokens
-- ✅ Channel mentions (`#<channelId>`) via safe placeholder tokens with channel name lookup
+- ✅ User mentions (`@<address>`) via safe placeholder tokens, display name resolved at render time
+- ✅ Role mentions (`@roleTag`) via safe placeholder tokens, resolved filterless from `spaceRoles`
+- ✅ Channel mentions (`#<channelId>`) via safe placeholder tokens, resolved filterless from `spaceChannels`
 - ✅ YouTube embeds (standalone URLs) and links (inline URLs)
 - ✅ Regular URL auto-linking
 - ✅ Invite links (via placeholder tokens)
-- ✅ Security hardened (no HTML injection, XSS protection, display name security)
+- ✅ Security hardened (no HTML injection, XSS protection, render-time name resolution)
+
+> The mention/URL/header/fence preprocessing comes from the **shared** module
+> (`@quilibrium/quorum-shared` → `messagePreprocessing.ts`); the desktop-only
+> steps (invite links, standalone YouTube, message links) and the token→React
+> renderer (`processMentionTokens`) remain in `MessageMarkdownRenderer.tsx`.
 
 **Security Architecture**:
 - Uses placeholder token system (`<<<TOKEN>>>`) for dynamic content
@@ -90,7 +96,7 @@ The message rendering system maintains **two independent rendering paths** for r
 
 ### System 2: Token-Based Rendering (Fallback Path)
 
-**Location**: `src/components/message/Message.tsx` (lines 664-744)
+**Location**: `src/components/message/Message.tsx` (the `else` branch after the `ENABLE_MARKDOWN && shouldUseMarkdown()` check, ~line 1209+)
 **Activation**: When `ENABLE_MARKDOWN === false` OR `shouldUseMarkdown()` returns false
 **Current behavior**: Unreachable code (kept for emergency fallback)
 
@@ -107,6 +113,24 @@ The message rendering system maintains **two independent rendering paths** for r
 2. **Backward compatibility**: Existing code path maintained for safety
 3. **Feature completeness**: Includes invite link support that was later added to MessageMarkdownRenderer
 4. **Testing**: Useful for comparing rendering behavior
+
+> ⚠️ **System 1 / System 2 divergence — role & channel resolution.** The two
+> paths use independent engines, so their mention behavior differs:
+> - **System 1** (MessageMarkdownRenderer, active): role/channel mentions resolve
+>   **filterless** from the `spaceRoles`/`spaceChannels` arrays (option B,
+>   2026-06-25, via the shared `messagePreprocessing` functions). Any `@roleTag` /
+>   `#<channelId>` that names a role/channel existing in the space becomes a pill.
+> - **System 2** (token-based fallback, unreachable): still resolves via
+>   `useMessageFormatting.ts` `processTextToken()`, which only styles a role/channel
+>   if its id is in the message's pre-extracted `message.mentions.roleIds` /
+>   `channelIds` set.
+>
+> This is invisible today because `shouldUseMarkdown()` always returns `true`, so
+> System 2 never runs. But if `ENABLE_MARKDOWN` is ever flipped to `false`, the same
+> message could render role/channel pills differently between the two paths. If the
+> fallback is ever reactivated, align `processTextToken()` to the filterless
+> behavior (or accept the difference deliberately). System 2 was NOT updated during
+> the 2026-06-25 preprocessing-to-shared migration — only System 1 was.
 
 ### Routing Decision Flow
 
@@ -148,48 +172,54 @@ if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
 
 ## Architecture
 
-### **Processing Pipeline (Security Hardened 2025-11-07)**
+### **Processing Pipeline (Security Hardened 2025-11-07; preprocessing moved to shared 2026-06-25)**
+
+The pure string→string preprocessing transforms now live in
+`@quilibrium/quorum-shared` (`src/utils/messagePreprocessing.ts`) and are shared
+with mobile — they are the single canonical producer of the `<<<MENTION_*>>>`
+token protocol that `markdownStripping` also consumes. Desktop imports the
+**individual** functions and calls them in its own order (it does NOT call the
+shared `prepareMessageContent` orchestrator, because it interleaves desktop-only
+steps and must run `processMessageLinks` before `processURLs`).
 
 ```typescript
-// Stable processing functions (outside component scope)
-const processURLs = (text: string): string => {
-  /* Convert URLs to markdown links (protects code blocks, inline code, existing md links) */
-};
+// Imported from @quilibrium/quorum-shared (shared with mobile):
+//   processMentions, processRoleMentions, processChannelMentions,
+//   processURLs, convertHeadersToH3, fixUnclosedCodeBlocks,
+//   getProtectedRegions / isInProtectedRegion, hasMarkdown
+// (the renderer aliases the mention ones, e.g. sharedProcessMentions)
 
-const processStandaloneYouTubeUrls = (text: string): string => {
-  /* Detect standalone YouTube URLs and convert to markdown image syntax */
-  /* Inline YouTube URLs remain as plain URLs for link processing */
-};
+// Still DESKTOP-INLINED in MessageMarkdownRenderer.tsx (mobile defers these to
+// its facade tasks, so they were intentionally NOT promoted):
+//   processInviteLinks, processStandaloneYouTubeUrls, processMessageLinks,
+//   processMentionTokens (the token → React renderer)
 
-const processMentions = (text: string): string => {
-  /* Replace @mentions with safe placeholder tokens: <<<MENTION_USER:address>>> */
-  /* Prevents markdown interpretation and XSS attacks */
-};
+// Thin desktop wrappers delegate to the shared pure functions:
+const processMentions = useCallback((text: string): string => {
+  if (!mapSenderToUser) return text;                    // desktop-only guard (see below)
+  return sharedProcessMentions(text, [], hasEveryoneMention);
+}, [mapSenderToUser, hasEveryoneMention]);
 
-const processRoleMentions = (text: string): string => {
-  /* Replace @role mentions with safe placeholders */
-};
+const processRoleMentions = useCallback(
+  (text: string) => sharedProcessRoleMentions(text, spaceRoles),    // filterless (option B)
+  [spaceRoles],
+);
+const processChannelMentions = useCallback(
+  (text: string) => sharedProcessChannelMentions(text, spaceChannels),
+  [spaceChannels],
+);
 
-const processChannelMentions = (text: string): string => {
-  /* Replace #channel mentions with safe placeholders */
-};
-
-const processMessageLinks = (text: string): string => {
-  /* Replace message URLs with <<<MESSAGE_LINK:channelId:messageId:channelName>>> */
-  /* Same-space only, protects code blocks/inline code/markdown links */
-};
-
-// Processing pipeline (order matters!)
+// Processing pipeline (order matters! — processMessageLinks BEFORE processURLs)
 const processedContent = useMemo(() => {
   return fixUnclosedCodeBlocks(
     convertHeadersToH3(
       processURLs(                    // Last: convert remaining URLs to links
-        processMessageLinks(          // Before URLs: extract message links
+        processMessageLinks(          // Before URLs: extract message links (desktop-only)
           processChannelMentions(
             processRoleMentions(
               processMentions(
-                processStandaloneYouTubeUrls(
-                  processInviteLinks(content)
+                processStandaloneYouTubeUrls(   // desktop-only
+                  processInviteLinks(content)   // desktop-only
                 )
               )
             )
@@ -200,6 +230,13 @@ const processedContent = useMemo(() => {
   );
 }, [content, processMentions, processRoleMentions, processChannelMentions, processMessageLinks]);
 ```
+
+> **`!mapSenderToUser` guard (desktop-only):** the shared `processMentions`
+> always tokenizes. Desktop's wrapper keeps an early `return text` when no user
+> resolver is wired, so surfaces without one (e.g. some bookmark/preview
+> contexts) leave `@<address>` as plain text rather than emitting a token that
+> wouldn't be rendered. This guard is a caller concern and intentionally lives in
+> the desktop wrapper, not in the shared function.
 
 ### **Component Rendering Flow (Updated 2025-11-07)**
 
@@ -219,9 +256,9 @@ const processedContent = useMemo(() => {
 
 ### **Performance Optimizations**
 
-- **Stable functions:** Processing functions moved outside component scope
-- **Memoized components:** `useMemo(() => ({ ... }), [])` prevents re-creation
-- **Minimal dependencies:** Only `content` triggers re-processing
+- **Shared pure functions:** The preprocessing transforms are pure module-level functions in `@quilibrium/quorum-shared` (stable references). Desktop's mention wrappers are `useCallback`-memoized so `processedContent`'s `useMemo` deps stay stable.
+- **Memoized components:** `useMemo(() => ({ ... }), [...])` prevents re-creation
+- **Minimal dependencies:** `processedContent` re-runs only when `content` or the resolver arrays (`spaceRoles`/`spaceChannels`) change
 - **Persistent state:** YouTube video state survives component re-renders
 
 ## Disabled Features (Design Decisions)
@@ -332,16 +369,13 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - **Example**: `"https://invite.url"` → `"![invite-card](https://invite.url)"` → Invite card
 
 ### User Mentions
-- **Token Pattern**: `<<<MENTION_USER:address:displayName>>>`
-- **Creation**: `processMentions()` converts `@<address>` format to safe tokens
-- **Format**: Only `@<Qm...>` is supported
-- **Rendering**: `text` and `p` components catch tokens and render styled spans
+- **Token Pattern**: `<<<MENTION_USER:address>>>` (the token carries ONLY the address; the display name is resolved at render time, not stored in the token)
+- **Creation**: shared `processMentions()` converts `@<address>` format to safe tokens
+- **Format**: `@<Qm...>` is the canonical form. The shared function also tolerates a legacy bare `@name` ONLY when a `members` array is supplied (mobile back-compat); desktop passes no members, so the shim is inert on desktop.
+- **Rendering**: `text`/`p`/`h3`/`li` components catch tokens and render styled spans via `processMentionTokens()`
 - **Security**: Prevents markdown interpretation and XSS attacks
-- **Display Name Handling**: ALWAYS uses `mapSenderToUser()` lookup for security
-  - Extracts address → lookup real display name from space data
-  - Prevents name-spoofing and impersonation attacks
-  - See [useMessageFormatting.ts:157-175](src/hooks/business/messages/useMessageFormatting.ts#L157-L175)
-- **Example**: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123:displayName>>>"` → Styled mention with lookup name
+- **Display Name Handling**: resolved at RENDER time in `processMentionTokens` (MessageMarkdownRenderer.tsx), via `resolveSender`/`mapSenderToUser` then `resolveSpaceMemberName`. A resolved user shows their name and is clickable; an unresolved address shows a non-interactive truncated-address pill. The lookup is always fresh (no name baked into the token) to prevent spoofing.
+- **Example**: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → styled pill, name looked up at render
 
 ### Everyone Mentions
 - **Token Pattern**: `<<<MENTION_EVERYONE>>>`
@@ -350,8 +384,9 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 
 ### Role Mentions
 - **Token Pattern**: `<<<MENTION_ROLE:roleTag:displayName>>>`
-- **Creation**: `processRoleMentions()` converts `@roleTag` to safe tokens
-- **Rendering**: `text` and `p` components render styled role mention spans
+- **Creation**: shared `processRoleMentions(text, spaceRoles)` converts `@roleTag` (and the canonical `@<roleId>` form) to safe tokens
+- **Resolution (option B, 2026-06-25)**: resolves **filterless directly from the `spaceRoles` array** — a pill is rendered for ANY `@roleTag` that names a role existing in the space, regardless of whether the role id was in `message.mentions.roleIds`. This replaces the previous behavior that only styled a role if its id was in the pre-extracted mention set. A pill means "this names a real role," NOT "this pinged the role" — the notification path is separate and unchanged. Identical `@admin` text now renders consistently everywhere (matches mobile).
+- **Rendering**: `text`/`p`/`h3`/`li` components render styled role mention spans
 
 **Why Tokens?**
 - Prevents markdown parser from interpreting dynamic content incorrectly
@@ -360,16 +395,13 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - Security: No raw HTML injection possible
 
 ### Channel Mentions
-- **Token Pattern**: `<<<MENTION_CHANNEL:channelId:channelName:displayName>>>`
-- **Creation**: `processChannelMentions()` converts `#<channelId>` format to safe tokens
+- **Token Pattern**: `<<<MENTION_CHANNEL:channelId:channelName>>>`
+- **Creation**: shared `processChannelMentions(text, spaceChannels)` converts `#<channelId>` format to safe tokens
 - **Format**: Only `#<ch-abc123>` is supported
-- **Rendering**: `text` and `p` components catch tokens and render clickable channel spans
+- **Resolution (option B, 2026-06-25)**: resolves **filterless directly from the `spaceChannels` array** (same rationale as role mentions — no longer gated on `message.mentions.channelIds`). The real channel name is read from the matched `spaceChannels` entry and embedded in the token, so the rendered name always reflects current space data (anti-spoofing).
+- **Rendering**: `text`/`p`/`h3`/`li` components catch tokens and render clickable channel spans
 - **Navigation**: Click handler navigates to the referenced channel
-- **Display Name Handling**: ALWAYS looks up channel name from `spaceChannels` array for security
-  - Extracts channelId → lookup real channel name from space data
-  - Prevents spoofing attacks
-  - See [useMessageFormatting.ts:196-218](src/hooks/business/messages/useMessageFormatting.ts#L196-L218)
-- **Example**: `"Check #<ch-123>"` → `"<<<MENTION_CHANNEL:ch-123:channelName:displayName>>>"` → Clickable span showing lookup name
+- **Example**: `"Check #<ch-123>"` → `"<<<MENTION_CHANNEL:ch-123:channelName>>>"` → clickable span showing the channel name
 
 ### Message Links (Discord-style)
 - **Token Pattern**: `<<<MESSAGE_LINK:channelId:messageId:channelName>>>`
@@ -539,11 +571,12 @@ All user-controlled content now follows this pattern:
 - [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
 
 ---
-**Last Updated**: 2026-05-20 — staleness audit fixes
-**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added, display name lookup for security)
+**Last Updated**: 2026-06-25 — preprocessing pipeline promoted to quorum-shared
+**Preprocessing Pipeline**: Moved to `@quilibrium/quorum-shared` (`messagePreprocessing.ts`) — single source of truth with mobile. Desktop imports the individual functions; `processInviteLinks`/`processStandaloneYouTubeUrls`/`processMessageLinks`/`processMentionTokens` stay desktop-inlined.
+**Role/Channel Resolution**: Option B — filterless, resolved directly from `spaceRoles`/`spaceChannels` (no longer gated on `message.mentions.roleIds`/`channelIds`).
+**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation, render-time name resolution)
 **Performance Optimization**: Complete
-**Mention Formats**: Only `@<address>` and `#<channelId>` supported (display names looked up from space data for security)
+**Mention Formats**: `@<address>` (user), `@roleTag`/`@<roleId>` (role), `#<channelId>` (channel), `@everyone`. Tokens: `<<<MENTION_USER:address>>>`, `<<<MENTION_ROLE:roleTag:displayName>>>`, `<<<MENTION_CHANNEL:channelId:channelName>>>`, `<<<MENTION_EVERYONE>>>`.
 **Message Links**: Complete (Discord-style rendering with same-space validation)
 **Spoilers**: Complete (plain text only, dot pattern styling, keyboard accessible)
 **Keyboard Shortcuts**: Complete (Bold, Italic, Strikethrough, Inline Code)
-**Recent Changes**: Updated documentation to reflect current mention format support (no enhanced formats with embedded names)
