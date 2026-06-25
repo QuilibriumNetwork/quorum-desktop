@@ -15,6 +15,13 @@ import {
   extractYouTubeVideoId,
   getValidInvitePrefixes,
   getValidMessageLinkPrefixes,
+  // Message-preprocessing pipeline (shared with mobile — single source of truth).
+  processMentions as sharedProcessMentions,
+  processRoleMentions as sharedProcessRoleMentions,
+  processChannelMentions as sharedProcessChannelMentions,
+  processURLs,
+  convertHeadersToH3,
+  fixUnclosedCodeBlocks,
 } from '@quilibrium/quorum-shared';
 import { remarkTwemoji, getEmojiOnlySize } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
@@ -75,118 +82,8 @@ const processInviteLinks = (text: string): string => {
   });
 };
 
-// Helper type for protected regions
-interface ProtectedRegion {
-  start: number;
-  end: number;
-}
-
-// Extract protected regions where mentions/URLs should NOT be processed
-// This includes: fenced code blocks, inline code, and markdown links
-const getProtectedRegions = (text: string): ProtectedRegion[] => {
-  const protectedRegions: ProtectedRegion[] = [];
-
-  // Extract fenced code blocks (```...```)
-  const codeBlockRegex = /```[\s\S]*?```/g;
-  let match;
-  while ((match = codeBlockRegex.exec(text)) !== null) {
-    protectedRegions.push({ start: match.index, end: match.index + match[0].length });
-  }
-
-  // Extract inline code (`...`)
-  const inlineCodeRegex = /`[^`]+`/g;
-  while ((match = inlineCodeRegex.exec(text)) !== null) {
-    const isInsideCodeBlock = protectedRegions.some(
-      r => match!.index >= r.start && match!.index < r.end
-    );
-    if (!isInsideCodeBlock) {
-      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
-    }
-  }
-
-  // Extract markdown links [text](url)
-  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  while ((match = markdownLinkRegex.exec(text)) !== null) {
-    const isInsideCodeBlock = protectedRegions.some(
-      r => match!.index >= r.start && match!.index < r.end
-    );
-    if (!isInsideCodeBlock) {
-      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
-    }
-  }
-
-  return protectedRegions;
-};
-
-// Check if an index is inside a protected region
-const isInProtectedRegion = (index: number, protectedRegions: ProtectedRegion[]): boolean => {
-  return protectedRegions.some(r => index >= r.start && index < r.end);
-};
-
-// Stable processing functions outside component to prevent re-creation
-const processURLs = (text: string): string => {
-  // Step 1: Build protected regions (code blocks, inline code, existing markdown links)
-  const protectedRegions: { start: number; end: number }[] = [];
-
-  // Extract fenced code blocks (```...```)
-  const codeBlockRegex = /```[\s\S]*?```/g;
-  let match;
-  while ((match = codeBlockRegex.exec(text)) !== null) {
-    protectedRegions.push({ start: match.index, end: match.index + match[0].length });
-  }
-
-  // Extract inline code (`...`)
-  const inlineCodeRegex = /`[^`]+`/g;
-  while ((match = inlineCodeRegex.exec(text)) !== null) {
-    const isInsideCodeBlock = protectedRegions.some(
-      r => match!.index >= r.start && match!.index < r.end
-    );
-    if (!isInsideCodeBlock) {
-      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
-    }
-  }
-
-  // Extract existing markdown links [text](url)
-  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-  while ((match = markdownLinkRegex.exec(text)) !== null) {
-    const isInsideCodeBlock = protectedRegions.some(
-      r => match!.index >= r.start && match!.index < r.end
-    );
-    if (!isInsideCodeBlock) {
-      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
-    }
-  }
-
-  // Step 2: Find all URLs and convert only those not in protected regions
-  const urlRegex = /https?:\/\/[^\s<>"{}|\\^`[\]]+/g;
-  const urlMatches: { index: number; url: string }[] = [];
-  while ((match = urlRegex.exec(text)) !== null) {
-    urlMatches.push({ index: match.index, url: match[0] });
-  }
-
-  // Filter out URLs in protected regions
-  const validUrls = urlMatches.filter(({ index }) => {
-    return !protectedRegions.some(r => index >= r.start && index < r.end);
-  });
-
-  // Step 3: Replace URLs from end to start to avoid index shifting
-  let result = text;
-  for (let i = validUrls.length - 1; i >= 0; i--) {
-    const { index, url } = validUrls[i];
-    const beforeUrl = result.substring(0, index);
-    const afterUrl = result.substring(index + url.length);
-
-    // Additional check: angle bracket autolinks <URL>
-    if (beforeUrl.endsWith('<') && afterUrl.startsWith('>')) {
-      continue; // Don't modify - already in angle bracket autolink
-    }
-
-    // Convert URL to markdown link
-    result = beforeUrl + `[${url}](${url})` + afterUrl;
-  }
-
-  return result;
-};
+// processURLs, getProtectedRegions, isInProtectedRegion now come from
+// @quilibrium/quorum-shared (the shared message-preprocessing pipeline).
 
 const processStandaloneYouTubeUrls = (text: string): string => {
   // Split text into lines first
@@ -249,208 +146,29 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   embeddedMedia,
 }) => {
 
-  // Convert H1 and H2 headers to H3 since only H3 is allowed
-  const convertHeadersToH3 = (text: string): string => {
-    // Don't convert headers inside code blocks
-    const codeBlockRegex = /```[\s\S]*?```/g;
-    const codeBlocks: string[] = [];
+  // convertHeadersToH3 and fixUnclosedCodeBlocks now come from
+  // @quilibrium/quorum-shared (the shared message-preprocessing pipeline).
 
-    // Extract code blocks and replace with placeholders
-    let textWithPlaceholders = text.replace(codeBlockRegex, (match) => {
-      codeBlocks.push(match);
-      return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
-    });
-
-    // Convert H1 and H2 to H3
-    textWithPlaceholders = textWithPlaceholders
-      .replace(/^##\s/gm, '### ')  // H2 to H3
-      .replace(/^#\s/gm, '### ');  // H1 to H3
-
-    // Restore code blocks
-    codeBlocks.forEach((block, index) => {
-      textWithPlaceholders = textWithPlaceholders.replace(`__CODE_BLOCK_${index}__`, block);
-    });
-
-    return textWithPlaceholders;
-  };
-
-  // Fix unclosed code blocks by adding missing closing ```
-  const fixUnclosedCodeBlocks = (text: string): string => {
-    // Split by ``` to analyze the structure
-    const parts = text.split('```');
-
-    // If odd number of parts, we have an unclosed code block
-    if (parts.length % 2 === 0) {
-      // Find the last opening ``` and close it properly
-      const lastPart = parts[parts.length - 1];
-      // Add closing ``` on a new line to ensure proper formatting
-      return text + (lastPart.endsWith('\n') ? '```' : '\n```');
-    }
-
-    return text;
-  };
-
-  // Process mentions to show displayNames with proper styling and click handling
-  // Only process mentions that have word boundaries AND are not inside protected regions
-  // Protected regions: code blocks, inline code, markdown links
+  // Process mentions → tokens. Delegates to the shared pipeline; the desktop
+  // wrapper keeps the `!mapSenderToUser` guard so contexts without a user
+  // resolver (e.g. some bookmark/preview surfaces) leave `@<address>` as plain
+  // text instead of emitting a raw token that wouldn't be rendered. Desktop
+  // never produced legacy bare-`@name` mentions, so it passes no members.
+  // `hasEveryoneMention` is desktop's authorization signal → `everyoneAuthorized`.
   const processMentions = useCallback((text: string): string => {
     if (!mapSenderToUser) return text;
-
-    // Get protected regions (code blocks, inline code, markdown links)
-    const protectedRegions = getProtectedRegions(text);
-
-    let processedText = text;
-
-    // Only style @everyone if the message has mentions.everyone = true and has word boundaries
-    if (hasEveryoneMention) {
-      const everyoneMatches = Array.from(text.matchAll(/@everyone\b/gi));
-
-      // Collect valid matches (not in protected regions and has word boundaries)
-      const validMatches = [];
-      for (const match of everyoneMatches) {
-        if (!isInProtectedRegion(match.index!, protectedRegions) && hasWordBoundaries(text, match)) {
-          validMatches.push(match);
-        }
-      }
-
-      // Replace from end to beginning to avoid index shifting
-      for (let i = validMatches.length - 1; i >= 0; i--) {
-        const match = validMatches[i];
-        const beforeText = processedText.substring(0, match.index);
-        const afterText = processedText.substring(match.index! + match[0].length);
-        processedText = beforeText + '<<<MENTION_EVERYONE>>>' + afterText;
-      }
-    }
-
-    // Replace @<address> with safe placeholder token only if it has word boundaries
-    // Using centralized IPFS CID validation pattern
-    // NOTE: Must match against processedText (not original text) since @everyone replacements change indices
-    const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
-    const userMentionRegex = new RegExp(`@<(${cidPattern})>`, 'g');
-    const userMatches = Array.from(processedText.matchAll(userMentionRegex));
-
-    // Process matches in reverse order to avoid index shifting issues
-    // Filter out matches in protected regions (using original text indices for protected region check)
-    // Note: Protected regions are calculated on original text, but since we only replaced @everyone
-    // with a longer token, protected region checks are still valid (mentions in code blocks stay in code blocks)
-    const validUserMatches = [];
-    for (const match of userMatches) {
-      if (hasWordBoundaries(processedText, match)) {
-        // Check if this position in original text was in a protected region
-        // Since @everyone tokens are longer, we can't use original indices directly
-        // Instead, check if the match content appears to be inside a code block in processedText
-        const isInCodeBlock = isInProtectedRegion(match.index!, getProtectedRegions(processedText));
-        if (!isInCodeBlock) {
-          validUserMatches.push(match);
-        }
-      }
-    }
-
-    // Replace from end to beginning to avoid index shifting
-    for (let i = validUserMatches.length - 1; i >= 0; i--) {
-      const match = validUserMatches[i];
-      const address = match[1];
-      const beforeText = processedText.substring(0, match.index);
-      const afterText = processedText.substring(match.index! + match[0].length);
-      processedText = beforeText + `<<<MENTION_USER:${address}>>>` + afterText;
-    }
-
-    return processedText;
+    return sharedProcessMentions(text, [], hasEveryoneMention);
   }, [mapSenderToUser, hasEveryoneMention]);
 
-  // Process role mentions - render a pill for any @roleTag that names a role
-  // that actually exists in the space (resolved directly from spaceRoles).
-  // Only process mentions that have word boundaries AND are not inside protected regions.
+  // Role mentions → tokens. Resolves directly from spaceRoles (option B —
+  // identical @roleTag text renders consistently; pill = "names a real role").
   const processRoleMentions = useCallback((text: string): string => {
-    if (!spaceRoles || spaceRoles.length === 0) {
-      return text;
-    }
-
-    // Tokenize every existing role's tag. We no longer gate on a pre-extracted
-    // message.mentions.roleIds set: identical @roleTag text renders consistently
-    // regardless of whether it was picked from the @ menu. (Pill = "names a real
-    // role", not "pinged that role" — the notification path is separate.)
-    const roleData = spaceRoles.map(role => ({
-      roleTag: role.roleTag,
-      displayName: role.displayName,
-    }));
-
-    // Replace @roleTag with safe placeholder (only if it has word boundaries and not in protected region)
-    // NOTE: Must re-match and recalculate protected regions after each role replacement
-    // because replacements change string indices
-    let processed = text;
-    roleData.forEach(({ roleTag, displayName }) => {
-      // Recalculate protected regions on current processed text
-      const protectedRegions = getProtectedRegions(processed);
-      const regex = new RegExp(`@${roleTag}(?!\\w)`, 'g');
-      const matches = Array.from(processed.matchAll(regex));
-
-      // Collect valid matches (not in protected regions and has word boundaries)
-      const validMatches = [];
-      for (const match of matches) {
-        if (!isInProtectedRegion(match.index!, protectedRegions) && hasWordBoundaries(processed, match)) {
-          validMatches.push(match);
-        }
-      }
-
-      // Replace from end to beginning to avoid index shifting
-      for (let i = validMatches.length - 1; i >= 0; i--) {
-        const match = validMatches[i];
-        const beforeText = processed.substring(0, match.index);
-        const afterText = processed.substring(match.index! + match[0].length);
-        processed = beforeText + `<<<MENTION_ROLE:${roleTag}:${displayName}>>>` + afterText;
-      }
-    });
-
-    return processed;
+    return sharedProcessRoleMentions(text, spaceRoles);
   }, [spaceRoles]);
 
-  // Process channel mentions - render a pill for any #<channelId> that names a
-  // channel that actually exists in the space (resolved directly from spaceChannels).
-  // Only process mentions that have word boundaries AND are not inside protected regions.
+  // Channel mentions → tokens. Resolves directly from spaceChannels.
   const processChannelMentions = useCallback((text: string): string => {
-    if (!spaceChannels || spaceChannels.length === 0) {
-      return text;
-    }
-
-    // Tokenize every existing channel id. No longer gated on a pre-extracted
-    // message.mentions.channelIds set (see processRoleMentions for the rationale).
-    const channelData = spaceChannels.map(channel => ({
-      channelId: channel.channelId,
-      channelName: channel.channelName,
-    }));
-
-    // Replace #<channelId> with safe placeholder (only if it has word boundaries and not in protected region)
-    // NOTE: Must re-match and recalculate protected regions after each channel replacement
-    // because replacements change string indices
-    let processed = text;
-    channelData.forEach(({ channelId, channelName }) => {
-      // Recalculate protected regions on current processed text
-      const protectedRegions = getProtectedRegions(processed);
-      // Escape special regex characters in channel ID
-      const escapedChannelId = channelId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-      const channelRegex = new RegExp(`#<${escapedChannelId}>`, 'g');
-      const matches = Array.from(processed.matchAll(channelRegex));
-
-      // Collect valid matches (not in protected regions and has word boundaries)
-      const validMatches = [];
-      for (const match of matches) {
-        if (!isInProtectedRegion(match.index!, protectedRegions) && hasWordBoundaries(processed, match)) {
-          validMatches.push(match);
-        }
-      }
-
-      // Replace from end to beginning to avoid index shifting
-      for (let i = validMatches.length - 1; i >= 0; i--) {
-        const match = validMatches[i];
-        const beforeText = processed.substring(0, match.index);
-        const afterText = processed.substring(match.index! + match[0].length);
-        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>` + afterText;
-      }
-    });
-
-    return processed;
+    return sharedProcessChannelMentions(text, spaceChannels);
   }, [spaceChannels]);
 
   // Process message links to convert them to styled tokens (same-space only)
