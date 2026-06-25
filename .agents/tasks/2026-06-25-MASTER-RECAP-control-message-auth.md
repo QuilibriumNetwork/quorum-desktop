@@ -38,6 +38,20 @@ itself proves** about who sent the message (the "session-authenticated sender").
 > "Desktop: DONE" = code written, type-check clean, unit tests pass (incl. the
 > spoof-attack tests). Still PENDING: a quick in-app manual check + opening the PR.
 > See "Current status / what's left" below.
+>
+> **Mobile "DONE" status (2026-06-25):** code complete on branch
+> `feature/dm-delete-own-message-sync`, **uncommitted working tree**, verified
+> static (tsc + lint clean; reaction send unchanged; normal receive unaffected;
+> desktop honors a legit cross-account delete — traced). The mobile branch ALSO
+> carries two delivery-reliability fixes the desktop side doesn't need: (1) the
+> delete sends via the all-devices transport (`sendEncryptedMessageToAllDevices`),
+> not the single-session reaction transport, so it reaches every device a normal
+> message does; (2) the send no longer bails on a transient `!isConnected` (it
+> enqueues and flushes on reconnect) — that was silently dropping deletes. These
+> are mobile-transport fixes, separate from the shared security logic. Live
+> mobile↔desktop propagation could not be confirmed: blocked by the pre-existing
+> desktop↔mobile delivery sync issue (affects normal messages too), NOT the auth
+> fix. Detail: mobile `.agents/docs/features/dm-delete-own-message.md`.
 
 **"Left alone on purpose" (group chats):** In a group chat the encryption can't
 prove who sent each message without a deeper change to the shared crypto library.
@@ -139,9 +153,8 @@ you what is OPEN vs DONE so nothing gets lost.
 |---|---|---|
 | **DONE** | `.done/2026-06-25-desktop-dm-control-msg-auth-fix-plan.md` (desktop) | The desktop DM delete+edit fix implemented on this branch. Complete: code + tests. |
 | **DONE** | mobile commit `18cc7dc` (branch `feature/dm-delete-own-message-sync`) | The mobile DM delete fix. The reference desktop mirrored. |
-| **OPEN** | `2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md` (desktop) | Original bug write-up. DM part now DONE; **SPACE part still open** (see below). |
-| **OPEN** | `2026-06-25-space-remove-message-auth-uses-payload-senderid.md` (mobile) | **Group-chat (space) delete fix — both platforms.** The biggest remaining piece. Needs lead-dev call on the space authenticated-sender. |
-| **REFERENCE** | `2026-06-25-control-message-auth-audit-senderid-spoofing.md` (mobile) | The full audit matrix of every control-message handler. Superseded as a tracker by THIS recap; keep for the detailed per-handler notes. |
+| **OPEN** | `2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md` (desktop) | Original DM bug write-up. DM part now DONE. (Space portion redacted — see private issue.) |
+| **OPEN** | **PRIVATE:** quorum-app-prod#1 + quorum-mobile gitignored `.agents/` | **Group-chat (space) authorization — the remaining work.** Detail is kept OUT of this public repo. |
 
 ### Adjacent work (related topic, NOT the spoofing fix — don't confuse)
 
@@ -153,10 +166,11 @@ you what is OPEN vs DONE so nothing gets lost.
 
 ### The one open follow-up this recap itself owns
 
-- **Space-path fix (desktop + mobile)** — tracked by the two OPEN space tasks above.
-  Both platforms still authorize space deletes/edits on the spoofable payload
-  senderId. Blocked on the same question: does the group-chat crypto expose a
-  per-message authenticated sender? → lead-dev / SDK decision.
+- **Space-path fix (desktop + mobile)** — this is an UNPATCHED authorization concern
+  for group chats, so its specifics are kept OUT of this public repo. Tracked
+  privately at **https://github.com/QuilibriumNetwork/quorum-app-prod/issues/1**, with
+  the design/decision doc in quorum-mobile's gitignored `.agents/`. Awaiting a
+  lead-dev direction decision. Do NOT re-add space exploit detail to this public repo.
 
 ## For a conversation with the lead dev (talking points)
 

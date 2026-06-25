@@ -44,28 +44,28 @@ session that decrypted the message. So a malicious peer in a DM with you can:
 
 This violates the intended rule that **a peer can never delete a message you authored** (delete is own-message-only). It's an integrity/authorization bypass, not a confidentiality leak, but it lets a counterparty silently censor your side of a DM.
 
-## Scope: this is ONE fix covering BOTH DMs and Spaces, in BOTH handlers
+## Scope: DM portion (this doc) — Space portion tracked privately
 
-The same `remove-message` handler authorizes BOTH conversation types — DMs and
-Spaces share one code block — and trusts the spoofable `decryptedContent.content.senderId`
-in EVERY authorization decision. So the fix is: replace `decryptedContent.content.senderId`
-with the cryptographically-authenticated sender (derived from the session that
-decrypted the message, NOT the payload) at every spot it gates a delete. Do this
-in both handlers. Concretely:
+This document covers the **DM** `remove-message` / `edit-message` fix, which is
+DONE and merged (PR #220). The DM handler authorizes by comparing the spoofable
+`decryptedContent.content.senderId`; the fix replaces it with the
+cryptographically-authenticated session sender (see "The fix" below).
 
-**Handler 1 — `saveMessage` path (~line 941–1036):**
-- line 992–993 — author check `targetMessage.content.senderId === decryptedContent.content.senderId`. **This is the DM authorization** (DMs have `spaceId == channelId`, so the space `else if` at line 997 is skipped — DMs are authorized ONLY by this line).
-- line 1012 — Space read-only-channel manager role check: `role.members.includes(decryptedContent.content.senderId)`.
-- line 1027 — Space regular `message:delete` role check: `r.members.includes(decryptedContent.content.senderId)`.
+> The **Space (group-chat)** portion of this issue is intentionally NOT detailed
+> here. It is an unpatched authorization concern and its specifics are kept out of
+> this public repo. Tracked privately:
+> **https://github.com/QuilibriumNetwork/quorum-app-prod/issues/1**
+> (design notes live in quorum-mobile's gitignored `.agents/`). Do not re-add Space
+> exploit specifics to this file.
 
-**Handler 2 — `addMessage` path (~line 1575–1626):**
-- line 1592–1593 — author check (DM + space "own message").
-- line 1609 — Space read-only manager role check.
-- line 1620 — Space regular `message:delete` role check.
+**DM handler — `saveMessage` path (~line 941–1036):**
+- the DM author check `targetMessage.content.senderId === decryptedContent.content.senderId`
+  (DMs have `spaceId == channelId`, so DMs are authorized ONLY by this line).
 
-So: **DM bypass** = lines 993 + 1593. **Space bypass** = lines 993/1593 (own) PLUS the role-lookup lines 1012/1027/1609/1620 (forge senderId = an admin/manager → delete anyone's space message). Fixing only the author-check lines would leave the space role bypass open; all of the above must use the authenticated sender.
+**DM handler — `addMessage` path (~line 1575–1626):**
+- the DM author check (same shape).
 
-Both use the payload `senderId`, not a session-bound identity.
+Both used the payload `senderId`, not a session-bound identity — now fixed for DMs.
 
 ## The fix (mirror the mobile fix)
 
@@ -95,7 +95,9 @@ conversation owner in scope at the `remove-message` handler and use it.
 - (a) Peer deletes a message THEY authored → honored.
 - (b) Peer tries to delete a message YOU authored (spoofing `senderId = you`) → **dropped**.
 - (c) Your own delete fans out to your other devices (self-sync) → honored (authenticated sender is you, target authored by you). Watch the multi-device rewrite: capture the authenticated sender BEFORE any conversation rewrite, else self-sync deletes get dropped.
-- (d) **Space `remove-message` path — CONFIRMED ALSO VULNERABLE (broader than DMs).** `addMessage` path lines 1592–1626 trust `decryptedContent.content.senderId` for BOTH the own-message check (line 1593) AND the role lookups: read-only manager check (`role.members.includes(decryptedContent.content.senderId)`, line 1609) and `message:delete` role check (line 1620). A peer with send access to a space can set `content.senderId = <an admin/manager's address>` and pass the role gate, deleting **anyone's** messages. The role membership lookup MUST use the authenticated sender, not the payload field. Fix the space path in the same pass.
+- (d) **Space path** — a related authorization concern exists for group chats; it is
+  tracked privately (see the note above:
+  https://github.com/QuilibriumNetwork/quorum-app-prod/issues/1). Not described here.
 
 ## Notes / context
 
