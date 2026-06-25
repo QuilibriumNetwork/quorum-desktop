@@ -122,7 +122,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
-- [Composer flattens multi-line paste into a single line (contentEditable newlines lost) — FIX in progress](bugs/2026-06-25-composer-paste-strips-newlines.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -164,6 +163,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Per-space mention-type filter doesn't sync across devices](bugs/.solved/2026-06-07-mention-type-filter-not-synced.md)
 - [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/.solved/2026-06-07-space-profile-save-missing-inbox.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
+- [Composer flattens multi-line paste into a single line](bugs/.solved/2026-06-25-composer-paste-strips-newlines.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -199,10 +199,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
-
-### Done Tasks
-- [Move image compression config + orchestration into quorum-shared (desktop side)](tasks/.done/2026-06-24-share-image-compression-config-with-shared.md)
-- [Close EXIF/metadata stripping gaps on image uploads](tasks/.done/2026-06-24-strip-image-exif-metadata-gaps.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -331,8 +327,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Port-to-mobile — desktop → mobile feature diff](tasks/port-to-mobile/README.md)
 
 ### Quorum Shared Migration
-- [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/.done/2026-06-12-icon-picker-PR-notes.md) ✓ done
-- [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/.done/2026-06-12-promote-icon-picker-vocabulary-to-shared.md) ✓ done
 - [Promote the message-preprocessing pipeline to quorum-shared](tasks/quorum-shared-migration/2026-06-18-promote-message-preprocessing-to-shared.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
 - [Mobile tasks — where to find them](tasks/quorum-shared-migration/mobile-tasks-pending.md)
@@ -351,6 +345,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [useTwoStepConfirm — extract two-step confirmation primitive to shared](tasks/quorum-shared-migration/.done/2026-05-28-migrate-use-two-step-confirm.md)
 - [Validation hooks — move logic to shared with errorKey i18n pattern](tasks/quorum-shared-migration/.done/2026-05-28-migrate-validation-hooks.md)
 - [Extract role-mutation pure helpers to `@quilibrium/quorum-shared`](tasks/quorum-shared-migration/.done/2026-05-29-migrate-role-mutation-helpers.md)
+- [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/.done/2026-06-12-icon-picker-PR-notes.md)
+- [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/.done/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
 
 ### Quorum Shared Migration Designs
 - [Utilities Migration Design](tasks/quorum-shared-migration/designs/2026-03-18-utils-design.md)
@@ -465,6 +461,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Global Notification Panel (Desktop) — Design](tasks/.done/2026-06-23-global-notification-panel-design.md)
 - [Global Notification Panel (Desktop) Implementation Plan](tasks/.done/2026-06-23-global-notification-panel-plan.md)
 - [Notification-type settings: stale read in the settings modal (+ clobber-on-save)](tasks/.done/2026-06-23-notification-settings-stale-read-and-clobber.md)
+- [Move image compression config + orchestration into quorum-shared (desktop side)](tasks/.done/2026-06-24-share-image-compression-config-with-shared.md)
+- [Close EXIF/metadata stripping gaps on image uploads](tasks/.done/2026-06-24-strip-image-exif-metadata-gaps.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -655,4 +653,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-24 10:02:52
+**Last Updated**: 2026-06-25 11:03:31

@@ -1,9 +1,11 @@
 ---
 type: bug
 title: "Composer flattens multi-line paste into a single line (contentEditable newlines lost)"
-status: open
+status: solved
 severity: medium
 created: 2026-06-25
+solved: 2026-06-25
+fixed-in: src/utils/mentionPillDom.ts (extractStorageTextFromEditor — newline reconstruction)
 area: message composer
 component: src/components/message/MessageComposer.tsx
 related:
@@ -11,6 +13,25 @@ related:
   - src/hooks/business/mentions/useMentionPillEditor.ts (wraps the serializer)
   - src/components/message/MessageMarkdownRenderer.tsx (the renderer — NOT the cause; receives already-flattened text)
 ---
+
+## RESOLVED 2026-06-25
+
+Fixed by reconstructing newlines in `extractStorageTextFromEditor`
+(`src/utils/mentionPillDom.ts`): emit `\n` for `<br>` and at block-element
+(`<div>`/`<p>`) boundaries, skipping the trailing filler `<br>` / `<div><br></div>`
+empty-line case to avoid double newlines. Covered by
+`src/dev/tests/utils/mentionPillDom.unit.test.ts` (13 cases).
+
+Both reported symptoms verified fixed in-app by the user:
+1. Multi-line messages no longer collapse onto one line.
+2. A pasted unclosed code fence now renders correctly (was an empty code box —
+   same root cause: with newlines restored, the fence sits on its own line, so
+   `fixUnclosedCodeBlocks` sees valid input and the content is no longer misread
+   as the code language identifier).
+
+Both symptoms shared the single newline-flattening root cause; one fix resolved
+both. The shared `fixUnclosedCodeBlocks` was never wrong — it only received
+pre-flattened input.
 
 # Composer flattens multi-line paste into a single line
 
