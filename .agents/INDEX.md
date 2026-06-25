@@ -122,6 +122,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
+- [Composer flattens multi-line paste into a single line (contentEditable newlines lost) — FIX in progress](bugs/2026-06-25-composer-paste-strips-newlines.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)

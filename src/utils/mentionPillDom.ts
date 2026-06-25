@@ -142,32 +142,83 @@ export function createPillElement(pillData: PillData, onClick?: () => void): HTM
 export function extractStorageTextFromEditor(editorElement: HTMLElement): string {
   let text = '';
 
-  const walk = (node: Node) => {
+  // Block-level tags a contentEditable uses to represent visual lines. Browsers
+  // keep the first line as inline/text content of the editor and wrap each
+  // subsequent line in its own block element, so a `\n` must be emitted at the
+  // start of every block boundary to reconstruct the original line breaks.
+  const BLOCK_TAGS = new Set(['DIV', 'P']);
+
+  // Walk the editor's DOM and serialize to storage text.
+  // `isBlock` marks a node that opens a new visual line (a block element that is
+  // not the editor's first child) so we can prefix it with a newline.
+  const walk = (node: Node, isBlock: boolean) => {
     if (node.nodeType === Node.TEXT_NODE) {
       text += node.textContent;
-    } else if (node.nodeType === Node.ELEMENT_NODE) {
-      const el = node as HTMLElement;
-      if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
-        const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
-
-        // Use simple format for storage: @<address> or #<id>
-        if (el.dataset.mentionType === 'role') {
-          // Roles always use @roleTag format (no brackets)
-          text += `@${el.dataset.mentionAddress}`;
-        } else if (el.dataset.mentionType === 'everyone') {
-          // @everyone always same format
-          text += '@everyone';
-        } else {
-          // Legacy format: @<address> or #<channelId>
-          text += `${prefix}<${el.dataset.mentionAddress}>`;
-        }
-      } else {
-        node.childNodes.forEach(walk);
-      }
+      return;
     }
+    if (node.nodeType !== Node.ELEMENT_NODE) return;
+
+    const el = node as HTMLElement;
+
+    // A <br> is an explicit line break.
+    if (el.tagName === 'BR') {
+      text += '\n';
+      return;
+    }
+
+    // Mention pills serialize to their storage token (no newline).
+    if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
+      const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
+      if (el.dataset.mentionType === 'role') {
+        // Roles always use @roleTag format (no brackets)
+        text += `@${el.dataset.mentionAddress}`;
+      } else if (el.dataset.mentionType === 'everyone') {
+        // @everyone always same format
+        text += '@everyone';
+      } else {
+        // Legacy format: @<address> or #<channelId>
+        text += `${prefix}<${el.dataset.mentionAddress}>`;
+      }
+      return;
+    }
+
+    // Other element: open a line break if this is a block boundary, then recurse.
+    if (isBlock) {
+      text += '\n';
+    }
+
+    const children = Array.from(el.childNodes);
+    children.forEach((child, i) => {
+      // A trailing <br> that is the sole/last child of a block is the filler
+      // browsers insert into an otherwise-empty line; the block's own leading
+      // newline already represents that line, so skip it to avoid a double `\n`.
+      const isTrailingFillerBr =
+        child.nodeType === Node.ELEMENT_NODE &&
+        (child as HTMLElement).tagName === 'BR' &&
+        i === children.length - 1 &&
+        BLOCK_TAGS.has(el.tagName);
+      if (isTrailingFillerBr) return;
+
+      const childOpensBlock =
+        child.nodeType === Node.ELEMENT_NODE &&
+        BLOCK_TAGS.has((child as HTMLElement).tagName);
+      walk(child, childOpensBlock);
+    });
   };
 
-  editorElement.childNodes.forEach(walk);
+  // Top-level children: the first child continues the first line (no leading
+  // newline); each subsequent block-level child opens a new line.
+  const topChildren = Array.from(editorElement.childNodes);
+  topChildren.forEach((child, i) => {
+    const opensBlock =
+      i > 0 &&
+      child.nodeType === Node.ELEMENT_NODE &&
+      BLOCK_TAGS.has((child as HTMLElement).tagName);
+    walk(child, opensBlock);
+  });
+
+  // Trim outer whitespace (matches the original behavior); the reconstruction
+  // above only adds INTERNAL newlines, which trim() leaves intact.
   return text.trim();
 }
 
