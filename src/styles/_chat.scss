@@ -174,6 +174,31 @@ img.twemoji {
   margin: 0 0.05em;
 }
 
+// "Jumbo emoji": when a message is nothing but emoji, render them larger.
+// The tier class lives on the renderer's wrapper div (set in
+// MessageMarkdownRenderer). 1 emoji is largest, 2-3 are smaller-but-large,
+// 4+ fall back to normal inline size (no class is applied).
+//
+// max-height caps every emoji image at 128px — the hard upper bound for
+// custom emojis. With the 14px message body font, the em-based heights below
+// resolve well under that (single ≈ 42px, few ≈ 31px); the cap is a safety
+// rail so neither Twemoji nor any future inline custom emoji can blow past it.
+.twemoji-jumbo {
+  img.twemoji {
+    vertical-align: -0.15em;
+    margin: 0 0.08em;
+    max-height: 128px;
+  }
+
+  &--single img.twemoji {
+    height: 3em;
+  }
+
+  &--few img.twemoji {
+    height: 2.2em;
+  }
+}
+
 .message-list {
   flex: 1 1 auto;
   overflow-y: auto;
