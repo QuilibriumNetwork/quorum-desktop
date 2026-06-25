@@ -330,8 +330,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Port-to-mobile — desktop → mobile feature diff](tasks/port-to-mobile/README.md)
 
 ### Quorum Shared Migration
-- [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/2026-06-12-icon-picker-PR-notes.md)
-- [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/2026-06-12-promote-icon-picker-vocabulary-to-shared.md)
+- [Icon-picker vocabulary — implementation status & PR sequencing](tasks/quorum-shared-migration/.done/2026-06-12-icon-picker-PR-notes.md) ✓ done
+- [Promote the icon-picker vocabulary to quorum-shared](tasks/quorum-shared-migration/.done/2026-06-12-promote-icon-picker-vocabulary-to-shared.md) ✓ done
 - [Promote the message-preprocessing pipeline to quorum-shared](tasks/quorum-shared-migration/2026-06-18-promote-message-preprocessing-to-shared.md)
 - [Cross-repo PR workflow for the quorum-shared migration](tasks/quorum-shared-migration/cross-repo-workflow.md)
 - [Mobile tasks — where to find them](tasks/quorum-shared-migration/mobile-tasks-pending.md)

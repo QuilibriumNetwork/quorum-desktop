@@ -1,8 +1,9 @@
 ---
 type: task
 title: "Promote + expand the icon-picker vocabulary (icon set + colors + filled-variant) to quorum-shared"
-status: in-progress
+status: done
 created: 2026-06-12
+completed: 2026-06-25
 runtime-test: not-required (data move; visual smoke on both apps)
 priority: medium (unblocks mobile channel/group icon parity — port-to-mobile rows 31/32)
 source-audit: D:\GitHub\Quilibrium\quorum-desktop\.agents\tasks\port-to-mobile\candidates.md (rows 31/32; "Channel & group icons" detailed entry)
@@ -97,4 +98,10 @@ In progress on branch `promote-icon-picker-vocabulary-to-shared`. Full sequencin
 
 **Checklist status:** shared vocab exported + merged (#39) ✓ · desktop import-swap done (re-exports from shared) ✓ · desktop tsc + lint clean ✓ · expanded picker renders (data validated; layout preview generated) ✓ · picker layout holds (sticky header + scroll + search) ✓ · mobile-tasks-pending row present (7.3, updated for 92 + named-enum) ✓. Remaining: live in-app visual smoke; mobile consumption (row 7.3).
 
-*Last updated: 2026-06-12*
+**Done (2026-06-25):** desktop + shared legs verified complete — `pickerVocabulary.ts`
+lives in shared (exported via Icon → primitives → root barrel), desktop `types.ts`
+re-exports it, tsc + lint clean, PR #39 merged. Moved to `.done/`. Remaining work is
+NOT desktop: live in-app visual smoke + the mobile consumption leg (row 7.3 in
+mobile-tasks-pending.md), which stay tracked there.
+
+*Last updated: 2026-06-25*
