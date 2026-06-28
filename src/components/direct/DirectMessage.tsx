@@ -235,17 +235,23 @@ const DirectMessage: React.FC<{}> = () => {
     if (conversation?.conversation) {
       // Priority 1: Use conversation data from IndexedDB (available offline).
       // Fall through to public profile only when local fields are empty/unknown.
+      // When neither the local row nor the public profile carries an identity
+      // (a never-replied, non-public contact), leave displayName/userIcon
+      // undefined. The name resolver then falls through to the truncated
+      // address and the avatar to address-derived initials — matching mobile
+      // and preserving privacy: no name/pfp is shown until the peer replies or
+      // has opted into a public profile.
       const localName = conversation.conversation.displayName;
       const localIcon = conversation.conversation.icon;
       m[address!] = {
         displayName:
           localName && localName !== t`Unknown User`
             ? localName
-            : pubName ?? t`Unknown User`,
+            : pubName,
         userIcon:
           localIcon && localIcon !== DefaultImages.UNKNOWN_USER
             ? localIcon
-            : pubIcon ?? DefaultImages.UNKNOWN_USER,
+            : pubIcon,
         primaryUsername: pubQns,
         address: address!,
       };
@@ -254,16 +260,16 @@ const DirectMessage: React.FC<{}> = () => {
       // Registration has no display name; public profile is the only naming
       // source available at this priority.
       m[registration.registration.user_address] = {
-        displayName: pubName ?? t`Unknown User`,
-        userIcon: pubIcon ?? DefaultImages.UNKNOWN_USER,
+        displayName: pubName,
+        userIcon: pubIcon,
         primaryUsername: pubQns,
         address: registration.registration.user_address,
       };
     } else {
       // Priority 3: Offline fallback - use address as identifier.
       m[address!] = {
-        displayName: pubName ?? t`Unknown User`,
-        userIcon: pubIcon ?? DefaultImages.UNKNOWN_USER,
+        displayName: pubName,
+        userIcon: pubIcon,
         primaryUsername: pubQns,
         address: address!,
       };
@@ -329,8 +335,10 @@ const DirectMessage: React.FC<{}> = () => {
   // wins; public-profile bio is the fallback for users who opted in.
   const otherUser = useMemo(() => {
     const base = members[address!] || {
-      displayName: t`Unknown User`,
-      userIcon: DefaultImages.UNKNOWN_USER,
+      // No identity yet — leave name/icon undefined so the resolver falls
+      // through to the truncated address and the avatar to address-initials.
+      displayName: undefined,
+      userIcon: undefined,
       address: address!,
     };
     const localBio = conversation?.conversation?.bio;
@@ -703,8 +711,10 @@ const DirectMessage: React.FC<{}> = () => {
     (senderId: string) => {
       return (
         members[senderId] || {
-          displayName: t`Unknown User`,
-          userIcon: DefaultImages.UNKNOWN_USER,
+          // No known identity — undefined name/icon lets the resolver fall
+          // through to the truncated address and the avatar to initials.
+          displayName: undefined,
+          userIcon: undefined,
         }
       );
     },

@@ -3,8 +3,6 @@ import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useRegistration } from '../../queries/registration/useRegistration';
 import { useConversation } from '../../queries/conversation/useConversation';
-import { DefaultImages } from '../../../utils';
-import { t } from '@lingui/core/macro';
 
 export interface DirectMessageMember {
   displayName?: string;
@@ -45,17 +43,20 @@ export function useDirectMessageData(): UseDirectMessageDataReturn {
   const members = useMemo(() => {
     const m: { [address: string]: DirectMessageMember } = {};
 
-    // Other user
+    // Other user. Leave displayName/userIcon undefined when no identity is
+    // known so callers fall through to the truncated address (name) and
+    // address-derived initials (avatar) — matching mobile and not revealing a
+    // name/pfp until the peer replies or has a public profile.
     if (conversation?.conversation) {
       m[address!] = {
-        displayName: conversation.conversation.displayName ?? t`Unknown User`,
-        userIcon: conversation.conversation.icon ?? DefaultImages.UNKNOWN_USER,
+        displayName: conversation.conversation.displayName ?? undefined,
+        userIcon: conversation.conversation.icon ?? undefined,
         address: address!,
       };
     } else if (registration?.registration) {
       m[registration.registration.user_address] = {
-        displayName: t`Unknown User`,
-        userIcon: DefaultImages.UNKNOWN_USER,
+        displayName: undefined,
+        userIcon: undefined,
         address: registration.registration.user_address,
       };
     }
@@ -72,8 +73,8 @@ export function useDirectMessageData(): UseDirectMessageDataReturn {
 
   // Helper getters for easier access
   const otherUser = members[address!] || {
-    displayName: t`Unknown User`,
-    userIcon: DefaultImages.UNKNOWN_USER,
+    displayName: undefined,
+    userIcon: undefined,
     address: address!,
   };
 
