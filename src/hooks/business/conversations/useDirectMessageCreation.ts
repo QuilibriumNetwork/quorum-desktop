@@ -100,6 +100,11 @@ export const useDirectMessageCreation = () => {
   return {
     // `address` keeps the field controlled by what the user typed.
     address: input,
+    // The resolved Qm… address everything downstream should key on: the QNS
+    // lookup result for @usernames, the raw input for Qm… addresses. Empty
+    // until an @username resolves. Persisting/navigating MUST use this, never
+    // `address` (the raw name), or a DM gets keyed by the QNS name and breaks.
+    effectiveAddress,
     handleAddressChange,
     handleSubmit,
     buttonText,
