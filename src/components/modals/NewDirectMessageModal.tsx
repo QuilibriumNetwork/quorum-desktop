@@ -29,6 +29,7 @@ const NewDirectMessageModal: React.FunctionComponent<
 > = (props) => {
   const {
     address,
+    effectiveAddress,
     handleAddressChange,
     handleSubmit,
     buttonText,
@@ -60,14 +61,19 @@ const NewDirectMessageModal: React.FunctionComponent<
   // Override handleSubmit to save conversation settings (only for new conversations)
   const handleSubmitWithSettings = React.useCallback(async () => {
     // Only save conversation record for NEW conversations
-    // For existing conversations, just navigate (don't overwrite their data)
-    if (address && !existingConversation) {
+    // For existing conversations, just navigate (don't overwrite their data).
+    // Key the row on the RESOLVED Qm… address (effectiveAddress), never the raw
+    // typed input: typing a @username would otherwise persist a row keyed by the
+    // QNS name (e.g. "alice/alice") while navigation goes to the resolved Qm…,
+    // splitting one partner into two contacts — and the name-keyed one is broken
+    // (no registration, can't send, can't be re-resolved).
+    if (effectiveAddress && !existingConversation) {
       // Persist the conversation record with the selected non-repudiability
       const now = Date.now();
       try {
         await messageDB.saveConversation({
-          conversationId: address + '/' + address,
-          address: address,
+          conversationId: effectiveAddress + '/' + effectiveAddress,
+          address: effectiveAddress,
           icon: DefaultImages.UNKNOWN_USER,
           displayName: t`Unknown User`,
           type: 'direct',
@@ -80,7 +86,7 @@ const NewDirectMessageModal: React.FunctionComponent<
       }
     }
     handleSubmit();
-  }, [address, existingConversation, nonRepudiable, messageDB, handleSubmit]);
+  }, [effectiveAddress, existingConversation, nonRepudiable, messageDB, handleSubmit]);
 
   return (
     <Modal

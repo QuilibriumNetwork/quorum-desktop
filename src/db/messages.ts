@@ -1,4 +1,4 @@
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, isValidIPFSCID } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
@@ -998,6 +998,30 @@ export class MessageDB {
 
   async saveConversation(conversation: Conversation): Promise<void> {
     await this.init();
+
+    // Guard: a direct conversation must be keyed by the partner's Qm… address
+    // ("<Qm…>/<Qm…>"), never a QNS @username. Persisting a name-keyed row splits
+    // one partner into two contacts and leaves the name-keyed one unusable (no
+    // registration → can't send, can't re-resolve). Reject loudly so a leaking
+    // call site is caught instead of silently corrupting the contact list.
+    if (conversation.type === 'direct') {
+      const [a, b] = String(conversation.conversationId).split('/');
+      const keyedByAddress =
+        !!a && a === b && isValidIPFSCID(a, true);
+      if (!keyedByAddress) {
+        logger.error(
+          '[messageDB] Refusing to save direct conversation not keyed by a Qm… address',
+          { conversationId: conversation.conversationId, address: conversation.address },
+        );
+        return Promise.reject(
+          new Error(
+            'Direct conversation must be keyed by a Qm… address, got: ' +
+              conversation.conversationId,
+          ),
+        );
+      }
+    }
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('conversations', 'readwrite');
       const store = transaction.objectStore('conversations');
