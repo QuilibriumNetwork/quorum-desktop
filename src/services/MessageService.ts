@@ -2268,7 +2268,8 @@ export class MessageService {
       (pendingMessage as any).type === 'edit-message';
     const isDeleteConversation =
       typeof pendingMessage === 'object' &&
-      (pendingMessage as any).type === 'delete-conversation';
+      ((pendingMessage as any).type === 'delete-conversation' ||
+        (pendingMessage as any).type === 'delete-conversation-self');
     const isReaction =
       typeof pendingMessage === 'object' &&
       ((pendingMessage as any).type === 'reaction' ||
@@ -2768,8 +2769,11 @@ export class MessageService {
         );
       }
 
-      // do not save delete-conversation message
-      if (message.content.type === 'delete-conversation') {
+      // do not save delete-conversation (control) messages
+      if (
+        message.content.type === 'delete-conversation' ||
+        message.content.type === 'delete-conversation-self'
+      ) {
         return outbounds;
       }
 
@@ -2856,6 +2860,23 @@ export class MessageService {
         }
         if (decryptedContent?.content?.type === 'delete-conversation') {
           await this.deleteEncryptionStates({ conversationId });
+          await this.deleteInboxMessages(
+            keyset.deviceKeyset.inbox_keyset,
+            [envelope.timestamp],
+            this.apiClient
+          );
+          return;
+        }
+        // delete-conversation-self: another of OUR OWN devices deleted this DM.
+        // Delete the whole conversation here too. Gated to self — the
+        // counterparty also receives the fan-out but must never delete our copy.
+        // (Self-sync messages only arrive on this init-envelope branch.)
+        if (
+          decryptedContent?.content?.type === 'delete-conversation-self' &&
+          decryptedContent.content.senderId === self_address
+        ) {
+          const target = decryptedContent.content.conversationAddress;
+          await this.deleteConversationLocally(target + '/' + target, queryClient);
           await this.deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
@@ -5685,6 +5706,7 @@ export class MessageService {
             const self = await this.apiClient.getUser(
               currentPasskeyInfo?.address!
             );
+            // 1. Notify the counterparty: resets their encryption session.
             await submitMessage(
               spaceId,
               { type: 'delete-conversation' },
@@ -5696,46 +5718,64 @@ export class MessageService {
               undefined,
               false
             );
+            // 2. Self-sync: tell our OWN other devices to delete the whole
+            // conversation. The fan-out reaches both parties, but the receive
+            // handler acts on delete-conversation-self only when the sender is
+            // self, so the counterparty can never trigger a delete on us.
+            await submitMessage(
+              spaceId,
+              {
+                type: 'delete-conversation-self',
+                senderId: currentPasskeyInfo.address,
+                conversationAddress: spaceId,
+              },
+              self.data,
+              counterparty.data,
+              queryClient,
+              currentPasskeyInfo,
+              keyset,
+              undefined,
+              false
+            );
           }
         } catch { /* Best effort notification - deletion still proceeds */ }
       }
-      // Delete encryption states (keys) and latest state
-      const states = await this.messageDB.getEncryptionStates({
-        conversationId,
-      });
-      for (const state of states) {
-        await this.messageDB.deleteEncryptionState(state);
-        // Best-effort cleanup of inbox mapping for this inbox
-        if (state.inboxId) {
-          await this.messageDB.deleteInboxMapping(state.inboxId);
-        }
-      }
-      await this.messageDB.deleteLatestState(conversationId);
-
-      // Delete all messages for this conversation and remove from indices
-      await this.messageDB.deleteMessagesForConversation(conversationId);
-
-      // Delete conversation users mapping and metadata
-      await this.messageDB.deleteConversationUsers(conversationId);
-      await this.messageDB.deleteConversation(conversationId);
-
-      // Best-effort: remove cached user profile for counterparty
-      if (spaceId && spaceId === channelId) {
-        await this.messageDB.deleteUser(spaceId);
-      }
-
-      // Invalidate queries
-      await queryClient.invalidateQueries({
-        queryKey: buildMessagesKey({ spaceId, channelId }),
-      });
-      await queryClient.invalidateQueries({
-        queryKey: buildConversationKey({ conversationId }),
-      });
-      await queryClient.invalidateQueries({
-        queryKey: buildConversationsKey({ type: 'direct' }),
-      });
+      await this.deleteConversationLocally(conversationId, queryClient);
     } catch {
       // no-op
     }
+  }
+
+  // Full local teardown of a DM conversation (states, mappings, messages,
+  // metadata, cache). No outbound send. Used by deleteConversation (after
+  // signalling) and by the delete-conversation-self receive handler.
+  private async deleteConversationLocally(
+    conversationId: string,
+    queryClient: QueryClient
+  ) {
+    const [spaceId, channelId] = conversationId.split('/');
+    const states = await this.messageDB.getEncryptionStates({ conversationId });
+    for (const state of states) {
+      await this.messageDB.deleteEncryptionState(state);
+      if (state.inboxId) {
+        await this.messageDB.deleteInboxMapping(state.inboxId);
+      }
+    }
+    await this.messageDB.deleteLatestState(conversationId);
+    await this.messageDB.deleteMessagesForConversation(conversationId);
+    await this.messageDB.deleteConversationUsers(conversationId);
+    await this.messageDB.deleteConversation(conversationId);
+    if (spaceId && spaceId === channelId) {
+      await this.messageDB.deleteUser(spaceId);
+    }
+    await queryClient.invalidateQueries({
+      queryKey: buildMessagesKey({ spaceId, channelId }),
+    });
+    await queryClient.invalidateQueries({
+      queryKey: buildConversationKey({ conversationId }),
+    });
+    await queryClient.invalidateQueries({
+      queryKey: buildConversationsKey({ type: 'direct' }),
+    });
   }
 }
