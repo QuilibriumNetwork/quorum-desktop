@@ -891,24 +891,10 @@ export const Message = React.memo(
                   </Modal>
                 )}
 
-              {/* Compact mode: show only signature warning inline */}
-              {isCompact ? (
-                !message.signature && (
-                  <Tooltip
-                    id={`signature-warning-compact-${message.messageId}`}
-                    content={t`Message does not have a valid signature, this may not be from the sender`}
-                    showOnTouch={true}
-                    autoHideAfter={3000}
-                  >
-                    <Icon
-                      name="warning"
-                      variant="filled"
-                      size="xs"
-                      className="text-warning mr-1"
-                    />
-                  </Tooltip>
-                )
-              ) : (
+              {/* Compact mode: header is collapsed — per-message indicators
+                  (including the unsigned-warning) render inline after the content
+                  via `trailingIndicators` below, not here. */}
+              {isCompact ? null : (
                 <>
                   {/* Desktop layout: horizontal row with username and timestamp */}
                   <Flex align="center" className="items-center min-w-0 hidden xs:flex">
@@ -1087,6 +1073,93 @@ export const Message = React.memo(
                 const contentData = formatting.getContentData();
                 if (!contentData) return null;
 
+                // Message receipt indicator: check (delivered) or check-check (read)
+                // Display logic:
+                // - readAt set -> check-check (always shown — readAt is only persisted
+                //   when the user's readReceipts setting was ON at receive time)
+                // - deliveredAt set -> check (always shown once persisted)
+                // - otherwise -> nothing
+                // Privacy settings gate PERSISTENCE, not display.
+                const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo?.address;
+                let receiptIndicator: React.ReactNode = null;
+                if (!message.sendStatus && isOwnMessage) {
+                  if (message.readAt) {
+                    receiptIndicator = (
+                      <span className="message-status delivered read">
+                        <Icon name="check" size="xs" />
+                        <Icon name="check" size="xs" />
+                      </span>
+                    );
+                  } else if (message.deliveredAt) {
+                    receiptIndicator = (
+                      <span className="message-status delivered">
+                        <Icon name="check" size="xs" />
+                      </span>
+                    );
+                  }
+                }
+
+                // On continuation (compact) rows the header is collapsed, so the
+                // per-message indicators that live there have nowhere to show.
+                // Reproduce them inline after the content, Discord-style. Non-compact
+                // rows keep them in the header (unchanged) and only carry the receipt.
+                // Order: (edited) -> unsigned -> pinned -> bookmark -> receipt (last).
+                const trailingIndicators: React.ReactNode = isCompact ? (
+                  <span className="message-inline-indicators">
+                    {isEdited && (
+                      <span className="text-small text-muted">{t`(edited)`}</span>
+                    )}
+                    {!message.signature && (
+                      <Tooltip
+                        id={`signature-warning-inline-${message.messageId}`}
+                        content={t`Message does not have a valid signature, this may not be from the sender`}
+                        showOnTouch={true}
+                        autoHideAfter={3000}
+                      >
+                        <Icon name="warning" variant="filled" size="xs" className="text-warning" />
+                      </Tooltip>
+                    )}
+                    {message.isPinned && (
+                      <Tooltip
+                        id={`pin-indicator-inline-${message.messageId}`}
+                        content={
+                          message.pinnedBy
+                            ? t`Pinned by ${formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))}`
+                            : t`Pinned`
+                        }
+                        showOnTouch={true}
+                        autoHideAfter={3000}
+                      >
+                        <Icon name="pin" variant="filled" size="xs" className="text-accent" />
+                      </Tooltip>
+                    )}
+                    {messageActions.isBookmarked && (
+                      <Tooltip
+                        id={`bookmark-indicator-inline-${message.messageId}`}
+                        content={t`Bookmarked`}
+                        showOnTouch={true}
+                        autoHideAfter={3000}
+                      >
+                        <Icon name="bookmark" variant="filled" size="xs" className="text-accent" />
+                      </Tooltip>
+                    )}
+                    {receiptIndicator}
+                  </span>
+                ) : (
+                  receiptIndicator
+                );
+
+                // Whether the compact trailing group has anything to show — used by
+                // the media (embed/sticker) branches, which render it as a small row
+                // below the media instead of trailing a last word.
+                const hasCompactTrailing =
+                  isCompact &&
+                  (isEdited ||
+                    !message.signature ||
+                    message.isPinned ||
+                    messageActions.isBookmarked ||
+                    receiptIndicator != null);
+
                 // Show edit UI if this message is being edited
                 if (editingMessageId === message.messageId && contentData.type === 'post') {
                   // Extract text exactly as stored - no modifications
@@ -1126,33 +1199,6 @@ export const Message = React.memo(
                     );
                   }
 
-                  // Message receipt indicator: check (delivered) or check-check (read)
-                  // Display logic:
-                  // - readAt set -> check-check (always shown — readAt is only persisted
-                  //   when the user's readReceipts setting was ON at receive time)
-                  // - deliveredAt set -> check (always shown once persisted)
-                  // - otherwise -> nothing
-                  // Privacy settings gate PERSISTENCE, not display. Once persisted,
-                  // checkmarks remain visible even if the setting is later turned off.
-                  const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo?.address;
-                  let receiptIndicator: React.ReactNode = null;
-                  if (!message.sendStatus && isOwnMessage) {
-                    if (message.readAt) {
-                      receiptIndicator = (
-                        <span className="message-status delivered read">
-                          <Icon name="check" size="xs" />
-                          <Icon name="check" size="xs" />
-                        </span>
-                      );
-                    } else if (message.deliveredAt) {
-                      receiptIndicator = (
-                        <span className="message-status delivered">
-                          <Icon name="check" size="xs" />
-                        </span>
-                      );
-                    }
-                  }
-
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     const embeddedMedia =
                       message.content?.type === 'post'
@@ -1178,7 +1224,7 @@ export const Message = React.memo(
                           messageSenderId={message.content?.senderId}
                           currentUserAddress={user.currentPasskeyInfo?.address}
                           currentSpaceId={spaceId}
-                          suffix={receiptIndicator}
+                          suffix={trailingIndicators}
                           embeddedMedia={embeddedMedia}
                         />
                         {imageKeys.map((key) => {
@@ -1355,7 +1401,7 @@ export const Message = React.memo(
                             </React.Fragment>
                           );
                         })}
-                        {i === contentData.content.length - 1 && receiptIndicator}
+                        {i === contentData.content.length - 1 && trailingIndicators}
                       </div>
                     );
                   })}
@@ -1485,14 +1531,28 @@ export const Message = React.memo(
                             </div>
                           );
                         })()}
+                      {/* Media has no "last word" to trail — render the compact
+                          indicators in a small row below the media instead. */}
+                      {hasCompactTrailing && (
+                        <div className="message-inline-indicators--media">
+                          {trailingIndicators}
+                        </div>
+                      )}
                     </div>
                   );
                 } else if (contentData.type === 'sticker') {
                   return (
-                    <img
-                      src={contentData.sticker?.imgUrl}
-                      className="message-sticker rounded-lg"
-                    />
+                    <>
+                      <img
+                        src={contentData.sticker?.imgUrl}
+                        className="message-sticker rounded-lg"
+                      />
+                      {hasCompactTrailing && (
+                        <div className="message-inline-indicators--media">
+                          {trailingIndicators}
+                        </div>
+                      )}
+                    </>
                   );
                 }
               })()}
