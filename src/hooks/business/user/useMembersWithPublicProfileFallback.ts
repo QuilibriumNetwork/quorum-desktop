@@ -128,7 +128,16 @@ export function useMembersWithPublicProfileFallback(
       merged[addr] = {
         ...(local ?? { address: addr }),
         displayName: local?.displayName || pub.display_name || undefined,
-        userIcon: local?.userIcon || pub.profile_image || undefined,
+        // Distinguish "no per-space avatar → backfill from public profile"
+        // (userIcon === undefined) from "deliberately cleared the per-space
+        // avatar" (userIcon === ''). A truthy `||` here would resurrect the
+        // sender's global avatar over an intentional clear. useChannelData
+        // maps the never-set/UNKNOWN_USER case to undefined and a real clear
+        // to '', so `!== undefined` is the correct discriminator.
+        userIcon:
+          local?.userIcon !== undefined
+            ? local.userIcon
+            : pub.profile_image || undefined,
         // Bio uses the same per-field merge — a populated per-space bio
         // wins, otherwise we surface the global public-profile bio so
         // users we don't share a space with still show an About section.

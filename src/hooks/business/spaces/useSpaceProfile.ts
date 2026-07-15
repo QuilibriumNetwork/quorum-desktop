@@ -199,12 +199,24 @@ export const useSpaceProfile = (
       return `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
     }
 
-    // Check if member has per-space avatar
-    if (currentMember?.user_icon && !currentMember.user_icon.includes(DefaultImages.UNKNOWN_USER)) {
-      return currentMember.user_icon;
+    // Three-state per-space avatar (matches the avatar clear/absent/value
+    // design — see WebSocketContext/useMembersWithPublicProfileFallback):
+    //   - real image  -> show it
+    //   - '' (cleared) -> the user DELIBERATELY removed their per-space avatar,
+    //                     so show initials and do NOT fall back to the global
+    //                     avatar (a truthy check here wrongly resurrected it)
+    //   - undefined    -> no per-space override -> fall back to the global avatar
+    const perSpaceIcon = currentMember?.user_icon;
+    if (perSpaceIcon !== undefined) {
+      // Explicit per-space value (including '' = cleared). Only a real,
+      // non-sentinel image is renderable; '' / sentinel -> default (initials).
+      if (perSpaceIcon && !perSpaceIcon.includes(DefaultImages.UNKNOWN_USER)) {
+        return perSpaceIcon;
+      }
+      return 'var(--unknown-icon)';
     }
 
-    // Fallback to global avatar
+    // No per-space override at all -> fall back to global avatar
     if (
       currentPasskeyInfo?.pfpUrl &&
       !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)
