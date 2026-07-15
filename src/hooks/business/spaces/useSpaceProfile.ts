@@ -6,6 +6,7 @@ import { DefaultImages } from '../../../utils';
 import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
+import type { UpdateProfileMessage } from '@quilibrium/quorum-shared';
 import { buildSpaceMembersKey } from '../../queries/spaceMembers/buildSpaceMembersKey';
 import { buildSpaceMembersFetcher } from '../../queries/spaceMembers/buildSpaceMembersFetcher';
 import { showError } from '../../../utils/toast';
@@ -305,9 +306,12 @@ export const useSpaceProfile = (
         throw new Error('Space not found');
       }
 
-      // Include a field only when changed (mirrors bio): omitted displayName =
-      // no change, empty = clear the per-space name. userIcon stays required by
-      // the type, so fall back to baseline (overwrite-with-same is harmless).
+      // Include a field ONLY when it changed. Two-state model: a per-space
+      // field is sent only when the user set/changed an OVERRIDE; omitting it
+      // means "no change / follow global". Do NOT send userIcon unconditionally
+      // (it previously fell back to baseline, re-stamping the global value into
+      // the per-space row on every save and faking an override). All three
+      // fields now behave identically: send on change, omit otherwise.
       await submitChannelMessage(
         spaceId,
         space.defaultChannelId,
@@ -317,9 +321,11 @@ export const useSpaceProfile = (
           ...(changed.displayName !== undefined
             ? { displayName: changed.displayName }
             : {}),
-          userIcon: changed.userIcon ?? baseline.userIcon,
+          ...(changed.userIcon !== undefined
+            ? { userIcon: changed.userIcon }
+            : {}),
           ...(changed.bio !== undefined ? { bio: changed.bio } : {}),
-        },
+        } as UpdateProfileMessage,
         queryClient,
         currentPasskeyInfo,
         undefined, // inReplyTo
