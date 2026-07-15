@@ -319,6 +319,32 @@
   }
 }
 
+// Per-message indicators shown inline on grouped (compact) continuation rows,
+// where the header — and its indicators — is collapsed. Trails the last word.
+.message-inline-indicators {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-1-5; // 6px
+  margin-left: $s-1-5; // separate from the preceding word
+  vertical-align: baseline;
+
+  // Receipt carries its own left margin in the header; inside the group the
+  // container gap handles spacing, so drop it to keep the rhythm even.
+  .message-status.delivered {
+    margin-left: 0;
+  }
+}
+
+// Media (embed/sticker) continuation rows have no trailing word, so the group
+// sits in a small left-aligned row directly below the media.
+.message-inline-indicators--media {
+  margin-top: $s-1; // 4px
+
+  .message-inline-indicators {
+    margin-left: 0;
+  }
+}
+
 /* === MESSAGE ROW GAP STYLES === */
 // Gap between messages - controlled entirely by parent, no internal padding
 .message-row {
