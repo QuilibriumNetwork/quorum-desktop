@@ -1,75 +1,56 @@
-import dayjs from './dayjs';
 import { t } from '@lingui/core/macro';
+import {
+  formatMessageDate as sharedFormatMessageDate,
+  formatConversationTime as sharedFormatConversationTime,
+} from '@quilibrium/quorum-shared';
 
 /**
  * Formats a message timestamp using a calendar-based format.
  * This is the standard format used across all message-related components.
  *
  * Format:
- * - Today: "14:45" (just the time in 24h format, or just "Today" if compact)
+ * - Today: locale time ("14:45" / "2:45 PM", per the device region)
  * - Yesterday: "Yesterday at 14:45" (or just "Yesterday" if compact)
  * - Last week: Day name (e.g., "Monday")
  * - Older: Relative time (e.g., "3 days ago", "2 months ago")
+ *
+ * Thin desktop shim over the shared string helper: it binds the lingui labels
+ * (shared is i18n-agnostic) and keeps the `(timestamp, compact)` signature so
+ * call sites don't change. `yesterdayAt` translates the whole "Yesterday at X"
+ * phrase as one unit, so locale word order is preserved. The clock is now
+ * locale-driven (was hard-coded 24h) — intended, matches mobile.
  *
  * @param timestamp - Unix timestamp in milliseconds
  * @param compact - If true, omit time for today/yesterday (useful for mobile)
  * @returns Formatted date string
  */
-export const formatMessageDate = (timestamp: number, compact = false): string => {
-  const time = dayjs.tz(
-    timestamp,
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  );
-  const fromNow = time.fromNow();
-  const timeFormatted = time.format('HH:mm');
-
-  if (compact) {
-    return time.calendar(null, {
-      sameDay: `[${t`Today`}]`,
-      lastDay: `[${t`Yesterday`}]`,
-      lastWeek: 'dddd',
-      sameElse: `[${fromNow}]`,
-    });
-  }
-
-  return time.calendar(null, {
-    sameDay: `[${timeFormatted}]`,
-    lastWeek: 'dddd',
-    lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
-    sameElse: `[${fromNow}]`,
+export const formatMessageDate = (timestamp: number, compact = false): string =>
+  sharedFormatMessageDate(timestamp, {
+    compact,
+    labels: {
+      today: t`Today`,
+      yesterday: t`Yesterday`,
+      yesterdayAt: (time) => t`Yesterday at ${time}`,
+    },
   });
-};
 
 /**
  * Formats a timestamp for conversation list display (compact format).
  * Used in DirectMessageContact and similar preview components.
  *
  * Format:
- * - 0-24h: "14:45" (24h format)
+ * - Today: locale time ("14:45" / "2:45 PM")
  * - 1-6 days: "1d", "2d", etc.
  * - 7+ days (same year): "Jan 8"
  * - 1+ year ago: "Jan 8, 2024"
  *
+ * Delegates to the shared formatter (no fixed words → no labels needed).
+ *
  * @param timestamp - Unix timestamp in milliseconds
  * @returns Compact formatted time string
  */
-export const formatConversationTime = (timestamp: number): string => {
-  const time = dayjs.tz(timestamp, Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const now = dayjs();
-  const daysDiff = now.startOf('day').diff(time.startOf('day'), 'day');
-
-  // Today: show time
-  if (daysDiff === 0) return time.format('HH:mm');
-
-  // 1-6 days ago: show "1d", "2d", etc.
-  if (daysDiff >= 1 && daysDiff <= 6) return `${daysDiff}d`;
-
-  // Different year: include year
-  if (time.year() !== now.year()) return time.format('MMM D, YYYY');
-
-  // 7+ days, same year: short date
-  return time.format('MMM D');
-};
+export const formatConversationTime = (timestamp: number): string =>
+  sharedFormatConversationTime(timestamp);
 
 /**
  * Formats remaining mute duration for display.
