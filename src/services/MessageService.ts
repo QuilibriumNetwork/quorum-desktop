@@ -4357,6 +4357,19 @@ export class MessageService {
                   }
                 }
 
+                // A synced batch may include an update-profile that saveMessage
+                // wrote to the member store above. This bulk-sync path refetched
+                // messages but not the members query, so a per-space profile
+                // change synced from another device (e.g. a name/avatar edit on
+                // mobile) landed in IndexedDB but never refreshed the live
+                // SpaceMembers cache — leaving stale member data (empty name /
+                // old avatar) until a manual refetch. Refetch it once per batch.
+                queryClient.refetchQueries({
+                  queryKey: buildSpaceMembersKey({
+                    spaceId: conversationId.split('/')[0],
+                  }),
+                });
+
                 noteSyncActivity();
               }
             }

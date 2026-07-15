@@ -1,11 +1,13 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useDropzone, FileRejection } from 'react-dropzone';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
 import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
+import { buildSpaceMembersKey } from '../../queries/spaceMembers/buildSpaceMembersKey';
+import { buildSpaceMembersFetcher } from '../../queries/spaceMembers/buildSpaceMembersFetcher';
 import { showError } from '../../../utils/toast';
 import { useDisplayNameValidation, validateUserBio } from '../validation';
 
@@ -74,36 +76,55 @@ export const useSpaceProfile = (
   const bioErrors = validateUserBio(bio);
   const hasValidationError = !!displayNameError || bioErrors.length > 0;
 
-  // Load current member data
+  // Load the member from the REACTIVE space-members query (same cache the
+  // channel/message rows use), not a one-shot read. A profile update synced
+  // from another device (e.g. a per-space name change made on mobile) writes
+  // the member row and invalidates this query, so opening this modal before
+  // that write lands no longer shows a stale/empty field that never refreshes.
+  // Plain useQuery (not the suspense variant) so no Suspense boundary is needed
+  // here; it shares the same queryKey/cache, so it stays in sync.
+  const { data: spaceMembers } = useQuery({
+    queryKey: buildSpaceMembersKey({ spaceId }),
+    queryFn: buildSpaceMembersFetcher({ spaceId, messageDB }),
+    enabled: !!spaceId && !!currentPasskeyInfo?.address,
+    networkMode: 'always', // IndexedDB, not network
+  });
+
+  const ownMember = useMemo(() => {
+    const addr = currentPasskeyInfo?.address;
+    if (!addr || !spaceMembers) return undefined;
+    return spaceMembers.find(
+      (m) =>
+        (m as { user_address?: string }).user_address === addr ||
+        (m as { address?: string }).address === addr
+    );
+  }, [spaceMembers, currentPasskeyInfo?.address]);
+
+  // Hydrate the editable fields from the member — but ONLY while the field is
+  // still pristine (its current value equals the last-loaded baseline). Once
+  // the user edits, the field diverges from baseline and we stop overwriting,
+  // so a live sync update never clobbers in-progress typing. When the member
+  // updates and the user hasn't touched the form, the field refreshes live.
   useEffect(() => {
     if (!currentPasskeyInfo?.address) return;
-
-    (async () => {
-      try {
-        const member = await messageDB.getSpaceMember(spaceId, currentPasskeyInfo.address);
-        setCurrentMember(member);
-        // Per-space name is an optional override: init from the member's name
-        // only, NOT the global name (that made an unset override look set and
-        // defeated clearing). Empty = use my global / QNS name here.
-        const initialDisplayName = member?.display_name ?? '';
-        const initialBio = member?.bio ?? '';
-        const initialUserIcon = member?.user_icon ?? '';
-        setDisplayName(initialDisplayName);
-        setBio(initialBio);
-        setBaseline({
-          displayName: initialDisplayName,
-          bio: initialBio,
-          userIcon: initialUserIcon,
-        });
-      } catch (error) {
-        console.error('Failed to load space member:', error);
-        // Fallback to global profile
-        setDisplayName(currentPasskeyInfo.displayName || '');
-        setBio('');
-        setBaseline({ displayName: currentPasskeyInfo.displayName || '', bio: '', userIcon: '' });
-      }
-    })();
-  }, [spaceId, currentPasskeyInfo?.address, messageDB]);
+    // Per-space name/bio are optional overrides: init from the member only,
+    // NOT the global name (that made an unset override look set and defeated
+    // clearing). Empty = use my global / QNS name here.
+    const memberDisplayName = ownMember?.display_name ?? '';
+    const memberBio = ownMember?.bio ?? '';
+    const memberUserIcon = ownMember?.user_icon ?? '';
+    setCurrentMember(ownMember ?? null);
+    setDisplayName((cur) => (cur === baseline.displayName ? memberDisplayName : cur));
+    setBio((cur) => (cur === baseline.bio ? memberBio : cur));
+    setBaseline({
+      displayName: memberDisplayName,
+      bio: memberBio,
+      userIcon: memberUserIcon,
+    });
+    // baseline is intentionally omitted from deps: it's updated here and the
+    // pristine check reads the latest value via the functional setState above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ownMember, currentPasskeyInfo?.address]);
 
   // Dropzone for avatar upload
   const { getRootProps, getInputProps, isDragActive: isAvatarDragActive } = useDropzone({
