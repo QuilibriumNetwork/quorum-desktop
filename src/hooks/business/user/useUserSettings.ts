@@ -129,6 +129,15 @@ export const useUserSettings = (
         setTypingIndicatorsDM(config?.typingIndicatorsDM ?? false);
         setTypingIndicatorsSpaces(config?.typingIndicatorsSpaces ?? false);
         setGenerateYouTubePreviews(config?.generateYouTubePreviews ?? false);
+        // Hydrate the display name from config (saveChanges writes it as
+        // `name`). Without this the field only reflected
+        // currentPasskeyInfo.displayName at mount and stayed empty whenever
+        // that was blank — even though the name was set and synced elsewhere.
+        // Only overwrite when config actually carries a name, so we don't blank
+        // a good passkey-seeded value with an empty config.
+        if (config?.name !== undefined) {
+          setDisplayName(config.name);
+        }
         setBio(config?.bio ?? '');
         setIsProfilePublic(config?.isProfilePublic ?? false);
         setSpaceTagId(config?.spaceTagId ?? undefined);

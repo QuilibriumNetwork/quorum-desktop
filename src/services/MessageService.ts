@@ -1340,12 +1340,18 @@ export class MessageService {
       // block profile updates after any key rotation.
       //
       // Upsert-aware merge: omitted field = no change, empty string = clear.
-      // displayName + bio use `!== undefined` (clearing propagates); userIcon
-      // keeps the truthy guard.
+      // displayName, bio AND userIcon use `!== undefined` so an explicit clear
+      // ('') propagates. An emptied userIcon is stored as '' and the avatar
+      // components treat '' as "no image" (isLikelyRenderableImage('') === false),
+      // falling back to initials — the same as the UNKNOWN_USER sentinel. Senders
+      // that mean "no change" omit the field; the all-spaces rebroadcast sends the
+      // UNKNOWN_USER sentinel (never ''), so this does not clobber. The public-
+      // profile backfill (useMembersWithPublicProfileFallback) also honors '' as
+      // a deliberate clear, so it won't resurrect the sender's global avatar.
       if (decryptedContent.content.displayName !== undefined) {
         participant.display_name = decryptedContent.content.displayName;
       }
-      if (decryptedContent.content.userIcon) {
+      if (decryptedContent.content.userIcon !== undefined) {
         participant.user_icon = decryptedContent.content.userIcon;
       }
       if (decryptedContent.content.bio !== undefined) {
@@ -1900,10 +1906,12 @@ export class MessageService {
       // Upsert-aware merge (mirrors mobile WebSocketContext.tsx:1841-1854):
       // see the same block in saveMessage above for the full rationale.
       // Presence semantics: omitted = no change, explicit empty = clear.
+      // userIcon uses `!== undefined` too so an emptied avatar ('') propagates
+      // and falls back to initials (see the saveMessage block above).
       if (decryptedContent.content.displayName !== undefined) {
         participant.display_name = decryptedContent.content.displayName;
       }
-      if (decryptedContent.content.userIcon) {
+      if (decryptedContent.content.userIcon !== undefined) {
         participant.user_icon = decryptedContent.content.userIcon;
       }
       if (decryptedContent.content.bio !== undefined) {
