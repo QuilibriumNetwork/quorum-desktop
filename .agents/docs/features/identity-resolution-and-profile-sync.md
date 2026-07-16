@@ -66,14 +66,17 @@ From `qns-username-display.md`, implemented by the shared
 `useMembersWithPublicProfileFallback.pickField`):
 
 ```
-custom per-space name (C, deliberate)  →  QNS primary username .q (B)
-  →  global display name (B)  →  truncated address
+custom per-space name (C override)  →  QNS primary username .q (B)
+  →  global display name (C global slot, else B)  →  truncated address
 ```
 
-- **Space surfaces:** deliberate per-space override wins; else QNS; else
-  global; else address.
+- **Space surfaces:** deliberate per-space override wins; else QNS; else the
+  member's global name (from the roster GLOBAL SLOT if present — the live push,
+  works for non-public users — else the public profile); else address.
 - **DM / global surfaces** (no per-space concept): QNS → global → address.
-- Avatar and bio follow the same "override else global" idea (no QNS step).
+- Avatar and bio follow the same "override → global slot → public" idea (no QNS
+  step). The global slot is the tier added by the two-slot model (below); it
+  sits between the override and the public profile.
 
 ## The two-state per-space model (follow-global, 2026-07-15/16)
 
@@ -101,37 +104,65 @@ rebroadcast, and on every global save. Consequences:
 4. Your own devices raced each other: each device's global save re-stamped
    every space with ITS value; last device to save/reconnect won the roster.
 
-The follow-global work removes the stamping so a non-empty roster field
-means a REAL override. De-stamped so far (2026-07-16, branch
-`follow-global-profile` in both repos): the on-connect/tag-rotation
-rebroadcasts, space creation, and (desktop) the editor save. STILL STAMPING
-as of this writing: the global-profile save path on both apps (desktop
-`MessageDB.updateUserProfile` all-spaces loop; mobile
-`UnifiedProfileEditModal.saveQuorum` per-space loop) — removing that is the
-remaining planned change. Once removed, the comparison trick becomes a
-legacy safety net rather than load-bearing.
+The follow-global work removes the OVERRIDE-field stamping so a non-empty
+override roster field means a REAL override. This SHIPPED 2026-07-16 (branch
+`follow-global-profile`, both repos): the on-connect/tag-rotation rebroadcasts,
+space creation, and the editor saves no longer write the global value into the
+override fields. The `resolveSpaceMemberName` comparison trick is now a legacy
+safety net (it neutralizes old stamped rows for free) rather than load-bearing.
 
-## How a global profile change propagates (target model)
+## The TWO-SLOT wire model (what actually shipped)
 
-User edits global name/avatar/bio on device D1:
+Rather than remove the global-save space broadcast entirely (which would have
+left spacemates dependent on channel B's 1h cache, and broken it for
+non-public users), `update-profile` messages carry TWO clearly-labeled groups
+of fields, stored SEPARATELY on the member row:
+
+- **Override slot** — `displayName` / `userIcon` / `bio` (wire) →
+  `display_name` / `user_icon`(desktop) or `profile_image`(mobile) / `bio`
+  (storage). A deliberate per-space override. Guarded by `profileTimestamp`.
+- **Global slot** — `globalDisplayName` / `globalUserIcon` / `globalBio` (wire)
+  → `global_display_name` / `global_user_icon`(desktop) or
+  `global_profile_image`(mobile) / `global_bio` (storage). The sender's current
+  global identity. Guarded (mobile) by a SEPARATE `globalProfileTimestamp`.
+
+The wire field names are identical across apps (byte-for-byte); only the local
+STORAGE field names differ (desktop `global_user_icon` vs mobile
+`global_profile_image` — each app reads its own storage). The global* fields
+are additive; old clients ignore them; the message signature is unaffected
+(`canonicalize` only hashes `type + displayName + userIcon`).
+
+> Not yet in the shared `UpdateProfileMessage` type — carried via casts. See
+> the follow-up task `2026-07-16-quorum-shared-type-two-slot-global-identity-fields`.
+
+## How a global profile change propagates (shipped model)
+
+User edits global name/avatar/bio on device D1 (`UnifiedProfileEditModal.
+saveQuorum` on mobile / `useUserSettings` → `MessageDB.updateUserProfile` on
+desktop):
 
 1. **Local + channel A:** update local user state; `saveConfig` (encrypted,
-   timestamped). D2 picks it up on restart/next pull (no live push — known
-   gap, acceptable).
+   timestamped). D2 picks it up on restart/next pull (no live push — known gap).
 2. **Channel B:** if `isProfilePublic`, publish the signed public profile
    (server keeps latest by timestamp = LWW across devices). Local
    `publicProfileQueryKey` cache is optimistically updated + invalidated on
    the saving device.
-3. **Channel C:** NOTHING (after the remaining de-stamping change lands).
-   Spacemates see the new global value via the precedence ladder: their
-   roster row for you is empty (no override) → falls to B on their next
-   profile fetch (1h cache, so up to ~1h staleness for them; DM partners
-   still get the live DM identity broadcast).
+3. **Channel C — GLOBAL SLOT (the live push):** send an `update-profile` to
+   every space carrying ONLY the global* slot (never the override fields).
+   Spacemates store it in the separate global slot and render it via the
+   precedence ladder immediately — no dependence on B's 1h cache, and it works
+   for NON-PUBLIC users too. The editing device also writes its own roster
+   global slots locally for instant self-render.
 4. **DMs:** unchanged — DM identity is pushed to partners via the existing
-   DM profile broadcast (global value; DMs have no override concept).
+   `dm-update-profile` broadcast (global value; DMs have no override concept).
 
-Per-space override edit (Space Settings → Account) is the ONLY thing that
-writes channel C: value / `''` / omitted per the wire semantics above.
+A per-space override edit (Space Settings → Account) is the ONLY thing that
+writes the OVERRIDE slot: value / `''` (clear = follow global) / omitted (no
+change) per the wire semantics above.
+
+The on-connect / tag-rotation rebroadcasts send the override-or-omit fields AND
+the current global slot, so a spacemate who missed a live save still learns the
+global identity on the next reconnect.
 
 ## Known limitations (accepted)
 
@@ -144,14 +175,42 @@ writes channel C: value / `''` / omitted per the wire semantics above.
 - **`Date.now()` LWW** — B and C timestamps come from the writing device's
   clock; severe clock skew can make an older edit win. Accepted (2026-07-16
   decision) — normal skew is seconds.
-- **Non-public users** (`isProfilePublic=false`) have no channel B: to
-  spacemates they render their per-space override if any, else placeholder/
-  address; to strangers always the address. This is the privacy-consistent
-  reading of the opt-in.
+- **Non-public users** (`isProfilePublic=false`) have no channel B, but they DO
+  reach spacemates: their global identity is pushed via the channel-C GLOBAL
+  SLOT (that's the whole point of the two-slot design). Only STRANGERS (no
+  shared space) see the address for a non-public user. Privacy-consistent: the
+  public toggle governs stranger visibility, not what spacemates see.
+- **Bio to DMs vs spaces**: global bio propagates to SPACEMATES ungated (via the
+  global slot). The DM identity broadcast still gates bio on `isProfilePublic`
+  (legacy DM behavior, unchanged). So a non-public user shows their bio to
+  spacemates but not to DM-only partners — accepted asymmetry.
+- **Channel B 1h cache** — still relevant for STRANGERS (people with no shared
+  space) and for the QNS `.q` name, which travels only in B. Spacemates no
+  longer depend on it for name/avatar/bio (the global slot is the live push).
+- **`Date.now()` LWW** — B and C timestamps come from the writing device's
+  clock; severe clock skew can make an older edit win. Accepted (2026-07-16).
 - **Legacy stamped rosters**: rows stamped with old global values before the
   de-stamping look like deliberate overrides until manually cleared in that
-  space's settings. Decision 2026-07-16: NO auto-migration (tiny user base,
-  manual clear is easy).
+  space's settings. Decision 2026-07-16: NO auto-migration (tiny user base).
+  Side effect: such a row can render a different name on desktop vs mobile
+  (desktop's comparison trick demotes a roster==global name to QNS; mobile
+  doesn't) until cleared — folds into the same accepted limitation.
+
+## Verification status (2026-07-16)
+
+- **Spaces, desktop↔desktop:** CONFIRMED working by the user — space text lands
+  and per-space + global profile updates render correctly.
+- **DM profile propagation:** BLOCKED by a pre-existing, unrelated DM-transport
+  delivery issue (~6 months old; master bug
+  `.agents/bugs/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
+  path is UNTOUCHED by this work; DM verification is parked on that transport
+  issue, not on this feature.
+- **Mobile↔desktop:** blocked by the same transport flakiness this session.
+  Verify once transport is healthy.
+- **Static confidence:** three independent code reviews (delivery-safety, LWW
+  correctness, regressions) found no delivery risk and two minor bugs, both
+  fixed (desktop optimistic-cache override wipe; mobile stale-message drop
+  guard). Both repos typecheck clean.
 
 ## File map (where each piece lives)
 
@@ -163,9 +222,11 @@ writes channel C: value / `''` / omitted per the wire semantics above.
 | Member fallback (precedence merge) | `src/hooks/business/user/useMembersWithPublicProfileFallback.ts` | `hooks/useMembersWithPublicProfileFallback.ts` |
 | Name resolvers | `src/utils/resolveMemberName.ts` (+ shared `resolveDisplayName`) | merged inside the fallback hook (`pickField`) |
 | Space editor (override) | `useSpaceProfile.ts` + `SpaceSettingsModal/Account.tsx` | `components/SpaceSettingsModal.tsx` |
-| C receive/upsert | `MessageService.ts` (update-profile handler) | `context/WebSocketContext.tsx` (~2100, ~3578) |
-| On-connect rebroadcast | `MessageService.ts` (~577, tag rotation) | `context/WebSocketContext.tsx` (~4770) |
-| Global-save space broadcast (TO BE REMOVED) | `MessageDB.tsx` `updateUserProfile` (~421) | `UnifiedProfileEditModal.tsx` `saveQuorum` space loop |
+| C receive/upsert (two-slot merge) | `MessageService.ts` (update-profile handlers + `applyGlobalProfileSlots`) | `context/WebSocketContext.tsx` (~2100 JS path, ~3589 batch path) |
+| C wire send (both slots) | `MessageService.ts` rebroadcast + `MessageDB.updateUserProfile` | `services/space/spaceMessageService.ts` (`sendUpdateProfileMessage`) |
+| On-connect rebroadcast (override-or-omit + global slot) | `MessageService.ts` (~595, tag rotation) | `context/WebSocketContext.tsx` (~4783) |
+| Global-save space broadcast (GLOBAL SLOT only) | `MessageDB.tsx` `updateUserProfile` | `UnifiedProfileEditModal.tsx` `saveQuorum` space loop |
+| useChannelData (surfaces global slots) | `src/hooks/business/channels/useChannelData.ts` | (mobile reads slots directly in the fallback hook) |
 | Channel A sync | `src/services/ConfigService.ts` | `services/config/configService.ts` |
 
 ---
