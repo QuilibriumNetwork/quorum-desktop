@@ -3,7 +3,7 @@ type: inventory
 title: Mobile features not on desktop — candidate list
 status: living
 created: 2026-06-01
-updated: 2026-06-10
+updated: 2026-07-15
 ---
 
 # Mobile features not on desktop — candidate list
@@ -18,13 +18,14 @@ Running inventory of features that exist on `quorum-mobile` but not on `quorum-d
 4. [Resolved archive](#resolved-archive) — shipped (✅), won't-port (❌), already-on-desktop (E). Full decision notes preserved here so nothing is re-litigated. Read only when verifying a past call.
 5. [Reference](#reference) — classification key, how-to-read, baseline, inventory-pass notes.
 
+> **Note for agents on ✅ entries:** a shipped candidate keeps its detailed write-up **in place** (under Actionable/Awaiting) with a `> ✅ SHIPPED` banner at the top, rather than being moved to the archive — the prose *after* such a banner is the PRE-SHIP plan, not the current state. The **status board is the source of truth for status**; when the board and a detail body seem to disagree, trust the board + the banner. (Fully-resolved candidates with no ongoing relevance live in [Resolved archive](#resolved-archive).)
+
 ---
 
 ## Inventory baseline
 
-- `quorum-mobile` `master` at `ccd69e6` (2026-06-02) — re-baselined 2026-06-08 in `session-2026-06-08-2`. Previous baseline was `0fa63d4` (2026-05-30); the delta added candidates **#27 Skins**, **#28 On-device translation**, **#29 Non-owner invite drawer**. Farcaster-specific additions in the same delta are folded into existing `❔` rows (#9, #15, #17), not promoted to top-level candidates until those product calls are made.
-- `quorum-desktop` `main` — last verified 2026-06-10 at `aac8d0a8` (after PR #187 settings revamp + #188 profile sync; neither changed an open candidate's status — verified by grep that `Appearance.tsx` still ships theme+accent+language only and that reporting/skins remain absent from `src/`).
-- `quorum-shared` `master` at `1115a25` (2026-06-05).
+- **🟢 Re-baselined 2026-07-15.** `quorum-desktop` `main` at `afb31b26` (2026-07-15); `quorum-mobile` on branch `feat/grouped-message-inline-indicators` (current working state); `quorum-shared` `master` at `2.1.0-34`. Re-verified every open candidate against desktop source: **#5 Reporting, #27 Skins, #32 hub-log all still absent from `src/`** (grep-confirmed); **#31a hex-paste import SHIPPED** (PR #193); **#12 QNS unchanged** (desktop-complete since PR #195). Also noted: **desktop shipped personal block-user** (PR #207, 2026-06-22 — `useBlockUser.ts`/`BlockUserModal.tsx`), which closes the reverse-direction question in [port-to-mobile #37](../port-to-mobile/candidates.md); it was never a row here (desktop-originated), recorded for cross-doc consistency.
+- *(Historical baselines: `quorum-mobile` `master` `ccd69e6` 2026-06-02; `quorum-desktop` `main` `aac8d0a8` 2026-06-10; `quorum-shared` `1115a25` 2026-06-05. The 2026-06-08 mobile re-baseline added candidates #27 Skins, #28 Translation, #29 Non-owner invite.)*
 
 ---
 
@@ -35,7 +36,7 @@ Legend: 🟢 ready to pick · 🚧 in progress · ✅ shipped · ⏸️ paused �
 | # | Feature | Class | Status | One-line state |
 |---|---|---|---|---|
 | **5** | Reporting / abuse flag | B | ⏸️ | Engineering-ready, but deprioritized (user call, low priority 2026-06-10). Bundles the deferred Ed448 signing-helper shared-promotion. |
-| **31** | Onboarding key import: paste hex / paste 24 words | A / B | 🟢 / ❔ | Desktop's `ImportKeyStep` is file-upload-only; mobile also offers paste-hex + recovery-phrase. **Hex-paste half is engineering-ready** (SDK `importKeyFile` already parses a 114-char hex string — UI-only). **24-words half needs a product call** (BIP-39 derivation lives only in mobile; recoverability-asymmetry question). Logged 2026-06-11, not yet built (user call). |
+| **31** | Onboarding key import: paste hex / paste 24 words | A / B | ✅ / ❔ | **Hex-paste half ✅ SHIPPED** (PR #193, 2026-06-11 — `ImportKeyStep` paste-hex + Security-tab copy-key companion, both in one PR as planned). **24-words half (#31b) still ❔** — needs a product call (BIP-39 derivation lives only in mobile; recoverability-asymmetry question). |
 | **7** | Profile prefs | C | ❔ | Sub-feature of #6; scope to that effort. |
 | **27** | Skins (custom themes) | B/C | ❔ | Large skin engine + gallery on mobile. Low priority but **scope partly decided 2026-06-11: full parity incl. geometry, app-wide.** **Deep dive done** ([`2026-06-11-skins-deep-dive.md`](2026-06-11-skins-deep-dive.md)): engine is a clean shared promotion; colors/fonts/accent apply trivially (CSS vars, minor accent 3→11-stop interp); geometry is the big chunk (Tailwind+SCSS → CSS-var bridge + regression). New open dimension: **cross-device skin sync** (opt-in, off by default, explore "smart" layered sync — §10). Phases 0–4 ~12–18 eng-days; sync is Phase 5. |
 | **28** | On-device translation | C | ❔ | Re-implementation, not a port (native engines are mobile-only). Needs product-scope call. |
@@ -71,7 +72,7 @@ Legend: 🟢 ready to pick · 🚧 in progress · ✅ shipped · ⏸️ paused �
 
 ## Actionable now
 
-> **As of 2026-06-10: the actionable list is empty by user choice.** The only engineering-ready candidate (#5 Reporting) is deprioritized, and the next-biggest opportunity (#27 Skins) is also low priority. Nothing is in flight. When priorities shift, #5 is the cleanest pick-up; see [#5 below](#5-reporting---deprioritized-but-engineering-ready) for why.
+> **As of 2026-07-15: the actionable list is empty.** #31a (paste-hex import) **shipped** (PR #193). The remaining engineering-ready candidate, #5 Reporting, is deprioritized by user call, and the next-biggest opportunity (#27 Skins) is also low priority. Nothing is in flight. When priorities shift, #5 is the cleanest pick-up; see [#5 below](#5-reporting---deprioritized-but-engineering-ready). #31a is retained below (with a ✅ banner) as the record of what shipped.
 
 A candidate belongs here when it is (a) capability-verified missing on desktop, (b) sized for a single feature PR, and (c) not blocked on a product decision. Move a row up from [Awaiting a product call](#awaiting-a-product-scope-call) once its scope question is answered.
 
@@ -85,7 +86,9 @@ The one candidate that is both verified-missing on desktop and well-bounded. Cur
 - 🔗 **When picked up, bundle the deferred shared-promotion.** Reporting and #6 Public Profile use the same canonicalize-then-sign pattern (build a canonical `"prefix:fields...:" + int64BE(timestamp)` byte payload, then `js_sign_ed448`). #6 ([shipped 2026-06-08](.done/2026-06-08-port-public-profile.md)) deferred the shared promotion deliberately so we'd have two real call sites before locking the API shape. With #5 also implementing it, that condition is met — the helpers should land in `@quilibrium/quorum-shared` and both `PublicProfileService` (desktop) + the new ReportingService (desktop) + mobile's two equivalents consume them. Note `int64ToBytes` already exists in shared (desktop's `ConfigService` uses it); mobile rolls its own `int64BE` — a follow-up mobile-task-pending entry. See [#6 archive note](#6-public-profile-ui--shipped-2026-06-08) and the [quorum-shared-migration cross-pointer](../quorum-shared-migration/README.md).
 - **History:** 2026-06-01 user call "not a priority right now." 2026-06-10 reaffirmed low priority.
 
-### #31a Onboarding: paste private key (hex) — 🟢 engineering-ready
+### #31a Onboarding: paste private key (hex) — ✅ SHIPPED (PR #193, 2026-06-11)
+
+> ✅ **SHIPPED 2026-07-15 re-audit:** both this (paste-hex import) and its copy-private-key companion landed in **PR [#193](https://github.com/QuilibriumNetwork/quorum-desktop/pull/193)** (`2bd33c0e`, 2026-06-11 — the same day the task was drafted). `ImportKeyStep.tsx` now has a validated hex textarea (`cleanHexKeyInput` → 114-hex check → synthetic `File` → existing `flow.importKeyFile`); `Security.tsx` has a confirmation-gated copy-private-key (hex). **The engineering-ready analysis below is the PRE-SHIP plan** — kept for the reasoning; it's done. (#31b, the 24-word half, is still open — see [Awaiting a product call](#31b-onboarding-paste-recovery-phrase-24-words--❔-needs-a-product-call).)
 
 Desktop's onboarding lets you import an existing account **only by uploading a `.key` file** ([`src/components/onboarding/steps/ImportKeyStep.tsx`](../../../src/components/onboarding/steps/ImportKeyStep.tsx) — drag-and-drop / file picker, `.key` only). Mobile additionally lets you **paste the raw hex private key** ([`quorum-mobile/components/onboarding/HexInputView.tsx`](../../../../quorum-mobile/components/onboarding/HexInputView.tsx) + a "Private Key" tab in [`account-setup.tsx`](../../../../quorum-mobile/app/(onboarding)/account-setup.tsx)). That paste path is missing on desktop. Surfaced by the user 2026-06-11; not previously in this list.
 
@@ -99,7 +102,7 @@ Desktop's onboarding lets you import an existing account **only by uploading a `
 - **Scope = UI only.** Add a "paste private key" affordance to `ImportKeyStep` (tab or secondary input alongside the dropzone): a textarea, client-side validation mirroring mobile (`replace(/^0x/i,'').replace(/\s/g,'').toLowerCase()`, require exactly 114 hex chars, friendly too-short/too-long messages), then construct the `File` and call the existing `flow.importKeyFile`. Reuse the existing `flow.importError` display.
 - **Companion: copy private key (hex) in settings — same PR.** Desktop's [`Security.tsx`](../../../src/components/modals/UserSettingsModal/Security.tsx) "Key Export" only **downloads** the `.key` file; there is no copy. Mobile copies the key to the clipboard ([`ProfileModal.tsx` `handleCopyRecoveryPhrase`](../../../../quorum-mobile/components/ProfileModal.tsx)). `getPrivateKeyHex()` **already exists** on desktop and is already wired into `Security.tsx` (it feeds the QR), so a copy button reuses it — UI-only, no plumbing. Symmetric with the paste-in capability, so they belong in one PR. Note the asymmetry: desktop has no mnemonic store, so copy is **hex-only**, never 24 words (mobile copies the mnemonic when present). Also requires deliberate **Security-tab UI consolidation** (download file + copy key + show QR are three actions on the same secret — group them).
 - **Class A** (UI/data port, capability already supported underneath). Single small PR. Belongs here in Actionable now.
-- **Not built yet (user call, 2026-06-11):** task drafted — [`2026-06-11-port-key-paste-import-and-copy-export.md`](2026-06-11-port-key-paste-import-and-copy-export.md). No PR in flight. Pairs with #31b below (same import surface), but #31a + copy-export can ship standalone.
+- **✅ Built & shipped (2026-06-11), PR [#193](https://github.com/QuilibriumNetwork/quorum-desktop/pull/193):** task [`2026-06-11-port-key-paste-import-and-copy-export.md`](2026-06-11-port-key-paste-import-and-copy-export.md). Shipped exactly as scoped — paste-hex import + copy-key export in one PR; #31b (24 words) deliberately not included (stays parked on a lead-dev call).
 
 ---
 
@@ -404,7 +407,9 @@ Quick rulings from the 2026-06-01 pass; no per-candidate deep-dive warranted.
 
 ---
 
-*Last updated: 2026-06-12 — **#12 QNS usernames marked desktop-complete.** Lead dev confirmed Model B (2026-06-11); PR #195 shipped the override + Stage 4 mentions on top of PR #190's resolution slice. Updated #12's status-board row (now ❔/✅) and notes, added the 2026-06-11 shipped entry, repointed the QNS doc links to `.done/` (all three QNS docs archived). Remaining work is mobile-only (publishing `primary_username`, 2 mobile bugs); the broadcast-vs-public-profile privacy call is non-blocking (`project_qns_username_broadcast_pending`).*
+*Last updated: 2026-07-15 — **freshness re-audit + light polish.** Re-baselined against desktop `main` `afb31b26`, mobile branch `feat/grouped-message-inline-indicators`, shared `2.1.0-34`. **Key correction: #31a (paste-hex key import) → ✅ SHIPPED** — it landed in PR #193 on 2026-06-11 (same day the task was drafted), together with its copy-private-key companion, but the file still listed it as "engineering-ready, not built yet." Flipped the status-board row (🟢→✅), added a ✅ banner to the #31a detail entry (pre-ship plan retained below it), and refreshed the "Actionable now" intro. Re-verified the other open candidates: #5 Reporting, #27 Skins, #32 hub-log all **still absent** from desktop `src/` (grep-confirmed, statuses unchanged); #12 QNS unchanged. Recorded (in the baseline) that **desktop shipped personal block-user** (PR #207) — not a row here since it's desktop-originated, but it closes the reverse question flagged in port-to-mobile #37. No code touched — desktop doc only.*
+
+*Previously: 2026-06-12 — **#12 QNS usernames marked desktop-complete.** Lead dev confirmed Model B (2026-06-11); PR #195 shipped the override + Stage 4 mentions on top of PR #190's resolution slice. Updated #12's status-board row (now ❔/✅) and notes, added the 2026-06-11 shipped entry, repointed the QNS doc links to `.done/` (all three QNS docs archived). Remaining work is mobile-only (publishing `primary_username`, 2 mobile bugs); the broadcast-vs-public-profile privacy call is non-blocking (`project_qns_username_broadcast_pending`).*
 
 *Previously: 2026-06-11 — **#27 Skins deep dive + user decisions.** New report [`2026-06-11-skins-deep-dive.md`](2026-06-11-skins-deep-dive.md) maps both codebases in full. Engine = clean `quorum-shared` promotion (pure `validate.ts`/`types.ts`); colors/fonts/accent apply trivially via existing `:root` CSS vars (minor: accent 3→11-stop ramp interp). **User decided: full parity incl. geometry** (Phase 2, the big chunk — Tailwind+SCSS → CSS-var bridge + regression), shared promotion agreed, mobile icon crash already fixed (convergence is a bonus). Verified the color-token mismatch the user flagged: surfaces 11-vs-12 map 1:1 (`--surface-00` un-skinned v1), accent is the real mismatch (3 points vs 11-stop ramp), text/semantic match. **New dimension raised: cross-device skin sync** — opt-in, off-by-default acceptable, but explore "smart" layered sync (portable color/font layer synced, form-factor wallpaper/geometry per-device); transport via gallery-skin id in `UserConfig`; scoped Phase 5, not yet designed (§10). No status change (still ❔/low priority, now with a decided scope direction).*
 

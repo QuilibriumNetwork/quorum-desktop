@@ -60,6 +60,15 @@ also does not touch group chats.** Fixing one side but not the other would make 
 apps disagree and cause new bugs. Group chats are tracked as separate future tasks
 (see "Related files" below). Not part of the current work.
 
+> **Scope note for the group-chat follow-up:** the underlying issue is not
+> specific to delete/edit — it applies to *every* group-permission decision that
+> the receiver makes based on the sender's claimed identity (the same pattern is
+> used for several existing permissions, and any new role permission would inherit
+> it). So the group-chat fix should be done once at the mechanism level — make the
+> proven sender the single identity all permission checks use — rather than
+> patched per feature. Detailed/private write-up is tracked outside this public
+> repo (see the private tracking issue referenced in the mobile design task).
+
 ## What "this work" (the current desktop branch) actually changes
 
 Branch: `fix/control-message-auth-session-sender`

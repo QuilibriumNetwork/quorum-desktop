@@ -3,7 +3,7 @@ type: inventory
 title: "Port to Mobile — candidates (features + convergence)"
 status: living
 created: 2026-06-12
-updated: 2026-06-23
+updated: 2026-07-15
 ---
 
 # Port-to-mobile candidates
@@ -36,57 +36,126 @@ A candidate lives here as an **observation**. The moment it becomes a concrete, 
 
 ## Status board
 
-Legend: 📋 noted (observation only) · 🟢 ready to scope · 🚧 task dropped (now tracked) · ⏸️ deprioritized · ❌ won't port
+Legend: 📋 noted / still open · 🚧 task dropped (scoped, not started) · ✅ shipped on mobile · 🆕 new mobile capability (not a port) · ⏸️ deprioritized · ❌ won't port
 
-> **Audit pass 2026-06-12.** Rows 3–25 added from a structured cross-repo audit (desktop ↔ mobile ↔ shared) of the 5 user-named features + a broad sweep. Method: reversed capability-verification (verify the concept on mobile, not a name-grep). Each entry below cites desktop source, mobile state, and shared involvement. **A recurring finding: most of these have their shared types/logic ALREADY in `@quilibrium/quorum-shared@2.1.0-29`** — the gap is mobile wiring + a version bump (mobile is pinned to `2.1.0-26`), not new shared work. Verified the uncertain `UserConfig` fields directly: `nonRepudiable`, `deliveryReceipts`, `readReceipts`, `typingIndicatorsDM`, `typingIndicatorsSpaces`, `generateYouTubePreviews`, `deviceNames`, `userNotes`, `spaceTagId` all exist in shared source.
+> **🟢 Freshness re-audit 2026-07-15 — big batch shipped since June.** Re-verified every open row against the current mobile working tree (branch `feat/grouped-message-inline-indicators`; pins `@quilibrium/quorum-shared@2.1.0-33`) + shared `master` (`2.1.0-34`). The board below is grouped by status; the two cross-repo nuances worth carrying forward: **(a)** mobile pins `2.1.0-33` but shared is `2.1.0-34`, so the expanded icon set (#53) and promoted preprocessing pipeline (#52) await a mobile bump; **(b)** per-space notif prefs land in synced config but the in-memory refresh helpers are dead exports (inbound cross-device change needs a remount). Full change list in the [footer note](#).
 
-### Feature-ports (mobile lacks it entirely / scaffolded-not-wired)
+> **Audit pass 2026-06-12 (historical — version facts refreshed 2026-07-15).** Rows 3–25 came from a structured cross-repo audit of the 5 user-named features + a broad sweep. Method: reversed capability-verification (verify the concept on mobile, not a name-grep). The recurring finding held: most gaps were mobile wiring on top of shared logic that already existed, not new shared work — and the bulk of that wiring has since shipped (see the board above). **Current versions (2026-07-15): mobile pins `@quilibrium/quorum-shared@2.1.0-33`; shared source is `2.1.0-34`.** The old note here said `2.1.0-29`/`2.1.0-26` — stale, ignore. The uncertain `UserConfig` fields (`nonRepudiable`, `deliveryReceipts`, `readReceipts`, `typingIndicatorsDM`, `typingIndicatorsSpaces`, `generateYouTubePreviews`, `deviceNames`, `userNotes`, `spaceTagId`) were all verified present in shared source.
 
-| # | Capability | Cost | Shared involvement | Status |
-|---|---|---|---|---|
-| 3 | **Threads in spaces** (side-panel threaded replies on a channel message) | HIGH | types ALREADY-EXIST; `StorageAdapter` needs thread query methods; `ThreadService`/`channelThreadHelpers` are promotion candidates | 📋 noted — biggest gap |
-| 4 | **Markdown rendering in messages** (bold/italic/lists/blockquote/tables + **fenced code blocks + inline code** + spoilers) | MED-HIGH | parse/strip ALREADY-EXISTS (incl. `.native.ts`); RENDER must be RN-specific; preprocessing pipeline is ADDITIVE promotion | 🚧 **task-dropped** (2026-06-18) — combined with mentions in `quorum-mobile/.agents/tasks/2026-06-18-mentions-and-markdown-renderer.md` (Phase 2) |
-| 5 | **YouTube facade** (thumbnail-first click-to-load, sender embeds base64 thumb; privacy) | MED | utils ALREADY-EXIST (`fetchYouTubeThumbnailAsBase64`, `extractStandaloneYouTubeVideoIds`); mobile dupes parsing locally | 📋 noted |
-| 6 | **"Generate YouTube previews" setting** (Privacy toggle gating sender-side thumb fetch) | SMALL | `UserConfig.generateYouTubePreviews` ALREADY in shared | 📋 noted |
-| 7 | **Typing indicators** (broadcast + render "X is typing…" in channel/thread/DM) | MED | `TypingService` + types + tests ALREADY COMPLETE in shared; desktop ships a `TypingIndicator.native.tsx` null-stub w/ "follow-up in mobile" comment | 📋 noted — shared-ready |
-| 8 | **@everyone / @role mentions** (compose + send-metadata + render + notify) | MED | `extractMentionsFromText` handles both; ALREADY-EXISTS, mobile never calls it | 🚧 **task-dropped** (2026-06-18) — `quorum-mobile/.agents/tasks/2026-06-18-mentions-and-markdown-renderer.md` (Phase 1 + 3) |
-| 9 | **DM delivery & read receipts** (✓/✓✓ + privacy toggles) | HIGH | ✅ **ALL shared work DONE in published `-31`** — `DeliveryAckMessage`/`ReadAckMessage`/`ReceiptControlMessage`/`ReceiptEnvelopeFields` + `ReceiptService` (RN-safe, root-exported via `./receipts`) + per-message `deliveredAt`/`readAt` + per-conversation + `UserConfig` toggles all present. **No shared migration, no bump.** Pure mobile-wiring task now. | 📋 noted (shared-ready; was wrongly tagged "needs shared migration" pre-2026-06-17) |
-| 10 | **"New messages" separator + jump-to-first-unread** | MED | NONE (UI/scroll) | 📋 noted |
-| 11 | **Space tags** (4-char tag badge next to sender name + tag picker in settings) | MED | types ALREADY-EXIST; `spaceTagId` in `UserConfig` | 📋 noted |
-| 12 | **User notes** (private per-user annotations, synced) | MED | `UserConfig.userNotes`/`deletedUserNoteAddresses` ALREADY-EXIST | 📋 noted |
-| 13 | **Encrypted DM data backup** (export/import `.qmbak`) | LARGE | NONE (format could be promoted, ADDITIVE) | 📋 noted |
-| 14 | **Device renaming** (label authorized devices) | MED | `UserConfig.deviceNames` ALREADY-EXISTS | 📋 noted |
-| 15 | **"Always sign DMs" (nonRepudiable) toggle** | SMALL | `UserConfig.nonRepudiable` ALREADY-EXISTS (mobile hardcodes `true`) | 📋 noted |
-| 16 | **Global typing-indicator toggles** (send in DMs / Spaces) | SMALL | `typingIndicatorsDM`/`typingIndicatorsSpaces` ALREADY-EXIST | 📋 noted (pairs with #7) |
-| 17 | **Space Settings "Fixes" section** (auto-repair tools, conditional) | SMALL | NONE | 📋 noted (low value) |
-| 18 | **Emoji skin-tone preference** (remembered Fitzpatrick modifier) | SMALL-MED | NONE | 📋 noted (low value) |
-| 19 | **In-app i18n / language switcher** (full Lingui 26-lang support + locale picker; mobile has ZERO i18n) | MED | NONE (app-level i18n) | 📋 noted — detailed plan exists (see entry below) |
-| 20 | **"Restore Missing Spaces" recovery tool** | SMALL | NONE | 📋 noted (mobile's hub-log sync may reduce need) |
-| 21 | **Per-message signing toggle** (lock button in composer when repudiable mode on) | LOW | NONE (UI-only) | 📋 noted |
+> **How to read this board (reworked 2026-07-15 for scannability).** One entry per candidate, two lines each: a **headline** (`#N · Name — STATUS`) and a **detail** line. Grouped by status so "what's left" is the top section to read. `[FP]` = feature-port (mobile lacks it), `[CV]` = convergence (both have it, desktop's better). Cost tag in the detail line. This board is the **index**; the full prose (desktop vs mobile source, shared involvement, file:line) lives further down.
+>
+> **Where each candidate's full detail lives** (the numbering is non-contiguous — use this map, don't assume a `## N` exists):
+> | Candidate | Full detail location |
+> |---|---|
+> | #1, #2 | own `## 1.` / `## 2.` heading |
+> | #3, #4, #5, #6, #7 | own `## N.` heading |
+> | #8, #22, #23 | `## User mentions cluster` (+ the `## 🔴 Cross-cutting … wire-format` note) |
+> | #9–#21, #24 | `## Sweep findings (rows 9–25) — condensed` (one bullet each) |
+> | #19 (expanded) | `### 19. Mobile i18n / language switcher` (near end) |
+> | #25 | `## 25. Space folders — detailed` |
+> | #26a–c, #27 | `## 🔴 Permission enforcement bugs` + `## 27.` (both ✅ resolved — see banners) |
+> | #28 | `## 28.` heading |
+> | #29, #30 | `## 29 / 30. Message highlighting` |
+> | #31, #32, #33 | `## Channel & group icons — detailed` |
+> | #34, #35, #36 | own `## N.` heading |
+> | #37, #38 | board entry only (new mobile capabilities — no prose entry yet) |
+>
+> **⚠️ Every `## N.` prose entry for a ✅-shipped candidate opens with a `> ✅ CURRENT STATE` banner. The prose *after* the banner is the PRE-SHIP analysis** (why desktop is better, what the fix had to cover) — do NOT read it as the current mobile state. The banner + this board are the source of truth for status.
 
-### Convergence (mobile has it, desktop's is better / safer)
+#### 📋 Still open — the live backlog (nothing shipped yet)
 
-| # | Capability | Cost | Shared involvement | Status |
-|---|---|---|---|---|
-| 1 | Reply notification counts (derived, settings-aware, thread-aware) | HIGH | none short-term | 📋 noted (2026-06-01) |
-| 2 | Per-space notification preferences (event-type granularity + cross-device sync + reinstall-survival) | HIGH | additive (types exist) | 🚧 **IN PROGRESS on mobile (2026-06-23)** — we are rolling out the full notification system on `quorum-mobile`, starting here. See note below. |
-| 22 | **User mentions — autocomplete + pill render** (mobile's exist but use WRONG wire format — see cross-cutting note) | MED | extract `USER_MENTION_REGEX` as named export (ADDITIVE); migrate to shared `useMentionInput` optional | 🚧 **task-dropped** (2026-06-18) — `quorum-mobile/.agents/tasks/2026-06-18-mentions-and-markdown-renderer.md` (Phase 1) |
-| 23 | **Mention notification counts/highlights** (mobile relies on server-vended count; no client logic) | MED | `isMentionedWithSettings`, `SpaceNotificationSettings`, `formatMentionCount` ALREADY-EXIST | 🚧 **task-dropped** (2026-06-18) — Phase 4 of `quorum-mobile/.agents/tasks/2026-06-18-mentions-and-markdown-renderer.md` (minimal scaffolding); full convergence with #1/#2 deferred |
-| 24 | **Channel mute → hide/dim muted channels** (mobile mutes notifications only) | LOW-MED | `showMutedChannels` in `UserConfig` ALREADY-EXISTS | 📋 noted |
-| 25 | **Space folders UI** (data round-trips on mobile; list view ignores folders — no folder UI/DnD) | MED (pill bar; was HIGH for DnD) | `NavItem`/`FolderColor`/`validateItems` ALREADY-EXIST | 🚧 **task-dropped** (2026-06-17) — UX decided: **Telegram-style pill bar** (Option A); `quorum-mobile/.agents/tasks/2026-06-17-space-folders-pill-bar.md` |
-| 28 | **Scroll-to-first-unread on channel/DM entry** (desktop jumps to first unread if ≥5 unread or ≥5min old; mobile always lands at bottom) | MED | NONE (UI/scroll; reads shared `Conversation.lastReadTimestamp`) | 📋 noted (pairs with #10 separator) |
-| 29 | **Message highlight on link/notification/bookmark jump** (scroll + timed flash; mobile PARTIAL — only pinned/bookmark, loaded-window only, wrong color/duration, no notification deep-link, no pagination fallback) | LOW-MED | NONE | 📋 noted |
-| 30 | **Mention viewport highlight** (unread @-you messages auto-flash on entry, 61s vs 8s link-jump timing; mobile ABSENT) | MED | NONE (needs `lastReadTimestamp` plumbed to list) | 📋 noted (pairs with #23/#30) |
-| 31 | **Channel icon picker — feature parity + EXPAND the set** (mobile: 20 icons vs desktop's 49; NO outline/filled variant; raw-hex vs named-color) — and the shared task also EXPANDS the curated set beyond 49 (183 whitelisted icons eligible; new ones can be added to the map) + needs a picker scroll/layout fix so it doesn't overflow | LOW-MED | promote + expand `ICON_OPTIONS` in shared (ADDITIVE) | ✅ **SHIPPED** — shared vocab in [#39](https://github.com/QuilibriumNetwork/quorum-shared/pull/39); full mobile consumption shipped in PR [#107](https://github.com/QuilibriumNetwork/quorum-mobile/pull/107) (`23427dc`, 2026-06-17) — `IconPicker.tsx` replaced with shared-vocab picker (`ICON_OPTIONS`/`ICON_COLORS`/`FILLED_ICONS`/`getIconColorHex`/`iconVariant`), old local 20-icon set deleted |
-| 32 | **GROUP icon + color** (desktop `GroupEditorModal` has full picker; mobile group header has NO icon affordance — `updateGroup` accepts `icon`/`iconColor` but UI never calls it) | LOW | `Group.icon`/`iconColor`/`iconVariant` ALREADY in shared | ✅ **SHIPPED** — group icon+color picker wired in PR [#107](https://github.com/QuilibriumNetwork/quorum-mobile/pull/107) (`23427dc`, 2026-06-17) via `ChannelSettingsSheet` group branch; group pencil affordance added to list; picker uses shared vocabulary |
-| 33 | **Channel-list icons render default** (was a LIVE bug — see bug section) | LOW | none | ✅ **FIXED on mobile `master`** (PR [#82](https://github.com/QuilibriumNetwork/quorum-mobile/pull/82) `fb81ffe`) |
-| 34 | **Avatar initials — display-name-based + shared logic** (mobile derives initials from the raw ADDRESS → opaque "AC"; desktop derives from the display name, emoji-aware, deterministic color — and the logic is ALREADY in shared) | MED | NONE — `getInitials` + `getColorFromDisplayName` ALREADY in `@quilibrium/quorum-shared` (`src/utils/avatar.ts`); mobile just never imports them | ✅ shipped (mobile PR #90, `5b7b5f9`, 2026-06-14 — display-name initials + shared gradient; `SpaceIcon` consolidates space monograms; `CachedAvatar` initials fallback) |
-| 35 | **DM conversation settings parity** (desktop's `ConversationSettingsModal` exposes 5 settings + delete; mobile's `DMSettingsSheet` exists but only renders Fix-Encryption + Delete — the `isRepudiable` & edit-history toggles are coded-but-unwired, and **mute / delivery receipts / read receipts are ABSENT**) | MED | additive — `isRepudiable`/`saveEditHistory`/`deliveryReceipts`/`readReceipts` per-conversation fields ALREADY-EXIST on shared `Conversation`; receipts pair with #9 | 🚧 **task-dropped** (2026-06-17) — `quorum-mobile/.agents/tasks/2026-06-17-dm-conversation-settings-parity.md` |
-| 36 | **Delete your own message in a DM** (desktop wires `canDeleteMessages` into the DM message list; mobile's `MessageActionSheet` + `MessagesList` SUPPORT `onDelete`/`canDelete` but the DM screen `app/(tabs)/messages/dm/[id].tsx` never passes them, so the Delete action never appears in a DM) | LOW | NONE (delete infra already on mobile; pure wiring in the DM path) | 🚧 **task-dropped** (2026-06-17) — `quorum-mobile/.agents/tasks/2026-06-17-delete-own-message-in-dm.md` |
+- **#9 · DM delivery & read receipts** — 📋 ABSENT `[FP]` `HIGH`
+  Shared 100% ready (`ReceiptService` + wire types + per-msg/-conv/-config fields in published dist); pure mobile wiring. Re-confirmed absent 2026-07-15. **Top unshipped DM item.**
+- **#7 · Typing indicators** — 📋 ABSENT `[FP]` `MED`
+  Shared `TypingService` + types + tests complete; desktop ships a `.native.tsx` null-stub. Lowest-friction MED. Pairs with #16.
+- **#16 · Global typing toggles (DM / Spaces)** — 📋 ABSENT `[FP]` `SMALL`
+  `typingIndicatorsDM`/`typingIndicatorsSpaces` already in shared. Pairs with #7.
+- **#5 · YouTube facade in chat** — 📋 ABSENT `[FP]` `MED`
+  Thumbnail-first click-to-load; utils already in shared (mobile dupes parsing in the Farcaster feed only). Pairs with #6.
+- **#6 · "Generate YouTube previews" setting** — 📋 ABSENT `[FP]` `SMALL`
+  Privacy gate for #5; `UserConfig.generateYouTubePreviews` already in shared.
+- **#10 · "New messages" separator + jump-to-first-unread** — 📋 ABSENT `[FP]` `MED`
+  UI/scroll only, no shared work. Pairs with #28.
+- **#28 · Scroll-to-first-unread on channel/DM entry** — 📋 ABSENT `[CV]` `MED`
+  Desktop jumps if ≥5 unread or ≥5min old; mobile always lands at bottom. Reads shared `lastReadTimestamp` (already present). Pairs with #10.
+- **#11 · Space tags** (4-char badge by sender name) — 📋 ABSENT `[FP]` `MED`
+  Never reads `sender.spaceTag`; types + `UserConfig.spaceTagId` already in shared.
+- **#12 · User notes** (private per-user annotations) — 📋 ABSENT `[FP]` `MED`
+  `UserConfig.userNotes`/`deletedUserNoteAddresses` already in shared (needs sync handling).
+- **#3 · Threads in spaces** — 📋 ABSENT `[FP]` `HIGH`
+  **Biggest single gap.** Types exist in shared; `StorageAdapter` needs thread queries (additive); `ThreadService`/`channelThreadHelpers` are promotion candidates. Worth its own planning pass.
+- **#30 · Mention viewport highlight** (unread @-you auto-flash on entry) — 📋 ABSENT `[FP]` `MED`
+  No `onViewableItemsChanged` trigger; needs `lastReadTimestamp` plumbed to the list. Highlight anim infra exists (from #29).
+- **#14 · Device renaming** — 📋 ABSENT `[FP]` `MED`
+  Device list shows generic labels, no rename; `UserConfig.deviceNames` already in shared.
+- **#13 · Encrypted DM backup `.qmbak`** — 📋 ABSENT `[FP]` `LARGE`
+  Needs `expo-file-system`/`expo-document-picker`; format could be promoted (additive).
+- **#19 · In-app i18n / language switcher** — 📋 ABSENT `[FP]` `MED`
+  Zero Lingui on mobile; detailed plan exists (see the #19 entry). App-level, no shared export.
+- **#17 · Space Settings "Fixes" section** (auto-repair) — 📋 ABSENT `[FP]` `SMALL` (low value)
+- **#18 · Emoji skin-tone preference** (Fitzpatrick modifier) — 📋 ABSENT `[FP]` `SMALL-MED` (low value)
+- **#20 · "Restore Missing Spaces" recovery tool** — 📋 ABSENT `[FP]` `SMALL`
+  Mobile's hub-log sync may reduce the need.
+- **#29 · Message highlight on link/notification/bookmark jump** — 📋 **PARTIAL** `[CV]` `LOW-MED`
+  Pinned + bookmark jump work (`scrollToMessageWithHighlight`, UI-thread Reanimated), but still blurple (not desktop yellow), ~1.5s fade, and **no notification-tap trigger**.
+
+#### 🚧 Task-dropped, not started (scoped, waiting on build)
+
+- **#25 · Space folders UI** — 🚧 NOT started `[CV]` `MED`
+  Spaces tab still renders a flat list, ignores `items`/folders (re-verified 2026-07-15). UX locked = **Telegram-style pill bar** (Option A) via shared `SegmentedPills`; task in mobile `.agents/tasks/.todo/2026-06-17-space-folders-pill-bar.md`. (PR #108 "channel drag reorder" is channel-reorder, NOT folders.)
+
+#### ✅ Shipped on mobile (verified 2026-07-15 against the current mobile branch)
+
+- **#4 · Markdown rendering** — ✅ SHIPPED `[FP]` (PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112))
+  Hand-rolled `MessageMarkdownRenderer.native.tsx` (no 3rd-party lib): bold/italic/strike, inline + fenced code (scroll+copy), spoilers, blockquote, lists, headings. **Only gap: tables.** Preprocessing promoted to shared (#52) but mobile runs a local copy until it bumps `2.1.0-33→34`.
+- **#8 · @everyone / @role mentions** — ✅ SHIPPED `[FP]` (PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112))
+  Compose autocomplete offers @everyone (permission-gated) + roles; send calls `extractMentionsFromText`; both renderers show pills; notify via `isMentionedWithSettings` per-type.
+- **#22 · User mention autocomplete + pill render** — ✅ SHIPPED `[CV]` (PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112))
+  Inserts canonical `@<address>`; autocomplete covers members+roles+@everyone (cap 8); regex parses `@<...>` + legacy bare. **Wire-format mismatch resolved.**
+- **#15 · "Always sign DMs" (nonRepudiable) toggle** — ✅ SHIPPED `[FP]` (PR [#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142))
+  "Always sign" Switch in `DMSettingsSheet` persists per-conversation `isRepudiable`; send reads it, so the stale `nonRepudiable:true` config default no longer gates signing. Per-DM (not a global Privacy toggle).
+- **#21 · Per-message signing toggle** — ✅ SHIPPED `[FP]` (PR [#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142))
+  Composer lock button when `signingOptional` (conversation `isRepudiable`); `skipSigning`/`onToggleSkipSigning` threaded through DM send.
+- **#35 · DM conversation settings parity** — ✅ SHIPPED (except receipts) `[CV]` (PRs [#138](https://github.com/QuilibriumNetwork/quorum-mobile/pull/138)/[#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142))
+  `DMSettingsSheet` now renders+wires Mute, Always-sign, Save Edit History, plus Fix-Encryption + Delete. Only the delivery/read-receipt toggles remain — gated on #9.
+- **#36 · Delete your own message in a DM** — ✅ SHIPPED `[FP]` (PR [#139](https://github.com/QuilibriumNetwork/quorum-mobile/pull/139))
+  DM screen wires `onDelete`+`canDeleteMessage` (own-message gate); propagates `remove-message` to all devices; receive-side honors the authenticated sender, not the spoofable payload.
+- **#1 · Reply notification counts** — ✅ SHIPPED `[CV]` (PR [#128](https://github.com/QuilibriumNetwork/quorum-mobile/pull/128))
+  Drift-prone MMKV counter **retired**; count derives from watermark-based `mentionReplyLog.ts`. `useReplyTracking` keeps only the active-channel marker.
+- **#2 · Per-space notification preferences** — ✅ SHIPPED `[CV]` (PRs [#124](https://github.com/QuilibriumNetwork/quorum-mobile/pull/124)/[#126](https://github.com/QuilibriumNetwork/quorum-mobile/pull/126))
+  Writes synced `UserConfig.notificationSettings`/`mutedChannels`; event-type Switch UI in `SpaceSettingsModal`; MMKV demoted to an NSE-read mirror. ⚠️ inbound cross-device change needs a space-screen remount (`refreshChannelMuteFromConfig` is a dead export); ⚠️ writes use `as any` until shared publishes the `NotificationSettings` fields.
+- **#23 · Mention notification counts / inbox** — ✅ SHIPPED `[CV]` (PR [#128](https://github.com/QuilibriumNetwork/quorum-mobile/pull/128))
+  Client-side mention/reply inbox (`mentionReplyLog.ts`): two-level read model, per-type gating, profile "Mentions & replies" section, per-channel + tab badges. (Viewport auto-flash is separate — #30, still open.)
+- **#24 · Channel mute → dim muted channels** — ✅ SHIPPED `[CV]` (PR [#126](https://github.com/QuilibriumNetwork/quorum-mobile/pull/126))
+  Muted channels **dimmed in place** (`textMuted` + `bell.slash`), whole-space mute shown on the space avatar. Mobile chose dim-never-hide, so it doesn't read `showMutedChannels` — a deliberate divergence, not a gap.
+- **#31 · Channel icon picker parity** — ✅ SHIPPED `[CV]` (PR [#107](https://github.com/QuilibriumNetwork/quorum-mobile/pull/107))
+  Shared-vocab picker (`ICON_OPTIONS`/`FILLED_ICONS`/`getIconColorHex`/`iconVariant`); old 20-icon local set deleted. **Follow-up:** shared #53 added 15 icons (source `2.1.0-34`); mobile pre-registered them (PR [#143](https://github.com/QuilibriumNetwork/quorum-mobile/pull/143)) but won't SHOW them until the `2.1.0-33→34` bump — no code change, just the bump.
+- **#32 · Group icon + color** — ✅ SHIPPED `[CV]` (PR [#107](https://github.com/QuilibriumNetwork/quorum-mobile/pull/107))
+  Group icon/color/variant picker wired via `ChannelSettingsSheet` group branch; group pencil affordance on the list.
+- **#33 · Channel-list icons render default** (was a live bug) — ✅ FIXED `[CV]` (PR [#82](https://github.com/QuilibriumNetwork/quorum-mobile/pull/82))
+  List now reads `channel.icon`/`iconColor`/`iconVariant`.
+- **#34 · Avatar initials from display name** — ✅ SHIPPED `[CV]` (PR [#90](https://github.com/QuilibriumNetwork/quorum-mobile/pull/90))
+  `DefaultAvatar`/`AvatarInitials` consume shared `getInitials`/`getColorFromDisplayName`; `SpaceIcon` consolidates space monograms.
+
+#### 🆕 New mobile capabilities (landed after the June audit — not desktop→mobile ports)
+
+Logged so the parity picture stays honest; some may be mobile-AHEAD or warrant a reverse convergence check.
+
+- **#37 · Personal Block user** (viewer-side hide) — 🆕 SHIPPED (PR [#127](https://github.com/QuilibriumNetwork/quorum-mobile/pull/127))
+  Hides a user's messages from your own view, per-space, synced via `UserConfig.blockedUsers[spaceId]`. No permission, no broadcast. **Reverse check answered (2026-07-15): desktop ALSO has personal block** (`useBlockUser.ts` + `BlockUserModal.tsx`, PR [#207](https://github.com/QuilibriumNetwork/quorum-desktop/pull/207), 2026-06-22) — no gap either direction. Worth a later parity spot-check that the two block models (mobile `blockedUsers[spaceId]` vs desktop's) are wire-compatible, but neither platform is missing the capability.
+- **#38 · Moderation mute-user** (role-gated broadcast) — 🆕 SHIPPED (PR [#125](https://github.com/QuilibriumNetwork/quorum-mobile/pull/125))
+  Requires `user:mute` role (no owner bypass), signed `MuteMessage` broadcast, receive-side re-validation + composer disable + timed mutes. **This is what row 26b once called "local-only, not a bug" — that reclassification is now stale** (see the permission section).
 
 ### 🔴 Correctness / permission bugs on mobile (not "missing features" — broken invariants)
 
 These surfaced during the 2026-06-12 parity deep-dive. Mobile reimplements permission logic locally instead of consuming shared's helpers, and three enforcement gaps result. **Higher priority than most feature-ports** because they silently break access-control that desktop enforces.
+
+> **✅ ENTIRE CLUSTER RESOLVED — re-verified 2026-07-15 against mobile branch + installed `2.1.0-33` dist.** The whole "publish + consume tail" the notes below describe as pending is DONE:
+> - **26a `@everyone` (receive + send):** the receive-side `hasPermission(senderId, 'mention:everyone', space)` check is present in shared source `mentions.ts:309` AND in the installed `2.1.0-33` dist (`index.native.js:1661`); mobile send-side role-gates `allowEveryone` (`SpaceChatArea.tsx:360`). SHIPPED.
+> - **26c owner-bypass:** the `if (isSpaceOwner) return true` short-circuit is GONE from shared (`_isSpaceOwner` param ignored) and confirmed absent in the `2.1.0-33` dist; mobile now delegates to shared helpers (`useRoleManagement.ts:27-30`), no local reimplementation. SHIPPED.
+> - **26b `user:mute`:** ⚠️ **the "personal/local-only, not a bug" reclassification below is now STALE.** Mobile PR [#125](https://github.com/QuilibriumNetwork/quorum-mobile/pull/125) (`6d967ed`) shipped a REAL role-gated moderation mute (signed `MuteMessage` broadcast, receive-side permission re-validation, composer disable, timed mutes) — logged as new row **38**. The old local-only mute still exists separately as personal Block (row **37**).
+> - **27 read-only channels:** both ENFORCE (composer gated on `canManageReadOnlyChannel`, locked-composer banner) AND the SET UI (read-only Switch + manager-role picker in `ChannelSettingsSheet`) are present. SHIPPED.
+> The historical per-row notes below are kept for context but are superseded by this banner. Mobile pins `2.1.0-33` (NOT the `2.1.0-29` / `2.1.0-26` the old notes assume — those are stale; the fixes are all in the shipped `-33`).
 
 > **🚧 TASK DROPPED 2026-06-12 → ✅ CORE SHIPPED 2026-06-13.** Rows 26a–c + 27 became mobile task `quorum-mobile/.agents/tasks/2026-06-12-permission-enforcement-wave-0.md` (= "Wave 0" in the sequencing section), now `partially-done`. Tracked desktop-side as row 0 in [mobile-tasks-pending.md](../quorum-shared-migration/mobile-tasks-pending.md). No shared work / no version bump (helpers already in mobile's installed `2.1.0-26`). **Per-row status (verified against mobile `master` 2026-06-14):**
 > - **27 — read-only enforcement + receive-side delete validation → ✅ SHIPPED** (mobile PR [#76](https://github.com/QuilibriumNetwork/quorum-mobile/pull/76) `e6fcc9a` "Enforce message-delete and read-only-channel permissions on receipt"; PR [#77](https://github.com/QuilibriumNetwork/quorum-mobile/pull/77) `f78b8a7` dropped unsupported control messages instead of rendering them).
@@ -114,6 +183,8 @@ These surfaced during the 2026-06-12 parity deep-dive. Mobile reimplements permi
 **Root cause (was):** `app/(tabs)/spaces/[id]/index.tsx:118` hardcoded `<IconSymbol name="number" …>` and never read `channel.icon` / `channel.iconColor`. Fixed by the one-line change above. **Note:** this was independent of the Tabler/SF icon-set mismatch (row 31) — that's a *separate* reason a desktop-set icon NAME may not resolve on mobile until the row-31 shared-vocabulary consumption lands; #82 fixed the list-render hardcoding (hit even mobile-set icons), not the cross-platform name mapping.
 
 ## Recommended sequencing (2026-06-12, with user priorities)
+
+> **⚠️ Mostly historical as of 2026-07-15.** Waves 0–2 have largely SHIPPED (permissions, mentions cluster, markdown, notification rollout, DM signing/delete). **What actually remains** (the live backlog): **#9 DM receipts** (top DM item, shared-ready), **#7 typing indicators** + **#16 toggles** (shared `TypingService` ready), **#5/#6 YouTube facade + setting**, **#10/#28 unread separator + scroll-to-first-unread**, **#11 space tags**, **#12 user notes**, **#3 threads** (biggest), plus smaller polish (**#4** tables-only gap, **#29/#30** highlight, **#13/#14/#17/#18/#19/#20**). Also pending: mobile bump `2.1.0-33→34` to pick up the expanded icon set (#53) + the promoted preprocessing pipeline (#52). Read the status board above for per-row truth; the waves below are the original plan.
 
 User-stated interest (2026-06-12), roughly in their priority order: user mentions (first), @everyone/role mentions, roles parity check, read-only channels, YouTube facade + setting, image+caption single-message, DM read receipts, scroll-to-last-seen, message highlighting, space tags, user notes, markdown. Below is the recommended ORDER, which front-loads the correctness bugs and the highest-leverage shared-consumption work.
 
@@ -161,6 +232,8 @@ Toast system (mobile has `ToastContext`) · web modal/overlay system (mobile use
 
 ## 1. Reply notification counts — convergence
 
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED on mobile** (PR [#128](https://github.com/QuilibriumNetwork/quorum-mobile/pull/128)). The MMKV counter described below is **retired**; count now derives from the watermark-based `mentionReplyLog.ts`. **The prose below is the PRE-SHIP analysis** — kept for the desktop-side rationale; read the status board for live status.
+
 **Mobile:** [`quorum-mobile/hooks/chat/useReplyTracking.ts`](../../../../quorum-mobile/hooks/chat/useReplyTracking.ts) — MMKV-backed counter. WebSocket handler calls `incrementReplyCount` on every incoming reply where `replyMetadata.parentAuthor === currentUser`. A separate "active channel" module-level singleton suppresses bumps while the user is viewing the channel; `clearReplyCount` is called on entry.
 
 **Desktop:** [`src/hooks/business/replies/useReplyNotificationCounts.ts`](../../../src/hooks/business/replies/useReplyNotificationCounts.ts) — React Query projection over `MessageDB`. Per render, queries `messageDB.getUnreadReplies()` with the channel's `conversation.lastReadTimestamp` as the cutoff, then filters out replies already read in threads via `threadReadTimes`. No separate "count" state to keep in sync.
@@ -176,7 +249,7 @@ Toast system (mobile has `ToastContext`) · web modal/overlay system (mobile use
 
 **Shared-package involvement:** none in the short term. Desktop's hook is tightly coupled to its `MessageDB` interface (which is desktop-specific). If a shared `StorageAdapter` ever grows the methods desktop's hook calls (`getUnreadReplies`, `getThreadReadTimesForChannel`, `getConversation` with `lastReadTimestamp`), then the *logic* of the hook could become shareable — but that's downstream of substantial shared-storage work.
 
-**Status:** noted (2026-06-01).
+**Status:** ✅ **SHIPPED on mobile (re-verified 2026-07-15)** — the drift-prone MMKV counter is retired; count now derives from the watermark-based `mentionReplyLog.ts` (mobile PR #128). See the status-board row 1. (2026-06-01 orig.)
 
 **Related desktop infrastructure (for context):**
 - [`src/hooks/business/replies/useSpaceReplyCounts.ts`](../../../src/hooks/business/replies/useSpaceReplyCounts.ts) — aggregates per-space
@@ -191,7 +264,9 @@ Toast system (mobile has `ToastContext`) · web modal/overlay system (mobile use
 
 ## 2. Per-space notification preferences — model richness, sync, and gating fidelity — convergence
 
-> **🚧 IN PROGRESS on mobile (2026-06-23).** We are now **rolling out the entire notification system on `quorum-mobile`**, beginning with per-space notification preferences (this row). This is no longer a pure observation — active mobile work has started. The whole notification cluster on this page (this row, **#1** reply counts, **#23** mention counts/highlights, and the OS-push/NSE plumbing threaded through them) is the surface being converged. When concrete scoped tasks land, they live as task files in the **mobile** repo (tracked there per [Lifecycle](#lifecycle)); this note is the desktop-side signpost that the work is underway. The source-of-truth question below (synced `UserConfig.notificationSettings` vs local-only MMKV) is the key architecture call that gates the rest.
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED on mobile** (PRs [#124](https://github.com/QuilibriumNetwork/quorum-mobile/pull/124)/[#126](https://github.com/QuilibriumNetwork/quorum-mobile/pull/126)). The source-of-truth question raised below was answered in favour of **synced `UserConfig`**: mobile now writes `UserConfig.notificationSettings`/`mutedChannels` (synced), with MMKV demoted to an NSE-read mirror, plus event-type Switch UI in `SpaceSettingsModal`. Two residual gaps: inbound cross-device change needs a space-screen remount (`refreshChannelMuteFromConfig` is a dead export), and writes use `as any` until shared publishes the `NotificationSettings.isMuted`/`enabledNotificationTypes` fields. **The prose below is the PRE-SHIP convergence analysis** — the "why desktop is better" + the architecture decision it drove; read the status board for live status.
+>
+> *(Historical: this was flagged 🚧 IN PROGRESS 2026-06-23 as the notification-system rollout began — that rollout, covering this row + #1 + #23 + #24, has now landed.)*
 
 **Mobile:** [`quorum-mobile/services/notifications/notificationPrefs.ts`](../../../../quorum-mobile/services/notifications/notificationPrefs.ts) — three-level boolean tree in MMKV (`global:enabled`, `space:<id>`, `channel:<spaceId>:<channelId>`), AND-resolved by `shouldNotifyForContext()`. Local-only, mirrored to iOS App Group for the NSE to read. No event-type granularity.
 
@@ -216,7 +291,7 @@ Toast system (mobile has `ToastContext`) · web modal/overlay system (mobile use
 
 **Shared-package involvement:** **additive.** The types already exist. What's missing is a shared hook (`useNotificationSettings`) that both apps could consume, plus possibly a shared `shouldNotifyForContext`-equivalent utility that knows about both `isMuted` and `enabledNotificationTypes`. These would replace mobile's `notificationPrefs.ts` and parts of desktop's `useChannelMute.ts`.
 
-**Status:** noted (2026-06-07).
+**Status:** ✅ SHIPPED 2026-07-15 (see banner at top of this entry). *(orig. noted 2026-06-07.)*
 
 **Related desktop infrastructure (for context):**
 - [`quorum-shared/src/types/notifications.ts`](../../../../quorum-shared/src/types/notifications.ts) — shared types already exist (`SpaceNotificationSettings`, `SpaceNotificationTypeId`)
@@ -235,6 +310,8 @@ Toast system (mobile has `ToastContext`) · web modal/overlay system (mobile use
 ---
 
 ## 🔴 Cross-cutting finding: the mention wire-format mismatch (read before scoping #8 / #22 / #23)
+
+> ✅ **RESOLVED 2026-07-15** (mobile PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112)). Mobile now composes, sends, and renders the canonical `@<address>` format and calls shared `extractMentionsFromText` on send — the cross-platform break described below no longer happens. **The analysis below is historical**, kept because it explains *why* the format was chosen and what the fix had to cover.
 
 The single most important finding of the 2026-06-12 audit. Desktop and mobile **store mentions in incompatible formats**, so cross-platform mentions silently break TODAY:
 
@@ -263,12 +340,14 @@ The single most important finding of the 2026-06-12 audit. Desktop and mobile **
 
 ## 4. Markdown rendering in messages (code blocks, inline code, spoilers) — feature-port
 
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED on mobile** (PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112)). Mobile now ships a hand-rolled `MessageMarkdownRenderer.native.tsx` (bold/italic/strike, inline + fenced code, spoilers, blockquote, lists, headings). **Only gap: tables** aren't implemented. Preprocessing was promoted to shared (#52) but mobile runs a local copy until the `2.1.0-33→34` bump. **The "**Mobile:** ABSENT" prose below is the PRE-SHIP state** — kept for the desktop-side renderer detail; read the status board for live status.
+
 **Mobile:** ABSENT for markdown. All message text routes through `components/Chat/MentionableText.tsx`, a custom tokenizer that only knows `@mention`/`#channel`/`:emoji:`/URL — **zero markdown awareness**. `**bold**`, `` `code` ``, fenced blocks, `||spoiler||` all render as literal characters. No markdown library in `package.json`. No mobile `.agents/` task.
 **Desktop:** `src/components/message/MessageMarkdownRenderer.tsx` — `react-markdown` + `remark-gfm` + `remark-breaks` + custom `remarkTwemoji`. Bold/italic/strike/H3/blockquote/lists/tables, inline code, fenced code blocks (monospace, `bg-surface-4`, scroll-wrapped >10 lines, floating copy button — **no syntax-color highlighting**), spoilers (`||text||` → click/keyboard reveal, accessible).
 **Why mobile needs it:** desktop users send formatted messages (and code) that mobile users see as raw syntax noise.
 **Mobile cost:** MED-HIGH — add an RN markdown lib (e.g. `react-native-markdown-display`; `react-markdown` is DOM-only and can't be reused), build `MessageMarkdownRenderer.native.tsx` with `code`/`fence`/spoiler/mention overrides, wire `MessagesList.renderPostMessage` to it.
 **Shared-package involvement:** parse/strip ALREADY-EXISTS — `quorum-shared/src/utils/markdownStripping.ts` + **`.native.ts`** (Metro-safe regex variant) + `markdownFormatting.ts` (compose-toolbar helpers) + `codeFormatting.ts` (DOM/RN-neutral). **Key split: PARSE is shareable, RENDER (DOM vs RN component tree) is not.** The desktop preprocessing pipeline (`processMentions`/`processURLs`/`fixUnclosedCodeBlocks`/`convertHeadersToH3`/…) lives inline in the renderer and is a strong ADDITIVE promotion candidate (`prepareMessageContent(content, opts)`) so both platforms share tokenization.
-**Status:** noted (2026-06-12).
+**Status:** ✅ SHIPPED 2026-07-15 (tables the only remaining gap — see banner at top of this entry). *(orig. noted 2026-06-12.)*
 
 ## 5. YouTube facade (lite embed) — feature-port
 
@@ -300,6 +379,8 @@ The single most important finding of the 2026-06-12 audit. Desktop and mobile **
 
 ## User mentions cluster (#8, #22, #23) — see cross-cutting note above first
 
+> ✅ **CURRENT STATE (2026-07-15): all three SHIPPED** (mobile PRs [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112) + [#128](https://github.com/QuilibriumNetwork/quorum-mobile/pull/128)). #8 @everyone/@role (compose+send+render+notify), #22 autocomplete+pills (canonical `@<address>`, members+roles+@everyone), #23 client-side mention/reply inbox — all landed. **The per-sub-item breakdown below describes the PRE-SHIP gaps** — read the status board for live status.
+
 **Desktop (the full system):** `src/hooks/business/mentions/` (`useMentionInput` tiered autocomplete, `useChannelMentionCounts`, `useSpaceMentionCounts`, `useAllMentions`, `useMentionNotificationSettings`, `useViewportMentionHighlight`), `MentionDropdown.tsx`, pill render in `MessageMarkdownRenderer.tsx` + `src/utils/mentionPillDom.ts`. Wire format `@<address>`; `@everyone` permission-gated; `@role` → `message.mentions.roleIds[]`.
 
 **#22 Autocomplete + pill render — convergence (mobile's exist but worse + wrong format):** mobile `components/Chat/MessageInput.tsx` has @member/#channel autocomplete (inserts bare `@address` — wrong), caps at 6, no roles/@everyone, no QNS-awareness; `MentionableText.tsx` render regex can't parse `@<address>`. **Shared:** extract a named `USER_MENTION_REGEX` export (ADDITIVE); optionally migrate to a shared `useMentionInput`.
@@ -308,7 +389,7 @@ The single most important finding of the 2026-06-12 audit. Desktop and mobile **
 
 **#23 Mention notification counts/highlights — convergence (scaffolded):** `DisplayChannel.mentionCount` plumbing exists but is server-vended; no client counting (`useChannelMentionCounts` et al. absent), no per-space notif settings UI, no unified inbox. **Shared:** `isMentionedWithSettings`, `SpaceNotificationSettings`, `formatMentionCount` ALREADY-EXIST. Pairs with convergence rows #1/#2.
 
-**Status:** noted (2026-06-12). The format fix (cross-cutting note) is the prerequisite and the highest-value sub-item.
+**Status:** ✅ SHIPPED 2026-07-15 — #8/#22/#23 all landed; the format fix (the prerequisite) is resolved (see banner at top). *(orig. noted 2026-06-12.)*
 
 ---
 
@@ -349,6 +430,8 @@ Each verified against desktop source + mobile state; full evidence in the 2026-0
 
 ## Channel & group icons — detailed (rows 31/32 + bug 33)
 
+> ✅ **CURRENT STATE (2026-07-15): all three SHIPPED on mobile** (PRs [#107](https://github.com/QuilibriumNetwork/quorum-mobile/pull/107) + [#143](https://github.com/QuilibriumNetwork/quorum-mobile/pull/143), bug-33 fix [#82](https://github.com/QuilibriumNetwork/quorum-mobile/pull/82)). Mobile's picker consumes the shared vocabulary (`ICON_OPTIONS`/`FILLED_ICONS`/`getIconColorHex`/`iconVariant`) for both channels and groups; the channel list reads the saved icon/color. **One pending, no-code item:** shared #53 added 15 icons (source `2.1.0-34`); mobile pre-registered them but won't SHOW them until the `2.1.0-33→34` bump. **The "PARTIAL / 20 icons / ABSENT" prose below is the PRE-SHIP state.**
+
 **Desktop:** both `ChannelEditorModal.tsx:130-140` and `GroupEditorModal.tsx:79-86` use a shared-on-desktop `<IconPicker>` (`src/components/space/IconPicker/`) with: **50 Tabler icons** (9 tiers), an **`iconVariant: 'outline' | 'filled'` toggle** (34 icons have filled variants), and an **8-color named palette** stored as enum strings (`'blue'`, `'green'`, …). Fields live on both `Channel` and `Group`.
 **Shared:** `Channel.icon`/`iconColor`/`iconVariant` AND `Group.icon`/`iconColor`/`iconVariant` ALREADY-EXIST (`quorum-shared/src/types/space.ts`). The icon SET + color palette were **desktop-local** (`IconPicker/types.ts`) — that's why mobile drifted — but the **picker vocabulary is now PROMOTED to shared** (shared PR [#39](https://github.com/QuilibriumNetwork/quorum-shared/pull/39), `src/primitives/Icon/pickerVocabulary.ts`: icons, named colors, filled set, `getIconColorHex` helper) and **desktop already re-exports it from shared**. Mobile consuming this shared vocabulary is the remaining step (rides the `2.1.0-30` bump).
 
@@ -361,6 +444,8 @@ Each verified against desktop source + mobile state; full evidence in the 2026-0
 > **Mobile settings UX note (user, 2026-06-12):** mobile currently crams all channel/group settings into the inline channels list, which is tight. Worth considering a **per-item mobile drawer** (open a drawer for a given channel OR group → all its settings inside, including the icon picker, read-only toggle, rename, delete). This would give the icon picker (and the read-only SET UI from #27, and group icon #32) a proper home instead of inline affordances on a cramped row. A design call, not yet scoped — but it's the natural container for several of these channel/group gaps at once.
 
 ## 🔴 Permission enforcement bugs (rows 26–27) — detailed
+
+> ✅ **CURRENT STATE (2026-07-15): entire cluster RESOLVED on mobile** (verified against the shipped `2.1.0-33` dist). 26a `@everyone` (receive + send role-gated), 26c owner-bypass (short-circuit removed in shared; mobile delegates to shared helpers), 27 read-only (enforce + SET UI) — all shipped. **26b reclassified AGAIN:** mobile now ships a REAL role-gated moderation mute (#38), so the "local-only, not a bug" call below is stale. **The deep-dive below is the PRE-FIX analysis** — it explains the root cause and the reasoning; read the status board for live status.
 
 Full parity deep-dive 2026-06-12. **Mobile's role CRUD is fine; enforcement is not.** Root cause: mobile reimplements `hasPermission`/`getUserPermissions`/`getUserRoles` locally (`quorum-mobile/hooks/chat/useRoleManagement.ts:56-111`) and never uses `createChannelPermissionChecker`/`canManageReadOnlyChannel` — so several checks desktop performs simply don't happen on mobile.
 
@@ -387,12 +472,14 @@ Old open task `2026-05-29-mobile-adopt-shared-permission-helpers.md` is now **WO
 
 ## 27. Read-only channels — feature-port (with correctness urgency)
 
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED on mobile** — both halves. ENFORCE: composer gated on `canManageReadOnlyChannel` with a locked-composer banner (`[channelId].tsx:121-125`, `SpaceChatArea.tsx:783-817`). SET UI: read-only Switch + manager-role picker in `ChannelSettingsSheet.tsx:392-421`. **The "ABSENT" prose below is the PRE-SHIP state** — read the status board for live status.
+
 **Mobile:** SET = ABSENT in UI (the hook layer `useChannelManagement.ts:40,80,131,159` persists `isReadOnly`/`managerRoleIds`, but `SpaceSettingsModal.tsx` channel editor exposes no toggle/role-picker). ENFORCE = ABSENT entirely — `SpaceChatArea.tsx:722-746` renders `MessageInput` with no `canPost` gate; `canManageReadOnlyChannel` unused; no locked-composer banner. **A read-only channel synced from desktop shows mobile users a live composer and they can post** — silent access-control break.
 **Desktop:** SET via `ChannelEditorModal.tsx:158-211` (Switch + manager-role multi-select). ENFORCE via `Channel.tsx:67-96` (`canPostInReadOnlyChannel`) → `canPost` → `<MessageComposer disabled>` (lock-icon banner) at `1730-1738`; also suppresses typing broadcasts + shows a lock channel-icon.
 **Storage:** `Channel.isReadOnly?: boolean` + `managerRoleIds?: string[]` (`quorum-shared/src/types/space.ts:56-57`).
 **Mobile cost:** ENFORCE-only minimal fix ~2-4h (compute `canManageReadOnlyChannel` in `[channelId].tsx`, thread `canPost` → `MessageInput disabled`, add banner). Full SET parity ~1-2 days (toggle + role picker in settings). Both ~2-3 days.
 **Shared:** ALREADY-EXISTS (`canManageReadOnlyChannel` + the `Channel` fields). No new exports.
-**Status:** noted (2026-06-12) — enforcement half is a correctness item; bundle with Wave 0.
+**Status:** ✅ SHIPPED 2026-07-15 — both enforce + SET UI landed (see banner at top). *(orig. noted 2026-06-12.)*
 
 ## 28. Scroll-to-first-unread on channel/DM entry — feature-port
 
@@ -414,6 +501,8 @@ Old open task `2026-05-29-mobile-adopt-shared-permission-helpers.md` is now **WO
 
 ## 34. Avatar initials — display-name-based + shared logic — convergence
 
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED on mobile** (PR [#90](https://github.com/QuilibriumNetwork/quorum-mobile/pull/90)). `DefaultAvatar`/`AvatarInitials` now consume shared `getInitials`/`getColorFromDisplayName`; `SpaceIcon` consolidates the scattered space monograms. **The "derives from address" prose below is the PRE-SHIP state.**
+
 **Mobile:** [`quorum-mobile/components/ui/DefaultAvatar.tsx`](../../../../quorum-mobile/components/ui/DefaultAvatar.tsx) — derives initials from the **address** string, not the display name: `address.startsWith('@') ? address.slice(1,3) : address.slice(0,2)`, uppercased (lines ~32-42). So a user's fallback avatar shows an opaque hex/base58 prefix like `"AC"` — meaningless to a human. Background color is a local djb2 hash over the address (`hashToColor`). Used at ~13 call sites (DM lists, message bubbles, call screens, profile/reaction modals, space lists). Space avatars are inconsistent: two list screens pass the *space address* into `DefaultAvatar` (→ address-prefix initials), three other spots inline their own `space.name.charAt(0)` monogram (`ApexSubscribeModal.tsx:361`, `InviteLinkCard.tsx:197`), and a couple show an SF Symbol instead.
 
 **Desktop:** initials + color logic lives in **`quorum-shared/src/utils/avatar.ts`** (`getInitials`, `getColorFromDisplayName`, `lightenColor`/`darkenColor`) — pure, exported publicly. `getInitials(displayName)` = first letters of the first two whitespace words, uppercased; emoji-aware (returns the leading emoji); `''`/`"Unknown User"` → `'?'`. Both **user** avatars (`src/components/user/UserAvatar`) and **space** avatars (`src/components/space/SpaceAvatar`, `SpaceIcon.tsx`) route through ONE `UserInitials` component that calls these shared functions — zero duplication. A `UserInitials.native.tsx` already exists in the shared component stack (uses `expo-linear-gradient` + RN `<Text>`).
@@ -427,9 +516,11 @@ Old open task `2026-05-29-mobile-adopt-shared-permission-helpers.md` is now **WO
 
 **Shared-package involvement:** **NONE.** `getInitials`, `getColorFromDisplayName`, `lightenColor`, `darkenColor` all already export from `@quilibrium/quorum-shared` (`src/utils/avatar.ts` → `utils/index.ts` → `index.ts`) and are in the dist mobile pins. No shared work, no version bump.
 
-**Status:** 🚧 task-dropped (2026-06-14) — mobile task file `quorum-mobile/.agents/tasks/2026-06-14-avatar-initials-display-name-from-shared.md`. Also fixes two existing mobile inconsistencies (address-junk initials; scattered space monograms) as a side effect, so it's a cleanup win on top of the parity win.
+**Status:** ✅ SHIPPED 2026-07-15 (PR #90 — see banner at top). *(orig. task-dropped 2026-06-14 as `quorum-mobile/.agents/tasks/2026-06-14-avatar-initials-display-name-from-shared.md`.)* Also fixed two mobile inconsistencies (address-junk initials; scattered space monograms) as a side effect.
 
 ## 35. DM conversation settings parity — convergence (scaffolded-not-wired)
+
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED except receipts** (mobile PRs [#138](https://github.com/QuilibriumNetwork/quorum-mobile/pull/138)/[#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142)). `DMSettingsSheet` now renders + wires Mute, Always-sign (`isRepudiable`), Save Edit History, plus the pre-existing Fix-Encryption + Delete. **Only the delivery/read-receipt toggles remain — gated on #9** (receipts don't exist on mobile yet). **The "coded-but-unwired / absent" prose below is the PRE-SHIP state.**
 
 **Desktop:** [`src/components/modals/ConversationSettingsModal.tsx`](../../../src/components/modals/ConversationSettingsModal.tsx) — a per-DM settings modal exposing **five settings + delete**:
 1. **Always sign messages** — per-conversation `isRepudiable` override of the global `nonRepudiable` (toggle inverts: `nonRepudiable = !isRepudiable`).
@@ -450,9 +541,11 @@ Plus a **Delete Conversation** danger action (local-only delete via `deleteConve
 
 **Shared-package involvement:** **NONE / already-present in `-31`.** The per-conversation fields `isRepudiable`, `saveEditHistory`, `deliveryReceipts`, `readReceipts` already exist on the shared `Conversation` type (desktop reads/writes them via `messageDB.saveConversation`). The receipts portion is gated on the #9 receipt PIPELINE being built on mobile (a mobile-side effort) — **not** on any shared work: the receipts wire types + `ReceiptService` already shipped in published `-31` (verified 2026-06-17). No new exports needed for any part of row 35.
 
-**Status:** 📋 noted (2026-06-14). Pairs with **#9** (receipts) and **#15** (global always-sign toggle). Two separate rows by request — this is the settings-sheet half; own-message delete is **#36**.
+**Status:** ✅ SHIPPED 2026-07-15 except the receipt toggles (gated on #9 — see banner at top). *(orig. noted 2026-06-14.)* Pairs with **#9** (receipts) and **#15**. This is the settings-sheet half; own-message delete is **#36**.
 
 ## 36. Delete your own message in a DM — feature-port (wiring)
+
+> ✅ **CURRENT STATE (2026-07-15): SHIPPED on mobile** (PR [#139](https://github.com/QuilibriumNetwork/quorum-mobile/pull/139)). The DM screen now wires `onDelete`+`canDeleteMessage` (own-message gate) and propagates a `remove-message` control to all devices; receive-side honors the authenticated sender, not the spoofable payload. **The "never passes them" prose below is the PRE-SHIP state.**
 
 **Desktop:** `src/components/direct/DirectMessage.tsx:208,979` — `useDirectMessagesList()` returns `canDeleteMessages`, which is threaded into the DM message list so a user can delete their own messages in a conversation.
 
@@ -467,7 +560,7 @@ Plus a **Delete Conversation** danger action (local-only delete via `deleteConve
 
 **Shared-package involvement:** **NONE.**
 
-**Status:** 📋 noted (2026-06-14). Independent of **#35** (different files: the message list/action-sheet vs the settings sheet), hence its own row.
+**Status:** ✅ SHIPPED 2026-07-15 (PR #139 — see banner at top). *(orig. noted 2026-06-14.)* Independent of **#35** (different files), hence its own row.
 
 ### 19. Mobile i18n / language switcher — feature-port (detailed plan exists)
 
@@ -485,7 +578,9 @@ Mobile's `ThemeProvider` already exposes `setAccentColor` and `setIsDark`/`toggl
 
 ---
 
-*Last updated: 2026-06-23 — **row 2 (per-space notification preferences) → 🚧 IN PROGRESS on mobile**: we are now rolling out the entire notification system on `quorum-mobile`, starting with per-space notification prefs. Flipped the status-board row from 📋 noted to 🚧 in-progress and added an in-progress callout at the top of the detailed §2 entry noting the whole notification cluster (#1 reply counts, #2 prefs, #23 mention counts/highlights + OS-push/NSE plumbing) is the surface being converged; the synced-`UserConfig` vs MMKV source-of-truth question is the gating architecture call. No code change; signpost only. When concrete tasks land they'll be task files in the mobile repo per Lifecycle.*
+*Last updated: 2026-07-15 — **big freshness re-audit + status-board readability rework.** Re-verified every open row against the current mobile working tree (branch `feat/grouped-message-inline-indicators`; pins `@quilibrium/quorum-shared@2.1.0-33`) and shared `master` (`2.1.0-34`). Flipped to ✅ SHIPPED: the mentions+markdown cluster (#4 markdown — tables the only gap; #8 @everyone/@role; #22 autocomplete+pills; the wire-format mismatch), the permission cluster (#26a/#26c enforced in the shipped `-33` dist; #27 read-only enforce + SET UI; and **#26b overturned** — mobile now ships REAL role-gated moderation mute, logged as new #38), the notification rollout (#1 reply counts, #2 per-space prefs, #23 mention inbox, #24 channel-mute dim), and the DM/signing cluster (#15, #21, #35-except-receipts, #36). Added two NEW mobile capabilities: **#37 Personal Block user** and **#38 Moderation mute-user**. Still open (unchanged): #3, #5, #6, #7, #9, #10, #11, #12, #13, #14, #16, #17, #18, #19, #20, #28, #30; #29 still PARTIAL; #25 task-dropped-not-started. Two cross-repo nuances flagged: (a) mobile pins `2.1.0-33` but shared is `2.1.0-34` — the expanded icon set (#53) and promoted `prepareMessageContent` pipeline (#52) await a mobile bump (mobile runs a local copy meanwhile); (b) per-space notif prefs land in synced config but the in-memory refresh helpers are dead exports (inbound cross-device change needs a remount). **Layout + agent-navigability pass:** replaced the two wide status-board tables + the new-capabilities table with a compact list grouped by status (📋 open / 🚧 not-started / ✅ shipped / 🆕 new), two lines per item. Added a **"where each candidate's full detail lives" map** to the board (the `## N.` numbering is non-contiguous; some detail lives in the `Sweep findings` blob). Guarded every ✅-shipped `## N.` detail entry with a `> ✅ CURRENT STATE` banner and updated its `**Status:**` line, so an agent grepping either the heading, the banner, or the Status line gets the current answer — the pre-ship prose after the banner is explicitly flagged as historical. Marked the recommended-sequencing waves + the permission deep-dive + the wire-format note as superseded. No mobile/shared code touched — desktop doc only.*
+
+*Previously: 2026-06-23 — **row 2 (per-space notification preferences) → 🚧 IN PROGRESS on mobile**: we are now rolling out the entire notification system on `quorum-mobile`, starting with per-space notification prefs. Flipped the status-board row from 📋 noted to 🚧 in-progress and added an in-progress callout at the top of the detailed §2 entry noting the whole notification cluster (#1 reply counts, #2 prefs, #23 mention counts/highlights + OS-push/NSE plumbing) is the surface being converged; the synced-`UserConfig` vs MMKV source-of-truth question is the gating architecture call. No code change; signpost only. When concrete tasks land they'll be task files in the mobile repo per Lifecycle.*
 
 *Previously: 2026-06-17 (pass 2) — **row 9 (DM receipts) CORRECTED**: the doc claimed receipts "need shared migration"; verified against the installed published `-31` dist that this is STALE — the entire receipts migration (wire types `DeliveryAck`/`ReadAck`/`ReceiptControlMessage`/`ReceiptEnvelopeFields`, RN-safe `ReceiptService` root-exported via `./receipts`, per-message `deliveredAt`/`readAt`, per-conversation + `UserConfig` toggles) already SHIPPED and PUBLISHED. #9 is now pure mobile wiring — no shared change, no bump. Fixed row 9, the #9 sweep entry, the Wave 2 line, and row 35's shared-involvement note. **Row 25 (space folders) UX DECIDED → Telegram-style pill bar (Option A)**, 🚧 task-dropped (`2026-06-17-space-folders-pill-bar.md`); cost revised MED (was HIGH for the rejected DnD); one multi-folder/uncategorized semantics question still owed to the lead. Verified the spaces tab flat-list bug + the mobile-local `validateItems`/`MAX_FOLDERS` (not shared exports, as the doc implied — corrected in the task). Previously 2026-06-17 (pass 1) — **rows 31 + 32 marked ✅ SHIPPED** (both consumed in mobile PR [#107](https://github.com/QuilibriumNetwork/quorum-mobile/pull/107) `23427dc`: full shared-vocab `IconPicker` replacing the old 20-icon local picker + group icon UI wired). **Rows 35 + 36 marked 🚧 task-dropped** — task files written in mobile repo. Previously: 2026-06-14 — **fixed `Channel.channelTopic` type drift**: was declared required (`channelTopic: string`) but optional in practice (validation treats empty as valid, channels store `''`, render sites truthy-guard) → widened to `channelTopic?: string` in shared `master` (`8d7664c`, pushed; additive/non-breaking; **no version bump**; desktop tsc clean against rebuilt dist). Updated the channel-topic entry accordingly: the "required, so removal is breaking" rationale is gone; mobile may now omit the field rather than echo `''` (still must not clobber a desktop-set value on edit).*
 

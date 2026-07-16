@@ -119,6 +119,36 @@ A small service (sits alongside `PublicProfileService.ts` etc.) that applies/cle
 - `fontScale` on Tailwind fixed-px text → decide rem-migration vs chokepoint scaling before Phase 2.
 - Spacing-scale-in-v1 vs radii+borders-only → Phase 2 UX call.
 
+## Downstream dependency surfaced 2026-06-28 — "shared skin runtime" gates mobile-primitives-in-shared
+A separate mobile design discussion (`quorum-mobile/.agents/reports/2026-06-28-shared-primitives-on-mobile-analysis.md`)
+concluded that mobile's UI components should eventually become the `.native.tsx` halves of the
+quorum-shared primitives — **but that move is blocked on a piece this task does not (yet) build.**
+
+This Phase 0 promotes only the **pure** skin engine and **explicitly keeps `radius()`/`space()`
+per-app** (see line ~44). That's correct for desktop's colour/font/accent consumption, because
+desktop primitives are CSS-var-driven and skinnable *without* any component change (only Phase 2
+geometry var-ification touches them).
+
+But a shared **`.native.tsx`** primitive (e.g. a future shared `Button.native.tsx` ≈ today's mobile
+`components/ui/Button.tsx`) reads the skin **from inside the component** (`useSurface`, `Skin.space`)
+— RN has no ambient CSS layer to mutate. So for mobile primitives to live in shared, shared needs a
+**cross-platform skin runtime**, not just the pure engine:
+- `activeSkin` carried in **shared's** theme context (shared's `ThemeProvider` is a flat
+  `{ colors, getColor }` today — no skin field). This is the same plumbing the IconSymbol migration
+  already names as its Phase-4 prerequisite (`quorum-mobile/.agents/tasks/2026-06-09-migrate-iconsymbol-to-shared-icon-primitive.md`).
+- the geometry/surface **runtime** (`radius()`/`space()` singletons + `useSurface`) promoted to
+  shared with native + web implementations behind one interface (web impl = the CSS-var/`SkinService`
+  path; native impl = mobile's current `theme/skins/` runtime).
+
+**No task owns this runtime layer yet.** It naturally slots between this Phase 0 (pure engine) and
+the eventual Phase 4 (icon/surface substitution + primitive promotion). Flagging here so the
+skins-port owner scopes it when Phase 1 lands — it is the true gating dependency for
+primitives-in-shared on **both** platforms, and the IconSymbol convergence depends on it too.
+
+> **Do NOT swap mobile onto shared's current `ThemeProvider`** as a shortcut — that was considered
+> and rejected (it would delete the skin feature and rewrite 158 mobile call sites). The runtime must
+> be promoted *up into* shared, not have mobile downgraded onto shared's flat provider.
+
 ## Phase 2 readiness note (2026-06-11)
 The geometry-bridge spike is **done** (see deep dive §4a-bis): the Tailwind→CSS-var bridge compiles and renders, `calc()`/negative-margin/`space-x` utilities survive, the `_variables.scss` SCSS side bridges in lockstep, and the one silent-failure trap (bare SCSS `+` on a geometry var) is pre-located to **exactly 3 lines** (`Input.scss:103,273`, `_dropdown-result-item.scss:218` — wrap in `calc()`). Raw-literal cleanup surface ≈ 30 spacing + 1 border. So Phase 2 has **no architectural unknown** and is ready to turn into its own task whenever Phase 1 lands; estimate holds at ~3–5 days.
 
@@ -129,4 +159,6 @@ The geometry-bridge spike is **done** (see deep dive §4a-bis): the Tailwind→C
 
 ---
 
-*Last updated: 2026-06-11*
+*Last updated: 2026-06-28 — added "Downstream dependency" note: a shared cross-platform skin runtime (activeSkin in shared's theme context + promoted geometry/surface runtime) is the unowned prerequisite gating mobile-primitives-in-shared; surfaced by the mobile primitives analysis report. No scope change to Phase 0–1.*
+
+*Previously: 2026-06-11*
