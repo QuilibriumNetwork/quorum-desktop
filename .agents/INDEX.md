@@ -200,6 +200,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
+- [update-profile receive: add per-slot staleness guard (parity with mobile)](tasks/2026-07-16-update-profile-receive-per-slot-timestamp-guard.md)
+- [quorum-shared: type the two-slot global identity fields (retire casts)](tasks/2026-07-16-quorum-shared-type-two-slot-global-identity-fields.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
