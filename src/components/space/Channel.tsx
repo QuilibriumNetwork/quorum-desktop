@@ -110,6 +110,13 @@ const Channel: React.FC<ChannelProps> = ({
     useResponsiveLayoutContext();
   const shell = useOptionalShellState();
   const isPhone = shell?.viewport === 'phone';
+  // Single source of truth for the card-vs-drawer split. The shell viewport is
+  // the app's authoritative responsive signal (it drives the nav rail, sidebars
+  // and the members drawer); keying the profile modal off the same value keeps
+  // it from disagreeing with the surrounding layout. Falls back to the
+  // window-width layout hook only if this Channel ever renders outside the shell
+  // (useOptionalShellState → null). 'desktop' is ≥1024, matching isDesktop.
+  const isDesktopLayout = shell ? shell.viewport === 'desktop' : isDesktop;
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const { showRightSidebar: showUsers, setShowRightSidebar: setShowUsers } =
@@ -1950,7 +1957,7 @@ const Channel: React.FC<ChannelProps> = ({
           the anchored row's DOM node — a popover that tried to follow the anchor
           would stick to a stale node and then fail to reopen. Closing on scroll
           (Discord/Slack-style) avoids that. */}
-      {isDesktop && (
+      {isDesktopLayout && (
         <FloatingPopover
           open={userProfileModal.isOpen && !!userProfileModal.selectedUser}
           onClose={handleUserProfileClose}
@@ -1975,8 +1982,37 @@ const Channel: React.FC<ChannelProps> = ({
         </FloatingPopover>
       )}
 
+      {/* User Profile drawer - below 1024px. The FloatingPopover above is
+          desktop-only (a card anchored to a virtualized message/sidebar row
+          detaches on scroll on narrow widths), so on tablet/narrow viewports
+          the same profile content is shown in a MobileDrawer instead — driven
+          by the identical userProfileModal state. Without this, clicking a
+          message avatar / mention / member row below 1024px set the modal
+          state but rendered nothing. Mirrors the DM view's pattern. */}
+      {!isDesktopLayout && (
+        <MobileDrawer
+          isOpen={userProfileModal.isOpen && !!userProfileModal.selectedUser}
+          onClose={handleUserProfileClose}
+          showCloseButton={false}
+          enableSwipeToClose={true}
+          ariaLabel={t`User profile`}
+        >
+          {userProfileModal.selectedUser && (
+            <UserProfile
+              key={userProfileModal.selectedUser.address}
+              spaceId={spaceId}
+              canEditRoles={isSpaceOwner}
+              roles={roles || []}
+              user={userProfileModal.selectedUser}
+              dismiss={handleUserProfileClose}
+              variant="drawer"
+            />
+          )}
+        </MobileDrawer>
+      )}
+
       {/* Mobile drawer for user list below 1024px */}
-      {!isDesktop && (
+      {!isDesktopLayout && (
         <MobileDrawer
           isOpen={showUsers}
           onClose={() => setShowUsers(false)}

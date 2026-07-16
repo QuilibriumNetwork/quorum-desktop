@@ -38,6 +38,13 @@ const UserProfile: React.FunctionComponent<{
   canEditRoles?: boolean;
   user: any;
   dismiss?: () => void;
+  /**
+   * Presentation variant. Default 'card' is the floating popover card
+   * (fixed width, own border/shadow). 'drawer' fills its container and drops
+   * the card chrome — used inside the MobileDrawer below 1024px so the profile
+   * reads as full-width drawer content, not a narrow card floating in a drawer.
+   */
+  variant?: 'card' | 'drawer';
 }> = (props) => {
   const { currentPasskeyInfo } = usePasskeysContext();
   const { messageDB } = useMessageDB();
@@ -217,10 +224,14 @@ const UserProfile: React.FunctionComponent<{
 
   return (
     <div
-      className="user-profile"
+      className={
+        'user-profile' + (props.variant === 'drawer' ? ' user-profile--drawer' : '')
+      }
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
     >
-      {props.dismiss && (
+      {/* Close X is only for the floating card; the drawer variant is dismissed
+          by swipe/tap-out, so it has no in-card close button. */}
+      {props.dismiss && props.variant !== 'drawer' && (
         <div
           className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"
           onClick={props.dismiss}
@@ -228,28 +239,20 @@ const UserProfile: React.FunctionComponent<{
           <Icon name="close" />
         </div>
       )}
-      <div
-        className={
-          'user-profile-header ' +
-          (currentPasskeyInfo!.address === props.user.address &&
-          userRoles.length === 0 &&
-          !props.canEditRoles
-            ? 'rounded-b-xl'
-            : '')
-        }
-      >
-        <UserAvatar
-          userIcon={props.user.userIcon}
-          displayName={props.user.displayName}
-          address={props.user.address}
-          size={44}
-          className="user-profile-icon"
-        />
-        <div className="user-profile-text">
+      {props.variant === 'drawer' ? (
+        // Drawer header: centered identity block (big avatar, name and address
+        // stacked below) — mirrors the DM profile drawer layout.
+        <div className="user-profile-header">
+          <UserAvatar
+            userIcon={props.user.userIcon}
+            displayName={props.user.displayName}
+            address={props.user.address}
+            size={96}
+          />
           <div className="user-profile-username">
             <ResolvedName resolved={resolvedName} />
           </div>
-          <Flex className="py-1 text-subtle">
+          <Flex className="text-subtle justify-center items-center">
             <span className="text-xs text-subtle">
               {formatAddress(props.user.address)}
             </span>
@@ -263,16 +266,54 @@ const UserProfile: React.FunctionComponent<{
               <></>
             </ClickToCopyContent>
           </Flex>
-          <div className="user-profile-state">
-            {/* TODO: Re-enable when online/offline status is implemented
-                See .agents/tasks/todo/user-status.md for implementation plan
-                Phase 1: Show current user's connection state
-                Phase 2: Show all users' online/offline status via presence system
-            <UserOnlineStateIndicator user={props.user} />
-            */}
+        </div>
+      ) : (
+        <div
+          className={
+            'user-profile-header ' +
+            (currentPasskeyInfo!.address === props.user.address &&
+            userRoles.length === 0 &&
+            !props.canEditRoles
+              ? 'rounded-b-xl'
+              : '')
+          }
+        >
+          <UserAvatar
+            userIcon={props.user.userIcon}
+            displayName={props.user.displayName}
+            address={props.user.address}
+            size={44}
+            className="user-profile-icon"
+          />
+          <div className="user-profile-text">
+            <div className="user-profile-username">
+              <ResolvedName resolved={resolvedName} />
+            </div>
+            <Flex className="py-1 text-subtle">
+              <span className="text-xs text-subtle">
+                {formatAddress(props.user.address)}
+              </span>
+              <ClickToCopyContent
+                className="ml-2"
+                tooltipText={t`Copy address`}
+                text={props.user.address}
+                tooltipLocation="top"
+                iconClassName="text-xs text-subtle hover:text-surface-7"
+              >
+                <></>
+              </ClickToCopyContent>
+            </Flex>
+            <div className="user-profile-state">
+              {/* TODO: Re-enable when online/offline status is implemented
+                  See .agents/tasks/todo/user-status.md for implementation plan
+                  Phase 1: Show current user's connection state
+                  Phase 2: Show all users' online/offline status via presence system
+              <UserOnlineStateIndicator user={props.user} />
+              */}
+            </div>
           </div>
         </div>
-      </div>
+      )}
 
       <div>
         {(userRoles.length > 0 || props.canEditRoles) && (
