@@ -19,13 +19,17 @@ audience: any agent or contributor planning the next migration move
 
 ## 🟢 Next session: start here
 
-State at end of 2026-05-30: Phase 2 fully exhausted. Phase 5 issue filed and awaiting reply. Multiple bonus C1 / dead-code cleanups shipped. Concrete next moves:
+**Freshness check 2026-07-16:** issues [#65](https://github.com/QuilibriumNetwork/quorum-mobile/issues/65), [#66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66), [#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67) are **all still OPEN, zero replies.** Phases 5/7/8 remain gated — nothing there has unblocked. Meanwhile ~10 additive shared PRs shipped independently (shared now `2.1.0-34`); the README status table captures them.
 
-1. **Run a fresh small-bucket sweep**. Past sweeps surfaced bonus C1 findings (one side reimplements what shared exports). Direction varies by session — mobile sweep done 2026-05-30 (1 finding queued as task drop); desktop sweep done 2026-05-30 (1 dead-code cleanup shipped). Worth re-running monthly or when new shared utils land.
+Concrete next moves (in priority order):
 
-2. **Channel pinning removal** — only START if [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) is the next desktop feature being implemented. Otherwise leave paused.
+1. **Finish the message-preprocessing migration (desktop consumer leg).** The shared leg shipped as [quorum-shared#52](https://github.com/QuilibriumNetwork/quorum-shared/pull/52) on 2026-06-25 — `src/utils/messagePreprocessing.ts` exists and is barrel-exported. Desktop STILL inlines the same transforms in `MessageMarkdownRenderer.tsx`. Remaining work: delete the inlined copies, import from shared, visual-smoke the renderer. Task: [`2026-06-18-promote-message-preprocessing-to-shared.md`](2026-06-18-promote-message-preprocessing-to-shared.md) (`in-progress`). This is the clearest unblocked win.
 
-3. **Wait on Phase 5 reply.** Issue [quorum-mobile#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67) filed 2026-05-30. Lead reply unblocks Phase 7.
+2. **Run a fresh small-bucket sweep.** Past sweeps surfaced bonus C1 findings (one side reimplements what shared exports). Direction varies by session. Worth re-running since a lot of new shared surface landed since the last sweep (role helpers, `formatAddress`, date formatters, image config).
+
+3. **Channel pinning removal** — only START if [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) is the next desktop feature being implemented. Otherwise leave paused.
+
+4. **Wait on Phase 5 reply.** Issue [quorum-mobile#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67) filed 2026-05-30, still no reply as of 2026-07-16. Lead reply unblocks Phase 7. If it's been sitting this long, a specific ping (per the "make the cost visible" rule in cross-repo-workflow.md) may be warranted.
 
 **Do NOT** pick up Phase 7 (gated on #67) or Phase 8 (gated on 7). **Do NOT** execute mobile task drops directly — runtime tests required, the lead reviews on their schedule. **Do NOT** re-investigate closed phases — full rationale in `shipped-log-archive.md`.
 
@@ -128,4 +132,6 @@ Audited and classified as stays-per-app. Surface a NEW reason if you want to rev
 
 ---
 
-*Last updated: 2026-05-30*
+*Last updated: 2026-07-16 — freshness pass: confirmed gating issues #65/#66/#67 all still open (zero replies), so Phases 5/7/8 remain blocked. Refreshed "start here" to surface the one clearly-unblocked task (message-preprocessing desktop consumer leg, shared leg shipped as #52) and to note the ~10 additive shared PRs that landed since. No phase re-classifications.*
+
+*Previously: 2026-05-30.*

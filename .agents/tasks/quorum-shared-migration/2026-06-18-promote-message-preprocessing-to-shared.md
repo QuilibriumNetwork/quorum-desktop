@@ -1,9 +1,9 @@
 ---
 type: task
 title: "Promote the message-preprocessing pipeline (mention/URL/header/code-fence transforms) to quorum-shared"
-status: ready
+status: in-progress
 created: 2026-06-18
-updated: 2026-06-25
+updated: 2026-07-16
 runtime-test: not-required (logic move; visual smoke on both apps)
 priority: medium (de-dups desktop's inlined pipeline; gives mobile's markdown renderer a shared backbone)
 source: mobile-originated — quorum-mobile Wave 1 Phase 2 wrote a clean pure-function extraction first
@@ -16,17 +16,30 @@ related:
 
 # Promote the message-preprocessing pipeline to quorum-shared
 
-## Status snapshot (re-verified 2026-06-25)
+## Status snapshot (re-verified 2026-07-16)
+
+> **UPDATE 2026-07-16 — the shared leg has SHIPPED; only the desktop consumer leg remains.**
+> The 2026-06-25 snapshot below said the shared module "does not exist" — that is now stale.
+> **[quorum-shared#52](https://github.com/QuilibriumNetwork/quorum-shared/pull/52) "Add shared
+> message-preprocessing pipeline + tests" merged 2026-06-25.** `src/utils/messagePreprocessing.ts`
+> + `src/utils/messagePreprocessing.test.ts` now exist and are re-exported from the barrel
+> (`src/utils/index.ts:21`). So the remaining work is **only the desktop half**: delete the
+> inlined transforms in `MessageMarkdownRenderer.tsx` and import them from
+> `@quilibrium/quorum-shared` instead. Verify the shipped shared API matches the divergence
+> reconciliation described below (esp. #7, the `!mapSenderToUser` token-leak guard) before
+> wiring desktop to it. Mobile's consumer leg is tracked separately (see `related:`).
+> Status flipped `ready → in-progress`.
 
 Re-checked against all three repos before marking ready. **The task is still worth
 doing and the duplication is real**, but one large chunk it described as *pending* has
 already landed independently, so the remaining work is smaller and cleaner than the
 2026-06-18 draft implied:
 
-- ❌ **Not started:** `quorum-shared/src/utils/messagePreprocessing.ts` does not exist;
-  no test file; desktop still has every function inlined in
-  `MessageMarkdownRenderer.tsx`; mobile still imports its local
-  `utils/messagePreprocessing.ts`. The duplication this task removes is live.
+- ✅ **Shared leg DONE (2026-06-25, PR #52):** `quorum-shared/src/utils/messagePreprocessing.ts`
+  + test file now exist and are barrel-exported. Desktop still has every function inlined in
+  `MessageMarkdownRenderer.tsx` (the desktop consumer swap is the remaining work);
+  mobile still imports its local `utils/messagePreprocessing.ts` (its own consumer leg).
+  The desktop-side duplication this task removes is still live.
 - ✅ **Already done (was the task's biggest open item):** the **option-B role/channel
   reconciliation**. Desktop's renderer ALREADY resolves role/channel mentions directly
   from `spaceRoles: Role[]` / `spaceChannels: Channel[]` with **no

@@ -3,7 +3,7 @@ type: index
 title: "Quorum Shared Migration — Master Tracker"
 status: ongoing
 created: 2026-05-19
-updated: 2026-05-28
+updated: 2026-07-16
 ---
 
 # Quorum Shared Migration — Master Tracker
@@ -49,7 +49,7 @@ quorum-shared-migration/
 │
 ├── reference/                         ← older / one-off docs kept for context
 │   ├── stacked-prs-workflow.md        (older PR-stacking pattern, secondary)
-│   └── npm-publish-access.md          (one-off setup task)
+│   └── npm-publish-access.md          (npm scope access [done] + live shared release flow)
 │
 └── .done/                             ← completed per-task files land here
     ├── 2026-05-18-typing-shared-migration.md
@@ -73,6 +73,8 @@ quorum-shared-migration/
 
 ## Status table
 
+> **Freshness check (2026-07-16):** all three lead-coordination issues are **still OPEN with zero replies** — [mobile#65](https://github.com/QuilibriumNetwork/quorum-mobile/issues/65) (notifications), [mobile#66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66) (channel-reorder broadcast), [mobile#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67) (Phase 5 crypto DI + broadcast). **Nothing gated on them has unblocked.** What *has* moved is a steady stream of additive shared PRs (see the "Shipped on shared since 2026-05-30" rows below), shared now at `2.1.0-34`. The blocked/⏸️ rows below remain accurate.
+
 Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app · 📋 audit only
 
 | Migration | Type | Status | Reference |
@@ -91,6 +93,14 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | `NavItem.icon`/`.color` structural alignment | Types | ⏸️ Mobile uses only space-variant items (no folder UI yet); deferred until mobile builds folders | [.done/2026-05-27-shared-vs-local-type-divergence.md](.done/2026-05-27-shared-vs-local-type-divergence.md) |
 | Field validators (`validateSpaceName`, `validateDisplayName`, `validateChannelName`, …) with errorKey i18n pattern | Hooks/Logic | ✅ Done (2026-05-28) | shared `2.1.0-19`. Mobile adoption queued — see [mobile-tasks-pending.md](mobile-tasks-pending.md). [shipped-log entry](shipped-log.md#2026-05-28--field-validators-validatespacename-validatedisplayname-) |
 | `useTwoStepConfirm` primitive (extracted from `useUserKicking` + `useSpaceLeaving`) | Hook | ✅ Done (2026-05-28) | shared `2.1.0-18`. See [shipped-log.md](shipped-log.md#2026-05-28--usetwostepconfirm) |
+| Role-mutation helpers (`toggleRolePermission`, `setRolePermissions`) | Logic | ✅ Done (2026-05-30) | shared `2.1.0-21` (PR #21), desktop #163. Mobile task dropped. [shipped-log.md](shipped-log.md#2026-05-30--role-mutation-helpers-extracted-phase-2-c4) |
+| Role tag/name uniqueness helpers · role color palette + resolver | Logic | ✅ Done (shared PRs #42, #43) | Shared-only additive; desktop consumes via `link:`. |
+| `formatAddress` (Qm-aware truncation) | Util | ✅ Done in shared (PR #49) | Matches the migration plan for shared `formatAddress`. Desktop imports it (`MessageMarkdownRenderer.tsx:31`). |
+| Message-preprocessing pipeline (mention/URL/header/code-fence transforms) | Util | 🟡 Shared leg done (PR #52, 2026-06-25); **desktop + mobile consumer legs still pending** — desktop still inlines it in `MessageMarkdownRenderer.tsx` | [2026-06-18-promote-message-preprocessing-to-shared.md](2026-06-18-promote-message-preprocessing-to-shared.md) (`in-progress`) |
+| Image compression config + orchestration · avatar/emoji size bump | Config | ✅ Done in shared (PRs #50, #51) | Shared-only additive. |
+| Locale-driven message/conversation date formatters + describers | Util | ✅ Done in shared (PRs #55, #56) | Shared-only additive. |
+| New wire/config types: `DeleteConversationSelfMessage` (#54), `DMUpdateProfileMessage` (#33), space `isMuted` + per-space `blockedUsers` on UserConfig (#48), `primaryUsername` (#40), two-slot global identity fields (#57) | Types | ✅ Done in shared | Additive type-only; desktop mirrors as needed. |
+| Security: remove space-owner permission bypass, enforce `@everyone` on receipt | Security | ✅ Done in shared (PR #41) | Cross-platform auth hardening. |
 | Hooks (276 hook files) | Logic | 🟢 6+ hooks/validators shipped. Audit refreshed 2026-05-28. Future per-candidate tasks at `2026-XX-XX-migrate-<hook>.md` as scoped. | [designs/2026-05-28-hooks-audit-refresh.md](designs/2026-05-28-hooks-audit-refresh.md) |
 | ActionQueueService | Service | ❌ Stays per-app. Re-audited 2026-05-28: mobile's `mutationQueue.ts` is a Farcaster-only stub with zero active callers; the two systems solve different problems. | [designs/2026-05-28-actionqueue-reaudit.md](designs/2026-05-28-actionqueue-reaudit.md) |
 | SearchService + SearchAdapter | Service | ❌ Stays per-app. Re-audited 2026-05-29: same MiniSearch config across platforms but desktop persists in IndexedDB while mobile rebuilds in-memory per session. One micro-shareable (MiniSearch options constant) for opportunistic future bundling. | [designs/2026-05-29-searchservice-reaudit.md](designs/2026-05-29-searchservice-reaudit.md) |
@@ -179,7 +189,9 @@ The mobile repo is a partially-public mirror, not the live internal dev tree. **
 
 ---
 
-*Last updated: 2026-05-28 (late) — first hook migration shipped: `useTwoStepConfirm` extracted to `quorum-shared@2.1.0-18`, desktop's `useUserKicking` + `useSpaceLeaving` refactored to consume it. Established per-task workflow: one candidate (or thematic bundle), one dated task file, ship, log, move to `.done/`. The intermediate "candidates" doc was retired in favor of this approach. See [shipped-log.md](shipped-log.md) for the chronological log.*
+*Last updated: 2026-07-16 — freshness pass on the blocked/pending rows. Verified all three lead-coordination issues (mobile#65/#66/#67) are still OPEN with zero replies → Phases 5/7/8 and the notifications + channel-reorder tracks remain genuinely blocked, nothing newly unblocked. Added status-table rows for the ~10 additive shared PRs that landed since 2026-05-30 (shared now `2.1.0-34`): role helpers, `formatAddress`, message-preprocessing pipeline (shared leg only — desktop consumer leg still pending), date formatters, image config, several new wire/config types, and the space-owner-bypass security fix. Corrected the `2026-06-18-promote-message-preprocessing-to-shared.md` task: its shared leg shipped as PR #52 on 2026-06-25 (the task file's own snapshot still said "does not exist"); status flipped `ready → in-progress`, desktop consumer swap is the remaining work.*
+
+*Previously: 2026-05-28 (late) — first hook migration shipped: `useTwoStepConfirm` extracted to `quorum-shared@2.1.0-18`, desktop's `useUserKicking` + `useSpaceLeaving` refactored to consume it. Established per-task workflow: one candidate (or thematic bundle), one dated task file, ship, log, move to `.done/`. The intermediate "candidates" doc was retired in favor of this approach. See [shipped-log.md](shipped-log.md) for the chronological log.*
 
 *Previously: 2026-05-28 (late) — hooks audit refreshed against mobile `origin/master` (`98d59a4`) and shared `origin/master` (`fbbd48c`). Headline: the `StorageAdapter`/`CryptoProvider` abstractions the March audit said were blockers already exist; mobile has 67 hooks (not 17); shared API design should follow mobile's split-mutation pattern. The audit's first-PR recommendation (A2 query helpers) was withdrawn after spot-checking revealed type-coupling and casing conflicts with shared's existing `queryKeys`.*
 

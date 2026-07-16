@@ -3,7 +3,7 @@ type: doc
 title: Client-Side Image Compression & Thumbnail System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-06-24T00:00:00.000Z
+updated: 2026-07-16T00:00:00.000Z
 ---
 
 # Client-Side Image Compression & Thumbnail System
@@ -38,7 +38,7 @@ src/utils/imageProcessing/      (desktop)
 └── index.ts                    # Public API exports
 ```
 
-Mobile consumes the same `imageConfig` / `imageOrchestration` from the published shared package and provides its own expo-image-manipulator adapter.
+Mobile consumes the same `imageConfig` numbers (`IMAGE_CONFIGS` / `FILE_SIZE_LIMITS`) from the published shared package as its single source of truth for per-surface limits. By design it does **not** use the shared `imageOrchestration` adapter — mobile keeps its own expo-image-manipulator pipeline (base64/URI handling, the byte-target quality sweep, the avatar 150KB OOM cap, PNG/JPEG choice) and only sources the dimension/limit values from shared. The orchestration layer remains desktop-only.
 
 ### Integration Points
 
@@ -61,11 +61,11 @@ Canonical dimensions decided 2026-06-24 for cross-platform consistency (sized ~d
 
 | Use Case | Input Limit | Static Output | Animated GIF Limit | Display Size |
 |----------|-------------|---------------|-------------------|--------------|
-| **User Avatars** | 25MB | 256×256px | N/A (static only) | ~40–82px |
+| **User Avatars** | 25MB | 512×512px | N/A (static only) | ~40–82px |
 | **Space Icons** | 25MB | 256×256px | N/A (static only) | ~82px |
 | **Space Banners** | 25MB | 1600×900px bounding box, `cover`-cropped at render | N/A (static only) | wide ~2:1 strip (upload hint: ratio 2:1) |
 | **Message Attachments** | 25MB | 300px + 1200px | 2MB (animation preserved) | 300×300px max |
-| **Custom Emojis** | 5MB | 96×96px | 100KB (animation preserved) | 24×24px |
+| **Custom Emojis** | 5MB | 128×128px | 100KB (animation preserved) | 24×24px |
 | **Custom Stickers** | 25MB | 512px (longest axis) | 750KB (animation preserved) | 300px max width |
 
 > **Space banner note:** `maintainAspectRatio` is used (no hard crop at upload); 1600×900 is a bounding box, not a target shape. Each surface `cover`-crops at render to its own wide ~2:1 strip (desktop channel-list header ~260–300×132, mobile header full-width×180, future discover hero). The upload UI hints "optimal ratio 2:1" to match what is shown.
@@ -132,9 +132,9 @@ const result = await processImage(file, 'emoji');
 const stickerResult = await processImage(file, 'sticker');
 
 // Or use convenient type-specific processors
-const emojiResult = await processEmojiImage(file);   // 96px, 100KB GIF limit
+const emojiResult = await processEmojiImage(file);   // 128px, 100KB GIF limit
 const stickerResult = await processStickerImage(file); // 512px longest axis, 750KB GIF limit
-const avatarResult = await processAvatarImage(file);   // 256px, no GIFs
+const avatarResult = await processAvatarImage(file);   // 512px, no GIFs
 ```
 
 ### Error Handling with Centralized Messages
@@ -160,7 +160,7 @@ try {
 - **Message GIFs**: 2MB hard limit (animation preserved)
 - **Sticker GIFs**: 750KB hard limit (animation preserved)
 - **Emoji GIFs**: 100KB hard limit (animation preserved)
-- **Emojis (static)**: 5MB (compressed to 96×96px)
+- **Emojis (static)**: 5MB (compressed to 128×128px)
 
 ### Output Results (After Processing)
 - **Static images**: 50KB - 500KB typical range
@@ -193,10 +193,11 @@ Both platforms share the same `imageConfig` + `imageOrchestration` from quorum-s
 - **PNG transparency**: Preserved for files ≤750KB, converted to JPEG for larger files
 - **GIF animation**: Always preserved within size limits
 
-### Mobile (🔜 Pending shared adoption)
-- Uses **expo-image-manipulator** for static compression
-- Same shared config + orchestration; mobile provides its own `ImagePlatform` adapter
-- Blocked on the published shared package + version bump; see the mobile task `quorum-mobile/.agents/tasks/2026-06-24-plug-mobile-into-shared-image-config.md`
+### Mobile (✅ Implemented — config shared; engine + orchestration remain per-platform by design)
+- Uses **expo-image-manipulator** for static compression (its own pipeline, not the shared orchestrator)
+- Sources per-surface limits from shared `IMAGE_CONFIGS` / `FILE_SIZE_LIMITS` (`2.1.0-34`): avatar 512, space icon 256, banner 1600×900, emoji 128, sticker 512, message attachment 1200 — killing the earlier cross-platform drift (avatar was 512 vs 123, emoji 128 vs 36)
+- **Config-only adoption** (deliberate): mobile keeps its own image functions, byte-target sweep, avatar 150KB OOM cap and PNG/JPEG format logic; only the numbers come from shared. The shared `imageOrchestration` adapter stays desktop-only.
+- Known pre-existing mobile defects (independent of this adoption, tracked in mobile `.agents/bugs/`): GIFs render static (expo-image render-side); transparent emoji/sticker get a black background on import (likely picker `allowsEditing` alpha-flatten)
 
 ## Development Notes
 
