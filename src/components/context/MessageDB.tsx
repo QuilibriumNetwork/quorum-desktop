@@ -435,23 +435,26 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     ) => {
       const spaces = await messageDB.getSpaces();
       for (const space of spaces) {
-        // Per-space bio overrides are applied via useSpaceProfile; the global
-        // bio is broadcast here so members of every space pick up the
-        // current global value. Receivers use upsert-aware merge — an
-        // explicit empty string clears the bio (matches what the user did
-        // in the User Settings → General editor); undefined leaves the
-        // receiver's stored bio untouched.
+        // Two-slot design (see identity-resolution doc): the global editor
+        // broadcasts the user's GLOBAL identity via the global* slots, NOT the
+        // per-space override fields. Sending the override fields here is what
+        // used to freeze every space to the global value and fake per-space
+        // overrides. Receivers store global* separately and render
+        // override-else-global. Empty string = deliberate global clear.
         submitChannelMessage(
           space.spaceId,
           space.defaultChannelId,
           {
             type: 'update-profile',
-            displayName,
-            userIcon,
             senderId: currentPasskeyInfo.address,
-            ...(bio !== undefined ? { bio } : {}),
+            globalDisplayName: displayName,
+            globalUserIcon: userIcon,
+            ...(bio !== undefined ? { globalBio: bio } : {}),
             ...(spaceTag ? { spaceTag } : {}),
-          } as UpdateProfileMessage,
+            // Cast via unknown: global* slots are additive, not yet on the shared
+            // UpdateProfileMessage type (additive shared PR pending). Override
+            // fields are intentionally absent — this is a global-only broadcast.
+          } as unknown as UpdateProfileMessage,
           queryClient,
           currentPasskeyInfo,
           undefined, // inReplyTo

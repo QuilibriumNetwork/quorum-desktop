@@ -5340,11 +5340,20 @@ export class MessageService {
           currentPasskeyInfo.address
         );
         if (participant) {
-          participant.display_name = updateProfileMessage.displayName;
-          participant.user_icon = updateProfileMessage.userIcon;
-          participant.spaceTag = updateProfileMessage.spaceTag;
-          // Apply any global slots present (harmless for pure override edits,
-          // where they're undefined). Two-slot design.
+          // Presence-checked: only apply OVERRIDE fields the message actually
+          // carries. A global-save message omits these (it uses the global*
+          // slots below), so an unconditional assignment would wipe a real
+          // per-space override with undefined. Matches the receive-side rule.
+          if (updateProfileMessage.displayName !== undefined) {
+            participant.display_name = updateProfileMessage.displayName;
+          }
+          if (updateProfileMessage.userIcon !== undefined) {
+            participant.user_icon = updateProfileMessage.userIcon;
+          }
+          if (updateProfileMessage.spaceTag !== undefined) {
+            participant.spaceTag = updateProfileMessage.spaceTag;
+          }
+          // Apply any global slots present (undefined for pure override edits).
           applyGlobalProfileSlots(participant, updateProfileMessage);
           await this.messageDB.saveSpaceMember(spaceId, participant);
 
