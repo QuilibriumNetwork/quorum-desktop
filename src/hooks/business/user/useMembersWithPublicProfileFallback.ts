@@ -44,11 +44,16 @@ interface MemberRecord {
    *  the public-profile fallback so members we don't share fresh data with
    *  still show their verified name. */
   primaryUsername?: string;
-  /** The member's GLOBAL display name from their public profile (as opposed to
-   *  `displayName`, which is the roster name and may be a per-space custom
-   *  name). resolveSpaceMemberName compares the two to decide whether the
+  /** The member's GLOBAL display name (roster global slot if present, else the
+   *  public profile). Kept SEPARATE from `displayName` (the roster override
+   *  name) so resolveSpaceMemberName can compare the two to decide whether the
    *  roster name was deliberately set for the space. */
   globalDisplayName?: string;
+  /** Roster GLOBAL avatar/bio slots (two-slot design) — the live-pushed global
+   *  identity, consumed as the tier between the per-space override and the
+   *  public profile. */
+  globalUserIcon?: string;
+  globalBio?: string;
   // Additional fields preserved opaquely (isKicked, spaceTag, joinedAt, etc).
   [extra: string]: unknown;
 }
@@ -121,33 +126,36 @@ export function useMembersWithPublicProfileFallback(
     const merged: MemberMap = { ...members };
     addressesToFetch.forEach((addr, i) => {
       const pub = dataRefs[i];
-      if (!pub) return;
       const local = members[addr];
-      // Per-field merge. A populated local field wins; an empty local
-      // field falls back to the public profile.
+      // Roster GLOBAL slots (two-slot design) — the live-pushed global identity,
+      // the tier between the per-space override and the public profile. Works
+      // for non-public users (no public profile). See identity-resolution doc.
+      const rosterGlobalName = local?.globalDisplayName as string | undefined;
+      const rosterGlobalIcon = (local as { globalUserIcon?: string } | undefined)?.globalUserIcon;
+      const rosterGlobalBio = (local as { globalBio?: string } | undefined)?.globalBio;
+      // The member's effective GLOBAL identity: prefer the live roster slot,
+      // else the public profile. Used both as the render fallback below and
+      // (as globalDisplayName) by resolveSpaceMemberName's custom-name compare.
+      const effectiveGlobalName = rosterGlobalName || pub?.display_name || undefined;
+      // Nothing to add for this member (no public profile AND no roster global
+      // slots) — leave the local record untouched.
+      if (!pub && !rosterGlobalName && !rosterGlobalIcon && !rosterGlobalBio) return;
+      // Per-field precedence: per-space OVERRIDE → roster global slot →
+      // public profile.
       merged[addr] = {
         ...(local ?? { address: addr }),
-        displayName: local?.displayName || pub.display_name || undefined,
-        // Per-space profile is two-state: a per-space OVERRIDE (non-empty
-        // value) wins; otherwise the field follows the member's GLOBAL value
-        // from their public profile. Empty per-space avatar = "follow global"
-        // (there is no per-space "blank" — that only exists globally), so an
-        // empty local userIcon falls back to the global avatar, same as
-        // name/bio. See per-space-profile-follow-global design.
-        userIcon: local?.userIcon || pub.profile_image || undefined,
-        // Bio uses the same per-field merge — a populated per-space bio
-        // wins, otherwise we surface the global public-profile bio so
-        // users we don't share a space with still show an About section.
-        bio: (local?.bio as string | undefined) || pub.bio || undefined,
-        // QNS primary username: only the public profile carries it, so the
-        // fallback is the only source. Rendered as "name.q" by the UI.
+        displayName: local?.displayName || rosterGlobalName || pub?.display_name || undefined,
+        userIcon: local?.userIcon || rosterGlobalIcon || pub?.profile_image || undefined,
+        bio: (local?.bio as string | undefined) || rosterGlobalBio || pub?.bio || undefined,
+        // QNS primary username: only the public profile carries it.
         primaryUsername:
           (local?.primaryUsername as string | undefined) ||
-          pub.primary_username ||
+          pub?.primary_username ||
           undefined,
         // The member's global display name, kept SEPARATE from the roster
-        // `displayName` so the space resolver can compare the two.
-        globalDisplayName: pub.display_name || undefined,
+        // `displayName` so the space resolver can compare the two (custom-name
+        // detection). Prefers the live roster global slot over the public one.
+        globalDisplayName: effectiveGlobalName,
       };
     });
     result = merged;
