@@ -627,6 +627,12 @@ export class MessageService {
           const bioOverride = ownMember?.bio || undefined;
 
           const nonce = crypto.randomUUID();
+          // Current GLOBAL identity from config — carried in the global* slots
+          // so members who missed the global save learn it on our tag-rotation
+          // rebroadcast. Separate from the override fields. (Two-slot design.)
+          const globalName = config.name || undefined;
+          const globalIcon = config.profile_image || undefined;
+          const globalBioVal = config.bio || undefined;
           const updateProfileMessage = {
             type: 'update-profile',
             senderId: selfAddress,
@@ -637,6 +643,9 @@ export class MessageService {
             ...(nameOverride !== undefined ? { displayName: nameOverride } : {}),
             ...(iconOverride !== undefined ? { userIcon: iconOverride } : {}),
             ...(bioOverride !== undefined ? { bio: bioOverride } : {}),
+            ...(globalName !== undefined ? { globalDisplayName: globalName } : {}),
+            ...(globalIcon !== undefined ? { globalUserIcon: globalIcon } : {}),
+            ...(globalBioVal !== undefined ? { globalBio: globalBioVal } : {}),
             ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
           } as UpdateProfileMessage;
 
