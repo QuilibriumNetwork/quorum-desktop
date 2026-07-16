@@ -118,6 +118,30 @@ export type UserConfig = {
 
 export type { UserNote } from '@quilibrium/quorum-shared';
 
+// The desktop space-member row as stored in IndexedDB: the SDK UserProfile plus
+// the local-only fields. Single source of truth for the shape — the two-slot
+// GLOBAL identity slots (global_*) and the per-slot LWW timestamps used to be
+// read via `as any` casts scattered across the receive handlers and hooks.
+// Storage names mirror the existing user_icon/profile_image split (desktop uses
+// *_user_icon); the WIRE names (globalUserIcon) are shared and identical.
+export type SpaceMemberRow = channel.UserProfile & {
+  inbox_address: string;
+  isKicked?: boolean;
+  spaceTag?: BroadcastSpaceTag;
+  joinedAt?: number;
+  bio?: string;
+  // GLOBAL identity slot (two-slot model) — the sender's current global
+  // identity, kept separate from the per-space override fields above.
+  global_display_name?: string;
+  global_user_icon?: string;
+  global_bio?: string;
+  // Per-slot last-write-wins guards: the override fields and the global slot
+  // each track the createdDate of the newest update-profile that set them, so
+  // an out-of-order rebroadcast can't let an older value win. Mirrors mobile.
+  profileTimestamp?: number;
+  globalProfileTimestamp?: number;
+};
+
 export interface SearchableMessage {
   id: string;
   messageId: string;
@@ -1113,13 +1137,7 @@ export class MessageDB {
 
   async saveSpaceMember(
     spaceId: string,
-    userProfile: channel.UserProfile & {
-      inbox_address: string;
-      isKicked?: boolean;
-      spaceTag?: BroadcastSpaceTag;
-      joinedAt?: number;
-      bio?: string;
-    }
+    userProfile: SpaceMemberRow
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -1135,9 +1153,7 @@ export class MessageDB {
   async getSpaceMember(
     spaceId: string,
     user_address: string
-  ): Promise<
-    channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag; joinedAt?: number; bio?: string }
-  > {
+  ): Promise<SpaceMemberRow> {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readonly');
@@ -1154,9 +1170,7 @@ export class MessageDB {
 
   async getSpaceMembers(
     spaceId: string
-  ): Promise<
-    (channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag; joinedAt?: number; bio?: string })[]
-  > {
+  ): Promise<SpaceMemberRow[]> {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readonly');

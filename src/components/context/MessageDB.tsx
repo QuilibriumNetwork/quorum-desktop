@@ -451,10 +451,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             globalUserIcon: userIcon,
             ...(bio !== undefined ? { globalBio: bio } : {}),
             ...(spaceTag ? { spaceTag } : {}),
-            // Cast via unknown: global* slots are additive, not yet on the shared
-            // UpdateProfileMessage type (additive shared PR pending). Override
-            // fields are intentionally absent — this is a global-only broadcast.
-          } as unknown as UpdateProfileMessage,
+            // Global-only broadcast: the override fields (incl. the required
+            // `userIcon`) are intentionally absent. Single cast to satisfy that
+            // one required field, matching the tag-rotation rebroadcast site.
+          } as UpdateProfileMessage,
           queryClient,
           currentPasskeyInfo,
           undefined, // inReplyTo

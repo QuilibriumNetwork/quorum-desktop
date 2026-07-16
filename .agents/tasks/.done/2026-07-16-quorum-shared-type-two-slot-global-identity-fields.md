@@ -1,9 +1,10 @@
 ---
 type: task
 title: "quorum-shared: type the two-slot global identity fields (retire casts)"
-status: todo
+status: done
 priority: low
 created: 2026-07-16
+completed: 2026-07-16
 related_docs:
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
 related_files:
@@ -75,4 +76,43 @@ wire shape that might still change). Pairs naturally with
 needs the timestamp fields on the shared member type).
 
 ---
+
+## Done — 2026-07-16 (shared PR #57 merged to master; desktop branch `feat/two-slot-identity-types-and-timestamp-guard`)
+
+Implemented together with the per-slot timestamp guard task in one typed pass.
+
+**quorum-shared (PR #57, merged):**
+- Added `globalDisplayName?` / `globalUserIcon?` / `globalBio?` to
+  `UpdateProfileMessage` (additive, optional; canonicalize unaffected). ✅
+- **Deviation — member-row fields NOT added to shared's `SpaceMember`.** Recon
+  found desktop's member row is typed off `channel.UserProfile` (the SDK type),
+  NOT shared's `SpaceMember`, so adding `global_*`/timestamp fields to shared's
+  `SpaceMember` would not retire desktop's storage casts. Instead a desktop-local
+  `SpaceMemberRow` type (in `src/db/messages.ts`) is now the single source of
+  truth for those fields. If mobile later wants a shared member-row type, that's
+  a separate, additive step — not required to retire desktop's casts.
+- **NOT published / NOT version-bumped** (deliberate — held for the next publish
+  batch per the user). Desktop consumes the change via the local symlink today;
+  mobile will only see it after a future publish + bump.
+
+**Desktop (branch, not yet PR'd at time of writing):**
+- Retired `as unknown as UpdateProfileMessage` in `MessageDB.updateUserProfile`
+  → single `as UpdateProfileMessage` cast (matches the tag-rotation rebroadcast
+  site; the remaining cast only papers over the pre-existing required-`userIcon`
+  field on a global-only broadcast, unrelated to this task). ✅
+- Retired the `(curr as any).global_*` reads in `useChannelData` and the
+  `(local as {...})` reads in `useMembersWithPublicProfileFallback` — both now
+  read typed fields off `SpaceMemberRow` / the existing `MemberRecord`. ✅
+- Replaced the `applyGlobalProfileSlots` helper with a typed, guard-aware
+  `applyProfileUpdate` (see the timestamp-guard task). ✅
+
+**Mobile — NOT done (out of scope this session).** Step 3 (drop mobile's
+`content as MessageContent` cast, `as never` member-row writes, and the
+`(local as {...})` reads) still stands. It only becomes possible after shared is
+published + mobile bumps to a version carrying the new `UpdateProfileMessage`
+fields. Track as a mobile-side follow-up once shared is published. The canonical
+avatar-field-name gotcha is resolved by keeping the per-app storage split
+(desktop `global_user_icon` vs mobile `global_profile_image`); only the WIRE
+name (`globalUserIcon`) is shared and identical — documented, not unified.
+
 *Last updated: 2026-07-16*

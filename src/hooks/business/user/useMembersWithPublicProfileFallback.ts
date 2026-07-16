@@ -130,9 +130,9 @@ export function useMembersWithPublicProfileFallback(
       // Roster GLOBAL slots (two-slot design) — the live-pushed global identity,
       // the tier between the per-space override and the public profile. Works
       // for non-public users (no public profile). See identity-resolution doc.
-      const rosterGlobalName = local?.globalDisplayName as string | undefined;
-      const rosterGlobalIcon = (local as { globalUserIcon?: string } | undefined)?.globalUserIcon;
-      const rosterGlobalBio = (local as { globalBio?: string } | undefined)?.globalBio;
+      const rosterGlobalName = local?.globalDisplayName;
+      const rosterGlobalIcon = local?.globalUserIcon;
+      const rosterGlobalBio = local?.globalBio;
       // The member's effective GLOBAL identity: prefer the live roster slot,
       // else the public profile. Used both as the render fallback below and
       // (as globalDisplayName) by resolveSpaceMemberName's custom-name compare.

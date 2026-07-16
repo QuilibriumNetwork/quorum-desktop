@@ -1,9 +1,10 @@
 ---
 type: task
 title: "update-profile receive: add per-slot staleness guard (parity with mobile)"
-status: todo
+status: done
 priority: low
 created: 2026-07-16
+completed: 2026-07-16
 related_docs:
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
 related_files:
@@ -60,4 +61,34 @@ practice, this can stay low-priority/wontfix. Mobile added the guard
 defensively, not from an observed desktop-style failure.
 
 ---
+
+## Done — 2026-07-16 (desktop branch `feat/two-slot-identity-types-and-timestamp-guard`)
+
+Implemented alongside the shared-type task in one typed pass.
+
+- Added `profileTimestamp?` + `globalProfileTimestamp?` to the desktop member
+  row (`SpaceMemberRow` in `src/db/messages.ts`). ✅
+- New `applyProfileUpdate(participant, content, createdDate)` helper in
+  `MessageService.ts` replaces `applyGlobalProfileSlots`. It mirrors mobile's
+  `applyOverride` / `applyGlobal` structure: each slot (override vs global) is
+  applied only when the incoming `createdDate` is newer than that slot's stored
+  timestamp, and stamps the applied slot's timestamp on save. ✅
+- Wired into BOTH receive handlers (the `saveMessage` path and the standalone
+  path) and the send-side self-apply (the editing device's own immediate local
+  write). Self-apply uses its own send `createdDate`, so the user's latest edit
+  always wins locally AND is protected from a later out-of-order echo of an
+  older edit. ✅
+- **Guard only — no inbox delete.** Mobile deletes the space-inbox message when
+  both slots are stale; desktop does NOT, because desktop's P2P transport has no
+  per-space server inbox to acknowledge. That cleanup belongs to the future
+  hub-log migration (confirmed coming to desktop), at the transport layer, not
+  in this handler. Noted in an `applyProfileUpdate` code comment so the future
+  migrator wires the inbox-ack at the transport layer — the guard itself is
+  transport-agnostic and needs no change.
+
+**Verification:** desktop `tsc` clean, eslint 0 errors, MessageService unit
+tests 24/24 pass. The rapid two-device LWW reorder was NOT reproduced
+behaviorally (per "How to confirm it's needed" — the guard is defensive parity
+with mobile, matching the doc's low-residual-risk assessment).
+
 *Last updated: 2026-07-16*

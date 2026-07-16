@@ -17,6 +17,7 @@ import {
   RATE_LIMITS,
 } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
+import type { SpaceMemberRow } from '../db/messages';
 import type {
   Message,
   ReactionMessage,
@@ -104,26 +105,57 @@ export interface MessageServiceDependencies {
   handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 }
 
-// Two-slot design (see identity-resolution-and-profile-sync doc): copy the
-// sender's GLOBAL identity fields from an update-profile message onto a member
-// row, stored separately from the per-space override fields
-// (display_name/user_icon/bio). Presence semantics: omitted = no change,
-// '' = deliberate global clear. Read untyped — global* are additive to the
-// shared UpdateProfileMessage (additive shared PR pending, non-blocking).
-function applyGlobalProfileSlots(participant: object, content: unknown): void {
-  const c = content as {
-    globalDisplayName?: string;
-    globalUserIcon?: string;
-    globalBio?: string;
-  };
-  const p = participant as {
-    global_display_name?: string;
-    global_user_icon?: string;
-    global_bio?: string;
-  };
-  if (c.globalDisplayName !== undefined) p.global_display_name = c.globalDisplayName;
-  if (c.globalUserIcon !== undefined) p.global_user_icon = c.globalUserIcon;
-  if (c.globalBio !== undefined) p.global_bio = c.globalBio;
+// Apply an update-profile message onto a member row (two-slot model — see
+// identity-resolution-and-profile-sync doc). The OVERRIDE fields
+// (display_name/user_icon/bio) and the GLOBAL slot (global_*) are stored
+// separately and each carry their own last-write-wins timestamp, so an
+// out-of-order rebroadcast carrying an older value for one slot can't clobber a
+// newer value in the other. Presence semantics: omitted = no change,
+// '' = deliberate clear. Mirrors mobile WebSocketContext (applyOverride/
+// applyGlobal). `createdDate` is the wire message's timestamp.
+//
+// NOTE: unlike mobile, this does NOT delete the inbox message when both slots
+// are stale — desktop's P2P transport has no per-space inbox to acknowledge.
+// That cleanup step belongs to the future hub-log migration, at the transport
+// layer, not here. See project docs / the two-slot task file.
+// Exported for unit testing (pure logic, no dependencies).
+export function applyProfileUpdate(
+  participant: SpaceMemberRow,
+  content: UpdateProfileMessage,
+  createdDate: number
+): void {
+  const ts = createdDate || Date.now();
+
+  const hasOverride =
+    content.displayName !== undefined ||
+    content.userIcon !== undefined ||
+    content.bio !== undefined;
+  const hasGlobal =
+    content.globalDisplayName !== undefined ||
+    content.globalUserIcon !== undefined ||
+    content.globalBio !== undefined;
+
+  const applyOverride =
+    hasOverride &&
+    !(participant.profileTimestamp && participant.profileTimestamp >= ts);
+  const applyGlobal =
+    hasGlobal &&
+    !(participant.globalProfileTimestamp && participant.globalProfileTimestamp >= ts);
+
+  // OVERRIDE slot — presence check ('' is a deliberate per-space clear).
+  if (applyOverride) {
+    if (content.displayName !== undefined) participant.display_name = content.displayName;
+    if (content.userIcon !== undefined) participant.user_icon = content.userIcon;
+    if (content.bio !== undefined) participant.bio = content.bio;
+    participant.profileTimestamp = ts;
+  }
+  // GLOBAL slot — the sender's current global identity, never mistaken for an override.
+  if (applyGlobal) {
+    if (content.globalDisplayName !== undefined) participant.global_display_name = content.globalDisplayName;
+    if (content.globalUserIcon !== undefined) participant.global_user_icon = content.globalUserIcon;
+    if (content.globalBio !== undefined) participant.global_bio = content.globalBio;
+    participant.globalProfileTimestamp = ts;
+  }
 }
 
 export class MessageService {
@@ -1376,38 +1408,21 @@ export class MessageService {
         spaceId,
         decryptedContent.content.senderId
       );
-      const participant = existing ?? ({
+      const participant: SpaceMemberRow = existing ?? {
         user_address: decryptedContent.content.senderId,
         inbox_address: inboxAddress,
-      } as secureChannel.UserProfile & { inbox_address: string; isKicked?: boolean });
+      };
 
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
       // block profile updates after any key rotation.
       //
-      // Upsert-aware merge: omitted field = no change, empty string = clear.
-      // displayName, bio AND userIcon use `!== undefined` so an explicit clear
-      // ('') propagates. An emptied userIcon is stored as '' and the avatar
-      // components treat '' as "no image" (isLikelyRenderableImage('') === false),
-      // falling back to initials — the same as the UNKNOWN_USER sentinel. Senders
-      // that mean "no change" omit the field; the all-spaces rebroadcast sends the
-      // UNKNOWN_USER sentinel (never ''), so this does not clobber. The public-
-      // profile backfill (useMembersWithPublicProfileFallback) also honors '' as
-      // a deliberate clear, so it won't resurrect the sender's global avatar.
-      if (decryptedContent.content.displayName !== undefined) {
-        participant.display_name = decryptedContent.content.displayName;
-      }
-      if (decryptedContent.content.userIcon !== undefined) {
-        participant.user_icon = decryptedContent.content.userIcon;
-      }
-      if (decryptedContent.content.bio !== undefined) {
-        participant.bio = decryptedContent.content.bio;
-      }
-      // GLOBAL identity slots (two-slot design — see identity-resolution doc).
-      // Stored separately from the override fields above so the sender's global
-      // rename reaches spacemates without being mistaken for a per-space
-      // override. Read untyped: additive to the shared UpdateProfileMessage.
-      applyGlobalProfileSlots(participant, decryptedContent.content);
+      // Two-slot, per-slot-LWW merge (see applyProfileUpdate). Presence
+      // semantics: omitted = no change, '' = deliberate clear (falls back to
+      // initials for an emptied icon). The public-profile backfill
+      // (useMembersWithPublicProfileFallback) also honors '' as a deliberate
+      // clear, so it won't resurrect the sender's global avatar.
+      applyProfileUpdate(participant, decryptedContent.content, decryptedContent.createdDate);
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -1940,37 +1955,19 @@ export class MessageService {
         spaceId,
         decryptedContent.content.senderId
       );
-      const participant =
-        existing ??
-        ({
-          user_address: decryptedContent.content.senderId,
-          inbox_address: inboxAddress,
-        } as secureChannel.UserProfile & {
-          inbox_address: string;
-          isKicked?: boolean;
-        });
+      const participant: SpaceMemberRow = existing ?? {
+        user_address: decryptedContent.content.senderId,
+        inbox_address: inboxAddress,
+      };
 
       // update-profile is itself a key rotation announcement — accept inbox address changes.
       // Signature was already verified upstream; rejecting on mismatch would permanently
       // block profile updates after any key rotation.
       //
-      // Upsert-aware merge (mirrors mobile WebSocketContext.tsx:1841-1854):
-      // see the same block in saveMessage above for the full rationale.
-      // Presence semantics: omitted = no change, explicit empty = clear.
-      // userIcon uses `!== undefined` too so an emptied avatar ('') propagates
-      // and falls back to initials (see the saveMessage block above).
-      if (decryptedContent.content.displayName !== undefined) {
-        participant.display_name = decryptedContent.content.displayName;
-      }
-      if (decryptedContent.content.userIcon !== undefined) {
-        participant.user_icon = decryptedContent.content.userIcon;
-      }
-      if (decryptedContent.content.bio !== undefined) {
-        participant.bio = decryptedContent.content.bio;
-      }
-      // GLOBAL identity slots (two-slot design) — stored separately from the
-      // override fields above. See identity-resolution doc.
-      applyGlobalProfileSlots(participant, decryptedContent.content);
+      // Two-slot, per-slot-LWW merge (see applyProfileUpdate + the saveMessage
+      // block above for the full rationale). Presence semantics: omitted =
+      // no change, '' = deliberate clear.
+      applyProfileUpdate(participant, decryptedContent.content, decryptedContent.createdDate);
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -5311,14 +5308,15 @@ export class MessageService {
           )
         );
 
+        const createdDate = Date.now();
         const message = {
           spaceId: spaceId,
           channelId: channelId,
           messageId: Buffer.from(messageId).toString('hex'),
           digestAlgorithm: 'SHA-256',
           nonce: nonce,
-          createdDate: Date.now(),
-          modifiedDate: Date.now(),
+          createdDate,
+          modifiedDate: createdDate,
           lastModifiedHash: '',
           content: {
             ...updateProfileMessage,
@@ -5349,21 +5347,15 @@ export class MessageService {
           currentPasskeyInfo.address
         );
         if (participant) {
-          // Presence-checked: only apply OVERRIDE fields the message actually
-          // carries. A global-save message omits these (it uses the global*
-          // slots below), so an unconditional assignment would wipe a real
-          // per-space override with undefined. Matches the receive-side rule.
-          if (updateProfileMessage.displayName !== undefined) {
-            participant.display_name = updateProfileMessage.displayName;
-          }
-          if (updateProfileMessage.userIcon !== undefined) {
-            participant.user_icon = updateProfileMessage.userIcon;
-          }
+          // Self-apply our own just-sent edit locally (don't wait for echo).
+          // Same two-slot, presence-checked, per-slot-LWW merge as the receive
+          // handlers — a global-only save omits the override fields, so they're
+          // left untouched rather than wiped. `createdDate` is our own send
+          // timestamp, so our latest edit always wins over our stored value.
+          applyProfileUpdate(participant, updateProfileMessage, createdDate);
           if (updateProfileMessage.spaceTag !== undefined) {
             participant.spaceTag = updateProfileMessage.spaceTag;
           }
-          // Apply any global slots present (undefined for pure override edits).
-          applyGlobalProfileSlots(participant, updateProfileMessage);
           await this.messageDB.saveSpaceMember(spaceId, participant);
 
           // Update query cache for immediate UI refresh. Use the already-merged
