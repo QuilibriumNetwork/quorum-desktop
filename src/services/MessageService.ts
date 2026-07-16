@@ -104,6 +104,28 @@ export interface MessageServiceDependencies {
   handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 }
 
+// Two-slot design (see identity-resolution-and-profile-sync doc): copy the
+// sender's GLOBAL identity fields from an update-profile message onto a member
+// row, stored separately from the per-space override fields
+// (display_name/user_icon/bio). Presence semantics: omitted = no change,
+// '' = deliberate global clear. Read untyped — global* are additive to the
+// shared UpdateProfileMessage (additive shared PR pending, non-blocking).
+function applyGlobalProfileSlots(participant: object, content: unknown): void {
+  const c = content as {
+    globalDisplayName?: string;
+    globalUserIcon?: string;
+    globalBio?: string;
+  };
+  const p = participant as {
+    global_display_name?: string;
+    global_user_icon?: string;
+    global_bio?: string;
+  };
+  if (c.globalDisplayName !== undefined) p.global_display_name = c.globalDisplayName;
+  if (c.globalUserIcon !== undefined) p.global_user_icon = c.globalUserIcon;
+  if (c.globalBio !== undefined) p.global_bio = c.globalBio;
+}
+
 export class MessageService {
   private messageDB: MessageDB;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
@@ -1372,6 +1394,11 @@ export class MessageService {
       if (decryptedContent.content.bio !== undefined) {
         participant.bio = decryptedContent.content.bio;
       }
+      // GLOBAL identity slots (two-slot design — see identity-resolution doc).
+      // Stored separately from the override fields above so the sender's global
+      // rename reaches spacemates without being mistaken for a per-space
+      // override. Read untyped: additive to the shared UpdateProfileMessage.
+      applyGlobalProfileSlots(participant, decryptedContent.content);
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -1932,6 +1959,9 @@ export class MessageService {
       if (decryptedContent.content.bio !== undefined) {
         participant.bio = decryptedContent.content.bio;
       }
+      // GLOBAL identity slots (two-slot design) — stored separately from the
+      // override fields above. See identity-resolution doc.
+      applyGlobalProfileSlots(participant, decryptedContent.content);
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -5313,6 +5343,9 @@ export class MessageService {
           participant.display_name = updateProfileMessage.displayName;
           participant.user_icon = updateProfileMessage.userIcon;
           participant.spaceTag = updateProfileMessage.spaceTag;
+          // Apply any global slots present (harmless for pure override edits,
+          // where they're undefined). Two-slot design.
+          applyGlobalProfileSlots(participant, updateProfileMessage);
           await this.messageDB.saveSpaceMember(spaceId, participant);
 
           // Update query cache for immediate UI refresh
