@@ -5366,19 +5366,18 @@ export class MessageService {
           applyGlobalProfileSlots(participant, updateProfileMessage);
           await this.messageDB.saveSpaceMember(spaceId, participant);
 
-          // Update query cache for immediate UI refresh
+          // Update query cache for immediate UI refresh. Use the already-merged
+          // `participant` (which the presence-checked writes above produced), NOT
+          // the raw message fields — spreading raw `updateProfileMessage.display_name`
+          // etc. would write `undefined` on a global-only save and briefly wipe the
+          // user's own per-space override in the UI until the next refetch.
           queryClient.setQueryData(
             buildSpaceMembersKey({ spaceId }),
             (oldData: secureChannel.UserProfile[]) => {
               if (!oldData) return oldData;
               return oldData.map((member) =>
                 member.user_address === currentPasskeyInfo.address
-                  ? {
-                      ...member,
-                      display_name: updateProfileMessage.displayName,
-                      user_icon: updateProfileMessage.userIcon,
-                      spaceTag: updateProfileMessage.spaceTag,
-                    }
+                  ? participant
                   : member
               );
             }
