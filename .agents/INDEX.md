@@ -35,6 +35,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels](docs/features/dropdown-panels.md)
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
+- [Identity resolution and profile sync (canonical model)](docs/features/identity-resolution-and-profile-sync.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Mention Pills UI System](docs/features/mention-pills-ui-system.md)
 - [Message Search Feature](docs/features/search-feature.md)
