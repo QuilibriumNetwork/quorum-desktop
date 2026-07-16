@@ -221,24 +221,19 @@ export const useSpaceProfile = (
       return `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
     }
 
-    // Three-state per-space avatar (matches the avatar clear/absent/value
-    // design — see WebSocketContext/useMembersWithPublicProfileFallback):
-    //   - real image  -> show it
-    //   - '' (cleared) -> the user DELIBERATELY removed their per-space avatar,
-    //                     so show initials and do NOT fall back to the global
-    //                     avatar (a truthy check here wrongly resurrected it)
-    //   - undefined    -> no per-space override -> fall back to the global avatar
+    // Two-state per-space avatar (follow-global model — supersedes the earlier
+    // three-state '' = "cleared, show initials" concept):
+    //   - non-empty per-space value -> OVERRIDE -> show it
+    //   - '' or absent              -> follow global -> fall back to the
+    //                                  global avatar (there is no per-space
+    //                                  "blank"; only the global avatar can be
+    //                                  empty, and its absence flows here)
     const perSpaceIcon = currentMember?.user_icon;
-    if (perSpaceIcon !== undefined) {
-      // Explicit per-space value (including '' = cleared). Only a real,
-      // non-sentinel image is renderable; '' / sentinel -> default (initials).
-      if (perSpaceIcon && !perSpaceIcon.includes(DefaultImages.UNKNOWN_USER)) {
-        return perSpaceIcon;
-      }
-      return 'var(--unknown-icon)';
+    if (perSpaceIcon && !perSpaceIcon.includes(DefaultImages.UNKNOWN_USER)) {
+      return perSpaceIcon;
     }
 
-    // No per-space override at all -> fall back to global avatar
+    // No per-space override -> fall back to the global (public-profile) avatar
     if (
       currentPasskeyInfo?.pfpUrl &&
       !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)

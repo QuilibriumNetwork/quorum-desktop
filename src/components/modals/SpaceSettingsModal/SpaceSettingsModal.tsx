@@ -499,6 +499,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           markedForDeletion={spaceProfile.markedForDeletion}
                           markForDeletion={spaceProfile.markForDeletion}
                           getProfileImageUrl={spaceProfile.getProfileImageUrl}
+                          currentMember={spaceProfile.currentMember}
                           onSave={spaceProfile.onSave}
                           isSaving={spaceProfile.isSaving}
                           hasValidationError={spaceProfile.hasValidationError}

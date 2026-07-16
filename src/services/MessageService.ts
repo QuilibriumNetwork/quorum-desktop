@@ -573,35 +573,50 @@ export class MessageService {
       ? { ...currentTag, spaceId: space.spaceId }
       : undefined;
 
-    // 7. Read display name + icon + bio from config
-    const displayName = config.name ?? '';
-    const userIcon = config.profile_image ?? DefaultImages.UNKNOWN_USER;
-    const bio = config.bio;
-
-    // 8. Broadcast update-profile to all spaces
+    // 7. Broadcast update-profile to all spaces
     const allSpaces = await this.messageDB.getSpaces();
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
 
       for (const s of allSpaces) {
         try {
+          // Per-space profile follows the sender's global value unless a
+          // deliberate OVERRIDE was set in this space. The stored member
+          // row carries an override iff its field is a non-empty value;
+          // empty/absent = follow global. We must NOT stamp the global
+          // config value as a per-space field (that froze the space to a
+          // stale global and broke "clear the override" — the bug this
+          // whole effort removes). So: send the per-space override if one
+          // exists, else OMIT the field so receivers fall back to the
+          // sender's global (public-profile) value via the render fallback.
+          // (See per-space-profile-empty-follows-global design.)
+          const ownMember = await this.messageDB.getSpaceMember(
+            s.spaceId,
+            selfAddress
+          );
+          const nameOverride = ownMember?.display_name || undefined;
+          // Member avatar lives on `user_icon` (typed UserProfile field);
+          // some rows also carry `profile_image` from other write paths, so
+          // read both defensively (mirrors the fallback at line ~4479).
+          const iconOverride =
+            ownMember?.user_icon ||
+            (ownMember as { profile_image?: string })?.profile_image ||
+            undefined;
+          const bioOverride = ownMember?.bio || undefined;
+
           const nonce = crypto.randomUUID();
-          const updateProfileMessage: UpdateProfileMessage = {
+          const updateProfileMessage = {
             type: 'update-profile',
-            displayName,
-            userIcon,
             senderId: selfAddress,
-            // Carry the global bio along on tag-rotation rebroadcasts so
-            // receivers who joined after the user last edited still pick
-            // it up. Only included when the user has a bio set —
-            // omitting it lets each receiver keep whatever bio it already
-            // has (the receive-side upsert merge treats absent fields as
-            // "no change"). An explicit empty-string bio here would
-            // instead CLEAR the receiver's stored bio, which is the
-            // wrong semantic for an incidental tag-rotation event.
-            ...(bio ? { bio } : {}),
+            // Omit any field with no per-space override — the receiver's
+            // upsert merge treats absent fields as "no change" and its
+            // render fallback surfaces the sender's global value. Only a
+            // real per-space override goes on the wire.
+            ...(nameOverride !== undefined ? { displayName: nameOverride } : {}),
+            ...(iconOverride !== undefined ? { userIcon: iconOverride } : {}),
+            ...(bioOverride !== undefined ? { bio: bioOverride } : {}),
             ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
-          };
+          } as UpdateProfileMessage;
 
           const messageId = await crypto.subtle.digest(
             'SHA-256',

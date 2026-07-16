@@ -51,6 +51,7 @@ interface AccountProps {
   markedForDeletion: boolean;
   markForDeletion: () => void;
   getProfileImageUrl: () => string;
+  currentMember: unknown;
   onSave: () => void;
   isSaving: boolean;
   hasValidationError: boolean;
@@ -83,6 +84,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
   markedForDeletion,
   markForDeletion,
   getProfileImageUrl,
+  currentMember,
   onSave,
   isSaving,
   hasValidationError,
@@ -156,6 +158,19 @@ const Account: React.FunctionComponent<AccountProps> = ({
             const avatarUrl = getProfileImageUrl();
             const showImage = hasAvatar && avatarUrl !== 'var(--unknown-icon)';
 
+            // The revert control ("Use my main avatar") only makes sense when a
+            // per-space OVERRIDE exists — either a fresh upload staged in this
+            // session, or a stored non-empty per-space user_icon. When merely
+            // FOLLOWING the global avatar (no override), showing a "remove"
+            // control is the misleading affordance this effort removes: there is
+            // nothing per-space to revert. (Follow-global design.)
+            const hasFreshUpload = !!fileData;
+            const perSpaceIcon = (currentMember as { user_icon?: string })?.user_icon;
+            const hasStoredOverride =
+              !!perSpaceIcon && !perSpaceIcon.includes(DefaultImages.UNKNOWN_USER);
+            const hasOverride =
+              (hasFreshUpload || hasStoredOverride) && !markedForDeletion;
+
             return (
               <>
                 <div
@@ -166,8 +181,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
                 >
                   <input {...getInputProps()} />
                   {!showImage && <Icon name="image" size="2xl" className="icon" />}
-                  {showImage && (
-                    <Tooltip id="space-profile-avatar-delete" content={t`Delete this image`} place="bottom">
+                  {showImage && hasOverride && (
+                    <Tooltip id="space-profile-avatar-delete" content={t`Use my main avatar`} place="bottom">
                       <button
                         type="button"
                         className="image-upload-delete-btn"
@@ -175,7 +190,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
                           e.stopPropagation();
                           markForDeletion();
                         }}
-                        aria-label={t`Delete this image`}
+                        aria-label={t`Use my main avatar`}
                       >
                         <Icon name="trash" size="sm" />
                       </button>
