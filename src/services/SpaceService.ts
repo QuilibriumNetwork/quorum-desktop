@@ -416,10 +416,11 @@ export class SpaceService {
       ),
     });
     await this.messageDB.saveSpace(space);
+    // Follow-global: don't stamp the creator's global name/avatar into their
+    // per-space row (empty = follow global). Peers learn identity from the join
+    // envelope; this row only records membership.
     await this.messageDB.saveSpaceMember(spaceAddress, {
       user_address: registration.user_address,
-      user_icon: userIcon,
-      display_name: userDisplayName,
       inbox_address: inboxAddress,
     });
     // Defensive: ensure creator is present in member list
@@ -430,8 +431,6 @@ export class SpaceService {
     if (!ensuredMember) {
       await this.messageDB.saveSpaceMember(spaceAddress, {
         user_address: registration.user_address,
-        user_icon: userIcon,
-        display_name: userDisplayName,
         inbox_address: inboxAddress,
       });
     }
