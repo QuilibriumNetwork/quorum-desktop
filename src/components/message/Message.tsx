@@ -17,7 +17,6 @@ const EmojiPicker = React.lazy(() =>
   import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
 );
 import type { EmojiData } from '../emoji-picker/types';
-import UserProfile from '../user/UserProfile';
 import { FloatingPopover, rectAnchor } from '../ui';
 import { SpaceTag } from '../space/SpaceTag';
 import { useParams } from 'react-router';
@@ -161,8 +160,6 @@ type MessageProps = {
   stickers?: { [key: string]: Sticker };
   message: MessageType;
   messageList: MessageType[];
-  senderRoles: Role[];
-  canEditRoles?: boolean;
   canDeleteMessages?: boolean;
   canPinMessages?: boolean;
   channel?: Channel;
@@ -220,8 +217,6 @@ export const Message = React.memo(
     stickers,
     message,
     messageList,
-    senderRoles,
-    canEditRoles,
     canDeleteMessages,
     canPinMessages,
     channel,
@@ -277,13 +272,10 @@ export const Message = React.memo(
     );
 
     // Component state that needs to be available to hooks
-    const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
     const contextMenuClosedAt = useRef(0);
     const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
-    // Anchor for the touch-path UserProfile card (positioned via FloatingPopover).
-    const userProfileAnchorRef = useRef<HTMLElement | null>(null);
 
     // Modal contexts
     const { showImageModal } = useImageModal();
@@ -358,7 +350,6 @@ export const Message = React.memo(
       message,
       hoverTarget,
       setHoverTarget,
-      setShowUserProfile,
       onCloseEmojiPickers: emojiPicker.closeEmojiPickers,
       onMobileActionsDrawer: (config) => {
         // For touch devices, always show confirmation (shiftKey = false)
@@ -367,10 +358,6 @@ export const Message = React.memo(
           ...buildDrawerConfig(),
           ...config,
         });
-      },
-      onEmojiPickerUserProfileClick: (clientY: number, onProfileClick: () => void) => {
-        // Direction is now handled by FloatingPopover's flip() middleware.
-        emojiPicker.handleUserProfileClick(clientY, onProfileClick);
       },
       onReply: messageActions.handleReply,
       isEditing: editingMessageId === message.messageId,
@@ -745,25 +732,6 @@ export const Message = React.memo(
           <Flex
             className="message-body w-full font-[11pt] px-[16px] items-start"
           >
-            {spaceId && (
-              <FloatingPopover
-                open={showUserProfile}
-                onClose={() => setShowUserProfile(false)}
-                anchor={userProfileAnchorRef.current}
-                placement="right-start"
-                closeOnScroll
-              >
-                <UserProfile
-                  spaceId={message.spaceId}
-                  canEditRoles={canEditRoles}
-                  roles={senderRoles}
-                  user={sender}
-                  dismiss={() => {
-                    setShowUserProfile(false);
-                  }}
-                />
-              </FloatingPopover>
-            )}
             {isCompact ? (
               <div className="message-sender-spacer">
                 <span className="compact-timestamp">
@@ -777,34 +745,30 @@ export const Message = React.memo(
                 address={sender.address}
                 size={44}
                 className="message-sender-icon"
-                onClick={
-                  isTouchDevice()
-                    ? (event: React.MouseEvent) => {
-                        // Capture the avatar element so FloatingPopover can
-                        // anchor the touch-path profile card to it.
-                        userProfileAnchorRef.current =
-                          event.currentTarget as HTMLElement;
-                        interactions.handleUserProfileClick(event);
+                onClick={(event: React.MouseEvent) => {
+                  // Single profile-open path for every input (mouse and touch):
+                  // hand off to the container's userProfileModal, which renders
+                  // the card on desktop and the drawer below 1024px. Previously
+                  // touch devices used a separate, viewport-agnostic popover in
+                  // this component — that always showed the desktop card (even on
+                  // phones / in device emulation) and is now removed.
+                  event.stopPropagation();
+                  if (onUserClick) {
+                    onUserClick(
+                      {
+                        address: sender.address,
+                        displayName: sender.displayName,
+                        userIcon: sender.userIcon,
+                        bio: sender.bio,
+                      },
+                      event,
+                      {
+                        type: 'message-avatar',
+                        element: event.currentTarget as HTMLElement,
                       }
-                    : (event: React.MouseEvent) => {
-                        event.stopPropagation();
-                        if (onUserClick) {
-                          onUserClick(
-                            {
-                              address: sender.address,
-                              displayName: sender.displayName,
-                              userIcon: sender.userIcon,
-                              bio: sender.bio,
-                            },
-                            event,
-                            {
-                              type: 'message-avatar',
-                              element: event.currentTarget as HTMLElement,
-                            }
-                          );
-                        }
-                      }
-                }
+                    );
+                  }
+                }}
               />
             )}
             <div className="message-content">

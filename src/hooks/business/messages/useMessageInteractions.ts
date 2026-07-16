@@ -9,13 +9,8 @@ interface UseMessageInteractionsOptions {
   message: MessageType;
   hoverTarget: string | undefined;
   setHoverTarget: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setShowUserProfile: React.Dispatch<React.SetStateAction<boolean>>;
   onCloseEmojiPickers: () => void;
   onMobileActionsDrawer: (config: any) => void;
-  onEmojiPickerUserProfileClick: (
-    clientY: number,
-    onProfileClick: () => void
-  ) => void;
   /** Callback to trigger reply - used for double-click to reply on desktop */
   onReply?: () => void;
   /** Whether the message is currently being edited */
@@ -27,10 +22,8 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     message,
     hoverTarget,
     setHoverTarget,
-    setShowUserProfile,
     onCloseEmojiPickers,
     onMobileActionsDrawer,
-    onEmojiPickerUserProfileClick,
     onReply,
     isEditing,
   } = options;
@@ -129,7 +122,6 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
       }
 
       // Common click behaviors
-      setShowUserProfile(false);
       onCloseEmojiPickers();
     },
     [
@@ -139,26 +131,8 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
       message.messageId,
       setHoverTarget,
       setActionsVisibleOnTap,
-      setShowUserProfile,
       onCloseEmojiPickers,
     ]
-  );
-
-  // Handle user profile icon click
-  const handleUserProfileClick = useCallback(
-    (e: React.MouseEvent) => {
-      onEmojiPickerUserProfileClick(e.clientY, () => setShowUserProfile(true));
-      e.stopPropagation();
-    },
-    [onEmojiPickerUserProfileClick, setShowUserProfile]
-  );
-
-  // Handle background click to close user profile
-  const handleUserProfileBackgroundClick = useCallback(
-    (e: React.MouseEvent) => {
-      setShowUserProfile(false);
-    },
-    [setShowUserProfile]
   );
 
   // Handle double-click to reply (desktop only)
@@ -212,7 +186,5 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     handleMouseOut,
     handleMessageClick,
     handleDoubleClick,
-    handleUserProfileClick,
-    handleUserProfileBackgroundClick,
   };
 }

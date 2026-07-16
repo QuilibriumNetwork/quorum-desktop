@@ -29,6 +29,70 @@
   }
 }
 
+// Drawer variant: rendered inside a full-width MobileDrawer below 1024px. The
+// drawer owns the surface, border and scrolling, so the profile drops its own
+// card chrome (fixed width / border / shadow) and fills the drawer width
+// instead of floating as a narrow card inside it.
+.user-profile--drawer {
+  width: 100%;
+  border: none;
+  box-shadow: none;
+  border-radius: 0;
+  // The drawer body already paints the modal surface; keep transparent so the
+  // header band and content sit directly on it without a nested surface step.
+  background: transparent;
+
+  // Flatten the header and footer surfaces into the drawer body. In the card
+  // these carry their own tinted bands (--color-bg-modal-sidebar / -modal) to
+  // read as distinct header/footer zones; inside the drawer that shows up as
+  // two mismatched stripes against the drawer surface, so make them transparent.
+  // Rules here are nested under .user-profile--drawer so they win over the base
+  // single-class .user-profile-* rules regardless of source order.
+  .user-profile-header {
+    border-radius: 0;
+    background: transparent;
+
+    // Centered identity block (big avatar, name and address stacked and
+    // centered below it), mirroring the DM profile drawer.
+    flex-direction: column;
+    align-items: center;
+    gap: $s-2;
+    padding: $s-6 $s-4 $s-4;
+    min-height: 0;
+  }
+
+  .user-profile-username {
+    padding-right: 0; // no close button to clear in the drawer
+    max-width: 100%;
+    text-align: center;
+    // Let a long name wrap and center instead of truncating to an ellipsis.
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .user-profile-action-footer {
+    background: transparent;
+  }
+
+  // Consistent 16px ($s-4) horizontal gutters for every content section, matching
+  // the header and the app's MobileDrawer standard (its header rows/sections all
+  // use $s-4). The card layout inherits 8px gutters from a 330px floating card,
+  // which read as cramped and misaligned against the 16px header once the profile
+  // fills a full-width drawer. Vertical padding on each section is left intact;
+  // only the left/right is normalised here.
+  //
+  // Roles block: the JSX wrapper is a bare `p-2` div (first child of the section
+  // container that follows the header), so target it structurally.
+  > div > .p-2,
+  .user-profile-bio-section,
+  .user-profile-note-section,
+  .user-profile-note-trigger,
+  .user-profile-action-footer {
+    padding-left: $s-4;
+    padding-right: $s-4;
+  }
+}
+
 .user-profile-header {
   // Subtle header band, offset from the card body (--color-bg-modal = surface-2).
   // This resolves to surface-1 which matches the chat background, but the card's

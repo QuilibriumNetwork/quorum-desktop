@@ -378,7 +378,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             )}
             {displayInfo.needsNewMessagesSeparator && <NewMessagesSeparator />}
             <Message
-              senderRoles={roles}
               spaceRoles={roles}
               stickers={stickers}
               emojiPickerOpen={emojiPickerOpen}
@@ -396,7 +395,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               setInReplyTo={setInReplyTo}
               editorRef={editor.current}
               height={height}
-              canEditRoles={isSpaceOwner}
               canDeleteMessages={canDeleteMessages(message)}
               canPinMessages={
                 canPinMessages ? canPinMessages(message) : undefined
