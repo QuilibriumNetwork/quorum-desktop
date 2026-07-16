@@ -4,6 +4,7 @@ import { useSpaceMembers } from '../../queries/spaceMembers/useSpaceMembers';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../../utils';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
+import type { SpaceMemberRow } from '../../../db/messages';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_USERS =
@@ -46,9 +47,11 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
   }, [mockUtils]);
 
   // Add mock users for testing virtualization performance
-  const enhancedSpaceMembers = useMemo(() => {
+  const enhancedSpaceMembers = useMemo<SpaceMemberRow[]>(() => {
     if (ENABLE_MOCK_USERS) {
-      return [...spaceMembers, ...mockUsers];
+      // mockUsers is dev-only `any[]`; cast the merged array once so members
+      // stay typed as SpaceMemberRow at the reduce below.
+      return [...spaceMembers, ...mockUsers] as SpaceMemberRow[];
     }
     return spaceMembers;
   }, [spaceMembers, mockUsers]);
@@ -72,18 +75,18 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             displayName: curr.display_name,
             // Per-space bio override; flows into UserProfile's "About"
             // section. Empty string means the user explicitly cleared it.
-            bio: (curr as any).bio as string | undefined,
+            bio: curr.bio,
             // Roster GLOBAL slots (two-slot design): the sender's current global
             // identity, pushed separately from the per-space override fields.
             // Consumed by the fallback resolver as the tier between override and
             // public profile. See identity-resolution-and-profile-sync doc.
-            globalDisplayName: (curr as any).global_display_name as string | undefined,
-            globalUserIcon: (curr as any).global_user_icon?.includes(DefaultImages.UNKNOWN_USER)
+            globalDisplayName: curr.global_display_name,
+            globalUserIcon: curr.global_user_icon?.includes(DefaultImages.UNKNOWN_USER)
               ? undefined
-              : ((curr as any).global_user_icon as string | undefined),
-            globalBio: (curr as any).global_bio as string | undefined,
+              : curr.global_user_icon,
+            globalBio: curr.global_bio,
             isKicked: curr.isKicked || false,
-            spaceTag: (curr as any).spaceTag as BroadcastSpaceTag | undefined,
+            spaceTag: curr.spaceTag,
             joinedAt: curr.joinedAt,
           },
         }),

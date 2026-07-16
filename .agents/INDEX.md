@@ -33,9 +33,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
 - [Dropdown Panels](docs/features/dropdown-panels.md)
+- [Identity resolution and profile sync (canonical model)](docs/features/identity-resolution-and-profile-sync.md)
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
-- [Identity resolution and profile sync (canonical model)](docs/features/identity-resolution-and-profile-sync.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Mention Pills UI System](docs/features/mention-pills-ui-system.md)
 - [Message Search Feature](docs/features/search-feature.md)
@@ -123,6 +123,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
+- [DM message delivery is unreliable (master report)](bugs/2026-07-02-dm-message-delivery-unreliable-master.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -200,8 +201,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
-- [update-profile receive: add per-slot staleness guard (parity with mobile)](tasks/2026-07-16-update-profile-receive-per-slot-timestamp-guard.md)
-- [quorum-shared: type the two-slot global identity fields (retire casts)](tasks/2026-07-16-quorum-shared-type-two-slot-global-identity-fields.md)
+- [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
+- [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -262,6 +263,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Polls in Spaces — v1 Implementation Plan](tasks/.todo/2026-06-01-polls-plan.md)
 - [Spaces Highlights Feed — Design Spec](tasks/.todo/2026-06-04-spaces-highlights-feed-design.md)
 - [Spaces Highlights Feed Implementation Plan](tasks/.todo/2026-06-04-spaces-highlights-feed-plan.md)
+- [Coalesce replayed space-manifest during history replay (stop flicker) — DEFERRED](tasks/.todo/2026-06-28-coalesce-replay-space-manifest-flicker.md)
+- [Coalesce replayed update-profile during history replay (stop flicker) — DEFERRED](tasks/.todo/2026-06-28-coalesce-replay-state-updates-flicker.md)
 
 ### Messagedb
 - [handleNewMessage Decomposition — Reconsidered](tasks/messagedb/handleNewMessage-reconsidered.md)
@@ -324,6 +327,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [QNS Usernames on Desktop — Implementation Plan](tasks/port-from-mobile/.done/2026-06-10-qns-username-display-plan.md)
 - [Port — paste private key on import + copy private key in settings](tasks/port-from-mobile/.done/2026-06-11-port-key-paste-import-and-copy-export.md)
 - [QNS username overrides display name everywhere + mentions by QNS name](tasks/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md)
+- [Design: per-message indicators on grouped (continuation) messages](tasks/port-from-mobile/.done/2026-06-28-grouped-message-indicators-design.md)
+- [Grouped/continuation messages drop per-message indicators (desktop + mobile)](tasks/port-from-mobile/.done/2026-06-28-grouped-message-indicators-missing.md)
+- [Implementation plan: per-message indicators on grouped (continuation) messages — DESKTOP](tasks/port-from-mobile/.done/2026-07-15-grouped-message-indicators-plan.md)
 
 ### Port To Mobile
 - [Port-to-mobile candidates](tasks/port-to-mobile/candidates.md)
@@ -466,6 +472,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Notification-type settings: stale read in the settings modal (+ clobber-on-save)](tasks/.done/2026-06-23-notification-settings-stale-read-and-clobber.md)
 - [Move image compression config + orchestration into quorum-shared (desktop side)](tasks/.done/2026-06-24-share-image-compression-config-with-shared.md)
 - [Close EXIF/metadata stripping gaps on image uploads](tasks/.done/2026-06-24-strip-image-exif-metadata-gaps.md)
+- [Plan: fix DM remove-message + edit-message authorization on desktop](tasks/.done/2026-06-25-desktop-dm-control-msg-auth-fix-plan.md)
+- [quorum-shared: type the two-slot global identity fields](tasks/.done/2026-07-16-quorum-shared-type-two-slot-global-identity-fields.md)
+- [update-profile receive: add per-slot staleness guard](tasks/.done/2026-07-16-update-profile-receive-per-slot-timestamp-guard.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -656,4 +665,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-06-25 11:03:31
+**Last Updated**: 2026-07-16 13:36:59
