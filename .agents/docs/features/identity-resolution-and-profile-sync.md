@@ -205,8 +205,17 @@ global identity on the next reconnect.
   `.agents/bugs/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
   path is UNTOUCHED by this work; DM verification is parked on that transport
   issue, not on this feature.
-- **Mobile↔desktop:** blocked by the same transport flakiness this session.
-  Verify once transport is healthy.
+- **Mobile→desktop global propagation:** CONFIRMED 2026-07-16. A display-name
+  changed on mobile propagated to desktop once the (flaky) transport recovered
+  and messages started landing — the name update rode in with the space
+  messages, exactly as the shared-transport model predicts. Validates the full
+  chain: mobile send → wire field parse → separate-global-slot store → render.
+  The earlier "not landing" was the pre-existing transport flakiness, not this
+  feature.
+- **Rapid two-device LWW race** (near-simultaneous renames on two devices →
+  strictly-latest wins everywhere): not yet exercised behaviorally; the
+  independent per-slot timestamp guards were verified by review. Low residual
+  risk.
 - **Static confidence:** three independent code reviews (delivery-safety, LWW
   correctness, regressions) found no delivery risk and two minor bugs, both
   fixed (desktop optimistic-cache override wipe; mobile stale-message drop
