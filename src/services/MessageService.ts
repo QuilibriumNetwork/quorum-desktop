@@ -118,7 +118,8 @@ export interface MessageServiceDependencies {
 // are stale — desktop's P2P transport has no per-space inbox to acknowledge.
 // That cleanup step belongs to the future hub-log migration, at the transport
 // layer, not here. See project docs / the two-slot task file.
-function applyProfileUpdate(
+// Exported for unit testing (pure logic, no dependencies).
+export function applyProfileUpdate(
   participant: SpaceMemberRow,
   content: UpdateProfileMessage,
   createdDate: number
