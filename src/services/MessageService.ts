@@ -104,6 +104,28 @@ export interface MessageServiceDependencies {
   handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 }
 
+// Two-slot design (see identity-resolution-and-profile-sync doc): copy the
+// sender's GLOBAL identity fields from an update-profile message onto a member
+// row, stored separately from the per-space override fields
+// (display_name/user_icon/bio). Presence semantics: omitted = no change,
+// '' = deliberate global clear. Read untyped — global* are additive to the
+// shared UpdateProfileMessage (additive shared PR pending, non-blocking).
+function applyGlobalProfileSlots(participant: object, content: unknown): void {
+  const c = content as {
+    globalDisplayName?: string;
+    globalUserIcon?: string;
+    globalBio?: string;
+  };
+  const p = participant as {
+    global_display_name?: string;
+    global_user_icon?: string;
+    global_bio?: string;
+  };
+  if (c.globalDisplayName !== undefined) p.global_display_name = c.globalDisplayName;
+  if (c.globalUserIcon !== undefined) p.global_user_icon = c.globalUserIcon;
+  if (c.globalBio !== undefined) p.global_bio = c.globalBio;
+}
+
 export class MessageService {
   private messageDB: MessageDB;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
@@ -573,35 +595,59 @@ export class MessageService {
       ? { ...currentTag, spaceId: space.spaceId }
       : undefined;
 
-    // 7. Read display name + icon + bio from config
-    const displayName = config.name ?? '';
-    const userIcon = config.profile_image ?? DefaultImages.UNKNOWN_USER;
-    const bio = config.bio;
-
-    // 8. Broadcast update-profile to all spaces
+    // 7. Broadcast update-profile to all spaces
     const allSpaces = await this.messageDB.getSpaces();
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
 
       for (const s of allSpaces) {
         try {
+          // Per-space profile follows the sender's global value unless a
+          // deliberate OVERRIDE was set in this space. The stored member
+          // row carries an override iff its field is a non-empty value;
+          // empty/absent = follow global. We must NOT stamp the global
+          // config value as a per-space field (that froze the space to a
+          // stale global and broke "clear the override" — the bug this
+          // whole effort removes). So: send the per-space override if one
+          // exists, else OMIT the field so receivers fall back to the
+          // sender's global (public-profile) value via the render fallback.
+          // (See per-space-profile-empty-follows-global design.)
+          const ownMember = await this.messageDB.getSpaceMember(
+            s.spaceId,
+            selfAddress
+          );
+          const nameOverride = ownMember?.display_name || undefined;
+          // Member avatar lives on `user_icon` (typed UserProfile field);
+          // some rows also carry `profile_image` from other write paths, so
+          // read both defensively (mirrors the fallback at line ~4479).
+          const iconOverride =
+            ownMember?.user_icon ||
+            (ownMember as { profile_image?: string })?.profile_image ||
+            undefined;
+          const bioOverride = ownMember?.bio || undefined;
+
           const nonce = crypto.randomUUID();
-          const updateProfileMessage: UpdateProfileMessage = {
+          // Current GLOBAL identity from config — carried in the global* slots
+          // so members who missed the global save learn it on our tag-rotation
+          // rebroadcast. Separate from the override fields. (Two-slot design.)
+          const globalName = config.name || undefined;
+          const globalIcon = config.profile_image || undefined;
+          const globalBioVal = config.bio || undefined;
+          const updateProfileMessage = {
             type: 'update-profile',
-            displayName,
-            userIcon,
             senderId: selfAddress,
-            // Carry the global bio along on tag-rotation rebroadcasts so
-            // receivers who joined after the user last edited still pick
-            // it up. Only included when the user has a bio set —
-            // omitting it lets each receiver keep whatever bio it already
-            // has (the receive-side upsert merge treats absent fields as
-            // "no change"). An explicit empty-string bio here would
-            // instead CLEAR the receiver's stored bio, which is the
-            // wrong semantic for an incidental tag-rotation event.
-            ...(bio ? { bio } : {}),
+            // Omit any field with no per-space override — the receiver's
+            // upsert merge treats absent fields as "no change" and its
+            // render fallback surfaces the sender's global value. Only a
+            // real per-space override goes on the wire.
+            ...(nameOverride !== undefined ? { displayName: nameOverride } : {}),
+            ...(iconOverride !== undefined ? { userIcon: iconOverride } : {}),
+            ...(bioOverride !== undefined ? { bio: bioOverride } : {}),
+            ...(globalName !== undefined ? { globalDisplayName: globalName } : {}),
+            ...(globalIcon !== undefined ? { globalUserIcon: globalIcon } : {}),
+            ...(globalBioVal !== undefined ? { globalBio: globalBioVal } : {}),
             ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
-          };
+          } as UpdateProfileMessage;
 
           const messageId = await crypto.subtle.digest(
             'SHA-256',
@@ -1357,6 +1403,11 @@ export class MessageService {
       if (decryptedContent.content.bio !== undefined) {
         participant.bio = decryptedContent.content.bio;
       }
+      // GLOBAL identity slots (two-slot design — see identity-resolution doc).
+      // Stored separately from the override fields above so the sender's global
+      // rename reaches spacemates without being mistaken for a per-space
+      // override. Read untyped: additive to the shared UpdateProfileMessage.
+      applyGlobalProfileSlots(participant, decryptedContent.content);
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -1917,6 +1968,9 @@ export class MessageService {
       if (decryptedContent.content.bio !== undefined) {
         participant.bio = decryptedContent.content.bio;
       }
+      // GLOBAL identity slots (two-slot design) — stored separately from the
+      // override fields above. See identity-resolution doc.
+      applyGlobalProfileSlots(participant, decryptedContent.content);
       participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
@@ -5295,24 +5349,35 @@ export class MessageService {
           currentPasskeyInfo.address
         );
         if (participant) {
-          participant.display_name = updateProfileMessage.displayName;
-          participant.user_icon = updateProfileMessage.userIcon;
-          participant.spaceTag = updateProfileMessage.spaceTag;
+          // Presence-checked: only apply OVERRIDE fields the message actually
+          // carries. A global-save message omits these (it uses the global*
+          // slots below), so an unconditional assignment would wipe a real
+          // per-space override with undefined. Matches the receive-side rule.
+          if (updateProfileMessage.displayName !== undefined) {
+            participant.display_name = updateProfileMessage.displayName;
+          }
+          if (updateProfileMessage.userIcon !== undefined) {
+            participant.user_icon = updateProfileMessage.userIcon;
+          }
+          if (updateProfileMessage.spaceTag !== undefined) {
+            participant.spaceTag = updateProfileMessage.spaceTag;
+          }
+          // Apply any global slots present (undefined for pure override edits).
+          applyGlobalProfileSlots(participant, updateProfileMessage);
           await this.messageDB.saveSpaceMember(spaceId, participant);
 
-          // Update query cache for immediate UI refresh
+          // Update query cache for immediate UI refresh. Use the already-merged
+          // `participant` (which the presence-checked writes above produced), NOT
+          // the raw message fields — spreading raw `updateProfileMessage.display_name`
+          // etc. would write `undefined` on a global-only save and briefly wipe the
+          // user's own per-space override in the UI until the next refetch.
           queryClient.setQueryData(
             buildSpaceMembersKey({ spaceId }),
             (oldData: secureChannel.UserProfile[]) => {
               if (!oldData) return oldData;
               return oldData.map((member) =>
                 member.user_address === currentPasskeyInfo.address
-                  ? {
-                      ...member,
-                      display_name: updateProfileMessage.displayName,
-                      user_icon: updateProfileMessage.userIcon,
-                      spaceTag: updateProfileMessage.spaceTag,
-                    }
+                  ? participant
                   : member
               );
             }

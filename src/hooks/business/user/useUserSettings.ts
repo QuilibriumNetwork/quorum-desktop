@@ -12,6 +12,8 @@ import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
 import { PublicProfileService } from '../../../services/PublicProfileService';
 import { QuorumApiClient } from '../../../api/baseTypes';
+import type { PublicProfileResponse } from '../../../api/baseTypes';
+import { publicProfileQueryKey } from './useUserPublicProfile';
 import { getDeviceName } from '../../../utils/deviceInfo';
 import { showError } from '../../../utils/toast';
 import { normalizePrivateKeyHex } from '../../../utils/privateKey';
@@ -395,6 +397,24 @@ export const useUserSettings = (
       buildConfigKey({ userAddress: currentPasskeyInfo.address }),
       newConfig
     );
+
+    // Refresh our own public-profile cache: non-overridden spaces render our
+    // name/avatar from it (1h staleTime), so a global change wouldn't reach
+    // already-rendered messages otherwise. Set optimistically; refetch only when
+    // public (a private profile 404s to null and would blank the value).
+    {
+      const key = publicProfileQueryKey(currentPasskeyInfo.address);
+      queryClient.setQueryData<PublicProfileResponse | null>(key, (prev) => ({
+        ...(prev ?? { signature: '' }),
+        display_name: displayName,
+        profile_image: profileImageUrl ?? '',
+        bio: isProfilePublic ? bio.trim() : (prev?.bio ?? ''),
+        timestamp: Date.now(),
+      }) as PublicProfileResponse);
+      if (isProfilePublic) {
+        void queryClient.invalidateQueries({ queryKey: key });
+      }
+    }
 
     // Public profile publish/unpublish: best-effort. The local
     // isProfilePublic setting is the source of truth — server publish

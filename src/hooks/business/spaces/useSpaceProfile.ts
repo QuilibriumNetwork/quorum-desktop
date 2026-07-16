@@ -6,6 +6,7 @@ import { DefaultImages } from '../../../utils';
 import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
+import type { UpdateProfileMessage } from '@quilibrium/quorum-shared';
 import { buildSpaceMembersKey } from '../../queries/spaceMembers/buildSpaceMembersKey';
 import { buildSpaceMembersFetcher } from '../../queries/spaceMembers/buildSpaceMembersFetcher';
 import { showError } from '../../../utils/toast';
@@ -220,24 +221,19 @@ export const useSpaceProfile = (
       return `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
     }
 
-    // Three-state per-space avatar (matches the avatar clear/absent/value
-    // design — see WebSocketContext/useMembersWithPublicProfileFallback):
-    //   - real image  -> show it
-    //   - '' (cleared) -> the user DELIBERATELY removed their per-space avatar,
-    //                     so show initials and do NOT fall back to the global
-    //                     avatar (a truthy check here wrongly resurrected it)
-    //   - undefined    -> no per-space override -> fall back to the global avatar
+    // Two-state per-space avatar (follow-global model — supersedes the earlier
+    // three-state '' = "cleared, show initials" concept):
+    //   - non-empty per-space value -> OVERRIDE -> show it
+    //   - '' or absent              -> follow global -> fall back to the
+    //                                  global avatar (there is no per-space
+    //                                  "blank"; only the global avatar can be
+    //                                  empty, and its absence flows here)
     const perSpaceIcon = currentMember?.user_icon;
-    if (perSpaceIcon !== undefined) {
-      // Explicit per-space value (including '' = cleared). Only a real,
-      // non-sentinel image is renderable; '' / sentinel -> default (initials).
-      if (perSpaceIcon && !perSpaceIcon.includes(DefaultImages.UNKNOWN_USER)) {
-        return perSpaceIcon;
-      }
-      return 'var(--unknown-icon)';
+    if (perSpaceIcon && !perSpaceIcon.includes(DefaultImages.UNKNOWN_USER)) {
+      return perSpaceIcon;
     }
 
-    // No per-space override at all -> fall back to global avatar
+    // No per-space override -> fall back to the global (public-profile) avatar
     if (
       currentPasskeyInfo?.pfpUrl &&
       !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)
@@ -305,9 +301,12 @@ export const useSpaceProfile = (
         throw new Error('Space not found');
       }
 
-      // Include a field only when changed (mirrors bio): omitted displayName =
-      // no change, empty = clear the per-space name. userIcon stays required by
-      // the type, so fall back to baseline (overwrite-with-same is harmless).
+      // Include a field ONLY when it changed. Two-state model: a per-space
+      // field is sent only when the user set/changed an OVERRIDE; omitting it
+      // means "no change / follow global". Do NOT send userIcon unconditionally
+      // (it previously fell back to baseline, re-stamping the global value into
+      // the per-space row on every save and faking an override). All three
+      // fields now behave identically: send on change, omit otherwise.
       await submitChannelMessage(
         spaceId,
         space.defaultChannelId,
@@ -317,9 +316,11 @@ export const useSpaceProfile = (
           ...(changed.displayName !== undefined
             ? { displayName: changed.displayName }
             : {}),
-          userIcon: changed.userIcon ?? baseline.userIcon,
+          ...(changed.userIcon !== undefined
+            ? { userIcon: changed.userIcon }
+            : {}),
           ...(changed.bio !== undefined ? { bio: changed.bio } : {}),
-        },
+        } as UpdateProfileMessage,
         queryClient,
         currentPasskeyInfo,
         undefined, // inReplyTo

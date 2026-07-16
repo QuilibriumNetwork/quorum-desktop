@@ -73,6 +73,15 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             // Per-space bio override; flows into UserProfile's "About"
             // section. Empty string means the user explicitly cleared it.
             bio: (curr as any).bio as string | undefined,
+            // Roster GLOBAL slots (two-slot design): the sender's current global
+            // identity, pushed separately from the per-space override fields.
+            // Consumed by the fallback resolver as the tier between override and
+            // public profile. See identity-resolution-and-profile-sync doc.
+            globalDisplayName: (curr as any).global_display_name as string | undefined,
+            globalUserIcon: (curr as any).global_user_icon?.includes(DefaultImages.UNKNOWN_USER)
+              ? undefined
+              : ((curr as any).global_user_icon as string | undefined),
+            globalBio: (curr as any).global_bio as string | undefined,
             isKicked: curr.isKicked || false,
             spaceTag: (curr as any).spaceTag as BroadcastSpaceTag | undefined,
             joinedAt: curr.joinedAt,
@@ -84,6 +93,9 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           userIcon?: string;
           displayName?: string;
           bio?: string;
+          globalDisplayName?: string;
+          globalUserIcon?: string;
+          globalBio?: string;
           isKicked?: boolean;
           spaceTag?: BroadcastSpaceTag;
           joinedAt?: number;

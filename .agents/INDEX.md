@@ -35,6 +35,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels](docs/features/dropdown-panels.md)
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
+- [Identity resolution and profile sync (canonical model)](docs/features/identity-resolution-and-profile-sync.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Mention Pills UI System](docs/features/mention-pills-ui-system.md)
 - [Message Search Feature](docs/features/search-feature.md)
@@ -199,6 +200,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
+- [update-profile receive: add per-slot staleness guard (parity with mobile)](tasks/2026-07-16-update-profile-receive-per-slot-timestamp-guard.md)
+- [quorum-shared: type the two-slot global identity fields (retire casts)](tasks/2026-07-16-quorum-shared-type-two-slot-global-identity-fields.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
