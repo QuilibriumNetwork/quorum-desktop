@@ -206,6 +206,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
 - [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
 - [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
+- [DM dead-session auto-heal via missing delivery receipts](tasks/2026-07-17-dm-dead-session-autoheal.md)
 - [DM dedupe-before-decrypt — deferred, measure first](tasks/2026-07-17-dm-dedupe-before-decrypt.md)
 
 ### .Archived
