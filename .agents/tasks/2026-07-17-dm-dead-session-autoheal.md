@@ -32,7 +32,16 @@ Delivery receipts. Sender-side rules:
 - **Dead direction:** N consecutive messages (e.g. 3) with no delivery-ack within a window
   (e.g. 120s) → the direction is dead (session desync or listen gap).
 
-HARD LIMITATION: if delivery receipts are disabled for a conversation, the detection signal does not exist — auto-heal is blind there and must no-op. The clean long-term fix is a PROTOCOL-level transport ack, always on but never user-visible, separate from the privacy-facing receipt feature (how Signal/WhatsApp separate the two) — a lead-dev protocol decision, out of scope here. Other caveats: counterparty
+HARD LIMITATION: if delivery receipts are disabled for a conversation, the detection signal
+does not exist — auto-heal is blind there and must no-op. A PROTOCOL-level transport ack
+(always on, never user-visible — the Signal/WhatsApp model, where only READ receipts are
+optional) would fix reliability but is a REAL PRIVACY TRADE-OFF, not a clean win: even an
+invisible ack reveals device reachability/presence to the counterparty (a contact can send
+messages just to watch when acks return, mapping the user's online pattern), defeating the
+deliberate Quorum stance that a user with receipts off sends NOTHING back. That stance is
+STRONGER than Signal's and consistent with the metadata-minimizing ethos — do not trade it
+away casually. Lead-dev decision; the principled default is: acks stay fully optional and
+the reliability machinery honestly degrades to no-op when they are off. Other caveats: counterparty
 genuinely offline must not trigger (no acks at all + no incoming traffic = ambiguous, do
 nothing); debounce across reconnects.
 
