@@ -207,7 +207,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
 - [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
 - [DM dedupe-before-decrypt — deferred, measure first](tasks/2026-07-17-dm-dedupe-before-decrypt.md)
-- [quorum-shared: add KeyedMutex util + desktop import swap](tasks/2026-07-17-quorum-shared-add-keyedmutex.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "quorum-shared: add KeyedMutex util (per-key FIFO async lock) + desktop import swap"
-status: pending — start AFTER the fix/dm-ratchet-serialization desktop PR merges
+status: DONE 2026-07-17 — shared PR #59 (KeyedMutex) + #60 (bump to 2.1.0-35) merged; desktop swapped to the shared export in PR #237. Remaining: npm publish of 2.1.0-35+ so mobile can consume (tracked in the mobile task).
 created: 2026-07-17
 related:
   - ".agents/docs/dm-ratchet-upstream-divergences.md (justification doc for the lead dev)"
@@ -39,4 +39,4 @@ implementation in shared prevents drift and gives mobile a ready-made primitive.
   do not block the DM fix on the shared release cycle.
 
 ---
-*Created: 2026-07-17*
+*Created: 2026-07-17 — Last updated: 2026-07-17*
