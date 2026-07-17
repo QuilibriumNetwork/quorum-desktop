@@ -827,10 +827,15 @@ export class MessageService {
     // state fork the ratchet (the losing save is silently erased and the
     // peer can no longer derive keys for the erased branch → aead::Error
     // on every subsequent frame). Serialize per conversation. Delivery is
-    // awaited OUTSIDE the lock: the outbound queue only drains while the
-    // socket is open, and holding the lock across an offline period would
-    // block all ratchet operations for this conversation.
-    const sent = await dmRatchetMutex.runExclusive(conversationId, async () => {
+    // awaited OUTSIDE the lock: the sendDirectMessages promise only resolves
+    // when the outbound queue hands the frames to an OPEN socket, and the
+    // outbound queue also runs submitMessage callbacks that take this same
+    // lock — holding the lock until delivery is a circular wait (observed
+    // live 2026-07-17: both directions stuck at "Sending…"). The promise is
+    // returned WRAPPED IN AN OBJECT because an async callback returning a
+    // bare promise is auto-flattened: runExclusive would then not release
+    // the lock until delivery, recreating the deadlock.
+    const { sent } = await dmRatchetMutex.runExclusive(conversationId, async () => {
       // Get encryption states - these contain all the inbox info we need for established sessions
       const response = await this.messageDB.getEncryptionStates({
         conversationId,
@@ -916,10 +921,10 @@ export class MessageService {
         );
       }
 
-      // Enqueue synchronously inside the lock so frames enter the outbound
-      // queue in ratchet order; the returned promise (resolved when the
-      // frames are handed to the socket) is awaited after the lock releases.
-      return this.sendDirectMessages(outboundMessages);
+      // sendDirectMessages enqueues synchronously (its Promise executor runs
+      // before it returns), so calling it here keeps frames in ratchet order
+      // while the object wrapper lets the lock release before delivery.
+      return { sent: this.sendDirectMessages(outboundMessages) };
     });
     await sent;
   }

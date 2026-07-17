@@ -864,6 +864,82 @@ describe('MessageService - Unit Tests', () => {
       // saved state, never the snapshot the first send started from.
       expect(events).toEqual(['read:v0', 'save:v1', 'read:v1', 'save:v2']);
     });
+
+    // Regression test for the live deadlock of 2026-07-17: the lock must be
+    // released once the advanced state is saved and the frames are enqueued —
+    // NOT held until the outbound queue delivers them. Holding it until
+    // delivery is a circular wait (outbound callbacks themselves take this
+    // lock), observed live as both directions stuck at "Sending…". The
+    // subtle trap: an async lock callback returning the delivery promise
+    // gets auto-flattened, silently extending the critical section.
+    it('releases the lock after save+enqueue even when the outbound queue never drains', async () => {
+      // Simulate a stalled socket: callbacks are queued but never executed.
+      const queuedCallbacks: Array<() => Promise<string[]>> = [];
+      mockDeps.enqueueOutbound = vi
+        .fn()
+        .mockImplementation((fn: () => Promise<string[]>) => {
+          queuedCallbacks.push(fn);
+        });
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          state: JSON.stringify({
+            tag: 'partner-inbox',
+            sending_inbox: {
+              inbox_public_key: 'some-pubkey',
+              inbox_address: 'partner-inbox',
+            },
+            receiving_inbox: { inbox_address: 'recv-inbox' },
+            ratchet_state: '{}',
+          }),
+          inboxId: 'partner-inbox',
+          conversationId: 'partner-address/partner-address',
+        },
+      ]);
+      mockDeps.messageDB.saveEncryptionState = vi.fn().mockResolvedValue(undefined);
+
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+      const fakeSession = {
+        ratchet_state: 'advanced',
+        receiving_inbox: { inbox_address: 'recv-inbox' },
+        sending_inbox: { inbox_address: 'partner-inbox' },
+        tag: 'partner-inbox',
+        sent_accept: true,
+        sealed_message: {},
+      };
+      (channel.DoubleRatchetInboxEncrypt as ReturnType<typeof vi.fn>)
+        .mockReturnValueOnce([fakeSession])
+        .mockReturnValueOnce([fakeSession]);
+
+      messageService = new MessageService(mockDeps);
+      const keyset = {
+        deviceKeyset: { inbox_keyset: { inbox_address: 'self-inbox-addr' } },
+        userKeyset: {},
+      } as any;
+
+      // Both sends pend on delivery (queue never drains) — that's expected.
+      // What must NOT happen: the first send's lock blocking the second send
+      // from reaching its own encrypt+save.
+      const first = messageService.encryptAndSendDm(
+        'partner-address',
+        { type: 'post', text: 'one' },
+        'self-address',
+        keyset
+      );
+      const second = messageService.encryptAndSendDm(
+        'partner-address',
+        { type: 'post', text: 'two' },
+        'self-address',
+        keyset
+      );
+
+      await vi.waitFor(() => {
+        expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalledTimes(2);
+      });
+
+      // Cleanup: drain the queue so both promises settle before test end.
+      for (const cb of queuedCallbacks) await cb();
+      await Promise.all([first, second]);
+    });
   });
 
   describe('7. sendEphemeralSpaceControl() - Typing Indicator (Space)', () => {
