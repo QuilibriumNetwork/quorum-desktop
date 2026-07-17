@@ -9,6 +9,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
+- [DM Double Ratchet fixes — divergences from the original upstream implementation](docs/dm-ratchet-upstream-divergences.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
@@ -123,7 +124,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
-- [DM message delivery is unreliable (master report)](bugs/2026-07-02-dm-message-delivery-unreliable-master.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -166,6 +166,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/.solved/2026-06-07-space-profile-save-missing-inbox.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [Composer flattens multi-line paste into a single line](bugs/.solved/2026-06-25-composer-paste-strips-newlines.md)
+- [DM message delivery is unreliable (master report — RESOLVED: session destruction + unserialized ratchet state)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
+- [DM decrypt failure destroys the whole session (Fix 1 spec, PR #235)](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
+- [DM frames drop with aead::Error (Fix 2: per-conversation ratchet serialization)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -203,6 +206,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
 - [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
 - [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
+- [DM dedupe-before-decrypt — deferred, measure first](tasks/2026-07-17-dm-dedupe-before-decrypt.md)
+- [quorum-shared: add KeyedMutex util + desktop import swap](tasks/2026-07-17-quorum-shared-add-keyedmutex.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)

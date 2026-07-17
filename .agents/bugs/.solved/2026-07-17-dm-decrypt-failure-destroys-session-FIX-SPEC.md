@@ -1,12 +1,12 @@
 ---
 type: bug
 title: "DM decrypt failure destroys the whole session (root cause of 6-month delivery bug) — FIX SPEC"
-status: SHIPPED 2026-07-17 (branch fix/dm-decrypt-failure-preserve-session). Fix 1 done — session no longer destroyed on decrypt failure, confirmed live (conversation survived decrypt failures that previously killed it). Remaining: individual frames still fail to decrypt (aead::Error) and drop — tracked in 2026-07-17-dm-aead-error-frame-drops.md (Fix 2+).
+status: SHIPPED 2026-07-17 (branch fix/dm-decrypt-failure-preserve-session). Fix 1 done — session no longer destroyed on decrypt failure, confirmed live (conversation survived decrypt failures that previously killed it). Follow-up (aead::Error frame drops) SOLVED 2026-07-17 — see .solved/2026-07-17-dm-aead-error-frame-drops.md (ratchet state serialization).
 created: 2026-07-17
 severity: high
 repo: quorum-desktop (mobile has the same disease — see cross-platform note)
 area: DM delivery / Double Ratchet / MessageService receive pipeline
-supersedes-as-actionable: ".agents/bugs/2026-07-02-dm-message-delivery-unreliable-master.md (the full 6-month diagnosis archive; read it for evidence, work from THIS doc for the fix)"
+supersedes-as-actionable: ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (the full 6-month diagnosis archive; read it for evidence, work from THIS doc for the fix)"
 related:
   - ".agents/tasks/2026-07-17-dm-session-reset-and-delivery-fix-plan.md (button shipped PR #234; systemic proposal)"
 ---
@@ -107,9 +107,10 @@ directly observable without deep log reading — messages simply keep landing.
 
 ## Cross-platform note
 
-Mobile has the identical destroy-on-failure behavior (its Reset Session button is the proof the
-team has met this). Fixes 1-4 are transport-agnostic receive logic and apply conceptually to
-mobile too; propose to lead-dev after Fix 1 is validated on desktop.
+CORRECTION (verified in mobile code 2026-07-17): mobile does NOT have the destroy-on-failure
+behavior — its decrypt failure returns null / throws WITHOUT persisting state, so Fix 1 needs
+no mobile port. Mobile shares only the serialization gap (Fix 2 family) — see
+quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md.
 
 ---
-*Created: 2026-07-17*
+*Created: 2026-07-17 — Last updated: 2026-07-17*

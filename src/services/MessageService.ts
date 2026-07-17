@@ -62,6 +62,7 @@ import type { ActionQueueService } from './ActionQueueService';
 import type { ReceiptService, ReceiptEnvelopeFields } from '@quilibrium/quorum-shared';
 import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
+import { dmRatchetMutex } from '../utils/keyedMutex';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
@@ -821,93 +822,111 @@ export class MessageService {
   ): Promise<void> {
     const conversationId = address + '/' + address;
 
-    // Get encryption states - these contain all the inbox info we need for established sessions
-    const response = await this.messageDB.getEncryptionStates({
-      conversationId,
+    // The read-state → encrypt → save-state sequence below is a Double
+    // Ratchet critical section: two concurrent callers reading the same
+    // state fork the ratchet (the losing save is silently erased and the
+    // peer can no longer derive keys for the erased branch → aead::Error
+    // on every subsequent frame). Serialize per conversation. Delivery is
+    // awaited OUTSIDE the lock: the sendDirectMessages promise only resolves
+    // when the outbound queue hands the frames to an OPEN socket, and the
+    // outbound queue also runs submitMessage callbacks that take this same
+    // lock — holding the lock until delivery is a circular wait (observed
+    // live 2026-07-17: both directions stuck at "Sending…"). The promise is
+    // returned WRAPPED IN AN OBJECT because an async callback returning a
+    // bare promise is auto-flattened: runExclusive would then not release
+    // the lock until delivery, recreating the deadlock.
+    const { sent } = await dmRatchetMutex.runExclusive(conversationId, async () => {
+      // Get encryption states - these contain all the inbox info we need for established sessions
+      const response = await this.messageDB.getEncryptionStates({
+        conversationId,
+      });
+      const sets = response.map((e) => JSON.parse(e.state));
+
+      // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
+      const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
+
+      let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+      // Get target inboxes from existing encryption states (excluding our own device)
+      const targetInboxes = sets
+        .map((s) => s.tag as string)
+        .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
+
+      // Validate we have recipients to send to
+      if (targetInboxes.length === 0) {
+        throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
+      }
+
+      // Encrypt for each inbox using existing encryption states (Double Ratchet)
+      for (const inbox of targetInboxes) {
+        const set = sets.find((s) => s.tag === inbox);
+        if (!set) {
+          continue; // Skip - no encryption state for this inbox
+        }
+
+        if (set.sending_inbox.inbox_public_key === '') {
+          const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+            keyset.deviceKeyset,
+            [set],
+            JSON.stringify(messageContent),
+            minimalSelf,
+            senderDisplayName,
+            senderUserIcon
+          );
+          sessions = [...sessions, ...newSessions];
+        } else {
+          const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+            keyset.deviceKeyset,
+            [set],
+            JSON.stringify(messageContent),
+            minimalSelf,
+            senderDisplayName,
+            senderUserIcon
+          );
+          sessions = [...sessions, ...newSessions];
+        }
+      }
+
+      // Save encryption states and collect messages to send
+      const outboundMessages: string[] = [];
+
+      for (const session of sessions) {
+        if (!session.receiving_inbox) {
+          continue;
+        }
+
+        const newEncryptionState = {
+          state: JSON.stringify({
+            ratchet_state: session.ratchet_state,
+            receiving_inbox: session.receiving_inbox,
+            tag: session.tag,
+            sending_inbox: session.sending_inbox,
+          } as secureChannel.DoubleRatchetStateAndInboxKeys),
+          timestamp: Date.now(),
+          inboxId: session.receiving_inbox.inbox_address,
+          conversationId: address + '/' + address,
+          sentAccept: session.sent_accept,
+        };
+        await this.messageDB.saveEncryptionState(newEncryptionState, true);
+
+        // Collect messages to send: listen subscription + direct message
+        outboundMessages.push(
+          JSON.stringify({
+            type: 'listen',
+            inbox_addresses: [session.receiving_inbox.inbox_address],
+          })
+        );
+        outboundMessages.push(
+          JSON.stringify({ type: 'direct', ...session.sealed_message })
+        );
+      }
+
+      // sendDirectMessages enqueues synchronously (its Promise executor runs
+      // before it returns), so calling it here keeps frames in ratchet order
+      // while the object wrapper lets the lock release before delivery.
+      return { sent: this.sendDirectMessages(outboundMessages) };
     });
-    const sets = response.map((e) => JSON.parse(e.state));
-
-    // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
-    const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
-
-    let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-
-    // Get target inboxes from existing encryption states (excluding our own device)
-    const targetInboxes = sets
-      .map((s) => s.tag as string)
-      .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
-
-    // Validate we have recipients to send to
-    if (targetInboxes.length === 0) {
-      throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
-    }
-
-    // Encrypt for each inbox using existing encryption states (Double Ratchet)
-    for (const inbox of targetInboxes) {
-      const set = sets.find((s) => s.tag === inbox);
-      if (!set) {
-        continue; // Skip - no encryption state for this inbox
-      }
-
-      if (set.sending_inbox.inbox_public_key === '') {
-        const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-          keyset.deviceKeyset,
-          [set],
-          JSON.stringify(messageContent),
-          minimalSelf,
-          senderDisplayName,
-          senderUserIcon
-        );
-        sessions = [...sessions, ...newSessions];
-      } else {
-        const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
-          keyset.deviceKeyset,
-          [set],
-          JSON.stringify(messageContent),
-          minimalSelf,
-          senderDisplayName,
-          senderUserIcon
-        );
-        sessions = [...sessions, ...newSessions];
-      }
-    }
-
-    // Save encryption states and collect messages to send
-    const outboundMessages: string[] = [];
-
-    for (const session of sessions) {
-      if (!session.receiving_inbox) {
-        continue;
-      }
-
-      const newEncryptionState = {
-        state: JSON.stringify({
-          ratchet_state: session.ratchet_state,
-          receiving_inbox: session.receiving_inbox,
-          tag: session.tag,
-          sending_inbox: session.sending_inbox,
-        } as secureChannel.DoubleRatchetStateAndInboxKeys),
-        timestamp: Date.now(),
-        inboxId: session.receiving_inbox.inbox_address,
-        conversationId: address + '/' + address,
-        sentAccept: session.sent_accept,
-      };
-      await this.messageDB.saveEncryptionState(newEncryptionState, true);
-
-      // Collect messages to send: listen subscription + direct message
-      outboundMessages.push(
-        JSON.stringify({
-          type: 'listen',
-          inbox_addresses: [session.receiving_inbox.inbox_address],
-        })
-      );
-      outboundMessages.push(
-        JSON.stringify({ type: 'direct', ...session.sealed_message })
-      );
-    }
-
-    // Send all messages via WebSocket
-    await this.sendDirectMessages(outboundMessages);
+    await sent;
   }
 
   /**
@@ -2533,117 +2552,121 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        let response = await this.messageDB.getEncryptionStates({
-          conversationId,
-        });
-        const inboxes = self.device_registrations
-          .map((d) => d.inbox_registration.inbox_address)
-          .concat(
-            counterparty.device_registrations.map(
-              (d) => d.inbox_registration.inbox_address
+        // Ratchet critical section: read state → encrypt → save. Serialized per
+        // conversation to prevent concurrent state forks (see dmRatchetMutex).
+        await dmRatchetMutex.runExclusive(conversationId, async () => {
+          let response = await this.messageDB.getEncryptionStates({
+            conversationId,
+          });
+          const inboxes = self.device_registrations
+            .map((d) => d.inbox_registration.inbox_address)
+            .concat(
+              counterparty.device_registrations.map(
+                (d) => d.inbox_registration.inbox_address
+              )
             )
-          )
-          .sort();
+            .sort();
 
-        for (const res of response) {
-          if (!inboxes.includes(JSON.parse(res.state).tag)) {
-            await this.messageDB.deleteEncryptionState(res);
+          for (const res of response) {
+            if (!inboxes.includes(JSON.parse(res.state).tag)) {
+              await this.messageDB.deleteEncryptionState(res);
+            }
           }
-        }
 
-        response = await this.messageDB.getEncryptionStates({ conversationId });
-        const sets = response.map((e) => JSON.parse(e.state));
+          response = await this.messageDB.getEncryptionStates({ conversationId });
+          const sets = response.map((e) => JSON.parse(e.state));
 
-        let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-        // Sign DM unless explicitly skipped
-        if (!skipSigning) {
-          try {
-            const sig = ch.js_sign_ed448(
-              Buffer.from(
-                new Uint8Array(keyset.userKeyset.user_key.private_key)
-              ).toString('base64'),
-              Buffer.from(messageId).toString('base64')
-            );
-            message.publicKey = Buffer.from(
-              new Uint8Array(keyset.userKeyset.user_key.public_key)
-            ).toString('hex');
-            message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
-              'hex'
-            );
-          } catch { /* Signature optional - continue without it */ }
-        }
+          let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+          // Sign DM unless explicitly skipped
+          if (!skipSigning) {
+            try {
+              const sig = ch.js_sign_ed448(
+                Buffer.from(
+                  new Uint8Array(keyset.userKeyset.user_key.private_key)
+                ).toString('base64'),
+                Buffer.from(messageId).toString('base64')
+              );
+              message.publicKey = Buffer.from(
+                new Uint8Array(keyset.userKeyset.user_key.public_key)
+              ).toString('hex');
+              message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+                'hex'
+              );
+            } catch { /* Signature optional - continue without it */ }
+          }
 
-        for (const inbox of inboxes.filter(
-          (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-        )) {
-          const set = sets.find((s) => s.tag === inbox);
-          if (set) {
-            if (set.sending_inbox.inbox_public_key === '') {
-              sessions = [
-                ...sessions,
-                ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-                  keyset.deviceKeyset,
-                  [set],
-                  JSON.stringify(message),
-                  self,
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
-                ),
-              ];
+          for (const inbox of inboxes.filter(
+            (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+          )) {
+            const set = sets.find((s) => s.tag === inbox);
+            if (set) {
+              if (set.sending_inbox.inbox_public_key === '') {
+                sessions = [
+                  ...sessions,
+                  ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                    keyset.deviceKeyset,
+                    [set],
+                    JSON.stringify(message),
+                    self,
+                    currentPasskeyInfo!.displayName,
+                    currentPasskeyInfo?.pfpUrl
+                  ),
+                ];
+              } else {
+                sessions = [
+                  ...sessions,
+                  ...secureChannel.DoubleRatchetInboxEncrypt(
+                    keyset.deviceKeyset,
+                    [set],
+                    JSON.stringify(message),
+                    self,
+                    currentPasskeyInfo!.displayName,
+                    currentPasskeyInfo?.pfpUrl
+                  ),
+                ];
+              }
             } else {
               sessions = [
                 ...sessions,
-                ...secureChannel.DoubleRatchetInboxEncrypt(
+                ...(await secureChannel.NewDoubleRatchetSenderSession(
                   keyset.deviceKeyset,
-                  [set],
+                  self.user_address,
+                  self.device_registrations
+                    .concat(counterparty.device_registrations)
+                    .find((d) => d.inbox_registration.inbox_address === inbox)!,
                   JSON.stringify(message),
-                  self,
                   currentPasskeyInfo!.displayName,
                   currentPasskeyInfo?.pfpUrl
-                ),
+                )),
               ];
             }
-          } else {
-            sessions = [
-              ...sessions,
-              ...(await secureChannel.NewDoubleRatchetSenderSession(
-                keyset.deviceKeyset,
-                self.user_address,
-                self.device_registrations
-                  .concat(counterparty.device_registrations)
-                  .find((d) => d.inbox_registration.inbox_address === inbox)!,
-                JSON.stringify(message),
-                currentPasskeyInfo!.displayName,
-                currentPasskeyInfo?.pfpUrl
-              )),
-            ];
           }
-        }
 
-        for (const session of sessions) {
-          const newEncryptionState: EncryptionState = {
-            state: JSON.stringify({
-              ratchet_state: session.ratchet_state,
-              receiving_inbox: session.receiving_inbox,
-              tag: session.tag,
-              sending_inbox: session.sending_inbox,
-            } as secureChannel.DoubleRatchetStateAndInboxKeys),
-            timestamp: Date.now(),
-            inboxId: session.receiving_inbox.inbox_address,
-            conversationId: address! + '/' + address!,
-            sentAccept: session.sent_accept,
-          };
-          await this.messageDB.saveEncryptionState(newEncryptionState, true);
-          outbounds.push(
-            JSON.stringify({
-              type: 'listen',
-              inbox_addresses: [session.receiving_inbox.inbox_address],
-            })
-          );
-          outbounds.push(
-            JSON.stringify({ type: 'direct', ...session.sealed_message })
-          );
-        }
+          for (const session of sessions) {
+            const newEncryptionState: EncryptionState = {
+              state: JSON.stringify({
+                ratchet_state: session.ratchet_state,
+                receiving_inbox: session.receiving_inbox,
+                tag: session.tag,
+                sending_inbox: session.sending_inbox,
+              } as secureChannel.DoubleRatchetStateAndInboxKeys),
+              timestamp: Date.now(),
+              inboxId: session.receiving_inbox.inbox_address,
+              conversationId: address! + '/' + address!,
+              sentAccept: session.sent_accept,
+            };
+            await this.messageDB.saveEncryptionState(newEncryptionState, true);
+            outbounds.push(
+              JSON.stringify({
+                type: 'listen',
+                inbox_addresses: [session.receiving_inbox.inbox_address],
+              })
+            );
+            outbounds.push(
+              JSON.stringify({ type: 'direct', ...session.sealed_message })
+            );
+          }
+        });
 
         await this.saveMessage(
           message,
@@ -2711,122 +2734,126 @@ export class MessageService {
       const conversation = await this.messageDB.getConversation({
         conversationId,
       });
-      let response = await this.messageDB.getEncryptionStates({
-        conversationId,
-      });
-      const inboxes = self.device_registrations
-        .map((d) => d.inbox_registration.inbox_address)
-        .concat(
-          counterparty.device_registrations.map(
-            (d) => d.inbox_registration.inbox_address
+      // Ratchet critical section: read state → encrypt → save. Serialized per
+      // conversation to prevent concurrent state forks (see dmRatchetMutex).
+      await dmRatchetMutex.runExclusive(conversationId, async () => {
+        let response = await this.messageDB.getEncryptionStates({
+          conversationId,
+        });
+        const inboxes = self.device_registrations
+          .map((d) => d.inbox_registration.inbox_address)
+          .concat(
+            counterparty.device_registrations.map(
+              (d) => d.inbox_registration.inbox_address
+            )
           )
-        )
-        .sort();
-      for (const res of response) {
-        if (!inboxes.includes(JSON.parse(res.state).tag)) {
-          await this.messageDB.deleteEncryptionState(res);
+          .sort();
+        for (const res of response) {
+          if (!inboxes.includes(JSON.parse(res.state).tag)) {
+            await this.messageDB.deleteEncryptionState(res);
+          }
         }
-      }
 
-      response = await this.messageDB.getEncryptionStates({ conversationId });
-      const sets = response.map((e) => JSON.parse(e.state));
+        response = await this.messageDB.getEncryptionStates({ conversationId });
+        const sets = response.map((e) => JSON.parse(e.state));
 
-      let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-      // Sign DM unless explicitly skipped (skip if already signed via preBuiltMessage)
-      if (!skipSigning && !preBuiltMessage) {
-        try {
-          const sig = ch.js_sign_ed448(
-            Buffer.from(
-              new Uint8Array(keyset.userKeyset.user_key.private_key)
-            ).toString('base64'),
-            Buffer.from(messageId).toString('base64')
-          );
-          message.publicKey = Buffer.from(
-            new Uint8Array(keyset.userKeyset.user_key.public_key)
-          ).toString('hex');
-          message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
-            'hex'
-          );
-        } catch { /* Signature optional - continue without it */ }
-      }
+        let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+        // Sign DM unless explicitly skipped (skip if already signed via preBuiltMessage)
+        if (!skipSigning && !preBuiltMessage) {
+          try {
+            const sig = ch.js_sign_ed448(
+              Buffer.from(
+                new Uint8Array(keyset.userKeyset.user_key.private_key)
+              ).toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            );
+            message.publicKey = Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.public_key)
+            ).toString('hex');
+            message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+              'hex'
+            );
+          } catch { /* Signature optional - continue without it */ }
+        }
 
-      // Piggyback pending delivery + read receipt acks on outgoing DM
-      this.attachPiggybackedAcks(address, message);
+        // Piggyback pending delivery + read receipt acks on outgoing DM
+        this.attachPiggybackedAcks(address, message);
 
-      for (const inbox of inboxes.filter(
-        (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-      )) {
-        const set = sets.find((s) => s.tag === inbox);
-        if (set) {
-          if (set.sending_inbox.inbox_public_key === '') {
-            sessions = [
-              ...sessions,
-              ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-                keyset.deviceKeyset,
-                [set],
-                JSON.stringify(message),
-                self,
-                currentPasskeyInfo!.displayName,
-                currentPasskeyInfo?.pfpUrl
-              ),
-            ];
+        for (const inbox of inboxes.filter(
+          (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+        )) {
+          const set = sets.find((s) => s.tag === inbox);
+          if (set) {
+            if (set.sending_inbox.inbox_public_key === '') {
+              sessions = [
+                ...sessions,
+                ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(message),
+                  self,
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                ),
+              ];
+            } else {
+              sessions = [
+                ...sessions,
+                ...secureChannel.DoubleRatchetInboxEncrypt(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(message),
+                  self,
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                ),
+              ];
+            }
           } else {
             sessions = [
               ...sessions,
-              ...secureChannel.DoubleRatchetInboxEncrypt(
+              ...(await secureChannel.NewDoubleRatchetSenderSession(
                 keyset.deviceKeyset,
-                [set],
+                self.user_address,
+                self.device_registrations
+                  .concat(counterparty.device_registrations)
+                  .find((d) => d.inbox_registration.inbox_address === inbox)!,
                 JSON.stringify(message),
-                self,
                 currentPasskeyInfo!.displayName,
                 currentPasskeyInfo?.pfpUrl
-              ),
+              )),
             ];
           }
-        } else {
-          sessions = [
-            ...sessions,
-            ...(await secureChannel.NewDoubleRatchetSenderSession(
-              keyset.deviceKeyset,
-              self.user_address,
-              self.device_registrations
-                .concat(counterparty.device_registrations)
-                .find((d) => d.inbox_registration.inbox_address === inbox)!,
-              JSON.stringify(message),
-              currentPasskeyInfo!.displayName,
-              currentPasskeyInfo?.pfpUrl
-            )),
-          ];
         }
-      }
 
-      // Strip piggybacked acks before persisting
-      this.stripPiggybackedAcks(message);
+        // Strip piggybacked acks before persisting
+        this.stripPiggybackedAcks(message);
 
-      for (const session of sessions) {
-        const newEncryptionState: EncryptionState = {
-          state: JSON.stringify({
-            ratchet_state: session.ratchet_state,
-            receiving_inbox: session.receiving_inbox,
-            tag: session.tag,
-            sending_inbox: session.sending_inbox,
-          } as secureChannel.DoubleRatchetStateAndInboxKeys),
-          timestamp: Date.now(),
-          inboxId: session.receiving_inbox.inbox_address,
-          conversationId: address! + '/' + address!,
-          sentAccept: session.sent_accept,
-        };
-        await this.messageDB.saveEncryptionState(newEncryptionState, true);
-        outbounds.push(
-          JSON.stringify({
-            type: 'listen',
-            inbox_addresses: [session.receiving_inbox.inbox_address],
-          })
-        );
-        outbounds.push(
-          JSON.stringify({ type: 'direct', ...session.sealed_message })
-        );
-      }
+        for (const session of sessions) {
+          const newEncryptionState: EncryptionState = {
+            state: JSON.stringify({
+              ratchet_state: session.ratchet_state,
+              receiving_inbox: session.receiving_inbox,
+              tag: session.tag,
+              sending_inbox: session.sending_inbox,
+            } as secureChannel.DoubleRatchetStateAndInboxKeys),
+            timestamp: Date.now(),
+            inboxId: session.receiving_inbox.inbox_address,
+            conversationId: address! + '/' + address!,
+            sentAccept: session.sent_accept,
+          };
+          await this.messageDB.saveEncryptionState(newEncryptionState, true);
+          outbounds.push(
+            JSON.stringify({
+              type: 'listen',
+              inbox_addresses: [session.receiving_inbox.inbox_address],
+            })
+          );
+          outbounds.push(
+            JSON.stringify({ type: 'direct', ...session.sealed_message })
+          );
+        }
+      });
 
       // do not save delete-conversation (control) messages
       if (
@@ -2944,27 +2971,41 @@ export class MessageService {
           return;
         }
 
-        const encryptionStates = await this.messageDB.getEncryptionStates({
-          conversationId,
-        });
-        const existing = encryptionStates.filter(
-          (e) => JSON.parse(e.state).tag == session.tag
-        );
-        for (const e of existing) {
-          await this.messageDB.deleteEncryptionState(e);
-        }
-
         const inbox_key = await secureChannel.NewInboxKeyset();
-        newState = JSON.stringify({
-          ratchet_state: session.state,
-          receiving_inbox: inbox_key,
-          tag: session.tag,
-          sending_inbox: {
-            inbox_address: session.return_inbox_address,
-            inbox_encryption_key: session.return_inbox_encryption_key,
-            inbox_public_key: session.return_inbox_public_key,
-            inbox_private_key: session.return_inbox_private_key,
-          },
+        // Ratchet critical section: replacing the session rows for this tag
+        // and persisting the new session must be atomic vs concurrent sends
+        // on the same conversation (see dmRatchetMutex).
+        await dmRatchetMutex.runExclusive(conversationId, async () => {
+          const encryptionStates = await this.messageDB.getEncryptionStates({
+            conversationId,
+          });
+          const existing = encryptionStates.filter(
+            (e) => JSON.parse(e.state).tag == session.tag
+          );
+          for (const e of existing) {
+            await this.messageDB.deleteEncryptionState(e);
+          }
+
+          newState = JSON.stringify({
+            ratchet_state: session.state,
+            receiving_inbox: inbox_key,
+            tag: session.tag,
+            sending_inbox: {
+              inbox_address: session.return_inbox_address,
+              inbox_encryption_key: session.return_inbox_encryption_key,
+              inbox_public_key: session.return_inbox_public_key,
+              inbox_private_key: session.return_inbox_private_key,
+            },
+          });
+          await this.messageDB.saveEncryptionState(
+            {
+              state: newState,
+              timestamp: message.timestamp,
+              inboxId: inbox_key.inbox_address,
+              conversationId: conversationId,
+            },
+            true
+          );
         });
         if (envelope.user_address != self_address) {
           updatedUserProfile = {
@@ -2983,14 +3024,7 @@ export class MessageService {
         });
 
         if (decryptedContent && newState) {
-          const newEncryptionState: EncryptionState = {
-            state: newState,
-            timestamp: message.timestamp,
-            inboxId: inbox_key.inbox_address,
-            conversationId: conversationId,
-          };
-
-          await this.messageDB.saveEncryptionState(newEncryptionState, true);
+          // Encryption state already persisted inside the locked section above.
 
           // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
           const userConfig = await this.messageDB.getUserConfig({ address: self_address });
@@ -3071,6 +3105,18 @@ export class MessageService {
     }
 
     if (!found) {
+      // No encryption state for this inbox — the frame cannot be decrypted
+      // and is dropped. Historically this branch was fully silent, which hid
+      // post-session-loss message losses across six months of debugging.
+      // Keep the delete (leaving the frame would redeliver it forever) but
+      // log loudly so the drop is visible in any debug session.
+      logger.warn(
+        '[MessageService] DM frame for unknown inbox — no encryption state, dropping unread',
+        {
+          inbox: message.inboxAddress?.slice(0, 12),
+          timestamp: message.timestamp,
+        }
+      );
       await this.deleteInboxMessages(
         keyset.deviceKeyset.inbox_keyset,
         [message.timestamp],
@@ -3092,108 +3138,168 @@ export class MessageService {
     let sentAccept: boolean | undefined;
     if (keys.sending_inbox) {
       // secureChannel.DoubleRatchetStateAndInboxKeys
-      if (keys.sending_inbox.inbox_public_key === '') {
-        try {
-          const result = await secureChannel.ConfirmDoubleRatchetSenderSession(
-            JSON.parse(found.state),
-            JSON.parse(message.encryptedContent)
-          );
-          decryptedContent = JSON.parse(result.message);
-          newState = JSON.stringify({
-            ratchet_state: result.ratchet_state,
-            receiving_inbox: result.receiving_inbox,
-            sending_inbox: result.sending_inbox,
-            tag: result.tag,
-          });
-          sentAccept = true;
-          if (result.user_profile.user_address != self_address) {
-            updatedUserProfile = result.user_profile;
-          }
-          if (decryptedContent?.content?.type === 'delete-conversation') {
-            await this.deleteEncryptionStates({ conversationId });
+      //
+      // Ratchet critical section — serialized per conversation (see
+      // dmRatchetMutex). Two invariants restored here:
+      // 1. The state is RE-READ inside the lock: `found` was fetched before
+      //    queuing for the lock, and a concurrent send (receipt, typing,
+      //    text) may have advanced and saved a newer state while this frame
+      //    waited. Decrypting from the stale snapshot forks the ratchet.
+      // 2. On success the advanced state is persisted IMMEDIATELY. The
+      //    Double Ratchet spec treats "accept plaintext + store state
+      //    changes" as one atomic step
+      //    (https://signal.org/docs/specifications/doubleratchet/). This
+      //    save previously happened at the tail of this handler, hundreds of
+      //    awaits later — a concurrent send could read the pre-decrypt state
+      //    and erase the receive advance on save (the state fork behind the
+      //    aead::Error frame drops).
+      const dm = await dmRatchetMutex.runExclusive(conversationId, async () => {
+        const freshStates = await this.messageDB.getEncryptionStates({
+          conversationId,
+        });
+        const fresh =
+          freshStates.find((s) => s.inboxId === message.inboxAddress) ?? found;
+        const freshKeys = JSON.parse(fresh.state);
+        if (freshKeys.sending_inbox.inbox_public_key === '') {
+          try {
+            const result =
+              await secureChannel.ConfirmDoubleRatchetSenderSession(
+                JSON.parse(fresh.state),
+                JSON.parse(message.encryptedContent)
+              );
+            const content = JSON.parse(result.message);
+            if (content?.content?.type === 'delete-conversation') {
+              await this.deleteEncryptionStates({ conversationId });
+              await this.deleteInboxMessages(
+                freshKeys.receiving_inbox,
+                [message.timestamp],
+                this.apiClient
+              );
+              return { outcome: 'handled' as const };
+            }
+            await this.messageDB.saveEncryptionState(
+              {
+                state: JSON.stringify({
+                  ratchet_state: result.ratchet_state,
+                  receiving_inbox: result.receiving_inbox,
+                  sending_inbox: result.sending_inbox,
+                  tag: result.tag,
+                }),
+                timestamp: message.timestamp,
+                inboxId: fresh.inboxId,
+                sentAccept: true,
+                conversationId,
+              },
+              true
+            );
+            return {
+              outcome: 'ok' as const,
+              content,
+              sentAccept: true,
+              updatedUserProfile:
+                result.user_profile.user_address != self_address
+                  ? result.user_profile
+                  : undefined,
+            };
+          } catch (decryptError) {
+            // Double Ratchet spec: on a decrypt/authentication failure, discard the
+            // message but LEAVE the session state untouched — a single bad/duplicate/
+            // out-of-order frame does not mean the session is broken, and later frames
+            // decrypt fine. Destroying the session here was the root cause of the
+            // long-standing "DM direction goes permanently dead" bug: the sender kept
+            // encrypting to a session the receiver had torn down.
+            // (https://signal.org/docs/specifications/doubleratchet/)
+            logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
             await this.deleteInboxMessages(
-              keys.receiving_inbox,
+              freshKeys.receiving_inbox,
               [message.timestamp],
               this.apiClient
             );
-            return;
+            return { outcome: 'handled' as const };
           }
-        } catch (decryptError) {
-          // Double Ratchet spec: on a decrypt/authentication failure, discard the
-          // message but LEAVE the session state untouched — a single bad/duplicate/
-          // out-of-order frame does not mean the session is broken, and later frames
-          // decrypt fine. Destroying the session here was the root cause of the
-          // long-standing "DM direction goes permanently dead" bug: the sender kept
-          // encrypting to a session the receiver had torn down.
-          // (https://signal.org/docs/specifications/doubleratchet/)
-          logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
-          await this.deleteInboxMessages(
-            keys.receiving_inbox,
-            [message.timestamp],
-            this.apiClient
-          );
-          return;
-        }
-      } else {
-        try {
-          const result = await secureChannel.DoubleRatchetInboxDecrypt(
-            JSON.parse(found.state),
-            JSON.parse(message.encryptedContent)
-          );
-          const maybeInit = result as {
-            receiving_inbox: secureChannel.InboxKeyset;
-            user_profile: secureChannel.UserProfile;
-            tag: any;
-            sending_inbox: secureChannel.SendingInbox;
-            ratchet_state: string;
-            message: string;
-          };
+        } else {
+          try {
+            const result = await secureChannel.DoubleRatchetInboxDecrypt(
+              JSON.parse(fresh.state),
+              JSON.parse(message.encryptedContent)
+            );
+            const maybeInit = result as {
+              receiving_inbox: secureChannel.InboxKeyset;
+              user_profile: secureChannel.UserProfile;
+              tag: any;
+              sending_inbox: secureChannel.SendingInbox;
+              ratchet_state: string;
+              message: string;
+            };
 
-          if (maybeInit.user_profile) {
-            newState = JSON.stringify({
-              ratchet_state: maybeInit.ratchet_state,
-              receiving_inbox: maybeInit.receiving_inbox,
-              sending_inbox: maybeInit.sending_inbox,
-              tag: maybeInit.tag,
-            });
-          } else {
-            newState = JSON.stringify({
-              ratchet_state: result.ratchet_state,
-              receiving_inbox: keys.receiving_inbox,
-              sending_inbox: keys.sending_inbox,
-              tag: keys.tag,
-            });
-          }
-          decryptedContent = JSON.parse(result.message);
-          sentAccept = found.sentAccept;
-          if (
-            (decryptedContent as any)?.content?.type === 'delete-conversation'
-          ) {
-            await this.deleteEncryptionStates({ conversationId });
+            let advancedState: string;
+            if (maybeInit.user_profile) {
+              advancedState = JSON.stringify({
+                ratchet_state: maybeInit.ratchet_state,
+                receiving_inbox: maybeInit.receiving_inbox,
+                sending_inbox: maybeInit.sending_inbox,
+                tag: maybeInit.tag,
+              });
+            } else {
+              advancedState = JSON.stringify({
+                ratchet_state: result.ratchet_state,
+                receiving_inbox: freshKeys.receiving_inbox,
+                sending_inbox: freshKeys.sending_inbox,
+                tag: freshKeys.tag,
+              });
+            }
+            const content = JSON.parse(result.message);
+            if (content?.content?.type === 'delete-conversation') {
+              await this.deleteEncryptionStates({ conversationId });
+              await this.deleteInboxMessages(
+                freshKeys.receiving_inbox,
+                [message.timestamp],
+                this.apiClient
+              );
+              return { outcome: 'handled' as const };
+            }
+            await this.messageDB.saveEncryptionState(
+              {
+                state: advancedState,
+                timestamp: message.timestamp,
+                inboxId: fresh.inboxId,
+                sentAccept: fresh.sentAccept,
+                conversationId,
+              },
+              true
+            );
+            return {
+              outcome: 'ok' as const,
+              content,
+              sentAccept: fresh.sentAccept,
+              updatedUserProfile: undefined,
+            };
+          } catch (decryptError) {
+            // Double Ratchet spec: on a decrypt/authentication failure, discard the
+            // message but LEAVE the session state untouched — a single bad/duplicate/
+            // out-of-order frame does not mean the session is broken, and later frames
+            // decrypt fine. Destroying the session here was the root cause of the
+            // long-standing "DM direction goes permanently dead" bug: the sender kept
+            // encrypting to a session the receiver had torn down.
+            // (https://signal.org/docs/specifications/doubleratchet/)
+            logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
             await this.deleteInboxMessages(
-              keys.receiving_inbox,
+              freshKeys.receiving_inbox,
               [message.timestamp],
               this.apiClient
             );
-            return;
+            return { outcome: 'handled' as const };
           }
-        } catch (decryptError) {
-          // Double Ratchet spec: on a decrypt/authentication failure, discard the
-          // message but LEAVE the session state untouched — a single bad/duplicate/
-          // out-of-order frame does not mean the session is broken, and later frames
-          // decrypt fine. Destroying the session here was the root cause of the
-          // long-standing "DM direction goes permanently dead" bug: the sender kept
-          // encrypting to a session the receiver had torn down.
-          // (https://signal.org/docs/specifications/doubleratchet/)
-          logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
-          await this.deleteInboxMessages(
-            keys.receiving_inbox,
-            [message.timestamp],
-            this.apiClient
-          );
-          return;
         }
+      });
+      if (dm.outcome !== 'ok') {
+        return;
       }
+      decryptedContent = dm.content;
+      sentAccept = dm.sentAccept;
+      updatedUserProfile = dm.updatedUserProfile;
+      // State already persisted inside the locked section — `newState` stays
+      // null so the deferred tail save (space path) does not run for DMs.
     } else {
       try {
         const spaceId = conversationId.split('/')[0];
@@ -5605,102 +5711,106 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        let response = await this.messageDB.getEncryptionStates({
-          conversationId,
-        });
-        const inboxes = self.device_registrations
-          .map((d) => d.inbox_registration.inbox_address)
-          .concat(
-            counterparty.device_registrations.map(
-              (d) => d.inbox_registration.inbox_address
-            )
-          )
-          .sort();
-        for (const res of response) {
-          if (!inboxes.includes(JSON.parse(res.state).tag)) {
-            await this.messageDB.deleteEncryptionState(res);
-          }
-        }
-
-        response = await this.messageDB.getEncryptionStates({ conversationId });
-        const sets = response.map((e) => JSON.parse(e.state));
-
-        let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-
-        // Strip ephemeral fields before encrypting
+        // Strip ephemeral fields before encrypting (declared outside the
+        // lock — also used by saveMessage after it)
         const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = failedMessage;
+        // Ratchet critical section: read state → encrypt → save. Serialized per
+        // conversation to prevent concurrent state forks (see dmRatchetMutex).
+        await dmRatchetMutex.runExclusive(conversationId, async () => {
+          let response = await this.messageDB.getEncryptionStates({
+            conversationId,
+          });
+          const inboxes = self.device_registrations
+            .map((d) => d.inbox_registration.inbox_address)
+            .concat(
+              counterparty.device_registrations.map(
+                (d) => d.inbox_registration.inbox_address
+              )
+            )
+            .sort();
+          for (const res of response) {
+            if (!inboxes.includes(JSON.parse(res.state).tag)) {
+              await this.messageDB.deleteEncryptionState(res);
+            }
+          }
 
-        for (const inbox of inboxes.filter(
-          (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-        )) {
-          const set = sets.find((s) => s.tag === inbox);
-          if (set) {
-            if (set.sending_inbox.inbox_public_key === '') {
-              sessions = [
-                ...sessions,
-                ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-                  keyset.deviceKeyset,
-                  [set],
-                  JSON.stringify(messageToEncrypt),
-                  self,
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
-                ),
-              ];
+          response = await this.messageDB.getEncryptionStates({ conversationId });
+          const sets = response.map((e) => JSON.parse(e.state));
+
+          let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+          for (const inbox of inboxes.filter(
+            (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+          )) {
+            const set = sets.find((s) => s.tag === inbox);
+            if (set) {
+              if (set.sending_inbox.inbox_public_key === '') {
+                sessions = [
+                  ...sessions,
+                  ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                    keyset.deviceKeyset,
+                    [set],
+                    JSON.stringify(messageToEncrypt),
+                    self,
+                    currentPasskeyInfo!.displayName,
+                    currentPasskeyInfo?.pfpUrl
+                  ),
+                ];
+              } else {
+                sessions = [
+                  ...sessions,
+                  ...secureChannel.DoubleRatchetInboxEncrypt(
+                    keyset.deviceKeyset,
+                    [set],
+                    JSON.stringify(messageToEncrypt),
+                    self,
+                    currentPasskeyInfo!.displayName,
+                    currentPasskeyInfo?.pfpUrl
+                  ),
+                ];
+              }
             } else {
               sessions = [
                 ...sessions,
-                ...secureChannel.DoubleRatchetInboxEncrypt(
+                ...(await secureChannel.NewDoubleRatchetSenderSession(
                   keyset.deviceKeyset,
-                  [set],
+                  self.user_address,
+                  self.device_registrations
+                    .concat(counterparty.device_registrations)
+                    .find((d) => d.inbox_registration.inbox_address === inbox)!,
                   JSON.stringify(messageToEncrypt),
-                  self,
                   currentPasskeyInfo!.displayName,
                   currentPasskeyInfo?.pfpUrl
-                ),
+                )),
               ];
             }
-          } else {
-            sessions = [
-              ...sessions,
-              ...(await secureChannel.NewDoubleRatchetSenderSession(
-                keyset.deviceKeyset,
-                self.user_address,
-                self.device_registrations
-                  .concat(counterparty.device_registrations)
-                  .find((d) => d.inbox_registration.inbox_address === inbox)!,
-                JSON.stringify(messageToEncrypt),
-                currentPasskeyInfo!.displayName,
-                currentPasskeyInfo?.pfpUrl
-              )),
-            ];
           }
-        }
 
-        for (const session of sessions) {
-          const newEncryptionState: EncryptionState = {
-            state: JSON.stringify({
-              ratchet_state: session.ratchet_state,
-              receiving_inbox: session.receiving_inbox,
-              tag: session.tag,
-              sending_inbox: session.sending_inbox,
-            } as secureChannel.DoubleRatchetStateAndInboxKeys),
-            timestamp: Date.now(),
-            inboxId: session.receiving_inbox.inbox_address,
-            conversationId: address + '/' + address,
-            sentAccept: session.sent_accept,
-          };
-          await this.messageDB.saveEncryptionState(newEncryptionState, true);
-          outbounds.push(
-            JSON.stringify({
-              type: 'listen',
-              inbox_addresses: [session.receiving_inbox.inbox_address],
-            })
-          );
-          outbounds.push(
-            JSON.stringify({ type: 'direct', ...session.sealed_message })
-          );
-        }
+          for (const session of sessions) {
+            const newEncryptionState: EncryptionState = {
+              state: JSON.stringify({
+                ratchet_state: session.ratchet_state,
+                receiving_inbox: session.receiving_inbox,
+                tag: session.tag,
+                sending_inbox: session.sending_inbox,
+              } as secureChannel.DoubleRatchetStateAndInboxKeys),
+              timestamp: Date.now(),
+              inboxId: session.receiving_inbox.inbox_address,
+              conversationId: address + '/' + address,
+              sentAccept: session.sent_accept,
+            };
+            await this.messageDB.saveEncryptionState(newEncryptionState, true);
+            outbounds.push(
+              JSON.stringify({
+                type: 'listen',
+                inbox_addresses: [session.receiving_inbox.inbox_address],
+              })
+            );
+            outbounds.push(
+              JSON.stringify({ type: 'direct', ...session.sealed_message })
+            );
+          }
+        });
 
         // Save to IndexedDB (without sendStatus/sendError)
         await this.saveMessage(

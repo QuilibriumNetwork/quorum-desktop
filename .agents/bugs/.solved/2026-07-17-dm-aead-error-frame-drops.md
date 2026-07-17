@@ -1,17 +1,61 @@
 ---
 type: bug
 title: "DM individual frames fail to decrypt (aead::Error) and drop — remaining half of the delivery bug"
-status: open — session-death half fixed & shipped 2026-07-17; this is the frame-generation half. Not yet root-caused. HAND-OFF doc for next session / more powerful model.
+status: SOLVED — LIVE-VERIFIED 2026-07-17 (branch fix/dm-ratchet-serialization). Root cause: UNSERIALIZED ratchet state read-modify-write across five writer paths; fixed with per-conversation mutex + immediate post-decrypt state save. Live test: 10 numbered messages per direction with receipts + typing ON, zero drops, zero stuck sends (old code reliably died at msg 3). Note: first fix iteration deadlocked (lock held until socket delivery via promise auto-flattening) — fixed in commit 2b64b84c; frames from a pre-reset session fail once with "skipping frame, keeping session" and drain harmlessly.
 created: 2026-07-17
 severity: high
-repo: quorum-desktop (mobile likely same)
+repo: quorum-desktop (mobile: shares the serialization gap only — no destroy-on-failure there; verified 2026-07-17)
 area: DM delivery / Double Ratchet / retry / dedupe
 related:
-  - ".agents/bugs/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED, stops session destruction)"
-  - ".agents/bugs/2026-07-02-dm-message-delivery-unreliable-master.md (full diagnosis archive)"
+  - ".agents/bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED, stops session destruction)"
+  - ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (full diagnosis archive)"
 ---
 
 # DM frames still drop with `aead::Error` (remaining half of the delivery bug)
+
+## VERDICT 2026-07-17 (independent code re-verification; supersedes the theories below)
+
+The dual-log conclusions below were re-verified against the code on `main`. Two corrections
+and one confirmation:
+
+1. **The head-of-line-block theory is NOT supported by the code.** The decrypt-failure catch
+   blocks DO delete the poison frame from the server inbox (`deleteInboxMessages` in both
+   catches), and the local inbound loop (`WebsocketProvider.processInbound`) catches handler
+   errors and CONTINUES to the next frame. Nothing in the pipeline lets one bad frame block
+   the frames behind it. The "same frame failing 5+ times" log signature is equally consistent
+   with *different* frames all failing identically — which is exactly what a forked session
+   produces (every subsequent frame from the forked sender fails at the same stack line).
+2. **The real mechanism: unserialized read-modify-write on the ratchet state.** Double Ratchet
+   state is strictly linear; five code paths did read-state → encrypt/decrypt → save-state with
+   no coordination:
+   - receive decrypt (`handleNewMessage` — read at top, save ~1,400 lines later; enormous window)
+   - text send / edit (`submitMessage` DM branch, in outbound-queue callbacks)
+   - retry (`retryDirectMessage`)
+   - receipt sends (`ActionQueueHandlers.sendReadAck`/`sendDeliveryAck` → `encryptAndSendDm`)
+   - typing indicators (`sendEphemeralDMControl` → `encryptAndSendDm`, fired on keystrokes)
+   Concurrent operations read the same snapshot; the losing save silently erases the winner's
+   ratchet advance → the peer can no longer derive keys for the erased branch → `aead::Error`
+   on subsequent frames. One collision that erases a DH-step/inbox-rotation forks the session
+   permanently ("msg 1 & 2 land, from msg 3 nothing lands").
+3. **Receipts confirmed as the amplifier, not the cause (answer (c)).** The two ack tasks do
+   NOT race each other (ActionQueue is strictly sequential) — the earlier "two acks interleave"
+   hypothesis was wrong in that detail. What receipts changed: every received message now fires
+   an encrypted send within milliseconds, precisely inside the receive handler's read-to-save
+   window. A race that previously needed coincidence (typing + send + receive overlapping,
+   two tabs) now had a trigger per message. Same single 6-month-old bug, made deterministic.
+
+**Fix (branch `fix/dm-ratchet-serialization`):** per-conversation FIFO mutex
+(`src/utils/keyedMutex.ts`, pure TS, extractable to quorum-shared) wrapped around all five
+critical sections; receive path re-reads state inside the lock and persists the advanced state
+immediately after successful decrypt (Double Ratchet spec: accept plaintext + store state is
+one atomic step); the silent unknown-inbox drop (`!found`) now logs. Regression test proves
+concurrent sends serialize (fails on the unserialized code). 432-test suite: no new failures.
+
+**Not fixed here (flag to lead dev):** two tabs on the same account still race (needs Web
+Locks API or single-instance enforcement); session reset (`deleteEncryptionStates`) is not
+under the lock (a reset racing an in-flight decrypt could resurrect a deleted row); mobile
+shares the unserialized pattern (verified 2026-07-17; it does NOT share destroy-on-failure)
+— see quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md.
 
 ## Read this first — what is and isn't fixed
 
@@ -145,4 +189,4 @@ those logs were removed from the tree but the tracing points are documented in g
 branch context; may share a root cause with the receipt-frame failures here.
 
 ---
-*Created: 2026-07-17*
+*Created: 2026-07-17 — Last updated: 2026-07-17*
