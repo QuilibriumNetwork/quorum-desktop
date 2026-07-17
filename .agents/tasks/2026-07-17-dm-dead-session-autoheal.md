@@ -1,7 +1,7 @@
 ---
 type: task
 title: "DM delivery auto-heal — detect via missing delivery receipts, resend / repair without manual reset"
-status: pending — highest-value follow-up after the three delivery fixes (PR #235, #236/#237, #238)
+status: pending, DOWNGRADED 2026-07-17 — original justification (silent session death) fixed by PR #238. Reassess after a 1-2 week normal-use soak: if sent-but-never-delivered messages (single grey check) basically never occur, archive this or shrink to the cheapest slice (manual resend affordance on stuck messages). Build the full automatic ladder only if real usage shows losses.
 created: 2026-07-17
 related:
   - ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (three-mechanism resolution; residual single-frame loss)"
@@ -32,7 +32,7 @@ Delivery receipts. Sender-side rules:
 - **Dead direction:** N consecutive messages (e.g. 3) with no delivery-ack within a window
   (e.g. 120s) → the direction is dead (session desync or listen gap).
 
-Caveats: receipts can be disabled per-conversation/user (degrade to no-op); counterparty
+HARD LIMITATION: if delivery receipts are disabled for a conversation, the detection signal does not exist — auto-heal is blind there and must no-op. The clean long-term fix is a PROTOCOL-level transport ack, always on but never user-visible, separate from the privacy-facing receipt feature (how Signal/WhatsApp separate the two) — a lead-dev protocol decision, out of scope here. Other caveats: counterparty
 genuinely offline must not trigger (no acks at all + no incoming traffic = ambiguous, do
 nothing); debounce across reconnects.
 
