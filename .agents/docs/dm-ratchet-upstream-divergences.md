@@ -115,6 +115,38 @@ advance.
 
 ---
 
+## Divergence 3 — stale init envelopes are refused instead of installed
+
+**Shipped:** branch `chore/dm-reset-signal-logging` (2026-07-17).
+
+**Original behavior:** an incoming initialization envelope (the "here is our new session"
+message that establishes or re-establishes a DM session) unconditionally replaced the
+receiver's existing session for that device tag, in complete silence.
+
+**New behavior:** an init envelope is installed only if it is strictly newer than the session
+rows it would replace. Concretely (`src/utils/initEnvelopeGuard.ts`, pure and unit-tested):
+an envelope whose timestamp exactly matches an existing row is a redelivery of an
+already-processed envelope and is refused; an envelope older than the newest existing row
+beyond a 2-minute clock-skew tolerance is refused. Refused envelopes are deleted from the
+server. Malformed envelopes with no resolvable sender address are also dropped. Every
+replacement, refusal, and reset signal is now logged at warning level.
+
+**Why this was necessary — this was the dominant cause of the 6-month delivery bug.** The
+server retains every inbox frame until the client explicitly deletes it, and those deletions
+can fail (`POST /inbox/delete` returning 502 was captured live). An undeleted init envelope
+is therefore redelivered on any reconnect — and *successfully re-processing* it replaced the
+receiver's CURRENT healthy session with a resurrected old one that the sender no longer
+holds. Captured live 2026-07-17: redelivered init envelopes up to 60 days old, replayed on
+every hard refresh, each silently killing the fresh session (receiver console completely
+silent afterward, because frames to the now-unknown inboxes never reach the app). This is
+why conversations kept dying minutes after every manual session reset: each reset planted
+the next mine. After the guard: hard refreshes no longer kill sessions, verified live.
+
+Note the security framing: the guard does not weaken session establishment — a genuine
+re-init always carries a timestamp newer than the rows it replaces, so legitimate resets are
+unaffected. It removes a replay hazard (old envelopes being honored) that the unconditional
+install created.
+
 ## Minor divergence — the `!found` branch now logs
 
 Frames addressed to an inbox with no encryption state were deleted unread with no log of any
@@ -135,17 +167,27 @@ its decrypt is an awaited native call between state read and write, and its deli
 receipts also ride the DM ratchet. MMKV's synchronous storage narrows the race window but
 does not remove it. Concrete proposal:
 
-1. Extract `KeyedMutex` to `quorum-shared` (additive-only) and serialize mobile's ratchet
-   operations the same way — tasks exist:
-   `quorum-desktop/.agents/tasks/2026-07-17-quorum-shared-add-keyedmutex.md` and
-   `quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md`.
+1. `KeyedMutex` is DONE in shared (#59, 2.1.0-35); mobile serializes its ratchet operations
+   per its task: `quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md`.
    The mobile task includes a recon item a JS mutex cannot cover: Android's
    `BackgroundMessageService` runs in a separate JS context; if it can decrypt the same
    inbox as the foreground app, that cross-context race needs a lead-dev-level decision.
-2. Optional hardening, desktop and mobile: dedupe-before-decrypt cache (redelivered frames
+2. **Divergence 3 on mobile (verified in mobile code 2026-07-17): partially protected by
+   design.** Mobile's init handling checks an ephemeral-key cache and tries the existing
+   session before falling through to fresh X3DH, so redelivery of the CURRENT session's
+   envelope cannot nuke it. An OLDER distinct envelope (from a previous reset epoch) that
+   fails existing-session decrypt and falls through to X3DH may still install a stale
+   session over a newer one — recon item in the mobile task. If confirmed,
+   `isStaleInitEnvelope` is pure and extractable to quorum-shared so both platforms share
+   the identical staleness rule.
+3. Optional hardening, desktop and mobile: dedupe-before-decrypt cache (redelivered frames
    currently fail AEAD harmlessly but noisily — deferred, see
-   `.agents/tasks/2026-07-17-dm-dedupe-before-decrypt.md`), and folding session reset
-   (`deleteEncryptionStates`) under the same lock.
+   `.agents/tasks/2026-07-17-dm-dedupe-before-decrypt.md`), folding session reset
+   (`deleteEncryptionStates`) under the same lock, and automatic resend on missing delivery
+   receipts (`.agents/tasks/2026-07-17-dm-dead-session-autoheal.md` — the highest-value
+   follow-up; converts residual single-frame wire losses into invisible recoveries).
+4. **Server-side:** `POST /inbox/delete` intermittently returns 502 Bad Gateway. Failed
+   deletes are the enabler of the whole redelivery class; worth a server-side look.
 
 ---
 *Created: 2026-07-17 — Last updated: 2026-07-17*
