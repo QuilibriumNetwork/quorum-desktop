@@ -327,7 +327,21 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         'base64'
       ).toString('hex'),
     } as secureChannel.DeleteMessages;
-    await apiClient.deleteInbox(del);
+    try {
+      await apiClient.deleteInbox(del);
+    } catch (err) {
+      // A failed delete leaves the frame on the server, where it will be
+      // REDELIVERED on the next re-listen. For init envelopes this is how a
+      // stale envelope can come back and silently replace a healthy session
+      // (502s on /inbox/delete observed live 2026-07-17). Make every failure
+      // loud, then rethrow so caller behavior is unchanged.
+      logger.warn('[MessageDB] ⚠️ inbox delete FAILED — frame stays on server and will be redelivered', {
+        inbox: inboxKeyset.inbox_address?.slice(0, 12),
+        timestamps,
+        err: (err as Error)?.message,
+      });
+      throw err;
+    }
   };
 
   const addOrUpdateConversation = async (

@@ -63,6 +63,7 @@ import type { ReceiptService, ReceiptEnvelopeFields } from '@quilibrium/quorum-s
 import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { dmRatchetMutex } from '../utils/keyedMutex';
+import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
@@ -2944,7 +2945,40 @@ export class MessageService {
             decryptedContent?.channelId + '/' + decryptedContent?.channelId;
           session.user_address = decryptedContent!.channelId;
         }
+        // Malformed envelope (no resolvable counterparty address): would
+        // create a garbage 'undefined/undefined' conversation row — observed
+        // live from ancient redelivered envelopes. Drop and defuse.
+        if (!session.user_address || session.user_address === 'undefined') {
+          logger.warn(
+            '[MessageService] ⚠️ MALFORMED init envelope (no user address) — dropping and deleting from server',
+            {
+              envelopeTimestamp: envelope.timestamp,
+              envelopeAgeSeconds: Math.round(
+                (Date.now() - envelope.timestamp) / 1000
+              ),
+            }
+          );
+          await this.deleteInboxMessages(
+            keyset.deviceKeyset.inbox_keyset,
+            [envelope.timestamp],
+            this.apiClient
+          );
+          return;
+        }
         if (decryptedContent?.content?.type === 'delete-conversation') {
+          // Reset/delete signals are obeyed unconditionally and used to be
+          // processed in COMPLETE silence — a stale one arriving late (e.g.
+          // queued server-side across a reconnect) silently wipes a healthy
+          // session. Log loudly with the frame's age so late kills are
+          // visible in any debug session.
+          logger.warn(
+            '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, init-envelope path) — wiping encryption states',
+            {
+              conversationId: conversationId?.slice(0, 16),
+              frameTimestamp: envelope.timestamp,
+              frameAgeSeconds: Math.round((Date.now() - envelope.timestamp) / 1000),
+            }
+          );
           await this.deleteEncryptionStates({ conversationId });
           await this.deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
@@ -2962,6 +2996,14 @@ export class MessageService {
           decryptedContent.content.senderId === self_address
         ) {
           const target = decryptedContent.content.conversationAddress;
+          logger.warn(
+            '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation-self from own device) — deleting conversation locally',
+            {
+              conversation: target?.slice(0, 16),
+              frameTimestamp: envelope.timestamp,
+              frameAgeSeconds: Math.round((Date.now() - envelope.timestamp) / 1000),
+            }
+          );
           await this.deleteConversationLocally(target + '/' + target, queryClient);
           await this.deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
@@ -2975,12 +3017,53 @@ export class MessageService {
         // Ratchet critical section: replacing the session rows for this tag
         // and persisting the new session must be atomic vs concurrent sends
         // on the same conversation (see dmRatchetMutex).
-        await dmRatchetMutex.runExclusive(conversationId, async () => {
+        const installed = await dmRatchetMutex.runExclusive(conversationId, async () => {
           const encryptionStates = await this.messageDB.getEncryptionStates({
             conversationId,
           });
           const existing = encryptionStates.filter(
             (e) => JSON.parse(e.state).tag == session.tag
+          );
+          // An init envelope REPLACES the session for this tag. The server
+          // redelivers any frame whose ack-by-delete failed (502s observed
+          // live), so a STALE envelope replayed on reconnect would replace a
+          // HEALTHY session with a zombie the sender no longer holds —
+          // confirmed live 2026-07-17 with envelopes up to 60 days old
+          // killing fresh sessions on every hard refresh. Refuse anything
+          // not strictly newer than the rows it would replace.
+          if (
+            isStaleInitEnvelope(
+              envelope.timestamp,
+              existing.map((e) => e.timestamp)
+            )
+          ) {
+            logger.warn(
+              '[MessageService] ⚠️ STALE init envelope IGNORED — zombie defused, keeping current session',
+              {
+                conversationId: conversationId?.slice(0, 16),
+                envelopeTimestamp: envelope.timestamp,
+                envelopeAgeSeconds: Math.round(
+                  (Date.now() - envelope.timestamp) / 1000
+                ),
+                newestRowTimestamp: Math.max(...existing.map((e) => e.timestamp)),
+              }
+            );
+            return false;
+          }
+          logger.warn(
+            '[MessageService] ⚠️ SESSION REPLACED by init envelope',
+            {
+              conversationId: conversationId?.slice(0, 16),
+              envelopeTimestamp: envelope.timestamp,
+              envelopeAgeSeconds: Math.round(
+                (Date.now() - envelope.timestamp) / 1000
+              ),
+              replacedRows: existing.map((e) => ({
+                inboxId: e.inboxId?.slice(0, 12),
+                stateTimestamp: e.timestamp,
+                stateAgeSeconds: Math.round((Date.now() - e.timestamp) / 1000),
+              })),
+            }
           );
           for (const e of existing) {
             await this.messageDB.deleteEncryptionState(e);
@@ -3006,7 +3089,18 @@ export class MessageService {
             },
             true
           );
+          return true;
         });
+        if (!installed) {
+          // Stale envelope refused: delete it from the server so it cannot
+          // be redelivered again (defuse the mine), keep the current session.
+          await this.deleteInboxMessages(
+            keyset.deviceKeyset.inbox_keyset,
+            [envelope.timestamp],
+            this.apiClient
+          );
+          return;
+        }
         if (envelope.user_address != self_address) {
           updatedUserProfile = {
             user_address: envelope.user_address,
@@ -3169,6 +3263,14 @@ export class MessageService {
               );
             const content = JSON.parse(result.message);
             if (content?.content?.type === 'delete-conversation') {
+              logger.warn(
+                '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, Confirm branch) — wiping encryption states',
+                {
+                  conversationId: conversationId?.slice(0, 16),
+                  frameTimestamp: message.timestamp,
+                  frameAgeSeconds: Math.round((Date.now() - message.timestamp) / 1000),
+                }
+              );
               await this.deleteEncryptionStates({ conversationId });
               await this.deleteInboxMessages(
                 freshKeys.receiving_inbox,
@@ -3250,6 +3352,14 @@ export class MessageService {
             }
             const content = JSON.parse(result.message);
             if (content?.content?.type === 'delete-conversation') {
+              logger.warn(
+                '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, InboxDecrypt branch) — wiping encryption states',
+                {
+                  conversationId: conversationId?.slice(0, 16),
+                  frameTimestamp: message.timestamp,
+                  frameAgeSeconds: Math.round((Date.now() - message.timestamp) / 1000),
+                }
+              );
               await this.deleteEncryptionStates({ conversationId });
               await this.deleteInboxMessages(
                 freshKeys.receiving_inbox,
@@ -5905,6 +6015,13 @@ export class MessageService {
           if (currentPasskeyInfo?.address) {
             const self = await this.apiClient.getUser(
               currentPasskeyInfo?.address!
+            );
+            // Timestamped send-side log so any RESET SIGNAL received later
+            // (see the receive-side warns) can be correlated with the reset
+            // that emitted it — or exposed as stale if none matches.
+            logger.warn(
+              '[MessageService] ⚠️ RESET SIGNAL sending (delete-conversation + delete-conversation-self)',
+              { conversation: spaceId?.slice(0, 16), at: Date.now() }
             );
             // 1. Notify the counterparty: resets their encryption session.
             await submitMessage(

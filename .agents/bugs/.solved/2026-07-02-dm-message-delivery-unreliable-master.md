@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM messages between users intermittently never arrive (master report)"
-status: RESOLVED 2026-07-17 — both mechanisms fixed and live-verified. (1) Session destruction on decrypt failure: fixed, PR #235. (2) aead::Error frame drops from unserialized ratchet state: fixed on branch fix/dm-ratchet-serialization, live-verified 10/10 messages per direction with receipts + typing on. This report is the consolidated summary + diagnosis archive.
+status: RESOLVED 2026-07-17 — THREE mechanisms found, fixed, and live-verified. (1) Session destruction on decrypt failure: fixed, PR #235. (2) Unserialized ratchet state read-modify-write: fixed, PR #236/#237. (3) Stale init-envelope redelivery silently replacing healthy sessions — THE DOMINANT killer, explains the recurring "reset works, then dies on refresh" pattern: fixed on branch chore/dm-reset-signal-logging (staleness guard). Residual: isolated single-frame wire loss with no auto-resend — tracked in the auto-heal task. This report is the consolidated summary + diagnosis archive.
 created: 2026-07-02
 severity: high
 repo: quorum-desktop (primary; mobile has the same patterns — see "Remaining gaps")
@@ -19,8 +19,8 @@ related:
 
 **One-line:** for ~6 months, DMs intermittently never arrived, with no error, no retry, and no
 signal to either user; once a conversation direction "went bad" it stayed dead until a manual
-session reset. Root-caused and fixed 2026-07-17 as two cooperating defects, both in
-`src/services/MessageService.ts`.
+session reset — and freshly reset conversations died again within minutes. Root-caused and
+fixed 2026-07-17 as THREE cooperating defects in the DM receive/send pipeline.
 
 ---
 
@@ -29,19 +29,26 @@ session reset. Root-caused and fixed 2026-07-17 as two cooperating defects, both
 | # | Mechanism | Effect | Fix | Status |
 |---|---|---|---|---|
 | 1 | **Session destruction on decrypt failure.** One bad frame → the receive pipeline deleted the entire Double Ratchet session (and the server copy of the frame). The sender kept encrypting into an inbox the receiver no longer had state for → every later message silently deleted (`!found` branch). | Conversation direction permanently dead | Both decrypt-failure catch blocks skip the frame and KEEP the session (Signal spec compliance) | SHIPPED, PR #235, live-verified |
-| 2 | **Unserialized ratchet state read-modify-write.** Five paths (receive decrypt, text send/edit, retry, receipt sends, typing sends) each did read-state → ratchet-op → save-state with no coordination. Concurrent ops read the same snapshot; the losing save erased the winner's advance → the peer could no longer derive keys → `aead::Error` on subsequent frames; one bad collision forked the session permanently ("msg 1 & 2 land, from msg 3 nothing lands"). | Individual frames dropped; under receipts, full one-direction death within ~3 messages | Per-conversation FIFO mutex (`src/utils/keyedMutex.ts`) around every ratchet critical section + receive path re-reads state inside the lock and saves immediately after decrypt | SHIPPED, branch `fix/dm-ratchet-serialization`, live-verified |
+| 2 | **Unserialized ratchet state read-modify-write.** Five paths (receive decrypt, text send/edit, retry, receipt sends, typing sends) each did read-state → ratchet-op → save-state with no coordination. Concurrent ops read the same snapshot; the losing save erased the winner's advance → the peer could no longer derive keys → `aead::Error`. Receipts amplified it: every received message fired a send inside the receive handler's huge read-to-save window. | Isolated frame drops; occasional session forks under receipt/typing load | Per-conversation FIFO mutex (`KeyedMutex`, now in quorum-shared) around every ratchet critical section + receive path re-reads state inside the lock and saves immediately after decrypt | SHIPPED, PR #236 + #237 (+ quorum-shared #59/#60), live-verified |
+| 3 | **Stale init-envelope redelivery — THE DOMINANT KILLER.** An init envelope replaces the receiver's session for its device tag, unconditionally and silently. The server redelivers any frame whose ack-by-delete failed (`POST /inbox/delete` 502s observed live), so every past reset left potential mines on the device inbox. On any reconnect/hard refresh the mines were replayed and each replaced the CURRENT healthy session with a zombie the sender no longer held. Observed live: redelivered envelopes up to 60 DAYS old killing a fresh session on every refresh. Explains the entire recurring pattern: reset → works → dies minutes later, because each reset planted the seed of the next death. | Fresh sessions silently died on the next reconnect; receiver console completely silent (frames to unknown inboxes never even reach the app) | `isStaleInitEnvelope` guard: refuse envelopes not strictly newer than the session rows they would replace (exact-timestamp match = redelivery; older than newest row beyond 2-min skew tolerance = zombie); refused envelopes are deleted server-side (mine defused). Also: drop malformed envelopes (undefined sender), loud logs on every session replacement, reset signal, and failed inbox delete | SHIPPED, branch `chore/dm-reset-signal-logging`, live-verified (hard refreshes no longer kill the session) |
 
-**Why receipts "caused" it:** they didn't — they amplified mechanism 2. The delivery/read
-receipt feature fires an encrypted send within milliseconds of every received message, exactly
-inside the receive handler's read-to-save window (which spanned ~1,400 lines of awaited code).
-A race that previously needed coincidence (typing + send + receive overlapping, two tabs)
-became near-deterministic. One 6-month-old bug, not two; receipts made it reproducible.
+**Attribution, honestly stated:** mechanisms 1 and 2 are real, spec-backed defects and their
+fixes stand on their own (2 was proven by a red/green concurrency test; 1 by the Signal spec
+and live survival of bad frames). But the recurring session DEATHS — the user-visible disease —
+were dominated by mechanism 3, which is why the conversation kept dying even after 1 and 2
+shipped. Nothing about mechanism 3 ever *failed*: old frames were processed *successfully*,
+which is why it survived every failure-focused investigation until the replacement site was
+instrumented.
 
-**Live verification (2026-07-17):** fresh session reset, receipts + typing ON, 10 numbered
-messages per direction: all 20 landed, nothing stuck at "Sending…", no dead direction. The old
-code reliably died at message 3 under the same protocol. Frames encrypted against a pre-reset
-session fail once with `skipping frame, keeping session` and drain harmlessly — expected noise,
-not loss.
+**Live verification (2026-07-17):** after the staleness guard: multiple hard refreshes on both
+clients (previously instantly fatal — a wall of `SESSION REPLACED` with 60-day-old envelopes,
+then silence), session survives, messages keep landing. Stale frames from old epochs fail once
+with `skipping frame, keeping session` and drain harmlessly.
+
+**Known residual (tracked, not a session-death bug):** isolated single-frame wire loss (one
+message vanishes, conversation continues, sender sees the missing delivery checkmark) with no
+automatic resend. Observed once post-fix. Recovery design:
+`.agents/tasks/2026-07-17-dm-dead-session-autoheal.md` (resend on missing delivery receipt).
 
 **Also shipped along the way:**
 - **Reset Session button** (PR #234) — manual recovery valve, still useful.
@@ -68,9 +75,26 @@ not loss.
 4. **Never hold the ratchet lock across delivery.** The outbound queue only drains on an open
    socket and its callbacks take the same lock; awaiting delivery inside the lock is a
    circular wait.
+5. **Never install an init envelope that is not strictly newer than the session it replaces.**
+   The server redelivers frames whose ack-by-delete failed, and successful re-processing of an
+   old init envelope silently resurrects a zombie session. `isStaleInitEnvelope`
+   (`src/utils/initEnvelopeGuard.ts`, pure, tested) is the gate; refused envelopes are deleted
+   server-side. Frame deletions can fail (502) — a refused mine that survives deletion is
+   refused again next time, harmlessly.
+6. **"Successfully processed" is not the same as "should have been processed."** This bug
+   survived five instrumented rounds because every investigation looked for FAILURES; the
+   killer was old frames being accepted successfully. When a session dies with a completely
+   silent console, suspect state replacement, not state corruption.
 
 ## 3. Remaining known gaps (for lead dev)
 
+- **No automatic resend (highest-value follow-up):** an isolated frame lost on the wire stays
+  lost; the sender sees the missing delivery checkmark but nothing retries. Design:
+  `.agents/tasks/2026-07-17-dm-dead-session-autoheal.md` (detect via missing delivery
+  receipts, resend unacked, auto-repair dead sessions).
+- **Failed inbox deletes (502 Bad Gateway on POST /inbox/delete, server side):** the root
+  enabler of mechanism 3 — every failed delete leaves a redelivery mine. Client now guards
+  and logs; the server-side 502s deserve their own investigation.
 - **Two tabs / same account:** two JS contexts race each other; the in-process mutex cannot
   arbitrate. Needs Web Locks API or single-instance enforcement. Pre-existing, low priority.
 - **Session reset not under the lock:** `deleteEncryptionStates` racing an in-flight decrypt
@@ -78,8 +102,12 @@ not loss.
 - **Mobile parity (verified in mobile code 2026-07-17):** mobile does NOT have the
   destroy-on-failure bug (its decrypt failure already returns null without persisting), but
   it DOES have the unserialized read-modify-write gap (no lock, awaited native decrypt
-  between read and write, receipts ride the ratchet). Tasks created:
-  `.agents/tasks/2026-07-17-quorum-shared-add-keyedmutex.md` (shared util) and
+  between read and write, receipts ride the ratchet). For mechanism 3, mobile is PARTIALLY
+  protected by design: its init handling checks an ephemeral-key cache and tries the existing
+  session first, so redelivery of the CURRENT envelope cannot nuke the session; an OLDER
+  distinct envelope falling through to fresh X3DH may still replace a newer session — recon
+  item in the mobile task. Tasks:
+  `.agents/tasks/.done/2026-07-17-quorum-shared-add-keyedmutex.md` (shared util, DONE) and
   `quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md`.
 - **Redelivery duplicates:** the server re-pushes undeleted frames on re-listen; duplicates
   always fail AEAD (key already consumed), get skipped and deleted. Harmless but noisy; a
