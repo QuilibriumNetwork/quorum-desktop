@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM messages between users intermittently never arrive (master report + guided debug-session kit)"
-status: PARTIALLY RESOLVED 2026-07-17 — root cause PROVEN live (H1); primary mechanism (session destruction on decrypt failure) FIXED & shipped (PR #235). Remaining: individual frames still drop with aead::Error. This report is now the DIAGNOSIS ARCHIVE; work items live in the two focused docs below.
+status: PARTIALLY RESOLVED 2026-07-17 — session destruction FIXED & shipped (PR #235); aead::Error frame drops root-caused (unserialized ratchet state read-modify-write across five writer paths) with fix implemented on branch fix/dm-ratchet-serialization, awaiting live verification. This report is the DIAGNOSIS ARCHIVE; work items live in the focused docs below.
 created: 2026-07-02
 severity: high
 repo: quorum-desktop (primary; mobile affected too)
@@ -22,8 +22,10 @@ related:
 > (1) **session destruction on decrypt failure** — one bad frame tore down the whole session,
 > permanently killing a DM direction. FIXED & shipped (PR #235, `MessageService.ts` — the two
 > decrypt-failure catch blocks no longer call `deleteEncryptionState`; Double Ratchet spec
-> compliance). (2) **frame generation** — individual frames still fail to decrypt with
-> `aead::Error` (leading theory: retry collisions). STILL OPEN, tracked in
+> compliance). (2) **frame generation** — individual frames failed to decrypt with
+> `aead::Error`. ROOT-CAUSED 2026-07-17 (unserialized ratchet state read-modify-write across
+> five send/receive paths; receipts amplified a preexisting race) and FIX IMPLEMENTED on
+> branch `fix/dm-ratchet-serialization` (per-conversation mutex) — see the verdict in
 > `2026-07-17-dm-aead-error-frame-drops.md`. Also shipped: a manual **Reset Session** button
 > (PR #234) as a user-facing recovery valve. This document below is the full diagnosis archive
 > (5 instrumented live rounds); the focused docs in the `related:` list are the actionable items.
