@@ -2945,6 +2945,19 @@ export class MessageService {
           session.user_address = decryptedContent!.channelId;
         }
         if (decryptedContent?.content?.type === 'delete-conversation') {
+          // Reset/delete signals are obeyed unconditionally and used to be
+          // processed in COMPLETE silence — a stale one arriving late (e.g.
+          // queued server-side across a reconnect) silently wipes a healthy
+          // session. Log loudly with the frame's age so late kills are
+          // visible in any debug session.
+          logger.warn(
+            '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, init-envelope path) — wiping encryption states',
+            {
+              conversationId: conversationId?.slice(0, 16),
+              frameTimestamp: envelope.timestamp,
+              frameAgeSeconds: Math.round((Date.now() - envelope.timestamp) / 1000),
+            }
+          );
           await this.deleteEncryptionStates({ conversationId });
           await this.deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
@@ -2962,6 +2975,14 @@ export class MessageService {
           decryptedContent.content.senderId === self_address
         ) {
           const target = decryptedContent.content.conversationAddress;
+          logger.warn(
+            '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation-self from own device) — deleting conversation locally',
+            {
+              conversation: target?.slice(0, 16),
+              frameTimestamp: envelope.timestamp,
+              frameAgeSeconds: Math.round((Date.now() - envelope.timestamp) / 1000),
+            }
+          );
           await this.deleteConversationLocally(target + '/' + target, queryClient);
           await this.deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
@@ -3169,6 +3190,14 @@ export class MessageService {
               );
             const content = JSON.parse(result.message);
             if (content?.content?.type === 'delete-conversation') {
+              logger.warn(
+                '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, Confirm branch) — wiping encryption states',
+                {
+                  conversationId: conversationId?.slice(0, 16),
+                  frameTimestamp: message.timestamp,
+                  frameAgeSeconds: Math.round((Date.now() - message.timestamp) / 1000),
+                }
+              );
               await this.deleteEncryptionStates({ conversationId });
               await this.deleteInboxMessages(
                 freshKeys.receiving_inbox,
@@ -3250,6 +3279,14 @@ export class MessageService {
             }
             const content = JSON.parse(result.message);
             if (content?.content?.type === 'delete-conversation') {
+              logger.warn(
+                '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, InboxDecrypt branch) — wiping encryption states',
+                {
+                  conversationId: conversationId?.slice(0, 16),
+                  frameTimestamp: message.timestamp,
+                  frameAgeSeconds: Math.round((Date.now() - message.timestamp) / 1000),
+                }
+              );
               await this.deleteEncryptionStates({ conversationId });
               await this.deleteInboxMessages(
                 freshKeys.receiving_inbox,
@@ -5905,6 +5942,13 @@ export class MessageService {
           if (currentPasskeyInfo?.address) {
             const self = await this.apiClient.getUser(
               currentPasskeyInfo?.address!
+            );
+            // Timestamped send-side log so any RESET SIGNAL received later
+            // (see the receive-side warns) can be correlated with the reset
+            // that emitted it — or exposed as stale if none matches.
+            logger.warn(
+              '[MessageService] ⚠️ RESET SIGNAL sending (delete-conversation + delete-conversation-self)',
+              { conversation: spaceId?.slice(0, 16), at: Date.now() }
             );
             // 1. Notify the counterparty: resets their encryption session.
             await submitMessage(
