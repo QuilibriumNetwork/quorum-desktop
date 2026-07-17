@@ -123,7 +123,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
-- [DM message delivery is unreliable (master report)](bugs/2026-07-02-dm-message-delivery-unreliable-master.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -166,6 +165,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/.solved/2026-06-07-space-profile-save-missing-inbox.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [Composer flattens multi-line paste into a single line](bugs/.solved/2026-06-25-composer-paste-strips-newlines.md)
+- [DM message delivery is unreliable (master report — RESOLVED: session destruction + unserialized ratchet state)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
+- [DM decrypt failure destroys the whole session (Fix 1 spec, PR #235)](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
+- [DM frames drop with aead::Error (Fix 2: per-conversation ratchet serialization)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)

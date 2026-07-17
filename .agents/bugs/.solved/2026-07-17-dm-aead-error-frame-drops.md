@@ -1,14 +1,14 @@
 ---
 type: bug
 title: "DM individual frames fail to decrypt (aead::Error) and drop — remaining half of the delivery bug"
-status: FIX IMPLEMENTED 2026-07-17 (branch fix/dm-ratchet-serialization) — root cause re-verified in code as UNSERIALIZED ratchet state read-modify-write across five writer paths; per-conversation mutex shipped. AWAITING LIVE VERIFICATION (sustained several-minute back-and-forth with zero drops).
+status: SOLVED — LIVE-VERIFIED 2026-07-17 (branch fix/dm-ratchet-serialization). Root cause: UNSERIALIZED ratchet state read-modify-write across five writer paths; fixed with per-conversation mutex + immediate post-decrypt state save. Live test: 10 numbered messages per direction with receipts + typing ON, zero drops, zero stuck sends (old code reliably died at msg 3). Note: first fix iteration deadlocked (lock held until socket delivery via promise auto-flattening) — fixed in commit 2b64b84c; frames from a pre-reset session fail once with "skipping frame, keeping session" and drain harmlessly.
 created: 2026-07-17
 severity: high
 repo: quorum-desktop (mobile likely same)
 area: DM delivery / Double Ratchet / retry / dedupe
 related:
   - ".agents/bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED, stops session destruction)"
-  - ".agents/bugs/2026-07-02-dm-message-delivery-unreliable-master.md (full diagnosis archive)"
+  - ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (full diagnosis archive)"
 ---
 
 # DM frames still drop with `aead::Error` (remaining half of the delivery bug)

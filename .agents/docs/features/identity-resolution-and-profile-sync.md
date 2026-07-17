@@ -202,7 +202,7 @@ global identity on the next reconnect.
   and per-space + global profile updates render correctly.
 - **DM profile propagation:** BLOCKED by a pre-existing, unrelated DM-transport
   delivery issue (~6 months old; master bug
-  `.agents/bugs/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
+  `.agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
   path is UNTOUCHED by this work; DM verification is parked on that transport
   issue, not on this feature.
 - **Mobile→desktop global propagation:** CONFIRMED 2026-07-16. A display-name
