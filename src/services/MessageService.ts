@@ -63,6 +63,7 @@ import type { ReceiptService, ReceiptEnvelopeFields } from '@quilibrium/quorum-s
 import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { dmRatchetMutex } from '../utils/keyedMutex';
+import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
@@ -2944,6 +2945,26 @@ export class MessageService {
             decryptedContent?.channelId + '/' + decryptedContent?.channelId;
           session.user_address = decryptedContent!.channelId;
         }
+        // Malformed envelope (no resolvable counterparty address): would
+        // create a garbage 'undefined/undefined' conversation row — observed
+        // live from ancient redelivered envelopes. Drop and defuse.
+        if (!session.user_address || session.user_address === 'undefined') {
+          logger.warn(
+            '[MessageService] ⚠️ MALFORMED init envelope (no user address) — dropping and deleting from server',
+            {
+              envelopeTimestamp: envelope.timestamp,
+              envelopeAgeSeconds: Math.round(
+                (Date.now() - envelope.timestamp) / 1000
+              ),
+            }
+          );
+          await this.deleteInboxMessages(
+            keyset.deviceKeyset.inbox_keyset,
+            [envelope.timestamp],
+            this.apiClient
+          );
+          return;
+        }
         if (decryptedContent?.content?.type === 'delete-conversation') {
           // Reset/delete signals are obeyed unconditionally and used to be
           // processed in COMPLETE silence — a stale one arriving late (e.g.
@@ -2996,20 +3017,39 @@ export class MessageService {
         // Ratchet critical section: replacing the session rows for this tag
         // and persisting the new session must be atomic vs concurrent sends
         // on the same conversation (see dmRatchetMutex).
-        await dmRatchetMutex.runExclusive(conversationId, async () => {
+        const installed = await dmRatchetMutex.runExclusive(conversationId, async () => {
           const encryptionStates = await this.messageDB.getEncryptionStates({
             conversationId,
           });
           const existing = encryptionStates.filter(
             (e) => JSON.parse(e.state).tag == session.tag
           );
-          // An init envelope REPLACES the session for this tag, silently and
-          // unconditionally. A STALE envelope redelivered by the server (its
-          // ack-by-delete can fail — 502s observed live) therefore replaces a
-          // HEALTHY session with a zombie the sender no longer has: the
-          // leading suspect for "fresh session dies minutes after reset".
-          // Log every replacement with the envelope's age and the age of the
-          // session rows it kills so a zombie install is visible.
+          // An init envelope REPLACES the session for this tag. The server
+          // redelivers any frame whose ack-by-delete failed (502s observed
+          // live), so a STALE envelope replayed on reconnect would replace a
+          // HEALTHY session with a zombie the sender no longer holds —
+          // confirmed live 2026-07-17 with envelopes up to 60 days old
+          // killing fresh sessions on every hard refresh. Refuse anything
+          // not strictly newer than the rows it would replace.
+          if (
+            isStaleInitEnvelope(
+              envelope.timestamp,
+              existing.map((e) => e.timestamp)
+            )
+          ) {
+            logger.warn(
+              '[MessageService] ⚠️ STALE init envelope IGNORED — zombie defused, keeping current session',
+              {
+                conversationId: conversationId?.slice(0, 16),
+                envelopeTimestamp: envelope.timestamp,
+                envelopeAgeSeconds: Math.round(
+                  (Date.now() - envelope.timestamp) / 1000
+                ),
+                newestRowTimestamp: Math.max(...existing.map((e) => e.timestamp)),
+              }
+            );
+            return false;
+          }
           logger.warn(
             '[MessageService] ⚠️ SESSION REPLACED by init envelope',
             {
@@ -3049,7 +3089,18 @@ export class MessageService {
             },
             true
           );
+          return true;
         });
+        if (!installed) {
+          // Stale envelope refused: delete it from the server so it cannot
+          // be redelivered again (defuse the mine), keep the current session.
+          await this.deleteInboxMessages(
+            keyset.deviceKeyset.inbox_keyset,
+            [envelope.timestamp],
+            this.apiClient
+          );
+          return;
+        }
         if (envelope.user_address != self_address) {
           updatedUserProfile = {
             user_address: envelope.user_address,
