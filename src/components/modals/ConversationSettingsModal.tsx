@@ -402,27 +402,36 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
         <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
 
-        {/* Reset Session Section */}
-        <Flex direction="column" align="center" className="mb-3">
+        {/* Reset Session — quiet, understated utility link (neutral) */}
+        <Flex justify="center" align="center" className="mb-3">
           <Button
             type="unstyled"
-            className="text-label-strong hover:text-main"
+            className="text-subtle hover:text-main cursor-pointer"
             onClick={(e: React.MouseEvent) => {
               if (!resetConfirmation.isConfirming) handleResetSessionClick(e);
             }}
           >
-            {t`Reset Encryption Session`}
+            <Flex align="center" gap="xs">
+              <Icon name="refresh" size="sm" />
+              {t`Reset Encryption Session`}
+            </Flex>
           </Button>
-          <div className="text-xs text-subtle">
-            {t`Reset if messages fail to send/decrypt`}
-          </div>
+          <Tooltip
+            id="conv-reset-session-tooltip"
+            content={t`Reset the encryption session if messages fail to send or decrypt. The next message will establish a fresh secure connection.`}
+            maxWidth={260}
+            className="!text-left !max-w-[260px]"
+            place="top"
+          >
+            <Icon name="info-circle" size="sm" className="ml-2 text-subtle" />
+          </Tooltip>
         </Flex>
 
-        {/* Delete Section */}
+        {/* Delete — destructive action, kept isolated as its own centered link */}
         <Flex justify="center" align="center">
           <Button
             type="unstyled"
-            className="text-danger hover:text-danger-hover"
+            className="text-danger hover:text-danger-hover cursor-pointer"
             onClick={(e: React.MouseEvent) => {
               if (!deleteConfirmation.isConfirming) handleDeleteClick(e);
             }}
