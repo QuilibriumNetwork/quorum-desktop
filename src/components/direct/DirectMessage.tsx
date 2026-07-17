@@ -175,7 +175,6 @@ const DirectMessage: React.FC<{}> = () => {
           : false;
         setDeliveryReceipts(effectiveDeliveryReceipts);
         setReadReceipts(effectiveReadReceipts);
-        logger.log('[ReadReceipt:Config]', { deliveryReceipts: effectiveDeliveryReceipts, readReceipts: effectiveReadReceipts, convOverride: { delivery: conversation?.conversation?.deliveryReceipts, read: conversation?.conversation?.readReceipts } });
         if (typeof convIsRepudiable !== 'undefined') {
           const convNonRepudiable = !convIsRepudiable;
           setNonRepudiable(convNonRepudiable);
@@ -389,7 +388,6 @@ const DirectMessage: React.FC<{}> = () => {
 
   const reportRead = useCallback((messageId: string, timestamp: number) => {
     if (!readReceipts || !receiptService) return;
-    logger.log('[ReadReceipt] reportRead', { messageId: messageId.slice(0, 8), timestamp });
     receiptService.onMessageRead(address!, messageId, timestamp);
   }, [readReceipts, receiptService, address]);
 

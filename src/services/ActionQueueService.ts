@@ -93,7 +93,6 @@ export class ActionQueueService {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   } | null {
-    logger.log('[ActionQueue] getUserKeyset called, hasKeyset:', !!this.userKeyset);
     return this.userKeyset;
   }
 
