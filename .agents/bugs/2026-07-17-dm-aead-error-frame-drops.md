@@ -39,7 +39,44 @@ JSON` (the WASM returns the string `Decryption failed: aead::Error` in `result.m
 parsing it throws). `aead::Error` = AEAD authentication failure = the ratchet message key used
 to encrypt didn't match what the receiver derived for that frame.
 
-## Leading hypothesis (NOT yet proven) — retry collisions
+## UPDATE 2026-07-17 — dual-log capture: RECEIPTS are the poison frames + head-of-line block
+
+Captured both sides live (reset session, msg 1 & 2 land, from msg 3 everything stops):
+
+- **The failing frames are RECEIPT control messages, not text messages.** Log B (receiver of the
+  text) shows that for EACH incoming message it sends back BOTH a `read-ack` AND a
+  `delivery-ack` as separate encrypted DM frames ("Read ack sent successfully" / "Ack sent
+  successfully"). So one text message produces THREE ratchet frames on the session
+  (message + read-ack + delivery-ack). Log A shows it processes the FIRST read-ack fine
+  (matching messageId `97cebda9…`), then every following incoming frame is `aead::Error`.
+  → The rapid-fire, concurrently-sent, low-volume ack frames are desyncing the ratchet. This
+  confirms the "receipt control-message path" candidate below, and largely exonerates the text
+  retry as the primary cause.
+- **Head-of-line block makes it fatal (this is the real "everything stops" mechanism).** Log A
+  shows the SAME frame failing 5+ times in a row (identical stack, `MessageService.ts:3167`).
+  The undecryptable frame is NOT removed from the network inbox on failure, so it is redelivered
+  and re-fails forever, AND the ratchet cannot advance past it — so the real message #3 queued
+  behind it in that inbox never gets read either. Session-preservation (Fix 1) holds, but a
+  single stuck frame jams the whole inbox.
+- **Corollary:** Fix 1 (keep session) is necessary but not sufficient. The two things to fix are
+  (a) stop generating colliding ack frames, and (b) don't let one undecryptable frame block the
+  inbox behind it.
+
+### Where to look next (sharpened by the logs)
+
+1. **Why do ack frames collide?** Read receipts + delivery receipts each send a SEPARATE
+   standalone DM (`ActionQueueHandlers.sendReadAck` / `sendDeliveryAck` → `encryptAndSendDm`).
+   Two encrypted frames enqueued back-to-back for the same session, plus the piggyback path,
+   are strong candidates for a ratchet-state race (two `encryptAndSendDm` interleaving their
+   state reads/saves). Check whether `encryptAndSendDm` serializes per-conversation.
+2. **Head-of-line block:** on `aead::Error`, the frame stays in the inbox and is redelivered
+   (log A: 5+ identical failures). Options: after N failures, delete the poison frame from the
+   inbox so the queue can advance (careful — it's currently kept precisely so nothing is lost);
+   OR make decrypt not block the inbox (skip-and-continue past a permanently-bad frame).
+3. **Reduce ack frame volume:** prefer piggybacking; coalesce read+delivery into one frame;
+   rate-limit standalone acks — fewer frames = fewer collision chances.
+
+## Leading hypothesis (SUPERSEDED by the dual-log finding above — kept for history) — retry collisions
 
 `aead::Error` on a per-frame basis means sender and receiver ratchet states diverged for that
 one frame. The most concrete suspected source is the **automatic retry**:
