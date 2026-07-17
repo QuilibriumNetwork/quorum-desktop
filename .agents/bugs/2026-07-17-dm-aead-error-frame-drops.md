@@ -30,10 +30,12 @@ The DM delivery bug had **two mechanisms**:
 
 ## Confirmed symptom (live, 2026-07-17, after Fix 1)
 
-Two desktop accounts (Brave ↔ Gatopardo), fresh session via reset. Messages flow, then
-occasional numbered messages fail to land in one or both directions (e.g. Brave→Gatopardo "13"
-dropped; Gatopardo→Brave "12" and "13" dropped) while surrounding messages arrive fine. On the
-receiver console: `[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping
+Two desktop accounts (Brave ↔ Gatopardo), fresh session via reset. **Cleanest repro
+(user-confirmed): msg 1 & 2 land, then from msg 3 onward NOTHING lands — normal TEXT messages
+included, not just receipts.** (An earlier looser run showed occasional single drops with the
+conversation continuing; the dual-log run below shows the full jam — the difference is whether a
+poison frame gets stuck at the head of the inbox.) On the receiver console:
+`[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping
 frame, keeping session` with `SyntaxError: Unexpected token 'D', "Decryption"... is not valid
 JSON` (the WASM returns the string `Decryption failed: aead::Error` in `result.message`; JSON
 parsing it throws). `aead::Error` = AEAD authentication failure = the ratchet message key used
@@ -61,6 +63,16 @@ Captured both sides live (reset session, msg 1 & 2 land, from msg 3 everything s
 - **Corollary:** Fix 1 (keep session) is necessary but not sufficient. The two things to fix are
   (a) stop generating colliding ack frames, and (b) don't let one undecryptable frame block the
   inbox behind it.
+
+> **IMPORTANT (user-confirmed 2026-07-17): NORMAL TEXT MESSAGES stop landing too, not only
+> receipts.** The receipt frames are what *trigger* the first `aead::Error`, but the resulting
+> head-of-line block (b) then jams the inbox for EVERYTHING queued behind the poison frame —
+> including ordinary text messages. Reproduction: reset session, msg 1 & 2 land, then from msg 3
+> onward NOTHING lands (text or receipts). So the user-visible symptom is still "normal messages
+> stop." Do not read this report as "only receipts fail" — receipts are the trigger, normal
+> messages are among the victims. Fix (b) (unblock the inbox) is therefore at least as important
+> as fix (a) (stop the colliding acks); (a) alone would reduce triggers but any single bad frame
+> from any source would still jam the queue.
 
 ### Where to look next (sharpened by the logs)
 
