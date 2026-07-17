@@ -1,19 +1,32 @@
 ---
 type: bug
 title: "DM messages between users intermittently never arrive (master report + guided debug-session kit)"
-status: open — root cause not yet observed live; four ranked hypotheses from a full code walk (2026-07-02); H1 has three confirmed silent-drop sites in code. Phase 1 session kit ready below.
+status: PARTIALLY RESOLVED 2026-07-17 — root cause PROVEN live (H1); primary mechanism (session destruction on decrypt failure) FIXED & shipped (PR #235). Remaining: individual frames still drop with aead::Error. This report is now the DIAGNOSIS ARCHIVE; work items live in the two focused docs below.
 created: 2026-07-02
 severity: high
 repo: quorum-desktop (primary; mobile affected too)
 area: DM delivery / Double Ratchet sessions / WebSocket transport
 user-confirmed: "reproduces desktop↔desktop AND desktop↔mobile (2026-07-02); DMs mostly, channels rarely. Long-standing (~6 months). Pattern: first message lands, subsequent ones often don't."
 related:
+  - ".agents/bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED PR #235: session no longer destroyed on decrypt failure)"
+  - ".agents/bugs/2026-07-17-dm-aead-error-frame-drops.md (OPEN — remaining half: individual frames still fail to decrypt)"
+  - ".agents/tasks/2026-07-17-dm-session-reset-and-delivery-fix-plan.md (Reset Session button shipped PR #234; systemic proposal)"
   - ".agents/docs/debugging/dm-architecture-and-debug-playbook.md (DM internals + identity debug ladder)"
   - ".agents/tools/dm-debug/ (console snippets 01-06 + log-points.md)"
   - "quorum-mobile/.agents/bugs/2026-06-13-desktop-to-mobile-messages-fail-decryption-invalid-signature.md (SPACE-path sibling; different transport)"
 ---
 
 # DM message delivery is unreliable (master report)
+
+> **RESOLUTION STATUS (2026-07-17):** H1 is confirmed the root cause. The bug had TWO mechanisms:
+> (1) **session destruction on decrypt failure** — one bad frame tore down the whole session,
+> permanently killing a DM direction. FIXED & shipped (PR #235, `MessageService.ts` — the two
+> decrypt-failure catch blocks no longer call `deleteEncryptionState`; Double Ratchet spec
+> compliance). (2) **frame generation** — individual frames still fail to decrypt with
+> `aead::Error` (leading theory: retry collisions). STILL OPEN, tracked in
+> `2026-07-17-dm-aead-error-frame-drops.md`. Also shipped: a manual **Reset Session** button
+> (PR #234) as a user-facing recovery valve. This document below is the full diagnosis archive
+> (5 instrumented live rounds); the focused docs in the `related:` list are the actionable items.
 
 **One-line:** DMs between two users intermittently never arrive and nothing ever surfaces the
 loss — no error, no retry, no signal to the sender. Reproduces **desktop↔desktop** (user-confirmed
