@@ -21,24 +21,24 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "檔案不能大於 {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:160
+#: src/hooks/business/channels/useChannelData.ts:175
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:176
+#: src/hooks/business/channels/useChannelData.ts:191
 msgid "No Role - {count}"
 msgstr "無角色 - {count}"
-
-#. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1716
-msgid "Send a message to #{channel_name}"
-msgstr "傳送訊息至 #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "歡迎來到 Quorum，{name}！您的帳戶已安全設定，隨時可用。"
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1723
+msgid "Send a message to #{channel_name}"
+msgstr "傳送訊息至 #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:131
@@ -68,27 +68,28 @@ msgid "Replying to"
 msgstr "回覆中"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:496
+#: src/components/message/Message.tsx:483
 msgid "has joined"
 msgstr "已加入"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:504
+#: src/components/message/Message.tsx:491
 msgid "has left"
 msgstr "已離開"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:512
+#: src/components/message/Message.tsx:499
 msgid "has been kicked"
 msgstr "已被踢出"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1080
+#: src/components/direct/DirectMessage.tsx:1078
 msgid "Send a message to {user}"
 msgstr "傳送訊息給 {user}"
 
-#: src/components/message/Message.tsx:990
-#: src/components/message/Message.tsx:1003
+#: src/components/message/Message.tsx:940
+#: src/components/message/Message.tsx:953
+#: src/components/message/Message.tsx:1074
 msgid "(edited)"
 msgstr "(編輯過的)"
 
@@ -97,7 +98,7 @@ msgid "(empty)"
 msgstr "(空的)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:128
-#: src/components/user/UserProfile.tsx:354
+#: src/components/user/UserProfile.tsx:395
 msgid "(only visible to you)"
 msgstr "(僅你可見)"
 
@@ -117,8 +118,8 @@ msgstr "[圖片]"
 msgid "[Message]"
 msgstr "[訊息]"
 
-#: src/components/message/Message.tsx:726
-#: src/components/message/Message.tsx:1125
+#: src/components/message/Message.tsx:713
+#: src/components/message/Message.tsx:1162
 msgid "[Original message was deleted]"
 msgstr "已刪除的訊息"
 
@@ -220,11 +221,11 @@ msgstr "此空間中有 {contextCount} 個書籤"
 msgid "{count} new notifications"
 msgstr "{count} 條新通知"
 
-#: src/utils/dateFormatting.ts:95
+#: src/utils/dateFormatting.ts:76
 msgid "{days} days"
 msgstr "{days} 天"
 
-#: src/utils/dateFormatting.ts:97
+#: src/utils/dateFormatting.ts:78
 msgid "{hours} hours"
 msgstr "{hours} 小時"
 
@@ -232,17 +233,17 @@ msgstr "{hours} 小時"
 msgid "{replyCount} replies"
 msgstr "{replyCount} 則回覆"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:311
+#: src/components/modals/SpaceSettingsModal/Account.tsx:326
 #: src/components/notifications/NotificationPanel.tsx:111
 msgid "@everyone"
 msgstr "@everyone"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:316
+#: src/components/modals/SpaceSettingsModal/Account.tsx:331
 #: src/components/notifications/NotificationPanel.tsx:115
 msgid "@roles"
 msgstr "@roles"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:306
+#: src/components/modals/SpaceSettingsModal/Account.tsx:321
 #: src/components/notifications/NotificationPanel.tsx:107
 msgid "@you"
 msgstr "@you"
@@ -255,7 +256,7 @@ msgstr "新增朋友"
 msgid "0 = forever"
 msgstr "0 = 永遠"
 
-#: src/utils/dateFormatting.ts:89
+#: src/utils/dateFormatting.ts:70
 msgid "0 hours"
 msgstr "0 小時"
 
@@ -284,16 +285,16 @@ msgid ""
 "website."
 msgstr "一個可重複使用的連結，任何人都可以用來加入。在社群媒體或您的網站上分享。"
 
-#: src/services/MessageService.ts:4626 src/services/NotificationService.ts:297
+#: src/services/MessageService.ts:4921 src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "一個角色"
 
-#: src/services/MessageService.ts:4636 src/services/NotificationService.ts:296
+#: src/services/MessageService.ts:4931 src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "一個空間"
 
-#: src/components/user/UserProfile.tsx:346
+#: src/components/user/UserProfile.tsx:387
 msgid "About"
 msgstr "關於"
 
@@ -314,7 +315,7 @@ msgstr "帳戶地址"
 msgid "Account Key"
 msgstr "帳戶金鑰"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:137
+#: src/components/modals/SpaceSettingsModal/Account.tsx:139
 #: src/components/modals/UserSettingsModal/Navigation.tsx:31
 #: src/components/modals/UserSettingsModal/Navigation.tsx:46
 msgid "Account Settings"
@@ -330,12 +331,12 @@ msgid "Add a friend"
 msgstr "新增朋友"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:153
-#: src/components/user/UserProfile.tsx:382
+#: src/components/user/UserProfile.tsx:423
 msgid "Add a note"
 msgstr "添加筆記"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:132
-#: src/components/user/UserProfile.tsx:358
+#: src/components/user/UserProfile.tsx:399
 msgid "Add a personal note..."
 msgstr "添加個人筆記..."
 
@@ -392,7 +393,7 @@ msgid ""
 "Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr "最多可新增 50 個自訂貼圖。自訂貼圖只能在 Space 內使用。您可以上傳 PNG、JPG 或 GIF，最大 25MB（自動優化）。"
 
-#: src/components/user/UserProfile.tsx:337
+#: src/components/user/UserProfile.tsx:378
 msgid "Adding..."
 msgstr "新增中..."
 
@@ -414,7 +415,7 @@ msgstr "進階設定"
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 #: src/components/modals/ChannelEditorModal.tsx:206
-#: src/components/modals/SpaceSettingsModal/Account.tsx:301
+#: src/components/modals/SpaceSettingsModal/Account.tsx:316
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:160
 #: src/components/notifications/NotificationPanel.tsx:261
 msgid "All"
@@ -457,7 +458,7 @@ msgstr "已經加入"
 msgid "Always sign Direct Messages"
 msgstr "始終簽署直接訊息"
 
-#: src/components/modals/ConversationSettingsModal.tsx:219
+#: src/components/modals/ConversationSettingsModal.tsx:253
 #: src/components/modals/NewDirectMessageModal.tsx:156
 msgid "Always sign messages"
 msgstr "始終簽署訊息"
@@ -516,7 +517,7 @@ msgid ""
 "Are you sure you want to delete this channel? This action cannot be undone."
 msgstr "您確定要刪除此頻道嗎？此動作無法撤銷。"
 
-#: src/components/modals/ConversationSettingsModal.tsx:64
+#: src/components/modals/ConversationSettingsModal.tsx:65
 msgid ""
 "Are you sure you want to delete this conversation?\n"
 "\n"
@@ -592,7 +593,7 @@ msgid "Backup Failed"
 msgstr "備份失敗"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:114
-#: src/components/modals/SpaceSettingsModal/Account.tsx:211
+#: src/components/modals/SpaceSettingsModal/Account.tsx:226
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Bio"
 msgstr "個人簡介"
@@ -606,7 +607,7 @@ msgid "Bio is too long"
 msgstr "個人簡介過長"
 
 #: src/components/modals/BlockUserModal.tsx:96
-#: src/components/user/UserProfile.tsx:432
+#: src/components/user/UserProfile.tsx:473
 msgid "Block"
 msgstr "封鎖"
 
@@ -632,8 +633,9 @@ msgstr "書籤數量已達上限！請刪除一些以新增新的。"
 msgid "Bookmark message"
 msgstr "書籤訊息"
 
-#: src/components/message/Message.tsx:942
-#: src/components/message/Message.tsx:1037
+#: src/components/message/Message.tsx:892
+#: src/components/message/Message.tsx:987
+#: src/components/message/Message.tsx:1103
 msgid "Bookmarked"
 msgstr "已書籤"
 
@@ -650,11 +652,11 @@ msgstr "已書籤的貼紙"
 msgid "Bookmarks"
 msgstr "書籤"
 
-#: src/components/direct/DirectMessage.tsx:861
+#: src/components/direct/DirectMessage.tsx:859
 msgid "Bookmarks in this conversation"
 msgstr "此對話中的書籤"
 
-#: src/components/space/Channel.tsx:1538
+#: src/components/space/Channel.tsx:1545
 msgid "Bookmarks in this Space"
 msgstr "此空間中的書籤"
 
@@ -673,7 +675,8 @@ msgstr "相機"
 #: src/components/modals/BlockUserModal.tsx:88
 #: src/components/modals/ConfirmationModal.native.tsx:28
 #: src/components/modals/ConfirmationModal.tsx:31
-#: src/components/modals/ConversationSettingsModal.tsx:67
+#: src/components/modals/ConversationSettingsModal.tsx:68
+#: src/components/modals/ConversationSettingsModal.tsx:89
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:293
@@ -717,7 +720,7 @@ msgstr "頻道圖示"
 msgid "Channel Managers"
 msgstr "頻道管理員"
 
-#: src/components/space/Channel.tsx:1985
+#: src/components/space/Channel.tsx:2021
 msgid "Channel members"
 msgstr "頻道成員"
 
@@ -773,7 +776,7 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "選擇您對 Quorum 的首選主題。"
 
 #: src/components/modals/ChannelEditorModal.tsx:207
-#: src/components/modals/SpaceSettingsModal/Account.tsx:302
+#: src/components/modals/SpaceSettingsModal/Account.tsx:317
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:161
 #: src/components/notifications/NotificationPanel.tsx:262
 #: src/components/space/IconPicker/IconPicker.web.tsx:195
@@ -793,7 +796,7 @@ msgstr "清除標籤為 {tag} 的通知"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:421
+#: src/components/modals/SpaceSettingsModal/Account.tsx:436
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "再次點擊以確認"
@@ -867,12 +870,12 @@ msgid ""
 "Control what others can see about you and how your behaviour is shared."
 msgstr "控制其他人可以看到您的哪些資訊，以及您的行為如何分享。"
 
-#: src/components/direct/DirectMessage.tsx:842
+#: src/components/direct/DirectMessage.tsx:840
 msgid "Conversation settings"
 msgstr "對話設定"
 
 #: src/components/direct/DirectMessageContactsList.tsx:281
-#: src/components/modals/ConversationSettingsModal.tsx:207
+#: src/components/modals/ConversationSettingsModal.tsx:241
 msgid "Conversation Settings"
 msgstr "對話設定"
 
@@ -893,12 +896,13 @@ msgstr "已複製！"
 msgid "Copy a link"
 msgstr "複製連結"
 
-#: src/components/direct/DirectMessage.tsx:824
-#: src/components/direct/DirectMessage.tsx:946
-#: src/components/direct/DirectMessage.tsx:965
+#: src/components/direct/DirectMessage.tsx:822
+#: src/components/direct/DirectMessage.tsx:944
+#: src/components/direct/DirectMessage.tsx:963
 #: src/components/direct/DMUserProfileSidebar.tsx:98
 #: src/components/modals/UserSettingsModal/General.tsx:195
-#: src/components/user/UserProfile.tsx:258
+#: src/components/user/UserProfile.tsx:261
+#: src/components/user/UserProfile.tsx:298
 msgid "Copy address"
 msgstr "複製地址"
 
@@ -1075,7 +1079,7 @@ msgstr "刪除"
 #: src/components/message/MessageActionsMenu.tsx:277
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
-#: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:443
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:464
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:106
@@ -1102,8 +1106,8 @@ msgid "Delete Channel"
 msgstr "刪除頻道"
 
 #: src/components/direct/DirectMessageContactsList.tsx:289
-#: src/components/modals/ConversationSettingsModal.tsx:63
-#: src/components/modals/ConversationSettingsModal.tsx:380
+#: src/components/modals/ConversationSettingsModal.tsx:64
+#: src/components/modals/ConversationSettingsModal.tsx:439
 msgid "Delete Conversation"
 msgstr "刪除對話"
 
@@ -1154,8 +1158,6 @@ msgstr "刪除空間"
 
 #: src/components/modals/CreateSpaceModal.tsx:112
 #: src/components/modals/CreateSpaceModal.tsx:120
-#: src/components/modals/SpaceSettingsModal/Account.tsx:170
-#: src/components/modals/SpaceSettingsModal/Account.tsx:178
 #: src/components/modals/SpaceSettingsModal/General.tsx:133
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
@@ -1177,11 +1179,11 @@ msgstr "刪除串聯"
 msgid "Deleting Space..."
 msgstr "正在刪除空間..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:397
+#: src/components/modals/ConversationSettingsModal.tsx:456
 msgid "Deleting..."
 msgstr "正在刪除..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:269
+#: src/components/modals/ConversationSettingsModal.tsx:303
 #: src/components/modals/UserSettingsModal/Privacy.tsx:175
 msgid "Delivery receipts"
 msgstr "傳送收據"
@@ -1260,7 +1262,7 @@ msgstr "在訊息中顯示來自你其中一個 Space 的標籤，放在您的�
 msgid "Display name"
 msgstr "顯示名稱"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:202
+#: src/components/modals/SpaceSettingsModal/Account.tsx:217
 msgid "Display Name"
 msgstr "顯示名稱"
 
@@ -1371,7 +1373,7 @@ msgstr "Emoji 選擇器"
 #: src/components/message/MessageComposer.tsx:850
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1904
+#: src/components/space/Channel.tsx:1911
 #: src/components/thread/ThreadPanel.tsx:539
 msgid "Emojis"
 msgstr "表情符號"
@@ -1384,7 +1386,7 @@ msgstr "啟用同步"
 msgid "Enable threaded conversations in channels"
 msgstr "在頻道中啟用串聯對話"
 
-#: src/services/ActionQueueHandlers.ts:1045
+#: src/services/ActionQueueHandlers.ts:1029
 msgid "Encryption error"
 msgstr "加密錯誤"
 
@@ -1515,7 +1517,7 @@ msgstr "複製私鑰失敗"
 msgid "Failed to create Space. Please try again."
 msgstr "建立空間失敗。請再試一次。"
 
-#: src/services/MessageService.ts:2996
+#: src/services/MessageService.ts:3178
 msgid "Failed to decrypt message with any known state"
 msgstr "無法使用任何已知狀態解密訊息"
 
@@ -1537,7 +1539,7 @@ msgstr "編輯訊息失敗"
 msgid "Failed to export backup"
 msgstr "匯出備份失敗"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:749
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:750
 #: src/hooks/business/spaces/useInviteManagement.ts:263
 msgid "Failed to generate invite link. Please try again."
 msgstr "生成邀請連結失敗。請再試一次。"
@@ -1607,7 +1609,7 @@ msgstr "儲存通知設定失敗"
 msgid "Failed to save notification settings"
 msgstr "無法儲存通知設定"
 
-#: src/hooks/business/user/useUserSettings.ts:458
+#: src/hooks/business/user/useUserSettings.ts:487
 #: src/services/ActionQueueHandlers.ts:93
 msgid "Failed to save settings"
 msgstr "儲存設定失敗"
@@ -1620,7 +1622,7 @@ msgstr "儲存空間設定失敗"
 msgid "Failed to send invite. Please try again."
 msgstr "邀請發送失敗。請再試一次。"
 
-#: src/components/message/Message.tsx:1529
+#: src/components/message/Message.tsx:1553
 msgid "Failed to send."
 msgstr "發送失敗。"
 
@@ -1638,11 +1640,11 @@ msgstr "無法取消靜音用戶"
 msgid "Failed to unpin message"
 msgstr "取消釘選訊息失敗"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:665
 msgid "Failed to update join preview. Please try again."
 msgstr "更新加入預覽失敗。請再試一次。"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:314
+#: src/hooks/business/spaces/useSpaceProfile.ts:348
 msgid "Failed to update profile"
 msgstr "更新個人資料失敗"
 
@@ -1663,7 +1665,7 @@ msgstr "功能"
 msgid "File cannot be larger than {maxSize}"
 msgstr "檔案不能大於 {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:120
+#: src/hooks/business/spaces/useSpaceProfile.ts:142
 #: src/hooks/business/ui/useCustomAssets.ts:142
 #: src/hooks/business/ui/useFileUpload.ts:57
 #: src/hooks/business/ui/useSpaceFileUploads.ts:76
@@ -1682,7 +1684,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "檔案不能大於 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:95
-#: src/hooks/business/spaces/useSpaceProfile.ts:122
+#: src/hooks/business/spaces/useSpaceProfile.ts:144
 #: src/hooks/business/ui/useCustomAssets.ts:107
 #: src/hooks/business/ui/useCustomAssets.ts:153
 #: src/hooks/business/ui/useFileUpload.ts:59
@@ -1701,7 +1703,7 @@ msgstr "檔案被拒絕。請使用 PNG、JPG 或 GIF。"
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
 msgstr "查找說明文件、鍵盤快捷鍵和恢復工具。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:527
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:528
 msgid "Fix"
 msgstr "修復"
 
@@ -1763,12 +1765,12 @@ msgid ""
 "etc.)."
 msgstr "產生一個全新的單次邀請連結並複製到您的剪貼簿。每次點擊都會產生一個新連結。將其貼到您想要的任何地方（電子郵件、WhatsApp 等）。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:736
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:737
 msgid "Generate Link"
 msgstr "生成連結"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:864
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:734
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:735
 msgid "Generate Public Invite Link"
 msgstr "生成公開邀請連結"
 
@@ -1849,8 +1851,8 @@ msgstr "隱藏金鑰"
 msgid "Hide Muted Channels"
 msgstr "隱藏靜音頻道"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:389
-#: src/components/modals/SpaceSettingsModal/Account.tsx:392
+#: src/components/modals/SpaceSettingsModal/Account.tsx:404
+#: src/components/modals/SpaceSettingsModal/Account.tsx:407
 msgid "Hide muted channels from sidebar"
 msgstr "從側邊欄隱藏靜音頻道"
 
@@ -1874,8 +1876,8 @@ msgstr "我了解，複製"
 msgid "I Understand, Show QR"
 msgstr "我明白，顯示 QR"
 
-#: src/components/message/Message.tsx:957
-#: src/components/message/Message.tsx:1052
+#: src/components/message/Message.tsx:907
+#: src/components/message/Message.tsx:1002
 msgid "I'm new!"
 msgstr "我是新手！"
 
@@ -1917,7 +1919,7 @@ msgstr "正在匯入..."
 msgid "Inline Code"
 msgstr "內聯代碼"
 
-#: src/services/MessageService.ts:3312
+#: src/services/MessageService.ts:3594
 msgid "invalid address for signature"
 msgstr "簽名的地址無效"
 
@@ -2015,7 +2017,7 @@ msgstr "加入中..."
 msgid "Jump"
 msgstr "跳轉"
 
-#: src/components/message/MessageList.tsx:675
+#: src/components/message/MessageList.tsx:673
 msgid "Jump to present"
 msgstr "跳至目前"
 
@@ -2055,7 +2057,7 @@ msgid "Keyboard Shortcuts"
 msgstr "鍵盤快捷鍵"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:476
+#: src/components/user/UserProfile.tsx:517
 msgid "Kick"
 msgstr "踢出"
 
@@ -2063,7 +2065,7 @@ msgstr "踢出"
 msgid "Kick User"
 msgstr "踢除使用者"
 
-#: src/components/user/UserProfile.tsx:476
+#: src/components/user/UserProfile.tsx:517
 msgid "Kicked!"
 msgstr "被踢出！"
 
@@ -2081,12 +2083,12 @@ msgid "Leave {0}"
 msgstr "離開 {0}"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:419
+#: src/components/modals/SpaceSettingsModal/Account.tsx:434
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:239
 msgid "Leave Space"
 msgstr "離開空間"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:403
+#: src/components/modals/SpaceSettingsModal/Account.tsx:418
 msgid "Leave this Space"
 msgstr "離開此空間"
 
@@ -2112,7 +2114,7 @@ msgstr "載入更多"
 msgid "Loading bookmarks..."
 msgstr "正在載入書籤..."
 
-#: src/components/message/MessageList.tsx:686
+#: src/components/message/MessageList.tsx:684
 msgid "Loading message..."
 msgstr "載入訊息中..."
 
@@ -2191,7 +2193,7 @@ msgstr "管理新訊息的桌面通知偏好設定。"
 msgid "Manage Roles"
 msgstr "管理角色"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:140
+#: src/components/modals/SpaceSettingsModal/Account.tsx:142
 msgid "Manage your settings for <0>{spaceName}</0>."
 msgstr "管理<0>{spaceName}</0>的設定"
 
@@ -2219,7 +2221,7 @@ msgstr "成員"
 msgid "members"
 msgstr "成員"
 
-#: src/components/space/Channel.tsx:1564
+#: src/components/space/Channel.tsx:1571
 msgid "Members List"
 msgstr "成員列表"
 
@@ -2238,9 +2240,9 @@ msgstr "提及所有人"
 msgid "Message actions"
 msgstr "訊息操作"
 
-#: src/components/message/Message.tsx:899
-#: src/components/message/Message.tsx:973
-#: src/components/message/Message.tsx:1068
+#: src/components/message/Message.tsx:923
+#: src/components/message/Message.tsx:1018
+#: src/components/message/Message.tsx:1079
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "訊息沒有有效的簽名，這可能不是發件人發送的"
@@ -2278,7 +2280,7 @@ msgstr "更多反應"
 msgid "Must be exactly 4 characters"
 msgstr "必須正好是 4 個字元"
 
-#: src/components/user/UserProfile.tsx:455
+#: src/components/user/UserProfile.tsx:496
 msgid "Mute"
 msgstr "靜音"
 
@@ -2286,7 +2288,7 @@ msgstr "靜音"
 msgid "Mute Channel"
 msgstr "靜音頻道"
 
-#: src/components/modals/ConversationSettingsModal.tsx:240
+#: src/components/modals/ConversationSettingsModal.tsx:274
 msgid "Mute conversation"
 msgstr "靜音對話"
 
@@ -2328,7 +2330,7 @@ msgid "My Account"
 msgstr "我的帳戶"
 
 #: src/components/direct/DirectMessageContactsList.tsx:461
-#: src/components/space/Channel.tsx:1762
+#: src/components/space/Channel.tsx:1769
 msgid "Name or Address"
 msgstr "名稱或地址"
 
@@ -2346,7 +2348,7 @@ msgstr "名稱類似於管理員、版主或支援者是保留的。"
 msgid "Navigation"
 msgstr "導航"
 
-#: src/services/ActionQueueHandlers.ts:1042
+#: src/services/ActionQueueHandlers.ts:1026
 msgid "Network error"
 msgstr "網路錯誤"
 
@@ -2498,7 +2500,7 @@ msgstr "沒有未讀通知"
 msgid "No user found for @{usernameQuery}."
 msgstr "找不到 @{usernameQuery} 的使用者。"
 
-#: src/components/space/Channel.tsx:1770 src/components/space/Channel.tsx:2005
+#: src/components/space/Channel.tsx:1777 src/components/space/Channel.tsx:2041
 msgid "No users found!"
 msgstr "找不到使用者！"
 
@@ -2508,7 +2510,7 @@ msgid "None"
 msgstr "無"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:128
-#: src/components/user/UserProfile.tsx:354
+#: src/components/user/UserProfile.tsx:395
 msgid "Note"
 msgstr "筆記"
 
@@ -2525,10 +2527,10 @@ msgstr "備註必須在 {0} 個字元以內"
 msgid "Notification permission not granted"
 msgstr "通知權限未授予"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:270
+#: src/components/modals/SpaceSettingsModal/Account.tsx:285
 #: src/components/modals/UserSettingsModal/Navigation.tsx:21
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
-#: src/components/shell/NavRail.tsx:65 src/components/space/Channel.tsx:1501
+#: src/components/shell/NavRail.tsx:65 src/components/space/Channel.tsx:1508
 msgid "Notifications"
 msgstr "通知"
 
@@ -2543,11 +2545,11 @@ msgid "Notifications are not supported in this browser"
 msgstr "此瀏覽器不支援通知"
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Notifications for {0}"
 msgstr "{0} 的通知"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:277
+#: src/components/modals/SpaceSettingsModal/Account.tsx:292
 msgid "Notifications for this Space"
 msgstr "此空間的通知"
 
@@ -2555,7 +2557,7 @@ msgstr "此空間的通知"
 msgid "Notify all members"
 msgstr "通知所有成員"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:290
+#: src/components/modals/SpaceSettingsModal/Account.tsx:305
 msgid "Notify me for:"
 msgstr "通知我："
 
@@ -2593,11 +2595,11 @@ msgid "Open {0}"
 msgstr "開啟 {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:30
-#: src/components/direct/DirectMessage.tsx:801
+#: src/components/direct/DirectMessage.tsx:799
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
-#: src/components/space/Channel.tsx:1392
+#: src/components/space/Channel.tsx:1399
 #: src/components/wallet/WalletPage.tsx:19
 msgid "Open navigation"
 msgstr "開啟導航"
@@ -2618,7 +2620,7 @@ msgstr "操作超時。請再試一次。"
 msgid "Original"
 msgstr "原始的"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:149
+#: src/components/modals/SpaceSettingsModal/Account.tsx:151
 msgid ""
 "Override your display name, avatar, and bio for this Space. Other Spaces and"
 " your global profile are unaffected."
@@ -2710,20 +2712,22 @@ msgstr "固定訊息"
 msgid "Pin/Unpin without confirmation"
 msgstr "釘選/取消釘選而不需要確認"
 
-#: src/components/message/Message.tsx:926
-#: src/components/message/Message.tsx:1021
+#: src/components/message/Message.tsx:876
+#: src/components/message/Message.tsx:971
+#: src/components/message/Message.tsx:1092
 msgid "Pinned"
 msgstr "已固定"
 
 #. placeholder {0}: formatResolvedName(resolveSenderName({
 #. ...mapSenderToUser(message.pinnedBy), address:
 #. mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))
-#: src/components/message/Message.tsx:925
-#: src/components/message/Message.tsx:1020
+#: src/components/message/Message.tsx:875
+#: src/components/message/Message.tsx:970
+#: src/components/message/Message.tsx:1091
 msgid "Pinned by {0}"
 msgstr "由 {0} 固定"
 
-#: src/components/space/Channel.tsx:1433
+#: src/components/space/Channel.tsx:1440
 msgid "Pinned Messages"
 msgstr "固定訊息"
 
@@ -2827,7 +2831,7 @@ msgstr "只讀"
 msgid "Read only channel"
 msgstr "只讀頻道"
 
-#: src/components/modals/ConversationSettingsModal.tsx:312
+#: src/components/modals/ConversationSettingsModal.tsx:346
 #: src/components/modals/UserSettingsModal/Privacy.tsx:199
 msgid "Read receipts"
 msgstr "已讀收據"
@@ -2848,7 +2852,7 @@ msgstr "重新授權"
 msgid "received config with invalid signature!"
 msgstr "收到無效簽名的配置！"
 
-#: src/services/ActionQueueHandlers.ts:1048
+#: src/services/ActionQueueHandlers.ts:1032
 msgid "Recipient has no devices"
 msgstr "收件人沒有設備"
 
@@ -2873,7 +2877,7 @@ msgstr "移除書籤"
 msgid "Remove from Favorites"
 msgstr "從收藏夾中移除"
 
-#: src/components/user/UserProfile.tsx:309
+#: src/components/user/UserProfile.tsx:350
 msgid "Removing..."
 msgstr "正在移除..."
 
@@ -2885,7 +2889,7 @@ msgstr "重新命名此裝置"
 msgid "Reopen"
 msgstr "重新開啟"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:322
+#: src/components/modals/SpaceSettingsModal/Account.tsx:337
 #: src/components/notifications/NotificationPanel.tsx:120
 msgid "Replies"
 msgstr "回覆"
@@ -2923,10 +2927,29 @@ msgstr "重置"
 msgid "Reset App Data"
 msgstr "重置應用程式資料"
 
-#: src/components/modals/ConversationSettingsModal.tsx:280
-#: src/components/modals/ConversationSettingsModal.tsx:319
+#: src/components/modals/ConversationSettingsModal.tsx:85
+#: src/components/modals/ConversationSettingsModal.tsx:416
+msgid "Reset Encryption Session"
+msgstr "重設加密會話"
+
+#: src/components/modals/ConversationSettingsModal.tsx:88
+msgid "Reset Session"
+msgstr "重設會話"
+
+#: src/components/modals/ConversationSettingsModal.tsx:421
+msgid ""
+"Reset the encryption session if messages fail to send or decrypt. The next "
+"message will establish a fresh secure connection."
+msgstr "如果訊息傳送或解密失敗，請重設加密會話。下一條訊息將建立新的安全連線。"
+
+#: src/components/modals/ConversationSettingsModal.tsx:314
+#: src/components/modals/ConversationSettingsModal.tsx:353
 msgid "Reset to global"
 msgstr "重設為全域設定"
+
+#: src/components/modals/ConversationSettingsModal.tsx:474
+msgid "Resetting..."
+msgstr "正在重設..."
 
 #: src/components/shell/AppShell.tsx:333
 msgid "Resize sidebar"
@@ -2964,7 +2987,7 @@ msgid "Restoring..."
 msgstr "正在恢復..."
 
 #: src/components/discover-page/DiscoverTab.tsx:89
-#: src/components/message/Message.tsx:1537
+#: src/components/message/Message.tsx:1561
 msgid "Retry"
 msgstr "重試"
 
@@ -2973,7 +2996,7 @@ msgstr "重試"
 msgid "Roles"
 msgstr "角色"
 
-#: src/components/modals/ConversationSettingsModal.tsx:364
+#: src/components/modals/ConversationSettingsModal.tsx:398
 msgid "Save"
 msgstr "保存"
 
@@ -2984,19 +3007,19 @@ msgstr "保存"
 #: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:718
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:719
 #: src/components/modals/ThreadSettingsModal.tsx:184
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:363
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "儲存變更"
 
-#: src/components/modals/ConversationSettingsModal.tsx:347
+#: src/components/modals/ConversationSettingsModal.tsx:381
 #: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "保存編輯歷史"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:703
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:704
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:352
 msgid "Save Failed"
 msgstr "儲存失敗"
@@ -3053,8 +3076,8 @@ msgstr "在此空間中搜尋"
 msgid "Search in this Space..."
 msgstr "在此空間中搜尋..."
 
-#: src/components/direct/DirectMessage.tsx:903
-#: src/components/space/Channel.tsx:1583
+#: src/components/direct/DirectMessage.tsx:901
+#: src/components/space/Channel.tsx:1590
 msgid "Search Messages"
 msgstr "搜尋訊息"
 
@@ -3082,7 +3105,7 @@ msgstr "搜尋串聯…"
 msgid "Search username or address"
 msgstr "搜尋用戶名或地址"
 
-#: src/components/space/Channel.tsx:1996
+#: src/components/space/Channel.tsx:2032
 msgid "Search Username or Address"
 msgstr "搜尋用戶名或地址"
 
@@ -3103,7 +3126,7 @@ msgstr "安全"
 msgid "See all bookmarks"
 msgstr "查看所有書籤"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:299
+#: src/components/modals/SpaceSettingsModal/Account.tsx:314
 msgid "Select"
 msgstr "選擇"
 
@@ -3132,7 +3155,7 @@ msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "直接向某人發送單次邀請。每個連結只能使用一次。"
 
-#: src/services/ActionQueueHandlers.ts:1050
+#: src/services/ActionQueueHandlers.ts:1034
 msgid "Send failed"
 msgstr "發送失敗"
 
@@ -3145,7 +3168,7 @@ msgstr "傳送邀請"
 msgid "Send Link"
 msgstr "發送連結"
 
-#: src/components/user/UserProfile.tsx:401
+#: src/components/user/UserProfile.tsx:442
 msgid "Send Message"
 msgstr "發送訊息"
 
@@ -3155,7 +3178,7 @@ msgstr "發送訊息"
 msgid "Send via DM"
 msgstr "透過私訊發送"
 
-#: src/components/message/Message.tsx:1522
+#: src/components/message/Message.tsx:1546
 msgid "Sending..."
 msgstr "發送中..."
 
@@ -3239,7 +3262,7 @@ msgstr "登入 Quorum"
 msgid "Skip for now"
 msgstr "稍後再說"
 
-#: src/services/MessageService.ts:4609
+#: src/services/MessageService.ts:4904
 msgid "Someone"
 msgstr "某人"
 
@@ -3288,7 +3311,7 @@ msgstr "空間名稱必須至少有 {0} 個字元"
 msgid "Space not found"
 msgstr "找不到空間"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:280
+#: src/components/modals/SpaceSettingsModal/Account.tsx:295
 msgid "Space notifications"
 msgstr "空間通知"
 
@@ -3336,7 +3359,7 @@ msgstr "狀態在這裡"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1910
+#: src/components/space/Channel.tsx:1917
 #: src/components/thread/ThreadPanel.tsx:545
 msgid "Stickers"
 msgstr "貼圖"
@@ -3345,7 +3368,7 @@ msgstr "貼圖"
 msgid "Strikethrough"
 msgstr "刪除線"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:530
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:531
 msgid "Sync Kick Status"
 msgstr "同步踢出狀態"
 
@@ -3366,7 +3389,7 @@ msgstr "標籤圖片"
 msgid "Tap to copy"
 msgstr "點擊以複製"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:217
+#: src/components/modals/SpaceSettingsModal/Account.tsx:232
 msgid "Tell people about yourself in this Space..."
 msgstr "在此空間中介紹您自己..."
 
@@ -3406,8 +3429,12 @@ msgstr "此操作無法撤銷，並將永久刪除此空間及其所有頻道和
 msgid "This bio will be visible to others when they view your profile."
 msgstr "當其他人查看您的個人資料時，這個簡介將會可見。"
 
-#: src/components/modals/ConversationSettingsModal.tsx:287
-#: src/components/modals/ConversationSettingsModal.tsx:326
+#: src/components/modals/ConversationSettingsModal.tsx:79
+msgid "this contact"
+msgstr "此聯絡人"
+
+#: src/components/modals/ConversationSettingsModal.tsx:321
+#: src/components/modals/ConversationSettingsModal.tsx:360
 msgid ""
 "This conversation overrides your global setting. Click \"Reset to global\" "
 "to use your global preference."
@@ -3505,7 +3532,7 @@ msgstr "該用戶將不再能夠在此空間中發送訊息。"
 msgid "This user will not be able to send messages for {days} days."
 msgstr "此用戶將無法在 {days} 天內發送訊息。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:735
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:736
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -3518,6 +3545,16 @@ msgid ""
 " you have exported your private key from the Privacy/Security settings. This"
 " action cannot be undone."
 msgstr "這將會從此瀏覽器中刪除所有資料，包括您的私鑰和所有私訊。私訊無法恢復，請確定您已從隱私權/安全性設定中匯出私鑰。此操作無法撤銷。"
+
+#: src/components/modals/ConversationSettingsModal.tsx:86
+msgid ""
+"This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
+"\n"
+"Use this if messages are failing to send or decrypt. Message history is not affected."
+msgstr ""
+"這將重設與 {counterpartyName} 的加密會話。下一條訊息將建立新的安全連線。\n"
+"\n"
+"如果訊息傳送或解密失敗，請使用此功能。訊息歷史記錄不受影響。"
 
 #: src/components/notifications/NotificationItem.tsx:180
 #: src/components/search/SearchResultItem.tsx:140
@@ -3537,7 +3574,7 @@ msgstr "串聯設定"
 msgid "Thread title"
 msgstr "串聯標題"
 
-#: src/components/space/Channel.tsx:1474
+#: src/components/space/Channel.tsx:1481
 #: src/components/thread/ThreadsListPanel.tsx:113
 msgid "Threads"
 msgstr "串聯"
@@ -3571,7 +3608,7 @@ msgid ""
 "settings. Notifications cannot be disabled programmatically."
 msgstr "要停用通知，請在瀏覽器設定中更改設定。無法以程式方式停用通知。"
 
-#: src/utils/dateFormatting.ts:28
+#: src/utils/dateFormatting.ts:31
 msgid "Today"
 msgstr "今天"
 
@@ -3630,7 +3667,7 @@ msgstr "空間中的打字指示器"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "無法壓縮emoji圖片。請使用較小的圖片。"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:162
+#: src/hooks/business/spaces/useSpaceProfile.ts:184
 #: src/hooks/business/ui/useFileUpload.ts:100
 #: src/hooks/business/ui/useSpaceFileUploads.ts:170
 #: src/hooks/business/ui/useSpaceFileUploads.ts:193
@@ -3647,7 +3684,7 @@ msgstr "無法壓縮貼圖圖片。請使用較小的圖片。"
 msgid "Unable to copy to clipboard"
 msgstr "無法複製到剪貼簿"
 
-#: src/services/SpaceService.ts:561
+#: src/services/SpaceService.ts:560
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -3678,7 +3715,7 @@ msgid "Unable to restore: not logged in"
 msgstr "無法恢復：未登入"
 
 #: src/components/modals/BlockUserModal.tsx:96
-#: src/components/user/UserProfile.tsx:432
+#: src/components/user/UserProfile.tsx:473
 msgid "Unblock"
 msgstr "解除封鎖"
 
@@ -3689,7 +3726,7 @@ msgstr "解除封鎖使用者"
 #: src/components/bookmarks/BookmarkCard.tsx:96
 #: src/components/direct/DirectMessageContactsList.tsx:326
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:2969 src/services/MessageService.ts:4536
+#: src/services/MessageService.ts:3151 src/services/MessageService.ts:4831
 msgid "Unknown"
 msgstr "未知"
 
@@ -3705,7 +3742,7 @@ msgstr "未知時間"
 
 #: src/components/bookmarks/BookmarkCard.tsx:49
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:248
+#: src/components/direct/DirectMessage.tsx:247
 #: src/components/direct/DirectMessageContactsList.tsx:44
 #: src/components/message/MentionDropdown.tsx:134
 #: src/components/message/MessageEditTextarea.tsx:533
@@ -3715,7 +3752,7 @@ msgstr "未知時間"
 #: src/components/message/MessageEditTextarea.tsx:582
 #: src/components/message/MessagePreview.tsx:208
 #: src/components/message/PinnedMessagesPanel.tsx:88
-#: src/components/modals/ConversationSettingsModal.tsx:118
+#: src/components/modals/ConversationSettingsModal.tsx:140
 #: src/components/modals/NewDirectMessageModal.tsx:78
 #: src/components/notifications/NotificationPanel.tsx:316
 #: src/components/notifications/NotificationPanel.tsx:355
@@ -3728,16 +3765,16 @@ msgstr "未知時間"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2599
-#: src/services/MessageService.ts:2790 src/services/MessageService.ts:2957
-#: src/services/MessageService.ts:2986 src/services/MessageService.ts:5015
-#: src/services/MessageService.ts:5127 src/services/MessageService.ts:5212
-#: src/services/MessageService.ts:5428 src/services/MessageService.ts:5626
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2677
+#: src/services/MessageService.ts:2872 src/services/MessageService.ts:3139
+#: src/services/MessageService.ts:3168 src/services/MessageService.ts:5310
+#: src/services/MessageService.ts:5422 src/services/MessageService.ts:5507
+#: src/services/MessageService.ts:5729 src/services/MessageService.ts:5931
 msgid "Unknown User"
 msgstr "未知使用者"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:455
+#: src/components/user/UserProfile.tsx:496
 msgid "Unmute"
 msgstr "取消靜音"
 
@@ -3779,13 +3816,13 @@ msgstr "取消釘住訊息"
 msgid "Unpin this post"
 msgstr "取消固定這篇文章"
 
-#: src/components/direct/DirectMessage.tsx:1024
+#: src/components/direct/DirectMessage.tsx:1022
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
 msgstr "在您回覆之前，該發件人將無法看到您的顯示名稱或個人資料圖片"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:530
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:531
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -3795,7 +3832,7 @@ msgstr "更新所有成員的踢出記錄。如果被踢的用戶仍然對某些
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 2:1"
 msgstr "上傳您的空間橫幅 - PNG 或 JPG - 最佳比例 2:1"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:188
+#: src/components/modals/SpaceSettingsModal/Account.tsx:203
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "為此空間上傳頭像 - PNG 或 JPG - 最佳比例 1:1"
 
@@ -3828,6 +3865,11 @@ msgstr "上傳貼圖"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "msgstr “使用「儲存至檔案」來儲存您的私鑰”"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:185
+#: src/components/modals/SpaceSettingsModal/Account.tsx:193
+msgid "Use my main avatar"
+msgstr "使用我的主要頭像"
+
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "用戶不存在。"
@@ -3837,16 +3879,17 @@ msgstr "用戶不存在。"
 msgid "User not authenticated"
 msgstr "用戶未經身份驗證"
 
-#: src/components/direct/DirectMessage.tsx:1125
+#: src/components/direct/DirectMessage.tsx:1123
+#: src/components/space/Channel.tsx:1998
 msgid "User profile"
 msgstr "用戶個人資料"
 
-#: src/components/direct/DirectMessage.tsx:885
+#: src/components/direct/DirectMessage.tsx:883
 msgid "User Profile"
 msgstr "用戶個人資料"
 
-#: src/components/modals/ConversationSettingsModal.tsx:288
-#: src/components/modals/ConversationSettingsModal.tsx:327
+#: src/components/modals/ConversationSettingsModal.tsx:322
+#: src/components/modals/ConversationSettingsModal.tsx:361
 msgid ""
 "Uses your global setting. Toggle to override for this conversation only."
 msgstr "使用您的全域設定。切換以僅針對此對話進行覆寫。"
@@ -3904,7 +3947,7 @@ msgstr "我們應該怎麼稱呼您？"
 msgid "What's on your mind today?"
 msgstr "今天您在想什麼？"
 
-#: src/components/modals/ConversationSettingsModal.tsx:351
+#: src/components/modals/ConversationSettingsModal.tsx:385
 #: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
@@ -3933,7 +3976,7 @@ msgid ""
 "applies to all messages in this Space."
 msgstr "當訊息被簽名時，發送者確認它來自他們的密鑰。當訊息未被簽名時，發送者具有合理的否認權。此設定適用於此空間中的所有訊息。"
 
-#: src/components/modals/ConversationSettingsModal.tsx:244
+#: src/components/modals/ConversationSettingsModal.tsx:278
 msgid ""
 "When muted, new messages won't show unread indicators or desktop "
 "notifications."
@@ -3979,23 +4022,23 @@ msgid ""
 "typing."
 msgstr "開啟後，您的私聊聯繫人會看到你正在輸入，你也會看到他們正在輸入。"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:312
+#: src/components/modals/SpaceSettingsModal/Account.tsx:327
 msgid "When someone mentions @everyone"
 msgstr "當有人提及 @everyone 時"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:317
+#: src/components/modals/SpaceSettingsModal/Account.tsx:332
 msgid "When someone mentions a role you have"
 msgstr "當有人提及您擁有的角色時"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:307
+#: src/components/modals/SpaceSettingsModal/Account.tsx:322
 msgid "When someone mentions you directly"
 msgstr "當有人直接提及您時"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:323
+#: src/components/modals/SpaceSettingsModal/Account.tsx:338
 msgid "When someone replies to your messages"
 msgstr "當有人回覆您的訊息時"
 
-#: src/components/modals/ConversationSettingsModal.tsx:223
+#: src/components/modals/ConversationSettingsModal.tsx:257
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. The default "
@@ -4019,13 +4062,13 @@ msgid ""
 "no 'forgot password' option. This is the price you pay for privacy :-)"
 msgstr "沒有這個備份，丟失設備就意味著丟失帳戶——沒有“忘記密碼”選項。這是隱私的代價:-)"
 
-#: src/utils/dateFormatting.ts:29
+#: src/utils/dateFormatting.ts:32
 msgid "Yesterday"
 msgstr "昨天"
 
-#: src/utils/dateFormatting.ts:38
-msgid "Yesterday at {timeFormatted}"
-msgstr "昨天 {timeFormatted}"
+#: src/utils/dateFormatting.ts:33
+msgid "Yesterday at {time}"
+msgstr "昨天 {time}"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:141
 msgid "You"
@@ -4036,7 +4079,7 @@ msgid "You are already a member of this Space."
 msgstr "您已經是此空間的成員。"
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1741
+#: src/components/space/Channel.tsx:1748
 msgid "You are muted for {0}"
 msgstr "您已被靜音 {0}"
 
@@ -4073,7 +4116,7 @@ msgid "You cannot delete the default channel."
 msgstr "您無法刪除預設頻道。"
 
 #: src/components/message/MessageComposer.tsx:644
-#: src/components/space/Channel.tsx:1744
+#: src/components/space/Channel.tsx:1751
 msgid "You cannot post in this channel"
 msgstr "您不能在此頻道中發佈"
 
@@ -4085,7 +4128,7 @@ msgstr "您無法向自己發送直接訊息。"
 msgid "You have a new unread message"
 msgstr "您有一條新的未讀訊息"
 
-#: src/components/space/Channel.tsx:1742
+#: src/components/space/Channel.tsx:1749
 msgid "You have been muted in this Space"
 msgstr "您已在此空間中被靜音"
 
@@ -4099,7 +4142,7 @@ msgid ""
 "Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
 msgstr "您必須為管理操作分配一個角色（踢出除外）。小心授予刪除和靜音權限。<0><1>了解更多</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:406
+#: src/components/modals/SpaceSettingsModal/Account.tsx:421
 msgid ""
 "You won't be able to rejoin unless you are re-invited. Your existing "
 "messages will NOT be deleted."
@@ -4129,7 +4172,7 @@ msgstr "您已經全部跟上了！"
 msgid "You're all set!"
 msgstr "一切就緒！"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:526
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:527
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -4188,7 +4231,7 @@ msgstr ""
 msgid "Your communities, your rules - no platform can ban you."
 msgstr "您的社區，您的規則——沒有平台可以封禁您。"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:146
+#: src/components/modals/SpaceSettingsModal/Account.tsx:148
 msgid "Your Details"
 msgstr "您的詳細資訊"
 
@@ -4219,7 +4262,7 @@ msgstr "您的個人檔案圖像大小必須為 {maxSize} 或更小，且必須�
 msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
 msgstr "您的 QNS 名稱 <0>{primaryUsername}.q</0> 會顯示為您的名稱。"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:247
+#: src/components/modals/SpaceSettingsModal/Account.tsx:262
 msgid "Your Roles"
 msgstr "您的角色"
 
@@ -4243,3 +4286,6 @@ msgstr "YouTube 影片縮圖"
 
 #~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 #~ msgstr "為您的 Space 上傳橫幅 - PNG 或 JPG - 最佳比例 3:1"
+
+#~ msgid "Yesterday at {timeFormatted}"
+#~ msgstr "昨天 {timeFormatted}"
