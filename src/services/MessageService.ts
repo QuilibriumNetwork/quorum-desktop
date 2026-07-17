@@ -448,7 +448,6 @@ export class MessageService {
     if (raw.type === 'delivery-ack') {
       if (this.receiptService && deliveryReceiptsEnabled) {
         const ackIds = raw.messageIds ?? [];
-        logger.log('[DeliveryReceipt] Processing incoming ack', { ackIds, from: senderAddress });
         this.receiptService.onAckReceived(ackIds);
       }
       return true; // Signal: intercept this message
@@ -463,7 +462,6 @@ export class MessageService {
         const upToMessageId = raw.upToMessageId;
         const upToTimestamp = raw.upToTimestamp;
         if (upToMessageId && upToTimestamp) {
-          logger.log('[ReadReceipt] Processing incoming read ack', { upToMessageId, upToTimestamp, from: senderAddress });
           this.receiptService.onReadAckReceived(upToMessageId, upToTimestamp, senderAddress);
         }
       }
@@ -504,7 +502,6 @@ export class MessageService {
     // 2. Extract piggybacked ackMessageIds, process, then strip
     const ackMessageIds = raw.ackMessageIds;
     if (ackMessageIds && this.receiptService && deliveryReceiptsEnabled) {
-      logger.log('[DeliveryReceipt] Processing piggybacked acks', { ackMessageIds, from: senderAddress });
       this.receiptService.onAckReceived(ackMessageIds);
     }
     delete raw.ackMessageIds;
@@ -512,7 +509,6 @@ export class MessageService {
     // 2b. Extract piggybacked readAckUpTo, process, then strip
     const readAckUpTo = raw.readAckUpTo;
     if (readAckUpTo && this.receiptService && readReceiptsEnabled) {
-      logger.log('[ReadReceipt] Processing piggybacked read ack', { readAckUpTo, from: senderAddress });
       this.receiptService.onReadAckReceived(readAckUpTo.messageId, readAckUpTo.timestamp, senderAddress);
     }
     delete raw.readAckUpTo;
@@ -525,7 +521,6 @@ export class MessageService {
       decryptedContent.content?.type === 'post' &&
       decryptedContent.content?.senderId !== selfAddress
     ) {
-      logger.log('[DeliveryReceipt] Buffering messageId for ack', { messageId: decryptedContent.messageId, sender: senderAddress });
       this.receiptService.onMessageReceived(senderAddress, decryptedContent.messageId);
     }
 

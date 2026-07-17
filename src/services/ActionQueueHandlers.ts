@@ -942,15 +942,8 @@ export class ActionQueueHandlers {
       const selfUserAddress = context.selfUserAddress as string;
 
       if (!messageIds || messageIds.length === 0) {
-        logger.log('[ActionQueue:sendDeliveryAck] Empty messageIds, skipping');
         return;
       }
-
-      logger.log('[ActionQueue:sendDeliveryAck] Sending standalone ack', {
-        address: address?.slice(0, 16),
-        messageIds,
-        selfUserAddress: selfUserAddress?.slice(0, 16),
-      });
 
       const ackMessage = {
         senderId: selfUserAddress,
@@ -960,7 +953,6 @@ export class ActionQueueHandlers {
 
       try {
         await this.deps.messageService.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
-        logger.log('[ActionQueue:sendDeliveryAck] Ack sent successfully');
       } catch (err: any) {
         logger.error('[ActionQueue:sendDeliveryAck] Failed to send ack', err.message);
         throw err;
@@ -999,15 +991,8 @@ export class ActionQueueHandlers {
       const selfUserAddress = context.selfUserAddress as string;
 
       if (!upToMessageId) {
-        logger.log('[ActionQueue:sendReadAck] No upToMessageId, skipping');
         return;
       }
-
-      logger.log('[ActionQueue:sendReadAck] Sending standalone read ack', {
-        address: address?.slice(0, 16),
-        upToMessageId,
-        upToTimestamp,
-      });
 
       const ackMessage = {
         senderId: selfUserAddress,
@@ -1018,7 +1003,6 @@ export class ActionQueueHandlers {
 
       try {
         await this.deps.messageService.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
-        logger.log('[ActionQueue:sendReadAck] Read ack sent successfully');
       } catch (err: any) {
         logger.error('[ActionQueue:sendReadAck] Failed to send read ack', err.message);
         throw err;
