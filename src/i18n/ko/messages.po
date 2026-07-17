@@ -21,24 +21,24 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "파일 크기는 {maxFileSize}보다 클 수 없습니다."
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:160
+#: src/hooks/business/channels/useChannelData.ts:175
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:176
+#: src/hooks/business/channels/useChannelData.ts:191
 msgid "No Role - {count}"
 msgstr "역할 없음 - {count}"
-
-#. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1716
-msgid "Send a message to #{channel_name}"
-msgstr "#{channel_name}에 메시지 보내기"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/steps/CompleteStep.tsx:19
 msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
 msgstr "Quorum에 오신 것을 환영합니다, {name}! 계정 보안이 완료되어 사용 준비가 되었습니다."
+
+#. js-lingui-explicit-id
+#: src/components/space/Channel.tsx:1723
+msgid "Send a message to #{channel_name}"
+msgstr "#{channel_name}에 메시지 보내기"
 
 #. js-lingui-explicit-id
 #: src/components/message/ReactionsList.tsx:131
@@ -68,27 +68,28 @@ msgid "Replying to"
 msgstr "답글 중"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:496
+#: src/components/message/Message.tsx:483
 msgid "has joined"
 msgstr "가입했습니다"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:504
+#: src/components/message/Message.tsx:491
 msgid "has left"
 msgstr "퇴장했습니다"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:512
+#: src/components/message/Message.tsx:499
 msgid "has been kicked"
 msgstr "추방되었습니다"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1080
+#: src/components/direct/DirectMessage.tsx:1078
 msgid "Send a message to {user}"
 msgstr "{user}에게 메시지 보내기"
 
-#: src/components/message/Message.tsx:990
-#: src/components/message/Message.tsx:1003
+#: src/components/message/Message.tsx:940
+#: src/components/message/Message.tsx:953
+#: src/components/message/Message.tsx:1074
 msgid "(edited)"
 msgstr "(편집됨)"
 
@@ -97,7 +98,7 @@ msgid "(empty)"
 msgstr "(비어 있음)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:128
-#: src/components/user/UserProfile.tsx:354
+#: src/components/user/UserProfile.tsx:395
 msgid "(only visible to you)"
 msgstr "(오직 당신만 볼 수 있습니다)"
 
@@ -117,8 +118,8 @@ msgstr "[이미지]"
 msgid "[Message]"
 msgstr "[메시지]"
 
-#: src/components/message/Message.tsx:726
-#: src/components/message/Message.tsx:1125
+#: src/components/message/Message.tsx:713
+#: src/components/message/Message.tsx:1162
 msgid "[Original message was deleted]"
 msgstr "[원본 메시지가 삭제되었습니다]"
 
@@ -220,11 +221,11 @@ msgstr "이 공간에 {contextCount}개의 북마크"
 msgid "{count} new notifications"
 msgstr "{count}개의 새로운 알림"
 
-#: src/utils/dateFormatting.ts:95
+#: src/utils/dateFormatting.ts:76
 msgid "{days} days"
 msgstr "{days} 일"
 
-#: src/utils/dateFormatting.ts:97
+#: src/utils/dateFormatting.ts:78
 msgid "{hours} hours"
 msgstr "{hours} 시간"
 
@@ -232,17 +233,17 @@ msgstr "{hours} 시간"
 msgid "{replyCount} replies"
 msgstr "{replyCount}개의 대화"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:311
+#: src/components/modals/SpaceSettingsModal/Account.tsx:326
 #: src/components/notifications/NotificationPanel.tsx:111
 msgid "@everyone"
 msgstr "@everyone"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:316
+#: src/components/modals/SpaceSettingsModal/Account.tsx:331
 #: src/components/notifications/NotificationPanel.tsx:115
 msgid "@roles"
 msgstr "@roles"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:306
+#: src/components/modals/SpaceSettingsModal/Account.tsx:321
 #: src/components/notifications/NotificationPanel.tsx:107
 msgid "@you"
 msgstr "@you"
@@ -255,7 +256,7 @@ msgstr "친구 추가"
 msgid "0 = forever"
 msgstr "0 = 영원히"
 
-#: src/utils/dateFormatting.ts:89
+#: src/utils/dateFormatting.ts:70
 msgid "0 hours"
 msgstr "0 시간"
 
@@ -286,16 +287,16 @@ msgid ""
 "website."
 msgstr "누구나 참여할 수 있는 재사용 가능한 링크입니다. 소셜 미디어나 당신의 웹사이트에 공유하세요."
 
-#: src/services/MessageService.ts:4626 src/services/NotificationService.ts:297
+#: src/services/MessageService.ts:4921 src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "역할"
 
-#: src/services/MessageService.ts:4636 src/services/NotificationService.ts:296
+#: src/services/MessageService.ts:4931 src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "공간"
 
-#: src/components/user/UserProfile.tsx:346
+#: src/components/user/UserProfile.tsx:387
 msgid "About"
 msgstr "정보"
 
@@ -316,7 +317,7 @@ msgstr "계정 주소"
 msgid "Account Key"
 msgstr "계정 키"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:137
+#: src/components/modals/SpaceSettingsModal/Account.tsx:139
 #: src/components/modals/UserSettingsModal/Navigation.tsx:31
 #: src/components/modals/UserSettingsModal/Navigation.tsx:46
 msgid "Account Settings"
@@ -332,12 +333,12 @@ msgid "Add a friend"
 msgstr "친구 추가"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:153
-#: src/components/user/UserProfile.tsx:382
+#: src/components/user/UserProfile.tsx:423
 msgid "Add a note"
 msgstr "노트 추가"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:132
-#: src/components/user/UserProfile.tsx:358
+#: src/components/user/UserProfile.tsx:399
 msgid "Add a personal note..."
 msgstr "개인 노트 추가..."
 
@@ -397,7 +398,7 @@ msgstr ""
 "최대 50개의 사용자 정의 스티커를 추가하세요. 사용자 정의 스티커는 Space 내에서만 사용할 수 있습니다. PNG, JPG 또는 "
 "GIF를 업로드할 수 있으며, 최대 25MB(자동 최적화됨)입니다."
 
-#: src/components/user/UserProfile.tsx:337
+#: src/components/user/UserProfile.tsx:378
 msgid "Adding..."
 msgstr "추가 중..."
 
@@ -419,7 +420,7 @@ msgstr "고급 설정"
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 #: src/components/modals/ChannelEditorModal.tsx:206
-#: src/components/modals/SpaceSettingsModal/Account.tsx:301
+#: src/components/modals/SpaceSettingsModal/Account.tsx:316
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:160
 #: src/components/notifications/NotificationPanel.tsx:261
 msgid "All"
@@ -462,7 +463,7 @@ msgstr "이미 참여했습니다"
 msgid "Always sign Direct Messages"
 msgstr "항상 직접 메시지 서명"
 
-#: src/components/modals/ConversationSettingsModal.tsx:219
+#: src/components/modals/ConversationSettingsModal.tsx:253
 #: src/components/modals/NewDirectMessageModal.tsx:156
 msgid "Always sign messages"
 msgstr "항상 메시지 서명"
@@ -523,7 +524,7 @@ msgid ""
 "Are you sure you want to delete this channel? This action cannot be undone."
 msgstr "이 채널을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
 
-#: src/components/modals/ConversationSettingsModal.tsx:64
+#: src/components/modals/ConversationSettingsModal.tsx:65
 msgid ""
 "Are you sure you want to delete this conversation?\n"
 "\n"
@@ -600,7 +601,7 @@ msgid "Backup Failed"
 msgstr "백업 실패"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:114
-#: src/components/modals/SpaceSettingsModal/Account.tsx:211
+#: src/components/modals/SpaceSettingsModal/Account.tsx:226
 #: src/components/modals/UserSettingsModal/General.tsx:147
 msgid "Bio"
 msgstr "바이오"
@@ -614,7 +615,7 @@ msgid "Bio is too long"
 msgstr "자기소개가 너무 깁니다"
 
 #: src/components/modals/BlockUserModal.tsx:96
-#: src/components/user/UserProfile.tsx:432
+#: src/components/user/UserProfile.tsx:473
 msgid "Block"
 msgstr "차단"
 
@@ -640,8 +641,9 @@ msgstr "북마크 한도에 도달했습니다! 새 북마크를 추가하려면
 msgid "Bookmark message"
 msgstr "북마크 메시지"
 
-#: src/components/message/Message.tsx:942
-#: src/components/message/Message.tsx:1037
+#: src/components/message/Message.tsx:892
+#: src/components/message/Message.tsx:987
+#: src/components/message/Message.tsx:1103
 msgid "Bookmarked"
 msgstr "북마크됨"
 
@@ -658,11 +660,11 @@ msgstr "북마크된 스티커"
 msgid "Bookmarks"
 msgstr "북마크들"
 
-#: src/components/direct/DirectMessage.tsx:861
+#: src/components/direct/DirectMessage.tsx:859
 msgid "Bookmarks in this conversation"
 msgstr "이 대화의 마커"
 
-#: src/components/space/Channel.tsx:1538
+#: src/components/space/Channel.tsx:1545
 msgid "Bookmarks in this Space"
 msgstr "이 공간의 북마크"
 
@@ -681,7 +683,8 @@ msgstr "카메라"
 #: src/components/modals/BlockUserModal.tsx:88
 #: src/components/modals/ConfirmationModal.native.tsx:28
 #: src/components/modals/ConfirmationModal.tsx:31
-#: src/components/modals/ConversationSettingsModal.tsx:67
+#: src/components/modals/ConversationSettingsModal.tsx:68
+#: src/components/modals/ConversationSettingsModal.tsx:89
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:293
@@ -726,7 +729,7 @@ msgstr "채널 아이콘"
 msgid "Channel Managers"
 msgstr "채널 관리자"
 
-#: src/components/space/Channel.tsx:1985
+#: src/components/space/Channel.tsx:2021
 msgid "Channel members"
 msgstr "채널 멤버"
 
@@ -782,7 +785,7 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "Quorum에 대한 선호하는 테마를 선택하세요."
 
 #: src/components/modals/ChannelEditorModal.tsx:207
-#: src/components/modals/SpaceSettingsModal/Account.tsx:302
+#: src/components/modals/SpaceSettingsModal/Account.tsx:317
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:161
 #: src/components/notifications/NotificationPanel.tsx:262
 #: src/components/space/IconPicker/IconPicker.web.tsx:195
@@ -802,7 +805,7 @@ msgstr "태그로 알림 지우기: {tag}"
 #: src/components/modals/GroupEditorModal.tsx:144
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:62
-#: src/components/modals/SpaceSettingsModal/Account.tsx:421
+#: src/components/modals/SpaceSettingsModal/Account.tsx:436
 #: src/components/modals/ThreadSettingsModal.tsx:204
 msgid "Click again to confirm"
 msgstr "다시 클릭하여 확인하세요"
@@ -876,12 +879,12 @@ msgid ""
 "Control what others can see about you and how your behaviour is shared."
 msgstr "다른 사람들이 당신에 대해 무엇을 볼 수 있는지, 당신의 행동이 어떻게 공유되는지 제어합니다."
 
-#: src/components/direct/DirectMessage.tsx:842
+#: src/components/direct/DirectMessage.tsx:840
 msgid "Conversation settings"
 msgstr "대화 설정"
 
 #: src/components/direct/DirectMessageContactsList.tsx:281
-#: src/components/modals/ConversationSettingsModal.tsx:207
+#: src/components/modals/ConversationSettingsModal.tsx:241
 msgid "Conversation Settings"
 msgstr "대화 설정"
 
@@ -902,12 +905,13 @@ msgstr "복사됨!"
 msgid "Copy a link"
 msgstr "링크 복사"
 
-#: src/components/direct/DirectMessage.tsx:824
-#: src/components/direct/DirectMessage.tsx:946
-#: src/components/direct/DirectMessage.tsx:965
+#: src/components/direct/DirectMessage.tsx:822
+#: src/components/direct/DirectMessage.tsx:944
+#: src/components/direct/DirectMessage.tsx:963
 #: src/components/direct/DMUserProfileSidebar.tsx:98
 #: src/components/modals/UserSettingsModal/General.tsx:195
-#: src/components/user/UserProfile.tsx:258
+#: src/components/user/UserProfile.tsx:261
+#: src/components/user/UserProfile.tsx:298
 msgid "Copy address"
 msgstr "주소 복사"
 
@@ -1087,7 +1091,7 @@ msgstr "삭제"
 #: src/components/message/MessageActionsMenu.tsx:277
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
-#: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:443
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:464
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:106
@@ -1114,8 +1118,8 @@ msgid "Delete Channel"
 msgstr "채널 삭제"
 
 #: src/components/direct/DirectMessageContactsList.tsx:289
-#: src/components/modals/ConversationSettingsModal.tsx:63
-#: src/components/modals/ConversationSettingsModal.tsx:380
+#: src/components/modals/ConversationSettingsModal.tsx:64
+#: src/components/modals/ConversationSettingsModal.tsx:439
 msgid "Delete Conversation"
 msgstr "대화 삭제"
 
@@ -1166,8 +1170,6 @@ msgstr "스페이스 삭제"
 
 #: src/components/modals/CreateSpaceModal.tsx:112
 #: src/components/modals/CreateSpaceModal.tsx:120
-#: src/components/modals/SpaceSettingsModal/Account.tsx:170
-#: src/components/modals/SpaceSettingsModal/Account.tsx:178
 #: src/components/modals/SpaceSettingsModal/General.tsx:133
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 #: src/components/modals/SpaceSettingsModal/General.tsx:216
@@ -1189,11 +1191,11 @@ msgstr "스레드 삭제"
 msgid "Deleting Space..."
 msgstr "공간 삭제 중..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:397
+#: src/components/modals/ConversationSettingsModal.tsx:456
 msgid "Deleting..."
 msgstr "삭제 중..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:269
+#: src/components/modals/ConversationSettingsModal.tsx:303
 #: src/components/modals/UserSettingsModal/Privacy.tsx:175
 msgid "Delivery receipts"
 msgstr "전달 확인"
@@ -1274,7 +1276,7 @@ msgstr "메시지에서 사용자 이름 옆에 소유한 Space 중 하나의 �
 msgid "Display name"
 msgstr "표시 이름"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:202
+#: src/components/modals/SpaceSettingsModal/Account.tsx:217
 msgid "Display Name"
 msgstr "표시 이름"
 
@@ -1387,7 +1389,7 @@ msgstr "이모지 선택기"
 #: src/components/message/MessageComposer.tsx:850
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
-#: src/components/space/Channel.tsx:1904
+#: src/components/space/Channel.tsx:1911
 #: src/components/thread/ThreadPanel.tsx:539
 msgid "Emojis"
 msgstr "이모지"
@@ -1400,7 +1402,7 @@ msgstr "동기화 활성화"
 msgid "Enable threaded conversations in channels"
 msgstr "채널에서 스레드형 대화를 활성화합니다"
 
-#: src/services/ActionQueueHandlers.ts:1045
+#: src/services/ActionQueueHandlers.ts:1029
 msgid "Encryption error"
 msgstr "암호화 오류"
 
@@ -1531,7 +1533,7 @@ msgstr "개인 키 복사 실패"
 msgid "Failed to create Space. Please try again."
 msgstr "공간 생성에 실패했습니다. 다시 시도하십시오."
 
-#: src/services/MessageService.ts:2996
+#: src/services/MessageService.ts:3178
 msgid "Failed to decrypt message with any known state"
 msgstr "알려진 상태로 메시지를 복호화하는 데 실패했습니다"
 
@@ -1553,7 +1555,7 @@ msgstr "메시지 편집에 실패했습니다"
 msgid "Failed to export backup"
 msgstr "백업 내보내기 실패"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:749
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:750
 #: src/hooks/business/spaces/useInviteManagement.ts:263
 msgid "Failed to generate invite link. Please try again."
 msgstr "초대 링크 생성에 실패했습니다. 다시 시도해 주세요."
@@ -1623,7 +1625,7 @@ msgstr "알림 설정 저장 실패"
 msgid "Failed to save notification settings"
 msgstr "알림 설정 저장에 실패했습니다."
 
-#: src/hooks/business/user/useUserSettings.ts:458
+#: src/hooks/business/user/useUserSettings.ts:487
 #: src/services/ActionQueueHandlers.ts:93
 msgid "Failed to save settings"
 msgstr "설정 저장에 실패했습니다"
@@ -1636,7 +1638,7 @@ msgstr "공간 설정을 저장하지 못했습니다."
 msgid "Failed to send invite. Please try again."
 msgstr "초대 전송에 실패했습니다. 다시 시도하십시오."
 
-#: src/components/message/Message.tsx:1529
+#: src/components/message/Message.tsx:1553
 msgid "Failed to send."
 msgstr "전송 실패."
 
@@ -1654,11 +1656,11 @@ msgstr "사용자의 음소거를 해제하지 못했습니다"
 msgid "Failed to unpin message"
 msgstr "메시지 고정 해제에 실패했습니다"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:664
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:665
 msgid "Failed to update join preview. Please try again."
 msgstr "참여 미리보기 업데이트에 실패했습니다. 다시 시도해 주세요."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:314
+#: src/hooks/business/spaces/useSpaceProfile.ts:348
 msgid "Failed to update profile"
 msgstr "프로필 업데이트에 실패했습니다."
 
@@ -1679,7 +1681,7 @@ msgstr "기능"
 msgid "File cannot be larger than {maxSize}"
 msgstr "파일은 {maxSize}보다 클 수 없습니다"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:120
+#: src/hooks/business/spaces/useSpaceProfile.ts:142
 #: src/hooks/business/ui/useCustomAssets.ts:142
 #: src/hooks/business/ui/useFileUpload.ts:57
 #: src/hooks/business/ui/useSpaceFileUploads.ts:76
@@ -1698,7 +1700,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "파일 크기는 5MB를 초과할 수 없습니다"
 
 #: src/hooks/business/messages/useMessageComposer.ts:95
-#: src/hooks/business/spaces/useSpaceProfile.ts:122
+#: src/hooks/business/spaces/useSpaceProfile.ts:144
 #: src/hooks/business/ui/useCustomAssets.ts:107
 #: src/hooks/business/ui/useCustomAssets.ts:153
 #: src/hooks/business/ui/useFileUpload.ts:59
@@ -1717,7 +1719,7 @@ msgstr "파일이 거부되었습니다. PNG, JPG 또는 GIF를 사용하세요.
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
 msgstr "문서, 키보드 단축키 및 복구 도구를 찾으세요."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:527
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:528
 msgid "Fix"
 msgstr "수정"
 
@@ -1784,12 +1786,12 @@ msgstr ""
 "새로운 일회성 초대 링크를 생성하여 당신의 클립보드에 복사합니다. 클릭할 때마다 새 링크가 생성됩니다. 원하는 곳(이메일, "
 "WhatsApp 등)에 붙여넣으세요."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:736
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:737
 msgid "Generate Link"
 msgstr "링크 생성"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:864
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:734
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:735
 msgid "Generate Public Invite Link"
 msgstr "공개 초대 링크 생성"
 
@@ -1870,8 +1872,8 @@ msgstr "키 숨기기"
 msgid "Hide Muted Channels"
 msgstr "음소거된 채널 숨기기"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:389
-#: src/components/modals/SpaceSettingsModal/Account.tsx:392
+#: src/components/modals/SpaceSettingsModal/Account.tsx:404
+#: src/components/modals/SpaceSettingsModal/Account.tsx:407
 msgid "Hide muted channels from sidebar"
 msgstr "음소거된 채널을 사이드바에서 숨기기"
 
@@ -1895,8 +1897,8 @@ msgstr "이해했습니다, 복사"
 msgid "I Understand, Show QR"
 msgstr "이해했습니다, QR 표시"
 
-#: src/components/message/Message.tsx:957
-#: src/components/message/Message.tsx:1052
+#: src/components/message/Message.tsx:907
+#: src/components/message/Message.tsx:1002
 msgid "I'm new!"
 msgstr "새로 왔어요!"
 
@@ -1938,7 +1940,7 @@ msgstr "가져오는 중..."
 msgid "Inline Code"
 msgstr "인라인 코드"
 
-#: src/services/MessageService.ts:3312
+#: src/services/MessageService.ts:3594
 msgid "invalid address for signature"
 msgstr "서명을 위한 잘못된 주소"
 
@@ -2036,7 +2038,7 @@ msgstr "참여 중..."
 msgid "Jump"
 msgstr "점프"
 
-#: src/components/message/MessageList.tsx:675
+#: src/components/message/MessageList.tsx:673
 msgid "Jump to present"
 msgstr "현재로 점프"
 
@@ -2076,7 +2078,7 @@ msgid "Keyboard Shortcuts"
 msgstr "키보드 단축키"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:476
+#: src/components/user/UserProfile.tsx:517
 msgid "Kick"
 msgstr "킥"
 
@@ -2084,7 +2086,7 @@ msgstr "킥"
 msgid "Kick User"
 msgstr "사용자 추방"
 
-#: src/components/user/UserProfile.tsx:476
+#: src/components/user/UserProfile.tsx:517
 msgid "Kicked!"
 msgstr "추방되었습니다!"
 
@@ -2102,12 +2104,12 @@ msgid "Leave {0}"
 msgstr "{0}에서 나가기"
 
 #: src/components/modals/LeaveSpaceModal.tsx:60
-#: src/components/modals/SpaceSettingsModal/Account.tsx:419
+#: src/components/modals/SpaceSettingsModal/Account.tsx:434
 #: src/hooks/business/spaces/useSpaceContextMenu.tsx:239
 msgid "Leave Space"
 msgstr "스페이스 나가기"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:403
+#: src/components/modals/SpaceSettingsModal/Account.tsx:418
 msgid "Leave this Space"
 msgstr "이 공간 나가기"
 
@@ -2133,7 +2135,7 @@ msgstr "더 로드하기"
 msgid "Loading bookmarks..."
 msgstr "북마크를 불러오는 중..."
 
-#: src/components/message/MessageList.tsx:686
+#: src/components/message/MessageList.tsx:684
 msgid "Loading message..."
 msgstr "메시지를 로딩 중..."
 
@@ -2212,7 +2214,7 @@ msgstr "새 메시지에 대한 데스크톱 알림 기본 설정 관리."
 msgid "Manage Roles"
 msgstr "역할 관리"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:140
+#: src/components/modals/SpaceSettingsModal/Account.tsx:142
 msgid "Manage your settings for <0>{spaceName}</0>."
 msgstr "<0>{spaceName}</0>에 대한 설정 관리"
 
@@ -2240,7 +2242,7 @@ msgstr "멤버"
 msgid "members"
 msgstr "멤버들"
 
-#: src/components/space/Channel.tsx:1564
+#: src/components/space/Channel.tsx:1571
 msgid "Members List"
 msgstr "회원 목록"
 
@@ -2261,9 +2263,9 @@ msgstr "모두 멘션하기"
 msgid "Message actions"
 msgstr "메시지 작업"
 
-#: src/components/message/Message.tsx:899
-#: src/components/message/Message.tsx:973
-#: src/components/message/Message.tsx:1068
+#: src/components/message/Message.tsx:923
+#: src/components/message/Message.tsx:1018
+#: src/components/message/Message.tsx:1079
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "메시지에 유효한 서명이 없습니다. 이는 발신자가 아닐 수 있습니다."
@@ -2301,7 +2303,7 @@ msgstr "더 많은 반응"
 msgid "Must be exactly 4 characters"
 msgstr "정확히 4자여야 합니다"
 
-#: src/components/user/UserProfile.tsx:455
+#: src/components/user/UserProfile.tsx:496
 msgid "Mute"
 msgstr "음소거"
 
@@ -2309,7 +2311,7 @@ msgstr "음소거"
 msgid "Mute Channel"
 msgstr "채널 음소거"
 
-#: src/components/modals/ConversationSettingsModal.tsx:240
+#: src/components/modals/ConversationSettingsModal.tsx:274
 msgid "Mute conversation"
 msgstr "대화 음소거"
 
@@ -2351,7 +2353,7 @@ msgid "My Account"
 msgstr "내 계정"
 
 #: src/components/direct/DirectMessageContactsList.tsx:461
-#: src/components/space/Channel.tsx:1762
+#: src/components/space/Channel.tsx:1769
 msgid "Name or Address"
 msgstr "이름 또는 주소"
 
@@ -2369,7 +2371,7 @@ msgstr "관리자, 중재자 또는 지원과 유사한 이름은 예약되어 �
 msgid "Navigation"
 msgstr "네비게이션"
 
-#: src/services/ActionQueueHandlers.ts:1042
+#: src/services/ActionQueueHandlers.ts:1026
 msgid "Network error"
 msgstr "네트워크 오류"
 
@@ -2525,7 +2527,7 @@ msgstr "읽지 않은 알림이 없습니다"
 msgid "No user found for @{usernameQuery}."
 msgstr "@{usernameQuery}에 해당하는 사용자를 찾을 수 없습니다."
 
-#: src/components/space/Channel.tsx:1770 src/components/space/Channel.tsx:2005
+#: src/components/space/Channel.tsx:1777 src/components/space/Channel.tsx:2041
 msgid "No users found!"
 msgstr "사용자를 찾을 수 없습니다!"
 
@@ -2535,7 +2537,7 @@ msgid "None"
 msgstr "없음"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:128
-#: src/components/user/UserProfile.tsx:354
+#: src/components/user/UserProfile.tsx:395
 msgid "Note"
 msgstr "노트"
 
@@ -2552,10 +2554,10 @@ msgstr "메모는 {0}자 이내로 작성해야 합니다."
 msgid "Notification permission not granted"
 msgstr "알림 권한이 부여되지 않음"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:270
+#: src/components/modals/SpaceSettingsModal/Account.tsx:285
 #: src/components/modals/UserSettingsModal/Navigation.tsx:21
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
-#: src/components/shell/NavRail.tsx:65 src/components/space/Channel.tsx:1501
+#: src/components/shell/NavRail.tsx:65 src/components/space/Channel.tsx:1508
 msgid "Notifications"
 msgstr "알림"
 
@@ -2570,11 +2572,11 @@ msgid "Notifications are not supported in this browser"
 msgstr "이 브라우저에서는 알림이 지원되지 않습니다."
 
 #. placeholder {0}: channel.channelName
-#: src/components/modals/SpaceSettingsModal/Account.tsx:353
+#: src/components/modals/SpaceSettingsModal/Account.tsx:368
 msgid "Notifications for {0}"
 msgstr "{0}에 대한 알림"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:277
+#: src/components/modals/SpaceSettingsModal/Account.tsx:292
 msgid "Notifications for this Space"
 msgstr "이 스페이스에 대한 알림"
 
@@ -2582,7 +2584,7 @@ msgstr "이 스페이스에 대한 알림"
 msgid "Notify all members"
 msgstr "모든 구성원에게 알림"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:290
+#: src/components/modals/SpaceSettingsModal/Account.tsx:305
 msgid "Notify me for:"
 msgstr "다음에 대해 알림:"
 
@@ -2620,11 +2622,11 @@ msgid "Open {0}"
 msgstr "열기 {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:30
-#: src/components/direct/DirectMessage.tsx:801
+#: src/components/direct/DirectMessage.tsx:799
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
-#: src/components/space/Channel.tsx:1392
+#: src/components/space/Channel.tsx:1399
 #: src/components/wallet/WalletPage.tsx:19
 msgid "Open navigation"
 msgstr "네비게이션 열기"
@@ -2645,7 +2647,7 @@ msgstr "작업 시간이 초과되었습니다. 다시 시도해 주세요."
 msgid "Original"
 msgstr "원본"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:149
+#: src/components/modals/SpaceSettingsModal/Account.tsx:151
 msgid ""
 "Override your display name, avatar, and bio for this Space. Other Spaces and"
 " your global profile are unaffected."
@@ -2741,20 +2743,22 @@ msgstr "메시지 고정"
 msgid "Pin/Unpin without confirmation"
 msgstr "확인 없이 고정/고정 해제"
 
-#: src/components/message/Message.tsx:926
-#: src/components/message/Message.tsx:1021
+#: src/components/message/Message.tsx:876
+#: src/components/message/Message.tsx:971
+#: src/components/message/Message.tsx:1092
 msgid "Pinned"
 msgstr "고정됨"
 
 #. placeholder {0}: formatResolvedName(resolveSenderName({
 #. ...mapSenderToUser(message.pinnedBy), address:
 #. mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))
-#: src/components/message/Message.tsx:925
-#: src/components/message/Message.tsx:1020
+#: src/components/message/Message.tsx:875
+#: src/components/message/Message.tsx:970
+#: src/components/message/Message.tsx:1091
 msgid "Pinned by {0}"
 msgstr "{0}에 의해 고정됨"
 
-#: src/components/space/Channel.tsx:1433
+#: src/components/space/Channel.tsx:1440
 msgid "Pinned Messages"
 msgstr "고정된 메시지"
 
@@ -2863,7 +2867,7 @@ msgstr "읽기 전용"
 msgid "Read only channel"
 msgstr "읽기 전용 채널"
 
-#: src/components/modals/ConversationSettingsModal.tsx:312
+#: src/components/modals/ConversationSettingsModal.tsx:346
 #: src/components/modals/UserSettingsModal/Privacy.tsx:199
 msgid "Read receipts"
 msgstr "읽음 확인"
@@ -2884,7 +2888,7 @@ msgstr "재인증"
 msgid "received config with invalid signature!"
 msgstr "유효하지 않은 서명으로 구성 수신!"
 
-#: src/services/ActionQueueHandlers.ts:1048
+#: src/services/ActionQueueHandlers.ts:1032
 msgid "Recipient has no devices"
 msgstr "수신자가 장치가 없습니다"
 
@@ -2909,7 +2913,7 @@ msgstr "북마크 제거"
 msgid "Remove from Favorites"
 msgstr "즐겨찾기에서 제거"
 
-#: src/components/user/UserProfile.tsx:309
+#: src/components/user/UserProfile.tsx:350
 msgid "Removing..."
 msgstr "제거 중..."
 
@@ -2921,7 +2925,7 @@ msgstr "이 기기 이름 변경"
 msgid "Reopen"
 msgstr "다시 열기"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:322
+#: src/components/modals/SpaceSettingsModal/Account.tsx:337
 #: src/components/notifications/NotificationPanel.tsx:120
 msgid "Replies"
 msgstr "답글"
@@ -2961,10 +2965,29 @@ msgstr "재설정"
 msgid "Reset App Data"
 msgstr "앱 데이터 재설정"
 
-#: src/components/modals/ConversationSettingsModal.tsx:280
-#: src/components/modals/ConversationSettingsModal.tsx:319
+#: src/components/modals/ConversationSettingsModal.tsx:85
+#: src/components/modals/ConversationSettingsModal.tsx:416
+msgid "Reset Encryption Session"
+msgstr "암호화 세션 재설정"
+
+#: src/components/modals/ConversationSettingsModal.tsx:88
+msgid "Reset Session"
+msgstr "세션 재설정"
+
+#: src/components/modals/ConversationSettingsModal.tsx:421
+msgid ""
+"Reset the encryption session if messages fail to send or decrypt. The next "
+"message will establish a fresh secure connection."
+msgstr "메시지 전송 또는 해독에 실패하는 경우 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다."
+
+#: src/components/modals/ConversationSettingsModal.tsx:314
+#: src/components/modals/ConversationSettingsModal.tsx:353
 msgid "Reset to global"
 msgstr "전역 설정으로 재설정"
+
+#: src/components/modals/ConversationSettingsModal.tsx:474
+msgid "Resetting..."
+msgstr "재설정 중..."
 
 #: src/components/shell/AppShell.tsx:333
 msgid "Resize sidebar"
@@ -3002,7 +3025,7 @@ msgid "Restoring..."
 msgstr "복원 중..."
 
 #: src/components/discover-page/DiscoverTab.tsx:89
-#: src/components/message/Message.tsx:1537
+#: src/components/message/Message.tsx:1561
 msgid "Retry"
 msgstr "다시 시도"
 
@@ -3011,7 +3034,7 @@ msgstr "다시 시도"
 msgid "Roles"
 msgstr "역할"
 
-#: src/components/modals/ConversationSettingsModal.tsx:364
+#: src/components/modals/ConversationSettingsModal.tsx:398
 msgid "Save"
 msgstr "저장"
 
@@ -3022,19 +3045,19 @@ msgstr "저장"
 #: src/components/modals/ChannelEditorModal.tsx:216
 #: src/components/modals/FolderEditorModal.tsx:110
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:718
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:719
 #: src/components/modals/ThreadSettingsModal.tsx:184
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:363
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "변경 사항 저장"
 
-#: src/components/modals/ConversationSettingsModal.tsx:347
+#: src/components/modals/ConversationSettingsModal.tsx:381
 #: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "편집 기록 저장"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:703
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:704
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:352
 msgid "Save Failed"
 msgstr "저장 실패"
@@ -3091,8 +3114,8 @@ msgstr "이 Space에서 검색"
 msgid "Search in this Space..."
 msgstr "이 Space에서 검색..."
 
-#: src/components/direct/DirectMessage.tsx:903
-#: src/components/space/Channel.tsx:1583
+#: src/components/direct/DirectMessage.tsx:901
+#: src/components/space/Channel.tsx:1590
 msgid "Search Messages"
 msgstr "메시지 검색"
 
@@ -3120,7 +3143,7 @@ msgstr "스레드 검색…"
 msgid "Search username or address"
 msgstr "사용자 이름 또는 주소 검색"
 
-#: src/components/space/Channel.tsx:1996
+#: src/components/space/Channel.tsx:2032
 msgid "Search Username or Address"
 msgstr "사용자 이름 또는 주소 검색"
 
@@ -3141,7 +3164,7 @@ msgstr "보안"
 msgid "See all bookmarks"
 msgstr "모든 마커 보기"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:299
+#: src/components/modals/SpaceSettingsModal/Account.tsx:314
 msgid "Select"
 msgstr "선택"
 
@@ -3170,7 +3193,7 @@ msgid ""
 "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "누군가에게 일회성 초대를 직접 보냅니다. 각 링크는 한 번만 사용할 수 있습니다."
 
-#: src/services/ActionQueueHandlers.ts:1050
+#: src/services/ActionQueueHandlers.ts:1034
 msgid "Send failed"
 msgstr "전송 실패"
 
@@ -3183,7 +3206,7 @@ msgstr "초대 전송"
 msgid "Send Link"
 msgstr "링크 보내기"
 
-#: src/components/user/UserProfile.tsx:401
+#: src/components/user/UserProfile.tsx:442
 msgid "Send Message"
 msgstr "메시지 전송"
 
@@ -3193,7 +3216,7 @@ msgstr "메시지 전송"
 msgid "Send via DM"
 msgstr "DM을 통해 보내기"
 
-#: src/components/message/Message.tsx:1522
+#: src/components/message/Message.tsx:1546
 msgid "Sending..."
 msgstr "전송 중..."
 
@@ -3279,7 +3302,7 @@ msgstr "Quorum에 로그인"
 msgid "Skip for now"
 msgstr "지금은 건너뛰기"
 
-#: src/services/MessageService.ts:4609
+#: src/services/MessageService.ts:4904
 msgid "Someone"
 msgstr "누군가"
 
@@ -3328,7 +3351,7 @@ msgstr "공간 이름은 최소 {0}자 이상이어야 합니다."
 msgid "Space not found"
 msgstr "스페이스를 찾을 수 없습니다"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:280
+#: src/components/modals/SpaceSettingsModal/Account.tsx:295
 msgid "Space notifications"
 msgstr "스페이스 알림"
 
@@ -3376,7 +3399,7 @@ msgstr "상태는 여기로 갑니다"
 #: src/components/message/EmojiPickerDrawer.tsx:72
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:42
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-#: src/components/space/Channel.tsx:1910
+#: src/components/space/Channel.tsx:1917
 #: src/components/thread/ThreadPanel.tsx:545
 msgid "Stickers"
 msgstr "스티커"
@@ -3385,7 +3408,7 @@ msgstr "스티커"
 msgid "Strikethrough"
 msgstr "취소선"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:530
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:531
 msgid "Sync Kick Status"
 msgstr "킥 상태 동기화"
 
@@ -3406,7 +3429,7 @@ msgstr "태그 이미지"
 msgid "Tap to copy"
 msgstr "복사하려면 탭하세요"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:217
+#: src/components/modals/SpaceSettingsModal/Account.tsx:232
 msgid "Tell people about yourself in this Space..."
 msgstr "이 스페이스에서 당신에 대해 사람들에게 알려주세요..."
 
@@ -3448,8 +3471,12 @@ msgstr "이 작업은 취소할 수 없으며, 이 공간과 모든 채널 및 �
 msgid "This bio will be visible to others when they view your profile."
 msgstr "이 바이오는 프로필을 볼 때 다른 사용자에게 표시됩니다."
 
-#: src/components/modals/ConversationSettingsModal.tsx:287
-#: src/components/modals/ConversationSettingsModal.tsx:326
+#: src/components/modals/ConversationSettingsModal.tsx:79
+msgid "this contact"
+msgstr "이 연락처"
+
+#: src/components/modals/ConversationSettingsModal.tsx:321
+#: src/components/modals/ConversationSettingsModal.tsx:360
 msgid ""
 "This conversation overrides your global setting. Click \"Reset to global\" "
 "to use your global preference."
@@ -3549,7 +3576,7 @@ msgstr "이 사용자는 이 공간에서 더 이상 메시지를 보낼 수 없
 msgid "This user will not be able to send messages for {days} days."
 msgstr "이 사용자는 {days} 일 동안 메시지를 보낼 수 없습니다."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:735
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:736
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -3564,6 +3591,16 @@ msgid ""
 msgstr ""
 "이 작업은 이 브라우저에서 당신의 모든 데이터를 삭제합니다. 개인 키와 모든 DM(1:1 메시지)도 포함됩니다. DM은 복구할 수 "
 "없습니다. 개인정보/보안 설정에서 개인 키를 내보내셨는지 확인하세요. 이 작업은 되돌릴 수 없습니다."
+
+#: src/components/modals/ConversationSettingsModal.tsx:86
+msgid ""
+"This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
+"\n"
+"Use this if messages are failing to send or decrypt. Message history is not affected."
+msgstr ""
+"이것은 {counterpartyName}님과의 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다.\n"
+"\n"
+"메시지 전송 또는 해독에 실패하는 경우 이 기능을 사용하십시오. 메시지 기록에는 영향을 미치지 않습니다."
 
 #: src/components/notifications/NotificationItem.tsx:180
 #: src/components/search/SearchResultItem.tsx:140
@@ -3583,7 +3620,7 @@ msgstr "스레드 설정"
 msgid "Thread title"
 msgstr "스레드 제목"
 
-#: src/components/space/Channel.tsx:1474
+#: src/components/space/Channel.tsx:1481
 #: src/components/thread/ThreadsListPanel.tsx:113
 msgid "Threads"
 msgstr "스레드"
@@ -3617,7 +3654,7 @@ msgid ""
 "settings. Notifications cannot be disabled programmatically."
 msgstr "알림을 비활성화하려면 브라우저 설정에서 설정을 변경하세요. 알림은 프로그래밍적으로 비활성화할 수 없습니다."
 
-#: src/utils/dateFormatting.ts:28
+#: src/utils/dateFormatting.ts:31
 msgid "Today"
 msgstr "오늘"
 
@@ -3677,7 +3714,7 @@ msgstr "공간의 입력 표시기"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "이모지 이미지를 압축할 수 없습니다. 더 작은 이미지를 사용하세요."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:162
+#: src/hooks/business/spaces/useSpaceProfile.ts:184
 #: src/hooks/business/ui/useFileUpload.ts:100
 #: src/hooks/business/ui/useSpaceFileUploads.ts:170
 #: src/hooks/business/ui/useSpaceFileUploads.ts:193
@@ -3694,7 +3731,7 @@ msgstr "스티커 이미지를 압축할 수 없습니다. 더 작은 이미지�
 msgid "Unable to copy to clipboard"
 msgstr "클립보드에 복사할 수 없습니다"
 
-#: src/services/SpaceService.ts:561
+#: src/services/SpaceService.ts:560
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -3725,7 +3762,7 @@ msgid "Unable to restore: not logged in"
 msgstr "복원할 수 없습니다: 로그인하지 않음"
 
 #: src/components/modals/BlockUserModal.tsx:96
-#: src/components/user/UserProfile.tsx:432
+#: src/components/user/UserProfile.tsx:473
 msgid "Unblock"
 msgstr "차단 해제"
 
@@ -3736,7 +3773,7 @@ msgstr "사용자 차단 해제"
 #: src/components/bookmarks/BookmarkCard.tsx:96
 #: src/components/direct/DirectMessageContactsList.tsx:326
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:2969 src/services/MessageService.ts:4536
+#: src/services/MessageService.ts:3151 src/services/MessageService.ts:4831
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -3752,7 +3789,7 @@ msgstr "알 수 없는 시간"
 
 #: src/components/bookmarks/BookmarkCard.tsx:49
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:248
+#: src/components/direct/DirectMessage.tsx:247
 #: src/components/direct/DirectMessageContactsList.tsx:44
 #: src/components/message/MentionDropdown.tsx:134
 #: src/components/message/MessageEditTextarea.tsx:533
@@ -3762,7 +3799,7 @@ msgstr "알 수 없는 시간"
 #: src/components/message/MessageEditTextarea.tsx:582
 #: src/components/message/MessagePreview.tsx:208
 #: src/components/message/PinnedMessagesPanel.tsx:88
-#: src/components/modals/ConversationSettingsModal.tsx:118
+#: src/components/modals/ConversationSettingsModal.tsx:140
 #: src/components/modals/NewDirectMessageModal.tsx:78
 #: src/components/notifications/NotificationPanel.tsx:316
 #: src/components/notifications/NotificationPanel.tsx:355
@@ -3775,16 +3812,16 @@ msgstr "알 수 없는 시간"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2599
-#: src/services/MessageService.ts:2790 src/services/MessageService.ts:2957
-#: src/services/MessageService.ts:2986 src/services/MessageService.ts:5015
-#: src/services/MessageService.ts:5127 src/services/MessageService.ts:5212
-#: src/services/MessageService.ts:5428 src/services/MessageService.ts:5626
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2677
+#: src/services/MessageService.ts:2872 src/services/MessageService.ts:3139
+#: src/services/MessageService.ts:3168 src/services/MessageService.ts:5310
+#: src/services/MessageService.ts:5422 src/services/MessageService.ts:5507
+#: src/services/MessageService.ts:5729 src/services/MessageService.ts:5931
 msgid "Unknown User"
 msgstr "알 수 없는 사용자"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:455
+#: src/components/user/UserProfile.tsx:496
 msgid "Unmute"
 msgstr "음소거 해제"
 
@@ -3826,13 +3863,13 @@ msgstr "메시지 핀 해제"
 msgid "Unpin this post"
 msgstr "이 게시물 고정 해제"
 
-#: src/components/direct/DirectMessage.tsx:1024
+#: src/components/direct/DirectMessage.tsx:1022
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
 msgstr "당신이 응답할 때까지, 이 발신자는 당신의 표시 이름이나 프로필 사진을 볼 수 없습니다."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:530
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:531
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -3843,7 +3880,7 @@ msgstr ""
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 2:1"
 msgstr "당신의 공간을 위한 배너를 업로드하세요 - PNG 또는 JPG - 최적 비율 2:1"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:188
+#: src/components/modals/SpaceSettingsModal/Account.tsx:203
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "이 공간의 아바타를 업로드하세요 - PNG 또는 JPG - 최적 비율 1:1"
 
@@ -3876,6 +3913,11 @@ msgstr "스티커 업로드"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "\"파일에 저장\"을 사용하여 개인 키를 저장하세요"
 
+#: src/components/modals/SpaceSettingsModal/Account.tsx:185
+#: src/components/modals/SpaceSettingsModal/Account.tsx:193
+msgid "Use my main avatar"
+msgstr "내 기본 아바타 사용"
+
 #: src/hooks/business/validation/useAddressValidation.ts:110
 msgid "User does not exist."
 msgstr "사용자가 존재하지 않습니다."
@@ -3885,16 +3927,17 @@ msgstr "사용자가 존재하지 않습니다."
 msgid "User not authenticated"
 msgstr "사용자가 인증되지 않았습니다"
 
-#: src/components/direct/DirectMessage.tsx:1125
+#: src/components/direct/DirectMessage.tsx:1123
+#: src/components/space/Channel.tsx:1998
 msgid "User profile"
 msgstr "사용자 프로필"
 
-#: src/components/direct/DirectMessage.tsx:885
+#: src/components/direct/DirectMessage.tsx:883
 msgid "User Profile"
 msgstr "사용자 프로필"
 
-#: src/components/modals/ConversationSettingsModal.tsx:288
-#: src/components/modals/ConversationSettingsModal.tsx:327
+#: src/components/modals/ConversationSettingsModal.tsx:322
+#: src/components/modals/ConversationSettingsModal.tsx:361
 msgid ""
 "Uses your global setting. Toggle to override for this conversation only."
 msgstr "전역 설정을 사용합니다. 이 대화에만 적용되도록 재정의하려면 토글하세요."
@@ -3952,7 +3995,7 @@ msgstr "당신을 어떻게 부르면 좋을까요?"
 msgid "What's on your mind today?"
 msgstr "오늘 당신의 마음속에 무엇이 있나요?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:351
+#: src/components/modals/ConversationSettingsModal.tsx:385
 #: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
@@ -3984,7 +4027,7 @@ msgstr ""
 "메시지가 서명되면 발신자는 자신의 키에서 온 것임을 확인합니다. 메시지가 서명되지 않으면 발신자는 그럴듯한 부인 가능성을 가집니다. 이 "
 "설정은 이 공간의 모든 메시지에 적용됩니다."
 
-#: src/components/modals/ConversationSettingsModal.tsx:244
+#: src/components/modals/ConversationSettingsModal.tsx:278
 msgid ""
 "When muted, new messages won't show unread indicators or desktop "
 "notifications."
@@ -4033,23 +4076,23 @@ msgid ""
 "typing."
 msgstr "켜면, DM 연락처가 당신이 입력 중인지, 그리고 당신이 그들이 입력 중인지 볼 수 있습니다."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:312
+#: src/components/modals/SpaceSettingsModal/Account.tsx:327
 msgid "When someone mentions @everyone"
 msgstr "누군가 @everyone을 멘션할 때"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:317
+#: src/components/modals/SpaceSettingsModal/Account.tsx:332
 msgid "When someone mentions a role you have"
 msgstr "누군가 당신이 가진 역할을 언급할 때"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:307
+#: src/components/modals/SpaceSettingsModal/Account.tsx:322
 msgid "When someone mentions you directly"
 msgstr "누군가 당신을 직접 멘션할 때"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:323
+#: src/components/modals/SpaceSettingsModal/Account.tsx:338
 msgid "When someone replies to your messages"
 msgstr "누군가 당신의 메시지에 답글을 달 때"
 
-#: src/components/modals/ConversationSettingsModal.tsx:223
+#: src/components/modals/ConversationSettingsModal.tsx:257
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. The default "
@@ -4079,13 +4122,13 @@ msgstr ""
 "이 백업 없이 기기를 잃으면 계정도 잃게 됩니다 - '비밀번호를 잊어버렸습니다' 옵션이 없습니다. 이는 개인 정보 보호를 위한 대가입니다"
 " :-)"
 
-#: src/utils/dateFormatting.ts:29
+#: src/utils/dateFormatting.ts:32
 msgid "Yesterday"
 msgstr "어제"
 
-#: src/utils/dateFormatting.ts:38
-msgid "Yesterday at {timeFormatted}"
-msgstr "어제 {timeFormatted}에"
+#: src/utils/dateFormatting.ts:33
+msgid "Yesterday at {time}"
+msgstr "어제 {time}"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:141
 msgid "You"
@@ -4096,7 +4139,7 @@ msgid "You are already a member of this Space."
 msgstr "이미 이 공간의 구성원입니다."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1741
+#: src/components/space/Channel.tsx:1748
 msgid "You are muted for {0}"
 msgstr "당신은 {0} 동안 음소거되었습니다."
 
@@ -4135,7 +4178,7 @@ msgid "You cannot delete the default channel."
 msgstr "기본 채널을 삭제할 수 없습니다."
 
 #: src/components/message/MessageComposer.tsx:644
-#: src/components/space/Channel.tsx:1744
+#: src/components/space/Channel.tsx:1751
 msgid "You cannot post in this channel"
 msgstr "이 채널에 게시할 수 없습니다."
 
@@ -4147,7 +4190,7 @@ msgstr "자신에게 직접 메시지를 보낼 수 없습니다."
 msgid "You have a new unread message"
 msgstr "새로 읽지 않은 메시지가 있습니다."
 
-#: src/components/space/Channel.tsx:1742
+#: src/components/space/Channel.tsx:1749
 msgid "You have been muted in this Space"
 msgstr "당신는 이 공간에서 음소거되었습니다"
 
@@ -4163,7 +4206,7 @@ msgstr ""
 "당신는 관리 작업(킥 제외)을 위해 역할을 할당해야 합니다. 삭제 및 음소거 권한을 신중하게 부여하십시오. <0><1>자세히 "
 "알아보기</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:406
+#: src/components/modals/SpaceSettingsModal/Account.tsx:421
 msgid ""
 "You won't be able to rejoin unless you are re-invited. Your existing "
 "messages will NOT be deleted."
@@ -4195,7 +4238,7 @@ msgstr "모두 잘 따라잡았습니다!"
 msgid "You're all set!"
 msgstr "준비 완료!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:526
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:527
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -4260,7 +4303,7 @@ msgstr ""
 msgid "Your communities, your rules - no platform can ban you."
 msgstr "당신의 커뮤니티, 당신의 규칙 - 어떤 플랫폼도 당신을 차단할 수 없습니다."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:146
+#: src/components/modals/SpaceSettingsModal/Account.tsx:148
 msgid "Your Details"
 msgstr "당신의 세부정보"
 
@@ -4294,7 +4337,7 @@ msgstr "프로필 이미지 크기는 {maxSize} 이하이어야 하며 PNG, JPG 
 msgid "Your QNS name <0>{primaryUsername}.q</0> is shown as your name."
 msgstr "당신의 QNS 이름 <0>{primaryUsername}.q</0>가 당신의 이름으로 표시됩니다."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:247
+#: src/components/modals/SpaceSettingsModal/Account.tsx:262
 msgid "Your Roles"
 msgstr "당신의 역할"
 
@@ -4318,3 +4361,6 @@ msgstr "YouTube 비디오 썸네일"
 
 #~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
 #~ msgstr "당신의 Space에 배너 업로드 - PNG 또는 JPG - 최적 비율 3:1"
+
+#~ msgid "Yesterday at {timeFormatted}"
+#~ msgstr "어제 {timeFormatted}에"
