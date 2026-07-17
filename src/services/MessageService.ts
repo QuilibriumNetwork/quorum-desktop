@@ -3119,13 +3119,19 @@ export class MessageService {
             return;
           }
         } catch (decryptError) {
-          logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession)', decryptError);
+          // Double Ratchet spec: on a decrypt/authentication failure, discard the
+          // message but LEAVE the session state untouched — a single bad/duplicate/
+          // out-of-order frame does not mean the session is broken, and later frames
+          // decrypt fine. Destroying the session here was the root cause of the
+          // long-standing "DM direction goes permanently dead" bug: the sender kept
+          // encrypting to a session the receiver had torn down.
+          // (https://signal.org/docs/specifications/doubleratchet/)
+          logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
             this.apiClient
           );
-          await this.messageDB.deleteEncryptionState(found);
           return;
         }
       } else {
@@ -3172,13 +3178,19 @@ export class MessageService {
             return;
           }
         } catch (decryptError) {
-          logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt)', decryptError);
+          // Double Ratchet spec: on a decrypt/authentication failure, discard the
+          // message but LEAVE the session state untouched — a single bad/duplicate/
+          // out-of-order frame does not mean the session is broken, and later frames
+          // decrypt fine. Destroying the session here was the root cause of the
+          // long-standing "DM direction goes permanently dead" bug: the sender kept
+          // encrypting to a session the receiver had torn down.
+          // (https://signal.org/docs/specifications/doubleratchet/)
+          logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
             this.apiClient
           );
-          await this.messageDB.deleteEncryptionState(found);
           return;
         }
       }
