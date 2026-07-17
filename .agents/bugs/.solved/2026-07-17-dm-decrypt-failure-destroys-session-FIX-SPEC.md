@@ -107,9 +107,10 @@ directly observable without deep log reading — messages simply keep landing.
 
 ## Cross-platform note
 
-Mobile has the identical destroy-on-failure behavior (its Reset Session button is the proof the
-team has met this). Fixes 1-4 are transport-agnostic receive logic and apply conceptually to
-mobile too; propose to lead-dev after Fix 1 is validated on desktop.
+CORRECTION (verified in mobile code 2026-07-17): mobile does NOT have the destroy-on-failure
+behavior — its decrypt failure returns null / throws WITHOUT persisting state, so Fix 1 needs
+no mobile port. Mobile shares only the serialization gap (Fix 2 family) — see
+quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md.
 
 ---
 *Created: 2026-07-17 — Last updated: 2026-07-17*

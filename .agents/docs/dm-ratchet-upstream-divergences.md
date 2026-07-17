@@ -126,16 +126,25 @@ truncated inbox address and timestamp.
 
 ## What we propose upstream / for mobile
 
-quorum-mobile has the same destroy-session-on-failure behavior and the same unserialized
-read-modify-write pattern (its own Reset Session button is evidence the team has met the
-symptom). Both divergences are transport-agnostic receive/send logic and apply conceptually
-to mobile as-is. Concrete proposal:
+**Mobile status, verified in code 2026-07-17** (`quorum-mobile/services/crypto/encryption-service.ts`):
+mobile does NOT have Divergence 1's bug — its decrypt-failure handling already returns null
+or throws WITHOUT persisting anything (it even carries a comment warning against saving
+corrupted state), so mobile was already spec-compliant there and nothing needs porting.
+Mobile DOES share the Divergence 2 gap: no lock exists around its ratchet state operations,
+its decrypt is an awaited native call between state read and write, and its delivery/read
+receipts also ride the DM ratchet. MMKV's synchronous storage narrows the race window but
+does not remove it. Concrete proposal:
 
-1. Port Divergence 1 (skip frame, keep session) to mobile's DM decrypt failure handling.
-2. Extract `KeyedMutex` to `quorum-shared` and serialize mobile's ratchet operations the
-   same way (additive-only change to shared, per the shared-package rules).
-3. Optional hardening, desktop and mobile: dedupe-before-decrypt cache (redelivered frames
-   currently fail AEAD harmlessly but noisily), and folding session reset
+1. Extract `KeyedMutex` to `quorum-shared` (additive-only) and serialize mobile's ratchet
+   operations the same way — tasks exist:
+   `quorum-desktop/.agents/tasks/2026-07-17-quorum-shared-add-keyedmutex.md` and
+   `quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md`.
+   The mobile task includes a recon item a JS mutex cannot cover: Android's
+   `BackgroundMessageService` runs in a separate JS context; if it can decrypt the same
+   inbox as the foreground app, that cross-context race needs a lead-dev-level decision.
+2. Optional hardening, desktop and mobile: dedupe-before-decrypt cache (redelivered frames
+   currently fail AEAD harmlessly but noisily — deferred, see
+   `.agents/tasks/2026-07-17-dm-dedupe-before-decrypt.md`), and folding session reset
    (`deleteEncryptionStates`) under the same lock.
 
 ---

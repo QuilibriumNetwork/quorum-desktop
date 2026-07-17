@@ -75,9 +75,12 @@ not loss.
   arbitrate. Needs Web Locks API or single-instance enforcement. Pre-existing, low priority.
 - **Session reset not under the lock:** `deleteEncryptionStates` racing an in-flight decrypt
   could resurrect a deleted row. Rare; worth folding under the mutex eventually.
-- **Mobile parity:** quorum-mobile has the same unserialized read-modify-write pattern AND had
-  the same destroy-on-failure behavior. `KeyedMutex` is pure TS and extractable to
-  quorum-shared. Propose both fixes for mobile.
+- **Mobile parity (verified in mobile code 2026-07-17):** mobile does NOT have the
+  destroy-on-failure bug (its decrypt failure already returns null without persisting), but
+  it DOES have the unserialized read-modify-write gap (no lock, awaited native decrypt
+  between read and write, receipts ride the ratchet). Tasks created:
+  `.agents/tasks/2026-07-17-quorum-shared-add-keyedmutex.md` (shared util) and
+  `quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md`.
 - **Redelivery duplicates:** the server re-pushes undeleted frames on re-listen; duplicates
   always fail AEAD (key already consumed), get skipped and deleted. Harmless but noisy; a
   dedupe-before-decrypt cache would silence it.

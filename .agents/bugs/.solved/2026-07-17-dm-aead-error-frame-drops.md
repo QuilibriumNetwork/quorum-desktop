@@ -4,7 +4,7 @@ title: "DM individual frames fail to decrypt (aead::Error) and drop — remainin
 status: SOLVED — LIVE-VERIFIED 2026-07-17 (branch fix/dm-ratchet-serialization). Root cause: UNSERIALIZED ratchet state read-modify-write across five writer paths; fixed with per-conversation mutex + immediate post-decrypt state save. Live test: 10 numbered messages per direction with receipts + typing ON, zero drops, zero stuck sends (old code reliably died at msg 3). Note: first fix iteration deadlocked (lock held until socket delivery via promise auto-flattening) — fixed in commit 2b64b84c; frames from a pre-reset session fail once with "skipping frame, keeping session" and drain harmlessly.
 created: 2026-07-17
 severity: high
-repo: quorum-desktop (mobile likely same)
+repo: quorum-desktop (mobile: shares the serialization gap only — no destroy-on-failure there; verified 2026-07-17)
 area: DM delivery / Double Ratchet / retry / dedupe
 related:
   - ".agents/bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED, stops session destruction)"
@@ -54,7 +54,8 @@ concurrent sends serialize (fails on the unserialized code). 432-test suite: no 
 **Not fixed here (flag to lead dev):** two tabs on the same account still race (needs Web
 Locks API or single-instance enforcement); session reset (`deleteEncryptionStates`) is not
 under the lock (a reset racing an in-flight decrypt could resurrect a deleted row); mobile
-has the same unserialized pattern and needs the same treatment.
+shares the unserialized pattern (verified 2026-07-17; it does NOT share destroy-on-failure)
+— see quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md.
 
 ## Read this first — what is and isn't fixed
 
