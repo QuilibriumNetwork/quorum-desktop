@@ -9,6 +9,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
+- [DM Double Ratchet fixes — divergences from the original upstream implementation](docs/dm-ratchet-upstream-divergences.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
