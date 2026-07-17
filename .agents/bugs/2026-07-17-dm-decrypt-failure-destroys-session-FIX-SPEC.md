@@ -36,6 +36,24 @@ decrypt fine. So destroying the session on one failure is pure self-harm: the ca
 if the code had simply skipped it. The reset button (shipped PR #234) is a manual unstick, not a
 cure — it re-establishes a session that the same reaction then destroys again.
 
+### Spec confirmation (verified 2026-07-17, not inference)
+
+A security-motivated reading of the current code is "decrypt/AEAD failure could mean tampering,
+so tear the session down (fail closed)." The Signal **Double Ratchet specification explicitly
+rejects this** for the `RatchetDecrypt` operation:
+
+> "If an exception is raised (e.g. message authentication failure) then the message is discarded
+> and changes to the state object are discarded. Otherwise, the decrypted plaintext is accepted
+> and changes to the state object are stored."
+> — Signal Double Ratchet spec, https://signal.org/docs/specifications/doubleratchet/
+
+So the spec-correct behavior on failure is: **discard the message, leave the saved session state
+untouched.** Rejecting the frame IS the complete defense against a tampered/injected message;
+destroying the session adds no security (the attacker gains nothing from you keeping the session)
+and breaks the protocol's documented tolerance for out-of-order / transient failures. The current
+code does the opposite — it persists a mutation (deletes the session) on failure — which is
+*non-compliant*. Our fix brings the code INTO spec, it does not weaken it.
+
 ## The exact drop sites (current `main`, `src/services/MessageService.ts`)
 
 Two catch blocks in the DM receive section do the damage:
