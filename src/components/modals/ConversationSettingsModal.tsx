@@ -34,7 +34,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   visible,
 }) => {
   const { data: conversation } = useConversation({ conversationId });
-  const { messageDB, getConfig, keyset, deleteConversation } = useMessageDB();
+  const { messageDB, getConfig, keyset, deleteConversation, deleteEncryptionStates } =
+    useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const navigate = useNavigate();
   const { data: convPages } = useConversations({ type: 'direct' });
@@ -66,6 +67,27 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           confirmText: t`Delete`,
           cancelText: t`Cancel`,
           variant: 'danger',
+        }
+      : undefined,
+  });
+
+  // Confirmation hook for encryption session reset (parity with mobile's
+  // DMSettingsSheet "Reset Session"). Local-only: the next outgoing message
+  // establishes a fresh session via a new init envelope, and the counterparty
+  // replaces its old session for this device when that envelope arrives.
+  const counterpartyName =
+    conversation?.conversation?.displayName ?? t`this contact`;
+  const resetConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: conversation
+      ? {
+          title: t`Reset Encryption Session`,
+          message: t`This will reset the encryption session with ${counterpartyName}. The next message will establish a fresh secure connection.\n\nUse this if messages are failing to send or decrypt. Message history is not affected.`,
+          preview: undefined,
+          confirmText: t`Reset Session`,
+          cancelText: t`Cancel`,
+          variant: 'warning',
         }
       : undefined,
   });
@@ -193,12 +215,24 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     ]
   );
 
-  // Reset confirmation when modal closes
+  const handleResetSessionClick = React.useCallback(
+    (e: React.MouseEvent) => {
+      const performReset = async () => {
+        await deleteEncryptionStates({ conversationId });
+        onClose();
+      };
+      resetConfirmation.handleClick(e, performReset);
+    },
+    [resetConfirmation, deleteEncryptionStates, conversationId, onClose]
+  );
+
+  // Reset confirmations when modal closes
   React.useEffect(() => {
     if (!visible) {
       deleteConfirmation.reset();
+      resetConfirmation.reset();
     }
-  }, [visible, deleteConfirmation]);
+  }, [visible, deleteConfirmation, resetConfirmation]);
 
   return (
     <Modal
@@ -368,6 +402,22 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
         <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
 
+        {/* Reset Session Section */}
+        <Flex direction="column" align="center" className="mb-3">
+          <Button
+            type="unstyled"
+            className="text-label-strong hover:text-main"
+            onClick={(e: React.MouseEvent) => {
+              if (!resetConfirmation.isConfirming) handleResetSessionClick(e);
+            }}
+          >
+            {t`Reset Encryption Session`}
+          </Button>
+          <div className="text-xs text-subtle">
+            {t`Reset if messages fail to send/decrypt`}
+          </div>
+        </Flex>
+
         {/* Delete Section */}
         <Flex justify="center" align="center">
           <Button
@@ -397,6 +447,24 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           busyMessage={t`Deleting...`}
           onConfirm={deleteConfirmation.modalConfig.onConfirm}
           onCancel={deleteConfirmation.modalConfig.onCancel}
+        />
+      )}
+
+      {/* Reset session confirmation modal */}
+      {resetConfirmation?.modalConfig && (
+        <ConfirmationModal
+          visible={resetConfirmation.showModal}
+          title={resetConfirmation.modalConfig.title}
+          message={resetConfirmation.modalConfig.message}
+          preview={resetConfirmation.modalConfig.preview}
+          confirmText={resetConfirmation.modalConfig.confirmText}
+          cancelText={resetConfirmation.modalConfig.cancelText}
+          variant={resetConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={resetConfirmation.isConfirming}
+          busyMessage={t`Resetting...`}
+          onConfirm={resetConfirmation.modalConfig.onConfirm}
+          onCancel={resetConfirmation.modalConfig.onCancel}
         />
       )}
     </Modal>
