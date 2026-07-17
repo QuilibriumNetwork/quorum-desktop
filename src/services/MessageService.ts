@@ -3003,6 +3003,28 @@ export class MessageService {
           const existing = encryptionStates.filter(
             (e) => JSON.parse(e.state).tag == session.tag
           );
+          // An init envelope REPLACES the session for this tag, silently and
+          // unconditionally. A STALE envelope redelivered by the server (its
+          // ack-by-delete can fail — 502s observed live) therefore replaces a
+          // HEALTHY session with a zombie the sender no longer has: the
+          // leading suspect for "fresh session dies minutes after reset".
+          // Log every replacement with the envelope's age and the age of the
+          // session rows it kills so a zombie install is visible.
+          logger.warn(
+            '[MessageService] ⚠️ SESSION REPLACED by init envelope',
+            {
+              conversationId: conversationId?.slice(0, 16),
+              envelopeTimestamp: envelope.timestamp,
+              envelopeAgeSeconds: Math.round(
+                (Date.now() - envelope.timestamp) / 1000
+              ),
+              replacedRows: existing.map((e) => ({
+                inboxId: e.inboxId?.slice(0, 12),
+                stateTimestamp: e.timestamp,
+                stateAgeSeconds: Math.round((Date.now() - e.timestamp) / 1000),
+              })),
+            }
+          );
           for (const e of existing) {
             await this.messageDB.deleteEncryptionState(e);
           }
