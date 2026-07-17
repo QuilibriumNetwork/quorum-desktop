@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM decrypt failure destroys the whole session (root cause of 6-month delivery bug) — FIX SPEC"
-status: root cause PROVEN live 2026-07-17; fix not yet implemented
+status: SHIPPED 2026-07-17 (branch fix/dm-decrypt-failure-preserve-session). Fix 1 done — session no longer destroyed on decrypt failure, confirmed live (conversation survived decrypt failures that previously killed it). Remaining: individual frames still fail to decrypt (aead::Error) and drop — tracked in 2026-07-17-dm-aead-error-frame-drops.md (Fix 2+).
 created: 2026-07-17
 severity: high
 repo: quorum-desktop (mobile has the same disease — see cross-platform note)
