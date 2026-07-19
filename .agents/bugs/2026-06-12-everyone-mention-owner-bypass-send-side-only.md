@@ -1,8 +1,9 @@
 ---
 type: bug
 title: "@everyone mention: owner-bypass in shared hasPermission propagates (send-side-only enforcement)"
-status: open
+status: partially-fixed — root (owner bypass) fixed in shared; receive-side check pending
 created: 2026-06-12
+updated: 2026-07-19
 ai_generated: true
 spans-repos:
   - quorum-shared
@@ -15,6 +16,18 @@ related_bugs:
 ---
 
 # @everyone owner-bypass is a real propagating bug (send-side-only enforcement)
+
+> **STATUS UPDATE (2026-07-19):**
+> - **Root fix LANDED**: shared `permissions.ts` no longer honors `isSpaceOwner` —
+>   `hasPermission`/`getUserPermissions` are role-only (the param is retained but
+>   deprecated/ignored). An honest owner-without-role client no longer sends
+>   `@everyone`. The "Root fix (shared)" section below is therefore DONE.
+> - **Remaining gap**: the receive side still honors `mentions.everyone` with no
+>   sender-authorization check, so a modified client can still set the flag. This
+>   defense-in-depth half is now folded into the broader receive-side
+>   authorization mechanism work (verified-sender enforcement) tracked in
+>   `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md` — close this
+>   bug when that Phase lands.
 
 > **⚠️ AI-assisted finding (2026-06-12). Verified against current source in all three repos with file:line citations below.** Surfaced while scoping the mobile permission-enforcement work. The parent doc [2026-01-09-space-owner-privacy-limitation.md](2026-01-09-space-owner-privacy-limitation.md) (#111) documents the owner-can't-be-verified constraint and its impact on **delete/mute/read-only**, but does NOT cover `mention:everyone`. This doc fills that gap, because @everyone behaves differently from the actions #111 lists.
 
