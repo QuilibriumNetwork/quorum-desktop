@@ -27,6 +27,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MessageService, MessageServiceDependencies } from '@/services/MessageService';
 import { deriveInboxAddress } from '@quilibrium/quorum-shared';
+import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QueryClient } from '@tanstack/react-query';
 
 // Mock the secure channel module for crypto operations
@@ -664,6 +665,74 @@ describe('MessageService - Unit Tests', () => {
       );
 
       expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
+    });
+  });
+
+  // SECURITY: a post to a read-only channel must be authorized against the
+  // verified signer (a manager), not the spoofable payload senderId.
+  describe('3e. addMessage() - read-only channel post authorization (anti-spoofing)', () => {
+    const RO = 'ro-channel';
+    const mgrPub = 'aabb00112233445566778899aabbccdd';
+    const roSpace = {
+      spaceId: 'space',
+      roles: [{ roleId: 'mgr-role', members: ['manager'], permissions: [] }],
+      groups: [
+        {
+          groupId: 'g1',
+          channels: [
+            { channelId: RO, isReadOnly: true, managerRoleIds: ['mgr-role'] },
+          ],
+        },
+      ],
+    };
+    const roPost = (over: Record<string, unknown> = {}) =>
+      ({
+        messageId: 'ro-1',
+        spaceId: 'space',
+        channelId: RO,
+        nonce: 'n-ro',
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        lastModifiedHash: '',
+        content: { senderId: 'manager', type: 'post', text: 'announce' },
+        ...over,
+      }) as any;
+    // The test harness mocks crypto.subtle.digest to return 32 zero bytes, so
+    // the signed-post's messageId must match that (64 hex zeros) to pass the
+    // fingerprint recompute in isReadOnlyPostAuthorized.
+    const signedManagerPost = () =>
+      roPost({ messageId: '0'.repeat(64), publicKey: mgrPub, signature: 'sig' });
+
+    beforeEach(() => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(roSpace);
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'manager', inbox_address: deriveInboxAddress(mgrPub) }]);
+    });
+
+    it('honors a SIGNED post from the verified read-only-channel manager', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(queryClient, 'space', RO, signedManagerPost());
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('DROPS an UNSIGNED post to a read-only channel', async () => {
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(queryClient, 'space', RO, roPost()); // no signature
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('DROPS a SIGNED read-only post whose verified signer is not a manager', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      // key resolves to 'intruder', who is NOT in the manager role
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'intruder', inbox_address: deriveInboxAddress(mgrPub) }]);
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(queryClient, 'space', RO, signedManagerPost());
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 

@@ -376,6 +376,10 @@ Space owner identity is cryptographically tied to space creation keys:
 >    the DB (`saveMessage`) and cache (`addMessage`) handlers.
 >
 > Covers `remove-message`, `edit-message`, `pin`, `mute`, and `@everyone`.
+> **Read-only-channel post acceptance** is also verified-signer on the live
+> path (a separate `isReadOnlyPostAuthorized` gate: verify the post signature →
+> authorize the verified signer as a channel manager; unsigned posts dropped).
+> Its durable/DB path stays deferred to the hub-log migration.
 > DMs stay session-anchored (PR #220). A branded `VerifiedSender` type makes
 > passing a raw `senderId` into these checks a compile error.
 

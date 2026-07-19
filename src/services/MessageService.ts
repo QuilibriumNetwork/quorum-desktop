@@ -20,6 +20,7 @@ import {
   authorizeControlMessage,
   isControlMessageType,
   shouldSignEdit,
+  canManageReadOnlyChannel,
   type ControlMessageContent,
 } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
@@ -34,6 +35,7 @@ import type {
   KickMessage,
   MuteMessage,
   Space,
+  Channel,
   EditMessage,
   PinMessage,
   ThreadMessage,
@@ -966,6 +968,60 @@ export class MessageService {
       channel,
       targetMessage,
     }).allowed;
+  }
+
+  /**
+   * Authorize a POST to a read-only channel against the VERIFIED ed448 signer
+   * (a channel manager), never the spoofable payload senderId. A read-only
+   * channel is manager-only, which requires proving the poster's identity, so
+   * an unsigned/unverifiable post is dropped even in a repudiable space.
+   *
+   * Self-contained (re-derives the fingerprint and verifies the signature here)
+   * so it holds regardless of which receive path reached the caller. This gates
+   * the LIVE cache path (addMessage); the durable saveMessage path has no
+   * read-only enforcement yet and stays deferred to the hub-log migration —
+   * .agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md.
+   */
+  private async isReadOnlyPostAuthorized(
+    decryptedContent: Message,
+    space: Space,
+    channel: Channel,
+    members: SpaceMemberRow[]
+  ): Promise<boolean> {
+    if (!decryptedContent.publicKey || !decryptedContent.signature) {
+      return false;
+    }
+    const messageId = await crypto.subtle.digest(
+      'SHA-256',
+      Buffer.from(
+        buildMessageFingerprint({
+          nonce: decryptedContent.nonce,
+          content: decryptedContent.content as any,
+          senderId: decryptedContent.content.senderId,
+          spaceId: decryptedContent.spaceId,
+          channelId: decryptedContent.channelId,
+        }),
+        'utf-8'
+      )
+    );
+    if (
+      decryptedContent.messageId !== Buffer.from(messageId).toString('hex') ||
+      ch.js_verify_ed448(
+        Buffer.from(decryptedContent.publicKey, 'hex').toString('base64'),
+        Buffer.from(messageId).toString('base64'),
+        Buffer.from(decryptedContent.signature, 'hex').toString('base64')
+      ) !== 'true'
+    ) {
+      return false;
+    }
+    const verifiedSender = resolveVerifiedSender(
+      decryptedContent.publicKey,
+      members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+    );
+    return (
+      !!verifiedSender &&
+      canManageReadOnlyChannel(verifiedSender, false, space, channel)
+    );
   }
 
   /**
@@ -2080,25 +2136,20 @@ export class MessageService {
           return;
         }
 
-        // Validate read-only channel permissions
+        // Validate read-only channel permissions against the VERIFIED signer
+        // (not the spoofable payload senderId): a modified client could forge a
+        // manager's address to post in a read-only channel for everyone. Drops
+        // unsigned/unverifiable posts (read-only requires proven manager
+        // identity). Live cache path only — see isReadOnlyPostAuthorized.
         if (channel.isReadOnly) {
-          const senderId = decryptedContent.content.senderId;
-
-          // Check if channel has manager roles configured
-          if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
-            return;
-          }
-
-          // Check if sender is in a manager role
-          // Note: Space owners must explicitly join a manager role (privacy requirement)
-          const isChannelManager =
-            space.roles?.some(
-              (role) =>
-                channel.managerRoleIds?.includes(role.roleId) &&
-                role.members?.includes(senderId)
-            ) ?? false;
-
-          if (!isChannelManager) {
+          const members = await this.messageDB.getSpaceMembers(spaceId);
+          const authorized = await this.isReadOnlyPostAuthorized(
+            decryptedContent,
+            space,
+            channel,
+            members
+          );
+          if (!authorized) {
             return;
           }
         }

@@ -355,6 +355,23 @@ if (spaceId != channelId) {
 
 See also: `.agents/docs/features/security.md` — "Control-Message Authorization (verified signer)" for the full mechanism.
 
+**Read-only POST acceptance (deciding whether a normal post is allowed into a
+read-only channel) — verified signer, live path (2026-07-19).** This is a
+*different* gate from the control-message (delete/pin) path above: it decides
+whether an incoming `post` is accepted, not whether a control action is
+authorized. On the live cache path (`addMessage`), it no longer trusts
+`content.senderId` — a new `isReadOnlyPostAuthorized` helper verifies the post's
+ed448 signature and authorizes the **verified signer** as a channel manager
+(`resolveVerifiedSender` + `canManageReadOnlyChannel`). Unsigned/unverifiable
+posts to a read-only channel are dropped (manager identity must be proven, so
+this holds even in a repudiable space).
+
+> **Still open — durable path.** `saveMessage` (the DB write path) has NO
+> read-only enforcement yet, so a forged read-only post can still be stored and
+> reappear on reload. Deferred to the hub-log migration; tracked in
+> `.agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md`.
+> `embed`/`sticker` type coverage is also still open there.
+
 **Key Processing Principles**:
 
 1. **Verified Identity Only**: Authorization is always against the ed448-proven signer, never the plaintext `senderId`
