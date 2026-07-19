@@ -114,19 +114,23 @@ Two updates from the control-message-auth work (see
    channel are dropped (read-only requires proven manager identity, so this holds
    even in a repudiable space). Tests: `MessageService.unit.test.tsx` §3e.
 
-**Still OPEN (this bug stays open):**
+**Still OPEN (this bug stays open) — tracked in a completion task:**
+`.agents/tasks/2026-07-19-readonly-channel-completion-durable-embed-sticker.md`
+(desktop + mobile; the plan below is its summary).
 - **Durable path** — `saveMessage` has NO read-only enforcement at all, so a
   forged read-only post can still land in the DB and reappear on reload/re-render
-  from storage. Deliberately deferred to the hub-log migration (the durable
-  receive path is being reworked there). The live-path fix hides it from the
-  live cache but does not close the durable hole.
+  from storage. The live-path fix hides it from the live cache but does not close
+  the durable hole. (Note: no longer strictly gated on the hub-log migration —
+  the manager-check logic is transport-agnostic and can be added to `saveMessage`
+  now; see the completion task.)
 - **Type coverage** — only `post` is checked; `embed`/`sticker` still bypass the
   read-only gate.
 
-When the hub-log migration reworks the durable path, apply the SAME
-`isReadOnlyPostAuthorized` / verified-signer pattern there and extend it to all
-content types, so identity + type coverage are consistent across live and
-durable paths.
+The completion task applies the SAME `isReadOnlyPostAuthorized` / verified-signer
+pattern to the durable path and all postable content types, plus a send-side
+"always sign read-only posts" change (so legit managers' own posts aren't
+dropped) and a composer toggle-disable for read-only channels. Closing it on both
+platforms resolves this bug.
 
 ---
 
