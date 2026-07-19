@@ -76,6 +76,12 @@ import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
 
+// Visible-content types gated by read-only-channel enforcement. Control
+// messages (reaction/pin/edit/remove/…) carry their own authorization.
+const READ_ONLY_GATED_TYPES = new Set(['post', 'embed', 'sticker']);
+const isReadOnlyGatedType = (type: string): boolean =>
+  READ_ONLY_GATED_TYPES.has(type);
+
 // Type definitions for the service
 export interface MessageServiceDependencies {
   messageDB: MessageDB;
@@ -970,17 +976,24 @@ export class MessageService {
     }).allowed;
   }
 
+  /** Locate a channel by id within a space's groups. */
+  private findChannelInSpace(
+    space: Space,
+    channelId: string
+  ): Channel | undefined {
+    return space.groups
+      ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+      ?.channels.find((c) => c.channelId === channelId);
+  }
+
   /**
-   * Authorize a POST to a read-only channel against the VERIFIED ed448 signer
-   * (a channel manager), never the spoofable payload senderId. A read-only
-   * channel is manager-only, which requires proving the poster's identity, so
-   * an unsigned/unverifiable post is dropped even in a repudiable space.
+   * Authorize a read-only-channel post/embed/sticker against the VERIFIED ed448
+   * signer (a channel manager), never the spoofable payload senderId. An
+   * unsigned/unverifiable post is dropped even in a repudiable space.
    *
-   * Self-contained (re-derives the fingerprint and verifies the signature here)
-   * so it holds regardless of which receive path reached the caller. This gates
-   * the LIVE cache path (addMessage); the durable saveMessage path has no
-   * read-only enforcement yet and stays deferred to the hub-log migration —
-   * .agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md.
+   * Self-contained (re-derives the fingerprint and verifies the signature here),
+   * so it holds on any receive path and for any content type. Used by both the
+   * live (addMessage) and durable (saveMessage) paths.
    */
   private async isReadOnlyPostAuthorized(
     decryptedContent: Message,
@@ -1506,6 +1519,38 @@ export class MessageService {
           : undefined;
       await messageDB.saveSpaceMember(spaceId, participant);
     } else {
+      // Read-only enforcement on the durable path, mirroring the live gate so a
+      // forged post can't survive on disk and resurface on refetch. Fail-OPEN on
+      // missing space/channel: this path also runs during sync/replay where a
+      // message can arrive before its space row, and a fail-secure drop would
+      // lose a legit (signed) manager message permanently. So we drop only when
+      // the channel is confirmed read-only AND the verified signer isn't a
+      // manager. Thread replies are exempt to match the live path.
+      const isDM = spaceId === channelId;
+      if (
+        !isDM &&
+        !decryptedContent.isThreadReply &&
+        isReadOnlyGatedType(decryptedContent.content.type)
+      ) {
+        const space = await messageDB.getSpace(spaceId);
+        const channel = space
+          ? this.findChannelInSpace(space, channelId)
+          : undefined;
+        if (space && channel?.isReadOnly) {
+          const members = await messageDB.getSpaceMembers(spaceId);
+          if (
+            !(await this.isReadOnlyPostAuthorized(
+              decryptedContent,
+              space,
+              channel,
+              members
+            ))
+          ) {
+            return; // forged/unsigned read-only post: do not persist
+          }
+        }
+      }
+
       // Check tombstone before saving - prevents deleted messages from being re-added during sync
       if (await messageDB.isMessageDeleted(decryptedContent.messageId)) {
         return;
@@ -2112,7 +2157,10 @@ export class MessageService {
       const isDM = spaceId === channelId;
       const isPostMessage = decryptedContent.content.type === 'post';
 
-      if (!isDM && isPostMessage) {
+      // Read-only enforcement covers all visible content (post/embed/sticker),
+      // not just text. Live path fail-secures on missing space/channel (the
+      // durable path fail-opens instead).
+      if (!isDM && isReadOnlyGatedType(decryptedContent.content.type)) {
         const space = await this.messageDB.getSpace(spaceId);
 
         // FAIL-SECURE: Reject if space data unavailable
@@ -2124,9 +2172,7 @@ export class MessageService {
         }
 
         // Find the target channel in space groups
-        const channel = space.groups
-          ?.find((g) => g.channels.find((c) => c.channelId === channelId))
-          ?.channels.find((c) => c.channelId === channelId);
+        const channel = this.findChannelInSpace(space, channelId);
 
         // FAIL-SECURE: Reject if channel not found
         if (!channel) {
@@ -2140,7 +2186,7 @@ export class MessageService {
         // (not the spoofable payload senderId): a modified client could forge a
         // manager's address to post in a read-only channel for everyone. Drops
         // unsigned/unverifiable posts (read-only requires proven manager
-        // identity). Live cache path only — see isReadOnlyPostAuthorized.
+        // identity). See isReadOnlyPostAuthorized.
         if (channel.isReadOnly) {
           const members = await this.messageDB.getSpaceMembers(spaceId);
           const authorized = await this.isReadOnlyPostAuthorized(
@@ -5111,6 +5157,16 @@ export class MessageService {
       const nonce = crypto.randomUUID();
       const space = await this.messageDB.getSpace(spaceId);
 
+      // Read-only posts must always be signed (receive-side drops unsigned ones,
+      // including a manager's own), so force-sign regardless of the repudiable
+      // "send unsigned" toggle.
+      const targetChannel = space
+        ? this.findChannelInSpace(space, channelId)
+        : undefined;
+      const effectiveSkipSigning = targetChannel?.isReadOnly
+        ? false
+        : skipSigning;
+
       // Calculate messageId (SHA-256 of the canonical fingerprint). Uses the
       // shared builder so the real content.type is hashed (control messages
       // like remove-message no longer sign under a hardcoded 'post') and
@@ -5217,7 +5273,10 @@ export class MessageService {
       } as Message;
 
       // Sign message BEFORE optimistic display (non-repudiability requirement)
-      if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+      if (
+        !space?.isRepudiable ||
+        (space?.isRepudiable && !effectiveSkipSigning)
+      ) {
         const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
         message.publicKey = inboxKey.publicKey;
         message.signature = Buffer.from(

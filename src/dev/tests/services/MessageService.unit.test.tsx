@@ -734,6 +734,160 @@ describe('MessageService - Unit Tests', () => {
       await messageService.addMessage(queryClient, 'space', RO, signedManagerPost());
       expect(spy).not.toHaveBeenCalled();
     });
+
+    // The read-only gate must cover ALL visible content types, not just 'post'.
+    // Before the fix, embed/sticker skipped the gate entirely (isPostMessage
+    // === false) and were accepted from anyone.
+    it('DROPS an UNSIGNED embed to a read-only channel', async () => {
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        RO,
+        roPost({
+          messageId: 'ro-embed',
+          content: { senderId: 'manager', type: 'embed', imageUrl: 'x' },
+        })
+      );
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('DROPS an UNSIGNED sticker to a read-only channel', async () => {
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        RO,
+        roPost({
+          messageId: 'ro-sticker',
+          content: { senderId: 'manager', type: 'sticker', stickerId: 's1' },
+        })
+      );
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('honors a SIGNED manager embed to a read-only channel', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        RO,
+        roPost({
+          messageId: '0'.repeat(64),
+          publicKey: mgrPub,
+          signature: 'sig',
+          content: { senderId: 'manager', type: 'embed', imageUrl: 'x' },
+        })
+      );
+      expect(spy).toHaveBeenCalled();
+    });
+  });
+
+  // SECURITY (durable path): the disk write (saveMessage) must enforce read-only
+  // the same way the live cache path does — otherwise a forged post/embed/sticker
+  // is persisted and reappears on the next refetch from storage. FAIL-OPEN on
+  // missing space/channel data: a fail-secure drop here would permanently lose a
+  // legit (signed) manager message that arrives before its space row during
+  // replay (see bug 2026-06-12, reverted first attempt).
+  describe('3f. saveMessage() - read-only channel durable enforcement (anti-spoofing)', () => {
+    const RO = 'ro-channel';
+    const mgrPub = 'aabb00112233445566778899aabbccdd';
+    const roSpace = {
+      spaceId: 'space',
+      roles: [{ roleId: 'mgr-role', members: ['manager'], permissions: [] }],
+      groups: [
+        {
+          groupId: 'g1',
+          channels: [
+            { channelId: RO, isReadOnly: true, managerRoleIds: ['mgr-role'] },
+          ],
+        },
+      ],
+    };
+    const roPost = (over: Record<string, unknown> = {}) =>
+      ({
+        messageId: 'ro-d1',
+        spaceId: 'space',
+        channelId: RO,
+        nonce: 'n-ro',
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        lastModifiedHash: '',
+        content: { senderId: 'manager', type: 'post', text: 'announce' },
+        ...over,
+      }) as any;
+    const signedManagerPost = (over: Record<string, unknown> = {}) =>
+      roPost({ messageId: '0'.repeat(64), publicKey: mgrPub, signature: 'sig', ...over });
+
+    const save = (msg: any) =>
+      messageService.saveMessage(
+        msg,
+        mockDeps.messageDB,
+        'space',
+        RO,
+        'group',
+        { user_icon: 'i.png', display_name: 'U' }
+      );
+
+    beforeEach(() => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(roSpace);
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'manager', inbox_address: deriveInboxAddress(mgrPub) }]);
+    });
+
+    it('PERSISTS a SIGNED manager post to a read-only channel', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      await save(signedManagerPost());
+      expect(mockDeps.messageDB.saveMessage).toHaveBeenCalled();
+    });
+
+    it('does NOT persist an UNSIGNED post to a read-only channel', async () => {
+      await save(roPost()); // no signature
+      expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+
+    it('does NOT persist an UNSIGNED embed to a read-only channel', async () => {
+      await save(
+        roPost({ messageId: 'ro-de', content: { senderId: 'manager', type: 'embed', imageUrl: 'x' } })
+      );
+      expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+
+    it('does NOT persist an UNSIGNED sticker to a read-only channel', async () => {
+      await save(
+        roPost({ messageId: 'ro-ds', content: { senderId: 'manager', type: 'sticker', stickerId: 's1' } })
+      );
+      expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+
+    it('does NOT persist a SIGNED post whose verified signer is not a manager', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'intruder', inbox_address: deriveInboxAddress(mgrPub) }]);
+      await save(signedManagerPost());
+      expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+
+    // FAIL-OPEN: with no space row loaded we cannot prove the channel is
+    // read-only, so we must NOT drop — otherwise a legit signed manager message
+    // arriving before its space during replay is lost from disk forever.
+    it('PERSISTS when space data is unavailable (fail-open, no legit-message loss)', async () => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(null);
+      await save(roPost()); // unsigned, but space unknown → cannot confirm read-only
+      expect(mockDeps.messageDB.saveMessage).toHaveBeenCalled();
+    });
+
+    // Thread replies are exempt to match the live path (addMessage short-circuits
+    // them before its read-only gate); the durable path must not be stricter.
+    it('does NOT gate a thread reply (matches live path)', async () => {
+      mockDeps.messageDB.getChannelThreads = vi.fn().mockResolvedValue([]);
+      await save(roPost({ messageId: 'ro-tr', isThreadReply: true, threadId: 't1' }));
+      expect(mockDeps.messageDB.saveMessage).toHaveBeenCalled();
+    });
   });
 
   describe('4. encryptAndSendToSpace() - Hub Message Helper', () => {

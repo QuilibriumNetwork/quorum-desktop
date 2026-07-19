@@ -1738,7 +1738,7 @@ const Channel: React.FC<ChannelProps> = ({
                 isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}
                 setInReplyTo={composer.setInReplyTo}
-                showSigningToggle={space?.isRepudiable}
+                showSigningToggle={space?.isRepudiable && !channel?.isReadOnly}
                 skipSigning={skipSigning}
                 onSigningToggle={() => setSkipSigning(!skipSigning)}
                 disabled={!canPost}

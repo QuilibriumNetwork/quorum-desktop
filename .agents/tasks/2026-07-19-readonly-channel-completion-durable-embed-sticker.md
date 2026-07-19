@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Complete read-only-channel enforcement: durable path + embed/sticker + always-sign read-only posts"
-status: open — ready to implement (new session)
+status: desktop DONE (shipping via PR) — mobile half still open (tracked in quorum-mobile 2026-06-25-space-control-msg-auth-signature-design.md). Bug stays open until both platforms land.
 priority: medium-high
 created: 2026-07-19
 severity: HIGH (authorization bypass — same class as the merged control-message-auth fix)
@@ -14,6 +14,39 @@ builds-on: quorum-desktop#241, quorum-shared#61
 ---
 
 # Complete read-only-channel enforcement
+
+## ✅ Desktop — DONE (2026-07-19)
+
+All three desktop parts shipped on branch `readonly-channel-durable-embed-sticker`
+(`src/services/MessageService.ts`, `src/components/space/Channel.tsx`):
+
+1. **Receive guard** — generalized `isReadOnlyPostAuthorized` (already
+   content-type agnostic) is now applied to `post` + `embed` + `sticker` on BOTH
+   the live (`addMessage`) and durable (`saveMessage`) paths via a shared
+   `isReadOnlyGatedType` set + `findChannelInSpace` helper. The live path
+   fail-secures on missing space/channel; the **durable path fail-OPENs** (drops
+   only when the channel is confirmed read-only AND the verified signer is not a
+   manager) so a legit signed manager message arriving before its space row
+   during replay is never permanently lost — the exact failure that reverted the
+   first attempt. Durable guard exempts thread replies to match the live path.
+2. **Send-side force-sign** — `submitChannelMessage` forces
+   `effectiveSkipSigning = false` when the target channel is read-only, so a
+   manager's own post is always signed (never dropped by the receive guard).
+3. **Composer UX** — `showSigningToggle={space?.isRepudiable && !channel?.isReadOnly}`.
+
+**Verification:** `MessageService.unit.test.tsx` extended (§3e live embed/sticker,
+new §3f durable path incl. fail-open + thread-reply exemption) — 44/44 pass;
+`tsc --noEmit` clean; manual smoke confirmed (manager can post text/embed/sticker
+in a read-only channel and they persist across reload; signing toggle hidden in
+read-only channels).
+
+**Still open:** the **mobile** half (send-side force-sign + composer toggle-disable,
+plus the read-only receive coverage) is being handled alongside the mobile
+control-message-auth work. Coordination note: the receive-side "drop unsigned
+read-only post" and the send-side force-sign MUST land together on mobile, or a
+manager's own unsigned post (repudiable space) gets dropped. Bug
+`2026-06-12-readonly-channel-receive-side-enforcement-gaps.md` stays OPEN until
+mobile lands.
 
 ## Where we are (what's already done)
 
