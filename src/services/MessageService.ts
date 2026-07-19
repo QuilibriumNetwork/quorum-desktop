@@ -1754,32 +1754,33 @@ export class MessageService {
 
       const isDM = spaceId === channelId;
 
-      if (!targetMessage) {
-        // If target message doesn't exist, always remove from UI.
-        // (Unchanged: this is a no-op removal of a message we don't have — not the
-        // attack surface. The attack targets a message that DOES exist, handled
-        // by the DM branch below.)
-        shouldHonorDelete = true;
-      } else if (isDM) {
-        // DM authorization — authorize against the session-authenticated sender,
-        // NOT the spoofable payload `senderId`. For a DM, `spaceId` (== channelId)
-        // is the cryptographically proven conversation owner. Require BOTH: the
-        // payload claim matches the proven owner AND the target was authored by
-        // that proven owner. A peer spoofing `senderId = you` to delete your
-        // message fails the second clause. (Same check as the saveMessage handler;
-        // see .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md.)
-        shouldHonorDelete =
-          decryptedContent.content.senderId === spaceId &&
-          targetMessage.content.senderId === spaceId;
+      if (isDM) {
+        if (!targetMessage) {
+          // DM, target we don't have: harmless no-op cache removal. The real
+          // attack surface (deleting a message that DOES exist) is handled below.
+          shouldHonorDelete = true;
+        } else {
+          // DM authorization — authorize against the session-authenticated
+          // sender, NOT the spoofable payload `senderId`. For a DM, `spaceId`
+          // (== channelId) is the cryptographically proven conversation owner.
+          // Require BOTH: the payload claim matches the proven owner AND the
+          // target was authored by that proven owner. (Same check as the
+          // saveMessage handler; see MASTER-RECAP-control-message-auth.md.)
+          shouldHonorDelete =
+            decryptedContent.content.senderId === spaceId &&
+            targetMessage.content.senderId === spaceId;
+        }
       } else {
-        // Space: authorize against the VERIFIED signing key (mirrors the
-        // saveMessage handler so cache and DB can't disagree).
+        // Space: authorize against the VERIFIED signing key, including the
+        // missing-target case (the helper returns ok-target-missing-noop only
+        // for a verified sender — an unsigned/spoofed remove of a locally-absent
+        // message no longer ghosts it out of the cache). Mirrors saveMessage.
         shouldHonorDelete = await this.isSpaceControlAuthorized(
           decryptedContent,
           this.messageDB,
           spaceId,
           channelId,
-          targetMessage
+          targetMessage ?? undefined
         );
       }
 
@@ -1994,20 +1995,17 @@ export class MessageService {
         return;
       }
 
-      // Fail-secure validation
-      const space = await this.messageDB.getSpace(spaceId);
-      if (!space) {
-        return;
-      }
-
-      // Check permission - sender must have user:mute via roles
-      const hasPermission = space.roles?.some(
-        (role) =>
-          role.members?.includes(muteContent.senderId) &&
-          role.permissions?.includes('user:mute')
-      );
-
-      if (!hasPermission) {
+      // Authorize against the VERIFIED signing key (user:mute role), not the
+      // spoofable payload senderId. authorizeControlMessage handles 'mute'
+      // without a target message.
+      if (
+        !(await this.isSpaceControlAuthorized(
+          decryptedContent,
+          this.messageDB,
+          spaceId,
+          channelId
+        ))
+      ) {
         return;
       }
 

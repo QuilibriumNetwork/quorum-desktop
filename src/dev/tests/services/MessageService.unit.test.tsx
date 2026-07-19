@@ -88,6 +88,9 @@ describe('MessageService - Unit Tests', () => {
         }),
         getSpaceMember: vi.fn().mockResolvedValue(null),
         getSpaceMembers: vi.fn().mockResolvedValue([]),
+        getMuteByMuteId: vi.fn().mockResolvedValue(null),
+        muteUser: vi.fn().mockResolvedValue(undefined),
+        unmuteUser: vi.fn().mockResolvedValue(undefined),
         isUserMuted: vi.fn().mockResolvedValue(false),
         getConversation: vi.fn().mockResolvedValue({ conversation: null }),
         updateMessage: vi.fn().mockResolvedValue(undefined),
@@ -588,6 +591,79 @@ describe('MessageService - Unit Tests', () => {
 
       // Unauthorized edit returns early before persisting any change.
       expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  // SECURITY: space mute must authorize against the verified signing key, not
+  // the spoofable payload senderId (same class as remove/edit).
+  describe('3d. addMessage() - Space mute authorization (anti-spoofing)', () => {
+    const muteMsg = (over: Record<string, unknown> = {}) =>
+      ({
+        messageId: 'mute-1',
+        spaceId: 'space',
+        channelId: 'channel',
+        nonce: 'n',
+        content: {
+          senderId: 'mod',
+          type: 'mute',
+          targetUserId: 'victim',
+          muteId: 'mid-1',
+          timestamp: Date.now(),
+          action: 'mute',
+        },
+        ...over,
+      }) as any;
+
+    beforeEach(() => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId: 'space',
+        roles: [{ members: ['mod'], permissions: ['user:mute'] }],
+        groups: [],
+      });
+    });
+
+    it('honors a SIGNED mute from the verified user:mute role holder', async () => {
+      const publicKey = '11223344556677889900aabbccddeeff';
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'mod', inbox_address: deriveInboxAddress(publicKey) }]);
+
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        'channel',
+        muteMsg({ publicKey, signature: 'sig' })
+      );
+
+      expect(mockDeps.messageDB.muteUser).toHaveBeenCalled();
+    });
+
+    it('DROPS an UNSIGNED mute claiming a moderator senderId (spoof)', async () => {
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        'channel',
+        muteMsg() // claims senderId 'mod' but no signature
+      );
+
+      expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
+    });
+
+    it('DROPS a SIGNED mute whose signer is not the claimed moderator', async () => {
+      const publicKey = 'ff00ff00ff00ff00ff00ff00ff00ff00';
+      // Key belongs to 'mallory' (no mute role); payload claims 'mod'.
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'mallory', inbox_address: deriveInboxAddress(publicKey) }]);
+
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        'channel',
+        muteMsg({ publicKey, signature: 'sig' })
+      );
+
+      expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
     });
   });
 
