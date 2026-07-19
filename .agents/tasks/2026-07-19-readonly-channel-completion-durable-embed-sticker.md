@@ -118,4 +118,13 @@ paths with force-signed sends, mark
 `.agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md`
 resolved.
 
+## References (for a cold review / full code check)
+
+- **The bug this completes:** `.agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md` (the two gaps = durable + embed/sticker).
+- **The merged base this builds on:** quorum-desktop#241 (https://github.com/QuilibriumNetwork/quorum-desktop/pull/241). Desktop `src/services/MessageService.ts` — the existing `isReadOnlyPostAuthorized` (generalize it) and its use in `addMessage`; `saveMessage`'s catch-all `else` (~1508) is where durable enforcement goes. Tests: `src/dev/tests/services/MessageService.unit.test.tsx` §3e.
+- **Shared primitives (published, consume as-is):** `@quilibrium/quorum-shared@2.1.0-35` — `buildMessageFingerprint`, `resolveVerifiedSender` (`D:/GitHub/Quilibrium/quorum-shared/src/utils/messageAuth.ts`), `canManageReadOnlyChannel` (`D:/GitHub/Quilibrium/quorum-shared/src/utils/channelPermissions.ts`).
+- **Private tracking issue (the whole effort):** https://github.com/QuilibriumNetwork/quorum-app-prod/issues/1.
+- **Mobile side:** the full mobile audit + reference list is in `D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/2026-06-25-space-control-msg-auth-signature-design.md` (gitignored/local) — mirror it for the mobile half of this task.
+- **Cross-repo rules:** `D:/GitHub/Quilibrium/quorum-atlas.md` (esp. iOS-review-only, ship/PR conventions).
+
 *Last updated: 2026-07-19*
