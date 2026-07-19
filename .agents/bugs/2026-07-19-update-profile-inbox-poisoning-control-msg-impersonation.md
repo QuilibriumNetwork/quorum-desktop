@@ -104,4 +104,24 @@ Mobile never shipped this bug: `services/space/spaceMessageAuth.ts`
 (`WebSocketContext.tsx` ~2148) creates with `inbox_address: ''` and never writes
 the announced key back.
 
+## Exposed a deeper architectural gap — multi-device (2026-07-19)
+
+Removing the rebinding write exposed a pre-existing gap it had been masking. Each
+device generates its OWN space signing keypair (`spaceSyncService.ts`
+`generateEd448()`), so one user signs with a different key per device, but the
+member table binds a member to a SINGLE `inbox_address`. The removed
+`participant.inbox_address = inboxAddress` line was — accidentally — the only
+thing that re-bound a second device's key into other members' tables. Without it,
+a control message (e.g. a delete) from a user's second device fails the
+`resolveVerifiedSender` reverse-lookup on other clients and is silently dropped
+(posts still land — unverifiable post signatures are nulled and processed
+anyway). So the vulnerable line was both a real bypass AND load-bearing for
+multi-device.
+
+Proper fix (cross-platform, above this fix's scope; an agent is working on it):
+a member needs MULTIPLE verified inbox keys, one per device, bound through the
+**authenticated device registration** the DM stack already trusts — not a
+spoofable in-band `update-profile`. The crypto-architecture doc's "Inbox Key
+Rotation" section carries the same flag and will be rewritten when that lands.
+
 *Last updated: 2026-07-19*

@@ -376,10 +376,16 @@ Space owner identity is cryptographically tied to space creation keys:
 >    the DB (`saveMessage`) and cache (`addMessage`) handlers.
 >
 > Covers `remove-message`, `edit-message`, `pin`, `mute`, and `@everyone`.
-> **Read-only-channel post acceptance** is also verified-signer on the live
-> path (a separate `isReadOnlyPostAuthorized` gate: verify the post signature →
-> authorize the verified signer as a channel manager; unsigned posts dropped).
-> Its durable/DB path stays deferred to the hub-log migration.
+> **Read-only-channel content acceptance** is also verified-signer, now on BOTH
+> the live (`addMessage`) and durable (`saveMessage`) paths and for `post` +
+> `embed` + `sticker` (a shared `isReadOnlyPostAuthorized` gate: verify the
+> signature → authorize the verified signer as a channel manager; unsigned
+> dropped). The durable path fail-opens on missing space/channel data (drops
+> only when the channel is confirmed read-only and the signer isn't a manager)
+> so a legit signed manager message isn't lost during sync/replay. Read-only
+> posts are also **force-signed on send** (overriding the repudiable
+> "send unsigned" toggle) so a manager's own post is never dropped, and the
+> composer hides the toggle for read-only channels (#242).
 > DMs stay session-anchored (PR #220). A branded `VerifiedSender` type makes
 > passing a raw `senderId` into these checks a compile error.
 
@@ -401,6 +407,31 @@ read-only manager. See "Control-Message Authorization" above.
 - **Location**: `src/services/MessageService.ts` — `isSpaceControlAuthorized` in
   the `remove-message` handlers (`saveMessage` + `addMessage`).
 - **Behavior**: Unauthorized/unsigned deletes silently dropped (fail closed).
+
+#### Profile-Update Authorization (protects the reverse-lookup — 2026-07-19)
+
+`update-profile` used to select the member row by the spoofable payload
+`senderId` and then overwrite that row's `inbox_address` with the signing key's
+derived address. Because the upstream check skips the key↔member binding for
+`update-profile`, an attacker could claim a victim's `senderId`, sign with their
+own key, and repoint the victim's `inbox_address` onto the attacker's key. That
+**poisons the `resolveVerifiedSender` reverse-lookup** control-message auth
+relies on, escalating a display spoof into remove/edit/pin/mute impersonation of
+the victim.
+
+- **Fix**: `isUpdateProfileAuthorized` authorizes against the **verified signer**
+  — a key already registered to a member may only update THAT member; a key
+  matching no member is accepted as a rotation/bootstrap announcement. The
+  handler **never writes the announced key onto the member row** (creates
+  display-only rows with an empty `inbox_address`; leaves existing
+  `inbox_address` untouched). Authoritative `inbox_address` comes only from the
+  verified join control.
+- **Location**: `src/services/MessageService.ts` — `isUpdateProfileAuthorized`,
+  used by both `update-profile` handlers (`saveMessage` + `addMessage`).
+- **Residual (accepted, mobile parity)**: an unregistered key can still set a
+  claimed sender's display name/avatar (needed for the missing-join-row
+  bootstrap) — cosmetic only, no `inbox_address` poisoning, so no control
+  authority.
 
 #### Pin Message Permission
 
@@ -519,6 +550,8 @@ User identity secured via WebAuthn passkeys:
 **Document Created**: 2025-11-08
 **Last Updated**: 2026-07-19
 **Major Updates**:
+- 2026-07-19: `update-profile` authorized by verified signer + never writes the announced key onto a member row (closes inbox_address poisoning → control-message impersonation) (#243)
+- 2026-07-19: Read-only-channel enforcement completed — verified-signer gate on the durable path and for embed/sticker, plus force-signed read-only sends and composer toggle-hide (#242)
 - 2026-07-19: Space control-message + @everyone authorization now keyed on the verified ed448 signer (not payload senderId)
 - 2026-01-02: Added config key encryption layer documentation (from qm delta commit)
 - 2025-12-15: Added mute user permission with full defense-in-depth validation

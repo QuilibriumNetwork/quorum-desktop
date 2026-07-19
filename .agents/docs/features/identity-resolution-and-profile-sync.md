@@ -196,6 +196,25 @@ global identity on the next reconnect.
   (desktop's comparison trick demotes a roster==global name to QNS; mobile
   doesn't) until cleared — folds into the same accepted limitation.
 
+## Receive-side authorization (security, 2026-07-19)
+
+`update-profile` is authorized against the **verified signer**, never the
+spoofable payload `senderId` (`isUpdateProfileAuthorized`, both `saveMessage` +
+`addMessage` handlers): a signing key already registered to a member may only
+update THAT member; a key matching no member is accepted as a rotation/bootstrap
+announcement. The handler **never writes the announced key onto the member row**
+— it upserts display fields only, creating rows with an empty `inbox_address`
+and leaving any existing `inbox_address` untouched. The authoritative
+`inbox_address` comes solely from the verified join control.
+
+This closes an escalation where a forged `senderId` + attacker key repointed a
+victim's `inbox_address` and poisoned the `resolveVerifiedSender` reverse-lookup
+that control-message auth relies on (#243; see
+`.agents/docs/features/security.md` → "Profile-Update Authorization"). Accepted
+residual: an unregistered key can still set the display name/avatar on a claimed
+`senderId` (needed for the missing-join-row bootstrap) — cosmetic only, no
+`inbox_address` poisoning.
+
 ## Verification status (2026-07-16)
 
 - **Spaces, desktop↔desktop:** CONFIRMED working by the user — space text lands
@@ -239,4 +258,4 @@ global identity on the next reconnect.
 | Channel A sync | `src/services/ConfigService.ts` | `services/config/configService.ts` |
 
 ---
-*Last updated: 2026-07-16*
+*Last updated: 2026-07-19*

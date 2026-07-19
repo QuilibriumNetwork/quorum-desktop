@@ -183,9 +183,17 @@ const effectiveSkip = space?.isRepudiable ? skipSigning : false;
 ```
 
 **Hierarchy:**
-1. Space setting (overrides everything)
-2. User global setting (if space allows choice)
-3. Default `true` (always sign)
+1. Read-only channel (overrides everything — always signed)
+2. Space setting (overrides user choice)
+3. User global setting (if space allows choice)
+4. Default `true` (always sign)
+
+> **Read-only channels always sign (2026-07-19, #242).** A post to a read-only
+> channel is manager-only and manager-attributed, so `submitChannelMessage`
+> forces `effectiveSkipSigning = false` for read-only channels regardless of the
+> repudiable toggle — otherwise a manager's own unsigned post would be dropped by
+> the receive-side read-only gate. The composer also hides the signing toggle for
+> read-only channels (`showSigningToggle={space?.isRepudiable && !channel?.isReadOnly}`).
 
 ## Data Storage
 
@@ -319,6 +327,13 @@ Signature verification runs whenever a message carries a `publicKey` and `signat
 | `mentions?.everyone === true` | Posts bearing `@everyone` — regardless of repudiability |
 
 This means **control messages and `@everyone` posts are always verified**, even in repudiable spaces where ordinary posts are allowed to be unsigned. The gate can no longer be bypassed by setting a space to repudiable.
+
+Separately, **content posted into a read-only channel** (`post` / `embed` /
+`sticker`) is always signature-verified regardless of repudiability, via a
+self-contained gate (`isReadOnlyPostAuthorized`) in the `addMessage` +
+`saveMessage` handlers rather than this upstream block — unsigned/unauthorized
+content is dropped (#242). See
+`.agents/docs/space-permissions/read-only-channels-system.md`.
 
 ### Verification Steps (in order)
 

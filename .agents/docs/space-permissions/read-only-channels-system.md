@@ -355,22 +355,32 @@ if (spaceId != channelId) {
 
 See also: `.agents/docs/features/security.md` — "Control-Message Authorization (verified signer)" for the full mechanism.
 
-**Read-only POST acceptance (deciding whether a normal post is allowed into a
-read-only channel) — verified signer, live path (2026-07-19).** This is a
+**Read-only content acceptance (deciding whether content is allowed into a
+read-only channel) — verified signer, both paths (2026-07-19).** This is a
 *different* gate from the control-message (delete/pin) path above: it decides
-whether an incoming `post` is accepted, not whether a control action is
-authorized. On the live cache path (`addMessage`), it no longer trusts
-`content.senderId` — a new `isReadOnlyPostAuthorized` helper verifies the post's
-ed448 signature and authorizes the **verified signer** as a channel manager
-(`resolveVerifiedSender` + `canManageReadOnlyChannel`). Unsigned/unverifiable
-posts to a read-only channel are dropped (manager identity must be proven, so
-this holds even in a repudiable space).
+whether incoming `post` / `embed` / `sticker` is accepted, not whether a control
+action is authorized. It no longer trusts `content.senderId` — the
+`isReadOnlyPostAuthorized` helper verifies the content's ed448 signature and
+authorizes the **verified signer** as a channel manager (`resolveVerifiedSender`
++ `canManageReadOnlyChannel`). Unsigned/unverifiable content is dropped (manager
+identity must be proven, so this holds even in a repudiable space). Applied on
+BOTH the live cache path (`addMessage`) and the durable DB path (`saveMessage`),
+so a forged post can't survive on disk and resurface on refetch.
 
-> **Still open — durable path.** `saveMessage` (the DB write path) has NO
-> read-only enforcement yet, so a forged read-only post can still be stored and
-> reappear on reload. Deferred to the hub-log migration; tracked in
-> `.agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md`.
-> `embed`/`sticker` type coverage is also still open there.
+- **Durable-path fail-open**: `saveMessage` also runs during sync/replay, where a
+  message can arrive before its space row loads. It therefore drops only when the
+  channel is *positively confirmed* read-only and the verified signer isn't a
+  manager; missing space/channel data passes through, so a legit signed manager
+  message is never permanently lost. Thread replies are exempt (matching the live
+  path).
+- **Send-side force-sign**: a post to a read-only channel is always signed
+  regardless of the repudiable "send unsigned" toggle (`submitChannelMessage`),
+  so a manager's own post is never dropped by the receive gate. The composer
+  hides the toggle for read-only channels.
+
+Desktop shipped in #242; the tracking bug
+`.agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md`
+stays open until the mobile mirror lands.
 
 **Key Processing Principles**:
 

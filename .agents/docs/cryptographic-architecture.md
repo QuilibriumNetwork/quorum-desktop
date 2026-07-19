@@ -260,7 +260,47 @@ A new inbox key (and therefore a new inbox address) is generated whenever:
 
 After rotation the old `inbox_address` stored in the receiver's `space_members` record is stale — it points to a key the sender no longer uses.
 
-### How Rotation Is Announced: `update-profile`
+> **⚠️ SUPERSEDED (2026-07-19, #243) — READ FIRST.** The mechanism described in
+> the rest of this section (a receiver updating a member's stored `inbox_address`
+> from an incoming `update-profile`) has been **removed**, because it was an
+> authorization-bypass vector: the receive handler selected the member row by the
+> spoofable payload `senderId` and the signature only proves the message was
+> signed by *some* key, not that the key belongs to the claimed sender. A member
+> could sign an `update-profile` claiming a victim's `senderId` and repoint the
+> victim's `inbox_address` onto the attacker's key, poisoning the
+> `resolveVerifiedSender` reverse-lookup that control-message auth relies on
+> (delete/edit/pin/mute impersonation). See
+> `.agents/docs/features/security.md` → "Profile-Update Authorization" and bug
+> `.agents/bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md`.
+>
+> **Current behavior:** `update-profile` is authorized against the verified signer
+> (`isUpdateProfileAuthorized`) and is **display-only** — it never writes the
+> announced key onto a member row. The authoritative `inbox_address` comes only
+> from the cryptographically **verified join control** (`js_verify_point` + ed448).
+> The upstream inbox-mismatch guard is still skipped for `update-profile` (so the
+> display update isn't dropped after a rotation), but the handler no longer acts
+> on the new key.
+>
+> **⚠️ KNOWN REGRESSION — multi-device (exposed 2026-07-19, fix in flight).**
+> This is more than a rare rotation edge case. Each device generates its OWN
+> space signing keypair (`spaceSyncService.ts` `generateEd448()`), so one user
+> signs space messages with a different key per device. The verified-signer
+> reverse-lookup binds a member to a SINGLE `inbox_address`, and the removed
+> `update-profile` rebinding was — accidentally — the only thing that let a
+> second device's key get into other members' tables. With it gone, a control
+> message (e.g. a delete) sent from a user's second device fails the reverse
+> lookup on other clients and is dropped (posts still land, because unverifiable
+> post signatures are nulled and processed anyway; control messages fail closed).
+> The vulnerable line was genuinely load-bearing for multi-device.
+>
+> The proper fix is neither keeping the spoofable rebinding nor just deleting it:
+> a member needs MULTIPLE verified inbox keys (one per device), bound through the
+> **authenticated device registration** the DM stack already trusts — not a
+> spoofable in-band announcement. That is a cross-platform shared/desktop design
+> change, above the scope of the #243 fix. An agent is working on it; this
+> section will be rewritten when it lands.
+
+### How Rotation Is Announced: `update-profile` (HISTORICAL — see note above)
 
 The `update-profile` message type is a broadcast that every member sends to the Space when their profile data changes (display name, avatar, or space tag). Critically, **it also carries the sender's current inbox address** via the signed envelope header.
 
@@ -311,9 +351,11 @@ What changes is only that the receiver now accepts the *new* inbox address from 
 Normal message:   stored_inbox == envelope_inbox? → verify signature
                   stored_inbox != envelope_inbox? → REJECT (mismatch)
 
-update-profile:   stored_inbox == envelope_inbox? → verify signature, update stored inbox
-                  stored_inbox != envelope_inbox? → verify signature, update stored inbox
-                  (mismatch is expected and legitimate — this IS the rotation)
+update-profile:   (current — #243) verify signature, authorize the VERIFIED
+                  signer (a known key may only speak for its own member; an
+                  unknown key is a display-only bootstrap). NEVER update the
+                  stored inbox_address from the announcement — the authoritative
+                  value comes only from the verified join control.
 ```
 
 ---
