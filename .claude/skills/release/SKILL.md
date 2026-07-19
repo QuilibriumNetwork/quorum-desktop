@@ -19,42 +19,37 @@ flow is: cut the release here, then run **deploy** to ship it.
 
 ## Versioning scheme
 
-This repo uses a base semantic version plus an incrementing **build suffix**:
+**Default behaviour: plain patch bump — increment the LAST number only.** We stay
+on the current `major.minor` line and bump the patch digit every release:
 
 ```
-2.1.0          first release (base, no suffix)
-2.1.0-1        next build
-2.1.0-2        next build
-2.1.0-3        ...
-2.1.1          "big change" — patch escalation, suffix resets
-2.1.1-1        next build on the new base
-2.2.0          minor escalation, suffix resets
-3.0.0          major escalation, suffix resets
+2.1.0          a release
+2.1.1          next release (patch bump)
+2.1.2          next release
+2.1.3          ...
 ```
 
-**Default behaviour: increment the build suffix.** This is what happens almost
-every release (`2.1.0` → `2.1.0-1` → `2.1.0-2` → ...). Escalating the base
-version (to `2.1.1`, `2.2.0`, or `3.0.0`) is **rare** and only happens when the
-user explicitly asks for it or confirms a "big change" — see Step 3. When in
-doubt, suffix-bump.
+This is what happens on **almost every release**: `2.1.2` → `2.1.3`. The major and
+minor stay put. Do NOT auto-escalate to a minor (`2.2.0`) or major (`3.0.0`) bump
+just because the commit range contains `feat:` or breaking-change commits — that
+inference is wrong for this repo and has caused repeated mistakes. Escalating the
+minor or major is **rare** and happens **only** when the user explicitly asks for
+it (e.g. `/release minor`) or confirms it. When in doubt, patch-bump.
 
 The version is stored **only in `package.json`** (the `version` field). Git tags
-mirror it with a `v` prefix: `v2.1.0`, `v2.1.0-1`, etc.
+mirror it with a `v` prefix: `v2.1.0`, `v2.1.1`, `v2.1.2`, ...
 
 ## Version math (apply exactly)
 
-Parse the current `package.json` version into `BASE` and optional `SUFFIX`:
-`2.1.0-3` → BASE=`2.1.0`, SUFFIX=`3`. `2.1.0` → BASE=`2.1.0`, SUFFIX=none.
+Parse the current `package.json` version into `major.minor.patch` (e.g.
+`2.1.2` → major=`2`, minor=`1`, patch=`2`).
 
-- **Suffix bump** (default): keep BASE, set SUFFIX to `(current SUFFIX or 0) + 1`.
-  - `2.1.0` → `2.1.0-1`
-  - `2.1.0-3` → `2.1.0-4`
-- **Patch escalation** (big change): `major.minor.(patch+1)`, drop suffix.
-  - `2.1.0-3` → `2.1.1`
-- **Minor escalation**: `major.(minor+1).0`, drop suffix.
-  - `2.1.0-3` → `2.2.0`
-- **Major escalation**: `(major+1).0.0`, drop suffix.
-  - `2.1.0-3` → `3.0.0`
+- **Patch bump** (default): `major.minor.(patch+1)`.
+  - `2.1.2` → `2.1.3`
+- **Minor escalation** (only on explicit user request): `major.(minor+1).0`.
+  - `2.1.2` → `2.2.0`
+- **Major escalation** (only on explicit user request): `(major+1).0.0`.
+  - `2.1.2` → `3.0.0`
 
 **Special case — the very first release.** If `package.json` is still at the
 placeholder `0.0.0` and no `v*` tags exist, the first release is **`2.1.0`** (the
@@ -92,28 +87,25 @@ git log <LATEST_VERSION_TAG>..HEAD --format="%h%x09%s"
   - `chore:`, `refactor:`, `style:`, `test:`, `build:`, `ci:`, `perf:` → **Maintenance**
   - `feat!:`, `fix!:`, or a body containing `BREAKING CHANGE` → **Breaking**
   - anything else → **Other**
-- A commit is a **"big change" signal** if it is a `feat:`, any `!` breaking
-  marker, or contains `BREAKING CHANGE`.
+
+The categorization is **only** for grouping the release notes. It does **NOT**
+drive the version bump — `feat:` commits do not make this a minor release.
 
 ### Step 3: Decide the new version
 
-Compute the **default** new version = a suffix bump (per the version math above).
-
-Then decide whether to escalate:
+The new version is a **plain patch bump** (per the version math above): keep
+`major.minor`, increment the last number. `2.1.2` → `2.1.3`. That is the answer
+almost every time — do not overthink it.
 
 - **First release ever** (placeholder `0.0.0`, no `v*` tags): the new version is
-  `2.1.0`. Skip the escalation question — confirm `2.1.0` and proceed.
-- **Big-change signal present** (any feat / breaking commit since last release):
-  use **AskUserQuestion** to ask the user how to version this release. Offer:
-  - "Build suffix — `<default suffix version>`" (Recommended if changes are small/iterative)
-  - "Patch — `<patch escalation>`" (a meaningful but compatible change)
-  - "Minor — `<minor escalation>`" (a notable feature set)
-  - "Major — `<major escalation>`" (a breaking or landmark release)
-  Show the actual computed numbers in each label.
-- **No big-change signal**: default to the suffix bump silently, but still state
-  the chosen version in Step 5 so the user can object before the push gate.
-
-Never escalate without an explicit user choice. The default is always the suffix bump.
+  `2.1.0`. Set it directly and proceed.
+- **Default (any normal release)**: patch-bump silently. Do NOT ask, and do NOT
+  escalate to minor/major just because the range contains `feat:` or breaking
+  commits. State the chosen version in Step 5 so the user can object before the
+  push gate.
+- **Explicit escalation only**: bump the minor or major **only** if the user
+  invoked `/release minor` / `/release major`, or otherwise explicitly asked for
+  it in this conversation. Never escalate on your own inference.
 
 ### Step 4: Bump `package.json`
 
@@ -161,14 +153,8 @@ changelog notes:
 gh release create "v<NEW_VERSION>" --title "v<NEW_VERSION>" --notes "<changelog>"
 ```
 
-For a build-suffix release (e.g. `v2.1.0-2`), mark it as a pre-release so it does
-not show as the "Latest" release above the base version:
-
-```bash
-gh release create "v<NEW_VERSION>" --title "v<NEW_VERSION>" --prerelease --notes "<changelog>"
-```
-
-(Base versions like `v2.1.0`, `v2.1.1`, `v2.2.0` are full releases — no `--prerelease`.)
+All patch releases (`v2.1.1`, `v2.1.2`, `v2.1.3`, ...) are full releases — no
+`--prerelease` flag.
 
 ### Step 7: Report
 
@@ -220,10 +206,10 @@ Generate notes with only the sections that have changes, in this order:
 ## Files modified
 
 - `package.json` — the `version` field only.
-- Git commit: `chore(release): vX.Y.Z[-N]`
-- Git tag: `vX.Y.Z[-N]` (annotated)
-- GitHub release with grouped changelog notes (pre-release for suffix builds)
+- Git commit: `chore(release): vX.Y.Z`
+- Git tag: `vX.Y.Z` (annotated)
+- GitHub release with grouped changelog notes
 
 ---
 
-*Last updated: 2026-06-12*
+*Last updated: 2026-07-17*
