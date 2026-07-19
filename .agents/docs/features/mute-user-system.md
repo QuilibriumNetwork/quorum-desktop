@@ -4,7 +4,7 @@ title: Mute User System Documentation
 status: done
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-17T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Mute User System Documentation
@@ -246,8 +246,16 @@ canMuteUser(): boolean {
 
 **Location**: `src/services/MessageService.ts`
 
+As of the **2026-07-19 control-message-auth fix** (see `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md`), mute authorization on the receive side is performed against the **cryptographically verified ed448 signer**, not the spoofable plaintext `muteContent.senderId`. The flow is:
+
+1. `isSpaceControlAuthorized()` calls `resolveVerifiedSender(decryptedContent.publicKey, members)` — a reverse lookup from the verified signing public key to the matching space member.
+2. `authorizeControlMessage()` (from `quorum-shared/src/utils/messageAuth.ts`) then checks `canMuteUser()` on the verified sender's identity via `createChannelPermissionChecker`.
+3. If the message is unsigned, the signing key is unknown, or the key matches no active member, `verifiedSender` is `null` and the mute is rejected (`unsigned-control-rejected`).
+
+The old direct `senderId`-based role check (shown below for historical reference only — **no longer the live code**):
+
 ```typescript
-// Check permission - sender must have user:mute via roles
+// HISTORICAL (pre-2026-07-19) — replaced by isSpaceControlAuthorized()
 const hasPermission = space.roles?.some(
   (role) =>
     role.members?.includes(muteContent.senderId) &&
@@ -258,6 +266,8 @@ if (!hasPermission) {
   return; // Reject silently
 }
 ```
+
+This was bypassable because `senderId` is plaintext written by the sender's client. The live code now anchors the permission check to the verified signing key.
 
 ## UI Behavior
 
@@ -381,4 +391,4 @@ Mute is enforced by each client independently. A malicious custom client could c
 *Status: Production Ready*
 *Cross-Platform: ✅ Web + Mobile Compatible*
 
-_Last updated: 2026-05-20 — staleness audit fixes_
+_Last updated: 2026-07-19_

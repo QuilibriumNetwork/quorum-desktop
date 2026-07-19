@@ -5,7 +5,7 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T09:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 related_docs: ["mention-pills-ui-system.md"]
 ---
 
@@ -484,23 +484,25 @@ See the full documentation for architecture details, implementation examples, in
 ### Permission System
 
 **Who can use @everyone**:
-- Space owners (automatic)
-- Users with `mention:everyone` role permission
+- Users with a role granting `mention:everyone`
+- Space owners get NO automatic bypass — an owner without an appropriate role is treated the same as any other member
+
+**Background**: the shared `hasPermission` function previously returned `true` for any space owner (`if (isSpaceOwner) return true`), effectively granting `mention:everyone` (and all other permissions) to owners unconditionally. That owner-bypass was removed; `hasPermission`/`getUserPermissions` are now role-only. The `isSpaceOwner` parameter is retained but deprecated and ignored (the JSDoc marks it `_isSpaceOwner`). The only owner-only action is `kick`, enforced via the owner's Ed448 key — not via `hasPermission`.
 
 **Permission files**:
-- `src/utils/permissions.ts` - Space owners get permission automatically
-- `src/api/quorumApi.ts` - `'mention:everyone'` added to Permission type
-- `src/components/modals/SpaceSettingsModal/Roles.tsx` - UI for assigning permission
+- `quorum-shared/src/utils/permissions.ts` — role-only (owner bypass removed)
+- `src/api/quorumApi.ts` — `'mention:everyone'` in the Permission type
+- `src/components/modals/SpaceSettingsModal/Roles.tsx` — UI for assigning permission
 
 ### Processing
 
-**Extraction**:
+**Extraction (send side)**:
 ```typescript
 const canUseEveryone = hasPermission(
   currentPasskeyInfo.address,
   'mention:everyone',
-  space,
-  isSpaceOwner
+  space ?? undefined,
+  isSpaceOwner || false  // ignored by hasPermission (deprecated param)
 );
 
 mentions = extractMentionsFromText(messageText, {
@@ -513,15 +515,26 @@ mentions = extractMentionsFromText(messageText, {
 - Only styled if `message.mentions.everyone === true`
 - Non-authorized users' @everyone appears as plain text
 
-**Notification counting**:
-- `isMentionedWithSettings()` checks `mentions.everyone` field
-- All users receive notification if `'mention-everyone'` enabled in settings
+**Notification gate (receive side — as of 2026-07-19)**:
+
+The notification path in `src/services/MessageService.ts` enforces `@everyone` against the cryptographically VERIFIED signer, not the spoofable payload `senderId`. The mechanism:
+
+1. `@everyone`-bearing posts are signature-verified even in repudiable spaces (the verify block runs before the notification path whenever `mentions.everyone === true`).
+2. The verified Ed448 public key is resolved to a space member address via `resolveVerifiedSender(publicKey, members)`.
+3. `hasPermission(verifiedSender, 'mention:everyone', space)` is called against that verified address (role-only, no owner bypass).
+4. The notification fires only if all three conditions hold: `mentions.everyone === true`, a verified sender is present, and that sender holds `mention:everyone` via a role.
+
+`isMentionedWithSettings` is called WITHOUT passing `space` (so its own `@everyone` branch is disabled), and the verified-sender check above is applied in addition to cover `@everyone`. User and role mention checks within `isMentionedWithSettings` are unaffected.
+
+A modified client that forges `mentions.everyone: true` without the corresponding permission will NOT trigger the notification on any correctly updated recipient client.
+
+See `.agents/docs/features/security.md` for the broader verified-sender / control-message authorization architecture this receive-side gate belongs to.
 
 ### Edge Cases
 
 - **Word boundary validation**: @everyone inside markdown syntax ignored (code blocks, bold, italic, links, etc.)
 - Case insensitive: @everyone, @Everyone, @EVERYONE work
-- Permission denial: Unauthorized @everyone doesn't trigger notifications
+- Permission denial: Unauthorized @everyone doesn't trigger notifications (enforced on both send and receive sides)
 
 ---
 
@@ -841,3 +854,5 @@ _Updated: 2026-03-14 (added Thread Mentions section documenting thread-aware not
 _Updated: 2026-06-23 (added Global Notification Panel section: NavRail bell, centered presentation, live cross-space aggregation via `useGlobalNotifications` → shared `fetchSpaceMentions`/`fetchSpaceReplies`, bounded-fetch cap, `useGlobalSenderResolver`, `Space › #channel` breadcrumb, broadened cache invalidations, confirm-gated cross-space mark-all; per-space bell unchanged)_
 
 _Updated: 2026-06-24 (Global Notification Panel refinements: moved to the Modal primitive via ModalProvider + `GlobalNotificationsModal` container for a proper backdrop/z-index; bell moved to last rail item + overlapping presence badge; mobile-style row redesign across BOTH panels (leading type badge with at/bullhorn/shield/reply icons + 3-line location/author-preview/relative-time layout, calendar icon removed); per-space title "…in this Space"; taller global modal with longer preview and single scroll region; vertical loading/empty state)_
+
+_Updated: 2026-07-19 (@everyone Permission System section: removed false "space owners automatic" claim (shared hasPermission owner-bypass was removed; owners need a role like anyone else); added receive-side @everyone gate — verified-signer enforcement in MessageService notification path via resolveVerifiedSender + hasPermission against the cryptographic sender, not the spoofable payload senderId)_

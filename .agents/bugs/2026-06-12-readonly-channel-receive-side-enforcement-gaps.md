@@ -94,6 +94,14 @@ part of #32.
 
 Mobile is being implemented WITHOUT these gaps (all content types, both live + batch receive paths, durable). This desktop bug should be brought to parity — ideally both consume the same shared `canManageReadOnlyChannel` check on receipt so the rule can't drift per-type or per-path.
 
+## 2026-07-19 — Partial related fix: sender identity now uses verified signer
+
+**This bug remains open** (sticker/embed type-coverage gap and durable-path enforcement are unresolved). However, as part of the **control-message-auth fix** (see `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md` and `.agents/docs/features/security.md`), the sender identity used when authorizing **control messages** on the receive side is now the **cryptographically verified ed448 signer** (via `resolveVerifiedSender` reverse-lookup), not the spoofable plaintext `senderId`.
+
+This does NOT fix the read-only enforcement gaps described above (those involve `post`/`embed`/`sticker` content types in the `saveMessage` durable path, not control message authorization). But any code sample or prose in this bug that implies `senderId`-based authorization reflects **old behavior** — live control-message handling no longer relies on the plaintext field for identity decisions.
+
+When the hub-log migration closes the durable-path and type-coverage gaps, the read-only check should also use `resolveVerifiedSender` (or `createChannelPermissionChecker` from `quorum-shared`) so that the identity chain is consistent with the control-message path.
+
 ---
 
-*Last updated: 2026-06-12*
+*Last updated: 2026-07-19*

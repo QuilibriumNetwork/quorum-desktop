@@ -16,7 +16,7 @@ This document provides a comprehensive overview of the security mechanisms imple
 
 Quorum Desktop implements a **multi-layered security architecture** designed for a decentralized, privacy-focused messaging platform.
 
-### Security Posture (as of 2025-12-11)
+### Security Posture (as of 2026-07-19)
 
 | Category | Status |
 |----------|--------|
@@ -25,12 +25,29 @@ Quorum Desktop implements a **multi-layered security architecture** designed for
 | **Defense-in-depth** | Fully implemented |
 | **Client validation bypass risk** | LOW - receiving-side validation protects honest clients |
 
+> **2026-07-19 — control-message authorization hardened.** Receive-side
+> authorization for **space** control messages (`remove-message`,
+> `edit-message`, `pin`, `mute`) and for `@everyone` no longer trusts the
+> plaintext payload `senderId` (which a modified client can forge). It now
+> authorizes against the **cryptographically verified ed448 signer**, derived
+> from the message's signing key by reverse lookup in `space_members`, failing
+> closed when the signer isn't a known member. This closes a spoofing bypass
+> where a space member on a modified client could impersonate a moderator (or a
+> message's author) to delete/edit/pin/mute anyone's content. The DM equivalent
+> was fixed earlier (PR #220, session-anchored). See "Control-Message
+> Authorization (verified signer)" below and
+> [messages/message-signing-system.md](messages/message-signing-system.md).
+> Mobile's matching receive-side verification is still pending.
+
 ### Key Security Principles
 
 1. **Defense-in-Depth**: Multiple validation layers (UI → Service → Receiving)
 2. **Fail-Secure**: When uncertain, reject rather than allow
 3. **Privacy-First**: End-to-end encryption, minimal metadata exposure
 4. **Decentralized Trust**: No central authority - clients validate independently
+5. **Authorize on proven identity, not claimed identity**: security-relevant
+   receive-side decisions key on the cryptographically verified sender (session
+   for DMs, ed448 signature for spaces), never on the sender-written `senderId`.
 
 ---
 
@@ -341,17 +358,45 @@ Space owner identity is cryptographically tied to space creation keys:
 - **Verification**: Protocol verifies via `owner_public_keys`
 - **Bypass**: Requires forging cryptographic signatures
 
+> **Control-Message Authorization (verified signer) — 2026-07-19.** For SPACE
+> control messages the receiving side no longer keys authorization on the
+> payload `senderId` (forgeable by a modified client). It resolves the
+> **verified ed448 signer** and authorizes against that. Mechanism (shared
+> `messageAuth.ts`, consumed by `MessageService.ts`):
+> 1. The message's signature is verified against a canonical fingerprint
+>    (`buildMessageFingerprint`: `nonce + content.type + senderId +
+>    spaceId+channelId (control types) + canonicalize(content)`). Control
+>    messages are verified **regardless of space repudiability**.
+> 2. `resolveVerifiedSender` maps the verified signing key → inbox address
+>    (`base58btc(sha256(publicKey))`) → the `space_members` row with that
+>    inbox address (REVERSE lookup). No match / kicked member → `null` → drop
+>    (fail closed). This is NOT a lookup by claimed `senderId`.
+> 3. `authorizeControlMessage` returns the allow/drop verdict (own-message /
+>    role / manager checks against the verified sender), applied identically in
+>    the DB (`saveMessage`) and cache (`addMessage`) handlers.
+>
+> Covers `remove-message`, `edit-message`, `pin`, `mute`, and `@everyone`.
+> DMs stay session-anchored (PR #220). A branded `VerifiedSender` type makes
+> passing a raw `senderId` into these checks a compile error.
+
 #### @everyone Mention Permission
 
-Permission stripped **before broadcast** - unauthorized mentions never propagate:
-- **Location**: `src/services/MessageService.ts:2799-2826`
-- **Check**: `hasPermission(address, 'mention:everyone', space, isSpaceOwner)`
+Two layers:
+- **Send side** — `hasPermission(address, 'mention:everyone', space)` (role-only;
+  the former `isSpaceOwner` bypass was removed in shared `permissions.ts`).
+- **Receive side (2026-07-19)** — `@everyone` is honored for notification ONLY if
+  the **verified signer** holds `mention:everyone`. `@everyone`-bearing posts are
+  signature-verified even in repudiable spaces so the signer is proven. A forged
+  `mentions.everyone` from a modified client no longer notifies the space.
 
 #### Delete Message Permission
 
-Receiving clients validate permissions independently:
-- **Location**: `src/services/MessageService.ts:691-750`
-- **Behavior**: Unauthorized deletes silently ignored
+Receiving clients validate permissions independently, authorizing the **verified
+signer** (not payload `senderId`) as own-author / `message:delete` role holder /
+read-only manager. See "Control-Message Authorization" above.
+- **Location**: `src/services/MessageService.ts` — `isSpaceControlAuthorized` in
+  the `remove-message` handlers (`saveMessage` + `addMessage`).
+- **Behavior**: Unauthorized/unsigned deletes silently dropped (fail closed).
 
 #### Pin Message Permission
 
@@ -361,6 +406,7 @@ Pin/unpin actions broadcast with full defense-in-depth validation:
 - **Receiving (addMessage)**: `src/services/MessageService.ts:882-978`
 - **Security Features**:
   - ✅ DMs rejected (pins are Space-only)
+  - ✅ Authorized against the **verified ed448 signer**, not payload `senderId` (2026-07-19)
   - ✅ Read-only channel managers can pin
   - ✅ Regular channels require explicit `message:pin` role permission
   - ✅ NO `isSpaceOwner` bypass on receiving side
@@ -376,6 +422,7 @@ Mute/unmute actions with full defense-in-depth validation (added 2025-12-15):
 - **Security Features**:
   - ✅ DMs rejected (mute is Space-only)
   - ✅ Self-mute rejected (prevents self-DoS)
+  - ✅ Authorized against the **verified ed448 signer**, not payload `senderId` (2026-07-19)
   - ✅ Requires explicit `user:mute` role permission
   - ✅ NO `isSpaceOwner` bypass on receiving side
   - ✅ Replay protection via `muteId` deduplication
@@ -466,8 +513,9 @@ User identity secured via WebAuthn passkeys:
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2026-01-02
+**Last Updated**: 2026-07-19
 **Major Updates**:
+- 2026-07-19: Space control-message + @everyone authorization now keyed on the verified ed448 signer (not payload senderId)
 - 2026-01-02: Added config key encryption layer documentation (from qm delta commit)
 - 2025-12-15: Added mute user permission with full defense-in-depth validation
 - 2025-12-12: Added bookmark limit database-layer validation (defense-in-depth hardening)

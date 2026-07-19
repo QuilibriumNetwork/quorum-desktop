@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "@everyone mention: owner-bypass in shared hasPermission propagates (send-side-only enforcement)"
-status: partially-fixed — root (owner bypass) fixed in shared; receive-side check pending
+status: fully-fixed — root (owner bypass) fixed in shared; receive-side @everyone gate landed 2026-07-19 in quorum-desktop
 created: 2026-06-12
 updated: 2026-07-19
 ai_generated: true
@@ -17,17 +17,21 @@ related_bugs:
 
 # @everyone owner-bypass is a real propagating bug (send-side-only enforcement)
 
-> **STATUS UPDATE (2026-07-19):**
-> - **Root fix LANDED**: shared `permissions.ts` no longer honors `isSpaceOwner` —
->   `hasPermission`/`getUserPermissions` are role-only (the param is retained but
->   deprecated/ignored). An honest owner-without-role client no longer sends
->   `@everyone`. The "Root fix (shared)" section below is therefore DONE.
-> - **Remaining gap**: the receive side still honors `mentions.everyone` with no
->   sender-authorization check, so a modified client can still set the flag. This
->   defense-in-depth half is now folded into the broader receive-side
->   authorization mechanism work (verified-sender enforcement) tracked in
->   `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md` — close this
->   bug when that Phase lands.
+> **STATUS UPDATE (2026-07-19) — FULLY RESOLVED:**
+> - **Root fix (shared) DONE**: `quorum-shared/src/utils/permissions.ts`
+>   `hasPermission`/`getUserPermissions` are role-only. The `isSpaceOwner` param
+>   is retained but deprecated/ignored. An honest owner-without-role client no
+>   longer sends `@everyone`. The "Root fix (shared)" section below is DONE.
+> - **Receive-side @everyone gate LANDED (2026-07-19, quorum-desktop)**: the
+>   notification path in `src/services/MessageService.ts` now verifies the Ed448
+>   signer holds `mention:everyone` before firing the @everyone notification.
+>   Mechanism: `resolveVerifiedSender(publicKey, members)` maps the proven key to
+>   a space-member address, then `hasPermission(verifiedSender, 'mention:everyone',
+>   space)` (role-only, no owner bypass) gates the notification. A forged
+>   `mentions.everyone: true` from a modified client no longer notifies recipients.
+>   See `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md` where the
+>   receive-side work was tracked.
+> - **This bug is fully closed.** Ready to move to `.solved/`.
 
 > **⚠️ AI-assisted finding (2026-06-12). Verified against current source in all three repos with file:line citations below.** Surfaced while scoping the mobile permission-enforcement work. The parent doc [2026-01-09-space-owner-privacy-limitation.md](2026-01-09-space-owner-privacy-limitation.md) (#111) documents the owner-can't-be-verified constraint and its impact on **delete/mute/read-only**, but does NOT cover `mention:everyone`. This doc fills that gap, because @everyone behaves differently from the actions #111 lists.
 
@@ -45,7 +49,7 @@ Clients **cannot verify who the space owner is** (no `ownerAddress` transmitted 
 |---|---|---|---|
 | **kick** | protocol-level (ED448 owner key, receiver-verifiable) | works correctly (owner-only) | OK by design |
 | **delete / pin** | send-side gate **+ receive-side role validation** | **local illusion** — sender sees it, recipients reject it (`MessageService.ts` checks sender role on receipt, no owner bypass) | cosmetic (misleading button) |
-| **`mention:everyone`** | **send-side gate ONLY** — no receive-side check | **REAL & PROPAGATING** — every recipient fires the @everyone notification | **HIGH** |
+| **`mention:everyone`** | send-side gate (role-only) + **receive-side verified-signer check** (2026-07-19) | **FIXED** — forged `mentions.everyone` no longer notifies; only a verified signer with a `mention:everyone` role triggers the notification | resolved |
 
 The first two rows are documented (#111, #68). **The third row is this bug** and was previously undocumented.
 
@@ -109,4 +113,4 @@ So owner-without-role → `canUseEveryone = true` → `mentions.everyone = true`
 
 ---
 
-*Last updated: 2026-06-12*
+*Last updated: 2026-07-19*

@@ -3,7 +3,7 @@ type: doc
 title: Cryptographic Architecture
 status: done
 created: 2025-12-20T00:00:00.000Z
-updated: 2026-02-18T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Cryptographic Architecture
@@ -14,7 +14,7 @@ updated: 2026-02-18T00:00:00.000Z
 This document explains the cryptographic protocols and key management used in Quorum. It focuses on the **mental model** needed to understand how encryption and signing work, rather than implementation details.
 
 
-**Last Updated**: 2026-02-18
+**Last Updated**: 2026-07-19
 
 ---
 
@@ -26,7 +26,8 @@ This document explains the cryptographic protocols and key management used in Qu
 4. [Key Storage Locations](#key-storage-locations)
 5. [Key Compromise Impact](#key-compromise-impact)
 6. [Inbox Key Rotation](#inbox-key-rotation)
-7. [SDK Functions Reference](#sdk-functions-reference)
+7. [Control-Message Authorization (Verified Signer)](#control-message-authorization-verified-signer)
+8. [SDK Functions Reference](#sdk-functions-reference)
 
 ---
 
@@ -299,7 +300,7 @@ For all other message types the mismatch check remains fully active: if a non-pr
 Skipping the inbox mismatch check for `update-profile` does **not** weaken security:
 
 - The **outer envelope** is still unsealed using the space Hub Key — only legitimate Space members can produce a valid envelope.
-- The **message ID hash** is still verified (`messageIdMismatch` check) — the hash covers `nonce + message_type + senderId + content`, so a tampered message fails here.
+- The **message ID hash** is still verified (`messageIdMismatch` check) — for regular posts the fingerprint covers `nonce + message_type + senderId + content`; for control messages (`remove-message`, `edit-message`, `pin`, `mute`) it additionally binds `spaceId + channelId` to prevent cross-space replay of a signed control message. A tampered message fails either way.
 - The **ed448 signature** is still verified against the extracted public key — the message must be signed by whoever holds the private key matching the envelope's claimed sender.
 
 What changes is only that the receiver now accepts the *new* inbox address from the envelope rather than demanding it match the old stored one.
@@ -314,6 +315,32 @@ update-profile:   stored_inbox == envelope_inbox? → verify signature, update s
                   stored_inbox != envelope_inbox? → verify signature, update stored inbox
                   (mismatch is expected and legitimate — this IS the rotation)
 ```
+
+---
+
+## Control-Message Authorization (Verified Signer)
+
+Space control messages (`remove-message`, `edit-message`, `pin`, `mute`) and `@everyone`-bearing posts are authorized against the **cryptographically verified ed448 signer**, not the spoofable plaintext `content.senderId`. This applies regardless of the space's `isRepudiable` flag.
+
+After the signature verification steps described above, `isSpaceControlAuthorized` in `MessageService` calls `resolveVerifiedSender` and then `authorizeControlMessage` (both in `quorum-shared/src/utils/messageAuth.ts`):
+
+```
+verified publicKey
+    → resolveVerifiedSender(publicKey, members)
+          // REVERSE lookup: publicKey → inbox address → space_members row
+          // Returns null if no match or member is kicked (fail closed)
+    → VerifiedSender | null
+    → authorizeControlMessage({ content, verifiedSender, space, channel, targetMessage })
+```
+
+An unsigned or signature-invalid control message resolves to `verifiedSender = null` and is silently dropped (fail closed). The narrow exception: in a repudiable space, an unsigned edit of an unsigned message is accepted when the claimed sender matches the target's author — deniable content stays deniable.
+
+The fingerprint for control messages additionally binds `spaceId + channelId` (see Security Properties Preserved above) so a validly-signed control message cannot be replayed into a different space or channel.
+
+For the full security rationale, cross-space replay protection, and the edit-inherit rule (edits sign iff the original was signed), see:
+- [features/security.md](features/security.md) — "Control-Message Authorization (verified signer)"
+- [features/messages/message-signing-system.md](features/messages/message-signing-system.md) — "Receive-Side Verification" and "Control-Message Authorization via Verified Signer"
+- `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md`
 
 ---
 
@@ -444,4 +471,4 @@ secureChannel.UnsealSyncEnvelope(
 ---
 
 
-_Last Updated: 2026-02-18_
+_Last Updated: 2026-07-19_

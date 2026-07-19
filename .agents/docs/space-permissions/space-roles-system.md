@@ -3,7 +3,7 @@ type: doc
 title: Space Roles System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-15T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Space Roles System
@@ -145,46 +145,45 @@ const { userRoles } = useUserRoleDisplay(targetAddress, roles, true);
 **Why No Automatic Bypass?**: The receiving side cannot verify space ownership for post/delete/pin operations (privacy requirement - no `Space.ownerAddress` exposed). To maintain consistent enforcement on both sending and receiving sides, space owners must join roles.
 
 ```typescript
-// Core permission checking pattern
+// Core permission checking pattern (quorum-shared/src/utils/permissions.ts)
 export function hasPermission(
   userAddress: string,
   permission: Permission,
   space: Space | undefined,
-  isSpaceOwner: boolean = false
+  _isSpaceOwner: boolean = false  // deprecated/ignored — see note below
 ): boolean {
-  // Space owners can ONLY kick without roles (protocol-level verification)
-  if (isSpaceOwner && permission === 'user:kick') return true;
+  // All permissions are role-only. The isSpaceOwner parameter is retained for
+  // API compatibility but is intentionally ignored: receivers cannot verify who
+  // the space owner is (no ownerAddress on the wire, by design), so any
+  // owner-bypass here would be bypassable by a modified client claiming ownership.
+  // The ONLY owner-privileged action is kick, which is enforced via the owner's
+  // Ed448 key at the protocol level — not here.
+  if (!space || !space.roles) return false;
 
-  // All other permissions require role membership
-  return (
-    space?.roles?.some(
-      (role) =>
-        role.members.includes(userAddress) &&
-        role.permissions.includes(permission)
-    ) || false
+  return space.roles.some(
+    (role) =>
+      role.members.includes(userAddress) &&
+      role.permissions.includes(permission)
   );
 }
 ```
+
+**Why `isSpaceOwner` is now a no-op**: receivers cannot verify space ownership (no `ownerAddress` is exposed on the wire, by privacy design). An `if (isSpaceOwner) return true` bypass is therefore bypassable by any client that passes `true` for a user who isn't the owner. The only exception — `kick` — is enforced at the protocol level via the owner's Ed448 signing key, which IS verifiable; `hasPermission` never handles kick.
 
 ### Multi-Role Permission Accumulation
 
 Users can have multiple roles simultaneously, with permissions accumulated across all roles:
 
 ```typescript
-// Get all permissions for a user
+// Get all permissions for a user (quorum-shared/src/utils/permissions.ts)
 export function getUserPermissions(
   userAddress: string,
   space: Space | undefined,
-  isSpaceOwner: boolean = false
+  _isSpaceOwner: boolean = false  // deprecated/ignored — see hasPermission note
 ): Permission[] {
   const permissions = new Set<Permission>();
 
-  // Space owners can ONLY kick without roles
-  if (isSpaceOwner) {
-    permissions.add('user:kick');
-  }
-
-  // All other permissions come from roles
+  // All permissions come from roles — no owner bypass.
   space?.roles?.forEach((role) => {
     if (role.members.includes(userAddress)) {
       role.permissions.forEach((p) => permissions.add(p));
@@ -376,33 +375,36 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 The logic for validating and processing messages (e.g., deletion) is now encapsulated within specialized services (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`. These services interact with the low-level `MessageDB` (`src/db/messages.ts`) for data access.
 
 ```typescript
-// Example: Delete message processing (orchestrated by a service)
+// Example: Delete message processing (orchestrated by MessageService)
+// Authorization is against the cryptographically VERIFIED ed448 signer,
+// never the spoofable payload senderId.
 if (spaceId != channelId) {
-  // Service would fetch space data
-  const space = await messageDB.getSpace(spaceId); // Internal call within a service
+  const members = await messageDB.getSpaceMembers(spaceId);
 
-  // For read-only channels: isolated manager system
-  if (channel?.isReadOnly) {
-    const isManager = /* manager role check */;
-    if (isManager) {
-      // Service would call messageDB.deleteMessage()
-      await messageDB.deleteMessage(messageId);
-      return;
-    }
-    return; // Block traditional roles
-  }
+  // Resolve the verified sender: key → inbox address → space_members row.
+  // Returns null if the key matches no known/active member (fail closed).
+  const verifiedSender = decryptedContent.publicKey
+    ? resolveVerifiedSender(decryptedContent.publicKey, members)
+    : null;
 
-  // For regular channels: traditional role system
-  if (!space?.roles.find(r =>
-    r.members.includes(senderId) &&
-    r.permissions.includes('message:delete')
-  )) {
-    return;
-  }
-  // Service would call messageDB.deleteMessage()
+  // authorizeControlMessage (quorum-shared/src/utils/messageAuth.ts) handles
+  // channel-type dispatch: read-only → manager check; regular → message:delete
+  // role check. Both checks run against verifiedSender, NOT senderId.
+  const verdict = authorizeControlMessage({
+    content: decryptedContent.content,
+    verifiedSender,
+    space,
+    channel,
+    targetMessage,
+  });
+
+  if (!verdict.allowed) return; // unsigned / unauthorized → drop silently
+
   await messageDB.deleteMessage(messageId);
 }
 ```
+
+See also: `.agents/docs/features/security.md` — "Control-Message Authorization (verified signer)" for the complete mechanism.
 
 ## Current Implementation Status
 
@@ -420,8 +422,18 @@ if (spaceId != channelId) {
 
 - **Visibility is Cosmetic**: Role visibility is UI-only; custom clients can bypass filters
 - **Mixed Enforcement Patterns**: Some areas use direct role checks instead of `hasPermission()`
-- **Incomplete Server Validation**: Not all permission checks have full server-side enforcement
 - **Limited Permission Scope**: Only covers basic moderation, not channel/space management
+
+### ✅ Receive-Side Verified-Signer Enforcement (2026-07-19)
+
+The four space control message types now have full receive-side, ed448-verified-signer authorization:
+
+- **`remove-message`** (delete): authorized against the verified signer as own-author or `message:delete` role holder / read-only manager
+- **`edit-message`**: authorized against the verified signer as the original author (own-message only)
+- **`pin`**: authorized against the verified signer as `message:pin` role holder or read-only manager
+- **`mute`**: authorized against the verified signer as `user:mute` role holder
+
+Authorization is centralized in `isSpaceControlAuthorized` (`src/services/MessageService.ts`), which calls `authorizeControlMessage` from `quorum-shared/src/utils/messageAuth.ts`. The payload `senderId` is no longer the authorization identity for any of these operations — only the cryptographically proven signer is. See `.agents/docs/features/security.md` — "Control-Message Authorization (verified signer)" for the complete mechanism.
 
 ## Future Enhancement Opportunities
 
@@ -527,6 +539,6 @@ export type Role = {
 
 ---
 
-_Last Updated: 2026-06-14 — fixed a stale Testing Considerations bullet that contradicted the design ("owners always have all permissions" → owners get nothing implicit except kick). Previously 2026-05-20 — staleness audit fixes._
+_Last Updated: 2026-07-19_
 _Implementation Status: Core features complete, user:mute added, user:kick removed_
-_Security Update: Space owners must join roles for delete/pin/mute (kick is space-owner only via protocol)_
+_Security Update: `isSpaceOwner` bypass removed from `hasPermission`; control messages (delete/edit/pin/mute) authorized against the ed448-verified signer via `authorizeControlMessage`_

@@ -3,7 +3,7 @@ type: doc
 title: Space Permissions Architecture
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-15T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Space Permissions Architecture
@@ -118,7 +118,8 @@ graph TD
 - **Space owners**: Must have roles with appropriate permissions for delete/pin (kick is the exception)
 - **Service-oriented processing**: Validation handled by `MessageService` and `SpaceService`
 - **Receiving-side validation**: MessageService.ts validates incoming messages in read-only channels
-- **Privacy constraint**: Space ownership cannot be verified for post/delete/pin (no `Space.ownerAddress` exposed)
+- **Privacy constraint**: Space ownership CANNOT be verified for post/delete/pin — no `Space.ownerAddress` is exposed on the wire, by design. This is why `hasPermission` ignores the `isSpaceOwner` parameter entirely.
+- **Ed448 signer IS verifiable (2026-07-19)**: While ownership is opaque, the per-message ed448 SIGNING IDENTITY is cryptographically proven. For control messages (`remove-message`, `edit-message`, `pin`, `mute`), the receiving side resolves the verified signer via `resolveVerifiedSender` (key → inbox address → `space_members` row, reverse lookup, fail closed) and authorizes against THAT identity — never the payload `senderId`, which is written by the sender's client and is spoofable. This is centralized in `isSpaceControlAuthorized` (`src/services/MessageService.ts`) via `authorizeControlMessage` (`quorum-shared/src/utils/messageAuth.ts`). See `.agents/docs/features/security.md` — "Control-Message Authorization (verified signer)".
 - **Protocol exception**: Kick messages are verified via `owner_public_keys` at the protocol level
 
 ## Implementation Structure
@@ -224,6 +225,6 @@ export type Channel = {
 
 ---
 
-_Last Updated: 2026-05-20 — staleness audit fixes_
+_Last Updated: 2026-07-19_
 _Architecture Status: Complete - Space owner bypass removed, receiving-side validation added_
-_Security Update: Space owners must join roles for post/delete/pin/mute (kick exception via protocol)_
+_Security Update: Ed448 signer identity is verifiable and is now the authorization identity for all control messages on receive; `isSpaceOwner` no longer grants permissions in `hasPermission`_

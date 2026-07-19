@@ -3,12 +3,12 @@ type: doc
 title: Message Signing System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-02-18T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Message Signing System
 
-**Last Updated:** 2026-02-18
+**Last Updated:** 2026-07-19
 
 ## Overview
 
@@ -76,9 +76,11 @@ type Space = {
 
 **Purpose:** Controls whether an entire space requires signing or allows per-message choice.
 
-**Logic:**
+**Logic (for regular posts):**
 - `isRepudiable: false` → All space messages MUST be signed
 - `isRepudiable: true` → Users can choose per message
+
+**Note:** `isRepudiable` only governs regular posts on the RECEIVE side. Control messages (`remove-message`, `edit-message`, `pin`, `mute`) and `@everyone`-bearing posts are always signature-verified and authorized against the verified ed448 signer, regardless of this flag. See [Receive-Side Verification](#receive-side-verification) below.
 
 ### 3. Conversation-level Settings
 
@@ -306,12 +308,25 @@ To verify the feature works correctly:
 
 When a Space message arrives, `MessageService` verifies non-repudiability before persisting the message. Understanding this is important because bugs here can silently drop messages with no visible error.
 
+### What Triggers Verification
+
+Signature verification runs whenever a message carries a `publicKey` and `signature` AND any of the following is true:
+
+| Condition | Applies to |
+|-----------|-----------|
+| `!space.isRepudiable` | All message types in a non-repudiable space |
+| `isControlMessageType(content.type)` | `remove-message`, `edit-message`, `pin`, `mute` — regardless of repudiability |
+| `mentions?.everyone === true` | Posts bearing `@everyone` — regardless of repudiability |
+
+This means **control messages and `@everyone` posts are always verified**, even in repudiable spaces where ordinary posts are allowed to be unsigned. The gate can no longer be bypassed by setting a space to repudiable.
+
 ### Verification Steps (in order)
 
 ```
 1. Unseal hub envelope → extract inboxAddress from envelope header
 2. Compute expected messageId:
-       SHA-256(nonce + content.type + senderId + canonicalize(content))
+       SHA-256(buildMessageFingerprint(...))
+       (see fingerprint format below)
 3. Check inboxMismatch:
        stored inbox_address != envelope inboxAddress  (AND stored address exists)
 4. Check messageIdMismatch:
@@ -320,17 +335,24 @@ When a Space message arrives, `MessageService` verifies non-repudiability before
 6. If both match     → verify ed448 signature against messageId
 ```
 
-### The Message ID Hash
+Both the live-message path and the sync/batch path in `MessageService` follow this same sequence. The old sync path had an `else if (!participant)` branch that could keep an unverified signature — that branch has been removed.
 
-Step 2 must use `decryptedContent.content.type` — **not** a hardcoded message type string. The hash covers:
+### The Message Fingerprint and messageId Hash
+
+Step 2 uses `buildMessageFingerprint` from `quorum-shared/src/utils/messageAuth.ts`. The fingerprint format depends on message type:
+
+**Control messages** (`remove-message`, `edit-message`, `pin`, `mute`) — bind spaceId and channelId to prevent cross-space replay:
 
 ```typescript
-SHA-256(
-  decryptedContent.nonce +
-  decryptedContent.content.type +   // e.g. 'post', 'update-profile', 'sticker'
-  decryptedContent.content.senderId +
-  canonicalize(decryptedContent.content)
-)
+fingerprint = nonce + content.type + senderId + spaceId + channelId + canonicalize(content)
+messageId   = SHA-256(fingerprint)  // as lowercase hex
+```
+
+**All other messages** (posts, `update-profile`, etc.) — legacy format, no scope binding:
+
+```typescript
+fingerprint = nonce + content.type + senderId + canonicalize(content)
+messageId   = SHA-256(fingerprint)
 ```
 
 Using the wrong type string causes `messageIdMismatch = true`, which clears the signature and treats the message as unsigned — even if the signature is perfectly valid.
@@ -357,6 +379,39 @@ If `inboxMismatch || messageIdMismatch`:
 If the ed448 signature itself fails:
 - The `nonRepudiable` flag on the saved message is set to `false`
 - Again silent — no rejection, just recorded as unsigned
+
+### Control-Message Authorization via Verified Signer
+
+After signature verification, **control messages are authorized against the cryptographically verified signer, not the spoofable payload `senderId`**. This is done by `isSpaceControlAuthorized` in `MessageService`, which calls into the shared helper `authorizeControlMessage` in `quorum-shared/src/utils/messageAuth.ts`.
+
+The pipeline is:
+
+```
+verified publicKey
+    → resolveVerifiedSender(publicKey, members)
+          → deriveInboxAddress(publicKey)        // base58btc(sha256(key))
+          → find space_members row by inbox_address (REVERSE lookup)
+          → reject if member is kicked or row is missing
+    → VerifiedSender (typed string, not raw payload senderId)
+    → authorizeControlMessage({ content, verifiedSender, space, channel, targetMessage })
+```
+
+If `verifiedSender` is null (unsigned, invalid signature, or no matching member), the control message is **rejected** (fail closed), with one narrow exception: in a repudiable space, an unsigned edit of an unsigned message is allowed when the claimed sender matches the target's author (both had no authenticated authorship to begin with — deniability by owner choice).
+
+The authorization rules per type:
+
+| Type | Unsigned? | Verified sender not the author? | Result |
+|------|-----------|--------------------------------|--------|
+| `remove-message` | Drop | Drop if no `message:delete` permission | Allow |
+| `edit-message` | Drop (unless repudiable + target unsigned) | Drop (must edit own message) | Allow |
+| `pin` | Drop | Requires `message:pin` permission | Allow |
+| `mute` | Drop | Requires `user:mute` permission | Allow |
+
+See [security.md](../security.md) ("Control-Message Authorization (verified signer)") and [.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md](../../../tasks/2026-06-25-MASTER-RECAP-control-message-auth.md) for the full security rationale.
+
+### Edit Signing — Inherit Rule
+
+Edits inherit the original message's signed/unsigned state. `shouldSignEdit(original)` returns `true` only if the original message has a `signature`. This prevents a deniable message from silently gaining a cryptographic signature on edit. The composer sets `skipSigning = !shouldSignEdit(original)` before sending an edit.
 
 ---
 

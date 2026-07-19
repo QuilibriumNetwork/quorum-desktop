@@ -3,7 +3,7 @@ type: doc
 title: Read-Only Channels System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-11T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Read-Only Channels System
@@ -322,57 +322,46 @@ const saveChanges = useCallback(async () => {
 
 The logic for validating delete messages in read-only channels is now encapsulated within specialized services (e.g., `MessageService` or `SpaceService`). These services interact with the low-level `MessageDB` (`src/db/messages.ts`) for data access.
 
+**Authorization uses the cryptographically verified ed448 signer, not the payload `senderId`.** The payload `senderId` is written by the sender's client and is spoofable. `MessageService` resolves the verified sender via `resolveVerifiedSender(publicKey, members)`, which maps the signing key to an inbox address (`base58btc(sha256(publicKey))`) and then does a REVERSE lookup against `space_members` rows — failing closed (drop) if the key matches no known, active member. The resulting `VerifiedSender` is then passed to `authorizeControlMessage` (from `quorum-shared/src/utils/messageAuth.ts`) for the actual allow/deny decision.
+
 ```typescript
-// Delete message processing (example of how a service would orchestrate)
+// Delete message processing (simplified illustration of what MessageService does)
 if (spaceId != channelId) {
-  // Service would fetch space data
-  const space = await messageDB.getSpace(spaceId); // Internal call within a service
+  // Service resolves the VERIFIED sender from the ed448 signing key,
+  // never from the spoofable payload senderId.
+  const members = await messageDB.getSpaceMembers(spaceId);
+  const verifiedSender = decryptedContent.publicKey
+    ? resolveVerifiedSender(decryptedContent.publicKey, members) // key → inbox → member
+    : null;
 
-  // Find the channel
-  const channel = space?.groups
-    ?.find((g) => g.channels.find((c) => c.channelId === channelId))
-    ?.channels.find((c) => c.channelId === channelId);
+  // authorizeControlMessage (quorum-shared/src/utils/messageAuth.ts) handles
+  // all control types (remove-message, edit-message, pin, mute).
+  // For remove-message in a read-only channel it checks manager status against
+  // the verified sender; in a regular channel it checks the message:delete role.
+  const verdict = authorizeControlMessage({
+    content: decryptedContent.content,
+    verifiedSender,   // proven by ed448 signature — NOT payload senderId
+    space,
+    channel,
+    targetMessage,
+  });
 
-  // Read-only channels: ISOLATED permission system
-  if (channel?.isReadOnly) {
-    const isManager = !!(
-      channel.managerRoleIds &&
-      space?.roles?.some(
-        (role) =>
-          channel.managerRoleIds?.includes(role.roleId) &&
-          role.members.includes(decryptedContent.content.senderId)
-      )
-    );
-    if (isManager) {
-      // Service would call messageDB.deleteMessage()
-      await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
-      return;
-    }
-    // For read-only channels, deny if not manager (even with traditional roles)
-    return;
-  }
+  if (!verdict.allowed) return; // fail closed — unsigned/unauthorized drops silently
 
-  // Regular channels: traditional role system
-  if (
-    !space?.roles.find(
-      (r) =>
-        r.members.includes(decryptedContent.content.senderId) &&
-        r.permissions.includes('message:delete')
-    )
-  ) {
-    return;
-  }
   // Service would call messageDB.deleteMessage()
   await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
 }
 ```
 
+See also: `.agents/docs/features/security.md` — "Control-Message Authorization (verified signer)" for the full mechanism.
+
 **Key Processing Principles**:
 
-1. **Channel Type Detection**: Determine if channel is read-only
-2. **Isolated Validation**: Check manager status independently from traditional roles
-3. **Fallback Blocking**: If not a manager, deny even if user has traditional permissions
-4. **Traditional Channel Fallback**: Use existing role-based processing for regular channels
+1. **Verified Identity Only**: Authorization is always against the ed448-proven signer, never the plaintext `senderId`
+2. **Channel Type Detection**: `authorizeControlMessage` determines if channel is read-only and applies the correct permission check
+3. **Isolated Validation**: Manager status in read-only channels is checked against the verified sender, independently from traditional roles
+4. **Fallback Blocking**: If the signer is unknown, unsigned, or lacks permission, the message is dropped silently (fail closed)
+5. **Traditional Channel Fallback**: In regular channels `authorizeControlMessage` checks the `message:delete` role on the verified sender
 
 ## Design System Integration
 
@@ -514,6 +503,6 @@ if (spaceId != channelId) {
 
 ---
 
-_Last Updated: 2025-12-11_
+_Last Updated: 2026-07-19_
 _Implementation Status: Core functionality complete, space owner bypass removed for security_
-_Security Update: Space owners must now join manager roles (receiving-side validation added)_
+_Security Update: Control messages (delete/edit/pin/mute) authorized against the ed448-verified signer, not the spoofable payload senderId_

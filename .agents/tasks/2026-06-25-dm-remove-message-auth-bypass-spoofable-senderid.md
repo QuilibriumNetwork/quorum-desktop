@@ -1,7 +1,7 @@
 ---
 type: task
 title: "SECURITY: DM remove-message authorization bypass (spoofable senderId) — anchor to session sender"
-status: "partial — DM remove + edit DONE (desktop branch); SPACE path still OPEN"
+status: "DONE — DM remove + edit merged (PR #220); SPACE remove/edit/pin/mute now fixed on desktop (branch feat/space-control-message-auth). Mobile receive-side verification still pending."
 priority: high
 created: 2026-06-25
 source: surfaced during quorum-mobile DM delete-own-message work + deep code review
@@ -13,10 +13,13 @@ severity: HIGH (authorization bypass / integrity)
 > Read that first for the big picture and current status.
 >
 > **What's done:** the DM `remove-message` + `edit-message` bypass described below
-> is FIXED on branch `fix/control-message-auth-session-sender` (see the recap and the
-> `.done/` plan file). **What remains:** the **space (group-chat)** portion — scenario
-> (d) below — is still open and shared with mobile's
-> `2026-06-25-space-remove-message-auth-uses-payload-senderid.md`. The text below is
+> is FIXED and merged (PR #220). **UPDATE (2026-07-19): the space (group-chat)
+> portion — scenario (d) below — is now ALSO fixed on desktop** (branch
+> `feat/space-control-message-auth`): space `remove-message`/`edit-message`/`pin`/
+> `mute` are authorized against the verified ed448 signer (not payload
+> `senderId`), via `quorum-shared` `messageAuth` (PR #61). See
+> [2026-06-25-MASTER-RECAP-control-message-auth.md](2026-06-25-MASTER-RECAP-control-message-auth.md).
+> **Remaining:** mobile's matching receive-side verification. The text below is
 > kept as the original detailed analysis.
 
 # DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`
@@ -51,12 +54,12 @@ DONE and merged (PR #220). The DM handler authorizes by comparing the spoofable
 `decryptedContent.content.senderId`; the fix replaces it with the
 cryptographically-authenticated session sender (see "The fix" below).
 
-> The **Space (group-chat)** portion of this issue is intentionally NOT detailed
-> here. It is an unpatched authorization concern and its specifics are kept out of
-> this public repo. Tracked privately:
-> **https://github.com/QuilibriumNetwork/quorum-app-prod/issues/1**
-> (design notes live in quorum-mobile's gitignored `.agents/`). Do not re-add Space
-> exploit specifics to this file.
+> The **Space (group-chat)** portion is now FIXED on desktop (2026-07-19) —
+> authorized against the verified ed448 signer. Design notes live in
+> quorum-mobile's gitignored `.agents/` and the private tracking issue
+> **https://github.com/QuilibriumNetwork/quorum-app-prod/issues/1**; the mobile
+> receive-side verification is the remaining piece. Do not re-add Space exploit
+> specifics to this public file.
 
 **DM handler — `saveMessage` path (~line 941–1036):**
 - the DM author check `targetMessage.content.senderId === decryptedContent.content.senderId`
@@ -111,4 +114,4 @@ Mobile reference implementation + full threat-model verification:
 quorum-mobile branch `feature/dm-delete-own-message-sync`, and the mobile memory note
 `dm-control-msg-auth-session-sender-not-payload`.
 
-*Last updated: 2026-06-25*
+*Last updated: 2026-07-19*
