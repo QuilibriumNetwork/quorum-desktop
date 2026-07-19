@@ -15,6 +15,13 @@ import {
   hasPermission,
   SimpleRateLimiter,
   RATE_LIMITS,
+  buildMessageFingerprint,
+  resolveVerifiedSender,
+  authorizeControlMessage,
+  isControlMessageType,
+  shouldSignEdit,
+  canManageReadOnlyChannel,
+  type ControlMessageContent,
 } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import type { SpaceMemberRow } from '../db/messages';
@@ -28,6 +35,7 @@ import type {
   KickMessage,
   MuteMessage,
   Space,
+  Channel,
   EditMessage,
   PinMessage,
   ThreadMessage,
@@ -926,6 +934,97 @@ export class MessageService {
   }
 
   /**
+   * Receive-side authorization for a SPACE control message (remove/edit/pin/
+   * mute). Derives the sender from the VERIFIED signing key (reverse lookup,
+   * fail closed) — never the spoofable payload senderId — and returns the
+   * shared allow/drop verdict. Must be applied identically in both the DB
+   * (saveMessage) and cache (addMessage) handlers so they can't disagree.
+   * `decryptedContent.publicKey` is non-null only after signature verification
+   * (see the verify blocks); unsigned/invalid control messages resolve to a
+   * null sender and are dropped (except the unsigned-edit-of-unsigned case).
+   */
+  private async isSpaceControlAuthorized(
+    decryptedContent: Message,
+    messageDB: MessageDB,
+    spaceId: string,
+    channelId: string,
+    targetMessage?: Message
+  ): Promise<boolean> {
+    const space = await messageDB.getSpace(spaceId);
+    const channel = space?.groups
+      ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+      ?.channels.find((c) => c.channelId === channelId);
+    const members = await messageDB.getSpaceMembers(spaceId);
+    const verifiedSender = decryptedContent.publicKey
+      ? resolveVerifiedSender(
+          decryptedContent.publicKey,
+          members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+        )
+      : null;
+    return authorizeControlMessage({
+      content: decryptedContent.content as ControlMessageContent,
+      verifiedSender,
+      space: space ?? undefined,
+      channel,
+      targetMessage,
+    }).allowed;
+  }
+
+  /**
+   * Authorize a POST to a read-only channel against the VERIFIED ed448 signer
+   * (a channel manager), never the spoofable payload senderId. A read-only
+   * channel is manager-only, which requires proving the poster's identity, so
+   * an unsigned/unverifiable post is dropped even in a repudiable space.
+   *
+   * Self-contained (re-derives the fingerprint and verifies the signature here)
+   * so it holds regardless of which receive path reached the caller. This gates
+   * the LIVE cache path (addMessage); the durable saveMessage path has no
+   * read-only enforcement yet and stays deferred to the hub-log migration —
+   * .agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md.
+   */
+  private async isReadOnlyPostAuthorized(
+    decryptedContent: Message,
+    space: Space,
+    channel: Channel,
+    members: SpaceMemberRow[]
+  ): Promise<boolean> {
+    if (!decryptedContent.publicKey || !decryptedContent.signature) {
+      return false;
+    }
+    const messageId = await crypto.subtle.digest(
+      'SHA-256',
+      Buffer.from(
+        buildMessageFingerprint({
+          nonce: decryptedContent.nonce,
+          content: decryptedContent.content as any,
+          senderId: decryptedContent.content.senderId,
+          spaceId: decryptedContent.spaceId,
+          channelId: decryptedContent.channelId,
+        }),
+        'utf-8'
+      )
+    );
+    if (
+      decryptedContent.messageId !== Buffer.from(messageId).toString('hex') ||
+      ch.js_verify_ed448(
+        Buffer.from(decryptedContent.publicKey, 'hex').toString('base64'),
+        Buffer.from(messageId).toString('base64'),
+        Buffer.from(decryptedContent.signature, 'hex').toString('base64')
+      ) !== 'true'
+    ) {
+      return false;
+    }
+    const verifiedSender = resolveVerifiedSender(
+      decryptedContent.publicKey,
+      members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+    );
+    return (
+      !!verifiedSender &&
+      canManageReadOnlyChannel(verifiedSender, false, space, channel)
+    );
+  }
+
+  /**
    * Saves message to DB and updates query cache.
    * @param currentUserAddress - Pass current user's address when sending messages to update lastReadTimestamp
    */
@@ -1113,50 +1212,19 @@ export class MessageService {
           // Don't return early - allow addMessage() to update React Query cache
         }
         // Unauthorized DM delete: drop silently (do not honor).
-      } else if (
-        targetMessage.content.senderId === decryptedContent.content.senderId
-      ) {
-        // Space "own message" delete — unchanged (space path is out of scope;
-        // tracked separately). Still uses payload senderId by design parity with
-        // mobile until the space path is fixed in tandem.
-        await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
-        // Don't return early - allow addMessage() to update React Query cache
-      } else if (spaceId != channelId) {
-        // For Spaces: Check role-based permissions
-        const space = await messageDB.getSpace(spaceId);
-
-        // For read-only channels: ISOLATED permission system - only managers can delete
-        const channel = space?.groups
-          ?.find((g) => g.channels.find((c) => c.channelId === channelId))
-          ?.channels.find((c) => c.channelId === channelId);
-
-        if (channel?.isReadOnly) {
-          const isManager = !!(
-            channel.managerRoleIds &&
-            space?.roles?.some(
-              (role) =>
-                channel.managerRoleIds?.includes(role.roleId) &&
-                role.members.includes(decryptedContent.content.senderId)
-            )
-          );
-          if (isManager) {
-            await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
-            // Don't return early - allow addMessage() to update React Query cache
-          } else {
-            // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
-            return;
-          }
-        } else {
-          // For regular channels: Traditional role-based permissions
-          if (
-            !space?.roles.find(
-              (r) =>
-                r.members.includes(decryptedContent.content.senderId) &&
-                r.permissions.includes('message:delete')
-            )
-          ) {
-            return;
-          }
+      } else {
+        // Space: authorize against the VERIFIED signing key (own-message,
+        // read-only manager, or message:delete role — all resolved from the
+        // signature, not the spoofable payload senderId).
+        if (
+          await this.isSpaceControlAuthorized(
+            decryptedContent,
+            messageDB,
+            spaceId,
+            channelId,
+            targetMessage
+          )
+        ) {
           await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
           // Don't return early - allow addMessage() to update React Query cache
         }
@@ -1173,15 +1241,13 @@ export class MessageService {
         return;
       }
 
-      // Only original sender can edit their message.
+      // Only the original author can edit their message.
       //
-      // SECURITY: `editMessage.senderId` is spoofable plaintext (same shape as the
-      // remove-message bug). For a DM, authorize against the session-authenticated
-      // sender — `spaceId` (== channelId) is the cryptographically proven
-      // conversation owner — and require the target to have been authored by that
-      // proven owner. A peer spoofing `senderId = you` to edit your message fails
-      // this check. Space path keeps the legacy payload check (out of scope,
-      // tracked in .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md).
+      // SECURITY: `editMessage.senderId` is spoofable plaintext. For a DM,
+      // authorize against the session-authenticated sender (`spaceId` == the
+      // proven conversation owner). For a space, authorize against the VERIFIED
+      // signing key (or, in a repudiable space, accept an unsigned edit only of
+      // an unsigned own message — the inherit rule).
       const isDM = spaceId === channelId;
       if (isDM) {
         if (
@@ -1190,7 +1256,15 @@ export class MessageService {
         ) {
           return;
         }
-      } else if (targetMessage.content.senderId !== editMessage.senderId) {
+      } else if (
+        !(await this.isSpaceControlAuthorized(
+          decryptedContent,
+          messageDB,
+          spaceId,
+          channelId,
+          targetMessage
+        ))
+      ) {
         return;
       }
 
@@ -1328,37 +1402,20 @@ export class MessageService {
         return; // Not supported
       }
 
-      const space = await messageDB.getSpace(spaceId);
       const senderId = pinMessage.senderId;
 
-      // For read-only channels: check manager privileges FIRST
-      const channel = space?.groups
-        ?.find((g) => g.channels.find((c) => c.channelId === channelId))
-        ?.channels.find((c) => c.channelId === channelId);
-
-      if (channel?.isReadOnly) {
-        const isManager = !!(
-          channel.managerRoleIds &&
-          space?.roles?.some(
-            (role) =>
-              channel.managerRoleIds?.includes(role.roleId) &&
-              role.members.includes(senderId)
-          )
-        );
-        if (!isManager) {
-          return; // Reject
-        }
-      } else {
-        // For regular channels: check explicit role membership (NO isSpaceOwner bypass)
-        // Space owners must assign themselves a role with message:pin permission
-        const hasRolePermission = space?.roles?.some(
-          (role) =>
-            role.members.includes(senderId) &&
-            role.permissions.includes('message:pin')
-        );
-        if (!hasRolePermission) {
-          return; // Reject
-        }
+      // Authorize against the VERIFIED signing key (read-only manager or
+      // message:pin role), not the spoofable payload senderId.
+      if (
+        !(await this.isSpaceControlAuthorized(
+          decryptedContent,
+          messageDB,
+          spaceId,
+          channelId,
+          targetMessage
+        ))
+      ) {
+        return;
       }
 
       // Pin limit validation (defense-in-depth) - only check when pinning
@@ -1647,9 +1704,27 @@ export class MessageService {
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
       // DM edits authorize against the session-authenticated sender (spaceId ==
-      // the proven conversation owner), not the spoofable payload senderId. Mirrors
-      // the saveMessage edit handler. Space path unchanged (out of scope).
+      // the proven conversation owner); space edits authorize against the
+      // VERIFIED signing key. Space auth is async (DB reads), so resolve it
+      // BEFORE the synchronous cache updater. Mirrors the saveMessage handler.
       const isDM = spaceId === channelId;
+      let spaceEditAuthorized = false;
+      if (!isDM) {
+        const target = await this.messageDB.getMessage({
+          spaceId,
+          channelId,
+          messageId: editMessage.originalMessageId,
+        });
+        spaceEditAuthorized = target
+          ? await this.isSpaceControlAuthorized(
+              decryptedContent,
+              this.messageDB,
+              spaceId,
+              channelId,
+              target
+            )
+          : false;
+      }
 
       queryClient.setQueriesData(
         { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
@@ -1674,7 +1749,7 @@ export class MessageService {
                         ) {
                           return m;
                         }
-                      } else if (m.content.senderId !== editMessage.senderId) {
+                      } else if (!spaceEditAuthorized) {
                         return m;
                       }
                       // Only allow editing post messages
@@ -1729,69 +1804,40 @@ export class MessageService {
         messageId: decryptedContent.content.removeMessageId,
       });
 
-      // Check if this delete request should be honored
-      let shouldHonorDelete = false;
+      // Check if this delete request should be honored (every branch below
+      // assigns it, so no initializer).
+      let shouldHonorDelete: boolean;
 
       const isDM = spaceId === channelId;
 
-      if (!targetMessage) {
-        // If target message doesn't exist, always remove from UI.
-        // (Unchanged: this is a no-op removal of a message we don't have — not the
-        // attack surface. The attack targets a message that DOES exist, handled
-        // by the DM branch below.)
-        shouldHonorDelete = true;
-      } else if (isDM) {
-        // DM authorization — authorize against the session-authenticated sender,
-        // NOT the spoofable payload `senderId`. For a DM, `spaceId` (== channelId)
-        // is the cryptographically proven conversation owner. Require BOTH: the
-        // payload claim matches the proven owner AND the target was authored by
-        // that proven owner. A peer spoofing `senderId = you` to delete your
-        // message fails the second clause. (Same check as the saveMessage handler;
-        // see .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md.)
-        shouldHonorDelete =
-          decryptedContent.content.senderId === spaceId &&
-          targetMessage.content.senderId === spaceId;
-      } else {
-        // Space path — unchanged (out of scope, tracked separately).
-
-        // 1. Users can always delete their own messages
-        if (
-          targetMessage.content.senderId === decryptedContent.content.senderId
-        ) {
+      if (isDM) {
+        if (!targetMessage) {
+          // DM, target we don't have: harmless no-op cache removal. The real
+          // attack surface (deleting a message that DOES exist) is handled below.
           shouldHonorDelete = true;
         } else {
-          if (!shouldHonorDelete && spaceId != channelId) {
-            const space = await this.messageDB.getSpace(spaceId);
-
-            // 3. Check read-only channel manager privileges
-            const channel = space?.groups
-              ?.find((g) => g.channels.find((c) => c.channelId === channelId))
-              ?.channels.find((c) => c.channelId === channelId);
-
-            if (channel?.isReadOnly && channel.managerRoleIds) {
-              const isManager = space?.roles?.some(
-                (role) =>
-                  channel.managerRoleIds?.includes(role.roleId) &&
-                  role.members.includes(decryptedContent.content.senderId)
-              );
-              if (isManager) {
-                shouldHonorDelete = true;
-              }
-            }
-
-            // 4. Check traditional role permissions
-            if (!shouldHonorDelete && !channel?.isReadOnly) {
-              const hasDeleteRole = space?.roles?.find(
-                (r) =>
-                  r.members.includes(decryptedContent.content.senderId) &&
-                  r.permissions.includes('message:delete')
-              );
-              if (hasDeleteRole) {
-                shouldHonorDelete = true;
-              }
-            }
-          }
+          // DM authorization — authorize against the session-authenticated
+          // sender, NOT the spoofable payload `senderId`. For a DM, `spaceId`
+          // (== channelId) is the cryptographically proven conversation owner.
+          // Require BOTH: the payload claim matches the proven owner AND the
+          // target was authored by that proven owner. (Same check as the
+          // saveMessage handler; see MASTER-RECAP-control-message-auth.md.)
+          shouldHonorDelete =
+            decryptedContent.content.senderId === spaceId &&
+            targetMessage.content.senderId === spaceId;
         }
+      } else {
+        // Space: authorize against the VERIFIED signing key, including the
+        // missing-target case (the helper returns ok-target-missing-noop only
+        // for a verified sender — an unsigned/spoofed remove of a locally-absent
+        // message no longer ghosts it out of the cache). Mirrors saveMessage.
+        shouldHonorDelete = await this.isSpaceControlAuthorized(
+          decryptedContent,
+          this.messageDB,
+          spaceId,
+          channelId,
+          targetMessage ?? undefined
+        );
       }
 
       if (shouldHonorDelete) {
@@ -1849,40 +1895,27 @@ export class MessageService {
         return; // Not supported
       }
 
-      const space = await this.messageDB.getSpace(spaceId);
       const senderId = pinMessage.senderId;
 
-      // Check permissions (same logic as saveMessage)
-      let hasPermission: boolean;
-
-      // For read-only channels: check manager privileges FIRST
-      const channel = space?.groups
-        ?.find((g) => g.channels.find((c) => c.channelId === channelId))
-        ?.channels.find((c) => c.channelId === channelId);
-
-      if (channel?.isReadOnly) {
-        const isManager = !!(
-          channel.managerRoleIds &&
-          space?.roles?.some(
-            (role) =>
-              channel.managerRoleIds?.includes(role.roleId) &&
-              role.members.includes(senderId)
-          )
-        );
-        hasPermission = isManager;
-      } else {
-        // For regular channels: check explicit role membership (NO isSpaceOwner bypass)
-        hasPermission = !!(
-          space?.roles?.some(
-            (role) =>
-              role.members.includes(senderId) &&
-              role.permissions.includes('message:pin')
-          )
-        );
+      // Authorize against the VERIFIED signing key (mirrors saveMessage).
+      const pinTarget = await this.messageDB.getMessage({
+        spaceId,
+        channelId,
+        messageId: pinMessage.targetMessageId,
+      });
+      if (!pinTarget) {
+        return;
       }
-
-      if (!hasPermission) {
-        return; // Reject
+      if (
+        !(await this.isSpaceControlAuthorized(
+          decryptedContent,
+          this.messageDB,
+          spaceId,
+          channelId,
+          pinTarget
+        ))
+      ) {
+        return;
       }
 
       // Pin limit validation - only check when pinning
@@ -2018,20 +2051,17 @@ export class MessageService {
         return;
       }
 
-      // Fail-secure validation
-      const space = await this.messageDB.getSpace(spaceId);
-      if (!space) {
-        return;
-      }
-
-      // Check permission - sender must have user:mute via roles
-      const hasPermission = space.roles?.some(
-        (role) =>
-          role.members?.includes(muteContent.senderId) &&
-          role.permissions?.includes('user:mute')
-      );
-
-      if (!hasPermission) {
+      // Authorize against the VERIFIED signing key (user:mute role), not the
+      // spoofable payload senderId. authorizeControlMessage handles 'mute'
+      // without a target message.
+      if (
+        !(await this.isSpaceControlAuthorized(
+          decryptedContent,
+          this.messageDB,
+          spaceId,
+          channelId
+        ))
+      ) {
         return;
       }
 
@@ -2106,25 +2136,20 @@ export class MessageService {
           return;
         }
 
-        // Validate read-only channel permissions
+        // Validate read-only channel permissions against the VERIFIED signer
+        // (not the spoofable payload senderId): a modified client could forge a
+        // manager's address to post in a read-only channel for everyone. Drops
+        // unsigned/unverifiable posts (read-only requires proven manager
+        // identity). Live cache path only — see isReadOnlyPostAuthorized.
         if (channel.isReadOnly) {
-          const senderId = decryptedContent.content.senderId;
-
-          // Check if channel has manager roles configured
-          if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
-            return;
-          }
-
-          // Check if sender is in a manager role
-          // Note: Space owners must explicitly join a manager role (privacy requirement)
-          const isChannelManager =
-            space.roles?.some(
-              (role) =>
-                channel.managerRoleIds?.includes(role.roleId) &&
-                role.members?.includes(senderId)
-            ) ?? false;
-
-          if (!isChannelManager) {
+          const members = await this.messageDB.getSpaceMembers(spaceId);
+          const authorized = await this.isReadOnlyPostAuthorized(
+            decryptedContent,
+            space,
+            channel,
+            members
+          );
+          if (!authorized) {
             return;
           }
         }
@@ -2573,8 +2598,9 @@ export class MessageService {
           const sets = response.map((e) => JSON.parse(e.state));
 
           let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-          // Sign DM unless explicitly skipped
-          if (!skipSigning) {
+          // Edit inherit rule: sign iff the edited message was signed, so an
+          // unsigned (deniable) DM message never silently gains a signature.
+          if (shouldSignEdit(originalMessage)) {
             try {
               const sig = ch.js_sign_ed448(
                 Buffer.from(
@@ -3545,12 +3571,16 @@ export class MessageService {
               conversationId.split('/')[0]
             );
 
-            // enforce non-repudiability
+            // Verify signatures for non-repudiable spaces (all types) AND for
+            // control messages in ANY space — control auth must not depend on
+            // repudiability, or a repudiable space would skip the gate.
             if (
               space &&
-              !space.isRepudiable &&
               decryptedContent.publicKey &&
-              decryptedContent.signature
+              decryptedContent.signature &&
+              (!space.isRepudiable ||
+                isControlMessageType(decryptedContent.content.type) ||
+                decryptedContent.mentions?.everyone === true)
             ) {
               const participant = await this.messageDB.getSpaceMember(
                 space.spaceId,
@@ -3563,10 +3593,13 @@ export class MessageService {
               const messageId = await crypto.subtle.digest(
                 'SHA-256',
                 Buffer.from(
-                  decryptedContent.nonce +
-                    decryptedContent.content.type +
-                    decryptedContent.content.senderId +
-                    canonicalize(decryptedContent.content as any),
+                  buildMessageFingerprint({
+                    nonce: decryptedContent.nonce,
+                    content: decryptedContent.content as any,
+                    senderId: decryptedContent.content.senderId,
+                    spaceId: decryptedContent.spaceId,
+                    channelId: decryptedContent.channelId,
+                  }),
                   'utf-8'
                 )
               );
@@ -4552,12 +4585,15 @@ export class MessageService {
                   conversationId.split('/')[0]
                 );
                 for (const message of envelope.message.messages) {
-                  // enforce non-repudiability
+                  // Verify non-repudiable (all types) + control messages (any
+                  // space) — control auth must not depend on repudiability.
                   if (
                     space &&
-                    !space.isRepudiable &&
                     message.publicKey &&
-                    message.signature
+                    message.signature &&
+                    (!space.isRepudiable ||
+                      isControlMessageType(message.content.type) ||
+                      message.mentions?.everyone === true)
                   ) {
                     const participant = await this.messageDB.getSpaceMember(
                       space.spaceId,
@@ -4570,14 +4606,21 @@ export class MessageService {
                     const messageId = await crypto.subtle.digest(
                       'SHA-256',
                       Buffer.from(
-                        message.nonce +
-                          message.content.type +
-                          message.content.senderId +
-                          canonicalize(message.content as any),
+                        buildMessageFingerprint({
+                          nonce: message.nonce,
+                          content: message.content as any,
+                          senderId: message.content.senderId,
+                          spaceId: message.spaceId,
+                          channelId: message.channelId,
+                        }),
                         'utf-8'
                       )
                     );
-                    // Handle case where participant is not found (e.g., sync received before member data)
+                    // Inbox-binding check is skipped when the participant row is
+                    // missing (common — see missing-no-join-row bug), but the
+                    // ed448 signature is ALWAYS verified: keeping an unverified
+                    // signature would let a forged control message carry a real
+                    // mod's (public) key and pass the handler's reverse lookup.
                     if (
                       (participant?.inbox_address !== inboxAddress &&
                         participant?.inbox_address) ||
@@ -4586,8 +4629,6 @@ export class MessageService {
                     ) {
                       message.publicKey = undefined;
                       message.signature = undefined;
-                    } else if (!participant) {
-                      // Participant not found yet, can't verify - keep signature for later verification
                     } else {
                       if (
                         ch.js_verify_ed448(
@@ -4885,14 +4926,35 @@ export class MessageService {
               ?.filter(role => role.members?.includes(self_address))
               ?.map(role => role.roleId) ?? [];
 
-            // Check for mentions ('space' lets isMentionedWithSettings verify
-            // the SENDER held mention:everyone before honoring @everyone)
-            const isMentioned = isMentionedWithSettings(decryptedContent, {
-              userAddress: self_address,
-              enabledTypes,
-              userRoles,
-              space: space ?? undefined,
-            });
+            // @everyone gate: honor it only if the VERIFIED signer (not the
+            // spoofable payload senderId) held mention:everyone. The verify
+            // block above always verifies @everyone-bearing posts, so a present
+            // publicKey here is proven. We drop `space` from
+            // isMentionedWithSettings (disabling its payload-based @everyone
+            // check) and do the @everyone check ourselves against the verified
+            // signer; user/@role checks are unaffected (they don't use space).
+            const everyoneSender = decryptedContent.publicKey
+              ? resolveVerifiedSender(
+                  decryptedContent.publicKey,
+                  (await this.messageDB.getSpaceMembers(
+                    spaceId
+                  )) as unknown as Parameters<typeof resolveVerifiedSender>[1]
+                )
+              : null;
+            const isMentioned =
+              isMentionedWithSettings(decryptedContent, {
+                userAddress: self_address,
+                enabledTypes,
+                userRoles,
+              }) ||
+              (enabledTypes.includes('mention-everyone') &&
+                decryptedContent.mentions?.everyone === true &&
+                !!everyoneSender &&
+                hasPermission(
+                  everyoneSender,
+                  'mention:everyone',
+                  space ?? undefined
+                ));
 
             // Check for reply to user's message
             const isReplyToMe = enabledTypes.includes('reply') &&
@@ -5049,14 +5111,20 @@ export class MessageService {
       const nonce = crypto.randomUUID();
       const space = await this.messageDB.getSpace(spaceId);
 
-      // Calculate messageId (SHA-256 hash)
+      // Calculate messageId (SHA-256 of the canonical fingerprint). Uses the
+      // shared builder so the real content.type is hashed (control messages
+      // like remove-message no longer sign under a hardcoded 'post') and
+      // control types bind spaceId/channelId. Posts are unchanged.
       const messageIdBuffer = await crypto.subtle.digest(
         'SHA-256',
         Buffer.from(
-          nonce +
-            'post' +
-            currentPasskeyInfo.address +
-            canonicalize(pendingMessage as any),
+          buildMessageFingerprint({
+            nonce,
+            content: pendingMessage as any,
+            senderId: currentPasskeyInfo.address,
+            spaceId,
+            channelId,
+          }),
           'utf-8'
         )
       );
@@ -5249,14 +5317,21 @@ export class MessageService {
           return outbounds;
         }
 
-        // Create the edit message with proper structure
+        // Create the edit message with proper structure. Shared builder binds
+        // spaceId/channelId (edit-message is a control type), matching receive.
         const messageId = await crypto.subtle.digest(
           'SHA-256',
           Buffer.from(
-            nonce +
-              'edit-message' +
-              currentPasskeyInfo.address +
-              canonicalize(editMessage),
+            buildMessageFingerprint({
+              nonce,
+              content: {
+                ...editMessage,
+                senderId: currentPasskeyInfo.address,
+              } as EditMessage,
+              senderId: currentPasskeyInfo.address,
+              spaceId,
+              channelId,
+            }),
             'utf-8'
           )
         );
@@ -5281,8 +5356,11 @@ export class MessageService {
           conversationId,
         });
 
-        // enforce non-repudiability
-        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+        // Edit inherit rule: an edit is signed iff the message it edits was
+        // signed, so a deliberately-unsigned (deniable) message never silently
+        // gains a signature on edit. In a non-repudiable space the original is
+        // always signed, so edits are too (consistent with the space rule).
+        if (shouldSignEdit(originalMessage)) {
           const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
@@ -5361,14 +5439,18 @@ export class MessageService {
           return outbounds;
         }
 
-        // Generate message ID using SHA-256(nonce + 'pin' + senderId + canonicalize(pinMessage))
+        // messageId = SHA-256 of the canonical fingerprint (pin is a control
+        // type: shared builder binds spaceId/channelId, matching receive).
         const messageId = await crypto.subtle.digest(
           'SHA-256',
           Buffer.from(
-            nonce +
-              'pin' +
-              currentPasskeyInfo.address +
-              canonicalize(pinMessage),
+            buildMessageFingerprint({
+              nonce,
+              content: { ...pinMessage, senderId: currentPasskeyInfo.address },
+              senderId: currentPasskeyInfo.address,
+              spaceId,
+              channelId,
+            }),
             'utf-8'
           )
         );

@@ -60,6 +60,7 @@ vi.mock('../../../utils/platform', () => ({
 
 vi.mock('@quilibrium/quorum-shared', () => ({
   formatRelativeTime: () => '2h ago',
+  resolveDisplayName: (name?: string) => name ?? 'User',
 }));
 
 // Mock primitives

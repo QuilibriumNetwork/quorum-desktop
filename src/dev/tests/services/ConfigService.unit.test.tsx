@@ -184,8 +184,14 @@ describe('ConfigService - Unit Tests', () => {
         keyset: mockKeyset,
       });
 
-      // ✅ VERIFY: Timestamp was updated
-      expect(mockConfig.timestamp).toBeGreaterThan(0);
+      // ✅ VERIFY: Timestamp was updated on the SAVED config. saveConfig
+      // deep-clones its input (to avoid mutating a shared React Query cache
+      // object), so the assertion must read the object passed to the DB, not
+      // the caller's original mockConfig.
+      const savedConfig = (
+        mockDeps.messageDB.saveUserConfig as ReturnType<typeof vi.fn>
+      ).mock.calls[0][0];
+      expect(savedConfig.timestamp).toBeGreaterThan(0);
 
       // ✅ VERIFY: Config saved to database
       expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalledWith(

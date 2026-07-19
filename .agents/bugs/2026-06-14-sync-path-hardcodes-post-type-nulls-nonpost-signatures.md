@@ -1,15 +1,18 @@
 ---
 type: bug
 title: "Sync-received non-post messages (embed/sticker) lose their signature: messageId recompute hardcodes 'post'"
-status: open
+status: resolved
 priority: high
 ai_generated: true
 created: 2026-06-14
-updated: 2026-06-14
+updated: 2026-07-19
+resolved: 2026-07-19
 related_files:
   - "src/services/MessageService.ts"
+  - "quorum-shared/src/utils/messageAuth.ts"
 related_docs:
   - ".agents/bugs/2026-06-13-space-members-missing-no-join-row.md"
+  - ".agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md"
 ---
 
 # Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled
@@ -117,3 +120,17 @@ This mirrors the already-correct live receive path at `:3182`.
   contributor. The fix is correct regardless — the sync path should never have hardcoded the type.
 - Cross-platform context (desktop ↔ mobile space messaging) is tracked on the mobile side; this
   report covers the desktop defect in isolation.
+
+## ✅ Resolution (2026-07-19)
+
+**Resolved as part of the control-message-auth fix.** The sync-path verify block in `MessageService.ts` now calls `buildMessageFingerprint` (from `quorum-shared/src/utils/messageAuth.ts`) passing the real message `content` object. `buildMessageFingerprint` internally reads `content.type` dynamically (it uses `content.type` for non-string content, or `'post'` only when content is a raw string — which is not the case for typed messages). It also binds `spaceId`/`channelId` for control types.
+
+The hardcoded `'post'` literal described in the original root cause section no longer exists in the sync verify block. Both the sync path and the live receive path now use identical fingerprint logic from the shared helper, so `embed`/`sticker` and all control types recompute the same `messageId` the sender signed.
+
+See `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md` and `quorum-shared/src/utils/messageAuth.ts` for the canonical implementation.
+
+**Ready to move to `.solved/`.**
+
+---
+
+*Last updated: 2026-07-19*

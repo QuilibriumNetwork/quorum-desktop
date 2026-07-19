@@ -12,6 +12,24 @@ audience: "the team — written in plain language, no deep jargon"
 This is the ONE document to read to understand the whole situation. Everything
 else (the other task files) is detail under one of the boxes below.
 
+> **STATUS UPDATE (2026-07-19) — the SPACE fix has LANDED on desktop.** The
+> "Left alone on purpose" framing below is now HISTORICAL. Desktop now
+> authorizes space `remove-message` / `edit-message` / `pin` / `mute` against
+> the cryptographically **verified ed448 signer** (reverse-lookup from the
+> signing key, fail-closed on unknown members) instead of the spoofable payload
+> `senderId`. The signature is the per-message sender proof the "we can't fix
+> group chats without deeper crypto" note worried about — it was already
+> attached to every message; we just made the receive side actually use it.
+> Shared primitives: `quorum-shared` PR #61 (`messageAuth.ts`). Desktop:
+> branch `feat/space-control-message-auth` (commits `955471b16`, `151ddeb9c`).
+> `@everyone` is also now gated on the verified signer. **Still pending:**
+> mobile's matching receive-side verification (mobile verifies nothing on
+> incoming space messages yet), and the coordinated production cut-over (do not
+> deploy desktop to prod until mobile ships, or updated desktops reject control
+> messages from un-updated clients). Deferred, non-blocking: the edited-message
+> "signed" badge across devices — `.agents/tasks/2026-07-19-edited-message-signature-badge-cross-device.md`.
+> Read the sections below with this update in mind.
+
 ## The bug, in one paragraph
 
 Delete and edit messages carry a "signed by: <name>" field that is **just text the
@@ -31,9 +49,17 @@ itself proves** about who sent the message (the "session-authenticated sender").
 
 |  | DM (private 1-on-1) | Space (group chat) |
 |---|---|---|
-| **delete** (`remove-message`) | Mobile: DONE. **Desktop: DONE** (code + tests, on branch). | Left alone on purpose — see note. |
-| **edit** (`edit-message`) | **Desktop: DONE** (code + tests, on branch). Mobile: no DM-edit handler exists. | Left alone on purpose — see note. |
+| **delete** (`remove-message`) | Mobile: DONE. Desktop: DONE (merged). | **Desktop: DONE** (verified-signer auth). Mobile: PENDING. |
+| **edit** (`edit-message`) | Desktop: DONE (merged). Mobile: no DM-edit handler exists. | **Desktop: DONE** (verified-signer auth + edit inherit rule). Mobile: PENDING. |
+| **pin** | n/a (space-only) | **Desktop: DONE** (verified-signer auth). Mobile: PENDING. |
+| **mute** | n/a (space-only) | **Desktop: DONE** (verified-signer auth). Mobile: PENDING. |
+| **@everyone** | n/a | **Desktop: DONE** (honored only if verified signer holds `mention:everyone`). Mobile: PENDING. |
 | **reactions** | Out of scope — low stakes (fake "X reacted", no privilege). | Out of scope — same. |
+
+> The Space column previously read "Left alone on purpose" for delete/edit. That
+> is now HISTORICAL (see the 2026-07-19 status update at the top). The "Left
+> alone on purpose" section below is kept for provenance but no longer describes
+> current desktop behavior.
 
 > "Desktop: DONE" = code written, type-check clean, unit tests pass (incl. the
 > spoof-attack tests). Still PENDING: a quick in-app manual check + opening the PR.
@@ -53,12 +79,14 @@ itself proves** about who sent the message (the "session-authenticated sender").
 > desktop↔mobile delivery sync issue (affects normal messages too), NOT the auth
 > fix. Detail: mobile `.agents/docs/features/dm-delete-own-message.md`.
 
-**"Left alone on purpose" (group chats):** In a group chat the encryption can't
-prove who sent each message without a deeper change to the shared crypto library.
-**Mobile chose not to fix group chats in this round, so desktop matches mobile and
-also does not touch group chats.** Fixing one side but not the other would make the
-apps disagree and cause new bugs. Group chats are tracked as separate future tasks
-(see "Related files" below). Not part of the current work.
+**"Left alone on purpose" (group chats) — HISTORICAL (superseded 2026-07-19):**
+This section described the state when only DMs were fixed. It reasoned that a
+group chat's encryption can't prove who sent each message "without a deeper
+change to the shared crypto library." That turned out to be avoidable: the
+ed448 **signature** already on every message IS the per-message sender proof —
+no crypto-library change was needed, only using the signature on the receive
+side. Desktop now does exactly that (see the 2026-07-19 status update at the
+top). Mobile's matching receive-side verification is the remaining piece.
 
 > **Scope note for the group-chat follow-up:** the underlying issue is not
 > specific to delete/edit — it applies to *every* group-permission decision that
@@ -217,4 +245,4 @@ Suggested PR scope: desktop DM `remove-message` + `edit-message` only. Mention i
 the PR body that space paths are intentionally unchanged (parity with mobile) and
 linked to the open space task.
 
-*Last updated: 2026-06-25*
+*Last updated: 2026-07-19*

@@ -3,7 +3,7 @@ type: doc
 title: Pinned Messages Feature
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-12T00:00:00.000Z
+updated: 2026-07-19T00:00:00.000Z
 ---
 
 # Pinned Messages Feature
@@ -72,27 +72,25 @@ The pinned messages feature allows authorized users to pin important messages wi
 
 Pin/unpin actions are broadcast to all space members using the same pattern as reactions, deletions, and edits:
 
-**Sending (`submitChannelMessage` - lines 3100-3232):**
+**Sending (`submitChannelMessage`):**
 - Validates user permissions before broadcast
-- Generates message ID using SHA-256(nonce + 'pin' + senderId + canonicalize(pinMessage))
+- Generates message ID via the shared `buildMessageFingerprint` helper (SHA-256 of `nonce + content.type + senderId + spaceId + channelId + canonicalize(content)`); because `'pin'` is a control type, the fingerprint binds `spaceId` and `channelId`, preventing replay into a different channel
 - Creates Message envelope with PinMessage content
 - Signs if non-repudiable space
 - Encrypts with Triple Ratchet
 - Sends via `sendHubMessage()`
 - Calls `saveMessage()` and `addMessage()` for local updates
 
-**Receiving (`saveMessage` - lines 448-523):**
+**Receiving (`saveMessage`):**
 - Validates target message exists
 - Rejects DMs (pins are Space-only)
-- Validates permissions:
-  - Read-only channels: Only managers via `managerRoleIds`
-  - Regular channels: Explicit `message:pin` role permission (NO isSpaceOwner bypass)
+- Validates permissions via `isSpaceControlAuthorized()` against the **verified ed448 signer** (not plaintext `senderId`)
 - Pin limit validation (50 max)
 - Updates target message with `isPinned`, `pinnedAt`, `pinnedBy` fields
 - Persists to IndexedDB
 
-**Receiving (`addMessage` - lines 882-978):**
-- Same permission validation as saveMessage (defense-in-depth)
+**Receiving (`addMessage`):**
+- Same permission validation as saveMessage (defense-in-depth), also via `isSpaceControlAuthorized()`
 - Pin limit validation
 - Updates React Query cache
 - Invalidates `pinnedMessages` and `pinnedMessageCount` query caches
@@ -315,17 +313,18 @@ All magic numbers have been extracted into configuration objects:
 
 1. **UI Layer**: Permission checked in hook via `canUserPin()`
    - Read-only channels: Check `managerRoleIds` first
-   - Regular channels: Check `message:pin` role permission via `hasPermission()` (includes isSpaceOwner bypass for UI only)
+   - Regular channels: Check `message:pin` role permission via `hasPermission()` (role-only; no `isSpaceOwner` bypass — the shared `hasPermission` no longer grants implicit owner permissions; owners must self-assign a role with `message:pin`)
    - UI elements conditionally rendered based on permissions
 
 2. **Sending Layer** (`MessageService.ts:3100-3232`):
    - Same permission logic before broadcast
    - Prevents unauthorized messages from being sent
 
-3. **Receiving Layer** (`MessageService.ts:448-523, 882-978`):
-   - **Independent validation** by each receiving client
+3. **Receiving Layer** (`MessageService.ts`):
+   - **Independent validation** by each receiving client via `isSpaceControlAuthorized()`
+   - Authorization runs against the **cryptographically verified ed448 signer** (reverse-looked-up from the signing public key via `resolveVerifiedSender`) — never against the spoofable plaintext `content.senderId`
    - Read-only channels: Only managers via `managerRoleIds`
-   - Regular channels: **Explicit `message:pin` role permission only** (NO isSpaceOwner bypass)
+   - Regular channels: **Explicit `message:pin` role permission only** (NO `isSpaceOwner` bypass — the shared `authorizeControlMessage` creates the permission checker with `isSpaceOwner: false` by design, since ownership is receiver-unverifiable)
    - Space owners must assign themselves a role with `message:pin` permission
    - Protects against malicious/modified clients
 
@@ -386,5 +385,5 @@ All magic numbers have been extracted into configuration objects:
 ---
 
 
-_Last updated: 2025-12-12_
+_Last updated: 2026-07-19_
 _Major Update: Added cross-client synchronization with full defense-in-depth validation_

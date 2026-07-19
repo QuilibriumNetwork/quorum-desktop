@@ -94,6 +94,40 @@ part of #32.
 
 Mobile is being implemented WITHOUT these gaps (all content types, both live + batch receive paths, durable). This desktop bug should be brought to parity — ideally both consume the same shared `canManageReadOnlyChannel` check on receipt so the rule can't drift per-type or per-path.
 
+## 2026-07-19 — Read-only POST identity FIXED on the live path; durable path + type coverage still open
+
+Two updates from the control-message-auth work (see
+`.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md` and
+`.agents/docs/features/security.md`):
+
+1. **Control messages** (remove/edit/pin/mute) now authorize against the
+   **verified ed448 signer** (via `resolveVerifiedSender` reverse-lookup), never
+   the plaintext `senderId`. Read-only-channel DELETE is covered by this (it goes
+   through the control-message helper's manager check).
+
+2. **Read-only-channel POST acceptance — identity gap CLOSED on the LIVE path.**
+   The `addMessage` (live cache) read-only check no longer trusts
+   `content.senderId`: it now verifies the post's ed448 signature and authorizes
+   the **verified signer** as a channel manager via a new
+   `isReadOnlyPostAuthorized` helper (`resolveVerifiedSender` +
+   `canManageReadOnlyChannel`). Unsigned/unverifiable posts to a read-only
+   channel are dropped (read-only requires proven manager identity, so this holds
+   even in a repudiable space). Tests: `MessageService.unit.test.tsx` §3e.
+
+**Still OPEN (this bug stays open):**
+- **Durable path** — `saveMessage` has NO read-only enforcement at all, so a
+  forged read-only post can still land in the DB and reappear on reload/re-render
+  from storage. Deliberately deferred to the hub-log migration (the durable
+  receive path is being reworked there). The live-path fix hides it from the
+  live cache but does not close the durable hole.
+- **Type coverage** — only `post` is checked; `embed`/`sticker` still bypass the
+  read-only gate.
+
+When the hub-log migration reworks the durable path, apply the SAME
+`isReadOnlyPostAuthorized` / verified-signer pattern there and extend it to all
+content types, so identity + type coverage are consistent across live and
+durable paths.
+
 ---
 
-*Last updated: 2026-06-12*
+*Last updated: 2026-07-19*

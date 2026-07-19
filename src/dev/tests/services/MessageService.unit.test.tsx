@@ -26,6 +26,8 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MessageService, MessageServiceDependencies } from '@/services/MessageService';
+import { deriveInboxAddress } from '@quilibrium/quorum-shared';
+import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QueryClient } from '@tanstack/react-query';
 
 // Mock the secure channel module for crypto operations
@@ -86,6 +88,10 @@ describe('MessageService - Unit Tests', () => {
           address: 'hub-address',
         }),
         getSpaceMember: vi.fn().mockResolvedValue(null),
+        getSpaceMembers: vi.fn().mockResolvedValue([]),
+        getMuteByMuteId: vi.fn().mockResolvedValue(null),
+        muteUser: vi.fn().mockResolvedValue(undefined),
+        unmuteUser: vi.fn().mockResolvedValue(undefined),
         isUserMuted: vi.fn().mockResolvedValue(false),
         getConversation: vi.fn().mockResolvedValue({ conversation: null }),
         updateMessage: vi.fn().mockResolvedValue(undefined),
@@ -327,43 +333,51 @@ describe('MessageService - Unit Tests', () => {
       expect(mockDeps.messageDB.saveMessage).toHaveBeenCalled();
     });
 
-    it('should handle remove-message type by calling deleteMessage', async () => {
-      const targetMessage = {
-        messageId: 'msg-to-remove',
-        spaceId: 'space',
-        channelId: 'channel',
-        createdDate: Date.now(),
-        modifiedDate: Date.now(),
-        digestAlgorithm: 'sha256' as const,
-        nonce: 'nonce',
-        lastModifiedHash: 'hash',
-        content: {
-          senderId: 'original-sender',
-          type: 'post',
-          text: 'Message',
-        },
-      };
+    const spaceTarget = {
+      messageId: 'msg-to-remove',
+      spaceId: 'space',
+      channelId: 'channel',
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      content: { senderId: 'original-sender', type: 'post', text: 'Message' },
+    };
+    const spaceRemove = (over: Record<string, unknown> = {}) => ({
+      messageId: 'remove-123',
+      spaceId: 'space',
+      channelId: 'channel',
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      content: {
+        senderId: 'original-sender',
+        type: 'remove-message',
+        removeMessageId: 'msg-to-remove',
+      },
+      ...over,
+    });
 
-      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(targetMessage);
-
-      const removeMessage = {
-        messageId: 'remove-123',
+    it('honors a SIGNED space delete when the verified signer authored the target', async () => {
+      // The verified sender is derived from the signing key, not the payload.
+      // Register a member whose inbox_address matches this public key so the
+      // reverse lookup resolves to 'original-sender'.
+      const publicKey = 'aabbccddeeff00112233445566778899';
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(spaceTarget);
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
         spaceId: 'space',
-        channelId: 'channel',
-        createdDate: Date.now(),
-        modifiedDate: Date.now(),
-        digestAlgorithm: 'sha256' as const,
-        nonce: 'nonce',
-        lastModifiedHash: 'hash',
-        content: {
-          senderId: 'original-sender', // Same sender can remove
-          type: 'remove-message',
-          removeMessageId: 'msg-to-remove',
-        },
-      };
+        roles: [],
+        groups: [],
+      });
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
+        { address: 'original-sender', inbox_address: deriveInboxAddress(publicKey) },
+      ]);
 
       await messageService.saveMessage(
-        removeMessage,
+        spaceRemove({ publicKey, signature: 'sig' }) as any,
         mockDeps.messageDB,
         'space',
         'channel',
@@ -371,8 +385,53 @@ describe('MessageService - Unit Tests', () => {
         { user_icon: 'icon.png', display_name: 'User' }
       );
 
-      // ✅ VERIFY: deleteMessage called
       expect(mockDeps.messageDB.deleteMessage).toHaveBeenCalledWith('msg-to-remove');
+    });
+
+    it('DROPS an UNSIGNED space delete (no verified signer, fail closed)', async () => {
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(spaceTarget);
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId: 'space',
+        roles: [],
+        groups: [],
+      });
+
+      await messageService.saveMessage(
+        spaceRemove() as any, // no publicKey/signature
+        mockDeps.messageDB,
+        'space',
+        'channel',
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      expect(mockDeps.messageDB.deleteMessage).not.toHaveBeenCalled();
+    });
+
+    it('DROPS a SIGNED space delete when the signer is not the author and has no role', async () => {
+      // Signer resolves to 'mallory' (a real member) but claims senderId=original-sender.
+      const publicKey = 'ffeeddccbbaa99887766554433221100';
+      mockDeps.messageDB.getMessage = vi.fn().mockResolvedValue(spaceTarget);
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId: 'space',
+        roles: [],
+        groups: [],
+      });
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
+        { address: 'mallory', inbox_address: deriveInboxAddress(publicKey) },
+      ]);
+
+      await messageService.saveMessage(
+        // claims to be the author, but the key belongs to mallory → senderid-mismatch
+        spaceRemove({ publicKey, signature: 'sig' }) as any,
+        mockDeps.messageDB,
+        'space',
+        'channel',
+        'direct',
+        { user_icon: 'icon.png', display_name: 'User' }
+      );
+
+      expect(mockDeps.messageDB.deleteMessage).not.toHaveBeenCalled();
     });
   });
 
@@ -533,6 +592,147 @@ describe('MessageService - Unit Tests', () => {
 
       // Unauthorized edit returns early before persisting any change.
       expect(mockDeps.messageDB.saveMessage).not.toHaveBeenCalled();
+    });
+  });
+
+  // SECURITY: space mute must authorize against the verified signing key, not
+  // the spoofable payload senderId (same class as remove/edit).
+  describe('3d. addMessage() - Space mute authorization (anti-spoofing)', () => {
+    const muteMsg = (over: Record<string, unknown> = {}) =>
+      ({
+        messageId: 'mute-1',
+        spaceId: 'space',
+        channelId: 'channel',
+        nonce: 'n',
+        content: {
+          senderId: 'mod',
+          type: 'mute',
+          targetUserId: 'victim',
+          muteId: 'mid-1',
+          timestamp: Date.now(),
+          action: 'mute',
+        },
+        ...over,
+      }) as any;
+
+    beforeEach(() => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId: 'space',
+        roles: [{ members: ['mod'], permissions: ['user:mute'] }],
+        groups: [],
+      });
+    });
+
+    it('honors a SIGNED mute from the verified user:mute role holder', async () => {
+      const publicKey = '11223344556677889900aabbccddeeff';
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'mod', inbox_address: deriveInboxAddress(publicKey) }]);
+
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        'channel',
+        muteMsg({ publicKey, signature: 'sig' })
+      );
+
+      expect(mockDeps.messageDB.muteUser).toHaveBeenCalled();
+    });
+
+    it('DROPS an UNSIGNED mute claiming a moderator senderId (spoof)', async () => {
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        'channel',
+        muteMsg() // claims senderId 'mod' but no signature
+      );
+
+      expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
+    });
+
+    it('DROPS a SIGNED mute whose signer is not the claimed moderator', async () => {
+      const publicKey = 'ff00ff00ff00ff00ff00ff00ff00ff00';
+      // Key belongs to 'mallory' (no mute role); payload claims 'mod'.
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'mallory', inbox_address: deriveInboxAddress(publicKey) }]);
+
+      await messageService.addMessage(
+        queryClient,
+        'space',
+        'channel',
+        muteMsg({ publicKey, signature: 'sig' })
+      );
+
+      expect(mockDeps.messageDB.muteUser).not.toHaveBeenCalled();
+    });
+  });
+
+  // SECURITY: a post to a read-only channel must be authorized against the
+  // verified signer (a manager), not the spoofable payload senderId.
+  describe('3e. addMessage() - read-only channel post authorization (anti-spoofing)', () => {
+    const RO = 'ro-channel';
+    const mgrPub = 'aabb00112233445566778899aabbccdd';
+    const roSpace = {
+      spaceId: 'space',
+      roles: [{ roleId: 'mgr-role', members: ['manager'], permissions: [] }],
+      groups: [
+        {
+          groupId: 'g1',
+          channels: [
+            { channelId: RO, isReadOnly: true, managerRoleIds: ['mgr-role'] },
+          ],
+        },
+      ],
+    };
+    const roPost = (over: Record<string, unknown> = {}) =>
+      ({
+        messageId: 'ro-1',
+        spaceId: 'space',
+        channelId: RO,
+        nonce: 'n-ro',
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        lastModifiedHash: '',
+        content: { senderId: 'manager', type: 'post', text: 'announce' },
+        ...over,
+      }) as any;
+    // The test harness mocks crypto.subtle.digest to return 32 zero bytes, so
+    // the signed-post's messageId must match that (64 hex zeros) to pass the
+    // fingerprint recompute in isReadOnlyPostAuthorized.
+    const signedManagerPost = () =>
+      roPost({ messageId: '0'.repeat(64), publicKey: mgrPub, signature: 'sig' });
+
+    beforeEach(() => {
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(roSpace);
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'manager', inbox_address: deriveInboxAddress(mgrPub) }]);
+    });
+
+    it('honors a SIGNED post from the verified read-only-channel manager', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(queryClient, 'space', RO, signedManagerPost());
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('DROPS an UNSIGNED post to a read-only channel', async () => {
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(queryClient, 'space', RO, roPost()); // no signature
+      expect(spy).not.toHaveBeenCalled();
+    });
+
+    it('DROPS a SIGNED read-only post whose verified signer is not a manager', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true');
+      // key resolves to 'intruder', who is NOT in the manager role
+      mockDeps.messageDB.getSpaceMembers = vi
+        .fn()
+        .mockResolvedValue([{ address: 'intruder', inbox_address: deriveInboxAddress(mgrPub) }]);
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
+      await messageService.addMessage(queryClient, 'space', RO, signedManagerPost());
+      expect(spy).not.toHaveBeenCalled();
     });
   });
 

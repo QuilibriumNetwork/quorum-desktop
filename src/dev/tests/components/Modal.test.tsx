@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Modal } from '@/components/primitives';
 
@@ -109,27 +109,23 @@ describe('Modal (baseline)', () => {
     expect(title.className).toContain('quorum-modal-title-center');
   });
 
-  // 8. Close button click dispatches synthetic Escape KeyboardEvent
-  it('close button click dispatches synthetic Escape KeyboardEvent', async () => {
+  // 8. Close button click triggers onClose (via the modal's animated close)
+  it('close button click triggers onClose', async () => {
     const user = userEvent.setup();
-    const escHandler = vi.fn();
-    document.addEventListener('keydown', escHandler);
+    const onClose = vi.fn();
 
     render(
-      <Modal {...defaultProps}>
+      <Modal {...defaultProps} onClose={onClose}>
         <p>Content</p>
       </Modal>
     );
 
-    // Close button is now a <button> element wrapping the icon
-    const closeButton = screen.getByLabelText('Close dialog');
-    await user.click(closeButton);
+    // Close button is a <button> element wrapping the icon. It calls the
+    // modal's context close() (animated), which invokes onClose after the
+    // close animation completes.
+    await user.click(screen.getByLabelText('Close dialog'));
 
-    expect(escHandler).toHaveBeenCalledWith(
-      expect.objectContaining({ key: 'Escape' })
-    );
-
-    document.removeEventListener('keydown', escHandler);
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 });
 
@@ -190,23 +186,18 @@ describe('Modal (accessibility)', () => {
     expect(dialog).not.toHaveAttribute('aria-labelledby');
   });
 
-  // A5. Escape key dispatches from close button click
-  it('close button dispatches Escape KeyboardEvent', async () => {
+  // A5. Close button click triggers onClose (animated close)
+  it('close button click triggers onClose', async () => {
     const user = userEvent.setup();
-    const escHandler = vi.fn();
-    document.addEventListener('keydown', escHandler);
+    const onClose = vi.fn();
 
     render(
-      <Modal {...defaultProps}>
+      <Modal {...defaultProps} onClose={onClose}>
         <p>Content</p>
       </Modal>
     );
 
     await user.click(screen.getByLabelText('Close dialog'));
-    expect(escHandler).toHaveBeenCalledWith(
-      expect.objectContaining({ key: 'Escape' })
-    );
-
-    document.removeEventListener('keydown', escHandler);
+    await waitFor(() => expect(onClose).toHaveBeenCalled());
   });
 });
