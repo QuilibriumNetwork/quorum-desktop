@@ -395,6 +395,20 @@ export class SpaceService {
         'hex'
       ),
     });
+    // The join key is also the per-USER SIGNING identity that receivers bind in
+    // their member table. Store it under `signing` so it survives a second
+    // device regenerating the per-device `inbox` (mailbox) key on config sync.
+    await this.messageDB.saveSpaceKey({
+      spaceId: spaceAddress,
+      keyId: 'signing',
+      address: inboxAddress,
+      publicKey: Buffer.from(new Uint8Array(inboxPair.public_key)).toString(
+        'hex'
+      ),
+      privateKey: Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
+        'hex'
+      ),
+    });
     await this.messageDB.saveSpaceKey({
       spaceId: spaceAddress,
       keyId: groupAddress,

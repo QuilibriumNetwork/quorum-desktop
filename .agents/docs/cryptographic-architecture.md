@@ -281,7 +281,7 @@ After rotation the old `inbox_address` stored in the receiver's `space_members` 
 > display update isn't dropped after a rotation), but the handler no longer acts
 > on the new key.
 >
-> **⚠️ KNOWN REGRESSION — multi-device (exposed 2026-07-19, fix in flight).**
+> **⚠️ MULTI-DEVICE — exposed 2026-07-19; sender-side fix implemented.**
 > This is more than a rare rotation edge case. Each device generates its OWN
 > space signing keypair (`spaceSyncService.ts` `generateEd448()`), so one user
 > signs space messages with a different key per device. The verified-signer
@@ -293,12 +293,25 @@ After rotation the old `inbox_address` stored in the receiver's `space_members` 
 > post signatures are nulled and processed anyway; control messages fail closed).
 > The vulnerable line was genuinely load-bearing for multi-device.
 >
-> The proper fix is neither keeping the spoofable rebinding nor just deleting it:
-> a member needs MULTIPLE verified inbox keys (one per device), bound through the
-> **authenticated device registration** the DM stack already trusts — not a
-> spoofable in-band announcement. That is a cross-platform shared/desktop design
-> change, above the scope of the #243 fix. An agent is working on it; this
-> section will be rewritten when it lands.
+> **Fix — signing/mailbox key split (implemented, sender-side).** The per-space
+> `inbox` key played two roles with opposite lifetimes: the MAILBOX (per-device
+> transport address, correctly regenerated per device) and the SIGNING identity
+> (per-user — the join key receivers bound). Space CREATE/JOIN now also store the
+> join key under a `signing` slot, the config-sync path preserves it instead of
+> letting the fresh per-device keypair overwrite it, and all space-message
+> signing uses `getSigningKey(spaceId)` = `signing` ?? `inbox` (the fallback
+> covers the join device and pre-migration state). No wire, receive-side, or
+> member-table change; the signing key already crossed devices inside the
+> E2E-encrypted config payload (and was discarded) — trust is unchanged from DMs
+> (all of a user's devices act as the user). Existing pre-fix second devices stay
+> broken until they re-add the space (acceptable for beta).
+>
+> **Durable follow-up (separate task):** a member holds MULTIPLE verified inbox
+> keys, new keys admitted only with a proof chained to the **authenticated device
+> registration** the DM stack already trusts. That also repairs the lost-join-key
+> case and enables true per-device keys. Cross-platform (shared + both apps).
+> Full analysis: quorum-mobile bug
+> `2026-07-19-multidevice-inbox-key-breaks-verified-signer-auth.md`.
 
 ### How Rotation Is Announced: `update-profile` (HISTORICAL — see note above)
 

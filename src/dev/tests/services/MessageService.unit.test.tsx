@@ -999,6 +999,37 @@ describe('MessageService - Unit Tests', () => {
     });
   });
 
+  // Multi-device: a synced second device regenerates the per-device `inbox`
+  // (mailbox) key, but must SIGN with the per-user `signing` key (the join key
+  // receivers bound), else verified-signer auth drops its control messages. The
+  // join device / pre-migration state has no `signing` key → fall back to `inbox`.
+  describe('3h. getSigningKey() - per-user signing key selection (multi-device)', () => {
+    const signingKey = { spaceId: 'space', keyId: 'signing', address: 'a', publicKey: 'signpub', privateKey: 'signpriv' };
+    const inboxKey = { spaceId: 'space', keyId: 'inbox', address: 'b', publicKey: 'inboxpub', privateKey: 'inboxpriv' };
+
+    it('signs with the per-user signing key when present', async () => {
+      mockDeps.messageDB.getSpaceKey = vi
+        .fn()
+        .mockImplementation((_s: string, keyId: string) =>
+          Promise.resolve(
+            keyId === 'signing' ? signingKey : keyId === 'inbox' ? inboxKey : undefined
+          )
+        );
+      const key = await (messageService as any).getSigningKey('space');
+      expect(key.publicKey).toBe('signpub');
+    });
+
+    it('falls back to the inbox (mailbox) key when no signing key exists', async () => {
+      mockDeps.messageDB.getSpaceKey = vi
+        .fn()
+        .mockImplementation((_s: string, keyId: string) =>
+          Promise.resolve(keyId === 'inbox' ? inboxKey : undefined)
+        );
+      const key = await (messageService as any).getSigningKey('space');
+      expect(key.publicKey).toBe('inboxpub');
+    });
+  });
+
   describe('4. encryptAndSendToSpace() - Hub Message Helper', () => {
     const createTestMessage = () =>
       ({
