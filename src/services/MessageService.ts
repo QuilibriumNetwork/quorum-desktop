@@ -987,6 +987,37 @@ export class MessageService {
   }
 
   /**
+   * Authorize an update-profile against the VERIFIED signer, never the
+   * spoofable payload senderId. A signing key already registered to a member
+   * may only update THAT member's profile; a key matching no member is accepted
+   * as a rotation/bootstrap announcement. Drops unsigned/invalid messages.
+   *
+   * Weaker than control-message auth by design (an unregistered key is accepted
+   * so a member whose join row never arrived can still surface a display name),
+   * but it closes the escalation: without it, a forged senderId + attacker key
+   * repoints a victim's inbox_address and poisons the resolveVerifiedSender
+   * reverse-lookup that control-message auth relies on.
+   */
+  private async isUpdateProfileAuthorized(
+    decryptedContent: Message,
+    messageDB: MessageDB,
+    spaceId: string
+  ): Promise<boolean> {
+    if (!decryptedContent.publicKey || !decryptedContent.signature) {
+      return false;
+    }
+    const members = await messageDB.getSpaceMembers(spaceId);
+    const verifiedSender = resolveVerifiedSender(
+      decryptedContent.publicKey,
+      members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+    );
+    return (
+      verifiedSender === null ||
+      verifiedSender === decryptedContent.content.senderId
+    );
+  }
+
+  /**
    * Authorize a read-only-channel post/embed/sticker against the VERIFIED ed448
    * signer (a channel manager), never the spoofable payload senderId. An
    * unsigned/unverifiable post is dropped even in a repudiable space.
@@ -1473,42 +1504,40 @@ export class MessageService {
         },
       });
     } else if (decryptedContent.content.type === 'update-profile') {
-      // Drop unsigned messages — we can't validate authenticity or derive
-      // the inbox address without the signing key material.
-      if (!decryptedContent.publicKey || !decryptedContent.signature) {
+      // SECURITY: authorize against the VERIFIED signer (reverse key→member
+      // lookup), never the spoofable payload senderId. Drops unsigned/invalid;
+      // a key already registered to a member may only update THAT member; an
+      // unregistered key is accepted as a rotation/bootstrap announcement.
+      if (
+        !(await this.isUpdateProfileAuthorized(
+          decryptedContent,
+          messageDB,
+          spaceId
+        ))
+      ) {
         return;
       }
 
-      const sh = await sha256.digest(
-        Buffer.from(decryptedContent.publicKey, 'hex')
-      );
-      const inboxAddress = base58btc.baseEncode(sh.bytes);
-
       // UPSERT: if we don't have a member record yet (joined the space after
-      // the sender sent their update, or join control was missed), create one
-      // from the profile data itself. Mirrors mobile WebSocketContext.tsx:1841-1854.
-      // Without this, every update-profile from an unknown sender was silently
-      // dropped, leaving messages with no displayable name or avatar.
+      // the sender sent their update, or join control was missed), create a
+      // display-only row so their name/avatar still render. inbox_address stays
+      // '' — the authoritative value comes from the VERIFIED join control, never
+      // from this self-asserted message (writing the announced key here would
+      // let a forged senderId poison the resolveVerifiedSender reverse-lookup).
       const existing = await messageDB.getSpaceMember(
         spaceId,
         decryptedContent.content.senderId
       );
       const participant: SpaceMemberRow = existing ?? {
         user_address: decryptedContent.content.senderId,
-        inbox_address: inboxAddress,
+        inbox_address: '',
       };
 
-      // update-profile is itself a key rotation announcement — accept inbox address changes.
-      // Signature was already verified upstream; rejecting on mismatch would permanently
-      // block profile updates after any key rotation.
-      //
       // Two-slot, per-slot-LWW merge (see applyProfileUpdate). Presence
       // semantics: omitted = no change, '' = deliberate clear (falls back to
-      // initials for an emptied icon). The public-profile backfill
-      // (useMembersWithPublicProfileFallback) also honors '' as a deliberate
-      // clear, so it won't resurrect the sender's global avatar.
+      // initials for an emptied icon). inbox_address is deliberately NOT touched
+      // here — see the security note above.
       applyProfileUpdate(participant, decryptedContent.content, decryptedContent.createdDate);
-      participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
       participant.spaceTag =
@@ -2025,43 +2054,39 @@ export class MessageService {
         queryClient,
       });
     } else if (decryptedContent.content.type === 'update-profile') {
-      // Drop unsigned messages — we can't validate authenticity or derive
-      // the inbox address without the signing key material.
-      if (!decryptedContent.publicKey || !decryptedContent.signature) {
+      // SECURITY: authorize against the VERIFIED signer (reverse key→member
+      // lookup), never the spoofable payload senderId. Drops unsigned/invalid;
+      // a key already registered to a member may only update THAT member; an
+      // unregistered key is accepted as a rotation/bootstrap announcement.
+      if (
+        !(await this.isUpdateProfileAuthorized(
+          decryptedContent,
+          this.messageDB,
+          spaceId
+        ))
+      ) {
         return;
       }
 
-      const sh = await sha256.digest(
-        Buffer.from(decryptedContent.publicKey, 'hex')
-      );
-      const inboxAddress = base58btc.baseEncode(sh.bytes);
-
       // UPSERT: if we don't have a member record yet (joined the space after
-      // the sender sent their update, or join control was missed), create one
-      // from the profile data itself. Mirrors the new-session path above
-      // (saveMessage) and mobile WebSocketContext.tsx:1925-1985. Without this,
-      // an update-profile from a sender whose join broadcast never arrived was
-      // silently dropped, leaving every one of their messages on a truncated
-      // address with no path to recovery. See
-      // .agents/bugs/2026-06-13-space-members-missing-no-join-row.md.
+      // the sender sent their update, or join control was missed), create a
+      // display-only row so their name/avatar still render. inbox_address stays
+      // '' — the authoritative value comes from the VERIFIED join control, never
+      // from this self-asserted message (writing the announced key here would
+      // let a forged senderId poison the resolveVerifiedSender reverse-lookup).
       const existing = await this.messageDB.getSpaceMember(
         spaceId,
         decryptedContent.content.senderId
       );
       const participant: SpaceMemberRow = existing ?? {
         user_address: decryptedContent.content.senderId,
-        inbox_address: inboxAddress,
+        inbox_address: '',
       };
 
-      // update-profile is itself a key rotation announcement — accept inbox address changes.
-      // Signature was already verified upstream; rejecting on mismatch would permanently
-      // block profile updates after any key rotation.
-      //
-      // Two-slot, per-slot-LWW merge (see applyProfileUpdate + the saveMessage
-      // block above for the full rationale). Presence semantics: omitted =
-      // no change, '' = deliberate clear.
+      // Two-slot, per-slot-LWW merge (see applyProfileUpdate). Presence
+      // semantics: omitted = no change, '' = deliberate clear. inbox_address is
+      // deliberately NOT touched here — see the security note above.
       applyProfileUpdate(participant, decryptedContent.content, decryptedContent.createdDate);
-      participant.inbox_address = inboxAddress;
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
       const inboundTag = decryptedContent.content.spaceTag;
       participant.spaceTag =

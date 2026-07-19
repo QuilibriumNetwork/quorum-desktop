@@ -890,6 +890,115 @@ describe('MessageService - Unit Tests', () => {
     });
   });
 
+  // SECURITY: update-profile must authorize against the VERIFIED signer, never
+  // the spoofable payload senderId, and must NEVER write the announced key onto
+  // a member row. Otherwise a forged senderId + attacker key repoints a victim's
+  // inbox_address and poisons the resolveVerifiedSender reverse-lookup that
+  // control-message auth (delete/edit/pin/mute) relies on.
+  describe('3g. saveMessage() - update-profile authorization (anti-poisoning)', () => {
+    const attackerPub = '1111111111111111111111111111111111111111111111111111111111111111';
+    const victimPub = '2222222222222222222222222222222222222222222222222222222222222222';
+    const freshPub = '3333333333333333333333333333333333333333333333333333333333333333';
+    const attackerInbox = deriveInboxAddress(attackerPub);
+    const victimInbox = deriveInboxAddress(victimPub);
+
+    const upMsg = (over: Record<string, unknown> = {}) =>
+      ({
+        messageId: 'up-1',
+        spaceId: 'space',
+        channelId: 'space',
+        nonce: 'n-up',
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        lastModifiedHash: '',
+        content: { senderId: 'victim', type: 'update-profile', displayName: 'Hacked' },
+        publicKey: attackerPub,
+        signature: 'sig',
+        ...over,
+      }) as any;
+
+    const save = (msg: any) =>
+      messageService.saveMessage(
+        msg,
+        mockDeps.messageDB,
+        'space',
+        'space',
+        'group',
+        { user_icon: 'i.png', display_name: 'U' }
+      );
+
+    beforeEach(() => {
+      mockDeps.messageDB.saveSpaceMember = vi.fn().mockResolvedValue(undefined);
+      mockDeps.messageDB.getSpaceMember = vi.fn().mockResolvedValue(null);
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([]);
+    });
+
+    it('DROPS an unsigned update-profile', async () => {
+      await save(upMsg({ publicKey: undefined, signature: undefined }));
+      expect(mockDeps.messageDB.saveSpaceMember).not.toHaveBeenCalled();
+    });
+
+    it('DROPS when a KNOWN key claims another member as senderId', async () => {
+      // attacker's key is registered to 'attacker'; it may not speak for 'victim'
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
+        { user_address: 'attacker', address: 'attacker', inbox_address: attackerInbox },
+        { user_address: 'victim', address: 'victim', inbox_address: victimInbox },
+      ]);
+      await save(upMsg()); // senderId 'victim', signed with attacker's key
+      expect(mockDeps.messageDB.saveSpaceMember).not.toHaveBeenCalled();
+    });
+
+    it('does NOT overwrite an existing member inbox_address (unknown key claiming victim)', async () => {
+      // fresh key resolves to no member → accepted as a bootstrap announcement,
+      // but the victim's existing inbox_address must be preserved (no poisoning).
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
+        { user_address: 'victim', address: 'victim', inbox_address: victimInbox },
+      ]);
+      mockDeps.messageDB.getSpaceMember = vi.fn().mockResolvedValue({
+        user_address: 'victim',
+        address: 'victim',
+        inbox_address: victimInbox,
+      });
+      await save(upMsg({ publicKey: freshPub }));
+      expect(mockDeps.messageDB.saveSpaceMember).toHaveBeenCalledWith(
+        'space',
+        expect.objectContaining({ inbox_address: victimInbox })
+      );
+    });
+
+    it('bootstraps an unknown sender with an EMPTY inbox_address (never the announced key)', async () => {
+      // no existing row; unknown key → create display-only row, inbox stays ''
+      await save(
+        upMsg({
+          content: { senderId: 'newuser', type: 'update-profile', displayName: 'Ada' },
+          publicKey: freshPub,
+        })
+      );
+      expect(mockDeps.messageDB.saveSpaceMember).toHaveBeenCalledWith(
+        'space',
+        expect.objectContaining({ user_address: 'newuser', inbox_address: '' })
+      );
+    });
+
+    it('accepts a member updating their OWN profile (verified signer === senderId)', async () => {
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([
+        { user_address: 'victim', address: 'victim', inbox_address: victimInbox },
+      ]);
+      mockDeps.messageDB.getSpaceMember = vi.fn().mockResolvedValue({
+        user_address: 'victim',
+        address: 'victim',
+        inbox_address: victimInbox,
+      });
+      // signed with victim's own key
+      await save(upMsg({ publicKey: victimPub }));
+      expect(mockDeps.messageDB.saveSpaceMember).toHaveBeenCalledWith(
+        'space',
+        expect.objectContaining({ inbox_address: victimInbox })
+      );
+    });
+  });
+
   describe('4. encryptAndSendToSpace() - Hub Message Helper', () => {
     const createTestMessage = () =>
       ({
