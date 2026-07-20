@@ -331,6 +331,52 @@ bump (per the additive-vs-breaking gut-check).
    desktop needs an IndexedDB store (version bump of the local DB only);
    mobile a new MMKV keyspace. Clean cut-over acceptable for beta.
 
+## Mobile agent: start here (self-contained pickup guide)
+
+If you're picking up the MOBILE side, everything you need is in THIS file — you
+don't need any other doc handed to you.
+
+**Step 0 — unblock the shared dependency (REQUIRED FIRST).** The new API
+(`verifyDeviceKeyStatement`, `buildDeviceKeyStatementBytes`, `SpaceMemberDevice`,
+and the `deviceKeys` param on `resolveVerifiedSender`) shipped in quorum-shared
+#62 but is NOT yet on npm at a version mobile installs. As of 2026-07-20 mobile
+pins `@quilibrium/quorum-shared@2.1.0-35`, whose PUBLISHED build predates
+deviceKeys (desktop only got it via its local `link:` symlink). Before you can
+import any of it: **bump shared's version + `npm publish`, then bump mobile's pin
+and reinstall.** Verify `node_modules/@quilibrium/quorum-shared/dist/utils/deviceKeys.d.ts`
+exists before writing mobile code.
+
+**Reference implementation:** the DESKTOP receive-side is merged (#245) — mirror
+it. Key files to read:
+- `src/db/messages.ts` — the `space_member_devices` store (DB v14) + CRUD +
+  missing-store read guards.
+- `src/services/MessageService.ts` — `processDeviceKeyStatement`,
+  `resolveSpaceSender`, the `announce-keys`/`revoke-device` control handlers,
+  and the four wired auth sites.
+- `quorum-shared/src/utils/deviceKeys.ts` — the verify/resolve logic you call.
+
+**Mobile scope (receive-side, additive, inert):** mirror desktop —
+- an MMKV admission store (get / getOne / save + revocation tombstones),
+- the `announce-keys`/`revoke-device` handlers in `context/WebSocketContext.tsx`,
+- resolver wiring in `services/space/spaceMessageAuth.ts` (pass stored admissions
+  to `resolveVerifiedSender`).
+Re-verify these paths against LIVE mobile source (refs here came from a deep-dive
+read, not a fresh one). No send-side flip yet — keep it behavior-neutral like
+desktop.
+
+**Background (optional — now summarized here so it needn't be handed over):**
+- Cross-repo rules: `D:/GitHub/Quilibrium/quorum-atlas.md` (iOS review pass,
+  never run Expo, prefer statically-verifiable mobile changes).
+- Root analysis + the interim `signing`-slot fix mobile ALREADY shipped (which
+  this supersedes):
+  `quorum-mobile/.agents/bugs/2026-07-19-multidevice-inbox-key-breaks-verified-signer-auth.md`.
+  Relation: that bug is the ORIGIN of this effort — it documents the multi-device
+  breakage and mobile's interim shared-signing-key fix; this durable per-device
+  work replaces that interim fix.
+
+**Release gate:** mobile receive-side ships additively (safe alone). The
+send-side flip on BOTH platforms is staged — see "Production release order".
+
 ## Cross-repo scope + sequencing (vertical slices)
 
 1. **quorum-shared** — types, statement bytes/verify, resolver extension,
