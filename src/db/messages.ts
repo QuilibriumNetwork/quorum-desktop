@@ -215,8 +215,23 @@ export class MessageDB {
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
       request.onerror = () => reject(request.error);
+      // A version bump can't apply while another tab holds an older connection
+      // open — the upgrade blocks until that connection closes. Log it so the
+      // stuck state is diagnosable rather than a silent hang.
+      request.onblocked = () => {
+        logger.warn(
+          '[MessageDB] DB upgrade blocked by another open tab; close other tabs to finish upgrading'
+        );
+      };
       request.onsuccess = () => {
         this.db = request.result;
+        // If another tab later requests a higher version, yield: close this
+        // connection so its upgrade isn't blocked (prevents a wedged DB across
+        // version bumps). The next DB call reopens via init().
+        this.db.onversionchange = () => {
+          this.db?.close();
+          this.db = null;
+        };
         resolve();
       };
 
@@ -1225,6 +1240,9 @@ export class MessageDB {
    */
   async saveSpaceMemberDevice(device: SpaceMemberDevice): Promise<void> {
     await this.init();
+    // Degrade gracefully if the v14 store isn't present yet (e.g. an upgrade
+    // blocked by another open tab). Never let an optional write crash a caller.
+    if (!this.db!.objectStoreNames.contains('space_member_devices')) return;
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(
         'space_member_devices',
@@ -1242,6 +1260,7 @@ export class MessageDB {
     deviceInboxAddress: string
   ): Promise<SpaceMemberDevice | undefined> {
     await this.init();
+    if (!this.db!.objectStoreNames.contains('space_member_devices')) return undefined;
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_member_devices', 'readonly');
       const request = transaction
@@ -1255,6 +1274,9 @@ export class MessageDB {
   /** All device admissions for a space (revoked rows included; resolver skips them). */
   async getSpaceMemberDevices(spaceId: string): Promise<SpaceMemberDevice[]> {
     await this.init();
+    // Missing store (upgrade not yet applied) → no admissions; the resolver
+    // falls back to join-bound member rows. Keeps the receive path alive.
+    if (!this.db!.objectStoreNames.contains('space_member_devices')) return [];
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_member_devices', 'readonly');
       const store = transaction.objectStore('space_member_devices');
