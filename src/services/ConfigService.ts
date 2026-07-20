@@ -127,6 +127,23 @@ export class ConfigService {
             await this.messageDB.saveSpaceKey(key);
           }
 
+          // Preserve the join-bound key as the per-USER SIGNING identity before
+          // the `inbox` (mailbox) slot is overwritten below with a fresh
+          // per-DEVICE keypair. Receivers verify control messages against the
+          // join key, so a second device must keep signing with it. A
+          // post-migration uploader carries an explicit `signing` slot (already
+          // saved by the loop above); older uploads only carry `inbox`, so
+          // derive `signing` from it.
+          if (!space.keys.find((k) => k.keyId === 'signing')) {
+            const syncedInbox = space.keys.find((k) => k.keyId === 'inbox');
+            if (syncedInbox) {
+              await this.messageDB.saveSpaceKey({
+                ...syncedInbox,
+                keyId: 'signing',
+              });
+            }
+          }
+
           const reg = (await this.apiClient.getSpace(space.spaceId)).data;
           this.spaceInfo.current[space.spaceId] = reg;
 

@@ -388,6 +388,15 @@ Space owner identity is cryptographically tied to space creation keys:
 > composer hides the toggle for read-only channels (#242).
 > DMs stay session-anchored (PR #220). A branded `VerifiedSender` type makes
 > passing a raw `senderId` into these checks a compile error.
+>
+> **Multi-device:** verified-signer auth resolves a member from a single bound
+> key (the join key), so a second device — which generates its own per-space key
+> — would have all its control messages dropped. Space messages are therefore
+> signed with a per-user **signing** key shared across a user's devices
+> (`getSigningKey` = `signing` ?? `inbox`), while the per-device `inbox` key
+> stays the mailbox. Details + the desktop/mobile divergence + the durable
+> per-device-key follow-up: `cryptographic-architecture.md` → "Multi-Device
+> Signing".
 
 #### @everyone Mention Permission
 
@@ -550,6 +559,7 @@ User identity secured via WebAuthn passkeys:
 **Document Created**: 2025-11-08
 **Last Updated**: 2026-07-19
 **Major Updates**:
+- 2026-07-19: Multi-device — space messages signed with a per-user `signing` key (shared across a user's devices) so verified-signer auth works from second devices; `inbox` stays the per-device mailbox key. See crypto-architecture "Multi-Device Signing"
 - 2026-07-19: `update-profile` authorized by verified signer + never writes the announced key onto a member row (closes inbox_address poisoning → control-message impersonation) (#243)
 - 2026-07-19: Read-only-channel enforcement completed — verified-signer gate on the durable path and for embed/sticker, plus force-signed read-only sends and composer toggle-hide (#242)
 - 2026-07-19: Space control-message + @everyone authorization now keyed on the verified ed448 signer (not payload senderId)

@@ -227,6 +227,13 @@ Quick reference for debugging and creating console snippets.
 }
 ```
 
+**`keyId` slots:** `owner`, `config`, `hub`, `inbox`, `signing`, plus the
+`<spaceAddress>` and `<groupAddress>` group keys. Note the split between `inbox`
+(per-DEVICE mailbox/transport key, regenerated on each device) and `signing`
+(per-USER identity key — the join key receivers bind; used to sign space
+messages via `getSigningKey` = `signing` ?? `inbox`). See
+`cryptographic-architecture.md` → "Multi-Device Signing".
+
 ---
 
 ### space_members
@@ -577,4 +584,4 @@ for (const s of stores) console.log(s, await countStore(s));
 
 ---
 
-*Last updated: 2026-05-20 — staleness audit fixes*
+*Last updated: 2026-07-19*

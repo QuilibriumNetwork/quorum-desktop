@@ -716,7 +716,7 @@ export class MessageService {
           } as Message;
 
           // Sign (non-repudiable — required for profile updates)
-          const inboxKey = await this.messageDB.getSpaceKey(s.spaceId, 'inbox');
+          const inboxKey = await this.getSigningKey(s.spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
             JSON.parse(
@@ -984,6 +984,23 @@ export class MessageService {
     return space.groups
       ?.find((g) => g.channels.find((c) => c.channelId === channelId))
       ?.channels.find((c) => c.channelId === channelId);
+  }
+
+  /**
+   * The key to SIGN space messages with. The per-space `inbox` key plays two
+   * roles with opposite lifetimes: the MAILBOX (per-device transport address,
+   * regenerated on each device) and the SIGNING identity (per-user, the join
+   * key that receivers bound in their member table). A synced second device has
+   * a fresh `inbox` key no receiver has seen, so signing with it fails the
+   * verified-signer reverse-lookup and the message is dropped. The `signing`
+   * slot holds the join key across devices; fall back to `inbox` for the join
+   * device and pre-migration state (where the two keys are identical).
+   */
+  private async getSigningKey(spaceId: string) {
+    return (
+      (await this.messageDB.getSpaceKey(spaceId, 'signing')) ??
+      (await this.messageDB.getSpaceKey(spaceId, 'inbox'))
+    );
   }
 
   /**
@@ -5302,7 +5319,7 @@ export class MessageService {
         !space?.isRepudiable ||
         (space?.isRepudiable && !effectiveSkipSigning)
       ) {
-        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+        const inboxKey = await this.getSigningKey(spaceId);
         message.publicKey = inboxKey.publicKey;
         message.signature = Buffer.from(
           JSON.parse(
@@ -5445,7 +5462,7 @@ export class MessageService {
         // gains a signature on edit. In a non-repudiable space the original is
         // always signed, so edits are too (consistent with the space rule).
         if (shouldSignEdit(originalMessage)) {
-          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
             JSON.parse(
@@ -5561,7 +5578,7 @@ export class MessageService {
 
         // Enforce non-repudiability
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
-          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
             JSON.parse(
@@ -5641,7 +5658,7 @@ export class MessageService {
 
         // Sign (same pattern as pin messages)
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
-          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          const inboxKey = await this.getSigningKey(spaceId);
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
             JSON.parse(
@@ -5714,7 +5731,7 @@ export class MessageService {
         } as Message;
 
         // Enforce non-repudiability (required for profile updates to verify sender)
-        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+        const inboxKey = await this.getSigningKey(spaceId);
         message.publicKey = inboxKey.publicKey;
         message.signature = Buffer.from(
           JSON.parse(

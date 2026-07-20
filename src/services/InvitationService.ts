@@ -747,6 +747,21 @@ export class InvitationService {
           new Uint8Array(inboxPair.private_key)
         ).toString('hex'),
       });
+      // The join key is also the per-USER SIGNING identity that receivers bind
+      // in their member table (the join broadcast). Store it under `signing` so
+      // it survives a second device regenerating the per-device `inbox`
+      // (mailbox) key on config sync.
+      await this.messageDB.saveSpaceKey({
+        spaceId: space.spaceId,
+        keyId: 'signing',
+        address: inboxAddress,
+        publicKey: Buffer.from(new Uint8Array(inboxPair.public_key)).toString(
+          'hex'
+        ),
+        privateKey: Buffer.from(
+          new Uint8Array(inboxPair.private_key)
+        ).toString('hex'),
+      });
       // Clear any tombstones from a previous join to allow messages to sync
       await this.messageDB.clearTombstonesForSpace(space.spaceId);
       await this.messageDB.saveSpace(space);
