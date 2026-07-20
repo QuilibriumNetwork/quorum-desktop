@@ -253,11 +253,16 @@ bump (per the additive-vs-breaking gut-check).
    verification silently across platforms. This project already carries
    `buildMessageFingerprint`/`canonicalize` precisely because of this class of
    bug — treat byte-identity as a hard gate, not an implementation detail.
-2. **Cap admissions per `(spaceId, userAddress)`** (e.g. ≤10, evict oldest
-   non-revoked). Each valid `announce-keys` is master-signed but a compromised/
-   malicious account could mint many with different `spaceKeyPublicKey`s,
-   bloating storage and turning the resolver's second-path scan into an O(n)
-   DoS. Enforce the cap at upsert and early-exit the resolver scan.
+2. **Bound `announce-keys` flooding per member** — but NOT with an evict-oldest
+   cap (that silently deletes in-use devices; rejected 2026-07-20). A valid
+   `announce-keys` is master-signed, but a member could mint many with distinct
+   `spaceKeyPublicKey`s, bloating storage and the resolver scan. The fix must
+   never break a working device (reject-new above a very high bound / rate-limit
+   / registration-anchored TTL). Tracked, with the rejected approach and
+   candidate directions, in
+   `.agents/bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md`.
+   Low severity (member-only, storage/perf, no impersonation) — receive-side
+   ships without a cap deliberately.
 3. **Document that `deviceInboxAddress` is a self-asserted tag**, not verified
    against the hub registration at receive (attribution + revocation handle
    only). Consequence: revocation is only as reliable as the master-key holder's
