@@ -3,7 +3,7 @@ type: doc
 title: Cryptographic Architecture
 status: done
 created: 2025-12-20T00:00:00.000Z
-updated: 2026-07-19T00:00:00.000Z
+updated: 2026-07-20T00:00:00.000Z
 ---
 
 # Cryptographic Architecture
@@ -14,7 +14,7 @@ updated: 2026-07-19T00:00:00.000Z
 This document explains the cryptographic protocols and key management used in Quorum. It focuses on the **mental model** needed to understand how encryption and signing work, rather than implementation details.
 
 
-**Last Updated**: 2026-07-19
+**Last Updated**: 2026-07-20
 
 ---
 
@@ -420,6 +420,19 @@ same root the device registration and every config upload already use) — which
 also auto-heals existing devices on cut-over and repairs the lost-join-key case.
 Spec: [`.agents/tasks/2026-07-19-per-device-signing-keys-registration-anchored.md`](../tasks/2026-07-19-per-device-signing-keys-registration-anchored.md).
 
+**Progress (2026-07-20):** the drift-proof core shipped in `quorum-shared`
+(`utils/deviceKeys.ts`: `announce-keys`/`revoke-device` statements, canonical
+byte builder, `verifyDeviceKeyStatement`, and a `deviceKeys`-aware
+`resolveVerifiedSender`), and desktop's **receive-side** landed (the
+`space_member_devices` store + the two control-message handlers, resolver wired
+into all four auth paths). This is **additive and behavior-neutral**: until the
+**send-side flip** ships on both platforms, every device still signs with the
+interim join-bound key, so nothing user-visible changes yet. Remaining:
+send-side (per-device signing + on-connect announce + Security-modal revocation)
+on desktop + mobile, mobile receive-side, then retire the interim `signing`
+slot. A non-destructive bound on `announce-keys` flooding is tracked in
+[`.agents/bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md`](../bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md).
+
 ---
 
 ## Control-Message Authorization (Verified Signer)
@@ -575,4 +588,4 @@ secureChannel.UnsealSyncEnvelope(
 ---
 
 
-_Last Updated: 2026-07-19_
+_Last Updated: 2026-07-20_

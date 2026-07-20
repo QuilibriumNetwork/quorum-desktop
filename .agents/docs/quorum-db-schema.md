@@ -3,7 +3,7 @@ type: doc
 title: 'IndexedDB Schema Reference: `quorum_db`'
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-23T00:00:00.000Z
+updated: 2026-07-20T00:00:00.000Z
 ---
 
 # IndexedDB Schema Reference: `quorum_db`
@@ -15,8 +15,19 @@ Quick reference for debugging and creating console snippets.
 | Property | Value |
 |----------|-------|
 | **Database Name** | `quorum_db` |
-| **Current Version** | 12 |
+| **Current Version** | 14 |
 | **Schema Location** | `src/db/messages.ts` |
+
+> **Dev gotcha (not a real-user issue):** IndexedDB only runs upgrades on a
+> version CHANGE. If two branches use the same `DB_VERSION` with different store
+> sets, switching between them against the same `localhost` origin leaves the DB
+> stamped at that version with a mismatched store set — reads then throw
+> `NotFoundError: ... object store ... not found`. Fix while developing: reset
+> the DB (Settings → Danger Zone → Reset App Data, or delete `quorum_db` in
+> DevTools → Application). Production users only ever run one monotonically
+> versioned build, so they can't hit this. The app closes its own connection on
+> `versionchange` (so a delete/upgrade isn't blocked by its own tab); a second
+> open tab can still block it.
 
 ---
 
@@ -42,6 +53,8 @@ Quick reference for debugging and creating console snippets.
 | **channel_threads** | `threadId` | `by_channel` |
 | **thread_read_times** | `threadId` | `by_channel` |
 | **user_notes** | `targetAddress` | — |
+| **search_indices** | `indexKey` | `by_lastUpdated` |
+| **space_member_devices** | `[spaceId, deviceInboxAddress]` | `by_member` |
 
 ---
 
@@ -446,13 +459,64 @@ Private annotations one user writes about another. Never synced — local only.
 
 ---
 
+### search_indices
+
+**Key:** `indexKey` (string) — `space:<spaceId>` or `dm:<conversationId>`
+
+**Indexes:**
+- `by_lastUpdated` → `lastUpdated`
+
+Serialized MiniSearch indices, persisted so full-text search survives restarts.
+
+```typescript
+{
+  indexKey: string          // "space:<id>" | "dm:<conversationId>"
+  serializedIndex: string   // JSON-serialized MiniSearch index
+  messageCount: number
+  lastUpdated: number
+}
+```
+
+---
+
+### space_member_devices
+
+**Key:** `[spaceId, deviceInboxAddress]` (compound)
+
+**Indexes:**
+- `by_member` → `[spaceId, userAddress]`
+
+Per-device space signing keys admitted via master-signed statements (durable
+multi-device). One row per device tag; the verified-signer resolver scans a
+space's rows and matches a message's signing key against `inboxAddress`. Never
+derived from the member row (poisoning-proof); revoked rows are kept as
+tombstones. Reads degrade gracefully if the store is absent (see
+`getSpaceMemberDevices`). See `cryptographic-architecture.md` → "Multi-Device
+Signing" and the shared `utils/deviceKeys.ts`.
+
+```typescript
+{
+  spaceId: string
+  userAddress: string          // the member (master user address)
+  deviceInboxAddress: string   // the device's DM inbox tag (attribution + revocation handle)
+  inboxAddress: string         // deriveInboxAddress(spaceKeyPublicKey) — the reverse-lookup key
+  spaceKeyPublicKey: string    // the device's per-space ed448 signing pubkey (hex)
+  timestamp: number            // statement timestamp (LWW ordering)
+  revoked?: boolean            // true once a revoke-device tombstone at >= timestamp arrived
+}
+```
+
+**MessageDB methods:** `getSpaceMemberDevices(spaceId)`, `getSpaceMemberDevice(spaceId, deviceInboxAddress)`, `saveSpaceMemberDevice(device)`
+
+---
+
 ## Console Snippets
 
 ### Open Database
 
 ```javascript
 const db = await new Promise((resolve, reject) => {
-  const req = indexedDB.open('quorum_db', 12);
+  const req = indexedDB.open('quorum_db'); // omit version = open at current, no upgrade
   req.onsuccess = () => resolve(req.result);
   req.onerror = () => reject(req.error);
 });
@@ -581,7 +645,9 @@ for (const s of stores) console.log(s, await countStore(s));
 | 10 | Added: channel_threads store |
 | 11 | Added: thread_read_times store |
 | 12 | Added: user_notes store (private per-user annotations, local-only) |
+| 13 | Added: search_indices store (persisted MiniSearch full-text indices) |
+| 14 | Added: space_member_devices store (per-device space signing keys — durable multi-device) |
 
 ---
 
-*Last updated: 2026-07-19*
+*Last updated: 2026-07-20*

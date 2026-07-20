@@ -16,12 +16,15 @@ const DangerZone: React.FunctionComponent = () => {
       // Clear React Query cache
       queryClient.clear();
 
-      // Delete IndexedDB database
+      // Delete IndexedDB database. A blocked delete means another tab still
+      // holds the DB open — treating it as success (the old behavior) silently
+      // reloaded on the SAME data, so the reset appeared to do nothing. Reject
+      // so the user is told to close other tabs instead.
       await new Promise<void>((resolve, reject) => {
         const req = indexedDB.deleteDatabase('quorum_db');
         req.onsuccess = () => resolve();
         req.onerror = () => reject(req.error);
-        req.onblocked = () => resolve();
+        req.onblocked = () => reject(new Error('blocked'));
       });
 
       // Clear all localStorage
@@ -34,7 +37,7 @@ const DangerZone: React.FunctionComponent = () => {
       window.location.reload();
     } catch (error) {
       console.error('Failed to reset app data:', error);
-      setResetError('unknown');
+      setResetError((error as Error)?.message === 'blocked' ? 'blocked' : 'unknown');
     }
   };
 
@@ -57,7 +60,11 @@ const DangerZone: React.FunctionComponent = () => {
                 dismissible
                 onClose={() => setResetError(null)}
               >
-                <Trans>An error occurred while resetting app data. Please try again.</Trans>
+                {resetError === 'blocked' ? (
+                  <Trans>Couldn't reset: Quorum is open in another tab. Close all other Quorum tabs, then try again.</Trans>
+                ) : (
+                  <Trans>An error occurred while resetting app data. Please try again.</Trans>
+                )}
               </Callout>
             </div>
           )}

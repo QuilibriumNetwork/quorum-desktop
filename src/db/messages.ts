@@ -1,6 +1,6 @@
 import { logger, isValidIPFSCID } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink } from '@quilibrium/quorum-shared';
+import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink, SpaceMemberDevice } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
@@ -196,7 +196,7 @@ interface StoredSearchIndex {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 13;
+  private readonly DB_VERSION = 14;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexLoadPromises: Map<string, Promise<void>> = new Map();
   private dirtyIndices: Set<string> = new Set();
@@ -215,8 +215,23 @@ export class MessageDB {
       const request = indexedDB.open(this.DB_NAME, this.DB_VERSION);
 
       request.onerror = () => reject(request.error);
+      // A version bump can't apply while another tab holds an older connection
+      // open — the upgrade blocks until that connection closes. Log it so the
+      // stuck state is diagnosable rather than a silent hang.
+      request.onblocked = () => {
+        logger.warn(
+          '[MessageDB] DB upgrade blocked by another open tab; close other tabs to finish upgrading'
+        );
+      };
       request.onsuccess = () => {
         this.db = request.result;
+        // If another tab later requests a higher version, yield: close this
+        // connection so its upgrade isn't blocked (prevents a wedged DB across
+        // version bumps). The next DB call reopens via init().
+        this.db.onversionchange = () => {
+          this.db?.close();
+          this.db = null;
+        };
         resolve();
       };
 
@@ -369,6 +384,17 @@ export class MessageDB {
             keyPath: 'indexKey',
           });
           indexStore.createIndex('by_lastUpdated', 'lastUpdated');
+        }
+
+        if (event.oldVersion < 14) {
+          // Per-device space signing keys admitted via master-signed statements.
+          // Keyed by the device's DM inbox tag so announce/revoke upsert one row
+          // per device; the resolver scans a space's rows and matches on the
+          // signing-key `inboxAddress` field (see utils/deviceKeys in shared).
+          const memberDevices = db.createObjectStore('space_member_devices', {
+            keyPath: ['spaceId', 'deviceInboxAddress'],
+          });
+          memberDevices.createIndex('by_member', ['spaceId', 'userAddress']);
         }
       };
     });
@@ -1202,6 +1228,64 @@ export class MessageDB {
       request.onsuccess = () => {
         resolve();
       };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Per-device signing-key admissions (and revocation tombstones), one row per
+   * device tag. Never derived from the member row — admitted only via a
+   * master-signed statement (see MessageService announce-keys/revoke-device
+   * handlers). Passed to resolveVerifiedSender as its optional 3rd arg.
+   */
+  async saveSpaceMemberDevice(device: SpaceMemberDevice): Promise<void> {
+    await this.init();
+    // Degrade gracefully if the v14 store isn't present yet (e.g. an upgrade
+    // blocked by another open tab). Never let an optional write crash a caller.
+    if (!this.db!.objectStoreNames.contains('space_member_devices')) return;
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(
+        'space_member_devices',
+        'readwrite'
+      );
+      transaction.objectStore('space_member_devices').put(device);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  /** The stored admission/tombstone for a device tag, if any (for LWW). */
+  async getSpaceMemberDevice(
+    spaceId: string,
+    deviceInboxAddress: string
+  ): Promise<SpaceMemberDevice | undefined> {
+    await this.init();
+    if (!this.db!.objectStoreNames.contains('space_member_devices')) return undefined;
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('space_member_devices', 'readonly');
+      const request = transaction
+        .objectStore('space_member_devices')
+        .get([spaceId, deviceInboxAddress]);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /** All device admissions for a space (revoked rows included; resolver skips them). */
+  async getSpaceMemberDevices(spaceId: string): Promise<SpaceMemberDevice[]> {
+    await this.init();
+    // Missing store (upgrade not yet applied) → no admissions; the resolver
+    // falls back to join-bound member rows. Keeps the receive path alive.
+    if (!this.db!.objectStoreNames.contains('space_member_devices')) return [];
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('space_member_devices', 'readonly');
+      const store = transaction.objectStore('space_member_devices');
+      const range = IDBKeyRange.bound(
+        [spaceId, ' '],
+        [spaceId, '￿']
+      );
+      const request = store.getAll(range);
+      request.onsuccess = () => resolve(request.result ?? []);
       request.onerror = () => reject(request.error);
     });
   }
