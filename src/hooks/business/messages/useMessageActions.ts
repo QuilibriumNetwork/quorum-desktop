@@ -1,4 +1,4 @@
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, MESSAGE_EDIT_WINDOW_MS } from '@quilibrium/quorum-shared';
 import { useCallback, useState } from 'react';
 import React from 'react';
 import type { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage, PostMessage } from '@quilibrium/quorum-shared';
@@ -99,11 +99,10 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   const canUserDelete = Boolean(canDeleteMessages);
 
   // Calculate if user can edit this message
-  // Only original sender can edit, and only within 15 minutes
-  const EDIT_TIME_WINDOW = 15 * 60 * 1000; // 15 minutes in milliseconds
+  // Only original sender can edit, and only within the shared edit window
   const canUserEdit = message.content.senderId === userAddress &&
     message.content.type === 'post' &&
-    (Date.now() - message.createdDate) <= EDIT_TIME_WINDOW;
+    (Date.now() - message.createdDate) <= MESSAGE_EDIT_WINDOW_MS;
 
   // Helper to build DM context for action queue handlers
   const buildDmActionContext = useCallback((address: string) => {

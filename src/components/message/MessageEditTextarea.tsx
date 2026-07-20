@@ -15,7 +15,7 @@ import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilib
 import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '../../config/features';
-import { createIPFSCIDRegex, extractMentionsFromText } from '@quilibrium/quorum-shared';
+import { createIPFSCIDRegex, extractMentionsFromText, applyEdit } from '@quilibrium/quorum-shared';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 
@@ -426,43 +426,34 @@ export function MessageEditTextarea({
       spaceChannels: spaceChannels.map(c => ({ channelId: c.channelId, channelName: c.channelName })),
     });
 
-    // Preserve current content in edits array before updating
-    const currentText = message.content.type === 'post' ? message.content.text : '';
-    const existingEdits = message.edits || [];
-
-    // Build edits array optimistically
-    const edits = message.modifiedDate === message.createdDate
-      ? // First edit: add original content to edits array
-        [
-          {
-            text: currentText,
-            modifiedDate: message.createdDate,
-            lastModifiedHash: message.nonce,
-          },
-        ]
-      : existingEdits.length > 0
-      ? // Subsequent edits: add current version
-        [
-          ...existingEdits,
-          {
-            text: currentText,
-            modifiedDate: message.modifiedDate,
-            lastModifiedHash: message.lastModifiedHash || message.nonce,
-          },
-        ]
-      : existingEdits;
+    // Apply the edit optimistically via the shared helper (same logic as the
+    // receive path — single source of truth). The optimistic path always
+    // retains prior versions; if the conversation/space has saveEditHistory
+    // off, the authoritative receive/DB path reconciles edits[] to empty. No
+    // replay guard fires here (fresh nonce never matches the stored one).
+    const applied = applyEdit(
+      {
+        text: message.content.type === 'post' ? message.content.text : '',
+        createdDate: message.createdDate,
+        modifiedDate: message.modifiedDate,
+        nonce: message.nonce,
+        lastModifiedHash: message.lastModifiedHash,
+        edits: message.edits,
+      },
+      { editedAt, editNonce, saveEditHistory: true }
+    );
 
     // Create updated message object
     const updatedMessage: MessageType = {
       ...message,
-      modifiedDate: editedAt,
-      lastModifiedHash: editNonce,
+      modifiedDate: applied.modifiedDate,
+      lastModifiedHash: applied.lastModifiedHash,
       mentions: mentions, // Update mentions with newly extracted mentions
       content: {
         ...message.content,
         text: editedText,
       } as PostMessage,
-      edits: edits,
+      edits: applied.edits,
     };
 
     // Update React Query cache IMMEDIATELY
@@ -517,7 +508,7 @@ export function MessageEditTextarea({
         }
 
         // If saveEditHistory is disabled, clear edits array
-        if (!saveEditHistoryEnabled && edits.length > 0) {
+        if (!saveEditHistoryEnabled && applied.edits.length > 0) {
           const correctedMessage: MessageType = {
             ...updatedMessage,
             edits: [],
