@@ -281,37 +281,10 @@ After rotation the old `inbox_address` stored in the receiver's `space_members` 
 > display update isn't dropped after a rotation), but the handler no longer acts
 > on the new key.
 >
-> **⚠️ MULTI-DEVICE — exposed 2026-07-19; sender-side fix implemented.**
-> This is more than a rare rotation edge case. Each device generates its OWN
-> space signing keypair (`spaceSyncService.ts` `generateEd448()`), so one user
-> signs space messages with a different key per device. The verified-signer
-> reverse-lookup binds a member to a SINGLE `inbox_address`, and the removed
-> `update-profile` rebinding was — accidentally — the only thing that let a
-> second device's key get into other members' tables. With it gone, a control
-> message (e.g. a delete) sent from a user's second device fails the reverse
-> lookup on other clients and is dropped (posts still land, because unverifiable
-> post signatures are nulled and processed anyway; control messages fail closed).
-> The vulnerable line was genuinely load-bearing for multi-device.
->
-> **Fix — signing/mailbox key split (implemented, sender-side).** The per-space
-> `inbox` key played two roles with opposite lifetimes: the MAILBOX (per-device
-> transport address, correctly regenerated per device) and the SIGNING identity
-> (per-user — the join key receivers bound). Space CREATE/JOIN now also store the
-> join key under a `signing` slot, the config-sync path preserves it instead of
-> letting the fresh per-device keypair overwrite it, and all space-message
-> signing uses `getSigningKey(spaceId)` = `signing` ?? `inbox` (the fallback
-> covers the join device and pre-migration state). No wire, receive-side, or
-> member-table change; the signing key already crossed devices inside the
-> E2E-encrypted config payload (and was discarded) — trust is unchanged from DMs
-> (all of a user's devices act as the user). Existing pre-fix second devices stay
-> broken until they re-add the space (acceptable for beta).
->
-> **Durable follow-up (separate task):** a member holds MULTIPLE verified inbox
-> keys, new keys admitted only with a proof chained to the **authenticated device
-> registration** the DM stack already trusts. That also repairs the lost-join-key
-> case and enables true per-device keys. Cross-platform (shared + both apps).
-> Full analysis: quorum-mobile bug
-> `2026-07-19-multidevice-inbox-key-breaks-verified-signer-auth.md`.
+> **Multi-device note.** The per-space inbox key turned out to play two roles
+> with opposite lifetimes (per-device mailbox vs per-user signing identity),
+> which broke verified-signer auth for second devices. That is now a first-class
+> concern — see **"Multi-Device Signing (mailbox key vs signing key)"** below.
 
 ### How Rotation Is Announced: `update-profile` (HISTORICAL — see note above)
 
@@ -370,6 +343,82 @@ update-profile:   (current — #243) verify signature, authorize the VERIFIED
                   stored inbox_address from the announcement — the authoritative
                   value comes only from the verified join control.
 ```
+
+---
+
+## Multi-Device Signing (mailbox key vs signing key)
+
+Verified-signer authorization (below) maps a message's signing key back to a
+member via a single bound `inbox_address` (set by the join broadcast). That
+assumed one key per member — which multi-device breaks.
+
+### The two roles of the per-space inbox key
+
+The per-space `inbox` key was doing two jobs that need **opposite lifetimes**:
+
+| Role | Must be | Why |
+|------|---------|-----|
+| **Mailbox** (hub transport address: `postHubAdd`, `listen`, inbox cleanup) | **per-DEVICE** | each device receives its own copy of space messages |
+| **Signing identity** (what verified-signer auth resolves to a member) | **per-USER** | receivers bound ONE key (the join key) for the member; every device must sign with it to be recognized |
+
+When a space syncs to a second device, that device generates a **fresh** inbox
+keypair (correct for the mailbox role). Before the fix it also signed with that
+fresh key — which no receiver's member table has seen — so `resolveVerifiedSender`
+failed closed and **every control message from a second device was dropped**
+(delete/edit/pin/mute, read-only posts, @everyone). Ordinary posts still landed
+(an unverifiable post signature is nulled and the post processed anyway); only
+signature-gated actions failed.
+
+> Historically, desktop's `update-profile` handler rewrote a member's stored
+> `inbox_address` from the signing key, which accidentally re-bound a second
+> device's key. That line was removed as a poisoning vulnerability (#243), which
+> is what exposed this gap — the rebinding was load-bearing for multi-device.
+
+### The fix: split the two roles (interim, sender-side)
+
+A per-user `signing` key slot holds the join key; the `inbox` slot stays the
+per-device mailbox key. Space messages are signed with
+`getSigningKey(spaceId)` = `signing` ?? `inbox` (the fallback covers the join
+device and pre-migration state, where the two are identical). No wire,
+receive-side, or member-table change — receivers already verify against whatever
+key signed the message; only *which key the sender uses* changed. The signing
+private key crossing devices is not new exposure: it already travelled inside the
+E2E-encrypted config payload (and was discarded). Trust is unchanged from DMs —
+all of a user's devices act as the user.
+
+### Desktop vs mobile (they diverge — intentional, for now)
+
+Both platforms ship the same core (sign with the per-user signing key), but the
+migration/heal behavior differs:
+
+| Aspect | Desktop | Mobile |
+|--------|---------|--------|
+| Store `signing` on create/join | yes | yes |
+| Sign via `signing ?? inbox` | yes (6 send sites) | yes |
+| Preserve `signing` on **new-space** sync | yes (`ConfigService`, `!existingSpace`) | yes |
+| Heal **already-synced** spaces (ongoing, every config receive) | **no** | **yes** |
+| Key provenance tag (`origin` / `promoted` / `adopted`) | no | yes — `origin` (own join key) never overwritten; others yield to the synced blob |
+| Promote join key → `signing` at config save | no | yes |
+| Re-anchor self member row to the signing address | no | yes |
+
+Consequence: an **existing** second device that was broken *before* the fix
+**auto-heals on mobile** (its primary device promotes and publishes the join key;
+the second device adopts it on the next sync) but **stays degraded on desktop**
+(desktop only wires the new-space path + the `signing ?? inbox` fallback). On
+desktop that user can still do admin actions from their primary device; the
+durable follow-up (below) heals the rest. This divergence is tolerable because
+receivers only ever needed the join binding, but any future migration must not
+assume the two platforms hold identical `signing` state.
+
+### Known limitation + durable follow-up
+
+The interim fix makes all of a user's devices share **one** signing key: no
+per-device attribution or revocation, and a lost join key breaks control ops
+until re-join. The durable design gives each device its **own** key, admitted by
+receivers only via a statement signed by the user's **master identity key** (the
+same root the device registration and every config upload already use) — which
+also auto-heals existing devices on cut-over and repairs the lost-join-key case.
+Spec: [`.agents/tasks/2026-07-19-per-device-signing-keys-registration-anchored.md`](../tasks/2026-07-19-per-device-signing-keys-registration-anchored.md).
 
 ---
 

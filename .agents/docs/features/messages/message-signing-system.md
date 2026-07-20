@@ -372,9 +372,18 @@ messageId   = SHA-256(fingerprint)
 
 Using the wrong type string causes `messageIdMismatch = true`, which clears the signature and treats the message as unsigned — even if the signature is perfectly valid.
 
+### Which key signs a space message (mailbox vs signing)
+
+Space messages are signed with a per-user **signing** key
+(`getSigningKey(spaceId)` = `signing` ?? `inbox`), NOT the per-device `inbox`
+(mailbox) key. A synced second device regenerates its `inbox` key, so signing
+with it would fail the receiver's verified-signer lookup and its control messages
+would be dropped. See [Multi-Device Signing](../../cryptographic-architecture.md#multi-device-signing-mailbox-key-vs-signing-key)
+for the full split, the desktop/mobile divergence, and the durable follow-up.
+
 ### Inbox Mismatch and Key Rotation
 
-The inbox mismatch check compares the sender's stored inbox address against the one in the envelope. This check must be **skipped for `update-profile`** messages because that message type is itself the key rotation announcement — the whole point is to update the stored address to the new one. See [Inbox Key Rotation](../../cryptographic-architecture.md#inbox-key-rotation) for full details.
+The inbox mismatch check compares the sender's stored inbox address against the one in the envelope. This check is **skipped for `update-profile`** messages so a display update isn't dropped after a key rotation. (Note: as of #243 the handler no longer updates the stored address from `update-profile` — it is display-only and authorized by the verified signer; the authoritative address comes from the verified join control. See [Inbox Key Rotation](../../cryptographic-architecture.md#inbox-key-rotation).)
 
 ```typescript
 const isUpdateProfile = decryptedContent.content.type === 'update-profile';
