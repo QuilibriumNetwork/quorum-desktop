@@ -69,8 +69,15 @@ member, and writes `inbox_address: ''` with **no signature or point check at
 all**. A single forged `leave` naming any member blanks their binding →
 `resolveVerifiedSender` can no longer resolve their key → all their control
 ops drop fleet-wide on every receiver that processed the forged leave
-(unauthenticated control-message DoS against an arbitrary member). Desktop's
-`leave` path should be checked for the same shape.
+(unauthenticated control-message DoS against an arbitrary member).
+
+> **Mobile-only (corrected 2026-07-20 after independent review).** Desktop's
+> `leave` handler (`MessageService.ts:4069-4090`) is NOT vulnerable: it verifies
+> `ed448(inboxPublicKey, 'delete' + hubKey.publicKey, inboxSignature)` and only
+> blanks the binding of the member whose inbox key the sender actually holds —
+> i.e. self-targeting only. Route 2 is therefore a **mobile-only** unauthenticated
+> victim-targeting attack; the earlier "check desktop for the same shape" was an
+> overstatement — desktop has a real cryptographic gate here.
 
 ## Route 3 — mobile `join` verifies nothing
 
@@ -87,9 +94,16 @@ On mobile the rebind needs only a hub-sealed `join` envelope with an arbitrary
 sync peer, gated on `reg.owner_public_keys.includes(owner_public_key) ||
 this.syncInfo.current[spaceId]`. The `syncInfo` branch trusts **any peer during
 an active sync handshake**, so a peer mid-sync can assert member rows
-(including `inbox_address`) that were never owner-signed. Lower confidence /
-narrower window than routes 1–3, but the same table, the same missing
-"only verified data may write bindings" rule.
+(including `inbox_address`) that were never owner-signed.
+
+> **Worse than first written (independent review, 2026-07-20).** The branch does
+> run an `ed448` verify (`:4548`), but against `exteriorEnvelope.owner_public_key`
+> — a field the attacker supplies. They pass their OWN key as `owner_public_key`
+> and self-sign the envelope; the verify passes and proves nothing. So under an
+> active sync window this is the **same severity** as routes 2/3 (arbitrary
+> member-row overwrite incl. the owner's), not a lesser one. The only limiter is
+> the sync window, and sync is peer-triggerable (`sync-info`, `:4499`), so an
+> attacker can open the window themselves.
 
 ## Threat model (who can do this)
 
@@ -140,10 +154,13 @@ verification twice.
 
 ## Confidence & what still needs testing
 
-- **High confidence (static):** the ed448 self-signature in Route 1 does not
-  bind address→key; the leave (Route 2) and mobile join (Route 3) handlers do
-  no verification; sync-members (Route 4) has a peer-trust branch. All read
-  directly from source at the lines cited.
+- **High confidence (static, independently reviewed 2026-07-20):** the ed448
+  self-signature in Route 1 does not bind address→key; the mobile leave (Route 2)
+  and mobile join (Route 3) handlers do no verification; sync-members (Route 4)
+  verifies only an attacker-supplied `owner_public_key` (self-signature → proves
+  nothing) under an active, peer-triggerable sync window. Desktop's `leave` is
+  NOT vulnerable (real key-possession gate — Route 2 is mobile-only). All read
+  directly from source at the lines cited and confirmed by a second reviewer.
 - **Not yet confirmed:** whether `js_verify_point` (WASM, unaudited here) can be
   satisfied by an existing member re-broadcasting a forged join for an arbitrary
   `(address, id, point)` — this is the gate that decides whether Route 1 is a

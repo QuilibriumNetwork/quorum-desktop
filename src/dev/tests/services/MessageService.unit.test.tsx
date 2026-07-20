@@ -89,6 +89,9 @@ describe('MessageService - Unit Tests', () => {
         }),
         getSpaceMember: vi.fn().mockResolvedValue(null),
         getSpaceMembers: vi.fn().mockResolvedValue([]),
+        getSpaceMemberDevices: vi.fn().mockResolvedValue([]),
+        getSpaceMemberDevice: vi.fn().mockResolvedValue(undefined),
+        saveSpaceMemberDevice: vi.fn().mockResolvedValue(undefined),
         getMuteByMuteId: vi.fn().mockResolvedValue(null),
         muteUser: vi.fn().mockResolvedValue(undefined),
         unmuteUser: vi.fn().mockResolvedValue(undefined),
@@ -1504,6 +1507,164 @@ describe('MessageService - Unit Tests', () => {
       await messageService.addMessage(queryClient, spaceId, channelId, postMessage);
 
       expect(spy).not.toHaveBeenCalled();
+    });
+  });
+
+  // Per-device signing keys: control auth resolves a second device's key via an
+  // admitted statement (stored in space_member_devices), and the receive handler
+  // persists admissions/tombstones. The statement crypto itself is covered by
+  // shared's deviceKeys.test.ts; these assert the desktop WIRING.
+  describe('9. Per-device signing keys (admission wiring)', () => {
+    const SPACE = 'space-pdk';
+    const CHANNEL = 'chan-pdk';
+    const ALICE = 'addr-alice-pdk';
+    const USER_PUB = '11'.repeat(57);
+    const DEVICE_KEY_PUB = '22'.repeat(57);
+    const JOIN_KEY_PUB = '33'.repeat(57);
+    const USER_ADDRESS = deriveInboxAddress(USER_PUB);
+    const DEVICE_INBOX = 'dev-inbox-1';
+
+    const aliceMember = {
+      address: ALICE,
+      user_address: ALICE,
+      inbox_address: deriveInboxAddress(JOIN_KEY_PUB),
+    };
+    const admission = {
+      spaceId: SPACE,
+      userAddress: ALICE,
+      deviceInboxAddress: DEVICE_INBOX,
+      inboxAddress: deriveInboxAddress(DEVICE_KEY_PUB),
+      spaceKeyPublicKey: DEVICE_KEY_PUB,
+      timestamp: 1,
+      revoked: false,
+    };
+    // remove-message of Alice's own message, signed by her SECOND device key.
+    const removeOwn = {
+      publicKey: DEVICE_KEY_PUB,
+      signature: 'sig',
+      content: { type: 'remove-message', senderId: ALICE, removeMessageId: 'm1' },
+    } as any;
+    const targetByAlice = { content: { senderId: ALICE, type: 'post' } } as any;
+
+    beforeEach(() => {
+      mockDeps.messageDB.getSpace = vi
+        .fn()
+        .mockResolvedValue({ spaceId: SPACE, groups: [], roles: [] });
+      mockDeps.messageDB.getSpaceMembers = vi.fn().mockResolvedValue([aliceMember]);
+    });
+
+    it('authorizes a control message signed by an admitted second-device key', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi
+        .fn()
+        .mockResolvedValue([admission]);
+      const ok = await (messageService as any).isSpaceControlAuthorized(
+        removeOwn,
+        mockDeps.messageDB,
+        SPACE,
+        CHANNEL,
+        targetByAlice
+      );
+      expect(ok).toBe(true);
+    });
+
+    it('drops the same message when no admission exists (fail closed)', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi.fn().mockResolvedValue([]);
+      const ok = await (messageService as any).isSpaceControlAuthorized(
+        removeOwn,
+        mockDeps.messageDB,
+        SPACE,
+        CHANNEL,
+        targetByAlice
+      );
+      expect(ok).toBe(false);
+    });
+
+    it('drops the message when the admitted device key is revoked', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi
+        .fn()
+        .mockResolvedValue([{ ...admission, revoked: true }]);
+      const ok = await (messageService as any).isSpaceControlAuthorized(
+        removeOwn,
+        mockDeps.messageDB,
+        SPACE,
+        CHANNEL,
+        targetByAlice
+      );
+      expect(ok).toBe(false);
+    });
+
+    it('persists an admission for a valid announce-keys statement', async () => {
+      // Force the WASM verifier to accept (real Ed448 is exercised elsewhere).
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true' as any);
+      const statement = {
+        type: 'announce-keys',
+        userAddress: USER_ADDRESS,
+        userPublicKey: USER_PUB,
+        spaceId: SPACE,
+        deviceInboxAddress: DEVICE_INBOX,
+        spaceKeyPublicKey: DEVICE_KEY_PUB,
+        timestamp: 1000,
+        signature: 'ab'.repeat(114),
+      };
+      const save = vi.fn().mockResolvedValue(undefined);
+      mockDeps.messageDB.saveSpaceMemberDevice = save;
+      mockDeps.messageDB.getSpaceMemberDevice = vi.fn().mockResolvedValue(undefined);
+
+      await (messageService as any).processDeviceKeyStatement(statement, SPACE);
+
+      expect(save).toHaveBeenCalledTimes(1);
+      expect(save.mock.calls[0][0]).toMatchObject({
+        spaceId: SPACE,
+        userAddress: USER_ADDRESS,
+        deviceInboxAddress: DEVICE_INBOX,
+        inboxAddress: deriveInboxAddress(DEVICE_KEY_PUB),
+        revoked: false,
+      });
+    });
+
+    it('persists a revocation tombstone for a valid revoke-device statement', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true' as any);
+      const statement = {
+        type: 'revoke-device',
+        userAddress: USER_ADDRESS,
+        userPublicKey: USER_PUB,
+        spaceId: SPACE,
+        deviceInboxAddress: DEVICE_INBOX,
+        timestamp: 2000,
+        signature: 'ab'.repeat(114),
+      };
+      const save = vi.fn().mockResolvedValue(undefined);
+      mockDeps.messageDB.saveSpaceMemberDevice = save;
+      mockDeps.messageDB.getSpaceMemberDevice = vi
+        .fn()
+        .mockResolvedValue({ ...admission, timestamp: 1000 });
+
+      await (messageService as any).processDeviceKeyStatement(statement, SPACE);
+
+      expect(save).toHaveBeenCalledTimes(1);
+      expect(save.mock.calls[0][0]).toMatchObject({
+        deviceInboxAddress: DEVICE_INBOX,
+        revoked: true,
+        timestamp: 2000,
+      });
+    });
+
+    it('drops a statement whose signed spaceId does not match the delivering space', async () => {
+      vi.mocked(channel_raw.js_verify_ed448).mockReturnValue('true' as any);
+      const save = vi.fn().mockResolvedValue(undefined);
+      mockDeps.messageDB.saveSpaceMemberDevice = save;
+      const statement = {
+        type: 'announce-keys',
+        userAddress: USER_ADDRESS,
+        userPublicKey: USER_PUB,
+        spaceId: 'a-different-space',
+        deviceInboxAddress: DEVICE_INBOX,
+        spaceKeyPublicKey: DEVICE_KEY_PUB,
+        timestamp: 1000,
+        signature: 'ab'.repeat(114),
+      };
+      await (messageService as any).processDeviceKeyStatement(statement, SPACE);
+      expect(save).not.toHaveBeenCalled();
     });
   });
 });

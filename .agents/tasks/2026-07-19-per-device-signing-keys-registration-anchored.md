@@ -243,6 +243,27 @@ optional TTL hardening, not required for correctness).
 All **additive** → ship shared alone; mobile catches up on its next pinned
 bump (per the additive-vs-breaking gut-check).
 
+### Hard prerequisites before the send-side flip (from independent review 2026-07-20)
+
+1. **`buildDeviceKeyStatementBytes` MUST live in shared and be the ONLY code
+   both platforms use to build statement bytes, for BOTH sign and verify.** Not
+   the existing `canonicalize` (it throws on non-message objects); a new,
+   dedicated function. If desktop and mobile serialize statements independently,
+   any field-order/encoding/whitespace difference makes signatures fail
+   verification silently across platforms. This project already carries
+   `buildMessageFingerprint`/`canonicalize` precisely because of this class of
+   bug — treat byte-identity as a hard gate, not an implementation detail.
+2. **Cap admissions per `(spaceId, userAddress)`** (e.g. ≤10, evict oldest
+   non-revoked). Each valid `announce-keys` is master-signed but a compromised/
+   malicious account could mint many with different `spaceKeyPublicKey`s,
+   bloating storage and turning the resolver's second-path scan into an O(n)
+   DoS. Enforce the cap at upsert and early-exit the resolver scan.
+3. **Document that `deviceInboxAddress` is a self-asserted tag**, not verified
+   against the hub registration at receive (attribution + revocation handle
+   only). Consequence: revocation is only as reliable as the master-key holder's
+   self-report of which tag to tombstone — fine in the normal UI flow (the tag
+   comes from the real registration), but must be stated as a design assumption.
+
 ## Edge cases (resolved)
 
 - **Revocation lifecycle** — see above. Residuals stated honestly: (a) a
@@ -322,6 +343,53 @@ bump (per the additive-vs-breaking gut-check).
    `cryptographic-architecture.md` multi-device section, resolve the mobile
    bug report, file the join-binding hardening follow-up.
 
+## Production release order (decided 2026-07-20)
+
+**Decision: ship the full fix (receive + send) on both apps, then deploy desktop
+to prod immediately AFTER the lead ships mobile to prod.** Not the fully
+decoupled "receive-side everywhere, soak, then flip" order — deliberately, for
+beta, because the blast radius is tiny (below).
+
+- **The receive-side is inherently tolerant regardless of order.** During any
+  transition a space contains both old shared-key signers and new per-device
+  signers, so `resolveVerifiedSender` must accept BOTH paths at once. That is
+  not extra work; it is required for correctness. It also means the "decoupled"
+  structure exists at the code level anyway — the only real choice is the
+  DEPLOY timing of the send-side flip.
+
+- **Why the aggressive timing is acceptable for beta.** The flip only changes
+  behavior for a **secondary** device. A user's PRIMARY (join) device signs
+  with the join-bound key receivers already hold, so it verifies on old clients
+  with no announcement. Therefore:
+  - Single-device users: zero regression, ever.
+  - Primary device of a multi-device user: unaffected.
+  - Only affected case: a control action (delete/edit/pin/mute) sent from a
+    SECONDARY device, received by a client still on an OLD build → that one
+    action silently doesn't apply on that one stale receiver until it updates
+    (no crash, no data loss). Multi-device users are rare, and during beta they
+    are mostly the devs/testers, who understand the transition.
+  - **Honest framing (independent review 2026-07-20):** the flip is a
+    regression *relative to the interim fix's current behavior*, not just
+    relative to the ideal. Today a secondary device signs with the shared join
+    key, which every receiver already has → its control ops work everywhere.
+    Post-flip it signs with its own key, which OLD receivers can't resolve →
+    those ops break for stale receivers until they update. We are knowingly
+    re-breaking secondary-device control ops on not-yet-updated clients for the
+    rollout window, in exchange for the durable end state. Acceptable at beta
+    scale; not "neutral."
+
+- **The one thing that makes it safe rather than fragile:** "prod" is a spread
+  of build versions, not a switch, so the flip's regression persists per-stale-
+  receiver until they update — it is NOT closed by deploying desktop right after
+  mobile. We accept that tail for beta given the blast radius. If real-user
+  multi-device usage grows or we leave beta, revert to the decoupled order
+  (soak receive-side to saturation before flipping).
+
+Concrete order: (1) shared additive publish → (2) desktop + mobile receive-side
++ send-side both merged → (3) lead ships mobile to prod → (4) we ship desktop to
+prod right after. Keep the `signing ?? inbox` fallback through this whole window;
+remove it only at cleanup once both apps are broadly updated.
+
 ## Discovered issues to handle OUTSIDE this task
 
 - **Join-binding hijack** (finding #4): forged join / unauthenticated leave /
@@ -331,7 +399,27 @@ bump (per the additive-vs-breaking gut-check).
   master-signature machinery.
 - Desktop interim branch lacks mobile's heal/promotion parity (finding #5) —
   acceptable if this durable task lands promptly; revisit only if the durable
-  work slips.
+  work slips. **Sharpened by independent review (2026-07-20):** the concrete gap
+  is that desktop's `signing`-key preservation sits inside `if (!existingSpace)`
+  (`ConfigService.ts:112`), so a PRE-fix desktop second device that ALREADY has
+  the space never adopts the blob's `signing` key on a later config sync — it
+  stays broken until the space is re-added. Mobile heals existing spaces
+  (`spaceSyncService.ts:86-141`); desktop does not. Once the durable per-device
+  work lands this is moot (no device needs the shared key); until then it's a
+  desktop-only "re-add to fix," which the release notes should state plainly.
+
+- **Desktop P2P revocation replay gap.** Until desktop migrates to the hub-log
+  transport, an offline desktop receiver has no replay path for a `revoke-device`
+  (or `announce-keys`) it missed; it catches up only on the announcing device's
+  next re-announce. Mobile's hub-log replay covers this. Not a design flaw
+  (inherent to the P2P transport, converges on hub-log migration), but note it
+  in the implementation plan: revocation propagation is asymmetric until then.
+
+- **`isSpaceControlAuthorized` durable path is not self-contained** (defense-in-
+  depth, not an active exploit): the `saveMessage` path resolves the verified
+  sender but relies on the streaming handler having already nulled a bad
+  `publicKey` rather than re-verifying the ed448 signature itself. Worth a
+  belt-and-braces re-verify when this code is next touched.
 
 ## Implementation-time verifications (small, listed so they aren't lost)
 

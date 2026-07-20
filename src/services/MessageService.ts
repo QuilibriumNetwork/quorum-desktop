@@ -21,7 +21,9 @@ import {
   isControlMessageType,
   shouldSignEdit,
   canManageReadOnlyChannel,
+  verifyDeviceKeyStatement,
   type ControlMessageContent,
+  type DeviceKeyStatement,
 } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import type { SpaceMemberRow } from '../db/messages';
@@ -949,6 +951,81 @@ export class MessageService {
    * (see the verify blocks); unsigned/invalid control messages resolve to a
    * null sender and are dropped (except the unsigned-edit-of-unsigned case).
    */
+  /**
+   * Ed448 verifier in the shape shared's verifyDeviceKeyStatement expects,
+   * backed by the WASM channel primitive (base64 in, 'true'/'false' out).
+   */
+  private readonly signingProvider = {
+    verifyEd448: async (publicKey: string, message: string, signature: string) =>
+      ch.js_verify_ed448(publicKey, message, signature) === 'true',
+  };
+
+  /**
+   * Resolve a verified signer against BOTH the join-bound member table and the
+   * per-device signing keys admitted via master-signed statements. Every
+   * control/read-only/update-profile auth path funnels through here so the
+   * two lookup paths stay consistent.
+   */
+  private async resolveSpaceSender(
+    publicKey: string,
+    messageDB: MessageDB,
+    spaceId: string,
+    members: SpaceMemberRow[]
+  ) {
+    const deviceKeys = await messageDB.getSpaceMemberDevices(spaceId);
+    return resolveVerifiedSender(
+      publicKey,
+      members as unknown as Parameters<typeof resolveVerifiedSender>[1],
+      deviceKeys as unknown as Parameters<typeof resolveVerifiedSender>[2]
+    );
+  }
+
+  /**
+   * Receive an announce-keys / revoke-device statement (new hub control types).
+   * Verifies it via shared (master-signed, self-certifying identity, 30s skew,
+   * last-write-wins) and persists the admission or a revocation tombstone.
+   * Fails closed silently. NEVER touches the join-bound member row — admissions
+   * live in their own store (the #243 poisoning lesson). Unknown types are
+   * ignored by the caller, so old clients are unaffected.
+   */
+  private async processDeviceKeyStatement(
+    statement: DeviceKeyStatement,
+    contextSpaceId: string
+  ): Promise<void> {
+    // The signature binds spaceId; only honor a statement meant for the space
+    // whose hub delivered it (defense in depth over the hub-key scoping).
+    if (statement.spaceId !== contextSpaceId) return;
+
+    const existing = await this.messageDB.getSpaceMemberDevice(
+      statement.spaceId,
+      statement.deviceInboxAddress
+    );
+    const verdict = await verifyDeviceKeyStatement(
+      this.signingProvider,
+      statement,
+      existing
+        ? { timestamp: existing.timestamp, revoked: !!existing.revoked }
+        : undefined
+    );
+
+    if (verdict.action === 'admit') {
+      await this.messageDB.saveSpaceMemberDevice(verdict.device);
+    } else if (verdict.action === 'revoke') {
+      // Tombstone: keep the row marked revoked so a later STALE announce is
+      // rejected by LWW; a strictly-newer announce (re-added device) re-admits.
+      await this.messageDB.saveSpaceMemberDevice({
+        spaceId: verdict.spaceId,
+        userAddress: verdict.userAddress,
+        deviceInboxAddress: verdict.deviceInboxAddress,
+        inboxAddress: existing?.inboxAddress ?? '',
+        spaceKeyPublicKey: existing?.spaceKeyPublicKey ?? '',
+        timestamp: verdict.timestamp,
+        revoked: true,
+      });
+    }
+    // reject → drop
+  }
+
   private async isSpaceControlAuthorized(
     decryptedContent: Message,
     messageDB: MessageDB,
@@ -962,9 +1039,11 @@ export class MessageService {
       ?.channels.find((c) => c.channelId === channelId);
     const members = await messageDB.getSpaceMembers(spaceId);
     const verifiedSender = decryptedContent.publicKey
-      ? resolveVerifiedSender(
+      ? await this.resolveSpaceSender(
           decryptedContent.publicKey,
-          members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+          messageDB,
+          spaceId,
+          members
         )
       : null;
     return authorizeControlMessage({
@@ -1024,9 +1103,11 @@ export class MessageService {
       return false;
     }
     const members = await messageDB.getSpaceMembers(spaceId);
-    const verifiedSender = resolveVerifiedSender(
+    const verifiedSender = await this.resolveSpaceSender(
       decryptedContent.publicKey,
-      members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+      messageDB,
+      spaceId,
+      members
     );
     return (
       verifiedSender === null ||
@@ -1075,9 +1156,11 @@ export class MessageService {
     ) {
       return false;
     }
-    const verifiedSender = resolveVerifiedSender(
+    const verifiedSender = await this.resolveSpaceSender(
       decryptedContent.publicKey,
-      members as unknown as Parameters<typeof resolveVerifiedSender>[1]
+      this.messageDB,
+      space.spaceId,
+      members
     );
     return (
       !!verifiedSender &&
@@ -4910,6 +4993,14 @@ export class MessageService {
                 }, true);
               }
             }
+          } else if (
+            envelope.message.type === 'announce-keys' ||
+            envelope.message.type === 'revoke-device'
+          ) {
+            await this.processDeviceKeyStatement(
+              envelope.message as unknown as DeviceKeyStatement,
+              conversationId.split('/')[0]
+            );
           }
         }
       } catch (e) { console.error('[MessageService] Error processing hub/sync message:', e); }
@@ -5022,11 +5113,11 @@ export class MessageService {
             // check) and do the @everyone check ourselves against the verified
             // signer; user/@role checks are unaffected (they don't use space).
             const everyoneSender = decryptedContent.publicKey
-              ? resolveVerifiedSender(
+              ? await this.resolveSpaceSender(
                   decryptedContent.publicKey,
-                  (await this.messageDB.getSpaceMembers(
-                    spaceId
-                  )) as unknown as Parameters<typeof resolveVerifiedSender>[1]
+                  this.messageDB,
+                  spaceId,
+                  await this.messageDB.getSpaceMembers(spaceId)
                 )
               : null;
             const isMentioned =
