@@ -22,6 +22,8 @@ import {
   shouldSignEdit,
   canManageReadOnlyChannel,
   verifyDeviceKeyStatement,
+  MESSAGE_EDIT_WINDOW_MS,
+  applyEdit,
   type ControlMessageContent,
   type DeviceKeyStatement,
 } from '@quilibrium/quorum-shared';
@@ -1417,10 +1419,9 @@ export class MessageService {
         return;
       }
 
-      // Check edit time window (15 minutes = 900000 ms)
-      const editTimeWindow = 15 * 60 * 1000;
+      // Check edit time window
       const timeSinceCreation = Date.now() - targetMessage.createdDate;
-      if (timeSinceCreation > editTimeWindow) {
+      if (timeSinceCreation > MESSAGE_EDIT_WINDOW_MS) {
         return;
       }
 
@@ -1458,67 +1459,45 @@ export class MessageService {
         saveEditHistoryEnabled = space?.saveEditHistory ?? false;
       }
 
-      // Check if this edit has already been applied (by comparing lastModifiedHash with editNonce)
-      // This prevents duplicate edits when processing the same edit message multiple times
-      const isAlreadyApplied =
-        targetMessage.lastModifiedHash === editMessage.editNonce;
+      // Apply the received edit via the shared helper (single source of truth
+      // with the send path and mobile). It retains prior versions in edits[]
+      // (seeding the original on the first edit); the replay guard makes a
+      // re-delivered edit a no-op so a duplicate can't clobber stored history.
+      const applied = applyEdit(
+        {
+          text:
+            targetMessage.content.type === 'post'
+              ? targetMessage.content.text
+              : '',
+          createdDate: targetMessage.createdDate,
+          modifiedDate: targetMessage.modifiedDate,
+          nonce: targetMessage.nonce,
+          lastModifiedHash: targetMessage.lastModifiedHash,
+          edits: targetMessage.edits,
+        },
+        {
+          editedAt: editMessage.editedAt,
+          editNonce: editMessage.editNonce,
+          saveEditHistory: saveEditHistoryEnabled,
+        }
+      );
 
-      // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
-      const currentText =
-        targetMessage.content.type === 'post' ? targetMessage.content.text : '';
-
-      // Create edits array if it doesn't exist
-      const existingEdits = targetMessage.edits || [];
-
-      // Only add to edits if saveEditHistory is enabled AND this edit hasn't been applied yet
-      let edits: Array<{
-        text: string | string[];
-        modifiedDate: number;
-        lastModifiedHash: string;
-      }>;
-
-      if (isAlreadyApplied) {
-        // Edit already applied: use existing edits array (don't modify)
-        edits = existingEdits;
-      } else if (!saveEditHistoryEnabled) {
-        // saveEditHistory disabled: don't preserve edits
-        edits = [];
-      } else if (targetMessage.modifiedDate === targetMessage.createdDate) {
-        // First edit: add original content to edits array
-        edits = [
-          {
-            text: currentText,
-            modifiedDate: targetMessage.createdDate,
-            lastModifiedHash: targetMessage.nonce, // Use original nonce as hash
-          },
-        ];
-      } else if (existingEdits.length > 0) {
-        // Subsequent edits: add current version (which is now the previous version)
-        edits = [
-          ...existingEdits,
-          {
-            text: currentText,
-            modifiedDate: targetMessage.modifiedDate,
-            lastModifiedHash:
-              targetMessage.lastModifiedHash || targetMessage.nonce,
-          },
-        ];
-      } else {
-        // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
-        edits = existingEdits;
+      // Replayed edit (already applied): make no change.
+      if (!applied.changed) {
+        return;
       }
 
       // Update the original message with edited text and mentions
       const updatedMessage: Message = {
         ...targetMessage,
-        modifiedDate: editMessage.editedAt,
-        lastModifiedHash: editMessage.editNonce,
+        modifiedDate: applied.modifiedDate,
+        lastModifiedHash: applied.lastModifiedHash,
         mentions: editMessage.mentions || targetMessage.mentions, // Update mentions if provided
         content: {
           ...targetMessage.content,
           text: editMessage.editedText,
         } as PostMessage,
-        edits: edits,
+        edits: applied.edits,
       };
 
       await messageDB.saveMessage(
@@ -1931,10 +1910,9 @@ export class MessageService {
                         return m;
                       }
 
-                      // Check edit time window (15 minutes)
-                      const editTimeWindow = 15 * 60 * 1000;
+                      // Check edit time window
                       const timeSinceCreation = Date.now() - m.createdDate;
-                      if (timeSinceCreation > editTimeWindow) {
+                      if (timeSinceCreation > MESSAGE_EDIT_WINDOW_MS) {
                         return m;
                       }
 
@@ -2707,10 +2685,9 @@ export class MessageService {
           return outbounds;
         }
 
-        // Check edit time window (15 minutes)
-        const editTimeWindow = 15 * 60 * 1000;
+        // Check edit time window
         const timeSinceCreation = Date.now() - originalMessage.createdDate;
-        if (timeSinceCreation > editTimeWindow) {
+        if (timeSinceCreation > MESSAGE_EDIT_WINDOW_MS) {
           return outbounds;
         }
 
@@ -5502,10 +5479,9 @@ export class MessageService {
           return outbounds;
         }
 
-        // Check edit time window (15 minutes)
-        const editTimeWindow = 15 * 60 * 1000;
+        // Check edit time window
         const timeSinceCreation = Date.now() - originalMessage.createdDate;
-        if (timeSinceCreation > editTimeWindow) {
+        if (timeSinceCreation > MESSAGE_EDIT_WINDOW_MS) {
           return outbounds;
         }
 
