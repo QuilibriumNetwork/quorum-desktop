@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
-status: DEEP-DIVE COMPLETE — spec ready; not yet implemented
+status: IN PROGRESS — shared core (#62) + desktop receive-side done; mobile receive + both-platform send-side pending (staged, see release order)
 priority: high (follow-up to the interim signing-split fix)
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
@@ -334,66 +334,66 @@ bump (per the additive-vs-breaking gut-check).
 ## Cross-repo scope + sequencing (vertical slices)
 
 1. **quorum-shared** — types, statement bytes/verify, resolver extension,
-   tests. Additive publish. (Observable: shared tests green; both apps build.)
-2. **Receive-side, desktop + mobile** — control handlers, admission storage,
-   resolver wired with admissions, member-sync statement carriage (desktop).
-   Observable: everything works exactly as before (interim model untouched);
-   new tests prove forged/replayed/revoked statements are rejected.
+   tests. ✅ DONE — merged as #62 (`utils/deviceKeys.ts`, `SpaceMemberDevice`,
+   `resolveVerifiedSender` deviceKeys param; 20 tests).
+2. **Receive-side, DESKTOP** — ✅ DONE this session (branch
+   `feat/per-device-signing-keys`, PR pending): `space_member_devices` store
+   (DB v14), `announce-keys`/`revoke-device` control handlers, `resolveSpaceSender`
+   wired into all four auth paths; missing-store read guards + `onversionchange`
+   DB hygiene; 63 desktop tests green. Verified by regression testing (delete
+   own/other, mute, @everyone, update-profile) — no behavior change, as designed.
+   Member-sync statement carriage NOT included (deferred with send-side).
+2b. **Receive-side, MOBILE** — pending (mobile effort).
 3. **Send-side flip, both platforms** — on-connect announce + per-device
-   signing + Security-modal revocation broadcast. Observable (the real test):
-   fresh second device (no shared `signing`) deletes/edits/pins from day one;
-   deleting that device from Security settings makes its subsequent control
-   ops drop on other clients.
-4. **Cleanup** — retire `signing` slot writes + fallback, rewrite
+   signing + Security-modal revocation broadcast. Gated on mobile-full per the
+   release order below. Observable (the real test): fresh second device (no
+   shared `signing`) deletes/edits/pins from day one; deleting that device from
+   Security settings makes its subsequent control ops drop on other clients.
+4. **Cleanup** — retire `signing` slot fallback, rewrite
    `cryptographic-architecture.md` multi-device section, resolve the mobile
    bug report, file the join-binding hardening follow-up.
 
-## Production release order (decided 2026-07-20)
+## Production release order (revised 2026-07-20 — STAGED, supersedes the earlier "ship together" decision)
 
-**Decision: ship the full fix (receive + send) on both apps, then deploy desktop
-to prod immediately AFTER the lead ships mobile to prod.** Not the fully
-decoupled "receive-side everywhere, soak, then flip" order — deliberately, for
-beta, because the blast radius is tiny (below).
+**Decision: ship the desktop RECEIVE-side on its own now; gate the desktop
+SEND-side flip until mobile is FULLY implemented (receive + send) and live.**
+This replaces the earlier "ship receive+send together on both, deploy desktop
+right after mobile" plan — the staged order is safer and costs nothing extra
+because the receive-side is inert.
 
-- **The receive-side is inherently tolerant regardless of order.** During any
-  transition a space contains both old shared-key signers and new per-device
-  signers, so `resolveVerifiedSender` must accept BOTH paths at once. That is
-  not extra work; it is required for correctness. It also means the "decoupled"
-  structure exists at the code level anyway — the only real choice is the
-  DEPLOY timing of the send-side flip.
+Concrete order:
+1. **quorum-shared** — additive core. ✅ merged (#62).
+2. **Desktop receive-side** — this PR. Ships alone NOW. It's **inert and
+   additive**: understands the new `announce-keys`/`revoke-device` statements
+   and can resolve per-device keys, but nothing broadcasts statements yet, so
+   there is **zero behavior change** (every device still signs with the interim
+   join-bound key; single-device and existing multi-device behavior unchanged).
+   Real users just get the normal additive v14 DB migration.
+3. **Mobile receive-side + send-side** — implemented and shipped by the mobile
+   effort (lead's territory / mobile task).
+4. **Desktop send-side flip** — ONLY after step 3 is live: on-connect announce +
+   per-device signing + Security-modal revocation. Waiting for mobile to be
+   *fully* done is more conservative than strictly required (the flip only needs
+   mobile's RECEIVE-side live), so it cannot strand mobile users.
+5. **Cleanup** — retire the `signing ?? inbox` fallback once both apps are
+   broadly updated; rewrite the crypto-architecture multi-device section.
 
-- **Why the aggressive timing is acceptable for beta.** The flip only changes
-  behavior for a **secondary** device. A user's PRIMARY (join) device signs
-  with the join-bound key receivers already hold, so it verifies on old clients
-  with no announcement. Therefore:
-  - Single-device users: zero regression, ever.
-  - Primary device of a multi-device user: unaffected.
-  - Only affected case: a control action (delete/edit/pin/mute) sent from a
-    SECONDARY device, received by a client still on an OLD build → that one
-    action silently doesn't apply on that one stale receiver until it updates
-    (no crash, no data loss). Multi-device users are rare, and during beta they
-    are mostly the devs/testers, who understand the transition.
-  - **Honest framing (independent review 2026-07-20):** the flip is a
-    regression *relative to the interim fix's current behavior*, not just
-    relative to the ideal. Today a secondary device signs with the shared join
-    key, which every receiver already has → its control ops work everywhere.
-    Post-flip it signs with its own key, which OLD receivers can't resolve →
-    those ops break for stale receivers until they update. We are knowingly
-    re-breaking secondary-device control ops on not-yet-updated clients for the
-    rollout window, in exchange for the durable end state. Acceptable at beta
-    scale; not "neutral."
-
-- **The one thing that makes it safe rather than fragile:** "prod" is a spread
-  of build versions, not a switch, so the flip's regression persists per-stale-
-  receiver until they update — it is NOT closed by deploying desktop right after
-  mobile. We accept that tail for beta given the blast radius. If real-user
-  multi-device usage grows or we leave beta, revert to the decoupled order
-  (soak receive-side to saturation before flipping).
-
-Concrete order: (1) shared additive publish → (2) desktop + mobile receive-side
-+ send-side both merged → (3) lead ships mobile to prod → (4) we ship desktop to
-prod right after. Keep the `signing ?? inbox` fallback through this whole window;
-remove it only at cleanup once both apps are broadly updated.
+**Why staged is safe (and why the flip is the only sensitive step):** the
+receive-side is inherently tolerant — a space in transition holds both
+old-shared-key and new-per-device signers, and `resolveVerifiedSender` accepts
+both paths, so shipping receive early breaks nothing. The **send-side flip** is
+the only step with a blast radius, and it is bounded:
+- Single-device users: zero regression, ever.
+- Primary (join) device of a multi-device user: unaffected (it signs with the
+  join-bound key receivers already hold).
+- Only affected case: a control action from a **secondary** device, received by
+  a client still on an OLD build → that one action silently doesn't apply on
+  that stale receiver until it updates (no crash, no data loss).
+- Honest framing: relative to the interim fix, the flip *re-breaks*
+  secondary-device control ops on not-yet-updated receivers for the rollout
+  window, in exchange for the durable end state. Staging the flip behind
+  mobile-full minimises that window. Keep the `signing ?? inbox` fallback
+  through the whole window.
 
 ## Discovered issues to handle OUTSIDE this task
 
