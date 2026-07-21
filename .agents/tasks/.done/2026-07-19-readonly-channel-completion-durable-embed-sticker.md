@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Complete read-only-channel enforcement: durable path + embed/sticker + always-sign read-only posts"
-status: desktop DONE (shipping via PR) — mobile half still open (tracked in quorum-mobile 2026-06-25-space-control-msg-auth-signature-design.md). Bug stays open until both platforms land.
+status: DONE (both platforms) — desktop shipped 2026-07-19; mobile shipped in quorum-mobile PR #160 (d3c6113, 2026-07-19). Closes-bug resolved.
 priority: medium-high
 created: 2026-07-19
 severity: HIGH (authorization bypass — same class as the merged control-message-auth fix)
@@ -40,13 +40,25 @@ new §3f durable path incl. fail-open + thread-reply exemption) — 44/44 pass;
 in a read-only channel and they persist across reload; signing toggle hidden in
 read-only channels).
 
-**Still open:** the **mobile** half (send-side force-sign + composer toggle-disable,
-plus the read-only receive coverage) is being handled alongside the mobile
-control-message-auth work. Coordination note: the receive-side "drop unsigned
-read-only post" and the send-side force-sign MUST land together on mobile, or a
-manager's own unsigned post (repudiable space) gets dropped. Bug
-`2026-06-12-readonly-channel-receive-side-enforcement-gaps.md` stays OPEN until
-mobile lands.
+## ✅ Mobile — DONE (2026-07-19, quorum-mobile PR #160 / d3c6113)
+
+Shipped alongside the mobile control-message-auth work, mirroring desktop:
+
+1. **Receive guard** — `isReadOnlyPostAuthorized` (new module
+   `services/space/spaceMessageAuth.ts`) authorizes the verified ed448 signer via
+   `canManageReadOnlyChannel`, applied to `post`/`embed`/`sticker` on BOTH the
+   live (`WebSocketContext.tsx` ~2430) and batch/durable (~4080) paths. Both drop
+   BEFORE `storage.saveMessage`, so a forged post can't resurrect from disk.
+2. **Send-side force-sign** — `SpaceChatArea.tsx` (~476/496):
+   `skipSigning: isReadOnlyChannel ? false : skipSigning`, so a manager's own post
+   is always signed and never dropped by the receive guard.
+3. **Composer UX** — `SpaceChatArea.tsx` ~823:
+   `signingOptional={!!spaceData?.isRepudiable && !isReadOnlyChannel}` hides the
+   unsigned toggle in read-only channels.
+
+Both platforms now enforce read-only for post/embed/sticker on live + durable
+paths with force-signed sends → bug
+`2026-06-12-readonly-channel-receive-side-enforcement-gaps.md` resolved.
 
 ## Where we are (what's already done)
 
@@ -160,4 +172,4 @@ resolved.
 - **Mobile side:** the full mobile audit + reference list is in `D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/2026-06-25-space-control-msg-auth-signature-design.md` (gitignored/local) — mirror it for the mobile half of this task.
 - **Cross-repo rules:** `D:/GitHub/Quilibrium/quorum-atlas.md` (esp. iOS-review-only, ship/PR conventions).
 
-*Last updated: 2026-07-19*
+*Last updated: 2026-07-21*

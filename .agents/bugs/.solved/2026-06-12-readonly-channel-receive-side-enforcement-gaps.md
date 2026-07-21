@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Read-only channel receive-side enforcement is incomplete (sticker/embed bypass; cache-only for posts)"
-status: open
+status: resolved (2026-07-21) — both platforms enforce read-only for post/embed/sticker on live + durable paths with force-signed sends. Desktop shipped 2026-07-19; mobile in quorum-mobile PR #160 (d3c6113). See tasks/.done/2026-07-19-readonly-channel-completion-durable-embed-sticker.md.
 created: 2026-06-12
 ai_generated: true
 related_bugs:

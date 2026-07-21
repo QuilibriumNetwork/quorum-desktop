@@ -43,17 +43,20 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     );
   }, [messages]);
 
-  // Determine if user has sent messages (auto-accept chat)
-  // Only check once on mount — no need to re-check on every message
+  // Determine if user has sent messages (auto-accept chat).
+  // Re-evaluated whenever the message list changes so the "not accepted yet"
+  // banner clears as soon as the user's reply lands, without a page refresh.
+  // Only ever flips false → true (idempotent), so no cascading re-renders.
   useEffect(() => {
-    const userMessages = messageList.filter(
-      (m) => m.content.senderId === user.currentPasskeyInfo!.address
+    const userAddress = user.currentPasskeyInfo?.address;
+    if (!userAddress) return;
+    const hasUserMessage = messageList.some(
+      (m) => m.content.senderId === userAddress
     );
-    if (userMessages.length > 0) {
+    if (hasUserMessage) {
       setAcceptChat(true);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only check
-  }, []);
+  }, [messageList, user.currentPasskeyInfo]);
 
   // Initial message loading
   useEffect(() => {

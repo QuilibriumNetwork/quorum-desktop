@@ -18,6 +18,7 @@ import { getTextareaSelectionRect } from '../../utils/toolbarPositioning';
 import { rectAnchor, type VirtualElement } from '../ui';
 import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
+import { extractVisualTextWithNewlines } from '../../utils/mentionPillDom';
 import { useTypingNotifier } from '../../hooks/business/messages/useTypingNotifier';
 import type { TypingScope } from '@quilibrium/quorum-shared';
 
@@ -486,12 +487,21 @@ export const MessageComposer = forwardRef<
       const selectedText = range.toString();
 
       if (selectedText.length > 0) {
-        // Text is selected - get character positions
-        const preCaretRange = range.cloneRange();
-        preCaretRange.selectNodeContents(editor);
-        preCaretRange.setEnd(range.startContainer, range.startOffset);
-        const start = preCaretRange.toString().length;
-        const end = start + selectedText.length;
+        // Text is selected - get character positions in NEWLINE-AWARE visual
+        // space. `Range.toString()` (and `textContent`) silently drop the
+        // newlines that block elements encode, so measuring with them yields
+        // offsets that don't match the text we hand to the formatter — which is
+        // what collapsed multi-line messages when a word was formatted. Measure
+        // with the same serializer used as the format source so offsets align.
+        const preStart = range.cloneRange();
+        preStart.selectNodeContents(editor);
+        preStart.setEnd(range.startContainer, range.startOffset);
+        const start = extractVisualTextWithNewlines(preStart.cloneContents()).length;
+
+        const preEnd = range.cloneRange();
+        preEnd.selectNodeContents(editor);
+        preEnd.setEnd(range.endContainer, range.endOffset);
+        const end = extractVisualTextWithNewlines(preEnd.cloneContents()).length;
 
         setSelectionRange({ start, end });
 
@@ -521,8 +531,12 @@ export const MessageComposer = forwardRef<
     const handleMarkdownFormat = useCallback(
       (formatFn: FormatFunction) => {
         if (ENABLE_MENTION_PILLS && editorRef.current) {
-          // For contentEditable: use visual text for formatting
-          const visualText = extractVisualText();
+          // For contentEditable: format against the newline-aware visual text so
+          // block line breaks survive. `extractVisualText()` (textContent) drops
+          // them, which is what flattened multi-line messages on format. The
+          // `white-space: pre-wrap` editor then renders the `\n`s in the single
+          // text node we write below, and `extractStorageText()` reads them back.
+          const visualText = extractVisualTextWithNewlines(editorRef.current);
           const result = formatFn(visualText, selectionRange.start, selectionRange.end);
 
           // For now, we'll just insert the formatted text as plain text

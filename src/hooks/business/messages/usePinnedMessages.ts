@@ -9,6 +9,7 @@ import { hasPermission } from '@quilibrium/quorum-shared';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import MessagePreview from '../../../components/message/MessagePreview';
 import { t } from '@lingui/core/macro';
+import { buildSpaceKey } from '../../queries/space/buildSpaceKey';
 
 // Configuration constants for pinned messages feature
 const PINNED_MESSAGES_CONFIG = {
@@ -29,9 +30,13 @@ export const usePinnedMessages = (
   const user = usePasskeysContext();
   const { messageDB, actionQueueService } = useMessageDB();
   const { showConfirmationModal } = useConfirmationModal();
-  // Query for space data to check roles and permissions
+  // Query for space data to check roles and permissions.
+  // Uses the canonical space cache key (buildSpaceKey) so role changes pushed
+  // by the space-manifest handler (MessageService setQueryData) update pin
+  // permissions live — without this alignment the pin option stayed stale until
+  // a page refresh because it read a separate ['space', spaceId] cache entry.
   const { data: space } = useQuery({
-    queryKey: ['space', spaceId],
+    queryKey: buildSpaceKey({ spaceId }),
     queryFn: async () => {
       if (!spaceId) return null;
       return await messageDB.getSpace(spaceId);

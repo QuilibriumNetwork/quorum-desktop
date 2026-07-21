@@ -301,7 +301,7 @@ describe('ActionQueueHandlers - Unit Tests', () => {
       });
 
       expect(invalidateSpy).toHaveBeenCalledWith({
-        queryKey: ['space', 'space-123'],
+        queryKey: ['Space', 'space-123'],
       });
     });
   });

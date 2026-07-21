@@ -28,6 +28,7 @@ import {
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { useQueryClient } from '@tanstack/react-query';
+import { buildSpaceKey } from '../../hooks/queries/space/buildSpaceKey';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { buildConfigFetcher } from '../../hooks/queries/config/buildConfigFetcher';
 import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
@@ -65,8 +66,11 @@ const UserProfile: React.FunctionComponent<{
   const { data: isSpaceOwner } = useSpaceOwner({
     spaceId: props.spaceId || '',
   });
+  // Use the canonical space cache key (buildSpaceKey) so role changes pushed by
+  // the space-manifest handler update role display live, instead of staying
+  // stale until a page refresh.
   const { data: space } = useQuery({
-    queryKey: ['space', props.spaceId],
+    queryKey: buildSpaceKey({ spaceId: props.spaceId || '' }),
     queryFn: async () => {
       if (!props.spaceId) return null;
       return await messageDB.getSpace(props.spaceId);
