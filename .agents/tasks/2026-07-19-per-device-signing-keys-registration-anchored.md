@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
-status: IN PROGRESS — shared core (#62) + desktop receive-side done + desktop SEND-side done on branch feat/per-device-signing-keys-send (Option A, PR to main NOT prod); mobile receive + send pending (staged, see release order)
+status: IN PROGRESS — shared core (#62) + desktop receive-side (#245) + desktop SEND-side (#249 MERGED to main, Option A) done; mobile receive+send done on quorum-mobile PR #168 (OPEN, not merged — user UI-tests cross-device first). Cleanup (retire signing slot) + prod deploy still pending (staged, see release order)
 priority: high (follow-up to the interim signing-split fix)
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
@@ -427,8 +427,14 @@ Concrete order:
    there is **zero behavior change** (every device still signs with the interim
    join-bound key; single-device and existing multi-device behavior unchanged).
    Real users just get the normal additive v14 DB migration.
-3. **Mobile receive-side + send-side** — implemented and shipped by the mobile
-   effort (lead's territory / mobile task).
+3. **Mobile receive-side + send-side** — ✅ DONE on quorum-mobile PR #168 (OPEN,
+   targets `master`, NOT merged). Same Option A as desktop. Mirrors desktop:
+   `deviceKeyStatements.ts` (announce/revoke build+sign + processDeviceKeyStatement),
+   MMKV `space_member_devices` store, resolver wiring, on-connect announce,
+   `spaceSyncService` stops adopting the shared `signing` slot (heal + new-space),
+   revoke on device removal. 8 new tests, suite 36/36, review clean (incl. iOS).
+   Held for user cross-device UI validation before merge. NOTE: touches the
+   lead's provenance heal logic → ping lead (Telegram).
 4. **Desktop send-side flip** — ONLY after step 3 is live: on-connect announce +
    per-device signing + Security-modal revocation. Waiting for mobile to be
    *fully* done is more conservative than strictly required (the flip only needs
