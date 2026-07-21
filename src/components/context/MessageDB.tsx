@@ -237,6 +237,7 @@ type MessageDBContextValue = {
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
   sendVerifyKickedStatuses: (spaceId: string) => Promise<number>;
+  broadcastDeviceRevocations: (deviceInboxAddresses: string[]) => Promise<void>;
   deleteConversation: (
     conversationId: string,
     currentPasskeyInfo: {
@@ -549,6 +550,18 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           config.spaceIds.includes(s.spaceId)
         )) {
           requestSync(space.spaceId);
+          // Re-announce this device's per-space signing key on connect so
+          // receivers that missed a prior announce self-heal. Idempotent,
+          // fire-and-forget; behaviour-neutral until the send-side flip is
+          // live on both platforms (per-device-signing task, Option A).
+          messageServiceRef.current
+            ?.announceDeviceKeys(space.spaceId, keyset)
+            .catch((err) =>
+              logger.warn('[DeviceKeys] announce on connect failed', {
+                err,
+                spaceId: space.spaceId,
+              })
+            );
         }
       }, 10000);
     }
@@ -705,6 +718,20 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       return syncService.sendVerifyKickedStatuses(spaceId);
     },
     [syncService]
+  );
+
+  // Broadcast master-signed revoke-device tombstones for removed devices across
+  // every space (Security-modal device removal). Uses the context keyset so
+  // callers only supply the removed devices' DM inbox addresses.
+  const broadcastDeviceRevocations = React.useCallback(
+    async (deviceInboxAddresses: string[]) => {
+      if (!keyset?.userKeyset || !keyset?.deviceKeyset) return;
+      await messageServiceRef.current?.broadcastDeviceRevocations(
+        deviceInboxAddresses,
+        keyset
+      );
+    },
+    [keyset]
   );
 
   const informSyncData = React.useCallback(
@@ -1458,6 +1485,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         updateUserProfile,
         requestSync,
         sendVerifyKickedStatuses,
+        broadcastDeviceRevocations,
         deleteConversation,
         actionQueueService,
         receiptService,
@@ -1498,6 +1526,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   updateUserProfile: () => undefined as never,
   requestSync: () => undefined as never,
   sendVerifyKickedStatuses: () => undefined as never,
+  broadcastDeviceRevocations: () => undefined as never,
   deleteConversation: () => undefined as never,
   actionQueueService: undefined as never,
   receiptService: null,

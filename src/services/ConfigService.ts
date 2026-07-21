@@ -124,24 +124,16 @@ export class ConfigService {
           }
 
           for (const key of space.keys) {
+            // Per-device-signing flip (Option A): a fresh device no longer
+            // adopts the shared `signing` slot. It signs with its own
+            // per-device `inbox` key (getSigningKey falls through to it) and
+            // announces that key via announce-keys. Skipping the synced
+            // `signing` key here — and NOT deriving one from `inbox` below —
+            // is what puts a fresh second device on its own key. Devices set
+            // up before this flip keep any previously-saved `signing` slot
+            // untouched (getSigningKey still reads it), so nothing regresses.
+            if (key.keyId === 'signing') continue;
             await this.messageDB.saveSpaceKey(key);
-          }
-
-          // Preserve the join-bound key as the per-USER SIGNING identity before
-          // the `inbox` (mailbox) slot is overwritten below with a fresh
-          // per-DEVICE keypair. Receivers verify control messages against the
-          // join key, so a second device must keep signing with it. A
-          // post-migration uploader carries an explicit `signing` slot (already
-          // saved by the loop above); older uploads only carry `inbox`, so
-          // derive `signing` from it.
-          if (!space.keys.find((k) => k.keyId === 'signing')) {
-            const syncedInbox = space.keys.find((k) => k.keyId === 'inbox');
-            if (syncedInbox) {
-              await this.messageDB.saveSpaceKey({
-                ...syncedInbox,
-                keyId: 'signing',
-              });
-            }
           }
 
           const reg = (await this.apiClient.getSpace(space.spaceId)).data;

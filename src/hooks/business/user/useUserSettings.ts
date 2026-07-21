@@ -89,7 +89,7 @@ export const useUserSettings = (
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
-  const { messageDB, actionQueueService, getConfig, updateUserProfile, setTypingConfig } = useMessageDB();
+  const { messageDB, actionQueueService, getConfig, updateUserProfile, setTypingConfig, broadcastDeviceRevocations } = useMessageDB();
   const queryClient = useQueryClient();
   const uploadRegistration = useUploadRegistration();
 
@@ -531,6 +531,16 @@ export const useUserSettings = (
       await uploadRegistration({
         address: currentPasskeyInfo.address,
         registration: updatedRegistration,
+      });
+
+      // Broadcast master-signed revoke-device tombstones for the removed
+      // devices across every space, so receivers stop admitting their
+      // per-device signing keys. pendingTombstones holds exactly the removed
+      // devices' DM inbox addresses (the revocation handle). Fire-and-forget;
+      // failures are logged inside the service (offline receivers catch up on
+      // the next re-announce). Cleared alongside the other tombstones below.
+      broadcastDeviceRevocations(pendingTombstones).catch((err) => {
+        logger.warn('[UserSettings] broadcastDeviceRevocations failed', err);
       });
 
       // Clear the removed devices list after successful save

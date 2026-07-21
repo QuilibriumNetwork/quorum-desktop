@@ -22,11 +22,15 @@ import {
   shouldSignEdit,
   canManageReadOnlyChannel,
   verifyDeviceKeyStatement,
+  buildDeviceKeyStatementBytes,
+  deriveInboxAddress,
   MESSAGE_EDIT_WINDOW_MS,
   applyEdit,
   getConversationSetting,
   type ControlMessageContent,
   type DeviceKeyStatement,
+  type AnnounceKeysStatement,
+  type RevokeDeviceStatement,
 } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import type { SpaceMemberRow } from '../db/messages';
@@ -1083,6 +1087,130 @@ export class MessageService {
       (await this.messageDB.getSpaceKey(spaceId, 'signing')) ??
       (await this.messageDB.getSpaceKey(spaceId, 'inbox'))
     );
+  }
+
+  /**
+   * Master-sign a device-key statement. The signature covers ONLY
+   * buildDeviceKeyStatementBytes (shared, byte-identical across platforms — the
+   * hard gate), NOT the JSON envelope, so desktop and mobile verify each other's
+   * statements. Domain-prefixed bytes can never collide with config-upload or
+   * registration signatures made by the same master key.
+   */
+  private signDeviceKeyStatement(
+    statement: DeviceKeyStatement,
+    keyset: { userKeyset: secureChannel.UserKeyset }
+  ): string {
+    const bytes = buildDeviceKeyStatementBytes(statement);
+    const sig = ch.js_sign_ed448(
+      Buffer.from(
+        new Uint8Array(keyset.userKeyset.user_key.private_key)
+      ).toString('base64'),
+      Buffer.from(bytes, 'utf-8').toString('base64')
+    );
+    return Buffer.from(JSON.parse(sig), 'base64').toString('hex');
+  }
+
+  /**
+   * Broadcast this device's per-space signing-key admission (announce-keys),
+   * master-signed so receivers admit the key it ACTUALLY signs with. We announce
+   * getSigningKey() (= `signing ?? inbox`): the join device announces the join
+   * key; a fresh second device (no shared `signing` slot — see the Option A flip
+   * in ConfigService) announces its own per-device `inbox` key. Idempotent and
+   * cheap — sent on space connect; receivers that missed it self-heal on the next
+   * connect. Behaviour-neutral until the send-side flip is live on both platforms
+   * (see the per-device-signing task's staged release order). Fire-and-forget.
+   */
+  async announceDeviceKeys(
+    spaceId: string,
+    keyset: {
+      userKeyset: secureChannel.UserKeyset;
+      deviceKeyset: secureChannel.DeviceKeyset;
+    }
+  ): Promise<void> {
+    try {
+      const signingKey = await this.getSigningKey(spaceId);
+      if (!signingKey?.publicKey) return;
+
+      const userPublicKey = Buffer.from(
+        new Uint8Array(keyset.userKeyset.user_key.public_key)
+      ).toString('hex');
+      const deviceInboxAddress =
+        keyset.deviceKeyset?.inbox_keyset?.inbox_address;
+      if (!deviceInboxAddress) return;
+
+      const statement: AnnounceKeysStatement = {
+        type: 'announce-keys',
+        userAddress: deriveInboxAddress(userPublicKey),
+        userPublicKey,
+        spaceId,
+        deviceInboxAddress,
+        spaceKeyPublicKey: signingKey.publicKey,
+        timestamp: Date.now(),
+        signature: '',
+      };
+      statement.signature = this.signDeviceKeyStatement(statement, keyset);
+
+      // Serialize eagerly so the enqueued closure captures the finished string,
+      // not the live (mutable) statement object.
+      const envelope = JSON.stringify({ type: 'control', message: statement });
+      this.enqueueOutbound(async () => [
+        await this.sendHubMessage(spaceId, envelope),
+      ]);
+    } catch (err) {
+      logger.warn('[DeviceKeys] announceDeviceKeys failed', { err, spaceId });
+    }
+  }
+
+  /**
+   * Broadcast a master-signed revoke-device tombstone for each removed device
+   * across every space the user is in (triggered by the Security-modal device
+   * removal). LWW-tombstoned by receivers; a re-added device gets fresh DM keys →
+   * new tag, so a same-tag re-admit needs a newer-ts announce only the master key
+   * can mint. Offline desktop receivers catch up on the announcing device's next
+   * re-announce (P2P has no control-message replay — converges on the hub-log
+   * migration). Fire-and-forget per statement; per-space failures are logged.
+   */
+  async broadcastDeviceRevocations(
+    deviceInboxAddresses: string[],
+    keyset: {
+      userKeyset: secureChannel.UserKeyset;
+      deviceKeyset: secureChannel.DeviceKeyset;
+    }
+  ): Promise<void> {
+    if (deviceInboxAddresses.length === 0) return;
+
+    const userPublicKey = Buffer.from(
+      new Uint8Array(keyset.userKeyset.user_key.public_key)
+    ).toString('hex');
+    const userAddress = deriveInboxAddress(userPublicKey);
+    const spaces = await this.messageDB.getSpaces();
+
+    for (const space of spaces) {
+      for (const deviceInboxAddress of deviceInboxAddresses) {
+        try {
+          const statement: RevokeDeviceStatement = {
+            type: 'revoke-device',
+            userAddress,
+            userPublicKey,
+            spaceId: space.spaceId,
+            deviceInboxAddress,
+            timestamp: Date.now(),
+            signature: '',
+          };
+          statement.signature = this.signDeviceKeyStatement(statement, keyset);
+
+          const envelope = JSON.stringify({ type: 'control', message: statement });
+          this.enqueueOutbound(async () => [
+            await this.sendHubMessage(space.spaceId, envelope),
+          ]);
+        } catch (err) {
+          logger.warn('[DeviceKeys] revoke broadcast failed', {
+            err,
+            spaceId: space.spaceId,
+          });
+        }
+      }
+    }
   }
 
   /**
