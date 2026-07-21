@@ -411,6 +411,40 @@ send-side flip on BOTH platforms is staged — see "Production release order".
    `cryptographic-architecture.md` multi-device section, resolve the mobile
    bug report, file the join-binding hardening follow-up.
 
+## Cross-device test recipe (how to validate before merging mobile PR #168)
+
+The whole feature only activates for ONE account with MULTIPLE devices, so the
+test needs the same account on two devices plus a second account to observe
+that moderation actually propagates to other people.
+
+**Accounts / devices:**
+- **Account 1** logged in on BOTH **desktop** (Device A, the primary/join device)
+  and **mobile** (Device B, the second device under test) — same account.
+- **Account 2** on any other client, joined to the SAME space — the observer.
+
+**Critical setup detail (because of Option A):** only a device that syncs the
+space FRESH on the new build gets its own per-device key. So make **mobile** the
+device under test and sync the space **fresh while running the PR #168 branch**
+(fresh login, or remove + re-add the space on mobile). If mobile already had the
+space from an older build it keeps the shared `signing` key and you are NOT
+testing the new path. Desktop just needs to be on `main` (has the receive-side).
+
+**The test (per-device signing):**
+1. From **mobile (Device B)**, delete / edit / pin a message in the space.
+2. Confirm the action lands on **Account 2's** client AND on **desktop
+   (Device A)**. Before this change that action silently vanished for them
+   (a second device's key was unrecognized).
+3. Single-device sanity: Account 2 (single device) sees no behaviour change.
+
+**The test (revocation):**
+4. On **desktop → Security settings**, remove the mobile device.
+5. Confirm mobile's SUBSEQUENT delete / pin STOPS landing on Account 2 / desktop.
+   This exercises the master-signed `revoke-device` tombstone end to end.
+
+If step 2 works, receivers are admitting the per-device key via the announce; if
+step 5 works, the tombstone is being honoured. Both green ⇒ cross-device flow is
+validated and mobile PR #168 can merge.
+
 ## Production release order (revised 2026-07-20 — STAGED, supersedes the earlier "ship together" decision)
 
 **Decision: ship the desktop RECEIVE-side on its own now; gate the desktop
