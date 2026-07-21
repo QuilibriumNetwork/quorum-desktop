@@ -348,6 +348,15 @@ update-profile:   (current — #243) verify signature, authorize the VERIFIED
 
 ## Multi-Device Signing (mailbox key vs signing key)
 
+> **Current model (2026-07-21): the durable per-device system below is now the
+> active design** — each device signs with its own key, admitted via a
+> master-signed `announce-keys` statement (see "Known limitation + durable
+> follow-up" and its Progress notes at the end of this section). The
+> "interim, sender-side" shared-key fix described first is **superseded** and
+> kept only for history; the interim `signing ?? inbox` read is still retained
+> during rollout and is removed at cleanup. A full rewrite of this section for
+> the pure per-device model is a pending cleanup task.
+
 Verified-signer authorization (below) maps a message's signing key back to a
 member via a single bound `inbox_address` (set by the join broadcast). That
 assumed one key per member — which multi-device breaks.

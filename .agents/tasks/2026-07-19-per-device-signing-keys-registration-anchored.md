@@ -16,6 +16,32 @@ related:
 
 # Durable multi-device: per-device signing keys via master-signed device statements
 
+## Summary / rationale (read first)
+
+Impersonation fix (#241/#243): space control actions (delete/edit/pin/mute,
+@everyone, update-profile) are authorized by the **verified ed448 signature**, not
+the spoofable plaintext `senderId` — a forger can't produce the real member's
+signature. **Side effect:** that fix assumed one signing key per member, so a
+second device (which signs with its own per-space key) resolved to no member and
+its actions were dropped fleet-wide — multi-device broke.
+
+**Durable fix (this work):** each device signs with its **own** per-space key,
+admitted by receivers ONLY via an `announce-keys` statement **signed by the
+account's master identity key** (whose hash is already every member's known
+address, so the account cryptographically vouches for its own devices; a forger
+can't mint one). Revocation is a master-signed `revoke-device` tombstone,
+triggered by removing a device in settings. Private keys never leave their device.
+**Option A** (chosen): fresh devices stop adopting the shared join key and sign
+per-device; devices already set up keep the shared key (`signing ?? inbox` read
+unchanged) so nothing regresses. Plus **#250**: an earlier receive-side gate was
+still stripping per-device signatures *before* authorization ran — fixed to
+consult the admissions store.
+
+**State (2026-07-21):** all merged (desktop #245/#249/#250, mobile #168), Option A
+throughout. Validated desktop↔desktop (2 devices + observer); mobile↔desktop
+pending the hub-log transport convergence. NOT deployed to prod (staged). The rest
+of this doc is the deep-dive, design, edge cases, and test results.
+
 > Deep-dive completed 2026-07-20 against real source on all three repos
 > (desktop branch `fix-multidevice-signing-key`, mobile branch
 > `fix/multidevice-space-signing-key`, shared `main`). Every claim below was
