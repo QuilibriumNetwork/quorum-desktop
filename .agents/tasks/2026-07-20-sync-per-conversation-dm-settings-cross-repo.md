@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Sync per-conversation DM settings across a user's devices (cross-repo)"
-status: shared ✅ merged · desktop ✅ implemented (branch, unmerged) · mobile ⏳ pending
+status: shared ✅ merged · desktop ✅ merged (#248) · shared -37 publish pending (undecided) · mobile ⏳ pending
 created: 2026-07-20
 priority: medium
 platforms: quorum-shared + quorum-desktop + quorum-mobile
@@ -24,7 +24,7 @@ device). The state is a mixed bag, verified against the real code on 2026-07-20:
 | Setting | Desktop storage | Desktop syncs? | Mobile storage | Mobile syncs? |
 |---|---|---|---|---|
 | DM **mute** | `UserConfig.mutedConversations` | ✅ **yes** | `UserConfig.mutedConversations` | ✅ **yes** |
-| DM **favorite** | `UserConfig.favoriteDMs` | ✅ yes | `UserConfig.favoriteDMs` | ✅ yes |
+| DM **favorite** | `UserConfig.favoriteDMs` | ✅ yes | **local MMKV `dm-favorites`** | ❌ **NO** (mobile gap) |
 | **Save Edit History** | local `Conversation.saveEditHistory` | ❌ no | local `Conversation.saveEditHistory` | ❌ no |
 | **Always sign** (`isRepudiable`) | local `Conversation.isRepudiable` | ❌ no | local `Conversation.isRepudiable` | ❌ no |
 | **Receipt override** (delivery/read) | local `Conversation.deliveryReceipts` / `.readReceipts` | ❌ no | (built + reverted; not present today) | ❌ no |
@@ -33,10 +33,17 @@ device). The state is a mixed bag, verified against the real code on 2026-07-20:
 > DM mute is a device-local `Conversation` field that does NOT sync. That is
 > wrong. Desktop mute already lives in `UserConfig.mutedConversations` and syncs
 > (`src/hooks/business/dm/useDMMute.ts:55` reads `config.mutedConversations`; the
-> `save-user-config` action queue uploads it). **Mute and favorites already sync
-> on BOTH platforms** — they are the reference implementation, not the gap. The
-> real gap is the three receipt/signing/edit-history overrides sitting on the
-> local `Conversation` record.
+> `save-user-config` action queue uploads it). **DM mute already syncs on BOTH
+> platforms** — the reference implementation, not the gap.
+>
+> **Favorites correction (code-verified 2026-07-21):** favorites syncs on DESKTOP
+> (`UserConfig.favoriteDMs`) but is **local-only on mobile** —
+> `quorum-mobile/hooks/chat/useDMFavorites.ts` stores them in a device-local MMKV
+> set (`createMMKV({ id: 'dm-favorites' })`), never in `UserConfig`. So favorites
+> is a mobile parity gap, tracked as item 8 in the mobile checklist (move mobile
+> favorites onto the existing typed `UserConfig.favoriteDMs`; no shared work).
+> The real per-conversation-map gap remains the three receipt/signing/edit-history
+> overrides on the local `Conversation` record.
 
 ### Where the local-only reads/writes are (evidence)
 
@@ -62,8 +69,10 @@ device). The state is a mixed bag, verified against the real code on 2026-07-20:
 interoperate desktop ↔ mobile) via the already-synced, encrypted `UserConfig`
 blob — one mechanism, not a per-setting bolt-on. Specifically bring these three
 into sync: `saveEditHistory`, `isRepudiable`, and the `deliveryReceipts` /
-`readReceipts` override. Mute and favorites are already done — **leave them
-where they are.**
+`readReceipts` override. Mute is already done on both platforms — leave it where
+it is. Favorites is done on desktop but is a **mobile-only** gap (mobile stores
+it local-only in MMKV) — the mobile half moves it onto the existing synced
+`UserConfig.favoriteDMs`, not into the new map.
 
 ## Design: a synced map on `UserConfig`, keyed by conversationId
 
@@ -100,6 +109,20 @@ the merge must agree across desktop ↔ mobile). Helpers:
 - **Do NOT fold mute in.** `mutedConversations` already works and syncs on both
   platforms. Migrating a working synced feature into a new shape is risk with no
   user benefit. Keep it as a sibling array.
+- **Store OVERRIDES ONLY (one rule for all four fields).** The map holds only
+  values that *differ from the inherited* global/default — never default-valued
+  entries. On save, a field equal to its inherited value is written as `undefined`
+  (inherit / clear any prior override); if a conversation has no genuine override
+  **and** no existing entry, write nothing at all (no empty entry). Only when an
+  entry already exists does an all-inherited save still write — the empty
+  `{ updatedAt }` reset tombstone that propagates the clear across devices.
+  Rationale: keeps the synced blob lean and makes the data model match its name
+  ("overrides"). This makes signing + edit-history behave like receipts already
+  do (absent = inherit, so they follow later changes to the global default).
+  Desktop implements this in `useDMConversationSettings.saveSettings` (skip guard)
+  + `ConversationSettingsModal` (builds the overrides-only patch by comparing to
+  the loaded global defaults). **Mobile MUST mirror this** — never write a
+  concrete value for a field that equals the global/default.
 
 ### Merge strategy — LOCKED: per-entry last-write-wins
 
@@ -141,13 +164,30 @@ apps' `getConfig`.
   helpers in `src/utils/conversationSettingsUtils.ts` (18 tests). #65 exported
   `ConversationSettingOverrides` from the package root (missed in #63).
 - Additive + optional → safe for mobile (see `feedback_dont_break_mobile_on_shared_changes`).
-- ⚠️ **Not yet published to npm.** Master carries the code but the published
-  `2.1.0-36` tarball predates it. Desktop consumes shared via `link:../quorum-shared`
-  (local repo), so dev/test builds see it now; a desktop **production** ship needs
-  shared published to npm at a pinned version (or CI resolving the link) — confirm
-  how desktop CI resolves `@quilibrium/quorum-shared` before release.
 
-### 2. quorum-desktop ✅ DONE (branch `feat/sync-conversation-settings`, unmerged)
+#### Publish state — IMPORTANT (verified 2026-07-21 against the npm tarball)
+The published **`2.1.0-36` already contains #63**: the `ConversationSettingOverrides`
+type (in `dist/types/user.d.ts`), all three helpers (`getConversationSetting` /
+`setConversationSetting` / `mergeConversationSettings`), and `ConversationSettingsMap`
+/ `ConversationSettingKey` — all reachable from the package root (`index.d.ts` does
+`export * from './utils'`). **Only #65 is missing from npm:** the one-line root
+re-export of `ConversationSettingOverrides` (defined in `user.d.ts` but not listed in
+`dist/types/index.d.ts`), so that name is not importable from published `2.1.0-36`.
+
+- npm won't allow republishing `2.1.0-36`, so #65 reaches npm only via a **`-37`
+  (or later) publish**. **Decision pending — likely wait for `-37`, not yet decided.**
+- **What each consumer actually needs:**
+  - **Mobile:** can build the whole feature against **published `2.1.0-36` today**,
+    typing its config map with **`ConversationSettingsMap`** (the stopgap desktop
+    first used). It needs `-37` ONLY to import `ConversationSettingOverrides` by name
+    (type-parity nicety, not a functional blocker).
+  - **Desktop:** the merged `main` code imports `ConversationSettingOverrides` (from
+    #65). Desktop builds via `link:../quorum-shared` (local repo, has #65), so dev is
+    fine. ⚠️ **If desktop CI/production ever resolves shared from npm `2.1.0-36`, that
+    import fails to typecheck → desktop needs `-37` published.** Confirm how desktop
+    CI resolves `@quilibrium/quorum-shared` before a production release.
+
+### 2. quorum-desktop ✅ DONE (PR #248 squash-merged to `main`, 2026-07-21)
 See the Progress section for the exact file-by-file changes + review fixes.
 - **Write:** `ConversationSettingsModal.tsx` writes the four fields into
   `UserConfig.conversationSettings[conversationId]` (via a `save-user-config`
@@ -187,7 +227,9 @@ See the Progress section for the exact file-by-file changes + review fixes.
 **Exactly one additive change:** `UserConfig.conversationSettings?: { [conversationId]: { saveEditHistory?, isRepudiable?, deliveryReceipts?, readReceipts?, updatedAt? } }` in `quorum-shared/src/types/user.ts`, all fields optional. Optionally a shared `effectiveConversationSetting` helper. Nothing else is a shared/wire change — the transport is the existing encrypted `UserConfig` blob. No new wire message type (unlike the separate `delete-conversation-self` work, which IS a blocked wire type). This means it can ship additively and does not carry the shared-publish blocker class.
 
 ## Not in scope
-- DM **mute** and **favorites** — already synced on both platforms; leave as-is.
+- DM **mute** — already synced on both platforms; leave as-is. Desktop
+  **favorites** is also already synced (leave as-is); mobile favorites is a
+  local-only gap and IS in scope for the mobile half (mobile checklist item 8).
 - **Global** delivery/read receipt toggles + the ✓/✓✓ pipeline — shipped on both.
 - `delete-conversation-self` self-sync — separate task, blocked on a new wire type.
 - Space (channel) settings sync — DM per-conversation only.
@@ -207,12 +249,15 @@ See the Progress section for the exact file-by-file changes + review fixes.
   - #65 (`fix: export ConversationSettingOverrides from package root`): one-line
     addition to the `from './user'` re-export list in `src/types/index.ts` (the
     type was in `user.ts` but not in the public API). Feature-only, no version bump.
-  - Both ride the not-yet-published `2.1.0-36`. **Still unpublished on npm** — if
-    `2.1.0-36` publishes without these, bump to `2.1.0-37` as its own commit
-    (versioning stays lead-dev's call, see `project_quorum_shared_versioning`).
-- **quorum-desktop:** ✅ **implemented** on branch `feat/sync-conversation-settings`
-  (built against the locally-linked shared dist; npm `2.1.0-36` does NOT yet
-  carry #63, so this must not merge/ship until shared publishes). Changes:
+  - **npm publish state (verified 2026-07-21):** published `2.1.0-36` **already
+    carries #63** (helpers + `ConversationSettingsMap`/`ConversationSettingKey` +
+    the `ConversationSettingOverrides` type). **Only #65 is missing from npm** (the
+    root re-export of `ConversationSettingOverrides`); it needs a **`-37` publish**
+    to reach npm. Decision on `-37` pending — likely wait, not yet decided. See the
+    "Publish state" block under Cross-repo scope §1 for exactly who needs `-37`.
+    Versioning stays lead-dev's call (see `project_quorum_shared_versioning`).
+- **quorum-desktop:** ✅ **DONE — PR #248 squash-merged to `main` (2026-07-21).**
+  Built against the locally-linked shared repo (`link:../quorum-shared`). Changes:
   - New `useDMConversationSettings` hook (write via `save-user-config` enqueue,
     optimistic config-cache update + rollback, mirroring `useDMMute`; reactive
     `getOverride` reader).
@@ -257,6 +302,13 @@ See the Progress section for the exact file-by-file changes + review fixes.
     (dual-read still serves it locally). The optimistic-update rollback under the
     `config:<addr>` dedup key can drop a second rapid save's optimistic value —
     inherited verbatim from `useDMMute`/`useDMFavorites`, not new here.
+  - **Follow-up (committed to `main` after #248): overrides-only writes.** The
+    modal now persists only fields that differ from the inherited global/default
+    (signing + edit-history were previously written as concrete values even at
+    the default); `saveSettings` skips writing entirely when there's no override
+    and no existing entry. Eliminates default-valued config bloat. See the
+    "Store overrides only" bullet under Design. (Migration still folds legacy
+    values as-is — see mobile checklist item 6.)
   - Typecheck + lint (no new warnings) + web build all green (re-verified after
     the #65 type revert).
   - **Files touched (desktop):** `src/hooks/business/dm/useDMConversationSettings.ts`
@@ -269,13 +321,24 @@ See the Progress section for the exact file-by-file changes + review fixes.
     migration), `src/db/messages.ts` (type).
 - **quorum-mobile:** ⏳ **PENDING — the remaining half. Execute-ready checklist below.**
 
-  Prereq: bump mobile's `@quilibrium/quorum-shared` pin to a published version
-  that carries #63 + #65 (or the code won't have the helpers). Until then mobile
-  can read the field untyped via `(config as any).conversationSettings`.
+  **Shared-version prereq (see the Publish state block in §1):** the helpers mobile
+  needs are already in published **`2.1.0-36`** — mobile can build against it today
+  and type its map with **`ConversationSettingsMap`**. `2.1.0-37` (with #65) is only
+  needed to import `ConversationSettingOverrides` by name. Team is likely waiting for
+  `-37` (undecided). If mobile starts before its pin is bumped, it can read the field
+  untyped via `(config as any).conversationSettings`.
 
-  1. **Write** — `app/(tabs)/messages/dm/[id].tsx` `updateConversationSetting()`:
-     write to `UserConfig.conversationSettings[conversationId]` via `setConversationSetting`
-     + the existing `saveConfig` flow, instead of `storage.saveConversation({...stored, ...patch})`.
+  1. **Write (overrides-only — mirror desktop)** — `app/(tabs)/messages/dm/[id].tsx`
+     `updateConversationSetting()`: write to `UserConfig.conversationSettings[conversationId]`
+     via `setConversationSetting` + the existing `saveConfig` flow, instead of
+     `storage.saveConversation({...stored, ...patch})`. **Persist OVERRIDES ONLY:**
+     a field equal to its inherited global/default is written as `undefined`
+     (inherit); if the conversation has no genuine override and no existing entry,
+     skip the write entirely (don't create an empty entry). See the "Store
+     overrides only" bullet under Design — desktop does this in
+     `useDMConversationSettings.saveSettings` (skip guard) + `ConversationSettingsModal`
+     (patch built by comparing to loaded global defaults). Do NOT write a concrete
+     value for signing/edit-history when it equals the global/default.
   2. **Read (dual-read, mirror desktop)** — effective value =
      `getConversationSetting(config.conversationSettings, id, key) ?? legacy local Conversation field ?? global ?? default`, at EVERY site:
      - DM send path / composer signing lock (`isRepudiable`).
@@ -298,7 +361,17 @@ See the Progress section for the exact file-by-file changes + review fixes.
   6. **Migration** — one-time sweep folding local `Conversation.{isRepudiable,
      saveEditHistory,deliveryReceipts,readReceipts}` into the map with a low
      `updatedAt` (desktop uses `1`); dual-read the legacy fields for one release.
-  7. Keep mute (`mutedConversations`) + favorites (`favoriteDMs`) exactly as-is.
+     Desktop's migration folds values as-is (it may carry a few default-valued
+     entries from the old always-concrete regime); it deliberately does NOT
+     re-derive overrides-only, to avoid duplicating the modal's global-compare
+     logic in a second place. Those self-clean when the user next re-saves. Mobile
+     may follow the same simple approach.
+  7. Keep mute (`mutedConversations`) exactly as-is — already synced.
+  8. **Favorites parity (separate, self-contained):** rework
+     `hooks/chat/useDMFavorites.ts` to read/write the existing typed
+     `UserConfig.favoriteDMs` (synced) instead of the local `dm-favorites` MMKV
+     set, copying the `useDMMute` bookmark pattern; one-time migrate the legacy
+     set. Brings mobile favorites to desktop parity; no shared publish needed.
 
 ## Interop & shipping — desktop-shipped, mobile-pending (verified 2026-07-21)
 
@@ -327,12 +400,16 @@ feature is additive and mobile is forward-compatible:
   loses its settings; only a brand-new third device pulling during that window
   would miss them until the next desktop save.
 
-## Ship order (updated)
-1. ✅ shared #63 + #65 merged.
-2. ⏳ Publish shared to npm (lead-dev) — needed for desktop's production build and
-   for mobile to pin. Desktop dev/test already works via `link:`.
-3. ⏳ Merge desktop `feat/sync-conversation-settings` (safe to merge before mobile;
-   see Interop). Confirm CI shared resolution first.
-4. ⏳ mobile: bump shared pin → implement the checklist above → ship.
+## Ship order (updated 2026-07-21)
+1. ✅ shared #63 + #65 merged to master.
+2. ✅ desktop PR #248 squash-merged to `main` (built via `link:`; safe to merge
+   before mobile — see Interop).
+3. ⏳ **Publish shared `2.1.0-37` to npm (lead-dev) — DECISION PENDING (likely
+   waiting).** Carries #65's `ConversationSettingOverrides` root export. Needed for:
+   (a) desktop's production/CI build IF CI resolves shared from npm rather than the
+   local link (desktop `main` imports `ConversationSettingOverrides`); (b) mobile to
+   import that type by name. Published `2.1.0-36` already has the #63 helpers, so
+   mobile can start against `-36` + `ConversationSettingsMap` without waiting.
+4. ⏳ mobile: (bump shared pin to `-36` or `-37`) → implement the §3 checklist → ship.
 
 *Last updated: 2026-07-21*

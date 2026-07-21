@@ -84,6 +84,16 @@ export function useDMConversationSettings(): UseDMConversationSettingsReturn {
             buildConfigKey({ userAddress })
           ) ?? (await messageDB.getUserConfig({ address: userAddress }));
 
+        // Overrides-only hygiene: if the patch carries no actual override AND no
+        // entry exists yet for this conversation, there is nothing to store and
+        // nothing to clear — skip the write so we never persist a default-valued
+        // (empty-but-timestamped) entry. When an entry DOES exist, we still write
+        // so an all-inherited patch clears it (the reset tombstone propagates).
+        const hasOverride = Object.values(patch).some((v) => v !== undefined);
+        const hasExistingEntry =
+          !!currentConfig?.conversationSettings?.[conversationId];
+        if (!hasOverride && !hasExistingEntry) return;
+
         const updatedConfig = {
           ...currentConfig,
           address: userAddress,

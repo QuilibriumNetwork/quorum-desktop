@@ -42,6 +42,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const [saveEditHistory, setSaveEditHistory] = React.useState<boolean>(false);
   const [convDeliveryReceipts, setConvDeliveryReceipts] = React.useState<boolean | undefined>(undefined);
   const [convReadReceipts, setConvReadReceipts] = React.useState<boolean | undefined>(undefined);
+  const [globalNonRepudiable, setGlobalNonRepudiable] = React.useState<boolean>(true);
   const [globalDeliveryReceipts, setGlobalDeliveryReceipts] = React.useState<boolean>(false);
   const [globalReadReceipts, setGlobalReadReceipts] = React.useState<boolean>(false);
 
@@ -126,7 +127,9 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           getOverride(conversationId, 'readReceipts') ??
             conversation?.conversation?.readReceipts
         );
-        // Load global receipt settings for display
+        // Load global defaults (used both for display and to decide, on save,
+        // which fields are genuine overrides worth persisting).
+        setGlobalNonRepudiable(cfg?.nonRepudiable ?? true);
         setGlobalDeliveryReceipts(cfg?.deliveryReceipts ?? false);
         setGlobalReadReceipts(cfg?.readReceipts ?? false);
       } catch {
@@ -148,12 +151,18 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
   const saveRepudiability = React.useCallback(async () => {
     try {
-      // Write to the synced config map (source of truth). Undefined receipt
-      // values clear the override (reset-to-global). The config save propagates
-      // across the user's devices; no local Conversation write is needed.
+      // Persist OVERRIDES ONLY: a field equal to its inherited value is left
+      // `undefined` so it inherits (and clears any prior override). This keeps
+      // the synced map free of default-valued entries — see the Merge/reset
+      // semantics in setConversationSetting. saveSettings itself skips writing
+      // when there is nothing to override and no existing entry to clear.
       await saveSettings(conversationId, {
-        isRepudiable: !nonRepudiable,
-        saveEditHistory,
+        // Signing: store only when it differs from the global default.
+        isRepudiable:
+          nonRepudiable !== globalNonRepudiable ? !nonRepudiable : undefined,
+        // Edit history: default is off, so store only when turned on.
+        saveEditHistory: saveEditHistory ? true : undefined,
+        // Receipts are already override-only (undefined = inherit global).
         deliveryReceipts: convDeliveryReceipts,
         readReceipts: convReadReceipts,
       });
@@ -165,6 +174,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     }
   }, [
     nonRepudiable,
+    globalNonRepudiable,
     saveEditHistory,
     convDeliveryReceipts,
     convReadReceipts,
