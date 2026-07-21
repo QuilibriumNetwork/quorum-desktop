@@ -24,6 +24,7 @@ import type { SpaceService } from './SpaceService';
 import type { QueryClient, InfiniteData } from '@tanstack/react-query';
 import type { ActionType } from '../types/actionQueue';
 import { buildMessagesKeyPrefix } from '../hooks/queries/messages/buildMessagesKey';
+import { buildSpaceKey } from '../hooks/queries/space/buildSpaceKey';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Message } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../utils';
@@ -149,7 +150,7 @@ export class ActionQueueHandlers {
         this.deps.queryClient
       );
       this.deps.queryClient.invalidateQueries({
-        queryKey: ['space', context.spaceId],
+        queryKey: buildSpaceKey({ spaceId: context.spaceId as string }),
       });
     },
     isPermanentError: (error) => {
