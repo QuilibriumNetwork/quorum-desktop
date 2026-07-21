@@ -15,7 +15,7 @@ import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilib
 import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '../../config/features';
-import { createIPFSCIDRegex, extractMentionsFromText, applyEdit } from '@quilibrium/quorum-shared';
+import { createIPFSCIDRegex, extractMentionsFromText, applyEdit, getConversationSetting } from '@quilibrium/quorum-shared';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 
@@ -496,8 +496,23 @@ export function MessageEditTextarea({
         try {
           const conversationId = `${currentSpaceId}/${currentChannelId}`;
           if (isDM) {
-            const conversationData = await messageDB.getConversation({ conversationId });
-            saveEditHistoryEnabled = conversationData?.conversation?.saveEditHistory ?? false;
+            // Dual-read: synced config override first, then the legacy local
+            // Conversation record (migration fallback for one release).
+            const address = currentPasskeyInfo?.address;
+            const cfg = address
+              ? await messageDB.getUserConfig({ address })
+              : undefined;
+            const override = getConversationSetting(
+              cfg?.conversationSettings,
+              conversationId,
+              'saveEditHistory'
+            );
+            if (typeof override !== 'undefined') {
+              saveEditHistoryEnabled = override;
+            } else {
+              const conversationData = await messageDB.getConversation({ conversationId });
+              saveEditHistoryEnabled = conversationData?.conversation?.saveEditHistory ?? false;
+            }
           } else {
             const space = await messageDB.getSpace(currentSpaceId);
             saveEditHistoryEnabled = space?.saveEditHistory ?? false;

@@ -4,7 +4,6 @@ import { t } from '@lingui/core/macro';
 import { useMessageDB } from '../context/useMessageDB';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useConversations } from '../../hooks';
-import { DefaultImages } from '../../utils';
 import { isFeatureEnabled } from '../../utils/platform';
 import {
   Modal,
@@ -15,12 +14,11 @@ import {
   Tooltip,
   Spacer,
 } from '../primitives';
-import { useQueryClient } from '@tanstack/react-query';
-import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
 import { useConfirmation } from '../../hooks/ui/useConfirmation';
 import ConfirmationModal from './ConfirmationModal';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
+import { useDMConversationSettings } from '../../hooks/business/dm/useDMConversationSettings';
 
 type ConversationSettingsModalProps = {
   conversationId: string;
@@ -34,12 +32,11 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   visible,
 }) => {
   const { data: conversation } = useConversation({ conversationId });
-  const { messageDB, getConfig, keyset, deleteConversation, deleteEncryptionStates } =
+  const { getConfig, keyset, deleteConversation, deleteEncryptionStates } =
     useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const navigate = useNavigate();
   const { data: convPages } = useConversations({ type: 'direct' });
-  const queryClient = useQueryClient();
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const [saveEditHistory, setSaveEditHistory] = React.useState<boolean>(false);
@@ -51,6 +48,9 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   // DM mute hook
   const { isMuted, toggleMute } = useDMMute();
   const muted = isMuted(conversationId);
+
+  // Per-conversation synced settings (save-edit-history, always-sign, receipts)
+  const { saveSettings, getOverride } = useDMConversationSettings();
 
   // Feature flag: only show edit history toggle if enabled via environment variable
   const showEditHistoryToggle = isFeatureEnabled('ENABLE_EDIT_HISTORY');
@@ -100,17 +100,32 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           userKey: keyset.userKeyset,
         });
 
-        const convIsRepudiable = conversation?.conversation?.isRepudiable;
-        if (typeof convIsRepudiable !== 'undefined') {
-          setNonRepudiable(!convIsRepudiable);
+        // Dual-read: synced config override first (via the reactive useConfig
+        // snapshot, so an optimistic save is reflected), then the legacy local
+        // Conversation record (migration fallback for one release), then global.
+        const isRepudiableOverride =
+          getOverride(conversationId, 'isRepudiable') ??
+          conversation?.conversation?.isRepudiable;
+        if (typeof isRepudiableOverride !== 'undefined') {
+          setNonRepudiable(!isRepudiableOverride);
         } else {
           setNonRepudiable(cfg?.nonRepudiable ?? true);
         }
         // Load saveEditHistory setting (defaults to false)
-        setSaveEditHistory(conversation?.conversation?.saveEditHistory ?? false);
+        setSaveEditHistory(
+          getOverride(conversationId, 'saveEditHistory') ??
+            conversation?.conversation?.saveEditHistory ??
+            false
+        );
         // Load per-conversation receipt overrides (undefined = use global)
-        setConvDeliveryReceipts(conversation?.conversation?.deliveryReceipts);
-        setConvReadReceipts(conversation?.conversation?.readReceipts);
+        setConvDeliveryReceipts(
+          getOverride(conversationId, 'deliveryReceipts') ??
+            conversation?.conversation?.deliveryReceipts
+        );
+        setConvReadReceipts(
+          getOverride(conversationId, 'readReceipts') ??
+            conversation?.conversation?.readReceipts
+        );
         // Load global receipt settings for display
         setGlobalDeliveryReceipts(cfg?.deliveryReceipts ?? false);
         setGlobalReadReceipts(cfg?.readReceipts ?? false);
@@ -127,38 +142,20 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     conversationId,
     currentPasskeyInfo,
     getConfig,
+    getOverride,
     keyset.userKeyset,
   ]);
 
   const saveRepudiability = React.useCallback(async () => {
     try {
-      const existing = await messageDB.getConversation({ conversationId });
-      const baseConv = existing.conversation ?? {
-        conversationId,
-        address: conversationId.split('/')[0],
-        icon: conversation?.conversation?.icon || DefaultImages.UNKNOWN_USER,
-        displayName: conversation?.conversation?.displayName || t`Unknown User`,
-        type: 'direct' as const,
-        timestamp: Date.now(),
-      };
-
-      const updatedConv = {
-        ...baseConv,
+      // Write to the synced config map (source of truth). Undefined receipt
+      // values clear the override (reset-to-global). The config save propagates
+      // across the user's devices; no local Conversation write is needed.
+      await saveSettings(conversationId, {
         isRepudiable: !nonRepudiable,
-        saveEditHistory: saveEditHistory,
+        saveEditHistory,
         deliveryReceipts: convDeliveryReceipts,
         readReceipts: convReadReceipts,
-      };
-
-      // Remove undefined receipt keys so IndexedDB doesn't store them
-      if (updatedConv.deliveryReceipts === undefined) delete updatedConv.deliveryReceipts;
-      if (updatedConv.readReceipts === undefined) delete updatedConv.readReceipts;
-
-      await messageDB.saveConversation(updatedConv);
-
-      // Invalidate conversation query to update DirectMessage component
-      await queryClient.invalidateQueries({
-        queryKey: buildConversationKey({ conversationId }),
       });
 
       onClose();
@@ -172,10 +169,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     convDeliveryReceipts,
     convReadReceipts,
     conversationId,
-    messageDB,
-    conversation,
+    saveSettings,
     onClose,
-    queryClient,
   ]);
 
   const handleDeleteClick = React.useCallback(

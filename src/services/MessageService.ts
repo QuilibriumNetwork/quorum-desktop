@@ -24,6 +24,7 @@ import {
   verifyDeviceKeyStatement,
   MESSAGE_EDIT_WINDOW_MS,
   applyEdit,
+  getConversationSetting,
   type ControlMessageContent,
   type DeviceKeyStatement,
 } from '@quilibrium/quorum-shared';
@@ -1446,13 +1447,23 @@ export class MessageService {
       let saveEditHistoryEnabled: boolean;
 
       if (isDM) {
-        // For DMs, check conversation setting
+        // For DMs, dual-read: synced config override first, then the legacy
+        // local Conversation record (migration fallback for one release).
         const conversationId = `${spaceId}/${channelId}`;
         const conversation = await messageDB.getConversation({
           conversationId,
         });
+        const userConfig = currentUserAddress
+          ? await messageDB.getUserConfig({ address: currentUserAddress })
+          : undefined;
         saveEditHistoryEnabled =
-          conversation?.conversation?.saveEditHistory ?? false;
+          getConversationSetting(
+            userConfig?.conversationSettings,
+            conversationId,
+            'saveEditHistory'
+          ) ??
+          conversation?.conversation?.saveEditHistory ??
+          false;
       } else {
         // For spaces, check space setting
         const space = await messageDB.getSpace(spaceId);
@@ -3294,8 +3305,13 @@ export class MessageService {
           const conversation = await this.messageDB.getConversation({
             conversationId,
           });
-          const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
-          const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
+          // Dual-read: synced config override first, then legacy local record.
+          const effectiveDeliveryReceipts =
+            getConversationSetting(userConfig?.conversationSettings, conversationId, 'deliveryReceipts') ??
+            conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
+          const effectiveReadReceipts =
+            getConversationSetting(userConfig?.conversationSettings, conversationId, 'readReceipts') ??
+            conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
           if (this.interceptControlMessages(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts, queryClient)) {
             // delivery-ack control message — encryption state saved, but don't save/display the message
             return;
@@ -4999,8 +5015,13 @@ export class MessageService {
         // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
         const userConfig = await this.messageDB.getUserConfig({ address: self_address });
         const senderAddress = conversationId.split('/')[0];
-        const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
-        const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
+        // Dual-read: synced config override first, then legacy local record.
+        const effectiveDeliveryReceipts =
+          getConversationSetting(userConfig?.conversationSettings, conversationId, 'deliveryReceipts') ??
+          conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
+        const effectiveReadReceipts =
+          getConversationSetting(userConfig?.conversationSettings, conversationId, 'readReceipts') ??
+          conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
         if (this.interceptControlMessages(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts, effectiveReadReceipts, queryClient)) {
           // delivery-ack control message — encryption state saved, but don't save/display the message
           return;

@@ -22,6 +22,7 @@ import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigatio
 import { useSidebar } from './context/SidebarProvider';
 import { OfflineBanner } from './ui/OfflineBanner';
 import { useMutedConversationsSync } from '../hooks/business/dm/useMutedConversationsSync';
+import { useMigrateConversationSettings } from '../hooks/business/dm/useMigrateConversationSettings';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -57,6 +58,7 @@ const Layout: React.FunctionComponent<{
 
   // Sync muted conversations to NotificationService for desktop notification filtering
   useMutedConversationsSync();
+  useMigrateConversationSettings();
 
   const [toast, setToast] = React.useState<{
     id?: string;
