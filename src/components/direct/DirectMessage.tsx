@@ -1,4 +1,4 @@
-import { logger, formatAddress } from '@quilibrium/quorum-shared';
+import { logger, formatAddress, getConversationSetting } from '@quilibrium/quorum-shared';
 import React, {
   useEffect,
   useRef,
@@ -52,6 +52,7 @@ import {
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
+import { useConfig } from '../../hooks/queries/config';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { MobileDrawer } from '../ui';
 import { DMUserProfileSidebar } from './DMUserProfileSidebar';
@@ -150,6 +151,11 @@ const DirectMessage: React.FC<{}> = () => {
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
 
+  // Synced per-conversation settings map (reactive to optimistic saves from the
+  // settings modal). Used to derive effective signing / receipt behavior below.
+  const { data: config } = useConfig({ userAddress });
+  const conversationSettings = config?.conversationSettings;
+
   // Only show the bookmark icon when there's at least one bookmark in this
   // DM. Global view lives on /bookmarks.
   const { filterByConversation } = useBookmarks({ userAddress });
@@ -163,15 +169,30 @@ const DirectMessage: React.FC<{}> = () => {
   React.useEffect(() => {
     (async () => {
       try {
-        const convIsRepudiable = conversation?.conversation?.isRepudiable;
         const cfg = await getConfig({
           address: user.currentPasskeyInfo!.address,
           userKey: keyset.userKeyset,
         });
+        // Dual-read: synced config override first, then the legacy local
+        // Conversation record (migration fallback), then global / default.
+        // Read the override from the reactive useConfig snapshot (not `cfg` from
+        // getConfig) so an optimistic save from the settings modal — which lands
+        // in the query cache before the action queue persists to IndexedDB — is
+        // reflected immediately instead of reverting for a render cycle.
+        const settings = conversationSettings;
+        const convIsRepudiable =
+          getConversationSetting(settings, conversationId, 'isRepudiable') ??
+          conversation?.conversation?.isRepudiable;
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
-        const effectiveDeliveryReceipts = conversation?.conversation?.deliveryReceipts ?? cfg?.deliveryReceipts ?? false;
+        const convDeliveryReceipts =
+          getConversationSetting(settings, conversationId, 'deliveryReceipts') ??
+          conversation?.conversation?.deliveryReceipts;
+        const convReadReceipts =
+          getConversationSetting(settings, conversationId, 'readReceipts') ??
+          conversation?.conversation?.readReceipts;
+        const effectiveDeliveryReceipts = convDeliveryReceipts ?? cfg?.deliveryReceipts ?? false;
         const effectiveReadReceipts = effectiveDeliveryReceipts
-          ? (conversation?.conversation?.readReceipts ?? cfg?.readReceipts ?? false)
+          ? (convReadReceipts ?? cfg?.readReceipts ?? false)
           : false;
         setDeliveryReceipts(effectiveDeliveryReceipts);
         setReadReceipts(effectiveReadReceipts);
@@ -192,6 +213,8 @@ const DirectMessage: React.FC<{}> = () => {
     conversation?.conversation?.isRepudiable,
     conversation?.conversation?.deliveryReceipts,
     conversation?.conversation?.readReceipts,
+    conversationSettings,
+    conversationId,
     keyset.userKeyset,
     getConfig,
     user.currentPasskeyInfo,

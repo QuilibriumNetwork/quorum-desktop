@@ -1,7 +1,7 @@
 // ConfigService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles user configuration management
 
-import { logger, int64ToBytes } from '@quilibrium/quorum-shared';
+import { logger, int64ToBytes, mergeConversationSettings } from '@quilibrium/quorum-shared';
 import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import type { Bookmark, Space } from '@quilibrium/quorum-shared';
@@ -292,6 +292,14 @@ export class ConfigService {
     );
     config.deviceNames = deviceNamesMerge.deviceNames;
     config.deletedDeviceNameAddresses = deviceNamesMerge.deletedDeviceNameAddresses;
+
+    // Merge per-conversation DM settings: per-entry last-write-wins by updatedAt
+    // (see mergeConversationSettings). Prevents an unrelated remote config save
+    // from clobbering another conversation's local override.
+    config.conversationSettings = mergeConversationSettings(
+      storedConfig?.conversationSettings,
+      config.conversationSettings
+    );
 
     // Merge user notes from remote
     const deletedNoteAddresses = config.deletedUserNoteAddresses ?? [];

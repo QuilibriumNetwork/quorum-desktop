@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Sync per-conversation DM settings across a user's devices (cross-repo)"
-status: design — not implemented
+status: shared ✅ merged · desktop ✅ implemented (branch, unmerged) · mobile ⏳ pending
 created: 2026-07-20
 priority: medium
 platforms: quorum-shared + quorum-desktop + quorum-mobile
@@ -134,16 +134,21 @@ apps' `getConfig`.
 
 ## Cross-repo scope
 
-### 1. quorum-shared (do FIRST, then publish)
-- Add `UserConfig.conversationSettings` (additive, all-optional) to
-  `src/types/user.ts`. **This is the only shared change.**
-- Optionally add a tiny `effectiveConversationSetting(config, conversationId, key, fallback)` helper if worth centralizing the `?? global ?? default` logic across both apps.
-- Additive + optional → safe for mobile, which is pinned to a published build
-  (see `feedback_dont_break_mobile_on_shared_changes`). Follow the canonical
-  order: **shared → publish → desktop → mobile bumps → mobile**. Mobile can read
-  the field untyped via `(config as any)` before it bumps if needed.
+### 1. quorum-shared ✅ DONE (PRs #63 + #65 merged to master, 2026-07-20/21)
+- Added `UserConfig.conversationSettings` (additive, all-optional) to
+  `src/types/user.ts` + the `ConversationSettingOverrides` type, plus the
+  `getConversationSetting` / `setConversationSetting` / `mergeConversationSettings`
+  helpers in `src/utils/conversationSettingsUtils.ts` (18 tests). #65 exported
+  `ConversationSettingOverrides` from the package root (missed in #63).
+- Additive + optional → safe for mobile (see `feedback_dont_break_mobile_on_shared_changes`).
+- ⚠️ **Not yet published to npm.** Master carries the code but the published
+  `2.1.0-36` tarball predates it. Desktop consumes shared via `link:../quorum-shared`
+  (local repo), so dev/test builds see it now; a desktop **production** ship needs
+  shared published to npm at a pinned version (or CI resolving the link) — confirm
+  how desktop CI resolves `@quilibrium/quorum-shared` before release.
 
-### 2. quorum-desktop
+### 2. quorum-desktop ✅ DONE (branch `feat/sync-conversation-settings`, unmerged)
+See the Progress section for the exact file-by-file changes + review fixes.
 - **Write:** `ConversationSettingsModal.tsx` writes the four fields into
   `UserConfig.conversationSettings[conversationId]` (via a `save-user-config`
   enqueue, mirroring `useDMMute`) instead of `messageDB.saveConversation`.
@@ -160,7 +165,7 @@ apps' `getConfig`.
   `Conversation.{saveEditHistory,isRepudiable,deliveryReceipts,readReceipts}`
   into the map; keep reading the local fields as a fallback for one release.
 
-### 3. quorum-mobile
+### 3. quorum-mobile ⏳ REMAINING — the mobile half (see the checklist in Progress)
 - Same move: `dm/[id].tsx` `updateConversationSetting` writes to
   `UserConfig.conversationSettings` instead of `storage.saveConversation`; the
   DM send path, composer lock, edit hooks, and receipt gating read effective
@@ -195,21 +200,139 @@ apps' `getConfig`.
    the new map) — recommended, and assumed here.
 
 ## Progress
-- **quorum-shared:** ✅ **PR #63 open** → master
-  (`feat/user-config-conversation-settings`): type + helpers + 18 passing tests,
-  feature-only (no version change). Build + vitest green, rebased onto current
-  master. Rides the already-bumped, not-yet-published `2.1.0-36` (npm latest is
-  still `2.1.0-35`; master's `chore: bump to 2.1.0-36` is the segregated bump
-  from other work). My earlier local `chore/bump-shared-2.1.0-36` branch was
-  redundant with master's bump and was deleted. If `2.1.0-36` publishes before
-  #63 merges, bump to `2.1.0-37` as its own commit.
-- **quorum-desktop:** pending shared publish (or local-link build). Rewire
-  `ConversationSettingsModal` (write) + `DirectMessage`/`MessageEditTextarea`
-  (read) to `UserConfig.conversationSettings` via the shared helpers; add
-  `mergeConversationSettings` to `ConfigService.getConfig`; migrate local
-  `Conversation` fields on first run (dual-read one release).
-- **quorum-mobile:** pending; write the aligned mobile task + add the
-  per-conversation receipt override UI (the reverted piece); use the bookmark
-  pattern + add `conversationSettings` to `getConfig`'s inbound preservation list.
+- **quorum-shared:** ✅ **DONE — PRs #63 + #65 merged to master.**
+  - #63 (`feat: add UserConfig.conversationSettings…`): `ConversationSettingOverrides`
+    type + `UserConfig.conversationSettings` + the `getConversationSetting` /
+    `setConversationSetting` / `mergeConversationSettings` helpers + 18 tests.
+  - #65 (`fix: export ConversationSettingOverrides from package root`): one-line
+    addition to the `from './user'` re-export list in `src/types/index.ts` (the
+    type was in `user.ts` but not in the public API). Feature-only, no version bump.
+  - Both ride the not-yet-published `2.1.0-36`. **Still unpublished on npm** — if
+    `2.1.0-36` publishes without these, bump to `2.1.0-37` as its own commit
+    (versioning stays lead-dev's call, see `project_quorum_shared_versioning`).
+- **quorum-desktop:** ✅ **implemented** on branch `feat/sync-conversation-settings`
+  (built against the locally-linked shared dist; npm `2.1.0-36` does NOT yet
+  carry #63, so this must not merge/ship until shared publishes). Changes:
+  - New `useDMConversationSettings` hook (write via `save-user-config` enqueue,
+    optimistic config-cache update + rollback, mirroring `useDMMute`; reactive
+    `getOverride` reader).
+  - `ConversationSettingsModal` writes the 4 fields into
+    `UserConfig.conversationSettings` (dropped the `messageDB.saveConversation`
+    write); load dual-reads config override → legacy local `Conversation`.
+  - `DirectMessage` now consumes `useConfig` and dual-reads `isRepudiable` +
+    delivery/read receipts from the synced map (reactive to modal saves).
+  - `MessageEditTextarea` dual-reads `saveEditHistory` (DM branch) from the map.
+  - `ConfigService.getConfig` merges `conversationSettings` via shared
+    `mergeConversationSettings` (per-entry LWW), beside the `deviceNames` merge.
+  - `useMigrateConversationSettings` (mounted in `Layout`): one-time per-user
+    sweep folding legacy local `Conversation` fields into the map with a low
+    `updatedAt` so any genuine edit wins; guarded by a localStorage flag.
+  - Added `conversationSettings?: { [conversationId]: ConversationSettingOverrides }`
+    to the desktop-local `UserConfig` in `src/db/messages.ts`, mirroring shared's
+    `UserConfig` field exactly (desktop still keeps its own `UserConfig` type — see
+    `project_quorum_shared_migration`). Initially typed with `ConversationSettingsMap`
+    as a workaround while #65's export was pending; reverted to the shared-aligned
+    form once #65 merged.
+  - **Post-review fixes (multi-agent /code-review high):**
+    - **MessageService reader sites (was a miss).** `MessageService.ts` reads
+      the effective receipt + edit-history settings on the RECEIVE path, direct
+      from the local `Conversation` record — three sites the modal no longer
+      writes to: receipt-intercept at (old) lines 3297-3298 and 5002-5003, and
+      edit-history-on-receive at ~1455. All three now dual-read the synced map
+      first (`getConversationSetting(userConfig?.conversationSettings, …) ?? local
+      ?? global`). **Mobile port MUST update the equivalent receive-path readers,
+      not just the modal/composer.**
+    - **Reactivity revert.** `DirectMessage` and the modal load originally read
+      the override from `getConfig()`/IndexedDB, where an optimistic save isn't
+      persisted yet → the just-saved value visibly reverted for a cycle. Both now
+      read the override from the reactive `useConfig` snapshot (`getOverride` in
+      the modal); `getConfig` is kept only for global defaults.
+    - Verified `mergeConversationSettings(local, undefined)` returns local
+      untouched (a newer mobile blob lacking the field can't wipe desktop
+      settings). Merge is strict `>` LWW, tie → local, so migration `updatedAt=1`
+      always loses to a real edit.
+  - **Known minor (accepted, documented):** migration skips a conversation if
+    the synced map already has ANY entry for it, so a field present only in the
+    legacy local record won't cross-device-propagate if a partial entry pre-exists
+    (dual-read still serves it locally). The optimistic-update rollback under the
+    `config:<addr>` dedup key can drop a second rapid save's optimistic value —
+    inherited verbatim from `useDMMute`/`useDMFavorites`, not new here.
+  - Typecheck + lint (no new warnings) + web build all green (re-verified after
+    the #65 type revert).
+  - **Files touched (desktop):** `src/hooks/business/dm/useDMConversationSettings.ts`
+    (new), `src/hooks/business/dm/useMigrateConversationSettings.ts` (new),
+    `src/components/modals/ConversationSettingsModal.tsx`,
+    `src/components/direct/DirectMessage.tsx`,
+    `src/components/message/MessageEditTextarea.tsx`,
+    `src/services/MessageService.ts` (3 receive-path readers),
+    `src/services/ConfigService.ts` (merge), `src/components/Layout.tsx` (mount
+    migration), `src/db/messages.ts` (type).
+- **quorum-mobile:** ⏳ **PENDING — the remaining half. Execute-ready checklist below.**
 
-*Last updated: 2026-07-20*
+  Prereq: bump mobile's `@quilibrium/quorum-shared` pin to a published version
+  that carries #63 + #65 (or the code won't have the helpers). Until then mobile
+  can read the field untyped via `(config as any).conversationSettings`.
+
+  1. **Write** — `app/(tabs)/messages/dm/[id].tsx` `updateConversationSetting()`:
+     write to `UserConfig.conversationSettings[conversationId]` via `setConversationSetting`
+     + the existing `saveConfig` flow, instead of `storage.saveConversation({...stored, ...patch})`.
+  2. **Read (dual-read, mirror desktop)** — effective value =
+     `getConversationSetting(config.conversationSettings, id, key) ?? legacy local Conversation field ?? global ?? default`, at EVERY site:
+     - DM send path / composer signing lock (`isRepudiable`).
+     - Edit hooks (`saveEditHistory`).
+     - Receipt gating.
+     - ⚠️ **Receive-path readers in mobile's MessageService equivalent** — this was
+       the desktop miss (3 sites: receipt-intercept ×2 + edit-history-on-receive).
+       Find mobile's equivalent of `interceptControlMessages` gating and the
+       received-edit `saveEditHistory` check and dual-read them too. **Do not
+       update only the modal/composer.**
+  3. **Per-conversation receipt override UI** — re-add to `DMSettingsSheet.tsx`
+     (the piece built + reverted on 2026-07-19); the receipt pipeline already exists.
+  4. **Merge** — call shared `mergeConversationSettings(local, remote)` in mobile's
+     `services/config/configService.ts` `getConfig`, beside the bookmark/mute merges.
+  5. **Inbound preservation (belt-and-suspenders)** — mobile's `getConfig` already
+     spreads `...decryptedConfig` (line ~397), so `conversationSettings` survives
+     inbound today. Still add it to the explicit round-trip list next to
+     `mutedConversations`/`bookmarks` (the `config-to-user-readback-bridge-missing`
+     guard) so no future refactor silently drops it.
+  6. **Migration** — one-time sweep folding local `Conversation.{isRepudiable,
+     saveEditHistory,deliveryReceipts,readReceipts}` into the map with a low
+     `updatedAt` (desktop uses `1`); dual-read the legacy fields for one release.
+  7. Keep mute (`mutedConversations`) + favorites (`favoriteDMs`) exactly as-is.
+
+## Interop & shipping — desktop-shipped, mobile-pending (verified 2026-07-21)
+
+**Shipping desktop without mobile is safe. Mixed desktop↔mobile works.** The
+feature is additive and mobile is forward-compatible:
+
+- **Two different users (desktop A ↔ mobile B DMing):** zero impact.
+  `conversationSettings` is a *per-user device-sync* field carried in each user's
+  own encrypted `UserConfig` blob — it is NOT part of the DM wire protocol.
+  Signing/receipts between A and B are unchanged; the only change is *where desktop
+  reads its own setting from* (config map vs local `Conversation` record), not what
+  it transmits.
+- **Same user on desktop + mobile:** no breakage. Mobile **preserves** the field
+  it doesn't understand — `services/config/configService.ts:397` spreads
+  `...decryptedConfig` on inbound, and `saveConfig` (`:507`) encrypts/uploads the
+  whole `config` object as-is (no whitelist reconstruction). So mobile round-trips
+  `conversationSettings` back to the server intact and never clobbers it. Expected
+  non-behavior until mobile ships: a setting changed on desktop won't take *effect*
+  on mobile (mobile still reads its device-local record), and vice-versa.
+- **One transient edge case (self-healing, not data loss):** a stale mobile that
+  hasn't pulled desktop's latest can upload a newer-timestamped blob whose
+  `conversationSettings` is absent, briefly regressing the *server* copy. But
+  desktop's `ConfigService.getConfig` merges `mergeConversationSettings(localWithSettings,
+  remoteWithout)` → keeps local (verified: helper returns `{...local}` when remote
+  is empty), and re-publishes on its next config write. The active desktop never
+  loses its settings; only a brand-new third device pulling during that window
+  would miss them until the next desktop save.
+
+## Ship order (updated)
+1. ✅ shared #63 + #65 merged.
+2. ⏳ Publish shared to npm (lead-dev) — needed for desktop's production build and
+   for mobile to pin. Desktop dev/test already works via `link:`.
+3. ⏳ Merge desktop `feat/sync-conversation-settings` (safe to merge before mobile;
+   see Interop). Confirm CI shared resolution first.
+4. ⏳ mobile: bump shared pin → implement the checklist above → ship.
+
+*Last updated: 2026-07-21*

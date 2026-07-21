@@ -1,6 +1,6 @@
 import { logger, isValidIPFSCID } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink, SpaceMemberDevice } from '@quilibrium/quorum-shared';
+import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink, SpaceMemberDevice, ConversationSettingOverrides } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
@@ -91,6 +91,12 @@ export type UserConfig = {
   favoriteDMs?: string[];
   // Muted DMs — no unread indicators or notifications.
   mutedConversations?: string[];
+  // Per-conversation DM setting overrides (save-edit-history, always-sign,
+  // delivery/read receipts), keyed by conversationId. Synced cross-device via
+  // the UserConfig blob; merged per-entry last-write-wins in ConfigService.
+  conversationSettings?: {
+    [conversationId: string]: ConversationSettingOverrides;
+  };
   // Personal "block user", scoped per space: addresses whose messages the
   // viewer hides from their OWN stream. Viewer-side only (no moderation effect,
   // no permission needed) — distinct from the role-gated moderation mute
