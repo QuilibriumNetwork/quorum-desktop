@@ -122,24 +122,46 @@ export function createPillElement(pillData: PillData, onClick?: () => void): HTM
 }
 
 /**
- * Extract storage format text from a contentEditable editor.
- * Walks the DOM tree and converts pills to their storage representation.
- *
- * Storage formats:
- * - Users: `@<address>`
- * - Roles: `@roleTag` (no brackets)
- * - Channels: `#<channelId>`
- * - Everyone: `@everyone`
- *
- * @param editorElement - The contentEditable div element
- * @returns Text in storage format with mention IDs
- *
- * @example
- * // Editor contains: "Hello " + <pill user Alice 0x123> + " welcome!"
- * const text = extractStorageTextFromEditor(editorRef.current);
- * // => "Hello @<0x123> welcome!"
+ * How a mention pill element is serialized during a DOM walk.
+ * - `storage` → the wire token (`@<address>`, `#<channelId>`, `@roleTag`, `@everyone`)
+ * - `visual`  → the visible label as the user sees it (`@Alice`, `#general`)
  */
-export function extractStorageTextFromEditor(editorElement: HTMLElement): string {
+function serializePillStorage(el: HTMLElement): string {
+  const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
+  if (el.dataset.mentionType === 'role') {
+    // Roles always use @roleTag format (no brackets)
+    return `@${el.dataset.mentionAddress}`;
+  }
+  if (el.dataset.mentionType === 'everyone') {
+    // @everyone always same format
+    return '@everyone';
+  }
+  // Legacy format: @<address> or #<channelId>
+  return `${prefix}<${el.dataset.mentionAddress}>`;
+}
+
+/**
+ * Walk a contentEditable subtree and serialize it to text, reconstructing the
+ * line breaks that browsers encode as block elements (`<div>`/`<p>`) and `<br>`.
+ *
+ * This is the shared engine behind both {@link extractStorageTextFromEditor}
+ * (pills → wire tokens) and {@link extractVisualTextWithNewlines} (pills →
+ * visible labels). Keeping the newline logic in one place means both callers
+ * agree on character offsets, which is what lets the markdown toolbar map a DOM
+ * selection to string positions without dropping line breaks.
+ *
+ * The returned text is NOT trimmed — callers that need the original composer
+ * behavior (storage) apply `.trim()` themselves; offset math needs the raw
+ * length.
+ *
+ * @param root - The contentEditable element OR a DocumentFragment (e.g. from
+ *   `Range.cloneContents()`), so the same walk measures partial selections.
+ * @param serializePill - How to render a mention pill leaf.
+ */
+function serializeEditorNodes(
+  root: Node,
+  serializePill: (el: HTMLElement) => string
+): string {
   let text = '';
 
   // Block-level tags a contentEditable uses to represent visual lines. Browsers
@@ -148,7 +170,6 @@ export function extractStorageTextFromEditor(editorElement: HTMLElement): string
   // start of every block boundary to reconstruct the original line breaks.
   const BLOCK_TAGS = new Set(['DIV', 'P']);
 
-  // Walk the editor's DOM and serialize to storage text.
   // `isBlock` marks a node that opens a new visual line (a block element that is
   // not the editor's first child) so we can prefix it with a newline.
   const walk = (node: Node, isBlock: boolean) => {
@@ -166,19 +187,9 @@ export function extractStorageTextFromEditor(editorElement: HTMLElement): string
       return;
     }
 
-    // Mention pills serialize to their storage token (no newline).
+    // Mention pills are leaves — serialize per the caller's mode (no newline).
     if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
-      const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
-      if (el.dataset.mentionType === 'role') {
-        // Roles always use @roleTag format (no brackets)
-        text += `@${el.dataset.mentionAddress}`;
-      } else if (el.dataset.mentionType === 'everyone') {
-        // @everyone always same format
-        text += '@everyone';
-      } else {
-        // Legacy format: @<address> or #<channelId>
-        text += `${prefix}<${el.dataset.mentionAddress}>`;
-      }
+      text += serializePill(el);
       return;
     }
 
@@ -208,7 +219,7 @@ export function extractStorageTextFromEditor(editorElement: HTMLElement): string
 
   // Top-level children: the first child continues the first line (no leading
   // newline); each subsequent block-level child opens a new line.
-  const topChildren = Array.from(editorElement.childNodes);
+  const topChildren = Array.from(root.childNodes);
   topChildren.forEach((child, i) => {
     const opensBlock =
       i > 0 &&
@@ -217,9 +228,49 @@ export function extractStorageTextFromEditor(editorElement: HTMLElement): string
     walk(child, opensBlock);
   });
 
+  return text;
+}
+
+/**
+ * Extract storage format text from a contentEditable editor.
+ * Walks the DOM tree and converts pills to their storage representation.
+ *
+ * Storage formats:
+ * - Users: `@<address>`
+ * - Roles: `@roleTag` (no brackets)
+ * - Channels: `#<channelId>`
+ * - Everyone: `@everyone`
+ *
+ * @param editorElement - The contentEditable div element
+ * @returns Text in storage format with mention IDs
+ *
+ * @example
+ * // Editor contains: "Hello " + <pill user Alice 0x123> + " welcome!"
+ * const text = extractStorageTextFromEditor(editorRef.current);
+ * // => "Hello @<0x123> welcome!"
+ */
+export function extractStorageTextFromEditor(editorElement: HTMLElement): string {
   // Trim outer whitespace (matches the original behavior); the reconstruction
-  // above only adds INTERNAL newlines, which trim() leaves intact.
-  return text.trim();
+  // only adds INTERNAL newlines, which trim() leaves intact.
+  return serializeEditorNodes(editorElement, serializePillStorage).trim();
+}
+
+/**
+ * Extract the *visible* text of a contentEditable subtree, with block/`<br>`
+ * line breaks reconstructed as `\n` and mention pills rendered as their visible
+ * label (e.g. `@Alice`, `#general`).
+ *
+ * Unlike `element.textContent` (which silently drops block-boundary newlines),
+ * this preserves line structure, so the markdown toolbar can format multi-line
+ * text without collapsing it. NOT trimmed — the result is used both as the text
+ * to format and to measure selection offsets, so its raw length must match the
+ * DOM exactly.
+ *
+ * @param root - The contentEditable element, or a `Range.cloneContents()`
+ *   fragment to measure a partial selection offset.
+ */
+export function extractVisualTextWithNewlines(root: Node): string {
+  return serializeEditorNodes(root, (el) => el.textContent || '');
 }
 
 /**

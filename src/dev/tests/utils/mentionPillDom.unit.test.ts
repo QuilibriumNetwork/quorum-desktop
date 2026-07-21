@@ -12,7 +12,10 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { extractStorageTextFromEditor } from '../../../utils/mentionPillDom';
+import {
+  extractStorageTextFromEditor,
+  extractVisualTextWithNewlines,
+} from '../../../utils/mentionPillDom';
 
 /** Build a contentEditable editor div from an HTML string. */
 function editor(html: string): HTMLElement {
@@ -86,6 +89,48 @@ describe('extractStorageTextFromEditor — newline reconstruction (the regressio
   it('keeps an unclosed code fence on its own line (the empty-code-box repro)', () => {
     const html = '```<div>code line 1</div><div>code line 2</div>';
     expect(extractStorageTextFromEditor(editor(html))).toBe('```\ncode line 1\ncode line 2');
+  });
+});
+
+describe('extractVisualTextWithNewlines — visible text with line breaks', () => {
+  it('returns plain single-line text unchanged', () => {
+    expect(extractVisualTextWithNewlines(editor('hello world'))).toBe('hello world');
+  });
+
+  it('renders pills as their visible label, not the storage token', () => {
+    const html = `hi ${pill('user', 'QmAddr123', '@Alice')} there`;
+    expect(extractVisualTextWithNewlines(editor(html))).toBe('hi @Alice there');
+  });
+
+  it('reconstructs newlines from <br> and per-line <div> (the format-collapse repro)', () => {
+    expect(extractVisualTextWithNewlines(editor('line1<br>line2<br>line3'))).toBe(
+      'line1\nline2\nline3'
+    );
+    expect(
+      extractVisualTextWithNewlines(editor('line1<div>line2</div><div>line3</div>'))
+    ).toBe('line1\nline2\nline3');
+  });
+
+  it('represents a blank line between paragraphs as a single newline', () => {
+    const html = 'para1<div><br></div><div>para2</div>';
+    expect(extractVisualTextWithNewlines(editor(html))).toBe('para1\n\npara2');
+  });
+
+  it('does NOT trim, so leading/trailing whitespace offsets stay accurate', () => {
+    expect(extractVisualTextWithNewlines(editor('  hi  '))).toBe('  hi  ');
+  });
+
+  it('measures a partial selection (fragment) with newlines preserved', () => {
+    // Simulate Range.cloneContents() over "line1\nlin" of a two-<div> editor:
+    // the fragment carries the leading text node plus a partial second block.
+    const frag = document.createDocumentFragment();
+    frag.appendChild(document.createTextNode('line1'));
+    const div = document.createElement('div');
+    div.textContent = 'lin';
+    frag.appendChild(div);
+    // "line1" + "\n" + "lin" = 9 chars — the offset the toolbar would record.
+    expect(extractVisualTextWithNewlines(frag)).toBe('line1\nlin');
+    expect(extractVisualTextWithNewlines(frag).length).toBe(9);
   });
 });
 
