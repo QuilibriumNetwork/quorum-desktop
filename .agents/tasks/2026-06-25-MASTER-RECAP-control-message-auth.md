@@ -22,11 +22,27 @@ else (the other task files) is detail under one of the boxes below.
 > attached to every message; we just made the receive side actually use it.
 > Shared primitives: `quorum-shared` PR #61 (`messageAuth.ts`). Desktop:
 > branch `feat/space-control-message-auth` (commits `955471b16`, `151ddeb9c`).
-> `@everyone` is also now gated on the verified signer. **Still pending:**
-> mobile's matching receive-side verification (mobile verifies nothing on
-> incoming space messages yet), and the coordinated production cut-over (do not
-> deploy desktop to prod until mobile ships, or updated desktops reject control
-> messages from un-updated clients). Deferred, non-blocking: the edited-message
+> `@everyone` is also now gated on the verified signer.
+>
+> **UPDATE (2026-07-21):** mobile's matching receive-side verification is now
+> ALSO merged to mobile `master` — `fix: space control message auth signatures
+> (#160)` (verified-signer receive) plus `fix: multi-device space message
+> signing (#162)`. So the security code is complete on BOTH platforms. The
+> **sole remaining blocker to close this recap is the coordinated production
+> cut-over** (do not deploy desktop to prod until mobile ships to prod, or
+> updated desktops reject control messages from un-updated clients). As of
+> 2026-07-21 **neither platform has the SPACE fix in production yet:**
+> - Desktop's last release is **v2.1.3 (2026-07-17)**, which PREDATES the space
+>   fix `d6d20a6a2` (2026-07-19) — verified `git merge-base --is-ancestor`: v2.1.3
+>   does NOT contain #241. (The DM fix #220 DID ship, it's in v2.1.2/v2.1.3.) So
+>   the space fix sits on `main` unreleased; the cut-over needs a fresh desktop
+>   release (v2.1.4+) cut after `d6d20a6a2`.
+> - Mobile code is merged to `master` but not yet shipped to prod (release timing
+>   is outside our control).
+>
+> This "neither in prod" state is the SAFE one — no client mismatch is possible
+> until one side ships. The cut-over = a new desktop release timed with mobile
+> going live. Deferred, non-blocking: the edited-message
 > "signed" badge across devices — `.agents/tasks/2026-07-19-edited-message-signature-badge-cross-device.md`.
 > Read the sections below with this update in mind.
 
@@ -49,11 +65,11 @@ itself proves** about who sent the message (the "session-authenticated sender").
 
 |  | DM (private 1-on-1) | Space (group chat) |
 |---|---|---|
-| **delete** (`remove-message`) | Mobile: DONE. Desktop: DONE (merged). | **Desktop: DONE** (verified-signer auth). Mobile: PENDING. |
-| **edit** (`edit-message`) | Desktop: DONE (merged). Mobile: no DM-edit handler exists. | **Desktop: DONE** (verified-signer auth + edit inherit rule). Mobile: PENDING. |
-| **pin** | n/a (space-only) | **Desktop: DONE** (verified-signer auth). Mobile: PENDING. |
-| **mute** | n/a (space-only) | **Desktop: DONE** (verified-signer auth). Mobile: PENDING. |
-| **@everyone** | n/a | **Desktop: DONE** (honored only if verified signer holds `mention:everyone`). Mobile: PENDING. |
+| **delete** (`remove-message`) | Mobile: DONE. Desktop: DONE (merged). | **Desktop: DONE** (verified-signer auth). **Mobile: DONE** (#160). |
+| **edit** (`edit-message`) | Desktop: DONE (merged). Mobile: no DM-edit handler exists. | **Desktop: DONE** (verified-signer auth + edit inherit rule). **Mobile: DONE** (#160). |
+| **pin** | n/a (space-only) | **Desktop: DONE** (verified-signer auth). **Mobile: DONE** (#160). |
+| **mute** | n/a (space-only) | **Desktop: DONE** (verified-signer auth). **Mobile: DONE** (#160). |
+| **@everyone** | n/a | **Desktop: DONE** (honored only if verified signer holds `mention:everyone`). **Mobile: DONE** (#160). |
 | **reactions** | Out of scope — low stakes (fake "X reacted", no privilege). | Out of scope — same. |
 
 > The Space column previously read "Left alone on purpose" for delete/edit. That
@@ -86,7 +102,8 @@ change to the shared crypto library." That turned out to be avoidable: the
 ed448 **signature** already on every message IS the per-message sender proof —
 no crypto-library change was needed, only using the signature on the receive
 side. Desktop now does exactly that (see the 2026-07-19 status update at the
-top). Mobile's matching receive-side verification is the remaining piece.
+top). Mobile's matching receive-side verification is now also merged (#160) —
+the only remaining piece is the coordinated production cut-over.
 
 > **Scope note for the group-chat follow-up:** the underlying issue is not
 > specific to delete/edit — it applies to *every* group-permission decision that
@@ -245,4 +262,4 @@ Suggested PR scope: desktop DM `remove-message` + `edit-message` only. Mention i
 the PR body that space paths are intentionally unchanged (parity with mobile) and
 linked to the open space task.
 
-*Last updated: 2026-07-19*
+*Last updated: 2026-07-21*

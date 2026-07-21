@@ -9,7 +9,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [DM Double Ratchet fixes — divergences from the original upstream implementation](docs/dm-ratchet-upstream-divergences.md)
+- [DM Double Ratchet fixes — divergences from the original implementation](docs/dm-ratchet-upstream-divergences.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
@@ -116,14 +116,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Owner Privacy Limitation](bugs/2026-01-09-space-owner-privacy-limitation.md)
 - [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/2026-01-09-userprofile-modal-positioning-viewport-boundary.md)
 - [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/2026-04-14-display-name-input-layout-shift-on-error.md)
-- [Virtuoso measurement callback resets scrollTop on new messages](bugs/2026-05-24-virtuoso-measurement-scroll-reset.md)
 - [UserSettingsModal shows stale display name after remote UserConfig sync](bugs/2026-05-30-user-settings-modal-stale-display-name.md)
 - [UserSettingsModal fields flash empty on open](bugs/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md)
 - [@everyone owner-bypass is a real propagating bug (send-side-only enforcement)](bugs/2026-06-12-everyone-mention-owner-bypass-send-side-only.md)
-- [Read-only channel receive-side enforcement is incomplete](bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
+- [update-profile inbox_address poisoning → control-message impersonation](bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
+- [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
+- [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -161,14 +162,16 @@ This is the main index for all documentation, bug reports, and task management.
 - [No visual feedback when dragging files onto dropzone areas](bugs/.solved/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Profile sync not triggered after key import in new onboarding flow](bugs/.solved/2026-04-13-profile-sync-not-triggered-after-key-import.md)
+- [Virtuoso measurement callback resets scrollTop on new messages](bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md)
 - [Action queue errors silently swallowed across all config-writing hooks](bugs/.solved/2026-06-07-action-queue-errors-swallowed.md)
 - [Per-space mention-type filter doesn't sync across devices](bugs/.solved/2026-06-07-mention-type-filter-not-synced.md)
 - [`Save Changes` in Account tab throws "missing inbox configuration"](bugs/.solved/2026-06-07-space-profile-save-missing-inbox.md)
+- [Read-only channel receive-side enforcement is incomplete](bugs/.solved/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [Composer flattens multi-line paste into a single line](bugs/.solved/2026-06-25-composer-paste-strips-newlines.md)
-- [DM message delivery is unreliable (master report — RESOLVED: session destruction + unserialized ratchet state)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
-- [DM decrypt failure destroys the whole session (Fix 1 spec, PR #235)](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
-- [DM frames drop with aead::Error (Fix 2: per-conversation ratchet serialization)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
+- [DM message delivery is unreliable (master report)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
+- [DM frames still drop with `aead::Error` (remaining half of the delivery bug)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
+- [FIX SPEC: DM decrypt failure destroys the session](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -201,13 +204,16 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
-- [Application-owned scroll anchoring for the message list (β)](tasks/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
 - [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
 - [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
-- [DM dead-session auto-heal via missing delivery receipts](tasks/2026-07-17-dm-dead-session-autoheal.md)
-- [DM dedupe-before-decrypt — deferred, measure first](tasks/2026-07-17-dm-dedupe-before-decrypt.md)
+- [DM delivery auto-heal](tasks/2026-07-17-dm-dead-session-autoheal.md)
+- [Edited messages show a false "not signed" warning on other devices](tasks/2026-07-19-edited-message-signature-badge-cross-device.md)
+- [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
+- [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
+- [Sync per-conversation DM settings across devices](tasks/2026-07-20-sync-per-conversation-dm-settings-cross-repo.md)
+- [Ghost device accumulation on reset/logout](tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -245,6 +251,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Decentralized GIF Library on Quilibrium](tasks/.deferred/2026-02-24-gifs-library-integration.md)
 - [Link Previews — Design Spec](tasks/.deferred/2026-05-27-link-previews-design.md)
 - [Implement @here mention (all space members, channel-context notification)](tasks/.deferred/2026-06-18-implement-here-mention.md)
+- [DM dedupe-before-decrypt](tasks/.deferred/2026-07-17-dm-dedupe-before-decrypt.md)
 
 ### .Todo
 - [User Status Feature Implementation Plan](tasks/.todo/2025-01-20-user-status.md)
@@ -370,7 +377,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SearchService re-audit (2026-05-29)](tasks/quorum-shared-migration/designs/2026-05-29-searchservice-reaudit.md)
 
 ### Quorum Shared Migration Reference
-- [Get npm Publish Access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/reference/npm-publish-access.md)
+- [npm Publish Access + Release Flow for @quilibrium/quorum-shared](tasks/quorum-shared-migration/reference/npm-publish-access.md)
 - [Stacked PRs Workflow](tasks/quorum-shared-migration/reference/stacked-prs-workflow.md)
 
 ### Search Optimization
@@ -452,6 +459,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Typing Indicators — Design Spec](tasks/.done/2026-05-18-typing-indicators-design.md)
 - [Typing Indicators Implementation Plan](tasks/.done/2026-05-18-typing-indicators-plan.md)
 - [Test Suite Review — Cleanup Before Migration](tasks/.done/2026-05-19-test-suite-review.md)
+- [Application-owned scroll anchoring for the message list (β)](tasks/.done/2026-05-24-virtuoso-application-owned-scroll-anchoring.md)
 - [Fix UserConfig type drift between quorum-shared and quorum-desktop](tasks/.done/2026-05-27-userconfig-type-drift.md)
 - [New UI Shell Implementation Plan](tasks/.done/2026-06-02-new-ui-shell-implementation.md)
 - [Drag-to-Resize Sidebar — Implementation Plan (Track E)](tasks/.done/2026-06-03-drag-resize-sidebar-plan.md)
@@ -480,6 +488,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Plan: fix DM remove-message + edit-message authorization on desktop](tasks/.done/2026-06-25-desktop-dm-control-msg-auth-fix-plan.md)
 - [quorum-shared: type the two-slot global identity fields](tasks/.done/2026-07-16-quorum-shared-type-two-slot-global-identity-fields.md)
 - [update-profile receive: add per-slot staleness guard](tasks/.done/2026-07-16-update-profile-receive-per-slot-timestamp-guard.md)
+- [quorum-shared: add KeyedMutex](tasks/.done/2026-07-17-quorum-shared-add-keyedmutex.md)
+- [Complete read-only-channel enforcement](tasks/.done/2026-07-19-readonly-channel-completion-durable-embed-sticker.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -670,4 +680,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-07-16 13:36:59
+**Last Updated**: 2026-07-21 10:24:05

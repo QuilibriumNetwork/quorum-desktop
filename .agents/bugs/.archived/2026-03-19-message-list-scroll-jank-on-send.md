@@ -6,10 +6,10 @@ priority: high
 ai_generated: true
 created: 2026-03-19
 updated: 2026-05-24
-superseded_by: ../2026-05-24-virtuoso-measurement-scroll-reset.md
+superseded_by: ../.solved/2026-05-24-virtuoso-measurement-scroll-reset.md
 ---
 
-> **This doc is archived.** The investigation across Phases 1-20 produced a definitive conclusion (the bug is in `react-virtuoso` itself, unfixed upstream for years) but no fix. Work continues in [`2026-05-24-virtuoso-measurement-scroll-reset.md`](../2026-05-24-virtuoso-measurement-scroll-reset.md), which starts from the post-Phase-20 conclusions and pursues profile-then-migrate. Keep this doc for the receipts on why we stopped patching, but don't add new findings here.
+> **This doc is archived.** The investigation across Phases 1-20 produced a definitive conclusion (the bug is in `react-virtuoso` itself, unfixed upstream for years) but no fix. Work continues in [`2026-05-24-virtuoso-measurement-scroll-reset.md`](../.solved/2026-05-24-virtuoso-measurement-scroll-reset.md), which starts from the post-Phase-20 conclusions and pursues profile-then-migrate. Keep this doc for the receipts on why we stopped patching, but don't add new findings here.
 
 # Message list scroll jank on send — Virtuoso scroll position drift
 

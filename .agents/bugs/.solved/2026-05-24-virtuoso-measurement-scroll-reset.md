@@ -1,13 +1,13 @@
 ---
 type: bug
 title: "Virtuoso measurement callback resets scrollTop on new messages — scroll jank in channels and DMs"
-status: in-progress
+status: solved
 priority: high
 ai_generated: true
 created: 2026-05-24
-updated: 2026-05-25
-supersedes: .archived/2026-03-19-message-list-scroll-jank-on-send.md
-related_doc: ../docs/features/messages/scroll-anchoring.md
+updated: 2026-07-21
+supersedes: ../.archived/2026-03-19-message-list-scroll-jank-on-send.md
+related_doc: ../../docs/features/messages/scroll-anchoring.md
 branch: fix/virtuoso-scroll-jank
 ---
 
@@ -17,9 +17,9 @@ branch: fix/virtuoso-scroll-jank
 
 When a message is sent or received in a channel or DM, the message list jumps the scroll position incorrectly: small jumps that snap back, or larger jumps that leave the new message off-screen. Root cause is in `react-virtuoso`'s internal measurement callback (multiple GitHub issues open since 2021, unfixed). Fix is at the application layer: our own scroll-anchoring hook (`useScrollAnchor`) replaces Virtuoso's `followOutput` and handles snap-to-bottom logic ourselves on three signals (scroll position, cache updates, imperative calls from send handlers).
 
-**Status as of 2026-05-25:** functional fix in place on branch `fix/virtuoso-scroll-jank` for channels and DMs. Threads regressed and need a follow-up fix in a fresh session (see Session 22 below). Cleanup of instrumentation done. PR pending the threads fix.
+**RESOLVED — shipped in PR #154** (`717c8e35f fix: virtuoso scroll jank`). The threads regression flagged in Session 22 was fixed within the same PR (not a separate follow-up), so channels, DMs, and threads all landed together. Accepted residual: a single-frame visual flash on some sends that settles within ~1 frame (telemetry-clean). See Session 23 closeout and the [feature doc](../../docs/features/messages/scroll-anchoring.md).
 
-**For ongoing reference:** see [`docs/features/messages/scroll-anchoring.md`](../docs/features/messages/scroll-anchoring.md) — the canonical "how it works" doc for the scroll-anchoring system. That doc evolves with the code; this bug doc is the historical artifact.
+**For ongoing reference:** see [`docs/features/messages/scroll-anchoring.md`](../../docs/features/messages/scroll-anchoring.md) — the canonical "how it works" doc for the scroll-anchoring system. That doc evolves with the code; this bug doc is the historical artifact.
 
 ## Current behavior
 
@@ -38,8 +38,8 @@ When a message is sent or received in a channel or DM, the message list jumps th
 | Hash navigation `#msg-{id}` | Preserved — unaffected by the new anchoring |
 | Auto-jump to first unread | Preserved |
 | Jump-to-present button | Works via the hook's imperative `snapToBottom` |
-| **Thread panel: send reply** | **REGRESSED** — page does not scroll to show the reply (fix planned, see Session 22) |
-| **Thread panel: receive a reply while at bottom** | **REGRESSED** — page does not auto-scroll to the new reply |
+| Thread panel: send reply | Fixed in #154 — explicit `snapToBottom()` on submit (see Session 23) |
+| Thread panel: receive a reply while at bottom | Fixed in #154 — hook subscribes via `anchorQueryKeyPrefix` (see Session 23) |
 | Thread panel: scroll-up | Works |
 
 ## Two root causes diagnosed
@@ -68,7 +68,7 @@ The current hook architecture does NOT address B3 directly. Empirically, the imp
 
 `useScrollAnchor` hook in `src/components/message/useScrollAnchor.ts` (will move to `src/hooks/ui/` before PR). Three signals: passive scroll listener maintains `wasAnchoredRef`; React Query cache subscription on the messages-key prefix snaps to bottom on APPEND or REPLACE when anchored; imperative `snapToBottom()` exposed on `MessageListRef` is called by send handlers in `Channel.tsx`/`DirectMessage.tsx` and by the jump-to-present button. Virtuoso's `followOutput` is permanently `false`. Anchor gate is suppressed when `hasJumpedToOldMessage` (hash nav, scrollToMessageId) or `deletionInProgress` is true — those paths are protected. Imperative snap force-sets `wasAnchoredRef=true` so a subsequent cache update from the send re-snaps.
 
-Full reference: [`docs/features/messages/scroll-anchoring.md`](../docs/features/messages/scroll-anchoring.md).
+Full reference: [`docs/features/messages/scroll-anchoring.md`](../../docs/features/messages/scroll-anchoring.md).
 
 ## Decisions made (what was tried, what we rejected)
 
@@ -213,7 +213,7 @@ User explicitly chose to defer to a fresh session — current session is approac
 
 **Pickup plan for fresh session:**
 1. Read the bug doc TL;DR + this Session 22.
-2. Read [`docs/features/messages/scroll-anchoring.md`](../docs/features/messages/scroll-anchoring.md) for the architecture.
+2. Read [`docs/features/messages/scroll-anchoring.md`](../../docs/features/messages/scroll-anchoring.md) for the architecture.
 3. Look at `src/hooks/queries/threads/` (and grep for how thread messages are queried) to find the thread-messages query-key shape.
 4. Two-part fix:
    - **Extend `useScrollAnchor` options** to accept an optional `queryKeyPrefix?: readonly unknown[]`. If provided, use it directly. Otherwise derive from `spaceId`/`channelId` as today. Back-compat preserved for Channel/DirectMessage callers.
@@ -223,6 +223,16 @@ User explicitly chose to defer to a fresh session — current session is approac
 7. If not clean: same diagnostic loop — `scrollDebug` is in `src/dev/` waiting; temporarily import + wire from ThreadPanel.
 
 **Note for whoever picks this up:** the prefix-passing approach was chosen over a higher-level callback because it keeps the hook's filter logic centralized. If you find that thread message updates have semantics meaningfully different from channel/DM updates (e.g. APPEND vs REPLACE definitions don't carry over), reconsider.
+
+### Session 23 (closeout) — threads fixed, whole thing shipped in PR #154
+
+The Session 22 pickup plan was executed and folded into PR #154 rather than a separate follow-up. Confirmed against the merged code (`git log -S` traces both changes to commit `717c8e35f`):
+
+- **Hook (`src/hooks/ui/useScrollAnchor.ts`):** gained the optional `queryKeyPrefix?: readonly unknown[]` option (takes precedence over `spaceId`/`channelId`), and `extractLastPageMessages` now handles the flat thread data shape (`{ messages }`) as well as the channel/DM `InfiniteData<{ pages }>` shape. So APPEND/REPLACE detection carries over to threads unchanged — the reconsideration flagged above wasn't needed.
+- **`MessageList.tsx`:** accepts an `anchorQueryKeyPrefix` prop and passes it straight through to the hook's `queryKeyPrefix`.
+- **`ThreadPanel.tsx`:** derives `anchorQueryKeyPrefix` via `useMemo` (line ~168), passes it to `MessageList` (line ~429), and its `handleSubmitMessage` calls `messageListRef.current?.scrollToBottom()` after submit (line ~50) — mirroring Channel/DirectMessage.
+
+All three anticipated pieces are present and merged. Runtime behavior was verified by whoever merged #154; this closeout is a code-trace confirmation, not an independent re-test. Bug marked `resolved`.
 
 ---
 

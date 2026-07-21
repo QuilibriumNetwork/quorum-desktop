@@ -1,20 +1,34 @@
 ---
 type: task
 title: "Application-owned scroll anchoring for the message list (β)"
-status: in-progress
+status: done
 priority: high
 ai_generated: true
 created: 2026-05-24
-updated: 2026-05-24
-related_bug: ../bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
+updated: 2026-07-21
+related_bug: ../../bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md
 branch: fix/virtuoso-scroll-jank
 ---
 
 # Application-owned scroll anchoring for the message list (β)
 
+## Closeout (2026-07-21)
+
+**Shipped and merged as PR #154** (`717c8e35f fix: virtuoso scroll jank`). The hybrid architecture (reactive scroll listener + proactive cache subscription + imperative snap) landed as planned. Completed cleanup items:
+
+- Hook moved to its convention location `src/hooks/ui/useScrollAnchor.ts` (step 5).
+- Old `src/components/message/__scrollDebug.ts` removed; replaced by dev-only `src/dev/scrollDebug.ts` (not wired into production).
+- All `TEMPORARY DEBUG` blocks stripped from source (`src/` is clean; the string now only appears in this task doc and the bug doc).
+- `followOutput={false}` made permanent and `snapToBottom` wired through `MessageListRef`.
+- Stable feature doc written: [`../../docs/features/messages/scroll-anchoring.md`](../../docs/features/messages/scroll-anchoring.md).
+
+**Accepted-with-known-limitation, not the original binary bar.** The task's original acceptance criteria demanded "zero suspect events, no partial fix ship." What actually shipped carries one accepted residual: a single-frame visual flash on some sends (the optimistic message can briefly appear partially visible before the snap lands; settles correctly within ~1 frame; telemetry-clean). This was judged acceptable rather than blocking. See the feature doc's "Known limitations" for the full list.
+
+Note: the related bug doc [`../../bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md`](../../bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md) references a threads-panel follow-up (Session 22) that is tracked separately there, not part of this task.
+
 ## Context
 
-This task implements the fix for the scroll-jank bug class documented in [`bugs/2026-05-24-virtuoso-measurement-scroll-reset.md`](../bugs/2026-05-24-virtuoso-measurement-scroll-reset.md). Read that document first for the full diagnostic history (16 sessions, two confirmed bug classes B1 and B2, six β iterations).
+This task implements the fix for the scroll-jank bug class documented in [`bugs/2026-05-24-virtuoso-measurement-scroll-reset.md`](../../bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md). Read that document first for the full diagnostic history (16 sessions, two confirmed bug classes B1 and B2, six β iterations).
 
 Summary of why we are here: `react-virtuoso`'s measurement callback writes incorrect `scrollTop` values in response to measurement events, and the library has many independent measurement triggers. Per-trigger fix attempts close at most one trigger while leaving others open. The architectural reframing is to target the consequence (the wrong `scrollTop` write) rather than the cause (the trigger inventory) by overwriting the value at the application layer.
 

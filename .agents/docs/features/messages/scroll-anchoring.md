@@ -5,7 +5,7 @@ status: stable
 ai_generated: true
 created: 2026-05-25
 updated: 2026-05-25
-related_bug: ../../../bugs/2026-05-24-virtuoso-measurement-scroll-reset.md
+related_bug: ../../../bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md
 ---
 
 # Message-list scroll anchoring
@@ -133,7 +133,7 @@ Use `src/dev/scrollDebug.ts` to capture telemetry of a failing scenario — temp
 
 ## Related
 
-- **Original bug investigation:** [`bugs/2026-05-24-virtuoso-measurement-scroll-reset.md`](../../../bugs/2026-05-24-virtuoso-measurement-scroll-reset.md) — full receipts, 18+ investigation sessions.
+- **Original bug investigation:** [`bugs/2026-05-24-virtuoso-measurement-scroll-reset.md`](../../../bugs/.solved/2026-05-24-virtuoso-measurement-scroll-reset.md) — full receipts, 18+ investigation sessions.
 - **Auto-jump to first unread:** [`auto-jump-first-unread.md`](./auto-jump-first-unread.md) — sets `hasJumpedToOldMessage=true`, the suppression flag this hook respects.
 - **Hash navigation:** [`hash-navigation-to-old-messages.md`](./hash-navigation-to-old-messages.md) — also uses `hasJumpedToOldMessage`.
 - **DM receipts:** [`dm-receipts.md`](./dm-receipts.md) — cache writes for read/delivered receipts also go through `setQueriesData` for the messages key; our filter correctly ignores them (no length growth, no last-message reference change).
