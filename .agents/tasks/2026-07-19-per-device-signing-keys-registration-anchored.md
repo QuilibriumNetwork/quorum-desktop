@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
-status: IN PROGRESS — shared core (#62) + desktop receive-side (#245) + desktop SEND-side (#249 MERGED to main, Option A) done; mobile receive+send done on quorum-mobile PR #168 (OPEN, not merged — user UI-tests cross-device first). Cleanup (retire signing slot) + prod deploy still pending (staged, see release order)
+status: IN PROGRESS — shared core (#62) + desktop receive-side (#245) + desktop SEND-side (#249 MERGED, Option A) + desktop GATE FIX (#250 OPEN — signature-strip gate ignored device admissions) done; mobile receive+send on quorum-mobile PR #168 (OPEN). Desktop↔desktop VALIDATED live; mobile↔desktop blocked by transport divergence. Cleanup (retire signing slot) + prod deploy pending (staged, see release order)
 priority: high (follow-up to the interim signing-split fix)
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
@@ -444,6 +444,55 @@ testing the new path. Desktop just needs to be on `main` (has the receive-side).
 If step 2 works, receivers are admitting the per-device key via the announce; if
 step 5 works, the tombstone is being honoured. Both green ⇒ cross-device flow is
 validated and mobile PR #168 can merge.
+
+## Test results (2026-07-21 — live cross-device testing)
+
+**Desktop ↔ desktop (same account, 2 devices + a separate observer account): ✅ VALIDATED.**
+Delete / edit / pin from a second desktop device land on the other device AND on
+the observer account. Confirmed the GENUINE per-device path (logs: announced key
+→ ADMITTED → "signature accepted via per-device key" for post/edit/pin), not the
+interim shared-key path. This is transport-independent (both on desktop P2P).
+
+**Bug found + fixed during testing → desktop PR #250 (OPEN).**
+Symptom: a second device's messages were rejected "invalid address for signature"
+— post shown unsigned, edit/pin/delete dropped. Reproduced desktop↔desktop, so
+NOT the transport. Root cause: the two legacy signature-strip gates in
+`MessageService`'s receive loop (streaming ~3910 + batch ~4917, from the
+#241/#243 verified-signer work) compare the signing key ONLY to the member join
+binding and never consulted the per-device admissions store — so a valid
+per-device signature was stripped BEFORE the device-aware resolver ran. #245
+wired the resolver into the auth FUNCTIONS but missed these pre-auth gates. Fix:
+`isAdmittedDeviceKey` (non-revoked admission, inboxAddress match,
+userAddress===sender), consulted on join-mismatch; both gates accept it. 4
+regression tests; validated by the live desktop↔desktop test. **Lesson: when
+adding a reverse-lookup admission path, audit ALL pre-auth signature gates, not
+just the auth functions.**
+
+**Mobile receive + send → quorum-mobile PR #168 (OPEN).**
+Receive-side validated: mobile admits per-device keys from every device
+(confirmed via diagnostic logs before trimming) + 8 unit tests + static analysis.
+**Mobile does NOT need the desktop gate fix** (static-verified): it has no
+pre-auth strip gate — `verifySpaceMessageSignature` checks only crypto validity,
+and every control path (`authorizeSpaceControlMessage` / `isReadOnlyPostAuthorized`
+/ `shouldStripEveryoneMention`) resolves via the device-aware resolver. Diagnostic
+logs trimmed to one high-signal line ("signature accepted via per-device key",
+receiver-side) + genuine failures, after raw logs proved too noisy.
+
+**Mobile ↔ desktop: NOT tested** — blocked by the known P2P-vs-hub-log transport
+divergence (separate from this feature). Clean test topologies until hub-log
+converges: desktop↔desktop and mobile↔mobile (same transport each).
+
+**Observations surfaced during testing (separate from this feature):**
+- Announce-keys accumulate in the mobile hub log and replay on every connect →
+  a flood of LWW "stale" re-admissions. Functionally correct (dedup), storage/perf
+  only. Ref `.agents/bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md`.
+- Multiple device registrations accrue per account across resets/re-logins. Ref
+  `.agents/tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md`.
+- **Cross-platform device-management LIST divergence:** a real, ACTIVE desktop
+  device did not appear in mobile's device-management list (mobile HAD admitted
+  that device's announce-keys, so the admissions store knew it — only the
+  registration-list UI differed). Registration fetch/display differs per platform.
+  NOT a per-device-signing blocker; worth a separate investigation.
 
 ## Production release order (revised 2026-07-20 — STAGED, supersedes the earlier "ship together" decision)
 

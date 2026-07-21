@@ -1033,6 +1033,27 @@ export class MessageService {
     // reject → drop
   }
 
+  /**
+   * Whether a message's signing-key address is admitted for the claimed sender
+   * via a non-revoked per-device statement — the second lookup path the
+   * inbox-binding signature gate must honour (alongside the member's join
+   * binding), or a valid second-device signature gets stripped before the
+   * verified-signer resolver ever runs.
+   */
+  private async isAdmittedDeviceKey(
+    spaceId: string,
+    senderId: string,
+    signingInboxAddress: string
+  ): Promise<boolean> {
+    const devices = await this.messageDB.getSpaceMemberDevices(spaceId);
+    return devices.some(
+      (d) =>
+        !d.revoked &&
+        d.inboxAddress === signingInboxAddress &&
+        d.userAddress === senderId
+    );
+  }
+
   private async isSpaceControlAuthorized(
     decryptedContent: Message,
     messageDB: MessageDB,
@@ -3907,10 +3928,21 @@ export class MessageService {
               // the signature is verified below as normal. Without the guard
               // this threw a TypeError that the outer catch swallowed, silently
               // dropping the message on non-repudiable spaces.
-              const inboxMismatch =
+              // A signing key not matching the member's join binding is still
+              // valid if it's an admitted per-device key (multi-device). Only
+              // consult the device store when there IS a mismatch, so the common
+              // single-key path pays nothing.
+              const joinMismatch =
                 !isUpdateProfile &&
                 participant?.inbox_address !== inboxAddress &&
-                participant?.inbox_address;
+                !!participant?.inbox_address;
+              const inboxMismatch =
+                joinMismatch &&
+                !(await this.isAdmittedDeviceKey(
+                  space.spaceId,
+                  decryptedContent.content.senderId,
+                  inboxAddress
+                ));
               const messageIdMismatch =
                 decryptedContent.messageId !==
                 Buffer.from(messageId).toString('hex');
@@ -4913,9 +4945,20 @@ export class MessageService {
                     // ed448 signature is ALWAYS verified: keeping an unverified
                     // signature would let a forged control message carry a real
                     // mod's (public) key and pass the handler's reverse lookup.
+                    // A key that isn't the join binding is still valid if it's an
+                    // admitted per-device key (multi-device).
+                    const joinMismatch =
+                      participant?.inbox_address !== inboxAddress &&
+                      !!participant?.inbox_address;
+                    const inboxMismatch =
+                      joinMismatch &&
+                      !(await this.isAdmittedDeviceKey(
+                        space.spaceId,
+                        message.content.senderId,
+                        inboxAddress
+                      ));
                     if (
-                      (participant?.inbox_address !== inboxAddress &&
-                        participant?.inbox_address) ||
+                      inboxMismatch ||
                       message.messageId !==
                         Buffer.from(messageId).toString('hex')
                     ) {
