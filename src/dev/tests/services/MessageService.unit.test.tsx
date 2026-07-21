@@ -1807,4 +1807,58 @@ describe('MessageService - Unit Tests', () => {
       expect(mockDeps.sendHubMessage).not.toHaveBeenCalled();
     });
   });
+
+  // The signature-strip gate (streaming + batch receive paths) must treat an
+  // admitted per-device key as bound to its member, or a valid second-device
+  // signature is stripped before the verified-signer resolver runs — the
+  // "invalid address for signature" regression. isAdmittedDeviceKey is that
+  // second lookup path.
+  describe('11. Per-device signing keys (signature-gate binding)', () => {
+    const SPACE = 'space-gate';
+    const ALICE = 'addr-alice-gate';
+    const BOB = 'addr-bob-gate';
+    const SIGNING_ADDR = 'QmDeviceSigningAddr';
+
+    const admission = (over = {}) => ({
+      spaceId: SPACE,
+      userAddress: ALICE,
+      deviceInboxAddress: 'dev-1',
+      inboxAddress: SIGNING_ADDR,
+      spaceKeyPublicKey: 'k',
+      timestamp: 1,
+      revoked: false,
+      ...over,
+    });
+
+    const call = (sender: string, addr: string) =>
+      (messageService as any).isAdmittedDeviceKey(SPACE, sender, addr);
+
+    it('accepts a non-revoked admitted key bound to the sender', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi
+        .fn()
+        .mockResolvedValue([admission()]);
+      expect(await call(ALICE, SIGNING_ADDR)).toBe(true);
+    });
+
+    it('rejects a revoked admission', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi
+        .fn()
+        .mockResolvedValue([admission({ revoked: true })]);
+      expect(await call(ALICE, SIGNING_ADDR)).toBe(false);
+    });
+
+    it('rejects an admission belonging to a different user', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi
+        .fn()
+        .mockResolvedValue([admission()]);
+      expect(await call(BOB, SIGNING_ADDR)).toBe(false);
+    });
+
+    it('rejects when no admission matches the signing address', async () => {
+      mockDeps.messageDB.getSpaceMemberDevices = vi
+        .fn()
+        .mockResolvedValue([admission()]);
+      expect(await call(ALICE, 'QmSomeOtherAddr')).toBe(false);
+    });
+  });
 });
