@@ -26,7 +26,7 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MessageService, MessageServiceDependencies } from '@/services/MessageService';
-import { deriveInboxAddress } from '@quilibrium/quorum-shared';
+import { deriveInboxAddress, buildDeviceKeyStatementBytes } from '@quilibrium/quorum-shared';
 import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QueryClient } from '@tanstack/react-query';
 
@@ -1665,6 +1665,146 @@ describe('MessageService - Unit Tests', () => {
       };
       await (messageService as any).processDeviceKeyStatement(statement, SPACE);
       expect(save).not.toHaveBeenCalled();
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Send-side: broadcasting announce-keys / revoke-device statements. Asserts
+  // the desktop WIRING (envelope shape, which key is announced, byte-identity of
+  // the signed payload). The statement verify logic is covered by shared's
+  // deviceKeys.test.ts and the receive-side wiring above.
+  // ---------------------------------------------------------------------------
+  describe('10. Per-device signing keys (send-side)', () => {
+    const SPACE = 'space-send';
+    const USER_PUB = '11'.repeat(57);
+    const USER_ADDRESS = deriveInboxAddress(USER_PUB);
+    const SIGNING_PUB = '22'.repeat(57); // shared join key held in the `signing` slot
+    const INBOX_PUB = '44'.repeat(57); // this device's own per-device inbox key
+    const DEVICE_INBOX = 'dev-inbox-send';
+
+    // Master ed448 key + this device's DM inbox address, as a keyset would carry.
+    const keyset = {
+      userKeyset: {
+        user_key: {
+          public_key: Array(57).fill(0x11), // hex === USER_PUB
+          private_key: Array(57).fill(0x99),
+        },
+      },
+      deviceKeyset: { inbox_keyset: { inbox_address: DEVICE_INBOX } },
+    } as any;
+
+    beforeEach(() => {
+      // enqueueOutbound normally defers; run the callback inline so sendHubMessage
+      // is exercised. Reconstruct so MessageService captures this impl.
+      mockDeps.enqueueOutbound = vi.fn(async (cb: any) => cb());
+      // Default: a shared `signing` slot exists (existing 2nd device / join device).
+      mockDeps.messageDB.getSpaceKey = vi.fn(async (_s: string, keyId: string) =>
+        keyId === 'signing'
+          ? { keyId: 'signing', publicKey: SIGNING_PUB, privateKey: 'pk' }
+          : keyId === 'inbox'
+            ? { keyId: 'inbox', publicKey: INBOX_PUB, privateKey: 'ik' }
+            : null
+      );
+      vi.mocked(channel_raw.js_sign_ed448).mockReturnValue(
+        JSON.stringify('mock-signature') as any
+      );
+      messageService = new MessageService(mockDeps);
+    });
+
+    it('broadcasts a well-formed announce-keys control envelope for the signed key', async () => {
+      await messageService.announceDeviceKeys(SPACE, keyset);
+
+      expect(mockDeps.sendHubMessage).toHaveBeenCalledTimes(1);
+      const [sentSpaceId, sentJson] = (mockDeps.sendHubMessage as any).mock.calls[0];
+      expect(sentSpaceId).toBe(SPACE);
+      const sent = JSON.parse(sentJson);
+      expect(sent.type).toBe('control');
+      expect(sent.message).toMatchObject({
+        type: 'announce-keys',
+        userAddress: USER_ADDRESS,
+        userPublicKey: USER_PUB,
+        spaceId: SPACE,
+        deviceInboxAddress: DEVICE_INBOX,
+        // Announces getSigningKey() = `signing ?? inbox`; here the shared slot.
+        spaceKeyPublicKey: SIGNING_PUB,
+      });
+      expect(typeof sent.message.signature).toBe('string');
+      expect(sent.message.signature.length).toBeGreaterThan(0);
+    });
+
+    it('signs the canonical shared bytes with the master key (cross-platform gate)', async () => {
+      await messageService.announceDeviceKeys(SPACE, keyset);
+
+      const sent = JSON.parse((mockDeps.sendHubMessage as any).mock.calls[0][1]);
+      const signCall = (channel_raw.js_sign_ed448 as any).mock.calls.at(-1);
+      // The signed message MUST be exactly buildDeviceKeyStatementBytes(statement)
+      // — if desktop and mobile serialize differently, signatures fail silently.
+      expect(signCall[1]).toBe(
+        Buffer.from(
+          buildDeviceKeyStatementBytes(sent.message),
+          'utf-8'
+        ).toString('base64')
+      );
+      // ...signed with the MASTER private key, not the space key.
+      expect(signCall[0]).toBe(
+        Buffer.from(
+          new Uint8Array(keyset.userKeyset.user_key.private_key)
+        ).toString('base64')
+      );
+    });
+
+    it('announces the own per-device inbox key when there is no shared signing slot', async () => {
+      // Fresh second device after the Option A flip: no `signing` slot.
+      mockDeps.messageDB.getSpaceKey = vi.fn(async (_s: string, keyId: string) =>
+        keyId === 'inbox'
+          ? { keyId: 'inbox', publicKey: INBOX_PUB, privateKey: 'ik' }
+          : null
+      );
+      messageService = new MessageService(mockDeps);
+
+      await messageService.announceDeviceKeys(SPACE, keyset);
+      const sent = JSON.parse((mockDeps.sendHubMessage as any).mock.calls[0][1]);
+      expect(sent.message.spaceKeyPublicKey).toBe(INBOX_PUB);
+    });
+
+    it('does not announce when the space has no signing key at all', async () => {
+      mockDeps.messageDB.getSpaceKey = vi.fn().mockResolvedValue(null);
+      messageService = new MessageService(mockDeps);
+
+      await messageService.announceDeviceKeys(SPACE, keyset);
+      expect(mockDeps.sendHubMessage).not.toHaveBeenCalled();
+    });
+
+    it('broadcasts a revoke-device per space for each removed device', async () => {
+      mockDeps.messageDB.getSpaces = vi
+        .fn()
+        .mockResolvedValue([{ spaceId: 's1' }, { spaceId: 's2' }]);
+
+      await messageService.broadcastDeviceRevocations(['dev-a', 'dev-b'], keyset);
+
+      // 2 spaces x 2 devices = 4 tombstone broadcasts.
+      expect(mockDeps.sendHubMessage).toHaveBeenCalledTimes(4);
+      const [sentSpaceId, sentJson] = (mockDeps.sendHubMessage as any).mock.calls[0];
+      const sent = JSON.parse(sentJson);
+      // The hub routing spaceId must match the spaceId bound in the signed statement.
+      expect(sentSpaceId).toBe(sent.message.spaceId);
+      expect(sent.type).toBe('control');
+      expect(sent.message).toMatchObject({
+        type: 'revoke-device',
+        userAddress: USER_ADDRESS,
+        userPublicKey: USER_PUB,
+        deviceInboxAddress: 'dev-a',
+      });
+      expect(typeof sent.message.signature).toBe('string');
+    });
+
+    it('does nothing when no devices were removed', async () => {
+      mockDeps.messageDB.getSpaces = vi
+        .fn()
+        .mockResolvedValue([{ spaceId: 's1' }]);
+
+      await messageService.broadcastDeviceRevocations([], keyset);
+      expect(mockDeps.sendHubMessage).not.toHaveBeenCalled();
     });
   });
 });

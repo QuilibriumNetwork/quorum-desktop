@@ -427,10 +427,22 @@ byte builder, `verifyDeviceKeyStatement`, and a `deviceKeys`-aware
 `space_member_devices` store + the two control-message handlers, resolver wired
 into all four auth paths). This is **additive and behavior-neutral**: until the
 **send-side flip** ships on both platforms, every device still signs with the
-interim join-bound key, so nothing user-visible changes yet. Remaining:
-send-side (per-device signing + on-connect announce + Security-modal revocation)
-on desktop + mobile, mobile receive-side, then retire the interim `signing`
-slot. A non-destructive bound on `announce-keys` flooding is tracked in
+interim join-bound key, so nothing user-visible changes yet.
+
+**Progress (2026-07-21):** desktop's **send-side** landed on a branch
+(`feat/per-device-signing-keys-send`): an on-connect `announce-keys` broadcast,
+a Security-modal `revoke-device` broadcast, and — using **Option A** — a fresh
+device no longer adopts the shared `signing` slot on config sync, so it signs
+with its own per-device `inbox` key (`getSigningKey` still reads `signing ??
+inbox`, so existing devices are untouched and nothing regresses). Only devices
+set up *after* the flip sign per-device. **Release gate:** this must NOT deploy
+to prod until mobile's receive-side is live — a prod mobile client on an older
+build would silently drop a secondary desktop device's control ops. Member-sync
+statement carriage is deferred (the stored `SpaceMemberDevice` keeps no verbatim
+signature to re-verify; on-connect re-announce covers the common case, and the
+gap converges away on the hub-log migration). Remaining: mobile receive + send,
+then retire the interim `signing` slot. A non-destructive bound on
+`announce-keys` flooding is tracked in
 [`.agents/bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md`](../bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md).
 
 ---
@@ -588,4 +600,4 @@ secureChannel.UnsealSyncEnvelope(
 ---
 
 
-_Last Updated: 2026-07-20_
+_Last Updated: 2026-07-21_

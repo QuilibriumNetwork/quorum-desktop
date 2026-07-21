@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
-status: IN PROGRESS — shared core (#62) + desktop receive-side done; mobile receive + both-platform send-side pending (staged, see release order)
+status: IN PROGRESS — shared core (#62) + desktop receive-side done + desktop SEND-side done on branch feat/per-device-signing-keys-send (Option A, PR to main NOT prod); mobile receive + send pending (staged, see release order)
 priority: high (follow-up to the interim signing-split fix)
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
@@ -395,6 +395,18 @@ send-side flip on BOTH platforms is staged — see "Production release order".
    release order below. Observable (the real test): fresh second device (no
    shared `signing`) deletes/edits/pins from day one; deleting that device from
    Security settings makes its subsequent control ops drop on other clients.
+   ▸ DESKTOP DONE (branch `feat/per-device-signing-keys-send`, **Option A**
+   chosen 2026-07-21): `announceDeviceKeys` (on-connect, per space) +
+   `broadcastDeviceRevocations` (Security-modal removeDevice) +
+   `signDeviceKeyStatement` on `MessageService`; ConfigService stops adopting the
+   shared `signing` slot on sync so a fresh device falls through to its own
+   `inbox` key (`getSigningKey` read `signing ?? inbox` UNCHANGED → existing
+   devices don't regress); 6 send-side unit tests (envelope shape, cross-platform
+   byte-identity of the signed payload, revoke fan-out). Member-sync statement
+   carriage DEFERRED (stored `SpaceMemberDevice` has no verbatim signature to
+   re-verify; on-connect re-announce covers the common case, converges on
+   hub-log). Merge to main (for local desktop↔mobile testing), DO NOT deploy to
+   prod until mobile receive-side is live.
 4. **Cleanup** — retire `signing` slot fallback, rewrite
    `cryptographic-architecture.md` multi-device section, resolve the mobile
    bug report, file the join-binding hardening follow-up.
@@ -481,4 +493,4 @@ the only step with a blast radius, and it is bounded:
 - `revoke-device` fan-out cost for users in many spaces (batch per connect).
 - Desktop DB migration bump mechanics for the new store.
 
-*Last updated: 2026-07-20*
+*Last updated: 2026-07-21*
