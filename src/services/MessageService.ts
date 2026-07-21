@@ -1017,9 +1017,6 @@ export class MessageService {
 
     if (verdict.action === 'admit') {
       await this.messageDB.saveSpaceMemberDevice(verdict.device);
-      logger.log(
-        `[DeviceKeys] ADMITTED ${statement.type} device=${statement.deviceInboxAddress.slice(0, 12)} signingAddr=${verdict.device.inboxAddress.slice(0, 12)} user=${statement.userAddress.slice(0, 12)} space=${statement.spaceId.slice(0, 12)}`
-      );
     } else if (verdict.action === 'revoke') {
       // Tombstone: keep the row marked revoked so a later STALE announce is
       // rejected by LWW; a strictly-newer announce (re-added device) re-admits.
@@ -1032,14 +1029,8 @@ export class MessageService {
         timestamp: verdict.timestamp,
         revoked: true,
       });
-      logger.log(
-        `[DeviceKeys] REVOKED device=${verdict.deviceInboxAddress.slice(0, 12)} user=${verdict.userAddress.slice(0, 12)} space=${verdict.spaceId.slice(0, 12)}`
-      );
-    } else {
-      logger.warn(
-        `[DeviceKeys] REJECTED ${statement?.type} reason=${verdict.reason} device=${statement?.deviceInboxAddress?.slice(0, 12)} space=${contextSpaceId.slice(0, 12)}`
-      );
     }
+    // reject → drop
   }
 
   /**
@@ -1186,9 +1177,6 @@ export class MessageService {
       this.enqueueOutbound(async () => [
         await this.sendHubMessage(spaceId, envelope),
       ]);
-      logger.log(
-        `[DeviceKeys] announced key device=${deviceInboxAddress.slice(0, 12)} signingKey=${signingKey.publicKey.slice(0, 12)} space=${spaceId.slice(0, 12)}`
-      );
     } catch (err) {
       logger.warn('[DeviceKeys] announceDeviceKeys failed', { err, spaceId });
     }
@@ -3948,27 +3936,19 @@ export class MessageService {
                 !isUpdateProfile &&
                 participant?.inbox_address !== inboxAddress &&
                 !!participant?.inbox_address;
-              const admittedDeviceKey =
+              const inboxMismatch =
                 joinMismatch &&
-                (await this.isAdmittedDeviceKey(
+                !(await this.isAdmittedDeviceKey(
                   space.spaceId,
                   decryptedContent.content.senderId,
                   inboxAddress
                 ));
-              if (joinMismatch && admittedDeviceKey) {
-                logger.log(
-                  `[DeviceKeys] signature accepted via per-device key signingAddr=${inboxAddress.slice(0, 12)} sender=${String(decryptedContent.content.senderId).slice(0, 12)} type=${decryptedContent.content.type}`
-                );
-              }
-              const inboxMismatch = joinMismatch && !admittedDeviceKey;
               const messageIdMismatch =
                 decryptedContent.messageId !==
                 Buffer.from(messageId).toString('hex');
 
               if (inboxMismatch || messageIdMismatch) {
-                logger.warn(
-                  `[DeviceKeys] invalid address for signature — signingAddr=${inboxAddress.slice(0, 12)} joinAddr=${String(participant?.inbox_address).slice(0, 12)} sender=${String(decryptedContent.content.senderId).slice(0, 12)} type=${decryptedContent.content.type} messageIdMismatch=${messageIdMismatch}`
-                );
+                logger.warn(t`invalid address for signature`);
                 decryptedContent.publicKey = undefined;
                 decryptedContent.signature = undefined;
               } else {
@@ -4970,26 +4950,18 @@ export class MessageService {
                     const joinMismatch =
                       participant?.inbox_address !== inboxAddress &&
                       !!participant?.inbox_address;
-                    const admittedDeviceKey =
+                    const inboxMismatch =
                       joinMismatch &&
-                      (await this.isAdmittedDeviceKey(
+                      !(await this.isAdmittedDeviceKey(
                         space.spaceId,
                         message.content.senderId,
                         inboxAddress
                       ));
-                    if (joinMismatch && admittedDeviceKey) {
-                      logger.log(
-                        `[DeviceKeys] (batch) signature accepted via per-device key signingAddr=${inboxAddress.slice(0, 12)} sender=${String(message.content.senderId).slice(0, 12)} type=${message.content.type}`
-                      );
-                    }
                     if (
-                      (joinMismatch && !admittedDeviceKey) ||
+                      inboxMismatch ||
                       message.messageId !==
                         Buffer.from(messageId).toString('hex')
                     ) {
-                      logger.warn(
-                        `[DeviceKeys] (batch) invalid address for signature — signingAddr=${inboxAddress.slice(0, 12)} joinAddr=${String(participant?.inbox_address).slice(0, 12)} sender=${String(message.content.senderId).slice(0, 12)} type=${message.content.type}`
-                      );
                       message.publicKey = undefined;
                       message.signature = undefined;
                     } else {
