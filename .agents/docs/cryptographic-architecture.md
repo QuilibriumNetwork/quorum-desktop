@@ -429,20 +429,35 @@ into all four auth paths). This is **additive and behavior-neutral**: until the
 **send-side flip** ships on both platforms, every device still signs with the
 interim join-bound key, so nothing user-visible changes yet.
 
-**Progress (2026-07-21):** desktop's **send-side** landed on a branch
-(`feat/per-device-signing-keys-send`): an on-connect `announce-keys` broadcast,
-a Security-modal `revoke-device` broadcast, and — using **Option A** — a fresh
-device no longer adopts the shared `signing` slot on config sync, so it signs
-with its own per-device `inbox` key (`getSigningKey` still reads `signing ??
-inbox`, so existing devices are untouched and nothing regresses). Only devices
-set up *after* the flip sign per-device. **Release gate:** this must NOT deploy
-to prod until mobile's receive-side is live — a prod mobile client on an older
-build would silently drop a secondary desktop device's control ops. Member-sync
-statement carriage is deferred (the stored `SpaceMemberDevice` keeps no verbatim
-signature to re-verify; on-connect re-announce covers the common case, and the
-gap converges away on the hub-log migration). Remaining: mobile receive + send,
-then retire the interim `signing` slot. A non-destructive bound on
-`announce-keys` flooding is tracked in
+**Progress (2026-07-21):** the durable per-device system is now **merged on both
+platforms**. Desktop **send-side** (#249) + **mobile receive+send** (quorum-mobile
+#168): on-connect `announce-keys` broadcast, Security-modal `revoke-device`
+broadcast, and — using **Option A** — a fresh device no longer adopts the shared
+`signing` slot on config sync, so it signs with its own per-device `inbox` key.
+`getSigningKey`/`getSpaceSigningKey` still read `signing ?? inbox`, so existing
+devices are untouched and nothing regresses; only devices set up *after* the flip
+sign per-device.
+
+A **receive-side gate bug** was found + fixed during cross-device testing (#250):
+the two legacy signature-strip gates in `MessageService`'s decrypt loop (streaming
++ batch, from the #241/#243 verified-signer work) compared a message's signing key
+ONLY to the member's join binding and never consulted the admissions store — so a
+valid second-device signature was stripped ("invalid address for signature")
+*before* the device-aware resolver ran. `isAdmittedDeviceKey` now lets both gates
+accept an admitted per-device key. Mobile has no equivalent gate (its receive path
+verifies crypto validity then resolves via the device-aware resolver), so it
+needed no such fix.
+
+**Validated:** desktop↔desktop (2 devices + observer) — delete/edit/pin from a
+second device land on the others via the per-device key. **Mobile↔desktop is not
+yet validated** (blocked by the P2P-vs-hub-log transport divergence, separate from
+this feature). **Release gate:** merged to main/master but **NOT deployed to prod**
+until cross-device is broadly validated. Deferred: member-sync statement carriage
+(stored `SpaceMemberDevice` keeps no verbatim signature; on-connect re-announce
+covers the common case, converges on the hub-log migration), and **cleanup**
+(retire the interim `signing` slot + rewrite this section for the pure per-device
+model). A non-destructive bound on `announce-keys` flooding — visible in testing
+as hub-log replay churn — is tracked in
 [`.agents/bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md`](../bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md).
 
 ---

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
-status: IN PROGRESS — shared core (#62) + desktop receive-side (#245) + desktop SEND-side (#249 MERGED, Option A) + desktop GATE FIX (#250 OPEN — signature-strip gate ignored device admissions) done; mobile receive+send on quorum-mobile PR #168 (OPEN). Desktop↔desktop VALIDATED live; mobile↔desktop blocked by transport divergence. Cleanup (retire signing slot) + prod deploy pending (staged, see release order)
+status: IN PROGRESS — shared core (#62) + desktop receive (#245) + desktop SEND (#249) + desktop GATE FIX (#250) all MERGED to main; mobile receive+send MERGED to master (quorum-mobile #168). Option A throughout. Desktop↔desktop VALIDATED live; mobile↔desktop blocked by transport divergence (unvalidated). REMAINING: prod deploy (staged — hold until cross-device validated) + cleanup (retire interim `signing` slot, trim rollout logs, rewrite crypto-arch section) + lead Telegram ping (mobile heal-logic change)
 priority: high (follow-up to the interim signing-split fix)
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
