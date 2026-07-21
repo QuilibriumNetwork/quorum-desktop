@@ -95,11 +95,11 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                   <div className="flex flex-col">
                     <div>
                       <span
-                        className="font-mono modal-role"
+                        className="font-mono modal-role transition-shadow focus-within:ring-2 focus-within:ring-black/20 dark:focus-within:ring-white/40"
                         style={{ backgroundColor: getRoleColorHex(r.color) }}
                       >
                         <input
-                          className="border-0 bg-transparent outline-none"
+                          className="border-0 bg-transparent outline-none focus-visible:outline-none"
                           style={{
                             width:
                               Math.max(
@@ -107,6 +107,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                                 60
                               ) + 'px',
                           }}
+                          onFocus={(e) => e.target.select()}
                           onChange={(e) =>
                             updateRoleDisplayName(
                               i,
@@ -120,7 +121,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                     <div className="mt-1">
                       @
                       <input
-                        className="border-0 bg-transparent outline-none font-mono"
+                        className="border-0 bg-transparent outline-none focus-visible:outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all font-mono"
                         style={{
                           width:
                             (roles.find((_, pi) => i == pi)
@@ -129,6 +130,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                             11 +
                             'px',
                         }}
+                        onFocus={(e) => e.target.select()}
                         onChange={(e) =>
                           updateRoleTag(i, e.target.value)
                         }
