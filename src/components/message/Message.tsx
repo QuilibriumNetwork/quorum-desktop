@@ -1050,14 +1050,13 @@ export const Message = React.memo(
                   if (message.readAt) {
                     receiptIndicator = (
                       <span className="message-status delivered read">
-                        <Icon name="check" size="xs" />
-                        <Icon name="check" size="xs" />
+                        <Icon name="checks-custom" size="sm" />
                       </span>
                     );
                   } else if (message.deliveredAt) {
                     receiptIndicator = (
                       <span className="message-status delivered">
-                        <Icon name="check" size="xs" />
+                        <Icon name="check" size="sm" />
                       </span>
                     );
                   }
@@ -1109,9 +1108,12 @@ export const Message = React.memo(
                     )}
                     {receiptIndicator}
                   </span>
-                ) : (
-                  receiptIndicator
-                );
+                ) : receiptIndicator ? (
+                  // Non-compact rows only carry the receipt inline. Wrap it in the
+                  // same flex-centered container as the compact case so the ✓/✓✓
+                  // aligns identically on both row types (bare inline sat too low).
+                  <span className="message-inline-indicators">{receiptIndicator}</span>
+                ) : null;
 
                 // Whether the compact trailing group has anything to show — used by
                 // the media (embed/sticker) branches, which render it as a small row
