@@ -3366,7 +3366,7 @@ export class MessageService {
               existing.map((e) => e.timestamp)
             )
           ) {
-            logger.warn(
+            logger.debug(
               '[MessageService] ⚠️ STALE init envelope IGNORED — zombie defused, keeping current session',
               {
                 conversationId: conversationId?.slice(0, 16),
