@@ -279,17 +279,15 @@
   &.delivered {
     display: inline-flex;
     align-items: center;
-    vertical-align: text-bottom;
+    vertical-align: middle;
     margin-left: 4px;
     color: var(--color-text-muted);
 
+    // Single ✓ (delivered) and double ✓✓ (read, `checks-custom`) are two icons
+    // authored in the same 24×24 box, so they MUST render at the same size.
     svg {
-      width: 12px;
-      height: 12px;
-    }
-
-    &.read svg + svg {
-      margin-left: -6px;
+      width: 16px;
+      height: 16px;
     }
   }
 
@@ -323,10 +321,13 @@
 // where the header — and its indicators — is collapsed. Trails the last word.
 .message-inline-indicators {
   display: inline-flex;
-  align-items: center;
+  // Trailing indicators (esp. the ✓/✓✓ receipt) sit at the bottom of the text
+  // line on both compact and non-compact rows. flex-end bottom-aligns the icons
+  // within the row; text-bottom drops the row itself to the text baseline.
+  align-items: flex-end;
   gap: $s-1-5; // 6px
   margin-left: $s-1-5; // separate from the preceding word
-  vertical-align: baseline;
+  vertical-align: text-bottom;
 
   // Receipt carries its own left margin in the header; inside the group the
   // container gap handles spacing, so drop it to keep the rhythm even.

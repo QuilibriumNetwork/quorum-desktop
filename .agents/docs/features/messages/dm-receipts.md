@@ -241,13 +241,13 @@ The receipt indicator in `Message.tsx` follows this priority:
 
 | Condition | Display |
 |---|---|
-| `readAt` set | ✓✓ (two `<Icon name="check">` with `-6px` margin overlap) |
+| `readAt` set | ✓✓ (single `<Icon name="checks-custom">` — a custom double-check SVG) |
 | `deliveredAt` set | ✓ (single `<Icon name="check">`) |
 | Otherwise | Nothing |
 
 **Settings gate persistence, not display.** Once `deliveredAt` or `readAt` is persisted to IndexedDB, the checkmark is always visible — even if the user later turns the setting OFF. This means past receipts (received while the setting was ON) remain visible. Turning the setting OFF only stops new acks from being processed and persisted.
 
-Both ✓ and ✓✓ use the same `.delivered` CSS class with `color: var(--color-text-muted)` and 12px icons. The `.read` modifier adds the negative margin to overlap the two check icons.
+Both ✓ and ✓✓ use the same `.delivered` CSS class with `color: var(--color-text-muted)` and 12px icons. The read state (`.read`) is now a single custom `checks-custom` icon — the double-check is baked into one SVG, so the old negative-margin overlap of two icons is gone.
 
 `readAt`, `deliveredAt`, `showDeliveryReceipts`, and `showReadReceipts` are all included in the `React.memo` comparison to trigger re-renders when they change.
 
@@ -282,7 +282,7 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 
 - **Gate persistence, not display**: Both delivery and read acks are only persisted when the user's respective setting is ON. Once persisted, checkmarks are always visible (even after toggling OFF). This preserves the user's past receipts while preventing new ones from accumulating when the setting is OFF.
 
-- **Two check icons instead of IconChecks**: The `IconChecks` Tabler icon exists in quorum-shared's icon map but renders too small at `xs` size. Two adjacent `<Icon name="check">` with `-6px` margin overlap gives better visual clarity.
+- **Custom `checks-custom` icon instead of IconChecks**: The `IconChecks` Tabler icon renders too small/cramped at `xs`. Originally this was worked around with two adjacent `<Icon name="check">` overlapped by `-6px` margin. Replaced (2026-07-23) with a single custom double-check SVG (`checks-custom`) added to the shared Icon primitive. It's stroke-based (matching Tabler) and each tick spans the same 15 viewBox units as `check`, so at `xs` each tick is exactly the size of a single delivered check — but the two ticks sit closer together for a cleaner read indicator. This was the first **stroke-based** custom icon, so `CustomIconDef` gained `stroke`/`strokeWidth` support in `customIcons.ts` (previous custom icons were all fill-based).
 
 - **No-ack rule**: `read-ack` control messages (like `delivery-ack`) are intercepted before `saveMessage` and never trigger delivery or read ack buffering. The `type === 'post'` guard in the defense-in-depth check prevents infinite ack loops.
 
@@ -312,3 +312,5 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 *Updated: 2026-05-18 — Added "Standalone-ack ratchet cost" to Known Limitations, cross-linking to the typing-indicators DR cost investigation.*
 
 *Updated: 2026-05-20 — Removed stale references to a non-existent `src/types/deliveryReceipt.ts` (wire types are inline literals, not a dedicated file). Documented the actual flat wire format and the piggybacked envelope fields. Added a forward-pointer to the receipts-shared-migration task that will lift these types into `@quilibrium/quorum-shared`.*
+
+*Updated: 2026-07-23 — Read indicator (✓✓) now renders a single custom `checks-custom` icon (a redesigned double-check SVG in the shared Icon primitive) instead of two overlapped `check` icons. Added stroke support to `CustomIconDef`.*
