@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
-status: IN PROGRESS — shared core (#62) + desktop receive (#245) + desktop SEND (#249) + desktop GATE FIX (#250) all MERGED to main; mobile receive+send MERGED to master (quorum-mobile #168). Option A throughout. Desktop↔desktop VALIDATED live; mobile↔desktop blocked by transport divergence (unvalidated). REMAINING: prod deploy (staged — hold until cross-device validated) + cleanup (retire interim `signing` slot, trim rollout logs, rewrite crypto-arch section) + lead Telegram ping (mobile heal-logic change)
+status: ALL CODE MERGED (both platforms) — shared core (#62) + desktop receive (#245) + desktop SEND (#249) + desktop GATE FIX (#250) on main; mobile receive+send on master (quorum-mobile #168). Option A throughout. Desktop↔desktop VALIDATED live; mobile↔desktop blocked by transport divergence (unvalidated, external). Kept OPEN for the ONE remaining code task: cleanup (retire the interim `signing ?? inbox` fallback — deliberately deferred until both apps are broadly updated in prod; removing it early re-breaks un-updated clients — + rewrite crypto-arch multi-device section). Non-code residuals: prod cut-over (tracked in MASTER-RECAP) + lead Telegram ping re mobile heal-logic change.
 priority: high (follow-up to the interim signing-split fix)
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
@@ -229,6 +229,56 @@ then signs everything with its **own** per-device key (`inbox`). The interim
 `getSigningKey` fallback (`signing ?? inbox`) stays during rollout and is
 removed at cleanup. The join device's per-device key IS the join key, so its
 announce also tags the join binding with a `deviceInboxAddress` for revocation.
+
+### The `signing ?? inbox` fallback: what it is for, and when it is safe to retire
+
+**Read this before touching `getSigningKey` / `getSpaceSigningKey`.** Retiring
+the fallback is the LAST step of this whole effort, and doing it early is a
+production hazard with zero upside. The details:
+
+**What the fallback is.** `getSigningKey(spaceId)` reads `signing ?? inbox`
+(desktop `MessageService.ts:1106`; mobile the equivalent). Combined with the
+Option A flip (ConfigService no longer *adopts* the synced `signing` slot,
+`ConfigService.ts:135`), the current state is:
+- **Fresh devices** (space synced on the post-flip build): no `signing` slot →
+  already sign per-device with `inbox`. The fallback never fires for them.
+- **Pre-flip devices** (had a `signing` slot stored before the flip): still sign
+  with the shared join key via the `?? signing` read.
+
+So the fallback ONLY affects pre-flip devices that still hold a stored `signing`
+slot. It is the interim shared-key model, kept alive for exactly those devices.
+
+**What the fallback is FOR.** It is a **rollout-window safety margin**, not
+something the local dev env or the final end state needs. Its single job: during
+the period when some clients are updated and some are not, a pre-flip
+multi-device user's existing device keeps signing with the shared join-bound key
+— which even receivers on an OLD build recognize via the member join binding
+(no `announce-keys` admission required). Remove it and that device switches to
+its own per-device key; a receiver still on a build WITHOUT the per-device
+admission (< desktop #245 / mobile #168) then fails-closed and drops that
+device's control actions (delete/edit/pin/mute, @everyone) until it updates.
+
+**What removing it does NOT break** (so nobody re-derives this later):
+- Local dev with both apps on the latest build: SAFE. Receivers admit per-device
+  keys, so every device resolves via the announce path (validated
+  desktop↔desktop). The join/primary device is safe regardless — its `inbox`
+  key IS the join key, recognized directly via the member binding with no
+  announce needed. Only *secondary* devices depend on the announce admission.
+- The fully-updated production end state: SAFE — every client admits per-device
+  keys, so nobody needs the shared key.
+- The fallback is NOT required for anything to function. It is dead-weight
+  scaffolding whose only value is protecting the mixed-client transition.
+
+**When it is safe to retire (the exact condition).** Only once BOTH apps'
+**receive-side** (per-device admission: desktop #245 + gate fix #250; mobile
+#168) is **broadly adopted in production** — i.e. the population of clients that
+could receive a control message but cannot admit a per-device key has shrunk to
+acceptable. Concretely: ship the coordinated cut-over release (desktop v2.1.4+
+timed with mobile going live) WITH the fallback intact, let adoption catch up,
+THEN retire `signing ?? inbox` in a subsequent release. Retiring it before that
+window closes re-breaks secondary-device control ops on not-yet-updated
+receivers for no benefit. There is no local-dev or correctness reason to remove
+it sooner; it is deliberately a post-rollout step.
 
 ### Revocation trigger
 
@@ -536,8 +586,8 @@ Concrete order:
    there is **zero behavior change** (every device still signs with the interim
    join-bound key; single-device and existing multi-device behavior unchanged).
    Real users just get the normal additive v14 DB migration.
-3. **Mobile receive-side + send-side** — ✅ DONE on quorum-mobile PR #168 (OPEN,
-   targets `master`, NOT merged). Same Option A as desktop. Mirrors desktop:
+3. **Mobile receive-side + send-side** — ✅ DONE + MERGED to `master`
+   (quorum-mobile PR #168, merged 2026-07-21). Same Option A as desktop. Mirrors desktop:
    `deviceKeyStatements.ts` (announce/revoke build+sign + processDeviceKeyStatement),
    MMKV `space_member_devices` store, resolver wiring, on-connect announce,
    `spaceSyncService` stops adopting the shared `signing` slot (heal + new-space),
@@ -548,8 +598,12 @@ Concrete order:
    per-device signing + Security-modal revocation. Waiting for mobile to be
    *fully* done is more conservative than strictly required (the flip only needs
    mobile's RECEIVE-side live), so it cannot strand mobile users.
-5. **Cleanup** — retire the `signing ?? inbox` fallback once both apps are
-   broadly updated; rewrite the crypto-architecture multi-device section.
+5. **Cleanup (post-retirement)** — retire the `signing ?? inbox` fallback and
+   rewrite the crypto-architecture multi-device section for the pure per-device
+   model. **Gate:** do this ONLY after both apps' receive-side is broadly adopted
+   in production (see "The `signing ?? inbox` fallback: what it is for, and when
+   it is safe to retire" above for the exact condition and why doing it earlier
+   is a rollout hazard with no upside). Not safe yet — nothing is in prod.
 
 **Why staged is safe (and why the flip is the only sensitive step):** the
 receive-side is inherently tolerant — a space in transition holds both
@@ -608,4 +662,4 @@ the only step with a blast radius, and it is bounded:
 - `revoke-device` fan-out cost for users in many spaces (batch per connect).
 - Desktop DB migration bump mechanics for the new store.
 
-*Last updated: 2026-07-21*
+*Last updated: 2026-07-24*

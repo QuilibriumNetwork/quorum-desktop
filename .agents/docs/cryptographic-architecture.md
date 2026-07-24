@@ -354,8 +354,18 @@ update-profile:   (current — #243) verify signature, authorize the VERIFIED
 > follow-up" and its Progress notes at the end of this section). The
 > "interim, sender-side" shared-key fix described first is **superseded** and
 > kept only for history; the interim `signing ?? inbox` read is still retained
-> during rollout and is removed at cleanup. A full rewrite of this section for
-> the pure per-device model is a pending cleanup task.
+> during rollout. **That fallback is a rollout-window safety margin**: it lets
+> pre-flip devices keep signing with the shared join key, which receivers on an
+> OLD build (without the per-device admission, < desktop #245 / mobile #168)
+> still recognize via the member join binding. It is safe to retire ONLY once
+> both apps' receive-side is broadly adopted in production (ship the coordinated
+> cut-over WITH the fallback intact, let adoption catch up, then remove it in a
+> later release). Removing it earlier re-breaks secondary-device control ops on
+> not-yet-updated receivers, for no benefit — it is not needed for local dev or
+> the fully-updated end state. Rationale + exact condition:
+> [`.agents/tasks/2026-07-19-per-device-signing-keys-registration-anchored.md`](../tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
+> ("The `signing ?? inbox` fallback" section). A full rewrite of this section
+> for the pure per-device model is a pending post-retirement cleanup task.
 
 Verified-signer authorization (below) maps a message's signing key back to a
 member via a single bound `inbox_address` (set by the join broadcast). That
@@ -624,4 +634,4 @@ secureChannel.UnsealSyncEnvelope(
 ---
 
 
-_Last Updated: 2026-07-21_
+_Last Updated: 2026-07-24_

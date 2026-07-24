@@ -1,7 +1,7 @@
 ---
 type: task
 title: "SECURITY: DM remove-message authorization bypass (spoofable senderId) — anchor to session sender"
-status: "DONE — DM remove + edit merged (PR #220); SPACE remove/edit/pin/mute now fixed on desktop (branch feat/space-control-message-auth). Mobile receive-side verification still pending."
+status: "DONE (both platforms merged) — DM remove + edit merged desktop #220; SPACE remove/edit/pin/mute/@everyone merged desktop #241/#243 (shared #61) and mobile #160. No code remaining; prod cut-over tracked in the MASTER-RECAP."
 priority: high
 created: 2026-06-25
 source: surfaced during quorum-mobile DM delete-own-message work + deep code review
@@ -114,4 +114,4 @@ Mobile reference implementation + full threat-model verification:
 quorum-mobile branch `feature/dm-delete-own-message-sync`, and the mobile memory note
 `dm-control-msg-auth-session-sender-not-payload`.
 
-*Last updated: 2026-07-19*
+*Last updated: 2026-07-24*

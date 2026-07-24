@@ -1,7 +1,7 @@
 ---
 type: recap
 title: "MASTER RECAP: control-message authorization fix (delete/edit spoofing) — desktop + mobile"
-status: living-document
+status: "living-document — ALL security code merged on BOTH platforms (DM #220; SPACE desktop #241/#243 + mobile #160 + shared #61; multi-device per-device-signing follow-up: desktop #245/#249/#250 + mobile #168 + shared #62). Only NON-code residuals remain: the coordinated prod cut-over (new desktop release timed with mobile going live) + the per-device `signing ?? inbox` cleanup (deferred until both apps broadly updated). Kept open as the cluster hub until those close."
 priority: high
 created: 2026-06-25
 audience: "the team — written in plain language, no deep jargon"
