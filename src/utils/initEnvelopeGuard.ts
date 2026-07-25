@@ -25,11 +25,33 @@
  */
 export const INIT_ENVELOPE_STALENESS_TOLERANCE_MS = 120_000;
 
+/**
+ * Absolute age bound, applied even when we hold NO rows for the tag.
+ *
+ * Rule 1 below ("no existing rows -> not stale") left a hole exactly where we
+ * are most vulnerable: a session RESET deletes every row, so for a moment there
+ * is nothing to compare against and ANY redelivered envelope is accepted. The
+ * server redelivers anything whose ack-by-delete failed, so old init envelopes
+ * sit on the inbox indefinitely - observed live 2026-07-25 replacing a
+ * just-reset session with envelopes 94,125 seconds (26 hours) old, and the
+ * master report saw 60-day-old ones. The zombie installs itself as the session,
+ * the peer's real traffic no longer matches, and the reset the user just
+ * performed is silently undone.
+ *
+ * A legitimate init envelope is seconds old. Ten minutes is five times the skew
+ * tolerance and still refuses everything observed.
+ */
+export const INIT_ENVELOPE_MAX_AGE_MS = 10 * 60_000;
+
 export function isStaleInitEnvelope(
   envelopeTimestamp: number,
   existingRowTimestamps: number[],
-  toleranceMs: number = INIT_ENVELOPE_STALENESS_TOLERANCE_MS
+  toleranceMs: number = INIT_ENVELOPE_STALENESS_TOLERANCE_MS,
+  now: number = Date.now(),
+  maxAgeMs: number = INIT_ENVELOPE_MAX_AGE_MS
 ): boolean {
+  // Rule 0: absolute age. Holds even with no rows — see INIT_ENVELOPE_MAX_AGE_MS.
+  if (now - envelopeTimestamp > maxAgeMs) return true;
   if (existingRowTimestamps.length === 0) return false;
   if (existingRowTimestamps.includes(envelopeTimestamp)) return true;
   const newest = Math.max(...existingRowTimestamps);
