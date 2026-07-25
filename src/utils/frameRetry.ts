@@ -22,10 +22,18 @@
  * Pure and unit-tested; no I/O, no timers. Extractable to quorum-shared.
  */
 
-/** Give up on a frame after this many failed decrypt attempts. */
-export const FRAME_RETRY_MAX_ATTEMPTS = 8;
+/**
+ * Attempt ceiling. Deliberately generous: redelivery is FAST (measured gaps of
+ * 0.5-10s), so a small attempt budget burns out long before the receiving chain
+ * catches up. Live measurement: a frame recovered on its 7th attempt, ~30s in,
+ * while an 8-attempt budget was fully spent in ~35s — several frames were given
+ * up moments before they would have decrypted. TIME is the meaningful bound
+ * here, not attempt count; this cap only exists to stop unbounded work on a
+ * single frame.
+ */
+export const FRAME_RETRY_MAX_ATTEMPTS = 40;
 
-/** Give up on a frame this long after we first saw it, whatever the count. */
+/** The real bound: give up this long after we first saw the frame. */
 export const FRAME_RETRY_TTL_MS = 5 * 60_000;
 
 /** Cap the tracker so a flood of undecryptable frames cannot grow it forever. */
