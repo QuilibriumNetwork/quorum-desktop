@@ -81,6 +81,7 @@ import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
+import { orderSessionsForSend } from '../utils/sessionSelection';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
@@ -925,7 +926,7 @@ export class MessageService {
       const response = await this.messageDB.getEncryptionStates({
         conversationId,
       });
-      const sets = response.map((e) => JSON.parse(e.state));
+      const sets = orderSessionsForSend(response);
 
       // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
       const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
@@ -2969,7 +2970,7 @@ export class MessageService {
           }
 
           response = await this.messageDB.getEncryptionStates({ conversationId });
-          const sets = response.map((e) => JSON.parse(e.state));
+          const sets = orderSessionsForSend(response);
 
           let sessions: secureChannel.SealedMessageAndMetadata[] = [];
           // Edit inherit rule: sign iff the edited message was signed, so an
@@ -3151,7 +3152,7 @@ export class MessageService {
         }
 
         response = await this.messageDB.getEncryptionStates({ conversationId });
-        const sets = response.map((e) => JSON.parse(e.state));
+        const sets = orderSessionsForSend(response);
 
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
         // Sign DM unless explicitly skipped (skip if already signed via preBuiltMessage)
@@ -6358,7 +6359,7 @@ export class MessageService {
           }
 
           response = await this.messageDB.getEncryptionStates({ conversationId });
-          const sets = response.map((e) => JSON.parse(e.state));
+          const sets = orderSessionsForSend(response);
 
           let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
