@@ -626,6 +626,7 @@ secureChannel.UnsealSyncEnvelope(
 
 ## Related Documentation
 
+- **[Message Transport Architecture — DMs and Spaces (cross-platform)](../../../quorum-mobile/.agents/docs/message-transport-architecture.md)** — the transport companion to THIS doc: how a message actually moves (encrypt → seal → deliver → receive → decrypt → ack), the DM session model, the space hub-log, and desktop-vs-mobile divergences. (Lives in the quorum-mobile repo; sibling checkout.)
 - [Security Architecture](features/security.md) - Application security (XSS, permissions, etc.)
 - [Data Management Architecture](data-management-architecture-guide.md) - Storage patterns
 - [Action Queue](features/action-queue.md) - Background task processing

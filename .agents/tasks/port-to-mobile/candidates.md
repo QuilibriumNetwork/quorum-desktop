@@ -3,7 +3,7 @@ type: inventory
 title: "Port to Mobile — candidates (features + convergence)"
 status: living
 created: 2026-06-12
-updated: 2026-07-19
+updated: 2026-07-24
 ---
 
 # Port-to-mobile candidates
@@ -99,13 +99,13 @@ Legend: 📋 noted / still open · 🚧 task dropped (scoped, not started) · �
 
 #### 🚧 Task-dropped, not started (scoped, waiting on build)
 
-- **#9 · DM delivery & read receipts** — 🚧 DROPPED `[FP]` `HIGH`
-  Shared 100% ready (`ReceiptService` + wire types + per-msg/-conv/-config fields in published dist); pure mobile wiring, no shared blocker. **Top unshipped DM item.** Task dropped in mobile: `quorum-mobile/.agents/tasks/2026-07-19-dm-receipt-pipeline-and-global-toggles.md` (pipeline + global toggles, the main build) → unblocks `2026-06-25-dm-receipt-toggles.md` (per-conversation overrides, blocked on the pipeline). Both carry `source: candidates.md row #9`.
 - **#25 · Space folders UI** — 🚧 NOT started `[CV]` `MED`
   Spaces tab still renders a flat list, ignores `items`/folders (re-verified 2026-07-15). UX locked = **Telegram-style pill bar** (Option A) via shared `SegmentedPills`; task in mobile `.agents/tasks/.todo/2026-06-17-space-folders-pill-bar.md`. (PR #108 "channel drag reorder" is channel-reorder, NOT folders.)
 
 #### ✅ Shipped on mobile (verified 2026-07-15 against the current mobile branch)
 
+- **#9 · DM delivery & read receipts** — ✅ SHIPPED `[FP]` (PR [#164](https://github.com/QuilibriumNetwork/quorum-mobile/pull/164), merged 2026-07-20)
+  The top unshipped DM item is done. `feat: DM delivery and read receipts` (#164) wired the receipt pipeline + global toggles on top of the already-ready shared `ReceiptService`; polish follow-ups: inline receipts (PR [#171](https://github.com/QuilibriumNetwork/quorum-mobile/pull/171)) + media corner-overlay receipts (PR [#172](https://github.com/QuilibriumNetwork/quorum-mobile/pull/172)), both 2026-07-23. Unblocks the per-conversation receipt overrides (#35's remaining toggles). Pure mobile wiring, no shared change.
 - **#4 · Markdown rendering** — ✅ SHIPPED `[FP]` (PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112))
   Hand-rolled `MessageMarkdownRenderer.native.tsx` (no 3rd-party lib): bold/italic/strike, inline + fenced code (scroll+copy), spoilers, blockquote, lists, headings. **Only gap: tables.** Preprocessing promoted to shared (#52) but mobile runs a local copy until it bumps `2.1.0-33→34`.
 - **#8 · @everyone / @role mentions** — ✅ SHIPPED `[FP]` (PR [#112](https://github.com/QuilibriumNetwork/quorum-mobile/pull/112))
@@ -116,8 +116,8 @@ Legend: 📋 noted / still open · 🚧 task dropped (scoped, not started) · �
   "Always sign" Switch in `DMSettingsSheet` persists per-conversation `isRepudiable`; send reads it, so the stale `nonRepudiable:true` config default no longer gates signing. Per-DM (not a global Privacy toggle).
 - **#21 · Per-message signing toggle** — ✅ SHIPPED `[FP]` (PR [#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142))
   Composer lock button when `signingOptional` (conversation `isRepudiable`); `skipSigning`/`onToggleSkipSigning` threaded through DM send.
-- **#35 · DM conversation settings parity** — ✅ SHIPPED (except receipts) `[CV]` (PRs [#138](https://github.com/QuilibriumNetwork/quorum-mobile/pull/138)/[#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142))
-  `DMSettingsSheet` now renders+wires Mute, Always-sign, Save Edit History, plus Fix-Encryption + Delete. Only the delivery/read-receipt toggles remain — gated on #9.
+- **#35 · DM conversation settings parity** — ✅ SHIPPED `[CV]` (PRs [#138](https://github.com/QuilibriumNetwork/quorum-mobile/pull/138)/[#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142); receipt toggles via [#164](https://github.com/QuilibriumNetwork/quorum-mobile/pull/164))
+  `DMSettingsSheet` renders+wires Mute, Always-sign, Save Edit History, plus Fix-Encryption + Delete. The delivery/read-receipt toggles (previously the only gap, gated on #9) landed with the receipt pipeline — full parity now.
 - **#36 · Delete your own message in a DM** — ✅ SHIPPED `[FP]` (PR [#139](https://github.com/QuilibriumNetwork/quorum-mobile/pull/139))
   DM screen wires `onDelete`+`canDeleteMessage` (own-message gate); propagates `remove-message` to all devices; receive-side honors the authenticated sender, not the spoofable payload.
 - **#1 · Reply notification counts** — ✅ SHIPPED `[CV]` (PR [#128](https://github.com/QuilibriumNetwork/quorum-mobile/pull/128))
@@ -184,7 +184,7 @@ These surfaced during the 2026-06-12 parity deep-dive. Mobile reimplements permi
 
 ## Recommended sequencing (2026-06-12, with user priorities)
 
-> **⚠️ Mostly historical as of 2026-07-15.** Waves 0–2 have largely SHIPPED (permissions, mentions cluster, markdown, notification rollout, DM signing/delete). **What actually remains** (the live backlog): **#9 DM receipts** (top DM item, shared-ready), **#7 typing indicators** + **#16 toggles** (shared `TypingService` ready), **#5/#6 YouTube facade + setting**, **#10/#28 unread separator + scroll-to-first-unread**, **#11 space tags**, **#12 user notes**, **#3 threads** (biggest), plus smaller polish (**#4** tables-only gap, **#29/#30** highlight, **#13/#14/#17/#18/#19/#20**). Also pending: mobile bump `2.1.0-33→34` to pick up the expanded icon set (#53) + the promoted preprocessing pipeline (#52). Read the status board above for per-row truth; the waves below are the original plan.
+> **⚠️ Mostly historical as of 2026-07-15.** Waves 0–2 have largely SHIPPED (permissions, mentions cluster, markdown, notification rollout, DM signing/delete). **What actually remains** (the live backlog; **#9 DM receipts now SHIPPED — mobile PR #164, 2026-07-20**): **#7 typing indicators** + **#16 toggles** (shared `TypingService` ready), **#5/#6 YouTube facade + setting**, **#10/#28 unread separator + scroll-to-first-unread**, **#11 space tags**, **#12 user notes**, **#3 threads** (biggest), plus smaller polish (**#4** tables-only gap, **#29/#30** highlight, **#13/#14/#17/#18/#19/#20**). Also pending: mobile bump `2.1.0-33→34` to pick up the expanded icon set (#53) + the promoted preprocessing pipeline (#52). Read the status board above for per-row truth; the waves below are the original plan.
 
 User-stated interest (2026-06-12), roughly in their priority order: user mentions (first), @everyone/role mentions, roles parity check, read-only channels, YouTube facade + setting, image+caption single-message, DM read receipts, scroll-to-last-seen, message highlighting, space tags, user notes, markdown. Below is the recommended ORDER, which front-loads the correctness bugs and the highest-leverage shared-consumption work.
 
@@ -194,7 +194,7 @@ User-stated interest (2026-06-12), roughly in their priority order: user mention
 
 **Wave 2 — high-value standalone ports (independent, pick by appetite).**
 - **YouTube facade (#5) + setting (#6)** — ship together (the setting gates the facade). Utils already in shared. MED + SMALL.
-- **DM delivery/read receipts (#9)** — HIGH but high user value. **Shared is DONE** (receipts wire types + `ReceiptService` + per-message/conversation/config fields all in published `-31`, RN-safe — verified 2026-06-17); it's now pure mobile wiring, no shared blocker.
+- **DM delivery/read receipts (#9)** — ✅ **SHIPPED** (mobile PR [#164](https://github.com/QuilibriumNetwork/quorum-mobile/pull/164), 2026-07-20; polish #171/#172). Was HIGH/high-value; shared was already DONE (`ReceiptService` + wire types + per-message/conversation/config fields, RN-safe), so it landed as pure mobile wiring with no shared change.
 - **Scroll-to-first-unread (#28) + new-messages separator (#10)** — ship together, pure UI/scroll, no shared work.
 - **Message-highlight parity (#29)** — small polish on mobile's existing partial impl (fix color/duration, add notification deep-link + pagination fallback).
 
@@ -397,7 +397,7 @@ The single most important finding of the 2026-06-12 audit. Desktop and mobile **
 
 Each verified against desktop source + mobile state; full evidence in the 2026-06-12 audit. Listed shortest-path-first within tier.
 
-- **#9 DM delivery/read receipts** (feature-port, HIGH) — desktop `ReceiptService.ts` + `useReadReceipt.ts` + Privacy toggles; mobile ABSENT (renders nothing; doesn't intercept acks). **⚠️ SHARED IS DONE (verified 2026-06-17 against the installed `-31` dist):** the receipts migration the old doc said was "pending" has landed and published. Present + root-exported: wire types `DeliveryAckMessage`/`ReadAckMessage`/`ReceiptControlMessage`/`ReceiptControlMessageType`/`ReceiptEnvelopeFields` (`dist/types/receipt.d.ts`), the platform-agnostic `ReceiptService` (`dist/receipts/service.d.ts`, root-exported via `export * from './receipts'`; DOM access `typeof document`-guarded explicitly "so the same code runs unchanged on React Native"), per-message `deliveredAt`/`readAt` (`Message` type), per-conversation `deliveryReceipts`/`readReceipts` (`Conversation`), and global `deliveryReceipts`/`readReceipts` (`UserConfig`). **So #9 is now a pure mobile-wiring task: no shared change, no version bump, no publish.** Mobile work = decrypt-layer ack intercept → feed `ReceiptService`; instantiate it with mobile send + cache callbacks; mark read from a FlashList viewport observer (`onViewableItemsChanged`); render ✓/✓✓ from `deliveredAt`/`readAt`; add the global Privacy toggles + the per-DM override (row 35 Phase C). The desktop task `2026-05-19-receipts-shared-migration.md` is the migration that DELIVERED this — it's not a blocker, it's done. **🚧 Task dropped on mobile 2026-07-19:** `quorum-mobile/.agents/tasks/2026-07-19-dm-receipt-pipeline-and-global-toggles.md` (pipeline + global toggles) + `2026-06-25-dm-receipt-toggles.md` (per-conversation overrides, blocked on the pipeline). No longer a bare observation — see the 🚧 board row.
+- **#9 DM delivery/read receipts** (feature-port, HIGH) — ✅ **SHIPPED on mobile** (PR [#164](https://github.com/QuilibriumNetwork/quorum-mobile/pull/164), merged 2026-07-20; polish #171/#172, 2026-07-23). The prose below is the PRE-SHIP analysis — read the ✅ status-board row for live status. — desktop `ReceiptService.ts` + `useReadReceipt.ts` + Privacy toggles; mobile ABSENT (renders nothing; doesn't intercept acks). **⚠️ SHARED IS DONE (verified 2026-06-17 against the installed `-31` dist):** the receipts migration the old doc said was "pending" has landed and published. Present + root-exported: wire types `DeliveryAckMessage`/`ReadAckMessage`/`ReceiptControlMessage`/`ReceiptControlMessageType`/`ReceiptEnvelopeFields` (`dist/types/receipt.d.ts`), the platform-agnostic `ReceiptService` (`dist/receipts/service.d.ts`, root-exported via `export * from './receipts'`; DOM access `typeof document`-guarded explicitly "so the same code runs unchanged on React Native"), per-message `deliveredAt`/`readAt` (`Message` type), per-conversation `deliveryReceipts`/`readReceipts` (`Conversation`), and global `deliveryReceipts`/`readReceipts` (`UserConfig`). **So #9 is now a pure mobile-wiring task: no shared change, no version bump, no publish.** Mobile work = decrypt-layer ack intercept → feed `ReceiptService`; instantiate it with mobile send + cache callbacks; mark read from a FlashList viewport observer (`onViewableItemsChanged`); render ✓/✓✓ from `deliveredAt`/`readAt`; add the global Privacy toggles + the per-DM override (row 35 Phase C). The desktop task `2026-05-19-receipts-shared-migration.md` is the migration that DELIVERED this — it's not a blocker, it's done. **✅ Shipped on mobile 2026-07-20** (PR [#164](https://github.com/QuilibriumNetwork/quorum-mobile/pull/164) — the pipeline + global toggles; per-conversation overrides landed with it). Mobile task: `quorum-mobile/.agents/tasks/2026-07-19-dm-receipt-pipeline-and-global-toggles.md`. See the ✅ board row.
 - **#10 New-messages separator + jump-to-first-unread** (feature-port, MED) — desktop `NewMessagesSeparator.tsx` + Channel/DirectMessage scroll logic; mobile ABSENT. Shared NONE. FlashList `scrollToIndex` differs from Virtuoso.
 - **#11 Space tags** (feature-port, MED) — desktop `src/components/space/SpaceTag/` + `Message.tsx` badge + General-tab picker + startup refresh; mobile ABSENT (never reads `sender.spaceTag`). Types + `UserConfig.spaceTagId` ALREADY in shared.
 - **#12 User notes** (feature-port, MED) — desktop `user_notes` store + `UserProfile`/`DMUserProfileSidebar` UI; mobile ABSENT. `UserConfig.userNotes` ALREADY in shared (sync handling needed).
@@ -520,7 +520,7 @@ Old open task `2026-05-29-mobile-adopt-shared-permission-helpers.md` is now **WO
 
 ## 35. DM conversation settings parity — convergence (scaffolded-not-wired)
 
-> ✅ **CURRENT STATE (2026-07-15): SHIPPED except receipts** (mobile PRs [#138](https://github.com/QuilibriumNetwork/quorum-mobile/pull/138)/[#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142)). `DMSettingsSheet` now renders + wires Mute, Always-sign (`isRepudiable`), Save Edit History, plus the pre-existing Fix-Encryption + Delete. **Only the delivery/read-receipt toggles remain — gated on #9** (receipts don't exist on mobile yet). **The "coded-but-unwired / absent" prose below is the PRE-SHIP state.**
+> ✅ **CURRENT STATE (updated 2026-07-24): FULL PARITY — SHIPPED** (mobile PRs [#138](https://github.com/QuilibriumNetwork/quorum-mobile/pull/138)/[#142](https://github.com/QuilibriumNetwork/quorum-mobile/pull/142); receipt toggles via [#164](https://github.com/QuilibriumNetwork/quorum-mobile/pull/164)). `DMSettingsSheet` renders + wires Mute, Always-sign (`isRepudiable`), Save Edit History, Fix-Encryption + Delete, AND the delivery/read-receipt toggles — verified wired (`onSetDeliveryReceipts`/`onSetReadReceipts` with global-inherit + override + read-nested-under-delivery cascade, mirroring desktop). The former "gated on #9" gap is closed now that #9 receipts shipped. **The "coded-but-unwired / absent" prose below is the PRE-SHIP state.**
 
 **Desktop:** [`src/components/modals/ConversationSettingsModal.tsx`](../../../src/components/modals/ConversationSettingsModal.tsx) — a per-DM settings modal exposing **five settings + delete**:
 1. **Always sign messages** — per-conversation `isRepudiable` override of the global `nonRepudiable` (toggle inverts: `nonRepudiable = !isRepudiable`).
@@ -541,7 +541,7 @@ Plus a **Delete Conversation** danger action (local-only delete via `deleteConve
 
 **Shared-package involvement:** **NONE / already-present in `-31`.** The per-conversation fields `isRepudiable`, `saveEditHistory`, `deliveryReceipts`, `readReceipts` already exist on the shared `Conversation` type (desktop reads/writes them via `messageDB.saveConversation`). The receipts portion is gated on the #9 receipt PIPELINE being built on mobile (a mobile-side effort) — **not** on any shared work: the receipts wire types + `ReceiptService` already shipped in published `-31` (verified 2026-06-17). No new exports needed for any part of row 35.
 
-**Status:** ✅ SHIPPED 2026-07-15 except the receipt toggles (gated on #9 — see banner at top). *(orig. noted 2026-06-14.)* Pairs with **#9** (receipts) and **#15**. This is the settings-sheet half; own-message delete is **#36**.
+**Status:** ✅ SHIPPED — full parity (receipt toggles landed with #9 via PR #164, 2026-07-24 update; see banner at top). *(orig. noted 2026-06-14.)* Pairs with **#9** (receipts) and **#15**. This is the settings-sheet half; own-message delete is **#36**.
 
 ## 36. Delete your own message in a DM — feature-port (wiring)
 

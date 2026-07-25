@@ -190,4 +190,165 @@ does not remove it. Concrete proposal:
    deletes are the enabler of the whole redelivery class; worth a server-side look.
 
 ---
-*Created: 2026-07-17 — Last updated: 2026-07-17*
+
+## Divergence 4 — a session reset keeps inbox ROUTING
+
+**Shipped:** PR #252 (2026-07-25).
+
+**Original behavior:** `EncryptionService.deleteEncryptionStates` deleted the conversation's
+inbox MAPPINGS along with its ratchet states.
+
+**Why that is wrong:** the peer still holds a confirmed session pointing at our existing
+conversation inbox and keeps writing to that address — it has no way to learn we reset. With
+the mapping gone those frames arrive at an address we no longer recognise and are silently
+discarded, while our next send mints a BRAND-NEW inbox the peer never hears about. Our
+messages still reach them (fresh init envelopes to their device inbox), so the conversation
+looks half-alive: everything we send lands, everything they send disappears — permanently.
+
+**Evidence:** measured live 2026-07-25. Immediately after a desktop reset the peer kept
+posting to the old inbox with a still-confirmed session and desktop logged "no encryption
+state, dropping unread" for every frame, including the first message after the reset.
+
+**Note:** mobile has always had this right — its `resetSession` deletes ratchet states but
+deliberately keeps conversation inbox keypairs ("the addresses are still valid for receiving")
+and inbox mappings ("routing still needs to work"). The desktop reset action added 2026-07-17
+mirrored the deletion but not those exclusions.
+
+---
+
+## Divergence 5 — undecryptable frames are RETAINED for retry, and acked on success
+
+**Shipped:** PR #253 (2026-07-25). **This amends Divergence 1**, which stopped the session
+being destroyed but left the frame being deleted on first failure.
+
+**Original behavior:** both decrypt-failure catch blocks deleted the frame from the server
+inbox on the FIRST failure.
+
+**Why that is wrong:** a frame routinely fails purely because our receiving chain has not yet
+ratcheted into the sender's current chain. Seconds later the DH ratchet runs, stores the
+skipped message keys, and the SAME frame decrypts. Deleting on first failure destroys frames
+before they can ever succeed.
+
+**Evidence:** real captured frames replayed offline against real captured ratchet states —
+5 of 6 deleted frames decrypted against a state the client itself held ~35s later, and
+emptying that state's skipped-keys map made them fail again, proving the keys those frames
+needed did arrive just after the frames were gone. Verified live: three frames recovered
+after previously failing (19.6s/3 attempts, 20.2s/3, 40.9s/6).
+
+**New behavior:** frames are retained (the server redelivers anything not acked-by-delete) and
+deleted only once an attempt or time budget is spent, preserving the original protection
+against a genuinely poisonous frame. Retaining is safe for the inbox: `processInbound` already
+catches handler errors and continues, so a kept frame does not block those behind it.
+
+Two supporting changes: successful decrypts are now ACKED (the confirmed-session path never
+was, which with retention caused repeat redelivery — measured at 12 repeat decrypts of one
+frame); and frame identity is a content hash, never the timestamp, because **two distinct live
+frames were observed sharing one server timestamp**. That non-uniqueness also means any
+delete-by-timestamp can take a sibling with it — mitigated by deleting far less often, but a
+real fix needs the delete API to accept a frame identity.
+
+---
+
+## Divergence 6 — send with the NEWEST session for a device
+
+**Shipped:** PR #254 (2026-07-25), mirroring quorum-mobile #179.
+
+**Original behavior:** all four send sites selected with `sets.find((s) => s.tag === inbox)` —
+first match in insertion order, no regard for recency.
+
+**Why that is wrong:** several stored rows legitimately share one device tag. When the peer
+resets they mint a new receiving inbox and announce it in a fresh init envelope, but they
+cannot delete our old row — so we hold BOTH a stale confirmed row, pointing at an inbox they
+have abandoned, and the fresh one. Both look send-ready and the stale one is first, so it won
+every time. A reset is meant to be ONE-SIDED: one user resets, their next message carries the
+new session, both converge. That only works if the peer's send path adopts the newest session.
+
+**Evidence:** live 2026-07-25 — reset from desktop and mobile→desktop died; reset from mobile
+and desktop→mobile died, 0 of 5 landing with no receipts either way. **The dead direction is
+always the one pointing back at whoever reset.**
+
+**New behavior:** `orderSessionsForSend` orders candidates send-ready first, then newest, so
+`find` yields the right session at every site.
+
+---
+
+## Divergence 7 — init envelopes have an ABSOLUTE age bound
+
+**Shipped:** PR #255 (2026-07-25). **This closes a hole in Divergence 3.**
+
+**Original behavior:** the staleness guard's first rule was "no existing rows for the tag →
+not stale".
+
+**Why that is wrong:** a session RESET deletes every row, so for a window there is nothing to
+compare against and ANY redelivered init envelope is accepted. The guard is blind precisely
+when the user resets — the recovery action disables the protection.
+
+**Evidence:** live 2026-07-25, immediately after a desktop reset:
+
+```
+SESSION REPLACED by init envelope  envelopeAgeSeconds: 94125  replacedRows: 0
+SESSION REPLACED by init envelope  envelopeAgeSeconds: 94089  replacedRows: 1
+SESSION REPLACED by init envelope  envelopeAgeSeconds: -0     replacedRows: 1
+```
+
+Two envelopes 26 HOURS old installed themselves into the freshly-reset state before the peer's
+real init arrived; the pairing was left desynced and the peer's frames then hit an inbox with
+no state. The reset the user had just performed was silently undone.
+
+**New behavior:** an absolute age bound (10 minutes) is applied BEFORE the relative rules, so
+it holds with zero rows. A legitimate init envelope is seconds old; 10 minutes is five times
+the existing clock-skew tolerance.
+
+---
+
+## STILL OPEN — the structural cause is on MOBILE, not desktop
+
+Desktop↔desktop has no reported issues; every pairing involving mobile breaks. That maps onto
+a storage-model difference, and desktop's model is the correct one:
+
+- **Desktop** mints a fresh inbox keyset PER SESSION and stores rows under
+  `inboxId: session.receiving_inbox.inbox_address` — every device gets its own inbox and its
+  own row. Multi-device safe.
+- **Mobile** reuses ONE conversation inbox for the whole conversation and stores rows under
+  `(conversationId, inboxId)` — all of a peer's devices collapse onto one key and overwrite
+  each other. Last writer wins; the other sessions are silently destroyed.
+
+Two devices is enough to trigger it, and a phone + a desktop is the ordinary case. Design and
+migration plan: `quorum-mobile/.agents/tasks/2026-07-25-mobile-per-device-conversation-inbox.md`.
+
+Desktop needs no change for this, but it explains why the divergences above, all real and all
+verified, did not by themselves close the bug: the mobile-side collision keeps manufacturing
+the conditions they cope with.
+
+### Update 2026-07-25 (later the same day) — mobile shipped, and a SECOND cause was found
+
+**quorum-mobile PR #180** shipped the per-device inbox fix above, plus a larger cause that
+matters to anyone reading DESKTOP logs:
+
+**Mobile never sent the SDK "accept".** A frame is either plain or init-wrapped, and the
+RECEIVER demands which: while desktop's `sending_inbox.inbox_public_key` is empty it takes
+`ConfirmDoubleRatchetSenderSession`, which throws `invalid initialization envelope` on a plain
+frame. Mobile chose the shape by asking *"do I know THEIR inbox?"*; the SDK asks *"have I told
+them MINE?"* via `sent_accept` (`DoubleRatchetInboxEncrypt`, channel.ts L976+). A mobile session
+born from desktop's init envelope knew desktop's inbox immediately, so mobile's first reply went
+out plain and desktop dropped every frame. **That is the source of the
+`invalid initialization envelope` bursts in desktop's console** — not a desktop defect.
+
+Two desktop-side facts worth knowing, both verified against source:
+
+- Desktop serializes its state blob without `sent_accept` (it lives in a separate DB column and
+  is never written back), so `state.sent_accept` is always `undefined` at encrypt time and
+  **desktop init-wraps every frame it sends.** The SDK's plain-frame branch is effectively dead
+  code here. This is why desktop↔desktop never hit the bug.
+- Desktop's `DoubleRatchetInboxDecrypt` tolerates an init-shaped plaintext on a confirmed row
+  (the `maybe_initialization_info_and_message.user_address` branch), so mobile's accept is safe
+  to receive whether or not desktop has already confirmed.
+
+**The bug is NOT closed.** After #180, a one-sided reset from mobile went 0/3 → 5/5 both
+directions, but frames still occasionally fail to arrive with no established cause, and
+mobile↔mobile — the majority pairing — has never been tested. Full trail, including two
+retracted hypotheses and the next debugging step:
+`quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecryptable-state-divergence.md`.
+
+---
+*Created: 2026-07-17 — Last updated: 2026-07-25*
