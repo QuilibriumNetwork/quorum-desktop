@@ -81,6 +81,7 @@ import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
+import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
@@ -203,6 +204,8 @@ export class MessageService {
     timestamps: number[],
     apiClient: QuorumApiClient
   ) => Promise<void>;
+  /** Retry budget for DM frames that fail to decrypt — see frameRetry.ts. */
+  private undecryptableFrames = new UndecryptableFrameTracker();
   private navigate: (path: string, options?: any) => void;
   private spaceInfo: Ref<SpaceInfoMap>;
   private syncInfo: Ref<SyncInfoMap>;
@@ -240,6 +243,45 @@ export class MessageService {
 
   // Cooldown guard: prevents rapid re-broadcasts when a space owner spam-updates their tag
   private pendingTagRebroadcast = new Set<string>();
+
+  /**
+   * A DM frame failed to decrypt. Decide whether to keep it on the server for
+   * another attempt, or give up and delete it.
+   *
+   * Frames routinely fail simply because our receiving chain has not yet
+   * ratcheted into the sender's current chain; the DH ratchet then stores the
+   * skipped message keys and the SAME frame decrypts. Deleting on the first
+   * failure destroyed those frames permanently — verified 2026-07-25 by
+   * replaying real captured frames against real captured states: 5 of 6
+   * deleted frames were decryptable against a state this client held ~35s
+   * later.
+   *
+   * Retaining is safe for the inbox: the inbound loop already catches handler
+   * errors and continues, so a kept frame does not block the ones behind it.
+   * The attempt/TTL budget preserves the original protection against a
+   * genuinely poisonous frame lingering forever.
+   */
+  private async retainOrDropUndecryptableFrame(
+    branch: string,
+    message: { inboxAddress?: string; encryptedContent: string; timestamp: number },
+    receivingInbox: unknown
+  ): Promise<void> {
+    const key = frameKey(message.inboxAddress, message.encryptedContent);
+    if (!this.undecryptableFrames.recordFailure(key)) {
+      // Keep it: the server redelivers anything not acked-by-delete, so the
+      // frame comes back and is retried once the session has moved on.
+      return;
+    }
+    logger.warn(
+      '[MessageService] giving up on an undecryptable DM frame after the retry budget — deleting',
+      {
+        branch,
+        inbox: message.inboxAddress?.slice(0, 16),
+        frameTimestamp: message.timestamp,
+      }
+    );
+    await this.deleteInboxMessages(receivingInbox, [message.timestamp], this.apiClient);
+  }
 
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
@@ -3588,6 +3630,12 @@ export class MessageService {
         const fresh =
           freshStates.find((s) => s.inboxId === message.inboxAddress) ?? found;
         const freshKeys = JSON.parse(fresh.state);
+        // A frame that previously failed and was retained has now come back
+        // and is about to be retried; on success we stop tracking it below.
+        const undecryptableKey = frameKey(
+          message.inboxAddress,
+          message.encryptedContent
+        );
         if (freshKeys.sending_inbox.inbox_public_key === '') {
           try {
             const result =
@@ -3628,6 +3676,7 @@ export class MessageService {
               },
               true
             );
+            this.undecryptableFrames.clear(undecryptableKey);
             return {
               outcome: 'ok' as const,
               content,
@@ -3646,10 +3695,10 @@ export class MessageService {
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
             logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
-            await this.deleteInboxMessages(
-              freshKeys.receiving_inbox,
-              [message.timestamp],
-              this.apiClient
+            await this.retainOrDropUndecryptableFrame(
+              'Confirm',
+              message,
+              freshKeys.receiving_inbox
             );
             return { outcome: 'handled' as const };
           }
@@ -3712,6 +3761,7 @@ export class MessageService {
               },
               true
             );
+            this.undecryptableFrames.clear(undecryptableKey);
             return {
               outcome: 'ok' as const,
               content,
@@ -3727,10 +3777,10 @@ export class MessageService {
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
             logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
-            await this.deleteInboxMessages(
-              freshKeys.receiving_inbox,
-              [message.timestamp],
-              this.apiClient
+            await this.retainOrDropUndecryptableFrame(
+              'InboxDecrypt',
+              message,
+              freshKeys.receiving_inbox
             );
             return { outcome: 'handled' as const };
           }
