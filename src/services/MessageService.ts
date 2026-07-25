@@ -283,6 +283,30 @@ export class MessageService {
     await this.deleteInboxMessages(receivingInbox, [message.timestamp], this.apiClient);
   }
 
+  /**
+   * Acknowledge a DM frame we have successfully decrypted, by deleting it from
+   * the server inbox.
+   *
+   * The confirmed-session path never did this: it relied on the
+   * delete-on-first-decrypt-failure above to clear the inbox, so a frame that
+   * SUCCEEDED was simply left there. That was invisible while failures were
+   * deleted immediately, but once frames are retained for retry the server
+   * keeps redelivering them and each redelivery is decrypted again — measured
+   * live at 12 repeat decrypts of a single frame. Acking on success stops the
+   * redelivery at the source.
+   *
+   * Never allowed to throw: a failed ack just means the frame is redelivered
+   * and skipped again, which is strictly better than losing the message we
+   * already decrypted.
+   */
+  private async ackProcessedFrame(receivingInbox: unknown, timestamp: number): Promise<void> {
+    try {
+      await this.deleteInboxMessages(receivingInbox, [timestamp], this.apiClient);
+    } catch (err) {
+      logger.warn('[MessageService] failed to ack a processed DM frame (will be redelivered)', err);
+    }
+  }
+
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
     this.threadService = new ThreadService(this.messageDB);
@@ -3677,6 +3701,7 @@ export class MessageService {
               true
             );
             this.undecryptableFrames.clear(undecryptableKey);
+            await this.ackProcessedFrame(freshKeys.receiving_inbox, message.timestamp);
             return {
               outcome: 'ok' as const,
               content,
@@ -3762,6 +3787,7 @@ export class MessageService {
               true
             );
             this.undecryptableFrames.clear(undecryptableKey);
+            await this.ackProcessedFrame(freshKeys.receiving_inbox, message.timestamp);
             return {
               outcome: 'ok' as const,
               content,
