@@ -46,18 +46,34 @@ export class EncryptionService {
   }
 
   /**
-   * Deletes all encryption states, inbox mappings, and cache for a conversation.
+   * Resets the Double Ratchet for a conversation: forgets the ratchet states so
+   * the next send re-initialises, while KEEPING the inbox routing intact.
+   *
+   * The routing must survive. Our peer still holds a confirmed session pointing
+   * at our existing conversation inbox and will keep writing to that address —
+   * it has no way to learn we reset. If we drop the mapping, those frames arrive
+   * at an address we no longer recognise and are silently discarded
+   * (`RX-NOSTATE`), and our next send mints a BRAND-NEW inbox the peer never
+   * hears about. The result is a permanently one-way conversation: our messages
+   * reach the peer (fresh init envelopes to their device inbox) while every
+   * message they send disappears. Measured live 2026-07-25: immediately after a
+   * desktop reset, mobile kept posting to the old inbox with a still-confirmed
+   * session and desktop logged `RX-NOSTATE` for every frame.
+   *
+   * This mirrors mobile's `encryptionService.resetSession`, which states the
+   * same rule explicitly: it deletes ratchet states but deliberately keeps
+   * conversation inbox keypairs ("the addresses are still valid for receiving")
+   * and inbox mappings ("routing still needs to work"). The desktop reset action
+   * added 2026-07-17 mirrored the deletion but not those exclusions.
    */
   async deleteEncryptionStates({ conversationId }: { conversationId: string }) {
     try {
       const states = await this.messageDB.getEncryptionStates({ conversationId });
       for (const state of states) {
         await this.messageDB.deleteEncryptionState(state);
-        if (state.inboxId) {
-          try {
-            await this.messageDB.deleteInboxMapping(state.inboxId);
-          } catch { /* ignore */ }
-        }
+        // Intentionally NOT deleting the inbox mapping — see above. Without the
+        // mapping the peer's in-flight session becomes unroutable and the
+        // conversation dies in one direction with no recovery path.
       }
       try {
         await this.messageDB.deleteLatestState(conversationId);

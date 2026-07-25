@@ -103,10 +103,14 @@ describe('EncryptionService - Unit Tests', () => {
       // ✅ VERIFY: All 3 states deleted
       expect(mockDeps.messageDB.deleteEncryptionState).toHaveBeenCalledTimes(3);
 
-      // ✅ VERIFY: Inbox mappings deleted for states with inboxId
-      expect(mockDeps.messageDB.deleteInboxMapping).toHaveBeenCalledTimes(2);
-      expect(mockDeps.messageDB.deleteInboxMapping).toHaveBeenCalledWith('inbox-1');
-      expect(mockDeps.messageDB.deleteInboxMapping).toHaveBeenCalledWith('inbox-2');
+      // ✅ VERIFY: inbox routing is PRESERVED.
+      // The peer still holds a confirmed session pointing at our existing
+      // conversation inbox and keeps writing to it — it cannot know we reset.
+      // Dropping the mapping makes those frames unroutable (silently discarded
+      // as RX-NOSTATE) while our next send mints a new inbox the peer never
+      // learns about, leaving the conversation permanently one-way. Mobile's
+      // resetSession keeps mappings for exactly this reason.
+      expect(mockDeps.messageDB.deleteInboxMapping).not.toHaveBeenCalled();
 
       // ✅ VERIFY: Latest state deleted
       expect(mockDeps.messageDB.deleteLatestState).toHaveBeenCalledWith(conversationId);
