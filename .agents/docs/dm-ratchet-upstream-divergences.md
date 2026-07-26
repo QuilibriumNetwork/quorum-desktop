@@ -351,4 +351,67 @@ retracted hypotheses and the next debugging step:
 `quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecryptable-state-divergence.md`.
 
 ---
-*Created: 2026-07-17 — Last updated: 2026-07-25*
+
+## Divergence 8 — the init path no longer silently destroys an embedded first message
+
+**Shipped:** PR #256 (2026-07-26).
+
+**Original behavior:** the device-inbox init path (`handleNewMessage`) ended in a bare
+`catch` that deleted the frame from the node inbox on ANY error — including errors thrown
+AFTER the envelope had decrypted successfully (settings lookup, message save, UI insert).
+A message embedded in an initialization envelope — i.e. the first message of any fresh
+session — was destroyed with zero log output if any step after decrypt hiccuped. Reproduced
+live in both directions (round 24: mobile's "m1" died exactly here).
+
+**New behavior:** every failure on the path is logged; the non-essential steps (receipt
+settings, control intercept, notification, UI cache) are isolated so they cannot abort the
+save; the critical save is retried once; on a post-decrypt failure the frame is RETAINED for
+redelivery instead of deleted; a stale-refused duplicate init salvages a young (< 10 min)
+embedded post before the frame is defused (the DB save upserts by messageId, so re-saves are
+no-ops); fully-processed control frames are now acked instead of left to redeliver.
+
+**Why it is correct:** same principle as Divergence 5 — the frame on the node is the only
+copy of the message, and deletion is only safe after the payload is durably persisted.
+
+## Context for desktop logs — mobile receive-stack fixes (quorum-mobile #181, #182, 2026-07-26)
+
+Mobile's DM receive flow failed in complete silence (bare catches on every path). #181 added
+logging; its first instrumented round then exposed the defect that explains the permanent
+"stale frame backlog" visible in every desktop/mobile capture of the past months:
+
+**Desktop's typing indicators crashed mobile's message save.** `typing-start`/`typing-stop`
+ride the DM ratchet as flat control messages (top-level `type`, no `content`, no
+`messageId` — the same wire shape as delivery/read acks). Mobile had no intercept for them:
+they fell through to `saveMessage`, crashed on the NOT NULL `message_id` constraint, and —
+because the crash preceded the ack — were redelivered and re-crashed on every drain cycle
+(124 crash-loops in one 5-minute capture). Additionally, 18 mobile ack-by-delete sites
+signed conversation-inbox deletes with the DEVICE key; the node rejects the signature and
+redelivers forever. #182 fixed both. Verified live: crash-loops 124 → 0, the backlog drained,
+and desktop→mobile delivered 12/12 — the first fully clean direction in this bug's history.
+
+## TWO OPEN UPSTREAM QUESTIONS (2026-07-26) — for the lead
+
+1. **`channel` crate: a receiver whose first-ever processed frame sits at chain position > 0
+   forks permanently at the next DH turn.** Deterministic repro against the SDK wasm build,
+   no devices needed (~seconds):
+   `quorum-mobile/.agents/scripts/dr-advanced-start-fork.mjs`. Case matrix: in-order start —
+   clean; mid-chain gap — clean (skipped keys work); first frame at position 1 — one frame
+   lost at the turn, then re-syncs; first frame at position 2+ — the sender's direction is
+   PERMANENTLY undecryptable from the first turn on, while the receiver's own direction keeps
+   working. This is dormant unless establishment-phase frames are lost — which mobile
+   pairings do constantly (see 2) and desktop↔desktop essentially never does, matching the
+   observed pairing asymmetry. Mobile's current re-key-per-unconfirmed-send accidentally
+   shields against it (every announce restarts the peer at position 0), so we froze all send-path
+   changes until the crate is fixed.
+
+2. **Node write path: a whole class of mobile writes never becomes retrievable, silently.**
+   Round 26, same session, same minutes, all frames confirmed handed to the native socket
+   with the connection open: read-ack frames 10/10 LOST, chat posts 11/11 delivered. The node
+   cannot see plaintext types — the visible discriminators are inbox, size, and the signature
+   fields of the write. Question: what does the write path do with a `direct` write whose
+   `inbox_public_key`/`inbox_signature` are empty or fail verification — is it dropped
+   without an error frame? (Mobile-side per-frame signature logging is armed for the next
+   capture round to pin the correlation.)
+
+---
+*Created: 2026-07-17 — Last updated: 2026-07-26*
