@@ -1,4 +1,5 @@
 import { logger, isValidIPFSCID } from '@quilibrium/quorum-shared';
+import { resolveDeliveryAckPatch, resolveReadAckPatch } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread, UserNote, FarcasterLink, SpaceMemberDevice, ConversationSettingOverrides } from '@quilibrium/quorum-shared';
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
@@ -455,7 +456,17 @@ export class MessageDB {
     });
   }
 
-  async updateMessageDeliveredAt(messageId: string, deliveredAt: number): Promise<void> {
+  /**
+   * DM delivery receipt: stamp deliveredAt on one sent message. Also completes a
+   * read upgrade when a read ack already covered it — the read debounce (5s) is
+   * shorter than the delivery one (10s), so read acks usually land first.
+   * `readWatermarks` is keyed by conversation (spaceId); omit it to skip that.
+   */
+  async updateMessageDeliveredAt(
+    messageId: string,
+    deliveredAt: number,
+    readWatermarks?: ReadonlyMap<string, number>
+  ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
       const tx = this.db!.transaction('messages', 'readwrite');
@@ -464,9 +475,10 @@ export class MessageDB {
 
       request.onsuccess = () => {
         const msg = request.result;
-        if (msg && !msg.deliveredAt) {
-          msg.deliveredAt = deliveredAt;
-          store.put(msg);
+        if (msg) {
+          const readWatermark = readWatermarks?.get(msg.spaceId) ?? 0;
+          const patch = resolveDeliveryAckPatch(msg, { readWatermark, now: deliveredAt });
+          if (patch) store.put({ ...msg, ...patch });
         }
         resolve();
       };
@@ -474,10 +486,18 @@ export class MessageDB {
     });
   }
 
+  /**
+   * DM read receipt: stamp readAt on own messages up to a high-water mark.
+   *
+   * Only messages with a genuine deliveredAt are marked — a read ack must never
+   * invent a delivery, or messages lost in transport get ✓✓ they never earned.
+   * The HWM message itself is exempt: reading it proves it arrived.
+   */
   async updateMessagesReadAt(
     spaceId: string,
     channelId: string,
     ownAddress: string,
+    upToMessageId: string,
     upToTimestamp: number,
     readAt: number
   ): Promise<void> {
@@ -491,18 +511,15 @@ export class MessageDB {
         [spaceId, channelId, upToTimestamp]
       );
       const request = index.openCursor(range);
+      const ctx = { upToMessageId, upToTimestamp, now: readAt };
 
       request.onsuccess = () => {
         const cursor = request.result;
         if (cursor) {
           const msg = cursor.value;
-          if (msg.content?.senderId === ownAddress && !msg.readAt) {
-            msg.readAt = readAt;
-            // Reading implies delivery
-            if (!msg.deliveredAt) {
-              msg.deliveredAt = readAt;
-            }
-            cursor.update(msg);
+          if (msg.content?.senderId === ownAddress) {
+            const patch = resolveReadAckPatch(msg, ctx);
+            if (patch) cursor.update({ ...msg, ...patch });
           }
           cursor.continue();
         } else {

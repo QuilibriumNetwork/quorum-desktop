@@ -25,6 +25,12 @@ import {
   ActionQueueHandlers,
 } from '../../services';
 import { ReceiptService, TypingService } from '@quilibrium/quorum-shared';
+import {
+  advanceReadWatermark,
+  isReadAckTimestampValid,
+  resolveDeliveryAckPatch,
+  resolveReadAckPatch,
+} from '@quilibrium/quorum-shared';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
@@ -1085,6 +1091,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     if (prev.spaces && !spaces) typingServiceRef.current?.onSettingDisabled('space');
   }, []);
 
+  // How far the peer has read, per DM conversation. In-memory only: it exists to
+  // bridge the ~5s gap between a read ack and the delivery acks it outran, so a
+  // restart mid-window costs at most a few ✓✓ that the next read ack restores.
+  const readWatermarksRef = useRef<Map<string, number>>(new Map());
+
   // ReceiptService — batched ack buffer with piggyback + standalone flush
   const receiptService = useMemo(() => {
     if (!selfAddress) return null;
@@ -1103,33 +1114,44 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         );
       },
       onAckProcessed: (messageIds: string[]) => {
-        // Update deliveredAt on sender's messages in React Query cache + IndexedDB
+        // Delivery acks are the source of truth for "it arrived". If a read ack
+        // already covered the message, this also completes the ✓✓ upgrade.
         const now = Date.now();
+        const ids = new Set(messageIds);
+
+        // Walk each cached conversation once rather than once per messageId — the
+        // query key carries the conversation, which the ack itself does not.
+        const cached = queryClient.getQueriesData<
+          InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }>
+        >({ queryKey: ['Messages'] });
+
+        for (const [queryKey, oldData] of cached) {
+          if (!oldData?.pages) continue;
+
+          // ['Messages', spaceId, channelId] — for DMs both are the partner address
+          const readWatermark = readWatermarksRef.current.get(String(queryKey[1] ?? '')) ?? 0;
+
+          let changed = false;
+          const newPages = oldData.pages.map((page) => {
+            let pageChanged = false;
+            const newMessages = page.messages.map((msg) => {
+              if (!ids.has(msg.messageId)) return msg;
+              const patch = resolveDeliveryAckPatch(msg, { readWatermark, now });
+              if (!patch) return msg;
+              changed = true;
+              pageChanged = true;
+              return { ...msg, ...patch } as Message;
+            });
+            return pageChanged ? { ...page, messages: newMessages } : page;
+          });
+
+          if (changed) queryClient.setQueryData(queryKey, { ...oldData, pages: newPages });
+        }
+
         for (const messageId of messageIds) {
-          // Update React Query cache — use 'Messages' prefix (capital M) to match all conversations
-          queryClient.setQueriesData(
-            { queryKey: ['Messages'] },
-            (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
-              if (!oldData?.pages) return oldData;
-
-              let changed = false;
-              const newPages = oldData.pages.map((page) => {
-                const newMessages = page.messages.map((msg) => {
-                  if (msg.messageId === messageId && !msg.deliveredAt) {
-                    changed = true;
-                    return { ...msg, deliveredAt: now } as Message;
-                  }
-                  return msg;
-                });
-                return changed ? { ...page, messages: newMessages } : page;
-              });
-
-              return changed ? { ...oldData, pages: newPages } : oldData;
-            }
-          );
-
-          // Persist to IndexedDB
-          messageDB.updateMessageDeliveredAt(messageId, now);
+          messageDB.updateMessageDeliveredAt(messageId, now, readWatermarksRef.current).catch(() => {
+            // Best effort — React Query cache is already updated
+          });
         }
       },
       onReadFlush: (address: string, highWaterMark: { messageId: string; timestamp: number }) => {
@@ -1146,10 +1168,20 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         );
       },
       onReadAckProcessed: (upToMessageId: string, upToTimestamp: number, conversationAddress: string) => {
-        // Update readAt (and deliveredAt if missing) on own messages up to timestamp
         const now = Date.now();
-        // DM conversationId is "address/address"
-        const conversationId = `${conversationAddress}/${conversationAddress}`;
+
+        // A peer sending an unbounded timestamp would otherwise mark our entire
+        // outbound history read.
+        if (!isReadAckTimestampValid(upToTimestamp, now)) return;
+
+        // Remember how far they have read, so delivery acks still in flight can
+        // finish the upgrade when they land (see onAckProcessed).
+        readWatermarksRef.current.set(
+          conversationAddress,
+          advanceReadWatermark(readWatermarksRef.current.get(conversationAddress) ?? 0, upToTimestamp)
+        );
+
+        const ctx = { upToMessageId, upToTimestamp, now };
 
         // Update React Query cache — scope to this conversation only (not all conversations)
         const conversationKey = buildMessagesKeyPrefix({ spaceId: conversationAddress, channelId: conversationAddress });
@@ -1160,22 +1192,16 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
             let changed = false;
             const newPages = oldData.pages.map((page) => {
+              let pageChanged = false;
               const newMessages = page.messages.map((msg) => {
-                if (
-                  msg.content?.senderId === selfAddress &&
-                  msg.createdDate <= upToTimestamp &&
-                  !msg.readAt
-                ) {
-                  changed = true;
-                  return {
-                    ...msg,
-                    readAt: now,
-                    deliveredAt: msg.deliveredAt || now,
-                  } as Message;
-                }
-                return msg;
+                if (msg.content?.senderId !== selfAddress) return msg;
+                const patch = resolveReadAckPatch(msg, ctx);
+                if (!patch) return msg;
+                changed = true;
+                pageChanged = true;
+                return { ...msg, ...patch } as Message;
               });
-              return changed ? { ...page, messages: newMessages } : page;
+              return pageChanged ? { ...page, messages: newMessages } : page;
             });
 
             return changed ? { ...oldData, pages: newPages } : oldData;
@@ -1183,9 +1209,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         );
 
         // Persist to IndexedDB — DM spaceId and channelId are both the address
-        messageDB.updateMessagesReadAt(conversationAddress, conversationAddress, selfAddress, upToTimestamp, now).catch(() => {
-          // Best effort — React Query cache is already updated
-        });
+        messageDB
+          .updateMessagesReadAt(conversationAddress, conversationAddress, selfAddress, upToMessageId, upToTimestamp, now)
+          .catch(() => {
+            // Best effort — React Query cache is already updated
+          });
       },
     });
 
