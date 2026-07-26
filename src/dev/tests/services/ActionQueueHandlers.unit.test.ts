@@ -732,6 +732,95 @@ describe('ActionQueueHandlers - Unit Tests', () => {
       );
       expect(channel.DoubleRatchetInboxEncrypt).not.toHaveBeenCalled();
     });
+
+    // Regression: #254 made all four ONLINE send sites order sessions send-ready-first
+    // then newest, so a peer's reset is adopted. This offline-only action-queue copy of
+    // the same logic was missed, so a DM composed while offline still selected by raw
+    // insertion order and could be encrypted for an inbox the peer had abandoned —
+    // silently discarded on arrival. Both rows below share one tag, which is legitimate
+    // (a row created by sending can coexist with one created by receiving).
+    it('encrypts an offline-queued DM with the NEWEST session when rows share a tag', async () => {
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+
+      const session = (timestamp: number, inbox: string) => ({
+        timestamp,
+        state: JSON.stringify({
+          tag: 'inbox-other',
+          sending_inbox: { inbox_address: inbox, inbox_public_key: `pub-${inbox}` },
+          receiving_inbox: { inbox_address: `recv-${inbox}` },
+          ratchet_state: {},
+        }),
+      });
+
+      // Stale row FIRST in insertion order — what the pre-fix code would have picked.
+      mockDeps.messageDB.getEncryptionStates = vi
+        .fn()
+        .mockResolvedValue([
+          session(1_000, 'abandoned-inbox'),
+          session(2_000, 'peer-new-inbox'),
+        ]);
+      handlers = new ActionQueueHandlers(mockDeps);
+
+      await handlers.getHandler('send-dm')!.execute({
+        address: 'recipient',
+        signedMessage: createTestMessage(),
+        messageId: 'msg-newest',
+        selfUserAddress: 'self-addr',
+      });
+
+      // NOTE: targetInboxes is not de-duplicated, so two rows sharing a tag drive two
+      // encrypt calls. That is pre-existing behaviour and orthogonal to this fix —
+      // what matters here is that EVERY call uses the newest session, never the stale one.
+      const calls = vi.mocked(channel.DoubleRatchetInboxEncrypt).mock.calls;
+      expect(calls.length).toBeGreaterThan(0);
+      for (const [, sets] of calls) {
+        expect(sets[0].sending_inbox.inbox_address).toBe('peer-new-inbox');
+      }
+    });
+
+    it('prefers a send-ready session over a newer unconfirmed one when offline-queued', async () => {
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+
+      // Newest row is unconfirmed; picking it would needlessly re-wrap in an init
+      // envelope even though a usable confirmed session exists.
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([
+        {
+          timestamp: 9_000,
+          state: JSON.stringify({
+            tag: 'inbox-other',
+            sending_inbox: { inbox_address: 'unconfirmed', inbox_public_key: '' },
+            receiving_inbox: { inbox_address: 'recv-unconfirmed' },
+            ratchet_state: {},
+          }),
+        },
+        {
+          timestamp: 1_000,
+          state: JSON.stringify({
+            tag: 'inbox-other',
+            sending_inbox: { inbox_address: 'ready', inbox_public_key: 'pub-ready' },
+            receiving_inbox: { inbox_address: 'recv-ready' },
+            ratchet_state: {},
+          }),
+        },
+      ]);
+      handlers = new ActionQueueHandlers(mockDeps);
+
+      await handlers.getHandler('send-dm')!.execute({
+        address: 'recipient',
+        signedMessage: createTestMessage(),
+        messageId: 'msg-ready',
+        selfUserAddress: 'self-addr',
+      });
+
+      const calls = vi.mocked(channel.DoubleRatchetInboxEncrypt).mock.calls;
+      expect(calls.length).toBeGreaterThan(0);
+      for (const [, sets] of calls) {
+        expect(sets[0].sending_inbox.inbox_address).toBe('ready');
+      }
+      expect(
+        channel.DoubleRatchetInboxEncryptForceSenderInit
+      ).not.toHaveBeenCalled();
+    });
   });
 
   describe('14. reaction-dm Handler', () => {
