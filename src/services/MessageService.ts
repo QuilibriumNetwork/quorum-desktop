@@ -99,6 +99,46 @@ const INIT_PAYLOAD_SALVAGE_MAX_AGE_MS = 10 * 60 * 1000;
 const isReadOnlyGatedType = (type: string): boolean =>
   READ_ONLY_GATED_TYPES.has(type);
 
+/**
+ * A failed Double Ratchet decrypt, reported as itself.
+ *
+ * The crypto core does NOT throw when a frame fails to authenticate. It returns
+ * the plaintext slot filled with an error string ("Decryption failed:
+ * aead::Error"), so the first thing that touches it is `JSON.parse`, which dies
+ * with `SyntaxError: Unexpected token 'D', "Decryption"... is not valid JSON`.
+ *
+ * That message is actively misleading: it reads like a serialization bug in our
+ * own code, and it has been the visible face of every DM decrypt failure in the
+ * logs for months. Nothing downstream changes — the error still lands in the
+ * same catch, the frame is still skipped, the session is still kept, and the
+ * state is still never persisted (the throw happens before the save, per the
+ * Double Ratchet spec's "discard changes on failure"). Only the diagnosis
+ * improves.
+ */
+export class DmDecryptError extends Error {
+  constructor(
+    readonly detail: string,
+    readonly branch: string
+  ) {
+    super(`DM frame failed to decrypt (${branch}): ${detail}`);
+    this.name = 'DmDecryptError';
+  }
+}
+
+/** The sentinel the crypto core returns in the message slot on AEAD failure. */
+const DECRYPT_FAILURE_SENTINEL = 'Decryption failed';
+
+/**
+ * Parse a decrypted Double Ratchet payload, converting the core's
+ * failure-as-plaintext into a `DmDecryptError` instead of a `SyntaxError`.
+ */
+export function parseDecryptedMessage(raw: string, branch: string): Message {
+  if (typeof raw === 'string' && raw.startsWith(DECRYPT_FAILURE_SENTINEL)) {
+    throw new DmDecryptError(raw.trim(), branch);
+  }
+  return JSON.parse(raw) as Message;
+}
+
 // Type definitions for the service
 export interface MessageServiceDependencies {
   messageDB: MessageDB;
@@ -3342,7 +3382,7 @@ export class MessageService {
         let conversationId = session.user_address + '/' + session.user_address;
 
         let updatedUserProfile: secureChannel.UserProfile | undefined;
-        decryptedContent = JSON.parse(session.message);
+        decryptedContent = parseDecryptedMessage(session.message, 'InitEnvelope');
 
         if (session.user_address == self_address) {
           conversationId =
@@ -3813,7 +3853,7 @@ export class MessageService {
                 JSON.parse(fresh.state),
                 JSON.parse(message.encryptedContent)
               );
-            const content = JSON.parse(result.message);
+            const content = parseDecryptedMessage(result.message, 'Confirm');
             if (content?.content?.type === 'delete-conversation') {
               logger.warn(
                 '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, Confirm branch) — wiping encryption states',
@@ -3904,7 +3944,7 @@ export class MessageService {
                 tag: freshKeys.tag,
               });
             }
-            const content = JSON.parse(result.message);
+            const content = parseDecryptedMessage(result.message, 'InboxDecrypt');
             if (content?.content?.type === 'delete-conversation') {
               logger.warn(
                 '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, InboxDecrypt branch) — wiping encryption states',
