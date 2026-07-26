@@ -90,6 +90,12 @@ import type { SpaceInfoMap, SyncInfoMap } from '../types/spaceRefs';
 // Visible-content types gated by read-only-channel enforcement. Control
 // messages (reaction/pin/edit/remove/…) carry their own authorization.
 const READ_ONLY_GATED_TYPES = new Set(['post', 'embed', 'sticker']);
+
+// How young an embedded init payload must be for the stale-refuse branch to
+// salvage it as a message. Bounds the recovery window for a frame retained
+// after a persist failure without letting ancient zombie envelopes dump
+// stale posts into the chat.
+const INIT_PAYLOAD_SALVAGE_MAX_AGE_MS = 10 * 60 * 1000;
 const isReadOnlyGatedType = (type: string): boolean =>
   READ_ONLY_GATED_TYPES.has(type);
 
@@ -3315,6 +3321,11 @@ export class MessageService {
     if (
       message.inboxAddress == keyset.deviceKeyset.inbox_keyset.inbox_address
     ) {
+      // Hoisted above the try so the catch can tell "failed before decrypt"
+      // (frame is garbage, safe to delete) from "failed after decrypt" (the
+      // frame holds a real message and must be retained).
+      let decryptedContent: Message | null = null;
+      let newState: any | null = null;
       try {
         const envelope = Object.assign(
           secureChannel.UnsealInitializationEnvelope(
@@ -3327,9 +3338,6 @@ export class MessageService {
           keyset.deviceKeyset,
           envelope
         );
-
-        let decryptedContent: Message | null = null;
-        let newState: any | null = null;
 
         let conversationId = session.user_address + '/' + session.user_address;
 
@@ -3488,8 +3496,58 @@ export class MessageService {
           return true;
         });
         if (!installed) {
-          // Stale envelope refused: delete it from the server so it cannot
-          // be redelivered again (defuse the mine), keep the current session.
+          // Stale envelope refused: keep the current session and delete the
+          // frame so it cannot redeliver. SALVAGE the payload first: a frame
+          // retained after a persist failure re-enters here on redelivery
+          // (its re-install is refused as same-timestamp) and its embedded
+          // message would otherwise be destroyed with the frame. Age-bounded
+          // so ancient zombie envelopes cannot dump stale posts into the
+          // chat; the DB save upserts by messageId, so a duplicate of an
+          // already-saved message is a no-op.
+          const payloadAgeMs = Date.now() - (decryptedContent?.createdDate ?? 0);
+          if (
+            decryptedContent?.content?.type === 'post' &&
+            payloadAgeMs < INIT_PAYLOAD_SALVAGE_MAX_AGE_MS
+          ) {
+            logger.warn(
+              '[MessageService] salvaging embedded message from refused init envelope',
+              {
+                conversationId: conversationId?.slice(0, 16),
+                messageId: decryptedContent.messageId?.slice(0, 12),
+                payloadAgeMs,
+              }
+            );
+            const conversation = await this.messageDB.getConversation({
+              conversationId,
+            });
+            const senderProfile = {
+              user_icon:
+                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+              display_name:
+                conversation?.conversation?.displayName ?? t`Unknown User`,
+            };
+            await this.saveMessage(
+              decryptedContent,
+              this.messageDB,
+              session.user_address,
+              session.user_address,
+              'direct',
+              senderProfile
+            );
+            await this.addMessage(
+              queryClient,
+              session.user_address,
+              session.user_address,
+              decryptedContent
+            );
+            await this.addOrUpdateConversation(
+              queryClient,
+              session.user_address,
+              envelope.timestamp,
+              0,
+              senderProfile
+            );
+          }
           await this.deleteInboxMessages(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
@@ -3515,71 +3573,131 @@ export class MessageService {
 
         if (decryptedContent && newState) {
           // Encryption state already persisted inside the locked section above.
-
-          // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
-          const userConfig = await this.messageDB.getUserConfig({ address: self_address });
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          // Dual-read: synced config override first, then legacy local record.
-          const effectiveDeliveryReceipts =
-            getConversationSetting(userConfig?.conversationSettings, conversationId, 'deliveryReceipts') ??
-            conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
-          const effectiveReadReceipts =
-            getConversationSetting(userConfig?.conversationSettings, conversationId, 'readReceipts') ??
-            conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
-          if (this.interceptControlMessages(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts, queryClient)) {
-            // delivery-ack control message — encryption state saved, but don't save/display the message
+          // The frame's payload is now the only copy of the message, so the
+          // non-essential steps are isolated: a settings/notification/UI-cache
+          // failure must never abort the save. (A throw anywhere in this block
+          // used to reach the outer catch, which silently deleted the frame —
+          // losing the first message of any fresh session that hit an error.)
+          let conversation: Awaited<
+            ReturnType<MessageDB['getConversation']>
+          > | null = null;
+          let effectiveDeliveryReceipts = false;
+          let effectiveReadReceipts = false;
+          try {
+            // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
+            const userConfig = await this.messageDB.getUserConfig({ address: self_address });
+            conversation = await this.messageDB.getConversation({
+              conversationId,
+            });
+            // Dual-read: synced config override first, then legacy local record.
+            effectiveDeliveryReceipts =
+              getConversationSetting(userConfig?.conversationSettings, conversationId, 'deliveryReceipts') ??
+              conversation?.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
+            effectiveReadReceipts =
+              getConversationSetting(userConfig?.conversationSettings, conversationId, 'readReceipts') ??
+              conversation?.conversation?.readReceipts ?? !!userConfig?.readReceipts;
+          } catch (settingsError) {
+            logger.error(
+              '[MessageService] init-path settings/conversation lookup failed — using receipt defaults',
+              { conversationId: conversationId?.slice(0, 16) },
+              settingsError
+            );
+          }
+          let intercepted = false;
+          try {
+            intercepted = this.interceptControlMessages(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts, queryClient);
+          } catch (interceptError) {
+            logger.error(
+              '[MessageService] init-path control intercept failed — treating as displayable message',
+              { conversationId: conversationId?.slice(0, 16) },
+              interceptError
+            );
+          }
+          if (intercepted) {
+            // delivery-ack control message — encryption state saved and the
+            // frame fully processed, so delete it (it used to be left behind
+            // and redelivered until the stale guard killed it).
+            await this.deleteInboxMessages(
+              keyset.deviceKeyset.inbox_keyset,
+              [envelope.timestamp],
+              this.apiClient
+            );
             return;
           }
-          await this.saveMessage(
-            decryptedContent,
-            this.messageDB,
-            session.user_address,
-            session.user_address,
-            'direct',
-            updatedUserProfile ?? {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? t`Unknown User`,
-            }
-          );
-
-          // Notify for DM posts from other users only (skip muted conversations)
-          if (
-            envelope.user_address !== self_address &&
-            decryptedContent?.content?.type === 'post' &&
-            !notificationService.isConversationMuted(conversationId)
-          ) {
-            const senderDisplayName = updatedUserProfile?.display_name
-              ?? conversation?.conversation?.displayName
-              ?? t`Unknown`;
-            notificationService.addPendingNotification({
-              type: 'dm',
-              senderName: senderDisplayName,
-            });
-          }
-
-          await this.addMessage(
-            queryClient,
-            session.user_address,
-            session.user_address,
-            decryptedContent
-          );
-          const profileToUse = updatedUserProfile ?? {
+          const senderProfile = updatedUserProfile ?? {
             user_icon:
               conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation?.conversation?.displayName ?? t`Unknown User`,
           };
-          await this.addOrUpdateConversation(
-            queryClient,
-            session.user_address,
-            envelope.timestamp,
-            0,
-            profileToUse
-          );
+          try {
+            await this.saveMessage(
+              decryptedContent,
+              this.messageDB,
+              session.user_address,
+              session.user_address,
+              'direct',
+              senderProfile
+            );
+          } catch (saveError) {
+            // The save is the critical step — retry once; a second failure
+            // reaches the outer catch, which retains the frame for redelivery.
+            logger.error(
+              '[MessageService] init-path saveMessage failed — retrying once',
+              {
+                conversationId: conversationId?.slice(0, 16),
+                messageId: decryptedContent.messageId?.slice(0, 12),
+              },
+              saveError
+            );
+            await this.saveMessage(
+              decryptedContent,
+              this.messageDB,
+              session.user_address,
+              session.user_address,
+              'direct',
+              senderProfile
+            );
+          }
+
+          try {
+            // Notify for DM posts from other users only (skip muted conversations)
+            if (
+              envelope.user_address !== self_address &&
+              decryptedContent?.content?.type === 'post' &&
+              !notificationService.isConversationMuted(conversationId)
+            ) {
+              const senderDisplayName = updatedUserProfile?.display_name
+                ?? conversation?.conversation?.displayName
+                ?? t`Unknown`;
+              notificationService.addPendingNotification({
+                type: 'dm',
+                senderName: senderDisplayName,
+              });
+            }
+
+            await this.addMessage(
+              queryClient,
+              session.user_address,
+              session.user_address,
+              decryptedContent
+            );
+            await this.addOrUpdateConversation(
+              queryClient,
+              session.user_address,
+              envelope.timestamp,
+              0,
+              senderProfile
+            );
+          } catch (renderError) {
+            // Message is safely in the DB — a notification/UI-cache failure
+            // must not retain the frame (that would redeliver a saved message).
+            logger.error(
+              '[MessageService] init-path post-save step failed — message saved, continuing',
+              { conversationId: conversationId?.slice(0, 16) },
+              renderError
+            );
+          }
         } else {
           console.error(t`Failed to decrypt message with any known state`);
         }
@@ -3588,7 +3706,34 @@ export class MessageService {
           [envelope.timestamp],
           this.apiClient
         );
-      } catch {
+      } catch (initPathError) {
+        if (decryptedContent) {
+          // The envelope decrypted — the failure was local (install/persist).
+          // RETAIN the frame: deleting here destroys the only copy of a real
+          // message (this exact silent delete lost the first message of fresh
+          // sessions). On redelivery the stale-refuse branch salvages the
+          // payload even when the re-install is refused.
+          logger.error(
+            '[MessageService] init-path failed AFTER decrypt — retaining frame for redelivery',
+            {
+              inbox: message.inboxAddress?.slice(0, 12),
+              timestamp: message.timestamp,
+              messageId: decryptedContent.messageId?.slice(0, 12),
+            },
+            initPathError
+          );
+          return;
+        }
+        // Nothing decrypted — undecryptable/foreign frame. Delete as before
+        // (bounded behavior), but never again silently.
+        logger.warn(
+          '[MessageService] init envelope failed before decrypt — deleting frame',
+          {
+            inbox: message.inboxAddress?.slice(0, 12),
+            timestamp: message.timestamp,
+          },
+          initPathError
+        );
         await this.deleteInboxMessages(
           keyset.deviceKeyset.inbox_keyset,
           [message.timestamp],
