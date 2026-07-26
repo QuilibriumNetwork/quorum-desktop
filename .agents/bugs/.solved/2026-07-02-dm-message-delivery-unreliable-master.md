@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM messages between users intermittently never arrive (master report)"
-status: RESOLVED 2026-07-17 — THREE mechanisms found, fixed, and live-verified. (1) Session destruction on decrypt failure: fixed, PR #235. (2) Unserialized ratchet state read-modify-write: fixed, PR #236/#237. (3) Stale init-envelope redelivery silently replacing healthy sessions — THE DOMINANT killer, explains the recurring "reset works, then dies on refresh" pattern: fixed on branch chore/dm-reset-signal-logging (staleness guard). Residual: isolated single-frame wire loss with no auto-resend — tracked in the auto-heal task. This report is the consolidated summary + diagnosis archive.
+status: ⚠️ REOPENED 2026-07-26 — THE SYMPTOM RESURFACED on desktop↔desktop (0 of 10 delivered, both directions). This file stays in .solved/ only because many documents link to this path; treat it as a MECHANISM CATALOGUE, not a status report. Current entry point: .agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md. Its "desktop↔desktop is healthy" premise is FALSIFIED. Previously: RESOLVED 2026-07-17 — THREE mechanisms found, fixed, and live-verified. (1) Session destruction on decrypt failure: fixed, PR #235. (2) Unserialized ratchet state read-modify-write: fixed, PR #236/#237. (3) Stale init-envelope redelivery silently replacing healthy sessions — THE DOMINANT killer, explains the recurring "reset works, then dies on refresh" pattern: fixed on branch chore/dm-reset-signal-logging (staleness guard). Residual: isolated single-frame wire loss with no auto-resend — tracked in the auto-heal task. This report is the consolidated summary + diagnosis archive.
 created: 2026-07-02
 severity: high
 repo: quorum-desktop (primary; mobile has the same patterns — see "Remaining gaps")
@@ -16,6 +16,14 @@ related:
 ---
 
 # DM message delivery is unreliable (master report)
+
+> ⚠️ **REOPENED 2026-07-26 — DO NOT READ THIS AS "FIXED".** The symptom returned on
+> desktop↔desktop. This document remains valuable as the catalogue of mechanisms
+> found and fixed in July, and every mechanism in it is still real. But its status,
+> its "residual" framing, and anything resting on "desktop↔desktop is healthy" are
+> out of date. **Start at
+> [.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md](../2026-07-26-dm-desktop-to-desktop-resurfaced.md)**
+> for current state, the instrumentation rig, and open leads.
 
 **One-line:** for ~6 months, DMs intermittently never arrived, with no error, no retry, and no
 signal to either user; once a conversation direction "went bad" it stayed dead until a manual
