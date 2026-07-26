@@ -28,6 +28,7 @@ import { buildSpaceKey } from '../hooks/queries/space/buildSpaceKey';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Message } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../utils';
+import { orderSessionsForSend } from '../utils/sessionSelection';
 
 export interface HandlerDependencies {
   messageDB: MessageDB;
@@ -594,11 +595,17 @@ export class ActionQueueHandlers {
         conversationId,
       });
 
-      // Get encryption states - these contain all the inbox info we need for established sessions
+      // Get encryption states - these contain all the inbox info we need for established sessions.
+      // Ordered send-ready-first-then-newest, exactly as the four online send sites do (#254):
+      // several stored rows legitimately share one device tag, and `find` below takes the FIRST
+      // match, so the order decides which session an offline-queued DM is encrypted with. Without
+      // this, a message queued while offline after the peer reset picks a stale row and is sent to
+      // an inbox the peer has abandoned — silently discarded on arrival, exactly the failure #254
+      // fixed everywhere else.
       const response = await this.deps.messageDB.getEncryptionStates({
         conversationId,
       });
-      const sets = response.map((e) => JSON.parse(e.state));
+      const sets = orderSessionsForSend(response);
 
       // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
       const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
