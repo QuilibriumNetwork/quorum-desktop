@@ -1,7 +1,7 @@
 ---
 type: task
 title: "DM delivery auto-heal — detect via missing delivery receipts, resend / repair without manual reset"
-status: pending, DOWNGRADED 2026-07-17 — original justification (silent session death) fixed by PR #238. Reassess after a 1-2 week normal-use soak: if sent-but-never-delivered messages (single grey check) basically never occur, archive this or shrink to the cheapest slice (manual resend affordance on stuck messages). Build the full automatic ladder only if real usage shows losses.
+status: ⚠️ RE-RAISED 2026-07-26 — the downgrade assumed dead directions were fixed by PR #238. They are not: desktop↔desktop reproduced 0/10 both directions, and a client was observed holding a DEAD session beside a healthy one with nothing detecting it. Heal action 2 below is exactly this case. Detector must require retry-exhaustion with ZERO successes on the session (never first-failure — the healing-lag class recovered 51/51 in the mobile rounds). Context: .agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md. Previously: pending, DOWNGRADED 2026-07-17 — original justification (silent session death) fixed by PR #238. Reassess after a 1-2 week normal-use soak: if sent-but-never-delivered messages (single grey check) basically never occur, archive this or shrink to the cheapest slice (manual resend affordance on stuck messages). Build the full automatic ladder only if real usage shows losses.
 created: 2026-07-17
 related:
   - ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (three-mechanism resolution; residual single-frame loss)"
