@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)"
-status: OPEN — mechanism MEASURED, cause is BELOW THE APP LAYER, all client-side work is DONE AND MERGED. Frame decryption failure is a deterministic function of position in the DH sending chain: positions 0-2 fail ~100%, position 3+ never fails, both directions. Failures are TRANSIENT — the same bytes decrypt on redelivery — so this is LATENCY WITH A LONG TAIL, not demonstrated message loss. It explains every symptom: lag, the inverted typing indicator, and messages arriving so late they are assumed lost. TEN app-level mechanisms have been proposed and killed (§3), including every form of forked ratchet and, by controlled experiment, frame shape itself. Three client defects were found and are MERGED to main (§7). Evidence is filed upstream at quorum-mobile#183. A fresh agent's next action is in §5 — it is NOT more local capturing.
+status: ROOT CAUSE FOUND 2026-07-27, upstream in the channel crate. Not fixable in this repo; all client-side work is DONE AND MERGED. Frame decryption failure is a deterministic function of position in the DH sending chain: positions 0-2 fail ~100%, position 3+ never fails, both directions. Failures are TRANSIENT — the same bytes decrypt on redelivery — so this is LATENCY WITH A LONG TAIL, not demonstrated message loss. It explains every symptom: lag, the inverted typing indicator, and messages arriving so late they are assumed lost. TEN app-level mechanisms have been proposed and killed (§3), including every form of forked ratchet and, by controlled experiment, frame shape itself. Three client defects were found and are MERGED to main (§7). Evidence is filed upstream at quorum-mobile#183. A fresh agent's next action is in §5 — it is NOT more local capturing.
 created: 2026-07-26
 severity: medium — user-visible lag and apparent loss; no permanent loss demonstrated since the init-envelope fix (see §1)
 repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)
@@ -52,7 +52,8 @@ related:
 | Why it usually looks fine | the frame is **redelivered** and decrypts on a later attempt. Recovery can take longer than a whole capture round, so short captures cannot tell loss from latency (finding AB) |
 | Direction | varies by round; both directions fail. Early rounds looked one-directional, later ones did not |
 | Earlier, worse state | 0 of 10 delivered both directions, permanent, until a manual reset |
-| **THE MECHANISM** | ⚠️ **REVISED — see finding AD.** On an AGED session, failure is near-total at chain positions 0-2 and absent from 3+. On a FRESH session the same positions are clean. **Chain position is where the failure lands, not what causes it.** The leading correlate is the accumulated skipped-keys map, which grew 2 → 20 → 23 → 37 across the day as the failure rate rose — but that is a hypothesis, not a conclusion (failures also *create* skipped keys, so cause and effect are circular on current evidence) |
+| **ROOT CAUSE** | ⚠️ **FOUND — finding AE.** When `skipped_keys_map` holds a bucket under the receiver's **current receiving header key**, the crate's decrypt takes that bucket and fails instead of deriving the key normally. **63 of 65 captured failures across 6 rounds decrypt when that ONE bucket is deleted** and nothing else changes. In a typical case the bucket held 3 keys of 62 — removing the other 59 changes nothing. Minimal repro in the archive; upstream, not fixable here |
+| ~~mechanism~~ (superseded, kept for the reasoning) | ⚠️ **REVISED — see finding AD.** On an AGED session, failure is near-total at chain positions 0-2 and absent from 3+. On a FRESH session the same positions are clean. **Chain position is where the failure lands, not what causes it.** The leading correlate is the accumulated skipped-keys map, which grew 2 → 20 → 23 → 37 across the day as the failure rate rose — but that is a hypothesis, not a conclusion (failures also *create* skipped keys, so cause and effect are circular on current evidence) |
 | Recovery | **transient** — nearly all failed frames decrypt on a later redelivery. All recovery counts in the archive are LOWER BOUNDS, because captures were saved at ~2 minutes |
 | Why the typing indicator is inverted | `typing-start` is the first frame after reading the peer's message, i.e. always **position 0**, the 100%-failure slot; the peer sees the *redelivered* copy a turn later |
 
@@ -60,11 +61,10 @@ The original reproduction pattern — works after a reset, use the same accounts
 mobile for days, return to desktop broken — **has still never been reproduced
 deliberately** and remains the single most valuable thing to capture.
 
-**The one-line summary:** on a session that has been in use for a while, the first
-few frames after every DH ratchet step fail on arrival and only land on
-redelivery — that is the lag, the inverted typing indicator, and why a message can
-look lost when it is merely very late. **Reset the session and it stops**, which
-is the strongest clue available and the one the next round should chase.
+**The one-line summary:** a stale entry in the ratchet's skipped-keys map, under
+the key the receiver is currently using, makes the crate fail frames it could
+decrypt. It builds up with use, every failure adds another, and a reset clears it
+— which is why the conversation degrades over days and works again after a reset.
 
 ---
 

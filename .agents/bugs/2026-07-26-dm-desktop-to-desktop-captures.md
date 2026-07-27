@@ -949,3 +949,73 @@ time. Offline replay can do this with no device time.
   `branch=Confirm` appeared (so the state was genuinely entered, unlike rig=11
   where it never occurred) and there were **zero** `invalid initialization
   envelope` errors. That fix is now validated on the path that stresses it.
+
+---
+
+## §2j. ROOT CAUSE — the skipped-keys bucket under the CURRENT receiving header key
+
+Offline ablation, no device time. Method: take a real captured failure, change
+**one** property of the ratchet state, re-run the identical decrypt against the
+real wasm. Tool: `quorum-mobile/.agents/scripts/dr-ablate.mjs`.
+
+### Finding AE — 63 of 65 captured failures decrypt once one bucket is removed
+
+**65 failures, 6 independent capture rounds, both clients:**
+
+| variant | decrypts |
+|---|---|
+| baseline (exactly as captured) | **0 / 65** |
+| `skipped_keys_map = {}` | **63 / 65** |
+| **drop ONLY `skipped_keys_map[current_receiving_header_key]`** | **63 / 65** |
+| drop ONLY the *next*-recv-header bucket | 0 / 65 |
+| keep only the current-recv-header bucket | 0 / 65 |
+| `previous_sending_chain_length = 0` | 0 / 65 |
+| `current_receiving_chain_length = 0` | 0 / 65 |
+| swap current ↔ next receiving header key | 0 / 65 |
+
+**It is not "fewer keys is better".** In a representative case the map held 62
+keys across 20 buckets, and the poisoning bucket held **3**. Deleting those 3
+makes the frame decrypt; deleting the other 59 changes nothing. The frame, the
+state and every other field are byte-identical between the failing and succeeding
+runs.
+
+Split by load: **59 of 59** failures on a map with ≥20 keys recover; 4 of 6 on
+small maps do. The 2 that never recover are on near-empty maps and are most
+likely genuine replays.
+
+### What the bug is
+
+When the skipped-keys map contains a bucket indexed by the receiver's **current**
+receiving header key, the crate's decrypt path takes that bucket and fails,
+instead of falling through to normal chain-key derivation. The message key it
+needs is derivable; it just never gets there.
+
+### Why this explains everything on file
+
+- **Fresh session works, aged session fails** (finding AC) — a fresh session has
+  no such bucket.
+- **A reset fixes it** — the reset discards the map. This is the oldest
+  observation in this investigation and it now has a mechanism.
+- **Positions 0-2 fail, 3+ never do** (finding T) — the early positions of a new
+  chain are exactly where the receiver consults skipped keys after a DH step.
+  Position is where the bug *lands*; the bucket is what *causes* it.
+- **It degrades over days** — every undecryptable frame leaves another skipped
+  key behind, so the bucket refills. A genuine feedback loop.
+- **Redelivery recovers** — later state has moved on and the poisoning bucket is
+  no longer under the current header key.
+
+### Minimal reproduction for upstream
+
+1. Any Double Ratchet state whose `skipped_keys_map` has an entry under
+   `current_receiving_header_key`.
+2. `js_double_ratchet_decrypt(state, frame)` → `Decryption failed: aead::Error`.
+3. Delete **only** that one bucket, leave everything else byte-identical.
+4. Same call → decrypts correctly.
+
+### Caveats, stated plainly
+
+This identifies **where** the failure is produced, not the defective line in the
+crate. The ablation shows the bucket is load-bearing; reading the crate's skipped
+-key lookup is what will show why. Ablation also cannot rule out that the bucket
+contents are themselves wrong (written badly earlier) rather than the lookup
+being wrong — both are consistent with this data, and both are upstream.
