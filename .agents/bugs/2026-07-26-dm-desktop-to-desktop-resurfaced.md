@@ -507,6 +507,23 @@ Measured (`yarn harness dm-stale-bucket`, 8 cycles per arm, fresh accounts both)
 | AEAD failures on new-chain frames | **32** of 56 | **0** of 56 |
 | failures on the DELAYED frames | 0 | **0** ← the regression that matters |
 
+**And measured against REAL degraded production state**, not just bench-built
+sessions. Each `[XPDUMP]` record holds the complete `EncryptionState` row *and* the
+frame that failed against it, so the shipped helper can be run against the field
+corpus directly — no export, no device
+(`DM_LOG_DIR=<logs> yarn harness replay-captured`):
+
+| | |
+|---|---|
+| distinct captured failures (54 logs, de-duplicated) | 159 |
+| recovered by the **shipped** code | **139 (87%)** |
+| recoveries that preserved the bucket's keys | **139/139** |
+| not recovered | 20 (near-empty maps; 2 have no current-header bucket) |
+
+That figure matches `dr-prune-safety.mjs` exactly, which is the point of running
+both: the analyzer open-codes the mutation, so a divergence between it and
+`dmStaleBucketRetry.ts` would otherwise go unnoticed.
+
 Implementation: [`src/utils/dmStaleBucketRetry.ts`](../../src/utils/dmStaleBucketRetry.ts)
 (pure, 14 unit tests) wired into **both** decrypt branches of
 `handleNewMessage`. Two things a future editor must not undo:
@@ -521,9 +538,17 @@ There is a kill switch (`staleBucketRetry.enabled`) because this is a workaround
 for a defect in a dependency we have no source for. It is inert on a healthy
 session: no bucket under the current key means one JSON parse and no retry.
 
-**Still to do before merge:** exercise it against mobile↔desktop traffic, and
-decide whether the `logger.warn` on each recovery is wanted in production or should
-be sampled.
+**Still to do before merge:**
+- Decide whether the `logger.warn` on each recovery is wanted in production or
+  should be sampled.
+- Confirm it in a browser. Everything above is protocol + service layer; nothing
+  has run the UI.
+- ⚠️ **Mobile↔desktop is worth doing but is NOT a correctness gate**, and an earlier
+  version of this section wrongly implied it was. The retry is purely
+  receiver-side: it keys off the receiver's own ratchet state and never inspects
+  the frame's origin, so a mobile-sent frame cannot reach a different branch.
+  What cross-platform traffic would measure is **how often buckets form in real
+  use** — the §5-D trigger question — not whether the mitigation is sound.
 
 **B2. Trigger redelivery on decrypt failure instead of waiting for it.**
 
