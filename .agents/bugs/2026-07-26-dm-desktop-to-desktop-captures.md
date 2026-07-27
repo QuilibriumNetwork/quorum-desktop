@@ -778,3 +778,59 @@ The remaining action is the write-up for
 [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183), carrying
 the position table from two independent builds and the fact that frame shape was
 experimentally excluded.
+
+---
+
+## §2h. The rig=11 regression round (2026-07-27) — all three fixes merged
+
+First round against `main` carrying all three client fixes: `sent_accept`
+restored, the init-envelope age bound scoped to the no-rows case, and the offline
+send path holding the ratchet lock.
+
+### Finding Z — no regression, and the underlying bug is untouched
+
+| | rig=10 (1 fix) | rig=11 (3 fixes) |
+|---|---|---|
+| position 0-2 failure | 100% | **100%** |
+| position 4+ failure | ~0% | **~0%** |
+| forked ratchet | none (539/539) | **none (567/567)** |
+| posts lost | 1 (A→B) | **1 (B→A, `B10`)** |
+| `STALE init envelope IGNORED` | 0 | **0** |
+| `SESSION REPLACED` / prune / send-dup | 0 | **0** |
+
+The three fixes are orthogonal to the position mechanism and the data says so:
+nothing moved. Critically **zero** stale-init refusals, which is the probe that
+would have caught the age-bound change misfiring.
+
+**The age bound is NOT exercised by this round at all** — it only fires when a
+client has been offline past the window. Confirming that fix needs the original
+protocol: close one client, reset and send one message from the peer, wait 15+
+minutes, reopen. Recorded so nobody reads this round as validating it.
+
+### Finding AA — a second device on one account made no measurable difference
+
+Account B had a mobile client online for the first half of the round (through
+post 5), giving a natural before/after:
+
+| direction | mobile ONLINE | mobile OFFLINE |
+|---|---|---|
+| A→B | 7/18 failed (39%) | 10/23 failed (43%) |
+| B→A | 7/19 failed (37%) | 13/21 failed (62%) |
+
+A→B is flat. B→A looks worse *without* the extra device, which is the opposite of
+"the extra device causes trouble", and with ~20 frames per cell it is noise.
+**No evidence the second device matters.** Worth knowing because multi-device was
+a live suspicion earlier (§3 row 6) and this is the first time it has been
+directly, if accidentally, tested.
+
+Session fan-out stayed at 7 inboxes throughout — rows persist whether a device is
+online or not — so the disconnect is invisible in the fan-out and had to be split
+by time.
+
+### Note on test cadence
+
+The operator believed messages were 3-7 s apart; measured post-to-post intervals
+were **12-18 s alternating**, i.e. ~30 s per side. Recorded because the mechanism
+predicts that *faster* exchange is *worse* — every reply triggers a DH step, so a
+tighter conversation spends proportionally more frames at chain positions 0-2.
+A genuinely rapid round is therefore an untested and probably harsher case.

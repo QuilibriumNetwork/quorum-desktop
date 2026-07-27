@@ -40,7 +40,7 @@ related:
 
 | | state |
 |---|---|
-| Latest round (rig=10) | **controlled experiment**: init-wrapping removed from every frame, **position table unchanged**. Frame shape is not a variable. One message (`A10`) lost for good. |
+| Latest round (rig=11) | **regression round, all three client fixes merged: nothing moved.** Position table identical, no new failure mode, one post lost (`B10`). A second device on one account made no measurable difference. |
 | Symptom the user reports | messages arrive **laggy**; reactions and read receipts vanish; occasionally a message is gone for good |
 | What the rig measures | **~40% of frames fail AEAD**, on a session both sides consider healthy |
 | Why it usually looks fine | something **resends** seconds later and covers the loss (`retryDirectMessage` is the leading candidate, instrumented in rig=9) |
