@@ -794,7 +794,7 @@ send path holding the ratchet lock.
 | position 0-2 failure | 100% | **100%** |
 | position 4+ failure | ~0% | **~0%** |
 | forked ratchet | none (539/539) | **none (567/567)** |
-| posts lost | 1 (A→B) | **1 (B→A, `B10`)** |
+| posts lost | 1 (A→B) — *see correction* | **0** (`B10` arrived after the capture) |
 | `STALE init envelope IGNORED` | 0 | **0** |
 | `SESSION REPLACED` / prune / send-dup | 0 | **0** |
 
@@ -806,6 +806,35 @@ would have caught the age-bound change misfiring.
 client has been offline past the window. Confirming that fix needs the original
 protocol: close one client, reset and send one message from the peer, wait 15+
 minutes, reopen. Recorded so nobody reads this round as validating it.
+
+### Finding AB — CORRECTION: `B10` was not lost. It arrived minutes after the capture.
+
+Reported lost during the round and scored as `LOST-FOR-GOOD` by the analysis,
+because it never decrypted inside the saved log. **It then arrived on its own,
+after both logs were saved.** So this round lost nothing; redelivery recovered
+every single post.
+
+**This invalidates the five-minute wait as a test for loss.** The protocol was
+already raised from 2-3 minutes to 5 on 2026-07-27 after a capture cut off before
+recovery (§6). Five is still not enough: recovery here took longer than the whole
+tail of the round. A message is only "lost" if it is still missing much later, and
+nothing shorter than that can distinguish loss from latency.
+
+**It also puts the earlier loss claims in doubt.** `A10` (rig=8) and `A10`
+(rig=10) were both recorded as permanently lost on exactly this evidence — absent
+from the log window, never rechecked afterwards. They were probably late too.
+**Treat "posts lost" in every round before this one as unverified**, and re-read
+those tables as "not yet arrived when we stopped looking".
+
+The one loss that is NOT in doubt is `age-test-1` (finding A): the init-envelope
+guard **deleted that frame server-side**, so there was nothing left to redeliver.
+Deletion is permanent in a way that failing to decrypt is not — which is exactly
+why that guard was the fix worth shipping.
+
+**Net effect on severity:** this is a latency bug with a very long tail, not
+(so far as anything measured shows) a message-loss bug. The user-visible harm is
+lag, an inverted typing indicator, and messages that arrive so late they are
+assumed lost.
 
 ### Finding AA — a second device on one account made no measurable difference
 

@@ -40,8 +40,9 @@ related:
 
 | | state |
 |---|---|
-| Latest round (rig=11) | **regression round, all three client fixes merged: nothing moved.** Position table identical, no new failure mode, one post lost (`B10`). A second device on one account made no measurable difference. |
-| Symptom the user reports | messages arrive **laggy**; reactions and read receipts vanish; occasionally a message is gone for good |
+| Latest round (rig=11) | **regression round, all three fixes merged: nothing moved.** Position table identical, no new failure mode, **zero posts lost** — the one that looked lost arrived after the capture. A second device on one account made no measurable difference. |
+| Symptom the user reports | messages arrive **laggy**; reactions and read receipts vanish; occasionally a message seems gone for good |
+| ⚠️ Severity | **latency with a very long tail, not confirmed loss.** Every "lost" post that was rechecked later had simply arrived (finding AB). No round before rig=11 rechecked, so their loss counts are unverified. The one *confirmed* permanent loss is the init-envelope guard deleting a frame server-side — now fixed. |
 | What the rig measures | **~40% of frames fail AEAD**, on a session both sides consider healthy |
 | Why it usually looks fine | something **resends** seconds later and covers the loss (`retryDirectMessage` is the leading candidate, instrumented in rig=9) |
 | Direction | **asymmetric in severity** — one round was 16/38 vs 0/38; the latest had failures both ways (A 6, B 48) |
