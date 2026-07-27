@@ -1019,3 +1019,76 @@ crate. The ablation shows the bucket is load-bearing; reading the crate's skippe
 -key lookup is what will show why. Ablation also cannot rule out that the bucket
 contents are themselves wrong (written badly earlier) rather than the lookup
 being wrong — both are consistent with this data, and both are upstream.
+
+---
+
+## §2k. Synthetic corroboration (2026-07-27) — a FRESH session cannot be made to fail
+
+Tool: [`dr-position-table.mjs`](../tools/dm-debug/dr-position-table.mjs). Builds
+pristine sessions from real X3DH material and drives the real wasm through six
+delivery regimes, scoring first-attempt failure by chain position — the same
+quantity the live rig measures. No device time, no logs, seconds per run.
+
+### Finding AF — 1920 synthetic frames, zero failures at every position
+
+| regime | pos 0 | pos 1 | pos 2 | pos 3+ |
+|---|---|---|---|---|
+| strict alternation, 1 frame/turn | 0% | — | — | — |
+| strict alternation, 4-frame burst | 0% | 0% | 0% | 0% |
+| crossing sends, 1 frame/turn | 0% | 0% | — | — |
+| crossing sends, 4-frame burst | 0% | 0% | 0% | 0% |
+| crossing + reordered delivery | 0% | 0% | 0% | 0% |
+| strict alternation + reordered | 0% | 0% | 0% | 0% |
+
+20 independent runs of the most realistic regime: **0/20 showed any failure.**
+
+**This was run before §2j existed and read at the time as a puzzle. It is not
+one.** Every session the harness builds is FRESH, so its skipped-keys map never
+develops the poisoning bucket finding AE identifies. The harness was testing the
+one condition under which the bug is known not to fire. **Finding AF is therefore
+independent synthetic corroboration of finding AC, and nothing more.**
+
+> ⛔ **Do not cite AF as evidence the crate is clean.** It measures a fresh
+> session. Both AC (real devices, post-reset) and AF (synthetic) say the same
+> thing: no accumulated map, no failure.
+
+### Finding AG — init-wrapping cannot affect the inner decrypt, by construction
+
+Established by *reading* [`channel.ts:976-1043`](../../../quilibrium-js-sdk-channels/src/channel/channel.ts#L976),
+not by measuring. In `DoubleRatchetInboxEncrypt` the inner `DoubleRatchetEncrypt`
+call happens at L987, **before** the `state.sent_accept` branch at L988, and its
+result is identical on both sides of it — only the outer `js_encrypt_inbox_message`
+sealing differs.
+
+So the init-wrap/plain choice **structurally cannot** change the inner ratchet
+ciphertext. This corroborates the rig=10 controlled experiment (finding Y) from a
+completely different direction, and it is cheaper: a code read, not a capture
+round. Worth remembering as a method — the TypeScript half of the SDK is readable
+and several questions that were answered with device time were answerable there.
+
+### Finding AH — a responder that sends before receiving forks PERMANENTLY
+
+Scenario X in the script, included only because it is fork-shaped. If the
+responder encrypts before it has ever decrypted anything, its entire first burst
+(4/4 frames) is undecryptable and **never recovers** across any number of
+redeliveries — unlike every failure in this investigation, which is transient.
+
+**The app cannot reach this state** (a responder learns a conversation exists by
+receiving), so this is not a cause of anything on file. Recorded because it is
+adjacent to [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183)
+item 1, and because a permanent fork produced from clean X3DH material in four
+lines of driver code may interest the lead.
+
+### The experiment this tool is now positioned to run — NOT YET BUILT
+
+§2i names the open test and this harness is the natural place for it:
+
+> *age a session deliberately (or replay one forward) and see whether failure
+> rate tracks `skipped` independently of elapsed time.*
+
+Captured evidence cannot separate those confounds, because failures also create
+skipped keys. A **synthetic** harness can, because it controls both independently:
+grow the map without ageing the session, age the session without growing the map.
+That would turn the feedback-loop hypothesis in §2i into a conclusion or kill it,
+and it would test whether the poisoning bucket ever arises **naturally** or only
+appears in states that got there by some other route.

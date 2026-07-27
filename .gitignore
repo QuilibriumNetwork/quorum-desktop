@@ -60,6 +60,10 @@ ios/
 # backup files
 *.bak
 
+# DM harness — real private keys / ratchet key material, keep local
+src/dev/tests/harness/.state/
+src/dev/tests/harness/logs/
+
 # custom
 .claude/settings.local.json
 .mcp.json
