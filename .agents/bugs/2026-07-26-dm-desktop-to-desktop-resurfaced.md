@@ -266,10 +266,22 @@ one client was two builds behind and its silence was unreadable.
    `warn`/`error`; `logger.debug` never reaches the console (shared logger
    `minLevel` is `log`).
 3. Send numbered messages so content maps to frames.
-4. **Wait 5 full minutes before saving**, and **save both consoles at the same
-   moment**. On 2026-07-27 a receiver log ended 10 s after the last failure while
-   the sender was still sending, and the round's most important question went
-   unanswered; a 69-second skew between the two saves cost the tail of another.
+4. **Save after ~2 minutes.** That is enough for everything this rig actually
+   measures, and it is what the operator will realistically do — an earlier
+   version of this file demanded 5 minutes and was simply not followed, which is
+   worse than an honest number. **Save both consoles at the same moment**; a
+   69-second skew between them cost the tail of one capture.
+
+   **What 2 minutes CANNOT tell you: whether a message was lost.** Recovery by
+   redelivery has been observed taking longer than an entire round (finding AB).
+   Any "lost for good" count read off a short capture is really "had not arrived
+   when we stopped looking". Do not report loss from the log window.
+
+   **How to answer the loss question without waiting:** save at 2 minutes as
+   normal, then simply glance at the conversation 20-30 minutes later and note
+   whether anything that looked missing has turned up. No console, no
+   babysitting, no attention cost. That is the only way loss has ever actually
+   been established here.
 5. Record what you *saw on screen* — **device observation outranks the rig**.
    That is how a 21-frame phantom loss was caught on mobile.
 

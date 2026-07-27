@@ -814,11 +814,22 @@ because it never decrypted inside the saved log. **It then arrived on its own,
 after both logs were saved.** So this round lost nothing; redelivery recovered
 every single post.
 
-**This invalidates the five-minute wait as a test for loss.** The protocol was
-already raised from 2-3 minutes to 5 on 2026-07-27 after a capture cut off before
-recovery (§6). Five is still not enough: recovery here took longer than the whole
-tail of the round. A message is only "lost" if it is still missing much later, and
-nothing shorter than that can distinguish loss from latency.
+**This invalidates waiting-in-the-capture as a test for loss, at any length the
+operator will tolerate.** The written protocol said 5 minutes; the operator was
+in fact saving at ~2 minutes in **every** round, because these rounds are tedious
+and long waits do not get done. Both numbers are too short — this recovery
+outlasted the entire tail of the round.
+
+The fix is not a longer wait. It is to stop asking the capture that question:
+save at 2 minutes, then glance at the conversation 20-30 minutes later. That
+costs no attention and is the only way loss has ever actually been established
+here. §6 now says so.
+
+**Also note what the short window does NOT damage.** The position table measures
+whether a frame fails on its FIRST delivery attempt, which is independent of how
+long anyone waits afterwards — so the core result stands unaffected. What the
+short window makes unreliable is only the split between "recovered late" and
+"never recovered": every recovery count in this file is a LOWER BOUND.
 
 **It also puts the earlier loss claims in doubt.** `A10` (rig=8) and `A10`
 (rig=10) were both recorded as permanently lost on exactly this evidence — absent
