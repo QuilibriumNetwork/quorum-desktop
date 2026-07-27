@@ -35,11 +35,16 @@ repo; set `SDK_DIR=` if yours is elsewhere.
 | `dr-replay.mjs` | Reassembles `[XPDUMP]` chunks from a log and re-runs the real failing decrypt. Reports whether the seal opened, whether the frame was init-wrapped, and whether the ratchet failed. Use to confirm a failure is genuine and reproducible rather than an app-level race. |
 | `dr-ablate.mjs` | **Finds what CAUSES a failure.** Re-runs the same decrypt while changing ONE property of the ratchet state at a time, so a load-bearing property announces itself by making the frame decrypt. |
 | `dr-advanced-start-fork.mjs` | Needs no log at all. Builds pristine sessions from one X3DH pair and drives a case matrix to reproduce the upstream crate's advanced-start fork in seconds. This is the runnable evidence behind item 1 of [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183). |
-| `dr-position-table.mjs` | Needs no log. Builds **fresh** sessions and scores first-attempt failure by chain position across six delivery regimes. Result: 1920 frames, zero failures — which corroborates finding AC rather than contradicting anything, because a fresh session has no poisoning skipped-keys bucket. ⛔ Not evidence the crate is clean. Its real value is unrealised: it is the natural home for the synthetic session-ageing test named in archive §2i. |
+| `dr-position-table.mjs` | Needs no log. Builds **fresh** sessions and scores first-attempt failure by chain position across six delivery regimes. Result: 1920 frames, zero failures — which corroborates finding AC rather than contradicting anything, because a fresh session has no poisoning skipped-keys bucket. ⛔ Not evidence the crate is clean. |
+| `dr-prune-safety.mjs` | **Explains the mechanism and validates the mitigation.** Per captured failure it reports what the frame *is* — its index in its own sending chain, whether it drove a DH step, whether that index collides with the stale bucket — and whether recovery is genuine or a re-accepted duplicate. Its synthetic half needs **no log** (`--synthetic-only`): it builds the poisoning condition from a pristine X3DH pair, so one state holds both the frame a retry would recover and the frames a prune would destroy. That is how the "does pruning break a success?" question got answered — the captured corpus cannot answer it, because `[XPDUMP]` only ever fires on failure. |
+| `dr-self-echo.mjs` | Does a client receive its OWN outbound frames? Joins `[DM-send wire]` against `[DM-recv wire]` within one client's log. **0 of 2709 distinct captured browser arrivals** — the control that proved the headless harness's 41-48% self-echo was a bench artifact (all bots shared one IndexedDB) and not the cause of the measured ~40% failure rate. |
 
 ```
-node .agents/tools/dm-debug/dr-replay.mjs <saved-console.log>
-node .agents/tools/dm-debug/dr-ablate.mjs <saved-console.log> [...more logs]
+node .agents/tools/dm-debug/dr-replay.mjs       <saved-console.log>
+node .agents/tools/dm-debug/dr-ablate.mjs       <saved-console.log> [...more logs]
+node .agents/tools/dm-debug/dr-prune-safety.mjs <saved-console.log> [...more logs]
+node .agents/tools/dm-debug/dr-prune-safety.mjs --synthetic-only    # no log needed
+node .agents/tools/dm-debug/dr-self-echo.mjs    <saved-console.log> [...more logs]
 ```
 
 **`dr-ablate` is the cheapest tool in this folder and it arrived last.** It found
