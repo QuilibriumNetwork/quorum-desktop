@@ -169,7 +169,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Read-only channel receive-side enforcement is incomplete](bugs/.solved/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [Composer flattens multi-line paste into a single line](bugs/.solved/2026-06-25-composer-paste-strips-newlines.md)
-- **[⚠️ ENTRY POINT — DM delivery broken again on desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)** — start here for anything DM-not-arriving; the master report below is REOPENED
+- **[⚠️ ENTRY POINT — DM delivery broken again on desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)** — start here for anything DM-not-arriving. Mechanism measured, cause is upstream, all client fixes merged; ten dead hypotheses recorded so they are not re-derived. The master report below is REOPENED
+- [DM desktop↔desktop — capture archive](bugs/2026-07-26-dm-desktop-to-desktop-captures.md) — per-round evidence for the above (findings A-AB, 7 instrumented rounds). Evidence only; the entry point holds the status
 - [DM message delivery is unreliable (master report)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md) — ⚠️ REOPENED 2026-07-26, mechanism catalogue only
 - [DM frames still drop with `aead::Error` (remaining half of the delivery bug)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
 - [FIX SPEC: DM decrypt failure destroys the session](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
