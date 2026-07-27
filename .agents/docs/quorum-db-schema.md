@@ -134,6 +134,14 @@ Quick reference for debugging and creating console snippets.
 }
 ```
 
+> ⚠️ **`sentAccept` lives OUTSIDE the `state` JSON, and the send path must merge it back in.**
+> The SDK picks the shape of every outgoing DM frame from `state.sent_accept`. Because the
+> session is rehydrated with `JSON.parse(row.state)` and this flag is a sibling column, it was
+> silently `undefined` on every send for the lifetime of the app — so every frame was wrapped in
+> an `InitializationEnvelope`, re-sending session setup material forever. Fixed 2026-07-27 in
+> `orderSessionsForSend`. **If you add another column beside `state`, check whether the SDK reads
+> it.**
+
 ---
 
 ### conversation_users

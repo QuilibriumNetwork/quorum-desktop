@@ -82,6 +82,14 @@ coordination:
 state row inside the lock (its pre-lock snapshot may be stale after waiting) and persists the
 advanced state immediately after a successful decrypt instead of at the tail of the handler.
 
+> **Correction, 2026-07-27.** The list above was incomplete: there is a **SIXTH** site, the
+> offline-composed DM path (`ActionQueueHandlers.sendDm`), and it held no lock at all until
+> 2026-07-27. It was missed because it is a near-identical copy of the `submitMessage` loop
+> living in a different file, and it only runs for DMs composed while offline — so it never
+> appeared in any instrumented capture. Now locked, with a regression test verified to fail
+> without it. **Anything applied to the DM encrypt path must be applied to all six sites**;
+> this is the second defect caused by one of the copies drifting.
+
 **Why this was necessary:** Double Ratchet state is strictly linear — the spec models
 encrypt/decrypt as sequential mutations of a single state object, and the ratchet's security
 (and correctness) depends on each operation starting from the latest stored state. Two
@@ -295,9 +303,23 @@ Two envelopes 26 HOURS old installed themselves into the freshly-reset state bef
 real init arrived; the pairing was left desynced and the peer's frames then hit an inbox with
 no state. The reset the user had just performed was silently undone.
 
-**New behavior:** an absolute age bound (10 minutes) is applied BEFORE the relative rules, so
-it holds with zero rows. A legitimate init envelope is seconds old; 10 minutes is five times
-the existing clock-skew tolerance.
+**New behavior:** an absolute age bound (10 minutes) covers the zero-rows case, where there is
+nothing to compare against.
+
+> **Revised 2026-07-27.** It originally ran BEFORE the relative rules, unconditionally, on the
+> assumption that "a legitimate init envelope is seconds old". **That only holds while the
+> receiver is online**, and it was measured destroying a real message: an envelope 174 s NEWER
+> than every row it would replace — one both relative rules accept — was refused for being
+> 17.6 minutes old, and the refusal path deletes the frame server-side. That is the
+> "away for a while, come back broken" report.
+>
+> Wall-clock age is the wrong test whenever rows exist, because the rows carry a better signal:
+> **a zombie is OLDER than the rows it would replace, a legitimate re-init is NEWER.** The
+> relative rules already encode exactly that. The bound is now scoped to the no-rows case it was
+> written for, and both observed zombie scenarios still refuse (fresh-session kills are caught by
+> the relative rule; the just-reset case has no rows). Envelopes stamped implausibly far in the
+> future are now also refused — one of those wins every recency comparison and would block every
+> legitimate re-init behind it.
 
 ---
 
@@ -305,6 +327,13 @@ the existing clock-skew tolerance.
 
 Desktop↔desktop has no reported issues; every pairing involving mobile breaks. That maps onto
 a storage-model difference, and desktop's model is the correct one:
+
+> **FALSIFIED 2026-07-27.** Desktop↔desktop reproduces the failure. Seven instrumented
+> desktop-only rounds measured ~40% of frames failing AEAD on first delivery attempt, in both
+> directions, on sessions both sides consider healthy. The storage-model difference below is
+> still real and mobile's model is still the wrong one — but it is not what makes
+> desktop↔desktop work, because desktop↔desktop does not work. See
+> `.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md`.
 
 - **Desktop** mints a fresh inbox keyset PER SESSION and stores rows under
   `inboxId: session.receiving_inbox.inbox_address` — every device gets its own inbox and its
@@ -340,6 +369,25 @@ Two desktop-side facts worth knowing, both verified against source:
   is never written back), so `state.sent_accept` is always `undefined` at encrypt time and
   **desktop init-wraps every frame it sends.** The SDK's plain-frame branch is effectively dead
   code here. This is why desktop↔desktop never hit the bug.
+
+  > **FIXED 2026-07-27, and the last sentence was wrong.** `orderSessionsForSend` now merges the
+  > `sentAccept` column back into the session object, so the SDK's plain-frame branch is live and
+  > desktop no longer re-sends setup material on every frame. Verified live: 12/12 sampled frames
+  > carried the setup material before, 0/12 after, with no change in delivery.
+  >
+  > The claim that this is "why desktop↔desktop never hit the bug" is falsified — desktop↔desktop
+  > does hit it, and a controlled round proved shape is not the variable: removing init-wrapping
+  > left the failure table unmoved.
+  >
+  > **One consequence to know when reading desktop logs.** A row created FROM the peer's init
+  > envelope is saved with no `sentAccept` value, so a first reply is still init-wrapped and the
+  > peer can still confirm — the handshake is intact (checked in source, not assumed). But from
+  > the second send onward a confirmed row sends plain, so in the asymmetric state
+  > *we are confirmed, peer is not* a plain frame will hit the peer's `Confirm` branch and throw
+  > `invalid initialization envelope`. Before this change every frame could confirm the peer, so
+  > that window is new. It is transient — the init-wrapped first reply redelivers and confirms —
+  > and it did not occur in the validation round, because that round never reset a session. **A
+  > reset round on a build carrying this fix has not been done.**
 - Desktop's `DoubleRatchetInboxDecrypt` tolerates an init-shaped plaintext on a confirmed row
   (the `maybe_initialization_info_and_message.user_address` branch), so mobile's accept is safe
   to receive whether or not desktop has already confirmed.
@@ -414,4 +462,4 @@ and desktop→mobile delivered 12/12 — the first fully clean direction in this
    capture round to pin the correlation.)
 
 ---
-*Created: 2026-07-17 — Last updated: 2026-07-26*
+*Created: 2026-07-17 — Last updated: 2026-07-27*

@@ -18,7 +18,7 @@ audience: future agents debugging DM-related bugs (delivery, identity, sync)
 - A change to a DM partner's pfp/name/bio is propagated by a **`dm-update-profile` control message** sent over the existing DM session whenever the partner saves their global profile in User Settings → General. This is intercepted on receive (never persisted as a chat post) and upserts the conversation row. This is the **push** path.
 - There is also a **pull/back-fill** path for identity the push never delivered (older contacts, missed messages): `useConversationsWithProfileBackfill` fetches the partner's server-side public profile and **writes it through to the `conversations` row**. See "Identity sources & the three sync paths" below. This is what makes the sidebar and the no-flash conversation open work for legacy contacts (added 2026-06-10).
 - Per-space profile saves (Space Settings → Account) are independent — they only touch `space_members`, never DMs.
-- **Network sync between two clients is not reliable.** Regular DMs from B to A sometimes never arrive. This is an open issue, not a code bug we've identified.
+- **Network sync between two clients is not reliable.** Regular DMs from B to A sometimes never arrive. **Update 2026-07-27: this is now measured, and it is not an identity problem — do not debug it with this playbook.** Frame decryption failure is a deterministic function of position in the DH sending chain (positions 0-2 fail ~100% on first delivery attempt, position 3+ never fails, both directions), the failures are transient, and messages that look lost are usually very late. Entry point, including what has already been ruled out: `.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md`.
 
 ## Identity sources & the three sync paths
 
@@ -227,6 +227,8 @@ drops or resurrects content):
 - [Per-Space Profile Data Flow](../../tasks/.done/per-space-profile-data-flow-analysis.md) — the space side's `update-profile` flow, mirror of DM logic.
 - [Action Queue Summary](../../reports/action-queue/000-action-queue-summary.md) — outbound message queue we ride on.
 - [DM Sync Non-Deterministic Failures](../../reports/action-queue/005-dm-sync-non-deterministic-failures.md) — known sync gap.
+- [DM delivery broken on desktop↔desktop](../../bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md) — **read this if messages are late or missing rather than mis-identified.** Ratchet/transport, not identity; ten dead hypotheses recorded so they are not re-derived.
+- [DM ratchet upstream divergences](../dm-ratchet-upstream-divergences.md) — the shipped divergences from the SDK's reference behaviour, lead-dev facing.
 
 ---
-*Last updated: 2026-06-13*
+*Last updated: 2026-07-27*
