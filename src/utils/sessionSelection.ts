@@ -29,25 +29,57 @@
 type Ordered = { ts: number; set: Record<string, unknown> };
 
 function isSendReady(set: Record<string, unknown> | undefined): boolean {
-  const sending = set?.sending_inbox as { inbox_public_key?: string } | undefined;
+  const sending = set?.sending_inbox as
+    | { inbox_public_key?: string }
+    | undefined;
   return Boolean(sending?.inbox_public_key);
 }
 
 /**
  * Parse stored encryption-state rows into session objects, ordered so that the
  * first match for a given tag is the one to send with.
+ *
+ * ## `sent_accept` must be restored here, not just in the stored row
+ *
+ * The SDK chooses the shape of every outgoing frame on `state.sent_accept`
+ * (`DoubleRatchetInboxEncrypt`): truthy sends the Double Ratchet envelope alone,
+ * falsy sends an `InitializationEnvelope` carrying the session setup material
+ * (return inbox keys, identity public key, display name, icon) with the ratchet
+ * envelope nested inside.
+ *
+ * That flag is persisted in the `sentAccept` COLUMN, while the session itself is
+ * persisted as JSON in `state`. This function used to return only
+ * `JSON.parse(r.state)` — so `sent_accept` was `undefined` on every send, and
+ * this client re-sent setup material on every DM frame instead of only until the
+ * session was established. Confirmed 2026-07-27 against captured data: 12 of 12
+ * stored state blobs contain exactly
+ * `ratchet_state / receiving_inbox / sending_inbox / tag`, and offline replay
+ * showed 24 of 24 sampled frames carrying it.
+ *
+ * NOT a disclosure issue: both branches seal their payload with
+ * `js_encrypt_inbox_message` to the recipient's inbox encryption key, so the
+ * setup material is encrypted in transit exactly like message content. The cost
+ * of the bug was payload size, not exposure.
+ *
+ * The column is the authority (`??`, so a legitimate stored `false` is kept);
+ * anything already inside the JSON is only a fallback for rows written by a
+ * future save that inlines it.
  */
 // Returns `any[]` deliberately: this replaces `response.map((e) => JSON.parse(e.state))`,
 // whose element type was `any`. Narrowing it here would ripple type errors through
 // every call site for no safety gain — the ordering is the change, not the typing.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function orderSessionsForSend<T extends { timestamp?: number; state: string }>(
-  rows: T[]
-): any[] {
+export function orderSessionsForSend<
+  T extends { timestamp?: number; state: string; sentAccept?: boolean },
+>(rows: T[]): any[] {
   return rows
     .map((r): Ordered | null => {
       try {
-        return { ts: r.timestamp ?? 0, set: JSON.parse(r.state) };
+        const set = JSON.parse(r.state) as Record<string, unknown>;
+        // Restore the flag the SDK reads. Without this line the SDK sees
+        // `undefined` and init-wraps every frame — see the note above.
+        set.sent_accept = r.sentAccept ?? set.sent_accept;
+        return { ts: r.timestamp ?? 0, set };
       } catch {
         return null; // unparseable row — skip rather than break the send
       }
