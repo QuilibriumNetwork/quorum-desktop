@@ -44,14 +44,15 @@ related:
 
 | | state |
 |---|---|
-| Latest round (rig=11) | **regression round, all three fixes merged: nothing moved.** Position table identical, no new failure mode, **zero posts lost** — the one that looked lost arrived after the capture. A second device on one account made no measurable difference. |
+| rig=11 | **regression round, all three fixes merged: nothing moved.** Position table identical, no new failure mode, **zero posts lost** — the one that looked lost arrived after the capture. A second device on one account made no measurable difference. |
+| **Latest round (reset, rig=11)** | **a FRESH session does not fail.** All delivered, no lag, no issues; A logged 0 decrypt failures against 60 the round before. Positions 0-2 went from 12/12 failing to 2/15. See finding AC |
 | Symptom the user reports | messages arrive **laggy**; reactions and read receipts vanish; occasionally a message seems gone for good |
 | ⚠️ Severity | **latency with a very long tail, not confirmed loss.** Every "lost" post that was rechecked later had simply arrived (finding AB). No round before rig=11 rechecked, so their loss counts are unverified. The one *confirmed* permanent loss is the init-envelope guard deleting a frame server-side — now fixed. |
 | What the rig measures | **~40% of frames fail AEAD**, on a session both sides consider healthy |
 | Why it usually looks fine | the frame is **redelivered** and decrypts on a later attempt. Recovery can take longer than a whole capture round, so short captures cannot tell loss from latency (finding AB) |
 | Direction | varies by round; both directions fail. Early rounds looked one-directional, later ones did not |
 | Earlier, worse state | 0 of 10 delivered both directions, permanent, until a manual reset |
-| **THE MECHANISM** | failure is a **deterministic function of position in the DH sending chain**: pos 0 = 100% fail, pos 1 ≈ 90%, pos 2 ≈ 60%, **pos 3+ = 0%**, both directions |
+| **THE MECHANISM** | ⚠️ **REVISED — see finding AD.** On an AGED session, failure is near-total at chain positions 0-2 and absent from 3+. On a FRESH session the same positions are clean. **Chain position is where the failure lands, not what causes it.** The leading correlate is the accumulated skipped-keys map, which grew 2 → 20 → 23 → 37 across the day as the failure rate rose — but that is a hypothesis, not a conclusion (failures also *create* skipped keys, so cause and effect are circular on current evidence) |
 | Recovery | **transient** — nearly all failed frames decrypt on a later redelivery. All recovery counts in the archive are LOWER BOUNDS, because captures were saved at ~2 minutes |
 | Why the typing indicator is inverted | `typing-start` is the first frame after reading the peer's message, i.e. always **position 0**, the 100%-failure slot; the peer sees the *redelivered* copy a turn later |
 
@@ -59,10 +60,11 @@ The original reproduction pattern — works after a reset, use the same accounts
 mobile for days, return to desktop broken — **has still never been reproduced
 deliberately** and remains the single most valuable thing to capture.
 
-**The one-line summary:** the first two or three frames after every DH ratchet
-step cannot be decrypted on arrival and only land on redelivery. That is the lag,
-that is the inverted typing indicator, and that is why a message can look lost
-when it is merely very late.
+**The one-line summary:** on a session that has been in use for a while, the first
+few frames after every DH ratchet step fail on arrival and only land on
+redelivery — that is the lag, the inverted typing indicator, and why a message can
+look lost when it is merely very late. **Reset the session and it stops**, which
+is the strongest clue available and the one the next round should chase.
 
 ---
 

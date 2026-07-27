@@ -874,3 +874,78 @@ were **12-18 s alternating**, i.e. ~30 s per side. Recorded because the mechanis
 predicts that *faster* exchange is *worse* — every reply triggers a DH step, so a
 tighter conversation spends proportionally more frames at chain positions 0-2.
 A genuinely rapid round is therefore an untested and probably harsher case.
+
+---
+
+## §2i. The reset round (2026-07-27) — THE POSITION LAW IS NOT A LAW
+
+Protocol: both clients `rig=11` (all three fixes), **one-sided reset**, then 5
+messages each. Operator report: *"all msg delivered, no lags, no issues"*, and a
+mobile client on account B showed everything **in real time**.
+
+### Finding AC — a fresh session does not exhibit the failure
+
+| chain position | A→B pre-reset (rig=11) | A→B **post-reset** | B→A pre-reset | B→A **post-reset** |
+|---|---|---|---|---|
+| 0 | 100% | **29%** (2/7) | 100% | **0%** |
+| 1 | 100% | **0%** | 100% | **0%** |
+| 2 | 100% | **0%** | 100% | **0%** |
+| 3 | 75% | **0%** | 100% | **0%** |
+
+Client A logged **0 decrypt failures** this round, against **60** in the previous
+one. B logged 5, of which 3 were leftover frames arriving on the *old* session.
+
+**This is not a sampling artifact.** Pre-reset, positions 0-2 were 12 received
+and 12 failed. Post-reset, the same positions were 15 received and 2 failed. The
+2 remaining failures were `read-ack` frames at position 0 and both recovered.
+
+### Finding AD — "positions 0-2 always fail" was a property of an AGED session
+
+§2e stated the failure as a deterministic function of chain position. **That
+framing is wrong and must be corrected wherever it appears**, including upstream.
+Chain position is where the failure *lands*; it is not what *causes* it. A fresh
+session shows the same positions behaving normally.
+
+The state fingerprints from this round make the difference visible. B's three
+old-session failures replay against:
+
+```
+state: root=441307d1 sLen=10 pS=7 rLen=11 skipped=37     <- the aged session
+```
+
+while the new session's two failures sit at:
+
+```
+state: root=3746edc4 sLen=0 pS=4 rLen=1 skipped=2
+state: root=b26aed02 sLen=0 pS=4 rLen=1 skipped=4
+```
+
+**`skipped` is the accumulated skipped-keys map.** Across the day it grew 2 → 20
+→ 23 → **37**, and the failure rate grew with it. After a reset it is back to
+single digits and the conversation is clean.
+
+### Hypothesis, explicitly NOT a conclusion
+
+A session degrades as its skipped-keys map grows, and it grows *because* of these
+failures — each undecryptable frame leaves a gap behind. That is a positive
+feedback loop, and it would explain the oldest observation in this file: **"works
+after a reset, breaks again after days of use."**
+
+**Do not treat this as established.** `skipped` is confounded with session age,
+number of DH epochs, and total traffic; and because failures *create* skipped
+keys, cause and effect are circular on this evidence alone. What is established
+is the negative result: **a fresh session does not fail, so nothing about chain
+position alone is sufficient to cause the failure.**
+
+The test that would separate them: age a session deliberately (or replay one
+forward) and see whether failure rate tracks `skipped` independently of elapsed
+time. Offline replay can do this with no device time.
+
+### What this does NOT change
+
+- Redelivery still recovers; nothing was lost this round.
+- The three merged fixes remain sound — this round is also their cleanest run.
+- The asymmetric-state window opened by the `sent_accept` fix **did not fire**:
+  `branch=Confirm` appeared (so the state was genuinely entered, unlike rig=11
+  where it never occurred) and there were **zero** `invalid initialization
+  envelope` errors. That fix is now validated on the path that stresses it.
