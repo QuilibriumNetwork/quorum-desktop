@@ -3489,7 +3489,16 @@ export class MessageService {
                 envelopeAgeSeconds: Math.round(
                   (Date.now() - envelope.timestamp) / 1000
                 ),
-                newestRowTimestamp: Math.max(...existing.map((e) => e.timestamp)),
+                // `Math.max()` of an empty list is -Infinity, which serialises
+                // to null and reads as "we had a row and it was missing" rather
+                // than "there was no row". Since scoping the age bound to the
+                // no-rows case, that is now the COMMON refusal, so the two must
+                // be distinguishable — this log line is how the refusal gets
+                // diagnosed at all.
+                rowCount: existing.length,
+                newestRowTimestamp: existing.length
+                  ? Math.max(...existing.map((e) => e.timestamp))
+                  : null,
               }
             );
             return false;
