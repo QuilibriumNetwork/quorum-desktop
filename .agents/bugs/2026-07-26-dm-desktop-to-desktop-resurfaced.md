@@ -356,14 +356,14 @@ one client was two builds behind and its silence was unreadable.
    That is how a 21-frame phantom loss was caught on mobile.
 
 **Offline analysis** — highest value per minute, zero device time. Both tools live
-in [`.agents/scripts/`](../scripts/) **in this repo**, because `.agents/` is
+in [`.agents/tools/dm-debug/`](../tools/dm-debug/) **in this repo**, alongside the existing console snippets, because `.agents/` is
 gitignored in quorum-mobile where they were originally written — the copies there
 were never tracked and would not survive a fresh clone. They resolve the SDK
 relative to the repo, or set `SDK_DIR=`.
 
 ```
-node .agents/scripts/dr-replay.mjs <desktop.log>    # reproduce a failure
-node .agents/scripts/dr-ablate.mjs <desktop.log>    # find what CAUSES it
+node .agents/tools/dm-debug/dr-replay.mjs <desktop.log>   # reproduce a failure
+node .agents/tools/dm-debug/dr-ablate.mjs <desktop.log>   # find what CAUSES it
 ```
 
 `dr-replay` reassembles `[XPDUMP]` chunks and re-runs the real failing decrypt

@@ -21,7 +21,7 @@ import { dirname, resolve } from 'node:path';
 // -> the sibling SDK checkout. Override with SDK_DIR= if yours lives elsewhere.
 const SDK_DIR =
   process.env.SDK_DIR ??
-  resolve(dirname(fileURLToPath(import.meta.url)), '../../../quilibrium-js-sdk-channels');
+  resolve(dirname(fileURLToPath(import.meta.url)), '../../../../quilibrium-js-sdk-channels');
 const glue = pathToFileURL(resolve(SDK_DIR, 'src/channel/channelwasm.js')).href;
 const ch = await import(glue);
 ch.initSync(readFileSync(resolve(SDK_DIR, 'src/wasm/channelwasm_bg.wasm')));

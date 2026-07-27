@@ -21,6 +21,33 @@ For background on the architecture and the debug ladder, read [`../../docs/debug
 | `03-encryption-states.js` | Shows the Double Ratchet state per conversation. Tells you whether a DM session actually exists. |
 | `04-stores.js` | Lists all IndexedDB object store names. Use when a snippet errors with "object store not found" — store names have drifted between builds. |
 | `05-profile-sources.js` | Per-DM, compares the stored conversation row's name/icon against the live public-profile API. Use to diagnose why an avatar/name shows in the open conversation (public-profile fallback, in-memory) but not in the sidebar (reads the stored row). A `data:image/...` stored icon means the avatar has been persisted to the row. |
+| `06-space-member-sources.js` | Space-member equivalent of 05. |
+
+## Offline analysis (node CLI, NOT console snippets)
+
+These are a different kind of tool: they run in a terminal against a **saved
+console log** and re-execute the real crypto against the SDK wasm. No devices, no
+live session, no capture round. They resolve the SDK as a sibling checkout of this
+repo; set `SDK_DIR=` if yours is elsewhere.
+
+| File | Purpose |
+|---|---|
+| `dr-replay.mjs` | Reassembles `[XPDUMP]` chunks from a log and re-runs the real failing decrypt. Reports whether the seal opened, whether the frame was init-wrapped, and whether the ratchet failed. Use to confirm a failure is genuine and reproducible rather than an app-level race. |
+| `dr-ablate.mjs` | **Finds what CAUSES a failure.** Re-runs the same decrypt while changing ONE property of the ratchet state at a time, so a load-bearing property announces itself by making the frame decrypt. |
+
+```
+node .agents/tools/dm-debug/dr-replay.mjs <saved-console.log>
+node .agents/tools/dm-debug/dr-ablate.mjs <saved-console.log> [...more logs]
+```
+
+**`dr-ablate` is the cheapest tool in this folder and it arrived last.** It found
+the root cause of the 2026-07 DM delivery bug in one run over logs already on
+disk, after ten hypotheses had been killed the slow way by booking capture rounds.
+**Add a case to its `VARIANTS` array to test a new hypothesis against every
+captured failure in seconds.** Reach for it before booking device time.
+
+> ⚠️ Logs containing `[XPDUMP]` hold **real ratchet key material**. Throwaway test
+> accounts only, keep them local, never paste raw regions into an issue.
 
 ## Workflow
 
@@ -39,4 +66,4 @@ For background on the architecture and the debug ladder, read [`../../docs/debug
 - **No output at all.** Console filter is hiding info-level. Set log level to "All levels" or "Verbose".
 
 ---
-*Last updated: 2026-06-10*
+*Last updated: 2026-07-27*

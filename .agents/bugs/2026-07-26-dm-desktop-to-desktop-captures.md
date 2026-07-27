@@ -956,7 +956,7 @@ time. Offline replay can do this with no device time.
 
 Offline ablation, no device time. Method: take a real captured failure, change
 **one** property of the ratchet state, re-run the identical decrypt against the
-real wasm. Tool: `quorum-mobile/.agents/scripts/dr-ablate.mjs`.
+real wasm. Tool: `.agents/tools/dm-debug/dr-ablate.mjs` (in this repo).
 
 ### Finding AE — 63 of 65 captured failures decrypt once one bucket is removed
 
