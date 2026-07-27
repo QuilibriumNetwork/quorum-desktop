@@ -283,8 +283,25 @@ grep -c "dmRatchetMutex" src/services/ActionQueueHandlers.ts             # offli
 grep -n "existingRowTimestamps.length === 0" src/utils/initEnvelopeGuard.ts  # age bound scoped
 ```
 
-There is a local alias (`git debug`) for the old two-command form, but it lives in
-this clone's git config and encodes the `origin/main` mistake — do not use it.
+**`git debug` does all of the above.** The alias lives in this clone's
+`.git/config` (not committed, so a fresh clone will not have it). It was rewritten
+2026-07-27: it previously encoded the `origin/main` mistake, and since the operator
+had been told to run it before every round, the bug was in the tool rather than in
+anyone's habits. It now rebases onto local main and prints the fix-presence checks,
+so the safe path is also the shortest one. Expected output:
+
+```
+--- BUILD CHECK (marker only reports probes, this reports fixes) ---
+<diag head commit>
+rig=11 probes=ALL-3-FIXES,...
+sent_accept fix : 1  (want >=1)
+offline lock    : 3  (want >=1)
+age-bound fix   : 3  (want >=1)
+local main ahead of origin by N commits
+```
+
+Any of those three reading `0` means the build does **not** contain that fix and
+the round would be misattributed. Stop and rebase properly.
 
 > **Commit docs on `main`, never on this branch.** The diag branch is never
 > merged, so anything committed here is lost. Keep doc edits in the working tree
