@@ -258,15 +258,33 @@ the single most valuable capture available, and no round so far has attempted it
 ## §6. THE RIG — how to capture (read before booking any test time)
 
 **Branch: `diag/dm-frame-join`** (local, never merge — it logs real key
-material). Rebase it forward onto `main`:
+material). Rebase it forward onto main before every round:
 
 ```
-git fetch origin && git rebase origin/main diag/dm-frame-join   # rebase + switch to it
-git checkout main                                               # back to normal work
+git fetch origin
+git log --oneline origin/main..main        # is LOCAL main ahead of origin?
+git rebase main diag/dm-frame-join        # rebase onto LOCAL main, then switch to it
+git checkout main                          # back to normal work
 ```
 
-There is a local alias for the first line (`git debug`), but it lives in this
-clone's git config, so do not assume it exists.
+> ⚠️ **Rebase onto `main`, NOT `origin/main`.** An earlier version of this file
+> said `origin/main`, and on 2026-07-27 that would have silently stripped all
+> three merged client fixes out of the diag build — they were committed to local
+> main and had not been pushed. A round on that build would have been read as
+> "the fixes changed nothing" when the fixes were not in it. Check the second
+> command above: if local main is ahead, `origin/main` is the wrong base.
+
+**Then prove the build is what you think it is**, because a marker only reports
+probes, not which fixes are compiled in:
+
+```
+grep -c "set.sent_accept = r.sentAccept" src/utils/sessionSelection.ts   # sent_accept fix
+grep -c "dmRatchetMutex" src/services/ActionQueueHandlers.ts             # offline lock
+grep -n "existingRowTimestamps.length === 0" src/utils/initEnvelopeGuard.ts  # age bound scoped
+```
+
+There is a local alias (`git debug`) for the old two-command form, but it lives in
+this clone's git config and encodes the `origin/main` mistake — do not use it.
 
 > **Commit docs on `main`, never on this branch.** The diag branch is never
 > merged, so anything committed here is lost. Keep doc edits in the working tree
