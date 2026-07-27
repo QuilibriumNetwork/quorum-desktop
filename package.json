@@ -43,6 +43,7 @@
     "scan-docs": "node src/dev/docs/utils/scanMarkdownFiles.cjs",
     "test": "vitest",
     "test:run": "vitest --run",
+    "harness": "vitest --run --config vitest.harness.config.ts",
     "mobile": "cd mobile && expo start --dev-client",
     "mobile:clear": "cd mobile && expo start --dev-client --clear",
     "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
@@ -97,6 +98,7 @@
     "@types/prismjs": "^1.26.5",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@types/ws": "^8.18.1",
     "@vitejs/plugin-react": "^5.2.0",
     "@vitest/ui": "^4.1.0",
     "autoprefixer": "^10.4.20",
@@ -121,7 +123,8 @@
     "vite": "^8.0.0",
     "vite-plugin-node-polyfills": "^0.26.0",
     "vite-plugin-static-copy": "^3.3.0",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.0",
+    "ws": "^8"
   },
   "resolutions": {
     "@quilibrium/quilibrium-js-sdk-channels": "^2.1.0-2"
