@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)"
-status: OPEN — root cause NOT established. Two client-side leads open (init-envelope age bound; four session-prune sites), plus two upstream causes already filed (quorum-mobile issue #183). One real regression of ours was found and fixed (#259). One confidently-argued mechanism was RETRACTED the same day — read §5 before trusting anything here.
+status: OPEN — root cause NOT established. NEXT ACTION IS NOT 'wait for it to break': run the 10-minute age-bound test in §1b. Upstream issue #183's main text was corrected 2026-07-26 (its desktop-is-immune claim was retracted). Two client-side leads open (init-envelope age bound; four session-prune sites), plus two upstream causes already filed (quorum-mobile issue #183). One real regression of ours was found and fixed (#259). One confidently-argued mechanism was RETRACTED the same day — read §5 before trusting anything here.
 created: 2026-07-26
 severity: high (silent, user-visible message and reaction loss)
 repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)
@@ -50,6 +50,29 @@ related:
 a reset; they then use the *same two accounts* on mobile for a few days; on
 returning to desktop it is broken again. This has not yet been reproduced
 deliberately — it is the single most valuable thing to capture.
+
+### §1b. What to do next — in order
+
+**Nothing here requires waiting for the bug to reappear.**
+
+1. **Run the 10-minute age-bound test** (lead 1 in §4). Close desktop; from the
+   peer, reset the session and send one message; wait >10 minutes; reopen
+   desktop on the diag build; watch for `STALE init envelope IGNORED`. It fires
+   ⇒ lead 1 confirmed and the cause is ours. It does not ⇒ lead 1 is dead and
+   the prune (lead 2) becomes prime suspect. Either outcome is progress, and it
+   does not depend on the user's mobile-usage pattern.
+2. **Use the diag build as the everyday desktop client.** Both leads are now
+   instrumented, so the next natural breakage self-diagnoses:
+   `[DM-prune ui]`/`[DM-prune send]` ⇒ lead 2; `STALE init envelope IGNORED` ⇒
+   lead 1; neither, with frames arriving and failing AEAD ⇒ upstream.
+3. **Awaiting a decision from the user, not more evidence:** the dead-session
+   detector (§4.4). Auto-reset silently, or prompt the user? Given this bug's
+   history a prompt is the safer first step. Do not build it without that call.
+4. **Small and safe, buildable now:** de-duplicate `targetInboxes` (§7) —
+   observed live sending the same reaction twice to one inbox.
+
+**Do not** re-derive the retracted mechanism in §5, and do not read the two
+masters' status lines as current (see the banner at the top of this file).
 
 ---
 
@@ -130,7 +153,16 @@ fingerprint), independently re-derived by a second agent from the raw logs:
 3. **UPSTREAM — quorum-mobile issue #183.** (a) the crate fork above;
    (b) the node write path silently dropping frames that were signed and handed
    to an open socket, reproduced phone↔phone at 32% one direction. Neither is
-   fixable here.
+   fixable here. **Its main text was CORRECTED on 2026-07-26** (not just
+   commented — the body itself): it previously told the lead dev that
+   "desktop to desktop virtually never loses frames, so it never fires there",
+   which framed the crate bug as mobile-only and would have de-prioritised the
+   fix. The retraction, this bug's d↔d reproduction, and the fingerprint-joined
+   21/21 arrive-and-fail evidence are now in item 1. Item 2 gained a scope note
+   saying desktop has never been measured for the write drop, so its
+   mobile-only framing must not be read as desktop being unaffected.
+   **If you produce new d↔d evidence, update that issue body — the lead dev
+   reads it, not this file.**
 4. **No dead-session detection.** See §2. The detector should require
    *retry-exhaustion on a session with zero successes*, never first-failure —
    the healing-lag class recovered 51/51 in the mobile rounds and must not
@@ -169,7 +201,15 @@ purely capture truncation; the frames arrived after the log was saved.
 ## §6. THE RIG — how to capture (read before booking any test time)
 
 **Branch: `diag/dm-frame-join`** (local, never merge — it logs real key
-material). Rebased over `main`. Never merge it; rebase it forward.
+material). Never merge it; rebase it forward onto `main`:
+
+```
+git fetch origin && git rebase origin/main diag/dm-frame-join   # rebase + switch to it
+git checkout main                                               # back to normal work
+```
+
+There is a local alias for the first line (`git debug`), but it lives in this
+clone's git config, so do not assume it exists — use the full command above.
 
 The startup marker **enumerates the probes the build carries**:
 
