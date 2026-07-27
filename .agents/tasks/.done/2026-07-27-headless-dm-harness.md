@@ -266,6 +266,62 @@ spaces build around that specific issue before implementing. Needs triple-ratche
 session establishment + SpaceService/SyncService + channel send; user A's space
 ownership is why the canonical pair matters here.
 
+### Follow-up session 2026-07-27 (later) — reproduction + mitigation, and two bench defects
+
+The harness delivered what it was built for: the production DM failure is now
+reproducible on demand, and a client-side mitigation is measured. Details live in
+`.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 (findings AI/AJ/AK)
+and §5-B1. What belongs here is the harness work itself:
+
+**New capability**
+- `transport.ts` — controlled reordering: `holdInbound()` / `releaseInbound(order)` /
+  `deliverWithheld()` / `deliver(frame)`, plus `sent` / `arrived` records and
+  `ciphertextFp()` so a frame can be joined across the two sides. Withholding is
+  enforced **by fingerprint**, because an un-acked frame is re-pushed on every
+  `listen` — a version that only skipped the first copy was silently defeated by
+  relay redelivery, and no bucket formed.
+- `dm-reorder.scenario.test.ts` — builds the stale bucket, then delivers the
+  sender's next chain. 3 withheld frames → exactly 3 failures, at exactly the
+  colliding indices; the withheld frames then decrypt with 0 failures.
+- `dm-loss.scenario.test.ts` — #183 item 2, per direction, joined by ciphertext
+  fingerprint, with a long redelivery tail window (a short run cannot tell loss
+  from latency) and frames addressed elsewhere excluded from the denominator.
+- `dm-stale-bucket.scenario.test.ts` — the cycle at scale with the mitigation OFF
+  then ON, fresh accounts per arm.
+
+**Two defects that invalidated earlier harness numbers** (both fixed; both were
+caught by controls, not by inspection)
+1. **All bots shared one IndexedDB.** `MessageDB` hardcodes `DB_NAME='quorum_db'`
+   and every bot uses the one global `fake-indexeddb`, so two bots were a single
+   client with two `MessageService` instances writing the same rows. Each then
+   subscribed to the other's session inboxes and received its own outbound
+   ciphertext — 41-48% of all arrivals, every one an unavoidable AEAD failure.
+   Fixed by a per-bot `DB_NAME` in `storage.ts`.
+   *The control that mattered:* the app's `setResubscribe` uses the identical rule,
+   so this looked like a real app defect. `dr-self-echo.mjs` found **0 self-echo in
+   2709 distinct captured browser arrivals** — harness artifact, not app behaviour.
+2. **The harness could not see decrypt failures.** They never leave
+   `handleNewMessage` (caught, frame retained, `handled` returned). So slice 4's
+   "0 failures" was measured by an observer blind to failures. `bot.ts` now tees the
+   failure log line and classifies **novel vs replay** — a frame already decrypted
+   once is refused by design and must not be counted. Use `bot.novelErrors()`.
+   Also: `refreshSubscriptions` no longer fires per frame (a `listen` re-pushes the
+   relay queue, which turned 3 expected failures into 437); it fires only when the
+   inbox set changes, as the app does.
+
+Slice 4's conclusion ("volume alone does not age a session") **still holds** and is
+now genuinely evidenced: on the fixed bench a fresh pair shows 0 skipped keys,
+0 novel failures and 0 self-echo.
+
+**`importSession.ts` is no longer on the critical path.** It existed to study a
+degraded ratchet by lifting one out of a browser. The degraded state can now be
+*built* from a pristine pair in seconds, so the operator export is optional.
+
+Also fixed: `vitest.config.ts` excluded `src/dev/tests/harness/**`. The scenarios
+were being collected by the default config, which mocks WebSocket/crypto and never
+inits the wasm, so 8 files failed `vitest run` for that reason alone. Suite is
+554/554 green.
+
 ## Progress log
 
 - 2026-07-27: branch `feat/headless-dm-harness` created; plan written.

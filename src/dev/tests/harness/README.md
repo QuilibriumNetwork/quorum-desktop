@@ -114,6 +114,8 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness dm-basic` | two bots exchange numbered DMs, no browser (HARNESS_ROUNDS) |
 | `yarn harness dm-volume` | concurrent bidirectional load; samples skipped-keys growth |
 | `yarn harness dm-reset-recover` | wipe a session mid-conversation, verify it re-inits and recovers |
+| `yarn harness dm-reorder` | **reproduces the production DM failure on demand.** Withholds the head of a sending chain so a stale skipped-keys bucket forms, then delivers the sender's next chain: the frames at colliding indices fail AEAD, and only those |
+| `yarn harness dm-loss` | send-vs-arrive frame loss per direction, joined by ciphertext fingerprint (issue #183 item 2) |
 
 On any decrypt failure a bot writes `logs/<ts>-<bot>.xpdump.log` in `[XPDUMP]`
 format, so the existing offline analyzers run on it unchanged:
@@ -123,12 +125,48 @@ node .agents/tools/dm-debug/dr-ablate.mjs   logs/<ts>-<bot>.xpdump.log
 node .agents/tools/dm-debug/dr-replay.mjs   logs/<ts>-<bot>.xpdump.log
 ```
 
+## Three things that will mislead you if you don't know them
+
+Each of these silently produced a wrong measurement before it was found. All are
+fixed; the notes are here so a change doesn't reintroduce them.
+
+1. **Every bot needs its OWN database.** `MessageDB` hardcodes
+   `DB_NAME = 'quorum_db'` and all bots share one global `fake-indexeddb`, so
+   without a per-bot name two bots become ONE client with two `MessageService`
+   instances writing the same rows — and each subscribes to the other's session
+   inboxes, so 41-48% of arrivals were the bot's own outbound ciphertext (all
+   guaranteed AEAD failures). See `storage.ts`.
+2. **Decrypt failures do not propagate.** The receive path catches
+   `DmDecryptError`, retains the frame for redelivery and returns `handled` — that
+   retention is what makes recovery work. So `try/catch` around
+   `handleNewMessage` sees nothing. `bot.ts` tees the failure log line instead, and
+   splits failures into **novel** vs **replay**: a frame the bot already decrypted
+   is refused by design. **Quote `bot.novelErrors()`, never `bot.errors`.**
+3. **Do not re-subscribe per frame.** A `listen` makes the relay re-push everything
+   still queued, so re-subscribing after every frame turns one undecryptable frame
+   into an unbounded redelivery loop (3 expected failures became 437). The app
+   subscribes on connect; `refreshSubscriptions` now only fires when the inbox set
+   actually changes.
+
+Also: `transport.holdInbound()` / `releaseInbound()` / `deliverWithheld()` give
+controlled reordering, and withholding is enforced **by fingerprint** — an un-acked
+frame is redelivered on every `listen`, so a version that merely skipped the first
+copy was defeated by the relay.
+
 ## Status
 
 - Slice 1 (identity + transport + register) — DONE, verified on prod.
 - Slice 2 (receive a real browser DM, decrypt headlessly) — DONE, verified on prod.
 - Slice 3 (two bots talk, no browser) — DONE, verified live. Replaces the two-browser loop.
 - Slice 4 (volume + XPDUMP capture) — DONE. Finding: volume alone does not age a
-  session. Remaining: importSession.ts (lift a real aged session from a browser).
+  session (re-confirmed after the fixes above; the original run could not see
+  failures at all).
+- **Reproduction + mitigation (2026-07-27) — DONE.** `dm-reorder` reproduces the
+  production failure mode on demand, and `dm-stale-bucket` measures the client-side
+  mitigation at 32→0 failures with no cost to delayed frames. So the open
+  `importSession.ts` step (lift a real aged session out of a browser) is **no longer
+  on the critical path** — the failure can be built from scratch instead.
 
-See `.agents/tasks/2026-07-27-headless-dm-harness.md` for the full slice plan.
+See `.agents/tasks/2026-07-27-headless-dm-harness.md` for the full slice plan, and
+`.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the findings.
+*Last updated: 2026-07-27*

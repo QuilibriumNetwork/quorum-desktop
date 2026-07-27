@@ -9,7 +9,7 @@
 // seam every DM path funnels through), so a scenario observes exactly what the
 // real code produced — no reimplemented routing or crypto.
 import { QueryClient } from '@tanstack/react-query';
-import type { Message, UserRegistration } from '@quilibrium/quorum-shared';
+import { logger, type Message, type UserRegistration } from '@quilibrium/quorum-shared';
 import { MessageService } from '../../../services/MessageService';
 import type { MessageServiceDependencies } from '../../../services/MessageService';
 import { ActionQueueService } from '../../../services/ActionQueueService';
@@ -30,8 +30,18 @@ export interface HarnessBot {
   messageDB: MessageDB;
   /** Every message the real code persisted, in arrival order. */
   captured: Message[];
-  /** handleNewMessage failures (e.g. DmDecryptError), for aging measurement. */
-  errors: { t: number; message: string; frame: unknown }[];
+  /**
+   * Receive-path decrypt failures.
+   *
+   * `replay` distinguishes the two kinds, and the distinction is load-bearing: a
+   * frame this bot ALREADY decrypted once is refused by the ratchet on a second
+   * delivery, which is the protocol working, not a defect. Un-acked frames are
+   * redelivered on every `listen`, so replays dominate a raw failure count — the
+   * same 2-5x overstatement the manual rig kept hitting. Quote `novel` failures.
+   */
+  errors: { t: number; message: string; frame: unknown; replay: boolean }[];
+  /** Failures on a frame never successfully decrypted before. */
+  novelErrors(): { t: number; message: string; frame: unknown; replay: boolean }[];
   /** Fires as each message is persisted (received OR locally saved on send). */
   onDecrypted?: (m: Message) => void;
   /** Fires on a receive-path failure, with the frame that failed. */
@@ -52,7 +62,8 @@ export async function createBot(
 ): Promise<HarnessBot> {
   const apiClient = makeApiClient();
   const identity = await loadOrCreateBot(name, apiClient, opts);
-  const messageDB = await makeMessageDB();
+  // Per-bot database — see storage.ts. Sharing one made two bots into one client.
+  const messageDB = await makeMessageDB(name);
   const transport = new WsTransport();
   const queryClient = new QueryClient();
 
@@ -65,9 +76,20 @@ export async function createBot(
   // Listen on the device inbox + every current session inbox — mirrors the app's
   // setResubscribe, so frames on newly-created session inboxes (e.g. after a
   // reset/re-init) actually arrive.
+  //
+  // Only re-sent when the inbox SET actually changes. A `listen` makes the relay
+  // re-push everything still queued, so re-sending it after every frame turns one
+  // undecryptable frame into an unbounded redelivery loop: a reorder run that
+  // should have produced ~3 failures produced 437. The app subscribes on connect,
+  // not per frame.
+  let subscribed = '';
   const refreshSubscriptions = async () => {
     const states = await messageDB.getAllEncryptionStates();
-    transport.listen([identity.inboxAddress, ...states.map((s) => s.inboxId)]);
+    const addresses = [identity.inboxAddress, ...states.map((s) => s.inboxId)];
+    const key = [...new Set(addresses)].sort().join(',');
+    if (key === subscribed) return;
+    subscribed = key;
+    transport.listen(addresses);
   };
 
   // Action queue: the send path routes through it once a session is established.
@@ -92,6 +114,7 @@ export async function createBot(
     messageDB,
     captured: [],
     errors: [],
+    novelErrors: () => bot.errors.filter((e) => !e.replay),
     send: async (toAddress: string, text: string) => {
       const self = (await apiClient.getUser(identity.address))?.data as UserRegistration;
       const counterparty = (await apiClient.getUser(toAddress))?.data as UserRegistration;
@@ -155,7 +178,37 @@ export async function createBot(
       return (origSave as (...a: unknown[]) => Promise<void>)(message, ...rest);
     };
 
+  // Frames this bot has decrypted at least once, by ciphertext fingerprint.
+  const decryptedOk = new Set<string>();
+
+  const record = async (message: string, frame: unknown, replay: boolean) => {
+    bot.errors.push({ t: Date.now(), message, frame, replay });
+    // Only dump NOVEL failures: a replay's state has legitimately moved past the
+    // frame, so feeding it to dr-ablate would fill the corpus with expected
+    // refusals and dilute the real signal.
+    if (!replay) {
+      if (!xpdump) xpdump = new XpdumpLog(name, Date.now());
+      try {
+        await xpdump.capture(messageDB, frame as Record<string, unknown>, Date.now());
+      } catch { /* capture is best-effort */ }
+    }
+    bot.onError?.(message, frame);
+  };
+
   transport.onMessage(async (frame) => {
+    // A DM decrypt failure does NOT propagate: the receive path catches it,
+    // retains the frame for redelivery and returns `handled` (that retention is
+    // what makes recovery possible). So the only external signal is the log line
+    // the service writes — teed here, and attributed to this frame because
+    // inbound dispatch is serialized. Without this, `errors` stayed empty and the
+    // XPDUMP emitter never fired even while the service logged AEAD failures.
+    let loggedFailure: string | undefined;
+    const origError = logger.error;
+    logger.error = ((...args: unknown[]) => {
+      const first = String(args[0] ?? '');
+      if (first.includes('DM decrypt failed')) loggedFailure = first;
+      return (origError as (...a: unknown[]) => unknown)(...args);
+    }) as typeof logger.error;
     try {
       await messageService.handleNewMessage(
         identity.address,
@@ -164,15 +217,16 @@ export async function createBot(
         queryClient
       );
     } catch (err) {
-      const message = (err as Error)?.message ?? String(err);
-      bot.errors.push({ t: Date.now(), message, frame });
-      // Auto-capture the failing (state, frame) pair in dr-ablate format.
-      if (!xpdump) xpdump = new XpdumpLog(name, Date.now());
-      try {
-        await xpdump.capture(messageDB, frame as Record<string, unknown>, Date.now());
-      } catch { /* capture is best-effort */ }
-      bot.onError?.(message, frame);
+      loggedFailure ??= (err as Error)?.message ?? String(err);
+    } finally {
+      logger.error = origError;
     }
+    // Capture BEFORE re-subscribing: refreshSubscriptions can pull further frames
+    // that advance the ratchet, and the dump must hold the state the frame failed
+    // against.
+    const fp = WsTransport.ciphertextFp(frame) ?? WsTransport.fingerprint(frame);
+    if (loggedFailure) await record(loggedFailure, frame, decryptedOk.has(fp));
+    else decryptedOk.add(fp);
     // Processing a frame may have created a new session inbox — keep subscriptions current.
     await refreshSubscriptions();
   });
