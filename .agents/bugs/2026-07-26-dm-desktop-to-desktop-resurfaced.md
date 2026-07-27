@@ -355,13 +355,27 @@ one client was two builds behind and its silence was unreadable.
 5. Record what you *saw on screen* — **device observation outranks the rig**.
    That is how a 21-frame phantom loss was caught on mobile.
 
-**Offline replay** — highest value per minute, zero device time:
+**Offline analysis** — highest value per minute, zero device time. Both tools live
+in [`.agents/scripts/`](../scripts/) **in this repo**, because `.agents/` is
+gitignored in quorum-mobile where they were originally written — the copies there
+were never tracked and would not survive a fresh clone. They resolve the SDK
+relative to the repo, or set `SDK_DIR=`.
+
 ```
-node E:/GitHub/Quilibrium/quorum-mobile/.agents/scripts/dr-replay.mjs <desktop.log>
+node .agents/scripts/dr-replay.mjs <desktop.log>    # reproduce a failure
+node .agents/scripts/dr-ablate.mjs <desktop.log>    # find what CAUSES it
 ```
-Reassembles `[XPDUMP]` chunks and re-runs the real failing decrypt against the
-real wasm core: whether the seal opened, whether the frame was init-wrapped,
-whether the ratchet failed.
+
+`dr-replay` reassembles `[XPDUMP]` chunks and re-runs the real failing decrypt
+against the real wasm core: whether the seal opened, whether the frame was
+init-wrapped, whether the ratchet failed.
+
+`dr-ablate` is what found the root cause. It re-runs the same decrypt while
+changing **one** property of the ratchet state at a time, so a property that is
+load-bearing announces itself by making the frame decrypt. **Add a variant to its
+`VARIANTS` array to test any new hypothesis against 65 real captured failures in
+seconds** — that is far cheaper than a capture round, and it is how ten dead
+hypotheses could have been killed faster.
 
 > ⚠️ `[XPDUMP]` lines contain **REAL KEY MATERIAL**. Throwaway test accounts only.
 > Keep logs local — never paste raw log regions into a GitHub issue (round data
