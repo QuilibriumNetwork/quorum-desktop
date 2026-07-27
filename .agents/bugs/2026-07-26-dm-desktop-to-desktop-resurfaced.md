@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)"
-status: ROOT CAUSE FOUND 2026-07-27, upstream in the channel crate (finding AE). When a session's `skipped_keys_map` holds a bucket under the receiver's CURRENT receiving header key, the crate's decrypt takes that bucket and fails on a frame it could otherwise derive the key for. 63 of 65 captured failures across 6 rounds decrypt when ONLY that bucket is deleted and nothing else changes. It builds up with use, every failure adds another key, and a reset clears it — which is why a conversation degrades over days and works again after a reset. ⚠️ The older framing ("failure is a deterministic function of chain position, 0-2 fail, 3+ never") is a SYMPTOM description and was RETIRED by finding AD — a fresh session shows those same positions behaving normally; position is where the failure lands, not what causes it. Failures are TRANSIENT — the same bytes decrypt on redelivery — so this is LATENCY WITH A LONG TAIL, not demonstrated message loss. TEN app-level mechanisms have been proposed and killed (§3). Three client defects were found and are MERGED to main (§7). Evidence is filed upstream at quorum-mobile#183. A fresh agent's next action is in §5 — it is NOT more local capturing, and §5 now lists a client-side mitigation that only became possible once AE was known.
+status: MECHANISM FULLY CHARACTERISED AND A CLIENT-SIDE MITIGATION IS VALIDATED (2026-07-27, finding AI — refines AE). The crate matches a skipped message key BY INDEX in the bucket filed under the receiver's pre-DH-step `current_receiving_header_key`, without checking that bucket belongs to the incoming frame's chain. A frame that opens a NEW sending chain and lands on an index present in that stale bucket is handed an OLD-chain key and fails AEAD; non-colliding indices decrypt normally. All three conditions hold in 139 of 139 recovered captured failures, the failing index set equals the stale bucket's index set exactly (5/5 synthetic configurations), and it is now REPRODUCIBLE ON DEMAND both against the bare crate and through the real client (`yarn harness dm-reorder`). ⚠️ AE's implied "the bucket's presence causes the failure" is NOT sufficient — controls show an in-order frame and non-colliding frames decrypt fine on a poisoned state. This also answers the lookup-vs-contents question §4 left open: it is the LOOKUP; the bucket's keys are valid and decrypt their own frames correctly. ⚠️⚠️ §5-B1 AS ORIGINALLY WRITTEN MUST NOT SHIP: pruning and persisting destroys the delayed frames whose keys live in that bucket (3/3 measured), converting recoverable latency into permanent loss. The safe form (B1′ — prune for the RETRY ONLY, re-file the bucket into the persisted state) is implemented on branch `feat/dm-stale-bucket-retry` and measured at 32→0 failures over 56 new-chain frames with ZERO cost to delayed frames. TEN app-level mechanisms remain dead (§3); three client defects are MERGED (§7). Evidence is filed upstream at quorum-mobile#183. Failures are TRANSIENT, so this is LATENCY WITH A LONG TAIL, not demonstrated loss.
 created: 2026-07-26
 severity: medium — user-visible lag and apparent loss; no permanent loss demonstrated since the init-envelope fix (see §1)
 repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)
@@ -23,9 +23,15 @@ related:
 
 > **START HERE if you are a fresh agent.** In order:
 >
-> 1. **The client-side work is finished and merged.** Do not start by hunting for
->    a bug in this repo — ten app-level mechanisms have already been proposed and
->    killed (§3), and the three real defects found along the way are shipped (§7).
+> 0. **2026-07-27: the mechanism is fully characterised, reproducible on demand, and
+>    a client-side mitigation is built and measured.** Run `yarn harness dm-reorder`
+>    to watch the production failure happen in ~35 seconds. The live work item is
+>    **reviewing and merging branch `feat/dm-stale-bucket-retry`** (§5-B1), not
+>    running another experiment. Findings AI/AJ/AK/AL in §1.
+> 1. **The client-side work up to that point is finished and merged.** Do not start
+>    by hunting for a bug in this repo — ten app-level mechanisms have already been
+>    proposed and killed (§3), and the three real defects found along the way are
+>    shipped (§7).
 > 2. **Read §3 before forming a theory.** Every one of those ten was argued
 >    confidently and then disproved by the next measurement. In every single case
 >    the measurement was sound and the interpretation ran ahead of it; one was
@@ -56,37 +62,134 @@ related:
 | Why it usually looks fine | the frame is **redelivered** and decrypts on a later attempt. Recovery can take longer than a whole capture round, so short captures cannot tell loss from latency (finding AB) |
 | Direction | varies by round; both directions fail. Early rounds looked one-directional, later ones did not |
 | Earlier, worse state | 0 of 10 delivered both directions, permanent, until a manual reset |
-| **ROOT CAUSE** | ⚠️ **FOUND — finding AE.** When `skipped_keys_map` holds a bucket under the receiver's **current receiving header key**, the crate's decrypt takes that bucket and fails instead of deriving the key normally. **63 of 65 captured failures across 6 rounds decrypt when that ONE bucket is deleted** and nothing else changes. In a typical case the bucket held 3 keys of 62 — removing the other 59 changes nothing. Minimal repro in the archive; upstream, not fixable here |
+| **ROOT CAUSE** | ⚠️ **FOUND — finding AE, mechanism completed by finding AI.** The crate matches a skipped message key **by index** in the bucket filed under the receiver's *pre-DH-step* `current_receiving_header_key`, without checking that bucket belongs to the incoming frame's chain. A frame opening a NEW sending chain, at an index present in that stale bucket, gets an OLD-chain key and fails AEAD. **139 of 159 captured failures** (the whole corpus on disk, de-duplicated — larger than the 65 first recorded) decrypt when that ONE bucket is removed, and **139/139 of them show all three conditions**. Upstream, not fixable here — but see §5-B1′, which removes the symptom |
+| **Reproducible on demand** | ✅ **YES, since 2026-07-27** — no devices, no aged session, no waiting. Out-of-order delivery within a chain forms the stale bucket; the sender's next chain then fails at exactly the colliding indices. `node .agents/tools/dm-debug/dr-prune-safety.mjs` (crate level, deterministic) and `yarn harness dm-reorder` (through the real client). See finding AI |
 | ~~mechanism~~ (superseded, kept for the reasoning) | ⚠️ **REVISED — see finding AD.** On an AGED session, failure is near-total at chain positions 0-2 and absent from 3+. On a FRESH session the same positions are clean. **Chain position is where the failure lands, not what causes it.** The leading correlate is the accumulated skipped-keys map, which grew 2 → 20 → 23 → 37 across the day as the failure rate rose — but that is a hypothesis, not a conclusion (failures also *create* skipped keys, so cause and effect are circular on current evidence) |
 | Recovery | **transient** — nearly all failed frames decrypt on a later redelivery. All recovery counts in the archive are LOWER BOUNDS, because captures were saved at ~2 minutes |
 | Why the typing indicator is inverted | `typing-start` is the first frame after reading the peer's message, i.e. always **position 0**, the 100%-failure slot; the peer sees the *redelivered* copy a turn later |
 
-The original reproduction pattern — works after a reset, use the same accounts on
-mobile for days, return to desktop broken — **has still never been reproduced
-deliberately** and remains the single most valuable thing to capture.
+The original *field* pattern — works after a reset, use the same accounts on mobile
+for days, return to desktop broken — has still never been reproduced by following
+those steps. **But the failure mode itself no longer needs it:** the mechanism is
+reproducible on demand in seconds (finding AI), so nothing further is blocked on
+capturing an aged session. What the field pattern would still add is *how the
+bucket comes to exist in normal use*, which remains unmeasured (§5-D).
 
-**The one-line summary:** a stale entry in the ratchet's skipped-keys map, under
-the key the receiver is currently using, makes the crate fail frames it could
-decrypt. It builds up with use, every failure adds another, and a reset clears it
-— which is why the conversation degrades over days and works again after a reset.
+**The one-line summary:** the ratchet keeps the message keys of frames it had to
+skip, filed under the sending chain they belong to — and when the sender starts a
+new chain, the crate matches those saved keys **by position number alone**, without
+checking they belong to this chain. So the first frames of every new chain get
+handed a key from the old one and fail. It accumulates with use, every failure adds
+another saved key, and a reset clears the lot — which is why a conversation degrades
+over days and works again after a reset.
 
 > **Bench refinement (headless harness, 2026-07-27):** "builds up with use" is NOT
 > message-count alone. A run of the REAL client headless in Node (both sides, fresh
 > accounts, 60–82 concurrent msgs each way) accumulated **zero** skipped keys and
-> **zero** failures — a controlled confirmation that a fresh session does not fail,
-> narrowing the accumulation trigger to time / cross-platform / reset, NOT volume.
-> A first run *did* fail, but a fresh-account control falsified it as stale queued
-> frames from account reuse (the redelivery mode), not load. See §5 "headless
-> harness" and [the harness task](../tasks/2026-07-27-headless-dm-harness.md).
+> **zero** failures, narrowing the accumulation trigger to time / cross-platform /
+> reset, NOT volume. A first run *did* fail, but a fresh-account control falsified
+> it as stale queued frames from account reuse, not load.
+> ⚠️ **This conclusion still holds but the original measurement did not support it
+> — see finding AJ.** The harness could not see decrypt failures at all when that
+> run was made (the receive path catches `DmDecryptError` and returns `handled`, so
+> nothing propagated), and every bot shared one IndexedDB. Both are fixed; on the
+> fixed bench a fresh pair still shows 0 skipped keys and 0 novel failures, so the
+> claim is now genuinely evidenced.
+
+> ### Bench findings, 2026-07-27 (offline ablation + headless harness)
+>
+> **AI — the mechanism, completing AE.** Three conditions are jointly necessary:
+> (a) a bucket exists under the receiver's `current_receiving_header_key`; (b) the
+> incoming frame opens a NEW sending chain, so the receiver takes a DH step;
+> (c) the frame's index *within that new chain* collides with an index present in
+> the stale bucket. The crate then applies an old-chain message key and fails AEAD.
+> - **139/139** recovered captured failures satisfy all three (whole corpus on
+>   disk, de-duplicated by envelope fingerprint: 159 dumps, 139 recover, 20 do not).
+> - The failing index set **equals** the stale bucket's index set, exactly, across
+>   5/5 synthetic configurations (bucket `[0]`…`[0,1,2,3,4]`).
+> - **Controls that could have falsified it and did not:** the bucket's mere
+>   presence is *not* sufficient (an in-order frame and non-colliding new-chain
+>   frames both decrypt on a poisoned state); and skipped keys from a previous
+>   chain are filed correctly under the *old* header key, so cross-DH-step
+>   withholding alone poisons nothing.
+> - **This settles §4's open lookup-vs-contents question: it is the LOOKUP.** The
+>   bucket's contents are valid — those keys decrypt their own frames correctly
+>   (measured, 3/3). They are simply being applied to the wrong chain.
+> - **It mechanically explains the retired position table.** The indices that get
+>   skipped in practice are the low ones, so the stale bucket holds 0,1,2… and
+>   every subsequent DH chain fails at exactly its first positions and is clean
+>   from there. Position was never causal; it is where the collision lands.
+>
+> **AJ — two harness defects that invalidated earlier bench numbers.** Both found
+> by controls, both fixed:
+> 1. **Every bot shared one database.** `MessageDB` hardcodes `DB_NAME='quorum_db'`
+>    and all bots use one global `fake-indexeddb`, so two bots were one client with
+>    two `MessageService` instances writing the same rows. Each then subscribed to
+>    the other's session inboxes (`refreshSubscriptions` reads every
+>    `encryption_states` row), so **41–48% of all arrivals were the bot's OWN
+>    outbound ciphertext** — each an unavoidable AEAD failure.
+>    ⚠️ It was tempting to conclude the same inflates the browser rounds, since the
+>    app's `setResubscribe` uses the identical rule. **A control killed that:**
+>    `dr-self-echo.mjs` finds **0 self-echo in 2709 distinct captured browser
+>    arrivals**, so the ~40% figure in this table is NOT explained by it. Harness
+>    artifact only. Fixed with a per-bot database name.
+> 2. **The harness could not see decrypt failures.** They never propagate out of
+>    `handleNewMessage`. Fixed by teeing the failure log line, and failures are now
+>    split into **novel** vs **replay** — a frame the bot already decrypted once is
+>    refused by design, and replays dominate a raw count. Only novel failures mean
+>    anything. (Also: re-subscribing after every frame made the relay re-push its
+>    queue in a loop, turning 3 expected failures into 437; the harness now
+>    re-subscribes only when the inbox set changes, as the app does.)
+>
+> **AK — the B1 mitigation, measured.** Naive B1 (prune the bucket, decrypt,
+> persist) **must not ship**: it destroys 3/3 of the delayed frames whose keys live
+> in that bucket, which are exactly the frames redelivery recovers today. **B1′**
+> (prune for the retry only, re-file the bucket into the persisted state) recovers
+> **32→0** failures over 56 new-chain frames per arm with **zero** delayed-frame
+> failures in either arm. See §5-B1.
+>
+> **AL — desktop↔desktop transport loss is 0%, first measurement (#183 item 2).**
+> The upstream lead is "the node write path drops a fraction of frames handed to an
+> open socket, 32% one direction phone↔phone"; d↔d had never been measured.
+> `yarn harness dm-loss`, fresh accounts, 300 rounds each way, 12 min of sending
+> plus a **20-minute** redelivery tail:
+>
+> | | A→B | B→A |
+> |---|---|---|
+> | frames addressed to an inbox the peer subscribes to | 301 | 301 |
+> | arrived (joined by ciphertext fingerprint) | **301** | **301** |
+> | missing | **0** | **0** |
+>
+> Zero novel decrypt failures on either side. Read it precisely:
+> - **It does not refute item 2.** Different platform and network path; this says
+>   nothing about phone↔phone.
+> - Each app-level message produced **2** outbound frames per side (602 raw), only
+>   301 of them addressed to an inbox this peer subscribes to. The rest are
+>   multi-device fan-out to addresses outside this pair and are excluded from the
+>   denominator — if they were *supposed* to land here, that exclusion would hide
+>   the loss. Worth confirming separately.
+> - Arrival counts are asymmetric (313 vs 371) purely because bob received more
+>   redeliveries (70 replays vs 12). The de-duplicated join is unaffected, and this
+>   is exactly why raw counters must never be quoted.
 
 ---
 
 ## §2. What is established (evidence: [captures archive](2026-07-26-dm-desktop-to-desktop-captures.md))
 
-- **THE ROOT CAUSE: a poisoning bucket in the skipped-keys map.** A bucket under
-  the receiver's *current* receiving header key makes the crate fail frames it
-  could decrypt. 63/65 captured failures, 6 rounds, both clients, decrypt when
-  only that bucket is removed. Upstream, in the crate. *(AE, §4 lead 0)*
+- **THE ROOT CAUSE: a stale skipped-keys bucket, matched by index against the
+  wrong chain.** A bucket under the receiver's *current* receiving header key makes
+  the crate fail frames it could decrypt — specifically the frames that open the
+  sender's NEXT chain at an index that bucket happens to hold. 139/159 captured
+  failures (whole corpus, de-duplicated) decrypt when only that bucket is removed,
+  and 139/139 of those show the full signature. Upstream, in the crate.
+  *(AE + AI, §4 lead 0)*
+- **The failure is reproducible on demand, from a pristine session.** Out-of-order
+  delivery within one chain forms the bucket; the sender's next chain then fails at
+  exactly the colliding indices — 5/5 synthetic configurations, and through the real
+  client (`yarn harness dm-reorder`). No aged session, no devices, no waiting. *(AI)*
+- **The bucket's presence alone is NOT sufficient**, and the index collision is what
+  discriminates: on a poisoned state, an in-order frame and any new-chain frame at a
+  non-colliding index both decrypt normally. *(AI — control)*
 - **A FRESH session does not exhibit the failure.** Post-reset, positions 0-2
   went from 12/12 failing to 2/15, and one client logged 0 failures against 60
   the round before. Independently corroborated synthetically: 1920 frames on
@@ -188,10 +291,15 @@ experiment, and structurally by reading the SDK (finding AG: in
 the `sent_accept` branch and is identical on both sides of it, so init-wrapping
 cannot alter the inner ciphertext).
 
-**Still open, and both upstream:** whether the *lookup* consults a bucket it
-shouldn't, or the bucket *contents* were written wrong earlier. Ablation cannot
-separate them; reading the crate would, and there is no Rust source in the SDK
-repo (only `channelwasm_bg.wasm`).
+**~~Still open, and both upstream:~~ RESOLVED 2026-07-27 — it is the LOOKUP.**
+The question was whether the lookup consults a bucket it shouldn't or the bucket
+*contents* were written wrong earlier. Ablation cannot separate them, but
+*inspection* can, and it did not need the crate source: the bucket's keys decrypt
+their own frames correctly (3/3 measured), so the contents are valid — they are
+being matched **by index** against a frame from a different chain. See finding AI
+and `dr-prune-safety.mjs`. This is the sharpest thing we can hand upstream: not
+"skipped-key handling misbehaves" but "the skipped-key lookup does not verify that
+the bucket's header key belongs to the frame's chain".
 → **Filed upstream** as **item 1a** of [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183), the
 issue's lead item. The body was rewritten 2026-07-27 to put it first, correct the
 desktop↔desktop attribution previously given to the fork, and absorb the standalone
@@ -225,7 +333,11 @@ folded into it, so the body is the whole story. Its shape:
     is now stated as UNQUANTIFIED — the d↔d failure once cited for it is
     attributed to 1a, and no production failure is cleanly 1b-shaped.
 - **item 2** — the node write path dropping frames handed to an open socket,
-  32% one direction phone↔phone.
+  32% one direction phone↔phone. **Now measured desktop↔desktop for the first
+  time: 0% loss, both directions, 301 frames each way with a 20-minute redelivery
+  tail** (finding AL, `yarn harness dm-loss`). That does not refute item 2 — it
+  bounds it to platforms/paths other than d↔d, and it removes transport loss as an
+  explanation for the d↔d symptom.
 
 Neither is fixable here. **If you produce new d↔d evidence, add it there — the
 lead dev reads that issue, not this file.**
@@ -244,13 +356,26 @@ Given this bug's history, prompt is the safer first step. Do not build without i
 source for. The app is exhausted as an explanation, the three real client defects
 are merged, and the evidence is filed upstream.
 
-⚠️ **But "cannot fix the cause" is not "cannot fix the symptom", and finding AE
-changed what is possible here.** An earlier version of this section said
-"everything this repo can do has been done"; that predated AE. **Option B below is
-now a candidate for removing the user-visible symptom without any upstream fix,
-and it can be validated offline for free before any app code is written.**
+⚠️ **But "cannot fix the cause" is not "cannot fix the symptom."** An earlier
+version of this section said "everything this repo can do has been done"; that
+predated AE.
 
-### FIRST: three tools that answer questions without a capture round
+> **STATE OF PLAY, 2026-07-27 (read this before picking anything below).**
+> The mechanism is fully characterised (AI), reproducible on demand in seconds with
+> no devices, and **a client-side mitigation is implemented and measured**: branch
+> `feat/dm-stale-bucket-retry`, 32→0 failures with no cost to delayed frames
+> (§5-B1). Transport loss is measured at 0% d↔d (AL).
+>
+> **The highest-value next action is to get that branch reviewed and merged**, not
+> to run another experiment. After that, the open questions are narrow: what supplies
+> the out-of-order delivery that forms the bucket in the field (§5-D), and whether
+> the mitigation behaves on mobile↔desktop traffic.
+>
+> ⚠️ And note what AJ says about this bench: two harness defects silently produced
+> wrong numbers before controls caught them. Treat any new harness measurement as
+> suspect until a control could have falsified it.
+
+### FIRST: the offline tools that answer questions without a capture round
 
 Ten hypotheses in this investigation were killed the slow way — book a round, ask
 the operator for attention, wait, read logs. The tool that finally found the root
@@ -262,6 +387,8 @@ cause needed **none of that** and arrived last. Do not repeat that ordering.
 | `dr-replay.mjs` | is this failure genuine and reproducible, or an app-level race | a saved log |
 | `dr-advanced-start-fork.mjs` | reproduces the upstream crate's advanced-start fork from a pristine X3DH pair | **nothing** — no log, no devices |
 | `dr-position-table.mjs` | drives **fresh** sessions through six delivery regimes and scores failure by chain position. 1920 frames, zero failures — corroborates AC, and is ⛔ **not** evidence the crate is clean (a fresh session has no poisoning bucket). Its unrealised value is the session-ageing test below | **nothing** |
+| `dr-prune-safety.mjs` | **the mechanism and the mitigation.** Reports, per captured failure, what the frame actually *is* (its index in its own chain, whether it drove a DH step, whether that index collides with the stale bucket) and whether recovery is real or a re-accepted duplicate. Its synthetic half **builds the poisoning condition from a pristine X3DH pair** and answers the questions the failure-only corpus cannot — above all "does the prune break a frame that would otherwise succeed" | a log (optional; `--synthetic-only` needs **nothing**) |
+| `dr-self-echo.mjs` | does a client receive its OWN outbound frames? Joins `[DM-send wire]` against `[DM-recv wire]` in one client's log. **0 of 2709 captured browser arrivals** — which is how the harness's 41-48% self-echo was identified as a bench artifact and not the cause of the ~40% failure rate | a log |
 
 ```
 node .agents/tools/dm-debug/dr-ablate.mjs <log> [...more logs]
@@ -303,12 +430,22 @@ straight to `dr-ablate.mjs`.
 ~5 min); regression-test a fix once one lands; measure the transport claim
 (item 2) by counting send-vs-arrive over hours.
 
-**Cannot (yet):** it is the desktop protocol + service layer, **not the UI and
-not mobile**, and it has **not reproduced the AGED-session failure** — volume does
-not age a session (§1 refinement). The open next step is `importSession.ts`: lift a
-real degraded `EncryptionState` row out of a browser (plain JSON in IndexedDB;
-`dr-replay` already loads these) and keep it alive on the bench. Full plan +
-env gotchas: [headless DM harness task](../tasks/2026-07-27-headless-dm-harness.md).
+**It DOES now reproduce the production failure** (finding AI): `yarn harness
+dm-reorder` withholds the head of a sending chain to form the stale bucket, then the
+sender's next chain fails at exactly the colliding indices. `yarn harness
+dm-stale-bucket` runs that cycle at scale with the mitigation off and on. So
+`importSession.ts` (lift a degraded row out of a browser) is **no longer needed** —
+the degraded state can be built from scratch.
+
+**Cannot:** it is the desktop protocol + service layer, **not the UI and not
+mobile**. Volume alone still does not age a session (§1 refinement).
+
+⚠️ **Read AJ before trusting a harness number.** Two defects in this bench produced
+confidently wrong measurements (a shared IndexedDB across bots, and an observer
+blind to decrypt failures). Both are fixed and documented in
+`src/dev/tests/harness/README.md`, but the lesson is the general one: give every
+harness claim a control that could falsify it. Full plan + env gotchas:
+[headless DM harness task](../tasks/2026-07-27-headless-dm-harness.md).
 
 ### If you are here because the user reports DM lag or a missing message
 
@@ -329,38 +466,64 @@ attempt essentially always, so the trigger is systematic rather than incidental.
 captures contain live ratchet state, they live only on the operator's machine, and
 they are not going in a public issue.
 
-### B. Mitigation we control — now TWO options, and B1 is new
+### B. Mitigation we control — B1′ is BUILT AND MEASURED, B2 is now redundant
 
-**B1. Prune the poisoning bucket and retry.** *(possible only since finding AE;
-UNVALIDATED, proposed 2026-07-27)*
+**B1. ~~Prune the poisoning bucket and retry.~~ VALIDATED, BUT ONLY IN THE B1′
+FORM — implemented on branch `feat/dm-stale-bucket-retry`, 2026-07-27.**
 
-AE proves that deleting **one** bucket makes 63 of 65 real captured failures
-decrypt immediately. The ratchet state is plain JSON that JavaScript can read and
-modify — `dr-ablate.mjs` already does exactly this mutation
-(`{ ...rs, skipped_keys_map: m }` after deleting `m[current_receiving_header_key]`),
-and the app already parses the same state on every send (`orderSessionsForSend`
-does `JSON.parse(r.state)`). So on decrypt failure the receive path could retry
-once with that single bucket removed.
+> ⚠️ **B1 as originally written above is DESTRUCTIVE. Do not ship it.** The three
+> blocking questions are now answered, and the answer to (2) is bad: those keys are
+> the ONLY way to read genuinely out-of-order frames, and a receiving chain cannot
+> be run backwards to re-derive them. **Pruning and persisting destroyed 3 of 3
+> delayed frames that decrypt without it** — and those are precisely the frames
+> redelivery recovers today. Naive B1 would have traded recoverable latency for
+> permanent loss and looked like a fix while doing it.
 
-If it holds, **the user-visible symptom goes away while the crate bug stays
-unfixed.** That is a materially better outcome than option B2, which only makes
-recovery faster.
+**The three questions, answered:**
 
-**Validate it offline first — this is free and requires no app code.** `dr-ablate`
-already runs against every captured failure on disk. What must be checked before
-building anything:
+1. *Does pruning break a frame that would otherwise succeed?* **Yes** — the frames
+   whose keys are in the bucket. Note the original plan ("run the variant across
+   all captured successes") **cannot be executed**: `[XPDUMP]` fires only inside the
+   two decrypt-failure catch blocks, so the corpus contains **zero** captured
+   successes by construction. It was answered synthetically instead, where one
+   state holds both the retried frame and the bucket's own frames.
+2. *What is lost?* Everything in the bucket, irrecoverably — see above.
+3. *Do the non-recovering failures differ?* Yes. On the full corpus 20 of 159 do
+   not recover; they sit on near-empty maps (`rLen=3, buckets=1, keys=1`) and 2
+   have no current-header bucket at all. Consistent with genuine replays, as
+   guessed.
 
-1. Does pruning only that bucket ever break a frame that would otherwise succeed?
-   (Run the variant across all captured *successes*, not just failures.)
-2. What is lost by discarding those keys — could a genuinely out-of-order message
-   that needed them become permanently undecryptable? In the representative case
-   the bucket held 3 keys of 62, and pruning would happen only on failure, but
-   that is an argument, not evidence.
-3. Do the 2 of 65 that never recover behave differently? (They sit on near-empty
-   maps and are most likely genuine replays.)
+**B1′ — the form that is safe, and what makes it safe.** Use the pruned state as a
+*decrypt input only*, then re-file the bucket under its own header key in whatever
+state gets persisted. The retried frame drove a DH step, so by the time the state
+is saved that header key is **no longer current** and cannot poison again, while
+the delayed frames it serves still decrypt.
 
-**Do not ship this without 1 and 2 answered.** It is a workaround for someone
-else's bug and it deliberately discards key material.
+Measured (`yarn harness dm-stale-bucket`, 8 cycles per arm, fresh accounts both):
+
+| | retry OFF | retry ON |
+|---|---|---|
+| stale bucket formed | 8/8 cycles | 8/8 cycles |
+| AEAD failures on new-chain frames | **32** of 56 | **0** of 56 |
+| failures on the DELAYED frames | 0 | **0** ← the regression that matters |
+
+Implementation: [`src/utils/dmStaleBucketRetry.ts`](../../src/utils/dmStaleBucketRetry.ts)
+(pure, 14 unit tests) wired into **both** decrypt branches of
+`handleNewMessage`. Two things a future editor must not undo:
+
+- **The retry has to wrap the decrypt AND `parseDecryptedMessage`.** A DM decrypt
+  failure does *not* reject — the crate returns a result whose `message` carries
+  `Decryption failed: aead::Error`, and `parseDecryptedMessage` is what throws.
+  A first version wrapped only the decrypt call and silently never fired.
+- **The re-file step is not optional.** Removing it is exactly naive B1.
+
+There is a kill switch (`staleBucketRetry.enabled`) because this is a workaround
+for a defect in a dependency we have no source for. It is inert on a healthy
+session: no bucket under the current key means one JSON parse and no retry.
+
+**Still to do before merge:** exercise it against mobile↔desktop traffic, and
+decide whether the `logger.warn` on each recovery is wanted in production or should
+be sampled.
 
 **B2. Trigger redelivery on decrypt failure instead of waiting for it.**
 
@@ -372,8 +535,13 @@ inverted typing indicator would shrink *without* the upstream fix.
 Unbuilt and unscoped. It is mitigation, not a cure, and it must not weaken the
 retention that makes recovery possible in the first place. Start from
 `UndecryptableFrameTracker` (`src/utils/frameRetry.ts`) and the skip-and-keep path
-in the receive handler. **B1 subsumes most of B2's value if B1 validates — try B1
-first, it is cheaper to test.**
+in the receive handler.
+
+> **B1′ has landed, so B2 is now mostly redundant** — B1′ recovers the frame on the
+> first delivery, so there is no wait to shorten for the failures it covers. B2 would
+> only help the residue B1′ does not recover (20 of 159 in the corpus, which look like
+> genuine replays and would not benefit either). **Do not build B2 without first
+> measuring what fraction of failures survive B1′ in real traffic.**
 
 ### C. The one fix never exercised live
 
@@ -384,33 +552,45 @@ minutes, reopen on a diag build, and check that `STALE init envelope IGNORED` do
 **not** fire and the message arrives. Fifteen minutes with the client closed, so
 it costs no attention.
 
-### D. Still never reproduced deliberately
+### D. ~~Still never reproduced deliberately~~ — REPRODUCED 2026-07-27, and what is left
 
-The original report — works after a reset, use the same accounts on mobile for
-days, return to desktop broken. Nobody has reproduced it on purpose. It remains
-the single most valuable capture available, and no round so far has attempted it.
+**The failure mode is reproduced deliberately**, in seconds, with no devices:
+`yarn harness dm-reorder` (real client) and `dr-prune-safety.mjs` (bare crate).
+Finding AI. Anything that needed "a genuinely broken session to look at" can stop
+waiting.
 
-### E. Separate the confounds behind the feedback-loop hypothesis
+**What that does NOT answer, and is now the only open question here:** *how the
+stale bucket comes to exist in ordinary use.* Forming it requires a later frame of a
+sending chain to be processed before an earlier one, and the relay delivers in
+order — so on the bench it takes deliberate withholding. In the field something
+supplies that reordering: frame loss followed by redelivery, a reconnect, or
+cross-platform behaviour. Volume alone does not (§1 bench refinement).
 
-§2i's story — "map grows → more failures → map grows" — is a **hypothesis, not a
-conclusion.** `skipped` is confounded with session age, DH epoch count and total
-traffic, and because failures *create* skipped keys, cause and effect are circular
-on captured evidence. §2i names the test: *age a session deliberately and see
-whether failure rate tracks `skipped` independently of elapsed time.*
+That is what the original field pattern would still buy — not the failure, but its
+*trigger*. It is also the one question that bears on whether the mitigation in
+option B1 is enough on its own, or whether the reordering source is itself worth
+fixing. Cheap next probe: instrument how often a real client processes a chain's
+frames out of order, which needs one counter and no capture round.
 
-Captured evidence cannot do this. A **synthetic** harness can, because it controls
-both independently: grow the map without ageing the session, age the session
-without growing the map. `dr-position-table.mjs` is the natural home. It would
-also answer whether the poisoning bucket ever arises **naturally**, or only in
-states that reached it by some other route — which bears directly on the
-lookup-vs-contents question §2j says ablation cannot settle. **No device time.**
+### E. ~~Separate the confounds behind the feedback-loop hypothesis~~ — LARGELY ANSWERED
 
-> **Better vehicle, in progress:** [2026-07-27-headless-dm-harness.md](../tasks/2026-07-27-headless-dm-harness.md)
-> (branch `feat/headless-dm-harness`) re-hosts the REAL `MessageService` in Node
-> over the same wasm core with `fake-indexeddb`. That can age a session through
-> the actual app paths at machine speed, which is strictly better than ageing a
-> synthetic two-party ratchet. Prefer it once slice 1 lands; use
-> `dr-position-table.mjs` only if you need an answer before then.
+§2i's story was "map grows → more failures → map grows", flagged as a hypothesis
+because `skipped` is confounded with session age, DH epoch count and traffic, and
+failures also *create* skipped keys.
+
+**What AI settles.** Ageing is not required at all: the failure needs one stale
+bucket and one index collision, and a session two messages old will do. So the
+"grow the map without ageing the session / age it without growing the map" experiment
+is no longer the pivotal test — the causal arrow is established directly, by building
+the state and observing that the failing index set equals the bucket's index set.
+
+**The feedback loop is real but secondary.** Each failure does leave a skipped key,
+which enlarges the bucket and widens the range of colliding indices. That explains
+gradual degradation. It is not what starts it.
+
+**What is still open is narrower and is now stated in §5-D:** what supplies the
+out-of-order delivery that creates the first bucket in the field. That is a question
+about the transport and the client's processing order, not about the ratchet.
 
 ### Structural facts to carry into ANY code change here
 

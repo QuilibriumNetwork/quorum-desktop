@@ -81,6 +81,7 @@ import { TypingService, type TypingMessage } from '@quilibrium/quorum-shared';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
+import { findStaleBucket, restoreStaleBucket } from '../utils/dmStaleBucketRetry';
 import { orderSessionsForSend } from '../utils/sessionSelection';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
@@ -3856,13 +3857,35 @@ export class MessageService {
           message.encryptedContent
         );
         if (freshKeys.sending_inbox.inbox_public_key === '') {
+          let restore: { headerKey: string; bucket: Record<string, unknown> } | null = null;
           try {
-            const result =
-              await secureChannel.ConfirmDoubleRatchetSenderSession(
-                JSON.parse(fresh.state),
+            // Wraps decrypt AND parse: the crate reports an AEAD failure in the
+            // returned message, not by rejecting, so parseDecryptedMessage is the
+            // call that throws (see the InboxDecrypt branch).
+            const decryptAndParse = async (row: unknown) => {
+              const r = await secureChannel.ConfirmDoubleRatchetSenderSession(
+                row as Parameters<typeof secureChannel.ConfirmDoubleRatchetSenderSession>[0],
                 JSON.parse(message.encryptedContent)
               );
-            const content = parseDecryptedMessage(result.message, 'Confirm');
+              return { result: r, content: parseDecryptedMessage(r.message, 'Confirm') };
+            };
+
+            let attempt: Awaited<ReturnType<typeof decryptAndParse>>;
+            try {
+              attempt = await decryptAndParse(JSON.parse(fresh.state));
+            } catch (firstError) {
+              // Upstream skipped-key lookup defect — see utils/dmStaleBucketRetry.ts.
+              const stale = findStaleBucket(fresh.state);
+              if (!stale) throw firstError;
+              attempt = await decryptAndParse(stale.prunedRow);
+              restore = { headerKey: stale.headerKey, bucket: stale.bucket };
+              logger.warn(
+                '[MessageService] DM frame recovered by pruning the stale skipped-keys bucket for the retry (upstream #183 item 1a)',
+                { branch: 'Confirm', prunedKeys: Object.keys(stale.bucket).length }
+              );
+            }
+            const result = attempt.result;
+            const content = attempt.content;
             if (content?.content?.type === 'delete-conversation') {
               logger.warn(
                 '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, Confirm branch) — wiping encryption states',
@@ -3883,7 +3906,11 @@ export class MessageService {
             await this.messageDB.saveEncryptionState(
               {
                 state: JSON.stringify({
-                  ratchet_state: result.ratchet_state,
+                  // Re-file a bucket pruned for the retry — see the InboxDecrypt
+                  // branch and utils/dmStaleBucketRetry.ts for why this is required.
+                  ratchet_state: restore
+                    ? restoreStaleBucket(result.ratchet_state, restore.headerKey, restore.bucket)
+                    : result.ratchet_state,
                   receiving_inbox: result.receiving_inbox,
                   sending_inbox: result.sending_inbox,
                   tag: result.tag,
@@ -3923,11 +3950,38 @@ export class MessageService {
             return { outcome: 'handled' as const };
           }
         } else {
+          // Retry bookkeeping for the stale-bucket mitigation: set only when the
+          // first decrypt failed and a pruned retry succeeded, so the bucket can
+          // be re-filed into the state that gets persisted.
+          let restore: { headerKey: string; bucket: Record<string, unknown> } | null = null;
           try {
-            const result = await secureChannel.DoubleRatchetInboxDecrypt(
-              JSON.parse(fresh.state),
-              JSON.parse(message.encryptedContent)
-            );
+            // A DM decrypt failure does NOT reject: the crate returns a result
+            // whose `message` carries "Decryption failed: aead::Error", and
+            // parseDecryptedMessage is what throws. So the stale-bucket retry has
+            // to wrap BOTH calls — wrapping only the decrypt never fires.
+            const decryptAndParse = async (row: unknown) => {
+              const r = await secureChannel.DoubleRatchetInboxDecrypt(
+                row as Parameters<typeof secureChannel.DoubleRatchetInboxDecrypt>[0],
+                JSON.parse(message.encryptedContent)
+              );
+              return { result: r, content: parseDecryptedMessage(r.message, 'InboxDecrypt') };
+            };
+
+            let attempt: Awaited<ReturnType<typeof decryptAndParse>>;
+            try {
+              attempt = await decryptAndParse(JSON.parse(fresh.state));
+            } catch (firstError) {
+              // Upstream skipped-key lookup defect — see utils/dmStaleBucketRetry.ts.
+              const stale = findStaleBucket(fresh.state);
+              if (!stale) throw firstError;
+              attempt = await decryptAndParse(stale.prunedRow);
+              restore = { headerKey: stale.headerKey, bucket: stale.bucket };
+              logger.warn(
+                '[MessageService] DM frame recovered by pruning the stale skipped-keys bucket for the retry (upstream #183 item 1a)',
+                { branch: 'InboxDecrypt', prunedKeys: Object.keys(stale.bucket).length }
+              );
+            }
+            const result = attempt.result;
             const maybeInit = result as {
               receiving_inbox: secureChannel.InboxKeyset;
               user_profile: secureChannel.UserProfile;
@@ -3938,22 +3992,29 @@ export class MessageService {
             };
 
             let advancedState: string;
+            // If the retry pruned a bucket to get here, put it back: those keys
+            // are the ONLY way to read genuinely delayed frames, and persisting
+            // the pruned state destroys them permanently (measured 3/3).
+            const keep = (ratchetState: string) =>
+              restore
+                ? restoreStaleBucket(ratchetState, restore.headerKey, restore.bucket)
+                : ratchetState;
             if (maybeInit.user_profile) {
               advancedState = JSON.stringify({
-                ratchet_state: maybeInit.ratchet_state,
+                ratchet_state: keep(maybeInit.ratchet_state),
                 receiving_inbox: maybeInit.receiving_inbox,
                 sending_inbox: maybeInit.sending_inbox,
                 tag: maybeInit.tag,
               });
             } else {
               advancedState = JSON.stringify({
-                ratchet_state: result.ratchet_state,
+                ratchet_state: keep(result.ratchet_state),
                 receiving_inbox: freshKeys.receiving_inbox,
                 sending_inbox: freshKeys.sending_inbox,
                 tag: freshKeys.tag,
               });
             }
-            const content = parseDecryptedMessage(result.message, 'InboxDecrypt');
+            const content = attempt.content;
             if (content?.content?.type === 'delete-conversation') {
               logger.warn(
                 '[MessageService] ⚠️ RESET SIGNAL received (delete-conversation, InboxDecrypt branch) — wiping encryption states',
