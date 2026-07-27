@@ -442,7 +442,7 @@ and desktop→mobile delivered 12/12 — the first fully clean direction in this
 1. **`channel` crate: a receiver whose first-ever processed frame sits at chain position > 0
    forks permanently at the next DH turn.** Deterministic repro against the SDK wasm build,
    no devices needed (~seconds):
-   `quorum-mobile/.agents/scripts/dr-advanced-start-fork.mjs`. Case matrix: in-order start —
+   `.agents/tools/dm-debug/dr-advanced-start-fork.mjs` (copied into this repo 2026-07-27 — quorum-mobile gitignores `.agents/`, so the original was never tracked anywhere). Case matrix: in-order start —
    clean; mid-chain gap — clean (skipped keys work); first frame at position 1 — one frame
    lost at the turn, then re-syncs; first frame at position 2+ — the sender's direction is
    PERMANENTLY undecryptable from the first turn on, while the receiver's own direction keeps

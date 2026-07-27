@@ -34,6 +34,7 @@ repo; set `SDK_DIR=` if yours is elsewhere.
 |---|---|
 | `dr-replay.mjs` | Reassembles `[XPDUMP]` chunks from a log and re-runs the real failing decrypt. Reports whether the seal opened, whether the frame was init-wrapped, and whether the ratchet failed. Use to confirm a failure is genuine and reproducible rather than an app-level race. |
 | `dr-ablate.mjs` | **Finds what CAUSES a failure.** Re-runs the same decrypt while changing ONE property of the ratchet state at a time, so a load-bearing property announces itself by making the frame decrypt. |
+| `dr-advanced-start-fork.mjs` | Needs no log at all. Builds pristine sessions from one X3DH pair and drives a case matrix to reproduce the upstream crate's advanced-start fork in seconds. This is the runnable evidence behind item 1 of [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183). |
 
 ```
 node .agents/tools/dm-debug/dr-replay.mjs <saved-console.log>
