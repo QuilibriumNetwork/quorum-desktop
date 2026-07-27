@@ -1,14 +1,14 @@
 ---
 type: bug
 title: "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)"
-status: OPEN, but the MECHANISM IS NOW MEASURED (rig=9, 2026-07-27). Frame decryption failure is a DETERMINISTIC FUNCTION OF POSITION IN THE DH SENDING CHAIN: position 0 fails 100%, position 1 ~90%, position 2 ~60%, position 3+ never fails — both directions. Failures are TRANSIENT; the same bytes decrypt on redelivery. This explains every reported symptom, including the inverted typing indicator (typing-start always lands at position 0) and 'messages arrive late in tight conversation' (half of all posts arrive late). No forked ratchet exists (proven with the DH epoch attached). EIGHT app-level mechanisms have now been proposed and killed (§3). The remaining explanation is below the app layer; the next step is offline replay of a position-0 frame, NOT another capture. Two defects of ours are separately confirmed and owed (§7 fixes 1 and 2).
+status: OPEN — mechanism MEASURED, cause is BELOW THE APP LAYER, all client-side work is DONE AND MERGED. Frame decryption failure is a deterministic function of position in the DH sending chain: positions 0-2 fail ~100%, position 3+ never fails, both directions. Failures are TRANSIENT — the same bytes decrypt on redelivery — so this is LATENCY WITH A LONG TAIL, not demonstrated message loss. It explains every symptom: lag, the inverted typing indicator, and messages arriving so late they are assumed lost. TEN app-level mechanisms have been proposed and killed (§3), including every form of forked ratchet and, by controlled experiment, frame shape itself. Three client defects were found and are MERGED to main (§7). Evidence is filed upstream at quorum-mobile#183. A fresh agent's next action is in §5 — it is NOT more local capturing.
 created: 2026-07-26
-severity: high (silent, user-visible message and reaction loss)
+severity: medium — user-visible lag and apparent loss; no permanent loss demonstrated since the init-envelope fix (see §1)
 repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)
 area: DM Double Ratchet / session lifecycle / transport
 entrypoint: true
 related:
-  - ".agents/bugs/2026-07-26-dm-desktop-to-desktop-captures.md (ALL round evidence, findings A-R — this file cites it by letter)"
+  - ".agents/bugs/2026-07-26-dm-desktop-to-desktop-captures.md (ALL round evidence, findings A-AB across 7 capture rounds — this file cites it by letter)"
   - ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (mechanism catalogue — filed as solved, but the symptom RESURFACED; read it for history, not status)"
   - ".agents/docs/dm-ratchet-upstream-divergences.md (the 8 shipped divergences, lead-dev facing)"
   - ".agents/tasks/2026-07-17-dm-dead-session-autoheal.md (heal action 2 is exactly this failure)"
@@ -20,16 +20,20 @@ related:
 
 # DM delivery is broken again, desktop↔desktop
 
-> **START HERE if you are a fresh agent.** Three things you would otherwise get
-> wrong in your first ten minutes:
+> **START HERE if you are a fresh agent.** In order:
 >
-> 1. **`.solved/2026-07-02-dm-message-delivery-unreliable-master.md` is filed as
->    SOLVED and the symptom has RESURFACED.** Good catalogue, bad status report.
-> 2. **The mobile master says "desktop↔desktop has no issues."** Falsified.
-> 3. **Seven confident mechanisms have been proposed here and all seven were
->    killed by the next measurement.** Read §3 before forming an eighth. In every
->    case the measurement was sound and the interpretation ran ahead of it — one
->    was retracted within minutes of being written.
+> 1. **The client-side work is finished and merged.** Do not start by hunting for
+>    a bug in this repo — ten app-level mechanisms have already been proposed and
+>    killed (§3), and the three real defects found along the way are shipped (§7).
+> 2. **Read §3 before forming a theory.** Every one of those ten was argued
+>    confidently and then disproved by the next measurement. In every single case
+>    the measurement was sound and the interpretation ran ahead of it; one was
+>    retracted within minutes of being written, and one reached a commit message
+>    before the user caught it.
+> 3. **Your next action is §5**, and it is probably not another capture.
+> 4. Two older documents will mislead you: `.solved/2026-07-02-dm-message-delivery-unreliable-master.md`
+>    is filed SOLVED and the symptom RESURFACED (good catalogue, bad status), and
+>    the mobile master's "desktop↔desktop has no issues" is falsified.
 >
 > **Docs in `.agents/` are written by agents after the fact and can be wrong.
 > When a doc and the code disagree, the code wins.**
@@ -44,11 +48,11 @@ related:
 | Symptom the user reports | messages arrive **laggy**; reactions and read receipts vanish; occasionally a message seems gone for good |
 | ⚠️ Severity | **latency with a very long tail, not confirmed loss.** Every "lost" post that was rechecked later had simply arrived (finding AB). No round before rig=11 rechecked, so their loss counts are unverified. The one *confirmed* permanent loss is the init-envelope guard deleting a frame server-side — now fixed. |
 | What the rig measures | **~40% of frames fail AEAD**, on a session both sides consider healthy |
-| Why it usually looks fine | something **resends** seconds later and covers the loss (`retryDirectMessage` is the leading candidate, instrumented in rig=9) |
-| Direction | **asymmetric in severity** — one round was 16/38 vs 0/38; the latest had failures both ways (A 6, B 48) |
+| Why it usually looks fine | the frame is **redelivered** and decrypts on a later attempt. Recovery can take longer than a whole capture round, so short captures cannot tell loss from latency (finding AB) |
+| Direction | varies by round; both directions fail. Early rounds looked one-directional, later ones did not |
 | Earlier, worse state | 0 of 10 delivered both directions, permanent, until a manual reset |
 | **THE MECHANISM** | failure is a **deterministic function of position in the DH sending chain**: pos 0 = 100% fail, pos 1 ≈ 90%, pos 2 ≈ 60%, **pos 3+ = 0%**, both directions |
-| Recovery | **transient** — 38 of 41 failed frames decrypted on a later redelivery |
+| Recovery | **transient** — nearly all failed frames decrypt on a later redelivery. All recovery counts in the archive are LOWER BOUNDS, because captures were saved at ~2 minutes |
 | Why the typing indicator is inverted | `typing-start` is the first frame after reading the peer's message, i.e. always **position 0**, the 100%-failure slot; the peer sees the *redelivered* copy a turn later |
 
 The original reproduction pattern — works after a reset, use the same accounts on
@@ -56,9 +60,9 @@ mobile for days, return to desktop broken — **has still never been reproduced
 deliberately** and remains the single most valuable thing to capture.
 
 **The one-line summary:** the first two or three frames after every DH ratchet
-step cannot be decrypted on arrival, and only land on redelivery. That is the lag,
-that is the inverted typing indicator, and that is the message loss when a
-redelivery does not get its chance.
+step cannot be decrypted on arrival and only land on redelivery. That is the lag,
+that is the inverted typing indicator, and that is why a message can look lost
+when it is merely very late.
 
 ---
 
@@ -113,7 +117,7 @@ Hypotheses 1, 4 and 6 all died of this.
 
 ---
 
-## §4. Open leads, ranked
+## §4. Leads — one still live, the rest closed
 
 **0. THE MECHANISM — the first frames of every DH sending chain cannot be
 decrypted on arrival.** *(measured rig=9; archive findings T, U, V)*
@@ -124,12 +128,13 @@ A->B failure rate:        100%   86%   67%    0%
 B->A failure rate:        100%  100%   60%    0%
 ```
 
-Both directions, no exceptions above position 2. Failures are **transient** — 38
-of 41 failed frames decrypted on a later redelivery. This accounts for every
-symptom on record: the inverted typing indicator (`typing-start` is the first
-frame after reading the peer's message, so it always occupies position 0), the
-lag in tight conversation, and message loss when a redelivery never gets its
-chance.
+Both directions, no exceptions above position 2. Failures are **transient** —
+nearly all failed frames decrypt on a later redelivery, and every recovery count
+in this file is a **lower bound** because captures are saved at ~2 minutes
+(finding AB). This accounts for every symptom on record: the inverted typing
+indicator (`typing-start` is the first frame after reading the peer's message, so
+it always occupies position 0), the lag in tight conversation, and messages that
+look lost because the redelivery had not landed yet.
 
 **Where it is NOT:** app code does not implement the ratchet. It selects a
 session, calls `DoubleRatchetInboxEncrypt`, and hands arriving frames to
@@ -144,22 +149,18 @@ last app-controlled property of an outgoing frame — and the position table did
 move (§3 row 10). Ten app-level hypotheses are dead, every form of forked ratchet
 is excluded with the DH epoch attached, and frame shape is excluded by
 manipulation rather than by argument.
-→ **The remaining action is the write-up for
-[#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183)**, not
-another local capture (§5).
+→ **Filed upstream 2026-07-27**:
+[#183 comment](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183#issuecomment-5090004304).
+Nothing further is actionable in this repo; see §5.
 
-**1. CONFIRMED DEFECT, fix owed — the init-envelope absolute age bound.**
-`INIT_ENVELOPE_MAX_AGE_MS = 10 min` in [initEnvelopeGuard.ts](../../src/utils/initEnvelopeGuard.ts);
-rule 0 fires **before** the no-rows check and refused envelopes are deleted
-server-side. It destroys legitimate re-inits whenever the receiver was offline.
-**Do NOT simply raise the bound** — it exists because 26-hour and 60-day zombie
-envelopes were seen resurrecting dead sessions, and a bigger number just moves
-the line. Wall-clock age is the wrong test; the signal that separates the cases
-is already there — a zombie is **older** than the rows it replaces, a legitimate
-re-init is **newer**, which is exactly what rules 2 and 3 encode. Any fix must
-keep those zombies refused: extend
+**1. ~~The init-envelope absolute age bound.~~ FIXED AND MERGED** 2026-07-27 (§7).
+Kept here only for the reasoning, which generalises: wall-clock age was the wrong
+test because a zombie is **older** than the rows it would replace while a
+legitimate re-init is **newer** — the relative rules already encoded that and the
+absolute bound overrode them. Any future change here must keep the 26-hour and
+60-day zombies refused; extend
 [initEnvelopeGuard.unit.test.ts](../../src/dev/tests/utils/initEnvelopeGuard.unit.test.ts),
-never relax it.
+never relax it. **Not yet exercised by a live round — see §5 option C.**
 
 **2. Four session-prune sites deleting healthy sessions.** *(not implicated in
 either 07-27 capture — zero prune lines on builds carrying the probes; still
@@ -169,11 +170,14 @@ open on one round of evidence, but demoted)* Three in the send paths
 registration data changes. All delete sessions whose `tag` is absent from a
 *cached* React Query read; mobile-created rows carry a non-device-inbox tag.
 
-**3. UPSTREAM — [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183).**
-(a) the crate fork; (b) the node write path dropping frames handed to an open
-socket, 32% one direction phone↔phone. Neither is fixable here. Its body was
-corrected 07-26 to retract a "desktop is immune" claim. **If you produce new d↔d
-evidence, update that issue — the lead dev reads it, not this file.**
+**3. UPSTREAM — [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183)
+— now the only live lead.** (a) the crate fork; (b) the node write path dropping
+frames handed to an open socket, 32% one direction phone↔phone. Neither is
+fixable here. Its body was corrected 07-26 to retract a "desktop is immune"
+claim, and our position table was added as a
+[comment](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183#issuecomment-5090004304)
+on 07-27. **If you produce new d↔d evidence, add it there — the lead dev reads
+that issue, not this file.**
 
 **4. No dead-session detection.** The detector must require *retry-exhaustion on
 a session with zero successes*, never first-failure — the healing-lag class
@@ -185,40 +189,69 @@ Given this bug's history, prompt is the safer first step. Do not build without i
 
 ## §5. Next action
 
-1. ~~Offline replay.~~ ~~Re-measure after the `sent_accept` fix.~~ **BOTH DONE.**
-   The failure reproduces deterministically against the real wasm, and survives
-   removal of init-wrapping unchanged (§2g).
-2. **Merge the `sent_accept` fix** (§7 fix 2). Validated by the rig=10 round: no
-   regression, per-frame failure rate flat, no new failure mode.
-3. **Write up [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183)** —
-   this is now the main action. Carry: the position table from **two independent
-   builds**, the fact that frame shape was excluded by manipulation, the
-   transient-recovery data (failures decrypt on redelivery), and that it is
-   symmetric across directions. Curated tables only — **never raw log regions**,
-   they contain key material.
-2. **Then, and only with that result**, take the position-rate table to
-   [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) — it is
-   the strongest evidence this investigation has produced, and the lead dev reads
-   that issue, not this file.
-3. **Independent of the root cause:** ship the §7 fix 1 (age bound) and fix 2
-   (missing mutex). Both are defects on their own merits.
-4. **Worth considering regardless:** the recovery already works — failed frames
-   decrypt on redelivery. If redelivery were *faster* or triggered on failure
-   rather than waited for, most of the user-visible lag would disappear even
-   without a root-cause fix. Treat as mitigation, not a fix.
+**Everything this repo can do about the root cause has been done.** The mechanism
+is measured, the app is exhausted as an explanation, the three real client defects
+are merged, and the evidence is filed upstream. Read that before opening an editor.
 
-**Structural facts to carry into any code change here:**
+### If you are here because the user reports DM lag or a missing message
 
-- **There are FIVE DM encrypt sites, not one.** `encryptAndSendDm`,
-  `submitMessage` ×2, `retryDirectMessage`, and `ActionQueueHandlers.sendDm` —
-  structurally near-identical, never de-duplicated. **Anything added to one must
-  be added to all five.** Two successive probe rounds each missed the site that
-  mattered; the full table with mutex status is in the archive (finding P).
-- **Something resends and masks the loss.** `retryDirectMessage` is the leading
-  candidate and is labelled in rig=9. It is currently the only thing standing
-  between this bug and routine visible message loss — identify it before touching
-  anything that looks like redundancy.
-- **`sLen` alone means nothing.** See §3 row 7. Always pair it with `root`.
+That is the known symptom of the unresolved upstream cause. **Do not start a new
+investigation.** Confirm it matches (§1), then either wait on
+[#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) or pick up
+option B below.
+
+### A. Waiting on upstream — the honest default
+
+The position table is filed at
+[#183 comment](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183#issuecomment-5090004304)
+(2026-07-27). It bears on that issue's item 1: the fork needs establishment-phase
+frame loss as a trigger, and our data shows chain-start frames fail on first
+attempt essentially always, so the trigger is systematic rather than incidental.
+
+**If the lead dev replies asking for evidence**, we can re-run instrumented rounds
+(§6) against any build. We deliberately did NOT promise to hand over state blobs:
+captures contain live ratchet state, they live only on the operator's machine, and
+they are not going in a public issue.
+
+### B. Mitigation we control — the best remaining value here
+
+**Recovery already works; it is just slow.** Failed frames decrypt on redelivery,
+and the whole user-visible symptom is how long that takes. If redelivery were
+triggered **on decrypt failure** rather than waited for, most of the lag and the
+inverted typing indicator would disappear *without* the upstream fix.
+
+This is unbuilt and unscoped. It is mitigation, not a cure, and it must not
+weaken the retention that makes recovery possible in the first place. Start from
+`UndecryptableFrameTracker` (`src/utils/frameRetry.ts`) and the skip-and-keep path
+in the receive handler.
+
+### C. The one fix never exercised live
+
+The init-envelope age-bound fix (§7) is merged but no round has triggered it,
+because it only fires for a client that has been offline past the window. To
+confirm: close one client, reset and send ONE message from the peer, wait 15+
+minutes, reopen on a diag build, and check that `STALE init envelope IGNORED` does
+**not** fire and the message arrives. Fifteen minutes with the client closed, so
+it costs no attention.
+
+### D. Still never reproduced deliberately
+
+The original report — works after a reset, use the same accounts on mobile for
+days, return to desktop broken. Nobody has reproduced it on purpose. It remains
+the single most valuable capture available, and no round so far has attempted it.
+
+### Structural facts to carry into ANY code change here
+
+- **There are FIVE DM encrypt sites**, structurally near-identical and never
+  de-duplicated: `encryptAndSendDm`, `submitMessage` ×2, `retryDirectMessage`,
+  and `ActionQueueHandlers.sendDm`. **Anything added to one must be added to all
+  five.** Two probe rounds each missed the site that mattered, and one shipped
+  defect existed purely because a fifth site had drifted (archive finding P).
+- **`sLen` alone means nothing** — it resets to 0 on every DH step. Always pair it
+  with `root` (§3 row 7).
+- **De-duplicate frames by fingerprint before quoting any count.** Raw failure
+  counters include redeliveries and have overstated volume three separate times.
+- **A short capture cannot establish loss.** See §6 step 4.
 
 ---
 
@@ -299,37 +332,33 @@ whether the ratchet failed.
 
 ---
 
-## §7. Owed fixes — client-side defects found while chasing this
+## §7. Client fixes — all three MERGED to main 2026-07-27
 
-Three are real, confirmed, and independent of the root cause. Ship them on their
-own merits; none of them is known to fix the position-0 failure.
+None of these caused the position-failure mechanism; all three were real defects
+found while chasing it, and each was validated before merge.
 
-| # | fix | confidence | risk / note |
-|---|---|---|---|
-| **1** | **The init-envelope age bound destroys legitimate messages.** `INIT_ENVELOPE_MAX_AGE_MS = 10 min` in [initEnvelopeGuard.ts](../../src/utils/initEnvelopeGuard.ts); rule 0 fires **before** the no-rows check and the refused envelope is deleted server-side. Measured: an envelope **174 s newer** than every row it would replace was destroyed for being 17.6 min old, and its message was lost with no trace (finding A). | **confirmed, measured, user-visible** | **Do NOT just raise the bound** — it exists because 26-hour and 60-day zombies were seen resurrecting dead sessions. Age is the wrong test; a zombie is *older* than the rows it replaces and a legitimate re-init is *newer*, which rules 2 and 3 already encode. Extend [the unit tests](../../src/dev/tests/utils/initEnvelopeGuard.unit.test.ts) first. |
-| 2 ✅ | **`sent_accept` never reaches the SDK** *(low severity — efficiency, not security)*, so **every** DM frame is init-wrapped. `orderSessionsForSend` builds sessions from `JSON.parse(r.state)`, but the flag lives in the sibling `sentAccept` DB column and is never merged back (finding W). Every message therefore re-sends session setup material (return inbox keys, identity public key, display name, icon) instead of only until the session is established. **Not a disclosure issue** — both branches seal the payload to the recipient's inbox key, so it is encrypted in transit exactly like message content. Cost is payload size, not exposure. | **confirmed, fixed, and VALIDATED live** (rig=10: 0/12 frames now carry `user_address`) | Re-sent setup material on every frame. **Re-measured after the change: no regression** (§2g), so the pre-round concern that this redundancy was compensating for frame loss is not supported. Ready to merge. |
-| **3** | **`ActionQueueHandlers.sendDm` takes no ratchet lock.** Zero `dmRatchetMutex` calls in the whole file, for the same read→encrypt→save section `MessageService` guards in **six** places (finding R). | **confirmed by inspection** | Latent — that path handles offline-composed DMs and did not execute in any capture, so it is **not** this bug's cause. The hazard is spelled out verbatim at [L1141-1153](../../src/services/MessageService.ts#L1141). |
-| 4 | No dead-session detection (§4 lead 4) | design gap, not a defect | **Awaiting a product decision, not evidence.** Must key on *retry-exhaustion with zero successes*, never first-failure — the healing-lag class recovered 51/51 on mobile and must not trigger a reset. |
-| 5 | The root-cause fix | — | Unknown; position-0 failure still unexplained. |
+| fix | what it was | evidence |
+|---|---|---|
+| **`sent_accept` never reached the SDK** | `orderSessionsForSend` parsed only `r.state`, but the flag lives in the sibling `sentAccept` column, so the SDK init-wrapped **every** frame — re-sending session setup material forever instead of until established. **Not** a disclosure issue: both branches seal the payload to the recipient's inbox key. | archive W, Y. Validated live: 12/12 frames carried setup material before, 0/12 after, delivery unchanged |
+| **init-envelope age bound destroyed legitimate re-inits** | the 10-minute bound ran first and unconditionally, so a reset that arrived while the user was away was refused **and deleted server-side**. Measured on an envelope 174 s *newer* than the rows it would replace. Now scoped to the no-rows case, which is what its own rationale described. | archive A. **The only confirmed permanent message loss in this investigation** |
+| **offline send path took no ratchet lock** | `ActionQueueHandlers.sendDm` did read→encrypt→save with no lock while `MessageService` guards the same sequence in six places. Latent — that path never ran in any capture. | archive R. Regression test verified to FAIL without the lock (`read:v0, read:v0`) |
 
-**Structural hazard, not a bug:** there are **five** near-identical DM encrypt
-loops (`encryptAndSendDm`, `submitMessage` ×2, `retryDirectMessage`,
-`ActionQueueHandlers.sendDm`) that have never been de-duplicated. Two successive
-probe rounds each instrumented the wrong one, and fix 3 exists only because one of
-the five drifted out of sync with the others. Worth consolidating.
+**Validated together** by the rig=11 regression round: position table identical,
+no new failure mode, zero stale-init refusals (archive Z). The age-bound fix is
+the exception — see §5 option C.
 
 ### Retired — investigated and found NOT to be defects
 
-- **De-duplicate `targetInboxes`.** Raised early on an observation of "the same
-  reaction sent twice to one inbox". **That observation was wrong** — the two
-  frames had different ids. Measured twice since: `[DM-send dup]` fired **zero**
-  times across ~490 frames, and with `msgId` attached, **0 of 133 (msgId, target)
-  pairs repeat** in either direction. No duplicate sends exist. Nothing to fix.
-- **Seven target inboxes per side.** Normal multi-device fan-out (§3 row 6).
+- **De-duplicate `targetInboxes`.** Raised on an observation that turned out to be
+  a misread. `[DM-send dup]` fired **zero** times across rounds, and with `msgId`
+  attached **0 of 133 (message, target) pairs repeat**. No duplicate sends exist.
+- **Seven target inboxes per side.** Normal multi-device fan-out (§3 row 6), and a
+  round where one account had a second device online showed no measurable
+  difference (archive AA).
 
-**Shipped 2026-07-26:** #259 (`orderSessionsForSend` in the offline action-queue
-send path — the fifth site #254 missed); #260 (a failed DM decrypt reports itself
-honestly instead of as a JSON `SyntaxError`).
+**Earlier, unrelated:** #259 (`orderSessionsForSend` in the offline send path —
+the fifth site #254 missed); #260 (a failed DM decrypt reports itself honestly
+instead of as a JSON `SyntaxError`).
 
 ---
 
