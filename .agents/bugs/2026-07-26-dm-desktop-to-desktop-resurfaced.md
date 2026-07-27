@@ -30,7 +30,10 @@ related:
 >    the measurement was sound and the interpretation ran ahead of it; one was
 >    retracted within minutes of being written, and one reached a commit message
 >    before the user caught it.
-> 3. **Your next action is §5**, and it is probably not another capture.
+> 3. **Your next action is §5**, and it is probably not another capture — §5 opens
+>    with three tools that answer questions offline, one of which needs no log and
+>    no devices at all. The tool that found the root cause arrived last, after ten
+>    hypotheses had been killed the expensive way.
 > 4. Two older documents will mislead you: `.solved/2026-07-02-dm-message-delivery-unreliable-master.md`
 >    is filed SOLVED and the symptom RESURFACED (good catalogue, bad status), and
 >    the mobile master's "desktop↔desktop has no issues" is falsified.
@@ -195,6 +198,32 @@ Given this bug's history, prompt is the safer first step. Do not build without i
 is measured, the app is exhausted as an explanation, the three real client defects
 are merged, and the evidence is filed upstream. Read that before opening an editor.
 
+### FIRST: three tools that answer questions without a capture round
+
+Ten hypotheses in this investigation were killed the slow way — book a round, ask
+the operator for attention, wait, read logs. The tool that finally found the root
+cause needed **none of that** and arrived last. Do not repeat that ordering.
+
+| tool ([`.agents/tools/dm-debug/`](../tools/dm-debug/)) | answers | needs |
+|---|---|---|
+| `dr-ablate.mjs` | **what CAUSES a failure** — re-runs a real captured decrypt while changing ONE state property at a time; a load-bearing property announces itself by making the frame decrypt | a saved log |
+| `dr-replay.mjs` | is this failure genuine and reproducible, or an app-level race | a saved log |
+| `dr-advanced-start-fork.mjs` | reproduces the upstream crate's advanced-start fork from a pristine X3DH pair | **nothing** — no log, no devices |
+
+```
+node .agents/tools/dm-debug/dr-ablate.mjs <log> [...more logs]
+```
+
+**To test a new hypothesis, add a case to `dr-ablate`'s `VARIANTS` array.** It
+runs against every captured failure on disk in seconds — 65 of them at the time of
+writing, spanning six rounds and both clients. If a hypothesis cannot be phrased
+as "this state property is load-bearing", ask whether it is testable at all before
+spending device time on it.
+
+Old logs live wherever the operator saved them (historically a `logs/` folder on
+the Desktop, with an `OLD/` subfolder for previous rounds). They contain **real
+ratchet key material** — keep them local.
+
 ### If you are here because the user reports DM lag or a missing message
 
 That is the known symptom of the unresolved upstream cause. **Do not start a new
@@ -355,7 +384,8 @@ one client was two builds behind and its silence was unreadable.
 5. Record what you *saw on screen* — **device observation outranks the rig**.
    That is how a 21-frame phantom loss was caught on mobile.
 
-**Offline analysis** — highest value per minute, zero device time. Both tools live
+**Offline analysis** — see the tool table in §5, which is where a fresh agent
+should meet these. Both log-driven tools live
 in [`.agents/tools/dm-debug/`](../tools/dm-debug/) **in this repo**, alongside the existing console snippets, because `.agents/` is
 gitignored in quorum-mobile where they were originally written — the copies there
 were never tracked and would not survive a fresh clone. They resolve the SDK
