@@ -29,6 +29,7 @@ import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels
 import type { Message } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../utils';
 import { orderSessionsForSend } from '../utils/sessionSelection';
+import { dmRatchetMutex } from '../utils/keyedMutex';
 
 export interface HandlerDependencies {
   messageDB: MessageDB;
@@ -67,18 +68,27 @@ export class ActionQueueHandlers {
    */
   private saveUserConfig: TaskHandler = {
     execute: async (context) => {
-      logger.log('[ActionQueue:saveUserConfig] Fetching keyset from service...');
+      logger.log(
+        '[ActionQueue:saveUserConfig] Fetching keyset from service...'
+      );
       const keyset = this.deps.getUserKeyset();
       if (!keyset) {
         throw new Error('Keyset not available');
       }
       const config = context.config as any;
-      logger.log('[ActionQueue:saveUserConfig] Keyset obtained, saving config...', {
-        address: config?.address,
-        itemCount: config?.items?.length,
-        spaceCount: config?.spaceIds?.length,
-        items: config?.items?.map((i: any) => i.type === 'folder' ? `folder:${i.name}` : `space:${i.id?.slice(0, 8)}`),
-      });
+      logger.log(
+        '[ActionQueue:saveUserConfig] Keyset obtained, saving config...',
+        {
+          address: config?.address,
+          itemCount: config?.items?.length,
+          spaceCount: config?.spaceIds?.length,
+          items: config?.items?.map((i: any) =>
+            i.type === 'folder'
+              ? `folder:${i.name}`
+              : `space:${i.id?.slice(0, 8)}`
+          ),
+        }
+      );
       await this.deps.configService.saveConfig({
         config,
         keyset,
@@ -101,7 +111,9 @@ export class ActionQueueHandlers {
   private updateSpace: TaskHandler = {
     execute: async (context) => {
       // Check if space still exists
-      const space = await this.deps.messageDB.getSpace(context.spaceId as string);
+      const space = await this.deps.messageDB.getSpace(
+        context.spaceId as string
+      );
       if (!space) {
         return;
       }
@@ -383,10 +395,15 @@ export class ActionQueueHandlers {
       }
 
       // Strip ephemeral fields before encrypting
-      const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = signedMessage;
+      const {
+        sendStatus: _sendStatus,
+        sendError: _sendError,
+        ...messageToEncrypt
+      } = signedMessage;
 
       // Triple Ratchet encrypt and send (saves state AFTER sending for queue resilience)
-      const encryptAndSend = this.deps.messageService.getEncryptAndSendToSpace();
+      const encryptAndSend =
+        this.deps.messageService.getEncryptAndSendToSpace();
       await encryptAndSend(spaceId, signedMessage, {
         stripEphemeralFields: true,
         saveStateAfterSend: true,
@@ -408,8 +425,10 @@ export class ActionQueueHandlers {
         channelId,
         'group',
         {
-          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-          display_name: conversation?.conversation?.displayName ?? 'Unknown User',
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation?.conversation?.displayName ?? 'Unknown User',
         },
         senderAddress
       );
@@ -423,7 +442,10 @@ export class ActionQueueHandlers {
             return {
               ...oldData,
               messages: oldData.messages.map((msg: Message) => {
-                if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                if (
+                  msg.messageId === messageId &&
+                  msg.sendStatus !== undefined
+                ) {
                   const { sendStatus: _, sendError: __, ...rest } = msg;
                   return rest as Message;
                 }
@@ -433,7 +455,12 @@ export class ActionQueueHandlers {
           }
         );
         this.deps.queryClient.invalidateQueries({
-          queryKey: ['thread-stats', spaceId, channelId, signedMessage.threadId],
+          queryKey: [
+            'thread-stats',
+            spaceId,
+            channelId,
+            signedMessage.threadId,
+          ],
         });
       } else {
         // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
@@ -441,7 +468,15 @@ export class ActionQueueHandlers {
         const messagesKey = buildMessagesKeyPrefix({ spaceId, channelId });
         this.deps.queryClient.setQueriesData(
           { queryKey: messagesKey },
-          (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+          (
+            oldData:
+              | InfiniteData<{
+                  messages: Message[];
+                  nextCursor?: number;
+                  prevCursor?: number;
+                }>
+              | undefined
+          ) => {
             if (!oldData?.pages) return oldData;
 
             // Check if message already exists in cache
@@ -458,7 +493,10 @@ export class ActionQueueHandlers {
                   return {
                     ...page,
                     messages: page.messages.map((msg) => {
-                      if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                      if (
+                        msg.messageId === messageId &&
+                        msg.sendStatus !== undefined
+                      ) {
                         // Clear sendStatus to mark as sent
                         const { sendStatus: _, sendError: __, ...rest } = msg;
                         return rest as Message;
@@ -483,7 +521,10 @@ export class ActionQueueHandlers {
               pages: oldData.pages.map((page, index) => {
                 // Add to the last page (most recent messages)
                 if (index === oldData.pages.length - 1) {
-                  const newMessages = [...page.messages, messageToEncrypt as Message];
+                  const newMessages = [
+                    ...page.messages,
+                    messageToEncrypt as Message,
+                  ];
                   // Sort by createdDate
                   newMessages.sort((a, b) => a.createdDate - b.createdDate);
                   return {
@@ -533,8 +574,15 @@ export class ActionQueueHandlers {
             return {
               ...oldData,
               messages: oldData.messages.map((msg: Message) => {
-                if (msg.messageId === messageId && msg.sendStatus !== undefined) {
-                  return { ...msg, sendStatus: 'failed' as const, sendError: sanitizedError };
+                if (
+                  msg.messageId === messageId &&
+                  msg.sendStatus !== undefined
+                ) {
+                  return {
+                    ...msg,
+                    sendStatus: 'failed' as const,
+                    sendError: sanitizedError,
+                  };
                 }
                 return msg;
               }),
@@ -556,7 +604,6 @@ export class ActionQueueHandlers {
     successMessage: undefined,
     failureMessage: undefined,
   };
-
 
   /**
    * Send a direct message that's already signed.
@@ -595,112 +642,157 @@ export class ActionQueueHandlers {
         conversationId,
       });
 
-      // Get encryption states - these contain all the inbox info we need for established sessions.
-      // Ordered send-ready-first-then-newest, exactly as the four online send sites do (#254):
-      // several stored rows legitimately share one device tag, and `find` below takes the FIRST
-      // match, so the order decides which session an offline-queued DM is encrypted with. Without
-      // this, a message queued while offline after the peer reset picks a stale row and is sent to
-      // an inbox the peer has abandoned — silently discarded on arrival, exactly the failure #254
-      // fixed everywhere else.
-      const response = await this.deps.messageDB.getEncryptionStates({
+      // Strip ephemeral fields before encrypting. Hoisted above the ratchet
+      // critical section below because it is a pure destructure of the caller's
+      // message and is needed again after the lock is released.
+      const {
+        sendStatus: _sendStatus,
+        sendError: _sendError,
+        ...messageToEncrypt
+      } = signedMessage;
+
+      // Ratchet critical section — serialized per conversation (see dmRatchetMutex).
+      //
+      // This handler read the session, encrypted with it, and saved the advanced
+      // state back with NO lock at all, while MessageService guards the very same
+      // read-encrypt-save sequence in six places. The hazard is spelled out at the
+      // online twin (MessageService.encryptAndSendDm): two concurrent callers
+      // reading the same state fork the ratchet, the losing save is silently
+      // erased, and the peer can no longer derive keys for the erased branch —
+      // aead::Error on every subsequent frame. Nothing made this path exempt; it
+      // simply drifted out of sync with its four siblings.
+      //
+      // Delivery is awaited OUTSIDE the lock. sendDirectMessages enqueues
+      // synchronously (its Promise executor runs before it returns), so calling it
+      // in here keeps frames in ratchet order, while returning the promise wrapped
+      // in an object lets the lock release before delivery completes. Holding the
+      // lock until delivery is a circular wait — the outbound queue also runs
+      // callbacks that take this same lock — and that deadlocked both directions
+      // at "Sending…" when it was last tried (observed live 2026-07-17).
+      const { sent } = await dmRatchetMutex.runExclusive(
         conversationId,
-      });
-      const sets = orderSessionsForSend(response);
+        async () => {
+          // Get encryption states - these contain all the inbox info we need for established sessions.
+          // Ordered send-ready-first-then-newest, exactly as the four online send sites do (#254):
+          // several stored rows legitimately share one device tag, and `find` below takes the FIRST
+          // match, so the order decides which session an offline-queued DM is encrypted with. Without
+          // this, a message queued while offline after the peer reset picks a stale row and is sent to
+          // an inbox the peer has abandoned — silently discarded on arrival, exactly the failure #254
+          // fixed everywhere else.
+          const response = await this.deps.messageDB.getEncryptionStates({
+            conversationId,
+          });
+          const sets = orderSessionsForSend(response);
 
-      // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
-      const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
+          // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
+          const minimalSelf = {
+            user_address: selfUserAddress,
+          } as secureChannel.UserRegistration;
 
-      let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+          let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
-      // Strip ephemeral fields before encrypting
-      const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = signedMessage;
+          // Get target inboxes from existing encryption states (excluding our own device)
+          const targetInboxes = sets
+            .map((s) => s.tag as string)
+            .filter(
+              (tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address
+            );
 
-      // Get target inboxes from existing encryption states (excluding our own device)
-      const targetInboxes = sets
-        .map((s) => s.tag as string)
-        .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
+          // Validate we have recipients to send to
+          if (targetInboxes.length === 0) {
+            logger.error(
+              '[ActionQueue:sendDm] No established sessions available'
+            );
+            throw new Error(
+              'No established sessions available. Please connect to the internet to initialize the conversation.'
+            );
+          }
 
-      // Validate we have recipients to send to
-      if (targetInboxes.length === 0) {
-        logger.error('[ActionQueue:sendDm] No established sessions available');
-        throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
-      }
+          logger.log('[ActionQueue:sendDm] Encrypting for inboxes...', {
+            targetInboxCount: targetInboxes.length,
+            encryptionStatesCount: sets.length,
+          });
 
-      logger.log('[ActionQueue:sendDm] Encrypting for inboxes...', {
-        targetInboxCount: targetInboxes.length,
-        encryptionStatesCount: sets.length,
-      });
+          // Encrypt for each inbox using existing encryption states (Double Ratchet)
+          for (const inbox of targetInboxes) {
+            const set = sets.find((s) => s.tag === inbox);
+            if (!set) {
+              continue; // Skip - no encryption state for this inbox
+            }
 
-      // Encrypt for each inbox using existing encryption states (Double Ratchet)
-      for (const inbox of targetInboxes) {
-        const set = sets.find((s) => s.tag === inbox);
-        if (!set) {
-          continue; // Skip - no encryption state for this inbox
+            if (set.sending_inbox.inbox_public_key === '') {
+              const newSessions =
+                secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(messageToEncrypt),
+                  minimalSelf,
+                  senderDisplayName,
+                  senderUserIcon
+                );
+              sessions = [...sessions, ...newSessions];
+            } else {
+              const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+                keyset.deviceKeyset,
+                [set],
+                JSON.stringify(messageToEncrypt),
+                minimalSelf,
+                senderDisplayName,
+                senderUserIcon
+              );
+              sessions = [...sessions, ...newSessions];
+            }
+          }
+
+          // Save encryption states and collect messages to send
+          const outboundMessages: string[] = [];
+
+          for (const session of sessions) {
+            if (!session.receiving_inbox) {
+              continue;
+            }
+
+            const newEncryptionState = {
+              state: JSON.stringify({
+                ratchet_state: session.ratchet_state,
+                receiving_inbox: session.receiving_inbox,
+                tag: session.tag,
+                sending_inbox: session.sending_inbox,
+              } as secureChannel.DoubleRatchetStateAndInboxKeys),
+              timestamp: Date.now(),
+              inboxId: session.receiving_inbox.inbox_address,
+              conversationId: address + '/' + address,
+              sentAccept: session.sent_accept,
+            };
+            await this.deps.messageDB.saveEncryptionState(
+              newEncryptionState,
+              true
+            );
+
+            // Collect messages to send: listen subscription + direct message
+            outboundMessages.push(
+              JSON.stringify({
+                type: 'listen',
+                inbox_addresses: [session.receiving_inbox.inbox_address],
+              })
+            );
+            outboundMessages.push(
+              JSON.stringify({ type: 'direct', ...session.sealed_message })
+            );
+          }
+
+          // Send all messages via WebSocket
+          logger.log('[ActionQueue:sendDm] Sending via WebSocket...', {
+            outboundMessagesCount: outboundMessages.length,
+            sessionsCount: sessions.length,
+          });
+          // Enqueued inside the lock to preserve ratchet order, awaited outside it.
+          return {
+            sent: this.deps.messageService.sendDirectMessages(outboundMessages),
+          };
         }
-
-        if (set.sending_inbox.inbox_public_key === '') {
-          const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-            keyset.deviceKeyset,
-            [set],
-            JSON.stringify(messageToEncrypt),
-            minimalSelf,
-            senderDisplayName,
-            senderUserIcon
-          );
-          sessions = [...sessions, ...newSessions];
-        } else {
-          const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
-            keyset.deviceKeyset,
-            [set],
-            JSON.stringify(messageToEncrypt),
-            minimalSelf,
-            senderDisplayName,
-            senderUserIcon
-          );
-          sessions = [...sessions, ...newSessions];
-        }
-      }
-
-      // Save encryption states and collect messages to send
-      const outboundMessages: string[] = [];
-
-      for (const session of sessions) {
-        if (!session.receiving_inbox) {
-          continue;
-        }
-
-        const newEncryptionState = {
-          state: JSON.stringify({
-            ratchet_state: session.ratchet_state,
-            receiving_inbox: session.receiving_inbox,
-            tag: session.tag,
-            sending_inbox: session.sending_inbox,
-          } as secureChannel.DoubleRatchetStateAndInboxKeys),
-          timestamp: Date.now(),
-          inboxId: session.receiving_inbox.inbox_address,
-          conversationId: address + '/' + address,
-          sentAccept: session.sent_accept,
-        };
-        await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
-
-        // Collect messages to send: listen subscription + direct message
-        outboundMessages.push(
-          JSON.stringify({
-            type: 'listen',
-            inbox_addresses: [session.receiving_inbox.inbox_address],
-          })
-        );
-        outboundMessages.push(
-          JSON.stringify({ type: 'direct', ...session.sealed_message })
-        );
-      }
-
-      // Send all messages via WebSocket
-      logger.log('[ActionQueue:sendDm] Sending via WebSocket...', {
-        outboundMessagesCount: outboundMessages.length,
-        sessionsCount: sessions.length,
-      });
-      await this.deps.messageService.sendDirectMessages(outboundMessages);
+      );
+      await sent;
       logger.log('[ActionQueue:sendDm] WebSocket send completed');
 
       // Save to IndexedDB (without sendStatus/sendError)
@@ -711,18 +803,31 @@ export class ActionQueueHandlers {
         address,
         'direct',
         {
-          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-          display_name: conversation?.conversation?.displayName ?? 'Unknown User',
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation?.conversation?.displayName ?? 'Unknown User',
         },
         selfUserAddress // Pass current user address to update lastReadTimestamp
       );
 
       // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
       // This prevents race conditions between two separate setQueryData calls
-      const messagesKey = buildMessagesKeyPrefix({ spaceId: address, channelId: address });
+      const messagesKey = buildMessagesKeyPrefix({
+        spaceId: address,
+        channelId: address,
+      });
       this.deps.queryClient.setQueriesData(
         { queryKey: messagesKey },
-        (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+        (
+          oldData:
+            | InfiniteData<{
+                messages: Message[];
+                nextCursor?: number;
+                prevCursor?: number;
+              }>
+            | undefined
+        ) => {
           if (!oldData?.pages) return oldData;
 
           // Check if message already exists in cache
@@ -739,7 +844,10 @@ export class ActionQueueHandlers {
                 return {
                   ...page,
                   messages: page.messages.map((msg) => {
-                    if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                    if (
+                      msg.messageId === messageId &&
+                      msg.sendStatus !== undefined
+                    ) {
                       // Clear sendStatus to mark as sent
                       const { sendStatus: _, sendError: __, ...rest } = msg;
                       return rest as Message;
@@ -758,7 +866,10 @@ export class ActionQueueHandlers {
             pageParams: oldData.pageParams,
             pages: oldData.pages.map((page, index) => {
               if (index === oldData.pages.length - 1) {
-                const newMessages = [...page.messages, messageToEncrypt as Message];
+                const newMessages = [
+                  ...page.messages,
+                  messageToEncrypt as Message,
+                ];
                 newMessages.sort((a, b) => a.createdDate - b.createdDate);
                 return {
                   ...page,
@@ -770,18 +881,20 @@ export class ActionQueueHandlers {
           };
         }
       );
-      logger.log('[ActionQueue:sendDm] DM sent successfully', { messageId: messageId?.slice(0, 16) });
+      logger.log('[ActionQueue:sendDm] DM sent successfully', {
+        messageId: messageId?.slice(0, 16),
+      });
     },
     isPermanentError: (error) => {
-      return (
-        error.message.includes('400') ||
-        error.message.includes('403')
-      );
+      return error.message.includes('400') || error.message.includes('403');
     },
     onFailure: (context, error) => {
       const address = context.address as string;
       const messageId = context.messageId as string;
-      logger.error('[ActionQueue:sendDm] DM send failed', { messageId: messageId?.slice(0, 16), error: error.message });
+      logger.error('[ActionQueue:sendDm] DM send failed', {
+        messageId: messageId?.slice(0, 16),
+        error: error.message,
+      });
       this.deps.messageService.updateMessageStatus(
         this.deps.queryClient,
         address,
@@ -791,7 +904,7 @@ export class ActionQueueHandlers {
         this.sanitizeError(error)
       );
     },
-    successMessage: undefined, 
+    successMessage: undefined,
     failureMessage: undefined,
   };
 
@@ -815,7 +928,10 @@ export class ActionQueueHandlers {
         throw new Error('Keyset not available');
       }
       const address = context.address as string;
-      const reactionMessage = context.reactionMessage as Record<string, unknown>;
+      const reactionMessage = context.reactionMessage as Record<
+        string,
+        unknown
+      >;
       const selfUserAddress = context.selfUserAddress as string;
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
@@ -960,9 +1076,17 @@ export class ActionQueueHandlers {
       };
 
       try {
-        await this.deps.messageService.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        await this.deps.messageService.encryptAndSendDm(
+          address,
+          ackMessage,
+          selfUserAddress,
+          keyset
+        );
       } catch (err: any) {
-        logger.error('[ActionQueue:sendDeliveryAck] Failed to send ack', err.message);
+        logger.error(
+          '[ActionQueue:sendDeliveryAck] Failed to send ack',
+          err.message
+        );
         throw err;
       }
     },
@@ -1010,9 +1134,17 @@ export class ActionQueueHandlers {
       };
 
       try {
-        await this.deps.messageService.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        await this.deps.messageService.encryptAndSendDm(
+          address,
+          ackMessage,
+          selfUserAddress,
+          keyset
+        );
       } catch (err: any) {
-        logger.error('[ActionQueue:sendReadAck] Failed to send read ack', err.message);
+        logger.error(
+          '[ActionQueue:sendReadAck] Failed to send read ack',
+          err.message
+        );
         throw err;
       }
     },
@@ -1030,10 +1162,18 @@ export class ActionQueueHandlers {
    */
   private sanitizeError(error: Error): string {
     const msg = error.message.toLowerCase();
-    if (msg.includes('network') || msg.includes('fetch') || msg.includes('offline')) {
+    if (
+      msg.includes('network') ||
+      msg.includes('fetch') ||
+      msg.includes('offline')
+    ) {
       return t`Network error`;
     }
-    if (msg.includes('encrypt') || msg.includes('ratchet') || msg.includes('key')) {
+    if (
+      msg.includes('encrypt') ||
+      msg.includes('ratchet') ||
+      msg.includes('key')
+    ) {
       return t`Encryption error`;
     }
     if (msg.includes('no target inboxes')) {

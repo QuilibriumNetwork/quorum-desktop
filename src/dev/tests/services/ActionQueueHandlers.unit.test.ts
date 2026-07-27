@@ -671,6 +671,68 @@ describe('ActionQueueHandlers - Unit Tests', () => {
       ).rejects.toThrow('No established sessions');
     });
 
+    it('serializes concurrent sends on the same conversation (ratchet mutex)', async () => {
+      // Regression test. This handler read the session, encrypted with it, and
+      // saved the advanced state back with NO lock, while the four online send
+      // sites all hold dmRatchetMutex for the same sequence. Double Ratchet
+      // state is strictly linear: if two sends both read the same snapshot, the
+      // losing save is silently erased and the peer can no longer derive keys
+      // for the erased branch — aead::Error on every subsequent frame.
+      //
+      // The lock must force read1 -> save1 -> read2 -> save2. Without it the
+      // reads interleave and this reads read:v0, read:v0, save:v1, save:v2.
+      const { channel } = await import('@quilibrium/quilibrium-js-sdk-channels');
+      const events: string[] = [];
+      let version = 0;
+
+      (channel.DoubleRatchetInboxEncrypt as ReturnType<typeof vi.fn>).mockReturnValue([
+        {
+          ratchet_state: 'advanced',
+          receiving_inbox: { inbox_address: 'recv-inbox' },
+          sending_inbox: { inbox_address: 'send-inbox', inbox_public_key: 'key' },
+          tag: 'inbox-1',
+          sealed_message: { inbox_address: 'send-inbox' },
+          sent_accept: true,
+        },
+      ]);
+
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockImplementation(async () => {
+        events.push(`read:v${version}`);
+        // Widen the race window: unlocked, the second send reaches its read
+        // while the first is still between read and save.
+        await new Promise((resolve) => setTimeout(resolve, 0));
+        return [
+          {
+            timestamp: version,
+            sentAccept: true,
+            state: JSON.stringify({
+              tag: 'inbox-1',
+              sending_inbox: { inbox_public_key: 'key' },
+              receiving_inbox: { inbox_address: 'inbox-1' },
+              ratchet_state: {},
+            }),
+          },
+        ];
+      });
+      mockDeps.messageDB.saveEncryptionState = vi.fn().mockImplementation(async () => {
+        version += 1;
+        events.push(`save:v${version}`);
+      });
+
+      handlers = new ActionQueueHandlers(mockDeps);
+      const handler = handlers.getHandler('send-dm')!;
+      const context = () => ({
+        address: 'recipient',
+        signedMessage: createTestMessage(),
+        messageId: 'msg-123',
+        selfUserAddress: 'self',
+      });
+
+      await Promise.all([handler.execute(context()), handler.execute(context())]);
+
+      expect(events).toEqual(['read:v0', 'save:v1', 'read:v1', 'save:v2']);
+    });
+
     it('should classify 400 and 403 as permanent errors', () => {
       const handler = handlers.getHandler('send-dm')!;
 
