@@ -599,7 +599,14 @@ export class MessageService {
         const upToMessageId = raw.upToMessageId;
         const upToTimestamp = raw.upToTimestamp;
         if (upToMessageId && upToTimestamp) {
-          this.receiptService.onReadAckReceived(upToMessageId, upToTimestamp, senderAddress);
+          // messageIds is absent from peers on older builds — the mark alone
+          // still applies, exactly as before.
+          this.receiptService.onReadAckReceived(
+            upToMessageId,
+            upToTimestamp,
+            senderAddress,
+            raw.messageIds
+          );
         }
       }
       return true; // Signal: intercept this message
@@ -646,7 +653,12 @@ export class MessageService {
     // 2b. Extract piggybacked readAckUpTo, process, then strip
     const readAckUpTo = raw.readAckUpTo;
     if (readAckUpTo && this.receiptService && readReceiptsEnabled) {
-      this.receiptService.onReadAckReceived(readAckUpTo.messageId, readAckUpTo.timestamp, senderAddress);
+      this.receiptService.onReadAckReceived(
+        readAckUpTo.messageId,
+        readAckUpTo.timestamp,
+        senderAddress,
+        readAckUpTo.messageIds
+      );
     }
     delete raw.readAckUpTo;
 

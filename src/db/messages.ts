@@ -491,7 +491,13 @@ export class MessageDB {
    *
    * Only messages with a genuine deliveredAt are marked — a read ack must never
    * invent a delivery, or messages lost in transport get ✓✓ they never earned.
-   * The HWM message itself is exempt: reading it proves it arrived.
+   * Messages the peer NAMED are exempt: reading one proves it arrived, so a
+   * named message settles even if its delivery ack was lost. `readMessageIds`
+   * is absent for peers on older builds, leaving only the HWM self-proving.
+   *
+   * The cursor range is bounded by upToTimestamp, which covers every named id:
+   * the mark is the newest read in the window, and ids are collected with the
+   * same createdDate the range is keyed on.
    */
   async updateMessagesReadAt(
     spaceId: string,
@@ -499,7 +505,8 @@ export class MessageDB {
     ownAddress: string,
     upToMessageId: string,
     upToTimestamp: number,
-    readAt: number
+    readAt: number,
+    readMessageIds?: ReadonlySet<string>
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -511,7 +518,7 @@ export class MessageDB {
         [spaceId, channelId, upToTimestamp]
       );
       const request = index.openCursor(range);
-      const ctx = { upToMessageId, upToTimestamp, now: readAt };
+      const ctx = { upToMessageId, upToTimestamp, now: readAt, readMessageIds };
 
       request.onsuccess = () => {
         const cursor = request.result;
