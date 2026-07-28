@@ -24,6 +24,7 @@
 //   HARNESS_LOSS_ROUNDS=200 HARNESS_LOSS_SETTLE_MS=600000 yarn harness dm-loss
 import { test, expect } from 'vitest';
 import { createBot, type HarnessBot } from './bot';
+import { createCanonicalPair, hasCanonicalKeys } from './canonical';
 import { WsTransport } from './transport';
 import { RunLog } from './log';
 
@@ -76,13 +77,39 @@ test(
 
     // Fresh accounts: reused ones carry queued frames that arrive without having
     // been sent in this run, which would corrupt both sides of the join.
+    //
+    // HARNESS_LOSS_CANONICAL=1 drives the operator's two REAL test accounts
+    // instead. That is not a convenience switch — it tests a specific hypothesis.
+    // Issue #183's write-layer loss is directional and intermittent (32% one way,
+    // ~0% the other, same devices/minutes/hub), and §27.4 reads that asymmetry as
+    // per-WRITER or per-INBOX node state rather than blanket sampling loss. If so,
+    // fresh throwaways are the population LEAST likely to exhibit it — the very
+    // choice that removes the queued-frame confound may remove the phenomenon.
+    // Aged, heavily-used, multi-device accounts are the population that matches
+    // the phones where the loss was actually measured.
+    //
+    // `drain: true` clears each device inbox first, so queued history cannot be
+    // counted as an arrival that was never sent in this run.
     const stamp = String(startedAt).slice(-6);
-    const [alice, bob] = await Promise.all([
-      createBot(`loss-a-${stamp}`),
-      createBot(`loss-b-${stamp}`),
-    ]);
+    const useCanonical = process.env.HARNESS_LOSS_CANONICAL === '1';
+    if (useCanonical && !hasCanonicalKeys()) {
+      throw new Error(
+        'HARNESS_LOSS_CANONICAL=1 but BOT_A_PRIVATE_KEY/BOT_B_PRIVATE_KEY are not set ' +
+          'in src/dev/tests/harness/.env.local'
+      );
+    }
+    const [alice, bob] = useCanonical
+      ? await (async () => {
+          const { a, b } = await createCanonicalPair({ drain: true });
+          return [a, b] as const;
+        })()
+      : await Promise.all([createBot(`loss-a-${stamp}`), createBot(`loss-b-${stamp}`)]);
     await Promise.all([alice.start(), bob.start()]);
-    say(`alice=${alice.identity.address.slice(0, 12)} bob=${bob.identity.address.slice(0, 12)}`);
+    say(
+      `mode=${useCanonical ? 'CANONICAL (real aged accounts)' : 'throwaway'} ` +
+        `alice=${alice.identity.address.slice(0, 12)} bob=${bob.identity.address.slice(0, 12)}`,
+      { mode: useCanonical ? 'canonical' : 'throwaway' }
+    );
 
     let aPosts = 0;
     let bPosts = 0;
