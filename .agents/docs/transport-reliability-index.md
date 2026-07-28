@@ -344,6 +344,38 @@ node .agents/tools/dm-debug/dr-advanced-start-fork.mjs              # needs noth
 > ⚠️ Logs containing `[XPDUMP]` hold **real ratchet key material**. Throwaway test
 > accounts only, keep them local, never paste raw regions into an issue.
 
+### 📁 The captured-log archive — held locally, NOT in this repo
+
+68 raw capture logs from rounds ~10-29 (25-27 July 2026) exist as a **local
+archive on the capture operator's machine**. They are deliberately not in this
+repo and not shared: a large share carry live ratchet key material.
+
+**The path is intentionally not recorded here** — it is a personal machine path,
+meaningless on anyone else's checkout. Ask the operator, or look in the private
+agent memory vault under `projects/quorum-desktop/`.
+
+The archive is organised by **what a tool can do with each file** rather than by
+date, since the filenames already carry dates. If you hold a copy, mirror this:
+
+| folder | what | key material |
+|---|---|---|
+| `xpdump-corpus/` (26) | console captures containing `[XPDUMP]` state dumps — what `dr-ablate` and `replay-captured` consume | **YES** |
+| `console-no-xpdump/` (17) | console captures with no state dumps | no |
+| `mobile-xptrace/` (25) | on-device frame traces. Includes **round 29's two phones** (`R58MA1HP46R`, `ZY22K3XRLP`) — the sole evidence base for #183 item 2 | no |
+
+Point the replay scenario at whichever directory holds your corpus:
+
+```bash
+DM_LOG_DIR="<your corpus dir>" yarn harness replay-captured
+```
+
+Without `DM_LOG_DIR` that scenario **skips silently**, so it looks like it passed
+while testing nothing.
+
+⚠️ **The archive is irreplaceable** — the rigs have moved on and several rounds
+cannot be re-captured. It is recorded here at all because an agent had to ask
+where the logs were and nothing pointed at them.
+
 **⚠️ The DR tools exist in BOTH repos and the two copies DIFFER.** `dr-ablate.mjs`,
 `dr-replay.mjs` and `dr-advanced-start-fork.mjs` are in `quorum-mobile/.agents/scripts/`
 as well (plus a mobile-only `dr-core-harness.mjs`). **Desktop's copies in

@@ -508,7 +508,7 @@ Old open task `2026-05-29-mobile-adopt-shared-permission-helpers.md` is now **WO
 **Desktop:** initials + color logic lives in **`quorum-shared/src/utils/avatar.ts`** (`getInitials`, `getColorFromDisplayName`, `lightenColor`/`darkenColor`) — pure, exported publicly. `getInitials(displayName)` = first letters of the first two whitespace words, uppercased; emoji-aware (returns the leading emoji); `''`/`"Unknown User"` → `'?'`. Both **user** avatars (`src/components/user/UserAvatar`) and **space** avatars (`src/components/space/SpaceAvatar`, `SpaceIcon.tsx`) route through ONE `UserInitials` component that calls these shared functions — zero duplication. A `UserInitials.native.tsx` already exists in the shared component stack (uses `expo-linear-gradient` + RN `<Text>`).
 
 **Why desktop is better / why mobile needs it:**
-1. **Meaningful initials.** Desktop shows `NA` for "Niccolò Angeli"; mobile shows address junk (`AC`). The desktop fallback is human-recognizable.
+1. **Meaningful initials.** Desktop shows `AB` for a display name like "Ada Byron"; mobile shows address junk (`AC`). The desktop fallback is human-recognizable.
 2. **One system for users AND spaces.** Desktop's space avatars reuse the exact same logic; mobile's space monograms are scattered across 3 inline copies + 2 address-based + 2 icon-only — inconsistent and drift-prone.
 3. **The logic is already shared and battle-tested.** `getInitials`/`getColorFromDisplayName` are pure, in the published dist mobile already pins, emoji-aware, with a stable color palette. Mobile reimplements a worse version locally for no reason.
 

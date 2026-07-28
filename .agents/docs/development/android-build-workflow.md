@@ -71,7 +71,7 @@ These are set as **Windows User environment variables** and persist across sessi
 
 ### Accented Username Workaround
 
-The Windows username contains an accented character (`Niccolò Angeli`). NTFS junctions alias it to `C:\Users\kyn`. Combined with `GRADLE_USER_HOME` pointing to an accent-free path (`D:\gradle-cache`), this fully resolves Gradle build failures caused by non-ASCII characters in paths. No separate Windows account is needed.
+If your Windows username contains a non-ASCII character, Gradle builds fail on paths that include it. An NTFS junction aliasing the profile to an ASCII-only path, combined with `GRADLE_USER_HOME` pointing somewhere accent-free (e.g. `D:\gradle-cache`), fully resolves it. No separate Windows account is needed.
 
 ### Android Emulator Setup
 

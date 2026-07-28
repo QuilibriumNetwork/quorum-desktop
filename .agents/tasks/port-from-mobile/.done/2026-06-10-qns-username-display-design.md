@@ -63,8 +63,8 @@ Once a user has a QNS name, the **global display-name field becomes the fallback
 
 ### The `.q` handle and trust model
 
-- The QNS name is stored **bare** (`niccolo`). The `.q` suffix is **appended only at render time** (`` `${primaryUsername}.q` ``), in **accent color**. This mirrors mobile's `UnifiedProfileHeader` (the richer of mobile's two inconsistent treatments). **No badge** — the suffix is the signal.
-- **What `.q` guarantees:** "this name is QNS-registered." It does **not** guarantee "this is the specific human you remember" — confusable registered names (e.g. `niccolo` vs `niccolò`) are a QNS registration-uniqueness matter, out of scope here. The UI must not imply more than "registered."
+- The QNS name is stored **bare** (`marco`). The `.q` suffix is **appended only at render time** (`` `${primaryUsername}.q` ``), in **accent color**. This mirrors mobile's `UnifiedProfileHeader` (the richer of mobile's two inconsistent treatments). **No badge** — the suffix is the signal.
+- **What `.q` guarantees:** "this name is QNS-registered." It does **not** guarantee "this is the specific human you remember" — confusable registered names (e.g. `marco` vs `marcò`) are a QNS registration-uniqueness matter, out of scope here. The UI must not imply more than "registered."
 
 ### Validation (what makes `.q` unspoofable)
 
@@ -80,7 +80,7 @@ Custom display names — **both** the global one (`UserSettingsModal/General.tsx
 
 - `NewDirectMessageModal.tsx` (today: single raw-address input, delegates to `useDirectMessageCreation`) gains `@`-prefix detection.
 - On `@`-prefixed input: call the shared resolver (`resolveName`), then derive the `Qm…` address from the returned `resolveKey`. Show resolution status (resolving / resolved-as / not-found).
-- The conversation is created against the **resolved address** (unchanged storage model); the conversation's displayed name follows the resolution rule (so it shows `niccolo.q`).
+- The conversation is created against the **resolved address** (unchanged storage model); the conversation's displayed name follows the resolution rule (so it shows `marco.q`).
 - Raw `Qm…` addresses keep working exactly as today.
 
 ### 2. Profile cards
@@ -92,13 +92,13 @@ Custom display names — **both** the global one (`UserSettingsModal/General.tsx
 
 ### 3. Mentions
 
-- **Autocomplete picker:** the candidate list (space members) carries the QNS name and the picker searches it, so you can type `@nic` and match `niccolo.q`. Requires the same `primary_username`-into-member-data plumbing as the profile surface (shared dependency, not extra).
+- **Autocomplete picker:** the candidate list (space members) carries the QNS name and the picker searches it, so you can type `@nic` and match `marco.q`. Requires the same `primary_username`-into-member-data plumbing as the profile surface (shared dependency, not extra).
 - **Mention pill render:** stored token stays `@<address>` (unchanged wire format — settled). The pill *displays* via the resolution rule, so it shows the `.q` name when appropriate and updates live as names change (no frozen text).
 - **Scope limit (held deliberately):** you can mention **space members only**. We do **not** add live QNS resolution into the compose path; mentioning a non-member stranger by QNS name is a separate, larger feature, out of scope. This keeps mentions cheap: no new network calls, no compose-time resolution, no storage change.
 
 ### 4. The "different name in space vs. DM" situation
 
-Accepted as **honest, not a bug.** A person can be "Nic (mod)" in a space (their chosen costume there) and `niccolo.q` in a DM (their verified identity). The **address underneath proves it's the same person** across both. Optional post-v1 polish: a one-time reconciliation hint in the DM ("niccolo.q — Nic (mod) in #devspace"). Not in v1.
+Accepted as **honest, not a bug.** A person can be "Nic (mod)" in a space (their chosen costume there) and `marco.q` in a DM (their verified identity). The **address underneath proves it's the same person** across both. Optional post-v1 polish: a one-time reconciliation hint in the DM ("marco.q — Nic (mod) in #devspace"). Not in v1.
 
 ## Hard constraint: do not break mobile
 

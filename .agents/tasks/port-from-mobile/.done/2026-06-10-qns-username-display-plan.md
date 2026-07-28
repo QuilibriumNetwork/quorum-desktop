@@ -220,8 +220,8 @@ describe('resolveName', () => {
     });
     vi.stubGlobal('fetch', fetchMock);
 
-    const result = await resolveName('niccolo');
-    expect(fetchMock).toHaveBeenCalledWith(`${QNS_BASE_URL}/resolve/niccolo`, expect.any(Object));
+    const result = await resolveName('marco');
+    expect(fetchMock).toHaveBeenCalledWith(`${QNS_BASE_URL}/resolve/marco`, expect.any(Object));
     expect(result?.address).toBe('QmABC');
   });
 
@@ -320,7 +320,7 @@ const base = { address: 'QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX' };
 describe('resolveDisplayName', () => {
   it('uses the per-space override when present (highest priority)', () => {
     const r = resolveDisplayName(
-      { ...base, display_name: 'NicMod', primary_username: 'niccolo', name: 'Niccolo' },
+      { ...base, display_name: 'MarMod', primary_username: 'marco', name: 'Marco' },
       { spaceOverrideName: 'Nic (mod)' }
     );
     expect(r.name).toBe('Nic (mod)');
@@ -329,16 +329,16 @@ describe('resolveDisplayName', () => {
 
   it('uses the QNS username when there is no space override', () => {
     const r = resolveDisplayName(
-      { ...base, primary_username: 'niccolo', display_name: 'Whatever' },
+      { ...base, primary_username: 'marco', display_name: 'Whatever' },
       {}
     );
-    expect(r.name).toBe('niccolo');
+    expect(r.name).toBe('marco');
     expect(r.isQnsVerified).toBe(true);
   });
 
   it('falls back to the global display name when no override and no QNS name', () => {
-    const r = resolveDisplayName({ ...base, display_name: 'Niccolo A.' }, {});
-    expect(r.name).toBe('Niccolo A.');
+    const r = resolveDisplayName({ ...base, display_name: 'Marco A.' }, {});
+    expect(r.name).toBe('Marco A.');
     expect(r.isQnsVerified).toBe(false);
   });
 
@@ -351,10 +351,10 @@ describe('resolveDisplayName', () => {
 
   it('treats empty/whitespace names as absent', () => {
     const r = resolveDisplayName(
-      { ...base, display_name: '   ', primary_username: 'niccolo' },
+      { ...base, display_name: '   ', primary_username: 'marco' },
       { spaceOverrideName: '  ' }
     );
-    expect(r.name).toBe('niccolo');
+    expect(r.name).toBe('marco');
     expect(r.isQnsVerified).toBe(true);
   });
 });
@@ -454,24 +454,24 @@ import { getReservedNameType, validateDisplayName } from './validation';
 
 describe('QNS .q suffix protection', () => {
   it('rejects a name ending in .q', () => {
-    expect(getReservedNameType('niccolo.q')).toBe('qns-suffix');
+    expect(getReservedNameType('marco.q')).toBe('qns-suffix');
   });
   it('rejects any dotted name (dots reserved for QNS)', () => {
     expect(getReservedNameType('foo.bar')).toBe('qns-suffix');
   });
   it('rejects lookalike/full-width dot bypasses', () => {
-    expect(getReservedNameType('niccolo．q')).toBe('qns-suffix'); // U+FF0E
-    expect(getReservedNameType('niccolo﹒q')).toBe('qns-suffix'); // U+FE52
+    expect(getReservedNameType('marco．q')).toBe('qns-suffix'); // U+FF0E
+    expect(getReservedNameType('marco﹒q')).toBe('qns-suffix'); // U+FE52
   });
   it('rejects trailing-space bypass', () => {
-    expect(getReservedNameType('niccolo.q ')).toBe('qns-suffix');
+    expect(getReservedNameType('marco.q ')).toBe('qns-suffix');
   });
   it('allows ordinary names without dots', () => {
-    expect(getReservedNameType('Niccolo A')).toBeNull();
+    expect(getReservedNameType('Marco A')).toBeNull();
   });
   it('validateDisplayName surfaces an error for dotted names', () => {
-    expect(validateDisplayName('niccolo.q')).not.toBeNull();
-    expect(validateDisplayName('Niccolo')).toBeNull();
+    expect(validateDisplayName('marco.q')).not.toBeNull();
+    expect(validateDisplayName('Marco')).toBeNull();
   });
 });
 ```
@@ -707,10 +707,10 @@ import { buildPublicProfileCanonical } from './publicProfilePayload';
 
 it('builds v2 when primaryUsername is present', () => {
   const s = buildPublicProfileCanonical({
-    address: 'QmA', displayName: 'Nic', profileImage: '', bio: '', primaryUsername: 'niccolo',
+    address: 'QmA', displayName: 'Nic', profileImage: '', bio: '', primaryUsername: 'marco',
   });
   expect(s.startsWith('public-profile-v2:QmA:Nic::')).toBe(true);
-  expect(s).toContain(':niccolo:');
+  expect(s).toContain(':marco:');
 });
 
 it('builds v1 when primaryUsername is absent', () => {
@@ -799,7 +799,7 @@ Run: `grep -rn "useDisplayNameValidation\|validateDisplayName" quorum-desktop/sr
 
 - [ ] **Step 2: Manual verification**
 
-In User Settings → display name: type `niccolo.q` → inline error appears, save disabled. Type `Niccolo` → no error. Repeat in Space Settings → per-space name. Record result.
+In User Settings → display name: type `marco.q` → inline error appears, save disabled. Type `Marco` → no error. Repeat in Space Settings → per-space name. Record result.
 
 - [ ] **Step 3: Commit (only if a modal needed rerouting)**
 
@@ -829,7 +829,7 @@ Run: `grep -rn "useMentionInput\|users=" quorum-desktop/src/components/message/M
 
 - [ ] **Step 2: Use the helper for the candidate label + match text**
 
-In `useMentionInput.ts`, where each candidate's display label is computed and where the filter matches the typed query, derive the name via `resolveDisplayName(user, { spaceOverrideName })` and also allow matching against `user.primary_username` so typing `@nic` matches `niccolo`. Keep matching against existing `display_name`/`name`/`address` too (additive).
+In `useMentionInput.ts`, where each candidate's display label is computed and where the filter matches the typed query, derive the name via `resolveDisplayName(user, { spaceOverrideName })` and also allow matching against `user.primary_username` so typing `@nic` matches `marco`. Keep matching against existing `display_name`/`name`/`address` too (additive).
 
 - [ ] **Step 3: Use the helper for the pill display name**
 
