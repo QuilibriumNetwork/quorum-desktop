@@ -122,6 +122,92 @@ describe('MessageDB - DM receipt reconciliation', () => {
     });
   });
 
+  describe('read acks that name what was read', () => {
+    const namedReadAck = (
+      upToMessageId: string,
+      upToTimestamp: number,
+      ids: string[],
+      at = 9_000
+    ) => db.updateMessagesReadAt(PEER, PEER, ME, upToMessageId, upToTimestamp, at, new Set(ids));
+
+    it('recovers a message whose delivery ack was lost, because reading proves arrival', async () => {
+      // No deliveredAt: its delivery ack never made it back. Before naming, the
+      // only escape was being the high-water mark itself.
+      await saveDm({ messageId: 'm1', createdDate: 400 });
+      await saveDm({ messageId: 'hwm', createdDate: 500, deliveredAt: 800 });
+
+      await namedReadAck('hwm', 500, ['m1', 'hwm']);
+
+      const m1 = await db.getMessageById('m1');
+      expect(m1?.readAt).toBe(9_000);
+      expect(m1?.deliveredAt).toBe(9_000);
+    });
+
+    it('still refuses a message the peer did NOT name — the delivery gate holds', async () => {
+      await saveDm({ messageId: 'lost', createdDate: 400 });
+      await saveDm({ messageId: 'read-one', createdDate: 450 });
+
+      await namedReadAck('hwm', 500, ['read-one']);
+
+      const lost = await db.getMessageById('lost');
+      expect(lost?.readAt).toBeUndefined();
+      expect(lost?.deliveredAt).toBeUndefined();
+    });
+
+    it('does not overwrite a real delivery time on a named message', async () => {
+      await saveDm({ messageId: 'm1', createdDate: 400, deliveredAt: 800 });
+
+      await namedReadAck('hwm', 500, ['m1']);
+
+      const m1 = await db.getMessageById('m1');
+      expect(m1?.readAt).toBe(9_000);
+      expect(m1?.deliveredAt).toBe(800);
+    });
+
+    it('leaves the peer\'s own messages alone even when named', async () => {
+      await saveDm({ messageId: 'theirs', createdDate: 400, senderId: PEER });
+
+      await namedReadAck('hwm', 500, ['theirs']);
+
+      const theirs = await db.getMessageById('theirs');
+      expect(theirs?.readAt).toBeUndefined();
+      expect(theirs?.deliveredAt).toBeUndefined();
+    });
+
+    it('repairs the reported-bug conversation when the reader names what it read', async () => {
+      // Same ten messages, #4 and #7 lost — but now the reader names them, so
+      // both recover instead of sitting blank until a delivery ack that never comes.
+      for (let n = 1; n <= 10; n++) {
+        const lost = n === 4 || n === 7;
+        await saveDm({
+          messageId: `m${n}`,
+          createdDate: n * 100,
+          deliveredAt: lost ? undefined : 800,
+        });
+      }
+
+      await namedReadAck('m10', 1000, Array.from({ length: 10 }, (_, i) => `m${i + 1}`));
+
+      const results = await Promise.all(
+        Array.from({ length: 10 }, (_, i) => db.getMessageById(`m${i + 1}`))
+      );
+
+      expect(results.every((m) => m?.readAt === 9_000)).toBe(true);
+      expect(results[3]?.deliveredAt).toBe(9_000); // m4 recovered
+      expect(results[6]?.deliveredAt).toBe(9_000); // m7 recovered
+    });
+
+    it('behaves exactly as before when the peer names nothing (older build)', async () => {
+      await saveDm({ messageId: 'lost', createdDate: 400 });
+      await saveDm({ messageId: 'ok', createdDate: 450, deliveredAt: 800 });
+
+      await readAck('hwm', 500);
+
+      expect((await db.getMessageById('lost'))?.readAt).toBeUndefined();
+      expect((await db.getMessageById('ok'))?.readAt).toBe(9_000);
+    });
+  });
+
   describe('delivery acks', () => {
     it('stamps deliveredAt when no read ack has arrived', async () => {
       await saveDm({ messageId: 'm1', createdDate: 400 });

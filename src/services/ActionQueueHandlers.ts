@@ -1107,7 +1107,13 @@ export class ActionQueueHandlers {
    * - address: string (DM conversation address)
    * - upToMessageId: string (high-water mark message ID)
    * - upToTimestamp: number (high-water mark timestamp)
+   * - messageIds: string[] (ids read since the last flush; may be absent)
    * - selfUserAddress: string (user's address for identity in envelope)
+   *
+   * If a newer read flush replaces this task before it sends (queue dedup on
+   * `read-ack:${address}`), the superseding ack carries a mark at least as high,
+   * so read state still lands; only the naming for the replaced window is lost
+   * and those messages fall back to needing their own delivery ack.
    */
   private sendReadAck: TaskHandler = {
     execute: async (context) => {
@@ -1120,6 +1126,7 @@ export class ActionQueueHandlers {
       const address = context.address as string;
       const upToMessageId = context.upToMessageId as string;
       const upToTimestamp = context.upToTimestamp as number;
+      const messageIds = context.messageIds as string[] | undefined;
       const selfUserAddress = context.selfUserAddress as string;
 
       if (!upToMessageId) {
@@ -1131,6 +1138,7 @@ export class ActionQueueHandlers {
         type: 'read-ack' as const,
         upToMessageId,
         upToTimestamp,
+        ...(messageIds?.length ? { messageIds } : {}),
       };
 
       try {

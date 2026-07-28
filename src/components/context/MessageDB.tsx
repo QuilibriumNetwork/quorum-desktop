@@ -1154,20 +1154,32 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           });
         }
       },
-      onReadFlush: (address: string, highWaterMark: { messageId: string; timestamp: number }) => {
+      onReadFlush: (
+        address: string,
+        payload: { messageId: string; timestamp: number; messageIds: string[] }
+      ) => {
         // Queue standalone read ack via Action Queue
         actionQueueService.enqueue(
           'send-read-ack',
           {
             address,
-            upToMessageId: highWaterMark.messageId,
-            upToTimestamp: highWaterMark.timestamp,
+            upToMessageId: payload.messageId,
+            upToTimestamp: payload.timestamp,
+            // Naming what was read lets the peer settle ✓✓ for messages whose
+            // delivery ack was lost. The mark still rides along and still heals
+            // a dropped read ack, so both failure modes stay covered.
+            messageIds: payload.messageIds,
             selfUserAddress: selfAddress,
           },
           `read-ack:${address}` // dedup key: one pending read ack per address
         );
       },
-      onReadAckProcessed: (upToMessageId: string, upToTimestamp: number, conversationAddress: string) => {
+      onReadAckProcessed: (
+        upToMessageId: string,
+        upToTimestamp: number,
+        conversationAddress: string,
+        messageIds?: string[]
+      ) => {
         const now = Date.now();
 
         // A peer sending an unbounded timestamp would otherwise mark our entire
@@ -1175,13 +1187,18 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         if (!isReadAckTimestampValid(upToTimestamp, now)) return;
 
         // Remember how far they have read, so delivery acks still in flight can
-        // finish the upgrade when they land (see onAckProcessed).
+        // finish the upgrade when they land (see onAckProcessed). Kept even now
+        // that acks name messages: naming dies with a dropped ack, the watermark
+        // is restated by every later one and so repairs it.
         readWatermarksRef.current.set(
           conversationAddress,
           advanceReadWatermark(readWatermarksRef.current.get(conversationAddress) ?? 0, upToTimestamp)
         );
 
-        const ctx = { upToMessageId, upToTimestamp, now };
+        // Named ids are self-proving, so they settle ✓✓ even when the delivery
+        // ack was lost. Absent for peers on older builds.
+        const readMessageIds = messageIds?.length ? new Set(messageIds) : undefined;
+        const ctx = { upToMessageId, upToTimestamp, now, readMessageIds };
 
         // Update React Query cache — scope to this conversation only (not all conversations)
         const conversationKey = buildMessagesKeyPrefix({ spaceId: conversationAddress, channelId: conversationAddress });
@@ -1210,7 +1227,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         // Persist to IndexedDB — DM spaceId and channelId are both the address
         messageDB
-          .updateMessagesReadAt(conversationAddress, conversationAddress, selfAddress, upToMessageId, upToTimestamp, now)
+          .updateMessagesReadAt(
+            conversationAddress,
+            conversationAddress,
+            selfAddress,
+            upToMessageId,
+            upToTimestamp,
+            now,
+            readMessageIds
+          )
           .catch(() => {
             // Best effort — React Query cache is already updated
           });
