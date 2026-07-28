@@ -29,9 +29,12 @@
 // devices to shared accounts and fan out to ghost inboxes we cannot observe —
 // confounding the exact variable being isolated. Instead the account is generated
 // here and thrown away.
+import { existsSync, rmSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { test, expect } from 'vitest';
 import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { createBot, type HarnessBot } from './bot';
+import { config } from './env';
 import { direction, subscribedInboxes } from './loss';
 import { makeApiClient } from './transport';
 import { RunLog } from './log';
@@ -39,6 +42,17 @@ import { RunLog } from './log';
 const ROUNDS = Number(process.env.HARNESS_MD_ROUNDS ?? 20);
 const GAP_MS = Number(process.env.HARNESS_MD_GAP_MS ?? 900);
 const SETTLE_MS = Number(process.env.HARNESS_MD_SETTLE_MS ?? 120_000);
+/**
+ * Devices on account A. Two proved the shape and measured clean at 100 rounds,
+ * which did NOT reproduce the ~10-of-200 seen on accounts carrying 5+ devices —
+ * so device COUNT is the next variable, and it is the cheap one: raising this
+ * costs nothing on any real account.
+ *
+ * Fan-out is already known to scale hard with device count (~9 frames/message on
+ * 5+ device accounts vs ~1:1 on throwaways), so if a threshold exists this is the
+ * dial that finds it.
+ */
+const DEVICES = Math.max(2, Number(process.env.HARNESS_MD_DEVICES ?? 2));
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -51,7 +65,7 @@ const postsMatching = (bot: HarnessBot, prefix: string) =>
   );
 
 test(
-  'dm-multidevice: a two-device account, per-device arrival',
+  'dm-multidevice: an N-device account, per-device arrival',
   async () => {
     const startedAt = Date.now();
     const log = new RunLog('dm-multidevice', startedAt);
@@ -74,15 +88,28 @@ test(
     // fetches the current device list then posts a merged registration
     // (identity.ts:141-153). Concurrent creation silently drops one device, and the
     // scenario would then measure a one-device account while claiming otherwise.
-    const aPhone = await createBot(`md-a-phone-${stamp}`, { privateKeyHex: KEY_A });
-    const aLaptop = await createBot(`md-a-laptop-${stamp}`, { privateKeyHex: KEY_A });
-    const bob = await createBot(`md-b-${stamp}`);
+    // This is also why the loop below awaits each createBot in turn.
+    const botNames: string[] = [];
+    const aDevices: HarnessBot[] = [];
+    for (let d = 0; d < DEVICES; d++) {
+      const name = `md-a-dev${d}-${stamp}`;
+      botNames.push(name);
+      aDevices.push(await createBot(name, { privateKeyHex: KEY_A }));
+    }
+    const bobName = `md-b-${stamp}`;
+    botNames.push(bobName);
+    const bob = await createBot(bobName);
+
+    // Device 0 is the sender; every other device of account A should receive a
+    // self-sync copy of what it sends, and a copy of everything bob sends.
+    const sender = aDevices[0];
+    const others = aDevices.slice(1);
 
     say(
-      `account A=${aPhone.identity.address.slice(0, 12)} ` +
-        `phone=${aPhone.identity.inboxAddress.slice(0, 12)} ` +
-        `laptop=${aLaptop.identity.inboxAddress.slice(0, 12)}  ` +
-        `bob=${bob.identity.address.slice(0, 12)}`
+      `account A=${sender.identity.address.slice(0, 12)} with ${DEVICES} device(s): ` +
+        aDevices.map((b, i) => `dev${i}=${b.identity.inboxAddress.slice(0, 10)}`).join(' ') +
+        `  bob=${bob.identity.address.slice(0, 12)}`,
+      { devices: DEVICES }
     );
 
     // ── STEP 1: prove the premise before measuring anything ──────────────────
@@ -92,19 +119,21 @@ test(
     // something else". If this fails, every downstream number is meaningless, so
     // fail here rather than report a red result that is really a setup bug.
     const api = makeApiClient();
-    const regA = (await api.getUser(aPhone.identity.address))?.data;
+    const regA = (await api.getUser(sender.identity.address))?.data;
     const registeredInboxes = (regA?.device_registrations ?? []).map(
       (d) => d.inbox_registration.inbox_address
     );
     say(`account A registration lists ${registeredInboxes.length} device(s)`, {
-      devices: registeredInboxes.length,
+      registered: registeredInboxes.length,
     });
-    expect(aPhone.identity.address).toBe(aLaptop.identity.address); // same ACCOUNT
-    expect(aPhone.identity.inboxAddress).not.toBe(aLaptop.identity.inboxAddress); // different DEVICE
-    expect(registeredInboxes).toContain(aPhone.identity.inboxAddress);
-    expect(registeredInboxes).toContain(aLaptop.identity.inboxAddress);
+    for (const b of aDevices) {
+      expect(b.identity.address).toBe(sender.identity.address); // same ACCOUNT
+      expect(registeredInboxes).toContain(b.identity.inboxAddress); // this DEVICE is registered
+    }
+    // Every device distinct — catches a name collision silently reusing a keyset.
+    expect(new Set(aDevices.map((b) => b.identity.inboxAddress)).size).toBe(DEVICES);
 
-    await Promise.all([aPhone.start(), aLaptop.start(), bob.start()]);
+    await Promise.all([...aDevices.map((b) => b.start()), bob.start()]);
 
     // ── Handshake ────────────────────────────────────────────────────────────
     //
@@ -114,17 +143,17 @@ test(
     // is ours, not the product's (cf. PR #264, where two bench defects made the
     // bench lie). Both devices are registered above before any bot starts, and the
     // handshake below forces each side to fetch registrations afterwards.
-    await aPhone.send(bob.identity.address, 'md-setup phone->bob');
+    await sender.send(bob.identity.address, 'md-setup A.dev0->bob');
     await sleep(5000);
-    await bob.send(aPhone.identity.address, 'md-setup bob->A');
+    await bob.send(sender.identity.address, 'md-setup bob->A');
     await sleep(5000);
 
     // ── STEP 2: send, then count PER DEVICE ──────────────────────────────────
     for (let i = 1; i <= ROUNDS; i++) {
-      await aPhone.send(bob.identity.address, `MD-A->B #${i}`).catch((e) =>
+      await sender.send(bob.identity.address, `MD-A->B #${i}`).catch((e) =>
         say(`send A->B #${i} threw: ${(e as Error).message}`)
       );
-      await bob.send(aPhone.identity.address, `MD-B->A #${i}`).catch((e) =>
+      await bob.send(sender.identity.address, `MD-B->A #${i}`).catch((e) =>
         say(`send B->A #${i} threw: ${(e as Error).message}`)
       );
       await sleep(GAP_MS);
@@ -136,18 +165,25 @@ test(
     // Frame-level, reusing dm-loss's join once PER RECEIVING DEVICE. This is the
     // whole point: the same accounting, applied to each device separately, instead
     // of aggregated per account.
-    const [phoneIn, laptopIn, bobIn] = await Promise.all([
-      subscribedInboxes(aPhone),
-      subscribedInboxes(aLaptop),
-      subscribedInboxes(bob),
-    ]);
+    const inboxesOf = new Map<HarnessBot, Set<string>>();
+    for (const b of [...aDevices, bob]) inboxesOf.set(b, await subscribedInboxes(b));
 
-    const legs = [
-      ['A.phone -> bob        (peer, primary)', direction(aPhone, bob, bobIn)],
-      ['A.phone -> A.laptop   (SELF-SYNC)     ', direction(aPhone, aLaptop, laptopIn)],
-      ['bob     -> A.phone    (peer 1st dev)  ', direction(bob, aPhone, phoneIn)],
-      ['bob     -> A.laptop   (PEER 2nd DEV)  ', direction(bob, aLaptop, laptopIn)],
-    ] as const;
+    const pad = (s: string) => s.padEnd(34);
+    const legs: [string, ReturnType<typeof direction>][] = [
+      [pad('A.dev0 -> bob (peer, primary)'), direction(sender, bob, inboxesOf.get(bob)!)],
+      [pad('bob -> A.dev0 (peer 1st dev)'), direction(bob, sender, inboxesOf.get(sender)!)],
+    ];
+    for (const [i, dev] of others.entries()) {
+      const n = i + 1;
+      legs.push([
+        pad(`A.dev0 -> A.dev${n} (SELF-SYNC)`),
+        direction(sender, dev, inboxesOf.get(dev)!),
+      ]);
+      legs.push([
+        pad(`bob -> A.dev${n} (PEER->EXTRA DEV)`),
+        direction(bob, dev, inboxesOf.get(dev)!),
+      ]);
+    }
 
     say('');
     say('==== FRAME-LEVEL, PER DEVICE (de-duplicated by ciphertext fingerprint) ====');
@@ -168,29 +204,38 @@ test(
     // result here does not contradict what was seen live — it separates delivery
     // from display.
     const bobGot = postsMatching(bob, 'MD-A->B');
-    const phoneGot = postsMatching(aPhone, 'MD-B->A');
-    const laptopGotPeer = postsMatching(aLaptop, 'MD-B->A');
-    const laptopGotSelf = postsMatching(aLaptop, 'MD-A->B');
 
     say('');
     say('==== MESSAGE-LEVEL, PER DEVICE (persisted, not rendered) ====');
-    say(`bob        received A->B : ${bobGot.size}/${ROUNDS}`, { bobGot: bobGot.size });
-    say(`A.phone    received B->A : ${phoneGot.size}/${ROUNDS}`, { phoneGot: phoneGot.size });
-    say(`A.laptop   received B->A : ${laptopGotPeer.size}/${ROUNDS}   <- PEER to 2nd device`, {
-      laptopGotPeer: laptopGotPeer.size,
-    });
-    say(`A.laptop   received A->B : ${laptopGotSelf.size}/${ROUNDS}   <- SELF-SYNC copy`, {
-      laptopGotSelf: laptopGotSelf.size,
-    });
+    say(`bob      received A->B : ${bobGot.size}/${ROUNDS}`, { bobGot: bobGot.size });
+    for (const [i, dev] of aDevices.entries()) {
+      const peer = postsMatching(dev, 'MD-B->A').size;
+      const self = postsMatching(dev, 'MD-A->B').size;
+      say(
+        `A.dev${i}   received B->A : ${peer}/${ROUNDS}` +
+          (i === 0
+            ? '   <- the sending device'
+            : `   |  self-sync A->B : ${self}/${ROUNDS}   <- EXTRA DEVICE`),
+        { device: i, peer, self }
+      );
+    }
     say(
-      `novel decrypt failures: phone=${aPhone.novelErrors().length} ` +
-        `laptop=${aLaptop.novelErrors().length} bob=${bob.novelErrors().length}`
+      'novel decrypt failures: ' +
+        aDevices.map((b, i) => `dev${i}=${b.novelErrors().length}`).join(' ') +
+        ` bob=${bob.novelErrors().length}`
     );
     console.log(`[dm-md] log: ${log.file}`);
 
-    aPhone.stop();
-    aLaptop.stop();
+    for (const b of aDevices) b.stop();
     bob.stop();
+
+    // Each run mints a throwaway account and one state file per bot. Nothing
+    // accumulates on an account that matters, but the directory would grow without
+    // bound, so the scenario removes what it created.
+    for (const name of botNames) {
+      const p = resolve(config.stateDir, `${name}.json`);
+      if (existsSync(p)) rmSync(p, { force: true });
+    }
 
     // The run IS the measurement, so the assertions are deliberately weak: they
     // check the bench had data to join on, not that delivery succeeded. A hard
