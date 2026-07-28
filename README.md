@@ -86,20 +86,53 @@ localStorage.removeItem('debug_mock_conversations')
 
 ### Prerequisites
 
-Requires Node.js and `quilibrium-js-sdk-channels` cloned alongside this repository.
+Requires Node.js, plus two sibling repositories cloned next to this one:
+
+```
+your-git-folder/
+├── quorum-desktop/              ← this repo
+├── quorum-shared/               ← github.com/QuilibriumNetwork/quorum-shared
+└── quilibrium-js-sdk-channels/
+```
+
+> **`@quilibrium/quorum-shared` is linked locally, not installed from a registry.**
+> `package.json` declares it as `"link:../quorum-shared"`, so `yarn install` symlinks the sibling folder directly into `node_modules`. The folder must be named exactly `quorum-shared` and sit next to `quorum-desktop`, otherwise the install fails. There is no published package to fall back on.
 
 When running locally in a browser, calls to the prod Quorum API are routed through the Vite dev server proxy (see `web/vite.config.ts` → `server.proxy`), so the browser only ever talks same-origin and no CORS workaround is needed. You do **not** need to disable browser CORS or install a CORS-unblocking extension. The proxy is dev-only; production and Electron builds call the API directly and are unaffected.
 
 ### Initial Setup
 
 ```bash
+# 1. SDK: build it and register a global yarn link
 cd ../quilibrium-js-sdk-channels/
 yarn build
 yarn link
+
+# 2. Shared package: install deps and build dist/
+#    dist/ is gitignored, so a fresh clone ships no build output
+cd ../quorum-shared/
+yarn install
+yarn build
+
+# 3. This repo
 cd ../quorum-desktop/
 yarn link @quilibrium/quilibrium-js-sdk-channels
 yarn install
 ```
+
+Note the asymmetry: the SDK uses `yarn link` (a global link registered by the SDK repo), while `quorum-shared` needs no link command at all, since the `link:../quorum-shared` entry in `package.json` makes `yarn install` create the symlink for you.
+
+### Working on `quorum-shared`
+
+The app imports the **built** output (`dist/index.mjs`), not the TypeScript source. Editing `quorum-shared/src` has no effect on this app until you rebuild:
+
+```bash
+cd ../quorum-shared/
+yarn build   # one-off rebuild
+yarn dev     # or watch mode: rebuilds on every save
+```
+
+Vite picks up the new `dist` on the next reload. If the app still serves stale shared code, run `yarn dev:clean` here to drop Vite's cache.
 
 ### Web Development
 
@@ -165,4 +198,4 @@ Both apps share code via the `@quilibrium/quorum-shared` package. See [Quorum Ec
 
 ---
 
-_Updated: 2026-06-24_
+_Updated: 2026-07-28_
