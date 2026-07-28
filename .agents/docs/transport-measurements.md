@@ -35,16 +35,26 @@ add a newer row and a note. Every row must cite the doc that reported it, so any
 number here can be traced back rather than taken on trust.
 
 **Record the CLASS of the result.** The single most expensive confusion in this
-investigation has been conflating two different failures:
+investigation has been conflating failures that live at different layers:
 
-| class | meaning |
-|---|---|
-| **arrival** | did the frame reach the peer at all? A miss here is transport loss |
-| **decrypt** | it arrived — did it open? A miss here is a crypto/session failure, and is usually transient |
+| class | question | a miss here means |
+|---|---|---|
+| **arrival** | did the frame reach the peer's socket at all? | transport loss |
+| **decrypt** | it arrived — did it open? | a crypto/session failure, usually transient |
+| **persistence** | it opened — did the app keep it? | the message is gone with no error anywhere |
 
 A frame that arrives and fails AEAD is **not** lost. Reporting it as loss is how
 "desktop↔desktop loses 100% of messages" got written down when what actually
 happened was that every frame arrived and none decrypted.
+
+> ⭐ **The third class was added 2026-07-28, and its absence is why this went
+> unfound for weeks.** Every scenario before `dm-multidevice` measured arrival, and
+> `dm-loss` measures *only* arrival by construction. A message that arrives,
+> decrypts cleanly, and is then dropped before `saveMessage` is invisible to every
+> one of them — they would all report that run as flawless, and on the canonical
+> accounts `dm-loss` did exactly that while the operator watched messages fail to
+> appear. **If a scenario does not count what the app persisted, it cannot see this
+> class at all.** Say which classes a run measured, not just its numbers.
 
 ---
 
@@ -84,10 +94,91 @@ Full detail: `quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecrypta
 > other devices, which can never arrive at the peer bot and are not loss. The other
 > ~3400 are **unobserved, not observed-good**.
 
+### ⭐ The fan-out channel during that same run — operator observation
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-28 | `dm-loss` run 2, **same run as the row above** | the canonical accounts' OTHER devices — two desktop clients the operator had open and online | arrival | **~10 of 200 messages landed on one desktop, 0 of 200 on the other** | the fan-out channel behaved nothing like the peer channel *in the same run, at the same moment* | operator, observed live during the run; confirmed 2026-07-28 as desktop run 2 |
+
+**This is the most consequential row in the file, and it reframes the one above
+it.** In one run, on one pair of accounts, the peer channel was perfect (201/201
+each way) while the self-sync fan-out to the same accounts' other devices was
+close to total loss. The bench reported 0% and was *structurally blind* to the
+channel that was failing — the ~3400 frames it excluded by design.
+
+⚠️ **Qualifier, deliberately recorded:** this was observed in two desktop UIs, not
+instrumented. A message could in principle arrive and be persisted without
+rendering in a conversation that is not open. That is exactly why the next
+scenario counts what `saveMessage` receives per device rather than what a UI shows
+— see `tasks/2026-07-28-harness-multidevice-and-coverage.md`. Until that runs, treat
+the figure as a strong signal, not a measurement.
+
+**Consequence for every earlier row in this file:** *every* bench run to date used
+one device per account. The self-sync copy and the peer's second device have never
+been exercised by any bench, on either platform. The nulls above are real, and they
+are nulls about a narrower channel than they appear to describe.
+
 > ⚠️ The 07-27 run (301/direction) and the 07-28 run 1 (201/direction) are
 > **different runs**, not two reports of one. An earlier version of the index's
 > §3.1 matrix collapsed them into a single row; finding that is what prompted this
 > file.
+
+### Multi-device (`dm-multidevice`) — the channel the rows above are blind to
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-28 | `dm-multidevice` | **one account with TWO devices** + peer, all harness bots, Node, fresh account | arrival | 5 rounds — all four legs 0%, 5/5 messages on every device | proved the shape; too small to speak to the 200-message observation | run log |
+| 07-28 | `dm-multidevice` | same, **100 rounds** | arrival + decrypt | **101/101 frames on all four legs, 0%. 100/100 messages on every device** — including the self-sync copy and the peer's 2nd device. 1 novel decrypt failure (phone), healed | **multi-device fan-out is NOT broken by itself on desktop.** Does NOT reproduce the ~10/200 observation | run log `2026-07-28T13-18-18` |
+
+### ⭐⭐ 4 devices — the operator's symptom reproduces on the bench
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-28 | `dm-multidevice` | **one account with FOUR devices** + peer, all harness bots, Node, fresh account, 100 rounds | arrival **and** persistence | **every one of the 8 frame legs: 101/101, 0% loss. Zero decrypt failures anywhere.** But `dev1` persisted only **52/100** messages — in BOTH directions, the same count — while `dev2` and `dev3` persisted 100/100 | **first bench reproduction of the operator's symptom.** Loss between arrival and persistence, with no error of any kind | run log `2026-07-28T13-45-03` |
+
+**Why this is the important row in the file.** The frames all arrived. Nothing
+failed to decrypt. `dm-loss` counts frames, so it would have reported this run as
+flawless — which is exactly what it did report on the canonical accounts while the
+operator watched messages fail to appear. The gap is **between the socket and
+`saveMessage`**, and no existing scenario looks there.
+
+It also rules something out: at 2 devices, 100 rounds, everything was clean. The
+failure needs more than one extra device, which fits the operator's 5+ device
+accounts and explains why every earlier bench (one device each) was green.
+
+**The identical 52 in both directions is the informative detail.** A per-message
+drop would not hit two independent streams equally; a device that stopped
+processing at one moment would. That points at a receive-pipeline stall rather than
+per-message loss — but the count alone cannot distinguish "stopped at #52" from
+"dropped every other one", and those are different bugs. The scenario now reports
+WHICH message numbers are missing so the shape is unambiguous.
+
+⚠️ **Not yet confirmed, and these are the ways it could still be the bench's fault:**
+
+- one run, one device out of three extras — not yet reproduced
+- all five bots share ONE Node process, so a starvation or event-loop effect
+  peculiar to the harness cannot be excluded. That `dev2` and `dev3` were perfect in
+  the same process argues against it, but does not settle it
+- the persistence seam is a tee on `saveMessage`; a fault in the tee itself would
+  look identical from outside
+
+⚠️ **Provenance note, recorded because it nearly went unnoticed:** this result came
+from an invocation that appeared to have been cancelled — the process kept running
+and completed. A *subsequent* background run of the same scenario failed at
+collection (`Vitest failed to find the current suite`, 9.7s) because it started
+while the first was still finishing, and produced nothing. Two vitest runs of the
+harness must not overlap.
+
+**What still separates this bench from the operator's observation**, in decreasing
+order of how cheaply it can be closed:
+
+1. **device count** — 2 here, 5+ on the canonical accounts. The one-key-many-bots
+   trick extends to 4 devices with no change to any real account
+2. **account age** — fresh here, heavily used there
+3. **the receiving client** — the observed devices were the real desktop app *in a
+   browser*; here they are harness bots in Node. Same client code, different
+   runtime, different storage, no UI layer. The harness cannot close this one by
+   construction
 
 ### Mobile harness (`quorum-mobile`, `yarn harness:dm`)
 
