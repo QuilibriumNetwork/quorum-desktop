@@ -113,6 +113,31 @@ are nulls about a narrower channel than they appear to describe.
 > §3.1 matrix collapsed them into a single row; finding that is what prompted this
 > file.
 
+### Multi-device (`dm-multidevice`) — the channel the rows above are blind to
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-28 | `dm-multidevice` | **one account with TWO devices** + peer, all harness bots, Node, fresh account | arrival | 5 rounds — all four legs 0%, 5/5 messages on every device | proved the shape; too small to speak to the 200-message observation | run log |
+| 07-28 | `dm-multidevice` | same, **100 rounds** | arrival + decrypt | **101/101 frames on all four legs, 0%. 100/100 messages on every device** — including the self-sync copy and the peer's 2nd device. 1 novel decrypt failure (phone), healed | **multi-device fan-out is NOT broken by itself on desktop.** Does NOT reproduce the ~10/200 observation | run log `2026-07-28T13-18-18` |
+
+⚠️ **Provenance note, recorded because it nearly went unnoticed:** this result came
+from an invocation that appeared to have been cancelled — the process kept running
+and completed. A *subsequent* background run of the same scenario failed at
+collection (`Vitest failed to find the current suite`, 9.7s) because it started
+while the first was still finishing, and produced nothing. Two vitest runs of the
+harness must not overlap.
+
+**What still separates this bench from the operator's observation**, in decreasing
+order of how cheaply it can be closed:
+
+1. **device count** — 2 here, 5+ on the canonical accounts. The one-key-many-bots
+   trick extends to 4 devices with no change to any real account
+2. **account age** — fresh here, heavily used there
+3. **the receiving client** — the observed devices were the real desktop app *in a
+   browser*; here they are harness bots in Node. Same client code, different
+   runtime, different storage, no UI layer. The harness cannot close this one by
+   construction
+
 ### Mobile harness (`quorum-mobile`, `yarn harness:dm`)
 
 | when | run | configuration | class | result | what it changed | source |
