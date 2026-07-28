@@ -120,6 +120,38 @@ are nulls about a narrower channel than they appear to describe.
 | 07-28 | `dm-multidevice` | **one account with TWO devices** + peer, all harness bots, Node, fresh account | arrival | 5 rounds — all four legs 0%, 5/5 messages on every device | proved the shape; too small to speak to the 200-message observation | run log |
 | 07-28 | `dm-multidevice` | same, **100 rounds** | arrival + decrypt | **101/101 frames on all four legs, 0%. 100/100 messages on every device** — including the self-sync copy and the peer's 2nd device. 1 novel decrypt failure (phone), healed | **multi-device fan-out is NOT broken by itself on desktop.** Does NOT reproduce the ~10/200 observation | run log `2026-07-28T13-18-18` |
 
+### ⭐⭐ 4 devices — the operator's symptom reproduces on the bench
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-28 | `dm-multidevice` | **one account with FOUR devices** + peer, all harness bots, Node, fresh account, 100 rounds | arrival **and** persistence | **every one of the 8 frame legs: 101/101, 0% loss. Zero decrypt failures anywhere.** But `dev1` persisted only **52/100** messages — in BOTH directions, the same count — while `dev2` and `dev3` persisted 100/100 | **first bench reproduction of the operator's symptom.** Loss between arrival and persistence, with no error of any kind | run log `2026-07-28T13-45-03` |
+
+**Why this is the important row in the file.** The frames all arrived. Nothing
+failed to decrypt. `dm-loss` counts frames, so it would have reported this run as
+flawless — which is exactly what it did report on the canonical accounts while the
+operator watched messages fail to appear. The gap is **between the socket and
+`saveMessage`**, and no existing scenario looks there.
+
+It also rules something out: at 2 devices, 100 rounds, everything was clean. The
+failure needs more than one extra device, which fits the operator's 5+ device
+accounts and explains why every earlier bench (one device each) was green.
+
+**The identical 52 in both directions is the informative detail.** A per-message
+drop would not hit two independent streams equally; a device that stopped
+processing at one moment would. That points at a receive-pipeline stall rather than
+per-message loss — but the count alone cannot distinguish "stopped at #52" from
+"dropped every other one", and those are different bugs. The scenario now reports
+WHICH message numbers are missing so the shape is unambiguous.
+
+⚠️ **Not yet confirmed, and these are the ways it could still be the bench's fault:**
+
+- one run, one device out of three extras — not yet reproduced
+- all five bots share ONE Node process, so a starvation or event-loop effect
+  peculiar to the harness cannot be excluded. That `dev2` and `dev3` were perfect in
+  the same process argues against it, but does not settle it
+- the persistence seam is a tee on `saveMessage`; a fault in the tee itself would
+  look identical from outside
+
 ⚠️ **Provenance note, recorded because it nearly went unnoticed:** this result came
 from an invocation that appeared to have been cancelled — the process kept running
 and completed. A *subsequent* background run of the same scenario failed at

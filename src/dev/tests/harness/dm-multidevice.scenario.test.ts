@@ -64,6 +64,39 @@ const postsMatching = (bot: HarnessBot, prefix: string) =>
       .map((m) => m.content?.text as string)
   );
 
+/**
+ * WHICH numbered messages are missing, not just how many.
+ *
+ * The count alone cannot separate two very different bugs, and the first
+ * multi-device run produced exactly the ambiguity: one device persisted 52 of 100
+ * in BOTH directions while every frame arrived and nothing failed to decrypt.
+ *
+ *   a contiguous TAIL missing  ⇒ the device stopped processing at some moment
+ *                                (a receive-pipeline stall)
+ *   SCATTERED gaps             ⇒ per-message drops
+ *   every OTHER one            ⇒ something in dedupe/ordering
+ *
+ * Those need different investigations, so the run has to say which it is.
+ */
+function missingReport(bot: HarnessBot, prefix: string, rounds: number): string {
+  const got = new Set<number>();
+  for (const text of postsMatching(bot, prefix)) {
+    const n = Number(/#(\d+)$/.exec(text)?.[1]);
+    if (Number.isFinite(n)) got.add(n);
+  }
+  const missing: number[] = [];
+  for (let i = 1; i <= rounds; i++) if (!got.has(i)) missing.push(i);
+  if (missing.length === 0) return 'none';
+
+  // Contiguous tail? i.e. everything from some point on is absent.
+  const isTail = missing[missing.length - 1] === rounds && missing.length === rounds - missing[0] + 1;
+  const shape = isTail
+    ? `CONTIGUOUS TAIL from #${missing[0]} — looks like the device STOPPED`
+    : `scattered (${missing.length} gaps, first #${missing[0]}, last #${missing[missing.length - 1]})`;
+  const sample = missing.slice(0, 24).join(',') + (missing.length > 24 ? ',…' : '');
+  return `${shape}  missing=[${sample}]`;
+}
+
 test(
   'dm-multidevice: an N-device account, per-device arrival',
   async () => {
@@ -218,6 +251,9 @@ test(
             : `   |  self-sync A->B : ${self}/${ROUNDS}   <- EXTRA DEVICE`),
         { device: i, peer, self }
       );
+      if (peer < ROUNDS) say(`   dev${i} B->A gaps: ${missingReport(dev, 'MD-B->A', ROUNDS)}`);
+      if (i > 0 && self < ROUNDS)
+        say(`   dev${i} A->B gaps: ${missingReport(dev, 'MD-A->B', ROUNDS)}`);
     }
     say(
       'novel decrypt failures: ' +
