@@ -155,6 +155,78 @@ processes plus the peer — three in total. `run-two-bots.mjs` generalises to N 
 
 ---
 
+## ⭐ Offline analysis (2026-07-28) — a mechanism that fits the 52/100, and it may be latency
+
+Found by reading, while the relay was down. **Not confirmed**, and it changes what
+the 4-device result probably means.
+
+### The receive path holds the ratchet lock across network I/O
+
+`MessageService.handleNewMessage` runs its critical section inside
+`dmRatchetMutex.runExclusive(conversationId, …)` (`MessageService.ts:3858`), and
+inside that lock it awaits **HTTP calls to the relay**:
+
+- `this.deleteInboxMessages(…, this.apiClient)` — POST `/inbox/delete`
+- `this.ackProcessedFrame(…)` — which is the same POST, wrapped
+
+`defaultMutateTimeout` is **22 seconds** (`src/api/baseTypes.ts:862`).
+
+So a single slow inbox-delete blocks **every** message on that conversation for up
+to 22s. At the bench's 700ms send gap that is ~31 messages backed up per stall;
+two or three stalls across a 100-message run accounts for the ~48 that were
+missing.
+
+`KeyedMutex`'s own documentation warns about precisely this shape:
+
+> *"Do NOT hold the lock across transport delivery… an async callback returning a
+> promise gets auto-flattened — returning a delivery promise from `fn` silently
+> extends the critical section until delivery."*
+
+The SEND paths follow that guidance (they wrap the delivery promise as `{ sent }`,
+`MessageService.ts:983`, `ActionQueueHandlers.ts:672`). The RECEIVE path does not —
+it awaits HTTP directly inside the lock.
+
+### Why this fits every feature of the result
+
+| observation | explained by |
+|---|---|
+| both directions stopped at the same count | one lock, one `conversationId` — A↔B share it |
+| no error raised anywhere | `ackProcessedFrame` catches and only `logger.warn`s |
+| all frames arrived (101/101) | the socket is unaffected; this is downstream of it |
+| clean at 2 devices, broken at 4 | 4 devices ⇒ ~4× the delete traffic ⇒ more chances of a slow call |
+| one device of four | whichever device's calls happened to be slow |
+
+### ⚠️ It predicts LATENCY, not loss — and that changes the finding
+
+If this is the mechanism, the missing messages were **not dropped**; they were
+still queued behind the lock when the run's settle window closed. They would land
+with a longer tail. This investigation has mistaken exactly this for loss before —
+see the master's "failures are TRANSIENT, so this is LATENCY WITH A LONG TAIL, not
+demonstrated loss".
+
+**The distinguishing evidence is already instrumented:** the gap report says
+whether the missing numbers are a CONTIGUOUS TAIL (backlog) or SCATTERED (real
+drops). That one line decides between two very different bugs.
+
+### ⚠️ And the run may have been degraded
+
+The 4-device run finished at 15:51. `api.quorummessenger.com` was returning 502 on
+every path by 15:53. The relay was plausibly already degrading *during* the run,
+which is exactly the condition that makes this mechanism bite. **Re-run against a
+healthy relay before treating 52/100 as a product measurement.**
+
+### Why it is still worth fixing either way
+
+Even as pure latency, this says user-visible delivery degrades **non-linearly**
+when the relay is slow, and gets worse with every device on the account. A 22s
+stall on one HTTP call should not stop a conversation's message processing. The
+acknowledgement is best-effort by design (its failure is caught and ignored), so
+there is no reason for it to be awaited inside the ratchet critical section at all.
+
+**Candidate fix, not yet attempted:** move the inbox-delete/ack outside the lock —
+the state is already persisted by then, and the ack's own failure path is already
+"it will be redelivered". Check the mobile receive path for the same shape.
+
 ## Coverage: what the bench can and cannot reach
 
 | path | covered? | by |
