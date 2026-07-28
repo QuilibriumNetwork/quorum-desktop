@@ -151,8 +151,26 @@ test(
     // cannot tell "both of our devices registered" from "one of ours plus
     // something else". If this fails, every downstream number is meaningless, so
     // fail here rather than report a red result that is really a setup bug.
+    // The relay intermittently 502s on /users. This read is SETUP, not
+    // measurement, so retry it — a transient server error killing the run after
+    // every bot has already registered wastes the whole setup and, worse, tempts
+    // whoever hits it into loosening the assertion instead. Retrying here is safe
+    // precisely because nothing about delivery is being measured yet.
     const api = makeApiClient();
-    const regA = (await api.getUser(sender.identity.address))?.data;
+    const fetchRegistration = async () => {
+      let lastErr: unknown;
+      for (let attempt = 1; attempt <= 5; attempt++) {
+        try {
+          return (await api.getUser(sender.identity.address))?.data;
+        } catch (err) {
+          lastErr = err;
+          say(`registration read attempt ${attempt}/5 failed: ${(err as Error).message}`);
+          await sleep(2000 * attempt);
+        }
+      }
+      throw lastErr;
+    };
+    const regA = await fetchRegistration();
     const registeredInboxes = (regA?.device_registrations ?? []).map(
       (d) => d.inbox_registration.inbox_address
     );
