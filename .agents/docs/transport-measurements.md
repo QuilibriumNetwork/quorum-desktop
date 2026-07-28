@@ -84,6 +84,30 @@ Full detail: `quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecrypta
 > other devices, which can never arrive at the peer bot and are not loss. The other
 > ~3400 are **unobserved, not observed-good**.
 
+### ⭐ The fan-out channel during that same run — operator observation
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-28 | `dm-loss` run 2, **same run as the row above** | the canonical accounts' OTHER devices — two desktop clients the operator had open and online | arrival | **~10 of 200 messages landed on one desktop, 0 of 200 on the other** | the fan-out channel behaved nothing like the peer channel *in the same run, at the same moment* | operator, observed live during the run; confirmed 2026-07-28 as desktop run 2 |
+
+**This is the most consequential row in the file, and it reframes the one above
+it.** In one run, on one pair of accounts, the peer channel was perfect (201/201
+each way) while the self-sync fan-out to the same accounts' other devices was
+close to total loss. The bench reported 0% and was *structurally blind* to the
+channel that was failing — the ~3400 frames it excluded by design.
+
+⚠️ **Qualifier, deliberately recorded:** this was observed in two desktop UIs, not
+instrumented. A message could in principle arrive and be persisted without
+rendering in a conversation that is not open. That is exactly why the next
+scenario counts what `saveMessage` receives per device rather than what a UI shows
+— see `tasks/2026-07-28-harness-multidevice-and-coverage.md`. Until that runs, treat
+the figure as a strong signal, not a measurement.
+
+**Consequence for every earlier row in this file:** *every* bench run to date used
+one device per account. The self-sync copy and the peer's second device have never
+been exercised by any bench, on either platform. The nulls above are real, and they
+are nulls about a narrower channel than they appear to describe.
+
 > ⚠️ The 07-27 run (301/direction) and the 07-28 run 1 (201/direction) are
 > **different runs**, not two reports of one. An earlier version of the index's
 > §3.1 matrix collapsed them into a single row; finding that is what prompted this

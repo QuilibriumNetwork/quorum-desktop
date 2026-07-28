@@ -20,12 +20,20 @@
 //     fan-out to the accounts' OTHER devices) can never arrive here and is not
 //     loss. Only frames addressed to the peer's subscribed inboxes are counted.
 //
+// ⚠️ THAT SECOND CAVEAT TURNED OUT TO MATTER ENORMOUSLY. During run 2 on the
+// canonical accounts this scenario reported 201/201 each way, 0% loss — while the
+// operator watched those same accounts' OTHER devices receive ~10 of 200 messages
+// on one desktop and 0 of 200 on the other, in the same run. This bench was
+// structurally blind to the channel that was failing. `dm-multidevice` is the
+// scenario that measures it; run it before quoting a 0% result from here.
+//
 //   yarn harness dm-loss
 //   HARNESS_LOSS_ROUNDS=200 HARNESS_LOSS_SETTLE_MS=600000 yarn harness dm-loss
 import { test, expect } from 'vitest';
 import { createBot, type HarnessBot } from './bot';
 import { createCanonicalPair, hasCanonicalKeys } from './canonical';
 import { WsTransport } from './transport';
+import { direction, subscribedInboxes } from './loss';
 import { RunLog } from './log';
 
 const ROUNDS = Number(process.env.HARNESS_LOSS_ROUNDS ?? 40);
@@ -33,37 +41,6 @@ const GAP_MS = Number(process.env.HARNESS_LOSS_GAP_MS ?? 700);
 const SETTLE_MS = Number(process.env.HARNESS_LOSS_SETTLE_MS ?? 120_000);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
-
-/** Inbox addresses a bot is actually listening on — the only place a frame CAN land. */
-async function subscribedInboxes(bot: HarnessBot): Promise<Set<string>> {
-  const states = await bot.messageDB.getAllEncryptionStates();
-  return new Set([bot.identity.inboxAddress, ...states.map((s) => s.inboxId)]);
-}
-
-function direction(from: HarnessBot, to: HarnessBot, toInboxes: Set<string>) {
-  // Frames this sender addressed to an inbox the receiver is subscribed to.
-  const sent = new Map<string, number>();
-  for (const s of from.transport.sent) {
-    if (!s.fp) continue;
-    if (s.target && !toInboxes.has(s.target)) continue; // fan-out elsewhere, not loss
-    if (!sent.has(s.fp)) sent.set(s.fp, s.t);
-  }
-  const arrived = new Set<string>();
-  for (const f of to.transport.arrived) {
-    const fp = WsTransport.ciphertextFp(f);
-    if (fp) arrived.add(fp);
-  }
-  const missing = [...sent.keys()].filter((fp) => !arrived.has(fp));
-  return {
-    sent: sent.size,
-    arrived: [...sent.keys()].filter((fp) => arrived.has(fp)).length,
-    missing: missing.length,
-    lossPct: sent.size ? (missing.length / sent.size) * 100 : 0,
-    // Frames the receiver got that the sender never recorded sending to it:
-    // redeliveries of older frames, or frames from the account's other devices.
-    unmatchedArrivals: [...arrived].filter((fp) => !sent.has(fp)).length,
-  };
-}
 
 test(
   'dm-loss: send-vs-arrive frame loss rate, both directions',
