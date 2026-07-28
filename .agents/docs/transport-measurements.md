@@ -35,16 +35,26 @@ add a newer row and a note. Every row must cite the doc that reported it, so any
 number here can be traced back rather than taken on trust.
 
 **Record the CLASS of the result.** The single most expensive confusion in this
-investigation has been conflating two different failures:
+investigation has been conflating failures that live at different layers:
 
-| class | meaning |
-|---|---|
-| **arrival** | did the frame reach the peer at all? A miss here is transport loss |
-| **decrypt** | it arrived — did it open? A miss here is a crypto/session failure, and is usually transient |
+| class | question | a miss here means |
+|---|---|---|
+| **arrival** | did the frame reach the peer's socket at all? | transport loss |
+| **decrypt** | it arrived — did it open? | a crypto/session failure, usually transient |
+| **persistence** | it opened — did the app keep it? | the message is gone with no error anywhere |
 
 A frame that arrives and fails AEAD is **not** lost. Reporting it as loss is how
 "desktop↔desktop loses 100% of messages" got written down when what actually
 happened was that every frame arrived and none decrypted.
+
+> ⭐ **The third class was added 2026-07-28, and its absence is why this went
+> unfound for weeks.** Every scenario before `dm-multidevice` measured arrival, and
+> `dm-loss` measures *only* arrival by construction. A message that arrives,
+> decrypts cleanly, and is then dropped before `saveMessage` is invisible to every
+> one of them — they would all report that run as flawless, and on the canonical
+> accounts `dm-loss` did exactly that while the operator watched messages fail to
+> appear. **If a scenario does not count what the app persisted, it cannot see this
+> class at all.** Say which classes a run measured, not just its numbers.
 
 ---
 

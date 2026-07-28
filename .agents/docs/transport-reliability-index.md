@@ -50,7 +50,8 @@ also resolves. If you are already in the repo a path names, drop the prefix.
 3. **The app-side layer is now largely fixed** — ~30 client PRs across both repos in July 2026, catalogued in §7.
 4. **Two root causes remain outside the app repos**, both filed upstream as [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183): a skipped-key lookup bug in the `channel` crate, and a slice of node inbox writes vanishing with no client-visible signal.
 5. The crate bug (#183 item 1a) is **fully characterised, reproducible on demand in seconds, and mitigated client-side** on desktop (PR #265).
-6. The node write-loss (#183 item 2) is measured on mobile senders (up to 32%, strongly directional), and **0% on every headless bench so far** — desktop↔desktop and now mobile↔mobile — which narrows it without localising it (§3.1); it is not fixable from any client, and needs node-side logs.
+6. The node write-loss (#183 item 2) is measured on mobile senders (up to 32%, strongly directional), and **0% on every headless bench** — but every one of those benches measured only whether frames ARRIVED (§3.1); it is not fixable from any client, and needs node-side logs.
+6b. **A separate failure lives past arrival**: with four devices on one account, every frame arrived and decrypted while one device persisted only half the messages, no error raised (§3.2). Unconfirmed, and it may be the larger share of what users actually experience as "messages not arriving".
 7. Remaining client-side work is send-side durability on mobile spaces, receipt truthfulness runtime verification, and hygiene items (ghost devices, junk state rows).
 
 ---
@@ -92,11 +93,20 @@ protocol-level **write ack** is feasible (it would close the last loss class).
 
 ## §3.1. What the benches actually cover — read before quoting a 0% result
 
-Three separate 0%-loss results now exist. **None of them contradicts the field
-loss, and it would be a serious error to read them as "the transport is fixed."**
-Each bench differs from the field configuration in more than one variable, so what
-they collectively establish is narrower than it looks: *both clients' send/receive
-logic is clean when run in Node, on fresh accounts, over the WASM crypto build.*
+> ⭐ **UPDATED 2026-07-28: the benches stopped being all-green.** `dm-multidevice`
+> reproduced the operator's symptom — see §3.2. Everything below still holds, but
+> the reason the earlier nulls were narrow turns out to be more specific than
+> "several variables differ": **they were all measuring the wrong layer.**
+
+Four separate 0%-**arrival**-loss results exist. **None of them contradicts the
+field loss, and it would be a serious error to read them as "the transport is
+fixed."** Each bench differs from the field configuration in more than one
+variable, so what they collectively establish is narrower than it looks: *both
+clients' send/receive logic delivers frames cleanly when run in Node, on fresh
+accounts, over the WASM crypto build.*
+
+Note the word **arrival**. That is the only class any of these rows measured, and
+§3.2 is a failure in a different one.
 
 **→ Every run and every number lives in [`docs/transport-measurements.md`](transport-measurements.md).**
 That file is the append-only log; this section is only the summary that matters
@@ -126,13 +136,72 @@ Consequently the live suspects for D remain undistinguished:
 3. real-account state: aged sessions, ghost devices, multi-device fan-out
 4. device network conditions
 
-**The two cheapest experiments that would actually discriminate**, neither yet run:
+**The cheapest experiment that would discriminate**, still not run:
+**mobile↔desktop on one bench** (§6 item 8) — the field's reported worst case, and
+the only cell no bench covers at all.
 
-- **mobile bench on the canonical multi-device accounts.** Changes exactly ONE
-  variable from row C (account shape) and directly tests suspect 3. Note it will
-  register an additional device on those accounts, as the desktop bench already did.
-- **mobile↔desktop on one bench** (§6 item 8). The field's reported worst case, and
-  the only cell no bench covers at all.
+*(A previous version of this section also proposed running the mobile bench on the
+canonical accounts. That is now superseded and should NOT be done: it would
+permanently add devices to shared accounts and fan out to ghost inboxes we cannot
+observe. §3.2's approach — one generated account, several bots — gives real
+multi-device with none of that cost.)*
+
+---
+
+## §3.2. ⭐ The multi-device finding — a failure class no bench was measuring
+
+**2026-07-28, `dm-multidevice`, four devices on one generated account, 100 rounds:**
+
+```
+all 8 frame legs:   101/101 arrived,  0.0% loss
+decrypt failures:   0 everywhere
+A.dev1 persisted:   52/100 messages  (BOTH directions, same count)
+A.dev2, A.dev3:     100/100
+```
+
+Every frame arrived. Nothing failed to decrypt. One device kept **half** the
+messages, with no error raised anywhere.
+
+**This is why weeks of green benches meant less than they appeared to.** `dm-loss`
+counts frames, so it would have reported this run as flawless — which is precisely
+what it did on the canonical accounts while the operator watched messages fail to
+land on a second desktop. The failure is **between the socket and `saveMessage`**,
+a layer no scenario looked at until this one. The measurement log now carries a
+third result class, `persistence`, for exactly this.
+
+**It needs more than one extra device.** At 2 devices, 100 rounds, everything was
+clean. That fits the operator's 5+ device accounts and explains why every earlier
+bench — all of them one device per account — was green.
+
+**The identical 52 in both directions is the informative detail.** A per-message
+drop would not hit two independent streams equally; a device that stopped
+processing at one moment would. That points at a receive-pipeline stall rather than
+per-message loss. The scenario now reports WHICH message numbers are absent, since
+"stopped at #52" and "dropped every other one" are different bugs.
+
+⚠️ **Not yet confirmed.** One run, one device of three extras. The confirmation run
+is blocked on a production outage (`api.quorummessenger.com` returning 502 from
+Cloudflare on every path including root, from ~15:53 on 07-28; other hostnames
+healthy, so an origin failure, not us). All five bots also share one Node process,
+so a harness-specific starvation effect is not excluded — though `dev2` and `dev3`
+being perfect in that same process argues against it.
+
+**If it confirms, the next step is not another measurement.** It is reading the
+receive path for what can discard a message after a successful decrypt, with the
+missing-number shape pointing at where.
+
+### A second, untested path to the same symptom
+
+Worth recording as a **hypothesis, not a finding**: the DM send path fetches both
+registrations to build its device fan-out, and a failed fetch is caught and falls
+back rather than failing loudly. A sender that cannot read the peer's registration
+builds a **shorter device list** — which would look exactly like "the message
+reached some devices and not others", and would be invisible to any frame-level
+count because every frame it did send arrives. Today's 502 outage shows those
+fetches do fail in production. This does **not** explain the 52/100 run (the relay
+was healthy and all frames arrived), but it is a plausible second route to the same
+field symptom, and how each client handles a registration-fetch failure mid-conversation
+has never been examined.
 
 ---
 
@@ -230,7 +299,17 @@ yarn harness dm-reorder        # reproduces the production failure in ~35s
 yarn harness dm-stale-bucket   # the same cycle at scale, mitigation off vs on
 yarn harness dm-loss           # send-vs-arrive accounting (the #183 item 2 measurement)
 yarn harness dm-reset-recover  # recovery after a session reset
+yarn harness dm-multidevice    # N devices on ONE account — the §3.2 finding
 ```
+
+`dm-multidevice` takes `HARNESS_MD_DEVICES=N` (default 2; the finding needs 4).
+It generates its own throwaway account and hands the same key to N bots, so it
+gives real multi-device **without touching the canonical accounts** — which must
+not be used for this, as every run would permanently add a device to them.
+
+⚠️ **It is the only scenario that measures the `persistence` class.** The others
+count frames, and a message that arrives, decrypts, and is then dropped is
+invisible to them.
 
 `dm-loss` also takes `HARNESS_LOSS_CANONICAL=1` to run on the canonical aged
 multi-device accounts instead of fresh throwaways (row B of §3.1).
@@ -315,6 +394,7 @@ Ranked. Each item names the doc that owns it — go there for detail.
 
 | # | item | owner doc | repo |
 |---|---|---|---|
+| 0 | ⭐ **Confirm the multi-device persistence loss (§3.2), then read the receive path for what discards a message after a successful decrypt.** Ranked above the node write-loss because it is client-side, reproducible on the bench, and needs nobody else | `tasks/2026-07-28-harness-multidevice-and-coverage.md` | desktop (then mobile) |
 | 1 | **Node write-loss (#183 item 2)** — blocked on node-side logs / a write ack. Nothing client-side left | [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) | upstream |
 | 2 | **Layer 2: space `log-append` resend on missing hub ack** — the proven ~1/5 space loss. Mobile-only (desktop has no hub log) | `quorum-mobile/.agents/tasks/2026-07-21-fix-space-append-send-loss-ack-resend.md` | mobile |
 | 3 | **Receipt truthfulness two-device runtime check** — code shipped on all three platforms, verification owed by both clients | `quorum-mobile/.agents/tasks/2026-07-26-receipt-truthfulness-delivery-gated-reads.md` | both |
