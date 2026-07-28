@@ -135,11 +135,37 @@ be treated as a clean product measurement.
    numbers are a **CONTIGUOUS TAIL** or **SCATTERED**:
    - contiguous tail ⇒ the device stopped processing at a moment ⇒ **backlog, this bug**
    - scattered gaps ⇒ per-message drops ⇒ **a different bug; this one does not explain it**
-3. Optionally, time the lock: log how long `runExclusive` holds `conversationId` on
-   the receive path. In the harness, conclusive holds cluster at the retry
-   multiples ~22s / ~45s / ~68s (no timeout decay there); in the app the decay
-   factor (§1) also produces 6.6-15.4s holds. Do not test only for "≈22s" — a
-   retried ack misses that window.
+3. **Read the lock-hold histogram — this is the DIRECT test and it is already
+   built.** `src/dev/tests/harness/lock-probe.ts` wraps the `dmRatchetMutex`
+   singleton from outside (no product change, the code under measurement is the
+   code that ships) and `dm-multidevice` prints a summary at the end of every run:
+
+   ```
+   ==== RATCHET LOCK HOLD TIMES (bug 2026-07-28, §5.3) ====
+   lock holds: n=… p50=… p90=… p99=… max=…
+     <100ms  (crypto only)              …
+     15-30s  ⚠ 1 timed-out attempt      …
+     30-55s  ⚠ 2 attempts               …
+     >55s    ⚠ 3 attempts (full retry)  …
+   ```
+
+   - holds in single-digit ms ⇒ the lock is doing crypto only; **the mechanism is
+     not firing on this run**
+   - holds clustering at the retry multiples ~22s / ~45s / ~69s (harness, no decay)
+     or 6.6-15.4s (in-app, decay 0.3) ⇒ **confirmed**
+
+   ⚠️ Do **not** test only for "≈22s". Mutations retry twice, so a stalled ack
+   lands near 45s or 69s and never near 22s — the criterion this section
+   originally carried would have produced a false negative.
+
+   This works **even on a run where nothing goes missing**, which makes it
+   stronger evidence than the gap shape in step 2: it measures the mechanism
+   rather than inferring it from consequences.
+
+   The probe has its own offline self-test (`yarn harness lock-probe`, no relay
+   needed) proving it records hold time, queue time, and throwing critical
+   sections — run it first if a result looks surprising, so an instrument fault is
+   ruled out before a product conclusion is drawn.
 
 ## §6. ✅ Mobile is NOT affected — and its pattern is the fix
 

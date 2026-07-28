@@ -36,6 +36,7 @@ import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { createBot, type HarnessBot } from './bot';
 import { config } from './env';
 import { direction, subscribedInboxes } from './loss';
+import { installLockProbe, summariseLockHolds } from './lock-probe';
 import { makeApiClient } from './transport';
 import { RunLog } from './log';
 
@@ -107,6 +108,13 @@ test(
       log.add(Date.now(), 'harness', 'note', { msg, ...fields });
     };
     const stamp = String(startedAt).slice(-6);
+
+    // BEFORE any bot exists: the mutex is a process-wide singleton, so the wrap
+    // has to be in place before the first critical section runs or the early
+    // holds are missed. Confirms or refutes the ratchet-lock-across-HTTP bug
+    // directly, instead of inferring it from which messages went missing —
+    // and it reports even on a run where nothing is lost.
+    const lockSamples = installLockProbe();
 
     // One generated account, handed to two bots. createBot takes the ACCOUNT from
     // privateKeyHex and the DEVICE from name, so this is genuinely one user with
@@ -278,6 +286,15 @@ test(
         aDevices.map((b, i) => `dev${i}=${b.novelErrors().length}`).join(' ') +
         ` bob=${bob.novelErrors().length}`
     );
+
+    // The direct test of the ratchet-lock-across-HTTP mechanism. Holds clustering
+    // at ~22s / ~45s / ~69s mean the lock is waiting on a timing-out POST; holds
+    // in single-digit ms mean it is doing crypto only and the mechanism is not
+    // firing on this run. ⚠️ Do NOT look only near 22s — mutations retry twice,
+    // so a stalled ack lands near 45s or 69s.
+    say('');
+    say('==== RATCHET LOCK HOLD TIMES (bug 2026-07-28, §5.3) ====');
+    for (const line of summariseLockHolds(lockSamples)) say(line);
     console.log(`[dm-md] log: ${log.file}`);
 
     for (const b of aDevices) b.stop();
