@@ -129,6 +129,21 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 > none of them contradicts the loss measured in the field — each bench differs
 > from the field configuration in several variables at once.
 
+## 📊 After a run that produces a number, append a row
+
+**`.agents/docs/transport-measurements.md`** — one row per run: date, what ran, the
+configuration, the result, and one line on what it changed. Append-only; never
+rewrite a past row.
+
+Record the **class** of the result, `arrival` or `decrypt`. A frame that arrives
+and fails AEAD is *not* lost, and reporting it as loss is how "desktop↔desktop
+loses 100% of messages" got written down when every frame had in fact arrived and
+none had decrypted.
+
+This takes a minute and it is the difference between a bench that accumulates
+knowledge and one that just prints numbers. Two weeks of results had to be
+reconstructed from five separate documents because nobody was doing it.
+
 On any decrypt failure a bot writes `logs/<ts>-<bot>.xpdump.log` in `[XPDUMP]`
 format, so the existing offline analyzers run on it unchanged:
 
