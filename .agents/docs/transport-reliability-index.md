@@ -223,6 +223,7 @@ Paths are repo-qualified — see §0.
 
 | path | what it is |
 |---|---|
+| `quorum-desktop/.agents/bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` | ⭐ **desktop receive awaits relay HTTP inside the per-conversation ratchet lock** (22s mutate timeout), so one slow ack stalls the conversation in both directions. Found by reading; confirmation owed. Mobile verified unaffected, and its pattern is the proposed fix |
 | `quorum-mobile/.agents/bugs/.solved/2026-07-24-dm-session-confirm-row-mismatch-x3dh-every-send.md` | authoritative SDK reading: confirm wrote to a row the send path never read. **Solved** (#177) |
 | `quorum-mobile/.agents/bugs/2026-06-13-desktop-to-mobile-messages-fail-decryption-invalid-signature.md` | earlier cross-platform decrypt/signature failure. Needs a full retest |
 | `quorum-mobile/.agents/bugs/2026-07-19-multidevice-inbox-key-breaks-verified-signer-auth.md` | multi-device inbox keys broke every verified-signer authorization |
@@ -394,7 +395,7 @@ Ranked. Each item names the doc that owns it — go there for detail.
 
 | # | item | owner doc | repo |
 |---|---|---|---|
-| 0 | ⭐ **Confirm the multi-device persistence loss (§3.2), then read the receive path for what discards a message after a successful decrypt.** Ranked above the node write-loss because it is client-side, reproducible on the bench, and needs nobody else | `tasks/2026-07-28-harness-multidevice-and-coverage.md` | desktop (then mobile) |
+| 0 | ⭐ **Desktop receive holds the ratchet lock across relay HTTP** — one slow ack stalls a whole conversation, both directions, up to 22s. Mechanism identified by reading; needs one clean bench run to tell backlog from loss. Mobile is NOT affected and its pattern is the fix | `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` | desktop |
 | 1 | **Node write-loss (#183 item 2)** — blocked on node-side logs / a write ack. Nothing client-side left | [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) | upstream |
 | 2 | **Layer 2: space `log-append` resend on missing hub ack** — the proven ~1/5 space loss. Mobile-only (desktop has no hub log) | `quorum-mobile/.agents/tasks/2026-07-21-fix-space-append-send-loss-ack-resend.md` | mobile |
 | 3 | **Receipt truthfulness two-device runtime check** — code shipped on all three platforms, verification owed by both clients | `quorum-mobile/.agents/tasks/2026-07-26-receipt-truthfulness-delivery-gated-reads.md` | both |
