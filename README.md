@@ -51,6 +51,29 @@ The [`src/dev/`](src/dev) folder contains development utilities:
 - **Primitives Playground** (`/playground`) - Web-based testing environment for UI primitives and components
 - **Mobile Playground** - Comprehensive testing environment accessible by running the mobile app (see Mobile Development section)
 
+#### Headless DM harness
+
+[`src/dev/tests/harness/`](src/dev/tests/harness/README.md) runs the **real desktop
+client in Node** - both sides of a conversation, no browser, no devices. It exists
+for the DM transport investigation: reproducing decrypt failures, measuring
+send-vs-arrive loss, and testing session recovery unattended.
+
+```bash
+yarn harness dm-basic      # two bots exchange DMs both ways
+yarn harness dm-reorder    # reproduces the upstream decrypt failure in ~35s
+yarn harness dm-loss       # send-vs-arrive accounting per direction
+```
+
+A sibling harness drives the **mobile** client the same way
+(`quorum-mobile/dev/harness/`, `yarn harness:dm`).
+
+Scenarios talk to the production relay and register real accounts, so use
+throwaway or dedicated test accounts only. The harness README covers setup, the
+full scenario list, and what the bench deliberately does *not* cover.
+
+For the investigation these support, start at
+[`.agents/docs/transport-reliability-index.md`](.agents/docs/transport-reliability-index.md).
+
 #### Accessing Development Tools
 
 After running `yarn dev`, you can access the development tools at: `http://localhost:[port]/dev`

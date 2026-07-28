@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)"
-status: MECHANISM FULLY CHARACTERISED AND A CLIENT-SIDE MITIGATION IS VALIDATED (2026-07-27, finding AI — refines AE). The crate matches a skipped message key BY INDEX in the bucket filed under the receiver's pre-DH-step `current_receiving_header_key`, without checking that bucket belongs to the incoming frame's chain. A frame that opens a NEW sending chain and lands on an index present in that stale bucket is handed an OLD-chain key and fails AEAD; non-colliding indices decrypt normally. All three conditions hold in 139 of 139 recovered captured failures, the failing index set equals the stale bucket's index set exactly (5/5 synthetic configurations), and it is now REPRODUCIBLE ON DEMAND both against the bare crate and through the real client (`yarn harness dm-reorder`). ⚠️ AE's implied "the bucket's presence causes the failure" is NOT sufficient — controls show an in-order frame and non-colliding frames decrypt fine on a poisoned state. This also answers the lookup-vs-contents question §4 left open: it is the LOOKUP; the bucket's keys are valid and decrypt their own frames correctly. ⚠️⚠️ §5-B1 AS ORIGINALLY WRITTEN MUST NOT SHIP: pruning and persisting destroys the delayed frames whose keys live in that bucket (3/3 measured), converting recoverable latency into permanent loss. The safe form (B1′ — prune for the RETRY ONLY, re-file the bucket into the persisted state) is implemented on branch `feat/dm-stale-bucket-retry` and measured at 32→0 failures over 56 new-chain frames with ZERO cost to delayed frames. TEN app-level mechanisms remain dead (§3); three client defects are MERGED (§7). Evidence is filed upstream at quorum-mobile#183. Failures are TRANSIENT, so this is LATENCY WITH A LONG TAIL, not demonstrated loss.
+status: MECHANISM FULLY CHARACTERISED AND A CLIENT-SIDE MITIGATION IS VALIDATED (2026-07-27, finding AI — refines AE). The crate matches a skipped message key BY INDEX in the bucket filed under the receiver's pre-DH-step `current_receiving_header_key`, without checking that bucket belongs to the incoming frame's chain. A frame that opens a NEW sending chain and lands on an index present in that stale bucket is handed an OLD-chain key and fails AEAD; non-colliding indices decrypt normally. All three conditions hold in 139 of 139 recovered captured failures, the failing index set equals the stale bucket's index set exactly (5/5 synthetic configurations), and it is now REPRODUCIBLE ON DEMAND both against the bare crate and through the real client (`yarn harness dm-reorder`). ⚠️ AE's implied "the bucket's presence causes the failure" is NOT sufficient — controls show an in-order frame and non-colliding frames decrypt fine on a poisoned state. This also answers the lookup-vs-contents question §4 left open: it is the LOOKUP; the bucket's keys are valid and decrypt their own frames correctly. ⚠️⚠️ §5-B1 AS ORIGINALLY WRITTEN MUST NOT SHIP: pruning and persisting destroys the delayed frames whose keys live in that bucket (3/3 measured), converting recoverable latency into permanent loss. The safe form (B1′ — prune for the RETRY ONLY, re-file the bucket into the persisted state) is **MERGED to main as PR #265 (2026-07-27)**, measured at 32→0 failures over 56 new-chain frames with ZERO cost to delayed frames. ⚠️ THIS BUG STAYS OPEN: #265 removes the SYMPTOM on desktop only — the cause is upstream (quorum-mobile#183 item 1a, still open), the mitigation is NOT ported to mobile, and §5-D (what forms the bucket in the field) is unanswered. TEN app-level mechanisms remain dead (§3); three client defects are MERGED (§7). Evidence is filed upstream at quorum-mobile#183. Failures are TRANSIENT, so this is LATENCY WITH A LONG TAIL, not demonstrated loss.
 created: 2026-07-26
 severity: medium — user-visible lag and apparent loss; no permanent loss demonstrated since the init-envelope fix (see §1)
 repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)
@@ -24,10 +24,13 @@ related:
 > **START HERE if you are a fresh agent.** In order:
 >
 > 0. **2026-07-27: the mechanism is fully characterised, reproducible on demand, and
->    a client-side mitigation is built and measured.** Run `yarn harness dm-reorder`
->    to watch the production failure happen in ~35 seconds. The live work item is
->    **reviewing and merging branch `feat/dm-stale-bucket-retry`** (§5-B1), not
->    running another experiment. Findings AI/AJ/AK/AL in §1.
+>    the client-side mitigation is MERGED** (PR #265). Run `yarn harness dm-reorder`
+>    to watch the production failure happen in ~35 seconds. Findings AI/AJ/AK/AL in §1.
+>    **The remaining work items are (a) porting the mitigation to mobile, and (b) §5-D
+>    — what supplies the out-of-order delivery that forms the bucket in the field.**
+>    Neither needs another capture round. *(Updated 2026-07-28: this item previously
+>    said the live work was "reviewing and merging branch `feat/dm-stale-bucket-retry`";
+>    that branch merged as PR #265 on 2026-07-27.)*
 > 1. **The client-side work up to that point is finished and merged.** Do not start
 >    by hunting for a bug in this repo — ten app-level mechanisms have already been
 >    proposed and killed (§3), and the three real defects found along the way are
@@ -362,14 +365,15 @@ predated AE.
 
 > **STATE OF PLAY, 2026-07-27 (read this before picking anything below).**
 > The mechanism is fully characterised (AI), reproducible on demand in seconds with
-> no devices, and **a client-side mitigation is implemented and measured**: branch
-> `feat/dm-stale-bucket-retry`, 32→0 failures with no cost to delayed frames
-> (§5-B1). Transport loss is measured at 0% d↔d (AL).
+> no devices, and **the client-side mitigation is MERGED to main as PR #265**
+> (2026-07-27): 32→0 failures with no cost to delayed frames (§5-B1′). Transport
+> loss is measured at 0% d↔d (AL).
 >
-> **The highest-value next action is to get that branch reviewed and merged**, not
-> to run another experiment. After that, the open questions are narrow: what supplies
-> the out-of-order delivery that forms the bucket in the field (§5-D), and whether
-> the mitigation behaves on mobile↔desktop traffic.
+> **The open questions are now narrow:** what supplies the out-of-order delivery
+> that forms the bucket in the field (§5-D); whether the mitigation behaves on
+> mobile↔desktop traffic; and porting it to mobile, which does not have it.
+> *(Updated 2026-07-28 — this block previously said the highest-value action was
+> getting that branch reviewed and merged.)*
 >
 > ⚠️ And note what AJ says about this bench: two harness defects silently produced
 > wrong numbers before controls caught them. Treat any new harness measurement as

@@ -66,6 +66,31 @@ function pruneCurrentBucket(rs) {
   return { state: { ...rs, skipped_keys_map: m }, removed, key };
 }
 
+/**
+ * The control variants from dr-ablate. Kept here too so the whole upstream table
+ * can be quoted against one de-duplicated denominator instead of mixing scopes.
+ */
+const CONTROL_VARIANTS = [
+  ['skipped_keys_map = {}', (rs) => ({ ...rs, skipped_keys_map: {} })],
+  ['keep only the current-recv-header bucket', (rs) => {
+    const k = rs.current_receiving_header_key;
+    const m = rs.skipped_keys_map ?? {};
+    return { ...rs, skipped_keys_map: k && m[k] ? { [k]: m[k] } : {} };
+  }],
+  ['drop only the next-recv-header bucket', (rs) => {
+    const m = { ...(rs.skipped_keys_map ?? {}) };
+    delete m[rs.next_receiving_header_key];
+    return { ...rs, skipped_keys_map: m };
+  }],
+  ['previous_sending_chain_length = 0', (rs) => ({ ...rs, previous_sending_chain_length: 0 })],
+  ['current_receiving_chain_length = 0', (rs) => ({ ...rs, current_receiving_chain_length: 0 })],
+  ['swap current <-> next receiving header key', (rs) => ({
+    ...rs,
+    current_receiving_header_key: rs.next_receiving_header_key,
+    next_receiving_header_key: rs.current_receiving_header_key,
+  })],
+];
+
 const bucketOf = (rs) => (rs.skipped_keys_map ?? {})[rs.current_receiving_header_key];
 const countKeys = (rs) =>
   Object.values(rs.skipped_keys_map ?? {}).reduce((a, v) => a + Object.keys(v ?? {}).length, 0);
@@ -126,6 +151,17 @@ function runCorpus(logPaths) {
       const { state: prunedRs, removed } = pruneCurrentBucket(rs);
       const pruned = tryDecrypt(JSON.stringify(prunedRs), envelope);
 
+      // The dr-ablate control variants, re-run here so every row of the upstream
+      // table shares ONE de-duplicated denominator. dr-ablate itself does not
+      // de-duplicate, so its counts and these are not interchangeable.
+      const controls = {};
+      for (const [label, mutate] of CONTROL_VARIANTS) {
+        let verdict;
+        try { verdict = tryDecrypt(JSON.stringify(mutate(rs)), envelope); }
+        catch { verdict = { ok: false }; }
+        controls[label] = verdict.ok;
+      }
+
       // The output state identifies the frame: rLen advances to (frame index + 1),
       // and a changed root_key means the frame arrived under the NEXT receiving
       // header key, i.e. it drove a DH step.
@@ -144,6 +180,7 @@ function runCorpus(logPaths) {
 
       rows.push({
         after,
+        controls,
         log: logPath.replace(/\\/g, '/').split('/').pop(),
         no: d.no,
         fp,
@@ -232,6 +269,15 @@ function reportCorpus(rows) {
     byMsg.set(k, (byMsg.get(k) ?? 0) + 1);
   }
   const dupes = [...byMsg.entries()].filter(([, n]) => n > 1);
+  // One denominator for every row, so the table can be quoted as a whole.
+  console.log('\n  ABLATION over the same de-duplicated set (for the upstream table):');
+  console.log(`     ${'baseline, exactly as captured'.padEnd(46)} ${baseOk.length} / ${rows.length}`);
+  console.log(`     ${'drop ONLY the current-recv-header bucket'.padEnd(46)} ${recovered.length} / ${rows.length}`);
+  for (const label of Object.keys(rows[0]?.controls ?? {})) {
+    const n = rows.filter((r) => r.controls?.[label]).length;
+    console.log(`     ${label.padEnd(46)} ${n} / ${rows.length}`);
+  }
+
   console.log(`\n  distinct recovered plaintexts      ${byMsg.size} of ${recovered.length} recoveries`);
   if (dupes.length) {
     console.log('  plaintexts recovered MORE THAN ONCE (same message, several dumps):');

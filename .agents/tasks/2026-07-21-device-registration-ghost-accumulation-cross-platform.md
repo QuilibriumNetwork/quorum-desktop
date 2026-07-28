@@ -45,16 +45,16 @@ re-registering after its local keyset was wiped. Any fix must therefore key off
     so the device/master keys physically survive — but they're bypassed because
     the session is gone.
 - Re-import path runs the SDK's `buildAndUploadRegistration`
-  (`quilibrium-js-sdk-channels/dist/index.js` ~line 5945): it **always**
+  (`@quilibrium/quilibrium-js-sdk-channels/dist/index.js` ~line 5857): it **always**
   `NewDeviceKeyset()`, fetches `existing.device_registrations`, and
   `ConstructUserRegistration(ident, existing, [newDevice])` — appends, never
   reuses `KeyDB id=2`, never prunes. → +1 ghost per reset+reimport.
 - Note: a plain reload WITHOUT reimport reuses `KeyDB id=2` via
   [`RegistrationPersister.tsx:158`](../../src/components/context/RegistrationPersister.tsx#L158)
   and does NOT mint. The reset only triggers the bug because it clears the
-  localStorage session (`App.tsx:84` reads `currentPasskeyInfo` from
-  `localStorage['passkeys-list']`; once null, `App.tsx:132` routes to
-  `OnboardingFlow`, not `RegistrationProvider`) and forces the reimport.
+  localStorage session (`App.tsx` gets `currentPasskeyInfo` from the passkeys
+  context, backed by `localStorage['passkeys-list']`; once null, `App.tsx:135`
+  routes to `OnboardingFlow`, not `RegistrationProvider`) and forces the reimport.
 - Correction (independent review 2026-07-21): the `NewDeviceKeyset()` at
   `RegistrationPersister.tsx:115` is NOT reachable on a transient network error.
   It requires `registration.registered === false` (a hub 404 — transient fetch
@@ -66,10 +66,12 @@ re-registering after its local keyset was wiped. Any fix must therefore key off
 ### Mobile mechanism
 
 - Mobile is architecturally more resilient: `initializeEncryptionKeys` REUSES
-  the SecureStore device keyset if present (`keyService.ts:527-543`) and
-  `uploadUserRegistration` DEDUPES by `inbox_address` before appending
-  (`keyService.ts:719-722`). So normal re-logins do NOT accumulate.
-- But "Reset App Data" → `signOut()` (`context/AuthContext.tsx:467`) calls
+  the SecureStore device keyset if present
+  (`services/onboarding/keyService.ts:520-545`) and the registration upload
+  DEDUPES by `inbox_address` before appending (same file, ~722-724). So normal
+  re-logins do NOT accumulate.
+- But "Reset App Data" → `signOut()` (`context/AuthContext.tsx`, clears at
+  ~470-473) calls
   `clearAllMMKVStorage()` **and** `clearAllSecureStorage()` — wiping the device
   keyset (inbox signing/encryption keys, inbox_address, identity, prekey). On
   re-login, no keyset to reuse → a new one is generated → new `inbox_address` →
@@ -85,8 +87,8 @@ still present**, then wipe. Both platforms already have the code:
   [`useUserSettings.ts:522-534`](../../src/hooks/business/user/useUserSettings.ts#L522-L534).
   Current device's inbox_address = `keyset.deviceKeyset.inbox_keyset.inbox_address`.
 - **Mobile:** `removeDeviceFromRegistration(userAddress, userPublicKey,
-  userPrivateKey, thisInboxAddress)` already exists (`keyService.ts:873`) — it
-  just isn't called on reset.
+  userPrivateKey, thisInboxAddress)` already exists
+  (`services/onboarding/keyService.ts:875`) — it just isn't called on reset.
 
 ### Slice 1 — Desktop (vertical, observable)
 
@@ -101,14 +103,24 @@ still present**, then wipe. Both platforms already have the code:
    followed by an immediate reload silently drops the request even online. Use
    `await Promise.race([uploadDeregister(...), timeout(~3000ms)])`, then wipe.
    This is the #1 way the fix "passes in tests, fails in the field."
-2. Then run the existing wipe (quorum_db + localStorage + sessionStorage + reload).
-3. (Secondary, optional) also delete `KeyDB` so the reset actually honors its own
+2. **(Added 2026-07-28 — send-side shipped in #249.)** Also before the wipe:
+   broadcast the `revoke-device` tombstone for THIS device —
+   `broadcastDeviceRevocations([thisInbox])`, exposed by `useMessageDB()` (the
+   hook DangerZone needs anyway) and already wired into the Security-modal
+   removal flow at
+   [`useUserSettings.ts:536-544`](../../src/hooks/business/user/useUserSettings.ts#L536-L544).
+   There it is fire-and-forget (the app stays alive); on reset it MUST be
+   awaited with the same bounded timeout as step 1, or the reload cancels it.
+   Without this, the reset cleans the hub list but leaves this device's
+   signing-key admission live in members' `space_member_devices` stores.
+3. Then run the existing wipe (quorum_db + localStorage + sessionStorage + reload).
+4. (Secondary, optional) also delete `KeyDB` so the reset actually honors its own
    copy ("delete your private keys") — see "Secondary" below; must run AFTER the
    deregister since the deregister needs the master key.
-4. **Observable outcome:** on a second device, open the device list; reset device
+5. **Observable outcome:** on a second device, open the device list; reset device
    A; A disappears from the list instead of piling up. Re-login on A adds exactly
    one entry (the new A), total device count stays flat across reset cycles.
-5. Unit test the "reconstruct registration without current device" pure logic
+6. Unit test the "reconstruct registration without current device" pure logic
    (input device list + this inbox → expected remaining list; last-device case).
 
 ### Slice 2 — Mobile (mirror)
@@ -118,8 +130,13 @@ still present**, then wipe. Both platforms already have the code:
    too): read `getPrivateKey()`/`getPublicKey()`/`getInboxAddress()` and call
    `removeDeviceFromRegistration(...)` before `clearAllSecureStorage()`.
    Best-effort with timeout.
-2. Then `clearAllMMKVStorage()` + `clearAllSecureStorage()` as today.
-3. **Observable outcome:** same as desktop, verified statically + on a real
+2. **(Added 2026-07-28 — send-side shipped in mobile #168.)** Also broadcast
+   `revoke-device` for THIS device before the wipe: ProfileModal already
+   broadcasts it on device *removal* (via the `deviceKeyStatements` service,
+   `services/space/deviceKeyStatements.ts`) — reuse that path for the current
+   device's inbox address, awaited with timeout.
+3. Then `clearAllMMKVStorage()` + `clearAllSecureStorage()` as today.
+4. **Observable outcome:** same as desktop, verified statically + on a real
    device pair (mobile: prefer statically-verifiable change per quorum-atlas;
    confirm on-device with the dual-device preview setup if available).
 
@@ -140,8 +157,9 @@ propose via Telegram, don't self-merge.
   device may remain listed until you remove it manually"). Accept the rare
   residual ghost. This keeps the common (online) path clean and reset reliable.
 - **Last device on the account:** mobile's `removeDeviceFromRegistration` refuses
-  to leave 0 devices (`keyService.ts:902-904`); desktop's filter has no such
-  guard. Removing the last device empties `device_registrations`. OPEN: confirm
+  to leave 0 devices (`services/onboarding/keyService.ts` ~903-909 — it also
+  returns false if the device isn't in the list at all); desktop's filter has no
+  such guard. Removing the last device empties `device_registrations`. OPEN: confirm
   the server accepts an empty device list on upload. If it does, allow reset to
   remove the last device (fully clean). If it rejects empty, accept a ≤1 residual
   ghost from single-device accounts — still a massive improvement over 10+.
@@ -153,8 +171,12 @@ propose via Telegram, don't self-merge.
   open WITHOUT a wipe, `RegistrationPersister` (registered:true path,
   lines 186-209) finds the current inbox_address missing from
   `device_registrations` and silently re-appends it — reversing the deregister.
-  Not catastrophic (self-consistent), but means a failed wipe undoes the
-  cleanup. Acceptable; note it so it isn't mistaken for the fix "not working."
+  (Re-append is at lines 187-210 in current code.) Same symmetry on the signing
+  side since #249/#168: both platforms re-announce this device's key per space
+  on connect, so a failed wipe also re-admits the just-revoked signing key.
+  Not catastrophic (self-consistent in both directions), but means a failed wipe
+  undoes the cleanup. Acceptable; note it so it isn't mistaken for the fix "not
+  working."
 - **`keyset` not ready at reset time (desktop):** `RegistrationContext` default
   is `keyset: undefined as never` and RegistrationPersister populates it after a
   ~200ms init. A user who opens Settings and types RESET faster than that could
@@ -171,69 +193,83 @@ propose via Telegram, don't self-merge.
   (desktop Security modal, mobile device management). No migration needed; just
   document it for the test accounts.
 
-## Tie-in: per-device signing keys
+## Tie-in: per-device signing keys — NOW LIVE (superseded 2026-07-28)
 
-Once the send-side of
-[2026-07-19-per-device-signing-keys-registration-anchored.md](2026-07-19-per-device-signing-keys-registration-anchored.md)
-lands, device removal broadcasts `revoke-device` per space. Deregister-on-reset
-should also fire that broadcast (before the wipe), or the reset leaves stale
-per-device signing admissions in other members' `space_member_devices` stores.
-Keep this dependency in mind; it does not block Slices 1-2 (revoke-device
-send-side isn't shipped yet), but the reset deregister and the revoke broadcast
-should share one code path when they converge.
+> Original framing ("once the send-side lands…") is obsolete: the send-side
+> shipped on BOTH platforms the same day this task was written — desktop #249
+> (`08ef96ea0`, announce + `broadcastDeviceRevocations` wired into the
+> Security-modal removal flow) and mobile #168 (`2609a78`, receive + send +
+> revoke-on-removal in ProfileModal). Both include the Option A signing flip
+> (fresh devices sign with their OWN per-device inbox key and announce it on
+> connect). Both are merged to main, prod-gated on cross-device validation.
 
-Be precise about scope (independent review 2026-07-21): deregister-on-reset
-removes the device from the HUB `UserRegistration` (so new DMs can't be sealed to
-it) but does NOT clear that device's admission rows already sitting in other
-members' local `space_member_devices` stores — those only clear via a
-`revoke-device` broadcast (not shipped) or some later cleanup. So this fix is
-"complete for the hub registration, not yet for space signing admissions." State
-that plainly rather than implying the ghost is fully erased everywhere.
+Consequences for this task:
 
-### Conflict check vs the per-device-signing feature (#244 / #245) — verified 2026-07-21
+1. **The ghost problem gained a second dimension.** Each reset+re-login cycle
+   now also announces a NEW per-device signing key into every member's
+   `space_member_devices` store, and the wiped device's old admission is never
+   revoked. Stale admissions accumulate exactly like hub ghosts.
+2. **The revoke broadcast is part of Slices 1-2** (step 2 in each), not a
+   future convergence item. The machinery exists on both platforms; reset just
+   has to call it for the current device before wiping — awaited, same
+   reload-cancels-fetch trap as the registration upload.
+3. **Self-revocation is a new flow** — the existing broadcasts revoke OTHER
+   devices; reset revokes the device doing the broadcasting, right before it
+   wipes. Master-signed + LWW (`quorum-shared/src/utils/deviceKeys.ts`
+   `~194`: verdicts anchor on `deriveInboxAddress(userPublicKey) ===
+   userAddress` + master signature + strictly-newer timestamp), so it should
+   verify identically, but flag it to the lead before implementing.
 
-Question raised: could deregister-on-reset conflict with the per-device signing
-work already merged (#244 interim per-user signing key; #245 desktop receive-side
-of per-device keys)? **Conclusion: no conflict with shipped code; it is a
-convergence point for the future send-side.** Verified against source:
+Scope stays honest: deregister cleans the hub `UserRegistration` (new DMs can't
+be sealed to the ghost) and the revoke tombstone clears its signing admission in
+stores of members that receive the broadcast; members that never see it keep the
+stale admission until later cleanup. Say that plainly rather than implying the
+ghost is fully erased everywhere.
+
+### Conflict check vs the per-device-signing feature — re-verified 2026-07-28
+
+Original check (2026-07-21, against #244/#245) concluded "no conflict with
+shipped code; convergence point for the future send-side." Re-verified after
+#249 (desktop send) and #168 (mobile send) landed — **still no conflict**, and
+the convergence is no longer future (see tie-in above). Current state:
 
 - **DangerZone overlap is harmless.** #245's only `DangerZone.tsx` change was
   making a *blocked* IDB delete reject instead of silently resolving. This fix
   adds a deregister step *before* the wipe — orthogonal, stacks cleanly.
+  (Re-confirmed: `DangerZone.tsx` today is exactly the wipe sequence described
+  above, no deregister, no KeyDB delete.)
 - **Signing admissions are anchored to the master key, not the hub device list
-  this fix mutates.** `quorum-shared/src/utils/deviceKeys.ts:194` verifies via
+  this fix mutates.** `quorum-shared/src/utils/deviceKeys.ts` (~194) verifies via
   `deriveInboxAddress(userPublicKey) === userAddress` + the master-key signature;
   it NEVER fetches or checks `UserRegistration.device_registrations[]`. So
   removing a device from the hub list invalidates no admission and breaks no
   verification. Different anchor.
-- **No send-side exists to collide with.** `MessageService.ts` has RECEIVE
-  handlers for `announce-keys`/`revoke-device` (~lines 986, 4974) but nothing
-  BROADCASTS them. Send-side is unshipped on both platforms.
-- **Mobile: same.** Its space signing key is per-user (shared via config), not
-  tied to the DM device registration, so `removeDeviceFromRegistration` on reset
-  doesn't touch it.
+- **Send-side now exists — and it's the machinery this fix reuses, not a
+  collision.** Desktop `MessageService.ts`: statement receive at ~1117 /
+  envelope dispatch ~5505; `announceDeviceKeys` ~1261; `broadcastDeviceRevocations`
+  ~1312. The broadcasts are additive control ops; a deregister-before-wipe step
+  doesn't interfere with them (it *calls* one of them, Slice 1 step 2).
+- **Mobile mirrors desktop since #168** (the earlier "mobile signing key is
+  per-user via config" note is superseded by the Option A flip). Same
+  conclusion: reuse, not conflict.
 
-Two items for the convergence (when send-side + revocation lands — NOT now):
-1. The await-before-wipe discipline must extend to the `revoke-device` broadcast
-   too (don't wipe keys/connection before it propagates — same trap as the
-   registration upload).
-2. Reset revokes the CURRENT device (self-revocation), whereas the per-device
-   plan frames revocation around removing OTHER devices. A device revoking itself
-   right before wiping is a slightly different flow — should be fine (master-
-   signed, LWW) but flag it to the lead when the send-side is designed.
+(The two former "convergence items" — await-before-wipe for the broadcast, and
+the self-revocation flag — are folded into Slice 1 step 2 and the tie-in
+section above.)
 
 ## Files (anticipated)
 
 Desktop:
-- `src/components/modals/UserSettingsModal/DangerZone.tsx` — deregister step +
-  best-effort/timeout + notice; optional KeyDB delete.
-- (wiring) registration context / keyset access into DangerZone.
+- `src/components/modals/UserSettingsModal/DangerZone.tsx` — deregister +
+  revoke-broadcast steps + best-effort/timeout + notice; optional KeyDB delete.
+- (wiring) registration context / keyset access + `broadcastDeviceRevocations`
+  (from `useMessageDB()`) into DangerZone.
 - new unit test for the reconstruct-without-current-device logic.
 
 Mobile:
-- `components/ProfileModal.tsx` (`handleResetAppData`) and/or
-  `context/AuthContext.tsx` (`signOut`) — call `removeDeviceFromRegistration`
-  before `clearAllSecureStorage`.
+- `components/ProfileModal.tsx` (`handleResetAppData`, ~852) and/or
+  `context/AuthContext.tsx` (`signOut`) — call `removeDeviceFromRegistration` +
+  the `deviceKeyStatements` revoke broadcast before `clearAllSecureStorage`.
 
 ## Secondary (do NOT bundle silently)
 
@@ -244,4 +280,11 @@ is a real hardening, but it interacts with the app-lock / duress-wipe work
 Decide explicitly (with the lead if needed); don't fold it into the ghost fix
 without calling it out.
 
-*Last updated: 2026-07-21*
+*Last updated: 2026-07-28*
+
+## Review Log
+**2026-07-28 - claude-fable-5**: Verified every source claim on desktop, mobile, SDK dist, and quorum-shared; core mechanics all hold, but the send-side premise was stale — updated the task to fold the now-shipped revoke-device broadcast into both slices.
+- STALE (fixed): 'send-side unshipped on both platforms' was overtaken same-day — desktop #249 (08ef96ea0) and mobile #168 (2609a78) shipped announce/revoke broadcasts + Option A flip; rewrote the tie-in and conflict-check sections, added revoke-broadcast step 2 to Slice 1 (broadcastDeviceRevocations via useMessageDB, awaited before wipe) and Slice 2 (deviceKeyStatements path).
+- New consequence documented: with the flip live, each reset cycle also accumulates stale signing-key admissions in members' space_member_devices stores — ghost problem has a second dimension.
+- Verified intact: DangerZone wipe sequence (no KeyDB delete), RegistrationPersister branch structure (line 115 corruption-only path, 158 reuse, 187-210 re-append), SDK buildAndUploadRegistration always-mints (now ~5857), mobile reuse/dedupe/last-device guard, deviceKeys.ts master-key anchor + LWW.
+- Pointer refreshes: SDK path needs @quilibrium/ scope; mobile keyService is services/onboarding/keyService.ts (875, ~903-909, ~520-545, ~722-724); App.tsx route now 135; added edge-case note that a failed wipe also re-admits the revoked signing key via on-connect re-announce (symmetric self-heal).

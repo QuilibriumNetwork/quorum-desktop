@@ -700,5 +700,70 @@ end.
   Side corpus: 140 novel-but-healed decrypt failures captured
   (`user-a` 53 / `user-b` 87 records), the aged-session lag class, `dr-ablate`-ready.
 
+- 2026-07-28: **slices 1-3 complete and measured. Mobile↔mobile: 0.0% loss.**
+  `quorum-mobile` branch `feat/harness-identity-dm`, commits `82a1bcc` (identity)
+  and `c6c43ea` (bot + two-bot measurement). Run: 40 rounds each direction,
+  **80/80 delivered, zero decrypt failures, both device inboxes empty at the end**,
+  production relay, two throwaway accounts, one device each.
+
+  **What it settles and what it does not.** Mobile's own send/receive logic does
+  not lose these messages once RN's native WebSocket is out of the loop — the
+  single-variable experiment §READ THIS FIRST asked for. It is *not* a verdict on
+  RN native: a fresh two-device pair is plausibly the population least likely to
+  exhibit an intermittent, account-aged fault, which is the same caveat that
+  applied to the two desktop `dm-loss` nulls. Three consecutive nulls across two
+  platforms now point the same way without any of them isolating the layer.
+
+  **The bot's shape had to differ from desktop's, and recon #2 understated why.**
+  Desktop constructs `new MessageService(deps)`. Mobile has no equivalent seam:
+  its DM receive path is ~4000 lines of `useCallback` *inside* `WebSocketProvider`
+  (`handleIncomingMessage` alone spans lines 762-3540). Extracting it — slice 2 as
+  originally written — would have meant refactoring shipping app code. Instead the
+  bot RENDERS the provider (it emits no native views) and mounts it authenticated,
+  so mobile's own effect connects, loads device keys and subscribes. A probe child
+  calls mobile's own `useWebSocket` and `useSendDirectMessage`. Nothing was
+  extracted and nothing was reimplemented.
+
+  **Findings worth carrying into any future harness work:**
+
+  1. **`NativeCryptoProvider` and `WasmCryptoProvider` are not interchangeable at
+     the ERROR level**, despite both implementing `CryptoProvider`. Native reports
+     a decrypt failure as `{message: [], decryptionError}` and base64-decodes a
+     string `message`; WASM's `parseWasmResult` throws for errors matching its
+     pattern list and JSON-parses everything else. Mobile's code is written
+     against the native conventions, so the mismatch turned a *recoverable*
+     failure into `SyntaxError: Unexpected token 'D'` thrown far from its cause,
+     and separately let base64 message payloads decode to nothing. Both cost
+     several runs that looked like transport loss and were not. This is a live
+     risk for any future cross-backend work, not a harness quirk.
+  2. **Simultaneous session open forks the pair.** Having both bots send from the
+     same instant failed all 50 messages of a 25-round run on X3DH while every
+     frame arrived intact — and the forked state persisted into *later* runs via
+     retained undecryptable frames that re-ran X3DH on redelivery. This is a real
+     mechanism, closely related to the zombie-init-envelope class already in the
+     investigation, and it deserves its own scenario rather than being the
+     baseline.
+  3. **A delivery count cannot distinguish "lost" from "delivered and refused".**
+     The run now reports frames still queued on each device inbox. That is what
+     turned an apparent 100% loss into *40 frames delivered perfectly and rejected
+     by the receiver's session* — the opposite diagnosis.
+  4. **jest module isolation is not sufficient for two bots in one process.**
+     `jest.isolateModulesAsync` does isolate static require-graphs (test kept in
+     `two-bot-feasibility.scenario.ts`), but lazy `require()`s run after the
+     isolate closes and resolve against the shared registry —
+     `services/crypto/initEnvelopeGuard` does exactly that. Silent, and it would
+     fuse the two devices being compared. Bots get one process each.
+
+  **Blast radius, final:** one `export` keyword on an existing mobile function
+  (so the harness reuses the real signed inbox-delete rather than duplicating its
+  crypto glue) plus one `package.json` script line. `jest.config.js` untouched, no
+  dependency added, `yarn.lock` never modified. App suite unchanged at 13 suites /
+  108 tests. Lazy `import()` is lowered by a harness-only babel config that reuses
+  the app's verbatim, chosen over adding `babel-plugin-dynamic-import-node`
+  precisely to keep the lockfile untouched.
+
+  **Not done:** slice 4 (mobile↔desktop, the field's reported worst case) and a
+  simultaneous-open scenario. Both are now cheap — the bot exists.
+
 ---
-*Last updated: 2026-07-27*
+*Last updated: 2026-07-28*

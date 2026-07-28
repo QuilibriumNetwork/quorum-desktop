@@ -1,9 +1,9 @@
 ---
 type: task
 title: "Headless DM harness — drive the real client in Node to debug DM transport without two browsers"
-status: IN PROGRESS — slice 1
+status: DONE — SHIPPED as PR #263 (harness) + #264 (on-demand reproduction + two bench-defect fixes), both merged 2026-07-27. Slices 1-3 DONE and live-verified; slice 4's one REMAINING item (`importSession.ts`, to lift an aged session out of a browser) was rendered UNNECESSARY by the later reproduction work — the degraded state is now built from scratch by `yarn harness dm-reorder`, see the resurfaced bug §5. Status corrected 2026-07-28; "IN PROGRESS — slice 1" was written at the start of the session and never updated. Follow-up #2 (a SPACE harness) was split out to `tasks/2026-07-27-headless-space-harness.md` and is a separate, unstarted spec.
 created: 2026-07-27
-branch: feat/headless-dm-harness
+branch: feat/headless-dm-harness (merged)
 area: DM transport / testing infrastructure
 related:
   - .agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md (the investigation this replaces the manual rig for; §6 THE RIG)

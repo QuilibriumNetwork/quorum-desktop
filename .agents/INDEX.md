@@ -15,6 +15,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
+- **[🗺️ Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)** — hand an agent THIS ONE PATH for any transport/DM/receipts work. Maps every doc, tool, PR and the upstream issue across quorum-desktop + quorum-mobile + quorum-shared, with a read-first ladder and a status-hygiene record
 
 ### .Archived
 - [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)
@@ -125,6 +126,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [update-profile inbox_address poisoning → control-message impersonation](bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
+- **[⚠️ ENTRY POINT — DM delivery is broken again, desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)** — start here for anything DM-not-arriving. Mechanism measured, cause is upstream (quorum-mobile#183), desktop mitigation merged as PR #265; ten dead hypotheses recorded in §3 so they are not re-derived. STAYS OPEN: not ported to mobile, §5-D unanswered
+- [Capture archive — DM desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-captures.md) — per-round evidence for the above (findings A-AL). Evidence only; the entry point holds the status
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -169,9 +172,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Read-only channel receive-side enforcement is incomplete](bugs/.solved/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/.solved/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [Composer flattens multi-line paste into a single line](bugs/.solved/2026-06-25-composer-paste-strips-newlines.md)
-- **[⚠️ ENTRY POINT — DM delivery broken again on desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)** — start here for anything DM-not-arriving. Mechanism measured, cause is upstream, all client fixes merged; ten dead hypotheses recorded so they are not re-derived. The master report below is REOPENED
-- [DM desktop↔desktop — capture archive](bugs/2026-07-26-dm-desktop-to-desktop-captures.md) — per-round evidence for the above (findings A-AB, 7 instrumented rounds). Evidence only; the entry point holds the status
-- [DM message delivery is unreliable (master report)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md) — ⚠️ REOPENED 2026-07-26, mechanism catalogue only
+- [DM message delivery is unreliable (master report)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
 - [DM frames still drop with `aead::Error` (remaining half of the delivery bug)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
 - [FIX SPEC: DM decrypt failure destroys the session](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
@@ -208,14 +209,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
-- [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
 - [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
 - [DM delivery auto-heal](tasks/2026-07-17-dm-dead-session-autoheal.md)
 - [Edited messages show a false "not signed" warning on other devices](tasks/2026-07-19-edited-message-signature-badge-cross-device.md)
 - [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
-- [Sync per-conversation DM settings across devices](tasks/2026-07-20-sync-per-conversation-dm-settings-cross-repo.md)
 - [Ghost device accumulation on reset/logout](tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md)
+- [Combined receipt ack, and a decision on the two deeper protocol options](tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md)
+- [Cross-platform DM harness](tasks/2026-07-27-cross-platform-dm-harness.md)
+- [Headless SPACE harness (spec)](tasks/2026-07-27-headless-space-harness.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -488,10 +490,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Move image compression config + orchestration into quorum-shared (desktop side)](tasks/.done/2026-06-24-share-image-compression-config-with-shared.md)
 - [Close EXIF/metadata stripping gaps on image uploads](tasks/.done/2026-06-24-strip-image-exif-metadata-gaps.md)
 - [Plan: fix DM remove-message + edit-message authorization on desktop](tasks/.done/2026-06-25-desktop-dm-control-msg-auth-fix-plan.md)
+- [DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`](tasks/.done/2026-06-25-dm-remove-message-auth-bypass-spoofable-senderid.md)
 - [quorum-shared: type the two-slot global identity fields](tasks/.done/2026-07-16-quorum-shared-type-two-slot-global-identity-fields.md)
 - [update-profile receive: add per-slot staleness guard](tasks/.done/2026-07-16-update-profile-receive-per-slot-timestamp-guard.md)
 - [quorum-shared: add KeyedMutex](tasks/.done/2026-07-17-quorum-shared-add-keyedmutex.md)
 - [Complete read-only-channel enforcement](tasks/.done/2026-07-19-readonly-channel-completion-durable-embed-sticker.md)
+- [Sync per-conversation DM settings across devices](tasks/.done/2026-07-20-sync-per-conversation-dm-settings-cross-repo.md)
+- [Headless DM harness](tasks/.done/2026-07-27-headless-dm-harness.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -682,4 +687,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-07-21 10:24:05
+**Last Updated**: 2026-07-28 10:26:20

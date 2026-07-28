@@ -115,9 +115,19 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness dm-volume` | concurrent bidirectional load; samples skipped-keys growth |
 | `yarn harness dm-reset-recover` | wipe a session mid-conversation, verify it re-inits and recovers |
 | `yarn harness dm-reorder` | **reproduces the production DM failure on demand.** Withholds the head of a sending chain so a stale skipped-keys bucket forms, then delivers the sender's next chain: the frames at colliding indices fail AEAD, and only those |
-| `yarn harness dm-loss` | send-vs-arrive frame loss per direction, joined by ciphertext fingerprint (issue #183 item 2) |
+| `yarn harness dm-loss` | send-vs-arrive frame loss per direction, joined by ciphertext fingerprint (issue #183 item 2). `HARNESS_LOSS_CANONICAL=1` runs it on the canonical aged multi-device accounts instead of fresh throwaways — the account shape is a variable in its own right, so the two arms answer different questions |
 | `yarn harness dm-stale-bucket` | the reorder cycle at scale, with the client-side mitigation OFF then ON, on fresh accounts per arm |
 | `yarn harness replay-captured` | runs the shipped stale-bucket retry against REAL degraded production state from saved rig logs. Needs `DM_LOG_DIR=<dir>`; skips without it |
+
+> **A sibling harness now drives the MOBILE client the same way** —
+> `quorum-mobile/dev/harness/`, `yarn harness:dm`. It is shaped differently
+> (mobile's DM receive path lives inside a React provider, so the bot renders it,
+> and each bot needs its own process), but it measures the same thing.
+>
+> ⚠️ **Before quoting any 0%-loss result from either bench**, read §3.1 of
+> `.agents/docs/transport-reliability-index.md`. Three such results now exist and
+> none of them contradicts the loss measured in the field — each bench differs
+> from the field configuration in several variables at once.
 
 On any decrypt failure a bot writes `logs/<ts>-<bot>.xpdump.log` in `[XPDUMP]`
 format, so the existing offline analyzers run on it unchanged:
