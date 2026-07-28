@@ -495,9 +495,17 @@ export class MessageDB {
    * named message settles even if its delivery ack was lost. `readMessageIds`
    * is absent for peers on older builds, leaving only the HWM self-proving.
    *
-   * The cursor range is bounded by upToTimestamp, which covers every named id:
-   * the mark is the newest read in the window, and ids are collected with the
-   * same createdDate the range is keyed on.
+   * The cursor range is bounded by upToTimestamp, which covers every named id
+   * from a well-behaved peer: the mark is the newest read in the window, and
+   * ids are collected with the same createdDate the range is keyed on.
+   *
+   * KNOWN DIVERGENCE (pre-dates named ids, inherited by them): resolveReadAckPatch
+   * honours a self-proving message regardless of its date, but this cursor does
+   * not visit anything past upToTimestamp, while the React Query cache walk in
+   * MessageDB.tsx has no date bound at all. So an ack naming an id NEWER than
+   * its own mark — which our own sender never produces, but a buggy or hostile
+   * peer could — marks it in the live cache and not on disk, and the tick
+   * disappears on reload. Cosmetic and self-correcting in the safe direction.
    */
   async updateMessagesReadAt(
     spaceId: string,

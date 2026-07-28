@@ -1110,10 +1110,25 @@ export class ActionQueueHandlers {
    * - messageIds: string[] (ids read since the last flush; may be absent)
    * - selfUserAddress: string (user's address for identity in envelope)
    *
-   * If a newer read flush replaces this task before it sends (queue dedup on
-   * `read-ack:${address}`), the superseding ack carries a mark at least as high,
-   * so read state still lands; only the naming for the replaced window is lost
-   * and those messages fall back to needing their own delivery ack.
+   * KNOWN LIMITATION — queue dedup drops named ids. `enqueue` deletes any
+   * pending task sharing the key `read-ack:${address}` before inserting the new
+   * one, so if two read flushes happen before the queue drains (it stalls
+   * entirely while offline), the earlier flush's `messageIds` are destroyed.
+   *
+   * Note the superseding ack's mark is NOT guaranteed to be at least as high.
+   * Each flush window computes its mark from scratch after `clearReadAddress`,
+   * so reading a newer message (queued, not yet sent) and then an older one
+   * produces a lower mark that replaces the higher. The receiver's watermark
+   * only advances, so nothing regresses there — the higher mark is simply
+   * delayed until some later ack carries one, which self-heals.
+   *
+   * What does NOT self-heal is a message whose delivery ack was lost, the case
+   * naming exists to rescue: it has no `deliveredAt`, so no later mark can
+   * cover it, and its name died with the replaced task. It stays on one tick.
+   *
+   * A missed rescue rather than a regression — before named ids those messages
+   * were stuck anyway. Fixing it means merging ids into the superseded task
+   * instead of replacing it.
    */
   private sendReadAck: TaskHandler = {
     execute: async (context) => {
