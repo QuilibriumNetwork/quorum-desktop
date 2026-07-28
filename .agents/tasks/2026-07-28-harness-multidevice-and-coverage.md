@@ -225,7 +225,32 @@ there is no reason for it to be awaited inside the ratchet critical section at a
 
 **Candidate fix, not yet attempted:** move the inbox-delete/ack outside the lock —
 the state is already persisted by then, and the ack's own failure path is already
-"it will be redelivered". Check the mobile receive path for the same shape.
+"it will be redelivered".
+
+### ✅ Checked mobile (read-only, 2026-07-28): it does NOT have this shape
+
+Mobile is structurally immune, for three independent reasons:
+
+| | desktop | mobile |
+|---|---|---|
+| where the ratchet lock sits | around the whole receive critical section (`MessageService.ts:3858`) | inside `services/crypto/encryption-service.ts` only — the crypto layer |
+| does the lock wrap network I/O? | **yes** — awaits `deleteInboxMessages` / `ackProcessedFrame` | **no** — `encryption-service.ts` performs no network I/O and does not import an API client |
+| how the inbox ack is issued | `await`ed inside the lock, 22s mutate timeout | `deleteProcessedEnvelope` returns **`void`**; dispatched `.catch(() => {})`, never awaited |
+| lock in the receive handler | yes | none — `runExclusive` appears nowhere in `context/` |
+
+**Two consequences.**
+
+1. **This mechanism is desktop-only, so it cannot explain the mobile↔mobile field
+   loss (round 29).** That stays #183 item 2. Do not let this finding absorb it.
+2. **It does fit what the operator observed**, because those two clients were
+   *desktops*: ~10 of 200 on one, 0 of 200 on the other, during a run in which the
+   peer channel was perfect. Desktop is exactly the platform with the defect.
+
+**Mobile's pattern IS the fix.** Desktop should dispatch the delete and not await
+it, catching and ignoring failure — which is what mobile already does, and what
+desktop's own `ackProcessedFrame` already implies by swallowing its error. That
+makes the fix "adopt the sibling platform's existing shape" rather than a new
+design, which is about as low-risk as a change to this path can be.
 
 ## Coverage: what the bench can and cannot reach
 
