@@ -16,6 +16,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 - **[🗺️ Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)** — hand an agent THIS ONE PATH for any transport/DM/receipts work. Maps every doc, tool, PR and the upstream issue across quorum-desktop + quorum-mobile + quorum-shared, with a read-first ladder and a status-hygiene record
+- **[📊 Transport & DM reliability — measurement log](docs/transport-measurements.md)** — the companion to the map: every capture round and bench run, its configuration, its result, and what it changed. APPEND-ONLY. Read before quoting any number; add a row after any run
 
 ### .Archived
 - [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)

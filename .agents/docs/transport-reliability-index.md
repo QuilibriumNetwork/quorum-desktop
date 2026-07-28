@@ -63,6 +63,7 @@ master first.
 | # | read | why |
 |---|---|---|
 | 1 | **this file** | the map |
+| 1b | `quorum-desktop/.agents/docs/transport-measurements.md` | **the numbers.** Every run, its configuration, its result, and what it changed — append-only. Read it before quoting any figure, and add to it after any run |
 | 2 | `quorum-mobile/.agents/tasks/2026-07-24-transport-reliability-START-HERE.md` | the consolidated *transport* orientation: what shipped, what is left, and the verified fact that mobile and desktop use **different transports** for spaces |
 | 3 | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` | the *DM ratchet* entry point: root cause, the ten dead hypotheses (§3), the offline tools (§5) |
 | 4 | [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) | the two upstream causes, lead-dev facing. Self-contained; the best single summary of the crypto findings |
@@ -97,12 +98,20 @@ Each bench differs from the field configuration in more than one variable, so wh
 they collectively establish is narrower than it looks: *both clients' send/receive
 logic is clean when run in Node, on fresh accounts, over the WASM crypto build.*
 
+**→ Every run and every number lives in [`docs/transport-measurements.md`](transport-measurements.md).**
+That file is the append-only log; this section is only the summary that matters
+for reading the issue. Add new results there, not here.
+
 | # | configuration | client | transport | crypto | accounts | result |
 |---|---|---|---|---|---|---|
-| A | desktop headless bench | desktop | Node `ws` | WASM | fresh throwaway | 301/301 both ways, **0%** |
-| B | desktop headless bench | desktop | Node `ws` | WASM | **canonical, aged, multi-device** | 201/direction, ~9 frames/msg fan-out, **0%** |
-| C | mobile headless bench (2026-07-28) | **mobile** | Node `ws` | WASM | fresh throwaway, 1 device | 80/80 both ways, **0%** |
+| A | desktop bench, 07-27 | desktop | Node `ws` | WASM | fresh throwaway | 301/301 both ways, **0%** |
+| A2 | desktop bench, 07-28 | desktop | Node `ws` | WASM | fresh throwaway | 201/direction, **0%** |
+| B | desktop bench, 07-28 | desktop | Node `ws` | WASM | **canonical, aged, multi-device** | 201/direction measurable, ~9 frames/msg fan-out, **0%** |
+| C | mobile bench, 07-28 | **mobile** | Node `ws` | WASM | fresh throwaway, 1 device | 80/80 both ways, **0%** |
 | D | **field, round 29** | mobile | **RN native** | **uniffi** | real devices | **8/25 lost one way (32%), 0/18 the reverse** |
+
+A and A2 are **different runs**, not one result reported twice — an earlier version
+of this table collapsed them, which is what prompted the measurement log.
 
 **C vs D differ in four variables at once** — transport, crypto backend, account
 shape and OS — so C does **not** isolate RN's native socket, and any claim that it
@@ -478,6 +487,12 @@ Add a row when a transport/DM doc is created; update §7 when a transport PR mer
 update §8 when you verify or fix a stale status. Keep paths repo-qualified (§0) —
 this file is read from both repos, so relative links break. Do **not** copy statuses
 in from the linked docs; that is what rotted the docs this file exists to navigate.
+
+**New measurements go in `docs/transport-measurements.md`, not here.** That file is
+append-only and is the only consolidated list in this cluster that is safe to keep,
+because a measurement — unlike a status — never goes stale; it is only ever
+superseded by a newer row. §3.1 here carries just the summary needed to read the
+upstream issue, and points at the log for everything else.
 
 A pointer stub lives at `quorum-mobile/.agents/docs/transport-reliability-index.md`
 so an agent starting in that repo finds this file. It carries no content — do not
