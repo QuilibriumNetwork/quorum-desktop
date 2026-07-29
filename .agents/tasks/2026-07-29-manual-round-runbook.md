@@ -72,7 +72,20 @@ side still uses the doctor (receiving desktops are dev builds).
    peer = common-mode loss at the source. One store tells you half the story.
 5. **Second reading ~10 minutes after the first.** It is what separates loss
    from a long latency tail. Identical missing-list twice = loss.
-6. **If loss appears, preserve before touching:** the JSONL file, the doctor's
+6. ⭐ **Every receiving desktop must have the ACTUAL APP open during the round.**
+   `/dev/*` routes render **outside** the app shell (`Router.web.tsx` — they are
+   siblings of `<Layout>`, not children), so a tab parked on `/dev/dm-doctor`
+   has no WebSocket provider and **receives nothing**. Keep the app on the
+   conversation in one tab and the doctor in another. On 2026-07-29 this
+   produced a confident, wrong "three-hour receive stall" finding, retracted the
+   same hour.
+7. ⭐ **Read BEFORE reloading, then reload and read again.** The first reading
+   captures what the running client actually held; the second captures what a
+   fresh inbox drain can still recover. **The difference between them is the
+   measurement** — it separates "stuck in the client" from "not on the relay at
+   all". A cold drain that still comes up short is the strongest available proof
+   of real loss (Round X used exactly this).
+8. **If loss appears, preserve before touching:** the JSONL file, the doctor's
    copy-rows from both desktops, a console log export. Never reset sessions,
    re-login, or clean up state before everything is captured — on 07-29 a
    "quick fix first" instinct would have destroyed the stale-device evidence.
@@ -83,9 +96,11 @@ side still uses the doctor (receiving desktops are dev builds).
   Primary phone (dev build) + desktop A (dev build, browser profile).
 - **Account B** — address `QmYVtoS6E7T4TL4p7Ve1KCVoMoBpz4QEajmJLCoiLjLjDd`.
   Preview phone (`….preview` app id, release build) + desktop B (dev build).
-- **Letters burned:** T, U, V (plus "A→B #n"/"B→A #n" numeric series). Next
-  free letter: **W** (reserved for the prod-build run). The burst button tracks
-  its own counter — trust its suggestion on dev builds.
+- **Letters burned:** T, U, V, **X** (plus "A→B #n"/"B→A #n" numeric series).
+  **W** is reserved for the prod-build run; next free after that: **Y**. The
+  burst button tracks its own counter — trust its suggestion on dev builds. The
+  doctor's scan window (default 6h) makes letter re-use safe over time, but keep
+  advancing letters within a session.
 - **Known artifacts deliberately left in place (evidence — do not clean up):**
   ghost self-conversation rows on both desktops; the V-series (20 messages)
   misfiled under B's own address on desktop B; U-series missing 2/5/10 on both
@@ -123,10 +138,12 @@ side still uses the doctor (receiving desktops are dev builds).
    mistake). Hand-typed `W 1`…`W 20`, doctor on both desktops. Answers
    dev-vs-prod for the field symptom. Bonus check: the flask icon must NOT
    appear in this build (release-exclusion proof owed to mobile PR #200).
-2. **Dev-build burst rounds** — the field symptom itself (15–20%, scattered).
-   Repeat bursts A→B on dev builds until a loss round is captured with the
-   full record set; that JSONL + both doctor readings is the richest evidence
-   yet possible client-side.
+2. ✅ **DONE — Round X (2026-07-29):** the field symptom captured end-to-end,
+   3/20 lost, absent from both receivers including a cold drain. See the
+   measurement log § ROUND X. **Now repeat it** to test the new lead: tag each
+   message fast/slow from the burst record and check whether losses keep falling
+   in the slow-send group (617-762 ms) rather than the fast one (35-94 ms).
+   Two or three more bursts settle it, and they cost minutes each now.
 3. **T3 native-probe round** — blocked on building T3 (workflow doc §2); the
    instrument below JS `ws.send`, where the message-level finding points.
 

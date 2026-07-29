@@ -29,6 +29,17 @@ minute later it sent `V 1`…`V 20` to account A.
 | desktop B (sender's own other device) | **20/20 in the store, 0 visible in the UI** — every row filed under `spaceId = channelId = <B's own address>` instead of the peer's address |
 | control | B's **desktop** → A delivered normally the same day; only the stale phone could not reach A |
 
+## §1b. CONFIRMED independent, 2026-07-29 evening (cold-drain control)
+
+An obvious objection to §1 was that desktop A might simply not have been running
+when the V series was sent. It was tested: at 16:50, after that client had been
+**cold-started and had drained its inbox from scratch** (recovering 17 messages
+of a later burst in the process), a fresh scan still read **0/20 for the V
+series**. A cold drain collects everything pending server-side, so the V frames
+are not in A's inbox at all — they went somewhere no current session reads.
+The mechanism in §2/§3 stands, and the "the app was just closed" explanation is
+excluded.
+
 ## §2. The two faces
 
 **Face 1 — toward the peer: total, silent loss.** A's desktop saw nothing at

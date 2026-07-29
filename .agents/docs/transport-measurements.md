@@ -665,4 +665,93 @@ Consequences, in order:
    but no second probe reading was taken.
 
 ---
+
+## ⭐⭐⭐⭐⭐ 2026-07-29 (evening) — ROUND X: the field loss captured from BOTH ENDS, with a cold-drain control
+
+**The most complete datapoint this investigation has produced.** First round run
+with the shipped tools (mobile burst button + desktop DM doctor), first round
+where the sender's per-message record and both receivers' stores describe the
+same twenty messages.
+
+**Configuration:** mobile A, **dev build**, burst tool, `X 1`…`X 20`, 2000 ms
+interval, 16:36:31→16:37:21Z. Receivers: desktop B (peer channel, app live
+throughout) and desktop A (the sender's own second device, self-sync fan-out
+channel — **app NOT running during the burst**, cold-started at 16:47).
+
+| observer | channel | class | result |
+|---|---|---|---|
+| **phone (sender)** | — | send record | **20/20 handed to the socket, zero errors**, each with messageId, nonce, queue time and settle time. Run wall time 50.0 s |
+| **desktop B** | peer | arrival + persistence | **17/20, missing [1, 6, 11].** Identical across three scans including one after a full page reload. Zero warnings (`sessionReplaced=0, unknownInbox=0, decrypt=0`), zero misfiled, zero duplicates |
+| **desktop A** | self-sync fan-out | arrival + persistence | app closed during the burst ⇒ 0/20 at first read; **cold-started and drained the inbox 9 minutes later ⇒ 17/20, missing [1, 6, 11]** — the same three. Zero warnings |
+
+### What this establishes, and why the cold drain is the key control
+
+1. **The same three messages are absent from two independent channels.**
+   Fan-out sends separate frames per device; independent per-inbox loss cannot
+   select the identical three on both. **The loss unit is the whole message.**
+   Confirms the morning's U-run cross-store finding on fresh evidence.
+2. ⭐ **They were not waiting server-side.** Desktop A's client started from
+   cold and drained its inbox from scratch — the operation that collects
+   everything pending — and still got only 17. Frames 1, 6, 11 are **not in
+   either recipient's inbox**. This is the control every previous reading
+   lacked, and it closes the "very late rather than lost" escape hatch far more
+   tightly than a settle window ever could.
+3. **Nothing failed on either receiver.** No decrypt failures, no unknown-inbox
+   drops, no session replacements, no misfiling, no orphan match. The receive
+   path was not asked to handle these frames at all.
+4. **Shape: scattered (1, 6, 11), not a contiguous tail** — per-message drops,
+   not a pipeline stall, by this file's own rule.
+
+Net: three messages left the phone's socket cleanly and reached neither
+mailbox. **That is quorum-mobile#183 item 2's shape, measured end-to-end for
+the first time.**
+
+### ⭐ A NEW signal: every loss came from the slow-send group
+
+The burst record's `tsAfterSendMs` is sharply bimodal, and the split is not random:
+
+| group | messages | count | lost |
+|---|---|---|---|
+| **fast (35-94 ms)** | 2, 3, 4, 9, 13, 18, 19, 20 | 8 | **0** |
+| **slow (617-762 ms)** | 1, 5, 6, 7, 8, 10, 11, 12, 14, 15, 16, 17 | 12 | **3** (1, 6, 11) |
+
+**The first time a property of the sending message itself correlates with
+loss.** 3/12 in the slow group, 0/8 in the fast. ⚠️ One round, n=20, and 8 fast
+samples cannot exclude chance (a hypergeometric test on these counts is not
+significant) — **this is a lead to test, not a finding**. The obvious mechanism
+to look at is what the slow sends were doing extra: session establishment /
+init-envelope work. Message #1 being lost also matches the known
+session-establishment signature seen on the cross-platform bench.
+
+**Next round must record this deliberately:** repeat bursts, tag each message
+fast/slow from the record, and see whether losses keep landing in the slow
+group. If they do, the suspect narrows from "the write path" to "the write path
+for init-wrapped/session-establishing frames".
+
+### ⚠️ Two corrections made during this round, recorded because both nearly became findings
+
+- **A "three-hour receive stall" was claimed and is RETRACTED.** Desktop A's
+  0/20 was read as a stalled receive pipeline, with the conversation row's stale
+  `13:55` timestamp as corroboration. The operator pointed out the app had not
+  been open on that profile; the router confirms `/dev/dm-doctor` renders
+  **outside the app shell** (`Router.web.tsx` — dev routes are siblings of
+  `<Layout>`, not children), so a tab on the doctor page has no WebSocket and
+  receives nothing. There was no stall. The corrected reading is *stronger*
+  (item 2 above), which is the lesson: the confident wrong version was also the
+  weaker one.
+- **The stale-returning-device bug is CONFIRMED independent**, not an artifact
+  of the above: desktop A, cold-drained at 16:50, still reads **0/20 for the V
+  series** sent 2 hours earlier. Those frames are not in its inbox either —
+  consistent with the orphaned-session-inbox mechanism, and not explainable by
+  the app having been closed, since a cold drain would have collected them.
+
+### Incidental, on desktop A: an ORPHAN-KEY row
+
+3 messages filed under a conversation key equal to **A's own address**, with no
+matching `conversations` row — permanently unreachable by the UI. Distinct from
+desktop B's `SELF`-flagged ghost row (which *has* a conversation row holding the
+20 misfiled V messages). Same family as the misfiling face of the
+stale-device bug; both are recorded there.
+
+---
 *Last updated: 2026-07-29*
