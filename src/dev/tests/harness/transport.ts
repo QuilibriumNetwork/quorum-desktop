@@ -42,7 +42,7 @@ export interface SentFrame {
 
 // ── Fault injection: a deliberately slow POST /inbox/delete ─────────────────
 //
-// `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` says the receive
+// `bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` says the receive
 // path holds the per-conversation ratchet lock across this POST, so one slow ack
 // stalls every message on the conversation, both directions.
 //

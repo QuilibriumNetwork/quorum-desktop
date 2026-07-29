@@ -2,7 +2,7 @@
 //
 // ── Why this exists ─────────────────────────────────────────────────────────
 //
-// `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` says the receive
+// `bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` says the receive
 // path awaits relay HTTP inside `dmRatchetMutex.runExclusive(conversationId, …)`,
 // so one slow `/inbox/delete` stalls every message on that conversation. That was
 // found by READING. This turns it into a direct measurement.

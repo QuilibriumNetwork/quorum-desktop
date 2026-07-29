@@ -349,7 +349,7 @@ export class MessageService {
    * That is measured, not theorised: stalling this POST by 30s on 1 call in 20
    * produced lock holds of 31.2s, messages queued 31.1s behind the lock, and
    * per-device persistence collapsing into CONTIGUOUS TAIL gaps while every frame
-   * still arrived. See `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md`
+   * still arrived. See `bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md`
    * §5-CONFIRMED, reproducible with `HARNESS_FAULT_DELETE_DELAY_MS`.
    *
    * ── Why not awaiting is safe ──────────────────────────────────────────────

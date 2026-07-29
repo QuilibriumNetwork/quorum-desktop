@@ -51,7 +51,7 @@ also resolves. If you are already in the repo a path names, drop the prefix.
 4. **Two root causes remain outside the app repos**, both filed upstream as [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183): a skipped-key lookup bug in the `channel` crate, and a slice of node inbox writes vanishing with no client-visible signal.
 5. The crate bug (#183 item 1a) is **fully characterised, reproducible on demand in seconds, and mitigated client-side** on desktop (PR #265).
 6. The node write-loss (#183 item 2) is measured on mobile senders (up to 32%, strongly directional), and **0% on every headless bench** — but every one of those benches measured only whether frames ARRIVED (§3.1); it is not fixable from any client, and needs node-side logs.
-6b. **A separate failure lives past arrival**: with four devices on one account, every frame arrived and decrypted while one device persisted only half the messages, no error raised (§3.2). ⚠️ **The 2026-07-29 re-run against a verified-healthy relay was clean on every device and did not reproduce it** — the original run was probably taken against a degrading relay. The failure *class* (persistence, past arrival) remains the right thing to measure; this particular reproduction does not stand.
+6b. **A separate failure lives past arrival, and it is now FIXED on desktop (PR #270, 2026-07-29)**: the receive handler awaited relay HTTP, and `processInbound` awaits that handler serially per inbox, so one slow `/inbox/delete` head-of-line blocked everything behind it — frames arrived and decrypted while the app never persisted them, no error raised (§3.2). Confirmed by fault injection, fixed at all 14 sites, re-validated under 66 injected 30s stalls with 100/100 on every device. ⚠️ Desktop only — mobile never had it, and **this does not explain the mobile field loss** in item 6.
 7. Remaining client-side work is send-side durability on mobile spaces, receipt truthfulness runtime verification, and hygiene items (ghost devices, junk state rows).
 
 ---
@@ -212,7 +212,7 @@ exactly what the mechanism predicts on a healthy relay, so it cannot separate "n
 bug" from "no trigger". **Another green 4-device run adds nothing**; discriminating
 needs a *slow* `/inbox/delete` (fault injection or a degraded relay) with the same
 histogram read. Full detail in
-[`bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md`](../bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md) §5-RESULT.
+[`bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md`](../bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md) §5-RESULT.
 
 ### A second, untested path to the same symptom
 
@@ -247,7 +247,7 @@ Paths are repo-qualified — see §0.
 
 | path | what it is |
 |---|---|
-| `quorum-desktop/.agents/bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` | ⭐ **desktop receive awaits relay HTTP inside the per-conversation ratchet lock** (22s mutate timeout), so one slow ack stalls the conversation in both directions. Found by reading; confirmation owed. Mobile verified unaffected, and its pattern is the proposed fix |
+| `quorum-desktop/.agents/bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` | ✅ **SOLVED 2026-07-29 (PR #270).** Desktop receive awaited relay HTTP while processing a frame, so a slow `/inbox/delete` head-of-line blocked the inbox. Confirmed by fault injection, fixed, and re-validated under 66 injected 30s stalls (100/100 every device, zero decrypt failures). ⚠️ Read §8 for the lesson: the lock was NOT the only serialization point, and a lock-only fix passed every test while the symptom survived. Mobile never had it |
 | `quorum-mobile/.agents/bugs/.solved/2026-07-24-dm-session-confirm-row-mismatch-x3dh-every-send.md` | authoritative SDK reading: confirm wrote to a row the send path never read. **Solved** (#177) |
 | `quorum-mobile/.agents/bugs/2026-06-13-desktop-to-mobile-messages-fail-decryption-invalid-signature.md` | earlier cross-platform decrypt/signature failure. Needs a full retest |
 | `quorum-mobile/.agents/bugs/2026-07-19-multidevice-inbox-key-breaks-verified-signer-auth.md` | multi-device inbox keys broke every verified-signer authorization |
@@ -451,7 +451,7 @@ Ranked. Each item names the doc that owns it — go there for detail.
 
 | # | item | owner doc | repo |
 |---|---|---|---|
-| 0 | ⭐ **Desktop receive holds the ratchet lock across relay HTTP** — one slow ack stalls a whole conversation, both directions, up to 22s. Mechanism identified by reading; needs one clean bench run to tell backlog from loss. Mobile is NOT affected and its pattern is the fix | `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` | desktop |
+| ✅ | **DONE 2026-07-29 (PR #270)** — desktop receive no longer awaits the relay inside `handleNewMessage`. All 14 inbox-delete sites dispatch instead. Validated under injected 30s relay stalls. Mobile was never affected | `bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` | desktop |
 | 1 | **Node write-loss (#183 item 2)** — blocked on node-side logs / a write ack. Nothing client-side left | [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) | upstream |
 | 2 | **Layer 2: space `log-append` resend on missing hub ack** — the proven ~1/5 space loss. Mobile-only (desktop has no hub log) | `quorum-mobile/.agents/tasks/2026-07-21-fix-space-append-send-loss-ack-resend.md` | mobile |
 | 3 | **Receipt truthfulness two-device runtime check** — code shipped on all three platforms, verification owed by both clients | `quorum-mobile/.agents/tasks/2026-07-26-receipt-truthfulness-delivery-gated-reads.md` | both |
