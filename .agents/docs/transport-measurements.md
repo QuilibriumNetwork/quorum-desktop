@@ -305,6 +305,58 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
+### ⭐⭐⭐ 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | `dm-multidevice` **canonical** | **aged account A** with 2 harness devices (`user-a` + the new `user-a-obs`) + `user-b`, 200 rounds, 700ms gap, **600s settle**, relay healthy, **no fault injected**, lock fix in place | arrival + decrypt + **persistence** | **all 4 frame legs 201/201, 0% loss.** bob 200/200, dev0 200/200 — but **`user-a-obs` persisted 100/200 in BOTH directions**, `CONTIGUOUS TAIL from #101` in both. Decrypt failures dev0=80, dev1=17, bob=46. Lock max 412ms | ⭐ **the operator's ~10-of-200 symptom, on the bench, automated** | run log `2026-07-29T10-07-26` |
+
+**This is the first reproduction that needs no fault injection and no degraded
+relay.** Every frame arrived at the extra device's socket — 201/201 on both its
+legs — and it persisted exactly half of them, stopping dead at message #101 in
+both directions simultaneously and never recovering across a **10-minute** tail.
+
+**Reading the shape:**
+
+- **Both directions stop at the same number.** Sends alternate on a 700ms gap, so
+  `#101` in each direction is the *same instant* — roughly 70s into the send loop.
+  This is one event at one moment, not two independent failures.
+- **It is not latency.** 600s of settle with frames still arriving and nothing
+  further persisted. §3's "a longer tail recovers them" does not hold here.
+- **It is not the ratchet-lock-across-HTTP bug** (that is fixed and shipped), and
+  not relay degradation (relay verified healthy, no injection).
+- **The socket stayed alive.** `transport.arrived` recorded all 201 frames per leg
+  *after* the device stopped persisting. So the failure is downstream of arrival
+  and downstream of the socket, in the receive pipeline itself.
+- **Aged account is the differentiating variable.** The identical shape on a
+  *fresh* 4-device account was clean (100/100 everywhere, same day, same code).
+
+### ⚠️ The lock histogram CANNOT rule out a deadlock — it only sees holds that finished
+
+`installLockProbe` records a sample in a `finally` block (`lock-probe.ts:65-74`).
+**A critical section that never returns never reaches that `finally`, so it is
+never sampled.** `max=412ms` therefore means "the longest hold that *completed*
+was 412ms" — it says nothing about a hold still outstanding when the run ended.
+
+That matters because a permanently-held `dmRatchetMutex` on one `conversationId`
+would produce precisely this signature: both directions of that conversation stop
+at one instant, permanently, while the socket keeps receiving. `KeyedMutex`'s own
+documentation warns about exactly this failure mode — *"waiting for delivery
+inside the lock is a circular wait"*.
+
+**Deadlock is therefore a live hypothesis that our current instrument is blind to,
+and the cheapest next step is to make it visible:** track holds at *acquire* time
+and report any still outstanding at the end of the run, rather than only those
+that released.
+
+⚠️ **Harness-vs-product is NOT yet settled.** All three bots share one Node
+process and the harness serializes inbound dispatch through a single promise chain
+(`transport.ts` `dispatch()`), so one handler invocation that never settles would
+stall that bot's entire queue forever — matching the shape exactly. The browser
+serializes per inbox too (`processInbound`), so the mechanism is plausible in the
+app, but this run cannot distinguish "product deadlock" from "harness-only hang".
+**Do not report this upstream until that is separated.**
+
 ### ⭐ Persistence on AGED accounts (`dm-loss` canonical) — closes one of two blind cells
 
 | when | run | configuration | class | result | what it changed | source |
