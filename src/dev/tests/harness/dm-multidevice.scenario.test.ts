@@ -44,7 +44,7 @@ import { createBot, type HarnessBot } from './bot';
 import { config } from './env';
 import { hasCanonicalKeys } from './canonical';
 import { direction, subscribedInboxes } from './loss';
-import { installLockProbe, summariseLockHolds } from './lock-probe';
+import { installLockProbe, summariseLockHolds, summariseOutstandingHolds } from './lock-probe';
 import { deleteFault, makeApiClient } from './transport';
 import { missingReport, postsMatching } from './persistence';
 import { RunLog } from './log';
@@ -310,6 +310,34 @@ test(
       faultInjected: deleteFault.injected,
     });
     for (const line of summariseLockHolds(lockSamples)) say(line);
+
+    // ── THE DEADLOCK REPORT ─────────────────────────────────────────────────
+    //
+    // The histogram above CANNOT show a deadlock: its samples are pushed in a
+    // `finally`, so a critical section that never returns is never sampled and
+    // `max=` only ever describes holds that COMPLETED. These two reports are the
+    // ones that can say "something is still stuck", and together they localise it:
+    // outstanding in BOTH ⇒ the ratchet lock; stuck frames only ⇒ a hang elsewhere
+    // in handleNewMessage.
+    say('');
+    say('==== STILL STUCK AT END OF RUN (deadlock detector) ====');
+    for (const line of summariseOutstandingHolds()) say(line);
+    for (const [i, b] of [...aDevices, bob].entries()) {
+      const stuck = b.transport.stuckFrames();
+      const who = i < aDevices.length ? `dev${i}` : 'bob';
+      if (stuck.length === 0) continue;
+      say(
+        `⛔ ${who}: ${stuck.length} inbound frame(s) never finished processing — ` +
+          `this bot's queue is blocked permanently`,
+        { bot: who, stuck: stuck.length }
+      );
+      for (const f of stuck.slice(0, 3)) {
+        say(`   fp=${f.fp} inbox=${f.inbox.slice(0, 16)} stuck ${Math.round(f.stuckMs / 1000)}s`);
+      }
+    }
+    if ([...aDevices, bob].every((b) => b.transport.stuckFrames().length === 0)) {
+      say('no bot has a stuck inbound frame');
+    }
     console.log(`[dm-md] log: ${log.file}`);
 
     for (const b of aDevices) b.stop();

@@ -128,6 +128,9 @@ export class WsTransport {
   readonly sent: SentFrame[] = [];
   /** Inbound dispatch is serialized — see dispatch(). */
   private chain: Promise<void> = Promise.resolve();
+  /** Handler invocations started but not yet settled — see stuckFrames(). */
+  private inFlightFrames = new Map<number, { fp: string; inbox: string; at: number }>();
+  private dispatchSeq = 0;
 
   constructor(private readonly wsUrl: string = config.wsUrl) {}
 
@@ -223,11 +226,50 @@ export class WsTransport {
   // concurrently would also make per-frame attribution of a failure ambiguous.
   private dispatch(frame: InboundFrame): Promise<void> {
     if (!this.handler) return Promise.resolve();
-    this.chain = this.chain.then(() => this.handler!(frame)).then(
-      () => undefined,
-      () => undefined
-    );
+    this.chain = this.chain
+      .then(() => {
+        // Registered before the handler runs, removed when it settles. Anything
+        // left in here at the end of a run is a handler invocation that NEVER
+        // returned — and because this chain is serial, it has blocked every frame
+        // behind it permanently.
+        //
+        // This is deliberately broader than the lock probe: it catches a hang
+        // ANYWHERE in handleNewMessage, not only inside runExclusive. Together the
+        // two localise the stall — outstanding in both ⇒ the lock; outstanding
+        // here only ⇒ somewhere else in the handler.
+        const id = ++this.dispatchSeq;
+        this.inFlightFrames.set(id, {
+          fp: WsTransport.fingerprint(frame),
+          inbox: String(frame.inboxAddress ?? '?'),
+          at: Date.now(),
+        });
+        return Promise.resolve(this.handler!(frame)).finally(() =>
+          this.inFlightFrames.delete(id)
+        );
+      })
+      .then(
+        () => undefined,
+        () => undefined
+      );
     return this.chain;
+  }
+
+  /**
+   * Handler invocations that started and never settled.
+   *
+   * Empty is expected. A non-empty result means this bot's inbound queue is
+   * permanently stuck: `dispatch` is serial, so every frame after the stuck one
+   * is blocked forever, which is exactly the "device stopped at message #N and
+   * never recovered" shape — while the socket keeps receiving, because
+   * `arrived` is appended in `ws.on('message')` upstream of this.
+   */
+  stuckFrames(): { fp: string; inbox: string; stuckMs: number }[] {
+    const now = Date.now();
+    return [...this.inFlightFrames.values()].map((f) => ({
+      fp: f.fp,
+      inbox: f.inbox,
+      stuckMs: now - f.at,
+    }));
   }
 
   /** Open the socket; resolves on the first `open`. Re-subscribes automatically. */
