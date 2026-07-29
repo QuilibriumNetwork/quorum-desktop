@@ -39,6 +39,13 @@ the cost.
 
 ## §2. The tool suite
 
+> **Status update 2026-07-29 (same day):** T1 SHIPPED — quorum-desktop PR #275,
+> merged (`/dev/dm-doctor`; prod-bundle exclusion proven by build + grep). T2
+> SHIPPED — quorum-mobile PR #200, merged (flask icon in the DM header, dev
+> builds; one `.preview` sanity check owed). Day-to-day usage now lives in
+> `tasks/2026-07-29-manual-round-runbook.md`. T3 (native probe) and T4 (round
+> runner) remain unbuilt.
+
 ### T1 — Resident "DM doctor" (desktop, dev build only)
 
 The checked-in console probe (`tools/dm-debug/07-receiver-probe.js`) becomes a

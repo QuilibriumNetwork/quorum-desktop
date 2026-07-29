@@ -251,6 +251,7 @@ Paths are repo-qualified — see §0.
 |---|---|
 | `quorum-mobile/.agents/tasks/2026-07-24-transport-reliability-START-HERE.md` | **transport entry point.** Consolidated status, the different-transports table, Layer 1 / Layer 2 split |
 | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` | **DM ratchet entry point.** Root cause, 10 dead hypotheses, offline tools, the rig |
+| `quorum-desktop/.agents/tasks/2026-07-29-manual-round-runbook.md` | ⭐ **THE RUNBOOK for operator-assisted test rounds.** A fresh session asked to run a manual DM round follows this file: the shipped tools (mobile burst button PR #200, desktop `/dev/dm-doctor` PR #275), the 6 rules, the test estate + burned letters, the step-by-step protocol, the queued experiments |
 | `quorum-mobile/.agents/bugs/2026-07-20-mobile-desktop-message-transport-delay-loss-master.md` | master report for mobile↔desktop. §0 is the remaining-work list |
 | `quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecryptable-state-divergence.md` | the 3115-line master, rounds 1-29. Reference, not a read-through |
 | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-captures.md` | **archive only** — round data + findings A→AL + retracted mechanisms. Cited by letter from the entry point |
