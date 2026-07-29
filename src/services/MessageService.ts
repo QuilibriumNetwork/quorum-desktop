@@ -3866,22 +3866,53 @@ export class MessageService {
     }
 
     if (!found) {
-      // No encryption state for this inbox — the frame cannot be decrypted
-      // and is dropped. Historically this branch was fully silent, which hid
-      // post-session-loss message losses across six months of debugging.
-      // Keep the delete (leaving the frame would redeliver it forever) but
-      // log loudly so the drop is visible in any debug session.
+      // No encryption state for this inbox, so this frame cannot be decrypted
+      // *yet*. Historically this branch was fully silent, which hid post-session-
+      // loss message losses across six months of debugging; the log line added in
+      // #236 is what finally surfaced it in a live capture on 2026-07-29.
+      //
+      // ── Why there is deliberately NO server-side delete here ────────────────
+      //
+      // The previous code called `deleteInboxMessages(keyset.deviceKeyset.inbox_keyset, …)`,
+      // and its comment claimed "leaving the frame would redeliver it forever".
+      // Both the call and the claim were wrong:
+      //
+      //   1. The delete payload is built from the keyset it is handed
+      //      (`inbox_address: inboxKeyset.inbox_address`, MessageDB.tsx:317-322),
+      //      so it named the DEVICE inbox — while this frame arrived on a SESSION
+      //      inbox. The device-inbox case already returned above, so the two are
+      //      guaranteed different here. It asked the relay to delete a timestamp
+      //      from a mailbox the frame is not in: a successful no-op. Confirmed in
+      //      an operator capture with 366 of these drops and ZERO delete failures.
+      //   2. A correct delete is IMPOSSIBLE in this branch by construction. The
+      //      payload needs the inbox's public key and a signature over its address
+      //      — both of which live in the encryption state we just failed to find.
+      //      There is no key material here to sign with.
+      //
+      // So the only honest options are "leave it" or "delete the wrong thing", and
+      // leaving it is also the better outcome: the relay is the sole copy, and a
+      // frame kept there can still be delivered once the session that owns this
+      // inbox is re-established. Deleting correctly — had it been possible — would
+      // have converted a recoverable stranding into permanent data loss.
+      //
+      // Mobile reached the same design independently: on exhausting every state it
+      // records a bounded local attempt and returns, with no server-side delete
+      // (quorum-mobile context/WebSocketContext.tsx, the init-wrapped-frame path).
+      //
+      // The attempt counter bounds our own repeated work and makes redelivery
+      // visible in the log; it deliberately does NOT gate on exhaustion, because
+      // there is no give-up action available that would not destroy the frame.
+      const unknownInboxKey = frameKey(message.inboxAddress, message.encryptedContent);
+      const attemptsExhausted = this.undecryptableFrames.recordFailure(unknownInboxKey);
       logger.warn(
-        '[MessageService] DM frame for unknown inbox — no encryption state, dropping unread',
+        '[MessageService] DM frame for unknown inbox — no encryption state, retained unread',
         {
           inbox: message.inboxAddress?.slice(0, 12),
           timestamp: message.timestamp,
+          // Distinguishes "a fresh frame we cannot place" from "the same frame
+          // redelivering" — the count the 366-line capture could not provide.
+          seenBefore: attemptsExhausted,
         }
-      );
-      this.dispatchInboxDelete(
-        keyset.deviceKeyset.inbox_keyset,
-        [message.timestamp],
-        'DM frame for an unknown inbox'
       );
       return;
     }
