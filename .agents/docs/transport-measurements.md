@@ -305,6 +305,41 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
+### ⭐⭐⭐ 2026-07-29 — a LIVE production capture, on a real desktop, not a bench
+
+The only row in this file that is not a bench run or a UI observation: an actual
+browser console log from the operator's desktop (account B), captured while a
+harness run drove the peer account.
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | **operator's real desktop, live** | production build in a browser, real aged account, harness driving the peer | **persistence** | **366 `DM frame for unknown inbox — no encryption state` — 366 DISTINCT frame timestamps, each once.** Two inboxes, 183 each. **36 `⚠️ SESSION REPLACED by init envelope`**, all one conversationId, all fresh (`envelopeAgeSeconds` -1/0/1). **Zero delete failures.** | ⭐ **first direct evidence of a client-side loss path in production**, and the first measurement taken in a browser rather than Node | operator console log |
+
+**What it establishes.** A session replacement orphans the receiving inbox, and
+frames the peer already addressed to it arrive with no state and are never
+persisted. The frames are **stranded, not destroyed**: the cleanup call named the
+*device* inbox while the frame sat in a *session* inbox, so it succeeded and
+removed nothing — which is why zero delete failures appear alongside 366 drops.
+
+**Methodological notes, both learned the hard way today:**
+
+- **The 366 was checked for redelivery inflation, not assumed.** An independent
+  review proposed it might be a small set re-logged repeatedly, correctly citing
+  this investigation's own rule to de-duplicate by fingerprint before reasoning —
+  a rule that *was* skipped when the finding was first written up. Checking the
+  timestamps refuted the inflation: 366 lines, 366 distinct frames.
+- ⚠️ **The "~10 drops per replacement matches ~10 of 200" corroboration is
+  RETRACTED.** It is not discriminating: the already-solved ratchet-lock bug
+  explains that same field observation and was confirmed by fault injection.
+  Reaching for a number that fits and treating the fit as support is the exact
+  error this file exists to prevent.
+- ⚠️ **Most of those 36 replacements were harness-induced.** This capture measures
+  the *mechanism*, not the natural replacement rate. Do not quote a frequency from
+  it.
+
+Full analysis and the corrections:
+[`bugs/2026-07-29-session-replacement-strands-in-flight-frames.md`](../bugs/2026-07-29-session-replacement-strands-in-flight-frames.md) — **read §7 first**, the original write-up was wrong on its central claim.
+
 ### ⭐⭐⭐ 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
 
 | when | run | configuration | class | result | what it changed | source |
