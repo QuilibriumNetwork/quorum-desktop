@@ -309,11 +309,11 @@ export class MessageService {
    * The attempt/TTL budget preserves the original protection against a
    * genuinely poisonous frame lingering forever.
    */
-  private async retainOrDropUndecryptableFrame(
+  private retainOrDropUndecryptableFrame(
     branch: string,
     message: { inboxAddress?: string; encryptedContent: string; timestamp: number },
     receivingInbox: unknown
-  ): Promise<void> {
+  ): void {
     const key = frameKey(message.inboxAddress, message.encryptedContent);
     if (!this.undecryptableFrames.recordFailure(key)) {
       // Keep it: the server redelivers anything not acked-by-delete, so the
@@ -328,7 +328,70 @@ export class MessageService {
         frameTimestamp: message.timestamp,
       }
     );
-    await this.deleteInboxMessages(receivingInbox, [message.timestamp], this.apiClient);
+    this.dispatchInboxDelete(
+      receivingInbox,
+      [message.timestamp],
+      'give-up on an undecryptable frame'
+    );
+  }
+
+  /**
+   * Fire an inbox-delete at the relay WITHOUT holding the caller open on it.
+   *
+   * ── Why this exists ───────────────────────────────────────────────────────
+   *
+   * Every caller of this runs inside `dmRatchetMutex.runExclusive(conversationId,
+   * …)`, and awaiting a relay POST in there holds the per-conversation lock for
+   * the duration of the call. `defaultMutateTimeout` is 22s and mutations retry
+   * twice, so one slow delete froze an entire conversation — both directions,
+   * since a DM's two directions share one conversationId — for up to ~69s.
+   *
+   * That is measured, not theorised: stalling this POST by 30s on 1 call in 20
+   * produced lock holds of 31.2s, messages queued 31.1s behind the lock, and
+   * per-device persistence collapsing into CONTIGUOUS TAIL gaps while every frame
+   * still arrived. See `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md`
+   * §5-CONFIRMED, reproducible with `HARNESS_FAULT_DELETE_DELAY_MS`.
+   *
+   * ── Why not awaiting is safe ──────────────────────────────────────────────
+   *
+   * The lock exists to serialize RATCHET STATE — read, advance, save. The delete
+   * is not part of that: by the time it runs the encryption state is already
+   * persisted, and the delete's only job is to stop the relay redelivering a
+   * frame we have finished with. Its failure was already a no-op by design (the
+   * frame simply comes back and is skipped again), so waiting up to a minute for
+   * it bought nothing.
+   *
+   * This is the shape mobile already uses (`deleteProcessedEnvelope` returns void
+   * and is dispatched `.catch(() => {})`, never awaited) and the shape desktop's
+   * own SEND paths already use (they wrap the delivery promise as `{ sent }` so it
+   * is not awaited inside the lock). The receive path was the odd one out.
+   *
+   * ⚠️ **Call this only AFTER the encryption state is persisted.** A crash between
+   * the two would otherwise lose a frame the relay would have redelivered. Every
+   * current caller satisfies this because the preceding `saveEncryptionState` /
+   * `deleteEncryptionStates` is still awaited.
+   *
+   * ⚠️ Two of the callers used to RETHROW on failure (the delete-conversation
+   * branches and the give-up path). They no longer can, so the `.catch` below is
+   * the only remaining signal — keep it. Redelivery covers the functional case,
+   * and `MessageDB.deleteInboxMessages` already logs loudly before it rejects.
+   */
+  private dispatchInboxDelete(
+    receivingInbox: unknown,
+    timestamps: number[],
+    context: string
+  ): void {
+    // Deferred through a resolved promise so a SYNCHRONOUS throw from the
+    // dependency lands in the same .catch as a rejection, rather than escaping
+    // into the critical section this exists to keep short.
+    void Promise.resolve()
+      .then(() => this.deleteInboxMessages(receivingInbox, timestamps, this.apiClient))
+      .catch((err) => {
+        logger.warn(
+          `[MessageService] inbox-delete failed (${context}) — the frame will be redelivered`,
+          err
+        );
+      });
   }
 
   /**
@@ -347,12 +410,8 @@ export class MessageService {
    * and skipped again, which is strictly better than losing the message we
    * already decrypted.
    */
-  private async ackProcessedFrame(receivingInbox: unknown, timestamp: number): Promise<void> {
-    try {
-      await this.deleteInboxMessages(receivingInbox, [timestamp], this.apiClient);
-    } catch (err) {
-      logger.warn('[MessageService] failed to ack a processed DM frame (will be redelivered)', err);
-    }
+  private ackProcessedFrame(receivingInbox: unknown, timestamp: number): void {
+    this.dispatchInboxDelete(receivingInbox, [timestamp], 'ack of a processed DM frame');
   }
 
   constructor(dependencies: MessageServiceDependencies) {
@@ -3415,10 +3474,10 @@ export class MessageService {
               ),
             }
           );
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'malformed init envelope (no user address)'
           );
           return;
         }
@@ -3437,10 +3496,10 @@ export class MessageService {
             }
           );
           await this.deleteEncryptionStates({ conversationId });
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'delete-conversation reset signal (init-envelope path)'
           );
           return;
         }
@@ -3462,10 +3521,10 @@ export class MessageService {
             }
           );
           await this.deleteConversationLocally(target + '/' + target, queryClient);
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'delete-conversation-self from own device'
           );
           return;
         }
@@ -3610,10 +3669,10 @@ export class MessageService {
               senderProfile
             );
           }
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'init path, message added'
           );
           return;
         }
@@ -3679,10 +3738,10 @@ export class MessageService {
             // delivery-ack control message — encryption state saved and the
             // frame fully processed, so delete it (it used to be left behind
             // and redelivered until the stale guard killed it).
-            await this.deleteInboxMessages(
+            this.dispatchInboxDelete(
               keyset.deviceKeyset.inbox_keyset,
               [envelope.timestamp],
-              this.apiClient
+              'init path, intercepted control message'
             );
             return;
           }
@@ -3763,10 +3822,10 @@ export class MessageService {
         } else {
           console.error(t`Failed to decrypt message with any known state`);
         }
-        await this.deleteInboxMessages(
+        this.dispatchInboxDelete(
           keyset.deviceKeyset.inbox_keyset,
           [envelope.timestamp],
-          this.apiClient
+          'init path, frame fully processed'
         );
       } catch (initPathError) {
         if (decryptedContent) {
@@ -3796,10 +3855,10 @@ export class MessageService {
           },
           initPathError
         );
-        await this.deleteInboxMessages(
+        this.dispatchInboxDelete(
           keyset.deviceKeyset.inbox_keyset,
           [message.timestamp],
-          this.apiClient
+          'init envelope failed before decrypt'
         );
         return;
       }
@@ -3819,10 +3878,10 @@ export class MessageService {
           timestamp: message.timestamp,
         }
       );
-      await this.deleteInboxMessages(
+      this.dispatchInboxDelete(
         keyset.deviceKeyset.inbox_keyset,
         [message.timestamp],
-        this.apiClient
+        'DM frame for an unknown inbox'
       );
       return;
     }
@@ -3908,10 +3967,12 @@ export class MessageService {
                 }
               );
               await this.deleteEncryptionStates({ conversationId });
-              await this.deleteInboxMessages(
+              // NOT awaited — dispatched after the state wipe above. This used to
+              // rethrow; it no longer can, so its .catch is the only signal.
+              this.dispatchInboxDelete(
                 freshKeys.receiving_inbox,
                 [message.timestamp],
-                this.apiClient
+                'delete-conversation reset signal (Confirm branch)'
               );
               return { outcome: 'handled' as const };
             }
@@ -3935,7 +3996,9 @@ export class MessageService {
               true
             );
             this.undecryptableFrames.clear(undecryptableKey);
-            await this.ackProcessedFrame(freshKeys.receiving_inbox, message.timestamp);
+            // NOT awaited: dispatched after the state save above, so it cannot
+            // extend this critical section. See dispatchInboxDelete.
+            this.ackProcessedFrame(freshKeys.receiving_inbox, message.timestamp);
             return {
               outcome: 'ok' as const,
               content,
@@ -3954,7 +4017,7 @@ export class MessageService {
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
             logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession) — skipping frame, keeping session', decryptError);
-            await this.retainOrDropUndecryptableFrame(
+            this.retainOrDropUndecryptableFrame(
               'Confirm',
               message,
               freshKeys.receiving_inbox
@@ -4037,10 +4100,12 @@ export class MessageService {
                 }
               );
               await this.deleteEncryptionStates({ conversationId });
-              await this.deleteInboxMessages(
+              // NOT awaited — dispatched after the state wipe above. This used to
+              // rethrow; it no longer can, so its .catch is the only signal.
+              this.dispatchInboxDelete(
                 freshKeys.receiving_inbox,
                 [message.timestamp],
-                this.apiClient
+                'delete-conversation reset signal (InboxDecrypt branch)'
               );
               return { outcome: 'handled' as const };
             }
@@ -4055,7 +4120,9 @@ export class MessageService {
               true
             );
             this.undecryptableFrames.clear(undecryptableKey);
-            await this.ackProcessedFrame(freshKeys.receiving_inbox, message.timestamp);
+            // NOT awaited: dispatched after the state save above, so it cannot
+            // extend this critical section. See dispatchInboxDelete.
+            this.ackProcessedFrame(freshKeys.receiving_inbox, message.timestamp);
             return {
               outcome: 'ok' as const,
               content,
@@ -4071,7 +4138,7 @@ export class MessageService {
             // encrypting to a session the receiver had torn down.
             // (https://signal.org/docs/specifications/doubleratchet/)
             logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt) — skipping frame, keeping session', decryptError);
-            await this.retainOrDropUndecryptableFrame(
+            this.retainOrDropUndecryptableFrame(
               'InboxDecrypt',
               message,
               freshKeys.receiving_inbox
@@ -5700,10 +5767,10 @@ export class MessageService {
     }
 
     if (keys.sending_inbox) {
-      await this.deleteInboxMessages(
+      this.dispatchInboxDelete(
         keys.receiving_inbox,
         [message.timestamp],
-        this.apiClient
+        'post-processing cleanup (DM inbox)'
       );
     } else {
       const inbox_key = await this.messageDB.getSpaceKey(
@@ -5719,7 +5786,7 @@ export class MessageService {
         return;
       }
 
-      await this.deleteInboxMessages(
+      this.dispatchInboxDelete(
         {
           inbox_address: inbox_key.address!,
           inbox_encryption_key: {} as never,
@@ -5730,7 +5797,7 @@ export class MessageService {
           },
         },
         [message.timestamp],
-        this.apiClient
+        'post-processing cleanup (space inbox)'
       );
     }
   }

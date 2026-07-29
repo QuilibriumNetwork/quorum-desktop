@@ -40,8 +40,65 @@ export interface SentFrame {
   target: string | undefined;
 }
 
+// ── Fault injection: a deliberately slow POST /inbox/delete ─────────────────
+//
+// `bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md` says the receive
+// path holds the per-conversation ratchet lock across this POST, so one slow ack
+// stalls every message on the conversation, both directions.
+//
+// ⚠️ That hypothesis CANNOT be tested on a healthy relay, and the 2026-07-29 run
+// proved it the expensive way: 100/100 on every device, no lock hold above 555ms,
+// which is exactly what the mechanism predicts when the POST is fast. A null there
+// cannot separate "no bug" from "no trigger", so repeating it adds nothing.
+//
+// The trigger has to be SUPPLIED. This makes a fraction of inbox-delete calls slow
+// the way a degrading relay would — and the relay really does degrade: it returned
+// 502 on every path for over an hour on 2026-07-28, which is the condition that
+// makes this bite.
+//
+// Selection is DETERMINISTIC (every Nth call), not random, so a run reproduces and
+// a before/after comparison is like-for-like. The counter is module-level, so the
+// rate is global across every bot in the process rather than per-bot.
+//
+// OFF unless HARNESS_FAULT_DELETE_DELAY_MS is set, so no existing run changes.
+export const deleteFault = {
+  /** ms to stall each selected call. 0 disables injection entirely. */
+  delayMs: Number(process.env.HARNESS_FAULT_DELETE_DELAY_MS ?? 0),
+  /** Fraction of calls to stall, 0..1. 0.1 => every 10th. */
+  rate: Number(process.env.HARNESS_FAULT_DELETE_RATE ?? 0.1),
+  /** How many inbox-delete calls were made. */
+  calls: 0,
+  /** How many of them this injector stalled. */
+  injected: 0,
+  /** One-line summary for the run log. */
+  summary(): string {
+    return this.delayMs > 0
+      ? `delete-fault ON: ${this.injected}/${this.calls} calls stalled by ${this.delayMs}ms (rate ${this.rate})`
+      : 'delete-fault OFF (healthy-relay baseline)';
+  },
+};
+
+type DeleteInbox = QuorumApiClient['deleteInbox'];
+
 export function makeApiClient(): QuorumApiClient {
-  return new QuorumApiClient({ baseUrl: config.apiUrl, wsUrl: config.wsUrl });
+  const client = new QuorumApiClient({ baseUrl: config.apiUrl, wsUrl: config.wsUrl });
+  if (deleteFault.delayMs > 0) {
+    const original = client.deleteInbox.bind(client) as DeleteInbox;
+    const every = Math.max(1, Math.round(1 / Math.min(1, Math.max(0.0001, deleteFault.rate))));
+    (client as unknown as { deleteInbox: DeleteInbox }).deleteInbox = ((
+      ...args: Parameters<DeleteInbox>
+    ) => {
+      deleteFault.calls += 1;
+      if (deleteFault.calls % every !== 0) return original(...args);
+      deleteFault.injected += 1;
+      // Stall BEFORE delegating. The lock is held for this whole time either way,
+      // which is the thing under test; doing it here also keeps the stall exactly
+      // as long as configured instead of at the mercy of the client's own
+      // timeout/retry arithmetic, so the expected histogram bucket is predictable.
+      return new Promise((r) => setTimeout(r, deleteFault.delayMs)).then(() => original(...args));
+    }) as DeleteInbox;
+  }
+  return client;
 }
 
 export class WsTransport {
