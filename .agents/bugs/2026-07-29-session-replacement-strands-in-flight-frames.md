@@ -1,9 +1,9 @@
 ---
 type: bug
 title: "A session replacement deletes the old encryption state, and every frame already addressed to the old inbox is then dropped AND deleted from the relay — permanent, silent message loss"
-status: OPEN — MECHANISM CONFIRMED FROM PRODUCTION LOGS AND CODE, NOT YET FIXED. Two safe-looking behaviours combine into unrecoverable data loss: replacing a session **deletes** the previous encryption state rows immediately (`MessageService.ts:3593-3595`), and a frame arriving for an inbox with no state is **deleted from the relay** rather than retained (`MessageService.ts:3868-3885`). Any frame in flight to the old inbox at the moment of replacement is therefore destroyed with no error and no possibility of redelivery. Measured in the operator's own desktop console: **36 session replacements, 366 destroyed frames, ~10 per replacement** — which matches the long-standing "~10 of 200 messages arrived" field observation.
+status: OPEN — PARTIALLY CONFIRMED, AND THIS FILE'S ORIGINAL CLAIM WAS WRONG IN ONE IMPORTANT WAY. ⚠️ **Corrected 2026-07-29 after independent adversarial review — read §7 before anything else.** What holds: session replacement orphans the receiving inbox (`MessageService.ts:3593-3616`), and **366 distinct messages** (verified distinct by frame timestamp) hit the no-state branch and were never persisted. What is WRONG: the original claim that those frames are *permanently destroyed*. The `!found` branch signs and addresses its delete with the **device** inbox (`keyset.deviceKeyset.inbox_keyset`, `MessageService.ts:3881`) while the frame sits in a **session** inbox, so it asks the relay to delete from the wrong mailbox and the frame is almost certainly untouched. Messages are **not delivered but probably still recoverable server-side**.
 created: 2026-07-29
-severity: HIGH — silent, permanent loss of user messages. No error surfaces, the sender believes it delivered, and the frame is removed from the relay so redelivery can never recover it. This is the loss class the investigation has been chasing for six months.
+severity: MEDIUM-HIGH — user-visible message loss (366 messages not persisted in one capture, silently, with no error to either party), but **downgraded from the original HIGH**: the data is probably not destroyed, only stranded. Re-rate upward if the relay is shown to expire or drop stranded frames.
 repo: quorum-desktop (mobile NOT yet checked — see §6)
 area: DM receive path / session lifecycle / init envelopes
 related:
@@ -135,6 +135,100 @@ to frames.
   filed here.
 - This does **not** explain quorum-mobile#183 item 2 (frames never arriving at all).
   That is upstream of arrival; this is entirely downstream of it.
+
+## §7. ⚠️ CORRECTIONS from independent adversarial review (2026-07-29)
+
+This section supersedes the claims above where they conflict. §1-§6 are left as
+written so the reasoning error is legible rather than quietly erased.
+
+### 7.1 The delete targets the WRONG INBOX — frames are stranded, not destroyed
+
+The single most important correction. At `MessageService.ts:3881` the `!found`
+branch calls:
+
+```js
+this.dispatchInboxDelete(keyset.deviceKeyset.inbox_keyset, [message.timestamp], …);
+```
+
+`deleteInboxMessages` builds its payload from that keyset —
+`inbox_address: inboxKeyset.inbox_address` (`MessageDB.tsx:317-322`) — i.e. the
+**device** inbox. But the frame arrived on `message.inboxAddress`, a **session**
+inbox; the device-inbox case already returned earlier (`:3434`). So the request
+names a mailbox the frame is not in.
+
+**Consequences:**
+
+- **"Permanently destroyed" (§2) is wrong.** The frames are very probably still on
+  the relay. Severity drops accordingly, and the messages may be recoverable once
+  the state problem is fixed.
+- **The code's own comment is false.** *"Keep the delete (leaving the frame would
+  redeliver it forever)"* — the delete does not work, so the frame does redeliver
+  forever. The stated intent is not achieved.
+- Mobile hit this exact bug and fixed it: `deleteProcessedEnvelope`
+  (`quorum-mobile/context/WebSocketContext.tsx:182-201`) explicitly picks the
+  signing key matching the inbox type, with a comment recording that using the
+  wrong one *"fails signature verification server-side and the envelope redelivers
+  forever — observed as an endless storm."*
+
+### 7.2 The 366 count is NOT inflated — checked, not assumed
+
+The reviewer proposed that 366 log lines might be a small set of frames re-logged
+on redelivery, citing this investigation's own rule to de-duplicate by fingerprint
+before reasoning. That rule was skipped when filing, which was a real methodological
+error.
+
+**Checked against the log: 366 lines, 366 distinct frame timestamps, each appearing
+exactly once.** No inflation. The count in §3 stands.
+
+### 7.3 The "~10 of 200" corroboration is NOT discriminating — retracted
+
+§3 leaned on the ratio matching the field observation. That is not evidence for
+*this* mechanism: the already-solved ratchet-lock bug explains the same observation
+(`.solved/2026-07-28-…-ratchet-lock-across-http.md` §7), and it was confirmed by
+fault injection. Reaching for a number that fits and treating the fit as support is
+the reasoning error this investigation has repeated several times. **Do not cite
+the ~10 ratio as support for this bug.**
+
+### 7.4 The §5 fix is broken as written
+
+The replace path selects rows by **tag alone** and unconditionally deletes every
+match (`MessageService.ts:3540-3542`, `:3593-3595`). Retained-but-superseded rows
+would be swept by the *next* replacement — and §3's own evidence is a burst of 35
+replacements. The proposed grace period would be nullified by exactly the churn
+cited to justify it. Any retention scheme must change what `existing` selects, not
+just mark rows.
+
+Also raised, and worth carrying:
+- Retaining superseded ratchet material widens a forward-secrecy window; Divergence 1
+  deliberately argues the opposite tradeoff.
+- No GC is proposed. `bugs/2025-12-09-encryption-state-evals-bloat.md` records ~16MB
+  of orphaned states from a structurally identical omission.
+- Four session-**prune** sites could sweep retained rows; the interaction is unexamined.
+
+### 7.5 Revised fix direction — smaller and better targeted
+
+**Fix the delete's inbox first** (mobile's pattern: address and sign for the inbox
+the frame actually arrived on, or do not attempt a server-side delete at all), and
+retain locally with a bounded skip-list. That is a far smaller change than
+retaining ratchet state across six call sites, and it targets the mechanism that is
+actually broken rather than the one originally hypothesised.
+
+### 7.6 Mobile — confirmed unaffected, with better evidence
+
+Mobile keeps a **persistent per-conversation inbox keypair** distinct from the
+ratchet state (`WebSocketContext.tsx:2735`, `:2901`), so replacement swaps ratchet
+material without minting a new receiving address — the orphaning precondition never
+exists. It also trial-decrypts against every stored state (`:2960-2988`) rather than
+a single keyed lookup, and on total failure calls `recordInboxAttempt` and returns
+**without** any server-side delete (`:2990-3009`). **No mobile change needed.**
+
+### 7.7 Still unproven
+
+- Whether the relay accepts or rejects the mismatched delete (relay source is not in
+  this repo). Settles by logging the response status in `dispatchInboxDelete`.
+- Whether stranded frames actually redeliver, and whether a redelivery storm could
+  starve fresh traffic — mobile documented exactly that consequence.
+- The natural, non-harness-driven session replacement rate (§4's confound, still open).
 
 ---
 *Last updated: 2026-07-29*
