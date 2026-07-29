@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Handoff — where the DM loss investigation actually stands, and the operator's four open questions"
-status: OPEN — §3.1 and §3.2 ANSWERED by research 2026-07-29 (inline below). What remains needs the operator: Run A (§3.5), which answers §3.1's redo and §3.4 in one 20-message run.
+status: OPEN — §3.1/§3.2 answered by research; Run A ATTEMPTED and INVALIDATED (stale-state confound — see §3.5 result). The W-run still owes the dev-vs-prod answer. Workflow + tooling successor: tasks/2026-07-29-transport-debug-workflow-and-tooling.md
 created: 2026-07-29
 area: DM delivery / transport / debugging methodology
 repo: quorum-desktop (+ quorum-mobile)
@@ -214,6 +214,27 @@ not one.
   the node, on the operator's own account→desktop path — item 2's shape,
   captured on the live symptom for the first time. Any anomaly ⇒ the first
   client-side lead anyone has had.
+
+### §3.5 RESULT (2026-07-29 afternoon) — Run A attempted and INVALIDATED; two new findings instead
+
+The preview build was freshly rebuilt (16:32) but ran on **June-era app data**
+(account B logged in since June 20), and the run also flipped the direction
+(B→A instead of A→B) — two extra variables, and one of them dominated:
+
+- **A received 0/20, zero warnings; B's own desktop got 20/20 — filed under a
+  ghost B↔B self-conversation, invisible in the UI.** Full rows in
+  `docs/transport-measurements.md`; filed as
+  `bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`.
+  **Not a dev-vs-prod datapoint.** The clean **W-run** (sign out/in on the
+  preview app first, then `W 1`…`W 20`, same probe) still owes §3.1 its answer.
+- **The U-run cross-check landed the day's biggest finding:** desktop A (the
+  sender's own other device) is missing exactly U2/U5/U10 — the same three as
+  receiver B. Same three messages absent on two independent channels ⇒ the
+  **loss is common-mode at the source: whole messages die with all their
+  fan-out copies**. Sharpens #183 item 2 from inbox-level to message-level.
+- The probe is now a checked-in tool: `tools/dm-debug/07-receiver-probe.js`.
+- Everything after this file: `tasks/2026-07-29-transport-debug-workflow-and-tooling.md`
+  (the three workflow rules, tools T1–T4, the experiment queue).
 
 ## §4. The receiver-side probe (reusable, paste into the desktop console)
 

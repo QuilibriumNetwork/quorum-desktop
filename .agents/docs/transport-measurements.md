@@ -606,4 +606,63 @@ Live suspects for round 29, still undistinguished:
   cell no bench covers at all.
 
 ---
+
+## ⭐⭐⭐ 2026-07-29 (afternoon) — the U-run cross-store check: the loss is COMMON-MODE AT THE SOURCE
+
+The morning U-run (operator's mobile dev build, account A → desktop B, 17/20,
+missing U2/U5/U10 on the receiver) was re-checked with store-wide IndexedDB
+scans (`tools/dm-debug/07-receiver-probe.js`) on **both** desktops:
+
+| store | channel | class | result |
+|---|---|---|---|
+| desktop B (the peer) | peer channel | persistence (store scan, all conversations) | **17/20, missing [2, 5, 10], duplicates 0** |
+| desktop A (the SENDER's own other device) | self-sync fan-out | persistence (store scan, all conversations) | **17/20, missing [2, 5, 10], duplicates 0** |
+
+**The same three messages are absent from two independent stores fed by two
+independent channels.** Each message fans out as separate frames to every device
+of both accounts; independent per-inbox write loss cannot hit the identical
+three messages on both channels. **The unit of loss is the whole message — all
+of its fan-out copies died together, at or before the source.** This reshapes
+quorum-mobile#183 item 2: the write-layer story must explain message-level, not
+inbox-level, loss (candidates: the RN native socket silently swallowing writes
+on a dying connection — RN ignores okhttp's `send()` result — or the node
+dropping a message's whole fan-out batch atomically). Issue body update pending.
+
+## ⭐⭐⭐ 2026-07-29 (afternoon) — the preview-build V-run: NOT a dev-vs-prod datapoint, but a new bug
+
+Setup: preview (release) APK **rebuilt the same day 16:32 local from current
+code** (verified via adb `lastUpdateTime`), but installed over **June-20-era app
+data** with account B logged in since then — i.e. a *returning stale device*
+with months-old session state. It sent `V 1`…`V 20` to account A at 16:35-16:37
+local, roughly one minute after the reinstall.
+
+| observer | class | result |
+|---|---|---|
+| desktop A (the peer — intended receiver) | persistence (store scan) + UI | **0/20. Zero warnings** (no unknown-inbox, no session-replaced, no decrypt failures). Confirmed visually later |
+| desktop B (sender's own other device) | persistence (store scan) | **20/20 in the store — but INVISIBLE in the UI**: every V row is filed under `spaceId = channelId = <B's own address>` (a ghost B↔B self-conversation) instead of the peer's address, which is how the real conversation is keyed (U-reference row: keyed by A's address) |
+| control | — | B's **desktop** → A messages delivered normally the same day (15:27), so account B could reach A; only the stale phone could not |
+
+Consequences, in order:
+
+1. **This run does NOT answer §3.1 (dev-vs-prod)** — the stale state confound
+   dominated everything. The clean run (sign out/in on the preview app first,
+   then `W 1`…`W 20`) is still owed.
+2. **It demonstrated a real user-shaped failure live**: a device returning after
+   weeks silently loses 100% of its sends toward the peer (frames presumably
+   posted to June-era session inboxes orphaned by later replacements — the
+   #273 mechanism seen from the SENDER's side, and why the receiver logs
+   nothing: it is not subscribed to those inboxes at all), while its self-sync
+   copies arrive, decrypt, persist — and then hide in a misfiled ghost
+   conversation. Filed as
+   `bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`.
+3. **Spurious conversation rows on both desktops**: desktop A carries an
+   "Unknown User" row with B's address (preview "U20", zero unique messages —
+   `duplicates: 0` proves no extra copies); desktop B carries the ghost
+   self-conversation whose profile backfill 404s on B's own address. Both
+   minted around the stale device's activity.
+4. ⚠️ Timing caveat, recorded for honesty: desktop A's probe reading was taken
+   ~25s after the last send; the absence was re-confirmed visually ~1h later,
+   but no second probe reading was taken.
+
+---
 *Last updated: 2026-07-29*

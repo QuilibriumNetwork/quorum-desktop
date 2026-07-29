@@ -298,6 +298,8 @@ Paths are repo-qualified — see §0.
 | path | what it is |
 |---|---|
 | `quorum-mobile/.agents/tasks/.done/2026-07-25-mobile-per-device-conversation-inbox.md` | conversation inbox keypairs must be **per device**, not per conversation. **Done** (#180); a narrower residual loss lives in the divergence master §20-undecies |
+| `quorum-desktop/.agents/bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md` | ⭐ a device returning with months-stale state loses 100% of sends toward the peer silently (orphaned session inboxes, #273 seen from the SENDER side) and its self-sync copies persist under a ghost self-conversation. Demonstrated live, probe-verified |
+| `quorum-desktop/.agents/tasks/2026-07-29-transport-debug-workflow-and-tooling.md` | ⭐ the manual-round workflow (3 rules) + tool suite T1-T4 (resident DM doctor, mobile burst button, NATIVE socket probe, round runner) + the ordered experiment queue |
 | `quorum-desktop/.agents/tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md` | ghost devices accumulate on every reset; desktop fans sends to each ghost inbox forever |
 | `quorum-mobile/.agents/tasks/2026-07-24-ghost-session-prune-with-registration-sourced-list.md` | prune ghost sessions from DM sends using a registration-sourced device list |
 | `quorum-mobile/.agents/bugs/2026-07-26-reset-app-data-stale-cipher-key-bricks-messages-db.md` | Reset App Data leaves a stale SQLCipher key cached; the next re-onboard bricks every chat |
@@ -320,10 +322,11 @@ All of these live in **quorum-desktop**.
 | `quorum-desktop/.agents/tools/dm-debug/dr-position-table.mjs` | ⛔ 1920 frames, zero failures — corroborates finding AC, and is **not** evidence the crate is clean |
 | `quorum-desktop/.agents/tools/dm-debug/dr-replay.mjs` | is this failure genuine, or an app-level race |
 | `quorum-desktop/.agents/tools/dm-debug/dr-self-echo.mjs` | does a client receive its own outbound frames? (0 of 2709 — killed the self-echo theory) |
+| `quorum-desktop/.agents/tools/dm-debug/07-receiver-probe.js` | **the receiver-side probe** — paste into the receiving desktop's console BEFORE a manual run; counts receive-path warnings and reads `messages` store-wide. `await window.__probe.report('V')` → landed / missing / duplicates. Produced every number in the 07-29 manual rounds |
 | `quorum-desktop/src/dev/tests/harness/README.md` | **headless desktop harness** — drives the REAL desktop client in Node, both sides, no browser, no devices |
 | `quorum-mobile/dev/harness/README.md` | **headless MOBILE harness** — drives the REAL mobile client in Node. Renders mobile's own `WebSocketProvider` (its DM receive path has no non-React seam), one bot per process |
 | `quorum-desktop/.agents/tasks/.done/2026-07-27-headless-dm-harness.md` | the desktop harness build spec |
-| `quorum-desktop/.agents/tasks/2026-07-27-cross-platform-dm-harness.md` | the mobile harness spec. **Slices 1-3 DONE** (mobile PRs #189-#193); slice 4 (mobile↔desktop) not started. Its progress log carries the findings and the measured results |
+| `quorum-desktop/.agents/tasks/.done/2026-07-27-cross-platform-dm-harness.md` | the mobile harness spec — **DONE, all four slices**. Slices 1-3 (mobile PRs #189-#193); slice 4 (mobile↔desktop) shipped as desktop PR #271. Its progress log carries the findings and the measured results |
 | `quorum-desktop/.agents/tasks/2026-07-27-headless-space-harness.md` | **spec, not started** — same for space message delivery |
 | `quorum-mobile/.agents/tasks/.done/2026-07-26-mobile-to-mobile-two-device-round.md` | first-ever mobile↔mobile round; produced the #183 item 2 directional evidence |
 
@@ -474,9 +477,11 @@ Ranked. Each item names the doc that owns it — go there for detail.
 | 5 | **Port the #265 stale-bucket mitigation to mobile** — desktop-only today | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §5-B1′ | mobile |
 | 6 | **Decide the combined-receipt-ack / protocol options** — proposed, awaiting review | `quorum-desktop/.agents/tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md` | both |
 | 7 | **What supplies the out-of-order delivery that forms the stale bucket in the field?** — the one remaining live question on the crate bug | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §5-D | — |
-| ✅ | **DONE 2026-07-29 (PR #271)** — cross-platform harness slice 4. `yarn harness:cross` runs mobile↔desktop on one bench, two processes paired through mobile's existing file rendezvous (NOT the single-process bundle the spec assumed — that design is dead, see the task). quorum-mobile needed no changes. First measurement: mobile→desktop **40/40, 0%** | `quorum-desktop/.agents/tasks/2026-07-27-cross-platform-dm-harness.md` | both |
+| ✅ | **DONE 2026-07-29 (PR #271)** — cross-platform harness slice 4. `yarn harness:cross` runs mobile↔desktop on one bench, two processes paired through mobile's existing file rendezvous (NOT the single-process bundle the spec assumed — that design is dead, see the task). quorum-mobile needed no changes. First measurement: mobile→desktop **40/40, 0%** | `quorum-desktop/.agents/tasks/.done/2026-07-27-cross-platform-dm-harness.md` | both |
 | 8 | **Node-side logs for a capture window (#183 item 2).** Everything client-side is now measured clean — arrival, decrypt, persistence, display, all four platform pairings, aged accounts, fan-out, session churn. The next thing that moves this forward is not a code change but a request | [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) | upstream |
 | 9 | Hygiene: ghost-device deregistration, junk encryption-state prune, dev-env latency | §4-E | both |
+| ⭐ | **NEW 2026-07-29 (manual rounds): the field loss is MESSAGE-level, not inbox-level** — the U-run's missing three are identical on the peer's store AND the sender's own other device's store, so whole messages die with all their fan-out copies, at or before the source. Sharpens #183 item 2; issue-body update pending. Same day: Run A (prod-preview) invalidated by stale June-era app data, and it exposed a returning-stale-device total-loss bug + ghost-conversation misfiling | `docs/transport-measurements.md` (07-29 afternoon rows) + `bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md` | both |
+| ⭐ | **The workflow + tool suite for everything above** — 3 rules (single-variable rounds, estate separation, operator never pastes code), tools T1-T4 including the NATIVE socket probe (the first instrument below JS `ws.send`), the ordered experiment queue (W-run → native-probe round → node logs), and the spaces stance (implement the designed ack-resend fix; no mystery budget) | `tasks/2026-07-29-transport-debug-workflow-and-tooling.md` | both |
 
 ---
 
