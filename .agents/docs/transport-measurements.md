@@ -305,6 +305,56 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
+### ⭐⭐⭐⭐ 2026-07-29 — THE SENDER ISOLATED: same account, same receiver, two runtimes
+
+**The most discriminating measurement in this file.** Two senders, the same real
+desktop receiving, the same accounts, the same relay, minutes apart. Only the
+sender's runtime differs.
+
+| when | sender | runtime | receiver | class | result |
+|---|---|---|---|---|---|
+| 07-29 | **operator's mobile app** | **RN native socket + uniffi crypto** | operator's real desktop (browser) | arrival | **16 of 20 — T1, T5, T13, T17 absent, still absent 10+ minutes later** |
+| 07-29 | **harness bot as the same account A** | **Node `ws` + WASM crypto** | the same desktop, same window | arrival | **all delivered, none missing** |
+
+Both measured on the receiver with the same instrumented probe reading IndexedDB
+directly, so the two numbers are like-for-like.
+
+**What it establishes.** The receiving client, the relay, the account state and the
+fan-out are all common to both rows and one row is perfect. **The difference is the
+sender's runtime.** This is the single-variable comparison the investigation has
+wanted for months and could never construct, because no bench can drive RN's native
+socket.
+
+**What it rules out**, all from the same reading:
+
+- **Not session replacement / unknown-inbox** — the receiver's probe recorded
+  `replaced: 0, unknownInbox: 0` while the loss happened. Independently confirms
+  the retirement of that hypothesis.
+- **Not a display bug** — IndexedDB and the rendered conversation agree exactly,
+  both missing the same four. Settles the one layer never previously tested.
+- **Not the ratchet-lock stall** — fixed, and this is scattered rather than a tail.
+- **Not the relay or fan-out in general** — the harness reached that same desktop
+  through the same relay with zero loss.
+
+**Gap shape: SCATTERED (1, 5, 13, 17), not contiguous.** By this file's own rule
+that means per-message drops rather than a receive-pipeline stall — pointing at the
+write path, which is exactly quorum-mobile#183 item 2's shape.
+
+⚠️ **Two corrections made while producing this row, both recorded so the reasoning
+is legible:**
+
+- The first reading (16/20) was briefly interpreted as *latency with a long tail*
+  after an ambiguous "they all landed". A re-read 10 minutes later returned the
+  identical `missing: [1,5,13,17]`. **It is loss, or a tail longer than 10 minutes.**
+  The latency reframing was wrong and is withdrawn.
+- The 4 missing read receipts were briefly treated as a possible separate receipt
+  defect. They are a **consequence**: the receiver never saw those four messages,
+  so it had nothing to acknowledge. One bug, not two.
+
+**Remaining suspects, unchanged but now carrying all the weight:** RN's native
+WebSocket write path, and the uniffi bridge. Both are named in #183 item 2, both
+are outside every bench by construction.
+
 ### ⭐⭐⭐ 2026-07-29 — a LIVE production capture, on a real desktop, not a bench
 
 The only row in this file that is not a bench run or a UI observation: an actual
