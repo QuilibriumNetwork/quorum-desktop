@@ -37,7 +37,7 @@ import { createBot, type HarnessBot } from './bot';
 import { config } from './env';
 import { direction, subscribedInboxes } from './loss';
 import { installLockProbe, summariseLockHolds } from './lock-probe';
-import { makeApiClient } from './transport';
+import { deleteFault, makeApiClient } from './transport';
 import { RunLog } from './log';
 
 const ROUNDS = Number(process.env.HARNESS_MD_ROUNDS ?? 20);
@@ -294,6 +294,14 @@ test(
     // so a stalled ack lands near 45s or 69s.
     say('');
     say('==== RATCHET LOCK HOLD TIMES (bug 2026-07-28, §5.3) ====');
+    // Which relay condition this run measured. Without this line a reader cannot
+    // tell a clean baseline from a clean fault-injected run, and those mean
+    // opposite things: the first proves nothing, the second refutes the mechanism.
+    say(deleteFault.summary(), {
+      faultDelayMs: deleteFault.delayMs,
+      faultCalls: deleteFault.calls,
+      faultInjected: deleteFault.injected,
+    });
     for (const line of summariseLockHolds(lockSamples)) say(line);
     console.log(`[dm-md] log: ${log.file}`);
 
