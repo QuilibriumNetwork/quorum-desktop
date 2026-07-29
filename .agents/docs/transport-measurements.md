@@ -305,6 +305,45 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
+### ⭐ Persistence on AGED accounts (`dm-loss` canonical) — closes one of two blind cells
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | `dm-loss` canonical | **the operator's real aged multi-device accounts**, 200 rounds, 700ms gap, **600s settle**, per-message persistence counted for the first time | arrival **and** persistence | **frames 201/201 each way, 0%. Persisted: bob 200/200, alice 200/200.** 6 novel decrypt failures total, all healed. Fan-out **2412 frames for 201 messages (~12:1)** | **aged session state does NOT break persistence on the peer channel.** Concentrates suspicion on the fan-out channel | run log `2026-07-29T09-44-43` |
+
+**Why this run existed.** `dm-loss` had only ever counted frames, plus a running
+`posts decrypted` tally that could not say *which* message went missing. So on the
+canonical accounts it reported 201/201 / 0% while the operator watched those same
+accounts' other devices receive ~10 of 200 — it was never asking the question.
+Per-message persistence accounting now makes it ask.
+
+**The answer is clean**, and that is informative rather than disappointing: it
+removes "aged session state corrupts persistence" as an explanation. Frames arrive,
+decrypt, and get persisted correctly on aged accounts, over a 10-minute tail.
+
+### ⚠️ The blind cell that REMAINS, and it is the one that matches the observation
+
+This run measured the **peer** channel. The operator's observation was about the
+**fan-out** channel — messages reaching their *other* devices.
+
+| channel | fresh accounts | **aged accounts** |
+|---|---|---|
+| peer — frames | ✅ clean | ✅ clean |
+| peer — **persistence** | ✅ clean | ✅ **clean (this run)** |
+| fan-out — frames | ✅ clean | ✅ clean |
+| fan-out — **persistence** | ✅ clean (4 devices) | ❌ **NEVER MEASURED** |
+
+The amplification is the tell: **2412 frames went out for 201 messages**, and only
+320 landed on inboxes this bench subscribes to. The other ~2100 went to the
+operator's real devices and are unobserved — "unobserved, not observed-good", the
+same structural blindness recorded against run 2.
+
+**Reaching that last cell needs a second harness bot registered as a device on the
+aged account A**, which mints one permanent extra device registration there (stable
+bot name, so it is minted once and reused). That is the cost the trap list warns
+about, it is bounded, and it is the only automated route left to the operator's
+actual symptom. Everything cheaper has now been run.
+
 ### ⭐ Cross-platform (`dm-cross`) — the last empty cell in the 2×2
 
 | when | run | configuration | class | result | what it changed | source |
