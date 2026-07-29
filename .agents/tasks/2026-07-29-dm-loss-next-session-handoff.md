@@ -220,8 +220,12 @@ not one.
 Hooks the logger and reads IndexedDB directly. `report(prefix)` returns landed
 count, missing numbers, and warning counts since install. **Timing matters: take
 the reading DURING a failure.** Counts taken while messages were landing came back
-0/0 and said nothing. Full snippet in this session's transcript; rebuild from
-`quorum_db` → object store `messages` → filter `content.text`.
+0/0 and said nothing.
+
+**Now a checked-in tool: [`.agents/tools/dm-debug/07-receiver-probe.js`](../tools/dm-debug/07-receiver-probe.js)**
+(rebuilt 2026-07-29 from the transcript description; verified against the schema
+doc and the exact warning strings in `MessageService.ts`). Paste the whole file
+into the receiving desktop's console BEFORE the sender starts.
 
 ## §5. What NOT to do
 
