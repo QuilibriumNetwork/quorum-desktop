@@ -53,6 +53,13 @@ export const DevMainPage: React.FC = () => {
       description: 'Browse IndexedDB with redacted sensitive data',
       path: '/dev/db-inspector',
     },
+    {
+      name: 'DM Doctor',
+      icon: 'bug',
+      description:
+        'Numbered-burst sequence scan, receive-path warning counters, and ghost-conversation detection for the DM-loss investigation',
+      path: '/dev/dm-doctor',
+    },
   ];
 
   const handleNavigate = (path: string) => {

@@ -13,6 +13,23 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { dynamicActivate, getUserLocale } from '../src/i18n/i18n';
 
+// DM Doctor's warning counters must start counting at t=0, not whenever the
+// /dev/dm-doctor page happens to be opened — so they install here, at the
+// earliest point in app startup, rather than on page mount like the rest of
+// src/dev/'s tools. The `process.env.NODE_ENV === 'development'` guard mirrors
+// `lazyDevImport` in src/components/Router/Router.web.tsx: in a production
+// build NODE_ENV is statically replaced with the literal "production", so this
+// whole branch — including the dynamic import() call — is dead-code-eliminated
+// at build time, never just skipped at runtime. web/vite.config.ts's
+// `rolldownOptions.external` additionally excludes every module under
+// `src/dev/` from production builds outright, so nothing here can ship even if
+// this guard were somehow bypassed.
+if (process.env.NODE_ENV === 'development') {
+  import('../src/dev/dm-doctor/warningCounters').then((m) =>
+    m.installDmWarningCounters()
+  );
+}
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

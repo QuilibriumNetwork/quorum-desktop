@@ -48,6 +48,11 @@ const devNavItems: DevNavItem[] = [
     icon: 'database',
     path: '/dev/db-inspector',
   },
+  {
+    name: 'DM Doctor',
+    icon: 'bug',
+    path: '/dev/dm-doctor',
+  },
 ];
 
 interface DevNavMenuProps {

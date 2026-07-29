@@ -88,6 +88,10 @@ const DbInspector = lazyDevImport(
   () => import('@/dev/db-inspector'),
   'DbInspector'
 );
+const DmDoctor = lazyDevImport(
+  () => import('@/dev/dm-doctor'),
+  'DmDoctor'
+);
 
 interface RouterProps {
   user: {
@@ -328,6 +332,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading DB inspector...</div>}>
               <DbInspector />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && DmDoctor && (
+        <Route
+          path="/dev/dm-doctor"
+          element={
+            <Suspense fallback={<div>Loading DM doctor...</div>}>
+              <DmDoctor />
             </Suspense>
           }
         />
