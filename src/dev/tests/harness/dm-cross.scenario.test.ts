@@ -5,7 +5,7 @@
 // ── Why this exists ─────────────────────────────────────────────────────────
 //
 // The field evidence says loss is worse **mobile→desktop and mobile→mobile than
-// desktop→desktop** (`tasks/2026-07-27-cross-platform-dm-harness.md`). Every
+// desktop→desktop** (`tasks/.done/2026-07-27-cross-platform-dm-harness.md`). Every
 // bench to date measures one platform talking to itself:
 //
 //   desktop↔desktop   301/301, 201/201, 0%      (dm-loss)

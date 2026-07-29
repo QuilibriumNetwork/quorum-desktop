@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Harness coverage: multi-device DM delivery, then the cells no bench reaches"
-status: IN PROGRESS — scenario 1 (dm-multidevice) being built
+status: IN PROGRESS — scenarios 1 and 2 DONE: `dm-multidevice` shipped (PR #269) and re-run clean on a healthy relay 07-29; mobile↔desktop shipped as `dm-cross` (PR #271, 40/40 and 39/40). The §lock-stall finding shipped as PR #270 and its bug is filed solved. Scenario 3 (mobile multi-device) remains unbuilt — unblocked, but see the 07-29 handoff (`2026-07-29-dm-loss-next-session-handoff.md` §5): green benches on healthy relays add nothing; the live agenda is the dev-vs-prod run
 created: 2026-07-28
 updated: 2026-07-29
 area: headless harness / DM delivery / multi-device fan-out
@@ -140,9 +140,10 @@ scenario should clean up its own state files or the directory grows without boun
 
 ## Scenario 2 — mobile↔desktop on one bench
 
-The field's reported worst case, and the only configuration **no** bench covers.
-Specced as slice 4 of `tasks/2026-07-27-cross-platform-dm-harness.md`. Cheap now
-that both bots exist.
+**✅ DONE 2026-07-29 as PR #271** (`yarn harness:cross`) — two processes paired via
+mobile's file rendezvous, quorum-mobile unchanged. Measured: mobile→desktop 40/40,
+desktop→mobile 39/40. See `docs/transport-measurements.md` and the closed spec,
+`tasks/.done/2026-07-27-cross-platform-dm-harness.md` (slice 4).
 
 ## Scenario 3 — multi-device on the MOBILE harness
 
@@ -286,9 +287,9 @@ design, which is about as low-risk as a change to this path can be.
 | mobile↔mobile DM, 1 device each | ✅ | `harness:dm` |
 | decrypt failure / stale bucket | ✅ | `dm-reorder`, `dm-stale-bucket`, `dr-*` |
 | session reset + recovery | ✅ | `dm-reset-recover` |
-| **self-sync copy to own 2nd device** | ❌ | scenario 1 |
-| **peer's 2nd device** | ❌ | scenario 1 |
-| **mobile↔desktop** | ❌ | scenario 2 |
+| **self-sync copy to own 2nd device** | ✅ | `dm-multidevice` (PR #269) |
+| **peer's 2nd device** | ✅ | `dm-multidevice` (PR #269) |
+| **mobile↔desktop** | ✅ | `dm-cross` (PR #271) |
 | mobile multi-device | ❌ | scenario 3 |
 | RN native WebSocket | ❌ **by construction** | needs a device; the bench exists to remove it |
 | uniffi bridge | ❌ **by construction** | WASM only in Node |

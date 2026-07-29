@@ -1,8 +1,9 @@
 ---
 type: task
 title: "Cross-platform DM harness — a headless mobile bot, and mobile↔desktop on one bench"
-status: NOT STARTED — spec
+status: DONE — all four slices shipped. Slices 1-3 (mobile bot, mobile↔mobile 80/80) landed in quorum-mobile branch feat/harness-identity-dm 2026-07-28; slice 4 (mobile↔desktop) landed as desktop PR #271 2026-07-29 (`yarn harness:cross`), deliberately as two processes paired over mobile's file rendezvous rather than the single-process bundle specced here — reasoning in src/dev/tests/harness/rendezvous.ts. Measured 2026-07-29: mobile→desktop 40/40, desktop→mobile 39/40. The 2×2 is complete. Status field corrected on close; "NOT STARTED" was written before the session that built it and never updated.
 created: 2026-07-27
+updated: 2026-07-29
 branch: feat/mobile-dm-harness (mobile) + feat/cross-platform-harness (desktop)
 area: DM transport / testing infrastructure / cross-repo
 repos: quorum-mobile (slices 1-3), quorum-desktop (slice 4)
@@ -765,5 +766,25 @@ end.
   **Not done:** slice 4 (mobile↔desktop, the field's reported worst case) and a
   simultaneous-open scenario. Both are now cheap — the bot exists.
 
+- 2026-07-29: **slice 4 landed and measured — task complete.** Desktop PR #271 adds
+  `dm-cross.scenario.test.ts`, `rendezvous.ts` and `run-cross.mjs` (`yarn harness:cross`).
+  Design deviation from this spec, deliberate: NOT the single-process Node bundle.
+  Slices 1-3 never extracted mobile's DM core (the bot renders `WebSocketProvider`
+  instead), so bundling would have dragged React and five native shims into desktop's
+  vitest — the failure this spec predicted of itself — and slices 1-3 had already
+  shown two bots cannot share a process (finding 4 above). Instead: two processes in
+  two repos, paired via mobile's existing file rendezvous; quorum-mobile unchanged.
+  Measured at 40 rounds each way, 180 s settle: mobile→desktop **40/40 (0.0%)**,
+  desktop→mobile **39/40** (the one miss was message #1 in the echo direction, a
+  session-open signature recorded as inference, not demonstrated cause). With the
+  2×2 complete, no bench configuration reproduces the field loss — all four cells
+  share Node `ws` + WASM + fresh accounts, which is what they collectively exonerate;
+  the remaining suspects (RN native socket, uniffi bridge, aged account state, device
+  network) are what every bench excludes by construction. Continuation lives in
+  `docs/transport-measurements.md`, `docs/transport-reliability-index.md` and
+  `tasks/2026-07-29-dm-loss-next-session-handoff.md`. The `dm-conversation-mix`
+  follow-up (§above) and a simultaneous-open scenario (finding 2, 07-28 entry) were
+  never slice-gated and remain unbuilt — open ideas, not blockers for this task.
+
 ---
-*Last updated: 2026-07-28*
+*Last updated: 2026-07-29*

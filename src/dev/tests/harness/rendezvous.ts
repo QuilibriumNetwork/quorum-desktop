@@ -2,7 +2,7 @@
 //
 // ── Why this shape, and not the one slice 4 specced ─────────────────────────
 //
-// `tasks/2026-07-27-cross-platform-dm-harness.md` slice 4 proposed bundling
+// `tasks/.done/2026-07-27-cross-platform-dm-harness.md` slice 4 proposed bundling
 // mobile's bot into a Node ESM artifact and running both bots in ONE desktop
 // process. Two things that landed after it was written make that wrong:
 //

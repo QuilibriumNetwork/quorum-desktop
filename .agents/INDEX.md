@@ -15,8 +15,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
-- **[🗺️ Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)** — hand an agent THIS ONE PATH for any transport/DM/receipts work. Maps every doc, tool, PR and the upstream issue across quorum-desktop + quorum-mobile + quorum-shared, with a read-first ladder and a status-hygiene record
-- **[📊 Transport & DM reliability — measurement log](docs/transport-measurements.md)** — the companion to the map: every capture round and bench run, its configuration, its result, and what it changed. APPEND-ONLY. Read before quoting any number; add a row after any run
+- [Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)
+- [Transport & DM reliability — measurement log](docs/transport-measurements.md)
 
 ### .Archived
 - [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)
@@ -127,8 +127,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [update-profile inbox_address poisoning → control-message impersonation](bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
-- **[⚠️ ENTRY POINT — DM delivery is broken again, desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)** — start here for anything DM-not-arriving. Mechanism measured, cause is upstream (quorum-mobile#183), desktop mitigation merged as PR #265; ten dead hypotheses recorded in §3 so they are not re-derived. STAYS OPEN: not ported to mobile, §5-D unanswered
-- [Capture archive — DM desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-captures.md) — per-round evidence for the above (findings A-AL). Evidence only; the entry point holds the status
+- [Capture archive — DM desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-captures.md)
+- [DM delivery is broken again, desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -176,6 +176,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM message delivery is unreliable (master report)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
 - [DM frames still drop with `aead::Error` (remaining half of the delivery bug)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
 - [FIX SPEC: DM decrypt failure destroys the session](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
+- [Desktop DM receive holds the ratchet lock across relay HTTP](bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md)
+- [Session replacement orphans the receiving inbox](bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -216,9 +218,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
 - [Ghost device accumulation on reset/logout](tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md)
-- [Combined receipt ack, and a decision on the two deeper protocol options](tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md)
-- [Cross-platform DM harness](tasks/2026-07-27-cross-platform-dm-harness.md)
+- [DM receipt protocol: read acks now name what they read](tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md)
 - [Headless SPACE harness (spec)](tasks/2026-07-27-headless-space-harness.md)
+- [Harness coverage — multi-device first, then the unreached cells](tasks/2026-07-28-harness-multidevice-and-coverage.md)
+- [Handoff — DM loss, end of 2026-07-29](tasks/2026-07-29-dm-loss-next-session-handoff.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -497,6 +500,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [quorum-shared: add KeyedMutex](tasks/.done/2026-07-17-quorum-shared-add-keyedmutex.md)
 - [Complete read-only-channel enforcement](tasks/.done/2026-07-19-readonly-channel-completion-durable-embed-sticker.md)
 - [Sync per-conversation DM settings across devices](tasks/.done/2026-07-20-sync-per-conversation-dm-settings-cross-repo.md)
+- [Cross-platform DM harness](tasks/.done/2026-07-27-cross-platform-dm-harness.md)
 - [Headless DM harness](tasks/.done/2026-07-27-headless-dm-harness.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
@@ -688,4 +692,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-07-28 10:26:20
+**Last Updated**: 2026-07-29 16:37:20
