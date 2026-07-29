@@ -268,10 +268,16 @@ and leaves the coupling between relay latency and message processing in place.
   logs — acceptable (redelivery covers it, and `MessageDB.tsx:345` already
   logs loudly before rethrowing), but it is a behavior change; keep the
   `.catch` logging.
-- Check the other `runExclusive` sites for the same shape before assuming this is
-  the only one: `MessageService.ts:983, 3012, 3195, 3477, 3858, 6610` and
-  `ActionQueueHandlers.ts:672`. 983 and 672 are known-good (they wrap as
-  `{ sent }`); the rest have not been audited for network calls inside the lock.
+- ✅ **The other `runExclusive` sites were audited 2026-07-29 and are clean — the
+  fix scope is exactly this one site.** All seven: `MessageService.ts:983, 3012,
+  3195, 3477, 3858, 6610` and `ActionQueueHandlers.ts:672`. `983` and `672` were
+  already known-good (they wrap the delivery promise as `{ sent }`). `3012`,
+  `3195`, `3477` and `6610` each `await` only `this.messageDB.getEncryptionStates`
+  / `deleteEncryptionState` / `saveEncryptionState` / `getConversation`, which are
+  defined in `src/db/messages.ts` — a file containing **no** reference to
+  `apiClient`, `QuorumApiClient`, `fetch(` or any URL. Local IndexedDB only, no
+  relay HTTP inside those locks. **`3858` (the receive path) is the sole site with
+  the defect**, via the three shapes listed in §1.
 
 ## §7. Scope — what this does NOT explain
 
