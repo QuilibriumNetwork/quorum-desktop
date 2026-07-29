@@ -21,20 +21,28 @@
 // frames from its join by design ("unobserved, not observed-good"), so it was
 // structurally blind to the channel that was failing.
 //
-// ── What this scenario refuses to do ────────────────────────────────────────
+// ── Accounts: throwaway by default, canonical only on purpose ───────────────
 //
-// It does NOT use the canonical accounts. They already carry 5+ device
-// registrations, and createBot mints a NEW device per bot NAME and merges it into
-// the registration (identity.ts:141-153). Running this there would permanently add
-// devices to shared accounts and fan out to ghost inboxes we cannot observe —
-// confounding the exact variable being isolated. Instead the account is generated
-// here and thrown away.
+// DEFAULT: a generated account, thrown away. The canonical accounts already carry
+// 5+ device registrations, and createBot mints a NEW device per bot NAME and
+// merges it into the registration (identity.ts:141-153) — so running there
+// permanently adds devices to a real account and fans out to inboxes we cannot
+// observe, confounding the variable being isolated. For measuring device COUNT,
+// which is what this scenario was built for, a generated account is strictly
+// better and free.
+//
+// HARNESS_MD_CANONICAL=1 opts into the real aged accounts, for the one question a
+// generated account cannot answer: does fan-out persistence break on an AGED
+// account? That is the last unmeasured cell and the one the operator's ~10-of-200
+// observation lives in. It costs ONE permanent device registration, held to one by
+// stable bot names — see the block at the top of the test body before using it.
 import { existsSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test, expect } from 'vitest';
 import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { createBot, type HarnessBot } from './bot';
 import { config } from './env';
+import { hasCanonicalKeys } from './canonical';
 import { direction, subscribedInboxes } from './loss';
 import { installLockProbe, summariseLockHolds } from './lock-probe';
 import { deleteFault, makeApiClient } from './transport';
@@ -76,11 +84,44 @@ test(
     // and it reports even on a run where nothing is lost.
     const lockSamples = installLockProbe();
 
-    // One generated account, handed to two bots. createBot takes the ACCOUNT from
+    // ── CANONICAL MODE (HARNESS_MD_CANONICAL=1) ─────────────────────────────
+    //
+    // Runs this scenario against the operator's REAL aged accounts instead of a
+    // generated throwaway, to reach the one cell nothing has measured:
+    // **fan-out persistence on an aged account**. Everything cheaper is already
+    // green — peer-channel persistence is clean on aged accounts (dm-loss
+    // canonical, 200/200 both ways), and fan-out persistence is clean on fresh
+    // accounts at 4 devices.
+    //
+    // ⚠️ COSTS ONE PERMANENT DEVICE REGISTRATION on account A, and there is no
+    // way to take it back: `deregister` does not exist (see
+    // `tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md`,
+    // status PLAN — not started). Authorised by the operator 2026-07-29.
+    //
+    // The cost is held to exactly ONE by using STABLE bot names. `createBot` mints
+    // a device per bot NAME and merges it into the registration
+    // (identity.ts:141-153), so a timestamped name would mint a NEW device on
+    // every run — which is precisely what the trap list warns about. Here:
+    //   dev0 = `user-a`      — already registered by earlier dm-loss runs
+    //   dev1 = `user-a-obs`  — the ONE new device, the observer, reused forever
+    //   peer = `user-b`      — already registered
+    // Re-running this scenario therefore adds nothing further.
+    const useCanonical = process.env.HARNESS_MD_CANONICAL === '1';
+    if (useCanonical && !hasCanonicalKeys()) {
+      throw new Error(
+        'HARNESS_MD_CANONICAL=1 but BOT_A_PRIVATE_KEY/BOT_B_PRIVATE_KEY are not set ' +
+          'in src/dev/tests/harness/.env.local'
+      );
+    }
+
+    // One account, handed to several bots. createBot takes the ACCOUNT from
     // privateKeyHex and the DEVICE from name, so this is genuinely one user with
-    // two devices — not two users.
-    const kp = JSON.parse(channel_raw.js_generate_ed448()) as { private_key: number[] };
-    const KEY_A = Buffer.from(kp.private_key).toString('hex');
+    // several devices — not several users.
+    const KEY_A = useCanonical
+      ? config.botKeys.A
+      : Buffer.from(
+          (JSON.parse(channel_raw.js_generate_ed448()) as { private_key: number[] }).private_key
+        ).toString('hex');
     // ed448 private keys are 57 bytes. Measured, not read off a spec sheet — two
     // earlier guesses at this length in this investigation were both wrong.
     expect(KEY_A).toHaveLength(114);
@@ -90,16 +131,22 @@ test(
     // (identity.ts:141-153). Concurrent creation silently drops one device, and the
     // scenario would then measure a one-device account while claiming otherwise.
     // This is also why the loop below awaits each createBot in turn.
+    // Canonical mode is pinned to exactly two A-devices — the already-registered
+    // `user-a` plus ONE new observer — because every extra name here is another
+    // permanent device on a real account. Throwaway mode is unconstrained.
+    const deviceNames = useCanonical
+      ? ['user-a', 'user-a-obs']
+      : Array.from({ length: DEVICES }, (_, d) => `md-a-dev${d}-${stamp}`);
+    const nDevices = deviceNames.length;
     const botNames: string[] = [];
     const aDevices: HarnessBot[] = [];
-    for (let d = 0; d < DEVICES; d++) {
-      const name = `md-a-dev${d}-${stamp}`;
+    for (const name of deviceNames) {
       botNames.push(name);
       aDevices.push(await createBot(name, { privateKeyHex: KEY_A }));
     }
-    const bobName = `md-b-${stamp}`;
+    const bobName = useCanonical ? 'user-b' : `md-b-${stamp}`;
     botNames.push(bobName);
-    const bob = await createBot(bobName);
+    const bob = await createBot(bobName, useCanonical ? { privateKeyHex: config.botKeys.B } : {});
 
     // Device 0 is the sender; every other device of account A should receive a
     // self-sync copy of what it sends, and a copy of everything bob sends.
@@ -107,10 +154,10 @@ test(
     const others = aDevices.slice(1);
 
     say(
-      `account A=${sender.identity.address.slice(0, 12)} with ${DEVICES} device(s): ` +
+      `account A=${sender.identity.address.slice(0, 12)} with ${nDevices} harness device(s): ` +
         aDevices.map((b, i) => `dev${i}=${b.identity.inboxAddress.slice(0, 10)}`).join(' ') +
         `  bob=${bob.identity.address.slice(0, 12)}`,
-      { devices: DEVICES }
+      { devices: nDevices, mode: useCanonical ? 'canonical' : 'throwaway' }
     );
 
     // ── STEP 1: prove the premise before measuring anything ──────────────────
@@ -150,7 +197,7 @@ test(
       expect(registeredInboxes).toContain(b.identity.inboxAddress); // this DEVICE is registered
     }
     // Every device distinct — catches a name collision silently reusing a keyset.
-    expect(new Set(aDevices.map((b) => b.identity.inboxAddress)).size).toBe(DEVICES);
+    expect(new Set(aDevices.map((b) => b.identity.inboxAddress)).size).toBe(nDevices);
 
     await Promise.all([...aDevices.map((b) => b.start()), bob.start()]);
 
@@ -271,9 +318,17 @@ test(
     // Each run mints a throwaway account and one state file per bot. Nothing
     // accumulates on an account that matters, but the directory would grow without
     // bound, so the scenario removes what it created.
-    for (const name of botNames) {
-      const p = resolve(config.stateDir, `${name}.json`);
-      if (existsSync(p)) rmSync(p, { force: true });
+    // ⚠️ NEVER in canonical mode. These .state files hold the DEVICE KEYSETS of
+    // real registrations on a real account. Deleting one does not remove the
+    // device — nothing can, `deregister` is unimplemented — it orphans it into an
+    // unreachable ghost AND makes the next run mint yet another device under the
+    // same name. One deleted file would turn a bounded one-device cost into an
+    // unbounded one.
+    if (!useCanonical) {
+      for (const name of botNames) {
+        const p = resolve(config.stateDir, `${name}.json`);
+        if (existsSync(p)) rmSync(p, { force: true });
+      }
     }
 
     // The run IS the measurement, so the assertions are deliberately weak: they
