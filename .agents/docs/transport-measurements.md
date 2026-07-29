@@ -3,7 +3,7 @@ type: doc
 title: "Transport & DM reliability — measurement log (every run, every number, one place)"
 status: living — APPEND-ONLY. Add a row when a run produces a number; never rewrite a past row.
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-07-29
 area: WebSocket transport / DM Double Ratchet / delivery loss
 related: docs/transport-reliability-index.md
 ---
@@ -135,6 +135,7 @@ are nulls about a narrower channel than they appear to describe.
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
 | 07-28 | `dm-multidevice` | **one account with FOUR devices** + peer, all harness bots, Node, fresh account, 100 rounds | arrival **and** persistence | **every one of the 8 frame legs: 101/101, 0% loss. Zero decrypt failures anywhere.** But `dev1` persisted only **52/100** messages — in BOTH directions, the same count — while `dev2` and `dev3` persisted 100/100 | **first bench reproduction of the operator's symptom.** Loss between arrival and persistence, with no error of any kind | run log `2026-07-28T13-45-03` |
+| 07-29 | `dm-multidevice` | **the same 4-device configuration**, re-run against a relay **verified healthy first** (`/` → 404, known user → 200). Fresh account, 100 rounds, 700ms gap, 180s settle | arrival **and** decrypt **and** persistence | **all 8 frame legs 101/101, 0% loss. Every device persisted 100/100 in BOTH directions** (dev0-dev3 and bob). 2 novel decrypt failures on dev3, both healed. **Ratchet lock: n=1065 holds, p50=29ms, p90=231ms, p99=370ms, max=555ms — every hold under 1s, ZERO in the 15-30s / 30-55s / >55s buckets** | **the 52/100 did NOT reproduce, and the lock-across-HTTP mechanism did not fire.** Re-points the row above at relay degradation rather than device count | run log `2026-07-29T05-52-51` |
 
 **Why this is the important row in the file.** The frames all arrived. Nothing
 failed to decrypt. `dm-loss` counts frames, so it would have reported this run as
@@ -179,6 +180,49 @@ order of how cheaply it can be closed:
    browser*; here they are harness bots in Node. Same client code, different
    runtime, different storage, no UI layer. The harness cannot close this one by
    construction
+
+### ⭐ The 07-29 re-run — the reproduction did not hold
+
+**Added 2026-07-29, after running the confirmation the bug report asked for.** The
+heading above says the symptom "reproduces on the bench". On the evidence of one
+run that was true; the re-run says it does not reproduce reliably, and the
+existing text is left standing so the sequence stays readable.
+
+Identical configuration, identical device count, identical round count. The only
+deliberate difference was **checking the relay was healthy before starting** —
+which the 07-28 run could not have done, because it finished at 15:51 and the
+relay was 502ing on every path by 15:53 and stayed down for over an hour. Its own
+row already carried that caveat. The re-run is clean on every axis the earlier one
+was not.
+
+**The lock histogram is the part that carries weight, because it reports even when
+nothing goes missing.** 1065 holds, none longer than 555ms, none within a factor
+of twenty of a single timed-out attempt. Per the bug's §5.3 criterion that is
+"the mechanism is not firing on this run".
+
+Read carefully, this run says three separate things, and they are not the same
+strength:
+
+1. **The 52/100 is not a device-count threshold** — 4 devices on a healthy relay
+   is clean. Reasonably well supported: same parameters, opposite result.
+2. **The lock mechanism did not fire here.** Directly measured, not inferred.
+3. **The mechanism is still real as code.** §1 of the bug is a reading of the
+   source, and this run does not touch that. What it constrains is *when* the
+   coupling bites: a healthy relay never makes the POST slow enough to matter.
+
+⚠️ **What it does NOT do is exonerate the receive path.** A null on a healthy
+relay is exactly what the mechanism predicts on a healthy relay, so this run
+cannot distinguish "the bug is not there" from "the bug did not have its trigger
+today". Confirming or killing it needs the POST to be slow — a fault-injected or
+genuinely degraded relay — not another clean one. Another green 4-device run adds
+nothing.
+
+> ⚠️ Inference, not measurement, recorded because it is the one hint in the data:
+> the holds are bimodal (638 under 100ms, 427 between 100ms and 1s) rather than
+> massed in the low band where crypto-only work would sit. That is *consistent
+> with* a network round trip inside the critical section. The probe times the
+> hold, it does not observe what runs inside it, so this is a hint about where to
+> look next and not evidence the coupling fired.
 
 ### Mobile harness (`quorum-mobile`, `yarn harness:dm`)
 
@@ -231,4 +275,4 @@ Live suspects for round 29, still undistinguished:
   cell no bench covers at all.
 
 ---
-*Last updated: 2026-07-28*
+*Last updated: 2026-07-29*

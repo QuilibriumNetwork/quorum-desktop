@@ -3,7 +3,7 @@ type: doc
 title: "Transport & DM reliability — cross-repo index (every doc, PR and issue in one place)"
 status: living — this is a MAP, not a status report. Every row links to the doc that owns the status.
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-07-29
 area: WebSocket transport / DM Double Ratchet / spaces hub-log / receipts
 repos: quorum-desktop + quorum-mobile + quorum-shared + upstream (channel crate, node write path)
 ---
@@ -51,7 +51,7 @@ also resolves. If you are already in the repo a path names, drop the prefix.
 4. **Two root causes remain outside the app repos**, both filed upstream as [quorum-mobile#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183): a skipped-key lookup bug in the `channel` crate, and a slice of node inbox writes vanishing with no client-visible signal.
 5. The crate bug (#183 item 1a) is **fully characterised, reproducible on demand in seconds, and mitigated client-side** on desktop (PR #265).
 6. The node write-loss (#183 item 2) is measured on mobile senders (up to 32%, strongly directional), and **0% on every headless bench** — but every one of those benches measured only whether frames ARRIVED (§3.1); it is not fixable from any client, and needs node-side logs.
-6b. **A separate failure lives past arrival**: with four devices on one account, every frame arrived and decrypted while one device persisted only half the messages, no error raised (§3.2). Unconfirmed, and it may be the larger share of what users actually experience as "messages not arriving".
+6b. **A separate failure lives past arrival**: with four devices on one account, every frame arrived and decrypted while one device persisted only half the messages, no error raised (§3.2). ⚠️ **The 2026-07-29 re-run against a verified-healthy relay was clean on every device and did not reproduce it** — the original run was probably taken against a degrading relay. The failure *class* (persistence, past arrival) remains the right thing to measure; this particular reproduction does not stand.
 7. Remaining client-side work is send-side durability on mobile spaces, receipt truthfulness runtime verification, and hygiene items (ghost devices, junk state rows).
 
 ---
@@ -97,6 +97,13 @@ protocol-level **write ack** is feasible (it would close the last loss class).
 > reproduced the operator's symptom — see §3.2. Everything below still holds, but
 > the reason the earlier nulls were narrow turns out to be more specific than
 > "several variables differ": **they were all measuring the wrong layer.**
+>
+> ⚠️ **AMENDED 2026-07-29: the reproduction did not hold.** The re-run against a
+> verified-healthy relay was clean on every device (§3.2). The point of this
+> section is unchanged and is the durable part — the earlier nulls measured
+> **arrival** only, and a persistence failure is invisible to them — but the
+> benches are, on today's evidence, green again. Do not cite §3.2 as a standing
+> reproduction.
 
 Four separate 0%-**arrival**-loss results exist. **None of them contradicts the
 field loss, and it would be a serious error to read them as "the transport is
@@ -179,16 +186,33 @@ processing at one moment would. That points at a receive-pipeline stall rather t
 per-message loss. The scenario now reports WHICH message numbers are absent, since
 "stopped at #52" and "dropped every other one" are different bugs.
 
-⚠️ **Not yet confirmed.** One run, one device of three extras. The confirmation run
-is blocked on a production outage (`api.quorummessenger.com` returning 502 from
-Cloudflare on every path including root, from ~15:53 on 07-28; other hostnames
-healthy, so an origin failure, not us). All five bots also share one Node process,
-so a harness-specific starvation effect is not excluded — though `dev2` and `dev3`
-being perfect in that same process argues against it.
+⚠️ **Not confirmed — and the 2026-07-29 re-run did not reproduce it.** One run, one
+device of three extras. All five bots also share one Node process, so a
+harness-specific starvation effect is not excluded — though `dev2` and `dev3` being
+perfect in that same process argues against it.
 
-**If it confirms, the next step is not another measurement.** It is reading the
-receive path for what can discard a message after a successful decrypt, with the
-missing-number shape pointing at where.
+**The confirmation run was taken on 2026-07-29**, once the outage that blocked it
+had cleared (`api.quorummessenger.com` was 502ing on every path from ~15:53 on
+07-28; relay health was verified before starting this time). Same 4 devices, same
+100 rounds:
+
+```
+all 8 frame legs:   101/101 arrived, 0.0% loss
+persisted:          100/100 on every device, both directions
+ratchet lock:       n=1065 holds, max=555ms, ZERO above 1s
+```
+
+**The 52/100 did not reproduce, and the lock histogram shows the
+lock-across-HTTP mechanism did not fire.** The most likely reading is that the
+07-28 run was taken against the relay as it degraded — which the row above already
+flagged as possible.
+
+⚠️ **This does not clear the receive path.** A clean run on a healthy relay is
+exactly what the mechanism predicts on a healthy relay, so it cannot separate "no
+bug" from "no trigger". **Another green 4-device run adds nothing**; discriminating
+needs a *slow* `/inbox/delete` (fault injection or a degraded relay) with the same
+histogram read. Full detail in
+[`bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md`](../bugs/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md) §5-RESULT.
 
 ### A second, untested path to the same symptom
 
@@ -622,4 +646,4 @@ correct the status in place and say what is owed, rather than moving.
 the bold ENTRY POINT / 🗺️ notes on this file and on the resurfaced-DM bug.
 
 ---
-*Last updated: 2026-07-28*
+*Last updated: 2026-07-29*

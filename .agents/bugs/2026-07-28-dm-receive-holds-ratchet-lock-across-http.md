@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Desktop DM receive holds the per-conversation ratchet lock across relay HTTP, so one slow ack stalls the whole conversation"
-status: OPEN — MECHANISM IDENTIFIED BY CODE READING, NOT YET CONFIRMED BY MEASUREMENT. The receive path awaits `deleteInboxMessages` / `ackProcessedFrame` (POST `/inbox/delete`, 22s mutate timeout, retried ×3) INSIDE `dmRatchetMutex.runExclusive(conversationId, …)`, so a single slow ack blocks every message on that conversation, in BOTH directions, for up to ~69s (see §1). A 4-device bench run showed one device persisting 52/100 messages while all 101 frames arrived and nothing failed to decrypt — consistent with this, but that run may have been taken against a degrading relay (see §4) and the confirming evidence (§5) has not been collected. Mobile does NOT have this shape and its pattern is the proposed fix (§6).
+status: OPEN — MECHANISM IDENTIFIED BY CODE READING; THE CONFIRMATION RUN WAS TAKEN 2026-07-29 AND WAS A NULL. The receive path awaits `deleteInboxMessages` / `ackProcessedFrame` (POST `/inbox/delete`, 22s mutate timeout, retried ×3) INSIDE `dmRatchetMutex.runExclusive(conversationId, …)`, so a single slow ack blocks every message on that conversation, in BOTH directions, for up to ~69s (see §1). A 4-device bench run showed one device persisting 52/100 messages while all 101 frames arrived and nothing failed to decrypt — consistent with this, but that run may have been taken against a degrading relay (see §4). ⚠️ **§5 has now been run against a verified-healthy relay and everything was clean: 100/100 on every device, and the lock histogram showed 1065 holds all under 555ms with none in the 15s+ buckets (§5-RESULT).** That does not refute §1, which is a reading of the source — it shows the coupling does not bite when the relay is fast, so a clean-relay run cannot settle this either way. Mobile does NOT have this shape and its pattern is the proposed fix (§6).
 created: 2026-07-28
 severity: medium — user-visible "messages not arriving" on desktop; likely LATENCY not permanent loss (§3), degrades with device count. ⚠️ NOT revisited after the 2026-07-28 review tripled the stall bound from 22s to ~69s: a conversation frozen for over a minute is closer to "broken" than "slow" from a user's seat, so re-rate this if §5 confirms the mechanism.
 repo: quorum-desktop (mobile verified NOT affected — §6)
@@ -167,6 +167,73 @@ be treated as a clean product measurement.
    sections — run it first if a result looks surprising, so an instrument fault is
    ruled out before a product conclusion is drawn.
 
+## §5-RESULT. The confirmation run was taken 2026-07-29 — clean on every signal
+
+Relay checked healthy first (`/` → 404, known user → 200), then the exact command
+from §5.1 with `HARNESS_MD_DEVICES=4 HARNESS_MD_ROUNDS=100 HARNESS_MD_GAP_MS=700
+HARNESS_MD_SETTLE_MS=180000`. Run log
+`src/dev/tests/harness/logs/2026-07-29T05-52-51-054Z-dm-multidevice.jsonl`
+(provenance checked against the runner's start time — an earlier session misread
+an older log as its own).
+
+```
+all 8 frame legs:   101/101 arrived, 0.0% loss
+persisted:          100/100 on bob and on dev0, dev1, dev2, dev3 — both directions
+decrypt failures:   dev3=2 (both healed; it still persisted 100/100), 0 elsewhere
+lock holds:         n=1065  p50=29ms  p90=231ms  p99=370ms  max=555ms
+                      <100ms   638
+                      100ms-1s 427
+                      15-30s / 30-55s / >55s: ZERO
+queued behind lock: p50=51ms  max=482ms
+```
+
+Taking the three signals of §5 in order:
+
+1. **§5.1 re-run** — the 52/100 did not reproduce. Same device count, same round
+   count, opposite result.
+2. **§5.2 gap shape** — not printed, because nothing was missing. No information
+   either way.
+3. **§5.3 lock histogram** — **the mechanism did not fire.** Every hold under one
+   second, none within a factor of twenty of even one timed-out attempt. Checked
+   at all three retry multiples (~22s/~45s/~69s), not only 22s, per the warning
+   in that section. The zero is real and not a reporting gap: `summariseLockHolds`
+   omits empty buckets (`lock-probe.ts:105`), and the unconditional `max=555ms` in
+   the header corroborates it independently, as does the absence of any `slowest:`
+   line (those print only above 1s).
+
+### What this changes, and what it deliberately does not
+
+**It does not refute §1.** That the lock wraps relay HTTP is read from the source
+and this run does not touch it. What the run constrains is *when* the coupling
+bites: on a healthy relay the POST returns in well under a second, so the lock is
+never held long enough to stall anything.
+
+**It weakens §4's evidence considerably.** The 52/100 came from a run that
+finished at 15:51 while the relay was 502ing by 15:53 for over an hour. §4 already
+flagged that. A clean result at identical parameters on a verified-healthy relay
+points that measurement at relay degradation rather than at a device-count
+threshold.
+
+⚠️ **A null here is exactly what the mechanism predicts here, so this run cannot
+distinguish "no bug" from "no trigger".** That is the important limitation and it
+should stop the obvious next move: **another clean 4-device run adds nothing.**
+What would discriminate is making the POST slow — fault injection on
+`/inbox/delete` (delay past the 22s mutate timeout) or a run taken while the relay
+is genuinely degraded — and then reading the same histogram. If holds appear in
+the 15-30s / 30-55s / >55s buckets and messages go missing together, the mechanism
+is confirmed; if holds stay short while messages still go missing, §1 is not the
+explanation and the search moves elsewhere.
+
+⚠️ **Inference, not measurement, but it is the one hint in the data:** the holds
+are bimodal — 638 under 100ms, 427 between 100ms and 1s — rather than massed low
+where crypto-only work would sit. That is *consistent with* a network round trip
+inside the critical section, which is what §1 claims is there. The probe times the
+hold and does not observe its contents, so this is a pointer for the next
+experiment, not evidence the coupling fired.
+
+**Severity re-rating deferred.** The §-header warning asks for a re-rate if §5
+confirms the mechanism. It did not, so `medium` stands unchanged.
+
 ## §6. ✅ Mobile is NOT affected — and its pattern is the fix
 
 Verified by reading (2026-07-28, read-only):
@@ -221,7 +288,7 @@ messages while the bench's peer channel measured 201/201, 0% loss. Desktop is th
 platform carrying this defect, and `dm-loss` counts frames, so it was blind to it.
 
 ---
-*Last updated: 2026-07-28*
+*Last updated: 2026-07-29*
 
 ## Review Log
 **2026-07-28 - claude-fable-5**: Verified every code claim against desktop and mobile sources; corrected the stall bound, added a third locked HTTP shape, fixed the run-log path, widened the confirmation criterion.

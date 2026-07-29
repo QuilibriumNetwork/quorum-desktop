@@ -3,7 +3,7 @@ type: task
 title: "Harness coverage: multi-device DM delivery, then the cells no bench reaches"
 status: IN PROGRESS — scenario 1 (dm-multidevice) being built
 created: 2026-07-28
-updated: 2026-07-28
+updated: 2026-07-29
 area: headless harness / DM delivery / multi-device fan-out
 repos: quorum-desktop (primary) + quorum-mobile
 related: docs/transport-measurements.md, docs/transport-reliability-index.md, quorum-mobile#183
@@ -215,6 +215,32 @@ every path by 15:53. The relay was plausibly already degrading *during* the run,
 which is exactly the condition that makes this mechanism bite. **Re-run against a
 healthy relay before treating 52/100 as a product measurement.**
 
+### ✅ 2026-07-29 — that re-run was done, and it was clean
+
+Relay verified healthy first (`/` → 404, known user → 200). Same 4 devices, same
+100 rounds, 700ms gap, 180s settle. Run log
+`src/dev/tests/harness/logs/2026-07-29T05-52-51-054Z-dm-multidevice.jsonl`.
+
+```
+all 8 frame legs:   101/101 arrived, 0.0% loss
+persisted:          100/100 on bob and dev0-dev3, BOTH directions
+decrypt failures:   dev3=2, both healed; 0 elsewhere
+ratchet lock:       n=1065  p50=29ms  p90=231ms  max=555ms
+                    ZERO holds in 15-30s / 30-55s / >55s
+```
+
+**The 52/100 did not reproduce and the lock mechanism did not fire.** The gap
+report printed nothing because nothing was missing, so the CONTIGUOUS-TAIL vs
+SCATTERED question is still unanswered — that signal needs a run where messages
+actually go missing.
+
+This supports the paragraph above: the 07-28 result was most likely relay
+degradation, not a device-count threshold. It does **not** show the receive path is
+sound — a null on a healthy relay is what the mechanism predicts on a healthy
+relay. See the bug report's §5-RESULT for what would actually discriminate
+(a slow `/inbox/delete`, injected or observed), and note that **repeating this run
+on a healthy relay adds nothing.**
+
 ### Why it is still worth fixing either way
 
 Even as pure latency, this says user-visible delivery degrades **non-linearly**
@@ -282,4 +308,4 @@ Append a row to `docs/transport-measurements.md`: date, what ran, configuration
 class, `arrival` or `decrypt`.
 
 ---
-*Last updated: 2026-07-28*
+*Last updated: 2026-07-29*
