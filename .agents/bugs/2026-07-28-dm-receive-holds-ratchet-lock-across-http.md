@@ -289,6 +289,34 @@ Against §5's own criteria, in order:
   probably the known reorder/stale-bucket class, provoked by frames being
   redelivered while the session advanced. Worth a look, not part of this finding.
 
+### ⏭️ RESUME HERE (2026-07-29) — the fix is written, its validation run was interrupted
+
+Branch `fix/dm-receive-lock-across-http`: `6d4b8005f` (injection tooling) +
+`da24521d3` (the fix). Typecheck clean, **565 unit tests pass across 37 files**.
+The after-measurement was still running when the machine had to be shut down, so
+**the fix is UNVALIDATED — do not merge it on the strength of the unit tests.**
+
+Re-run the identical injection and compare against §5-CONFIRMED's table:
+
+```bash
+HARNESS_MD_DEVICES=4 HARNESS_MD_ROUNDS=100 HARNESS_MD_GAP_MS=700 \
+HARNESS_MD_SETTLE_MS=300000 HARNESS_FAULT_DELETE_DELAY_MS=30000 \
+HARNESS_FAULT_DELETE_RATE=0.05 yarn harness dm-multidevice
+```
+
+Check the relay is healthy first (`/` → 404, a known user → 200), run it in the
+background (~10 min), and read the JSONL log, not the console. **Expected: zero
+holds in `30-55s`, no `CONTIGUOUS TAIL` anywhere, persistence back near 100/100.**
+If tails remain, the fix is incomplete — report that rather than explaining it away;
+the injection exists precisely so this test can fail.
+
+Next after that: **slice 4, mobile↔desktop on one bench** — the field's worst case
+and the only configuration no bench covers. Design settled 2026-07-29 and it
+deviates from the written spec: two processes paired through mobile's existing file
+rendezvous, NOT the specced single-process bundle (mobile's DM core is deliberately
+un-extracted and lives inside `WebSocketProvider`, and slices 1-3 established that
+two bots cannot share a process). quorum-mobile needs no changes.
+
 ### The fix now has an acceptance test that can fail
 
 Re-run the identical injection after applying §6. Expected: **no holds in
