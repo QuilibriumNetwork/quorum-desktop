@@ -1,6 +1,6 @@
 ---
 type: bug
-title: "A session replacement deletes the old encryption state, and every frame already addressed to the old inbox is then dropped AND deleted from the relay — permanent, silent message loss"
+title: "Session replacement orphans the receiving inbox, and the cleanup for unplaceable frames named the wrong mailbox — real code defects, but NOT the cause of the field symptom"
 status: CODE DEFECTS REAL AND MITIGATED (PR #273) — but the CAUSAL CLAIM IS RETIRED. ⚠️ Read §8 first, then §7. Three purpose-built bench runs (`dm-session-churn`) failed to reproduce any loss, including one with a confirmed 10-frame pre-wipe backlog on the orphaned inbox: 60/60 both directions, every time. The 366-drop capture that motivated this file was taken while the harness was re-registering bots on that account, so it is most probably a testing artifact rather than the operator's organic failure. What stands: replacement does orphan the inbox, and the old cleanup named the wrong mailbox so it removed nothing (fixed, with tests that fail against the old code). What does NOT stand: that this explains the field symptom.
 created: 2026-07-29
 severity: MEDIUM-HIGH — user-visible message loss (366 messages not persisted in one capture, silently, with no error to either party), but **downgraded from the original HIGH**: the data is probably not destroyed, only stranded. Re-rate upward if the relay is shown to expire or drop stranded frames.
@@ -13,7 +13,14 @@ related:
   - "quorum-mobile#183 (upstream; this is CLIENT-side and does NOT explain item 2)"
 ---
 
-# Session replacement destroys every frame in flight to the old inbox
+# Session replacement orphans the receiving inbox
+
+> ⛔ **READ §8 FIRST, THEN §7.** Everything between here and §7 is the original
+> write-up, preserved so the reasoning is legible. Its central causal claim was
+> **retired on 2026-07-29** after three purpose-built bench runs failed to
+> reproduce any loss, and two pieces of its supporting evidence were withdrawn.
+> The *code defects* it describes are real and are fixed; the *explanation of the
+> field symptom* is not.
 
 ## §1. The two behaviours that combine
 
