@@ -3474,10 +3474,10 @@ export class MessageService {
               ),
             }
           );
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'malformed init envelope (no user address)'
           );
           return;
         }
@@ -3496,10 +3496,10 @@ export class MessageService {
             }
           );
           await this.deleteEncryptionStates({ conversationId });
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'delete-conversation reset signal (init-envelope path)'
           );
           return;
         }
@@ -3521,10 +3521,10 @@ export class MessageService {
             }
           );
           await this.deleteConversationLocally(target + '/' + target, queryClient);
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'delete-conversation-self from own device'
           );
           return;
         }
@@ -3669,10 +3669,10 @@ export class MessageService {
               senderProfile
             );
           }
-          await this.deleteInboxMessages(
+          this.dispatchInboxDelete(
             keyset.deviceKeyset.inbox_keyset,
             [envelope.timestamp],
-            this.apiClient
+            'init path, message added'
           );
           return;
         }
@@ -3738,10 +3738,10 @@ export class MessageService {
             // delivery-ack control message — encryption state saved and the
             // frame fully processed, so delete it (it used to be left behind
             // and redelivered until the stale guard killed it).
-            await this.deleteInboxMessages(
+            this.dispatchInboxDelete(
               keyset.deviceKeyset.inbox_keyset,
               [envelope.timestamp],
-              this.apiClient
+              'init path, intercepted control message'
             );
             return;
           }
@@ -3822,10 +3822,10 @@ export class MessageService {
         } else {
           console.error(t`Failed to decrypt message with any known state`);
         }
-        await this.deleteInboxMessages(
+        this.dispatchInboxDelete(
           keyset.deviceKeyset.inbox_keyset,
           [envelope.timestamp],
-          this.apiClient
+          'init path, frame fully processed'
         );
       } catch (initPathError) {
         if (decryptedContent) {
@@ -3855,10 +3855,10 @@ export class MessageService {
           },
           initPathError
         );
-        await this.deleteInboxMessages(
+        this.dispatchInboxDelete(
           keyset.deviceKeyset.inbox_keyset,
           [message.timestamp],
-          this.apiClient
+          'init envelope failed before decrypt'
         );
         return;
       }
@@ -3878,10 +3878,10 @@ export class MessageService {
           timestamp: message.timestamp,
         }
       );
-      await this.deleteInboxMessages(
+      this.dispatchInboxDelete(
         keyset.deviceKeyset.inbox_keyset,
         [message.timestamp],
-        this.apiClient
+        'DM frame for an unknown inbox'
       );
       return;
     }
@@ -5767,10 +5767,10 @@ export class MessageService {
     }
 
     if (keys.sending_inbox) {
-      await this.deleteInboxMessages(
+      this.dispatchInboxDelete(
         keys.receiving_inbox,
         [message.timestamp],
-        this.apiClient
+        'post-processing cleanup (DM inbox)'
       );
     } else {
       const inbox_key = await this.messageDB.getSpaceKey(
@@ -5786,7 +5786,7 @@ export class MessageService {
         return;
       }
 
-      await this.deleteInboxMessages(
+      this.dispatchInboxDelete(
         {
           inbox_address: inbox_key.address!,
           inbox_encryption_key: {} as never,
@@ -5797,7 +5797,7 @@ export class MessageService {
           },
         },
         [message.timestamp],
-        this.apiClient
+        'post-processing cleanup (space inbox)'
       );
     }
   }
