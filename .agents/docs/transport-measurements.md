@@ -136,6 +136,7 @@ are nulls about a narrower channel than they appear to describe.
 |---|---|---|---|---|---|---|
 | 07-28 | `dm-multidevice` | **one account with FOUR devices** + peer, all harness bots, Node, fresh account, 100 rounds | arrival **and** persistence | **every one of the 8 frame legs: 101/101, 0% loss. Zero decrypt failures anywhere.** But `dev1` persisted only **52/100** messages — in BOTH directions, the same count — while `dev2` and `dev3` persisted 100/100 | **first bench reproduction of the operator's symptom.** Loss between arrival and persistence, with no error of any kind | run log `2026-07-28T13-45-03` |
 | 07-29 | `dm-multidevice` | **the same 4-device configuration**, re-run against a relay **verified healthy first** (`/` → 404, known user → 200). Fresh account, 100 rounds, 700ms gap, 180s settle | arrival **and** decrypt **and** persistence | **all 8 frame legs 101/101, 0% loss. Every device persisted 100/100 in BOTH directions** (dev0-dev3 and bob). 2 novel decrypt failures on dev3, both healed. **Ratchet lock: n=1065 holds, p50=29ms, p90=231ms, p99=370ms, max=555ms — every hold under 1s, ZERO in the 15-30s / 30-55s / >55s buckets** | **the 52/100 did NOT reproduce, and the lock-across-HTTP mechanism did not fire.** Re-points the row above at relay degradation rather than device count | run log `2026-07-29T05-52-51` |
+| 07-29 | `dm-multidevice` **+ FAULT INJECTION** | same 4 devices / 100 rounds, but **`/inbox/delete` deliberately stalled 30s on a deterministic 1-in-20 of calls** (`HARNESS_FAULT_DELETE_DELAY_MS=30000`, rate 0.05 — 50 of 1016 calls hit). 300s settle | arrival **and** persistence | **All 8 frame legs still 101/101, 0% arrival loss** — but persistence collapsed: dev0 97/100, **dev1 50/58, dev2 25/27, dev3 23/23**, bob 85/100. **Every single gap is a `CONTIGUOUS TAIL`, not one scattered.** Lock: n=5745, **10 holds in the `30-55s` bucket, max=31260ms**; queued-behind-lock **max=31173ms** | ⭐ **MECHANISM CONFIRMED.** A slow inbox-delete holds the ratchet lock and stalls the conversation, exactly as §1 predicted by code reading | run log `2026-07-29T06-19-55` |
 
 **Why this is the important row in the file.** The frames all arrived. Nothing
 failed to decrypt. `dm-loss` counts frames, so it would have reported this run as
@@ -223,6 +224,56 @@ nothing.
 > with* a network round trip inside the critical section. The probe times the
 > hold, it does not observe what runs inside it, so this is a hint about where to
 > look next and not evidence the coupling fired.
+
+### ⭐⭐ The 07-29 fault-injected run — the lock mechanism, measured
+
+**This is the run that settles the ratchet-lock-across-HTTP question**, and it only
+works because it stops waiting for the relay to misbehave and *makes* it misbehave.
+The two clean 4-device runs could never have decided it: a lock held across a fast
+POST is indistinguishable from a lock not held across a POST at all.
+
+Injecting a 30s stall into 1 call in 20 produced every predicted signature at once:
+
+| §5 criterion | predicted if the mechanism is real | measured |
+|---|---|---|
+| lock hold time | clusters at the stall duration | **10 holds in `30-55s`, max 31260ms** — the injected 30s, visible directly |
+| gap shape | `CONTIGUOUS TAIL` (backlog) not `scattered` (drops) | **every gap on every device was a contiguous tail. Zero scattered.** |
+| both directions together | equal, since one conversationId ⇒ one lock | dev1 50/58, dev2 25/27, **dev3 23/23** |
+| frame arrival | unaffected — this is downstream of the socket | **101/101 on all 8 legs, 0% loss** |
+| queueing | messages wait behind the holder | **max 31173ms** — a message sat 31s waiting its turn |
+
+Nothing was dropped by the transport. Every frame arrived. The messages did not get
+persisted **because the receive path was stuck waiting on an HTTP call whose failure
+it already treats as harmless.**
+
+### ⚠️ Three things this run does NOT establish — read before quoting it
+
+1. **The harness overstates the blast radius, and by a lot.** All five bots share
+   one process and therefore one `dmRatchetMutex` singleton, and DM
+   conversationIds are `<partner>/<partner>` — so **all four of A's devices
+   contend on the same key** (bob's address). The `slowest:` list shows only
+   **two** distinct keys across five bots, confirming it. In production each
+   device is a separate browser with its own lock, so one device's stalled ack
+   stalls *that device*, not all four. The per-device degradation ladder here
+   (97 → 50 → 25 → 23) is largely a harness artifact. **The mechanism is real;
+   this run's magnitude is not a production estimate.**
+2. **This is very probably LATENCY, not loss** — as §3 of the bug insisted it
+   would be. 50 injections × 30s ≈ 1500s of cumulative stall across 2 lock keys,
+   against a 300s settle: the backlog *could not* have drained in the window.
+   The missing messages were almost certainly still queued when counting stopped.
+   Distinguishing permanently-lost from very-late needs a settle longer than the
+   injected stall budget, and this run cannot do it.
+3. **It does not explain the field symptom.** The defect is desktop-only (§6 of
+   the bug verifies mobile does not have it), and the field's worst cases are
+   mobile→desktop and mobile↔mobile. It required a 30s injected stall to fire.
+   **Do not let this absorb quorum-mobile#183 item 2.**
+
+**What it does establish** is worth stating plainly: a latent defect that was
+argued from code reading is now a measured behaviour, the fix has an acceptance
+test that can actually fail (re-run this injection after the fix; expect no
+`30-55s` holds and no tails), and the bug is no longer a hypothesis competing for
+attention with the field investigation — it can be fixed and closed on its own
+evidence.
 
 ### Mobile harness (`quorum-mobile`, `yarn harness:dm`)
 

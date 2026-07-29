@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Desktop DM receive holds the per-conversation ratchet lock across relay HTTP, so one slow ack stalls the whole conversation"
-status: OPEN — MECHANISM IDENTIFIED BY CODE READING; THE CONFIRMATION RUN WAS TAKEN 2026-07-29 AND WAS A NULL. The receive path awaits `deleteInboxMessages` / `ackProcessedFrame` (POST `/inbox/delete`, 22s mutate timeout, retried ×3) INSIDE `dmRatchetMutex.runExclusive(conversationId, …)`, so a single slow ack blocks every message on that conversation, in BOTH directions, for up to ~69s (see §1). A 4-device bench run showed one device persisting 52/100 messages while all 101 frames arrived and nothing failed to decrypt — consistent with this, but that run may have been taken against a degrading relay (see §4). ⚠️ **§5 has now been run against a verified-healthy relay and everything was clean: 100/100 on every device, and the lock histogram showed 1065 holds all under 555ms with none in the 15s+ buckets (§5-RESULT).** That does not refute §1, which is a reading of the source — it shows the coupling does not bite when the relay is fast, so a clean-relay run cannot settle this either way. Mobile does NOT have this shape and its pattern is the proposed fix (§6).
+status: OPEN — ✅ **MECHANISM CONFIRMED BY MEASUREMENT 2026-07-29** via fault injection (§5-CONFIRMED). Stalling `/inbox/delete` by 30s on 1 call in 20 produced every predicted signature: lock holds in the `30-55s` bucket (max 31260ms), messages queued up to 31173ms, persistence collapsing to `CONTIGUOUS TAIL` gaps on every device with **zero** scattered gaps, while all 8 frame legs still arrived 101/101. The fix (§6) is now justified on evidence and has an acceptance test that can fail. ⚠️ Two clean healthy-relay runs preceded it and proved nothing either way — see §5-RESULT for why, and §5-CONFIRMED's caveats before quoting the magnitude (the harness shares one lock across all four devices, so its blast radius is inflated; and this is almost certainly latency, not permanent loss). The receive path awaits `deleteInboxMessages` / `ackProcessedFrame` (POST `/inbox/delete`, 22s mutate timeout, retried ×3) INSIDE `dmRatchetMutex.runExclusive(conversationId, …)`, so a single slow ack blocks every message on that conversation, in BOTH directions, for up to ~69s (see §1). A 4-device bench run showed one device persisting 52/100 messages while all 101 frames arrived and nothing failed to decrypt — consistent with this, but that run may have been taken against a degrading relay (see §4). ⚠️ **§5 has now been run against a verified-healthy relay and everything was clean: 100/100 on every device, and the lock histogram showed 1065 holds all under 555ms with none in the 15s+ buckets (§5-RESULT).** That does not refute §1, which is a reading of the source — it shows the coupling does not bite when the relay is fast, so a clean-relay run cannot settle this either way. Mobile does NOT have this shape and its pattern is the proposed fix (§6).
 created: 2026-07-28
 severity: medium — user-visible "messages not arriving" on desktop; likely LATENCY not permanent loss (§3), degrades with device count. ⚠️ NOT revisited after the 2026-07-28 review tripled the stall bound from 22s to ~69s: a conversation frozen for over a minute is closer to "broken" than "slow" from a user's seat, so re-rate this if §5 confirms the mechanism.
 repo: quorum-desktop (mobile verified NOT affected — §6)
@@ -233,6 +233,69 @@ experiment, not evidence the coupling fired.
 
 **Severity re-rating deferred.** The §-header warning asks for a re-rate if §5
 confirms the mechanism. It did not, so `medium` stands unchanged.
+
+## §5-CONFIRMED. ✅ Fault injection, 2026-07-29 — every predicted signature fired
+
+The two clean runs above could not decide this, because a lock held across a *fast*
+POST looks identical to a lock not held across a POST at all. So the trigger was
+supplied: `HARNESS_FAULT_DELETE_DELAY_MS=30000 HARNESS_FAULT_DELETE_RATE=0.05`
+stalls a deterministic 1-in-20 of `/inbox/delete` calls by 30s
+(`harness/transport.ts`, off unless set). Same 4 devices, same 100 rounds, 300s
+settle. Run log `2026-07-29T06-19-55-844Z-dm-multidevice.jsonl`. 50 of 1016 calls
+were stalled.
+
+```
+FRAME LEVEL   all 8 legs: 101/101 arrived, 0.0% loss      <- transport untouched
+PERSISTED     dev0 97/100   dev1 50/100 & 58/100
+              dev2 25/100 & 27/100   dev3 23/100 & 23/100   bob 85/100
+GAP SHAPE     CONTIGUOUS TAIL on every device, every direction. ZERO scattered.
+LOCK          n=5745  p50=15ms  p90=29ms  p99=242ms  max=31260ms
+                <100ms  5382 | 100ms-1s 349 | 1-5s 4 | 30-55s ⚠ 2 attempts  10
+              slowest: 31260ms, 30690ms, 30439ms, 30374ms, 30329ms
+QUEUEING      p50=0ms  max=31173ms                      <- a message waited 31s
+```
+
+Against §5's own criteria, in order:
+
+1. **§5.1 re-run with a trigger** — persistence collapsed while arrival stayed
+   perfect. The failure sits exactly where §1 says it does: between the socket and
+   `saveMessage`.
+2. **§5.2 gap shape** — **`CONTIGUOUS TAIL` on every device in every direction,
+   not one scattered gap.** This is the criterion that discriminates backlog from
+   per-message drops, and it came back unanimously for backlog. Both directions of
+   a device stop at nearly the same message (dev3: 23 and 23; dev2: 25 and 27) —
+   the one-lock-per-conversation prediction.
+3. **§5.3 lock histogram** — the injected 30s appears *as lock hold time*. Ten
+   holds in `30-55s` with a max of 31260ms. The lock is demonstrably held across
+   the HTTP call. This is the direct measurement §5.3 was built for.
+
+### ⚠️ What this does NOT license
+
+- **The magnitude is a harness artifact.** `dmRatchetMutex` is a process-wide
+  singleton and DM conversationIds are `<partner>/<partner>`, so all four of A's
+  devices contend on ONE key (bob's address) — the `slowest:` list shows only two
+  distinct keys for five bots. In production each device is a separate browser
+  with its own lock, so a stalled ack stalls that device alone. The 97→50→25→23
+  ladder is largely bots blocking each other. **Cite the mechanism, not the
+  numbers.**
+- **This is almost certainly latency, not loss** — as §3 insisted. 50 × 30s ≈
+  1500s of stall across 2 keys versus a 300s settle: the backlog could not have
+  drained before counting stopped. Proving permanence needs a settle longer than
+  the injected stall budget.
+- **It still does not explain the field symptom** (§7 stands). Desktop-only, and
+  it needed an injected 30s stall to fire. Do not let it absorb
+  quorum-mobile#183 item 2.
+- **bob's 246 novel decrypt failures** are unexplained by this bug and are
+  probably the known reorder/stale-bucket class, provoked by frames being
+  redelivered while the session advanced. Worth a look, not part of this finding.
+
+### The fix now has an acceptance test that can fail
+
+Re-run the identical injection after applying §6. Expected: **no holds in
+`30-55s`, no contiguous tails, persistence back to 100/100.** That is a real
+before/after, and it is only obtainable with injection — on a healthy relay the
+before and after are both green, which is what made the first two runs
+uninformative.
 
 ## §6. ✅ Mobile is NOT affected — and its pattern is the fix
 
