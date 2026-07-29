@@ -45,6 +45,30 @@ const samples: LockSample[] = [];
 let installedAt = 0;
 
 /**
+ * Critical sections that have STARTED and not yet returned.
+ *
+ * ⚠️ This exists because `samples` structurally cannot show a deadlock. A sample
+ * is pushed in a `finally`, so a critical section that never returns is never
+ * sampled — which means `max=…` only ever reports "the longest hold that
+ * COMPLETED". On 2026-07-29 a run showed `max=412ms` while one device had stopped
+ * persisting entirely; that number was not evidence the lock was healthy, it was
+ * evidence about the holds that finished.
+ *
+ * A permanently-held lock produces a very specific signature: both directions of
+ * one conversation stop at the same instant, forever, while the socket keeps
+ * receiving. `KeyedMutex`'s own docs warn about it as a circular wait. This map is
+ * what turns that hypothesis into a yes/no.
+ */
+interface InFlightHold {
+  key: string;
+  startedAt: number;
+  /** ms since probe install, so it can be lined up against the run timeline. */
+  t: number;
+}
+const inFlight = new Map<number, InFlightHold>();
+let holdSeq = 0;
+
+/**
  * Wrap the shared mutex once per process. Idempotent: the singleton is shared by
  * every bot in this process, so a second install would double-count every hold.
  */
@@ -59,9 +83,15 @@ export function installLockProbe(): LockSample[] {
       const queuedAt = Date.now();
       return original(key, async () => {
         const startedAt = Date.now();
+        // Registered BEFORE the body runs and removed in `finally`, so anything
+        // still here at the end of the run never returned. That is the only way
+        // to see a deadlock — `samples` below cannot, by construction.
+        const holdId = ++holdSeq;
+        inFlight.set(holdId, { key, startedAt, t: startedAt - installedAt });
         try {
           return await fn();
         } finally {
+          inFlight.delete(holdId);
           // Recorded in `finally` so a throwing critical section still reports its
           // hold — the delete-conversation and give-up paths RETHROW (bug §1), and
           // those are exactly the holds worth seeing.
@@ -120,4 +150,42 @@ export function summariseLockHolds(all: LockSample[]): string[] {
       `max=${waited[waited.length - 1]}ms`
   );
   return lines;
+}
+
+/**
+ * Critical sections still outstanding — the DEADLOCK report.
+ *
+ * Call at the very end of a run. Anything listed here entered
+ * `dmRatchetMutex.runExclusive` and never came back, which means every later
+ * message on that `conversationId` is blocked forever. A DM's two directions share
+ * one conversationId, so a single entry here explains BOTH directions of that
+ * conversation stopping at the same instant.
+ *
+ * Empty is the expected result. A non-empty list is the strongest possible
+ * evidence for the stall class this investigation has been chasing, because
+ * unlike a missing-message count it names the lock, the moment, and the fact that
+ * it never released.
+ */
+export function summariseOutstandingHolds(): string[] {
+  if (inFlight.size === 0) {
+    return ['outstanding critical sections: NONE (no lock was still held at the end)'];
+  }
+  const now = Date.now();
+  const lines = [
+    `⛔ OUTSTANDING CRITICAL SECTIONS: ${inFlight.size} — these NEVER returned.`,
+    `   Every later message on these conversationIds is blocked permanently.`,
+  ];
+  for (const { key, startedAt, t } of [...inFlight.values()].sort((a, b) => a.startedAt - b.startedAt)) {
+    lines.push(
+      `   held ${Math.round((now - startedAt) / 1000)}s and counting on ${key.slice(0, 24)} ` +
+        `(acquired at t+${Math.round(t / 1000)}s)`
+    );
+  }
+  return lines;
+}
+
+/** Reset between scenarios in one process — the mutex wrap itself stays installed. */
+export function resetLockProbe(): void {
+  samples.length = 0;
+  inFlight.clear();
 }

@@ -305,6 +305,135 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
+### ⭐⭐⭐ 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | `dm-multidevice` **canonical** | **aged account A** with 2 harness devices (`user-a` + the new `user-a-obs`) + `user-b`, 200 rounds, 700ms gap, **600s settle**, relay healthy, **no fault injected**, lock fix in place | arrival + decrypt + **persistence** | **all 4 frame legs 201/201, 0% loss.** bob 200/200, dev0 200/200 — but **`user-a-obs` persisted 100/200 in BOTH directions**, `CONTIGUOUS TAIL from #101` in both. Decrypt failures dev0=80, dev1=17, bob=46. Lock max 412ms | ⭐ **the operator's ~10-of-200 symptom, on the bench, automated** | run log `2026-07-29T10-07-26` |
+
+**This is the first reproduction that needs no fault injection and no degraded
+relay.** Every frame arrived at the extra device's socket — 201/201 on both its
+legs — and it persisted exactly half of them, stopping dead at message #101 in
+both directions simultaneously and never recovering across a **10-minute** tail.
+
+**Reading the shape:**
+
+- **Both directions stop at the same number.** Sends alternate on a 700ms gap, so
+  `#101` in each direction is the *same instant* — roughly 70s into the send loop.
+  This is one event at one moment, not two independent failures.
+- **It is not latency.** 600s of settle with frames still arriving and nothing
+  further persisted. §3's "a longer tail recovers them" does not hold here.
+- **It is not the ratchet-lock-across-HTTP bug** (that is fixed and shipped), and
+  not relay degradation (relay verified healthy, no injection).
+- **The socket stayed alive.** `transport.arrived` recorded all 201 frames per leg
+  *after* the device stopped persisting. So the failure is downstream of arrival
+  and downstream of the socket, in the receive pipeline itself.
+- **Aged account is the differentiating variable.** The identical shape on a
+  *fresh* 4-device account was clean (100/100 everywhere, same day, same code).
+
+### ✅ Deadlock RULED OUT, and the reproduction is deterministic
+
+**Second canonical run, 2026-07-29 (log `2026-07-29T10-35-59`), with both new
+detectors armed:**
+
+```
+outstanding critical sections: NONE (no lock was still held at the end)
+no bot has a stuck inbound frame
+```
+
+Neither the ratchet lock nor any handler invocation was outstanding. **The
+deadlock hypothesis below is dead**, and so is the broader "something hung"
+reading. Kept here because the reasoning was sound and the instrument that killed
+it is the useful artifact.
+
+**And the reproduction is exact:**
+
+| | run 1 | run 2 |
+|---|---|---|
+| dev1 persisted | 100/200 both directions | **100/200 both directions** |
+| tail begins | #101 | **#101** |
+| decrypt failures dev0/dev1/bob | 80 / 17 / 46 | 102 / 33 / 25 |
+
+Identical counts twice rules out a race. **The handler RETURNS for messages #101
+onward — they are processed and silently discarded, not stalled.** That is a
+different bug class from everything this investigation has assumed so far, and it
+retires the "backlog, a longer tail recovers them" reading (§3 of the solved lock
+bug) for this failure.
+
+**Two readings of the number, and they predict different things:**
+
+1. **A ceiling** — dev1 persisted exactly 200 messages (100 + 100) and stopped.
+2. **Proportional** — it stopped at exactly the halfway point; and the 07-28
+   fresh-account 4-device run showed **52/100**, also about half.
+
+Discriminated by re-running at 100 rounds: **~50/100 ⇒ proportional (time or
+rate); 100/100 ⇒ a ceiling near 200.**
+
+### ⚠️ The lock histogram CANNOT rule out a deadlock — it only sees holds that finished
+
+`installLockProbe` records a sample in a `finally` block (`lock-probe.ts:65-74`).
+**A critical section that never returns never reaches that `finally`, so it is
+never sampled.** `max=412ms` therefore means "the longest hold that *completed*
+was 412ms" — it says nothing about a hold still outstanding when the run ended.
+
+That matters because a permanently-held `dmRatchetMutex` on one `conversationId`
+would produce precisely this signature: both directions of that conversation stop
+at one instant, permanently, while the socket keeps receiving. `KeyedMutex`'s own
+documentation warns about exactly this failure mode — *"waiting for delivery
+inside the lock is a circular wait"*.
+
+**Deadlock is therefore a live hypothesis that our current instrument is blind to,
+and the cheapest next step is to make it visible:** track holds at *acquire* time
+and report any still outstanding at the end of the run, rather than only those
+that released.
+
+⚠️ **Harness-vs-product is NOT yet settled.** All three bots share one Node
+process and the harness serializes inbound dispatch through a single promise chain
+(`transport.ts` `dispatch()`), so one handler invocation that never settles would
+stall that bot's entire queue forever — matching the shape exactly. The browser
+serializes per inbox too (`processInbound`), so the mechanism is plausible in the
+app, but this run cannot distinguish "product deadlock" from "harness-only hang".
+**Do not report this upstream until that is separated.**
+
+### ⭐ Persistence on AGED accounts (`dm-loss` canonical) — closes one of two blind cells
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | `dm-loss` canonical | **the operator's real aged multi-device accounts**, 200 rounds, 700ms gap, **600s settle**, per-message persistence counted for the first time | arrival **and** persistence | **frames 201/201 each way, 0%. Persisted: bob 200/200, alice 200/200.** 6 novel decrypt failures total, all healed. Fan-out **2412 frames for 201 messages (~12:1)** | **aged session state does NOT break persistence on the peer channel.** Concentrates suspicion on the fan-out channel | run log `2026-07-29T09-44-43` |
+
+**Why this run existed.** `dm-loss` had only ever counted frames, plus a running
+`posts decrypted` tally that could not say *which* message went missing. So on the
+canonical accounts it reported 201/201 / 0% while the operator watched those same
+accounts' other devices receive ~10 of 200 — it was never asking the question.
+Per-message persistence accounting now makes it ask.
+
+**The answer is clean**, and that is informative rather than disappointing: it
+removes "aged session state corrupts persistence" as an explanation. Frames arrive,
+decrypt, and get persisted correctly on aged accounts, over a 10-minute tail.
+
+### ⚠️ The blind cell that REMAINS, and it is the one that matches the observation
+
+This run measured the **peer** channel. The operator's observation was about the
+**fan-out** channel — messages reaching their *other* devices.
+
+| channel | fresh accounts | **aged accounts** |
+|---|---|---|
+| peer — frames | ✅ clean | ✅ clean |
+| peer — **persistence** | ✅ clean | ✅ **clean (this run)** |
+| fan-out — frames | ✅ clean | ✅ clean |
+| fan-out — **persistence** | ✅ clean (4 devices) | ❌ **NEVER MEASURED** |
+
+The amplification is the tell: **2412 frames went out for 201 messages**, and only
+320 landed on inboxes this bench subscribes to. The other ~2100 went to the
+operator's real devices and are unobserved — "unobserved, not observed-good", the
+same structural blindness recorded against run 2.
+
+**Reaching that last cell needs a second harness bot registered as a device on the
+aged account A**, which mints one permanent extra device registration there (stable
+bot name, so it is minted once and reused). That is the cost the trap list warns
+about, it is bounded, and it is the only automated route left to the operator's
+actual symptom. Everything cheaper has now been run.
+
 ### ⭐ Cross-platform (`dm-cross`) — the last empty cell in the 2×2
 
 | when | run | configuration | class | result | what it changed | source |

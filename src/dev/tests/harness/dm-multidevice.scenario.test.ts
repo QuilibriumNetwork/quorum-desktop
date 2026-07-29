@@ -21,23 +21,32 @@
 // frames from its join by design ("unobserved, not observed-good"), so it was
 // structurally blind to the channel that was failing.
 //
-// ── What this scenario refuses to do ────────────────────────────────────────
+// ── Accounts: throwaway by default, canonical only on purpose ───────────────
 //
-// It does NOT use the canonical accounts. They already carry 5+ device
-// registrations, and createBot mints a NEW device per bot NAME and merges it into
-// the registration (identity.ts:141-153). Running this there would permanently add
-// devices to shared accounts and fan out to ghost inboxes we cannot observe —
-// confounding the exact variable being isolated. Instead the account is generated
-// here and thrown away.
+// DEFAULT: a generated account, thrown away. The canonical accounts already carry
+// 5+ device registrations, and createBot mints a NEW device per bot NAME and
+// merges it into the registration (identity.ts:141-153) — so running there
+// permanently adds devices to a real account and fans out to inboxes we cannot
+// observe, confounding the variable being isolated. For measuring device COUNT,
+// which is what this scenario was built for, a generated account is strictly
+// better and free.
+//
+// HARNESS_MD_CANONICAL=1 opts into the real aged accounts, for the one question a
+// generated account cannot answer: does fan-out persistence break on an AGED
+// account? That is the last unmeasured cell and the one the operator's ~10-of-200
+// observation lives in. It costs ONE permanent device registration, held to one by
+// stable bot names — see the block at the top of the test body before using it.
 import { existsSync, rmSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { test, expect } from 'vitest';
 import { channel_raw } from '@quilibrium/quilibrium-js-sdk-channels';
 import { createBot, type HarnessBot } from './bot';
 import { config } from './env';
+import { hasCanonicalKeys } from './canonical';
 import { direction, subscribedInboxes } from './loss';
-import { installLockProbe, summariseLockHolds } from './lock-probe';
+import { installLockProbe, summariseLockHolds, summariseOutstandingHolds } from './lock-probe';
 import { deleteFault, makeApiClient } from './transport';
+import { missingReport, postsMatching } from './persistence';
 import { RunLog } from './log';
 
 const ROUNDS = Number(process.env.HARNESS_MD_ROUNDS ?? 20);
@@ -57,47 +66,6 @@ const DEVICES = Math.max(2, Number(process.env.HARNESS_MD_DEVICES ?? 2));
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** Messages of a given text prefix this bot's real code actually persisted. */
-const postsMatching = (bot: HarnessBot, prefix: string) =>
-  new Set(
-    bot.captured
-      .filter((m) => m.content?.type === 'post' && (m.content.text ?? '').startsWith(prefix))
-      .map((m) => m.content?.text as string)
-  );
-
-/**
- * WHICH numbered messages are missing, not just how many.
- *
- * The count alone cannot separate two very different bugs, and the first
- * multi-device run produced exactly the ambiguity: one device persisted 52 of 100
- * in BOTH directions while every frame arrived and nothing failed to decrypt.
- *
- *   a contiguous TAIL missing  ⇒ the device stopped processing at some moment
- *                                (a receive-pipeline stall)
- *   SCATTERED gaps             ⇒ per-message drops
- *   every OTHER one            ⇒ something in dedupe/ordering
- *
- * Those need different investigations, so the run has to say which it is.
- */
-function missingReport(bot: HarnessBot, prefix: string, rounds: number): string {
-  const got = new Set<number>();
-  for (const text of postsMatching(bot, prefix)) {
-    const n = Number(/#(\d+)$/.exec(text)?.[1]);
-    if (Number.isFinite(n)) got.add(n);
-  }
-  const missing: number[] = [];
-  for (let i = 1; i <= rounds; i++) if (!got.has(i)) missing.push(i);
-  if (missing.length === 0) return 'none';
-
-  // Contiguous tail? i.e. everything from some point on is absent.
-  const isTail = missing[missing.length - 1] === rounds && missing.length === rounds - missing[0] + 1;
-  const shape = isTail
-    ? `CONTIGUOUS TAIL from #${missing[0]} — looks like the device STOPPED`
-    : `scattered (${missing.length} gaps, first #${missing[0]}, last #${missing[missing.length - 1]})`;
-  const sample = missing.slice(0, 24).join(',') + (missing.length > 24 ? ',…' : '');
-  return `${shape}  missing=[${sample}]`;
-}
-
 test(
   'dm-multidevice: an N-device account, per-device arrival',
   async () => {
@@ -116,11 +84,44 @@ test(
     // and it reports even on a run where nothing is lost.
     const lockSamples = installLockProbe();
 
-    // One generated account, handed to two bots. createBot takes the ACCOUNT from
+    // ── CANONICAL MODE (HARNESS_MD_CANONICAL=1) ─────────────────────────────
+    //
+    // Runs this scenario against the operator's REAL aged accounts instead of a
+    // generated throwaway, to reach the one cell nothing has measured:
+    // **fan-out persistence on an aged account**. Everything cheaper is already
+    // green — peer-channel persistence is clean on aged accounts (dm-loss
+    // canonical, 200/200 both ways), and fan-out persistence is clean on fresh
+    // accounts at 4 devices.
+    //
+    // ⚠️ COSTS ONE PERMANENT DEVICE REGISTRATION on account A, and there is no
+    // way to take it back: `deregister` does not exist (see
+    // `tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md`,
+    // status PLAN — not started). Authorised by the operator 2026-07-29.
+    //
+    // The cost is held to exactly ONE by using STABLE bot names. `createBot` mints
+    // a device per bot NAME and merges it into the registration
+    // (identity.ts:141-153), so a timestamped name would mint a NEW device on
+    // every run — which is precisely what the trap list warns about. Here:
+    //   dev0 = `user-a`      — already registered by earlier dm-loss runs
+    //   dev1 = `user-a-obs`  — the ONE new device, the observer, reused forever
+    //   peer = `user-b`      — already registered
+    // Re-running this scenario therefore adds nothing further.
+    const useCanonical = process.env.HARNESS_MD_CANONICAL === '1';
+    if (useCanonical && !hasCanonicalKeys()) {
+      throw new Error(
+        'HARNESS_MD_CANONICAL=1 but BOT_A_PRIVATE_KEY/BOT_B_PRIVATE_KEY are not set ' +
+          'in src/dev/tests/harness/.env.local'
+      );
+    }
+
+    // One account, handed to several bots. createBot takes the ACCOUNT from
     // privateKeyHex and the DEVICE from name, so this is genuinely one user with
-    // two devices — not two users.
-    const kp = JSON.parse(channel_raw.js_generate_ed448()) as { private_key: number[] };
-    const KEY_A = Buffer.from(kp.private_key).toString('hex');
+    // several devices — not several users.
+    const KEY_A = useCanonical
+      ? config.botKeys.A
+      : Buffer.from(
+          (JSON.parse(channel_raw.js_generate_ed448()) as { private_key: number[] }).private_key
+        ).toString('hex');
     // ed448 private keys are 57 bytes. Measured, not read off a spec sheet — two
     // earlier guesses at this length in this investigation were both wrong.
     expect(KEY_A).toHaveLength(114);
@@ -130,16 +131,22 @@ test(
     // (identity.ts:141-153). Concurrent creation silently drops one device, and the
     // scenario would then measure a one-device account while claiming otherwise.
     // This is also why the loop below awaits each createBot in turn.
+    // Canonical mode is pinned to exactly two A-devices — the already-registered
+    // `user-a` plus ONE new observer — because every extra name here is another
+    // permanent device on a real account. Throwaway mode is unconstrained.
+    const deviceNames = useCanonical
+      ? ['user-a', 'user-a-obs']
+      : Array.from({ length: DEVICES }, (_, d) => `md-a-dev${d}-${stamp}`);
+    const nDevices = deviceNames.length;
     const botNames: string[] = [];
     const aDevices: HarnessBot[] = [];
-    for (let d = 0; d < DEVICES; d++) {
-      const name = `md-a-dev${d}-${stamp}`;
+    for (const name of deviceNames) {
       botNames.push(name);
       aDevices.push(await createBot(name, { privateKeyHex: KEY_A }));
     }
-    const bobName = `md-b-${stamp}`;
+    const bobName = useCanonical ? 'user-b' : `md-b-${stamp}`;
     botNames.push(bobName);
-    const bob = await createBot(bobName);
+    const bob = await createBot(bobName, useCanonical ? { privateKeyHex: config.botKeys.B } : {});
 
     // Device 0 is the sender; every other device of account A should receive a
     // self-sync copy of what it sends, and a copy of everything bob sends.
@@ -147,10 +154,10 @@ test(
     const others = aDevices.slice(1);
 
     say(
-      `account A=${sender.identity.address.slice(0, 12)} with ${DEVICES} device(s): ` +
+      `account A=${sender.identity.address.slice(0, 12)} with ${nDevices} harness device(s): ` +
         aDevices.map((b, i) => `dev${i}=${b.identity.inboxAddress.slice(0, 10)}`).join(' ') +
         `  bob=${bob.identity.address.slice(0, 12)}`,
-      { devices: DEVICES }
+      { devices: nDevices, mode: useCanonical ? 'canonical' : 'throwaway' }
     );
 
     // ── STEP 1: prove the premise before measuring anything ──────────────────
@@ -190,7 +197,7 @@ test(
       expect(registeredInboxes).toContain(b.identity.inboxAddress); // this DEVICE is registered
     }
     // Every device distinct — catches a name collision silently reusing a keyset.
-    expect(new Set(aDevices.map((b) => b.identity.inboxAddress)).size).toBe(DEVICES);
+    expect(new Set(aDevices.map((b) => b.identity.inboxAddress)).size).toBe(nDevices);
 
     await Promise.all([...aDevices.map((b) => b.start()), bob.start()]);
 
@@ -303,6 +310,34 @@ test(
       faultInjected: deleteFault.injected,
     });
     for (const line of summariseLockHolds(lockSamples)) say(line);
+
+    // ── THE DEADLOCK REPORT ─────────────────────────────────────────────────
+    //
+    // The histogram above CANNOT show a deadlock: its samples are pushed in a
+    // `finally`, so a critical section that never returns is never sampled and
+    // `max=` only ever describes holds that COMPLETED. These two reports are the
+    // ones that can say "something is still stuck", and together they localise it:
+    // outstanding in BOTH ⇒ the ratchet lock; stuck frames only ⇒ a hang elsewhere
+    // in handleNewMessage.
+    say('');
+    say('==== STILL STUCK AT END OF RUN (deadlock detector) ====');
+    for (const line of summariseOutstandingHolds()) say(line);
+    for (const [i, b] of [...aDevices, bob].entries()) {
+      const stuck = b.transport.stuckFrames();
+      const who = i < aDevices.length ? `dev${i}` : 'bob';
+      if (stuck.length === 0) continue;
+      say(
+        `⛔ ${who}: ${stuck.length} inbound frame(s) never finished processing — ` +
+          `this bot's queue is blocked permanently`,
+        { bot: who, stuck: stuck.length }
+      );
+      for (const f of stuck.slice(0, 3)) {
+        say(`   fp=${f.fp} inbox=${f.inbox.slice(0, 16)} stuck ${Math.round(f.stuckMs / 1000)}s`);
+      }
+    }
+    if ([...aDevices, bob].every((b) => b.transport.stuckFrames().length === 0)) {
+      say('no bot has a stuck inbound frame');
+    }
     console.log(`[dm-md] log: ${log.file}`);
 
     for (const b of aDevices) b.stop();
@@ -311,9 +346,17 @@ test(
     // Each run mints a throwaway account and one state file per bot. Nothing
     // accumulates on an account that matters, but the directory would grow without
     // bound, so the scenario removes what it created.
-    for (const name of botNames) {
-      const p = resolve(config.stateDir, `${name}.json`);
-      if (existsSync(p)) rmSync(p, { force: true });
+    // ⚠️ NEVER in canonical mode. These .state files hold the DEVICE KEYSETS of
+    // real registrations on a real account. Deleting one does not remove the
+    // device — nothing can, `deregister` is unimplemented — it orphans it into an
+    // unreachable ghost AND makes the next run mint yet another device under the
+    // same name. One deleted file would turn a bounded one-device cost into an
+    // unbounded one.
+    if (!useCanonical) {
+      for (const name of botNames) {
+        const p = resolve(config.stateDir, `${name}.json`);
+        if (existsSync(p)) rmSync(p, { force: true });
+      }
     }
 
     // The run IS the measurement, so the assertions are deliberately weak: they

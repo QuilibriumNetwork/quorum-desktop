@@ -34,6 +34,7 @@ import { createBot, type HarnessBot } from './bot';
 import { createCanonicalPair, hasCanonicalKeys } from './canonical';
 import { WsTransport } from './transport';
 import { direction, subscribedInboxes } from './loss';
+import { missingReport, persistedNumbers } from './persistence';
 import { RunLog } from './log';
 
 const ROUNDS = Number(process.env.HARNESS_LOSS_ROUNDS ?? 40);
@@ -161,6 +162,26 @@ test(
         { direction: label, ...d });
     }
     say(`posts decrypted: alice=${aPosts} bob=${bPosts}`);
+
+    // ── MESSAGE-LEVEL, the question the frame counts above cannot answer ─────
+    //
+    // `posts decrypted` is a running tally, so it cannot say WHICH message went
+    // missing, and on multi-device accounts it also counts self-sync copies. That
+    // is why this scenario reported 201/201 / 0% on the canonical accounts while
+    // the operator watched the same accounts' other devices receive ~10 of 200:
+    // nothing here was ever counting per-message persistence.
+    //
+    // These two lines are the whole point of running this on aged accounts:
+    // "of the N messages the peer sent, how many did this bot's real code
+    // actually persist, and are the absences a stall or scattered drops?"
+    const bGot = persistedNumbers(bob, 'A->B');
+    const aGot = persistedNumbers(alice, 'B->A');
+    say('');
+    say('==== MESSAGE-LEVEL, PERSISTED (not frames, not rendered) ====');
+    say(`bob   persisted A->B : ${bGot.size}/${ROUNDS}`, { bobPersisted: bGot.size });
+    if (bGot.size < ROUNDS) say(`   bob A->B gaps: ${missingReport(bob, 'A->B', ROUNDS)}`);
+    say(`alice persisted B->A : ${aGot.size}/${ROUNDS}`, { alicePersisted: aGot.size });
+    if (aGot.size < ROUNDS) say(`   alice B->A gaps: ${missingReport(alice, 'B->A', ROUNDS)}`);
     say(`decrypt failures — NOVEL (the only ones worth quoting): ` +
       `alice=${alice.novelErrors().length} bob=${bob.novelErrors().length}   ` +
       `replays (expected refusals): alice=${alice.errors.length - alice.novelErrors().length} ` +
