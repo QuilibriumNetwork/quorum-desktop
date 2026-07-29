@@ -44,6 +44,7 @@
     "test": "vitest",
     "test:run": "vitest --run",
     "harness": "vitest --run --config vitest.harness.config.ts",
+    "harness:cross": "node src/dev/tests/harness/run-cross.mjs",
     "mobile": "cd mobile && expo start --dev-client",
     "mobile:clear": "cd mobile && expo start --dev-client --clear",
     "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
