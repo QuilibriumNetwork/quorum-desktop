@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Desktop DM receive holds the per-conversation ratchet lock across relay HTTP, so one slow ack stalls the whole conversation"
-status: OPEN — ✅ **MECHANISM CONFIRMED BY MEASUREMENT 2026-07-29** via fault injection (§5-CONFIRMED). Stalling `/inbox/delete` by 30s on 1 call in 20 produced every predicted signature: lock holds in the `30-55s` bucket (max 31260ms), messages queued up to 31173ms, persistence collapsing to `CONTIGUOUS TAIL` gaps on every device with **zero** scattered gaps, while all 8 frame legs still arrived 101/101. The fix (§6) is now justified on evidence and has an acceptance test that can fail. ⚠️ Two clean healthy-relay runs preceded it and proved nothing either way — see §5-RESULT for why, and §5-CONFIRMED's caveats before quoting the magnitude (the harness shares one lock across all four devices, so its blast radius is inflated; and this is almost certainly latency, not permanent loss). The receive path awaits `deleteInboxMessages` / `ackProcessedFrame` (POST `/inbox/delete`, 22s mutate timeout, retried ×3) INSIDE `dmRatchetMutex.runExclusive(conversationId, …)`, so a single slow ack blocks every message on that conversation, in BOTH directions, for up to ~69s (see §1). A 4-device bench run showed one device persisting 52/100 messages while all 101 frames arrived and nothing failed to decrypt — consistent with this, but that run may have been taken against a degrading relay (see §4). ⚠️ **§5 has now been run against a verified-healthy relay and everything was clean: 100/100 on every device, and the lock histogram showed 1065 holds all under 555ms with none in the 15s+ buckets (§5-RESULT).** That does not refute §1, which is a reading of the source — it shows the coupling does not bite when the relay is fast, so a clean-relay run cannot settle this either way. Mobile does NOT have this shape and its pattern is the proposed fix (§6).
+status: ✅ **FIXED AND VALIDATED 2026-07-29** on branch `fix/dm-receive-lock-across-http` — awaiting review/merge, NOT yet deployed. Under 66 injected 30s relay stalls the fixed build kept **100/100 on every device in both directions, zero decrypt failures, no gaps, max lock hold 562ms** (§8). ⚠️ The first fix — freeing the ratchet lock only — passed the unit suite and cut lock holds 48× **while the messages still vanished**; the real constraint turned out to be broader than §1 states: `processInbound` awaits `handleNewMessage` serially per inbox, so *any* awaited relay call in that handler is a head-of-line block. Eight more sites outside the lock had to go too. Mobile never had this and needs nothing. Below is the original analysis, kept as written: **MECHANISM CONFIRMED BY MEASUREMENT 2026-07-29** via fault injection (§5-CONFIRMED). Stalling `/inbox/delete` by 30s on 1 call in 20 produced every predicted signature: lock holds in the `30-55s` bucket (max 31260ms), messages queued up to 31173ms, persistence collapsing to `CONTIGUOUS TAIL` gaps on every device with **zero** scattered gaps, while all 8 frame legs still arrived 101/101. The fix (§6) is now justified on evidence and has an acceptance test that can fail. ⚠️ Two clean healthy-relay runs preceded it and proved nothing either way — see §5-RESULT for why, and §5-CONFIRMED's caveats before quoting the magnitude (the harness shares one lock across all four devices, so its blast radius is inflated; and this is almost certainly latency, not permanent loss). The receive path awaits `deleteInboxMessages` / `ackProcessedFrame` (POST `/inbox/delete`, 22s mutate timeout, retried ×3) INSIDE `dmRatchetMutex.runExclusive(conversationId, …)`, so a single slow ack blocks every message on that conversation, in BOTH directions, for up to ~69s (see §1). A 4-device bench run showed one device persisting 52/100 messages while all 101 frames arrived and nothing failed to decrypt — consistent with this, but that run may have been taken against a degrading relay (see §4). ⚠️ **§5 has now been run against a verified-healthy relay and everything was clean: 100/100 on every device, and the lock histogram showed 1065 holds all under 555ms with none in the 15s+ buckets (§5-RESULT).** That does not refute §1, which is a reading of the source — it shows the coupling does not bite when the relay is fast, so a clean-relay run cannot settle this either way. Mobile does NOT have this shape and its pattern is the proposed fix (§6).
 created: 2026-07-28
 severity: medium — user-visible "messages not arriving" on desktop; likely LATENCY not permanent loss (§3), degrades with device count. ⚠️ NOT revisited after the 2026-07-28 review tripled the stall bound from 22s to ~69s: a conversation frozen for over a minute is closer to "broken" than "slow" from a user's seat, so re-rate this if §5 confirms the mechanism.
 repo: quorum-desktop (mobile verified NOT affected — §6)
@@ -289,33 +289,79 @@ Against §5's own criteria, in order:
   probably the known reorder/stale-bucket class, provoked by frames being
   redelivered while the session advanced. Worth a look, not part of this finding.
 
-### ⏭️ RESUME HERE (2026-07-29) — the fix is written, its validation run was interrupted
+## §8. ✅ FIXED AND VALIDATED (2026-07-29) — and the first attempt failed, which is the point
 
-Branch `fix/dm-receive-lock-across-http`: `6d4b8005f` (injection tooling) +
-`da24521d3` (the fix). Typecheck clean, **565 unit tests pass across 37 files**.
-The after-measurement was still running when the machine had to be shut down, so
-**the fix is UNVALIDATED — do not merge it on the strength of the unit tests.**
+Branch `fix/dm-receive-lock-across-http`. Three runs, identical parameters, only
+the code changing:
 
-Re-run the identical injection and compare against §5-CONFIRMED's table:
+| | **before** | **partial fix** (lock only) | **complete fix** |
+|---|---|---|---|
+| stalls injected | 50 of 1016 | 42 of 856 | **66 of 1327** (harshest) |
+| lock hold max | 31260ms | 655ms | **562ms** |
+| queued behind lock max | 31173ms | 456ms | **394ms** |
+| holds in `30-55s` | 10 | 0 | **0** |
+| dev0 / dev1 / dev2 / dev3 | 97 / 50 / 25 / 23 | 79 / 38 / 30 / 23 | **100 / 100 / 100 / 100** |
+| bob | 85/100 | 93/100 | **100/100** |
+| novel decrypt failures | 246 (bob) | 121 (bob) | **0 everywhere** |
+| gap shape | `CONTIGUOUS TAIL` | `CONTIGUOUS TAIL` | **none — nothing missing** |
 
-```bash
-HARNESS_MD_DEVICES=4 HARNESS_MD_ROUNDS=100 HARNESS_MD_GAP_MS=700 \
-HARNESS_MD_SETTLE_MS=300000 HARNESS_FAULT_DELETE_DELAY_MS=30000 \
-HARNESS_FAULT_DELETE_RATE=0.05 yarn harness dm-multidevice
+The final run absorbed **66 injected 30-second stalls — over half an hour of
+cumulative relay stall — and lost nothing, delayed nothing, and failed to decrypt
+nothing.**
+
+### ⚠️ The first fix passed every test except the one that mattered
+
+The middle column is the important lesson. Freeing the ratchet lock worked
+*perfectly at what it targeted*: hold times fell 48×, and the `30-55s` bucket
+emptied. Typecheck was clean and all 565 unit tests passed. **And the messages
+still vanished in contiguous tails.** Shipping on that evidence would have closed
+this bug while the user-visible symptom survived untouched.
+
+**The model in §1 was too narrow.** The ratchet lock is not the only serialization
+point, and it is not even the important one. `WebsocketProvider.processInbound`
+(`src/components/context/WebsocketProvider.tsx:77`) guards itself with
+`inboundProcessingRef` and then awaits `handleNewMessage` once per message, in a
+`for` loop, per inbox:
+
+```ts
+for (const message of messages) {
+  await handlerRef.current!(message);   // serial, per inbox
+}
 ```
 
-Check the relay is healthy first (`/` → 404, a known user → 200), run it in the
-background (~10 min), and read the JSONL log, not the console. **Expected: zero
-holds in `30-55s`, no `CONTIGUOUS TAIL` anywhere, persistence back near 100/100.**
-If tails remain, the fix is incomplete — report that rather than explaining it away;
-the injection exists precisely so this test can fail.
+So **any** awaited relay call anywhere in `handleNewMessage` stalls every later
+frame for that inbox — lock or no lock. Verified in the app, not inferred from the
+harness: the browser serializes per inbox exactly as the bench does, which is why
+the bench was faithful here rather than exaggerating.
 
-Next after that: **slice 4, mobile↔desktop on one bench** — the field's worst case
-and the only configuration no bench covers. Design settled 2026-07-29 and it
-deviates from the written spec: two processes paired through mobile's existing file
-rendezvous, NOT the specced single-process bundle (mobile's DM core is deliberately
-un-extracted and lives inside `WebSocketProvider`, and slices 1-3 established that
-two bots cannot share a process). quorum-mobile needs no changes.
+`handleNewMessage` spans ~2400 lines (3416-5808) and held **eight more** awaited
+inbox-deletes outside the critical section. All were the same housekeeping shape.
+`b41df6f7f` dispatches those too; the handler now awaits no inbox-delete anywhere.
+
+**Generalised rule for this file, worth more than the fix:** the constraint is not
+"don't hold the lock across HTTP", it is **"don't await the relay inside
+`handleNewMessage` at all."** The inbound queue is serial per inbox, so every
+`await` in there is a head-of-line block on that inbox.
+
+### A secondary confirmation nobody asked for
+
+Novel decrypt failures went **246 → 121 → 0**. Those were never a separate bug:
+frames backing up behind a stall get redelivered while the session advances, which
+is the reorder/stale-bucket class. Removing the stall removed them. That the
+number fell in lockstep with the tails across three runs is independent evidence
+the mechanism was correctly identified.
+
+### Still true, and still not fixed by this
+
+This is **desktop-only** and does not touch the field symptom (§7 stands). Mobile
+never had the defect — its pattern is what this fix copies — so **quorum-mobile
+needs no change, no PR and no deploy.** The next real target is
+**slice 4, mobile↔desktop on one bench**: the field's worst case and the only
+configuration no bench covers. Design settled 2026-07-29 and it deviates from the
+written spec — two processes paired through mobile's existing file rendezvous, NOT
+the specced single-process bundle (mobile's DM core is deliberately un-extracted
+and lives inside `WebSocketProvider`, and slices 1-3 established two bots cannot
+share a process). quorum-mobile needs no changes for that either.
 
 ### The fix now has an acceptance test that can fail
 

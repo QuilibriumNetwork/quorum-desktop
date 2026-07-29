@@ -225,6 +225,36 @@ nothing.
 > hold, it does not observe what runs inside it, so this is a hint about where to
 > look next and not evidence the coupling fired.
 
+### ⭐⭐ The 07-29 fix validation — and the partial fix that passed every other test
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | `dm-multidevice` + injection | same injection, **lock-only fix applied** | persistence | lock max **655ms** (was 31260ms), queueing **456ms**, zero `30-55s` holds — **but persistence still 79/38/30/23 with `CONTIGUOUS TAIL` everywhere** | ⚠️ **the fix that wasn't.** Freed the lock perfectly and the symptom survived | run log `2026-07-29T06-36-45` |
+| 07-29 | `dm-multidevice` + injection | same injection, **complete fix applied** (all 14 sites) | arrival + decrypt + persistence | **66 of 1327 calls stalled 30s — the harshest fault of any run — and every device persisted 100/100 both directions, bob 100/100, ZERO decrypt failures anywhere, no gaps.** Lock max **562ms** | ✅ **validated.** Over half an hour of cumulative relay stall absorbed with nothing lost or delayed | run log `2026-07-29T08-08-45` |
+
+**The middle row is the one to remember.** Freeing the ratchet lock cut hold times
+48×, emptied the `30-55s` bucket, kept the typecheck clean and passed all 565 unit
+tests — **and the messages still vanished in contiguous tails.** Every signal
+except the one that mattered said "fixed".
+
+The cause: the ratchet lock is not the only serialization point, and not the
+important one. `WebsocketProvider.processInbound` awaits `handleNewMessage`
+serially per inbox, so **any** awaited relay call in that ~2400-line handler is a
+head-of-line block on that inbox — lock or no lock. Eight more awaited
+inbox-deletes lived outside the critical section. Verified against the app's own
+code, not assumed from the bench.
+
+> **The durable rule, worth more than the fix:** not *"don't hold the lock across
+> HTTP"* but **"don't await the relay inside `handleNewMessage` at all."**
+
+Novel decrypt failures fell **246 → 121 → 0** across the three runs, in lockstep
+with the tails. Those were frames backing up behind a stall and being redelivered
+while the session advanced — the known reorder/stale-bucket class, not a separate
+defect. Independent corroboration that the mechanism was correctly identified.
+
+⚠️ Still desktop-only, still does not explain the mobile field loss, and mobile
+needs no change — its pattern is what the fix copies.
+
 ### ⭐⭐ The 07-29 fault-injected run — the lock mechanism, measured
 
 **This is the run that settles the ratchet-lock-across-HTTP question**, and it only
