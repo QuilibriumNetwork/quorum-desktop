@@ -331,6 +331,44 @@ both directions simultaneously and never recovering across a **10-minute** tail.
 - **Aged account is the differentiating variable.** The identical shape on a
   *fresh* 4-device account was clean (100/100 everywhere, same day, same code).
 
+### ✅ Deadlock RULED OUT, and the reproduction is deterministic
+
+**Second canonical run, 2026-07-29 (log `2026-07-29T10-35-59`), with both new
+detectors armed:**
+
+```
+outstanding critical sections: NONE (no lock was still held at the end)
+no bot has a stuck inbound frame
+```
+
+Neither the ratchet lock nor any handler invocation was outstanding. **The
+deadlock hypothesis below is dead**, and so is the broader "something hung"
+reading. Kept here because the reasoning was sound and the instrument that killed
+it is the useful artifact.
+
+**And the reproduction is exact:**
+
+| | run 1 | run 2 |
+|---|---|---|
+| dev1 persisted | 100/200 both directions | **100/200 both directions** |
+| tail begins | #101 | **#101** |
+| decrypt failures dev0/dev1/bob | 80 / 17 / 46 | 102 / 33 / 25 |
+
+Identical counts twice rules out a race. **The handler RETURNS for messages #101
+onward — they are processed and silently discarded, not stalled.** That is a
+different bug class from everything this investigation has assumed so far, and it
+retires the "backlog, a longer tail recovers them" reading (§3 of the solved lock
+bug) for this failure.
+
+**Two readings of the number, and they predict different things:**
+
+1. **A ceiling** — dev1 persisted exactly 200 messages (100 + 100) and stopped.
+2. **Proportional** — it stopped at exactly the halfway point; and the 07-28
+   fresh-account 4-device run showed **52/100**, also about half.
+
+Discriminated by re-running at 100 rounds: **~50/100 ⇒ proportional (time or
+rate); 100/100 ⇒ a ceiling near 200.**
+
 ### ⚠️ The lock histogram CANNOT rule out a deadlock — it only sees holds that finished
 
 `installLockProbe` records a sample in a `finally` block (`lock-probe.ts:65-74`).
