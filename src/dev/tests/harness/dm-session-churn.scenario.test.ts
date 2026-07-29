@@ -15,7 +15,7 @@
 // **Volume without churn, and churn without volume. Never both.** Real accounts
 // have both at once, which is exactly the condition this scenario creates.
 //
-// The defect under test (`bugs/2026-07-29-session-replacement-strands-in-flight-frames.md`):
+// The defect under test (`bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md`):
 // replacing a session mints a NEW receiving inbox and deletes the old state, so
 // frames the peer had already addressed to the OLD inbox arrive with no state and
 // are never persisted. A frame only gets stranded if it is already in the air when

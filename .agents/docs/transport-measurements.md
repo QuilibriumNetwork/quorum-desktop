@@ -388,7 +388,7 @@ removed nothing — which is why zero delete failures appear alongside 366 drops
   it.
 
 Full analysis and the corrections:
-[`bugs/2026-07-29-session-replacement-strands-in-flight-frames.md`](../bugs/2026-07-29-session-replacement-strands-in-flight-frames.md) — **read §7 first**, the original write-up was wrong on its central claim.
+[`bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md`](../bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md) — **read §7 first**, the original write-up was wrong on its central claim.
 
 ### ⭐⭐⭐ 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
 

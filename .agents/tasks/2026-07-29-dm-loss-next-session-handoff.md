@@ -49,7 +49,7 @@ Two real code defects were found and fixed along the way; **neither was the fiel
 symptom**. That ratio is the honest shape of the day and is recorded in the bug
 files rather than smoothed over.
 
-⚠️ `bugs/2026-07-29-session-replacement-strands-in-flight-frames.md` — code
+⚠️ `bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md` — code
 defects real and fixed, **causal claim retired**. Read its §8 then §7 before §1.
 
 ## §3. The operator's four open questions — the actual agenda
