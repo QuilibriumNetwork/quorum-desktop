@@ -66,6 +66,8 @@ const WIPES = Number(process.env.HARNESS_CHURN_WIPES ?? 1);
  * one — and it is the only ordering under which the defect can bite.
  */
 const HOLD = process.env.HARNESS_CHURN_HOLD === '1';
+/** Rounds the receiver stops consuming BEFORE the wipe, so pre-wipe frames queue. */
+const HOLD_LEAD = Number(process.env.HARNESS_CHURN_HOLD_LEAD ?? 5);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -128,13 +130,24 @@ test(
         .send(alice.identity.address, `CHURN-B->A #${i}`)
         .catch((e) => say(`send B->A #${i} threw: ${(e as Error).message}`));
 
+      // ⚠️ The hold must start SEVERAL ROUNDS BEFORE the wipe, not on the same
+      // round. Run 2 held and wiped together and came back 60/60 — because every
+      // frame that queued was sent AFTER the wipe, so they were all init
+      // envelopes to the device inbox and there was not a single pre-wipe
+      // session-inbox frame in the backlog. The test never built the condition it
+      // was meant to test. The whole hypothesis is about frames ALREADY addressed
+      // to the old inbox, so the backlog has to contain some.
+      if (HOLD && wipeRounds.has(i + HOLD_LEAD)) {
+        alice.transport.holdInbound();
+        say(
+          `⏸️  HELD alice's inbound at round #${i} — she is "offline" for the ` +
+            `${HOLD_LEAD} rounds BEFORE the wipe, so pre-wipe frames pile up on her old inbox`
+        );
+      }
+
       if (wipeRounds.has(i)) {
-        // Stop alice consuming BEFORE the wipe, so bob's next frames genuinely
-        // queue instead of being processed on arrival. Without this the window is
-        // ~100ms wide and nothing is ever in flight — measured: run 1 was 60/60.
         if (HOLD) {
-          alice.transport.holdInbound();
-          say(`⏸️  HELD alice's inbound at round #${i} — she is now "offline"`);
+          say(`   (backlog on alice's old session inbox at wipe time: ${alice.transport.heldCount} frame(s))`);
         }
         // Bob forgets its sessions. Its NEXT send therefore carries a fresh init
         // envelope, which makes alice REPLACE her session and mint a new

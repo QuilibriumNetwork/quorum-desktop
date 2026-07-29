@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A session replacement deletes the old encryption state, and every frame already addressed to the old inbox is then dropped AND deleted from the relay — permanent, silent message loss"
-status: OPEN — PARTIALLY CONFIRMED, AND THIS FILE'S ORIGINAL CLAIM WAS WRONG IN ONE IMPORTANT WAY. ⚠️ **Corrected 2026-07-29 after independent adversarial review — read §7 before anything else.** What holds: session replacement orphans the receiving inbox (`MessageService.ts:3593-3616`), and **366 distinct messages** (verified distinct by frame timestamp) hit the no-state branch and were never persisted. What is WRONG: the original claim that those frames are *permanently destroyed*. The `!found` branch signs and addresses its delete with the **device** inbox (`keyset.deviceKeyset.inbox_keyset`, `MessageService.ts:3881`) while the frame sits in a **session** inbox, so it asks the relay to delete from the wrong mailbox and the frame is almost certainly untouched. Messages are **not delivered but probably still recoverable server-side**.
+status: CODE DEFECTS REAL AND MITIGATED (PR #273) — but the CAUSAL CLAIM IS RETIRED. ⚠️ Read §8 first, then §7. Three purpose-built bench runs (`dm-session-churn`) failed to reproduce any loss, including one with a confirmed 10-frame pre-wipe backlog on the orphaned inbox: 60/60 both directions, every time. The 366-drop capture that motivated this file was taken while the harness was re-registering bots on that account, so it is most probably a testing artifact rather than the operator's organic failure. What stands: replacement does orphan the inbox, and the old cleanup named the wrong mailbox so it removed nothing (fixed, with tests that fail against the old code). What does NOT stand: that this explains the field symptom.
 created: 2026-07-29
 severity: MEDIUM-HIGH — user-visible message loss (366 messages not persisted in one capture, silently, with no error to either party), but **downgraded from the original HIGH**: the data is probably not destroyed, only stranded. Re-rate upward if the relay is shown to expire or drop stranded frames.
 repo: quorum-desktop (mobile NOT yet checked — see §6)
@@ -135,6 +135,64 @@ to frames.
   filed here.
 - This does **not** explain quorum-mobile#183 item 2 (frames never arriving at all).
   That is upstream of arrival; this is entirely downstream of it.
+
+## §8. ⛔ THE MECHANISM DID NOT REPRODUCE — three bench runs, hypothesis retired
+
+`dm-session-churn` was built specifically to trigger this, because the coverage
+gap was real: volume scenarios never replace a session, and `dm-reset-recover`
+replaces one while sending three messages with waits between, so nothing is ever
+in flight. Three runs, each adding the ingredient the previous one lacked:
+
+| run | setup | result |
+|---|---|---|
+| 1 | 60 rounds both directions, wipe at #30 under load | **60/60, zero loss** |
+| 2 | + receiver held "offline" across the wipe, device-inbox frames released first | **60/60, zero loss** |
+| 3 | + hold starts 5 rounds BEFORE the wipe, so pre-wipe frames actually queue (**10 confirmed** on the old inbox at wipe time) | **60/60, zero loss** |
+
+Run 2's null was a test defect, not evidence: holding and wiping on the same round
+meant every queued frame was sent *after* the wipe, so the backlog contained no
+pre-wipe session-inbox frames at all. Run 3 fixed that and the backlog is logged.
+
+**Run 3 built the exact condition §1 requires and produced no loss.** A stopping
+rule was committed before the result: the hypothesis is retired rather than
+adjusted a fourth time.
+
+### What that means for §3's evidence
+
+The 366 drops were real and distinct. But they were captured **while the harness
+was repeatedly re-registering bots on that account**, which churns sessions
+artificially — §4 already flagged this as a confound and it now carries the
+weight. **The most probable reading is that the capture was an artifact of
+testing, not the operator's organic failure.**
+
+⚠️ **A second operator observation that WAS used as supporting evidence has also
+been withdrawn.** "No messages landing on the desktop during a run" was recorded
+as the symptom firing live; the run in question was on generated throwaway
+accounts and never sent to that account at all. Nothing landing was correct
+behaviour, not a failure. It should not have been treated as data.
+
+### What is NOT retired
+
+The **code defects** in §1 and §7.1 are real and independently verified:
+replacement orphans the inbox, and the cleanup named the wrong mailbox so it
+removed nothing. The guardrail shipped (PR #273) and its tests fail against the
+old code. What is retired is the **causal claim** that this mechanism explains the
+operator's field symptom.
+
+### Where the symptom actually points now
+
+The operator's own characterisation — *"sometimes messages land, sometimes not,
+sometimes after a while, sometimes lost forever"*, worst mobile→desktop — is
+intermittent with variable latency and occasional permanence. Every client-side
+layer now measures clean: arrival, decrypt, persistence, all four platform
+pairings, aged accounts, multi-device fan-out, and now session churn. That is
+consistent with quorum-mobile#183 item 2, which is upstream and not fixable from
+any client.
+
+**The discriminating evidence is a console capture taken DURING a failure**, not
+during a healthy window. Counts taken while messages were landing came back 0/0,
+which is expected and says nothing. Non-zero during a failure means a client-side
+path remains; zero during a failure means the frame never arrived.
 
 ## §7. ⚠️ CORRECTIONS from independent adversarial review (2026-07-29)
 
