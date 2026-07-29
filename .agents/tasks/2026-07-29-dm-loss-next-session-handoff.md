@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Handoff — where the DM loss investigation actually stands, and the operator's four open questions"
-status: OPEN — orientation for a fresh session. No code work queued; the next move is answering the questions in §3.
+status: OPEN — §3.1 and §3.2 ANSWERED by research 2026-07-29 (inline below). What remains needs the operator: Run A (§3.5), which answers §3.1's redo and §3.4 in one 20-message run.
 created: 2026-07-29
 area: DM delivery / transport / debugging methodology
 repo: quorum-desktop (+ quorum-mobile)
@@ -70,6 +70,33 @@ production build does not lose messages, everything downstream changes.
 
 This is cheap and should probably go first.
 
+**✅ ANSWERED 2026-07-29 — the past test was found, and it does NOT settle the question.**
+
+The half-remembered test is **Runs 3–5 of 2026-07-21**, recorded in
+`quorum-mobile/.agents/bugs/2026-07-20-mobile-desktop-message-transport-delay-loss-master.md` §5,
+all on the prod-preview build (`build-prod-variant.ps1` → third app id `….preview`):
+
+- **Run 5 (prod-preview): DMs both directions 5/5, with receipts — clean.** But
+  n=5, and the report itself flags it as "a DIFFERENT device/account pairing
+  whose sessions happened to be healthy" — not the failing pairing. Five
+  messages cannot speak to a 15–20% loss rate (P(no loss) ≈ 0.85⁵ ≈ 44% even if
+  the bug were present).
+- **Run 3 (prod-preview): SPACE mobile→desktop 4/5, one permanently lost** —
+  proves loss in general "ships to prod, not a dev artifact", but spaces use a
+  different transport (hub-log), so it does not answer the DM question.
+- The ~10s DM send **latency** bug reproduced on BOTH the preview build and the
+  real live app (2026-07-24 bug file) — production transport is not healthy,
+  but that is latency, not loss.
+
+**The uncomfortable corollary:** every DM-loss capture with send-side
+confirmation (rounds 27 and 29 — the whole evidence base of #183 item 2) ran on
+**dev builds**, because the rig only works there (release Hermes logs never
+reach logcat; desktop's XPDUMP probe deliberately bails out of non-dev builds).
+And the 2026-07-29 sender-isolation runs used the operator's dev-build mobile
+app. So the dev-environment hypothesis is **not excluded by anything on file**
+— the only prod-build DM datapoint is 5 clean messages on a healthy pairing.
+The redo is genuinely needed; see §3.5 Run A.
+
 ### 3.2 Why can we not just READ the answer out of the debug branches?
 
 Both repos have debug branches carrying **very verbose logging**, built during
@@ -84,6 +111,43 @@ Nobody this session looked at those branches. Worth establishing:
 
 If those branches already log the send path, running one capture on them may be
 far cheaper than anything else proposed here.
+
+**✅ ANSWERED 2026-07-29 — they do log the send path, they WERE run on the
+sending side, and they already gave everything they are capable of giving.**
+
+Branch inventory (verified against both repos' git, all local-only, never pushed):
+
+| repo | branch | head | state |
+|---|---|---|---|
+| mobile | **`diag/dm-frame-trace`** — THE rig | 07-27, 5 commits | **merges clean onto current master** (dry-run `git merge-tree`); enter with `git debug`, never by SHA |
+| mobile | `debug/transport-trace` (WSTRACE, space era) | 07-21 | superseded by the rig |
+| mobile | `debug/dm-cross-platform-trace`, `test/dm-fix-instrumented`, `test/dm-instrumented-v2` | 07-25 | earlier XPTRACE iterations, superseded |
+| desktop | `diag/dm-frame-join` (rig=11) | 07-27, 14 commits | ⚠️ **now CONFLICTS with main** — PRs #270–#274 rewrote the receive path it instruments; its `git debug` will stop at "REBASE FAILED". Not needed for the current agenda (the §4 receiver probe measures without instrumentation), but budget resolution time before any future desktop capture |
+
+What the mobile rig logs **at the send side**: `[DM-send wire]` at prepare-end,
+plus the `patch-rn-ws-diag.mjs` node_modules patch that logs **every individual
+frame AT the `ws.send` call** — length, target inbox, `bufferedAmount`, and a
+mid-batch `readyState` check. (`git debug` re-applies the patch; it dies on
+every `yarn install`, which is what invalidated round 25.)
+
+**"Why can't we just read the answer out of them?" — we did.** Rounds 27 and 29
+ran the rig on the phones; the local `mobile-xptrace/` archive (25 traces,
+including round 29's two phones) is exactly those send-side logs. That is where
+#183 item 2 comes from: every lost frame was confirmed handed to `ws.send`,
+signed, correct inbox, socket open — and never arrived, never redelivered. The
+instrumentation answered the question it can reach.
+
+**Why that didn't finish it:** the rig's deepest probe is the call into RN's JS
+`WebSocket`. Below it — RN bridge → native module (okhttp on Android) → wire →
+node write path — no client-side log exists, and the protocol has no write ack.
+The three remaining discriminators, none tried: (a) a native-layer probe in the
+debug build (log okhttp's `send()` return value and queue state — RN ignores
+that boolean, a plausible silent-drop point), (b) an on-path packet capture,
+(c) node-side logs — the standing #183 ask.
+
+**What one more rig run WOULD add:** the 07-29 T/U isolation runs used a plain
+dev build, so there is no send-side trace of those exact losses. §3.5 Run B
+closes that.
 
 ### 3.3 Why has this been so hard to pin down?
 
@@ -103,12 +167,53 @@ factors observed today:
 - **Confounds we introduced.** The harness re-registering bots churned sessions on
   the operator's account and produced a 366-drop capture that was probably our own
   artifact.
+- **(added by the §3.2 research)** The deepest send-side instrument stops at the
+  JS/native boundary, and the two instruments cannot be combined: the rig needs a
+  dev build, a prod-preview build is a logging black box. So "instrumented" and
+  "production-like" have never been true of the same run — which is also why §3.1
+  is still open.
 
 ### 3.4 Is a third measurement run worth it?
 
 Two runs isolate the variable (15% and 20%). A third would tighten the rate but
 not change the conclusion. Cheap if the operator is willing: send `V 1`…`V 20`
 from mobile, then `await window.__probe.report('V')` on the desktop.
+
+**→ Superseded by §3.5 Run A: make the third run a PREVIEW-BUILD run.** Same
+protocol, same cost, and it answers §3.1 at the same time. A third dev-build run
+only tightens a rate we already trust; a preview-build run branches the whole
+investigation.
+
+## §3.5 The two candidate runs (operator required, ~15 min each once built)
+
+Both use the §4 receiver probe unchanged; they differ only in what the phone runs.
+They are mutually exclusive instruments (§3.3 last bullet), so they are two runs,
+not one.
+
+**Run A — dev-vs-prod (do this first).**
+1. `quorum-mobile/.agents/scripts/build-prod-variant.ps1` (~6 min warm, ~30 min
+   cold; installs as the third app id `….preview`, guarded against overwriting
+   the live app). Sign into the test account — a preview build was already a
+   registered device on the shared test accounts during the July rounds, so this
+   likely mints no new registration; if it does, it is one, once.
+2. Send `V 1`…`V 20` from the preview build to the desktop account.
+3. Desktop console: `await window.__probe.report('V')` — **during/right after,
+   and again 10 minutes later** (§4's timing rule).
+- **20/20 ⇒ the loss is a dev-environment artifact** — everything downstream
+  reprioritizes, and the dev-tooling stack (Metro, dev WebSocket path, dev-mode
+  React) becomes the suspect list. **Losses ⇒ dev environment exonerated**, the
+  rate tightens (§3.4 satisfied), and #183 item 2 gains a production datapoint.
+
+**Run B — send-side trace of the actual symptom (only if Run A loses messages).**
+1. In quorum-mobile: `git debug` (verified: rebases clean onto current master),
+   confirm the BUILD CHECK lines, dev-start on the phone.
+2. Same `W 1`…`W 20` + probe protocol, but also capture logcat
+   (`capture-xptrace.bat`) on the phone.
+- Every lost message then has a per-frame record at `ws.send` (target inbox,
+  readyState, bufferedAmount). All-clean-yet-missing ⇒ loss is below JS or at
+  the node, on the operator's own account→desktop path — item 2's shape,
+  captured on the live symptom for the first time. Any anomaly ⇒ the first
+  client-side lead anyone has had.
 
 ## §4. The receiver-side probe (reusable, paste into the desktop console)
 
