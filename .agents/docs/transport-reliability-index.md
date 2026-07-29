@@ -143,9 +143,19 @@ Consequently the live suspects for D remain undistinguished:
 3. real-account state: aged sessions, ghost devices, multi-device fan-out
 4. device network conditions
 
-**The cheapest experiment that would discriminate**, still not run:
-**mobile↔desktop on one bench** (§6 item 8) — the field's reported worst case, and
-the only cell no bench covers at all.
+✅ **That experiment has now been run (2026-07-29, `yarn harness:cross`).**
+mobile↔desktop on one bench, 40 rounds each way, 180s settle: **mobile→desktop
+40/40, 0.0%; desktop→mobile 39/40**, the single miss being message #1 in the echo
+direction (a session-open signature, not per-message loss — it recurred in the
+smoke run). **The field's reported worst direction is clean on the bench**, which
+completes the 2×2 and means *no* bench configuration reproduces the field loss.
+
+All four benches share Node `ws` + WASM + fresh accounts, so that combination is
+what they collectively exonerate — and the suspects above are unchanged but now
+carry the whole weight, because client logic no longer explains anything. **The
+cheapest remaining discriminator is no longer a bench**: it needs RN's native
+socket or an aged real account in the loop, which the harness cannot supply by
+construction.
 
 *(A previous version of this section also proposed running the mobile bench on the
 canonical accounts. That is now superseded and should NOT be done: it would

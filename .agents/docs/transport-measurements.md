@@ -305,6 +305,42 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
+### ⭐ Cross-platform (`dm-cross`) — the last empty cell in the 2×2
+
+| when | run | configuration | class | result | what it changed | source |
+|---|---|---|---|---|---|---|
+| 07-29 | `dm-cross` smoke | mobile↔desktop, 5 rounds, **20s settle** | — | 4/8 "delivered" | ⛔ **not a measurement** — settle far too short, and the gaps were at the HEAD not the tail. Recorded only so nobody re-derives it as a finding | run log |
+| 07-29 | `dm-cross` | **mobile↔desktop on one bench**, two processes/two repos, Node `ws`, WASM, fresh throwaways, 1 device each, 40 rounds each way, 180s settle | arrival | **mobile→desktop 40/40, 0.0%. desktop→mobile 39/40, missing only #1.** 79/80 total | ⭐ **the field's reported worst direction is CLEAN on the bench.** Completes the 2×2; no bench configuration now reproduces the field loss | run log `run-1785314457979` |
+
+**The single miss is message #1 in the echo direction, and that shape repeated in
+the smoke run.** Role `b` echoes the instant it receives round 1, which is the
+earliest possible moment in the reverse direction — before that direction's
+session is settled. Missing the **head** is the signature of session
+establishment; per-message transport loss does not preferentially eat message #1
+twice in a row. ⚠️ Recorded as a strong inference, not a demonstrated cause: it
+has not been isolated, and it is worth its own scenario (mobile's own notes
+already flag simultaneous-open as a real and separate mechanism).
+
+**What this closes.** Every cell of the platform matrix is now measured:
+
+| | desktop receiver | mobile receiver |
+|---|---|---|
+| **desktop sender** | 301/301, 201/201, 0% | **40/40, 0%** (this run, echo direction minus #1) |
+| **mobile sender** | **40/40, 0%** (this run) | 80/80, 0% |
+
+**No bench configuration reproduces the field loss** — including, now, the exact
+cross-platform direction the field complains about. Since all four benches share
+Node `ws` + WASM + fresh accounts, that combination is what they collectively
+exonerate, and the remaining suspects for round 29 are unchanged and sharpened:
+RN's native WebSocket write path, the uniffi bridge, aged real-account state, and
+device network conditions. **The client logic is not where this lives.**
+
+⚠️ One unexplained observation, recorded rather than dismissed: mobile persisted
+119 messages for 40 sent + 39 received, with its own outgoing texts appearing
+twice in the sample. Not loss, and it does not affect the join (the receiver's
+set is deduped by number), but it is unaccounted for and someone should find out
+why before quoting mobile's `persisted=` figure for anything.
+
 ### Mobile harness (`quorum-mobile`, `yarn harness:dm`)
 
 | when | run | configuration | class | result | what it changed | source |
