@@ -43,6 +43,21 @@ also resolves. If you are already in the repo a path names, drop the prefix.
 
 ---
 
+> ⚠️ **#183 was restructured on 2026-07-30 and its sections were RENUMBERED.** It is now
+> ordered by how cheaply the lead dev can verify each cause, and it carries only
+> lead-dev-actionable items (client-side work was removed — that is ours). Older
+> references throughout these docs use the previous numbering; map them as:
+>
+> | old label | new label | what it is |
+> |---|---|---|
+> | item 1a | **item 2a** | `channel` crate: skipped-key lookup matches by index across chains |
+> | item 1b | **item 2b** | `channel` crate: first-frame-at-position>0 forks at the next DH turn |
+> | item 2 | **item 3** | node write path: residual vanished inbox writes |
+> | *(new)* | **item 1** | relay: the WebSocket pong deadline is ~6× too tight (see 6i below) |
+>
+> Text below this banner has **not** been rewritten to the new numbering — read it
+> with this table in hand.
+
 ## §1. The whole situation in seven sentences
 
 1. For ~6 months, messages between clients were delayed, sometimes apparently lost, and DM receipts often never rendered.
