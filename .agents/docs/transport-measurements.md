@@ -754,4 +754,381 @@ desktop B's `SELF`-flagged ghost row (which *has* a conversation row holding the
 stale-device bug; both are recorded there.
 
 ---
-*Last updated: 2026-07-29*
+
+## ⭐⭐⭐ 2026-07-30 — ROUND Y: exact replication, and the slow-send lead is REFUTED
+
+Same configuration as Round X, one deliberate correction: **both desktops had
+the app open and connected for the whole burst** (Round X's desktop A did not —
+see its §corrections). Mobile A dev build, burst tool, `Y 1`…`Y 20`, 2000 ms,
+14:43:30→14:44:20Z.
+
+| observer | channel | class | result |
+|---|---|---|---|
+| **phone (sender)** | — | send record | **20/20 handed to the socket, zero errors.** Wall time 50.5 s |
+| **desktop B** | peer, live throughout | arrival + persistence | **17/20, missing [5, 11, 17].** Identical before and after reload. Zero warnings |
+| **desktop A** | self-sync fan-out, live throughout | arrival + persistence | **17/20, missing [5, 11, 17]** — the same three. Zero warnings |
+
+### ⛔ The slow-send correlation is REFUTED — do not re-derive it
+
+Round X reported that all 3 losses fell in a "slow send" group (617-762 ms)
+while 8 fast sends (35-94 ms) were clean, and flagged it as a lead to test.
+**Round Y kills it.** This round **19 of 20 sends were slow** (481-682 ms; a
+single 40 ms outlier), and the three lost messages took **548, 515 and 496 ms** —
+unremarkable, slightly *faster* than the round's mean. There is no relationship
+between send duration and loss.
+
+Recorded prominently because it was explicitly published as a lead, and because
+this is what the round was for. The X split was chance in n=20; the discipline
+that killed it in one round is worth more than the lead was.
+
+### What three rounds now establish, repeatedly
+
+1. **Loss rate stable at 3/20 (15%)**, twice consecutively, consistent with the
+   earlier 15-20% field figures.
+2. **Both receivers lose the identical set, every time** — and this round with
+   both clients live and connected throughout, removing Round X's confound.
+   Common-mode loss at or before the source is now established across three
+   independent rounds (U, X, Y).
+3. **Reload never recovers them** (operator waited ~1 min, then reloaded, then
+   re-scanned: unchanged).
+4. **Zero warnings of any kind, on either receiver, in every round.**
+
+### ⚠️ An evenly-spaced pattern, recorded and explicitly NOT built upon
+
+X lost 1, 6, 11 (every 5th); Y lost 5, 11, 17 (every 6th). Both are arithmetic
+progressions, which invites a periodicity theory. **Resist it**: the U-run
+(2, 5, 10) and the T-run (1, 5, 13, 17) were not. A 3-term AP among 20 arises by
+chance ~8% of the time, so two consecutive occurrences is ~0.6% — suggestive,
+far from conclusive, and this investigation's documented failure mode is exactly
+this kind of pattern-fit. Watch it across future rounds; do not theorise on it.
+
+### ⭐ NEW, and a different failure class: receipt acks lost on the way to MOBILE
+
+Operator observation during Round Y, unprompted:
+
+| device | receipts visible |
+|---|---|
+| **desktop A** (account A, second device) | receipts on **all 17** landed messages |
+| **mobile A** (account A, the sender itself) | receipts on **only 4** — messages 1, 2, 3 and 20 |
+
+Same account, same 17 messages, two devices, one has the full set and one has
+four. Desktop A holding them proves B **did** emit acks for all 17, so this is
+not a sender-side or B-side omission: **~13 receipt acks reached one of A's
+devices and not the other.** The gap shape is head+tail (1, 2, 3 … 20), not
+scattered.
+
+This is **not** the same as the retired 2026-07-29 observation (there, the
+receipts were missing *because* the underlying messages never arrived — a
+consequence, not a second bug). Here the messages landed, the acks were emitted,
+and only mobile lacks them.
+
+It corroborates field round 26, which saw **read-ack frames 0/10 delivered while
+chat posts 11/11 delivered in the same socket and the same minutes** (issue #183
+item 2) — the same selectivity, in the other direction. Taken together, loss on
+the mobile leg is not specific to outbound chat messages.
+
+⚠️ **Needs one clarification before it is quoted**: the operator's note is
+ambiguous between *delivery* ticks and *read* ticks ("read receipt only on
+1,2,3,20 and no readreceipts"). Confirm which tick class is present on those four
+before building on this row.
+
+**Next rounds must count receipts as a first-class result**, on every device, not
+as an aside — the tooling counts messages only.
+
+### The live hypothesis after Round Y
+
+Not send duration, but **ratchet chain position**. The DH ratchet steps whenever
+the peer's traffic comes back — including B's receipt acks mid-burst — so a few
+messages per burst are sent at a **chain transition**. That is a structural
+property that varies per message and is invisible to every instrument used so
+far. The mobile diag rig already logs DH epoch and sending-chain length per send
+(`rig=9`), and since the burst button is now on `master`, `git debug` rebases the
+rig on top of it and yields both in one build. **One rig round answers whether
+the lost messages sit at chain transitions.**
+
+---
+
+## ⭐⭐⭐⭐ 2026-07-30 — ROUND Z: the RIG round. Send side proven complete; the session/shape hypothesis refuted
+
+First round on the **diagnostic rig** (`diag/dm-frame-trace`, rebased onto master
+so it carries the burst button too — `git debug`, BUILD CHECK all green). Mobile A
+→ account B, `Z 1`…`Z 20`, 2000 ms, 15:00:16→15:01:03Z. Desktop B live; desktop A
+deliberately **closed** (offline-device catch-up test, reading owed).
+
+| observer | class | result |
+|---|---|---|
+| **phone (sender)** | send record | **20/20 sent**, wall 49.0 s |
+| **phone (rig)** | send instrumentation | **120 `[DM-send row]` probes = 20 messages × 6 device targets, no gaps.** Every lost message was prepared and dispatched to all six targets exactly like the landed ones |
+| **desktop B** | arrival + persistence | **16/20, missing [1, 7, 8, 14]**, unchanged after reload. Zero warnings |
+
+### ⭐ What the rig establishes: the client's send path is COMPLETE
+
+Every one of the 20 messages produced a full 6-target fan-out at the send-row
+stage — including all four that vanished. **No message was skipped, no target
+dropped, no send errored.** The loss is entirely downstream of the client's send
+logic. This is the first round with direct instrumentation on the sending side of
+a reproduced loss.
+
+### ⛔ The session / chain-transition hypothesis is REFUTED
+
+Round Y proposed that losses sit at ratchet chain transitions, testable via the
+rig's `shape` field (`init` = session setup, `plain` = established). The result
+kills it: **`shape` is constant per target device, not per message.**
+
+| target | shape (all 20) | session rows |
+|---|---|---|
+| QmX4pUca… | plain | 1 |
+| QmbbgTUt… | **init** | 2 |
+| QmUoTWS7… | plain | **19** |
+| QmYTED4B… | **init** | 2 |
+| QmPYQwYN… | **init** | 1 |
+| QmNpLHRH… | **init** | 1 |
+
+Every message to a given device carries the same shape, so shape cannot select
+*which* messages vanish. Timing does not either: the lost messages' fan-out
+spreads (156/369/162/272 ms) sit inside the landed range (152-3159 ms).
+
+**Two hypotheses proposed and killed in two consecutive rounds** (slow-send in Y,
+shape/chain in Z). Both were published as leads and both were refuted by the next
+measurement rather than accumulating.
+
+### ⛔ The evenly-spaced pattern is also dead
+
+X lost 1, 6, 11; Y lost 5, 11, 17 — both arithmetic progressions, flagged as a
+curiosity and explicitly not built upon. **Z lost 1, 7, 8, 14 — 7 and 8 are
+adjacent.** Coincidence confirmed. The earlier restraint was correct.
+
+### Two real defects the rig exposed incidentally (neither causes the loss)
+
+1. **4 of 6 target devices receive init-wrapped frames on EVERY message** — those
+   sessions never confirm, so session-setup material is re-sent forever. The
+   known "sessions never confirm" defect, now observed in live production traffic
+   rather than inferred. Related: `quorum-mobile` #177 and the send-latency bug's
+   finding of 6 permanently-unconfirmed sessions.
+2. **Ghost fan-out: one conversation targets 6 device inboxes**, and one of them
+   carries **19 session rows** of churn debris. Every typed message becomes six
+   encrypted frames.
+
+### Loss rate across the three tool-instrumented rounds
+
+| round | lost | rate |
+|---|---|---|
+| X | 3/20 [1, 6, 11] | 15% |
+| Y | 3/20 [5, 11, 17] | 15% |
+| Z | 4/20 [1, 7, 8, 14] | 20% |
+
+Stable 15-20%, matching every earlier field figure.
+
+### ⚠️ The gap this round did NOT close, and the one-flag fix
+
+`[DM-send row]` fires at frame **preparation**, not at the socket write. The
+node_modules transport patch that logs each actual `ws.send` (`[WS-frame]`)
+**produced zero lines**, despite `git debug` reporting all three bundles patched
+— almost certainly Metro serving a cached copy of the dependency (app-source rig
+changes were picked up on reload; the node_modules patch was not).
+
+**Fix: start Metro with `-ResetCache`.** Closing this gives the complete chain —
+prepared → handed to the socket → absent at both receivers — which is what makes
+the upstream report airtight. (Field rounds 27 and 29 already established the
+`ws.send` link historically; this would re-establish it on current code.)
+
+### Receipts: round Y's anomaly did NOT reproduce
+
+Operator observation: this round receipts behaved **correctly** — present for
+landed messages, absent for the four that never arrived, which is the right
+behaviour. Round Y's asymmetry (desktop A holding 17 receipts while mobile A held
+4) is therefore **unconfirmed and not a standing finding**. Keep counting
+receipts per device in future rounds; do not cite the Y row as established.
+
+### Inbound during the burst
+
+Only 10 `[DM-recv wire]` frames, all to one inbox, and **several are redeliveries
+of the same fingerprint via both the `batch` and `individual` paths** (e.g.
+`e3f16f2f` three times). Not loss, but worth knowing the inbound path duplicates
+under normal operation.
+
+---
+
+## ⭐⭐⭐⭐⭐ 2026-07-30 — ROUND P: THE MECHANISM. Frames written into a dying socket
+
+**The most important measurement in this file.** Same rig configuration as Round
+Z, but Metro started with **`-ResetCache`**, which finally loaded the
+`node_modules` transport patch — so every frame handed to `ws.send` is logged,
+along with mid-write socket failures. Mobile A → account B, `P 1`…`P 20`, 2000 ms.
+
+| observer | class | result |
+|---|---|---|
+| phone (sender) | send record | 20/20 sent |
+| phone (rig + transport patch) | **socket** | **TWO socket drops during the 50 s burst** (17:28:29, 17:29:01 local), each `socket lost mid-batch, requeued` ×6 then `flushed-pending` ×6 ~1.8 s later |
+| desktop B | arrival + persistence | **15/20, missing [2, 3, 9, 10, 16]** (25%), unchanged after reload, zero warnings |
+
+### ⭐ The finding: loss clusters in the ~5 s before a detected socket drop
+
+| message | gap to next detected drop | outcome |
+|---|---|---|
+| 3 | **2.0 s** | **LOST** |
+| 16 | **2.5 s** | **LOST** |
+| 2 | **4.6 s** | **LOST** |
+| 15 | 5.1 s | landed |
+| 1 | 7.6 s | landed |
+| 14 | 9.4 s | landed |
+
+`ws.send()` returns successfully because the local buffer accepts the bytes, but
+the TCP connection is already broken and they are never delivered. On reconnect
+the client requeues **only the batch it was actively writing**; everything
+written in the preceding seconds is treated as sent and never retried. No
+application-level ack exists, so nothing anywhere learns those messages died.
+
+All six per-device frames were logged as written for every lost message (and
+Round Z independently showed 120/120 send rows), so the client's send path is
+complete — the frames are lost *after* `ws.send` and *before* the wire.
+
+### ⭐⭐ Why this explains every prior null, including weeks of green benches
+
+The harness runs Node `ws` over a stable wired connection, where sockets
+essentially never drop. The phone runs a mobile radio, where they drop
+constantly — **twice in one 50-second burst here**. Every bench was measuring a
+configuration in which the trigger cannot occur. It also matches the 2026-07-29
+sender-isolation row exactly: same account, same relay, same receiver, mobile app
+lost 15-20% and a harness bot over Node `ws` lost none. **The variable was never
+the crypto or the client logic; it was the socket.**
+
+Full write-up, caveats and fix direction:
+[`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+
+### ⚠️ Limits of this round — read before quoting it
+
+- **One round.** Replication owed.
+- **Messages 9 and 10 do not align with a *detected* drop.** The probe only sees
+  a dead socket when it is midway through a batch write; drops between batches
+  are invisible. Undetected drops are an inference, not a measurement.
+- **logcat throttled** (37 `chatty` indicators; 108 of ~120 expected frame lines
+  survived). Does not affect the lost messages — all six frames captured for each
+  — but frame coverage is incomplete.
+- `bufferedAmount` reads `?` on RN's socket, so bytes queued-but-unsent at the
+  drop cannot be seen. That would be direct confirmation.
+
+**Confirmation round:** extend the patch to log socket lifecycle directly
+(`onopen`/`onclose` with code+reason/`onerror`) rather than only mid-write
+failures, then repeat. Predictions: every lost message sits within ~5 s of a
+`close`, including 9 and 10; and the true `close` count exceeds the 2 visible now.
+
+### Loss rate across four instrumented rounds
+
+| round | lost | rate | notes |
+|---|---|---|---|
+| X | 3/20 [1, 6, 11] | 15% | cold-drain control on 2nd receiver |
+| Y | 3/20 [5, 11, 17] | 15% | both receivers live |
+| Z | 4/20 [1, 7, 8, 14] | 20% | rig: 120/120 send rows complete |
+| **P** | **5/20 [2, 3, 9, 10, 16]** | **25%** | **rig + transport patch: socket drops seen** |
+
+---
+
+## ⭐⭐⭐⭐⭐⭐ 2026-07-30 — THE IDLE CAPTURE: the connection dies every 19 seconds, with nobody touching it
+
+**The measurement that turns a mechanism into a root cause.** After Round P
+suggested losses cluster before socket drops, the transport patch was extended to
+log the socket **lifecycle itself** (`[WS-life] OPEN / CLOSE(code, reason, clean,
+queue depths) / ERROR`) rather than only noticing a dead socket mid-write. Then
+the phone was left **completely idle** — no burst, no messages, no interaction.
+
+| metric | value |
+|---|---|
+| capture | **25.6 minutes, phone idle** |
+| disconnections | **81** → **one every 19.0 s** |
+| connection lifetime (OPEN→CLOSE) | min 13.9 s, **median 16.3 s**, max 20.2 s |
+| reconnect gap (CLOSE→OPEN) | median **2.7 s** |
+| close code | **1006 on every one**, `clean=false`, empty reason |
+| queue depth at close | `pending=0 outbound=0` |
+| time actually connected | **86%** |
+
+### What it establishes
+
+1. **The drops are not caused by the bursts.** The operator raised precisely this
+   objection ("a real user hardly sends a message every 2000 ms") and was right to.
+   The answer is that the connection dies on its own schedule whether or not
+   anything is sent. Bursts were a magnifying glass, never the cause.
+2. ⭐ **There is NO keepalive anywhere in the transport.** A grep of the shipped
+   bundle finds no `ping`, `pong`, `heartbeat` or keepalive timer in either the RN
+   client or the browser client. The socket is left silent and something upstream
+   reaps it after ~16 s.
+3. **Close code 1006 = no close handshake**, so the client cannot learn of the
+   break from the protocol — it finds out only when a read/write finally fails,
+   seconds later. In that gap `readyState` still reads `OPEN`, the pre-write guard
+   passes, `ws.send()` accepts the bytes, and the frame is dropped from the queue
+   as "sent".
+4. ⭐⭐ **The arithmetic closes the loop.** A ~5 s blind window inside a 19 s cycle
+   is ~26% of sends. Measured DM loss across the four instrumented rounds: **15%,
+   15%, 20%, 25%.** Two independent routes to the same number.
+5. **It explains ordinary use, not just bursts.** One message sent at a random
+   moment has roughly a one-in-four chance of entering a doomed connection. That
+   is the six-month field symptom exactly.
+
+### ⭐ It is an IDLE timeout of ~11 s — measured across 217 closes
+
+Time from the **last frame sent** to the **CLOSE**:
+
+| p25 | **median** | p75 | max | within 14 s |
+|---|---|---|---|---|
+| 7.2 s | **10.9 s** | 12.4 s | 16.7 s | **203 / 217** |
+
+One cycle: `OPEN → ~29 subscribe frames over 2-3 s → 12 s of total silence →
+ERROR + CLOSE(1006) → OPEN → …`. The 6,501 frames logged in 25 minutes are almost
+entirely **re-subscription churn caused by the reconnects themselves**, not
+useful traffic.
+
+### ⚠️ Desktop comparison — TWO claims made and retracted the same hour
+
+| claim | basis | verdict |
+|---|---|---|
+| "desktop shows the same ~19 s cycle" | one `quorum-ws` row reading 19.82 s | ⛔ **WRONG** |
+| "desktop is reaped on a ~175 s cycle" | HAR `time` = 172.9 s and 177.6 s | ⛔ **WRONG** — for a still-open connection HAR `time` is *elapsed so far*, not a lifetime |
+| **desktop holds one connection 20+ minutes** | operator watching the live panel; re-verified at 3.1 min with the **VPN disconnected** | ✅ **correct** |
+
+**Why the desktop survives:** it is accidentally chatty. Its background traffic
+recurs more often than the ~11 s idle window, so the timer never expires. Not
+better engineering — the mobile client simply goes silent after subscribing.
+Both clients were on the same WiFi, and the VPN (desktop only) was excluded by
+re-testing with it off.
+
+> **Method note:** both errors read a *duration-so-far* as a *final lifetime*.
+> Measure connection lifetimes at the close event, never from a snapshot of an
+> open connection.
+
+### TCP-level confirmation, independent of app logging
+
+Sampling the phone's TCP table over adb (`ss -tn`, 10 samples / 50 s) shows
+**five distinct local ports** against the relay's Cloudflare address
+`172.67.151.63:443` — the connection genuinely re-establishes at TCP level. This
+method needs **no instrumentation**, so it works on production/`.preview` builds
+too, and is the cheapest way to check whether live users' apps behave the same.
+
+### Why every bench was green, restated precisely
+
+Node's `ws` on a wired desktop holds a connection for hours, and the harness
+never idled a socket into the reap window. **The benches were not wrong and the
+client logic was never at fault — the benches simply could not host the
+trigger.** This also retro-explains the 2026-07-29 sender-isolation row: same
+account, same relay, same receiver, mobile app lost 15-20% while a harness bot
+over Node `ws` lost none. The variable was the socket all along.
+
+### What this does NOT yet establish
+
+- The blind window between the real break and the client noticing is
+  **inferred**; the exact instant was not instrumented (`bufferedAmount` reads
+  `?` on RN's socket).
+- Individual lost messages have not yet been tied to specific `CLOSE` events —
+  the lifecycle probe was armed *after* round P. A repeat burst closes this,
+  including round P's messages 9 and 10.
+- **What performs the reap is unknown** — home router, ISP/CGNAT, or Cloudflare
+  in front of the relay. It does not block the client fix (a keepalive is correct
+  on any network), but if it is a proxy setting, raising it may be the smaller
+  fix.
+- **Not yet checked on a production build.** The TCP-sampling method above needs
+  no instrumentation and can answer this on the `.preview` or live app.
+
+Full analysis, caveats and the two-layer fix plan:
+[`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+
+---
+*Last updated: 2026-07-30*
