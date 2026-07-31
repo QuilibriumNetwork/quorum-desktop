@@ -19,6 +19,13 @@ related:
 
 # Space deletion: instant + offline UX, and stop leaking ghost spaces
 
+> 🧭 **Start at the index, not here:**
+> [`.agents/docs/spaces-list-sync-index.md`](../docs/spaces-list-sync-index.md) is the
+> single entry point for Spaces-list cross-device sync. It carries the verified per-pair
+> state matrix (which pairs are broken and why), what shipped on 2026-07-31, and the
+> ordering constraint that decides when the pieces below can land. This task remains the
+> **owning doc for the implementation**; the index tells you where it sits.
+
 ## Evidence (live desktop account, 2026-07-19)
 
 - `config.spaceIds` = 4 (UI truth: 2 created + 2 joined); `getSpaces()` = 13 →

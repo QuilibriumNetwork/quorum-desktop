@@ -14,6 +14,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
+- [Spaces list cross-device sync — cross-repo index](docs/spaces-list-sync-index.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 - [Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)
 - [Transport & DM reliability — measurement log](docs/transport-measurements.md)

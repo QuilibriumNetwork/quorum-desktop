@@ -11,6 +11,22 @@ updated: 2025-12-13T00:00:00.000Z
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
+> 🧭 **Start at the index:**
+> [`.agents/docs/spaces-list-sync-index.md`](../docs/spaces-list-sync-index.md) is the
+> single entry point for Spaces-list cross-device sync.
+>
+> **Partially fixed 2026-07-31** (branch `fix/config-save-filter-wipes-local-spaces`):
+> the `saveConfig` filter no longer rewrites local state, and no longer publishes a
+> truncated list. Two corrections to the analysis below, both confirmed in code:
+> - This is **not** multi-device-only, and does not need a profile import. The filter
+>   mutated the same object that was persisted locally and pushed to the React Query
+>   cache, so a single device emptied its own nav.
+> - `getConfig` has **no `allowSync` gate** — the toggle stops uploads, never downloads.
+>   A device with sync off still adopts whatever is on the server, verbatim and unmerged.
+>
+> Option A (merge + tombstones) is still open and is Slice 2 of
+> [`../tasks/2026-07-19-space-deletion-ghost-cleanup.md`](../tasks/2026-07-19-space-deletion-ghost-cleanup.md).
+
 ## Symptoms
 
 - User has spaces A, B, C on Device A with sync enabled
