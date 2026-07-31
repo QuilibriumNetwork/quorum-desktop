@@ -5,6 +5,10 @@
 /* Auto-resizing textarea container */
 .message-composer-textarea-container {
   flex: 1;
+  /* Flex items default to `min-width: auto`, so an unbreakable string (a long
+     URL) sets the item's minimum to its min-content width and stretches the
+     row, pushing the send button out of view. */
+  min-width: 0;
 }
 
 /* Textarea specific styles */
@@ -26,7 +30,9 @@
   font-size: $text-base;
   white-space: pre-wrap;
   word-wrap: break-word;
-  overflow-wrap: break-word;
+  /* `anywhere` (not `break-word`) so a long unbroken URL also lowers the
+     element's min-content width instead of only wrapping visually. */
+  overflow-wrap: anywhere;
   resize: none;
   /* min-height and max-height removed - now calculated dynamically in JavaScript */
   transition: height $duration-100 ease;
@@ -78,7 +84,9 @@
   font-size: $text-base;
   white-space: pre-wrap;
   word-wrap: break-word;
-  overflow-wrap: break-word;
+  /* `anywhere` (not `break-word`) so a long unbroken URL also lowers the
+     element's min-content width instead of only wrapping visually. */
+  overflow-wrap: anywhere;
   resize: none;
   transition: height $duration-100 ease;
   vertical-align: middle;
