@@ -154,15 +154,81 @@ deliberate deviations. Files: `src/utils/deviceRegistration.ts` (pure),
   safe to try because the upload is already best-effort, so a hub rejection just
   leaves today's single ghost. `planDeviceDeregistration` returns `last-device`
   so the choice is one line to flip once the server behaviour is known.
-- **Deviation — the two cleanups run in parallel, not sequentially**, under one
-  3s budget: different transports, no ordering between them, so the user waits
-  for the slower rather than the sum.
+- **Deviation — the two cleanups run in parallel, not sequentially:** different
+  transports, no ordering between them, so the user waits for the slower rather
+  than the sum. They are bounded and reported **independently** (`{hub, spaces}`)
+  — see the review findings below for why sharing one budget was a bug.
 - Added a `Resetting...` button state: the goodbye can take up to 3s and a
   dead-looking button invites a double click. New i18n string, not yet extracted
   into the catalogs (renders English until the next translation batch).
 - `KeyDB` deletion deliberately NOT bundled (see "Secondary" below).
 - Not yet verified on real hardware — the observable two-device check in step 5
   below is still outstanding.
+
+#### Review findings, and what they change for Slice 2 (2026-07-28)
+
+Three independent review passes (code review, silent-failure hunt, security)
+found **two real bugs in the first implementation**, both in the *composition*
+rather than in either component — the isolated unit tests for the pure filter
+and the flush barrier passed throughout. Mobile must not repeat them:
+
+1. **The flush barrier's answer was computed and discarded.** `revokeInSpaces`
+   awaited `flushOutbound` and dropped the boolean, and the aggregate read only
+   the hub leg, so unsent frames were reported as a clean goodbye. This is the
+   worse half to lose silently: on failure the hub entry is already gone, so
+   nothing points at the problem, while every space still trusts the device's
+   signing key.
+2. **A slow revoke overwrote a hub write that had already succeeded.** One
+   shared budget + `Promise.all` meant the outer timeout won whenever the socket
+   leg timed out, so the user was told the device might still be listed when it
+   had already been removed. **Bound and report each leg independently**
+   (`DeregisterOutcome = {hub, spaces}`).
+
+Also fixed, all worth checking on mobile:
+
+- **Budget vs the client's own timeout.** The 3s cap abandoned the hub POST
+  under merely-slow networks — the desktop API client allows 22s + 2 retries for
+  that same call, and the request had no `keepalive`, so the reload killed it.
+  Now 8s for the hub leg with an explicit `timeout` passed through so the client
+  aborts at our deadline instead of orphaning a request. **Check what mobile's
+  registration upload timeout is before picking a budget.**
+- **Diagnostics were invisible in production.** `@quilibrium/quorum-shared`'s
+  `logger` gates on `detectEnvironment()`, which is false when
+  `NODE_ENV === 'production'`, so every `logger.warn` on this path was a no-op
+  in exactly the build where the data is about to be destroyed. Desktop uses
+  `console.warn` here deliberately. Mobile: `__DEV__` gates the same logger, so
+  the same trap applies.
+- **Stale-list clobber.** The cached device list could be minutes old (settings
+  left open) and the upload replaces it wholesale, so a device registered
+  elsewhere meanwhile would be silently deleted. Desktop now re-reads
+  immediately before planning and skips the write if the re-read fails. Mobile's
+  `removeDeviceFromRegistration` fetches internally — verify it re-reads rather
+  than trusting a snapshot.
+- **Socket identity in the flush.** `send()` on a closing socket drops silently,
+  so an empty buffer on a *reconnected* socket said nothing about the previous
+  socket's frames. The barrier now compares instance identity.
+
+Known-and-accepted after review:
+
+- **The `useSuspenseQuery` concern was a non-issue.** `RegistrationProvider`
+  holds an observer on the same query key for the whole session, so the cache is
+  always warm and a background refetch changes `fetchStatus`, not `status` — no
+  suspension of the settings modal.
+- **`planDeviceDeregistration` survived the security pass** — no input removes
+  the wrong device or more than intended; malformed entries are kept, never
+  dropped; `thisInboxAddress` comes only from the local keyset, never from hub
+  data.
+- **The console warning is still wiped by the reload** (DevTools clears on
+  navigation by default). The reviewer's suggestion — encode the outcome in the
+  reload URL and show a real notice on the freshly-booted screen — is a genuinely
+  better answer and is left as a follow-up, since it lands UI in the onboarding
+  screen rather than in this fix.
+- **The security pass independently re-derived the `KeyDB` gap** and rates it
+  Critical *because the reset copy explicitly promises to delete private keys*.
+  Still deliberately out of scope here; see "Secondary" below. One dependency it
+  surfaced: desktop's "allow removing the last device" choice is low-risk partly
+  *because* `KeyDB` survives, so re-examine that decision if/when `KeyDB`
+  deletion ships.
 
 ### Slice 2 — Mobile (mirror)
 
@@ -338,3 +404,6 @@ without calling it out.
 - New consequence documented: with the flip live, each reset cycle also accumulates stale signing-key admissions in members' space_member_devices stores — ghost problem has a second dimension.
 - Verified intact: DangerZone wipe sequence (no KeyDB delete), RegistrationPersister branch structure (line 115 corruption-only path, 158 reuse, 187-210 re-append), SDK buildAndUploadRegistration always-mints (now ~5857), mobile reuse/dedupe/last-device guard, deviceKeys.ts master-key anchor + LWW.
 - Pointer refreshes: SDK path needs @quilibrium/ scope; mobile keyService is services/onboarding/keyService.ts (875, ~903-909, ~520-545, ~722-724); App.tsx route now 135; added edge-case note that a failed wipe also re-admits the revoked signing key via on-connect re-announce (symmetric self-heal).
+
+## Updates
+- **2026-07-31 15:35**: Slice 1 (desktop) implemented + independently reviewed (3 passes). Review found 2 real composition bugs (discarded flush result; slow leg overwriting the other's success) — both fixed and now mutation-checked by 8 new hook tests. See 'Review findings' section for what Slice 2 must avoid.
