@@ -1131,4 +1131,107 @@ Full analysis, caveats and the two-layer fix plan:
 [`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
 
 ---
+
+## ⭐⭐⭐⭐⭐⭐ 2026-07-30 — THE RELAY PROBE: it is not an idle timeout, it is a 10 s pong deadline
+
+**This round supersedes the causal half of THE IDLE CAPTURE above.** The
+observed *effect* (connections dying constantly, 1006, frames lost in the blind
+window) is unchanged and still correct. The *cause* was misidentified, and the
+fix that followed from it would not have worked.
+
+### Method
+
+The relay's protocol behaviour was measured directly, from the desktop, with a
+dependency-free raw WebSocket client over TLS
+([`.agents/scripts/relay-pong-probe.mjs`](../scripts/relay-pong-probe.mjs)).
+A raw client is required because **every JS WebSocket client pongs
+automatically and cannot be told not to** — and *not* ponging is precisely the
+condition under test. Each trial takes ~10-40 s. **No phone, no instrumentation,
+no app build.**
+
+### Results
+
+| # | trial | pongs? | app frames? | outcome |
+|---|---|---|---|---|
+| 1 | `ws` library, fully silent | yes (auto) | none | **survived 90 s** (9 pings, all auto-ponged) |
+| 2 | raw `pong` control | yes | none | **survived** (39.5 s, 24.5 s, 21.6 s across runs) |
+| 3 | raw `nopong` | **no** | none | **died 9.71 / 10.03 / 9.98 / 10.02 / 9.99 s** |
+| 4 | raw `nopong-app` (empty listen, rejected) | no | every 5 s | **died 9.76 s** |
+| 5 | raw `nopong-listen` (**valid** frame, accepted) | no | every 5 s | **died 10.02 s** |
+| 6 | raw `nopong-unlisten` (**valid** frame, accepted) | no | every 5 s | **died 10.01 s** |
+| 7 | `pong-slow` 500 ms | late 500 ms | none | **survived 31.4 s** |
+| 8 | `pong-slow` 900 ms | late 900 ms | none | **died 10.02 s** |
+| 9 | `pong-slow` 1500 / 3000 ms | late | none | **died 10.01 / 10.02 s** |
+
+### ⭐ The model, fully pinned
+
+- The relay sends a **protocol-level PING every 9.0 s** (measured to ±0.03 s).
+- It enforces a **read deadline of exactly 10.0 s**, refreshed **only by a pong**.
+- **Application traffic does not refresh it.** Trials 5 and 6 sent well-formed
+  frames the relay *accepted* (no error response) and still died on schedule.
+  Trial 4 rules out "the frame was merely rejected" as the explanation.
+- On expiry the relay **destroys the TCP connection with no close frame**, which
+  is exactly what surfaces to a client as **code 1006, `clean=false`, empty
+  reason** — the signature on all 81 disconnections in THE IDLE CAPTURE.
+- **A client therefore has a ~1.0 s budget to answer each ping.** 500 ms
+  survives; 900 ms is already too late.
+
+This is the standard Gorilla WebSocket idiom
+(`pingPeriod = pongWait * 9/10`, deadline refreshed in the pong handler) with
+the constants set about **six times too small**: the library's own example uses
+`pongWait = 60 s` / `pingPeriod = 54 s`, and OkHttp's guidance is a 30-60 s
+heartbeat. This relay runs **10 s / 9 s**.
+
+### ⛔ What this overturns
+
+| prior claim | status |
+|---|---|
+| "any connection silent for ~11 s is killed" | ⛔ **WRONG.** A fully silent connection survives indefinitely as long as it pongs (trials 1, 2) |
+| "the desktop survives because it is accidentally chatty" | ⛔ **WRONG.** It survives because Chromium pongs within milliseconds. Chattiness is irrelevant (trials 5, 6) |
+| "the app has no keepalive, so add one at ~5 s in `quorum-shared`" | ⛔ **REFUTED.** An app-level keepalive cannot help: only pongs count. It would have failed the acceptance test |
+| "the median 10.9 s silence before each close is the reap window" | ⛔ **Coincidence.** 10.9 s of app silence sat near the 10.0 s pong deadline, which is what was actually firing |
+
+The `~11 s idle` reading was an artefact: mobile falls silent right after
+subscribing, so "time since last app frame" and "time since connection open"
+were nearly the same number, and the wrong one was causal.
+
+### ⭐⭐ Why mobile dies and desktop does not
+
+**Browsers and React Native both pong automatically at the native layer, and JS
+cannot see, send, delay or control it.** Chromium (desktop/Electron) answers in
+milliseconds over a stable connection. React Native on Android is backed by
+OkHttp, which also auto-pongs natively — but on a mobile radio, a **1.0 s**
+round trip budget is brutal. Any radio wake-up, doze exit, WiFi power-save
+cycle or latency spike over ~1 s misses the deadline and the relay kills the
+connection.
+
+That fits the mobile capture's *variable* lifetimes (13.9 s min, 16.3 s median,
+20.2 s max) far better than a fixed idle timer: some pings are answered in
+time and extend the connection, some are not.
+
+**Consequence: the client cannot fix this.** There is no JS API for pong timing
+on any platform. This is a relay configuration issue.
+
+### What this does NOT establish
+
+- **The exact mobile mechanism is inferred, not measured.** The model predicts
+  mobile misses pongs intermittently; that has not been observed directly.
+  RN's JS `WebSocket` does not expose ping/pong events, so confirming it needs
+  a **packet capture on the phone** or **relay-side logs** — not an app patch.
+- **Whether the 9 s pinger is the relay itself or Cloudflare in front of it.**
+  The 9 s/10 s ratio is the Gorilla signature, which points at origin app code,
+  but this was not confirmed from the server side.
+- **Whether the deadline is uniform** across relay instances/regions.
+- Measured from one machine, one network, on 2026-07-30.
+
+### Why every bench was green, restated once more
+
+Node's `ws` auto-pongs over a wired connection with sub-millisecond latency, so
+the harness never came close to the 1 s budget. **The benches could not host the
+trigger** — the same conclusion as before, but now with the actual mechanism.
+
+Full analysis and the revised fix plan:
+[`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+
+---
 *Last updated: 2026-07-30*

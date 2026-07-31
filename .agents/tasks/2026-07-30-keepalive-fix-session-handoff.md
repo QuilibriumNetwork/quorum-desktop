@@ -1,132 +1,136 @@
 ---
 type: task
-title: "NEXT SESSION — implement and verify the WebSocket keepalive fix (plus the research to be confident before it reaches the lead dev)"
-status: OPEN — root cause established 2026-07-30. This file is the brief for the implementation session. Research first, then fix, then verify, then hand over
+title: "The keepalive fix — RESEARCH DONE, and it refuted the plan. The cause is relay-side; the client work left is send durability"
+status: RESEARCH COMPLETE 2026-07-30. Layer 1 (app keepalive) is REFUTED by direct measurement and must NOT be built. Primary fix is a relay config change owed to the lead dev. Layer 2 (send durability) is the remaining client work
 created: 2026-07-30
-area: WebSocket transport / keepalive / send durability
-repos: quorum-shared (the fix lives here), quorum-mobile + quorum-desktop (verification)
+updated: 2026-07-30
+area: WebSocket transport / relay pong deadline / send durability
+repos: relay/infra (primary fix), quorum-desktop + quorum-shared (send durability only)
 related:
-  - "bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md (THE root cause — read first)"
-  - "docs/transport-measurements.md § THE IDLE CAPTURE (the numbers)"
-  - "tasks/2026-07-29-manual-round-runbook.md (how to run the verification rounds)"
+  - "bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md §0d (the retraction) and §6 (the revised fix)"
+  - "docs/transport-measurements.md § THE RELAY PROBE (the measurements)"
+  - "scripts/relay-pong-probe.mjs (reproduces it in ~10s, any machine, no phone)"
 ---
 
-# Next session: the keepalive fix
+# The keepalive fix: what the research found
 
-## §1. Read these first, in order (20 minutes)
+## §1. The headline — the plan was wrong, and measurement caught it
 
-1. `bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md` — the root
-   cause, the evidence, the two-layer fix, and the acceptance criteria.
-2. `docs/transport-measurements.md` § THE IDLE CAPTURE and § ROUND P.
-3. `docs/transport-reliability-index.md` §1 item 6h for the one-paragraph frame.
+The brief for this session was *"research → fix → verify, because we need to be
+sure before handing this to the lead dev."* The research stage refuted the fix
+before a line of it was written.
 
-**The one-line version:** any connection silent for ~11 s is killed (code 1006,
-no close handshake); the app has no keepalive anywhere; `readyState` stays
-`OPEN` for seconds after the break so `ws.send()` swallows frames that are never
-delivered and never retried. 15-25% of DMs lost, silently, for months.
+**Planned:** add a ~5 s application-level keepalive to `quorum-shared`, because
+"any connection silent for ~11 s is killed and the app has no keepalive."
 
-## §2. The operator's requirement
+**Measured:** there is no idle timeout. The relay sends a **protocol PING every
+9.0 s** and enforces a **10.0 s read deadline that only a pong refreshes**.
+Clients get a **~1.0 second budget** to answer each ping. Application traffic —
+including valid frames the relay accepts — does **not** refresh the deadline.
 
-> *"We need to be sure of the results before handing this to the lead dev."*
+So the planned keepalive would have shipped a release, woken the mobile radio
+every 5 s forever, and **changed nothing**. It would have failed the acceptance
+test in a way that looked like "the fix didn't take" rather than "the diagnosis
+was wrong."
 
-So: **research → fix → verify with numbers → only then hand over.** A plausible
-fix is not enough; the acceptance test in §5 must actually pass, and it is
-designed so it can fail.
+Full evidence: `docs/transport-measurements.md` § THE RELAY PROBE.
+Retraction and revised plan: the bug file's §0d and §6.
 
-## §3. Research to do BEFORE writing code
+## §2. What is now established
 
-The operator explicitly asked for external best-practice research, not only
-codebase reading. Worth doing — this is a standard problem with well-trodden
-answers, and we should not invent one.
+| fact | evidence |
+|---|---|
+| relay pings every **9.0 s** | ±0.03 s across many trials |
+| read deadline is **10.0 s**, pong-refreshed only | 5 `nopong` runs: 9.71 / 9.98 / 9.99 / 10.02 / 10.03 s |
+| **app traffic does not help** | valid accepted `listen`/`unlisten` every 5 s → still died at 10.0 s |
+| pong budget is **~1.0 s** | 500 ms late survives; 900 ms late dies |
+| kill is a **bare TCP teardown** | no close frame → client sees 1006, clean=false, empty reason |
+| a ponging client survives indefinitely | silent-but-ponging connections survived every cap tested |
 
-**A. WebSocket keepalive best practice**
-- Application-level heartbeat vs protocol ping/pong: browsers and RN cannot send
-  protocol pings from JS, so what do production apps actually do?
-- Interval selection against an ~11 s reaper. Is ~5 s right? What do widely-used
-  real-time SDKs default to, and why?
-- Detecting a dead connection *quickly* rather than waiting for a failed write
-  (e.g. expecting a server echo within N ms and forcing a reconnect on miss).
+**Why mobile and not desktop:** browsers and React Native both pong
+automatically in native code (Chromium; OkHttp on RN Android), and **JS cannot
+see, send, delay or control a pong on any platform**. Chromium answers in
+milliseconds. A phone on a mobile radio — radio wake-up, doze exit, WiFi
+power-save, any latency spike over ~1 s — misses the budget often enough to be
+killed every ~16 s. That also fits the *variable* mobile lifetimes (13.9 /
+16.3 / 20.2 s) better than any fixed timer.
 
-**B. Mobile-specific concerns**
-- Battery/radio cost of a 5 s heartbeat on Android; standard mitigations
-  (suspend when backgrounded, reconnect on foreground, align with app state).
-- React Native `WebSocket` (okhttp) specifics: does anything there help or hurt?
-  Is there a `pingInterval` reachable from RN, or must it be application-level?
-- Behaviour across network transitions (WiFi ↔ cellular, doze, app backgrounded).
+**Therefore no client change can fix the cause.**
 
-**C. Send durability (Layer 2)**
-- Standard patterns for "the socket may have eaten my write": pending-until-acked
-  queues, replay windows on reconnect, idempotent redelivery.
-- What guarantees are reasonable in a P2P/decentralised setting where there is no
-  server-side write ack today (see quorum-mobile#183) — and what the client can
-  do unilaterally, without protocol changes.
+## §3. What to hand the lead dev — the primary fix
 
-**D. Codebase**
-- `quorum-shared` transport clients (RN + browser) — where a heartbeat belongs so
-  both platforms inherit it; how `pendingEnvelopes` / `outboundQueue` /
-  `resubscribeHandler` interact on reconnect.
-- Does the relay accept an arbitrary keepalive frame? Is there an existing no-op
-  or ping-like message type? **If not, this needs the lead dev before we ship.**
-- Whether the reconnect/backoff logic amplifies the problem (currently a fresh
-  connection re-subscribes ~29 frames, ~81 times in 25 min).
+**Raise the relay's pong deadline and ping period.**
 
-## §4. The fix, in two layers
+```go
+// current (inferred from measured behaviour)   // recommended
+pongWait   = 10 * time.Second                   pongWait   = 60 * time.Second
+pingPeriod = (pongWait * 9) / 10  // 9s         pingPeriod = (pongWait * 9) / 10  // 54s
+```
 
-**Layer 1 — keepalive (attacks the cause).** In `quorum-shared`'s transport so
-both clients inherit it. ~5 s interval (two chances inside the ~11 s window).
-Ideally a message the relay echoes, so the client also learns the connection is
-alive inbound. Suspend/relax when backgrounded on mobile.
+The `pingPeriod = pongWait * 9/10` ratio is the Gorilla WebSocket idiom, so the
+relay is almost certainly following the library's example — with `pongWait` set
+to 10 s instead of the example's **60 s**. OkHttp's guidance is a 30-60 s
+heartbeat. The relay is roughly **six times too tight** for a mobile network.
 
-**Layer 2 — send durability (attacks the consequence).** Stop treating
-`ws.send()` as delivery: retain frames briefly and replay unconfirmed ones on
-reconnect. Messages already carry ids and the receive path dedupes, so replay is
-safe. The app already has `pendingEnvelopes` + flush-on-reconnect — the window is
-simply far too narrow (it rescues only the in-flight batch).
+One configuration change fixes every client, every platform, DMs and spaces,
+**with no app release**.
 
-⚠️ Branch + PR per repo, as always. `quorum-shared` changes need the local-link
-workflow, and its version bump is a separate commit on master (never on the
-feature branch); we never publish — that is the lead dev's call.
+Ask them to confirm: is the 9 s pinger the relay itself, or Cloudflare in front
+of it? The Gorilla ratio points at origin app code, but that was not confirmed
+server-side.
 
-## §5. Verification — the acceptance test (this is the point)
+**Verification for them:** `.agents/scripts/relay-pong-probe.mjs nopong 90`.
+Today it dies at 10.0 s. After the change it should survive ~60 s.
+
+## §4. The remaining CLIENT work — send durability only
+
+The client cannot stop the drops, so it must stop losing messages to them.
+
+1. **Widen the replay window.** Retain frames for N seconds after `ws.send` and
+   replay unconfirmed ones on reconnect. Messages carry ids and the receive path
+   dedupes, so replay is safe. `quorum-shared`'s clients already have a
+   `pendingEnvelopes` buffer + flush-on-reconnect; the window is simply far too
+   narrow (it rescues only the batch actively being written).
+2. ⚠️ **Desktop has no such buffer at all — and does not use the shared client.**
+   `quorum-desktop/src/components/context/WebsocketProvider.tsx` is a separate
+   implementation; `quorum-shared`'s `BrowserWebSocketClient` is used by no app.
+   Desktop's `processOutbound` calls `ws.send(m)` in a loop with no per-send
+   `readyState` re-check and no requeue. It is spared today only because
+   Chromium pongs reliably — it is not safe, just lucky.
+3. **Keep frames pending until acknowledged**, not until `ws.send` returns.
+4. **Protocol write ack** (quorum-mobile#183) — unchanged ask, better motivated.
+
+⚠️ Branch + PR per repo. `quorum-shared` changes need the local-link workflow,
+and its version bump is a separate commit on master, never on the feature
+branch; we never publish (lead dev's call). Mobile is currently on the debug
+branch `diag/dm-frame-trace` — branch off master, not off it.
+
+## §5. Acceptance criteria — revised
+
+The Layer 1 rows are void. What remains:
 
 | stage | measurement | pass |
 |---|---|---|
-| baseline (recorded 2026-07-30) | idle capture, drops per 25 min | **81** |
-| after Layer 1 | same idle capture, same phone | **≈0 drops** |
-| after Layer 1 | 20-message burst, DM doctor on both receivers | **20/20 on both** |
+| baseline (recorded) | idle capture, drops per 25 min | **81** |
+| after the **relay** change | same idle capture, same phone | **≈0 drops** |
+| after the **relay** change | 20-message burst, DM doctor both receivers | **20/20 on both** |
 | after Layer 2 | burst with a drop forced mid-run | **20/20 still** |
 
-Tooling is already built and merged: mobile burst button (flask icon, dev
-builds), desktop `/dev/dm-doctor`, and the socket-lifecycle probe in
-`quorum-mobile/.agents/scripts/patch-rn-ws-diag.mjs` (**gitignored, local only** —
-re-apply after any `yarn install`; `git debug` does it). Protocol: the runbook.
+The relay rows cannot be run until the relay change lands. Layer 2 is testable
+independently — and is worth testing *before* the relay change, while drops are
+still plentiful and free.
 
-**Also cheap and worth doing:** the TCP-sampling method (`adb shell ss -tn`,
-watching distinct local ports against the relay) needs **no instrumentation**, so
-it can measure the `.preview`/production build and confirm live users are hit by
-the same thing.
+## §6. Still owed, independent of the fix
 
-## §6. Still owed from 2026-07-30, independent of the fix
-
+- **Confirm the mobile mechanism directly.** That RN misses pongs is *inferred*.
+  RN's JS `WebSocket` does not expose ping/pong, so this needs a **packet
+  capture on the phone** or **relay-side logs** — an app patch cannot see it.
 - **Tie individual lost messages to individual CLOSE events** — one burst with
-  the lifecycle probe armed (it was added *after* round P). Closes the last
-  inferential gap, including round P's messages 9 and 10.
-- **Production-build check** (TCP sampling, per above) — also folds in the
-  long-owed W-run.
+  the lifecycle probe armed (added after round P). Closes round P's 9 and 10.
+- **Production-build check** via TCP sampling (`adb shell ss -tn`), no
+  instrumentation needed; folds in the long-owed W-run.
 - **Desktop A offline catch-up reading** from round Z.
-- **Identify what actually reaps the connection** (router / ISP-CGNAT /
-  Cloudflare). Does not block the client fix; may reveal a smaller infra fix.
-
-## §7. What to hand the lead dev, once the numbers are in
-
-1. The root-cause bug file, with the before/after measurements.
-2. The client fix (PRs), with the acceptance-test results.
-3. The remaining **protocol** ask, unchanged but now much better motivated:
-   a **write ack** (quorum-mobile#183). This finding shows the failure is not
-   exotic server behaviour but the ordinary consequence of a connection that
-   dies whenever it goes quiet.
-4. If the relay/proxy idle timeout turns out to be configurable, the
-   infrastructure-side ask.
+- **Is the deadline uniform** across relay instances and regions?
 
 ---
 *Last updated: 2026-07-30*
