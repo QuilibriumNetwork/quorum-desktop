@@ -63,7 +63,7 @@ msgid "Replying to {user}"
 msgstr "Answerin' {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:714
+#: src/components/message/MessageComposer.tsx:728
 msgid "Replying to"
 msgstr "Replyin' to"
 
@@ -83,13 +83,13 @@ msgid "has been kicked"
 msgstr "has been kicked overboard"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:1078
+#: src/components/direct/DirectMessage.tsx:1101
 msgid "Send a message to {user}"
 msgstr "Send a message to {user}, savvy?"
 
 #: src/components/message/Message.tsx:940
 #: src/components/message/Message.tsx:953
-#: src/components/message/Message.tsx:1074
+#: src/components/message/Message.tsx:1073
 msgid "(edited)"
 msgstr "(Edited)"
 
@@ -98,7 +98,7 @@ msgid "(empty)"
 msgstr "(Empty)"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:128
-#: src/components/user/UserProfile.tsx:395
+#: src/components/user/UserProfile.tsx:399
 msgid "(only visible to you)"
 msgstr "(only visible to ye)"
 
@@ -119,7 +119,7 @@ msgid "[Message]"
 msgstr "[Message]"
 
 #: src/components/message/Message.tsx:713
-#: src/components/message/Message.tsx:1162
+#: src/components/message/Message.tsx:1164
 msgid "[Original message was deleted]"
 msgstr "[Ay, the message be gone!]"
 
@@ -290,16 +290,16 @@ msgstr ""
 "A reusable link any scallywag can use to join, savvy? Share it on yer social"
 " media or yer website, arr!"
 
-#: src/services/MessageService.ts:4921 src/services/NotificationService.ts:297
+#: src/services/MessageService.ts:5773 src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "a role"
 
-#: src/services/MessageService.ts:4931 src/services/NotificationService.ts:296
+#: src/services/MessageService.ts:5783 src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "a Space"
 
-#: src/components/user/UserProfile.tsx:387
+#: src/components/user/UserProfile.tsx:391
 msgid "About"
 msgstr "About, matey"
 
@@ -336,12 +336,12 @@ msgid "Add a friend"
 msgstr "Add a mate"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:153
-#: src/components/user/UserProfile.tsx:423
+#: src/components/user/UserProfile.tsx:427
 msgid "Add a note"
 msgstr "Add a note, savvy?"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:132
-#: src/components/user/UserProfile.tsx:399
+#: src/components/user/UserProfile.tsx:403
 msgid "Add a personal note..."
 msgstr "Add a personal note, ye scallywag..."
 
@@ -401,7 +401,7 @@ msgstr ""
 "Add up to 50 custom stickers. Custom stickers can only be used within a "
 "Space. Ye can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 
-#: src/components/user/UserProfile.tsx:378
+#: src/components/user/UserProfile.tsx:382
 msgid "Adding..."
 msgstr "Addin'..."
 
@@ -424,7 +424,7 @@ msgstr "Advanced Settin's"
 #: src/components/direct/DirectMessageContactsList.tsx:323
 #: src/components/modals/ChannelEditorModal.tsx:206
 #: src/components/modals/SpaceSettingsModal/Account.tsx:316
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:160
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 #: src/components/notifications/NotificationPanel.tsx:261
 msgid "All"
 msgstr "All"
@@ -466,7 +466,7 @@ msgstr "Already aboard"
 msgid "Always sign Direct Messages"
 msgstr "Always sign yer Direct Messages"
 
-#: src/components/modals/ConversationSettingsModal.tsx:253
+#: src/components/modals/ConversationSettingsModal.tsx:258
 #: src/components/modals/NewDirectMessageModal.tsx:156
 msgid "Always sign messages"
 msgstr "Always sign yer messages"
@@ -475,7 +475,7 @@ msgstr "Always sign yer messages"
 msgid "An error occurred while deleting the Space. Please try again."
 msgstr "An error occurred whilst deletin' the Space. Try again, matey."
 
-#: src/components/modals/UserSettingsModal/DangerZone.tsx:60
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:66
 msgid "An error occurred while resetting app data. Please try again."
 msgstr ""
 "Arrr, somethin’ went amiss while tryin’ to reset yer app data. Heave-ho an’ "
@@ -536,7 +536,7 @@ msgid ""
 "Are you sure you want to delete this channel? This action cannot be undone."
 msgstr "Be ye sure ye want to scuttle this channel? This be a one-way voyage."
 
-#: src/components/modals/ConversationSettingsModal.tsx:65
+#: src/components/modals/ConversationSettingsModal.tsx:66
 msgid ""
 "Are you sure you want to delete this conversation?\n"
 "\n"
@@ -559,7 +559,7 @@ msgid ""
 "Are you sure you want to delete this group? This action cannot be undone."
 msgstr "Be ye sure ye want to scuttle this group? This be a one-way voyage."
 
-#: src/hooks/business/messages/useMessageActions.ts:424
+#: src/hooks/business/messages/useMessageActions.ts:423
 msgid "Are you sure you want to delete this message?"
 msgstr "Are ye sure ye want to send this message to the depths?"
 
@@ -575,15 +575,15 @@ msgstr ""
 "Are ye sure ye want to leave this Space? Ye won't be able to rejoin unless "
 "ye be re-invited."
 
-#: src/hooks/business/messages/usePinnedMessages.ts:313
+#: src/hooks/business/messages/usePinnedMessages.ts:318
 msgid "Are you sure you want to pin this message?"
 msgstr "Are ye sure ye want to nail this message to the mast?"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:312
+#: src/hooks/business/messages/usePinnedMessages.ts:317
 msgid "Are you sure you want to unpin this message?"
 msgstr "Are ye sure ye want to pull this message from the mast?"
 
-#: src/components/message/MessageComposer.tsx:800
+#: src/components/message/MessageComposer.tsx:814
 msgid "attach image"
 msgstr "Attach an image"
 
@@ -631,7 +631,7 @@ msgid "Bio is too long"
 msgstr "Yer tale be too long, matey!"
 
 #: src/components/modals/BlockUserModal.tsx:96
-#: src/components/user/UserProfile.tsx:473
+#: src/components/user/UserProfile.tsx:477
 msgid "Block"
 msgstr "Block"
 
@@ -659,7 +659,7 @@ msgstr "Mark this treasure"
 
 #: src/components/message/Message.tsx:892
 #: src/components/message/Message.tsx:987
-#: src/components/message/Message.tsx:1103
+#: src/components/message/Message.tsx:1102
 msgid "Bookmarked"
 msgstr "Marked as treasure"
 
@@ -676,7 +676,7 @@ msgstr "Treasured sticker"
 msgid "Bookmarks"
 msgstr "Treasure Marks"
 
-#: src/components/direct/DirectMessage.tsx:859
+#: src/components/direct/DirectMessage.tsx:882
 msgid "Bookmarks in this conversation"
 msgstr "Mararkers in this conversation"
 
@@ -699,8 +699,8 @@ msgstr "Spyglass"
 #: src/components/modals/BlockUserModal.tsx:88
 #: src/components/modals/ConfirmationModal.native.tsx:28
 #: src/components/modals/ConfirmationModal.tsx:31
-#: src/components/modals/ConversationSettingsModal.tsx:68
-#: src/components/modals/ConversationSettingsModal.tsx:89
+#: src/components/modals/ConversationSettingsModal.tsx:69
+#: src/components/modals/ConversationSettingsModal.tsx:90
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:293
@@ -708,14 +708,14 @@ msgstr "Spyglass"
 #: src/components/modals/UserSettingsModal/Security.tsx:491
 #: src/components/notifications/NotificationPanel.tsx:201
 #: src/hooks/business/channels/useChannelManagement.ts:244
-#: src/hooks/business/messages/useMessageActions.ts:436
-#: src/hooks/business/messages/usePinnedMessages.ts:325
+#: src/hooks/business/messages/useMessageActions.ts:435
+#: src/hooks/business/messages/usePinnedMessages.ts:330
 #: src/hooks/business/spaces/useRoleManagement.ts:78
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "Belay that"
 
-#: src/components/message/MessageEditTextarea.tsx:727
+#: src/components/message/MessageEditTextarea.tsx:733
 msgid "CANCEL"
 msgstr "Avast! CANCEL"
 
@@ -804,7 +804,7 @@ msgstr "Choose thy preferred theme for Quorum."
 
 #: src/components/modals/ChannelEditorModal.tsx:207
 #: src/components/modals/SpaceSettingsModal/Account.tsx:317
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:161
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:163
 #: src/components/notifications/NotificationPanel.tsx:262
 #: src/components/space/IconPicker/IconPicker.web.tsx:195
 msgid "Clear"
@@ -875,7 +875,7 @@ msgstr "Aye, Delete it!"
 msgid "Confirm Leave"
 msgstr "Aye, Cast Off!"
 
-#: src/components/modals/UserSettingsModal/DangerZone.tsx:79
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:86
 msgid "Confirm Reset"
 msgstr "Aye, Reset it!"
 
@@ -899,12 +899,12 @@ msgstr ""
 "Control what others can spy on ye about, an' how yer behaviour be shared, "
 "savvy?"
 
-#: src/components/direct/DirectMessage.tsx:840
+#: src/components/direct/DirectMessage.tsx:863
 msgid "Conversation settings"
 msgstr "Conversation parley"
 
 #: src/components/direct/DirectMessageContactsList.tsx:281
-#: src/components/modals/ConversationSettingsModal.tsx:241
+#: src/components/modals/ConversationSettingsModal.tsx:246
 msgid "Conversation Settings"
 msgstr "Conversation Parley"
 
@@ -925,13 +925,13 @@ msgstr "Copied, me heartie!"
 msgid "Copy a link"
 msgstr "Copy a link, ye landlubber"
 
-#: src/components/direct/DirectMessage.tsx:822
-#: src/components/direct/DirectMessage.tsx:944
-#: src/components/direct/DirectMessage.tsx:963
+#: src/components/direct/DirectMessage.tsx:845
+#: src/components/direct/DirectMessage.tsx:967
+#: src/components/direct/DirectMessage.tsx:986
 #: src/components/direct/DMUserProfileSidebar.tsx:98
 #: src/components/modals/UserSettingsModal/General.tsx:195
-#: src/components/user/UserProfile.tsx:261
-#: src/components/user/UserProfile.tsx:298
+#: src/components/user/UserProfile.tsx:265
+#: src/components/user/UserProfile.tsx:302
 msgid "Copy address"
 msgstr "Copy the address"
 
@@ -971,7 +971,7 @@ msgstr "Copy the message link, savvy?"
 msgid "Copying..."
 msgstr "Copyin'..."
 
-#: src/services/ConfigService.ts:264
+#: src/services/ConfigService.ts:273
 msgid "Could not add Space"
 msgstr "Could not add yer Space, matey"
 
@@ -984,7 +984,7 @@ msgstr "Couldn't fetch the Space details. Try again, matey."
 msgid "Could not import key"
 msgstr "Couldn't fetch the key, shiver me timbers!"
 
-#: src/services/ConfigService.ts:137
+#: src/services/ConfigService.ts:146
 msgid "Could not obtain manifest for Space"
 msgstr "Could not obtain manifest fer yer Space, shiver me timbers"
 
@@ -1008,6 +1008,14 @@ msgid ""
 "image."
 msgstr ""
 "Couldn’t load yer saved profile. Please re-enter yer name and profile image."
+
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:64
+msgid ""
+"Couldn't reset: Quorum is open in another tab. Close all other Quorum tabs, "
+"then try again."
+msgstr ""
+"Couldn't reset: Quorum be open in another tab. Close all other Quorum tabs, "
+"then try again, savvy?"
 
 #: src/components/discover-page/DiscoverPage.tsx:92
 msgid "Create"
@@ -1107,7 +1115,7 @@ msgstr ""
 "Default Space settings provide the most typical chat experience, but for "
 "higher privacy guarantees, review these advanced settings, savvy?"
 
-#: src/hooks/business/messages/useMessageActions.ts:438
+#: src/hooks/business/messages/useMessageActions.ts:437
 msgid "delete"
 msgstr "walk the plank"
 
@@ -1115,13 +1123,13 @@ msgstr "walk the plank"
 #: src/components/message/MessageActionsMenu.tsx:277
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:30
-#: src/components/modals/ConversationSettingsModal.tsx:67
+#: src/components/modals/ConversationSettingsModal.tsx:68
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:443
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:464
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:106
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:108
 #: src/hooks/business/channels/useChannelManagement.ts:243
-#: src/hooks/business/messages/useMessageActions.ts:435
+#: src/hooks/business/messages/useMessageActions.ts:434
 #: src/hooks/business/spaces/useRoleManagement.ts:77
 msgid "Delete"
 msgstr "Walk the Plank"
@@ -1142,8 +1150,8 @@ msgid "Delete Channel"
 msgstr "Scuttle Channel"
 
 #: src/components/direct/DirectMessageContactsList.tsx:289
-#: src/components/modals/ConversationSettingsModal.tsx:64
-#: src/components/modals/ConversationSettingsModal.tsx:439
+#: src/components/modals/ConversationSettingsModal.tsx:65
+#: src/components/modals/ConversationSettingsModal.tsx:444
 msgid "Delete Conversation"
 msgstr "Scuttle the Conversation"
 
@@ -1167,7 +1175,7 @@ msgstr "Scuttle Group"
 msgid "Delete message"
 msgstr "Walk this message off the plank"
 
-#: src/hooks/business/messages/useMessageActions.ts:423
+#: src/hooks/business/messages/useMessageActions.ts:422
 msgid "Delete Message"
 msgstr "Walk the Plank"
 
@@ -1175,11 +1183,11 @@ msgstr "Walk the Plank"
 msgid "Delete message without confirmation"
 msgstr "Delete message without confirmation, savvy?"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:178
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:180
 msgid "Delete Messages"
 msgstr "Walk the Plank"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:211
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:213
 msgid "Delete role"
 msgstr "Maroon this role"
 
@@ -1215,11 +1223,11 @@ msgstr "Scuttle Thread"
 msgid "Deleting Space..."
 msgstr "Scuttlin' Space..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:456
+#: src/components/modals/ConversationSettingsModal.tsx:461
 msgid "Deleting..."
 msgstr "Scuttlin'..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:303
+#: src/components/modals/ConversationSettingsModal.tsx:308
 #: src/components/modals/UserSettingsModal/Privacy.tsx:175
 msgid "Delivery receipts"
 msgstr "Delivery Receipts"
@@ -1406,7 +1414,7 @@ msgstr "Message History"
 msgid "Edit message"
 msgstr "Edit this message"
 
-#: src/components/message/MessageComposer.tsx:850
+#: src/components/message/MessageComposer.tsx:864
 msgid "emoji & stickers"
 msgstr "Emoji & stickers, by the kraken!"
 
@@ -1415,7 +1423,7 @@ msgid "Emoji picker"
 msgstr "Emoji chest"
 
 #: src/components/message/EmojiPickerDrawer.tsx:66
-#: src/components/message/MessageComposer.tsx:850
+#: src/components/message/MessageComposer.tsx:864
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:41
 #: src/components/space/Channel.tsx:1911
@@ -1431,7 +1439,7 @@ msgstr "Enable sync"
 msgid "Enable threaded conversations in channels"
 msgstr "Enable threaded conversations in channels, arrr!"
 
-#: src/services/ActionQueueHandlers.ts:1029
+#: src/services/ActionQueueHandlers.ts:1200
 msgid "Encryption error"
 msgstr "Encryption error, arr!"
 
@@ -1492,7 +1500,7 @@ msgstr "Enter details manually, if ye dare!"
 msgid "Enter Quorum"
 msgstr "Enter Quorum, arrr!"
 
-#: src/components/message/MessageEditTextarea.tsx:729
+#: src/components/message/MessageEditTextarea.tsx:735
 msgid "Enter to"
 msgstr "Enter to"
 
@@ -1526,7 +1534,7 @@ msgstr "Error requestin' notification permission:"
 msgid "Error showing notification:"
 msgstr "Error showin' notification:"
 
-#: src/components/message/MessageEditTextarea.tsx:714
+#: src/components/message/MessageEditTextarea.tsx:720
 msgid "Esc to"
 msgstr "Esc to"
 
@@ -1571,7 +1579,7 @@ msgstr "Failed to copy the private key, blast it!"
 msgid "Failed to create Space. Please try again."
 msgstr "Failed to create Space. Try again, ye landlubber."
 
-#: src/services/MessageService.ts:3178
+#: src/services/MessageService.ts:3823
 msgid "Failed to decrypt message with any known state"
 msgstr "Failed t' decrypt message with any known state, matey"
 
@@ -1579,13 +1587,13 @@ msgstr "Failed t' decrypt message with any known state, matey"
 msgid "Failed to delete folder"
 msgstr "Failed to delete folder, shiver me timbers!"
 
-#: src/services/ActionQueueHandlers.ts:330
-#: src/services/ActionQueueHandlers.ts:875
+#: src/services/ActionQueueHandlers.ts:344
+#: src/services/ActionQueueHandlers.ts:999
 msgid "Failed to delete message"
 msgstr "Failed t' delete message"
 
-#: src/services/ActionQueueHandlers.ts:306
-#: src/services/ActionQueueHandlers.ts:920
+#: src/services/ActionQueueHandlers.ts:320
+#: src/services/ActionQueueHandlers.ts:1044
 msgid "Failed to edit message"
 msgstr "Failed t' edit message"
 
@@ -1602,7 +1610,7 @@ msgstr "Failed t' generate invite link. Please try again."
 msgid "Failed to import backup"
 msgstr "Failed to import backup, blast it!"
 
-#: src/services/ActionQueueHandlers.ts:163
+#: src/services/ActionQueueHandlers.ts:177
 msgid "Failed to kick user"
 msgstr "Failed t' kick user"
 
@@ -1616,7 +1624,7 @@ msgid "Failed to load public Spaces."
 msgstr "Failed to load them public Spaces, arrr."
 
 #: src/components/modals/MuteUserModal.tsx:55
-#: src/services/ActionQueueHandlers.ts:189
+#: src/services/ActionQueueHandlers.ts:203
 msgid "Failed to mute user"
 msgstr "Failed to silence that landlubber!"
 
@@ -1624,13 +1632,17 @@ msgstr "Failed to silence that landlubber!"
 msgid "Failed to parse WebSocket message:"
 msgstr "Failed t' parse WebSocket message:"
 
-#: src/services/ActionQueueHandlers.ts:262
+#: src/services/ActionQueueHandlers.ts:276
 msgid "Failed to pin message"
 msgstr "Failed t' pin message"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:102
 msgid "Failed to restore Spaces"
 msgstr "Failed to restore Spaces, blast it all!"
+
+#: src/hooks/business/dm/useDMConversationSettings.ts:129
+msgid "Failed to save conversation settings"
+msgstr "Failed to save conversation settin's"
 
 #: src/hooks/business/dm/useDMFavorites.ts:112
 #: src/hooks/business/dm/useDMFavorites.ts:166
@@ -1664,11 +1676,11 @@ msgid "Failed to save notification settings"
 msgstr "Failed to save notification settings, blast it!"
 
 #: src/hooks/business/user/useUserSettings.ts:487
-#: src/services/ActionQueueHandlers.ts:93
+#: src/services/ActionQueueHandlers.ts:105
 msgid "Failed to save settings"
 msgstr "Failed t' save settings"
 
-#: src/services/ActionQueueHandlers.ts:119
+#: src/services/ActionQueueHandlers.ts:133
 msgid "Failed to save Space settings"
 msgstr "Failed to save Space settings, shiver me timbers!"
 
@@ -1676,7 +1688,7 @@ msgstr "Failed to save Space settings, shiver me timbers!"
 msgid "Failed to send invite. Please try again."
 msgstr "Failed to send invite. Try again, matey."
 
-#: src/components/message/Message.tsx:1553
+#: src/components/message/Message.tsx:1555
 msgid "Failed to send."
 msgstr "Failed t' send."
 
@@ -1686,11 +1698,11 @@ msgid "Failed to unblock user"
 msgstr "Shiver me timbers! Failed to unblock scallywag"
 
 #: src/components/modals/MuteUserModal.tsx:55
-#: src/services/ActionQueueHandlers.ts:215
+#: src/services/ActionQueueHandlers.ts:229
 msgid "Failed to unmute user"
 msgstr "Failed to un-silence that user, arrr!"
 
-#: src/services/ActionQueueHandlers.ts:280
+#: src/services/ActionQueueHandlers.ts:294
 msgid "Failed to unpin message"
 msgstr "Failed t' unpin message"
 
@@ -1983,7 +1995,7 @@ msgstr "Importin’..."
 msgid "Inline Code"
 msgstr "Inline Code, savvy?"
 
-#: src/services/MessageService.ts:3594
+#: src/services/MessageService.ts:4393
 msgid "invalid address for signature"
 msgstr "invalid address for signature, arrr"
 
@@ -1999,8 +2011,8 @@ msgstr ""
 msgid "invalid link"
 msgstr "invalid link, arr!"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:73
-#: src/hooks/business/messages/usePinnedMessages.ts:165
+#: src/hooks/business/messages/usePinnedMessages.ts:78
+#: src/hooks/business/messages/usePinnedMessages.ts:170
 msgid "Invalid message ID"
 msgstr "That message ID be cursed!"
 
@@ -2125,7 +2137,7 @@ msgid "Keyboard Shortcuts"
 msgstr "Keyboard Shortcuts, arr"
 
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/user/UserProfile.tsx:517
+#: src/components/user/UserProfile.tsx:521
 msgid "Kick"
 msgstr "Keelhaul"
 
@@ -2133,7 +2145,7 @@ msgstr "Keelhaul"
 msgid "Kick User"
 msgstr "Keelhaul the User"
 
-#: src/components/user/UserProfile.tsx:517
+#: src/components/user/UserProfile.tsx:521
 msgid "Kicked!"
 msgstr "Keelhauled!"
 
@@ -2235,11 +2247,11 @@ msgstr "Make profile public, arrr?"
 msgid "Make Public"
 msgstr "Make Public, ye dog!"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:190
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:192
 msgid "Make role invisible"
 msgstr "Make role invisible, or face the plank!"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:190
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:192
 msgid "Make role public"
 msgstr "Make role visible to all"
 
@@ -2305,7 +2317,7 @@ msgstr ""
 "only channel. Note: Space owners must also be in a manager role to post "
 "here, arrr."
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:166
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Mention Everyone"
 msgstr "Hail everyone aboard!"
 
@@ -2315,13 +2327,13 @@ msgstr "Message actions"
 
 #: src/components/message/Message.tsx:923
 #: src/components/message/Message.tsx:1018
-#: src/components/message/Message.tsx:1079
+#: src/components/message/Message.tsx:1078
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 "Message bears not a valid sigil, this may not come from the sender, savvy?"
 
-#: src/components/message/MessageComposer.tsx:177
+#: src/components/message/MessageComposer.tsx:178
 msgid "Message..."
 msgstr "Say somethin'..."
 
@@ -2330,11 +2342,11 @@ msgstr "Say somethin'..."
 msgid "Messages"
 msgstr "Messages"
 
-#: src/components/message/MessageComposer.tsx:870
+#: src/components/message/MessageComposer.tsx:884
 msgid "Messages are NOT signed!"
 msgstr "Messages be NOT signed, arr!"
 
-#: src/components/message/MessageComposer.tsx:871
+#: src/components/message/MessageComposer.tsx:885
 msgid "Messages are signed!"
 msgstr "Messages be signed, aye!"
 
@@ -2354,7 +2366,7 @@ msgstr "More reactions, me hearty"
 msgid "Must be exactly 4 characters"
 msgstr "Must be exactly 4 characters, savvy?"
 
-#: src/components/user/UserProfile.tsx:496
+#: src/components/user/UserProfile.tsx:500
 msgid "Mute"
 msgstr "Silence"
 
@@ -2362,7 +2374,7 @@ msgstr "Silence"
 msgid "Mute Channel"
 msgstr "Silence this Channel"
 
-#: src/components/modals/ConversationSettingsModal.tsx:274
+#: src/components/modals/ConversationSettingsModal.tsx:279
 msgid "Mute conversation"
 msgstr "Silence conversation"
 
@@ -2390,7 +2402,7 @@ msgstr "Silence this Space"
 msgid "Mute User"
 msgstr "Silence the User"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:176
 msgid "Mute Users"
 msgstr "Silence the Crew"
 
@@ -2424,7 +2436,7 @@ msgstr "Names resembling admin, moderator, or support be reserved, matey."
 msgid "Navigation"
 msgstr "Navigation"
 
-#: src/services/ActionQueueHandlers.ts:1026
+#: src/services/ActionQueueHandlers.ts:1193
 msgid "Network error"
 msgstr "Network error, arrr!"
 
@@ -2598,7 +2610,7 @@ msgid "None"
 msgstr "None"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:128
-#: src/components/user/UserProfile.tsx:395
+#: src/components/user/UserProfile.tsx:399
 msgid "Note"
 msgstr "Note"
 
@@ -2685,7 +2697,7 @@ msgid "Open {0}"
 msgstr "Open {0}"
 
 #: src/components/bookmarks/BookmarksPage.tsx:30
-#: src/components/direct/DirectMessage.tsx:799
+#: src/components/direct/DirectMessage.tsx:822
 #: src/components/direct/EmptyDirectMessage.tsx:27
 #: src/components/discover-page/DiscoverPage.tsx:28
 #: src/components/farcaster/FarcasterPage.tsx:19
@@ -2766,7 +2778,7 @@ msgstr "Pendin'"
 msgid "Pending removal - click Save to confirm"
 msgstr "Pendin' removal - click Save to confirm"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:143
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:145
 #: src/components/space/RolePreview.tsx:34
 msgid "Permissions:"
 msgstr "Ship's orders:"
@@ -2775,13 +2787,13 @@ msgstr "Ship's orders:"
 msgid "Photo Library"
 msgstr "Portrait Gallery"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:327
+#: src/hooks/business/messages/usePinnedMessages.ts:332
 msgid "pin"
 msgstr "nail"
 
 #: src/components/message/MessageActions.tsx:95
 #: src/components/message/MessageActionsMenu.tsx:267
-#: src/hooks/business/messages/usePinnedMessages.ts:324
+#: src/hooks/business/messages/usePinnedMessages.ts:329
 msgid "Pin"
 msgstr "Nail to Mast"
 
@@ -2790,7 +2802,7 @@ msgid "Pin important messages to keep them easily accessible"
 msgstr "Nail important messages to the mast so ye can find 'em quick, arrr!"
 
 #. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
-#: src/hooks/business/messages/usePinnedMessages.ts:87
+#: src/hooks/business/messages/usePinnedMessages.ts:92
 msgid "Pin limit reached ({0})"
 msgstr "The mast be full, ye can't nail more! ({0})"
 
@@ -2798,11 +2810,11 @@ msgstr "The mast be full, ye can't nail more! ({0})"
 msgid "Pin message"
 msgstr "Nail to the mast"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:310
+#: src/hooks/business/messages/usePinnedMessages.ts:315
 msgid "Pin Message"
 msgstr "Nail Message to Mast"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:172
 msgid "Pin Messages"
 msgstr "Nail Messages to Mast"
 
@@ -2812,7 +2824,7 @@ msgstr "Pin/Unpin without confirmation, savvy?"
 
 #: src/components/message/Message.tsx:876
 #: src/components/message/Message.tsx:971
-#: src/components/message/Message.tsx:1092
+#: src/components/message/Message.tsx:1091
 msgid "Pinned"
 msgstr "Nailed to mast"
 
@@ -2821,7 +2833,7 @@ msgstr "Nailed to mast"
 #. mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))
 #: src/components/message/Message.tsx:875
 #: src/components/message/Message.tsx:970
-#: src/components/message/Message.tsx:1091
+#: src/components/message/Message.tsx:1090
 msgid "Pinned by {0}"
 msgstr "Nailed to the mast by {0}"
 
@@ -2871,7 +2883,7 @@ msgstr ""
 msgid "Private key saved to selected folder"
 msgstr "Private key saved to the selected folder"
 
-#: src/components/message/MessageComposer.tsx:665
+#: src/components/message/MessageComposer.tsx:679
 msgid "Processing image... This may take a moment for large files."
 msgstr "Processin' image... This may take a moment for large files."
 
@@ -2939,7 +2951,7 @@ msgstr "Read only"
 msgid "Read only channel"
 msgstr "Read only channel, ye scurvy dog!"
 
-#: src/components/modals/ConversationSettingsModal.tsx:346
+#: src/components/modals/ConversationSettingsModal.tsx:351
 #: src/components/modals/UserSettingsModal/Privacy.tsx:199
 msgid "Read receipts"
 msgstr "Read Receipts"
@@ -2960,7 +2972,7 @@ msgstr "Reauthorize"
 msgid "received config with invalid signature!"
 msgstr "received config with invalid signature, arrr!"
 
-#: src/services/ActionQueueHandlers.ts:1032
+#: src/services/ActionQueueHandlers.ts:1203
 msgid "Recipient has no devices"
 msgstr "That landlubber has no devices!"
 
@@ -2985,7 +2997,7 @@ msgstr "Remove treasure mark"
 msgid "Remove from Favorites"
 msgstr "Remove from yer Favorites"
 
-#: src/components/user/UserProfile.tsx:350
+#: src/components/user/UserProfile.tsx:354
 msgid "Removing..."
 msgstr "Removin'..."
 
@@ -3033,20 +3045,20 @@ msgstr ""
 msgid "Reset"
 msgstr "Reset"
 
-#: src/components/modals/UserSettingsModal/DangerZone.tsx:47
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:50
 msgid "Reset App Data"
 msgstr "Reset App Data, arrr!"
 
-#: src/components/modals/ConversationSettingsModal.tsx:85
-#: src/components/modals/ConversationSettingsModal.tsx:416
+#: src/components/modals/ConversationSettingsModal.tsx:86
+#: src/components/modals/ConversationSettingsModal.tsx:421
 msgid "Reset Encryption Session"
 msgstr "Reset yer Encryption Session, savvy?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:88
+#: src/components/modals/ConversationSettingsModal.tsx:89
 msgid "Reset Session"
 msgstr "Reset Session"
 
-#: src/components/modals/ConversationSettingsModal.tsx:421
+#: src/components/modals/ConversationSettingsModal.tsx:426
 msgid ""
 "Reset the encryption session if messages fail to send or decrypt. The next "
 "message will establish a fresh secure connection."
@@ -3054,12 +3066,12 @@ msgstr ""
 "Reset the encryption session if yer messages fail to send or decrypt, me "
 "hearty. The next message ye send will forge a fresh, secure connection."
 
-#: src/components/modals/ConversationSettingsModal.tsx:314
-#: src/components/modals/ConversationSettingsModal.tsx:353
+#: src/components/modals/ConversationSettingsModal.tsx:319
+#: src/components/modals/ConversationSettingsModal.tsx:358
 msgid "Reset to global"
 msgstr "Reset to Global"
 
-#: src/components/modals/ConversationSettingsModal.tsx:474
+#: src/components/modals/ConversationSettingsModal.tsx:479
 msgid "Resetting..."
 msgstr "Resetting, arrr..."
 
@@ -3103,7 +3115,7 @@ msgid "Restoring..."
 msgstr "Restorin'..."
 
 #: src/components/discover-page/DiscoverTab.tsx:89
-#: src/components/message/Message.tsx:1561
+#: src/components/message/Message.tsx:1563
 msgid "Retry"
 msgstr "Try again!"
 
@@ -3112,11 +3124,11 @@ msgstr "Try again!"
 msgid "Roles"
 msgstr "Crew Roles"
 
-#: src/components/modals/ConversationSettingsModal.tsx:398
+#: src/components/modals/ConversationSettingsModal.tsx:403
 msgid "Save"
 msgstr "Stash it"
 
-#: src/components/message/MessageEditTextarea.tsx:748
+#: src/components/message/MessageEditTextarea.tsx:754
 msgid "SAVE"
 msgstr "SAVE"
 
@@ -3130,7 +3142,7 @@ msgstr "SAVE"
 msgid "Save Changes"
 msgstr "Save yer changes"
 
-#: src/components/modals/ConversationSettingsModal.tsx:381
+#: src/components/modals/ConversationSettingsModal.tsx:386
 #: src/components/modals/SpaceSettingsModal/General.tsx:302
 msgid "Save Edit History"
 msgstr "Save Edit History, matey!"
@@ -3192,7 +3204,7 @@ msgstr "Search in this Space, me hearty!"
 msgid "Search in this Space..."
 msgstr "Search in this Space..., by the beard!"
 
-#: src/components/direct/DirectMessage.tsx:901
+#: src/components/direct/DirectMessage.tsx:924
 #: src/components/space/Channel.tsx:1590
 msgid "Search Messages"
 msgstr "Search Messages"
@@ -3246,7 +3258,7 @@ msgstr "See all mararkers"
 msgid "Select"
 msgstr "Select"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:159
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:161
 msgid "Select permissions"
 msgstr "Choose yer ship's orders"
 
@@ -3273,7 +3285,7 @@ msgstr ""
 "Send a one-time invite directly to some scallywag, arrr. Each link can only "
 "be used once."
 
-#: src/services/ActionQueueHandlers.ts:1034
+#: src/services/ActionQueueHandlers.ts:1205
 msgid "Send failed"
 msgstr "Send failed, arrr!"
 
@@ -3286,7 +3298,7 @@ msgstr "Send forth invite"
 msgid "Send Link"
 msgstr "Send Link, ye dog!"
 
-#: src/components/user/UserProfile.tsx:442
+#: src/components/user/UserProfile.tsx:446
 msgid "Send Message"
 msgstr "Send ye message"
 
@@ -3296,7 +3308,7 @@ msgstr "Send ye message"
 msgid "Send via DM"
 msgstr "Send via DM, matey"
 
-#: src/components/message/Message.tsx:1546
+#: src/components/message/Message.tsx:1548
 msgid "Sending..."
 msgstr "Sendin'..."
 
@@ -3328,7 +3340,7 @@ msgstr ""
 msgid "Shift + Click"
 msgstr "Shift + Click, matey"
 
-#: src/components/message/MessageEditTextarea.tsx:750
+#: src/components/message/MessageEditTextarea.tsx:756
 msgid "Shift+Enter for new line"
 msgstr "Shift+Enter for new line, matey!"
 
@@ -3387,7 +3399,7 @@ msgstr "Sign in t' Quorum, arrr!"
 msgid "Skip for now"
 msgstr "Skip fer now"
 
-#: src/services/MessageService.ts:4904
+#: src/services/MessageService.ts:5756
 msgid "Someone"
 msgstr "Some scallywag"
 
@@ -3560,12 +3572,12 @@ msgstr ""
 msgid "This bio will be visible to others when they view your profile."
 msgstr "This bio will be visible to others when they be viewin' yer profile."
 
-#: src/components/modals/ConversationSettingsModal.tsx:79
+#: src/components/modals/ConversationSettingsModal.tsx:80
 msgid "this contact"
 msgstr "this scallywag"
 
-#: src/components/modals/ConversationSettingsModal.tsx:321
-#: src/components/modals/ConversationSettingsModal.tsx:360
+#: src/components/modals/ConversationSettingsModal.tsx:326
+#: src/components/modals/ConversationSettingsModal.tsx:365
 msgid ""
 "This conversation overrides your global setting. Click \"Reset to global\" "
 "to use your global preference."
@@ -3691,7 +3703,7 @@ msgstr ""
 "This will create a public invite link that any scallywag can use t' join yer"
 " Space. Consider who ye share this link with."
 
-#: src/components/modals/UserSettingsModal/DangerZone.tsx:50
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:53
 msgid ""
 "This will delete all your data from this browser, including your private "
 "keys and all direct messages. Direct messages cannot be recovered. Make sure"
@@ -3703,7 +3715,7 @@ msgstr ""
 " sure ye’ve exported yer private key from the Privacy/Security settings. "
 "This action be final, matey!"
 
-#: src/components/modals/ConversationSettingsModal.tsx:86
+#: src/components/modals/ConversationSettingsModal.tsx:87
 msgid ""
 "This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
 "\n"
@@ -3813,7 +3825,7 @@ msgstr "Two ranks can't share the tag @{0}, arrr."
 msgid "Type DELETE to confirm"
 msgstr "Type DELETE to confirm, savvy?"
 
-#: src/components/modals/UserSettingsModal/DangerZone.tsx:68
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:75
 msgid "Type RESET to confirm"
 msgstr "Type RESET to confirm, matey"
 
@@ -3850,7 +3862,7 @@ msgstr "Unable to compress sticker images. Use smaller images."
 msgid "Unable to copy to clipboard"
 msgstr "Unable to copy to clipboard, blast!"
 
-#: src/services/SpaceService.ts:560
+#: src/services/SpaceService.ts:574
 msgid ""
 "Unable to leave Space due to incomplete configuration. The Space data may be"
 " corrupted."
@@ -3883,7 +3895,7 @@ msgid "Unable to restore: not logged in"
 msgstr "Unable to restore: not logged in, arr!"
 
 #: src/components/modals/BlockUserModal.tsx:96
-#: src/components/user/UserProfile.tsx:473
+#: src/components/user/UserProfile.tsx:477
 msgid "Unblock"
 msgstr "Unblock"
 
@@ -3894,7 +3906,7 @@ msgstr "Unblock Scallywag"
 #: src/components/bookmarks/BookmarkCard.tsx:96
 #: src/components/direct/DirectMessageContactsList.tsx:326
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:3151 src/services/MessageService.ts:4831
+#: src/services/MessageService.ts:3793 src/services/MessageService.ts:5662
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -3910,17 +3922,16 @@ msgstr "Unknown time"
 
 #: src/components/bookmarks/BookmarkCard.tsx:49
 #: src/components/bookmarks/BookmarkItem.tsx:115
-#: src/components/direct/DirectMessage.tsx:247
+#: src/components/direct/DirectMessage.tsx:270
 #: src/components/direct/DirectMessageContactsList.tsx:44
 #: src/components/message/MentionDropdown.tsx:134
-#: src/components/message/MessageEditTextarea.tsx:533
-#: src/components/message/MessageEditTextarea.tsx:565
-#: src/components/message/MessageEditTextarea.tsx:572
-#: src/components/message/MessageEditTextarea.tsx:576
+#: src/components/message/MessageEditTextarea.tsx:539
+#: src/components/message/MessageEditTextarea.tsx:571
+#: src/components/message/MessageEditTextarea.tsx:578
 #: src/components/message/MessageEditTextarea.tsx:582
+#: src/components/message/MessageEditTextarea.tsx:588
 #: src/components/message/MessagePreview.tsx:208
 #: src/components/message/PinnedMessagesPanel.tsx:88
-#: src/components/modals/ConversationSettingsModal.tsx:140
 #: src/components/modals/NewDirectMessageModal.tsx:78
 #: src/components/notifications/NotificationPanel.tsx:316
 #: src/components/notifications/NotificationPanel.tsx:355
@@ -3933,16 +3944,16 @@ msgstr "Unknown time"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:2677
-#: src/services/MessageService.ts:2872 src/services/MessageService.ts:3139
-#: src/services/MessageService.ts:3168 src/services/MessageService.ts:5310
-#: src/services/MessageService.ts:5422 src/services/MessageService.ts:5507
-#: src/services/MessageService.ts:5729 src/services/MessageService.ts:5931
+#: src/services/EncryptionService.ts:154 src/services/MessageService.ts:3196
+#: src/services/MessageService.ts:3391 src/services/MessageService.ts:3648
+#: src/services/MessageService.ts:3752 src/services/MessageService.ts:6190
+#: src/services/MessageService.ts:6306 src/services/MessageService.ts:6391
+#: src/services/MessageService.ts:6613 src/services/MessageService.ts:6815
 msgid "Unknown User"
 msgstr "Unknown User"
 
 #: src/components/modals/MuteUserModal.tsx:138
-#: src/components/user/UserProfile.tsx:496
+#: src/components/user/UserProfile.tsx:500
 msgid "Unmute"
 msgstr "Un-silence"
 
@@ -3962,13 +3973,13 @@ msgstr "Un-silence Space"
 msgid "Unmute User"
 msgstr "Un-silence User"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:327
+#: src/hooks/business/messages/usePinnedMessages.ts:332
 msgid "unpin"
 msgstr "un-nail"
 
 #: src/components/message/MessageActions.tsx:95
 #: src/components/message/MessageActionsMenu.tsx:267
-#: src/hooks/business/messages/usePinnedMessages.ts:324
+#: src/hooks/business/messages/usePinnedMessages.ts:329
 msgid "Unpin"
 msgstr "Un-nail"
 
@@ -3976,7 +3987,7 @@ msgstr "Un-nail"
 msgid "Unpin message"
 msgstr "Pull from the mast"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:310
+#: src/hooks/business/messages/usePinnedMessages.ts:315
 msgid "Unpin Message"
 msgstr "Un-nail Message"
 
@@ -3984,7 +3995,7 @@ msgstr "Un-nail Message"
 msgid "Unpin this post"
 msgstr "Pull this from the mast"
 
-#: src/components/direct/DirectMessage.tsx:1022
+#: src/components/direct/DirectMessage.tsx:1045
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -4046,22 +4057,22 @@ msgstr "Use me main avatar, aye"
 msgid "User does not exist."
 msgstr "That user be not found in these waters."
 
-#: src/hooks/business/messages/usePinnedMessages.ts:77
-#: src/hooks/business/messages/usePinnedMessages.ts:169
+#: src/hooks/business/messages/usePinnedMessages.ts:82
+#: src/hooks/business/messages/usePinnedMessages.ts:174
 msgid "User not authenticated"
 msgstr "User not authenticated, arrr!"
 
-#: src/components/direct/DirectMessage.tsx:1123
+#: src/components/direct/DirectMessage.tsx:1146
 #: src/components/space/Channel.tsx:1998
 msgid "User profile"
 msgstr "User profile, ye matey"
 
-#: src/components/direct/DirectMessage.tsx:883
+#: src/components/direct/DirectMessage.tsx:906
 msgid "User Profile"
 msgstr "User Profile, ye landlubber"
 
-#: src/components/modals/ConversationSettingsModal.tsx:322
-#: src/components/modals/ConversationSettingsModal.tsx:361
+#: src/components/modals/ConversationSettingsModal.tsx:327
+#: src/components/modals/ConversationSettingsModal.tsx:366
 msgid ""
 "Uses your global setting. Toggle to override for this conversation only."
 msgstr "Uses yer global settin'. Toggle to override for this talk only."
@@ -4119,7 +4130,7 @@ msgstr "What should we call ye, matey?"
 msgid "What's on your mind today?"
 msgstr "What's stirrin' in yer noggin today?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:385
+#: src/components/modals/ConversationSettingsModal.tsx:390
 #: src/components/modals/SpaceSettingsModal/General.tsx:306
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
@@ -4157,7 +4168,7 @@ msgstr ""
 "messages be not signed, senders have plausible deniability. This settin' "
 "applies to all messages in this Space."
 
-#: src/components/modals/ConversationSettingsModal.tsx:278
+#: src/components/modals/ConversationSettingsModal.tsx:283
 msgid ""
 "When muted, new messages won't show unread indicators or desktop "
 "notifications."
@@ -4233,7 +4244,7 @@ msgstr "When someone mentions ye directly"
 msgid "When someone replies to your messages"
 msgstr "When someone replies to yer messages"
 
-#: src/components/modals/ConversationSettingsModal.tsx:257
+#: src/components/modals/ConversationSettingsModal.tsx:262
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. The default "
@@ -4325,7 +4336,7 @@ msgstr ""
 msgid "You cannot delete the default channel."
 msgstr "Ye cannot delete the default channel."
 
-#: src/components/message/MessageComposer.tsx:644
+#: src/components/message/MessageComposer.tsx:658
 #: src/components/space/Channel.tsx:1751
 msgid "You cannot post in this channel"
 msgstr "Ye cannot post in this channel"
