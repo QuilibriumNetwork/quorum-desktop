@@ -89,6 +89,27 @@ side still uses the doctor (receiving desktops are dev builds).
    copy-rows from both desktops, a console log export. Never reset sessions,
    re-login, or clean up state before everything is captured — on 07-29 a
    "quick fix first" instinct would have destroyed the stale-device evidence.
+9. ⭐ **Validate the capture BEFORE running the round, and again before quoting
+   any number from it. This is a command, not an eyeball.**
+
+   ```bash
+   node .agents/scripts/validate-capture.mjs <capture.log>   # 0 usable, 1 REJECTED, 2 degraded
+   ```
+
+   A capture is only evidence if it contains **both** armed markers:
+   `[DM-diag] armed` (the build is the diag branch) and `[WS-diag] transport
+   patch armed` (the `node_modules` transport patch survived). The failure is
+   time-of-check/time-of-use: `git debug` arms the rig, then **any `yarn
+   install` or `quorum-shared` rebuild silently disarms it**, and the capture
+   that follows looks normal — just quieter. **Absence of evidence reads exactly
+   like a quiet network**, which is why round 25 was captured, analysed and
+   thrown away. `git debug` now *fails* rather than printing `(want 1)`, and
+   this validator refuses the file outright, so neither check depends on
+   somebody remembering to look.
+
+   ⚠️ After changing `quorum-shared`, the rebuilt dist wipes the patch. Re-run
+   `git debug`, then **restart Metro with `-ResetCache`** — a warm cache serves
+   the old bundle, which is its own silent invalidator (round P).
 
 ## §3. The test estate (as of 2026-07-29)
 
