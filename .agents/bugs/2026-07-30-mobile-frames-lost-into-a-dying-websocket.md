@@ -382,8 +382,14 @@ sleep is **not** why the pong is missed. **That mechanism is still unexplained**
 
 1. **The cause is untouched.** Connections still died 9 times in 51 s during the
    round that passed. Only the relay-side `pongWait` change stops that.
-2. **The client fix is not shipped** — a local patch on one device, not merged,
-   not published. See `tasks/2026-07-31-ship-send-retention-to-quorum-shared.md`.
+2. **The client fix IS now shipped** — merged as `quorum-shared` b24058e (PR #69)
+   and published as **2.1.0-39**, which mobile requires and has. It does not
+   change this bug's status: the fix makes the loss survivable, it does not stop
+   the connections dying. Record: `tasks/.done/2026-07-31-ship-send-retention-to-quorum-shared.md`.
+   ⚠️ The shipped code differs from what rounds S/T/U validated (per-connection
+   buffer rather than a wall-clock window, plus three other departures) and has
+   **not yet been run on a device** — see
+   `tasks/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md`.
 3. **Two clean rounds are not elimination.** At 15-25% loss a 20-message round
    can pass on luck; the per-message position analysis carries the weight, not
    the 20/20.

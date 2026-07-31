@@ -207,6 +207,7 @@ linked docs, not here.
 
 | doc | covers | relationship |
 |---|---|---|
+| `quorum-desktop/.agents/tasks/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md` | Whether messages **sent into** a Space actually arrive (WebSocket transport / send durability). | **Different layer, same word.** That one is about message *delivery*; this one is about which Spaces appear in the *list*. A fix in either has no bearing on the other. Both dated 2026-07-31, so check which you actually want. |
 | `quorum-mobile/.agents/bugs/2026-06-22-userconfig-blob-not-live-synced-cross-device-master.md` | Umbrella for config **staleness** — no live refetch trigger; the blob only re-pulls on restart or incidental UI paths. | Different axis. That doc explicitly says **do not fold the space-loss work in**. A live refetch would make convergence *faster*; it would not make it *correct*. |
 | `quorum-desktop/.agents/bugs/2026-06-13-config-not-refetched-stale-until-restart.md` | The desktop half of the staleness umbrella. | Same — adjacent, not this. |
 | `quorum-mobile/.agents/bugs/2026-07-19-new-desktop-space-appears-one-launch-late-on-mobile.md` | New Space invisible on mobile until the next launch. | The *add* path's latency. Small and independent. |
