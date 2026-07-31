@@ -3,16 +3,44 @@ import { Button, Callout, Icon, Input } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { useQueryClient } from '@tanstack/react-query';
+import { useDeregisterThisDevice } from '../../../hooks/business/user/useDeregisterThisDevice';
 
 const DangerZone: React.FunctionComponent = () => {
   const queryClient = useQueryClient();
+  const deregisterThisDevice = useDeregisterThisDevice();
   const [confirmInput, setConfirmInput] = React.useState('');
   const [resetError, setResetError] = React.useState<string | null>(null);
+  const [isResetting, setIsResetting] = React.useState(false);
 
   const isConfirmed = confirmInput.trim().toLowerCase() === 'reset';
 
   const handleResetAppData = async () => {
+    setIsResetting(true);
     try {
+      // Say goodbye BEFORE anything is destroyed. The device keyset below is
+      // the only handle to this device's hub entry and the only key that can
+      // revoke its space signing admission, so wiping first strands both and
+      // every reset+re-login appends a fresh entry instead of replacing one.
+      //
+      // The catch is load-bearing: a goodbye that fails (offline, hub down, a
+      // bug in here) must never stop the user from resetting — people reset
+      // precisely when things are broken. The cost of failing is one stale
+      // entry they can remove by hand from another device.
+      const outcome = await deregisterThisDevice().catch((err) => {
+        console.warn('[Reset] deregistration threw', err);
+        return { hub: 'failed', spaces: 'failed' } as const;
+      });
+      if (outcome.hub !== 'ok') {
+        console.warn(
+          `[Reset] hub deregistration ${outcome.hub} — this device may stay listed until removed manually`
+        );
+      }
+      if (outcome.spaces !== 'ok') {
+        console.warn(
+          `[Reset] space revocation ${outcome.spaces} — other members may keep trusting this device's signing key`
+        );
+      }
+
       // Clear React Query cache
       queryClient.clear();
 
@@ -38,6 +66,7 @@ const DangerZone: React.FunctionComponent = () => {
     } catch (error) {
       console.error('Failed to reset app data:', error);
       setResetError((error as Error)?.message === 'blocked' ? 'blocked' : 'unknown');
+      setIsResetting(false);
     }
   };
 
@@ -80,10 +109,14 @@ const DangerZone: React.FunctionComponent = () => {
             <Button
               type="danger"
               className="!w-auto !inline-flex"
-              disabled={!isConfirmed}
+              disabled={!isConfirmed || isResetting}
               onClick={handleResetAppData}
             >
-              <Trans>Confirm Reset</Trans>
+              {isResetting ? (
+                <Trans>Resetting...</Trans>
+              ) : (
+                <Trans>Confirm Reset</Trans>
+              )}
             </Button>
           </div>
         </div>

@@ -11,11 +11,18 @@ export const useUploadRegistration = () => {
     async ({
       address,
       registration,
+      timeout,
     }: {
       address: string;
       registration: channel.UserRegistration;
+      /**
+       * Override the client's default. Callers that are about to tear the page
+       * down need the request aborted at their own deadline rather than left
+       * in flight for a reload to cancel.
+       */
+      timeout?: number;
     }) => {
-      await apiClient.postUser(address, registration);
+      await apiClient.postUser(address, registration, { timeout });
 
       invalidateRegistration({ address });
     },

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Ghost device accumulation on reset/logout — deregister-before-wipe (desktop + mobile)"
-status: PLAN — not started
+status: IN PROGRESS — Slice 1 (desktop) implemented on `fix/deregister-device-before-reset-wipe`; Slice 2 (mobile) not started
 priority: medium (UX/hygiene; not a security hole, but pollutes the device list and per-device-signing admissions)
 created: 2026-07-21
 platforms: quorum-desktop + quorum-mobile (+ optional quilibrium-js-sdk-channels hardening)
@@ -123,6 +123,113 @@ still present**, then wipe. Both platforms already have the code:
 6. Unit test the "reconstruct registration without current device" pure logic
    (input device list + this inbox → expected remaining list; last-device case).
 
+#### Slice 1 implementation notes (2026-07-28, branch `fix/deregister-device-before-reset-wipe`)
+
+Shipped as planned, plus one thing the plan didn't anticipate and three
+deliberate deviations. Files: `src/utils/deviceRegistration.ts` (pure),
+`src/hooks/business/user/useDeregisterThisDevice.ts`, `DangerZone.tsx`,
+`WebsocketProvider.tsx`; 13 unit tests.
+
+- **The plan's await-before-wipe discipline was NOT enough for the revoke
+  broadcast, and this is the important finding for Slice 2.**
+  `broadcastDeviceRevocations` only calls `enqueueOutbound`, which appends to a
+  queue drained by a detached `processOutbound()` loop; `ws.send()` then only
+  fills the browser's socket buffer. So awaiting it proves the statements were
+  *signed and queued*, not sent — `location.reload()` discards both the queue
+  and the buffer, and the revoke would have vanished exactly as silently as the
+  fire-and-forget HTTP upload the plan warned about. Added
+  `flushOutbound(timeoutMs)` to `WebSocketProvider`: a sentinel enqueued behind
+  the caller's frames (FIFO + serial loop ⇒ it runs only after they are sent),
+  then polls `bufferedAmount` to 0. Short-circuits on a non-OPEN socket so an
+  offline reset stays instant. Mutation-checked: resolving the barrier early
+  kills 4 of its 5 tests.
+- **Deviation — no user-facing failure notice.** The plan wanted a non-blocking
+  notice when the deregister fails. The reset ends in `window.location.reload()`
+  microseconds later, so any toast/callout would be unobservable theatre. Shipped
+  a `console.warn` breadcrumb instead. If a real notice is wanted it has to move
+  *before* the confirm (e.g. an offline hint next to the button) — a UX decision,
+  not a wiring one.
+- **Deviation — desktop attempts the last-device removal** (mobile refuses it).
+  The open question about an empty `device_registrations` is still open; this is
+  safe to try because the upload is already best-effort, so a hub rejection just
+  leaves today's single ghost. `planDeviceDeregistration` returns `last-device`
+  so the choice is one line to flip once the server behaviour is known.
+- **Deviation — the two cleanups run in parallel, not sequentially:** different
+  transports, no ordering between them, so the user waits for the slower rather
+  than the sum. They are bounded and reported **independently** (`{hub, spaces}`)
+  — see the review findings below for why sharing one budget was a bug.
+- Added a `Resetting...` button state: the goodbye can take up to 3s and a
+  dead-looking button invites a double click. New i18n string, not yet extracted
+  into the catalogs (renders English until the next translation batch).
+- `KeyDB` deletion deliberately NOT bundled (see "Secondary" below).
+- Not yet verified on real hardware — the observable two-device check in step 5
+  below is still outstanding.
+
+#### Review findings, and what they change for Slice 2 (2026-07-28)
+
+Three independent review passes (code review, silent-failure hunt, security)
+found **two real bugs in the first implementation**, both in the *composition*
+rather than in either component — the isolated unit tests for the pure filter
+and the flush barrier passed throughout. Mobile must not repeat them:
+
+1. **The flush barrier's answer was computed and discarded.** `revokeInSpaces`
+   awaited `flushOutbound` and dropped the boolean, and the aggregate read only
+   the hub leg, so unsent frames were reported as a clean goodbye. This is the
+   worse half to lose silently: on failure the hub entry is already gone, so
+   nothing points at the problem, while every space still trusts the device's
+   signing key.
+2. **A slow revoke overwrote a hub write that had already succeeded.** One
+   shared budget + `Promise.all` meant the outer timeout won whenever the socket
+   leg timed out, so the user was told the device might still be listed when it
+   had already been removed. **Bound and report each leg independently**
+   (`DeregisterOutcome = {hub, spaces}`).
+
+Also fixed, all worth checking on mobile:
+
+- **Budget vs the client's own timeout.** The 3s cap abandoned the hub POST
+  under merely-slow networks — the desktop API client allows 22s + 2 retries for
+  that same call, and the request had no `keepalive`, so the reload killed it.
+  Now 8s for the hub leg with an explicit `timeout` passed through so the client
+  aborts at our deadline instead of orphaning a request. **Check what mobile's
+  registration upload timeout is before picking a budget.**
+- **Diagnostics were invisible in production.** `@quilibrium/quorum-shared`'s
+  `logger` gates on `detectEnvironment()`, which is false when
+  `NODE_ENV === 'production'`, so every `logger.warn` on this path was a no-op
+  in exactly the build where the data is about to be destroyed. Desktop uses
+  `console.warn` here deliberately. Mobile: `__DEV__` gates the same logger, so
+  the same trap applies.
+- **Stale-list clobber.** The cached device list could be minutes old (settings
+  left open) and the upload replaces it wholesale, so a device registered
+  elsewhere meanwhile would be silently deleted. Desktop now re-reads
+  immediately before planning and skips the write if the re-read fails. Mobile's
+  `removeDeviceFromRegistration` fetches internally — verify it re-reads rather
+  than trusting a snapshot.
+- **Socket identity in the flush.** `send()` on a closing socket drops silently,
+  so an empty buffer on a *reconnected* socket said nothing about the previous
+  socket's frames. The barrier now compares instance identity.
+
+Known-and-accepted after review:
+
+- **The `useSuspenseQuery` concern was a non-issue.** `RegistrationProvider`
+  holds an observer on the same query key for the whole session, so the cache is
+  always warm and a background refetch changes `fetchStatus`, not `status` — no
+  suspension of the settings modal.
+- **`planDeviceDeregistration` survived the security pass** — no input removes
+  the wrong device or more than intended; malformed entries are kept, never
+  dropped; `thisInboxAddress` comes only from the local keyset, never from hub
+  data.
+- **The console warning is still wiped by the reload** (DevTools clears on
+  navigation by default). The reviewer's suggestion — encode the outcome in the
+  reload URL and show a real notice on the freshly-booted screen — is a genuinely
+  better answer and is left as a follow-up, since it lands UI in the onboarding
+  screen rather than in this fix.
+- **The security pass independently re-derived the `KeyDB` gap** and rates it
+  Critical *because the reset copy explicitly promises to delete private keys*.
+  Still deliberately out of scope here; see "Secondary" below. One dependency it
+  surfaced: desktop's "allow removing the last device" choice is low-risk partly
+  *because* `KeyDB` survives, so re-examine that decision if/when `KeyDB`
+  deletion ships.
+
 ### Slice 2 — Mobile (mirror)
 
 1. In the reset flow (`ProfileModal.handleResetAppData` → before `signOut()`, or
@@ -135,6 +242,12 @@ still present**, then wipe. Both platforms already have the code:
    broadcasts it on device *removal* (via the `deviceKeyStatements` service,
    `services/space/deviceKeyStatements.ts`) — reuse that path for the current
    device's inbox address, awaited with timeout.
+   **Check mobile's send path for the same enqueue-is-not-sent trap desktop
+   had** (see Slice 1 notes): if the broadcast hands frames to a queue or a
+   WebSocket wrapper rather than awaiting the actual send, awaiting it proves
+   nothing and mobile needs its own flush barrier before the storage wipe.
+   Mobile has no `location.reload()`, but `clearAllSecureStorage()` destroys the
+   signing key mid-flight, which loses the frames just as effectively.
 3. Then `clearAllMMKVStorage()` + `clearAllSecureStorage()` as today.
 4. **Observable outcome:** same as desktop, verified statically + on a real
    device pair (mobile: prefer statically-verifiable change per quorum-atlas;
@@ -259,12 +372,15 @@ section above.)
 
 ## Files (anticipated)
 
-Desktop:
-- `src/components/modals/UserSettingsModal/DangerZone.tsx` — deregister +
-  revoke-broadcast steps + best-effort/timeout + notice; optional KeyDB delete.
-- (wiring) registration context / keyset access + `broadcastDeviceRevocations`
-  (from `useMessageDB()`) into DangerZone.
-- new unit test for the reconstruct-without-current-device logic.
+Desktop (DONE — see Slice 1 implementation notes):
+- `src/utils/deviceRegistration.ts` — `planDeviceDeregistration` (pure).
+- `src/hooks/business/user/useDeregisterThisDevice.ts` — upload + revoke under
+  one bounded budget, best-effort.
+- `src/components/modals/UserSettingsModal/DangerZone.tsx` — goodbye before the
+  wipe + `Resetting...` state.
+- `src/components/context/WebsocketProvider.tsx` — `flushOutbound` barrier.
+- `src/dev/tests/utils/deviceRegistration.unit.test.ts` (8),
+  `src/dev/tests/components/websocketFlushOutbound.unit.test.tsx` (5).
 
 Mobile:
 - `components/ProfileModal.tsx` (`handleResetAppData`, ~852) and/or
@@ -288,3 +404,6 @@ without calling it out.
 - New consequence documented: with the flip live, each reset cycle also accumulates stale signing-key admissions in members' space_member_devices stores — ghost problem has a second dimension.
 - Verified intact: DangerZone wipe sequence (no KeyDB delete), RegistrationPersister branch structure (line 115 corruption-only path, 158 reuse, 187-210 re-append), SDK buildAndUploadRegistration always-mints (now ~5857), mobile reuse/dedupe/last-device guard, deviceKeys.ts master-key anchor + LWW.
 - Pointer refreshes: SDK path needs @quilibrium/ scope; mobile keyService is services/onboarding/keyService.ts (875, ~903-909, ~520-545, ~722-724); App.tsx route now 135; added edge-case note that a failed wipe also re-admits the revoked signing key via on-connect re-announce (symmetric self-heal).
+
+## Updates
+- **2026-07-31 15:35**: Slice 1 (desktop) implemented + independently reviewed (3 passes). Review found 2 real composition bugs (discarded flush result; slow leg overwriting the other's success) — both fixed and now mutation-checked by 8 new hook tests. See 'Review findings' section for what Slice 2 must avoid.

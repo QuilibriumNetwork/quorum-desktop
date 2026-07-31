@@ -17,6 +17,7 @@ interface WebSocketContextValue {
   connected: boolean;
   setMessageHandler: (handler: MessageHandler) => void;
   enqueueOutbound: (message: OutboundMessage) => void;
+  flushOutbound: (timeoutMs?: number) => Promise<boolean>;
   setResubscribe: (resubscribe: () => Promise<void>) => void;
 }
 
@@ -28,6 +29,11 @@ interface WebSocketProviderProps {
 
 // Grace period before reporting disconnect (prevents flicker during reconnection)
 const DISCONNECT_GRACE_MS = 3000;
+
+// How long flushOutbound() waits for the socket's own send buffer to drain, and
+// how often it re-checks. Short: its only caller is tearing the page down.
+const FLUSH_TIMEOUT_MS = 3000;
+const FLUSH_POLL_MS = 25;
 
 export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const [connected, setConnected] = useState(false);
@@ -224,6 +230,59 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     processOutbound(); // Only process outbound - independent from inbound
   };
 
+  /**
+   * Resolve once everything enqueued BEFORE this call has actually been handed
+   * to the network, or false if that can't be confirmed in time.
+   *
+   * enqueueOutbound() only appends to a queue that a detached processOutbound()
+   * loop drains, and ws.send() only copies into the browser's socket buffer.
+   * Neither tells a caller its frames left the machine — which normally doesn't
+   * matter, because the page stays alive and the queue drains on its own. It
+   * matters for the one caller that is about to destroy the page (reset app
+   * data → location.reload()), since the reload discards both the queue and the
+   * unsent buffer. Its goodbye frames (revoke-device) would vanish silently.
+   *
+   * Two barriers: a sentinel enqueued behind the caller's frames, which the
+   * FIFO loop only reaches after ws.send()-ing all of them, then bufferedAmount
+   * reaching 0 so the bytes are off to the OS rather than sitting in the buffer.
+   *
+   * Never rejects and never waits on a closed socket — resetting while offline
+   * must stay instant.
+   */
+  const flushOutbound = (
+    timeoutMs: number = FLUSH_TIMEOUT_MS
+  ): Promise<boolean> => {
+    if (wsRef.current?.readyState !== WebSocket.OPEN) return Promise.resolve(false);
+
+    const deadline = Date.now() + timeoutMs;
+    // The frames are being sent on THIS socket. send() on a closing socket
+    // drops silently, so if a reconnect swaps in a fresh one mid-flush, an
+    // empty buffer on the new socket says nothing about the old one's frames.
+    const sendingOn = wsRef.current;
+
+    const queueDrained = new Promise<void>((resolve) => {
+      enqueueOutbound(async () => {
+        resolve();
+        return [];
+      });
+    });
+
+    const bufferDrained = async (): Promise<boolean> => {
+      while (Date.now() < deadline) {
+        const ws = wsRef.current;
+        if (!ws || ws !== sendingOn || ws.readyState !== WebSocket.OPEN) return false;
+        if (ws.bufferedAmount === 0) return true;
+        await new Promise((r) => setTimeout(r, FLUSH_POLL_MS));
+      }
+      return false;
+    };
+
+    return Promise.race([
+      queueDrained.then(bufferDrained),
+      new Promise<boolean>((resolve) => setTimeout(() => resolve(false), timeoutMs)),
+    ]);
+  };
+
   const setMessageHandler = (handler: MessageHandler) => {
     handlerRef.current = handler;
     processInbound(); // Process any queued inbound messages now that handler is set
@@ -237,6 +296,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     connected,
     setMessageHandler,
     enqueueOutbound,
+    flushOutbound,
     setResubscribe,
   };
 
