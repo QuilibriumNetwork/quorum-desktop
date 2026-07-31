@@ -496,64 +496,77 @@ export class ConfigService {
       const finalSpaceIds = new Set(uploadConfig.spaceIds);
       uploadConfig.spaceKeys = config.spaceKeys.filter(sk => finalSpaceIds.has(sk.spaceId));
 
-      // Uploading fewer Spaces than we hold is how one device's incomplete DB
-      // becomes every device's truncated nav: this config wins on timestamp, and
-      // getConfig applies a remote Space list verbatim. Loud, because the
-      // encryption-state warning above stays silent when a Space is absent from
-      // the local DB entirely rather than present-but-unkeyed.
-      if (uploadConfig.spaceIds.length < config.spaceIds.length) {
+      // A Space dropped here is one this device still wants but cannot prove a
+      // key for right now: an incomplete local DB, not a removal. Deliberate
+      // removals never reach this branch, because leaving or deleting a Space
+      // takes it out of config.spaceIds before saveConfig runs — nothing is
+      // dropped, and the upload proceeds exactly as before. So removals still
+      // propagate to other devices on the existing mechanism.
+      //
+      // Publishing a truncated list is what turns one device's incomplete DB
+      // into every device's problem: this config wins on timestamp, and
+      // getConfig applies a remote Space list verbatim, so every other device
+      // adopts the shorter list. Hold the upload and let a later save publish
+      // the full list once the missing Spaces have synced.
+      // See .agents/bugs/2026-01-09-config-sync-space-loss-race-condition.md
+      const droppedSpaceIds = config.spaceIds.filter(id => !finalSpaceIds.has(id));
+
+      if (droppedSpaceIds.length > 0) {
+        // Local-only, exactly like an allowSync:false save: the config below is
+        // still persisted with the full list, tombstones are deliberately NOT
+        // cleared (nothing synced), and the next save retries the publish.
         logger.warn(
-          `[ConfigService] Uploading a narrower Space list than this device holds (${uploadConfig.spaceIds.length}/${config.spaceIds.length}); other devices will adopt the shorter list:`,
-          config.spaceIds.filter(id => !finalSpaceIds.has(id))
+          `[ConfigService] NOT publishing — would upload ${uploadConfig.spaceIds.length}/${config.spaceIds.length} Spaces; the change is local-only until these finish syncing:`,
+          droppedSpaceIds
         );
+      } else {
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const configJson = JSON.stringify(uploadConfig);
+        const ciphertext =
+          Buffer.from(
+            await window.crypto.subtle.encrypt(
+              { name: 'AES-GCM', iv: iv },
+              subtleKey,
+              Buffer.from(configJson, 'utf-8')
+            )
+          ).toString('hex') + Buffer.from(iv).toString('hex');
+
+        const signature = Buffer.from(
+          JSON.parse(
+            ch.js_sign_ed448(
+              Buffer.from(
+                new Uint8Array(userKey.user_key.private_key)
+              ).toString('base64'),
+              Buffer.from(
+                new Uint8Array([
+                  ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
+                  ...int64ToBytes(ts),
+                ])
+              ).toString('base64')
+            )
+          ),
+          'base64'
+        ).toString('hex');
+
+        logger.log('[ConfigService] Posting settings to server...', {
+          address: config.address,
+          timestamp: ts,
+        });
+        await this.apiClient.postUserSettings(config.address, {
+          user_address: config.address,
+          user_public_key: Buffer.from(
+            new Uint8Array(userKey.user_key.public_key)
+          ).toString('hex'),
+          user_config: ciphertext,
+          timestamp: ts,
+          signature: signature,
+        });
+        logger.log('[ConfigService] Settings posted successfully');
+
+        // Reset tombstones only after successful sync (Phase 7: Critical Fix)
+        config.deletedBookmarkIds = [];
+        config.deletedUserNoteAddresses = [];
       }
-
-      const iv = crypto.getRandomValues(new Uint8Array(12));
-      const configJson = JSON.stringify(uploadConfig);
-      const ciphertext =
-        Buffer.from(
-          await window.crypto.subtle.encrypt(
-            { name: 'AES-GCM', iv: iv },
-            subtleKey,
-            Buffer.from(configJson, 'utf-8')
-          )
-        ).toString('hex') + Buffer.from(iv).toString('hex');
-
-      const signature = Buffer.from(
-        JSON.parse(
-          ch.js_sign_ed448(
-            Buffer.from(
-              new Uint8Array(userKey.user_key.private_key)
-            ).toString('base64'),
-            Buffer.from(
-              new Uint8Array([
-                ...new Uint8Array(Buffer.from(ciphertext, 'utf-8')),
-                ...int64ToBytes(ts),
-              ])
-            ).toString('base64')
-          )
-        ),
-        'base64'
-      ).toString('hex');
-
-      logger.log('[ConfigService] Posting settings to server...', {
-        address: config.address,
-        timestamp: ts,
-      });
-      await this.apiClient.postUserSettings(config.address, {
-        user_address: config.address,
-        user_public_key: Buffer.from(
-          new Uint8Array(userKey.user_key.public_key)
-        ).toString('hex'),
-        user_config: ciphertext,
-        timestamp: ts,
-        signature: signature,
-      });
-      logger.log('[ConfigService] Settings posted successfully');
-
-      // Reset tombstones only after successful sync (Phase 7: Critical Fix)
-      config.deletedBookmarkIds = [];
-      config.deletedUserNoteAddresses = [];
     }
 
     logger.log('[ConfigService] Saving config to local DB...');

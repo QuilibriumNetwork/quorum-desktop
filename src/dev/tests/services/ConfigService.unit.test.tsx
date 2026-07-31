@@ -393,7 +393,7 @@ describe('ConfigService - Unit Tests', () => {
     });
   });
 
-  describe('5. saveConfig() - upload narrowing must not touch local state', () => {
+  describe('5. saveConfig() - truncated Space lists stay local', () => {
     const mockKeyset = {
       userKeyset: {
         user_key: {
@@ -444,23 +444,6 @@ describe('ConfigService - Unit Tests', () => {
       expect(saved.items[2].spaceIds).toEqual(['space-1', 'space-3']);
     });
 
-    it('still narrows the uploaded payload to Spaces that have keys', async () => {
-      const encryptSpy = arrangePartialDb();
-
-      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
-
-      const uploaded = JSON.parse(
-        Buffer.from(encryptSpy.mock.calls[0][2] as Uint8Array).toString('utf-8')
-      );
-      expect(uploaded.spaceIds).toEqual(['space-1']);
-      expect(uploaded.spaceKeys.map((k: any) => k.spaceId)).toEqual(['space-1']);
-      // space-2 dropped, and the folder keeps only its keyed Space
-      expect(uploaded.items).toEqual([
-        { type: 'space', id: 'space-1' },
-        { type: 'folder', id: 'folder-1', name: 'Work', spaceIds: ['space-1'] },
-      ]);
-    });
-
     it('caches the full Space list, not the narrowed upload', async () => {
       arrangePartialDb();
       const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData');
@@ -469,6 +452,67 @@ describe('ConfigService - Unit Tests', () => {
 
       const cached = setQueryDataSpy.mock.calls.at(-1)?.[1] as any;
       expect(cached.spaceIds).toEqual(['space-1', 'space-2', 'space-3']);
+    });
+
+    it('does not publish a Space list truncated by an incomplete DB', async () => {
+      arrangePartialDb();
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      // Publishing this would make every other device adopt the shorter list
+      expect(mockDeps.apiClient.postUserSettings).not.toHaveBeenCalled();
+    });
+
+    it('keeps tombstones unsent when the upload is held', async () => {
+      arrangePartialDb();
+      const withTombstones = {
+        ...partialDbConfig(),
+        deletedBookmarkIds: ['bk-1'],
+        deletedUserNoteAddresses: ['addr-1'],
+      };
+
+      await configService.saveConfig({ config: withTombstones, keyset: mockKeyset });
+
+      // Clearing these without syncing would resurrect the deletions elsewhere
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.deletedBookmarkIds).toEqual(['bk-1']);
+      expect(saved.deletedUserNoteAddresses).toEqual(['addr-1']);
+    });
+
+    it('still publishes when the user removed a Space, so removals propagate', async () => {
+      // The user left space-2: the caller already took it out of spaceIds, but
+      // it is still sitting in the local DB with a valid encryption state.
+      // Nothing is dropped by narrowing, so this must publish as normal.
+      const afterLeaving = {
+        address: 'user-left',
+        spaceIds: ['space-1'],
+        items: [{ type: 'space', id: 'space-1' }],
+        allowSync: true,
+        timestamp: 0,
+      } as any;
+
+      mockDeps.messageDB.getSpaces = vi
+        .fn()
+        .mockResolvedValue([{ spaceId: 'space-1' }, { spaceId: 'space-2' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      const encryptSpy = vi
+        .spyOn(global.crypto.subtle, 'encrypt')
+        .mockResolvedValue(new Uint8Array(16).buffer as ArrayBuffer);
+
+      await configService.saveConfig({ config: afterLeaving, keyset: mockKeyset });
+
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalled();
+      const uploaded = JSON.parse(
+        Buffer.from(encryptSpy.mock.calls[0][2] as Uint8Array).toString('utf-8')
+      );
+      // space-2 is gone from the published list, and its key with it
+      expect(uploaded.spaceIds).toEqual(['space-1']);
+      expect(uploaded.spaceKeys.map((k: any) => k.spaceId)).toEqual(['space-1']);
     });
   });
 });
