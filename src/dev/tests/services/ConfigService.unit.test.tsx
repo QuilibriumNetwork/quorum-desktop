@@ -495,7 +495,14 @@ describe('ConfigService - Unit Tests', () => {
         .fn()
         .mockResolvedValue([{ spaceId: 'space-1' }, { spaceId: 'space-2' }]);
       mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
-      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      // Faithful to the real removal paths (SpaceService.deleteSpace, the
+      // self-kicked branch in MessageService): the leaving Space's encryption
+      // state is deleted BEFORE saveConfig runs, so space-2 has none here.
+      mockDeps.messageDB.getEncryptionStates = vi
+        .fn()
+        .mockImplementation(({ conversationId }: { conversationId: string }) =>
+          Promise.resolve(conversationId.startsWith('space-1') ? [{ id: 'enc-1' }] : [])
+        );
       mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
       mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
       mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
@@ -513,6 +520,56 @@ describe('ConfigService - Unit Tests', () => {
       // space-2 is gone from the published list, and its key with it
       expect(uploaded.spaceIds).toEqual(['space-1']);
       expect(uploaded.spaceKeys.map((k: any) => k.spaceId)).toEqual(['space-1']);
+      // A published save earns a fresh timestamp
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.timestamp).toBeGreaterThan(0);
+    });
+
+    it('does not advance the stored timestamp when the upload is held', async () => {
+      arrangePartialDb();
+
+      await configService.saveConfig({
+        config: { ...partialDbConfig(), timestamp: 1000 },
+        keyset: mockKeyset,
+      });
+
+      // getConfig resolves purely by timestamp and never merges the losing
+      // side, so claiming to be newer than the server without having published
+      // would make this device ignore every remote config while it holds.
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.timestamp).toBe(1000);
+    });
+
+    it('holds when a listed Space is absent from the local DB entirely', async () => {
+      // The EncryptionService re-key path (ensureKeyForSpace) writes the new
+      // spaceId into the config before the Space row exists under that id, so
+      // getSpaces() cannot see it yet. Narrowing must hold, not publish a
+      // config that silently drops the Space from every other device.
+      const midRename = {
+        address: 'user-rename',
+        spaceIds: ['space-new'],
+        items: [{ type: 'space', id: 'space-new' }],
+        allowSync: true,
+        timestamp: 500,
+      } as any;
+
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'encrypt').mockResolvedValue(
+        new Uint8Array(16).buffer as ArrayBuffer
+      );
+
+      await configService.saveConfig({ config: midRename, keyset: mockKeyset });
+
+      expect(mockDeps.apiClient.postUserSettings).not.toHaveBeenCalled();
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.spaceIds).toEqual(['space-new']);
+      expect(saved.timestamp).toBe(500);
     });
   });
 });

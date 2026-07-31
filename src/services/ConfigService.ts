@@ -512,13 +512,21 @@ export class ConfigService {
       const droppedSpaceIds = config.spaceIds.filter(id => !finalSpaceIds.has(id));
 
       if (droppedSpaceIds.length > 0) {
-        // Local-only, exactly like an allowSync:false save: the config below is
-        // still persisted with the full list, tombstones are deliberately NOT
-        // cleared (nothing synced), and the next save retries the publish.
+        // Local-only: the config below is still persisted with the full list,
+        // and tombstones are deliberately NOT cleared, since nothing synced.
         logger.warn(
           `[ConfigService] NOT publishing — would upload ${uploadConfig.spaceIds.length}/${config.spaceIds.length} Spaces; the change is local-only until these finish syncing:`,
           droppedSpaceIds
         );
+
+        // Keep the timestamp we came in with. getConfig resolves purely by
+        // timestamp and does not merge the losing side, so a device that
+        // advanced its local timestamp without the server agreeing would treat
+        // its own config as newer than every remote one and quietly stop
+        // applying other devices' changes for as long as it keeps holding.
+        // Publishing is what earns the right to a newer timestamp. `ts` still
+        // gates the cache write below, so the UI updates as usual.
+        config.timestamp = configInput.timestamp ?? 0;
       } else {
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const configJson = JSON.stringify(uploadConfig);
