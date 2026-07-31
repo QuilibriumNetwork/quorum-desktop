@@ -118,6 +118,23 @@ stop corruption, they do not make the lists converge.
 **Not fixed by any of the above:** the desktop → mobile and mobile → mobile rows, and the
 ghost rows both platforms leave in local storage after a removal.
 
+### Accepted limitation of the desktop guard (`31bd214d4`) — know this before debugging
+
+Nothing retries a held save. The action-queue handler only retries on a thrown error, and
+the hold resolves normally, so the queue records success and never revisits it. "A later
+save publishes it" is passive: it depends on some unrelated user action calling
+`saveConfig` again after the missing Space finally syncs.
+
+For a Space that can *never* be keyed — a bloated encryption state (#108), or one never
+synced to this device — that means the device stops publishing **any** config change
+(settings, mutes, bookmarks, profile) until the Space syncs or is removed. It fails safe
+(stale settings) rather than destructive (lost Spaces), and the
+`[ConfigService] NOT publishing` warning makes it visible instead of silent, but it is a
+real dead end: `useSpaceRecovery` cannot clear it either, because it only re-adds Spaces
+orphaned *out* of `spaceIds`, not Spaces still listed there that lack keys.
+
+Slice 2's tombstones remove the dead end by making such a Space explicitly deletable.
+
 ## §4. The three things a fresh agent will otherwise rediscover the hard way
 
 **1. The mobile kick path wrote to an orphaned store.** Before `df6b198`,
