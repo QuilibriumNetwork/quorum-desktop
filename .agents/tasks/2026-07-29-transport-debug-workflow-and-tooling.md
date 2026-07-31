@@ -5,7 +5,7 @@ status: OPEN — plan agreed with the operator 2026-07-29. Build order in §6.
 created: 2026-07-29
 area: debugging infrastructure / DM + space transport
 related:
-  - "tasks/2026-07-29-dm-loss-next-session-handoff.md (how the need became undeniable)"
+  - "tasks/.done/2026-07-29-dm-loss-next-session-handoff.md (how the need became undeniable)"
   - "docs/transport-measurements.md (where every result must land)"
   - "quorum-mobile#183 (the field bug all of this serves)"
 ---

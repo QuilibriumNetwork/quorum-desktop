@@ -271,7 +271,7 @@ After rotation the old `inbox_address` stored in the receiver's `space_members` 
 > `resolveVerifiedSender` reverse-lookup that control-message auth relies on
 > (delete/edit/pin/mute impersonation). See
 > `.agents/docs/features/security.md` → "Profile-Update Authorization" and bug
-> `.agents/bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md`.
+> `.agents/bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md`.
 >
 > **Current behavior:** `update-profile` is authorized against the verified signer
 > (`isUpdateProfileAuthorized`) and is **display-only** — it never writes the

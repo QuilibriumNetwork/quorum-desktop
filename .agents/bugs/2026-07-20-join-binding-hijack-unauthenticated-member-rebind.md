@@ -6,7 +6,7 @@ created: 2026-07-20
 severity: HIGH (authorization-integrity — same class as #243, reached through the join/leave path instead of update-profile)
 platforms: quorum-desktop + quorum-mobile
 related:
-  - .agents/bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md (#243 — the update-profile form of this, fixed)
+  - .agents/bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md (#243 — the update-profile form of this, fixed)
   - .agents/tasks/2026-07-19-per-device-signing-keys-registration-anchored.md (durable design whose master-signature machinery this hardening reuses)
   - .agents/bugs/2026-01-09-space-owner-privacy-limitation.md (#111)
   - .agents/docs/features/security.md ("Control-Message Authorization")

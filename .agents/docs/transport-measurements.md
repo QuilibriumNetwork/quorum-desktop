@@ -28,11 +28,34 @@ whatever we later conclude it means. A measurement never needs updating — only
 superseding by a newer measurement, which is a new row. That is why this is the
 one document in the cluster that can safely be a single consolidated list.
 
+## Start here — the five that carry the current picture
+
+Capped at five deliberately. If a sixth belongs, one has to go: an unbounded
+"important" list is how this file previously ended up with 58 star markers on a
+scale that only ratcheted upward, four separate entries each claiming to be the
+most important one, and retracted findings still wearing their original emphasis.
+**Status tags replaced that.** Untagged means the entry still stands; the
+exceptions carry `[REFUTED]`, `[SUPERSEDED]`, `[UNCONFIRMED]` or
+`[PARTLY REFUTED]` in the heading, which is falsifiable and updatable in a way
+that an importance rating is not.
+
+| # | section | why it is on this list |
+|---|---|---|
+| 1 | **ROUND Q** (2026-07-31) | every loss falls in a 1.4-3.5 s band before a socket CLOSE, no survivor inside it. The mechanism, measured |
+| 2 | **THE RELAY PROBE** (2026-07-30) | the relay pings every 9.0 s and enforces a 10.0 s deadline only a pong refreshes. Reproducible in 10 s from any machine |
+| 3 | **THE SENDER ISOLATED** (2026-07-29) | same account, same receiver, minutes apart: mobile app lost, harness bot lost none. The single-variable comparison |
+| 4 | **ROUND X** (2026-07-29) | the cold-drain control — lost frames are in nobody's inbox, so they never reached the relay |
+| 5 | **ROUND Z** (2026-07-30) | 120/120 send rows: the client's send path is complete, so the loss is downstream of it |
+
 ## How to add a row
 
 Append. Never edit a past row, even one that later turned out to be misleading —
 add a newer row and a note. Every row must cite the doc that reported it, so any
 number here can be traced back rather than taken on trust.
+
+**When a later run overturns an earlier one, tag the earlier heading** rather
+than rewriting it. The row stays; the reader learns it no longer holds without
+having to read forward to find out.
 
 **Record the CLASS of the result.** The single most expensive confusion in this
 investigation has been conflating failures that live at different layers:
@@ -47,7 +70,7 @@ A frame that arrives and fails AEAD is **not** lost. Reporting it as loss is how
 "desktop↔desktop loses 100% of messages" got written down when what actually
 happened was that every frame arrived and none decrypted.
 
-> ⭐ **The third class was added 2026-07-28, and its absence is why this went
+> **The third class was added 2026-07-28, and its absence is why this went
 > unfound for weeks.** Every scenario before `dm-multidevice` measured arrival, and
 > `dm-loss` measures *only* arrival by construction. A message that arrives,
 > decrypts cleanly, and is then dropped before `saveMessage` is invisible to every
@@ -94,13 +117,13 @@ Full detail: `quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecrypta
 > other devices, which can never arrive at the peer bot and are not loss. The other
 > ~3400 are **unobserved, not observed-good**.
 
-### ⭐ The fan-out channel during that same run — operator observation
+### The fan-out channel during that same run — operator observation
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
 | 07-28 | `dm-loss` run 2, **same run as the row above** | the canonical accounts' OTHER devices — two desktop clients the operator had open and online | arrival | **~10 of 200 messages landed on one desktop, 0 of 200 on the other** | the fan-out channel behaved nothing like the peer channel *in the same run, at the same moment* | operator, observed live during the run; confirmed 2026-07-28 as desktop run 2 |
 
-**This is the most consequential row in the file, and it reframes the one above
+**The row that reframed the bench nulls, and it reframes the one above
 it.** In one run, on one pair of accounts, the peer channel was perfect (201/201
 each way) while the self-sync fan-out to the same accounts' other devices was
 close to total loss. The bench reported 0% and was *structurally blind* to the
@@ -130,13 +153,16 @@ are nulls about a narrower channel than they appear to describe.
 | 07-28 | `dm-multidevice` | **one account with TWO devices** + peer, all harness bots, Node, fresh account | arrival | 5 rounds — all four legs 0%, 5/5 messages on every device | proved the shape; too small to speak to the 200-message observation | run log |
 | 07-28 | `dm-multidevice` | same, **100 rounds** | arrival + decrypt | **101/101 frames on all four legs, 0%. 100/100 messages on every device** — including the self-sync copy and the peer's 2nd device. 1 novel decrypt failure (phone), healed | **multi-device fan-out is NOT broken by itself on desktop.** Does NOT reproduce the ~10/200 observation | run log `2026-07-28T13-18-18` |
 
-### ⭐⭐ 4 devices — the operator's symptom reproduces on the bench
+### [SUPERSEDED] 4 devices — the operator's symptom reproduces on the bench
+
+> Superseded by the 07-29 re-run below: identical configuration, opposite result.
+> The 52/100 did not reproduce on a relay verified healthy first.
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
 | 07-28 | `dm-multidevice` | **one account with FOUR devices** + peer, all harness bots, Node, fresh account, 100 rounds | arrival **and** persistence | **every one of the 8 frame legs: 101/101, 0% loss. Zero decrypt failures anywhere.** But `dev1` persisted only **52/100** messages — in BOTH directions, the same count — while `dev2` and `dev3` persisted 100/100 | **first bench reproduction of the operator's symptom.** Loss between arrival and persistence, with no error of any kind | run log `2026-07-28T13-45-03` |
 | 07-29 | `dm-multidevice` | **the same 4-device configuration**, re-run against a relay **verified healthy first** (`/` → 404, known user → 200). Fresh account, 100 rounds, 700ms gap, 180s settle | arrival **and** decrypt **and** persistence | **all 8 frame legs 101/101, 0% loss. Every device persisted 100/100 in BOTH directions** (dev0-dev3 and bob). 2 novel decrypt failures on dev3, both healed. **Ratchet lock: n=1065 holds, p50=29ms, p90=231ms, p99=370ms, max=555ms — every hold under 1s, ZERO in the 15-30s / 30-55s / >55s buckets** | **the 52/100 did NOT reproduce, and the lock-across-HTTP mechanism did not fire.** Re-points the row above at relay degradation rather than device count | run log `2026-07-29T05-52-51` |
-| 07-29 | `dm-multidevice` **+ FAULT INJECTION** | same 4 devices / 100 rounds, but **`/inbox/delete` deliberately stalled 30s on a deterministic 1-in-20 of calls** (`HARNESS_FAULT_DELETE_DELAY_MS=30000`, rate 0.05 — 50 of 1016 calls hit). 300s settle | arrival **and** persistence | **All 8 frame legs still 101/101, 0% arrival loss** — but persistence collapsed: dev0 97/100, **dev1 50/58, dev2 25/27, dev3 23/23**, bob 85/100. **Every single gap is a `CONTIGUOUS TAIL`, not one scattered.** Lock: n=5745, **10 holds in the `30-55s` bucket, max=31260ms**; queued-behind-lock **max=31173ms** | ⭐ **MECHANISM CONFIRMED.** A slow inbox-delete holds the ratchet lock and stalls the conversation, exactly as §1 predicted by code reading | run log `2026-07-29T06-19-55` |
+| 07-29 | `dm-multidevice` **+ FAULT INJECTION** | same 4 devices / 100 rounds, but **`/inbox/delete` deliberately stalled 30s on a deterministic 1-in-20 of calls** (`HARNESS_FAULT_DELETE_DELAY_MS=30000`, rate 0.05 — 50 of 1016 calls hit). 300s settle | arrival **and** persistence | **All 8 frame legs still 101/101, 0% arrival loss** — but persistence collapsed: dev0 97/100, **dev1 50/58, dev2 25/27, dev3 23/23**, bob 85/100. **Every single gap is a `CONTIGUOUS TAIL`, not one scattered.** Lock: n=5745, **10 holds in the `30-55s` bucket, max=31260ms**; queued-behind-lock **max=31173ms** | **MECHANISM CONFIRMED.** A slow inbox-delete holds the ratchet lock and stalls the conversation, exactly as §1 predicted by code reading | run log `2026-07-29T06-19-55` |
 
 **Why this is the important row in the file.** The frames all arrived. Nothing
 failed to decrypt. `dm-loss` counts frames, so it would have reported this run as
@@ -182,7 +208,7 @@ order of how cheaply it can be closed:
    runtime, different storage, no UI layer. The harness cannot close this one by
    construction
 
-### ⭐ The 07-29 re-run — the reproduction did not hold
+### The 07-29 re-run — the reproduction did not hold
 
 **Added 2026-07-29, after running the confirmation the bug report asked for.** The
 heading above says the symptom "reproduces on the bench". On the evidence of one
@@ -225,7 +251,7 @@ nothing.
 > hold, it does not observe what runs inside it, so this is a hint about where to
 > look next and not evidence the coupling fired.
 
-### ⭐⭐ The 07-29 fix validation — and the partial fix that passed every other test
+### The 07-29 fix validation — and the partial fix that passed every other test
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
@@ -255,7 +281,7 @@ defect. Independent corroboration that the mechanism was correctly identified.
 ⚠️ Still desktop-only, still does not explain the mobile field loss, and mobile
 needs no change — its pattern is what the fix copies.
 
-### ⭐⭐ The 07-29 fault-injected run — the lock mechanism, measured
+### The 07-29 fault-injected run — the lock mechanism, measured
 
 **This is the run that settles the ratchet-lock-across-HTTP question**, and it only
 works because it stops waiting for the relay to misbehave and *makes* it misbehave.
@@ -305,9 +331,9 @@ test that can actually fail (re-run this injection after the fix; expect no
 attention with the field investigation — it can be fixed and closed on its own
 evidence.
 
-### ⭐⭐⭐⭐ 2026-07-29 — THE SENDER ISOLATED: same account, same receiver, two runtimes
+### 2026-07-29 — THE SENDER ISOLATED: same account, same receiver, two runtimes
 
-**The most discriminating measurement in this file.** Two senders, the same real
+**The single-variable sender comparison.** Two senders, the same real
 desktop receiving, the same accounts, the same relay, minutes apart. Only the
 sender's runtime differs.
 
@@ -355,7 +381,7 @@ is legible:**
 WebSocket write path, and the uniffi bridge. Both are named in #183 item 2, both
 are outside every bench by construction.
 
-### ⭐⭐⭐ 2026-07-29 — a LIVE production capture, on a real desktop, not a bench
+### 2026-07-29 — a LIVE production capture, on a real desktop, not a bench
 
 The only row in this file that is not a bench run or a UI observation: an actual
 browser console log from the operator's desktop (account B), captured while a
@@ -363,7 +389,7 @@ harness run drove the peer account.
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
-| 07-29 | **operator's real desktop, live** | production build in a browser, real aged account, harness driving the peer | **persistence** | **366 `DM frame for unknown inbox — no encryption state` — 366 DISTINCT frame timestamps, each once.** Two inboxes, 183 each. **36 `⚠️ SESSION REPLACED by init envelope`**, all one conversationId, all fresh (`envelopeAgeSeconds` -1/0/1). **Zero delete failures.** | ⭐ **first direct evidence of a client-side loss path in production**, and the first measurement taken in a browser rather than Node | operator console log |
+| 07-29 | **operator's real desktop, live** | production build in a browser, real aged account, harness driving the peer | **persistence** | **366 `DM frame for unknown inbox — no encryption state` — 366 DISTINCT frame timestamps, each once.** Two inboxes, 183 each. **36 `⚠️ SESSION REPLACED by init envelope`**, all one conversationId, all fresh (`envelopeAgeSeconds` -1/0/1). **Zero delete failures.** | **first direct evidence of a client-side loss path in production**, and the first measurement taken in a browser rather than Node | operator console log |
 
 **What it establishes.** A session replacement orphans the receiving inbox, and
 frames the peer already addressed to it arrive with no state and are never
@@ -390,11 +416,11 @@ removed nothing — which is why zero delete failures appear alongside 366 drops
 Full analysis and the corrections:
 [`bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md`](../bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md) — **read §7 first**, the original write-up was wrong on its central claim.
 
-### ⭐⭐⭐ 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
+### 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
-| 07-29 | `dm-multidevice` **canonical** | **aged account A** with 2 harness devices (`user-a` + the new `user-a-obs`) + `user-b`, 200 rounds, 700ms gap, **600s settle**, relay healthy, **no fault injected**, lock fix in place | arrival + decrypt + **persistence** | **all 4 frame legs 201/201, 0% loss.** bob 200/200, dev0 200/200 — but **`user-a-obs` persisted 100/200 in BOTH directions**, `CONTIGUOUS TAIL from #101` in both. Decrypt failures dev0=80, dev1=17, bob=46. Lock max 412ms | ⭐ **the operator's ~10-of-200 symptom, on the bench, automated** | run log `2026-07-29T10-07-26` |
+| 07-29 | `dm-multidevice` **canonical** | **aged account A** with 2 harness devices (`user-a` + the new `user-a-obs`) + `user-b`, 200 rounds, 700ms gap, **600s settle**, relay healthy, **no fault injected**, lock fix in place | arrival + decrypt + **persistence** | **all 4 frame legs 201/201, 0% loss.** bob 200/200, dev0 200/200 — but **`user-a-obs` persisted 100/200 in BOTH directions**, `CONTIGUOUS TAIL from #101` in both. Decrypt failures dev0=80, dev1=17, bob=46. Lock max 412ms | **the operator's ~10-of-200 symptom, on the bench, automated** | run log `2026-07-29T10-07-26` |
 
 **This is the first reproduction that needs no fault injection and no degraded
 relay.** Every frame arrived at the extra device's socket — 201/201 on both its
@@ -480,7 +506,7 @@ serializes per inbox too (`processInbound`), so the mechanism is plausible in th
 app, but this run cannot distinguish "product deadlock" from "harness-only hang".
 **Do not report this upstream until that is separated.**
 
-### ⭐ Persistence on AGED accounts (`dm-loss` canonical) — closes one of two blind cells
+### Persistence on AGED accounts (`dm-loss` canonical) — closes one of two blind cells
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
@@ -519,12 +545,12 @@ bot name, so it is minted once and reused). That is the cost the trap list warns
 about, it is bounded, and it is the only automated route left to the operator's
 actual symptom. Everything cheaper has now been run.
 
-### ⭐ Cross-platform (`dm-cross`) — the last empty cell in the 2×2
+### Cross-platform (`dm-cross`) — the last empty cell in the 2×2
 
 | when | run | configuration | class | result | what it changed | source |
 |---|---|---|---|---|---|---|
 | 07-29 | `dm-cross` smoke | mobile↔desktop, 5 rounds, **20s settle** | — | 4/8 "delivered" | ⛔ **not a measurement** — settle far too short, and the gaps were at the HEAD not the tail. Recorded only so nobody re-derives it as a finding | run log |
-| 07-29 | `dm-cross` | **mobile↔desktop on one bench**, two processes/two repos, Node `ws`, WASM, fresh throwaways, 1 device each, 40 rounds each way, 180s settle | arrival | **mobile→desktop 40/40, 0.0%. desktop→mobile 39/40, missing only #1.** 79/80 total | ⭐ **the field's reported worst direction is CLEAN on the bench.** Completes the 2×2; no bench configuration now reproduces the field loss | run log `run-1785314457979` |
+| 07-29 | `dm-cross` | **mobile↔desktop on one bench**, two processes/two repos, Node `ws`, WASM, fresh throwaways, 1 device each, 40 rounds each way, 180s settle | arrival | **mobile→desktop 40/40, 0.0%. desktop→mobile 39/40, missing only #1.** 79/80 total | **the field's reported worst direction is CLEAN on the bench.** Completes the 2×2; no bench configuration now reproduces the field loss | run log `run-1785314457979` |
 
 **The single miss is message #1 in the echo direction, and that shape repeated in
 the smoke run.** Role `b` echoes the instant it receives round 1, which is the
@@ -607,7 +633,7 @@ Live suspects for round 29, still undistinguished:
 
 ---
 
-## ⭐⭐⭐ 2026-07-29 (afternoon) — the U-run cross-store check: the loss is COMMON-MODE AT THE SOURCE
+## 2026-07-29 (afternoon) — the U-run cross-store check: the loss is COMMON-MODE AT THE SOURCE
 
 The morning U-run (operator's mobile dev build, account A → desktop B, 17/20,
 missing U2/U5/U10 on the receiver) was re-checked with store-wide IndexedDB
@@ -628,7 +654,7 @@ inbox-level, loss (candidates: the RN native socket silently swallowing writes
 on a dying connection — RN ignores okhttp's `send()` result — or the node
 dropping a message's whole fan-out batch atomically). Issue body update pending.
 
-## ⭐⭐⭐ 2026-07-29 (afternoon) — the preview-build V-run: NOT a dev-vs-prod datapoint, but a new bug
+## 2026-07-29 (afternoon) — the preview-build V-run: NOT a dev-vs-prod datapoint, but a new bug
 
 Setup: preview (release) APK **rebuilt the same day 16:32 local from current
 code** (verified via adb `lastUpdateTime`), but installed over **June-20-era app
@@ -666,9 +692,9 @@ Consequences, in order:
 
 ---
 
-## ⭐⭐⭐⭐⭐ 2026-07-29 (evening) — ROUND X: the field loss captured from BOTH ENDS, with a cold-drain control
+## 2026-07-29 (evening) — ROUND X: the field loss captured from BOTH ENDS, with a cold-drain control
 
-**The most complete datapoint this investigation has produced.** First round run
+**The first round captured from both ends with a cold-drain control.** First round run
 with the shipped tools (mobile burst button + desktop DM doctor), first round
 where the sender's per-message record and both receivers' stores describe the
 same twenty messages.
@@ -690,7 +716,7 @@ channel — **app NOT running during the burst**, cold-started at 16:47).
    Fan-out sends separate frames per device; independent per-inbox loss cannot
    select the identical three on both. **The loss unit is the whole message.**
    Confirms the morning's U-run cross-store finding on fresh evidence.
-2. ⭐ **They were not waiting server-side.** Desktop A's client started from
+2. **They were not waiting server-side.** Desktop A's client started from
    cold and drained its inbox from scratch — the operation that collects
    everything pending — and still got only 17. Frames 1, 6, 11 are **not in
    either recipient's inbox**. This is the control every previous reading
@@ -706,7 +732,10 @@ Net: three messages left the phone's socket cleanly and reached neither
 mailbox. **That is quorum-mobile#183 item 2's shape, measured end-to-end for
 the first time.**
 
-### ⭐ A NEW signal: every loss came from the slow-send group
+### [REFUTED] A NEW signal: every loss came from the slow-send group
+
+> Refuted by Round Y, which had 19 of 20 sends slow and losses unremarkable in
+> timing. Do not re-derive it.
 
 The burst record's `tsAfterSendMs` is sharply bimodal, and the split is not random:
 
@@ -755,7 +784,7 @@ stale-device bug; both are recorded there.
 
 ---
 
-## ⭐⭐⭐ 2026-07-30 — ROUND Y: exact replication, and the slow-send lead is REFUTED
+## 2026-07-30 — ROUND Y: exact replication, and the slow-send lead is REFUTED
 
 Same configuration as Round X, one deliberate correction: **both desktops had
 the app open and connected for the whole burst** (Round X's desktop A did not —
@@ -802,7 +831,10 @@ chance ~8% of the time, so two consecutive occurrences is ~0.6% — suggestive,
 far from conclusive, and this investigation's documented failure mode is exactly
 this kind of pattern-fit. Watch it across future rounds; do not theorise on it.
 
-### ⭐ NEW, and a different failure class: receipt acks lost on the way to MOBILE
+### [UNCONFIRMED] A different failure class: receipt acks lost on the way to MOBILE
+
+> Did not reproduce in Round Z, where receipts behaved correctly. Not a standing
+> finding; do not cite it as established.
 
 Operator observation during Round Y, unprompted:
 
@@ -848,7 +880,7 @@ the lost messages sit at chain transitions.**
 
 ---
 
-## ⭐⭐⭐⭐ 2026-07-30 — ROUND Z: the RIG round. Send side proven complete; the session/shape hypothesis refuted
+## 2026-07-30 — ROUND Z: the RIG round. Send side proven complete; the session/shape hypothesis refuted
 
 First round on the **diagnostic rig** (`diag/dm-frame-trace`, rebased onto master
 so it carries the burst button too — `git debug`, BUILD CHECK all green). Mobile A
@@ -861,7 +893,7 @@ deliberately **closed** (offline-device catch-up test, reading owed).
 | **phone (rig)** | send instrumentation | **120 `[DM-send row]` probes = 20 messages × 6 device targets, no gaps.** Every lost message was prepared and dispatched to all six targets exactly like the landed ones |
 | **desktop B** | arrival + persistence | **16/20, missing [1, 7, 8, 14]**, unchanged after reload. Zero warnings |
 
-### ⭐ What the rig establishes: the client's send path is COMPLETE
+### What the rig establishes: the client's send path is COMPLETE
 
 Every one of the 20 messages produced a full 6-target fan-out at the send-row
 stage — including all four that vanished. **No message was skipped, no target
@@ -949,9 +981,9 @@ under normal operation.
 
 ---
 
-## ⭐⭐⭐⭐⭐ 2026-07-30 — ROUND P: THE MECHANISM. Frames written into a dying socket
+## 2026-07-30 — ROUND P: THE MECHANISM. Frames written into a dying socket
 
-**The most important measurement in this file.** Same rig configuration as Round
+**The round that first tied loss to socket drops.** Same rig configuration as Round
 Z, but Metro started with **`-ResetCache`**, which finally loaded the
 `node_modules` transport patch — so every frame handed to `ws.send` is logged,
 along with mid-write socket failures. Mobile A → account B, `P 1`…`P 20`, 2000 ms.
@@ -962,7 +994,7 @@ along with mid-write socket failures. Mobile A → account B, `P 1`…`P 20`, 20
 | phone (rig + transport patch) | **socket** | **TWO socket drops during the 50 s burst** (17:28:29, 17:29:01 local), each `socket lost mid-batch, requeued` ×6 then `flushed-pending` ×6 ~1.8 s later |
 | desktop B | arrival + persistence | **15/20, missing [2, 3, 9, 10, 16]** (25%), unchanged after reload, zero warnings |
 
-### ⭐ The finding: loss clusters in the ~5 s before a detected socket drop
+### The finding: loss clusters in the ~5 s before a detected socket drop
 
 | message | gap to next detected drop | outcome |
 |---|---|---|
@@ -983,7 +1015,7 @@ All six per-device frames were logged as written for every lost message (and
 Round Z independently showed 120/120 send rows), so the client's send path is
 complete — the frames are lost *after* `ws.send` and *before* the wire.
 
-### ⭐⭐ Why this explains every prior null, including weeks of green benches
+### Why this explains every prior null, including weeks of green benches
 
 The harness runs Node `ws` over a stable wired connection, where sockets
 essentially never drop. The phone runs a mobile radio, where they drop
@@ -1024,7 +1056,10 @@ failures, then repeat. Predictions: every lost message sits within ~5 s of a
 
 ---
 
-## ⭐⭐⭐⭐⭐⭐ 2026-07-30 — THE IDLE CAPTURE: the connection dies every 19 seconds, with nobody touching it
+## [CAUSAL HALF SUPERSEDED] 2026-07-30 — THE IDLE CAPTURE: the connection dies every 19 seconds, with nobody touching it
+
+> The counts and lifetimes stand. Their attribution to an idle timeout does not —
+> see THE RELAY PROBE below.
 
 **The measurement that turns a mechanism into a root cause.** After Round P
 suggested losses cluster before socket drops, the transport patch was extended to
@@ -1048,7 +1083,7 @@ the phone was left **completely idle** — no burst, no messages, no interaction
    objection ("a real user hardly sends a message every 2000 ms") and was right to.
    The answer is that the connection dies on its own schedule whether or not
    anything is sent. Bursts were a magnifying glass, never the cause.
-2. ⭐ **There is NO keepalive anywhere in the transport.** A grep of the shipped
+2. **There is NO keepalive anywhere in the transport.** A grep of the shipped
    bundle finds no `ping`, `pong`, `heartbeat` or keepalive timer in either the RN
    client or the browser client. The socket is left silent and something upstream
    reaps it after ~16 s.
@@ -1057,14 +1092,18 @@ the phone was left **completely idle** — no burst, no messages, no interaction
    seconds later. In that gap `readyState` still reads `OPEN`, the pre-write guard
    passes, `ws.send()` accepts the bytes, and the frame is dropped from the queue
    as "sent".
-4. ⭐⭐ **The arithmetic closes the loop.** A ~5 s blind window inside a 19 s cycle
+4. **The arithmetic closes the loop.** A ~5 s blind window inside a 19 s cycle
    is ~26% of sends. Measured DM loss across the four instrumented rounds: **15%,
    15%, 20%, 25%.** Two independent routes to the same number.
 5. **It explains ordinary use, not just bursts.** One message sent at a random
    moment has roughly a one-in-four chance of entering a doomed connection. That
    is the six-month field symptom exactly.
 
-### ⭐ It is an IDLE timeout of ~11 s — measured across 217 closes
+### [REFUTED] It is an IDLE timeout of ~11 s — measured across 217 closes
+
+> There is no idle timeout. A silent connection survives indefinitely provided it
+> pongs. The ~11 s was mobile's app-silence, coincidentally near the real 10.0 s
+> pong deadline. See THE RELAY PROBE.
 
 Time from the **last frame sent** to the **CLOSE**:
 
@@ -1132,7 +1171,7 @@ Full analysis, caveats and the two-layer fix plan:
 
 ---
 
-## ⭐⭐⭐⭐⭐⭐ 2026-07-30 — THE RELAY PROBE: it is not an idle timeout, it is a 10 s pong deadline
+## 2026-07-30 — THE RELAY PROBE: it is not an idle timeout, it is a 10 s pong deadline
 
 **This round supersedes the causal half of THE IDLE CAPTURE above.** The
 observed *effect* (connections dying constantly, 1006, frames lost in the blind
@@ -1163,7 +1202,7 @@ no app build.**
 | 8 | `pong-slow` 900 ms | late 900 ms | none | **died 10.02 s** |
 | 9 | `pong-slow` 1500 / 3000 ms | late | none | **died 10.01 / 10.02 s** |
 
-### ⭐ The model, fully pinned
+### The model, fully pinned
 
 - The relay sends a **protocol-level PING every 9.0 s** (measured to ±0.03 s).
 - It enforces a **read deadline of exactly 10.0 s**, refreshed **only by a pong**.
@@ -1195,7 +1234,11 @@ The `~11 s idle` reading was an artefact: mobile falls silent right after
 subscribing, so "time since last app frame" and "time since connection open"
 were nearly the same number, and the wrong one was causal.
 
-### ⭐⭐ Why mobile dies and desktop does not
+### [PARTLY REFUTED] Why mobile dies and desktop does not
+
+> The desktop half stands (Chromium pongs in milliseconds). The mobile half does
+> not: Round Q showed connections during an active burst live *shorter* than idle,
+> so radio sleep is NOT why the pong is missed. That mechanism is unexplained.
 
 **Browsers and React Native both pong automatically at the native layer, and JS
 cannot see, send, delay or control it.** Chromium (desktop/Electron) answers in
@@ -1234,4 +1277,319 @@ Full analysis and the revised fix plan:
 [`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
 
 ---
-*Last updated: 2026-07-30*
+
+## 2026-07-31 — ROUND Q: every loss lands in a 1.4-3.5 s BAND before a socket CLOSE
+
+**The round that closes the chain.** Round P showed losses clustering before
+socket drops but could not tie individual messages to individual closes (its
+lifecycle probe was armed *after* it). Round Q does, and the separation is total.
+
+**Configuration:** mobile A → account B, `Q 1`…`Q 20`, 2000 ms, 42.9 s wall,
+08:22:26→08:23:09Z. Both desktops live throughout.
+
+| observer | class | result |
+|---|---|---|
+| phone (sender) | send record | **20/20 sent**, zero errors |
+| phone (transport patch) | socket lifecycle | **16 CLOSE in 5.3 min, 4 inside the burst. `1006` on every one** |
+| **desktop B** (peer) | persistence | **16/20, missing [3, 4, 10, 17]**, unchanged on a second scan 8 min later |
+| **desktop A** (self-sync fan-out) | persistence | **16/20, missing [3, 4, 10, 17]** — identical |
+
+Zero warnings on both receivers (`sessionReplaced=0, unknownInbox=0,
+decryptFailish=0`), zero duplicates, zero misfiled. **Common-mode loss at the
+source is now established across FOUR independent rounds (U, X, Y, Q).**
+
+### The finding: a clean two-sided band, with zero overlap
+
+Seconds from each message's send to the **next `[WS-life] CLOSE`**:
+
+| group | n | Δ to next CLOSE |
+|---|---|---|
+| **LOST** | 4 | **3.48, 3.18, 3.00, 1.43** |
+| landed — *nearer* than every loss | 2 | 0.86, 0.66 |
+| landed — *further* than every loss | 14 | 5.34, 5.50, 5.82, 7.39 … 15.83 |
+
+**Every loss falls inside [1.43 s, 3.48 s] before a close, and not one survivor
+falls inside that band.** The gaps on both sides are clean: nothing landed
+between 0.86 and 1.43, nothing landed between 3.48 and 5.34.
+
+Reading it:
+
+- **>3.5 s out** — the connection is still alive; the frame is delivered.
+- **1.4-3.5 s out** — the relay has already killed the connection, `readyState`
+  still reads `OPEN`, `ws.send()` accepts the bytes and they are never
+  delivered or retried. **This is the blind window, measured rather than
+  inferred.**
+- **<0.9 s out** — the failure surfaces *while this batch is being written*, so
+  the existing `pendingEnvelopes` requeue catches it and flushes it on
+  reconnect. **The last writes before detection are rescued; the earlier ones
+  are not.** Round P observed that path directly (`socket lost mid-batch,
+  requeued` ×6 then `flushed-pending` ×6).
+
+That third bullet is exactly why the current requeue does not help: **its window
+is ~1 s wide and the lethal window sits just outside it.**
+
+### ⛔ The pre-registered prediction FAILED, and the failure is the useful part
+
+Before reading either doctor, the predicted loss set was published as
+**[4, 11, 18]**, derived from "the relay kills at OPEN+10.0 s, so everything
+written between the kill and the client noticing is lost". Observed:
+**[3, 4, 10, 17]** — one hit out of three, and three of the four real losses
+unpredicted.
+
+The failure was **systematic, not random**: in all three affected connections
+the message just *before* the computed deadline was lost, and the message inside
+the computed blind window *landed*. That one-message offset is what exposed the
+requeue rescue at the near edge, which the naive model had no room for.
+
+⚠️ **The requeue explanation is POST-HOC.** It was derived after seeing this
+round, it is consistent with code already read and with Round P's direct
+observation, and it is **not established**. It needs its own pre-registered
+prediction in the next round before it is quoted as mechanism.
+
+### ⛔ The radio-warmth hypothesis is REFUTED
+
+The prediction was that an active burst keeps the radio hot, so pongs land
+inside the relay's ~1 s budget and connections live *longer* than the 19.0 s
+idle cadence. The opposite:
+
+| window | connection lifetime |
+|---|---|
+| **during the burst** | n=4, min 12.4 s, **median 12.9 s**, max 14.2 s |
+| outside the burst, same capture | n=14, median **15.4 s** |
+| the 25.6-min idle capture | median **16.3 s** |
+
+Sending every 2 s did not extend connection life; if anything it shortened it.
+**Radio sleep is not why the pong is missed**, and the mechanism behind
+`RN misses pongs` remains unexplained.
+
+The consistent reading is that the observed "lifetime" is not connection life at
+all but **time until the client noticed**: the relay kills on its own schedule
+either way, and activity makes *detection* faster because a failed write
+surfaces the error sooner. That also explains the shorter burst-window figures
+without needing the connection to die sooner.
+
+### Method notes
+
+- Captured from a **master build** — the diag branch's `[DM-send wire]` probe
+  was absent, so the round should have been unanalysable. It was recovered
+  because the **burst button's JSONL lives on master** and carries
+  `tsQueuedIso` per message, while `[WS-life]` carries `t=<epoch ms>` from the
+  same device clock. `join-losses-to-closes.mjs --burst` does that join exactly.
+  ⚠️ Do not rely on this: `[DM-send row]`/`[DM-recv wire]` were still missing,
+  so nothing about per-target fan-out or inbound traffic could be checked.
+- `validate-capture.mjs` rejected the capture **before the burst was sent** and
+  named the cause correctly. The round ran anyway; the analysis above is what
+  the burst record could rescue, not what the round was designed to produce.
+
+Full analysis: [`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+
+---
+
+## 2026-07-31 — ROUND R: the mechanism CONFIRMED by three pre-registered predictions
+
+**The round that ends the mechanism question.** Round Q found the loss band but
+explained its near edge *post-hoc*. Round R published three predictions before
+any data was read, and all three held.
+
+**Configuration:** rig properly armed this time (`git debug`, all probes
+present), mobile A → account B, `R 1`…`R 20`, 2000 ms, 44.7 s wall,
+08:48:35→08:49:20Z. Both desktops live.
+
+| observer | class | result |
+|---|---|---|
+| phone (sender) | send record | **20/20 sent** |
+| phone (rig) | send instrumentation | **120 `[DM-send row]` = 20 × 6 targets**, 20 `[DM-send wire]` |
+| **desktop B** (peer) | persistence | **17/20, missing [2, 9, 16]** |
+| **desktop A** (self-sync fan-out) | persistence | **17/20, missing [2, 9, 16]** — identical |
+
+Zero warnings on both. **Common-mode loss now established across FIVE
+independent rounds (U, X, Y, Q, R).**
+
+### The three predictions, published before reading the doctors
+
+| # | prediction | result |
+|---|---|---|
+| 1 | losses fall in a ~1.4-3.5 s band before a `CLOSE`; messages within ~1 s of a `CLOSE` survive | ✅ **losses at 3.24 / 3.29 / 2.81 s. Survivors nearest the close at 0.90 / 0.94 / 0.38 s. Zero survivors inside the band** |
+| 2 | each near-edge survivor shows `socket lost mid-batch, requeued` then `flushed-pending` | ✅ **exactly. Each of R3, R10, R17 shows 6 REQUEUED ~1 s after send, then 6 FLUSHED on reconnect** |
+| 3 | every message shows a full 6-target fan-out, lost ones included | ✅ **120/120 send rows** — replicates Round Z |
+
+### The mechanism, stated exactly
+
+Inside the burst: **3 CLOSEs, 18 REQUEUED, 18 FLUSHED.** 18 = 3 × 6. Each close
+requeues and then flushes **exactly one message's fan-out** — the batch that was
+mid-drain when the failure surfaced.
+
+A message is six frames (one per device inbox). What happens to it depends
+entirely on where it lands relative to the client noticing the socket is dead:
+
+| written | fate |
+|---|---|
+| **> 3.5 s before detection** | connection still alive — delivered |
+| **1.4-3.5 s before detection** | relay has already killed the connection, `readyState` still reads `OPEN`, `ws.send()` accepts all six frames, they are dropped from the queue as sent, never delivered, never retried → **LOST** |
+| **< 1 s before detection** | the failure surfaces mid-drain, so all six frames are requeued and flushed on reconnect → **SURVIVES** |
+
+**The rescue path already exists and works.** Its window is simply ~1 s wide,
+and the lethal window sits immediately outside it.
+
+### What this does to the fix
+
+Layer 2 stops being speculative. It is no longer "design a replay scheme" — the
+replay scheme is present, correct, and exercised on every drop. It only needs
+its retention widened from *the batch currently draining* to *everything written
+in the last ~5 s*, replayed on reconnect.
+
+That also removes the objection raised against blanket replay (that re-sending
+frames which already landed makes the receiver fail AEAD on a consumed ratchet
+key, feeding crate bug 2a): frames inside the blind window **provably never
+reached the relay** — five rounds of cold-drain and dual-store evidence — so
+replaying them cannot produce a duplicate.
+
+### Incidental observations, recorded not built upon
+
+- **Close code `1000` appeared alongside the usual `1006`**, with
+  `clean=false`, and twice an `OPEN` was followed by another `OPEN` ~2.6 s later
+  with no `CLOSE` between. Suggests a second client or a reconnect race. Not
+  investigated.
+- Connection lifetimes across the whole capture are far more variable than the
+  idle capture suggested: **min 1.8 s, median 15.4 s, max 60.5 s** (n=101). A
+  60 s connection is much longer than anything the pong-deadline model predicts
+  and is unexplained.
+- **Operator note:** desktop A showed *more* missing before a page refresh, with
+  one or two appearing after it. Both post-refresh scans agree on [2, 9, 16].
+  Possibly late arrival inside the window rather than a cache effect; worth a
+  deliberate before/after-refresh reading in a future round.
+
+---
+
+## 2026-07-31 — ROUND S: the candidate FIX, tested locally. 20/20, and the lethal band is now survivable
+
+**First round with a fix applied.** A local `node_modules` patch
+(`patch-rn-ws-retain.mjs`, mobile, gitignored) widens the existing send-retry
+window: every frame handed to `ws.send` is retained for 6 s, and anything still
+inside that window when the socket reopens is replayed. **No `quorum-shared`
+publish, no rebuild, no link step** — the same patch mechanism already used for
+the diag probes.
+
+**Configuration:** rig armed + retain patch, Metro restarted with
+`-ResetCache`, mobile A → account B, `S 1`…`S 20`, 2000 ms, 47.0 s wall,
+09:29:19→09:30:06Z. Both desktops live.
+
+| observer | class | result |
+|---|---|---|
+| phone (sender) | send record | 20/20 sent |
+| phone (transport) | socket lifecycle | **8 CLOSE during the capture** — the conditions for loss were present |
+| phone (fix) | replay | **6 `[WS-retain] replaying` events, 42 frames** (1, 3, 6, 7, 12, 13) |
+| **desktop B** (peer) | persistence | **20/20, none missing, duplicates 0** |
+| **desktop A** (self-sync fan-out) | persistence | **20/20, none missing, duplicates 0** |
+
+Zero warnings on both (`sessionReplaced=0, unknownInbox=0, decryptFailish=0`).
+
+### Why this is a real pass and not a lucky round
+
+A clean 20/20 proves nothing on its own — a round in which the socket never
+dropped would score the same. It dropped **8 times**. The decisive comparison is
+per-message position relative to the next `CLOSE`:
+
+| round | messages inside the lethal 1.4-3.5 s band | of those, lost |
+|---|---|---|
+| Q (unpatched) | 4 — at 3.48, 3.18, 3.00, 1.43 s | **4 of 4** |
+| R (unpatched) | 3 — at 3.24, 3.29, 2.81 s | **3 of 3** |
+| **S (patched)** | **3 — at 3.23, 2.16, 3.35 s** | **0 of 3** |
+
+Across Q and R every single message written into that band died, 7 for 7. In S,
+S2 (3.23 s), S7 (2.16 s) and S13 (3.35 s) sat in the same band and all three
+landed. The near-edge cases the *old* requeue already handled behaved as before
+(S3 at 0.86 s, S14 at 1.01 s).
+
+### The safety question, answered
+
+Replay necessarily re-sends some frames that did arrive, because the client
+knows when it *noticed* the death, not when the relay caused it. **Both
+receivers report `duplicates: 0` and `decryptFailish: 0`.** No duplicate message
+surfaced and no decrypt-failure storm appeared, which is what the
+already-routine redelivery path predicted.
+
+### Limits — read before quoting this
+
+- **One round.** Replication owed. Q and R each needed a second round before
+  their findings were trusted, and this one is more consequential than either.
+- **This is a local `node_modules` patch, not shipped code.** It proves the
+  *mechanism* and sizes the window. The real change belongs in `quorum-shared`'s
+  `RNWebSocketClient` and needs a PR, a version bump, and the lead dev's call on
+  publishing.
+- **It does not fix the cause.** Connections still died 8 times in ~47 s. This
+  makes the loss survivable; only the relay-side `pongWait` change (#183 item 1)
+  stops it happening.
+- **The 6 s window is a first guess** sized from a measured ~3.5 s detection lag.
+  It has not been tuned, and the cost of a larger window is duplicate volume.
+- The armed markers were absent from the capture because they fire at bundle
+  load, before the capture started. The `[WS-retain] replaying` lines are
+  themselves proof the patched bundle ran — that string exists nowhere else.
+
+---
+
+## 2026-07-31 — ROUNDS T and U: the fix sized correctly. 20/20, and the one failure in between diagnosed the parameter
+
+### Round T (6 s retention) — 19/20, and the miss is informative
+
+`T 1`…`T 20`, 2000 ms, 47.0 s. Both desktops **19/20, missing [5]**, duplicates 0.
+16 CLOSEs during the capture (roughly double Round S), 8 replay events.
+
+**T5 was lost at Δ=5.02 s before its CLOSE — outside the 1.4-3.5 s band**, while
+messages at 3.46, 3.31, 2.69, 1.05, 0.96 and 0.35 s all landed. So the fix
+covered its band; T5 was a different failure.
+
+The cause was a **sizing error, not a second mechanism**. Retention is measured
+from send to **replay** (the reconnect), so the budget must cover the blind
+window *and* the reconnect gap. That round's gap was **4.42 s**:
+
+```
+effective pre-drop coverage = RETAIN_MS − reconnect gap = 6.00 − 4.42 = 1.58 s
+```
+
+T5 was **9.43 s old** when the socket reopened, past the 6 s cutoff, so it was
+pruned and never replayed. It also shows the blind window is **not fixed at
+~3.5 s** — it exceeded 5 s on that connection.
+
+### Round U (12 s retention) — 20/20, with the T5 failure mode covered
+
+`U 1`…`U 20`, 2000 ms, 51.4 s. Both desktops **20/20, duplicates 0, zero
+warnings**. 9 CLOSEs, 5 replay events carrying 170 frames. The capture confirms
+the running build (`retained within 12000ms`).
+
+**Five messages sat at the T5-like position (4-7 s before a drop): 3, 9, 10, 15,
+16 — all landed.** Three of them were **9.68 / 9.92 / 10.32 s old at replay**,
+so under the old 6 s window they would have aged out exactly as T5 did.
+
+### The chain, across five rounds
+
+| round | retention | result | what it establishes |
+|---|---|---|---|
+| Q | none | 16/20 | 4 lost, all inside the 1.4-3.5 s band |
+| R | none | 17/20 | 3 lost, all inside it; mechanism confirmed by 3 pre-registered predictions |
+| S | 6 s | **20/20** | 3 messages survived the band that had killed 7 of 7 |
+| T | 6 s | 19/20 | one loss, diagnosed to retention being eaten by the reconnect gap |
+| U | **12 s** | **20/20** | 3 messages rescued at ages 6 s would have dropped |
+
+`duplicates: 0` and `decryptFailish: 0` on **every** patched round, so replay has
+not produced visible duplicates or a decrypt-failure storm.
+
+### Limits
+
+- **Two clean rounds at 12 s is not proof of elimination.** Loss was 15-25% of
+  messages, so a 20-message round has real chance of passing by luck; the
+  per-message position analysis is what carries the weight, not the 20/20.
+- **12 s is sized from observed worst cases** (blind window >5 s, reconnect gap
+  4.4 s). A longer reconnect gap would eat it again. A design that keys off
+  *connection generation* rather than a wall-clock budget would remove the
+  sensitivity entirely, and is the better shape for the real implementation.
+- **Still a local `node_modules` patch, not shipped code**, and it does not fix
+  the cause — connections still died 9 times in ~51 s. Only the relay-side
+  `pongWait` change (#183 item 1) stops that.
+- **Receipts remain unexplained and unstable**: round T had T1-T4 missing
+  receipts on mobile A; round U had T20 missing on desktop A with mobile A
+  complete. The gaps move between rounds and devices with no pattern yet. Still
+  `[UNCONFIRMED]`; do not build on it.
+
+---
+*Last updated: 2026-07-31*

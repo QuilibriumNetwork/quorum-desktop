@@ -782,7 +782,7 @@ end.
   the remaining suspects (RN native socket, uniffi bridge, aged account state, device
   network) are what every bench excludes by construction. Continuation lives in
   `docs/transport-measurements.md`, `docs/transport-reliability-index.md` and
-  `tasks/2026-07-29-dm-loss-next-session-handoff.md`. The `dm-conversation-mix`
+  `tasks/.done/2026-07-29-dm-loss-next-session-handoff.md`. The `dm-conversation-mix`
   follow-up (§above) and a simultaneous-open scenario (finding 2, 07-28 entry) were
   never slice-gated and remain unbuilt — open ideas, not blockers for this task.
 

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "update-profile repoints a victim's inbox_address (poisons verified-signer reverse-lookup → control-message impersonation)"
-status: fixed (pending merge) — desktop; mobile never had it
+status: SOLVED — merged as desktop PR #243 (302b4d27f); verified present on main 2026-07-31 (isUpdateProfileAuthorized at 3 call sites, resolveVerifiedSender at 9). Mobile never had it
 created: 2026-07-19
 severity: HIGH (authorization bypass — escalates a display spoof into control-message impersonation)
 related:

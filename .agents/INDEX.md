@@ -124,7 +124,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
-- [update-profile inbox_address poisoning → control-message impersonation](bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
+- [update-profile inbox_address poisoning → control-message impersonation](bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
 - [Capture archive — DM desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-captures.md)
@@ -221,7 +221,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM receipt protocol: read acks now name what they read](tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md)
 - [Headless SPACE harness (spec)](tasks/2026-07-27-headless-space-harness.md)
 - [Harness coverage — multi-device first, then the unreached cells](tasks/2026-07-28-harness-multidevice-and-coverage.md)
-- [Handoff — DM loss, end of 2026-07-29](tasks/2026-07-29-dm-loss-next-session-handoff.md)
+- [Handoff — DM loss, end of 2026-07-29](tasks/.done/2026-07-29-dm-loss-next-session-handoff.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)

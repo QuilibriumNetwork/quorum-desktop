@@ -1,9 +1,9 @@
 ---
 type: bug
-title: "⭐⭐ ROOT CAUSE: the relay kills any client that misses a pong by >1s (9s ping / 10s deadline), and frames written in the blind window before the client notices are silently lost"
-status: OPEN — root cause established 2026-07-30 and REVISED the same day by direct protocol measurement of the relay. The original "no app keepalive / ~11s idle timeout" diagnosis is RETRACTED (§0d). Primary fix is relay-side and belongs to the lead dev
+title: "ROOT CAUSE: the relay kills any client that misses a pong by >1s (9s ping / 10s deadline), and frames written in the blind window before the client notices are silently lost"
+status: OPEN — CAUSE UNFIXED (relay-side, #183 item 1, lead dev). MECHANISM CONFIRMED on device 2026-07-31 by pre-registered prediction (rounds Q/R). A CLIENT-SIDE FIX IS VALIDATED but NOT SHIPPED: rounds S/T/U took a reproducible 16-17/20 to 20/20 via a local node_modules patch. Stays OPEN until the quorum-shared PR merges AND the relay constant is raised
 created: 2026-07-30
-updated: 2026-07-30
+updated: 2026-07-31
 severity: CRITICAL — silently drops 15-25% of all DMs during ordinary use on mobile, with no error surfaced anywhere and no recovery. This is the leading explanation for the ~6-month message-loss symptom
 area: WebSocket transport / relay pong deadline / send durability
 repos: relay/infra (the primary fix), quorum-shared + quorum-desktop (send durability only)
@@ -349,5 +349,47 @@ some of it, or all of it.
   The 9 s/10 s Gorilla ratio points at origin app code, unconfirmed server-side.
 - **Check the deadline is uniform** across relay instances and regions.
 
+## §8. 2026-07-31 — mechanism CONFIRMED on device, and a client fix VALIDATED (not shipped)
+
+**Confirmed.** Rounds Q and R joined every sent message to the socket close that
+followed it. **Every loss sat 1.4-3.5 s before a CLOSE and no survivor sat inside
+that band**, twice. Round R published three predictions before the data was read
+and all three held, including that the near-edge survivors would show
+`socket lost mid-batch, requeued` then `flushed-pending` — they did, 6 frames
+each, one message's fan-out per close.
+
+**The existing rescue was the answer all along, just too narrow.** Its window is
+~1 s; the lethal window is 3.5-5 s.
+
+**Fix validated, not shipped.** A local `node_modules` patch widening the
+retention window:
+
+| round | retention | result |
+|---|---|---|
+| Q / R | none | 16/20, 17/20 |
+| S | 6 s | **20/20** |
+| T | 6 s | 19/20 — one loss, aged out because the reconnect gap ate the budget |
+| U | **12 s** | **20/20**, with 3 messages rescued at ages 6 s would have dropped |
+
+`duplicates: 0` and `decryptFailish: 0` on every patched round.
+
+⛔ **Also refuted here:** the radio-warmth hypothesis. Connections during an
+active burst live *shorter* than idle (12.9 s vs 15.4 s vs 16.3 s), so radio
+sleep is **not** why the pong is missed. **That mechanism is still unexplained**
+— it is the one load-bearing inference in this file that remains unproven.
+
+### Why this bug stays OPEN
+
+1. **The cause is untouched.** Connections still died 9 times in 51 s during the
+   round that passed. Only the relay-side `pongWait` change stops that.
+2. **The client fix is not shipped** — a local patch on one device, not merged,
+   not published. See `tasks/2026-07-31-ship-send-retention-to-quorum-shared.md`.
+3. **Two clean rounds are not elimination.** At 15-25% loss a 20-message round
+   can pass on luck; the per-message position analysis carries the weight, not
+   the 20/20.
+
+Move to `.solved` only when the quorum-shared PR has merged **and** the relay
+constant has been raised **and** a round confirms it on a shipped build.
+
 ---
-*Last updated: 2026-07-30*
+*Last updated: 2026-07-31*

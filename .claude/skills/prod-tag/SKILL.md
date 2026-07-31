@@ -37,7 +37,8 @@ Display this so the user can confirm it's the right commit.
 Show the user:
 - Tag name
 - Commit hash
-- Commit message
+- Commit subject (for identification only — this is NOT the tag message, see rule below)
+- The tag message you intend to use (see step 5)
 
 Ask: "Tag and push?" — wait for an explicit yes.
 
@@ -55,3 +56,4 @@ Report: tag name, commit, and remote URL.
 - Always use **annotated** tags (`-a`), never lightweight.
 - Always use **today's actual date**, never a placeholder.
 - Never push without user confirmation.
+- **The tag message is always a generic deployment note — "Production deployment", optionally with a version suffix like "Production deployment (v2.1.4)". Never reuse the tagged commit's own subject/message as the tag annotation.** The commit being tagged is often unrelated in content to the fact that it's a deploy checkpoint (e.g. a docs or chore commit that happened to be HEAD at deploy time) — the tag message describes the tag's *purpose* (marking a prod deploy), not the commit's content. This has been a recurring mistake: defaulting to the commit's subject line because it was already on screen for identification.

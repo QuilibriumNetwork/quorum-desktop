@@ -9,7 +9,7 @@ platforms: quorum-desktop + quorum-mobile + quorum-shared
 supersedes: the interim per-user `signing`-slot fix (branch fix-multidevice-signing-key)
 related:
   - quorum-mobile .agents/bugs/2026-07-19-multidevice-inbox-key-breaks-verified-signer-auth.md (root analysis)
-  - .agents/bugs/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md (why in-band rebinding is banned)
+  - .agents/bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md (why in-band rebinding is banned)
   - .agents/docs/cryptographic-architecture.md ("Inbox Key Rotation" section — carries the interim note)
   - .agents/bugs/2026-01-09-space-owner-privacy-limitation.md (#111 — owner unverifiable by design)
 ---

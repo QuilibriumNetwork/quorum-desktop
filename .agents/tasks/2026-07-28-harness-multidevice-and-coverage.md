@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Harness coverage: multi-device DM delivery, then the cells no bench reaches"
-status: IN PROGRESS — scenarios 1 and 2 DONE: `dm-multidevice` shipped (PR #269) and re-run clean on a healthy relay 07-29; mobile↔desktop shipped as `dm-cross` (PR #271, 40/40 and 39/40). The §lock-stall finding shipped as PR #270 and its bug is filed solved. Scenario 3 (mobile multi-device) remains unbuilt — unblocked, but see the 07-29 handoff (`2026-07-29-dm-loss-next-session-handoff.md` §5): green benches on healthy relays add nothing; the live agenda is the dev-vs-prod run
+status: IN PROGRESS — scenarios 1 and 2 DONE: `dm-multidevice` shipped (PR #269) and re-run clean on a healthy relay 07-29; mobile↔desktop shipped as `dm-cross` (PR #271, 40/40 and 39/40). The §lock-stall finding shipped as PR #270 and its bug is filed solved. Scenario 3 (mobile multi-device) remains unbuilt — unblocked, but see the 07-29 handoff (`tasks/.done/2026-07-29-dm-loss-next-session-handoff.md` §5): green benches on healthy relays add nothing; the live agenda is the dev-vs-prod run
 created: 2026-07-28
 updated: 2026-07-29
 area: headless harness / DM delivery / multi-device fan-out
