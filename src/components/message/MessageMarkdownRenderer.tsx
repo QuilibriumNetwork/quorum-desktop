@@ -72,7 +72,16 @@ const isInviteLink = (url: string): boolean => {
   return validPrefixes.some(prefix => url.startsWith(prefix));
 };
 
-// Process invite links to convert them to markdown image syntax with special alt text
+/**
+ * Turn an invite link into the invite card, but ONLY when the link stands alone
+ * on its own line — the same rule `processStandaloneYouTubeUrls` applies to
+ * YouTube embeds. An invite the sender wrote *into* a sentence, gave a label to,
+ * or quoted in code is something they wrote deliberately, so it stays a plain
+ * (auto-truncated) link rather than being swallowed by a card.
+ *
+ * The in-app share flow sends the bare link as the whole message body, so the
+ * card still renders for it.
+ */
 const processInviteLinks = (text: string): string => {
   // Skip URLs inside code or existing markdown links. Rewriting the destination
   // of `[label](invite-url)` into `[label](![invite-card](invite-url))` produced
@@ -82,11 +91,20 @@ const processInviteLinks = (text: string): string => {
 
   // Replace invite links with markdown image syntax
   return text.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url, offset: number) => {
-    if (isInviteLink(url) && !isInProtectedRegion(offset, protectedRegions)) {
-      // Use markdown image syntax with special alt text (similar to YouTube embeds)
-      return `![invite-card](${url})`;
+    if (!isInviteLink(url) || isInProtectedRegion(offset, protectedRegions)) {
+      return url;
     }
-    return url;
+
+    // Standalone check: the URL must be the only thing on its line.
+    const lineStart = text.lastIndexOf('\n', offset - 1) + 1;
+    const nextNewline = text.indexOf('\n', offset + url.length);
+    const lineEnd = nextNewline === -1 ? text.length : nextNewline;
+    if (text.slice(lineStart, lineEnd).trim() !== url) {
+      return url;
+    }
+
+    // Use markdown image syntax with special alt text (similar to YouTube embeds)
+    return `![invite-card](${url})`;
   });
 };
 
