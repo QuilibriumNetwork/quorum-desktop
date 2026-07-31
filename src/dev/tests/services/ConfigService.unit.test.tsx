@@ -392,4 +392,184 @@ describe('ConfigService - Unit Tests', () => {
       );
     });
   });
+
+  describe('5. saveConfig() - truncated Space lists stay local', () => {
+    const mockKeyset = {
+      userKeyset: {
+        user_key: {
+          private_key: new Uint8Array(57),
+          public_key: new Uint8Array(57),
+        },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    // The config lists three Spaces across a folder, but the local DB only
+    // holds space-1 with a usable encryption state. That is the state a device
+    // is in mid-sync, and it is what previously truncated the nav.
+    const partialDbConfig = () => ({
+      address: 'user-partial',
+      spaceIds: ['space-1', 'space-2', 'space-3'],
+      items: [
+        { type: 'space', id: 'space-1' },
+        { type: 'space', id: 'space-2' },
+        { type: 'folder', id: 'folder-1', name: 'Work', spaceIds: ['space-1', 'space-3'] },
+      ],
+      allowSync: true,
+      timestamp: 0,
+    }) as any;
+
+    const arrangePartialDb = () => {
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      return vi
+        .spyOn(global.crypto.subtle, 'encrypt')
+        .mockResolvedValue(new Uint8Array(16).buffer as ArrayBuffer);
+    };
+
+    it('persists the full Space list locally even when the DB is incomplete', async () => {
+      arrangePartialDb();
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.spaceIds).toEqual(['space-1', 'space-2', 'space-3']);
+      expect(saved.items).toHaveLength(3);
+      // The folder keeps both of its Spaces: filtering must not mutate it
+      expect(saved.items[2].spaceIds).toEqual(['space-1', 'space-3']);
+    });
+
+    it('caches the full Space list, not the narrowed upload', async () => {
+      arrangePartialDb();
+      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData');
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      const cached = setQueryDataSpy.mock.calls.at(-1)?.[1] as any;
+      expect(cached.spaceIds).toEqual(['space-1', 'space-2', 'space-3']);
+    });
+
+    it('does not publish a Space list truncated by an incomplete DB', async () => {
+      arrangePartialDb();
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      // Publishing this would make every other device adopt the shorter list
+      expect(mockDeps.apiClient.postUserSettings).not.toHaveBeenCalled();
+    });
+
+    it('keeps tombstones unsent when the upload is held', async () => {
+      arrangePartialDb();
+      const withTombstones = {
+        ...partialDbConfig(),
+        deletedBookmarkIds: ['bk-1'],
+        deletedUserNoteAddresses: ['addr-1'],
+      };
+
+      await configService.saveConfig({ config: withTombstones, keyset: mockKeyset });
+
+      // Clearing these without syncing would resurrect the deletions elsewhere
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.deletedBookmarkIds).toEqual(['bk-1']);
+      expect(saved.deletedUserNoteAddresses).toEqual(['addr-1']);
+    });
+
+    it('still publishes when the user removed a Space, so removals propagate', async () => {
+      // The user left space-2: the caller already took it out of spaceIds, but
+      // it is still sitting in the local DB with a valid encryption state.
+      // Nothing is dropped by narrowing, so this must publish as normal.
+      const afterLeaving = {
+        address: 'user-left',
+        spaceIds: ['space-1'],
+        items: [{ type: 'space', id: 'space-1' }],
+        allowSync: true,
+        timestamp: 0,
+      } as any;
+
+      mockDeps.messageDB.getSpaces = vi
+        .fn()
+        .mockResolvedValue([{ spaceId: 'space-1' }, { spaceId: 'space-2' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      // Faithful to the real removal paths (SpaceService.deleteSpace, the
+      // self-kicked branch in MessageService): the leaving Space's encryption
+      // state is deleted BEFORE saveConfig runs, so space-2 has none here.
+      mockDeps.messageDB.getEncryptionStates = vi
+        .fn()
+        .mockImplementation(({ conversationId }: { conversationId: string }) =>
+          Promise.resolve(conversationId.startsWith('space-1') ? [{ id: 'enc-1' }] : [])
+        );
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      const encryptSpy = vi
+        .spyOn(global.crypto.subtle, 'encrypt')
+        .mockResolvedValue(new Uint8Array(16).buffer as ArrayBuffer);
+
+      await configService.saveConfig({ config: afterLeaving, keyset: mockKeyset });
+
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalled();
+      const uploaded = JSON.parse(
+        Buffer.from(encryptSpy.mock.calls[0][2] as Uint8Array).toString('utf-8')
+      );
+      // space-2 is gone from the published list, and its key with it
+      expect(uploaded.spaceIds).toEqual(['space-1']);
+      expect(uploaded.spaceKeys.map((k: any) => k.spaceId)).toEqual(['space-1']);
+      // A published save earns a fresh timestamp
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.timestamp).toBeGreaterThan(0);
+    });
+
+    it('does not advance the stored timestamp when the upload is held', async () => {
+      arrangePartialDb();
+
+      await configService.saveConfig({
+        config: { ...partialDbConfig(), timestamp: 1000 },
+        keyset: mockKeyset,
+      });
+
+      // getConfig resolves purely by timestamp and never merges the losing
+      // side, so claiming to be newer than the server without having published
+      // would make this device ignore every remote config while it holds.
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.timestamp).toBe(1000);
+    });
+
+    it('holds when a listed Space is absent from the local DB entirely', async () => {
+      // The EncryptionService re-key path (ensureKeyForSpace) writes the new
+      // spaceId into the config before the Space row exists under that id, so
+      // getSpaces() cannot see it yet. Narrowing must hold, not publish a
+      // config that silently drops the Space from every other device.
+      const midRename = {
+        address: 'user-rename',
+        spaceIds: ['space-new'],
+        items: [{ type: 'space', id: 'space-new' }],
+        allowSync: true,
+        timestamp: 500,
+      } as any;
+
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'encrypt').mockResolvedValue(
+        new Uint8Array(16).buffer as ArrayBuffer
+      );
+
+      await configService.saveConfig({ config: midRename, keyset: mockKeyset });
+
+      expect(mockDeps.apiClient.postUserSettings).not.toHaveBeenCalled();
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.spaceIds).toEqual(['space-new']);
+      expect(saved.timestamp).toBe(500);
+    });
+  });
 });
