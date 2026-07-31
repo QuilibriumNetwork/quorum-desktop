@@ -1,7 +1,14 @@
 ---
 type: task
 title: "Ghost device accumulation on reset/logout — deregister-before-wipe (desktop + mobile)"
-status: IN PROGRESS — Slice 1 (desktop) implemented on `fix/deregister-device-before-reset-wipe`; Slice 2 (mobile) not started
+status: DONE — Slice 1 (desktop #281, `accd11b35`) and Slice 2 (mobile #203, `ffdbfc9`) merged 2026-07-31
+outstanding:
+  - The two-device observable check has NOT been run on real hardware (reset A,
+    confirm it leaves B's device list and the count stays flat across cycles).
+  - Desktop follow-up — its `flushOutbound` claims more than `bufferedAmount`
+    can prove; the relay blind window applies there too. See the Slice 2 notes.
+  - `KeyDB` still survives a desktop reset despite the copy promising otherwise
+    (pre-existing, deliberately out of scope). See "Secondary".
 priority: medium (UX/hygiene; not a security hole, but pollutes the device list and per-device-signing admissions)
 created: 2026-07-21
 platforms: quorum-desktop + quorum-mobile (+ optional quilibrium-js-sdk-channels hardening)
@@ -253,6 +260,51 @@ Known-and-accepted after review:
    device pair (mobile: prefer statically-verifiable change per quorum-atlas;
    confirm on-device with the dual-device preview setup if available).
 
+#### Slice 2 implementation notes (2026-07-31, quorum-mobile #203, merged `ffdbfc9`)
+
+Files: `services/onboarding/deregisterDevice.ts` (new), `keyService.ts`,
+`context/WebSocketContext.tsx`, `components/ProfileModal.tsx`; 11 tests, suite 137.
+Same `{hub, spaces}` shape as desktop, both legs independently bounded.
+
+What the warning above got right, and what it got wrong:
+
+- **Right that mobile needed its own flush barrier, wrong about the mechanism.**
+  `clearAllSecureStorage()` is not what loses the frames — they are signed
+  before the wipe, and once built they are just strings. The real loss is that
+  `signOut()` flips `isAuthenticated`, and the effect watching it calls
+  `disconnect()`, discarding anything still queued. Same outcome, different
+  cause; a fix aimed only at key-wipe ordering would have missed it.
+- **Mobile's transport is much stronger than desktop's**, which changed the
+  problem rather than removing it. It re-checks `readyState` before every send,
+  requeues into `pendingEnvelopes`, and retains frames for replay on the next
+  connect. But a reset has no next connect, so all that durability does not
+  apply to precisely this caller.
+- **`removeDeviceFromRegistration` already read the registration fresh**, so
+  desktop's stale-snapshot bug did not exist here. It was, however, dead code
+  (zero callers), so its `Promise<boolean>` was free to fix — `false` meant four
+  different things including both "already absent" and "hub unreachable".
+
+**The finding worth carrying forward (from review of the mobile branch):**
+`ws.send()` succeeding is not delivery, and the relay kills a late client with
+no close frame, so a socket reads OPEN for 3.5-5s after it is dead —
+`quorum-shared/src/transport/send-retention.ts` documents 15-25% measured loss
+through that window. So a barrier built on "the queue reached my sentinel" can
+report a revoke that never arrived as a clean goodbye. There is no ack at this
+layer to fix it properly. Mobile now watches the socket for a settle window
+after writing (narrows, does not close) and documents that `spaces: 'ok'` means
+sent, not received.
+
+**Desktop has the same exposure and does not yet acknowledge it** — its
+`flushOutbound` checks `bufferedAmount`, which is equally blind to a
+relay-killed socket. Worth a follow-up: either the same settle window, or at
+least correcting the doc comment so the next reader does not over-trust it.
+
+Mobile-only improvement worth back-porting in spirit: a **toast** on a failed
+goodbye. The whole fallback is the user removing the device by hand later, which
+requires knowing it failed, and `logger` is disabled in release builds on both
+platforms. Desktop cannot do this (the reload eats it) — its outcome would have
+to survive into the post-reload screen.
+
 ### Slice 3 — SDK hardening (raise with lead; optional, not required for the fix)
 
 Desktop SDK `buildAndUploadRegistration` should reuse the existing `KeyDB id=2`
@@ -407,3 +459,5 @@ without calling it out.
 
 ## Updates
 - **2026-07-31 15:35**: Slice 1 (desktop) implemented + independently reviewed (3 passes). Review found 2 real composition bugs (discarded flush result; slow leg overwriting the other's success) — both fixed and now mutation-checked by 8 new hook tests. See 'Review findings' section for what Slice 2 must avoid.
+- **2026-07-31 16:24**: Slice 2 (mobile) implemented + reviewed: quorum-mobile#203. Review surfaced that ws.send success is not delivery (relay blind window, 15-25% measured loss) — mobile now settles and reports honestly. Desktop has the same exposure, unacknowledged; follow-up noted.
+- **2026-07-31 16:26**: Both slices merged (desktop accd11b35 / mobile ffdbfc9). Remaining before this closes: the two-device observable check, and the desktop follow-up on flushOutbound's delivery claim.

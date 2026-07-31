@@ -129,6 +129,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
 - [Capture archive — DM desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-captures.md)
 - [DM delivery is broken again, desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)
+- [Reset App Data does not delete the master private key (Electron + fallback-authenticator browsers)](bugs/2026-07-31-reset-app-data-leaves-private-keys-in-keydb.md)
+- [Electron stores the master private key at rest with no user secret](bugs/2026-07-31-electron-master-key-at-rest-no-user-secret.md) — decide before the desktop app ships
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -217,11 +219,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Edited messages show a false "not signed" warning on other devices](tasks/2026-07-19-edited-message-signature-badge-cross-device.md)
 - [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
-- [Ghost device accumulation on reset/logout](tasks/2026-07-21-device-registration-ghost-accumulation-cross-platform.md)
 - [DM receipt protocol: read acks now name what they read](tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md)
 - [Headless SPACE harness (spec)](tasks/2026-07-27-headless-space-harness.md)
 - [Harness coverage — multi-device first, then the unreached cells](tasks/2026-07-28-harness-multidevice-and-coverage.md)
 - [Handoff — DM loss, end of 2026-07-29](tasks/.done/2026-07-29-dm-loss-next-session-handoff.md)
+- [Ghost device accumulation on reset/logout — deregister-before-wipe](tasks/.done/2026-07-21-device-registration-ghost-accumulation-cross-platform.md) — desktop #281 + mobile #203 merged; on-device check still outstanding
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
