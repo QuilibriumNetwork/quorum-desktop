@@ -22,6 +22,8 @@ import {
   processURLs,
   convertHeadersToH3,
   fixUnclosedCodeBlocks,
+  getProtectedRegions,
+  isInProtectedRegion,
 } from '@quilibrium/quorum-shared';
 import { remarkTwemoji, getEmojiOnlySize } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
@@ -72,9 +74,15 @@ const isInviteLink = (url: string): boolean => {
 
 // Process invite links to convert them to markdown image syntax with special alt text
 const processInviteLinks = (text: string): string => {
+  // Skip URLs inside code or existing markdown links. Rewriting the destination
+  // of `[label](invite-url)` into `[label](![invite-card](invite-url))` produced
+  // an unparseable href, which react-markdown dropped — the message rendered as
+  // plain text with no link at all.
+  const protectedRegions = getProtectedRegions(text);
+
   // Replace invite links with markdown image syntax
-  return text.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url) => {
-    if (isInviteLink(url)) {
+  return text.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url, offset: number) => {
+    if (isInviteLink(url) && !isInProtectedRegion(offset, protectedRegions)) {
       // Use markdown image syntax with special alt text (similar to YouTube embeds)
       return `![invite-card](${url})`;
     }
