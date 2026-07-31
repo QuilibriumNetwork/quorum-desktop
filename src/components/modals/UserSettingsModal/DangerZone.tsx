@@ -26,10 +26,18 @@ const DangerZone: React.FunctionComponent = () => {
       // bug in here) must never stop the user from resetting — people reset
       // precisely when things are broken. The cost of failing is one stale
       // entry they can remove by hand from another device.
-      const outcome = await deregisterThisDevice().catch(() => 'failed' as const);
-      if (outcome !== 'deregistered') {
+      const outcome = await deregisterThisDevice().catch((err) => {
+        console.warn('[Reset] deregistration threw', err);
+        return { hub: 'failed', spaces: 'failed' } as const;
+      });
+      if (outcome.hub !== 'ok') {
         console.warn(
-          `[Reset] device deregistration ${outcome} — this device may stay listed until removed manually`
+          `[Reset] hub deregistration ${outcome.hub} — this device may stay listed until removed manually`
+        );
+      }
+      if (outcome.spaces !== 'ok') {
+        console.warn(
+          `[Reset] space revocation ${outcome.spaces} — other members may keep trusting this device's signing key`
         );
       }
 

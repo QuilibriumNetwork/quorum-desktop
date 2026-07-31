@@ -255,6 +255,10 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     if (wsRef.current?.readyState !== WebSocket.OPEN) return Promise.resolve(false);
 
     const deadline = Date.now() + timeoutMs;
+    // The frames are being sent on THIS socket. send() on a closing socket
+    // drops silently, so if a reconnect swaps in a fresh one mid-flush, an
+    // empty buffer on the new socket says nothing about the old one's frames.
+    const sendingOn = wsRef.current;
 
     const queueDrained = new Promise<void>((resolve) => {
       enqueueOutbound(async () => {
@@ -266,7 +270,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     const bufferDrained = async (): Promise<boolean> => {
       while (Date.now() < deadline) {
         const ws = wsRef.current;
-        if (!ws || ws.readyState !== WebSocket.OPEN) return false;
+        if (!ws || ws !== sendingOn || ws.readyState !== WebSocket.OPEN) return false;
         if (ws.bufferedAmount === 0) return true;
         await new Promise((r) => setTimeout(r, FLUSH_POLL_MS));
       }
