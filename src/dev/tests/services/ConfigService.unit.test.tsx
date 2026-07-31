@@ -392,4 +392,83 @@ describe('ConfigService - Unit Tests', () => {
       );
     });
   });
+
+  describe('5. saveConfig() - upload narrowing must not touch local state', () => {
+    const mockKeyset = {
+      userKeyset: {
+        user_key: {
+          private_key: new Uint8Array(57),
+          public_key: new Uint8Array(57),
+        },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    // The config lists three Spaces across a folder, but the local DB only
+    // holds space-1 with a usable encryption state. That is the state a device
+    // is in mid-sync, and it is what previously truncated the nav.
+    const partialDbConfig = () => ({
+      address: 'user-partial',
+      spaceIds: ['space-1', 'space-2', 'space-3'],
+      items: [
+        { type: 'space', id: 'space-1' },
+        { type: 'space', id: 'space-2' },
+        { type: 'folder', id: 'folder-1', name: 'Work', spaceIds: ['space-1', 'space-3'] },
+      ],
+      allowSync: true,
+      timestamp: 0,
+    }) as any;
+
+    const arrangePartialDb = () => {
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      return vi
+        .spyOn(global.crypto.subtle, 'encrypt')
+        .mockResolvedValue(new Uint8Array(16).buffer as ArrayBuffer);
+    };
+
+    it('persists the full Space list locally even when the DB is incomplete', async () => {
+      arrangePartialDb();
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.spaceIds).toEqual(['space-1', 'space-2', 'space-3']);
+      expect(saved.items).toHaveLength(3);
+      // The folder keeps both of its Spaces: filtering must not mutate it
+      expect(saved.items[2].spaceIds).toEqual(['space-1', 'space-3']);
+    });
+
+    it('still narrows the uploaded payload to Spaces that have keys', async () => {
+      const encryptSpy = arrangePartialDb();
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      const uploaded = JSON.parse(
+        Buffer.from(encryptSpy.mock.calls[0][2] as Uint8Array).toString('utf-8')
+      );
+      expect(uploaded.spaceIds).toEqual(['space-1']);
+      expect(uploaded.spaceKeys.map((k: any) => k.spaceId)).toEqual(['space-1']);
+      // space-2 dropped, and the folder keeps only its keyed Space
+      expect(uploaded.items).toEqual([
+        { type: 'space', id: 'space-1' },
+        { type: 'folder', id: 'folder-1', name: 'Work', spaceIds: ['space-1'] },
+      ]);
+    });
+
+    it('caches the full Space list, not the narrowed upload', async () => {
+      arrangePartialDb();
+      const setQueryDataSpy = vi.spyOn(queryClient, 'setQueryData');
+
+      await configService.saveConfig({ config: partialDbConfig(), keyset: mockKeyset });
+
+      const cached = setQueryDataSpy.mock.calls.at(-1)?.[1] as any;
+      expect(cached.spaceIds).toEqual(['space-1', 'space-2', 'space-3']);
+    });
+  });
 });

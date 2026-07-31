@@ -456,28 +456,6 @@ export class ConfigService {
         );
       }
 
-      // Ensure spaceIds and items only include spaces that have encryption keys
-      // This prevents server validation errors when some spaces don't have complete encryption data
-      const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
-      config.spaceIds = config.spaceIds.filter(id => validSpaceIds.has(id));
-      if (config.items) {
-        config.items = config.items.filter(item => {
-          if (item.type === 'space') {
-            return validSpaceIds.has(item.id);
-          } else {
-            // For folders, filter out spaces without encryption keys
-            item.spaceIds = item.spaceIds.filter(id => validSpaceIds.has(id));
-            // Remove empty folders
-            return item.spaceIds.length > 0;
-          }
-        });
-      }
-
-      // After filtering spaceIds/items, also filter spaceKeys to only include spaces that are still in spaceIds
-      // This ensures bidirectional consistency: spaceIds ⟷ spaceKeys
-      const finalSpaceIds = new Set(config.spaceIds);
-      config.spaceKeys = config.spaceKeys.filter(sk => finalSpaceIds.has(sk.spaceId));
-
       // Collect bookmarks before encryption (Phase 7: Sync Integration)
       config.bookmarks = await this.messageDB.getBookmarks();
       // Note: deletedBookmarkIds will be reset AFTER successful sync
@@ -486,8 +464,52 @@ export class ConfigService {
       config.userNotes = await this.messageDB.getAllUserNotes();
       // Note: deletedUserNoteAddresses will be reset AFTER successful sync
 
+      // Build the payload we POST. The server rejects a config whose spaceIds
+      // and spaceKeys disagree, so the parcel is narrowed to Spaces this device
+      // can currently prove it holds encryption keys for.
+      //
+      // This narrowing MUST stay on `uploadConfig`. `config` is what we persist
+      // to IndexedDB and push into the React Query cache below; trimming it
+      // there deletes Spaces from this device's own nav whenever the local DB is
+      // momentarily incomplete, which is how a device silently wipes its own
+      // Space list. Note the copies below: folder items are cloned rather than
+      // mutated, because a shallow spread still shares those nested objects.
+      // See .agents/bugs/2026-01-09-config-sync-space-loss-race-condition.md
+      const uploadConfig: UserConfig = { ...config };
+      const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
+      uploadConfig.spaceIds = config.spaceIds.filter(id => validSpaceIds.has(id));
+      if (config.items) {
+        uploadConfig.items = config.items
+          .map(item =>
+            item.type === 'space'
+              ? item
+              : // Clone folders: filtering in place would corrupt `config.items`
+                { ...item, spaceIds: item.spaceIds.filter(id => validSpaceIds.has(id)) }
+          )
+          // Drop unkeyed Spaces, and folders left empty by the line above
+          .filter(item =>
+            item.type === 'space' ? validSpaceIds.has(item.id) : item.spaceIds.length > 0
+          );
+      }
+
+      // Bidirectional consistency: spaceIds ⟷ spaceKeys, as the server requires
+      const finalSpaceIds = new Set(uploadConfig.spaceIds);
+      uploadConfig.spaceKeys = config.spaceKeys.filter(sk => finalSpaceIds.has(sk.spaceId));
+
+      // Uploading fewer Spaces than we hold is how one device's incomplete DB
+      // becomes every device's truncated nav: this config wins on timestamp, and
+      // getConfig applies a remote Space list verbatim. Loud, because the
+      // encryption-state warning above stays silent when a Space is absent from
+      // the local DB entirely rather than present-but-unkeyed.
+      if (uploadConfig.spaceIds.length < config.spaceIds.length) {
+        logger.warn(
+          `[ConfigService] Uploading a narrower Space list than this device holds (${uploadConfig.spaceIds.length}/${config.spaceIds.length}); other devices will adopt the shorter list:`,
+          config.spaceIds.filter(id => !finalSpaceIds.has(id))
+        );
+      }
+
       const iv = crypto.getRandomValues(new Uint8Array(12));
-      const configJson = JSON.stringify(config);
+      const configJson = JSON.stringify(uploadConfig);
       const ciphertext =
         Buffer.from(
           await window.crypto.subtle.encrypt(
