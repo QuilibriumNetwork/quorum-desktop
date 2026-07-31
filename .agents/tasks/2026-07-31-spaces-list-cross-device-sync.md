@@ -1,33 +1,36 @@
 ---
-type: doc
-title: "Spaces list cross-device sync — cross-repo index (start here)"
-status: living — this is a MAP plus the one thing no other doc owns (the verified per-pair state matrix)
+type: task
+title: "Make the Spaces list identical on every device (umbrella — start here)"
+status: open — blocked on lead-dev decisions in §5; two defensive fixes shipped 2026-07-31 (§3)
+priority: high
 created: 2026-07-31
 updated: 2026-07-31
+severity: data-integrity (Spaces vanish from a device's list) + cross-device divergence
 area: UserConfig spaces list / space add + removal propagation / ghost cleanup
 repos: quorum-desktop + quorum-mobile (+ quorum-shared for the wire type)
+owns: the per-device-pair state matrix (§2). Implementation detail lives in the linked sub-docs (§6).
 ---
 
-# Spaces list cross-device sync — index
+# Make the Spaces list identical on every device
 
-**Goal, in the product owner's words:** *the Spaces list must be identical on every
-device, always.* It is not, today. This file is the single place to start.
+**The requirement:** *the Spaces list must be identical on every device, always.* It is
+not, today. This is the umbrella task for getting there, and the single place to start.
 
 > **To brief an agent, paste this:**
 >
 > ```
-> Read quorum-desktop/.agents/docs/spaces-list-sync-index.md first. It is the single
-> source of truth for Spaces-list cross-device sync across quorum-desktop and
+> Read quorum-desktop/.agents/tasks/2026-07-31-spaces-list-cross-device-sync.md first.
+> It is the umbrella task for Spaces-list cross-device sync across quorum-desktop and
 > quorum-mobile. Read §1 and §2 before forming any theory, and §5 before writing code.
 > ```
 
 ⚠️ **Do not start implementing from this file.** §5 lists decisions that need the lead
-dev, including a wire-format change. This index tells you what is true and what is left;
-it does not authorise the change.
+dev, including a wire-format change. This task states what is true and what is left; it
+does not authorise the change.
 
 ## §0. Paths, and one thing that will trip you up
 
-Paths are repo-qualified, not relative, because this index is read from both repos.
+Paths are repo-qualified, not relative, because this task is read from both repos.
 The repos are siblings, so `../quorum-mobile/...` also resolves from inside either one.
 
 | repo | root (this machine) |

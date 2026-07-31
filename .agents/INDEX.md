@@ -14,7 +14,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
-- [Spaces list cross-device sync — cross-repo index](docs/spaces-list-sync-index.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 - [Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)
 - [Transport & DM reliability — measurement log](docs/transport-measurements.md)
@@ -212,6 +211,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Make the Spaces list identical on every device (umbrella — start here)](tasks/2026-07-31-spaces-list-cross-device-sync.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)

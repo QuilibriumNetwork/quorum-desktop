@@ -11,9 +11,9 @@ updated: 2025-12-13T00:00:00.000Z
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-> 🧭 **Start at the index:**
-> [`.agents/docs/spaces-list-sync-index.md`](../docs/spaces-list-sync-index.md) is the
-> single entry point for Spaces-list cross-device sync.
+> 🧭 **Start at the umbrella task:**
+> [`../tasks/2026-07-31-spaces-list-cross-device-sync.md`](../tasks/2026-07-31-spaces-list-cross-device-sync.md)
+> is the single entry point for Spaces-list cross-device sync.
 >
 > **Partially fixed 2026-07-31** (branch `fix/config-save-filter-wipes-local-spaces`):
 > the `saveConfig` filter no longer rewrites local state, and no longer publishes a
