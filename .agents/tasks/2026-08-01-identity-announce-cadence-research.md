@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Identity announce: cap the retries instead of re-sending forever, and fix what un-converges a row"
-status: STEPS 1-3 SHIPPED 2026-08-01 — bootstrap announce + Step 4 remain; see the HANDOVER box
+status: STEPS 1-3 DONE 2026-08-01 (announce implemented, awaiting live verification). Step 4 remains
 priority: medium — the two live bugs it uncovered are fixed and merged
 created: 2026-08-01
 updated: 2026-08-01
@@ -47,15 +47,30 @@ All three repos are on their base branch, clean, nothing unpushed. Desktop
 
 ### What is left, in priority order
 
-**1. The bootstrap announce (finishes Step 3).** Desktop still **never announces
-its own identity on connect**. After the fixes above it RECEIVES correctly but
-does not volunteer, so a member nobody has a row for stays unknown. The spec is
-`.agents/tasks/2026-08-01-space-member-identity-announce-on-connect.md` Slice 1 —
-global slot only, gated by the Step 2 cap (3 attempts), **no periodic cadence**.
-That task's §6 lists three traps already paid for on the DM side; read them.
+**1. ✅ The bootstrap announce — DONE 2026-08-01.** Desktop now announces on
+connect: `MessageService.announceProfileToAllSpacesOnConnect`, fired from
+`MessageDB.tsx` on the startup timer and from `setResubscribe`, bounded by
+`src/utils/spaceProfileGate.ts` (3 attempts per identity, minutes apart, then
+silent — a bootstrap, not a cadence). The DM gate was extracted to
+`src/utils/profileSendGate.ts` and both now sit on it.
 
-**2. Step 4, the diagnostic.** A count of "rows with no identity from any source",
-run before and after. Without it, none of this is measured — see §2 Step 4.
+Two deviations from the spec, both argued in
+`2026-08-01-space-member-identity-announce-on-connect.md`'s status box: the
+announce carries the **override slot as well as** the global one (global-only
+would show a member's global name to anyone bootstrapping a row, breaking the
+"a per-space name is what spacemates see" requirement), and the gate is spaced in
+**minutes rather than 24h** (a bootstrap should finish inside a session; the
+floor exists only so a flapping socket cannot spend the allowance in one outage).
+
+⚠️ **Unit-tested, not yet verified on a real space.** That is item 2.
+
+**2. Step 4, the diagnostic — now the top item.** A count of "rows with no
+identity from any source", run before and after. Without it, none of this is
+measured, and the announce above is the first change whose whole purpose is to
+move that number. Baseline to beat, from the 2026-06-13 run on "Quorum Test 2":
+**46 of 89 distinct senders had no member row at all.** Tool and procedure:
+`.agents/tools/dm-debug/06-space-member-sources.js`, `__spaceMissingSenders(id)`.
+Reload between runs — the point is that the row PERSISTS.
 
 **3. Two things I did NOT verify** and which are adjacent to a question the
 operator raised (does a per-space name always win?):

@@ -104,6 +104,44 @@ whether it reported failures or presented as a clean pass.
 Hypothesis 4 predicts the surviving 3 files share the property of not importing
 the SDK. That is cheap to check and would discriminate 4 from 1-3.
 
+## §4b. 🔵 STRONGEST LEAD — the same signature reproduced ON DEMAND, from a drive-letter mismatch
+
+Later on 2026-08-01, running vitest from inside the secondary worktree produced
+**exactly this signature deliberately**:
+
+```
+Error: Cannot find module '/@fs/E:/GitHub/Quilibrium/quorum-desktop/.worktrees/secondary/src/dev/tests/setup.ts'
+ Test Files  1 failed (1)
+      Tests  no tests
+   Duration  1.92s (transform 0ms, setup 0ms, import 0ms, ...)
+```
+
+Note `import 0ms` and `Tests no tests` — the collapsed-run fingerprint from §1.
+
+**Cause:** the command was issued with a cwd of `D:/GitHub/.../worktrees/secondary`
+while the file resolved through `E:/GitHub/.../worktrees/secondary`. Both paths
+reach the same directory (one is an NTFS junction), but Vite's `/@fs/` resolution
+and its `server.fs.allow` list compare paths as STRINGS, so the two spellings do
+not match and every module fails to resolve. Re-running the identical command
+from the `E:` spelling passed immediately (2 files, 21 tests).
+
+**Why this is the best lead for §1.** `git worktree list` reports the worktree
+under `D:/`, so any tooling that takes git's word for the path and any human or
+agent that copies it gets the wrong spelling. `.worktrees/` is a cross-drive
+junction sitting INSIDE the project root — which is also exactly what broke
+`yarn lint` for every file until `.worktrees/**` was added to the eslint ignores
+(PR #287). Two separate tools have now mis-walked this directory.
+
+**Cheapest test:** run the full suite from the `E:` spelling and from the `D:`
+spelling and compare. If the flake in the MAIN repo has the same root, expect it
+to correlate with something resolving a path through the junction rather than
+with load or concurrency — which would also explain occurrence C (a single-file
+run with nothing else executing, which no concurrency theory survives).
+
+⚠️ Not yet proven for the MAIN repo: every main-repo run in this session used
+the `E:` spelling and none of them collapsed. So this is a confirmed mechanism
+that produces an identical signature, not yet a confirmed cause of §1.
+
 ## §5. Diagnosis plan
 
 - [ ] **Capture a full flaked run.** Loop `npx vitest run` under artificial load

@@ -290,6 +290,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   // Pending on-reconnect identity push, so a flapping socket replaces the
   // pending broadcast instead of stacking another one behind it.
   const dmProfilePushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const spaceProfileAnnounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const invalidateConversation = useInvalidateConversation();
   const navigate = useNavigate();
 
@@ -567,6 +568,29 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           );
       };
 
+      // Same idea for spaces, and the same startup race. A space member's name
+      // and avatar exist on your device only because someone announced them,
+      // and desktop announced only at join and on tag rotation — so a member
+      // who joined while you were offline stayed a truncated address forever.
+      // Bounded by its own gate (3 attempts per identity, then silent), because
+      // past the bootstrap the member digest exchange is the repair path.
+      const fireSpaceProfileAnnounce = () => {
+        if (!messageServiceRef.current) {
+          // Realistically unreachable today (the service is built
+          // unconditionally in the same render pass), but a silent return here
+          // would disable the announce for the whole session with nothing to
+          // explain why — and "renders as an address" is already a symptom with
+          // no signal of its own.
+          logger.warn('[SpaceProfile] announce skipped — service not ready');
+          return;
+        }
+        messageServiceRef.current
+          .announceProfileToAllSpacesOnConnect(selfAddress)
+          .catch((err) =>
+            logger.warn('[SpaceProfile] identity announce failed', { err })
+          );
+      };
+
       setResubscribe(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
@@ -588,6 +612,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         dmProfilePushTimerRef.current = setTimeout(
           fireDmProfileRebroadcast,
           4000
+        );
+        if (spaceProfileAnnounceTimerRef.current !== null) {
+          clearTimeout(spaceProfileAnnounceTimerRef.current);
+        }
+        spaceProfileAnnounceTimerRef.current = setTimeout(
+          fireSpaceProfileAnnounce,
+          6000
         );
       });
 
@@ -629,6 +660,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             );
         }
       }, 10000);
+
+      // Startup path for the space announce — see the race note above. Trails
+      // the requestSync block so the digest exchange, which repairs rows that
+      // already exist, gets the quieter moment; the announce only has to reach
+      // members who have no row for us at all.
+      setTimeout(fireSpaceProfileAnnounce, 12000);
     }
   }, [keyset, selfAddress]);
 

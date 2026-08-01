@@ -18,22 +18,21 @@
 // finite job; the first version of this gate had no cap and so kept paying 365
 // sends a year per pair to say nothing new.
 //
-// The three states, in the order the predicate checks them:
-//   never sent / identity changed → send (a rename resets the count)
-//   attempts exhausted            → never again, until the identity changes
-//   otherwise                     → send once the interval has elapsed
+// The rules themselves — cap, expiry, legacy-record migration, in-flight claim
+// — live in `profileSendGate.ts` and are shared with the space announce. What
+// stays here is DM-specific: the storage namespace, the interval, and what
+// counts as the payload.
 //
 // Desktop counterpart of mobile's MMKV gate
-// (quorum-mobile/services/dm/dmProfileService.ts). The two are NOT yet in
-// parity and diverge in opposite directions: mobile has no expiry and no cap,
-// so it sends exactly once ever and a single lost frame is permanent. Bringing
-// mobile to the same rule is tracked, and is deliberately not part of this
-// change.
+// (quorum-mobile/services/dm/dmProfileService.ts).
 //
 // See .agents/tasks/2026-08-01-identity-announce-cadence-research.md (Step 2)
 // and 2026-08-01-dm-partner-identity-lost-on-established-sessions.md
 
-import { logger } from '@quilibrium/quorum-shared';
+import {
+  canonicalProfileSignature,
+  createProfileSendGate,
+} from './profileSendGate';
 
 const GATE_PREFIX = 'quorum:dm-profile-broadcast';
 
@@ -64,24 +63,24 @@ export const RESEND_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
  *    un-converged an already-healed row; with a cap and no fix, such a row would
  *    stay broken forever.
  *  - The MIGRATION stampedes the whole fleet on deploy day if a legacy record
- *    keeps its stored `at`. See `readRecord`.
+ *    keeps its stored `at`. See `migrateRecord` in `profileSendGate.ts`.
  *
  * Rationale and the cost model:
  *   .agents/tasks/2026-08-01-identity-announce-cadence-research.md
  *
- * Do not copy this into the space implementation — spaces already have a
- * receiver-driven member reconciliation and need no cadence (that task, Step 3).
+ * ⚠️ Do not reuse this INTERVAL for spaces. Spaces already have a
+ * receiver-driven member reconciliation (`MemberDigest` → `MemberDelta`), so
+ * their announce is a bootstrap rather than a cadence and spaces it far more
+ * tightly — see `spaceProfileGate.ts`. The cap is shared; the interval is not.
  */
 export const MAX_SENDS_PER_IDENTITY = 3;
 
-/**
- * Attempts credited to a record written before this cap existed.
- *
- * 2 leaves exactly ONE more try for pairs that are broken right now, then the
- * cap closes. Going straight to MAX would abandon them; going to 0 would replay
- * the whole ladder for every pair that is already fine.
- */
-const MIGRATED_ATTEMPTS = MAX_SENDS_PER_IDENTITY - 1;
+const gate = createProfileSendGate({
+  storagePrefix: GATE_PREFIX,
+  logPrefix: '[DMProfile]',
+  minGapMs: RESEND_INTERVAL_MS,
+  maxSendsPerIdentity: MAX_SENDS_PER_IDENTITY,
+});
 
 /** The identity fields that actually go on the wire. */
 export interface DmProfileWirePayload {
@@ -94,131 +93,19 @@ export interface DmProfileWirePayload {
  * Canonical signature of the exact wire payload.
  *
  * Field PRESENCE matters as well as value: an avatar-only push and a
- * name-only push are different messages and must not gate each other. Built
- * from an explicit sorted key order so it never depends on insertion order.
+ * name-only push are different messages and must not gate each other.
+ *
+ * Note `bio` alone tests `!== undefined` rather than truthiness — an empty bio
+ * is a deliberate CLEAR on the wire, so it has to be distinguishable from an
+ * omitted one. Names and avatars have no such "clear" semantics here.
  */
 export const dmProfileSignature = (payload: DmProfileWirePayload): string => {
   const canonical: Record<string, string> = {};
   if (payload.displayName) canonical.displayName = payload.displayName;
   if (payload.userIcon) canonical.userIcon = payload.userIcon;
   if (payload.bio !== undefined) canonical.bio = payload.bio;
-  return JSON.stringify(
-    Object.keys(canonical)
-      .sort()
-      .map((k) => [k, canonical[k]])
-  );
+  return canonicalProfileSignature(canonical);
 };
-
-const gateKey = (selfAddress: string, partnerAddress: string): string =>
-  `${GATE_PREFIX}:${selfAddress}:${partnerAddress}`;
-
-interface GateRecord {
-  sig: string;
-  at: number;
-  /** Sends of THIS signature to this partner so far. Capped at MAX_SENDS_PER_IDENTITY. */
-  attempts: number;
-}
-
-const writeRecord = (
-  selfAddress: string,
-  partnerAddress: string,
-  record: GateRecord
-): void => {
-  try {
-    localStorage.setItem(
-      gateKey(selfAddress, partnerAddress),
-      JSON.stringify(record)
-    );
-  } catch (err) {
-    logger.warn('[DMProfile] gate write failed — will re-send next connect', { err });
-  }
-};
-
-/**
- * Upgrade a pre-cap record, and PERSIST the upgrade.
- *
- * ⚠️ `at` is re-anchored to NOW, deliberately, never the stored value. Records
- * carry a timestamp up to 24h old, so keeping it would put every existing pair
- * instantly past the interval and fire the entire fleet on the first connect
- * after deploy. Re-anchoring spreads the one remaining attempt across whenever
- * each user next opens the app.
- *
- * The write matters as much as the value: without it the upgrade is recomputed
- * on every read, so `now - at` is always ~0 and the record can never age out —
- * which is exactly how the pre-cap code left legacy bare-signature records
- * permanently gated shut.
- */
-const migrateRecord = (
-  selfAddress: string,
-  partnerAddress: string,
-  sig: string,
-  now: number
-): GateRecord => {
-  const migrated: GateRecord = { sig, at: now, attempts: MIGRATED_ATTEMPTS };
-  writeRecord(selfAddress, partnerAddress, migrated);
-  return migrated;
-};
-
-const readRecord = (
-  selfAddress: string,
-  partnerAddress: string,
-  now: number
-): GateRecord | null => {
-  let raw: string | null;
-  try {
-    raw = localStorage.getItem(gateKey(selfAddress, partnerAddress));
-  } catch (err) {
-    // Storage unavailable — fail OPEN. A redundant identity push is harmless;
-    // a missed one leaves the partner stuck on a placeholder.
-    logger.warn('[DMProfile] gate read failed — treating as not-yet-sent', { err });
-    return null;
-  }
-  if (!raw) return null;
-  try {
-    const parsed = JSON.parse(raw) as unknown;
-    if (
-      parsed !== null &&
-      typeof parsed === 'object' &&
-      !Array.isArray(parsed) &&
-      typeof (parsed as GateRecord).sig === 'string'
-    ) {
-      // Only `sig` is required to recognise the object form. `at` and
-      // `attempts` are validated below rather than in this guard, so a record
-      // whose numbers are unusable still migrates with its REAL signature
-      // instead of falling through to the bare-signature branch and having the
-      // whole JSON blob mistaken for one.
-      const sig = (parsed as GateRecord).sig;
-      const at = (parsed as GateRecord).at;
-      const attempts = (parsed as GateRecord).attempts;
-      // Shape 1 of 2: `{sig, at}` — the pre-cap format, no attempt counter.
-      //
-      // `Number.isInteger` / `Number.isFinite`, not `typeof === 'number'`: NaN
-      // and Infinity are both numbers, and either breaks the gate silently — a
-      // NaN `attempts` defeats the cap (`NaN >= 3` is false, so it sends
-      // forever) and a NaN `at` wedges the interval shut. Note NaN and Infinity
-      // both serialise to `null` through JSON, so this also covers a record that
-      // was written while one of them was in play.
-      if (!Number.isFinite(at) || !Number.isInteger(attempts) || attempts < 0) {
-        return migrateRecord(selfAddress, partnerAddress, sig, now);
-      }
-      return { sig, at, attempts };
-    }
-  } catch {
-    // Not JSON at all — fall through to the legacy branch.
-  }
-  // Shape 2 of 2: the ORIGINAL format stored a BARE SIGNATURE string. Note that
-  // a signature is itself valid JSON (an array), so it parses cleanly — which is
-  // exactly why the shape check above matters more than the try/catch.
-  return migrateRecord(selfAddress, partnerAddress, raw, now);
-};
-
-// In-flight claims, process-local. The persisted record is only written AFTER
-// encryptAndSendDm resolves (a real crypto + network round trip), so two
-// overlapping broadcast runs — the startup timer and a reconnect timer can
-// overlap by design — would both read "not yet sent" and both send a real
-// encrypted DM to the same partner. Claiming synchronously here closes that
-// window. Not persisted: a reload legitimately means nothing is in flight.
-const inFlight = new Set<string>();
 
 /**
  * Should we send this payload to this partner right now?
@@ -236,21 +123,7 @@ export const shouldSendDmProfile = (
   partnerAddress: string,
   signature: string,
   now: number = Date.now()
-): boolean => {
-  if (inFlight.has(`${gateKey(selfAddress, partnerAddress)}|${signature}`)) {
-    return false;
-  }
-  const record = readRecord(selfAddress, partnerAddress, now);
-  if (!record) return true;
-  // A changed identity is not a retry — it is new information, so it ignores
-  // both the interval and the cap, and starts its own count (see record*Send).
-  if (record.sig !== signature) return true;
-  // The cap. Checked BEFORE the interval so a converged pair short-circuits
-  // without any arithmetic, and so the intent reads in order: "have we said
-  // this enough times already?" then "has it been long enough?".
-  if (record.attempts >= MAX_SENDS_PER_IDENTITY) return false;
-  return now - record.at >= RESEND_INTERVAL_MS;
-};
+): boolean => gate.shouldSend(selfAddress, partnerAddress, signature, now);
 
 /**
  * Claim a send synchronously, before awaiting it. Must be paired with
@@ -261,18 +134,14 @@ export const claimDmProfileSend = (
   selfAddress: string,
   partnerAddress: string,
   signature: string
-): void => {
-  inFlight.add(`${gateKey(selfAddress, partnerAddress)}|${signature}`);
-};
+): void => gate.claim(selfAddress, partnerAddress, signature);
 
 /** Release an in-flight claim, whether the send succeeded or threw. */
 export const releaseDmProfileSend = (
   selfAddress: string,
   partnerAddress: string,
   signature: string
-): void => {
-  inFlight.delete(`${gateKey(selfAddress, partnerAddress)}|${signature}`);
-};
+): void => gate.release(selfAddress, partnerAddress, signature);
 
 /**
  * Record a successful send, advancing the attempt counter. Call ONLY after the
@@ -288,9 +157,4 @@ export const recordDmProfileSend = (
   partnerAddress: string,
   signature: string,
   now: number = Date.now()
-): void => {
-  const previous = readRecord(selfAddress, partnerAddress, now);
-  const attempts =
-    previous && previous.sig === signature ? previous.attempts + 1 : 1;
-  writeRecord(selfAddress, partnerAddress, { sig: signature, at: now, attempts });
-};
+): void => gate.record(selfAddress, partnerAddress, signature, now);
