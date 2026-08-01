@@ -26,7 +26,17 @@ import { logger } from '@quilibrium/quorum-shared';
 
 const GATE_PREFIX = 'quorum:dm-profile-broadcast';
 
-/** Re-send an unchanged identity at most this often, per partner. */
+/**
+ * Re-send an unchanged identity at most this often, per partner.
+ *
+ * ⚠️ PLACEHOLDER VALUE — chosen to bound an anti-loss retry, not researched.
+ * It pays a cost on EVERY pair to fix a failure that occurs on a small fraction
+ * of pairs, so it scales with the user base rather than with the problem
+ * (~6 GB/day at 10k users × 20 partners × 30 KB avatars). Better shapes
+ * (receiver-driven request, fingerprint-first, backoff) are being evaluated in
+ * .agents/tasks/2026-08-01-identity-announce-cadence-research.md — do not treat
+ * this constant as settled, and do not copy it into the space implementation.
+ */
 export const RESEND_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
 
 /** The identity fields that actually go on the wire. */
