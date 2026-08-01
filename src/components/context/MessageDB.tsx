@@ -287,6 +287,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const queryClient = useQueryClient();
   const { apiClient } = useQuorumApiClient();
   const { setMessageHandler, enqueueOutbound, setResubscribe } = useWebSocket();
+  // Pending on-reconnect identity push, so a flapping socket replaces the
+  // pending broadcast instead of stacking another one behind it.
+  const dmProfilePushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const invalidateConversation = useInvalidateConversation();
   const navigate = useNavigate();
 
@@ -576,8 +579,16 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             }),
           ];
         });
-        // Staggered so it never competes with the listen frame above.
-        setTimeout(fireDmProfileRebroadcast, 4000);
+        // Staggered so it never competes with the listen frame above. Reconnects
+        // fire on a flat 1s retry, so without clearing the previous timer a
+        // flapping socket stacks up independent pending broadcasts.
+        if (dmProfilePushTimerRef.current !== null) {
+          clearTimeout(dmProfilePushTimerRef.current);
+        }
+        dmProfilePushTimerRef.current = setTimeout(
+          fireDmProfileRebroadcast,
+          4000
+        );
       });
 
       // Startup path — see the race note above. Runs alongside the existing

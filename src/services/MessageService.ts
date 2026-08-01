@@ -87,7 +87,10 @@ import {
   dmProfileSignature,
   shouldSendDmProfile,
   recordDmProfileSend,
+  claimDmProfileSend,
+  releaseDmProfileSend,
 } from '../utils/dmProfileGate';
+import { preferIncomingProfileField } from '../utils/conversationProfile';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
@@ -579,6 +582,8 @@ export class MessageService {
         continue;
       }
 
+      // Claim BEFORE the await, release in `finally` — see dmProfileGate.
+      claimDmProfileSend(selfUserAddress, partnerAddress, signature);
       try {
         await this.encryptAndSendDm(
           partnerAddress,
@@ -604,6 +609,10 @@ export class MessageService {
           err,
           partner: partnerAddress.slice(0, 16),
         });
+      } finally {
+        // Runs on the `continue` above too, so a no-session partner is not
+        // wedged shut for the rest of the session.
+        releaseDmProfileSend(selfUserAddress, partnerAddress, signature);
       }
     }
   }
@@ -5729,9 +5738,23 @@ export class MessageService {
           return;
         }
 
-        const profileToUse = updatedUserProfile ?? {
-          user_icon: conversation.conversation?.icon,
-          display_name: conversation.conversation?.displayName,
+        // MERGE, never replace. `?? existing` was safe only while
+        // updatedUserProfile was always undefined on this path; now that a
+        // decrypted frame can supply one, a partial profile (real name, blank
+        // avatar — an ordinary partner with no picture set) would otherwise be
+        // passed through whole. db.saveMessage writes icon/displayName onto the
+        // conversation row UNCONDITIONALLY (src/db/messages.ts), and it runs
+        // BEFORE addOrUpdateConversation's guarded merge below, so a blank
+        // field here permanently wipes a known-good stored value.
+        const profileToUse = {
+          user_icon: preferIncomingProfileField(
+            updatedUserProfile?.user_icon,
+            conversation.conversation?.icon
+          ),
+          display_name: preferIncomingProfileField(
+            updatedUserProfile?.display_name,
+            conversation.conversation?.displayName
+          ),
         };
         await this.saveMessage(
           decryptedContent,
@@ -5776,9 +5799,16 @@ export class MessageService {
           conversationId.split('/')[0],
           decryptedContent.channelId,
           keys.sending_inbox ? 'direct' : 'group',
-          updatedUserProfile ?? {
-            user_icon: conversation.conversation?.icon,
-            display_name: conversation.conversation?.displayName,
+          // Merge, not replace — see the sibling branch above.
+          {
+            user_icon: preferIncomingProfileField(
+              updatedUserProfile?.user_icon,
+              conversation.conversation?.icon
+            ),
+            display_name: preferIncomingProfileField(
+              updatedUserProfile?.display_name,
+              conversation.conversation?.displayName
+            ),
           }
         );
 

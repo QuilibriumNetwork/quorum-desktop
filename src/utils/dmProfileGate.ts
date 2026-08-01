@@ -102,11 +102,20 @@ const readRecord = (
   return { sig: raw, at: Date.now() };
 };
 
+// In-flight claims, process-local. The persisted record is only written AFTER
+// encryptAndSendDm resolves (a real crypto + network round trip), so two
+// overlapping broadcast runs — the startup timer and a reconnect timer can
+// overlap by design — would both read "not yet sent" and both send a real
+// encrypted DM to the same partner. Claiming synchronously here closes that
+// window. Not persisted: a reload legitimately means nothing is in flight.
+const inFlight = new Set<string>();
+
 /**
  * Should we send this payload to this partner right now?
  *
  * True when we have never sent to them, when the identity has changed, or when
- * the last send is older than RESEND_INTERVAL_MS (the anti-loss retry).
+ * the last send is older than RESEND_INTERVAL_MS (the anti-loss retry) — and
+ * only when no equivalent send is already in flight.
  *
  * `now` is injectable so the expiry is testable without faking the clock.
  */
@@ -116,10 +125,35 @@ export const shouldSendDmProfile = (
   signature: string,
   now: number = Date.now()
 ): boolean => {
+  if (inFlight.has(`${gateKey(selfAddress, partnerAddress)}|${signature}`)) {
+    return false;
+  }
   const record = readRecord(selfAddress, partnerAddress);
   if (!record) return true;
   if (record.sig !== signature) return true;
   return now - record.at >= RESEND_INTERVAL_MS;
+};
+
+/**
+ * Claim a send synchronously, before awaiting it. Must be paired with
+ * `releaseDmProfileSend` in a `finally` so a failed send does not wedge the
+ * partner shut until reload.
+ */
+export const claimDmProfileSend = (
+  selfAddress: string,
+  partnerAddress: string,
+  signature: string
+): void => {
+  inFlight.add(`${gateKey(selfAddress, partnerAddress)}|${signature}`);
+};
+
+/** Release an in-flight claim, whether the send succeeded or threw. */
+export const releaseDmProfileSend = (
+  selfAddress: string,
+  partnerAddress: string,
+  signature: string
+): void => {
+  inFlight.delete(`${gateKey(selfAddress, partnerAddress)}|${signature}`);
 };
 
 /**

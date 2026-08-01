@@ -30,11 +30,20 @@ describe('isPlaceholderDisplayName', () => {
     expect(isPlaceholderDisplayName('GattoPardo')).toBe(false);
   });
 
-  // The literal is stored in English at write time, so the check must NOT be
-  // translated — a row written before a language switch must still be seen as
-  // a placeholder.
-  it('matches the English literal exactly, not a translation', () => {
-    expect(isPlaceholderDisplayName('Utente sconosciuto')).toBe(false);
+  // Rows are written with the Lingui `t` macro, which evaluates at the ACTIVE
+  // locale — so an Italian user's new DM row holds "Utente sconosciuto", and
+  // the check has to consult the current locale's spelling too. Lingui THROWS
+  // if no locale is activated, and this suite runs without one, which is
+  // exactly the early-startup condition the app can hit. So this asserts the
+  // safety contract: consulting the locale must never throw out of an identity
+  // check, it must degrade to the English literal.
+  it('does not throw when no locale is activated', () => {
+    expect(() => isPlaceholderDisplayName('anything')).not.toThrow();
+    expect(isPlaceholderDisplayName(UNKNOWN_USER_PLACEHOLDER)).toBe(true);
+  });
+
+  it('does not treat an unrelated name as a placeholder', () => {
+    expect(isPlaceholderDisplayName('Utente Reale')).toBe(false);
   });
 });
 

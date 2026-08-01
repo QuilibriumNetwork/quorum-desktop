@@ -10,6 +10,8 @@ import {
   dmProfileSignature,
   shouldSendDmProfile,
   recordDmProfileSend,
+  claimDmProfileSend,
+  releaseDmProfileSend,
   RESEND_INTERVAL_MS,
 } from '../../../utils/dmProfileGate';
 
@@ -22,6 +24,10 @@ const SIG = dmProfileSignature({ displayName: 'Bob', userIcon: 'icon' });
 
 beforeEach(() => {
   localStorage.clear();
+  // In-flight claims are module-local, so they must be cleared between tests
+  // or a claim leaks into the next one.
+  releaseDmProfileSend(SELF, PARTNER, SIG);
+  releaseDmProfileSend(SELF, OTHER_PARTNER, SIG);
 });
 
 describe('dmProfileSignature', () => {
@@ -92,6 +98,27 @@ describe('shouldSendDmProfile', () => {
   it('is per-self-address — a different account starts fresh', () => {
     recordDmProfileSend(SELF, PARTNER, SIG, T0);
     expect(shouldSendDmProfile('QmOtherSelf', PARTNER, SIG, T0)).toBe(true);
+  });
+
+  // The persisted record is only written AFTER the network send resolves, so
+  // two overlapping broadcast runs (the startup timer and a reconnect timer can
+  // overlap by design) would both read "not yet sent" and both transmit a real
+  // encrypted DM. The in-flight claim closes that window.
+  it('does not double-send while an identical send is in flight', () => {
+    expect(shouldSendDmProfile(SELF, PARTNER, SIG, T0)).toBe(true);
+    claimDmProfileSend(SELF, PARTNER, SIG);
+    expect(shouldSendDmProfile(SELF, PARTNER, SIG, T0)).toBe(false);
+  });
+
+  it('reopens after the claim is released, so a failed send retries', () => {
+    claimDmProfileSend(SELF, PARTNER, SIG);
+    releaseDmProfileSend(SELF, PARTNER, SIG);
+    expect(shouldSendDmProfile(SELF, PARTNER, SIG, T0)).toBe(true);
+  });
+
+  it('claims are per-partner — one in flight does not block another', () => {
+    claimDmProfileSend(SELF, PARTNER, SIG);
+    expect(shouldSendDmProfile(SELF, OTHER_PARTNER, SIG, T0)).toBe(true);
   });
 
   // Upgrade path: the pre-expiry format stored a bare signature string with no
