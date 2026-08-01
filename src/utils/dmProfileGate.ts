@@ -30,12 +30,32 @@ const GATE_PREFIX = 'quorum:dm-profile-broadcast';
  * Re-send an unchanged identity at most this often, per partner.
  *
  * ⚠️ PLACEHOLDER VALUE — chosen to bound an anti-loss retry, not researched.
- * It pays a cost on EVERY pair to fix a failure that occurs on a small fraction
- * of pairs, so it scales with the user base rather than with the problem
- * (~6 GB/day at 10k users × 20 partners × 30 KB avatars). Better shapes
- * (receiver-driven request, fingerprint-first, backoff) are being evaluated in
- * .agents/tasks/2026-08-01-identity-announce-cadence-research.md — do not treat
- * this constant as settled, and do not copy it into the space implementation.
+ * It scales with the user base rather than with the problem: ~12 GB/day at 10k
+ * users (20 partners × ~2 destination inboxes × 30 KB avatars), forever.
+ *
+ * DECIDED 2026-08-01: keep this interval, but CAP the number of retries — stop
+ * after 3 sends per (partner, identity-version), until the signature changes.
+ * Healing a lost identity is a finite job; repeating it 365×/year per partner is
+ * not. ~99% cheaper, with the same convergence.
+ *
+ * The retry is a TRANSITIONAL SAFETY NET, not architecture. It exists only
+ * because a lost frame had no second chance — with reliable delivery, ONE send
+ * per identity is enough (which is exactly what mobile already does). As
+ * delivery is proven the cap should shrink toward 1. Do not build as if the
+ * retry were permanent.
+ *
+ * Two things not to get wrong:
+ *  - Capping is only safe once db.saveMessage stops re-stamping 'Unknown User'
+ *    onto the row (src/db/messages.ts:1360-1370). That re-stamp is what
+ *    un-converges an already-fixed row. Fix it in the same effort.
+ *  - The MIGRATION stampedes the whole fleet on deploy day if a legacy record is
+ *    stamped with its stored `at` instead of `Date.now()`.
+ *
+ * Both are covered in:
+ *   .agents/tasks/2026-08-01-identity-announce-cadence-research.md
+ *
+ * Do not copy this into the space implementation — spaces already have a
+ * receiver-driven member reconciliation and need no cadence (that task, Slice 3).
  */
 export const RESEND_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
 

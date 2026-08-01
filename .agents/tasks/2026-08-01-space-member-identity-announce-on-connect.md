@@ -215,7 +215,26 @@ Plus one that is space-specific and NOT shared with DMs:
    still stands. Announcing is safe (it is a normal control message through the
    normal handler); inventing rows from message traffic is not.
 
-## §7. Open question inherited from the DM fix — retry cadence
+## §7. Open question inherited from the DM fix — retry cadence ✅ ANSWERED
+
+> ✅ **2026-08-01: answered in
+> `.agents/tasks/2026-08-01-identity-announce-cadence-research.md` Slice 3.**
+>
+> **Spaces should get no cadence at all.** They already ship a receiver-driven,
+> fingerprint-first member reconciliation — `requestSync` fires on every connect
+> (`MessageDB.tsx:611-631`) and exchanges `MemberDigest` → `MemberDelta`. That is
+> candidates A+B from the list below, already on the wire. It is broken in two
+> specific ways, filed as
+> `.agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`
+> (digest hashes only the override slot, which is empty post-follow-global; and
+> applying a delta full-row-`put`s away the global slot). **Fix those, and
+> Slice 1 here becomes a bootstrap for members nobody has a row for** — gate it
+> with the same capped retry as DMs (3 attempts, then stop), not a flat interval.
+>
+> 🔴 **§4 above is also corrected there.** "Cheaper here than it was for
+> DMs" is true for the *sender's uplink* only. One broadcast is read by every
+> member, so total transfer is `spaces × members` — at 5 spaces × 50 members
+> that is ~6× the total bytes of a daily DM announce, not less.
 
 The DM gate currently re-sends an unchanged identity **once per 24h per
 partner**. That is a placeholder value, not a researched one, and it is
