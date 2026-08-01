@@ -179,7 +179,7 @@ class ScrollDebug {
     this.events = [];
     this.origin = null;
     this.sessionLabel = null;
-    try { sessionStorage.removeItem(STORAGE_KEY); } catch {}
+    try { sessionStorage.removeItem(STORAGE_KEY); } catch { /* sessionStorage unavailable */ }
     // eslint-disable-next-line no-console
     console.log(`${TAG} cleared.`);
   }

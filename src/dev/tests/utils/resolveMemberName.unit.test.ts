@@ -37,7 +37,7 @@ describe('resolveMemberName', () => {
     expect(r.isQnsVerified).toBe(false);
     // address-only fallback — non-empty, derived from the address
     expect(r.name.length).toBeGreaterThan(0);
-    expect(ADDR).toContain(r.name.replace(/[…\.]/g, '').slice(0, 4));
+    expect(ADDR).toContain(r.name.replace(/[….]/g, '').slice(0, 4));
   });
 
   it('treats empty/whitespace names as absent', async () => {
