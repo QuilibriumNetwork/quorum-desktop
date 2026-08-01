@@ -124,6 +124,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
 - [Electron keeps the master private key unlocked on disk](bugs/2026-07-31-electron-master-key-at-rest-no-user-secret.md)
+- [Space sync member reconciliation is blind to — and erases — the global identity slot](bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md)
 - [Reset App Data leaves private keys behind (desktop)](bugs/2026-07-31-reset-app-data-leaves-private-keys-in-keydb.md)
 
 ### Solved Issues

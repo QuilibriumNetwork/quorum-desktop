@@ -213,7 +213,26 @@ Clearing the poisoned `"Unknown User"` / `/unknown.png` literals off existing ro
 a name the app does not have. That is cosmetic cleanup, not identity recovery, and it
 belongs with Slice 4 as a one-shot migration rather than a user-facing button.
 
-## §5c. The 24h retry interval is a placeholder — see the cadence research task
+## §5c. The 24h retry interval is a placeholder — ✅ DECIDED
+
+> ✅ **2026-08-01: researched and decided in
+> `.agents/tasks/2026-08-01-identity-announce-cadence-research.md`.**
+>
+> **Keep the 24h interval, cap it at 3 retries** per (partner, identity-version),
+> then stop until the identity changes. ~99% cheaper, same convergence, ~5 lines.
+> The retry is a transitional safety net — with reliable delivery one send is
+> enough. ⚠️ The migration is what bites: stamp legacy records with
+> `at = Date.now()`, **not** the stored value, or the whole fleet fires on the
+> first connect after deploy.
+>
+> **Also relevant to this file: Slice 4 below is promoted, not deferred.** The
+> `db.saveMessage` re-stamp is the mechanism that un-converges an already-fixed
+> row, and it is the reason the retries can safely be capped. It is Slice 2 of
+> that task.
+>
+> The prose below is the original framing; its cost figures omit the per-device
+> fan-out multiplier (a DM send emits one frame **per destination inbox**, ~9 on
+> aged accounts).
 
 `RESEND_INTERVAL_MS` in `src/utils/dmProfileGate.ts` is **24h, chosen to bound
 an anti-loss retry, not researched.** It pays a cost on EVERY pair to fix a
