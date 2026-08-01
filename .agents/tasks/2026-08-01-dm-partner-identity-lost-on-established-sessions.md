@@ -213,6 +213,19 @@ Clearing the poisoned `"Unknown User"` / `/unknown.png` literals off existing ro
 a name the app does not have. That is cosmetic cleanup, not identity recovery, and it
 belongs with Slice 4 as a one-shot migration rather than a user-facing button.
 
+## §5c. The 24h retry interval is a placeholder — see the cadence research task
+
+`RESEND_INTERVAL_MS` in `src/utils/dmProfileGate.ts` is **24h, chosen to bound
+an anti-loss retry, not researched.** It pays a cost on EVERY pair to fix a
+failure that occurs on a small fraction of pairs, so it scales with the
+population rather than with the problem. Rough order: 10k users × 20 partners ×
+~30 KB ≈ 6 GB/day.
+
+Do not treat that constant as settled, and do not copy it into the space
+implementation. Better shapes (receiver-driven request, fingerprint-first,
+backoff, piggyback) are laid out in
+`.agents/tasks/2026-08-01-identity-announce-cadence-research.md`.
+
 ## §6. Work — vertical slices
 
 ### §6.0 Branching and sequencing
@@ -329,7 +342,37 @@ connect and desktop does neither.
       space `update-profile`? Verify before implementing, so desktop does not diverge in
       the other direction.
 
-### Slice 4 — Stop writing the placeholder into the row on send *(low priority)*
+### Slice 4 — Stop writing the placeholder into the row on send *(DEFERRED — spec was wrong)*
+
+> 🔴 **2026-08-01: this slice's spec below is WRONG and it was NOT implemented.**
+> `addOrUpdateConversation` is not the stamper. `db.saveMessage`
+> (`src/db/messages.ts:1360-1370`) **unconditionally** `put`s `icon` and
+> `displayName` onto the conversation row for EVERY message saved — DMs and
+> spaces alike — from the profile its caller passes. On the send path
+> (`MessageService.ts:3455`) that caller passes
+> `conversation?.conversation?.displayName ?? 'Unknown User'`.
+>
+> Consequences:
+> 1. Changing only the `addOrUpdateConversation` call (what the spec below says)
+>    is a literal **no-op** — `saveMessage` already stamped 14 lines earlier.
+> 2. The real fix has to make the DB layer preserve the stored value when the
+>    caller supplies an empty one — the same EMPTY MEANS ABSENT rule as
+>    `utils/conversationProfile.ts`, applied at the last place that violates it.
+>    That is a **shared write path used by spaces too**, so it needs its own
+>    branch, its own review, and space-side regression testing. It was
+>    deliberately kept out of the identity PR, which was already verified
+>    working end to end.
+> 3. **Latent race worth knowing about**: because the send path reads the
+>    conversation row once at the top of the send and `saveMessage` then
+>    re-stamps from that read, a `dm-update-profile` landing mid-send can be
+>    reverted to the placeholder. Narrow (the steady state re-stamps the same
+>    real value once the row has one) but real.
+>
+> Next step: split into its own task against `db.saveMessage`, covering both DM
+> and space callers.
+
+<details>
+<summary>Original (incorrect) spec, kept for the record</summary>
 
 **User-visible outcome:** no behavioural change expected; this is hygiene. A row with no
 known identity stays *empty* rather than being stamped `"Unknown User"` / `/unknown.png`.
@@ -344,6 +387,8 @@ render in the first place.
 - [ ] Pass `undefined` instead of the placeholders, and let the render layer decide
 - [ ] Confirm `addOrUpdateConversation`'s `if (display_name || user_icon)` guard then
       correctly skips the write
+
+</details>
 
 ## §7. How to verify / diagnose
 
