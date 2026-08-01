@@ -37,7 +37,7 @@ export type SpaceProfileWireFields = {
   globalDisplayName?: string;
   globalUserIcon?: string;
   globalBio?: string;
-  spaceTag?: BroadcastSpaceTag;
+  spaceTag?: BroadcastSpaceTag | null;
 };
 
 /**
@@ -58,12 +58,24 @@ export type SpaceProfileWireFields = {
  * Conversely, the override IS sent when it exists — a member who set a
  * per-space name expects spacemates to see that name, so an announce carrying
  * only the global slot would show the wrong one to anybody bootstrapping a row.
+ *
+ * `resolvedTag` is THREE-STATE, matching the wire semantics the receiver applies
+ * (see `resolveInboundSpaceTag`):
+ *
+ * - `undefined` → **omit the field**: "I have nothing to say about the tag".
+ *   What every caller but one passes. The on-connect announce and the global
+ *   profile save are not talking about tags, and if their silence read as a
+ *   clear they would strip every member's tag on every reconnect.
+ * - `null` → **the tombstone**: the tag was deleted and somebody has to say so.
+ *   Only the tag-rotation rebroadcast passes this, because it is the only caller
+ *   that fires *because* the tag changed.
+ * - an object → set it.
  */
 export const buildSpaceProfileWirePayload = (
   selfAddress: string,
   ownMember: OwnSpaceMemberFields | undefined,
   config: GlobalProfileFields,
-  resolvedTag?: BroadcastSpaceTag
+  resolvedTag?: BroadcastSpaceTag | null
 ): SpaceProfileWireFields => {
   const nameOverride = ownMember?.display_name || undefined;
   // The member avatar lives on `user_icon` (the typed UserProfile field), but
@@ -85,7 +97,9 @@ export const buildSpaceProfileWirePayload = (
     ...(globalName !== undefined ? { globalDisplayName: globalName } : {}),
     ...(globalIcon !== undefined ? { globalUserIcon: globalIcon } : {}),
     ...(globalBioVal !== undefined ? { globalBio: globalBioVal } : {}),
-    ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
+    // `!== undefined`, not truthiness: `null` is a deliberate tombstone and has
+    // to reach the wire, where truthiness would silently drop it.
+    ...(resolvedTag !== undefined ? { spaceTag: resolvedTag } : {}),
   };
 };
 

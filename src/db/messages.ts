@@ -1226,11 +1226,21 @@ export class MessageDB {
    * the stored value. A present value — including an empty string, which is how
    * the two-slot model expresses a deliberate clear — always wins.
    *
+   * `options.clearFields` is the escape hatch that rule needs. Because absence
+   * means "no change", the row would otherwise have no way to express "remove
+   * this field" — and `spaceTag` needs exactly that, since a tag DELETION is
+   * signalled by absence on the wire and the receive handlers turn that absence
+   * into `undefined`. Without an explicit clear, a tag the owner deleted stays
+   * on every other member's roster forever. Name/avatar/bio do not need this:
+   * the two-slot model clears them with `''`, which is a present value.
+   *
    * See .agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md
+   * and .agents/bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md
    */
   async saveSpaceMember(
     spaceId: string,
-    userProfile: SpaceMemberRow
+    userProfile: SpaceMemberRow,
+    options?: { clearFields?: (keyof SpaceMemberRow)[] }
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -1256,7 +1266,18 @@ export class MessageDB {
         const incoming = Object.fromEntries(
           Object.entries(userProfile).filter(([, v]) => v !== undefined)
         );
-        store.put({ ...existing, ...incoming, spaceId });
+        const merged = { ...existing, ...incoming, spaceId } as Record<
+          string,
+          unknown
+        >;
+        // Applied AFTER the merge, so a clear wins over whatever `existing`
+        // held. `delete` rather than assigning `undefined`: the row is read
+        // back with `Object.entries` elsewhere, and a key present with an
+        // undefined value is not the same as an absent one.
+        for (const field of options?.clearFields ?? []) {
+          delete merged[field as string];
+        }
+        store.put(merged);
       };
       getRequest.onerror = () => reject(getRequest.error);
 

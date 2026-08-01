@@ -151,6 +151,24 @@ describe('the space tag', () => {
     const p = buildSpaceProfileWirePayload(SELF, undefined, GLOBAL, tag);
     expect(p.spaceTag).toEqual(tag);
   });
+
+  // Three-state, matching the wire semantics the receiver applies. Omitted and
+  // cleared are DIFFERENT messages and conflating them breaks in both
+  // directions: silence-as-clear strips every member's tag on every reconnect,
+  // and no tombstone at all means a deleted tag never disappears.
+  it('carries an explicit null tombstone when the tag was deleted', () => {
+    const p = buildSpaceProfileWirePayload(SELF, undefined, GLOBAL, null);
+    expect('spaceTag' in p).toBe(true);
+    expect(p.spaceTag).toBeNull();
+  });
+
+  // The regression guard that matters most: the on-connect announce passes no
+  // tag, and if that reached the wire as a clear it would wipe every member's
+  // tag every time anybody reconnected.
+  it('a caller with nothing to say about the tag says nothing', () => {
+    const p = buildSpaceProfileWirePayload(SELF, undefined, GLOBAL, undefined);
+    expect('spaceTag' in p).toBe(false);
+  });
 });
 
 describe('hasAnnounceableIdentity', () => {

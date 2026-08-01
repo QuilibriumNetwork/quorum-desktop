@@ -966,7 +966,11 @@ describe('MessageService - Unit Tests', () => {
       await save(upMsg({ publicKey: freshPub }));
       expect(mockDeps.messageDB.saveSpaceMember).toHaveBeenCalledWith(
         'space',
-        expect.objectContaining({ inbox_address: victimInbox })
+        expect.objectContaining({ inbox_address: victimInbox }),
+        // No spaceTag on this message → no clear requested. Absence must mean
+        // "no change"; treating it as a clear would strip every member's tag on
+        // every global profile save and every on-connect announce.
+        undefined
       );
     });
 
@@ -980,7 +984,8 @@ describe('MessageService - Unit Tests', () => {
       );
       expect(mockDeps.messageDB.saveSpaceMember).toHaveBeenCalledWith(
         'space',
-        expect.objectContaining({ user_address: 'newuser', inbox_address: '' })
+        expect.objectContaining({ user_address: 'newuser', inbox_address: '' }),
+        undefined
       );
     });
 
@@ -997,7 +1002,8 @@ describe('MessageService - Unit Tests', () => {
       await save(upMsg({ publicKey: victimPub }));
       expect(mockDeps.messageDB.saveSpaceMember).toHaveBeenCalledWith(
         'space',
-        expect.objectContaining({ inbox_address: victimInbox })
+        expect.objectContaining({ inbox_address: victimInbox }),
+        undefined
       );
     });
   });
