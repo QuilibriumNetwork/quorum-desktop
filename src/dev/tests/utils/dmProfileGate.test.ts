@@ -221,6 +221,34 @@ describe('migration from a pre-cap record', () => {
     expect(shouldSendDmProfile(SELF, PARTNER, SIG, T0 + RESEND_INTERVAL_MS)).toBe(true);
   });
 
+  // A number that is not a usable count. `typeof NaN === 'number'`, so a naive
+  // shape check lets these through — and then `NaN >= MAX` is false, which
+  // defeats the cap silently and sends forever.
+  it.each([
+    ['NaN attempts', { sig: SIG, at: T0, attempts: NaN }],
+    ['Infinity attempts', { sig: SIG, at: T0, attempts: Infinity }],
+    ['negative attempts', { sig: SIG, at: T0, attempts: -5 }],
+    ['fractional attempts', { sig: SIG, at: T0, attempts: 1.5 }],
+    ['NaN at', { sig: SIG, at: NaN, attempts: 1 }],
+  ])('re-migrates a corrupt record rather than trusting it (%s)', (_label, bad) => {
+    localStorage.setItem(KEY, JSON.stringify(bad));
+    // Re-migrated, so it is anchored at now and NOT immediately due...
+    expect(shouldSendDmProfile(SELF, PARTNER, SIG, T0)).toBe(false);
+    const stored = JSON.parse(localStorage.getItem(KEY)!);
+    expect(Number.isInteger(stored.attempts)).toBe(true);
+    expect(Number.isFinite(stored.at)).toBe(true);
+    // ...and the cap still bites rather than sending forever.
+    const sent: number[] = [];
+    for (let day = 0; day < 10; day++) {
+      const at = T0 + day * RESEND_INTERVAL_MS;
+      if (shouldSendDmProfile(SELF, PARTNER, SIG, at)) {
+        recordDmProfileSend(SELF, PARTNER, SIG, at);
+        sent.push(day);
+      }
+    }
+    expect(sent.length).toBeLessThanOrEqual(MAX_SENDS_PER_IDENTITY);
+  });
+
   it('grants exactly ONE more attempt, then closes', () => {
     localStorage.setItem(KEY, JSON.stringify({ sig: SIG, at: T0 - RESEND_INTERVAL_MS }));
     const sent: number[] = [];

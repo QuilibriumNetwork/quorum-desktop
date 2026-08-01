@@ -176,6 +176,69 @@ describe('MessageDB.saveMessage — conversation identity is never downgraded', 
     expect(conv?.icon).toBe(DefaultImages.UNKNOWN_USER);
   });
 
+  // The two guards are independent ternaries, and a partner with a name but no
+  // avatar (or vice versa) is an ordinary production state — an avatar-only push
+  // and a name-only push are genuinely different messages.
+  it('handles a MIXED update: real icon, placeholder name', async () => {
+    await seedRealIdentity();
+    await db.saveMessage(
+      message({ messageId: 'msg-mix-1', createdDate: 8000 }),
+      8000,
+      PARTNER,
+      'direct',
+      'data:image/jpeg;base64,/9j/NEWER',
+      'Unknown User'
+    );
+    const conv = await db.getConversation({ conversationId }).then((r) => r.conversation);
+    expect(conv?.icon).toBe('data:image/jpeg;base64,/9j/NEWER'); // real wins
+    expect(conv?.displayName).toBe(REAL_NAME); // placeholder preserved the stored one
+  });
+
+  it('handles a MIXED update: real name, placeholder icon', async () => {
+    await seedRealIdentity();
+    await db.saveMessage(
+      message({ messageId: 'msg-mix-2', createdDate: 9000 }),
+      9000,
+      PARTNER,
+      'direct',
+      DefaultImages.UNKNOWN_USER,
+      'Ada L.'
+    );
+    const conv = await db.getConversation({ conversationId }).then((r) => r.conversation);
+    expect(conv?.displayName).toBe('Ada L.');
+    expect(conv?.icon).toBe(REAL_ICON);
+  });
+
+  // The space half of the bug is the one nobody had spotted, and its callers
+  // pass conversationType 'group'. The fix does not branch on type today, so
+  // this pins that it stays that way.
+  it('protects a GROUP (space channel) row the same way', async () => {
+    const spaceId = 'space-1';
+    const channelId = 'channel-1';
+    const groupConversationId = `${spaceId}/${channelId}`;
+    const groupMessage = (id: string, at: number) =>
+      message({ messageId: id, spaceId, channelId, createdDate: at });
+
+    await db.saveMessage(groupMessage('g1', 1000), 1000, spaceId, 'group', REAL_ICON, REAL_NAME);
+
+    // Every space caller passes `{}`, which reaches the DB as undefined.
+    await db.saveMessage(
+      groupMessage('g2', 2000),
+      2000,
+      spaceId,
+      'group',
+      undefined as unknown as string,
+      undefined as unknown as string
+    );
+
+    const conv = await db
+      .getConversation({ conversationId: groupConversationId })
+      .then((r) => r.conversation);
+    expect(conv?.displayName).toBe(REAL_NAME);
+    expect(conv?.icon).toBe(REAL_ICON);
+    expect(conv?.type).toBe('group');
+  });
+
   it('preserves unrelated fields it has always preserved', async () => {
     await seedRealIdentity();
     const seeded = await db.getConversation({ conversationId }).then((r) => r.conversation);

@@ -180,16 +180,28 @@ const readRecord = (
       parsed !== null &&
       typeof parsed === 'object' &&
       !Array.isArray(parsed) &&
-      typeof (parsed as GateRecord).sig === 'string' &&
-      typeof (parsed as GateRecord).at === 'number'
+      typeof (parsed as GateRecord).sig === 'string'
     ) {
+      // Only `sig` is required to recognise the object form. `at` and
+      // `attempts` are validated below rather than in this guard, so a record
+      // whose numbers are unusable still migrates with its REAL signature
+      // instead of falling through to the bare-signature branch and having the
+      // whole JSON blob mistaken for one.
       const sig = (parsed as GateRecord).sig;
+      const at = (parsed as GateRecord).at;
       const attempts = (parsed as GateRecord).attempts;
       // Shape 1 of 2: `{sig, at}` — the pre-cap format, no attempt counter.
-      if (typeof attempts !== 'number') {
+      //
+      // `Number.isInteger` / `Number.isFinite`, not `typeof === 'number'`: NaN
+      // and Infinity are both numbers, and either breaks the gate silently — a
+      // NaN `attempts` defeats the cap (`NaN >= 3` is false, so it sends
+      // forever) and a NaN `at` wedges the interval shut. Note NaN and Infinity
+      // both serialise to `null` through JSON, so this also covers a record that
+      // was written while one of them was in play.
+      if (!Number.isFinite(at) || !Number.isInteger(attempts) || attempts < 0) {
         return migrateRecord(selfAddress, partnerAddress, sig, now);
       }
-      return { sig, at: (parsed as GateRecord).at, attempts };
+      return { sig, at, attempts };
     }
   } catch {
     // Not JSON at all — fall through to the legacy branch.
