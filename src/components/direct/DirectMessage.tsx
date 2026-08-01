@@ -32,7 +32,10 @@ import type { TypingScope } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { ClickToCopyContent } from '../ui';
-import { DefaultImages } from '../../utils';
+import {
+  realDisplayNameOrUndefined,
+  realIconOrUndefined,
+} from '../../utils/identityPlaceholder';
 import { isTouchDevice } from '../../utils/platform';
 
 import { GlobalSearch } from '../search';
@@ -263,17 +266,12 @@ const DirectMessage: React.FC<{}> = () => {
       // address and the avatar to address-derived initials — matching mobile
       // and preserving privacy: no name/pfp is shown until the peer replies or
       // has opted into a public profile.
-      const localName = conversation.conversation.displayName;
-      const localIcon = conversation.conversation.icon;
       m[address!] = {
         displayName:
-          localName && localName !== t`Unknown User`
-            ? localName
-            : pubName,
+          realDisplayNameOrUndefined(conversation.conversation.displayName) ??
+          pubName,
         userIcon:
-          localIcon && localIcon !== DefaultImages.UNKNOWN_USER
-            ? localIcon
-            : pubIcon,
+          realIconOrUndefined(conversation.conversation.icon) ?? pubIcon,
         primaryUsername: pubQns,
         address: address!,
       };

@@ -214,6 +214,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
 - [Make the Spaces list identical on every device](tasks/2026-07-31-spaces-list-cross-device-sync.md)
+- [DM unread dot never clears](tasks/2026-08-01-dm-unread-dot-stale-previews-snapshot.md) — the DM list renders a frozen snapshot of the conversation rows; read state never reaches it
+- [DM partner identity never recovers on an established session](tasks/2026-08-01-dm-partner-identity-lost-on-established-sessions.md) — desktop decrypts the sender's name/avatar on every DM frame and throws it away; mobile already applies it
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)

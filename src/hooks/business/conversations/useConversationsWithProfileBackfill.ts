@@ -35,20 +35,16 @@ import { publicProfileQueryKey } from '../user/useUserPublicProfile';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { buildConversationsKey } from '../../queries/conversations/buildConversationsKey';
 import { buildConversationKey } from '../../queries/conversation/buildConversationKey';
-import { DefaultImages } from '../../../utils';
+import {
+  isPlaceholderDisplayName,
+  isPlaceholderIcon,
+} from '../../../utils/identityPlaceholder';
 import { logger } from '@quilibrium/quorum-shared';
 
-// "Unknown User" is the literal placeholder stored on rows with no real name
-// (MessageService.ts). We can't import the runtime-translated t`Unknown User`
-// here without coupling to the i18n macro, and the stored value is the
-// English literal at write time, so match that constant directly.
-const UNKNOWN_USER_NAME = 'Unknown User';
-
-const isPlaceholderName = (name?: string): boolean =>
-  !name || name === UNKNOWN_USER_NAME;
-
-const isPlaceholderIcon = (icon?: string): boolean =>
-  !icon || icon === DefaultImages.UNKNOWN_USER;
+// The placeholder rule lives in utils/identityPlaceholder — same definition the
+// render surfaces use, so a row this hook considers fillable is exactly a row
+// the UI considers identity-less.
+const isPlaceholderName = isPlaceholderDisplayName;
 
 /**
  * A conversation row augmented with the partner's QNS primary username, sourced

@@ -4,6 +4,7 @@ import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { ResolvedName } from '../user/ResolvedName';
 import { resolveMemberName } from '../../utils/resolveMemberName';
+import { realIconOrUndefined } from '../../utils/identityPlaceholder';
 import { Icon } from '../primitives';
 import { formatConversationTime } from '../../utils/dateFormatting';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
@@ -91,8 +92,12 @@ const DirectMessageContact: React.FunctionComponent<{
       {/* Avatar with optional unread dot, muted badge, favorite border */}
       <div className="relative flex-shrink-0">
         <UserAvatar
-          userIcon={props.userIcon}
-          displayName={props.displayName || formatAddress(props.address)}
+          // Placeholder name/icon must not reach the avatar: the literal
+          // 'Unknown User' renders a "?" while the header shows address
+          // initials for the same row. Feed it the RESOLVED name so the
+          // initials match the label underneath.
+          userIcon={realIconOrUndefined(props.userIcon)}
+          displayName={resolvedName.name}
           address={props.address}
           size={44}
           className={

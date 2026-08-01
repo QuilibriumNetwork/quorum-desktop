@@ -83,6 +83,14 @@ import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
 import { findStaleBucket, restoreStaleBucket } from '../utils/dmStaleBucketRetry';
 import { orderSessionsForSend } from '../utils/sessionSelection';
+import {
+  dmProfileSignature,
+  shouldSendDmProfile,
+  recordDmProfileSend,
+  claimDmProfileSend,
+  releaseDmProfileSend,
+} from '../utils/dmProfileGate';
+import { preferIncomingProfileField } from '../utils/conversationProfile';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
@@ -563,6 +571,19 @@ export class MessageService {
         ...(bio !== undefined ? { bio } : {}),
       };
 
+      // Dedup gate. The on-connect rebroadcast fires on EVERY ws.onopen, and
+      // each send here is a real encrypted DM on the wire. Skip a send whose
+      // payload is byte-identical to the last one this device recorded for
+      // this (self, partner). Recorded only AFTER a successful send, so a
+      // failure leaves the gate open and the next connect retries.
+      // Mirrors mobile's MMKV gate (services/dm/dmProfileService.ts).
+      const signature = dmProfileSignature(msg);
+      if (!shouldSendDmProfile(selfUserAddress, partnerAddress, signature)) {
+        continue;
+      }
+
+      // Claim BEFORE the await, release in `finally` — see dmProfileGate.
+      claimDmProfileSend(selfUserAddress, partnerAddress, signature);
       try {
         await this.encryptAndSendDm(
           partnerAddress,
@@ -570,12 +591,74 @@ export class MessageService {
           selfUserAddress,
           keyset,
         );
+        recordDmProfileSend(selfUserAddress, partnerAddress, signature);
       } catch (err) {
+        // A contact row with no established session is the normal case for a
+        // never-messaged contact, not a fault: there is no session to encrypt
+        // to, and there is no conversation to fix either. Stay quiet about it
+        // so the genuine failures below remain visible. The gate is NOT
+        // recorded, so this partner is retried once a session exists.
+        const message = (err as Error)?.message ?? '';
+        if (message.includes('No established sessions available')) {
+          logger.debug('[DMProfile] no session with partner yet — skipping', {
+            partner: partnerAddress.slice(0, 16),
+          });
+          continue;
+        }
         logger.warn('[DMProfile] broadcast to partner failed', {
           err,
           partner: partnerAddress.slice(0, 16),
         });
+      } finally {
+        // Runs on the `continue` above too, so a no-session partner is not
+        // wedged shut for the rest of the session.
+        releaseDmProfileSend(selfUserAddress, partnerAddress, signature);
       }
+    }
+  }
+
+  /**
+   * On-connect DM identity rebroadcast.
+   *
+   * An established DM session never carries the sender's identity (the decrypt
+   * union only exposes `user_profile` on its init-carrying variant, measured
+   * absent on every established-session frame), so a partner whose row is still
+   * a placeholder has no way to learn who we are from ordinary traffic. Pushing
+   * our current global identity on connect is the recovery path — and the only
+   * one that works for a partner with no published public profile.
+   *
+   * Mirrors mobile, which already rebroadcasts to all DM partners on reconnect
+   * (quorum-mobile context/WebSocketContext.tsx ~6270). Cheap by construction:
+   * the per-partner gate above makes an unchanged identity a no-op on the wire.
+   */
+  async rebroadcastProfileToAllDMsOnConnect(
+    selfUserAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): Promise<void> {
+    try {
+      const config = await this.messageDB.getUserConfig({
+        address: selfUserAddress,
+      });
+      const displayName = config?.name || '';
+      const userIcon = config?.profile_image || '';
+      // Nothing to advertise yet (fresh account, config not synced) — sending
+      // empty fields would be a wire no-op the receiver ignores anyway.
+      if (!displayName && !userIcon) return;
+      // Bio is deliberately omitted: the DM identity push gates bio on the
+      // public-profile toggle (legacy DM behaviour), and this path has no
+      // access to that decision. Name + avatar only, matching mobile.
+      await this.broadcastProfileToAllDMs(
+        displayName,
+        userIcon,
+        undefined,
+        selfUserAddress,
+        keyset,
+      );
+    } catch (err) {
+      logger.warn('[DMProfile] on-connect rebroadcast failed', { err });
     }
   }
 
@@ -4158,7 +4241,22 @@ export class MessageService {
               outcome: 'ok' as const,
               content,
               sentAccept: fresh.sentAccept,
-              updatedUserProfile: undefined,
+              // Carry the sender's identity through when the frame has it.
+              // `user_profile` is only on the init-carrying variant of the
+              // decrypt union (hence the guard above at `maybeInit.user_profile`),
+              // but dropping it meant a DM partner's name/avatar could ONLY ever
+              // be learned during session setup: once established, no amount of
+              // traffic refreshed it, so a partner with no public profile stayed
+              // on the placeholder forever. Mobile applies it on this same path
+              // (quorum-mobile WebSocketContext.tsx ~4739).
+              // Self-address guard mirrors the Confirm branch: on a multi-device
+              // self-echo the profile is OURS, and must not overwrite the
+              // partner's conversation row.
+              updatedUserProfile:
+                maybeInit.user_profile &&
+                maybeInit.user_profile.user_address != self_address
+                  ? maybeInit.user_profile
+                  : undefined,
             };
           } catch (decryptError) {
             // Double Ratchet spec: on a decrypt/authentication failure, discard the
@@ -5640,9 +5738,23 @@ export class MessageService {
           return;
         }
 
-        const profileToUse = updatedUserProfile ?? {
-          user_icon: conversation.conversation?.icon,
-          display_name: conversation.conversation?.displayName,
+        // MERGE, never replace. `?? existing` was safe only while
+        // updatedUserProfile was always undefined on this path; now that a
+        // decrypted frame can supply one, a partial profile (real name, blank
+        // avatar — an ordinary partner with no picture set) would otherwise be
+        // passed through whole. db.saveMessage writes icon/displayName onto the
+        // conversation row UNCONDITIONALLY (src/db/messages.ts), and it runs
+        // BEFORE addOrUpdateConversation's guarded merge below, so a blank
+        // field here permanently wipes a known-good stored value.
+        const profileToUse = {
+          user_icon: preferIncomingProfileField(
+            updatedUserProfile?.user_icon,
+            conversation.conversation?.icon
+          ),
+          display_name: preferIncomingProfileField(
+            updatedUserProfile?.display_name,
+            conversation.conversation?.displayName
+          ),
         };
         await this.saveMessage(
           decryptedContent,
@@ -5687,9 +5799,16 @@ export class MessageService {
           conversationId.split('/')[0],
           decryptedContent.channelId,
           keys.sending_inbox ? 'direct' : 'group',
-          updatedUserProfile ?? {
-            user_icon: conversation.conversation?.icon,
-            display_name: conversation.conversation?.displayName,
+          // Merge, not replace — see the sibling branch above.
+          {
+            user_icon: preferIncomingProfileField(
+              updatedUserProfile?.user_icon,
+              conversation.conversation?.icon
+            ),
+            display_name: preferIncomingProfileField(
+              updatedUserProfile?.display_name,
+              conversation.conversation?.displayName
+            ),
           }
         );
 

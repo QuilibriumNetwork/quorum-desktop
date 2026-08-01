@@ -67,6 +67,10 @@ import { useNavigate } from 'react-router';
 // Web: uses multiformats directly
 // Native: uses React Native compatible implementations
 import { sha256, base58btc } from '../../utils/crypto';
+import {
+  hasProfileContent,
+  preferIncomingProfileField,
+} from '../../utils/conversationProfile';
 import { t } from '@lingui/core/macro';
 
 type MessageDBContextValue = {
@@ -283,6 +287,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const queryClient = useQueryClient();
   const { apiClient } = useQuorumApiClient();
   const { setMessageHandler, enqueueOutbound, setResubscribe } = useWebSocket();
+  // Pending on-reconnect identity push, so a flapping socket replaces the
+  // pending broadcast instead of stacking another one behind it.
+  const dmProfilePushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const invalidateConversation = useInvalidateConversation();
   const navigate = useNavigate();
 
@@ -362,15 +369,21 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
     // Persist profile updates to IndexedDB (not just React Query cache)
     // This ensures profile data survives page refresh
-    if (updatedUserProfile?.display_name || updatedUserProfile?.user_icon) {
+    if (hasProfileContent(updatedUserProfile)) {
       try {
         const existing = await messageDB.getConversation({ conversationId });
         if (existing?.conversation) {
           await messageDB.saveConversation({
             ...existing.conversation,
-            displayName:
-              updatedUserProfile.display_name ?? existing.conversation.displayName,
-            icon: updatedUserProfile.user_icon ?? existing.conversation.icon,
+            // Empty incoming field = absent, never "clear". See conversationProfile.ts.
+            displayName: preferIncomingProfileField(
+              updatedUserProfile?.display_name,
+              existing.conversation.displayName
+            ),
+            icon: preferIncomingProfileField(
+              updatedUserProfile?.user_icon,
+              existing.conversation.icon
+            ),
             timestamp: Math.max(timestamp, existing.conversation.timestamp),
           });
         }
@@ -395,8 +408,16 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               const existingConv = page.conversations.find(
                 (c: Conversation) => c.conversationId === conversationId
               );
-              const newDisplayName = updatedUserProfile?.display_name ?? existingConv?.displayName;
-              const newIcon = updatedUserProfile?.user_icon ?? existingConv?.icon;
+              // Same rule as the IndexedDB merge above: an empty incoming
+              // field must not blank the cached value.
+              const newDisplayName = preferIncomingProfileField(
+                updatedUserProfile?.display_name,
+                existingConv?.displayName
+              );
+              const newIcon = preferIncomingProfileField(
+                updatedUserProfile?.user_icon,
+                existingConv?.icon
+              );
 
               return {
                 ...page,
@@ -522,7 +543,31 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       setMessageHandler((message) =>
         handleNewMessage(selfAddress, keyset, message)
       );
-      setResubscribe(async () =>
+      // Push our identity to every DM partner. An established DM session
+      // carries no sender profile, so a partner whose row is still a
+      // placeholder cannot learn who we are from ordinary traffic — this is
+      // their only recovery path when they have no public profile to fall back
+      // on. The per-partner dedup gate makes an unchanged identity a wire
+      // no-op, so repeated calls cost nothing. Mirrors mobile.
+      //
+      // Deliberately NOT wired only into setResubscribe: on a fresh page load
+      // the socket opens before this effect registers that callback, so
+      // resubscribe fires on later RE-connects but never on startup. The
+      // listen-frame block below has the same race and works around it the
+      // same way (a startup timer that duplicates the resubscribe work).
+      const fireDmProfileRebroadcast = () => {
+        const ks = actionQueueServiceRef.current?.getUserKeyset();
+        // Either ref being unset means we ran before init finished; the other
+        // scheduled call (startup vs reconnect) covers it.
+        if (!ks || !messageServiceRef.current) return;
+        messageServiceRef.current
+          .rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
+          .catch((err) =>
+            logger.warn('[DMProfile] identity push failed', { err })
+          );
+      };
+
+      setResubscribe(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
           return [
@@ -533,8 +578,22 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 .concat(keyset.deviceKeyset.inbox_keyset.inbox_address),
             }),
           ];
-        })
-      );
+        });
+        // Staggered so it never competes with the listen frame above. Reconnects
+        // fire on a flat 1s retry, so without clearing the previous timer a
+        // flapping socket stacks up independent pending broadcasts.
+        if (dmProfilePushTimerRef.current !== null) {
+          clearTimeout(dmProfilePushTimerRef.current);
+        }
+        dmProfilePushTimerRef.current = setTimeout(
+          fireDmProfileRebroadcast,
+          4000
+        );
+      });
+
+      // Startup path — see the race note above. Runs alongside the existing
+      // 10s space-sync block so a cold load also pushes identity.
+      setTimeout(fireDmProfileRebroadcast, 10000);
       setTimeout(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
