@@ -1,8 +1,8 @@
 ---
 type: task
 title: "Identity announce: cap the retries instead of re-sending forever, and fix what un-converges a row"
-status: open — researched and decided 2026-08-01; implementation NOT started
-priority: medium (Slice 2 is higher — it is a live bug)
+status: STEPS 1-3 SHIPPED 2026-08-01 — bootstrap announce + Step 4 remain; see the HANDOVER box
+priority: medium — the two live bugs it uncovered are fixed and merged
 created: 2026-08-01
 updated: 2026-08-01
 severity: a bandwidth and battery problem at scale, plus one live correctness bug (Slice 2)
@@ -23,6 +23,68 @@ related_docs:
 > **One file.** Research, decision and work all live here. The only separate
 > document is a distinct defect this uncovered, with its own repro:
 > `.agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`.
+
+---
+
+## 🔴 HANDOVER — read this first (written 2026-08-01, end of session)
+
+**Steps 1-3 are SHIPPED and merged. One piece of Step 3 remains, plus Step 4.**
+
+Everything below this box is the reasoning and the record. Here is the state.
+
+### Merged
+
+| What | Where |
+|---|---|
+| Step 1 — saving a message no longer erases a conversation's name/avatar | desktop #288 `19e79da41` |
+| Step 2 — retry cap, 3 attempts (desktop ∞→3, mobile 1→3) | desktop #289, mobile #213 |
+| Step 3a — space digest can see the global slot | **shared** #71 `5a49829` |
+| Step 3b — sync no longer erases the global slot, nor reverts a per-space name | desktop #290 `4be71e3fd` |
+| Lint made usable again (`.worktrees` was breaking every file's parse) | desktop #287 |
+
+All three repos are on their base branch, clean, nothing unpushed. Desktop
+**749 tests**, shared **567**, mobile **210**. `tsc` and `eslint` clean on desktop.
+
+### What is left, in priority order
+
+**1. The bootstrap announce (finishes Step 3).** Desktop still **never announces
+its own identity on connect**. After the fixes above it RECEIVES correctly but
+does not volunteer, so a member nobody has a row for stays unknown. The spec is
+`.agents/tasks/2026-08-01-space-member-identity-announce-on-connect.md` Slice 1 —
+global slot only, gated by the Step 2 cap (3 attempts), **no periodic cadence**.
+That task's §6 lists three traps already paid for on the DM side; read them.
+
+**2. Step 4, the diagnostic.** A count of "rows with no identity from any source",
+run before and after. Without it, none of this is measured — see §2 Step 4.
+
+**3. Two things I did NOT verify** and which are adjacent to a question the
+operator raised (does a per-space name always win?):
+   - does the space UI feed `resolveSpaceMemberName` its `globalDisplayName` from
+     the **roster global slot** or only from the **public profile**?
+   - how does a **non-public** user's global name reach that comparison? They have
+     no public profile, so if the comparison only reads channel B it sees nothing.
+
+   The precedence *rule* is confirmed correct
+   (`override → QNS → global → address`, and `resolveSpaceMemberName` lets a
+   deliberate per-space name beat QNS). What is unverified is the **plumbing**
+   that feeds it. Nothing shipped depends on this; it is the next thing to trace.
+
+**4. `.agents/bugs/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md`**
+— the test suite silently ran 29 of 749 tests on 5 occasions today. Read that file
+before trusting any suite result. **Quote the FILE COUNT alongside the test
+count**; a collapsed run is invisible otherwise.
+
+### Two lessons worth carrying
+
+- **Reach for headless verification first.** This task twice claimed a step
+  "needs the operator, two clients, 20 minutes". Both times it did not: the digest
+  is a pure function, and the erasure was a DB write path testable against
+  `fake-indexeddb`. Device time was never needed to *establish* a defect — only to
+  confirm a fix end to end.
+- **Write the failing test before the fix.** Every defect here was converted from
+  "found by reading code" to "demonstrated" that way, and one of them (the space
+  half of Step 1) had been mis-specified in an earlier doc precisely because
+  nobody had run it.
 
 ## §0. Doesn't this already work? Yes, almost.
 
@@ -91,7 +153,7 @@ erasure within 24h.
 |---|---|---|---|
 | **1** | **Stop identity being erased.** `db.saveMessage` overwrote the conversation row's name/avatar on every save. | ✅ **SHIPPED** — desktop #288 (`19e79da41`). 8 tests, 4 fail against the old code. Mobile was never affected. | no |
 | **2** | **Cap the retries.** Keep the 24h check, add "and fewer than 3 sends". Both platforms, moving in opposite directions. | ✅ **DONE, both repos** — desktop `fix/cap-identity-announce-retries` (24 tests), mobile same branch name (16 tests). Not yet merged. | no |
-| **3** | **Spaces: no cadence.** Verify + fix the digest/apply defects, then add the bootstrap announce behind the same cap. | 🟡 **defects CONFIRMED and FIXED** (shared `97feb86`, desktop `9e6547a78`, unmerged). Bootstrap announce still to do. | **no** — both defects were proven headlessly; see below |
+| **3** | **Spaces: no cadence.** Verify + fix the digest/apply defects, then add the bootstrap announce behind the same cap. | 🟡 **defects SHIPPED** (shared #71, desktop #290). **Bootstrap announce still to do.** | **no** — both defects were proven headlessly |
 | **4** | **Prove it.** A diagnostic counting rows with no identity from any source. Run before and after. | not started | no |
 
 | Rejected | Why |
