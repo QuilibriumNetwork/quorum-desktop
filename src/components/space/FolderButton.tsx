@@ -41,7 +41,9 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   try {
     const dragContext = useDragStateContext();
     shouldHideTooltip = dragContext.isDragging || dragContext.isContextMenuOpen;
-  } catch {}
+  } catch {
+    /* no drag provider above us — leave the tooltip visible */
+  }
 
   const showIndicators = !isExpanded;
 

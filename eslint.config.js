@@ -12,6 +12,13 @@ export default [
       'mobile/android/**',
       'mobile/ios/**',
       'node_modules/**',
+      // Git worktrees live here by convention and are full second checkouts,
+      // each with its own tsconfig.json. Without this, typescript-eslint finds
+      // several candidate tsconfigRootDirs and fails to parse EVERY file:
+      //   "No tsconfigRootDir was set, and multiple candidate TSConfigRootDirs
+      //    are present" — 1383 errors, none of them real.
+      // Already in .gitignore; eslint's flat config does not read that.
+      '.worktrees/**',
       '**/*.config.js',
       'public/wasm_exec.js',
       'mobile/babel.config.js',

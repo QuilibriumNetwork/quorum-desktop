@@ -1,4 +1,7 @@
-/* globals are injected by vitest (globals: true) — no import needed */
+// Test globals are injected by vitest (globals: true) — no import needed.
+// NB: keep this a LINE comment. As a block comment starting with the word
+// "globals", eslint parses it as a `/* globals */` configuration directive and
+// errors on the rest of the sentence.
 import { fetchSpaceMentions } from '../../../hooks/business/mentions/fetchSpaceMentions';
 
 const ME = 'QmMeAddr0000000000000000000000000000000000';
