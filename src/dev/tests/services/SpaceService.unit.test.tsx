@@ -296,6 +296,18 @@ describe('SpaceService - Unit Tests', () => {
       expect(mockDeps.messageDB.deleteSpace).toHaveBeenCalledWith(spaceId);
       expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
     });
+
+    // The sidebar and the Spaces list read ['Spaces'], not the config query.
+    // Without this invalidation the deleted Space stays on screen until a
+    // page reload, which is what users were seeing.
+    it('should invalidate the Spaces query so the sidebar drops the Space without a reload', async () => {
+      const spaceId = 'space-to-delete';
+      const invalidateQueries = vi.spyOn(queryClient, 'invalidateQueries');
+
+      await spaceService.deleteSpace(spaceId, queryClient);
+
+      expect(invalidateQueries).toHaveBeenCalledWith({ queryKey: ['Spaces'] });
+    });
   });
 
   describe('6. createSpace() - Key Generation and Persistence', () => {

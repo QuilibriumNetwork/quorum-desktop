@@ -95,8 +95,10 @@ exactly what the reporter observed ("desktop lost its Spaces, mobile looked fine
 
 ## §3. What shipped 2026-07-31, and what it does not fix
 
-Two branches, neither merged at time of writing. Both are narrow, defensive fixes — they
-stop corruption, they do not make the lists converge.
+Two branches, **both merged later the same day** (desktop `4a04a8b24` / #282, mobile
+`2368084` / #204; the original "neither merged at time of writing" was true only for the
+hours between). Both are narrow, defensive fixes — they stop corruption, they do not make
+the lists converge.
 
 **`quorum-desktop` — branch `fix/config-save-filter-wipes-local-spaces`**
 
@@ -207,7 +209,7 @@ linked docs, not here.
 
 | doc | covers | relationship |
 |---|---|---|
-| `quorum-desktop/.agents/tasks/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md` | Whether messages **sent into** a Space actually arrive (WebSocket transport / send durability). | **Different layer, same word.** That one is about message *delivery*; this one is about which Spaces appear in the *list*. A fix in either has no bearing on the other. Both dated 2026-07-31, so check which you actually want. |
+| `quorum-desktop/.agents/tasks/transport/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md` | Whether messages **sent into** a Space actually arrive (WebSocket transport / send durability). | **Different layer, same word.** That one is about message *delivery*; this one is about which Spaces appear in the *list*. A fix in either has no bearing on the other. Both dated 2026-07-31, so check which you actually want. |
 | `quorum-mobile/.agents/bugs/2026-06-22-userconfig-blob-not-live-synced-cross-device-master.md` | Umbrella for config **staleness** — no live refetch trigger; the blob only re-pulls on restart or incidental UI paths. | Different axis. That doc explicitly says **do not fold the space-loss work in**. A live refetch would make convergence *faster*; it would not make it *correct*. |
 | `quorum-desktop/.agents/bugs/2026-06-13-config-not-refetched-stale-until-restart.md` | The desktop half of the staleness umbrella. | Same — adjacent, not this. |
 | `quorum-mobile/.agents/bugs/2026-07-19-new-desktop-space-appears-one-launch-late-on-mobile.md` | New Space invisible on mobile until the next launch. | The *add* path's latency. Small and independent. |
@@ -253,4 +255,4 @@ that instead of restarting — see the staleness umbrella in §6.
 *Created 2026-07-31 to give the Spaces-list work one entry point. Consolidates findings
 from the 2026-07-31 space-loss investigation with the four pre-existing docs listed in §6.*
 
-*Last updated: 2026-07-31*
+*Last updated: 2026-08-01*

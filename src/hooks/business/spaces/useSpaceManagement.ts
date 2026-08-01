@@ -143,7 +143,10 @@ export const useSpaceManagement = (
       setIsDeleting(true);
 
       await deleteSpace(spaceId);
-      navigate('/');
+      // '/' redirects to '/messages' (the DM/contacts list), so deleting a
+      // Space used to drop the user into their DMs. Send them to the Spaces
+      // list instead, matching the leave flow in useSpaceLeaving.
+      navigate('/spaces');
       onClose?.();
     } catch (error) {
       console.error('Failed to delete space:', error);

@@ -5,7 +5,7 @@ status: living — APPEND-ONLY. Add a row when a run produces a number; never re
 created: 2026-07-28
 updated: 2026-07-29
 area: WebSocket transport / DM Double Ratchet / delivery loss
-related: docs/transport-reliability-index.md
+related: tasks/transport/index.md
 ---
 
 # Transport & DM reliability — measurement log
@@ -18,7 +18,7 @@ progress logs). None of those answers the question above on its own.
 
 ## Why this file is safe to consolidate, when the index deliberately is not
 
-`docs/transport-reliability-index.md` refuses to carry status, and it is right to:
+`index.md` refuses to carry status, and it is right to:
 statuses are claims about the present, they go stale silently, and duplicating
 them is what rotted the docs the index exists to navigate.
 
@@ -133,7 +133,7 @@ channel that was failing — the ~3400 frames it excluded by design.
 instrumented. A message could in principle arrive and be persisted without
 rendering in a conversation that is not open. That is exactly why the next
 scenario counts what `saveMessage` receives per device rather than what a UI shows
-— see `tasks/2026-07-28-harness-multidevice-and-coverage.md`. Until that runs, treat
+— see `2026-07-28-harness-multidevice-and-coverage.md`. Until that runs, treat
 the figure as a strong signal, not a measurement.
 
 **Consequence for every earlier row in this file:** *every* bench run to date used
@@ -414,7 +414,7 @@ removed nothing — which is why zero delete failures appear alongside 366 drops
   it.
 
 Full analysis and the corrections:
-[`bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md`](../bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md) — **read §7 first**, the original write-up was wrong on its central claim.
+[`bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md`](../../bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md) — **read §7 first**, the original write-up was wrong on its central claim.
 
 ### 2026-07-29 — THE SYMPTOM REPRODUCED ON THE BENCH, healthy relay, no injection
 
@@ -680,7 +680,7 @@ Consequences, in order:
    nothing: it is not subscribed to those inboxes at all), while its self-sync
    copies arrive, decrypt, persist — and then hide in a misfiled ghost
    conversation. Filed as
-   `bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`.
+   `2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`.
 3. **Spurious conversation rows on both desktops**: desktop A carries an
    "Unknown User" row with B's address (preview "U20", zero unique messages —
    `duplicates: 0` proves no extra copies); desktop B carries the ghost
@@ -1026,7 +1026,7 @@ lost 15-20% and a harness bot over Node `ws` lost none. **The variable was never
 the crypto or the client logic; it was the socket.**
 
 Full write-up, caveats and fix direction:
-[`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+[`2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
 
 ### ⚠️ Limits of this round — read before quoting it
 
@@ -1167,7 +1167,7 @@ over Node `ws` lost none. The variable was the socket all along.
   no instrumentation and can answer this on the `.preview` or live app.
 
 Full analysis, caveats and the two-layer fix plan:
-[`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+[`2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
 
 ---
 
@@ -1182,7 +1182,7 @@ fix that followed from it would not have worked.
 
 The relay's protocol behaviour was measured directly, from the desktop, with a
 dependency-free raw WebSocket client over TLS
-([`.agents/scripts/relay-pong-probe.mjs`](../scripts/relay-pong-probe.mjs)).
+([`.agents/scripts/relay-pong-probe.mjs`](../../scripts/relay-pong-probe.mjs)).
 A raw client is required because **every JS WebSocket client pongs
 automatically and cannot be told not to** — and *not* ponging is precisely the
 condition under test. Each trial takes ~10-40 s. **No phone, no instrumentation,
@@ -1274,7 +1274,7 @@ the harness never came close to the 1 s budget. **The benches could not host the
 trigger** — the same conclusion as before, but now with the actual mechanism.
 
 Full analysis and the revised fix plan:
-[`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+[`2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
 
 ---
 
@@ -1381,7 +1381,7 @@ without needing the connection to die sooner.
   named the cause correctly. The round ran anyway; the analysis above is what
   the burst record could rescue, not what the round was designed to produce.
 
-Full analysis: [`bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](../bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
+Full analysis: [`2026-07-30-mobile-frames-lost-into-a-dying-websocket.md`](2026-07-30-mobile-frames-lost-into-a-dying-websocket.md).
 
 ---
 
@@ -1592,4 +1592,83 @@ not produced visible duplicates or a decrypt-failure storm.
   `[UNCONFIRMED]`; do not build on it.
 
 ---
-*Last updated: 2026-07-31*
+
+## 2026-08-01 — THE PUBLISHED-BUILD SMOKE ROUND: 20/20, but no socket data
+
+**The first time the shipped `quorum-shared` code has run on a device.** Every
+prior patched round (S, T, U) tested a local `node_modules` patch; this one
+tested the published package, which is the gap
+[`2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md`](2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md)
+§3 exists to close.
+
+⚠️ **Read this as a SMOKE TEST, not as that confirmation round.** It carries no
+socket-lifecycle data, so it **cannot separate "the fix worked" from "the socket
+never died during those seconds"**. §3 is still owed.
+
+**Configuration:** mobile dev build → desktop, 20-message burst. Burst interval,
+wall time, per-desktop breakdown and duplicate count were **not recorded**, and
+**no round letter was used** — none should be treated as burned.
+
+| observer | class | result |
+|---|---|---|
+| desktop | persistence | **20/20 landed** |
+| phone | socket lifecycle | ⛔ **none — diag probes absent** |
+| phone | replay events | ⛔ **none — no logcat capture was running** |
+
+### What WAS verified about the build (2026-08-01, by inspecting the installed package)
+
+This part is solid, and it settles "is it really the published code?":
+
+| check | result |
+|---|---|
+| `quorum-mobile/package.json` | `"@quilibrium/quorum-shared": "2.1.0-39"` — a version, **not** `link:` |
+| installed package | `2.1.0-39`, a real directory, not a link to the sibling checkout |
+| shipped implementation present | `SendRetention`, `sealOnClose` on `onclose`, `replayRetainedFrames` on open |
+| local patch applied? | **no** — `retained within`, `armed window=` and `__retain` all absent |
+| retention active by default? | **yes**, no opt-in required: `12000 ms / 200 frames / 3 replays`. Mobile passes no options and does not need to |
+
+### ⚠️ Both implementations log under the SAME `[WS-retain]` tag — record this
+
+Grepping a capture for `WS-retain` does **not** tell you which one ran:
+
+| what ran | the line it prints |
+|---|---|
+| **published 2.1.0-39** | `[WS-retain] replaying N frame(s) from the previous connection` |
+| local patch | `[WS-retain] replaying N frame(s) retained within 12000ms (dropped M older)` |
+| local patch, at startup | `[WS-retain] armed window=12000ms cap=…` |
+
+This is the cheapest possible check that a round tested what it claims to have
+tested, and it needs no rig.
+
+### Why this round cannot be scored
+
+At 15-25% loss a 20-message round has a real chance of passing on luck — which is
+exactly why S/T/U were argued from per-message position relative to the next
+`CLOSE` rather than from the 20/20. This round has no `[WS-life]` lines because:
+
+- the diag probes were wiped by the reinstall that brought in `2.1.0-39`, and
+  `git debug` had not been re-run (verified: `WS-diag`, `WS-life`, `WS-frame` all
+  absent from the installed dist);
+- no logcat capture was running during the burst.
+
+**It still establishes something no earlier round did:** the published build runs
+on a device, sends, and delivers a full burst with no visible breakage. That was a
+real unknown, because the shipped implementation departs from the validated patch
+in four ways (retention keyed to the socket close rather than a wall clock;
+`pendingEnvelopes` flushes retained too; a per-frame replay cap; and
+`BrowserWebSocketClient` fixed as well).
+
+### The cheap upgrade for the next round
+
+`[WS-retain] replaying …` is emitted by **the published package itself**, not by
+the diag rig. So even a capture with no rig answers both questions at once if
+those lines appear: it proves the published code ran, *and* that the socket died
+and frames were rescued. With `git debug` armed on top, the full per-message join
+is available again via `join-losses-to-closes.mjs`.
+
+⛔ **Do not apply `patch-rn-ws-retain.mjs`** — the fix is in the package now, and
+applying the patch on top would double-retain. `git debug` applies a *different*
+patch (`patch-rn-ws-diag.mjs`, the instrumentation), which is still required.
+
+---
+*Last updated: 2026-08-01*

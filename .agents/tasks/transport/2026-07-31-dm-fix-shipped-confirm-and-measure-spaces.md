@@ -6,8 +6,8 @@ created: 2026-07-31
 area: WebSocket transport / send durability / spaces measurement
 repos: quorum-mobile (device rounds), quorum-desktop (tooling + docs)
 related:
-  - "docs/transport-measurements.md § ROUND Q → § ROUNDS T and U (all the evidence)"
-  - "bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md (root cause, still OPEN — cause is relay-side)"
+  - "tasks/transport/measurements.md § ROUND Q → § ROUNDS T and U (all the evidence)"
+  - "tasks/transport/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md (root cause, still OPEN — cause is relay-side)"
   - "quorum-mobile/.agents/bugs/2026-07-26-spaces-log-append-ack-ignored-silent-write-loss.md (the spaces brief, re-scoped 2026-07-31)"
 ---
 
@@ -53,9 +53,29 @@ round** or the capture will have no socket data at all.
 
 ## §3. ROUND 1 — confirm the shipped build
 
+> **PARTIAL PROGRESS 2026-08-01 — a smoke round ran, and it does NOT close this.**
+> A 20-message burst on the **published** package (mobile dev build → desktop) landed
+> **20/20**. Build provenance was verified by inspecting the installed package: version
+> `2.1.0-39`, a real directory rather than a `link:`, `SendRetention` present, local
+> patch **not** applied, retention on by default at `12000 ms / 200 frames / 3 replays`.
+> **But there was no logcat capture and the diag probes were absent** (`WS-diag`,
+> `WS-life`, `WS-frame` all missing — the reinstall wiped them and `git debug` had not
+> been re-run), so there is **no socket data and no way to tell whether the socket
+> died at all**. At 15-25% loss that 20/20 is not separable from a quiet burst.
+> **This section is still owed in full.** No round letter was used; none is burned.
+> Logged as `measurements.md` § THE PUBLISHED-BUILD SMOKE ROUND.
+>
+> ⭐ **One thing that round taught us, worth using below:** the published package and
+> the old local patch **both log under `[WS-retain]`**, so that tag alone proves
+> nothing. The published build prints `replaying N frame(s) **from the previous
+> connection**`; the patch printed `replaying N frame(s) **retained within 12000ms**`
+> and `[WS-retain] armed window=`. Grep for the wording, not the tag. And because that
+> line comes from the *package* rather than the rig, it is evidence even in a capture
+> with no probes armed.
+
 The 20/20 results came from a **local patch**. The shipped code is *different
 and strictly more protective* (see §5), and it has **never been run on a
-device**. That is the gap.
+device under instrumentation**. That is the gap.
 
 1. `cd quorum-mobile && git debug` — must print `RIG ARMED`. **Do not apply
    `patch-rn-ws-retain.mjs`** — the fix is in the package now; applying the

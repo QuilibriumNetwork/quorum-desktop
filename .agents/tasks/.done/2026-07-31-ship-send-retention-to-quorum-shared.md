@@ -175,7 +175,7 @@ verify this from a bench** — every headless bench uses Node `ws` over a wired
 connection, which answers pings in sub-millisecond time and therefore never
 hosts the trigger. That is why weeks of green benches meant nothing.
 
-Protocol: `tasks/2026-07-29-manual-round-runbook.md`. The measurement that
+Protocol: `docs/transport-manual-round-runbook.md`. The measurement that
 carries the weight is **not** the 20/20 — with 15-25% loss a 20-message round
 can pass on luck. It is the **per-message position analysis**: for each message,
 its gap to the next `[WS-life] CLOSE` and its age at replay time. Run:

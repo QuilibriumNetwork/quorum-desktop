@@ -1,7 +1,9 @@
 ---
 type: task
 title: "Space deletion: instant/offline UX via action queue + tombstone-driven multi-device cleanup (kills ghost spaces)"
-status: open — design agreed, implement on a SEPARATE branch (not fix-multidevice-signing-key)
+status: open — Slices 1-5 not started; design agreed, implement on a SEPARATE branch
+  (not fix-multidevice-signing-key). Addendum defects B and C are FIXED and operator-verified
+  2026-08-01 (branch `fix/space-delete-redirect-and-stale-list`) — see the addendum section.
 priority: high
 created: 2026-07-19
 severity: data-integrity + UX (blocking-leave, no offline; garbage accumulation compounds #108)
@@ -144,6 +146,12 @@ independent quick wins that can ship WITHOUT the full action-queue rework (they
 also survive it). #1 is a symptom the Slice 1 rewrite structurally resolves;
 recorded here so it isn't lost.
 
+> **Status 2026-08-01: B and C are fixed and verified in the running app**
+> (branch `fix/space-delete-redirect-and-stale-list`, commit `44b8e5313`). They
+> shipped on their own, ahead of the slices, exactly as this section predicted.
+> **A is still open** and stays with Slice 1 — nothing below changed the
+> fire-and-forget send that causes it.
+
 ### A. "Delete failed" toast, but the space is actually deleted (refresh confirms)
 Symptom: deleting a space sometimes shows a failure message, yet after a page
 refresh the space is gone — deletion actually succeeded. The error and the
@@ -175,7 +183,7 @@ not a modal error over an already-completed delete. If a pre-Slice-1 stopgap is
 wanted, stop surfacing the fire-and-forget send failure as a hard "delete failed"
 toast. Belongs to **Slice 1** (and Slice 3 for the corrupted-space path).
 
-### B. After delete, redirect goes to Contacts, not the Spaces list
+### B. After delete, redirect goes to Contacts, not the Spaces list — ✅ FIXED 2026-08-01
 Symptom: deleting a space drops you on the DM/contacts list instead of the spaces
 page.
 
@@ -189,7 +197,13 @@ lives at `/spaces` (`DiscoverPage mode="spaces-empty"`, `Router.web.tsx:143-158`
 Fix: navigate both delete paths to `/spaces` instead. Two one-line changes
 (`useSpaceManagement.ts:146`, `useSpaceLeaving.ts:51`). Independent quick win.
 
-### C. Deleted space lingers in the sidebar/spaces list until refresh
+**Done.** Both call sites now navigate to `/spaces`. Covered by
+`src/dev/tests/hooks/spaceDeleteRedirect.unit.test.ts`, which asserts the
+destination from each call site and that a delete that throws does not navigate
+at all. Verified against the previous code: both assertions go red without the
+change.
+
+### C. Deleted space lingers in the sidebar/spaces list until refresh — ✅ FIXED 2026-08-01
 Symptom: even on an immediately-successful delete, the just-deleted space still
 appears in the spaces list; only a page refresh clears it.
 
@@ -207,6 +221,13 @@ Fix: after the local wipe, invalidate `['Spaces']`. `deleteSpace` already receiv
 existing config-cache update (`:681`), or have the hook call `useInvalidateSpaces`
 after `deleteSpace` resolves. This is also the correct sidebar-update mechanism
 for Slice 1's optimistic path. Independent quick win.
+
+**Done.** Took the first option: the invalidation sits at the end of
+`SpaceService.deleteSpace`, immediately after `messageDB.deleteSpace`, so both
+call sites get it and the refetch reads post-delete state. Covered by a new case
+in `SpaceService.unit.test.tsx` ("should invalidate the Spaces query so the
+sidebar drops the Space without a reload"). **Slice 1 should reuse this**, not
+add a second invalidation: its optimistic path needs the same call, just earlier.
 
 ## Cross-platform — READ BEFORE TOUCHING THE CONFIG/WIRE SHAPE
 Mobile is affected too, but **mobile work is tracked separately and is OUT OF
@@ -268,10 +289,12 @@ share them in the same form (delete/leave live in `hooks/chat/useSpaceSettings.t
 6. Restore button: a tombstoned (deleted) space is NOT offered for restore; a
    genuinely sync-lost, non-tombstoned space still is.
 7. Regression: DM states never touched by reconciliation.
-8. Redirect (B): after deleting a space you land on `/spaces` (spaces list), not
+8. ✅ Redirect (B): after deleting a space you land on `/spaces` (spaces list), not
    the contacts/DM list — from both the settings-modal delete and the leave flow.
-9. Live sidebar (C): a successful delete removes the space from the spaces
+   *Done 2026-08-01: unit-tested both call sites, operator-verified in the app.*
+9. ✅ Live sidebar (C): a successful delete removes the space from the spaces
    list/sidebar immediately, with no page refresh.
+   *Done 2026-08-01: unit-tested, operator-verified in the app.*
 10. Toast/state agreement (A): a delete never shows a "failed" toast while the
     space is actually gone; propagation failures surface as queue/offline state,
     not as an error over a completed delete.
@@ -283,4 +306,4 @@ upload limit until #108 lands. This task stops accumulation + fixes the leave UX
 #108 fixes per-space size. Implement on a SEPARATE branch, not
 `fix-multidevice-signing-key`.
 
-*Last updated: 2026-07-21*
+*Last updated: 2026-08-01*

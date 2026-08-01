@@ -48,7 +48,10 @@ export const useSpaceLeaving = () => {
         }
 
         await deleteSpace(spaceId);
-        navigate('/messages');
+        // Land on the Spaces list, not the DM list. '/messages' is the
+        // contacts view, which is a jarring place to end up after leaving a
+        // Space. The Spaces list lives at '/spaces'.
+        navigate('/spaces');
         if (onSuccess) {
           onSuccess();
         }

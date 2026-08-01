@@ -8,7 +8,7 @@ repos: quorum-mobile (rig + burst), quorum-desktop (DM doctor)
 related:
   - "bugs/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md (the diagnosis under test)"
   - "docs/transport-measurements.md § ROUND P (the round this completes) and § THE RELAY PROBE"
-  - "tasks/2026-07-29-manual-round-runbook.md (THE protocol — follow it, this file only adds the round plan)"
+  - "docs/transport-manual-round-runbook.md (THE protocol — follow it, this file only adds the round plan)"
 ---
 
 # Round Q — tie individual lost messages to individual CLOSE events

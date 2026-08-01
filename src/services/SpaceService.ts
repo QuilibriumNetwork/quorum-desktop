@@ -683,6 +683,11 @@ export class SpaceService {
       () => userConfig
     );
     await this.messageDB.deleteSpace(spaceId);
+    // The sidebar and the Spaces list read the ['Spaces'] query, not the
+    // config query updated above, so without this they keep serving the
+    // cached pre-delete list until a page reload. createSpace already does
+    // the same thing at the end of its flow.
+    await queryClient.invalidateQueries({ queryKey: buildSpacesKey({}) });
   }
 
   /**
