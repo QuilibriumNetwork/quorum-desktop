@@ -27,17 +27,31 @@ Duration    26.30s (transform 49.11s, setup 27.89s, import 98.46s, tests 10.42s,
 Twice on 2026-08-01 the same command instead produced **29 tests**, with the
 **import phase collapsing by two orders of magnitude**:
 
-| # | When | Reported | import phase | Concurrent activity |
+| # | When | Reported | import phase | Preceding activity |
 |---|---|---|---|---|
-| A | during step-2 implementation | `Test Files 47 failed \| 3 passed (50)` / `Tests 29 passed (29)` | **1.16s** | a full `npx jest` run in `quorum-mobile` was executing in parallel |
-| B | immediately after merging PRs #288/#289 | `Tests 29 passed (29)` — ⚠️ the `Test Files` line was truncated by `tail -4` and is **not known** | **707ms** | two `gh pr merge` operations had just completed |
+| A | during step-2 implementation | `Test Files 47 failed \| 3 passed (50)` / `Tests 29 passed (29)` | **1.16s** | a full `npx jest` run in `quorum-mobile` executing in parallel |
+| B | immediately after merging PRs #288/#289 | `Tests 29 passed (29)` — ⚠️ `Test Files` line truncated by `tail -4`, **not known** | **707ms** | two `gh pr merge` operations had just completed |
+| C | step-3, **single-file run** | `Test Files 1 failed (1)` / `Tests no tests` | **0ms** | had just written `src/db/messages.ts` |
+| D | step-3, full run | `Test Files 48 failed \| 3 passed (51)` / `Tests 29 passed (29)` | **576ms** | `yarn build` in `quorum-shared` (a `link:` dependency) |
+| E | step-3, full run | `Test Files 48 failed \| 3 passed (51)` / `Tests 29 passed (29)` | **700ms** | `yarn build` in `quorum-shared` |
 
-Both times:
+Every time:
 
-- **exactly 29 tests**, which strongly suggests the *same* 3 files survive each
-  time rather than a random subset;
-- an immediate re-run with **no code change** was fully green (50 files, 736
-  tests). Occurrence A was followed by three clean runs, occurrence B by one.
+- **exactly 29 tests** in the full-suite cases, which strongly suggests the *same*
+  3 files survive rather than a random subset;
+- an immediate re-run with **no code change** was fully green.
+
+**Occurrence C matters most**: it was a SINGLE-file run with nothing else
+executing, which rules out "concurrent load" as a necessary condition and rules
+out any theory that needs many workers.
+
+### ⛔ A tempting correlation that does NOT hold
+
+D and E both followed a `quorum-shared` rebuild, which made "rebuild a `link:`ed
+dep → next run collapses" look deterministic. **It was tested twice and failed to
+reproduce both times** — rebuild followed immediately by a single-file run, and
+by a full run, were both clean (51 files, 744 tests). So the rebuild is at most a
+contributing factor, not a trigger. Do not start from this hypothesis.
 
 An import phase of <1.2s against a normal ~98s means the modules were never
 really imported — the files are erroring at import time, not failing assertions.
@@ -70,15 +84,17 @@ whether it reported failures or presented as a clean pass.
 
 ## §4. Hypotheses, cheapest first
 
-1. **Worker pool starvation or crash under concurrent load.** Both occurrences
-   coincided with other heavy processes (a parallel jest suite; two `gh` merges).
-   12 CPUs, no `poolOptions` set. A worker that dies during module resolution
-   would produce exactly this shape: near-zero import time, most files unable to
-   start.
-2. **Windows file-handle exhaustion (`EMFILE`) under concurrent load.** Same
-   trigger profile, and Windows is markedly less forgiving here than Linux.
-3. **Transform-cache race.** Two vitest/vite processes sharing a cache directory
-   while one is writing.
+1. **Vite dependency-optimization cache invalidation.** Best fit for ALL five: A,
+   B, D and E followed something that touches disk under `node_modules` or the
+   project tree, and C followed a source write. If `node_modules/.vite` is being
+   re-optimized and a run starts during that window, every import fails while the
+   optimizer holds the cache. Cheapest check: delete `node_modules/.vite` and see
+   whether the very next run reproduces it.
+2. **Worker pool starvation or crash.** A worker dying during module resolution
+   gives exactly this shape. ⚠️ Weakened by occurrence C, a single-file run with
+   nothing else executing.
+3. **Windows file-handle exhaustion (`EMFILE`).** Windows is markedly less
+   forgiving than Linux. Same weakening from C.
 4. **The inlined WASM SDK.** `server.deps.inline` forces
    `@quilibrium/quilibrium-js-sdk-channels` through transform for every importer.
    If resolving or instantiating it fails transiently, every file that imports it

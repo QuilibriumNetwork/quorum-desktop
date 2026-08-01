@@ -91,7 +91,7 @@ erasure within 24h.
 |---|---|---|---|
 | **1** | **Stop identity being erased.** `db.saveMessage` overwrote the conversation row's name/avatar on every save. | ✅ **SHIPPED** — desktop #288 (`19e79da41`). 8 tests, 4 fail against the old code. Mobile was never affected. | no |
 | **2** | **Cap the retries.** Keep the 24h check, add "and fewer than 3 sends". Both platforms, moving in opposite directions. | ✅ **DONE, both repos** — desktop `fix/cap-identity-announce-retries` (24 tests), mobile same branch name (16 tests). Not yet merged. | no |
-| **3** | **Spaces: no cadence.** Verify + fix the digest/apply defects, then add the bootstrap announce behind the same cap. | not started | **yes — the ~20 min check** |
+| **3** | **Spaces: no cadence.** Verify + fix the digest/apply defects, then add the bootstrap announce behind the same cap. | 🟡 **defects CONFIRMED and FIXED** (shared `97feb86`, desktop `9e6547a78`, unmerged). Bootstrap announce still to do. | **no** — both defects were proven headlessly; see below |
 | **4** | **Prove it.** A diagnostic counting rows with no identity from any source. Run before and after. | not started | no |
 
 | Rejected | Why |
@@ -284,8 +284,24 @@ deliberately emptied, so most members hash to `hash('')` on both fields; and
 applying a delta does a full-row `put` that **erases** `global_display_name` /
 `global_user_icon` / the profile timestamps.
 
-- [ ] Verify both defects live (bug file §4, ~20 minutes, two clients)
-- [ ] Fix them (bug file §5 — defect 2 first, it is destructive and independent)
+- [x] **Verify both defects — done headlessly, no device time and no second
+      client.** An earlier draft of this task said this step needed the operator
+      for ~20 minutes. It did not: the digest is a pure function, and the
+      erasure is a DB write path testable against `fake-indexeddb`. Reach for
+      that first next time.
+      - Defect 1: a member with a real global identity hashed **identically** to
+        one with no identity at all, and to one with a **completely different**
+        identity (2 of 4 tests failed against the old code).
+      - Defect 2: the global slot, the bio, **and both staleness guards** were
+        destroyed by a delta-shaped write (4 of 8 tests failed).
+- [x] Fix them (defect 2 first — destructive and independent). Also required
+      carrying the global slot through the desktop adapter, which was dropping it
+      before the digest ever saw it, and declaring it on the shared `SpaceMember`
+      type — a field the type will not admit cannot be hashed. That closes the
+      long-outstanding two-slot-types follow-up.
+- [ ] End-to-end confirmation once merged: two clients, one space, check the
+      roster actually heals (bug file §4). This is confirming the FIX, not the
+      defect.
 - [ ] Then ship the sibling task's Slice 1 (announce-on-connect, global slot only)
       as a **bootstrap** for members nobody has a row for, behind the Step 2 cap
 - [ ] **Do not copy 24h**, and do not give spaces a periodic cadence

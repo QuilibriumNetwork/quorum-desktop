@@ -139,6 +139,15 @@ export class IndexedDBAdapter implements StorageAdapter {
   // while quorum-shared SpaceMember uses (address, profile_image).
   // This adapter maps between the two conventions.
 
+  // These two carry the GLOBAL identity slot as well as the per-space override.
+  // Dropping it here was invisible but load-bearing: the sync layer builds its
+  // member digest from whatever `dbMemberToShared` returns, and since the
+  // follow-global work stopped stamping the override fields, the global slot is
+  // where most members' identity actually lives. Without it every member hashed
+  // as "no identity", so two clients that disagreed completely still agreed they
+  // were in sync and exchanged nothing.
+  // See .agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md
+
   private dbMemberToShared(dbMember: any): SpaceMember {
     return {
       address: dbMember.user_address ?? dbMember.address ?? '',
@@ -150,6 +159,12 @@ export class IndexedDBAdapter implements StorageAdapter {
       isKicked: dbMember.isKicked,
       joinedAt: dbMember.joinedAt,
       spaceTag: dbMember.spaceTag,
+      bio: dbMember.bio,
+      global_display_name: dbMember.global_display_name,
+      global_user_icon: dbMember.global_user_icon,
+      global_bio: dbMember.global_bio,
+      profileTimestamp: dbMember.profileTimestamp,
+      globalProfileTimestamp: dbMember.globalProfileTimestamp,
     };
   }
 
@@ -162,6 +177,12 @@ export class IndexedDBAdapter implements StorageAdapter {
       isKicked: member.isKicked,
       joinedAt: member.joinedAt,
       spaceTag: member.spaceTag,
+      bio: member.bio,
+      global_display_name: member.global_display_name,
+      global_user_icon: member.global_user_icon,
+      global_bio: member.global_bio,
+      profileTimestamp: member.profileTimestamp,
+      globalProfileTimestamp: member.globalProfileTimestamp,
     };
   }
 

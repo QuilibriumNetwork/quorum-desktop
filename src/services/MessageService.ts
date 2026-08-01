@@ -5653,15 +5653,68 @@ export class MessageService {
                   continue;
                 }
                 const existing = await this.messageDB.getSpaceMember(spaceId, userAddress);
+
+                // PER-SLOT STALENESS GUARD — the same last-write-wins rule
+                // `applyProfileUpdate` applies to `update-profile` messages.
+                //
+                // The sync protocol compares DIGESTS, which carry no notion of
+                // newer or older: `computeMemberDiff` only asks whether two
+                // hashes differ, and the responder then sends ITS version. So a
+                // peer holding a STALE identity will happily push it back over a
+                // newer one. That would revert a deliberate per-space name the
+                // member had just changed — the one thing a per-space override
+                // must never do, since it exists precisely so the member is NOT
+                // shown under their global name here.
+                //
+                // ⚠️ This became reachable only now. Until the digest was taught
+                // to see the global slot, every member hashed as "no identity",
+                // so identity deltas were essentially never produced and this
+                // path was dead. Turning the digest on turns this on with it.
+                //
+                // Ties go to the stored value, matching applyProfileUpdate. A
+                // member arriving with NO timestamp is treated as timestamp 0,
+                // so it can populate an empty row but can never overwrite a
+                // stamped one — which is the right call for peers that predate
+                // the global slot travelling over sync at all.
+                const incomingOverrideTs = member.profileTimestamp ?? 0;
+                const incomingGlobalTs = member.globalProfileTimestamp ?? 0;
+                const applyOverride = !(
+                  existing?.profileTimestamp &&
+                  existing.profileTimestamp >= incomingOverrideTs
+                );
+                const applyGlobal = !(
+                  existing?.globalProfileTimestamp &&
+                  existing.globalProfileTimestamp >= incomingGlobalTs
+                );
+
+                // `saveSpaceMember` merges, so an omitted slot keeps what is
+                // stored rather than blanking it.
                 const dbMember = {
-                  ...member,
                   user_address: userAddress,
-                  // Map profile_image to user_icon (desktop DB format)
-                  user_icon: member.profile_image || member.user_icon,
+                  inbox_address: member.inbox_address,
+                  isKicked: member.isKicked,
+                  spaceTag: member.spaceTag,
                   // Preserve joinedAt from local DB if sync data doesn't have it
                   joinedAt: member.joinedAt ?? existing?.joinedAt,
+                  ...(applyOverride
+                    ? {
+                        display_name: member.display_name,
+                        // Map profile_image to user_icon (desktop DB format)
+                        user_icon: member.profile_image || member.user_icon,
+                        bio: member.bio,
+                        profileTimestamp: member.profileTimestamp,
+                      }
+                    : {}),
+                  ...(applyGlobal
+                    ? {
+                        global_display_name: member.global_display_name,
+                        global_user_icon: member.global_user_icon,
+                        global_bio: member.global_bio,
+                        globalProfileTimestamp: member.globalProfileTimestamp,
+                      }
+                    : {}),
                 };
-                await this.messageDB.saveSpaceMember(spaceId, dbMember);
+                await this.messageDB.saveSpaceMember(spaceId, dbMember as SpaceMemberRow);
               }
               queryClient.refetchQueries({
                 queryKey: ['spaceMembers', spaceId],
