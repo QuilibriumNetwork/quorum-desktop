@@ -33,7 +33,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
 - [Dropdown Panels](docs/features/dropdown-panels.md)
-- [Identity resolution and profile sync (canonical model)](docs/features/identity-resolution-and-profile-sync.md)
+- [Identity resolution and profile sync (canonical model)](docs/features/identity-resolution-and-profile-sync.md) — **start here for any "member shows as a truncated address" report.** Its "Why a name goes missing, and what repairs it" section holds the convergence model (pull vs push, per-platform matrix, debugging checklist)
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
@@ -119,7 +119,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserSettingsModal fields flash empty on open](bugs/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md)
 - [@everyone owner-bypass is a real propagating bug (send-side-only enforcement)](bugs/2026-06-12-everyone-mention-owner-bypass-send-side-only.md)
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
-- [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
+- [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md) — root cause characterised; the convergence model that explains it now lives in the identity-resolution doc
+- [A deleted space tag never disappears from other members' rosters](bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md) — self-inflicted by #290; read §6 before "restoring the old behaviour", the obvious fix is worse
+- [Every logger call is a no-op in production builds](bugs/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) — "fail open and log" produces zero signal from real users
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)

@@ -176,6 +176,97 @@ live save still learns the identity on the next reconnect.
 > a member neither side has heard of, and that gap is the only thing the
 > announce exists to close.
 
+## Why a name goes missing, and what repairs it (convergence model)
+
+> Added 2026-08-01. Everything above describes what the data IS. This section
+> describes how it CONVERGES — which is where every "member shows as a
+> 6-character address" report actually comes from. If you read one section
+> before touching this area, read this one.
+
+### The premise that explains every symptom
+
+**A user's name and avatar are not stored anywhere that others look up.** In a
+space, another member has a copy only because somebody's client SENT it while
+that member's client was listening. Miss that moment and you have nothing, and
+for a long time nothing ever said it again.
+
+The single exception is channel B (the published public profile), which IS a
+server-side lookup available at any time to anyone. **It is OFF by default**
+(`config?.isProfilePublic ?? false`, `useUserSettings.ts`). So for most users the
+safety net people assume exists catches nothing, and identity depends entirely
+on peer-to-peer traffic.
+
+### Three mechanisms, and which platform has which
+
+| Mechanism | What it does | Desktop | Mobile |
+|---|---|---|---|
+| **Roster PULL** — `requestSync` → `MemberDigest` → `MemberDelta` | On connect, ask the space "here is a fingerprint of every member I know; what am I missing?" Any online peer replies with the missing rows — **for every member it knows about, not just itself**. One informed peer can populate your whole roster in one exchange, including members who are offline right now. | ✅ | ❌ removed (`WebSocketContext.tsx:1297-1303`) |
+| **Identity PUSH — on change** | A global profile save broadcasts `update-profile` to every joined space immediately. | ✅ | ✅ |
+| **Identity PUSH — on connect (bootstrap)** | Announce our identity on connect, so members who have NO row for us get one. Capped (3 per identity) because it only has to cover what the pull cannot. | ✅ since 2026-08-01 | ⚠️ once ever, no expiry |
+| **Durable replay** | Does a member who was OFFLINE receive it later? | ❌ none for control messages | ✅ hub log replays `update-profile` on reconnect — **but only from their join point**; pre-join history is never delivered |
+
+**The pull is the main mechanism, not the push.** This is the thing most easily
+misread: an announce reaches only whoever is listening at that instant, whereas
+one pull can repair an entire roster. The push exists to cover the one case the
+pull cannot — a member nobody has ever heard of, so there is no row to compare.
+
+### Why it was broken for so long
+
+The pull existed all along and **never worked**. `computeMemberHash` built its
+fingerprint from the OVERRIDE slot only, which the follow-global work (2026-07-16)
+deliberately stopped populating — so nearly every member hashed as "no identity".
+Two clients with completely different rosters therefore always agreed they were
+in sync and exchanged nothing. Fixed 2026-08-01 (shared #71 + desktop #290); see
+`.agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`.
+
+So the pull went from "never worked" to "works", and the bootstrap push was added
+on top. Both landed the same day and **neither has been measured on a live space**
+(that is Step 4 of `2026-08-01-identity-announce-cadence-research.md`).
+
+### Where it stands per platform pairing
+
+| Viewer | Looking at a DESKTOP member | Looking at a MOBILE member |
+|---|---|---|
+| **Desktop** | repaired — pull, plus the bootstrap push | **still broken** — that member announced once, long ago, and does not participate in the pull |
+| **Mobile** | repaired — the desktop push reaches it, and mobile's receive/upsert/two-slot merge are all correct | **still broken** — same cause, and mobile cannot pull either |
+
+Mobile's RECEIVE side is not the problem and never was: it upserts a missing row,
+stores both slots with independent timestamp guards, and renders the precedence
+ladder correctly. **Mobile's problem is entirely on the SEND side plus the absent
+pull.**
+
+### What would actually close the gap
+
+1. **Give mobile the roster pull.** The largest single win by a wide margin: any
+   client opening a space would obtain every member's identity from any one
+   online peer. Not a new invention — desktop already has it and it now works.
+2. **Give mobile's announce an expiry.** Smaller, and partly redundant once 1
+   lands. Tracked as §10 of
+   `.agents/tasks/2026-08-01-space-member-identity-announce-on-connect.md`.
+
+Remaining structural limit after both: this is peer-to-peer, so "immediately on
+join" really means "as soon as one other member is online". If nobody else is
+online there is nobody to learn from. Closing THAT needs a server-side roster (or
+defaulting the public profile on for spacemates), which is an architecture call —
+see candidate #32, the hub-log migration.
+
+### Debugging checklist
+
+When someone reports a member rendering as an address:
+
+1. **Which platforms?** Use the matrix above before anything else. A mobile→mobile
+   report is expected today and needs no investigation.
+2. **Was anyone else online?** The pull needs a peer. Nothing repairs in isolation.
+3. **Is the announce gate exhausted?** 3 attempts per identity, then silent until
+   the identity changes (`src/utils/spaceProfileGate.ts`). While testing, having
+   the other user change their name or avatar resets the counter — otherwise you
+   are testing a gate that is already closed.
+4. **Count it.** `.agents/tools/dm-debug/06-space-member-sources.js` →
+   `__spaceMissingSenders(spaceId)`. Baseline from 2026-06-13 on "Quorum Test 2":
+   89 distinct senders, 46 with no member row.
+5. Reload before concluding it worked — the row must PERSIST, not render once
+   from an in-memory fallback.
+
 ## Known limitations (accepted)
 
 - **Channel A has no live cross-device push** — your own second device
