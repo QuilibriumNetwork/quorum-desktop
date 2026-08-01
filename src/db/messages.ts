@@ -7,6 +7,7 @@ import type { SpaceNotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
+import { QUORUM_DB_NAME, QUORUM_DB_VERSION } from './dbVersion';
 import MiniSearch, { type Options } from 'minisearch';
 
 export interface EncryptedMessage {
@@ -202,8 +203,8 @@ interface StoredSearchIndex {
 
 export class MessageDB {
   private db: IDBDatabase | null = null;
-  private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 14;
+  private readonly DB_NAME = QUORUM_DB_NAME;
+  private readonly DB_VERSION = QUORUM_DB_VERSION;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexLoadPromises: Map<string, Promise<void>> = new Map();
   private dirtyIndices: Set<string> = new Set();

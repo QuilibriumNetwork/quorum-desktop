@@ -70,15 +70,30 @@ Comprehensive development suite for building and managing cross-platform compone
 
 - `DbInspector.tsx` - Visual UI for browsing all database stores
 - `dbDumpUtil.ts` - Core dump logic with security redaction
-- Shows record counts for all 14 stores
+- Shows record counts for every store found in the database
 - Click any store to browse its records (with sensitive data redacted)
 - Copy buttons to export safe JSON for debugging
-- Console commands: `__dbDump()`, `__dbCounts()`, `__dbStore(name)`
+- Console commands: `__dbDump()`, `__dbCounts()`, `__dbStore(name)`, `__dbInfo()`
+
+**Schema drift is designed out** (it used to break the tool on every schema bump):
+- The version and the store list are read from the live database at runtime via
+  `openQuorumDb()` — nothing about the schema is hardcoded here
+- Never open `quorum_db` with an explicit version from a dev tool: IndexedDB
+  throws `VersionError` when the requested version is lower than the stored one,
+  which is exactly what a stale constant produces
+- A store present in the DB but not classified in `dbDumpUtil.ts` is fully
+  redacted and flagged in the UI, so new stores fail closed rather than leaking
+- `src/dev/tests/db/dbInspectorCoverage.test.ts` fails CI if a store is added to
+  `messages.ts` without being classified, or if the tool lists one that no longer exists
+- The header warns when the live DB version differs from `QUORUM_DB_VERSION`
+  (`src/db/dbVersion.ts`), which is the branch-switching gotcha in
+  `.agents/docs/quorum-db-schema.md`
 
 **Security Features**:
 - Private keys show as `[REDACTED:64chars]`
 - Public keys show truncated (first 8 + last 4 chars)
 - Encryption states show as `[ENCRYPTED_STATE:Xbytes]`
+- Private user notes and serialized search indices are redacted
 - Safe to use with real accounts
 
 ### 🧭 Navigation System
