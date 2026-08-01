@@ -1,4 +1,5 @@
 import { resolveDisplayName as resolveSharedDisplayName } from '@quilibrium/quorum-shared';
+import { realDisplayNameOrUndefined } from './identityPlaceholder';
 
 export interface ResolvedMemberName {
   /** The readable name to display. Never empty (falls back to the address). */
@@ -38,7 +39,13 @@ export function resolveMemberName(
   const { name, isQnsVerified } = resolveSharedDisplayName(
     {
       address: member.address,
-      display_name: member.displayName ?? undefined,
+      // The stored `'Unknown User'` literal is a placeholder, not a name.
+      // Demote it here — the single choke point every name surface goes
+      // through — so the ladder continues to QNS and then the truncated
+      // address instead of rendering the placeholder verbatim. Without this
+      // the sidebar showed "Unknown User" while the header, which demoted it
+      // inline, showed the address for the very same row.
+      display_name: realDisplayNameOrUndefined(member.displayName),
       primary_username: member.primaryUsername ?? undefined,
     },
     { spaceOverrideName: opts.spaceOverrideName },

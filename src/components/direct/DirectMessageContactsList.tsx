@@ -15,6 +15,7 @@ import {
 } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { resolveMemberName, formatResolvedName } from '../../utils/resolveMemberName';
+import { realIconOrUndefined } from '../../utils/identityPlaceholder';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
@@ -379,8 +380,17 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
                 >
                   <div className="direct-messages-strip-avatar">
                     <UserAvatar
-                      displayName={c.displayName || ''}
-                      userIcon={c.icon}
+                      // Same resolved identity as the expanded row and the
+                      // tooltip above — a placeholder must never reach here.
+                      displayName={
+                        resolveMemberName({
+                          address: c.address,
+                          displayName: c.displayName,
+                          primaryUsername: (c as { primaryUsername?: string })
+                            .primaryUsername,
+                        }).name
+                      }
+                      userIcon={realIconOrUndefined(c.icon)}
                       address={c.address}
                       size={44}
                     />
