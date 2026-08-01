@@ -272,6 +272,39 @@ above. The hub log genuinely replaced the P2P sync for **message catch-up** — 
 is durable, replays on reconnect, and is structurally better for that job. It did
 **not** replace the **roster bootstrap**, because that was never the same job.
 
+### ✅ MEASURED 2026-08-01 — delivery to an offline mobile member IS durable
+
+Run against two real users, since the relay is not in either repo and this could
+not be settled by reading code:
+
+1. User A's mobile app **fully closed** (not backgrounded).
+2. User B, on desktop, changed their global display name and avatar.
+3. A opened mobile.
+
+**Result: A saw B's new name and avatar.** So a desktop `'group'` broadcast
+reaches a member who was completely offline when it was sent, and lands on their
+next open. Whether the relay does that via the hub log or the legacy per-member
+space inbox is still unknown (and does not matter for design).
+
+**Why this is the finding that unblocks the work:** it means an announcement does
+not need the receiver to be online at that instant. So a **join-triggered
+announce** — existing members announcing when a `join` arrives — will actually
+reach the new joiner, even if they close the app immediately after joining. That
+was the precondition, and it holds.
+
+Scope of the measurement, stated honestly:
+
+- ✅ confirmed: **desktop sender → mobile receiver**, receiver offline, existing member.
+- ❔ untested: **desktop as the receiver**. Desktop has no `log-since` catch-up at
+  all (verified: zero references to `log-append`/`log-since`/`listen-hub` in the
+  desktop source), so it likely still needs a live connection, and leans on
+  `requestSync` instead. This asymmetry is expected to disappear when desktop
+  migrates to the hub log.
+- ❔ untested: the **late joiner** case specifically — this test used a member who
+  had already joined. It confirms the delivery property the fix depends on, not
+  the fix itself.
+- ❔ unknown: the retention window. One trial, minutes-scale.
+
 ### What would actually close the gap
 
 1. **Make the join exchange two-way.** When a `join` control message arrives,
