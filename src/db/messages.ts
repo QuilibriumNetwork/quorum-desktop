@@ -8,6 +8,10 @@ import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
 import { QUORUM_DB_NAME, QUORUM_DB_VERSION } from './dbVersion';
+import {
+  isPlaceholderDisplayName,
+  isPlaceholderIcon,
+} from '../utils/identityPlaceholder';
 import MiniSearch, { type Options } from 'minisearch';
 
 export interface EncryptedMessage {
@@ -1358,12 +1362,32 @@ export class MessageDB {
         // Update lastReadTimestamp if this is our own message (prevents false unread indicators)
         const isOwnMessage =
           currentUserAddress && message.content?.senderId === currentUserAddress;
+        // EMPTY / PLACEHOLDER MEANS ABSENT — saving a message must never
+        // DOWNGRADE the identity already on the row. This `put` replaces the
+        // whole record, and both call paths hand us non-identity here:
+        //
+        //  - the DM SEND path passes the row as it read it at the TOP of the
+        //    send (MessageService.ts ~3269/3464), falling back to the
+        //    'Unknown User' / default-icon placeholders. So a partner's
+        //    `dm-update-profile` landing mid-send was overwritten by that stale
+        //    snapshot, silently reverting a name we had already learned.
+        //  - the SPACE paths pass `{}` and the wrapper asserts
+        //    `updatedUserProfile.user_icon!`, so both arrive `undefined` and
+        //    used to blank the channel row on every space message saved.
+        //
+        // Rule: a real incoming value always wins; otherwise keep what is
+        // stored; and only when there is nothing stored do we fall back to the
+        // incoming placeholder, so a brand-new row keeps today's shape (both
+        // fields are required on `Conversation`).
+        // See .agents/tasks/2026-08-01-identity-announce-cadence-research.md §2.
         const request = conversationStore.put({
           ...existingConv, // Preserve existing fields including isRepudiable
           conversationId,
           address: address,
-          icon: icon,
-          displayName: displayName,
+          icon: isPlaceholderIcon(icon) ? (existingConv?.icon ?? icon) : icon,
+          displayName: isPlaceholderDisplayName(displayName)
+            ? (existingConv?.displayName ?? displayName)
+            : displayName,
           type: conversationType,
           timestamp: message.createdDate,
           lastMessageId: message.messageId, // Track last message for previews
