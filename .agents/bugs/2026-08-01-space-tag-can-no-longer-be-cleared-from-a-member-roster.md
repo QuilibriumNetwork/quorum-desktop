@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A deleted space tag never disappears from other members' rosters — the undefined-stripping merge swallowed the only clear signal"
-status: CONFIRMED by isolated repro (not yet fixed)
+status: FIXED on branch fix/space-tag-clear-survives-partial-merge (awaiting the announce PR to merge first)
 priority: medium — cosmetic but permanent, and self-inflicted 3 commits ago
 created: 2026-08-01
 updated: 2026-08-01
@@ -93,33 +93,46 @@ Unverified. Mobile stores the roster in its own layer and did not receive #290,
 so it is probably unaffected — but its receive handler has the same
 `participant.spaceTag = ... : undefined` shape, so confirm rather than assume.
 
-## §6. Fix options, cheapest first
+## §6. The fix — and the wrong fix that the test suite caught
 
-1. **A `null` tombstone in the merge.** Keep dropping `undefined` (that is the
-   #290 property worth keeping — it is what makes a partial row safe), and let
-   `null` mean "remove this field":
+> ⚠️ **Read this before "restoring the old behaviour".** The obvious fix is to
+> make absence mean "clear" again, the way it did before #290. That is WORSE
+> than the current bug, and it was written, run and reverted on 2026-08-01.
 
-   ```ts
-   const incoming = Object.fromEntries(
-     Object.entries(userProfile)
-       .filter(([, v]) => v !== undefined)
-       .map(([k, v]) => [k, v === null ? undefined : v])
-   );
-   ```
+Most `update-profile` messages carry no tag at all — a global avatar save, and
+now the on-connect identity announce. If absence means "clear", every one of
+those strips every member's tag, and the announce does it on **every
+reconnect**. So the pre-#290 behaviour was not correct-then-broken; it was
+**over-clearing**, and #290 traded it for **under-clearing**. Neither is right,
+because absence genuinely cannot carry both "I have nothing to say about the
+tag" and "the tag is gone".
 
-   Then the two receive sites assign `null` instead of `undefined`.
-   `SpaceMemberRow.spaceTag` widens to `BroadcastSpaceTag | null`; renderers
-   already test truthiness. **Preferred** — it restores the lost expressiveness
-   instead of special-casing one field.
-2. **Clear `spaceTag` through a dedicated DB method.** Narrow, no type change,
-   but leaves the general "no field can ever be removed" hole open for the next
-   caller to fall into.
-3. **Put a tombstone on the wire** (`spaceTag: null` from the sender). Correct in
-   the long run and needed for cross-client agreement, but it is a wire change
-   and both apps must understand it, so it is not the first move.
+The three-state fix:
 
-Whichever is chosen: **write the failing test first**. This defect is invisible
-to `tsc` and to every existing test, which is how it shipped.
+| Wire | Meaning | Why |
+|---|---|---|
+| field absent | no change | the common case: the sender is talking about something else |
+| `spaceTag: null` | **clear** — the tombstone | deletion needs its own signal |
+| a tag object | set it, if it validates | an INVALID tag is REJECTED, not treated as a clear, or a malformed tag becomes a one-message way to blank somebody else's |
+
+Implemented as:
+
+- `resolveInboundSpaceTag` (`MessageService.ts`, exported and unit-tested) —
+  the three-state decision, used by both receive sites.
+- `saveSpaceMember(spaceId, row, { clearFields: ['spaceTag'] })` — carries the
+  clear through the merge. Absence stays the safe default for every partial
+  writer, which is the #290 property worth keeping.
+- `rebroadcastTagIfChanged` sends `spaceTag: null` on deletion instead of
+  omitting the field. It is the ONLY sender entitled to speak about the tag —
+  it fires only when the tag actually changed. Every other sender omits it
+  precisely because it has nothing to say.
+
+Old clients see a falsy value and behave exactly as they did, so the wire change
+is additive.
+
+**Mobile is unverified.** Its receive handler has the same shape and would need
+to learn the tombstone too; until then a mobile client will keep showing a
+deleted tag. Not a regression — that is what it does today.
 
 ## §7. How it was found
 

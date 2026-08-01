@@ -175,9 +175,29 @@ from BEFORE a member's cursor, Cause B mostly self-heals and only Cause A
 matters. If the cursor starts at join/first-connect, Cause B is real and §10 is
 required. **Do not build §10 before answering this.**
 
-- [ ] Read `quorum-mobile` `hubLogSync.ts` + `hubLogCursor.ts`: where does a
-      NEW member's cursor start, and is there a server-side retention window?
-- [ ] Record the answer here, in one paragraph, with file:line
+> ## ✅ ANSWERED 2026-08-01 — replay does NOT rescue Cause B
+>
+> `quorum-mobile/context/WebSocketContext.tsx:1297-1303` and `:6182-6185` say it
+> verbatim, twice: *"No peer-to-peer sync; new joiners only see messages sent
+> after they joined."* Mobile's sync handlers were removed deliberately in
+> favour of the hub log.
+>
+> So the hub log DOES carry `update-profile` and DOES replay it on reconnect —
+> which rescues an **existing** member who was merely offline, and is a genuinely
+> stronger position than desktop, which has no durable replay for control
+> messages at all. But it does nothing for a member who joined LATER, and
+> mobile's announce gate never expires, so nobody will ever say it again.
+>
+> **§10 is therefore required, not optional.** Cause B is confirmed real.
+>
+> One extra finding: `clearProfileBroadcastState`
+> (`services/space/spaceMessageService.ts:963-967`) documents itself as the
+> escape hatch used on leave-space/sign-out so a rejoin re-broadcasts. A
+> repo-wide grep shows it is **never called**. The one escape hatch the comments
+> claim exists does not fire.
+
+- [x] Read `quorum-mobile` `hubLogSync.ts` + `hubLogCursor.ts`
+- [x] Record the answer here
 
 ### Slice 1 — Announce identity to every space on connect
 
