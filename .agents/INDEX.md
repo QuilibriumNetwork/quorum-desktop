@@ -220,7 +220,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Edited messages show a false "not signed" warning on other devices](tasks/2026-07-19-edited-message-signature-badge-cross-device.md)
 - [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
-- [DM receipt protocol: read acks now name what they read](tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md)
+- [DM receipt protocol: read acks now name what they read](tasks/.done/2026-07-27-combined-receipt-ack-and-protocol-options.md) — DONE 2026-08-01, shipped all three platforms (shared #67, desktop #267, mobile #205)
+- [Desktop has no self-echo guard on receipt ack intercepts](tasks/2026-08-01-desktop-ack-self-echo-guard.md) — spun out of the above; needs a multi-device run to be called a bug or a non-issue
 - [Headless SPACE harness (spec)](tasks/2026-07-27-headless-space-harness.md)
 - [Harness coverage — multi-device first, then the unreached cells](tasks/2026-07-28-harness-multidevice-and-coverage.md)
 - [Handoff — DM loss, end of 2026-07-29](tasks/.done/2026-07-29-dm-loss-next-session-handoff.md)

@@ -133,28 +133,49 @@ SENDER SIDE (receiving read acks):
 | `src/components/modals/UserSettingsModal/Privacy.tsx` | Delivery + Read receipts toggle UI |
 | `src/hooks/business/user/useUserSettings.ts` | `readReceipts` state and config persistence |
 
-> **Note:** there is no `src/types/deliveryReceipt.ts` — wire types (`DeliveryAckMessage`, `ReadAckMessage`) live as inline `as const` literals at the construction sites in `ActionQueueHandlers.ts` (lines 957, 1014) and string comparisons in `MessageService.ts:325, 339`. Slated to be lifted into `@quilibrium/quorum-shared/src/types/receipt.ts` by the [receipts-shared-migration task](../../../tasks/quorum-shared-migration/2026-05-19-receipts-shared-migration.md).
+> **Note:** there is no `src/types/deliveryReceipt.ts`. The wire types (`DeliveryAckMessage`, `ReadAckMessage`, `ReceiptEnvelopeFields`) now live in `@quilibrium/quorum-shared/src/types/receipt.ts` — one definition both clients build against, so desktop and mobile cannot drift on what a tick means. The decision logic lives beside them in `shared/src/receipts/reconcile.ts`.
 
-### Wire format (today, inline)
+### Wire format
 
 Both ack messages are flat objects sent through `encryptAndSendDm`:
 
 ```typescript
-// Delivery ack — emitted in ActionQueueHandlers.ts:955
+// Delivery ack
 {
   senderId: string;
   type: 'delivery-ack';
-  messageIds: string[];
+  messageIds: string[];      // the actual set received — honest by construction
 }
 
-// Read ack — emitted in ActionQueueHandlers.ts:1012
+// Read ack
 {
   senderId: string;
   type: 'read-ack';
   upToMessageId: string;     // high-water mark
   upToTimestamp: number;     // createdDate of that message
+  messageIds?: string[];     // the ids read since the last flush (see below)
 }
 ```
+
+**Why a read ack carries both a mark and a set.** They repair different failures, and neither
+subsumes the other:
+
+- The **named ids** are self-proving — you cannot read a message you never received — so each
+  one settles ✓✓ on its own, *including when that message's delivery ack was lost in
+  transport*. Before this, only the high-water-mark message enjoyed that exemption, so a
+  message with a lost delivery ack sat on one tick forever.
+- The **high-water mark** is cumulative: every ack restates the whole read history, so a later
+  ack repairs a read ack that was itself dropped. A set names each message once and is gone
+  with the ack that carried it.
+
+`messageIds` is optional on purpose: a peer on an older build ignores it and behaves exactly
+as before. Nothing is drained or destroyed to populate it, so there is no mixed-version
+hazard. It is also untrusted peer JSON — `ReceiptService.onReadAckReceived` sanitizes it and
+degrades to mark-only rather than letting a malformed value discard the whole ack.
+
+**The delivery gate is unchanged.** A message that was neither named nor genuinely delivered
+is never marked read. Naming widens the self-proving exemption from one message to n; it does
+not expand the range.
 
 ### Piggybacked envelope fields
 
@@ -163,8 +184,12 @@ Stamped onto outgoing DM messages by `attachPiggybackedAcks`, stripped by `strip
 ```typescript
 // On Message (transient, never stored locally)
 {
-  ackMessageIds?: string[];                                    // piggybacked delivery acks
-  readAckUpTo?: { messageId: string; timestamp: number };      // piggybacked read ack
+  ackMessageIds?: string[];               // piggybacked delivery acks
+  readAckUpTo?: {                         // piggybacked read ack
+    messageId: string;
+    timestamp: number;
+    messageIds?: string[];                // mirrors ReadAckMessage.messageIds
+  };
 }
 
 // Persisted on Message after processing the incoming ack
@@ -173,6 +198,10 @@ Stamped onto outgoing DM messages by `attachPiggybackedAcks`, stripped by `strip
   readAt?: number;
 }
 ```
+
+> Mobile consumes piggybacked acks but does not yet produce them — every mobile ack is a
+> standalone control message with its own ratchet advance. Tracked in
+> `quorum-mobile/.agents/tasks/2026-07-27-mobile-piggyback-receipt-acks-on-outgoing-dms.md`.
 
 ## The useReadReceipt Hook
 
@@ -314,3 +343,5 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 *Updated: 2026-05-20 — Removed stale references to a non-existent `src/types/deliveryReceipt.ts` (wire types are inline literals, not a dedicated file). Documented the actual flat wire format and the piggybacked envelope fields. Added a forward-pointer to the receipts-shared-migration task that will lift these types into `@quilibrium/quorum-shared`.*
 
 *Updated: 2026-07-23 — Read indicator (✓✓) now renders a single custom `checks-custom` icon (a redesigned double-check SVG in the shared Icon primitive) instead of two overlapped `check` icons. Added stroke support to `CustomIconDef`.*
+
+*Updated: 2026-08-01 — A read ack now also NAMES the ids it read, so a message whose delivery ack was lost still reaches ✓✓. Documented the field, why the high-water mark is kept alongside it, and the piggyback mirror. Corrected the wire-types note: they live in `@quilibrium/quorum-shared/src/types/receipt.ts` now, not inline.*

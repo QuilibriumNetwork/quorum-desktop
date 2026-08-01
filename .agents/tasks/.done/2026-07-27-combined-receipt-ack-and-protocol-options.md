@@ -1,10 +1,11 @@
 ---
 type: task
 title: "DM receipt protocol: read acks now name what they read (option 2b, shipped)"
-status: option 2b SHIPPED on shared + desktop 2026-07-28 (shared #67, desktop #267) — remaining work in §9; option 1 skipped, option 2 deferred (see R6)
+status: DONE 2026-08-01 — option 2b shipped on all three platforms (shared #67, desktop #267, mobile #205); option 1 skipped, option 2 deferred (R6), two follow-ups spun out to their own files (§11)
 created: 2026-07-27
+completed: 2026-08-01
 priority: medium
-effort: option 2b done (shared + desktop, one release); remaining — mobile piggybacking (small, mobile-only), mobile 2b wiring after publish (small), live verification (see §10); option 3 is a separate, larger project in the transport stream
+effort: option 2b done end to end; what is left lives elsewhere — see §11
 area: DM receipts — shared ReceiptService + receipt wire types, desktop MessageService/ActionQueueHandlers, mobile WebSocketContext
 repo: quorum-shared (protocol + service) + quorum-desktop (wiring) + quorum-mobile (wiring)
 shared_change_required: true
@@ -34,7 +35,8 @@ sitting on one tick forever.
 |---|---|---|
 | §1-§7 | The original proposal, written 2026-07-27 | Superseded. Kept because §2's analysis of the two ack shapes is what led to 2b, and §3's hazard analysis is why option 1 was dropped rather than merely deprioritised. |
 | §8 | Review response, 2026-07-28 | The decision record. R3 defines 2b; R6 explains why option 2 is deferred rather than rejected. |
-| §9 | Implementation status | Current. Start here for what is left to do. |
+| §9 | Implementation status | Historical as of 2026-08-01 — its "what remains" list is now resolved or spun out. |
+| §11 | Closure | Current. Start here: what shipped, and where the two surviving follow-ups live. |
 
 Reading §1-§7 as instructions would be a mistake — option 1 in particular is analysed in
 detail and then **not built**. They are preserved as reasoning, not as a plan. Anyone picking
@@ -592,7 +594,10 @@ Nothing is urgent; the shipped behaviour is correct.
 
 ---
 
-## 9. Implementation status (2026-07-28)
+## 9. Implementation status (2026-07-28) — superseded by §11
+
+> Kept as the record of what was open on the day desktop shipped. Every item in
+> "What remains" below has since been resolved or given its own file — see §11.
 
 **Option 2b is shipped on shared + desktop.** Option 1 was skipped as decided; option 2
 remains deferred per R6, and the watermark was deliberately NOT deleted.
@@ -736,9 +741,76 @@ since it needs no patched build.
 
 ---
 
-*Last updated: 2026-07-28*
+## 11. Closure (2026-08-01)
+
+**Option 2b is shipped on all three platforms.** A read ack names the ids it read alongside
+the high-water mark, so a message whose delivery ack was lost in transport reaches ✓✓ when
+the peer reads it, instead of sitting on one tick forever.
+
+| Repo | PR | What landed |
+|---|---|---|
+| quorum-shared | #67 | Optional `messageIds` on `ReadAckMessage` and the piggyback envelope; per-address read set beside the mark; `isHighWaterMark` generalised to `isNamed`; `sanitizeReadMessageIds`. Published to npm as **`2.1.0-39`**, now the registry's latest. |
+| quorum-desktop | #267 | Ids through the action queue and the envelope, both intercepts, the IndexedDB walk. 560 tests. |
+| quorum-mobile | #205 | Ids on the standalone read-ack (omitted when empty), both intercepts forwarding the raw peer value for shared to sanitize, resolver context for the React Query and SQLite walks. 160 tests, receipts 21 → 34. |
+
+The delivery gate is unchanged and pinned on both platforms: an undelivered message the ack
+did **not** name is still refused. Mobile's proof is a paired test against real SQLite — three
+messages with no delivery acks at all reach ✓✓ when named, and only the mark upgrades when
+not, so the result cannot come from the pre-2b path.
+
+### The §9 list, resolved
+
+1. **Live verification** — closed by test as far as test can close it
+   (`receiptLostDeliveryAck.test.ts` on desktop drives the real service through its real 5s
+   timer and the real IndexedDB walk; mobile's paired SQLite test does the equivalent). The
+   residual is integration-only: encryption/transport, tick rendering, and the
+   `MessageDBProvider` glue. **§10 is kept** for whoever wants that run — note the obvious
+   happy-path test proves nothing here, because a healthy channel reaches ✓✓ through the
+   pre-existing delivery path.
+2. **Publishing `2.1.0-39`** — **done.** Verified 2026-08-01: it is npm's latest, and mobile
+   resolves it from the registry (`yarn.lock`, not a link).
+3. **Desktop self-echo guard** — **spun out** to
+   `tasks/2026-08-01-desktop-ack-self-echo-guard.md`. It never belonged to 2b: it pre-dates
+   named ids, and 2b cannot worsen it (named ids are the partner's message ids and can never
+   match our own). The fan-out is confirmed real; whether it does damage on desktop is not,
+   and settling that needs a multi-device run rather than more reading.
+4. **Mobile piggybacking** — **still open, own file**, unchanged by any of this:
+   `quorum-mobile/.agents/tasks/2026-07-27-mobile-piggyback-receipt-acks-on-outgoing-dms.md`.
+   Mobile consumes piggybacked acks but never produces them, so it pays a full ratchet
+   advance for every ack. Mobile-only, no shared release, no compat risk — still the cheapest
+   remaining traffic win.
+5. **Mobile 2b wiring** — **done** (#205). It was blocked on item 2 and unblocked when
+   `2.1.0-39` reached npm.
+
+### Deliberately not done, and why
+
+- **Option 1** (drain the delivery buffer into the read ack) — skipped. Its traffic benefit
+  is unobtainable safely, and 2b takes its ordering benefit without draining anything. R1.
+- **Option 2** (delete the high-water mark) — deferred, not rejected. The mark is the only
+  thing that repairs a *dropped read ack*, and this transport loses messages. It becomes a
+  pure code deletion, with no wire change, if and when option 3's work makes read acks
+  reliable. R6.
+- **Option 3** (per-conversation sequence numbers) — belongs to the transport reliability
+  stream, as it always did.
+- **The three known-not-fixed items in §10a** stay known and not fixed: queue dedup dropping
+  named ids (a missed rescue, not a regression — those messages were stuck before 2b too),
+  cache/DB divergence on an out-of-range named id (pre-dates named ids; widening the DB walk
+  would introduce a cross-conversation write surface that does not currently exist), and
+  drain-then-send-throws on the piggyback path (pre-existing shape).
+
+---
+
+*Last updated: 2026-08-01*
 
 ## Review Log
+**2026-08-01 - claude-opus-5**: Closed the task — 2b now shipped on all three platforms; added §11 and spun out the one item that was never 2b's
+- Mobile 2b wiring landed (quorum-mobile #205): named ids on the standalone read-ack omitted when empty so older peers see a byte-identical message, both intercepts forwarding the RAW peer value so shared's sanitizer (not a local `new Set`) handles malformed input, ids threaded into the resolver context for the React Query and SQLite walks
+- Mobile receipts 21 → 34 tests, full suite 160 green; the rescue is proved by a PAIRED test against real SQLite — same three messages with no delivery acks reach ✓✓ when named, only the mark upgrades when not — so the result provably comes from naming
+- Verified §9 item 2 is done: `2.1.0-39` is npm's latest and mobile resolves it from the registry per yarn.lock, superseding the doc's "npm latest is 2.1.0-37"
+- Spun §9 item 3 (desktop self-echo guard) out to tasks/2026-08-01-desktop-ack-self-echo-guard.md — it pre-dates 2b and was holding the parent open for an unrelated reason; re-verified the fan-out filter, which had drifted from the cited MessageService.ts:998 to :1054-1057, and noted `selfAddress` is already a parameter of `interceptControlMessages` so the fix, if needed, is one condition
+- Marked §9 superseded rather than rewriting it, keeping the three-layer structure the doc deliberately uses; §10 kept because the live-run caveat (a happy-path test proves nothing about 2b) still applies to anyone attempting it
+- Left mobile piggybacking open in its own file, and restated why option 1 stays skipped, option 2 stays deferred, and the three §10a items stay known-and-unfixed
+
 **2026-07-28 - claude-fable-5**: Full verification pass against all three repos, plus reviewer verdicts on §7 recorded as new §8; status updated to reviewed
 - All code citations verified accurate: line refs, behaviours, 124-crash-loop figure, shared 2.1.0-37, 12-test desktop suite, all four cross-referenced .agents files
 - Mixed-version hazard confirmed end to end and shown to be specific to drain-to-combine (flushForPiggyback destroys buffer+timer); mitigation 3 verified safe via resolveDeliveryAckPatch null on dupes; a 4th mitigation (invert direction, enrich delivery-ack) recorded and rejected

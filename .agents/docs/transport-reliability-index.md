@@ -311,7 +311,8 @@ Paths are repo-qualified — see §0.
 | `quorum-mobile/.agents/bugs/2026-07-24-dm-false-receipt-ticks-on-undelivered-message.md` | ticks appeared on a message that never landed |
 | `quorum-mobile/.agents/tasks/2026-07-27-mobile-piggyback-receipt-acks-on-outgoing-dms.md` | mobile never piggybacks receipt acks on outgoing DMs — half the port is missing |
 | `quorum-mobile/.agents/tasks/2026-07-24-mobile-dm-delivery-receipt-messageid-mismatch.md` | outgoing `messageId` differed between the stored and wire copies |
-| `quorum-desktop/.agents/tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md` | **proposed, for review** — combined receipt ack + two deeper protocol options |
+| `quorum-desktop/.agents/tasks/.done/2026-07-27-combined-receipt-ack-and-protocol-options.md` | **DONE 2026-08-01** — read acks now name what they read (option 2b), shipped on all three platforms. Option 1 skipped, option 2 deferred, option 3 belongs to this stream |
+| `quorum-desktop/.agents/tasks/2026-08-01-desktop-ack-self-echo-guard.md` | desktop lacks mobile's `senderId !== self` guard on ack intercepts — fan-out confirmed, damage unconfirmed |
 | `quorum-desktop/.agents/docs/features/messages/dm-receipts.md` | how receipts work (reference) |
 | `quorum-mobile/.agents/tasks/.done/2026-07-19-dm-receipt-pipeline-and-global-toggles.md` | the mobile receipt pipeline + global toggles |
 
@@ -511,7 +512,8 @@ Ranked. Each item names the doc that owns it — go there for detail.
 | 3 | **Receipt truthfulness two-device runtime check** — code shipped on all three platforms, verification owed by both clients | `quorum-mobile/.agents/tasks/2026-07-26-receipt-truthfulness-delivery-gated-reads.md` | both |
 | 4 | **Mobile piggyback receipt acks** — half the port is missing | `quorum-mobile/.agents/tasks/2026-07-27-mobile-piggyback-receipt-acks-on-outgoing-dms.md` | mobile |
 | 5 | **Port the #265 stale-bucket mitigation to mobile** — desktop-only today | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §5-B1′ | mobile |
-| 6 | **Decide the combined-receipt-ack / protocol options** — proposed, awaiting review | `quorum-desktop/.agents/tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md` | both |
+| ✅ | **DONE 2026-08-01** — the combined-receipt-ack / protocol options are decided and built. Option 2b shipped on all three platforms (shared #67, desktop #267, mobile #205): a read ack names the ids it read, so a message whose delivery ack was lost still reaches ✓✓. Option 1 skipped, option 2 deferred until read acks are reliable, option 3 (sequence numbers) stays in this stream | `quorum-desktop/.agents/tasks/.done/2026-07-27-combined-receipt-ack-and-protocol-options.md` | both |
+| 6 | **Desktop ack self-echo guard** — desktop has no `senderId !== self` on its ack intercepts where mobile does; the own-device fan-out is confirmed real, whether it does damage is not | `quorum-desktop/.agents/tasks/2026-08-01-desktop-ack-self-echo-guard.md` | desktop |
 | 7 | **What supplies the out-of-order delivery that forms the stale bucket in the field?** — the one remaining live question on the crate bug | `quorum-desktop/.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §5-D | — |
 | ✅ | **DONE 2026-07-29 (PR #271)** — cross-platform harness slice 4. `yarn harness:cross` runs mobile↔desktop on one bench, two processes paired through mobile's existing file rendezvous (NOT the single-process bundle the spec assumed — that design is dead, see the task). quorum-mobile needed no changes. First measurement: mobile→desktop **40/40, 0%** | `quorum-desktop/.agents/tasks/.done/2026-07-27-cross-platform-dm-harness.md` | both |
 | 8 | **Node-side logs for a capture window (#183 item 2).** Everything client-side is now measured clean — arrival, decrypt, persistence, display, all four platform pairings, aged accounts, fan-out, session churn. The next thing that moves this forward is not a code change but a request | [#183](https://github.com/QuilibriumNetwork/quorum-mobile/issues/183) | upstream |
@@ -670,7 +672,8 @@ quorum-mobile/.agents/bugs/2026-07-20-mobile-desktop-message-transport-delay-los
 ```
 quorum-desktop/.agents/docs/transport-reliability-index.md                     (map — read first)
 quorum-mobile/.agents/tasks/2026-07-26-receipt-truthfulness-delivery-gated-reads.md
-quorum-desktop/.agents/tasks/2026-07-27-combined-receipt-ack-and-protocol-options.md
+quorum-desktop/.agents/tasks/.done/2026-07-27-combined-receipt-ack-and-protocol-options.md
+quorum-desktop/.agents/tasks/2026-08-01-desktop-ack-self-echo-guard.md
 quorum-desktop/.agents/docs/features/messages/dm-receipts.md
 ```
 
@@ -704,4 +707,4 @@ correct the status in place and say what is owed, rather than moving.
 the bold ENTRY POINT / 🗺️ notes on this file and on the resurfaced-DM bug.
 
 ---
-*Last updated: 2026-07-29*
+*Last updated: 2026-08-01*
