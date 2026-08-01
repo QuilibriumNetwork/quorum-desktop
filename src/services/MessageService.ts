@@ -83,6 +83,11 @@ import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
 import { findStaleBucket, restoreStaleBucket } from '../utils/dmStaleBucketRetry';
 import { orderSessionsForSend } from '../utils/sessionSelection';
+import {
+  dmProfileSignature,
+  readDmProfileGate,
+  writeDmProfileGate,
+} from '../utils/dmProfileGate';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
@@ -563,6 +568,17 @@ export class MessageService {
         ...(bio !== undefined ? { bio } : {}),
       };
 
+      // Dedup gate. The on-connect rebroadcast fires on EVERY ws.onopen, and
+      // each send here is a real encrypted DM on the wire. Skip a send whose
+      // payload is byte-identical to the last one this device recorded for
+      // this (self, partner). Recorded only AFTER a successful send, so a
+      // failure leaves the gate open and the next connect retries.
+      // Mirrors mobile's MMKV gate (services/dm/dmProfileService.ts).
+      const signature = dmProfileSignature(msg);
+      if (readDmProfileGate(selfUserAddress, partnerAddress) === signature) {
+        continue;
+      }
+
       try {
         await this.encryptAndSendDm(
           partnerAddress,
@@ -570,12 +586,58 @@ export class MessageService {
           selfUserAddress,
           keyset,
         );
+        writeDmProfileGate(selfUserAddress, partnerAddress, signature);
       } catch (err) {
         logger.warn('[DMProfile] broadcast to partner failed', {
           err,
           partner: partnerAddress.slice(0, 16),
         });
       }
+    }
+  }
+
+  /**
+   * On-connect DM identity rebroadcast.
+   *
+   * An established DM session never carries the sender's identity (the decrypt
+   * union only exposes `user_profile` on its init-carrying variant, measured
+   * absent on every established-session frame), so a partner whose row is still
+   * a placeholder has no way to learn who we are from ordinary traffic. Pushing
+   * our current global identity on connect is the recovery path — and the only
+   * one that works for a partner with no published public profile.
+   *
+   * Mirrors mobile, which already rebroadcasts to all DM partners on reconnect
+   * (quorum-mobile context/WebSocketContext.tsx ~6270). Cheap by construction:
+   * the per-partner gate above makes an unchanged identity a no-op on the wire.
+   */
+  async rebroadcastProfileToAllDMsOnConnect(
+    selfUserAddress: string,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+  ): Promise<void> {
+    try {
+      const config = await this.messageDB.getUserConfig({
+        address: selfUserAddress,
+      });
+      const displayName = config?.name || '';
+      const userIcon = config?.profile_image || '';
+      // Nothing to advertise yet (fresh account, config not synced) — sending
+      // empty fields would be a wire no-op the receiver ignores anyway.
+      if (!displayName && !userIcon) return;
+      // Bio is deliberately omitted: the DM identity push gates bio on the
+      // public-profile toggle (legacy DM behaviour), and this path has no
+      // access to that decision. Name + avatar only, matching mobile.
+      await this.broadcastProfileToAllDMs(
+        displayName,
+        userIcon,
+        undefined,
+        selfUserAddress,
+        keyset,
+      );
+    } catch (err) {
+      logger.warn('[DMProfile] on-connect rebroadcast failed', { err });
     }
   }
 
@@ -754,6 +816,14 @@ export class MessageService {
     };
 
     await this.messageDB.saveConversation(merged);
+
+    // TEMPORARY (branch fix/dm-identity-from-established-session): confirms the
+    // on-connect rebroadcast lands and heals the row. REMOVE before the PR.
+    logger.warn('[DMIdentity] applied dm-update-profile from partner', {
+      partner: senderAddress.slice(0, 16),
+      displayName: merged.displayName,
+      iconLength: merged.icon?.length ?? 0,
+    });
 
     if (queryClient) {
       queryClient.invalidateQueries({ queryKey: buildConversationsKey({ type: 'direct' }) });
@@ -4097,6 +4167,20 @@ export class MessageService {
               message: string;
             };
 
+            // TEMPORARY (branch fix/dm-identity-from-established-session):
+            // measures how often an established-session frame actually carries
+            // the sender's identity. `user_profile` is only on the init-carrying
+            // variant of the decrypt union, so this is the open question in
+            // Slice 1 of the task. REMOVE before opening the PR.
+            logger.warn('[DMIdentity] established-session frame decrypted', {
+              conversationId: conversationId?.slice(0, 16),
+              hasUserProfile: Boolean(maybeInit.user_profile),
+              displayName: maybeInit.user_profile?.display_name ?? '(none)',
+              iconLength: maybeInit.user_profile?.user_icon?.length ?? 0,
+              profileAddress: maybeInit.user_profile?.user_address?.slice(0, 12) ?? '(none)',
+              selfAddress: self_address?.slice(0, 12),
+            });
+
             let advancedState: string;
             // If the retry pruned a bucket to get here, put it back: those keys
             // are the ONLY way to read genuinely delayed frames, and persisting
@@ -4158,7 +4242,22 @@ export class MessageService {
               outcome: 'ok' as const,
               content,
               sentAccept: fresh.sentAccept,
-              updatedUserProfile: undefined,
+              // Carry the sender's identity through when the frame has it.
+              // `user_profile` is only on the init-carrying variant of the
+              // decrypt union (hence the guard above at `maybeInit.user_profile`),
+              // but dropping it meant a DM partner's name/avatar could ONLY ever
+              // be learned during session setup: once established, no amount of
+              // traffic refreshed it, so a partner with no public profile stayed
+              // on the placeholder forever. Mobile applies it on this same path
+              // (quorum-mobile WebSocketContext.tsx ~4739).
+              // Self-address guard mirrors the Confirm branch: on a multi-device
+              // self-echo the profile is OURS, and must not overwrite the
+              // partner's conversation row.
+              updatedUserProfile:
+                maybeInit.user_profile &&
+                maybeInit.user_profile.user_address != self_address
+                  ? maybeInit.user_profile
+                  : undefined,
             };
           } catch (decryptError) {
             // Double Ratchet spec: on a decrypt/authentication failure, discard the

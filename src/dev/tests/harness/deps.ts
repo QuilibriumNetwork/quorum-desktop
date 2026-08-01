@@ -13,6 +13,7 @@ import type { QueryClient } from '@tanstack/react-query';
 import type { MessageDB } from '../../../db/messages';
 import type { QuorumApiClient } from '../../../api/baseTypes';
 import type { WsTransport } from './transport';
+import { preferIncomingProfileField } from '../../../utils/conversationProfile';
 
 type Ref<T> = { current: T };
 
@@ -94,9 +95,17 @@ export function makeDeps(input: DepsInput) {
         if (existing?.conversation) {
           await messageDB.saveConversation({
             ...existing.conversation,
-            displayName:
-              updatedUserProfile?.display_name ?? existing.conversation.displayName,
-            icon: updatedUserProfile?.user_icon ?? existing.conversation.icon,
+            // Must match MessageDB.addOrUpdateConversation exactly — the harness
+            // exists to reproduce production behaviour, so a divergent merge here
+            // would hide the very bug it is meant to catch.
+            displayName: preferIncomingProfileField(
+              updatedUserProfile?.display_name,
+              existing.conversation.displayName
+            ),
+            icon: preferIncomingProfileField(
+              updatedUserProfile?.user_icon,
+              existing.conversation.icon
+            ),
             timestamp: Math.max(timestamp, existing.conversation.timestamp),
           });
         }

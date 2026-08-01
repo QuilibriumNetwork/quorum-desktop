@@ -67,6 +67,10 @@ import { useNavigate } from 'react-router';
 // Web: uses multiformats directly
 // Native: uses React Native compatible implementations
 import { sha256, base58btc } from '../../utils/crypto';
+import {
+  hasProfileContent,
+  preferIncomingProfileField,
+} from '../../utils/conversationProfile';
 import { t } from '@lingui/core/macro';
 
 type MessageDBContextValue = {
@@ -362,15 +366,21 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
     // Persist profile updates to IndexedDB (not just React Query cache)
     // This ensures profile data survives page refresh
-    if (updatedUserProfile?.display_name || updatedUserProfile?.user_icon) {
+    if (hasProfileContent(updatedUserProfile)) {
       try {
         const existing = await messageDB.getConversation({ conversationId });
         if (existing?.conversation) {
           await messageDB.saveConversation({
             ...existing.conversation,
-            displayName:
-              updatedUserProfile.display_name ?? existing.conversation.displayName,
-            icon: updatedUserProfile.user_icon ?? existing.conversation.icon,
+            // Empty incoming field = absent, never "clear". See conversationProfile.ts.
+            displayName: preferIncomingProfileField(
+              updatedUserProfile?.display_name,
+              existing.conversation.displayName
+            ),
+            icon: preferIncomingProfileField(
+              updatedUserProfile?.user_icon,
+              existing.conversation.icon
+            ),
             timestamp: Math.max(timestamp, existing.conversation.timestamp),
           });
         }
@@ -395,8 +405,16 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               const existingConv = page.conversations.find(
                 (c: Conversation) => c.conversationId === conversationId
               );
-              const newDisplayName = updatedUserProfile?.display_name ?? existingConv?.displayName;
-              const newIcon = updatedUserProfile?.user_icon ?? existingConv?.icon;
+              // Same rule as the IndexedDB merge above: an empty incoming
+              // field must not blank the cached value.
+              const newDisplayName = preferIncomingProfileField(
+                updatedUserProfile?.display_name,
+                existingConv?.displayName
+              );
+              const newIcon = preferIncomingProfileField(
+                updatedUserProfile?.user_icon,
+                existingConv?.icon
+              );
 
               return {
                 ...page,
@@ -522,7 +540,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       setMessageHandler((message) =>
         handleNewMessage(selfAddress, keyset, message)
       );
-      setResubscribe(async () =>
+      setResubscribe(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
           return [
@@ -533,8 +551,25 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 .concat(keyset.deviceKeyset.inbox_keyset.inbox_address),
             }),
           ];
-        })
-      );
+        });
+
+        // Push our identity to every DM partner on connect. An established DM
+        // session carries no sender profile, so a partner whose row is still a
+        // placeholder cannot learn who we are from ordinary traffic — this is
+        // their only recovery path when they have no public profile to fall
+        // back on. Per-partner dedup gate makes an unchanged identity a wire
+        // no-op, so a flapping connection does not spam. Mirrors mobile.
+        // Staggered so it never competes with the listen frame above.
+        setTimeout(() => {
+          const ks = actionQueueServiceRef.current?.getUserKeyset();
+          if (!ks) return;
+          messageServiceRef.current
+            ?.rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
+            .catch((err) =>
+              logger.warn('[DMProfile] on-connect rebroadcast failed', { err })
+            );
+        }, 4000);
+      });
       setTimeout(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
