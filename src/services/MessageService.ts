@@ -1049,6 +1049,14 @@ export class MessageService {
     } as Message;
 
     const inboxKey = await this.getSigningKey(spaceId);
+    // `getSigningKey` legitimately resolves to undefined when we hold neither a
+    // signing nor an inbox key for this space. Dereferencing it would surface
+    // that as a bare TypeError inside the caller's catch-all, which tells a
+    // future debugger nothing about WHICH precondition failed — and this one is
+    // actionable (broken/missing key material) rather than transient.
+    if (!inboxKey?.publicKey || !inboxKey?.privateKey) {
+      throw new Error(`No signing key for space ${spaceId}`);
+    }
     message.publicKey = inboxKey.publicKey;
     message.signature = Buffer.from(
       JSON.parse(
@@ -1148,7 +1156,19 @@ export class MessageService {
           releaseSpaceProfileAnnounce(selfAddress, space.spaceId, signature);
         }
       } catch (err) {
-        logger.warn('[SpaceProfile] announce to space failed', {
+        // Separate the EXPECTED case from a real fault, mirroring the DM
+        // sibling. A space we hold no key material for is a normal transient
+        // state (mid-join, a space row that arrived before its keys), not
+        // something to investigate — and letting it share the `warn` channel
+        // with genuine failures is how the genuine ones get ignored.
+        const detail = (err as Error)?.message ?? '';
+        if (detail.startsWith('No signing key for space')) {
+          logger.debug('[SpaceProfile] no signing key for space yet — skipping', {
+            spaceId: space.spaceId,
+          });
+          continue;
+        }
+        logger.error('[SpaceProfile] announce to space failed', {
           err,
           spaceId: space.spaceId,
         });

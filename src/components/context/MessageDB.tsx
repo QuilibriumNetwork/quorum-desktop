@@ -575,7 +575,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       // Bounded by its own gate (3 attempts per identity, then silent), because
       // past the bootstrap the member digest exchange is the repair path.
       const fireSpaceProfileAnnounce = () => {
-        if (!messageServiceRef.current) return;
+        if (!messageServiceRef.current) {
+          // Realistically unreachable today (the service is built
+          // unconditionally in the same render pass), but a silent return here
+          // would disable the announce for the whole session with nothing to
+          // explain why — and "renders as an address" is already a symptom with
+          // no signal of its own.
+          logger.warn('[SpaceProfile] announce skipped — service not ready');
+          return;
+        }
         messageServiceRef.current
           .announceProfileToAllSpacesOnConnect(selfAddress)
           .catch((err) =>
