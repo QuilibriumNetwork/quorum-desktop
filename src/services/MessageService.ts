@@ -576,6 +576,10 @@ export class MessageService {
       // Mirrors mobile's MMKV gate (services/dm/dmProfileService.ts).
       const signature = dmProfileSignature(msg);
       if (readDmProfileGate(selfUserAddress, partnerAddress) === signature) {
+        // TEMPORARY diagnostic — REMOVE before the PR.
+        logger.warn('[DMIdentity] SKIPPED (gate closed, already sent this exact payload)', {
+          partner: partnerAddress.slice(0, 16),
+        });
         continue;
       }
 
@@ -587,9 +591,16 @@ export class MessageService {
           keyset,
         );
         writeDmProfileGate(selfUserAddress, partnerAddress, signature);
+        // TEMPORARY diagnostic — REMOVE before the PR.
+        logger.warn('[DMIdentity] SENT dm-update-profile', {
+          partner: partnerAddress.slice(0, 16),
+          displayName,
+          iconLength: userIcon?.length ?? 0,
+        });
       } catch (err) {
-        logger.warn('[DMProfile] broadcast to partner failed', {
+        logger.warn('[DMIdentity] SEND FAILED', {
           err,
+          message: (err as Error)?.message,
           partner: partnerAddress.slice(0, 16),
         });
       }
@@ -623,9 +634,21 @@ export class MessageService {
       });
       const displayName = config?.name || '';
       const userIcon = config?.profile_image || '';
+      // TEMPORARY diagnostic — REMOVE before the PR.
+      logger.warn('[DMIdentity] on-connect rebroadcast starting', {
+        self: selfUserAddress?.slice(0, 12),
+        haveConfig: Boolean(config),
+        displayName: displayName || '(empty)',
+        iconLength: userIcon.length,
+      });
       // Nothing to advertise yet (fresh account, config not synced) — sending
       // empty fields would be a wire no-op the receiver ignores anyway.
-      if (!displayName && !userIcon) return;
+      if (!displayName && !userIcon) {
+        logger.warn(
+          '[DMIdentity] ABORT: config carries no name and no avatar — nothing to advertise'
+        );
+        return;
+      }
       // Bio is deliberately omitted: the DM identity push gates bio on the
       // public-profile toggle (legacy DM behaviour), and this path has no
       // access to that decision. Name + avatar only, matching mobile.

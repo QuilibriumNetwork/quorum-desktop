@@ -560,15 +560,34 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         // back on. Per-partner dedup gate makes an unchanged identity a wire
         // no-op, so a flapping connection does not spam. Mirrors mobile.
         // Staggered so it never competes with the listen frame above.
-        setTimeout(() => {
+        // TEMPORARY diagnostics in this block — REMOVE before the PR.
+        const fireDmProfileRebroadcast = () => {
           const ks = actionQueueServiceRef.current?.getUserKeyset();
-          if (!ks) return;
+          logger.warn('[DMIdentity] on-connect hook fired', {
+            haveActionQueue: Boolean(actionQueueServiceRef.current),
+            haveKeyset: Boolean(ks),
+            haveMessageService: Boolean(messageServiceRef.current),
+            selfAddress: selfAddress?.slice(0, 12),
+          });
+          if (!ks) {
+            logger.warn('[DMIdentity] ABORT: ActionQueue keyset not ready yet');
+            return;
+          }
+          if (!messageServiceRef.current) {
+            logger.warn('[DMIdentity] ABORT: MessageService not ready yet');
+            return;
+          }
           messageServiceRef.current
-            ?.rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
+            .rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
             .catch((err) =>
-              logger.warn('[DMProfile] on-connect rebroadcast failed', { err })
+              logger.warn('[DMIdentity] on-connect rebroadcast threw', { err })
             );
-        }, 4000);
+        };
+        setTimeout(fireDmProfileRebroadcast, 4000);
+        // Manual trigger, so the send path can be exercised without waiting on
+        // connect timing: run `__quorumPushDmProfile()` in the console.
+        (window as unknown as Record<string, unknown>).__quorumPushDmProfile =
+          fireDmProfileRebroadcast;
       });
       setTimeout(async () => {
         enqueueOutbound(async () => {
