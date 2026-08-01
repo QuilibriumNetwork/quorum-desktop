@@ -89,8 +89,8 @@ erasure within 24h.
 
 | # | Step | Status | Needs the operator? |
 |---|---|---|---|
-| **1** | **Stop identity being erased.** `db.saveMessage` overwrote the conversation row's name/avatar on every save. | ✅ **DONE** — branch `fix/conversation-identity-preserve-on-empty`, 8 tests, 4 of which fail against the old code | no |
-| **2** | **Cap the retries.** Keep the 24h check, add "and fewer than 3 sends". Both platforms, moving in opposite directions. | not started | no |
+| **1** | **Stop identity being erased.** `db.saveMessage` overwrote the conversation row's name/avatar on every save. | ✅ **SHIPPED** — desktop #288 (`19e79da41`). 8 tests, 4 fail against the old code. Mobile was never affected. | no |
+| **2** | **Cap the retries.** Keep the 24h check, add "and fewer than 3 sends". Both platforms, moving in opposite directions. | ✅ **DONE, both repos** — desktop `fix/cap-identity-announce-retries` (24 tests), mobile same branch name (16 tests). Not yet merged. | no |
 | **3** | **Spaces: no cadence.** Verify + fix the digest/apply defects, then add the bootstrap announce behind the same cap. | not started | **yes — the ~20 min check** |
 | **4** | **Prove it.** A diagnostic counting rows with no identity from any source. Run before and after. | not started | no |
 
@@ -233,15 +233,30 @@ Add `attempts`. Migrate **both** legacy shapes to
   then stops. Users do not all connect at the same moment, so it spreads across a
   day.
 
-- [ ] Add `attempts` to the record + migration for both legacy shapes
-- [ ] The cap in `shouldSendDmProfile`
-- [ ] Tests in `src/dev/tests/utils/dmProfileGate.test.ts`, including both
-      migration paths and the no-stampede property
-- [ ] **Mobile: the same cap, moving in the opposite direction.** Its gate has no
-      expiry at all, so it sends once and never retries. Give it the same
-      `{sig, at, attempts}` record and the same rule — for mobile this is an
-      *increase* from 1 attempt to 3.
-- [ ] `npx tsc --noEmit --jsx react-jsx --skipLibCheck` + `yarn lint` clean
+- [x] Add `attempts` to the record + migration for both legacy shapes
+- [x] The cap in `shouldSendDmProfile`
+- [x] Tests — `src/dev/tests/utils/dmProfileGate.test.ts`, 24 total. Verified to
+      fail against the old behaviour: **3 fail with the cap check disabled**, and
+      **5 fail when the migration does not re-anchor the timestamp**.
+- [x] Desktop: 728 tests, `tsc` clean, `eslint` clean
+- [x] **Mobile: the same cap, moving in the opposite direction.** Its gate had no
+      expiry *and* no retry — one send ever, so a lost frame was permanent. Now
+      the same `{sig, at, attempts}` record and the same rule, an *increase* from
+      1 attempt to 3. Constants and migration semantics match desktop exactly.
+      - Decision logic split into `services/dm/dmProfileGate.ts`, free of MMKV so
+        it is unit-testable — importing the MMKV-backed service into a jest test
+        pulls in NitroModules and fails. Mirrors the existing `dmBurstPrefix`
+        pattern, and now mirrors desktop's file name too.
+      - 16 new tests; full mobile suite 204 pass. `tsc` unchanged at 11
+        pre-existing errors (all in `services/calling`, none in these files —
+        confirmed by counting against `master`).
+
+> **A migration asymmetry worth knowing.** Both platforms credit legacy records
+> 2 attempts, so both land on "exactly one more try, then stop". But that is a
+> *reduction* on desktop (from unbounded) and an *increase* on mobile (from
+> zero). Mobile therefore gets a small, bounded, one-time rise in traffic on
+> first deploy — one extra announce per existing pair — which is the price of
+> closing its permanent-failure hole.
 
 ### Step 3 — Spaces: repair the existing mechanism, do not add a cadence
 
