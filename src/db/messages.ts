@@ -1204,6 +1204,30 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Upsert a space member, MERGING over whatever is already stored.
+   *
+   * `put` replaces the whole record, so writing the incoming object directly
+   * destroyed every field it did not mention. The space SYNC path feeds this
+   * members reconstructed from the wire, and the wire shape (shared
+   * `SpaceMember`) cannot carry the GLOBAL identity slot at all — the adapter's
+   * `dbMemberToShared` drops `global_display_name`, `global_user_icon`,
+   * `global_bio`, `bio` and both profile timestamps. So applying a member delta
+   * erased the identity that actually renders: since the follow-global work
+   * stopped stamping the per-space OVERRIDE fields, the global slot is where
+   * most members' identity lives.
+   *
+   * Losing the timestamps was the quieter half of the same bug — they are the
+   * per-slot last-write-wins guards, so without them an out-of-order rebroadcast
+   * can let an older value win.
+   *
+   * Merge rule, matching `saveMessage` and `utils/conversationProfile`: a
+   * key that is ABSENT (or explicitly `undefined`) means "no change" and keeps
+   * the stored value. A present value — including an empty string, which is how
+   * the two-slot model expresses a deliberate clear — always wins.
+   *
+   * See .agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md
+   */
   async saveSpaceMember(
     spaceId: string,
     userProfile: SpaceMemberRow
@@ -1212,7 +1236,29 @@ export class MessageDB {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readwrite');
       const store = transaction.objectStore('space_members');
-      store.put({ ...userProfile, spaceId });
+      const userAddress = (userProfile as { user_address?: string }).user_address;
+      // keyPath is ['spaceId', 'user_address']. Without an address there is
+      // nothing to look up (and the `put` below will fail on the keyPath
+      // anyway); `store.get([spaceId, undefined])` would throw a DataError
+      // first and turn that into a different, more confusing failure.
+      if (!userAddress) {
+        store.put({ ...userProfile, spaceId });
+        transaction.oncomplete = () => resolve();
+        transaction.onerror = () => reject(transaction.error);
+        return;
+      }
+      const getRequest = store.get([spaceId, userAddress]);
+
+      getRequest.onsuccess = () => {
+        const existing = getRequest.result as SpaceMemberRow | undefined;
+        // Drop explicit `undefined`s so they cannot punch holes in `existing`
+        // via the spread — `{...a, ...{x: undefined}}` yields `x: undefined`.
+        const incoming = Object.fromEntries(
+          Object.entries(userProfile).filter(([, v]) => v !== undefined)
+        );
+        store.put({ ...existing, ...incoming, spaceId });
+      };
+      getRequest.onerror = () => reject(getRequest.error);
 
       transaction.oncomplete = () => resolve();
       transaction.onerror = () => reject(transaction.error);
