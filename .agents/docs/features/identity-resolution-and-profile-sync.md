@@ -235,59 +235,65 @@ stores both slots with independent timestamp guards, and renders the precedence
 ladder correctly. **Mobile's problem is entirely on the SEND side plus the absent
 pull.**
 
+### What joining a space actually gives you (read this before proposing a fix)
+
+> Corrected twice on 2026-08-01. The first version said "give mobile the roster
+> pull"; the second said the hub log had superseded it. **Both were wrong**, and
+> the second was wrong because it came from a doc rather than from the code.
+> What follows is traced from source.
+
+Three separate things arrive when you join a space, and only two of them are
+about identity:
+
+| What | Carries | Where from |
+|---|---|---|
+| **The space manifest** | `members: string[]` — **addresses only, no names or avatars** (`quorum-shared/src/types/space.ts:29`) | owner-published, encrypted with the space config key, fetched via the invite link |
+| **Your own `join` control message** | your `participant` record, WITH your identity (`InvitationService.ts:869`) | you broadcast it to the space |
+| **`requestSync`** → `sync-members` / `MemberDelta` | full member rows for everyone, with identity (`MessageService.ts:5491,5521`) | a peer, on request. **Desktop only** — `InvitationService.ts:875` fires it immediately after the join broadcast |
+
+So the manifest tells you **who is in the space**. It does not tell you **what
+they are called**. That is the whole symptom: a new joiner has a complete member
+list and no identities, which renders as a list of truncated addresses.
+
+### The defect, in one sentence
+
+**Joining is a ONE-WAY identity exchange.** Your `join` message announces you to
+everyone; nothing announces everyone to you. Desktop papers over this by calling
+`requestSync` right after joining. Mobile removed the sync handlers
+(`WebSocketContext.tsx:1297-1303`) and did not replace that half, so on mobile
+the exchange stays one-way and a joiner learns each member's identity only when
+that member happens to speak again.
+
+⚠️ **On why mobile removed it: unknown, and do not assume.** The code comments
+describing the removal may have been written by our side rather than by the lead
+dev, and the mobile git history arrives in large squashed commits, so intent is
+not recoverable from either. What IS established is the mechanical consequence
+above. The hub log genuinely replaced the P2P sync for **message catch-up** — it
+is durable, replays on reconnect, and is structurally better for that job. It did
+**not** replace the **roster bootstrap**, because that was never the same job.
+
 ### What would actually close the gap
 
-> ⚠️ **Corrected 2026-08-01.** An earlier version of this section recommended
-> "give mobile the roster pull". **Do not do that.** It reads as the obvious fix
-> and it points against the architecture. Reasoning below.
+1. **Make the join exchange two-way.** When a `join` control message arrives,
+   existing members announce their identity. This is the exact inverse of the
+   defect: today the joiner speaks and nobody answers. It works in the hub-log
+   model (a `join` is already in the log, so every member sees it), it fires only
+   when somebody genuinely needs the data rather than on a speculative timer, and
+   it needs no new message type. Cost is one broadcast per member per join.
+   **This is the recommended direction.**
+2. **Give mobile's announce an expiry** (§10 of the announce task). Cheap,
+   uncontested, and useful whatever else lands — but on its own it only heals a
+   joiner slowly, as members drift through reconnects.
+3. **Put identities in the manifest.** Tempting, since the owner already
+   publishes a member snapshot. But it makes the owner an identity authority,
+   the data is as stale as the owner's own roster, and it would put every
+   member's base64 avatar into a blob fetched by every joiner.
+4. **A roster served by the relay.** The only option that works when no other
+   member is online. Relay change, lead-dev call.
 
-**Mobile did not lose a feature when its sync handlers were removed.** It moved
-to a strictly better transport, and the P2P roster pull became redundant *for the
-job it was doing*. From `quorum-mobile/.agents/docs/message-transport-architecture.md`:
-
-- Spaces are **a durable append-only log with a per-hub cursor**, replayed via
-  `log-since` on every reconnect/foreground. The log carries control messages,
-  `update-profile` among them, and **replays every handler on every reconnect**.
-- That doc names desktop's current behaviour — "fetch-once at startup" — as a
-  **staleness bug class**, and says the durable log "is also the general fix" for
-  it.
-- It also warns, in as many words: *"Mobile was written by the Lead Dev;
-  divergences are often intentional — verify against the SDK before 'fixing' one
-  to match the other."*
-
-**Desktop is slated to migrate to the hub log** (lead-confirmed; see
-`2026-07-19-per-device-signing-keys-registration-anchored.md` and the
-`edited-message-signature-badge` task, both of which already reason about the
-interaction). So the direction of travel is desktop → mobile's model, not the
-reverse. Re-adding P2P roster sync to mobile would be building something slated
-for deletion, and would widen a divergence the lead deliberately closed.
-
-**The two mechanisms actually cover different gaps**, which is what makes this
-easy to get wrong:
-
-| Who is missing identity | Hub log | P2P roster pull |
-|---|---|---|
-| An EXISTING member who was offline when it was announced | ✅ replayed from their cursor | ✅ if a peer is online |
-| A member who joined LATER | ❌ their cursor starts at join; pre-join entries are never delivered | ✅ if a peer is online |
-
-So the hub log's one hole is the **late joiner**, and that is the seam to work
-on — *inside* the hub-log model, not by reviving the pull:
-
-1. **Give the announce an expiry** (mobile's §10; desktop already has this as of
-   2026-08-01). With durable replay behind it, a single announce reaches every
-   current member for good. Cheapest, and already specced.
-2. **Announce on JOIN, not only on connect.** A `join` control message is itself
-   in the hub log, so every member sees exactly when somebody new arrives — the
-   one moment when a broadcast is known to be needed rather than speculative.
-   This converts a blind timer into a targeted response and is the natural shape
-   once both platforms are on the log. Cost is one broadcast per member per join,
-   bounded and proportional to the actual need.
-3. **A roster served by the relay.** Cleanest and the only one that works when
-   nobody else is online, but it is a relay change and a lead-dev call.
-
-Do 1 first, consider 2, and treat 3 as the long answer. And when desktop lands
-the hub-log migration, the P2P `sync-request`/`MemberDigest`/`MemberDelta` path
-becomes redundant there too and should be retired rather than maintained.
+Desktop is lead-confirmed to migrate to the hub log, so anything built here
+should assume the P2P sync path eventually goes away — which is another argument
+for (1) over reviving the pull on mobile.
 
 ### Debugging checklist
 
