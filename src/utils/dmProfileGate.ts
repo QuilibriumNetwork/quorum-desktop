@@ -1,22 +1,33 @@
-// Per-partner dedup gate for the `dm-update-profile` broadcast.
+// Per-partner send gate for the `dm-update-profile` broadcast.
 //
-// The on-connect rebroadcast fires on EVERY ws.onopen, and every send it makes
-// is a real encrypted DM on the wire (plus a push on the receiving device). A
-// user with 30 DM partners on a flaky connection would otherwise emit 30
-// messages per reconnect, forever, to say nothing new.
+// The identity push runs on every connect, and every send it makes is a real
+// encrypted DM on the wire (plus a push on the receiving device). A user with
+// 30 DM partners on a flaky connection would otherwise emit 30 messages per
+// reconnect, forever, to say nothing new. So: skip a byte-identical resend.
 //
-// The gate records the exact payload last successfully sent to each partner and
-// skips a byte-identical resend. Recording happens only AFTER a successful
-// send, so a failure leaves the gate open and the next connect retries.
+// BUT a pure "sent once, never again" gate makes convergence depend on a
+// single frame arriving. This transport is documented-unreliable, and the
+// failure is permanent and silent: the sender believes the partner knows who
+// they are, the partner renders a placeholder forever, and nothing retries.
+// Observed live on 2026-08-01 — a closed gate on one side while the other side
+// still showed "Unknown User".
 //
-// Desktop counterpart of mobile's MMKV gate in
-// quorum-mobile/services/dm/dmProfileService.ts.
+// So the gate EXPIRES. An unchanged identity is re-sent at most once per
+// RESEND_INTERVAL_MS per partner, which bounds the wire cost to ~1 message per
+// partner per day while guaranteeing the identity eventually lands.
+//
+// Desktop counterpart of mobile's MMKV gate
+// (quorum-mobile/services/dm/dmProfileService.ts), plus the expiry, which
+// mobile does not have.
 //
 // See .agents/tasks/2026-08-01-dm-partner-identity-lost-on-established-sessions.md
 
 import { logger } from '@quilibrium/quorum-shared';
 
 const GATE_PREFIX = 'quorum:dm-profile-broadcast';
+
+/** Re-send an unchanged identity at most this often, per partner. */
+export const RESEND_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
 
 /** The identity fields that actually go on the wire. */
 export interface DmProfileWirePayload {
@@ -30,7 +41,7 @@ export interface DmProfileWirePayload {
  *
  * Field PRESENCE matters as well as value: an avatar-only push and a
  * name-only push are different messages and must not gate each other. Built
- * from an explicit key order so it never depends on object insertion order.
+ * from an explicit sorted key order so it never depends on insertion order.
  */
 export const dmProfileSignature = (payload: DmProfileWirePayload): string => {
   const canonical: Record<string, string> = {};
@@ -47,32 +58,86 @@ export const dmProfileSignature = (payload: DmProfileWirePayload): string => {
 const gateKey = (selfAddress: string, partnerAddress: string): string =>
   `${GATE_PREFIX}:${selfAddress}:${partnerAddress}`;
 
-/**
- * The signature last successfully sent to this partner, or null if we have
- * never sent one (or storage is unavailable — in which case we deliberately
- * fail OPEN and re-send, since a redundant identity push is harmless whereas a
- * missed one leaves the partner stuck on a placeholder).
- */
-export const readDmProfileGate = (
+interface GateRecord {
+  sig: string;
+  at: number;
+}
+
+const readRecord = (
   selfAddress: string,
   partnerAddress: string
-): string | null => {
+): GateRecord | null => {
+  let raw: string | null;
   try {
-    return localStorage.getItem(gateKey(selfAddress, partnerAddress));
+    raw = localStorage.getItem(gateKey(selfAddress, partnerAddress));
   } catch (err) {
+    // Storage unavailable — fail OPEN. A redundant identity push is harmless;
+    // a missed one leaves the partner stuck on a placeholder.
     logger.warn('[DMProfile] gate read failed — treating as not-yet-sent', { err });
     return null;
   }
+  if (!raw) return null;
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (
+      parsed !== null &&
+      typeof parsed === 'object' &&
+      !Array.isArray(parsed) &&
+      typeof (parsed as GateRecord).sig === 'string' &&
+      typeof (parsed as GateRecord).at === 'number'
+    ) {
+      return {
+        sig: (parsed as GateRecord).sig,
+        at: (parsed as GateRecord).at,
+      };
+    }
+  } catch {
+    // Not JSON at all — fall through to the legacy branch.
+  }
+  // Pre-expiry format stored a BARE SIGNATURE string. Note that a signature is
+  // itself valid JSON (an array), so it parses cleanly — which is exactly why
+  // the shape check above matters more than the try/catch. Stamp it as sent
+  // "now" rather than at epoch 0, so upgrading does not make every partner
+  // instantly due for a resend on the first connect after deploy.
+  return { sig: raw, at: Date.now() };
 };
 
-/** Record a successful send. Storage failures are non-fatal (gate stays open). */
-export const writeDmProfileGate = (
+/**
+ * Should we send this payload to this partner right now?
+ *
+ * True when we have never sent to them, when the identity has changed, or when
+ * the last send is older than RESEND_INTERVAL_MS (the anti-loss retry).
+ *
+ * `now` is injectable so the expiry is testable without faking the clock.
+ */
+export const shouldSendDmProfile = (
   selfAddress: string,
   partnerAddress: string,
-  signature: string
+  signature: string,
+  now: number = Date.now()
+): boolean => {
+  const record = readRecord(selfAddress, partnerAddress);
+  if (!record) return true;
+  if (record.sig !== signature) return true;
+  return now - record.at >= RESEND_INTERVAL_MS;
+};
+
+/**
+ * Record a successful send. Call ONLY after the send resolves, so a failure
+ * leaves the gate open and the next connect retries.
+ * Storage failures are non-fatal (gate simply stays open).
+ */
+export const recordDmProfileSend = (
+  selfAddress: string,
+  partnerAddress: string,
+  signature: string,
+  now: number = Date.now()
 ): void => {
   try {
-    localStorage.setItem(gateKey(selfAddress, partnerAddress), signature);
+    localStorage.setItem(
+      gateKey(selfAddress, partnerAddress),
+      JSON.stringify({ sig: signature, at: now } satisfies GateRecord)
+    );
   } catch (err) {
     logger.warn('[DMProfile] gate write failed — will re-send next connect', { err });
   }

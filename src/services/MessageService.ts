@@ -85,8 +85,8 @@ import { findStaleBucket, restoreStaleBucket } from '../utils/dmStaleBucketRetry
 import { orderSessionsForSend } from '../utils/sessionSelection';
 import {
   dmProfileSignature,
-  readDmProfileGate,
-  writeDmProfileGate,
+  shouldSendDmProfile,
+  recordDmProfileSend,
 } from '../utils/dmProfileGate';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
@@ -575,11 +575,7 @@ export class MessageService {
       // failure leaves the gate open and the next connect retries.
       // Mirrors mobile's MMKV gate (services/dm/dmProfileService.ts).
       const signature = dmProfileSignature(msg);
-      if (readDmProfileGate(selfUserAddress, partnerAddress) === signature) {
-        // TEMPORARY diagnostic — REMOVE before the PR.
-        logger.warn('[DMIdentity] SKIPPED (gate closed, already sent this exact payload)', {
-          partner: partnerAddress.slice(0, 16),
-        });
+      if (!shouldSendDmProfile(selfUserAddress, partnerAddress, signature)) {
         continue;
       }
 
@@ -590,17 +586,22 @@ export class MessageService {
           selfUserAddress,
           keyset,
         );
-        writeDmProfileGate(selfUserAddress, partnerAddress, signature);
-        // TEMPORARY diagnostic — REMOVE before the PR.
-        logger.warn('[DMIdentity] SENT dm-update-profile', {
-          partner: partnerAddress.slice(0, 16),
-          displayName,
-          iconLength: userIcon?.length ?? 0,
-        });
+        recordDmProfileSend(selfUserAddress, partnerAddress, signature);
       } catch (err) {
-        logger.warn('[DMIdentity] SEND FAILED', {
+        // A contact row with no established session is the normal case for a
+        // never-messaged contact, not a fault: there is no session to encrypt
+        // to, and there is no conversation to fix either. Stay quiet about it
+        // so the genuine failures below remain visible. The gate is NOT
+        // recorded, so this partner is retried once a session exists.
+        const message = (err as Error)?.message ?? '';
+        if (message.includes('No established sessions available')) {
+          logger.debug('[DMProfile] no session with partner yet — skipping', {
+            partner: partnerAddress.slice(0, 16),
+          });
+          continue;
+        }
+        logger.warn('[DMProfile] broadcast to partner failed', {
           err,
-          message: (err as Error)?.message,
           partner: partnerAddress.slice(0, 16),
         });
       }
@@ -634,21 +635,9 @@ export class MessageService {
       });
       const displayName = config?.name || '';
       const userIcon = config?.profile_image || '';
-      // TEMPORARY diagnostic — REMOVE before the PR.
-      logger.warn('[DMIdentity] on-connect rebroadcast starting', {
-        self: selfUserAddress?.slice(0, 12),
-        haveConfig: Boolean(config),
-        displayName: displayName || '(empty)',
-        iconLength: userIcon.length,
-      });
       // Nothing to advertise yet (fresh account, config not synced) — sending
       // empty fields would be a wire no-op the receiver ignores anyway.
-      if (!displayName && !userIcon) {
-        logger.warn(
-          '[DMIdentity] ABORT: config carries no name and no avatar — nothing to advertise'
-        );
-        return;
-      }
+      if (!displayName && !userIcon) return;
       // Bio is deliberately omitted: the DM identity push gates bio on the
       // public-profile toggle (legacy DM behaviour), and this path has no
       // access to that decision. Name + avatar only, matching mobile.
@@ -839,14 +828,6 @@ export class MessageService {
     };
 
     await this.messageDB.saveConversation(merged);
-
-    // TEMPORARY (branch fix/dm-identity-from-established-session): confirms the
-    // on-connect rebroadcast lands and heals the row. REMOVE before the PR.
-    logger.warn('[DMIdentity] applied dm-update-profile from partner', {
-      partner: senderAddress.slice(0, 16),
-      displayName: merged.displayName,
-      iconLength: merged.icon?.length ?? 0,
-    });
 
     if (queryClient) {
       queryClient.invalidateQueries({ queryKey: buildConversationsKey({ type: 'direct' }) });
@@ -4189,20 +4170,6 @@ export class MessageService {
               ratchet_state: string;
               message: string;
             };
-
-            // TEMPORARY (branch fix/dm-identity-from-established-session):
-            // measures how often an established-session frame actually carries
-            // the sender's identity. `user_profile` is only on the init-carrying
-            // variant of the decrypt union, so this is the open question in
-            // Slice 1 of the task. REMOVE before opening the PR.
-            logger.warn('[DMIdentity] established-session frame decrypted', {
-              conversationId: conversationId?.slice(0, 16),
-              hasUserProfile: Boolean(maybeInit.user_profile),
-              displayName: maybeInit.user_profile?.display_name ?? '(none)',
-              iconLength: maybeInit.user_profile?.user_icon?.length ?? 0,
-              profileAddress: maybeInit.user_profile?.user_address?.slice(0, 12) ?? '(none)',
-              selfAddress: self_address?.slice(0, 12),
-            });
 
             let advancedState: string;
             // If the retry pruned a bucket to get here, put it back: those keys

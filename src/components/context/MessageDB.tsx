@@ -554,32 +554,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       // same way (a startup timer that duplicates the resubscribe work).
       const fireDmProfileRebroadcast = () => {
         const ks = actionQueueServiceRef.current?.getUserKeyset();
-        // TEMPORARY diagnostics — REMOVE before the PR.
-        logger.warn('[DMIdentity] identity push fired', {
-          haveActionQueue: Boolean(actionQueueServiceRef.current),
-          haveKeyset: Boolean(ks),
-          haveMessageService: Boolean(messageServiceRef.current),
-          selfAddress: selfAddress?.slice(0, 12),
-        });
-        if (!ks) {
-          logger.warn('[DMIdentity] ABORT: ActionQueue keyset not ready yet');
-          return;
-        }
-        if (!messageServiceRef.current) {
-          logger.warn('[DMIdentity] ABORT: MessageService not ready yet');
-          return;
-        }
+        // Either ref being unset means we ran before init finished; the other
+        // scheduled call (startup vs reconnect) covers it.
+        if (!ks || !messageServiceRef.current) return;
         messageServiceRef.current
           .rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
           .catch((err) =>
-            logger.warn('[DMIdentity] identity push threw', { err })
+            logger.warn('[DMProfile] identity push failed', { err })
           );
       };
-      // TEMPORARY manual trigger — REMOVE before the PR. Exercises the send
-      // path from the console without waiting on connect timing:
-      //   __quorumPushDmProfile()
-      (window as unknown as Record<string, unknown>).__quorumPushDmProfile =
-        fireDmProfileRebroadcast;
 
       setResubscribe(async () => {
         enqueueOutbound(async () => {
