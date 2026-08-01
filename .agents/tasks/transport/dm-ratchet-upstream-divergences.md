@@ -192,7 +192,7 @@ does not remove it. Concrete proposal:
    currently fail AEAD harmlessly but noisily — deferred, see
    `.agents/tasks/2026-07-17-dm-dedupe-before-decrypt.md`), folding session reset
    (`deleteEncryptionStates`) under the same lock, and automatic resend on missing delivery
-   receipts (`.agents/tasks/2026-07-17-dm-dead-session-autoheal.md` — the highest-value
+   receipts (`.agents/tasks/transport/2026-07-17-dm-dead-session-autoheal.md` — the highest-value
    follow-up; converts residual single-frame wire losses into invisible recoveries).
 4. **Server-side:** `POST /inbox/delete` intermittently returns 502 Bad Gateway. Failed
    deletes are the enabler of the whole redelivery class; worth a server-side look.
@@ -333,7 +333,7 @@ a storage-model difference, and desktop's model is the correct one:
 > directions, on sessions both sides consider healthy. The storage-model difference below is
 > still real and mobile's model is still the wrong one — but it is not what makes
 > desktop↔desktop work, because desktop↔desktop does not work. See
-> `.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md`.
+> `.agents/tasks/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md`.
 
 - **Desktop** mints a fresh inbox keyset PER SESSION and stores rows under
   `inboxId: session.receiving_inbox.inbox_address` — every device gets its own inbox and its

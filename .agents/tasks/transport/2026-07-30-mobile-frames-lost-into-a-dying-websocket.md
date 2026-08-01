@@ -8,9 +8,9 @@ severity: CRITICAL — silently drops 15-25% of all DMs during ordinary use on m
 area: WebSocket transport / relay pong deadline / send durability
 repos: relay/infra (the primary fix), quorum-shared + quorum-desktop (send durability only)
 related:
-  - "docs/transport-measurements.md § THE RELAY PROBE (the current mechanism), § THE IDLE CAPTURE and § ROUND P (the effect)"
+  - "tasks/transport/measurements.md § THE RELAY PROBE (the current mechanism), § THE IDLE CAPTURE and § ROUND P (the effect)"
   - "quorum-mobile#183 item 2 (node write-loss) — this plausibly explains a large share of it"
-  - "tasks/2026-07-29-manual-round-runbook.md (how the rounds were run)"
+  - "tasks/transport/runbook.md (how the rounds were run)"
 ---
 
 # The relay reaps clients that miss a pong, and takes their messages with them
@@ -37,7 +37,7 @@ related:
 This file first concluded that **"any connection silent for ~11 s is killed and
 the app has no keepalive, so add a ~5 s app-level keepalive to
 `quorum-shared`."** Direct measurement of the relay refuted both halves the same
-day (`docs/transport-measurements.md` § THE RELAY PROBE):
+day (`measurements.md` § THE RELAY PROBE):
 
 | original claim | verdict |
 |---|---|
@@ -389,7 +389,7 @@ sleep is **not** why the pong is missed. **That mechanism is still unexplained**
    ⚠️ The shipped code differs from what rounds S/T/U validated (per-connection
    buffer rather than a wall-clock window, plus three other departures) and has
    **not yet been run on a device** — see
-   `tasks/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md`.
+   `2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md`.
 3. **Two clean rounds are not elimination.** At 15-25% loss a 20-message round
    can pass on luck; the per-message position analysis carries the weight, not
    the 20/20.

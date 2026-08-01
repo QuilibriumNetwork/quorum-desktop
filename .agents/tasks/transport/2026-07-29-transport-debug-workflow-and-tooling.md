@@ -6,7 +6,7 @@ created: 2026-07-29
 area: debugging infrastructure / DM + space transport
 related:
   - "tasks/.done/2026-07-29-dm-loss-next-session-handoff.md (how the need became undeniable)"
-  - "docs/transport-measurements.md (where every result must land)"
+  - "tasks/transport/measurements.md (where every result must land)"
   - "quorum-mobile#183 (the field bug all of this serves)"
 ---
 
@@ -43,7 +43,7 @@ the cost.
 > merged (`/dev/dm-doctor`; prod-bundle exclusion proven by build + grep). T2
 > SHIPPED — quorum-mobile PR #200, merged (flask icon in the DM header, dev
 > builds; one `.preview` sanity check owed). Day-to-day usage now lives in
-> `tasks/2026-07-29-manual-round-runbook.md`. T3 (native probe) and T4 (round
+> `runbook.md`. T3 (native probe) and T4 (round
 > runner) remain unbuilt.
 
 ### T1 — Resident "DM doctor" (desktop, dev build only)
@@ -112,12 +112,12 @@ is root-caused: the hub `log-append` ack is received and discarded, so a lost
 write is invisible and never resent. The fix is designed and waiting:
 `quorum-mobile/.agents/tasks/2026-07-21-fix-space-append-send-loss-ack-resend.md`.
 Implement it; verify with the (spec'd, unbuilt) headless space harness
-(`tasks/2026-07-27-headless-space-harness.md`). Do not spend mystery budget
+(`2026-07-27-headless-space-harness.md`). Do not spend mystery budget
 here — spend it on §3.
 
 ## §5. Also in the pipeline (ordinary bug work, no devices needed)
 
-- `bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md` —
+- `2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md` —
   both faces (send-side autoheal = existing task; receive-side mapping fix =
   failing unit test first).
 - Ghost-conversation cleanup + detection (fits T1).

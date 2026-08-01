@@ -6,7 +6,7 @@ created: 2026-07-28
 updated: 2026-07-29
 area: headless harness / DM delivery / multi-device fan-out
 repos: quorum-desktop (primary) + quorum-mobile
-related: docs/transport-measurements.md, docs/transport-reliability-index.md, quorum-mobile#183
+related: tasks/transport/measurements.md, tasks/transport/index.md, quorum-mobile#183
 ---
 
 # Harness coverage — multi-device first, then the unreached cells
@@ -28,7 +28,7 @@ the channel it structurally could not see was close to total loss.
 That is why the manual testing kept showing dropped messages while the bench went
 green. **The two were never measuring the same thing.** Nothing about the earlier
 nulls was wrong; they were nulls about a narrower channel than they appeared to
-describe, and the write-up now says so (`docs/transport-measurements.md`).
+describe, and the write-up now says so (`measurements.md`).
 
 **Untested channels, on both platforms, to date:**
 
@@ -142,7 +142,7 @@ scenario should clean up its own state files or the directory grows without boun
 
 **✅ DONE 2026-07-29 as PR #271** (`yarn harness:cross`) — two processes paired via
 mobile's file rendezvous, quorum-mobile unchanged. Measured: mobile→desktop 40/40,
-desktop→mobile 39/40. See `docs/transport-measurements.md` and the closed spec,
+desktop→mobile 39/40. See `measurements.md` and the closed spec,
 `tasks/.done/2026-07-27-cross-platform-dm-harness.md` (slice 4).
 
 ## Scenario 3 — multi-device on the MOBILE harness
@@ -295,7 +295,7 @@ design, which is about as low-risk as a change to this path can be.
 | uniffi bridge | ❌ **by construction** | WASM only in Node |
 | native batch decrypt | ❌ **by construction** | native-only, no WASM equivalent |
 | SQLCipher at rest | ❌ **by construction** | shim drops `PRAGMA key` |
-| spaces / hub log | ❌ | `tasks/2026-07-27-headless-space-harness.md` (unstarted) |
+| spaces / hub log | ❌ | `2026-07-27-headless-space-harness.md` (unstarted) |
 
 The four "by construction" rows are why a green bench never means the product is
 healthy — it means the layers the bench covers are healthy.
@@ -304,7 +304,7 @@ healthy — it means the layers the bench covers are healthy.
 
 ## After every run
 
-Append a row to `docs/transport-measurements.md`: date, what ran, configuration
+Append a row to `measurements.md`: date, what ran, configuration
 (**including device count per account**), result, and what it changed. Record the
 class, `arrival` or `decrypt`.
 

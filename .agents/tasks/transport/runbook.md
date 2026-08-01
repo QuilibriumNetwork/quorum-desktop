@@ -1,13 +1,14 @@
 ---
-type: task
+type: doc
 title: "RUNBOOK — running a manual DM transport round with the shipped tools (fresh-session protocol)"
 status: LIVING — the standing protocol for every operator-assisted transport test round. Update it when a tool or rule changes; append results to the measurement log, never here.
 created: 2026-07-29
+moved: "2026-08-01 — from tasks/ to docs/. It is a living protocol, not a work item; sitting in tasks/ made it read as permanently unfinished."
 area: DM transport debugging / manual rounds
 related:
-  - "docs/transport-reliability-index.md (THE MAP — read its §1 and §2 ladder before anything)"
-  - "docs/transport-measurements.md (every result lands there, same day)"
-  - "tasks/2026-07-29-transport-debug-workflow-and-tooling.md (why these tools exist; T3/T4 still unbuilt)"
+  - "tasks/transport/index.md (THE MAP — read its §1 and §2 ladder before anything)"
+  - "tasks/transport/measurements.md (every result lands there, same day)"
+  - "tasks/transport/2026-07-29-transport-debug-workflow-and-tooling.md (why these tools exist; T3/T4 still unbuilt)"
 ---
 
 # RUNBOOK — manual DM transport round
@@ -19,12 +20,12 @@ with the operator. **Do not improvise a protocol — this file is the protocol.*
 
 Read first, in this order (15 minutes, non-negotiable):
 
-1. `docs/transport-reliability-index.md` §1 (the whole situation in seven
+1. `index.md` §1 (the whole situation in seven
    sentences) and §2 (the read ladder). The index is the map to everything.
-2. `docs/transport-measurements.md` — at least the 2026-07-29 rows at the end.
+2. `measurements.md` — at least the 2026-07-29 rows at the end.
    The result classes (arrival / decrypt / persistence) are defined at the top;
    use them.
-3. `tasks/2026-07-29-transport-debug-workflow-and-tooling.md` §1 (the three
+3. `2026-07-29-transport-debug-workflow-and-tooling.md` §1 (the three
    rules) and §3 (the experiment queue).
 
 The one-paragraph big picture: after ~30 client fixes across both apps, one
@@ -34,7 +35,7 @@ lost messages die WHOLE (every fan-out copy at once), at or before the source.
 No bench reproduces it; only operator-assisted rounds on real devices can move
 it. Two other bug classes were split off the same day and must not be conflated
 with it: the stale-returning-device total loss, and receive-side misfiling into
-ghost conversations (`bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`).
+ghost conversations (`2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`).
 
 ## §1. The instruments (shipped 2026-07-29)
 
@@ -146,7 +147,7 @@ side still uses the doctor (receiving desktops are dev builds).
 5. **Sender record:** pull the JSONL; confirm all N have records; note per-send
    errors and timing outliers.
 6. **Record the result** the same day: append rows to
-   `docs/transport-measurements.md` (state the result CLASS per its own rules;
+   `measurements.md` (state the result CLASS per its own rules;
    the doctor's copy-row button gives the template), and add the run to §3 of
    this file's letter ledger... no — letters live in §3 above; update it.
 7. **If loss occurred:** rule 6, then update the relevant bug/issue docs with

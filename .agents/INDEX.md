@@ -9,14 +9,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Config Sync System](docs/config-sync-system.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Device Naming](docs/device-naming.md)
-- [DM Double Ratchet fixes — divergences from the original implementation](docs/dm-ratchet-upstream-divergences.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
-- [Transport & DM reliability — cross-repo index](docs/transport-reliability-index.md)
-- [Transport & DM reliability — measurement log](docs/transport-measurements.md)
 
 ### .Archived
 - [Cross-Platform Repository Implementation](docs/.archived/cross-platform-repository-implementation.md)
@@ -124,13 +121,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop shows stale synced config until restart](bugs/2026-06-13-config-not-refetched-stale-until-restart.md)
 - [Space members show truncated address — no `space_members` row](bugs/2026-06-13-space-members-missing-no-join-row.md)
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
-- [update-profile inbox_address poisoning → control-message impersonation](bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
-- [Capture archive — DM desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-captures.md)
-- [DM delivery is broken again, desktop↔desktop](bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md)
-- [Reset App Data does not delete the master private key (Electron + fallback-authenticator browsers)](bugs/2026-07-31-reset-app-data-leaves-private-keys-in-keydb.md)
-- [Electron stores the master private key at rest with no user secret](bugs/2026-07-31-electron-master-key-at-rest-no-user-secret.md) — decide before the desktop app ships
+- [Electron keeps the master private key unlocked on disk](bugs/2026-07-31-electron-master-key-at-rest-no-user-secret.md)
+- [Reset App Data leaves private keys behind (desktop)](bugs/2026-07-31-reset-app-data-leaves-private-keys-in-keydb.md)
 
 ### Solved Issues
 - [Icon Color Not Saving Issue](bugs/.solved/2025-01-15-icon-color-not-saving-issue.md)
@@ -178,6 +172,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM message delivery is unreliable (master report)](bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md)
 - [DM frames still drop with `aead::Error` (remaining half of the delivery bug)](bugs/.solved/2026-07-17-dm-aead-error-frame-drops.md)
 - [FIX SPEC: DM decrypt failure destroys the session](bugs/.solved/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md)
+- [update-profile inbox_address poisoning → control-message impersonation](bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
 - [Desktop DM receive holds the ratchet lock across relay HTTP](bugs/.solved/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md)
 - [Session replacement orphans the receiving inbox](bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md)
 - [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](bugs/.solved/emoji-picker-mobile-drawer-empty-space.md)
@@ -211,21 +206,14 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Make the Spaces list identical on every device (umbrella — start here)](tasks/2026-07-31-spaces-list-cross-device-sync.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Unify Account tab's defer-vs-instant control semantics](tasks/2026-06-07-account-tab-defer-save-unification.md)
 - [UserProfile card layout polish pass](tasks/2026-06-08-userprofile-card-layout-polish.md)
 - [Master recap: the "spoofable senderId" fix](tasks/2026-06-25-MASTER-RECAP-control-message-auth.md)
-- [DM delivery auto-heal](tasks/2026-07-17-dm-dead-session-autoheal.md)
 - [Edited messages show a false "not signed" warning on other devices](tasks/2026-07-19-edited-message-signature-badge-cross-device.md)
 - [Durable multi-device: per-device signing keys via master-signed device statements](tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - [Space deletion: instant + offline UX, and stop leaking ghost spaces](tasks/2026-07-19-space-deletion-ghost-cleanup.md)
-- [DM receipt protocol: read acks now name what they read](tasks/.done/2026-07-27-combined-receipt-ack-and-protocol-options.md) — DONE 2026-08-01, shipped all three platforms (shared #67, desktop #267, mobile #205)
-- [Desktop has no self-echo guard on receipt ack intercepts](tasks/2026-08-01-desktop-ack-self-echo-guard.md) — spun out of the above; needs a multi-device run to be called a bug or a non-issue
-- [Headless SPACE harness (spec)](tasks/2026-07-27-headless-space-harness.md)
-- [Harness coverage — multi-device first, then the unreached cells](tasks/2026-07-28-harness-multidevice-and-coverage.md)
-- [Handoff — DM loss, end of 2026-07-29](tasks/.done/2026-07-29-dm-loss-next-session-handoff.md)
-- [Ghost device accumulation on reset/logout — deregister-before-wipe](tasks/.done/2026-07-21-device-registration-ghost-accumulation-cross-platform.md) — desktop #281 + mobile #203 merged; on-device check still outstanding
+- [Make the Spaces list identical on every device](tasks/2026-07-31-spaces-list-cross-device-sync.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -401,6 +389,30 @@ This is the main index for all documentation, bug reports, and task management.
 - [Quick Wins - Search Improvements](tasks/search-optimization/quick-wins.md)
 - [Search Performance Optimization](tasks/search-optimization/README.md)
 
+### Transport
+> 📁 **The whole DM/transport issue lives in this one folder.** Bugs, tasks and reference
+> material together on purpose — organised by issue, not by file type. Start with the README.
+> The mobile half stays in `quorum-mobile/.agents/` (gitignored); tooling stays in
+> `.agents/scripts/` and `.agents/tools/dm-debug/`.
+
+- [⭐ START HERE — what is open](tasks/transport/README.md) — one screen: blocked-upstream / owed-a-round / ready-to-build, plus which files never complete
+- [Transport & DM reliability — cross-repo index](tasks/transport/index.md) — 🗺️ THE MAP + the archive: every doc, PR, issue, and every retracted theory
+- [Transport & DM reliability — measurement log](tasks/transport/measurements.md) — append-only; the only file here that cannot rot. Read before quoting any number
+- [RUNBOOK — manual DM transport round](tasks/transport/runbook.md) — living protocol; follow before any device round
+- [The relay reaps clients that miss a pong, and takes their messages with them](tasks/transport/2026-07-30-mobile-frames-lost-into-a-dying-websocket.md) — ⭐ THE ROOT CAUSE. Relay-side (#183 item 1), still unfixed
+- [DM delivery is broken again, desktop↔desktop](tasks/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md) — the DM ratchet ENTRY POINT: root cause, the 10 dead hypotheses (§3), the offline tools (§5)
+- [Where this stands, and the two rounds left](tasks/transport/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md) — two device rounds owed: confirm the shipped fix, and measure Spaces (never done)
+- [Returning stale device: DMs toward the peer vanish, self-sync copies misfile](tasks/transport/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md) — OPEN, severity high; real-user shape
+- [DM delivery auto-heal](tasks/transport/2026-07-17-dm-dead-session-autoheal.md) — re-scoped 2026-08-01, priority INVERTED: build heal action 2 only
+- [Desktop has no send retention](tasks/transport/2026-08-01-desktop-send-retention-gap.md) — desktop doesn't consume the shared client that got the fix
+- [Desktop has no self-echo guard on receipt ack intercepts](tasks/transport/2026-08-01-desktop-ack-self-echo-guard.md) — needs a multi-device run to be called a bug or a non-issue
+- [Transport debugging: workflow + tools](tasks/transport/2026-07-29-transport-debug-workflow-and-tooling.md) — T1/T2 shipped; T3/T4 unbuilt and lower value now
+- [Harness coverage — multi-device first, then the unreached cells](tasks/transport/2026-07-28-harness-multidevice-and-coverage.md) — scenarios 1-2 done; scenario 3 unbuilt
+- [Headless SPACE harness (spec)](tasks/transport/2026-07-27-headless-space-harness.md) — spec only, unstarted; would make the Spaces measurement repeatable
+- [DM Double Ratchet fixes — divergences from the original implementation](tasks/transport/dm-ratchet-upstream-divergences.md) — the 8 shipped divergences, lead-dev facing
+- [Issue 183 Body](tasks/transport/issue-183-body.md) — the upstream issue text
+- [Capture archive — DM desktop↔desktop](tasks/transport/2026-07-26-dm-desktop-to-desktop-captures.md) — 📦 ARCHIVE: round data + findings A→AL. Read-only
+
 ## 📋 Completed Tasks
 
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/.done/2025-01-06-add-user-bio-field.md)
@@ -504,8 +516,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [quorum-shared: add KeyedMutex](tasks/.done/2026-07-17-quorum-shared-add-keyedmutex.md)
 - [Complete read-only-channel enforcement](tasks/.done/2026-07-19-readonly-channel-completion-durable-embed-sticker.md)
 - [Sync per-conversation DM settings across devices](tasks/.done/2026-07-20-sync-per-conversation-dm-settings-cross-repo.md)
+- [Ghost device accumulation on reset/logout](tasks/.done/2026-07-21-device-registration-ghost-accumulation-cross-platform.md)
+- [DM receipt protocol: read acks now name what they read](tasks/.done/2026-07-27-combined-receipt-ack-and-protocol-options.md)
 - [Cross-platform DM harness](tasks/.done/2026-07-27-cross-platform-dm-harness.md)
 - [Headless DM harness](tasks/.done/2026-07-27-headless-dm-harness.md)
+- [Handoff — DM loss, end of 2026-07-29](tasks/.done/2026-07-29-dm-loss-next-session-handoff.md)
+- [The keepalive fix: what the research found](tasks/.done/2026-07-30-keepalive-fix-session-handoff.md)
+- [Round Q — tie individual lost messages to individual CLOSE events](tasks/.done/2026-07-31-round-q-join-losses-to-close-events.md)
+- [Ship the send-retention fix to quorum-shared](tasks/.done/2026-07-31-ship-send-retention-to-quorum-shared.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -696,4 +714,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-07-29 16:37:20
+**Last Updated**: 2026-08-01 09:28:15

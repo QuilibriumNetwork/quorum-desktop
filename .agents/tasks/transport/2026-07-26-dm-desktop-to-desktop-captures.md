@@ -4,7 +4,7 @@ title: "DM desktop↔desktop — capture archive (round data and retracted mecha
 status: ARCHIVE — evidence only. The live entry point is 2026-07-26-dm-desktop-to-desktop-resurfaced.md
 created: 2026-07-27
 related:
-  - ".agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md (the entry point — read that first)"
+  - ".agents/tasks/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md (the entry point — read that first)"
 ---
 
 # Capture archive — DM desktop↔desktop
@@ -1024,7 +1024,7 @@ being wrong — both are consistent with this data, and both are upstream.
 
 ## §2k. Synthetic corroboration (2026-07-27) — a FRESH session cannot be made to fail
 
-Tool: [`dr-position-table.mjs`](../tools/dm-debug/dr-position-table.mjs). Builds
+Tool: [`dr-position-table.mjs`](../../tools/dm-debug/dr-position-table.mjs). Builds
 pristine sessions from real X3DH material and drives the real wasm through six
 delivery regimes, scoring first-attempt failure by chain position — the same
 quantity the live rig measures. No device time, no logs, seconds per run.

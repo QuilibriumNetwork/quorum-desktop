@@ -7,10 +7,10 @@ severity: high — real-user shape (reinstall, long-idle secondary phone). The s
 area: DM session lifecycle (send side) + receive-side conversation mapping
 repos: sender behaviour observed from quorum-mobile (current code, June-era app data); receive-side misfiling observed on quorum-desktop
 related:
-  - "docs/transport-measurements.md § the preview-build V-run (the evidence rows for everything below)"
+  - "tasks/transport/measurements.md § the preview-build V-run (the evidence rows for everything below)"
   - "bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md (#273 — the orphaned-inbox mechanism, here observed from the SENDER's side for the first time)"
-  - "tasks/2026-07-17-dm-dead-session-autoheal.md (the mitigation home for the send side)"
-  - "tasks/2026-07-29-transport-debug-workflow-and-tooling.md (the workflow overhaul this incident fed)"
+  - "tasks/transport/2026-07-17-dm-dead-session-autoheal.md (the mitigation home for the send side)"
+  - "tasks/transport/2026-07-29-transport-debug-workflow-and-tooling.md (the workflow overhaul this incident fed)"
 ---
 
 # Returning stale device: DMs toward the peer vanish, self-sync copies misfile
@@ -93,7 +93,7 @@ equipped to diagnose it.
 
 ## §6. Mitigation homes
 
-1. **Send side (the fix that matters):** `tasks/2026-07-17-dm-dead-session-autoheal.md`
+1. **Send side (the fix that matters):** `2026-07-17-dm-dead-session-autoheal.md`
    — no delivery receipts after N sends ⇒ re-fetch the peer registration,
    re-establish sessions, resend. This exact incident is its acceptance
    scenario: a returning device must self-heal within one conversation turn.

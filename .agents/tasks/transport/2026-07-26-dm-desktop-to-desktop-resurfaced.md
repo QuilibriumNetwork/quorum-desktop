@@ -8,10 +8,10 @@ repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream
 area: DM Double Ratchet / session lifecycle / transport
 entrypoint: true
 related:
-  - ".agents/bugs/2026-07-26-dm-desktop-to-desktop-captures.md (ALL round evidence, findings A-AH across 8 capture rounds + offline ablation and synthetic harness rounds — this file cites it by letter)"
+  - ".agents/tasks/transport/2026-07-26-dm-desktop-to-desktop-captures.md (ALL round evidence, findings A-AH across 8 capture rounds + offline ablation and synthetic harness rounds — this file cites it by letter)"
   - ".agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md (mechanism catalogue — filed as solved, but the symptom RESURFACED; read it for history, not status)"
-  - ".agents/docs/dm-ratchet-upstream-divergences.md (the 8 shipped divergences, lead-dev facing)"
-  - ".agents/tasks/2026-07-17-dm-dead-session-autoheal.md (heal action 2 is exactly this failure)"
+  - ".agents/tasks/transport/dm-ratchet-upstream-divergences.md (the 8 shipped divergences, lead-dev facing)"
+  - ".agents/tasks/transport/2026-07-17-dm-dead-session-autoheal.md (heal action 2 is exactly this failure)"
   - ".agents/docs/debugging/dm-architecture-and-debug-playbook.md (DM internals)"
   - ".agents/tasks/2026-07-27-headless-dm-harness.md (headless bench: drives the REAL client in Node, both sides, no browser — see §5 and §6)"
   - "quorum-mobile/.agents/bugs/2026-07-24-dm-desktop-frames-undecryptable-state-divergence.md (3000-line master, rounds 1-29)"
@@ -385,7 +385,7 @@ Ten hypotheses in this investigation were killed the slow way — book a round, 
 the operator for attention, wait, read logs. The tool that finally found the root
 cause needed **none of that** and arrived last. Do not repeat that ordering.
 
-| tool ([`.agents/tools/dm-debug/`](../tools/dm-debug/)) | answers | needs |
+| tool ([`.agents/tools/dm-debug/`](../../tools/dm-debug/)) | answers | needs |
 |---|---|---|
 | `dr-ablate.mjs` | **what CAUSES a failure** — re-runs a real captured decrypt while changing ONE state property at a time; a load-bearing property announces itself by making the frame decrypt | a saved log |
 | `dr-replay.mjs` | is this failure genuine and reproducible, or an app-level race | a saved log |
@@ -449,7 +449,7 @@ confidently wrong measurements (a shared IndexedDB across bots, and an observer
 blind to decrypt failures). Both are fixed and documented in
 `src/dev/tests/harness/README.md`, but the lesson is the general one: give every
 harness claim a control that could falsify it. Full plan + env gotchas:
-[headless DM harness task](../tasks/2026-07-27-headless-dm-harness.md).
+[headless DM harness task](../../tasks/2026-07-27-headless-dm-harness.md).
 
 ### If you are here because the user reports DM lag or a missing message
 
@@ -744,7 +744,7 @@ one client was two builds behind and its silence was unreadable.
 
 **Offline analysis** — see the tool table in §5, which is where a fresh agent
 should meet these. Both log-driven tools live
-in [`.agents/tools/dm-debug/`](../tools/dm-debug/) **in this repo**, alongside the existing console snippets, because `.agents/` is
+in [`.agents/tools/dm-debug/`](../../tools/dm-debug/) **in this repo**, alongside the existing console snippets, because `.agents/` is
 gitignored in quorum-mobile where they were originally written — the copies there
 were never tracked and would not survive a fresh clone. They resolve the SDK
 relative to the repo, or set `SDK_DIR=`.
