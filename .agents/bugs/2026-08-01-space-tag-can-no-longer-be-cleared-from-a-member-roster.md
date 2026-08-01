@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A deleted space tag never disappears from other members' rosters — the undefined-stripping merge swallowed the only clear signal"
-status: FIXED on branch fix/space-tag-clear-survives-partial-merge (awaiting the announce PR to merge first)
+status: FIXED 2026-08-01 (desktop). Mobile still needs the tombstone — see §5
 priority: medium — cosmetic but permanent, and self-inflicted 3 commits ago
 created: 2026-08-01
 updated: 2026-08-01
@@ -126,6 +126,11 @@ Implemented as:
   omitting the field. It is the ONLY sender entitled to speak about the tag —
   it fires only when the tag actually changed. Every other sender omits it
   precisely because it has nothing to say.
+- `buildSpaceProfileWirePayload` takes the tag as the SAME three states, so the
+  send and receive halves read identically: `undefined` omits, `null` is the
+  tombstone, an object sets. Note the spread tests `!== undefined` rather than
+  truthiness — a truthiness check silently swallows the tombstone, which is the
+  exact shape of the original bug and would be easy to reintroduce.
 
 Old clients see a falsy value and behave exactly as they did, so the wire change
 is additive.

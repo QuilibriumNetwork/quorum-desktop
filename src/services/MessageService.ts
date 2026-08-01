@@ -215,6 +215,45 @@ export interface MessageServiceDependencies {
 // That cleanup step belongs to the future hub-log migration, at the transport
 // layer, not here. See project docs / the two-slot task file.
 // Exported for unit testing (pure logic, no dependencies).
+/**
+ * Decide what an inbound `update-profile` means for a member's space tag.
+ *
+ * Three cases, and conflating the first two is a live bug in both directions:
+ *
+ * - **absent (`undefined`) → no change.** Most `update-profile` messages carry
+ *   no tag at all: a global avatar save, the on-connect identity announce. If
+ *   absence meant "clear", every one of those would strip every member's tag,
+ *   and the on-connect announce would do it on every reconnect.
+ * - **`null` → the TOMBSTONE.** The owner deleted the tag and the sender says
+ *   so explicitly. Absence cannot carry that meaning (see above), so deletion
+ *   needs a signal of its own. Older clients see a falsy value and behave as
+ *   they always did, so this is additive on the wire.
+ * - **an object → set it, if it validates.** A tag that FAILS validation is
+ *   REJECTED, not treated as a clear: a malformed tag must not be able to strip
+ *   a good one.
+ *
+ * The clear has to travel to the DB as an explicit `clearFields`, because
+ * `saveSpaceMember` merges and drops `undefined`s — see that method's doc and
+ * .agents/bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md
+ */
+export function resolveInboundSpaceTag(
+  inbound: BroadcastSpaceTag | null | undefined
+): {
+  /** Whether to touch `participant.spaceTag` at all. */
+  write: boolean;
+  tag?: BroadcastSpaceTag;
+  options?: { clearFields: (keyof SpaceMemberRow)[] };
+} {
+  if (inbound === null) {
+    return { write: true, tag: undefined, options: { clearFields: ['spaceTag'] } };
+  }
+  if (!inbound) return { write: false };
+  if (!validateSpaceTagLetters(inbound.letters) || !isValidSpaceTagUrl(inbound.url)) {
+    return { write: false };
+  }
+  return { write: true, tag: inbound };
+}
+
 export function applyProfileUpdate(
   participant: SpaceMemberRow,
   content: UpdateProfileMessage,
@@ -925,9 +964,14 @@ export class MessageService {
     setTimeout(() => this.pendingTagRebroadcast.delete(space.spaceId), 60_000);
 
     // 6. Build the resolved tag (or undefined if owner deleted it)
-    const resolvedTag: BroadcastSpaceTag | undefined = currentTag?.letters
+    // `null`, not `undefined`, when the owner deleted the tag: this is the one
+    // caller that fires BECAUSE the tag changed, so it is the one entitled — and
+    // obliged — to say "it is gone". Omitting the field would read as "no
+    // change" and the deletion would never reach anybody. See
+    // resolveInboundSpaceTag for the receiving half.
+    const resolvedTag: BroadcastSpaceTag | null = currentTag?.letters
       ? { ...currentTag, spaceId: space.spaceId }
-      : undefined;
+      : null;
 
     // 7. Broadcast update-profile to all spaces
     const allSpaces = await this.messageDB.getSpaces();
@@ -998,7 +1042,7 @@ export class MessageService {
     spaceId: string,
     selfAddress: string,
     config: GlobalProfileFields,
-    resolvedTag?: BroadcastSpaceTag
+    resolvedTag?: BroadcastSpaceTag | null
   ): Promise<UpdateProfileMessage> {
     const ownMember = await this.messageDB.getSpaceMember(spaceId, selfAddress);
     return buildSpaceProfileWirePayload(
@@ -2192,14 +2236,9 @@ export class MessageService {
       // here — see the security note above.
       applyProfileUpdate(participant, decryptedContent.content, decryptedContent.createdDate);
       // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
-      const inboundTag = decryptedContent.content.spaceTag;
-      participant.spaceTag =
-        inboundTag &&
-        validateSpaceTagLetters(inboundTag.letters) &&
-        isValidSpaceTagUrl(inboundTag.url)
-          ? inboundTag
-          : undefined;
-      await messageDB.saveSpaceMember(spaceId, participant);
+      const tagWrite = resolveInboundSpaceTag(decryptedContent.content.spaceTag);
+      if (tagWrite.write) participant.spaceTag = tagWrite.tag;
+      await messageDB.saveSpaceMember(spaceId, participant, tagWrite.options);
     } else {
       // Read-only enforcement on the durable path, mirroring the live gate so a
       // forged post can't survive on disk and resurface on refetch. Fail-OPEN on
@@ -2739,15 +2778,12 @@ export class MessageService {
       // semantics: omitted = no change, '' = deliberate clear. inbox_address is
       // deliberately NOT touched here — see the security note above.
       applyProfileUpdate(participant, decryptedContent.content, decryptedContent.createdDate);
-      // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
-      const inboundTag = decryptedContent.content.spaceTag;
-      participant.spaceTag =
-        inboundTag &&
-        validateSpaceTagLetters(inboundTag.letters) &&
-        isValidSpaceTagUrl(inboundTag.url)
-          ? inboundTag
-          : undefined;
-      await this.messageDB.saveSpaceMember(spaceId, participant);
+      // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized
+      // payloads. Absent means no change, `null` is the deletion tombstone;
+      // see resolveInboundSpaceTag.
+      const tagWrite = resolveInboundSpaceTag(decryptedContent.content.spaceTag);
+      if (tagWrite.write) participant.spaceTag = tagWrite.tag;
+      await this.messageDB.saveSpaceMember(spaceId, participant, tagWrite.options);
       await queryClient.setQueryData(
         buildSpaceMembersKey({ spaceId }),
         (oldData: secureChannel.UserProfile[]) => {
