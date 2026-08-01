@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Space sync member reconciliation is blind to the global identity slot, and erases it on apply"
-status: open — UNVERIFIED, found by code reading; reproduction steps in §4
+status: CONFIRMED and FIXED 2026-08-01 (pending merge) — both defects demonstrated by tests that fail against the old code
 priority: high (if confirmed) — it disables the one mechanism that should make a space identity cadence unnecessary
 created: 2026-08-01
 updated: 2026-08-01
@@ -21,10 +21,20 @@ related_tools:
 
 # Space sync member reconciliation ignores — and erases — the global identity slot
 
-> ⚠️ **Found by reading code during the identity-cadence research
-> (2026-08-01). NOT reproduced live.** §4 is the verification procedure; run it
-> before acting. Context and the work that consumes this fix:
-> `.agents/tasks/2026-08-01-identity-announce-cadence-research.md` Slice 3.
+> ✅ **CONFIRMED AND FIXED, 2026-08-01.** Filed as code-reading; both defects were
+> then demonstrated headlessly, with **no device time and no second client** —
+> the §4 two-client procedure turned out not to be needed to establish them.
+>
+> | Defect | How it was proven | Result |
+> |---|---|---|
+> | 1 — digest blind to the global slot | `quorum-shared/src/sync/memberDigestGlobalSlot.test.ts` | a member with a real global identity hashed **identically** to one with none, and to one with a **completely different** identity. 2 of 4 tests failed against the old code. |
+> | 2 — delta apply erases the global slot | `quorum-desktop/src/dev/tests/db/saveSpaceMemberGlobalSlot.test.ts` | `global_display_name`, `global_user_icon`, `global_bio` **and both staleness guards** were destroyed. 4 of 8 tests failed against the old code. |
+>
+> Fixed in `quorum-shared` `97feb86` and `quorum-desktop` `9e6547a78`.
+> §4 below is kept as the END-TO-END confirmation — worth running once the fix
+> merges, to check the roster actually heals in a live space.
+>
+> Context: `.agents/tasks/2026-08-01-identity-announce-cadence-research.md` Step 3.
 
 ## §1. Why this matters more than it looks
 
