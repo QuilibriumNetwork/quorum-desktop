@@ -7,20 +7,18 @@ import {
 } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
 import {
-  getStoreCounts,
+  getDbInfo,
   dumpStore,
   dumpDatabase,
   formatDumpForCopy,
-  ALL_STORES,
-  SENSITIVE_STORES,
+  classifyStore,
+  type DbInfo,
   type StoreName,
   type StoreDump,
 } from './dbDumpUtil';
 
-const SENSITIVE_SET = new Set<string>(SENSITIVE_STORES);
-
 export const DbInspector: React.FC = () => {
-  const [counts, setCounts] = useState<Record<string, number> | null>(null);
+  const [info, setInfo] = useState<DbInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedStore, setSelectedStore] = useState<StoreName | null>(null);
@@ -28,7 +26,7 @@ export const DbInspector: React.FC = () => {
   const [storeLoading, setStoreLoading] = useState(false);
   const [copyStatus, setCopyStatus] = useState<string | null>(null);
 
-  // Load store counts on mount
+  // Load the live schema (version + stores + counts) on mount
   useEffect(() => {
     loadCounts();
   }, []);
@@ -37,8 +35,8 @@ export const DbInspector: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      const result = await getStoreCounts();
-      setCounts(result);
+      const result = await getDbInfo();
+      setInfo(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load database');
     } finally {
@@ -86,9 +84,11 @@ export const DbInspector: React.FC = () => {
     }
   };
 
-  const totalRecords = counts
-    ? Object.values(counts).reduce((a, b) => a + b, 0)
+  const totalRecords = info
+    ? Object.values(info.counts).reduce((a, b) => a + b, 0)
     : 0;
+
+  const versionMismatch = info != null && info.dbVersion !== info.appDbVersion;
 
   return (
     <div className="min-h-screen bg-app">
@@ -104,7 +104,9 @@ export const DbInspector: React.FC = () => {
                 DB Inspector
               </Text>
               <Text variant="subtle" size="sm">
-                IndexedDB browser with redacted sensitive data
+                {info
+                  ? `${info.dbName} v${info.dbVersion} · IndexedDB browser with redacted sensitive data`
+                  : 'IndexedDB browser with redacted sensitive data'}
               </Text>
             </div>
           </Flex>
@@ -154,6 +156,38 @@ export const DbInspector: React.FC = () => {
           </div>
         )}
 
+        {/* Schema drift: the DB on this origin isn't the one this build writes.
+            Usually means branch-switching against the same localhost origin —
+            see the dev gotcha in .agents/docs/quorum-db-schema.md. */}
+        {!loading && versionMismatch && info && (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+            <Text variant="strong" className="text-yellow-500">
+              Schema drift: database is at v{info.dbVersion}, this build expects v
+              {info.appDbVersion}
+            </Text>
+            <Text variant="subtle" size="sm" className="mt-1">
+              {info.missingStores.length > 0
+                ? `Missing stores: ${info.missingStores.join(', ')}. `
+                : ''}
+              Reset the DB (Settings → Danger Zone → Reset App Data) or reload the app to
+              let it upgrade.
+            </Text>
+          </div>
+        )}
+
+        {/* Stores present in the DB that have no redaction rule yet */}
+        {!loading && info && info.unclassifiedStores.length > 0 && (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
+            <Text variant="strong" className="text-yellow-500">
+              Unclassified stores: {info.unclassifiedStores.join(', ')}
+            </Text>
+            <Text variant="subtle" size="sm" className="mt-1">
+              Every field is redacted until they are added to SAFE_STORES or
+              SENSITIVE_STORES in dbDumpUtil.ts.
+            </Text>
+          </div>
+        )}
+
         {/* Loading state */}
         {loading && (
           <div className="text-center py-12">
@@ -163,7 +197,7 @@ export const DbInspector: React.FC = () => {
         )}
 
         {/* Main content */}
-        {!loading && counts && (
+        {!loading && info && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Store list */}
             <div className="lg:col-span-1">
@@ -174,9 +208,10 @@ export const DbInspector: React.FC = () => {
                 </Flex>
 
                 <div className="space-y-2">
-                  {ALL_STORES.map((storeName) => {
-                    const count = counts[storeName] || 0;
-                    const isSensitive = SENSITIVE_SET.has(storeName);
+                  {info.stores.map((storeName) => {
+                    const count = info.counts[storeName] || 0;
+                    const classification = classifyStore(storeName);
+                    const isSensitive = classification !== 'safe';
                     const isSelected = selectedStore === storeName;
 
                     return (
@@ -196,7 +231,11 @@ export const DbInspector: React.FC = () => {
                                 name="lock"
                                 size="xs"
                                 className="text-yellow-500"
-                                title="Contains redacted data"
+                                title={
+                                  classification === 'unclassified'
+                                    ? 'Unclassified store — all fields redacted'
+                                    : 'Contains redacted data'
+                                }
                               />
                             )}
                             <Text
@@ -257,9 +296,11 @@ export const DbInspector: React.FC = () => {
                         <Text variant="strong" size="lg" className="font-mono">
                           {storeData.name}
                         </Text>
-                        {SENSITIVE_SET.has(storeData.name) && (
+                        {storeData.classification !== 'safe' && (
                           <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 rounded">
-                            Redacted
+                            {storeData.classification === 'unclassified'
+                              ? 'Unclassified'
+                              : 'Redacted'}
                           </span>
                         )}
                       </Flex>
@@ -303,6 +344,7 @@ export const DbInspector: React.FC = () => {
             <div><span className="text-accent">__dbDump(true)</span> - Dump all stores including messages</div>
             <div><span className="text-accent">__dbCounts()</span> - Show record counts table</div>
             <div><span className="text-accent">__dbStore('action_queue')</span> - Dump specific store</div>
+            <div><span className="text-accent">__dbInfo()</span> - Live DB version, store list, drift</div>
           </div>
         </div>
       </div>

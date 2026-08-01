@@ -8,17 +8,11 @@
  * this tool replaces (`.agents/tools/dm-debug/07-receiver-probe.js`).
  */
 
+import { openQuorumDb } from '../openQuorumDb';
 import type { DmDoctorConversationRow, DmDoctorMessageRow } from './dmDoctorCore';
 
-const DB_NAME = 'quorum_db';
-
 function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () =>
-      reject(request.error ?? new Error(`Failed to open ${DB_NAME}`));
-  });
+  return openQuorumDb();
 }
 
 function readAll<T>(db: IDBDatabase, storeName: string): Promise<T[]> {

@@ -16,6 +16,7 @@ Quick reference for debugging and creating console snippets.
 |----------|-------|
 | **Database Name** | `quorum_db` |
 | **Current Version** | 14 |
+| **Version Constant** | `src/db/dbVersion.ts` (`QUORUM_DB_VERSION`) |
 | **Schema Location** | `src/db/messages.ts` |
 
 > **Dev gotcha (not a real-user issue):** IndexedDB only runs upgrades on a
@@ -28,6 +29,17 @@ Quick reference for debugging and creating console snippets.
 > versioned build, so they can't hit this. The app closes its own connection on
 > `versionchange` (so a delete/upgrade isn't blocked by its own tab); a second
 > open tab can still block it.
+
+> **Writing a dev tool or console snippet that reads this DB?** Open it with
+> `openQuorumDb()` (`src/dev/openQuorumDb.ts`), or with a bare
+> `indexedDB.open('quorum_db')` — **never with an explicit version**. IndexedDB
+> throws `VersionError` when the requested version is lower than the stored one,
+> so a hardcoded version constant breaks the tool on the next schema bump (this
+> is what silently killed the DB Inspector between v7 and v14). Read `db.version`
+> and `db.objectStoreNames` afterwards to discover the live schema. Note that a
+> version-less open still *creates* the database at v1 if it is missing, which
+> makes `MessageDB.init()` skip its `oldVersion < 1` block and leave the app with
+> no stores — `openQuorumDb()` aborts and rolls that back for you.
 
 ---
 
@@ -656,6 +668,11 @@ for (const s of stores) console.log(s, await countStore(s));
 | 13 | Added: search_indices store (persisted MiniSearch full-text indices) |
 | 14 | Added: space_member_devices store (per-device space signing keys — durable multi-device) |
 
+**When you bump this:** update `QUORUM_DB_VERSION` in `src/db/dbVersion.ts` (the
+only place the number lives), add the row above, and classify any new store in
+`src/dev/db-inspector/dbDumpUtil.ts` as safe or sensitive —
+`src/dev/tests/db/dbInspectorCoverage.test.ts` fails until you do.
+
 ---
 
-*Last updated: 2026-07-20*
+*Last updated: 2026-08-01*
