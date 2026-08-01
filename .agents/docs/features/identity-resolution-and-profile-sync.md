@@ -237,18 +237,57 @@ pull.**
 
 ### What would actually close the gap
 
-1. **Give mobile the roster pull.** The largest single win by a wide margin: any
-   client opening a space would obtain every member's identity from any one
-   online peer. Not a new invention — desktop already has it and it now works.
-2. **Give mobile's announce an expiry.** Smaller, and partly redundant once 1
-   lands. Tracked as §10 of
-   `.agents/tasks/2026-08-01-space-member-identity-announce-on-connect.md`.
+> ⚠️ **Corrected 2026-08-01.** An earlier version of this section recommended
+> "give mobile the roster pull". **Do not do that.** It reads as the obvious fix
+> and it points against the architecture. Reasoning below.
 
-Remaining structural limit after both: this is peer-to-peer, so "immediately on
-join" really means "as soon as one other member is online". If nobody else is
-online there is nobody to learn from. Closing THAT needs a server-side roster (or
-defaulting the public profile on for spacemates), which is an architecture call —
-see candidate #32, the hub-log migration.
+**Mobile did not lose a feature when its sync handlers were removed.** It moved
+to a strictly better transport, and the P2P roster pull became redundant *for the
+job it was doing*. From `quorum-mobile/.agents/docs/message-transport-architecture.md`:
+
+- Spaces are **a durable append-only log with a per-hub cursor**, replayed via
+  `log-since` on every reconnect/foreground. The log carries control messages,
+  `update-profile` among them, and **replays every handler on every reconnect**.
+- That doc names desktop's current behaviour — "fetch-once at startup" — as a
+  **staleness bug class**, and says the durable log "is also the general fix" for
+  it.
+- It also warns, in as many words: *"Mobile was written by the Lead Dev;
+  divergences are often intentional — verify against the SDK before 'fixing' one
+  to match the other."*
+
+**Desktop is slated to migrate to the hub log** (lead-confirmed; see
+`2026-07-19-per-device-signing-keys-registration-anchored.md` and the
+`edited-message-signature-badge` task, both of which already reason about the
+interaction). So the direction of travel is desktop → mobile's model, not the
+reverse. Re-adding P2P roster sync to mobile would be building something slated
+for deletion, and would widen a divergence the lead deliberately closed.
+
+**The two mechanisms actually cover different gaps**, which is what makes this
+easy to get wrong:
+
+| Who is missing identity | Hub log | P2P roster pull |
+|---|---|---|
+| An EXISTING member who was offline when it was announced | ✅ replayed from their cursor | ✅ if a peer is online |
+| A member who joined LATER | ❌ their cursor starts at join; pre-join entries are never delivered | ✅ if a peer is online |
+
+So the hub log's one hole is the **late joiner**, and that is the seam to work
+on — *inside* the hub-log model, not by reviving the pull:
+
+1. **Give the announce an expiry** (mobile's §10; desktop already has this as of
+   2026-08-01). With durable replay behind it, a single announce reaches every
+   current member for good. Cheapest, and already specced.
+2. **Announce on JOIN, not only on connect.** A `join` control message is itself
+   in the hub log, so every member sees exactly when somebody new arrives — the
+   one moment when a broadcast is known to be needed rather than speculative.
+   This converts a blind timer into a targeted response and is the natural shape
+   once both platforms are on the log. Cost is one broadcast per member per join,
+   bounded and proportional to the actual need.
+3. **A roster served by the relay.** Cleanest and the only one that works when
+   nobody else is online, but it is a relay change and a lead-dev call.
+
+Do 1 first, consider 2, and treat 3 as the long answer. And when desktop lands
+the hub-log migration, the P2P `sync-request`/`MemberDigest`/`MemberDelta` path
+becomes redundant there too and should be retired rather than maintained.
 
 ### Debugging checklist
 
