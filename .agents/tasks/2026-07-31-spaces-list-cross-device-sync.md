@@ -95,8 +95,10 @@ exactly what the reporter observed ("desktop lost its Spaces, mobile looked fine
 
 ## §3. What shipped 2026-07-31, and what it does not fix
 
-Two branches, neither merged at time of writing. Both are narrow, defensive fixes — they
-stop corruption, they do not make the lists converge.
+Two branches, **both merged later the same day** (desktop `4a04a8b24` / #282, mobile
+`2368084` / #204; the original "neither merged at time of writing" was true only for the
+hours between). Both are narrow, defensive fixes — they stop corruption, they do not make
+the lists converge.
 
 **`quorum-desktop` — branch `fix/config-save-filter-wipes-local-spaces`**
 
@@ -253,4 +255,4 @@ that instead of restarting — see the staleness umbrella in §6.
 *Created 2026-07-31 to give the Spaces-list work one entry point. Consolidates findings
 from the 2026-07-31 space-loss investigation with the four pre-existing docs listed in §6.*
 
-*Last updated: 2026-07-31*
+*Last updated: 2026-08-01*
