@@ -540,6 +540,47 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       setMessageHandler((message) =>
         handleNewMessage(selfAddress, keyset, message)
       );
+      // Push our identity to every DM partner. An established DM session
+      // carries no sender profile, so a partner whose row is still a
+      // placeholder cannot learn who we are from ordinary traffic — this is
+      // their only recovery path when they have no public profile to fall back
+      // on. The per-partner dedup gate makes an unchanged identity a wire
+      // no-op, so repeated calls cost nothing. Mirrors mobile.
+      //
+      // Deliberately NOT wired only into setResubscribe: on a fresh page load
+      // the socket opens before this effect registers that callback, so
+      // resubscribe fires on later RE-connects but never on startup. The
+      // listen-frame block below has the same race and works around it the
+      // same way (a startup timer that duplicates the resubscribe work).
+      const fireDmProfileRebroadcast = () => {
+        const ks = actionQueueServiceRef.current?.getUserKeyset();
+        // TEMPORARY diagnostics — REMOVE before the PR.
+        logger.warn('[DMIdentity] identity push fired', {
+          haveActionQueue: Boolean(actionQueueServiceRef.current),
+          haveKeyset: Boolean(ks),
+          haveMessageService: Boolean(messageServiceRef.current),
+          selfAddress: selfAddress?.slice(0, 12),
+        });
+        if (!ks) {
+          logger.warn('[DMIdentity] ABORT: ActionQueue keyset not ready yet');
+          return;
+        }
+        if (!messageServiceRef.current) {
+          logger.warn('[DMIdentity] ABORT: MessageService not ready yet');
+          return;
+        }
+        messageServiceRef.current
+          .rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
+          .catch((err) =>
+            logger.warn('[DMIdentity] identity push threw', { err })
+          );
+      };
+      // TEMPORARY manual trigger — REMOVE before the PR. Exercises the send
+      // path from the console without waiting on connect timing:
+      //   __quorumPushDmProfile()
+      (window as unknown as Record<string, unknown>).__quorumPushDmProfile =
+        fireDmProfileRebroadcast;
+
       setResubscribe(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
@@ -552,43 +593,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             }),
           ];
         });
-
-        // Push our identity to every DM partner on connect. An established DM
-        // session carries no sender profile, so a partner whose row is still a
-        // placeholder cannot learn who we are from ordinary traffic — this is
-        // their only recovery path when they have no public profile to fall
-        // back on. Per-partner dedup gate makes an unchanged identity a wire
-        // no-op, so a flapping connection does not spam. Mirrors mobile.
         // Staggered so it never competes with the listen frame above.
-        // TEMPORARY diagnostics in this block — REMOVE before the PR.
-        const fireDmProfileRebroadcast = () => {
-          const ks = actionQueueServiceRef.current?.getUserKeyset();
-          logger.warn('[DMIdentity] on-connect hook fired', {
-            haveActionQueue: Boolean(actionQueueServiceRef.current),
-            haveKeyset: Boolean(ks),
-            haveMessageService: Boolean(messageServiceRef.current),
-            selfAddress: selfAddress?.slice(0, 12),
-          });
-          if (!ks) {
-            logger.warn('[DMIdentity] ABORT: ActionQueue keyset not ready yet');
-            return;
-          }
-          if (!messageServiceRef.current) {
-            logger.warn('[DMIdentity] ABORT: MessageService not ready yet');
-            return;
-          }
-          messageServiceRef.current
-            .rebroadcastProfileToAllDMsOnConnect(selfAddress, ks)
-            .catch((err) =>
-              logger.warn('[DMIdentity] on-connect rebroadcast threw', { err })
-            );
-        };
         setTimeout(fireDmProfileRebroadcast, 4000);
-        // Manual trigger, so the send path can be exercised without waiting on
-        // connect timing: run `__quorumPushDmProfile()` in the console.
-        (window as unknown as Record<string, unknown>).__quorumPushDmProfile =
-          fireDmProfileRebroadcast;
       });
+
+      // Startup path — see the race note above. Runs alongside the existing
+      // 10s space-sync block so a cold load also pushes identity.
+      setTimeout(fireDmProfileRebroadcast, 10000);
       setTimeout(async () => {
         enqueueOutbound(async () => {
           const conversations = await messageDB.getAllEncryptionStates();
