@@ -4,7 +4,7 @@ title: "Identity resolution and profile sync (canonical model)"
 status: done
 ai_generated: true
 created: 2026-07-16
-updated: 2026-07-16
+updated: 2026-08-01
 related_docs:
   - "qns-username-display.md"
   - "user-config-sync.md"
@@ -160,9 +160,21 @@ A per-space override edit (Space Settings → Account) is the ONLY thing that
 writes the OVERRIDE slot: value / `''` (clear = follow global) / omitted (no
 change) per the wire semantics above.
 
-The on-connect / tag-rotation rebroadcasts send the override-or-omit fields AND
-the current global slot, so a spacemate who missed a live save still learns the
-global identity on the next reconnect.
+The on-connect announce and the tag-rotation rebroadcast both send the
+override-or-omit fields AND the current global slot, so a spacemate who missed a
+live save still learns the identity on the next reconnect.
+
+> ⚠️ Until 2026-08-01 desktop had NO on-connect announce — only join and tag
+> rotation, and tag rotation is not connect-triggered despite what an earlier
+> version of the table below claimed. A member who joined while you were offline
+> therefore never got a second chance and rendered as a truncated address
+> indefinitely (46 of 89 senders on one test space). The announce added then is a
+> **bootstrap, not a cadence**: it is capped at 3 attempts per identity
+> (`src/utils/spaceProfileGate.ts`) because past that the receiver-driven member
+> digest exchange (`requestSync` → `MemberDigest` → `MemberDelta`) is the repair
+> path. The digest can reconcile rows two peers disagree about; it cannot invent
+> a member neither side has heard of, and that gap is the only thing the
+> announce exists to close.
 
 ## Known limitations (accepted)
 
@@ -252,10 +264,12 @@ residual: an unregistered key can still set the display name/avatar on a claimed
 | Space editor (override) | `useSpaceProfile.ts` + `SpaceSettingsModal/Account.tsx` | `components/SpaceSettingsModal.tsx` |
 | C receive/upsert (two-slot merge) | `MessageService.ts` (update-profile handlers + `applyGlobalProfileSlots`) | `context/WebSocketContext.tsx` (~2100 JS path, ~3589 batch path) |
 | C wire send (both slots) | `MessageService.ts` rebroadcast + `MessageDB.updateUserProfile` | `services/space/spaceMessageService.ts` (`sendUpdateProfileMessage`) |
-| On-connect rebroadcast (override-or-omit + global slot) | `MessageService.ts` (~595, tag rotation) | `context/WebSocketContext.tsx` (~4783) |
+| Tag-rotation rebroadcast (override-or-omit + global slot) | `MessageService.ts` `rebroadcastTagIfChanged` — fires when an incoming manifest changes the selected TAG, **not** on connect | `context/WebSocketContext.tsx` (~4783) |
+| On-connect announce (override-or-omit + global slot, no tag) | `MessageService.ts` `announceProfileToAllSpacesOnConnect`, fired from `MessageDB.tsx` (startup timer **and** `setResubscribe`). Bounded by `src/utils/spaceProfileGate.ts` — 3 attempts per identity, then silent | `services/space/spaceMessageService.ts` (`maybeSendUpdateProfileMessage`) — gate has NO expiry, see below |
+| Announce payload rule (two-slot) | `src/utils/spaceProfilePayload.ts` (pure, tested) | inline in `spaceMessageService.ts` |
 | Global-save space broadcast (GLOBAL SLOT only) | `MessageDB.tsx` `updateUserProfile` | `UnifiedProfileEditModal.tsx` `saveQuorum` space loop |
 | useChannelData (surfaces global slots) | `src/hooks/business/channels/useChannelData.ts` | (mobile reads slots directly in the fallback hook) |
 | Channel A sync | `src/services/ConfigService.ts` | `services/config/configService.ts` |
 
 ---
-*Last updated: 2026-07-19*
+*Last updated: 2026-08-01*

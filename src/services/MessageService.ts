@@ -90,6 +90,20 @@ import {
   claimDmProfileSend,
   releaseDmProfileSend,
 } from '../utils/dmProfileGate';
+import {
+  claimSpaceProfileAnnounce,
+  recordSpaceProfileAnnounce,
+  releaseSpaceProfileAnnounce,
+  shouldAnnounceSpaceProfile,
+  spaceProfileSignature,
+} from '../utils/spaceProfileGate';
+import {
+  buildSpaceProfileWirePayload,
+  hasAnnounceableIdentity,
+  type GlobalProfileFields,
+  type OwnSpaceMemberFields,
+  type SpaceProfileWireFields,
+} from '../utils/spaceProfilePayload';
 import { preferIncomingProfileField } from '../utils/conversationProfile';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
@@ -922,89 +936,18 @@ export class MessageService {
 
       for (const s of allSpaces) {
         try {
-          // Per-space profile follows the sender's global value unless a
-          // deliberate OVERRIDE was set in this space. The stored member
-          // row carries an override iff its field is a non-empty value;
-          // empty/absent = follow global. We must NOT stamp the global
-          // config value as a per-space field (that froze the space to a
-          // stale global and broke "clear the override" — the bug this
-          // whole effort removes). So: send the per-space override if one
-          // exists, else OMIT the field so receivers fall back to the
-          // sender's global (public-profile) value via the render fallback.
-          // (See per-space-profile-empty-follows-global design.)
-          const ownMember = await this.messageDB.getSpaceMember(
+          const payload = await this.buildSpaceProfilePayload(
             s.spaceId,
-            selfAddress
+            selfAddress,
+            config,
+            resolvedTag
           );
-          const nameOverride = ownMember?.display_name || undefined;
-          // Member avatar lives on `user_icon` (typed UserProfile field);
-          // some rows also carry `profile_image` from other write paths, so
-          // read both defensively (mirrors the fallback at line ~4479).
-          const iconOverride =
-            ownMember?.user_icon ||
-            (ownMember as { profile_image?: string })?.profile_image ||
-            undefined;
-          const bioOverride = ownMember?.bio || undefined;
-
-          const nonce = crypto.randomUUID();
-          // Current GLOBAL identity from config — carried in the global* slots
-          // so members who missed the global save learn it on our tag-rotation
-          // rebroadcast. Separate from the override fields. (Two-slot design.)
-          const globalName = config.name || undefined;
-          const globalIcon = config.profile_image || undefined;
-          const globalBioVal = config.bio || undefined;
-          const updateProfileMessage = {
-            type: 'update-profile',
-            senderId: selfAddress,
-            // Omit any field with no per-space override — the receiver's
-            // upsert merge treats absent fields as "no change" and its
-            // render fallback surfaces the sender's global value. Only a
-            // real per-space override goes on the wire.
-            ...(nameOverride !== undefined ? { displayName: nameOverride } : {}),
-            ...(iconOverride !== undefined ? { userIcon: iconOverride } : {}),
-            ...(bioOverride !== undefined ? { bio: bioOverride } : {}),
-            ...(globalName !== undefined ? { globalDisplayName: globalName } : {}),
-            ...(globalIcon !== undefined ? { globalUserIcon: globalIcon } : {}),
-            ...(globalBioVal !== undefined ? { globalBio: globalBioVal } : {}),
-            ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
-          } as UpdateProfileMessage;
-
-          const messageId = await crypto.subtle.digest(
-            'SHA-256',
-            Buffer.from(
-              nonce +
-                'update-profile' +
-                selfAddress +
-                canonicalize(updateProfileMessage),
-              'utf-8'
-            )
+          const message = await this.signSpaceProfileMessage(
+            s.spaceId,
+            s.defaultChannelId,
+            selfAddress,
+            payload
           );
-
-          const message = {
-            spaceId: s.spaceId,
-            channelId: s.defaultChannelId,
-            messageId: Buffer.from(messageId).toString('hex'),
-            digestAlgorithm: 'SHA-256',
-            nonce,
-            createdDate: Date.now(),
-            modifiedDate: Date.now(),
-            lastModifiedHash: '',
-            content: updateProfileMessage,
-          } as Message;
-
-          // Sign (non-repudiable — required for profile updates)
-          const inboxKey = await this.getSigningKey(s.spaceId);
-          message.publicKey = inboxKey.publicKey;
-          message.signature = Buffer.from(
-            JSON.parse(
-              ch.js_sign_ed448(
-                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
-                Buffer.from(messageId).toString('base64')
-              )
-            ),
-            'base64'
-          ).toString('hex');
-
           outbounds.push(await this.encryptAndSendToSpace(s.spaceId, message));
         } catch (err) {
           logger.error(`Failed to re-broadcast tag to space ${s.spaceId}`, err);
@@ -1028,6 +971,189 @@ export class MessageService {
       buildConfigKey({ userAddress: selfAddress }),
       () => updatedConfig
     );
+  }
+
+  /**
+   * Build the `update-profile` payload this device should announce to a space.
+   *
+   * TWO SLOTS, kept separate (see
+   * `.agents/docs/features/identity-resolution-and-profile-sync.md`):
+   *
+   * - OVERRIDE (`displayName`/`userIcon`/`bio`) — a deliberate per-space
+   *   identity, read from our own member row. Sent only when one really exists;
+   *   otherwise the field is OMITTED and the receiver's merge treats that as "no
+   *   change", falling back to the global slot when it renders. Stamping the
+   *   global config value into these fields is the bug the follow-global work
+   *   removed: it froze each space to a stale global and made "clear my
+   *   per-space name" inexpressible.
+   * - GLOBAL (`global*`) — our current global identity from config, so a member
+   *   who missed the live save still learns it.
+   *
+   * Sending the override slot matters for correctness, not just fidelity: a
+   * member who set a per-space name expects spacemates to see THAT name, and a
+   * bootstrap carrying only the global slot would show the global one to anybody
+   * who had no row for them yet.
+   */
+  private async buildSpaceProfilePayload(
+    spaceId: string,
+    selfAddress: string,
+    config: GlobalProfileFields,
+    resolvedTag?: BroadcastSpaceTag
+  ): Promise<UpdateProfileMessage> {
+    const ownMember = await this.messageDB.getSpaceMember(spaceId, selfAddress);
+    return buildSpaceProfileWirePayload(
+      selfAddress,
+      ownMember as OwnSpaceMemberFields | undefined,
+      config,
+      resolvedTag
+      // Cast: `UpdateProfileMessage` still declares `userIcon` required, which
+      // the omit-the-override rule contradicts by design. Same cast as the
+      // global-save broadcast site in MessageDB.tsx. Tracked by the shared-type
+      // follow-up (2026-07-16-quorum-shared-type-two-slot-global-identity-fields).
+    ) as unknown as UpdateProfileMessage;
+  }
+
+  /**
+   * Wrap an `update-profile` payload in a signed space `Message`.
+   *
+   * Signing is non-repudiable and required for profile updates, so this is not
+   * optional — and it is the expensive half (a key read, a digest and an ed448
+   * signature), which is why callers that gate their sends should decide BEFORE
+   * calling this.
+   */
+  private async signSpaceProfileMessage(
+    spaceId: string,
+    channelId: string,
+    selfAddress: string,
+    payload: UpdateProfileMessage
+  ): Promise<Message> {
+    const nonce = crypto.randomUUID();
+    const messageId = await crypto.subtle.digest(
+      'SHA-256',
+      Buffer.from(
+        nonce + 'update-profile' + selfAddress + canonicalize(payload),
+        'utf-8'
+      )
+    );
+
+    const message = {
+      spaceId,
+      channelId,
+      messageId: Buffer.from(messageId).toString('hex'),
+      digestAlgorithm: 'SHA-256',
+      nonce,
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      lastModifiedHash: '',
+      content: payload,
+    } as Message;
+
+    const inboxKey = await this.getSigningKey(spaceId);
+    message.publicKey = inboxKey.publicKey;
+    message.signature = Buffer.from(
+      JSON.parse(
+        ch.js_sign_ed448(
+          Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+          Buffer.from(messageId).toString('base64')
+        )
+      ),
+      'base64'
+    ).toString('hex');
+
+    return message;
+  }
+
+  /**
+   * On-connect space identity announce — the BOOTSTRAP half of space identity.
+   *
+   * Space identity is push-based: a member's name and avatar exist on your
+   * device only because somebody announced them. Desktop announced at join and
+   * on tag rotation and nowhere else, so a member who joined a space while you
+   * were offline had no second chance and rendered as a 6-char address
+   * indefinitely. Measured on the test space "Quorum Test 2": 46 of 89 distinct
+   * senders had no member row at all.
+   *
+   * This complements, and does not duplicate, the member digest exchange that
+   * `requestSync` already drives. That exchange reconciles rows two peers
+   * DISAGREE about; it cannot invent a member neither side has ever heard of.
+   * Hence "bootstrap": the gate closes after a few attempts (see
+   * `spaceProfileGate.ts`) rather than running as a cadence, because past the
+   * bootstrap the digest sync is the repair path.
+   *
+   * The `spaceTag` is deliberately NOT carried here. Reconstructing it would
+   * mean trusting `config.lastBroadcastSpaceTag`, which only the tag-rotation
+   * path maintains, and broadcasting a stale tag is worse than omitting one —
+   * the receiver treats an absent `spaceTag` as "no change", and a member delta
+   * carries the real tag once a digest disagreement surfaces.
+   *
+   * Fire-and-forget: per-space failures are logged and never block anything.
+   */
+  async announceProfileToAllSpacesOnConnect(selfAddress: string): Promise<void> {
+    let spaces: Space[];
+    let config: Awaited<ReturnType<typeof this.messageDB.getUserConfig>>;
+    try {
+      config = await this.messageDB.getUserConfig({ address: selfAddress });
+      if (!config) return;
+      spaces = await this.messageDB.getSpaces();
+    } catch (err) {
+      logger.warn('[SpaceProfile] on-connect announce could not read state', {
+        err,
+      });
+      return;
+    }
+
+    // `spaceIds` is the joined set. A Space row can outlive membership (an
+    // invite preview, a space we left), and announcing into one we are not in
+    // would be rejected by the receiver's authorization check anyway.
+    const joinedIds = config.spaceIds;
+    const joined = Array.isArray(joinedIds)
+      ? spaces.filter((s) => joinedIds.includes(s.spaceId))
+      : spaces;
+
+    for (const space of joined) {
+      try {
+        const payload = await this.buildSpaceProfilePayload(
+          space.spaceId,
+          selfAddress,
+          config
+        );
+
+        // Nothing to advertise yet (fresh account, config not synced). An
+        // all-empty announce is a wire no-op the receiver ignores, and sending
+        // it would burn an attempt from the cap for nothing.
+        const wire = payload as unknown as SpaceProfileWireFields;
+        if (!hasAnnounceableIdentity(wire)) continue;
+
+        const signature = spaceProfileSignature(wire);
+        if (
+          !shouldAnnounceSpaceProfile(selfAddress, space.spaceId, signature)
+        ) {
+          continue;
+        }
+
+        // Claim BEFORE the await, release in `finally` — the startup timer and
+        // a reconnect timer overlap by design, and the record is only written
+        // once the send resolves. See spaceProfileGate.
+        claimSpaceProfileAnnounce(selfAddress, space.spaceId, signature);
+        try {
+          const message = await this.signSpaceProfileMessage(
+            space.spaceId,
+            space.defaultChannelId,
+            selfAddress,
+            payload
+          );
+          await this.encryptAndSendToSpace(space.spaceId, message);
+          recordSpaceProfileAnnounce(selfAddress, space.spaceId, signature);
+        } finally {
+          releaseSpaceProfileAnnounce(selfAddress, space.spaceId, signature);
+        }
+      } catch (err) {
+        logger.warn('[SpaceProfile] announce to space failed', {
+          err,
+          spaceId: space.spaceId,
+        });
+      }
+    }
   }
 
   /**

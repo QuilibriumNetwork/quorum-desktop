@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Spaces: members render as a truncated address because desktop never re-announces identity on connect"
-status: open — not started; design proven on the DM side 2026-08-01
+status: Slices 1-3 IMPLEMENTED 2026-08-01 (desktop). Slice 0 + §10 (mobile) still open
 priority: high
 created: 2026-08-01
 updated: 2026-08-01
@@ -130,6 +130,41 @@ applies much more weakly here. Still gate it — see §5, Slice 2.
 
 ## §5. Work — vertical slices
 
+> ## ✅ Status 2026-08-01 — Slices 1, 2 and 3 are implemented (desktop)
+>
+> `MessageService.announceProfileToAllSpacesOnConnect`, fired from
+> `MessageDB.tsx` on the startup timer **and** from `setResubscribe` (trap 1).
+> Bounded by `src/utils/spaceProfileGate.ts`. The payload rule is a pure,
+> tested function: `src/utils/spaceProfilePayload.ts`.
+>
+> **Two deliberate deviations from what Slice 1 says below.** Both are argued in
+> the code comments; if you disagree, argue with those, not with this box.
+>
+> 1. **The announce sends the OVERRIDE slot too, not global-only.** Slice 1 says
+>    global-only, on the grounds that sending the override re-introduces roster
+>    stamping. That conflates two different things. The bug was stamping the
+>    *global config value* into an override field; sending a *real* override read
+>    from our own member row is what `rebroadcastTagIfChanged` already does, and
+>    what the identity-resolution doc describes as the model. Global-only would
+>    actively break the operator's requirement that a deliberate per-space name
+>    is what spacemates see: a member bootstrapping a fresh row would get the
+>    global name instead. `spaceProfilePayload.test.ts` pins both directions —
+>    a real override travels, an absent one is omitted rather than filled.
+> 2. **The gate is spaced in MINUTES, not the DM gate's 24h.** Same cap (3), very
+>    different spacing, because a space announce is a bootstrap rather than a
+>    repair mechanism — the member digest exchange repairs rows that exist, so
+>    all this has to do is reach members who have no row at all, and it should
+>    finish inside a session rather than over three days. The 5-minute floor
+>    exists only so a flapping socket cannot spend the whole allowance inside one
+>    outage.
+>
+> **Still open here:** Slice 0 (the hub-log replay question) and §10 (mobile's
+> gate, which has no expiry at all). Both live in `quorum-mobile`.
+>
+> **Not yet verified against the live diagnostic in §8** — the code is
+> unit-tested but the before/after count on a real space has not been run. That
+> is Step 4 of the cadence-research task.
+
 ### Slice 0 — Settle whether hub-log replay already rescues Cause B
 
 **User-visible outcome:** none; this is a 30-minute question whose answer decides
@@ -157,11 +192,11 @@ shape already exists — copy it from `rebroadcastTagIfChanged`
 the per-space OVERRIDE fields; that would re-introduce the roster-stamping
 problem the follow-global work removed (see the identity-resolution doc).
 
-- [ ] Add the broadcast alongside the existing on-connect space loop in
-      `MessageDB.tsx` (the one already doing `requestSync` + `announceDeviceKeys`)
-- [ ] Global slot only — no override fields
-- [ ] Verify against the live diagnostic in §8
-- [ ] `npx tsc --noEmit --jsx react-jsx --skipLibCheck` + `yarn lint` clean
+- [x] Add the broadcast alongside the existing on-connect space loop in
+      `MessageDB.tsx` — plus `setResubscribe`, each with its own cleared timer
+- [x] ~~Global slot only~~ → override-or-omit **and** global slot; see the box above
+- [ ] Verify against the live diagnostic in §8 — NOT DONE, needs a real space
+- [x] `npx tsc --noEmit --jsx react-jsx --skipLibCheck` + `yarn lint` clean
 
 ### Slice 2 — Gate it, and give the gate an expiry
 
@@ -172,17 +207,18 @@ Reuse the DM design (`src/utils/dmProfileGate.ts`) rather than inventing one —
 per-(self, space) signature, persisted, skip an unchanged payload, **with an
 expiry** so a lost broadcast cannot break convergence permanently.
 
-- [ ] Extract/generalise the DM gate rather than copy-pasting it
-- [ ] Claim in-flight synchronously (see §6 trap 3)
-- [ ] Unit tests mirroring `src/dev/tests/utils/dmProfileGate.test.ts`
+- [x] Extracted to `src/utils/profileSendGate.ts`; `dmProfileGate` now sits on
+      it (its 29 tests pass unchanged) and `spaceProfileGate` is the second caller
+- [x] Claim in-flight synchronously (see §6 trap 3)
+- [x] `spaceProfileGate.test.ts` (23) + `spaceProfilePayload.test.ts` (18)
 
 ### Slice 3 — Fix the mislabelled doc
 
 **User-visible outcome:** the next person doesn't lose an hour to it.
 
-- [ ] Correct the "On-connect rebroadcast" row in
-      `.agents/docs/features/identity-resolution-and-profile-sync.md` §"File map"
-- [ ] Note that the space announce is now genuinely on-connect once Slice 1 lands
+- [x] Corrected the "On-connect rebroadcast" row — it is now two rows, one for
+      tag rotation and one for the real on-connect announce
+- [x] Noted, with the bootstrap-not-cadence distinction spelled out
 
 ## §6. The three traps — all three cost a cycle on the DM side
 
