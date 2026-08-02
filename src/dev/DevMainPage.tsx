@@ -60,6 +60,13 @@ export const DevMainPage: React.FC = () => {
         'Numbered-burst sequence scan, receive-path warning counters, and ghost-conversation detection for the DM-loss investigation',
       path: '/dev/dm-doctor',
     },
+    {
+      name: 'Identity Coverage',
+      icon: 'id-badge',
+      description:
+        'How many space members and DM partners carry no identity from any source, and therefore render as a truncated address. Take one snapshot before a change and one after',
+      path: '/dev/identity-coverage',
+    },
   ];
 
   const handleNavigate = (path: string) => {

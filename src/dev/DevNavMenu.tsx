@@ -53,6 +53,11 @@ const devNavItems: DevNavItem[] = [
     icon: 'bug',
     path: '/dev/dm-doctor',
   },
+  {
+    name: 'Identity Coverage',
+    icon: 'id-badge',
+    path: '/dev/identity-coverage',
+  },
 ];
 
 interface DevNavMenuProps {
