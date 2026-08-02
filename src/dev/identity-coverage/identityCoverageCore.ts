@@ -77,6 +77,14 @@ export interface IdentityMessageRow {
 /** Minimal shape of a `spaces` row, for naming the per-space breakdown. */
 export interface IdentitySpaceRow {
   spaceId: string;
+  /**
+   * The shared `Space` type calls this `spaceName`, and that is what desktop
+   * actually persists. `name` is kept as a fallback only because reading the
+   * wrong one of the two is exactly how every space in the first real snapshot
+   * came back as "(unnamed)" — a report you cannot act on, because you cannot
+   * tell which space the bad numbers belong to.
+   */
+  spaceName?: string;
   name?: string;
 }
 
@@ -297,7 +305,7 @@ export function computeSpaceCoverage(
 
   return {
     spaceId: space.spaceId,
-    spaceName: space.name?.trim() || '(unnamed)',
+    spaceName: space.spaceName?.trim() || space.name?.trim() || '(unnamed)',
     distinctSenders: senderCounts.size,
     sendersWithNoRow,
     selfMissingRow: missingSenders.some((s) => s.isSelf),
