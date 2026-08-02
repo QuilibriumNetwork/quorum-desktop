@@ -17,6 +17,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { type Message, type UserRegistration } from '@quilibrium/quorum-shared';
 import type { MessageDB } from '../../../db/messages';
 import type { EncryptedMessage } from '../../../db/messages';
+import { sha256, base58btc } from '../../../utils/crypto';
 import { makeMessageDB } from './storage';
 import { makeApiClient, WsTransport } from './transport';
 import { createSpaceGraph, type SpaceGraph } from './spaceDeps';
@@ -75,6 +76,29 @@ export interface HarnessSpaceBot {
   requestSync(spaceId: string): Promise<boolean>;
   /** Member rows currently on disk for a space. */
   members(spaceId: string): Promise<number>;
+  /**
+   * Add `count` synthetic member rows to this bot's roster for a space.
+   *
+   * ⚠️ READ BEFORE USING — this is a deliberate, load-bearing shortcut and it
+   * bounds what the resulting measurement means.
+   *
+   * The reported roster failure happens at ~79 members. Reaching that with real
+   * clients would cost 79 account registrations and 79 real joins PER
+   * ITERATION, which makes a rate measurement unaffordable. It is unnecessary
+   * because the responder builds its delta from its OWN stored rows and nothing
+   * else: `getPayloadCache` fills `memberMap` from
+   * `storage.getSpaceMembers(spaceId)` (`quorum-shared/src/sync/service.ts:141`),
+   * and the receiver's apply path validates nothing against the manifest or any
+   * registration — it skips rows with no address and writes the rest
+   * (`MessageService.ts:6010-6052`). So seeded rows travel the identical code
+   * path real ones do.
+   *
+   * What this therefore measures: **whether a roster of size N is delivered.**
+   * What it does NOT measure: the behaviour of N live clients — their traffic,
+   * their own sync requests, or peer selection among many candidates. Those are
+   * separate variables and must not be claimed from this.
+   */
+  seedMembers(spaceId: string, count: number): Promise<number>;
   /** Wait until everything enqueued so far has been handed to the socket. */
   flush(timeoutMs?: number): Promise<boolean>;
   /** Fetch + delete queued frames on the device inbox. */
@@ -237,6 +261,41 @@ export async function createSpaceBot(
 
     members: async (spaceId: string) =>
       (await messageDB.getSpaceMembers(spaceId)).length,
+
+    seedMembers: async (spaceId: string, count: number) => {
+      for (let i = 0; i < count; i++) {
+        // Real-shaped addresses (base58btc of a sha256), derived deterministically
+        // from the space + index so two runs at the same size are comparable.
+        const digest = await sha256.digest(
+          Buffer.from(`${spaceId}:seed:${i}`, 'utf-8')
+        );
+        const address = base58btc.baseEncode(digest.bytes);
+        const inboxDigest = await sha256.digest(
+          Buffer.from(`${spaceId}:seed-inbox:${i}`, 'utf-8')
+        );
+        await messageDB.saveSpaceMember(spaceId, {
+          user_address: address,
+          inbox_address: base58btc.baseEncode(inboxDigest.bytes),
+          // A populated GLOBAL slot, because that is what the follow-global work
+          // left real rows carrying — seeding the override slot instead would
+          // exercise a shape production stopped producing in 2026-07.
+          global_display_name: `Seeded Member ${i}`,
+          globalProfileTimestamp: Date.now(),
+          joinedAt: Date.now(),
+        } as Parameters<MessageDB['saveSpaceMember']>[1]);
+      }
+      // The responder caches its payload view; without this the seeded rows are
+      // invisible until something else invalidates it, and the sweep would
+      // silently measure N=1 at every size.
+      (
+        graph.syncService as unknown as {
+          sharedSyncService: {
+            invalidateCache: (s: string, c?: string) => void;
+          };
+        }
+      ).sharedSyncService.invalidateCache(spaceId);
+      return (await messageDB.getSpaceMembers(spaceId)).length;
+    },
 
     flush: (timeoutMs?: number) => graph.outbound.flush(timeoutMs),
 
