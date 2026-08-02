@@ -223,6 +223,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM unread dot never clears](tasks/2026-08-01-dm-unread-dot-stale-previews-snapshot.md) — the DM list renders a frozen snapshot of the conversation rows; read state never reaches it
 - [DM partner identity never recovers on an established session](tasks/2026-08-01-dm-partner-identity-lost-on-established-sessions.md) — desktop decrypts the sender's name/avatar on every DM frame and throws it away; mobile already applies it
 - [Spaces: desktop never re-announces identity on connect](tasks/2026-08-01-space-member-identity-announce-on-connect.md) — the space twin of the DM identity fix; mobile's announce gate never expires, which is a second, independent cause
+- [Promote the identity-announce gate to shared](tasks/2026-08-02-promote-identity-announce-gate-to-shared.md) — PARKED on purpose: the retry half may be temporary, so promoting it could buy the coupling cost twice. §1 has the trigger that unparks it
 - [Research: a better identity-announce cadence](tasks/2026-08-01-identity-announce-cadence-research.md) — the 24h re-announce is a placeholder that scales with the user base, not with the problem
 
 ### .Archived
