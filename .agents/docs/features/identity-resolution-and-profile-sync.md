@@ -210,6 +210,36 @@ misread: an announce reaches only whoever is listening at that instant, whereas
 one pull can repair an entire roster. The push exists to cover the one case the
 pull cannot — a member nobody has ever heard of, so there is no row to compare.
 
+### What "P2P" actually means here (and why the two apps differ so much)
+
+There is no server that stores "who is in this space and what are they called"
+and hands it out. Identity spreads **between clients**. So the only question that
+matters for any given client is: **does it ASK, and does it ANSWER?**
+
+| | Announces about itself | **Asks** others for the roster | **Answers** someone else's request |
+|---|---|---|---|
+| **Desktop** | ✅ on join, on connect, on profile change | ✅ `requestSync` on join and on every launch | ✅ replies with `MemberDelta` — rows for **everyone it knows**, not just itself |
+| **Mobile** | ✅ on connect and on profile change | ❌ never | ❌ never — `sync-request` is in the removed-handlers list (`WebSocketContext.tsx:1297-1303`) |
+
+Read the third column twice. It is the one people miss, and it has a consequence
+that is not obvious:
+
+> **A desktop client that joins a mostly-mobile space gets nothing, no matter how
+> many people are online.** It sends its `requestSync` and nobody can reply,
+> because no mobile client implements the responder. Being online is necessary
+> but not sufficient — there has to be a **desktop** peer online.
+
+So the picture is not "a P2P network with two kinds of node". It is a **P2P
+network made of desktop clients, with mobile clients attached as leaves**. A
+mobile client can be *told* about somebody (it receives announcements and stores
+them correctly — its receive side is not the problem), but it will never *ask*,
+and it can never *tell you about a third person*. Its knowledge only flows
+outward about itself.
+
+That single asymmetry explains why mobile shows the most missing names despite
+having the better message transport, and why "mobile has the hub log, so mobile
+is fine" is wrong.
+
 ### Why it was broken for so long
 
 The pull existed all along and **never worked**. `computeMemberHash` built its
