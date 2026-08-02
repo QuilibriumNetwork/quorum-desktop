@@ -122,6 +122,7 @@ export function makeDeps(input: DepsInput) {
     synchronizeAll: noop('synchronizeAll'),
     informSyncData: noop('informSyncData'),
     initiateSync: noop('initiateSync'),
+    requestSync: noop('requestSync'),
     directSync: noop('directSync'),
     saveConfig: noop('saveConfig'),
     sendHubMessage: (async () => '' ) as unknown as (spaceId: string, message: string) => Promise<string>,

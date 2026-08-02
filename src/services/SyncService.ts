@@ -457,8 +457,18 @@ export class SyncService {
   /**
    * Broadcasts sync request to all members via hub (30s expiry, schedules initiateSync).
    * Uses SharedSyncService for O(1) cached payload generation.
+   *
+   * @returns whether the request was built and QUEUED — not whether it was
+   * delivered. `enqueueOutbound` is deliberately not awaited, so `true` means
+   * "nothing threw while assembling and scheduling it" and nothing more.
+   *
+   * ⚠️ Errors are still swallowed here rather than thrown, because most callers
+   * fire this on connect and have no useful recovery. The boolean exists for
+   * the one caller that does: the roster convergence check spends from a budget
+   * of two attempts per space, and charging one for a request that never got
+   * built would silently halve it. Do NOT go back to returning `void`.
    */
-  async requestSync(spaceId: string): Promise<void> {
+  async requestSync(spaceId: string): Promise<boolean> {
     logger.log(`[SyncService] requestSync called for space ${spaceId}`);
     showSyncToast(t`Syncing...`);
     try {
@@ -519,8 +529,10 @@ export class SyncService {
         logger.log(`[SyncService] requestSync: Sending sync-request for space ${spaceId}`);
         return [JSON.stringify({ type: 'group', ...envelope })];
       });
+      return true;
     } catch (error) {
       logger.error(`[SyncService] requestSync failed for space ${spaceId}:`, error);
+      return false;
     }
   }
 

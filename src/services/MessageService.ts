@@ -105,6 +105,7 @@ import {
   type SpaceProfileWireFields,
 } from '../utils/spaceProfilePayload';
 import { preferIncomingProfileField } from '../utils/conversationProfile';
+import { createRosterConvergenceTracker } from '../utils/rosterConvergence';
 import { UndecryptableFrameTracker, frameKey } from '../utils/frameRetry';
 import { ThreadService } from './ThreadService';
 import type { Ref } from '../types/ref';
@@ -193,6 +194,17 @@ export interface MessageServiceDependencies {
     theirSummary?: any // New protocol: SyncSummary
   ) => Promise<void>;
   initiateSync: (spaceId: string) => Promise<void>;
+  /**
+   * Re-broadcast a `sync-request` for a space.
+   *
+   * Needed here — not just at connect — because the roster half of a sync is a
+   * single payload with no retry, so a lost frame has to be noticed and asked
+   * for again. See `scheduleRosterConvergenceCheck`.
+   *
+   * Resolves to whether the request was built and queued, so a re-ask that
+   * never left the process is not charged against the retry budget.
+   */
+  requestSync: (spaceId: string) => Promise<boolean>;
   directSync: (spaceId: string, message: any) => Promise<void>;
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   sendHubMessage: (spaceId: string, message: string) => Promise<string>;
@@ -330,6 +342,7 @@ export class MessageService {
     theirSummary?: any
   ) => Promise<void>;
   private initiateSync: (spaceId: string) => Promise<void>;
+  private requestSync: (spaceId: string) => Promise<boolean>;
   private directSync: (spaceId: string, message: any) => Promise<void>;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
@@ -337,6 +350,17 @@ export class MessageService {
   private handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 
   private threadService: ThreadService;
+
+  // Did the roster pull actually deliver? The member half of a sync is one
+  // payload with no retry, so a lost frame silently costs the entire roster.
+  // Peers advertise `memberCount` on `sync-info`; this compares that against
+  // what we hold and asks again when we are obviously short.
+  private rosterConvergence = createRosterConvergenceTracker();
+
+  // One pending convergence check per space. Several peers answer a single
+  // request, so without this every `sync-info` would arm its own timer and the
+  // same check would run N times for one exchange.
+  private rosterConvergenceTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
   // Per-sender rate limiters (receiving-side defense-in-depth)
   private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
@@ -489,6 +513,7 @@ export class MessageService {
     this.synchronizeAll = dependencies.synchronizeAll;
     this.informSyncData = dependencies.informSyncData;
     this.initiateSync = dependencies.initiateSync;
+    this.requestSync = dependencies.requestSync;
     this.directSync = dependencies.directSync;
     this.saveConfig = dependencies.saveConfig;
     this.sendHubMessage = dependencies.sendHubMessage;
@@ -1218,6 +1243,99 @@ export class MessageService {
         });
       }
     }
+  }
+
+  /**
+   * How long to wait after a peer's `sync-info` before checking whether the
+   * roster it advertised actually arrived.
+   *
+   * Long enough for the whole exchange — `sync-initiate`, `sync-manifest`, then
+   * the delta payloads, the member half of which is sent LAST — to complete on
+   * a slow link. Too short and every healthy sync would trigger a pointless
+   * second request; too long and the user is reading truncated addresses in the
+   * meantime.
+   */
+  private static readonly ROSTER_CONVERGENCE_CHECK_DELAY_MS = 20_000;
+
+  /**
+   * Arm a one-shot check that the roster pull actually converged.
+   *
+   * Debounced per space: several peers answer one `sync-request`, and each of
+   * their `sync-info` responses lands here. The LAST one wins, which is what we
+   * want — it pushes the check out until the answers have stopped arriving.
+   *
+   * Deliberately fire-and-forget and deliberately silent on failure. This is a
+   * best-effort repair for a roster that is already incomplete; if it cannot
+   * run, the user is no worse off than before it existed, and throwing out of a
+   * timer would take down nothing useful.
+   */
+  /**
+   * Drop everything the convergence check holds for a space.
+   *
+   * ⚠️ Call this whenever a space stops being ours. A timer armed seconds
+   * before a kick would otherwise still fire, read members for a space that has
+   * just been deleted, and broadcast a `sync-request` into a space we are no
+   * longer a member of.
+   */
+  forgetRosterConvergence(spaceId: string): void {
+    const timer = this.rosterConvergenceTimers.get(spaceId);
+    if (timer) clearTimeout(timer);
+    this.rosterConvergenceTimers.delete(spaceId);
+    this.rosterConvergence.forget(spaceId);
+  }
+
+  private scheduleRosterConvergenceCheck(spaceId: string): void {
+    const existing = this.rosterConvergenceTimers.get(spaceId);
+    if (existing) clearTimeout(existing);
+
+    this.rosterConvergenceTimers.set(
+      spaceId,
+      setTimeout(async () => {
+        this.rosterConvergenceTimers.delete(spaceId);
+        try {
+          const members = await this.messageDB.getSpaceMembers(spaceId);
+          const localCount = members?.length ?? 0;
+          const decision = this.rosterConvergence.shouldReAsk(spaceId, localCount);
+
+          if (!decision.ask) {
+            // Logged on the NEGATIVE branch too. "We know you are 70 rows short
+            // and we are out of attempts" is the most actionable state this
+            // code can be in, and the first version of it printed nothing.
+            logger.log(
+              `[MessageService] roster check for ${spaceId.substring(0, 12)}: ` +
+                `not asking (${decision.reason}) — have ${localCount}` +
+                (decision.target !== undefined ? `, best offer ${decision.target}` : '')
+            );
+            return;
+          }
+
+          logger.log(
+            `[MessageService] roster did not converge for ${spaceId.substring(0, 12)}: ` +
+              `have ${localCount}, best peer advertised ${decision.target} ` +
+              `(short by ${decision.shortfall}) — asking again`
+          );
+          // Charge the attempt ONLY if the request was actually built and
+          // queued. The allowance is two; spending one on a request that threw
+          // inside `requestSync` would silently halve it, and since `logger` is
+          // a no-op in production nobody would ever see why the roster stopped
+          // repairing itself.
+          const sent = await this.requestSync(spaceId);
+          if (sent) {
+            this.rosterConvergence.noteReAsk(spaceId);
+          } else {
+            logger.error(
+              `[MessageService] roster re-ask for ${spaceId.substring(0, 12)} was not sent; ` +
+                `attempt not charged`
+            );
+          }
+        } catch (error) {
+          logger.error(
+            `[MessageService] roster convergence check failed for ${spaceId.substring(0, 12)}:`,
+            error
+          );
+        }
+      }, MessageService.ROSTER_CONVERGENCE_CHECK_DELAY_MS)
+    );
   }
 
   /**
@@ -5375,6 +5493,11 @@ export class MessageService {
                     () => userConfig
                   );
                   await this.messageDB.deleteSpace(spaceId);
+                  // The space is gone from under us. Any armed convergence
+                  // timer would fire ~20s from now against a deleted space and
+                  // broadcast a sync-request into a space we were just removed
+                  // from.
+                  this.forgetRosterConvergence(spaceId);
                   return;
                 }
                 // If someone else was kicked, mark them inactive locally
@@ -5455,6 +5578,16 @@ export class MessageService {
               ) {
                 logger.log(`[MessageService] sync-info: Adding candidate and scheduling sync`);
                 this.syncInfo.current[spaceId].candidates.push(envelope.message);
+                // Remember what this peer says it holds, and arm a check that
+                // we actually received it. The member half of a delta is ONE
+                // payload with no retry, so losing that frame loses the whole
+                // roster silently — measured 2026-08-02, where the same join
+                // delivered 0 rows on one run and 71 on the next.
+                this.rosterConvergence.noteAdvertisedRoster(
+                  spaceId,
+                  envelope.message.memberCount ?? envelope.message.summary?.memberCount
+                );
+                this.scheduleRosterConvergenceCheck(spaceId);
                 // reset the timeout to be 1s to more aggressively grab viable candidates for sync instead of waiting the full 30s
                 clearTimeout(this.syncInfo.current[spaceId].invokable);
                 this.syncInfo.current[spaceId].invokable =

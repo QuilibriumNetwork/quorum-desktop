@@ -110,6 +110,7 @@ describe('MessageService - Unit Tests', () => {
       synchronizeAll: vi.fn().mockResolvedValue(undefined),
       informSyncData: vi.fn().mockResolvedValue(undefined),
       initiateSync: vi.fn().mockResolvedValue(undefined),
+      requestSync: vi.fn().mockResolvedValue(undefined),
       directSync: vi.fn().mockResolvedValue(undefined),
       saveConfig: vi.fn().mockResolvedValue(undefined),
       sendHubMessage: vi.fn().mockResolvedValue('message-id'),
