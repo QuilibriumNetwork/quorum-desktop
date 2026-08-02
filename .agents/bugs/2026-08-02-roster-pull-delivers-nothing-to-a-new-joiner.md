@@ -1,8 +1,8 @@
 ---
 type: bug
-title: "A new joiner receives ZERO member rows from the roster pull, even with a fully-populated desktop peer online"
-status: CONFIRMED 2026-08-02. Handshake proven to COMPLETE; break isolated to delta-delivery-or-apply. See §3b
-priority: HIGH — this is the mechanism the whole identity effort assumed was working
+title: "The roster pull works, but it is unreliable and it picks its peer badly (originally filed as 'delivers nothing')"
+status: ⚠️ ORIGINAL HEADLINE DISPROVEN 2026-08-02 — the pull works (1 → 72 rows). Two smaller defects remain open; see §0
+priority: medium — downgraded from HIGH once the mechanism was shown to work
 created: 2026-08-02
 updated: 2026-08-02
 severity: a new member of a space sees every existing member as a truncated address, indefinitely
@@ -18,7 +18,60 @@ related_tasks:
   - ".agents/tasks/port-from-mobile/candidates.md (#32 — assumes this works)"
 ---
 
-# The roster pull delivers nothing to a new joiner
+# The roster pull: what it actually does
+
+## §0. ⚠️ READ FIRST — the original conclusion was WRONG
+
+This file was opened after a two-client test where a new joiner received zero
+member rows. **That conclusion did not survive instrumentation.** Everything from
+§1 down is the investigation as it happened, kept because the ruled-out list is
+still valuable; but the headline was wrong and the priority is downgraded.
+
+**With logging added, the same test succeeded outright:**
+
+```
+A:  member delta: ours=79 theirs=1 missing=78 outdated=0 resolved=78 (cache.memberMap=79)
+B:  sync-delta: memberDelta=71 members → saved 71 member row(s) for QmZM3AKwKfMp
+```
+
+B's snapshot afterwards: **72 member rows** for that space, up from 1, read
+straight from IndexedDB — so it persisted. The mechanism works end to end.
+
+### What remains genuinely open
+
+**1. It is unreliable.** The first run delivered nothing at all, with the same
+two clients and the same code. The member half is a SINGLE payload (message
+chunks go first, members ride one final payload — `service.ts:698-755`), so
+losing it loses the entire roster exchange with no partial result and no retry
+until the next connect. Desktop does not consume the send-retention fix that
+shipped in shared `2.1.0-39` (transport item B1), which makes whole-payload loss
+the leading explanation. **Nothing about this is specific to identity** — it is
+the documented transport problem, surfacing somewhere expensive.
+
+**2. Peer selection ignores roster completeness.** B was offered, in the same
+window, peers advertising **90**, **79** and **72** members
+(`sync-info payload: {memberCount: …}`). It synced with the **72** one. The
+arithmetic is exact: 72 − 1 (B's own row, which that peer also holds) = the 71
+received. So B ended 7 rows short of A and 18 short of the best peer on offer.
+
+The cause is in the candidate handling (`MessageService.ts:5451-5466`): every
+sync-info is pushed into `candidates` if it has `messageCount || summary` —
+**`memberCount` is never consulted**, and `initiateSync` then picks one. The
+selection is message-centric, so the roster is whatever the message-optimal peer
+happens to have. Cheapest fix: weigh `memberCount` when choosing, or sync members
+from the best member peer independently of the message peer.
+
+### What this changes elsewhere
+
+- The identity doc's claim that "one informed peer can populate a whole roster"
+  is **correct in principle and verified in practice** — with the caveat that the
+  peer is not chosen for that, and the exchange can silently deliver nothing.
+- Candidate #32's removal list is back to deleting something that **works**. That
+  is the harder version of the decision, not the easier one.
+- The instrumentation that settled this is on `debug/log-sync-member-delta-counts`
+  in both repos. It should ship: this was undiagnosable without it, and `logger`
+  is a no-op in production so it costs nothing.
+
 
 ## §1. The measurement (both clients, `/dev/identity-coverage`)
 
