@@ -35,7 +35,12 @@ B:  sync-delta: memberDelta=71 members → saved 71 member row(s) for QmZM3AKwKf
 ```
 
 B's snapshot afterwards: **72 member rows** for that space, up from 1, read
-straight from IndexedDB — so it persisted. **And the member list UI then showed
+straight from IndexedDB — so it persisted.
+
+For contrast, an ESTABLISHED client (user A) measured before and after showed
+**47 → 47**. That is correct, not a failure: A already held 79 rows for that
+space, more than the 72 the peer that synced with it had, so there was nothing to
+receive. See NEXT STEP C. **And the member list UI then showed
 them all**, confirmed visually, so this is verified at the level that actually
 matters to a user, not just in storage.
 
@@ -84,6 +89,43 @@ sync-info is pushed into `candidates` if it has `messageCount || summary` —
 selection is message-centric, so the roster is whatever the message-optimal peer
 happens to have. Cheapest fix: weigh `memberCount` when choosing, or sync members
 from the best member peer independently of the message peer.
+
+### 🎯 NEXT STEPS — both are small, self-contained, and need nobody's permission
+
+**A. Weigh roster completeness when choosing a sync peer.** *(do this first — it
+is contained and testable)*
+
+- Where: `MessageService.ts` ~5451-5466 admits a candidate on
+  `messageCount || summary`; `memberCount` is on the payload and never read.
+  `initiateSync(spaceId)` then picks from `candidates`.
+- Evidence: B was offered **90**, **79** and **72** members in one window and
+  synced with the **72**. Arithmetic confirms it: 72 − 1 (B's own row) = the 71
+  received.
+- Options, cheapest first: (1) prefer the candidate with the highest
+  `memberCount` when message counts are comparable; (2) score on both; (3) sync
+  members from the best member peer independently of the message peer.
+- Verify with the two-client join and `/dev/identity-coverage` — the joiner
+  should land on the BEST peer's count, not an arbitrary one.
+
+**B. Make the member half survive a lost frame.** *(needs a judgement call)*
+
+- The member delta is ONE payload (`service.ts:698-755`, message chunks first,
+  members in a single final payload). Lose it and the entire roster exchange is
+  lost, with no partial result and no retry until the next connect.
+- This is not identity-specific — it is the documented transport gap surfacing
+  somewhere expensive. Desktop does not consume the send-retention fix that
+  shipped in shared `2.1.0-39` (**transport item B1**). Read
+  `.agents/tasks/transport/README.md` before designing anything here: the right
+  fix may be B1 rather than anything in the sync layer.
+- Cheapest local mitigation if B1 stays out of reach: chunk the member delta, or
+  re-request on the next connect when the roster is still materially smaller than
+  the peer's advertised `memberCount` (which is already on the wire).
+
+**C. Not fixable here — a member nobody holds.** User A has **41 senders no
+active peer appears to hold**, one with 202 messages. No amount of pulling
+recovers them; the person has to re-announce. Tracked by the announce work
+(desktop #291 shipped, mobile #215 awaiting release). **Do not chase these under
+this bug.**
 
 ### What this changes elsewhere
 
