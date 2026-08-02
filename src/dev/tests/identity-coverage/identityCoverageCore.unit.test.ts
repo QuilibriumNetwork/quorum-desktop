@@ -448,3 +448,57 @@ describe('delta and report', () => {
     expect(report).not.toContain('## Delta');
   });
 });
+
+// The first real snapshot (2026-08-02) reported every space as "(unnamed)",
+// because the tool read `space.name` while the shared `Space` type — and what
+// desktop persists — calls it `spaceName`. A report you cannot attribute to a
+// space is a report you cannot act on, so this is pinned in both directions.
+describe('space naming', () => {
+  it('reads the spaceName field the app actually writes', () => {
+    const result = buildIdentityCoverageSnapshot({
+      spaces: [{ spaceId: 's1', spaceName: 'Quorum Test 2' }],
+      members: [],
+      messages: [],
+      conversations: [],
+      ownAddress: 'QmSelf',
+      takenAt: '2026-08-02T00:00:00.000Z',
+    });
+    expect(result.spaces[0].spaceName).toBe('Quorum Test 2');
+  });
+
+  it('still falls back to a legacy `name` field', () => {
+    const result = buildIdentityCoverageSnapshot({
+      spaces: [{ spaceId: 's1', name: 'Legacy Space' }],
+      members: [],
+      messages: [],
+      conversations: [],
+      ownAddress: 'QmSelf',
+      takenAt: '2026-08-02T00:00:00.000Z',
+    });
+    expect(result.spaces[0].spaceName).toBe('Legacy Space');
+  });
+
+  it('prefers spaceName when a row somehow carries both', () => {
+    const result = buildIdentityCoverageSnapshot({
+      spaces: [{ spaceId: 's1', spaceName: 'Current', name: 'Stale' }],
+      members: [],
+      messages: [],
+      conversations: [],
+      ownAddress: 'QmSelf',
+      takenAt: '2026-08-02T00:00:00.000Z',
+    });
+    expect(result.spaces[0].spaceName).toBe('Current');
+  });
+
+  it('says (unnamed) rather than throwing when neither is present', () => {
+    const result = buildIdentityCoverageSnapshot({
+      spaces: [{ spaceId: 's1' }],
+      members: [],
+      messages: [],
+      conversations: [],
+      ownAddress: 'QmSelf',
+      takenAt: '2026-08-02T00:00:00.000Z',
+    });
+    expect(result.spaces[0].spaceName).toBe('(unnamed)');
+  });
+});
