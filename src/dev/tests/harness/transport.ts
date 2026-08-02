@@ -81,10 +81,16 @@ export const deleteFault = {
 type DeleteInbox = QuorumApiClient['deleteInbox'];
 
 export function makeApiClient(): QuorumApiClient {
-  const client = new QuorumApiClient({ baseUrl: config.apiUrl, wsUrl: config.wsUrl });
+  const client = new QuorumApiClient({
+    baseUrl: config.apiUrl,
+    wsUrl: config.wsUrl,
+  });
   if (deleteFault.delayMs > 0) {
     const original = client.deleteInbox.bind(client) as DeleteInbox;
-    const every = Math.max(1, Math.round(1 / Math.min(1, Math.max(0.0001, deleteFault.rate))));
+    const every = Math.max(
+      1,
+      Math.round(1 / Math.min(1, Math.max(0.0001, deleteFault.rate)))
+    );
     (client as unknown as { deleteInbox: DeleteInbox }).deleteInbox = ((
       ...args: Parameters<DeleteInbox>
     ) => {
@@ -95,7 +101,9 @@ export function makeApiClient(): QuorumApiClient {
       // which is the thing under test; doing it here also keeps the stall exactly
       // as long as configured instead of at the mercy of the client's own
       // timeout/retry arithmetic, so the expected histogram bucket is predictable.
-      return new Promise((r) => setTimeout(r, deleteFault.delayMs)).then(() => original(...args));
+      return new Promise((r) => setTimeout(r, deleteFault.delayMs)).then(() =>
+        original(...args)
+      );
     }) as DeleteInbox;
   }
   return client;
@@ -129,7 +137,10 @@ export class WsTransport {
   /** Inbound dispatch is serialized — see dispatch(). */
   private chain: Promise<void> = Promise.resolve();
   /** Handler invocations started but not yet settled — see stuckFrames(). */
-  private inFlightFrames = new Map<number, { fp: string; inbox: string; at: number }>();
+  private inFlightFrames = new Map<
+    number,
+    { fp: string; inbox: string; at: number }
+  >();
   private dispatchSeq = 0;
 
   constructor(private readonly wsUrl: string = config.wsUrl) {}
@@ -140,7 +151,9 @@ export class WsTransport {
 
   /** Stable id for a frame, so redelivered copies are recognised. */
   static fingerprint(frame: InboundFrame): string {
-    return fnv1a(String((frame as { encryptedContent?: string }).encryptedContent ?? ''));
+    return fnv1a(
+      String((frame as { encryptedContent?: string }).encryptedContent ?? '')
+    );
   }
 
   /**
@@ -155,7 +168,10 @@ export class WsTransport {
       const s =
         typeof rawOrFrame === 'string'
           ? rawOrFrame
-          : String((rawOrFrame as { encryptedContent?: string }).encryptedContent ?? '');
+          : String(
+              (rawOrFrame as { encryptedContent?: string }).encryptedContent ??
+                ''
+            );
       obj = JSON.parse(s) as Record<string, unknown>;
     } catch {
       return undefined;
@@ -165,7 +181,10 @@ export class WsTransport {
       obj && typeof obj.envelope === 'string'
         ? obj
         : (obj?.message as Record<string, unknown> | undefined);
-    const env = sealed && typeof sealed.envelope === 'string' ? sealed.envelope : undefined;
+    const env =
+      sealed && typeof sealed.envelope === 'string'
+        ? sealed.envelope
+        : undefined;
     return env ? fnv1a(env) : undefined;
   }
 
@@ -311,7 +330,8 @@ export class WsTransport {
         });
 
         ws.on('error', (err: Error) => {
-          if (!this.connected) reject(new Error(`WS connect failed: ${err.message}`));
+          if (!this.connected)
+            reject(new Error(`WS connect failed: ${err.message}`));
         });
       };
       open();
@@ -320,27 +340,52 @@ export class WsTransport {
 
   /** Subscribe to inbox addresses. Remembered and re-sent on reconnect. */
   listen(inboxAddresses: string[]): void {
-    this.subscriptions = Array.from(new Set([...this.subscriptions, ...inboxAddresses]));
+    this.subscriptions = Array.from(
+      new Set([...this.subscriptions, ...inboxAddresses])
+    );
     if (this.connected) this.sendListen(this.subscriptions);
   }
 
   private sendListen(inboxAddresses: string[]): void {
-    this.ws?.send(JSON.stringify({ type: 'listen', inbox_addresses: inboxAddresses }));
+    this.ws?.send(
+      JSON.stringify({ type: 'listen', inbox_addresses: inboxAddresses })
+    );
   }
 
   /** Raw send — pushes an outbound sealed frame, and records it for loss counting. */
   send(raw: string): void {
     let target: string | undefined;
     try {
-      const o = JSON.parse(raw) as { inbox_address?: string; message?: { inbox_address?: string } };
+      const o = JSON.parse(raw) as {
+        inbox_address?: string;
+        message?: { inbox_address?: string };
+      };
       target = o.inbox_address ?? o.message?.inbox_address;
-    } catch { /* not JSON — still counted */ }
-    this.sent.push({ t: Date.now(), fp: WsTransport.ciphertextFp(raw), target });
+    } catch {
+      /* not JSON — still counted */
+    }
+    this.sent.push({
+      t: Date.now(),
+      fp: WsTransport.ciphertextFp(raw),
+      target,
+    });
     this.ws?.send(raw);
   }
 
   close(): void {
     this.closed = true;
     this.ws?.close();
+  }
+
+  /**
+   * Undo `close()`'s latch so `connect()` works again.
+   *
+   * `close()` sets `closed = true` specifically to stop the 1s auto-reconnect in
+   * `ws.on('close')`, which is right for teardown and wrong for a scenario that
+   * deliberately takes a client offline and brings it back. Without this a
+   * reconnect silently produces a socket that is immediately abandoned.
+   */
+  reopen(): void {
+    this.closed = false;
   }
 }

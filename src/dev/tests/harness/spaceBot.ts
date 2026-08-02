@@ -17,6 +17,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { type Message, type UserRegistration } from '@quilibrium/quorum-shared';
 import type { MessageDB } from '../../../db/messages';
 import type { EncryptedMessage } from '../../../db/messages';
+import { sha256, base58btc } from '../../../utils/crypto';
 import { makeMessageDB } from './storage';
 import { makeApiClient, WsTransport } from './transport';
 import { createSpaceGraph, type SpaceGraph } from './spaceDeps';
@@ -71,10 +72,60 @@ export interface HarnessSpaceBot {
   join(inviteLink: string): Promise<{ spaceId: string; channelId: string }>;
   /** Post a text message to a channel via the real submitChannelMessage path. */
   post(spaceId: string, channelId: string, text: string): Promise<void>;
+  /**
+   * Post `count` messages, draining ONCE at the end rather than per message.
+   *
+   * Same real path as `post`; only the waiting differs. Used to build a relay
+   * backlog for an offline member, where the point is volume and per-message
+   * timing is not the measurement.
+   */
+  postMany(
+    spaceId: string,
+    channelId: string,
+    count: number,
+    prefix: string
+  ): Promise<void>;
+  /** Drop the socket without tearing the bot down — simulates going offline. */
+  disconnect(): void;
+  /** Reopen the socket and re-subscribe — simulates coming back. */
+  reconnect(): Promise<void>;
   /** Ask the space for a roster/message sync (the pull under investigation). */
   requestSync(spaceId: string): Promise<boolean>;
   /** Member rows currently on disk for a space. */
   members(spaceId: string): Promise<number>;
+  /**
+   * Sync-handshake log lines this bot emitted, in order.
+   *
+   * The real services log every step; this captures the ones the roster bugs
+   * argue about, so a failing trial can say WHICH step died instead of only
+   * that the roster is short.
+   */
+  syncTrace: string[];
+  /** Count trace lines containing `needle`. */
+  traceCount(needle: string): number;
+  /**
+   * Add `count` synthetic member rows to this bot's roster for a space.
+   *
+   * ⚠️ READ BEFORE USING — this is a deliberate, load-bearing shortcut and it
+   * bounds what the resulting measurement means.
+   *
+   * The reported roster failure happens at ~79 members. Reaching that with real
+   * clients would cost 79 account registrations and 79 real joins PER
+   * ITERATION, which makes a rate measurement unaffordable. It is unnecessary
+   * because the responder builds its delta from its OWN stored rows and nothing
+   * else: `getPayloadCache` fills `memberMap` from
+   * `storage.getSpaceMembers(spaceId)` (`quorum-shared/src/sync/service.ts:141`),
+   * and the receiver's apply path validates nothing against the manifest or any
+   * registration — it skips rows with no address and writes the rest
+   * (`MessageService.ts:6010-6052`). So seeded rows travel the identical code
+   * path real ones do.
+   *
+   * What this therefore measures: **whether a roster of size N is delivered.**
+   * What it does NOT measure: the behaviour of N live clients — their traffic,
+   * their own sync requests, or peer selection among many candidates. Those are
+   * separate variables and must not be claimed from this.
+   */
+  seedMembers(spaceId: string, count: number): Promise<number>;
   /** Wait until everything enqueued so far has been handed to the socket. */
   flush(timeoutMs?: number): Promise<boolean>;
   /** Fetch + delete queued frames on the device inbox. */
@@ -128,6 +179,37 @@ export async function createSpaceBot(
 
   /** Spaces this bot created or joined — needed to clear their timers at stop(). */
   const joinedSpaces = new Set<string>();
+
+  // ── Sync handshake trace ──────────────────────────────────────────────────
+  //
+  // The real services already log every step of the sync handshake. In a browser
+  // those lines are trapped behind DevTools and a human scrolling; in-process
+  // they are data, and they are the difference between "the roster did not
+  // arrive" and "the request was read 210s after it expired".
+  //
+  // Filtered at capture, because an unfiltered trace of a 1200-frame backlog is
+  // tens of thousands of lines. These are the steps the two roster bugs actually
+  // argue about — the chain in `2026-08-02-sync-requests-arrive-four-minutes-
+  // late…` §4, plus the member-delta counters shared #72 added.
+  const TRACE_PATTERNS = [
+    'requestSync',
+    'sync-request',
+    'sync-info',
+    'sync-initiate',
+    'sync-manifest',
+    'sync-delta',
+    'initiateSync',
+    'member delta',
+    'delta payload',
+    'informSyncData',
+  ];
+  const syncTrace: string[] = [];
+  const trace = (line: string) => {
+    if (TRACE_PATTERNS.some((p) => line.includes(p))) syncTrace.push(line);
+  };
+  /** Run a send-side operation with its log lines traced too, not just receives. */
+  const traced = <T>(fn: () => Promise<T>): Promise<T> =>
+    runAttributed({ record: () => {}, trace }, fn);
 
   /**
    * Fail loudly when the send pipeline did not drain.
@@ -204,10 +286,12 @@ export async function createSpaceBot(
       graph.invitationService.constructInviteLink(spaceId),
 
     join: async (link: string) => {
-      const result = await graph.invitationService.joinInviteLink(
-        link,
-        identity.keyset,
-        passkeyInfo
+      const result = await traced(() =>
+        graph.invitationService.joinInviteLink(
+          link,
+          identity.keyset,
+          passkeyInfo
+        )
       );
       if (!result)
         throw new Error('joinInviteLink returned nothing (unparseable link?)');
@@ -233,10 +317,83 @@ export async function createSpaceBot(
       await mustDrain(graph.outbound.flush(), 'post outbound');
     },
 
-    requestSync: (spaceId: string) => graph.syncService.requestSync(spaceId),
+    postMany: async (
+      spaceId: string,
+      channelId: string,
+      count: number,
+      prefix: string
+    ) => {
+      for (let i = 1; i <= count; i++) {
+        await graph.messageService.submitChannelMessage(
+          spaceId,
+          channelId,
+          `${prefix} ${i}/${count}`,
+          queryClient,
+          passkeyInfo
+        );
+      }
+      // One drain for the whole batch. Generous timeout: the ActionQueue
+      // encrypts and sends each message serially, so a large batch legitimately
+      // takes minutes, and a premature "wedged" throw here would be wrong.
+      await mustDrain(drainActionQueue(10 * 60_000), 'postMany action queue');
+      await mustDrain(graph.outbound.flush(10 * 60_000), 'postMany outbound');
+    },
+
+    disconnect: () => transport.close(),
+
+    reconnect: async () => {
+      transport.reopen();
+      await transport.connect();
+      // Force a re-listen: the subscription memo still holds the old key, and
+      // the relay only re-pushes a retained backlog in response to a `listen`.
+      subscribed = '';
+      await refreshSubscriptions();
+    },
+
+    requestSync: (spaceId: string) =>
+      traced(() => graph.syncService.requestSync(spaceId)),
 
     members: async (spaceId: string) =>
       (await messageDB.getSpaceMembers(spaceId)).length,
+
+    syncTrace,
+    traceCount: (needle: string) =>
+      syncTrace.filter((l) => l.includes(needle)).length,
+
+    seedMembers: async (spaceId: string, count: number) => {
+      for (let i = 0; i < count; i++) {
+        // Real-shaped addresses (base58btc of a sha256), derived deterministically
+        // from the space + index so two runs at the same size are comparable.
+        const digest = await sha256.digest(
+          Buffer.from(`${spaceId}:seed:${i}`, 'utf-8')
+        );
+        const address = base58btc.baseEncode(digest.bytes);
+        const inboxDigest = await sha256.digest(
+          Buffer.from(`${spaceId}:seed-inbox:${i}`, 'utf-8')
+        );
+        await messageDB.saveSpaceMember(spaceId, {
+          user_address: address,
+          inbox_address: base58btc.baseEncode(inboxDigest.bytes),
+          // A populated GLOBAL slot, because that is what the follow-global work
+          // left real rows carrying — seeding the override slot instead would
+          // exercise a shape production stopped producing in 2026-07.
+          global_display_name: `Seeded Member ${i}`,
+          globalProfileTimestamp: Date.now(),
+          joinedAt: Date.now(),
+        } as Parameters<MessageDB['saveSpaceMember']>[1]);
+      }
+      // The responder caches its payload view; without this the seeded rows are
+      // invisible until something else invalidates it, and the sweep would
+      // silently measure N=1 at every size.
+      (
+        graph.syncService as unknown as {
+          sharedSyncService: {
+            invalidateCache: (s: string, c?: string) => void;
+          };
+        }
+      ).sharedSyncService.invalidateCache(spaceId);
+      return (await messageDB.getSpaceMembers(spaceId)).length;
+    },
 
     flush: (timeoutMs?: number) => graph.outbound.flush(timeoutMs),
 
@@ -331,6 +488,7 @@ export async function createSpaceBot(
       record: (m: string) => {
         loggedFailure ??= m;
       },
+      trace,
     };
     try {
       await runAttributed(sink, () =>
