@@ -1732,4 +1732,101 @@ desktop PR #297. The rate is slice S2 and is not started.
 
 
 ---
+
+## 2026-08-02 — SPACE HARNESS S2: roster delivery is 15/15 at 2, 25 and 79 members. `[BENCH — CANNOT HOST THE TRIGGER]`
+
+**Class: `arrival` + persistence.** Desktop↔desktop, headless, one Node process,
+production relay. `yarn harness space-rate`, sweep 2/25/79 members × 5
+iterations. Each trial is independent: fresh accounts, fresh space, fresh joiner.
+Roster size is varied by seeding member rows on the responder — sound because the
+responder builds its delta only from `storage.getSpaceMembers` and the receiver
+validates nothing against the manifest.
+
+| roster size | trials | delivered | rate | median lag | longest streak |
+|---|---|---|---|---|---|
+| 2 | 5 | 5 | 100% | 4.7 s | 5 |
+| 25 | 5 | 5 | 100% | 4.7 s | 5 |
+| 79 | 5 | 5 | 100% | 4.8 s | 5 |
+| **overall** | **15** | **15** | **100%** | — | **15** |
+
+0 EMPTY misses, 0 PARTIAL misses, 0 novel receive failures.
+
+### ⚠️ This is the FOURTH green bench, and it refutes nothing
+
+Read `Why every bench was green` above before quoting this. Node's `ws` auto-pongs
+in sub-millisecond time and harness connections hold 20+ minutes, so the harness
+**cannot host the trigger** that produced the field failures. A 100% result here
+is consistent with the field report, not evidence against it — exactly as the
+301/301 DM bench was.
+
+### What it DOES establish, and this part is new
+
+**Roster size is exonerated.** 100% and a flat ~4.7 s from 2 to 79 members. The
+suspicion that a large roster was the variable — plausible because
+`chunkMembers()` is dead code (`quorum-shared/src/sync/utils.ts:639`) so the
+member delta ships as ONE unbounded payload at any size — does not survive. At 79
+members that single payload is built, sent and applied intact, every time. That
+closes question 2 of the three the bug file asks, with a negative.
+
+Also established: the digest → `computeMemberDiff` → `buildMemberDelta` → apply
+chain is correct at 79 members, and one informed peer really can populate an
+entire roster in one exchange, which the identity doc asserted as design and had
+never been demonstrated at scale.
+
+### The variable this run did NOT test — and it is the leading remaining suspect
+
+**Peer selection is never exercised here, because there is exactly ONE responder.**
+The field failure had B choosing among peers advertising **90, 79 and 72** members
+and syncing with the 72 (`selectBestCandidate`, message-count-first sort;
+`bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` NEXT STEP A).
+With a single candidate that sort cannot misfire, so this sweep is blind to it by
+construction. A second responder holding a different roster is the next
+measurement, and it is cheap now that the rig exists.
+
+
+---
+
+## 2026-08-02 — SPACE HARNESS: a reconnect backlog starves the roster handshake, with a cliff at the 30s expiry
+
+**Class: `arrival` + persistence.** `yarn harness space-backlog`, desktop PR #298.
+B joins a space, goes offline, A posts M messages into it, B returns and joins a
+SECOND space whose owner holds a 79-member roster. The retained flood and the
+handshake compete for B's single serial inbound queue.
+
+| backlog | frames B received | roster delivered | median lag |
+|---|---|---|---|
+| 0 | 15 | 100% (2/2) | 5.1 s |
+| 100 | 417 | 100% (2/2) | 23.0 s |
+| 300 | 1201 | **0% (0/2)** | — both ended `rows=1/80` |
+
+`rows=1/80` reproduces the field symptom verbatim. Delivery stops exactly where
+the lag crosses `DEFAULT_SYNC_EXPIRY_MS` (30 s).
+
+### The failing step, captured — and it is not "nobody answers"
+
+```
+requestSync=4   sync-info=12   Adding candidate=0
+No suitable candidates=2   sync-delta=0   member delta=0
+sync-info: No active session or expired, ignoring
+```
+
+**Twelve `sync-info` replies arrived, each advertising the full 80-member roster,
+and all twelve were discarded** because the joiner's own 30 s window had closed
+before it processed them. The peer answered; the receiver refused.
+
+`requestSync=4` rules out "retry more": it already retried three extra times and
+each retry failed identically. The frames are not late — they arrive in time and
+are **read** too late. Expiry is judged at processing time, not arrival time.
+
+### Scope
+
+This does NOT show the backlog is the only field cause; the harness still cannot
+host the socket behaviour that needs real devices (see "Why every bench was
+green"). It shows the backlog is a **sufficient** cause, deterministically — so a
+candidate fix can now be validated before shipping.
+
+Reported in `bugs/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
+
+
+---
 *Last updated: 2026-08-02*

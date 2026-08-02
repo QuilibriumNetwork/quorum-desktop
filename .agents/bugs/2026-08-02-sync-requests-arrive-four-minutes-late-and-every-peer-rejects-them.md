@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A reconnecting client starves control-message processing for minutes, so every sync-request expires unread and a new joiner is answered by nobody"
-status: OPEN — measured 2026-08-02. Strong lead in §5 (receiver-side backlog, not network). Confirm with §5b step 1 BEFORE writing code
+status: ✅ CONFIRMED 2026-08-02 — §5b step 1 is DONE. Reproduced on demand in the harness with a dose-response curve, and the failing line is captured. See §0. The mechanism is NOT what the title says — read §0 before §1
 priority: HIGH — this is upstream of every roster fix shipped 2026-08-01/02; none of them can work while it holds
 created: 2026-08-02
 updated: 2026-08-02
@@ -17,6 +17,105 @@ related_docs:
 ---
 
 # Sync requests expire unread, behind a reconnect backlog
+
+## §0. ✅ CONFIRMED IN THE HARNESS — and the failing line is captured
+
+> Added 2026-08-02, after §5b step 1 ("confirm the backlog reading **before**
+> writing code") was carried out. Everything from §1 down is the original field
+> investigation and still stands. This section supersedes its *framing*: the
+> backlog reading is right, and the step that actually fails is not the one the
+> title implies.
+
+### It reproduces on demand, with a dose-response curve
+
+`yarn harness space-backlog` (desktop PR #298). B joins a space, goes offline, A
+posts M messages into it, then B returns and joins a **second** space whose owner
+holds a 79-member roster. The retained flood and the roster handshake compete for
+B's single serial inbound queue — the field condition, made deterministic.
+
+| backlog | frames B received | roster delivered | median lag |
+|---|---|---|---|
+| 0 | 15 | **100%** (2/2) | 5.1 s |
+| 100 | 417 | **100%** (2/2) | 23.0 s |
+| 300 | 1201 | **0%** (0/2) | — both ended `rows=1/80` |
+
+`rows=1/80` is §1's symptom verbatim. Delivery stops exactly where the lag
+crosses `DEFAULT_SYNC_EXPIRY_MS` (30 s).
+
+**The control arm was already run and had been misread.** `yarn harness
+space-rate` measures 15/15 at 2, 25 and 79 members on FRESH accounts with no
+backlog — which is precisely what §5b step 1 asked for ("repeat with an account
+used recently... if the handshake then completes, the diagnosis is settled"). It
+completes, every time. Roster size is exonerated as a variable in the same run:
+flat ~4.7 s from 2 to 79 members.
+
+### 🔴 The failing step, captured
+
+The harness traces the real services' own log lines and attributes them per bot.
+At 300 backlog messages:
+
+```
+requestSync=4   sync-info=12   Adding candidate=0
+No suitable candidates=2   sync-delta=0   member delta=0
+
+sync-info from: …, hasSession: true, isExpired: true
+sync-info payload: {"messageCount":1,"memberCount":80,"hasSummary":true}
+sync-info: No active session or expired, ignoring
+```
+
+**Twelve `sync-info` replies arrived, each advertising the complete 80-member
+roster, and B discarded every one.** The peer answered, the answer arrived, and
+the receiver refused it on its own expiry bookkeeping.
+
+This is **§3's stale-answer corollary**, not §2's "nobody answers". In the field
+capture both were present and §2 got the emphasis; under controlled conditions
+§3 is the one that kills it. Worth correcting, because the two point at different
+fixes.
+
+### ⚠️ "Retry more" is NOT the fix — this run rules it out
+
+Read `requestSync=4`. **B already retried three extra times, and every retry
+failed identically.** Twelve offers, zero accepted. More retries produce more
+offers to discard, because the frames are not late — **they arrive in time and are
+read too late.** Expiry is judged at *processing* time, not at *arrival* time.
+
+That also explains why desktop #296's convergence check cannot rescue this: it
+hangs off the `sync-info` handler, so the repair is gated on the very step that
+is failing.
+
+### The three repair points, cheapest first
+
+| # | fix | note |
+|---|---|---|
+| **a** | judge expiry against the frame's **arrival** timestamp rather than when we got round to it | smallest change, and it directly matches what was measured |
+| **b** | **do not discard a usable offer just because our window closed** — remember it and let the next `requestSync` prefer a peer already known to hold more | this is §5b step 4, and it is now evidence-backed rather than speculative |
+| **c** | stop bulk frames queueing ahead of perishable control frames | §5b step 2, the real scheduling fix, biggest blast radius |
+
+⚠️ **Still do NOT simply raise `DEFAULT_SYNC_EXPIRY_MS`** (§5b step 3). Nothing
+here changes that: a longer window means acting on a summary that is minutes
+stale, converting a visible failure into a silent one.
+
+### What this does NOT establish
+
+That the backlog is the **only** cause in the field. The harness cannot host the
+socket behaviour that needs real devices ("Why every bench was green",
+`tasks/transport/measurements.md`), and nothing here rules it out. What is
+established is that a reconnect backlog is a **sufficient** cause — and, because
+the failure is now deterministic, **any candidate fix can be validated before it
+ships**: 0% either becomes 100% or it does not.
+
+### What it changes elsewhere
+
+- **`2026-07-20-announce-keys-flooding-unbounded-admissions.md` is rated LOW
+  because it needs an attacker. It does not.** A legitimate backlog produces the
+  same starvation, and the consequence is not "slower control-message
+  processing" — it is that the sync handshake is unavailable for minutes after
+  every reconnect, which is exactly the window a new joiner needs it. That
+  severity should be revisited.
+- **`2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`** ends with "STOP
+  TESTING THIS BY HAND — it needs the harness". The harness exists and has
+  answered two of its three questions: it is not roster size, and it is not
+  intermittent-by-luck — it is deterministic given a backlog.
 
 ## §1. The measurement
 
