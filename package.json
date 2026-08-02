@@ -35,6 +35,8 @@
     "electron:build": "yarn build && electron-builder",
     "lint": "eslint .",
     "validate": "tsc --noEmit && eslint .",
+    "worktree:doctor": "node scripts/worktree-doctor.mjs",
+    "worktree:check": "node scripts/worktree-doctor.mjs --check",
     "preview": "vite preview --config web/vite.config.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

@@ -24,6 +24,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Development
 - [Android Build Workflow](docs/development/android-build-workflow.md)
 - [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
+- [Git Worktrees and Linked Dependencies](docs/development/git-worktrees-and-linked-dependencies.md)
 
 ### Features
 - [Action Queue](docs/features/action-queue.md)

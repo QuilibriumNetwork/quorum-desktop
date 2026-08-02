@@ -92,6 +92,10 @@ const DmDoctor = lazyDevImport(
   () => import('@/dev/dm-doctor'),
   'DmDoctor'
 );
+const IdentityCoverage = lazyDevImport(
+  () => import('@/dev/identity-coverage'),
+  'IdentityCoverage'
+);
 
 interface RouterProps {
   user: {
@@ -342,6 +346,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading DM doctor...</div>}>
               <DmDoctor />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && IdentityCoverage && (
+        <Route
+          path="/dev/identity-coverage"
+          element={
+            <Suspense fallback={<div>Loading identity coverage...</div>}>
+              <IdentityCoverage />
             </Suspense>
           }
         />
