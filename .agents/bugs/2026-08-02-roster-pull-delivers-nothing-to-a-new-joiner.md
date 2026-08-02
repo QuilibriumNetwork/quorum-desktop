@@ -83,21 +83,43 @@ window, peers advertising **90**, **79** and **72** members
 arithmetic is exact: 72 − 1 (B's own row, which that peer also holds) = the 71
 received. So B ended 7 rows short of A and 18 short of the best peer on offer.
 
-The cause is in the candidate handling (`MessageService.ts:5451-5466`): every
-sync-info is pushed into `candidates` if it has `messageCount || summary` —
-**`memberCount` is never consulted**, and `initiateSync` then picks one. The
-selection is message-centric, so the roster is whatever the message-optimal peer
-happens to have. Cheapest fix: weigh `memberCount` when choosing, or sync members
-from the best member peer independently of the message peer.
+The cause is the **sort order in `selectBestCandidate`**
+(`quorum-shared/src/sync/service.ts:577-589`) — traced 2026-08-02, and it is
+narrower than the first version of this file claimed:
+
+```js
+const msgDiff = b.summary.messageCount - a.summary.messageCount;
+if (msgDiff !== 0) return msgDiff;
+return b.summary.memberCount - a.summary.memberCount;   // tiebreaker only
+```
+
+So `memberCount` **is** consulted, but only when message counts are exactly
+equal — which almost never happens. In practice the roster you get is whatever
+the *message*-optimal peer happens to hold.
+
+> ⚠️ An earlier version of this file said `memberCount` "is never consulted" and
+> pointed at desktop's candidate ADMISSION (`MessageService.ts:5451-5466`, which
+> admits on `messageCount || summary`). Admission is not the problem — the peers
+> were all admitted. **The selection sort is the problem, and it lives in
+> quorum-shared, not desktop.** Same practical effect, different file.
+
+Cheapest fix: score on both rather than message-first, or sync members from the
+best member peer independently of the message peer. Do **not** simply swap the
+two keys — that makes roster completeness beat message history and can regress
+message sync.
 
 ### 🎯 NEXT STEPS — both are small, self-contained, and need nobody's permission
 
 **A. Weigh roster completeness when choosing a sync peer.** *(do this first — it
 is contained and testable)*
 
-- Where: `MessageService.ts` ~5451-5466 admits a candidate on
-  `messageCount || summary`; `memberCount` is on the payload and never read.
-  `initiateSync(spaceId)` then picks from `candidates`.
+- Where: **`quorum-shared/src/sync/service.ts:577-589`, `selectBestCandidate`** —
+  a pure function over an array of candidates, so it is unit-testable with no
+  I/O, no crypto and no wire change. Desktop reaches it via
+  `SyncService.initiateSync` → `sharedSyncService.buildSyncInitiate`.
+- ⚠️ It is in **shared**, so it needs a branch + PR there, and mobile inherits it
+  on its next version bump (desktop is `link:`, so desktop gets it immediately).
+  The change is strictly an improvement for mobile too.
 - Evidence: B was offered **90**, **79** and **72** members in one window and
   synced with the **72**. Arithmetic confirms it: 72 − 1 (B's own row) = the 71
   received.

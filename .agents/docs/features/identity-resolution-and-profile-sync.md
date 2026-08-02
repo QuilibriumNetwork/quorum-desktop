@@ -4,7 +4,7 @@ title: "Identity resolution and profile sync (canonical model)"
 status: done
 ai_generated: true
 created: 2026-07-16
-updated: 2026-08-01
+updated: 2026-08-02
 related_docs:
   - "qns-username-display.md"
   - "user-config-sync.md"
@@ -182,9 +182,20 @@ live save still learns the identity on the next reconnect.
 > are here because of a missing-name report, read the convergence model directly
 > below, then the open items.
 
-**The state, in one line:** the dominant cause was a case-mismatched React Query
-key discarding every roster update (desktop #295, fixed). A new joiner now goes
-from 1 member row to 72 in a two-client test, and the member list renders them.
+**The state — and it is DIFFERENT per platform. Do not collapse these into one
+sentence; doing so has already misled a reader once.**
+
+| Viewer → member | State |
+|---|---|
+| **desktop → desktop** | ✅ largely repaired. The dominant cause was a case-mismatched React Query key discarding every roster update (#295). A new joiner goes from 1 member row to 72 in a two-client test and the list renders them. |
+| **desktop → mobile** | ❌ **still broken.** That member announced once long ago and does not participate in the pull. Unchanged by anything shipped 2026-08-01/02 except the mobile expiry, which is **awaiting a release**. |
+| **mobile → desktop** | ✅ repaired — the desktop push reaches it; mobile's receive side was never the problem. |
+| **mobile → mobile** | ❌ **still broken.** Mobile neither asks nor answers. This is the architectural gap, not a bug with a fix in it. |
+
+> ⚠️ #295 repaired the **desktop viewer's** ability to render what it already
+> received. It did nothing for mobile, and nothing for a mobile *member's*
+> discoverability. "The truncated-address bug is fixed" is only true for the
+> first row of that table.
 
 | | |
 |---|---|
@@ -196,7 +207,9 @@ from 1 member row to 72 in a two-client test, and the member list renders them.
 
 | Item | Where |
 |---|---|
-| Sync peer selection ignores `memberCount`; the member half is one payload with no retry | `bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
+| **MOBILE cannot ask or answer** — the largest remaining gap, and the only one that needs a lead-dev decision | "What would actually close the gap" below. Do NOT ship a mobile fix for this unilaterally |
+| Mobile's announce expiry is written but **unreleased** — desktop→mobile stays broken until a mobile build ships | mobile #215; `tasks/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
+| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
 | A per-space name/avatar never reaches your own other devices | `bugs/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
 | Members that **no peer holds** — only the person re-announcing recovers them | same roster-pull file, NEXT STEP C. Blocked on a mobile release carrying #215 |
 | A deleted space tag still shows on **mobile** | `bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
@@ -443,17 +456,25 @@ the quadratic case the moment several are online.
 
 #### What to do in the meantime — uncontested and cheap
 
-1. **Give mobile's announce an expiry** (§10 of
-   `2026-08-01-space-member-identity-announce-on-connect.md`). Mobile announces a
-   given identity to a given space **once, ever**, with no expiry and no retry;
-   the one escape hatch its comments describe (`clearProfileBroadcastState`) is
-   **never called from anywhere**. Desktop got the equivalent cap-and-expiry on
-   2026-08-01 and the design is proven. This is O(1) per member per interval, it
-   needs no architecture decision, and it helps every pairing.
-2. **Measure first** (Step 4). Everything shipped 2026-08-01 is unmeasured, and
-   the repaired roster pull (#71 + #290) may already have moved the number a long
-   way on desktop-to-desktop. Deciding the mobile architecture before reading
-   that number is deciding without evidence.
+1. ✅ **DONE, awaiting release — give mobile's announce an expiry** (§10 of
+   `2026-08-01-space-member-identity-announce-on-connect.md`, shipped as mobile
+   #215). Mobile used to announce a given identity to a given space **once, ever**,
+   with no expiry and no retry; the one escape hatch its comments describe
+   (`clearProfileBroadcastState`) is **never called from anywhere**. It now expires
+   at most 3 times per identity, the same rule desktop got on 2026-08-01.
+
+   ⚠️ **This is written but not in anyone's hands.** Until a mobile build ships,
+   every mobile member is still discoverable only by whoever happened to be
+   listening the one time they announced. **The desktop→mobile and mobile→mobile
+   rows of the state table above do not improve until that release.** If the
+   number has to move for real users soon, chasing this release is worth more
+   than any code we can write.
+
+2. ✅ **DONE — measure first** (Step 4). The measurement is what found #295, which
+   turned out to matter more than everything else shipped that day. Record and
+   both snapshots are in
+   `tasks/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
+   `/dev/identity-coverage`.
 
 3. **A roster served by the relay** remains the only option that works when no
    other member is online at all. Relay change, lead-dev call, long answer.
@@ -571,4 +592,4 @@ residual: an unregistered key can still set the display name/avatar on a claimed
 | Channel A sync | `src/services/ConfigService.ts` | `services/config/configService.ts` |
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-02*

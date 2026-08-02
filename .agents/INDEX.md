@@ -125,6 +125,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Every logger call is a no-op in production builds](bugs/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) — "fail open and log" produces zero signal from real users
 - [A per-space name/avatar never reaches your own other devices](bugs/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md) — other MEMBERS get it fine; your own second device does not. Not the UserConfig cross-device bug (different channel)
 - [The roster pull works, but is unreliable and picks its peer badly](bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md) — filed as "delivers nothing", DISPROVEN by instrumentation (1 → 72 rows). Two smaller defects remain; §0 has the corrected story
+- ["Delete Space" is Leave, and an owner clicking it permanently bricks the space](bugs/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md) — the dialog promises a permanent delete and performs a no-op for everyone else; owner use leaves the space un-kickable and un-rotatable with no recovery path
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
