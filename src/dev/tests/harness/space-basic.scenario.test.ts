@@ -136,8 +136,13 @@ test(
     say(`A member rows    : ${aMembers} (expected 2: itself + B)`, { aMembers });
     say(`B member writes  : ${b.memberWrites.length} -> ${JSON.stringify(b.memberWrites.map((w) => w.userAddress?.slice(0, 10)))}`);
     say(`first post at ${secs(firstPostAt)}, roster complete at ${secs(rosterCompleteAt)}`);
-    say(`receive errors   : A=${a.errors.length} B=${b.errors.length}`);
-    for (const e of [...a.errors, ...b.errors].slice(0, 5)) say(`   ! ${e.message}`);
+    say(
+      `receive failures : NOVEL A=${a.novelErrors().length} B=${b.novelErrors().length}   ` +
+        `replays (expected refusals) A=${a.errors.length - a.novelErrors().length} ` +
+        `B=${b.errors.length - b.novelErrors().length}`,
+      { aNovel: a.novelErrors().length, bNovel: b.novelErrors().length }
+    );
+    for (const e of [...a.novelErrors(), ...b.novelErrors()].slice(0, 5)) say(`   ! ${e.message}`);
     say(`outbound failures: A=${a.graph.outbound.failures.length} B=${b.graph.outbound.failures.length}`);
     for (const f of [...a.graph.outbound.failures, ...b.graph.outbound.failures]) {
       say(`   ! ${f.error}`);

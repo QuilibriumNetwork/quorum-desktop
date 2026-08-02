@@ -64,7 +64,30 @@ test(
     console.log(`[space-create] extra channel=${extraChannelId}`);
     expect(extraKey?.privateKey).toBeTruthy();
 
-    // 5. Nothing in the outbound queue threw. Space creation enqueues the
+    // 5. THE FAILURE COUNTER CAN FIRE. This is a self-test of the instrument,
+    //    not of the app, and it earns its place: the space receive path swallows
+    //    every error in one terminal catch (`MessageService.ts:6110`) and reports
+    //    it via `console.error`, while the DM path uses `logger.error`. A tee
+    //    wired to only one of those reports zero space failures no matter how
+    //    many happen — a number that cannot be non-zero, printed next to numbers
+    //    that can. A scenario asserting "0 errors" against it proves nothing.
+    //
+    //    So: hand the receive path a frame addressed to the space inbox whose
+    //    ciphertext is garbage, and require the counter to notice.
+    const spaceInbox = (await bot.messageDB.getSpaceKey(spaceId, 'inbox')).address!;
+    expect(bot.novelErrors().length).toBe(0);
+    await bot.transport.deliver({
+      inboxAddress: spaceInbox,
+      encryptedContent: 'not-json-at-all',
+      timestamp: Date.now(),
+    });
+    console.log(
+      `[space-create] failure-counter self-test: novel=${bot.novelErrors().length} ` +
+        `msg="${bot.novelErrors()[0]?.message?.slice(0, 60) ?? ''}"`
+    );
+    expect(bot.novelErrors().length).toBe(1);
+
+    // 6. Nothing in the outbound queue threw. Space creation enqueues the
     //    manifest broadcast and the space-inbox `listen`; a silent failure there
     //    would leave the bot unable to receive anything for this space, and the
     //    app's queue swallows errors, so this is the only place it surfaces.

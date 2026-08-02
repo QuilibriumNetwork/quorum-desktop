@@ -41,8 +41,17 @@ export interface HarnessSpaceBot {
   captured: Message[];
   /** Every space-member row the real code persisted, in write order. */
   memberWrites: MemberWrite[];
-  /** Receive-path decrypt failures the service logged. */
-  errors: { t: number; message: string; frame: unknown }[];
+  /**
+   * Receive-path failures the service reported.
+   *
+   * `replay` splits the two kinds, and the split is load-bearing: a frame this
+   * bot already decrypted is refused on a second delivery, which is the protocol
+   * working. Un-acked frames are redelivered on every `listen`, so replays
+   * dominate a raw count. **Quote `novelErrors()`, never `errors`.**
+   */
+  errors: { t: number; message: string; frame: unknown; replay: boolean }[];
+  /** Failures on a frame never successfully decrypted before. */
+  novelErrors(): { t: number; message: string; frame: unknown; replay: boolean }[];
   onDecrypted?: (m: Message) => void;
   onMember?: (w: MemberWrite) => void;
 
@@ -129,6 +138,7 @@ export async function createSpaceBot(
     captured: [],
     memberWrites: [],
     errors: [],
+    novelErrors: () => bot.errors.filter((e) => !e.replay),
 
     createSpace: async (spaceName: string) => {
       const registration = (await apiClient.getUser(identity.address))
@@ -237,18 +247,45 @@ export async function createSpaceBot(
       return (origSaveMember as (...a: unknown[]) => Promise<void>)(spaceId, row, ...rest);
     };
 
+  // Frames this bot has decrypted at least once, by ciphertext fingerprint.
+  const decryptedOk = new Set<string>();
+
+  // ⚠️ The space receive path does NOT report failures the way the DM path does,
+  // and getting this wrong makes the harness lie in the most dangerous direction.
+  //
+  //   - Nothing propagates. The terminal catch of the whole hub/sync branch is
+  //     `MessageService.ts:6110`, which swallows the error, so a try/catch around
+  //     handleNewMessage sees nothing. Same as DM (see bot.ts note 2).
+  //   - It logs through `console.error`, NOT `logger.error`. The DM path uses
+  //     `logger.error`. A tee that wraps only `logger` therefore reports ZERO
+  //     space failures no matter how many occur — a count that is structurally
+  //     incapable of being non-zero, printed next to counts that are real.
+  //
+  // So both sinks are teed, and matching is against an explicit marker list
+  // rather than a loose substring: `'Failed to'` alone also matches
+  // `'Failed to re-broadcast space tag on manifest update'`, which is a
+  // cosmetic tag rebroadcast and not a delivery failure at all.
+  const FAILURE_MARKERS = [
+    'Error processing hub/sync message', // MessageService.ts:6110 — the space branch
+    'DM decrypt failed', // the DM branch, for a bot that does both
+    'TripleRatchetDecrypt failed',
+    'UnsealSyncEnvelope',
+    'UnsealHubEnvelope',
+  ];
+  const isFailure = (first: string) => FAILURE_MARKERS.some((m) => first.includes(m));
+
   transport.onMessage(async (frame) => {
-    // Space decrypt failures are logged, not thrown (same as DM — see bot.ts),
-    // so the only external signal is the log line. Tee it.
     let loggedFailure: string | undefined;
-    const origError = logger.error;
-    logger.error = ((...args: unknown[]) => {
-      const first = String(args[0] ?? '');
-      if (first.includes('decrypt failed') || first.includes('Failed to')) {
-        loggedFailure ??= first;
-      }
-      return (origError as (...a: unknown[]) => unknown)(...args);
-    }) as typeof logger.error;
+    const origLoggerError = logger.error;
+    const origConsoleError = console.error;
+    const tee = (orig: (...a: unknown[]) => unknown) =>
+      ((...args: unknown[]) => {
+        const first = String(args[0] ?? '');
+        if (isFailure(first)) loggedFailure ??= `${first} ${String(args[1] ?? '')}`.trim();
+        return orig(...args);
+      }) as never;
+    logger.error = tee(origLoggerError as (...a: unknown[]) => unknown);
+    console.error = tee(origConsoleError as (...a: unknown[]) => unknown);
     try {
       await graph.messageService.handleNewMessage(
         identity.address,
@@ -259,9 +296,25 @@ export async function createSpaceBot(
     } catch (err) {
       loggedFailure ??= (err as Error)?.message ?? String(err);
     } finally {
-      logger.error = origError;
+      logger.error = origLoggerError;
+      console.error = origConsoleError;
     }
-    if (loggedFailure) bot.errors.push({ t: Date.now(), message: loggedFailure, frame });
+    // Novel vs replay, exactly as the DM bot splits them and for the same reason:
+    // an un-acked frame is redelivered on every `listen`, so a raw failure count
+    // is dominated by refusals of frames this bot already decrypted. That
+    // overstatement has been measured at 2-5x three separate times in this
+    // investigation. Quote `novelErrors()`.
+    const fp = WsTransport.ciphertextFp(frame) ?? WsTransport.fingerprint(frame);
+    if (loggedFailure) {
+      bot.errors.push({
+        t: Date.now(),
+        message: loggedFailure,
+        frame,
+        replay: decryptedOk.has(fp),
+      });
+    } else {
+      decryptedOk.add(fp);
+    }
     await refreshSubscriptions();
   });
 
