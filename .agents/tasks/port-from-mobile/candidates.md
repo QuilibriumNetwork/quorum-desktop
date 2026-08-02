@@ -267,6 +267,24 @@ The mnemonic half of #31 (see #31a in [Actionable now](#actionable-now) for the 
     table to the decision; it is the part that is not obvious.
 
 
+- **2026-08-02 — the P2P pull WORKS; measured. The removal decision is the harder one.**
+  A two-client test took a new joiner from **1 member row to 72** via
+  `requestSync` → `MemberDelta`, persisted and rendered. So the 2026-08-01 note
+  above should be read with this correction: an earlier claim that the pull
+  "never worked" was **wrong** — `computeMemberDiff` finds missing members by
+  ADDRESS, not by hash, so shared #71 fixed *stale identities not refreshing*,
+  not the pull itself. Deleting this path therefore removes a **working**
+  mechanism, not a broken one.
+  - Two smaller defects found alongside, both filed in
+    `.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`:
+    the exchange is unreliable (the member half is one payload, no retry), and
+    peer selection ignores `memberCount` entirely.
+  - **Unrelated to this candidate but found in the same investigation**, and worth
+    knowing because it dwarfed everything else: a case-mismatched React Query key
+    was discarding every roster update the sync delivered (desktop #295). If
+    anyone re-opens "sync doesn't work", check the view layer first.
+
+
 ### #27 Skins (custom themes) — ❔ needs UX call (low priority 2026-06-10)
 
 Bundled samples + locally-saved skins + server gallery. Per-skin: color tokens (accent/surfaces/text/semantic), radii/spacing/borders (with global `scale`), `fontScale`, embedded font face, icon substitution map, wallpaper (cover/tile/contain + scrim), frame chrome, per-region surface backgrounds. All input validated against an allow-list (`validate.ts`) with image content-sniffing. Server gallery is Ed448-signed publish.

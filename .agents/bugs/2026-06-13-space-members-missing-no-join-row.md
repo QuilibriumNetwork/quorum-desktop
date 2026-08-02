@@ -17,6 +17,27 @@ related_tools:
   - ".agents/tools/dm-debug/06-space-member-sources.js"
 ---
 
+> ## 📍 2026-08-02 — largely answered; read this before the body
+>
+> The 52%-of-members-have-no-row symptom this bug characterises has been measured
+> and substantially explained. **The dominant cause turned out NOT to be the join
+> broadcast being ephemeral**, but a case-mismatched React Query key that
+> discarded every roster update the sync delivered (desktop #295): 72 rows in
+> IndexedDB, one person in the member list.
+>
+> The receive-side and send-side work this bug asked for all shipped
+> (desktop #288-#292, #295, shared #71, mobile #213/#215). A new joiner now goes
+> from 1 row to 72 in a two-client test.
+>
+> What remains of THIS bug: members that **no active peer holds at all** — user A
+> still has 41, one with 202 messages. Those are unreachable by any pull and need
+> the person to re-announce.
+>
+> Current state, next steps and the residual defects:
+> `.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
+> and `.agents/docs/features/identity-resolution-and-profile-sync.md`
+> ("Why a name goes missing, and what repairs it").
+
 # Space members show truncated address — no `space_members` row
 
 ## Symptom

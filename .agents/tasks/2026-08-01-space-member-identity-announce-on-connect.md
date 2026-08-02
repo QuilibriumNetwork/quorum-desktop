@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Spaces: members render as a truncated address because desktop never re-announces identity on connect"
-status: Slices 1-3 IMPLEMENTED 2026-08-01 (desktop). Slice 0 + §10 (mobile) still open
+status: DONE 2026-08-02 — Slices 0-3 (desktop) and §10 (mobile #215) all shipped. Awaiting a mobile release
 priority: high
 created: 2026-08-01
 updated: 2026-08-01
@@ -334,7 +334,25 @@ client having reconnected in between.
 Reload between steps: the point is that the roster row PERSISTS, not that it
 renders once from an in-memory fallback.
 
-## §10. Mobile follow-up — give the announce gate an expiry
+## §10. Mobile follow-up — give the announce gate an expiry ✅ SHIPPED (mobile #215)
+
+> ✅ **Done 2026-08-02.** `services/space/spaceAnnounceGate.ts` + the shared
+> decision logic in `services/identity/profileAnnounceGate.ts`. An unchanged
+> identity is now re-announced at most once per 24h, at most 3 times, per space —
+> same constants as the DM gate and as desktop, with a test pinning that parity.
+> The legacy bare-signature migration keeps the real signature, credits one
+> remaining attempt, and anchors at NOW so the fleet does not all fire on the
+> first launch after deploy.
+>
+> Also corrected there: `clearProfileBroadcastState` documented itself as running
+> on leave-space and sign-out and is **never called from anywhere**.
+>
+> ⚠️ **Not yet in anyone's hands.** This only helps once a mobile release carries
+> it — which is what unblocks the "members no peer holds" case in
+> `.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
+> (NEXT STEP C).
+
+### Original spec, kept for reference
 
 Gated on Slice 0. If replay does NOT rescue Cause B, mobile needs the same
 change desktop got: an expiry on the persisted announce gate, so a member who
