@@ -4,7 +4,7 @@ title: "Every logger call is a no-op in production builds, so 'fail open and log
 status: CONFIRMED by reading the logger source and grepping for overrides (not yet fixed)
 priority: high — it does not break behaviour, it breaks our ability to SEE behaviour
 created: 2026-08-01
-updated: 2026-08-01
+updated: 2026-08-02
 severity: silent — nothing fails; we simply learn nothing from any user who is not a developer
 area: observability / logging / quorum-shared
 repos: quorum-shared (cause), quorum-desktop + quorum-mobile (affected)
@@ -64,6 +64,35 @@ anything outside a developer's own machine. This is also why transport
 reliability had to be measured with a hand-built harness rather than read off
 production behaviour.
 
+### §2b. The list keeps growing — a new site, added 2026-08-02
+
+The roster convergence check (`src/utils/rosterConvergence.ts` +
+`MessageService.scheduleRosterConvergenceCheck`) re-broadcasts a `sync-request`
+when a peer advertised more members than we actually received. Its entire
+observable surface is `logger`, so in production it can:
+
+- decide the roster is short and re-ask — invisibly;
+- decide **not** to re-ask because the attempt budget is spent while still 70
+  rows short — invisibly, and this is the single most actionable state it has;
+- throw inside its timer and repair nothing, ever — invisibly.
+
+It was written that way **knowingly**, and the alternative was considered and
+rejected: a bespoke counter for one feature is a band-aid on a systemic problem,
+and building private telemetry per feature is how a codebase ends up with five
+incompatible half-solutions instead of one fix.
+
+⚠️ **The point of recording it here is that the cost of this bug is compounding,
+not static.** Every "fail open and log" feature shipped from now on adds another
+question nobody can answer about a real user's session. The next one that wants
+production visibility should trigger the fix in §4 rather than route around it.
+
+The mitigation actually applied, which is available to any similar feature: the
+decision function returns a **typed reason** rather than a boolean, and the
+caller logs it on every branch. That does nothing in production, but it means a
+developer reproducing the problem locally gets "not asking (cap-reached) — have
+1, best offer 78" instead of silence. Cheap, and it makes the eventual §4 fix a
+matter of changing the sink rather than re-instrumenting the code.
+
 ## §3. What NOT to do
 
 Do **not** simply flip `enabled` to true in production. The reason it is off is
@@ -98,4 +127,4 @@ change relies on "fail open and log" for observability, then checked whether the
 logs actually reach anywhere. They do not.
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-02*

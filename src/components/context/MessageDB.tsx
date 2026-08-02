@@ -245,7 +245,7 @@ type MessageDBContextValue = {
     spaceTag?: BroadcastSpaceTag,
     bio?: string
   ) => Promise<void>;
-  requestSync: (spaceId: string) => Promise<void>;
+  requestSync: (spaceId: string) => Promise<boolean>;
   sendVerifyKickedStatuses: (spaceId: string) => Promise<number>;
   broadcastDeviceRevocations: (deviceInboxAddresses: string[]) => Promise<void>;
   deleteConversation: (
@@ -993,6 +993,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       synchronizeAll,
       informSyncData,
       initiateSync,
+      requestSync,
       directSync,
       saveConfig,
       sendHubMessage,
@@ -1012,6 +1013,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     synchronizeAll,
     informSyncData,
     initiateSync,
+    requestSync,
     directSync,
     saveConfig,
     sendHubMessage,
@@ -1454,9 +1456,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
   const deleteSpace = React.useCallback(
     async (spaceId: string) => {
+      // Drop the roster-convergence state and cancel any armed check FIRST.
+      // `SpaceService` cannot reach MessageService's tracker, and a check armed
+      // seconds ago would otherwise fire ~20s from now against a space that no
+      // longer exists — popping a "Syncing…" toast and broadcasting a
+      // sync-request into a space the user just left.
+      messageService.forgetRosterConvergence(spaceId);
       return spaceService.deleteSpace(spaceId, queryClient);
     },
-    [spaceService, queryClient]
+    [spaceService, messageService, queryClient]
   );
 
   const kickUser = React.useCallback(

@@ -51,7 +51,7 @@ export class InvitationService {
   private getConfig: (params: { address: string; userKey: secureChannel.UserKeyset }) => Promise<any>;
   private saveConfig: (params: { config: any; keyset: any }) => Promise<void>;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
-  private requestSync: (spaceId: string) => Promise<void>;
+  private requestSync: (spaceId: string) => Promise<boolean>;
 
   constructor(dependencies: {
     messageDB: MessageDB;
@@ -63,7 +63,7 @@ export class InvitationService {
     getConfig: (params: { address: string; userKey: secureChannel.UserKeyset }) => Promise<any>;
     saveConfig: (params: { config: any; keyset: any }) => Promise<void>;
     sendHubMessage: (spaceId: string, message: string) => Promise<string>;
-    requestSync: (spaceId: string) => Promise<void>;
+    requestSync: (spaceId: string) => Promise<boolean>;
   }) {
     this.messageDB = dependencies.messageDB;
     this.apiClient = dependencies.apiClient;
