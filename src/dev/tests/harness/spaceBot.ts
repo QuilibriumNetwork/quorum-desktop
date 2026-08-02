@@ -14,13 +14,14 @@
 //     the real code persist, and when" has to be observable directly rather
 //     than inferred from message traffic.
 import { QueryClient } from '@tanstack/react-query';
-import { logger, type Message, type UserRegistration } from '@quilibrium/quorum-shared';
+import { type Message, type UserRegistration } from '@quilibrium/quorum-shared';
 import type { MessageDB } from '../../../db/messages';
 import type { EncryptedMessage } from '../../../db/messages';
 import { makeMessageDB } from './storage';
 import { makeApiClient, WsTransport } from './transport';
 import { createSpaceGraph, type SpaceGraph } from './spaceDeps';
 import { deleteInboxMessages } from './deps';
+import { runAttributed } from './errorTap';
 import { loadOrCreateBot, type Bot as Identity } from './identity';
 
 /** One member row as the real code persisted it, with arrival time. */
@@ -51,12 +52,19 @@ export interface HarnessSpaceBot {
    */
   errors: { t: number; message: string; frame: unknown; replay: boolean }[];
   /** Failures on a frame never successfully decrypted before. */
-  novelErrors(): { t: number; message: string; frame: unknown; replay: boolean }[];
+  novelErrors(): {
+    t: number;
+    message: string;
+    frame: unknown;
+    replay: boolean;
+  }[];
   onDecrypted?: (m: Message) => void;
   onMember?: (w: MemberWrite) => void;
 
   /** Create a space (bot becomes owner). Returns its ids. */
-  createSpace(spaceName: string): Promise<{ spaceId: string; channelId: string }>;
+  createSpace(
+    spaceName: string
+  ): Promise<{ spaceId: string; channelId: string }>;
   /** Mint a one-time invite link for a space this bot owns. */
   inviteLink(spaceId: string): Promise<string>;
   /** Join a space from an invite link. */
@@ -118,6 +126,34 @@ export async function createSpaceBot(
     completedOnboarding: true,
   };
 
+  /** Spaces this bot created or joined — needed to clear their timers at stop(). */
+  const joinedSpaces = new Set<string>();
+
+  /**
+   * Fail loudly when the send pipeline did not drain.
+   *
+   * These booleans used to be discarded at every call site, and that is a trap
+   * specific to this instrument: if an outbound action hangs rather than throws
+   * (the relay returned 502 on every path for over an hour on 2026-07-28), the
+   * queue wedges, `failures` stays EMPTY because nothing threw, and `createSpace`
+   * / `join` / `post` all return as though the work was sent. The scenario then
+   * reports zero posts and a roster of 1 — and that is indistinguishable from the
+   * roster bug under study, while actually being the harness never having sent
+   * anything. Throwing here separates the two.
+   */
+  const mustDrain = async (
+    ok: Promise<boolean>,
+    what: string
+  ): Promise<void> => {
+    if (!(await ok)) {
+      throw new Error(
+        `[harness] ${what} did not drain — outbound backlog=${graph.outbound.backlog}, ` +
+          `connected=${transport.connected}. The send pipeline is wedged; any delivery ` +
+          `result from this run is meaningless.`
+      );
+    }
+  };
+
   /** Resolve once no queue task is pending or processing (or the wait expires). */
   const drainActionQueue = async (timeoutMs = 30_000): Promise<boolean> => {
     const deadline = Date.now() + timeoutMs;
@@ -143,24 +179,29 @@ export async function createSpaceBot(
     createSpace: async (spaceName: string) => {
       const registration = (await apiClient.getUser(identity.address))
         ?.data as UserRegistration;
-      if (!registration) throw new Error(`no registration for ${identity.address}`);
+      if (!registration)
+        throw new Error(`no registration for ${identity.address}`);
       const ids = await graph.spaceService.createSpace(
         spaceName,
         '',
         identity.keyset,
-        registration as unknown as Parameters<SpaceGraph['spaceService']['createSpace']>[3],
+        registration as unknown as Parameters<
+          SpaceGraph['spaceService']['createSpace']
+        >[3],
         false,
         false,
         '',
         '',
         queryClient
       );
-      await graph.outbound.flush();
+      await mustDrain(graph.outbound.flush(), 'createSpace outbound');
       await refreshSubscriptions();
+      joinedSpaces.add(ids.spaceId);
       return ids;
     },
 
-    inviteLink: (spaceId: string) => graph.invitationService.constructInviteLink(spaceId),
+    inviteLink: (spaceId: string) =>
+      graph.invitationService.constructInviteLink(spaceId),
 
     join: async (link: string) => {
       const result = await graph.invitationService.joinInviteLink(
@@ -168,9 +209,11 @@ export async function createSpaceBot(
         identity.keyset,
         passkeyInfo
       );
-      if (!result) throw new Error('joinInviteLink returned nothing (unparseable link?)');
-      await graph.outbound.flush();
+      if (!result)
+        throw new Error('joinInviteLink returned nothing (unparseable link?)');
+      await mustDrain(graph.outbound.flush(), 'join outbound');
       await refreshSubscriptions();
+      joinedSpaces.add(result.spaceId);
       return result;
     },
 
@@ -186,13 +229,14 @@ export async function createSpaceBot(
       // handler later, so submitChannelMessage returning means "queued", not
       // "sent". Wait for the queue to drain and THEN for the outbound FIFO,
       // in that order — the handler is what puts frames into the FIFO.
-      await drainActionQueue();
-      await graph.outbound.flush();
+      await mustDrain(drainActionQueue(), 'post action queue');
+      await mustDrain(graph.outbound.flush(), 'post outbound');
     },
 
     requestSync: (spaceId: string) => graph.syncService.requestSync(spaceId),
 
-    members: async (spaceId: string) => (await messageDB.getSpaceMembers(spaceId)).length,
+    members: async (spaceId: string) =>
+      (await messageDB.getSpaceMembers(spaceId)).length,
 
     flush: (timeoutMs?: number) => graph.outbound.flush(timeoutMs),
 
@@ -217,6 +261,18 @@ export async function createSpaceBot(
 
     stop: () => {
       graph.actionQueueService.stop();
+      graph.outbound.dispose();
+      // The real sync path arms timers that outlive the socket: a 20s roster
+      // convergence re-ask (`MessageService.scheduleRosterConvergenceCheck`,
+      // armed on every `sync-info`) and the 1s `initiateSync` kick. Left running,
+      // they fire against a closed transport after teardown — polluting
+      // `outbound.failures` with post-mortem noise — and keep the whole service
+      // graph and its fake-indexeddb store reachable until they do. At volume
+      // that is one orphaned graph per iteration.
+      for (const spaceId of joinedSpaces) {
+        graph.messageService.forgetRosterConvergence(spaceId);
+        delete graph.syncInfo.current[spaceId];
+      }
       transport.close();
     },
   };
@@ -224,87 +280,77 @@ export async function createSpaceBot(
   // Capture seam 1 — messages. Faithful: this is the Message the real code chose
   // to persist, received or locally saved on send.
   const origSaveMessage = messageDB.saveMessage.bind(messageDB);
-  (messageDB as unknown as { saveMessage: MessageDB['saveMessage'] }).saveMessage =
-    async (message: Message, ...rest: unknown[]) => {
-      bot.captured.push(message);
-      bot.onDecrypted?.(message);
-      return (origSaveMessage as (...a: unknown[]) => Promise<void>)(message, ...rest);
-    };
+  (
+    messageDB as unknown as { saveMessage: MessageDB['saveMessage'] }
+  ).saveMessage = async (message: Message, ...rest: unknown[]) => {
+    bot.captured.push(message);
+    bot.onDecrypted?.(message);
+    return (origSaveMessage as (...a: unknown[]) => Promise<void>)(
+      message,
+      ...rest
+    );
+  };
 
   // Capture seam 2 — member rows. The roster arrives on the sync-delta path, not
   // the message path, so nothing above would see it.
   const origSaveMember = messageDB.saveSpaceMember.bind(messageDB);
-  (messageDB as unknown as { saveSpaceMember: MessageDB['saveSpaceMember'] }).saveSpaceMember =
-    async (spaceId: string, row: Record<string, unknown>, ...rest: unknown[]) => {
-      const write: MemberWrite = {
-        t: Date.now(),
-        spaceId,
-        userAddress: row?.user_address as string | undefined,
-        displayName: row?.display_name as string | undefined,
-      };
-      bot.memberWrites.push(write);
-      bot.onMember?.(write);
-      return (origSaveMember as (...a: unknown[]) => Promise<void>)(spaceId, row, ...rest);
+  (
+    messageDB as unknown as { saveSpaceMember: MessageDB['saveSpaceMember'] }
+  ).saveSpaceMember = async (
+    spaceId: string,
+    row: Record<string, unknown>,
+    ...rest: unknown[]
+  ) => {
+    const write: MemberWrite = {
+      t: Date.now(),
+      spaceId,
+      userAddress: row?.user_address as string | undefined,
+      displayName: row?.display_name as string | undefined,
     };
+    bot.memberWrites.push(write);
+    bot.onMember?.(write);
+    return (origSaveMember as (...a: unknown[]) => Promise<void>)(
+      spaceId,
+      row,
+      ...rest
+    );
+  };
 
   // Frames this bot has decrypted at least once, by ciphertext fingerprint.
   const decryptedOk = new Set<string>();
 
-  // ⚠️ The space receive path does NOT report failures the way the DM path does,
-  // and getting this wrong makes the harness lie in the most dangerous direction.
-  //
-  //   - Nothing propagates. The terminal catch of the whole hub/sync branch is
-  //     `MessageService.ts:6110`, which swallows the error, so a try/catch around
-  //     handleNewMessage sees nothing. Same as DM (see bot.ts note 2).
-  //   - It logs through `console.error`, NOT `logger.error`. The DM path uses
-  //     `logger.error`. A tee that wraps only `logger` therefore reports ZERO
-  //     space failures no matter how many occur — a count that is structurally
-  //     incapable of being non-zero, printed next to counts that are real.
-  //
-  // So both sinks are teed, and matching is against an explicit marker list
-  // rather than a loose substring: `'Failed to'` alone also matches
-  // `'Failed to re-broadcast space tag on manifest update'`, which is a
-  // cosmetic tag rebroadcast and not a delivery failure at all.
-  const FAILURE_MARKERS = [
-    'Error processing hub/sync message', // MessageService.ts:6110 — the space branch
-    'DM decrypt failed', // the DM branch, for a bot that does both
-    'TripleRatchetDecrypt failed',
-    'UnsealSyncEnvelope',
-    'UnsealHubEnvelope',
-  ];
-  const isFailure = (first: string) => FAILURE_MARKERS.some((m) => first.includes(m));
-
+  // Failure attribution is delegated to `errorTap.ts` — read the header there
+  // before changing anything here. Short version: the space receive path
+  // swallows every failure into one terminal catch and reports it through
+  // `console.error`, so it can only be observed by teeing a process-global; and
+  // teeing a process-global PER FRAME silently corrupts the count as soon as a
+  // second bot exists, which is every scenario that matters.
   transport.onMessage(async (frame) => {
     let loggedFailure: string | undefined;
-    const origLoggerError = logger.error;
-    const origConsoleError = console.error;
-    const tee = (orig: (...a: unknown[]) => unknown) =>
-      ((...args: unknown[]) => {
-        const first = String(args[0] ?? '');
-        if (isFailure(first)) loggedFailure ??= `${first} ${String(args[1] ?? '')}`.trim();
-        return orig(...args);
-      }) as never;
-    logger.error = tee(origLoggerError as (...a: unknown[]) => unknown);
-    console.error = tee(origConsoleError as (...a: unknown[]) => unknown);
+    const sink = {
+      record: (m: string) => {
+        loggedFailure ??= m;
+      },
+    };
     try {
-      await graph.messageService.handleNewMessage(
-        identity.address,
-        identity.keyset,
-        frame as unknown as EncryptedMessage,
-        queryClient
+      await runAttributed(sink, () =>
+        graph.messageService.handleNewMessage(
+          identity.address,
+          identity.keyset,
+          frame as unknown as EncryptedMessage,
+          queryClient
+        )
       );
     } catch (err) {
       loggedFailure ??= (err as Error)?.message ?? String(err);
-    } finally {
-      logger.error = origLoggerError;
-      console.error = origConsoleError;
     }
     // Novel vs replay, exactly as the DM bot splits them and for the same reason:
     // an un-acked frame is redelivered on every `listen`, so a raw failure count
     // is dominated by refusals of frames this bot already decrypted. That
     // overstatement has been measured at 2-5x three separate times in this
     // investigation. Quote `novelErrors()`.
-    const fp = WsTransport.ciphertextFp(frame) ?? WsTransport.fingerprint(frame);
+    const fp =
+      WsTransport.ciphertextFp(frame) ?? WsTransport.fingerprint(frame);
     if (loggedFailure) {
       bot.errors.push({
         t: Date.now(),
@@ -315,7 +361,20 @@ export async function createSpaceBot(
     } else {
       decryptedOk.add(fp);
     }
-    await refreshSubscriptions();
+    // Guarded: `transport.dispatch` swallows ANY outcome of this handler
+    // (`.then(() => undefined, () => undefined)`), so an unguarded throw here
+    // would be invisible to every counter the scenarios report — a silent
+    // swallow of exactly the kind this file exists to avoid.
+    try {
+      await refreshSubscriptions();
+    } catch (err) {
+      bot.errors.push({
+        t: Date.now(),
+        message: `refreshSubscriptions failed: ${(err as Error)?.message ?? String(err)}`,
+        frame,
+        replay: false,
+      });
+    }
   });
 
   return bot;

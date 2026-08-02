@@ -45,7 +45,7 @@ function postTexts(bot: HarnessSpaceBot): string[] {
 }
 
 test(
-  'space-basic: B joins A\'s space and receives both A\'s post and A\'s member row',
+  "space-basic: B joins A's space and receives both A's post and A's member row",
   async () => {
     const startedAt = Date.now();
     const stamp = String(startedAt).slice(-6);
@@ -63,101 +63,136 @@ test(
       createSpaceBot(`space-b-${stamp}`),
     ]);
     await Promise.all([a.start(), b.start()]);
-    say(`A=${a.identity.address.slice(0, 12)}  B=${b.identity.address.slice(0, 12)}`, {
-      a: a.identity.address,
-      b: b.identity.address,
-    });
 
-    b.onMember = (w) =>
-      log.add(w.t, 'b', 'member', { user: w.userAddress?.slice(0, 12) });
-    b.onDecrypted = (m) => {
-      if (m.content?.type === 'post') {
-        log.add(Date.now(), 'b', 'recv', { text: (m.content as { text?: string }).text });
+    // Everything from here runs inside try/finally. Without it, ANY early throw
+    // — a failed expect, a transient relay 5xx inside createSpace/join/post —
+    // skips stop() and leaks a live production WebSocket plus the ActionQueue's
+    // 1s interval, per bot, for the rest of the worker process. At S2 volume the
+    // iterations most likely to throw are exactly the interesting ones.
+    try {
+      say(
+        `A=${a.identity.address.slice(0, 12)}  B=${b.identity.address.slice(0, 12)}`,
+        {
+          a: a.identity.address,
+          b: b.identity.address,
+        }
+      );
+
+      b.onMember = (w) =>
+        log.add(w.t, 'b', 'member', { user: w.userAddress?.slice(0, 12) });
+      b.onDecrypted = (m) => {
+        if (m.content?.type === 'post') {
+          log.add(Date.now(), 'b', 'recv', {
+            text: (m.content as { text?: string }).text,
+          });
+        }
+      };
+
+      // ── A creates the space and posts BEFORE B exists in it ──────────────────
+      const { spaceId, channelId } = await a.createSpace(`harness-s1-${stamp}`);
+      say(`space=${spaceId.slice(0, 12)} channel=${channelId.slice(0, 12)}`, {
+        spaceId,
+        channelId,
+      });
+
+      const preJoinText = `A pre-join #1 ${stamp}`;
+      await a.post(spaceId, channelId, preJoinText);
+      say(`A posted (pre-join): "${preJoinText}"`);
+
+      // ── B joins ──────────────────────────────────────────────────────────────
+      const link = await a.inviteLink(spaceId);
+      const joined = await b.join(link);
+      expect(joined.spaceId).toBe(spaceId);
+      say(
+        `B joined; B member rows=${await b.members(spaceId)} A member rows=${await a.members(spaceId)}`
+      );
+
+      // ── A posts again, now that B is a member ────────────────────────────────
+      const postJoinText = `A post-join #2 ${stamp}`;
+      await a.post(spaceId, channelId, postJoinText);
+      say(`A posted (post-join): "${postJoinText}"`);
+
+      // ── Sample until both halves land, or the window closes ──────────────────
+      let firstPostAt: number | undefined;
+      let rosterCompleteAt: number | undefined;
+      const deadline = Date.now() + WINDOW_MS;
+      while (Date.now() < deadline) {
+        await sleep(SAMPLE_MS);
+        const bPosts = postTexts(b);
+        const bMembers = await b.members(spaceId);
+        const aMembers = await a.members(spaceId);
+        if (!firstPostAt && bPosts.length > 0) firstPostAt = Date.now();
+        if (!rosterCompleteAt && bMembers >= 2) rosterCompleteAt = Date.now();
+        log.add(Date.now(), 'harness', 'sample', {
+          bPosts: bPosts.length,
+          bMembers,
+          aMembers,
+        });
+        if (firstPostAt && rosterCompleteAt) break;
       }
-    };
 
-    // ── A creates the space and posts BEFORE B exists in it ──────────────────
-    const { spaceId, channelId } = await a.createSpace(`harness-s1-${stamp}`);
-    say(`space=${spaceId.slice(0, 12)} channel=${channelId.slice(0, 12)}`, {
-      spaceId,
-      channelId,
-    });
-
-    const preJoinText = `A pre-join #1 ${stamp}`;
-    await a.post(spaceId, channelId, preJoinText);
-    say(`A posted (pre-join): "${preJoinText}"`);
-
-    // ── B joins ──────────────────────────────────────────────────────────────
-    const link = await a.inviteLink(spaceId);
-    const joined = await b.join(link);
-    expect(joined.spaceId).toBe(spaceId);
-    say(`B joined; B member rows=${await b.members(spaceId)} A member rows=${await a.members(spaceId)}`);
-
-    // ── A posts again, now that B is a member ────────────────────────────────
-    const postJoinText = `A post-join #2 ${stamp}`;
-    await a.post(spaceId, channelId, postJoinText);
-    say(`A posted (post-join): "${postJoinText}"`);
-
-    // ── Sample until both halves land, or the window closes ──────────────────
-    let firstPostAt: number | undefined;
-    let rosterCompleteAt: number | undefined;
-    const deadline = Date.now() + WINDOW_MS;
-    while (Date.now() < deadline) {
-      await sleep(SAMPLE_MS);
+      // ── Report before asserting, so a failing run still produces the numbers ─
       const bPosts = postTexts(b);
       const bMembers = await b.members(spaceId);
       const aMembers = await a.members(spaceId);
-      if (!firstPostAt && bPosts.length > 0) firstPostAt = Date.now();
-      if (!rosterCompleteAt && bMembers >= 2) rosterCompleteAt = Date.now();
-      log.add(Date.now(), 'harness', 'sample', {
+      const secs = (t?: number) =>
+        t ? `${((t - startedAt) / 1000).toFixed(1)}s` : 'never';
+
+      say('');
+      say('==== RESULT ====');
+      say(`B posts received : ${bPosts.length}  ${JSON.stringify(bPosts)}`, {
         bPosts: bPosts.length,
-        bMembers,
+      });
+      say(
+        `   pre-join  ("${preJoinText}") : ${bPosts.includes(preJoinText) ? 'ARRIVED (sync path)' : 'missing'}`
+      );
+      say(
+        `   post-join ("${postJoinText}"): ${bPosts.includes(postJoinText) ? 'ARRIVED (broadcast path)' : 'missing'}`
+      );
+      say(
+        `B member rows    : ${bMembers} (expected 2: itself + A)   first at ${secs(rosterCompleteAt)}`,
+        {
+          bMembers,
+        }
+      );
+      say(`A member rows    : ${aMembers} (expected 2: itself + B)`, {
         aMembers,
       });
-      if (firstPostAt && rosterCompleteAt) break;
+      say(
+        `B member writes  : ${b.memberWrites.length} -> ${JSON.stringify(b.memberWrites.map((w) => w.userAddress?.slice(0, 10)))}`
+      );
+      say(
+        `first post at ${secs(firstPostAt)}, roster complete at ${secs(rosterCompleteAt)}`
+      );
+      say(
+        `receive failures : NOVEL A=${a.novelErrors().length} B=${b.novelErrors().length}   ` +
+          `replays (expected refusals) A=${a.errors.length - a.novelErrors().length} ` +
+          `B=${b.errors.length - b.novelErrors().length}`,
+        { aNovel: a.novelErrors().length, bNovel: b.novelErrors().length }
+      );
+      for (const e of [...a.novelErrors(), ...b.novelErrors()].slice(0, 5))
+        say(`   ! ${e.message}`);
+      say(
+        `outbound failures: A=${a.graph.outbound.failures.length} B=${b.graph.outbound.failures.length}`
+      );
+      for (const f of [
+        ...a.graph.outbound.failures,
+        ...b.graph.outbound.failures,
+      ]) {
+        say(`   ! ${f.error}`);
+      }
+      say(`log: ${log.file}`);
+
+      // The message half: at least one of A's posts reached B through the real
+      // receive path. This is the spec's make-or-break condition.
+      expect(bPosts.length).toBeGreaterThan(0);
+      // The roster half: B learned about A. B only ever wrote its own row locally,
+      // so a second row can only have come off the wire.
+      expect(bMembers).toBeGreaterThanOrEqual(2);
+    } finally {
+      a.stop();
+      b.stop();
     }
-
-    // ── Report before asserting, so a failing run still produces the numbers ─
-    const bPosts = postTexts(b);
-    const bMembers = await b.members(spaceId);
-    const aMembers = await a.members(spaceId);
-    const secs = (t?: number) => (t ? `${((t - startedAt) / 1000).toFixed(1)}s` : 'never');
-
-    say('');
-    say('==== RESULT ====');
-    say(`B posts received : ${bPosts.length}  ${JSON.stringify(bPosts)}`, {
-      bPosts: bPosts.length,
-    });
-    say(`   pre-join  ("${preJoinText}") : ${bPosts.includes(preJoinText) ? 'ARRIVED (sync path)' : 'missing'}`);
-    say(`   post-join ("${postJoinText}"): ${bPosts.includes(postJoinText) ? 'ARRIVED (broadcast path)' : 'missing'}`);
-    say(`B member rows    : ${bMembers} (expected 2: itself + A)   first at ${secs(rosterCompleteAt)}`, {
-      bMembers,
-    });
-    say(`A member rows    : ${aMembers} (expected 2: itself + B)`, { aMembers });
-    say(`B member writes  : ${b.memberWrites.length} -> ${JSON.stringify(b.memberWrites.map((w) => w.userAddress?.slice(0, 10)))}`);
-    say(`first post at ${secs(firstPostAt)}, roster complete at ${secs(rosterCompleteAt)}`);
-    say(
-      `receive failures : NOVEL A=${a.novelErrors().length} B=${b.novelErrors().length}   ` +
-        `replays (expected refusals) A=${a.errors.length - a.novelErrors().length} ` +
-        `B=${b.errors.length - b.novelErrors().length}`,
-      { aNovel: a.novelErrors().length, bNovel: b.novelErrors().length }
-    );
-    for (const e of [...a.novelErrors(), ...b.novelErrors()].slice(0, 5)) say(`   ! ${e.message}`);
-    say(`outbound failures: A=${a.graph.outbound.failures.length} B=${b.graph.outbound.failures.length}`);
-    for (const f of [...a.graph.outbound.failures, ...b.graph.outbound.failures]) {
-      say(`   ! ${f.error}`);
-    }
-    say(`log: ${log.file}`);
-
-    a.stop();
-    b.stop();
-
-    // The message half: at least one of A's posts reached B through the real
-    // receive path. This is the spec's make-or-break condition.
-    expect(bPosts.length).toBeGreaterThan(0);
-    // The roster half: B learned about A. B only ever wrote its own row locally,
-    // so a second row can only have come off the wire.
-    expect(bMembers).toBeGreaterThanOrEqual(2);
   },
   10 * 60 * 1000
 );

@@ -36,21 +36,60 @@ export interface OutboundQueue {
   readonly sentCount: number;
   /** Inbox addresses this queue routed into transport.listen(). */
   readonly listenedInboxes: string[];
+  /** Actions still waiting because the socket is not open. */
+  readonly backlog: number;
+  /** Stop the reconnect-retry timer. Call from the bot's stop(). */
+  dispose: () => void;
 }
+
+/** Matches the app's 1s processOutbound interval (WebsocketProvider.tsx:217-221). */
+const RECONNECT_RETRY_MS = 1000;
 
 export function createOutboundQueue(transport: WsTransport): OutboundQueue {
   const queue: OutboundAction[] = [];
   const failures: { t: number; error: string }[] = [];
   const listened: string[] = [];
   let draining = false;
+  let disposed = false;
+  let retryTimer: ReturnType<typeof setTimeout> | undefined;
   let sent = 0;
 
   const drain = async () => {
     if (draining) return;
     draining = true;
     try {
-      let action: OutboundAction | undefined;
-      while ((action = queue.shift())) {
+      while (queue.length) {
+        // The socket-readiness gate. The app checks `readyState === OPEN` BEFORE
+        // dequeuing anything and leaves the queue untouched otherwise
+        // (`WebsocketProvider.tsx:146`), so a reconnect window DELAYS frames;
+        // `ws.onopen` and a 1s interval then drain them.
+        //
+        // An earlier version of this file shifted and sent unconditionally,
+        // which can destroy a frame silently: `WsTransport.send` passes no
+        // callback to `ws.send()`, and the `ws` library's `sendAfterClose` only
+        // constructs an error `if (cb)`. No throw, no callback, no entry in
+        // `failures`.
+        //
+        // ⚠️ HOW LIKELY IS THAT HERE? Low — and it is worth knowing why, because
+        // the honest answer is not "we hardened it". Node's `ws` auto-pongs over
+        // a wired connection in sub-millisecond time, so a harness socket never
+        // approaches the relay's ~1 s deadline; desktop connections have been
+        // observed holding 20+ minutes, and this is precisely why every harness
+        // bench measures 0% loss while physical devices measured 15-25%
+        // (`tasks/transport/measurements.md`, "Why every bench was green").
+        // The trigger essentially cannot be hosted here.
+        //
+        // So this gate is cheap insurance against a window that rarely opens,
+        // not a fix for an observed harness failure. It is kept because it costs
+        // ~10 lines, matches the app exactly, and removes a class of artifact
+        // that would be indistinguishable from the bug under study if it ever
+        // did fire. Same reasoning as transport item B1, which is open on the
+        // app for the same reason: the protection is MISSING, not unnecessary.
+        if (!transport.connected) {
+          scheduleRetry();
+          break;
+        }
+        const action = queue.shift()!;
         try {
           const frames = await action();
           for (const raw of frames) {
@@ -59,13 +98,27 @@ export function createOutboundQueue(transport: WsTransport): OutboundQueue {
             transport.send(raw);
           }
         } catch (err) {
-          failures.push({ t: Date.now(), error: (err as Error)?.message ?? String(err) });
+          failures.push({
+            t: Date.now(),
+            error: (err as Error)?.message ?? String(err),
+          });
           logger.warn('[harness] outbound action failed', { err });
         }
       }
     } finally {
       draining = false;
     }
+  };
+
+  // The app's equivalent is the 1s interval that re-calls processOutbound
+  // (`WebsocketProvider.tsx:217-221`). Only armed while a backlog is waiting on
+  // the socket, so an idle bot has no live timer to leak at teardown.
+  const scheduleRetry = () => {
+    if (retryTimer || disposed) return;
+    retryTimer = setTimeout(() => {
+      retryTimer = undefined;
+      void drain();
+    }, RECONNECT_RETRY_MS);
   };
 
   // Returns true when the frame was a subscribe request and has been handled.
@@ -76,7 +129,8 @@ export function createOutboundQueue(transport: WsTransport): OutboundQueue {
     } catch {
       return false;
     }
-    if (parsed.type !== 'listen' || !Array.isArray(parsed.inbox_addresses)) return false;
+    if (parsed.type !== 'listen' || !Array.isArray(parsed.inbox_addresses))
+      return false;
     const addresses = parsed.inbox_addresses.filter(
       (a): a is string => typeof a === 'string'
     );
@@ -113,6 +167,14 @@ export function createOutboundQueue(transport: WsTransport): OutboundQueue {
     },
     get listenedInboxes() {
       return [...listened];
+    },
+    get backlog() {
+      return queue.length;
+    },
+    dispose: () => {
+      disposed = true;
+      if (retryTimer) clearTimeout(retryTimer);
+      retryTimer = undefined;
     },
   };
 }

@@ -15,13 +15,14 @@
 import { test, expect } from 'vitest';
 import { createSpaceBot } from './spaceBot';
 
-test(
-  'space-create: a headless bot creates a real space and reads its manifest back',
-  async () => {
-    const stamp = String(Date.now()).slice(-6);
-    const bot = await createSpaceBot(`space-a-${stamp}`);
-    await bot.start();
+test('space-create: a headless bot creates a real space and reads its manifest back', async () => {
+  const stamp = String(Date.now()).slice(-6);
+  const bot = await createSpaceBot(`space-a-${stamp}`);
+  await bot.start();
 
+  // try/finally so an early assertion failure still closes the socket and
+  // stops the ActionQueue interval — see the same note in space-basic.
+  try {
     const spaceName = `harness-s0-${stamp}`;
     const { spaceId, channelId } = await bot.createSpace(spaceName);
     console.log(`[space-create] bot=${bot.identity.address.slice(0, 12)}`);
@@ -41,7 +42,9 @@ test(
     const link = await bot.inviteLink(spaceId);
     expect(link).toContain(spaceId);
     const fetched = await bot.graph.invitationService.processInviteLink(link);
-    console.log(`[space-create] manifest read back from relay: "${fetched.spaceName}"`);
+    console.log(
+      `[space-create] manifest read back from relay: "${fetched.spaceName}"`
+    );
     expect(fetched.spaceId).toBe(spaceId);
     expect(fetched.spaceName).toBe(spaceName);
     expect(fetched.defaultChannelId).toBe(channelId);
@@ -55,7 +58,9 @@ test(
     const hubKey = await bot.messageDB.getSpaceKey(spaceId, 'hub');
     expect(hubKey?.address).toBeTruthy();
     const memberCount = await bot.members(spaceId);
-    console.log(`[space-create] local member rows=${memberCount} encryptionStates=${states.length}`);
+    console.log(
+      `[space-create] local member rows=${memberCount} encryptionStates=${states.length}`
+    );
     expect(memberCount).toBe(1);
 
     // 4. A second channel, so createChannel is exercised too (spec S0 names it).
@@ -74,7 +79,8 @@ test(
     //
     //    So: hand the receive path a frame addressed to the space inbox whose
     //    ciphertext is garbage, and require the counter to notice.
-    const spaceInbox = (await bot.messageDB.getSpaceKey(spaceId, 'inbox')).address!;
+    const spaceInbox = (await bot.messageDB.getSpaceKey(spaceId, 'inbox'))
+      .address!;
     expect(bot.novelErrors().length).toBe(0);
     await bot.transport.deliver({
       inboxAddress: spaceInbox,
@@ -98,8 +104,7 @@ test(
     );
     for (const f of bot.graph.outbound.failures) console.log(`   ! ${f.error}`);
     expect(bot.graph.outbound.failures).toEqual([]);
-
+  } finally {
     bot.stop();
-  },
-  180_000
-);
+  }
+}, 180_000);
