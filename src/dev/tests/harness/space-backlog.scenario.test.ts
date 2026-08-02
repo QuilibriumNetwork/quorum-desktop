@@ -165,7 +165,34 @@ test(
             framesArrived: b.transport.arrived.length - framesBefore,
           };
           trials.push(trial);
-          log.add(Date.now(), 'harness', 'trial', { ...trial });
+          log.add(Date.now(), 'harness', 'trial', {
+            ...trial,
+            bTrace: b.syncTrace,
+          });
+
+          // On a MISS, say WHICH step died. Without this the scenario reports
+          // "the roster is short" and the reader is back to guessing — which is
+          // the whole failure mode this investigation keeps repeating.
+          if (!trial.ok) {
+            const step = (needle: string) =>
+              `${needle}=${b!.traceCount(needle)}`;
+            say(
+              `    B handshake: ${[
+                'requestSync',
+                'sync-info',
+                'Adding candidate',
+                'No suitable candidates',
+                'Expired, ignoring',
+                'No active session or expired',
+                'sync-delta',
+                'member delta',
+              ]
+                .map(step)
+                .join('  ')}`
+            );
+            for (const line of b.syncTrace.slice(-6))
+              say(`      | ${line.slice(0, 150)}`);
+          }
           say(
             `  backlog=${backlog} iter=${i}/${ITERATIONS}  ${trial.ok ? 'OK' : 'MISS'}  ` +
               `rows=${got}/${target}  framesArrived=${trial.framesArrived}` +

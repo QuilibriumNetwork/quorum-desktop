@@ -94,6 +94,16 @@ export interface HarnessSpaceBot {
   /** Member rows currently on disk for a space. */
   members(spaceId: string): Promise<number>;
   /**
+   * Sync-handshake log lines this bot emitted, in order.
+   *
+   * The real services log every step; this captures the ones the roster bugs
+   * argue about, so a failing trial can say WHICH step died instead of only
+   * that the roster is short.
+   */
+  syncTrace: string[];
+  /** Count trace lines containing `needle`. */
+  traceCount(needle: string): number;
+  /**
    * Add `count` synthetic member rows to this bot's roster for a space.
    *
    * ⚠️ READ BEFORE USING — this is a deliberate, load-bearing shortcut and it
@@ -170,6 +180,37 @@ export async function createSpaceBot(
   /** Spaces this bot created or joined — needed to clear their timers at stop(). */
   const joinedSpaces = new Set<string>();
 
+  // ── Sync handshake trace ──────────────────────────────────────────────────
+  //
+  // The real services already log every step of the sync handshake. In a browser
+  // those lines are trapped behind DevTools and a human scrolling; in-process
+  // they are data, and they are the difference between "the roster did not
+  // arrive" and "the request was read 210s after it expired".
+  //
+  // Filtered at capture, because an unfiltered trace of a 1200-frame backlog is
+  // tens of thousands of lines. These are the steps the two roster bugs actually
+  // argue about — the chain in `2026-08-02-sync-requests-arrive-four-minutes-
+  // late…` §4, plus the member-delta counters shared #72 added.
+  const TRACE_PATTERNS = [
+    'requestSync',
+    'sync-request',
+    'sync-info',
+    'sync-initiate',
+    'sync-manifest',
+    'sync-delta',
+    'initiateSync',
+    'member delta',
+    'delta payload',
+    'informSyncData',
+  ];
+  const syncTrace: string[] = [];
+  const trace = (line: string) => {
+    if (TRACE_PATTERNS.some((p) => line.includes(p))) syncTrace.push(line);
+  };
+  /** Run a send-side operation with its log lines traced too, not just receives. */
+  const traced = <T>(fn: () => Promise<T>): Promise<T> =>
+    runAttributed({ record: () => {}, trace }, fn);
+
   /**
    * Fail loudly when the send pipeline did not drain.
    *
@@ -245,10 +286,12 @@ export async function createSpaceBot(
       graph.invitationService.constructInviteLink(spaceId),
 
     join: async (link: string) => {
-      const result = await graph.invitationService.joinInviteLink(
-        link,
-        identity.keyset,
-        passkeyInfo
+      const result = await traced(() =>
+        graph.invitationService.joinInviteLink(
+          link,
+          identity.keyset,
+          passkeyInfo
+        )
       );
       if (!result)
         throw new Error('joinInviteLink returned nothing (unparseable link?)');
@@ -307,10 +350,15 @@ export async function createSpaceBot(
       await refreshSubscriptions();
     },
 
-    requestSync: (spaceId: string) => graph.syncService.requestSync(spaceId),
+    requestSync: (spaceId: string) =>
+      traced(() => graph.syncService.requestSync(spaceId)),
 
     members: async (spaceId: string) =>
       (await messageDB.getSpaceMembers(spaceId)).length,
+
+    syncTrace,
+    traceCount: (needle: string) =>
+      syncTrace.filter((l) => l.includes(needle)).length,
 
     seedMembers: async (spaceId: string, count: number) => {
       for (let i = 0; i < count; i++) {
@@ -440,6 +488,7 @@ export async function createSpaceBot(
       record: (m: string) => {
         loggedFailure ??= m;
       },
+      trace,
     };
     try {
       await runAttributed(sink, () =>

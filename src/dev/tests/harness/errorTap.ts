@@ -41,6 +41,18 @@ import { logger } from '@quilibrium/quorum-shared';
 /** Where an attributed failure is recorded. One per in-flight frame. */
 export interface FailureSink {
   record: (message: string) => void;
+  /**
+   * Optional: receive EVERY `logger.log` line emitted while this sink is
+   * current, not only failures.
+   *
+   * This is what turns "the roster did not arrive" into "the handshake died at
+   * step 4, and here is by how many milliseconds". The sync path is already
+   * densely logged by the real services — `sync-request: Expired, ignoring`,
+   * `initiateSync: No suitable candidates`, `member delta: … resolved=N` — and
+   * in a browser those lines are trapped behind DevTools and a human reading
+   * them. In-process they are data.
+   */
+  trace?: (line: string) => void;
 }
 
 const store = new AsyncLocalStorage<FailureSink>();
@@ -89,9 +101,26 @@ export function installErrorTap(): void {
 
   const loggerRef = logger as unknown as {
     error: (...a: unknown[]) => unknown;
+    log: (...a: unknown[]) => unknown;
   };
   loggerRef.error = wrap(loggerRef.error.bind(logger));
   console.error = wrap(console.error.bind(console)) as typeof console.error;
+
+  // The trace tap. Same discipline as above — installed once, never restored,
+  // attributed by async context — because a per-frame patch/restore of a global
+  // is the bug this module exists to avoid.
+  const origLog = loggerRef.log.bind(logger);
+  loggerRef.log = (...args: unknown[]) => {
+    const sink = store.getStore();
+    if (sink?.trace) {
+      sink.trace(
+        args
+          .map((a) => (typeof a === 'string' ? a : JSON.stringify(a)))
+          .join(' ')
+      );
+    }
+    return origLog(...args);
+  };
 }
 
 /** Run `fn` with failures attributed to `sink`. */
