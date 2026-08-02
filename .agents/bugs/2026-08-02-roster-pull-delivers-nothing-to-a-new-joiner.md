@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A new joiner receives ZERO member rows from the roster pull, even with a fully-populated desktop peer online"
-status: CONFIRMED by a two-client measurement 2026-08-02 — cause not yet located
+status: CONFIRMED 2026-08-02. Handshake proven to COMPLETE; break isolated to delta-delivery-or-apply. See §3b
 priority: HIGH — this is the mechanism the whole identity effort assumed was working
 created: 2026-08-02
 updated: 2026-08-02
@@ -67,6 +67,63 @@ It also invalidates an assumption in two other documents until resolved:
   builds a delta of members the requester lacks. Traced 2026-08-02.
 - **Not "the peer had nothing to give"** — see §1.
 - **Not a build mismatch** — both clients were the same local dev build.
+
+## §3b. 🔵 The chain COMPLETES — logs captured 2026-08-02, both clients
+
+Console logs from both clients (dev build, so `logger` is live) show the sync
+handshake succeeding end to end. Steps confirmed, in order:
+
+| # | Evidence |
+|---|---|
+| 1 | B: `[SyncService] requestSync: Sending sync-request for space QmZM3AKwKfMp…` |
+| 2 | A: `sync-request from: QmY36Yq6kaSi, ourInbox: QmaqgoJ4MuW3, isOurOwn: false` — not expired |
+| 3 | A: `sync-request: Calling informSyncData` → `informSyncData called for space QmZM3AKwKfMp` |
+| 4 | A: `buildSyncInfo: returning sync-info response - we have data they don't` → `Queued sync-info response` |
+| 5 | B: `sync-info payload: {inboxAddress: 'QmaqgoJ4MuW3', messageCount: 1, memberCount: 78}` — **B is told, explicitly, that A has 78 members** |
+| 6 | B: `sync-info: Adding candidate and scheduling sync` (hasSession true, not expired) |
+| 7 | A: `sync-initiate from: QmY36Yq6kaSi` … `has memberDigests: true` … **`Built 2 delta payload(s)`** |
+| 8 | B: `Control message received: sync-delta` |
+
+So the handshake, the peer selection, the digest exchange and the delta build all
+work. **The break is between A building the delta and B's roster changing.**
+
+### Also ruled out by reading the code (do not re-check these)
+
+- **Payload assembly is correct.** `buildSyncDeltaPayloads`
+  (`quorum-shared/src/sync/service.ts:698-755`) emits message chunks first, then a
+  SEPARATE final payload carrying `memberDelta`. A built **2** payloads for **1**
+  message digest, which is consistent with payload 2 being the member/peer one.
+- **Address keying is consistent.** Digests key on `member.address`
+  (`createMemberDigest`, `utils.ts:269`), `memberMap` keys on `m.address`
+  (`service.ts:172`), and desktop's adapter populates `address` from
+  `user_address`. So the `memberMap.get(addr)` in `buildMemberDelta` is not
+  silently missing.
+- **The apply block exists and is not mis-nested.** `MessageService.ts:5827`
+  handles `memberDelta` at the same level as the message delta, not inside it.
+
+### Remaining candidates, now narrow
+
+1. **The member payload was LOST in transit.** Leading theory. It is payload 2 of
+   2, and desktop is documented as not consuming the send-retention fix that
+   shipped in shared `2.1.0-39` (transport item B1). B logged only two
+   `sync-delta` receipts across ALL spaces, so it is entirely possible only the
+   message payload arrived for this space.
+2. **The delta was built empty** despite the diff being correct — would mean
+   `cache.memberMap` was populated for the digest count (78, per the sync-info)
+   but not for the lookup, which is hard to square with the keying above.
+3. **The apply threw** partway. Nothing is logged there either way.
+
+### The one-line experiment that separates them
+
+None of the three can be told apart from the current logs, because **the
+sync-delta handler logs nothing about what it received**. Add a single line at
+`MessageService.ts:5827` recording `envelope.message.memberDelta?.members?.length`
+(and one on the send side for what was built), re-run the two-client join, and the
+answer is immediate:
+
+- built 77, received 0 → **transport loss** (candidate 1)
+- built 0 → **empty delta** (candidate 2)
+- received 77, roster unchanged → **apply failure** (candidate 3)
 
 ## §4. Where to look next — the chain is fully logged
 
