@@ -129,7 +129,153 @@ is contained and testable)*
 - Verify with the two-client join and `/dev/identity-coverage` — the joiner
   should land on the BEST peer's count, not an arbitrary one.
 
-**B. Make the member half survive a lost frame.** *(needs a judgement call)*
+**B. 🔴 The member payload is INTERMITTENT — it arrived once and has failed
+every time since.** *(now the only thing blocking a new joiner; do this one)*
+
+> ⚠️ **Read §0 of this file before this section.** An earlier draft of what
+> follows said the payload "NEVER arrives, every time, for everybody". **That is
+> contradicted by this file's own §0**, where `memberDelta=71 members → saved 71
+> member row(s)` was measured on 2026-08-02 and the joiner went 1 → 72 rows.
+>
+> It works sometimes. Writing "never" was an overstatement produced by a run of
+> consecutive failures, and it is the third time in this investigation that a
+> streak of observations got promoted to a law. **Intermittent is the finding**,
+> and intermittent is exactly what a manual two-client test cannot characterise —
+> see the harness note at the end of this section.
+
+A clean two-client run, with the requester NOT starved (see
+`2026-08-02-sync-requests-arrive-four-minutes-late-…`) and two peers answering
+with **90** and **79** members:
+
+```
+sync-info: Adding candidate and scheduling sync      ← handshake fine
+Control message received: sync-delta
+sync-delta: memberDelta=ABSENT, messageDelta=present, isFinal=false
+```
+
+Twice, in two consecutive rounds. A console-wide search for **`isFinal=true`
+returned NOTHING**, in any round, for any space.
+
+That is decisive about the shape of the failure. `buildSyncDeltaPayloads`
+(`quorum-shared/src/sync/service.ts:735-790`) emits message chunks with
+`isFinal: false` and then pushes a **separate final payload carrying
+`memberDelta` with `isFinal: true`** — and when there is no such payload to
+push, it instead stamps `isFinal = true` on the LAST message chunk. So:
+
+> Receiving `isFinal: false` and never receiving `isFinal: true` proves the
+> responder **did** build a final member payload. The requester simply never
+> gets it. The exchange never completes.
+
+### ⚠️ "It is transport loss" is now the WEAKER explanation — do not start there
+
+The obvious reading is desktop's missing send retention (transport item B1). Read
+`.agents/tasks/transport/2026-08-01-desktop-send-retention-gap.md` before
+assuming it: that task records desktop benches at **301/301, 0% loss, both
+directions**, because desktop does not miss pongs and its connections hold for
+20+ minutes. **A transport that loses 0% of frames does not lose the same
+specific payload 100% of the time.** Deterministic, repeatable, always-the-last-
+payload loss is the signature of something not being SENT, not something being
+dropped.
+
+### 🎯 The next capture, and it is cheap
+
+The responder-side instrumentation already exists — shared #72 added:
+
+```
+[SyncService] member delta: ours=N theirs=M missing=X outdated=Y resolved=Z (cache.memberMap=K)
+```
+
+**Capture the RESPONDER's console** (the established client) while the joiner
+syncs, filtered on `member delta`. That single line separates every remaining
+possibility:
+
+| what the responder logs | meaning |
+|---|---|
+| no line at all | the responder never even reached the member-delta build |
+| `resolved=0` with `missing` high | the diff found work but `cache.memberMap` could not resolve it — responder-side bug |
+| `resolved=78` and the joiner still gets nothing | it was built and then genuinely not delivered — only then is B1 the answer |
+
+### ✅ That capture was taken. The responder side is FINE.
+
+The established client, four consecutive rounds, identical every time:
+
+```
+[SyncService] member delta: ours=79 theirs=90 missing=5 outdated=2 resolved=7 (cache.memberMap=79)
+[MessageService] sync-delta: memberDelta=ABSENT, messageDelta=present, isFinal=false
+```
+
+So `resolved=7` — real member rows were built. **This is not the digest bug, not
+`computeMemberDiff`, and not an empty `cache.memberMap`.** All three are ruled
+out by that one number.
+
+And note the second line: the responder is ALSO receiving deltas with no member
+half. It has been stuck at 79 against a 90-member peer for four rounds.
+
+> **Member deltas get built reliably and delivered unreliably.** It is also not
+> specific to a new joiner — the established client above is stuck at 79 against
+> a 90-member peer for the same reason. The "new joiner" in the original title
+> just makes it most visible.
+
+The send loop is also fine (`SyncService.ts:888-922`): it iterates every payload,
+seals each, and pushes all of them, which matches the observed
+`Returning 3 outbound envelope(s)` for 2 deltas + 1 peer-map.
+
+**So the loss sits between "queued for send" and "decrypted on receipt", and
+nothing narrower is established.** Do not guess past this point — two earlier
+hypotheses in this investigation (delivery latency, then transport loss) both
+looked strong and both were wrong.
+
+### ❓ One unexplained observation, worth checking first next session
+
+A receiver processing `sync-manifest` and `sync-delta` should take the
+`outerEnvelope.type === 'sync'` branch at `MessageService.ts:4601`, which logs
+`Received sync envelope from …` at `:4603`. Deltas are sent as
+`{ type: 'sync', ...envelope }` (`SyncService.ts:921`).
+
+**A client that received 3 `sync-manifest` and 3 `sync-delta` logged that line
+ZERO times.** Either those control messages are arriving by a different route
+than the one the send path uses, or the console capture was partial. Confirm
+before building anything on it — but if it holds, it points straight at the seam
+where the payload is being lost.
+
+### 🧨 Separate latent gap found while tracing: `chunkMembers` is dead code
+
+`chunkMembers()` (`quorum-shared/src/sync/utils.ts:639`) is defined, exported
+from the barrel, and **never called anywhere**. `chunkMessages` IS used
+(`service.ts:735`), so messages are split at `MAX_CHUNK_SIZE` (5MB) and members
+are sent as ONE unbounded payload.
+
+⚠️ **This is NOT the bug above** — the failing payload carried 7 members, orders
+of magnitude below any limit. But a large space would ship its entire roster,
+avatars included, as a single multi-megabyte frame with nothing splitting it.
+Someone wrote that function anticipating exactly this and never wired it in.
+Worth fixing on its own merits, and worth NOT conflating with the delivery
+failure.
+
+### 🛠️ STOP TESTING THIS BY HAND — it needs the harness
+
+This is an **intermittent** failure in a two-client exchange. A manual test gives
+one sample per hour of operator time, and one sample cannot distinguish "always
+broken" from "broken 4 times in 5". Every wrong turn in this investigation came
+from reading a short streak as a rule.
+
+`.agents/tasks/transport/2026-07-27-headless-space-harness.md` is a written spec,
+not started, and its slice S1 ("two bots in one space, B receives ONE post") is
+already most of what this needs — add "and B receives the member roster" and the
+harness answers in seconds what cost a day by hand:
+
+- is it 1-in-2 or 1-in-50?
+- does it correlate with roster size, with how long the joiner was offline, with
+  the number of payloads?
+- does it EVER succeed twice in a row?
+
+**Build that before writing another line of fix for this bug.** Guessing at an
+intermittent bug from single samples is what produced three wrong answers here
+already.
+
+Everything below was written when this was still a hypothesis.
+
+**B (original framing). Make the member half survive a lost frame.**
 
 - The member delta is ONE payload (`service.ts:698-755`, message chunks first,
   members in a single final payload). Lose it and the entire roster exchange is

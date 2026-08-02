@@ -211,6 +211,7 @@ you what is OPEN vs DONE so nothing gets lost.
 | **OPEN** | **PRIVATE:** quorum-app-prod#1 + quorum-mobile gitignored `.agents/` (`2026-06-25-space-control-msg-auth-signature-design.md` + `2026-06-25-space-auth-leaddev-message.md`) | **Group-chat (space) authorization — the remaining work.** Design doc + lead-dev message live here. Detail kept OUT of this public repo. |
 | **OPEN (private detail)** | `2026-06-25-space-remove-message-auth-uses-payload-senderid.md` (mobile, gitignored) | The mobile-side space bug report this design answers. Mobile-local only. |
 | **REFERENCE** | `2026-06-25-control-message-auth-audit-senderid-spoofing.md` (mobile, gitignored) | The full per-handler audit matrix (DM + space + reactions). Detailed reference; THIS recap is the live tracker. |
+| **IN REVIEW** | quorum-mobile PR #217 (`fix/verify-owner-signature-on-space-control-messages`) | Receive-side parity: mobile now performs the owner-signature check on space control messages that desktop already performed, and authenticates `leave` the same way desktop does. Mobile-side only, no wire change, desktop needs nothing. Task detail in mobile's gitignored `.agents/`. |
 
 ### Adjacent work (related topic, NOT the spoofing fix — don't confuse)
 
@@ -262,4 +263,4 @@ Suggested PR scope: desktop DM `remove-message` + `edit-message` only. Mention i
 the PR body that space paths are intentionally unchanged (parity with mobile) and
 linked to the open space task.
 
-*Last updated: 2026-07-21*
+*Last updated: 2026-08-02*
