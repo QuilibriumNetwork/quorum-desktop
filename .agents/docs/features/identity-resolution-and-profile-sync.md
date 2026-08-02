@@ -176,6 +176,42 @@ live save still learns the identity on the next reconnect.
 > a member neither side has heard of, and that gap is the only thing the
 > announce exists to close.
 
+## 🗺️ MAP — everything about "people show as an address" (updated 2026-08-02)
+
+> One entry point, so nobody has to know which of a dozen files to open. If you
+> are here because of a missing-name report, read the convergence model directly
+> below, then the open items.
+
+**The state, in one line:** the dominant cause was a case-mismatched React Query
+key discarding every roster update (desktop #295, fixed). A new joiner now goes
+from 1 member row to 72 in a two-client test, and the member list renders them.
+
+| | |
+|---|---|
+| **The architecture** | this document — read "Why a name goes missing" next |
+| **The measurement tool** | `/dev/identity-coverage` (dev builds only). Take a snapshot before and after any change |
+| **The full record** | `.agents/tasks/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
+
+**Open, with next steps written:**
+
+| Item | Where |
+|---|---|
+| Sync peer selection ignores `memberCount`; the member half is one payload with no retry | `bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
+| A per-space name/avatar never reaches your own other devices | `bugs/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
+| Members that **no peer holds** — only the person re-announcing recovers them | same roster-pull file, NEXT STEP C. Blocked on a mobile release carrying #215 |
+| A deleted space tag still shows on **mobile** | `bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
+| Every `logger` call is a no-op in production — why none of this was visible | `bugs/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md` |
+| Hub-log migration; would delete the (working) pull | `tasks/port-from-mobile/candidates.md` #32 |
+
+**Two corrections this effort had to make about itself**, both worth knowing
+before trusting any older wording:
+
+1. The roster pull was claimed to have "never worked". **False** — missing members
+   are found by ADDRESS, not by hash. Shared #71 fixed stale identities not
+   refreshing, which is narrower.
+2. The fix was believed to be a join-triggered announce. **Killed by arithmetic**
+   before it was built: broadcast fan-out makes it N² in traffic.
+
 ## Why a name goes missing, and what repairs it (convergence model)
 
 > Added 2026-08-01. Everything above describes what the data IS. This section
