@@ -124,6 +124,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [A deleted space tag never disappears from other members' rosters](bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md) — self-inflicted by #290; read §6 before "restoring the old behaviour", the obvious fix is worse
 - [Every logger call is a no-op in production builds](bugs/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md) — "fail open and log" produces zero signal from real users
 - [A per-space name/avatar never reaches your own other devices](bugs/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md) — other MEMBERS get it fine; your own second device does not. Not the UserConfig cross-device bug (different channel)
+- [🔴 The roster pull delivers NOTHING to a new joiner](bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md) — measured: a peer with 78 member rows, a joiner receives 1. The mechanism the whole identity effort assumed was working
 - [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](bugs/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - [announce-keys flooding → unbounded per-device admission store](bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - [Join-binding hijack: unauthenticated member rebind/blank](bugs/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
