@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Identity announce: cap the retries instead of re-sending forever, and fix what un-converges a row"
-status: STEPS 1-3 DONE 2026-08-01 (announce implemented, awaiting live verification). Step 4 remains
+status: CLOSED 2026-08-02 — all four steps shipped and measured. Follow-ups live in the bug files listed in the box
 priority: medium — the two live bugs it uncovered are fixed and merged
 created: 2026-08-01
 updated: 2026-08-01
@@ -26,80 +26,75 @@ related_docs:
 
 ---
 
-## 🔴 HANDOVER — read this first (written 2026-08-01, end of session)
+## ✅ CLOSED 2026-08-02 — Step 4 ran, and it changed the conclusion
 
-**Steps 1-3 are SHIPPED and merged. One piece of Step 3 remains, plus Step 4.**
+**Everything in this task is DONE and shipped. The measurement it demanded found a
+different, bigger defect than anything this task was about.** Read this box, then
+the open items at the bottom; the body below is the reasoning, kept as the record.
 
-Everything below this box is the reasoning and the record. Here is the state.
+### What shipped
 
-### Merged
+| Step | What | Where |
+|---|---|---|
+| 1 | Saving a message no longer erases a conversation's name/avatar | desktop #288 |
+| 2 | Retry cap, 3 attempts (desktop ∞→3, mobile 1→3) | desktop #289, mobile #213 |
+| 3a | The space digest can see the identity that renders | shared #71 |
+| 3b | Sync no longer erases the global slot, nor reverts a per-space name | desktop #290 |
+| 3c | Desktop announces its identity to every joined space on connect | desktop #291 |
+| 3d | Mobile's announce gate expires instead of firing once ever | mobile #215 |
+| 4 | The instrument: `/dev/identity-coverage` | desktop #293, #294 |
 
-| What | Where |
-|---|---|
-| Step 1 — saving a message no longer erases a conversation's name/avatar | desktop #288 `19e79da41` |
-| Step 2 — retry cap, 3 attempts (desktop ∞→3, mobile 1→3) | desktop #289, mobile #213 |
-| Step 3a — space digest can see the global slot | **shared** #71 `5a49829` |
-| Step 3b — sync no longer erases the global slot, nor reverts a per-space name | desktop #290 `4be71e3fd` |
-| Lint made usable again (`.worktrees` was breaking every file's parse) | desktop #287 |
+### 🔴 What Step 4 actually found — the headline of the whole effort
 
-All three repos are on their base branch, clean, nothing unpushed. Desktop
-**749 tests**, shared **567**, mobile **210**. `tsc` and `eslint` clean on desktop.
+**A case-mismatched React Query key was discarding every roster update the sync
+delivered** (desktop #295). The `sync-delta` handler refetched
+`['spaceMembers', spaceId]`; every subscriber builds `['SpaceMembers', spaceId]`.
+Measured: **72 member rows in IndexedDB, 1 person in the member list**, recovered
+only after several manual reloads.
 
-### What is left, in priority order
+That is almost certainly the dominant cause of the user-visible symptom, and it
+had nothing to do with the wire, the crypto, or the retry cadence this task spent
+its length on.
 
-**1. ✅ The bootstrap announce — DONE 2026-08-01.** Desktop now announces on
-connect: `MessageService.announceProfileToAllSpacesOnConnect`, fired from
-`MessageDB.tsx` on the startup timer and from `setResubscribe`, bounded by
-`src/utils/spaceProfileGate.ts` (3 attempts per identity, minutes apart, then
-silent — a bootstrap, not a cadence). The DM gate was extracted to
-`src/utils/profileSendGate.ts` and both now sit on it.
+⚠️ **A claim from this task was WRONG and is corrected in the identity doc**: the
+roster pull did NOT "never work". `computeMemberDiff` finds missing members by
+ADDRESS, not by hash, so members you had never heard of were always detected and
+sent. Shared #71 fixed *stale identities never refreshing*, a narrower thing.
+That overstatement is what mis-ranked two days of work toward the transport.
 
-Two deviations from the spec, both argued in
-`2026-08-01-space-member-identity-announce-on-connect.md`'s status box: the
-announce carries the **override slot as well as** the global one (global-only
-would show a member's global name to anyone bootstrapping a row, breaking the
-"a per-space name is what spacemates see" requirement), and the gate is spaced in
-**minutes rather than 24h** (a bootstrap should finish inside a session; the
-floor exists only so a flapping socket cannot spend the allowance in one outage).
+### The measurements (2026-08-02, real spaces)
 
-⚠️ **Unit-tested, not yet verified on a real space.** That is item 2.
+| | Before | After |
+|---|---|---|
+| A joiner's roster in "Quilibrium Community" | 1 row | **72 rows**, and the member list renders them |
+| User A, established client, all spaces | 47 senders with no row | **47** — unchanged |
 
-**2. Step 4, the diagnostic — now the top item.** A count of "rows with no
-identity from any source", run before and after. Without it, none of this is
-measured, and the announce above is the first change whose whole purpose is to
-move that number. Baseline to beat, from the 2026-06-13 run on "Quorum Test 2":
-**46 of 89 distinct senders had no member row at all.** Tool and procedure:
-`.agents/tools/dm-debug/06-space-member-sources.js`, `__spaceMissingSenders(id)`.
-Reload between runs — the point is that the row PERSISTS.
+**A did not move, and that is expected.** The pull can only spread identity some
+peer actually holds. A already had 79 rows for that space — more than B's 72 — so
+B had nothing to give it. A's 41 are people who posted (one of them 202 messages)
+and whom *no currently-active peer appears to hold at all*. For those, the pull is
+the wrong instrument: only the person themselves re-announcing can restore them,
+which is what the announce work covers and what mobile #215 unblocks once released.
 
-**3. Two things I did NOT verify** and which are adjacent to a question the
-operator raised (does a per-space name always win?):
-   - does the space UI feed `resolveSpaceMemberName` its `globalDisplayName` from
-     the **roster global slot** or only from the **public profile**?
-   - how does a **non-public** user's global name reach that comparison? They have
-     no public profile, so if the comparison only reads channel B it sees nothing.
+### Open items, ready to pick up
 
-   The precedence *rule* is confirmed correct
-   (`override → QNS → global → address`, and `resolveSpaceMemberName` lets a
-   deliberate per-space name beat QNS). What is unverified is the **plumbing**
-   that feeds it. Nothing shipped depends on this; it is the next thing to trace.
-
-**4. `.agents/bugs/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md`**
-— the test suite silently ran 29 of 749 tests on 5 occasions today. Read that file
-before trusting any suite result. **Quote the FILE COUNT alongside the test
-count**; a collapsed run is invisible otherwise.
+1. **The exchange is unreliable** — one two-client run delivered nothing at all,
+   same clients, same code. Members ride a SINGLE payload with no retry until the
+   next connect. See `.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`.
+2. **Peer selection ignores roster completeness** — same bug file. Small, contained.
+3. **Nothing recovers a member nobody holds.** A's 41. Needs those users to
+   re-announce; blocked on a mobile release carrying #215.
+4. **The per-space override never reaches your own other devices** —
+   `.agents/bugs/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md`.
 
 ### Two lessons worth carrying
 
-- **Reach for headless verification first.** This task twice claimed a step
-  "needs the operator, two clients, 20 minutes". Both times it did not: the digest
-  is a pure function, and the erasure was a DB write path testable against
-  `fake-indexeddb`. Device time was never needed to *establish* a defect — only to
-  confirm a fix end to end.
-- **Write the failing test before the fix.** Every defect here was converted from
-  "found by reading code" to "demonstrated" that way, and one of them (the space
-  half of Step 1) had been mis-specified in an earlier doc precisely because
-  nobody had run it.
+- **Measure before reasoning about architecture.** Two days of correct-sounding
+  architectural analysis, and the defect was a capitalisation in a cache key.
+  The panel gave the first honest number; the delta counts found the seam.
+- **When storage and the UI disagree, suspect the cache key before the transport.**
+  Every layer was healthy in isolation. Nobody was looking at the seam between
+  them.
 
 ## §0. Doesn't this already work? Yes, almost.
 
