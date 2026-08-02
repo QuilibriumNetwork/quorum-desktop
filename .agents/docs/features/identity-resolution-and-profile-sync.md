@@ -240,18 +240,40 @@ That single asymmetry explains why mobile shows the most missing names despite
 having the better message transport, and why "mobile has the hub log, so mobile
 is fine" is wrong.
 
-### Why it was broken for so long
+### Why it was broken for so long — corrected 2026-08-02
 
-The pull existed all along and **never worked**. `computeMemberHash` built its
-fingerprint from the OVERRIDE slot only, which the follow-global work (2026-07-16)
-deliberately stopped populating — so nearly every member hashed as "no identity".
-Two clients with completely different rosters therefore always agreed they were
-in sync and exchanged nothing. Fixed 2026-08-01 (shared #71 + desktop #290); see
-`.agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`.
+> ⚠️ An earlier version of this section said the pull "never worked" because
+> every member hashed as "no identity", so two clients always agreed they were in
+> sync. **That was wrong**, and it mis-ranked the whole investigation. Corrected
+> below after the mechanism was instrumented and measured.
 
-So the pull went from "never worked" to "works", and the bootstrap push was added
-on top. Both landed the same day and **neither has been measured on a live space**
-(that is Step 4 of `2026-08-01-identity-announce-cadence-research.md`).
+There were **two independent defects**, and the smaller one got the attention:
+
+**1. Stale identities never refreshed** (shared #71). `computeMemberHash` built
+its fingerprint from the OVERRIDE slot only, which the follow-global work
+(2026-07-16) deliberately stopped populating, so nearly every member hashed as
+"no identity". But note what that does and does not break:
+`computeMemberDiff` (`quorum-shared/src/sync/utils.ts:392-413`) finds **missing**
+members by **address**, not by hash — `if (!ourDigest) missingAddresses.push(…)`.
+So a member you had never heard of was always detected and always sent. The hash
+governs only the **outdated** branch. #71 therefore fixed "a peer's changed name
+never propagates", **not** "the pull does not work". Applying those deltas
+without erasing the global slot is desktop #290, and that one was live all along.
+
+**2. The view layer discarded every roster update** (desktop #295). The
+`sync-delta` handler refetched `['spaceMembers', spaceId]` while every subscriber
+builds `['SpaceMembers', spaceId]`. React Query keys are case-sensitive, so the
+refetch hit a key nobody was subscribed to. Rows landed in IndexedDB and the
+member list never learned. Measured: **72 rows on disk, 1 person in the list**,
+recovered only after several manual reloads.
+
+**Defect 2 was almost certainly the dominant cause of the user-visible symptom**,
+and it had nothing to do with the wire, the crypto, or the announce cadence. It
+was found last, by instrumenting the delta counts, because every layer looked
+healthy in isolation and nobody was looking at the seam between storage and view.
+
+**Lesson: when storage and UI disagree, suspect the cache key before
+re-litigating the transport.**
 
 ### Where it stands per platform pairing
 
