@@ -307,26 +307,68 @@ Scope of the measurement, stated honestly:
 
 ### What would actually close the gap
 
-1. **Make the join exchange two-way.** When a `join` control message arrives,
-   existing members announce their identity. This is the exact inverse of the
-   defect: today the joiner speaks and nobody answers. It works in the hub-log
-   model (a `join` is already in the log, so every member sees it), it fires only
-   when somebody genuinely needs the data rather than on a speculative timer, and
-   it needs no new message type. Cost is one broadcast per member per join.
-   **This is the recommended direction.**
-2. **Give mobile's announce an expiry** (§10 of the announce task). Cheap,
-   uncontested, and useful whatever else lands — but on its own it only heals a
-   joiner slowly, as members drift through reconnects.
-3. **Put identities in the manifest.** Tempting, since the owner already
-   publishes a member snapshot. But it makes the owner an identity authority,
-   the data is as stale as the owner's own roster, and it would put every
-   member's base64 avatar into a blob fetched by every joiner.
-4. **A roster served by the relay.** The only option that works when no other
-   member is online. Relay change, lead-dev call.
+> This section has been rewritten four times on 2026-08-01/02. The costed
+> analysis below is why it should stop moving. **Read the cost model before
+> proposing anything** — three of the four earlier answers died on it or on a
+> code trace, not on taste.
 
-Desktop is lead-confirmed to migrate to the hub log, so anything built here
-should assume the P2P sync path eventually goes away — which is another argument
-for (1) over reviving the pull on mobile.
+#### ⛔ The naive join-triggered announce is QUADRATIC — do not build it
+
+The appealing idea: when a `join` arrives, every existing member announces their
+identity, so the new joiner learns everyone. It is the exact inverse of the
+defect, it needs no new message type, and the `join` is already visible to all.
+
+It is also unaffordable. A space `update-profile` is **broadcast**, so the relay
+fans out one copy per member. With `N` members and a payload `P` (dominated by a
+base64 avatar, ~30 KB):
+
+| Shape | Messages per join | Bytes delivered |
+|---|---|---|
+| every member announces (broadcast) | N | **N² × P** |
+| one member answers, **directed** | 1 | **N × P** |
+
+At N=50 that is **~75 MB per join** versus ~1.5 MB. At N=20, 12 MB versus 0.6 MB.
+A single join in a mid-size space would cost more traffic than the space's entire
+message history. Any "everyone responds" design has this shape regardless of how
+the responders are chosen, because the response itself is a broadcast.
+
+#### The affordable shape, and why it is a lead-dev question
+
+The linear column is a **directed** response carrying the roster — which is
+precisely what `sync-members` / `MemberDelta` over `SealSyncEnvelope` already is.
+So the affordable fix is not a new mechanism; it is the existing one with a
+different **trigger**: fire it from the `join` event rather than from a
+`requestSync` that the joiner has to send.
+
+That matters because it moves the requirement from "the joiner must be able to
+ASK" (which mobile cannot) to "the joiner must be able to RECEIVE" (a smaller
+change). But it still means mobile re-implements a slice of what was deliberately
+removed, and desktop is lead-confirmed to migrate to the hub log — so the trigger,
+the transport and the eventual retirement of the P2P path all interact.
+
+**This is a design question for the lead dev, not a fix to ship unilaterally.**
+Bring the cost table; it is the part that is not obvious.
+
+Add herd suppression to whatever lands: a randomised delay per responder, cancelled
+on seeing somebody else's response. Without it, "one member answers" degrades into
+the quadratic case the moment several are online.
+
+#### What to do in the meantime — uncontested and cheap
+
+1. **Give mobile's announce an expiry** (§10 of
+   `2026-08-01-space-member-identity-announce-on-connect.md`). Mobile announces a
+   given identity to a given space **once, ever**, with no expiry and no retry;
+   the one escape hatch its comments describe (`clearProfileBroadcastState`) is
+   **never called from anywhere**. Desktop got the equivalent cap-and-expiry on
+   2026-08-01 and the design is proven. This is O(1) per member per interval, it
+   needs no architecture decision, and it helps every pairing.
+2. **Measure first** (Step 4). Everything shipped 2026-08-01 is unmeasured, and
+   the repaired roster pull (#71 + #290) may already have moved the number a long
+   way on desktop-to-desktop. Deciding the mobile architecture before reading
+   that number is deciding without evidence.
+
+3. **A roster served by the relay** remains the only option that works when no
+   other member is online at all. Relay change, lead-dev call, long answer.
 
 ### Debugging checklist
 
