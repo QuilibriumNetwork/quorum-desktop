@@ -5824,7 +5824,26 @@ export class MessageService {
             }
 
             // Apply member delta
+            //
+            // Counted on arrival AND after the loop. Without both numbers the
+            // send-side logs prove a delta was built and the receive-side logs
+            // prove a `sync-delta` arrived, while the roster stays empty and
+            // nothing distinguishes "the payload never came", "it came empty"
+            // and "it came full and every row was skipped". That gap cost a
+            // full debugging session on 2026-08-02.
+            // See .agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
+            logger.log(
+              `[MessageService] sync-delta: memberDelta=${
+                envelope.message.memberDelta
+                  ? `${envelope.message.memberDelta.members?.length ?? 0} members`
+                  : 'ABSENT'
+              }, messageDelta=${envelope.message.messageDelta ? 'present' : 'absent'}, isFinal=${
+                (envelope.message as { isFinal?: boolean }).isFinal
+              }`
+            );
             if (envelope.message.memberDelta) {
+              let savedMembers = 0;
+              let skippedNoAddress = 0;
               for (const member of envelope.message.memberDelta.members || []) {
                 // Map shared SpaceMember type to desktop DB format:
                 // - address -> user_address
@@ -5832,6 +5851,7 @@ export class MessageService {
                 // Handle both shared types and legacy field names
                 const userAddress = member.address || member.user_address;
                 if (!userAddress) {
+                  skippedNoAddress++;
                   continue;
                 }
                 const existing = await this.messageDB.getSpaceMember(spaceId, userAddress);
@@ -5897,9 +5917,21 @@ export class MessageService {
                     : {}),
                 };
                 await this.messageDB.saveSpaceMember(spaceId, dbMember as SpaceMemberRow);
+                savedMembers++;
               }
+              logger.log(
+                `[MessageService] sync-delta: saved ${savedMembers} member row(s) for ${spaceId.substring(0, 12)}` +
+                  (skippedNoAddress ? `, skipped ${skippedNoAddress} with no address` : '')
+              );
+              // Use the SHARED key builder. This was hand-written as
+              // `['spaceMembers', spaceId]` while every subscriber uses
+              // `buildSpaceMembersKey` → `['SpaceMembers', spaceId]`. React Query
+              // keys are case-sensitive, so the refetch targeted a key nobody was
+              // subscribed to: rows landed in IndexedDB and the member list kept
+              // showing the stale roster until the user reloaded, repeatedly.
+              // Measured 2026-08-02 — 72 rows on disk, 1 in the list.
               queryClient.refetchQueries({
-                queryKey: ['spaceMembers', spaceId],
+                queryKey: buildSpaceMembersKey({ spaceId }),
               });
             }
 
