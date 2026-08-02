@@ -1,8 +1,15 @@
-# Headless DM harness
+# Headless harness (DM + spaces)
 
 Drive the **real** Quorum desktop client in Node — no browser, no UI — to debug
-DM transport. One process hosts both sides of a conversation, on one clock, at any
+transport. One process hosts both sides of a conversation, on one clock, at any
 volume, unattended. Output is a log the existing `dr-*` analyzers read directly.
+
+Two halves, sharing identity/transport/storage:
+
+- **DM** — `bot.ts` + `deps.ts` + `dm-*.scenario.test.ts`. Complete through slice 4.
+- **SPACES** — `spaceBot.ts` + `spaceDeps.ts` + `outbound.ts` + `space-*.scenario.test.ts`.
+  Slices S0-S1 done. Built to characterise the intermittent roster-pull failure
+  (`.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`).
 
 It is **not** a reimplementation of the protocol. It re-hosts the real client:
 the SDK wasm crypto core, `fake-indexeddb` for storage, Node's native `fetch` +
@@ -90,8 +97,11 @@ not just failures), no key material in service code. See the task file for detai
 | `identity.ts` | ed448 key → registered user + device keyset (generate or from-hex) |
 | `canonical.ts` | your two `.env` test users (createUserA/B, createCanonicalPair) |
 | `transport.ts` | REST client + WebSocket (`{type:'listen'}` subscribe) |
-| `bot.ts` | assembles the real MessageService + MessageDB + transport (send/receive/wipe/drain) |
+| `bot.ts` | DM bot: the real MessageService + MessageDB + transport (send/receive/wipe/drain) |
 | `deps.ts` | MessageServiceDependencies wiring (real for DM, no-op for space/sync) |
+| `spaceBot.ts` | SPACE bot: same construction, plus create/invite/join/post and a member-row capture seam |
+| `spaceDeps.ts` | the real ConfigService/SyncService/InvitationService/SpaceService graph |
+| `outbound.ts` | the app's serialized outbound FIFO (spaces need it — see below) |
 | `storage.ts` | MessageDB on fake-indexeddb |
 | `inspect.ts` | read ratchet state (skipped-keys count) out of a bot's MessageDB |
 | `xpdump.ts` | dr-ablate-format capture on decrypt failure |
@@ -118,6 +128,22 @@ Log analyzers stay in `.agents/tools/dm-debug/` (`dr-ablate`, `dr-replay`,
 | `yarn harness dm-loss` | send-vs-arrive frame loss per direction, joined by ciphertext fingerprint (issue #183 item 2). `HARNESS_LOSS_CANONICAL=1` runs it on the canonical aged multi-device accounts instead of fresh throwaways — the account shape is a variable in its own right, so the two arms answer different questions |
 | `yarn harness dm-stale-bucket` | the reorder cycle at scale, with the client-side mitigation OFF then ON, on fresh accounts per arm |
 | `yarn harness replay-captured` | runs the shipped stale-bucket retry against REAL degraded production state from saved rig logs. Needs `DM_LOG_DIR=<dir>`; skips without it |
+
+### Space scenarios
+
+| command | what it does |
+|---|---|
+| `yarn harness space-create` | S0: a bot creates a real space on production and reads its manifest back through the joiner's own decode path |
+| `yarn harness space-basic` | S1: B joins A's space by invite and must receive **both** A's post and A's member row. `HARNESS_SPACE_WINDOW_MS` / `HARNESS_SPACE_SAMPLE_MS` tune the wait |
+
+`space-basic` asserts the ROSTER as well as the message, because the roster half
+is the thing under investigation. B writes only its own member row locally, so a
+second row can only have come off the wire.
+
+> ⚠️ **A green `space-basic` is not evidence the roster bug is absent.** It runs
+> at N=2 members; the reported failure is at N≈79 and is intermittent. Quoting a
+> few green runs as a rate is precisely the mistake that produced three wrong
+> answers in the bug file. The rate is slice S2's job.
 
 > **A sibling harness now drives the MOBILE client the same way** —
 > `quorum-mobile/dev/harness/`, `yarn harness:dm`. It is shaped differently
@@ -180,6 +206,21 @@ controlled reordering, and withholding is enforced **by fingerprint** — an un-
 frame is redelivered on every `listen`, so a version that merely skipped the first
 copy was defeated by the relay.
 
+4. **Spaces need the app's SERIALIZED outbound queue; the DM one is not faithful
+   enough.** `deps.ts` runs each enqueued action immediately and concurrently
+   (`void (async () => …)()`). The app appends to a FIFO and drains it with one
+   action in flight at a time (`WebsocketProvider.tsx:136-163`). Invisible for DM
+   — one action, one frame. Not invisible for spaces: joining enqueues the `join`
+   broadcast then `requestSync`, and a responder enqueues several sealed delta
+   payloads the requester reassembles. Firing those concurrently reorders the
+   wire in a way production never does, so a space harness on the DM version
+   would be measuring itself. Use `outbound.ts`.
+5. **A channel post is asynchronous past the call.** `submitChannelMessage`
+   enqueues on the ActionQueue and returns; a handler encrypts and sends later.
+   `spaceBot.post()` drains the ActionQueue and THEN the outbound FIFO. A
+   scenario that assumes "the call returned, so it was sent" attributes its own
+   race to the transport.
+
 ## Status
 
 - Slice 1 (identity + transport + register) — DONE, verified on prod.
@@ -194,6 +235,19 @@ copy was defeated by the relay.
   `importSession.ts` step (lift a real aged session out of a browser) is **no longer
   on the critical path** — the failure can be built from scratch instead.
 
-See `.agents/tasks/2026-07-27-headless-dm-harness.md` for the full slice plan, and
-`.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the findings.
-*Last updated: 2026-07-27*
+### Spaces
+
+- Slice S0 (a headless bot creates a real space) — DONE, verified on prod. Settled
+  the spec's blocking unknown: **nothing in create/invite/join is
+  passkey-interactive**, it is all `js_sign_ed448` over raw keys, same as DM send.
+- Slice S1 (B joins and receives A's post AND A's member row) — DONE, green on
+  four consecutive runs, roster complete at 9.8-11.2s. Reproducibility of the
+  instrument; not a rate.
+- Slice S2 (delivery rate + lag at volume, and roster size as the first swept
+  variable) — NEXT. This is the one that turns the anecdote into a number.
+
+See `.agents/tasks/2026-07-27-headless-dm-harness.md` for the DM slice plan,
+`.agents/tasks/transport/2026-07-27-headless-space-harness.md` for the space one,
+and `.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
+findings.
+*Last updated: 2026-08-02*

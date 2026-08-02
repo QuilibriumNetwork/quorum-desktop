@@ -80,7 +80,7 @@ that scored 20/20.
 | # | what | why it matters | doc |
 |---|---|---|---|
 | R1 | ⭐ **Confirm the shipped send-retention fix on a device** | The 20/20 rounds tested a *local patch*; the merged code differs in four ways. An 08-01 smoke round landed 20/20 but had **no socket data**, so it cannot be scored | `2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md` §3 |
-| R2 | ⭐ **Measure Spaces — never done, on any platform, ever** | Every claim about the Spaces write path is code-reading. Verified that space writes share the DM outbound queue, so the shipped fix *should* already cover them. Untested | same file, §4 |
+| R2 | ⭐ **Measure Spaces — never done, on any platform, ever** | Every claim about the Spaces write path is code-reading. Verified that space writes share the DM outbound queue, so the shipped fix *should* already cover them. Untested. **⏳ May no longer need device time for the desktop↔desktop half** — B7's S2 would measure it headlessly. Mobile still needs a round | same file, §4 |
 | R3 | **Receipt-truthfulness two-device runtime check** | Code shipped on all three platforms; verification owed by both clients. **Blocks B2** | `quorum-mobile/.agents/tasks/.done/2026-07-26-receipt-truthfulness-delivery-gated-reads.md` |
 | R4 | **Desktop ack self-echo guard** — multi-device run | Desktop lacks mobile's `senderId !== self` guard. Fan-out confirmed; damage unconfirmed | `2026-08-01-desktop-ack-self-echo-guard.md` |
 
@@ -98,7 +98,7 @@ lost the same way.
 | B4 | **Port the #265 stale-bucket mitigation to mobile** — desktop-only today, so mobile still suffers U2 | small | `2026-07-26-dm-desktop-to-desktop-resurfaced.md` §5-B1′ |
 | B5 | **Space `log-append` ack-resend** (Layer 2) — the ack arrives and is discarded, so a dropped space message is invisible to its author. Mobile-only (desktop has no hub log) | small | `quorum-mobile/.agents/tasks/2026-07-21-fix-space-append-send-loss-ack-resend.md` |
 | B6 | **Mobile piggyback receipt acks on outgoing DMs** — half the port is missing | small | `quorum-mobile/.agents/tasks/2026-07-27-mobile-piggyback-receipt-acks-on-outgoing-dms.md` |
-| B7 | **Headless space harness** — spec written, unstarted. Would make R2 repeatable instead of manual | medium | `2026-07-27-headless-space-harness.md` |
+| B7 | **Headless space harness** — ⏳ **S0+S1 done and green (PR #297)**: a bot creates a real space, a second joins by invite and gets both the post and the member roster. **S2 is the deliverable and is not started** — it is the slice that produces a RATE, which is the whole point. Makes R2 repeatable instead of manual, and is the instrument the roster bug asks for by name | medium | `2026-07-27-headless-space-harness.md` |
 | B8 | **Hygiene**: ghost-device deregistration, junk encryption-state prune | small | index §4-E |
 | B9 | ⚠️ **Lower value than it looks:** harness scenario 3 (mobile multi-device), and tooling T3/T4. Green benches on healthy relays add nothing now that the mechanism is confirmed, and T3's question was answered from the desktop by the relay probe | — | `2026-07-28-harness-multidevice-and-coverage.md`, `2026-07-29-transport-debug-workflow-and-tooling.md` |
 
@@ -163,4 +163,4 @@ and the cost was that nobody could tell what was open. Keep it cheap to maintain
 - **If a row disagrees with the doc it points at, the doc wins.** Fix the row.
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-02*

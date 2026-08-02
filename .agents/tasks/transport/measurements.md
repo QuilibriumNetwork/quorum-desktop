@@ -3,7 +3,7 @@ type: doc
 title: "Transport & DM reliability — measurement log (every run, every number, one place)"
 status: living — APPEND-ONLY. Add a row when a run produces a number; never rewrite a past row.
 created: 2026-07-28
-updated: 2026-07-29
+updated: 2026-08-02
 area: WebSocket transport / DM Double Ratchet / delivery loss
 related: tasks/transport/index.md
 ---
@@ -1671,4 +1671,65 @@ applying the patch on top would double-retain. `git debug` applies a *different*
 patch (`patch-rn-ws-diag.mjs`, the instrumentation), which is still required.
 
 ---
-*Last updated: 2026-08-01*
+
+## 2026-08-02 — SPACE HARNESS S1: a join delivers both halves, at N=2 members. `[NOT A RATE]`
+
+**Class: `arrival` + persistence.** Desktop↔desktop, headless, both bots in one
+Node process on production. `yarn harness space-basic`, four consecutive runs,
+fresh throwaway accounts each time (a reused bot would already hold the row and
+the message, and would "pass" with no exchange having happened).
+
+Bot A creates a space and posts, bot B joins by invite link, A posts again.
+
+| | run 1 | run 2 | run 3 | run 4 | run 5 |
+|---|---|---|---|---|---|
+| pre-join post — reachable ONLY by the sync exchange | ✅ | ✅ | ✅ | ✅ | ✅ |
+| post-join post — also reachable by hub broadcast | ✅ | ✅ | ✅ | ✅ | ✅ |
+| B member rows, 1 → 2 | ✅ 11.2 s | ✅ 10.5 s | ✅ 9.8 s | ✅ 10.6 s | ✅ 10.0 s |
+| outbound action failures | 0 | 0 | 0 | 0 | 0 |
+| receive failures (novel) | ⚠️ n/m | ⚠️ n/m | ⚠️ n/m | ⚠️ n/m | 0 |
+
+> ⚠️ **`n/m` = not measurable, and it was originally recorded here as `0`.** The
+> space receive path swallows every error in one terminal catch
+> (`MessageService.ts:6110`) and reports it via **`console.error`**, while the DM
+> path uses `logger.error` — and the harness tee was wired only to `logger`. Runs
+> 1-4 therefore printed a receive-failure count that could not have been non-zero.
+> Fixed in the second commit of desktop PR #297, which tees both sinks, splits
+> novel from replay by ciphertext fingerprint, and adds a self-test requiring the
+> counter to go 0 → 1 on a deliberately corrupt frame. **Run 5 is the first
+> trustworthy `0`.** The delivery numbers in runs 1-4 stand — posts and member
+> rows are read from IndexedDB, not from that tee.
+
+Member rows are read from IndexedDB, not from a UI or an in-memory tally, and B
+writes only its OWN row locally — so a second row can only have come off the
+wire.
+
+### ⚠️ What this is NOT, stated first because it is the likely misuse
+
+**This is not a delivery rate, and it is not evidence the roster bug is absent.**
+It runs at **2 members**; the reported failure
+(`bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`) is at ~79 and
+is intermittent. Four samples at the wrong N cannot bound a rate at the right one.
+That bug file records three confident wrong answers produced in one day, all from
+promoting a short streak to a law; this row exists partly so the fourth is harder
+to write.
+
+### What it DOES establish
+
+Two things that were previously unknown and could only be settled by running it:
+
+1. **Nothing in space create / invite / join is passkey-interactive.** All
+   `js_sign_ed448` over raw keys, same as DM send. This was the assumption that
+   could have blocked the whole self-contained approach. It does not.
+2. **The full desktop space path runs headlessly, end to end** — create, invite,
+   join, triple-ratchet session establishment, hub broadcast, and the
+   `requestSync` → `MemberDigest` → `MemberDelta` roster exchange. R2 ("measure
+   Spaces — never done on any platform") no longer needs device time for the
+   desktop↔desktop half.
+
+Reported in `tasks/transport/2026-07-27-headless-space-harness.md`; code in
+desktop PR #297. The rate is slice S2 and is not started.
+
+
+---
+*Last updated: 2026-08-02*

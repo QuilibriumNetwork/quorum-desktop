@@ -1,8 +1,9 @@
 ---
 type: task
 title: "Headless SPACE harness — reproduce & measure desktop↔desktop space message delivery lag/loss"
-status: SPEC — not yet started. Review before building.
+status: IN PROGRESS — S0 and S1 done and green (PR #297). S2 (the rate) is next.
 created: 2026-07-27
+updated: 2026-08-02
 area: Spaces / mesh sync / triple ratchet / testing infrastructure
 builds_on: .agents/tasks/2026-07-27-headless-dm-harness.md (DM harness — slices 1-4 done; reuse its identity/transport/storage/bot machinery)
 related:
@@ -14,6 +15,123 @@ related:
 ---
 
 # Headless SPACE harness (spec)
+
+## ✅ PROGRESS — S0 and S1 built and green (2026-08-02, PR #297)
+
+Everything below this box is the original spec, unedited. Read this first: three
+of its recon assumptions are now settled by execution rather than by reading, and
+one of them changed the design.
+
+### What shipped
+
+| file | role |
+|---|---|
+| `src/dev/tests/harness/outbound.ts` | the app's real serialized outbound FIFO, plus `flush()` and `listen` interception |
+| `src/dev/tests/harness/spaceDeps.ts` | the ConfigService / SyncService / InvitationService / SpaceService graph, wired as `MessageDB.tsx` wires it |
+| `src/dev/tests/harness/spaceBot.ts` | a headless client that can hold space membership; adds a member-row capture seam |
+| `space-create.scenario.test.ts` | S0 |
+| `space-basic.scenario.test.ts` | S1, extended with the roster assertion |
+
+### S0 — ✅ the blocking assumption is resolved: **nothing is passkey-interactive**
+
+The spec flagged this as "the assumption recon couldn't resolve", and it was the
+one that could have killed Path A. It does not. `createSpace`, `constructInviteLink`
+and `joinInviteLink` sign exclusively with `ch.js_sign_ed448` over raw private
+keys held in `messageDB.space_keys` — the same construction DM send uses. No
+WebAuthn, no browser-only API, no user gesture. **Path A is open.**
+
+`yarn harness space-create` creates a real space on production, mints a one-time
+invite, and reads the manifest back through the joiner's own decode path
+(`processInviteLink` → `getSpaceManifest` → decrypt with the config key).
+
+### S1 — ✅ **both** halves of a join arrive, including the roster
+
+`yarn harness space-basic`. A creates a space and posts, B joins by invite, A
+posts again. Four consecutive runs, all green:
+
+| | run 1 | run 2 | run 3 | run 4 | run 5 |
+|---|---|---|---|---|---|
+| pre-join post (sync path) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| post-join post (broadcast path) | ✅ | ✅ | ✅ | ✅ | ✅ |
+| B member rows (1 → 2) | ✅ 11.2s | ✅ 10.5s | ✅ 9.8s | ✅ 10.6s | ✅ 10.0s |
+| outbound action failures | 0 | 0 | 0 | 0 | 0 |
+| receive failures (novel) | ⚠️ n/m | ⚠️ n/m | ⚠️ n/m | ⚠️ n/m | 0 |
+
+> ⚠️ **`n/m` = not measurable, and it was reported as `0`.** Runs 1-4 printed
+> "receive errors: A=0 B=0" from a counter that could not have printed anything
+> else. The space receive path swallows every error in one terminal catch
+> (`MessageService.ts:6110`) and reports it through **`console.error`**, while the
+> DM path uses `logger.error` — and the tee was wired only to `logger`. Fixed in
+> the second commit on PR #297, which also splits novel from replay failures and
+> adds a self-test that requires the counter to go 0 → 1 on a deliberately corrupt
+> frame. **Run 5's `0` is the first trustworthy one.** The delivery results in
+> runs 1-4 are unaffected — posts and member rows are counted from IndexedDB, not
+> from that tee.
+
+> ⚠️ **This is reproducibility of the instrument, not a delivery rate.** Four
+> samples at N=2 members says the harness drives the real path end to end. It
+> says nothing about how often the exchange fails at N=79, which is the actual
+> question and is S2's job. Do not quote these four runs as evidence the roster
+> bug is absent — that is exactly the streak-to-law move that produced three
+> wrong answers in the bug file.
+
+Splitting the two posts either side of the join was deliberate: the pre-join post
+is reachable ONLY by the sync exchange, the post-join one also by the live hub
+broadcast. If a future run shows the second arriving and the first not, the
+broadcast works and the sync exchange does not — a materially different finding
+from both failing, and a single post would have conflated them.
+
+### 🔧 One design change the spec did not anticipate
+
+**The DM harness's `enqueueOutbound` is not faithful enough for spaces, and this
+matters for the measurement.** `deps.ts` runs each enqueued action immediately
+and concurrently (`void (async () => …)()`). The app appends to a queue and
+drains it with ONE action in flight at a time
+(`WebsocketProvider.tsx:136-163`).
+
+That difference is invisible for DM — one action, one frame. It is not invisible
+here: joining enqueues the `join` broadcast and then `requestSync`, and a
+responder enqueues several sealed delta payloads that the requester reassembles.
+Running them concurrently reorders the wire in a way production never does, so a
+harness built on the DM version would have been measuring itself. `outbound.ts`
+is the faithful FIFO; the space graph uses it and the DM path is untouched.
+
+It also intercepts `{type:'listen'}` frames (which space create/join emit through
+`enqueueOutbound`) and routes them into `transport.listen()`, so the space inbox
+subscription survives a reconnect the way `setResubscribe` makes it in the app.
+
+### Two smaller recon findings worth keeping
+
+1. **`SyncService` needs only four dependencies** — `messageDB`,
+   `enqueueOutbound`, `syncInfo`, `sendHubMessage`. The spec sized "wire the
+   real sync deps" as the bulk of the work; the real cost was the service
+   construction ORDER, not the dependency count. There is a genuine cycle
+   (SpaceService.sendHubMessage ← the other three services; SyncService ←
+   MessageService; MessageService.saveMessage ← SpaceService) which
+   `MessageDB.tsx` breaks with a forward ref. `spaceDeps.ts` mirrors that
+   deliberately.
+2. **A channel post is asynchronous past the call.** `submitChannelMessage`
+   enqueues on the ActionQueue and returns; a handler encrypts and sends later.
+   `spaceBot.post()` therefore drains the ActionQueue and THEN the outbound FIFO,
+   in that order. A scenario that assumed "the call returned, so it was sent"
+   would attribute its own race to the transport.
+
+### 🎯 Next: S2, the rate
+
+S1 answers "can it work". None of the three questions in the bug file are
+answered yet, and all three need volume:
+
+- is it 1-in-2 or 1-in-50?
+- does it correlate with roster size, offline duration, or payload count?
+- does it ever succeed twice in a row?
+
+S1 runs at N=2 members. The reported failure is at N≈79, and roster size is the
+first variable to sweep — `chunkMembers()` being dead code
+(`quorum-shared/src/sync/utils.ts:639`, never called) means the member delta ships
+as ONE unbounded payload regardless of size, so size is a live suspect and cheap
+to vary now that spaces can be created headlessly.
+
+---
 
 ## The problem this targets (operator's words)
 
@@ -146,3 +264,6 @@ fake-indexeddb + wasm-from-sibling + lingui-locale environment is unchanged.
   - channelId: `QmYomM8EAeaCZJN8GFJjxTvKEfUDNErDdgtn2JjsKfjZpJ`
   - A is the owner (its key is `BOT_A_PRIVATE_KEY` in .env.local). These are
     addresses, not secrets. Use for S4 once S0-S1 prove session establishment.
+
+---
+*Last updated: 2026-08-02*

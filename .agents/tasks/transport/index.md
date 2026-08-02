@@ -370,7 +370,7 @@ All of these live in **quorum-desktop**.
 | `quorum-mobile/dev/harness/README.md` | **headless MOBILE harness** — drives the REAL mobile client in Node. Renders mobile's own `WebSocketProvider` (its DM receive path has no non-React seam), one bot per process |
 | `quorum-desktop/.agents/tasks/.done/2026-07-27-headless-dm-harness.md` | the desktop harness build spec |
 | `quorum-desktop/.agents/tasks/.done/2026-07-27-cross-platform-dm-harness.md` | the mobile harness spec — **DONE, all four slices**. Slices 1-3 (mobile PRs #189-#193); slice 4 (mobile↔desktop) shipped as desktop PR #271. Its progress log carries the findings and the measured results |
-| `quorum-desktop/.agents/tasks/transport/2026-07-27-headless-space-harness.md` | **spec, not started** — same for space message delivery |
+| `quorum-desktop/.agents/tasks/transport/2026-07-27-headless-space-harness.md` | the space harness spec — **S0+S1 built and green (desktop PR #297)**: a headless bot creates a real space, a second joins by invite and receives both the post and the member roster. S2 (the rate) not started |
 | `quorum-mobile/.agents/tasks/.done/2026-07-26-mobile-to-mobile-two-device-round.md` | first-ever mobile↔mobile round; produced the #183 item 2 directional evidence |
 
 Harness commands — run from the **quorum-desktop** checkout:
@@ -384,7 +384,14 @@ yarn harness dm-stale-bucket   # the same cycle at scale, mitigation off vs on
 yarn harness dm-loss           # send-vs-arrive accounting (the #183 item 2 measurement)
 yarn harness dm-reset-recover  # recovery after a session reset
 yarn harness dm-multidevice    # N devices on ONE account — the §3.2 finding
+
+yarn harness space-create      # a bot creates a real space and reads its manifest back
+yarn harness space-basic       # B joins A's space; must get A's post AND A's member row
 ```
+
+⚠️ `space-basic` runs at **2 members**. The roster failure it is built to catch was
+reported at ~79. A green run is not evidence the bug is absent — see
+`bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` §0.
 
 `dm-multidevice` takes `HARNESS_MD_DEVICES=N` (default 2; the finding needs 4).
 It generates its own throwaway account and hands the same key to N bots, so it
@@ -725,4 +732,4 @@ correct the status in place and say what is owed, rather than moving.
 the bold ENTRY POINT / 🗺️ notes on this file and on the resurfaced-DM bug.
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-02*

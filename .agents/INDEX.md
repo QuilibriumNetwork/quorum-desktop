@@ -422,7 +422,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Desktop has no self-echo guard on receipt ack intercepts](tasks/transport/2026-08-01-desktop-ack-self-echo-guard.md) — needs a multi-device run to be called a bug or a non-issue
 - [Transport debugging: workflow + tools](tasks/transport/2026-07-29-transport-debug-workflow-and-tooling.md) — T1/T2 shipped; T3/T4 unbuilt and lower value now
 - [Harness coverage — multi-device first, then the unreached cells](tasks/transport/2026-07-28-harness-multidevice-and-coverage.md) — scenarios 1-2 done; scenario 3 unbuilt
-- [Headless SPACE harness (spec)](tasks/transport/2026-07-27-headless-space-harness.md) — spec only, unstarted; would make the Spaces measurement repeatable
+- [Headless SPACE harness](tasks/transport/2026-07-27-headless-space-harness.md) — S0+S1 built and green (PR #297); S2, the rate, is next and is the deliverable
 - [DM Double Ratchet fixes — divergences from the original implementation](tasks/transport/dm-ratchet-upstream-divergences.md) — the 8 shipped divergences, lead-dev facing
 - [Issue 183 Body](tasks/transport/issue-183-body.md) — the upstream issue text
 - [Capture archive — DM desktop↔desktop](tasks/transport/2026-07-26-dm-desktop-to-desktop-captures.md) — 📦 ARCHIVE: round data + findings A→AL. Read-only
