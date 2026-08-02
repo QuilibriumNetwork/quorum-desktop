@@ -220,6 +220,53 @@ The mnemonic half of #31 (see #31a in [Actionable now](#actionable-now) for the 
   - [readonly-channel-receive-side-enforcement-gaps](../../bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md) — **prerequisite**: replay re-persists blocked content every reconnect unless durable-path enforcement is added first.
   - Meta-pattern + the two receive-side prerequisites documented in [dm-architecture-and-debug-playbook.md](../../docs/debugging/dm-architecture-and-debug-playbook.md) ("fetch-once-at-startup pattern").
 
+- **2026-08-02 — ⚠️ IDENTITY IS A SEPARATE PROBLEM, and this candidate currently
+  hides a regression.** Two days of identity work (desktop #287-#292, shared #71,
+  mobile #213, plus the mobile announce-expiry branch) produced findings that
+  change what #32 has to include. Full reasoning, traced to source, in
+  [identity-resolution-and-profile-sync.md](../../docs/features/identity-resolution-and-profile-sync.md)
+  → "Why a name goes missing, and what repairs it".
+  - **The hub log does NOT solve identity cold-start, only message cold-start.**
+    A joiner's cursor starts at their join. Mobile's own source states it twice,
+    verbatim: *"new joiners only see messages sent after they joined"*
+    (`quorum-mobile/context/WebSocketContext.tsx:1297-1303` and `:6182-6185`).
+    So every existing member's identity announcement is, by definition, before
+    the joiner's cursor and is never delivered to them. The bullet above —
+    "a joiner gets recent history even with no peer online" — is true for posts
+    and **false for the identity of people who joined earlier**.
+  - **🔴 The removal list would delete the only thing that fixes that.**
+    "Delete `SyncService.ts` (clean, 993 LOC)... the startup/reconnect
+    `requestSync` loop" removes `sync-members`/`MemberDelta`, which is the ONLY
+    mechanism giving a desktop joiner other members' identities
+    (`InvitationService.ts:875` fires `requestSync` immediately after the join
+    broadcast). Post-#32, desktop would inherit mobile's current gap rather than
+    mobile inheriting desktop's fix. **Whatever replaces it must carry a roster
+    bootstrap for joiners**, or this candidate is a net regression for identity.
+  - **Why a joiner has nothing to start from:** the space manifest carries
+    `members: string[]` — **addresses only, no names or avatars**
+    (`quorum-shared/src/types/space.ts:29`). Your own `join` control message
+    carries YOUR identity to everyone else (`InvitationService.ts:869`). Nothing
+    carries everyone else's identity to you. **Joining is a one-way identity
+    exchange**, and that single sentence is the whole "52% of members have no
+    roster row" symptom.
+  - **⛔ The obvious mitigation is quadratic — do not scope it.** "When a `join`
+    arrives, every member announces" is appealing and unaffordable: an
+    `update-profile` is a broadcast, so the relay fans out one copy per member.
+    With N members and payload P (dominated by a base64 avatar, ~30 KB), bytes
+    delivered go as **N² × P** — ~75 MB per join at N=50 — versus **N × P** for a
+    single **directed** response. Any "several members answer" variant has the
+    same shape.
+  - **✅ Measured 2026-08-01 — delivery to an offline member IS durable.** Mobile
+    app fully closed, desktop user changed their global name and avatar, mobile
+    opened: the change was there. So a directed, join-triggered roster response
+    would land even if the joiner closes the app immediately. That was the open
+    precondition and it holds.
+  - **Net effect on this candidate:** the privacy tradeoff and the two infra
+    unknowns are unchanged. What is added is a **required scope item** — a roster
+    bootstrap for joiners — and a **costed dead end** to avoid. Bring the N²
+    table to the decision; it is the part that is not obvious.
+
+
 ### #27 Skins (custom themes) — ❔ needs UX call (low priority 2026-06-10)
 
 Bundled samples + locally-saved skins + server gallery. Per-skin: color tokens (accent/surfaces/text/semantic), radii/spacing/borders (with global `scale`), `fontScale`, embedded font face, icon substitution map, wallpaper (cover/tile/contain + scrim), frame chrome, per-region surface backgrounds. All input validated against an allow-list (`validate.ts`) with image content-sniffing. Server gallery is Ed448-signed publish.
