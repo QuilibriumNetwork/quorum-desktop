@@ -72,6 +72,23 @@ export interface HarnessSpaceBot {
   join(inviteLink: string): Promise<{ spaceId: string; channelId: string }>;
   /** Post a text message to a channel via the real submitChannelMessage path. */
   post(spaceId: string, channelId: string, text: string): Promise<void>;
+  /**
+   * Post `count` messages, draining ONCE at the end rather than per message.
+   *
+   * Same real path as `post`; only the waiting differs. Used to build a relay
+   * backlog for an offline member, where the point is volume and per-message
+   * timing is not the measurement.
+   */
+  postMany(
+    spaceId: string,
+    channelId: string,
+    count: number,
+    prefix: string
+  ): Promise<void>;
+  /** Drop the socket without tearing the bot down — simulates going offline. */
+  disconnect(): void;
+  /** Reopen the socket and re-subscribe — simulates coming back. */
+  reconnect(): Promise<void>;
   /** Ask the space for a roster/message sync (the pull under investigation). */
   requestSync(spaceId: string): Promise<boolean>;
   /** Member rows currently on disk for a space. */
@@ -255,6 +272,39 @@ export async function createSpaceBot(
       // in that order — the handler is what puts frames into the FIFO.
       await mustDrain(drainActionQueue(), 'post action queue');
       await mustDrain(graph.outbound.flush(), 'post outbound');
+    },
+
+    postMany: async (
+      spaceId: string,
+      channelId: string,
+      count: number,
+      prefix: string
+    ) => {
+      for (let i = 1; i <= count; i++) {
+        await graph.messageService.submitChannelMessage(
+          spaceId,
+          channelId,
+          `${prefix} ${i}/${count}`,
+          queryClient,
+          passkeyInfo
+        );
+      }
+      // One drain for the whole batch. Generous timeout: the ActionQueue
+      // encrypts and sends each message serially, so a large batch legitimately
+      // takes minutes, and a premature "wedged" throw here would be wrong.
+      await mustDrain(drainActionQueue(10 * 60_000), 'postMany action queue');
+      await mustDrain(graph.outbound.flush(10 * 60_000), 'postMany outbound');
+    },
+
+    disconnect: () => transport.close(),
+
+    reconnect: async () => {
+      transport.reopen();
+      await transport.connect();
+      // Force a re-listen: the subscription memo still holds the old key, and
+      // the relay only re-pushes a retained backlog in response to a `listen`.
+      subscribed = '';
+      await refreshSubscriptions();
     },
 
     requestSync: (spaceId: string) => graph.syncService.requestSync(spaceId),
