@@ -17,6 +17,21 @@ related:
 > it silently deleted legitimate in-use devices (see "Why the naive fix is
 > wrong"). Filing this so the real fix is designed deliberately, not rushed.
 
+> ⚠️ **SEVERITY MAY BE UNDERSTATED — new evidence 2026-08-02.** This is filed as
+> a member-only DoS needing an attacker. A two-client join measured a **benign**
+> client producing the same effect: a long-absent account reconnected, the relay
+> delivered ~352 retained `announce-keys` at once, and the resulting ~650 serial
+> decrypts head-of-line-blocked control-message processing for minutes. Every
+> `sync-request` in that window was read only after its 30s expiry and dropped,
+> so that client answered **nobody** across **all six** of its spaces and a new
+> joiner got an empty roster.
+>
+> So "slower control-message processing" is not the ceiling. The real consequence
+> is that the space sync handshake is **unavailable for minutes after every
+> reconnect** — precisely when a joiner needs it — and no attacker is required.
+> See `.agents/bugs/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md`
+> §5. Confirm that reading (its §5b step 1) before re-rating this.
+
 ## The issue
 
 Per-device signing keys are admitted by a receiver whenever a valid
