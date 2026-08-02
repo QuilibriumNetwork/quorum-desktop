@@ -39,11 +39,27 @@ straight from IndexedDB — so it persisted. **And the member list UI then showe
 them all**, confirmed visually, so this is verified at the level that actually
 matters to a user, not just in storage.
 
-One observation worth keeping: immediately after the rows landed, the member list
-still showed only B ("No Role - 1") and caught up shortly after. So there is a
-lag between the write and the render. Not chased — but if a future report says
-"the data is there and the list is empty", start here rather than assuming the
-sync failed.
+### ✅ And the render gap turned out to be a real bug — FIXED (#295)
+
+The member list did NOT simply lag. With 72 rows on disk it showed exactly one
+person and needed **several manual reloads** before the roster appeared.
+
+Cause: the `sync-delta` handler refetched a hand-written query key,
+`['spaceMembers', spaceId]`, while every subscriber uses `buildSpaceMembersKey`
+→ `['SpaceMembers', spaceId]`. **React Query keys are case-sensitive**, so the
+refetch targeted a key nobody was subscribed to and the list never learned
+anything had changed. One character class, and it silently discarded every
+synced roster update this app has ever received.
+
+This is very likely a large share of the user-visible "people have no name"
+experience, independent of anything on the wire — rows were arriving and never
+being rendered.
+
+**Lesson worth carrying:** every layer looked healthy in isolation. The wire was
+fine, storage was fine, the apply loop was fine. The defect lived in the seam
+between storage and view, which is exactly where nobody was looking, and it was
+only found once the delta counts were made visible. When storage and UI disagree,
+suspect the cache key before re-litigating the transport.
 
 ### What remains genuinely open
 
