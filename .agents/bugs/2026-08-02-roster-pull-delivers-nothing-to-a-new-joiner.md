@@ -35,7 +35,15 @@ B:  sync-delta: memberDelta=71 members → saved 71 member row(s) for QmZM3AKwKf
 ```
 
 B's snapshot afterwards: **72 member rows** for that space, up from 1, read
-straight from IndexedDB — so it persisted. The mechanism works end to end.
+straight from IndexedDB — so it persisted. **And the member list UI then showed
+them all**, confirmed visually, so this is verified at the level that actually
+matters to a user, not just in storage.
+
+One observation worth keeping: immediately after the rows landed, the member list
+still showed only B ("No Role - 1") and caught up shortly after. So there is a
+lag between the write and the render. Not chased — but if a future report says
+"the data is there and the list is empty", start here rather than assuming the
+sync failed.
 
 ### What remains genuinely open
 
