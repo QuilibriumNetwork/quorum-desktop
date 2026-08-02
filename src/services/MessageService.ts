@@ -5923,8 +5923,15 @@ export class MessageService {
                 `[MessageService] sync-delta: saved ${savedMembers} member row(s) for ${spaceId.substring(0, 12)}` +
                   (skippedNoAddress ? `, skipped ${skippedNoAddress} with no address` : '')
               );
+              // Use the SHARED key builder. This was hand-written as
+              // `['spaceMembers', spaceId]` while every subscriber uses
+              // `buildSpaceMembersKey` → `['SpaceMembers', spaceId]`. React Query
+              // keys are case-sensitive, so the refetch targeted a key nobody was
+              // subscribed to: rows landed in IndexedDB and the member list kept
+              // showing the stale roster until the user reloaded, repeatedly.
+              // Measured 2026-08-02 — 72 rows on disk, 1 in the list.
               queryClient.refetchQueries({
-                queryKey: ['spaceMembers', spaceId],
+                queryKey: buildSpaceMembersKey({ spaceId }),
               });
             }
 
