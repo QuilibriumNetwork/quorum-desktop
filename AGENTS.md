@@ -53,8 +53,7 @@ quorum-desktop/
 │
 └── .agents/                    # Development documentation
     ├── docs/                   # Architecture & feature guides
-    ├── tasks/                  # Task tracking
-    ├── bugs/                   # Bug reports
+    ├── issues/           # Bugs AND tasks being worked on right now
     └── reports/                # Analysis & audits
 ```
 

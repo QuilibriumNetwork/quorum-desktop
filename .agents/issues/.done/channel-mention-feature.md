@@ -39,7 +39,7 @@ Create Discord-like channel mention functionality where users can type `#channel
 ## Prerequisites
 
 - [ ] Review .agents documentation: INDEX.md, AGENTS.md, and agents-workflow.md for context
-- [ ] Check existing tasks in .agents/tasks/ for similar patterns and solutions
+- [ ] Check existing issues in .agents/issues/ for similar patterns and solutions
 - [ ] Review related documentation in .agents/docs/ for architectural context
 - [x] Feature analyzed by feature-analyzer agent for complexity and best practices
 - [ ] Understand current mention system architecture (users: `@<address>`, roles: `@roleTag`)

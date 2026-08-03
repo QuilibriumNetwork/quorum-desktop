@@ -73,7 +73,7 @@ updated: '2026-01-09'
 
 ## Prerequisites
 - [ ] Review .agents documentation: INDEX.md, AGENTS.md, and agents-workflow.md for context
-- [ ] Check existing tasks in .agents/tasks/ for similar patterns and solutions
+- [ ] Check existing issues in .agents/issues/ for similar patterns and solutions
 - [ ] Review related documentation in .agents/docs/ for architectural context
 - [ ] ✅ Feature analyzed by feature-analyzer agent for complexity and best practices
 - [ ] Current implementation tested in token-based rendering path
