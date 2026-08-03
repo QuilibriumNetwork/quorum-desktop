@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A space frame that fails to decrypt is deleted from the relay anyway, so the message is lost permanently and silently"
-status: open
+status: done — fixed in desktop #305 (2026-08-03)
 priority: HIGH — silent, permanent data loss with no user-visible signal; the DM path already does this correctly, so the fix has a working model in the same file
 created: 2026-08-03
 severity: a space message that fails to decrypt for ANY reason is destroyed rather than retried — the relay is the only copy
@@ -13,6 +13,31 @@ related_bugs:
 ---
 
 # A space frame that fails to decrypt is deleted from the relay anyway
+
+## ✅ FIXED — desktop #305, 2026-08-03
+
+An `opened` flag flips the moment the envelope is unsealed. Only a failure
+**before** that point retains the frame; anything throwing during application
+handling would throw identically on a retry, so those are still deleted exactly
+as before. Retention reuses the DM path's existing `UndecryptableFrameTracker`
+(40 attempts / 5 min TTL), so a genuinely poisonous frame still cannot linger.
+
+**What was verified:**
+
+- Four unit tests in `src/dev/tests/services/MessageService.spaceFrameRetention.unit.test.ts`,
+  asserting the property that matters — `deleteInboxMessages` **not** being
+  called — rather than "it didn't crash", since a frame can be lost with no
+  error at all.
+- **Confirmed load-bearing**: with the fix reverted, 3 of 4 fail and the old code
+  deletes on **all 40** delivery attempts. The fourth is the regression guard
+  (normal frames must still be acked) and passes either way by design.
+- Full suite 61 files / 924 tests green. `yarn harness space-basic` passes live
+  against production, so the real space receive path still works end to end.
+
+⚠️ **What was NOT verified:** the retention path itself has only been exercised
+with a mocked unseal. No live test forces a real space frame to fail to open. The
+change is a guarded early return so integration risk is low, but that gap is
+real — do not read "924 tests green" as covering it.
 
 ## How this was found
 
