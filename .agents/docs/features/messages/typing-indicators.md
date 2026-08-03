@@ -4,7 +4,7 @@ title: "Typing Indicators"
 status: done
 ai_generated: true
 created: 2026-05-18
-updated: 2026-05-18
+updated: 2026-08-03
 related_docs:
   - .agents/docs/features/messages/dm-receipts.md
 related_tasks:
@@ -36,6 +36,35 @@ Typing signals are ephemeral control messages. They ride the existing encrypted 
 - Exist only as an in-memory event
 
 This is the same mechanism that makes `delivery-ack` and `read-ack` safe to broadcast. The packet transits the network but does not live on the network.
+
+## ⚠️ Ephemeral locally does NOT mean ephemeral on the relay
+
+> Added 2026-08-03 after a measured bug. Read this before adding any early return to a receive path, and before porting typing to another client.
+
+"Ephemeral" above describes **local persistence** — never written to IndexedDB, never in the sync manifest. It says nothing about the relay, and there is no separate ephemeral transport: `sendEphemeralSpaceControl` calls `encryptAndSendToSpace`, the same function ordinary posts use. On the wire a typing frame is an ordinary hub broadcast.
+
+**The relay retains every frame until the client deletes it, and that delete IS the ack.** So a frame we process and never ack is re-pushed on every `listen`, for the life of the account.
+
+Space typing did exactly that. The space receive path acks in one place — the tail of `handleNewMessage` — and the typing branch returned before reaching it.
+
+MEASURED (`yarn harness space-typing`), one run, one reconnect, with an ordinary post as the control arm:
+
+| | POST (control) | TYPING |
+|---|---|---|
+| before the fix | redelivered 0x | redelivered **2x** |
+| after the fix | redelivered 0x | redelivered **0x** |
+
+**The freshness filter did not prevent this and could not.** It drops typing messages older than 30s — which correctly stops stale indicators rendering — but it runs *after* the frame has been received and unsealed. It defends the UI, not the queue.
+
+### Why the cost matters
+
+Typing is high volume by design (one `typing-start` per 5s per scope while composing). An unbounded, permanently growing pile of un-acked typing frames is plausibly the largest single source of reconnect backlog — and **queue depth is what decides whether a perishable control frame is read before it expires**. A `sync-info` reply is valid for 30s, and the wait for it is simply the number of frames ahead of it. See `issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md`.
+
+### The rule
+
+**Every processed space frame must be acked before returning.** Use `MessageService.ackSpaceFrame`, which exists as a named helper for exactly this reason. The DM path is already safe by a different route — it acks inside the ratchet critical section (`ackProcessedFrame`), upstream of the receipt/typing intercept.
+
+Fixed in desktop #308.
 
 ## Cost profile (DM path)
 
@@ -182,3 +211,5 @@ Space-channel typing is not affected — it broadcasts via the hub envelope, whi
 *Updated: 2026-05-18 -- added "freshness filter" row to the Throttling and TTL table (drops typing messages > 30s old at receiver) and an implementation note explaining why TypingService is built once per `selfAddress` instead of per-messageService rebuild (fixed the Space → DM → Space stale-listener bug).*
 
 *Updated: 2026-05-18 -- removed the "Backwards compatibility" section. It described federated mixed-version scenarios (Alice on v1.5 with typing, Bob on v1.4 without) that don't apply pre-production. If we later need to handle clients on different versions, mitigations can be designed against the actual situation.*
+
+*Updated: 2026-08-03 -- added "Ephemeral locally does NOT mean ephemeral on the relay". Space typing frames were processed and never acked, so the relay re-pushed them on every reconnect forever; measured 2x redelivery against 0x for a control post, fixed in #308.*

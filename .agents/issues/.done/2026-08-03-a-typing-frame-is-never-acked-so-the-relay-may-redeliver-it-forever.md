@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A typing-indicator frame returns before the inbox ack, so the relay is never told to drop it — and may redeliver it on every reconnect, forever"
-status: open
+status: done
 created: 2026-08-03
 severity: potentially a permanent backlog source, which is upstream of every perishable-control-frame problem in the transport work
 area: space message receive path / inbox ack / typing indicators
@@ -13,6 +13,51 @@ related_bugs:
 ---
 
 # A typing frame returns before the ack
+
+## ✅ CONFIRMED AND FIXED — desktop #308, 2026-08-03
+
+It was not just plausible; it was measured. `yarn harness space-typing` runs both
+arms in one run, one reconnect, with an ordinary post as the control:
+
+| | POST (control) | TYPING | total frames redelivered |
+|---|---|---|---|
+| before | 0x | **2x** | 1 |
+| after | 0x | **0x** | **0** |
+
+The control arm is what makes it conclusive: it proves the harness models acking
+correctly, so the typing result is not an artefact of the instrument.
+
+**Fix:** ack before returning, via a new `MessageService.ackSpaceFrame` helper.
+It was extracted rather than inlined precisely because the ack had ONE call site
+and every early return past it leaked a frame permanently — which is how this
+survived. Guarded by a unit test (confirmed load-bearing) plus the harness
+scenario above.
+
+⚠️ **The remaining open question is scope, not existence.** This fixed the typing
+path. Nothing has systematically audited the space receive path for OTHER early
+returns that skip the ack — the audit that found this one covered the bare
+`return;` statements in `handleNewMessage` and cleared the rest, but that was a
+manual pass, not a proof. See "Cross-repo" below for the mobile angle.
+
+## Cross-repo: mobile is exposed on the space path only
+
+`quorum-mobile/.agents/issues/.open/2026-07-24-typing-indicators-and-toggles-port.md`
+is ready for implementation and **its slice 3 would reproduce this bug**.
+
+- **Slice 2 (DM) is safe.** It extends `handleDmReceipt`, and every call site
+  already does `deleteProcessedEnvelope(...)` immediately before returning
+  (`context/WebSocketContext.tsx:2983-2986`, `:3330-3333`).
+- **Slice 3 (space) is exposed.** It adds a NEW intercept at the space
+  decrypt/parse sites and the task text says only "intercept … before the message
+  is treated as a post". Mobile acks per-branch rather than in one tail, so an
+  intercept that returns early without `deleteProcessedEnvelope` leaks exactly
+  the way desktop did.
+
+That task has been annotated with this requirement.
+
+---
+
+# Original report
 
 > **Deliberately ungraded.** The code path is CONFIRMED; whether the relay
 > actually retains these frames is NOT, and that is the whole question. Until it
