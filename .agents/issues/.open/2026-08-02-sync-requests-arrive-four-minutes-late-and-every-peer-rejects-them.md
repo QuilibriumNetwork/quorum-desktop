@@ -180,11 +180,42 @@ load-bearing. Full suite 58 files / 888 tests green.
 - **Every field report.** The harness cannot host the socket conditions that
   need real devices. The claim is "fixes the backlog-starvation path", not
   "fixes the field".
-- **A flood longer than the re-ask ladder.** The allowance is 2 re-asks per space
-  per 15-minute window with a 60 s cooldown. If a flood outlasts that ladder the
-  client waits for the window to roll. Untested — the harness flood at 300 drains
-  well inside it. **This is the first thing to look at if a field report survives
-  the fix.**
+- ~~**A flood longer than the re-ask ladder.**~~ ✅ **ANSWERED 2026-08-03 — no
+  ceiling in the tested range.** Swept to 1200 messages / 4806 frames, 4× the load
+  the fix was validated on, and it still delivers 100%. The ladder never
+  exhausts.
+
+  | backlog | frames | median lag | rate |
+  |---|---|---|---|
+  | 300 | 1203 | 79.5 s | 100% |
+  | 600 | 2410 | 182 s | 100% |
+  | 1200 | 4806 | **456.5 s** | 100% |
+
+  ⚠️ **A first pass at 1200 reported 0/2 and that reading was WRONG.** The
+  observation window was set to 360 s; the trials converge at ~456 s, so they
+  were cut off shortly before succeeding. It was briefly read as "the re-ask
+  ladder is exhausted" — a mechanism asserted with no evidence. Recorded because
+  the mistake is more useful than the result: the harness could not see the
+  roster check's own decisions at all (`roster` matched none of its
+  `TRACE_PATTERNS`), so there was nothing to check the guess against. Fixed in
+  `src/dev/tests/harness/spaceBot.ts`.
+
+- 🔴 **LATENCY is now the real defect.** 456 s is seven and a half minutes of a
+  user looking at truncated addresses with no sign that anything is happening.
+  The mitigation recovers, but it cannot recover *promptly* — the re-ask only
+  succeeds once the flood has drained, so recovery time is bounded below by drain
+  time. **This is the argument for fixing the head-of-line blocking itself rather
+  than tuning the ladder**, and it is why raising `MAX_ROSTER_REASKS` would be
+  the wrong move: the ladder is not what is failing.
+
+- **Per-frame cost rises with queue depth, and is UNEXPLAINED.** 66 ms/frame at
+  300, 75.5 at 600, 95 at 1200 — 44% worse at 4× load. It is NOT the O(n²)
+  inbound queue (`WebsocketProvider.tsx:196` spread-copies the whole array on
+  every arrival; `:55` `.slice(1)` copies it on every dequeue) — at 4800 frames
+  that is ~11.5 M pointer copies each way, tens of milliseconds against a
+  456,000 ms run. Those copies are free waste and worth removing, but they are
+  not the cause. Profile before theorising; likely suspects are IndexedDB growth
+  and React re-render churn, but that is a list of suspects, not a finding.
 
 ### Cost
 
@@ -232,7 +263,15 @@ reason a browser would execute that branch differently from a Node bot running
 the same TypeScript. **The marginal information gain is narrow.** Do not treat
 these as owed work.
 
-### A. The re-ask ladder under a flood that outlasts it — FREE, do this one first
+### A. ✅ DONE 2026-08-03 — the re-ask ladder under a flood that outlasts it
+
+> **Answered: there is no ceiling up to 1200 messages / 4806 frames.** See the
+> table in §0b. Kept below for the method, and because the sweep is worth
+> re-running whenever the ladder constants or the drain path change.
+>
+> ⚠️ Use a window of **at least 900 s** at 1200 backlog. The first attempt used
+> 360 s, the trials need ~456 s, and the resulting 0/2 was misread as a real
+> ceiling.
 
 The allowance is 2 re-asks per space per 15-minute window with a 60 s cooldown
 (`src/utils/rosterConvergence.ts`). If a real flood outlasts that ladder, the fix
