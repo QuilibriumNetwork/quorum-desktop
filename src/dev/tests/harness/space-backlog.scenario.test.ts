@@ -228,10 +228,24 @@ test(
                 'No active session or expired',
                 'sync-delta',
                 'member delta',
+                // The repair path (desktop #300). `asking again` = a re-ask
+                // actually fired; `not asking` = the check ran and DECLINED,
+                // and the line itself carries the reason (cap-reached,
+                // cooling-down, converged, no-target). Both zero means the
+                // debounced check never fired at all — a third state entirely,
+                // and the one that is invisible without this counter.
+                'asking again',
+                'not asking',
               ]
                 .map(step)
                 .join('  ')}`
             );
+            // Every roster-check decision, in full. These are few (the check is
+            // debounced and capped) and they are the difference between "the
+            // ladder ran out" and "the ladder never started" — a distinction
+            // that was guessed wrong once already.
+            for (const line of b.syncTrace.filter((l) => l.includes('roster')))
+              say(`      | ${line.slice(0, 200)}`);
             for (const line of b.syncTrace.slice(-6))
               say(`      | ${line.slice(0, 150)}`);
           }
