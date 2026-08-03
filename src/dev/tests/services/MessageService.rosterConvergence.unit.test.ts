@@ -26,7 +26,8 @@
  *      entitled to use. The expiry gate is untouched; only the tracker moved
  *      out from behind it.
  *
- * See .agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
+ * See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under
+ * .agents/issues/ — issues are filed by state and move, so grep the filename.
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
