@@ -4,7 +4,7 @@ title: "Identity resolution and profile sync (canonical model)"
 status: done
 ai_generated: true
 created: 2026-07-16
-updated: 2026-08-02
+updated: 2026-08-03
 related_docs:
   - "qns-username-display.md"
   - "user-config-sync.md"
@@ -187,10 +187,32 @@ sentence; doing so has already misled a reader once.**
 
 | Viewer → member | State |
 |---|---|
-| **desktop → desktop** | ✅ largely repaired. The dominant cause was a case-mismatched React Query key discarding every roster update (#295). A new joiner goes from 1 member row to 72 in a two-client test and the list renders them. |
-| **desktop → mobile** | ❌ **still broken.** That member announced once long ago and does not participate in the pull. Unchanged by anything shipped 2026-08-01/02 except the mobile expiry, which is **awaiting a release**. |
+| **desktop → desktop** | ✅ largely repaired. The dominant cause was a case-mismatched React Query key discarding every roster update (#295). A new joiner goes from 1 member row to 72 in a two-client test and the list renders them. **Hardened 2026-08-03** — see below; #295 made the pull *render*, but the pull could still be starved before it delivered anything. |
+| **desktop → mobile** | ❌ **broken, and the fix is written but NOT SHIPPED.** That member announced once long ago and does not participate in the pull. Mobile #215 fixes it — **merged to mobile `master` 2026-08-02, and the last mobile build shipped 2026-07-31, so it is NOT in users' hands.** This is a RELEASE action, not a coding one. |
 | **mobile → desktop** | ✅ repaired — the desktop push reaches it; mobile's receive side was never the problem. |
-| **mobile → mobile** | ❌ **still broken.** Mobile neither asks nor answers. This is the architectural gap, not a bug with a fix in it. |
+| **mobile → mobile** | ❌ **broken.** Mobile neither asks nor answers. ⚠️ But note: #215 plus mobile's hub-log replay should repair much of this too, because a member who re-announces on connect is replayed to mobile peers from their join point. **Re-measure after a build ships before treating the ask/answer gap as the blocker.** |
+
+### What changed 2026-08-03 (desktop) — the pull's reliability layer
+
+#295 fixed the *view* layer: rows arrived and were discarded before render. But
+the pull could still deliver nothing at all, and three separate causes were found
+and fixed:
+
+| PR | what it fixed |
+|---|---|
+| **#300** | the roster convergence re-ask never armed when the sync window had expired — the exact case it existed for. 300-message backlog: **0% → 100%** roster delivery |
+| **#305** | a space frame that failed to decrypt was **deleted from the relay** — the only copy. Silent permanent message loss, now retried instead |
+| **#308** | typing indicators were processed and never acked, so the relay re-pushed every one of them on every reconnect, forever. MEASURED 2x redelivery vs 0x for a control post |
+
+**Why #308 belongs in an identity doc:** queue depth is what decides whether a
+perishable control frame is read before it expires. A `sync-info` reply is valid
+30 s; the wait for it is simply the number of frames ahead of it. An unbounded
+pile of un-acked typing frames is a permanent, growing tax on every roster pull.
+
+⚠️ **Also measured and FALSIFIED:** bounded chunking of the inbound queue. Built,
+measured, discarded — the wait is the number of frames *ahead*, and chunking only
+changes how they are packaged. Do not re-propose it without explaining how it
+moves queue POSITION. See `issues/2026-08-02-sync-requests-arrive-four-minutes-late-…`.
 
 > ⚠️ #295 repaired the **desktop viewer's** ability to render what it already
 > received. It did nothing for mobile, and nothing for a mobile *member's*
@@ -208,7 +230,7 @@ sentence; doing so has already misled a reader once.**
 | Item | Where |
 |---|---|
 | **MOBILE cannot ask or answer** — the largest remaining gap, and the only one that needs a lead-dev decision | "What would actually close the gap" below. Do NOT ship a mobile fix for this unilaterally |
-| Mobile's announce expiry is written but **unreleased** — desktop→mobile stays broken until a mobile build ships | mobile #215; `issues/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
+| 🔴 **SHIP A MOBILE BUILD — the single highest-value action available.** Mobile #215 (`ca9309e`, "a mobile member is no longer invisible to everyone who joins later") is **merged to mobile `master` on 2026-08-02**. The last mobile build shipped **2026-07-31**, two days earlier, so it does NOT contain the fix. Until a build ships, **no further client work on either repo will move the two broken quadrants** — and re-measuring before it ships will measure the old behaviour | mobile #215; `issues/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
 | Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
 | A per-space name/avatar never reaches your own other devices | `issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
 | Members that **no peer holds** — only the person re-announcing recovers them | same roster-pull file, NEXT STEP C. Blocked on a mobile release carrying #215 |
