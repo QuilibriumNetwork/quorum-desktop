@@ -36,9 +36,18 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
     >
       <div>
         <p className="text-body text-subtle">
+          {/*
+            Was "You won't be able to rejoin unless you are re-invited", which is
+            false whenever the Space has a public invite link: that link is
+            deterministic per Space and keeps working, so an old copy of it still
+            gets you back in. Verified by rejoining with a previously-used link.
+            Mobile's confirmation carried the same wrong claim and was corrected
+            to match.
+          */}
           <Trans>
-            Are you sure you want to leave this Space? You won't be able to
-            rejoin unless you are re-invited.
+            Are you sure you want to leave this Space? You'll need an invite to
+            rejoin, though a public invite link will still work if this Space has
+            one.
           </Trans>
         </p>
         {error && (

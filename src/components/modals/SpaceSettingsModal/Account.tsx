@@ -418,9 +418,13 @@ const Account: React.FunctionComponent<AccountProps> = ({
                 <Trans>Leave this Space</Trans>
               </div>
               <div className="pt-2 text-sm">
+                {/* See LeaveSpaceModal for why the old "unless you are
+                    re-invited" claim was wrong: a public invite link survives
+                    leaving and still works. */}
                 <Trans>
-                  You won't be able to rejoin unless you are re-invited. Your
-                  existing messages will NOT be deleted.
+                  You'll need an invite to rejoin, though a public invite link
+                  will still work if this Space has one. Your existing messages
+                  will NOT be deleted.
                 </Trans>
               </div>
               {leaveError && <div className="pt-4 text-sm">{leaveError}</div>}
