@@ -202,6 +202,19 @@ export async function createSpaceBot(
     'member delta',
     'delta payload',
     'informSyncData',
+    // ⚠️ Added 2026-08-03, and its absence had already cost a wrong conclusion.
+    // Desktop #300 made the roster re-ask the mechanism that repairs a starved
+    // handshake — but every line that mechanism emits ("roster did not converge
+    // … asking again", "roster check for X: not asking (cap-reached)") starts
+    // with "roster" and matched none of the patterns above. So the harness could
+    // measure that a run FAILED while being structurally unable to show WHY, and
+    // a 0/2 result at 1200 backlog was read as "the re-ask ladder is exhausted"
+    // on no evidence at all.
+    //
+    // `shouldReAsk` deliberately returns a REASON rather than a boolean, and the
+    // caller logs it on every branch (see rosterConvergence.ts). Capturing it is
+    // the entire point of that design.
+    'roster',
   ];
   const syncTrace: string[] = [];
   const trace = (line: string) => {
