@@ -4307,6 +4307,14 @@ export class MessageService {
 
     let decryptedContent: Message | null = null;
     let newState: string | null = null;
+    /**
+     * A space frame we could not OPEN, and are keeping on the relay to retry.
+     *
+     * Declared out here because the decision is made in the space branch's catch
+     * but acted on much later, at the inbox-cleanup tail — those are different
+     * block scopes in the same very long function.
+     */
+    let retainUnopenedSpaceFrame = false;
 
     const keys = JSON.parse(found.state);
     let updatedUserProfile: secureChannel.UserProfile | undefined;
@@ -4585,6 +4593,17 @@ export class MessageService {
       // State already persisted inside the locked section — `newState` stays
       // null so the deferred tail save (space path) does not run for DMs.
     } else {
+      const spaceFrameKey = frameKey(
+        message.inboxAddress,
+        message.encryptedContent
+      );
+      /**
+       * Did we get the envelope OPEN? Everything after that point is
+       * application handling, and a failure there will fail identically on a
+       * retry — so only a failure BEFORE this flips is worth keeping the frame
+       * for. See the catch at the end of this block.
+       */
+      let opened = false;
       try {
         const spaceId = conversationId.split('/')[0];
         const hub_key = await this.messageDB.getSpaceKey(spaceId, 'hub');
@@ -4638,6 +4657,13 @@ export class MessageService {
             )
           ).toString('utf-8');
         }
+
+        // The envelope is open. From here on a failure is an application bug,
+        // not a "we could not decrypt it yet" — retrying would fail the same
+        // way, so the frame stops being a retry candidate and the tail cleanup
+        // deletes it exactly as it always did.
+        opened = true;
+        this.undecryptableFrames.clear(spaceFrameKey);
 
         const envelope = JSON.parse(result);
         if (envelope.type === 'message') {
@@ -6134,7 +6160,40 @@ export class MessageService {
             );
           }
         }
-      } catch (e) { console.error('[MessageService] Error processing hub/sync message:', e); }
+      } catch (e) {
+        console.error('[MessageService] Error processing hub/sync message:', e);
+        // ⚠️ THE RELAY IS THE ONLY COPY. It holds a frame until we delete it,
+        // and that delete IS the ack — so deleting a frame we never opened
+        // destroys the message permanently, silently (this log is a no-op in
+        // production builds), with no retry and nothing shown to the user.
+        //
+        // A space frame can fail to open for reasons that are transient by
+        // nature: the config key rotated and the frame predates the rotation,
+        // or the key that opens it has not arrived yet. Those decrypt fine
+        // later, and the relay will redeliver anything we have not acked.
+        //
+        // Same discipline the DM path has had since 2026-07-25, where replaying
+        // real captured frames proved 5 of 6 deleted frames were decryptable
+        // against a state the client itself held ~35s later. The budget
+        // (40 attempts / 5 min TTL) is what stops a genuinely poisonous frame
+        // lingering forever.
+        //
+        // See issues/.open/2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md
+        if (!opened) {
+          retainUnopenedSpaceFrame = !this.undecryptableFrames.recordFailure(
+            spaceFrameKey
+          );
+          if (!retainUnopenedSpaceFrame) {
+            logger.warn(
+              '[MessageService] giving up on an unopenable space frame after the retry budget — deleting',
+              {
+                inbox: message.inboxAddress?.slice(0, 16),
+                frameTimestamp: message.timestamp,
+              }
+            );
+          }
+        }
+      }
     }
 
     if (newState) {
@@ -6359,6 +6418,18 @@ export class MessageService {
         // Space was deleted, silently skip cleanup
         logger.debug(
           `Skipping inbox cleanup for deleted space: ${conversationId.split('/')[0]}`
+        );
+        return;
+      }
+
+      // We could not open this frame and its retry budget is not spent. Do NOT
+      // delete it: the delete is the ack, and the relay is the only copy.
+      // Leaving it means the relay redelivers it on the next `listen`, by which
+      // time the key that opens it may have arrived.
+      if (retainUnopenedSpaceFrame) {
+        logger.log(
+          `[MessageService] keeping an unopenable space frame for retry: ` +
+            `${conversationId.split('/')[0].substring(0, 12)} ts=${message.timestamp}`
         );
         return;
       }
