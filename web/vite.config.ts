@@ -3,7 +3,25 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
+import { readFileSync } from 'fs';
 import { lingui } from '@lingui/vite-plugin';
+
+/**
+ * App version, read from package.json at config-load time and inlined into the
+ * bundle as `__APP_VERSION__`. package.json is the single source of truth (the
+ * release skill bumps it), so the UI never carries a hand-maintained copy that
+ * can drift from the released tag.
+ *
+ * Read here rather than imported so the value is a plain string in the bundle
+ * and no part of package.json ends up in the shipped output.
+ *
+ * Read once, at config load. A running dev server therefore keeps showing the
+ * version it started with — restart `yarn dev` after a version bump to see the
+ * new one. Builds are always correct, since they load the config fresh.
+ */
+const appVersion: string = JSON.parse(
+  readFileSync(resolve(__dirname, '../package.json'), 'utf-8')
+).version;
 
 /**
  * Absolute paths for vite-plugin-node-polyfills shim specifiers.
@@ -79,6 +97,7 @@ export default defineConfig(({ command }): UserConfig => ({
   },
   define: {
     // Define compile-time constants
+    __APP_VERSION__: JSON.stringify(appVersion),
   },
   plugins: [
     resolvePolyfillShims(),

@@ -19,41 +19,69 @@ flow is: cut the release here, then run **deploy** to ship it.
 
 ## Versioning scheme
 
-**Default behaviour: plain patch bump — increment the LAST number only.** We stay
-on the current `major.minor` line and bump the patch digit every release:
+The version is **`<network-version>-<build>`**, e.g. `2.1.0-1`.
 
 ```
-2.1.0          a release
-2.1.1          next release (patch bump)
-2.1.2          next release
-2.1.3          ...
+2.1.0-1        a release
+2.1.0-2        next release (counter increments)
+2.1.0-3        next release
+...
+2.1.1-1        Q network moved to 2.1.1 — base changes, counter RESETS
 ```
 
-This is what happens on **almost every release**: `2.1.2` → `2.1.3`. The major and
-minor stay put. Do NOT auto-escalate to a minor (`2.2.0`) or major (`3.0.0`) bump
-just because the commit range contains `feat:` or breaking-change commits — that
-inference is wrong for this repo and has caused repeated mistakes. Escalating the
-minor or major is **rare** and happens **only** when the user explicitly asks for
-it (e.g. `/release minor`) or confirms it. When in doubt, patch-bump.
+Two independent parts, and only one of them normally moves:
+
+- **The base (`2.1.0`) is the Quilibrium network version this build runs
+  against.** It is not the app's own version and it is not yours to bump. It
+  changes **only** when the Q network itself releases a new version, and only
+  when the user says so. Never infer a base change from the commit range.
+- **The counter (`-1`, `-2`, …) is the build number.** It increments by one on
+  every release, and **resets to `1`** when the base changes.
+
+The whole stack shares this shape: quorum-shared is at `2.1.0-N` in its own
+`package.json`, and quorum-mobile's artifacts are named `2.1.0-N.apk` from an
+EAS-managed counter. Desktop matching it is the point of the scheme.
+
+**Do NOT patch-bump.** `2.1.0-1` → `2.1.1-1` is wrong unless the network moved.
+The old scheme (`2.1.2` → `2.1.3`) was retired because a bare `2.1.4` reads as a
+claim about a Q network version that does not exist. Releases `v2.1.0` through
+`v2.1.4` predate the change and are left in place as history; the first release
+under this scheme steps down numerically from them, which is expected and
+harmless (nothing compares these strings — there is no auto-updater, and
+`electron-builder.json` has no `publish` block).
+
+**Never zero-pad the counter.** `2.1.0-07` is invalid semver (leading zeros are
+forbidden in numeric prerelease identifiers) and some tooling rejects it.
 
 The version is stored **only in `package.json`** (the `version` field). Git tags
-mirror it with a `v` prefix: `v2.1.0`, `v2.1.1`, `v2.1.2`, ...
+mirror it with a `v` prefix: `v2.1.0-1`, `v2.1.0-2`, ... The `v` stays: it is the
+git convention and it distinguishes version tags from the `prod-YYYY-MM-DD`
+deploy tags in the same repo.
+
+**The UI picks this up automatically.** `web/vite.config.ts` reads
+`package.json` at build time and inlines it as `__APP_VERSION__`;
+`src/config/appVersion.ts` exposes it as `APP_VERSION`, and the settings
+sidebar renders it. Bumping `package.json` is the only manual step — never
+hand-edit a version string anywhere else.
 
 ## Version math (apply exactly)
 
-Parse the current `package.json` version into `major.minor.patch` (e.g.
-`2.1.2` → major=`2`, minor=`1`, patch=`2`).
+Parse the current `package.json` version into `base` and `build` by splitting on
+the **first** `-` (e.g. `2.1.0-7` → base=`2.1.0`, build=`7`).
 
-- **Patch bump** (default): `major.minor.(patch+1)`.
-  - `2.1.2` → `2.1.3`
-- **Minor escalation** (only on explicit user request): `major.(minor+1).0`.
-  - `2.1.2` → `2.2.0`
-- **Major escalation** (only on explicit user request): `(major+1).0.0`.
-  - `2.1.2` → `3.0.0`
+- **Normal release** (default, effectively always): keep the base, increment the
+  counter → `<base>-<build+1>`.
+  - `2.1.0-7` → `2.1.0-8`
+  - `2.1.0-9` → `2.1.0-10` (no padding, plain integer math)
+- **Network bump** (only when the user states the new network version): new base,
+  counter resets to `1` → `<new-base>-1`.
+  - `2.1.0-42` → `2.1.1-1`
+  - This stays monotonic in semver, since `2.1.1-1` > `2.1.0-42`.
 
-**Special case — the very first release.** If `package.json` is still at the
-placeholder `0.0.0` and no `v*` tags exist, the first release is **`2.1.0`** (the
-agreed starting point), not a computed bump. Set it directly.
+**Special case — a version with no counter.** If `package.json` holds a bare
+`major.minor.patch` with no `-N` suffix, it predates this scheme. Do not try to
+compute from it. Ask the user for the network version to use as the base, then
+set `<base>-1`.
 
 ## Workflow
 
@@ -62,13 +90,19 @@ agreed starting point), not a computed bump. Set it directly.
 ```bash
 git rev-parse --abbrev-ref HEAD          # must be main
 git status --porcelain                   # must be clean
-git tag -l "v*" --sort=-version:refname | head -10
+git tag -l "v*" --sort=-creatordate | head -10
 node -e "console.log(require('./package.json').version)"
 ```
 
 - If the branch is not `main` → **STOP**, tell the user. (Releases are cut from `main`.)
 - If there are uncommitted changes → **STOP**, tell the user to commit or stash first.
 - Note the current version and the latest `v*` tag.
+
+Sort by `creatordate`, **not** `version:refname`. Git's version sort has no
+reliable ordering for prerelease suffixes without `versionsort.suffix` config,
+and the pre-2.1.0-1 tags (`v2.1.0` … `v2.1.4`) sort *above* every current tag
+under a naive version sort. "Most recently cut" is the property actually wanted
+here, and creatordate gives it exactly.
 
 ### Step 2: Analyze commits since the last release
 
@@ -93,19 +127,18 @@ drive the version bump — `feat:` commits do not make this a minor release.
 
 ### Step 3: Decide the new version
 
-The new version is a **plain patch bump** (per the version math above): keep
-`major.minor`, increment the last number. `2.1.2` → `2.1.3`. That is the answer
-almost every time — do not overthink it.
+Keep the base, increment the counter (per the version math above). `2.1.0-7` →
+`2.1.0-8`. That is the answer every time unless the user says the network moved.
 
-- **First release ever** (placeholder `0.0.0`, no `v*` tags): the new version is
-  `2.1.0`. Set it directly and proceed.
-- **Default (any normal release)**: patch-bump silently. Do NOT ask, and do NOT
-  escalate to minor/major just because the range contains `feat:` or breaking
-  commits. State the chosen version in Step 5 so the user can object before the
-  push gate.
-- **Explicit escalation only**: bump the minor or major **only** if the user
-  invoked `/release minor` / `/release major`, or otherwise explicitly asked for
-  it in this conversation. Never escalate on your own inference.
+- **Default (any normal release)**: increment the counter silently. Do NOT ask,
+  and do NOT touch the base because the range contains `feat:` or breaking
+  commits — the base tracks the Q network, not this repo's changes. State the
+  chosen version in Step 5 so the user can object before the push gate.
+- **Network bump only on explicit instruction**: change the base **only** if the
+  user names the new Q network version in this conversation. Then reset the
+  counter to `1`. Never infer a base change.
+- **No counter in the current version**: see the special case in the version
+  math. Ask for the base, do not guess.
 
 ### Step 4: Bump `package.json`
 
@@ -116,7 +149,7 @@ Edit the `version` field in `package.json` to the chosen new version. Change
 ### Step 5: Commit & tag
 
 Report to the user first:
-- Previous version → New version (bump kind: suffix / patch / minor / major / initial)
+- Previous version → New version (bump kind: counter increment / network bump)
 - Number of commits included
 - A one-line summary of the categorized changes
 
@@ -153,8 +186,10 @@ changelog notes:
 gh release create "v<NEW_VERSION>" --title "v<NEW_VERSION>" --notes "<changelog>"
 ```
 
-All patch releases (`v2.1.1`, `v2.1.2`, `v2.1.3`, ...) are full releases — no
-`--prerelease` flag.
+These are all full releases — **never** pass `--prerelease`. The `-N` suffix is
+semver's prerelease field, but that is an artifact of encoding the build counter,
+not a statement that the build is unfinished. GitHub does not infer it either:
+`gh release create` only marks a release as prerelease when explicitly told to.
 
 ### Step 7: Report
 
@@ -201,15 +236,23 @@ Generate notes with only the sections that have changes, in this order:
 - **`gh` CLI unavailable or not authenticated** → the `git push` still
   succeeds; tell the user the tag is pushed and they can create the GitHub
   release manually at the repo's Releases page.
-- **First release** → version is `2.1.0`, set directly (no computed bump).
+- **Version has no `-N` counter** → predates this scheme. Ask for the Q network
+  version to use as the base, then set `<base>-1`. Do not compute.
+- **New version sorts below an existing tag** → expected for the first release
+  after the scheme change (`v2.1.4` → `v2.1.0-1`) and only for that one.
+  Proceed. If it happens again later, the math is wrong: stop and re-read the
+  version math section.
 
 ## Files modified
 
 - `package.json` — the `version` field only.
-- Git commit: `chore(release): vX.Y.Z`
-- Git tag: `vX.Y.Z` (annotated)
+- Git commit: `chore(release): v<base>-<build>`
+- Git tag: `v<base>-<build>` (annotated)
 - GitHub release with grouped changelog notes
+
+The UI version badge needs no edit: it reads `package.json` through
+`__APP_VERSION__` at build time.
 
 ---
 
-*Last updated: 2026-07-17*
+*Last updated: 2026-08-03*

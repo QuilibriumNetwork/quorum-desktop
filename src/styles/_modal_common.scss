@@ -216,6 +216,36 @@
   }
 }
 
+// App version, bottom-left corner of the settings modal. Anchored to
+// .modal-complex-container-inner (already position: relative) rather than to the
+// sidebar: the sidebar's box ends above the save-button footer row, so anchoring
+// there left the version short of the actual bottom.
+//
+// Deliberately NOT placed in normal flow inside the sidebar — pushing it down
+// would need the sidebar to become a flex column, and .modal-nav-category sets
+// margin on both vertical edges, which collapses between siblings in block flow.
+// Flex stops that collapsing and would double every nav gap here and in
+// SpaceSettingsModal, which shares the class.
+//
+// pointer-events: none so it can never intercept a click in that corner.
+.modal-complex-version {
+  position: absolute;
+  bottom: $s-4;
+  left: $s-4;
+  z-index: 1;
+  font-size: $text-xs;
+  line-height: $text-xs-lh;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  user-select: none;
+
+  // Follows the sidebar: below $screen-md the left column is gone, and the
+  // version goes with it rather than floating over the mobile layout.
+  @media (max-width: $screen-md) {
+    display: none;
+  }
+}
+
 .modal-complex-content {
   background-color: var(--color-bg-modal);
   display: flex;
