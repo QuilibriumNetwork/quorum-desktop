@@ -16,7 +16,7 @@
 // applies the same `||` semantics on its equivalent merge
 // (quorum-mobile context/WebSocketContext.tsx ~4740).
 //
-// See .agents/tasks/2026-08-01-dm-partner-identity-lost-on-established-sessions.md
+// See 2026-08-01-dm-partner-identity-lost-on-established-sessions.md under .agents/issues/
 
 /** The identity fields carried on a decrypted frame / SDK `UserProfile`. */
 export interface IncomingPartnerProfile {

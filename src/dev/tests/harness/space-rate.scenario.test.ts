@@ -6,7 +6,7 @@
 // S1 proved the exchange CAN work. It ran at two members and passed five times,
 // which says nothing about a failure reported at ~79 members and described as
 // intermittent. This scenario answers the three questions
-// `.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
+// `2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` under .agents/issues/
 // says a manual test cannot:
 //
 //   1. is it 1-in-2 or 1-in-50?

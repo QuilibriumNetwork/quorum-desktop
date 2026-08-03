@@ -11,7 +11,7 @@
 // So: capped like the DM gate, but spaced in minutes rather than days, because
 // past the bootstrap the member digest exchange is the repair path.
 //
-// Context: .agents/tasks/2026-08-01-space-member-identity-announce-on-connect.md
+// Context: 2026-08-01-space-member-identity-announce-on-connect.md under .agents/issues/
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

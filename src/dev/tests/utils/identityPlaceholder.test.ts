@@ -3,7 +3,7 @@
 // "Unknown User" with a "?" avatar while the header showed "QmYVto…LjDd" with
 // a "Q" avatar for the SAME row.
 //
-// Context: .agents/tasks/2026-08-01-dm-partner-identity-lost-on-established-sessions.md
+// Context: 2026-08-01-dm-partner-identity-lost-on-established-sessions.md under .agents/issues/
 
 import { describe, it, expect } from 'vitest';
 import {

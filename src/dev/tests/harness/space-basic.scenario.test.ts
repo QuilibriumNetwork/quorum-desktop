@@ -9,8 +9,8 @@
 //   2. A's member row        — the ROSTER half, one payload, no retry
 //
 // The second one is why this scenario exists in this shape. The spec's S1 asked
-// only for the post; `.agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-
-// new-joiner.md` is about the roster, and its §0 says the exchange is
+// only for the post; `2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
+// under .agents/issues/ is about the roster, and its §0 says the exchange is
 // INTERMITTENT — it worked once (`memberDelta=71 members → saved 71 member
 // row(s)`) and failed repeatedly around it. A joiner with 2 members is the
 // smallest possible instance of "78 rows on one side, 1 on the other".

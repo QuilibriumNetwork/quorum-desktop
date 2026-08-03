@@ -6,7 +6,7 @@
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/issues/):
  * 9 of 12 public methods have zero coverage: handleSyncInitiateV2,
  * handleSyncManifest, requestSync, directSync, synchronizeAll,
  * updateCacheWithMessage, updateCacheWithMember, removeCacheMessage,

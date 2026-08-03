@@ -1234,8 +1234,8 @@ export class MessageDB {
    * on every other member's roster forever. Name/avatar/bio do not need this:
    * the two-slot model clears them with `''`, which is a present value.
    *
-   * See .agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md
-   * and .agents/bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md
+   * See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/issues/
+   * and 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
    */
   async saveSpaceMember(
     spaceId: string,
@@ -1446,7 +1446,7 @@ export class MessageDB {
         // stored; and only when there is nothing stored do we fall back to the
         // incoming placeholder, so a brand-new row keeps today's shape (both
         // fields are required on `Conversation`).
-        // See .agents/tasks/2026-08-01-identity-announce-cadence-research.md §2.
+        // See 2026-08-01-identity-announce-cadence-research.md under .agents/issues/ §2.
         const request = conversationStore.put({
           ...existingConv, // Preserve existing fields including isRepudiable
           conversationId,
@@ -1840,7 +1840,7 @@ export class MessageDB {
    *
    * Storage-adapter-shaped: this is the IndexedDB implementation of what
    * will become a SearchAdapter method once quorum-shared migration unblocks.
-   * Per `.agents/tasks/search-optimization/decisions.md` decision #9.
+   * Per `search-optimization/decisions.md` under .agents/issues/ decision #9.
    */
   async ensureIndexReady(context: SearchContext): Promise<void> {
     const indexKey = this.getIndexKey(context);
@@ -2842,7 +2842,7 @@ export class MessageDB {
   // ============================================
   // DEBUG UTILITIES FOR ENCRYPTION STATE ANALYSIS
   // ============================================
-  // See: .agents/bugs/encryption-state-evals-bloat.md
+  // See: 2025-12-09-encryption-state-evals-bloat.md under .agents/issues/
   //
   // Usage (browser console):
   //   await window.__messageDB.analyzeEncryptionStates()

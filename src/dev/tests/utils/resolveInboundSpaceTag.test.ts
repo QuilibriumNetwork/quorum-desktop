@@ -16,7 +16,7 @@
 // away). Neither state is right, because absence cannot carry both meanings.
 // Hence the tombstone.
 //
-// See .agents/bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md
+// See 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
 
 import { describe, it, expect } from 'vitest';
 import { resolveInboundSpaceTag } from '../../../services/MessageService';

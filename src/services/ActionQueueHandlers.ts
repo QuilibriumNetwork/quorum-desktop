@@ -12,7 +12,7 @@
  * - Space updates show success/failure
  * - Moderation shows success/failure
  *
- * See: .agents/tasks/background-action-queue.md
+ * See: background-action-queue.md under .agents/issues/
  */
 
 import { logger } from '@quilibrium/quorum-shared';

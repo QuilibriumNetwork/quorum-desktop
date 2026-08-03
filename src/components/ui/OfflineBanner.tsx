@@ -14,7 +14,7 @@
  *
  * Adds 'offline-banner-visible' class to body to push layout down.
  *
- * See: .agents/tasks/background-action-queue.md
+ * See: background-action-queue.md under .agents/issues/
  */
 
 import React, { useEffect, useState } from 'react';

@@ -20,7 +20,7 @@ import { MessageDB, type SpaceMemberRow } from '../../../db/messages';
 // default for every partial writer); a caller that genuinely means "remove
 // this" now has to say so.
 //
-// See .agents/bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md
+// See 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
 
 const SPACE = 'space-1';
 const MEMBER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';

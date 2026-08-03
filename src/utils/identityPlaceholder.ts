@@ -21,7 +21,7 @@
 // active when it was written, which can differ from the one active now.
 //
 // Spaces have the same class of placeholder problem (see
-// .agents/bugs/2026-06-13-space-members-missing-no-join-row.md); this module is
+// 2026-06-13-space-members-missing-no-join-row.md under .agents/issues/); this module is
 // the intended home for that rule too if it is fixed the same way.
 
 import { t } from '@lingui/core/macro';

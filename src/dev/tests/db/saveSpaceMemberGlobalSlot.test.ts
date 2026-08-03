@@ -15,7 +15,7 @@ import { MessageDB, type SpaceMemberRow } from '../../../db/messages';
 // (2026-07-16) deliberately stopped stamping the per-space OVERRIDE fields, so
 // they are empty unless someone set a real per-space override.
 //
-// See .agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md
+// See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/issues/
 
 const SPACE = 'space-1';
 const MEMBER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';

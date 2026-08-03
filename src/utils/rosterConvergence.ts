@@ -36,7 +36,7 @@
 // ⚠️ OBSERVABILITY. `shouldReAsk` returns a REASON, not a boolean, and the
 // caller logs it on every branch. That is not gold-plating: `logger` is a no-op
 // in production builds (see
-// .agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md),
+// 2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md under .agents/issues/),
 // so a developer running a dev build is the ONLY audience this code will ever
 // have, and giving them "false" with no reason attached reproduces exactly the
 // blindness that made the original bug take a session to find.

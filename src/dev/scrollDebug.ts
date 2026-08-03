@@ -28,7 +28,7 @@
  * SessionStorage persistence across page reloads.
  *
  * Built during the investigation documented in
- * .agents/bugs/2026-05-24-virtuoso-measurement-scroll-reset.md. Architecture
+ * 2026-05-24-virtuoso-measurement-scroll-reset.md under .agents/issues/. Architecture
  * reference: .agents/docs/features/messages/scroll-anchoring.md.
  *
  * API surface (via window.__scrollDebug):

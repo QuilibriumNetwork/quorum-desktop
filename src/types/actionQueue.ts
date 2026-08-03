@@ -2,7 +2,7 @@
  * Action Queue Types
  *
  * Types for the persistent background action queue system.
- * See: .agents/tasks/background-action-queue.md
+ * See: background-action-queue.md under .agents/issues/
  */
 
 export type ActionType =

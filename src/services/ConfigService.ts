@@ -474,7 +474,7 @@ export class ConfigService {
       // momentarily incomplete, which is how a device silently wipes its own
       // Space list. Note the copies below: folder items are cloned rather than
       // mutated, because a shallow spread still shares those nested objects.
-      // See .agents/bugs/2026-01-09-config-sync-space-loss-race-condition.md
+      // See 2026-01-09-config-sync-space-loss-race-condition.md under .agents/issues/
       const uploadConfig: UserConfig = { ...config };
       const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
       uploadConfig.spaceIds = config.spaceIds.filter(id => validSpaceIds.has(id));
@@ -508,7 +508,7 @@ export class ConfigService {
       // getConfig applies a remote Space list verbatim, so every other device
       // adopts the shorter list. Hold the upload and let a later save publish
       // the full list once the missing Spaces have synced.
-      // See .agents/bugs/2026-01-09-config-sync-space-loss-race-condition.md
+      // See 2026-01-09-config-sync-space-loss-race-condition.md under .agents/issues/
       const droppedSpaceIds = config.spaceIds.filter(id => !finalSpaceIds.has(id));
 
       if (droppedSpaceIds.length > 0) {

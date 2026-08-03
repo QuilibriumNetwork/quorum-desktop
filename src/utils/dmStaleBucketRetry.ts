@@ -1,6 +1,6 @@
 /**
  * Mitigation for the upstream skipped-key lookup defect (quorum-mobile#183 item
- * 1a; bug doc `.agents/bugs/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §5-B1).
+ * 1a; bug doc `transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` under .agents/issues/ §5-B1).
  *
  * THE UPSTREAM DEFECT, as measured. A receiver files the message keys of frames
  * it had to skip into `skipped_keys_map`, keyed by the header key of the sending

@@ -4,7 +4,7 @@
 // These tests pin both edges: the expiry that bounds the second one, and the
 // CAP that bounds the first one so a converged pair stops paying forever.
 //
-// Context: .agents/tasks/2026-08-01-identity-announce-cadence-research.md (Step 2)
+// Context: 2026-08-01-identity-announce-cadence-research.md under .agents/issues/ (Step 2)
 
 import { describe, it, expect, beforeEach } from 'vitest';
 import {

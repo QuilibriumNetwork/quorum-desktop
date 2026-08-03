@@ -3,7 +3,7 @@
 // these tests is that flipping `||` back to `??` (which reads as an equivalent
 // tidy-up) turns a blank avatar into silent data loss.
 //
-// Context: .agents/tasks/2026-08-01-dm-partner-identity-lost-on-established-sessions.md
+// Context: 2026-08-01-dm-partner-identity-lost-on-established-sessions.md under .agents/issues/
 
 import { describe, it, expect } from 'vitest';
 import {

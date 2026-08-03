@@ -25,7 +25,7 @@
 // 5 spaces × 50 members that is several times a daily DM announce, not less.
 // An uncapped version would be the most expensive identity traffic in the app.
 //
-// See .agents/tasks/2026-08-01-space-member-identity-announce-on-connect.md
+// See 2026-08-01-space-member-identity-announce-on-connect.md under .agents/issues/
 // and 2026-08-01-identity-announce-cadence-research.md (Step 3).
 
 import {
