@@ -232,6 +232,95 @@ before in exactly the congested case.
 2. Fix (a) and fix (c) below remain open; this repaired the roster symptom, not
    the scheduling.
 
+## §0d. THE ROOT FIX — design + safety analysis (2026-08-03)
+
+> This is the section to read before touching the inbound path. #300 is a
+> mitigation and has been taken as far as one can go: the roster arrives, but at
+> 1200 backlog it takes **456 s**, and that cannot improve while the re-ask must
+> wait for the flood to drain. Recovery is bounded below by drain time.
+
+### The mechanism, corrected
+
+Not "a single FIFO queue with no priority" — that was wrong.
+`processInbound` (`src/components/context/WebsocketProvider.tsx:83-133`) drains
+the **entire** queue into a map keyed by inbox address, then runs each inbox's
+frames as a concurrent promise chain. Strict order holds only *within* one inbox.
+
+The barrier is different and more specific: **once a batch starts, every
+newly-arrived frame waits for that whole batch to complete.** `processInbound`
+returns immediately while `inboundProcessingRef` is held (`:84-86`), so frames
+arriving mid-flood merely accumulate. A 1 s interval (`:216-226`) re-triggers, so
+nothing strands permanently.
+
+So B's `sync-info` is not queued *behind* 4806 frames by ordering — **it is not in
+the batch at all**, and the batch has 4806 frames left to process. Minutes.
+
+⚠️ **This kills the obvious fix.** Sorting control frames to the front *within* a
+batch does nothing, because the perishable frame arrives after the batch was
+assembled.
+
+### The design: bounded chunks + stable partition
+
+Process a bounded number of frames, then **re-read the queue** (now containing
+whatever arrived meanwhile), put perishable frames first, continue. The batch
+stops being a commitment and becomes a rolling window.
+
+**Stable partition, NOT a sort.** Relative order within each class is preserved;
+only the classes are reordered. `sync-manifest` before `sync-delta` still holds.
+
+### ✅ The discriminator is free — no decryption needed
+
+The blocking question was whether a frame's class can be known without decrypting
+it. It can:
+
+```js
+const outerEnvelope = JSON.parse(message.encryptedContent);   // :4598
+if (outerEnvelope.type === 'sync') { … }                       // :4601
+```
+
+The outer envelope is **plaintext JSON**. `type === 'sync'` marks a directed sync
+envelope; anything else is a hub broadcast. No crypto, no key lookup.
+
+### ✅ Safety: reordering `type: 'sync'` cannot break the ratchet
+
+Three findings, each READ from code, that together make this far safer than
+"reordering the message pipeline" sounds:
+
+1. **`type: 'sync'` is emitted only by `SyncService`, `SpaceService` and
+   `ConfigService`.** The DM path never produces one. So prioritising sync frames
+   **never reorders DM traffic**.
+2. **The DM path is a different branch and already has its own mutex.**
+   `MessageService.ts:4314` — `if (keys.sending_inbox)` selects the Double
+   Ratchet path, and its own comment describes it as a *"Ratchet critical
+   section — serialized per conversation (see `dmRatchetMutex`)"*, which re-reads
+   state inside the lock precisely so concurrent frames cannot fork the ratchet.
+   **DM correctness does not depend on inbound queue order.**
+3. **Space envelope decryption is stateless.** `UnsealSyncEnvelope` and
+   `UnsealHubEnvelope` (`:4604`, `:4623`) take only the hub key and config key,
+   read from the DB at decrypt time. No session state threads through them, so
+   space frames carry no ordering constraint at the crypto layer.
+
+### Remaining risk — the honest list
+
+- **Application-level ordering inside space traffic.** A `sync-delta` writes
+  messages that a hub post might also deliver. Whether the store dedupes by
+  `messageId` could NOT be confirmed — `MessageDB`'s IndexedDB layer lives in
+  `quorum-shared`. ⚠️ **Verify before shipping.** Mitigating context: sync deltas
+  already race with live posts today (inbox groups run concurrently), so this
+  changes the *timing* of an existing interleaving rather than creating a new
+  hazard class.
+- **Chunk size.** Too small and per-chunk overhead dominates; too large and the
+  barrier is rebuilt. Needs measuring, not guessing.
+- **Blast radius.** This touches the path every frame in the app takes. #300
+  touched one branch of one handler; this is not comparable, and the DM harness
+  scenarios are the regression net that makes it testable at all.
+
+### Acceptance test — pre-registered
+
+`space-backlog` at 1200 already measures this: **median lag must collapse from
+456 s to seconds.** Delivery is already 100%, so rate is not the metric —
+**latency is**. State the target before running, not after.
+
 ## §0c. Optional verification — recipes, so nobody re-derives them
 
 > Added 2026-08-03. **Neither of these is blocking.** The fix is merged, additive,
