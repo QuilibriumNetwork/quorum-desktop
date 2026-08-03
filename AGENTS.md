@@ -108,7 +108,7 @@ if (someCondition) return <SomeComponent />;
 - Call hooks in the same order on every render
 - NEVER put conditional returns before hooks
 
-**Reference**: [React Hooks Violation Bug](.agents/bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
+**Reference**: [React Hooks Violation Bug](.agents/issues/.done/2025-01-20-react-hooks-violation-conditional-return.md)
 
 ---
 
@@ -162,7 +162,7 @@ quorum-shared is not just a dependency — it's the migration destination for th
 - **Import pattern**: Always import migrated utils and primitives from `@quilibrium/quorum-shared`, not from local paths.
 
 **Key reference docs:**
-- [Migration status overview](.agents/tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
+- [Migration status overview](.agents/issues/quorum-shared-migration/reference/stacked-prs-workflow.md)
 - [Hooks migration design + hook classification](.agents/tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
 - [quorum-shared architecture](.agents/docs/quorum-shared-architecture.md)
 

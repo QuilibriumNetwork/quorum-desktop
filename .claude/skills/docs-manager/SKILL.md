@@ -16,8 +16,8 @@ This skill automates the creation, updating, and organization of documentation f
 - Creating tasks, planning features, tracking work, implementation planning
 - Creating documentation, documenting features, explaining architecture
 - Creating reports, audits, researches, analyses, investigations, assessments
-- Updating or organizing existing bugs/tasks/docs/reports
-- Moving completed work between folders (.done/.solved/.archived)
+- Updating or organizing existing issues (bugs/tasks)/docs/reports
+- Moving completed work between folders (.open/.deferred/.done/.archived)
 - Following the established .agents workflow
 
 **Automatically triggers on phrases like:**
@@ -59,18 +59,18 @@ This skill focuses on **document creation and content management** within the `.
 ## Core Capabilities
 
 ### 1. Bug Report Management
-- Creates detailed bug reports in `.agents/bugs/`
+- Creates detailed bug reports in `.agents/issues/` (frontmatter `type: bug`)
 - Follows established template with symptoms, root cause, solution
 - Uses kebab-case naming: `feature-specific-bug-description.md`
 - Includes required AI-generated warning
-- Automatically moves to `.solved/` when bug is fixed
+- Automatically moves to `.agents/issues/.done/` once the fix has been verified
 
 ### 2. Task Creation & Management
-- Creates comprehensive task files in `.agents/tasks/`
+- Creates comprehensive task files in `.agents/issues/` (frontmatter `type: task`)
 - Follows complexity-based templates (Trivial/Low/Medium/High/Critical)
 - Includes proper status tracking, file references, verification steps
 - Updates existing tasks with current codebase state
-- Manages task lifecycle: **open** → **in-progress** → **on-hold** → **done**
+- Manages task lifecycle: **open** (`.open/`) → **in-progress** (root of `issues/`) → **on-hold** (root of `issues/`) → **done** (`.done/`)
 
 ### 3. Documentation Creation
 - Creates feature documentation in `.agents/docs/features/`
@@ -89,12 +89,12 @@ This skill focuses on **document creation and content management** within the `.
 - **Automatically runs update-index.py** after any file operation
 - **Executes yarn scan-docs** for comprehensive project documentation sync
 - Maintains synchronized INDEX.md reflecting current .agents state
-- Handles file moves between folders (.done, .solved, .archived)
+- Handles file moves between folders (.open, .deferred, .done, .archived)
 - Updates cross-references and directory organization
 - Preserves numeric ordering and proper categorization
 
 ### 6. Workflow Integration
-- Respects folder structure: bugs/, tasks/, docs/, reports/ with .done/.solved/.archived subfolders
+- Respects folder structure: issues/, docs/, reports/ — issues/ uses .open/.deferred/.done/.archived subfolders
 - Maintains consistent naming conventions and templates
 - Preserves completed work and implementation notes
 - Updates cross-references and maintains documentation index
@@ -135,7 +135,7 @@ Analyze the request to identify:
 - When **completed** → use `status: done` and move to `.done/` folder
 - When **archiving** (no longer relevant, superseded, abandoned) → use `status: archived` and move to `.archived/` folder
 - **Never** create a new task with `status: in-progress` unless you are immediately implementing it
-- **Never** move a bug to `.solved/` unless the fix has been **verified**. If you can test the fix yourself (e.g., TypeScript compiles, lint passes, unit tests pass), do so and then mark it solved. If verification requires manual/browser/runtime testing you cannot perform, provide the user with specific test instructions and only mark it solved after they confirm the fix works.
+- **Never** move a `type: bug` issue to `.done/` unless the fix has been **verified**. If you can test the fix yourself (e.g., TypeScript compiles, lint passes, unit tests pass), do so and then mark it done. If verification requires manual/browser/runtime testing you cannot perform, provide the user with specific test instructions and only mark it done after they confirm the fix works. This rule is keyed on the frontmatter `type:`, not on the folder.
 - **Note**: You rarely need to set `archived` status unless explicitly asked to archive a task/bug
 
 **Complexity System** (tasks only):
@@ -153,29 +153,40 @@ Analyze the request to identify:
 **Note**: Documentation and report files should use `status: done` since they represent finalized documentation and completed analysis/audit reports.
 
 **Folder-Based Status Rules** (CRITICAL):
-When moving files between folders, the status MUST be updated to match the folder's purpose:
+Bugs and tasks both live in `.agents/issues/`. Which one an item is lives ONLY in its `type: bug` / `type: task` frontmatter — NEVER in its folder path. Setting `type:` is mandatory on every issue. The folder IS the source of truth for `status:` — when moving files between folders, the status MUST be updated to match the folder's purpose:
 
-- **Moving to `.done/` folder** (tasks):
-  - Update `status: done`
+- **Root of `issues/`** (being worked on right now):
+  - Update `status: in-progress` (or `status: on-hold` if blocked)
+  - Should stay short — most new issues start in `.open/`, not here
+
+- **Moving to `.open/` folder** (not started, or an unfixed bug nobody is on):
+  - Update `status: open`
+
+- **Moving to `.deferred/` folder** (consciously postponed):
+  - Update `status: deferred`
   - Update `updated` date to current date
 
-- **Moving to `.solved/` folder** (bugs):
+- **Moving to `.done/` folder** (completed tasks and fixed bugs):
   - Update `status: done`
   - Update `updated` date to current date
+  - For `type: bug` issues, only after the fix has been **verified** (see rule above)
 
-- **Moving to `.archived/` folder** (tasks or bugs):
+- **Moving to `.archived/` folder** (tasks or bugs — obsolete, cancelled, invalid, won't-fix):
   - Update `status: archived`
   - Update `updated` date to current date
   - Archived items are no longer relevant, superseded, or abandoned but preserved for reference
 
+**Epic subfolders**: A large issue with many sub-issues gets its own named folder under `issues/` (e.g. `issues/quorum-shared-migration/`), behaving as a miniature issues tree with its own `.open/`, `.done/`, `.archived/`. It sits at the root of `issues/` while in progress, and moves inside `.done/` when the whole epic is finished.
+
 **Default Status by Location**:
-- Files in `.done/` or `.solved/` folders → `status: done`
-- Files in `.archived/` folders → `status: archived`
-- Files in root task folders → `status: open` (or `in-progress` if actively being implemented, or `on-hold` if blocked)
-- Files in root bug folders → `status: open`
+- Files at the root of `issues/` → `status: in-progress` (or `on-hold` if blocked) — root should stay short
+- Files in `.open/` → `status: open`
+- Files in `.deferred/` → `status: deferred`
+- Files in `.done/` → `status: done`
+- Files in `.archived/` → `status: archived`
 - Files in docs folders → `status: done`
 
-#### For Bug Reports (`.agents/bugs/`):
+#### For Bug Reports (`.agents/issues/`):
 ```markdown
 ---
 type: bug
@@ -206,7 +217,7 @@ updated: YYYY-MM-DD
 [How to avoid in future - patterns/practices]
 ```
 
-#### For Tasks (`.agents/tasks/`):
+#### For Tasks (`.agents/issues/`):
 Use complexity-appropriate template:
 
 **Low Complexity:**
@@ -347,7 +358,7 @@ related_tasks: []   # Add if applicable
 
 ## Prerequisites
 - [ ] Review .agents documentation: INDEX.md, AGENTS.md, and agents-workflow.md for context
-- [ ] Check existing tasks in .agents/tasks/ for similar patterns and solutions
+- [ ] Check existing issues in .agents/issues/ for similar patterns and solutions
 - [ ] Review related documentation in .agents/docs/ for architectural context
 - [ ] [Required setup/dependencies]
 - [ ] Branch created from `develop`
@@ -519,14 +530,14 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
   - Follow the date with a kebab-case descriptive name
   - This applies to bugs, tasks, docs, and reports — no exceptions
 - Place in appropriate folder:
-  - Active bugs: `.agents/bugs/`
-  - Solved bugs: `.agents/bugs/.solved/`
-  - Active tasks: `.agents/tasks/`
-  - Completed tasks: `.agents/tasks/.done/`
+  - New/not-started issues (bugs or tasks): `.agents/issues/.open/`
+  - Issues being worked on right now: root of `.agents/issues/`
+  - Postponed issues: `.agents/issues/.deferred/`
+  - Completed tasks and fixed bugs: `.agents/issues/.done/`
   - Feature docs: `.agents/docs/features/`
   - Reports/audits: `.agents/reports/`
   - Completed reports: `.agents/reports/.done/`
-  - Archived items: respective `.archived/` folders
+  - Archived issues: `.agents/issues/.archived/`
 
 ### Step 4: Cross-Reference Management
 - Add references to related documentation
@@ -543,7 +554,7 @@ When actively implementing a task, the task file is the **source of truth** for 
 **Use `task-sync.py`** for all task file updates during implementation. This script performs edits deterministically, avoiding markdown corruption or wrong-line matches:
 
 ```bash
-TASK=".agents/tasks/my-task.md"
+TASK=".agents/issues/my-task.md"
 SYNC="$HOME/.config/.claude/skills/docs-manager/task-sync.py"
 
 # After completing a step:
@@ -589,8 +600,7 @@ python "$SYNC" "$TASK" validate-paths
 5. **Document changes** - Add to Updates section with timestamp
 
 **For Status Changes:**
-- Moving bugs to `.solved/` when fixed → **MUST update `status: done`**
-- Moving tasks to `.done/` when complete → **MUST update `status: done`**
+- Moving a bug or task to `.done/` when complete (fix verified for bugs) → **MUST update `status: done`**
 - Moving files to `.archived/` folders → **MUST update `status: archived`**
 - Archiving outdated documentation
 - Updating cross-references when files move
@@ -614,7 +624,7 @@ After creating, editing, moving, renaming, or deleting any bug report, task, or 
 
 **When to run the index update script**:
 - ✅ After creating any new .md file in .agents/
-- ✅ After moving files between folders (.done, .solved, .archived)
+- ✅ After moving files between folders (.open, .deferred, .done, .archived)
 - ✅ After renaming any .md file in .agents/
 - ✅ After deleting any .md file in .agents/
 - ✅ After editing titles (# headings) in existing files
@@ -622,7 +632,7 @@ After creating, editing, moving, renaming, or deleting any bug report, task, or 
 The script automatically:
 - Scans all .md files in .agents/ directory
 - Extracts titles from first # heading
-- Organizes by folder structure (docs → bugs → tasks → reports)
+- Organizes by folder structure (docs → issues → reports)
 - Maintains proper subfolder groupings
 - Updates "Last Updated" timestamp
 - Handles numeric prefixes for ordering (01-file.md, 02-file.md)
@@ -638,12 +648,12 @@ The script automatically:
 ### Bug Report Example
 **User says**: "There's an issue with the modal stacking order"
 
-**Skill response**: Creates `.agents/bugs/2026-03-10-modal-zindex-stacking-issue.md` with proper template, analyzes the z-index conflict, documents the CSS fix needed, and includes prevention strategies.
+**Skill response**: Creates `.agents/issues/.open/2026-03-10-modal-zindex-stacking-issue.md` with proper template, analyzes the z-index conflict, documents the CSS fix needed, and includes prevention strategies.
 
 ### Task Creation Example
 **User says**: "I need to implement user authentication"
 
-**Skill response**: Creates `.agents/tasks/2026-03-10-user-authentication.md` with High complexity template, breaks down into phases (setup, UI components, backend integration), includes verification steps for security testing.
+**Skill response**: Creates `.agents/issues/.open/2026-03-10-user-authentication.md` with High complexity template, breaks down into phases (setup, UI components, backend integration), includes verification steps for security testing.
 
 ### Documentation Example
 **User says**: "Document the new search feature we just built"
@@ -664,10 +674,10 @@ The script automatically:
 **User says**: "Move the completed auth task to the .done folder"
 
 **Skill response**:
-1. Moves `.agents/tasks/2026-03-10-user-authentication.md` to `.agents/tasks/.done/2026-03-10-user-authentication.md`
+1. Moves `.agents/issues/2026-03-10-user-authentication.md` to `.agents/issues/.done/2026-03-10-user-authentication.md`
 2. Runs the index update script: `python3 update-index.py`
    - Updates INDEX.md with new file location
-3. Verifies the task now appears under "📋 Completed Tasks" instead of "📋 Tasks" in INDEX.md
+3. Verifies the task now appears under "✅ Completed Issues" instead of "🐛📋 Issues" in INDEX.md
 4. Reports successful completion
 
 ## Workflow Integration
@@ -702,4 +712,4 @@ node "$HOME/.config/.claude/skills/docs-manager/add-yaml-frontmatter.cjs" --appl
 
 ---
 
-_Updated: 2026-03-10_
+_Updated: 2026-08-03_
