@@ -1829,4 +1829,58 @@ Reported in `issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-
 
 
 ---
-*Last updated: 2026-08-02*
+
+## 2026-08-03 — SPACE HARNESS: the fix shape validated, and two suspects ruled out
+
+Desktop PR #299. All three results are from `yarn harness space-*` against
+production.
+
+### 1. A late re-ask recovers the roster — the fix shape, measured
+
+`space-backlog` at 300 backlog messages, with a re-ask issued only AFTER the
+flood drains:
+
+| | result |
+|---|---|
+| asking **during** the flood | **0/2** |
+| asking **after** it drains | **2/2**, `rows=80/80` both times |
+
+So the request is not wrong, its TIMING is. Nothing needs to change about the 30 s
+expiry or about accepting offers. Validated before any fix was written.
+
+### 2. Payload count — RULED OUT, and the premise behind it was false
+
+The field signature is that the member delta (the LAST payload, `isFinal: true`)
+never arrives, and the existing scenarios were believed blind to it because their
+target spaces hold no posts. Measured:
+
+```
+sync-initiate: Their manifest has 0 digests
+sync-initiate: Built 2 delta payload(s)              <- TWO, with zero posts
+sync-delta: memberDelta=ABSENT, messageDelta=present, isFinal=false
+sync-delta: memberDelta=79 members, ..., isFinal=true      <- and it ARRIVES
+```
+
+The `join` control message is itself a message digest, so a message chunk always
+precedes the member payload. Every space scenario has been exercising the field
+shape from the start, and the final payload lands every time.
+
+### 3. Peer selection — MOOT, fixed upstream
+
+`selectBestCandidate`'s message-count-first sort was replaced by a weighted sum in
+quorum-shared #73 (`31185b3`), whose own commit message cites this field case
+(peers at 90/79/72, synced with the 72). Desktop consumes shared via `link:`, so
+it already has it.
+
+### Scope
+
+Two trials on the re-ask; the contrast is 0/2 vs 2/2 on identical setup. This
+validates a fix SHAPE, not an implementation. The harness still cannot host the
+socket conditions that need real devices, so the claim is "fixes the
+backlog-starvation path", not "fixes every field report".
+
+Reported in `issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
+
+
+---
+*Last updated: 2026-08-03*

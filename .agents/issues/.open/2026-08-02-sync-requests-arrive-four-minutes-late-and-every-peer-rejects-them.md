@@ -4,7 +4,7 @@ title: "A reconnecting client starves control-message processing for minutes, so
 status: open
 priority: HIGH — this is upstream of every roster fix shipped 2026-08-01/02; none of them can work while it holds
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-03
 severity: a new member of a space is answered by NOBODY and stays at 1 member row indefinitely
 area: space sync / control-message scheduling / announce-keys backlog / SyncService expiry
 repos: quorum-desktop (observed), possibly the relay
@@ -83,6 +83,61 @@ That also explains why desktop #296's convergence check cannot rescue this: it
 hangs off the `sync-info` handler, so the repair is gated on the very step that
 is failing.
 
+### ✅ THE FIX SHAPE IS VALIDATED — measured 2026-08-03, before any fix was written
+
+`space-backlog` gained a late re-ask arm: when the roster fails during the flood,
+ask again once the flood has drained. Nothing else changed.
+
+| | result |
+|---|---|
+| asking **during** the flood | **0/2** |
+| asking **after** it drains | **2/2**, `rows=80/80` both times |
+
+**The request is not wrong — its TIMING is.** Nothing needs to change about the
+30 s expiry, and nothing needs to change about accepting offers. The ask simply
+has to wait until the reply can be processed.
+
+This is why `requestSync=4` mattered: it already re-asks three extra times, but
+all of them fire *during* the flood, so all of them are wasted. Re-asking once
+the queue is quiet succeeds immediately.
+
+#### 🔴 And it rules out the larger candidate — fix (b) is NOT small
+
+Tracing the code before proposing a diff found **three gates on the same window,
+across two repos**:
+
+| # | where | effect |
+|---|---|---|
+| 1 | `MessageService` sync-info handler (desktop) | `No active session or expired, ignoring` |
+| 2 | shared `addCandidate` | `Session expired` — candidate silently dropped |
+| 3 | shared `hasActiveSession` | **deletes** the session outright |
+
+Desktop keeps its OWN candidate list (`syncInfo.current[spaceId].candidates`) and
+only transfers it into shared inside `initiateSync` — where gate 2 re-checks the
+same window. So "accept a good offer without an open session" would have to relax
+all three; relaxing one changes nothing, and relaxing all three changes semantics
+for mobile too.
+
+#### The recommended fix
+
+**Defer the sync request until the inbound queue is quiet.** Desktop-only, leaves
+expiry semantics intact, and validated above by simulation.
+
+Two implementation decisions left open deliberately, because they are judgment
+calls rather than research:
+
+- what counts as "quiet" — no frames for N ms, or queue depth below a threshold
+- whether to defer the INITIAL ask or only re-ask after quiet. The second is
+  smaller and strictly additive, which usually wins
+
+It also explains why the convergence check (desktop #296) cannot rescue this:
+right idea, wrong trigger. It hangs off the `sync-info` handler, so the repair is
+gated on the step that is failing.
+
+**Its test already exists.** `yarn harness space-backlog` at 300 backlog messages
+is 0% without a fix. The real fix either turns that to 100% on its own, or it
+does not.
+
 ### The three repair points, cheapest first
 
 > ⚠️ **Corrected 2026-08-03.** The first version of this table proposed "judge
@@ -123,8 +178,8 @@ rediscovered:
 
 | gap | why it might matter | status |
 |---|---|---|
-| the target space holds ~0 messages, so the member delta is the **only** payload | the field signature is `isFinal=false` arrives and `isFinal=true` never does — the member payload is the LAST of several. **That shape has never been reproduced** | ⚠️ open, highest priority |
-| ONE responder | `selectBestCandidate` sorts message-count-first; with a single candidate it cannot misfire. Field had peers at 90/79/72 | ⚠️ open |
+| the target space holds ~0 messages, so the member delta is the **only** payload | — | ✅ **RESOLVED 2026-08-03, and the premise was false.** The `join` control message is itself a message digest, so the responder builds **2 payloads even with zero posts** and the joiner receives `isFinal=false` then `isFinal=true` carrying all 79 members. Every space scenario has been exercising the field shape from the start. Payload count is not the variable |
+| ONE responder | — | ✅ **MOOT.** The message-count-first sort was fixed upstream in quorum-shared #73 (`31185b3`), whose commit message cites this exact field case (90/79/72, synced with the 72). Desktop consumes shared via `link:`, so it already has it. A scenario reproducing that defect would test a bug that no longer exists |
 | backlog is space POSTS; the field's was `announce-keys` | different handler (`processDeviceKeyStatement`), possibly different per-frame cost | untested assumption |
 | ONE space | the field user was in **six**, all flooding on the same reconnect | not modelled |
 | all peers are desktop | mobile never ANSWERS a sync request, so a real joiner's usable responder pool is much smaller than the member count suggests | not modelled |
@@ -132,6 +187,12 @@ rediscovered:
 | socket behaviour | the DM lesson: needs real devices | permanently out of reach |
 
 **A green harness result covers only the variables the harness actually varies.**
+
+> Two of the rows above were closed on 2026-08-03 by *checking* rather than by
+> building: one premise was false, and the other described an already-fixed bug.
+> Both checks took under two minutes. The payload one had already cost ~40
+> minutes of scenario-building before it was checked — the order matters more
+> than the checking does.
 The 15/15 at 79 members is true and narrow; it was measured on a one-payload
 exchange with a single responder.
 
