@@ -259,14 +259,109 @@ the batch at all**, and the batch has 4806 frames left to process. Minutes.
 batch does nothing, because the perishable frame arrives after the batch was
 assembled.
 
-### The design: bounded chunks + stable partition
+### ⛔ THE DESIGN CHANGED — read this before the sections below
 
-Process a bounded number of frames, then **re-read the queue** (now containing
-whatever arrived meanwhile), put perishable frames first, continue. The batch
-stops being a commitment and becomes a rolling window.
+> **2026-08-03, after four independent reviews (security, correctness,
+> architecture, cross-platform).** The original proposal was *bounded chunks
+> **plus a stable partition** that floats perishable frames to the front*.
+>
+> **The partition is CUT.** Every serious hazard the reviews found attaches to
+> the prioritisation half; none attach to the chunking half. And chunking alone
+> is expected to fix the bug. See "The revised design" and "Why the partition was
+> cut" below.
+>
+> The sections after this one are kept as written because the reasoning is worth
+> reading — but ⚠️ **one of them (ground (c)) was REFUTED**, and that refutation
+> is the single most important thing in this issue. Do not read them as current.
 
-**Stable partition, NOT a sort.** Relative order within each class is preserved;
-only the classes are reordered. `sync-manifest` before `sync-delta` still holds.
+### The revised design: bounded chunks only, no reordering
+
+Process a bounded slice, **yield to the event loop**, re-read the queue (now
+containing whatever arrived meanwhile), continue. FIFO is preserved exactly —
+nothing is reordered, so no frame can overtake another.
+
+The batch stops being a commitment and becomes a rolling window. A frame arriving
+mid-flood waits **at most one chunk** instead of the remainder of the backlog.
+
+**Why this is expected to be sufficient.** MEASURED: ~95 ms/frame at 1200
+backlog. A 100-frame chunk is therefore ~9.5 s — comfortably inside the 30 s sync
+window, which is all that is needed. (Mobile's 250 would be ~24 s: it fits, but
+with no margin. Prefer ~100 on desktop, and treat it as a measured choice, not a
+guess.)
+
+**Prior art, already in production.** READ: `quorum-mobile`'s
+`WebSocketContext.tsx` (`processMessageQueue`, ~:5277-5537) already does exactly
+this — `splice(0, MAX_BATCH_DRAIN_SIZE)` with `MAX_BATCH_DRAIN_SIZE = 250`, in a
+`while` loop that re-reads the queue after every slice and yields with
+`await new Promise(resolve => setTimeout(resolve, 0))` between them. Mobile has
+**no** prioritisation. So the half being kept is field-proven and the half being
+cut is the novel, dangerous one.
+
+⚠️ **The yield must be a real macrotask yield** (`setTimeout(…, 0)`), not merely
+an `await` on an already-resolved promise. This is not a detail — today's code
+*already* awaits every frame individually and the bug still reproduces at 456 s,
+which proves per-frame awaits are not sufficient on their own. Get this wrong and
+the rewrite ships, passes `space-backlog` at 300 (where the existing awaits
+happen to yield often enough), and still fails the field case at depth.
+
+**Demand a unit test that asserts a frame enqueued DURING chunk processing is
+visible in the very next chunk.** An end-to-end latency measurement can pass for
+the wrong reason; this cannot.
+
+### Why the partition was cut — four independent findings
+
+1. 🔴 **It could silently destroy chat history.** `rekey`/`kick` are sent as
+   `type: 'sync'` (`src/services/SpaceService.ts:955-993`), encrypted with the
+   OLD config key so current members can open them. Ordinary posts are hub
+   broadcasts — the deprioritised class. Float the rekey ahead of older posts and:
+   the rekey handler **unconditionally overwrites** the space's single config key
+   row (`MessageService.ts:5302-5307`; `space_keys` has compound key
+   `['spaceId','keyId']`, so it is a true replace with no versioning), every hub
+   unseal reads the config key **fresh from the DB at decrypt time**
+   (`:4590-4639`, no per-frame key epoch), and the older posts now fail to
+   decrypt. **And then they are deleted** — see
+   `2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md`.
+   Permanent silent loss for an innocent bystander, in exactly the
+   reconnect-onto-backlog scenario this fix targets. Strictly worse than the bug
+   being fixed.
+2. 🟠 **The priority lane is claimable by anyone, for free.** The
+   `outerEnvelope.type` check runs on raw JSON **before any signature or
+   decryption check**. Forging a frame that claims priority costs nothing and
+   needs no key material; the victim then runs a real WASM `UnsealSyncEnvelope`
+   on it, on the main thread. That makes the existing denial of service *more
+   precise* — an attacker can specifically deny the priority mechanism to the
+   people who need it. Member inbox addresses are learnable from ordinary `join`
+   broadcasts.
+3. **The discriminator is wrong in both directions.**
+   - **Too narrow:** `sync-request` is a BROADCAST, sent via `SealHubEnvelope` as
+     `type: 'group'` (`src/services/SyncService.ts:497,530`) — the one outlier
+     among sync payloads. So a congested *responder* would never prioritise
+     incoming requests, leaving the symmetric half of §2's "nobody can sync with
+     anybody" untouched. `update-profile` identity announces are also hub
+     broadcasts, so the filed issue whose symptom is literally "members render as
+     a truncated address" would get zero benefit.
+   - **Too broad:** `synchronizeAll` chunks a space's full history into payloads
+     of up to **5 MB**, each tagged `type: 'sync'` (`SyncService.ts:59-206`). The
+     tag does not mean "small perishable control frame"; it also means "I am
+     dumping my entire history at you". Prioritising it would push multi-megabyte
+     bulk transfers ahead of DM traffic.
+4. **Starvation reversal.** Under sustained sync load, ordinary chat processing
+   loses ground to control traffic — bounded by chunk width, but a real cost that
+   was unstated in the original design.
+
+**If prioritisation is ever revisited**, the reviews agree the envelope type is
+the wrong discriminator: perishability should be declared by the EMITTER in the
+outer plaintext JSON (additive, backward-compatible, old clients ignore it), not
+inferred by the receiver from a transport wrapper. Put the check behind a single
+`isPerishable(envelope)` so widening it is one line. And classify **once at
+enqueue** in `ws.onmessage` into two queues rather than re-partitioning the
+remaining queue at every boundary — cheaper, and correct by construction rather
+than emergent.
+
+### Historical — the original design and its safety argument
+
+> ⚠️ Kept for the reasoning. **Ground (c) below is REFUTED** — see the correction
+> at the end of this subsection. Do not treat any of it as the current plan.
 
 ### ✅ The discriminator is free — no decryption needed
 
@@ -300,6 +395,37 @@ Three findings, each READ from code, that together make this far safer than
    read from the DB at decrypt time. No session state threads through them, so
    space frames carry no ordering constraint at the crypto layer.
 
+#### 🔴 CORRECTION — grounds (a) and (b) hold; ground (c) is REFUTED
+
+Independent security review, 2026-08-03. Grounds (a) and (b) were each verified
+true. **Ground (c)'s premise is true and its conclusion is false**, and the gap
+between them is the most important lesson in this issue.
+
+The two functions genuinely take no ratchet-state parameter. But the conclusion
+drawn — *"so space frames carry no ordering constraint at the crypto layer"* —
+does not follow, because the constraint does not live **inside** those calls. It
+lives in **what they read from the DB between invocations**, which is exactly
+what reordering perturbs:
+
+- `getSpaceKey(spaceId, 'config')` is read fresh on every unseal (`:4590-4639`).
+- `rekey` replaces that row outright (`:5302-5307`).
+- So the order in which a `rekey` and an older post are processed decides whether
+  the post can be decrypted **at all**.
+
+**The config key IS the state.** "This function takes no state parameter" is not
+the same claim as "this operation is order-independent", and treating them as
+interchangeable is what produced a design that could destroy user data.
+
+A second, unproven companion risk from the same review: the space's single
+encryption-state row (`spaceId/spaceId`) carries `id_peer_map`/`peer_id_map`,
+read-modify-written **unlocked** by both the hub-class `join` handler
+(`:4876-4902`) and the sync-class `sync-delta` peer-map handler (`:6098-6126`).
+`dmRatchetMutex` is never applied to a `spaceId/spaceId` conversation. Today this
+is safe only because both classes share one inbox and run strictly FIFO. It was
+traced as *probably* benign (both writes are additive keyed merges that converge)
+but **not every field either handler touches was traced**. If prioritisation is
+ever revisited, finish that audit first.
+
 ### Remaining risk — the honest list
 
 - ~~**Application-level ordering inside space traffic.**~~ ✅ **RESOLVED
@@ -313,20 +439,53 @@ Three findings, each READ from code, that together make this far safer than
   (The store lives in `quorum-desktop/src/db/messages.ts`, NOT in
   `quorum-shared` — an earlier note said otherwise and was wrong.)
 
-  Mitigating context that still holds: sync deltas already race with live posts
-  today, since inbox groups run concurrently. Reordering changes the *timing* of
-  an existing interleaving rather than creating a new hazard class.
+  ⚠️ **This was RIGHT FOR THE WRONG REASON, corrected 2026-08-03.** Upsert-by-id
+  rules out **duplication**. It does NOT rule out **resurrection** — a
+  `sync-delta` delete reordered against a still-queued original post. What
+  actually protects that is an unrelated pre-existing mechanism: `saveMessage()`
+  checks `isMessageDeleted()` (`MessageService.ts:2394`) and both the sync-delta
+  path and the live post path funnel through it. There is a closed bug of exactly
+  this shape — `issues/.done/2025-12-18-deleted-messages-reappear-via-sync.md`.
+  The conclusion stands; the reasoning that reached it did not.
+
+  ⚠️ **The "mitigating context" below was also wrong.** It claimed sync deltas and
+  live posts already race today. They do not: a space has exactly ONE inbox
+  address, so hub-broadcast and directed-sync frames for that space land in the
+  **same** per-inbox promise chain and are processed strictly FIFO
+  (`WebsocketProvider.tsx:113-119`). Reordering across that pair is not an
+  existing interleaving whose timing would shift — **it is new, and the partition
+  is what would introduce it.** That error is what made the config-key hazard
+  invisible in the original analysis.
 - **Chunk size.** Too small and per-chunk overhead dominates; too large and the
   barrier is rebuilt. Needs measuring, not guessing.
 - **Blast radius.** This touches the path every frame in the app takes. #300
   touched one branch of one handler; this is not comparable, and the DM harness
   scenarios are the regression net that makes it testable at all.
 
-### Acceptance test — pre-registered
+### Acceptance test — pre-registered, and its blind spots
 
-`space-backlog` at 1200 already measures this: **median lag must collapse from
-456 s to seconds.** Delivery is already 100%, so rate is not the metric —
+`space-backlog` at 1200 already measures the headline: **median lag must collapse
+from 456 s to seconds.** Delivery is already 100%, so rate is not the metric —
 **latency is**. State the target before running, not after.
+
+⚠️ **But that test alone is NOT sufficient, and believing it was is a mistake
+this issue nearly repeated.** Three gaps, all found by review rather than by
+running anything:
+
+1. **It cannot see the responder-side failure.** In `space-backlog` only the
+   JOINER is under backlog; the peer that must answer never is. So the symmetric
+   half of §2's "nobody can sync with anybody" is invisible to it. **Needed: a
+   variant where the responder is mid-backlog when the request arrives.**
+2. **There is no unit test of `processInbound` at all** (confirmed by grep —
+   nothing under `src/dev/tests` touches it). The single most load-bearing
+   property of the revised design — that a frame enqueued DURING chunk processing
+   is visible in the next chunk — has no test and cannot be inferred from an
+   end-to-end latency number, which can pass for the wrong reason.
+3. **The DM harness scenarios must be run even though DM safety is argued by
+   construction.** `dm-loss`, `dm-multidevice`, `dm-reorder` exist precisely
+   because "argued safe by code reading" has been wrong here before — the
+   ratchet-lock-across-HTTP bug passed every test except the one that mattered
+   (see `measurements.md`).
 
 ## §0c. Optional verification — recipes, so nobody re-derives them
 
