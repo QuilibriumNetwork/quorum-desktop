@@ -6,7 +6,7 @@ ai_generated: true
 created: 2026-06-11
 updated: 2026-06-11
 related_docs: ["input-validation-reference.md"]
-related_tasks: [".agents/tasks/port-from-mobile/2026-06-11-qns-username-overrides-display-name-plan.md", ".agents/tasks/port-from-mobile/2026-06-10-qns-username-display-design.md"]
+related_tasks: [".agents/issues/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md", ".agents/issues/port-from-mobile/.done/2026-06-10-qns-username-display-design.md"]
 ---
 
 # QNS Username Display (name resolution)
@@ -112,8 +112,8 @@ What the public/private toggle does NOT do: gate reachability. The QNS resolver 
 
 ## Related Documentation
 
-- Implementation plan: `.agents/tasks/port-from-mobile/2026-06-11-qns-username-overrides-display-name-plan.md` (includes the full surface audit)
-- Original design: `.agents/tasks/port-from-mobile/2026-06-10-qns-username-display-design.md`
+- Implementation plan: `.agents/issues/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md` (includes the full surface audit)
+- Original design: `.agents/issues/port-from-mobile/.done/2026-06-10-qns-username-display-design.md`
 - Validation rules: `.agents/docs/features/input-validation-reference.md`
 
 ---

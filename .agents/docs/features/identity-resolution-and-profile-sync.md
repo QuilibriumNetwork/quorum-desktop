@@ -10,8 +10,8 @@ related_docs:
   - "user-config-sync.md"
   - "../config-sync-system.md"
 related_tasks:
-  - ".agents/tasks/port-from-mobile/.done/2026-06-08-port-public-profile.md"
-  - ".agents/tasks/.done/2026-06-10-space-message-list-public-profile-fallback.md"
+  - ".agents/issues/port-from-mobile/.done/2026-06-08-port-public-profile.md"
+  - ".agents/issues/.done/2026-06-10-space-message-list-public-profile-fallback.md"
 ---
 
 # Identity resolution and profile sync (canonical model)
@@ -201,20 +201,20 @@ sentence; doing so has already misled a reader once.**
 |---|---|
 | **The architecture** | this document — read "Why a name goes missing" next |
 | **The measurement tool** | `/dev/identity-coverage` (dev builds only). Take a snapshot before and after any change |
-| **The full record** | `.agents/tasks/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
+| **The full record** | `.agents/issues/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
 
 **Open, with next steps written:**
 
 | Item | Where |
 |---|---|
 | **MOBILE cannot ask or answer** — the largest remaining gap, and the only one that needs a lead-dev decision | "What would actually close the gap" below. Do NOT ship a mobile fix for this unilaterally |
-| Mobile's announce expiry is written but **unreleased** — desktop→mobile stays broken until a mobile build ships | mobile #215; `tasks/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
-| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
-| A per-space name/avatar never reaches your own other devices | `bugs/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
+| Mobile's announce expiry is written but **unreleased** — desktop→mobile stays broken until a mobile build ships | mobile #215; `issues/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
+| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
+| A per-space name/avatar never reaches your own other devices | `issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
 | Members that **no peer holds** — only the person re-announcing recovers them | same roster-pull file, NEXT STEP C. Blocked on a mobile release carrying #215 |
-| A deleted space tag still shows on **mobile** | `bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
-| Every `logger` call is a no-op in production — why none of this was visible | `bugs/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md` |
-| Hub-log migration; would delete the (working) pull | `tasks/port-from-mobile/candidates.md` #32 |
+| A deleted space tag still shows on **mobile** | `issues/.open/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
+| Every `logger` call is a no-op in production — why none of this was visible | `issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md` |
+| Hub-log migration; would delete the (working) pull | `issues/port-from-mobile/candidates.md` #32 |
 
 **Two corrections this effort had to make about itself**, both worth knowing
 before trusting any older wording:
@@ -473,7 +473,7 @@ the quadratic case the moment several are online.
 2. ✅ **DONE — measure first** (Step 4). The measurement is what found #295, which
    turned out to matter more than everything else shipped that day. Record and
    both snapshots are in
-   `tasks/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
+   `issues/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
    `/dev/identity-coverage`.
 
 3. **A roster served by the relay** remains the only option that works when no
@@ -553,7 +553,7 @@ residual: an unregistered key can still set the display name/avatar on a claimed
   and per-space + global profile updates render correctly.
 - **DM profile propagation:** BLOCKED by a pre-existing, unrelated DM-transport
   delivery issue (~6 months old; master bug
-  `.agents/bugs/.solved/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
+  `.agents/issues/.done/2026-07-02-dm-message-delivery-unreliable-master.md`). The DM
   path is UNTOUCHED by this work; DM verification is parked on that transport
   issue, not on this feature.
 - **Mobile→desktop global propagation:** CONFIRMED 2026-07-16. A display-name

@@ -10,7 +10,7 @@ This skill guides **small additions** to the `quorum-shared` package — a new i
 
 **For larger moves** — relocating existing code from desktop to shared, deleting the local source, updating consumer imports — use the `migrate-to-shared` skill instead. That workflow has six phases (analyze, prepare, copy, update desktop, verify, commit) and handles `@lingui` stripping, DOM-API guards, ESM/Metro fallbacks, and partial migrations.
 
-**For tracking ongoing migrations,** see `.agents/tasks/quorum-shared-migration/README.md` in this repo — that's the master tracker for what's done, in progress, ready, and blocked.
+**For tracking ongoing migrations,** see `.agents/issues/quorum-shared-migration/README.md` in this repo — that's the master tracker for what's done, in progress, ready, and blocked.
 
 ## Locate the Shared Repo
 

@@ -160,8 +160,8 @@ Error is shown inline below the input. The confirm action (Enter, checkmark icon
 ## Related documentation
 
 - [Config Sync System](config-sync-system.md) — encryption, signing, merge strategy for UserConfig
-- [Task: device-naming-plan](../tasks/.done/2026-04-08-device-naming-plan.md) — implementation plan
-- [Design spec](../tasks/.done/2026-04-08-device-naming-design.md) — original design decisions
+- [Task: device-naming-plan](../issues/.done/2026-04-08-device-naming-plan.md) — implementation plan
+- [Design spec](../issues/.done/2026-04-08-device-naming-design.md) — original design decisions
 
 ---
 

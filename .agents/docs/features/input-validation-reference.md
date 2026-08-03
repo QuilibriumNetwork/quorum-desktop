@@ -32,7 +32,7 @@ This document provides a quick reference for all input and textarea validations 
 | **Thread Titles** | 100 chars | N/A | `THREAD_TITLE_MAX_CHARS` | `ThreadSettingsModal.tsx` |
 | **Mention Display Names** | 200 chars | N/A | Hardcoded | `MessageMarkdownRenderer.tsx:203` |
 
-> **2026-05-28 — `MAX_NAME_LENGTH` raised from 40 to 50, `MIN_NAME_LENGTH = 2` added for Space names only.** Aligned to mobile's values per the cross-repo workflow's "follow mobile patterns" rule. Channel/group/display names keep no minimum to preserve existing behavior. See [shipped-log](../../tasks/quorum-shared-migration/shipped-log.md) for full migration context.
+> **2026-05-28 — `MAX_NAME_LENGTH` raised from 40 to 50, `MIN_NAME_LENGTH = 2` added for Space names only.** Aligned to mobile's values per the cross-repo workflow's "follow mobile patterns" rule. Channel/group/display names keep no minimum to preserve existing behavior. See [shipped-log](../../issues/quorum-shared-migration/shipped-log.md) for full migration context.
 
 ### Content Security Validation
 

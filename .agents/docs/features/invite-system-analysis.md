@@ -15,7 +15,7 @@ updated: 2026-06-08T00:00:00.000Z
 
 The Quorum desktop application supports two invite link formats for spaces: **one-time** (private) and **public**. Both formats coexist on the same space — generating a public link does NOT block one-time invites, and either format can be sent to a contact via DM. This document explains how the invite system works, its architecture, and behavioral considerations.
 
-> **Consolidation note (2026-06-07):** desktop's invite logic was realigned with mobile (`quorum-mobile/services/space/inviteService.ts`). Previously, generating a public link rekeyed all members, minted a new config keypair, uploaded ~200 evals, and silently hijacked the "send private invite" button. After consolidation, public generation reuses the existing config key, uploads exactly 1 eval, refreshes the manifest, and both invite formats remain available in parallel. See [`tasks/2026-06-07-consolidate-invite-system-with-mobile.md`](../../tasks/2026-06-07-consolidate-invite-system-with-mobile.md).
+> **Consolidation note (2026-06-07):** desktop's invite logic was realigned with mobile (`quorum-mobile/services/space/inviteService.ts`). Previously, generating a public link rekeyed all members, minted a new config keypair, uploaded ~200 evals, and silently hijacked the "send private invite" button. After consolidation, public generation reuses the existing config key, uploads exactly 1 eval, refreshes the manifest, and both invite formats remain available in parallel. See [`issues/.done/2026-06-07-consolidate-invite-system-with-mobile.md`](../../issues/.done/2026-06-07-consolidate-invite-system-with-mobile.md).
 
 ## Architecture Overview
 
@@ -210,7 +210,7 @@ Same function handles both one-time and public links; the branch is whether the 
 >
 > But every subsequent `broadcastSpaceUpdate` — kicking a member, granting a role, editing settings, binding a channel — re-encrypts the **manifest** with a fresh ephemeral key while leaving the **eval** untouched. So after any post-publish space update, the two ephemeral keys diverge.
 >
-> The server-side response for `getSpaceInviteEval` carries the eval's own ephemeral key separately. The joiner MUST use that key (not the manifest's) when decrypting the eval. The fallback to the manifest's key only exists for legacy servers that don't yet return the eval's key. This was the root cause of the long-standing intermittent "expired/invalid public invite link" reports — fixed in PR #183 (task [`2026-06-08-fix-join-invite-link.md`](../../tasks/2026-06-08-fix-join-invite-link.md)).
+> The server-side response for `getSpaceInviteEval` carries the eval's own ephemeral key separately. The joiner MUST use that key (not the manifest's) when decrypting the eval. The fallback to the manifest's key only exists for legacy servers that don't yet return the eval's key. This was the root cause of the long-standing intermittent "expired/invalid public invite link" reports — fixed in PR #183 (task [`2026-06-08-fix-join-invite-link.md`](../../issues/.done/2026-06-08-fix-join-invite-link.md)).
 >
 > Mobile's equivalent in [`quorum-mobile/hooks/chat/useSpaceActions.ts:271-279`](../../../../quorum-mobile/hooks/chat/useSpaceActions.ts) documents the same thing.
 

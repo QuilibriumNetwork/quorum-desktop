@@ -31,7 +31,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 2. **Prop Drilling**: Layout-Level modals (ConfirmationModal, ImageModal, EditHistoryModal) are triggered 5+ levels deep. Context providers avoid passing functions through every level.
 3. **No Bugs**: Both systems have perfect z-index stacking.
 
-**Do NOT attempt to unify** - see `.agents/tasks/.archived/modal-system-unification.md` for full analysis.
+**Do NOT attempt to unify** - see `.agents/issues/.archived/modal-system-unification.md` for full analysis.
 
 ### When to Use Each System
 

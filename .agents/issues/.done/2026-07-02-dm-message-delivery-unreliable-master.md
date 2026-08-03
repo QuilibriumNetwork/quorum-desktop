@@ -1,0 +1,190 @@
+---
+type: bug
+title: "DM messages between users intermittently never arrive (master report)"
+status: done
+created: 2026-07-02
+severity: high
+repo: quorum-desktop (primary; mobile has the same patterns — see "Remaining gaps")
+area: DM delivery / Double Ratchet sessions / WebSocket transport
+user-confirmed: "reproduced desktop↔desktop AND desktop↔mobile; ~6 months standing; first message lands, subsequent ones often don't; dead direction stays dead"
+related:
+  - ".agents/issues/.done/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1: stop destroying the session on decrypt failure — PR #235)"
+  - ".agents/issues/.done/2026-07-17-dm-aead-error-frame-drops.md (Fix 2: serialize ratchet state operations — branch fix/dm-ratchet-serialization)"
+  - ".agents/tasks/2026-07-17-dm-session-reset-and-delivery-fix-plan.md (Reset Session button — PR #234)"
+  - ".agents/docs/debugging/dm-architecture-and-debug-playbook.md (DM internals + identity debug ladder)"
+  - ".agents/tools/dm-debug/ (console snippets 01-06 + log-points.md — historical debug kit)"
+---
+
+# DM message delivery is unreliable (master report)
+
+> ⚠️ **REOPENED 2026-07-26 — DO NOT READ THIS AS "FIXED".** The symptom returned on
+> desktop↔desktop. This document remains valuable as the catalogue of mechanisms
+> found and fixed in July, and every mechanism in it is still real. But its status,
+> its "residual" framing, and anything resting on "desktop↔desktop is healthy" are
+> out of date. **Start at
+> [.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md](../2026-07-26-dm-desktop-to-desktop-resurfaced.md)**
+> for current state, the instrumentation rig, and open leads.
+
+**One-line:** for ~6 months, DMs intermittently never arrived, with no error, no retry, and no
+signal to either user; once a conversation direction "went bad" it stayed dead until a manual
+session reset — and freshly reset conversations died again within minutes. Root-caused and
+fixed 2026-07-17 as THREE cooperating defects in the DM receive/send pipeline.
+
+---
+
+## 1. Resolution summary
+
+| # | Mechanism | Effect | Fix | Status |
+|---|---|---|---|---|
+| 1 | **Session destruction on decrypt failure.** One bad frame → the receive pipeline deleted the entire Double Ratchet session (and the server copy of the frame). The sender kept encrypting into an inbox the receiver no longer had state for → every later message silently deleted (`!found` branch). | Conversation direction permanently dead | Both decrypt-failure catch blocks skip the frame and KEEP the session (Signal spec compliance) | SHIPPED, PR #235, live-verified |
+| 2 | **Unserialized ratchet state read-modify-write.** Five paths (receive decrypt, text send/edit, retry, receipt sends, typing sends) each did read-state → ratchet-op → save-state with no coordination. Concurrent ops read the same snapshot; the losing save erased the winner's advance → the peer could no longer derive keys → `aead::Error`. Receipts amplified it: every received message fired a send inside the receive handler's huge read-to-save window. | Isolated frame drops; occasional session forks under receipt/typing load | Per-conversation FIFO mutex (`KeyedMutex`, now in quorum-shared) around every ratchet critical section + receive path re-reads state inside the lock and saves immediately after decrypt | SHIPPED, PR #236 + #237 (+ quorum-shared #59/#60), live-verified |
+| 3 | **Stale init-envelope redelivery — THE DOMINANT KILLER.** An init envelope replaces the receiver's session for its device tag, unconditionally and silently. The server redelivers any frame whose ack-by-delete failed (`POST /inbox/delete` 502s observed live), so every past reset left potential mines on the device inbox. On any reconnect/hard refresh the mines were replayed and each replaced the CURRENT healthy session with a zombie the sender no longer held. Observed live: redelivered envelopes up to 60 DAYS old killing a fresh session on every refresh. Explains the entire recurring pattern: reset → works → dies minutes later, because each reset planted the seed of the next death. | Fresh sessions silently died on the next reconnect; receiver console completely silent (frames to unknown inboxes never even reach the app) | `isStaleInitEnvelope` guard: refuse envelopes not strictly newer than the session rows they would replace (exact-timestamp match = redelivery; older than newest row beyond 2-min skew tolerance = zombie); refused envelopes are deleted server-side (mine defused). Also: drop malformed envelopes (undefined sender), loud logs on every session replacement, reset signal, and failed inbox delete | SHIPPED, branch `chore/dm-reset-signal-logging`, live-verified (hard refreshes no longer kill the session) |
+
+**Attribution, honestly stated:** mechanisms 1 and 2 are real, spec-backed defects and their
+fixes stand on their own (2 was proven by a red/green concurrency test; 1 by the Signal spec
+and live survival of bad frames). But the recurring session DEATHS — the user-visible disease —
+were dominated by mechanism 3, which is why the conversation kept dying even after 1 and 2
+shipped. Nothing about mechanism 3 ever *failed*: old frames were processed *successfully*,
+which is why it survived every failure-focused investigation until the replacement site was
+instrumented.
+
+**Live verification (2026-07-17):** after the staleness guard: multiple hard refreshes on both
+clients (previously instantly fatal — a wall of `SESSION REPLACED` with 60-day-old envelopes,
+then silence), session survives, messages keep landing. Stale frames from old epochs fail once
+with `skipping frame, keeping session` and drain harmlessly.
+
+**Known residual (tracked, not a session-death bug):** isolated single-frame wire loss (one
+message vanishes, conversation continues, sender sees the missing delivery checkmark) with no
+automatic resend. Observed once post-fix. Recovery design:
+`.agents/issues/transport/2026-07-17-dm-dead-session-autoheal.md` (resend on missing delivery receipt).
+
+**Also shipped along the way:**
+- **Reset Session button** (PR #234) — manual recovery valve, still useful.
+- **Un-silenced `!found` drop** — the silent delete-unread branch now logs loudly.
+- **Deadlock lesson (first fix iteration):** holding the conversation lock until socket delivery
+  deadlocks against the outbound queue (whose callbacks take the same lock). Subtle trap: an
+  async lock callback that returns the delivery promise gets auto-flattened, silently extending
+  the critical section until delivery. Fixed by wrapping the returned promise in an object;
+  regression-tested. If you ever see both directions stuck at "Sending…" again, start here.
+
+## 2. What a future reader needs to know (the invariants)
+
+1. **Double Ratchet state is strictly linear.** Every encrypt/decrypt must read the LATEST
+   saved state, advance it, and save. Two operations from the same snapshot fork the ratchet.
+   All DM ratchet operations must go through `dmRatchetMutex.runExclusive(conversationId, …)`
+   — see `src/utils/keyedMutex.ts` and the five call sites in `MessageService.ts`.
+2. **Decrypt failure = skip the frame, keep the session.** Signal Double Ratchet spec: "If an
+   exception is raised then the message is discarded and changes to the state object are
+   discarded." Destroying the session on failure is non-compliant self-harm.
+   (https://signal.org/docs/specifications/doubleratchet/)
+3. **Accept plaintext + store state is ONE atomic step.** The receive path saves the advanced
+   state immediately after successful decrypt, inside the lock — never at the end of the
+   handler.
+4. **Never hold the ratchet lock across delivery.** The outbound queue only drains on an open
+   socket and its callbacks take the same lock; awaiting delivery inside the lock is a
+   circular wait.
+5. **Never install an init envelope that is not strictly newer than the session it replaces.**
+   The server redelivers frames whose ack-by-delete failed, and successful re-processing of an
+   old init envelope silently resurrects a zombie session. `isStaleInitEnvelope`
+   (`src/utils/initEnvelopeGuard.ts`, pure, tested) is the gate; refused envelopes are deleted
+   server-side. Frame deletions can fail (502) — a refused mine that survives deletion is
+   refused again next time, harmlessly.
+6. **"Successfully processed" is not the same as "should have been processed."** This bug
+   survived five instrumented rounds because every investigation looked for FAILURES; the
+   killer was old frames being accepted successfully. When a session dies with a completely
+   silent console, suspect state replacement, not state corruption.
+
+## 3. Remaining known gaps (for lead dev)
+
+- **No automatic resend (highest-value follow-up):** an isolated frame lost on the wire stays
+  lost; the sender sees the missing delivery checkmark but nothing retries. Design:
+  `.agents/issues/transport/2026-07-17-dm-dead-session-autoheal.md` (detect via missing delivery
+  receipts, resend unacked, auto-repair dead sessions).
+- **Failed inbox deletes (502 Bad Gateway on POST /inbox/delete, server side):** the root
+  enabler of mechanism 3 — every failed delete leaves a redelivery mine. Client now guards
+  and logs; the server-side 502s deserve their own investigation.
+- **Two tabs / same account:** two JS contexts race each other; the in-process mutex cannot
+  arbitrate. Needs Web Locks API or single-instance enforcement. Pre-existing, low priority.
+- **Session reset not under the lock:** `deleteEncryptionStates` racing an in-flight decrypt
+  could resurrect a deleted row. Rare; worth folding under the mutex eventually.
+- **Mobile parity (verified in mobile code 2026-07-17):** mobile does NOT have the
+  destroy-on-failure bug (its decrypt failure already returns null without persisting), but
+  it DOES have the unserialized read-modify-write gap (no lock, awaited native decrypt
+  between read and write, receipts ride the ratchet). For mechanism 3, mobile is PARTIALLY
+  protected by design: its init handling checks an ephemeral-key cache and tries the existing
+  session first, so redelivery of the CURRENT envelope cannot nuke the session; an OLDER
+  distinct envelope falling through to fresh X3DH may still replace a newer session — recon
+  item in the mobile task. Tasks:
+  `.agents/issues/.done/2026-07-17-quorum-shared-add-keyedmutex.md` (shared util, DONE) and
+  `quorum-mobile/.agents/tasks/2026-07-17-serialize-dm-ratchet-state-keyedmutex.md`.
+- **Redelivery duplicates:** the server re-pushes undeleted frames on re-listen; duplicates
+  always fail AEAD (key already consumed), get skipped and deleted. Harmless but noisy; a
+  dedupe-before-decrypt cache would silence it.
+
+---
+
+## 4. Diagnosis archive (historical — how it was found)
+
+Five instrumented live rounds (2026-07-02 → 2026-07-17), two desktop accounts, `[DMTRACE]`
+probe kit on branch `debug/dm-delivery-trace`, console snippets in `.agents/tools/dm-debug/`.
+
+### The receive pipeline (as it was; line anchors from 2026-07-02 master)
+
+```
+SENDER                                          RECEIVER
+DirectMessage submit
+  → MessageService.submitMessage (DM branch)      WS onmessage (WebsocketProvider)
+    enumerate inboxes: self devices +               → inbound queue → handleNewMessage
+      counterparty devices                            → DM: found = states[message.inboxAddress]
+    prune stale sessions                              ├─ msg to own DEVICE inbox → init-envelope
+    per inbox: DoubleRatchetInboxEncrypt /            │    + NewDoubleRatchetRecipientSession
+      ForceSenderInit / NewSenderSession              ├─ msg to SESSION inbox with state →
+    save new ratchet state per session                │    DoubleRatchetInboxDecrypt
+    emit frames: {listen} + {direct}                  └─ no state → !found (was: silent delete)
+  → enqueueOutbound → ws.send loop                  on success: save state, saveMessage,
+    ── NO ack, NO retry ──                            deleteInboxMessages (ack-by-delete)
+                                                    SERVER retains inbox messages until the
+RECONNECT: resubscribe re-listens ONLY inboxes      client deletes them → redelivery on
+present in encryption_states + own device inbox     re-listen is possible
+```
+
+Key structural facts that made the bug possible:
+- Outbound had no delivery guarantee (frames dequeued before send; errors logged only).
+- The server IS a durable inbox — but only if the client still listens on the inbox and never
+  deletes what it couldn't read. Both provisos were violated by the drop sites below.
+- Sessions are per device-pair: one receiver device can be fine while another is black-holed.
+
+### The drop sites (all in the DM receive section, as found)
+
+| # | Site | On failure it did | Logged? |
+|---|---|---|---|
+| D1 | `DoubleRatchetInboxDecrypt` catch | deleted server message + WHOLE SESSION | error |
+| D2 | `ConfirmDoubleRatchetSenderSession` catch | same | error |
+| D3a | init-envelope bare catch | deleted server message | nothing |
+| D3b | `!found` (no state for inbox) | deleted server message, unread | nothing |
+
+The black-hole loop (H1, proven live): one decrypt failure → D1 destroys session + message →
+sender keeps encrypting to the dead session inbox → receiver hits D3b silently forever → after
+reconnect the inbox isn't even listened to. Explained every observed shape: "first message
+lands", "stays bad once bad", "no errors anywhere", "asymmetric conversation rows".
+
+### Hypotheses and final verdicts
+
+| # | Hypothesis | Verdict |
+|---|---|---|
+| H1 | decrypt-fail → session+message destroyed → silent black hole | **CONFIRMED live** (dual-log capture); fixed by PR #235 |
+| H1b | individual frames fail `aead::Error` (the trigger feeding H1) | **CONFIRMED**; root cause = unserialized ratchet state RMW, fixed by serialization branch. NOT head-of-line blocking (disproved in code: failed frames are deleted server-side and the inbound loop continues past failures); NOT ack-vs-ack collision (ActionQueue is sequential) — the collision is send-vs-receive and send-vs-send across queues |
+| H2 | outbound frames lost at a dying socket | not the primary cause; hardening still worthwhile |
+| H3 | stale device registrations → encrypting to dead inboxes | not observed |
+| H4 | listen/subscription gap on reconnect | not the primary cause; redelivery duplicates observed as harmless AEAD-fail noise |
+
+### Debug kit (kept for future sessions)
+
+- `.agents/tools/dm-debug/` — console snippets: 01 snapshot, 03 encryption-states diff.
+- Branch `debug/dm-delivery-trace` — `[DMTRACE]` probes P1-P6 (send fan-out, encrypt branch,
+  ws send/recv, the loud `!found`, decrypt OK) + redelivery detector.
+- Repro protocol: two profiles, numbered messages, receipts + typing ON; amplifiers: reconnect
+  churn, two tabs, burst sends, sleep/wake.
+
+---
+*Created: 2026-07-02 — Last updated: 2026-07-17*

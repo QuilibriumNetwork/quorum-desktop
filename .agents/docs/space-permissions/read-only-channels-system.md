@@ -379,7 +379,7 @@ so a forged post can't survive on disk and resurface on refetch.
   hides the toggle for read-only channels.
 
 Desktop shipped in #242; the tracking bug
-`.agents/bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md`
+`.agents/issues/.done/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md`
 stays open until the mobile mirror lands.
 
 **Key Processing Principles**:

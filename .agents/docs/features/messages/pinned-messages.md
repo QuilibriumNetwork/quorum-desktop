@@ -379,8 +379,8 @@ All magic numbers have been extracted into configuration objects:
 
 ## Implementation Tasks
 
-- [Pinned Messages Feature Plan](.agents/tasks/.done/pinned-messages-feature.md) - Original feature implementation
-- [Pinned Messages Sync Task](.agents/tasks/pinned-messages-sync.md) - Cross-client synchronization (✅ COMPLETED 2025-12-12)
+- [Pinned Messages Feature Plan](.agents/issues/.done/pinned-messages-feature.md) - Original feature implementation
+- [Pinned Messages Sync Task](.agents/issues/.done/pinned-messages-sync.md) - Cross-client synchronization (✅ COMPLETED 2025-12-12)
 
 ---
 

@@ -5,14 +5,14 @@ ai_generated: true
 created: 2026-03-24
 updated: 2026-03-24
 related_tasks:
-  - .agents/tasks/2026-03-18-dm-delivery-receipts-design.md
-  - .agents/tasks/2026-03-18-dm-delivery-receipts-plan.md
-  - .agents/tasks/2026-03-22-dm-read-receipts-design.md
-  - .agents/tasks/2026-03-22-dm-read-receipts-plan.md
+  - .agents/issues/.done/2026-03-18-dm-delivery-receipts-design.md
+  - .agents/issues/.done/2026-03-18-dm-delivery-receipts-plan.md
+  - .agents/issues/.done/2026-03-22-dm-read-receipts-design.md
+  - .agents/issues/.done/2026-03-22-dm-read-receipts-plan.md
 related_docs:
   - .agents/docs/features/messages/dm-receipts.md
-  - .agents/bugs/2026-03-22-read-receipts-testing-blocked.md
-  - .agents/bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md
+  - .agents/issues/.done/2026-03-22-read-receipts-testing-blocked.md
+  - .agents/issues/.done/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md
 ---
 
 # Expert Panel Analysis: DM Receipts (Delivery & Read)
@@ -64,7 +64,7 @@ The raw 5.7/10 composite does not accurately reflect the quality of the receipt 
 |-----------|--------|--------|-------------|
 | Dual privacy toggles | Pragmatism | -1 | Deliberate product design for a privacy-focused app. The granularity (delivery vs read) gives users more control, which is the product's differentiator. Signal's simpler model makes different privacy trade-offs. |
 | Per-conversation overrides | Pragmatism | -1 | Existing pattern in the app — conversations already have per-conversation settings for other features. The receipt overrides follow the same pattern. |
-| "Settings gate persistence, not display" | Pragmatism | -0.5 | This was a deliberate design decision that already proved correct — it was the fix for the checkmark-disappearing bug (`.agents/bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md`). |
+| "Settings gate persistence, not display" | Pragmatism | -0.5 | This was a deliberate design decision that already proved correct — it was the fix for the checkmark-disappearing bug (`.agents/issues/.done/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md`). |
 | Four callbacks in MessageDB | Pragmatism | -0.5 | Standard dependency-injection pattern. The callbacks keep `ReceiptService` pure (no React, no IndexedDB knowledge). This is the correct architecture for testability. |
 
 ### Adjusted assessment
@@ -105,7 +105,7 @@ These are the highest-priority findings where multiple experts independently ide
 #### 4. Debug `logger.log` Calls — Intentional, not a bug
 
 - **Issue**: Seven `logger.log` calls with `[DeliveryReceipt]` and `[ReadReceipt]` prefixes remain in the code.
-- **Status**: **Intentionally retained** — the feature is still undergoing testing (see `.agents/bugs/2026-03-22-read-receipts-testing-blocked.md`). These logs are needed to verify receipt flow during testing. They do not appear in production builds (the app uses a logger that is stripped/silenced in production). Will be removed after testing is complete.
+- **Status**: **Intentionally retained** — the feature is still undergoing testing (see `.agents/issues/.done/2026-03-22-read-receipts-testing-blocked.md`). These logs are needed to verify receipt flow during testing. They do not appear in production builds (the app uses a logger that is stripped/silenced in production). Will be removed after testing is complete.
 
 #### 5. Missing Test Coverage for Critical Paths (Implementation + Pragmatism)
 
@@ -219,10 +219,10 @@ The most notable disagreement is on the **"settings gate persistence, not displa
 ## Related Documentation
 
 - [DM Receipts Feature Doc](.agents/docs/features/messages/dm-receipts.md) — Full feature documentation
-- [Delivery Receipts Design](.agents/tasks/2026-03-18-dm-delivery-receipts-design.md) — Phase 1 design spec
-- [Read Receipts Design](.agents/tasks/2026-03-22-dm-read-receipts-design.md) — Phase 2 design spec
-- [Read Receipts Testing Bug](.agents/bugs/2026-03-22-read-receipts-testing-blocked.md) — Testing progress and bugs found
-- [Receipt Persistence Bug](.agents/bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md) — Fixed: checkmarks disappearing on refresh
+- [Delivery Receipts Design](.agents/issues/.done/2026-03-18-dm-delivery-receipts-design.md) — Phase 1 design spec
+- [Read Receipts Design](.agents/issues/.done/2026-03-22-dm-read-receipts-design.md) — Phase 2 design spec
+- [Read Receipts Testing Bug](.agents/issues/.done/2026-03-22-read-receipts-testing-blocked.md) — Testing progress and bugs found
+- [Receipt Persistence Bug](.agents/issues/.done/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md) — Fixed: checkmarks disappearing on refresh
 
 ---
 

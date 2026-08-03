@@ -8,8 +8,8 @@ updated: 2026-05-18
 related_docs:
   - .agents/docs/features/messages/dm-receipts.md
 related_tasks:
-  - .agents/tasks/.done/2026-05-18-typing-indicators-design.md
-  - .agents/tasks/.done/2026-05-18-typing-indicators-plan.md
+  - .agents/issues/.done/2026-05-18-typing-indicators-design.md
+  - .agents/issues/.done/2026-05-18-typing-indicators-plan.md
 ---
 
 # Typing Indicators
@@ -53,7 +53,7 @@ The one plausible slow-leak vector is `skipped_keys_map` growth on a single DR r
 
 Space typing rides Triple Ratchet hub broadcast and does NOT advance any per-conversation ratchet — see [`cryptographic-architecture.md`](.agents/docs/cryptographic-architecture.md) for the broadcast model.
 
-Full analysis: [`.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md`](.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md).
+Full analysis: [`.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md`](.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md).
 
 ## Key files
 
@@ -153,13 +153,13 @@ Space-channel typing is not affected — it broadcasts via the hub envelope, whi
 - Per-conversation typing override (Conversation Settings)
 - Per-space typing override (Space Settings)
 - Mobile (`quorum-mobile`) implementation -- the `TypingIndicator.native.tsx` stub keeps Metro happy; mobile keystroke wiring is a follow-up task
-- Custom status / presence -- see `.agents/tasks/.todo/2025-01-20-user-status.md`
+- Custom status / presence -- see `.agents/issues/.open/2025-01-20-user-status.md`
 
 ## Known limitations
 
 - **First-send DM bootstrap (see "DM session bootstrap caveat" above):** typing doesn't show in a fresh DM until one real message has been exchanged.
 - **Display name fallback:** if the resolver can't find a display name, the indicator shows a truncated address. A proper per-context resolver could be added later (see the deferred display-name resolver hook discussion in the implementation plan).
-- **DM ratchet advance per typing event:** opted-in DM typing costs a ~2–4× multiplier on Double Ratchet operations per drafted message (writes overwrite in place, no row growth). One open question: whether the SDK bounds `skipped_keys_map` for out-of-order DR receives. See the "Cost profile" section above and `.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md`.
+- **DM ratchet advance per typing event:** opted-in DM typing costs a ~2–4× multiplier on Double Ratchet operations per drafted message (writes overwrite in place, no row growth). One open question: whether the SDK bounds `skipped_keys_map` for out-of-order DR receives. See the "Cost profile" section above and `.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md`.
 
 ## Implementation notes worth knowing
 
@@ -167,7 +167,7 @@ Space-channel typing is not affected — it broadcasts via the hub envelope, whi
 
 **Why `encryptAndSendDm` was extracted:** It was a private method on `ActionQueueHandlers`. Adding the typing send path required it to be reachable from `MessageService.sendEphemeralDMControl`. Extracted to a public method on `MessageService` (commit `f48941b1`). All existing callers (delivery-ack, read-ack, reactions, deletes, edits) now delegate via `messageService.encryptAndSendDm` instead of the private handler method.
 
-**Why fixed-height indicator row:** A row that shows/hides dynamically would shift the composer position and create CLS, particularly painful on mobile where Virtuoso scroll positions are already fragile (see `.agents/bugs/2026-03-19-message-list-scroll-jank-on-send.md`). The `h-5` (20px) reserves space at all times.
+**Why fixed-height indicator row:** A row that shows/hides dynamically would shift the composer position and create CLS, particularly painful on mobile where Virtuoso scroll positions are already fragile (see `.agents/issues/.archived/2026-03-19-message-list-scroll-jank-on-send.md`). The `h-5` (20px) reserves space at all times.
 
 **Why the TypingService instance is stable across MessageService re-memoizations:** In `MessageDB.tsx`, `messageService` and `actionQueueService` have large dependency lists in their own `useMemo`s, so they get re-memoized on many navigations (e.g., when the `navigate` callback changes identity). An earlier version of the typing wiring depended on these directly in the TypingService `useMemo`, which caused the service to be destroyed and recreated on every such re-memo. Hook subscribers in the indicator component held closures pointing at the destroyed instance while incoming messages were dispatched to the new instance with an empty listeners map — manifesting as "after navigating Space → DM → Space, typing indicator stops showing until hard refresh." Fix (commit `7654dc0a`): TypingService is built once per `selfAddress` (the only dep that genuinely warrants a new instance). The callbacks read the latest `messageService` / `actionQueueService` via refs so they always call the current versions. The wiring `useEffect` re-runs `setTypingService(typingService)` when either side changes (no-op when nothing changed); the destroy `useEffect` only fires when `typingService` itself invalidates (sign-out / provider unmount).
 

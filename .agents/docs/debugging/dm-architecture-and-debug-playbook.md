@@ -18,7 +18,7 @@ audience: future agents debugging DM-related bugs (delivery, identity, sync)
 - A change to a DM partner's pfp/name/bio is propagated by a **`dm-update-profile` control message** sent over the existing DM session whenever the partner saves their global profile in User Settings → General. This is intercepted on receive (never persisted as a chat post) and upserts the conversation row. This is the **push** path.
 - There is also a **pull/back-fill** path for identity the push never delivered (older contacts, missed messages): `useConversationsWithProfileBackfill` fetches the partner's server-side public profile and **writes it through to the `conversations` row**. See "Identity sources & the three sync paths" below. This is what makes the sidebar and the no-flash conversation open work for legacy contacts (added 2026-06-10).
 - Per-space profile saves (Space Settings → Account) are independent — they only touch `space_members`, never DMs.
-- **Network sync between two clients is not reliable.** Regular DMs from B to A sometimes never arrive. **Update 2026-07-27: this is now measured, and it is not an identity problem — do not debug it with this playbook.** Frame decryption failure is a deterministic function of position in the DH sending chain (positions 0-2 fail ~100% on first delivery attempt, position 3+ never fails, both directions), the failures are transient, and messages that look lost are usually very late. Entry point, including what has already been ruled out: `.agents/tasks/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md`.
+- **Network sync between two clients is not reliable.** Regular DMs from B to A sometimes never arrive. **Update 2026-07-27: this is now measured, and it is not an identity problem — do not debug it with this playbook.** Frame decryption failure is a deterministic function of position in the DH sending chain (positions 0-2 fail ~100% on first delivery attempt, position 3+ never fails, both directions), the failures are transient, and messages that look lost are usually very late. Entry point, including what has already been ruled out: `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md`.
 
 ## Identity sources & the three sync paths
 
@@ -179,10 +179,10 @@ Confirmed instances of the pattern (all desktop):
 
 | Bug | What's fetched once and never reconciled |
 |---|---|
-| [space-members-missing-no-join-row](../../bugs/2026-06-13-space-members-missing-no-join-row.md) | Member roster — `join` is an ephemeral fire-and-forget broadcast; miss it and the row never appears (~52% missing in a live test). |
-| [config-not-refetched-stale-until-restart](../../bugs/2026-06-13-config-not-refetched-stale-until-restart.md) | Synced `UserConfig` — only server-fetched at startup; cross-device changes invisible until restart. |
-| [config-sync-space-loss-race-condition](../../bugs/2026-01-09-config-sync-space-loss-race-condition.md) | Space sync as a fragile one-shot startup loop (this also has a separate destructive `saveConfig` bug). |
-| [user-settings-modal-stale-display-name](../../bugs/2026-05-30-user-settings-modal-stale-display-name.md) | Settings modal reads a cached source not invalidated on incoming sync (same family, modal-local). |
+| [space-members-missing-no-join-row](../../issues/.open/2026-06-13-space-members-missing-no-join-row.md) | Member roster — `join` is an ephemeral fire-and-forget broadcast; miss it and the row never appears (~52% missing in a live test). |
+| [config-not-refetched-stale-until-restart](../../issues/.open/2026-06-13-config-not-refetched-stale-until-restart.md) | Synced `UserConfig` — only server-fetched at startup; cross-device changes invisible until restart. |
+| [config-sync-space-loss-race-condition](../../issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Space sync as a fragile one-shot startup loop (this also has a separate destructive `saveConfig` bug). |
+| [user-settings-modal-stale-display-name](../../issues/.open/2026-05-30-user-settings-modal-stale-display-name.md) | Settings modal reads a cached source not invalidated on incoming sync (same family, modal-local). |
 
 **The hub log is the general fix for this whole class.** The lead dev is bringing mobile's
 hub log to desktop. Rather than build per-bug refetch triggers (window-focus, polling,
@@ -194,11 +194,11 @@ bespoke refetch band-aid ahead of the migration** — sequence the fix WITH the 
 on every reconnect, so any handler that bails or null-derefs on missing state silently
 drops or resurrects content):
 1. Control-message receive handlers must be upsert-safe / null-safe. Audit lives in
-   [space-members-missing-no-join-row](../../bugs/2026-06-13-space-members-missing-no-join-row.md)
+   [space-members-missing-no-join-row](../../issues/.open/2026-06-13-space-members-missing-no-join-row.md)
    ("Control-handler replay audit"). `update-profile` + non-repudiability fixed in PR #199;
    `verify-kicked`, `leave`, and several `space!` derefs still need it.
 2. Durable-path enforcement must match cache-path enforcement, or replay resurrects blocked
-   content — see [readonly-channel-receive-side-enforcement-gaps](../../bugs/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
+   content — see [readonly-channel-receive-side-enforcement-gaps](../../issues/.done/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
    (read-only check is cache-only; replay re-persists the offending message every reconnect).
 
 ## What still needs investigation
@@ -224,11 +224,11 @@ drops or resurrects content):
 ## Related docs
 
 - [Avatar & Initials System](../features/avatar-initials-system.md) — render-side fallback when identity is missing.
-- [Per-Space Profile Data Flow](../../tasks/.done/per-space-profile-data-flow-analysis.md) — the space side's `update-profile` flow, mirror of DM logic.
+- [Per-Space Profile Data Flow](../../issues/.done/per-space-profile-data-flow-analysis.md) — the space side's `update-profile` flow, mirror of DM logic.
 - [Action Queue Summary](../../reports/action-queue/000-action-queue-summary.md) — outbound message queue we ride on.
 - [DM Sync Non-Deterministic Failures](../../reports/action-queue/005-dm-sync-non-deterministic-failures.md) — known sync gap.
-- [DM delivery broken on desktop↔desktop](../../tasks/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md) — **read this if messages are late or missing rather than mis-identified.** Ratchet/transport, not identity; ten dead hypotheses recorded so they are not re-derived.
-- [DM ratchet upstream divergences](../../tasks/transport/dm-ratchet-upstream-divergences.md) — the shipped divergences from the SDK's reference behaviour, lead-dev facing.
+- [DM delivery broken on desktop↔desktop](../../issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md) — **read this if messages are late or missing rather than mis-identified.** Ratchet/transport, not identity; ten dead hypotheses recorded so they are not re-derived.
+- [DM ratchet upstream divergences](../../issues/transport/dm-ratchet-upstream-divergences.md) — the shipped divergences from the SDK's reference behaviour, lead-dev facing.
 
 ---
 *Last updated: 2026-07-27*

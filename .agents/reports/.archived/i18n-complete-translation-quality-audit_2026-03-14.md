@@ -5,7 +5,7 @@ ai_generated: true
 created: 2026-03-14
 updated: 2026-03-14
 related_tasks:
-  - .agents/tasks/2026-03-14-i18n-complete-translation-quality-audit.md
+  - .agents/issues/.done/2026-03-14-i18n-complete-translation-quality-audit.md
 related_docs:
   - .agents/reports/.archived/i18n-translation-quality-audit_2026-03-14.md
 ---
@@ -117,7 +117,7 @@ Added per-language rules to `D:/GitHub/toolmix/tools/text/po-file-translator/LLM
 ## Related Documentation
 
 - Prior audit: `.agents/reports/.archived/i18n-translation-quality-audit_2026-03-14.md`
-- Task: `.agents/tasks/2026-03-14-i18n-complete-translation-quality-audit.md`
+- Task: `.agents/issues/.done/2026-03-14-i18n-complete-translation-quality-audit.md`
 - LLM prompt: `D:/GitHub/toolmix/tools/text/po-file-translator/LLM-prompt.txt`
 - PO files: `src/i18n/*/messages.po`
 

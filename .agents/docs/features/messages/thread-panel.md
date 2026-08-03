@@ -11,7 +11,7 @@ related_docs:
   - "docs/features/responsive-layout.md"
   - "docs/styling-guidelines.md"
 related_tasks:
-  - "tasks/threaded-conversations.md"
+  - "issues/.done/threaded-conversations.md"
   - "tasks/2025-03-09-thread-panel-layout.md"
 ---
 
@@ -434,7 +434,7 @@ These items are planned but not yet implemented:
 - [Pinned Messages](pinned-messages.md) — Similar broadcast pattern for cross-client sync
 - [Dropdown Panels](../dropdown-panels.md) — Panel UI patterns (ThreadPanel uses a full sidebar instead)
 - [Responsive Layout](../responsive-layout.md) — Mobile layout considerations
-- [Threaded Conversations Task](../../tasks/threaded-conversations.md) — Original implementation task with full dependency chain
+- [Threaded Conversations Task](../../../issues/.done/threaded-conversations.md) — Original implementation task with full dependency chain
 
 ---
 

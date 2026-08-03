@@ -10,7 +10,7 @@ updated: 2026-01-09T00:00:00.000Z
 # Mention Pills Feature Research & Validation
 
 > **Purpose**: Research and validate the technical feasibility and user value of implementing mention pills in the message composer.
-> **Related Task**: [mention-pills-in-message-textarea.md](../tasks/mention-pills-in-message-textarea.md)
+> **Related Task**: [mention-pills-in-message-textarea.md](../issues/.done/mention-pills-in-message-textarea.md)
 
 
 ## Executive Summary
@@ -258,7 +258,7 @@ return enableMentionPills ?
 4. ⏳ Phase 3: Mobile implementation (Deferred - see task)
 5. ⏳ Phase 4: Polish & accessibility (Deferred - see task)
 
-**Implementation Task**: See [mention-pills-in-message-textarea.md](../tasks/mention-pills-in-message-textarea.md) for current implementation status and plan.
+**Implementation Task**: See [mention-pills-in-message-textarea.md](../issues/.done/mention-pills-in-message-textarea.md) for current implementation status and plan.
 
 **Risk Assessment**: Low
 - Feature flag provides instant rollback

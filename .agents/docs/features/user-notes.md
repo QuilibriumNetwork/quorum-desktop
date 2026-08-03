@@ -11,7 +11,7 @@ related_docs:
   - docs/features/user-config-sync.md
   - docs/features/messages/bookmarks.md
 related_tasks:
-  - tasks/.done/2026-05-16-user-notes-plan.md
+  - issues/.done/2026-05-16-user-notes-plan.md
 ---
 
 # User Notes

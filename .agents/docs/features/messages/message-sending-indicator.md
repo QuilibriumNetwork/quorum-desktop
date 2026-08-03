@@ -258,11 +258,11 @@ DM receipts are documented in their own feature doc: **[DM Receipts](dm-receipts
 
 ## Related Documentation
 
-- **Implementation Task**: `.agents/tasks/.done/message-sending-indicator.md` - Full implementation plan with phases
+- **Implementation Task**: `.agents/issues/.done/message-sending-indicator.md` - Full implementation plan with phases
 - **Action Queue**: [Action Queue](../action-queue.md) - Persistent queue with retry and offline support
 - **DM Receipts**: [DM Receipts](dm-receipts.md) - Delivery and read receipts feature doc
-- **Delivery Receipts Design**: `.agents/tasks/2026-03-18-dm-delivery-receipts-design.md` - Phase 1 design spec
-- **Read Receipts Design**: `.agents/tasks/2026-03-22-dm-read-receipts-design.md` - Phase 2 design spec
+- **Delivery Receipts Design**: `.agents/issues/.done/2026-03-18-dm-delivery-receipts-design.md` - Phase 1 design spec
+- **Read Receipts Design**: `.agents/issues/.done/2026-03-22-dm-read-receipts-design.md` - Phase 2 design spec
 
 ---
 

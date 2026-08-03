@@ -326,7 +326,7 @@ For THIS repo (quorum-desktop + quorum-shared), the workflow is:
 Documentation upkeep that goes in the desktop PR (not a separate one):
 
 - Move the per-PR task file from `.agents/tasks/quorum-shared-migration/` to `.done/` (use `git mv` to preserve history).
-- Update `.agents/tasks/quorum-shared-migration/README.md`: change the status table row to ✅ Done with the dated link, update "Next up", bump the footer.
+- Update `.agents/issues/quorum-shared-migration/README.md`: change the status table row to ✅ Done with the dated link, update "Next up", bump the footer.
 - Update `quorum-shared/README.md` (in the shared PR): add an entry to the Package Structure tree and Modules section, bump the footer date.
 
 ---

@@ -431,7 +431,7 @@ The authorization rules per type:
 | `pin` | Drop | Requires `message:pin` permission | Allow |
 | `mute` | Drop | Requires `user:mute` permission | Allow |
 
-See [security.md](../security.md) ("Control-Message Authorization (verified signer)") and [.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md](../../../tasks/2026-06-25-MASTER-RECAP-control-message-auth.md) for the full security rationale.
+See [security.md](../security.md) ("Control-Message Authorization (verified signer)") and [.agents/issues/2026-06-25-MASTER-RECAP-control-message-auth.md](../../../issues/2026-06-25-MASTER-RECAP-control-message-auth.md) for the full security rationale.
 
 ### Edit Signing — Inherit Rule
 

@@ -5,7 +5,7 @@ ai_generated: true
 created: 2026-04-07
 updated: 2026-04-07
 related_tasks:
-  - ".agents/tasks/.done/2026-04-07-eslint-10-migration.md"
+  - ".agents/issues/.done/2026-04-07-eslint-10-migration.md"
 related_docs: []
 ---
 

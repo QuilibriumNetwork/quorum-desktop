@@ -8,11 +8,11 @@ updated: 2026-03-24
 related_docs:
   - .agents/docs/features/messages/message-sending-indicator.md
 related_tasks:
-  - .agents/tasks/2026-03-18-dm-delivery-receipts-design.md
-  - .agents/tasks/2026-03-18-dm-delivery-receipts-plan.md
-  - .agents/tasks/2026-03-22-dm-read-receipts-design.md
-  - .agents/tasks/2026-03-22-dm-read-receipts-plan.md
-  - .agents/bugs/2026-03-22-read-receipts-testing-blocked.md
+  - .agents/issues/.done/2026-03-18-dm-delivery-receipts-design.md
+  - .agents/issues/.done/2026-03-18-dm-delivery-receipts-plan.md
+  - .agents/issues/.done/2026-03-22-dm-read-receipts-design.md
+  - .agents/issues/.done/2026-03-22-dm-read-receipts-plan.md
+  - .agents/issues/.done/2026-03-22-read-receipts-testing-blocked.md
 ---
 
 # DM Receipts (Delivery & Read)
@@ -321,17 +321,17 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 - **Crash before flush**: If the app crashes before the 5s debounce fires, pending read marks are lost. The next time the user opens the conversation, new marks are established.
 - **Observer overhead**: Every incoming message from the other person that's newer than the baseline gets an IntersectionObserver. For very long active conversations, this could mean many observers. The browser optimizes them internally (shared scroll listener), but it's worth noting.
 - **Sync issues**: Intermittent DM delivery failures (Double Ratchet state desync) can prevent read acks from arriving. This is a pre-existing infrastructure issue, not specific to read receipts.
-- **Standalone-ack ratchet cost**: Standalone delivery and read acks go through `messageService.encryptAndSendDm` and therefore advance the Double Ratchet on both sides (1 IndexedDB `put` on `encryption_states` + 1 on `latest_states` per side, writes overwrite in place — no row growth). Piggybacked acks have no extra cost (they ride the encryption of the message they attach to). The standalone path shares the same `skipped_keys_map` slow-leak question raised by typing indicators — see `.agents/tasks/.done/2026-05-18-typing-dm-ratchet-investigation.md` for the analysis. Not typing-specific; applies to any out-of-order DR receive.
+- **Standalone-ack ratchet cost**: Standalone delivery and read acks go through `messageService.encryptAndSendDm` and therefore advance the Double Ratchet on both sides (1 IndexedDB `put` on `encryption_states` + 1 on `latest_states` per side, writes overwrite in place — no row growth). Piggybacked acks have no extra cost (they ride the encryption of the message they attach to). The standalone path shares the same `skipped_keys_map` slow-leak question raised by typing indicators — see `.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md` for the analysis. Not typing-specific; applies to any out-of-order DR receive.
 
 ## Related Documentation
 
 - [Message Sending Indicator](.agents/docs/features/messages/message-sending-indicator.md) — Message status lifecycle (Sending → Sent → ✓ → ✓✓ → Failed)
-- [Delivery Receipts Design Spec](.agents/tasks/2026-03-18-dm-delivery-receipts-design.md) — Phase 1 design
-- [Delivery Receipts Implementation Plan](.agents/tasks/2026-03-18-dm-delivery-receipts-plan.md) — Phase 1 task breakdown
-- [Read Receipts Design Spec](.agents/tasks/2026-03-22-dm-read-receipts-design.md) — Phase 2 design
-- [Read Receipts Implementation Plan](.agents/tasks/2026-03-22-dm-read-receipts-plan.md) — Phase 2 task breakdown
-- [Read Receipts Testing Bug](.agents/bugs/2026-03-22-read-receipts-testing-blocked.md) — Testing progress and bugs found
-- [Receipt Persistence Bug](.agents/bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md) — Fixed: checkmarks disappearing on refresh
+- [Delivery Receipts Design Spec](.agents/issues/.done/2026-03-18-dm-delivery-receipts-design.md) — Phase 1 design
+- [Delivery Receipts Implementation Plan](.agents/issues/.done/2026-03-18-dm-delivery-receipts-plan.md) — Phase 1 task breakdown
+- [Read Receipts Design Spec](.agents/issues/.done/2026-03-22-dm-read-receipts-design.md) — Phase 2 design
+- [Read Receipts Implementation Plan](.agents/issues/.done/2026-03-22-dm-read-receipts-plan.md) — Phase 2 task breakdown
+- [Read Receipts Testing Bug](.agents/issues/.done/2026-03-22-read-receipts-testing-blocked.md) — Testing progress and bugs found
+- [Receipt Persistence Bug](.agents/issues/.done/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md) — Fixed: checkmarks disappearing on refresh
 - [Action Queue](.agents/docs/features/action-queue.md) — Persistent queue used for standalone acks
 
 ---

@@ -60,7 +60,7 @@ The fallback exists because a sync handshake can complete (or stall) without eve
 
 Toast id is the literal string `'sync'`, shared across all spaces — concurrent space syncs collapse into one toast and one shared timer pair.
 
-See `.agents/tasks/.done/sync-toast-notifications.md` for the design history and rework notes.
+See `.agents/issues/.done/sync-toast-notifications.md` for the design history and rework notes.
 
 ## Implementation Details
 

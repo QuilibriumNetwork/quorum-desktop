@@ -271,7 +271,7 @@ After rotation the old `inbox_address` stored in the receiver's `space_members` 
 > `resolveVerifiedSender` reverse-lookup that control-message auth relies on
 > (delete/edit/pin/mute impersonation). See
 > `.agents/docs/features/security.md` → "Profile-Update Authorization" and bug
-> `.agents/bugs/.solved/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md`.
+> `.agents/issues/.done/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md`.
 >
 > **Current behavior:** `update-profile` is authorized against the verified signer
 > (`isUpdateProfileAuthorized`) and is **display-only** — it never writes the
@@ -363,7 +363,7 @@ update-profile:   (current — #243) verify signature, authorize the VERIFIED
 > later release). Removing it earlier re-breaks secondary-device control ops on
 > not-yet-updated receivers, for no benefit — it is not needed for local dev or
 > the fully-updated end state. Rationale + exact condition:
-> [`.agents/tasks/2026-07-19-per-device-signing-keys-registration-anchored.md`](../tasks/2026-07-19-per-device-signing-keys-registration-anchored.md)
+> [`.agents/issues/2026-07-19-per-device-signing-keys-registration-anchored.md`](../issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 > ("The `signing ?? inbox` fallback" section). A full rewrite of this section
 > for the pure per-device model is a pending post-retirement cleanup task.
 
@@ -437,7 +437,7 @@ until re-join. The durable design gives each device its **own** key, admitted by
 receivers only via a statement signed by the user's **master identity key** (the
 same root the device registration and every config upload already use) — which
 also auto-heals existing devices on cut-over and repairs the lost-join-key case.
-Spec: [`.agents/tasks/2026-07-19-per-device-signing-keys-registration-anchored.md`](../tasks/2026-07-19-per-device-signing-keys-registration-anchored.md).
+Spec: [`.agents/issues/2026-07-19-per-device-signing-keys-registration-anchored.md`](../issues/2026-07-19-per-device-signing-keys-registration-anchored.md).
 
 **Progress (2026-07-20):** the drift-proof core shipped in `quorum-shared`
 (`utils/deviceKeys.ts`: `announce-keys`/`revoke-device` statements, canonical
@@ -477,7 +477,7 @@ covers the common case, converges on the hub-log migration), and **cleanup**
 (retire the interim `signing` slot + rewrite this section for the pure per-device
 model). A non-destructive bound on `announce-keys` flooding — visible in testing
 as hub-log replay churn — is tracked in
-[`.agents/bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md`](../bugs/2026-07-20-announce-keys-flooding-unbounded-admissions.md).
+[`.agents/issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md`](../issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md).
 
 ---
 
@@ -503,7 +503,7 @@ The fingerprint for control messages additionally binds `spaceId + channelId` (s
 For the full security rationale, cross-space replay protection, and the edit-inherit rule (edits sign iff the original was signed), see:
 - [features/security.md](features/security.md) — "Control-Message Authorization (verified signer)"
 - [features/messages/message-signing-system.md](features/messages/message-signing-system.md) — "Receive-Side Verification" and "Control-Message Authorization via Verified Signer"
-- `.agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md`
+- `.agents/issues/2026-06-25-MASTER-RECAP-control-message-auth.md`
 
 ---
 

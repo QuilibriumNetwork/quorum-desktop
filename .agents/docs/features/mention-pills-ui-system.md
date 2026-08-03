@@ -304,12 +304,12 @@ Pills use the same CSS classes as rendered mentions in Message.tsx for consisten
 The mention pills implementation went through two phases:
 
 **Phase 1: Initial Implementation**
-- Task: [mention-pills-in-message-textarea.md](../../tasks/.done/mention-pills-in-message-textarea.md)
+- Task: [mention-pills-in-message-textarea.md](../../issues/.done/mention-pills-in-message-textarea.md)
 - Implemented pills in both MessageComposer and MessageEditTextarea
 - Result: ~270 lines of duplicated code across 2 components
 
 **Phase 2: Code Abstraction**
-- Task: [mention-pills-abstraction-refactor.md](../../tasks/.done/mention-pills-abstraction-refactor.md)
+- Task: [mention-pills-abstraction-refactor.md](../../issues/.done/mention-pills-abstraction-refactor.md)
 - Following "Rule of Three" principle, extracted shared utilities and hooks
 - Created `mentionPillDom.ts` (pure functions) and `useMentionPillEditor.ts` (React hook)
 - Refactored both components to use shared hook
@@ -359,8 +359,8 @@ The mention pills implementation went through two phases:
 - **Mention System**: [mention-notification-system.md](./mention-notification-system.md) - Notification system, autocomplete, extraction, rendering
 
 - **Implementation Tasks**:
-  - [mention-pills-in-message-textarea.md](../../tasks/.done/mention-pills-in-message-textarea.md) - Initial implementation
-  - [mention-pills-abstraction-refactor.md](../../tasks/.done/mention-pills-abstraction-refactor.md) - Code refactoring
+  - [mention-pills-in-message-textarea.md](../../issues/.done/mention-pills-in-message-textarea.md) - Initial implementation
+  - [mention-pills-abstraction-refactor.md](../../issues/.done/mention-pills-abstraction-refactor.md) - Code refactoring
 
 - **Research & Design**:
   - [mention-pills-research.md](../../reports/mention-pills-research.md) - Industry research, POC validation, technical insights

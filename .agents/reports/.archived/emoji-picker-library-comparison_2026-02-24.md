@@ -6,8 +6,8 @@ reviewed_by: null
 created: 2026-02-24
 updated: 2026-02-24
 related_tasks:
-  - "tasks/emoji-picker-performance-fix.md"
-  - "tasks/emoji-picker-in-message-composer.md"
+  - "issues/.done/emoji-picker-performance-fix.md"
+  - "issues/.done/emoji-picker-in-message-composer.md"
 related_docs:
   - "docs/features/messages/emoji-picker-react-customization.md"
 ---
@@ -91,7 +91,7 @@ None use native OS emojis. The performance problem is solved through sprite shee
 2. Add `lazyLoadEmojis={true}` (only visible emojis trigger HTTP requests)
 3. Service worker caching for `/apple/64/*.png` (images download once, then instant)
 
-This addresses the performance problem without migration risk. See task: `tasks/emoji-picker-performance-fix.md`.
+This addresses the performance problem without migration risk. See task: `issues/.done/emoji-picker-performance-fix.md`.
 
 **Revisit emoji-mart only if**: after optimization, individual-image loading is still unacceptable AND emoji-mart gets active maintenance again AND we're willing to give up CSS customization control.
 

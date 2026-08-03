@@ -209,7 +209,7 @@ Cleaning up the hash earlier would cause the highlight to stop mid-animation.
 - `.agents/docs/features/messages/pinned-messages.md` - Pinned messages panel
 - `.agents/docs/features/messages/bookmarks.md` - Bookmarks panel
 - `.agents/docs/features/mention-notification-system.md` - Mention detection and notifications
-- `.agents/tasks/message-highlight-system-refactor.md` - Refactoring task with implementation details
+- `.agents/issues/.done/message-highlight-system-refactor.md` - Refactoring task with implementation details
 
 ---
 

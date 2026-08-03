@@ -151,6 +151,6 @@ The Data Backup section appears in **User Settings > Privacy/Security**, below t
 - [Data Management Architecture](../data-management-architecture-guide.md) — IndexedDB schema, service architecture
 - [Config Sync System](../config-sync-system.md) — ConfigService encryption pattern (reference for domain separation)
 - [Cryptographic Architecture](../cryptographic-architecture.md) — Ed448 key hierarchy
-- [Task: User Data Backup & Restore](../../tasks/user-data-backup-restore-feature.md) — Implementation task with full context
+- [Task: User Data Backup & Restore](../../issues/.done/user-data-backup-restore-feature.md) — Implementation task with full context
 
 _Last updated: 2026-02-16_

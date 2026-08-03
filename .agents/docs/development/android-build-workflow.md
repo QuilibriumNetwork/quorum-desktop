@@ -167,7 +167,7 @@ This was caused by multiple Metro configuration issues in the monorepo setup. Al
 - `multiformats` subpath imports need package exports support → mapped manually in `resolveRequest`
 - Stale `AccentColorSwitcher` imports in test files → removed
 
-See [bug report](.agents/bugs/2026-03-15-mobile-metro-bundling-failure.md) for full details.
+See [bug report](.agents/issues/.done/2026-03-15-mobile-metro-bundling-failure.md) for full details.
 
 ### "No apps connected" in Metro
 

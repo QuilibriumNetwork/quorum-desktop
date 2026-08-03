@@ -154,7 +154,7 @@ Index key shape: `space:{spaceId}` or `dm:{conversationId}`. Scoping rules:
    - Add to `fields` if the field should be tokenized and searched
    - Add to `storeFields` if it should be returned with search results
    - Add to `searchOptions.boost` to weight it
-4. Bump the persisted index format if you want existing caches invalidated. The current schema has no `indexVersion` field — option drift will silently misbehave on cached records. See [decisions.md §12b](../../tasks/search-optimization/decisions.md) for the deferred mitigation pattern (`SEARCH_INDEX_VERSION` constant + filter on load). The simplest workaround today: bump `DB_VERSION` (12→13→14...) and add a no-op upgrade step, which wipes the `search_indices` store on next launch via deletion-and-recreation if you choose to delete-then-create the store
+4. Bump the persisted index format if you want existing caches invalidated. The current schema has no `indexVersion` field — option drift will silently misbehave on cached records. See [decisions.md §12b](../../issues/search-optimization/decisions.md) for the deferred mitigation pattern (`SEARCH_INDEX_VERSION` constant + filter on load). The simplest workaround today: bump `DB_VERSION` (12→13→14...) and add a no-op upgrade step, which wipes the `search_indices` store on next launch via deletion-and-recreation if you choose to delete-then-create the store
 
 ## Extending the Context System
 
@@ -171,13 +171,13 @@ To add a new scope (e.g. cross-space search, channel-specific search):
 - **500 result hard cap.** Most queries return well under 100, so the cap is rarely hit. When it is, the UI shows a warning callout suggesting refinement.
 - **Text-only indexing.** Only message `content.text` (for `post` and `event` types) is indexed. Attachments, images, and media are not searchable.
 - **Single-context scope.** No cross-space global search. Each search is confined to the current space or DM.
-- **`beforeunload` flush is best-effort.** Browsers don't await Promises returned from `beforeunload` handlers, so on a hard close (window X, browser quit) the in-flight IndexedDB write may not complete. At most one 5-second debounce window of incremental updates is lost. Source-of-truth is the `messages` store, so the next lazy load rebuilds from messages. See [decisions.md §12a](../../tasks/search-optimization/decisions.md).
-- **Persisted index can be stale for cold spaces.** `markIndexDirty` only fires when the index is loaded in memory. Messages arriving for a space whose index has been evicted are NOT reflected in the persisted version until the next lazy load triggers a fresh build. See [decisions.md §12c](../../tasks/search-optimization/decisions.md).
+- **`beforeunload` flush is best-effort.** Browsers don't await Promises returned from `beforeunload` handlers, so on a hard close (window X, browser quit) the in-flight IndexedDB write may not complete. At most one 5-second debounce window of incremental updates is lost. Source-of-truth is the `messages` store, so the next lazy load rebuilds from messages. See [decisions.md §12a](../../issues/search-optimization/decisions.md).
+- **Persisted index can be stale for cold spaces.** `markIndexDirty` only fires when the index is loaded in memory. Messages arriving for a space whose index has been evicted are NOT reflected in the persisted version until the next lazy load triggers a fresh build. See [decisions.md §12c](../../issues/search-optimization/decisions.md).
 
 ## Related Documentation
 
 - [Search optimization tasks](../../tasks/search-optimization/) — phase docs, design decisions, performance roadmap
-- [Decisions log](../../tasks/search-optimization/decisions.md) — rationale for sorting, persistence, debounce, eviction
+- [Decisions log](../../issues/search-optimization/decisions.md) — rationale for sorting, persistence, debounce, eviction
 - [Data management architecture guide](../data-management-architecture-guide.md) — MessageDB and IndexedDB schema context
 - [Dropdown panels](./dropdown-panels.md) — reusable panel used by `SearchResults`
 - [Primitives](./primitives/) — UI components used in search

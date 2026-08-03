@@ -795,7 +795,7 @@ const NavItemSchema = z.discriminatedUnion('type', [
 ## Related Documentation
 
 - [Data Management Architecture Guide](../data-management-architecture-guide.md) - UserConfig and sync patterns
-- [Task: Space Folders Discord-Style](../../tasks/done/space-folders-discord-style.md) - Implementation task with phase details
+- [Task: Space Folders Discord-Style](../../issues/.done/space-folders-discord-style.md) - Implementation task with phase details
 
 ---
 

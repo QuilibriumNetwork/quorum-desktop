@@ -159,7 +159,7 @@ Before implementing, read relevant docs:
 - [Primitives Introduction](docs/features/primitives/01-introduction-and-concepts.md)
 - [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md)
 - [API Reference Template](docs/features/primitives/API-REFERENCE.md)
-- [quorum-shared migration overview](tasks/quorum-shared-migration/README.md)
+- [quorum-shared migration overview](issues/quorum-shared-migration/README.md)
 
 ---
 
@@ -214,7 +214,7 @@ Before implementing, read relevant docs:
 
 | Task | Primary Documentation |
 |------|----------------------|
-| Component architecture | [Component Architecture Workflow](tasks/mobile-dev/docs/component-architecture-workflow-explained.md) |
+| Component architecture | [Component Architecture Workflow](issues/mobile-dev/docs/component-architecture-workflow-explained.md) |
 | Testing primitives | [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md) |
 | Repository structure | [Web/Native Repo Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md) |
 | Platform detection | [Quick Reference - Platform Detection](../AGENTS.md#mobile-first-development) |
@@ -249,7 +249,7 @@ For everything else (the common case): commit locally, let the next code PR swee
 
 ### Where this rule lives in the per-effort workflows
 
-The `.agents/tasks/<effort>/` folders may have their own workflow docs that elaborate on this for their specific context (e.g. [`tasks/port-from-mobile/workflow.md`](tasks/port-from-mobile/workflow.md) describes how the rule interacts with session-branch naming across multiple worktrees). The general principle above always applies; effort-specific workflows only extend it.
+The `.agents/tasks/<effort>/` folders may have their own workflow docs that elaborate on this for their specific context (e.g. [`issues/port-from-mobile/workflow.md`](issues/port-from-mobile/workflow.md) describes how the rule interacts with session-branch naming across multiple worktrees). The general principle above always applies; effort-specific workflows only extend it.
 
 ---
 
