@@ -462,11 +462,38 @@ ever revisited, finish that audit first.
   touched one branch of one handler; this is not comparable, and the DM harness
   scenarios are the regression net that makes it testable at all.
 
-### Acceptance test — pre-registered, and its blind spots
+### Acceptance test — ⛔ `space-backlog` CANNOT validate this fix
 
-`space-backlog` at 1200 already measures the headline: **median lag must collapse
-from 456 s to seconds.** Delivery is already 100%, so rate is not the metric —
-**latency is**. State the target before running, not after.
+> **Corrected 2026-08-03.** I pre-registered `space-backlog` at 1200 as the
+> acceptance test ("median lag must collapse from 456 s to seconds"). **That is
+> invalid**, and believing it was is the most consequential process error in this
+> issue.
+
+**The harness never runs `processInbound`.** Inbound frames go through
+`WsTransport.dispatch` (`src/dev/tests/harness/transport.ts:138,246-274`), a
+hand-written mirror that is **one single global serial promise chain**
+(`this.chain = this.chain.then(...)`). The real app instead drains into a Map
+keyed by inbox and runs those groups **concurrently** via `Promise.allSettled`
+(`WebsocketProvider.tsx:92-124`). Different structures.
+
+So a change to `processInbound` produces **no** movement in `space-backlog`. The
+fix would have been "validated" against an instrument structurally incapable of
+observing it.
+
+Two consequences worth keeping straight:
+
+- The 456 s figure is **still meaningful** as "reconnect backlogs cause severe
+  multi-minute starvation" — and the arithmetic is exact: 4806 frames × 95 ms =
+  456.57 s vs 456.5 s measured, so the reply really did wait for essentially the
+  entire backlog. What it is NOT is a mechanism-faithful measurement of
+  `processInbound`.
+- One reviewer traced the scenario's timing and found B joins S2 only *after*
+  reconnect, so S2's inbox was not subscribed when the early snapshots were
+  taken — meaning the real `processInbound`'s cross-inbox concurrency would not
+  have rescued it either. The two models converge here **by coincidence of
+  timing, not by structure.** Do not generalise from that.
+
+**The real acceptance test does not exist yet.** See §0e.
 
 ⚠️ **But that test alone is NOT sufficient, and believing it was is a mistake
 this issue nearly repeated.** Three gaps, all found by review rather than by
@@ -486,6 +513,97 @@ running anything:
    because "argued safe by code reading" has been wrong here before — the
    ratchet-lock-across-HTTP bug passed every test except the one that mattered
    (see `measurements.md`).
+
+## §0e. What the verification round established, and the order to work in
+
+> 2026-08-03. Six independent reviews (security, correctness, architecture,
+> cross-platform, per-frame cost, diagnosis re-derivation). This section is the
+> current state of knowledge. Where it contradicts §0d, this wins.
+
+### ✅ Confirmed: the mechanism
+
+Two reviewers derived it independently from the code rather than from the
+description. `processInbound`'s drain (`WebsocketProvider.tsx:92-103`) is a
+**one-time snapshot**; nothing in the running batch re-reads
+`messageQueue.current`; the `inboundProcessingRef` guard makes every re-entrant
+call a no-op until `Promise.allSettled` resolves. **The wait is bounded by the
+duration of the in-flight batch** — not by one chunk, not by the 1 s interval.
+
+Ruled out as a competing cause: the `invokable` 1 s timer churn
+(`MessageService.ts:5605-5620`) lives inside the `hasSession && !isExpired`
+branch, which never fires under backlog because `isExpired` is always true by
+then.
+
+### 🔬 The cost is I/O-shaped, not CPU-shaped
+
+READ, by tracing one space POST frame end-to-end: **~15 sequential, individually
+awaited IndexedDB round trips per frame** (14 reads + 1 write). The crypto is the
+cheap part — `UnsealHubEnvelope`'s body is synchronous when a config key exists,
+and `js_verify_ed448` is not even awaited. Every DB call is a genuine macrotask
+yield (`fake-indexeddb` uses `setImmediate` deliberately; real IndexedDB has the
+same task-based completion semantics).
+
+Three consequences:
+
+1. **The operator's report that the UI does NOT feel frozen is correct and now
+   explained.** A frame is many short synchronous bursts separated by ~15 real
+   yields. An earlier claim in this investigation that the app "freezes" was
+   wrong.
+2. **UI responsiveness and the head-of-line bug are independent facts.** The
+   yields happen constantly; they simply do not help a frame that was never added
+   to the running batch.
+3. **The Web Worker option is dead.** Moving cheap synchronous crypto off-thread
+   does not touch a cost dominated by sequential storage round trips.
+
+⚠️ **Corrects a claim in §0d.** It argued "per-frame awaits already exist and the
+bug still reproduces, therefore per-frame awaits do not yield enough." Wrong: the
+awaits DO yield to macrotasks — that is precisely how the queue reaches 4806
+frames, since `ws.onmessage` fires throughout. The bug is that **nothing ever
+re-reads the queue**. "Does not yield" and "does not look again" are different
+failure modes. The `setTimeout(…, 0)` guidance stays as defensive practice for
+the rewrite, but it is NOT evidence about today's bug.
+
+### ⚠️ Harness fidelity — two gaps, both material
+
+1. **It does not run `processInbound`** (see the acceptance-test section above).
+2. **Its storage is in-memory.** `fake-indexeddb` is a red-black tree; real
+   IndexedDB is disk-backed. The *yield structure* transfers; the *magnitude*
+   does not. **Do not quote 66-95 ms/frame as a prediction of field latency.**
+3. **It is blind to a field-only cost.** With no UI mounted, the React Query
+   updates hit an early return. In the real app with a conversation open, that
+   path rewrites growing page arrays and triggers real re-renders. Field
+   per-frame cost could be materially worse than anything measured here.
+
+The unexplained 44% per-frame growth: top candidate is **GC pressure** as the
+run's live heap grows (`transport.arrived` alone retains every frame). The
+store's O(log n) growth explains only ~19%. Not measured — do not assert it.
+
+### 🎁 A free win, independent of everything else
+
+`getSpace(spaceId)` is read **three times per frame** with no caching
+(`MessageService.ts:4723`, `:6260`, `:2995`). If per-frame cost is ~15 sequential
+round trips, removing two redundant ones is ≈13% off the drain, with no behaviour
+change and no risk. Worth doing on its own merits whatever happens to the queue.
+
+### The order to work in
+
+1. **Build the missing instrument.** There is no unit test of `processInbound`
+   anywhere (confirmed by grep — `websocketFlushOutbound.unit.test.tsx` is the
+   only file importing `WebsocketProvider` outside the harness, and it exercises
+   only the outbound path). Needed: a test that starts a batch, enqueues a frame
+   mid-flight, and asserts when it is picked up. **That is the acceptance test
+   this fix actually needs**; without it any fix ships on reasoning alone.
+2. **Remove the redundant `getSpace` reads.** Free, isolated, measurable.
+3. **Then bounded chunks**, validated against (1).
+4. **Separately and arguably first:**
+   `2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md`.
+   Losing messages is worse than waiting for them.
+
+Optional, if per-frame timing is ever wanted directly: stamp `arrivedAt` in
+`transport.ts`'s `ws.on('message')` and timestamp `spaceBot`'s trace lines. Then
+`processedAt − arrivedAt` for the surviving `sync-info` measures the gap directly
+instead of inferring it from aggregate arithmetic. Both bots share a process, so
+there is no clock-skew concern.
 
 ## §0c. Optional verification — recipes, so nobody re-derives them
 
