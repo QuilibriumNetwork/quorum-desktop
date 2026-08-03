@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Ghost device accumulation on reset/logout — deregister-before-wipe (desktop + mobile)"
-status: DONE — Slice 1 (desktop #281, `accd11b35`) and Slice 2 (mobile #203, `ffdbfc9`) merged 2026-07-31
+status: done
 outstanding:
   - The two-device observable check has NOT been run on real hardware (reset A,
     confirm it leaves B's device list and the count stays flat across cycles).
@@ -19,6 +19,11 @@ related:
 ---
 
 # Ghost device accumulation on reset/logout
+
+## Status
+
+Slice 1 (desktop #281, `accd11b35`) and Slice 2 (mobile #203, `ffdbfc9`) merged 2026-07-31
+
 
 ## Symptom (observed)
 

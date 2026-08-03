@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A per-space name/avatar set on one of your devices never reaches your own other devices"
-status: OPEN — observed 2026-08-01 on a live two-device test, cause not yet traced
+status: open
 priority: medium — user-visible, and it silently contradicts a design doc that assumed it worked
 created: 2026-08-01
 updated: 2026-08-01
@@ -16,6 +16,11 @@ related_docs:
 ---
 
 # A per-space override never reaches your own other devices
+
+## Status
+
+observed 2026-08-01 on a live two-device test, cause not yet traced
+
 
 ## §1. Observed (live test, 2026-08-01)
 

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "SECURITY: DM remove-message authorization bypass (spoofable senderId) — anchor to session sender"
-status: "DONE (both platforms merged) — DM remove + edit merged desktop #220; SPACE remove/edit/pin/mute/@everyone merged desktop #241/#243 (shared #61) and mobile #160. No code remaining; prod cut-over tracked in the MASTER-RECAP."
+status: done
 priority: high
 created: 2026-06-25
 source: surfaced during quorum-mobile DM delete-own-message work + deep code review
@@ -23,6 +23,11 @@ severity: HIGH (authorization bypass / integrity)
 > kept as the original detailed analysis.
 
 # DM remove-message auth bypass: authorize against the session-authenticated sender, not the payload `senderId`
+
+## Status
+
+both platforms merged) — DM remove + edit merged desktop #220; SPACE remove/edit/pin/mute/@everyone merged desktop #241/#243 (shared #61) and mobile #160. No code remaining; prod cut-over tracked in the MASTER-RECAP.
+
 
 ## Summary
 

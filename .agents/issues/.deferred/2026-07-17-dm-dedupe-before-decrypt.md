@@ -1,13 +1,18 @@
 ---
 type: task
 title: "DM dedupe-before-decrypt — skip redelivered frames before they hit the ratchet"
-status: deferred — measure first; implement only if duplicate noise shows up in normal use
+status: deferred
 created: 2026-07-17
 related:
   - ".agents/issues/.done/2026-07-02-dm-message-delivery-unreliable-master.md (Remaining gaps section)"
 ---
 
 # DM dedupe-before-decrypt
+
+## Status
+
+measure first; implement only if duplicate noise shows up in normal use
+
 
 ## Why (and why deferred)
 

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "vitest intermittently runs 29 of 736 tests — the import phase collapses from ~98s to <1.2s"
-status: open — mechanism visible and CI-safe (exits non-zero); cause still unproven. Read §0 before proposing a fix
+status: open
 priority: high (a test suite that under-reports coverage is worse than one that fails)
 created: 2026-08-01
 updated: 2026-08-02
@@ -13,6 +13,11 @@ related_docs:
 ---
 
 # vitest intermittently runs 4% of the suite
+
+## Status
+
+mechanism visible and CI-safe (exits non-zero); cause still unproven. Read §0 before proposing a fix
+
 
 ## §0. 2026-08-02 — the mechanism is now visible, and §2's open question is ANSWERED
 

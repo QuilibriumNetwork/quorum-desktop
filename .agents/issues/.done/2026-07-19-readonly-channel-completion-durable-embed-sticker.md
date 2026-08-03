@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Complete read-only-channel enforcement: durable path + embed/sticker + always-sign read-only posts"
-status: DONE (both platforms) — desktop shipped 2026-07-19; mobile shipped in quorum-mobile PR #160 (d3c6113, 2026-07-19). Closes-bug resolved.
+status: done
 priority: medium-high
 created: 2026-07-19
 severity: HIGH (authorization bypass — same class as the merged control-message-auth fix)
@@ -14,6 +14,11 @@ builds-on: quorum-desktop#241, quorum-shared#61
 ---
 
 # Complete read-only-channel enforcement
+
+## Status
+
+both platforms) — desktop shipped 2026-07-19; mobile shipped in quorum-mobile PR #160 (d3c6113, 2026-07-19). Closes-bug resolved.
+
 
 ## ✅ Desktop — DONE (2026-07-19)
 

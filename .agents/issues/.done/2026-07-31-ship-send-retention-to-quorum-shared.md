@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Ship the send-retention fix to quorum-shared (proven locally on device; PR only, no version bump, no publish)"
-status: DONE — merged as quorum-shared b24058e (PR #69) and PUBLISHED as 2.1.0-39; mobile requires and has it. Kept for the reasoning trail. ➡️ ACTIVE WORK MOVED TO issues/transport/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md
+status: done
 created: 2026-07-31
 area: WebSocket transport / send durability
 repos: quorum-shared (the change), quorum-mobile (consumer, blocked on publish), quorum-desktop (separate, see §6)
@@ -12,6 +12,11 @@ related:
 ---
 
 # Ship the send-retention fix to quorum-shared
+
+## Status
+
+merged as quorum-shared b24058e (PR #69) and PUBLISHED as 2.1.0-39; mobile requires and has it. Kept for the reasoning trail. ➡️ ACTIVE WORK MOVED TO issues/transport/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md
+
 
 ## §0. What shipped (2026-07-31)
 

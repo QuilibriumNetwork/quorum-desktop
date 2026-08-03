@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "announce-keys flooding: a malicious member can grow the per-device admission store without bound (needs a non-destructive cap)"
-status: OPEN — known limitation, deliberately shipped without a cap; needs a solid, non-evicting fix (likely a lead-dev call)
+status: open
 created: 2026-07-20
 severity: LOW (member-only DoS: storage/perf degradation, no impersonation, no data loss)
 platforms: quorum-desktop + quorum-mobile (+ shared owns MAX_DEVICES_PER_MEMBER)
@@ -11,6 +11,11 @@ related:
 ---
 
 # announce-keys flooding → unbounded per-device admission store
+
+## Status
+
+known limitation, deliberately shipped without a cap; needs a solid, non-evicting fix (likely a lead-dev call)
+
 
 > Surfaced 2026-07-20 during code review of the desktop receive-side slice.
 > A first attempt at an evict-oldest cap was written and then REJECTED because

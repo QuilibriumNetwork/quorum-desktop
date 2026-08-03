@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Electron stores the master private key at rest with no user secret — its decryption key sits in the same record"
-status: OPEN — statically confirmed in source and in the shipped SDK bundle; options identified, none chosen. Needs a decision BEFORE the desktop app ships.
+status: open
 created: 2026-07-31
 severity: HIGH for the downloadable desktop app (the master key is recoverable from disk with no passkey, biometric, or prompt). Not remotely exploitable.
 platforms: quorum-desktop — Electron always; browser only on fallback authenticators. quorum-mobile and PRF-capable browsers are unaffected.
@@ -13,6 +13,11 @@ related:
 ---
 
 # Electron keeps the master private key unlocked on disk
+
+## Status
+
+statically confirmed in source and in the shipped SDK bundle; options identified, none chosen. Needs a decision BEFORE the desktop app ships.
+
 
 > Split out of the reset-residue bug on 2026-07-31: that one is about a reset
 > failing to erase the key, this one is about the key's protection during normal

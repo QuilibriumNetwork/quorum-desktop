@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Cross-platform DM harness — a headless mobile bot, and mobile↔desktop on one bench"
-status: DONE — all four slices shipped. Slices 1-3 (mobile bot, mobile↔mobile 80/80) landed in quorum-mobile branch feat/harness-identity-dm 2026-07-28; slice 4 (mobile↔desktop) landed as desktop PR #271 2026-07-29 (`yarn harness:cross`), deliberately as two processes paired over mobile's file rendezvous rather than the single-process bundle specced here — reasoning in src/dev/tests/harness/rendezvous.ts. Measured 2026-07-29: mobile→desktop 40/40, desktop→mobile 39/40. The 2×2 is complete. Status field corrected on close; "NOT STARTED" was written before the session that built it and never updated.
+status: done
 created: 2026-07-27
 updated: 2026-07-29
 branch: feat/mobile-dm-harness (mobile) + feat/cross-platform-harness (desktop)
@@ -16,6 +16,11 @@ related:
 ---
 
 # Cross-platform DM harness
+
+## Status
+
+all four slices shipped. Slices 1-3 (mobile bot, mobile↔mobile 80/80) landed in quorum-mobile branch feat/harness-identity-dm 2026-07-28; slice 4 (mobile↔desktop) landed as desktop PR #271 2026-07-29 (`yarn harness:cross`), deliberately as two processes paired over mobile's file rendezvous rather than the single-process bundle specced here — reasoning in src/dev/tests/harness/rendezvous.ts. Measured 2026-07-29: mobile→desktop 40/40, desktop→mobile 39/40. The 2×2 is complete. Status field corrected on close; "NOT STARTED" was written before the session that built it and never updated.
+
 
 ## Why
 

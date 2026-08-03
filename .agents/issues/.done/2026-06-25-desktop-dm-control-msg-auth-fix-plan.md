@@ -1,7 +1,7 @@
 ---
 type: task
 title: "PLAN: Desktop DM control-message auth fix (remove-message + edit-message) — anchor to session sender"
-status: done (DM paths implemented + tested; PR + manual verify tracked in MASTER-RECAP)
+status: done
 priority: high
 created: 2026-06-25
 branch: fix/control-message-auth-session-sender
@@ -9,6 +9,11 @@ mirrors: quorum-mobile commit 18cc7dc (branch feature/dm-delete-own-message-sync
 ---
 
 # Plan: fix DM remove-message + edit-message authorization on desktop
+
+## Status
+
+DM paths implemented + tested; PR + manual verify tracked in MASTER-RECAP)
+
 
 ## Plain-language problem
 

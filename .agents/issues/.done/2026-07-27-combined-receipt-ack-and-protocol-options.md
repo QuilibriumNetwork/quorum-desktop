@@ -1,7 +1,7 @@
 ---
 type: task
 title: "DM receipt protocol: read acks now name what they read (option 2b, shipped)"
-status: DONE 2026-08-01 — option 2b shipped on all three platforms (shared #67, desktop #267, mobile #205); option 1 skipped, option 2 deferred (R6), two follow-ups spun out to their own files (§11)
+status: done
 created: 2026-07-27
 completed: 2026-08-01
 priority: medium
@@ -17,6 +17,11 @@ related:
 ---
 
 # DM receipt protocol: read acks now name what they read
+
+## Status
+
+2026-08-01 — option 2b shipped on all three platforms (shared #67, desktop #267, mobile #205); option 1 skipped, option 2 deferred (R6), two follow-ups spun out to their own files (§11)
+
 
 ## What this document is
 

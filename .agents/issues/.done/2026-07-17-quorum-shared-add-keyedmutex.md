@@ -1,7 +1,7 @@
 ---
 type: task
 title: "quorum-shared: add KeyedMutex util (per-key FIFO async lock) + desktop import swap"
-status: DONE 2026-07-17 — shared PR #59 (KeyedMutex) + #60 (bump to 2.1.0-35) merged; desktop swapped to the shared export in PR #237. Remaining: npm publish of 2.1.0-35+ so mobile can consume (tracked in the mobile task).
+status: done
 created: 2026-07-17
 related:
   - ".agents/docs/dm-ratchet-upstream-divergences.md (justification doc for the lead dev)"
@@ -9,6 +9,11 @@ related:
 ---
 
 # quorum-shared: add KeyedMutex
+
+## Status
+
+2026-07-17 — shared PR #59 (KeyedMutex) + #60 (bump to 2.1.0-35) merged; desktop swapped to the shared export in PR #237. Remaining: npm publish of 2.1.0-35+ so mobile can consume (tracked in the mobile task).
+
 
 ## Why shared
 
