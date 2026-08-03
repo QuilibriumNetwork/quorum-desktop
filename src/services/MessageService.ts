@@ -4679,6 +4679,39 @@ export class MessageService {
             if (this.typingService) {
               this.typingService.onTypingReceived(innerMsg as TypingMessage);
             }
+            // ⚠️ ACK BEFORE RETURNING. This early return used to skip the tail,
+            // which is the ONLY place a space frame is acked — so every typing
+            // indicator ever received stayed on the relay and was re-pushed on
+            // every `listen`, forever.
+            //
+            // MEASURED (`yarn harness space-typing`): after one reconnect, an
+            // ordinary post was redelivered 0x and a typing frame 2x, in the
+            // same run.
+            //
+            // `TypingService`'s 30s freshness filter already defends the UI
+            // against this replay (see
+            // `.agents/docs/features/messages/typing-indicators.md`), but it runs
+            // AFTER the frame has been received and unsealed, so it does nothing
+            // for the cost. And that cost is the thing that matters: queue DEPTH
+            // is what decides whether a perishable control frame — a `sync-info`
+            // reply, valid 30s — is read before it expires.
+            //
+            // Typing is high volume by design (one `typing-start` per 5s per
+            // scope while composing), so an unbounded, ever-growing accumulation
+            // of them is plausibly the largest single source of reconnect
+            // backlog. See
+            // `issues/.open/2026-08-03-a-typing-frame-is-never-acked-…`.
+            const typingInboxKey = await this.messageDB.getSpaceKey(
+              conversationId.split('/')[0],
+              'inbox'
+            );
+            if (typingInboxKey) {
+              this.ackSpaceFrame(
+                typingInboxKey,
+                message.timestamp,
+                'processed typing indicator'
+              );
+            }
             return;
           }
 
@@ -6434,20 +6467,48 @@ export class MessageService {
         return;
       }
 
-      this.dispatchInboxDelete(
-        {
-          inbox_address: inbox_key.address!,
-          inbox_encryption_key: {} as never,
-          inbox_key: {
-            type: 'ed448',
-            public_key: hexToSpreadArray(inbox_key.publicKey),
-            private_key: hexToSpreadArray(inbox_key.privateKey),
-          },
-        },
-        [message.timestamp],
+      this.ackSpaceFrame(
+        inbox_key,
+        message.timestamp,
         'post-processing cleanup (space inbox)'
       );
     }
+  }
+
+  /**
+   * Tell the relay we are finished with a space frame.
+   *
+   * ⚠️ The delete IS the ack, and the relay is the only copy — it retains a
+   * frame until we delete it and re-pushes anything un-acked on every `listen`.
+   * So a frame we process and never ack is not merely untidy: it comes back on
+   * every reconnect, forever, each time costing a full unseal and a slot in the
+   * inbound queue.
+   *
+   * That is why this is a named helper rather than inline code. It had exactly
+   * one call site — the tail of `handleNewMessage` — and every path that
+   * returned before reaching it leaked a frame permanently. Typing indicators
+   * did (MEASURED: an ordinary post was redelivered 0x after a reconnect, a
+   * typing frame 2x; `yarn harness space-typing`). If you add an early return to
+   * the space path, call this first.
+   */
+  private ackSpaceFrame(
+    inboxKey: { address?: string; publicKey: string; privateKey: string },
+    timestamp: number,
+    context: string
+  ): void {
+    this.dispatchInboxDelete(
+      {
+        inbox_address: inboxKey.address!,
+        inbox_encryption_key: {} as never,
+        inbox_key: {
+          type: 'ed448',
+          public_key: hexToSpreadArray(inboxKey.publicKey),
+          private_key: hexToSpreadArray(inboxKey.privateKey),
+        },
+      },
+      [timestamp],
+      context
+    );
   }
 
   /**
