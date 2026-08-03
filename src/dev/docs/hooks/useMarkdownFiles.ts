@@ -1,5 +1,21 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { FrontmatterData } from '../types/frontmatter';
+import {
+  deriveEpic,
+  deriveState,
+  issueSortDate,
+  normalizeComplexity,
+  normalizePriority,
+  normalizeType,
+  type IssueComplexity,
+  type IssuePriority,
+  type IssueState,
+  type IssueType,
+} from '../utils/issueTaxonomy';
+
+/** The three trees the dev viewer browses. `.agents/issues/` replaced the old
+ *  `tasks/` + `bugs/` split, so there is one issue section, not two. */
+export type MarkdownSection = 'docs' | 'issues' | 'reports';
 
 export interface MarkdownFile {
   name: string;
@@ -7,11 +23,20 @@ export interface MarkdownFile {
   folder: string;
   title: string;
   slug: string; // URL-safe identifier
-  status?: 'pending' | 'open' | 'done' | 'archived' | 'active' | 'solved' | 'in-progress' | 'on-hold' | 'blocked' | 'deferred' | 'design' | 'backlog';
-  priority?: 'low' | 'medium' | 'high' | 'critical';
-  complexity?: 'low' | 'medium' | 'high' | 'very-high'; // tasks only
+  /** Issues: derived from the folder. Reports: active/archived. Docs: from frontmatter. */
+  status?: IssueState | 'active';
+  /** Issues only — the named epic folder this belongs to, if any. */
+  epic?: string | null;
+  /** Issues only — bug or task, from `type:` frontmatter. */
+  issueType?: IssueType | null;
+  priority?: IssuePriority;
+  complexity?: IssueComplexity;
+  /** Sort key for newest-first ordering; empty when the file carries no date. */
+  sortDate?: string;
   content?: string;
   frontmatter?: FrontmatterData; // Extracted YAML frontmatter
+  /** Set when the file's YAML could not be parsed, so its metadata is missing. */
+  parseError?: string;
   created?: string; // YYYY-MM-DD
   updated?: string; // YYYY-MM-DD
   ai_generated?: boolean;
@@ -47,83 +72,41 @@ const generateSlug = (path: string): string => {
     .replace(/^\.agents\//, '')
     .replace(/\.md$/, '')
     .toLowerCase();
-  
-  // Remove type prefix (docs/, tasks/, bugs/, reports/)
-  slug = slug.replace(/^(docs|tasks|bugs|reports)\//, '');
-  
+
+  // Remove section prefix (docs/, issues/, reports/)
+  slug = slug.replace(/^(docs|issues|reports)\//, '');
+
   // Replace special characters and spaces with hyphens
   slug = slug
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, ''); // Remove leading/trailing hyphens
-  
+
   return slug;
 };
 
-// Determine status from filename or folder structure
-const determineStatus = (
+/**
+ * Status for the two sections that are not issues.
+ *
+ * Issues get theirs from `deriveState`, which knows the whole `.open/`,
+ * `.deferred/`, `.done/`, `.archived/` vocabulary. Docs and reports have a much
+ * smaller one: a report is current or it has been archived, and a doc simply
+ * carries whatever its frontmatter says.
+ */
+const sectionStatus = (
   path: string,
-  filename: string,
-  type: 'docs' | 'tasks' | 'bugs' | 'reports'
-): MarkdownFile['status'] => {
-  if (type === 'tasks') {
-    if (path.includes('/.done/') || filename.startsWith('DONE_')) {
-      return 'done';
-    }
-    if (path.includes('/.archived/') || filename.startsWith('ARCHIVED_')) {
-      return 'archived';
-    }
-    if (path.includes('/.deferred/')) {
-      return 'deferred';
-    }
-    if (path.includes('/.todo/')) {
-      return 'open';
-    }
-    return 'pending';
+  section: 'docs' | 'reports'
+): MarkdownFile['status'] | undefined => {
+  if (section === 'reports') {
+    return path.includes('/.archived/') ||
+      path.includes('/.archive/') ||
+      path.includes('/.done/')
+      ? 'archived'
+      : 'active';
   }
-
-  if (type === 'bugs') {
-    // Check if it's in .solved folder or has SOLVED prefix
-    if (path.includes('/.solved/') || filename.startsWith('SOLVED_')) {
-      return 'solved';
-    }
-    return 'active';
-  }
-
-  if (type === 'reports') {
-    // Check if it's in .archive folder
-    if (path.includes('/.archive/')) {
-      return 'archived';
-    }
-    // Check if it's in .done folder (for backwards compatibility)
-    if (path.includes('/.done/')) {
-      return 'archived';
-    }
-    return 'active';
-  }
-
   return undefined;
 };
 
-// Determine priority from filename (for bugs)
-const determinePriority = (filename: string): MarkdownFile['priority'] => {
-  const name = filename.toLowerCase();
-  if (name.includes('critical') || name.includes('crash')) {
-    return 'critical';
-  }
-  if (
-    name.includes('high') ||
-    name.includes('urgent') ||
-    name.includes('important')
-  ) {
-    return 'high';
-  }
-  if (name.includes('low') || name.includes('minor')) {
-    return 'low';
-  }
-  return 'medium'; // default
-};
-
-export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') => {
+export const useMarkdownFiles = (section: MarkdownSection) => {
   const [files, setFiles] = useState<MarkdownFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
@@ -135,7 +118,7 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') =>
         setError('');
 
         // Get the raw file data
-        const rawFiles = (markdownFilesData as any)[type] || [];
+        const rawFiles = (markdownFilesData as any)[section] || [];
 
         // Process the files with titles, status, and slugs
         // Priority: Use frontmatter if exists, otherwise fall back to detection functions
@@ -149,16 +132,31 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') =>
             title = `${numberPrefix}: ${title}`;
           }
 
+          const isIssue = section === 'issues';
+
           return {
             name: file.name,
             path: file.path,
             folder: file.folder,
             title,
             slug: generateSlug(file.path),
-            status: file.frontmatter?.status || determineStatus(file.path, file.name, type),
-            priority: type === 'bugs' ? (file.frontmatter?.priority || determinePriority(file.name)) : undefined,
-            complexity: file.frontmatter?.complexity,
+            status: isIssue
+              ? deriveState(file.folder, file.frontmatter?.status)
+              : file.frontmatter?.status ??
+                sectionStatus(file.path, section as 'docs' | 'reports'),
+            epic: isIssue ? deriveEpic(file.folder) : undefined,
+            issueType: isIssue ? normalizeType(file.frontmatter?.type) : undefined,
+            // Priority is read from frontmatter only. It used to be guessed from
+            // words in the filename ("crash" => critical), which quietly graded
+            // issues nobody had graded.
+            priority: normalizePriority(file.frontmatter?.priority) ?? undefined,
+            complexity:
+              normalizeComplexity(file.frontmatter?.complexity) ?? undefined,
+            sortDate: isIssue
+              ? issueSortDate(file.frontmatter?.created, file.name)
+              : undefined,
             frontmatter: file.frontmatter,
+            parseError: file.parseError,
             created: file.frontmatter?.created,
             updated: file.frontmatter?.updated,
             ai_generated: file.frontmatter?.ai_generated,
@@ -173,7 +171,7 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') =>
         setFiles(processedFiles);
       } catch (err) {
         setError(
-          `Error loading ${type} files: ${err instanceof Error ? err.message : 'Unknown error'}`
+          `Error loading ${section} files: ${err instanceof Error ? err.message : 'Unknown error'}`
         );
       } finally {
         setLoading(false);
@@ -181,11 +179,11 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') =>
     };
 
     loadFiles();
-  }, [type]);
+  }, [section]);
 
   // Helper to find a file by slug
   const findBySlug = (slug: string) => {
-    return files.find(f => f.slug === slug);
+    return files.find((f) => f.slug === slug);
   };
 
   return { files, loading, error, findBySlug };

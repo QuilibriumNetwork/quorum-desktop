@@ -1,13 +1,28 @@
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import {
-  Input,
-  Flex,
-  Text,
-  Icon,
-} from '../../../components/primitives';
-import { type MarkdownFile } from '../hooks/useMarkdownFiles';
+import { Input, Flex, Text, Icon } from '../../../components/primitives';
+import { type MarkdownFile, type MarkdownSection } from '../hooks/useMarkdownFiles';
 import type { IconName } from '../../../components/primitives';
+import {
+  ISSUE_PRIORITY_ORDER,
+  ISSUE_STATE_LABELS,
+  ISSUE_STATE_ORDER,
+  ISSUE_TYPE_ORDER,
+} from '../utils/issueTaxonomy';
+
+/**
+ * Filtered, grouped list of markdown files.
+ *
+ * Issues get three filters — type, state, priority — because `.agents/issues/`
+ * merged what used to be two separate pages: the bug-or-task distinction became
+ * a field, so it has to become a filter. Docs and reports keep the single
+ * status filter they always had.
+ *
+ * Chip counts are computed against the *other* active filters, so "Bug (22)"
+ * next to an active "Open" chip means twenty-two open bugs, not twenty-two bugs
+ * in the tree. A count that ignored the rest of the filters would promise
+ * results that clicking it does not deliver.
+ */
 
 interface FilterOption {
   label: string;
@@ -15,7 +30,9 @@ interface FilterOption {
   count: number;
 }
 
-// Icon mapping for status, complexity, and priority
+/** Sentinel for "this file has no value for this field at all". */
+const NONE = '__none__';
+
 function getStatusIcon(status: string): IconName {
   switch (status) {
     case 'done':
@@ -41,21 +58,6 @@ function getStatusIcon(status: string): IconName {
   }
 }
 
-function getComplexityIcon(complexity: string): IconName {
-  switch (complexity) {
-    case 'low':
-      return 'check';
-    case 'medium':
-      return 'target';
-    case 'high':
-      return 'fire';
-    case 'very-high':
-      return 'fire';
-    default:
-      return 'target';
-  }
-}
-
 function getPriorityIcon(priority: string): IconName {
   switch (priority) {
     case 'low':
@@ -64,185 +66,166 @@ function getPriorityIcon(priority: string): IconName {
       return 'minus';
     case 'high':
       return 'arrow-up';
-    case 'critical':
-      return 'warning';
     default:
       return 'minus';
   }
 }
 
+function getTypeIcon(type: string): IconName {
+  return type === 'bug' ? 'bug' : 'check-square';
+}
+
 interface FilterableListProps {
   files: MarkdownFile[];
-  type: 'tasks' | 'bugs' | 'docs' | 'reports';
+  section: MarkdownSection;
   basePath: string;
 }
 
+/** One filter dimension: how to read it off a file, and how to order its chips. */
+interface FilterSpec {
+  key: string;
+  label: string;
+  /** The file's value, or `NONE` when it has none. */
+  read: (file: MarkdownFile) => string;
+  /** Chip order; values outside it are appended alphabetically. */
+  order: string[];
+  labels?: Record<string, string>;
+  /** Whether to offer a "None" chip for files missing the field. */
+  offerNone?: boolean;
+  icon?: (value: string) => IconName;
+}
+
+const capitalize = (value: string) =>
+  value.charAt(0).toUpperCase() + value.slice(1);
+
+const ISSUE_FILTERS: FilterSpec[] = [
+  {
+    key: 'type',
+    label: 'Type',
+    read: (f) => f.issueType ?? NONE,
+    order: [...ISSUE_TYPE_ORDER],
+    labels: { bug: 'Bug', task: 'Task' },
+    offerNone: true,
+    icon: getTypeIcon,
+  },
+  {
+    key: 'status',
+    label: 'State',
+    read: (f) => f.status ?? NONE,
+    order: [...ISSUE_STATE_ORDER],
+    labels: ISSUE_STATE_LABELS,
+    icon: getStatusIcon,
+  },
+  {
+    key: 'priority',
+    label: 'Priority',
+    read: (f) => f.priority ?? NONE,
+    order: [...ISSUE_PRIORITY_ORDER],
+    offerNone: true,
+    icon: getPriorityIcon,
+  },
+  // No complexity filter: the field is abandoned. It was on 94% of issues
+  // filed in Dec 2025 and 0% of those filed in July and August 2026 — agents
+  // simply stopped writing it. Filtering on it would sort the backlog by when
+  // it was written rather than by anything about the work. It still renders in
+  // the detail view for the 116 older issues that carry one.
+];
+
+const SIMPLE_FILTERS: FilterSpec[] = [
+  {
+    key: 'status',
+    label: 'Status',
+    read: (f) => f.status ?? NONE,
+    order: ['active', ...ISSUE_STATE_ORDER],
+    labels: ISSUE_STATE_LABELS,
+    icon: getStatusIcon,
+  },
+];
+
 export const FilterableList: React.FC<FilterableListProps> = ({
   files,
-  type,
+  section,
   basePath,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [complexityFilter, setComplexityFilter] = useState<string>('all');
-  const [priorityFilter, setPriorityFilter] = useState<string>('all');
+  const [selected, setSelected] = useState<Record<string, string>>({});
 
-  // Calculate available filters
+  const isIssues = section === 'issues';
+  const specs = isIssues ? ISSUE_FILTERS : SIMPLE_FILTERS;
+  const noun = isIssues ? 'issues' : section;
+
+  const matchesSearch = useMemo(() => {
+    const term = searchTerm.trim().toLowerCase();
+    if (!term) return () => true;
+    return (file: MarkdownFile) =>
+      file.title.toLowerCase().includes(term) ||
+      file.path.toLowerCase().includes(term);
+  }, [searchTerm]);
+
+  const matchesSpec = (file: MarkdownFile, spec: FilterSpec) => {
+    const active = selected[spec.key];
+    return !active || active === 'all' || spec.read(file) === active;
+  };
+
+  const filteredFiles = useMemo(
+    () =>
+      files.filter(
+        (file) =>
+          matchesSearch(file) && specs.every((spec) => matchesSpec(file, spec))
+      ),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [files, matchesSearch, selected, specs]
+  );
+
+  /**
+   * Options per filter, counted against every other active filter. Each
+   * dimension is counted on the set that excludes only itself, so its own chips
+   * stay clickable instead of collapsing to the one already selected.
+   */
   const filterOptions = useMemo(() => {
-    const statuses: Record<string, number> = {};
-    const complexities: Record<string, number> = {};
-    const priorities: Record<string, number> = {};
+    return specs.map((spec) => {
+      const pool = files.filter(
+        (file) =>
+          matchesSearch(file) &&
+          specs.every((other) => other.key === spec.key || matchesSpec(file, other))
+      );
 
-    files.forEach((file) => {
-      if (file.status) {
-        statuses[file.status] = (statuses[file.status] || 0) + 1;
-      }
-      if (file.complexity) {
-        complexities[file.complexity] = (complexities[file.complexity] || 0) + 1;
-      }
-      if (file.priority) {
-        priorities[file.priority] = (priorities[file.priority] || 0) + 1;
-      }
-    });
-
-    // Define status order
-    const statusOrder = ['open', 'in-progress', 'on-hold', 'blocked', 'design', 'backlog', 'deferred', 'done', 'archived'];
-    const statusOptions: FilterOption[] = [
-      { label: 'All', value: 'all', count: files.length },
-      ...statusOrder
-        .filter(status => statuses[status] > 0)
-        .map(status => ({
-          label: status.charAt(0).toUpperCase() + status.slice(1),
-          value: status,
-          count: statuses[status],
-        })),
-    ];
-
-    // Define complexity order: low → medium → high → very-high
-    const complexityOrder = ['low', 'medium', 'high', 'very-high'];
-    const complexityOptions: FilterOption[] = [
-      { label: 'All', value: 'all', count: files.length },
-      ...complexityOrder
-        .filter(complexity => complexities[complexity] > 0)
-        .map(complexity => ({
-          label: complexity.charAt(0).toUpperCase() + complexity.slice(1),
-          value: complexity,
-          count: complexities[complexity],
-        })),
-    ];
-
-    // Define priority order: low → medium → high → critical
-    const priorityOrder = ['low', 'medium', 'high', 'critical'];
-    const priorityOptions: FilterOption[] = [
-      { label: 'All', value: 'all', count: files.length },
-      ...priorityOrder
-        .filter(priority => priorities[priority] > 0)
-        .map(priority => ({
-          label: priority.charAt(0).toUpperCase() + priority.slice(1),
-          value: priority,
-          count: priorities[priority],
-        })),
-    ];
-
-    return { statusOptions, complexityOptions, priorityOptions };
-  }, [files]);
-
-  // Apply filters
-  const filteredFiles = useMemo(() => {
-    return files.filter((file) => {
-      // Search filter
-      const matchesSearch =
-        file.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        file.path.toLowerCase().includes(searchTerm.toLowerCase());
-
-      // Status filter
-      const matchesStatus =
-        statusFilter === 'all' || file.status === statusFilter;
-
-      // Complexity filter (only for tasks)
-      const matchesComplexity =
-        complexityFilter === 'all' || file.complexity === complexityFilter;
-
-      // Priority filter (only for bugs)
-      const matchesPriority =
-        priorityFilter === 'all' || file.priority === priorityFilter;
-
-      return matchesSearch && matchesStatus && matchesComplexity && matchesPriority;
-    });
-  }, [files, searchTerm, statusFilter, complexityFilter, priorityFilter]);
-
-  // Build hierarchical folder structure
-  interface FolderNode {
-    name: string;
-    path: string;
-    files: typeof filteredFiles;
-    subfolders: FolderNode[];
-  }
-
-  const buildFolderTree = useMemo(() => {
-    const root: FolderNode = {
-      name: 'root',
-      path: '',
-      files: [],
-      subfolders: []
-    };
-
-    filteredFiles.forEach((file) => {
-      const folder = file.folder || 'root';
-
-      if (folder === 'root') {
-        // File belongs to root
-        root.files.push(file);
-        return;
-      }
-
-      const folderParts = folder.split('/');
-
-      // Only exclude dot-prefixed folders if they're at the root level (first segment)
-      // For example: ".done" → excluded, but "messagedb/.done" → kept
-      if (folderParts.length === 1 && folderParts[0].startsWith('.')) {
-        // Root-level dot folder (e.g., .done, .archived, .solved)
-        // Add to root since these are for status filtering
-        root.files.push(file);
-        return;
-      }
-
-      // Navigate/create folder hierarchy and add file to the deepest folder
-      let currentNode = root;
-      let currentPath = '';
-
-      folderParts.forEach((part) => {
-        currentPath = currentPath ? `${currentPath}/${part}` : part;
-
-        // Find or create subfolder (including dot-prefixed if nested)
-        let subfolder = currentNode.subfolders.find(sf => sf.name === part);
-        if (!subfolder) {
-          subfolder = {
-            name: part,
-            path: currentPath,
-            files: [],
-            subfolders: []
-          };
-          currentNode.subfolders.push(subfolder);
-        }
-
-        currentNode = subfolder;
+      const counts = new Map<string, number>();
+      pool.forEach((file) => {
+        const value = spec.read(file);
+        counts.set(value, (counts.get(value) ?? 0) + 1);
       });
 
-      // Add file to the deepest folder level
-      currentNode.files.push(file);
+      const known = spec.order.filter((value) => (counts.get(value) ?? 0) > 0);
+      const extra = [...counts.keys()]
+        .filter((value) => value !== NONE && !spec.order.includes(value))
+        .sort();
+
+      const options: FilterOption[] = [
+        { label: 'All', value: 'all', count: pool.length },
+        ...[...known, ...extra].map((value) => ({
+          label: spec.labels?.[value] ?? capitalize(value),
+          value,
+          count: counts.get(value) ?? 0,
+        })),
+      ];
+
+      if (spec.offerNone && (counts.get(NONE) ?? 0) > 0) {
+        options.push({
+          label: 'None',
+          value: NONE,
+          count: counts.get(NONE) ?? 0,
+        });
+      }
+
+      return { spec, options };
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [files, matchesSearch, selected, specs]);
 
-    // Sort files and subfolders alphabetically
-    const sortNode = (node: FolderNode) => {
-      node.files.sort((a, b) => a.title.localeCompare(b.title));
-      node.subfolders.sort((a, b) => a.name.localeCompare(b.name));
-      node.subfolders.forEach(sortNode);
-    };
-
-    sortNode(root);
-    return root;
-  }, [filteredFiles]);
+  const activeCount = specs.filter(
+    (spec) => selected[spec.key] && selected[spec.key] !== 'all'
+  ).length;
 
   return (
     <div>
@@ -256,97 +239,70 @@ export const FilterableList: React.FC<FilterableListProps> = ({
             </Text>
             <Input
               type="text"
-              placeholder={`Search ${type}...`}
+              placeholder={`Search ${noun}...`}
               variant="bordered"
               value={searchTerm}
               onChange={(value: string) => setSearchTerm(value)}
             />
           </div>
 
-          {/* Status Filter */}
-          <div>
-            <Text variant="subtle" size="sm" weight="medium" className="mb-2">
-              Status
-            </Text>
-            <Flex gap="xs" className="flex-wrap">
-              {filterOptions.statusOptions.map((option) => (
-                <button
-                  key={option.value}
-                  onClick={() => setStatusFilter(option.value)}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 ${
-                    statusFilter === option.value
-                      ? 'bg-accent text-white'
-                      : 'bg-surface-2 text-main hover:bg-surface-3'
-                  }`}
-                >
-                  {option.value !== 'all' && (
-                    <Icon name={getStatusIcon(option.value)} size="sm" />
-                  )}
-                  {option.label} ({option.count})
-                </button>
-              ))}
-            </Flex>
-          </div>
-
-          {/* Complexity Filter (only for tasks) */}
-          {type === 'tasks' && filterOptions.complexityOptions.length > 1 && (
-            <div>
-              <Text variant="subtle" size="sm" weight="medium" className="mb-2">
-                Complexity
-              </Text>
-              <Flex gap="xs" className="flex-wrap">
-                {filterOptions.complexityOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setComplexityFilter(option.value)}
-                    className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 ${
-                      complexityFilter === option.value
-                        ? 'bg-accent text-white'
-                        : 'bg-surface-2 text-main hover:bg-surface-3'
-                    }`}
-                  >
-                    {option.value !== 'all' && (
-                      <Icon name={getComplexityIcon(option.value)} size="sm" />
-                    )}
-                    {option.label} ({option.count})
-                  </button>
-                ))}
-              </Flex>
-            </div>
-          )}
-
-          {/* Priority Filter (only for bugs) */}
-          {type === 'bugs' && filterOptions.priorityOptions.length > 1 && (
-            <div>
-              <Text variant="subtle" size="sm" weight="medium" className="mb-2">
-                Priority
-              </Text>
-              <Flex gap="xs" className="flex-wrap">
-                {filterOptions.priorityOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => setPriorityFilter(option.value)}
-                    className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 ${
-                      priorityFilter === option.value
-                        ? 'bg-accent text-white'
-                        : 'bg-surface-2 text-main hover:bg-surface-3'
-                    }`}
-                  >
-                    {option.value !== 'all' && (
-                      <Icon name={getPriorityIcon(option.value)} size="sm" />
-                    )}
-                    {option.label} ({option.count})
-                  </button>
-                ))}
-              </Flex>
-            </div>
+          {filterOptions.map(({ spec, options }) =>
+            options.length > 1 ? (
+              <div key={spec.key}>
+                <Text variant="subtle" size="sm" weight="medium" className="mb-2">
+                  {spec.label}
+                </Text>
+                <Flex gap="xs" className="flex-wrap">
+                  {options.map((option) => {
+                    const isActive =
+                      (selected[spec.key] ?? 'all') === option.value;
+                    return (
+                      <button
+                        key={option.value}
+                        onClick={() =>
+                          setSelected((prev) => ({
+                            ...prev,
+                            [spec.key]: option.value,
+                          }))
+                        }
+                        className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 cursor-pointer ${
+                          isActive
+                            ? 'bg-accent text-white'
+                            : 'bg-surface-2 text-main hover:bg-surface-3'
+                        }`}
+                      >
+                        {option.value !== 'all' &&
+                          option.value !== NONE &&
+                          spec.icon && (
+                            <Icon name={spec.icon(option.value)} size="sm" />
+                          )}
+                        {option.label} ({option.count})
+                      </button>
+                    );
+                  })}
+                </Flex>
+              </div>
+            ) : null
           )}
 
           {/* Results count */}
           <div className="pt-2 border-t border-default">
-            <Text variant="subtle" size="sm">
-              Showing {filteredFiles.length} of {files.length} {type}
-            </Text>
+            <Flex gap="sm" align="center" className="flex-wrap">
+              <Text variant="subtle" size="sm">
+                Showing {filteredFiles.length} of {files.length} {noun}
+              </Text>
+              {(activeCount > 0 || searchTerm) && (
+                <button
+                  onClick={() => {
+                    setSelected({});
+                    setSearchTerm('');
+                  }}
+                  className="text-sm text-accent hover:underline cursor-pointer"
+                >
+                  Clear filters
+                </button>
+              )}
+            </Flex>
           </div>
         </Flex>
       </div>
@@ -355,67 +311,11 @@ export const FilterableList: React.FC<FilterableListProps> = ({
       <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
         <div className="p-6">
           {filteredFiles.length > 0 ? (
-            <div className="space-y-4">
-              {/* Render root files first */}
-              {buildFolderTree.files.length > 0 && (
-                <ul className="space-y-2">
-                  {buildFolderTree.files.map((file) => (
-                    <li key={file.path}>
-                      <Link
-                        to={`${basePath}/${file.slug}`}
-                        className="block hover:text-accent transition-colors"
-                      >
-                        <Flex gap="sm" align="center">
-                          <Text variant="main" size="md">
-                            • {file.title}
-                          </Text>
-                          {file.status && (
-                            <span
-                              className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getStatusStyle(
-                                file.status
-                              )}`}
-                            >
-                              <Icon name={getStatusIcon(file.status)} size="xs" />
-                              {file.status}
-                            </span>
-                          )}
-                          {file.complexity && (
-                            <span
-                              className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getComplexityStyle(
-                                file.complexity
-                              )}`}
-                            >
-                              <Icon name={getComplexityIcon(file.complexity)} size="xs" />
-                              {file.complexity}
-                            </span>
-                          )}
-                          {file.priority && (
-                            <span
-                              className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getPriorityStyle(
-                                file.priority
-                              )}`}
-                            >
-                              <Icon name={getPriorityIcon(file.priority)} size="xs" />
-                              {file.priority}
-                            </span>
-                          )}
-                        </Flex>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              )}
-
-              {/* Render folder tree recursively */}
-              {buildFolderTree.subfolders.map((folder) => (
-                <FolderView
-                  key={folder.path}
-                  folder={folder}
-                  basePath={basePath}
-                  level={0}
-                />
-              ))}
-            </div>
+            isIssues ? (
+              <IssueGroups files={filteredFiles} basePath={basePath} />
+            ) : (
+              <FolderTree files={filteredFiles} basePath={basePath} />
+            )
           ) : (
             <div className="text-center py-12">
               <Icon
@@ -424,7 +324,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                 className="text-muted mx-auto mb-4"
               />
               <Text variant="subtle" size="lg">
-                No {type} found
+                No {noun} found
               </Text>
               <Text variant="muted" size="sm">
                 Try adjusting your filters
@@ -437,96 +337,257 @@ export const FilterableList: React.FC<FilterableListProps> = ({
   );
 };
 
-// Recursive component for rendering folders
-interface FolderViewProps {
-  folder: {
-    name: string;
-    path: string;
-    files: MarkdownFile[];
-    subfolders: any[];
-  };
-  basePath: string;
-  level: number;
-}
+/** Newest first, then alphabetical. Undated files sort to the bottom. */
+const byDateThenTitle = (a: MarkdownFile, b: MarkdownFile) => {
+  const dateA = a.sortDate || '';
+  const dateB = b.sortDate || '';
+  if (dateA !== dateB) return dateB.localeCompare(dateA);
+  return a.title.localeCompare(b.title);
+};
 
-const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
-  const indent = level * 20; // 20px per nesting level
+const FileRow: React.FC<{ file: MarkdownFile; basePath: string }> = ({
+  file,
+  basePath,
+}) => (
+  <li>
+    <Link
+      to={`${basePath}/${file.slug}`}
+      className="block hover:text-accent transition-colors"
+    >
+      <Flex gap="sm" align="center" className="flex-wrap">
+        <Text variant="main" size="md">
+          • {file.title}
+        </Text>
+        {file.issueType && (
+          <span
+            className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getTypeStyle(
+              file.issueType
+            )}`}
+          >
+            <Icon name={getTypeIcon(file.issueType)} size="xs" />
+            {file.issueType}
+          </span>
+        )}
+        {file.status && (
+          <span
+            className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getStatusStyle(
+              file.status
+            )}`}
+          >
+            <Icon name={getStatusIcon(file.status)} size="xs" />
+            {file.status}
+          </span>
+        )}
+        {file.priority && (
+          <span
+            className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getPriorityStyle(
+              file.priority
+            )}`}
+          >
+            <Icon name={getPriorityIcon(file.priority)} size="xs" />
+            {file.priority}
+          </span>
+        )}
+        {file.parseError && (
+          <span className="px-2 py-0.5 rounded text-xs flex items-center gap-1 bg-danger/20 text-danger border border-danger/30">
+            <Icon name="warning" size="xs" />
+            invalid frontmatter
+          </span>
+        )}
+      </Flex>
+    </Link>
+  </li>
+);
+
+/**
+ * Issues grouped by epic.
+ *
+ * Only the epic is a heading. The status folders (`.done/`, `.archived/`, and
+ * an epic's own nested ones) are deliberately flattened away: state is a filter
+ * now, so rendering it as a second level of headings would split every epic
+ * into piles that the chips already separate on demand.
+ */
+const IssueGroups: React.FC<{ files: MarkdownFile[]; basePath: string }> = ({
+  files,
+  basePath,
+}) => {
+  const { ungrouped, epics } = useMemo(() => {
+    const loose: MarkdownFile[] = [];
+    const grouped = new Map<string, MarkdownFile[]>();
+
+    files.forEach((file) => {
+      if (file.epic) {
+        const bucket = grouped.get(file.epic) ?? [];
+        bucket.push(file);
+        grouped.set(file.epic, bucket);
+      } else {
+        loose.push(file);
+      }
+    });
+
+    loose.sort(byDateThenTitle);
+    grouped.forEach((bucket) => bucket.sort(byDateThenTitle));
+
+    return {
+      ungrouped: loose,
+      epics: [...grouped.entries()].sort((a, b) => a[0].localeCompare(b[0])),
+    };
+  }, [files]);
 
   return (
-    <div style={{ marginLeft: `${indent}px` }} className="space-y-3">
-      {/* Folder Header */}
-      <div className="mb-2">
-        <Flex gap="xs" align="center">
-          <Icon name="folder" size="md" className="text-accent" />
-          <Text variant="main" size="lg" weight="semibold" className="text-accent">
-            {folder.name.charAt(0).toUpperCase() + folder.name.slice(1)}
-          </Text>
-        </Flex>
-        <div className="h-px bg-border mt-1" />
-      </div>
-
-      {/* Files in this folder */}
-      {folder.files.length > 0 && (
-        <ul className="space-y-2 mb-4">
-          {folder.files.map((file) => (
-            <li key={file.path}>
-              <Link
-                to={`${basePath}/${file.slug}`}
-                className="block hover:text-accent transition-colors"
-              >
-                <Flex gap="sm" align="center">
-                  <Text variant="main" size="md">
-                    • {file.title}
-                  </Text>
-                  {file.status && (
-                    <span
-                      className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getStatusStyle(
-                        file.status
-                      )}`}
-                    >
-                      <Icon name={getStatusIcon(file.status)} size="xs" />
-                      {file.status}
-                    </span>
-                  )}
-                  {file.complexity && (
-                    <span
-                      className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getComplexityStyle(
-                        file.complexity
-                      )}`}
-                    >
-                      <Icon name={getComplexityIcon(file.complexity)} size="xs" />
-                      {file.complexity}
-                    </span>
-                  )}
-                  {file.priority && (
-                    <span
-                      className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getPriorityStyle(
-                        file.priority
-                      )}`}
-                    >
-                      <Icon name={getPriorityIcon(file.priority)} size="xs" />
-                      {file.priority}
-                    </span>
-                  )}
-                </Flex>
-              </Link>
-            </li>
+    <div className="space-y-4">
+      {ungrouped.length > 0 && (
+        <ul className="space-y-2">
+          {ungrouped.map((file) => (
+            <FileRow key={file.path} file={file} basePath={basePath} />
           ))}
         </ul>
       )}
 
-      {/* Render subfolders recursively */}
-      {folder.subfolders.map((subfolder) => (
+      {epics.map(([epic, epicFiles]) => (
+        <div key={epic} className="space-y-3">
+          <div className="mb-2">
+            <Flex gap="xs" align="center">
+              <Icon name="folder" size="md" className="text-accent" />
+              <Text
+                variant="main"
+                size="lg"
+                weight="semibold"
+                className="text-accent"
+              >
+                {capitalize(epic)}
+              </Text>
+              <Text variant="subtle" size="sm">
+                ({epicFiles.length})
+              </Text>
+            </Flex>
+            <div className="h-px bg-border mt-1" />
+          </div>
+          <ul className="space-y-2 mb-4">
+            {epicFiles.map((file) => (
+              <FileRow key={file.path} file={file} basePath={basePath} />
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+interface FolderNode {
+  name: string;
+  path: string;
+  files: MarkdownFile[];
+  subfolders: FolderNode[];
+}
+
+/** Docs and reports keep the nested folder tree — their folders are subject
+ *  matter (features/, debugging/), not status. */
+const FolderTree: React.FC<{ files: MarkdownFile[]; basePath: string }> = ({
+  files,
+  basePath,
+}) => {
+  const root = useMemo(() => {
+    const tree: FolderNode = { name: 'root', path: '', files: [], subfolders: [] };
+
+    files.forEach((file) => {
+      const folder = file.folder || 'root';
+
+      if (folder === 'root') {
+        tree.files.push(file);
+        return;
+      }
+
+      const folderParts = folder.split('/');
+
+      // A root-level dot folder (.archived, .done) is status, not subject
+      // matter, so its files render at the top level.
+      if (folderParts.length === 1 && folderParts[0].startsWith('.')) {
+        tree.files.push(file);
+        return;
+      }
+
+      let currentNode = tree;
+      let currentPath = '';
+
+      folderParts.forEach((part) => {
+        currentPath = currentPath ? `${currentPath}/${part}` : part;
+        let subfolder = currentNode.subfolders.find((sf) => sf.name === part);
+        if (!subfolder) {
+          subfolder = { name: part, path: currentPath, files: [], subfolders: [] };
+          currentNode.subfolders.push(subfolder);
+        }
+        currentNode = subfolder;
+      });
+
+      currentNode.files.push(file);
+    });
+
+    const sortNode = (node: FolderNode) => {
+      node.files.sort((a, b) => a.title.localeCompare(b.title));
+      node.subfolders.sort((a, b) => a.name.localeCompare(b.name));
+      node.subfolders.forEach(sortNode);
+    };
+
+    sortNode(tree);
+    return tree;
+  }, [files]);
+
+  return (
+    <div className="space-y-4">
+      {root.files.length > 0 && (
+        <ul className="space-y-2">
+          {root.files.map((file) => (
+            <FileRow key={file.path} file={file} basePath={basePath} />
+          ))}
+        </ul>
+      )}
+      {root.subfolders.map((folder) => (
         <FolderView
-          key={subfolder.path}
-          folder={subfolder}
+          key={folder.path}
+          folder={folder}
           basePath={basePath}
-          level={level + 1}
+          level={0}
         />
       ))}
     </div>
   );
 };
+
+const FolderView: React.FC<{
+  folder: FolderNode;
+  basePath: string;
+  level: number;
+}> = ({ folder, basePath, level }) => (
+  <div style={{ marginLeft: `${level * 20}px` }} className="space-y-3">
+    <div className="mb-2">
+      <Flex gap="xs" align="center">
+        <Icon name="folder" size="md" className="text-accent" />
+        <Text variant="main" size="lg" weight="semibold" className="text-accent">
+          {capitalize(folder.name)}
+        </Text>
+      </Flex>
+      <div className="h-px bg-border mt-1" />
+    </div>
+
+    {folder.files.length > 0 && (
+      <ul className="space-y-2 mb-4">
+        {folder.files.map((file) => (
+          <FileRow key={file.path} file={file} basePath={basePath} />
+        ))}
+      </ul>
+    )}
+
+    {folder.subfolders.map((subfolder) => (
+      <FolderView
+        key={subfolder.path}
+        folder={subfolder}
+        basePath={basePath}
+        level={level + 1}
+      />
+    ))}
+  </div>
+);
 
 // Helper functions for styling
 function getStatusStyle(status: string): string {
@@ -541,12 +602,6 @@ function getStatusStyle(status: string): string {
       return 'bg-surface-2 text-subtle border border-default';
     case 'deferred':
       return 'bg-info/20 text-info border border-info/30';
-    case 'blocked':
-      return 'bg-danger/20 text-danger border border-danger/30';
-    case 'design':
-      return 'bg-accent/10 text-accent border border-accent/20';
-    case 'backlog':
-      return 'bg-surface-2 text-subtle border border-default';
     case 'archived':
       return 'bg-muted/20 text-muted border border-muted/30';
     default:
@@ -554,19 +609,10 @@ function getStatusStyle(status: string): string {
   }
 }
 
-function getComplexityStyle(complexity: string): string {
-  switch (complexity) {
-    case 'low':
-      return 'bg-success/20 text-success border border-success/30';
-    case 'medium':
-      return 'bg-accent/20 text-accent border border-accent/30';
-    case 'high':
-      return 'bg-warning/20 text-warning border border-warning/30';
-    case 'very-high':
-      return 'bg-danger/20 text-danger border border-danger/30';
-    default:
-      return 'bg-surface-2 text-subtle border border-default';
-  }
+function getTypeStyle(type: string): string {
+  return type === 'bug'
+    ? 'bg-danger/20 text-danger border border-danger/30'
+    : 'bg-accent/10 text-accent border border-accent/20';
 }
 
 function getPriorityStyle(priority: string): string {
@@ -576,8 +622,6 @@ function getPriorityStyle(priority: string): string {
     case 'medium':
       return 'bg-accent/20 text-accent border border-accent/30';
     case 'high':
-      return 'bg-warning/20 text-warning border border-warning/30';
-    case 'critical':
       return 'bg-danger/20 text-danger border border-danger/30';
     default:
       return 'bg-surface-2 text-subtle border border-default';
