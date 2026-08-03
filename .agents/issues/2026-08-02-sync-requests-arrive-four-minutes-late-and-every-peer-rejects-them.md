@@ -2,7 +2,7 @@
 type: bug
 title: "A reconnecting client starves control-message processing for minutes, so every sync-request expires unread and a new joiner is answered by nobody"
 status: in-progress
-priority: MEDIUM — downgraded 2026-08-03. The roster symptom is fixed (desktop #300, see §0b); the head-of-line blocking underneath it is not, and still delays every perishable control frame
+priority: medium
 created: 2026-08-02
 updated: 2026-08-03
 severity: was "a new member is answered by NOBODY and stays at 1 member row indefinitely" — that path now self-repairs; what remains is control frames read minutes late
@@ -563,6 +563,62 @@ case, and are close to a no-op for ordinary live traffic. Anyone measuring this
 must reproduce the dump shape or they will measure nothing and conclude there is
 no bug.
 
+### ⛔ FALSIFIED — bounded chunks do NOT fix this. Measured, then discarded.
+
+> 2026-08-03. The fix was **implemented** and run against the instrument from
+> #306. It does not work, the code was discarded, and this is the most useful
+> negative result in the issue.
+
+| configuration | frames the late frame waited |
+|---|---|
+| no fix (single unbounded batch) | **360** |
+| bounded chunks, 100 frames | **262** |
+| bounded chunks, **10** frames | **352** |
+
+Making the chunk **10× smaller made it slightly worse.** The variation is noise,
+not a trend. Chunk size is simply not the variable.
+
+#### Why — and the error is in the framing, not the code
+
+The diagnosis was "the frame is not in the running batch, so let it into one
+sooner." That is true and irrelevant. **Being in the batch does not help a frame
+that is at the BACK of a FIFO queue.** Letting it in one chunk earlier moves it
+from position 401 to position 361; it still waits for every frame ahead of it.
+
+Restated correctly, and this is what the numbers say:
+
+> **The wait is the number of frames QUEUED AHEAD of it, times the per-frame
+> cost.** Batching, chunking and grouping change how those frames are packaged.
+> None of them change how many are in front.
+
+#### What that leaves — three levers, and chunking is not one
+
+1. **Prioritisation** — move the perishable frame forward. The only lever that
+   attacks queue POSITION. Cut earlier because `rekey`/`kick` ride `type: 'sync'`
+   and would overtake older posts. ⚠️ Note #305 changed this picture: frames that
+   fail to open are now retained and retried rather than destroyed, so the
+   failure is no longer *permanent*. It is still a failure — the old config key
+   is gone, so the retries also fail until the budget expires. **Making
+   prioritisation safe requires versioning the space config key** (keep the
+   previous one for a grace window), which is the security review's condition (b).
+   That is now the main open design question.
+2. **Fewer frames in the queue** — attack the SOURCES of backlog rather than its
+   scheduling. This is why
+   `2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md`
+   just became much more interesting: un-acked frames are redelivered on every
+   reconnect forever, so any such leak is a permanently growing queue depth. Same
+   for `2026-07-20-announce-keys-flooding-unbounded-admissions.md`. **Halving the
+   queue halves the wait, with none of prioritisation's risk.**
+3. **Cheaper frames** — ~15 sequential IndexedDB round trips each. Real, but a
+   constant factor, and the `getSpace` attempt showed the easy-looking wins are
+   entangled with authorization gates.
+
+#### What was kept
+
+The instrument (#306). It did its job on its first outing: it falsified a fix
+that four reviews, including two adversarial ones, had all treated as sound in
+principle. Nobody caught this by reading — the numbers caught it in ten minutes.
+
 ### ✅ Confirmed: the mechanism
 
 Two reviewers derived it independently from the code rather than from the
@@ -661,9 +717,10 @@ calling its removal free.
    means the fix did not take.**
 2. ❌ **DROPPED — the `getSpace` dedupe is not free.** See above; it touches
    authorization gates.
-3. **Bounded chunks**, validated against (1). This is now the only remaining
-   piece of the latency work, and it has a real acceptance test for the first
-   time.
+3. ⛔ **DROPPED — bounded chunks do not fix it.** Built, measured against (1),
+   falsified, discarded. See the FALSIFIED section above. **Do not re-propose it
+   without first explaining how it changes queue POSITION**, which is the only
+   thing that matters.
 4. ✅ **DONE — desktop #305.**
    `2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md`
    is fixed and filed in `.done/`.
