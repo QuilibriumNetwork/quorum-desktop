@@ -228,11 +228,11 @@ Automatically updates all required systems:
 **Skill Response**:
 ```
 🔍 Analyzing 'bugs' folder...
-✅ Found 47 files across subfolders (.solved, .archived)
+✅ Found 47 files across subfolders (.done, .archived)
 ✅ Detected integrations: docs-manager, dev UI, routing
 
 ⚠️  RENAME OPERATION - Will preserve all content
-├── Rename .agents/bugs/ → .agents/issues/
+├── Rename .agents/legacy-notes/ → .agents/decisions/
 ├── Update all 47 existing file references
 ├── Modify docs-manager templates (bugs→issues)
 ├── Update dev navigation and component
