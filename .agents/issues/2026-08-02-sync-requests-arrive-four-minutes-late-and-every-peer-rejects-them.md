@@ -520,6 +520,49 @@ running anything:
 > cross-platform, per-frame cost, diagnosis re-derivation). This section is the
 > current state of knowledge. Where it contradicts §0d, this wins.
 
+### 📏 MEASURED at last — the instrument exists (desktop #306)
+
+> Added 2026-08-03, after building the missing test. Everything below this
+> subsection was established by READING. This part was established by RUNNING,
+> and it sharpens the diagnosis.
+
+`src/dev/tests/components/websocketInboundPickup.unit.test.tsx` drives the real
+provider with a fake socket. Deterministic result:
+
+> A frame injected after 40 frames of a **400-frame relay dump** is handled at
+> **position 400** — it waits **360 frames** — despite being on a DIFFERENT
+> inbox, one that would have run concurrently had it been in the batch at all.
+
+**The defect reproduces on demand, outside the harness, in ~15 seconds.**
+
+#### ⚠️ The sharpened mechanism, and it is NOT "a frame waits for the batch"
+
+Two earlier attempts measured **nothing**, and why they failed is most of the
+value:
+
+| arrival shape | where the late frame landed |
+|---|---|
+| whole flood delivered synchronously | position **1 of 13** |
+| evenly spaced, 4× faster than processing | waited **9 frames of 500** |
+
+Both are real behaviours; neither is the bug. The correct statement is:
+
+**The wait is bounded by the frames REMAINING IN THE BATCH THAT IS ALREADY
+RUNNING.** It only becomes large when the whole backlog is already inside one
+batch when the late frame arrives.
+
+Under spread-out arrival, batches grow geometrically (each drains what
+accumulated during the last) but stay small, and the wait is trivial. Under a
+**relay dump** — thousands of retained frames landing essentially at once, which
+is exactly a reconnect — one batch swallows the lot and the wait is the whole
+backlog.
+
+**This is why the fix is worth building and also why it is narrower than it
+sounded:** bounded chunks help enormously in the dump case, which is the field
+case, and are close to a no-op for ordinary live traffic. Anyone measuring this
+must reproduce the dump shape or they will measure nothing and conclude there is
+no bug.
+
 ### ✅ Confirmed: the mechanism
 
 Two reviewers derived it independently from the code rather than from the
@@ -611,17 +654,26 @@ calling its removal free.
 
 ### The order to work in
 
-1. **Build the missing instrument.** There is no unit test of `processInbound`
-   anywhere (confirmed by grep — `websocketFlushOutbound.unit.test.tsx` is the
-   only file importing `WebsocketProvider` outside the harness, and it exercises
-   only the outbound path). Needed: a test that starts a batch, enqueues a frame
-   mid-flight, and asserts when it is picked up. **That is the acceptance test
-   this fix actually needs**; without it any fix ships on reasoning alone.
-2. **Remove the redundant `getSpace` reads.** Free, isolated, measurable.
-3. **Then bounded chunks**, validated against (1).
-4. **Separately and arguably first:**
-   `2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md`.
-   Losing messages is worse than waiting for them.
+1. ✅ **DONE — the instrument exists** (desktop #306). See the measured section
+   above. Its assertion is deliberately written to FLIP when the fix lands:
+   `expect(waitedFrames).toBeGreaterThan(floodSize * 0.5)` becomes an upper
+   bound of about one chunk. **A green run on the current assertion after a fix
+   means the fix did not take.**
+2. ❌ **DROPPED — the `getSpace` dedupe is not free.** See above; it touches
+   authorization gates.
+3. **Bounded chunks**, validated against (1). This is now the only remaining
+   piece of the latency work, and it has a real acceptance test for the first
+   time.
+4. ✅ **DONE — desktop #305.**
+   `2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md`
+   is fixed and filed in `.done/`.
+5. **NEW, and unquantified:**
+   `2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md`.
+   A typing frame returns before the inbox ack. If the relay retains those, every
+   typing indicator ever sent accumulates and is redelivered on every reconnect —
+   a permanently growing backlog that sits UPSTREAM of all of this and that no
+   amount of client-side chunking would fix. The code path is confirmed; whether
+   the relay retains them is not, and that is a binary experiment.
 
 Optional, if per-frame timing is ever wanted directly: stamp `arrivedAt` in
 `transport.ts`'s `ws.on('message')` and timestamp `spaceBot`'s trace lines. Then
