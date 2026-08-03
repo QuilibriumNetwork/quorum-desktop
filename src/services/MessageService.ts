@@ -5594,7 +5594,8 @@ export class MessageService {
             // flood had drained. The request was never wrong; only its timing
             // was, which is why re-asking is the whole repair.
             //
-            // See .agents/issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md
+            // See 2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md
+            // under .agents/issues/ (filed by state, so grep the name — it moves).
             const learnedTarget = this.rosterConvergence.noteAdvertisedRoster(
               spaceId,
               envelope.message.memberCount ?? envelope.message.summary?.memberCount

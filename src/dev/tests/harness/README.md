@@ -9,7 +9,8 @@ Two halves, sharing identity/transport/storage:
 - **DM** — `bot.ts` + `deps.ts` + `dm-*.scenario.test.ts`. Complete through slice 4.
 - **SPACES** — `spaceBot.ts` + `spaceDeps.ts` + `outbound.ts` + `space-*.scenario.test.ts`.
   Slices S0-S1 done. Built to characterise the intermittent roster-pull failure
-  (`.agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`).
+  (`2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` under
+  `.agents/issues/` — issues are filed by state and move, so grep the filename).
 
 It is **not** a reimplementation of the protocol. It re-hosts the real client:
 the SDK wasm crypto core, `fake-indexeddb` for storage, Node's native `fetch` +

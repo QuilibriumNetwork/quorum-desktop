@@ -41,8 +41,9 @@
 // have, and giving them "false" with no reason attached reproduces exactly the
 // blindness that made the original bug take a session to find.
 //
-// See .agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
-// (NEXT STEP B).
+// See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under
+// .agents/issues/ (NEXT STEP B). Issues are filed by state and move between
+// .open/, the root and .done/, so grep the filename rather than trusting a path.
 
 import { advertisedCount } from '@quilibrium/quorum-shared';
 
