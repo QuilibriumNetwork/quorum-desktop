@@ -102,7 +102,7 @@ export const Docs: React.FC = () => {
 
         {/* Filterable Documentation List */}
         {!loading && (
-          <FilterableList files={docFiles} type="docs" basePath="/dev/docs" />
+          <FilterableList files={docFiles} section="docs" basePath="/dev/docs" />
         )}
       </div>
     </div>

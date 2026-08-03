@@ -19,14 +19,9 @@ const devNavItems: DevNavItem[] = [
     path: '/dev/docs',
   },
   {
-    name: 'Tasks',
+    name: 'Issues',
     icon: 'clipboard-list',
-    path: '/dev/tasks',
-  },
-  {
-    name: 'Bugs',
-    icon: 'bug',
-    path: '/dev/bugs',
+    path: '/dev/issues',
   },
   {
     name: 'Reports',

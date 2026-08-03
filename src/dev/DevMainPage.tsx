@@ -17,16 +17,11 @@ export const DevMainPage: React.FC = () => {
       path: '/dev/docs',
     },
     {
-      name: 'Tasks',
+      name: 'Issues',
       icon: 'clipboard-list',
-      description: 'View development tasks and implementation plans',
-      path: '/dev/tasks',
-    },
-    {
-      name: 'Bug Reports',
-      icon: 'bug',
-      description: 'Browse bug reports and known issues',
-      path: '/dev/bugs',
+      description:
+        'Bugs and tasks, filterable by type, state, priority and complexity',
+      path: '/dev/issues',
     },
     {
       name: 'Reports & Audits',

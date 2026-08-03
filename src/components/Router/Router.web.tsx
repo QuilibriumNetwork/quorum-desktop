@@ -81,8 +81,7 @@ const DevMainPage = lazyDevImport(
   'DevMainPage'
 );
 const Docs = lazyDevImport(() => import('@/dev/docs/Docs'), 'Docs');
-const Tasks = lazyDevImport(() => import('@/dev/docs/Tasks'), 'Tasks');
-const Bugs = lazyDevImport(() => import('@/dev/docs/Bugs'), 'Bugs');
+const Issues = lazyDevImport(() => import('@/dev/docs/Issues'), 'Issues');
 const Reports = lazyDevImport(() => import('@/dev/docs/Reports'), 'Reports');
 const DbInspector = lazyDevImport(
   () => import('@/dev/db-inspector'),
@@ -300,22 +299,12 @@ export function Router({ user, setUser }: RouterProps) {
           }
         />
       )}
-      {process.env.NODE_ENV === 'development' && Tasks && (
+      {process.env.NODE_ENV === 'development' && Issues && (
         <Route
-          path="/dev/tasks/:taskId?"
+          path="/dev/issues/:issueId?"
           element={
-            <Suspense fallback={<div>Loading tasks...</div>}>
-              <Tasks />
-            </Suspense>
-          }
-        />
-      )}
-      {process.env.NODE_ENV === 'development' && Bugs && (
-        <Route
-          path="/dev/bugs/:bugId?"
-          element={
-            <Suspense fallback={<div>Loading bug reports...</div>}>
-              <Bugs />
+            <Suspense fallback={<div>Loading issues...</div>}>
+              <Issues />
             </Suspense>
           }
         />
