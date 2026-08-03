@@ -228,7 +228,7 @@ cd mobile/android && ./gradlew clean
 ## Related Documentation
 
 - [Expo Dev Testing Guide](../expo-dev-testing-guide.md) — General Expo setup and testing workflows
-- [Metro Bundling Bug Report](../../.agents/bugs/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
+- [Metro Bundling Bug Report](../../.agents/issues/.done/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
 
 ---
 
