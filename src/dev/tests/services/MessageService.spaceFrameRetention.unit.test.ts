@@ -194,6 +194,42 @@ describe('a space frame that cannot be opened is kept on the relay', () => {
     expect(mockDeps.deleteInboxMessages).toHaveBeenCalled();
   });
 
+  // ── The other half of the ack contract ──────────────────────────────────
+  //
+  // The tests above are about NOT deleting a frame we could not open. This one
+  // is the opposite failure, and it was live: a frame we DID process, and never
+  // acked.
+  //
+  // A typing indicator returns early from `handleNewMessage`, and that return
+  // used to skip the tail — the only place a space frame is acked. So every
+  // typing indicator ever received stayed on the relay and was re-pushed on
+  // every `listen`, forever.
+  //
+  // MEASURED (`yarn harness space-typing`), same run, same reconnect:
+  //   before the fix — post redelivered 0x, typing redelivered 2x
+  //   after  the fix — post redelivered 0x, typing redelivered 0x
+  //
+  // This is the cheap guard for that; the harness scenario is the real proof.
+  it('acks a typing indicator, which is processed and then returned from early', async () => {
+    unsealThrows = false;
+    unsealedPayload = JSON.stringify({
+      type: 'message',
+      message: {
+        type: 'typing-start',
+        senderId: 'QmSomeoneElse',
+        scope: 'space',
+        spaceId: SPACE_ID,
+        channelId: SPACE_ID,
+        timestamp: Date.now(),
+      },
+    });
+
+    await deliver(spaceFrame(6666, 'typing'));
+    await settle();
+
+    expect(mockDeps.deleteInboxMessages).toHaveBeenCalled();
+  });
+
   // The budget is per frame, not global — one poisonous frame must not spend
   // another frame's allowance.
   it('tracks frames independently', async () => {
