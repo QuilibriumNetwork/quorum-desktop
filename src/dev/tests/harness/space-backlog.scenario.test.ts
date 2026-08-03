@@ -61,10 +61,17 @@ const ITERATIONS = Number(process.env.HARNESS_BACKLOG_ITERATIONS ?? 2);
 const ROSTER = Number(process.env.HARNESS_BACKLOG_ROSTER ?? 79);
 const WINDOW_MS = Number(process.env.HARNESS_BACKLOG_WINDOW_MS ?? 180_000);
 const SAMPLE_MS = 2000;
+/** Re-ask after the flood drains, to test the "don't ask until you can listen" fix shape. */
+const LATE_REASK = process.env.HARNESS_BACKLOG_LATE_REASK !== '0';
+const LATE_WINDOW_MS = Number(
+  process.env.HARNESS_BACKLOG_LATE_WINDOW_MS ?? 60_000
+);
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 interface Trial {
+  /** Did a re-ask AFTER the flood recover the roster? undefined = not attempted. */
+  lateOk?: boolean;
   backlog: number;
   iteration: number;
   ok: boolean;
@@ -154,8 +161,43 @@ test(
             }
           }
 
-          const got = await b.members(s2.spaceId);
+          let got = await b.members(s2.spaceId);
+
+          // ── LATE RE-ASK ARM ────────────────────────────────────────────────
+          //
+          // Tests a candidate FIX without writing any product code: if the only
+          // problem is that the request was issued while we could not process
+          // the reply in time, then asking again once the flood has drained
+          // should just work. `requestSync=4` in the failed runs shows it
+          // already re-asks DURING the flood and wastes every one, so the
+          // variable being tested is the TIMING of the ask, not its existence.
+          //
+          // A recovery here validates "defer the ask until the inbound queue is
+          // quiet" — desktop-only, no change to expiry semantics — and rules
+          // out the far larger cross-repo change of accepting offers without an
+          // open session.
+          let lateOk: boolean | undefined;
+          if (!got || got < target) {
+            if (LATE_REASK) {
+              say(
+                `    flood done (${b.transport.arrived.length - framesBefore} frames); re-asking…`
+              );
+              await b.requestSync(s2.spaceId);
+              const lateDeadline = Date.now() + LATE_WINDOW_MS;
+              while (Date.now() < lateDeadline) {
+                await sleep(SAMPLE_MS);
+                if ((await b.members(s2.spaceId)) >= target) break;
+              }
+              got = await b.members(s2.spaceId);
+              lateOk = got >= target;
+              say(
+                `    late re-ask: ${lateOk ? 'RECOVERED' : 'still short'} rows=${got}/${target}`
+              );
+            }
+          }
+
           const trial: Trial = {
+            lateOk,
             backlog,
             iteration: i,
             ok: got >= target,
