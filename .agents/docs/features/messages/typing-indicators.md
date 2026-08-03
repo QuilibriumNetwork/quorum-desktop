@@ -53,7 +53,7 @@ The one plausible slow-leak vector is `skipped_keys_map` growth on a single DR r
 
 Space typing rides Triple Ratchet hub broadcast and does NOT advance any per-conversation ratchet — see [`cryptographic-architecture.md`](.agents/docs/cryptographic-architecture.md) for the broadcast model.
 
-Full analysis: [`.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md`](.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md).
+Full analysis: [`.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md`](../../../issues/.done/2026-05-18-typing-dm-ratchet-investigation.md).
 
 ## Key files
 

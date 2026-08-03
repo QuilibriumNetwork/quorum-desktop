@@ -27,7 +27,7 @@ Concrete next moves (in priority order):
 
 2. **Run a fresh small-bucket sweep.** Past sweeps surfaced bonus C1 findings (one side reimplements what shared exports). Direction varies by session. Worth re-running since a lot of new shared surface landed since the last sweep (role helpers, `formatAddress`, date formatters, image config).
 
-3. **Channel pinning removal** — only START if [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) is the next desktop feature being implemented. Otherwise leave paused.
+3. **Channel pinning removal** — only START if [`../2026-01-07-channel-ordering-feature.md`](../.done/2026-01-07-channel-ordering-feature.md) is the next desktop feature being implemented. Otherwise leave paused.
 
 4. **Wait on Phase 5 reply.** Issue [quorum-mobile#67](https://github.com/QuilibriumNetwork/quorum-mobile/issues/67) filed 2026-05-30, still no reply as of 2026-07-16. Lead reply unblocks Phase 7. If it's been sitting this long, a specific ping (per the "make the cost visible" rule in cross-repo-workflow.md) may be warranted.
 
@@ -117,8 +117,8 @@ Re-evaluate the services currently blocked or deferred. **Mostly defer-by-design
 ## Paused tracks (not in the linear sequence)
 
 - **Notifications convergence** — mobile issue #65, no replies as of 2026-05-29. Architecturally complex (mobile MMKV + iOS NSE vs desktop `UserConfig`-synced). Full investigation in [../../reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md). Includes the deferred `getMutedChannelsForSpace` + `isChannelMuted` migration.
-- **Channel reorder pure helpers (future C4)** — desktop's channel-ordering feature ([`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md)) ships reorder hooks as desktop-local for now. Pure `Space → Space` transforms (`moveChannelInSpace`, `reorderGroupsInSpace`, `reorderChannelsInGroup`) are identical between platforms — clean C4 candidate once the feature ships AND mobile addresses the broadcast gap ([mobile #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)).
-- **Channel pinning removal (cross-repo)** — separate from the migration; tracked in [`../2026-01-07-channel-ordering-feature.md`](../2026-01-07-channel-ordering-feature.md) §6. Drops `Channel.isPinned`/`pinnedAt` from shared types + mobile's unused `usePinChannel` + desktop's pin UI. Pattern A sequencing (mobile first).
+- **Channel reorder pure helpers (future C4)** — desktop's channel-ordering feature ([`../2026-01-07-channel-ordering-feature.md`](../.done/2026-01-07-channel-ordering-feature.md)) ships reorder hooks as desktop-local for now. Pure `Space → Space` transforms (`moveChannelInSpace`, `reorderGroupsInSpace`, `reorderChannelsInGroup`) are identical between platforms — clean C4 candidate once the feature ships AND mobile addresses the broadcast gap ([mobile #66](https://github.com/QuilibriumNetwork/quorum-mobile/issues/66)).
+- **Channel pinning removal (cross-repo)** — separate from the migration; tracked in [`../2026-01-07-channel-ordering-feature.md`](../.done/2026-01-07-channel-ordering-feature.md) §6. Drops `Channel.isPinned`/`pinnedAt` from shared types + mobile's unused `usePinChannel` + desktop's pin UI. Pattern A sequencing (mobile first).
 
 ## Explicit non-goals (don't re-debate)
 

@@ -127,7 +127,7 @@ For each, the format is:
     - Collapsed-strip DnD is also implemented now (was deferred originally). `SpacesSidebarRow compact` participates in DnD; folders render via `SpacesSidebarFolder collapsed`.
   - **Action:** This is the longest rewrite. Plan ~1 hour. Section-by-section: read the existing prose, then rewrite the architecture sections against §1 files. Keep historical context where it adds clarity (e.g. "the old `FolderContainer` rendered children as 72px icon tiles; the new `SpacesSidebarFolder` uses the two-line row layout for visual consistency with top-level rows"). Keep all DnD logic descriptions — they still apply.
 
-- [responsive-layout.md](../../.agents/docs/features/responsive-layout.md)
+- [responsive-layout.md](responsive-layout.md)
   - **Confidence:** HIGH
   - **Stale claims:** Lines 25, 57, 65, 71, 76, 98 describe NavMenu widths (74px / 50px) and reference `navbar/NavMenu.scss` for CSS.
   - **What's true now:**

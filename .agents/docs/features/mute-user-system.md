@@ -246,7 +246,7 @@ canMuteUser(): boolean {
 
 **Location**: `src/services/MessageService.ts`
 
-As of the **2026-07-19 control-message-auth fix** (see `.agents/issues/2026-06-25-MASTER-RECAP-control-message-auth.md`), mute authorization on the receive side is performed against the **cryptographically verified ed448 signer**, not the spoofable plaintext `muteContent.senderId`. The flow is:
+As of the **2026-07-19 control-message-auth fix** (see `.agents/issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md`), mute authorization on the receive side is performed against the **cryptographically verified ed448 signer**, not the spoofable plaintext `muteContent.senderId`. The flow is:
 
 1. `isSpaceControlAuthorized()` calls `resolveVerifiedSender(decryptedContent.publicKey, members)` — a reverse lookup from the verified signing public key to the matching space member.
 2. `authorizeControlMessage()` (from `quorum-shared/src/utils/messageAuth.ts`) then checks `canMuteUser()` on the verified sender's identity via `createChannelPermissionChecker`.

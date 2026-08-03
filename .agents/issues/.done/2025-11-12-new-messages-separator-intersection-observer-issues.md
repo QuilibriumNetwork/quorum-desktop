@@ -323,7 +323,7 @@ When implementing the fix, verify:
 ## Documentation
 
 - [new-messages-separator.md](../docs/features/messages/new-messages-separator.md) - Feature spec
-- [auto-jump-first-unread.md](../docs/features/messages/auto-jump-first-unread.md) - Related feature
+- [auto-jump-first-unread.md](../.archived/auto-jump-first-unread.md) - Related feature
 
 ---
 

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Identity announce: cap the retries instead of re-sending forever, and fix what un-converges a row"
-status: in-progress
+status: done
 priority: medium — the two live bugs it uncovered are fixed and merged
 created: 2026-08-01
 updated: 2026-08-01
@@ -13,7 +13,7 @@ related_tasks:
   - ".agents/issues/2026-08-01-space-member-identity-announce-on-connect.md"
   - ".agents/issues/transport/README.md"
 related_bugs:
-  - ".agents/issues/.open/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md"
+  - ".agents/issues/.done/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md"
 related_docs:
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
 ---
@@ -22,7 +22,7 @@ related_docs:
 
 > **One file.** Research, decision and work all live here. The only separate
 > document is a distinct defect this uncovered, with its own repro:
-> `.agents/issues/.open/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`.
+> `.agents/issues/.done/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`.
 
 ---
 
@@ -80,7 +80,7 @@ which is what the announce work covers and what mobile #215 unblocks once releas
 
 1. **The exchange is unreliable** — one two-client run delivered nothing at all,
    same clients, same code. Members ride a SINGLE payload with no retry until the
-   next connect. See `.agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`.
+   next connect. See `.agents/issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`.
 2. **Peer selection ignores roster completeness** — same bug file. Small, contained.
 3. **Nothing recovers a member nobody holds.** A's 41. Needs those users to
    re-announce; blocked on a mobile release carrying #215.
@@ -349,7 +349,7 @@ the wire, no new type needed:
 | delta applied on receive | `src/services/MessageService.ts:5645-5669` |
 
 It does not work for identity, for two reasons filed as
-`.agents/issues/.open/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`
+`.agents/issues/.done/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`
 (**unverified — code reading only; that file's §4 is the repro**): the digest
 hashes only the per-space **override** slot, which the follow-global work
 deliberately emptied, so most members hash to `hash('')` on both fields; and

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "The roster pull works, but it is unreliable and it picks its peer badly (originally filed as 'delivers nothing')"
-status: open
+status: in-progress
 priority: medium — downgraded from HIGH once the mechanism was shown to work
 created: 2026-08-02
 updated: 2026-08-02
@@ -14,7 +14,7 @@ related_bugs:
 related_docs:
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
 related_tasks:
-  - ".agents/issues/2026-08-01-identity-announce-cadence-research.md (Step 4)"
+  - ".agents/issues/.done/2026-08-01-identity-announce-cadence-research.md (Step 4)"
   - ".agents/issues/port-from-mobile/candidates.md (#32 — assumes this works)"
 ---
 

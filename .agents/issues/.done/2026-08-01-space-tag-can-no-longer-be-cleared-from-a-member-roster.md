@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A deleted space tag never disappears from other members' rosters — the undefined-stripping merge swallowed the only clear signal"
-status: open
+status: done
 priority: medium — cosmetic but permanent, and self-inflicted 3 commits ago
 created: 2026-08-01
 updated: 2026-08-01

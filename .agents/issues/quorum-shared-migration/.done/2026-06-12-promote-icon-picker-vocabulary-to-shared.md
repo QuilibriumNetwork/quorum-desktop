@@ -57,7 +57,7 @@ Desktop stores `iconColor` as a **named enum** (`'blue'`); mobile stores **raw h
 
 ## Cross-repo workflow
 
-Follow [cross-repo-workflow.md](cross-repo-workflow.md). Shape:
+Follow [cross-repo-workflow.md](../cross-repo-workflow.md). Shape:
 1. **quorum-shared PR**: add the picker vocabulary + helpers, re-export from root, bump version. Additive — no breaking change.
 2. **quorum-desktop PR**: swap `IconPicker`'s local `types.ts` imports to the shared exports (keep the components). Verify the picker still renders all 49 icons + variant toggle + colors.
 3. **quorum-mobile**: consume the shared vocabulary in its picker — tracked in the mobile task ([`2026-06-12-channel-group-icon-and-settings.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md)) + add a `mobile-tasks-pending.md` row.
@@ -91,7 +91,7 @@ In progress on branch `promote-icon-picker-vocabulary-to-shared`. Full sequencin
 
 - **Icon set: 49 → 92.** 43 added from the already-renderable set (Layer A; zero mapping work, no Layer-B icons needed). User-curated via the browsable preview; `trash` + `close` dropped (UI-action confusion). `FILLED_ICONS` 33 → 61 (every added entry's `…Filled` variant verified to exist in Tabler).
 - **Layout: sticky header + scroll grid + search.** Header (variant toggle + colors + search box) pinned; only the grid scrolls. Width/columns unchanged (320px / 8-col). Search filters by name/category; empty-state included. Category menu rejected as overkill at 92.
-- **Color storage: named enum** (confirmed recommendation). Mobile converges to named, resolves via shared `getIconColorHex`. Tracked in [mobile-tasks-pending.md](mobile-tasks-pending.md) row 7.3.
+- **Color storage: named enum** (confirmed recommendation). Mobile converges to named, resolves via shared `getIconColorHex`. Tracked in [mobile-tasks-pending.md](../mobile-tasks-pending.md) row 7.3.
 - **Shared side prepped:** `quorum-shared/src/primitives/Icon/pickerVocabulary.ts` + barrel re-exports written and typecheck-clean. User drives the shared PR + version bump.
 - **Desktop:** import-swap **DONE** — shared PR [#39](https://github.com/QuilibriumNetwork/quorum-shared/pull/39) merged, shared `dist/` rebuilt, desktop `types.ts` now re-exports the vocabulary from `@quilibrium/quorum-shared` (keeps `IconPickerProps` local). tsc + lint clean. Web picker layout/search done.
 - **`.native.tsx` left unchanged** — dead in desktop (`index.ts` hardcodes `.web`; not in the tsc program; no react-native dep). Native parity is the mobile task's job.

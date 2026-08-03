@@ -9,9 +9,9 @@ severity: user-visible — a DM partner renders forever as "Unknown User" / trun
 area: DM receive path / conversation-row identity / mobile parity
 repos: quorum-desktop (fix), quorum-mobile (reference implementation — already correct)
 related_tasks:
-  - ".agents/issues/2026-08-01-dm-unread-dot-stale-previews-snapshot.md"
+  - ".agents/issues/.open/2026-08-01-dm-unread-dot-stale-previews-snapshot.md"
 related_bugs:
-  - ".agents/issues/.open/2026-06-13-space-members-missing-no-join-row.md"
+  - ".agents/issues/.done/2026-06-13-space-members-missing-no-join-row.md"
   - ".agents/issues/.done/2025-12-18-dm-unknown-user-identity-not-revealed.md"
 related_docs:
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
@@ -159,7 +159,7 @@ writing `undefined` where the variable had previously just been left unassigned.
 
 ## §5. Relationship to the spaces bug — same disease, different organ
 
-`.agents/issues/.open/2026-06-13-space-members-missing-no-join-row.md` describes the same
+`.agents/issues/.done/2026-06-13-space-members-missing-no-join-row.md` describes the same
 structural failure on the space side: identity rides only on control messages (`join` /
 `update-profile`), ordinary message traffic never writes it, and desktop's control
 messages are fire-and-forget with no durable replay (mobile has hub-log catch-up).
@@ -216,7 +216,7 @@ belongs with Slice 4 as a one-shot migration rather than a user-facing button.
 ## §5c. The 24h retry interval is a placeholder — ✅ DECIDED
 
 > ✅ **2026-08-01: researched and decided in
-> `.agents/issues/2026-08-01-identity-announce-cadence-research.md`.**
+> `.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md`.**
 >
 > **Keep the 24h interval, cap it at 3 retries** per (partner, identity-version),
 > then stop until the identity changes. ~99% cheaper, same convergence, ~5 lines.
@@ -243,7 +243,7 @@ population rather than with the problem. Rough order: 10k users × 20 partners �
 Do not treat that constant as settled, and do not copy it into the space
 implementation. Better shapes (receiver-driven request, fingerprint-first,
 backoff, piggyback) are laid out in
-`.agents/issues/2026-08-01-identity-announce-cadence-research.md`.
+`.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md`.
 
 ## §6. Work — vertical slices
 

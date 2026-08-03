@@ -18,7 +18,7 @@ Expose the existing public invite URL (`space.inviteUrl`) to non-owner members o
 
 Mobile already ships this affordance for non-owners (`app/(tabs)/spaces/[id]/index.tsx` header invite button + `components/InviteModal.tsx` post-generate display branch). The link is replicated to every member's local Space record via the encrypted space manifest, but desktop only exposes it through the owner-gated `SpaceSettings > Invites` tab. This port closes the gap with no new architectural decisions — pure UI exposure of an already-synced field.
 
-Full capability investigation is in [`candidates.md #29`](candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick). The framing took three rounds with the user; the captured lesson is at the bottom of that section.
+Full capability investigation is in [`candidates.md #29`](../candidates.md#29-non-owner-read-only-access-to-the-existing-public-invite-url--ready-to-pick). The framing took three rounds with the user; the captured lesson is at the bottom of that section.
 
 ## Mobile source (read-only reference)
 

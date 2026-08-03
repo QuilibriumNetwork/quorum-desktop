@@ -32,7 +32,7 @@ Working notes for the three-repo rollout. Branch in quorum-desktop:
 ### STATUS (2026-06-12, later)
 - ✅ **Step 1 done** — quorum-shared [#39](https://github.com/QuilibriumNetwork/quorum-shared/pull/39) squash-merged to `master` (`39833f4`). Shared `dist/` rebuilt (`yarn build`); ESM + CJS + `.d.ts` all carry the 92-icon vocabulary.
 - ✅ **Step 2 done** — desktop `types.ts` swapped to re-export the vocabulary from `@quilibrium/quorum-shared` (keeps `IconPickerProps` local). `npx tsc --noEmit` exit 0; `yarn lint` clean. Picker components + the 2 hook consumers unchanged (still import via `./types`, which re-exports shared).
-- ⏳ **Step 3** — quorum-mobile consumption, tracked in [mobile-tasks-pending.md](mobile-tasks-pending.md) row 7.3.
+- ⏳ **Step 3** — quorum-mobile consumption, tracked in [mobile-tasks-pending.md](../mobile-tasks-pending.md) row 7.3.
 - Remaining: live in-app visual smoke; shared version bump/publish at next release (desktop uses `link:../quorum-shared` so it doesn't need a published version).
 
 ### 1. quorum-shared PR (user drives) — additive, no breaking change
@@ -67,7 +67,7 @@ Once shared's new version is published and desktop's `@quilibrium/quorum-shared`
 - Re-run `npx tsc --noEmit` + `yarn lint` + visual smoke of the picker.
 
 ### 3. quorum-mobile (tracked, not done here)
-Row **7.3** in [mobile-tasks-pending.md](mobile-tasks-pending.md) — consume the shared vocabulary, converge to the named-color enum. Blocked on step 1 publish.
+Row **7.3** in [mobile-tasks-pending.md](../mobile-tasks-pending.md) — consume the shared vocabulary, converge to the named-color enum. Blocked on step 1 publish.
 
 ## Why the swap can't happen on this branch yet
 Desktop resolves `@quilibrium/quorum-shared` via its built `dist/` (`main: ./dist/index.js`), even though the package is symlinked to the working copy. The new `pickerVocabulary.ts` is in shared's `src/` but not its `dist/` until shared runs `yarn build`. So importing the vocabulary from shared today would fail to resolve. Desktop therefore keeps the expanded data in its local `types.ts` until the shared package is rebuilt/published, then swaps (step 2 pending item).

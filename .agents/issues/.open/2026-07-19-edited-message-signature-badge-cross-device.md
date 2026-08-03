@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Edited messages show a false 'not signed' warning on other devices (cross-device badge inconsistency)"
-status: in-progress
+status: open
 priority: medium
 created: 2026-07-19
 severity: trust-UX (NOT a security hole — false WARNING, never a false 'verified')

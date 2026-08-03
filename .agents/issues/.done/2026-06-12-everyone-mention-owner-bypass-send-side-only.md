@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "@everyone mention: owner-bypass in shared hasPermission propagates (send-side-only enforcement)"
-status: open
+status: done
 created: 2026-06-12
 updated: 2026-07-19
 ai_generated: true
@@ -29,11 +29,11 @@ related_bugs:
 >   a space-member address, then `hasPermission(verifiedSender, 'mention:everyone',
 >   space)` (role-only, no owner bypass) gates the notification. A forged
 >   `mentions.everyone: true` from a modified client no longer notifies recipients.
->   See `.agents/issues/2026-06-25-MASTER-RECAP-control-message-auth.md` where the
+>   See `.agents/issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md` where the
 >   receive-side work was tracked.
 > - **This bug is fully closed.** Ready to move to `.solved/`.
 
-> **⚠️ AI-assisted finding (2026-06-12). Verified against current source in all three repos with file:line citations below.** Surfaced while scoping the mobile permission-enforcement work. The parent doc [2026-01-09-space-owner-privacy-limitation.md](2026-01-09-space-owner-privacy-limitation.md) (#111) documents the owner-can't-be-verified constraint and its impact on **delete/mute/read-only**, but does NOT cover `mention:everyone`. This doc fills that gap, because @everyone behaves differently from the actions #111 lists.
+> **⚠️ AI-assisted finding (2026-06-12). Verified against current source in all three repos with file:line citations below.** Surfaced while scoping the mobile permission-enforcement work. The parent doc [2026-01-09-space-owner-privacy-limitation.md](../.open/2026-01-09-space-owner-privacy-limitation.md) (#111) documents the owner-can't-be-verified constraint and its impact on **delete/mute/read-only**, but does NOT cover `mention:everyone`. This doc fills that gap, because @everyone behaves differently from the actions #111 lists.
 
 ## TL;DR
 

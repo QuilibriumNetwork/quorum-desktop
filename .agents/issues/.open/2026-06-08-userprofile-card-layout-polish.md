@@ -1,7 +1,7 @@
 ---
 type: task
 title: UserProfile card layout polish pass
-status: in-progress
+status: open
 created: 2026-06-08
 scope: desktop (UI design)
 priority: medium
@@ -59,7 +59,7 @@ These were noticed during the bio port but predate it:
 
 ## What's NOT in scope
 
-- The positioning architecture refactor (Floating UI). That's tracked separately at [`2026-06-08-userprofile-positioning-floating-ui.md`](2026-06-08-userprofile-positioning-floating-ui.md). They could be done in the same PR if it makes sense once both are scoped, but they're independent.
+- The positioning architecture refactor (Floating UI). That's tracked separately at [`2026-06-08-userprofile-positioning-floating-ui.md`](../.done/2026-06-08-userprofile-positioning-floating-ui.md). They could be done in the same PR if it makes sense once both are scoped, but they're independent.
 - Any changes to the data the card displays (bio resolution rules, role visibility logic, etc.) — settled in the bio port.
 - Mobile drawer rendering — `MobileDrawer` is a separate component, not `UserProfile`.
 

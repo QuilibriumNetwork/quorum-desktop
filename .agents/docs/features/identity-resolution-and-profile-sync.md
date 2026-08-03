@@ -201,7 +201,7 @@ sentence; doing so has already misled a reader once.**
 |---|---|
 | **The architecture** | this document — read "Why a name goes missing" next |
 | **The measurement tool** | `/dev/identity-coverage` (dev builds only). Take a snapshot before and after any change |
-| **The full record** | `.agents/issues/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
+| **The full record** | `.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
 
 **Open, with next steps written:**
 
@@ -209,10 +209,10 @@ sentence; doing so has already misled a reader once.**
 |---|---|
 | **MOBILE cannot ask or answer** — the largest remaining gap, and the only one that needs a lead-dev decision | "What would actually close the gap" below. Do NOT ship a mobile fix for this unilaterally |
 | Mobile's announce expiry is written but **unreleased** — desktop→mobile stays broken until a mobile build ships | mobile #215; `issues/2026-08-01-space-member-identity-announce-on-connect.md` §10 |
-| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
+| Sync peer selection is message-first (`memberCount` is a tiebreaker that never fires); the member half is one payload with no retry | `issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` → NEXT STEPS |
 | A per-space name/avatar never reaches your own other devices | `issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` |
 | Members that **no peer holds** — only the person re-announcing recovers them | same roster-pull file, NEXT STEP C. Blocked on a mobile release carrying #215 |
-| A deleted space tag still shows on **mobile** | `issues/.open/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
+| A deleted space tag still shows on **mobile** | `issues/.done/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md` §5 |
 | Every `logger` call is a no-op in production — why none of this was visible | `issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md` |
 | Hub-log migration; would delete the (working) pull | `issues/port-from-mobile/candidates.md` #32 |
 
@@ -473,7 +473,7 @@ the quadratic case the moment several are online.
 2. ✅ **DONE — measure first** (Step 4). The measurement is what found #295, which
    turned out to matter more than everything else shipped that day. Record and
    both snapshots are in
-   `issues/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
+   `issues/.done/2026-08-01-identity-announce-cadence-research.md` (CLOSED). Tool:
    `/dev/identity-coverage`.
 
 3. **A roster served by the relay** remains the only option that works when no

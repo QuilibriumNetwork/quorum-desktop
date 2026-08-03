@@ -26,7 +26,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
 
 ## ARCHIVED - Web Worker Approach Deprecated
 
-> **This task has been archived and replaced by [background-action-queue.md](../background-action-queue.md)**
+> **This task has been archived and replaced by [background-action-queue.md](../.done/background-action-queue.md)**
 
 ### Why Web Worker Was Removed
 

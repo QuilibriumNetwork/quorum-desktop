@@ -315,8 +315,8 @@ src/index.scss - Added new stylesheet imports
 ## Related Documentation
 
 - [Modal System Documentation](.agents/docs/new-modal-component.md)
-- [Responsive Layout Documentation](.agents/docs/responsive-layout.md)
-- [Emoji System Documentation](.agents/docs/emojipicker-responsive.md)
+- [Responsive Layout Documentation](../../../issues/.done/responsive-layout.md)
+- [Emoji System Documentation](../../../issues/.done/emojipicker-responsive.md)
 - [Touch Interface Guidelines](.agents/docs/reacttooltip-mobile.md)
 
 ---

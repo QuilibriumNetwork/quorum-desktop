@@ -34,7 +34,7 @@ known limitation, deliberately shipped without a cap; needs a solid, non-evictin
 > So "slower control-message processing" is not the ceiling. The real consequence
 > is that the space sync handshake is **unavailable for minutes after every
 > reconnect** — precisely when a joiner needs it — and no attacker is required.
-> See `.agents/issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md`
+> See `.agents/issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md`
 > §5. Confirm that reading (its §5b step 1) before re-rating this.
 
 ## The issue

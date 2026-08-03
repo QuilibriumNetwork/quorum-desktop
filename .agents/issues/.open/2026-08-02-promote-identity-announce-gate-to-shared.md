@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Promote the identity-announce gate to quorum-shared — but only once we know it isn't temporary"
-status: in-progress
+status: open
 priority: low — no drift exists today; this prevents a future one
 created: 2026-08-02
 updated: 2026-08-02
@@ -9,7 +9,7 @@ severity: none currently. The risk it addresses is silent constant drift, which 
 area: identity announce / quorum-shared / cross-platform parity
 repos: quorum-shared (destination), quorum-desktop + quorum-mobile (callers)
 related_tasks:
-  - ".agents/issues/2026-08-01-identity-announce-cadence-research.md"
+  - ".agents/issues/.done/2026-08-01-identity-announce-cadence-research.md"
   - ".agents/issues/2026-08-01-space-member-identity-announce-on-connect.md"
   - ".agents/issues/port-from-mobile/candidates.md (#32 — the reason to wait)"
 related_docs:

@@ -768,7 +768,7 @@ yarn vitest src/dev/tests/services/ActionQueue --run
 | `ActionQueueService.unit.test.ts` | 42 | Queue mechanics, retry logic, multi-tab safety |
 | `ActionQueueHandlers.unit.test.ts` | 56 | All 15 handlers, context contracts, error classification |
 
-Tests verify control flow and contracts, not real encryption (SDK is mocked). See [README](src/dev/tests/README.md) for details.
+Tests verify control flow and contracts, not real encryption (SDK is mocked). See [README](../../issues/messagedb/README.md) for details.
 
 ---
 

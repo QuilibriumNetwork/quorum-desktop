@@ -54,10 +54,10 @@ Backend endpoint inventory (from mobile API client, the source of truth for what
 
 ## Scope clarifications (decisions locked 2026-06-08)
 
-- **No QNS resolution in this PR.** Mobile's `NewConversationModal` accepts both `Qm...` addresses AND `@username` (via QNS `useResolveName`). Desktop's `NewDirectMessageModal` accepts only raw addresses. Pulling in QNS would mean adding a new 1,235-LOC API client + 451 LOC of hooks + a new base URL (`names.quilibrium.com`) — that's candidate #12 (QNS marketplace) territory, not a small extract. The `@username` UX gap stays as a separate mini-candidate logged under `### #12` in [candidates.md](candidates.md#12-qns-marketplace).
+- **No QNS resolution in this PR.** Mobile's `NewConversationModal` accepts both `Qm...` addresses AND `@username` (via QNS `useResolveName`). Desktop's `NewDirectMessageModal` accepts only raw addresses. Pulling in QNS would mean adding a new 1,235-LOC API client + 451 LOC of hooks + a new base URL (`names.quilibrium.com`) — that's candidate #12 (QNS marketplace) territory, not a small extract. The `@username` UX gap stays as a separate mini-candidate logged under `### #12` in [candidates.md](../candidates.md#12-qns-marketplace).
 - **DM-list search stays a local-list filter.** [`DirectMessageContactsList.tsx:127-134`](../../../src/components/direct/DirectMessageContactsList.tsx#L127-L134) filters existing conversations by `displayName`/`address` substring. We do **not** turn it into a remote-user-discovery surface. That's a separable UX question and would only be useful with a backend enumeration endpoint we don't have.
 - **Existing `NewDirectMessageModal` flow stays put.** Desktop's [address-only "New Direct Message" modal](../../../src/components/modals/NewDirectMessageModal.tsx) using [`useDirectMessageCreation`](../../../src/hooks/business/conversations/useDirectMessageCreation.ts) already covers "I know the recipient's address, start a chat" — no changes needed in this PR.
-- **Bio is already synced — no new work needed.** Initial scoping assumed bio was local-only. Verification proved it isn't: [`useUserSettings.ts:115`](../../../src/hooks/business/user/useUserSettings.ts#L115) loads `setBio(config?.bio ?? '')` and [line 317](../../../src/hooks/business/user/useUserSettings.ts#L317) writes `bio: bio.trim() || undefined` into the UserConfig posted to `/users/:addr/config`. Bio already syncs cross-device on desktop, mirroring mobile. The comment in [`db/messages.ts:59`](../../../src/db/messages.ts#L59) (`// User's bio/description (local-only for now)`) is **stale** and gets a drive-by update to current reality (synced via UserConfig, published when `isProfilePublic=true`). The historical bio task ([`.agents/issues/.done/2025-01-06-add-user-bio-field.md`](../.done/2025-01-06-add-user-bio-field.md)) shipped local-only; cross-device sync was added later without updating the comment. What this PR adds *for bio* is **carrying it in the public-profile payload** so non-members can see it via `GET /users/:addr/public-profile` — already covered by `publishPublicProfile` including `bio`.
+- **Bio is already synced — no new work needed.** Initial scoping assumed bio was local-only. Verification proved it isn't: [`useUserSettings.ts:115`](../../../src/hooks/business/user/useUserSettings.ts#L115) loads `setBio(config?.bio ?? '')` and [line 317](../../../src/hooks/business/user/useUserSettings.ts#L317) writes `bio: bio.trim() || undefined` into the UserConfig posted to `/users/:addr/config`. Bio already syncs cross-device on desktop, mirroring mobile. The comment in [`db/messages.ts:59`](../../../src/db/messages.ts#L59) (`// User's bio/description (local-only for now)`) is **stale** and gets a drive-by update to current reality (synced via UserConfig, published when `isProfilePublic=true`). The historical bio task ([`.agents/issues/.done/2025-01-06-add-user-bio-field.md`](../../.done/2025-01-06-add-user-bio-field.md)) shipped local-only; cross-device sync was added later without updating the comment. What this PR adds *for bio* is **carrying it in the public-profile payload** so non-members can see it via `GET /users/:addr/public-profile` — already covered by `publishPublicProfile` including `bio`.
 
 ## Mobile sources to study
 
@@ -153,7 +153,7 @@ Desktop's settings modal has multiple tabs. The toggle belongs in **`Privacy.tsx
 
 ### Phase G — Shared promotion (deferred)
 
-Per the decision in Phase B, no shared package changes in this PR. The signing-payload helpers stay desktop-local with a `// TODO(shared-promotion)` marker. Logged in [candidates.md `### #6`](candidates.md#6-public-profile-ui--in-progress-2026-06-08) under "Shared-promotion opportunity" so the lead dev can pick it up when Reporting (#5) lands and we see both call sites.
+Per the decision in Phase B, no shared package changes in this PR. The signing-payload helpers stay desktop-local with a `// TODO(shared-promotion)` marker. Logged in [candidates.md `### #6`](../candidates.md#6-public-profile-ui--in-progress-2026-06-08) under "Shared-promotion opportunity" so the lead dev can pick it up when Reporting (#5) lands and we see both call sites.
 
 ## Build sequence
 
@@ -242,8 +242,8 @@ Port the public-profile capability from `quorum-mobile`: publish/unpublish toggl
 
 (For the lead dev / record. No action needed in this PR.)
 
-- **QNS `@username` in `NewDirectMessageModal`** — desktop is missing the `@username → address` resolution path that mobile has. Logged under [candidates.md `### #12`](candidates.md#12-qns-marketplace) as a mini-candidate worth picking up if/when QNS goes in product scope.
-- **Backend never exposed user enumeration** — record this in [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md)? Actually no, neither app has it, so it's not a "desktop is better" thing — it's a product/backend gap. Already captured in [candidates.md `### #6`](candidates.md#6-public-profile-ui--in-progress-2026-06-08); nothing to add elsewhere.
+- **QNS `@username` in `NewDirectMessageModal`** — desktop is missing the `@username → address` resolution path that mobile has. Logged under [candidates.md `### #12`](../candidates.md#12-qns-marketplace) as a mini-candidate worth picking up if/when QNS goes in product scope.
+- **Backend never exposed user enumeration** — record this in [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md)? Actually no, neither app has it, so it's not a "desktop is better" thing — it's a product/backend gap. Already captured in [candidates.md `### #6`](../candidates.md#6-public-profile-ui--in-progress-2026-06-08); nothing to add elsewhere.
 - **`v2:primary_username` signing path** — mobile's publish payload has a v1/v2 split (line 92-100 of `publicProfile.ts`); v2 carries an optional `primaryUsername`. Desktop doesn't have QNS, so it'll only ever publish v1 payloads. Note in `PublicProfileService.ts` and leave the v2 path as a `// reserved for future QNS integration` stub.
 - **Farcaster link in published profile** — mobile bundles a `farcasterLink` (with its own internal Quorum-side signature) on publish when the user has Farcaster connected. Desktop doesn't have Farcaster (candidate #9). Skip this branch entirely; profile payloads from desktop will never include `farcaster`.
 
@@ -258,7 +258,7 @@ Port the public-profile capability from `quorum-mobile`: publish/unpublish toggl
 - [ ] PR opened.
 - [ ] User confirmation before self-merge.
 - [ ] Move this task file to `.done/` in the merge commit.
-- [ ] Update [shipped-log.md](shipped-log.md).
+- [ ] Update [shipped-log.md](../shipped-log.md).
 
 ---
 

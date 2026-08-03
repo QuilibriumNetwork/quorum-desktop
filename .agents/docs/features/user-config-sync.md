@@ -89,7 +89,7 @@ When profile fetch fails for registered users, a toast notification is shown:
 
 ## Related Documentation
 
-- [Task: user-config-sync-on-existing-accounts.md](.agents/issues/.done/user-config-sync-on-existing-accounts.md) - Full implementation details
+- [Task: user-config-sync-on-existing-accounts.md](../../issues/.done/user-config-sync-on-existing-accounts.md) - Full implementation details
 - [ConfigService.ts](src/services/ConfigService.ts) - Full config management (spaces, bookmarks)
 - [useProfileValidation.ts](src/hooks/business/validation/useProfileValidation.ts) - Image validation utility
 

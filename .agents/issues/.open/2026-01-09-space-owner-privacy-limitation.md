@@ -80,7 +80,7 @@ Owner generates ZK proof proving knowledge of owner private key without revealin
 ## Related
 
 - [space-owner-delete-permissions-bug.md](.archived/space-owner-delete-permissions-bug.md) - Proposes `ownerAddress` solution (rejected for privacy)
-- [message-delete-owner-vulnerability.md](.archived/message-delete-owner-vulnerability.md) - Details the delete vulnerability (archived)
+- [message-delete-owner-vulnerability.md](../.archived/message-delete-owner-vulnerability.md) - Details the delete vulnerability (archived)
 - [security.md](../docs/features/security.md) - Security architecture noting no `isSpaceOwner` bypass
 - [space-roles-system.md](../docs/space-permissions/space-roles-system.md) - Documents owner must join roles
 

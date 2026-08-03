@@ -91,7 +91,7 @@ if (decryptedContent.replyMetadata?.parentAuthor) {
 - [ ] No console errors
 
 ## Related Documentation
-- [DM Mark All Read Bug (solved)](.agents/issues/.done/dm-mark-all-read-no-immediate-ui-update.md) - Similar issue with different root cause
+- [DM Mark All Read Bug (solved)](dm-mark-all-read-no-immediate-ui-update.md) - Similar issue with different root cause
 - [useSpaceReplyCounts](src/hooks/business/replies/useSpaceReplyCounts.ts) - Query key: `['reply-counts', 'space', userAddress, ...spaceIds]`
 - [useReplyNotificationCounts](src/hooks/business/replies/useReplyNotificationCounts.ts) - Query key: `['reply-counts', 'channel', spaceId, ...]`
 

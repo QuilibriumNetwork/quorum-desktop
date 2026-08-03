@@ -19,13 +19,13 @@ related_tasks:
 
 The DM delivery & read receipts feature ([dm-receipts.md](../../docs/features/messages/dm-receipts.md)) was implemented entirely in `quorum-desktop`. Per the same principle that motivated the typing migration ([2026-05-18-typing-shared-migration.md](2026-05-18-typing-shared-migration.md)), the protocol-level pieces — wire types and the service that buffers/flushes acks — belong in `@quilibrium/quorum-shared` so mobile can consume them identically.
 
-The full per-service audit lives in [designs/2026-05-18-services-design.md §1](designs/2026-05-18-services-design.md). This task is the executable PR plan.
+The full per-service audit lives in [designs/2026-05-18-services-design.md §1](../designs/2026-05-18-services-design.md). This task is the executable PR plan.
 
 **Sequencing.** Ship this PR **after** the typing PR lands. They are independent functionally, but typing sets the precedent for the `src/<feature>/` folder layout (service.ts + service.test.ts + index.ts) and the receipts PR should mirror it.
 
 > **Prerequisite from the MessageDB refactor (RESOLVED 2026-05-20)**: investigation during this PR found there was never a real wire-format ambiguity. The "two shapes" framing in the original prereq block was based on the defensive triple-fallback reads in `processDeliveryReceiptData` (`raw.type === 'delivery-ack' || raw.content?.type === 'delivery-ack'`) — but a grep + git-history pass confirmed only one sender exists (`ActionQueueHandlers.ts:957, 1014`), always flat, and the `raw.content?.type` branches were unreverted dead code from the original receiver bug ([`.agents/issues/.done/2026-03-19-standalone-delivery-ack-unreliable.md`](../../.done/2026-03-19-standalone-delivery-ack-unreliable.md) line 28). No external peer ever shipped the nested shape.
 >
-> **What was done**: a small cleanup commit on this branch dropped the dead nested-shape fallbacks in `MessageService.ts:325, 328, 339, 342–343` before the migration. After that, the shared types codify the only shape that ever exists. See [messagedb/shared-migration-cross-check.md §Sequencing constraint on #3](../messagedb/shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization) for the full investigation.
+> **What was done**: a small cleanup commit on this branch dropped the dead nested-shape fallbacks in `MessageService.ts:325, 328, 339, 342–343` before the migration. After that, the shared types codify the only shape that ever exists. See [messagedb/shared-migration-cross-check.md §Sequencing constraint on #3](../../messagedb/shared-migration-cross-check.md#sequencing-constraint-on-3-intercept-normalization) for the full investigation.
 
 ## What makes this slightly larger than typing
 
@@ -206,6 +206,6 @@ If bundling the UserConfig consolidation: add another half-day for the UserConfi
 
 *Created: 2026-05-19 — companion task to the typing migration; introduces new receipt wire types in shared since desktop never had a dedicated types file for them.*
 
-*Updated 2026-05-19 (same day) — added prerequisite block at the top: must resolve the desktop wire-format ambiguity (Tier 0 #3 of the MessageDB refactor) before or as part of this PR, otherwise the shared types lock in only one of the two shapes desktop emits. Cross-referenced from [messagedb/shared-migration-cross-check.md](../messagedb/shared-migration-cross-check.md).*
+*Updated 2026-05-19 (same day) — added prerequisite block at the top: must resolve the desktop wire-format ambiguity (Tier 0 #3 of the MessageDB refactor) before or as part of this PR, otherwise the shared types lock in only one of the two shapes desktop emits. Cross-referenced from [messagedb/shared-migration-cross-check.md](../../messagedb/shared-migration-cross-check.md).*
 
 *Updated 2026-05-20 — investigation during this PR proved the "two shapes" framing was wrong: only flat shape ever existed on the wire, the nested-shape receiver branches were dead defensive code from the original receiver bug. Prereq block rewritten to record the actual resolution (small cleanup commit dropped the dead branches in front of the migration). Tier 0 #3 in optimizations-low-risk.md marked done.*

@@ -102,7 +102,7 @@ that sat inside the blind window survived. Look for `[WS-retain] replaying N`.
 ## §4. ROUND 2 — measure spaces (never been done)
 
 > ⚠️ **Not to be confused with**
-> `issues/2026-07-31-spaces-list-cross-device-sync.md`, dated the same day. That one is about **which
+> `issues/.open/2026-07-31-spaces-list-cross-device-sync.md`, dated the same day. That one is about **which
 > Spaces appear in a device's list** (UserConfig sync, membership propagation, ghost cleanup). This
 > section is about **whether messages sent into a Space arrive** (transport). Different layer, different
 > code, unrelated fixes.

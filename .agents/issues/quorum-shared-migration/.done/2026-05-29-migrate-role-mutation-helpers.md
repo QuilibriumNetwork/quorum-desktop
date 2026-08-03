@@ -131,7 +131,7 @@ Mobile task drop required. Path: `D:\GitHub\Quilibrium\quorum-mobile\.agents\tas
 
 ## Cross-repo PR sequencing
 
-Standard shared → desktop → mobile per [cross-repo-workflow.md](cross-repo-workflow.md):
+Standard shared → desktop → mobile per [cross-repo-workflow.md](../cross-repo-workflow.md):
 
 1. **quorum-shared PR**: add roleUtils + tests + barrel re-export. Self-merge.
 2. **quorum-desktop PR**: import + use the new utils. Self-merge.

@@ -167,7 +167,7 @@ This was caused by multiple Metro configuration issues in the monorepo setup. Al
 - `multiformats` subpath imports need package exports support → mapped manually in `resolveRequest`
 - Stale `AccentColorSwitcher` imports in test files → removed
 
-See [bug report](.agents/issues/.done/2026-03-15-mobile-metro-bundling-failure.md) for full details.
+See [bug report](../../issues/.done/2026-03-15-mobile-metro-bundling-failure.md) for full details.
 
 ### "No apps connected" in Metro
 
@@ -228,7 +228,7 @@ cd mobile/android && ./gradlew clean
 ## Related Documentation
 
 - [Expo Dev Testing Guide](../expo-dev-testing-guide.md) — General Expo setup and testing workflows
-- [Metro Bundling Bug Report](../../.agents/issues/.done/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
+- [Metro Bundling Bug Report](../../issues/.done/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
 
 ---
 

@@ -386,7 +386,7 @@ Space-level mute checks happen first (O(1)) to avoid unnecessary channel iterati
 ## Related Documentation
 
 - [Mention Notification System](mention-notification-system.md)
-- [Reply Notification System](reply-notification-system.md)
+- [Reply Notification System](../../issues/.done/reply-notification-system.md)
 - [Config Sync System](../config-sync-system.md)
 
 ---

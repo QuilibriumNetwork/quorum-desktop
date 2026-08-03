@@ -18,7 +18,7 @@ related_tasks:
 
 **Estimated accessibility score: ~75/100 (up from ~50/100)**
 
-The core WCAG 2.1 AA remediation is complete (see [done/accessibility-wcag-remediation.md](done/accessibility-wcag-remediation.md) for full details). Summary of what shipped:
+The core WCAG 2.1 AA remediation is complete (see [done/accessibility-wcag-remediation.md](../.done/accessibility-wcag-remediation.md) for full details). Summary of what shipped:
 
 - **Button `<span>` → `<button>`** — 100+ instances now keyboard-accessible with native focus, Enter, Space
 - **Modal accessibility** — `role="dialog"`, `aria-modal`, `aria-labelledby`, focus trap, focus restoration, close button as `<button>`

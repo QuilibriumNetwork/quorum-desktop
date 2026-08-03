@@ -181,7 +181,7 @@ Alert.alert(/* ... */);
 Clipboard.setString(keyData);  // ⚠️ Key in clipboard
 ```
 
-**Documentation**: [cross-platform-key-backup.md](../docs/features/cross-platform-key-backup.md)
+**Documentation**: [cross-platform-key-backup.md](../issues/.archived/cross-platform-key-backup.md)
 
 **Security Concerns** (if implemented):
 - Clipboard history may retain the key
@@ -378,7 +378,7 @@ cachedPreview: {
 - [cryptographic-architecture.md](../docs/cryptographic-architecture.md) - Key hierarchy and storage
 - [security.md](../docs/features/security.md) - Security architecture
 - [config-sync-system.md](../docs/config-sync-system.md) - Sync encryption details
-- [cross-platform-key-backup.md](../docs/features/cross-platform-key-backup.md) - Backup methods
+- [cross-platform-key-backup.md](../issues/.archived/cross-platform-key-backup.md) - Backup methods
 - [action-queue.md](../docs/features/action-queue.md) - Queue security section
 - [privacy-analysis-quorum-2025-12-03.md](privacy-analysis-quorum-2025-12-03.md) - Previous privacy analysis
 

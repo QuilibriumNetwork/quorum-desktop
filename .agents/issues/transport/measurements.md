@@ -1708,7 +1708,7 @@ wire.
 
 **This is not a delivery rate, and it is not evidence the roster bug is absent.**
 It runs at **2 members**; the reported failure
-(`issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`) is at ~79 and
+(`issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`) is at ~79 and
 is intermittent. Four samples at the wrong N cannot bound a rate at the right one.
 That bug file records three confident wrong answers produced in one day, all from
 promoting a short streak to a law; this row exists partly so the fourth is harder
@@ -1778,7 +1778,7 @@ never been demonstrated at scale.
 **Peer selection is never exercised here, because there is exactly ONE responder.**
 The field failure had B choosing among peers advertising **90, 79 and 72** members
 and syncing with the 72 (`selectBestCandidate`, message-count-first sort;
-`issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` NEXT STEP A).
+`issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` NEXT STEP A).
 With a single candidate that sort cannot misfire, so this sweep is blind to it by
 construction. A second responder holding a different roster is the next
 measurement, and it is cheap now that the rig exists.
@@ -1825,7 +1825,7 @@ host the socket behaviour that needs real devices (see "Why every bench was
 green"). It shows the backlog is a **sufficient** cause, deterministically — so a
 candidate fix can now be validated before shipping.
 
-Reported in `issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
+Reported in `issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
 
 
 ---
@@ -1879,7 +1879,7 @@ validates a fix SHAPE, not an implementation. The harness still cannot host the
 socket conditions that need real devices, so the claim is "fixes the
 backlog-starvation path", not "fixes every field report".
 
-Reported in `issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
+Reported in `issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
 
 ## 2026-08-03 — the fix, measured (desktop #300)
 

@@ -739,7 +739,7 @@ theme.colors.utilities.info; // Info
 - [When to Use Primitives](./03-when-to-use-primitives.md) - Decision framework
 - [Web-to-Native Migration Guide](./04-web-to-native-migration.md) - Step-by-step conversion patterns
 - [Primitive Styling Guide](./05-primitive-styling-guide.md) - Color system and consistency rules
-- [Theme System](../theme/README.md) - Color system and theming
+- [Theme System](../../../issues/messagedb/README.md) - Color system and theming
 
 ---
 

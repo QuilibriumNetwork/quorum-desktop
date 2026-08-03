@@ -282,7 +282,7 @@ The original plan incorrectly allowed space owners implicit pin permission via `
 
 ## Related Documentation
 
-- [Pinned Messages Feature Plan](.agents/issues/.done/pinned-messages-feature.md)
+- [Pinned Messages Feature Plan](pinned-messages-feature.md)
 - [Security Architecture](.agents/docs/features/security.md)
 - [Data Management Architecture](.agents/docs/data-management-architecture-guide.md)
 - [Client-Side Limitations Audit](.temp/client-side-limitations-bypass-audit_2025-12-11.md)

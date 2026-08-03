@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Space deletion: instant/offline UX via action queue + tombstone-driven multi-device cleanup (kills ghost spaces)"
-status: in-progress
+status: open
   (not fix-multidevice-signing-key). Addendum defects B and C are FIXED and operator-verified
   2026-08-01 (branch `fix/space-delete-redirect-and-stale-list`) — see the addendum section.
 priority: high

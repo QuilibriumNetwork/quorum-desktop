@@ -10,7 +10,7 @@ related:
   - "quorum-mobile/.agents/bugs/2026-07-20-mobile-desktop-message-transport-delay-loss-master.md (master; §0 space-receive fixes are MOBILE; desktop differs)"
   - "quorum-mobile/.agents/bugs/2026-07-26-spaces-log-append-ack-ignored-silent-write-loss.md (MOBILE hub-log ack — desktop does NOT use hub-log; carries the open triple-ratchet late-join question)"
   - ".agents/issues/.open/2026-01-09-config-sync-space-loss-race-condition.md"
-  - ".agents/issues/.open/2026-06-13-space-members-missing-no-join-row.md"
+  - ".agents/issues/.done/2026-06-13-space-members-missing-no-join-row.md"
   - ".agents/docs/data-management-architecture-guide.md (desktop sync architecture)"
 ---
 

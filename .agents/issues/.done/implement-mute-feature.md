@@ -44,7 +44,7 @@ updated: 2026-01-09
 
 - **Existing pattern**: `message:delete` permission works for moderators via receive-side validation ([MessageService.ts:839-852](src/services/MessageService.ts#L839-L852))
 - **Key insight**: Mute is **client-enforced** (each client decides to ignore messages), unlike kick which is **protocol-enforced** (requires owner signature)
-- **Related bug**: [user-kick-role-permission-non-functional.md](.agents/issues/.done/user-kick-role-permission-non-functional.md)
+- **Related bug**: [user-kick-role-permission-non-functional.md](user-kick-role-permission-non-functional.md)
 
 ## Implementation
 

@@ -7,7 +7,7 @@ scope: desktop
 created: 2026-06-07
 related:
   - .agents/issues/.done/2026-06-07-align-notification-settings-with-mobile.md
-  - .agents/issues/2026-06-07-account-tab-defer-save-unification.md
+  - .agents/issues/.open/2026-06-07-account-tab-defer-save-unification.md
 ---
 
 # `useDMMute` and `useDMFavorites` read stale config from messageDB

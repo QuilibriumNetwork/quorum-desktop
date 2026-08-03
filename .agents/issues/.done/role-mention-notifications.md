@@ -713,7 +713,7 @@ Implement role mention notifications to allow users to mention entire roles (e.g
 ## Related Documentation
 
 - [Mention Notification System](../docs/features/mention-notification-system.md) - Architecture overview
-- [Notification Settings Phase 4](.done/mention-notification-settings-phase4.md) - Settings implementation
+- [Notification Settings Phase 4](mention-notification-settings-phase4.md) - Settings implementation
 - [Space Roles System](../docs/space-permissions/space-roles-system.md) - Complete role system documentation
 - [Space Permissions Architecture](../docs/space-permissions/space-permissions-architecture.md) - Permission system overview
 

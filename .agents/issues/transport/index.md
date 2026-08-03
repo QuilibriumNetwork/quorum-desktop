@@ -391,7 +391,7 @@ yarn harness space-basic       # B joins A's space; must get A's post AND A's me
 
 ⚠️ `space-basic` runs at **2 members**. The roster failure it is built to catch was
 reported at ~79. A green run is not evidence the bug is absent — see
-`issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` §0.
+`issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md` §0.
 
 `dm-multidevice` takes `HARNESS_MD_DEVICES=N` (default 2; the finding needs 4).
 It generates its own throwaway account and hands the same key to N bots, so it

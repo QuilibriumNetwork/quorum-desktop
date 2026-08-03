@@ -9,7 +9,7 @@ severity: user-visible — over half the active posters in a test space render a
 area: space member roster / identity announce / mobile parity
 repos: quorum-desktop (implement here). quorum-mobile already announces on connect — see §6.
 related_bugs:
-  - ".agents/issues/.open/2026-06-13-space-members-missing-no-join-row.md"
+  - ".agents/issues/.done/2026-06-13-space-members-missing-no-join-row.md"
 related_tasks:
   - ".agents/issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md"
 related_docs:
@@ -33,7 +33,7 @@ same fix, as the DM one that shipped 2026-08-01 — with the design already prov
 and three implementation traps already paid for.
 
 > **Do not re-derive the root cause.** It is fully characterised in
-> `.agents/issues/.open/2026-06-13-space-members-missing-no-join-row.md`, including a
+> `.agents/issues/.done/2026-06-13-space-members-missing-no-join-row.md`, including a
 > live diagnostic run. This task is the *fix*, and exists because the fix shape
 > is now known from the DM work.
 
@@ -274,14 +274,14 @@ Plus one that is space-specific and NOT shared with DMs:
 ## §7. Open question inherited from the DM fix — retry cadence ✅ ANSWERED
 
 > ✅ **2026-08-01: answered in
-> `.agents/issues/2026-08-01-identity-announce-cadence-research.md` Slice 3.**
+> `.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md` Slice 3.**
 >
 > **Spaces should get no cadence at all.** They already ship a receiver-driven,
 > fingerprint-first member reconciliation — `requestSync` fires on every connect
 > (`MessageDB.tsx:611-631`) and exchanges `MemberDigest` → `MemberDelta`. That is
 > candidates A+B from the list below, already on the wire. It is broken in two
 > specific ways, filed as
-> `.agents/issues/.open/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`
+> `.agents/issues/.done/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md`
 > (digest hashes only the override slot, which is empty post-follow-global; and
 > applying a delta full-row-`put`s away the global slot). **Fix those, and
 > Slice 1 here becomes a bootstrap for members nobody has a row for** — gate it
@@ -349,7 +349,7 @@ renders once from an in-memory fallback.
 >
 > ⚠️ **Not yet in anyone's hands.** This only helps once a mobile release carries
 > it — which is what unblocks the "members no peer holds" case in
-> `.agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
+> `.agents/issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
 > (NEXT STEP C).
 
 ### Original spec, kept for reference

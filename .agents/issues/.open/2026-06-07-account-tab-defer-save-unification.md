@@ -1,7 +1,7 @@
 ---
 type: task
 title: Unify Account tab's defer-until-Save vs. instant-toggle semantics
-status: in-progress
+status: open
 created: 2026-06-07
 scope: desktop
 related:
@@ -26,7 +26,7 @@ The Account tab of `SpaceSettingsModal` currently mixes two patterns:
 
 The `Save Changes` button at the bottom of the modal only persists the first three. The others have already self-saved by the time the user clicks Save. A user looking at the panel cannot tell which controls are deferred and which are instant by sight — same widget, same context, different semantics.
 
-This was tolerable when only the Select was deferred (one outlier). With the new per-channel switches added by [`feat/align-notification-settings-with-mobile`](2026-06-07-align-notification-settings-with-mobile.md), the inconsistency becomes more visible.
+This was tolerable when only the Select was deferred (one outlier). With the new per-channel switches added by [`feat/align-notification-settings-with-mobile`](../.done/2026-06-07-align-notification-settings-with-mobile.md), the inconsistency becomes more visible.
 
 ## Why this is a separate task (not in the notification-alignment PR)
 

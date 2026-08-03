@@ -9,7 +9,7 @@ severity: HIGH (authorization bypass / integrity)
 ---
 
 > **HUB:** This issue is tracked from
-> [2026-06-25-MASTER-RECAP-control-message-auth.md](2026-06-25-MASTER-RECAP-control-message-auth.md).
+> [2026-06-25-MASTER-RECAP-control-message-auth.md](../.open/2026-06-25-MASTER-RECAP-control-message-auth.md).
 > Read that first for the big picture and current status.
 >
 > **What's done:** the DM `remove-message` + `edit-message` bypass described below
@@ -18,7 +18,7 @@ severity: HIGH (authorization bypass / integrity)
 > `feat/space-control-message-auth`): space `remove-message`/`edit-message`/`pin`/
 > `mute` are authorized against the verified ed448 signer (not payload
 > `senderId`), via `quorum-shared` `messageAuth` (PR #61). See
-> [2026-06-25-MASTER-RECAP-control-message-auth.md](2026-06-25-MASTER-RECAP-control-message-auth.md).
+> [2026-06-25-MASTER-RECAP-control-message-auth.md](../.open/2026-06-25-MASTER-RECAP-control-message-auth.md).
 > **Remaining:** mobile's matching receive-side verification. The text below is
 > kept as the original detailed analysis.
 

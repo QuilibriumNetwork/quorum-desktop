@@ -1,7 +1,7 @@
 ---
 type: task
 title: "DM unread dot never clears — the list renders a frozen snapshot of the conversation rows"
-status: in-progress
+status: open
 priority: high
 created: 2026-08-01
 updated: 2026-08-01
@@ -93,7 +93,7 @@ is not the one this mutation uses.
 
 ### §1.4 Corroboration — this has been patched around twice already
 
-- [`dm-mark-all-read-no-immediate-ui-update.md`](.done/dm-mark-all-read-no-immediate-ui-update.md)
+- [`dm-mark-all-read-no-immediate-ui-update.md`](../.done/dm-mark-all-read-no-immediate-ui-update.md)
   records exactly this fingerprint (rail dot clears, contact rows don't) and was closed by
   building [`DmReadStateContext.tsx`](../../src/context/DmReadStateContext.tsx) to overlay
   a forced read timestamp on top of the stale list. The cause was never removed.

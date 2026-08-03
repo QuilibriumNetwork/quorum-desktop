@@ -3296,7 +3296,7 @@ Append to `.agents/issues/quorum-shared-migration/mobile-tasks-pending.md`:
 
 **Status:** pending
 **Created:** 2026-06-01
-**Spec:** [polls-design.md](../2026-06-01-polls-design.md)
+**Spec:** [polls-design.md](2026-06-01-polls-design.md)
 **Desktop PR:** [link when merged]
 
 Mobile work to mirror the desktop polls feature:

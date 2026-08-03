@@ -12,7 +12,7 @@ updated: 2025-12-13T00:00:00.000Z
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 > 🧭 **Start at the umbrella task:**
-> [`../2026-07-31-spaces-list-cross-device-sync.md`](../2026-07-31-spaces-list-cross-device-sync.md)
+> [`../2026-07-31-spaces-list-cross-device-sync.md`](2026-07-31-spaces-list-cross-device-sync.md)
 > is the single entry point for Spaces-list cross-device sync.
 >
 > **Partially fixed 2026-07-31** (branch `fix/config-save-filter-wipes-local-spaces`):
@@ -25,7 +25,7 @@ updated: 2025-12-13T00:00:00.000Z
 >   A device with sync off still adopts whatever is on the server, verbatim and unmerged.
 >
 > Option A (merge + tombstones) is still open and is Slice 2 of
-> [`../2026-07-19-space-deletion-ghost-cleanup.md`](../2026-07-19-space-deletion-ghost-cleanup.md).
+> [`../2026-07-19-space-deletion-ghost-cleanup.md`](2026-07-19-space-deletion-ghost-cleanup.md).
 
 ## Symptoms
 
@@ -165,12 +165,12 @@ This helps detect if the bug is occurring in production. If users report space l
 
 The filtering logic **cannot simply be removed** - it was added to fix a different bug where folder operations failed with `400 - invalid config missing data`. The server requires `spaceIds.length === spaceKeys.length` (bidirectional consistency).
 
-See: [.agents/issues/.done/space-creation-config-save-race-condition.md](.agents/issues/.done/space-creation-config-save-race-condition.md)
+See: [.agents/issues/.done/space-creation-config-save-race-condition.md](../.done/space-creation-config-save-race-condition.md)
 
 ## Hub-log migration impact (2026-06-13)
 
 The incoming desktop **hub log** (mobile's durable, replay-on-reconnect transport;
-see [2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md)
+see [2026-06-13-space-members-missing-no-join-row.md](../.done/2026-06-13-space-members-missing-no-join-row.md)
 and [2026-06-13-config-not-refetched-stale-until-restart.md](2026-06-13-config-not-refetched-stale-until-restart.md))
 **does NOT fix the core of this bug.** The destructive part is `saveConfig`'s
 filter-and-overwrite logic, which drops spaces lacking complete local encryption state —

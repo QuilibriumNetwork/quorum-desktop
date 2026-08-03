@@ -15,7 +15,7 @@ related_tasks:
 
 # Test Suite Review — Cleanup Before Migration
 
-> **Sibling workstreams in flight (2026-05-19):** [quorum-shared migration](./quorum-shared-migration/README.md) and [MessageDB refactor](./messagedb/README.md). The ReceiptService cleanup and util-test expansion items below are prerequisites of the receipts and util-tests migration PRs in the shared-migration stream.
+> **Sibling workstreams in flight (2026-05-19):** [quorum-shared migration](./quorum-shared-migration/README.md) and [MessageDB refactor](../messagedb/README.md). The ReceiptService cleanup and util-test expansion items below are prerequisites of the receipts and util-tests migration PRs in the shared-migration stream.
 
 ---
 

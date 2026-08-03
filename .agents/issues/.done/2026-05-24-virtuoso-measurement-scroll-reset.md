@@ -101,7 +101,7 @@ Full reference: [`docs/features/messages/scroll-anchoring.md`](../../docs/featur
 - Do NOT accept residual jank as a known limitation. The most-used surface in the app must not have constant visual degradation.
 - No stacking of patches; revert immediately when something doesn't help.
 - Every change recorded in the bug doc BEFORE testing the change.
-- Maintain alignment with documented features: see [`docs/features/messages/auto-jump-first-unread.md`](../docs/features/messages/auto-jump-first-unread.md) and [`docs/features/messages/hash-navigation-to-old-messages.md`](../docs/features/messages/hash-navigation-to-old-messages.md). The hook's `hasJumpedToOldMessage` suppression preserves both.
+- Maintain alignment with documented features: see [`docs/features/messages/auto-jump-first-unread.md`](../.archived/auto-jump-first-unread.md) and [`docs/features/messages/hash-navigation-to-old-messages.md`](../docs/features/messages/hash-navigation-to-old-messages.md). The hook's `hasJumpedToOldMessage` suppression preserves both.
 
 ## What to check first if this regresses
 

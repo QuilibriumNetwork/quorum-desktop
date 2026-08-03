@@ -105,20 +105,13 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### In Progress
 
-- 📋 [Space Tag Click — Space Info Modal](issues/2026-02-24-space-tag-info-modal.md)
-- 📋 [Unify Account tab's defer-vs-instant control semantics](issues/2026-06-07-account-tab-defer-save-unification.md)
-- 📋 [UserProfile card layout polish pass](issues/2026-06-08-userprofile-card-layout-polish.md)
-- 📋 [Master recap: the "spoofable senderId" fix](issues/2026-06-25-MASTER-RECAP-control-message-auth.md)
-- 📋 [Edited messages show a false "not signed" warning on other devices](issues/2026-07-19-edited-message-signature-badge-cross-device.md)
-- 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
-- 📋 [Space deletion: instant + offline UX, and stop leaking ghost spaces](issues/2026-07-19-space-deletion-ghost-cleanup.md)
-- 📋 [Make the Spaces list identical on every device](issues/2026-07-31-spaces-list-cross-device-sync.md)
-- 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
-- 📋 [DM unread dot never clears](issues/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
-- 📋 [Identity announce: cap the retries](issues/2026-08-01-identity-announce-cadence-research.md)
-- 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
-- 📋 [Promote the identity-announce gate to shared](issues/2026-08-02-promote-identity-announce-gate-to-shared.md)
+- 🐛 [vitest intermittently runs 4% of the suite](issues/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md)
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
+- 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
+- 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
+- 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
+- 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
+- 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 
 #### Messagedb
 
@@ -283,21 +276,13 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Bug: Display Name Input Grows Wider When Validation Error Appears](issues/.open/2026-04-14-display-name-input-layout-shift-on-error.md)
 - 🐛 [UserSettingsModal shows stale display name after remote UserConfig sync](issues/.open/2026-05-30-user-settings-modal-stale-display-name.md)
 - 🐛 [UserSettingsModal fields flash empty on open](issues/.open/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md)
-- 🐛 [@everyone owner-bypass is a real propagating bug (send-side-only enforcement)](issues/.open/2026-06-12-everyone-mention-owner-bypass-send-side-only.md)
 - 🐛 [Desktop shows stale synced config until restart](issues/.open/2026-06-13-config-not-refetched-stale-until-restart.md)
-- 🐛 [Space members show truncated address — no `space_members` row](issues/.open/2026-06-13-space-members-missing-no-join-row.md)
-- 🐛 [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](issues/.open/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - 🐛 [announce-keys flooding → unbounded per-device admission store](issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - 🐛 [Join-binding hijack: unauthenticated member rebind/blank](issues/.open/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
 - 🐛 [Electron keeps the master private key unlocked on disk](issues/.open/2026-07-31-electron-master-key-at-rest-no-user-secret.md)
 - 🐛 [Reset App Data leaves private keys behind (desktop)](issues/.open/2026-07-31-reset-app-data-leaves-private-keys-in-keydb.md)
 - 🐛 [Every logger call is a no-op in production builds](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md)
 - 🐛 [A per-space override never reaches your own other devices](issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md)
-- 🐛 [Space sync member reconciliation ignores — and erases — the global identity slot](issues/.open/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md)
-- 🐛 [A deleted space tag can no longer be cleared from a member roster](issues/.open/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md)
-- 🐛 [vitest intermittently runs 4% of the suite](issues/.open/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md)
-- 🐛 [The roster pull: what it actually does](issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
-- 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -312,6 +297,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Multi-User Invite Selection Enhancement](issues/.open/2026-01-09-multi-user-invite-selection.md)
 - 📋 [Test Suite Implementation Plan for Quorum Desktop](issues/.open/2026-01-09-test-suite-plan.md)
 - 📋 [Auto-save settings modals — eliminate save buttons](issues/.open/2026-02-16-auto-save-settings-modals.md)
+- 📋 [Space Tag Click — Space Info Modal](issues/.open/2026-02-24-space-tag-info-modal.md)
 - 📋 [Thread List Panel: "Created by me" Filter](issues/.open/2026-03-14-thread-list-created-filter.md)
 - 📋 [Invite with Role — Design](issues/.open/2026-04-20-invite-with-role-design.md)
 - 📋 [Invite with Role Implementation Plan](issues/.open/2026-04-20-invite-with-role-implementation.md)
@@ -319,8 +305,16 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Polls in Spaces — v1 Implementation Plan](issues/.open/2026-06-01-polls-plan.md)
 - 📋 [Spaces Highlights Feed — Design Spec](issues/.open/2026-06-04-spaces-highlights-feed-design.md)
 - 📋 [Spaces Highlights Feed Implementation Plan](issues/.open/2026-06-04-spaces-highlights-feed-plan.md)
+- 📋 [Unify Account tab's defer-vs-instant control semantics](issues/.open/2026-06-07-account-tab-defer-save-unification.md)
+- 📋 [UserProfile card layout polish pass](issues/.open/2026-06-08-userprofile-card-layout-polish.md)
+- 📋 [Master recap: the "spoofable senderId" fix](issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md)
 - 📋 [Coalesce replayed space-manifest during history replay (stop flicker) — DEFERRED](issues/.open/2026-06-28-coalesce-replay-space-manifest-flicker.md)
 - 📋 [Coalesce replayed update-profile during history replay (stop flicker) — DEFERRED](issues/.open/2026-06-28-coalesce-replay-state-updates-flicker.md)
+- 📋 [Edited messages show a false "not signed" warning on other devices](issues/.open/2026-07-19-edited-message-signature-badge-cross-device.md)
+- 📋 [Space deletion: instant + offline UX, and stop leaking ghost spaces](issues/.open/2026-07-19-space-deletion-ghost-cleanup.md)
+- 📋 [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md)
+- 📋 [DM unread dot never clears](issues/.open/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
+- 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
 
 ### Deferred
 
@@ -371,7 +365,9 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Action queue errors silently swallowed across all config-writing hooks](issues/.done/2026-06-07-action-queue-errors-swallowed.md)
 - 🐛 [Per-space mention-type filter doesn't sync across devices](issues/.done/2026-06-07-mention-type-filter-not-synced.md)
 - 🐛 [`Save Changes` in Account tab throws "missing inbox configuration"](issues/.done/2026-06-07-space-profile-save-missing-inbox.md)
+- 🐛 [@everyone owner-bypass is a real propagating bug (send-side-only enforcement)](issues/.done/2026-06-12-everyone-mention-owner-bypass-send-side-only.md)
 - 🐛 [Read-only channel receive-side enforcement is incomplete](issues/.done/2026-06-12-readonly-channel-receive-side-enforcement-gaps.md)
+- 🐛 [Space members show truncated address — no `space_members` row](issues/.done/2026-06-13-space-members-missing-no-join-row.md)
 - 🐛 [Sync path hardcodes `'post'` in the signature messageId recompute → non-post signatures nulled](issues/.done/2026-06-14-sync-path-hardcodes-post-type-nulls-nonpost-signatures.md)
 - 🐛 [Composer flattens multi-line paste into a single line](issues/.done/2026-06-25-composer-paste-strips-newlines.md)
 - 🐛 [DM message delivery is unreliable (master report)](issues/.done/2026-07-02-dm-message-delivery-unreliable-master.md)
@@ -380,6 +376,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [update-profile inbox_address poisoning → control-message impersonation](issues/.done/2026-07-19-update-profile-inbox-poisoning-control-msg-impersonation.md)
 - 🐛 [Desktop DM receive holds the ratchet lock across relay HTTP](issues/.done/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md)
 - 🐛 [Session replacement orphans the receiving inbox](issues/.done/2026-07-29-session-replacement-strands-in-flight-frames.md)
+- 🐛 [Space sync member reconciliation ignores — and erases — the global identity slot](issues/.done/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md)
+- 🐛 [A deleted space tag can no longer be cleared from a member roster](issues/.done/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -506,6 +504,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [The keepalive fix: what the research found](issues/.done/2026-07-30-keepalive-fix-session-handoff.md)
 - 📋 [Round Q — tie individual lost messages to individual CLOSE events](issues/.done/2026-07-31-round-q-join-losses-to-close-events.md)
 - 📋 [Ship the send-retention fix to quorum-shared](issues/.done/2026-07-31-ship-send-retention-to-quorum-shared.md)
+- 📋 [Identity announce: cap the retries](issues/.done/2026-08-01-identity-announce-cadence-research.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -736,4 +735,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-03 09:03:41
+**Last Updated**: 2026-08-03 12:45:59

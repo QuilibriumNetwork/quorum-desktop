@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Space Tag Click — Space Info Modal"
-status: in-progress
+status: open
 complexity: medium
 ai_generated: true
 reviewed_by: null

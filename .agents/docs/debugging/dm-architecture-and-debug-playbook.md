@@ -179,7 +179,7 @@ Confirmed instances of the pattern (all desktop):
 
 | Bug | What's fetched once and never reconciled |
 |---|---|
-| [space-members-missing-no-join-row](../../issues/.open/2026-06-13-space-members-missing-no-join-row.md) | Member roster — `join` is an ephemeral fire-and-forget broadcast; miss it and the row never appears (~52% missing in a live test). |
+| [space-members-missing-no-join-row](../../issues/.done/2026-06-13-space-members-missing-no-join-row.md) | Member roster — `join` is an ephemeral fire-and-forget broadcast; miss it and the row never appears (~52% missing in a live test). |
 | [config-not-refetched-stale-until-restart](../../issues/.open/2026-06-13-config-not-refetched-stale-until-restart.md) | Synced `UserConfig` — only server-fetched at startup; cross-device changes invisible until restart. |
 | [config-sync-space-loss-race-condition](../../issues/.open/2026-01-09-config-sync-space-loss-race-condition.md) | Space sync as a fragile one-shot startup loop (this also has a separate destructive `saveConfig` bug). |
 | [user-settings-modal-stale-display-name](../../issues/.open/2026-05-30-user-settings-modal-stale-display-name.md) | Settings modal reads a cached source not invalidated on incoming sync (same family, modal-local). |
@@ -194,7 +194,7 @@ bespoke refetch band-aid ahead of the migration** — sequence the fix WITH the 
 on every reconnect, so any handler that bails or null-derefs on missing state silently
 drops or resurrects content):
 1. Control-message receive handlers must be upsert-safe / null-safe. Audit lives in
-   [space-members-missing-no-join-row](../../issues/.open/2026-06-13-space-members-missing-no-join-row.md)
+   [space-members-missing-no-join-row](../../issues/.done/2026-06-13-space-members-missing-no-join-row.md)
    ("Control-handler replay audit"). `update-profile` + non-repudiability fixed in PR #199;
    `verify-kicked`, `leave`, and several `space!` derefs still need it.
 2. Durable-path enforcement must match cache-path enforcement, or replay resurrects blocked

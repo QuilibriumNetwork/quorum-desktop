@@ -8,7 +8,7 @@ created: 2026-06-07
 solved: 2026-06-08
 solved_by: PR #180
 related:
-  - .agents/issues/2026-06-07-account-tab-defer-save-unification.md
+  - .agents/issues/.open/2026-06-07-account-tab-defer-save-unification.md
   - .agents/issues/.done/2026-06-07-align-notification-settings-with-mobile.md
 ---
 
@@ -87,7 +87,7 @@ This is a codebase-wide pattern, not specific to the PR. The PR's per-channel no
 ## Why it wasn't fixed in the notification-alignment PR
 
 1. **It's pre-existing.** Every site listed above had the same swallowed-error behavior before this PR. The change from `await` to `void` in `useChannelMute` (commit `1467b522`) doesn't make error handling worse — the existing `try/catch` was already catching nothing actionable.
-2. **The right architectural fix touches the whole hook family** and overlaps with the [defer-vs-instant unification task](../2026-06-07-account-tab-defer-save-unification.md), which is the natural home for a systematic rewrite. Patching 5-10 individual sites here would be band-aid work that gets thrown away by the unification refactor.
+2. **The right architectural fix touches the whole hook family** and overlaps with the [defer-vs-instant unification task](../.open/2026-06-07-account-tab-defer-save-unification.md), which is the natural home for a systematic rewrite. Patching 5-10 individual sites here would be band-aid work that gets thrown away by the unification refactor.
 3. **The notification PR was already large** — adding error-handling refactor to it would have ballooned scope.
 
 ## Suggested fix (when a maintainer tackles this)

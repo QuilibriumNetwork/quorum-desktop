@@ -22,7 +22,7 @@ related:
 > found and fixed in July, and every mechanism in it is still real. But its status,
 > its "residual" framing, and anything resting on "desktop↔desktop is healthy" are
 > out of date. **Start at
-> [.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md](../2026-07-26-dm-desktop-to-desktop-resurfaced.md)**
+> [.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md](../transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md)**
 > for current state, the instrumentation rig, and open leads.
 
 **One-line:** for ~6 months, DMs intermittently never arrived, with no error, no retry, and no

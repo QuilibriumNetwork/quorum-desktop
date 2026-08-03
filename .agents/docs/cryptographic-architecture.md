@@ -503,7 +503,7 @@ The fingerprint for control messages additionally binds `spaceId + channelId` (s
 For the full security rationale, cross-space replay protection, and the edit-inherit rule (edits sign iff the original was signed), see:
 - [features/security.md](features/security.md) — "Control-Message Authorization (verified signer)"
 - [features/messages/message-signing-system.md](features/messages/message-signing-system.md) — "Receive-Side Verification" and "Control-Message Authorization via Verified Signer"
-- `.agents/issues/2026-06-25-MASTER-RECAP-control-message-auth.md`
+- `.agents/issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md`
 
 ---
 

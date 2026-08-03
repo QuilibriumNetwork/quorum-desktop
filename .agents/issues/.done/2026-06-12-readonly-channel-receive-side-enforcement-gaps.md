@@ -97,7 +97,7 @@ Mobile is being implemented WITHOUT these gaps (all content types, both live + b
 ## 2026-07-19 — Read-only POST identity FIXED on the live path; durable path + type coverage still open
 
 Two updates from the control-message-auth work (see
-`.agents/issues/2026-06-25-MASTER-RECAP-control-message-auth.md` and
+`.agents/issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md` and
 `.agents/docs/features/security.md`):
 
 1. **Control messages** (remove/edit/pin/mute) now authorize against the

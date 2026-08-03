@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Make the Spaces list identical on every device (umbrella — start here)"
-status: in-progress
+status: open
 priority: high
 created: 2026-07-31
 updated: 2026-07-31

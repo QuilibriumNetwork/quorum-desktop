@@ -159,6 +159,6 @@ To prevent unbounded growth of tombstones:
 
 ## Related Issues
 
-- [ghost-message-after-delete.md](.agents/issues/.done/ghost-message-after-delete.md) - Different bug where `remove-message` type was misclassified (already fixed with type guard)
+- [ghost-message-after-delete.md](ghost-message-after-delete.md) - Different bug where `remove-message` type was misclassified (already fixed with type guard)
 
 ---

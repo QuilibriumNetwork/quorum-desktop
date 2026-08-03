@@ -1,7 +1,7 @@
 ---
 type: task
 title: "MASTER RECAP: control-message authorization fix (delete/edit spoofing) — desktop + mobile"
-status: in-progress
+status: open
 priority: high
 created: 2026-06-25
 audience: "the team — written in plain language, no deep jargon"
@@ -43,7 +43,7 @@ else (the other task files) is detail under one of the boxes below.
 > This "neither in prod" state is the SAFE one — no client mismatch is possible
 > until one side ships. The cut-over = a new desktop release timed with mobile
 > going live. Deferred, non-blocking: the edited-message
-> "signed" badge across devices — `.agents/issues/2026-07-19-edited-message-signature-badge-cross-device.md`.
+> "signed" badge across devices — `.agents/issues/.open/2026-07-19-edited-message-signature-badge-cross-device.md`.
 > Read the sections below with this update in mind.
 
 ## The bug, in one paragraph

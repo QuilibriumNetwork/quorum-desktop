@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Space members show truncated address — no space_members row (join broadcast never arrived)"
-status: open
+status: done
 priority: high
 ai_generated: false
 created: 2026-06-13
@@ -34,7 +34,7 @@ related_tools:
 > the person to re-announce.
 >
 > Current state, next steps and the residual defects:
-> `.agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
+> `.agents/issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md`
 > and `.agents/docs/features/identity-resolution-and-profile-sync.md`
 > ("Why a name goes missing, and what repairs it").
 

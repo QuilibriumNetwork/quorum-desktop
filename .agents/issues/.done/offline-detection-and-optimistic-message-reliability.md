@@ -17,7 +17,7 @@ updated: '2026-01-09'
 **Related Documentation**:
 - [Offline Support](../docs/features/offline-support.md)
 - [Action Queue](../docs/features/action-queue.md)
-- [Message Sending Indicator](../docs/features/messages/message-sending-indicator.md)
+- [Message Sending Indicator](message-sending-indicator.md)
 
 **Files**:
 - `src/components/context/ActionQueueContext.tsx:64-108`

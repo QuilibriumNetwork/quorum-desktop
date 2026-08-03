@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Space sync member reconciliation is blind to the global identity slot, and erases it on apply"
-status: open
+status: done
 priority: high (if confirmed) — it disables the one mechanism that should make a space identity cadence unnecessary
 created: 2026-08-01
 updated: 2026-08-01
@@ -12,7 +12,7 @@ related_bugs:
   - "2026-06-13-space-members-missing-no-join-row.md"
 related_tasks:
   - ".agents/issues/2026-08-01-space-member-identity-announce-on-connect.md"
-  - ".agents/issues/2026-08-01-identity-announce-cadence-research.md"
+  - ".agents/issues/.done/2026-08-01-identity-announce-cadence-research.md"
 related_docs:
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
 related_tools:
@@ -34,7 +34,7 @@ related_tools:
 > §4 below is kept as the END-TO-END confirmation — worth running once the fix
 > merges, to check the roster actually heals in a live space.
 >
-> Context: `.agents/issues/2026-08-01-identity-announce-cadence-research.md` Step 3.
+> Context: `.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md` Step 3.
 
 ## §1. Why this matters more than it looks
 
@@ -155,7 +155,7 @@ If both defects are fixed, the space side needs only a **bootstrap** announce fo
 members nobody has a row for (the sibling task's Slice 1), behind a bounded,
 terminating gate. It does **not** need a periodic cadence, and specifically must
 not copy the DM 24h placeholder — see
-`.agents/issues/2026-08-01-identity-announce-cadence-research.md` Slice 3.
+`.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md` Slice 3.
 
 ---
 *Last updated: 2026-08-01*

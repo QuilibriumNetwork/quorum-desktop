@@ -51,7 +51,7 @@ So muting a space on desktop does NOT propagate to mobile today, and vice versa.
 
 - Investigation: [`../../reports/2026-05-28-notification-architecture-divergence.md`](../../reports/2026-05-28-notification-architecture-divergence.md)
 - GitHub issue draft: [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md)
-- Tracked separately as a row in [the migration status table](README.md) — no longer this task's problem.
+- Tracked separately as a row in [the migration status table](../../messagedb/README.md) — no longer this task's problem.
 
 ### What about the legacy `NotificationSettings` placeholder in `quorum-shared/src/types/user.ts`?
 
@@ -76,7 +76,7 @@ Everything below was the original investigation. The plans, options, and Phase 1
 
 ## How this was discovered
 
-While shipping the [YouTube previews privacy toggle](../.done/2026-05-27-userconfig-type-drift.md) on branch `chore/userconfig-type-drift-and-yt-toggle`, I attempted to dedupe a local `UserConfig` type in `src/db/messages.ts` against the shared one in `quorum-shared/src/types/user.ts`. The local and shared `UserConfig` had identical shapes (after I added the missing fields), so deduping seemed safe.
+While shipping the [YouTube previews privacy toggle](../../.done/2026-05-27-userconfig-type-drift.md) on branch `chore/userconfig-type-drift-and-yt-toggle`, I attempted to dedupe a local `UserConfig` type in `src/db/messages.ts` against the shared one in `quorum-shared/src/types/user.ts`. The local and shared `UserConfig` had identical shapes (after I added the missing fields), so deduping seemed safe.
 
 It wasn't. Switching all imports of `UserConfig` to point at the shared type surfaced a **deeper structural problem**: `UserConfig` references `NavItem` and `NotificationSettings`, and **both of those types are also duplicated locally vs in shared, AND they have different shapes**.
 
@@ -183,7 +183,7 @@ This is surprising because extensive analysis was done during prior `quorum-shar
 
 ## Related
 
-- Prior task: [`../.done/2026-05-27-userconfig-type-drift.md`](../.done/2026-05-27-userconfig-type-drift.md) — the original UserConfig type drift discovery (resolved at the field level)
+- Prior task: [`../.done/2026-05-27-userconfig-type-drift.md`](../../.done/2026-05-27-userconfig-type-drift.md) — the original UserConfig type drift discovery (resolved at the field level)
 - Architecture doc: [`../../docs/quorum-shared-architecture.md`](../../docs/quorum-shared-architecture.md)
 - Sync system doc: [`../../docs/config-sync-system.md`](../../docs/config-sync-system.md)
 

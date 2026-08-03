@@ -246,7 +246,7 @@ private async signMessage(
 | Apr–May 2026 | Created `ThreadService` (607 lines) | N/A (new) | Threads feature. Mostly outside MessageService. |
 | Mar 24, 2026 | Extracted `attachPiggybackedAcks()` / `stripPiggybackedAcks()` helpers | ~20 (DRY) | Eliminated duplicated piggyback code across two send paths. Fixed `readAckUpTo` strip bug. |
 | Mar 2026 | Created `ReceiptService` (204 lines) | N/A (new) | Delivery + read receipt service. Not extracted from MessageService — created as new service with ~110 lines of integration in MessageService. |
-| Dec 20, 2025 | Extracted `encryptAndSendToSpace()` | ~200 | [Task file](./messageservice-extract-encrypt-helper.md) |
+| Dec 20, 2025 | Extracted `encryptAndSendToSpace()` | ~200 | [Task file](.done/messageservice-extract-encrypt-helper.md) |
 | Dec 18, 2025 | Removed dead fallback code | 249 | Cleaned up `enqueueOutbound` paths |
 
 ---
@@ -262,7 +262,7 @@ private async signMessage(
 - Import chain issue blocks test creation
 - Risk outweighs benefit for current feature velocity
 
-**Plan**: [messageservice-handlenewmessage-refactor.md](./messageservice-handlenewmessage-refactor.md)
+**Plan**: [messageservice-handlenewmessage-refactor.md](.archived/messageservice-handlenewmessage-refactor.md)
 
 ### Retry Method Consolidation
 

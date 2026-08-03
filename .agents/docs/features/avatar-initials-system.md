@@ -616,7 +616,7 @@ border-radius: 50%;
 - [Primitives API Reference](./primitives/API-REFERENCE.md) - Select component avatar support
 
 ### Tasks
-- [Space Initials Fallback Task](./../../tasks/space-initials-fallback.md) - Original implementation task
+- [Space Initials Fallback Task](../../issues/.done/space-initials-fallback.md) - Original implementation task
 
 ---
 

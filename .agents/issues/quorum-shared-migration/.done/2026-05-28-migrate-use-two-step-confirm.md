@@ -22,7 +22,7 @@ This migration extracts the primitive to `@quilibrium/quorum-shared` as `useTwoS
 
 **Why not `useKickConfirmation` or `useConfirmation`?**
 - `useKickConfirmation` was too specific — desktop uses the pattern in both kick AND space-leave flows.
-- `useConfirmation` is already a desktop-only hook with a completely different shape (UI orchestration: shift-click bypass, modal escalation, React mouse events). Mobile would never use it. **VERIFIED-AND-REJECTED** during this session — see [shipped-log.md](shipped-log.md#2026-05-28--usetwostepconfirm) lesson 1.
+- `useConfirmation` is already a desktop-only hook with a completely different shape (UI orchestration: shift-click bypass, modal escalation, React mouse events). Mobile would never use it. **VERIFIED-AND-REJECTED** during this session — see [shipped-log.md](../../port-from-mobile/shipped-log.md#2026-05-28--usetwostepconfirm) lesson 1.
 
 ## Files
 

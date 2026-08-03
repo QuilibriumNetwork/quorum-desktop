@@ -1231,7 +1231,7 @@ queryClient.setQueryData(messagesKey, (oldData) => {
 
 ### Why No Web Worker?
 
-An earlier version of this task ([archived](./archived/background-action-queue-with-worker-crypto.md)) included Web Worker milestones for crypto offloading. After timing analysis, this was found to be **unnecessary**:
+An earlier version of this task ([archived](../.archived/background-action-queue-with-worker-crypto.md)) included Web Worker milestones for crypto offloading. After timing analysis, this was found to be **unnecessary**:
 
 | Operation | Time | % of Total | Web Worker Benefit |
 |-----------|------|------------|-------------------|

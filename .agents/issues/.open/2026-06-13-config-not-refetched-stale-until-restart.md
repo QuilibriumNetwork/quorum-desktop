@@ -64,7 +64,7 @@ cross-device change is invisible until a restart re-runs the startup fetch.
 ## Hub-log migration impact (2026-06-13)
 
 This bug is the same root-cause class as
-[2026-06-13-space-members-missing-no-join-row.md](2026-06-13-space-members-missing-no-join-row.md):
+[2026-06-13-space-members-missing-no-join-row.md](../.done/2026-06-13-space-members-missing-no-join-row.md):
 **desktop fetches state once at startup and never reconciles after** (rosters there,
 synced config here). The lead dev is bringing mobile's durable **hub log** to desktop —
 a per-hub log replayed via `log-since` on every reconnect/foreground. That migration IS

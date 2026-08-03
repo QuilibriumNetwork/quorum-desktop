@@ -108,7 +108,7 @@ If users request easier formatting, we can add an **inline toolbar** above TextI
 - ~3-4 hours implementation
 - Trade-off: Takes 40-50px vertical space
 
-**See:** [markdown-toolbar-editor_mobile.md](./markdown-toolbar-editor_mobile.md) for complete research and implementation details
+**See:** [markdown-toolbar-editor_mobile.md](../.archived/markdown-toolbar-editor_mobile.md) for complete research and implementation details
 
 ### Key Architectural Insight
 
@@ -132,7 +132,7 @@ Desktop's `markdownFormatting.ts` already handles markdown conflicts:
 
 **Mobile (Native App):**
 - Current: Manual markdown (no toolbar implementation needed)
-- Future: See [markdown-toolbar-editor_mobile.md](./markdown-toolbar-editor_mobile.md) for inline toolbar option
+- Future: See [markdown-toolbar-editor_mobile.md](../.archived/markdown-toolbar-editor_mobile.md) for inline toolbar option
 
 **Shared (Cross-Platform):**
 - Formatting: `src/utils/markdownFormatting.ts` ✅
@@ -140,7 +140,7 @@ Desktop's `markdownFormatting.ts` already handles markdown conflicts:
 - Icon primitive: `src/components/primitives/Icon` ✅ (if toolbar added)
 
 **Related Documentation:**
-- [markdown-toolbar-editor_mobile.md](./markdown-toolbar-editor_mobile.md) - Mobile research & implementation details
+- [markdown-toolbar-editor_mobile.md](../.archived/markdown-toolbar-editor_mobile.md) - Mobile research & implementation details
 
 ---
 

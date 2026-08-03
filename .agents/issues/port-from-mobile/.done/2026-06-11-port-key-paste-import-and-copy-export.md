@@ -11,7 +11,7 @@ pr: TBD
 
 # Port — paste private key on import + copy private key in settings
 
-> Source candidate: [`candidates.md` #31a](candidates.md#31a-onboarding-paste-private-key-hex--engineering-ready) (import side) + the copy-export companion surfaced 2026-06-11. The **24-word recovery-phrase** half ([`#31b`](candidates.md#31b-onboarding-paste-recovery-phrase-24-words--needs-a-product-call)) is **parked** pending a lead-dev product call — out of scope here.
+> Source candidate: [`candidates.md` #31a](../candidates.md#31a-onboarding-paste-private-key-hex--engineering-ready) (import side) + the copy-export companion surfaced 2026-06-11. The **24-word recovery-phrase** half ([`#31b`](../candidates.md#31b-onboarding-paste-recovery-phrase-24-words--needs-a-product-call)) is **parked** pending a lead-dev product call — out of scope here.
 
 ## Summary
 

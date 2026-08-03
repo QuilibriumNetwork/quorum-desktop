@@ -143,7 +143,7 @@ Mobile task dropped at [`2026-05-29-mobile-rewire-invite-helpers-to-shared.md`](
 - `toggleRolePermission(role, permission)`: 5 LOC each — `useRoleManagement.ts:96-112` (desktop) and `hooks/chat/useRoleManagement.ts:417-422` (mobile).
 - `setRolePermissions(role, permissions)`: 3 LOC — desktop `useRoleManagement.ts:114-124`, mobile via `useUpdateRole` aggregate params.
 
-Both extractable cleanly to shared `src/utils/roleUtils.ts`. Per-task file scoped at [`2026-05-29-migrate-role-mutation-helpers.md`](2026-05-29-migrate-role-mutation-helpers.md).
+Both extractable cleanly to shared `src/utils/roleUtils.ts`. Per-task file scoped at [`2026-05-29-migrate-role-mutation-helpers.md`](.done/2026-05-29-migrate-role-mutation-helpers.md).
 
 **Scope guardrails** (explicit not-extractions, all justified): UUID gen (Trap E — platform-correct primitive divergence, same as AES-GCM); `toggleRolePublic` (tiny semantic divergence: `=== false` vs `??`; 2 LOC extraction overhead exceeds payoff); per-field setters (1-2 LOC each, too thin for shared API surface); member assignment (desktop doesn't manage membership in this hook).
 

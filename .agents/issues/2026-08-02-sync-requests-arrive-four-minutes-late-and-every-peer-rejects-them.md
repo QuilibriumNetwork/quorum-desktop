@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A reconnecting client starves control-message processing for minutes, so every sync-request expires unread and a new joiner is answered by nobody"
-status: open
+status: in-progress
 priority: MEDIUM — downgraded 2026-08-03. The roster symptom is fixed (desktop #300, see §0b); the head-of-line blocking underneath it is not, and still delays every perishable control frame
 created: 2026-08-02
 updated: 2026-08-03
