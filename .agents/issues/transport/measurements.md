@@ -1912,9 +1912,56 @@ that the fix shape called for also already existed, as the debounce.
 - **Harness-only.** The socket conditions that need real devices are still out of
   reach, so this is "the backlog-starvation path is fixed", not "the field is
   fixed". One real two-client run is still owed.
-- **Untested:** a flood outlasting the re-ask ladder (2 per space per 15 min,
-  60 s cooldown). The 300-message flood drains well inside it. First thing to
-  check if a field report survives the fix.
+- ~~**Untested:** a flood outlasting the re-ask ladder.~~ Swept the same day —
+  see below.
+
+## 2026-08-03 (later) — the ladder has no ceiling, and latency is the real defect
+
+Swept to 4× the load the fix was validated on. **The re-ask ladder never
+exhausts** (2 per space per 15 min, 60 s cooldown was the suspected limit).
+
+| backlog | frames | median lag | rate | per frame |
+|---|---|---|---|---|
+| 300 | 1203 | 79.5 s | 100% | 66 ms |
+| 600 | 2410 | 182 s | 100% | 75.5 ms |
+| 1200 | 4806 | **456.5 s** | 100% | **95 ms** |
+
+### ⚠️ A first pass at 1200 said 0/2 and the reading was WRONG
+
+The observation window was 360 s; the trials converge at ~456 s, so both were cut
+off shortly before succeeding. It was briefly concluded that "the re-ask ladder
+is exhausted" — a mechanism asserted from a failed run with **no supporting
+evidence in the trace, because the trace could not carry any**: every line the
+roster check emits starts with `roster`, which matched none of the harness's
+`TRACE_PATTERNS`. Fixed in desktop #302, which also adds `asking again` /
+`not asking` counters so "the check never fired" is distinguishable from "the
+check ran and declined".
+
+**Use a window ≥ 900 s at 1200 backlog.** Method note, not a footnote: the same
+arithmetic that produced the wrong answer (79.5 s at 300, 182 s at 600 → ~360 s
+predicted at 1200) was also what exposed it. Extrapolate the lag before choosing
+a window.
+
+### 🔴 What the sweep actually found
+
+**Recovery latency scales with drain time and is now the defect.** 456 s is over
+seven minutes of a user looking at truncated addresses with no sign of progress.
+The mitigation recovers but cannot recover *promptly* — the re-ask only succeeds
+once the flood has drained, so recovery is bounded below by drain time.
+
+This is the argument for fixing the head-of-line blocking rather than tuning the
+ladder, and it is why raising `MAX_ROSTER_REASKS` would be the wrong move: the
+ladder is not what is failing.
+
+### Unexplained: per-frame cost rises 44% with queue depth
+
+66 → 75.5 → 95 ms/frame as backlog grows 4×. **Not** the O(n²) inbound queue
+(`WebsocketProvider.tsx:196` spread-copies the whole array on every arrival;
+`:55` `.slice(1)` copies it on every dequeue) — at 4800 frames that is ~11.5 M
+pointer copies each way, tens of milliseconds against a 456,000 ms run. Those
+copies are free waste and worth removing, but they do not explain this. Profile
+before theorising; IndexedDB growth and React re-render churn are suspects, not
+findings.
 
 ---
 *Last updated: 2026-08-03*
