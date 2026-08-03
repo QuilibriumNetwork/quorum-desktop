@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A reconnecting client starves control-message processing for minutes, so every sync-request expires unread and a new joiner is answered by nobody"
-status: ✅ CONFIRMED 2026-08-02 — §5b step 1 is DONE. Reproduced on demand in the harness with a dose-response curve, and the failing line is captured. See §0. The mechanism is NOT what the title says — read §0 before §1
+status: ✅ CONFIRMED 2026-08-02 — §5b step 1 is DONE. ⚠️ Fix table CORRECTED 2026-08-03: the first proposal did not match the code. Reproduced on demand in the harness with a dose-response curve, and the failing line is captured. See §0. The mechanism is NOT what the title says — read §0 before §1
 priority: HIGH — this is upstream of every roster fix shipped 2026-08-01/02; none of them can work while it holds
 created: 2026-08-02
 updated: 2026-08-02
@@ -85,15 +85,55 @@ is failing.
 
 ### The three repair points, cheapest first
 
+> ⚠️ **Corrected 2026-08-03.** The first version of this table proposed "judge
+> expiry against the frame's ARRIVAL timestamp". **No such check exists**, so
+> that fix was written against a mechanism that is not there. What
+> `MessageService.ts:5565-5566` actually evaluates is our OWN outstanding
+> request's window:
+>
+> ```js
+> const sessionExpiry = this.syncInfo.current[spaceId]?.expiry;   // set to Date.now() + 30s when WE asked
+> const isExpired = sessionExpiry ? sessionExpiry <= Date.now() : true;
+> ```
+>
+> So the question it asks is **"how long ago did I ask"**, evaluated at
+> PROCESSING time. B asked at T+0, A replied at T+1, B read the reply at T+200,
+> and B's own ask-window had closed. The incoming frame's age is never consulted.
+> Read this before proposing anything.
+
 | # | fix | note |
 |---|---|---|
-| **a** | judge expiry against the frame's **arrival** timestamp rather than when we got round to it | smallest change, and it directly matches what was measured |
-| **b** | **do not discard a usable offer just because our window closed** — remember it and let the next `requestSync` prefer a peer already known to hold more | this is §5b step 4, and it is now evidence-backed rather than speculative |
-| **c** | stop bulk frames queueing ahead of perishable control frames | §5b step 2, the real scheduling fix, biggest blast radius |
+| **b** | **do not require an open session to use a good offer** — accept it, or remember the peer and its `memberCount` for the next `requestSync` | §5b step 4. The only one of the original three that survives contact with the code, because it does not depend on the window at all |
+| **c** | stop bulk frames queueing ahead of perishable control frames | §5b step 2, the real scheduling fix, biggest blast radius. Attacks the cause rather than the symptom |
+| **d** | keep the ask-window OPEN while we are demonstrably behind (e.g. anchor it to processing progress rather than wall clock) | replaces the retracted (a). Unvalidated, and it risks acting on a genuinely stale summary — the same objection that rules out simply raising the expiry |
+
+⚠️ **Do not treat any of these as ready.** The reproduction is solid; the fix
+analysis is one code-read old, and its first version was already wrong once.
 
 ⚠️ **Still do NOT simply raise `DEFAULT_SYNC_EXPIRY_MS`** (§5b step 3). Nothing
 here changes that: a longer window means acting on a summary that is minutes
 stale, converting a visible failure into a silent one.
+
+### ⚠️ How faithfully does the harness model a real user? Enumerated, not assumed
+
+The DM harness benched 0% loss for weeks against a failure that was real, because
+it could not host the trigger. The same question has to be asked here, and the
+answer is "partly" — with the gaps written down rather than left to be
+rediscovered:
+
+| gap | why it might matter | status |
+|---|---|---|
+| the target space holds ~0 messages, so the member delta is the **only** payload | the field signature is `isFinal=false` arrives and `isFinal=true` never does — the member payload is the LAST of several. **That shape has never been reproduced** | ⚠️ open, highest priority |
+| ONE responder | `selectBestCandidate` sorts message-count-first; with a single candidate it cannot misfire. Field had peers at 90/79/72 | ⚠️ open |
+| backlog is space POSTS; the field's was `announce-keys` | different handler (`processDeviceKeyStatement`), possibly different per-frame cost | untested assumption |
+| ONE space | the field user was in **six**, all flooding on the same reconnect | not modelled |
+| all peers are desktop | mobile never ANSWERS a sync request, so a real joiner's usable responder pool is much smaller than the member count suggests | not modelled |
+| fresh accounts, seconds-old sessions | real clients carry months of ratchet state and several devices per account | partly unfixable |
+| socket behaviour | the DM lesson: needs real devices | permanently out of reach |
+
+**A green harness result covers only the variables the harness actually varies.**
+The 15/15 at 79 members is true and narrow; it was measured on a one-payload
+exchange with a single responder.
 
 ### What this does NOT establish
 
@@ -313,4 +353,4 @@ The `expiry` and `now` values are already printed by
 `MessageService`'s `sync-request` handler — no new instrumentation needed.
 
 ---
-*Last updated: 2026-08-02*
+*Last updated: 2026-08-03*
