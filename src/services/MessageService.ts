@@ -5571,6 +5571,36 @@ export class MessageService {
               memberCount: envelope.message.memberCount,
               hasSummary: !!envelope.message.summary,
             });
+            // ⚠️ These two calls sit OUTSIDE the session gate below, and that
+            // placement is the entire point of them. They were INSIDE it until
+            // 2026-08-03, which left the convergence check disarmed in exactly
+            // the case it was built to repair.
+            //
+            // What a peer advertises is true whether or not our own request
+            // window is still open. The gate below answers a different
+            // question — "may we sync FROM this offer, in THIS session?" — and
+            // it is still right to answer that with the expiry. But learning
+            // what is out there is not acting on the offer, and it does not
+            // need permission from a window we opened.
+            //
+            // Measured 2026-08-02 against a 300-message reconnect backlog:
+            // twelve `sync-info` frames arrived, every one advertising 80
+            // members, and every one fell to the `else` branch on
+            // `isExpired: true` — the inbound queue took longer to drain than
+            // the 30s window. With these calls inside the gate the tracker
+            // learned nothing, no check was ever armed, and the client sat on
+            // 1 row of 80 with nothing left to try. The roster landed 0/2 that
+            // way, and 2/2 when the same request was simply made again once the
+            // flood had drained. The request was never wrong; only its timing
+            // was, which is why re-asking is the whole repair.
+            //
+            // See .agents/issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md
+            const learnedTarget = this.rosterConvergence.noteAdvertisedRoster(
+              spaceId,
+              envelope.message.memberCount ?? envelope.message.summary?.memberCount
+            );
+            if (learnedTarget) this.scheduleRosterConvergenceCheck(spaceId);
+
             if (hasSession && !isExpired) {
               if (
                 envelope.message.inboxAddress &&
@@ -5578,16 +5608,6 @@ export class MessageService {
               ) {
                 logger.log(`[MessageService] sync-info: Adding candidate and scheduling sync`);
                 this.syncInfo.current[spaceId].candidates.push(envelope.message);
-                // Remember what this peer says it holds, and arm a check that
-                // we actually received it. The member half of a delta is ONE
-                // payload with no retry, so losing that frame loses the whole
-                // roster silently — measured 2026-08-02, where the same join
-                // delivered 0 rows on one run and 71 on the next.
-                this.rosterConvergence.noteAdvertisedRoster(
-                  spaceId,
-                  envelope.message.memberCount ?? envelope.message.summary?.memberCount
-                );
-                this.scheduleRosterConvergenceCheck(spaceId);
                 // reset the timeout to be 1s to more aggressively grab viable candidates for sync instead of waiting the full 30s
                 clearTimeout(this.syncInfo.current[spaceId].invokable);
                 this.syncInfo.current[spaceId].invokable =
@@ -5599,7 +5619,13 @@ export class MessageService {
                 logger.log(`[MessageService] sync-info: Missing inboxAddress or counts, ignoring`);
               }
             } else {
-              logger.log(`[MessageService] sync-info: No active session or expired, ignoring`);
+              // NOT "ignoring" any more, and the wording matters to whoever
+              // reads this log next: we cannot sync from this offer, but we
+              // have banked what it advertised and a re-ask is pending.
+              logger.log(
+                `[MessageService] sync-info: No active session or expired — cannot sync from ` +
+                  `this offer, roster check armed: ${learnedTarget}`
+              );
             }
           } else if (envelope.message.type === 'sync-initiate') {
             logger.log(`[MessageService] sync-initiate received from: ${envelope.message.inboxAddress?.substring(0, 12)}`);
