@@ -41,7 +41,10 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
     { id: 'emojis', icon: 'smile', label: t`Emojis`, className: '' },
     { id: 'stickers', icon: 'image', label: t`Stickers`, className: '' },
     { id: 'invites', icon: 'user-plus', label: t`Invites`, className: '' },
-    { id: 'danger', icon: 'warning', label: t`Delete Space`, className: 'text-danger' },
+    // Labelled "Danger", not "Delete Space": deleting is not available yet, and a tab
+    // named after a capability the app does not have is the same overpromise the tab's
+    // own copy was fixed for. Matches mobile's Danger tab.
+    { id: 'danger', icon: 'warning', label: t`Danger`, className: 'text-danger' },
   ];
 
   // Owners see everything. Non-owners see Account always + Invites only when

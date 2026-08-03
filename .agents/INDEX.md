@@ -118,6 +118,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Identity announce: cap the retries](issues/2026-08-01-identity-announce-cadence-research.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 - 📋 [Promote the identity-announce gate to shared](issues/2026-08-02-promote-identity-announce-gate-to-shared.md)
+- 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 
 #### Messagedb
 
@@ -295,7 +296,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Space sync member reconciliation ignores — and erases — the global identity slot](issues/.open/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md)
 - 🐛 [A deleted space tag can no longer be cleared from a member roster](issues/.open/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md)
 - 🐛 [vitest intermittently runs 4% of the suite](issues/.open/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md)
-- 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/.open/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
