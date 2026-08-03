@@ -14,13 +14,19 @@
  * control frame — rather than calling the scheduler directly. It is the only
  * test in either repo that proves the feature is connected to anything.
  *
- * It pins three things:
+ * It pins these things:
  *   1. a `sync-info` advertising more members than we hold leads to a re-ask;
  *   2. several `sync-info` answers to ONE request collapse into ONE re-ask
  *      (the debounce — without it every peer that replies arms its own timer);
- *   3. a client that is already converged asks for nothing.
+ *   3. a client that is already converged asks for nothing;
+ *   4. an EXPIRED or absent sync session still arms the check — see below, this
+ *      is the case the whole mechanism exists for and it was the one case that
+ *      did not work;
+ *   5. arming the check does NOT mean syncing from an offer we are no longer
+ *      entitled to use. The expiry gate is untouched; only the tracker moved
+ *      out from behind it.
  *
- * See .agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
+ * See .agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
@@ -192,6 +198,68 @@ describe('sync-info arms the roster convergence check', () => {
     localMembers = Array.from({ length: 88 }, (_, i) => ({ user_address: `addr-${i}` }));
 
     await deliver(90);
+    await vi.advanceTimersByTimeAsync(20_000);
+
+    expect(mockDeps.requestSync).not.toHaveBeenCalled();
+  });
+
+  // ── The case this whole mechanism exists for ─────────────────────────────
+  //
+  // A client reconnecting onto a long backlog drains its inbound queue serially.
+  // Its `sync-request` goes out, peers answer, and by the time those answers are
+  // processed the 30s window has closed. Measured 2026-08-02 at a 300-message
+  // backlog: twelve answers, every one advertising 80 members, every one
+  // discarded on `isExpired: true`.
+  //
+  // The tracker used to live INSIDE that gate, so this exact client — the one
+  // holding 1 row of 80, with no session left and nothing else to try — learned
+  // no target and armed no check. The repair was silent in the only failure it
+  // was written for.
+  it('still arms the check when our request window has already expired', async () => {
+    localMembers = [{ user_address: SELF }]; // 1 row, against an advertised 90
+    // The session exists, but its window closed while we drained the backlog.
+    mockDeps.syncInfo.current[SPACE_ID].expiry = Date.now() - 1;
+
+    await deliver(90);
+    await vi.advanceTimersByTimeAsync(20_000);
+
+    expect(mockDeps.requestSync).toHaveBeenCalledWith(SPACE_ID);
+  });
+
+  // The counterpart to the test above, and the reason it is safe: hoisting the
+  // tracker out of the gate must NOT hoist the gate's actual decision with it.
+  // An offer that arrived after our window closed is still an offer we may not
+  // sync from — we bank what it advertises and ask again, nothing more.
+  it('does not sync from an offer that arrived after the window closed', async () => {
+    localMembers = [{ user_address: SELF }];
+    mockDeps.syncInfo.current[SPACE_ID].expiry = Date.now() - 1;
+
+    await deliver(90);
+
+    expect(mockDeps.syncInfo.current[SPACE_ID].candidates).toHaveLength(0);
+    expect(mockDeps.initiateSync).not.toHaveBeenCalled();
+  });
+
+  // The other half of the gate: no session at all, which is where a client sits
+  // once its sync state has been torn down. A peer's answer is still true.
+  it('still arms the check when there is no sync session at all', async () => {
+    localMembers = [{ user_address: SELF }];
+    delete mockDeps.syncInfo.current[SPACE_ID];
+
+    await deliver(90);
+    await vi.advanceTimersByTimeAsync(20_000);
+
+    expect(mockDeps.requestSync).toHaveBeenCalledWith(SPACE_ID);
+  });
+
+  // A frame that teaches us nothing must not arm anything. Without a target
+  // `shouldReAsk` can only answer `no-target`, so arming would buy a timer and
+  // a database read to reach a foregone conclusion.
+  it('arms nothing when the advertised count is unusable', async () => {
+    localMembers = [{ user_address: SELF }];
+    mockDeps.syncInfo.current[SPACE_ID].expiry = Date.now() - 1;
+
+    await deliver(0);
     await vi.advanceTimersByTimeAsync(20_000);
 
     expect(mockDeps.requestSync).not.toHaveBeenCalled();

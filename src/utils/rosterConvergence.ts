@@ -20,20 +20,28 @@
 // obviously short. No new message type, no wire change, no dependency on the
 // transport work.
 //
+// ⚠️ WHERE THIS IS WIRED IN MATTERS AS MUCH AS WHAT IT DECIDES. The two calls
+// that drive it — `noteAdvertisedRoster` and the scheduler — must stay OUTSIDE
+// the sync-session expiry gate in `MessageService`'s `sync-info` handler. They
+// were inside it until 2026-08-03, which meant a client whose request window
+// expired while it drained a reconnect backlog never learned a target and never
+// armed a check: this module was silent in precisely the failure it exists for.
+// Read the comment at that call site before moving either call.
+//
 // ⚠️ This is a MITIGATION, not the repair. The real fix is either chunking the
 // member half or desktop consuming the send-retention fix that shipped in shared
-// 2.1.0-39 (transport item B1). Read `.agents/tasks/transport/README.md` before
+// 2.1.0-39 (transport item B1). Read `.agents/issues/transport/README.md` before
 // deciding this is enough.
 //
 // ⚠️ OBSERVABILITY. `shouldReAsk` returns a REASON, not a boolean, and the
 // caller logs it on every branch. That is not gold-plating: `logger` is a no-op
 // in production builds (see
-// .agents/bugs/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md),
+// .agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md),
 // so a developer running a dev build is the ONLY audience this code will ever
 // have, and giving them "false" with no reason attached reproduces exactly the
 // blindness that made the original bug take a session to find.
 //
-// See .agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
+// See .agents/issues/.open/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
 // (NEXT STEP B).
 
 import { advertisedCount } from '@quilibrium/quorum-shared';
@@ -133,8 +141,15 @@ export interface RosterConvergenceState {
 }
 
 export interface RosterConvergenceTracker {
-  /** Record what a peer says it holds. Ignores absent or nonsensical counts. */
-  noteAdvertisedRoster(spaceId: string, memberCount: unknown, now?: number): void;
+  /**
+   * Record what a peer says it holds. Ignores absent or nonsensical counts.
+   *
+   * Returns whether a usable target was actually recorded. The caller needs
+   * that to decide whether arming a convergence check buys anything: with no
+   * target `shouldReAsk` can only ever answer `no-target`, so arming would
+   * spend a timer and a database read reaching a foregone conclusion.
+   */
+  noteAdvertisedRoster(spaceId: string, memberCount: unknown, now?: number): boolean;
   /** Are we obviously short of the best roster on offer, and allowed to ask again? */
   shouldReAsk(spaceId: string, localMemberCount: number, now?: number): ReAskDecision;
   /** Record that a re-ask was sent. Call this ONLY after actually sending one. */
@@ -187,7 +202,7 @@ export function createRosterConvergenceTracker(
       // An absurd value here would set a target that can never be reached, so
       // the check below would spend its whole allowance every window forever.
       const count = advertisedCount(memberCount as number | undefined | null);
-      if (count === 0) return;
+      if (count === 0) return false;
 
       const existing = states.get(spaceId);
       if (!existing) {
@@ -197,13 +212,14 @@ export function createRosterConvergenceTracker(
           lastReAskAt: 0,
           windowStartedAt: now,
         });
-        return;
+        return true;
       }
       rollWindow(existing, now);
       // Keep the BEST offer seen, not the latest. Several peers answer one
       // request and they hold different amounts; the target is the fullest
       // roster available, not whichever client happened to reply last.
       if (count > existing.bestAdvertised) existing.bestAdvertised = count;
+      return true;
     },
 
     shouldReAsk(spaceId, localMemberCount, now = Date.now()) {
