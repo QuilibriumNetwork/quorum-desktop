@@ -8,7 +8,12 @@ import { useModalContext } from '../../../components/context/ModalProvider';
  */
 export const useSpacePermissions = (spaceId: string) => {
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
-  const { openSpaceEditor, openLeaveSpace } = useModalContext();
+  // `openLeaveSpace` was destructured here and never called. Dropped rather than
+  // wired up: leaving is offered through the Space context menu, which correctly
+  // withholds it from owners, and an unused handle here reads like a second entry
+  // point that exists. LeaveSpaceModal itself is currently unreachable — nothing in
+  // the app calls openLeaveSpace — and is left alone for a separate cleanup.
+  const { openSpaceEditor } = useModalContext();
 
   const handleSpaceContextAction = useCallback(() => {
     // Always open Space Settings - Account tab for members, all tabs for owners

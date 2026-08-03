@@ -1,16 +1,42 @@
 ---
 type: bug
 title: "\"Delete Space\" is actually Leave, the dialog promises otherwise, and an owner clicking it permanently bricks the space"
-status: OPEN — found 2026-08-02 during adversarial verification of two space key-management bugs filed in quorum-mobile. Not yet runtime-reproduced.
+status: in-progress
 created: 2026-08-02
-severity: high (UI promises a permanent destructive action and performs a no-op for everyone else; owner use leaves the space permanently un-kickable and un-rotatable, with no recovery path)
+severity: medium — was high. The dangerous half is neutralised in release builds as of 2026-08-03 (see Update): the button is disabled, so an owner can no longer brick a Space with it, and no dialog claims a deletion that does not happen. What remains is the absence of real deletion, which is blocked on a backend endpoint.
 area: space management / space deletion + leaving / ownership
 repo: quorum-desktop
 related:
-  - "quorum-mobile .agents/bugs/2026-08-02-config-key-rotation-on-kick-destroys-space-history.md (ownerless spaces can never receive that fix — see §4)"
-  - "quorum-mobile .agents/bugs/2026-08-02-leaving-a-space-revokes-no-access.md (the leave path this button actually invokes)"
+  - "quorum-mobile .agents/issues/2026-08-02-make-delete-space-actually-delete.md (the cross-repo tracker for the remaining work — read this one first)"
+  - "quorum-mobile .agents/issues/.open/2026-08-02-config-key-rotation-on-kick-destroys-space-history.md (ownerless spaces can never receive that fix — see §4)"
+  - "quorum-mobile .agents/issues/.open/2026-08-02-leaving-a-space-revokes-no-access.md (the leave path this button actually invokes)"
   - "issues/.done/user-kick-role-permission-non-functional.md (independently root-caused the owner-key constraint that makes §3 permanent)"
 ---
+
+> ## Update 2026-08-03 — the lying is fixed, the deletion is not
+>
+> **Landed on desktop** (branch `fix/space-delete-stop-promising-what-it-does-not-do`):
+> the Danger tab no longer claims permanent space-wide deletion, the type-to-confirm
+> and its channel/member counts are gone, the button is **disabled in release builds**
+> with copy explaining why, the tab is labelled "Danger" rather than "Delete Space",
+> and the dead `isOwner = true` stub from §2 is deleted outright (nothing consumed it;
+> `useSpaceOwner` was already the real predicate everywhere that mattered). Dev builds
+> keep the action under the honest label "Leave this Space", because that is what
+> `SpaceService.deleteSpace` actually does. Covered by
+> `src/dev/tests/hooks/spaceOwnerPredicate.unit.test.ts`.
+>
+> **§1 and the §2 stub are therefore resolved. §3 is not reachable in a release build
+> any more** — an owner cannot press the button, so they cannot brick a Space with it.
+>
+> **Still open, and why this stays a bug rather than moving to `.done/`:** there is no
+> way to delete a Space. That needs a server-side purge endpoint that does not exist in
+> any repo this team holds, plus a tombstone so a purged Space cannot be silently
+> re-registered by the client self-heal. Both are specified in the cross-repo tracker
+> above, §4. Do not close this until deletion actually works; the current state is an
+> honest disabled button, not a fixed feature.
+>
+> Note also that §3's premise is narrower than written: the owner key is not confined
+> to the creating device once cross-device sync is on. See §4B finding 2 of the tracker.
 
 # "Delete Space" is Leave with a destructive-sounding label, and the owner must never click it
 

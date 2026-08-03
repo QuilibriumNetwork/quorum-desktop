@@ -33,7 +33,6 @@ export interface UseSpaceManagementReturn {
     currentBannerFile?: File
   ) => Promise<void>;
   handleDeleteSpace: () => Promise<void>;
-  isOwner: boolean;
   currentPasskeyInfo: any;
   deleteError: string | null;
   clearDeleteError: () => void;
@@ -161,8 +160,12 @@ export const useSpaceManagement = (
     setDeleteError(null);
   }, []);
 
-  // Determine if current user is owner (simplified logic)
-  const isOwner = true; // For now, assume user is owner - would need proper implementation
+  // Ownership deliberately NOT computed here. This used to return a hardcoded
+  // `isOwner = true`, which is wrong for every member who is not the owner, and it
+  // was never read — SpaceSettingsModal and Navigation both use `useSpaceOwner`,
+  // which resolves ownership properly as possession of the `owner` key slot.
+  // Removed rather than fixed: a second source of truth for the same question is
+  // how the hardcoded value survived unnoticed in the first place.
 
   return {
     spaceName,
@@ -179,7 +182,6 @@ export const useSpaceManagement = (
     setSelectedCategory,
     saveChanges,
     handleDeleteSpace,
-    isOwner,
     currentPasskeyInfo,
     deleteError,
     clearDeleteError,
