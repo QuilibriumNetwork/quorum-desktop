@@ -18,7 +18,7 @@ import { DefaultImages } from '../../../utils';
 // stored; and only fall back to the incoming placeholder when the row is new,
 // so a brand-new row keeps the shape `Conversation` requires.
 //
-// See .agents/tasks/2026-08-01-identity-announce-cadence-research.md §2.
+// See 2026-08-01-identity-announce-cadence-research.md under .agents/issues/ §2.
 
 const PARTNER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';
 const REAL_NAME = 'Ada Lovelace';

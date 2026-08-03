@@ -18,13 +18,20 @@ Comprehensive development suite for building and managing cross-platform compone
 
 **Path**: `docs/` folder  
 **Access**: `/dev` route during development  
-**Purpose**: Interactive frontend for browsing project documentation, tasks, and bug reports
+**Purpose**: Interactive frontend for browsing project documentation, issues, and reports
 
 - Browse all documentation files from `.agents/docs/`
-- View task management files from `.agents/tasks/` (pending, ongoing, completed)
-- Access bug reports from `.agents/bugs/` (active and solved)
+- Browse issues — bugs and tasks together — from `.agents/issues/`, filtered by
+  type, state and priority. State comes from the folder an issue sits in
+  (`.open/`, `.deferred/`, `.done/`, `.archived/`, or the root for in-progress),
+  not from its `status:` field, which routinely goes stale when a file is refiled
 - Browse reports and audits from `.agents/reports/` (security audits, research, analysis)
 - Features search functionality and categorization
+
+The file list is a build artifact: run `yarn scan-docs` after adding or moving
+markdown under `.agents/`, or the viewer keeps showing the previous tree. The
+scan also reports any file whose YAML frontmatter fails to parse — those render
+without metadata until the YAML is fixed.
 - Full markdown rendering with syntax highlighting
 - Organized by folder structure (e.g., mobile-dev/docs, features/primitives)
 

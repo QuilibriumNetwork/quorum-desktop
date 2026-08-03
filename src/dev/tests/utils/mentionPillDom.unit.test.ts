@@ -6,7 +6,7 @@
  * flattened to a single line because the walker ignored block elements and
  * <br>). Browsers represent contentEditable line breaks as either <br> nodes or
  * by wrapping each line after the first in its own <div>/<p>; both shapes are
- * exercised here. See .agents/bugs/2026-06-25-composer-paste-strips-newlines.md.
+ * exercised here. See 2026-06-25-composer-paste-strips-newlines.md under .agents/issues/.
  *
  * @vitest-environment jsdom
  */

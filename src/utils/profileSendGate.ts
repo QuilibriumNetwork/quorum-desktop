@@ -20,7 +20,7 @@
 // failure: one lost frame becomes permanent and silent, because the sender
 // recorded a success the receiver never saw.
 //
-// See .agents/tasks/2026-08-01-identity-announce-cadence-research.md
+// See 2026-08-01-identity-announce-cadence-research.md under .agents/issues/
 
 import { logger } from '@quilibrium/quorum-shared';
 

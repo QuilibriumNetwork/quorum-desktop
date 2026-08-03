@@ -5,8 +5,8 @@
  * Settings are stored in IndexedDB user_config.notificationSettings[spaceId] and sync across devices.
  *
  * Part of Phase 4: Mention Notification Settings & Reply Notification System
- * @see .agents/tasks/mention-notification-settings-phase4.md
- * @see .agents/tasks/reply-notification-system.md
+ * @see mention-notification-settings-phase4.md under .agents/issues/
+ * @see reply-notification-system.md under .agents/issues/
  */
 
 import { useState, useEffect, useCallback, useMemo, useRef } from 'react';
@@ -83,7 +83,7 @@ export function useMentionNotificationSettings({
   // read that could capture desktop's stale local default before a cross-device
   // config sync had landed in IndexedDB — making the modal display (and worse,
   // a no-op Save) clobber a value another device had already set.
-  // See .agents/tasks/.todo/2026-06-23-notification-settings-stale-read-and-clobber.md
+  // See 2026-06-23-notification-settings-stale-read-and-clobber.md under .agents/issues/
   const { data: config } = useConfig({ userAddress: userAddress || '' });
 
   // The persisted settings for this space, derived from the live config.

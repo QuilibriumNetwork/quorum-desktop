@@ -146,7 +146,7 @@ export class IndexedDBAdapter implements StorageAdapter {
   // where most members' identity actually lives. Without it every member hashed
   // as "no identity", so two clients that disagreed completely still agreed they
   // were in sync and exchanged nothing.
-  // See .agents/bugs/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md
+  // See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/issues/
 
   private dbMemberToShared(dbMember: any): SpaceMember {
     return {

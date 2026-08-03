@@ -16,7 +16,7 @@
  * IMPORTANT: All methods currently return mock data or no-ops.
  * Passkey functionality is NOT available on mobile until properly implemented.
  *
- * See: .agents/tasks/todo/mobile-sdk-integration-issue.md for full details
+ * See: mobile-dev/2025-08-08-mobile-sdk-integration-issue.md under .agents/issues/ for full details
  */
 
 import { logger } from '@quilibrium/quorum-shared';

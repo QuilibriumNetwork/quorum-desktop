@@ -246,7 +246,7 @@ export interface MessageServiceDependencies {
  *
  * The clear has to travel to the DB as an explicit `clearFields`, because
  * `saveSpaceMember` merges and drops `undefined`s — see that method's doc and
- * .agents/bugs/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md
+ * 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
  */
 export function resolveInboundSpaceTag(
   inbound: BroadcastSpaceTag | null | undefined
@@ -2073,7 +2073,7 @@ export class MessageService {
       // fully and tolerate a cosmetic self-sync lag, because desktop's JS SDK does
       // not expose the per-message authenticated sender that would let us tell a
       // genuine self-echo from a peer spoofing your address. See
-      // .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md.
+      // 2026-06-25-MASTER-RECAP-control-message-auth.md under .agents/issues/.
       const isDM = spaceId === channelId;
       if (isDM) {
         const authorized =
@@ -4788,7 +4788,7 @@ export class MessageService {
               const isUpdateProfile = decryptedContent.content.type === 'update-profile';
               // participant may be null: the sender's join broadcast never
               // reached us, so there is no space_members row yet (common — see
-              // .agents/bugs/2026-06-13-space-members-missing-no-join-row.md).
+              // 2026-06-13-space-members-missing-no-join-row.md under .agents/issues/).
               // Optional-chain the deref; a missing inbox_address means we have
               // nothing to compare against, so there is no mismatch to flag and
               // the signature is verified below as normal. Without the guard
@@ -6017,7 +6017,7 @@ export class MessageService {
             // nothing distinguishes "the payload never came", "it came empty"
             // and "it came full and every row was skipped". That gap cost a
             // full debugging session on 2026-08-02.
-            // See .agents/bugs/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md
+            // See 2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md under .agents/issues/
             logger.log(
               `[MessageService] sync-delta: memberDelta=${
                 envelope.message.memberDelta

@@ -26,7 +26,7 @@
 // Desktop counterpart of mobile's MMKV gate
 // (quorum-mobile/services/dm/dmProfileService.ts).
 //
-// See .agents/tasks/2026-08-01-identity-announce-cadence-research.md (Step 2)
+// See 2026-08-01-identity-announce-cadence-research.md under .agents/issues/ (Step 2)
 // and 2026-08-01-dm-partner-identity-lost-on-established-sessions.md
 
 import {
@@ -66,7 +66,7 @@ export const RESEND_INTERVAL_MS = 24 * 60 * 60 * 1000; // 24h
  *    keeps its stored `at`. See `migrateRecord` in `profileSendGate.ts`.
  *
  * Rationale and the cost model:
- *   .agents/tasks/2026-08-01-identity-announce-cadence-research.md
+ *   2026-08-01-identity-announce-cadence-research.md under .agents/issues/
  *
  * ⚠️ Do not reuse this INTERVAL for spaces. Spaces already have a
  * receiver-driven member reconciliation (`MemberDigest` → `MemberDelta`), so

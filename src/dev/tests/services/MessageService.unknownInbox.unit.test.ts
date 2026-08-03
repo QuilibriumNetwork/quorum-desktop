@@ -24,7 +24,7 @@
  * So the correct behaviour is to retain, and this test pins it. If someone later
  * "restores" a delete here, this fails.
  *
- * Full analysis: `.agents/bugs/.solved/2026-07-29-session-replacement-strands-in-flight-frames.md`
+ * Full analysis: `2026-07-29-session-replacement-strands-in-flight-frames.md` under .agents/issues/
  */
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { MessageService } from '../../../services/MessageService';

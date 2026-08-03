@@ -30,7 +30,7 @@ const DISPLAY_THRESHOLD = 10;
  * Uses React Query with 30s stale time for performance while maintaining
  * reasonable real-time updates when invalidated.
  *
- * @see .agents/tasks/reply-notification-system.md
+ * @see reply-notification-system.md under .agents/issues/
  */
 export function useReplyNotificationCounts({
   spaceId,

@@ -7,7 +7,7 @@
  * - Space settings updates
  * - Moderation actions (kick, mute)
  *
- * See: .agents/tasks/background-action-queue.md
+ * See: background-action-queue.md under .agents/issues/
  */
 
 import { logger } from '@quilibrium/quorum-shared';
@@ -32,7 +32,7 @@ export class ActionQueueService {
 
   // Callback to check online status from ActionQueueContext
   // Uses WebSocket state instead of unreliable navigator.onLine
-  // See: .agents/tasks/offline-detection-and-optimistic-message-reliability.md
+  // See: offline-detection-and-optimistic-message-reliability.md under .agents/issues/
   private isOnlineCallback?: () => boolean;
 
   // Debounced queue update event

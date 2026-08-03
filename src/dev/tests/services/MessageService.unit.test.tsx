@@ -12,7 +12,7 @@
  * - saveMessage (database persistence for reaction/remove paths)
  * - encryptAndSendToSpace (hub message helper)
  *
- * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/issues/):
  * - handleNewMessage routing (inbox-match branch and 7 message types)
  * - updateMessageStatus, encryptAndSendDm, sendEphemeralDM/SpaceControl
  * - deleteConversation, submitChannelMessage actual side effects
@@ -442,7 +442,7 @@ describe('MessageService - Unit Tests', () => {
   // SECURITY: DM control-message authorization must anchor to the session-
   // authenticated sender (the conversation owner == spaceId for a DM), NOT the
   // spoofable plaintext content.senderId. See
-  // .agents/tasks/2026-06-25-MASTER-RECAP-control-message-auth.md
+  // 2026-06-25-MASTER-RECAP-control-message-auth.md under .agents/issues/
   describe('3b. saveMessage() - DM remove-message authorization (anti-spoofing)', () => {
     // For a DM, spaceId === channelId === the proven conversation partner address.
     const PEER = 'peer-address';

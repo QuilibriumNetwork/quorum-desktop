@@ -247,7 +247,7 @@ copy was defeated by the relay.
 - Slice S2 (delivery rate + lag at volume, and roster size as the first swept
   variable) — NEXT. This is the one that turns the anecdote into a number.
 
-See `.agents/issues/.done/2026-07-27-headless-dm-harness.md` for the DM slice plan,
+See `2026-07-27-headless-dm-harness.md` under .agents/issues/ for the DM slice plan,
 `.agents/issues/transport/2026-07-27-headless-space-harness.md` for the space one,
 and `.agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md` §1 for the DM
 findings.

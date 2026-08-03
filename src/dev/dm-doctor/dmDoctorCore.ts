@@ -11,7 +11,7 @@
  * (`.agents/tools/dm-debug/07-receiver-probe.js`) so the same numbers a manual
  * probe run would produce come out of the resident dev panel, plus the two
  * misfiling/ghost-conversation checks from
- * `.agents/bugs/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md`.
+ * `transport/2026-07-29-stale-returning-device-dm-sends-vanish-and-misfile.md` under .agents/issues/.
  *
  * Also formats the "Copy full report" clipboard block: a self-contained
  * markdown paste designed for a fresh agent to read with no follow-up
@@ -518,7 +518,7 @@ export interface FullReportInput {
   warningState: DmWarningCounterState | null;
 }
 
-export const DM_DOCTOR_RUNBOOK_POINTER = '.agents/tasks/2026-07-29-manual-round-runbook.md';
+export const DM_DOCTOR_RUNBOOK_POINTER = 'transport/runbook.md under .agents/issues/';
 
 function formatDistributionLines(
   scanResult: ScanResult,

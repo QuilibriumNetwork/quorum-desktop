@@ -3,9 +3,9 @@
 //   yarn harness space-backlog
 //   HARNESS_BACKLOG_SIZES=0,50,200 HARNESS_BACKLOG_ITERATIONS=3 yarn harness space-backlog
 //
-// This is the experiment `.agents/bugs/2026-08-02-sync-requests-arrive-four-
-// minutes-late-and-every-peer-rejects-them.md` §5b step 1 asks for, and it is
-// the thing a manual test cannot do: vary the backlog and watch the rate move.
+// This is the experiment `2026-08-02-sync-requests-arrive-four-minutes-late-and-
+// every-peer-rejects-them.md` under .agents/issues/ §5b step 1 asks for, and it
+// is the thing a manual test cannot do: vary the backlog and watch the rate move.
 //
 // ## The field observation being reproduced
 //

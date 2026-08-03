@@ -6,7 +6,7 @@
  *
  * APPROACH: Unit tests with vi.fn() mocks - NOT integration tests
  *
- * KNOWN GAPS (see .agents/tasks/2026-05-19-test-suite-review.md):
+ * KNOWN GAPS (see 2026-05-19-test-suite-review.md under .agents/issues/):
  * - getConfig newer-remote-timestamp branch (the 60-line decrypt-and-verify path)
  * - getConfig equal-timestamp / stale-remote branches
  * - getConfig bookmark merge, user notes merge, tombstone application paths
