@@ -10,7 +10,7 @@ Refresh the `.agents/INDEX.md` index by running the project script that scans `.
 ## Command
 
 ```bash
-python3 .claude/skills/docs-manager/update-index.py
+python "$HOME/.config/.claude/skills/docs-manager/update-index.py"
 ```
 
 ## What the script does
