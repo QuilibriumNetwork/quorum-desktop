@@ -195,11 +195,165 @@ before in exactly the congested case.
 
 ### Still to do
 
-1. **One real two-client run** before this is trusted in the field. The harness
-   green is necessary, not sufficient — that gap is what made every earlier bench
-   result misleading.
+1. **Two open verification questions**, both OPTIONAL and neither blocking — see
+   §0c for the recipes and for the honest argument about whether they are worth
+   anyone's time.
 2. Fix (a) and fix (c) below remain open; this repaired the roster symptom, not
    the scheduling.
+
+## §0c. Optional verification — recipes, so nobody re-derives them
+
+> Added 2026-08-03. **Neither of these is blocking.** The fix is merged, additive,
+> desktop-only, and measured not to touch the healthy path. Both are recorded
+> here because working them out took a research pass, and that pass should not
+> have to happen twice.
+
+> ⚠️ **Default to A, not B.** Hand-driven UI testing is a LAST RESORT in this
+> project — the operator's time is the scarcest resource, and a manual run is
+> n=1, unrepeatable and slow to interpret. If a question can be pushed into the
+> harness, push it into the harness, even if that costs an afternoon of scenario
+> work. Reach for B only when something genuinely cannot be observed any other
+> way (real sockets, real Electron, real UI rendering). Test A below needs zero
+> human time and answers the more valuable question.
+
+### First, the honest case for NOT bothering
+
+The instinct "harness green is not enough, verify in the field" comes from real
+precedent in this project: the DM investigation found defects a Node bench could
+not see for weeks (the ratchet lock held across an HTTP round trip, the
+session-replacement orphaned inbox). **That precedent does not transfer here.**
+Those escaped because they depended on things the bench structurally could not
+reproduce — React Native's native socket, the uniffi crypto bridge, real HTTP
+latency inside a lock.
+
+Desktop #300 is pure application-layer control flow: two calls moved from inside
+an `if` to outside it. There is no transport-, runtime-, or crypto-specific
+reason a browser would execute that branch differently from a Node bot running
+the same TypeScript. **The marginal information gain is narrow.** Do not treat
+these as owed work.
+
+### A. The re-ask ladder under a flood that outlasts it — FREE, do this one first
+
+The allowance is 2 re-asks per space per 15-minute window with a 60 s cooldown
+(`src/utils/rosterConvergence.ts`). If a real flood outlasts that ladder, the fix
+is silently useless in exactly the case it was written for. The 300-message
+harness flood drains far too fast to tell us.
+
+This is a dose-response question, which is what the harness is for:
+
+```
+HARNESS_BACKLOG_SIZES=600,1000,1500 yarn harness space-backlog
+```
+
+Costs no human time. **This is strictly more valuable than the manual test
+below** — it answers something a one-shot manual run structurally cannot.
+
+### B. One real two-client run — ~15 minutes, no tooling needed
+
+⚠️ **The naive version of this test is worthless and will mislead you.** A fresh
+joiner with a quiet queue converges 100% *with or without the fix* (`backlog=0`
+is 100% in every table above). Leave-and-rejoin on its own therefore returns
+green regardless. It is the same false-confidence pattern that produced three
+wrong answers during this investigation.
+
+**Use CPU throttling instead of a large flood.** Verified: there are no Workers
+anywhere in the message pipeline — decrypt, verification and the WASM calls all
+run synchronously on the renderer main thread inside one mutex-gated loop
+(`src/components/context/WebsocketProvider.tsx:83-133`, `:193-201`). Chrome's CPU
+throttle suspends that whole thread, so WASM slows identically to JS. Slowing the
+drain reproduces the same race as enlarging the flood, and leaves the **real,
+unmodified 30 s window** in place.
+
+Sizing, from the measurements above: `backlog=100` was 417 frames in 23.0 s, so
+~55 ms/frame. At 6× that is ~330 ms/frame, which passes 30 s with **well under
+100 messages**. Tens, not hundreds — no flood script required.
+
+**Steps** (test accounts A and B, both non-owners of the ~78-member space S2):
+
+1. B leaves S2. Leaving genuinely resets B: `SpaceService.deleteSpace`
+   (`src/services/SpaceService.ts:654-685`) deletes B's encryption states, every
+   space message, every member row, every space key, strips the spaceId from
+   config and deletes the space record. **Confirm it** in `/dev/db-inspector` —
+   `space_members` for S2 must read 0. Do not take the cleanup on faith.
+2. B quits the app (socket closed — the backlog is retained-frame replay).
+3. Post a few dozen messages into a scratch space containing only A and B. The
+   scratch space keeps the flood off anything real.
+4. B relaunches, sets DevTools → Performance → CPU throttling to **6×**, then
+   joins S2 via a **fresh invite link** (the old registration is gone).
+5. Filter the console on `sync-info` and `roster`.
+
+**Pass requires BOTH lines, in this order:**
+
+```
+sync-info: No active session or expired — cannot sync from this offer, roster check armed: true
+roster did not converge for QmXXX: have 1, best peer advertised 79 (short by 78) — asking again
+```
+
+Then confirm the final row count in `/dev/db-inspector`.
+
+**Scoring rules, fixed in advance:**
+
+- **Roster converges but those lines are absent → NULL RUN, not a pass.** The fix
+  was never exercised; the queue drained inside the window and the ordinary fast
+  path did the work. Raise the throttle and rerun.
+- **71-78 of 80 is a PASS, not a failure.** That structural gap is documented and
+  the thresholds (`MIN_ROSTER_SHORTFALL = 10`, `MIN_ROSTER_COVERAGE = 0.75`) were
+  deliberately set above it.
+- **A red result may be a different, known bug.** `2026-06-13-space-members-missing-no-join-row.md`
+  and `2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md` sit
+  in this exact area and would look like "the fix failed".
+- **n = 1 proves little.** Even the harness runs 2+ iterations per row.
+
+**Prerequisites that will otherwise waste the run:**
+
+- **Dev build, mandatory.** `logger` is a no-op in production
+  (`2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md`), and
+  `/dev/db-inspector` is gated on `NODE_ENV === 'development'` — a prod build
+  loses both signal sources at once and leaves only the rendered member list,
+  which has its own open bugs and cannot distinguish "fixed" from "never fired".
+- **Watch the socket.** The relay pings every 9 s with a 10 s pong deadline.
+  Pong is most likely handled in the browser's network stack, off the main
+  thread, so throttling should not drop the connection — but that is INFERRED,
+  not verified. Start at 6×, confirm the connection survives a minute, and only
+  then go higher.
+
+### Why the obvious cheaper shortcuts do not work
+
+Recorded so they are not re-proposed:
+
+- **Reusing the space's existing history as the backlog.** Does not work. The
+  relay model is a per-inbox mailbox retained until the client explicitly acks by
+  deleting; the `listen` frame carries no cursor, offset or timestamp at any of
+  its ~10 call sites. A client that already processed and acked its history will
+  not receive it again. A backlog requires frames that queued while it was away.
+- **Flooding the space B rejoins.** Does not work. B must be a *member* to
+  receive a flood, but B must *leave* to become a fresh joiner. Those cannot be
+  the same space — hence the scratch space.
+- **Shrinking the sync expiry in a local build** (`src/services/SyncService.ts:52`
+  hardcodes `requestExpiry: 30000`; desktop does not read the shared constant).
+  Works, but dropping it to ~2 s puts it *below* the healthy round trip of
+  4.7-5.1 s, so every join trips the gate and backlog stops being the variable.
+  It becomes a valid test of a different claim — "does the fix recover when
+  offers always arrive late" — and should be written up as such if used.
+
+### Backlogs accumulate without anyone posting
+
+Worth knowing for interpreting field reports, and it means real users hit this
+more easily than the harness suggests:
+
+- Every client's reconnect fires `announceProfileToAllSpacesOnConnect` and
+  `announceDeviceKeys` for every space it belongs to, queueing frames into every
+  other member's inbox. **MEASURED**: a long-absent account once received ~352
+  retained `announce-keys` frames at once, driving ~650 serial decrypts and
+  blocking for minutes — see `2026-07-20-announce-keys-flooding-unbounded-admissions.md`.
+- One logical message is ~9-12 frames once multi-device accounts are involved.
+  The harness's single-device bots still saw ~4 frames per message (300 posts →
+  1197 frames), so **the cliff is between ~417 and ~1201 FRAMES**, and message
+  count is a poor proxy for it.
+- Un-acked frames never expire. Anything the client failed to delete (a crash
+  mid-processing, an unknown inbox, a failed delete) stays on the relay and is
+  redelivered on every subsequent `listen`, so a backlog can accumulate silently
+  across many past sessions.
 
 ### The three repair points, cheapest first
 
