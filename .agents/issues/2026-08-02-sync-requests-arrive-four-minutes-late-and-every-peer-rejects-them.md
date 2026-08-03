@@ -302,13 +302,20 @@ Three findings, each READ from code, that together make this far safer than
 
 ### Remaining risk — the honest list
 
-- **Application-level ordering inside space traffic.** A `sync-delta` writes
-  messages that a hub post might also deliver. Whether the store dedupes by
-  `messageId` could NOT be confirmed — `MessageDB`'s IndexedDB layer lives in
-  `quorum-shared`. ⚠️ **Verify before shipping.** Mitigating context: sync deltas
-  already race with live posts today (inbox groups run concurrently), so this
-  changes the *timing* of an existing interleaving rather than creating a new
-  hazard class.
+- ~~**Application-level ordering inside space traffic.**~~ ✅ **RESOLVED
+  2026-08-03.** The concern was that a `sync-delta` and a hub post delivering the
+  same message could duplicate it if reordered. They cannot: the `messages`
+  object store is declared `keyPath: 'messageId'`
+  (`src/db/messages.ts:253-255`) and writes go through `store.put(message)`
+  (`:1419`), which is an **upsert** — the same `messageId` overwrites rather than
+  inserting a second row. Message writes are idempotent by id.
+
+  (The store lives in `quorum-desktop/src/db/messages.ts`, NOT in
+  `quorum-shared` — an earlier note said otherwise and was wrong.)
+
+  Mitigating context that still holds: sync deltas already race with live posts
+  today, since inbox groups run concurrently. Reordering changes the *timing* of
+  an existing interleaving rather than creating a new hazard class.
 - **Chunk size.** Too small and per-chunk overhead dominates; too large and the
   barrier is rebuilt. Needs measuring, not guessing.
 - **Blast radius.** This touches the path every frame in the app takes. #300
