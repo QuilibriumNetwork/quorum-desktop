@@ -2,6 +2,7 @@
 type: task
 title: Phase 1.4 - LRU Memory Management
 status: in-progress
+priority: low
 created: 2026-05-25
 updated: '2026-05-25'
 ---

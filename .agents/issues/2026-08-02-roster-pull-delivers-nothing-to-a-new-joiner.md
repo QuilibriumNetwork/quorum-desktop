@@ -2,7 +2,7 @@
 type: bug
 title: "The roster pull works, but it is unreliable and it picks its peer badly (originally filed as 'delivers nothing')"
 status: in-progress
-priority: medium — downgraded from HIGH once the mechanism was shown to work
+priority: medium
 created: 2026-08-02
 updated: 2026-08-02
 severity: a new member of a space sees every existing member as a truncated address, indefinitely

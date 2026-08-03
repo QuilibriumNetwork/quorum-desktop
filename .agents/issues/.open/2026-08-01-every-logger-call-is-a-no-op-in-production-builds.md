@@ -2,7 +2,7 @@
 type: bug
 title: "Every logger call is a no-op in production builds, so 'fail open and log' produces zero signal from real users"
 status: open
-priority: high — it does not break behaviour, it breaks our ability to SEE behaviour
+priority: high
 created: 2026-08-01
 updated: 2026-08-02
 severity: silent — nothing fails; we simply learn nothing from any user who is not a developer

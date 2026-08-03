@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Validation hooks — move logic to shared with errorKey i18n pattern"
-status: in-progress
+status: done
 complexity: medium
 created: 2026-05-28
 updated: 2026-05-28

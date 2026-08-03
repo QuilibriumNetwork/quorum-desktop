@@ -2,6 +2,7 @@
 type: task
 title: "DM Double Ratchet fixes — divergences from the original upstream implementation"
 status: in-progress
+priority: low
 created: 2026-07-17
 ---
 

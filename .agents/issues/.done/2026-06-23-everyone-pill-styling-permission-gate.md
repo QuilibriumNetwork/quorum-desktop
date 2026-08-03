@@ -10,7 +10,7 @@ related_files:
   - src/components/message/MessageMarkdownRenderer.tsx
   - src/hooks/business/messages/useMessageFormatting.ts
 related_bug: .agents/issues/.done/2026-06-12-everyone-mention-owner-bypass-send-side-only.md
-mirror_of: quorum-mobile commit "fix(mentions): only style @everyone when the sender was authorized"
+mirror_of: 'quorum-mobile commit "fix(mentions): only style @everyone when the sender was authorized"'
 ---
 
 # Gate @everyone pill styling on sender permission

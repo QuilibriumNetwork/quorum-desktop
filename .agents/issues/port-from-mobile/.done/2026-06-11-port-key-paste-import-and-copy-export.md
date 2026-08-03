@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Port: paste private key on import + copy private key in settings (with Security-tab UI consolidation)"
-status: in-progress
+status: done
 created: 2026-06-11
 updated: 2026-06-11
 candidate: "#31a (+ companion copy-export); #31b parked"

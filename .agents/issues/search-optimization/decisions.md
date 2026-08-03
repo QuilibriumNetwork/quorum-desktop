@@ -2,6 +2,7 @@
 type: task
 title: Design Decisions & Rationale
 status: in-progress
+priority: low
 created: 2025-11-12T00:00:00.000Z
 updated: '2026-05-24'
 ---

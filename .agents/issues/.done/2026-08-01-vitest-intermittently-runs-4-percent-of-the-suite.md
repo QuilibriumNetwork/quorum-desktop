@@ -1,8 +1,8 @@
 ---
 type: bug
 title: "vitest intermittently runs 29 of 736 tests — the import phase collapses from ~98s to <1.2s"
-status: in-progress
-priority: high (a test suite that under-reports coverage is worse than one that fails)
+status: done
+priority: high
 created: 2026-08-01
 updated: 2026-08-02
 severity: potentially silent — the first question below decides whether this is an annoyance or a trap

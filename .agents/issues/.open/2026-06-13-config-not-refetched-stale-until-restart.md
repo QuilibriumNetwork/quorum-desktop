@@ -2,6 +2,7 @@
 type: bug
 title: "Desktop shows stale synced config (e.g. public-profile toggle) until restart — config only server-fetched at startup"
 status: open
+priority: medium
 created: 2026-06-13
 severity: medium
 repo: quorum-desktop

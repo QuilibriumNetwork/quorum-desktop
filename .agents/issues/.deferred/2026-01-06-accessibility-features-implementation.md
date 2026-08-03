@@ -2,6 +2,7 @@
 type: task
 title: Accessibility Features — Remaining Work
 status: deferred
+priority: low
 complexity: high
 ai_generated: true
 created: 2026-01-06T00:00:00.000Z

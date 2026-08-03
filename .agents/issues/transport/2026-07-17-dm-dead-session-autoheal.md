@@ -2,6 +2,7 @@
 type: task
 title: "DM delivery auto-heal — detect via missing delivery receipts, resend / repair without manual reset"
 status: in-progress
+priority: medium
 created: 2026-07-17
 area: DM session lifecycle / delivery recovery
 related:

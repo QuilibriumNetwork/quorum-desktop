@@ -2,6 +2,7 @@
 type: bug
 title: UserSettingsModal fields flash empty for 1-2 seconds on open
 status: open
+priority: low
 severity: low
 created: 2026-06-08
 surfaced-by: 2026-06-08 per-space bio port session — user noticed when opening UserSettingsModal to verify global bio persisted

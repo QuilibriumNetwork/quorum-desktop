@@ -2,6 +2,7 @@
 type: bug
 title: Expired Invite Card Validation Timing Issue
 status: open
+priority: medium
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-11-09T00:00:00.000Z
 ---

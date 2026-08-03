@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Extract encryptAndSendToSpace() Helper"
-status: in-progress
+status: done
 complexity: medium
 created: 2025-12-20
 updated: 2026-01-09

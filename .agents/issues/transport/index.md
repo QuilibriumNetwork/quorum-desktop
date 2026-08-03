@@ -2,6 +2,7 @@
 type: task
 title: "Transport & DM reliability — cross-repo index (every doc, PR and issue in one place)"
 status: in-progress
+priority: low
 created: 2026-07-28
 updated: 2026-08-01
 area: WebSocket transport / DM Double Ratchet / spaces hub-log / receipts

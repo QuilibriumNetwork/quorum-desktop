@@ -3,7 +3,7 @@ type: bug
 title: "Session replacement orphans the receiving inbox, and the cleanup for unplaceable frames named the wrong mailbox — real code defects, but NOT the cause of the field symptom"
 status: done
 created: 2026-07-29
-severity: MEDIUM-HIGH — user-visible message loss (366 messages not persisted in one capture, silently, with no error to either party), but **downgraded from the original HIGH**: the data is probably not destroyed, only stranded. Re-rate upward if the relay is shown to expire or drop stranded frames.
+severity: 'MEDIUM-HIGH — user-visible message loss (366 messages not persisted in one capture, silently, with no error to either party), but **downgraded from the original HIGH**: the data is probably not destroyed, only stranded. Re-rate upward if the relay is shown to expire or drop stranded frames.'
 repo: quorum-desktop (mobile NOT yet checked — see §6)
 area: DM receive path / session lifecycle / init envelopes
 related:

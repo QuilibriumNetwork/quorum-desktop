@@ -2,6 +2,7 @@
 type: task
 title: "Port skins — Phase 0 (shared promotion) + Phase 1 (colors/fonts/accent engine)"
 status: in-progress
+priority: medium
 candidate: 27
 created: 2026-06-11
 depends_on: []

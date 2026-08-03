@@ -2,7 +2,7 @@
 type: task
 title: "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements"
 status: in-progress
-priority: high (follow-up to the interim signing-split fix)
+priority: high
 created: 2026-07-19
 severity: HIGH (security-critical — touches the verified-signer auth boundary)
 platforms: quorum-desktop + quorum-mobile + quorum-shared

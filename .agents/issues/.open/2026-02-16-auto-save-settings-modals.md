@@ -2,6 +2,7 @@
 type: task
 title: "Auto-save settings modals — eliminate save buttons"
 status: open
+priority: medium
 complexity: high
 ai_generated: true
 reviewed_by: null

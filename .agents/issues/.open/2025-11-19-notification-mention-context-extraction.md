@@ -2,6 +2,7 @@
 type: task
 title: Implement Smart Context Extraction Around Mentions in NotificationPanel
 status: open
+priority: low
 complexity: medium
 ai_generated: true
 created: 2025-11-19T00:00:00.000Z

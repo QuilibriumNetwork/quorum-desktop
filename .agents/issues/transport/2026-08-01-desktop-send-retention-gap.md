@@ -2,6 +2,7 @@
 type: task
 title: "Desktop has NO send retention — it does not consume the shared WebSocket client that got the fix"
 status: in-progress
+priority: high
 created: 2026-08-01
 area: WebSocket transport / send durability
 repos: quorum-desktop (+ quorum-shared if the client is adopted)

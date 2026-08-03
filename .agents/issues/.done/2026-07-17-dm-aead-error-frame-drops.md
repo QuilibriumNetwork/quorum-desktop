@@ -4,7 +4,7 @@ title: "DM individual frames fail to decrypt (aead::Error) and drop — remainin
 status: done
 created: 2026-07-17
 severity: high
-repo: quorum-desktop (mobile: shares the serialization gap only — no destroy-on-failure there; verified 2026-07-17)
+repo: 'quorum-desktop (mobile: shares the serialization gap only — no destroy-on-failure there; verified 2026-07-17)'
 area: DM delivery / Double Ratchet / retry / dedupe
 related:
   - ".agents/issues/.done/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED, stops session destruction)"

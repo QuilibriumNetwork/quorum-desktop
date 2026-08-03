@@ -2,6 +2,7 @@
 type: task
 title: Implement Message Forwarding with Privacy Controls
 status: open
+priority: medium
 complexity: high
 ai_generated: true
 created: 2025-11-16T00:00:00.000Z

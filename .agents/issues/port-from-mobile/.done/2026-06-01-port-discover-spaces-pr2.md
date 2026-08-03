@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Unified /spaces page (PR 2 of 2) — Join via link tab + Create space tab + retire legacy modals"
-status: in-progress
+status: done
 created: 2026-06-01
 updated: 2026-06-03
 candidate: "#1 (port-from-mobile) — PR 2"

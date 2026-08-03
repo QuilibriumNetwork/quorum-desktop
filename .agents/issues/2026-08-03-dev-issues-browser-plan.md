@@ -188,31 +188,31 @@ no future field needs a code change.
 
 Each ends in something observable in the browser.
 
-- [ ] **1 — The Issues page exists and lists everything.**
+- [x] **1 — The Issues page exists and lists everything.** — PR #304
       Taxonomy module + tests, scanner rescoped, hook updated, `Issues.tsx`,
       routes, nav. Tasks and Bugs gone.
       *Observable:* `/dev` shows one **Issues** tab; it lists all 517 files
       grouped by epic, each row badged with type, state and priority.
-- [ ] **2 — Filters work.**
+- [x] **2 — Filters work.** — PR #304
       Type / state / priority / complexity chips with live counts, plus sorting.
       *Observable:* clicking "Bug" + "Open" narrows to open bugs; the counter
       tracks it.
-- [ ] **3 — Every field is visible on an issue.**
+- [x] **3 — Every field is visible on an issue.** — PR #307
       Metadata box + generic other-fields section.
       *Observable:* opening an issue shows priority, severity, area, related
       links, and anything else its frontmatter carries.
-- [ ] **4 — Frontmatter is mechanically clean.**
+- [x] **4 — Frontmatter is mechanically clean.**
       8 parse errors fixed, 13 messy priorities reduced, 42 status/folder
       mismatches reconciled. A verification script re-runs the survey and reports
       zero of each.
       *Observable:* the 8 previously-blank files show real titles and badges; the
       priority chips add up.
-- [ ] **5 — Actionable issues have a priority.**
+- [x] **5 — Actionable issues have a priority.**
       Backfill low/medium/high on the ~106 in-progress/open/deferred issues that
       lack one, reading each issue's own severity/impact wording.
       *Observable:* filtering "Open + High" returns a real, useful worklist
       instead of near-empty results.
-- [ ] **6 — Stale path references repointed.** (optional, small)
+- [x] **6 — Stale path references repointed.** — PR #307
 
 ## 6. Verification
 
@@ -223,6 +223,55 @@ Each ends in something observable in the browser.
   priorities, 0 status/folder mismatches.
 - Manual pass on `localhost:5173/dev/issues`: counts, chips, epic grouping, and a
   detail page render correctly.
+
+## 7. Outcome
+
+All six slices landed on 2026-08-03. Code in PRs **#304** and **#307**; the data
+pass is `.md`-only and therefore sits uncommitted on `main` per the docs
+workflow.
+
+**Verified after the data pass** (520 issue files):
+
+| Check | Before | After |
+|---|---|---|
+| Files whose YAML fails to parse | 8 | **0** |
+| `priority:` values that are prose | 13 | **0** |
+| `status:` contradicting its folder | 44 | **0** |
+| Files missing `type:` or `status:` | 0 | **0** |
+| Actionable issues carrying a priority | 19 / 127 | **126 / 127** |
+
+`tsc --noEmit` and `eslint` clean; suite **941/941** (44 new unit tests across
+`issueTaxonomy` and `frontmatterDisplay`). `yarn scan-docs` reports no parse
+errors.
+
+**Backfill distribution** — 12 high, 31 medium, 62 low. The high ones are the
+security and data-integrity issues (Electron key at rest, reset not deleting the
+master key, join-binding rebind, config-sync space loss, Safari passkey session
+loss, the evals bloat that breaks config sync) plus the four live transport
+items. Epic trackers, READMEs, shipped logs and historical `mobile-dev/` material
+were graded `low` deliberately: they are reference material, not work, and
+grading them anything else would crowd the real backlog.
+
+**One issue is deliberately left ungraded** —
+`2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md`.
+Its author wrote `priority: unknown until the one open question is answered`,
+which is a genuine statement about the issue, not sloppiness: it is trivial if
+typing frames are not retained and significant if they are. Inventing a grade
+would fake certainty, so the field was removed and the reasoning moved into the
+body. It shows under the **None** chip, which is the honest answer.
+
+**Two YAML repairs kept text rather than dropping it**, against the general
+"drop the prose" rule, because dropping would have destroyed the only content
+the field carried:
+
+- `severity:` values that are entirely prose were quoted, not truncated to a
+  grade word — severity is display-only and never filtered.
+- The prose wedged under `status:` in
+  `2026-07-19-space-deletion-ghost-cleanup.md` (defects B and C fixed and
+  operator-verified 2026-08-01) was moved into the body as a callout.
+
+**Still open:** nobody has looked at the page in a browser. `tsc`, `eslint` and
+the suite all pass, but that is not the same as seeing it render.
 
 ---
 *Last updated: 2026-08-03*

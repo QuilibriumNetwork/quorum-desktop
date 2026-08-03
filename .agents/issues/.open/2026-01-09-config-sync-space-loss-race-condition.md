@@ -2,6 +2,7 @@
 type: bug
 title: Config Sync Space Loss Race Condition
 status: open
+priority: high
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-12-13T00:00:00.000Z

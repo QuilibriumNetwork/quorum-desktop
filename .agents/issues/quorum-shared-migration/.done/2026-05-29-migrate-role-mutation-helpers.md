@@ -2,7 +2,7 @@
 type: task
 title: Extract toggleRolePermission and setRolePermissions to shared
 phase: Phase 2 (C4 extract pure helpers)
-status: in-progress
+status: done
 created: 2026-05-29
 updated: 2026-05-29
 priority: medium

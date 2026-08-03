@@ -2,6 +2,7 @@
 type: bug
 title: Kick User Button Remains Enabled After User is Kicked
 status: open
+priority: low
 created: 2025-09-16T00:00:00.000Z
 updated: 2026-01-09T00:00:00.000Z
 related_issues:

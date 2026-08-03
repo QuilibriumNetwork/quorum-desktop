@@ -1,7 +1,7 @@
 ---
 type: task
 title: "QNS Usernames on Desktop — Implementation Plan"
-status: in-progress
+status: done
 created: 2026-06-10
 ---
 

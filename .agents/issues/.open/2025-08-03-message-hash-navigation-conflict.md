@@ -2,6 +2,7 @@
 type: bug
 title: "Message Hash Navigation Conflict Bug"
 status: open
+priority: low
 created: 2026-01-09
 updated: 2025-08-03
 ---

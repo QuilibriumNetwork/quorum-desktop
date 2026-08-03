@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Unified /spaces page (PR 1 of 2) — My Spaces tab + Discover tab"
-status: in-progress
+status: done
 created: 2026-06-01
 updated: 2026-06-01
 candidate: "#1 (port-from-mobile)"

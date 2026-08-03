@@ -1,7 +1,7 @@
 ---
 type: task
 title: Mobile Internationalization (i18n) Implementation Plan
-status: in-progress
+status: archived
 complexity: medium
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-01-09'

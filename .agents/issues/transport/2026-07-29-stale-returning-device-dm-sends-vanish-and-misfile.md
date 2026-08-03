@@ -2,6 +2,7 @@
 type: task
 title: "A device returning with months-stale state silently loses every DM toward the peer — and its self-sync copies persist under a ghost self-conversation"
 status: in-progress
+priority: high
 created: 2026-07-29
 severity: high — real-user shape (reinstall, long-idle secondary phone). The sender's UI looks healthy, the peer receives nothing, and the sender's own devices hide the copies in an invisible conversation
 area: DM session lifecycle (send side) + receive-side conversation mapping

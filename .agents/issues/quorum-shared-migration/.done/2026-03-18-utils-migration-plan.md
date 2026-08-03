@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Utilities Migration Implementation Plan"
-status: in-progress
+status: done
 complexity: high
 created: 2026-03-18
 completed: 2026-04-09

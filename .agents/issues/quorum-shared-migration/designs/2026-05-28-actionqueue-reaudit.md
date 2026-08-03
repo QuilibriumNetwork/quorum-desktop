@@ -2,6 +2,7 @@
 type: task
 title: "ActionQueueService re-audit: verdict is stays-per-app"
 status: in-progress
+priority: low
 created: 2026-05-28
 audience: future sessions reviewing the migration tracker's ActionQueueService row
 related_docs:

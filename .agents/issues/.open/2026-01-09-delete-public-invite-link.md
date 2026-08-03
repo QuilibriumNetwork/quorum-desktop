@@ -2,6 +2,7 @@
 type: task
 title: 'Task: Implement Delete Public Invite Link Feature'
 status: open
+priority: medium
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-06-07'

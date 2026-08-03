@@ -2,16 +2,14 @@
 type: task
 title: "Space deletion: instant/offline UX via action queue + tombstone-driven multi-device cleanup (kills ghost spaces)"
 status: open
-  (not fix-multidevice-signing-key). Addendum defects B and C are FIXED and operator-verified
-  2026-08-01 (branch `fix/space-delete-redirect-and-stale-list`) — see the addendum section.
 priority: high
 created: 2026-07-19
 severity: data-integrity + UX (blocking-leave, no offline; garbage accumulation compounds #108)
 spans-repos:
   - quorum-desktop (this task — implement here)
-  - quorum-mobile (mirror — has BOTH the same add-only receive bug AND a
+  - 'quorum-mobile (mirror — has BOTH the same add-only receive bug AND a
     mobile-only write-side gap: delete/leave never publish. Tracked separately as
-    the mobile bug below; do NOT implement mobile changes from this desktop task.)
+    the mobile bug below; do NOT implement mobile changes from this desktop task.)'
 related:
   - .agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md (#108 — 2MB/created-space bloat this compounds)
   - .agents/docs/features/action-queue.md (delete-space is "not yet integrated"; recommended pattern lines 731-753)
@@ -27,6 +25,11 @@ related:
 > per-pair state matrix (which pairs are broken and why), what shipped on 2026-07-31, and
 > the ordering constraint that decides when the pieces below can land. This task remains
 > the **owner of the implementation plan**; the umbrella tells you where it sits.
+
+> **Partly landed.** Addendum defects B and C are FIXED and operator-verified
+> 2026-08-01, on branch `fix/space-delete-redirect-and-stale-list` (not
+> `fix-multidevice-signing-key`) — see the addendum section. The task stays open
+> for the rest.
 
 ## Evidence (live desktop account, 2026-07-19)
 

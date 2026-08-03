@@ -1,7 +1,7 @@
 ---
 type: task
 title: Mobile Development Plan - Improved Version
-status: in-progress
+status: archived
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-01-09'
 ---

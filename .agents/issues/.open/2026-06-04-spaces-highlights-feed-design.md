@@ -2,6 +2,7 @@
 type: task
 title: Spaces Highlights Feed — Design Spec
 status: open
+priority: medium
 created: 2026-06-04
 related_docs:
   - docs/data-management-architecture-guide.md

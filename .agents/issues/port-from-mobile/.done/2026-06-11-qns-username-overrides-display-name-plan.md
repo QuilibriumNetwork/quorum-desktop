@@ -1,7 +1,7 @@
 ---
 type: task
 title: "QNS username overrides display name everywhere (Model B) + mentions"
-status: in-progress
+status: done
 created: 2026-06-11
 completed: 2026-06-11
 branch: feat/qns-username-overrides-display-name

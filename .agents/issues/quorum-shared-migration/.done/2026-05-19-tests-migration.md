@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Util Tests — Relocate to quorum-shared"
-status: in-progress
+status: done
 complexity: low
 created: 2026-03-19
 updated: 2026-05-19

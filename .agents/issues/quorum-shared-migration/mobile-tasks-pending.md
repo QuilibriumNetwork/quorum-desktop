@@ -2,6 +2,7 @@
 type: task
 title: "Mobile tasks — where to find them (signpost, not a list)"
 status: in-progress
+priority: low
 created: 2026-05-28
 updated: 2026-06-14
 audience: any session looking for the mobile-side task queue

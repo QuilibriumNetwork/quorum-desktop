@@ -2,7 +2,7 @@
 type: bug
 title: "A per-space name/avatar set on one of your devices never reaches your own other devices"
 status: open
-priority: medium — user-visible, and it silently contradicts a design doc that assumed it worked
+priority: medium
 created: 2026-08-01
 updated: 2026-08-01
 severity: your own second device shows you following your global identity, as if you had never set the override

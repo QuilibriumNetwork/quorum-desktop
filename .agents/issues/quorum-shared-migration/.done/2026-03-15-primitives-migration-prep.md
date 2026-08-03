@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Primitives Migration Prep: Decisions & Cleanup Before Moving to quorum-shared"
-status: in-progress
+status: done
 complexity: medium
 created: 2026-03-15
 completed: 2026-03-18

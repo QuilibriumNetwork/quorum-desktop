@@ -1,7 +1,7 @@
 ---
 type: task
 title: 'MessageDB: Optimization Plan (Phase 4)'
-status: on-hold
+status: archived
 complexity: high
 created: 2025-10-01T00:00:00.000Z
 updated: '2026-01-09'

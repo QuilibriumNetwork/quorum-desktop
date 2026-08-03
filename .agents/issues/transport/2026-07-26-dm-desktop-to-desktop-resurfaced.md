@@ -2,6 +2,7 @@
 type: task
 title: "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)"
 status: in-progress
+priority: medium
 created: 2026-07-26
 severity: medium — user-visible lag and apparent loss; no permanent loss demonstrated since the init-envelope fix (see §1)
 repo: quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)

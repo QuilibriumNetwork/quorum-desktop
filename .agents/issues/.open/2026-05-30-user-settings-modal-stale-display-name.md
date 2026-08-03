@@ -2,6 +2,7 @@
 type: bug
 title: UserSettingsModal shows stale display name after remote UserConfig sync
 status: open
+priority: low
 created: 2026-05-30
 severity: low
 discovered-during: AES-GCM config-decrypt dedup session (unrelated to that refactor)

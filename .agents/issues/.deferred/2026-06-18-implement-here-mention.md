@@ -2,6 +2,7 @@
 type: task
 title: "Implement @here mention (all space members, channel-context notification)"
 status: deferred
+priority: low
 complexity: high
 ai_generated: true
 created: 2026-06-18

@@ -2,6 +2,7 @@
 type: task
 title: Full Markdown Support Inside Spoilers
 status: open
+priority: low
 complexity: medium
 created: 2026-01-06T00:00:00.000Z
 updated: '2026-01-09'

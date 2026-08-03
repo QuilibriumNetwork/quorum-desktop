@@ -3,7 +3,7 @@ type: bug
 title: "Desktop DM receive holds the per-conversation ratchet lock across relay HTTP, so one slow ack stalls the whole conversation"
 status: done
 created: 2026-07-28
-severity: medium — user-visible "messages not arriving" on desktop; likely LATENCY not permanent loss (§3), degrades with device count. ⚠️ NOT revisited after the 2026-07-28 review tripled the stall bound from 22s to ~69s: a conversation frozen for over a minute is closer to "broken" than "slow" from a user's seat, so re-rate this if §5 confirms the mechanism.
+severity: 'medium — user-visible "messages not arriving" on desktop; likely LATENCY not permanent loss (§3), degrades with device count. ⚠️ NOT revisited after the 2026-07-28 review tripled the stall bound from 22s to ~69s: a conversation frozen for over a minute is closer to "broken" than "slow" from a user''s seat, so re-rate this if §5 confirms the mechanism.'
 repo: quorum-desktop (mobile verified NOT affected — §6)
 area: DM receive path / ratchet serialization / transport
 related:

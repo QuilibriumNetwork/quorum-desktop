@@ -2,6 +2,7 @@
 type: task
 title: Invite with Role (Pre-assign Role to Non-Members)
 status: open
+priority: medium
 issue: https://github.com/QuilibriumNetwork/quorum-desktop/issues/81
 created: 2026-04-20T00:00:00.000Z
 updated: 2026-04-20T00:00:00.000Z

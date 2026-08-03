@@ -1552,6 +1552,7 @@
         "type": "task",
         "title": "Accessibility Features — Remaining Work",
         "status": "deferred",
+        "priority": "low",
         "complexity": "high",
         "ai_generated": true,
         "created": "2026-01-06T00:00:00.000Z",
@@ -1569,6 +1570,7 @@
         "type": "task",
         "title": "Decentralized GIF Library on Quilibrium",
         "status": "deferred",
+        "priority": "low",
         "complexity": "high",
         "ai_generated": false,
         "reviewed_by": null,
@@ -1586,6 +1588,7 @@
         "type": "task",
         "title": "Link Previews — Design",
         "status": "deferred",
+        "priority": "medium",
         "created": "2026-05-27T00:00:00.000Z",
         "updated": "2026-05-27T00:00:00.000Z"
       }
@@ -1598,6 +1601,7 @@
         "type": "task",
         "title": "Implement @here mention (all space members, channel-context notification)",
         "status": "deferred",
+        "priority": "low",
         "complexity": "high",
         "ai_generated": true,
         "created": "2026-06-18T00:00:00.000Z",
@@ -1617,6 +1621,7 @@
         "type": "task",
         "title": "DM dedupe-before-decrypt — skip redelivered frames before they hit the ratchet",
         "status": "deferred",
+        "priority": "medium",
         "created": "2026-07-17T00:00:00.000Z",
         "related": [
           ".agents/issues/.done/2026-07-02-dm-message-delivery-unreliable-master.md (Remaining gaps section)"
@@ -3497,8 +3502,21 @@
       "name": "2026-06-23-everyone-pill-styling-permission-gate.md",
       "path": ".agents/issues/.done/2026-06-23-everyone-pill-styling-permission-gate.md",
       "folder": ".done",
-      "frontmatter": {},
-      "parseError": "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line at line 13, column 47:"
+      "frontmatter": {
+        "type": "task",
+        "title": "Gate @everyone pill styling on sender permission (render-side), not just the wire flag",
+        "status": "done",
+        "created": "2026-06-23T00:00:00.000Z",
+        "urgency": "low (cosmetic; notification side already enforced)",
+        "found_via": "mobile↔desktop @everyone audit 2026-06-23 (mobile fix shipped same day)",
+        "related_files": [
+          "src/components/message/Message.tsx",
+          "src/components/message/MessageMarkdownRenderer.tsx",
+          "src/hooks/business/messages/useMessageFormatting.ts"
+        ],
+        "related_bug": ".agents/issues/.done/2026-06-12-everyone-mention-owner-bypass-send-side-only.md",
+        "mirror_of": "quorum-mobile commit \"fix(mentions): only style @everyone when the sender was authorized\""
+      }
     },
     {
       "name": "2026-06-23-global-notification-panel-design.md",
@@ -3694,8 +3712,19 @@
       "name": "2026-07-17-dm-aead-error-frame-drops.md",
       "path": ".agents/issues/.done/2026-07-17-dm-aead-error-frame-drops.md",
       "folder": ".done",
-      "frontmatter": {},
-      "parseError": "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line at line 7, column 29:"
+      "frontmatter": {
+        "type": "bug",
+        "title": "DM individual frames fail to decrypt (aead::Error) and drop — remaining half of the delivery bug",
+        "status": "done",
+        "created": "2026-07-17T00:00:00.000Z",
+        "severity": "high",
+        "repo": "quorum-desktop (mobile: shares the serialization gap only — no destroy-on-failure there; verified 2026-07-17)",
+        "area": "DM delivery / Double Ratchet / retry / dedupe",
+        "related": [
+          ".agents/issues/.done/2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md (Fix 1 — SHIPPED, stops session destruction)",
+          ".agents/issues/.done/2026-07-02-dm-message-delivery-unreliable-master.md (full diagnosis archive)"
+        ]
+      }
     },
     {
       "name": "2026-07-17-dm-decrypt-failure-destroys-session-FIX-SPEC.md",
@@ -3738,7 +3767,7 @@
         "type": "task",
         "title": "Complete read-only-channel enforcement: durable path + embed/sticker + always-sign read-only posts",
         "status": "done",
-        "priority": "medium-high",
+        "priority": "medium",
         "created": "2026-07-19T00:00:00.000Z",
         "severity": "HIGH (authorization bypass — same class as the merged control-message-auth fix)",
         "spans-repos": [
@@ -3793,8 +3822,24 @@
       "name": "2026-07-21-device-registration-ghost-accumulation-cross-platform.md",
       "path": ".agents/issues/.done/2026-07-21-device-registration-ghost-accumulation-cross-platform.md",
       "folder": ".done",
-      "frontmatter": {},
-      "parseError": "bad indentation of a sequence entry at line 10, column 5:"
+      "frontmatter": {
+        "type": "task",
+        "title": "Ghost device accumulation on reset/logout — deregister-before-wipe (desktop + mobile)",
+        "status": "done",
+        "outstanding": [
+          "The two-device observable check has NOT been run on real hardware (reset A, confirm it leaves B's device list and the count stays flat across cycles).",
+          "Desktop follow-up — its `flushOutbound` claims more than `bufferedAmount` can prove; the relay blind window applies there too. See the Slice 2 notes.",
+          "`KeyDB` still survives a desktop reset despite the copy promising otherwise (pre-existing, deliberately out of scope). See \"Secondary\"."
+        ],
+        "priority": "medium",
+        "created": "2026-07-21T00:00:00.000Z",
+        "platforms": "quorum-desktop + quorum-mobile (+ optional quilibrium-js-sdk-channels hardening)",
+        "related": [
+          ".agents/issues/2026-07-19-per-device-signing-keys-registration-anchored.md (revoke-device tie-in)",
+          ".agents/docs/features/onboarding-flow.md (KeyDB id=2 / registration flow)",
+          ".agents/reports/2026-06-22-app-lock-password-gate-research.md (reset flow + duress-wipe; KeyDB-not-deleted note)"
+        ]
+      }
     },
     {
       "name": "2026-07-27-combined-receipt-ack-and-protocol-options.md",
@@ -3866,8 +3911,20 @@
       "name": "2026-07-28-dm-receive-holds-ratchet-lock-across-http.md",
       "path": ".agents/issues/.done/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md",
       "folder": ".done",
-      "frontmatter": {},
-      "parseError": "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line at line 6, column 222:"
+      "frontmatter": {
+        "type": "bug",
+        "title": "Desktop DM receive holds the per-conversation ratchet lock across relay HTTP, so one slow ack stalls the whole conversation",
+        "status": "done",
+        "created": "2026-07-28T00:00:00.000Z",
+        "severity": "medium — user-visible \"messages not arriving\" on desktop; likely LATENCY not permanent loss (§3), degrades with device count. ⚠️ NOT revisited after the 2026-07-28 review tripled the stall bound from 22s to ~69s: a conversation frozen for over a minute is closer to \"broken\" than \"slow\" from a user's seat, so re-rate this if §5 confirms the mechanism.",
+        "repo": "quorum-desktop (mobile verified NOT affected — §6)",
+        "area": "DM receive path / ratchet serialization / transport",
+        "related": [
+          ".agents/issues/transport/2026-07-28-harness-multidevice-and-coverage.md (owner task — the bench work that surfaced this)",
+          ".agents/docs/transport-measurements.md (§ multi-device rows — the 52/100 measurement)",
+          ".agents/docs/transport-reliability-index.md (§3.2 — the finding in context; map for the whole investigation)"
+        ]
+      }
     },
     {
       "name": "2026-07-29-dm-loss-next-session-handoff.md",
@@ -3891,8 +3948,21 @@
       "name": "2026-07-29-session-replacement-strands-in-flight-frames.md",
       "path": ".agents/issues/.done/2026-07-29-session-replacement-strands-in-flight-frames.md",
       "folder": ".done",
-      "frontmatter": {},
-      "parseError": "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line at line 6, column 178:"
+      "frontmatter": {
+        "type": "bug",
+        "title": "Session replacement orphans the receiving inbox, and the cleanup for unplaceable frames named the wrong mailbox — real code defects, but NOT the cause of the field symptom",
+        "status": "done",
+        "created": "2026-07-29T00:00:00.000Z",
+        "severity": "MEDIUM-HIGH — user-visible message loss (366 messages not persisted in one capture, silently, with no error to either party), but **downgraded from the original HIGH**: the data is probably not destroyed, only stranded. Re-rate upward if the relay is shown to expire or drop stranded frames.",
+        "repo": "quorum-desktop (mobile NOT yet checked — see §6)",
+        "area": "DM receive path / session lifecycle / init envelopes",
+        "related": [
+          ".agents/docs/transport-measurements.md (the bench runs that could not see this)",
+          ".agents/docs/transport-reliability-index.md",
+          ".agents/issues/.done/2026-07-28-dm-receive-holds-ratchet-lock-across-http.md (a different defect in the same handler)",
+          "quorum-mobile#183 (upstream; this is CLIENT-side and does NOT explain item 2)"
+        ]
+      }
     },
     {
       "name": "2026-07-30-keepalive-fix-session-handoff.md",
@@ -3957,7 +4027,7 @@
         "type": "task",
         "title": "Identity announce: cap the retries instead of re-sending forever, and fix what un-converges a row",
         "status": "done",
-        "priority": "medium — the two live bugs it uncovered are fixed and merged",
+        "priority": "medium",
         "created": "2026-08-01T00:00:00.000Z",
         "updated": "2026-08-01T00:00:00.000Z",
         "severity": "a bandwidth and battery problem at scale, plus one live correctness bug (Slice 2)",
@@ -3984,7 +4054,7 @@
         "type": "bug",
         "title": "Space sync member reconciliation is blind to the global identity slot, and erases it on apply",
         "status": "done",
-        "priority": "high (if confirmed) — it disables the one mechanism that should make a space identity cadence unnecessary",
+        "priority": "high",
         "created": "2026-08-01T00:00:00.000Z",
         "updated": "2026-08-01T00:00:00.000Z",
         "severity": "user-visible — space members render as a truncated address; existing identity can be lost",
@@ -4013,7 +4083,7 @@
         "type": "bug",
         "title": "A deleted space tag never disappears from other members' rosters — the undefined-stripping merge swallowed the only clear signal",
         "status": "done",
-        "priority": "medium — cosmetic but permanent, and self-inflicted 3 commits ago",
+        "priority": "medium",
         "created": "2026-08-01T00:00:00.000Z",
         "updated": "2026-08-01T00:00:00.000Z",
         "severity": "a tag deleted by the space owner keeps rendering next to every member's name on every other client, forever",
@@ -4036,8 +4106,8 @@
       "frontmatter": {
         "type": "bug",
         "title": "vitest intermittently runs 29 of 736 tests — the import phase collapses from ~98s to <1.2s",
-        "status": "in-progress",
-        "priority": "high (a test suite that under-reports coverage is worse than one that fails)",
+        "status": "done",
+        "priority": "high",
         "created": "2026-08-01T00:00:00.000Z",
         "updated": "2026-08-02T00:00:00.000Z",
         "severity": "potentially silent — the first question below decides whether this is an annoyance or a trap",
@@ -4045,6 +4115,25 @@
         "repos": "quorum-desktop",
         "related_docs": [
           "vitest.config.ts"
+        ]
+      }
+    },
+    {
+      "name": "2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md",
+      "path": ".agents/issues/.done/2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md",
+      "folder": ".done",
+      "frontmatter": {
+        "type": "bug",
+        "title": "A space frame that fails to decrypt is deleted from the relay anyway, so the message is lost permanently and silently",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-08-03T00:00:00.000Z",
+        "severity": "a space message that fails to decrypt for ANY reason is destroyed rather than retried — the relay is the only copy",
+        "area": "space message receive path / inbox ack / frame retention",
+        "repos": "quorum-desktop",
+        "related_bugs": [
+          "2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md (found during its §0d security review)",
+          "2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md (why this is silent in production)"
         ]
       }
     },
@@ -6121,6 +6210,7 @@
         "type": "bug",
         "title": "Pinned Messages Panel Button Clicks Bug",
         "status": "open",
+        "priority": "medium",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-01-08T00:00:00.000Z"
       }
@@ -6133,6 +6223,7 @@
         "type": "task",
         "title": "User Status Feature Implementation Plan",
         "status": "open",
+        "priority": "low",
         "complexity": "high",
         "created": "2025-01-20T00:00:00.000Z",
         "updated": "2026-01-09"
@@ -6146,6 +6237,7 @@
         "type": "bug",
         "title": "Markdown Line Break Inconsistency",
         "status": "open",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-01-21T00:00:00.000Z"
       }
@@ -6158,6 +6250,7 @@
         "type": "bug",
         "title": "Message Hash Navigation Conflict Bug",
         "status": "open",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-08-03T00:00:00.000Z"
       }
@@ -6170,6 +6263,7 @@
         "type": "bug",
         "title": "Modal Gesture Handling Technical Debt",
         "status": "open",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-08-10T00:00:00.000Z"
       }
@@ -6182,6 +6276,7 @@
         "type": "bug",
         "title": "MessageDB Context: IndexedDB Platform Compatibility Issue",
         "status": "open",
+        "priority": "high",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-08-21T00:00:00.000Z"
       }
@@ -6194,6 +6289,7 @@
         "type": "bug",
         "title": "Kick User Button Remains Enabled After User is Kicked",
         "status": "open",
+        "priority": "low",
         "created": "2025-09-16T00:00:00.000Z",
         "updated": "2026-01-09T00:00:00.000Z",
         "related_issues": [
@@ -6209,6 +6305,7 @@
         "type": "bug",
         "title": "Expired Invite Card Validation Timing Issue",
         "status": "open",
+        "priority": "medium",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-11-09T00:00:00.000Z"
       }
@@ -6221,6 +6318,7 @@
         "type": "task",
         "title": "Implement Message Forwarding with Privacy Controls",
         "status": "open",
+        "priority": "medium",
         "complexity": "high",
         "ai_generated": true,
         "created": "2025-11-16T00:00:00.000Z",
@@ -6235,6 +6333,7 @@
         "type": "task",
         "title": "Implement Smart Context Extraction Around Mentions in NotificationPanel",
         "status": "open",
+        "priority": "low",
         "complexity": "medium",
         "ai_generated": true,
         "created": "2025-11-19T00:00:00.000Z",
@@ -6249,6 +6348,7 @@
         "type": "bug",
         "title": "Encryption State Evals Causing Config Sync Bloat",
         "status": "open",
+        "priority": "high",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-12-09T00:00:00.000Z",
         "related_issues": [
@@ -6264,6 +6364,7 @@
         "type": "task",
         "title": "Service Worker for App Update Detection",
         "status": "open",
+        "priority": "medium",
         "complexity": "low",
         "ai_generated": true,
         "created": "2025-12-14T00:00:00.000Z",
@@ -6281,6 +6382,7 @@
         "type": "task",
         "title": "Tombstone Cleanup Strategy for Deleted Messages",
         "status": "open",
+        "priority": "low",
         "complexity": "medium",
         "ai_generated": true,
         "created": "2025-12-18T00:00:00.000Z",
@@ -6295,6 +6397,7 @@
         "type": "task",
         "title": "Implement Role-Based Channel Visibility",
         "status": "open",
+        "priority": "medium",
         "complexity": "high",
         "ai_generated": true,
         "created": "2025-12-26T00:00:00.000Z",
@@ -6309,6 +6412,7 @@
         "type": "task",
         "title": "Public Space Directory Feature",
         "status": "open",
+        "priority": "medium",
         "ai_generated": true,
         "created": "2025-12-30T00:00:00.000Z",
         "updated": "2026-01-09"
@@ -6322,6 +6426,7 @@
         "type": "task",
         "title": "Fix Lingui \"Uncompiled Message Detected\" Warning",
         "status": "open",
+        "priority": "low",
         "complexity": "low",
         "ai_generated": true,
         "created": "2026-01-04T00:00:00.000Z",
@@ -6341,6 +6446,7 @@
         "type": "task",
         "title": "Full Markdown Support Inside Spoilers",
         "status": "open",
+        "priority": "low",
         "complexity": "medium",
         "created": "2026-01-06T00:00:00.000Z",
         "updated": "2026-01-09"
@@ -6354,6 +6460,7 @@
         "type": "bug",
         "title": "Config Sync Space Loss Race Condition",
         "status": "open",
+        "priority": "high",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2025-12-13T00:00:00.000Z"
@@ -6367,6 +6474,7 @@
         "type": "task",
         "title": "Conversation Deletion State Synchronization",
         "status": "open",
+        "priority": "medium",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -6379,6 +6487,7 @@
         "type": "task",
         "title": "Task: Implement Delete Public Invite Link Feature",
         "status": "open",
+        "priority": "medium",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-06-07",
@@ -6395,6 +6504,7 @@
         "type": "bug",
         "title": "DirectMessage Invite Loading Performance Issue",
         "status": "open",
+        "priority": "medium",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09T00:00:00.000Z"
       }
@@ -6407,6 +6517,7 @@
         "type": "task",
         "title": "Multi-User Invite Selection Enhancement",
         "status": "open",
+        "priority": "low",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
@@ -6420,6 +6531,7 @@
         "type": "bug",
         "title": "Safari Passkey Session Loss - Random Logout on Browser Restart",
         "status": "open",
+        "priority": "high",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09T00:00:00.000Z"
@@ -6433,6 +6545,7 @@
         "type": "bug",
         "title": "Space Owner Privacy Limitation",
         "status": "open",
+        "priority": "high",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09T00:00:00.000Z",
@@ -6449,6 +6562,7 @@
         "type": "task",
         "title": "Test Suite Implementation Plan for Quorum Desktop",
         "status": "open",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -6461,6 +6575,7 @@
         "type": "bug",
         "title": "UserProfile Modal Positioning - Viewport Boundary Detection",
         "status": "open",
+        "priority": "low",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09T00:00:00.000Z"
@@ -6474,6 +6589,7 @@
         "type": "task",
         "title": "Auto-save settings modals — eliminate save buttons",
         "status": "open",
+        "priority": "medium",
         "complexity": "high",
         "ai_generated": true,
         "reviewed_by": null,
@@ -6491,6 +6607,7 @@
         "type": "task",
         "title": "Space Tag Click — Space Info Modal",
         "status": "open",
+        "priority": "low",
         "complexity": "medium",
         "ai_generated": true,
         "reviewed_by": null,
@@ -6538,6 +6655,7 @@
         "type": "task",
         "title": "Invite with Role (Pre-assign Role to Non-Members)",
         "status": "open",
+        "priority": "medium",
         "issue": "https://github.com/QuilibriumNetwork/quorum-desktop/issues/81",
         "created": "2026-04-20T00:00:00.000Z",
         "updated": "2026-04-20T00:00:00.000Z"
@@ -6551,6 +6669,7 @@
         "type": "task",
         "title": "Invite with Role Implementation Plan",
         "status": "open",
+        "priority": "medium",
         "created": "2026-04-20T00:00:00.000Z"
       }
     },
@@ -6562,6 +6681,7 @@
         "type": "bug",
         "title": "UserSettingsModal shows stale display name after remote UserConfig sync",
         "status": "open",
+        "priority": "low",
         "created": "2026-05-30T00:00:00.000Z",
         "severity": "low",
         "discovered-during": "AES-GCM config-decrypt dedup session (unrelated to that refactor)"
@@ -6575,6 +6695,7 @@
         "type": "task",
         "title": "Polls in Spaces — Design Spec (v1 + roadmap to final)",
         "status": "open",
+        "priority": "medium",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-01T00:00:00.000Z"
       }
@@ -6587,6 +6708,7 @@
         "type": "task",
         "title": "Polls in Spaces — Implementation Plan (v1)",
         "status": "open",
+        "priority": "medium",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-01T00:00:00.000Z",
         "spec": "2026-06-01-polls-design.md"
@@ -6600,6 +6722,7 @@
         "type": "task",
         "title": "Spaces Highlights Feed — Design Spec",
         "status": "open",
+        "priority": "medium",
         "created": "2026-06-04T00:00:00.000Z",
         "related_docs": [
           "docs/data-management-architecture-guide.md",
@@ -6623,6 +6746,7 @@
         "type": "task",
         "title": "Spaces Highlights Feed — Implementation Plan",
         "status": "open",
+        "priority": "medium",
         "created": "2026-06-04T00:00:00.000Z",
         "related_design": "2026-06-04-spaces-highlights-feed-design.md"
       }
@@ -6635,6 +6759,7 @@
         "type": "task",
         "title": "Unify Account tab's defer-until-Save vs. instant-toggle semantics",
         "status": "open",
+        "priority": "low",
         "created": "2026-06-07T00:00:00.000Z",
         "scope": "desktop",
         "related": [
@@ -6651,6 +6776,7 @@
         "type": "bug",
         "title": "UserSettingsModal fields flash empty for 1-2 seconds on open",
         "status": "open",
+        "priority": "low",
         "severity": "low",
         "created": "2026-06-08T00:00:00.000Z",
         "surfaced-by": "2026-06-08 per-space bio port session — user noticed when opening UserSettingsModal to verify global bio persisted",
@@ -6683,6 +6809,7 @@
         "type": "bug",
         "title": "Desktop shows stale synced config (e.g. public-profile toggle) until restart — config only server-fetched at startup",
         "status": "open",
+        "priority": "medium",
         "created": "2026-06-13T00:00:00.000Z",
         "severity": "medium",
         "repo": "quorum-desktop",
@@ -6761,15 +6888,42 @@
       "name": "2026-07-19-space-deletion-ghost-cleanup.md",
       "path": ".agents/issues/.open/2026-07-19-space-deletion-ghost-cleanup.md",
       "folder": ".open",
-      "frontmatter": {},
-      "parseError": "bad indentation of a sequence entry at line 13, column 31:"
+      "frontmatter": {
+        "type": "task",
+        "title": "Space deletion: instant/offline UX via action queue + tombstone-driven multi-device cleanup (kills ghost spaces)",
+        "status": "open",
+        "priority": "high",
+        "created": "2026-07-19T00:00:00.000Z",
+        "severity": "data-integrity + UX (blocking-leave, no offline; garbage accumulation compounds",
+        "spans-repos": [
+          "quorum-desktop (this task — implement here)",
+          "quorum-mobile (mirror — has BOTH the same add-only receive bug AND a mobile-only write-side gap: delete/leave never publish. Tracked separately as the mobile bug below; do NOT implement mobile changes from this desktop task.)"
+        ],
+        "related": [
+          ".agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md (#108 — 2MB/created-space bloat this compounds)",
+          ".agents/docs/features/action-queue.md (delete-space is \"not yet integrated\"; recommended pattern lines 731-753)",
+          "../../quorum-mobile/.agents/bugs/2026-07-19-config-sync-add-only-deleted-spaces-linger.md (MOBILE side — shared tombstone/reconciliation contract + mobile-only write-side publish gap; severity high. Any wire/config change here must stay in sync with this.)",
+          "../../quorum-mobile/.agents/reports/2026-07-19-signing-key-multidevice-hunt-tracker.md (M2 add-only sync; D7 corrupted-space delete)"
+        ]
+      }
     },
     {
       "name": "2026-07-20-announce-keys-flooding-unbounded-admissions.md",
       "path": ".agents/issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md",
       "folder": ".open",
-      "frontmatter": {},
-      "parseError": "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line at line 6, column 31:"
+      "frontmatter": {
+        "type": "bug",
+        "title": "announce-keys flooding: a malicious member can grow the per-device admission store without bound (needs a non-destructive cap)",
+        "status": "open",
+        "priority": "low",
+        "created": "2026-07-20T00:00:00.000Z",
+        "severity": "LOW (member-only DoS: storage/perf degradation, no impersonation, no data loss)",
+        "platforms": "quorum-desktop + quorum-mobile (+ shared owns MAX_DEVICES_PER_MEMBER)",
+        "related": [
+          ".agents/issues/2026-07-19-per-device-signing-keys-registration-anchored.md (the feature; lists the cap as a pre-send-side prerequisite)",
+          "quorum-shared src/utils/deviceKeys.ts (MAX_DEVICES_PER_MEMBER constant, currently unused)"
+        ]
+      }
     },
     {
       "name": "2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md",
@@ -6779,6 +6933,7 @@
         "type": "bug",
         "title": "Space member-binding can be rebound/blanked by a spoofable join/leave/sync-members payload (verified-signer bypass via the join path)",
         "status": "open",
+        "priority": "high",
         "created": "2026-07-20T00:00:00.000Z",
         "severity": "HIGH (authorization-integrity — same class as",
         "platforms": "quorum-desktop + quorum-mobile",
@@ -6798,6 +6953,7 @@
         "type": "bug",
         "title": "Electron stores the master private key at rest with no user secret — its decryption key sits in the same record",
         "status": "open",
+        "priority": "high",
         "created": "2026-07-31T00:00:00.000Z",
         "severity": "HIGH for the downloadable desktop app (the master key is recoverable from disk with no passkey, biometric, or prompt). Not remotely exploitable.",
         "platforms": "quorum-desktop — Electron always; browser only on fallback authenticators. quorum-mobile and PRF-capable browsers are unaffected.",
@@ -6817,6 +6973,7 @@
         "type": "bug",
         "title": "\"Reset App Data\" does not delete the master private key on Electron and fallback-authenticator browsers",
         "status": "open",
+        "priority": "high",
         "created": "2026-07-31T00:00:00.000Z",
         "severity": "HIGH on Electron and fallback-authenticator browsers (the reset's own copy promises key deletion and does not do it; the surviving master key needs no passkey to decrypt). PRF-browser users and mobile are unaffected.",
         "platforms": "quorum-desktop — Electron always affected, browser only on fallback authenticators; quorum-mobile verified clean",
@@ -6873,7 +7030,7 @@
         "type": "bug",
         "title": "Every logger call is a no-op in production builds, so 'fail open and log' produces zero signal from real users",
         "status": "open",
-        "priority": "high — it does not break behaviour, it breaks our ability to SEE behaviour",
+        "priority": "high",
         "created": "2026-08-01T00:00:00.000Z",
         "updated": "2026-08-02T00:00:00.000Z",
         "severity": "silent — nothing fails; we simply learn nothing from any user who is not a developer",
@@ -6892,7 +7049,7 @@
         "type": "bug",
         "title": "A per-space name/avatar set on one of your devices never reaches your own other devices",
         "status": "open",
-        "priority": "medium — user-visible, and it silently contradicts a design doc that assumed it worked",
+        "priority": "medium",
         "created": "2026-08-01T00:00:00.000Z",
         "updated": "2026-08-01T00:00:00.000Z",
         "severity": "your own second device shows you following your global identity, as if you had never set the override",
@@ -6914,7 +7071,7 @@
         "type": "task",
         "title": "Promote the identity-announce gate to quorum-shared — but only once we know it isn't temporary",
         "status": "open",
-        "priority": "low — no drift exists today; this prevents a future one",
+        "priority": "low",
         "created": "2026-08-02T00:00:00.000Z",
         "updated": "2026-08-02T00:00:00.000Z",
         "severity": "none currently. The risk it addresses is silent constant drift, which has bitten once already",
@@ -6931,6 +7088,25 @@
       }
     },
     {
+      "name": "2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md",
+      "path": ".agents/issues/.open/2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md",
+      "folder": ".open",
+      "frontmatter": {
+        "type": "bug",
+        "title": "A typing-indicator frame returns before the inbox ack, so the relay is never told to drop it — and may redeliver it on every reconnect, forever",
+        "status": "open",
+        "created": "2026-08-03T00:00:00.000Z",
+        "severity": "potentially a permanent backlog source, which is upstream of every perishable-control-frame problem in the transport work",
+        "area": "space message receive path / inbox ack / typing indicators",
+        "repos": "quorum-desktop",
+        "related_bugs": [
+          "2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md (same ack path, opposite failure — that one over-deletes, this one may never delete)",
+          "2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md (if confirmed, this feeds the backlog that issue is about)",
+          "2026-07-20-announce-keys-flooding-unbounded-admissions.md (the other known backlog source)"
+        ]
+      }
+    },
+    {
       "name": "2026-07-19-per-device-signing-keys-registration-anchored.md",
       "path": ".agents/issues/2026-07-19-per-device-signing-keys-registration-anchored.md",
       "folder": "root",
@@ -6938,7 +7114,7 @@
         "type": "task",
         "title": "Durable multi-device: per-device space signing keys, admitted via master-identity-signed device statements",
         "status": "in-progress",
-        "priority": "high (follow-up to the interim signing-split fix)",
+        "priority": "high",
         "created": "2026-07-19T00:00:00.000Z",
         "severity": "HIGH (security-critical — touches the verified-signer auth boundary)",
         "platforms": "quorum-desktop + quorum-mobile + quorum-shared",
@@ -7013,8 +7189,22 @@
       "name": "2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md",
       "path": ".agents/issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md",
       "folder": "root",
-      "frontmatter": {},
-      "parseError": "incomplete explicit mapping pair; a key node is missed; or followed by a non-tabulated empty line at line 6, column 111:"
+      "frontmatter": {
+        "type": "bug",
+        "title": "\"Delete Space\" is actually Leave, the dialog promises otherwise, and an owner clicking it permanently bricks the space",
+        "status": "in-progress",
+        "priority": "medium",
+        "created": "2026-08-02T00:00:00.000Z",
+        "severity": "medium — was high. The dangerous half is neutralised in release builds as of 2026-08-03 (see Update): the button is disabled, so an owner can no longer brick a Space with it, and no dialog claims a deletion that does not happen. What remains is the absence of real deletion, which is blocked on a backend endpoint.",
+        "area": "space management / space deletion + leaving / ownership",
+        "repo": "quorum-desktop",
+        "related": [
+          "quorum-mobile .agents/issues/2026-08-02-make-delete-space-actually-delete.md (the cross-repo tracker for the remaining work — read this one first)",
+          "quorum-mobile .agents/issues/.open/2026-08-02-config-key-rotation-on-kick-destroys-space-history.md (ownerless spaces can never receive that fix — see §4)",
+          "quorum-mobile .agents/issues/.open/2026-08-02-leaving-a-space-revokes-no-access.md (the leave path this button actually invokes)",
+          "issues/.done/user-kick-role-permission-non-functional.md (independently root-caused the owner-key constraint that makes §3 permanent)"
+        ]
+      }
     },
     {
       "name": "2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md",
@@ -7024,7 +7214,7 @@
         "type": "bug",
         "title": "The roster pull works, but it is unreliable and it picks its peer badly (originally filed as 'delivers nothing')",
         "status": "in-progress",
-        "priority": "medium — downgraded from HIGH once the mechanism was shown to work",
+        "priority": "medium",
         "created": "2026-08-02T00:00:00.000Z",
         "updated": "2026-08-02T00:00:00.000Z",
         "severity": "a new member of a space sees every existing member as a truncated address, indefinitely",
@@ -7051,7 +7241,7 @@
         "type": "bug",
         "title": "A reconnecting client starves control-message processing for minutes, so every sync-request expires unread and a new joiner is answered by nobody",
         "status": "in-progress",
-        "priority": "MEDIUM — downgraded 2026-08-03. The roster symptom is fixed (desktop",
+        "priority": "medium",
         "created": "2026-08-02T00:00:00.000Z",
         "updated": "2026-08-03T00:00:00.000Z",
         "severity": "was \"a new member is answered by NOBODY and stays at 1 member row indefinitely\" — that path now self-repairs; what remains is control frames read minutes late",
@@ -7077,7 +7267,6 @@
         "status": "in-progress",
         "created": "2026-08-03T00:00:00.000Z",
         "priority": "medium",
-        "complexity": "medium",
         "area": "dev tooling / .agents markdown viewer",
         "related_docs": [
           ".agents/agents-workflow.md"
@@ -7091,7 +7280,7 @@
       "frontmatter": {
         "type": "task",
         "title": "MessageDB: Optimization Plan (Phase 4)",
-        "status": "on-hold",
+        "status": "archived",
         "complexity": "high",
         "created": "2025-10-01T00:00:00.000Z",
         "updated": "2026-01-09"
@@ -7104,7 +7293,7 @@
       "frontmatter": {
         "type": "task",
         "title": "handleNewMessage Refactoring Plan",
-        "status": "on-hold",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7116,7 +7305,7 @@
       "frontmatter": {
         "type": "task",
         "title": "handleNewMessage Integration Tests Guide",
-        "status": "on-hold",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7128,7 +7317,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Extract encryptAndSendToSpace() Helper",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "medium",
         "created": "2025-12-20T00:00:00.000Z",
         "updated": "2026-01-09T00:00:00.000Z"
@@ -7142,6 +7331,7 @@
         "type": "task",
         "title": "MessageDB Refactoring - Current State",
         "status": "in-progress",
+        "priority": "low",
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-05-19"
@@ -7155,6 +7345,7 @@
         "type": "task",
         "title": "handleNewMessage Decomposition — Reconsidered",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-19T00:00:00.000Z",
         "updated": "2026-05-19",
         "related_docs": [
@@ -7176,6 +7367,7 @@
         "type": "task",
         "title": "MessageService.ts Analysis",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-05-19"
       }
@@ -7188,6 +7380,7 @@
         "type": "task",
         "title": "High-Risk Optimization Opportunities",
         "status": "in-progress",
+        "priority": "low",
         "created": "2025-10-03T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7200,6 +7393,7 @@
         "type": "task",
         "title": "Low/Medium Risk Optimization Opportunities",
         "status": "in-progress",
+        "priority": "low",
         "created": "2025-10-03T00:00:00.000Z",
         "updated": "2026-05-19"
       }
@@ -7212,6 +7406,7 @@
         "type": "task",
         "title": "MessageDB Refactor — Master Tracker",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-19T00:00:00.000Z",
         "updated": "2026-05-20"
       }
@@ -7224,6 +7419,7 @@
         "type": "task",
         "title": "MessageDB Refactor — Cross-Check Against quorum-shared Architecture",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-19T00:00:00.000Z",
         "updated": "2026-05-19",
         "related_docs": [
@@ -7245,7 +7441,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Cross-Platform Hooks Refactoring Plan",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-03-19"
       }
@@ -7257,7 +7453,7 @@
       "frontmatter": {
         "type": "task",
         "title": "CSS to Mobile Colors Sync Script",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7269,7 +7465,7 @@
       "frontmatter": {
         "type": "task",
         "title": "File Upload Hooks Consolidation Task",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7281,7 +7477,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Mobile Internationalization (i18n) Implementation Plan",
-        "status": "in-progress",
+        "status": "archived",
         "complexity": "medium",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
@@ -7294,7 +7490,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Mobile Image Compression Implementation",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7306,7 +7502,7 @@
       "frontmatter": {
         "type": "task",
         "title": "React Native Upgrade Risk Assessment",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7318,7 +7514,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Mobile/Desktop Behavioral Differences Audit Plan",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7330,7 +7526,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Mobile Development Plan - Improved Version",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7342,7 +7538,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Native Business Components Implementation Plan",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7354,7 +7550,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Cross-Platform Development : Revised Plan",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7366,7 +7562,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Primitive Migration Audit Report",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7377,7 +7573,7 @@
       "folder": "mobile-dev/.archived",
       "frontmatter": {
         "type": "task",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
       }
@@ -7389,7 +7585,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Third-Party Component Migration Report",
-        "status": "in-progress",
+        "status": "archived",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-04-09"
       }
@@ -7402,6 +7598,7 @@
         "type": "task",
         "title": "Business Logic Extraction & Native Preparation Plan",
         "status": "in-progress",
+        "priority": "low",
         "created": "2025-08-01T00:00:00.000Z",
         "updated": "2026-03-19",
         "related_issues": [
@@ -7417,6 +7614,7 @@
         "type": "task",
         "title": "Quilibrium SDK Mobile Integration Issue",
         "status": "in-progress",
+        "priority": "low",
         "created": "2025-08-08T00:00:00.000Z",
         "updated": "2026-04-09"
       }
@@ -7429,6 +7627,7 @@
         "type": "task",
         "title": "Component Architecture Masterplan - Desktop/Mobile Unification",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-04-09"
       }
@@ -7441,6 +7640,7 @@
         "type": "task",
         "title": "Mobile/Touch Implementation Transition Plan",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-04-09"
       }
@@ -7453,6 +7653,7 @@
         "type": "task",
         "title": "Component Architecture Workflow - Detailed Explanation",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-04-09"
       }
@@ -7465,6 +7666,7 @@
         "type": "task",
         "title": "mobile-dev — historical reference (single-repo era)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-12T00:00:00.000Z"
       }
     },
@@ -7475,7 +7677,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Unified `/spaces` Page (PR 1 of 2) — Implementation Plan",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-01T00:00:00.000Z"
       }
     },
@@ -7486,7 +7688,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Unified /spaces page (PR 2 of 2) — Join via link tab + Create space tab + retire legacy modals",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-03T00:00:00.000Z",
         "candidate": "#1 (port-from-mobile) — PR 2",
@@ -7500,7 +7702,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Unified /spaces page (PR 1 of 2) — My Spaces tab + Discover tab",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-01T00:00:00.000Z",
         "candidate": "#1 (port-from-mobile)",
@@ -7515,7 +7717,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Port non-owner read-only view of the public invite URL from mobile",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-08T00:00:00.000Z",
         "updated": "2026-06-08T00:00:00.000Z",
         "candidate": 29,
@@ -7529,7 +7731,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Port per-space profile bio override to desktop's SpaceSettings → Account tab",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-08T00:00:00.000Z",
         "branch": "feat/port-per-space-bio",
         "worktree": ".worktrees/secondary",
@@ -7544,7 +7746,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Port the public-profile capability from mobile + retire `/discover/people`",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "medium",
         "created": "2026-06-08T00:00:00.000Z",
         "updated": "2026-06-08T00:00:00.000Z",
@@ -7559,7 +7761,7 @@
       "frontmatter": {
         "type": "task",
         "title": "QNS usernames on desktop — display, search, mention & trust model",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-10T00:00:00.000Z",
         "completed": "2026-06-11T00:00:00.000Z",
         "related-candidate": "#12 (QNS marketplace) — this is a scoped slice; see candidates.md"
@@ -7572,7 +7774,7 @@
       "frontmatter": {
         "type": "task",
         "title": "QNS Usernames on Desktop — Implementation Plan",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-10T00:00:00.000Z"
       }
     },
@@ -7583,7 +7785,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Port: paste private key on import + copy private key in settings (with Security-tab UI consolidation)",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-11T00:00:00.000Z",
         "updated": "2026-06-11T00:00:00.000Z",
         "candidate": "#31a (+ companion copy-export); #31b parked",
@@ -7598,7 +7800,7 @@
       "frontmatter": {
         "type": "task",
         "title": "QNS username overrides display name everywhere (Model B) + mentions",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-11T00:00:00.000Z",
         "completed": "2026-06-11T00:00:00.000Z",
         "branch": "feat/qns-username-overrides-display-name",
@@ -7613,7 +7815,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Design: per-message indicators on grouped (continuation) messages",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-28T00:00:00.000Z"
       }
     },
@@ -7624,7 +7826,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Grouped/continuation messages drop per-message indicators (desktop + mobile)",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-28T00:00:00.000Z"
       }
     },
@@ -7635,7 +7837,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Implementation plan: per-message indicators on grouped (continuation) messages — DESKTOP",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-07-15T00:00:00.000Z"
       }
     },
@@ -7647,6 +7849,7 @@
         "type": "task",
         "title": "Port skins — Phase 0 (shared promotion) + Phase 1 (colors/fonts/accent engine)",
         "status": "in-progress",
+        "priority": "medium",
         "candidate": 27,
         "created": "2026-06-11T00:00:00.000Z",
         "depends_on": [],
@@ -7661,6 +7864,7 @@
         "type": "task",
         "title": "Skins (custom themes) — deep dive on porting from mobile to desktop",
         "status": "in-progress",
+        "priority": "low",
         "candidate": 27,
         "created": "2026-06-11T00:00:00.000Z"
       }
@@ -7673,6 +7877,7 @@
         "type": "task",
         "title": "Mobile features not on desktop — candidate list",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-07-15T00:00:00.000Z"
       }
@@ -7685,6 +7890,7 @@
         "type": "task",
         "title": "Port from Mobile — Master Tracker",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-01T00:00:00.000Z"
       }
@@ -7697,6 +7903,7 @@
         "type": "task",
         "title": "Port-from-mobile shipped log",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-10T00:00:00.000Z"
       }
@@ -7709,6 +7916,7 @@
         "type": "task",
         "title": "Workflow for porting features from mobile to desktop",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-01T00:00:00.000Z",
         "updated": "2026-06-01T00:00:00.000Z",
         "audience": "any agent working on the port-from-mobile effort"
@@ -7722,6 +7930,7 @@
         "type": "task",
         "title": "Port to Mobile — candidates (features + convergence)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-12T00:00:00.000Z",
         "updated": "2026-07-24T00:00:00.000Z"
       }
@@ -7734,6 +7943,7 @@
         "type": "task",
         "title": "Port to Mobile — Master Tracker",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-06-12T00:00:00.000Z",
         "updated": "2026-06-12T00:00:00.000Z"
       }
@@ -7745,7 +7955,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Primitives Migration Prep: Decisions & Cleanup Before Moving to quorum-shared",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "medium",
         "created": "2026-03-15T00:00:00.000Z",
         "completed": "2026-03-18T00:00:00.000Z",
@@ -7761,7 +7971,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Utilities Migration Implementation Plan",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "high",
         "created": "2026-03-18T00:00:00.000Z",
         "completed": "2026-04-09T00:00:00.000Z",
@@ -7777,7 +7987,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Typing Indicators — Migration to quorum-shared",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-05-18T00:00:00.000Z",
         "updated": "2026-05-19T00:00:00.000Z",
         "related_docs": [
@@ -7798,7 +8008,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Delivery & Read Receipts — Migration to quorum-shared",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-05-19T00:00:00.000Z",
         "updated": "2026-05-19T00:00:00.000Z",
         "related_docs": [
@@ -7819,7 +8029,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Util Tests — Relocate to quorum-shared",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "low",
         "created": "2026-03-19T00:00:00.000Z",
         "updated": "2026-05-19T00:00:00.000Z",
@@ -7835,7 +8045,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Investigate and fix structural type divergence between quorum-shared and quorum-desktop",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-05-27T00:00:00.000Z",
         "updated": "2026-05-29T00:00:00.000Z",
         "priority": "high"
@@ -7848,7 +8058,7 @@
       "frontmatter": {
         "type": "task",
         "title": "useTwoStepConfirm — extract two-step confirmation primitive to shared",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "low",
         "created": "2026-05-28T00:00:00.000Z",
         "updated": "2026-05-28T00:00:00.000Z",
@@ -7865,7 +8075,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Validation hooks — move logic to shared with errorKey i18n pattern",
-        "status": "in-progress",
+        "status": "done",
         "complexity": "medium",
         "created": "2026-05-28T00:00:00.000Z",
         "updated": "2026-05-28T00:00:00.000Z",
@@ -7884,7 +8094,7 @@
         "type": "task",
         "title": "Extract toggleRolePermission and setRolePermissions to shared",
         "phase": "Phase 2 (C4 extract pure helpers)",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-05-29T00:00:00.000Z",
         "updated": "2026-05-29T00:00:00.000Z",
         "priority": "medium"
@@ -7897,7 +8107,7 @@
       "frontmatter": {
         "type": "task",
         "title": "Icon-picker vocabulary promotion + expansion — PR sequencing & status",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-12T00:00:00.000Z",
         "completed": "2026-06-25T00:00:00.000Z",
         "parent-task": "2026-06-12-promote-icon-picker-vocabulary-to-shared.md"
@@ -7910,11 +8120,11 @@
       "frontmatter": {
         "type": "task",
         "title": "Promote + expand the icon-picker vocabulary (icon set + colors + filled-variant) to quorum-shared",
-        "status": "in-progress",
+        "status": "done",
         "created": "2026-06-12T00:00:00.000Z",
         "completed": "2026-06-25T00:00:00.000Z",
         "runtime-test": "not-required (data move; visual smoke on both apps)",
-        "priority": "medium (unblocks mobile channel/group icon parity — port-to-mobile rows 31/32)",
+        "priority": "medium",
         "source-audit": "D:\\GitHub\\Quilibrium\\quorum-desktop\\.agents\\tasks\\port-to-mobile\\candidates.md (rows 31/32; \"Channel & group icons\" detailed entry)",
         "related": [
           "quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md (the mobile consumer)",
@@ -7933,7 +8143,7 @@
         "created": "2026-06-18T00:00:00.000Z",
         "updated": "2026-07-16T00:00:00.000Z",
         "runtime-test": "not-required (logic move; visual smoke on both apps)",
-        "priority": "medium (de-dups desktop's inlined pipeline; gives mobile's markdown renderer a shared backbone)",
+        "priority": "medium",
         "source": "mobile-originated — quorum-mobile Wave 1 Phase 2 wrote a clean pure-function extraction first",
         "related": [
           "quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-18-adopt-shared-message-preprocessing.md (the mobile consumer leg)",
@@ -7951,6 +8161,7 @@
         "type": "task",
         "title": "Cross-repo PR workflow when mobile PRs need a different reviewer",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-28T00:00:00.000Z",
         "updated": "2026-05-29T00:00:00.000Z",
         "audience": "future agents working on this migration"
@@ -7964,6 +8175,7 @@
         "type": "task",
         "title": "Utilities Migration: quorum-desktop → quorum-shared",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-03-18T00:00:00.000Z",
         "completed": "2026-04-09T00:00:00.000Z",
         "depends_on": [
@@ -7980,6 +8192,7 @@
         "type": "task",
         "title": "Services Layer — Migration Design for quorum-shared",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-18T00:00:00.000Z",
         "updated": "2026-05-19T00:00:00.000Z",
         "related_docs": [
@@ -8003,6 +8216,7 @@
         "type": "task",
         "title": "ActionQueueService re-audit: verdict is stays-per-app",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-28T00:00:00.000Z",
         "audience": "future sessions reviewing the migration tracker's ActionQueueService row",
         "related_docs": [
@@ -8019,6 +8233,7 @@
         "type": "task",
         "title": "Hooks Migration — Audit (2026-05-28)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-28T00:00:00.000Z"
       }
     },
@@ -8030,6 +8245,7 @@
         "type": "task",
         "title": "SearchService re-audit: stays per-app (one micro-shareable)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-29T00:00:00.000Z",
         "audience": "future sessions reviewing the migration tracker's SearchService row",
         "related_docs": [
@@ -8046,6 +8262,7 @@
         "type": "task",
         "title": "Mobile tasks — where to find them (signpost, not a list)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-28T00:00:00.000Z",
         "updated": "2026-06-14T00:00:00.000Z",
         "audience": "any session looking for the mobile-side task queue"
@@ -8059,6 +8276,7 @@
         "type": "task",
         "title": "Quorum Shared Migration — Master Tracker",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-19T00:00:00.000Z",
         "updated": "2026-07-16T00:00:00.000Z"
       }
@@ -8071,6 +8289,7 @@
         "type": "task",
         "title": "npm Publish Access + Release Flow for @quilibrium/quorum-shared",
         "status": "in-progress",
+        "priority": "low",
         "complexity": "low",
         "created": "2026-03-15T00:00:00.000Z",
         "updated": "2026-07-16T00:00:00.000Z"
@@ -8084,6 +8303,7 @@
         "type": "task",
         "title": "Stacked PRs Workflow: Primitives + Hooks/Utils Migration",
         "status": "in-progress",
+        "priority": "low",
         "complexity": "medium",
         "created": "2026-03-15T00:00:00.000Z",
         "updated": "2026-04-09T00:00:00.000Z",
@@ -8101,6 +8321,7 @@
         "type": "task",
         "title": "Quorum-shared migration — roadmap",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-05-29T00:00:00.000Z",
         "updated": "2026-05-30T00:00:00.000Z",
         "audience": "any agent or contributor planning the next migration move"
@@ -8114,6 +8335,7 @@
         "type": "task",
         "title": "Quorum-shared migration — shipped-log archive (older entries)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-29T00:00:00.000Z",
         "audience": "only read if you specifically need historical context"
       }
@@ -8126,6 +8348,7 @@
         "type": "task",
         "title": "Quorum-shared migration — shipped log",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-28T00:00:00.000Z",
         "updated": "2026-06-13T00:00:00.000Z",
         "audience": "read recent entries to catch up on what's changed and why"
@@ -8139,6 +8362,7 @@
         "type": "task",
         "title": "Design Decisions & Rationale",
         "status": "in-progress",
+        "priority": "low",
         "created": "2025-11-12T00:00:00.000Z",
         "updated": "2026-05-24"
       }
@@ -8151,6 +8375,7 @@
         "type": "task",
         "title": "Future Search Optimization Phases",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-05-24"
       }
@@ -8163,6 +8388,7 @@
         "type": "task",
         "title": "Phase 1.2 - Lazy Loading",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-05-25T00:00:00.000Z",
         "updated": "2026-05-25"
       }
@@ -8175,6 +8401,7 @@
         "type": "task",
         "title": "Phase 1.3 - IndexedDB Persistence",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-25T00:00:00.000Z",
         "updated": "2026-05-25"
       }
@@ -8187,6 +8414,7 @@
         "type": "task",
         "title": "Phase 1.4 - LRU Memory Management",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-05-25T00:00:00.000Z",
         "updated": "2026-05-25"
       }
@@ -8199,6 +8427,7 @@
         "type": "task",
         "title": "Quick Wins - Search Improvements",
         "status": "in-progress",
+        "priority": "low",
         "created": "2025-11-12T00:00:00.000Z",
         "updated": "2026-05-24"
       }
@@ -8211,6 +8440,7 @@
         "type": "task",
         "title": "Search Performance Optimization",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-05-25"
       }
@@ -8223,6 +8453,7 @@
         "type": "task",
         "title": "DM delivery auto-heal — detect via missing delivery receipts, resend / repair without manual reset",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-07-17T00:00:00.000Z",
         "area": "DM session lifecycle / delivery recovery",
         "related": [
@@ -8246,6 +8477,7 @@
         "type": "task",
         "title": "DM desktop↔desktop — capture archive (round data and retracted mechanisms)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-07-27T00:00:00.000Z",
         "related": [
           ".agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md (the entry point — read that first)"
@@ -8260,6 +8492,7 @@
         "type": "task",
         "title": "DM delivery broken again on desktop↔desktop (the 2026-07-02 master report is NOT closed)",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-07-26T00:00:00.000Z",
         "severity": "medium — user-visible lag and apparent loss; no permanent loss demonstrated since the init-envelope fix (see §1)",
         "repo": "quorum-desktop (cross-repo — mobile shares the accounts and the upstream causes)",
@@ -8286,6 +8519,7 @@
         "type": "task",
         "title": "Headless SPACE harness — reproduce & measure desktop↔desktop space message delivery lag/loss",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-07-27T00:00:00.000Z",
         "updated": "2026-08-02T00:00:00.000Z",
         "area": "Spaces / mesh sync / triple ratchet / testing infrastructure",
@@ -8307,6 +8541,7 @@
         "type": "task",
         "title": "Harness coverage: multi-device DM delivery, then the cells no bench reaches",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-07-28T00:00:00.000Z",
         "updated": "2026-07-29T00:00:00.000Z",
         "area": "headless harness / DM delivery / multi-device fan-out",
@@ -8322,6 +8557,7 @@
         "type": "task",
         "title": "A device returning with months-stale state silently loses every DM toward the peer — and its self-sync copies persist under a ghost self-conversation",
         "status": "in-progress",
+        "priority": "high",
         "created": "2026-07-29T00:00:00.000Z",
         "severity": "high — real-user shape (reinstall, long-idle secondary phone). The sender's UI looks healthy, the peer receives nothing, and the sender's own devices hide the copies in an invisible conversation",
         "area": "DM session lifecycle (send side) + receive-side conversation mapping",
@@ -8342,6 +8578,7 @@
         "type": "task",
         "title": "Transport debugging: the workflow and tool suite that takes the operator out of the copy-paste loop",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-07-29T00:00:00.000Z",
         "area": "debugging infrastructure / DM + space transport",
         "related": [
@@ -8359,6 +8596,7 @@
         "type": "task",
         "title": "ROOT CAUSE: the relay kills any client that misses a pong by >1s (9s ping / 10s deadline), and frames written in the blind window before the client notices are silently lost",
         "status": "in-progress",
+        "priority": "high",
         "created": "2026-07-30T00:00:00.000Z",
         "updated": "2026-07-31T00:00:00.000Z",
         "severity": "CRITICAL — silently drops 15-25% of all DMs during ordinary use on mobile, with no error surfaced anywhere and no recovery. This is the leading explanation for the ~6-month message-loss symptom",
@@ -8379,6 +8617,7 @@
         "type": "task",
         "title": "DM fix is SHIPPED and live — what remains is one confirmation round, then measuring spaces",
         "status": "in-progress",
+        "priority": "high",
         "created": "2026-07-31T00:00:00.000Z",
         "area": "WebSocket transport / send durability / spaces measurement",
         "repos": "quorum-mobile (device rounds), quorum-desktop (tooling + docs)",
@@ -8417,6 +8656,7 @@
         "type": "task",
         "title": "Desktop has NO send retention — it does not consume the shared WebSocket client that got the fix",
         "status": "in-progress",
+        "priority": "high",
         "created": "2026-08-01T00:00:00.000Z",
         "area": "WebSocket transport / send durability",
         "repos": "quorum-desktop (+ quorum-shared if the client is adopted)",
@@ -8436,6 +8676,7 @@
         "type": "task",
         "title": "DM Double Ratchet fixes — divergences from the original upstream implementation",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-07-17T00:00:00.000Z"
       }
     },
@@ -8447,6 +8688,7 @@
         "type": "task",
         "title": "Transport & DM reliability — cross-repo index (every doc, PR and issue in one place)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-07-28T00:00:00.000Z",
         "updated": "2026-08-01T00:00:00.000Z",
         "area": "WebSocket transport / DM Double Ratchet / spaces hub-log / receipts",
@@ -8460,7 +8702,8 @@
       "frontmatter": {
         "type": "task",
         "title": "issue 183 body",
-        "status": "in-progress"
+        "status": "in-progress",
+        "priority": "medium"
       }
     },
     {
@@ -8471,6 +8714,7 @@
         "type": "task",
         "title": "Transport & DM reliability — measurement log (every run, every number, one place)",
         "status": "in-progress",
+        "priority": "low",
         "created": "2026-07-28T00:00:00.000Z",
         "updated": "2026-08-02T00:00:00.000Z",
         "area": "WebSocket transport / DM Double Ratchet / delivery loss",
@@ -8485,6 +8729,7 @@
         "type": "task",
         "title": "Transport & DM reliability — START HERE. What is open, what is blocked, what is not work at all",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-08-01T00:00:00.000Z",
         "area": "WebSocket transport / DM Double Ratchet / spaces / receipts",
         "repos": "quorum-desktop + quorum-mobile + quorum-shared + upstream",
@@ -8503,6 +8748,7 @@
         "type": "task",
         "title": "RUNBOOK — running a manual DM transport round with the shipped tools (fresh-session protocol)",
         "status": "in-progress",
+        "priority": "medium",
         "created": "2026-07-29T00:00:00.000Z",
         "moved": "2026-08-01 — from tasks/ to docs/. It is a living protocol, not a work item; sitting in tasks/ made it read as permanently unfinished.",
         "area": "DM transport debugging / manual rounds",

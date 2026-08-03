@@ -2,6 +2,7 @@
 type: task
 title: Phase 1.2 - Lazy Loading
 status: in-progress
+priority: medium
 created: 2026-05-25
 updated: '2026-05-25'
 ---

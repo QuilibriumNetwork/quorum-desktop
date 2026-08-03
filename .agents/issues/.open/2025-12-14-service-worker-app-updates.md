@@ -2,6 +2,7 @@
 type: task
 title: Service Worker for App Update Detection
 status: open
+priority: medium
 complexity: low
 ai_generated: true
 created: 2025-12-14T00:00:00.000Z

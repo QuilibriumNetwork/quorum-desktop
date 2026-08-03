@@ -2,6 +2,7 @@
 type: task
 title: Unify Account tab's defer-until-Save vs. instant-toggle semantics
 status: open
+priority: low
 created: 2026-06-07
 scope: desktop
 related:

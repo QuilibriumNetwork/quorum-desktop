@@ -2,6 +2,7 @@
 type: task
 title: "Transport debugging: the workflow and tool suite that takes the operator out of the copy-paste loop"
 status: in-progress
+priority: medium
 created: 2026-07-29
 area: debugging infrastructure / DM + space transport
 related:

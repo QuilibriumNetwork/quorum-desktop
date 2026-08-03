@@ -2,6 +2,7 @@
 type: task
 title: User Status Feature Implementation Plan
 status: open
+priority: low
 complexity: high
 created: 2025-01-20T00:00:00.000Z
 updated: '2026-01-09'

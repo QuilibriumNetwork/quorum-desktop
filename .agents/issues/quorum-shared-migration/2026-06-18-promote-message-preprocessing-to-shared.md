@@ -5,7 +5,7 @@ status: in-progress
 created: 2026-06-18
 updated: 2026-07-16
 runtime-test: not-required (logic move; visual smoke on both apps)
-priority: medium (de-dups desktop's inlined pipeline; gives mobile's markdown renderer a shared backbone)
+priority: medium
 source: mobile-originated — quorum-mobile Wave 1 Phase 2 wrote a clean pure-function extraction first
 related:
   - quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-18-adopt-shared-message-preprocessing.md (the mobile consumer leg)

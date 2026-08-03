@@ -2,7 +2,7 @@
 type: bug
 title: "A deleted space tag never disappears from other members' rosters — the undefined-stripping merge swallowed the only clear signal"
 status: done
-priority: medium — cosmetic but permanent, and self-inflicted 3 commits ago
+priority: medium
 created: 2026-08-01
 updated: 2026-08-01
 severity: a tag deleted by the space owner keeps rendering next to every member's name on every other client, forever

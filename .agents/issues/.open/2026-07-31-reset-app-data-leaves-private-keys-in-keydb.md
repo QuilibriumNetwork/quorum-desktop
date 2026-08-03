@@ -2,6 +2,7 @@
 type: bug
 title: "\"Reset App Data\" does not delete the master private key on Electron and fallback-authenticator browsers"
 status: open
+priority: high
 created: 2026-07-31
 severity: HIGH on Electron and fallback-authenticator browsers (the reset's own copy promises key deletion and does not do it; the surviving master key needs no passkey to decrypt). PRF-browser users and mobile are unaffected.
 platforms: quorum-desktop — Electron always affected, browser only on fallback authenticators; quorum-mobile verified clean

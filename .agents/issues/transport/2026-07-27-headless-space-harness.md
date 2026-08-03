@@ -2,6 +2,7 @@
 type: task
 title: "Headless SPACE harness — reproduce & measure desktop↔desktop space message delivery lag/loss"
 status: in-progress
+priority: medium
 created: 2026-07-27
 updated: 2026-08-02
 area: Spaces / mesh sync / triple ratchet / testing infrastructure

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Implementation plan: per-message indicators on grouped (continuation) messages — DESKTOP"
-status: in-progress
+status: done
 created: 2026-07-15
 ---
 

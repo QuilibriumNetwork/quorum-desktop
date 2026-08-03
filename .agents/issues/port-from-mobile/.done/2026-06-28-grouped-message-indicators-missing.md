@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Grouped/continuation messages drop per-message indicators (desktop + mobile)"
-status: in-progress
+status: done
 created: 2026-06-28
 ---
 

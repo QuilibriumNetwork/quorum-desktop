@@ -2,6 +2,7 @@
 type: task
 title: "Transport & DM reliability — START HERE. What is open, what is blocked, what is not work at all"
 status: in-progress
+priority: medium
 created: 2026-08-01
 area: WebSocket transport / DM Double Ratchet / spaces / receipts
 repos: quorum-desktop + quorum-mobile + quorum-shared + upstream

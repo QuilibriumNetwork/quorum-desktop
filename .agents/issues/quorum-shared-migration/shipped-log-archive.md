@@ -2,6 +2,7 @@
 type: task
 title: Quorum-shared migration — shipped-log archive (older entries)
 status: in-progress
+priority: low
 created: 2026-05-29
 audience: only read if you specifically need historical context
 ---

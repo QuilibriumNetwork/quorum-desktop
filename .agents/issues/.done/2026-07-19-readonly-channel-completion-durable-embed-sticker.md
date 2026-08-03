@@ -2,7 +2,7 @@
 type: task
 title: "Complete read-only-channel enforcement: durable path + embed/sticker + always-sign read-only posts"
 status: done
-priority: medium-high
+priority: medium
 created: 2026-07-19
 severity: HIGH (authorization bypass — same class as the merged control-message-auth fix)
 spans-repos:

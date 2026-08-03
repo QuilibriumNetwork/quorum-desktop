@@ -2,6 +2,7 @@
 type: task
 title: Quick Wins - Search Improvements
 status: in-progress
+priority: low
 created: 2025-11-12T00:00:00.000Z
 updated: '2026-05-24'
 ---

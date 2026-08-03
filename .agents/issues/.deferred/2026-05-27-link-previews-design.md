@@ -2,6 +2,7 @@
 type: task
 title: Link Previews — Design
 status: deferred
+priority: medium
 created: 2026-05-27
 updated: 2026-05-27
 ---

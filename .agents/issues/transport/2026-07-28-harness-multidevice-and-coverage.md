@@ -2,6 +2,7 @@
 type: task
 title: "Harness coverage: multi-device DM delivery, then the cells no bench reaches"
 status: in-progress
+priority: medium
 created: 2026-07-28
 updated: 2026-07-29
 area: headless harness / DM delivery / multi-device fan-out

@@ -2,6 +2,7 @@
 type: task
 title: "DM desktop↔desktop — capture archive (round data and retracted mechanisms)"
 status: in-progress
+priority: low
 created: 2026-07-27
 related:
   - ".agents/issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md (the entry point — read that first)"

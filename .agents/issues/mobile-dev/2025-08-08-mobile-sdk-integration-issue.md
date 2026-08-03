@@ -2,6 +2,7 @@
 type: task
 title: Quilibrium SDK Mobile Integration Issue
 status: in-progress
+priority: low
 created: 2025-08-08T00:00:00.000Z
 updated: '2026-04-09'
 ---

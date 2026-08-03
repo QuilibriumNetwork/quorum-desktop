@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Delivery & Read Receipts — Migration to quorum-shared"
-status: in-progress
+status: done
 created: 2026-05-19
 updated: 2026-05-19
 related_docs:

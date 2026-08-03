@@ -2,6 +2,7 @@
 type: bug
 title: 'MessageDB Context: IndexedDB Platform Compatibility Issue'
 status: open
+priority: high
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-08-21T00:00:00.000Z
 ---

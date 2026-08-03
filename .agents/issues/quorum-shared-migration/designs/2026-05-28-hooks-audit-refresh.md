@@ -2,6 +2,7 @@
 type: task
 title: "Hooks Migration — Audit (2026-05-28)"
 status: in-progress
+priority: low
 created: 2026-05-28
 ---
 

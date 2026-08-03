@@ -2,6 +2,7 @@
 type: bug
 title: Encryption State Evals Causing Config Sync Bloat
 status: open
+priority: high
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-12-09T00:00:00.000Z
 related_issues:

@@ -1,7 +1,7 @@
 ---
 type: task
 title: Port the public-profile capability from mobile + retire `/discover/people`
-status: in-progress
+status: done
 complexity: medium
 created: 2026-06-08
 updated: 2026-06-08

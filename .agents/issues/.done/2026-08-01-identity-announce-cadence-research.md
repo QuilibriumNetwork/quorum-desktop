@@ -2,7 +2,7 @@
 type: task
 title: "Identity announce: cap the retries instead of re-sending forever, and fix what un-converges a row"
 status: done
-priority: medium — the two live bugs it uncovered are fixed and merged
+priority: medium
 created: 2026-08-01
 updated: 2026-08-01
 severity: a bandwidth and battery problem at scale, plus one live correctness bug (Slice 2)

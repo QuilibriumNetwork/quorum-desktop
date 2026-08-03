@@ -2,6 +2,7 @@
 type: task
 title: "SearchService re-audit: stays per-app (one micro-shareable)"
 status: in-progress
+priority: low
 created: 2026-05-29
 audience: future sessions reviewing the migration tracker's SearchService row
 related_docs:

@@ -2,6 +2,7 @@
 type: task
 title: "Invite with Role Implementation Plan"
 status: open
+priority: medium
 created: 2026-04-20
 ---
 

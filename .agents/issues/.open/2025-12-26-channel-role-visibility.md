@@ -2,6 +2,7 @@
 type: task
 title: Implement Role-Based Channel Visibility
 status: open
+priority: medium
 complexity: high
 ai_generated: true
 created: 2025-12-26T00:00:00.000Z

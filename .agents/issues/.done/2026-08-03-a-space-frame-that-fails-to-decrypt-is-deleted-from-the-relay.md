@@ -1,8 +1,8 @@
 ---
 type: bug
 title: "A space frame that fails to decrypt is deleted from the relay anyway, so the message is lost permanently and silently"
-status: done — fixed in desktop #305 (2026-08-03)
-priority: HIGH — silent, permanent data loss with no user-visible signal; the DM path already does this correctly, so the fix has a working model in the same file
+status: done
+priority: high
 created: 2026-08-03
 severity: a space message that fails to decrypt for ANY reason is destroyed rather than retried — the relay is the only copy
 area: space message receive path / inbox ack / frame retention

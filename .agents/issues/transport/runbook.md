@@ -2,6 +2,7 @@
 type: task
 title: "RUNBOOK — running a manual DM transport round with the shipped tools (fresh-session protocol)"
 status: in-progress
+priority: medium
 created: 2026-07-29
 moved: "2026-08-01 — from tasks/ to docs/. It is a living protocol, not a work item; sitting in tasks/ made it read as permanently unfinished."
 area: DM transport debugging / manual rounds

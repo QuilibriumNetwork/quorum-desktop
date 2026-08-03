@@ -2,6 +2,7 @@
 type: bug
 title: Pinned Messages Panel Button Clicks Bug
 status: open
+priority: medium
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-01-08T00:00:00.000Z
 ---

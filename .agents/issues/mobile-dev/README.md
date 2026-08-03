@@ -2,6 +2,7 @@
 type: task
 title: "mobile-dev — historical reference (single-repo era)"
 status: in-progress
+priority: low
 created: 2026-06-12
 ---
 

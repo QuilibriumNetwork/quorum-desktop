@@ -1,7 +1,7 @@
 ---
 type: task
 title: "QNS usernames on desktop — display, search, mention & trust model"
-status: in-progress
+status: done
 created: 2026-06-10
 completed: 2026-06-11
 related-candidate: "#12 (QNS marketplace) — this is a scoped slice; see candidates.md"

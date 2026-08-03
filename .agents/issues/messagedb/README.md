@@ -2,6 +2,7 @@
 type: task
 title: "MessageDB Refactor — Master Tracker"
 status: in-progress
+priority: low
 created: 2026-05-19
 updated: '2026-05-20'
 ---

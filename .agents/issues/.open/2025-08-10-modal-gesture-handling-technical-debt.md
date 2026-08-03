@@ -2,6 +2,7 @@
 type: bug
 title: Modal Gesture Handling Technical Debt
 status: open
+priority: low
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-08-10T00:00:00.000Z
 ---

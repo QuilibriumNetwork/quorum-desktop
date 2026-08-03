@@ -2,6 +2,7 @@
 type: task
 title: "Polls in Spaces — Implementation Plan (v1)"
 status: open
+priority: medium
 created: 2026-06-01
 updated: 2026-06-01
 spec: 2026-06-01-polls-design.md

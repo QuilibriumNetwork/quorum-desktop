@@ -1,7 +1,7 @@
 ---
 type: task
 title: Port non-owner read-only view of the public invite URL from mobile
-status: in-progress
+status: done
 created: 2026-06-08
 updated: 2026-06-08
 candidate: 29

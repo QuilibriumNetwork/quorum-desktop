@@ -1,7 +1,7 @@
 ---
 type: task
 title: "useTwoStepConfirm — extract two-step confirmation primitive to shared"
-status: in-progress
+status: done
 complexity: low
 created: 2026-05-28
 updated: 2026-05-28

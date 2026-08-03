@@ -2,6 +2,7 @@
 type: task
 title: "MessageDB Refactor — Cross-Check Against quorum-shared Architecture"
 status: in-progress
+priority: low
 created: 2026-05-19
 updated: '2026-05-19'
 related_docs:

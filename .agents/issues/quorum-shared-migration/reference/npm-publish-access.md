@@ -2,6 +2,7 @@
 type: task
 title: "npm Publish Access + Release Flow for @quilibrium/quorum-shared"
 status: in-progress
+priority: low
 complexity: low
 created: 2026-03-15
 updated: 2026-07-16

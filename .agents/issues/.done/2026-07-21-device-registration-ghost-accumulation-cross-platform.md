@@ -7,9 +7,9 @@ outstanding:
     confirm it leaves B's device list and the count stays flat across cycles).
   - Desktop follow-up — its `flushOutbound` claims more than `bufferedAmount`
     can prove; the relay blind window applies there too. See the Slice 2 notes.
-  - `KeyDB` still survives a desktop reset despite the copy promising otherwise
-    (pre-existing, deliberately out of scope). See "Secondary".
-priority: medium (UX/hygiene; not a security hole, but pollutes the device list and per-device-signing admissions)
+  - '`KeyDB` still survives a desktop reset despite the copy promising otherwise
+    (pre-existing, deliberately out of scope). See "Secondary".'
+priority: medium
 created: 2026-07-21
 platforms: quorum-desktop + quorum-mobile (+ optional quilibrium-js-sdk-channels hardening)
 related:

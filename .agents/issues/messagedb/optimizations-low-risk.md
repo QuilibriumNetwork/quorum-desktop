@@ -2,6 +2,7 @@
 type: task
 title: Low/Medium Risk Optimization Opportunities
 status: in-progress
+priority: low
 created: 2025-10-03T00:00:00.000Z
 updated: '2026-05-19'
 ---

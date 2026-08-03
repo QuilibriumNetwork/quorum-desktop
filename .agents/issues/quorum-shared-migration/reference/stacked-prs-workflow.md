@@ -2,6 +2,7 @@
 type: task
 title: "Stacked PRs Workflow: Primitives + Hooks/Utils Migration"
 status: in-progress
+priority: low
 complexity: medium
 created: 2026-03-15
 updated: 2026-04-09

@@ -2,6 +2,7 @@
 type: task
 title: Spaces Highlights Feed — Implementation Plan
 status: open
+priority: medium
 created: 2026-06-04
 related_design: 2026-06-04-spaces-highlights-feed-design.md
 ---

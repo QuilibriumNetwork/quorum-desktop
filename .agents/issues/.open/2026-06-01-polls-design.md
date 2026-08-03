@@ -2,6 +2,7 @@
 type: task
 title: "Polls in Spaces — Design Spec (v1 + roadmap to final)"
 status: open
+priority: medium
 created: 2026-06-01
 updated: 2026-06-01
 ---

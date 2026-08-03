@@ -2,6 +2,7 @@
 type: task
 title: Quorum-shared migration — roadmap
 status: in-progress
+priority: medium
 created: 2026-05-29
 updated: 2026-05-30
 audience: any agent or contributor planning the next migration move

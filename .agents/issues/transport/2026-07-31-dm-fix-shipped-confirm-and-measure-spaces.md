@@ -2,6 +2,7 @@
 type: task
 title: "DM fix is SHIPPED and live — what remains is one confirmation round, then measuring spaces"
 status: in-progress
+priority: high
 created: 2026-07-31
 area: WebSocket transport / send durability / spaces measurement
 repos: quorum-mobile (device rounds), quorum-desktop (tooling + docs)

@@ -2,7 +2,7 @@
 type: task
 title: "Promote the identity-announce gate to quorum-shared — but only once we know it isn't temporary"
 status: open
-priority: low — no drift exists today; this prevents a future one
+priority: low
 created: 2026-08-02
 updated: 2026-08-02
 severity: none currently. The risk it addresses is silent constant drift, which has bitten once already

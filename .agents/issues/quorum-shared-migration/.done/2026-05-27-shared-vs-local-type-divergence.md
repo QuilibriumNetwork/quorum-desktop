@@ -1,7 +1,7 @@
 ---
 type: task
 title: Investigate and fix structural type divergence between quorum-shared and quorum-desktop
-status: in-progress
+status: done
 created: 2026-05-27
 updated: 2026-05-29
 priority: high

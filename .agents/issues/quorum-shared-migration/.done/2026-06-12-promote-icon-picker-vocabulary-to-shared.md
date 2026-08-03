@@ -1,11 +1,11 @@
 ---
 type: task
 title: "Promote + expand the icon-picker vocabulary (icon set + colors + filled-variant) to quorum-shared"
-status: in-progress
+status: done
 created: 2026-06-12
 completed: 2026-06-25
 runtime-test: not-required (data move; visual smoke on both apps)
-priority: medium (unblocks mobile channel/group icon parity — port-to-mobile rows 31/32)
+priority: medium
 source-audit: D:\GitHub\Quilibrium\quorum-desktop\.agents\tasks\port-to-mobile\candidates.md (rows 31/32; "Channel & group icons" detailed entry)
 related:
   - quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md (the mobile consumer)

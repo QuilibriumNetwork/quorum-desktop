@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Design: per-message indicators on grouped (continuation) messages"
-status: in-progress
+status: done
 created: 2026-06-28
 ---
 

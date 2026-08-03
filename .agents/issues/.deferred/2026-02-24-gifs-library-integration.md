@@ -2,6 +2,7 @@
 type: task
 title: "Decentralized GIF Library on Quilibrium"
 status: deferred
+priority: low
 complexity: high
 ai_generated: false
 reviewed_by: null

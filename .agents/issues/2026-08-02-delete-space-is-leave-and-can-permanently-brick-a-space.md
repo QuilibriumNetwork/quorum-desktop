@@ -2,8 +2,9 @@
 type: bug
 title: "\"Delete Space\" is actually Leave, the dialog promises otherwise, and an owner clicking it permanently bricks the space"
 status: in-progress
+priority: medium
 created: 2026-08-02
-severity: medium — was high. The dangerous half is neutralised in release builds as of 2026-08-03 (see Update): the button is disabled, so an owner can no longer brick a Space with it, and no dialog claims a deletion that does not happen. What remains is the absence of real deletion, which is blocked on a backend endpoint.
+severity: 'medium — was high. The dangerous half is neutralised in release builds as of 2026-08-03 (see Update): the button is disabled, so an owner can no longer brick a Space with it, and no dialog claims a deletion that does not happen. What remains is the absence of real deletion, which is blocked on a backend endpoint.'
 area: space management / space deletion + leaving / ownership
 repo: quorum-desktop
 related:

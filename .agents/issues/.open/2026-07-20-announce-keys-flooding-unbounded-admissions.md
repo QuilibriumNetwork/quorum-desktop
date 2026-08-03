@@ -2,8 +2,9 @@
 type: bug
 title: "announce-keys flooding: a malicious member can grow the per-device admission store without bound (needs a non-destructive cap)"
 status: open
+priority: low
 created: 2026-07-20
-severity: LOW (member-only DoS: storage/perf degradation, no impersonation, no data loss)
+severity: 'LOW (member-only DoS: storage/perf degradation, no impersonation, no data loss)'
 platforms: quorum-desktop + quorum-mobile (+ shared owns MAX_DEVICES_PER_MEMBER)
 related:
   - .agents/issues/2026-07-19-per-device-signing-keys-registration-anchored.md (the feature; lists the cap as a pre-send-side prerequisite)

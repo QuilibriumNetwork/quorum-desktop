@@ -2,6 +2,7 @@
 type: bug
 title: "Space member-binding can be rebound/blanked by a spoofable join/leave/sync-members payload (verified-signer bypass via the join path)"
 status: open
+priority: high
 created: 2026-07-20
 severity: HIGH (authorization-integrity — same class as #243, reached through the join/leave path instead of update-profile)
 platforms: quorum-desktop + quorum-mobile

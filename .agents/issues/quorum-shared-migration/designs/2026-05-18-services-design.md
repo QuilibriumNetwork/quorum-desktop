@@ -2,6 +2,7 @@
 type: task
 title: "Services Layer — Migration Design for quorum-shared"
 status: in-progress
+priority: low
 created: 2026-05-18
 updated: 2026-05-19
 related_docs:

@@ -2,6 +2,7 @@
 type: task
 title: Cross-repo PR workflow when mobile PRs need a different reviewer
 status: in-progress
+priority: low
 created: 2026-05-28
 updated: 2026-05-29
 audience: future agents working on this migration

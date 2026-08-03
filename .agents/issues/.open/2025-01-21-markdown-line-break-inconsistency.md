@@ -2,6 +2,7 @@
 type: bug
 title: Markdown Line Break Inconsistency
 status: open
+priority: low
 created: 2026-01-09T00:00:00.000Z
 updated: 2025-01-21T00:00:00.000Z
 ---

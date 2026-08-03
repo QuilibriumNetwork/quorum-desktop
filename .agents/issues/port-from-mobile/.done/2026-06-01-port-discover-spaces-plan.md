@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Unified `/spaces` Page (PR 1 of 2) — Implementation Plan"
-status: in-progress
+status: done
 created: 2026-06-01
 ---
 

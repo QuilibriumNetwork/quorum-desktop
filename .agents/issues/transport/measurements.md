@@ -2,6 +2,7 @@
 type: task
 title: "Transport & DM reliability — measurement log (every run, every number, one place)"
 status: in-progress
+priority: low
 created: 2026-07-28
 updated: 2026-08-02
 area: WebSocket transport / DM Double Ratchet / delivery loss

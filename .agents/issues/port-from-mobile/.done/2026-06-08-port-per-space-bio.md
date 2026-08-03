@@ -1,7 +1,7 @@
 ---
 type: task
 title: Port per-space profile bio override to desktop's SpaceSettings → Account tab
-status: in-progress
+status: done
 created: 2026-06-08
 branch: feat/port-per-space-bio
 worktree: .worktrees/secondary

@@ -2,6 +2,7 @@
 type: task
 title: "ROOT CAUSE: the relay kills any client that misses a pong by >1s (9s ping / 10s deadline), and frames written in the blind window before the client notices are silently lost"
 status: in-progress
+priority: high
 created: 2026-07-30
 updated: 2026-07-31
 severity: CRITICAL — silently drops 15-25% of all DMs during ordinary use on mobile, with no error surfaced anywhere and no recovery. This is the leading explanation for the ~6-month message-loss symptom

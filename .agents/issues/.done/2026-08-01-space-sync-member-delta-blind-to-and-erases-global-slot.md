@@ -2,7 +2,7 @@
 type: bug
 title: "Space sync member reconciliation is blind to the global identity slot, and erases it on apply"
 status: done
-priority: high (if confirmed) — it disables the one mechanism that should make a space identity cadence unnecessary
+priority: high
 created: 2026-08-01
 updated: 2026-08-01
 severity: user-visible — space members render as a truncated address; existing identity can be lost

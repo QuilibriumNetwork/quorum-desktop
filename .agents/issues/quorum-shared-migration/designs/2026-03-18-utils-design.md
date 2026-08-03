@@ -2,6 +2,7 @@
 type: task
 title: "Utilities Migration: quorum-desktop → quorum-shared"
 status: in-progress
+priority: low
 created: 2026-03-18
 completed: 2026-04-09
 depends_on:

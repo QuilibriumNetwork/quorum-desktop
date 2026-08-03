@@ -2,6 +2,7 @@
 type: task
 title: "Skins (custom themes) — deep dive on porting from mobile to desktop"
 status: in-progress
+priority: low
 candidate: 27
 created: 2026-06-11
 ---

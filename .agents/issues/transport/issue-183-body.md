@@ -2,6 +2,7 @@
 type: task
 title: "issue 183 body"
 status: in-progress
+priority: medium
 ---
 
 > **Transparency note:** this work — 30+ instrumented capture rounds, the client fixes in mobile PRs #178-#182 / desktop PRs #252-#256, and this write-up — was done with AI coding agents under my direction. The crypto internals are above my own skill level, so please treat the analysis as machine-generated and verify accordingly. Everything below is therefore backed by a script you can run, or explicitly marked as inferred.

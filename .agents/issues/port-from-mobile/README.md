@@ -2,6 +2,7 @@
 type: task
 title: "Port from Mobile — Master Tracker"
 status: in-progress
+priority: low
 created: 2026-06-01
 updated: 2026-06-01
 ---

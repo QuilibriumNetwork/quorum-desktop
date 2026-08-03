@@ -2,6 +2,7 @@
 type: task
 title: Workflow for porting features from mobile to desktop
 status: in-progress
+priority: low
 created: 2026-06-01
 updated: 2026-06-01
 audience: any agent working on the port-from-mobile effort

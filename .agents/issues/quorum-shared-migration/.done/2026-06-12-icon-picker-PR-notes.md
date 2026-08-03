@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Icon-picker vocabulary promotion + expansion — PR sequencing & status"
-status: in-progress
+status: done
 created: 2026-06-12
 completed: 2026-06-25
 parent-task: 2026-06-12-promote-icon-picker-vocabulary-to-shared.md

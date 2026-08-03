@@ -1,8 +1,7 @@
 ---
 type: bug
 title: "A typing-indicator frame returns before the inbox ack, so the relay is never told to drop it — and may redeliver it on every reconnect, forever"
-status: open — the code path is CONFIRMED; whether the relay actually retains these frames is NOT, and that is the whole question
-priority: unknown until the one open question is answered — trivial if typing frames are not retained, significant if they are (a permanent, ever-growing reconnect backlog for every active user)
+status: open
 created: 2026-08-03
 severity: potentially a permanent backlog source, which is upstream of every perishable-control-frame problem in the transport work
 area: space message receive path / inbox ack / typing indicators
@@ -14,6 +13,13 @@ related_bugs:
 ---
 
 # A typing frame returns before the ack
+
+> **Deliberately ungraded.** The code path is CONFIRMED; whether the relay
+> actually retains these frames is NOT, and that is the whole question. Until it
+> is answered this is trivial if typing frames are not retained, and significant
+> if they are — a permanent, ever-growing reconnect backlog for every active
+> user. Carrying no `priority:` is the honest state, not an oversight: grade it
+> once the question below is settled.
 
 ## What is CONFIRMED (READ)
 
@@ -35,6 +41,52 @@ place a space frame is acked. The relay's model is retain-until-the-client-delet
 and **the delete IS the ack**.
 
 So: a typing frame is processed, and the relay is never told we are done with it.
+
+## 🔴 UPGRADED 2026-08-03 — the send path is the same as an ordinary post
+
+The open question below was "does the relay retain typing frames?". Reading the
+SEND path answers it as far as client code can:
+
+```ts
+// MessageService.ts:605-614 — "Broadcast an ephemeral control message to a space"
+async sendEphemeralSpaceControl(spaceId: string, msg: TypingMessage) {
+  await this.encryptAndSendToSpace(spaceId, msg as unknown as Message);
+}
+```
+
+`encryptAndSendToSpace` is **the same function ordinary posts use**. On the wire a
+typing frame is an ordinary space hub broadcast, landing in every member's space
+inbox exactly like a message.
+
+⚠️ **"Ephemeral" in that comment describes LOCAL PERSISTENCE** — "never calls
+saveMessage… no local persistence and never enters the sync manifest". It says
+nothing about relay retention, and there is no separate ephemeral transport.
+
+So the chain is: sent like a post → never acked (the early `return` at
+`MessageService.ts:4682`) → and the relay retains until acked. **Typing frames
+accumulate.**
+
+### Why this may be the dominant backlog source
+
+`TypingService` sends **one `typing-start` per 5 s per scope** while someone is
+typing, plus a `typing-stop`. In a busy 79-member space that is hundreds of
+frames per hour, from ordinary conversation, with nobody doing anything unusual.
+
+For comparison, the largest MEASURED backlog in this investigation was ~352
+retained `announce-keys` frames — enough to block a client for minutes. A week's
+worth of typing indicators across several active spaces would dwarf that.
+
+**If confirmed, this is upstream of everything.** Queue depth is the variable
+that decides whether a perishable frame is read in time (see the FALSIFIED
+section of the sync-requests issue: the wait is the number of frames AHEAD, and
+nothing about scheduling changes that). A permanent, unbounded, ever-growing
+source of queue depth beats every scheduling fix under discussion.
+
+### Still not proven
+
+The relay is not in these repos, so "retained and redelivered" remains INFERRED —
+strongly, from an identical send path and a documented retain-until-acked model,
+but inferred. The experiment below still settles it.
 
 ## What is NOT confirmed — and it decides everything
 
