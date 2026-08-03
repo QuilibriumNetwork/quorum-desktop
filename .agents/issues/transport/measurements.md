@@ -1881,6 +1881,40 @@ backlog-starvation path", not "fixes every field report".
 
 Reported in `issues/.open/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md` §0.
 
+## 2026-08-03 — the fix, measured (desktop #300)
+
+The fix shape above, implemented and re-measured. Run with the scenario's own
+simulated late re-ask **disabled** (`HARNESS_BACKLOG_LATE_REASK=0`), so these
+numbers are the product path and not the scaffolding that validated it.
+
+| backlog | trials | delivered | rate | median lag | median frames |
+|---|---|---|---|---|---|
+| 0 | 2 | 2 | 100% | 4.8 s | 15 |
+| 300 | 2 | 2 | **100%** | 79.5 s | 1203 |
+
+Against the same rows measured 2026-08-02: 0 backlog was 100% @ 4.7 s
+(**unchanged**, so the healthy path did not regress), and 300 backlog was
+**0%** (both trials `rows=1/80`).
+
+The two 300 trials landed 79.8 s and 79.3 s. A 0.5 s spread across independent
+runs is a timer firing, not luck — consistent with the mechanism being the
+per-space debounce on the convergence check rather than anything load-dependent.
+
+**What the fix was.** Not the new scheduler the previous entry anticipated. The
+re-ask machinery already existed (#296); the two calls that arm it sat inside the
+sync-session expiry gate, so the failure it was written for was the one case that
+disarmed it. Moving them out was the whole change. The "wait for quiet" detector
+that the fix shape called for also already existed, as the debounce.
+
+### Scope
+
+- Two trials per row. The before/after contrast is 0% vs 100% on identical setup.
+- **Harness-only.** The socket conditions that need real devices are still out of
+  reach, so this is "the backlog-starvation path is fixed", not "the field is
+  fixed". One real two-client run is still owed.
+- **Untested:** a flood outlasting the re-ask ladder (2 per space per 15 min,
+  60 s cooldown). The 300-message flood drains well inside it. First thing to
+  check if a field report survives the fix.
 
 ---
 *Last updated: 2026-08-03*

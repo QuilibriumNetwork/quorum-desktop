@@ -44,6 +44,28 @@ receive. See NEXT STEP C. **And the member list UI then showed
 them all**, confirmed visually, so this is verified at the level that actually
 matters to a user, not just in storage.
 
+### ✅ NEXT STEP B is now complete — and it needed a second fix (#296, then #300)
+
+> Added 2026-08-03.
+
+The convergence check shipped as **#296** and was measured **inert in the case it
+was written for**. Both calls that arm it — `noteAdvertisedRoster` and the
+scheduler — sat inside the sync-session expiry gate in the `sync-info` handler.
+A client whose request window expired while it drained a reconnect backlog
+therefore learned no target and armed no check: the repair was silent in exactly
+the failure it repairs.
+
+**#300** moved those two calls out of the gate. Measured on `space-backlog` with
+the scenario's simulated re-ask disabled: a 300-message backlog went from **0% to
+100%** roster delivery, healthy path unchanged. Details and scope limits in
+[`2026-08-02-sync-requests-arrive-four-minutes-late-…`](2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md) §0b.
+
+**Carry this forward:** a mitigation that is only reachable when the primary path
+partly works is not a mitigation. #296's own unit tests were green throughout,
+because all four of them set up an open session — the uncovered case was the only
+one that mattered. If mobile ever ports this module, port the wiring rule with
+it.
+
 ### ✅ And the render gap turned out to be a real bug — FIXED (#295)
 
 The member list did NOT simply lag. With 72 rows on disk it showed exactly one

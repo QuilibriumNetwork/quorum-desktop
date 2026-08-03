@@ -2,10 +2,10 @@
 type: bug
 title: "A reconnecting client starves control-message processing for minutes, so every sync-request expires unread and a new joiner is answered by nobody"
 status: open
-priority: HIGH — this is upstream of every roster fix shipped 2026-08-01/02; none of them can work while it holds
+priority: MEDIUM — downgraded 2026-08-03. The roster symptom is fixed (desktop #300, see §0b); the head-of-line blocking underneath it is not, and still delays every perishable control frame
 created: 2026-08-02
 updated: 2026-08-03
-severity: a new member of a space is answered by NOBODY and stays at 1 member row indefinitely
+severity: was "a new member is answered by NOBODY and stays at 1 member row indefinitely" — that path now self-repairs; what remains is control frames read minutes late
 area: space sync / control-message scheduling / announce-keys backlog / SyncService expiry
 repos: quorum-desktop (observed), possibly the relay
 related_bugs:
@@ -79,9 +79,10 @@ failed identically.** Twelve offers, zero accepted. More retries produce more
 offers to discard, because the frames are not late — **they arrive in time and are
 read too late.** Expiry is judged at *processing* time, not at *arrival* time.
 
-That also explains why desktop #296's convergence check cannot rescue this: it
-hangs off the `sync-info` handler, so the repair is gated on the very step that
-is failing.
+That also explains why desktop #296's convergence check could not rescue this —
+though the precise reason took one more pass to get right, and getting it right
+is what turned the fix from "invent a scheduler" into a five-line move. See
+[§0b](#0b--shipped--the-roster-half-is-fixed-desktop-300) below.
 
 ### ✅ THE FIX SHAPE IS VALIDATED — measured 2026-08-03, before any fix was written
 
@@ -118,25 +119,87 @@ same window. So "accept a good offer without an open session" would have to rela
 all three; relaxing one changes nothing, and relaxing all three changes semantics
 for mobile too.
 
-#### The recommended fix
+## §0b. ✅ SHIPPED — the roster half is fixed (desktop #300)
 
-**Defer the sync request until the inbound queue is quiet.** Desktop-only, leaves
-expiry semantics intact, and validated above by simulation.
+> Added 2026-08-03. The fix is in `main`. **The roster symptom is repaired; the
+> underlying head-of-line blocking is not** — see "What this does NOT fix".
 
-Two implementation decisions left open deliberately, because they are judgment
-calls rather than research:
+### The reason #296 could not fire — corrected, and it is the whole fix
 
-- what counts as "quiet" — no frames for N ms, or queue depth below a threshold
-- whether to defer the INITIAL ask or only re-ask after quiet. The second is
-  smaller and strictly additive, which usually wins
+The framing above ("it hangs off the `sync-info` handler, so the repair is gated
+on the step that is failing") was **imprecise, and the imprecision hid a small
+fix behind an imagined large one.**
 
-It also explains why the convergence check (desktop #296) cannot rescue this:
-right idea, wrong trigger. It hangs off the `sync-info` handler, so the repair is
-gated on the step that is failing.
+The `sync-info` handler *does* run. All twelve frames reach it. What actually
+happened is narrower: the two calls that drive the convergence check —
+`noteAdvertisedRoster` and `scheduleRosterConvergenceCheck` — sat **inside** the
+`hasSession && !isExpired` branch. So the offers were discarded by the expiry
+gate *before* the tracker ever saw them. No target was learned, no check was
+armed, and #296 went silent in precisely the failure it was written for.
 
-**Its test already exists.** `yarn harness space-backlog` at 300 backlog messages
-is 0% without a fix. The real fix either turns that to 100% on its own, or it
-does not.
+That is a **wiring** defect, not a missing mechanism.
+
+### The change
+
+Move those two calls out of the gate ([`MessageService.ts`, `sync-info`
+handler](../../../src/services/MessageService.ts)). What a peer advertises is
+true whether or not our own request window is still open; the gate answers a
+different question — *"may we sync FROM this offer, in this session?"* — and
+still answers it, unchanged. `noteAdvertisedRoster` now returns whether it
+recorded a usable target, so a check is armed only when there is something to
+converge to.
+
+**No new mechanism, and no "quiet" heuristic had to be invented.** The two open
+judgment calls from the previous section dissolved: the convergence check is
+already debounced per space, so it fires once the answers *stop* arriving —
+which is already the quiet moment the re-ask needs. The detector was there.
+
+### Result
+
+`space-backlog` with its simulated late re-ask **disabled** (`HARNESS_BACKLOG_LATE_REASK=0`),
+so this measures the product path and not the scenario's own scaffolding:
+
+| backlog | trials | delivered | rate | median lag |
+|---|---|---|---|---|
+| 0 | 2 | 2 | 100% | 4.8 s |
+| 300 | 2 | 2 | **100%** | 79.5 s |
+
+The 300 row was **0%** before. The healthy path is unchanged (4.7 s → 4.8 s), and
+the two 300 trials landed 79.8 s and 79.3 s — 0.5 s apart across independent
+runs, which is a timer firing rather than luck.
+
+Also verified: the two new tests **fail** with the fix reverted, so they are
+load-bearing. Full suite 58 files / 888 tests green.
+
+### What this does NOT fix
+
+- **The head-of-line blocking itself.** A reconnecting client still drains its
+  inbound queue serially and still reads perishable control frames minutes late.
+  This fix means the roster *recovers* afterwards; it does not make the frames
+  timely. Everything from §1 down still stands as the description of that.
+- **Every field report.** The harness cannot host the socket conditions that
+  need real devices. The claim is "fixes the backlog-starvation path", not
+  "fixes the field".
+- **A flood longer than the re-ask ladder.** The allowance is 2 re-asks per space
+  per 15-minute window with a 60 s cooldown. If a flood outlasts that ladder the
+  client waits for the window to roll. Untested — the harness flood at 300 drains
+  well inside it. **This is the first thing to look at if a field report survives
+  the fix.**
+
+### Cost
+
+A client in many spaces can now send up to two extra `sync-request` broadcasts
+per space where it previously sent none. The debounce places them after each
+space's flood has drained rather than during it, but it is more traffic than
+before in exactly the congested case.
+
+### Still to do
+
+1. **One real two-client run** before this is trusted in the field. The harness
+   green is necessary, not sufficient — that gap is what made every earlier bench
+   result misleading.
+2. Fix (a) and fix (c) below remain open; this repaired the roster symptom, not
+   the scheduling.
 
 ### The three repair points, cheapest first
 
@@ -268,8 +331,12 @@ B broadcast a `sync-request` for **six** spaces. The result, every time:
 
 - **Peer selection cannot help** (shared #73). Choosing the best peer is
   meaningless when no peer answers.
-- **The convergence check cannot fire** (desktop #296). It hangs off the
-  `sync-info` handler, and no `sync-info` arrives.
+- **The convergence check cannot fire** (desktop #296). ⚠️ **Corrected
+  2026-08-03 and now FIXED — see [§0b](#0b--shipped--the-roster-half-is-fixed-desktop-300).**
+  The reason given here is wrong: `sync-info` *does* arrive (twelve of them). The
+  frames were discarded by the expiry gate before reaching the tracker, because
+  the two calls that arm the check sat inside that gate. Desktop #300 moved them
+  out.
 - **The digest and delta fixes cannot help** (#71, #290, #295). Nothing gets far
   enough to build a delta.
 
