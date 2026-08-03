@@ -4,11 +4,12 @@ title: "The roster pull works, but it is unreliable and it picks its peer badly 
 status: in-progress
 priority: medium
 created: 2026-08-02
-updated: 2026-08-02
+updated: 2026-08-03
 severity: a new member of a space sees every existing member as a truncated address, indefinitely
 area: space member roster / SyncService / requestSync → MemberDigest → MemberDelta
 repos: quorum-desktop
 related_bugs:
+  - "2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md (THE ROOT CAUSE of this issue's symptom — read that one first)"
   - "2026-06-13-space-members-missing-no-join-row.md"
   - "2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md"
 related_docs:
@@ -19,6 +20,36 @@ related_tasks:
 ---
 
 # The roster pull: what it actually does
+
+## 🔗 How this relates to the sync-requests issue — same symptom, two layers
+
+> Added 2026-08-03. The two files were only linked in one direction, which made
+> the relationship easy to miss.
+
+Both describe the **same user-visible failure**: a new member of a space sees
+everyone as a truncated address. They are not duplicates — they sit at different
+layers of one causal chain:
+
+| | this file | `2026-08-02-sync-requests-arrive-four-minutes-late-…` |
+|---|---|---|
+| layer | the roster MECHANISM | why it never gets a chance to run |
+| asks | does the pull work, and does it pick a good peer? | why does the handshake never complete? |
+| answer | it works, and peer selection was fixed upstream (shared #73) | a reconnect backlog starves control-message processing, so offers are read after their 30 s window and discarded |
+
+**Read the sync-requests issue first.** It is the root cause; this file is the
+mechanism that root cause starves. Fixes landed on both:
+
+- **#295** (here) — the React Query key mismatch that discarded every synced
+  roster update before it could render.
+- **#296 → #300** (both) — the convergence re-ask, and the wiring defect that
+  left it disarmed in exactly the case it was written for.
+- **#305, #308** (sync-requests) — two sources of relay backlog, which is what
+  makes the starvation happen at all.
+
+⚠️ Do not close either on the strength of the other. This file's own §0 records
+that its original headline was wrong, and the sync-requests file records that
+bounded chunking — the obvious fix for the starvation — was built, measured and
+falsified.
 
 ## §0. ⚠️ READ FIRST — the original conclusion was WRONG
 
