@@ -32,6 +32,7 @@ import Appearance from './Appearance';
 import Help from './Help';
 import Navigation from './Navigation';
 import DangerZone from './DangerZone';
+import { APP_VERSION } from '../../../config/appVersion';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -221,6 +222,17 @@ const UserSettingsModal: React.FunctionComponent<{
       <div className="modal-complex-container-inner relative">
         {/* Loading overlay for saving */}
         <ModalSaveOverlay visible={isSaving} />
+
+        {/* App version, bottom-left corner of the modal. Anchored to the modal
+            container rather than the sidebar because the sidebar stops above
+            the save-button footer row, which left the version floating ~90px
+            short of the bottom. Hidden below $screen-md along with the sidebar
+            it belongs to. Renders nothing when the build inlined no version. */}
+        {APP_VERSION && (
+          <div className="modal-complex-version" aria-label={t`App version`}>
+            v{APP_VERSION}
+          </div>
+        )}
 
         <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div className="modal-complex-layout-with-footer">
