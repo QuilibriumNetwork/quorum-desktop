@@ -578,12 +578,36 @@ The unexplained 44% per-frame growth: top candidate is **GC pressure** as the
 run's live heap grows (`transport.arrived` alone retains every frame). The
 store's O(log n) growth explains only ~19%. Not measured — do not assert it.
 
-### 🎁 A free win, independent of everything else
+### ❌ The "free win" is NOT free — investigated and dropped 2026-08-03
 
-`getSpace(spaceId)` is read **three times per frame** with no caching
-(`MessageService.ts:4723`, `:6260`, `:2995`). If per-frame cost is ~15 sequential
-round trips, removing two redundant ones is ≈13% off the drain, with no behaviour
-change and no risk. Worth doing on its own merits whatever happens to the queue.
+A review reported `getSpace(spaceId)` read **three times per frame** and called
+deduping it a no-risk ~13% saving. **On inspection that is wrong, and the reasons
+are worth recording so it is not re-proposed.**
+
+The three reads are in different functions, each conditionally reached, and each
+feeds a **security gate**:
+
+| site | gate it feeds |
+|---|---|
+| `MessageService.ts:4749` | signature verification (`space.isRepudiable`) |
+| `:6319` | the `@everyone` mention gate (`space.roles`) |
+| `:2995` (inside `addMessage`) | read-only channel enforcement, explicitly fail-secure on a missing space |
+
+They are not repeated lookups on one path. Deduping means either threading the
+row through function signatures, or caching it — and **caching is hazardous
+here**: control frames (`join`, `kick`, role updates) MUTATE the space, so a
+memoised row can feed a stale `isRepudiable` or stale roles into an authorization
+decision. That trades a performance nudge for a security regression.
+
+A safe subset exists — `:4749` and `:6319` sit on the message path inside one
+function with no space mutation between them, so one read could serve both. That
+is 1 of ~15 round trips (~7%), on a number measured in a harness whose absolute
+magnitudes are already known not to transfer to the field (see the fidelity
+gaps above). Not worth touching an authorization-gating file for.
+
+**Lesson, and it generalises:** "no behaviour change and no risk" was asserted
+about code that gates message authorization. Verify what a read is FOR before
+calling its removal free.
 
 ### The order to work in
 
