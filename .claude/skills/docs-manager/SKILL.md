@@ -555,7 +555,7 @@ When actively implementing a task, the task file is the **source of truth** for 
 
 ```bash
 TASK=".agents/issues/my-task.md"
-SYNC="$HOME/.config/.claude/skills/docs-manager/task-sync.py"
+SYNC=".claude/skills/docs-manager/task-sync.py"
 
 # After completing a step:
 python "$SYNC" "$TASK" check "Add login endpoint"
@@ -614,7 +614,7 @@ After creating, editing, moving, renaming, or deleting any bug report, task, or 
 1. **Run the index update script**:
    ```bash
    # The script lives in the global skills folder:
-   python "$HOME/.config/.claude/skills/docs-manager/update-index.py"
+   python ".claude/skills/docs-manager/update-index.py"
    ```
 
 2. **Verify the INDEX.md was updated**:
@@ -698,10 +698,10 @@ Adds YAML frontmatter metadata to markdown files in `.agents/` folder.
 **Usage:**
 ```bash
 # Preview changes
-node "$HOME/.config/.claude/skills/docs-manager/add-yaml-frontmatter.cjs" --dry-run
+node ".claude/skills/docs-manager/add-yaml-frontmatter.cjs" --dry-run
 
 # Apply changes
-node "$HOME/.config/.claude/skills/docs-manager/add-yaml-frontmatter.cjs" --apply
+node ".claude/skills/docs-manager/add-yaml-frontmatter.cjs" --apply
 ```
 
 **What it extracts:**

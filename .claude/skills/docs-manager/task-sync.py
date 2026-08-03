@@ -13,6 +13,9 @@ Commands:
     uncheck <text>      Uncheck a checkbox whose line contains <text>
     status <new-status> Update frontmatter status and updated date
     note <message>      Append timestamped note to ## Updates section
+    review-log <model> <summary>[;;<finding>;;<finding>...]
+                         Append a review-pass entry to ## Review Log
+    review-log-check    Show existing ## Review Log entries (if any)
     remaining           Show all unchecked items with section context
     validate-paths      Check if backtick file references exist
     summary             Show status + progress + remaining items
@@ -136,7 +139,7 @@ def cmd_uncheck(content, search_text):
 
 def cmd_status(content, new_status):
     """Update frontmatter status and updated date."""
-    valid = ['open', 'in-progress', 'on-hold', 'done', 'archived']
+    valid = ['open', 'in-progress', 'deferred', 'on-hold', 'done', 'archived']
     if new_status not in valid:
         return content, f"ERROR: Invalid status '{new_status}'. Valid: {', '.join(valid)}"
 
@@ -176,6 +179,57 @@ def cmd_note(content, message):
             content = content.rstrip('\n') + '\n\n## Updates\n' + note_line + '\n'
 
     return content, f"Note added: {note_line}"
+
+
+def cmd_review_log(content, model, message):
+    """Append a review-pass entry to ## Review Log. Never overwrites prior entries.
+
+    message format: "<summary>;;<finding 1>;;<finding 2>..."
+    Only <summary> is required; each ;;-separated part after it becomes a bullet.
+    """
+    today = datetime.now().strftime('%Y-%m-%d')
+    parts = [p.strip() for p in message.split(';;') if p.strip()]
+    if not parts:
+        return content, "ERROR: review-log message cannot be empty"
+    summary, findings = parts[0], parts[1:]
+
+    entry_lines = [f"**{today} - {model}**: {summary}"]
+    entry_lines += [f"- {f}" for f in findings]
+    entry = '\n'.join(entry_lines)
+
+    heading_pattern = re.compile(r'^## Review Log\s*$', re.MULTILINE)
+    match = heading_pattern.search(content)
+
+    if match:
+        next_heading = re.search(r'^## ', content[match.end():], re.MULTILINE)
+        if next_heading:
+            insert_pos = match.end() + next_heading.start()
+            content = content[:insert_pos].rstrip('\n') + '\n\n' + entry + '\n\n' + content[insert_pos:]
+        else:
+            content = content.rstrip('\n') + '\n\n' + entry + '\n'
+    else:
+        content = content.rstrip('\n') + '\n\n## Review Log\n' + entry + '\n'
+
+    return content, f"Review log entry added ({today} - {model})"
+
+
+def cmd_review_log_check(content):
+    """Read-only: show existing ## Review Log entries, if any."""
+    heading_pattern = re.compile(r'^## Review Log\s*$', re.MULTILINE)
+    match = heading_pattern.search(content)
+    if not match:
+        return "No prior review log found for this file."
+
+    next_heading = re.search(r'^## ', content[match.end():], re.MULTILINE)
+    if next_heading:
+        section = content[match.end():match.end() + next_heading.start()]
+    else:
+        section = content[match.end():]
+
+    section = section.strip('\n')
+    if not section:
+        return "## Review Log section exists but has no entries."
+    return section
 
 
 def cmd_remaining(content, task_file):
@@ -320,6 +374,10 @@ def main():
         print(cmd_validate_paths(content, task_file))
         return
 
+    if command == 'review-log-check':
+        print(cmd_review_log_check(content))
+        return
+
     if command == 'summary':
         print(cmd_summary(content, task_file))
         return
@@ -329,20 +387,27 @@ def main():
         print(f"ERROR: '{command}' requires an argument.")
         sys.exit(1)
 
-    arg = ' '.join(sys.argv[3:])
-
-    if command == 'check':
-        new_content, msg = cmd_check(content, arg)
-    elif command == 'uncheck':
-        new_content, msg = cmd_uncheck(content, arg)
-    elif command == 'status':
-        new_content, msg = cmd_status(content, arg)
-    elif command == 'note':
-        new_content, msg = cmd_note(content, arg)
+    if command == 'review-log':
+        if len(sys.argv) < 5:
+            print("ERROR: 'review-log' requires <model> and <summary[;;finding;;finding...]>")
+            sys.exit(1)
+        model = sys.argv[3]
+        message = ' '.join(sys.argv[4:])
+        new_content, msg = cmd_review_log(content, model, message)
     else:
-        print(f"ERROR: Unknown command '{command}'")
-        print("Valid commands: check, uncheck, status, note, remaining, validate-paths, summary")
-        sys.exit(1)
+        arg = ' '.join(sys.argv[3:])
+        if command == 'check':
+            new_content, msg = cmd_check(content, arg)
+        elif command == 'uncheck':
+            new_content, msg = cmd_uncheck(content, arg)
+        elif command == 'status':
+            new_content, msg = cmd_status(content, arg)
+        elif command == 'note':
+            new_content, msg = cmd_note(content, arg)
+        else:
+            print(f"ERROR: Unknown command '{command}'")
+            print("Valid commands: check, uncheck, status, note, review-log, review-log-check, remaining, validate-paths, summary")
+            sys.exit(1)
 
     if new_content != content:
         write_file(task_file, new_content)
