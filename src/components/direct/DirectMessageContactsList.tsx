@@ -18,7 +18,10 @@ import { resolveMemberName, formatResolvedName } from '../../utils/resolveMember
 import { realIconOrUndefined } from '../../utils/identityPlaceholder';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
-import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
+import {
+  useConversationPreviews,
+  withPreviews,
+} from '../../hooks/business/conversations/useConversationPreviews';
 import { useConversationsWithProfileBackfill } from '../../hooks/business/conversations/useConversationsWithProfileBackfill';
 import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
@@ -64,19 +67,16 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
   // and write the result through to IndexedDB so later loads are instant.
   const conversationsBackfilled =
     useConversationsWithProfileBackfill(conversationsList);
-  const { data: conversationsWithPreviewsRaw = conversationsBackfilled } =
+  // Previews are cached by lastMessageId; everything else on the row (read
+  // state, timestamp, identity) comes from the live polled data. Merging here
+  // rather than caching whole rows is what keeps the unread dot honest — see
+  // the note on useConversationPreviews.
+  const { data: previewsByConversationId } =
     useConversationPreviews(conversationsBackfilled);
-  // useConversationPreviews caches rows by message ID, dropping primaryUsername
-  // attached after it resolved — re-attach it here (by address) so name.q sticks.
-  const conversationsWithPreviews = React.useMemo(() => {
-    const qnsByAddress = new Map(
-      conversationsBackfilled.map((c) => [c.address, c.primaryUsername])
-    );
-    return conversationsWithPreviewsRaw.map((c) => {
-      const primaryUsername = qnsByAddress.get(c.address);
-      return primaryUsername ? { ...c, primaryUsername } : c;
-    });
-  }, [conversationsWithPreviewsRaw, conversationsBackfilled]);
+  const conversationsWithPreviews = React.useMemo(
+    () => withPreviews(conversationsBackfilled, previewsByConversationId),
+    [conversationsBackfilled, previewsByConversationId]
+  );
   const { openNewDirectMessage, openConversationSettings } = useModalContext();
   const [mockUtils, setMockUtils] = React.useState<any>(null);
 
