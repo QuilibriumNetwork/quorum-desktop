@@ -61,13 +61,12 @@ and the two surfaces disagree about how to say so:
 > broken until remount.** Do not read that as Slice 1 having failed — check the header and
 > IndexedDB first.
 >
-> ✅ **RESOLVED 2026-08-04** on branch `fix/dm-unread-stale-previews-snapshot` (awaiting
-> operator verification, not yet merged). The previews query no longer caches conversation
-> rows at all — it returns `{ preview, previewIcon }` only, merged onto the live polled
+> ✅ **RESOLVED — shipped in PR #312, 2026-08-04.** The previews query no longer caches
+> conversation rows at all — it returns `{ preview, previewIcon }` only, merged onto the live polled
 > rows at render time. `displayName`, `icon` and `primaryUsername` therefore come from the
-> live data on every render, and the re-attach hack is gone. **Once that branch is on
-> `main`, this whole callout stops applying: the sidebar is a trustworthy test surface
-> again.** Until then, keep checking the header and IndexedDB.
+> live data on every render, and the re-attach hack is gone. **This whole callout no
+> longer applies: the sidebar is a trustworthy test surface again**, so it is no longer
+> necessary to fall back to the header and IndexedDB.
 
 Operator notes, taken as given (not independently verified here):
 
@@ -278,7 +277,7 @@ Recommended order, one PR per step:
 
 | # | Step | Observable outcome |
 |---|---|---|
-| 1 | previews snapshot task — ✅ done 2026-08-04 on `fix/dm-unread-stale-previews-snapshot`, pending operator verification and merge | sidebar renders live conversation rows |
+| 1 | previews snapshot task — ✅ shipped in PR #312, 2026-08-04 | sidebar renders live conversation rows |
 | 2 | **Slice 1** (this task) | B sends one message → name + avatar land and survive reload |
 | 3 | **Slice 3** (this task) | already-broken conversations heal on next reconnect |
 | 4 | **Slices 2 + 4** (this task) | consistent empty-state render; no placeholder stamping |
@@ -347,9 +346,8 @@ through:
       `useConversationsWithProfileBackfill.ts:184-191` and in `handleDMProfileUpdate`
       (`MessageService.ts:758-761`).~~ **Not needed — do not implement.** The check this
       item asked for has been made: `2026-08-01-dm-unread-dot-stale-previews-snapshot.md`
-      landed its Slice 1 first (2026-08-04, branch
-      `fix/dm-unread-stale-previews-snapshot`), removing the cause instead of adding a
-      third invalidation. The previews cache no longer holds `displayName` / `icon` /
+      landed its Slice 1 first (PR #312, 2026-08-04), removing the cause instead of
+      adding a third invalidation. The previews cache no longer holds `displayName` / `icon` /
       `primaryUsername`, so there is nothing left to bust. Adding the invalidation now
       would re-read N messages from IndexedDB on every profile update for no effect.
 

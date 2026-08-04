@@ -20,8 +20,14 @@ related:
 
 ## Status
 
-All three slices are implemented on branch `fix/dm-unread-stale-previews-snapshot`.
-Operator verified the core behaviour 2026-08-04 (§7 results below).
+**2026-08-04 — shipped in PR #312** (`fix(dm): the unread dot clears when you read a
+conversation`). All three slices plus the §3 send-path fix are on `main`.
+
+**Left in progress deliberately, not closed.** §7 opens with "Nothing here is checkable
+from a diff. Run all of it manually before closing", and steps 2, 3 and 7 are still
+unrun, as is the read-then-clear case in the collapsed strip (step 6). Step 3 is the one
+that matters most: it is the only check that exercises the §3 fix, and no automated test
+can see it. Close this once those four are green.
 
 **Slice 1 — done.** `useConversationPreviews` now returns
 `Record<conversationId, { preview, previewIcon }>` instead of a full copy of each

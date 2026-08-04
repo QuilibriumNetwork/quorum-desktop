@@ -14,10 +14,14 @@ repos: quorum-desktop
 
 ## Status
 
-Fixed 2026-08-04 on branch `fix/dm-unread-stale-previews-snapshot`, commit
-"fix(notifications): the global panel no longer crashes on a mention it cannot
-resolve". Landed on that branch because it was found while operator-testing it;
-it is unrelated to the DM previews work and is its own commit.
+**2026-08-04 — shipped in PR #312** (`fix(dm): the unread dot clears when you read
+a conversation`), as its own commit "fix(notifications): the global panel no
+longer crashes on a mention it cannot resolve".
+
+It rode that PR because it was found while operator-testing the DM branch; it is
+unrelated to the DM previews work. Closed rather than left open because the fix
+is verified by a test that was confirmed red without it — the reported
+`TypeError` reproduces at the same column when the guard is removed.
 
 ## Symptom
 
