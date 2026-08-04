@@ -1,7 +1,7 @@
 ---
 type: task
 title: "quorum-shared's bare-@name mention branch is now dead code on both clients — remove it before something switches it back on"
-status: in-progress
+status: done
 priority: low
 created: 2026-08-04
 updated: 2026-08-04
@@ -17,15 +17,23 @@ related:
 
 ## Status
 
-Done on `quorum-shared` branch `fix/identity-resolver-and-mention-cleanup`, with
-the matching desktop call-site update on the same branch name in `quorum-desktop`.
+**Done and merged.**
+
+- `quorum-shared` **PR #74** — squash-merged to `master` as `78d203d`. Removes the
+  branch, `buildMemberKeyMap`, and `members` from both the signature and
+  `PreprocessOptions`.
+- `quorum-desktop` **PR #310** — squash-merged to `main` as `537328f8`. Carries the
+  matching call-site update (`MessageMarkdownRenderer.tsx:186`). Shipped together
+  with the desktop resolver bug, which shared the branch
+  `fix/identity-resolver-and-mention-cleanup`.
+- `quorum-mobile` — **no change needed**, see §8.
 
 §3's "breaking signature change" concern was resolved by taking the breakage
 **deliberately and loudly** rather than avoiding it — see §5.
 
 Verified, not argued: the regression test was run against the OLD implementation
-and fails there, then passes with the branch removed. quorum-shared 585 tests
-pass; quorum-desktop 953 tests pass with typecheck and lint clean against the
+and fails there, then passes with the branch removed. Re-run on the merged bases:
+quorum-shared 585 pass, quorum-desktop 953 pass, typecheck clean against the
 rebuilt `dist`.
 
 ## 0. Correction — the original version of this issue was wrong about desktop
@@ -147,5 +155,39 @@ that `members` is deliberately not passed because the branch is "gated on
 off". That gate no longer exists — the branch is gone and the parameter with it.
 The code is still correct; the comment now describes a mechanism that isn't
 there. Worth trimming to a sentence on the next mobile touch.
+
+## 8. Why the mobile fix needed nothing from shared
+
+Worth writing down, because "we fixed it on mobile weeks ago, so why is there a
+shared PR now?" is a fair question with a precise answer.
+
+The mobile fix (`quorum-mobile` `7acfff6`) changed a single call:
+
+```ts
+// before — members went in, so members.length > 0, so the branch ran
+prepareMessageContent(text, { members, roles, channels, everyoneAuthorized })
+// after — no members key → opts.members is undefined → the `= []` default applies
+prepareMessageContent(text, { roles, channels, everyoneAuthorized })
+```
+
+`[].length > 0` is false, so the branch was skipped. The gate was **designed to
+be operated from the call site**, and mobile operated it. No shared change was
+required, and mobile avoided forking shared. Desktop had always passed `[]`, so
+it was never affected.
+
+So after the mobile fix the state was: *the branch does not run anywhere* — but
+*any caller could still make it run*, because the gate was a property of the
+argument rather than of the function, and `PreprocessOptions` advertised
+`members?: SpaceMember[]` as a supported option, actively inviting it. The
+failure mode if someone accepted that invitation is the silent kind: the pill
+renders, looks right, opens a profile, and notifies nobody.
+
+**"The dangerous path does not run" and "the dangerous path cannot be made to
+run" are two separate pieces of work.** The first fixes the bug for users; the
+second fixes it for the next developer. Mobile did the first correctly and
+completely. This issue was the second, deferred deliberately because touching
+shared turns a one-repo bugfix into a three-repo change (desktop call site,
+`dist` rebuild, both clients moving together) and would have coupled a mobile fix
+to a desktop release.
 
 *Last updated: 2026-08-04*

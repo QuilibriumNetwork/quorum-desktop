@@ -108,11 +108,9 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
-- 🐛 [A fallback string is fed INTO the resolver, so the resolver returns it](issues/2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
-- 📋 [The dangerous branch is off everywhere. Delete it so it stays off.](issues/2026-08-04-remove-the-dead-bare-name-mention-branch-from-shared.md)
 
 #### Messagedb
 
@@ -315,6 +313,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md)
 - 📋 [DM unread dot never clears](issues/.open/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
 - 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
+- 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
 
 ### Deferred
 
@@ -381,6 +380,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [vitest intermittently runs 4% of the suite](issues/.done/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md)
 - 🐛 [A space frame that fails to decrypt is deleted from the relay anyway](issues/.done/2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md)
 - 🐛 [A typing frame returns before the ack](issues/.done/2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md)
+- 🐛 [A fallback string is fed INTO the resolver, so the resolver returns it](issues/.done/2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -509,6 +509,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Ship the send-retention fix to quorum-shared](issues/.done/2026-07-31-ship-send-retention-to-quorum-shared.md)
 - 📋 [Identity announce: cap the retries](issues/.done/2026-08-01-identity-announce-cadence-research.md)
 - 📋 [Dev viewer: one Issues browser instead of Tasks + Bugs](issues/.done/2026-08-03-dev-issues-browser-plan.md)
+- 📋 [The dangerous branch is off everywhere. Delete it so it stays off.](issues/.done/2026-08-04-remove-the-dead-bare-name-mention-branch-from-shared.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -739,4 +740,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-04 13:50:49
+**Last Updated**: 2026-08-04 14:20:28

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Several desktop surfaces inject a truncated address AS the display name before calling the resolver, so it outranks the global name and the .q name"
-status: in-progress
+status: done
 priority: medium
 created: 2026-08-04
 updated: 2026-08-04
@@ -17,15 +17,24 @@ related:
 
 ## Status
 
-Fixed on branch `fix/identity-resolver-and-mention-cleanup`. Every §3 site is
-addressed, plus one the original write-up missed (§3-A). Two of the original
-three findings did not survive verification and are corrected in §3-B — read
-that section before trusting the original table.
+**Done and merged.** `quorum-desktop` **PR #310**, squash-merged to `main` as
+`537328f8`. It shared the branch `fix/identity-resolver-and-mention-cleanup` with
+the shared-package mention cleanup, whose `quorum-shared` **PR #74** merged first
+(desktop's call site would not compile against the old signature).
+
+Every §3 site is addressed, plus one the original write-up missed (§3-A). Two of
+the original three findings did not survive verification and are corrected in
+§3-B — read that section before trusting the original table.
 
 Verification is behavioural, not by reading: a new component test renders the
 reaction list and asserts the `.q` name appears. It was confirmed to go RED with
 the defect reintroduced and GREEN with the fix, so it could genuinely have
-failed. Desktop: 953 tests pass, typecheck and lint clean.
+failed. Re-run on the merged base: 953 tests pass, typecheck and lint clean.
+
+Two Definition-of-Done items were **not** closed here and moved to their own
+item, `.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md`:
+the missing desktop avatar resolver (§5) and the cross-client tier divergences
+measured in §9. Neither is part of this defect; both are cross-client decisions.
 
 ## 1. The defect in one sentence
 
@@ -187,8 +196,8 @@ from the **resolved** name, so the avatar and the label beside it cannot disagre
 - [x] `globalDisplayName` and `primaryUsername` are passed wherever they are available, so the resolver has the tiers it needs (with §3-C noting that `globalDisplayName` is not itself a tier)
 - [x] A follow-global member with a `.q` name renders as their `.q` name in the reaction list, not as an address — proven by `src/dev/tests/components/ReactionsModal.test.tsx`, verified red-before-green
 - [x] Grep for the pattern `displayName ||` / `userIcon ||` across `src/` (excluding `src/dev/`) is reviewed, and every remaining hit is either fixed or recorded as legitimately not an identity ladder — see §7
-- [ ] Avatar resolution has a single home on desktop, or the shared-package decision is filed as its own item — **still open**, see §5
-- [ ] Checked against mobile: the same surface resolves identically on both clients
+- [x] Avatar resolution has a single home on desktop, **or the shared-package decision is filed as its own item** — filed, see the follow-up named in §Status. Desktop still has no avatar resolver
+- [x] Checked against mobile: the same surface resolves identically on both clients — checked and MEASURED, see §9. The reaction surface now matches; three tier-level divergences were found and filed
 
 ## 7. Remaining `displayName ||` hits, reviewed
 
@@ -212,5 +221,55 @@ for `DirectMessage.tsx` (no space roster, no override slot, and DM senders
 resolve through the QNS-first ladder, so there is nothing to enrich). The test
 was confirmed to fail when the ThreadPanel prop is removed. A stale-exemption
 check keeps the allowlist honest.
+
+## 9. Mobile parity — checked, with results
+
+Closing the DoD item properly rather than asserting parity. Compared desktop's
+`src/utils/resolveMemberName.ts` against mobile's `utils/resolveMemberName.ts`
+(rewritten in `quorum-mobile` `7acfff6`).
+
+**The surface in question now matches.** Mobile's
+`components/Chat/ReactionDetailsModal.tsx:102-107` passes `m ?? { address: addr }`
+— the roster row untouched, no fallback fed in — which is the same shape as this
+fix. Both clients render a follow-global member's `.q` name in the reaction list.
+
+Three tier-level divergences remain. All predate this work; none is introduced by
+it. Filed as the follow-up item named in §Status.
+
+**1. The global slot is a TIER on mobile and only a COMPARATOR on desktop.**
+Mobile passes `display_name: global` into shared's `resolveDisplayName`
+(`resolveMemberName.ts:133-140`), so a global name is genuinely rendered. Desktop
+reads `globalDisplayName` only to detect an echoed roster name and never returns
+it (§3-C). Desktop reaches the same output by a different mechanism — the
+enricher merges the global name INTO `displayName` upstream — so a desktop
+surface that does not use `useMembersWithPublicProfileFallback` would diverge.
+
+**2. Echo detection exists only on desktop, deliberately.** Mobile's own header
+documents the consequence: for a legacy roster row stamped before the
+follow-global work (2026-07-16), mobile's stale echo outranks the member's QNS
+name while desktop demotes it, so the same member reads differently on the two
+clients until the row is cleared. Documented, decaying, accepted.
+
+**3. The address fallback is formatted differently. MEASURED, not inferred:**
+
+| Client | Same address, no name anywhere |
+|---|---|
+| Mobile — `truncateAddress(addr,'medium')` → `formatAddress(addr, 6, 4)` | `QmV5xWMo…F2nX` |
+| Desktop — shared `resolveDisplayName`'s internal `truncate()` | `QmV5xW…F2nX` |
+
+Both were evaluated against `QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX`.
+Desktop shows two fewer entropy characters, because shared's `truncate()` is a
+naive `slice(0,6)` that spends two of its six on the constant `Qm` prefix,
+whereas `formatAddress` is Qm-aware and counts entropy after it.
+
+Note this contradicts a claim in mobile's own source comment, which says its
+address rung "is already parity-matched with desktop". It is parity-matched with
+desktop's `formatAddress` **presets**, but desktop's *name resolver* does not use
+`formatAddress` — it uses shared's `truncate()`. The comment is wrong for this
+rung and should be corrected when the divergence is.
+
+Mobile also returns an `isAddressFallback` flag that desktop lacks, so desktop
+call sites cannot cheaply distinguish "no name known" from "a name". Minor, but
+it is why mobile can vary avatar-initial behaviour and desktop cannot.
 
 *Last updated: 2026-08-04*
