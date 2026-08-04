@@ -2,7 +2,6 @@ import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConfig } from '../../queries/config';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { useDmReadState } from '../../../context/DmReadStateContext';
 
 /**
  * Hook to get total count of unread Direct Message conversations
@@ -12,16 +11,12 @@ import { useDmReadState } from '../../../context/DmReadStateContext';
  *
  * Uses the existing DM unread logic: (c.lastReadTimestamp ?? 0) < c.timestamp
  * where c.timestamp represents the last message timestamp in the conversation.
- *
- * Also considers the DmReadStateContext for immediate UI updates when
- * "mark all as read" is triggered.
  */
 export function useDirectMessageUnreadCount(): number {
   const user = usePasskeysContext();
   const userAddress = user.currentPasskeyInfo?.address;
   const { data: config } = useConfig({ userAddress: userAddress || '' });
   const { messageDB } = useMessageDB();
-  const { markAllReadTimestamp } = useDmReadState();
 
   // Create muted set for filtering
   const mutedSet = new Set(config?.mutedConversations || []);
@@ -65,11 +60,6 @@ export function useDirectMessageUnreadCount(): number {
     staleTime: 90000, // 90 seconds (1.5 minutes) - reduces query frequency while maintaining reasonable UX
     refetchOnWindowFocus: true, // Immediate updates when user returns to app
   });
-
-  // If mark-all-read is active, return 0 immediately (context-based override)
-  if (markAllReadTimestamp) {
-    return 0;
-  }
 
   return data || 0;
 }

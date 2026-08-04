@@ -30,7 +30,13 @@ const GlobalNotificationsInner: React.FC<Props> = ({ isOpen, onClose }) => {
       onClose={onClose}
       spaces={spaces}
       resolveGlobalSender={resolveGlobalSender}
-      // Required by the shared props but unused in global mode.
+      // Required by the shared props. In global mode the panel resolves every
+      // sender — row headers AND in-body mentions — through
+      // `resolveGlobalSender` above, because a single per-space map cannot
+      // cover a list that spans spaces. This stub is the unreachable branch.
+      // It used to be reachable: the panel handed it straight to
+      // NotificationItem for mention rendering, and returning `undefined` there
+      // threw in render and took the whole panel down.
       spaceId=""
       channelIds={[]}
       mapSenderToUser={() => undefined}

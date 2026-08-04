@@ -174,14 +174,24 @@ Uses `console.warn` rather than `logger.warn` on purpose — see the no-op logge
 
 ### Next actions, in order
 
-1. **Stop the publisher.** Port desktop's refuse-to-publish guard to mobile's `saveConfig`.
-   Filed as `quorum-mobile/.agents/issues/.open/2026-08-04-mobile-publishes-a-narrowed-space-list-and-empties-every-desktop-sidebar.md`
-   — **gitignored on that side, so its content is restated in §3/§4 here and in the
-   mechanism above.** The ordering constraint in §4.2 is now satisfied: `removeSpaceFromConfig`
-   is wired into delete (`useSpaceSettings.ts:133`), leave (`:188`) and kicked
-   (`WebSocketContext.tsx:1443`). The comment at mobile `configService.ts:655-665` still
-   argues the opposite and must be updated with the fix, or it will justify a second revert.
-2. **Make them converge.** Slice 2 tombstones, per §5 — still needs the lead dev.
+1. ~~**Stop the publisher.**~~ **Shipped 2026-08-04 as quorum-mobile #228** (squash
+   `35b3fc8`). Mobile's `saveConfig` now holds the upload rather than publishing a Space
+   list narrowed by incomplete local storage, and keeps its incoming timestamp while
+   holding, so a held save cannot make that device look newer than the server. The stale
+   comment at mobile `configService.ts:655-665` — which argued no removal path prunes
+   `config.spaceIds`, the premise `3a03b6f` reverted the guard on — is replaced;
+   `removeSpaceFromConfig` has satisfied §4.2's ordering constraint since `df6b198`.
+
+   Carries desktop's accepted limitation from §3: a Space that can never be keyed on that
+   device now blocks all of its config publishing until the Space syncs or is removed.
+   Fail-safe, visible in the log, and pinned by a test so it stays a decision.
+
+   **Not verified on a device.** The closing check is two-device: change the username on
+   mobile, confirm the desktop sidebar is untouched and the diagnostic ring above stays
+   empty. Until that passes, treat this as in-progress.
+2. **Make them converge.** Slice 2 tombstones, per §5 — still needs the lead dev. This is
+   now the only thing standing between here and the requirement at the top of this file:
+   desktop → mobile removal still cannot reach mobile's screen.
 
 ## §3. What shipped 2026-07-31, and what it does not fix
 

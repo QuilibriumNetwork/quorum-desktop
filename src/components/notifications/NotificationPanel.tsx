@@ -295,6 +295,15 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                   const sender = global && resolveGlobalSender
                     ? resolveGlobalSender(rowSpaceId, senderId)
                     : mapSenderToUser(senderId);
+                  // Mentions inside the message body must resolve against the
+                  // same roster as the row header. The global panel spans
+                  // spaces, so bind the resolver to THIS row's space —
+                  // GlobalNotificationsModal has no per-space mapSenderToUser
+                  // to hand down and passes a stub.
+                  const resolveMentionUser =
+                    global && resolveGlobalSender
+                      ? (id: string) => resolveGlobalSender(rowSpaceId, id)
+                      : mapSenderToUser;
                   return (
                     <div
                       key={`${notification.message.messageId}-${notification.channelId}`}
@@ -315,7 +324,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                               )
                             : t`Unknown User`
                         }
-                        mapSenderToUser={mapSenderToUser}
+                        mapSenderToUser={resolveMentionUser}
                         spaceRoles={spaceRoles}
                         spaceChannels={spaceChannels}
                         spaceName={global ? (notification as any).spaceName : undefined}
@@ -334,6 +343,15 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                   const sender = global && resolveGlobalSender
                     ? resolveGlobalSender(rowSpaceId, senderId)
                     : mapSenderToUser(senderId);
+                  // Mentions inside the message body must resolve against the
+                  // same roster as the row header. The global panel spans
+                  // spaces, so bind the resolver to THIS row's space —
+                  // GlobalNotificationsModal has no per-space mapSenderToUser
+                  // to hand down and passes a stub.
+                  const resolveMentionUser =
+                    global && resolveGlobalSender
+                      ? (id: string) => resolveGlobalSender(rowSpaceId, id)
+                      : mapSenderToUser;
                   return (
                     <div
                       key={`${notification.message.messageId}-${notification.channelId}`}
@@ -354,7 +372,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                               )
                             : t`Unknown User`
                         }
-                        mapSenderToUser={mapSenderToUser}
+                        mapSenderToUser={resolveMentionUser}
                         spaceRoles={spaceRoles}
                         spaceChannels={spaceChannels}
                         spaceName={global ? (notification as any).spaceName : undefined}

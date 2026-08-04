@@ -3776,10 +3776,21 @@ export class MessageService {
         currentPasskeyInfo.address // Update lastReadTimestamp for own messages
       );
       await this.addMessage(queryClient, address, address, message);
+      // Both stamps are the message's own createdDate, matching exactly what
+      // `db.saveMessage` just wrote to IndexedDB for an own message
+      // (messages.ts: `timestamp: message.createdDate`, and
+      // `lastReadTimestamp: message.createdDate` when isOwnMessage).
+      //
+      // `Date.now()` used to be passed for `timestamp` here. It is evaluated
+      // after encrypt + enqueue, so it is strictly later than `createdDate`,
+      // and the optimistic row it wrote was `lastReadTimestamp < timestamp` —
+      // i.e. unread the instant you sent a message. The stale previews snapshot
+      // hid that from the sidebar; now that the list renders live rows, it
+      // would be visible until the next 2s poll corrected it.
       await this.addOrUpdateConversation(
         queryClient,
         address,
-        Date.now(),
+        message.createdDate,
         message.createdDate,
         {
           user_icon:

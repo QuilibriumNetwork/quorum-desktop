@@ -2,8 +2,6 @@ import { useMemo, useEffect, useState, useCallback } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessages } from '../../queries/messages/useMessages';
-import { useInvalidateConversation } from '../../queries/conversation/useInvalidateConversation';
-import { useMessageDB } from '../../../components/context/useMessageDB';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 
 export interface UseDirectMessagesListReturn {
@@ -12,7 +10,6 @@ export interface UseDirectMessagesListReturn {
   fetchNextPage: () => void;
   fetchPreviousPage: () => void;
   hasNextPage?: boolean;
-  saveReadTime: () => void;
   canDeleteMessages: (message: MessageType) => boolean;
 }
 
@@ -22,11 +19,7 @@ export interface UseDirectMessagesListReturn {
 export function useDirectMessagesList(): UseDirectMessagesListReturn {
   const { address } = useParams<{ address: string }>();
   const user = usePasskeysContext();
-  const conversationId = address! + '/' + address!;
   const [acceptChat, setAcceptChat] = useState(false);
-
-  const { messageDB } = useMessageDB();
-  const invalidateConversation = useInvalidateConversation();
 
   // Get messages for this conversation
   const {
@@ -66,22 +59,12 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     }
   }, []);
 
-  // Save read time is handled by DirectMessage.tsx's periodic interval + unmount save.
-  // Removed the messageList-triggered effect here because it caused cascading re-renders
-  // (invalidateConversation) that disrupted Virtuoso's scroll measurement cycle.
-
-  const saveReadTime = () => {
-    if (messageList.length > 0) {
-      const latestTimestamp = Math.max(
-        ...messageList.map((msg) => msg.createdDate || 0)
-      );
-      messageDB.saveReadTime({
-        conversationId,
-        lastMessageTimestamp: latestTimestamp,
-      });
-      invalidateConversation({ conversationId });
-    }
-  };
+  // Read time is written by DirectMessage.tsx's periodic interval + unmount save,
+  // through useUpdateReadTime — the single write path. This hook used to export a
+  // second `saveReadTime` that nothing consumed and that invalidated a different
+  // set of query keys; it was deleted rather than wired up, because two divergent
+  // read-time writers is how the read state drifts. If a new caller needs one,
+  // use useUpdateReadTime.
 
   const canDeleteMessages = useCallback(
     (message: MessageType) => {
@@ -104,7 +87,6 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     fetchNextPage,
     fetchPreviousPage,
     hasNextPage,
-    saveReadTime,
     canDeleteMessages,
   };
 }

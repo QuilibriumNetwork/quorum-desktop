@@ -154,11 +154,15 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
 
         // Only render as mention if the user is in the message's memberIds
         if (message.mentions.memberIds.includes(userId)) {
+          // `mapSenderToUser` is typed `(id) => any` and callers legitimately
+          // return undefined for a sender they cannot resolve. Dereferencing it
+          // bare threw inside render and took the whole panel down through the
+          // error boundary. Fall back to the address label instead.
           const mention = mapSenderToUser(userId);
           return {
             type: 'mention' as const,
             key: `${messageId}-${lineIndex}-${tokenIndex}`,
-            displayName: mention.displayName || `@${userId.substring(0, 8)}...`,
+            displayName: mention?.displayName || `@${userId.substring(0, 8)}...`,
             address: userId,
             isInteractive: !disableMentionInteractivity,
           };
