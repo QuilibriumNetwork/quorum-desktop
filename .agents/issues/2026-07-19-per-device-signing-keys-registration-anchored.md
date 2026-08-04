@@ -624,9 +624,9 @@ the only step with a blast radius, and it is bounded:
 
 ## Discovered issues to handle OUTSIDE this task
 
-- **Join-binding hijack** (finding #4): forged join / unauthenticated leave /
-  sync-members assertion can rewrite bindings. Filed:
-  `.agents/issues/.open/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md`.
+- **Join-binding hardening** (finding #4): an authorization gap in the
+  member-binding path. Detail held privately - see `.agents/AGENTS.md` ->
+  "Security-sensitive issues".
   Needs a lead-dev ping (Telegram, short). Hardening rider reuses this task's
   master-signature machinery.
 - Desktop interim branch lacks mobile's heal/promotion parity (finding #5) —

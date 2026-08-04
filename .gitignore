@@ -72,5 +72,10 @@ src/dev/tests/harness/logs/
 .temp/
 .worktrees/
 
+# Security-sensitive issue reports. This repo is PUBLIC, so any write-up that
+# describes a working attack against shipped code is held here and never
+# tracked. See .agents/AGENTS.md -> "Security-sensitive issues (.secret/)".
+.agents/issues/.secret/
+
 
 

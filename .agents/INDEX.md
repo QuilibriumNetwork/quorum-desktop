@@ -105,7 +105,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### In Progress
 
-- 🐛 [vitest intermittently runs 4% of the suite](issues/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md)
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
@@ -240,6 +239,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 #### Transport
 
+- 🐛 [`flushOutbound` claims more than `bufferedAmount` can prove](issues/transport/2026-08-04-flushoutbound-reports-delivered-on-bufferedamount-alone.md)
 - 📋 [DM delivery auto-heal](issues/transport/2026-07-17-dm-dead-session-autoheal.md)
 - 📋 [Capture archive — DM desktop↔desktop](issues/transport/2026-07-26-dm-desktop-to-desktop-captures.md)
 - 📋 [DM delivery is broken again, desktop↔desktop](issues/transport/2026-07-26-dm-desktop-to-desktop-resurfaced.md)
@@ -278,9 +278,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [UserSettingsModal fields flash empty on open](issues/.open/2026-06-08-user-settings-modal-fields-flash-empty-on-open.md)
 - 🐛 [Desktop shows stale synced config until restart](issues/.open/2026-06-13-config-not-refetched-stale-until-restart.md)
 - 🐛 [announce-keys flooding → unbounded per-device admission store](issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
-- 🐛 [Join-binding hijack: unauthenticated member rebind/blank](issues/.open/2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md)
-- 🐛 [Electron keeps the master private key unlocked on disk](issues/.open/2026-07-31-electron-master-key-at-rest-no-user-secret.md)
-- 🐛 [Reset App Data leaves private keys behind (desktop)](issues/.open/2026-07-31-reset-app-data-leaves-private-keys-in-keydb.md)
 - 🐛 [Every logger call is a no-op in production builds](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md)
 - 🐛 [A per-space override never reaches your own other devices](issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
@@ -378,6 +375,9 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Session replacement orphans the receiving inbox](issues/.done/2026-07-29-session-replacement-strands-in-flight-frames.md)
 - 🐛 [Space sync member reconciliation ignores — and erases — the global identity slot](issues/.done/2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md)
 - 🐛 [A deleted space tag can no longer be cleared from a member roster](issues/.done/2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md)
+- 🐛 [vitest intermittently runs 4% of the suite](issues/.done/2026-08-01-vitest-intermittently-runs-4-percent-of-the-suite.md)
+- 🐛 [A space frame that fails to decrypt is deleted from the relay anyway](issues/.done/2026-08-03-a-space-frame-that-fails-to-decrypt-is-deleted-from-the-relay.md)
+- 🐛 [A typing frame returns before the ack](issues/.done/2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -505,6 +505,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Round Q — tie individual lost messages to individual CLOSE events](issues/.done/2026-07-31-round-q-join-losses-to-close-events.md)
 - 📋 [Ship the send-retention fix to quorum-shared](issues/.done/2026-07-31-ship-send-retention-to-quorum-shared.md)
 - 📋 [Identity announce: cap the retries](issues/.done/2026-08-01-identity-announce-cadence-research.md)
+- 📋 [Dev viewer: one Issues browser instead of Tasks + Bugs](issues/.done/2026-08-03-dev-issues-browser-plan.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -735,4 +736,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-03 12:45:59
+**Last Updated**: 2026-08-04 10:34:48

@@ -207,7 +207,7 @@ Before implementing, read relevant docs:
 | Task | Primary Documentation |
 |------|----------------------|
 | Search implementation | [Search Feature Guide](docs/features/search-feature.md) |
-| Performance optimization | [Search Performance Task](tasks/search-performance-optimization.md) |
+| Performance optimization | Search Performance Task |
 | MessageDB queries | [Data Management Architecture](docs/data-management-architecture-guide.md) |
 
 ### Mobile Development
@@ -215,8 +215,8 @@ Before implementing, read relevant docs:
 | Task | Primary Documentation |
 |------|----------------------|
 | Component architecture | [Component Architecture Workflow](issues/mobile-dev/docs/component-architecture-workflow-explained.md) |
-| Testing primitives | [Primitives Testing Guide](tasks/mobile-dev/docs/primitives-testing.md) |
-| Repository structure | [Web/Native Repo Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md) |
+| Testing primitives | Primitives Testing Guide |
+| Repository structure | Web/Native Repo Structure |
 | Platform detection | [Quick Reference - Platform Detection](../AGENTS.md#mobile-first-development) |
 
 ---
@@ -384,6 +384,10 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 - Active work: Root folder (`bugs/`, `tasks/`, `reports/`)
 - Completed work: `.done/` or `.solved/` subfolders
 - Archived/deprecated: `.archived/` subfolder
+- **Exploitable security detail: `issues/.secret/` — gitignored, never committed.**
+  This repo is public. If a write-up describes an attack that works against code
+  users are running today, it is created there from the start. See
+  [AGENTS.md](AGENTS.md) → "Security-sensitive issues".
 
 ---
 
@@ -479,7 +483,7 @@ if (someCondition) return <Loading />;
 
 **Why**: Violates React's Rules of Hooks
 
-**Reference**: [React Hooks Violation Bug](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
+**Reference**: React Hooks Violation Bug
 
 ---
 
@@ -497,7 +501,7 @@ yarn add package-name
 
 **Why**: Creates package-lock.json conflicts with yarn.lock
 
-**Reference**: [CLAUDE.md - Package Management](../../CLAUDE.md#package-management)
+**Reference**: CLAUDE.md - Package Management
 
 ---
 
@@ -595,7 +599,7 @@ yarn add package-name
 
 - [AGENTS.md](AGENTS.md) - Fast lookup for common tasks
 - [INDEX.md](INDEX.md) - Complete documentation index
-- [CLAUDE.md](../../CLAUDE.md) - Project setup and guidelines
+- CLAUDE.md - Project setup and guidelines
 - [Cross-Platform Components Guide](docs/cross-platform-components-guide.md) - Architecture patterns
 - [Primitives INDEX](docs/features/primitives/INDEX.md) - Primitives documentation hub
 

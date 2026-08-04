@@ -146,6 +146,14 @@ The `.agents/` folder contains all development context:
 - Active Bugs & Tasks
 - Reports & Audits
 
+**🔒 `.agents/issues/.secret/` — gitignored, never committed.** This repository is
+public, so issue write-ups that describe an attack working against code users are
+running today (mechanism, `file:line` pointers, vulnerable code, repro steps) are
+created in `.secret/` from the start and kept out of `INDEX.md`. Ordinary
+reliability, data-loss and correctness bugs are filed normally, however serious.
+Full rule and the release procedure: [.agents/AGENTS.md](.agents/AGENTS.md) →
+"Security-sensitive issues".
+
 ---
 
 ## quorum-shared Migration — Active & Ongoing

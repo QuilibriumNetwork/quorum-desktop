@@ -113,6 +113,49 @@ All primitives live in `@quilibrium/quorum-shared`, re-exported from `src/compon
 
 → **Full API**: `docs/features/primitives/API-REFERENCE.md`
 
+## 🔒 Security-sensitive issues: `issues/.secret/`
+
+**This repository is PUBLIC.** `issues/.secret/` is gitignored and must stay that
+way. It holds issue files whose contents would help someone attack users of the
+shipped app.
+
+**The test, applied when you create the file, not later:**
+
+> Does this document describe an attack that works against code users are running
+> today, or materially help someone build one?
+
+If yes, create it in `.secret/` from the start - mechanism, `file:line` pointers,
+vulnerable code excerpt, reproduction steps. Severity is not the test and neither
+is `status:`; a `done` write-up still belongs in `.secret/` if the fix has not
+actually reached users, because release lag is exactly the window an attacker wants.
+
+If no, file it normally. Reliability bugs, data-loss bugs, crashes and correctness
+defects are ordinary engineering work even when serious. A bug is not
+security-sensitive just because it sounds alarming.
+
+**Why a folder rather than a judgement call each time.** Anything committed here is
+permanent: deleting a file later does not remove it from git history, and by then
+it has been cloned and indexed. When unsure, put it in `.secret/` - a file held
+back costs nothing and can be released in one move, a file published cannot be
+recalled.
+
+**Rules:**
+
+- Never add a `.secret/` file to `INDEX.md` - the index is tracked, so a row there
+  republishes the title and the path.
+- Never paste `.secret/` detail into a tracked file, a commit message, a PR
+  description or a public GitHub issue.
+- A tracked file may reference the work in neutral language ("space-auth hardening,
+  detail held privately") but must not restate the mechanism.
+  [`2026-06-25-MASTER-RECAP-control-message-auth.md`](issues/.open/2026-06-25-MASTER-RECAP-control-message-auth.md)
+  is the worked example of that neutral public hub.
+- The authoritative cross-repo tracker is the private repo
+  `QuilibriumNetwork/quorum-app-prod` (issue #1 for the control-message-auth
+  cluster). Link there, not to `.secret/` paths.
+- **Releasing a file** once its fix has shipped to users: move it out of
+  `.secret/` into `.done/`, add its `INDEX.md` row, and say in the commit that the
+  fix is live. A deliberate act, never a side effect of tidying.
+
 ## 📚 Key Documentation
 
 - **Workflow Guide**: [agents-workflow.md](agents-workflow.md)

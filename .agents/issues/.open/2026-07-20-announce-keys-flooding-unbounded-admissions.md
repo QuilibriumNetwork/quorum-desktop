@@ -106,8 +106,7 @@ was written and reverted because it breaks the feature it supports:
   registration (TTL / registration cross-check). This is the strongest option:
   it ties the admission set to the user's real device list, so a flood of
   fabricated device tags is dropped on the next registration fetch. It also
-  dovetails with the join-binding hardening
-  (`2026-07-20-join-binding-hijack-unauthenticated-member-rebind.md`) and the
+  dovetails with the join-binding hardening (detail held privately) and the
   durable design's revocation story.
 - Whatever is chosen must live in shared (or be identically enforced on both
   platforms) so desktop and mobile agree.
