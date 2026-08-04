@@ -174,21 +174,29 @@ Uses `console.warn` rather than `logger.warn` on purpose — see the no-op logge
 
 ### Next actions, in order
 
-1. ~~**Stop the publisher.**~~ **Shipped 2026-08-04 as quorum-mobile #228** (squash
-   `35b3fc8`). Mobile's `saveConfig` now holds the upload rather than publishing a Space
-   list narrowed by incomplete local storage, and keeps its incoming timestamp while
-   holding, so a held save cannot make that device look newer than the server. The stale
-   comment at mobile `configService.ts:655-665` — which argued no removal path prunes
-   `config.spaceIds`, the premise `3a03b6f` reverted the guard on — is replaced;
-   `removeSpaceFromConfig` has satisfied §4.2's ordering constraint since `df6b198`.
+1. ~~**Stop the publisher.**~~ **Done, and verified on a device 2026-08-04** —
+   quorum-mobile #228 (`35b3fc8`) and #229 (`93f9172`). Mobile no longer publishes a Space
+   list narrowed by incomplete local storage. It holds rather than truncating, keeps its
+   incoming timestamp while holding, and carries previously-synced Space keys forward from
+   the config blob so an incomplete local import does not narrow the list in the first
+   place. The stale comment that argued no removal path prunes `config.spaceIds` — the
+   premise `3a03b6f` reverted the guard on — is replaced.
 
-   Carries desktop's accepted limitation from §3: a Space that can never be keyed on that
-   device now blocks all of its config publishing until the Space syncs or is removed.
-   Fail-safe, visible in the log, and pinned by a test so it stays a decision.
+   **Read this before porting the desktop guard anywhere: #228 alone was wrong.** Holding
+   the whole publish on one unkeyable Space is all-or-nothing, and on a device that
+   imported its Spaces rather than creating them it is the steady state, not the rare dead
+   end §3 assumes. It measured `0/3` Spaces keyable on a real phone and silently stopped
+   that device syncing every setting. Desktop carries the same all-or-nothing guard;
+   whether it is equally exposed has not been checked.
 
-   **Not verified on a device.** The closing check is two-device: change the username on
-   mobile, confirm the desktop sidebar is untouched and the diagnostic ring above stays
-   empty. Until that passes, treat this as in-progress.
+   Verified end to end on device: `carrying 3 previously-synced Space key(s)` →
+   `published ts=…` → `server read-back CONFIRMS`, with the desktop sidebar intact
+   afterwards.
+
+   Two residues, both filed in quorum-mobile: a device already wedged cannot heal itself
+   (it needs another device to publish first), and **nothing yet explains why that phone
+   keys 0 of 3 Spaces** — `2026-08-04-mobile-cannot-key-any-space-it-imported-from-the-config-blob.md`
+   is the root cause under this entire umbrella and is still open.
 2. **Make them converge.** Slice 2 tombstones, per §5 — still needs the lead dev. This is
    now the only thing standing between here and the requirement at the top of this file:
    desktop → mobile removal still cannot reach mobile's screen.
