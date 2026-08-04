@@ -26,7 +26,6 @@ import { useConversationsWithProfileBackfill } from '../../hooks/business/conver
 import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
-import { useDmReadState } from '../../context/DmReadStateContext';
 import { useOptionalShellState } from '../shell/useShellState';
 
 // Safe development-only testing - automatically disabled in production
@@ -90,9 +89,6 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
 
   // DM mute hook
   const { isMuted, toggleMute, mutedSet } = useDMMute();
-
-  // DM read state context (for immediate UI updates on "mark all as read")
-  const { markAllReadTimestamp } = useDmReadState();
 
   // Shell state — null when rendered outside the AppShell tree (legacy fallback).
   // sidebarLiveCollapsed follows the on-screen width during drag so the layout
@@ -346,10 +342,9 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
         <div className="direct-messages-list-strip flex flex-col overflow-y-auto overflow-x-hidden">
           {filteredConversations.map((c) => {
             const isActive = currentAddress === c.address;
-            const effectiveReadTimestamp = markAllReadTimestamp
-              ? Math.max(c.lastReadTimestamp ?? 0, markAllReadTimestamp)
-              : (c.lastReadTimestamp ?? 0);
-            const unread = effectiveReadTimestamp < c.timestamp && !mutedSet.has(c.conversationId);
+            const unread =
+              (c.lastReadTimestamp ?? 0) < c.timestamp &&
+              !mutedSet.has(c.conversationId);
             return (
               <Tooltip
                 key={'dmc-strip-' + c.address}
@@ -508,13 +503,12 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
         ) : (
           <>
             {filteredConversations.map((c) => {
-              // Use context override timestamp if available (for immediate "mark all read" UI update)
-              const effectiveReadTimestamp = markAllReadTimestamp
-                ? Math.max(c.lastReadTimestamp ?? 0, markAllReadTimestamp)
-                : (c.lastReadTimestamp ?? 0);
               return (
                 <DirectMessageContact
-                  unread={effectiveReadTimestamp < c.timestamp && !mutedSet.has(c.conversationId)}
+                  unread={
+                    (c.lastReadTimestamp ?? 0) < c.timestamp &&
+                    !mutedSet.has(c.conversationId)
+                  }
                   key={'dmc-' + c.address}
                   address={c.address}
                   userIcon={c.icon}
