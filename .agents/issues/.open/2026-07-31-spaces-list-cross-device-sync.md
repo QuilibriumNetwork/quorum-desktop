@@ -156,6 +156,33 @@ warning. Two obstacles to collecting it:
   the missing instrument, and it is the cheapest thing to build here: it turns a
   "spaces vanished again, no idea why" report into a timestamped count.
 
+### The instrument (PR #311)
+
+Built 2026-08-04, behaviour-neutral. When `getConfig` adopts a config that drops Spaces
+this device still holds, it warns and appends to a bounded ring in `localStorage`:
+
+```js
+JSON.parse(localStorage.getItem('quorum:diag:configSpaceShrink'))
+```
+
+Each entry has the winning blob's timestamp, before/after counts, dropped ids, and
+`stillInDb`. **`stillInDb > 0` is this bug; `stillInDb === 0` is a legitimate removal from
+another device.** That single number is what separates them, and it is why the next report
+of this will not be guesswork.
+
+Uses `console.warn` rather than `logger.warn` on purpose — see the no-op logger bug above.
+
+### Next actions, in order
+
+1. **Stop the publisher.** Port desktop's refuse-to-publish guard to mobile's `saveConfig`.
+   Filed as `quorum-mobile/.agents/issues/.open/2026-08-04-mobile-publishes-a-narrowed-space-list-and-empties-every-desktop-sidebar.md`
+   — **gitignored on that side, so its content is restated in §3/§4 here and in the
+   mechanism above.** The ordering constraint in §4.2 is now satisfied: `removeSpaceFromConfig`
+   is wired into delete (`useSpaceSettings.ts:133`), leave (`:188`) and kicked
+   (`WebSocketContext.tsx:1443`). The comment at mobile `configService.ts:655-665` still
+   argues the opposite and must be updated with the fix, or it will justify a second revert.
+2. **Make them converge.** Slice 2 tombstones, per §5 — still needs the lead dev.
+
 ## §3. What shipped 2026-07-31, and what it does not fix
 
 Two branches, **both merged later the same day** (desktop `4a04a8b24` / #282, mobile
