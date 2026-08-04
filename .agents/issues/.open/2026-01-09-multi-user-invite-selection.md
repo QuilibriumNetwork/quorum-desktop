@@ -415,9 +415,9 @@ SpaceSettingsModal.tsx
 
 ## Related Documentation
 
-- [Invite System Analysis](.agents/docs/features/invite-system-analysis.md) - Technical architecture
-- [Select API Reference](.agents/docs/features/primitives/API-REFERENCE.md#select) - Component props
-- [Multi-User UX Patterns](.agents/docs/features/primitives/02-primitives-AGENTS.md) - Design patterns
+- [Invite System Analysis](../../docs/features/invite-system-analysis.md) - Technical architecture
+- [Select API Reference](../../docs/features/primitives/API-REFERENCE.md#select) - Component props
+- Multi-User UX Patterns - Design patterns
 
 
 ---

@@ -130,7 +130,7 @@ Net **-35 LOC of pure dead surface**. tsc clean. Smoke tested: messages render n
 **Shipped**:
 - [quorum-shared#21](https://github.com/QuilibriumNetwork/quorum-shared/pull/21) — adds `src/utils/roleUtils.ts` + tests + barrel re-export. Version `2.1.0-21`.
 - [quorum-desktop#163](https://github.com/QuilibriumNetwork/quorum-desktop/pull/163) — `useRoleManagement.ts` swaps inline include/filter/spread + spread-with-new-array blocks for shared imports. Net -7 LOC.
-- Mobile task dropped: [`2026-05-30-mobile-adopt-shared-role-mutation-helpers.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-30-mobile-adopt-shared-role-mutation-helpers.md). Static-only verification, runtime test not required (pure mechanical refactor).
+- Mobile task dropped: [`2026-05-30-mobile-adopt-shared-role-mutation-helpers.md`](../../../../quorum-mobile/.agents/issues/quorum-shared-migration/.done/2026-05-30-mobile-adopt-shared-role-mutation-helpers.md). Static-only verification, runtime test not required (pure mechanical refactor).
 
 **Version coordination note**: Cassandra pushed a `2.1.0-17` bump (`20934044`) from an older base while our work had progressed to `2.1.0-20`. Her merge resolved correctly — master stayed at `2.1.0-20` (highest-version-wins). Our PR continues to `2.1.0-21`. Worth flagging if it happens again: she may not be tracking the latest version when branching.
 

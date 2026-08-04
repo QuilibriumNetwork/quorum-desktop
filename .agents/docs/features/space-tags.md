@@ -333,7 +333,7 @@ An earlier design proposed embedding `spaceName`, `spaceDescription`, and a 48x4
 
 The directory API eliminates all these concerns — the popover fetches fresh data on click with zero payload changes.
 
-See [tasks/space-tag-info-modal.md](../../tasks/space-tag-info-modal.md) for the full implementation plan.
+See tasks/space-tag-info-modal.md for the full implementation plan.
 
 ---
 

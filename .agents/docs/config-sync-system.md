@@ -382,7 +382,7 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 
 - [Data Management Architecture](data-management-architecture-guide.md) - Overall data architecture
 - [Bookmarks Feature](features/messages/bookmarks.md) - Detailed bookmark sync implementation
-- [Bloated Encryption States Bug](../bugs/bloated-encryption-states-sync-failure.md) - Known issue with large states
+- Bloated Encryption States Bug - Known issue with large states
 
 ## File Reference
 

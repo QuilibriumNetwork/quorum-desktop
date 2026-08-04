@@ -273,6 +273,6 @@ The offline banner displays queued action count:
 
 - [Action Queue](action-queue.md) - Offline action handling and retry logic
 - [DM Offline Navigation Bug (Solved)](../../issues/.done/dm-offline-navigation-empty.md) - Implementation details
-- [Space Offline Navigation Bug (Solved)](../../bugs/.solved/offline-navigation-issues.md) - Root cause analysis
+- Space Offline Navigation Bug (Solved) - Root cause analysis
 
 ---

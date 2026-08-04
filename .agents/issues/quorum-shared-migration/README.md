@@ -68,7 +68,7 @@ quorum-shared-migration/
 
 **Related cross-folder docs:**
 - [`../../reports/2026-05-28-notification-architecture-divergence.md`](../../reports/2026-05-28-notification-architecture-divergence.md) — authoritative deep-dive on the notifications architecture question. Anchors the GitHub issue paused on a lead-dev reply.
-- [`../../.temp/2026-05-28-notifications-explainer.md`](../../.temp/2026-05-28-notifications-explainer.md) and [`../../.temp/2026-05-28-notifications-investigation-correction.md`](../../.temp/2026-05-28-notifications-investigation-correction.md) — earlier-session conversation artifacts. NOT authoritative; kept for context.
+- `../../.temp/2026-05-28-notifications-explainer.md` and `../../.temp/2026-05-28-notifications-investigation-correction.md` — earlier-session conversation artifacts. NOT authoritative; kept for context.
 
 **Convention.** Audits live in `designs/` and act as reference material that evolves slowly. Per-PR executable tasks live at the root, dated `YYYY-MM-DD-<slug>.md`, and move into `.done/` once merged. Evergreen workflow/reference docs (like the cross-repo workflow, roadmap, shipped-log, README) live at the root WITHOUT date prefixes — dates are for time-bound work only. One-off setup docs go in `reference/`.
 
@@ -90,7 +90,7 @@ Legend: ✅ done · 🟢 ready to ship · ⏸️ blocked · ❌ stays per-app ·
 | UserNote inline → named shared type | Types | ✅ Done (2026-05-27) | quorum-shared PR #17, version 2.1.0-16 |
 | Desktop `UserConfig` mirror catch-up (`isProfilePublic`, `farcasterLink`) | Types | ✅ Done (2026-05-28) | quorum-desktop PR #159 |
 | Notification types rename to `Space*` prefix + desktop dedup against shared | Types | ✅ Done (2026-05-28) | quorum-shared PR #18, quorum-desktop PR #160. Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
-| Per-space notification sync (desktop ↔ mobile) | Feature | ⏸️ Awaiting lead-dev confirmation on architecture | GitHub issue draft: [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
+| Per-space notification sync (desktop ↔ mobile) | Feature | ⏸️ Awaiting lead-dev confirmation on architecture | GitHub issue draft: ../../.temp/2026-05-28-notification-prefs-github-issue.md. Report: [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md) |
 | `NavItem.icon`/`.color` structural alignment | Types | ⏸️ Mobile uses only space-variant items (no folder UI yet); deferred until mobile builds folders | [.done/2026-05-27-shared-vs-local-type-divergence.md](.done/2026-05-27-shared-vs-local-type-divergence.md) |
 | Field validators (`validateSpaceName`, `validateDisplayName`, `validateChannelName`, …) with errorKey i18n pattern | Hooks/Logic | ✅ Done (2026-05-28) | shared `2.1.0-19`. Mobile adoption queued — see [mobile-tasks-pending.md](mobile-tasks-pending.md). [shipped-log entry](shipped-log.md#2026-05-28--field-validators-validatespacename-validatedisplayname-) |
 | `useTwoStepConfirm` primitive (extracted from `useUserKicking` + `useSpaceLeaving`) | Hook | ✅ Done (2026-05-28) | shared `2.1.0-18`. See [shipped-log.md](shipped-log.md#2026-05-28--usetwostepconfirm) |
@@ -130,7 +130,7 @@ See [roadmap.md](roadmap.md) for the leverage-ordered plan. The roadmap names th
 
 ## Relationship to the MessageDB refactor
 
-The pending [MessageDB refactor work](../messagedb/messagedb-current-state.md) (extracting `MessageCacheService`, `DirectMessageService`, `ChannelMessageService`; breaking down `kickUser` / `createSpace` / `joinInviteLink`) is **largely orthogonal** to this migration. Every service in that refactor is explicitly classified as "stays per-app" in [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) — they're coupled to React Query, ActionQueue, or the desktop decrypt pipeline.
+The pending MessageDB refactor work (extracting `MessageCacheService`, `DirectMessageService`, `ChannelMessageService`; breaking down `kickUser` / `createSpace` / `joinInviteLink`) is **largely orthogonal** to this migration. Every service in that refactor is explicitly classified as "stays per-app" in [designs/2026-05-18-services-design.md](designs/2026-05-18-services-design.md) — they're coupled to React Query, ActionQueue, or the desktop decrypt pipeline.
 
 **One real interaction** plus a couple of doc-framing notes:
 
@@ -165,7 +165,7 @@ The typing task is the reference example. Receipts and future migrations should 
 
 - **MessageService audit** — explicitly out of scope today (~2000 lines, ~60 imports, deeply coupled). Worth a separate dedicated audit once the more tractable services have landed.
 - **`isTypingControlMessage` / `isReceiptControlMessage` type guards** — optional small helpers that would let `MessageService` narrow incoming envelopes against the shared union types without inline string literals. Cosmetic improvement, not a blocker.
-- **Notification preference sync (desktop ↔ mobile)** — investigation complete: see [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md). The shared `UserConfig` fields already exist; the gap is mobile-side code that bridges `UserConfig.notificationSettings[spaceId].isMuted` and `UserConfig.mutedChannels[spaceId]` to mobile's local MMKV at config-load + writes back on toggle. ⏸️ Awaiting lead-dev direction via the GitHub issue drafted at [`../../.temp/2026-05-28-notification-prefs-github-issue.md`](../../.temp/2026-05-28-notification-prefs-github-issue.md).
+- **Notification preference sync (desktop ↔ mobile)** — investigation complete: see [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md). The shared `UserConfig` fields already exist; the gap is mobile-side code that bridges `UserConfig.notificationSettings[spaceId].isMuted` and `UserConfig.mutedChannels[spaceId]` to mobile's local MMKV at config-load + writes back on toggle. ⏸️ Awaiting lead-dev direction via the GitHub issue drafted at `../../.temp/2026-05-28-notification-prefs-github-issue.md`.
 - **Mobile public-repo dump re-audit** — the 2026-05-28 "catching up public repo" commit on `quorum-mobile` (`98d59a4`) added massive new functionality (full notification stack, iOS NSE, Farcaster hooks, calling, wallet, etc.). The older design docs in `designs/` predate this and need refreshing against the current mobile state before driving new migration work. Suggested first pass: hooks audit (was the original "biggest unblocked" item).
 
 ## Upstream changes 2026-05-28
@@ -186,7 +186,7 @@ Mobile's `origin/master` got a massive public-repo sync the same day. Before thi
 
 ### Lesson learned and codified
 
-The mobile repo is a partially-public mirror, not the live internal dev tree. **Before grepping mobile for cross-repo work, always verify freshness** with `git fetch && git log -1 origin/master`. Earlier session reasoning was based on a January snapshot; only late-session diligence caught the May 28 dump. Memory note saved in `~/.agents/memory/projects/quilibrium/quorum-desktop/quorum-shared-migration.md`.
+The mobile repo is a partially-public mirror, not the live internal dev tree. **Before grepping mobile for cross-repo work, always verify freshness** with `git fetch && git log -1 origin/master`. Earlier session reasoning was based on a January snapshot; only late-session diligence caught the May 28 dump.
 
 ---
 
@@ -196,7 +196,7 @@ The mobile repo is a partially-public mirror, not the live internal dev tree. **
 
 *Previously: 2026-05-28 (late) — hooks audit refreshed against mobile `origin/master` (`98d59a4`) and shared `origin/master` (`fbbd48c`). Headline: the `StorageAdapter`/`CryptoProvider` abstractions the March audit said were blockers already exist; mobile has 67 hooks (not 17); shared API design should follow mobile's split-mutation pattern. The audit's first-PR recommendation (A2 query helpers) was withdrawn after spot-checking revealed type-coupling and casing conflicts with shared's existing `queryKeys`.*
 
-*Previously: 2026-05-28 (evening) — three PRs shipped this session: quorum-desktop #159 (UserConfig mirror catch-up for `isProfilePublic`/`farcasterLink`), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` prefix rename + desktop dedup against shared). Notifications track now PAUSED on lead-dev direction — full architecture investigation at [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md), GitHub issue draft at [../../.temp/2026-05-28-notification-prefs-github-issue.md](../../.temp/2026-05-28-notification-prefs-github-issue.md). Also discovered the mobile public-repo had a massive 2026-05-28 catch-up dump (`98d59a4`) — the older design docs need refreshing against the new mobile state before driving more migration work. Status table refreshed to reflect this; "Next up" rewritten.*
+*Previously: 2026-05-28 (evening) — three PRs shipped this session: quorum-desktop #159 (UserConfig mirror catch-up for `isProfilePublic`/`farcasterLink`), quorum-shared #18 + quorum-desktop #160 (notification types `Space*` prefix rename + desktop dedup against shared). Notifications track now PAUSED on lead-dev direction — full architecture investigation at [reports/2026-05-28-notification-architecture-divergence.md](../../reports/2026-05-28-notification-architecture-divergence.md), GitHub issue draft at ../../.temp/2026-05-28-notification-prefs-github-issue.md. Also discovered the mobile public-repo had a massive 2026-05-28 catch-up dump (`98d59a4`) — the older design docs need refreshing against the new mobile state before driving more migration work. Status table refreshed to reflect this; "Next up" rewritten.*
 
 *Previously: 2026-05-28 (morning) — mobile codebase access verified, upstream `quorum-shared` pulled (Farcaster module + new UserConfig fields landed). Status table updated, "Upstream changes 2026-05-28" section added.*
 

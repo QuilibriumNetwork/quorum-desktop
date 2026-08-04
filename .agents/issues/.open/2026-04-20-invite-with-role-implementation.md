@@ -1305,11 +1305,9 @@ yarn build
 
 - [ ] **Step 4: If all pass, update task file footer**
 
-```bash
-python "$HOME/.config/.claude/skills/docs-manager/task-sync.py" \
-  .agents/issues/.open/2026-04-20-invite-with-role-implementation.md \
-  note "All phases complete, all verifications passed"
-```
+Record completion in this file's footer — by hand, or with your own `.agents`
+task-sync tooling if you use any. Note: "All phases complete, all verifications
+passed".
 
 ### Task 15: Prepare PR
 

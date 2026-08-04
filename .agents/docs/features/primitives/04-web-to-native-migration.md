@@ -36,7 +36,7 @@ Complete guide for converting web components to React Native using our cross-pla
 
 Before migrating any component, the component logic **MUST** be extracted in a surgical way following these guidelines:
 
-📋 **Read**: [Cross-Platform Hooks Refactoring Plan](/.agents/tasks/todo/mobile-dev/cross-platform-hooks-refactoring-plan.md)
+📋 **Read**: Cross-Platform Hooks Refactoring Plan
 
 **Key Requirements:**
 

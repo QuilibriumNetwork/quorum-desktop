@@ -663,4 +663,4 @@ This approach gives us the best of both worlds: **code reuse for efficiency** an
 ---
 
 _Last updated: 2026-04-09_
-_For questions about specific components, see [components-shared-arch-masterplan.md](../components-shared-arch-masterplan.md) or [quorum-shared-architecture.md](../../../docs/quorum-shared-architecture.md)._
+_For questions about specific components, see components-shared-arch-masterplan.md or [quorum-shared-architecture.md](../../../docs/quorum-shared-architecture.md)._

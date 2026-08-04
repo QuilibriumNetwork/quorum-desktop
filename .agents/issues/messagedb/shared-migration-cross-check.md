@@ -84,7 +84,7 @@ The doc proposes two approaches:
 - **Preferred (unify senders)**: edit ActionQueueHandlers send paths so all control messages use the same shape; readers then read only one shape.
 - **Fallback (normalize at receiver)**: defensive `const ctl = raw.content?.type ? raw.content : raw;` at the top of the intercept.
 
-**The constraint**: the [receipts shared migration](../quorum-shared-migration/2026-05-19-receipts-shared-migration.md) introduces `DeliveryAckMessage` and `ReadAckMessage` types in `quorum-shared/src/types/receipt.ts`. Once those types ship, **the wire format is locked across desktop and mobile.** The defensive triple-fallback in the receiver (`raw.foo` vs `raw.content?.foo`) needs to be reconciled with whatever shape the shared types codify.
+**The constraint**: the [receipts shared migration](../quorum-shared-migration/.done/2026-05-19-receipts-shared-migration.md) introduces `DeliveryAckMessage` and `ReadAckMessage` types in `quorum-shared/src/types/receipt.ts`. Once those types ship, **the wire format is locked across desktop and mobile.** The defensive triple-fallback in the receiver (`raw.foo` vs `raw.content?.foo`) needs to be reconciled with whatever shape the shared types codify.
 
 **Resolution (2026-05-20 — investigated during the receipts migration)**: option 3 above turned out to be the reality. After grepping every ack-construction site in the codebase and tracing the git history, the verdict is:
 

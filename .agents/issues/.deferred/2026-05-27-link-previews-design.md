@@ -26,7 +26,7 @@ Both follow-ups are referenced in [Related Work](#related-work).
 
 ## Goal
 
-Render rich previews for URLs shared in messages — title, description, site name, hero image — without leaking receivers' IPs or other metadata to third-party websites. Match the privacy model already established by the YouTube facade (see [youtube-facade-optimization.md](../docs/features/messages/youtube-facade-optimization.md)).
+Render rich previews for URLs shared in messages — title, description, site name, hero image — without leaking receivers' IPs or other metadata to third-party websites. Match the privacy model already established by the YouTube facade (see [youtube-facade-optimization.md](../../docs/features/messages/youtube-facade-optimization.md)).
 
 ## Non-Goals
 
@@ -367,10 +367,10 @@ The renderer's fetch utility is structured as a swappable interface so any of th
 
 - **Follow-up: Privacy toggle for previews** — adds a "Generate link previews" toggle to `UserSettingsModal` defaulting to OFF, gating both YouTube embeds and link previews behind a single switch. Owns the migration UX (banner explaining the change to existing users).
 - **Follow-up: EditMessage feature parity with send** — extends `EditMessage` to carry `embeddedMedia`, makes the edit composer functionally symmetric with the send composer. Will also fix the interim limitation in [Edit Behavior (Interim)](#edit-behavior-interim) for all media types (images, YouTube, link previews) in one change.
-- [youtube-facade-optimization.md](../docs/features/messages/youtube-facade-optimization.md) — the privacy/architecture pattern this spec mirrors.
+- [youtube-facade-optimization.md](../../docs/features/messages/youtube-facade-optimization.md) — the privacy/architecture pattern this spec mirrors.
 - [embedded-media-spec.md](../.done/2026-03-12-embedded-media-spec.md) — the `embeddedMedia` field's original design.
-- [data-management-architecture-guide.md](../docs/data-management-architecture-guide.md) — P2P / E2E architecture context.
-- [privacy-first-defaults](D:\.config\.agents\memory\projects\quilibrium\quorum-desktop\privacy-first-defaults.md) — the golden rule this work serves.
+- [data-management-architecture-guide.md](../../docs/data-management-architecture-guide.md) — P2P / E2E architecture context.
+- privacy-first-defaults — the golden rule this work serves.
 
 ---
 

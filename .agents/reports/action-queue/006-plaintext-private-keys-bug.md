@@ -190,7 +190,7 @@ This lesson has been added to the `feature-analyzer` agent instructions.
 ## Related
 
 - **Fix**: [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md)
-- **Old report**: [006-plaintext-private-keys-bug-old.md](006-plaintext-private-keys-bug-old.md)
+- **Old report**: 006-plaintext-private-keys-bug-old.md
 - **Doc**: [Action Queue Feature](../../docs/features/action-queue.md)
 
 ---

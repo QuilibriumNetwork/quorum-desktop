@@ -253,8 +253,8 @@ Spaces need similar treatment but currently lack any merge or tombstone logic.
 
 ## Related Documentation
 
-- [config-sync-system.md](.agents/docs/architecture/config-sync-system.md) - Config sync architecture
-- [user-config-sync.md](.agents/docs/features/user-config-sync.md) - Profile sync feature (different issue)
+- [config-sync-system.md](../../docs/config-sync-system.md) - Config sync architecture
+- [user-config-sync.md](../../docs/features/user-config-sync.md) - Profile sync feature (different issue)
 
 ---
 

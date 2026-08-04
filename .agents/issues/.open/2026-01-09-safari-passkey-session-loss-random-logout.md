@@ -59,7 +59,7 @@ This dialog indicates Safari/WebAuthn cannot find a credential for the current d
 
 ### Hypothesis 1: localStorage vs Passkey Credential Mismatch
 
-Per the [passkey authentication flow analysis](..\reports\onboarding-flow\passkey-authentication-flow-analysis-2025-11-23.md):
+Per the [passkey authentication flow analysis](../../reports/.archived/onboarding-flow/.done/passkey-authentication-flow-analysis-2025-11-23.md):
 
 - Login state is determined by `localStorage['passkeys-list']` existence
 - If localStorage is cleared but passkey credential remains in Keychain, the app shows login screen
@@ -88,7 +88,7 @@ Per documentation, when importing a key file:
 
 ### Hypothesis 4: Config Sync Failure
 
-Per [config-sync-system.md](..\docs\config-sync-system.md):
+Per [config-sync-system.md](../../docs/config-sync-system.md):
 - User reported sync not working between Mobile Beta and Safari
 - If `allowSync` is enabled but sync fails, could cause state inconsistencies
 - Timestamp-based conflict resolution could reject local config in edge cases

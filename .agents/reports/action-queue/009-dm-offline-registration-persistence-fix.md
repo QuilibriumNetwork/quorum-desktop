@@ -11,7 +11,7 @@ updated: '2026-01-09'
 > **AI-Generated**: May contain errors. Verify before use.
 
 
-**Supersedes**: [009-dm-offline-registration-persistence-fix-old.md](009-dm-offline-registration-persistence-fix-old.md)
+**Supersedes**: 009-dm-offline-registration-persistence-fix-old.md
 
 ---
 
@@ -238,7 +238,7 @@ Compared to the old 009 fix, this approach:
 
 ## Related
 
-- **Previous approach**: [009-dm-offline-registration-persistence-fix-old.md](009-dm-offline-registration-persistence-fix-old.md)
+- **Previous approach**: 009-dm-offline-registration-persistence-fix-old.md
 - **Similar pattern**: [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md)
 - **Action Queue Feature**: [../../docs/features/action-queue.md](../../docs/features/action-queue.md)
 

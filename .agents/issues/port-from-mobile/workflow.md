@@ -202,7 +202,7 @@ If the port reveals an architectural divergence that needs a cross-repo decision
 ## Memory bookmarks
 
 If you discover a persistent fact during a port (mobile uses pattern X for Y, mobile and desktop disagree on Z, etc.), update the relevant doc:
-- Implementation patterns / project state → `~/.agents/memory/projects/quilibrium/quorum-desktop/<topic>.md`.
+- Implementation patterns / project state → the maintainer keeps these in private notes outside this repo.
 - Cross-repo workflow learnings that should generalize → consider adding to [`../quorum-shared-migration/cross-repo-workflow.md`](../quorum-shared-migration/cross-repo-workflow.md) and link from here.
 
 ## PR description template
@@ -236,4 +236,4 @@ Port the [feature name] from `quorum-mobile` to `quorum-desktop`.
 
 *Previously: 2026-06-08 — added session-branch naming rule for multi-worktree setups (primary clone vs `.worktrees/<name>/`); slimmed the "Doc commits piggy-back on the next feature PR" section to defer to the new repo-wide canonical version in [`agents-workflow.md`](../../agents-workflow.md#pr--commit-workflow).*
 
-*Previously: 2026-06-01 — added mandatory "Capability verification" step (symbol-grep is not enough) and the "Port the capability, not the mobile UX pattern" rule with the Discord-vs-Telegram model worked example. Introduced two-way diff framing — sibling [`desktop-better-than-mobile.md`](desktop-better-than-mobile.md) tracks capabilities where desktop is materially better than mobile.*
+*Previously: 2026-06-01 — added mandatory "Capability verification" step (symbol-grep is not enough) and the "Port the capability, not the mobile UX pattern" rule with the Discord-vs-Telegram model worked example. Introduced two-way diff framing — sibling `desktop-better-than-mobile.md` tracks capabilities where desktop is materially better than mobile.*

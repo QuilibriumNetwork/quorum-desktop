@@ -14,7 +14,7 @@ updated: '2026-01-09'
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 
-**Related**: [deleted-messages-reappear-via-sync.md](../bugs/deleted-messages-reappear-via-sync.md)
+**Related**: deleted-messages-reappear-via-sync.md
 
 ## What & Why
 

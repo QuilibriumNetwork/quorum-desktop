@@ -450,8 +450,8 @@ Before proceeding with migration, the following should be clarified:
 
 ## Related Documentation
 
-- [Cross-Platform Repository Implementation](.agents/docs/cross-platform-repository-implementation.md) - Current desktop structure
-- [Primitives Architecture](.agents/docs/primitives-architecture.md) - Component design patterns
+- [Cross-Platform Repository Implementation](../docs/.archived/cross-platform-repository-implementation.md) - Current desktop structure
+- Primitives Architecture - Component design patterns
 - quorum-shared package: `node_modules/@quilibrium/quorum-shared/`
 
 ---

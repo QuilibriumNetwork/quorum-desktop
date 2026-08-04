@@ -149,7 +149,7 @@ The analysis identified real duplication in Triple Ratchet encryption code. Base
 ## Related Documentation
 
 - [MessageService Deep Dive](../issues/messagedb/messageservice-deep-dive.md) - Current refactoring assessment
-- [Action Queue](docs/features/action-queue.md) - Uses similar encryption patterns
+- [Action Queue](../docs/features/action-queue.md) - Uses similar encryption patterns
 
 ## Sources
 

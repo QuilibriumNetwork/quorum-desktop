@@ -415,7 +415,7 @@ The small `blur(4px)` is intentional: larger blur radii read as opaque frost reg
 
 ### Touch Support
 
-**Important**: See [Touch Interaction System](./../touch-interaction-system.md#drag-and-drop-with-long-press-dnd-kit) for full details on touch + drag-and-drop patterns.
+**Important**: See [Touch Interaction System](./touch-interaction-system.md#drag-and-drop-with-long-press-dnd-kit) for full details on touch + drag-and-drop patterns.
 
 #### Sensor Configuration
 

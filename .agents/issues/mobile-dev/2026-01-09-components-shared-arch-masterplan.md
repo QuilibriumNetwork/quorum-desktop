@@ -23,7 +23,7 @@ updated: '2026-04-09'
 This masterplan defines the **architectural philosophy and technical approach** for creating a unified codebase that supports both desktop and mobile platforms. The approach extracts only the "raw HTML portion" into platform-specific primitives while keeping 90%+ of the codebase shared.
 
 **For current architecture details**, see [quorum-shared-architecture.md](../../docs/quorum-shared-architecture.md).
-**For detailed development workflows**, see [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md).
+**For detailed development workflows**, see `component-dev-guidelines.md`.
 
 ## Current State Analysis
 
@@ -627,7 +627,7 @@ export function MyFeature() {
 - [quorum-shared-architecture.md](../../docs/quorum-shared-architecture.md) - Current multi-repo architecture overview
 - [cross-platform-components-guide.md](../../docs/cross-platform-components-guide.md) - Component classification and cross-platform patterns
 - [primitives docs](../../docs/features/primitives/) - Primitives quick reference and styling guide
-- [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md) - Development workflows and code examples
+- `component-dev-guidelines.md` - Development workflows and code examples
 
 ## Key Architectural Insights
 
@@ -651,7 +651,7 @@ For all web components (`.web.tsx`), follow this styling hierarchy:
 3. **Raw CSS Last**: Add custom CSS only when Tailwind can't handle it cleanly
 4. **Extract Shared Patterns**: Always create reusable classes for repeated styling
 
-**Detailed styling examples and workflows**: See [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md)
+**Detailed styling examples and workflows**: See `component-dev-guidelines.md`
 
 #### Styling Best Practices
 

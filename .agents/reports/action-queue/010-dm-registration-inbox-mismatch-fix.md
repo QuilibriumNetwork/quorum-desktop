@@ -223,7 +223,7 @@ When Action Queue is enabled for DMs, **counterparty's NEW devices won't receive
 
 ### Why Action Queue Can't Do This
 
-Report [009-dm-offline-registration-persistence-fix.md](../reports/action-queue/009-dm-offline-registration-persistence-fix.md) deliberately removed `counterparty.device_registrations` from queue context to avoid storing sensitive registration data.
+Report [009-dm-offline-registration-persistence-fix.md](./009-dm-offline-registration-persistence-fix.md) deliberately removed `counterparty.device_registrations` from queue context to avoid storing sensitive registration data.
 
 **Trade-off**: Offline resilience vs new device support.
 

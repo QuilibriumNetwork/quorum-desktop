@@ -306,9 +306,9 @@ Manual:
 
 ## 12. Related Documentation
 
-- [.agents/docs/features/invite-system-analysis.md](../docs/features/invite-system-analysis.md) — existing invite system deep-dive
-- [.agents/docs/space-permissions/space-roles-system.md](../docs/space-permissions/space-roles-system.md) — role architecture and permissions
-- [.agents/docs/quorum-shared-architecture.md](../docs/quorum-shared-architecture.md) — shared package structure and cross-repo workflow
+- [.agents/docs/features/invite-system-analysis.md](../../docs/features/invite-system-analysis.md) — existing invite system deep-dive
+- [.agents/docs/space-permissions/space-roles-system.md](../../docs/space-permissions/space-roles-system.md) — role architecture and permissions
+- [.agents/docs/quorum-shared-architecture.md](../../docs/quorum-shared-architecture.md) — shared package structure and cross-repo workflow
 - Issue: https://github.com/QuilibriumNetwork/quorum-desktop/issues/81
 
 ---

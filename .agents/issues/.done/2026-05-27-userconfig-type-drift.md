@@ -100,7 +100,7 @@ Current branch `feat/preview-privacy-toggle` no longer fits the work. Suggested 
 
 ## Files involved
 
-**quorum-shared** (separate repo, branch + PR per the [quorum-shared workflow](../../../../../.config/.agents/memory/projects/quilibrium/quorum-desktop/quorum-shared-workflow.md)):
+**quorum-shared** (separate repo, branch + PR per the quorum-shared workflow):
 - `src/types/user.ts` — add 7 optional fields to `UserConfig`
 
 **quorum-desktop** (this branch):

@@ -300,7 +300,7 @@ const handleRangeChanged = useCallback(
 - [auto-jump-first-unread.md](./auto-jump-first-unread.md) - Auto-jump infrastructure
 - [hash-navigation-to-old-messages.md](./hash-navigation-to-old-messages.md) - Shared bidirectional loading
 - [date-separators-messages-list.md](../../../issues/.done/date-separators-messages-list.md) - DateSeparator pattern
-- [new-messages-separator-intersection-observer-issues.md](../../bugs/new-messages-separator-intersection-observer-issues.md) - Bug investigation & solution
+- new-messages-separator-intersection-observer-issues.md - Bug investigation & solution
 
 ## Implementation Notes
 

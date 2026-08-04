@@ -250,8 +250,8 @@ A temporary shim implementation is currently in place that provides mock functio
 ## Related Documentation
 
 - [SDK Shim Temporary Solutions](.archived/sdk-shim-temporary-solutions.md) - Current workaround implementation
-- [Passkey SDK Expo Dev Integration Plan](./passkey-sdk-expo-dev-integration-plan.md) - Integration attempt plan
-- [SDK Integration Test Results](./sdk-integration-test-results.md) - Detailed test logs
+- Passkey SDK Expo Dev Integration Plan - Integration attempt plan
+- SDK Integration Test Results - Detailed test logs
 
 ## Resources
 

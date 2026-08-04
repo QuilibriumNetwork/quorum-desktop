@@ -290,7 +290,7 @@ consumer = mobile):
    `link:../quorum-shared` once shared's `dist/` is rebuilt (`yarn build` in shared) — same
    mechanism as the icon-picker migration; no publish needed for local desktop dev.
 3. **quorum-mobile**: consumer leg — tracked in the mobile task
-   ([`2026-06-18-adopt-shared-message-preprocessing.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-18-adopt-shared-message-preprocessing.md)).
+   ([`2026-06-18-adopt-shared-message-preprocessing.md`](../../../../quorum-mobile/.agents/issues/quorum-shared-migration/.done/2026-06-18-adopt-shared-message-preprocessing.md)).
 
 > Reminder ([feedback_dont_break_mobile_on_shared_changes]): the shared change must be
 > **additive** — new module, new exports, no edits to existing shared signatures mobile is

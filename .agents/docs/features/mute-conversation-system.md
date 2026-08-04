@@ -158,8 +158,8 @@ Mute operations work offline via Action Queue:
 
 - **Channel Mute** ([useChannelMute.ts](src/hooks/business/channels/useChannelMute.ts)) - Similar concept for space channels
 - **DM Favorites** ([useDMFavorites.ts](src/hooks/business/dm/useDMFavorites.ts)) - Pattern reference for implementation
-- **Desktop Notifications** ([desktop-notifications.md](.agents/docs/features/desktop-notifications.md)) - Notification system overview
-- **Action Queue** ([action-queue.md](.agents/docs/features/action-queue.md)) - Offline support mechanism
+- **Desktop Notifications** ([desktop-notifications.md](./desktop-notifications.md)) - Notification system overview
+- **Action Queue** ([action-queue.md](./action-queue.md)) - Offline support mechanism
 
 ## Technical Decisions
 

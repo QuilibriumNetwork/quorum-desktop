@@ -236,7 +236,7 @@ The new approach is simpler and more secure.
 ## Related
 
 - **Bug**: [006-plaintext-private-keys-bug.md](006-plaintext-private-keys-bug.md)
-- **Old fix proposal**: [007-plaintext-private-keys-fix-old.md](007-plaintext-private-keys-fix-old.md)
+- **Old fix proposal**: 007-plaintext-private-keys-fix-old.md
 - **Doc**: [Action Queue Feature](../../docs/features/action-queue.md)
 
 ---

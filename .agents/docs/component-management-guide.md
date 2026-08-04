@@ -254,7 +254,7 @@ Always use existing tokens:
 
 ### Web Styling Hierarchy
 
-From [component-development-guide.md](./component-development-guide.md#web-styling-hierarchy):
+From component-development-guide.md:
 
 1. **Tailwind Utilities First**
 

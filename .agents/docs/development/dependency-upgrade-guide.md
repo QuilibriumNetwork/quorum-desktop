@@ -174,8 +174,8 @@ If adding new Node built-in polyfills:
 
 ## Related Documentation
 
-- [Unused Dependencies Analysis](.agents/docs/development/unused-dependencies-analysis.md)
-- [Dependency Updates Audit Task](.agents/tasks/dependency-updates-audit.md)
+- Unused Dependencies Analysis
+- Dependency Updates Audit Task
 - [Vite 8 Migration Guide](https://vite.dev/guide/migration.html)
 
 ---

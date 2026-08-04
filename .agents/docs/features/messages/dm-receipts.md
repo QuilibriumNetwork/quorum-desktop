@@ -332,7 +332,7 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 - [Read Receipts Implementation Plan](../../../issues/.done/2026-03-22-dm-read-receipts-plan.md) — Phase 2 task breakdown
 - [Read Receipts Testing Bug](../../../issues/.done/2026-03-22-read-receipts-testing-blocked.md) — Testing progress and bugs found
 - [Receipt Persistence Bug](../../../issues/.done/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md) — Fixed: checkmarks disappearing on refresh
-- [Action Queue](.agents/docs/features/action-queue.md) — Persistent queue used for standalone acks
+- [Action Queue](../action-queue.md) — Persistent queue used for standalone acks
 
 ---
 

@@ -1579,7 +1579,7 @@ Reference [`src/components/bookmarks/BookmarksPanel.scss`](src/components/bookma
 
 Run: `grep -E "^\s*--(color|surface)-" src/styles/_colors.scss | head -50`
 
-For any variable used in the SCSS above that doesn't exist, find the closest existing variable and substitute it. Use the [styling guidelines](.agents/docs/styling-guidelines.md) as the authoritative reference for which variable corresponds to which role.
+For any variable used in the SCSS above that doesn't exist, find the closest existing variable and substitute it. Use the [styling guidelines](../../docs/styling-guidelines.md) as the authoritative reference for which variable corresponds to which role.
 
 - [ ] **Step 9.3: Commit**
 
@@ -1970,7 +1970,7 @@ Use the existing feature docs in `.agents/docs/features/` (e.g., `bookmarks.md`,
 Under the `### Features` section, add an alphabetically-sorted entry:
 
 ```markdown
-- [Highlights Feed](docs/features/highlights-feed.md)
+- Highlights Feed
 ```
 
 - [ ] **Step 14.3: Commit**

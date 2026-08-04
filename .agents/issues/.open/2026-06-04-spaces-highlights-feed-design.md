@@ -513,7 +513,7 @@ While `useHighlights` is loading: render 3 skeleton cards (matching the highligh
 
 ### Styling alignment
 
-- Follow the [styling guidelines](../docs/styling-guidelines.md): no inline colors, all values via `_colors.scss` semantic variables.
+- Follow the [styling guidelines](../../docs/styling-guidelines.md): no inline colors, all values via `_colors.scss` semantic variables.
 - Card surface: same `--surface-*` token `BookmarkCard` uses.
 - Border radius, shadow, padding: borrow from `BookmarkCard.scss` so the visual feels native to the app.
 - No emoji in production UI — use Tabler icons only.
@@ -641,7 +641,7 @@ When PR #4 (hooks migration) unblocks:
 3. Migrate `useHighlights()` to quorum-shared `hooks/` — **bundle with `useAllMentions` migration** since they share patterns and a common helper
 4. Mobile builds its own UI on top of the shared hook
 
-Same pattern receipts and typing followed (desktop ships first, mobile follows once the hook contract stabilizes — see [shipped log](quorum-shared-migration/shipped-log.md)).
+Same pattern receipts and typing followed (desktop ships first, mobile follows once the hook contract stabilizes — see [shipped log](../quorum-shared-migration/shipped-log.md)).
 
 ---
 

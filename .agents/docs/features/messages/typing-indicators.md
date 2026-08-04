@@ -80,7 +80,7 @@ Although typing messages never touch `messages` storage, each DM typing event **
 
 The one plausible slow-leak vector is `skipped_keys_map` growth on a single DR row if typing ciphertexts are lost or arrive out of order (the receiver holds skipped keys waiting for ciphertext that for typing will never come). Whether the SDK bounds this map (by entry count or age) is a pending question for the SDK team — applies to any out-of-order DM, not just typing.
 
-Space typing rides Triple Ratchet hub broadcast and does NOT advance any per-conversation ratchet — see [`cryptographic-architecture.md`](.agents/docs/cryptographic-architecture.md) for the broadcast model.
+Space typing rides Triple Ratchet hub broadcast and does NOT advance any per-conversation ratchet — see [`cryptographic-architecture.md`](../../cryptographic-architecture.md) for the broadcast model.
 
 Full analysis: [`.agents/issues/.done/2026-05-18-typing-dm-ratchet-investigation.md`](../../../issues/.done/2026-05-18-typing-dm-ratchet-investigation.md).
 

@@ -698,7 +698,7 @@ const { theme } = useTheme();
 
 - [Primitives Migration Task](../issues/.done/primitives-migration-to-quorum-shared.md) - Step-by-step migration plan
 - [Gap Analysis Report](../reports/primitives-gap-analysis-quorum-shared_2026-01-14.md) - Desktop vs mobile comparison
-- [Component Architecture Masterplan](../tasks/mobile-dev/components-shared-arch-masterplan.md) - Architectural philosophy
+- Component Architecture Masterplan - Architectural philosophy
 
 ---
 

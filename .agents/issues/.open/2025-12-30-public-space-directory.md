@@ -60,7 +60,7 @@ Quorum operates on a **decentralized network**, but uses a **coordination API** 
 - Discovery requires aggregated, searchable data - inherently centralized
 - Privacy-sensitive data (messages, keys) remain fully decentralized
 
-> **Reference**: See [Data Management Architecture](../docs/data-management-architecture-guide.md) and [Cryptographic Architecture](../docs/cryptographic-architecture.md) for details on Quorum's architecture.
+> **Reference**: See [Data Management Architecture](../../docs/data-management-architecture-guide.md) and [Cryptographic Architecture](../../docs/cryptographic-architecture.md) for details on Quorum's architecture.
 
 ---
 
@@ -270,7 +270,7 @@ Users who have joined a space can rate it.
 - **Minimum 7 days membership required** before rating (prevents join-rate-leave manipulation)
 - Rating updates replace previous rating
 
-> **Dependency**: The 7-day membership requirement depends on the `joinedAt` field being stored for space members. See [New Member Badge task](new-member-badge-spaces.md) which adds this field. If that task is not yet implemented, this rule should be deferred or the API should skip this check until `joinedAt` data is available.
+> **Dependency**: The 7-day membership requirement depends on the `joinedAt` field being stored for space members. See New Member Badge task which adds this field. If that task is not yet implemented, this rule should be deferred or the API should skip this check until `joinedAt` data is available.
 
 ### 4. Report Space (Flag for Review)
 
@@ -738,10 +738,10 @@ The current `isPublic` flag on Space has a different meaning ("directly joinable
 
 ## Related Documentation
 
-- [Invite System Documentation](../docs/features/invite-system-analysis.md)
-- [Data Management Architecture](../docs/data-management-architecture-guide.md)
-- [Cryptographic Architecture](../docs/cryptographic-architecture.md)
-- [Config Sync System](../docs/config-sync-system.md)
+- [Invite System Documentation](../../docs/features/invite-system-analysis.md)
+- [Data Management Architecture](../../docs/data-management-architecture-guide.md)
+- [Cryptographic Architecture](../../docs/cryptographic-architecture.md)
+- [Config Sync System](../../docs/config-sync-system.md)
 
 ---
 

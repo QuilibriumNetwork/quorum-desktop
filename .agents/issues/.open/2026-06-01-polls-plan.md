@@ -30,7 +30,7 @@ This plan spans two repos. Execute in this order:
 2. **Phase B — `quorum-desktop`** (Tasks 8-23): consume `2.1.0-22`, build the feature.
 3. **Phase C — Mobile follow-up** (Task 24): drop a `mobile-tasks-pending.md` entry; mobile work is out of scope for this PR.
 
-For the cross-repo workflow specifics (branch naming, when to open shared PR vs. desktop PR), follow [`.agents/issues/quorum-shared-migration/cross-repo-workflow.md`](quorum-shared-migration/cross-repo-workflow.md).
+For the cross-repo workflow specifics (branch naming, when to open shared PR vs. desktop PR), follow [`.agents/issues/quorum-shared-migration/cross-repo-workflow.md`](../quorum-shared-migration/cross-repo-workflow.md).
 
 ---
 
@@ -994,7 +994,7 @@ git commit -m "feat(polls): export poll types, aggregator, validators; bump 2.1.
 
 - [ ] **Step 5: Open PR + publish**
 
-Follow [`cross-repo-workflow.md`](quorum-shared-migration/cross-repo-workflow.md) for the shared-PR publish flow. Once merged and published to npm, Phase B can consume `@quilibrium/quorum-shared@2.1.0-22`.
+Follow [`cross-repo-workflow.md`](../quorum-shared-migration/cross-repo-workflow.md) for the shared-PR publish flow. Once merged and published to npm, Phase B can consume `@quilibrium/quorum-shared@2.1.0-22`.
 
 ---
 
