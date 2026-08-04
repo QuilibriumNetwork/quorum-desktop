@@ -24,7 +24,7 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
-import { shouldShowDateSeparator, shouldShowCompactHeader, formatAddress } from '@quilibrium/quorum-shared';
+import { shouldShowDateSeparator, shouldShowCompactHeader } from '@quilibrium/quorum-shared';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
 import { Button as ButtonBase } from '../primitives';
 // Cast to work around React type version mismatch between quorum-shared and quorum-desktop
@@ -299,21 +299,25 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       },
     }));
 
-    // Internal resolver from the raw `members` map — used only when the caller
-    // doesn't supply its own mapper. Space channels and DMs both pass an
-    // enriched mapper (with public-profile fallback) via the prop; this is the
-    // bare fallback for any caller that doesn't.
+    // Internal resolver from the `members` map — used only when the caller
+    // doesn't supply its own mapper.
+    //
+    // An empty `displayName` is passed through UNCHANGED and that is the whole
+    // point: empty means "no per-space override, follow the global identity",
+    // and the name resolvers read that. Substituting a truncated address here
+    // would look like a deliberate per-space name, and `resolveSpaceMemberName`
+    // ranks a per-space name ABOVE the QNS `.q` name — so the fallback invented
+    // on this line would beat the real name sitting in the same object. The
+    // fallback belongs to the resolver (its output), never to the caller (its
+    // input). Matches the enriched mapper in Channel.tsx.
     const mapSenderToUserInternal = useCallback(
       (senderId: string) => {
         const member = members[senderId];
-        if (member) {
-          return {
-            ...member,
-            displayName: member.displayName || formatAddress(senderId),
-          };
-        }
+        if (member) return member;
+        // Sender isn't in the roster at all: no name to resolve, so hand the
+        // resolver an address-only record and let it produce the truncation.
         return {
-          displayName: senderId ? formatAddress(senderId) : 'Unknown User',
+          address: senderId,
           userIcon: DefaultImages.UNKNOWN_USER,
         };
       },

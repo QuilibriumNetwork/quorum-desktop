@@ -178,12 +178,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   // Process mentions → tokens. Delegates to the shared pipeline; the desktop
   // wrapper keeps the `!mapSenderToUser` guard so contexts without a user
   // resolver (e.g. some bookmark/preview surfaces) leave `@<address>` as plain
-  // text instead of emitting a raw token that wouldn't be rendered. Desktop
-  // never produced legacy bare-`@name` mentions, so it passes no members.
+  // text instead of emitting a raw token that wouldn't be rendered.
   // `hasEveryoneMention` is desktop's authorization signal → `everyoneAuthorized`.
+  // Only the canonical `@<address>` form becomes a pill; a bare `@Name` stays
+  // plain text (the shared pipeline no longer accepts a member list at all).
   const processMentions = useCallback((text: string): string => {
     if (!mapSenderToUser) return text;
-    return sharedProcessMentions(text, [], hasEveryoneMention);
+    return sharedProcessMentions(text, hasEveryoneMention);
   }, [mapSenderToUser, hasEveryoneMention]);
 
   // Role mentions → tokens. Resolves directly from spaceRoles (option B —

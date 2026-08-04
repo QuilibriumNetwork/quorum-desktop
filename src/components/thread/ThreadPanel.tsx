@@ -409,6 +409,13 @@ export const ThreadPanel: React.FC = () => {
             setInReplyTo={composer.setInReplyTo}
             customEmoji={channelProps.customEmoji}
             members={channelProps.members}
+            // Same enriched mapper the channel view uses. Without it MessageList
+            // falls back to its internal mapper, and thread author names lose
+            // their QNS `.q` name to a truncated address — while this very
+            // panel's other surfaces (thread header, participant list) already
+            // used the enriched mapper. Threads are a space context, so the
+            // override-aware resolver runs and a substituted address wins.
+            mapSenderToUser={channelProps.mapSenderToUser}
             submitMessage={handleSubmitMessage}
             onUserClick={channelProps.onUserClick}
             lastReadTimestamp={undefined}

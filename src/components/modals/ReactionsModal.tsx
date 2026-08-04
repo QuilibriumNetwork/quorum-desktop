@@ -4,7 +4,7 @@ import { parse as parseEmoji } from '@twemoji/parser';
 import { Modal, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { ResolvedName } from '../user/ResolvedName';
-import { resolveSpaceMemberName } from '../../utils/resolveMemberName';
+import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Reaction } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../emoji-picker/types';
@@ -46,22 +46,30 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
     return reactions.find((r) => r.emojiId === activeEmojiId);
   }, [reactions, activeEmojiId]);
 
-  // Helper to get user info from member ID
-  const getUserInfo = (memberId: string): MemberInfo => {
-    const member = members[memberId];
-    return {
-      displayName: member?.displayName || memberId.slice(0, 8) + '...',
-      primaryUsername: member?.primaryUsername,
-      globalDisplayName: member?.globalDisplayName,
-      userIcon: member?.userIcon,
-      address: memberId,
-    };
-  };
-
-  // Map member IDs to user data
+  // Map member IDs to user data, resolving each name once.
+  //
+  // `displayName` is passed to the resolver EXACTLY as stored, empty included.
+  // Empty means "no per-space override, follow the global identity". This used
+  // to substitute a truncated address for an empty one, which the resolver then
+  // read as a deliberate per-space name — and a per-space name outranks the QNS
+  // `.q` name, so a follow-global member appeared here as `QmXoypiz...` while
+  // their `.q` name sat unused in the very same object. The resolver produces
+  // the address fallback itself; a caller must never feed it one.
   const reactionUsers = useMemo(() => {
     if (!selectedReaction) return [];
-    return selectedReaction.memberIds.map((memberId) => getUserInfo(memberId));
+    return selectedReaction.memberIds.map((memberId) => {
+      const member = members[memberId];
+      return {
+        address: memberId,
+        userIcon: member?.userIcon,
+        resolved: resolveSpaceMemberName({
+          address: memberId,
+          displayName: member?.displayName,
+          primaryUsername: member?.primaryUsername,
+          globalDisplayName: member?.globalDisplayName,
+        }),
+      };
+    });
   }, [selectedReaction, members]);
 
   // Render emoji as Twemoji image or custom emoji
@@ -133,17 +141,14 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
               >
                 <UserAvatar
                   userIcon={user.userIcon}
-                  displayName={user.displayName || ''}
+                  // Initials come from the RESOLVED name so the avatar and the
+                  // label next to it can never disagree.
+                  displayName={formatResolvedName(user.resolved)}
                   address={user.address}
                   size={24}
                 />
                 <ResolvedName
-                  resolved={resolveSpaceMemberName({
-                    address: user.address,
-                    displayName: user.displayName,
-                    primaryUsername: user.primaryUsername,
-                    globalDisplayName: user.globalDisplayName,
-                  })}
+                  resolved={user.resolved}
                   className="truncate-user-name flex-1 min-w-0"
                 />
               </Flex>

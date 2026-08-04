@@ -3,9 +3,8 @@ import { useMessages } from '../../queries/messages/useMessages';
 import { useSpaceOwner } from '../../queries/spaceOwner/useSpaceOwner';
 import { useSpace } from '../../queries/space/useSpace';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { hasPermission, formatAddress } from '@quilibrium/quorum-shared';
+import { hasPermission } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Channel, Role } from '@quilibrium/quorum-shared';
-import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
 import { useBlockUser } from '../user/useBlockUser';
 
@@ -159,17 +158,24 @@ export function useChannelMessages({
     [roles, user.currentPasskeyInfo, channel, space]
   );
 
+  // Base sender lookup. Channel.tsx wraps this with a public-profile-enriched
+  // map and only falls through to it for senders missing from the roster, so
+  // the `member` branch is not currently reachable — it is written correctly
+  // anyway so that a future direct consumer can't reintroduce the defect.
+  //
+  // A member is returned UNCHANGED, empty `displayName` included. Empty means
+  // "no per-space override, follow the global identity"; substituting a
+  // truncated address here reads as a deliberate per-space name, which
+  // `resolveSpaceMemberName` ranks above the QNS `.q` name. The resolver owns
+  // the fallback, so a caller must never supply one.
   const mapSenderToUser = useCallback(
     (senderId: string) => {
       const member = members[senderId];
-      if (member) {
-        return {
-          ...member,
-          displayName: member.displayName || formatAddress(senderId),
-        };
-      }
+      if (member) return member;
+      // Not in the roster: address-only, so the resolver produces the
+      // truncation itself and every surface truncates the same way.
       return {
-        displayName: senderId ? formatAddress(senderId) : t`Unknown User`,
+        address: senderId,
         userIcon: DefaultImages.UNKNOWN_USER,
       };
     },
