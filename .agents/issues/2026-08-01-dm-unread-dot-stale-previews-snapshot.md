@@ -20,9 +20,8 @@ related:
 
 ## Status
 
-Slices 1 and 3 are implemented on branch `fix/dm-unread-stale-previews-snapshot`.
-Slice 2 is deliberately not started — it is gated on operator verification of
-Slice 1 (§7). Merge is blocked on that manual run.
+All three slices are implemented on branch `fix/dm-unread-stale-previews-snapshot`.
+Operator verified the core behaviour 2026-08-04 (§7 results below).
 
 **Slice 1 — done.** `useConversationPreviews` now returns
 `Record<conversationId, { preview, previewIcon }>` instead of a full copy of each
@@ -38,11 +37,19 @@ timestamp`. Both now pass `message.createdDate`, which is exactly what
 (`messages.ts` ~1459-1461), so the optimistic row and the polled row agree and
 there is no flash.
 
-**Slice 2 — partially absorbed, remainder held.** The `primaryUsername` re-attach
-hack (§4.2 bullet 1) is gone: it existed only to undo the row-copy, and the new
-shape never takes the copy, so keeping it would have meant writing it back in.
-`DmReadStateContext` removal is NOT done — it is the part that genuinely needs the
-operator check in §7 step 5 first.
+**Slice 2 — done.** The `primaryUsername` re-attach hack (§4.2 bullet 1) went with
+the row-copy it existed to undo. `DmReadStateContext` is deleted, along with the
+`DmReadStateProvider` wrapper in `App.tsx` and both consumers' overlay branches.
+§5 defect 6 (the unused `saveReadTime` in `useDirectMessagesList`) is deleted too.
+
+The gating check in §7 step 5 turned out to be unrunnable, and the reason
+strengthens the removal rather than weakening it: **`markAllAsRead` has no caller
+anywhere in `src`.** `markAllReadTimestamp` was permanently `null`, so both
+consumers already reduced to `(lastReadTimestamp ?? 0) < timestamp` at runtime.
+The DM sidebar has no "mark all as read" trigger — the ones that exist belong to
+the notifications panel and the Space context menu, and both write through
+`messageDB.saveReadTime`. So there was no reachable behaviour to regress. See
+§7 step 5 below, corrected.
 
 **Slice 3 — done.**
 [`src/dev/tests/hooks/conversationPreviewsReadState.unit.test.tsx`](../../src/dev/tests/hooks/conversationPreviewsReadState.unit.test.tsx),
@@ -50,16 +57,34 @@ three tests. The middle one, "clears unread when the read time advances without 
 new message", is the §4.3 sequence.
 
 MEASURED, not inferred:
-- `npx tsc --noEmit` clean; `npx vitest --run` → 66 files, 962 tests passed.
+- `npx tsc --noEmit` clean; `npx vitest --run` → 67 files, 965 tests passed.
+- `yarn harness` (live-network DM scenarios, ~27 min) → 20 passed, 2 skipped,
+  exit 0. Covers the §3 send-path change against the real relay.
 - Falsified: temporarily restoring the row-copy inside the query (`{ ...conv,
   preview, previewIcon }`) turns the sequence test red with the exact production
   symptom — `isUnread` stays `true` after the read time advances. Reverted; green
   again. The test could have failed.
+- One full-suite run out of four reported a single unidentified failure that did
+  not reproduce on the two runs either side of it. Recorded rather than dismissed:
+  if a flake surfaces in CI, this is the first sighting.
+
+### Operator verification, 2026-08-04
+
+| §7 step | Result |
+|---|---|
+| 1 — read, no reply | ✅ PASS. The core fix, and passed without the remount escape hatch of step 8, so it is a genuine result. |
+| 2 — full exchange | not run |
+| 3 — send to a quiet contact (§3) | not run |
+| 4 — genuine unread still works | ✅ PASS |
+| 5 — mark all as read | ⛔ unrunnable, premise was wrong — see the corrected step below |
+| 6 — collapsed strip | partial: the strip and the expanded list agree on a genuinely-unread row. The read-then-clear case in the strip is still unrun. |
+| 7 — muted | not run |
+| 8 — no unmount cheating | observed |
 
 Not touched, and still open as recorded in §5: defect 1 (`lastReadTimestamp: 0`
 hardcoded on the two init paths, now `MessageService.ts` ~4047 and ~4189 — line
-6307 already passes the stored value correctly) and defects 2-7. §5 says each is
-its own PR; that still holds.
+6307 already passes the stored value correctly) and defects 2-5, 7. Defect 6 is
+done. §5 says each is its own PR; that still holds.
 
 ## §0. What the operator sees
 
@@ -238,8 +263,11 @@ Only after Slice 1 is operator-verified.
   forced-timestamp overlay should be dead weight. Consumers to check:
   `DirectMessageContactsList`, `useDirectMessageUnreadCount`, `useSpaceContextMenu`.
 
-**Operator-visible outcome:** "Mark all as read" from the DM context menu still clears
-every dot instantly, with the overlay gone. QNS `name.q` names still render in the list.
+**Operator-visible outcome:** ~~"Mark all as read" from the DM context menu still clears
+every dot instantly, with the overlay gone.~~ Superseded — that menu item does not exist
+(see §7 step 5). The observable outcome is the absence of change: unread dots, the NavRail
+DM dot and QNS `name.q` names all behave exactly as they did after Slice 1, because the
+overlay was already inert.
 
 ### §4.3 — Slice 3: a regression test that would have caught this
 
@@ -277,7 +305,7 @@ own PR; none should be bundled into Slice 1.
 | 7 | [`useDirectMessageUnreadCount.ts:65`](../../src/hooks/business/messages/useDirectMessageUnreadCount.ts#L65) | `staleTime: 90000` means the NavRail dot is correct only as long as every write path remembers to invalidate `['unread-counts', 'direct-messages']`. It works today; it is the same class of fragility as §1.3. |
 
 Defect 6 is worth doing alongside Slice 2 — it is three lines and it removes a live
-footgun.
+footgun. **Done 2026-08-04**, in the Slice 2 commit.
 
 ## §6. Mobile — different problem, do not fold it in
 
@@ -350,8 +378,14 @@ Nothing here is checkable from a diff. Run all of it manually before closing.
    **never** acquires a dot, not even for a frame.
 4. **Genuine unread still works.** A is on a Space screen; B sends → A's DM list shows the
    dot and the NavRail dot, and the row sorts to the top with the right preview.
-5. **Mark all as read** from the DM context menu clears every dot instantly (regression
-   guard for Slice 2).
+5. ~~**Mark all as read** from the DM context menu clears every dot instantly (regression
+   guard for Slice 2).~~ **This step was written on a false premise and cannot be run.**
+   There is no "mark all as read" in the DM context menu, and `DmReadStateContext.markAllAsRead`
+   had no caller anywhere in `src` — the overlay it fed was permanently inert. Confirmed
+   by operator attempt 2026-08-04 ("there's no that right click option") and by grep.
+   Nothing to guard; Slice 2 removed dead code. If a DM mark-all-read is ever built, it
+   should write `saveReadTime` per conversation like the Space context menu does
+   (`useSpaceContextMenu.tsx:127-133`), not re-introduce a render-time overlay.
 6. **Collapsed strip.** Repeat 1 and 4 with the sidebar collapsed — it renders from the
    same array ([`:346-351`](../../src/components/direct/DirectMessageContactsList.tsx#L346-L351))
    and must behave identically.
