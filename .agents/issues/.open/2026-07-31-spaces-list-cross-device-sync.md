@@ -4,7 +4,7 @@ title: "Make the Spaces list identical on every device (umbrella — start here)
 status: open
 priority: high
 created: 2026-07-31
-updated: 2026-07-31
+updated: 2026-08-04
 severity: data-integrity (Spaces vanish from a device's list) + cross-device divergence
 area: UserConfig spaces list / space add + removal propagation / ghost cleanup
 repos: quorum-desktop + quorum-mobile (+ quorum-shared for the wire type)
@@ -92,6 +92,69 @@ A truncated config empties desktop's list instantly, because desktop renders fro
 same truncated config is **invisible on mobile**, whose list reads storage. So mobile was
 both the likely publisher and structurally incapable of showing the symptom — which is
 exactly what the reporter observed ("desktop lost its Spaces, mobile looked fine").
+
+## §2b. Still firing after the 2026-07-31 fixes — three reproductions, 2026-08-04
+
+The desktop sidebar emptied three more times on 2026-08-04, all recoverable with
+Settings → Restore Spaces. **The 2026-07-31 work did not close this, and was never going
+to: it hardened desktop as a *publisher* and left desktop defenceless as a *receiver*,
+while mobile's publisher guard was deliberately reverted (`3a03b6f`, §3).** Desktop is the
+victim of mobile's publish, and there is no guard on the path that actually hurts it.
+
+**What the reporter did, in order:**
+
+| # | action on mobile | result on desktop |
+|---|---|---|
+| 1 | created a test Space | after refresh: the test Space showed, **every other Space gone** |
+| 2 | deleted that test Space | Spaces gone again |
+| 3 | changed the username — no Space operation at all | Spaces gone again |
+
+**All three are the same event: mobile called `saveConfig`.** Reproduction 3 is the
+decisive one — it touches nothing about Spaces, so the trigger cannot be any Space
+operation. It is the publish path itself. Reproduction 1 is the confirming detail: the
+survivor was exactly the one Space mobile had just created locally and could therefore
+key.
+
+Note for the reporter's own hypothesis: "removing a Space on mobile doesn't sync yet" was
+true before 2026-07-31 and is **no longer true** — `df6b198` added `removeSpaceFromConfig`,
+so reproduction 2 published too.
+
+### The chain, read end to end (file:line, verified 2026-08-04)
+
+1. Any mobile `saveConfig` rebuilds the published blob narrowed to Spaces this device can
+   currently key — `quorum-mobile/services/config/configService.ts:615-645`. Username
+   changes, mutes, bookmarks and settings all land here.
+2. Mobile **warns and publishes anyway** (`:666-671`) with a fresh `ts = Date.now()`
+   (`:591`). Desktop refuses in the identical situation
+   (`quorum-desktop/src/services/ConfigService.ts:512-529`).
+3. `collectSpaceKeysForSync` (`:507-546`) drops a Space if it is missing from
+   `getAllSpaces()`, has no keys, **or has no encryption state** for `spaceId/spaceId`.
+4. Mobile's blob import saves the keys first (`spaceSyncService.ts:129-141`) but writes
+   `saveSpace` and `saveEncryptionState` only *after* two network round-trips
+   (`fetchSpace`, `getSpaceManifest`) that each `return false` on failure (`:145-160`), and
+   it walks Spaces sequentially with a **1-second delay each** (`:312-327`). A Space that
+   failed, or that sync has simply not reached yet, is unkeyable and gets dropped.
+5. Desktop `getConfig` takes remote on a newer timestamp, applies it **verbatim**, writes
+   it to IndexedDB and pushes it into the React Query config cache
+   (`ConfigService.ts:374-384`). No merge, no floor, no log.
+6. The sidebar renders from `config.items` (`useNavItems.ts:49-53`) → empty. The Space rows
+   are untouched in IndexedDB, which is exactly why Restore Spaces
+   (`useSpaceRecovery.ts:30-72`) brings them all back.
+
+### Epistemic status
+
+Steps 1-6 are **READ** (cited above). That mobile's list was narrow *on these three
+occasions* is **INFERRED** from the symptom shape, not measured — no log was captured.
+
+The decisive measurement is mobile's `[ConfigSync] publishing a NARROWER Space list`
+warning. Two obstacles to collecting it:
+
+- In a release mobile build that line does not exist: `logger.warn` is compiled to a no-op.
+  See [`2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md`](2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md).
+  A dev build will show it.
+- **Desktop logs nothing at all when an adopted config shrinks its Space list.** That is
+  the missing instrument, and it is the cheapest thing to build here: it turns a
+  "spaces vanished again, no idea why" report into a timestamped count.
 
 ## §3. What shipped 2026-07-31, and what it does not fix
 
@@ -255,4 +318,4 @@ that instead of restarting — see the staleness umbrella in §6.
 *Created 2026-07-31 to give the Spaces-list work one entry point. Consolidates findings
 from the 2026-07-31 space-loss investigation with the four pre-existing docs listed in §6.*
 
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-04*
