@@ -110,6 +110,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
+- 📋 [DM unread dot never clears](issues/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 
 #### Messagedb
@@ -311,7 +312,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Edited messages show a false "not signed" warning on other devices](issues/.open/2026-07-19-edited-message-signature-badge-cross-device.md)
 - 📋 [Space deletion: instant + offline UX, and stop leaking ghost spaces](issues/.open/2026-07-19-space-deletion-ghost-cleanup.md)
 - 📋 [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md)
-- 📋 [DM unread dot never clears](issues/.open/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
 - 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
 - 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
 
@@ -740,4 +740,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-04 14:20:28
+**Last Updated**: 2026-08-04 16:02:31

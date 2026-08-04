@@ -1,10 +1,10 @@
 ---
 type: task
 title: "DM unread dot never clears — the list renders a frozen snapshot of the conversation rows"
-status: open
+status: in-progress
 priority: high
 created: 2026-08-01
-updated: 2026-08-01
+updated: 2026-08-04
 severity: UX (the DM list lies about read state; the primary daily-use surface)
 area: DM contacts list / read-state propagation (React Query cache shape)
 repos: quorum-desktop (implement here). quorum-mobile is affected by a DIFFERENT,
@@ -17,6 +17,49 @@ related:
 ---
 
 # DM unread dot never clears
+
+## Status
+
+Slices 1 and 3 are implemented on branch `fix/dm-unread-stale-previews-snapshot`.
+Slice 2 is deliberately not started — it is gated on operator verification of
+Slice 1 (§7). Merge is blocked on that manual run.
+
+**Slice 1 — done.** `useConversationPreviews` now returns
+`Record<conversationId, { preview, previewIcon }>` instead of a full copy of each
+conversation row, and `DirectMessageContactsList` merges it onto the live polled
+rows at render time via the new exported `withPreviews()`. Read state, timestamp
+and identity are therefore always read from the 2s poll, never from the cache.
+
+**§3 — done, same commit.** `MessageService` line ~3779 passed `Date.now()` as the
+conversation `timestamp` while `lastReadTimestamp` came from `message.createdDate`,
+so every outbound send optimistically wrote a row that was `lastReadTimestamp <
+timestamp`. Both now pass `message.createdDate`, which is exactly what
+`db.saveMessage` writes to IndexedDB for an own message
+(`messages.ts` ~1459-1461), so the optimistic row and the polled row agree and
+there is no flash.
+
+**Slice 2 — partially absorbed, remainder held.** The `primaryUsername` re-attach
+hack (§4.2 bullet 1) is gone: it existed only to undo the row-copy, and the new
+shape never takes the copy, so keeping it would have meant writing it back in.
+`DmReadStateContext` removal is NOT done — it is the part that genuinely needs the
+operator check in §7 step 5 first.
+
+**Slice 3 — done.**
+[`src/dev/tests/hooks/conversationPreviewsReadState.unit.test.tsx`](../../src/dev/tests/hooks/conversationPreviewsReadState.unit.test.tsx),
+three tests. The middle one, "clears unread when the read time advances without a
+new message", is the §4.3 sequence.
+
+MEASURED, not inferred:
+- `npx tsc --noEmit` clean; `npx vitest --run` → 66 files, 962 tests passed.
+- Falsified: temporarily restoring the row-copy inside the query (`{ ...conv,
+  preview, previewIcon }`) turns the sequence test red with the exact production
+  symptom — `isUnread` stays `true` after the read time advances. Reverted; green
+  again. The test could have failed.
+
+Not touched, and still open as recorded in §5: defect 1 (`lastReadTimestamp: 0`
+hardcoded on the two init paths, now `MessageService.ts` ~4047 and ~4189 — line
+6307 already passes the stored value correctly) and defects 2-7. §5 says each is
+its own PR; that still holds.
 
 ## §0. What the operator sees
 
@@ -93,7 +136,7 @@ is not the one this mutation uses.
 
 ### §1.4 Corroboration — this has been patched around twice already
 
-- [`dm-mark-all-read-no-immediate-ui-update.md`](../.done/dm-mark-all-read-no-immediate-ui-update.md)
+- [`dm-mark-all-read-no-immediate-ui-update.md`](.done/dm-mark-all-read-no-immediate-ui-update.md)
   records exactly this fingerprint (rail dot clears, contact rows don't) and was closed by
   building [`DmReadStateContext.tsx`](../../src/context/DmReadStateContext.tsx) to overlay
   a forced read timestamp on top of the stale list. The cause was never removed.
@@ -202,11 +245,21 @@ every dot instantly, with the overlay gone. QNS `name.q` names still render in t
 
 The failure is not visible in a component snapshot — it needs the *sequence*. Cover:
 "row is unread → read time is written → row is read", asserting on what the list computes,
-with no `lastMessageId` change anywhere in between. See [`.agents/tasks/messagedb/`](messagedb/)
-for the existing DB-test harness conventions.
+with no `lastMessageId` change anywhere in between. See
+[`src/dev/tests/hooks/`](../../src/dev/tests/hooks/) for the hook-test conventions and
+[`src/dev/tests/db/`](../../src/dev/tests/db/) for the fake-indexeddb ones.
 
 **Operator-visible outcome:** a named test in the suite that fails on `main` and passes on
 the branch.
+
+**Landed as**
+[`conversationPreviewsReadState.unit.test.tsx`](../../src/dev/tests/hooks/conversationPreviewsReadState.unit.test.tsx):
+
+| test | guards |
+|---|---|
+| `caches preview payload only — no conversation row fields` | the shape that made the bug possible; fails the moment anything is copied into the cache again |
+| `clears unread when the read time advances without a new message` | the §4.3 sequence; also asserts `getMessage` ran exactly once, so the pass is real cache reuse and not an accidental refetch |
+| `refreshes the preview when a new message does arrive` | the previews still work — guards against "fixed by never caching" |
 
 ## §5. Secondary defects found in the same area
 
@@ -241,13 +294,49 @@ This fix does not carry over. Mobile's DM unread indicator is not wired up at al
   equivalent anywhere.
 
 So the mobile badge can never turn on, and if it did there would be no way to turn it off.
-Mobile already tracks this: `quorum-mobile/.agents/tasks/.todo/2026-06-18-channel-unread-dot-lastread-timestamp.md`
+Mobile already tracks this: `quorum-mobile/.agents/issues/.open/2026-06-18-channel-unread-dot-lastread-timestamp.md`
 opens with "No per-channel last-read timestamp."
 
 **Therefore:** do not treat "check it on mobile" as a verification step for this task —
 there is nothing there to verify. Mobile needs its own task to build the read-state write
 path first. When it does, adopt desktop's `(lastRead ?? 0) < timestamp` semantics so the
 two platforms agree on what a fresh conversation means.
+
+### §6.1 Re-verified 2026-08-04 against quorum-mobile @ `387bb1c`
+
+Everything above still holds. Three additions, all READ from the code:
+
+1. **Mobile cannot have THIS bug, structurally.** There is no `useConversationPreviews`
+   equivalent and no second cached copy of the rows. Mobile persists the preview onto the
+   conversation row at write time (`hooks/chat/useSendDirectMessage.ts:634-648`,
+   `useSendDirectEmbedMessage.ts:360-377` write `lastMessagePreview`), and the list reads
+   `conv.lastMessagePreview` straight off the live row
+   (`app/(tabs)/messages/index.tsx:206-210`). One source, nothing to go stale against.
+   This is the same asymmetry already noted in
+   [`quorum-shared-migration/roadmap.md:101`](quorum-shared-migration/roadmap.md): desktop's
+   previews hook exists *only* because desktop's write path does not populate
+   `lastMessagePreview`. Aligning desktop's write path would delete the hook outright — a
+   larger, separate piece of work, not a prerequisite for anything here.
+2. **The mobile write path is still absent, confirmed by a whole-repo grep.** Six hits for
+   `lastReadTimestamp` outside `.agents/`: two read sites, one type field
+   (`hooks/chat/useConversations.ts:37`), one `undefined` initialiser
+   (`components/NewConversationModal.tsx:169`), one comment. `saveReadTime` / `markAsRead`
+   return nothing for Quorum DMs — the only `markRead` is
+   `useMarkFarcasterConversationRead`, which is Farcaster's own server-side unread system
+   and shares no state with `lastReadTimestamp`.
+3. **Mobile has desktop's §3 defect too, latent behind the missing write path.** Both send
+   paths spread `...conversation` and set `timestamp: message.createdDate` without touching
+   `lastReadTimestamp`. The moment someone builds the read-state write path, sending a
+   message will make `timestamp > lastReadTimestamp` and light the dot on your own
+   conversation — exactly the desktop bug §3 fixes. Whoever does that work must advance
+   `lastReadTimestamp` in the same `saveConversation` call, in both
+   `useSendDirectMessage.ts` and `useSendDirectEmbedMessage.ts`.
+
+Also worth correcting when the mobile task is picked up:
+`quorum-mobile/.agents/issues/.open/2026-06-18-channel-unread-dot-lastread-timestamp.md`
+says "`lastReadTimestamp` exists only on the DM `Conversation` object (DM inbox dot)",
+which reads as though the DM dot works. It exists as a *field*; nothing populates it, so
+the DM dot is permanently dark.
 
 ## §7. Verification (desktop, two accounts)
 
@@ -272,4 +361,4 @@ Nothing here is checkable from a diff. Run all of it manually before closing.
    DM contacts only.
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-04*

@@ -4,12 +4,12 @@ title: "DM partner identity never recovers on an established session (desktop di
 status: in-progress
 priority: high
 created: 2026-08-01
-updated: 2026-08-01
+updated: 2026-08-04
 severity: user-visible — a DM partner renders forever as "Unknown User" / truncated address
 area: DM receive path / conversation-row identity / mobile parity
 repos: quorum-desktop (fix), quorum-mobile (reference implementation — already correct)
 related_tasks:
-  - ".agents/issues/.open/2026-08-01-dm-unread-dot-stale-previews-snapshot.md"
+  - ".agents/issues/2026-08-01-dm-unread-dot-stale-previews-snapshot.md"
 related_bugs:
   - ".agents/issues/.done/2026-06-13-space-members-missing-no-join-row.md"
   - ".agents/issues/.done/2025-12-18-dm-unknown-user-identity-not-revealed.md"
@@ -60,6 +60,14 @@ and the two surfaces disagree about how to say so:
 > **Consequence for this task: Slice 1 can land and work, and the sidebar may still look
 > broken until remount.** Do not read that as Slice 1 having failed — check the header and
 > IndexedDB first.
+>
+> ✅ **RESOLVED 2026-08-04** on branch `fix/dm-unread-stale-previews-snapshot` (awaiting
+> operator verification, not yet merged). The previews query no longer caches conversation
+> rows at all — it returns `{ preview, previewIcon }` only, merged onto the live polled
+> rows at render time. `displayName`, `icon` and `primaryUsername` therefore come from the
+> live data on every render, and the re-attach hack is gone. **Once that branch is on
+> `main`, this whole callout stops applying: the sidebar is a trustworthy test surface
+> again.** Until then, keep checking the header and IndexedDB.
 
 Operator notes, taken as given (not independently verified here):
 
@@ -270,7 +278,7 @@ Recommended order, one PR per step:
 
 | # | Step | Observable outcome |
 |---|---|---|
-| 1 | previews snapshot task | sidebar renders live conversation rows |
+| 1 | previews snapshot task — ✅ done 2026-08-04 on `fix/dm-unread-stale-previews-snapshot`, pending operator verification and merge | sidebar renders live conversation rows |
 | 2 | **Slice 1** (this task) | B sends one message → name + avatar land and survive reload |
 | 3 | **Slice 3** (this task) | already-broken conversations heal on next reconnect |
 | 4 | **Slices 2 + 4** (this task) | consistent empty-state render; no placeholder stamping |
@@ -334,14 +342,16 @@ through:
 - [ ] Decide the single canonical empty-state render — recommend the header's
       (truncated address + address-derived initials), since it matches mobile and does
       not assert a name the app does not have
-- [ ] **Bust the previews snapshot on identity change.** Add
+- [x] ~~**Bust the previews snapshot on identity change.** Add
       `['conversation-previews']` to the invalidations in
       `useConversationsWithProfileBackfill.ts:184-191` and in `handleDMProfileUpdate`
-      (`MessageService.ts:758-761`). Without this the sidebar keeps serving the pre-update
-      copy (see the callout in §1) and Slice 1 will look like it did nothing. Coordinate
-      with `2026-08-01-dm-unread-dot-stale-previews-snapshot.md`, which proposes fixing
-      the snapshot's cause rather than adding another invalidation — **if that task lands
-      first, this item may be unnecessary.** Check before implementing.
+      (`MessageService.ts:758-761`).~~ **Not needed — do not implement.** The check this
+      item asked for has been made: `2026-08-01-dm-unread-dot-stale-previews-snapshot.md`
+      landed its Slice 1 first (2026-08-04, branch
+      `fix/dm-unread-stale-previews-snapshot`), removing the cause instead of adding a
+      third invalidation. The previews cache no longer holds `displayName` / `icon` /
+      `primaryUsername`, so there is nothing left to bust. Adding the invalidation now
+      would re-read N messages from IndexedDB on every profile update for no effect.
 
 ### Slice 3 — Heal already-broken rows without requiring a profile edit
 
@@ -444,4 +454,4 @@ renders once from an in-memory fallback.
 | Mobile reference implementation | `quorum-mobile/context/WebSocketContext.tsx:4739-4741` |
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-04*

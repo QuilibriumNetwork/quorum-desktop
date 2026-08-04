@@ -3,7 +3,7 @@ type: doc
 title: DM Conversation List Previews
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-08-04
 ---
 
 # DM Conversation List Previews
@@ -65,6 +65,27 @@ Shows message previews and timestamps in the DM conversation list, similar to Si
 
 **Special:** Deleted messages show `Message deleted` (no icon)
 
+### What the query owns — and what it must never own
+
+`useConversationPreviews` returns `Record<conversationId, { preview, previewIcon }>`
+and **nothing else**. `withPreviews(conversations, previews)`, exported from the same
+file, merges that payload onto the caller's live conversation rows at render time.
+The rows win on every field they carry.
+
+This split is load-bearing, not stylistic. The query key is
+`conversationId:lastMessageId`, so it only moves when a message arrives. Anything
+else copied into the cached value freezes there until that happens. The hook used
+to return `{ ...conv, preview, previewIcon }` — a full copy of every row — and the
+sidebar rendered the copy, which produced two separate bugs:
+
+- reading a DM advances `lastReadTimestamp` without touching any message id, so the
+  list kept rendering the pre-read snapshot and the unread dot never cleared;
+- a QNS `primaryUsername` resolved after the query ran was dropped, and had to be
+  re-attached by hand in the list component.
+
+Regression guard:
+`src/dev/tests/hooks/conversationPreviewsReadState.unit.test.tsx`.
+
 ## Performance
 
 - **IndexedDB Query:** O(1) direct key lookup per conversation
@@ -82,6 +103,13 @@ Shows message previews and timestamps in the DM conversation list, similar to Si
 - New message arrives
 - Conversation updates
 
+It exists for cases where the preview text itself changed under an unchanged
+`lastMessageId` — an edit or a delete. It is **not** how read state, timestamps or
+identity stay fresh; those are never cached here in the first place. Do not add
+`['conversation-previews']` to a mutation just to refresh a conversation field. That
+forces a re-read of N messages from IndexedDB and papers over a staleness that the
+payload shape above already prevents.
+
 ## i18n Support
 
 Uses Lingui macro syntax for automatic extraction:
@@ -95,5 +123,7 @@ Future translations ready:
 
 ---
 
-**Updated:** 2025-01-14
+**Updated:** 2026-08-04
 **Verified:** 2025-12-09 - File paths confirmed current
+
+*Last updated: 2026-08-04*
