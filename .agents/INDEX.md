@@ -110,7 +110,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
-- 📋 [DM unread dot never clears](issues/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
 
 #### Messagedb
@@ -281,6 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [announce-keys flooding → unbounded per-device admission store](issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - 🐛 [Every logger call is a no-op in production builds](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md)
 - 🐛 [A per-space override never reaches your own other devices](issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md)
+- 🐛 [Desktop shows a stale display name everywhere except the User Settings field](issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md)
 - 🐛 [A Space created on mobile does not land correctly on desktop](issues/.open/2026-08-04-mobile-created-space-syncs-badly-to-desktop-owner-missing-and-message-not-shown.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
@@ -508,6 +508,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [The keepalive fix: what the research found](issues/.done/2026-07-30-keepalive-fix-session-handoff.md)
 - 📋 [Round Q — tie individual lost messages to individual CLOSE events](issues/.done/2026-07-31-round-q-join-losses-to-close-events.md)
 - 📋 [Ship the send-retention fix to quorum-shared](issues/.done/2026-07-31-ship-send-retention-to-quorum-shared.md)
+- 📋 [DM unread dot never clears](issues/.done/2026-08-01-dm-unread-dot-stale-previews-snapshot.md)
 - 📋 [Identity announce: cap the retries](issues/.done/2026-08-01-identity-announce-cadence-research.md)
 - 📋 [Dev viewer: one Issues browser instead of Tasks + Bugs](issues/.done/2026-08-03-dev-issues-browser-plan.md)
 - 📋 [The dangerous branch is off everywhere. Delete it so it stays off.](issues/.done/2026-08-04-remove-the-dead-bare-name-mention-branch-from-shared.md)
@@ -741,4 +742,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-04 17:00:54
+**Last Updated**: 2026-08-04 17:32:30
