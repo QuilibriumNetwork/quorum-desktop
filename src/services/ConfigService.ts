@@ -373,6 +373,17 @@ export class ConfigService {
       }
     }
 
+    // Diagnostic only — this does not change what gets adopted.
+    //
+    // The remote config is applied verbatim, and the sidebar renders from
+    // `config.items` (useNavItems.ts:49-53), so a publisher that narrows its
+    // Space list empties this device's nav the moment its blob wins on
+    // timestamp. Desktop refuses to publish such a list (saveConfig, below);
+    // mobile currently only warns and publishes anyway. Nothing on this side
+    // recorded the adoption, which is why every report of "all my Spaces
+    // vanished" arrived with no evidence attached.
+    await this.recordSpaceListShrinkOnAdopt(storedConfig, config);
+
     await this.messageDB.saveUserConfig({
       ...config,
       timestamp: savedConfig.timestamp,
@@ -384,6 +395,78 @@ export class ConfigService {
       () => config
     );
     return config;
+  }
+
+  /**
+   * Record — never block — an incoming config that carries fewer Spaces than
+   * this device already had.
+   *
+   * The number that matters is `stillInDb`: Spaces this device holds complete,
+   * usable rows for that are about to stop being rendered. Those are exactly
+   * the ones Settings → Restore Spaces puts back, so a non-zero count is this
+   * bug firing rather than a legitimate remove-on-another-device.
+   *
+   * Two deliberate choices:
+   * - `console.warn`, not `logger.warn`. The shared logger compiles to a no-op
+   *   in production builds, and a diagnostic that is silent in the only build
+   *   real users run is not a diagnostic.
+   * - A localStorage ring as well as the console. The console is empty unless
+   *   devtools happened to be open before the adoption, and this fires while
+   *   the user is looking at the sidebar, not at devtools.
+   *
+   * Wrapped whole in try/catch: an instrument must never be able to break the
+   * sync path it is measuring.
+   */
+  private async recordSpaceListShrinkOnAdopt(
+    storedConfig: UserConfig | undefined,
+    incoming: UserConfig
+  ): Promise<void> {
+    try {
+      const before = storedConfig?.spaceIds ?? [];
+      if (before.length === 0) return;
+
+      const after = new Set(incoming.spaceIds ?? []);
+      const dropped = before.filter(id => !after.has(id));
+      if (dropped.length === 0) return;
+
+      // Only read the DB once we know something was dropped.
+      const dbSpaceIds = new Set((await this.messageDB.getSpaces()).map(s => s.spaceId));
+      const stillInDb = dropped.filter(id => dbSpaceIds.has(id));
+
+      const entry = {
+        at: new Date().toISOString(),
+        incomingTimestamp: incoming.timestamp,
+        before: before.length,
+        after: after.size,
+        dropped: dropped.length,
+        stillInDb: stillInDb.length,
+        droppedIds: dropped.slice(0, 25),
+      };
+
+      console.warn(
+        `[ConfigService] ADOPTED a config that drops ${entry.dropped} Space(s) ` +
+          `(${entry.before} → ${entry.after}); ${entry.stillInDb} of them are still ` +
+          `present in this device's local DB and will disappear from the sidebar:`,
+        entry
+      );
+
+      if (typeof localStorage === 'undefined') return;
+      const KEY = 'quorum:diag:configSpaceShrink';
+      let ring: unknown[] = [];
+      try {
+        const raw = localStorage.getItem(KEY);
+        if (raw) {
+          const parsed: unknown = JSON.parse(raw);
+          if (Array.isArray(parsed)) ring = parsed;
+        }
+      } catch {
+        // A corrupted ring must not cost us this entry — start a fresh one.
+      }
+      ring.push(entry);
+      localStorage.setItem(KEY, JSON.stringify(ring.slice(-20)));
+    } catch (e) {
+      console.warn('[ConfigService] space-shrink diagnostic failed (ignored)', e);
+    }
   }
 
   /**

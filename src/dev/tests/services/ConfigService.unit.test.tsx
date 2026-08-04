@@ -572,4 +572,176 @@ describe('ConfigService - Unit Tests', () => {
       expect(saved.timestamp).toBe(500);
     });
   });
+
+  /**
+   * The receive side of the vanishing-sidebar bug.
+   *
+   * saveConfig (section 5) stops THIS device publishing a truncated list. It
+   * does nothing about a truncated list arriving from another device, which is
+   * how the bug actually reaches a desktop: mobile narrows its Space list to
+   * what it can key, publishes anyway, wins on timestamp, and this device
+   * adopts it verbatim. The sidebar renders from the adopted config, so it
+   * empties while every Space row sits untouched in IndexedDB.
+   *
+   * These tests pin the instrument, not a fix — adoption is still verbatim.
+   * The first test is the characterization: it asserts the loss happens, so it
+   * will fail the day someone makes the receive side merge, which is the
+   * correct moment to revisit it.
+   */
+  describe('6. getConfig() - space-list shrink on adopt', () => {
+    const address = 'user-address-123';
+    const mockUserKey = {
+      user_key: {
+        private_key: new Uint8Array(57),
+        public_key: new Uint8Array(57),
+      },
+    } as any;
+    const DIAG_KEY = 'quorum:diag:configSpaceShrink';
+
+    /** Drive one adopt-a-newer-remote-config cycle. */
+    async function adopt({
+      storedSpaceIds,
+      remoteSpaceIds,
+      dbSpaceIds = storedSpaceIds,
+    }: {
+      storedSpaceIds: string[];
+      remoteSpaceIds: string[];
+      dbSpaceIds?: string[];
+    }) {
+      const storedConfig = { address, spaceIds: storedSpaceIds, timestamp: 500 };
+      const decryptedConfig = {
+        address,
+        spaceIds: remoteSpaceIds,
+        items: remoteSpaceIds.map(id => ({ type: 'space', id })),
+        spaceKeys: [],
+        timestamp: 1000,
+      };
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(decryptedConfig));
+      const decryptedBuffer = jsonBytes.buffer.slice(
+        jsonBytes.byteOffset,
+        jsonBytes.byteOffset + jsonBytes.byteLength
+      );
+
+      mockDeps.messageDB.getUserConfig = vi.fn().mockResolvedValue(storedConfig);
+      mockDeps.messageDB.getSpaces = vi
+        .fn()
+        .mockResolvedValue(dbSpaceIds.map(id => ({ spaceId: id })));
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({
+        data: { user_config: 'aabbccdd' + '000000000000000000000000', timestamp: 1000, signature: 'aabbcc' },
+      });
+
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(decryptedBuffer as ArrayBuffer);
+
+      return configService.getConfig({ address, userKey: mockUserKey });
+    }
+
+    /** The single diagnostic entry the instrument recorded, if any. */
+    function lastEntry() {
+      const raw = localStorage.getItem(DIAG_KEY);
+      if (!raw) return undefined;
+      const ring = JSON.parse(raw);
+      return ring[ring.length - 1];
+    }
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it('adopts the narrower list verbatim, dropping Spaces this device still holds', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      const result = await adopt({
+        storedSpaceIds: ['space-a', 'space-b', 'space-c'],
+        remoteSpaceIds: ['space-c'],
+      });
+
+      // The reported symptom: only the publisher's Space survives.
+      expect(result.spaceIds).toEqual(['space-c']);
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(saved.spaceIds).toEqual(['space-c']);
+    });
+
+    it('warns and records the drop, naming the Spaces about to vanish', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await adopt({
+        storedSpaceIds: ['space-a', 'space-b', 'space-c'],
+        remoteSpaceIds: ['space-c'],
+      });
+
+      expect(warn).toHaveBeenCalledWith(
+        expect.stringContaining('ADOPTED a config that drops 2 Space(s)'),
+        expect.objectContaining({ before: 3, after: 1, dropped: 2, stillInDb: 2 })
+      );
+      expect(lastEntry()).toMatchObject({
+        before: 3,
+        after: 1,
+        dropped: 2,
+        stillInDb: 2,
+        droppedIds: ['space-a', 'space-b'],
+        incomingTimestamp: 1000,
+      });
+    });
+
+    it('counts only dropped Spaces the local DB still holds', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      // space-a was already gone from this device's DB, so losing it from the
+      // nav costs the user nothing. Only space-b is a real disappearance.
+      await adopt({
+        storedSpaceIds: ['space-a', 'space-b', 'space-c'],
+        remoteSpaceIds: ['space-c'],
+        dbSpaceIds: ['space-b', 'space-c'],
+      });
+
+      expect(lastEntry()).toMatchObject({ dropped: 2, stillInDb: 1 });
+    });
+
+    it('stays silent when the incoming list is not narrower', async () => {
+      // Control arm: same adopt path, same DB, nothing dropped. If this warns,
+      // the instrument is measuring adoption rather than loss and every entry
+      // above is noise.
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      await adopt({
+        storedSpaceIds: ['space-a'],
+        remoteSpaceIds: ['space-a', 'space-b'],
+      });
+
+      expect(warn).not.toHaveBeenCalled();
+      expect(localStorage.getItem(DIAG_KEY)).toBeNull();
+    });
+
+    it('keeps the diagnostic ring bounded at 20 entries', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+      localStorage.setItem(
+        DIAG_KEY,
+        JSON.stringify(Array.from({ length: 20 }, (_, i) => ({ at: `old-${i}` })))
+      );
+
+      await adopt({ storedSpaceIds: ['space-a', 'space-b'], remoteSpaceIds: ['space-b'] });
+
+      const ring = JSON.parse(localStorage.getItem(DIAG_KEY)!);
+      expect(ring).toHaveLength(20);
+      expect(ring[0].at).toBe('old-1');
+      expect(ring[19]).toMatchObject({ dropped: 1 });
+    });
+
+    it('never lets a broken diagnostic take down config sync', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('quota exceeded');
+      });
+
+      const result = await adopt({
+        storedSpaceIds: ['space-a', 'space-b'],
+        remoteSpaceIds: ['space-b'],
+      });
+
+      expect(result.spaceIds).toEqual(['space-b']);
+      expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalled();
+    });
+  });
 });
