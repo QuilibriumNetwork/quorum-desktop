@@ -191,7 +191,7 @@ Previously inconsistent - now all use 8000ms to match CSS animation duration.
    - Uses local state (self-highlighting), not hash
 
 ✅ **TypeScript compiles**
-   - Run: `cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
+   - Run: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
 
 ✅ **No console errors**
    - Test all highlight scenarios, check for warnings/errors

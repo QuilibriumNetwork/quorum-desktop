@@ -498,7 +498,7 @@ Test icon usage in real components:
 
 Run TypeScript compiler:
 ```bash
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
+cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
 ```
 
 ### Phase 6: Cleanup & Documentation (1 hour)

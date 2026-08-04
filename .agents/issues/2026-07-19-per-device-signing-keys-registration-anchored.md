@@ -441,7 +441,7 @@ read, not a fresh one). No send-side flip yet — keep it behavior-neutral like
 desktop.
 
 **Background (optional — now summarized here so it needn't be handed over):**
-- Cross-repo rules: `D:/GitHub/Quilibrium/quorum-atlas.md` (iOS review pass,
+- Cross-repo rules: `quorum-atlas.md` (iOS review pass,
   never run Expo, prefer statically-verifiable mobile changes).
 - Root analysis + the interim `signing`-slot fix mobile ALREADY shipped (which
   this supersedes):

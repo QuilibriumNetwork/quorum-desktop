@@ -265,12 +265,12 @@ After feature-analyzer review, the hybrid two-system architecture was determined
 
 - [ ] **Run type checking**
   ```bash
-  cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
+  cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
   ```
 
 - [ ] **Run build**
   ```bash
-  cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"
+  cmd.exe /c "cd /d quorum-desktop && yarn build"
   ```
 
 ## Verification

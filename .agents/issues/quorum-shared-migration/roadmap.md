@@ -37,9 +37,9 @@ Concrete next moves (in priority order):
 ## Pre-flight (before starting any session)
 
 ```bash
-git -C "D:/GitHub/Quilibrium/quorum-shared" pull
-git -C "D:/GitHub/Quilibrium/quorum-mobile" fetch && git -C "D:/GitHub/Quilibrium/quorum-mobile" log -1 --format="%h %ad %s" --date=short origin/master
-git -C "D:/GitHub/Quilibrium/quorum-desktop" status --short
+git -C "../quorum-shared" pull
+git -C "../quorum-mobile" fetch && git -C "../quorum-mobile" log -1 --format="%h %ad %s" --date=short origin/master
+git -C "../quorum-desktop" status --short
 ```
 
 **Mobile working tree is stuck on a Jan 14 commit. ALWAYS read mobile files via `git show origin/master:<path>`, never via the working tree.**

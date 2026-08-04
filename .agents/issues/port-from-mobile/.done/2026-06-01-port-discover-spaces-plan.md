@@ -96,10 +96,10 @@ Available from `src/components/primitives`: `Modal`, `Input`, `Switch`, `Select`
 ## Pre-flight (run once before starting Task 1)
 
 ```bash
-git -C "D:/GitHub/Quilibrium/quorum-desktop" pull --ff-only
-git -C "D:/GitHub/Quilibrium/quorum-mobile" pull --ff-only
-git -C "D:/GitHub/Quilibrium/quorum-shared" pull --ff-only
-git -C "D:/GitHub/Quilibrium/quorum-desktop" checkout -b feat/port-discover-spaces
+git -C "../quorum-desktop" pull --ff-only
+git -C "../quorum-mobile" pull --ff-only
+git -C "../quorum-shared" pull --ff-only
+git -C "../quorum-desktop" checkout -b feat/port-discover-spaces
 ```
 
 Expected: all three pulls report "Already up to date." or fast-forward. New branch `feat/port-discover-spaces` created from current main.
@@ -109,12 +109,12 @@ Expected: all three pulls report "Already up to date." or fast-forward. New bran
 ## Task 1: Add `DirectoryEntry`, `DirectoryResponse`, `SpaceCategory` types to shared
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-shared/src/types/directory.ts`
-- Modify: `D:/GitHub/Quilibrium/quorum-shared/src/types/index.ts`
+- Create: `quorum-shared/src/types/directory.ts`
+- Modify: `quorum-shared/src/types/index.ts`
 
 - [ ] **Step 1: Create `directory.ts` with the three types**
 
-Create `D:/GitHub/Quilibrium/quorum-shared/src/types/directory.ts` with this exact content:
+Create `quorum-shared/src/types/directory.ts` with this exact content:
 
 ```typescript
 /**
@@ -156,7 +156,7 @@ export interface DirectoryResponse {
 
 - [ ] **Step 2: Add barrel export to `types/index.ts`**
 
-Open `D:/GitHub/Quilibrium/quorum-shared/src/types/index.ts`. After the existing typing-types export block (last block in the file), append:
+Open `quorum-shared/src/types/index.ts`. After the existing typing-types export block (last block in the file), append:
 
 ```typescript
 // Directory types (public space discovery)
@@ -170,7 +170,7 @@ export type {
 - [ ] **Step 3: Build shared and verify exports**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 yarn build
 ```
 
@@ -185,7 +185,7 @@ Expected: at least one file (likely `dist/types/directory.d.ts` or `dist/index.d
 - [ ] **Step 4: Commit the directory types**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 git add src/types/directory.ts src/types/index.ts
 git commit -m "feat(types): add DirectoryEntry, DirectoryResponse, SpaceCategory"
 ```
@@ -195,11 +195,11 @@ git commit -m "feat(types): add DirectoryEntry, DirectoryResponse, SpaceCategory
 ## Task 2: Add `hideMutedSpacesFromSidebar` field to shared `UserConfig`
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-shared/src/types/user.ts:87`
+- Modify: `quorum-shared/src/types/user.ts:87`
 
 - [ ] **Step 1: Add the optional field**
 
-Open `D:/GitHub/Quilibrium/quorum-shared/src/types/user.ts`. Find the `UserConfig` type at line 37. After line 87 (`showMutedChannels?: boolean;`), insert this line:
+Open `quorum-shared/src/types/user.ts`. Find the `UserConfig` type at line 37. After line 87 (`showMutedChannels?: boolean;`), insert this line:
 
 ```typescript
   /** When true, the navbar hides spaces where notificationSettings[spaceId].isMuted === true. Default false (show all spaces). */
@@ -220,7 +220,7 @@ So lines 85-89 should now read:
 - [ ] **Step 2: Build shared and verify**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 yarn build
 ```
 
@@ -235,7 +235,7 @@ Expected: one match showing the field in the emitted declaration.
 - [ ] **Step 3: Commit the UserConfig extension**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 git add src/types/user.ts
 git commit -m "feat(types): add UserConfig.hideMutedSpacesFromSidebar"
 ```
@@ -245,12 +245,12 @@ git commit -m "feat(types): add UserConfig.hideMutedSpacesFromSidebar"
 ## Task 3: Bump shared version + open shared PR + self-merge
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-shared/package.json` (version field)
+- Modify: `quorum-shared/package.json` (version field)
 
 - [ ] **Step 1: Identify current version**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 grep '"version"' package.json
 ```
 
@@ -258,12 +258,12 @@ Expected: a line like `"version": "2.1.0-21",`
 
 - [ ] **Step 2: Bump version to next `2.1.0-NN`**
 
-In `D:/GitHub/Quilibrium/quorum-shared/package.json`, replace the version string. If current is `2.1.0-21`, change to `2.1.0-22`. (Generally: increment the trailing number by 1.)
+In `quorum-shared/package.json`, replace the version string. If current is `2.1.0-21`, change to `2.1.0-22`. (Generally: increment the trailing number by 1.)
 
 - [ ] **Step 3: Commit version bump**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 git add package.json
 git commit -m "chore: bump to 2.1.0-22"
 ```
@@ -271,7 +271,7 @@ git commit -m "chore: bump to 2.1.0-22"
 - [ ] **Step 4: Push + open PR**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-shared"
+cd "quorum-shared"
 git push -u origin HEAD:feat/directory-types-and-user-config
 gh pr create --title "feat(types): DirectoryEntry + UserConfig.hideMutedSpacesFromSidebar" --body "$(cat <<'EOF'
 ## What
@@ -320,7 +320,7 @@ git checkout master && git pull
 - [ ] **Step 1: Confirm `link:` symlink is working**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 node -e "console.log(require('@quilibrium/quorum-shared/package.json').version)"
 ```
 
@@ -328,7 +328,7 @@ Expected: prints `2.1.0-22` (the new version from Task 3).
 
 - [ ] **Step 2: Confirm new types are importable**
 
-Create temporary test file `D:/GitHub/Quilibrium/quorum-desktop/test-shared-types.ts`:
+Create temporary test file `quorum-desktop/test-shared-types.ts`:
 
 ```typescript
 import type { DirectoryEntry, DirectoryResponse, SpaceCategory, UserConfig } from '@quilibrium/quorum-shared';
@@ -369,11 +369,11 @@ rm test-shared-types.ts
 ## Task 5: Mirror `hideMutedSpacesFromSidebar` on desktop's local `UserConfig`
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/db/messages.ts:89`
+- Modify: `quorum-desktop/src/db/messages.ts:89`
 
 - [ ] **Step 1: Add the mirror field**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/db/messages.ts`. Find the local `UserConfig` type at line 50. After line 89 (`showMutedChannels?: boolean;`), insert:
+Open `quorum-desktop/src/db/messages.ts`. Find the local `UserConfig` type at line 50. After line 89 (`showMutedChannels?: boolean;`), insert:
 
 ```typescript
   // When true, the navbar hides spaces where notificationSettings[spaceId].isMuted === true.
@@ -384,7 +384,7 @@ Open `D:/GitHub/Quilibrium/quorum-desktop/src/db/messages.ts`. Find the local `U
 - [ ] **Step 2: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -393,7 +393,7 @@ Expected: no errors.
 - [ ] **Step 3: Commit the mirror**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 git add src/db/messages.ts
 git commit -m "feat(db): mirror UserConfig.hideMutedSpacesFromSidebar"
 ```
@@ -403,11 +403,11 @@ git commit -m "feat(db): mirror UserConfig.hideMutedSpacesFromSidebar"
 ## Task 6: Add `getDirectoryUrl` URL builder + `DirectoryEntry` query param type
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/api/quorumApi.ts`
+- Modify: `quorum-desktop/src/api/quorumApi.ts`
 
 - [ ] **Step 1: Add the URL builder + query param interface**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/api/quorumApi.ts`. After the existing URL builders (after the `getSpaceInviteEvalUrl` export), append:
+Open `quorum-desktop/src/api/quorumApi.ts`. After the existing URL builders (after the `getSpaceInviteEvalUrl` export), append:
 
 ```typescript
 // Directory endpoint params (matches mobile's QuorumMobileClient.exploreSpaces signature)
@@ -437,7 +437,7 @@ export const getDirectoryUrl = (params?: ExploreSpacesParams): `/${string}` => {
 - [ ] **Step 2: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -455,11 +455,11 @@ git commit -m "feat(api): add getDirectoryUrl + ExploreSpacesParams"
 ## Task 7: Add `exploreSpaces` method to `QuorumApiClient`
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/api/baseTypes.ts` (imports block lines 3-16 + method addition after line 458)
+- Modify: `quorum-desktop/src/api/baseTypes.ts` (imports block lines 3-16 + method addition after line 458)
 
 - [ ] **Step 1: Update imports**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/api/baseTypes.ts`. In the import block at lines 3-16, add `getDirectoryUrl` to the existing import and add a new import for the shared types. After the modification, the imports should look like:
+Open `quorum-desktop/src/api/baseTypes.ts`. In the import block at lines 3-16, add `getDirectoryUrl` to the existing import and add a new import for the shared types. After the modification, the imports should look like:
 
 ```typescript
 import qs from 'qs';
@@ -509,7 +509,7 @@ Locate the `QuorumApiClient extends AbstractQuorumApiClient` class (starts at li
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -527,12 +527,12 @@ git commit -m "feat(api): add QuorumApiClient.exploreSpaces method"
 ## Task 8: Create mock space-name and description arrays + generator
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/utils/mock/mockSpaces.ts`
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/utils/mock/index.ts`
+- Create: `quorum-desktop/src/utils/mock/mockSpaces.ts`
+- Modify: `quorum-desktop/src/utils/mock/index.ts`
 
 - [ ] **Step 1: Create `mockSpaces.ts` with cycling arrays + generator**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/utils/mock/mockSpaces.ts`:
+Create `quorum-desktop/src/utils/mock/mockSpaces.ts`:
 
 ```typescript
 /**
@@ -684,7 +684,7 @@ export function getMockSpacesCount(): number {
 
 - [ ] **Step 2: Add to mock barrel**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/utils/mock/index.ts`. After the existing exports, append:
+Open `quorum-desktop/src/utils/mock/index.ts`. After the existing exports, append:
 
 ```typescript
 
@@ -698,7 +698,7 @@ export {
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -706,7 +706,7 @@ Expected: no errors.
 
 - [ ] **Step 4: Write a unit test for `generateMockSpaces`**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/dev/tests/utils/mockSpaces.test.ts`:
+Create `quorum-desktop/src/dev/tests/utils/mockSpaces.test.ts`:
 
 ```typescript
 import { describe, it, expect } from 'vitest';
@@ -754,7 +754,7 @@ describe('generateMockSpaces', () => {
 - [ ] **Step 5: Run the test**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 yarn vitest run src/dev/tests/utils/mockSpaces.test.ts
 ```
 
@@ -772,12 +772,12 @@ git commit -m "feat(mock): add generateMockSpaces dev fixture"
 ## Task 9: Create `useExploreSpaces` hook (real fetch + mock-mode swap)
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/spaces/useExploreSpaces.ts`
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/spaces/index.ts`
+- Create: `quorum-desktop/src/hooks/business/spaces/useExploreSpaces.ts`
+- Modify: `quorum-desktop/src/hooks/business/spaces/index.ts`
 
 - [ ] **Step 1: Create the hook file**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/spaces/useExploreSpaces.ts`:
+Create `quorum-desktop/src/hooks/business/spaces/useExploreSpaces.ts`:
 
 ```typescript
 /**
@@ -947,7 +947,7 @@ export function useExploreSpaces(): UseExploreSpacesReturn {
 
 - [ ] **Step 2: Add to barrel**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/spaces/index.ts`. After the existing exports, append:
+Open `quorum-desktop/src/hooks/business/spaces/index.ts`. After the existing exports, append:
 
 ```typescript
 export { useExploreSpaces, SPACE_CATEGORIES } from './useExploreSpaces';
@@ -956,7 +956,7 @@ export { useExploreSpaces, SPACE_CATEGORIES } from './useExploreSpaces';
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -974,13 +974,13 @@ git commit -m "feat(hooks): add useExploreSpaces (with dev-mode mock support)"
 ## Task 10: Create `useHideMutedSpaces` hook (read + toggle the UserConfig field)
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/user/useHideMutedSpaces.ts`
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/user/index.ts` (if it exists; otherwise create)
+- Create: `quorum-desktop/src/hooks/business/user/useHideMutedSpaces.ts`
+- Modify: `quorum-desktop/src/hooks/business/user/index.ts` (if it exists; otherwise create)
 
 - [ ] **Step 1: Confirm or create the barrel**
 
 ```bash
-cat "D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/user/index.ts" 2>&1 || echo "MISSING"
+cat "../quorum-desktop/src/hooks/business/user/index.ts" 2>&1 || echo "MISSING"
 ```
 
 If the file exists, note its content. If it doesn't exist, create it minimally with:
@@ -991,7 +991,7 @@ If the file exists, note its content. If it doesn't exist, create it minimally w
 
 - [ ] **Step 2: Create the hook**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/user/useHideMutedSpaces.ts`:
+Create `quorum-desktop/src/hooks/business/user/useHideMutedSpaces.ts`:
 
 ```typescript
 /**
@@ -1066,7 +1066,7 @@ export function useHideMutedSpaces(): UseHideMutedSpacesReturn {
 
 - [ ] **Step 3: Add to user-hooks barrel**
 
-In `D:/GitHub/Quilibrium/quorum-desktop/src/hooks/business/user/index.ts`, ensure the file exports this hook. If existing content is a barrel, append:
+In `quorum-desktop/src/hooks/business/user/index.ts`, ensure the file exports this hook. If existing content is a barrel, append:
 
 ```typescript
 export { useHideMutedSpaces } from './useHideMutedSpaces';
@@ -1082,7 +1082,7 @@ export { useHideMutedSpaces } from './useHideMutedSpaces';
 - [ ] **Step 4: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -1100,12 +1100,12 @@ git commit -m "feat(hooks): add useHideMutedSpaces (read + toggle UserConfig fie
 ## Task 11: Create `SpaceCard` shared card component (two variants)
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpaceCard.tsx`
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpaceCard.scss`
+- Create: `quorum-desktop/src/components/spaces-page/SpaceCard.tsx`
+- Create: `quorum-desktop/src/components/spaces-page/SpaceCard.scss`
 
 - [ ] **Step 1: Create the component**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpaceCard.tsx`:
+Create `quorum-desktop/src/components/spaces-page/SpaceCard.tsx`:
 
 ```typescript
 import * as React from 'react';
@@ -1248,7 +1248,7 @@ export const SpaceCard: React.FC<SpaceCardProps> = (props) => {
 
 - [ ] **Step 2: Create the SCSS**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpaceCard.scss`:
+Create `quorum-desktop/src/components/spaces-page/SpaceCard.scss`:
 
 ```scss
 @import '../../styles/variables';
@@ -1335,7 +1335,7 @@ Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpaceCard
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -1353,12 +1353,12 @@ git commit -m "feat(spaces-page): add SpaceCard component (my-space + public var
 ## Task 12: Build `MySpacesTab` component
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.tsx`
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.scss`
+- Create: `quorum-desktop/src/components/spaces-page/MySpacesTab.tsx`
+- Create: `quorum-desktop/src/components/spaces-page/MySpacesTab.scss`
 
 - [ ] **Step 1: Create the component**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.tsx`:
+Create `quorum-desktop/src/components/spaces-page/MySpacesTab.tsx`:
 
 ```typescript
 import * as React from 'react';
@@ -1575,7 +1575,7 @@ NOTE: the `require()` inside `MySpaceCard` is a workaround if direct top-of-file
 
 - [ ] **Step 3: Create the SCSS**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesTab.scss`:
+Create `quorum-desktop/src/components/spaces-page/MySpacesTab.scss`:
 
 ```scss
 @import '../../styles/variables';
@@ -1638,7 +1638,7 @@ Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/MySpacesT
 - [ ] **Step 4: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -1656,12 +1656,12 @@ git commit -m "feat(spaces-page): add MySpacesTab component"
 ## Task 13: Build `DiscoverTab` component
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/DiscoverTab.tsx`
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/DiscoverTab.scss`
+- Create: `quorum-desktop/src/components/spaces-page/DiscoverTab.tsx`
+- Create: `quorum-desktop/src/components/spaces-page/DiscoverTab.scss`
 
 - [ ] **Step 1: Create the component**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/DiscoverTab.tsx`:
+Create `quorum-desktop/src/components/spaces-page/DiscoverTab.tsx`:
 
 ```typescript
 import * as React from 'react';
@@ -1804,7 +1804,7 @@ export const DiscoverTab: React.FC = () => {
 
 - [ ] **Step 2: Create the SCSS**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/DiscoverTab.scss`:
+Create `quorum-desktop/src/components/spaces-page/DiscoverTab.scss`:
 
 ```scss
 @import '../../styles/variables';
@@ -1867,7 +1867,7 @@ Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/DiscoverT
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -1891,13 +1891,13 @@ git commit -m "feat(spaces-page): add DiscoverTab component"
 ## Task 14: Build `SpacesPage` shell with tab navigation
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpacesPage.tsx`
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpacesPage.scss`
-- Create: `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/index.ts`
+- Create: `quorum-desktop/src/components/spaces-page/SpacesPage.tsx`
+- Create: `quorum-desktop/src/components/spaces-page/SpacesPage.scss`
+- Create: `quorum-desktop/src/components/spaces-page/index.ts`
 
 - [ ] **Step 1: Create the page shell**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpacesPage.tsx`:
+Create `quorum-desktop/src/components/spaces-page/SpacesPage.tsx`:
 
 ```typescript
 import * as React from 'react';
@@ -1969,7 +1969,7 @@ export const SpacesPage: React.FC = () => {
 
 - [ ] **Step 2: Create the SCSS**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpacesPage.scss`:
+Create `quorum-desktop/src/components/spaces-page/SpacesPage.scss`:
 
 ```scss
 @import '../../styles/variables';
@@ -2017,7 +2017,7 @@ Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/SpacesPag
 
 - [ ] **Step 3: Create the barrel**
 
-Create `D:/GitHub/Quilibrium/quorum-desktop/src/components/spaces-page/index.ts`:
+Create `quorum-desktop/src/components/spaces-page/index.ts`:
 
 ```typescript
 export { SpacesPage } from './SpacesPage';
@@ -2029,7 +2029,7 @@ export { SpaceCard } from './SpaceCard';
 - [ ] **Step 4: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -2047,11 +2047,11 @@ git commit -m "feat(spaces-page): add SpacesPage shell + tab navigation"
 ## Task 15: Wire `/spaces` route in router
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/components/Router/Router.web.tsx`
+- Modify: `quorum-desktop/src/components/Router/Router.web.tsx`
 
 - [ ] **Step 1: Add the import**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/components/Router/Router.web.tsx`. Add this import after the existing component imports (after line 11):
+Open `quorum-desktop/src/components/Router/Router.web.tsx`. Add this import after the existing component imports (after line 11):
 
 ```typescript
 import { SpacesPage } from '@/components/spaces-page';
@@ -2083,7 +2083,7 @@ Inside the `<Routes>` block, add a new `<Route>` BEFORE the existing `<Route pat
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -2101,11 +2101,11 @@ git commit -m "feat(router): wire /spaces route"
 ## Task 16: Wire `icon-layout-grid-add` navbar entry point
 
 **Files:**
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/src/components/navbar/NavMenu.tsx`
+- Modify: `quorum-desktop/src/components/navbar/NavMenu.tsx`
 
 - [ ] **Step 1: Add the new entry button at the top of the space list**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/src/components/navbar/NavMenu.tsx`. Find the closing `</div>` of the `<div className="nav-menu-logo">` block (around line 570). Right after that closing `</div>`, BEFORE the `<nav className="nav-menu-spaces grow">` opening (around line 571), insert:
+Open `quorum-desktop/src/components/navbar/NavMenu.tsx`. Find the closing `</div>` of the `<div className="nav-menu-logo">` block (around line 570). Right after that closing `</div>`, BEFORE the `<nav className="nav-menu-spaces grow">` opening (around line 571), insert:
 
 ```typescript
       {/* Spaces hub entry (added 2026-06-01 for unified /spaces page).
@@ -2168,7 +2168,7 @@ Replace it with:
 - [ ] **Step 3: TypeScript check**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -2191,7 +2191,7 @@ git commit -m "feat(navbar): add /spaces entry + hide-muted-spaces filter"
 - [ ] **Step 1: Lint + format**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 yarn lint
 yarn format
 ```
@@ -2255,13 +2255,13 @@ Ctrl+C in the terminal running `yarn dev`.
 ## Task 18: Drop mobile-side tasks for shared promotion + banner request
 
 **Files:**
-- Create: `D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-adopt-shared-directory-types.md`
-- Create: `D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-add-banner-to-directory-entry.md`
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/quorum-shared-migration/mobile-tasks-pending.md`
+- Create: `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-adopt-shared-directory-types.md`
+- Create: `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-add-banner-to-directory-entry.md`
+- Modify: `quorum-desktop/.agents/tasks/quorum-shared-migration/mobile-tasks-pending.md`
 
 - [ ] **Step 1: Create the directory-types adoption task**
 
-Create `D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-adopt-shared-directory-types.md`:
+Create `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-adopt-shared-directory-types.md`:
 
 ```markdown
 ---
@@ -2289,7 +2289,7 @@ Single source of truth for wire shapes. Both apps consume the same `/directory` 
 
 ```bash
 # Confirm no other consumers of the local types
-git -C "D:/GitHub/Quilibrium/quorum-mobile" grep -E "DirectoryEntry|DirectoryResponse|SpaceCategory" -- "*.ts" "*.tsx" | grep -v quorumClient.ts
+git -C "../quorum-mobile" grep -E "DirectoryEntry|DirectoryResponse|SpaceCategory" -- "*.ts" "*.tsx" | grep -v quorumClient.ts
 ```
 
 If the grep shows only the local definitions and re-exports, the swap is safe.
@@ -2330,7 +2330,7 @@ Mobile has been on the old shared version (`2.1.0-21`) the whole time and contin
 
 - [ ] **Step 2: Create the banner-request task**
 
-Create `D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-add-banner-to-directory-entry.md`:
+Create `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-add-banner-to-directory-entry.md`:
 
 ```markdown
 ---
@@ -2373,7 +2373,7 @@ Required: verify the live `/directory` endpoint returns the new field for a spac
 
 - [ ] **Step 3: Add rows to `mobile-tasks-pending.md`**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/quorum-shared-migration/mobile-tasks-pending.md`. Add two new rows to the queued tasks table (or section, depending on the file's structure):
+Open `quorum-desktop/.agents/tasks/quorum-shared-migration/mobile-tasks-pending.md`. Add two new rows to the queued tasks table (or section, depending on the file's structure):
 
 ```markdown
 | 2026-06-01 | Adopt shared DirectoryEntry / DirectoryResponse / SpaceCategory (shared 2.1.0-22) | `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-06-01-adopt-shared-directory-types.md` | Static-verifiable swap (no runtime test). Triggered by desktop's discover-spaces port. |
@@ -2385,7 +2385,7 @@ Open `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/quorum-shared-migration/
 - [ ] **Step 4: Regenerate mobile INDEX**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-mobile"
+cd "quorum-mobile"
 python .agents/update-index.py
 ```
 
@@ -2394,7 +2394,7 @@ Expected: prints something like "INDEX.md regenerated" (or similar; the exact ou
 - [ ] **Step 5: Commit the desktop-side `mobile-tasks-pending.md` update**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 git add .agents/issues/quorum-shared-migration/mobile-tasks-pending.md
 git commit -m "docs(shared-migration): queue mobile tasks for directory types + banner request"
 ```
@@ -2406,10 +2406,10 @@ git commit -m "docs(shared-migration): queue mobile tasks for directory types + 
 ## Task 19: Move PR 1 task file to `.done/` + update shipped-log
 
 **Files:**
-- Move: `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/2026-06-01-port-discover-spaces.md` → `.done/`
-- Move: `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/2026-06-01-port-discover-spaces-plan.md` → `.done/`
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/shipped-log.md`
-- Modify: `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/README.md` (status table)
+- Move: `quorum-desktop/.agents/tasks/port-from-mobile/2026-06-01-port-discover-spaces.md` → `.done/`
+- Move: `quorum-desktop/.agents/tasks/port-from-mobile/2026-06-01-port-discover-spaces-plan.md` → `.done/`
+- Modify: `quorum-desktop/.agents/tasks/port-from-mobile/shipped-log.md`
+- Modify: `quorum-desktop/.agents/tasks/port-from-mobile/README.md` (status table)
 
 - [ ] **Step 1: Confirm PR 1 has been opened, smoke-tested, and self-merged**
 
@@ -2418,14 +2418,14 @@ This step is gated on the desktop PR being merged. If the PR is still in review,
 - [ ] **Step 2: Move task files**
 
 ```bash
-cd "D:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 git mv .agents/issues/port-from-mobile/.done/2026-06-01-port-discover-spaces.md .agents/tasks/port-from-mobile/.done/
 git mv .agents/issues/port-from-mobile/.done/2026-06-01-port-discover-spaces-plan.md .agents/tasks/port-from-mobile/.done/
 ```
 
 - [ ] **Step 3: Add shipped-log entry**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/shipped-log.md`. Below the existing "Top-level lessons" section and the "2026-06-01 — folder scaffolded" entry, add a new entry:
+Open `quorum-desktop/.agents/tasks/port-from-mobile/shipped-log.md`. Below the existing "Top-level lessons" section and the "2026-06-01 — folder scaffolded" entry, add a new entry:
 
 ```markdown
 ## 2026-06-01 (later) — Unified /spaces page PR 1 shipped
@@ -2446,7 +2446,7 @@ Shipped the foundation of the unified `/spaces` page: new route, two tabs (My Sp
 
 - [ ] **Step 4: Update status table in README.md**
 
-Open `D:/GitHub/Quilibrium/quorum-desktop/.agents/tasks/port-from-mobile/README.md`. Find the status table row for `Unified /spaces page — PR 1`. Change its status column from `🟢 ready to start` to `✅ shipped` and add the PR URL to the reference column.
+Open `quorum-desktop/.agents/tasks/port-from-mobile/README.md`. Find the status table row for `Unified /spaces page — PR 1`. Change its status column from `🟢 ready to start` to `✅ shipped` and add the PR URL to the reference column.
 
 - [ ] **Step 5: Commit the closure**
 

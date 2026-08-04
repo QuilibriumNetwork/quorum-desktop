@@ -74,7 +74,7 @@ components={{
 - [x] **Step 4: Verify TypeScript compiles**
 
 ```bash
-cd "d:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -273,7 +273,7 @@ In `ThreadPanel.scss`, make these changes:
 - [x] **Step 5: Verify TypeScript**
 
 ```bash
-cd "d:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
@@ -295,7 +295,7 @@ git commit -m "feat(thread): discord-style dual title with thread icon in header
 - [ ] **Step 1: Start dev server and open a thread**
 
 ```bash
-cd "d:/GitHub/Quilibrium/quorum-desktop"
+cd "quorum-desktop"
 yarn dev
 ```
 

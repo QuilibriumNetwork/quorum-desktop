@@ -30,7 +30,7 @@ These four files are orphaned -- no imports reference them from anywhere in the 
 - [x] **Step 1: Delete the four native files**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 rm src/components/onboarding/Onboarding.native.tsx
 rm src/components/onboarding/OnboardingStyles.native.tsx
 rm src/components/onboarding/Login.native.tsx
@@ -40,7 +40,7 @@ rm src/components/Maintenance.native.tsx
 - [x] **Step 2: Verify no broken imports**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -30
 ```
 
@@ -67,7 +67,7 @@ git commit -m "chore: delete dead native onboarding and maintenance components"
 - [x] **Step 1: Delete old files**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 rm src/components/onboarding/Onboarding.tsx
 rm src/components/onboarding/Login.tsx
 rm src/hooks/business/user/useOnboardingFlow.ts
@@ -117,7 +117,7 @@ export * from './useKeyBackup';
 - [x] **Step 3: Verify no broken imports**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -30
 ```
 
@@ -210,7 +210,7 @@ To:
 - [x] **Step 3: Verify the app builds**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -30
 ```
 
@@ -258,7 +258,7 @@ Keep everything after (icon button styles, sizes, etc. starting at line 214).
 - [x] **Step 2: Verify build**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -30
 ```
 
@@ -349,7 +349,7 @@ Remove the `disabled-onboarding` accessibility test (lines 205-215):
 - [x] **Step 3: Run tests to verify**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx vitest run src/dev/tests/components/Button.test.tsx 2>&1
 ```
 
@@ -366,12 +366,12 @@ git commit -m "chore: remove white button variants from playground and tests"
 
 ### Task 6: Remove white button types and logic from quorum-shared
 
-**Repo:** `d:/GitHub/Quilibrium/quorum-shared`
+**Repo:** `quorum-shared`
 
 **Branch setup:** The previous branch (`fix/input-error-message-layout-shift`) may have been deleted. Create a fresh branch from `master`:
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git checkout master
 git pull
 git checkout -b chore/remove-white-button-variants
@@ -385,7 +385,7 @@ git checkout -b chore/remove-white-button-variants
 
 - [x] **Step 1: Remove white variant types from BaseButtonProps**
 
-In `d:/GitHub/Quilibrium/quorum-shared/src/primitives/Button/types.ts`, update the `type` union. Change:
+In `quorum-shared/src/primitives/Button/types.ts`, update the `type` union. Change:
 
 ```typescript
   type?:
@@ -423,7 +423,7 @@ Note: `danger-outline` was missing from the type union but exists in the SCSS --
 
 - [x] **Step 2: Remove disabled-onboarding logic from Button.web.tsx**
 
-In `d:/GitHub/Quilibrium/quorum-shared/src/primitives/Button/Button.web.tsx`, simplify the component. Change lines 7-14:
+In `quorum-shared/src/primitives/Button/Button.web.tsx`, simplify the component. Change lines 7-14:
 
 From:
 ```typescript
@@ -480,7 +480,7 @@ To:
 - [x] **Step 3: Build quorum-shared to verify**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 yarn build 2>&1 | tail -10
 ```
 
@@ -489,7 +489,7 @@ Expected: Build succeeds.
 - [x] **Step 4: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git add src/primitives/Button/types.ts src/primitives/Button/Button.web.tsx
 git commit -m "chore: remove white button variants and disabled-onboarding logic"
 ```
@@ -509,7 +509,7 @@ If using a published version, the user will handle the version bump and PR merge
 - [x] **Step 2: Final type check across quorum-desktop**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -30
 ```
 
@@ -518,7 +518,7 @@ Expected: No type errors. All references to white button variants have been remo
 - [x] **Step 3: Run full test suite**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx vitest run 2>&1 | tail -20
 ```
 

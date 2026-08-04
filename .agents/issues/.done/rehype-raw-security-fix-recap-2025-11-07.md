@@ -308,8 +308,7 @@ If `ENABLE_MARKDOWN` is set to `false` or `shouldUseMarkdown()` logic is reverte
 
 - **Issue Identified**: Security review flagged rehype-raw as critical vulnerability
 - **Lead Developer Feedback**: Confirmed weird HTML payloads possible
-- **Implementation**: Claude (AI assistant)
-- **Testing & Validation**: User (kyn)
+- **Testing & Validation**: Verified against the reproduction payloads before merge
 
 ---
 

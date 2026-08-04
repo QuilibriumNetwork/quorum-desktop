@@ -8,7 +8,7 @@ created: 2026-04-20
 
 # Invite with Role Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Use `python "$HOME/.config/.claude/skills/docs-manager/task-sync.py" .agents/issues/.open/2026-04-20-invite-with-role-implementation.md check "step text"` to keep this file in sync with progress.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking. Use `python <your task-sync tool> .agents/issues/.open/2026-04-20-invite-with-role-implementation.md check "step text"` to keep this file in sync with progress.
 
 **Goal:** Allow space owners to pre-assign a role to a user before they join, by attaching a role when sending a personal invite. The role applies automatically on join.
 
@@ -49,13 +49,13 @@ created: 2026-04-20
 ### Task 1: Add `PendingRoleInvite` type to quorum-shared
 
 **Files:**
-- Modify: `D:\GitHub\Quilibrium\quorum-shared\src\types\space.ts` (lines 60-87)
-- Modify: `D:\GitHub\Quilibrium\quorum-shared\package.json` (version field)
+- Modify: `quorum-shared/src/types/space.ts` (lines 60-87)
+- Modify: `quorum-shared/package.json` (version field)
 
 - [ ] **Step 1: Create a branch in quorum-shared**
 
 ```bash
-cd /d/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git checkout -b feat/pending-role-invites
 ```
 
@@ -109,10 +109,10 @@ export type Space = {
 
 - [ ] **Step 3: Ensure `PendingRoleInvite` is exported from the barrel**
 
-Check `D:\GitHub\Quilibrium\quorum-shared\src\types\index.ts` re-exports everything from `space.ts`. If it uses explicit named re-exports, add `PendingRoleInvite`. If it uses `export * from './space'`, no change needed.
+Check `quorum-shared/src/types/index.ts` re-exports everything from `space.ts`. If it uses explicit named re-exports, add `PendingRoleInvite`. If it uses `export * from './space'`, no change needed.
 
 ```bash
-grep -E "pendingRoleInvites|PendingRoleInvite|export \* from './space'" /d/GitHub/Quilibrium/quorum-shared/src/types/index.ts
+grep -E "pendingRoleInvites|PendingRoleInvite|export \* from './space'" quorum-shared/src/types/index.ts
 ```
 
 Expected: either `export * from './space';` (covers it) or explicit list that needs `PendingRoleInvite` added.
@@ -124,7 +124,7 @@ Edit `package.json`. Increment the minor version (e.g., `2.1.0` → `2.2.0`).
 - [ ] **Step 5: Verify types compile**
 
 ```bash
-cd /d/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 yarn build
 ```
 
@@ -167,8 +167,8 @@ EOF
 ### Task 2: Upgrade `@quilibrium/quorum-shared` in quorum-desktop
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-desktop\package.json`
-- Modify: `d:\GitHub\Quilibrium\quorum-desktop\yarn.lock` (generated)
+- Modify: `quorum-desktop/package.json`
+- Modify: `quorum-desktop/yarn.lock` (generated)
 
 - [ ] **Step 1: Bump the dependency version**
 
@@ -207,7 +207,7 @@ These two changes are independent of UI work, have limited blast radius, and har
 
 ### Task 3: Clear pending entries on space rekey
 
-**File:** `d:\GitHub\Quilibrium\quorum-desktop\src\services\InvitationService.ts` (line 433 area)
+**File:** `quorum-desktop/src/services/InvitationService.ts` (line 433 area)
 
 - [ ] **Step 1: Add the mutation before manifest serialization**
 
@@ -258,7 +258,7 @@ git commit -m "feat(invites): clear pendingRoleInvites on generateNewInviteLink 
 
 ### Task 4: Clear pending entries on kick
 
-**File:** `d:\GitHub\Quilibrium\quorum-desktop\src\services\SpaceService.ts` (line 785 area)
+**File:** `quorum-desktop/src/services/SpaceService.ts` (line 785 area)
 
 - [ ] **Step 1: Extend the existing role-cleanup block**
 
@@ -311,7 +311,7 @@ git commit -m "feat(roles): drop pendingRoleInvites entry when kicking user"
 ### Task 5: Create the hook that manages pending-role-invite writes
 
 **Files:**
-- Create: `d:\GitHub\Quilibrium\quorum-desktop\src\hooks\business\spaces\usePendingRoleInvites.ts`
+- Create: `quorum-desktop/src/hooks/business/spaces/usePendingRoleInvites.ts`
 
 This hook owns the two write operations: adding an entry (used by both the invite-send path and the management panel) and cancelling one. Both trigger a manifest re-post via `actionQueueService`.
 
@@ -416,7 +416,7 @@ git commit -m "feat(roles): add usePendingRoleInvites hook"
 
 ### Task 6: Add role-picker state and selection logic to `useInviteManagement`
 
-**File:** `d:\GitHub\Quilibrium\quorum-desktop\src\hooks\business\spaces\useInviteManagement.ts`
+**File:** `quorum-desktop/src/hooks/business/spaces/useInviteManagement.ts`
 
 - [ ] **Step 1: Type `space` as `Space`, add selectedRoleId state, integrate pending-invite write**
 
@@ -815,7 +815,7 @@ git commit -m "feat(invites): add role picker to send-invite UI"
 
 ### Task 8: Apply role on join event in MessageService
 
-**File:** `d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts` (around line 2876-2963)
+**File:** `quorum-desktop/src/services/MessageService.ts` (around line 2876-2963)
 
 This change runs inside the `join` handler and only executes on the owner's client. Ownership is determined by the presence of the owner private key in local storage (`messageDB.getSpaceKey(spaceId, 'owner')`), matching the app's existing ownership check pattern.
 

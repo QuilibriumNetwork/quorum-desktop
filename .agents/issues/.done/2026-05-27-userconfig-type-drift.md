@@ -120,7 +120,7 @@ No desktop runtime code changes needed for Phase 1.
 - **Mobile crashes:** none expected — mobile already ignores fields it doesn't know about, this just makes them visible in the type.
 - **Hidden duplicates:** possible. If mobile already wrote a field under a slightly different name (e.g. `delivery_receipts` snake_case vs `deliveryReceipts` camelCase), that would be a real conflict surfaced by this audit. Worth grepping the mobile repo before finalising the field names.
 
-## Open questions (for Kyn)
+## Open questions
 
 1. **Naming convention:** desktop uses camelCase (`deliveryReceipts`). Is mobile consistent? If mobile uses snake_case for any of these, we have a real interop bug, not just a type gap.
 2. **Should `generateYouTubePreviews` be device-local instead of synced?** Argument for syncing: privacy preference should be uniform across the user's devices. Argument for device-local: someone might have a different threat model on their phone (e.g. mobile data carrier vs home wifi). Default recommendation: sync it — uniform default privacy is safer.

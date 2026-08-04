@@ -17,15 +17,15 @@ related_tasks: ["2026-06-18-fix-everyone-mention-scope.md"]
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 **Files** (anticipated — confirm before implementing):
-- `d:\GitHub\Quilibrium\quorum-shared\src\utils\mentions.ts` — `extractMentionsFromText`, `isMentionedWithSettings`
-- `d:\GitHub\Quilibrium\quorum-shared\src\types\` — `Mentions` type, `Permission` type
-- `d:\GitHub\Quilibrium\quorum-desktop\src\utils\mentionPillDom.ts:16` — `MentionPillType`
-- `d:\GitHub\Quilibrium\quorum-desktop\src\hooks\business\mentions\useMentionInput.ts:41` — autocomplete union type
-- `d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts:4509` — mention type detection (receive)
-- `d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts:4667` — send side permission check
-- `d:\GitHub\Quilibrium\quorum-desktop\src\services\NotificationService.ts:26` — `mentionType` union
-- `d:\GitHub\Quilibrium\quorum-desktop\src\components\message\MessageMarkdownRenderer.tsx:308` — pill rendering
-- `d:\GitHub\Quilibrium\quorum-desktop\src\components\modals\SpaceSettingsModal\Account.tsx` — notification settings UI
+- `quorum-shared/src/utils/mentions.ts` — `extractMentionsFromText`, `isMentionedWithSettings`
+- `quorum-shared/src/types/` — `Mentions` type, `Permission` type
+- `quorum-desktop/src/utils/mentionPillDom.ts:16` — `MentionPillType`
+- `quorum-desktop/src/hooks/business/mentions/useMentionInput.ts:41` — autocomplete union type
+- `quorum-desktop/src/services/MessageService.ts:4509` — mention type detection (receive)
+- `quorum-desktop/src/services/MessageService.ts:4667` — send side permission check
+- `quorum-desktop/src/services/NotificationService.ts:26` — `mentionType` union
+- `quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx:308` — pill rendering
+- `quorum-desktop/src/components/modals/SpaceSettingsModal/Account.tsx` — notification settings UI
 
 ## Deferred reason
 

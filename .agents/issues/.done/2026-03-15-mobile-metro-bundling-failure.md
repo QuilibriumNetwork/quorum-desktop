@@ -26,7 +26,7 @@ curl -s "http://localhost:8081/index.bundle?platform=android&dev=true&minify=fal
 
 **Error message** (hidden from terminal):
 ```
-Unable to resolve module ./index from D:\GitHub\Quilibrium\quorum-desktop/.:
+Unable to resolve module ./index from quorum-desktop/.:
 None of these files exist:
   * ..\index(.android.ts|.native.ts|.ts|...)
 ```

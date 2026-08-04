@@ -495,7 +495,7 @@ yarn lingui:compile
 - [ ] Test offline deletion propagation
 
 ### Code Quality
-- [ ] Run `cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit"` to verify TypeScript
+- [ ] Run `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit"` to verify TypeScript
 - [ ] Ensure all three deletion locations use identical placeholder creation logic
 - [ ] Add comments explaining placeholder approach
 

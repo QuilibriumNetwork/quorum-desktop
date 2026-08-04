@@ -203,7 +203,7 @@ React.useEffect(() => {
 ### Type Checking (2 minutes)
 
 ```bash
-cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
+cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
 ```
 
 Should return NO errors.
@@ -211,7 +211,7 @@ Should return NO errors.
 ### Build Test (3 minutes)
 
 ```bash
-cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && yarn build"
+cmd.exe /c "cd /d quorum-desktop && yarn build"
 ```
 
 Should succeed without errors.

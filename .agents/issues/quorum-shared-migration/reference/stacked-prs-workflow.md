@@ -36,12 +36,12 @@ quorum-desktop:
 ### Primitives migration (next up)
 ```bash
 # quorum-shared
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git checkout feat/shared-types-migration
 git checkout -b feat/shared-primitives-migration
 
 # quorum-desktop
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git checkout feat/shared-types-migration
 git checkout -b feat/shared-primitives-migration
 ```

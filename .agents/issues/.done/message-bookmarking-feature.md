@@ -887,7 +887,7 @@ useQuery({
    - Test: Left space with bookmarks → bookmarks remain but navigation shows error
 
 ✅ **TypeScript compiles**
-   - Run: `cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit"`
+   - Run: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit"`
 
 ---
 

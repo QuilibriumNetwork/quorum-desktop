@@ -125,7 +125,7 @@ yarn install
 - [ ] **Step 1: Rebuild tarball from quorum-shared**
 
 ```powershell
-cd D:\GitHub\Quilibrium\quorum-shared
+cd ../quorum-shared
 npm pack
 ```
 
@@ -139,7 +139,7 @@ In `quorum-desktop/package.json`, change to:
 - [ ] **Step 3: Clean install**
 
 ```powershell
-cd D:\GitHub\Quilibrium\quorum-desktop
+cd <repo root>
 yarn remove -W @quilibrium/quorum-shared
 yarn add -W "file:../quorum-shared/quilibrium-quorum-shared-2.1.0-4.tgz"
 Remove-Item -Recurse -Force node_modules\.vite -ErrorAction SilentlyContinue

@@ -161,9 +161,9 @@ Folder layout mirrors `src/sync/` and the planned `src/typing/`.
 
 ## Verification
 
-- `cd d:/GitHub/Quilibrium/quorum-shared && yarn test:run` — new receipts test file passes alongside existing sync + typing tests
-- `cd d:/GitHub/Quilibrium/quorum-desktop && yarn test:run` — all remaining desktop tests pass (the 273-line receipts test now lives in shared and runs there)
-- `cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --skipLibCheck` — clean
+- `cd ../quorum-shared && yarn test:run` — new receipts test file passes alongside existing sync + typing tests
+- `cd <repo root> && yarn test:run` — all remaining desktop tests pass (the 273-line receipts test now lives in shared and runs there)
+- `cd <repo root> && npx tsc --noEmit --skipLibCheck` — clean
 - **Manual two-account QA** — DM delivery receipts still display (single check / double check), read receipts still display when reading new messages, no regression in piggybacked ack handling, no regression in standalone flush timing
 
 ## Estimated effort

@@ -193,7 +193,7 @@ Earlier sessions assumed mobile would adopt desktop's `NotificationSettings` sha
 
 For breaking changes, grep mobile first:
 ```bash
-cd D:\GitHub\Quilibrium\quorum-mobile
+cd ../quorum-mobile
 git grep -E "\b(OldSymbolA|OldSymbolB)\b" origin/master -- "*.ts" "*.tsx"
 ```
 
@@ -224,7 +224,7 @@ The mobile app is NOT run or tested as part of normal migration sessions. Expo d
 
 When a migration ships on shared + desktop and has a mobile-side change we can't open as a PR immediately (needs runtime testing, batching, or out of session time), drop a mobile task file inside `quorum-mobile` so a future session can pick it up cold.
 
-**Where**: `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\`. Mobile's `.agents/` is gitignored — these are local-only artifacts, no commits, no lead visibility through git.
+**Where**: `quorum-mobile/.agents/tasks/quorum-shared-migration/`. Mobile's `.agents/` is gitignored — these are local-only artifacts, no commits, no lead visibility through git.
 
 **When to drop** (vs. skip): if mobile imports affected symbols AND we can't open the PR this session, drop a task. If mobile imports zero affected symbols (Pattern B), skip — there's nothing to do.
 
@@ -241,7 +241,7 @@ When a migration ships on shared + desktop and has a mobile-side change we can't
 **After dropping** — record the task in its **mobile-side home**, where the next session will look (the status lives where the work happens):
 1. The mobile task file you just wrote IS the record — set its frontmatter `status` and keep it current there.
 2. If it's a shared-migration task, add/triage it in mobile's `quorum-shared-migration/STATUS.md`.
-3. Run `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py` to regenerate mobile's INDEX.
+3. Run `cd ../quorum-mobile && python .agents/update-index.py` to regenerate mobile's INDEX.
 4. **Do NOT add a status row to [mobile-tasks-pending.md](mobile-tasks-pending.md)** — as of 2026-06-14 that file is a **signpost, not a list** (a hand-maintained desktop-side list of mobile tasks rots, because status changes in mobile sessions). It already points future sessions at the mobile-side homes above; that's all the visibility needed.
 
 ## i18n in shared (2026-05-28)

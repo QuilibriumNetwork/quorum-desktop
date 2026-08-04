@@ -37,8 +37,8 @@ updated: '2026-01-09'
 **Fix**: Integrate existing hook (1-2 hours)
 
 **Location**:
-- Hook: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/search/useSearchResultsVirtualization.ts`
-- Component: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/search/SearchResults.tsx`
+- Hook: `/mntquorum-desktop/src/hooks/business/search/useSearchResultsVirtualization.ts`
+- Component: `/mntquorum-desktop/src/components/search/SearchResults.tsx`
 
 ---
 
@@ -252,18 +252,18 @@ Measure:
 ## Files Requiring Changes
 
 ### Phase 1.1 (Integrate Virtuoso)
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/search/SearchResults.tsx`
+- `/mntquorum-desktop/src/components/search/SearchResults.tsx`
 
 ### Phase 1.2 (Lazy Loading)
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/db/messages.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/services/SearchService.ts`
+- `/mntquorum-desktop/src/db/messages.ts`
+- `/mntquorum-desktop/src/services/SearchService.ts`
 
 ### Phase 1.3 (IndexedDB Persistence)
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/db/messages.ts`
-- Create: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/db/messages.native.ts` (mobile)
+- `/mntquorum-desktop/src/db/messages.ts`
+- Create: `/mntquorum-desktop/src/db/messages.native.ts` (mobile)
 
 ### Phase 1.4 (Memory Management)
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/db/messages.ts`
+- `/mntquorum-desktop/src/db/messages.ts`
 
 ---
 

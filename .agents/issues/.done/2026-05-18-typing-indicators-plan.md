@@ -1471,7 +1471,7 @@ export function TypingIndicator({ scope }: TypingIndicatorProps) {
 The component above uses `useDisplayNameResolver`. Check whether it already exists:
 
 ```bash
-ls /d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/user/ | grep -i displayname
+ls ../quorum-desktop/src/hooks/business/user/ | grep -i displayname
 ```
 
 If it doesn't exist, create `src/hooks/business/user/useDisplayNameResolver.ts`:

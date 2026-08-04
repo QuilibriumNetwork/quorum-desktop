@@ -127,7 +127,7 @@ Mobile adoption is **statically verifiable** — TypeScript and grep confirm com
 3. Bump `@quilibrium/quorum-shared` version in mobile's `package.json` to whatever this PR publishes.
 4. Verification: `yarn tsc --noEmit && yarn lint && grep -rn "permissions.includes(.*permission)" hooks/` returns zero results in mobile.
 
-Mobile task drop required. Path: `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\2026-05-29-mobile-adopt-shared-role-mutation-helpers.md`.
+Mobile task drop required. Path: `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-shared-role-mutation-helpers.md`.
 
 ## Cross-repo PR sequencing
 
@@ -149,13 +149,13 @@ Mobile re-implements three pure read-side helpers as React hooks instead of usin
 
 **Nuance** (why it's not a trivial rewire): mobile's hooks take `spaceId` and use `useRoles(spaceId)` reactively, whereas shared's pure functions take a pre-fetched `Space` object. The rewire shape is: mobile's hooks become thin wrappers that call `useRoles(spaceId)` themselves to fetch the data, build a partial `Space`-shaped object, then call into shared's pure functions. Plus a correctness gain: shared's `isSpaceOwner` parameter is missing from mobile's version — current mobile incorrectly returns `false` for space owners' permissions.
 
-This is a Category C1 (mobile eliminating inline reimplementations of shared utilities) task, ~60 LOC payoff, separate from this Phase 2 extraction. Mobile task dropped at: `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\2026-05-29-mobile-adopt-shared-permission-helpers.md`. Statically verifiable but the composition refactor is bigger than a 1-line import swap.
+This is a Category C1 (mobile eliminating inline reimplementations of shared utilities) task, ~60 LOC payoff, separate from this Phase 2 extraction. Mobile task dropped at: `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-shared-permission-helpers.md`. Statically verifiable but the composition refactor is bigger than a 1-line import swap.
 
 ## Done criteria
 
 - [ ] quorum-shared PR opened and merged with `roleUtils` exports + tests
 - [ ] quorum-desktop PR opened and merged consuming the new utils
-- [ ] Mobile task file dropped at `D:\GitHub\Quilibrium\quorum-mobile\.agents\tasks\quorum-shared-migration\2026-05-29-mobile-adopt-shared-role-mutation-helpers.md`
+- [ ] Mobile task file dropped at `quorum-mobile/.agents/tasks/quorum-shared-migration/2026-05-29-mobile-adopt-shared-role-mutation-helpers.md`
 - [ ] Row added to `mobile-tasks-pending.md`
 - [ ] Entry added to `shipped-log.md`
 - [ ] This task file moved to `.done/`

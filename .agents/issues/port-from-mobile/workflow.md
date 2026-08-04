@@ -25,13 +25,13 @@ quorum-desktop:   [main delivery target — feature-scoped PRs, self-merged afte
 Always pull all three repos before starting work.
 
 ```bash
-git -C "D:/GitHub/Quilibrium/quorum-desktop" pull --ff-only
-git -C "D:/GitHub/Quilibrium/quorum-mobile" pull --ff-only
-git -C "D:/GitHub/Quilibrium/quorum-shared" pull --ff-only
+git -C "../quorum-desktop" pull --ff-only
+git -C "../quorum-mobile" pull --ff-only
+git -C "../quorum-shared" pull --ff-only
 
 # Verify latest commits — confirms mobile mirror isn't stale
-git -C "D:/GitHub/Quilibrium/quorum-mobile" log -1 --format="%h %ad %s" --date=short
-git -C "D:/GitHub/Quilibrium/quorum-shared" log -1 --format="%h %ad %s" --date=short
+git -C "../quorum-mobile" log -1 --format="%h %ad %s" --date=short
+git -C "../quorum-shared" log -1 --format="%h %ad %s" --date=short
 ```
 
 **Mobile working tree IS usable as of 2026-06-01.** The roadmap's prior warning about a stale Jan 14 working tree was for the shared-migration effort's snapshot in time — verify each session with `git pull` + `git log -1` but normally you can `cat`/`Read` mobile files directly. If `git log` shows a date wildly older than expected, fall back to `git show origin/master:<path>`.
@@ -143,7 +143,7 @@ Specific to this effort: when a session's doc commits include shipped-log entrie
 
 ### Session branch naming
 
-The repo has a **primary working tree** at the repo root (`D:/GitHub/Quilibrium/quorum-desktop`) plus one or more **named worktrees** at `.worktrees/<name>/` (currently `.worktrees/secondary/`; could grow to `tertiary/` etc). All worktrees share `.git`, so branch names must be unique across them — naming has to encode where the session is happening.
+The repo has a **primary working tree** at the repo root (`quorum-desktop`) plus one or more **named worktrees** at `.worktrees/<name>/` (currently `.worktrees/secondary/`; could grow to `tertiary/` etc). All worktrees share `.git`, so branch names must be unique across them — naming has to encode where the session is happening.
 
 Naming rule:
 

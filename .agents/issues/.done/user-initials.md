@@ -66,7 +66,7 @@ Following the established component guidelines:
 
 ### Step 1: Create Shared Utilities
 
-Create `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/avatar.ts`:
+Create `/mntquorum-desktop/src/utils/avatar.ts`:
 
 ```typescript
 /**

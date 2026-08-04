@@ -264,7 +264,7 @@ While the `notificationSettings` decision is blocked, the following structural f
 
 ## Phase 0 confirmation (2026-05-28) — mobile codebase access unblocked
 
-The latest `quorum-mobile` is now cloned locally at `D:\GitHub\Quilibrium\quorum-mobile`. Re-ran the Phase 0 grep against the real current source. Results below.
+The latest `quorum-mobile` is now cloned locally at `quorum-mobile`. Re-ran the Phase 0 grep against the real current source. Results below.
 
 ### Shared package versions (current)
 - Desktop has `@quilibrium/quorum-shared@2.1.0-16` (from PR #17, with `UserNote` lift)

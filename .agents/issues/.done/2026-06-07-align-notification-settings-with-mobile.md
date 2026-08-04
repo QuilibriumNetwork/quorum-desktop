@@ -30,7 +30,7 @@ The prior architecture report (`2026-05-28-notification-architecture-divergence.
 
 | Surface | Label | What it controls |
 |---|---|---|
-| Profile → Settings | "Push Notifications" / *Receive notifications on your device* | Gates **both** OS push notifications **and** the in-app notification log via `shouldNotifyForContext()` in [`notificationPrefs.ts:99-111`](D:/GitHub/Quilibrium/quorum-mobile/services/notifications/notificationPrefs.ts) |
+| Profile → Settings | "Push Notifications" / *Receive notifications on your device* | Gates **both** OS push notifications **and** the in-app notification log via `shouldNotifyForContext()` in `notificationPrefs.ts:99-111` (`quorum-mobile/services/notifications/notificationPrefs.ts`) |
 | Space Settings → Notifications | "Notify me when messages are posted in this space." | Same dual-surface gate, scoped to space |
 | Space Settings → channel rows | `# channelName` | Same dual-surface gate, scoped to channel |
 
@@ -57,7 +57,7 @@ The desktop in-app notification panel (`NotificationPanel.tsx`) is **per-space**
 ### Bugs surfaced by this analysis
 
 **Bug #1 — Desktop channel mute doesn't suppress OS notifications.**
-[`MessageService.ts:4298`](d:/GitHub/Quilibrium/quorum-desktop/src/services/MessageService.ts#L4298) checks `settings?.isMuted` (space mute) but not `config?.mutedChannels?.[spaceId]?.includes(channelId)`. Channel mute removes the channel from badges and the in-app panel, but the browser `Notification` will still fire. The `channelId` is available at line 4280; the fix is a one-line addition to the suppression check.
+[`MessageService.ts:4298`](../../../src/services/MessageService.ts#L4298) checks `settings?.isMuted` (space mute) but not `config?.mutedChannels?.[spaceId]?.includes(channelId)`. Channel mute removes the channel from badges and the in-app panel, but the browser `Notification` will still fire. The `channelId` is available at line 4280; the fix is a one-line addition to the suppression check.
 
 **Bug #2 — Desktop `enabledNotificationTypes` sync regression.**
 The Save button in the Space Settings → Account tab calls `messageDB.saveUserConfig()` directly instead of going through the action queue. This means the mention-type filter doesn't sync across devices, while every other notification setting does. Inconsistent.

@@ -41,7 +41,7 @@ In `src/styles/_colors.scss`, find `html.dark {` (around line 144). The dark the
 - [ ] **Step 3: Verify the file compiles**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
 ```
 
@@ -50,7 +50,7 @@ Expected: no errors related to _colors.scss (SCSS is not type-checked by tsc —
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/styles/_colors.scss
 git commit -m "style: add --color-bg-panel-item tokens for desktop panel cards"
 ```
@@ -146,7 +146,7 @@ The full `.dropdown-result-item` rule should now look like:
 - [ ] **Step 3: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/styles/_dropdown-result-item.scss
 git commit -m "style: add .panel-item-box class for desktop panel card items"
 ```
@@ -192,7 +192,7 @@ Add `border: $border solid var(--color-border-default);` after `box-shadow`:
 - [ ] **Step 2: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/components/ui/DropdownPanel.scss
 git commit -m "style: add border to DropdownPanel container"
 ```
@@ -300,7 +300,7 @@ The `.threads-results-list` currently has `padding: 0 0 $s-3 0 !important`. The 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/components/thread/ThreadsListPanel.tsx src/components/thread/ThreadsListPanel.scss
 git commit -m "style: apply panel card items and restyle section headers in ThreadsListPanel"
 ```
@@ -391,7 +391,7 @@ Replace with:
 - [ ] **Step 3: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/components/bookmarks/BookmarksPanel.tsx src/components/bookmarks/BookmarksPanel.scss
 git commit -m "style: apply panel card items in BookmarksPanel"
 ```
@@ -485,7 +485,7 @@ Replace with:
 - [ ] **Step 3: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/components/notifications/NotificationPanel.tsx src/components/notifications/NotificationPanel.scss
 git commit -m "style: apply panel card items in NotificationPanel"
 ```
@@ -577,7 +577,7 @@ Replace with:
 - [ ] **Step 3: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/components/message/PinnedMessagesPanel.tsx src/components/message/PinnedMessagesPanel.scss
 git commit -m "style: apply panel card items in PinnedMessagesPanel"
 ```
@@ -638,7 +638,7 @@ If `.search-results-list` is already defined with a padding override, update tha
 - [ ] **Step 4: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/components/search/SearchResults.tsx src/components/search/SearchResults.scss
 git commit -m "style: apply panel card items in SearchResults"
 ```
@@ -650,7 +650,7 @@ git commit -m "style: apply panel card items in SearchResults"
 - [ ] **Step 1: Run type-check**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -40
 ```
 
@@ -659,7 +659,7 @@ Expected: zero errors.
 - [ ] **Step 2: Run lint**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 yarn lint 2>&1 | tail -20
 ```
 

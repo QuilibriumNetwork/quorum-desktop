@@ -63,7 +63,7 @@ onClick={(e: React.MouseEvent) => {
 - [ ] **Step 3: Verify TypeScript**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | grep -i "MessageActions"
 ```
 
@@ -505,7 +505,7 @@ git commit -m "chore(emoji-picker): remove emojiPickerOpenDirection state from M
 - [ ] **Step 1: Run lint**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 yarn lint 2>&1 | grep -E "error|warning" | grep -i "emoji\|Message\|picker" | head -20
 ```
 

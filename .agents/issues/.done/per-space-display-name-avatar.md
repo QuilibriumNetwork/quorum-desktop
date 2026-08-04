@@ -180,7 +180,7 @@ The backend already supports per-space profiles through `space_members` table an
   - Verify: Other window sees update within 5 seconds
 
 ✓ **TypeScript compiles**
-  - Run: `cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit"`
+  - Run: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit"`
   - Expect: Zero errors
 
 ✓ **Mobile compatible**

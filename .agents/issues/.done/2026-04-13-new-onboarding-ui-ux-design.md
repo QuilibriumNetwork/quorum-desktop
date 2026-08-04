@@ -672,7 +672,7 @@ After the new onboarding is complete and tested, the following can be removed:
 - [New onboarding flow spec](./../reports/onboarding-flow/new-onboarding-flow-inline-passkey-2025-12-08.md)
 - [Passkey flow analysis](./../reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
 - [Passkey flow simplified](./../reports/onboarding-flow/passkey-flow-simplified-2025-11-23.md)
-- [SDK hook extraction plan](D:/GitHub/Quilibrium/quilibrium-js-sdk-channels/.agents/tasks/2026-04-13-passkey-hook-extraction-plan.md)
+- SDK hook extraction plan (`quilibrium-js-sdk-channels/.agents/tasks/2026-04-13-passkey-hook-extraction-plan.md`)
 
 ---
 

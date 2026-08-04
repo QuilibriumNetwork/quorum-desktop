@@ -210,7 +210,7 @@ function calculatePosition(clickX: number, clickY: number) {
    - Test: Right-click on message composer → native browser menu appears
 
 ✅ **TypeScript compiles**
-   - Run: `cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
+   - Run: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
 
 ## Definition of Done
 

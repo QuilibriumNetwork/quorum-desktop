@@ -27,7 +27,7 @@ Mobile's `.agents/` is gitignored (local-only), so read these directly on disk �
 
 1. Write the task file in the **mobile** repo (`quorum-mobile/.agents/tasks/…`, or `…/quorum-shared-migration/` for a shared-adoption task). That file carries the task's status — set its frontmatter `status` and keep it current there.
 2. If it's a shared-migration task, add/triage it in mobile's `STATUS.md`.
-3. Run `cd D:\GitHub\Quilibrium\quorum-mobile && python .agents/update-index.py` to refresh mobile's INDEX.
+3. Run `cd ../quorum-mobile && python .agents/update-index.py` to refresh mobile's INDEX.
 4. **Do NOT add a status row back here.** This file is a signpost. Recording the task in its mobile-side home (step 1-2) is what makes it visible to the next session — that's where they'll look, because this file sends them there.
 
 > **If you ever want the at-a-glance cross-repo list back:** don't hand-maintain it (that's what rotted). Generate it — a script that scans mobile's task-file frontmatter + `STATUS.md` and rewrites a table from ground truth, the same way `INDEX.md` / `RECAP.md` are generated. Not built yet (signpost was enough); build it only if the glance is actually missed.

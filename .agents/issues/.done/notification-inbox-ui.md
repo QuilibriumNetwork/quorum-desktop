@@ -41,7 +41,7 @@ Implement a comprehensive notification dropdown/inbox UI that displays all unrea
 ### Existing Infrastructure to Leverage
 
 #### 1. Message Display & Truncation
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/search/SearchResults.tsx`
+**File**: `/mntquorum-desktop/src/components/search/SearchResults.tsx`
 
 The search results component provides the exact pattern we need:
 - Uses `SearchResultItem` for individual items
@@ -69,8 +69,8 @@ The search results component provides the exact pattern we need:
 
 #### 2. Message Highlighting & Navigation
 **Files**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/messages/useMessageHighlight.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/PinnedMessagesPanel.tsx`
+- `/mntquorum-desktop/src/hooks/business/messages/useMessageHighlight.ts`
+- `/mntquorum-desktop/src/components/message/PinnedMessagesPanel.tsx`
 
 **Existing pattern from PinnedMessagesPanel** (lines 189-215):
 ```tsx
@@ -103,8 +103,8 @@ const handleJumpToMessage = useCallback(
 
 #### 3. Mention Count Tracking
 **Files**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/mentions/useChannelMentionCounts.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/mentions/useSpaceMentionCounts.ts`
+- `/mntquorum-desktop/src/hooks/business/mentions/useChannelMentionCounts.ts`
+- `/mntquorum-desktop/src/hooks/business/mentions/useSpaceMentionCounts.ts`
 
 **Existing infrastructure**:
 - `useChannelMentionCounts`: Returns `{ [channelId]: mentionCount }`
@@ -114,10 +114,10 @@ const handleJumpToMessage = useCallback(
 
 #### 4. UI Primitives Available
 **Files**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/ui/DropdownPanel.tsx`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/primitives/Icon/`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/primitives/Select/`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/primitives/Tooltip/`
+- `/mntquorum-desktop/src/components/ui/DropdownPanel.tsx`
+- `/mntquorum-desktop/src/components/primitives/Icon/`
+- `/mntquorum-desktop/src/components/primitives/Select/`
+- `/mntquorum-desktop/src/components/primitives/Tooltip/`
 
 **Available icons** (from iconMapping.ts):
 - `bell`: Notification bell icon
@@ -131,7 +131,7 @@ const handleJumpToMessage = useCallback(
 
 ### Phase 1: Core Hook - useAllMentions
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/mentions/useAllMentions.ts`
+**File**: `/mntquorum-desktop/src/hooks/business/mentions/useAllMentions.ts`
 
 **Purpose**: Fetch all unread mentions across all channels in a space, supporting filter by mention type.
 
@@ -279,7 +279,7 @@ function getMentionType(message: Message, userAddress: string): 'you' | 'everyon
 - Uses existing `getDefaultMentionSettings` from `notificationSettingsUtils.ts`
 - Query invalidation: Invalidate `['mention-notifications', spaceId]` when messages change
 
-**Export**: Add to `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/mentions/index.ts`:
+**Export**: Add to `/mntquorum-desktop/src/hooks/business/mentions/index.ts`:
 ```tsx
 export { useAllMentions } from './useAllMentions';
 ```
@@ -288,7 +288,7 @@ export { useAllMentions } from './useAllMentions';
 
 ### Phase 2: NotificationItem Component
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/notifications/NotificationItem.tsx`
+**File**: `/mntquorum-desktop/src/components/notifications/NotificationItem.tsx`
 
 **Purpose**: Display a single notification item (similar to SearchResultItem)
 
@@ -368,7 +368,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 export default NotificationItem;
 ```
 
-**Styling**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/notifications/NotificationItem.scss`
+**Styling**: `/mntquorum-desktop/src/components/notifications/NotificationItem.scss`
 
 ```scss
 // Copy from SearchResultItem.scss and adjust class names
@@ -434,7 +434,7 @@ export default NotificationItem;
 
 ### Phase 3: NotificationDropdown Component
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/notifications/NotificationDropdown.tsx`
+**File**: `/mntquorum-desktop/src/components/notifications/NotificationDropdown.tsx`
 
 **Purpose**: Main dropdown panel with filtering and mark-all-read functionality
 
@@ -663,7 +663,7 @@ export const NotificationDropdown: React.FC<NotificationDropdownProps> = ({
 export default NotificationDropdown;
 ```
 
-**Styling**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/notifications/NotificationDropdown.scss`
+**Styling**: `/mntquorum-desktop/src/components/notifications/NotificationDropdown.scss`
 
 ```scss
 .notification-dropdown {
@@ -722,7 +722,7 @@ export default NotificationDropdown;
 
 ### Phase 4: Integration into Channel Header
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/space/Channel.tsx`
+**File**: `/mntquorum-desktop/src/components/space/Channel.tsx`
 
 **Changes Required**:
 
@@ -884,7 +884,7 @@ The existing read time tracking system (lines 428-467) already handles this. Whe
 - Leverage existing React Query invalidation in MessageService
 - When new mention arrives, MessageService already invalidates `['mention-counts']`
 - Add invalidation for `['mention-notifications', spaceId]` in same location
-- File: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/services/MessageService.ts` (around line 586-593)
+- File: `/mntquorum-desktop/src/services/MessageService.ts` (around line 586-593)
 
 ```tsx
 // Add to existing invalidation logic

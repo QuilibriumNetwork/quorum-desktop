@@ -44,7 +44,7 @@ Once they confirm:
 npm org ls quilibrium
 
 # Test publish access (dry run — doesn't actually publish)
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 npm publish --dry-run
 ```
 
@@ -57,7 +57,7 @@ This is the live part of the doc. After a feature PR merges into `quorum-shared`
 > **Versioning convention — do NOT "fix" it.** `quorum-shared` uses `2.1.0-N` (a plain integer prerelease suffix that increments: `-33` → `-34` → `-35`, never resetting to SemVer `2.1.1`). This is a **deliberate lead-dev convention**, not an accident. `npm version prerelease` happens to produce exactly this (`2.1.0-34` → `2.1.0-35`), so it's safe to use. Do not propose migrating shared to conventional `X.Y.Z` releases. (Desktop, separately, uses plain SemVer patch bumps — different repo, different rule.)
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 
 # 0. On main, up to date, with the merged feature PR already in.
 git checkout main && git pull

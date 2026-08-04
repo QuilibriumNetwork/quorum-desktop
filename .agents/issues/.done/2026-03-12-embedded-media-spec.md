@@ -54,7 +54,7 @@ The facade UX (thumbnail shown → click to load iframe) is preserved. The only 
 
 `PostMessage` is **canonically defined in `@quilibrium/quorum-shared`** (`src/types/message.ts`), not in `quorum-desktop`. The `embeddedMedia` field must be added there first.
 
-- **During development:** `yarn link` against the local `d:\GitHub\Quilibrium\quorum-shared` repo
+- **During development:** `yarn link` against the local `quorum-shared` repo
 - **For release:** publish a new quorum-shared version, bump `package.json` in quorum-desktop (currently `"@quilibrium/quorum-shared": "2.1.0-2"`)
 - **Mobile:** inherits the same type automatically; unknown fields are ignored — backwards compatible
 

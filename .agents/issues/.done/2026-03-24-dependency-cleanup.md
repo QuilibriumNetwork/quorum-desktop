@@ -155,7 +155,7 @@ cd mobile && yarn remove expo-document-picker expo-image-picker expo-media-libra
 - [ ] **Step 2: Run verification protocol (from root)**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 npx tsc --noEmit --jsx react-jsx --skipLibCheck && yarn build && yarn test:run && yarn lint
 ```
 

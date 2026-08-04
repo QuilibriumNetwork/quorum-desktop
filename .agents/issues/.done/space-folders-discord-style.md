@@ -39,18 +39,18 @@ Run after each step to catch errors early (faster than `yarn build`):
 
 **Option 1: Lint specific files (recommended)**
 ```bash
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
+cmd.exe /c "cd /d quorum-desktop && yarn lint"
 ```
 
 **Option 2: Type-check specific files only**
 ```bash
 # Replace with actual files you modified
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skipLibCheck src/path/to/file.ts src/path/to/other.tsx"
+cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --skipLibCheck src/path/to/file.ts src/path/to/other.tsx"
 ```
 
 **Example for folder files:**
 ```bash
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skipLibCheck src/components/navbar/FolderButton.tsx src/components/navbar/FolderContainer.tsx src/utils/folderUtils.ts"
+cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --skipLibCheck src/components/navbar/FolderButton.tsx src/components/navbar/FolderContainer.tsx src/utils/folderUtils.ts"
 ```
 
 > ⚠️ Avoid running `npx tsc --noEmit` on the whole project - it will show many unrelated errors.

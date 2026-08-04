@@ -186,7 +186,7 @@ Create Discord-like channel mention functionality where users can type `#channel
    - Test: Channel mentions only clickable if channel still exists
 
 ✅ **TypeScript compiles**
-   - Run: `cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
+   - Run: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
 
 ✅ **Mobile compatible**
    - Test: Channel mention dropdown works on mobile layout

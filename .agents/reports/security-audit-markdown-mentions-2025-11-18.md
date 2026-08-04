@@ -50,7 +50,7 @@ The application demonstrates **excellent security architecture** with multiple d
 The application implements a **defense-in-depth** approach with three security layers:
 
 #### Layer 1: Input Validation
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/validation.ts`
+**File**: `/mntquorum-desktop/src/utils/validation.ts`
 
 ```typescript
 export const DANGEROUS_HTML_CHARS = /[<>"']/;
@@ -70,7 +70,7 @@ export const validateNameForXSS = (name: string): boolean => {
 **Effectiveness**: ✅ Prevents HTML tag injection and attribute breakout attacks
 
 #### Layer 2: Placeholder Token System
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx`
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx`
 
 **Architecture**:
 1. User mentions converted to safe tokens: `<<<MENTION_USER:address:displayName>>>`
@@ -137,7 +137,7 @@ Old code would display "CEO - URGENT PAYMENT REQUIRED" instead of actual user's 
 
 ### Security Fix Applied
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 400)
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 400)
 
 ```typescript
 // BEFORE (Vulnerable):
@@ -189,7 +189,7 @@ Would display "OFFICIAL ANNOUNCEMENTS" but navigate to spam channel.
 
 ### Security Fix Applied
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 436)
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 436)
 
 ```typescript
 // BEFORE (Vulnerable):
@@ -208,7 +208,7 @@ const displayName = channelName;
 
 ### Multi-Layer Channel Validation
 
-**Extraction Phase** (`/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionUtils.ts` Line 294-315):
+**Extraction Phase** (`/mntquorum-desktop/src/utils/mentionUtils.ts` Line 294-315):
 ```typescript
 // Match by ID only (exact match for rename-safety)
 const channel = options.spaceChannels.find(c => c.channelId === possibleChannelId);
@@ -264,7 +264,7 @@ const channelData = channelMentions
 
 ### Security Fix Applied
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 377)
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 377)
 
 ```typescript
 // BEFORE (Vulnerable):
@@ -293,7 +293,7 @@ const mentionRegex = new RegExp(
 
 ### Input Sanitization Layer
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 204-213)
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 204-213)
 
 ```typescript
 const sanitizeDisplayName = useCallback((displayName: string | null | undefined): string => {
@@ -313,7 +313,7 @@ const sanitizeDisplayName = useCallback((displayName: string | null | undefined)
 
 ### IPFS CID Validation
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/validation.ts` (Line 150-155)
+**File**: `/mntquorum-desktop/src/utils/validation.ts` (Line 150-155)
 
 ```typescript
 export const createIPFSCIDRegex = (precise = false): RegExp => {
@@ -352,7 +352,7 @@ export const createIPFSCIDRegex = (precise = false): RegExp => {
 
 ### Protection Against Markdown Injection
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionUtils.ts` (Line 34-41)
+**File**: `/mntquorum-desktop/src/utils/mentionUtils.ts` (Line 34-41)
 
 ```typescript
 export function hasWordBoundaries(text: string, match: RegExpMatchArray): boolean {
@@ -431,7 +431,7 @@ Prevents mention processing inside all markdown syntax elements, ensuring mentio
 
 ### Markdown Parser Configuration
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 771-778)
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 771-778)
 
 ```typescript
 <ReactMarkdown
@@ -566,7 +566,7 @@ pre: ({ children, ...props }: any) => {
 
 ### Centralized Validation Architecture
 
-**Display Names** (`/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/validation/useDisplayNameValidation.ts`):
+**Display Names** (`/mntquorum-desktop/src/hooks/business/validation/useDisplayNameValidation.ts`):
 
 ```typescript
 export const useDisplayNameValidation = (displayName: string) => {
@@ -603,7 +603,7 @@ export const useDisplayNameValidation = (displayName: string) => {
 
 ### Space Name Validation
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/validation/useSpaceNameValidation.ts` (similar pattern)
+**File**: `/mntquorum-desktop/src/hooks/business/validation/useSpaceNameValidation.ts` (similar pattern)
 
 **Applied To**:
 - Space creation (`CreateSpaceModal.tsx`)
@@ -611,7 +611,7 @@ export const useDisplayNameValidation = (displayName: string) => {
 
 ### Mention Extraction Validation
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/services/MessageService.ts` (Lines 130-200, not shown in excerpt but verified via grep)
+**File**: `/mntquorum-desktop/src/services/MessageService.ts` (Lines 130-200, not shown in excerpt but verified via grep)
 
 **Permission-Based Extraction**:
 ```typescript
@@ -639,7 +639,7 @@ mentions = extractMentionsFromText(messageText, {
 
 ### IPFS Address Validation
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/validation.ts` (Line 117-136)
+**File**: `/mntquorum-desktop/src/utils/validation.ts` (Line 117-136)
 
 ```typescript
 export const isValidIPFSCID = (address: string, precise = false): boolean => {
@@ -682,7 +682,7 @@ All user inputs validated at entry points, with consistent enforcement across th
 
 ### Notification Panel
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/notifications/NotificationPanel.tsx`
+**File**: `/mntquorum-desktop/src/components/notifications/NotificationPanel.tsx`
 
 **Security Properties**:
 - Uses same validation as message rendering
@@ -692,7 +692,7 @@ All user inputs validated at entry points, with consistent enforcement across th
 
 ### Markdown Stripping
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/markdownStripping.ts`
+**File**: `/mntquorum-desktop/src/utils/markdownStripping.ts`
 
 ```typescript
 export function stripMarkdown(text: string): string {
@@ -737,7 +737,7 @@ export function stripMarkdown(text: string): string {
 
 ### Search Results Security
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/search/SearchResultItem.tsx` (not read in full, but verified via grep)
+**File**: `/mntquorum-desktop/src/components/search/SearchResultItem.tsx` (not read in full, but verified via grep)
 
 **Uses**: `stripMarkdownAndMentions()` for pure plain text display
 
@@ -753,7 +753,7 @@ export function stripMarkdown(text: string): string {
 
 ### Mention Autocomplete
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageComposer.tsx` (Line 148-187)
+**File**: `/mntquorum-desktop/src/components/message/MessageComposer.tsx` (Line 148-187)
 
 ```typescript
 const handleMentionSelect = useCallback(
@@ -793,7 +793,7 @@ const handleMentionSelect = useCallback(
 
 ### Mention Highlighting (Visual Feedback)
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionHighlighting.ts` (Line 91-100)
+**File**: `/mntquorum-desktop/src/utils/mentionHighlighting.ts` (Line 91-100)
 
 ```typescript
 export const highlightMentions = (text: string): string => {
@@ -817,7 +817,7 @@ const escapeHtml = (text: string): string => {
 
 ### Markdown Toolbar
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MarkdownToolbar.tsx` (referenced but not read)
+**File**: `/mntquorum-desktop/src/components/message/MarkdownToolbar.tsx` (referenced but not read)
 
 **Security**: Inserts markdown syntax only, no HTML tags or scripts
 
@@ -1505,34 +1505,34 @@ Quorum Desktop's security practices **meet or exceed** industry standards for me
 ### Core Security Files
 
 **Validation**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/validation.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/validation/useDisplayNameValidation.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/validation/useSpaceNameValidation.ts`
+- `/mntquorum-desktop/src/utils/validation.ts`
+- `/mntquorum-desktop/src/hooks/business/validation/useDisplayNameValidation.ts`
+- `/mntquorum-desktop/src/hooks/business/validation/useSpaceNameValidation.ts`
 
 **Markdown Rendering**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/markdownStripping.ts`
+- `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx`
+- `/mntquorum-desktop/src/utils/markdownStripping.ts`
 
 **Mentions**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionUtils.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionHighlighting.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/mentions/useMentionInput.ts`
+- `/mntquorum-desktop/src/utils/mentionUtils.ts`
+- `/mntquorum-desktop/src/utils/mentionHighlighting.ts`
+- `/mntquorum-desktop/src/hooks/business/mentions/useMentionInput.ts`
 
 **Message Processing**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/services/MessageService.ts`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/hooks/business/messages/useMessageFormatting.ts`
+- `/mntquorum-desktop/src/services/MessageService.ts`
+- `/mntquorum-desktop/src/hooks/business/messages/useMessageFormatting.ts`
 
 **UI Components**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageComposer.tsx`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/notifications/NotificationPanel.tsx`
+- `/mntquorum-desktop/src/components/message/MessageComposer.tsx`
+- `/mntquorum-desktop/src/components/notifications/NotificationPanel.tsx`
 
 **Configuration**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/config/features.ts`
+- `/mntquorum-desktop/src/config/features.ts`
 
 **Documentation**:
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/.agents/docs/features/security.md`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/.agents/docs/features/messages/markdown-renderer.md`
-- `/mnt/d/GitHub/Quilibrium/quorum-desktop/.agents/docs/features/mention-notification-system.md`
+- `/mntquorum-desktop/.agents/docs/features/security.md`
+- `/mntquorum-desktop/.agents/docs/features/messages/markdown-renderer.md`
+- `/mntquorum-desktop/.agents/docs/features/mention-notification-system.md`
 
 ---
 

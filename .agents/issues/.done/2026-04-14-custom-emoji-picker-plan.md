@@ -358,7 +358,7 @@ export function getAllEmojis(): EmojiItem[] {
 
 Run:
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck
+cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
 If `emoji-datasource-twitter/emoji.json` doesn't resolve, add `"resolveJsonModule": true` to `tsconfig.json`.
@@ -424,7 +424,7 @@ export default EmojiSprite;
 
 Run:
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck
+cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
 - [ ] **Step 3: Commit**
@@ -580,7 +580,7 @@ export function useFrequentlyUsed() {
 
 Run:
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck
+cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
 - [ ] **Step 4: Commit**
@@ -1078,7 +1078,7 @@ export type { EmojiData, CustomEmoji } from './types';
 
 Run:
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck
+cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
 - [ ] **Step 5: Commit**
@@ -1202,7 +1202,7 @@ import type { CustomEmoji } from '<relative-path>/emoji-picker/types';
 
 Run:
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && grep -r "emoji-picker-react" src/ --include="*.ts" --include="*.tsx"
+cd <repo root> && grep -r "emoji-picker-react" src/ --include="*.ts" --include="*.tsx"
 ```
 
 Should return zero results.
@@ -1211,7 +1211,7 @@ Should return zero results.
 
 Run:
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck
+cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 
 - [ ] **Step 10: Commit**
@@ -1232,7 +1232,7 @@ git commit -m "feat(emoji-picker): replace emoji-picker-react with custom picker
 - [ ] **Step 1: Remove emoji-picker-react from dependencies**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn remove emoji-picker-react
+cd <repo root> && yarn remove emoji-picker-react
 ```
 
 - [ ] **Step 2: Delete old emoji picker SCSS and remove its import**
@@ -1249,7 +1249,7 @@ grep -r "_emoji-picker" src/styles/ --include="*.scss"
 - [ ] **Step 3: Verify build works**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn build
+cd <repo root> && yarn build
 ```
 
 - [ ] **Step 4: Commit**
@@ -1266,7 +1266,7 @@ git commit -m "chore: remove emoji-picker-react dependency and old SCSS override
 - [ ] **Step 1: Start the dev server**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop && yarn dev
+cd <repo root> && yarn dev
 ```
 
 - [ ] **Step 2: Verify sprite sheet rendering**

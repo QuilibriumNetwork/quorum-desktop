@@ -222,7 +222,7 @@ Later on 2026-08-01, running vitest from inside the secondary worktree produced
 **exactly this signature deliberately**:
 
 ```
-Error: Cannot find module '/@fs/E:/GitHub/Quilibrium/quorum-desktop/.worktrees/secondary/src/dev/tests/setup.ts'
+Error: Cannot find module '/@fs/quorum-desktop/.worktrees/secondary/src/dev/tests/setup.ts'
  Test Files  1 failed (1)
       Tests  no tests
    Duration  1.92s (transform 0ms, setup 0ms, import 0ms, ...)

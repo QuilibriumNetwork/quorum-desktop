@@ -35,8 +35,8 @@ The repos are siblings, so `../quorum-mobile/...` also resolves from inside eith
 
 | repo | root (this machine) |
 |---|---|
-| `quorum-desktop/` | `E:\GitHub\Quilibrium\quorum-desktop\` |
-| `quorum-mobile/` | `E:\GitHub\Quilibrium\quorum-mobile\` |
+| `quorum-desktop/` | `quorum-desktop/` |
+| `quorum-mobile/` | `quorum-mobile/` |
 
 > 🔴 **`quorum-mobile/.agents/` is gitignored** (`.gitignore:56`) — it is local-only and
 > invisible to anyone else's checkout, unlike `quorum-desktop/.agents/`, which is tracked.

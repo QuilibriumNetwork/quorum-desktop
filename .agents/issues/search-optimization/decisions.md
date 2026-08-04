@@ -305,7 +305,7 @@ Debated using Web Workers to offload search index building from main thread.
 ### Decision: **Shape Phase 1.3 persistence to mirror the planned `SearchAdapter` interface**
 
 **Context**:
-A session-start check of `D:\GitHub\Quilibrium\quorum-shared\src` confirmed `SearchService` and `MessageDB` are not yet in the shared package. The quorum-shared migration roadmap (see [../quorum-shared-migration/README.md](../quorum-shared-migration/README.md) status table) lists `SearchService + SearchAdapter` as Tier 1B: **blocked on mobile codebase access**. The services-design audit ([../quorum-shared-migration/designs/2026-05-18-services-design.md §3](../quorum-shared-migration/designs/2026-05-18-services-design.md)) classifies `SearchService` as portable verbatim once a `SearchAdapter` interface exists in shared.
+A session-start check of `quorum-shared/src` confirmed `SearchService` and `MessageDB` are not yet in the shared package. The quorum-shared migration roadmap (see [../quorum-shared-migration/README.md](../quorum-shared-migration/README.md) status table) lists `SearchService + SearchAdapter` as Tier 1B: **blocked on mobile codebase access**. The services-design audit ([../quorum-shared-migration/designs/2026-05-18-services-design.md §3](../quorum-shared-migration/designs/2026-05-18-services-design.md)) classifies `SearchService` as portable verbatim once a `SearchAdapter` interface exists in shared.
 
 **Options Considered**:
 

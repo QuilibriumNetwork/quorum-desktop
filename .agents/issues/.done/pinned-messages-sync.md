@@ -293,23 +293,23 @@ The original plan incorrectly allowed space owners implicit pin permission via `
 
 ### Key Implementation Details
 
-1. **Canonicalization** - Implemented exactly as planned at [canonicalize.ts:104-110](d:\GitHub\Quilibrium\quorum-desktop\src\utils\canonicalize.ts#L104-L110)
+1. **Canonicalization** - Implemented exactly as planned at canonicalize.ts:104-110 (`quorum-desktop/src/utils/canonicalize.ts`)
 
-2. **saveMessage() Validation** - Implemented at [MessageService.ts:448-523](d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts#L448-L523)
+2. **saveMessage() Validation** - Implemented at [MessageService.ts:448-523](../../../src/services/MessageService.ts#L448-L523)
    - Full permission validation with read-only channel manager logic
    - DM rejection (pins are Space-only)
    - Pin limit validation (50 max)
 
-3. **addMessage() Cache Updates** - Implemented at [MessageService.ts:882-978](d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts#L882-L978)
+3. **addMessage() Cache Updates** - Implemented at [MessageService.ts:882-978](../../../src/services/MessageService.ts#L882-L978)
    - Identical permission validation as saveMessage (defense-in-depth)
    - Invalidates both pinnedMessages and pinnedMessageCount caches
 
-4. **submitChannelMessage() Broadcasting** - Implemented at [MessageService.ts:3100-3232](d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts#L3100-L3232)
+4. **submitChannelMessage() Broadcasting** - Implemented at [MessageService.ts:3100-3232](../../../src/services/MessageService.ts#L3100-L3232)
    - Permission validation before broadcast
    - Triple Ratchet encryption
    - Non-repudiable signing
 
-5. **usePinnedMessages Hook** - Updated at [usePinnedMessages.ts:71-160](d:\GitHub\Quilibrium\quorum-desktop\src\hooks\business\messages\usePinnedMessages.ts#L71-L160)
+5. **usePinnedMessages Hook** - Updated at [usePinnedMessages.ts:71-160](../../../src/hooks/business/messages/usePinnedMessages.ts#L71-L160)
    - Replaced local `updateMessagePinStatus()` with `submitChannelMessage()` broadcast
    - Destructured `submitChannelMessage` from `useMessageDB()` context (not `messageDB.submitChannelMessage()`)
 
@@ -323,8 +323,8 @@ The original plan incorrectly allowed space owners implicit pin permission via `
 
 ### Files Modified
 
-- ✅ [src/utils/canonicalize.ts](d:\GitHub\Quilibrium\quorum-desktop\src\utils\canonicalize.ts) - Added PinMessage canonicalization
-- ✅ [src/services/MessageService.ts](d:\GitHub\Quilibrium\quorum-desktop\src\services\MessageService.ts) - Added pin handling in saveMessage, addMessage, submitChannelMessage
-- ✅ [src/hooks/business/messages/usePinnedMessages.ts](d:\GitHub\Quilibrium\quorum-desktop\src\hooks\business\messages\usePinnedMessages.ts) - Replaced local operations with network broadcast
+- ✅ src/utils/canonicalize.ts (`quorum-desktop/src/utils/canonicalize.ts`) - Added PinMessage canonicalization
+- ✅ [src/services/MessageService.ts](../../../src/services/MessageService.ts) - Added pin handling in saveMessage, addMessage, submitChannelMessage
+- ✅ [src/hooks/business/messages/usePinnedMessages.ts](../../../src/hooks/business/messages/usePinnedMessages.ts) - Replaced local operations with network broadcast
 
 ---

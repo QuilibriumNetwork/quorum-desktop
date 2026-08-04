@@ -22,8 +22,8 @@ related_tasks:
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 **Repos**:
-- quorum-shared: `d:\GitHub\Quilibrium\quorum-shared`
-- quorum-desktop: `d:\GitHub\Quilibrium\quorum-desktop`
+- quorum-shared: `quorum-shared`
+- quorum-desktop: `quorum-desktop`
 
 ## What & Why
 
@@ -54,7 +54,7 @@ There may be more types that haven't been audited yet. This task consolidates ev
 
 Compare every type definition in quorum-desktop against quorum-shared and produce a complete list of what's missing.
 
-1. **Read quorum-shared types** — All files in `d:\GitHub\Quilibrium\quorum-shared\src\types\`
+1. **Read quorum-shared types** — All files in `quorum-shared/src/types/`
    - `message.ts` — Message, PostMessage, all content types, MessageContent union
    - `space.ts` — Space, Channel, Group, Role, Permission, Emoji, Sticker
    - `user.ts` — UserProfile, UserConfig, SpaceMember, NavItem, NotificationSettings
@@ -82,7 +82,7 @@ Compare every type definition in quorum-desktop against quorum-shared and produc
 
 ### Phase 2: quorum-shared Changes
 
-All work in `d:\GitHub\Quilibrium\quorum-shared`.
+All work in `quorum-shared`.
 
 1. **Add new types** — Based on audit results, add all new type definitions
 2. **Extend existing types** — Add missing optional fields to existing types
@@ -93,7 +93,7 @@ All work in `d:\GitHub\Quilibrium\quorum-shared`.
 
 ### Phase 3: quorum-desktop Import Refactoring
 
-All work in `d:\GitHub\Quilibrium\quorum-desktop`. **This is the bulk of the work.**
+All work in `quorum-desktop`. **This is the bulk of the work.**
 
 1. **Remove local type definitions** from `src/api/quorumApi.ts` (and any other source files)
    - Delete the type/interface blocks that now live in quorum-shared

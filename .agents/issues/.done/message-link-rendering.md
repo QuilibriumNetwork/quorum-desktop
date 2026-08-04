@@ -656,7 +656,7 @@ The `currentSpaceId` needs to be passed through the component hierarchy:
    - Expected: Link styled within list item
 
 ✅ **TypeScript compiles**
-   - Run: `cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
+   - Run: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"`
 
 ✅ **No console errors**
    - Test: Open DevTools, paste and view message links

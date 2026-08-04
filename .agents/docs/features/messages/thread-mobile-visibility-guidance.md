@@ -8,7 +8,7 @@ updated: 2026-03-11
 
 # Thread Visibility on Mobile — Guidance for quorum-mobile
 
-> **Note:** Based on a snapshot of `D:\GitHub\Quilibrium\quorum-mobile` which may be outdated. The current mobile repo is more up to date — verify all file paths and logic before implementing.
+> **Note:** Based on a snapshot of `quorum-mobile` which may be outdated. The current mobile repo is more up to date — verify all file paths and logic before implementing.
 
 ## Background
 

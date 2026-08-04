@@ -64,7 +64,7 @@ This is NOT about markdown-specific logic. It's about treating mentions as **wor
 
 ### 1. Mention Extraction (Storage Layer)
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionUtils.ts` (Lines 198-284)
+**File**: `/mntquorum-desktop/src/utils/mentionUtils.ts` (Lines 198-284)
 
 **Current Code**:
 ```typescript
@@ -99,7 +99,7 @@ export function extractMentionsFromText(text: string, options?: {...}): Mentions
 
 ### 2. Mention Rendering (Display Layer)
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx`
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx`
 
 **Current Code**:
 ```typescript
@@ -124,7 +124,7 @@ const processMentions = useCallback((text: string): string => {
 
 ### 3. Processing Pipeline
 
-**File**: `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 279-295)
+**File**: `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Line 279-295)
 
 **Current Pipeline**:
 ```typescript
@@ -478,7 +478,7 @@ const boundaryPattern = /[\s.,!?;:\n()[\]{}]/;
 ### Phase 3: Documentation & Migration (30 minutes)
 
 **Update Documentation**:
-1. **`/mnt/d/GitHub/Quilibrium/quorum-desktop/.agents/docs/features/mention-notification-system.md`**
+1. **`/mntquorum-desktop/.agents/docs/features/mention-notification-system.md`**
    - Add section on word boundary validation
    - Document edge cases and behavior
    - Add examples of what renders vs doesn't
@@ -583,11 +583,11 @@ The word boundary approach should be implemented immediately as it's both simple
 ## File Reference
 
 **Files Requiring Changes**:
-1. `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/utils/mentionUtils.ts` (Lines 198-284)
+1. `/mntquorum-desktop/src/utils/mentionUtils.ts` (Lines 198-284)
    - Add `hasWordBoundaries()` helper
    - Apply to all mention extraction patterns
 
-2. `/mnt/d/GitHub/Quilibrium/quorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Lines 202-276)
+2. `/mntquorum-desktop/src/components/message/MessageMarkdownRenderer.tsx` (Lines 202-276)
    - Apply word boundary check in all mention processors
 
 **Total Lines Modified**: ~100 lines (mostly adding boundary checks)

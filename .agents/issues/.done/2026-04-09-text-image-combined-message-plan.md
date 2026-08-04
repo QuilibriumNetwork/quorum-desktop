@@ -197,7 +197,7 @@ created: 2026-04-09
 - [ ] **Step 3: Verify TypeScript**
 
   ```bash
-  cd d:/GitHub/Quilibrium/quorum-desktop
+  cd <repo root>
   npx tsc --noEmit --jsx react-jsx --skipLibCheck
   ```
   Expected: no errors

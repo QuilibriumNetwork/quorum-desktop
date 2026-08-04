@@ -69,7 +69,7 @@ Rename the `.agents/` folder to `.agents/` to better reflect its purpose as a re
   - 146 path references need updating
   - **Action**: Delete this file and regenerate it:
     ```bash
-    cd /mnt/d/GitHub/Quilibrium/quorum-desktop
+    cd /mntquorum-desktop
     node .agents/update-index.py
     node src/dev/docs/utils/scanMarkdownFiles.cjs
     ```
@@ -152,7 +152,7 @@ Rename the `.agents/` folder to `.agents/` to better reflect its purpose as a re
 
 - [ ] Check for broken imports:
   ```bash
-  cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit"
+  cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit"
   ```
 
 ## Rollback Plan

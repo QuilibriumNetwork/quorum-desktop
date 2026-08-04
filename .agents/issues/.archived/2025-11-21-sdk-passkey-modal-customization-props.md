@@ -608,7 +608,7 @@ import { t } from '@lingui/core/macro';
 
 ## Related Documentation
 
-- SDK Repository: `D:\GitHub\Quilibrium\quilibrium-js-sdk-channels`
+- SDK Repository: `quilibrium-js-sdk-channels`
 - Current SDK Usage: `src/components/onboarding/Onboarding.tsx:94-100`
 - Current CSS Overrides: `src/styles/_passkey-modal.scss`
 - README Integration Info: `README.md:70-81`

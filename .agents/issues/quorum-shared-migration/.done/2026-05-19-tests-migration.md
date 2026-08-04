@@ -60,7 +60,7 @@ Recommended layout (co-located, mirrors the sync precedent):
 
 ### 3. Verify shared test infrastructure
 
-- `cd d:/GitHub/Quilibrium/quorum-shared && yarn test:run` — moved tests pass alongside existing `sync/service.test.ts`
+- `cd ../quorum-shared && yarn test:run` — moved tests pass alongside existing `sync/service.test.ts`
 - No new dev dependencies required (shared already has `vitest`)
 
 ### 4. Clean up quorum-desktop
@@ -69,7 +69,7 @@ Recommended layout (co-located, mirrors the sync precedent):
 - Delete `src/dev/tests/utils/mentionUtils.enhanced.test.ts`
 - Delete `src/dev/tests/utils/messageGrouping.unit.test.ts`
 - Update `src/dev/tests/README.md` to drop the three removed files from the list
-- `cd d:/GitHub/Quilibrium/quorum-desktop && yarn test:run` — remaining tests still pass (mentionHighlighting + deviceInfo + all service tests + the hook test)
+- `cd <repo root> && yarn test:run` — remaining tests still pass (mentionHighlighting + deviceInfo + all service tests + the hook test)
 
 ## Verification
 

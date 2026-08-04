@@ -566,12 +566,12 @@ Only consider if you want "pure" new system without events. Requires:
 
 **4b. TypeScript Validation** (15 min)
 ```bash
-cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
+cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
 ```
 
 **4c. Build Test** (15 min)
 ```bash
-cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && yarn build"
+cmd.exe /c "cd /d quorum-desktop && yarn build"
 ```
 
 **4d. Verify Migration Complete** (5 min)

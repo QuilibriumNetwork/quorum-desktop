@@ -67,13 +67,13 @@ Desktop is **missing** `senderAddress` in `cachedPreview` — shared already has
 
 ## Chunk 1: quorum-shared Changes
 
-All work in `d:\GitHub\Quilibrium\quorum-shared`.
+All work in `quorum-shared`.
 
 ### Task 1: Add SpaceTag types and extend Space/Channel
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\space.ts`
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\index.ts`
+- Modify: `quorum-shared/src/types/space.ts`
+- Modify: `quorum-shared/src/types/index.ts`
 
 - [x] **Step 1: Add SpaceTag and BroadcastSpaceTag to space.ts**
 
@@ -127,13 +127,13 @@ export type {
 
 - [x] **Step 5: Verify build**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-shared && yarn build`
+Run: `cd ../quorum-shared && yarn build`
 Expected: Build passes with no errors
 
 - [x] **Step 6: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git add src/types/space.ts src/types/index.ts
 git commit -m "feat: add SpaceTag types and thread fields to Space/Channel"
 ```
@@ -141,8 +141,8 @@ git commit -m "feat: add SpaceTag types and thread fields to Space/Channel"
 ### Task 2: Add thread types and extend Message types
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\message.ts`
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\index.ts`
+- Modify: `quorum-shared/src/types/message.ts`
+- Modify: `quorum-shared/src/types/index.ts`
 
 - [x] **Step 1: Add ThreadMeta, ThreadMessage, and ChannelThread to message.ts**
 
@@ -288,13 +288,13 @@ export type {
 
 - [x] **Step 7: Verify build**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-shared && yarn build`
+Run: `cd ../quorum-shared && yarn build`
 Expected: Build passes with no errors
 
 - [x] **Step 8: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git add src/types/message.ts src/types/index.ts
 git commit -m "feat: add thread types and extend Message/EditMessage/UpdateProfileMessage"
 ```
@@ -302,8 +302,8 @@ git commit -m "feat: add thread types and extend Message/EditMessage/UpdateProfi
 ### Task 3: Extend Bookmark, UserConfig, SpaceMember, NavItem
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\bookmark.ts`
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\user.ts`
+- Modify: `quorum-shared/src/types/bookmark.ts`
+- Modify: `quorum-shared/src/types/user.ts`
 
 - [x] **Step 1: Add threadId to Bookmark**
 
@@ -386,13 +386,13 @@ export type NavItem =
 
 - [x] **Step 5: Verify build**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-shared && yarn build`
+Run: `cd ../quorum-shared && yarn build`
 Expected: Build passes with no errors
 
 - [x] **Step 6: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git add src/types/bookmark.ts src/types/user.ts
 git commit -m "feat: extend Bookmark, UserConfig, SpaceMember, NavItem with desktop fields"
 ```
@@ -400,7 +400,7 @@ git commit -m "feat: extend Bookmark, UserConfig, SpaceMember, NavItem with desk
 ### Task 4: Version bump and final build verification
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\package.json`
+- Modify: `quorum-shared/package.json`
 
 - [x] **Step 1: Bump version**
 
@@ -410,13 +410,13 @@ Change `"version": "2.1.0-1"` to `"version": "2.1.0-3"` in `package.json`.
 
 - [x] **Step 2: Full build verification**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-shared && yarn build`
+Run: `cd ../quorum-shared && yarn build`
 Expected: Build passes with no errors
 
 - [x] **Step 3: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-shared
+cd ../quorum-shared
 git add package.json
 git commit -m "chore: bump version to 2.1.0-3"
 ```
@@ -427,14 +427,14 @@ git commit -m "chore: bump version to 2.1.0-3"
 
 ## Chunk 2: quorum-desktop Import Refactoring
 
-All work in `d:\GitHub\Quilibrium\quorum-desktop`.
+All work in `quorum-desktop`.
 
 > **Important:** Task 5 (point at local shared) must run first so that `@quilibrium/quorum-shared` resolves to the local checkout with the new types. Otherwise Tasks 6-7 will fail because the published version doesn't have the new types yet.
 
 ### Task 5: Point quorum-desktop at local quorum-shared
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-desktop\package.json`
+- Modify: `quorum-desktop/package.json`
 
 - [x] **Step 1: Switch to file: dependency for development**
 
@@ -452,13 +452,13 @@ to:
 
 - [x] **Step 2: Install updated dependency**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-desktop && yarn install`
+Run: `cd <repo root> && yarn install`
 Expected: Install completes successfully, `yarn.lock` is updated, quorum-shared now resolves to local checkout
 
 - [x] **Step 3: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add package.json yarn.lock
 git commit -m "chore: point quorum-shared to local checkout for types migration"
 ```
@@ -468,7 +468,7 @@ git commit -m "chore: point quorum-shared to local checkout for types migration"
 ### Task 6: Strip quorumApi.ts down to API functions only
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-desktop\src\api\quorumApi.ts`
+- Modify: `quorum-desktop/src/api/quorumApi.ts`
 
 Remove all type definitions. After this, `quorumApi.ts` will only contain:
 - API URL functions (kept)
@@ -533,7 +533,7 @@ export const getSpaceInviteEvalUrl: () => `/${string}` = () => `/invite/eval`;
 - [x] **Step 2: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add src/api/quorumApi.ts
 git commit -m "refactor: remove all type definitions from quorumApi.ts"
 ```
@@ -615,13 +615,13 @@ import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 
 - [x] **Step 4: Type-check**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck`
+Run: `cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck`
 Expected: No type errors (only pre-existing errors remain)
 
 - [x] **Step 5: Commit**
 
 ```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
+cd <repo root>
 git add -A
 git commit -m "refactor: update all imports to use @quilibrium/quorum-shared directly"
 ```
@@ -630,12 +630,12 @@ git commit -m "refactor: update all imports to use @quilibrium/quorum-shared dir
 
 - [x] **Step 1: Type-check**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck`
+Run: `cd <repo root> && npx tsc --noEmit --jsx react-jsx --skipLibCheck`
 Expected: No type errors (only pre-existing errors remain)
 
 - [x] **Step 2: Full build**
 
-Run: `cd d:/GitHub/Quilibrium/quorum-desktop && yarn build`
+Run: `cd <repo root> && yarn build`
 Expected: Build passes with no errors
 
 - [x] **Step 3: Fix any errors**

@@ -406,7 +406,7 @@ After each conversion:
 
 1. **Visual regression**: Compare before/after screenshots
 2. **Build verification**: Run `yarn build` to ensure no syntax errors
-3. **Type check**: Run `cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit"`
+3. **Type check**: Run `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit"`
 4. **Cross-platform test**: Verify on both web and mobile if applicable
 
 ---

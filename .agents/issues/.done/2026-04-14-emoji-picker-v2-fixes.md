@@ -150,7 +150,7 @@ With:
 - [ ] **Step 2: Verify TypeScript compiles**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
 ```
 
 Expected: only the pre-existing `ImportKeyStep.tsx` error. No errors in `EmojiPicker.tsx`.
@@ -158,7 +158,7 @@ Expected: only the pre-existing `ImportKeyStep.tsx` error. No errors in `EmojiPi
 - [ ] **Step 3: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/emoji-picker/EmojiPicker.tsx && git commit -m "fix(emoji-picker): replace Button primitive with plain button to fix mouse hover events"
+cd "quorum-desktop" && git add src/components/emoji-picker/EmojiPicker.tsx && git commit -m "fix(emoji-picker): replace Button primitive with plain button to fix mouse hover events"
 ```
 
 ---
@@ -208,7 +208,7 @@ In `EmojiPicker.tsx`, find the fallback span and change it to:
 - [ ] **Step 3: Verify TypeScript compiles**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
 ```
 
 Expected: only the pre-existing `ImportKeyStep.tsx` error.
@@ -216,7 +216,7 @@ Expected: only the pre-existing `ImportKeyStep.tsx` error.
 - [ ] **Step 4: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/emoji-picker/emojiData.ts src/components/emoji-picker/EmojiPicker.tsx && git commit -m "fix(emoji-picker): add clock/star category icons for Frequently Used and Custom"
+cd "quorum-desktop" && git add src/components/emoji-picker/emojiData.ts src/components/emoji-picker/EmojiPicker.tsx && git commit -m "fix(emoji-picker): add clock/star category icons for Frequently Used and Custom"
 ```
 
 ---
@@ -468,7 +468,7 @@ Replace the full contents of `EmojiPicker.scss` with the following (changes anno
 - [ ] **Step 2: Verify TypeScript compiles (SCSS errors show at build time, not tsc)**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -10
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -10
 ```
 
 Expected: only the pre-existing `ImportKeyStep.tsx` error.
@@ -476,7 +476,7 @@ Expected: only the pre-existing `ImportKeyStep.tsx` error.
 - [ ] **Step 3: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/emoji-picker/EmojiPicker.scss && git commit -m "fix(emoji-picker): vertical skin popover, full-height active bar, stronger hover contrast, topbar padding"
+cd "quorum-desktop" && git add src/components/emoji-picker/EmojiPicker.scss && git commit -m "fix(emoji-picker): vertical skin popover, full-height active bar, stronger hover contrast, topbar padding"
 ```
 
 ---
@@ -555,13 +555,13 @@ Also update `.sticker-item` — with 4 columns in a 420px panel (minus 32px padd
 - [ ] **Step 2: Verify TypeScript compiles**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -10
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -10
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/styles/_chat.scss && git commit -m "fix(stickers-panel): grow to 420x560 to fit emoji picker, 4-column sticker grid"
+cd "quorum-desktop" && git add src/styles/_chat.scss && git commit -m "fix(stickers-panel): grow to 420x560 to fit emoji picker, 4-column sticker grid"
 ```
 
 ---
@@ -634,13 +634,13 @@ style={{
 - [ ] **Step 3: Verify TypeScript compiles**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
 ```
 
 - [ ] **Step 4: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/message/Message.tsx && git commit -m "fix(emoji-picker): adjust message-actions positioning to not cover toolbar"
+cd "quorum-desktop" && git add src/components/message/Message.tsx && git commit -m "fix(emoji-picker): adjust message-actions positioning to not cover toolbar"
 ```
 
 ---
@@ -700,7 +700,7 @@ No additional changes needed here — the backdrop handles it.
 - [ ] **Step 4: Verify TypeScript compiles**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
 ```
 
 Expected: only the pre-existing `ImportKeyStep.tsx` error.
@@ -708,7 +708,7 @@ Expected: only the pre-existing `ImportKeyStep.tsx` error.
 - [ ] **Step 5: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/message/MessageList.tsx src/components/space/Channel.tsx && git commit -m "fix(emoji-picker): auto-close message-actions picker when stickers panel opens"
+cd "quorum-desktop" && git add src/components/message/MessageList.tsx src/components/space/Channel.tsx && git commit -m "fix(emoji-picker): auto-close message-actions picker when stickers panel opens"
 ```
 
 ---
@@ -773,13 +773,13 @@ const handleRangeChanged = useCallback(
 - [ ] **Step 2: Verify TypeScript compiles**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
+cd "quorum-desktop" && npx tsc --noEmit --jsx react-jsx --skipLibCheck 2>&1 | head -20
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
-cd "d:\GitHub\Quilibrium\quorum-desktop" && git add src/components/emoji-picker/EmojiPicker.tsx && git commit -m "fix(emoji-picker): debounce rangeChanged after manual category click to fix scroll bug"
+cd "quorum-desktop" && git add src/components/emoji-picker/EmojiPicker.tsx && git commit -m "fix(emoji-picker): debounce rangeChanged after manual category click to fix scroll bug"
 ```
 
 ---

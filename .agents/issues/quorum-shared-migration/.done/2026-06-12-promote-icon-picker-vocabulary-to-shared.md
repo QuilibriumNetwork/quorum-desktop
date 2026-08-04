@@ -6,7 +6,7 @@ created: 2026-06-12
 completed: 2026-06-25
 runtime-test: not-required (data move; visual smoke on both apps)
 priority: medium
-source-audit: D:\GitHub\Quilibrium\quorum-desktop\.agents\tasks\port-to-mobile\candidates.md (rows 31/32; "Channel & group icons" detailed entry)
+source-audit: quorum-desktop/.agents/tasks/port-to-mobile/candidates.md (rows 31/32; "Channel & group icons" detailed entry)
 related:
   - quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md (the mobile consumer)
   - quorum-mobile/.agents/tasks/2026-06-09-migrate-iconsymbol-to-shared-icon-primitive.md (Phase 2b flags this exact vocabulary-alignment, gated on a design call)
@@ -60,7 +60,7 @@ Desktop stores `iconColor` as a **named enum** (`'blue'`); mobile stores **raw h
 Follow [cross-repo-workflow.md](../cross-repo-workflow.md). Shape:
 1. **quorum-shared PR**: add the picker vocabulary + helpers, re-export from root, bump version. Additive — no breaking change.
 2. **quorum-desktop PR**: swap `IconPicker`'s local `types.ts` imports to the shared exports (keep the components). Verify the picker still renders all 49 icons + variant toggle + colors.
-3. **quorum-mobile**: consume the shared vocabulary in its picker — tracked in the mobile task ([`2026-06-12-channel-group-icon-and-settings.md`](file:///D:/GitHub/Quilibrium/quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md)) + add a `mobile-tasks-pending.md` row.
+3. **quorum-mobile**: consume the shared vocabulary in its picker — tracked in the mobile task (`2026-06-12-channel-group-icon-and-settings.md` (`quorum-mobile/.agents/tasks/2026-06-12-channel-group-icon-and-settings.md`)) + add a `mobile-tasks-pending.md` row.
 
 ## Connection to the existing icon-shim task
 

@@ -511,8 +511,8 @@ This ensures:
 - [ ] Commit: "Update documentation for RouteWrapper"
 
 ### Final Steps
-- [ ] Run type checking: `cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit"`
-- [ ] Run linter: `cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && yarn lint"`
+- [ ] Run type checking: `cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit"`
+- [ ] Run linter: `cmd.exe /c "cd /d quorum-desktop && yarn lint"`
 - [ ] Format code if needed
 - [ ] Create PR with clear description
 - [ ] Request code review

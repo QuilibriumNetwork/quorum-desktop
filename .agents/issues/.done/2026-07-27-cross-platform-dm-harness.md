@@ -240,7 +240,7 @@ upstream, at zero device cost.
 ### 🥉 3. Prove mitigation 1 before shipping it
 
 §26.1 resend-with-dedupe (blind double-write, ~12% loss → ~1.4%) is the highest-value
-client item on the board, Kyn-gated and unbuilt. The bench already has the exact
+client item on the board, maintainer-gated and unbuilt. The bench already has the exact
 pattern — `dm-stale-bucket.scenario.test.ts` runs a mitigation **OFF then ON, fresh
 accounts per arm**. Measuring the improvement at N=hundreds beats shipping on an
 estimate.

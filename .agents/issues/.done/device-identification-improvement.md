@@ -258,7 +258,7 @@ The "save as property in device keys" approach would be simpler but requires **S
 
 **Status:** Pending (Requires SDK changes)
 **Complexity:** Medium
-**Location:** `@quilibrium/quilibrium-js-sdk-channels` (local: `/mnt/d/GitHub/Quilibrium/quilibrium-js-sdk-channels`)
+**Location:** `@quilibrium/quilibrium-js-sdk-channels` (local: `/mntquilibrium-js-sdk-channels`)
 
 ### Why SDK Modification is the Proper Solution
 

@@ -416,9 +416,9 @@ yarn vitest src/dev/refactoring/tests/ --run
 **Testing**:
 ```bash
 yarn vitest src/dev/refactoring/tests/ --run  # All tests pass
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"  # No TypeScript errors
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"  # No lint errors
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"  # Production build succeeds
+cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"  # No TypeScript errors
+cmd.exe /c "cd /d quorum-desktop && yarn lint"  # No lint errors
+cmd.exe /c "cd /d quorum-desktop && yarn build"  # Production build succeeds
 ```
 
 **Deliverable**: Production-ready, well-documented codebase
@@ -438,20 +438,20 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"  # Producti
 
 2. **TypeScript Compilation**
    ```bash
-   cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
+   cmd.exe /c "cd /d quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
    # No errors
    ```
 
 3. **Production Build**
    ```bash
-   cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"
+   cmd.exe /c "cd /d quorum-desktop && yarn build"
    # Build succeeds
    # Compare bundle size to baseline (should not increase)
    ```
 
 4. **Code Quality**
    ```bash
-   cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
+   cmd.exe /c "cd /d quorum-desktop && yarn lint"
    # No lint errors
    ```
 

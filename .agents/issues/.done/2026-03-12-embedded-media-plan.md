@@ -32,7 +32,7 @@ created: 2026-03-12
 ### Task 1: Add `embeddedMedia` to `PostMessage` in quorum-shared
 
 **Files:**
-- Modify: `d:\GitHub\Quilibrium\quorum-shared\src\types\message.ts`
+- Modify: `quorum-shared/src/types/message.ts`
 
 - [ ] **Step 1: Add the field**
 
@@ -56,7 +56,7 @@ created: 2026-03-12
 - [ ] **Step 2: Build quorum-shared to verify no type errors**
 
   ```bash
-  cd d:\GitHub\Quilibrium\quorum-shared
+  cd ../quorum-shared
   yarn build
   ```
   Expected: clean build
@@ -64,17 +64,17 @@ created: 2026-03-12
 - [ ] **Step 3: Link quorum-shared locally into quorum-desktop**
 
   ```bash
-  cd d:\GitHub\Quilibrium\quorum-shared
+  cd ../quorum-shared
   yarn link
 
-  cd d:\GitHub\Quilibrium\quorum-desktop
+  cd <repo root>
   yarn link @quilibrium/quorum-shared
   ```
 
 - [ ] **Step 4: Verify quorum-desktop compiles with linked package**
 
   ```bash
-  cd d:\GitHub\Quilibrium\quorum-desktop
+  cd <repo root>
   npx tsc --noEmit --jsx react-jsx --skipLibCheck
   ```
   Expected: no errors
@@ -82,7 +82,7 @@ created: 2026-03-12
 - [ ] **Step 5: Commit quorum-shared change**
 
   ```bash
-  cd d:\GitHub\Quilibrium\quorum-shared
+  cd ../quorum-shared
   git add src/types/message.ts
   git commit -m "feat: add embeddedMedia field to PostMessage"
   ```

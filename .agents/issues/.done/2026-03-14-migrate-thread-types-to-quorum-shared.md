@@ -37,7 +37,7 @@ The thread feature is fully implemented in quorum-desktop but all thread-related
 ## Context
 
 - **Existing pattern**: quorum-shared already has `Message`, `PostMessage`, `PinMessage`, `Bookmark`, `Space`, `Channel` types that quorum-desktop imports and extends locally. Thread types follow the exact same pattern as `PinMessage` (a message content variant with `targetMessageId` and an `action` field).
-- **quorum-shared repo**: `d:\GitHub\Quilibrium\quorum-shared` — currently has **zero** thread-related code.
+- **quorum-shared repo**: `quorum-shared` — currently has **zero** thread-related code.
 - **No breaking changes**: Adding new types and optional fields to existing types is additive and non-breaking for quorum-mobile.
 - **Constraint**: quorum-shared is published as `@quilibrium/quorum-shared@2.1.0-1`. Changes require a version bump and publish cycle.
 
@@ -50,7 +50,7 @@ The thread feature is fully implemented in quorum-desktop but all thread-related
 
 ### Phase 1: Add Thread Types to quorum-shared
 
-All work in `d:\GitHub\Quilibrium\quorum-shared`.
+All work in `quorum-shared`.
 
 1. **Add `ThreadMeta` type** (`src/types/message.ts`)
    - Add before the `Message` type definition:
@@ -144,12 +144,12 @@ All work in `d:\GitHub\Quilibrium\quorum-shared`.
 
 10. **Build and verify** — Run the quorum-shared build to ensure no type errors:
     ```bash
-    cd d:\GitHub\Quilibrium\quorum-shared && yarn build
+    cd ../quorum-shared && yarn build
     ```
 
 ### Phase 2: Update quorum-desktop Imports
 
-All work in `d:\GitHub\Quilibrium\quorum-desktop`.
+All work in `quorum-desktop`.
 
 1. **Remove local type definitions** (`src/api/quorumApi.ts`)
    - Remove `ThreadMeta`, `ThreadMessage`, `ChannelThread` type definitions
@@ -208,11 +208,11 @@ These items require separate tasks and broader discussion:
 ## Verification
 
 ✅ **quorum-shared builds successfully**
-   - Run: `cd d:\GitHub\Quilibrium\quorum-shared && yarn build`
+   - Run: `cd ../quorum-shared && yarn build`
    - Verify: No TypeScript errors, declarations generated
 
 ✅ **quorum-desktop builds successfully**
-   - Run: `cd d:\GitHub\Quilibrium\quorum-desktop && yarn build`
+   - Run: `cd <repo root> && yarn build`
    - Verify: No TypeScript errors
 
 ✅ **quorum-desktop type-checks**

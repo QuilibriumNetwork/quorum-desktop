@@ -280,6 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [announce-keys flooding → unbounded per-device admission store](issues/.open/2026-07-20-announce-keys-flooding-unbounded-admissions.md)
 - 🐛 [Every logger call is a no-op in production builds](issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md)
 - 🐛 [A per-space override never reaches your own other devices](issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md)
+- 🐛 [A Space created on mobile does not land correctly on desktop](issues/.open/2026-08-04-mobile-created-space-syncs-badly-to-desktop-owner-missing-and-message-not-shown.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -736,4 +737,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-04 10:34:48
+**Last Updated**: 2026-08-04 11:12:29

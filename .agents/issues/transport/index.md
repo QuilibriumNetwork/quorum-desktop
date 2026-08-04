@@ -48,9 +48,9 @@ this index is read from both repos. Prefix any path with the checkout root:
 
 | repo | root (this machine) |
 |---|---|
-| `quorum-desktop/` | `E:\GitHub\Quilibrium\quorum-desktop\` |
-| `quorum-mobile/` | `E:\GitHub\Quilibrium\quorum-mobile\` |
-| `quorum-shared/` | `E:\GitHub\Quilibrium\quorum-shared\` |
+| `quorum-desktop/` | `quorum-desktop/` |
+| `quorum-mobile/` | `quorum-mobile/` |
+| `quorum-shared/` | `quorum-shared/` |
 
 The three repos are **siblings**, so from inside any one of them `../quorum-mobile/...`
 also resolves. If you are already in the repo a path names, drop the prefix.
