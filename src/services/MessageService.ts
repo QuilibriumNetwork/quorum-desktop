@@ -334,6 +334,33 @@ export function resolveSyncDeltaSlots(input: {
   return { applyOverride, applyGlobal };
 }
 
+/**
+ * A `join` control carries the joiner's GLOBAL identity, not a per-space choice.
+ *
+ * Filing it in the OVERRIDE slot froze that member under whatever name they had at
+ * join time: the override outranks every later global update, and the on-connect
+ * announce reads it back off the row and re-stamps it on every connect, so it never
+ * decays. Filed in the global slot with a `joinedAt` stamp instead, so ordinary
+ * last-write-wins applies and a later rename reaches us.
+ */
+export function buildJoinedMemberRow(participant: {
+  address: string;
+  inboxAddress: string;
+  userIcon?: string;
+  displayName?: string;
+  joinedAt: number;
+}): SpaceMemberRow {
+  return {
+    user_address: participant.address,
+    inbox_address: participant.inboxAddress,
+    global_user_icon: participant.userIcon,
+    global_display_name: participant.displayName,
+    globalProfileTimestamp: participant.joinedAt,
+    isKicked: false,
+    joinedAt: participant.joinedAt,
+  } as SpaceMemberRow;
+}
+
 export class MessageService {
   private messageDB: MessageDB;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
@@ -4948,14 +4975,10 @@ export class MessageService {
                 participant.signature
               );
               if (result === 'true') {
-                this.messageDB.saveSpaceMember(conversationId.split('/')[0], {
-                  user_address: participant.address,
-                  user_icon: participant.userIcon,
-                  display_name: participant.displayName,
-                  inbox_address: participant.inboxAddress,
-                  isKicked: false,
-                  joinedAt: participant.joinedAt,
-                });
+                this.messageDB.saveSpaceMember(
+                  conversationId.split('/')[0],
+                  buildJoinedMemberRow(participant)
+                );
                 await queryClient.setQueryData(
                   buildSpaceMembersKey({
                     spaceId: conversationId.split('/')[0],
@@ -4963,10 +4986,14 @@ export class MessageService {
                   (oldData: (secureChannel.UserProfile & { joinedAt?: number })[]) => {
                     return [
                       ...(oldData ?? []),
+                      // Same slots as the DB write above. Patching the override
+                      // slot here instead would leave the cache and IndexedDB
+                      // disagreeing about a new joiner until the next refetch.
                       {
                         user_address: participant.address,
-                        user_icon: participant.userIcon,
-                        display_name: participant.displayName,
+                        global_user_icon: participant.userIcon,
+                        global_display_name: participant.displayName,
+                        globalProfileTimestamp: participant.joinedAt,
                         joinedAt: participant.joinedAt,
                       },
                     ];
