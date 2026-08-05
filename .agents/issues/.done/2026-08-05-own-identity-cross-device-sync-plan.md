@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Implementation plan — your own identity, Phase 1 (desktop only)"
-status: in-progress
+status: done
 priority: high
 created: 2026-08-05
 updated: 2026-08-05
@@ -13,6 +13,30 @@ related:
 ---
 
 # Own identity, Phase 1 — implementation plan
+
+## Status
+
+**2026-08-05 — shipped in PR #313** (`fix(identity): your own name and avatar are
+correct everywhere, and follow a rename made on another device`).
+
+All nine tasks landed, plus five that the plan did not anticipate:
+
+- three blockers from an independent branch review (the tag rebroadcast was a
+  second ungated broadcast site; the migration's `await` guaranteed nothing
+  because `enqueueOutbound` is fire-and-forget; the legacy `sync-members` path had
+  no self-exclusion),
+- the reconciliation had to **subscribe** to the config rather than read it once on
+  mount, or a rename only landed at next launch,
+- and three fields — name, avatar, bio — needed the global slot promoted to a real
+  resolver tier. That last one was found **on a device, by the reporter**, minutes
+  after the clear landed: emptying the override slot turned a defect documented as
+  "latent, not live" into a live one.
+
+1004 tests, typecheck and lint clean. Two tests were made to fail on purpose to
+confirm they could.
+
+Wave A's four tasks were dispatched to parallel subagents as designed; they do not
+share files. They were told not to run git, since a shared index would have raced.
 
 > **For agentic workers:** REQUIRED SUB-SKILL: use `superpowers:subagent-driven-development`
 > (recommended) or `superpowers:executing-plans` to implement this task-by-task.

@@ -19,6 +19,30 @@ related:
 
 # Your own identity, on your own devices
 
+## Status
+
+**2026-08-05 — Phase 1 shipped in PR #313. Phase 2 killed by measurement, not
+built.** Kept open only for the two outstanding device checks in
+`2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md`.
+
+Phase 1 landed as specified, plus three fixes this document did not foresee: the
+tag rebroadcast was a second ungated broadcast site, the migration's `await`
+guaranteed nothing because the send queue is fire-and-forget, and the legacy
+`sync-members` path had no self-exclusion. All three came from independent review
+rather than from re-reading.
+
+**Phase 2 is dead — see §6.** Its premise was that channel C cannot carry per-space
+overrides between a user's own devices. A device test showed it can, live, which is
+better than the config blob would have managed. The design is retained as the
+record of a decision **not** taken.
+
+One correction this document made about itself, worth keeping: it claimed the
+on-connect announce needed no change because the clear would starve it. A passing
+test in the repo proved otherwise — `''` and "absent" produced identical wire
+output, so the clear could never leave the device. That was the third confident
+reading of this subsystem falsified in a day, and the first two were already
+recorded here when it was written.
+
 ## §1. The problem in one sentence
 
 **The system has no way to know which name you actually chose**, so it cannot tell

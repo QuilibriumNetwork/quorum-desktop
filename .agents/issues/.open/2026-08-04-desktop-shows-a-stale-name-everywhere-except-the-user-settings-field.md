@@ -17,6 +17,39 @@ related:
 
 # Desktop shows a stale display name everywhere except the User Settings field
 
+## Status
+
+**2026-08-05 — fix shipped in PR #313, DEVICE-VERIFIED, deliberately NOT closed.**
+
+What landed: self surfaces reconcile from the synced config; nothing authors our
+own per-space override any more; an incoming join is filed as a global identity;
+a one-time broadcast migration cleared the existing stamps; and the global slot
+became a real resolver tier for name, avatar and bio. Design and plan:
+`2026-08-05-own-identity-cross-device-sync-design.md` / `-plan.md`.
+
+Verified on the reporter's device after the merge candidate: source A now equals
+source B, no space holds a diverged override, the tripwire is clean, the migration
+cleared 4 legacy overrides, and name + avatar + member list all render correctly.
+A rename on mobile reaches desktop without a reload.
+
+**Why this stays open — two device checks are outstanding**, and this is a
+`type: bug`, so it does not move to `.done` on reasoning:
+
+- [ ] The **notifications drawer** shows sender names, not truncated addresses.
+      Highest-value remaining check: that surface had its own resolver reading only
+      the override slot, and the join change would have made it worse for every
+      future joiner had the fix not landed alongside.
+- [ ] **Other members render normally in a busy space.** The widest blast radius of
+      the join and resolver changes. The reporter has one space with few users, so
+      this is a wait-and-see over days rather than a single look.
+
+Close this once both are confirmed.
+
+⚠️ **Do not read this as fixing "members show as a truncated address".** That is
+the P2P roster pull/announce gap and is untouched. This helps only the subset
+whose identity had arrived in the global slot and was being read from the wrong
+one.
+
 ## §1. Symptom, as reported
 
 Change your own username on mobile. On desktop:

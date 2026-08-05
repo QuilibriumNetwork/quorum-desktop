@@ -111,7 +111,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
-- 📋 [Own identity, Phase 1 — implementation plan](issues/2026-08-05-own-identity-cross-device-sync-plan.md)
 
 #### Messagedb
 
@@ -519,6 +518,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Identity announce: cap the retries](issues/.done/2026-08-01-identity-announce-cadence-research.md)
 - 📋 [Dev viewer: one Issues browser instead of Tasks + Bugs](issues/.done/2026-08-03-dev-issues-browser-plan.md)
 - 📋 [The dangerous branch is off everywhere. Delete it so it stays off.](issues/.done/2026-08-04-remove-the-dead-bare-name-mention-branch-from-shared.md)
+- 📋 [Own identity, Phase 1 — implementation plan](issues/.done/2026-08-05-own-identity-cross-device-sync-plan.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -749,4 +749,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-05 14:07:53
+**Last Updated**: 2026-08-05 14:38:02

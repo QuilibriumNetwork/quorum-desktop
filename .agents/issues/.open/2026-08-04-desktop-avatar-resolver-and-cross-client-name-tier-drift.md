@@ -16,6 +16,25 @@ related:
 
 # One rule for names, no rule for avatars, and three tiers that disagree across clients
 
+## Status
+
+**2026-08-05 — §3-A closed in PR #313. §2, §3-C and §3-D remain.**
+
+§3-A (the global slot is a tier on mobile, only a comparator on desktop) is fixed:
+desktop's `resolveSpaceMemberName` now returns the global slot, so the ladder is
+override → QNS → global → address. It was not "latent" as this file claimed — see
+§3-A for what happened.
+
+§2 (desktop has no avatar resolver) is **partly** addressed and its real question
+is untouched. `useChannelData` now applies an override → global ladder for avatars
+and bios, which closes the live symptom. **But that is a fix at one map, not a
+resolver, and the open design question stands**: whether to promote mobile's
+`resolveMemberAvatar` into `quorum-shared` and delete mobile's copy, or twin it on
+desktop. That is a cross-client call and is still unmade.
+
+§3-C (address fallback formatted differently) and §3-D (`isAddressFallback`)
+untouched.
+
 ## 1. Why this is its own item
 
 PR #310 fixed a real defect: desktop call sites fed a truncated address INTO the
