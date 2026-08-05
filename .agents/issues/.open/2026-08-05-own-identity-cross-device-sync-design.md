@@ -371,7 +371,35 @@ author, and both can perpetuate a poisoned value:
   write; **change this companion cache write with it**, or the cache and the DB
   disagree about which slot holds a new joiner's name until the next refetch.
 
-## §6. Phase 2 — only if measured necessary
+## §6. Phase 2 — ⛔ MEASURED UNNECESSARY 2026-08-05. Do not build it.
+
+**The gate was run and Phase 2 failed it, which is the good outcome.**
+
+MEASURED on a real device pair: a per-space name set **on mobile** reached
+**desktop** correctly, immediately, over channel C.
+
+That kills the premise. Phase 2 existed because
+`2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` assumed
+per-space overrides never reach a user's own other devices — an assumption that
+was **never traced**, and is now shown to be false in at least one direction. The
+space roster already carries them, live, which is better than the config blob
+would have managed: the blob has no live push and only re-pulls on startup and a
+handful of incidental actions.
+
+So the elaborate design below would have traded a working live channel for a
+restart-gated one, to solve a problem that did not exist. It is retained as the
+record of a decision **not** taken, and of what it would cost if the premise ever
+turns out to hold after all.
+
+⚠️ **Still open, and the reason this is not simply deleted:** only
+**mobile → desktop** was measured. The 2026-08-01 issue observed the
+**desktop → mobile** direction. If that direction is genuinely broken, the fix is
+to repair channel C in that direction — not to move authorship into the blob.
+Tracked in `2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md`.
+
+**Everything below is the un-built design. Read it only if the gate is reopened.**
+
+### The original gate and design
 
 **First, measure.** Set a per-space name on desktop; check whether it reaches the
 phone, and the reverse. The 2026-08-01 issue assumed it never does and was never

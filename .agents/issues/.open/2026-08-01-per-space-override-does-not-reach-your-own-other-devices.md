@@ -4,7 +4,7 @@ title: "A per-space name/avatar set on one of your devices never reaches your ow
 status: open
 priority: medium
 created: 2026-08-01
-updated: 2026-08-01
+updated: 2026-08-05
 severity: your own second device shows you following your global identity, as if you had never set the override
 area: per-space profile override / channel C / multi-device
 repos: quorum-desktop + quorum-mobile (observed desktop → mobile; the reverse is untested)
@@ -20,6 +20,25 @@ related_docs:
 ## Status
 
 observed 2026-08-01 on a live two-device test, cause not yet traced
+
+> **⚠️ NARROWED 2026-08-05 by measurement — half the premise is false.**
+>
+> A per-space name set **on mobile reached desktop correctly and immediately**,
+> over channel C. So per-space overrides *do* cross a user's own devices; the
+> general claim in this file's title is wrong as written.
+>
+> What remains open is the **direction this file actually observed**: desktop →
+> mobile (§1 step 4). That is untested since, and is the only live part of this
+> issue. §5 already listed the reverse direction as untested; it is now measured
+> and working.
+>
+> **This mattered beyond this file.** An entire deferred architecture — moving
+> per-space profiles into the encrypted config blob — was designed on the
+> assumption that channel C could not carry them between a user's own devices.
+> The measurement killed it before it was built. See
+> `2026-08-05-own-identity-cross-device-sync-design.md` §6.
+>
+> Retitle this issue to name the direction when someone next touches it.
 
 
 ## §1. Observed (live test, 2026-08-01)
@@ -92,4 +111,4 @@ Establish the restart behaviour first — it is one minute of work and it splits
 the hypothesis space in half.
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-05*
