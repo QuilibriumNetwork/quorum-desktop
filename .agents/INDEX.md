@@ -285,6 +285,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A Space created on mobile does not land correctly on desktop](issues/.open/2026-08-04-mobile-created-space-syncs-badly-to-desktop-owner-missing-and-message-not-shown.md)
 - 🐛 [The two clients do not merge the same config fields](issues/.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)
 - 🐛 [The config upload has no size guard, and mobile's failure is invisible](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md)
+- 🐛 [`.qmbak` backup cannot restore DM session continuity](issues/.open/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
@@ -751,4 +752,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-05 16:04:29
+**Last Updated**: 2026-08-05 16:11:31

@@ -80,6 +80,22 @@ not part of Safari and thus have their own counter of days of use… We do not
 expect the first-party in such a web application to have its website data
 deleted."*
 
+**Why the rule exists** (worth knowing, because it explains why the exemption is
+what it is). In 2019 ITP capped JavaScript-set cookies to 7 days to stop
+first-party cookies being used for cross-site tracking. Trackers moved their
+identifiers into `localStorage` and IndexedDB instead — storage which, in
+WebKit's own words, has *"no expiry function at all"* and which a site cannot
+even ask the browser to time-limit. The 2020 change extended the same 7-day rule
+to all script-writable storage to close that bypass. The underlying heuristic is
+"a site you genuinely use will be revisited, and revisiting resets the counter" —
+sound for tracking, and wrong for local-first apps where local storage is the
+only copy of the data. This was flagged at the time: contemporary coverage of the
+backlash warned it could *"effectively block decentralized apps using the browser
+as a trusted replication node in a peer-to-peer network"*, which describes Quorum
+exactly. Apple's answer to that class of app has been consistent: install it.
+Chrome and Firefox do **not** time-delete first-party storage — Safari is the
+outlier, not the norm.
+
 Sources: [WebKit — Full third-party cookie blocking and more](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/) (the announcement),
 [WebKit — Updates to Storage Policy](https://webkit.org/blog/14403/updates-to-storage-policy/) (2023 quota model),
 [lapcatsoftware — Safari Un-Intelligent Tracking Prevention](https://lapcatsoftware.com/articles/2023/8/5.html)
@@ -161,16 +177,18 @@ end to end is part of Verification below.
 
 Ordered by ratio of user protection to effort.
 
-### M1 — Restore ratchet states when the target is empty (code, small, highest value)
+### M1 — Make `.qmbak` able to restore DM sessions → **split out**
 
-Make the import conditional instead of unconditional: if `encryption_states` is
-empty for a conversation, import the state from the backup; if a live state
-exists, keep skipping it. This preserves the original merge safety and turns
-`.qmbak` into real disaster recovery.
+> **Corrected 2026-08-05.** An earlier draft of this issue described this as a
+> small conditional-import fix. That was wrong. The export is missing
+> `inbox_mapping` and `latest_states`, the ratchet blob is opaque so send and
+> receive chains cannot be separated at the app layer, and naively restoring a
+> rewound sending chain risks message-key reuse. It needs SDK input.
 
-- `src/db/messages.ts:2270` — extend `importDMData` to accept `encryption_states` and add the store to the transaction
-- `src/services/BackupService.ts:202` — stop dropping them at the call site
-- Needs a test that a restore into an empty DB yields a decryptable existing session, and that a restore into a live account leaves the live state untouched
+Tracked separately as
+[2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md).
+It is **independent of ITP** — it applies equally to cache clears, device resets
+and new devices — so it should not block or be blocked by the mitigations below.
 
 ### M2 — Warn Safari users and steer them to install (UI, small)
 
@@ -192,8 +210,24 @@ field, how often it is granted.
 
 The `.qmbak` export exists but is manual and buried in Settings → Privacy/Security.
 A periodic nudge (or an automatic export to the Downloads folder in Electron)
-converts it from a feature nobody uses into an actual safety net. Only worth
-building **after M1**, since today's backup does not restore session continuity.
+converts it from a feature nobody uses into an actual safety net. **Blocked on
+[the backup issue](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)** —
+prompting users to take a backup that cannot fully restore would manufacture
+exactly the false confidence that issue is about.
+
+### M6 — Document the user-level ITP opt-out, but do not recommend it (docs, trivial)
+
+Safari → Settings → Privacy → uncheck **Prevent Cross-Site Tracking** disables ITP
+entirely, including this deletion. (A Develop → Experimental Features toggle for
+just this rule also exists but resets on every Safari update, so it is not a real
+answer.)
+
+Record it for completeness, and do **not** put it in user-facing guidance. Asking
+the users of a privacy-focused encrypted messenger to switch off their browser's
+anti-tracking protection in order to keep their data is a bad trade and a worse
+look — and this user base is the one most likely to have set it deliberately.
+M2 (install) achieves the same protection without asking anyone to weaken
+anything.
 
 ### M5 — Add ITP eviction to the backup doc's list of loss scenarios (docs, trivial)
 

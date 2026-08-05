@@ -135,6 +135,15 @@ window.__selfIdentitySources = async () => {
     : [];
 
   // ---- report -------------------------------------------------------------
+  // Defined up here rather than beside the verdicts: the size section below
+  // also renders pass/fail lines, and a `const` used above its declaration is a
+  // TDZ crash, not a hoist.
+  const say = (ok, text) =>
+    console.log(
+      `%c${ok ? '✔' : '✖'} ${text}`,
+      `color:${ok ? '#4ade80' : '#f87171'};font-weight:bold`
+    );
+
   const settingsField = config?.name ?? '(config has no name)';
   const navRailName = passkey?.displayName || 'User';
 
@@ -210,8 +219,9 @@ window.__selfIdentitySources = async () => {
     console.table(
       budget.map((b) => ({ ...b, kb: (b.bytes / 1024).toFixed(1) }))
     );
-    // Bookmarks measured at 75% of one real blob. Break them down by field so
-    // the fix is chosen on evidence — see
+    // Bookmarks measured at 75% of one real blob, 94% of it a base64 sender
+    // avatar copied into every bookmark. Break them down by field so the fix is
+    // chosen on evidence — see
     // 2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md under .agents/issues/.
     const marks = config.bookmarks ?? [];
     if (marks.length) {
@@ -223,6 +233,64 @@ window.__selfIdentitySources = async () => {
           kb: (sum(f) / 1024).toFixed(1),
         })).concat([{ 'cachedPreview field': `(${marks.length} bookmarks)`, kb: (sizeOf(marks) / 1024).toFixed(1) }])
       );
+    }
+
+    // ---- which bookmark store are we even looking at? -------------------
+    //
+    // 🔴 `config.bookmarks` above is NOT the live bookmark store. It is the copy
+    // embedded in the stored config blob, and it is refreshed only when
+    // `saveConfig` next runs. The live rows are their own object store.
+    //
+    // That matters for verifying the strip, and reading the wrong one gives a
+    // FALSE NEGATIVE: the sweep rewrites the `bookmarks` store on launch, but
+    // the number printed above keeps showing the old size until the next config
+    // save. Read both, and say which state this account is actually in.
+    const liveMarks = await all('bookmarks');
+    const iconBytes = (list) =>
+      list.reduce((n, b) => n + sizeOf(b?.cachedPreview?.senderIcon), 0);
+    const liveIconKb = iconBytes(liveMarks) / 1024;
+    const configIconKb = iconBytes(marks) / 1024;
+    const sweepRan = !!localStorage.getItem(
+      `bookmarkSenderIconsStripped:v1:${selfAddress}`
+    );
+
+    console.table([
+      {
+        store: "IndexedDB 'bookmarks' (LIVE rows)",
+        count: liveMarks.length,
+        'senderIcon kb': liveIconKb.toFixed(1),
+        'refreshed by': 'the one-time sweep, on launch',
+      },
+      {
+        store: "user_config.bookmarks (blob COPY)",
+        count: marks.length,
+        'senderIcon kb': configIconKb.toFixed(1),
+        'refreshed by': 'the next saveConfig',
+      },
+    ]);
+
+    if (!sweepRan && liveIconKb > 1) {
+      say(
+        false,
+        `Embedded avatars still present (${liveIconKb.toFixed(1)} KB live) and the sweep has ` +
+          'NOT run on this device. This build does not contain the bookmark-avatar fix — ' +
+          'this is a BASELINE reading, not a verification.'
+      );
+    } else if (sweepRan && configIconKb > 1) {
+      say(
+        true,
+        `Sweep has run (live store clean at ${liveIconKb.toFixed(1)} KB). The blob copy still ` +
+          `reads ${configIconKb.toFixed(1)} KB because no config save has happened since — ` +
+          'uploads are ALREADY thin (saveConfig strips on the way out); this local copy ' +
+          'catches up on the next save. Change any setting and re-run to see it drop.'
+      );
+    } else if (sweepRan) {
+      say(
+        true,
+        'Converged — both the live store and the blob copy are free of embedded avatars.'
+      );
+    } else {
+      say(true, 'No embedded bookmark avatars on this account (nothing to strip).');
     }
 
     const oneAvatar = sizeOf(config.profile_image);
@@ -237,12 +305,6 @@ window.__selfIdentitySources = async () => {
   }
 
   // ---- verdicts ----------------------------------------------------------
-  const say = (ok, text) =>
-    console.log(
-      `%c${ok ? '✔' : '✖'} ${text}`,
-      `color:${ok ? '#4ade80' : '#f87171'};font-weight:bold`
-    );
-
   console.log(
     '%c=== VERDICT ===',
     'color:#fbbf24;font-weight:bold;font-size:14px'

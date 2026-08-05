@@ -33,10 +33,11 @@ prediction is arithmetic from §3-A, not an observation.
 | ⏳ **PREDICTED, not measured** | ~873 KB → ~253 KB on the real account. Arithmetic from §3-A (619.8 KB of `senderIcon` removed), not yet observed |
 
 **To close this issue**, run `.agents/tools/dm-debug/08-self-identity-sources.js`
-in the console on the affected account, after a launch on this build (the sweep
-runs once, on mount, gated by `localStorage['bookmarkSenderIconsStripped:v1:<address>']`).
-Expected: the bookmarks row drops from ~656 KB to under 40 KB and the whole blob
-lands near 250 KB.
+in the console **on a build containing this branch**, after one launch (the sweep
+runs once, on mount, gated by
+`localStorage['bookmarkSenderIconsStripped:v1:<address>']`). Read the new
+verdict line, which now names the state directly instead of leaving it to be
+inferred from a number.
 
 That single console paste is the entire residue. It cannot be automated because
 it measures **this account's real stored bookmarks** — the 873 KB figure came
@@ -45,6 +46,37 @@ re-measure a fixture. Everything else that was once "open the app and look" is
 now covered above, including avatar rendering: `bookmarkSenderIconResolution.unit.test.tsx`
 drives the real hook against a fake IndexedDB and asserts which store is read,
 on which address, and what renders when each tier is empty.
+
+### ⚠️ The tool measured the wrong store, and would have reported a false negative
+
+Found 2026-08-05 when the baseline was re-run. **`bookmarks` and `user_config`
+are separate IndexedDB object stores.** The size table reads
+`config.bookmarks` — the copy embedded in the *stored config blob* — but the
+sweep rewrites the live `bookmarks` store. They reconcile only on the next
+`saveConfig`.
+
+So on a correctly-fixed device, freshly launched, the old tool would still have
+printed **656.5 KB** and looked like the fix had done nothing, when in fact the
+sweep had run and every upload was already thin (`saveConfig` strips on the way
+out regardless of what is on disk). The verification instruction given earlier
+in this file was wrong for exactly one launch's worth of time, which is precisely
+when someone would run it.
+
+The tool now reads **both** stores side by side and reports one of four states:
+
+| verdict | meaning |
+|---|---|
+| ✖ avatars present, sweep has not run | this build does not have the fix — a BASELINE reading, not a verification |
+| ✔ sweep run, blob copy stale | live store clean, uploads already thin, local copy catches up on the next config save (change any setting and re-run) |
+| ✔ converged | both stores clean |
+| ✔ nothing to strip | account never had embedded avatars |
+
+All four branches smoke-tested against a stubbed IndexedDB before committing.
+
+**Baseline re-measured 2026-08-05** on the real account and identical to §1 to
+the byte — 873.2 KB blob, 656.5 KB bookmarks, 619.8 KB `senderIcon`, 18
+bookmarks — so the instrument is deterministic and the pre-fix number is not a
+one-off reading.
 
 ### Two defects the tests caught after the code was written
 
