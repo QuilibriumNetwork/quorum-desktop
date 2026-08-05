@@ -22,6 +22,17 @@ interface UseChannelDataProps {
   channelId: string;
 }
 
+/**
+ * One rung of the avatar ladder: a usable avatar, or `undefined` so the next
+ * rung — and ultimately the initials placeholder — can take over. The default
+ * UNKNOWN_USER image counts as absent; handing it on would render a broken-looking
+ * placeholder instead of initials.
+ */
+function pickAvatar(icon: string | undefined): string | undefined {
+  if (!icon) return undefined;
+  return icon.includes(DefaultImages.UNKNOWN_USER) ? undefined : icon;
+}
+
 export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
   const { data: space } = useSpace({ spaceId });
   const { data: spaceMembers } = useSpaceMembers({ spaceId });
@@ -68,10 +79,16 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
         Object.assign(prev, {
           [curr.user_address]: {
             address: curr.user_address,
-            // Filter out invalid avatars (null or UNKNOWN_USER) to enable initials fallback
-            userIcon: curr.user_icon?.includes(DefaultImages.UNKNOWN_USER)
-              ? undefined
-              : curr.user_icon,
+            // Avatar ladder, applied HERE rather than at each call site: the
+            // per-space override, else the global slot. Consumers of this map
+            // read `userIcon` raw (the member sidebar does), and with the
+            // override correctly empty — its normal state under the two-slot
+            // model — an override-only read renders no avatar at all. Same
+            // shape as the name defect fixed in resolveSpaceMemberName.
+            // Invalid avatars (UNKNOWN_USER) are dropped at each rung so the
+            // initials fallback still engages.
+            userIcon:
+              pickAvatar(curr.user_icon) ?? pickAvatar(curr.global_user_icon),
             displayName: curr.display_name,
             // Per-space bio override; flows into UserProfile's "About"
             // section. Empty string means the user explicitly cleared it.
@@ -81,9 +98,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             // Consumed by the fallback resolver as the tier between override and
             // public profile. See identity-resolution-and-profile-sync doc.
             globalDisplayName: curr.global_display_name,
-            globalUserIcon: curr.global_user_icon?.includes(DefaultImages.UNKNOWN_USER)
-              ? undefined
-              : curr.global_user_icon,
+            globalUserIcon: pickAvatar(curr.global_user_icon),
             globalBio: curr.global_bio,
             isKicked: curr.isKicked || false,
             spaceTag: curr.spaceTag,
@@ -113,10 +128,9 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
         Object.assign(prev, {
           [curr.user_address]: {
             address: curr.user_address,
-            // Filter out invalid avatars (null or UNKNOWN_USER) to enable initials fallback
-            userIcon: curr.user_icon?.includes(DefaultImages.UNKNOWN_USER)
-              ? undefined
-              : curr.user_icon,
+            // Same override → global ladder as `members` above.
+            userIcon:
+              pickAvatar(curr.user_icon) ?? pickAvatar(curr.global_user_icon),
             displayName: curr.display_name,
             left: curr.inbox_address === '',
             isKicked: curr.isKicked || false,
