@@ -23,6 +23,7 @@ For background on the architecture and the debug ladder, read [`../../docs/debug
 | `05-profile-sources.js` | Per-DM, compares the stored conversation row's name/icon against the live public-profile API. Use to diagnose why an avatar/name shows in the open conversation (public-profile fallback, in-memory) but not in the sidebar (reads the stored row). A `data:image/...` stored icon means the avatar has been persisted to the row. |
 | `06-space-member-sources.js` | Space-member equivalent of 05. |
 | `07-receiver-probe.js` | **DM-loss receiver probe** (handoff §4, sender-isolation runs). Install BEFORE the sender starts; counts receive-path warnings from install and reads `messages` from IndexedDB directly. `await window.__probe.report('V')` → landed / missing numbers / warning counters. Take a second reading ~10 min later — that is what separates loss from a latency tail. |
+| `08-self-identity-sources.js` | **Why YOUR OWN name differs between two surfaces of the same app.** Prints all four identity stores side by side — the device-local `passkeys-list` (NavRail tooltip), the config blob (User Settings field), your own roster row's override + global slots per space (message authors, member lists), and the published public profile — then a verdict naming which surface reads which store and which one is stale. Written for `2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md`; run it before theorising. |
 
 ## Offline analysis (node CLI, NOT console snippets)
 
@@ -74,4 +75,4 @@ captured failure in seconds.** Reach for it before booking device time.
 - **No output at all.** Console filter is hiding info-level. Set log level to "All levels" or "Verbose".
 
 ---
-*Last updated: 2026-07-27*
+*Last updated: 2026-08-05*
