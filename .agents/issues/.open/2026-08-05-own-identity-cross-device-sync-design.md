@@ -276,6 +276,19 @@ already treats as a deliberate clear. `saveSpaceMember`'s `clearFields` escape h
 is **not** needed here; it exists for `spaceTag`, whose deletion is signalled by
 absence.
 
+#### 5-D-0. It clears the name and avatar, NOT the bio — deliberately
+
+This looks like an omission and is not. Nothing ever stamped a per-space **bio**
+automatically: the join path does not write one, the legacy-owner repair does not,
+and the global profile save sends `globalBio`, never the override `bio`. The only
+writer is the Space Settings → Account editor.
+
+So a non-empty per-space bio is **always** deliberate, and clearing it would destroy
+something the user actually typed — the opposite of the reasoning that justifies
+clearing names.
+
+If a future change starts stamping bios, this reasoning expires with it.
+
 #### 🔴 5-D-i. The clear MUST stamp a `profileTimestamp`, or a sibling device undoes it
 
 Found by independent regression review 2026-08-05, with the path traced end to end.
