@@ -96,10 +96,14 @@ const SpaceSettingsModal: React.FunctionComponent<{
     try {
       const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
       const inboxAddress = inboxKey?.address || '';
+      // GLOBAL slot, not the override — the override outranks every later
+      // global update and the announce re-stamps it forever, so writing it here
+      // would freeze the owner under their current name.
       await messageDB.saveSpaceMember(spaceId, {
         user_address: user.currentPasskeyInfo.address,
-        user_icon: user.currentPasskeyInfo.pfpUrl || '',
-        display_name: user.currentPasskeyInfo.displayName || '',
+        global_user_icon: user.currentPasskeyInfo.pfpUrl || '',
+        global_display_name: user.currentPasskeyInfo.displayName || '',
+        globalProfileTimestamp: Date.now(),
         inbox_address: inboxAddress,
       } as any);
       setMissingOwnerMembership(false);
