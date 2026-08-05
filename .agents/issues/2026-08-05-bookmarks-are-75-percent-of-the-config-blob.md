@@ -26,16 +26,44 @@ prediction is arithmetic from §3-A, not an observation.
 
 | | |
 |---|---|
-| ✅ **MEASURED** | 13 new shared unit tests + 2 new ConfigService tests + 8 render-ladder tests. Full suites green: desktop 1014/1014, shared 598/598. Both suites were confirmed able to FAIL — neutering the stripper turns 6 shared tests red, neutering the two ConfigService call sites turns both new sync tests red |
+| ✅ **MEASURED** | 44 new tests: 13 shared (the stripper), 12 render-ladder (pure precedence), 9 resolution (the hook against a fake IndexedDB), 8 sweep (the migration, including its failure modes), 2 ConfigService (both sync directions). Desktop 1035/1035, shared 598/598, tsc clean, lint 0 errors |
+| ✅ **MEASURED** | every group was confirmed able to FAIL by neutering the code under it — the stripper (6 red), the two ConfigService call sites (2 red), the counterpart gate (4 red), the changed-rows-only skip (2 red), the migration's completion flag moved before its writes (2 red) |
 | ✅ **MEASURED** | the plaintext handed to `crypto.subtle.encrypt` (literally the uploaded blob) contains no `senderIcon` and no avatar bytes, while both bookmarks and their `senderAddress` survive |
+| ✅ **MEASURED** | the sweep writes only rows that changed, and does NOT set its completion flag when a read or write fails — so a partial failure retries next launch instead of being permanently skipped |
 | ⏳ **PREDICTED, not measured** | ~873 KB → ~253 KB on the real account. Arithmetic from §3-A (619.8 KB of `senderIcon` removed), not yet observed |
-| ⏳ **UNVERIFIED** | that bookmark cards still show the right avatar on a real account, including for a sender whose row this device has never held |
 
 **To close this issue**, run `.agents/tools/dm-debug/08-self-identity-sources.js`
 in the console on the affected account, after a launch on this build (the sweep
 runs once, on mount, gated by `localStorage['bookmarkSenderIconsStripped:v1:<address>']`).
 Expected: the bookmarks row drops from ~656 KB to under 40 KB and the whole blob
-lands near 250 KB. Then open `/bookmarks` and confirm avatars render.
+lands near 250 KB.
+
+That single console paste is the entire residue. It cannot be automated because
+it measures **this account's real stored bookmarks** — the 873 KB figure came
+from 18 real bookmarks with 18 real avatars, and a synthetic fixture would only
+re-measure a fixture. Everything else that was once "open the app and look" is
+now covered above, including avatar rendering: `bookmarkSenderIconResolution.unit.test.tsx`
+drives the real hook against a fake IndexedDB and asserts which store is read,
+on which address, and what renders when each tier is empty.
+
+### Two defects the tests caught after the code was written
+
+Recorded because both were live in a version already described as verified, and
+both were found by an instrument rather than by re-reading:
+
+1. **The DM counterpart avatar.** `conversation.icon` is the counterpart's, and
+   it was being read without checking who sent the message — so bookmarking your
+   own message in a DM rendered your name beside the other person's face. Found
+   while writing up how rendering worked; fixed by passing the conversation
+   record whole and gating in the pure resolver.
+2. **The public-profile fallback never actually fell back.** The gate was
+   `!localIcon`, but on first render the IndexedDB read is still in flight, so
+   `localIcon` is always undefined and the request always fired. The code comment
+   claimed the opposite. On a 200-bookmark page that is one network request per
+   distinct sender on open. Fixed by also waiting on the local query's
+   `isFetched`. **This one was invisible to every pure test** — it only exists in
+   the wiring, which is exactly the layer that had no test until the question
+   "is there another way to test this?" was asked.
 
 ### What shipped
 

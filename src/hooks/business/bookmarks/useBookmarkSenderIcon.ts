@@ -89,7 +89,9 @@ export function useBookmarkSenderIcon(bookmark: Bookmark): string | undefined {
   const { spaceId, conversationId, sourceType } = bookmark;
   const scopeId = (sourceType === 'channel' ? spaceId : conversationId) || '';
 
-  const { data: local } = useQuery({
+  const localEnabled = !!senderAddress && !!scopeId;
+
+  const { data: local, isFetched: localFetched } = useQuery({
     queryKey: buildBookmarkSenderLocalKey(scopeId, senderAddress),
     queryFn: async (): Promise<BookmarkSenderIconSources> => {
       if (sourceType === 'channel' && spaceId) {
@@ -109,7 +111,7 @@ export function useBookmarkSenderIcon(bookmark: Bookmark): string | undefined {
       }
       return {};
     },
-    enabled: !!senderAddress && !!scopeId,
+    enabled: localEnabled,
     networkMode: 'always', // IndexedDB, not the network
     staleTime: 60 * 1000,
   });
@@ -121,11 +123,20 @@ export function useBookmarkSenderIcon(bookmark: Bookmark): string | undefined {
 
   const localIcon = pickBookmarkSenderIcon(senderAddress, { ...local, selfIcon });
 
-  // Only reach for the network when nothing local answered. Bookmarks render as
-  // a flat list of up to MAX_BOOKMARKS, so an unconditional fetch per card would
-  // be one request per distinct sender on page open.
+  // Only reach for the network once the local read has SETTLED and produced
+  // nothing. Waiting on `isFetched` is the whole point: on the first render
+  // `local` is undefined simply because the read is in flight, so gating on
+  // `!localIcon` alone fires the request every time and the fallback stops
+  // being a fallback. Bookmarks render as a flat list of up to MAX_BOOKMARKS
+  // with no virtualization, so that is one public-profile request per distinct
+  // sender the moment the page opens. Measured by
+  // `bookmarkSenderIconResolution.unit.test.tsx`, which caught exactly this.
+  //
+  // `!localEnabled` covers a bookmark with no space or conversation to read
+  // from: nothing local can ever answer, so go straight to the network.
+  const localSettled = !localEnabled || localFetched;
   const { data: publicProfile } = useUserPublicProfile(senderAddress, {
-    enabled: !!senderAddress && !localIcon,
+    enabled: !!senderAddress && localSettled && !localIcon,
   });
 
   return pickBookmarkSenderIcon(senderAddress, {
