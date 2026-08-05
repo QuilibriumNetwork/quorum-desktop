@@ -4,7 +4,7 @@ title: Bookmarks Feature
 status: done
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-06-04T00:00:00.000Z
+updated: 2026-08-05
 ---
 
 # Bookmarks Feature
@@ -63,7 +63,9 @@ The chat-header bookmark icon is only rendered when the current context has at l
 - `src/hooks/business/bookmarks/useBookmarks.ts` — main business hook with React Query integration
 - `src/hooks/queries/bookmarks/useResolvedBookmark.ts` — message resolution for hybrid preview rendering
 - `src/hooks/queries/bookmarks/` — React Query hooks for data fetching and caching
-- `src/hooks/business/messages/useMessageActions.ts` — bookmark action handler, threads `senderIcon` through `mapSenderToUser`
+- `src/hooks/business/messages/useMessageActions.ts` — bookmark action handler; takes the sender NAME from `mapSenderToUser` and deliberately not the avatar
+- `src/hooks/business/bookmarks/useBookmarkSenderIcon.ts` — resolves the sender avatar at render from `cachedPreview.senderAddress`
+- `src/hooks/business/bookmarks/useStripBookmarkSenderIcons.ts` — one-time sweep removing embedded avatars from bookmarks stored by older builds
 
 **Sync Layer**:
 - `src/services/ConfigService.ts` — bookmark collection, differential sync, and merge with deduplication
@@ -99,8 +101,8 @@ export type Bookmark = {
   createdAt: number;            // Timestamp for sorting
 
   cachedPreview: {
+    senderAddress: string;      // Who sent it — the avatar is resolved from THIS at render
     senderName: string;         // Display name at bookmark time
-    senderIcon?: string;        // Avatar URL captured at bookmark time (snapshot)
     textSnippet: string;        // First ~150 chars, plain text (empty for media-only)
     messageDate: number;        // Original message timestamp
     sourceName: string;         // "Space Name > #channel" or empty for DMs
@@ -261,14 +263,15 @@ const { isBookmarked, toggleBookmark, canAddBookmark } = useBookmarks({ userAddr
 // Check if message is bookmarked (O(1))
 const bookmarked = isBookmarked(message.messageId);
 
-// Toggle bookmark with context (senderIcon is captured from mapSenderToUser)
+// Toggle bookmark with context. The sender NAME is snapshotted; the avatar is
+// deliberately not — see "Sender avatar" below.
 toggleBookmark(
   message,
   'channel',
   { spaceId, channelId, conversationId: undefined },
   'User Display Name',
   'Space Name > #channel-name',
-  senderIconUrl
+  threadName
 );
 ```
 
@@ -365,8 +368,39 @@ The merge prevents multiple bookmarks pointing to the same message, ensuring a c
 ### Two-Surface Split
 The page handles the global view (search + cross-source filter). The panel handles the in-context view (no filter dropdown, scoped to the current space or DM). This avoids two surfaces offering the same filters and keeps the chat header uncluttered.
 
-### Sender Icon Snapshot
-The sender avatar URL is captured at bookmark time and stored in `cachedPreview.senderIcon`, so cards render the real avatar even when the original message isn't in local IndexedDB. Bookmarks created before this field existed fall back to the default avatar.
+### Sender avatar — resolved, never stored (changed 2026-08-05)
+
+`cachedPreview` stores the sender's **address**, not their avatar. `BookmarkCard`
+resolves the image at render through `useBookmarkSenderIcon`, on the same ladder
+every other surface uses: per-space override → roster global slot → DM
+conversation record → our own avatar (for our own messages) → published public
+profile. A miss renders coloured initials, exactly as a sender with no avatar
+always has.
+
+It used to be a snapshot: `cachedPreview.senderIcon`, a base64 data URI copied
+into every bookmark. **Measured 2026-08-05 on a real account: 18 bookmarks at
+~34 KB apiece, 619.8 KB — 94% of all bookmark data and 69% of an 873 KB config
+blob, against a ~1 MB working ceiling.** The config blob is the only
+cross-device transport for every synced setting, and its failure mode is silent,
+so a render cache is not worth that budget.
+
+Three places enforce it, because dropping the field from new writes alone would
+not shrink an existing account:
+
+| Where | What it does |
+|---|---|
+| `useBookmarks.createBookmarkFromMessage` | never writes it — the field is gone from the shared `BookmarkPreview` type, so it is a compile error |
+| `ConfigService` (upload + adopt) | `stripBookmarkSenderIcons` on the way out AND on the way in, so a device still on an older build cannot re-inflate the blob in either direction |
+| `useStripBookmarkSenderIcons` | one-time local sweep over stored bookmarks, reclaiming the IndexedDB copy |
+
+Side benefit: a bookmarked sender's avatar now follows a rename or a new profile
+picture instead of being frozen at bookmark time.
+
+⚠️ **Mobile still writes the blob with whatever it holds locally.** It never
+wrote `senderIcon` itself, but bookmarks it adopted from desktop before this
+change still carry one, and it has no strip. See the issue file for the two call
+sites; the fix is blocked on a `quorum-shared` release, since mobile consumes the
+package from npm rather than the local link.
 
 ### Performance Architecture
 All bookmarks are loaded into a memoized Set for O(1) status checking. With a 200 bookmark limit, memory cost is negligible.
@@ -465,4 +499,4 @@ Sync requires network connectivity. Local changes are preserved but won't sync u
 
 ---
 
-*Last updated: 2026-06-04*
+*Last updated: 2026-08-05*

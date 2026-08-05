@@ -4,7 +4,7 @@ title: Config Sync System
 status: done
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-12T00:00:00.000Z
+updated: 2026-08-05
 ---
 
 # Config Sync System
@@ -385,6 +385,28 @@ The API has an implicit size limit on the config payload. Based on observed fail
 - **Failure threshold**: ~21MB (caused by bloated encryption states)
 
 The 100KB per-encryption-state filter keeps total payload well under limits.
+
+### What has actually eaten the budget
+
+Nothing checks the size before publishing, so an overrun surfaces only as
+whatever the server returns — and the failure is the quiet kind: the device
+keeps working and looking correct locally, and simply stops telling any other
+device anything. Both entries below were found by measuring a real account with
+`.agents/tools/dm-debug/08-self-identity-sources.js`, which prints the blob's
+size broken down by part. Run it before theorising.
+
+| Contributor | Measured | Status |
+|---|---|---|
+| **Bookmark sender avatars** — a base64 avatar copied into every bookmark | 656 KB of an 873 KB blob (75%), of which `senderIcon` alone was 619.8 KB (69% of the whole blob) | **fixed on desktop 2026-08-05.** `stripBookmarkSenderIcons` runs on upload AND on adopt in `ConfigService`; the avatar is resolved at render from `senderAddress`. Mobile still needs the same, blocked on a `quorum-shared` release |
+| Encryption states (`spaceKeys`) | 160.6 KB (18%) on the same account; historically the ~21 MB failures | bounded by the 100 KB per-state filter; see `.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md` |
+
+⚠️ **Before adding any new field to `UserConfig`, ask what it costs per item and
+whether it is rebuildable.** The bookmark avatar was a pure render cache
+reconstructible from an address already in the payload, and it still grew to two
+thirds of the transport that every synced setting shares.
+
+A pre-flight size check that fails loudly is still **not implemented** — see
+§4.3 of `.agents/issues/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
 
 ## Related Documentation
 

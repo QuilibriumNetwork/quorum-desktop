@@ -2747,6 +2747,28 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Overwrite an EXISTING bookmark row.
+   *
+   * `addBookmark` uses `IDBObjectStore.add`, which rejects a key that already
+   * exists, and it enforces MAX_BOOKMARKS. Neither is right for rewriting a row
+   * that is already there (a sync update, or the legacy-avatar sweep): the
+   * first throws, and the second could refuse a rewrite on an account sitting
+   * at the cap. This uses `put` and no count check, so it can only replace, and
+   * never grows the store.
+   */
+  async putBookmark(bookmark: Bookmark): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readwrite');
+      const store = transaction.objectStore('bookmarks');
+      const request = store.put(bookmark);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async removeBookmark(bookmarkId: string): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {

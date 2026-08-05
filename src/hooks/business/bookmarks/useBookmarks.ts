@@ -39,13 +39,19 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
   const canAddBookmark = bookmarkCount < BOOKMARKS_CONFIG.MAX_BOOKMARKS;
 
   // Helper to create bookmark from message
+  //
+  // 🔴 The preview stores the sender's ADDRESS, never their avatar. Every
+  // bookmark lives in the encrypted config blob, and an embedded base64 avatar
+  // per bookmark was 69% of that blob against a ~1 MB ceiling (measured
+  // 2026-08-05). BookmarkCard resolves the avatar from `senderAddress` at
+  // render instead — which also means it follows a rename rather than freezing
+  // at bookmark time.
   const createBookmarkFromMessage = useCallback((
     message: Message,
     sourceType: 'channel' | 'dm',
     context: BookmarkContext,
     senderName: string,
     sourceName: string,
-    senderIcon?: string,
     threadName?: string
   ): Bookmark => {
     // Determine content type and extract relevant data
@@ -96,7 +102,6 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       cachedPreview: {
         senderAddress: message.content.senderId,
         senderName,
-        senderIcon,
         threadName,
         textSnippet,
         messageDate: message.createdDate,
@@ -167,7 +172,6 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     context: BookmarkContext,
     senderName: string = 'Unknown User',
     sourceName: string = 'Unknown Source',
-    senderIcon?: string,
     threadName?: string
   ) => {
     // Validate bookmark limit
@@ -192,7 +196,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       return;
     }
 
-    const bookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName, senderIcon, threadName);
+    const bookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName, threadName);
     addBookmarkMutation.mutate(bookmark);
   }, [canAddBookmark, createBookmarkFromMessage, addBookmarkMutation]);
 
@@ -208,7 +212,6 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     context: BookmarkContext,
     senderName: string = 'Unknown User',
     sourceName: string = 'Unknown Source',
-    senderIcon?: string,
     threadName?: string
   ) => {
     // Validate message structure first (before accessing messageId)
@@ -258,7 +261,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
         return;
       }
 
-      const newBookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName, senderIcon, threadName);
+      const newBookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName, threadName);
       addBookmarkMutation.mutate(newBookmark, {
         onSettled: () => {
           setPendingToggles(prev => {

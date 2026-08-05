@@ -25,6 +25,7 @@ import { useMutedConversationsSync } from '../hooks/business/dm/useMutedConversa
 import { useMigrateConversationSettings } from '../hooks/business/dm/useMigrateConversationSettings';
 import { useReconcileSelfIdentity } from '../hooks/business/user/useReconcileSelfIdentity';
 import { useClearLegacySpaceOverrides } from '../hooks/business/user/useClearLegacySpaceOverrides';
+import { useStripBookmarkSenderIcons } from '../hooks/business/bookmarks';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -63,6 +64,7 @@ const Layout: React.FunctionComponent<{
   useMigrateConversationSettings();
   useReconcileSelfIdentity();
   useClearLegacySpaceOverrides();
+  useStripBookmarkSenderIcons();
 
   const [toast, setToast] = React.useState<{
     id?: string;

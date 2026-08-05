@@ -6,6 +6,7 @@ import { Flex, Button, Icon, Tooltip } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { MessageMarkdownRenderer } from '../message/MessageMarkdownRenderer';
 import { useResolvedBookmark } from '../../hooks/queries/bookmarks';
+import { useBookmarkSenderIcon } from '../../hooks/business/bookmarks';
 import { formatMessageDate, DefaultImages } from '../../utils';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { useImageModal } from '../context/ImageModalProvider';
@@ -47,7 +48,10 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
 
   const senderAddress = cachedPreview.senderAddress || resolvedMessage?.content?.senderId || '';
   const senderName = cachedPreview.senderName || t`Unknown User`;
-  const senderIcon = cachedPreview.senderIcon;
+  // Resolved from `senderAddress`, never stored on the bookmark — an embedded
+  // avatar per bookmark was 69% of the encrypted config blob. Undefined is a
+  // normal outcome; UserAvatar falls back to coloured initials.
+  const senderIcon = useBookmarkSenderIcon(bookmark);
   const messageDate = resolvedMessage?.createdDate ?? cachedPreview.messageDate;
 
   // Local map: bookmarks span all spaces/DMs, so we synthesize from the

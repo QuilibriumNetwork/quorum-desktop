@@ -1,7 +1,12 @@
 // ConfigService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles user configuration management
 
-import { logger, int64ToBytes, mergeConversationSettings } from '@quilibrium/quorum-shared';
+import {
+  logger,
+  int64ToBytes,
+  mergeConversationSettings,
+  stripBookmarkSenderIcons,
+} from '@quilibrium/quorum-shared';
 import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import type { Bookmark, Space } from '@quilibrium/quorum-shared';
@@ -326,6 +331,21 @@ export class ConfigService {
 
     // Merge bookmarks from remote
     if (config.bookmarks && config.bookmarks.length > 0) {
+      // Strip the legacy embedded avatars off the REMOTE payload before
+      // anything reads it. A device still running an older build keeps
+      // publishing them, and without this they would flow straight back into
+      // this device's IndexedDB and then back into its own uploads. Mutating
+      // `config` (rather than a local copy) also keeps them out of the stored
+      // config written at the end of this method.
+      const inbound = stripBookmarkSenderIcons(config.bookmarks);
+      if (inbound.strippedCount > 0) {
+        logger.log(
+          `[ConfigService] dropped ${inbound.strippedCount} legacy bookmark avatar(s) ` +
+            `from an inbound config (~${Math.round(inbound.bytesFreed / 1024)} KB)`
+        );
+      }
+      config.bookmarks = inbound.bookmarks;
+
       const localBookmarks = await this.messageDB.getBookmarks();
       const mergedBookmarks = this.mergeBookmarks(
         localBookmarks,
@@ -350,8 +370,15 @@ export class ConfigService {
         for (const bookmark of toDelete) {
           await this.messageDB.removeBookmark(bookmark.bookmarkId);
         }
-        for (const bookmark of [...toAdd, ...toUpdate]) {
+        // `addBookmark` enforces MAX_BOOKMARKS and uses IDBObjectStore.add, which
+        // REJECTS an existing key — so it is right for `toAdd` and wrong for
+        // `toUpdate`, whose keys exist by definition. An update used to throw
+        // ConstraintError and abort the whole differential apply.
+        for (const bookmark of toAdd) {
           await this.messageDB.addBookmark(bookmark);
+        }
+        for (const bookmark of toUpdate) {
+          await this.messageDB.putBookmark(bookmark);
         }
 
         logger.log(`Bookmark sync: ${toDelete.length} deleted, ${toAdd.length} added, ${toUpdate.length} updated`);
@@ -360,8 +387,11 @@ export class ConfigService {
 
         // Attempt to restore original bookmarks on failure
         try {
+          // put, not add: a partially-applied sync leaves some of these rows
+          // still present, and `add` would throw on the first one and abandon
+          // the rest of the restore.
           for (const bookmark of localBookmarks) {
-            await this.messageDB.addBookmark(bookmark);
+            await this.messageDB.putBookmark(bookmark);
           }
           logger.warn('Successfully restored local bookmarks after sync failure');
         } catch (restoreError) {
@@ -540,7 +570,24 @@ export class ConfigService {
       }
 
       // Collect bookmarks before encryption (Phase 7: Sync Integration)
-      config.bookmarks = await this.messageDB.getBookmarks();
+      //
+      // Stripped on the way out, not just at creation time. Bookmarks written
+      // before this change — and any adopted from a device still running an
+      // older build — still carry an embedded base64 avatar per bookmark, which
+      // measured 656 KB of an 873 KB blob against a ~1 MB working ceiling. This
+      // is the choke point that keeps them out of the upload regardless of what
+      // is on disk. The local sweep (useStripBookmarkSenderIcons) then reclaims
+      // the disk copy; this line is what protects the blob in the meantime.
+      const collectedBookmarks = stripBookmarkSenderIcons(
+        await this.messageDB.getBookmarks()
+      );
+      if (collectedBookmarks.strippedCount > 0) {
+        logger.log(
+          `[ConfigService] dropped ${collectedBookmarks.strippedCount} legacy bookmark avatar(s) ` +
+            `from the sync payload (~${Math.round(collectedBookmarks.bytesFreed / 1024)} KB)`
+        );
+      }
+      config.bookmarks = collectedBookmarks.bookmarks;
       // Note: deletedBookmarkIds will be reset AFTER successful sync
 
       // Collect user notes before encryption
