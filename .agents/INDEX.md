@@ -286,6 +286,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The two clients do not merge the same config fields](issues/.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)
 - 🐛 [The config upload has no size guard, and mobile's failure is invisible](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md)
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
+- 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -750,4 +751,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-05 15:31:18
+**Last Updated**: 2026-08-05 15:40:46

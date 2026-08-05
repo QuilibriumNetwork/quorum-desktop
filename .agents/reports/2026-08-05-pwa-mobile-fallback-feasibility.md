@@ -12,6 +12,7 @@ related_docs:
   - "../docs/cryptographic-architecture.md"
 related_tasks:
   - ".agents/issues/.open/2025-12-14-service-worker-app-updates.md"
+  - ".agents/issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
 ---
 
 # PWA feasibility — quorum-desktop as the mobile fallback
@@ -36,7 +37,7 @@ claim.
 
 3. **But the push architecture already fits.** Mobile's push payload carries **only identifiers, no ciphertext** (READ, `quorum-mobile/ios/QuorumNotificationService/NotificationService.swift`). That is content-less push plus local enrichment, which maps onto Web Push + Service Worker almost exactly — and the SW is better positioned than the iOS NSE, because it reads the same IndexedDB the page uses instead of needing an App Group catalog file.
 
-4. **Storage eviction is the silent data-loss risk, and it is live today.** In a Safari *tab*, WebKit wipes IndexedDB after 7 days without interaction. That is the ratchet state, space keys, and message history. **Home-screen-installed PWAs are exempt.** This makes install a data-integrity requirement, not a nice-to-have.
+4. **Storage eviction is the silent data-loss risk, it is live today, and it is not mobile-only.** In a Safari *tab* on **macOS as well as iOS**, WebKit wipes all IndexedDB after 7 days of Safari use without visiting the site. Installed web apps (Home Screen on iOS, Add to Dock on macOS 14+) are exempt. This makes install a data-integrity requirement rather than an enhancement. **Filed separately as a live bug:** [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
 
 5. **`largeBlob` on Android Chrome is the one unknown that can kill the plan.** The account private key lives in the passkey's `largeBlob` (READ, [privateKey.ts:6](../../src/utils/privateKey.ts#L6)). Support is confirmed on iOS/Safari 17+; Android is unverified. If it fails there, the mobile fallback degrades to pasting a 114-char hex key. **Test this first.**
 
@@ -147,23 +148,34 @@ for how long? That determines whether "no background delivery" means *delayed* o
 
 ### 3.2 Storage eviction — the silent data-loss risk
 
-- **Issue**: WebKit applies a 7-day cap on script-writable storage (IndexedDB, LocalStorage, SW registrations) for origins without user interaction. For Quorum that is the identity keyset, `space_keys`, `encryption_states` (ratchet), and all message history.
-- **Impact**: **Critical, and live today** for anyone using the web app in a phone browser. Not hypothetical, not future-only.
-- **Evidence**: [WebKit storage policy](https://webkit.org/blog/14403/updates-to-storage-policy/); key locations READ from [cryptographic-architecture.md](../docs/cryptographic-architecture.md) §Key Storage Locations.
+> **Escalated after follow-up research (2026-08-05).** This is not a mobile-only
+> or future-only concern. It affects `app.quorummessenger.com` users on **macOS
+> Safari today**, and is filed as a live bug:
+> [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md).
+> The summary below is the short version; the bug carries the full analysis,
+> mitigations, and verification plan.
 
-**Home-screen-installed web apps are exempt** — they carry their own days-of-use
-counter — and on iOS 17+ get up to 20% of disk (vs 80% for the browser itself).
-Storage can still be reclaimed under device disk pressure.
+- **Issue**: WebKit's ITP deletes **all** script-writable storage (IndexedDB, LocalStorage, SessionStorage, Media keys, **and Service Worker registrations and cache**) for an origin after seven days of browser use without user interaction on that site.
+- **Impact**: **Critical, live today, and broader than assumed.** Applies to macOS Safari and every iOS browser (all are WebKit). Electron and Chromium/Gecko desktop browsers are unaffected.
+- **Evidence**: [WebKit — Full third-party cookie blocking and more](https://webkit.org/blog/10218/full-third-party-cookie-blocking-and-more/) (the rule); [lapcatsoftware, 2023](https://lapcatsoftware.com/articles/2023/8/5.html) (demonstrated on macOS desktop with evidence from Safari's own statistics DB); key locations READ from [cryptographic-architecture.md](../docs/cryptographic-architecture.md).
 
-**Design consequence (INFERRED):** an *uninstalled* Quorum PWA is actively unsafe
-for the user. Install stops being an optional enhancement and becomes a
-precondition. That justifies a loud, guided, near-blocking install flow and
-`navigator.storage.persist()` on every launch.
+Three corrections to the earlier draft:
 
-**Unresolved and important:** can the app recover from *identity intact (passkey),
-ratchet state gone*? If a wiped `encryption_states` means permanently broken DM
-sessions rather than a re-handshake, the severity is much higher. Not answered by
-the current docs.
+1. **The counter is days of *Safari use*, not calendar days**, and any interaction with the site resets it. The at-risk user is the occasional visitor, not the daily one — which is exactly why this has gone unnoticed by anyone developing the app.
+2. **`navigator.storage.persist()` does not rescue the tab case on Safari.** WebKit grants persistence *"based on heuristics like whether the website is opened as a Home Screen Web App"*. In a plain tab the request is refused. It is still worth calling — it genuinely protects Chrome and Firefox users — but only **installing** prevents the Safari wipe. **The app calls it nowhere today** (MEASURED, repo-wide grep: zero hits).
+3. **Loss is partial, not total.** Identity survives (the passkey is in the platform authenticator, not browser storage). Profile, spaces, space keys and the *space* ratchet state all come back from the encrypted server config, which backs up `spaceKeys` including `encryptionState` per space ([ConfigService.ts:545-561](../../src/services/ConfigService.ts#L545-L561)). What is unrecoverable is **DM history, DM conversation metadata, and DM Double Ratchet states** — there is no server-side message store.
+
+**The `.qmbak` backup does not close the gap.** Export captures ratchet states
+([messages.ts:2251](../../src/db/messages.ts#L2251)) but import discards them
+unconditionally — `importDMData` accepts only `{ messages, conversations }` and
+opens only those two stores ([messages.ts:2270-2278](../../src/db/messages.ts#L2270-L2278)).
+Correct for merging into a live account, wrong for restoring onto a wiped one.
+Making it conditional is a small, high-value fix (M1 in the bug).
+
+**Design consequence (INFERRED):** an *uninstalled* Quorum PWA is actively unsafe.
+Install becomes a precondition, which justifies a loud, guided install flow —
+and the same argument applies retroactively to today's Safari web users, who
+currently get no warning at all.
 
 ### 3.3 Passkey `largeBlob` on mobile browsers
 
@@ -355,6 +367,7 @@ Blocking or near-blocking, and none of them answerable from this repo:
 
 ## 9. Action items
 
+- [ ] **Safari ITP eviction — mitigate for today's users** — Priority: high. Tracked as [2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md](../issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md). **Independent of the PWA decision** — worth doing whatever is decided here.
 - [ ] **E1 — `largeBlob` support matrix** — Priority: critical. Blocks everything.
 - [ ] **E2 — storage survival test** (start early, 21-day wall clock) — Priority: critical
 - [ ] **E2b — "passkey intact, ratchet gone" recovery check** — Priority: high. Answerable immediately.

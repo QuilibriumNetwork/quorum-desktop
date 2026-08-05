@@ -54,9 +54,12 @@ lands near 250 KB. Then open `/bookmarks` and confirm avatars render.
 
 1. **MOBILE has no strip.** It never wrote `senderIcon` itself, but bookmarks it
    adopted from desktop before this change still carry one, and it publishes the
-   same blob. **Blocked on a `quorum-shared` release** — mobile consumes the
-   package from npm (`2.1.0-39`), not the local link, so it cannot import the new
-   helper yet. The change is two lines once it can: strip inside
+   same blob. **Blocked on a `quorum-shared` PUBLISH, not a merge** — the helper
+   is in shared `master` (PR #75) and the version is bumped to `2.1.0-40`, but
+   that repo has **no CI publish workflow**, so `npm publish` has to be run by
+   hand. npm's latest is still `2.1.0-39`, which is exactly what mobile pins, so
+   mobile cannot import the helper until someone publishes. The change is two
+   lines once it can: strip inside
    `getLocalBookmarks` and `saveLocalBookmarks`
    (`services/config/configService.ts:104` and `:115`), which between them are
    the only read and write points for MMKV bookmark storage — that covers the
@@ -68,11 +71,12 @@ lands near 250 KB. Then open `/bookmarks` and confirm avatars render.
    `setBookmarksPanelVisible(true)` appears nowhere in the mobile repo, so
    `BookmarksPanel` — a finished component — can never open. A mobile user can
    bookmark a message (the action sheet offers it, and it syncs) and then has no
-   way to see their bookmarks. Unrelated to the payload size, and logged
-   separately as candidate **#39** in
-   `.agents/issues/port-to-mobile/candidates.md`. Worth knowing here because it
-   means the mobile strip is a **sync-hygiene** fix, not a user-visible one: on
-   mobile nothing renders these bookmarks either way.
+   way to see their bookmarks. No task file exists for it in either repo, so it
+   is logged as candidate **#39** in
+   `.agents/issues/port-to-mobile/candidates.md`, which carries the strip above,
+   the publish dependency, and the counterpart-avatar trap in one place. Worth
+   knowing here because it means the mobile strip is a **sync-hygiene** fix, not
+   a user-visible one: on mobile nothing renders these bookmarks either way.
 2. **§4.3, the pre-flight blob size check, is still open** and still worth doing.
    It is a different failure mode with its own UX question (what does the user
    see when a save is held?), so it was kept out of this branch rather than
