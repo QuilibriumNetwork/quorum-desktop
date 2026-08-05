@@ -305,6 +305,35 @@ export function applyProfileUpdate(
   }
 }
 
+/**
+ * Which slots may a sync-delta member row write?
+ *
+ * The sync protocol compares DIGESTS, which carry no notion of newer or older, so
+ * a peer holding a stale identity will happily push it back. For OUR OWN row that
+ * is never acceptable — a peer is not authoritative about our per-space choice,
+ * and `computeMemberDiff` has no self-exclusion of its own.
+ *
+ * For everyone else the per-slot timestamp guard applies, and a row with NO stored
+ * timestamp accepts unconditionally: that is the deliberate bootstrap for a member
+ * we have never heard of, pinned by saveSpaceMemberGlobalSlot.test.ts. Do not
+ * "harden" it.
+ */
+export function resolveSyncDeltaSlots(input: {
+  isSelf: boolean;
+  existingOverrideTs?: number;
+  existingGlobalTs?: number;
+  incomingOverrideTs: number;
+  incomingGlobalTs: number;
+}): { applyOverride: boolean; applyGlobal: boolean } {
+  const applyOverride =
+    !input.isSelf &&
+    !(input.existingOverrideTs && input.existingOverrideTs >= input.incomingOverrideTs);
+  const applyGlobal = !(
+    input.existingGlobalTs && input.existingGlobalTs >= input.incomingGlobalTs
+  );
+  return { applyOverride, applyGlobal };
+}
+
 export class MessageService {
   private messageDB: MessageDB;
   private enqueueOutbound: (action: () => Promise<string[]>) => void;
@@ -6108,16 +6137,14 @@ export class MessageService {
                 // so it can populate an empty row but can never overwrite a
                 // stamped one — which is the right call for peers that predate
                 // the global slot travelling over sync at all.
-                const incomingOverrideTs = member.profileTimestamp ?? 0;
-                const incomingGlobalTs = member.globalProfileTimestamp ?? 0;
-                const applyOverride = !(
-                  existing?.profileTimestamp &&
-                  existing.profileTimestamp >= incomingOverrideTs
-                );
-                const applyGlobal = !(
-                  existing?.globalProfileTimestamp &&
-                  existing.globalProfileTimestamp >= incomingGlobalTs
-                );
+                const { applyOverride, applyGlobal } = resolveSyncDeltaSlots({
+                  // A peer is never authoritative about OUR per-space name.
+                  isSelf: userAddress === self_address,
+                  existingOverrideTs: existing?.profileTimestamp,
+                  existingGlobalTs: existing?.globalProfileTimestamp,
+                  incomingOverrideTs: member.profileTimestamp ?? 0,
+                  incomingGlobalTs: member.globalProfileTimestamp ?? 0,
+                });
 
                 // `saveSpaceMember` merges, so an omitted slot keeps what is
                 // stored rather than blanking it.
