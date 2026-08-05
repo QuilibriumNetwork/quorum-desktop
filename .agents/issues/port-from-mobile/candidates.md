@@ -73,9 +73,19 @@ Legend: 🟢 ready to pick · 🚧 in progress · ✅ shipped · ⏸️ paused �
 
 ## Actionable now
 
-> **As of 2026-07-15: the actionable list is empty.** #31a (paste-hex import) **shipped** (PR #193). The remaining engineering-ready candidate, #5 Reporting, is deprioritized by user call, and the next-biggest opportunity (#27 Skins) is also low priority. Nothing is in flight. When priorities shift, #5 is the cleanest pick-up; see [#5 below](#5-reporting---deprioritized-but-engineering-ready). #31a is retained below (with a ✅ banner) as the record of what shipped.
+> **As of 2026-08-05: one actionable item — #33a, notification badge colours.**
+> (Previous note, 2026-07-15: the list was empty.) #31a (paste-hex import) **shipped** (PR #193). The remaining engineering-ready candidate, #5 Reporting, is deprioritized by user call, and the next-biggest opportunity (#27 Skins) is also low priority. Nothing is in flight. When priorities shift, #5 is the cleanest pick-up; see [#5 below](#5-reporting---deprioritized-but-engineering-ready). #31a is retained below (with a ✅ banner) as the record of what shipped.
 
 A candidate belongs here when it is (a) capability-verified missing on desktop, (b) sized for a single feature PR, and (c) not blocked on a product decision. Move a row up from [Awaiting a product call](#awaiting-a-product-scope-call) once its scope question is answered.
+
+### #33a Notification badge colours per kind — 🟢 actionable
+
+Mobile colours the leading notification badge by kind so the kind is readable while scanning; desktop uses one fixed `var(--accent)` for every row. Capability-verified: the badge exists and is already built the same way (same 36px circle, same 16% `color-mix` wash, and its SCSS comment says it mirrors mobile), and the kind is already computed one screen up in `NotificationItem.tsx` to choose the glyph — so this is a modifier class plus four SCSS lines, not a port.
+
+- **Hues:** `@everyone` → `var(--danger)`, role → `var(--success)`, reply → `var(--info)`, `@you` → orange. `@you` and reply take the most separated hues on purpose: they are the two personal kinds and sit side by side constantly.
+- **One real gap:** there is no orange semantic token. `--warning` is an amber that reads as a caution state and should NOT be used for a mention. A token needs adding.
+- **Not blocked on anything.** Single small PR, visual, verifiable by eye in both themes.
+- 🔗 Full spec: [`2026-08-05-notification-badge-colours-and-dm-rows.md`](2026-08-05-notification-badge-colours-and-dm-rows.md) (part 1).
 
 ### #5 Reporting — ⏸️ deprioritized but engineering-ready
 
@@ -112,6 +122,19 @@ Desktop's onboarding lets you import an existing account **only by uploading a `
 These fit desktop UX in principle but require a decision that's the lead dev's, not an engineering one (new dependency, architectural shift, "do we want this surface at all?"). They are **not** ranked by engineering risk — they're blocked on product, period. Don't scope engineering until the question is answered.
 
 The headline questions, grouped:
+
+### #33b DM notifications in the panel — ❔ needs a product call
+
+Mobile now shows Quorum DMs in its notifications panel (one row per conversation, sender's avatar or initials in the leading slot, gated on DM mute). **Desktop has no DM notifications at all** — the panel is built from `MentionNotification` + `ReplyNotification`, both space-scoped.
+
+The blocking question is not engineering: desktop's panel is **per-space** (a bell in the channel header), so a DM has no obvious home in it. That may mean desktop wants a global panel first, or that DMs belong on a different surface here entirely.
+
+Underneath it sits the architectural one: mobile can do this cheaply because it PERSISTS a notification log at the WebSocket receive point, while desktop derives notifications live from `MessageDB`. Adding DMs to a live-derived space-scoped panel is a design problem, not a port — see the "Critical design point for the desktop port" section of mobile's notification-system doc.
+
+Deciding **against** is a perfectly good outcome and should be logged here as one.
+
+- 🔗 [`2026-08-05-notification-badge-colours-and-dm-rows.md`](2026-08-05-notification-badge-colours-and-dm-rows.md) (part 2).
+
 
 - **"Customization" track:** #27 Skins, #28 Translation.
 - **"Big new product surface" cluster:** #9 Farcaster, #12 QNS, #13 Wallet, #14 Calling, #15 Audio spaces, #16 Miniapps, #17 Governance. These are the multi-week features; each needs a yes/no/later before anyone engineers.
