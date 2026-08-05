@@ -190,6 +190,15 @@ leaked-orphan bug below; it is the plain cost of having created two spaces. Two
 disposable test spaces are carrying 94% of a real account's sync payload.
 
 Exactly the predicted shape: ~2 MB per created space, ~12-63 KB per joined one.
+
+🔴 **This account is ON the threshold, not under it.** §Problem above records the
+original failure as *"the total payload exceeded the server limit (~4MB)"*. This
+blob is **4.11 MB and was ACCEPTED** (see
+`2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md` §6-A
+for the evidence chain). The known-good and known-bad points now effectively
+touch, so **one more created space (~2 MB) takes this account over**, and nothing
+in either client would report it. The 620 KB the bookmark fix returned is the
+only reason there is any margin at all.
 Two fat states, 3952 KB between them.
 
 ### Three things this settles

@@ -165,6 +165,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - 📋 [Port skins — Phase 0 + Phase 1](issues/port-from-mobile/2026-06-11-port-skins-phase-0-1.md)
 - 📋 [Skins (custom themes) — deep dive (candidate #27)](issues/port-from-mobile/2026-06-11-skins-deep-dive.md)
+- 📋 [Notification badges: colour per kind, and the DM question](issues/port-from-mobile/2026-08-05-notification-badge-colours-and-dm-rows.md)
 - 📋 [Cross-app feature diff (port-from-mobile) — Master Tracker](issues/port-from-mobile/README.md)
 - 📋 [Mobile features not on desktop — candidate list](issues/port-from-mobile/candidates.md)
 - 📋 [Port-from-mobile shipped log](issues/port-from-mobile/shipped-log.md)
@@ -320,7 +321,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md)
 - 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
 - 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
-- 📋 [Guided install flow for Safari web users](issues/.open/2026-08-05-guided-install-flow-for-safari-web-users.md)
+- 📋 [Guided install flow for Safari users](issues/.open/2026-08-05-guided-install-flow-for-safari-web-users.md)
 - 📋 [Does mobile need the desktop identity fixes?](issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
 - 📋 [Your own identity, on your own devices](issues/.open/2026-08-05-own-identity-cross-device-sync-design.md)
 
@@ -753,4 +754,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-05 16:44:52
+**Last Updated**: 2026-08-05 16:53:00

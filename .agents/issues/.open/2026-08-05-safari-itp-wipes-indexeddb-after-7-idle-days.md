@@ -197,11 +197,14 @@ only one that does not ask the user to weaken their browser's privacy settings.
 Installed web apps are exempt from ITP eviction.
 
 Full spec: [2026-08-05-guided-install-flow-for-safari-web-users.md](2026-08-05-guided-install-flow-for-safari-web-users.md).
+**It covers macOS desktop as well as iOS** — Add to Dock (Safari 17+) is the
+desktop equivalent of Add to Home Screen and grants the same ITP exemption.
 
-Two things found while speccing it that belong here:
+Three things found while speccing it that belong here:
 
 - **Install is gated on an unverified assumption.** Nobody has confirmed that passkey auth (`navigator.credentials.get()` + `largeBlob`) works inside an iOS standalone web app. If it does not, this mitigation collapses and this bug needs a different answer. That check is Phase 0 of the install task and should run before anything else here.
-- **Installing does not carry the user's data across.** An iOS Home Screen web app gets a **separate storage partition** from Safari: no shared IndexedDB, localStorage, cookies or service worker. So telling a Safari-tab user to install means telling them to start with an empty database and leave their DM history behind in the tab. The handoff is export `.qmbak` → import in the installed app, which routes this bug straight through [the backup issue](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md) and its session-continuity gap. **The two issues are less independent than originally filed.**
+- **Installing does not carry the user's data across.** An iOS Home Screen web app gets a **separate storage partition** from Safari: no shared IndexedDB, localStorage, cookies or service worker. So telling a Safari-tab user to install means telling them to start with an empty database and leave their DM history behind in the tab. The handoff is export `.qmbak` → import in the installed app, which routes this bug straight through [the backup issue](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md) and its session-continuity gap. **The two issues are less independent than originally filed.** (Whether macOS Add to Dock partitions the same way is unverified, and desktop users are the ones likeliest to have the most history to lose.)
+- **The install advice is only safe if the origin never changes.** Passkeys are scoped to `app.quorummessenger.com` (the SDK omits `rp.id`, so WebAuthn defaults it to the calling origin's effective domain), and IndexedDB is keyed by origin. The QStorage hosting migration must therefore change only what sits *behind* that hostname. If the URL changes, every passkey stops working and every local database is orphaned at once — and an installed web app is pinned to its origin too, so everyone who followed this advice would be stranded. Full detail in the install task under "Blocking constraints".
 
 ### M3 — Call `navigator.storage.persist()` on startup (code, trivial)
 

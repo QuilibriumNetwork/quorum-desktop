@@ -4,6 +4,7 @@ title: "Space deletion: instant/offline UX via action queue + tombstone-driven m
 status: open
 priority: high
 created: 2026-07-19
+updated: 2026-08-05
 severity: data-integrity + UX (blocking-leave, no offline; garbage accumulation compounds #108)
 spans-repos:
   - quorum-desktop (this task — implement here)
@@ -305,8 +306,14 @@ share them in the same form (delete/leave live in `hooks/chat/useSpaceSettings.t
 ## Non-goals / relation to #108
 Does NOT fix the 2MB-per-created-space creation bloat (#108 — separate
 blob-contract decision). Even ghost-free, 2+ created spaces approach the ~4MB
-upload limit until #108 lands. This task stops accumulation + fixes the leave UX;
+upload limit until #108 lands. **CONFIRMED by measurement 2026-08-05:** a real
+account with exactly 2 created spaces (both throwaway test spaces, neither a
+ghost) sits at **4.11 MB, of which 3952 KB is those two states** — accepted by
+the server, but with the original 400 reported at "~4MB" there is effectively no
+margin. See `2025-12-09-encryption-state-evals-bloat.md` → MEASURED 2026-08-05.
+Note this account's bloat is NOT ghost debris, so it is #108 that gates it here,
+not this task. This task stops accumulation + fixes the leave UX;
 #108 fixes per-space size. Implement on a SEPARATE branch, not
 `fix-multidevice-signing-key`.
 
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-05*
