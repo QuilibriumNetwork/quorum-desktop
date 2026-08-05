@@ -4,7 +4,7 @@ title: "Desktop has no avatar resolver, and three name tiers resolve differently
 status: open
 priority: medium
 created: 2026-08-04
-updated: 2026-08-04
+updated: 2026-08-05
 area: identity resolution / desktop-mobile parity / quorum-shared
 source: split out of 2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver (PR #310) — these were two of its Definition-of-Done items that are not part of that defect and are cross-client decisions rather than desktop ones
 related:
@@ -56,7 +56,36 @@ implement a desktop-local twin and accept two implementations.
 All three predate PR #310 and none was introduced by it. Measurements and file
 references are in the parent issue's §9.
 
-### 3-A. The global slot is a TIER on mobile, only a COMPARATOR on desktop
+### 3-A. ✅ FIXED 2026-08-05 — the global slot is now a real tier on desktop too
+
+> **Closed, and it was not latent after all.** This section called the gap
+> "latent, not live" because the enricher merged the global name into
+> `displayName` before any render path saw it. That was true only while every
+> roster row carried a stamped override.
+>
+> The Phase 1 identity work
+> (`2026-08-05-own-identity-cross-device-sync-design.md`) clears those overrides,
+> which is their correct normal state under the two-slot model — and that turned
+> this live immediately. Callers passing the RAW roster field rather than the
+> enriched one, **the member sidebar in `Channel.tsx:2094-2100` among them**, fell
+> straight through to a truncated address. The reporter appeared in his own member
+> list with no name and no avatar. Found on a device, within minutes of the clear
+> landing.
+>
+> `resolveSpaceMemberName` now returns the global slot as a tier:
+> **override → QNS → global → address**. Fixing it in the resolver rather than at
+> each call site means no surface can miss the tier again.
+>
+> The `ReactionsModal` test that pinned the comparator behaviour said it would be
+> the one to change deliberately if a tier were added. It was, and it now pins the
+> tier plus the two orderings that must not regress.
+>
+> **Lesson worth keeping:** "latent, not live" was load-bearing on an assumption
+> about the data, not about the code. When the data changed, the latency vanished.
+
+The original description follows.
+
+#### The gap as originally written
 
 Mobile passes `display_name: global` into shared's `resolveDisplayName`, so a
 global name is genuinely rendered as a rung. Desktop's `resolveSpaceMemberName`
@@ -136,9 +165,9 @@ cannot.
 
 - [ ] Avatar resolution has a single documented home, and the promote-to-shared question is decided rather than deferred
 - [ ] The address fallback renders the identical string on both clients, with a test pinning it
-- [ ] `globalDisplayName` is either a real resolver tier on desktop or documented as permanently a comparator, with the reason
+- [x] `globalDisplayName` is either a real resolver tier on desktop or documented as permanently a comparator, with the reason — **done 2026-08-05, it is now a tier (§3-A)**
 - [ ] A decision recorded on `isAddressFallback` — adopt or reject
 - [ ] Mobile's incorrect "already parity-matched with desktop" comment is corrected
 - [ ] `.agents/docs/features/identity-resolution-and-profile-sync.md` reflects whatever is decided
 
-*Last updated: 2026-08-04*
+*Last updated: 2026-08-05*
