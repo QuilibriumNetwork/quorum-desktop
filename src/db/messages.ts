@@ -12,6 +12,7 @@ import {
   isPlaceholderDisplayName,
   isPlaceholderIcon,
 } from '../utils/identityPlaceholder';
+import { recordSelfOverrideWrite } from '../utils/selfOverrideTripwire';
 import MiniSearch, { type Options } from 'minisearch';
 
 export interface EncryptedMessage {
@@ -219,6 +220,12 @@ export class MessageDB {
   // transparently from IndexedDB (Phase 1.3) on next access, so the
   // tradeoff is one ~10ms deserialize hit vs unbounded memory growth.
   private static readonly MAX_IN_MEMORY_INDICES = 10;
+  /** Set by MessageDBProvider once the user's address is derived. Diagnostics only. */
+  private selfAddressForDiagnostics?: string;
+
+  setSelfAddressForDiagnostics(address: string): void {
+    this.selfAddressForDiagnostics = address;
+  }
 
   async init() {
     if (this.db) return;
@@ -1247,6 +1254,14 @@ export class MessageDB {
       const transaction = this.db!.transaction('space_members', 'readwrite');
       const store = transaction.objectStore('space_members');
       const userAddress = (userProfile as { user_address?: string }).user_address;
+      const incomingName = (userProfile as { display_name?: string }).display_name;
+      if (
+        userAddress &&
+        userAddress === this.selfAddressForDiagnostics &&
+        incomingName
+      ) {
+        recordSelfOverrideWrite({ spaceId, value: incomingName });
+      }
       // keyPath is ['spaceId', 'user_address']. Without an address there is
       // nothing to look up (and the `put` below will fail on the keyPath
       // anyway); `store.get([spaceId, undefined])` would throw a DataError

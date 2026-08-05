@@ -533,6 +533,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             Buffer.from(new Uint8Array(keyset.userKeyset.user_key.public_key))
           );
           setSelfAddress(base58btc.baseEncode(sh.bytes));
+          messageDB.setSelfAddressForDiagnostics(base58btc.baseEncode(sh.bytes));
         }
       } catch { /* ignore */ }
     })();
