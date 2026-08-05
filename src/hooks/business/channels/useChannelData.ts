@@ -90,9 +90,12 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             userIcon:
               pickAvatar(curr.user_icon) ?? pickAvatar(curr.global_user_icon),
             displayName: curr.display_name,
-            // Per-space bio override; flows into UserProfile's "About"
-            // section. Empty string means the user explicitly cleared it.
-            bio: curr.bio,
+            // Same override → global ladder as the avatar above. An empty
+            // override means "follow global", not "no bio", so `||` is right:
+            // consumers reading this map raw (the virtualized member list at
+            // :246 and :279) would otherwise show no About section at all once
+            // the override is empty — its normal state under the two-slot model.
+            bio: curr.bio || curr.global_bio,
             // Roster GLOBAL slots (two-slot design): the sender's current global
             // identity, pushed separately from the per-space override fields.
             // Consumed by the fallback resolver as the tier between override and
