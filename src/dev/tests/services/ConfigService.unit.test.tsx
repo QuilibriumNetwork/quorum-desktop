@@ -744,4 +744,146 @@ describe('ConfigService - Unit Tests', () => {
       expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalled();
     });
   });
+
+  // Bookmarks were 656 KB of an 873 KB config blob (measured 2026-08-05), and
+  // 94% of that was one field: a base64 sender avatar copied into every single
+  // bookmark. The blob is the ONLY cross-device transport for every synced
+  // setting, so overrunning it stops Spaces, mutes, device names and profile
+  // sync all at once, silently. These tests guard both directions of the choke
+  // point — nothing fat goes out, nothing fat comes in.
+  describe('7. bookmarks - embedded sender avatars never enter the blob', () => {
+    const AVATAR = `data:image/png;base64,${'A'.repeat(34_000)}`;
+
+    const legacyBookmark = (id: string) =>
+      ({
+        bookmarkId: id,
+        messageId: `msg-${id}`,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        sourceType: 'channel',
+        createdAt: 1_700_000_000_000,
+        cachedPreview: {
+          senderAddress: 'QmSender000000000000000000000000000000',
+          senderName: 'Rosalind',
+          senderIcon: AVATAR,
+          textSnippet: 'still here',
+          messageDate: 1_699_999_000_000,
+          sourceName: 'Quorum Test > #general',
+          contentType: 'text',
+        },
+      }) as any;
+
+    const mockKeyset = {
+      userKeyset: {
+        user_key: { private_key: new Uint8Array(57), public_key: new Uint8Array(57) },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    it('strips them from the payload that gets encrypted and uploaded', async () => {
+      // Assert on the PLAINTEXT handed to crypto.subtle.encrypt — that is
+      // literally the blob the server stores, so this cannot pass by testing a
+      // copy that never went over the wire.
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi
+        .fn()
+        .mockResolvedValue([legacyBookmark('bm-1'), legacyBookmark('bm-2')]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      const encrypt = vi
+        .spyOn(global.crypto.subtle, 'encrypt')
+        .mockResolvedValue(new Uint8Array(16).buffer as ArrayBuffer);
+
+      await configService.saveConfig({
+        config: {
+          address: 'user-sync',
+          spaceIds: ['space-1'],
+          allowSync: true,
+          timestamp: 0,
+        } as any,
+        keyset: mockKeyset,
+      });
+
+      expect(encrypt).toHaveBeenCalled();
+      const uploaded = Buffer.from(encrypt.mock.calls[0][2] as ArrayBuffer).toString('utf-8');
+
+      expect(uploaded).not.toContain('senderIcon');
+      expect(uploaded).not.toContain(AVATAR);
+      // 2 x 34 KB is what the old payload carried; the whole blob is now smaller
+      // than one of those avatars.
+      expect(uploaded.length).toBeLessThan(AVATAR.length);
+
+      // The bookmarks themselves still sync — only the avatar is gone, and the
+      // address it is re-resolved from survives.
+      const parsed = JSON.parse(uploaded);
+      expect(parsed.bookmarks).toHaveLength(2);
+      expect(parsed.bookmarks[0].cachedPreview.senderAddress).toBe(
+        'QmSender000000000000000000000000000000'
+      );
+      expect(parsed.bookmarks[0].cachedPreview.textSnippet).toBe('still here');
+    });
+
+    it('strips them from an inbound config published by an un-migrated device', async () => {
+      // A sibling device on an older build keeps publishing the fat payload.
+      // Without this, the bytes flow into IndexedDB and back out of this
+      // device's own uploads, and the sweep never converges.
+      const address = 'user-address-123';
+      const decryptedConfig = {
+        address,
+        spaceIds: ['space-1'],
+        items: [{ type: 'space', id: 'space-1' }],
+        spaceKeys: [],
+        bookmarks: [legacyBookmark('bm-1'), legacyBookmark('bm-2')],
+        timestamp: 1000,
+      };
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(decryptedConfig));
+      const decryptedBuffer = jsonBytes.buffer.slice(
+        jsonBytes.byteOffset,
+        jsonBytes.byteOffset + jsonBytes.byteLength
+      );
+
+      mockDeps.messageDB.getUserConfig = vi
+        .fn()
+        .mockResolvedValue({ address, spaceIds: ['space-1'], timestamp: 500 });
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({
+        data: {
+          user_config: 'aabbccdd' + '000000000000000000000000',
+          timestamp: 1000,
+          signature: 'aabbcc',
+        },
+      });
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(
+        decryptedBuffer as ArrayBuffer
+      );
+
+      const result = await configService.getConfig({
+        address,
+        userKey: {
+          user_key: { private_key: new Uint8Array(57), public_key: new Uint8Array(57) },
+        } as any,
+      });
+
+      // Nothing fat reaches IndexedDB...
+      const written = mockDeps.messageDB.addBookmark.mock.calls.map((c: any[]) => c[0]);
+      expect(written).toHaveLength(2);
+      for (const bookmark of written) {
+        expect(bookmark.cachedPreview.senderIcon).toBeUndefined();
+        expect(bookmark.cachedPreview.senderAddress).toBe(
+          'QmSender000000000000000000000000000000'
+        );
+      }
+
+      // ...nor the config this device now believes is current and will re-publish.
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(JSON.stringify(saved)).not.toContain('senderIcon');
+      expect(JSON.stringify(result)).not.toContain('senderIcon');
+    });
+  });
 });

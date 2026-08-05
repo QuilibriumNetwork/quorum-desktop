@@ -108,6 +108,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
+- 🐛 [Bookmarks are three quarters of the config blob](issues/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -164,6 +165,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - 📋 [Port skins — Phase 0 + Phase 1](issues/port-from-mobile/2026-06-11-port-skins-phase-0-1.md)
 - 📋 [Skins (custom themes) — deep dive (candidate #27)](issues/port-from-mobile/2026-06-11-skins-deep-dive.md)
+- 📋 [Notification badges: colour per kind, and the DM question](issues/port-from-mobile/2026-08-05-notification-badge-colours-and-dm-rows.md)
 - 📋 [Cross-app feature diff (port-from-mobile) — Master Tracker](issues/port-from-mobile/README.md)
 - 📋 [Mobile features not on desktop — candidate list](issues/port-from-mobile/candidates.md)
 - 📋 [Port-from-mobile shipped log](issues/port-from-mobile/shipped-log.md)
@@ -282,10 +284,11 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A per-space override never reaches your own other devices](issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md)
 - 🐛 [Desktop shows a stale display name everywhere except the User Settings field](issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md)
 - 🐛 [A Space created on mobile does not land correctly on desktop](issues/.open/2026-08-04-mobile-created-space-syncs-badly-to-desktop-owner-missing-and-message-not-shown.md)
-- 🐛 [Bookmarks are three quarters of the config blob](issues/.open/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md)
 - 🐛 [The two clients do not merge the same config fields](issues/.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)
 - 🐛 [The config upload has no size guard, and mobile's failure is invisible](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md)
+- 🐛 [`.qmbak` backup cannot restore DM session continuity](issues/.open/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
+- 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -318,6 +321,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md)
 - 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
 - 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
+- 📋 [Guided install flow for Safari users](issues/.open/2026-08-05-guided-install-flow-for-safari-web-users.md)
 - 📋 [Does mobile need the desktop identity fixes?](issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
 - 📋 [Your own identity, on your own devices](issues/.open/2026-08-05-own-identity-cross-device-sync-design.md)
 
@@ -704,6 +708,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docs Staleness Audit — 2026-05-20](reports/2026-05-20-docs-staleness-audit.md)
 - [Notification preference architecture — desktop vs mobile](reports/2026-05-28-notification-architecture-divergence.md)
 - [App Lock / Password Gate — Feasibility Research](reports/2026-06-22-app-lock-password-gate-research.md)
+- [PWA feasibility — quorum-desktop as the mobile fallback](reports/2026-08-05-pwa-mobile-fallback-feasibility.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -749,4 +754,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-05 14:38:02
+**Last Updated**: 2026-08-05 16:53:00

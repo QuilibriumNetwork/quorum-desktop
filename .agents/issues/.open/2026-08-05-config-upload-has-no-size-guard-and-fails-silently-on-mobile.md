@@ -45,6 +45,11 @@ debugging that lands in the wrong place.
 
 ## §3. It is not hypothetical
 
+> ⚠️ **Both numbers in this section are superseded — see §6.** The 873 KB was a
+> stale snapshot, the real figure was 4205 KB, and that blob **uploaded
+> successfully**. The "one bookmark from the cliff" framing below is wrong in
+> both directions and is kept only because how it was wrong is the useful part.
+
 MEASURED 2026-08-05 on a real 5-space account
 (`2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md`
 §4-A-vi): the blob is **873 KB** against a **~1 MB observed working ceiling**.
@@ -71,6 +76,119 @@ server receives only ciphertext (`ConfigService.saveConfig` posts `user_address`
 `user_public_key`, the encrypted `user_config`, `timestamp`, `signature`) and
 therefore cannot inspect either field. That claim is stale, or describes a
 client-side guard. Correct it when this is fixed.
+
+## §6. MEASURED 2026-08-05 (same account, later the same day) — a 4205 KB blob UPLOADED FINE
+
+Taken after the bookmark-avatar strip landed and forced a fresh `saveConfig`,
+with `.agents/tools/dm-debug/08-self-identity-sources.js`. Three findings, and
+each one changes something in this issue.
+
+### 6-A. The ceiling is at least 4x higher than recorded. §4.4 has its first real data point.
+
+| | |
+|---|---|
+| blob | **4205 KB** |
+| `allowSync` | on |
+| refuse-to-publish hold | not holding |
+| outcome | **upload succeeded** |
+
+The outcome is inferred, but the mechanism is tight: `ConfigService.saveConfig`
+POSTs at `:695` and calls `saveUserConfig` at `:711` **with no try/catch between
+them**, and `QuorumApiClient` throws on any 4xx. So a rejected upload skips the
+local save. The local config was observably rewritten (its bookmark copy went
+from 619.8 KB to 0.0 KB in that same save), therefore the POST returned.
+
+**So `~1 MB observed working` should be read as `~4.2 MB observed working`.**
+
+🔴 **But do not read that as headroom — it is the opposite.** Cross-referencing
+`2025-12-09-encryption-state-evals-bloat.md` §Problem, the original reported
+failure was *"the total payload exceeded the server limit (**~4MB**)"*, a 400
+`invalid config missing data`. So the two known points are now:
+
+| | payload | outcome |
+|---|---|---|
+| this measurement, 2026-08-05 | **4205 KB (4.11 MB)** | ✅ accepted |
+| original report, 2025-12-09 | "~4 MB" | ❌ 400 rejected |
+
+Those effectively touch. The real limit is a hair above 4205 KB, or the original
+"~4MB" was itself an estimate — either way **this account is sitting ON the
+threshold, not four times under it.** One more created space (~2 MB) puts it
+over, and per §2 nothing would say so. The earlier "one large bookmark away from
+the cliff" in §3 had the wrong number but, by accident, the right posture.
+
+The ~21 MB figure remains a separate, much higher observation and should be
+treated as unreliable until reconciled — a 4 MB rejection and a 21 MB rejection
+cannot both be the limit. §4.4 still needs the real number, and this is now the
+sharpest bracket available for asking: **it is between 4.11 MB and whatever the
+2025-12-09 account actually sent.**
+
+### 6-B. Why §3's number was wrong, and why that generalises
+
+`config.spaceKeys`, `config.bookmarks` and every other blob field are a
+**snapshot written by the last `saveConfig`**, not a live view. The account read
+873 KB one hour and 4205 KB the next with no user action in between beyond a
+settings toggle; nothing grew, the stale copy simply caught up.
+
+> **Any blob measurement taken without forcing a fresh save is a LOWER BOUND.**
+
+This is not a footnote — it is why the bloat has been characterised for eight
+months as "space creation occasionally 400s" rather than "the payload is
+permanently multi-megabyte". Nobody was ever looking at a current number. Any
+size guard built for §4.1 must measure the payload it is **about to send**, not
+`sizeOf(storedConfig)`, or it will read the previous save's size and pass.
+
+### 6-C. A size guard alone will not close this. THREE states are indistinguishable today.
+
+This issue frames the problem as "no size check". The deeper problem is that a
+device cannot tell whether its config reached the server **at all**, for any
+reason:
+
+| state | what the user sees | what the local DB shows |
+|---|---|---|
+| `allowSync` off | settings save fine | config row updated |
+| refuse-to-publish hold | settings save fine | config row updated |
+| genuine upload | settings save fine | config row updated |
+
+`saveConfig` writes the local row in all three, so **"my setting saved" has never
+been evidence of sync** — and a size-rejection would become a fourth
+indistinguishable member of that set. Add to §4:
+
+5. **Report the publish OUTCOME, not just the size.** Whether the last save was
+   uploaded, held, skipped for `allowSync`, or rejected — and when. A stored
+   `lastPublishedAt` / `lastPublishOutcome` would make every one of these
+   answerable from the UI instead of from a console script.
+
+The diagnostic now prints all three states plus the size verdict, so this is
+answerable today for anyone who runs it. That is an instrument, not a fix.
+
+### 6-D. Adds to §5: a second stale claim in the same doc
+
+`config-sync-system.md` also stated *"the 100KB per-encryption-state filter keeps
+total payload well under limits."* **No such filter exists.**
+`ConfigService.ts:561` filters on `encryptionState !== undefined` — a presence
+check, not a size check — and a codebase-wide search for a 100 KB constant finds
+only the image compressor's threshold and two IndexedDB row limits. Corrected in
+that doc 2026-08-05.
+
+That sentence is plausibly why this issue took until 2026-08-05 to be written:
+the doc asserted a mitigation that was never built, so the budget looked
+supervised.
+
+### 6-E. What the 4205 KB actually was
+
+98% encryption states, and now attributable per space (the tool read `.name`
+instead of `spaceName` until 2026-08-05, so every space rendered as "(unknown)"
+and no earlier reading could name them):
+
+| space | KB | |
+|---|---|---|
+| Cross device test | 1976.1 | created |
+| Test Leave | 1975.4 | created |
+| three joined spaces | 34-63 each | joined |
+
+Two throwaway test spaces, 94% of the payload. Detail and the fix options are in
+`.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md`. Bookmarks —
+the thing that triggered all of this — are now 37.1 KB, under 1%.
 
 ---
 

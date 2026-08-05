@@ -65,8 +65,15 @@ window.__selfIdentitySources = async () => {
   // ---- C / C'. our own roster row, per space -----------------------------
   const members = await all('space_members');
   const spaces = await all('spaces');
-  const nameForSpace = (id) =>
-    spaces.find((s) => s.spaceId === id)?.name ?? '(unknown)';
+  // The stored field is `spaceName` (quorum-shared Space type), NOT `name`.
+  // This read `.name` until 2026-08-05, so every space rendered as "(unknown)"
+  // in every table below — which made the encryption-state breakdown useless
+  // for its whole purpose, namely deciding WHICH space is carrying the bloat.
+  // `.name` is kept as a fallback in case an older row shape survives.
+  const nameForSpace = (id) => {
+    const s = spaces.find((sp) => sp.spaceId === id);
+    return s?.spaceName || s?.name || '(unknown)';
+  };
   const selfRows = members.filter((m) => m.user_address === selfAddress);
 
   // ---- D. the published public profile -----------------------------------
@@ -135,6 +142,15 @@ window.__selfIdentitySources = async () => {
     : [];
 
   // ---- report -------------------------------------------------------------
+  // Defined up here rather than beside the verdicts: the size section below
+  // also renders pass/fail lines, and a `const` used above its declaration is a
+  // TDZ crash, not a hoist.
+  const say = (ok, text) =>
+    console.log(
+      `%c${ok ? '✔' : '✖'} ${text}`,
+      `color:${ok ? '#4ade80' : '#f87171'};font-weight:bold`
+    );
+
   const settingsField = config?.name ?? '(config has no name)';
   const navRailName = passkey?.displayName || 'User';
 
@@ -210,8 +226,9 @@ window.__selfIdentitySources = async () => {
     console.table(
       budget.map((b) => ({ ...b, kb: (b.bytes / 1024).toFixed(1) }))
     );
-    // Bookmarks measured at 75% of one real blob. Break them down by field so
-    // the fix is chosen on evidence — see
+    // Bookmarks measured at 75% of one real blob, 94% of it a base64 sender
+    // avatar copied into every bookmark. Break them down by field so the fix is
+    // chosen on evidence — see
     // 2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md under .agents/issues/.
     const marks = config.bookmarks ?? [];
     if (marks.length) {
@@ -225,6 +242,64 @@ window.__selfIdentitySources = async () => {
       );
     }
 
+    // ---- which bookmark store are we even looking at? -------------------
+    //
+    // 🔴 `config.bookmarks` above is NOT the live bookmark store. It is the copy
+    // embedded in the stored config blob, and it is refreshed only when
+    // `saveConfig` next runs. The live rows are their own object store.
+    //
+    // That matters for verifying the strip, and reading the wrong one gives a
+    // FALSE NEGATIVE: the sweep rewrites the `bookmarks` store on launch, but
+    // the number printed above keeps showing the old size until the next config
+    // save. Read both, and say which state this account is actually in.
+    const liveMarks = await all('bookmarks');
+    const iconBytes = (list) =>
+      list.reduce((n, b) => n + sizeOf(b?.cachedPreview?.senderIcon), 0);
+    const liveIconKb = iconBytes(liveMarks) / 1024;
+    const configIconKb = iconBytes(marks) / 1024;
+    const sweepRan = !!localStorage.getItem(
+      `bookmarkSenderIconsStripped:v1:${selfAddress}`
+    );
+
+    console.table([
+      {
+        store: "IndexedDB 'bookmarks' (LIVE rows)",
+        count: liveMarks.length,
+        'senderIcon kb': liveIconKb.toFixed(1),
+        'refreshed by': 'the one-time sweep, on launch',
+      },
+      {
+        store: "user_config.bookmarks (blob COPY)",
+        count: marks.length,
+        'senderIcon kb': configIconKb.toFixed(1),
+        'refreshed by': 'the next saveConfig',
+      },
+    ]);
+
+    if (!sweepRan && liveIconKb > 1) {
+      say(
+        false,
+        `Embedded avatars still present (${liveIconKb.toFixed(1)} KB live) and the sweep has ` +
+          'NOT run on this device. This build does not contain the bookmark-avatar fix — ' +
+          'this is a BASELINE reading, not a verification.'
+      );
+    } else if (sweepRan && configIconKb > 1) {
+      say(
+        true,
+        `Sweep has run (live store clean at ${liveIconKb.toFixed(1)} KB). The blob copy still ` +
+          `reads ${configIconKb.toFixed(1)} KB because no config save has happened since — ` +
+          'uploads are ALREADY thin (saveConfig strips on the way out); this local copy ' +
+          'catches up on the next save. Change any setting and re-run to see it drop.'
+      );
+    } else if (sweepRan) {
+      say(
+        true,
+        'Converged — both the live store and the blob copy are free of embedded avatars.'
+      );
+    } else {
+      say(true, 'No embedded bookmark avatars on this account (nothing to strip).');
+    }
+
     const oneAvatar = sizeOf(config.profile_image);
     if (oneAvatar > 0) {
       console.log(
@@ -234,15 +309,88 @@ window.__selfIdentitySources = async () => {
           ).toFixed(0)} KB to a ${(blobBytes / 1024).toFixed(0)} KB blob.`
       );
     }
+
+    // ---- is this blob actually being published? --------------------------
+    //
+    // Nothing checks the blob's size before uploading, so an overrun is
+    // whatever the server returns. Worse, THREE different states all leave the
+    // config saved locally and looking healthy, and only one of them means the
+    // upload happened:
+    //
+    //   1. allowSync off            → never uploads, by design
+    //   2. refuse-to-publish guard  → held, because this device cannot prove a
+    //                                 key for every Space it lists
+    //   3. uploaded fine
+    //
+    // `saveConfig` writes the local row in all three, so "my settings saved" is
+    // not evidence of sync. Print the state instead of leaving it inferred.
+    const blobKb = blobBytes / 1024;
+    const keyedSpaceIds = new Set((config.spaceKeys ?? []).map((sk) => sk.spaceId));
+    const wouldDrop = (config.spaceIds ?? []).filter((id) => !keyedSpaceIds.has(id));
+
+    console.log(
+      '%c=== is this blob being published? ===',
+      'color:#60a5fa;font-weight:bold;font-size:14px'
+    );
+    say(
+      config.allowSync !== false,
+      config.allowSync === false
+        ? 'allowSync is OFF — this device never uploads its config. Every setting below is ' +
+            'local-only, and no other device will ever see any of it.'
+        : 'allowSync is on.'
+    );
+    say(
+      wouldDrop.length === 0,
+      wouldDrop.length
+        ? `${wouldDrop.length} Space(s) in spaceIds have no matching spaceKey, so saveConfig ` +
+            'REFUSES to publish (it will not upload a truncated Space list). The save is ' +
+            'local-only until those Spaces finish syncing, and NOTHING retries a held save.'
+        : 'Space list and keys agree — no refuse-to-publish hold.'
+    );
+
+    // ~1 MB is the observed working ceiling; ~21 MB is where failures were seen.
+    // Between them is untested, not safe.
+    say(
+      blobKb < 1024,
+      blobKb < 1024
+        ? `Blob is ${blobKb.toFixed(0)} KB, inside the ~1 MB observed working range.`
+        : `Blob is ${blobKb.toFixed(0)} KB — OVER the ~1 MB observed working ceiling. ` +
+            'Uploads in this range are untested rather than known-broken, but nothing ' +
+            'checks the size before publishing, so a failure surfaces only as a server ' +
+            'error. See .agents/docs/config-sync-system.md → Size Limits.'
+    );
+
+    // The dominant contributor, historically and again here. A CREATED space
+    // pre-allocates ~10k polynomial evals (~2 MB); a JOINED one costs ~12 KB.
+    // Deleting a space has also been observed to LEAK its state rather than
+    // remove it, so orphans accumulate. Break it down per space so the reading
+    // says which spaces are responsible instead of one large total.
+    const keyBreakdown = (config.spaceKeys ?? [])
+      .map((sk) => ({
+        space: nameForSpace(sk.spaceId),
+        spaceId: String(sk.spaceId).slice(0, 12) + '…',
+        kb: +(sizeOf(sk) / 1024).toFixed(1),
+        likely: sizeOf(sk) > 500 * 1024 ? 'CREATED here (~10k evals)' : 'joined',
+      }))
+      .sort((a, b) => b.kb - a.kb);
+    if (keyBreakdown.length) {
+      console.table(keyBreakdown);
+      const fat = keyBreakdown.filter((k) => k.kb > 500);
+      if (fat.length) {
+        console.log(
+          `%c⚠ ${fat.length} encryption state(s) over 500 KB, ${fat
+            .reduce((n, k) => n + k.kb, 0)
+            .toFixed(0)} KB total. This is the known evals bloat — ` +
+            '.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md (open, high). ' +
+            'Not a bookmark problem: check that count against the number of Spaces you ' +
+            'actually CREATED, since deleted Spaces have been seen to leak their state.',
+          'color:#f87171;font-weight:bold'
+        );
+      }
+    }
   }
 
   // ---- verdicts ----------------------------------------------------------
-  const say = (ok, text) =>
-    console.log(
-      `%c${ok ? '✔' : '✖'} ${text}`,
-      `color:${ok ? '#4ade80' : '#f87171'};font-weight:bold`
-    );
-
   console.log(
     '%c=== VERDICT ===',
     'color:#fbbf24;font-weight:bold;font-size:14px'

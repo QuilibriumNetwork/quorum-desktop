@@ -4,7 +4,7 @@ title: Encryption State Evals Causing Config Sync Bloat
 status: open
 priority: high
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-09T00:00:00.000Z
+updated: 2026-08-05
 related_issues:
   - '#108'
 ---
@@ -158,3 +158,88 @@ fully (state+keys+members+messages), trim live created spaces' eval pool to
 ~256. Both operate only on `id/id` space conversations, never DMs.
 
 ---
+
+## MEASURED 2026-08-05 — now 98% of the config blob, and a 4.2 MB upload SUCCEEDED
+
+Taken with `.agents/tools/dm-debug/08-self-identity-sources.js` on a real
+account, immediately after the bookmark-avatar strip
+(`2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`) landed and forced a
+fresh `saveConfig`.
+
+| part | KB | share |
+|---|---|---|
+| **whole blob** | **4205.4** | — |
+| **spaceKeys (encryption states)** | **4112.1** | **98%** |
+| profile_image | 49.6 | 1% |
+| bookmarks (post-fix) | 37.1 | <1% |
+| everything else | 6.5 | — |
+
+Per space:
+
+| space | kb | classification |
+|---|---|---|
+| **Cross device test** | **1976.1** | CREATED (~10k evals) |
+| **Test Leave** | **1975.4** | CREATED (~10k evals) |
+| Quorum Test Community Space | 63.4 | joined |
+| Polar bears and cubs | 63.3 | joined |
+| Quilibrium Community | 34.0 | joined |
+
+**Both fat states are throwaway TEST spaces**, and both are live — each has rows
+in `spaces`, `space_members` and `config.spaceKeys`. So this is not the
+leaked-orphan bug below; it is the plain cost of having created two spaces. Two
+disposable test spaces are carrying 94% of a real account's sync payload.
+
+Exactly the predicted shape: ~2 MB per created space, ~12-63 KB per joined one.
+
+🔴 **This account is ON the threshold, not under it.** §Problem above records the
+original failure as *"the total payload exceeded the server limit (~4MB)"*. This
+blob is **4.11 MB and was ACCEPTED** (see
+`2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md` §6-A
+for the evidence chain). The known-good and known-bad points now effectively
+touch, so **one more created space (~2 MB) takes this account over**, and nothing
+in either client would report it. The 620 KB the bookmark fix returned is the
+only reason there is any margin at all.
+Two fat states, 3952 KB between them.
+
+### Three things this settles
+
+1. **A 4205 KB config uploaded successfully.** `allowSync` was on, the
+   refuse-to-publish guard was not holding, and `ConfigService.saveConfig` runs
+   `postUserSettings` BEFORE `saveUserConfig` with no try/catch between them
+   (`ConfigService.ts:700-712`) — so a thrown POST skips the local save. The
+   local config was observably rewritten, therefore the POST returned.
+   **The "~1 MB maximum observed working" figure in `config-sync-system.md` is
+   conservative by at least 4x.** The real ceiling is still unknown; the ~21 MB
+   failure figure remains the only known-bad point.
+
+2. **Every blob measurement before a fresh save was a LOWER BOUND.** The same
+   account read 873 KB minutes earlier with `spaceKeys` at 160.6 KB.
+   `config.spaceKeys` is a snapshot refreshed only by `saveConfig`, so the blob
+   had been multi-megabyte in substance for some time and nothing showed it.
+   This is why the bloat kept being characterised as an occasional
+   space-creation failure rather than a standing condition.
+
+3. **The doc's mitigation does not exist.** `config-sync-system.md` claimed "the
+   100KB per-encryption-state filter keeps total payload well under limits".
+   There is no such filter — `ConfigService.ts:561` filters on
+   `encryptionState !== undefined`, a presence check. Corrected in that doc
+   2026-08-05. Nothing bounds a state entering the blob, and nothing checks the
+   blob's size before uploading.
+
+### ~~Still open here~~ ANSWERED 2026-08-05
+
+Both fat states are live created spaces, named above, neither orphaned. The tool
+now prints space names — it read the wrong field (`name` instead of `spaceName`)
+until 2026-08-05 and rendered every space as "(unknown)", which is why earlier
+readings could not answer this and why the bloat was never attributable to a
+specific space.
+
+**Next decision, and it is not ours to make alone.** The issue's own "Actionable"
+section already scopes it: shrink the pool at creation (the SDK accepts `total`,
+one line, desktop-local) and/or trim evals from the config upload while keeping
+the full pool locally. The second helps EXISTING accounts and the first does not,
+but it changes the blob contract and must match mobile — the lead-dev call this
+issue has been waiting on since 2025-12-09. What this measurement adds is the
+argument: it is no longer "space creation occasionally 400s", it is "two
+throwaway test spaces permanently occupy 94% of the payload that carries every
+synced setting, on an account that is otherwise healthy".

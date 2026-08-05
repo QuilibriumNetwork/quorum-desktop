@@ -477,10 +477,11 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     };
 
 
-    // Get sender name + icon for bookmark preview
+    // Sender NAME only. The avatar is deliberately not captured: it would be
+    // embedded per bookmark in the encrypted config blob (69% of it, measured
+    // 2026-08-05), and BookmarkCard resolves it from `senderAddress` instead.
     const senderInfo = mapSenderToUser ? mapSenderToUser(message.content.senderId) : undefined;
     const senderName = senderInfo?.displayName || 'Unknown User';
-    const senderIcon = senderInfo?.userIcon;
 
     // Use provided sourceName or derive it
     const bookmarkSourceName = sourceName ||
@@ -518,7 +519,6 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       context,
       senderName,
       bookmarkSourceName,
-      senderIcon,
       threadName
     );
   }, [message, bookmarks, conversationId, spaceId, channelId, mapSenderToUser, sourceName, messageDB]);
