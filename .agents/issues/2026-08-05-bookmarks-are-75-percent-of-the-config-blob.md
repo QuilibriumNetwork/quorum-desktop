@@ -30,7 +30,8 @@ prediction is arithmetic from §3-A, not an observation.
 | ✅ **MEASURED** | every group was confirmed able to FAIL by neutering the code under it — the stripper (6 red), the two ConfigService call sites (2 red), the counterpart gate (4 red), the changed-rows-only skip (2 red), the migration's completion flag moved before its writes (2 red) |
 | ✅ **MEASURED** | the plaintext handed to `crypto.subtle.encrypt` (literally the uploaded blob) contains no `senderIcon` and no avatar bytes, while both bookmarks and their `senderAddress` survive |
 | ✅ **MEASURED** | the sweep writes only rows that changed, and does NOT set its completion flag when a read or write fails — so a partial failure retries next launch instead of being permanently skipped |
-| ⏳ **PREDICTED, not measured** | ~873 KB → ~253 KB on the real account. Arithmetic from §3-A (619.8 KB of `senderIcon` removed), not yet observed |
+| ✅ **MEASURED 2026-08-05 on the real account** | **the sweep works.** After one launch on this branch the live `bookmarks` store holds 19 rows carrying **0.0 KB** of `senderIcon`, down from 619.8 KB. Every embedded avatar is gone from local storage |
+| ⏳ **PREDICTED, not measured** | the whole blob at ~253 KB. Needs one config save first — see below. The 619.8 KB is confirmed gone from the live store; what is unconfirmed is only the resulting blob total |
 
 **To close this issue**, run `.agents/tools/dm-debug/08-self-identity-sources.js`
 in the console **on a build containing this branch**, after one launch (the sweep
@@ -77,6 +78,40 @@ All four branches smoke-tested against a stubbed IndexedDB before committing.
 the byte — 873.2 KB blob, 656.5 KB bookmarks, 619.8 KB `senderIcon`, 18
 bookmarks — so the instrument is deterministic and the pre-fix number is not a
 one-off reading.
+
+**Post-sweep reading, same account, one launch on this branch:**
+
+| store | rows | `senderIcon` |
+|---|---|---|
+| live `bookmarks` | 19 | **0.0 KB** (was 619.8) |
+| `user_config.bookmarks` (blob copy) | 18 | 619.8 KB — stale, exactly as the new verdict predicts |
+
+The row counts differ (19 vs 18) because a bookmark was added after the last
+config save: `addBookmark` writes the `bookmarks` store and does not call
+`ConfigService.saveConfig`. That is the same staleness, visible from a second
+angle, and not a fault.
+
+### The stale blob copy is left alone ON PURPOSE — do not "fix" it in the sweep
+
+It is tempting to have the sweep also rewrite `user_config.bookmarks`, so local
+storage reclaims the bytes immediately instead of waiting for the next save.
+**Do not.** The reasoning, so this is not re-litigated:
+
+1. **It is already harmless.** Nothing outside `ConfigService` reads
+   `config.bookmarks` (checked 2026-08-05) — every bookmark surface renders from
+   the `bookmarks` object store via `useBookmarks`. Uploads are thin from the
+   first save regardless, because `saveConfig` strips on the way out. The stale
+   field is dead weight on local disk, not a wrong value anyone can see.
+2. **The fix would introduce a clobber race on the highest-blast-radius object
+   in the app.** The sweep would read the config at T0; an ordinary
+   `ConfigService.saveConfig` can land at T1 with a new timestamp and unrelated
+   changes; the sweep's write at T2 would put the T0 snapshot back and silently
+   lose them. `MessageDB.saveUserConfig` is a bare `store.put` with no
+   timestamp guard, so nothing would catch it. The config blob is exactly the
+   object whose corruption is silent and account-wide.
+
+Trading a real race against the config blob for some local disk and one less
+verification step is a bad trade. It self-heals on the next save.
 
 ### Two defects the tests caught after the code was written
 
