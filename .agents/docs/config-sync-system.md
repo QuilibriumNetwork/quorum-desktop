@@ -384,7 +384,15 @@ The API has an implicit size limit on the config payload. Based on observed fail
 - **Maximum observed working**: ~1MB
 - **Failure threshold**: ~21MB (caused by bloated encryption states)
 
-The 100KB per-encryption-state filter keeps total payload well under limits.
+⚠️ **"The 100KB per-encryption-state filter keeps total payload well under
+limits" — this line used to be here and it is WRONG.** No such filter exists.
+`saveConfig` does `config.spaceKeys = allSpaceKeys.filter(sk => sk.encryptionState !== undefined)`
+(`ConfigService.ts:561`) — an UNDEFINED check, not a size check. A codebase-wide
+search for a 100 KB constant finds only the image compressor's threshold and two
+IndexedDB row limits, neither related. Nothing bounds the size of an encryption
+state entering the blob, and **nothing checks the blob's size before uploading
+it**, so an overrun surfaces only as whatever the server returns. Measured
+2026-08-05: a real account at **4205 KB**, 4112 KB of it encryption states.
 
 ### What has actually eaten the budget
 
@@ -397,8 +405,17 @@ size broken down by part. Run it before theorising.
 
 | Contributor | Measured | Status |
 |---|---|---|
-| **Bookmark sender avatars** — a base64 avatar copied into every bookmark | 656 KB of an 873 KB blob (75%), of which `senderIcon` alone was 619.8 KB (69% of the whole blob) | **fixed on desktop 2026-08-05.** `stripBookmarkSenderIcons` runs on upload AND on adopt in `ConfigService`; the avatar is resolved at render from `senderAddress`. Mobile still needs the same, blocked on a `quorum-shared` release |
-| Encryption states (`spaceKeys`) | 160.6 KB (18%) on the same account; historically the ~21 MB failures | bounded by the 100 KB per-state filter; see `.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md` |
+| **Bookmark sender avatars** — a base64 avatar copied into every bookmark | 656 KB of an 873 KB blob (75%), of which `senderIcon` alone was 619.8 KB (69% of the whole blob) | ✅ **fixed on desktop 2026-08-05**, confirmed on the real account: bookmarks 656.5 KB → **37.1 KB**, `senderIcon` → 0.0 KB. `stripBookmarkSenderIcons` runs on upload AND on adopt in `ConfigService`; the avatar is resolved at render from `senderAddress`. Mobile still needs the same, blocked on a `quorum-shared` publish |
+| **Encryption states (`spaceKeys`)** | **4112 KB of a 4205 KB blob (98%)**, measured on the same account minutes after the bookmark fix landed | 🔴 **open, and now dominant by far.** ~10k polynomial evals (~2 MB) are pre-allocated per **created** space; a joined space costs ~12 KB. Deleted spaces have been observed to LEAK their state rather than remove it, so orphans accumulate. See `.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md` (priority high) |
+
+> ⚠️ **The two rows above were measured on the same account 20 minutes apart, and
+> the second reading is not a regression — it is the first HONEST one.**
+> `config.spaceKeys` in the stored blob is a snapshot refreshed only by
+> `saveConfig`. The 873 KB reading was stale; the blob had been ~4.8 MB in
+> substance for some time and nobody could see it, because the only number
+> anyone reads is the one written at the last save. Removing 620 KB of bookmark
+> avatars is what caused a save, which is what revealed the real total. **Treat
+> any blob figure taken without a fresh `saveConfig` as a lower bound.**
 
 ⚠️ **Before adding any new field to `UserConfig`, ask what it costs per item and
 whether it is rebuildable.** The bookmark avatar was a pure render cache

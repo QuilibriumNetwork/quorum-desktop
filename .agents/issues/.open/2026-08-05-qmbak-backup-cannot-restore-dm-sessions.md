@@ -184,7 +184,8 @@ handling: wrong is silent, and neither the user nor a code reader can detect it.
 
 ## Related
 
-- [Safari ITP wipes IndexedDB after 7 idle days](2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) — the trigger that surfaced this; **but this defect is independent of it** and applies equally to cache clears, device resets, the Safari passkey bug, and moving to a new device
+- [Safari ITP wipes IndexedDB after 7 idle days](2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) — the trigger that surfaced this. The defect itself is independent (it applies equally to cache clears, device resets, the Safari passkey bug, and moving to a new device), **but the two are coupled on the fix path**: see below.
+- [Guided install flow for Safari web users](2026-08-05-guided-install-flow-for-safari-web-users.md) — **this issue is on its critical path.** An iOS Home Screen web app gets a storage partition separate from Safari, so a user who installs starts with an empty database. The only handoff for their existing history is export `.qmbak` from the tab → import in the installed app. That makes this issue the migration mechanism for the ITP mitigation, not just a disaster-recovery nicety. The install flow can ship before this is fixed, but only with copy that states plainly that history transfers and sessions do not.
 - [User Data Backup & Restore](../../docs/features/user-data-backup.md) — the feature as currently documented; its "Import Behavior" section describes the skip as intended, which is correct for the merge case and is the framing this issue disputes for the restore case
 - [Cryptographic Architecture](../../docs/cryptographic-architecture.md) — Double Ratchet model and key storage
 - [PWA feasibility report](../../reports/2026-08-05-pwa-mobile-fallback-feasibility.md) §3.2

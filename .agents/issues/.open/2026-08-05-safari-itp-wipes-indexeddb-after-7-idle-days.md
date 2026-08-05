@@ -190,15 +190,18 @@ Tracked separately as
 It is **independent of ITP** — it applies equally to cache clears, device resets
 and new devices — so it should not block or be blocked by the mitigations below.
 
-### M2 — Warn Safari users and steer them to install (UI, small)
+### M2 — Warn Safari users and steer them to install → **specced separately**
 
-Detect WebKit-without-standalone (`navigator.standalone === false` plus a Safari
-UA check, or `display-mode: browser`) and show a persistent, dismissible notice
-explaining that browser storage will be cleared after a week of not visiting, with
-one-click paths to **Add to Dock** (macOS 14+) or **Add to Home Screen** (iOS).
+The only mitigation that **prevents** the wipe rather than softening it, and the
+only one that does not ask the user to weaken their browser's privacy settings.
+Installed web apps are exempt from ITP eviction.
 
-This is the only mitigation that actually prevents the wipe rather than softening
-it. Costs nothing and works today.
+Full spec: [2026-08-05-guided-install-flow-for-safari-web-users.md](2026-08-05-guided-install-flow-for-safari-web-users.md).
+
+Two things found while speccing it that belong here:
+
+- **Install is gated on an unverified assumption.** Nobody has confirmed that passkey auth (`navigator.credentials.get()` + `largeBlob`) works inside an iOS standalone web app. If it does not, this mitigation collapses and this bug needs a different answer. That check is Phase 0 of the install task and should run before anything else here.
+- **Installing does not carry the user's data across.** An iOS Home Screen web app gets a **separate storage partition** from Safari: no shared IndexedDB, localStorage, cookies or service worker. So telling a Safari-tab user to install means telling them to start with an empty database and leave their DM history behind in the tab. The handoff is export `.qmbak` → import in the installed app, which routes this bug straight through [the backup issue](2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md) and its session-continuity gap. **The two issues are less independent than originally filed.**
 
 ### M3 — Call `navigator.storage.persist()` on startup (code, trivial)
 

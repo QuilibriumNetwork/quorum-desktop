@@ -302,6 +302,85 @@ window.__selfIdentitySources = async () => {
           ).toFixed(0)} KB to a ${(blobBytes / 1024).toFixed(0)} KB blob.`
       );
     }
+
+    // ---- is this blob actually being published? --------------------------
+    //
+    // Nothing checks the blob's size before uploading, so an overrun is
+    // whatever the server returns. Worse, THREE different states all leave the
+    // config saved locally and looking healthy, and only one of them means the
+    // upload happened:
+    //
+    //   1. allowSync off            → never uploads, by design
+    //   2. refuse-to-publish guard  → held, because this device cannot prove a
+    //                                 key for every Space it lists
+    //   3. uploaded fine
+    //
+    // `saveConfig` writes the local row in all three, so "my settings saved" is
+    // not evidence of sync. Print the state instead of leaving it inferred.
+    const blobKb = blobBytes / 1024;
+    const keyedSpaceIds = new Set((config.spaceKeys ?? []).map((sk) => sk.spaceId));
+    const wouldDrop = (config.spaceIds ?? []).filter((id) => !keyedSpaceIds.has(id));
+
+    console.log(
+      '%c=== is this blob being published? ===',
+      'color:#60a5fa;font-weight:bold;font-size:14px'
+    );
+    say(
+      config.allowSync !== false,
+      config.allowSync === false
+        ? 'allowSync is OFF — this device never uploads its config. Every setting below is ' +
+            'local-only, and no other device will ever see any of it.'
+        : 'allowSync is on.'
+    );
+    say(
+      wouldDrop.length === 0,
+      wouldDrop.length
+        ? `${wouldDrop.length} Space(s) in spaceIds have no matching spaceKey, so saveConfig ` +
+            'REFUSES to publish (it will not upload a truncated Space list). The save is ' +
+            'local-only until those Spaces finish syncing, and NOTHING retries a held save.'
+        : 'Space list and keys agree — no refuse-to-publish hold.'
+    );
+
+    // ~1 MB is the observed working ceiling; ~21 MB is where failures were seen.
+    // Between them is untested, not safe.
+    say(
+      blobKb < 1024,
+      blobKb < 1024
+        ? `Blob is ${blobKb.toFixed(0)} KB, inside the ~1 MB observed working range.`
+        : `Blob is ${blobKb.toFixed(0)} KB — OVER the ~1 MB observed working ceiling. ` +
+            'Uploads in this range are untested rather than known-broken, but nothing ' +
+            'checks the size before publishing, so a failure surfaces only as a server ' +
+            'error. See .agents/docs/config-sync-system.md → Size Limits.'
+    );
+
+    // The dominant contributor, historically and again here. A CREATED space
+    // pre-allocates ~10k polynomial evals (~2 MB); a JOINED one costs ~12 KB.
+    // Deleting a space has also been observed to LEAK its state rather than
+    // remove it, so orphans accumulate. Break it down per space so the reading
+    // says which spaces are responsible instead of one large total.
+    const keyBreakdown = (config.spaceKeys ?? [])
+      .map((sk) => ({
+        space: nameForSpace(sk.spaceId),
+        spaceId: String(sk.spaceId).slice(0, 12) + '…',
+        kb: +(sizeOf(sk) / 1024).toFixed(1),
+        likely: sizeOf(sk) > 500 * 1024 ? 'CREATED here (~10k evals)' : 'joined',
+      }))
+      .sort((a, b) => b.kb - a.kb);
+    if (keyBreakdown.length) {
+      console.table(keyBreakdown);
+      const fat = keyBreakdown.filter((k) => k.kb > 500);
+      if (fat.length) {
+        console.log(
+          `%c⚠ ${fat.length} encryption state(s) over 500 KB, ${fat
+            .reduce((n, k) => n + k.kb, 0)
+            .toFixed(0)} KB total. This is the known evals bloat — ` +
+            '.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md (open, high). ' +
+            'Not a bookmark problem: check that count against the number of Spaces you ' +
+            'actually CREATED, since deleted Spaces have been seen to leak their state.',
+          'color:#f87171;font-weight:bold'
+        );
+      }
+    }
   }
 
   // ---- verdicts ----------------------------------------------------------
