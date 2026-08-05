@@ -176,13 +176,18 @@ fresh `saveConfig`.
 
 Per space:
 
-| kb | classification |
-|---|---|
-| 1976.1 | CREATED (~10k evals) |
-| 1975.4 | CREATED (~10k evals) |
-| 63.4 | joined |
-| 63.3 | joined |
-| 34.0 | joined |
+| space | kb | classification |
+|---|---|---|
+| **Cross device test** | **1976.1** | CREATED (~10k evals) |
+| **Test Leave** | **1975.4** | CREATED (~10k evals) |
+| Quorum Test Community Space | 63.4 | joined |
+| Polar bears and cubs | 63.3 | joined |
+| Quilibrium Community | 34.0 | joined |
+
+**Both fat states are throwaway TEST spaces**, and both are live — each has rows
+in `spaces`, `space_members` and `config.spaceKeys`. So this is not the
+leaked-orphan bug below; it is the plain cost of having created two spaces. Two
+disposable test spaces are carrying 94% of a real account's sync payload.
 
 Exactly the predicted shape: ~2 MB per created space, ~12-63 KB per joined one.
 Two fat states, 3952 KB between them.
@@ -212,10 +217,20 @@ Two fat states, 3952 KB between them.
    2026-08-05. Nothing bounds a state entering the blob, and nothing checks the
    blob's size before uploading.
 
-### Still open here
+### ~~Still open here~~ ANSWERED 2026-08-05
 
-Whether both fat states correspond to spaces actually CREATED on this account,
-or whether one is leaked debris from a deleted space (the compounding bug
-above). The tool now prints space names — it read the wrong field (`name`
-instead of `spaceName`) until 2026-08-05 and rendered every space as
-"(unknown)", which is why earlier readings could not answer this.
+Both fat states are live created spaces, named above, neither orphaned. The tool
+now prints space names — it read the wrong field (`name` instead of `spaceName`)
+until 2026-08-05 and rendered every space as "(unknown)", which is why earlier
+readings could not answer this and why the bloat was never attributable to a
+specific space.
+
+**Next decision, and it is not ours to make alone.** The issue's own "Actionable"
+section already scopes it: shrink the pool at creation (the SDK accepts `total`,
+one line, desktop-local) and/or trim evals from the config upload while keeping
+the full pool locally. The second helps EXISTING accounts and the first does not,
+but it changes the blob contract and must match mobile — the lead-dev call this
+issue has been waiting on since 2025-12-09. What this measurement adds is the
+argument: it is no longer "space creation occasionally 400s", it is "two
+throwaway test spaces permanently occupy 94% of the payload that carries every
+synced setting, on an account that is otherwise healthy".
