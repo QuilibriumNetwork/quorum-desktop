@@ -19,10 +19,45 @@ related:
 
 ## Status
 
-**Desktop fix built on branch `fix/bookmark-sender-icon-bloat`; the on-device
-number has NOT been taken yet.** What is claimed below is labelled, because the
-distinction matters: the code is verified by tests, the 873 KB → ~253 KB
-prediction is arithmetic from §3-A, not an observation.
+**2026-08-05 — DESKTOP SHIPPED in PR #314** (`fix(bookmarks): bookmarks stop
+eating three quarters of the config sync payload`), with the matching
+`quorum-shared` change in shared PR #75 (`2.1.0-40`).
+
+What landed: bookmarks no longer store the sender's avatar. It is resolved at
+render from `cachedPreview.senderAddress`, and the field is stripped on config
+upload, on config adopt, and by a one-time local sweep. Also fixes an adjacent
+bug where the differential bookmark sync called `addBookmark` (which uses
+`IDBObjectStore.add` and rejects existing keys) for rows it had classified as
+updates, throwing `ConstraintError` and aborting both the apply and the restore.
+
+**Verified on the affected real account, not just by tests:** bookmarks
+656.5 KB → **37.1 KB**, `senderIcon` 619.8 KB → **0.0 KB**, live store and blob
+copy both converged, and a real `saveConfig` + upload completed.
+
+**Still open — this is why the issue has NOT moved to `.done/`:**
+
+- **Mobile has no strip**, and it publishes the same blob. Blocked on a
+  `quorum-shared` **publish** (the version is bumped to `2.1.0-40` and merged,
+  but that repo has no CI publish step, so npm still serves `2.1.0-39`, which is
+  what mobile pins). Two lines once unblocked — see "Not done, and why" below,
+  and port-to-mobile candidate #39.
+- §4.3, the pre-flight size guard, was deliberately left out of this branch and
+  now has its own issue:
+  `.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md`.
+
+> ⚠️ **The headline number moved for a reason worth knowing.** This issue opened
+> against an 873 KB blob. After the fix forced a fresh save, the same account read
+> **4205 KB** — 98% encryption states, from two created test spaces. Nothing grew;
+> `config.spaceKeys` is a snapshot refreshed only by `saveConfig`, so **873 KB was
+> a stale lower bound.** Bookmarks were never the biggest thing in the blob, they
+> were the biggest thing anyone could *see*. Detail in
+> `.open/2025-12-09-encryption-state-evals-bloat.md` → MEASURED 2026-08-05.
+
+### Original pre-ship assessment (kept for the record)
+
+What is claimed below is labelled, because the distinction matters: the code is
+verified by tests, and the 873 KB → ~253 KB prediction was arithmetic from §3-A
+rather than an observation at the time it was written.
 
 | | |
 |---|---|
