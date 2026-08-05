@@ -24,9 +24,12 @@
  */
 
 import { useEffect, useRef } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { logger } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
+import { buildConfigKey } from '../../queries/config';
+import type { UserConfig } from '../../../db/messages';
 
 interface SyncedIdentity {
   name?: string;
@@ -66,6 +69,18 @@ export function useReconcileSelfIdentity(): void {
   const address = currentPasskeyInfo?.address;
   const lastAppliedRef = useRef<string | undefined>(undefined);
 
+  // SUBSCRIBE to the config rather than reading it once on mount.
+  // `ConfigService.getConfig` pushes each freshly-pulled config into this cache
+  // key, and those pulls happen well after mount — opening a DM is the common
+  // one. A one-shot read here would leave the NavRail stale until the next app
+  // launch, which is most of the bug we are fixing.
+  const { data: config } = useQuery<UserConfig | undefined>({
+    queryKey: buildConfigKey({ userAddress: address ?? '' }),
+    queryFn: () => messageDB.getUserConfig({ address: address! }),
+    enabled: Boolean(address),
+    networkMode: 'always', // IndexedDB, not network
+  });
+
   useEffect(() => {
     if (!address) return;
 
@@ -73,7 +88,6 @@ export function useReconcileSelfIdentity(): void {
 
     (async () => {
       try {
-        const config = await messageDB.getUserConfig({ address });
         const write = shouldReconcileSelfIdentity(config, {
           displayName: currentPasskeyInfo?.displayName,
           pfpUrl: currentPasskeyInfo?.pfpUrl,
@@ -104,5 +118,5 @@ export function useReconcileSelfIdentity(): void {
     return () => {
       cancelled = true;
     };
-  }, [address, currentPasskeyInfo, messageDB, updateStoredPasskey]);
+  }, [address, config, currentPasskeyInfo, updateStoredPasskey]);
 }
