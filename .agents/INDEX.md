@@ -111,6 +111,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
+- 📋 [Own identity, Phase 1 — implementation plan](issues/2026-08-05-own-identity-cross-device-sync-plan.md)
 
 #### Messagedb
 
@@ -282,6 +283,10 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A per-space override never reaches your own other devices](issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md)
 - 🐛 [Desktop shows a stale display name everywhere except the User Settings field](issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md)
 - 🐛 [A Space created on mobile does not land correctly on desktop](issues/.open/2026-08-04-mobile-created-space-syncs-badly-to-desktop-owner-missing-and-message-not-shown.md)
+- 🐛 [Bookmarks are three quarters of the config blob](issues/.open/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md)
+- 🐛 [The two clients do not merge the same config fields](issues/.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)
+- 🐛 [The config upload has no size guard, and mobile's failure is invisible](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md)
+- 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -314,6 +319,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Make the Spaces list identical on every device](issues/.open/2026-07-31-spaces-list-cross-device-sync.md)
 - 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
 - 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
+- 📋 [Does mobile need the desktop identity fixes?](issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
+- 📋 [Your own identity, on your own devices](issues/.open/2026-08-05-own-identity-cross-device-sync-design.md)
 
 ### Deferred
 
@@ -742,4 +749,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-04 17:32:30
+**Last Updated**: 2026-08-05 14:07:53

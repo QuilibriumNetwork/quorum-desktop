@@ -320,11 +320,19 @@ const finalSpaceIds = new Set(config.spaceIds);
 config.spaceKeys = config.spaceKeys.filter(sk => finalSpaceIds.has(sk.spaceId));
 ```
 
-**Why bidirectional filtering?** The server validates that `spaceIds` and `spaceKeys` must be perfectly in sync:
+**Why bidirectional filtering?** `spaceIds` and `spaceKeys` must be perfectly in sync:
 - Every space in `spaceIds` must have keys in `spaceKeys` (prevents "missing encryption" errors)
 - Every key in `spaceKeys` must reference a space in `spaceIds` (prevents "orphaned keys" errors)
 
-Mismatches result in `400 - invalid config missing data` errors.
+> ⚠️ **Corrected 2026-08-05.** This section previously said the **server** validates
+> that pairing and returns `400 - invalid config missing data`. It cannot. The server
+> receives only ciphertext — `saveConfig` POSTs `user_address`, `user_public_key`, the
+> AES-GCM-encrypted `user_config`, `timestamp` and `signature`, and the whole config
+> object is encrypted on-device before it leaves. No config field is ever visible to
+> it. The consistency rule is enforced **client-side**, by the filtering above.
+>
+> The same fact answers a privacy question that comes up whenever a field is added
+> here: the server learns nothing from a new field except the ciphertext's length.
 
 **Impact**:
 - Spaces without complete encryption won't appear in the nav bar
@@ -397,4 +405,4 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 ---
 
 
-*Last updated: 2026-05-27 — synced `UserConfig` snippet with the real shared type (added 7 fields previously missing from the doc), expanded triggers table.*
+*Last updated: 2026-08-05*

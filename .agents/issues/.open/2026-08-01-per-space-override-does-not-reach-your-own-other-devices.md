@@ -4,7 +4,7 @@ title: "A per-space name/avatar set on one of your devices never reaches your ow
 status: open
 priority: medium
 created: 2026-08-01
-updated: 2026-08-01
+updated: 2026-08-05
 severity: your own second device shows you following your global identity, as if you had never set the override
 area: per-space profile override / channel C / multi-device
 repos: quorum-desktop + quorum-mobile (observed desktop → mobile; the reverse is untested)
@@ -20,6 +20,45 @@ related_docs:
 ## Status
 
 observed 2026-08-01 on a live two-device test, cause not yet traced
+
+> **⚠️ CONFIRMED AND NARROWED 2026-08-05 — it is ONE-DIRECTIONAL.**
+>
+> Both directions were measured on a real device pair, with two independent
+> fields:
+>
+> | direction | per-space override arrives? | measured |
+> |---|---|---|
+> | **mobile → desktop** | ✅ **yes, immediately** | name and bio, 2026-08-05 |
+> | **desktop → mobile** | ❌ **no** | name + avatar 2026-08-01, bio 2026-08-05 |
+>
+> So the title's general claim is **wrong**: overrides do cross a user's own
+> devices. The defect is real but sits in exactly one direction, and it
+> reproduces on demand. Observable end state: **the same space shows two
+> different bios on the two devices.**
+>
+> **What this rules out.** The relay does deliver an `update-profile` to the
+> sender's own other device — mobile → desktop proves it — so hypothesis 3 in §4
+> (relay fan-out excludes own devices) is refuted unless the relay is itself
+> asymmetric, which nothing suggests. Desktop's RECEIVE path is fine, since it
+> accepts mobile's. **The fault is in mobile's receive of a desktop-sent
+> `update-profile`, or in desktop's send reaching mobile specifically.**
+>
+> That makes §4 hypothesis 2 the strongest remaining candidate: `update-profile`
+> is authorised against the VERIFIED signer, desktop signs with its own per-space
+> signing key, and if mobile has not admitted that device key it drops the message
+> fail-closed. Check that before anything else. Hypothesis 1 (self-message filter
+> on receive) is the cheap second.
+>
+> ⚠️ Do not investigate mobile unilaterally — see
+> `2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md` §4.
+>
+> **This mattered beyond this file.** An entire deferred architecture — moving
+> per-space profiles into the encrypted config blob — was designed on the
+> assumption that channel C could not carry them between a user's own devices.
+> The measurement killed it before it was built. See
+> `2026-08-05-own-identity-cross-device-sync-design.md` §6.
+>
+> Retitle this issue to name the direction when someone next touches it.
 
 
 ## §1. Observed (live test, 2026-08-01)
@@ -92,4 +131,4 @@ Establish the restart behaviour first — it is one minute of work and it splits
 the hypothesis space in half.
 
 ---
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-05*

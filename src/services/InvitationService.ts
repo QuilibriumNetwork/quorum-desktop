@@ -2,7 +2,7 @@
 // This service handles space invitation operations
 
 import { logger, int64ToBytes, parseInviteParams, getInviteUrlBase } from '@quilibrium/quorum-shared';
-import { MessageDB, NavItem } from '../db/messages';
+import { MessageDB, NavItem, type SpaceMemberRow } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
@@ -765,16 +765,24 @@ export class InvitationService {
       // Clear any tombstones from a previous join to allow messages to sync
       await this.messageDB.clearTombstonesForSpace(space.spaceId);
       await this.messageDB.saveSpace(space);
-      await this.messageDB.saveSpaceMember(space.spaceId, {
-        user_address: currentPasskeyInfo.address,
-        user_icon: currentPasskeyInfo.pfpUrl,
-        display_name: currentPasskeyInfo.displayName,
-        inbox_address: inboxAddress,
-      });
       let config = await this.getConfig({
         address: currentPasskeyInfo.address,
         userKey: keyset.userKeyset,
       });
+      // Two-slot model: our own row gets the GLOBAL slot, never the override.
+      // A value in the override slot outranks every later global update and the
+      // announce re-stamps it forever, so stamping it here froze us under the
+      // name we happened to have at join time. Sourced from the synced config
+      // rather than the device-local passkey record, which a rename made on
+      // another device never reaches.
+      const joinedAt = Date.now();
+      await this.messageDB.saveSpaceMember(space.spaceId, {
+        user_address: currentPasskeyInfo.address,
+        global_user_icon: config?.profile_image ?? currentPasskeyInfo.pfpUrl,
+        global_display_name: config?.name ?? currentPasskeyInfo.displayName,
+        globalProfileTimestamp: joinedAt,
+        inbox_address: inboxAddress,
+      } as SpaceMemberRow);
       // Create NavItem for the new space
       const newSpaceItem: NavItem = { type: 'space', id: space.spaceId };
       if (config) {

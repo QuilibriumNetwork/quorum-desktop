@@ -59,10 +59,28 @@ data URIs, not links — the measurement above shows one avatar alone at ~50 KB.
 So a bookmarked image message, or a bookmark of a sender with an avatar, can cost
 tens of KB, and the preview is duplicated per bookmark rather than referenced.
 
-INFERRED, not measured: the exact split between `senderIcon`, `imageUrl` and
-`thumbnailUrl` inside those 656 KB has not been broken down. Do that first — it
-decides whether the fix is "stop embedding sender avatars", "stop embedding image
-data", or both.
+## §3-A. MEASURED 2026-08-05 — it is almost entirely sender avatars
+
+Broken down on the same account, per `cachedPreview` field:
+
+| field | size | share of bookmarks |
+|---|---|---|
+| **`senderIcon`** | **619.8 KB** | **94%** |
+| `imageUrl` | 25.6 KB | 4% |
+| `textSnippet` | 1.2 KB | <1% |
+| `thumbnailUrl` | 0.0 KB | 0% |
+| **total, 18 bookmarks** | **656.5 KB** | — |
+
+**18 bookmarks, and each one carries its own embedded copy of the sender's
+avatar** — roughly 34 KB apiece, duplicated per bookmark rather than referenced.
+That single field is **69% of the entire config blob** and the reason the account
+sits at 873 KB.
+
+This settles the direction: option 1 below, and only the `senderIcon` half of it.
+Dropping `senderIcon` alone would take the blob from ~873 KB to ~253 KB. Bookmark
+previews would resolve the avatar at render from `senderAddress`, through the same
+resolver every other surface already uses — which also means a bookmarked sender's
+avatar stops being frozen at bookmark time.
 
 ## §4. Directions, none decided
 
@@ -80,9 +98,17 @@ data", or both.
 
 ## §5. Next step
 
-Break down the 656 KB by field before choosing. One console pass over the
-`bookmarks` array summing `cachedPreview.senderIcon`, `.imageUrl`, `.thumbnailUrl`
-and `.textSnippet` separately answers it.
+~~Break down the 656 KB by field before choosing.~~ **Done — see §3-A.** The answer
+is `senderIcon`, at 94% of bookmarks and 69% of the whole blob.
+
+The remaining question is migration: existing bookmarks already carry the embedded
+avatar, so dropping the field from new writes does not shrink an existing blob. A
+one-time sweep that strips `cachedPreview.senderIcon` from stored bookmarks would,
+and it is safe in a way the per-space override clear was not — the value is a
+render cache, rebuildable from `senderAddress`, so nothing is lost.
+
+The breakdown is printed by `.agents/tools/dm-debug/08-self-identity-sources.js`,
+so re-measuring after the fix costs one console paste.
 
 ---
 

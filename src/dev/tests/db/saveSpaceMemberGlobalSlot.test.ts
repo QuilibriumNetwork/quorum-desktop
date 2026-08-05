@@ -1,6 +1,14 @@
 import 'fake-indexeddb/auto';
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { MessageDB, type SpaceMemberRow } from '../../../db/messages';
+
+// MessageService pulls in the native SDK at module load; stub it so the pure
+// slot-resolution rule can be imported here.
+vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
+  channel: {},
+  channel_raw: {},
+}));
+import { resolveSyncDeltaSlots } from '../../../services/MessageService';
 
 // `db.saveSpaceMember` does a full-row `store.put`, so it writes exactly the
 // object it is handed and everything absent from that object is destroyed.
@@ -159,17 +167,24 @@ describe('member-delta staleness rule (per-slot last-write-wins)', () => {
     await db.init();
   });
 
-  /** The decision MessageService makes before writing a synced member. */
+  /**
+   * The decision MessageService makes before writing a synced member.
+   *
+   * Calls the REAL `resolveSyncDeltaSlots` rather than re-implementing it. This
+   * used to be a hand-copy, which meant changing the real rule left these tests
+   * green while they certified behaviour the shipped code no longer had.
+   * MEMBER is not our own address, hence `isSelf: false` — self-exclusion has
+   * its own tests in syncDeltaSelfExclusion.unit.test.ts.
+   */
   const applyIncoming = async (incoming: Partial<SpaceMemberRow>) => {
     const existing = await db.getSpaceMember(SPACE, MEMBER);
-    const applyOverride = !(
-      existing?.profileTimestamp &&
-      existing.profileTimestamp >= (incoming.profileTimestamp ?? 0)
-    );
-    const applyGlobal = !(
-      existing?.globalProfileTimestamp &&
-      existing.globalProfileTimestamp >= (incoming.globalProfileTimestamp ?? 0)
-    );
+    const { applyOverride, applyGlobal } = resolveSyncDeltaSlots({
+      isSelf: false,
+      existingOverrideTs: existing?.profileTimestamp,
+      existingGlobalTs: existing?.globalProfileTimestamp,
+      incomingOverrideTs: incoming.profileTimestamp ?? 0,
+      incomingGlobalTs: incoming.globalProfileTimestamp ?? 0,
+    });
     await db.saveSpaceMember(SPACE, {
       user_address: MEMBER,
       inbox_address: 'inbox-1',

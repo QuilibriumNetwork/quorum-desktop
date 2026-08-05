@@ -223,6 +223,9 @@ moves queue POSITION. See `issues/2026-08-02-sync-requests-arrive-four-minutes-l
 |---|---|
 | **The architecture** | this document — read "Why a name goes missing" next |
 | **The measurement tool** | `/dev/identity-coverage` (dev builds only). Take a snapshot before and after any change |
+| **Your OWN identity** | `.agents/tools/dm-debug/08-self-identity-sources.js` — one console paste; prints all four stores your own name lives in, your roster row per space, and the config blob's size budget. Run this FIRST for any "my own name is wrong" report |
+| **Tripwire** | `localStorage['quorum:diag:selfOverrideWrites']` — every non-empty write to your OWN per-space override, with a stack. Should stay empty; only the Space Settings editor may appear |
+| **Migration record** | `localStorage['quorum:diag:clearedSpaceOverrides']` — what the one-time legacy-override clear destroyed, since it is irreversible |
 | **The full record** | `.agents/issues/.done/2026-08-01-identity-announce-cadence-research.md` — CLOSED, its box has every shipped PR and both measurements |
 
 **Open, with next steps written:**
@@ -543,12 +546,34 @@ When someone reports a member rendering as an address:
   longer depend on it for name/avatar/bio (the global slot is the live push).
 - **`Date.now()` LWW** — B and C timestamps come from the writing device's
   clock; severe clock skew can make an older edit win. Accepted (2026-07-16).
-- **Legacy stamped rosters**: rows stamped with old global values before the
-  de-stamping look like deliberate overrides until manually cleared in that
-  space's settings. Decision 2026-07-16: NO auto-migration (tiny user base).
-  Side effect: such a row can render a different name on desktop vs mobile
-  (desktop's comparison trick demotes a roster==global name to QNS; mobile
-  doesn't) until cleared — folds into the same accepted limitation.
+- **Legacy stamped rosters** — ⚠️ **this entry was wrong until 2026-08-05, in a way
+  that mattered.** It described stamped rows as a decaying legacy condition. They
+  were neither decaying nor legacy:
+
+  1. **The join path never stopped stamping.** The de-stamping of 2026-07-16 removed
+     the editor saves and the rebroadcasts, but both `InvitationService` (our own
+     row) and the `join` receive handler (every other member's row) kept writing the
+     global name into the OVERRIDE slot. New traps were still being created daily.
+  2. **The on-connect announce refreshed them.** `buildSpaceProfilePayload` read our
+     own override straight off the row and re-sent it beside the current global name,
+     and the receiver re-stamped both. So a stale value did not age out — it was
+     renewed on every connect, and after the first announce it was byte-for-byte
+     indistinguishable from a deliberately chosen per-space name.
+
+  MEASURED 2026-08-05: four of five spaces on one account held a diverged override,
+  all carrying fresh timestamps, rendering four different names none of which was the
+  user's current one.
+
+  **Fixed** in the Phase 1 work (see
+  `.agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md`): joins
+  file identity under the global slot, nothing authors our own override but the Space
+  Settings editor, and a one-time broadcast clear removes the existing ones. The
+  2026-07-16 "no auto-migration" decision was reversed for exactly this reason — the
+  rows could not be told apart, so they could not be left to expire.
+
+  Side effect while any un-migrated client remains: such a row can still render a
+  different name on desktop vs mobile (desktop's comparison trick demotes a
+  roster==global name to QNS; mobile doesn't).
 
 ## Receive-side authorization (security, 2026-07-19)
 
@@ -614,4 +639,4 @@ residual: an unregistered key can still set the display name/avatar on a claimed
 | Channel A sync | `src/services/ConfigService.ts` | `services/config/configService.ts` |
 
 ---
-*Last updated: 2026-08-02*
+*Last updated: 2026-08-05*

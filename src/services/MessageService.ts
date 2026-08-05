@@ -83,6 +83,7 @@ import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
 import { findStaleBucket, restoreStaleBucket } from '../utils/dmStaleBucketRetry';
 import { orderSessionsForSend } from '../utils/sessionSelection';
+import { legacySpaceOverrideClearDone } from '../utils/legacyOverrideClearGate';
 import {
   dmProfileSignature,
   shouldSendDmProfile,
@@ -303,6 +304,62 @@ export function applyProfileUpdate(
     if (content.globalBio !== undefined) participant.global_bio = content.globalBio;
     participant.globalProfileTimestamp = ts;
   }
+}
+
+/**
+ * Which slots may a sync-delta member row write?
+ *
+ * The sync protocol compares DIGESTS, which carry no notion of newer or older, so
+ * a peer holding a stale identity will happily push it back. For OUR OWN row that
+ * is never acceptable — a peer is not authoritative about our per-space choice,
+ * and `computeMemberDiff` has no self-exclusion of its own.
+ *
+ * For everyone else the per-slot timestamp guard applies, and a row with NO stored
+ * timestamp accepts unconditionally: that is the deliberate bootstrap for a member
+ * we have never heard of, pinned by saveSpaceMemberGlobalSlot.test.ts. Do not
+ * "harden" it.
+ */
+export function resolveSyncDeltaSlots(input: {
+  isSelf: boolean;
+  existingOverrideTs?: number;
+  existingGlobalTs?: number;
+  incomingOverrideTs: number;
+  incomingGlobalTs: number;
+}): { applyOverride: boolean; applyGlobal: boolean } {
+  const applyOverride =
+    !input.isSelf &&
+    !(input.existingOverrideTs && input.existingOverrideTs >= input.incomingOverrideTs);
+  const applyGlobal = !(
+    input.existingGlobalTs && input.existingGlobalTs >= input.incomingGlobalTs
+  );
+  return { applyOverride, applyGlobal };
+}
+
+/**
+ * A `join` control carries the joiner's GLOBAL identity, not a per-space choice.
+ *
+ * Filing it in the OVERRIDE slot froze that member under whatever name they had at
+ * join time: the override outranks every later global update, and the on-connect
+ * announce reads it back off the row and re-stamps it on every connect, so it never
+ * decays. Filed in the global slot with a `joinedAt` stamp instead, so ordinary
+ * last-write-wins applies and a later rename reaches us.
+ */
+export function buildJoinedMemberRow(participant: {
+  address: string;
+  inboxAddress: string;
+  userIcon?: string;
+  displayName?: string;
+  joinedAt: number;
+}): SpaceMemberRow {
+  return {
+    user_address: participant.address,
+    inbox_address: participant.inboxAddress,
+    global_user_icon: participant.userIcon,
+    global_display_name: participant.displayName,
+    globalProfileTimestamp: participant.joinedAt,
+    isKicked: false,
+    joinedAt: participant.joinedAt,
+  } as SpaceMemberRow;
 }
 
 export class MessageService {
@@ -956,6 +1013,14 @@ export class MessageService {
     },
     queryClient: QueryClient
   ): Promise<void> {
+    // This is the SECOND site that broadcasts our own override slot — it uses
+    // the same buildSpaceProfilePayload, which reads `ownMember.display_name`
+    // off the roster. Gating only the on-connect announce left this one free to
+    // re-broadcast a still-poisoned override with a fresh timestamp, and unlike
+    // the announce it is not capped by the 3-attempt gate. A space-manifest can
+    // arrive at any time, so wait for the legacy clear here too.
+    await legacySpaceOverrideClearDone;
+
     // 1. Read config — one IndexedDB read
     const config = await this.messageDB.getUserConfig({ address: selfAddress });
     if (!config?.spaceTagId) return;
@@ -1166,6 +1231,15 @@ export class MessageService {
    * Fire-and-forget: per-space failures are logged and never block anything.
    */
   async announceProfileToAllSpacesOnConnect(selfAddress: string): Promise<void> {
+    // The announce reads our own override slot straight off the roster row and
+    // re-sends it. If it runs before the legacy-override clear has landed, it
+    // re-announces the stale value with a FRESH timestamp and repoisons the row
+    // — the exact mechanism that made these names permanent. Both triggers (the
+    // startup timer and setResubscribe) funnel through here, so this is the one
+    // place the gate has to live. Resolves immediately once the clear has run or
+    // been skipped; released even when the clear fails.
+    await legacySpaceOverrideClearDone;
+
     let spaces: Space[];
     let config: Awaited<ReturnType<typeof this.messageDB.getUserConfig>>;
     try {
@@ -4919,14 +4993,10 @@ export class MessageService {
                 participant.signature
               );
               if (result === 'true') {
-                this.messageDB.saveSpaceMember(conversationId.split('/')[0], {
-                  user_address: participant.address,
-                  user_icon: participant.userIcon,
-                  display_name: participant.displayName,
-                  inbox_address: participant.inboxAddress,
-                  isKicked: false,
-                  joinedAt: participant.joinedAt,
-                });
+                this.messageDB.saveSpaceMember(
+                  conversationId.split('/')[0],
+                  buildJoinedMemberRow(participant)
+                );
                 await queryClient.setQueryData(
                   buildSpaceMembersKey({
                     spaceId: conversationId.split('/')[0],
@@ -4934,10 +5004,14 @@ export class MessageService {
                   (oldData: (secureChannel.UserProfile & { joinedAt?: number })[]) => {
                     return [
                       ...(oldData ?? []),
+                      // Same slots as the DB write above. Patching the override
+                      // slot here instead would leave the cache and IndexedDB
+                      // disagreeing about a new joiner until the next refetch.
                       {
                         user_address: participant.address,
-                        user_icon: participant.userIcon,
-                        display_name: participant.displayName,
+                        global_user_icon: participant.userIcon,
+                        global_display_name: participant.displayName,
+                        globalProfileTimestamp: participant.joinedAt,
                         joinedAt: participant.joinedAt,
                       },
                     ];
@@ -5749,6 +5823,26 @@ export class MessageService {
               );
               if (verify) {
                 for (const member of envelope.message.members) {
+                  // A peer is never authoritative about OUR per-space name.
+                  // This LEGACY sync-members path writes rows verbatim, with no
+                  // timestamp comparison at all, so without this a peer holding
+                  // an old copy of our row — including one on an un-migrated
+                  // build — pushes it straight back and bypasses the whole
+                  // self-authorship model. Same rule as resolveSyncDeltaSlots
+                  // applies on the modern delta path.
+                  const isSelfRow =
+                    (member as any).user_address === self_address;
+                  const incoming = isSelfRow
+                    ? (() => {
+                        const {
+                          display_name: _dropName,
+                          user_icon: _dropIcon,
+                          profileTimestamp: _dropTs,
+                          ...rest
+                        } = member as any;
+                        return rest;
+                      })()
+                    : (member as any);
                   try {
                     const existing = await this.messageDB.getSpaceMember(
                       conversationId.split('/')[0],
@@ -5757,7 +5851,7 @@ export class MessageService {
                     await this.messageDB.saveSpaceMember(
                       conversationId.split('/')[0],
                       {
-                        ...(member as any),
+                        ...incoming,
                         isKicked: existing?.isKicked ?? false,
                         joinedAt: (member as any).joinedAt ?? existing?.joinedAt,
                       } as any
@@ -5765,7 +5859,7 @@ export class MessageService {
                   } catch {
                     await this.messageDB.saveSpaceMember(
                       conversationId.split('/')[0],
-                      member as any
+                      incoming as any
                     );
                   }
                 }
@@ -6108,16 +6202,14 @@ export class MessageService {
                 // so it can populate an empty row but can never overwrite a
                 // stamped one — which is the right call for peers that predate
                 // the global slot travelling over sync at all.
-                const incomingOverrideTs = member.profileTimestamp ?? 0;
-                const incomingGlobalTs = member.globalProfileTimestamp ?? 0;
-                const applyOverride = !(
-                  existing?.profileTimestamp &&
-                  existing.profileTimestamp >= incomingOverrideTs
-                );
-                const applyGlobal = !(
-                  existing?.globalProfileTimestamp &&
-                  existing.globalProfileTimestamp >= incomingGlobalTs
-                );
+                const { applyOverride, applyGlobal } = resolveSyncDeltaSlots({
+                  // A peer is never authoritative about OUR per-space name.
+                  isSelf: userAddress === self_address,
+                  existingOverrideTs: existing?.profileTimestamp,
+                  existingGlobalTs: existing?.globalProfileTimestamp,
+                  incomingOverrideTs: member.profileTimestamp ?? 0,
+                  incomingGlobalTs: member.globalProfileTimestamp ?? 0,
+                });
 
                 // `saveSpaceMember` merges, so an omitted slot keeps what is
                 // stored rather than blanking it.

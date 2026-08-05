@@ -113,7 +113,11 @@ window.__spaceMemberSources = async (spaceId, focusSuffixes) => {
     let pubStatus = '';
     try {
       const url = `${apiBase}/users/${m.user_address}/public-profile`;
-      const resp = await fetch(url, { credentials: 'include' });
+      // No `credentials: 'include'`: it makes the browser demand an explicit
+      // Access-Control-Allow-Origin plus Allow-Credentials, which this endpoint
+      // does not send, so the fetch fails CORS from a dev origin. The app's own
+      // client sends no credentials either.
+      const resp = await fetch(url);
       pubStatus = resp.status;
       if (resp.ok) {
         const body = await resp.json();

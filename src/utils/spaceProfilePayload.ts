@@ -77,12 +77,14 @@ export const buildSpaceProfileWirePayload = (
   config: GlobalProfileFields,
   resolvedTag?: BroadcastSpaceTag | null
 ): SpaceProfileWireFields => {
-  const nameOverride = ownMember?.display_name || undefined;
+  // `??`, not `||`: '' is the wire's deliberate clear and MUST survive to the
+  // payload. With `||` a clear and a never-set field produced the same omitted
+  // field, so clearing a per-space name never left this device.
+  const nameOverride = ownMember?.display_name;
   // The member avatar lives on `user_icon` (the typed UserProfile field), but
   // some rows also carry `profile_image` from other write paths, so read both.
-  const iconOverride =
-    ownMember?.user_icon || ownMember?.profile_image || undefined;
-  const bioOverride = ownMember?.bio || undefined;
+  const iconOverride = ownMember?.user_icon ?? ownMember?.profile_image;
+  const bioOverride = ownMember?.bio;
 
   const globalName = config.name || undefined;
   const globalIcon = config.profile_image || undefined;
