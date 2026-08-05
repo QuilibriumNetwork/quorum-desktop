@@ -55,17 +55,28 @@ describe('the global slot', () => {
 });
 
 describe('the override slot — rule 2, never stamp the global into it', () => {
-  // The normal state post-follow-global: the member row exists but its override
-  // fields are empty, meaning "follow global".
-  it('omits every override field when no override is set', () => {
+  it('OMITS the override field when there is no override at all', () => {
     const p = buildSpaceProfileWirePayload(
       SELF,
-      { display_name: '', user_icon: '', bio: '' },
+      { display_name: undefined, user_icon: undefined, bio: undefined },
       GLOBAL
     );
     expect('displayName' in p).toBe(false);
     expect('userIcon' in p).toBe(false);
     expect('bio' in p).toBe(false);
+  });
+
+  it('SENDS an empty string when the override was deliberately cleared', () => {
+    // '' is the wire's "deliberate clear". Collapsing it to an omission means a
+    // clear can never leave this device, so spacemates keep the stale name.
+    const p = buildSpaceProfileWirePayload(
+      SELF,
+      { display_name: '', user_icon: '', bio: '' },
+      GLOBAL
+    );
+    expect(p.displayName).toBe('');
+    expect(p.userIcon).toBe('');
+    expect(p.bio).toBe('');
   });
 
   it('omits them when there is no member row at all', () => {
