@@ -81,9 +81,16 @@ READ, `ConfigService.saveConfig`:
   `user_public_key`, the ciphertext, a timestamp and a signature. **The server sees
   no config field in plaintext.**
 - `spaceIds`, `items` and `spaceKeys` — the latter holding the actual **private
-  keys and encryption states** for every space — are already inside that blob.
-  Adding a map keyed by space ID therefore reveals **nothing new**; the space list
-  is already there, beside far more sensitive material.
+  keys and encryption states** for every space — are already inside that blob. So
+  the space list this addition is keyed by is already present, beside far more
+  sensitive material, and the addition discloses no *new category* of information.
+
+  > Stated precisely, because the loose version is nearly circular: "it is inside an
+  > encrypted blob, so it reveals nothing" would license adding anything at all. The
+  > real argument is narrower — the **keys** of the new map are space IDs already
+  > present in the same blob, and its **values** are names the user already
+  > broadcasts in plaintext to every member of that space. The only genuine
+  > incremental exposure is ciphertext length, addressed next.
 - Metadata: ciphertext length is visible. A few hundred bytes per space is noise
   against 160 KB of space keys and 656 KB of bookmarks, and the "how many spaces"
   signal already exists more strongly.
@@ -115,6 +122,28 @@ that, do not invent a second mechanism.
 Keep the passkey value as a **fallback**, not a replacement, so a cold or
 never-synced state cannot blank the name.
 
+#### 🔴 5-A-i. Never write an empty name into the passkey record
+
+The existing onboarding precedent guards this: `if (validatedName) {
+updateStoredPasskey(...) }`. **Keep that guard.** It is not defensive style, it is
+load-bearing.
+
+`currentPasskeyInfo.displayName` / `.pfpUrl` is read **directly** — not through this
+reconciliation — by roughly fifteen sites, including `App.tsx`, `NavRail.tsx`,
+`DirectMessage.tsx`, outgoing DM sender denormalisation in `MessageService.ts` and
+`MessageEditTextarea.tsx`, `useProfileImage.ts`, and the settings and space-settings
+modals. They all read the same in-memory object, so **one bad write blanks every one
+of them at once.**
+
+And `getConfig` returns `getDefaultUserConfig(address)` — which has **no `name`** —
+whenever there is neither a network response nor a stored config. That is the exact
+cold-start, fresh-onboarding and offline-first-run state.
+
+Note also that `allowSync` gates only the **upload** path (`ConfigService.ts:494`).
+`getConfig` has no `allowSync` check, so a device with sync switched off still
+downloads and would still feed a previously-uploaded config into this
+reconciliation. "Sync is off" is not an isolation guarantee here.
+
 ### 5-B. Nothing authors your own roster override
 
 Four writers, all local:
@@ -123,25 +152,76 @@ Four writers, all local:
 |---|---|
 | `InvitationService.ts:768-773` (join) | write the **global** slot with a `globalProfileTimestamp`, sourced from the config blob; leave the override empty |
 | `SpaceSettingsModal.tsx:99-104` (`addOwnerToMembers`) | same |
-| `MessageService.ts:6131-6139` (sync-delta apply) | refuse an override-slot write for our **own** address; a peer is never authoritative about our per-space choice. Also fix the guard failing open on a row with no `profileTimestamp` |
-| `MessageService.ts:1066-1078` (`buildSpaceProfilePayload`) | **no code change — but read the note below.** This is the site that keeps the stale value alive, and it is fixed by starving it, not by editing it |
+| `MessageService.ts:6131-6139` (sync-delta apply) | refuse an override-slot write for our **own** address. A peer is never authoritative about our per-space choice |
+
+> **Do NOT also tighten that site's "guard fails open on a row with no
+> `profileTimestamp`".** An earlier draft of this design said to. Independent
+> review 2026-08-05 showed why that is wrong: failing open on an unstamped row is
+> the **intended bootstrap** for members we have never heard of, and it is pinned
+> by `saveSpaceMemberGlobalSlot.test.ts` ("but it CAN populate a row that has no
+> timestamp yet"). Self-exclusion already covers our own row, which is the case
+> that mattered. Tightening it globally would break a working path to fix a case
+> that is already fixed.
+| `src/utils/spaceProfilePayload.ts:80` (`buildSpaceProfileWirePayload`) | **needs a real change — see 5-B-i.** An earlier draft said "no code change, it is fixed by starving it". That was wrong |
 
 The Space Settings → Account editor stays exactly as it is. It is the only
 legitimate author of an override, and it already goes through `applyProfileUpdate`.
 
-> **Why the announce needs no edit, and what that depends on.** "Stop echoing an
-> override we did not author" is unimplementable on its own in Phase 1, because
-> nothing yet records authorship. It does not need to be implemented: once the
-> other three writers are fixed **and** the one-time clear (§5-D) has run, the only
-> way a non-empty override can exist on our own row is the Space Settings editor.
-> At that point the echo is correct and desirable — a member who set a per-space
-> name expects spacemates to see it.
->
-> This makes §5-D a **hard dependency** of §5-B, not a convenience. Ship the clear
-> in the same change, or the announce keeps refreshing the old value forever.
->
 > An override arriving from your own *other device* via `update-profile` is a
-> legitimate author and must keep working.
+> legitimate author and must keep working. That carve-out is necessary, and it is
+> also the reason 5-B-ii below exists.
+
+#### 🔴 5-B-i. The announce cannot express a clear — FALSIFIED CLAIM, corrected
+
+An earlier draft argued the announce needed no edit: once nothing else authors the
+override and the clear had run, the echo would become correct by starvation. That
+argument was **wrong**, and there is a checked-in, currently-passing test proving it.
+
+[spaceProfilePayload.ts:80](../../../src/utils/spaceProfilePayload.ts#L80) reads
+`ownMember?.display_name || undefined` — **`||`, not `!== undefined`**. So a
+present-but-empty `''` and an absent field collapse to the identical wire output:
+`displayName` is omitted entirely.
+[spaceProfilePayload.test.ts:60-69](../../../src/dev/tests/utils/spaceProfilePayload.test.ts#L60-L69)
+asserts exactly this and is green today.
+
+Note the contrast: the Space Settings editor
+([useSpaceProfile.ts:279-323](../../../src/hooks/business/spaces/useSpaceProfile.ts#L279-L323))
+builds its payload with `changed.displayName !== undefined`, so a deliberate clear
+really is sent. **Two independent implementations of "should I include the override
+field", disagreeing on the one case 5-D depends on.**
+
+Consequence: the clear persists locally and fixes this device's own render, but it
+is **invisible on the wire**. Spacemates holding a poisoned copy of our row keep
+showing the stale name, and so do our own other devices.
+
+**Fix:** give `buildSpaceProfileWirePayload` presence semantics for the override
+fields, matching the editor. `''` is already valid wire semantics (the two-slot
+model documents `'' = deliberate clear`), so this is not a wire change — it is the
+builder finally being able to say what the protocol already allows.
+
+#### 🔴 5-B-ii. The clear must be BROADCAST, not just written locally
+
+Same review, second failure of the same claim, and this one can actively undo the fix.
+
+An un-migrated second instance of the app — another machine, another browser
+profile, an Electron build that has not restarted — still holds the stale override
+on **its** row and keeps announcing it with a **fresh** `createdDate` on every
+reconnect. The receiving migrated device must accept it, because of the carve-out
+above. A `profileTimestamp` on our clear does **not** save us: the sibling's
+timestamp is newer, so it wins the comparison and restarts the never-decays clock
+that §4-A-iii measured.
+
+So the clear cannot be a local write. **It must send an `update-profile` carrying
+`displayName: ''` to each affected space.** That single change:
+
+- clears spacemates' poisoned copies of our row,
+- clears our own other devices' rows,
+- and therefore stops the sibling re-announcing, because its own builder then reads
+  an empty override.
+
+It depends on 5-B-i: without presence semantics the payload cannot carry the clear.
+
+Cost is one small broadcast per space, with no avatar in it. Bounded and one-off.
 
 ### 5-C. Receive-side classification
 
@@ -150,6 +230,40 @@ legitimate author of an override, and it already goes through `applyProfileUpdat
 creates the same permanent trap for the joiner on every member's client, which is
 why the identity doc's "legacy stamped rosters — accepted, decaying" note is wrong:
 nothing decays, new traps are still being created.
+
+Hashing is unaffected: `computeMemberHash` hashes `display_name ||
+global_display_name` — the resolved string, not the slot it came from — so a
+joiner produces an identical digest either way (READ, independent review
+2026-08-05, corroborated by `memberDigestGlobalSlot.test.ts`).
+
+#### 🔴 5-C-i. This change BREAKS the global notification panel unless 5-C-ii ships with it
+
+Found by independent regression review 2026-08-05. This is the finding that would
+otherwise have shipped a new, growing bug.
+
+`buildGlobalSenderMap` ([resolveGlobalSender.ts:29-48](../../../src/utils/resolveGlobalSender.ts#L29-L48))
+builds its lookup from `row.display_name` / `row.user_icon` **only**. It never reads
+the global slot — its own `ResolvedGlobalSender` declares a `globalDisplayName` the
+builder never populates, and
+[NotificationPanel.tsx:315-323](../../../src/components/notifications/NotificationPanel.tsx#L315-L323)
+passes that permanently-`undefined` value into `resolveSpaceMemberName`.
+
+It has worked **by accident** since the two-slot model shipped, because every
+incoming join unconditionally stamped `display_name` — which is exactly what this
+file reads, and exactly what 5-C stops doing.
+
+So after 5-C alone, **every member who joins any space from then on** renders
+correctly in the member list, message list, mentions, reactions, threads and pinned
+messages, and as a **truncated address in the global notifications drawer** —
+permanently, growing with every new joiner.
+
+#### 5-C-ii. Required, ships with 5-C
+
+Teach `buildGlobalSenderMap` the ladder: override → global slot → public profile.
+`identityCoverageCore.ts:164-172` already implements it and can be followed.
+
+This is a **fix site**, not merely a surface to verify. An earlier draft listed it
+only under 5-E, which is exactly how the regression would have reached production.
 
 ### 5-D. One-time clear
 
@@ -162,14 +276,87 @@ already treats as a deliberate clear. `saveSpaceMember`'s `clearFields` escape h
 is **not** needed here; it exists for `spaceTag`, whose deletion is signalled by
 absence.
 
+#### 🔴 5-D-i. The clear MUST stamp a `profileTimestamp`, or a sibling device undoes it
+
+Found by independent regression review 2026-08-05, with the path traced end to end.
+
+An un-updated second device still holds the old override on **its** row, and
+`buildSpaceProfileWirePayload` reads `ownMember?.display_name` and keeps announcing
+it. That announcement arrives as an ordinary `update-profile` and is applied by
+`applyProfileUpdate` — **not** by the sync-delta site 5-B self-excludes, a different
+path entirely, and one that must stay open because an override from your own other
+device is a legitimate author.
+
+`applyProfileUpdate` is deliberately fail-open on an unstamped row — its own test is
+titled *"legacy row = always apply"*. So a clear written **without** a
+`profileTimestamp` produces exactly the row shape that a stale sibling's announce
+overwrites unconditionally.
+
+**Therefore: write `display_name: ''` together with `profileTimestamp: Date.now()`.**
+The clear then wins the last-write-wins comparison against any older announce.
+
+Bounded, but real: the announce gate caps at 3 attempts per identity
+(`src/utils/spaceProfileGate.ts`), and the sibling's identity never changes because
+it never ran the clear — so it goes quiet after 3 reconnects. Without the timestamp
+the name still comes back up to 3 times, which is 3 times too many for a user
+watching to see whether the fix worked.
+
+#### 🔴 5-D-iii. Sequence the clear BEFORE the first announce, or it races
+
+`announceProfileToAllSpacesOnConnect` fires from **two** independent triggers — a
+startup timer and `setResubscribe` ([MessageDB.tsx:571-591](../../../src/components/context/MessageDB.tsx#L571-L591)).
+The startup timer exists precisely because that path already raced app
+initialisation once; the comment there says so.
+
+"Ship them in the same change" governs code review, not runtime ordering. Without an
+explicit gate, the first post-upgrade connect can re-announce the pre-clear value
+with a fresh timestamp **before** the migration's async IndexedDB write lands, and
+the row is repoisoned by the exact mechanism §4-A-iii measured.
+
+The migration must complete before the first announce is allowed to build a payload.
+
+#### 5-D-iv. Follow the existing one-shot migration pattern
+
+[useMigrateConversationSettings.ts](../../../src/hooks/business/dm/useMigrateConversationSettings.ts)
+is the template: a versioned `localStorage` flag keyed by address, a `useEffect`
+plus a `ranRef` guard, and — importantly — it does **not** set the flag when the
+migration fails, so a failure retries rather than silently skipping. Copy that
+shape rather than inventing one.
+
+#### 5-D-ii. Log what it destroyed
+
+The clear is irreversible, unconditional, and runs once. If anything surfaces days
+later there is otherwise **no artifact** to distinguish "this user never had a
+per-space name" from "the clear ate it".
+
+Record the pre-clear values to a bounded `localStorage` ring, the same shape PR #311
+used for config shrink (`quorum:diag:configSpaceShrink`). Use `console.warn`, not
+`logger.warn` — see the no-op-logger bug.
+
 ### 5-E. Surfaces to verify, including two that are easy to miss
 
 NavRail tooltip · DM self entry · message authors · member list · mention pills and
 autocomplete · reactions list and modal · thread panels · pinned messages ·
 **your own profile card** (`UserProfile.tsx` — only the bio is special-cased today,
-the name is not) · **the global notification panel** (`resolveGlobalSender.ts` reads
-the roster through its own hand-rolled map, so it does not come along for free with
-a fix scoped to `useMembersWithPublicProfileFallback`).
+the name is not) · **the global notification panel** (see 5-C-i — a fix site, not
+just a verify site) · **search results** (`useSearchResultDisplay.ts:77-86` and
+`useSearchResultDisplayDM.ts:57-66` both special-case `senderId === self` and render
+`currentPasskeyInfo` directly — the same stale store as NavRail; likely fixed for
+free by 5-A, but nobody will check it unless it is named).
+
+Two more writers found by review that are not in 5-B, both carry-forward rather than
+author, and both can perpetuate a poisoned value:
+
+- [EncryptionService.ts:174-187](../../../src/services/EncryptionService.ts#L174-L187)
+  — a space re-key / address migration deletes and re-saves every member row with a
+  `...member` spread, copying whatever `display_name` currently holds into the new
+  `spaceId`. If it runs on a device that has not yet cleared, it carries the poison
+  across the migration.
+- [MessageService.ts:4930-4945](../../../src/services/MessageService.ts#L4930-L4945)
+  — the optimistic `queryClient.setQueryData` that rides along with the join DB
+  write still patches `display_name: participant.displayName`. 5-C changes the DB
+  write; **change this companion cache write with it**, or the cache and the DB
+  disagree about which slot holds a new joiner's name until the next refetch.
 
 ## §6. Phase 2 — only if measured necessary
 
@@ -216,9 +403,30 @@ test decides whether Phase 2 is needed at all.
 - [ ] Every surface in §5-E shows the same name as the User Settings field
 - [ ] A per-space name set in Space Settings → Account still wins, and still clears
 - [ ] No code path writes our own roster override except that editor
+
+> ⚠️ **That item is not provable by tests, and pretending otherwise is how this
+> design already went wrong twice.** It is an exhaustive negative claim, and review
+> found two write vectors (`EncryptionService.ts:177`, the two `applyProfileUpdate`
+> receive sites) while the claim was being written. A fixed list of unit tests
+> pinned to N known call sites cannot show the N+1th does not exist.
+>
+> **Build an instrument instead:** a guard inside `saveSpaceMember` that warns when
+> a non-empty `display_name` is written for `user_address === selfAddress` from
+> anywhere not explicitly tagged as the editor. That is an exhaustive check, it
+> keeps working as the code changes, and it is the kind of thing that has found
+> more in this subsystem than reading ever has.
 - [ ] The on-connect announce no longer re-stamps an override it did not author
 - [ ] Existing stale overrides are gone after one run
+- [ ] A member who joins **after** this ships renders with a name in the **global notifications drawer**, not a truncated address (the 5-C-i regression)
+- [ ] The clear survives a sibling device re-announcing the old override (5-D-i)
+- [ ] A cold start with no config and no network still shows a name, not a blank (5-A-i)
 - [ ] Each fix has a test that goes **red** when the fix is reverted — verified, not assumed
+
+> ⚠️ **Trap when writing those tests.** `saveSpaceMemberGlobalSlot.test.ts`
+> hand-duplicates the sync-delta apply decision inline instead of importing it, so
+> changing the real code in `MessageService.ts` will **not** turn that file red. It
+> will keep passing while certifying behaviour the shipped code no longer has.
+> Either make it import the real logic, or update the copy deliberately and say so.
 - [ ] `identity-resolution-and-profile-sync.md` corrected: legacy stamps are not decaying, and the join path still stamps
 - [ ] `config-sync-system.md` corrected: the server cannot validate `spaceIds`/`spaceKeys`, it only receives ciphertext
 

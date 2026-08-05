@@ -1,37 +1,20 @@
 // === Quorum SELF-Identity Source Diagnostic ===
 //
-// Answers one question: when YOUR OWN name renders differently on two surfaces
-// of the same app, which of the four stores does each surface read, and what
-// does each one currently hold?
+// When YOUR OWN name renders differently on two surfaces of the same app, this
+// says which store each surface reads and what each one holds. Reading only the
+// roster row cannot separate the causes; this reads all four in one pass.
 //
-// Built for 2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-
-// settings-field.md (.agents/issues/). §4 of that file says "read the row"
-// first; this reads the row AND the three other candidates in one pass, so a
-// single run separates the hypotheses instead of confirming only one.
+// | store | who reads it | syncs? |
+// |---|---|---|
+// | A. localStorage['passkeys-list'][0] | NavRail tooltip, DM self entry, join-time roster stamp | never — only this device's own save writes it |
+// | B. user_config.name (channel A) | the User Settings field | yes |
+// | C. space_members[self].display_name (override) | message authors, member lists — outranks everything | reaches other members |
+// | C'. space_members[self].global_display_name | the slot a rename broadcast writes | reaches other members |
+// | D. /users/:addr/public-profile (channel B) | last fallback, only carrier of the QNS .q name | server-side |
 //
-// The four sources, and who reads each:
-//
-//   A. localStorage['passkeys-list'][0].displayName
-//        -> NavRail avatar + hover tooltip (NavRail.tsx:94), the DM self entry
-//           (DirectMessage.tsx:301), and the value stamped into your own roster
-//           row at join (InvitationService.ts:771).
-//        -> written ONLY by updateStoredPasskey(), i.e. onboarding and THIS
-//           device's own Settings save. A config-blob pull never touches it.
-//   B. IndexedDB user_config.name   (channel A, the encrypted settings blob)
-//        -> the User Settings display-name field (useUserSettings.ts:140).
-//        -> this is the one that DOES follow a rename made on another device.
-//   C. IndexedDB space_members[you].display_name   (channel C OVERRIDE slot)
-//        -> message authors and space member lists, and it outranks D forever.
-//   C'. space_members[you].global_display_name     (channel C GLOBAL slot)
-//        -> the tier mobile's rename broadcast actually writes.
-//   D. GET /users/:addr/public-profile             (channel B)
-//        -> the last fallback, plus the only carrier of the QNS .q name.
-//
-// Usage: paste the whole file into the DevTools console and run. Read the
-// VERDICT lines at the bottom. No writes, no clipboard side effects.
-//
-// Privacy: prints display names and address tails only. It never reads the
-// passkey key material (that lives under a different localStorage key).
+// Paste into the DevTools console and read the VERDICT lines. Read-only.
+// Prints display names and address tails only, never key material.
+// See 2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md
 
 window.__selfIdentitySources = async () => {
   const UNKNOWN_NAME = 'Unknown User';
