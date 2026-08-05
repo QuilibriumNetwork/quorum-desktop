@@ -1013,6 +1013,14 @@ export class MessageService {
     },
     queryClient: QueryClient
   ): Promise<void> {
+    // This is the SECOND site that broadcasts our own override slot — it uses
+    // the same buildSpaceProfilePayload, which reads `ownMember.display_name`
+    // off the roster. Gating only the on-connect announce left this one free to
+    // re-broadcast a still-poisoned override with a fresh timestamp, and unlike
+    // the announce it is not capped by the 3-attempt gate. A space-manifest can
+    // arrive at any time, so wait for the legacy clear here too.
+    await legacySpaceOverrideClearDone;
+
     // 1. Read config — one IndexedDB read
     const config = await this.messageDB.getUserConfig({ address: selfAddress });
     if (!config?.spaceTagId) return;
@@ -5815,6 +5823,26 @@ export class MessageService {
               );
               if (verify) {
                 for (const member of envelope.message.members) {
+                  // A peer is never authoritative about OUR per-space name.
+                  // This LEGACY sync-members path writes rows verbatim, with no
+                  // timestamp comparison at all, so without this a peer holding
+                  // an old copy of our row — including one on an un-migrated
+                  // build — pushes it straight back and bypasses the whole
+                  // self-authorship model. Same rule as resolveSyncDeltaSlots
+                  // applies on the modern delta path.
+                  const isSelfRow =
+                    (member as any).user_address === self_address;
+                  const incoming = isSelfRow
+                    ? (() => {
+                        const {
+                          display_name: _dropName,
+                          user_icon: _dropIcon,
+                          profileTimestamp: _dropTs,
+                          ...rest
+                        } = member as any;
+                        return rest;
+                      })()
+                    : (member as any);
                   try {
                     const existing = await this.messageDB.getSpaceMember(
                       conversationId.split('/')[0],
@@ -5823,7 +5851,7 @@ export class MessageService {
                     await this.messageDB.saveSpaceMember(
                       conversationId.split('/')[0],
                       {
-                        ...(member as any),
+                        ...incoming,
                         isKicked: existing?.isKicked ?? false,
                         joinedAt: (member as any).joinedAt ?? existing?.joinedAt,
                       } as any
@@ -5831,7 +5859,7 @@ export class MessageService {
                   } catch {
                     await this.messageDB.saveSpaceMember(
                       conversationId.split('/')[0],
-                      member as any
+                      incoming as any
                     );
                   }
                 }

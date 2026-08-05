@@ -20,6 +20,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { logger, type UpdateProfileMessage } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { releaseLegacySpaceOverrideClearGate } from '../../../utils/legacyOverrideClearGate';
+import type { SpaceMemberRow } from '../../../db/messages';
 
 /** Bump to re-run if the shape ever changes. */
 const CLEAR_FLAG_PREFIX = 'spaceOverridesCleared:v1:';
@@ -104,9 +105,32 @@ export function useClearLegacySpaceOverrides(): void {
         for (const entry of plan) {
           const space = spaces.find((s) => s.spaceId === entry.spaceId);
           if (!space) continue;
-          // '' is the wire's deliberate clear. submitChannelMessage broadcasts it
-          // AND self-applies it locally with a fresh profileTimestamp, which is
-          // what stops an un-migrated sibling's announce winning the comparison.
+
+          // LOCAL half — deterministic, and it must land before the gate opens.
+          //
+          // `submitChannelMessage` does self-apply the clear, but it does so
+          // inside `enqueueOutbound`, which pushes to a queue and returns without
+          // awaiting anything (WebsocketProvider.enqueueOutbound). So awaiting it
+          // guarantees nothing: the local write might not have happened when the
+          // announce is released, and it does not happen at all while the socket
+          // is closed. Write the row ourselves so the ordering the gate promises
+          // is real rather than a race with favourable odds.
+          //
+          // '' is a present value, so it survives saveSpaceMember's merge as a
+          // deliberate clear. The timestamp is what beats an un-migrated
+          // sibling's re-announce.
+          await messageDB.saveSpaceMember(entry.spaceId, {
+            user_address: selfAddress,
+            display_name: '',
+            user_icon: '',
+            profileTimestamp: Date.now(),
+          } as SpaceMemberRow);
+
+          // WIRE half — best-effort, and self-healing if it does not go out.
+          // Once the row holds '', the ordinary on-connect announce carries
+          // `displayName: ''` too (that is what the presence-semantics fix in
+          // this branch enables), so the clear still reaches everyone on the
+          // next connect even if this send is dropped.
           await submitChannelMessage(
             entry.spaceId,
             space.defaultChannelId,
