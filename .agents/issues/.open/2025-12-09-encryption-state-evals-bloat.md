@@ -4,7 +4,7 @@ title: Encryption State Evals Causing Config Sync Bloat
 status: open
 priority: high
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-12-09T00:00:00.000Z
+updated: 2026-08-05
 related_issues:
   - '#108'
 ---
@@ -158,3 +158,64 @@ fully (state+keys+members+messages), trim live created spaces' eval pool to
 ~256. Both operate only on `id/id` space conversations, never DMs.
 
 ---
+
+## MEASURED 2026-08-05 — now 98% of the config blob, and a 4.2 MB upload SUCCEEDED
+
+Taken with `.agents/tools/dm-debug/08-self-identity-sources.js` on a real
+account, immediately after the bookmark-avatar strip
+(`2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`) landed and forced a
+fresh `saveConfig`.
+
+| part | KB | share |
+|---|---|---|
+| **whole blob** | **4205.4** | — |
+| **spaceKeys (encryption states)** | **4112.1** | **98%** |
+| profile_image | 49.6 | 1% |
+| bookmarks (post-fix) | 37.1 | <1% |
+| everything else | 6.5 | — |
+
+Per space:
+
+| kb | classification |
+|---|---|
+| 1976.1 | CREATED (~10k evals) |
+| 1975.4 | CREATED (~10k evals) |
+| 63.4 | joined |
+| 63.3 | joined |
+| 34.0 | joined |
+
+Exactly the predicted shape: ~2 MB per created space, ~12-63 KB per joined one.
+Two fat states, 3952 KB between them.
+
+### Three things this settles
+
+1. **A 4205 KB config uploaded successfully.** `allowSync` was on, the
+   refuse-to-publish guard was not holding, and `ConfigService.saveConfig` runs
+   `postUserSettings` BEFORE `saveUserConfig` with no try/catch between them
+   (`ConfigService.ts:700-712`) — so a thrown POST skips the local save. The
+   local config was observably rewritten, therefore the POST returned.
+   **The "~1 MB maximum observed working" figure in `config-sync-system.md` is
+   conservative by at least 4x.** The real ceiling is still unknown; the ~21 MB
+   failure figure remains the only known-bad point.
+
+2. **Every blob measurement before a fresh save was a LOWER BOUND.** The same
+   account read 873 KB minutes earlier with `spaceKeys` at 160.6 KB.
+   `config.spaceKeys` is a snapshot refreshed only by `saveConfig`, so the blob
+   had been multi-megabyte in substance for some time and nothing showed it.
+   This is why the bloat kept being characterised as an occasional
+   space-creation failure rather than a standing condition.
+
+3. **The doc's mitigation does not exist.** `config-sync-system.md` claimed "the
+   100KB per-encryption-state filter keeps total payload well under limits".
+   There is no such filter — `ConfigService.ts:561` filters on
+   `encryptionState !== undefined`, a presence check. Corrected in that doc
+   2026-08-05. Nothing bounds a state entering the blob, and nothing checks the
+   blob's size before uploading.
+
+### Still open here
+
+Whether both fat states correspond to spaces actually CREATED on this account,
+or whether one is leaked debris from a deleted space (the compounding bug
+above). The tool now prints space names — it read the wrong field (`name`
+instead of `spaceName`) until 2026-08-05 and rendered every space as
+"(unknown)", which is why earlier readings could not answer this.

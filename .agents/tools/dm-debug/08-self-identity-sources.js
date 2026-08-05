@@ -65,8 +65,15 @@ window.__selfIdentitySources = async () => {
   // ---- C / C'. our own roster row, per space -----------------------------
   const members = await all('space_members');
   const spaces = await all('spaces');
-  const nameForSpace = (id) =>
-    spaces.find((s) => s.spaceId === id)?.name ?? '(unknown)';
+  // The stored field is `spaceName` (quorum-shared Space type), NOT `name`.
+  // This read `.name` until 2026-08-05, so every space rendered as "(unknown)"
+  // in every table below — which made the encryption-state breakdown useless
+  // for its whole purpose, namely deciding WHICH space is carrying the bloat.
+  // `.name` is kept as a fallback in case an older row shape survives.
+  const nameForSpace = (id) => {
+    const s = spaces.find((sp) => sp.spaceId === id);
+    return s?.spaceName || s?.name || '(unknown)';
+  };
   const selfRows = members.filter((m) => m.user_address === selfAddress);
 
   // ---- D. the published public profile -----------------------------------
