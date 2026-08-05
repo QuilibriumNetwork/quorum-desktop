@@ -3,9 +3,9 @@ import type { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 /**
  * Member shape consumed by the notification panel's name resolution
  * (`resolveSpaceMemberName`). Mirrors the per-space `mapSenderToUser` output so
- * the global panel can reuse the same render path. `primaryUsername` /
- * `globalDisplayName` come from the public-profile fetch (not the space roster),
- * so they are optional here — parity with the per-space path when unenriched.
+ * the global panel can reuse the same render path. `globalDisplayName` comes
+ * from the roster's global slot (not a public-profile fetch); `primaryUsername`
+ * stays optional as it is unenriched here.
  */
 export interface ResolvedGlobalSender {
   address: string;
@@ -15,7 +15,13 @@ export interface ResolvedGlobalSender {
   globalDisplayName?: string;
 }
 
-type SpaceMemberRow = channel.UserProfile & { isKicked?: boolean };
+type SpaceMemberRow = channel.UserProfile & {
+  isKicked?: boolean;
+  /** Roster GLOBAL slots (two-slot model) — the tier between the per-space
+   *  override and the public profile. */
+  global_display_name?: string;
+  global_user_icon?: string;
+};
 
 /**
  * Pure core: given a map of spaceId -> roster (as returned by
@@ -33,10 +39,15 @@ export function buildGlobalSenderMap(
   for (const [spaceId, rows] of Object.entries(membersBySpace)) {
     const map = new Map<string, ResolvedGlobalSender>();
     for (const row of rows) {
+      // Same precedence as useMembersWithPublicProfileFallback: override wins
+      // when non-empty, else the global slot. `globalDisplayName` is kept
+      // SEPARATE so resolveSpaceMemberName can compare the two.
+      const global = row.global_display_name || undefined;
       map.set(row.user_address, {
         address: row.user_address,
-        displayName: row.display_name,
-        userIcon: row.user_icon,
+        displayName: row.display_name || global,
+        userIcon: row.user_icon || row.global_user_icon || undefined,
+        globalDisplayName: global,
       });
     }
     bySpace.set(spaceId, map);
