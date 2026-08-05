@@ -73,10 +73,11 @@ window.__selfIdentitySources = async () => {
   let pub = null;
   let pubStatus = '';
   try {
-    const resp = await fetch(
-      `${apiBase}/users/${selfAddress}/public-profile`,
-      { credentials: 'include' }
-    );
+    // No `credentials: 'include'` — it makes the browser demand an explicit
+    // Access-Control-Allow-Origin plus Allow-Credentials, which this endpoint
+    // does not send, so the request fails CORS from a dev origin. The app's own
+    // client does not send credentials either.
+    const resp = await fetch(`${apiBase}/users/${selfAddress}/public-profile`);
     pubStatus = resp.status;
     if (resp.ok) {
       const body = await resp.json();
@@ -96,13 +97,16 @@ window.__selfIdentitySources = async () => {
     return t.length ? t : null;
   };
   const truncate = (a) => (a.length > 10 ? `${a.slice(0, 6)}…${a.slice(-4)}` : a);
+  // The QNS name normally travels only in the public profile, but the config
+  // blob carries it too — so the ladder stays accurate even when the fetch fails.
+  const qnsName = present(pub?.primary_username) || present(config?.primaryUsername);
   const resolveSurface = (row) => {
     const rosterGlobalName = present(row?.global_display_name);
     const effectiveGlobal = rosterGlobalName || present(pub?.display_name);
     // hook line 147: the OVERRIDE slot wins the merge outright when non-empty
     const merged =
       present(row?.display_name) || rosterGlobalName || present(pub?.display_name);
-    const qns = present(pub?.primary_username);
+    const qns = qnsName;
     if (qns && merged && merged !== effectiveGlobal) return merged;
     if (qns) return `${qns}.q`;
     const demoted = merged === UNKNOWN_NAME ? null : merged;
@@ -158,12 +162,20 @@ window.__selfIdentitySources = async () => {
       readBy: 'final fallback for everyone else',
     },
     {
-      source: 'D. public profile primary_username',
-      channel: 'B — the only carrier of QNS',
-      value: pub?.primary_username ? `${pub.primary_username}.q` : '(none)',
+      source: 'QNS primary_username',
+      channel: pub?.primary_username ? 'B — public profile' : 'config blob fallback',
+      value: qnsName ? `${qnsName}.q` : '(none)',
       readBy: 'the .q rung of the ladder',
     },
   ]);
+  if (!pub) {
+    console.log(
+      `%cPublic profile not readable from this origin (HTTP ${pubStatus}) — ` +
+        'the two D rows fall back to the config blob. Everything else is local ' +
+        'and unaffected.',
+      'color:#fbbf24'
+    );
+  }
 
   const perSpace = selfRows.map((row) => ({
     _raw: row,
@@ -256,32 +268,54 @@ window.__selfIdentitySources = async () => {
       : 'No space holds a diverged override — §3 of the issue is REFUTED, look downstream at rendering.'
   );
 
-  // The repair discriminator (§4-B): a join stamp writes display_name and NO
-  // profileTimestamp; every deliberate override goes through applyProfileUpdate,
-  // which always stamps one. If that holds here, a one-shot repair is safe.
-  const stamped = stuckOverrides.filter((r) => r._raw.profileTimestamp == null);
+  // Post-fix instruments. The tripwire should stay empty: after the Phase 1
+  // work only the Space Settings editor may write our own override slot.
+  const tripwire = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('quorum:diag:selfOverrideWrites')) ?? [];
+    } catch {
+      return [];
+    }
+  })();
   say(
-    stuckOverrides.length === 0 || stamped.length === stuckOverrides.length,
-    stuckOverrides.length === 0
-      ? 'No diverged override, so the repair discriminator is moot here.'
-      : `${stamped.length}/${stuckOverrides.length} diverged override(s) carry NO profileTimestamp — ` +
-          (stamped.length === stuckOverrides.length
-            ? 'the join-stamp signature, so the §4-B one-shot repair is safe.'
-            : 'some carry one, which a join stamp never writes. The §4-B discriminator is WRONG ' +
-              'as stated and the repair must NOT ship until that is explained.')
+    tripwire.length === 0,
+    tripwire.length === 0
+      ? 'Tripwire clean — nothing has written our own per-space override.'
+      : `Tripwire caught ${tripwire.length} write(s) to our OWN override slot. Only the ` +
+          'Space Settings editor may do this. Inspect quorum:diag:selfOverrideWrites — ' +
+          'each entry carries the stack that wrote it.'
   );
 
-  const globalsLanding = perSpace.filter(
-    (r) => present(r._raw.global_display_name) === present(config?.name)
-  ).length;
-  say(
-    perSpace.length > 0 && globalsLanding === perSpace.length,
-    `${globalsLanding}/${perSpace.length} space(s) have a global slot matching the config blob — ` +
-      (perSpace.length > 0 && globalsLanding === perSpace.length
-        ? 'the sender-side broadcast IS landing, so the fault is purely in precedence/rendering.'
-        : 'some global slots are behind the config blob, so the broadcast is NOT landing everywhere ' +
-          'and the receive path needs checking too.')
+  const cleared = (() => {
+    try {
+      return JSON.parse(localStorage.getItem('quorum:diag:clearedSpaceOverrides')) ?? [];
+    } catch {
+      return [];
+    }
+  })();
+  if (cleared.length) {
+    console.log(
+      `%cℹ The one-time migration cleared ${cleared.length} legacy override(s). ` +
+        'Previous values are in quorum:diag:clearedSpaceOverrides — it is irreversible, ' +
+        'so that record is the only copy.',
+      'color:#60a5fa'
+    );
+  }
+
+  // A global slot behind the config blob is only a fault for a space some device
+  // has actually broadcast into since the rename — a space no device has announced
+  // to will legitimately lag. Reported, not judged.
+  const behind = perSpace.filter(
+    (r) => present(r._raw.global_display_name) !== present(config?.name)
   );
+  if (behind.length) {
+    console.log(
+      `%cℹ ${behind.length}/${perSpace.length} space(s) have a global slot behind the ` +
+        'config blob. Expected for any space no device has announced into since the ' +
+        'rename; a fault only if every device HAS announced there.',
+      'color:#fbbf24'
+    );
+  }
 
   const out = {
     selfAddress,
