@@ -52,6 +52,30 @@ empty.
 
 **This is the item to answer first.** The rest can wait.
 
+## §2-B. 🔴 The other urgent one: desktop → mobile per-space overrides never arrive
+
+MEASURED 2026-08-05, both directions, two independent fields:
+
+| direction | arrives? |
+|---|---|
+| mobile → desktop | ✅ yes, immediately (name, bio) |
+| **desktop → mobile** | ❌ **no** (name + avatar 2026-08-01, bio 2026-08-05) |
+
+Reproduces on demand. The user-visible end state is **the same space showing two
+different bios on the two devices**.
+
+Because mobile → desktop works, the relay does deliver to a sender's own other
+device, and desktop's receive path is fine. So the fault is mobile's receive of a
+**desktop-sent** `update-profile`, or desktop's send reaching mobile specifically.
+
+Strongest candidate, from the owning issue's §4: `update-profile` is authorised
+against the VERIFIED signer. Desktop signs with its own per-space signing key; if
+mobile has not admitted that device key (`announce-keys`) it drops the message
+fail-closed. That would be invisible and would explain the asymmetry exactly.
+
+Full record and hypothesis ranking:
+`2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md`.
+
 ## §3. ✅ What a device test already settled — do NOT redo it
 
 MEASURED 2026-08-05: a per-space name set **on mobile** reached **desktop**

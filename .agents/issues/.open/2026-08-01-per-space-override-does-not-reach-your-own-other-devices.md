@@ -21,16 +21,36 @@ related_docs:
 
 observed 2026-08-01 on a live two-device test, cause not yet traced
 
-> **⚠️ NARROWED 2026-08-05 by measurement — half the premise is false.**
+> **⚠️ CONFIRMED AND NARROWED 2026-08-05 — it is ONE-DIRECTIONAL.**
 >
-> A per-space name set **on mobile reached desktop correctly and immediately**,
-> over channel C. So per-space overrides *do* cross a user's own devices; the
-> general claim in this file's title is wrong as written.
+> Both directions were measured on a real device pair, with two independent
+> fields:
 >
-> What remains open is the **direction this file actually observed**: desktop →
-> mobile (§1 step 4). That is untested since, and is the only live part of this
-> issue. §5 already listed the reverse direction as untested; it is now measured
-> and working.
+> | direction | per-space override arrives? | measured |
+> |---|---|---|
+> | **mobile → desktop** | ✅ **yes, immediately** | name and bio, 2026-08-05 |
+> | **desktop → mobile** | ❌ **no** | name + avatar 2026-08-01, bio 2026-08-05 |
+>
+> So the title's general claim is **wrong**: overrides do cross a user's own
+> devices. The defect is real but sits in exactly one direction, and it
+> reproduces on demand. Observable end state: **the same space shows two
+> different bios on the two devices.**
+>
+> **What this rules out.** The relay does deliver an `update-profile` to the
+> sender's own other device — mobile → desktop proves it — so hypothesis 3 in §4
+> (relay fan-out excludes own devices) is refuted unless the relay is itself
+> asymmetric, which nothing suggests. Desktop's RECEIVE path is fine, since it
+> accepts mobile's. **The fault is in mobile's receive of a desktop-sent
+> `update-profile`, or in desktop's send reaching mobile specifically.**
+>
+> That makes §4 hypothesis 2 the strongest remaining candidate: `update-profile`
+> is authorised against the VERIFIED signer, desktop signs with its own per-space
+> signing key, and if mobile has not admitted that device key it drops the message
+> fail-closed. Check that before anything else. Hypothesis 1 (self-message filter
+> on receive) is the cheap second.
+>
+> ⚠️ Do not investigate mobile unilaterally — see
+> `2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md` §4.
 >
 > **This mattered beyond this file.** An entire deferred architecture — moving
 > per-space profiles into the encrypted config blob — was designed on the
