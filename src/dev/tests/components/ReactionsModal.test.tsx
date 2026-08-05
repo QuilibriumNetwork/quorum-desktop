@@ -99,20 +99,43 @@ describe('ReactionsModal — name resolution', () => {
     expect(screen.queryByText('alice.q')).not.toBeInTheDocument();
   });
 
-  it('pins that globalDisplayName is a COMPARATOR, not a resolver tier', () => {
-    // Documenting real current behaviour, not endorsing it. `globalDisplayName`
-    // exists only so resolveSpaceMemberName can tell a deliberate per-space name
-    // from the global name echoed at join; it is never itself rendered. With an
-    // empty override, no QNS name, and a global name present, the ladder falls
-    // through to the address.
+  it('renders globalDisplayName as a real resolver TIER', () => {
+    // CHANGED DELIBERATELY 2026-08-05. This test previously pinned the opposite:
+    // that `globalDisplayName` was only a comparator and this shape rendered a
+    // truncated address. It said "if a future caller supplies the two slots
+    // separately, this test is the one that will change — deliberately". This is
+    // that change, and it was not hypothetical.
     //
-    // Latent, not live: the enricher (useMembersWithPublicProfileFallback)
-    // already merges the global name INTO `displayName`, so no production path
-    // reaches the modal in this shape. If a future caller supplies the two slots
-    // separately, this test is the one that will change — deliberately.
+    // The old behaviour was latent only while every roster row carried a stamped
+    // override, so callers passing the RAW roster field (the member sidebar,
+    // Channel.tsx) still got a name. Once the override is correctly empty — its
+    // normal state under the two-slot model — those callers rendered the address
+    // for everyone, including the user themself. Measured on a real account.
     renderWith({ displayName: undefined, globalDisplayName: 'Alice' });
+    expect(screen.getByText('Alice')).toBeInTheDocument();
+  });
+
+  it('still prefers the QNS name over the global slot', () => {
+    // Ladder order: deliberate override → QNS → global → address. Adding the
+    // global tier must not let it jump the QNS name.
+    renderWith({
+      displayName: undefined,
+      globalDisplayName: 'Alice',
+      primaryUsername: 'alice',
+    });
+    expect(screen.getByText('alice.q')).toBeInTheDocument();
     expect(screen.queryByText('Alice')).not.toBeInTheDocument();
-    expect(screen.getByText(/QmV5xW/)).toBeInTheDocument();
+  });
+
+  it('demotes an override that merely ECHOES the global name', () => {
+    // roster === global means a legacy stamp, not a choice. It must not outrank
+    // the QNS name.
+    renderWith({
+      displayName: 'Alice',
+      globalDisplayName: 'Alice',
+      primaryUsername: 'alice',
+    });
+    expect(screen.getByText('alice.q')).toBeInTheDocument();
   });
 
   it('renders the merged global name when the enricher has filled displayName', () => {

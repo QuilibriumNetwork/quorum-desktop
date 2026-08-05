@@ -73,9 +73,26 @@ export function resolveSpaceMemberName(member: {
   const global = (member.globalDisplayName ?? '').trim();
   const qns = (member.primaryUsername ?? '').trim();
 
-  if (qns && roster && roster !== global) {
+  // A roster name that DIFFERS from the global one is a deliberate per-space
+  // override and outranks everything.
+  if (roster && roster !== global) {
     return { name: roster, isQnsVerified: false };
   }
+
+  if (qns) return { name: qns, isQnsVerified: true };
+
+  // The global slot is a real TIER, not just a comparator.
+  //
+  // It used to be neither returned nor fallen back to: callers reached the right
+  // answer only when they happened to pass an ALREADY-MERGED displayName from
+  // useMembersWithPublicProfileFallback. Callers passing the raw roster field —
+  // the member sidebar is one — got a truncated address instead.
+  //
+  // That was latent while every roster row carried a stamped override. Once the
+  // override is correctly empty (its normal state under the two-slot model), it
+  // renders as an address for everyone. Closing it here rather than at each call
+  // site, so no surface can miss the tier again.
+  if (global) return { name: global, isQnsVerified: false };
 
   return resolveMemberName({
     address: member.address,
