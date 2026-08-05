@@ -24,6 +24,7 @@ import { OfflineBanner } from './ui/OfflineBanner';
 import { useMutedConversationsSync } from '../hooks/business/dm/useMutedConversationsSync';
 import { useMigrateConversationSettings } from '../hooks/business/dm/useMigrateConversationSettings';
 import { useReconcileSelfIdentity } from '../hooks/business/user/useReconcileSelfIdentity';
+import { useClearLegacySpaceOverrides } from '../hooks/business/user/useClearLegacySpaceOverrides';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -61,6 +62,7 @@ const Layout: React.FunctionComponent<{
   useMutedConversationsSync();
   useMigrateConversationSettings();
   useReconcileSelfIdentity();
+  useClearLegacySpaceOverrides();
 
   const [toast, setToast] = React.useState<{
     id?: string;

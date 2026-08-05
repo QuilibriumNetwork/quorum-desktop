@@ -83,6 +83,7 @@ import { dmRatchetMutex } from '../utils/keyedMutex';
 import { isStaleInitEnvelope } from '../utils/initEnvelopeGuard';
 import { findStaleBucket, restoreStaleBucket } from '../utils/dmStaleBucketRetry';
 import { orderSessionsForSend } from '../utils/sessionSelection';
+import { legacySpaceOverrideClearDone } from '../utils/legacyOverrideClearGate';
 import {
   dmProfileSignature,
   shouldSendDmProfile,
@@ -1222,6 +1223,15 @@ export class MessageService {
    * Fire-and-forget: per-space failures are logged and never block anything.
    */
   async announceProfileToAllSpacesOnConnect(selfAddress: string): Promise<void> {
+    // The announce reads our own override slot straight off the roster row and
+    // re-sends it. If it runs before the legacy-override clear has landed, it
+    // re-announces the stale value with a FRESH timestamp and repoisons the row
+    // — the exact mechanism that made these names permanent. Both triggers (the
+    // startup timer and setResubscribe) funnel through here, so this is the one
+    // place the gate has to live. Resolves immediately once the clear has run or
+    // been skipped; released even when the clear fails.
+    await legacySpaceOverrideClearDone;
+
     let spaces: Space[];
     let config: Awaited<ReturnType<typeof this.messageDB.getUserConfig>>;
     try {
