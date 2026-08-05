@@ -24,6 +24,7 @@ For background on the architecture and the debug ladder, read [`../../docs/debug
 | `06-space-member-sources.js` | Space-member equivalent of 05. |
 | `07-receiver-probe.js` | **DM-loss receiver probe** (handoff §4, sender-isolation runs). Install BEFORE the sender starts; counts receive-path warnings from install and reads `messages` from IndexedDB directly. `await window.__probe.report('V')` → landed / missing numbers / warning counters. Take a second reading ~10 min later — that is what separates loss from a latency tail. |
 | `08-self-identity-sources.js` | **Why YOUR OWN name differs between two surfaces of the same app.** Prints all four identity stores side by side — the device-local `passkeys-list` (NavRail tooltip), the config blob (User Settings field), your own roster row's override + global slots per space (message authors, member lists), and the published public profile — then a verdict naming which surface reads which store and which one is stale. Written for `2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md`; run it before theorising. |
+| `09-member-list-visibility.js` | **Why is someone missing from the space member list?** The list hides any row with an empty `inbox_address` or `isKicked`, so a member can exist on disk with a good name and still not render. Prints every row with a `hiddenFromList` column. Use it before assuming a missing person is a naming bug. |
 
 ## Offline analysis (node CLI, NOT console snippets)
 
