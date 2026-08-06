@@ -19,6 +19,11 @@ import { rectAnchor, type VirtualElement } from '../ui';
 import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 import { extractVisualTextWithNewlines } from '../../utils/mentionPillDom';
+import {
+  readSelectionInsideEditor,
+  insertTextAtSavedCaret,
+  type SavedCaret,
+} from '../../utils/composerSelection';
 import { useTypingNotifier } from '../../hooks/business/messages/useTypingNotifier';
 import type { TypingScope } from '@quilibrium/quorum-shared';
 
@@ -165,6 +170,29 @@ export const MessageComposer = forwardRef<
     });
     const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
 
+    // Last caret position seen inside the contentEditable editor. Used to put
+    // the caret back when focus has been away (emoji panel, search box, …).
+    const savedRangeRef = useRef<SavedCaret | null>(null);
+
+    useEffect(() => {
+      if (!ENABLE_MENTION_PILLS) return;
+
+      // selectionchange is the only event that fires for every way the caret
+      // can move — typing, arrow keys, clicking, dragging a selection.
+      const handleSelectionChange = () => {
+        const editor = editorRef.current;
+        if (!editor) return;
+        const range = readSelectionInsideEditor(editor);
+        // Ignore selections belonging to other elements; that is exactly the
+        // case we need the remembered one for.
+        if (range) savedRangeRef.current = range;
+      };
+
+      document.addEventListener('selectionchange', handleSelectionChange);
+      return () =>
+        document.removeEventListener('selectionchange', handleSelectionChange);
+    }, [editorRef]);
+
     // Markdown toolbar state. The anchor is a virtual element over the current
     // selection rect; FloatingPopover handles centering/flip/clamp.
     const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
@@ -195,19 +223,50 @@ export const MessageComposer = forwardRef<
       },
       insertEmoji: (emoji: string) => {
         if (ENABLE_MENTION_PILLS && editorRef.current) {
-          // ContentEditable mode: use execCommand to preserve mention pills
-          editorRef.current.focus();
-          document.execCommand('insertText', false, emoji);
+          // ContentEditable mode: use execCommand to preserve mention pills.
+          //
+          // Focus alone is not enough to get the caret back. Using the emoji
+          // panel moves focus out of the editor, and if it lands on a text
+          // input (the picker's search box) the document selection moves with
+          // it — after that, focus() collapses the caret to offset 0 and the
+          // emoji lands at the start of the message. Restore the last caret we
+          // saw inside the editor before inserting.
+          const editor = editorRef.current;
+          const before = extractStorageText();
+          // focus -> restore caret -> insert. The ordering lives in
+          // insertTextAtSavedCaret so it stays under test.
+          const inserted = insertTextAtSavedCaret(
+            editor,
+            emoji,
+            savedRangeRef.current
+          );
           // Trigger input handler to sync state
           const newText = extractStorageText();
+          // execCommand reports failure by returning false rather than
+          // throwing, so without this the user just sees a click that did
+          // nothing and there is no trace of it anywhere.
+          if (!inserted || newText === before) {
+            console.error('[MessageComposer] emoji insertion did nothing', {
+              emoji,
+              returned: inserted,
+            });
+          }
           onChange(newText);
           setCursorPosition(getCursorPosition());
+          // Keep the saved caret in step so a second emoji lands after the first.
+          savedRangeRef.current = readSelectionInsideEditor(editor);
         } else {
-          // TextArea mode: append emoji to current value
-          onChange(value + emoji);
-          // Focus and move cursor to end
+          // TextArea mode: insert at the caret, not at the end. A blurred
+          // textarea still reports the selection it had when it lost focus.
+          const textarea = textareaRef.current;
+          const start = textarea?.selectionStart ?? value.length;
+          const end = textarea?.selectionEnd ?? value.length;
+          onChange(value.slice(0, start) + emoji + value.slice(end));
+          // Focus and put the cursor after the inserted emoji. Order matches
+          // handleMentionSelect below; for a textarea (unlike contentEditable)
+          // focus() does not disturb an already-set selection.
           setTimeout(() => {
-            const newPos = value.length + emoji.length;
+            const newPos = start + emoji.length;
             textareaRef.current?.setSelectionRange(newPos, newPos);
             textareaRef.current?.focus();
           }, 0);
