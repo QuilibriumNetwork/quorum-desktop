@@ -57,7 +57,6 @@ import type {
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import {
-  buildMessagesKey,
   buildMessagesKeyPrefix,
   buildSpaceMembersKey,
   buildSpaceKey,
@@ -6044,8 +6043,11 @@ export class MessageService {
                 for (const channelId of channelIds) {
                   if (!checked[channelId]) {
                     checked[channelId] = true;
+                    // Prefix, not buildMessagesKey: the mounted variant depends
+                    // on whether the space allows threads, and this batch has
+                    // no idea which one the channel is open under.
                     queryClient.refetchQueries({
-                      queryKey: buildMessagesKey({
+                      queryKey: buildMessagesKeyPrefix({
                         spaceId: conversationId.split('/')[0],
                         channelId: channelId,
                       }),
@@ -6136,8 +6138,9 @@ export class MessageService {
               }
 
               for (const channelId of channelIdsToRefetch) {
+                // Prefix: matches whichever thread variant the channel mounted.
                 queryClient.refetchQueries({
-                  queryKey: buildMessagesKey({
+                  queryKey: buildMessagesKeyPrefix({
                     spaceId,
                     channelId,
                   }),
@@ -7746,7 +7749,7 @@ export class MessageService {
       await this.messageDB.deleteUser(spaceId);
     }
     await queryClient.invalidateQueries({
-      queryKey: buildMessagesKey({ spaceId, channelId }),
+      queryKey: buildMessagesKeyPrefix({ spaceId, channelId }),
     });
     await queryClient.invalidateQueries({
       queryKey: buildConversationKey({ conversationId }),

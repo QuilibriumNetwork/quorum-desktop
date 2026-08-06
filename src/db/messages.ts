@@ -646,42 +646,54 @@ export class MessageDB {
       }
 
       // For initial load and backward pagination, we want reverse order
-      const request =
-        !cursor || direction === 'backward'
-          ? index.openCursor(range, 'prev')
-          : index.openCursor(range, 'next');
+      const isDescendingScan = !cursor || direction === 'backward';
+      const request = isDescendingScan
+        ? index.openCursor(range, 'prev')
+        : index.openCursor(range, 'next');
 
       const messages: Message[] = [];
 
       request.onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
+        // Deliberately NOT named `cursor`: it used to shadow the timestamp
+        // parameter of the same name, so the reverse test below read the
+        // exhausted IDB cursor and flipped every forward page that didn't
+        // stop at `limit`.
+        const idbCursor = (event.target as IDBRequest).result;
 
-        if (cursor && messages.length < limit) {
-          if (!includeThreadReplies && cursor.value.isThreadReply) {
-            cursor.continue();
+        if (idbCursor && messages.length < limit) {
+          if (!includeThreadReplies && idbCursor.value.isThreadReply) {
+            idbCursor.continue();
             return;
           }
-          messages.push(cursor.value);
-          cursor.continue();
+          messages.push(idbCursor.value);
+          idbCursor.continue();
         } else {
-          // Calculate cursors for next/prev pages
-          const nextCursor =
-            messages.length === limit
-              ? direction === 'forward'
-                ? messages[messages.length - 1].createdDate
-                : messages[0].createdDate
-              : null;
+          // `messages` is still in scan order: descending for a backward scan,
+          // ascending for a forward one.
+          const newest = isDescendingScan
+            ? messages[0]
+            : messages[messages.length - 1];
+          const oldest = isDescendingScan
+            ? messages[messages.length - 1]
+            : messages[0];
 
-          const prevCursor =
-            messages.length > 0
-              ? direction === 'forward'
-                ? messages[0].createdDate
-                : messages[messages.length - 1].createdDate
-              : null;
+          // nextCursor answers "might there be messages NEWER than this page?".
+          // A descending scan has newer ones exactly when the caller capped it
+          // with a cursor; a forward scan only when it stopped at `limit`.
+          // Gating both on a full page hid everything newer than an unread
+          // anchor, because such a page is short by definition.
+          // `!!cursor`, not `cursor !== undefined`, so this agrees with
+          // `isDescendingScan` above about what counts as "no cursor".
+          const hasNewer = isDescendingScan
+            ? !!cursor && messages.length > 0
+            : messages.length === limit;
+
+          const nextCursor = hasNewer ? newest.createdDate : null;
+          const prevCursor = messages.length > 0 ? oldest.createdDate : null;
 
           // For backward pagination and initial load, reverse the array
           // to maintain chronological order
-          if (!cursor || direction === 'backward') {
+          if (isDescendingScan) {
             messages.reverse();
           }
 

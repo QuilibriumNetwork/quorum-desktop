@@ -10,6 +10,7 @@ import { useConfirmationModal } from '../../../components/context/ConfirmationMo
 import MessagePreview from '../../../components/message/MessagePreview';
 import { t } from '@lingui/core/macro';
 import { buildSpaceKey } from '../../queries/space/buildSpaceKey';
+import { buildMessagesKeyPrefix } from '../../queries/messages/buildMessagesKey';
 
 // Configuration constants for pinned messages feature
 const PINNED_MESSAGES_CONFIG = {
@@ -104,7 +105,7 @@ export const usePinnedMessages = (
       // Optimistic update: Update React Query caches immediately for instant UI feedback
       // Update Messages cache to show isPinned = true
       queryClient.setQueriesData(
-        { queryKey: ['Messages', spaceId, channelId] },
+        { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
         (oldData: any) => {
           if (!oldData?.pages) return oldData;
           return {
@@ -132,7 +133,14 @@ export const usePinnedMessages = (
 
       // Update pinnedMessages list cache directly for instant UI feedback
       // Get the message from Messages cache to add to pinned list
-      const messagesData = queryClient.getQueryData(['Messages', spaceId, channelId]) as any;
+      // getQueryData is an EXACT hash lookup, so a 3-element key never matched
+      // the real 4-element Messages key and this always came back undefined —
+      // the optimistic append below was dead code. getQueriesData prefix-matches,
+      // so it finds whichever thread variant this channel actually mounted.
+      const [firstMatch] = queryClient.getQueriesData({
+        queryKey: buildMessagesKeyPrefix({ spaceId, channelId }),
+      });
+      const messagesData = firstMatch?.[1] as any;
       if (messagesData?.pages) {
         for (const page of messagesData.pages) {
           const foundMsg = page.messages?.find((m: Message) => m.messageId === messageId);
@@ -185,7 +193,7 @@ export const usePinnedMessages = (
       // Optimistic update: Update React Query caches immediately for instant UI feedback
       // Update Messages cache to show isPinned = false
       queryClient.setQueriesData(
-        { queryKey: ['Messages', spaceId, channelId] },
+        { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
         (oldData: any) => {
           if (!oldData?.pages) return oldData;
           return {

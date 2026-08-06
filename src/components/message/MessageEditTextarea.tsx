@@ -9,7 +9,7 @@ import { rectAnchor, type VirtualElement } from '../ui';
 import type { FormatFunction } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, PostMessage, Role, Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
-import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
+import { buildMessagesKeyPrefix } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
@@ -457,8 +457,8 @@ export function MessageEditTextarea({
     };
 
     // Update React Query cache IMMEDIATELY
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId: currentSpaceId, channelId: currentChannelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId: currentSpaceId, channelId: currentChannelId }) },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
 
@@ -540,8 +540,8 @@ export function MessageEditTextarea({
           );
 
           // Update React Query cache with corrected edits array
-          queryClient.setQueryData(
-            buildMessagesKey({ spaceId: currentSpaceId, channelId: currentChannelId }),
+          queryClient.setQueriesData(
+            { queryKey: buildMessagesKeyPrefix({ spaceId: currentSpaceId, channelId: currentChannelId }) },
             (oldData: InfiniteData<any>) => {
               if (!oldData?.pages) return oldData;
               return {
