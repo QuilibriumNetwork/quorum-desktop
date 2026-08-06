@@ -72,6 +72,10 @@ const IdentityCoverage = lazyDevImport(
   'IdentityCoverage'
 );
 const FakeQns = lazyDevImport(() => import('@/dev/fake-qns'), 'FakeQns');
+const ErrorStates = lazyDevImport(
+  () => import('@/dev/error-states'),
+  'ErrorStates'
+);
 
 interface RouterProps {
   user: {
@@ -336,6 +340,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading fake QNS...</div>}>
               <FakeQns />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && ErrorStates && (
+        <Route
+          path="/dev/error-states"
+          element={
+            <Suspense fallback={<div>Loading error states...</div>}>
+              <ErrorStates />
             </Suspense>
           }
         />

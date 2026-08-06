@@ -8,6 +8,7 @@ import { messages } from '@/i18n/en/messages';
 
 import { RouteBoundary } from '@/components/Router/RouteBoundary';
 import { AppErrorScreen } from '@/components/AppErrorScreen';
+import { ErrorStates } from '@/dev/error-states';
 
 beforeAll(() => {
   i18n.load('en', messages);
@@ -187,6 +188,56 @@ describe('AppErrorScreen', () => {
 
     expect(
       screen.getByRole('button', { name: 'Reload Quorum' })
+    ).toBeInTheDocument();
+  });
+});
+
+// Guards the /dev/error-states preview page against shipping broken, so opening
+// it is never a wasted trip to a blank screen.
+describe('dev error-states preview page', () => {
+  const renderPage = () =>
+    render(
+      <I18nProvider i18n={i18n}>
+        <MemoryRouter initialEntries={['/dev/error-states']}>
+          <ErrorStates />
+        </MemoryRouter>
+      </I18nProvider>
+    );
+
+  it('renders every route-scope error state', () => {
+    renderPage();
+
+    expect(
+      screen.getByText("This channel couldn't be loaded")
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("This conversation couldn't be loaded")
+    ).toBeInTheDocument();
+    expect(screen.getByText("This page couldn't be loaded")).toBeInTheDocument();
+  });
+
+  it('recovers a panel through the real retry path', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(screen.getAllByRole('button', { name: 'Let it succeed' })[0]);
+    await user.click(screen.getAllByRole('button', { name: 'Try again' })[0]);
+
+    expect(
+      await screen.findByText('Recovered — the view rendered')
+    ).toBeInTheDocument();
+  });
+
+  it('can show the app-root crash screen', async () => {
+    const user = userEvent.setup();
+    renderPage();
+
+    await user.click(
+      screen.getByRole('button', { name: 'Show app-root crash screen' })
+    );
+
+    expect(
+      await screen.findByText('Something went wrong')
     ).toBeInTheDocument();
   });
 });

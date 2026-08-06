@@ -58,6 +58,11 @@ const devNavItems: DevNavItem[] = [
     icon: 'at',
     path: '/dev/fake-qns',
   },
+  {
+    name: 'Error States',
+    icon: 'alert-triangle',
+    path: '/dev/error-states',
+  },
 ];
 
 interface DevNavMenuProps {
