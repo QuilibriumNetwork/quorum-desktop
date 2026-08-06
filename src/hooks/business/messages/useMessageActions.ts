@@ -10,7 +10,7 @@ import MessagePreview from '../../../components/message/MessagePreview';
 import { extractMessageRawText } from '@quilibrium/quorum-shared';
 import { useCopyToClipboard } from '../ui';
 import { useBookmarks } from '../bookmarks';
-import { buildMessagesKey } from '../../queries/messages/buildMessagesKey';
+import { buildMessagesKeyPrefix } from '../../queries/messages/buildMessagesKey';
 import { getThreadTitle } from '../../../utils/threadTitle';
 import { t } from '@lingui/core/macro';
 import { ENABLE_DM_ACTION_QUEUE } from '../../../config/features';
@@ -142,7 +142,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         ?.memberIds.includes(userAddress);
 
       // Optimistic update: Update React Query cache immediately
-      const messagesKey = buildMessagesKey({ spaceId, channelId });
+      // Prefix + setQueriesData: the channel's mounted variant depends on
+      // whether threads are enabled, which this hook doesn't know.
+      const messagesKey = buildMessagesKeyPrefix({ spaceId, channelId });
 
       // Build the updated reactions
       const currentReactions = message.reactions || [];
@@ -179,8 +181,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       }
 
       // Optimistic update: Update React Query cache immediately for instant UI feedback
-      queryClient.setQueryData(
-        messagesKey,
+      queryClient.setQueriesData(
+        { queryKey: messagesKey },
         (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
           if (!oldData?.pages) return oldData;
           return {
@@ -301,7 +303,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
       // Optimistic update: soft-delete thread roots (preserve threadMeta), hard-delete others
       const isThreadRoot = !!message.threadMeta;
-      const messagesKey = buildMessagesKey({ spaceId, channelId });
+      // Prefix + setQueriesData: the channel's mounted variant depends on
+      // whether threads are enabled, which this hook doesn't know.
+      const messagesKey = buildMessagesKeyPrefix({ spaceId, channelId });
 
       if (isThreadRoot) {
         // Soft-delete: replace content but keep message in feed for thread access
@@ -310,8 +314,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
           senderId: message.content.senderId,
           text: '',
         };
-        queryClient.setQueryData(
-          messagesKey,
+        queryClient.setQueriesData(
+          { queryKey: messagesKey },
           (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
             if (!oldData?.pages) return oldData;
             return {
@@ -334,8 +338,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         });
       } else {
         // Hard-delete: remove from cache and DB
-        queryClient.setQueryData(
-          messagesKey,
+        queryClient.setQueriesData(
+          { queryKey: messagesKey },
           (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
             if (!oldData?.pages) return oldData;
             return {

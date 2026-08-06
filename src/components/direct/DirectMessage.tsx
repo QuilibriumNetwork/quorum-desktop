@@ -21,7 +21,7 @@ import { useConversation } from '../../hooks/queries/conversation/useConversatio
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
-import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
+import { buildMessagesKeyPrefix } from '../../hooks/queries/messages/buildMessagesKey';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, {
   MessageComposerRef,
@@ -630,8 +630,8 @@ const DirectMessage: React.FC<{}> = () => {
         });
 
         // Update React Query cache to replace current pages with new data
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId: address!, channelId: address! }),
+        queryClient.setQueriesData(
+          { queryKey: buildMessagesKeyPrefix({ spaceId: address!, channelId: address! }) },
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
@@ -702,8 +702,8 @@ const DirectMessage: React.FC<{}> = () => {
           afterLimit: 40,
         });
 
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId: address!, channelId: address! }),
+        queryClient.setQueriesData(
+          { queryKey: buildMessagesKeyPrefix({ spaceId: address!, channelId: address! }) },
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],

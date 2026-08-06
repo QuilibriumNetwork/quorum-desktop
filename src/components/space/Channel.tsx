@@ -14,7 +14,7 @@ import {
 import { useMutedUsers, useInvalidateMutedUsers } from '../../hooks/queries/mutedUsers';
 import { formatMuteRemaining } from '../../utils/dateFormatting';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
-import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
+import { buildMessagesKeyPrefix } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -772,8 +772,8 @@ const Channel: React.FC<ChannelProps> = ({
       const isRootSender = user.currentPasskeyInfo!.address === activeThreadRootMessage.content.senderId;
 
       // Optimistic update: remove thread from UI immediately
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId, channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
         (oldData: any) => {
           if (!oldData?.pages) return oldData;
           return {
@@ -894,13 +894,26 @@ const Channel: React.FC<ChannelProps> = ({
 
         // Update React Query cache to replace current pages with new data
         // This creates a single page centered around the target message
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId, includeThreadReplies: !threadsEnabled }),
+        // Prefix + setQueriesData, not setQueryData with an exact key. The
+        // payload below is a LITERAL, so setQueryData would never return
+        // undefined and would CREATE a cache entry — meaning a `threadsEnabled`
+        // value that went stale across the await above would silently spawn an
+        // orphaned variant nothing reads, instead of cleanly missing.
+        const written = queryClient.setQueriesData(
+          { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
           }
         );
+        // This component owns a mounted messages query, so zero matches means
+        // the key contract broke again. Loud in dev, silent in prod.
+        if (import.meta.env.DEV && written.length === 0) {
+          console.warn(
+            '[Channel] jump wrote to no mounted messages query',
+            { spaceId, channelId }
+          );
+        }
 
         // The MessageList will automatically re-render with the new data
         // and the existing hash navigation logic will scroll to the message
@@ -995,13 +1008,26 @@ const Channel: React.FC<ChannelProps> = ({
         });
 
         // Update React Query cache to replace current pages with new data
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId, includeThreadReplies: !threadsEnabled }),
+        // Prefix + setQueriesData, not setQueryData with an exact key. The
+        // payload below is a LITERAL, so setQueryData would never return
+        // undefined and would CREATE a cache entry — meaning a `threadsEnabled`
+        // value that went stale across the await above would silently spawn an
+        // orphaned variant nothing reads, instead of cleanly missing.
+        const written = queryClient.setQueriesData(
+          { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
           }
         );
+        // This component owns a mounted messages query, so zero matches means
+        // the key contract broke again. Loud in dev, silent in prod.
+        if (import.meta.env.DEV && written.length === 0) {
+          console.warn(
+            '[Channel] jump wrote to no mounted messages query',
+            { spaceId, channelId }
+          );
+        }
 
         // Calculate initial unread count from the loaded messages
         const unreadCount = messages.filter(

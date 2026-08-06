@@ -39,6 +39,16 @@ async function determineInitialCursor({
   const { conversation } = await messageDB.getConversation({ conversationId });
   const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
+  // No read pointer yet — a channel that has never been opened, or a fresh
+  // device. Treating that as "everything is unread" anchors the jump on the
+  // OLDEST message in the channel, which is the opposite of useful: the first
+  // page then holds just that one message. Channel.tsx's own auto-jump effect
+  // already bails out on this exact condition; the fetcher has to agree with
+  // it, otherwise the two disagree about where the channel starts.
+  if (lastReadTimestamp === 0) {
+    return null; // Load from bottom
+  }
+
   // Get first unread message
   const firstUnread = await messageDB.getFirstUnreadMessage({
     spaceId,
