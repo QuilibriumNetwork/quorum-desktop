@@ -109,8 +109,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
 - 🐛 [Bookmarks are three quarters of the config blob](issues/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md)
-- 🐛 [A local message-read failure is presented as a server outage, or silently redirects the user home](issues/2026-08-06-a-message-read-failure-is-presented-as-a-server-outage-or-a-redirect-home.md)
-- 🐛 [Invalid icon names render nothing, and no type error catches them](issues/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
+- 🐛 [Every shared primitive reaches consumers as `any`](issues/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -395,6 +394,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A typing frame returns before the ack](issues/.done/2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md)
 - 🐛 [A fallback string is fed INTO the resolver, so the resolver returns it](issues/.done/2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver.md)
 - 🐛 [Global notifications panel crashes on any mention it cannot resolve](issues/.done/2026-08-04-global-notifications-panel-crashes-on-unresolvable-mention.md)
+- 🐛 [A local message-read failure is presented as a server outage, or silently redirects the user home](issues/.done/2026-08-06-a-message-read-failure-is-presented-as-a-server-outage-or-a-redirect-home.md)
 - 🐛 [A channel you have never opened loads exactly one message — its oldest — and reads as empty](issues/.done/2026-08-06-channel-loads-one-old-message-and-reads-as-empty.md)
 - 🐛 [All emoji images break in a git worktree](issues/.done/2026-08-06-emoji-images-break-in-git-worktrees.md)
 - 🐛 [Emoji panel inserts the emoji at the start of the message](issues/.done/2026-08-06-emoji-panel-inserts-at-start-of-message.md)
@@ -761,4 +761,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-06 17:02:56
+**Last Updated**: 2026-08-06 18:11:46

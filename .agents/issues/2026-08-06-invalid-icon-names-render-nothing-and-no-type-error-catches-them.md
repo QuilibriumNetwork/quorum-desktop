@@ -1,20 +1,31 @@
 ---
 type: bug
-title: "Invalid icon names render nothing, and the type system cannot catch them"
+title: "Every shared primitive reaches consumers as `any`, so nothing type-checks their props"
 status: in-progress
-priority: medium
+priority: low
 created: 2026-08-06
 updated: 2026-08-06
-severity: twelve call sites rendered no icon at all, four of them user-facing, and tsc reported zero errors
+severity: props on all 21 primitives go unchecked; the two cases looked at so far were both invisible dead UI in production
 area: primitives / build types
 repos: quorum-desktop, quorum-shared
 ---
 
-# Invalid icon names render nothing, and no type error catches them
+# Every shared primitive reaches consumers as `any`
 
-Found while fixing the error screens, which shipped with an invisible badge
-because they passed `name="alert-triangle"`. There is no `alert-triangle` in
-`IconName`; the triangle is called `warning`.
+Filed as an icon bug, which is how it surfaced: the error screens shipped with an
+invisible badge because they passed `name="alert-triangle"`, and there is no
+`alert-triangle` in `IconName` (the triangle is called `warning`). The icon half
+is fixed. The general problem underneath it is not, and it is why the title
+changed.
+
+**In one sentence:** the shared package's type declarations point at a file that
+is never built, TypeScript quietly gives up and types every primitive as `any`,
+so no prop on any of them has been checked — for as long as the platform split
+has existed.
+
+That is invisible by construction. It never crashes and never logs; the symptom
+is a component silently doing nothing, which is exactly what both bugs found so
+far look like.
 
 ## The type hole
 
@@ -73,6 +84,104 @@ An earlier draft of this issue also listed `components/ui/ThemeRadioGroup.tsx:43
 literals that really reach `Icon`.
 
 ## Status
+
+**2026-08-06 — partly shipped.** quorum-shared PR #76 and quorum-desktop PR #319.
+**Deliberately left open**: `Icon` is fixed, the other 20 primitives are not.
+
+What landed:
+
+- quorum-shared now emits the missing `X.d.ts` next to each `X.web.d.ts`
+  (`scripts/emit-platform-shims.mjs`, run as part of `yarn build`), so the
+  barrel's extensionless platform import resolves for consumers.
+- **Enabled for `Icon` only**, via an allowlist in that script. Turning on all 19
+  at once surfaced **98 pre-existing errors** in quorum-desktop, about two thirds
+  in dev tooling: handlers that may be `undefined`, `string` passed where a union
+  is required, native-only props on web components. Genuine, but a separate
+  cleanup, and `yarn validate` is green today so it should stay that way.
+- Four prop types that were wrong and only hidden by the `any` were fixed while
+  there: `Spacer.size` optional, `Button.onClick`/`Icon.onClick` taking a
+  required event on web and zero args on native, `hapticFeedback`/`swipeToClose`
+  on the base props, and `Icon` accepting `title`.
+- All twelve call sites repaired, and the six descriptor lists in desktop typed
+  as `IconName`.
+
+MEASURED: with `Icon` enabled, `tsc` rejects an invalid name
+(`Type '"alert-triangle"' is not assignable to type 'IconName'`) where before it
+reported nothing. Desktop is at 0 `tsc` errors, 1119 tests green.
+
+## Remaining work — read this before starting
+
+**Not urgent.** Nothing is on fire, `yarn validate` is green, and the app works.
+This is a slow cleanup that pays for itself in found bugs. Do one primitive per
+PR and stop whenever you like; every step leaves the repo green.
+
+### Is it worth doing? Two data points
+
+Most of the 98 are paperwork. A fair challenge is "buttons work fine, so this is
+just appeasing the compiler". Two were checked by hand, and the split is
+instructive:
+
+- **`CreateSpaceModal.tsx:80` and 7 sibling modals** — `onClose={isSaving ?
+  undefined : props.onClose}`. Deliberate: it blocks closing mid-save, and
+  `closeOnBackdropClick`/`closeOnEscape` are turned off alongside it. The **type**
+  is wrong here, not the code. Fix is one character in shared: `onClose?`.
+  Genuinely cosmetic.
+- **`Channel.tsx:1890`** — a `<Tooltip id="toggle-signing-tooltip" content=… />`
+  with no children. `Tooltip` attaches itself to the element it wraps, so with no
+  children it falls through to `<>{children}</>` and renders nothing. That
+  tooltip had never been visible to anyone, and `MessageComposer` already had the
+  working version. **Deleted in `b6d9a661a`.** Real dead UI, found by the type
+  check and by nothing else.
+
+So: one in two of the sampled cases was a live invisible-feature bug of exactly
+the same class as the icons. The other 96 are unaudited.
+
+### The loop, per primitive
+
+1. In **quorum-shared**, add the name to `ENABLED` in
+   `scripts/emit-platform-shims.mjs` (~line 51). That is the whole shared-side
+   change. `yarn build` regenerates the shims.
+2. In **quorum-desktop**, `npx tsc --noEmit` and fix what lights up.
+3. **Check quorum-mobile too.** It consumes the same declaration tree via
+   package.json `exports`. It has NOT been measured — it could be zero extra
+   errors or another fifty. Measure before promising a PR size.
+4. Ship shared first, then desktop (and mobile if affected). Desktop cannot go
+   green until the shared build is published.
+
+Fix at the source, not with casts. When the value is a literal in a static list,
+type the list (`icon: IconName`) so a typo fails the build. Only cast when the
+value genuinely comes from persisted data, as `MentionDropdown` does.
+
+### What each primitive will cost, measured
+
+From the one run with all 19 enabled (98 errors, quorum-desktop only). Counts are
+approximate because one error can name two types.
+
+| Next up | ~Errors | Where | Shape of the fix |
+|---|---|---|---|
+| `Text` | 26 | almost entirely `src/dev/` — docs viewer, dm-doctor, db-inspector, identity-coverage | `variant` gets a `string`; type the variable or the descriptor list |
+| `Button` | ~30 | `src/components/modals/` and `src/dev/` | 11 are a `size` union taking `string`; 10 are the deliberate `onClose`/handler-may-be-undefined pattern; the rest are prop mismatches |
+| `Select` / `RadioGroup` | 11 | 8 in `dev/components-audit/ComponentAuditViewer.tsx`, rest scattered | `onChange` is `(value: string \| string[]) => void`; call sites declare `(value: string) => void` |
+| `Spacer` | 11 | modals | already fixed in shared (`size` optional) — should be near zero now, re-measure |
+| `Input` | 3 | scattered | prop mismatches |
+| `Tooltip` | 3 | `Channel.tsx` | one was the dead tooltip above; re-measure |
+| `Select` (web) | 1 | | |
+
+**Start with `Text`.** It is the largest single cluster, it is almost entirely
+dev tooling, so the blast radius on production code is near zero, and it is a
+good rehearsal for the loop before touching `Button`, which is the one that
+reaches the modals.
+
+### Two other threads
+
+- Decide whether `skipLibCheck` is earning its place. It is what turned a broken
+  declaration into a silent `any` rather than a build failure, so the same class
+  of bug can recur in any other dependency.
+- Optional: a dev-mode `console.warn` inside `Icon` for an unknown name, so a bad
+  name is loud at runtime as well as at build time. `isValidIconName` is already
+  exported from shared and unused.
+
+## What was done first
 
 Call sites fixed, and a regression guard added:
 `src/dev/tests/components/iconNames.test.ts` scans every icon literal in `src/`
