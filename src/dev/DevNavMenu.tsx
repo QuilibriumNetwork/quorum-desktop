@@ -53,6 +53,11 @@ const devNavItems: DevNavItem[] = [
     icon: 'id-badge',
     path: '/dev/identity-coverage',
   },
+  {
+    name: 'Fake QNS',
+    icon: 'at',
+    path: '/dev/fake-qns',
+  },
 ];
 
 interface DevNavMenuProps {

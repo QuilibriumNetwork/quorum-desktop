@@ -526,14 +526,56 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
   // Public profile — resolve-by-known-address only. The server exposes no
   // enumeration endpoint, so this is a key-value lookup, not a search.
   // 404 indicates "user hasn't opted in"; callers handle by mapping to null.
-  getPublicProfile(
+  //
+  // `primary_username` is the QNS `.q` name, and this response is its ONLY
+  // carrier — it is never in a message broadcast or a roster row. So a member's
+  // `.q` is unknowable without a fetch here, and a user with a private profile
+  // has no `.q` as far as anyone else is concerned.
+  //
+  // This is also the single seam the dev-only QNS overlay hooks (see
+  // `src/dev/fake-qns/fakeQnsCore.ts`). Injecting here rather than in the hooks is
+  // deliberate: every public-profile hook shares one React Query key, so a
+  // hook-level fake that missed one would cache a real `null` and silently
+  // never appear.
+  // `data` is nullable ONLY because the dev overlay can simulate "this user has
+  // no public profile" on a response that really did arrive. In production the
+  // 404 still throws and this is never null, so callers keep their existing
+  // 404 → null handling either way; the type just stops the simulated case from
+  // being an unchecked lie.
+  async getPublicProfile(
     address: string,
     { headers, timeout }: { headers?: RequestHeaders; timeout?: number } = {}
-  ) {
-    return this.get<PublicProfileResponse>(getPublicProfileUrl(address), {
-      headers,
-      timeout,
-    });
+  ): Promise<FetchResponse<PublicProfileResponse | null>> {
+    if (process.env.NODE_ENV !== 'development') {
+      return this.get<PublicProfileResponse>(getPublicProfileUrl(address), {
+        headers,
+        timeout,
+      });
+    }
+
+    const { applyFakeQns } = await import('../dev/fake-qns/fakeQnsCore');
+
+    let response: FetchResponse<PublicProfileResponse>;
+    try {
+      response = await this.get<PublicProfileResponse>(
+        getPublicProfileUrl(address),
+        { headers, timeout }
+      );
+    } catch (error: unknown) {
+      // A 404 is the case the overlay most needs to reach: the members you want
+      // a fake `.q` for usually have no published profile at all. Synthesize
+      // one if a rule matches, otherwise rethrow so callers keep their existing
+      // 404 → null handling.
+      if (isHandledFetchError(error) && error.status === 404) {
+        const faked = applyFakeQns(address, null);
+        if (faked) return { data: faked, status: 200 };
+      }
+      throw error;
+    }
+
+    // A null here means the overlay is simulating a private profile, so the
+    // real response must be withheld rather than passed through.
+    return { data: applyFakeQns(address, response.data ?? null), status: response.status };
   }
 
   postPublicProfile(
