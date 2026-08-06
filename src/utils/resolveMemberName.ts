@@ -1,5 +1,35 @@
-import { resolveDisplayName as resolveSharedDisplayName } from '@quilibrium/quorum-shared';
+import {
+  hasReservedQnsSuffix,
+  resolveDisplayName as resolveSharedDisplayName,
+} from '@quilibrium/quorum-shared';
 import { realDisplayNameOrUndefined } from './identityPlaceholder';
+
+/**
+ * A stored name that would forge the verified-QNS marker is not a name.
+ *
+ * Shared's `resolveDisplayName` enforces this for every tier it resolves, so
+ * `resolveMemberName` below inherits it for free. `resolveSpaceMemberName` does
+ * NOT — it implements the ladder itself and returns before ever reaching
+ * shared, except in the all-empty case where there is nothing left to forge.
+ *
+ * That gap mattered: `resolveSpaceMemberName` is what messages, mentions,
+ * reactions, notifications, pinned messages and the channel view all call, so
+ * the shared guard covered DMs and left every space context exposed. A display
+ * name of `alice.q` renders identically to a name somebody registered and
+ * elected primary — `isQnsVerified` is computed and never rendered, so the
+ * suffix is the only signal a viewer gets.
+ *
+ * Applied BEFORE the roster-vs-global echo comparison, not after. A forged
+ * roster name must not merely lose to the global name, it must not participate:
+ * were it compared raw, `roster !== global` would read as a deliberate
+ * per-space name and return the forged string outright.
+ *
+ * The real fix is to make this function delegate to shared like its sibling
+ * does, so there is one ladder rather than two. That is a larger change; this
+ * closes the hole in the meantime.
+ */
+const unreserved = (value: string): string =>
+  value && hasReservedQnsSuffix(value) ? '' : value;
 
 export interface ResolvedMemberName {
   /** The readable name to display. Never empty (falls back to the address). */
@@ -69,9 +99,9 @@ export function resolveSpaceMemberName(member: {
   globalDisplayName?: string | null;
   address: string;
 }): ResolvedMemberName {
-  const roster = (member.displayName ?? '').trim();
-  const global = (member.globalDisplayName ?? '').trim();
-  const qns = (member.primaryUsername ?? '').trim();
+  const roster = unreserved((member.displayName ?? '').trim());
+  const global = unreserved((member.globalDisplayName ?? '').trim());
+  const qns = unreserved((member.primaryUsername ?? '').trim());
 
   // A roster name that DIFFERS from the global one is a deliberate per-space
   // override and outranks everything.

@@ -61,6 +61,12 @@ vi.mock('../../../utils/platform', () => ({
 vi.mock('@quilibrium/quorum-shared', () => ({
   formatRelativeTime: () => '2h ago',
   resolveDisplayName: (name?: string) => name ?? 'User',
+  // The real implementation, not a stub. `resolveSpaceMemberName` drops a name
+  // that would forge the verified `.q` marker, and stubbing this to a constant
+  // would switch that guard off for anything this panel renders — a mock that
+  // silently disables a security rule is worse than no mock.
+  hasReservedQnsSuffix: (name: string) =>
+    name.replace(/[.．﹒․]/g, '.').trim().toLowerCase().endsWith('.q'),
 }));
 
 // Mock primitives
