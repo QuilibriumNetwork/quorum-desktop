@@ -6,15 +6,25 @@
  * API client rather than the hooks, and what a green run does and does not
  * prove.
  *
- * Nothing here writes to the network. Desktop has no "set my own primary
- * username" control at all — it reads `primary_username` from other people's
- * profiles and never publishes one (see `PublicProfileService.ts`) — so unlike
- * mobile's version of this panel, every switch below is a read-side overlay
- * with no real-state half.
+ * Nothing here writes to the network, including the "give myself a .q" control.
+ * Desktop never publishes a primary username (see `PublicProfileService.ts`),
+ * and it reads its OWN one from `useUserPublicProfile(ownAddress)` — the same
+ * fetch this overlay intercepts. So self is just another pinned entry here,
+ * where mobile's equivalent has to write a real profile field.
+ *
+ * ## Giving yourself a name covers most of the job
+ *
+ * Almost every surface that renders a name can render YOU: your messages, a
+ * reply to your own message, a mention you typed at yourself, your reactions,
+ * the member sidebar, and the notification body when someone mentions you (the
+ * name in that body is the mentioned person, not the sender). The everyone
+ * switch exists for the remainder — a DM partner's name, a blocked user — and
+ * is a coverage sweep rather than a state anybody would really be in.
  */
 
 import React, { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
 import {
@@ -65,9 +75,15 @@ const Toggle: React.FC<ToggleProps> = ({
 
 export const FakeQns: React.FC = () => {
   const queryClient = useQueryClient();
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const ownAddress = currentPasskeyInfo?.address ?? null;
+
   const [state, setState] = useState<FakeQnsState>(() => getFakeQnsState());
   const [address, setAddress] = useState('');
   const [name, setName] = useState('');
+  const [selfName, setSelfName] = useState(() =>
+    ownAddress ? (getFakeQnsState().entries[ownAddress.toLowerCase()]?.primaryUsername ?? '') : ''
+  );
 
   /** Drop every cached public profile so the next render refetches through the
    *  overlay. Without this a toggle looks inert for up to an hour. */
@@ -103,7 +119,31 @@ export const FakeQns: React.FC = () => {
     [invalidate]
   );
 
+  /** Your own address is just another pinned entry — desktop reads its own
+   *  primary username from `useUserPublicProfile(ownAddress)`, the same fetch
+   *  the overlay intercepts, so there is nothing special to do for self. */
+  const handleApplySelf = useCallback(() => {
+    if (!ownAddress) return;
+    // Accept "name" or "name.q". The stored value is always bare and the suffix
+    // is appended at render, so storing it with the suffix renders "name.q.q".
+    const trimmed = selfName.trim().replace(/\.q$/i, '');
+    setState(
+      trimmed
+        ? setFakeQnsEntry(ownAddress, { primaryUsername: trimmed })
+        : removeFakeQnsEntry(ownAddress)
+    );
+    invalidate();
+  }, [ownAddress, selfName, invalidate]);
+
+  const handleClearSelf = useCallback(() => {
+    if (!ownAddress) return;
+    setSelfName('');
+    setState(removeFakeQnsEntry(ownAddress));
+    invalidate();
+  }, [ownAddress, invalidate]);
+
   const handleReset = useCallback(() => {
+    setSelfName('');
     setState(clearFakeQns());
     invalidate();
   }, [invalidate]);
@@ -130,16 +170,57 @@ export const FakeQns: React.FC = () => {
             value={state.enabled}
             onChange={(v) => update({ enabled: v })}
           />
+        </Flex>
+
+        {/* Ordered by what you reach for, matching mobile's panel. Giving
+            YOURSELF a name covers almost every surface on its own, because
+            almost every surface can render you: your messages, a reply to your
+            own message, a mention you typed at yourself, your reactions, and
+            the notification body when someone mentions you (the name in that
+            body is the MENTIONED person, which is you). The blanket switch
+            below is for the few that render somebody else. */}
+        <div className="mt-4 pt-4 border-t border-neutral-700">
+          <Text variant="strong" size="sm" className="block">
+            1 · Give MYSELF a .q
+          </Text>
+          <Text variant="subtle" size="xs" className="block mb-2">
+            Start here. Pins this name for your own address
+            {ownAddress ? '' : ' (no address yet — sign in first)'}. Desktop
+            never publishes a primary username, so unlike mobile this is a
+            read-side overlay with no real profile write.
+          </Text>
+          <Flex className="gap-2 items-center">
+            <input
+              className="flex-1 px-2 py-1 rounded border border-neutral-600 bg-transparent text-sm"
+              placeholder="e.g. qatest"
+              value={selfName}
+              onChange={(e) => setSelfName(e.target.value)}
+              aria-label="Fake primary QNS username for yourself"
+            />
+            <Button
+              size="sm"
+              onClick={handleApplySelf}
+              disabled={!ownAddress || !selfName.trim()}
+            >
+              Set
+            </Button>
+            <Button size="sm" onClick={handleClearSelf} disabled={!ownAddress}>
+              Clear
+            </Button>
+          </Flex>
+        </div>
+
+        <Flex direction="column" className="gap-3 mt-4 pt-4 border-t border-neutral-700">
           <Toggle
-            label="Give everyone a .q"
-            hint="Stable qXXXX name per address. The fast way to find every surface that renders a name. Never overwrites a real registration."
+            label="2 · Give EVERYONE a .q"
+            hint="Coverage sweep, not a realistic state. Only needed for surfaces that render somebody else — a DM partner's name, another person's mention pill. Never overwrites a real registration."
             value={state.giveEveryoneAName}
             disabled={!state.enabled}
             onChange={(v) => update({ giveEveryoneAName: v })}
           />
           <Toggle
-            label="All profiles private"
-            hint="Every public-profile fetch returns nothing — what others see when a profile is not public. Overrides the switch above."
+            label="3 · All profiles private"
+            hint="Every public-profile fetch returns nothing. For YOUR OWN profile the real public/private toggle in settings is the better test — it is end-to-end. This only simulates OTHER people being private. Overrides switch 2."
             value={state.allProfilesPrivate}
             disabled={!state.enabled}
             onChange={(v) => update({ allProfilesPrivate: v })}
@@ -212,6 +293,10 @@ export const FakeQns: React.FC = () => {
                 : 'enabled, no blanket rule'
             : 'off'}
           {entries.length > 0 ? ` · ${entries.length} pinned` : ''}
+          {ownAddress &&
+          state.entries[ownAddress.toLowerCase()]?.primaryUsername
+            ? ` · me: ${state.entries[ownAddress.toLowerCase()]!.primaryUsername}.q`
+            : ' · me: none'}
         </Text>
         <Button size="sm" onClick={handleReset}>
           Reset
@@ -223,6 +308,16 @@ export const FakeQns: React.FC = () => {
         already-resolved member map. Keep these switches matched with mobile&apos;s
         panel when comparing the two clients, or you are comparing different
         inputs.
+      </Text>
+      {/* Desktop's own limitation, stated where it will be read. It differs
+          from mobile's — mobile's member list cannot show a .q at all, this one
+          can but only for people who have posted. Writing mobile's caveat here
+          would send someone hunting the wrong thing. */}
+      <Text size="xs" className="text-yellow-500">
+        The member sidebar only shows a .q for members who have posted in the
+        open channel — it cheap-merges from the message senders and never
+        fetches the full roster. A silent lurker showing no .q there is expected,
+        not a regression.
       </Text>
     </Flex>
   );
