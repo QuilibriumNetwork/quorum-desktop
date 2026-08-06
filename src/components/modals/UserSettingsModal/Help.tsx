@@ -1,6 +1,9 @@
 import * as React from 'react';
-import { Button, Icon, Spacer } from '../../primitives';
+import { Button, Callout, Icon, Spacer } from '../../primitives';
 import { t } from '@lingui/core/macro';
+import { useMessageDB } from '../../context/useMessageDB';
+import { useConfirmation } from '../../../hooks/ui/useConfirmation';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface HelpProps {
   isRestoring?: boolean;
@@ -11,6 +14,41 @@ const Help: React.FunctionComponent<HelpProps> = ({
   isRestoring = false,
   onRestoreMissingSpaces,
 }) => {
+  // Global "Fix DM Encryption" — resets the ratchet for every DM at once,
+  // matching mobile's account-level action. The per-conversation equivalent
+  // lives in ConversationSettingsModal; this is the same operation fanned out,
+  // for when the user cannot tell which conversation is stuck.
+  const { resetAllDirectMessageSessions } = useMessageDB();
+  const [resetSuccess, setResetSuccess] = React.useState(false);
+  const [resetError, setResetError] = React.useState<string | null>(null);
+
+  const resetConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: {
+      title: t`Fix DM Encryption`,
+      message: t`This will reset the encryption sessions for all your DM conversations. Your next message to each contact will establish a fresh secure connection.\n\nUse this if messages are failing to send or decrypt.`,
+      confirmText: t`Reset All`,
+      cancelText: t`Cancel`,
+      variant: 'warning',
+    },
+  });
+
+  const handleResetAllClick = (e: React.MouseEvent) => {
+    if (resetConfirmation.isConfirming) return;
+    setResetSuccess(false);
+    setResetError(null);
+    resetConfirmation.handleClick(e, async () => {
+      try {
+        await resetAllDirectMessageSessions();
+        setResetSuccess(true);
+      } catch (error: any) {
+        console.error('Failed to reset DM encryption sessions:', error);
+        setResetError(error?.message || t`Failed to reset encryption sessions`);
+      }
+    });
+  };
+
   return (
     <>
       <div className="modal-content-header">
@@ -65,6 +103,53 @@ const Help: React.FunctionComponent<HelpProps> = ({
           </div>
         </div>
 
+        {/* Fix DM Encryption Section */}
+        <Spacer size="md" direction="vertical" borderTop={true} />
+        <div className="text-subtitle-2 mb-2">{t`Fix DM Encryption`}</div>
+        <div className="modal-content-info">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-start justify-between gap-3 p-3 rounded-md border">
+              <div className="text-sm" style={{ lineHeight: 1.3 }}>
+                {t`Reset your DM encryption sessions if messages are failing to send or decrypt.`}
+              </div>
+              <Button
+                type="secondary"
+                size="small"
+                className="whitespace-nowrap"
+                onClick={handleResetAllClick}
+                disabled={resetConfirmation.isConfirming}
+              >
+                {resetConfirmation.isConfirming ? t`Resetting...` : t`Reset`}
+              </Button>
+            </div>
+            {resetSuccess && (
+              <Callout
+                variant="success"
+                size="sm"
+                dismissible
+                onClose={() => setResetSuccess(false)}
+              >
+                <div>
+                  <div className="font-medium">{t`Encryption Reset`}</div>
+                  <div className="text-sm mt-1">
+                    {t`Your next message to each contact will establish a fresh secure connection.`}
+                  </div>
+                </div>
+              </Callout>
+            )}
+            {resetError && (
+              <Callout
+                variant="error"
+                size="sm"
+                dismissible
+                onClose={() => setResetError(null)}
+              >
+                <div className="text-sm">{resetError}</div>
+              </Callout>
+            )}
+          </div>
+        </div>
+
         {/* Data Recovery Section */}
         {onRestoreMissingSpaces && (
           <>
@@ -91,6 +176,23 @@ const Help: React.FunctionComponent<HelpProps> = ({
           </>
         )}
       </div>
+
+      {/* Confirmation for the global DM encryption reset */}
+      {resetConfirmation.modalConfig && (
+        <ConfirmationModal
+          visible={resetConfirmation.showModal}
+          title={resetConfirmation.modalConfig.title}
+          message={resetConfirmation.modalConfig.message}
+          confirmText={resetConfirmation.modalConfig.confirmText}
+          cancelText={resetConfirmation.modalConfig.cancelText}
+          variant={resetConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={resetConfirmation.isConfirming}
+          busyMessage={t`Resetting...`}
+          onConfirm={resetConfirmation.modalConfig.onConfirm}
+          onCancel={resetConfirmation.modalConfig.onCancel}
+        />
+      )}
     </>
   );
 };

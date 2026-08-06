@@ -148,7 +148,101 @@ describe('EncryptionService - Unit Tests', () => {
     });
   });
 
-  describe('2. ensureKeyForSpace() - Key Generation/Retrieval', () => {
+  describe('2. resetAllDirectMessageSessions() - Global "Fix DM Encryption"', () => {
+    it('should reset every DM conversation while preserving inbox routing', async () => {
+      mockDeps.messageDB.getConversations = vi.fn().mockResolvedValue({
+        conversations: [
+          { conversationId: 'peer-a/inbox-a' },
+          { conversationId: 'peer-b/inbox-b' },
+          { conversationId: 'peer-c/inbox-c' },
+        ],
+        nextCursor: null,
+      });
+      mockDeps.messageDB.getEncryptionStates = vi
+        .fn()
+        .mockResolvedValue([{ state: 'ratchet', inboxId: 'inbox-1' }]);
+
+      const count = await encryptionService.resetAllDirectMessageSessions();
+
+      // ✅ VERIFY: only DM conversations are swept — group ratchets are not
+      // part of this action and resetting them would be silent collateral.
+      expect(mockDeps.messageDB.getConversations).toHaveBeenCalledWith(
+        expect.objectContaining({ type: 'direct' })
+      );
+
+      // ✅ VERIFY: every conversation was reset, and the caller learns how many
+      expect(count).toBe(3);
+      for (const conversationId of ['peer-a/inbox-a', 'peer-b/inbox-b', 'peer-c/inbox-c']) {
+        expect(mockDeps.messageDB.getEncryptionStates).toHaveBeenCalledWith({ conversationId });
+        expect(mockDeps.messageDB.deleteLatestState).toHaveBeenCalledWith(conversationId);
+      }
+      expect(mockDeps.messageDB.deleteEncryptionState).toHaveBeenCalledTimes(3);
+
+      // ✅ VERIFY: inbox routing survives the GLOBAL reset too.
+      // This is the one behaviour that separates this from mobile's
+      // `encryptionStateStorage.clearAll()`. Dropping the mappings here would
+      // break every conversation at once in the direction the user cannot
+      // see: peers keep writing to inboxes we no longer recognise (RX-NOSTATE)
+      // while our own sends still land, so the app looks healthy and messages
+      // silently vanish. Measured live on desktop 2026-07-25.
+      expect(mockDeps.messageDB.deleteInboxMapping).not.toHaveBeenCalled();
+    });
+
+    it('should sweep conversations across every page, not just the first', async () => {
+      // A user with more DMs than the page size must still get all of them
+      // reset; stopping at page one would leave the stuck conversation broken
+      // and the action would appear to have done nothing.
+      mockDeps.messageDB.getConversations = vi
+        .fn()
+        .mockResolvedValueOnce({
+          conversations: [{ conversationId: 'peer-a/inbox-a' }],
+          nextCursor: 1000,
+        })
+        .mockResolvedValueOnce({
+          conversations: [{ conversationId: 'peer-b/inbox-b' }],
+          nextCursor: null,
+        });
+
+      const count = await encryptionService.resetAllDirectMessageSessions();
+
+      expect(count).toBe(2);
+      expect(mockDeps.messageDB.getConversations).toHaveBeenCalledTimes(2);
+      expect(mockDeps.messageDB.getConversations).toHaveBeenLastCalledWith(
+        expect.objectContaining({ cursor: 1000 })
+      );
+      expect(mockDeps.messageDB.deleteLatestState).toHaveBeenCalledWith('peer-b/inbox-b');
+    });
+
+    it('should terminate when a page repeats instead of advancing', async () => {
+      // Guards the cursor that never advances (exactly-page-size case). Without
+      // the no-progress break this spins forever and hangs the settings modal.
+      mockDeps.messageDB.getConversations = vi.fn().mockResolvedValue({
+        conversations: [{ conversationId: 'peer-a/inbox-a' }],
+        nextCursor: 1000,
+      });
+
+      const count = await encryptionService.resetAllDirectMessageSessions();
+
+      expect(count).toBe(1);
+      expect(mockDeps.messageDB.getConversations).toHaveBeenCalledTimes(2);
+      // ✅ VERIFY: the repeated conversation is reset once, not twice
+      expect(mockDeps.messageDB.deleteLatestState).toHaveBeenCalledTimes(1);
+    });
+
+    it('should no-op cleanly when there are no DM conversations', async () => {
+      mockDeps.messageDB.getConversations = vi
+        .fn()
+        .mockResolvedValue({ conversations: [], nextCursor: null });
+
+      const count = await encryptionService.resetAllDirectMessageSessions();
+
+      expect(count).toBe(0);
+      expect(mockDeps.messageDB.getEncryptionStates).not.toHaveBeenCalled();
+      expect(mockDeps.messageDB.deleteEncryptionState).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('3. ensureKeyForSpace() - Key Generation/Retrieval', () => {
     it('should return existing spaceId if key already exists', async () => {
       const userAddress = 'user-123';
       const space = {

@@ -82,6 +82,56 @@ export class EncryptionService {
   }
 
   /**
+   * Resets the Double Ratchet for EVERY direct conversation — the global
+   * "Fix DM Encryption" action, mirroring mobile's entry point in ProfileModal.
+   *
+   * Deliberately a fan-out over `deleteEncryptionStates` rather than a wholesale
+   * wipe of the encryption store. Mobile's global reset calls
+   * `encryptionStateStorage.clearAll()`, which also drops conversation inbox
+   * keypairs and inbox mappings. On desktop that is precisely the failure
+   * documented on `deleteEncryptionStates` above and measured live 2026-07-25:
+   * the peer keeps writing to the old inbox with a still-confirmed session,
+   * every frame lands as `RX-NOSTATE`, and the conversation goes permanently
+   * one-way with no recovery path. Routing each conversation through the
+   * hardened per-conversation reset keeps the mappings intact, so the promise
+   * this action makes to the user — the next message to each contact
+   * establishes a fresh secure connection — holds in BOTH directions.
+   *
+   * Returns the number of conversations reset, for the success message.
+   */
+  async resetAllDirectMessageSessions(): Promise<number> {
+    // Sweep every DM conversation, paginating the same way getAllDMData does
+    // for backup export. Collected into a Set first so the reset loop cannot
+    // double-visit a conversation returned on two pages.
+    const conversationIds = new Set<string>();
+    let cursor: number | undefined;
+    for (;;) {
+      const page = await this.messageDB.getConversations({
+        type: 'direct',
+        cursor,
+        limit: 1000,
+      });
+      const sizeBefore = conversationIds.size;
+      for (const conversation of page.conversations) {
+        conversationIds.add(conversation.conversationId);
+      }
+      // Stop when the store is exhausted, or when a page contributed nothing
+      // new — the latter guards a cursor that fails to advance, which would
+      // otherwise spin forever for a user sitting exactly on the page size.
+      if (!page.nextCursor || conversationIds.size === sizeBefore) break;
+      cursor = page.nextCursor;
+    }
+
+    for (const conversationId of conversationIds) {
+      // deleteEncryptionStates swallows its own failures, so one unreadable
+      // record cannot abort the sweep and leave the rest untouched.
+      await this.deleteEncryptionStates({ conversationId });
+    }
+
+    return conversationIds.size;
+  }
+
+  /**
    * Ensures space has valid keys. If missing, generates new keys and migrates all data to new address.
    */
   async ensureKeyForSpace(user_address: string, space: Space, queryClient: QueryClient) {
