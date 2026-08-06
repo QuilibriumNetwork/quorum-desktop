@@ -13,6 +13,7 @@ import {
   Icon,
   Tooltip,
   Spacer,
+  Callout,
 } from '../primitives';
 import { useConfirmation } from '../../hooks/ui/useConfirmation';
 import ConfirmationModal from './ConfirmationModal';
@@ -73,18 +74,19 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   });
 
   // Confirmation hook for encryption session reset (parity with mobile's
-  // DMSettingsSheet "Reset Session"). Local-only: the next outgoing message
+  // DMSettingsSheet "Fix Encryption"). Local-only: the next outgoing message
   // establishes a fresh session via a new init envelope, and the counterparty
   // replaces its old session for this device when that envelope arrives.
   const counterpartyName =
     conversation?.conversation?.displayName ?? t`this contact`;
+  const [resetSuccess, setResetSuccess] = React.useState(false);
   const resetConfirmation = useConfirmation({
     type: 'modal',
     enableShiftBypass: false,
     modalConfig: conversation
       ? {
-          title: t`Reset Encryption Session`,
-          message: t`This will reset the encryption session with ${counterpartyName}. The next message will establish a fresh secure connection.\n\nUse this if messages are failing to send or decrypt. Message history is not affected.`,
+          title: t`Fix Encryption`,
+          message: t`This will reset the encryption session with ${counterpartyName}. The next message will establish a fresh secure connection.\n\nUse this if messages are failing to send or decrypt.`,
           preview: undefined,
           confirmText: t`Reset Session`,
           cancelText: t`Cancel`,
@@ -224,11 +226,14 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     (e: React.MouseEvent) => {
       const performReset = async () => {
         await deleteEncryptionStates({ conversationId });
-        onClose();
+        // Stay open and confirm inline rather than closing. The reset leaves no
+        // visible trace anywhere in the app, so closing the modal on success is
+        // indistinguishable from the click having done nothing.
+        setResetSuccess(true);
       };
       resetConfirmation.handleClick(e, performReset);
     },
-    [resetConfirmation, deleteEncryptionStates, conversationId, onClose]
+    [resetConfirmation, deleteEncryptionStates, conversationId]
   );
 
   // Reset confirmations when modal closes
@@ -236,6 +241,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     if (!visible) {
       deleteConfirmation.reset();
       resetConfirmation.reset();
+      setResetSuccess(false);
     }
   }, [visible, deleteConfirmation, resetConfirmation]);
 
@@ -407,8 +413,10 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
         <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
 
-        {/* Reset Session — quiet, understated utility link (neutral) */}
-        <Flex justify="center" align="center" className="mb-3">
+        {/* Fix Encryption — quiet, understated utility link (neutral). The
+            sublabel carries what used to be a tooltip: it is the one row here
+            a confused user is meant to find, so it should not need a hover. */}
+        <Flex direction="column" align="center" className="mb-3">
           <Button
             type="unstyled"
             className="text-subtle hover:text-main cursor-pointer"
@@ -418,18 +426,29 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           >
             <Flex align="center" gap="xs">
               <Icon name="refresh" size="sm" />
-              {t`Reset Encryption Session`}
+              {t`Fix Encryption`}
             </Flex>
           </Button>
-          <Tooltip
-            id="conv-reset-session-tooltip"
-            content={t`Reset the encryption session if messages fail to send or decrypt. The next message will establish a fresh secure connection.`}
-            maxWidth={260}
-            className="!text-left !max-w-[260px]"
-            place="top"
-          >
-            <Icon name="info-circle" size="sm" className="ml-2 text-subtle" />
-          </Tooltip>
+          <div className="text-sm text-subtle">
+            {t`Reset if messages fail to send or decrypt`}
+          </div>
+          {resetSuccess && (
+            <div className="mt-3 w-full">
+              <Callout
+                variant="success"
+                size="sm"
+                dismissible
+                onClose={() => setResetSuccess(false)}
+              >
+                <div>
+                  <div className="font-medium">{t`Encryption Reset`}</div>
+                  <div className="text-sm mt-1">
+                    {t`Your next message will establish a fresh secure connection.`}
+                  </div>
+                </div>
+              </Callout>
+            </div>
+          )}
         </Flex>
 
         {/* Delete — destructive action, kept isolated as its own centered link */}

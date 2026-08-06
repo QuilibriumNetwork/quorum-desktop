@@ -86,6 +86,7 @@ type MessageDBContextValue = {
     }>
   >;
   deleteEncryptionStates: (args: { conversationId: string }) => Promise<void>;
+  resetAllDirectMessageSessions: () => Promise<number>;
   submitMessage: (
     address: string,
     pendingMessage: string | object,
@@ -775,6 +776,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     },
     [encryptionService]
   );
+
+  // Global "Fix DM Encryption" — resets the ratchet for every DM at once.
+  const resetAllDirectMessageSessions = useCallback(async () => {
+    return encryptionService.resetAllDirectMessageSessions();
+  }, [encryptionService]);
 
   // SyncService (must be before MessageService - provides sync dependencies)
   const syncService = useMemo(() => {
@@ -1622,6 +1628,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         keyset,
         setKeyset,
         deleteEncryptionStates,
+        resetAllDirectMessageSessions,
         submitMessage,
         createSpace,
         updateSpace,
@@ -1663,6 +1670,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   keyset: undefined as never,
   setKeyset: (_) => {},
   deleteEncryptionStates: () => undefined as never,
+  resetAllDirectMessageSessions: () => undefined as never,
   submitMessage: () => undefined as never,
   createSpace: () => undefined as never,
   updateSpace: () => undefined as never,
