@@ -437,7 +437,7 @@ This is a **pre-existing limitation from `develop` branch**, not something we in
 
 | User | User Address | Device Inbox |
 |------|--------------|--------------|
-| **Gattopardo** | `QmQuCGpEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imXST1` | `QmXJ6SMvGkRsBdLQa88hbLhRKkGV4LxN94jPBdiSXj2XB5` |
+| **Gattopardo** | `QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz` | `QmXJ6SMvGkRsBdLQa88hbLhRKkGV4LxN94jPBdiSXj2XB5` |
 | **Jennifer** | `QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n` | `QmV6527S2QdWHieonTHUHV5wQS5H9weo9S33HjdJ2CB3a3` |
 
 ### Summary

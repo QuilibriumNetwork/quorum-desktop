@@ -36,7 +36,7 @@ Chronological history of features ported from `quorum-mobile` to `quorum-desktop
 
 | Piece | State |
 |---|---|
-| **DM search by `@username`** | ✅ Done + verified live. `useResolveQnsName` → shared `resolveName` (`GET /resolve/:name`) → `deriveAddress` (ed448 pubkey → `Qm…`). `@` is optional (auto-detect: `Qm`-prefix = address, else username). Verified `lamat` → `QmVYRWmquW98yaymeRv7aLn6bqRYr9PAtWcG87Kj25YvPY` (real account). |
+| **DM search by `@username`** | ✅ Done + verified live. `useResolveQnsName` → shared `resolveName` (`GET /resolve/:name`) → `deriveAddress` (ed448 pubkey → `Qm…`). `@` is optional (auto-detect: `Qm`-prefix = address, else username). Verified `lamat` → `QmUserUserEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz` (real account). |
 | **`.q`-suffix validation** | ✅ Done. Display-name inputs (global `UserSettingsModal` + per-space `SpaceSettingsModal`) reject names ending in `.q` (normalized: trim + lowercase + confusable-dot fold). Mid-name dots (`jane.doe`) stay valid. New shared `hasReservedQnsSuffix` + `'qns-suffix'` reserved type + `displayName.reservedQnsSuffix` errorKey. |
 | **Profile `.q` display** | ⚠️ Built as **Model A** (secondary handle in profile card). Render confirmed via temp-injection; dormant with real data (see mobile bugs). |
 

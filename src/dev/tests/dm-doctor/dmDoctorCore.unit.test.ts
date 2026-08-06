@@ -594,7 +594,7 @@ describe('formatFullReport', () => {
   });
 
   it('emits the full own address, never truncated', () => {
-    const longAddress = 'QmQuCGpEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imXST1';
+    const longAddress = 'QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz';
     const report = formatFullReport({
       generatedAtIso: '2026-07-29T19:00:00.000Z',
       ownAddress: longAddress,

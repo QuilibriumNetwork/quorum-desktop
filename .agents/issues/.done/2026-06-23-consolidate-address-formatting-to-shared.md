@@ -17,7 +17,7 @@ created: 2026-06-23
 
 ## Problem
 
-Address truncation (`QmQuCGpEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imXST1` → a short display label) is implemented **independently and inconsistently** across all three repos. The same address renders differently between desktop and mobile, and even between screens *within* each app.
+Address truncation (`QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz` → a short display label) is implemented **independently and inconsistently** across all three repos. The same address renders differently between desktop and mobile, and even between screens *within* each app.
 
 This matters because the truncated string is used for **identity verification** (confirming you're messaging the right person). Two concrete consequences:
 

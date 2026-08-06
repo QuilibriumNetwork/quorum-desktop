@@ -33,7 +33,7 @@ Debug logging confirmed the mismatch:
 
 ```
 [ThreadSettingsModal] hasOtherReplies=true {
-  currentUserAddress: 'QmQuCGpEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imXST1',
+  currentUserAddress: 'QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz',
   otherSenders: [
     { id: '98a2e5...', sender: 'QmYxPTq82YeAYpiv4XEehrT6gSFkwVwuA4xWMQydAKK1ia', type: 'post' },
     { id: 'a4e280...', sender: 'QmYxPTq82YeAYpiv4XEehrT6gSFkwVwuA4xWMQydAKK1ia', type: 'post' }

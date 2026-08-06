@@ -29,7 +29,7 @@ created: 2026-06-10
 | Stage | What | Status |
 |---|---|---|
 | **1** | Shared: `deriveAddress` (via `multiformats`, not mobile's deps), minimal `resolveName` (defines a local `QnsNameRecord` — shared had no `NameRecord`), `resolveDisplayName` helper, `.q`-suffix validation. | ✅ done, merged (#35/#36), 261 shared tests pass |
-| **2** | DM search by `@username` (`useResolveQnsName` + `useDirectMessageCreation` + modal). **`@` is optional** (auto-detect: starts-with-`Qm` = address, else username). | ✅ done + **verified live** (`lamat` → `QmVYRWmquW98yaymeRv7aLn6bqRYr9PAtWcG87Kj25YvPY`, matches LaMat's real address). Model-independent. |
+| **2** | DM search by `@username` (`useResolveQnsName` + `useDirectMessageCreation` + modal). **`@` is optional** (auto-detect: starts-with-`Qm` = address, else username). | ✅ done + **verified live** (`lamat` → `QmUserUserEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz`, matches LaMat's real address). Model-independent. |
 | **3** | Profile `.q` display + `.q`-suffix validation in both settings inputs. | ⚠️ **built as Model A (secondary handle), BLOCKED on lead-dev Model A-vs-B decision** — see below. Validation + plumbing are keep-regardless; only the *render* is model-dependent. |
 | **4** | Mentions by QNS name (autocomplete + pill). | ❌ NOT started. Blocked on the same A-vs-B decision (mentions show a name; which name depends on the model). |
 

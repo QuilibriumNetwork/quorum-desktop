@@ -115,7 +115,7 @@ side still uses the doctor (receiving desktops are dev builds).
 
 ## §3. The test estate (as of 2026-07-29)
 
-- **Account A** — address `QmQuCGpEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imXST1`.
+- **Account A** — address `QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz`.
   Primary phone (dev build) + desktop A (dev build, browser profile).
 - **Account B** — address `QmYVtoS6E7T4TL4p7Ve1KCVoMoBpz4QEajmJLCoiLjLjDd`.
   Preview phone (`….preview` app id, release build) + desktop B (dev build).
