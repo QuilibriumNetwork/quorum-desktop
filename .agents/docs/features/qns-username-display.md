@@ -4,7 +4,7 @@ title: "QNS Username Display (name resolution)"
 status: done
 ai_generated: true
 created: 2026-06-11
-updated: 2026-06-11
+updated: 2026-08-06
 related_docs: ["input-validation-reference.md"]
 related_tasks: [".agents/issues/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md", ".agents/issues/port-from-mobile/.done/2026-06-10-qns-username-display-design.md"]
 ---
@@ -86,9 +86,41 @@ Fetch scopes (deliberate, perf-driven):
 - **DMs**: `useUserPublicProfile(address)` per conversation partner; the DM list backfill (`useConversationsWithProfileBackfill`) fetches each partner's profile (small N) and returns `ConversationWithQns`.
 - **Profile card** (`UserProfile.tsx`): uses the member object's fields when present, otherwise does one on-demand profile fetch while open.
 
-### Local smoke-testing (no real data)
+### Local smoke-testing (no real data) — use the dev page, not the old recipe
 
-Until mobile publishes `primary_username`, no real `.q` exists. To eyeball rendering locally, temporarily synthesize a fake `primary_username` in the public-profile `queryFn`. **Apply it in ALL hooks that write `publicProfileQueryKey`** — `useUserPublicProfile`, `useMembersWithPublicProfileFallback`, and `useConversationsWithProfileBackfill` — because they share one cache key: if any non-injected one resolves first, it caches a real `null` and the injected ones never run (this caused a confusing "callout never shows" during development). To exercise the custom-name-wins rule, also inject a stable `globalDisplayName` (e.g. snapshot the first-seen roster name) so changing a per-space name makes it differ. Use `yarn dev:clean` to clear the cached `null` between runs. Remove all injections before commit.
+A `.q` costs real money, so no test account owns one and every QNS surface is
+otherwise unreachable. **`/dev/fake-qns`** synthesizes one (shipped 2026-08-06,
+PR #315). Read-side overlay: nothing is written, signed or published.
+
+- **Give myself a .q** — start here, it covers most of the job. Nearly every
+  surface that renders a name can render you: your messages, a reply to your own
+  message, a mention you typed at yourself, your reactions, the member sidebar,
+  and the notification body when someone mentions you (the name resolved there
+  is the mentioned person, not the sender). Self needs no publish path: desktop
+  reads its own primary username from `useUserPublicProfile(ownAddress)`, the
+  same fetch the overlay intercepts.
+- **Give everyone a .q** — coverage sweep for what is left, a DM partner's name
+  and a blocked user. Never overwrites a real registration.
+- **All profiles private** — simulates other people being private. For your own
+  profile the real public/private toggle is the better test; it goes end-to-end.
+- **Pin one address** — the control arm. With everyone named there is nothing to
+  compare against, so pin one member to a known name, or to no name at all, and
+  the difference tells you which tier actually won.
+
+The overlay injects inside `QuorumApiClient.getPublicProfile`, and the core is
+kept byte-identical to mobile's `services/dev/fakeQns.ts` so the two clients can
+be compared. Both suites assert the same hard-coded name derivation, so the pair
+cannot drift unnoticed.
+
+> **The old recipe is obsolete — do not follow it.** It said to temporarily
+> synthesize a `primary_username` in the public-profile `queryFn`, applying it in
+> ALL hooks that write `publicProfileQueryKey` (`useUserPublicProfile`,
+> `useMembersWithPublicProfileFallback`, `useConversationsWithProfileBackfill`)
+> because they share one cache key: if a non-injected one resolved first it
+> cached a real `null` and the injected ones never ran, which cost a confusing
+> "callout never shows" debugging session. The single API-client seam makes that
+> failure unreachable — there is no second path to a public profile, so there is
+> no hook to forget and nothing to revert before committing.
 
 ### Trust / validation
 
@@ -117,4 +149,4 @@ What the public/private toggle does NOT do: gate reachability. The QNS resolver 
 - Validation rules: `.agents/docs/features/input-validation-reference.md`
 
 ---
-*Last updated: 2026-06-11*
+*Last updated: 2026-08-06*
