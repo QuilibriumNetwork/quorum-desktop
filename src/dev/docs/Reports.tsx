@@ -71,7 +71,7 @@ export const Reports: React.FC = () => {
         {loading && (
           <div className="text-center py-12">
             <Icon
-              name="loader"
+              name="spinner"
               size="2xl"
               className="text-accent mx-auto mb-4"
             />
@@ -85,7 +85,7 @@ export const Reports: React.FC = () => {
         {error && (
           <div className="bg-danger/10 border border-danger/30 rounded-lg p-6 mb-8">
             <Flex gap="sm" align="center" className="mb-2">
-              <Icon name="alert-triangle" size="md" className="text-danger" />
+              <Icon name="warning" size="md" className="text-danger" />
               <Text variant="strong" size="lg" className="text-danger">
                 Error Loading Reports
               </Text>

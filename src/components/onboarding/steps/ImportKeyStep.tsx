@@ -182,7 +182,7 @@ export const ImportKeyStep: React.FC<StepProps> = ({ flow }) => {
       {(flow.importError || dropError) && (
         <div className="mb-4 max-w-xs">
           <div className="flex items-center gap-2 mb-2">
-            <Icon name="alert-circle" className="text-danger shrink-0" />
+            <Icon name="error" className="text-danger shrink-0" />
             <p className="text-sm text-danger">{t`Could not import key`}</p>
           </div>
           <p className="text-xs onboarding-label-muted">{flow.importError ?? dropError}</p>
