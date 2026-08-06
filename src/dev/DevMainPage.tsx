@@ -5,11 +5,17 @@ import {
   Button,
   Spacer,
   Icon,
+  type IconName,
 } from '../components/primitives';
 import { DevNavMenu } from './DevNavMenu';
 
 export const DevMainPage: React.FC = () => {
-  const devTools = [
+  const devTools: Array<{
+    name: string;
+    icon: IconName;
+    description: string;
+    path: string;
+  }> = [
     {
       name: 'Documentation',
       icon: 'book',

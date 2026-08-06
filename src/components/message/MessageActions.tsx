@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { parse as parseEmoji } from '@twemoji/parser';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
-import { Tooltip, Icon } from '../primitives';
+import { Tooltip, Icon, type IconName } from '../primitives';
 import { useQuickReactions, useFrequentEmojis } from '../../hooks/business/messages';
 import { useShiftKey } from '../../hooks/ui/useShiftKey';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
@@ -119,7 +119,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   // handler is provided and the corresponding capability is granted.
   const shiftActions: Array<{
     id: ActionId;
-    icon: string;
+    icon: IconName;
     onClick: (e: React.MouseEvent) => void;
     danger?: boolean;
   }> = [];

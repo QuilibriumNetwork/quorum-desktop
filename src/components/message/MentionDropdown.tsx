@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Icon } from '../primitives';
+import { Icon, type IconName } from '../primitives';
 import { FloatingPopover, rectAnchor, type VirtualElement } from '../ui';
 import { getRoleColorHex, formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
@@ -184,7 +184,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
                   : undefined
               }
             >
-              <Icon name={option.data.icon || 'hashtag'} size="sm" />
+              <Icon name={(option.data.icon as IconName) || 'hashtag'} size="sm" />
             </div>
             <div className="mention-dropdown__info">
               <span className="mention-dropdown__name">

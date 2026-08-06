@@ -1,9 +1,9 @@
 import React from 'react';
-import { Flex, Icon } from '../components/primitives';
+import { Flex, Icon, type IconName } from '../components/primitives';
 
 interface DevNavItem {
   name: string;
-  icon: string;
+  icon: IconName;
   path: string;
 }
 
