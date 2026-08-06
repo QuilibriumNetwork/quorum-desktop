@@ -289,6 +289,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [`.qmbak` backup cannot restore DM session continuity](issues/.open/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
+- 🐛 [A local message-read failure is presented as a server outage, or silently redirects the user home](issues/.open/2026-08-06-a-message-read-failure-is-presented-as-a-server-outage-or-a-redirect-home.md)
+- 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -392,8 +394,10 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A typing frame returns before the ack](issues/.done/2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md)
 - 🐛 [A fallback string is fed INTO the resolver, so the resolver returns it](issues/.done/2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver.md)
 - 🐛 [Global notifications panel crashes on any mention it cannot resolve](issues/.done/2026-08-04-global-notifications-panel-crashes-on-unresolvable-mention.md)
+- 🐛 [A channel you have never opened loads exactly one message — its oldest — and reads as empty](issues/.done/2026-08-06-channel-loads-one-old-message-and-reads-as-empty.md)
 - 🐛 [All emoji images break in a git worktree](issues/.done/2026-08-06-emoji-images-break-in-git-worktrees.md)
 - 🐛 [Emoji panel inserts the emoji at the start of the message](issues/.done/2026-08-06-emoji-panel-inserts-at-start-of-message.md)
+- 🐛 [Messages arriving over sync never reach an open channel, so it stays completely empty until you reload](issues/.done/2026-08-06-synced-messages-never-reach-an-open-channel-so-it-stays-empty.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -756,4 +760,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-06 10:43:18
+**Last Updated**: 2026-08-06 12:58:51
