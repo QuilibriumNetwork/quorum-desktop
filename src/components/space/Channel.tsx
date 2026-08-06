@@ -1887,16 +1887,6 @@ const Channel: React.FC<ChannelProps> = ({
         </div>
       </div>
 
-      <Tooltip
-        id="toggle-signing-tooltip"
-        content={
-          skipSigning
-            ? 'This message will NOT be signed'
-            : 'This message will be signed'
-        }
-        place="top"
-      />
-
       {/* Emoji & Stickers panel - fixed position, offset by sidebar width */}
       {composer.showStickers && (
         <>
