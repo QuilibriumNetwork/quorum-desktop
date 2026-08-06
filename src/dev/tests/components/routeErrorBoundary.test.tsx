@@ -224,20 +224,32 @@ describe('dev error-states preview page', () => {
     await user.click(screen.getAllByRole('button', { name: 'Try again' })[0]);
 
     expect(
-      await screen.findByText('Recovered — the view rendered')
+      await screen.findByText('Recovered, the view rendered')
     ).toBeInTheDocument();
   });
 
-  it('can show the app-root crash screen', async () => {
+  it('shows the app-root crash screen inline, without a click', () => {
+    renderPage();
+
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: 'Reload Quorum' })
+    ).toBeInTheDocument();
+  });
+
+  it('can blow the crash screen up to full screen', async () => {
     const user = userEvent.setup();
     renderPage();
 
-    await user.click(
-      screen.getByRole('button', { name: 'Show app-root crash screen' })
-    );
+    await user.click(screen.getByRole('button', { name: 'View full screen' }));
 
+    expect(await screen.findByText('Something went wrong')).toBeInTheDocument();
     expect(
-      await screen.findByText('Something went wrong')
+      screen.getByRole('button', { name: 'Back to error states' })
     ).toBeInTheDocument();
+    // The route panels are gone: this is the whole-app takeover, as in App.tsx.
+    expect(
+      screen.queryByText("This channel couldn't be loaded")
+    ).not.toBeInTheDocument();
   });
 });

@@ -15,8 +15,11 @@ import { Logo } from './Logo';
  */
 export const AppErrorScreen = () => {
   return (
+    // flex-1, not min-h-screen: the App.tsx fallback wrapper already supplies
+    // `flex flex-col min-h-screen`, so this fills the viewport there while
+    // staying containable in the /dev/error-states preview.
     <div
-      className="flex flex-col min-h-screen items-center justify-center px-4 relative"
+      className="flex flex-1 flex-col items-center justify-center px-4 py-12 relative"
       role="alert"
     >
       <Logo className="max-w-[160px] text-muted absolute top-4 left-4" />

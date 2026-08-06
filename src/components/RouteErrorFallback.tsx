@@ -26,9 +26,13 @@ const titleFor = (scope: RouteErrorScope) => {
 };
 
 /**
- * Route-scoped error state. Renders inside `Layout`, so the sidebars and the
- * space list stay usable and the failure stays visibly attached to the view
- * that actually failed.
+ * Route-scoped error state, on the same template as the 404 and maintenance
+ * screens: circular icon badge, title, description, stacked actions.
+ *
+ * Fills its container rather than the viewport. It renders inside `Layout`, so
+ * the sidebars and the space list stay usable and the failure stays visibly
+ * attached to the view that actually failed. No Logo either, for the same
+ * reason: the app chrome around it is still on screen.
  *
  * This replaced a bare `<Navigate to="/" replace />` fallback, which ejected
  * the user to the root with no explanation — indistinguishable from the app
@@ -37,19 +41,29 @@ const titleFor = (scope: RouteErrorScope) => {
 export const RouteErrorFallback: React.FunctionComponent<
   RouteErrorFallbackProps
 > = ({ scope = 'page', onRetry }) => (
-  <div className="empty-state empty-state--fill" role="alert">
-    <Icon name="alert-triangle" size="5xl" className="empty-state__icon" />
-    <p className="empty-state__title">{titleFor(scope)}</p>
-    <p className="empty-state__description">
-      {t`Something went wrong while loading it. Trying again usually works; if it doesn't, reload the app.`}
-    </p>
-    <div className="empty-state__actions">
-      <Button type="primary" onClick={onRetry}>
-        {t`Try again`}
-      </Button>
-      <Button type="subtle-outline" onClick={() => window.location.reload()}>
-        {t`Reload app`}
-      </Button>
+  <div className="error-panel" role="alert">
+    <div className="error-panel__content">
+      <div className="flex justify-center mb-6">
+        <div className="onboarding-step-icon onboarding-step-icon--large">
+          <Icon name="alert-triangle" size="3xl" />
+        </div>
+      </div>
+      <h1 className="onboarding-title">{titleFor(scope)}</h1>
+      <p className="onboarding-description mx-auto">
+        {t`Something went wrong while loading it. Trying again usually works; if it doesn't, reload the app.`}
+      </p>
+      <div className="error-panel__actions">
+        <Button type="primary" className="onboarding-action" onClick={onRetry}>
+          {t`Try again`}
+        </Button>
+        <Button
+          type="subtle-outline"
+          className="onboarding-action"
+          onClick={() => window.location.reload()}
+        >
+          {t`Reload app`}
+        </Button>
+      </div>
     </div>
   </div>
 );
