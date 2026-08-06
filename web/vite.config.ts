@@ -3,8 +3,39 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync, existsSync } from 'fs';
 import { lingui } from '@lingui/vite-plugin';
+
+const PROJECT_ROOT = resolve(__dirname, '..');
+
+/**
+ * Locate the channels SDK wasm in a developer's local SDK checkout, if there is
+ * one.
+ *
+ * This is a DEVELOPER CONVENIENCE ONLY. The published npm package ships just
+ * `dist/` — no `src/`, no `.wasm` — so on any clean install none of these
+ * candidates exist. That is fine: `public/channelwasm_bg.wasm` is committed to
+ * this repo and `publicDir` serves and bundles it with no plugin involved. The
+ * copy target below merely lets someone hacking on the SDK locally override
+ * that committed copy with their working one.
+ *
+ * Returns null when there is no local checkout, so the target can be omitted
+ * entirely rather than left pointing at nothing — see the split-plugin note at
+ * the call site for why a target that matches nothing is dangerous.
+ */
+function findLocalSdkWasm(): string | null {
+  const candidates = [
+    // yarn-linked SDK: works from the main checkout and from a git worktree,
+    // because the link lives inside this tree's own node_modules.
+    'node_modules/@quilibrium/quilibrium-js-sdk-channels/src/wasm/channelwasm_bg.wasm',
+    // SDK checked out beside the repo. Only resolves from the main checkout —
+    // from `.worktrees/<name>/` this points somewhere that does not exist.
+    '../quilibrium-js-sdk-channels/src/wasm/channelwasm_bg.wasm',
+  ];
+  return candidates.find((c) => existsSync(resolve(PROJECT_ROOT, c))) ?? null;
+}
+
+const localSdkWasm = findLocalSdkWasm();
 
 /**
  * App version, read from package.json at config-load time and inlined into the
@@ -111,18 +142,27 @@ export default defineConfig(({ command }): UserConfig => ({
         plugins: ['@lingui/babel-plugin-lingui-macro'],
       },
     }),
+    // NOTE: keep each copy target in its OWN viteStaticCopy() instance.
+    // The plugin fails the entire target array when any one target matches no
+    // files, and in dev it only logs that failure rather than throwing. Sharing
+    // one instance means a single bad path silently takes every other asset
+    // down with it: that is exactly how a stale SDK path once left every emoji
+    // in the app rendering as a broken image, with nothing but one line in the
+    // terminal to show for it.
     viteStaticCopy({
       targets: [
         {
           src: 'node_modules/emoji-datasource-twitter/img/twitter/*',
           dest: 'twitter',
         },
-        {
-          src: '../quilibrium-js-sdk-channels/src/wasm/channelwasm_bg.wasm',
-          dest: './',
-        },
       ],
     }),
+    // Only registered when a local SDK checkout actually exists — see
+    // findLocalSdkWasm(). Otherwise the committed public/channelwasm_bg.wasm is
+    // what ships, and no target is registered that could match nothing.
+    ...(localSdkWasm
+      ? [viteStaticCopy({ targets: [{ src: localSdkWasm, dest: './' }] })]
+      : []),
   ],
   server: {
     allowedHosts: [
