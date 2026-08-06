@@ -8,7 +8,7 @@
  * is deliberately left empty — that handed the resolver an address in the
  * `displayName` slot. The resolver reads a present `displayName` as a deliberate
  * per-space name, and a per-space name outranks the QNS `.q` name, so the pill
- * showed `QmV5xWMo...` while the member's `.q` name sat unused in the very same
+ * showed `QmPeer…zzzz` while the member's `.q` name sat unused in the very same
  * object.
  *
  * The load-bearing case is `follow-global member with a .q name`. Delete the
@@ -42,7 +42,7 @@ vi.mock('@/components/primitives/Icon', () => ({
   Icon: ({ name }: { name: string }) => <span data-testid={`icon-${name}`} />,
 }));
 
-const ADDR = 'QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX';
+const ADDR = 'QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
 const reactions = [{ emojiId: 'e1', emojiName: '👍', count: 1, memberIds: [ADDR] }];
 
@@ -147,7 +147,7 @@ describe('ReactionsModal — name resolution', () => {
   it('falls back to a truncated address when the member has no name at all', () => {
     // The fallback is legitimate HERE — produced by the resolver, as output.
     renderWith({});
-    expect(screen.getByText(/QmV5xW/)).toBeInTheDocument();
+    expect(screen.getByText(/QmPeer/)).toBeInTheDocument();
   });
 
   it('does not render a member entirely absent from the members map as blank', () => {
@@ -160,6 +160,6 @@ describe('ReactionsModal — name resolution', () => {
         members={{}}
       />,
     );
-    expect(screen.getByText(/QmV5xW/)).toBeInTheDocument();
+    expect(screen.getByText(/QmPeer/)).toBeInTheDocument();
   });
 });

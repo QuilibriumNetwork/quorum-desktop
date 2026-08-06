@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 
-const ADDR = 'QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX';
+const ADDR = 'QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
 describe('resolveMemberName', () => {
   it('uses the explicit per-space override above everything else', async () => {

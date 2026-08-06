@@ -361,12 +361,12 @@ await secureChannel.SealHubEnvelope(
 #### Console Output
 
 ```
-[KICK TIMING] Starting kick operation for user: QmNTPKPGXqwjFUjfCMMrTXXtxzwqCDVtN3oTGSFEuSXX2U
-[KICK SERVICE] Starting kickUser for: QmNTPKPGXqwjFUjfCMMrTXXtxzwqCDVtN3oTGSFEuSXX2U
+[KICK TIMING] Starting kick operation for user: QmPeerBEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz
+[KICK SERVICE] Starting kickUser for: QmPeerBEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz
 [KICK SERVICE] getSpace completed in 15ms
 [KICK SERVICE] Starting enqueued outbound operation
 [KICK TIMING] kickUser() completed in 16ms
-[KICK TIMING] Kick operation completed for user: QmNTPKPGXqwjFUjfCMMrTXXtxzwqCDVtN3oTGSFEuSXX2U
+[KICK TIMING] Kick operation completed for user: QmPeerBEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz
 [KICK TIMING] Cache invalidation completed in 3ms
 [KICK TIMING] Total kick operation took 20ms
 [KICK SERVICE] Get keys (space, owner, hub) completed in 5ms

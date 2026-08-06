@@ -372,19 +372,19 @@ See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for a c
 ```
 === Sender Diagnostic ===
 1. Receiver API inboxes: 1
-   [0] QmcdZhrRKQimZzWypBrSFEBdEDRvbGR1khSLpNqjCRHkWR
+   [0] QmPeerSEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz
 
 2. Sender encryption states: 1
-   [0] tag: QmcdZhrRKQimZzWypBrSFEBdEDRvbGR1khSLpNqjCRHkWR        ← CORRECT
-       sending_inbox: QmR1BVJuHUgjeKviRna6huxEKUPWo552e8eJsPidCk936Q  ← WRONG!
-       receiving_inbox: Qmf19SKP1yWGw7Tsv5rQ4yr68KXmowVVJysdSXagBeSBqK
+   [0] tag: QmPeerSEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz        ← CORRECT
+       sending_inbox: QmPeerCEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz  ← WRONG!
+       receiving_inbox: QmPeerTEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz
 
 3. Analysis:
    tag in API? ✅ YES
-   Will send to: QmR1BVJuHUgjeKviRna6huxEKUPWo552e8eJsPidCk936Q  ← Not receiver's inbox!
+   Will send to: QmPeerCEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz  ← Not receiver's inbox!
 
 === Receiver Diagnostic ===
-My device inbox: QmcdZhrRKQimZzWypBrSFEBdEDRvbGR1khSLpNqjCRHkWR
+My device inbox: QmPeerSEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz
 My encryption states for sender: 0  ← No state!
 ```
 
@@ -437,8 +437,8 @@ This is a **pre-existing limitation from `develop` branch**, not something we in
 
 | User | User Address | Device Inbox |
 |------|--------------|--------------|
-| **Gattopardo** | `QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz` | `QmXJ6SMvGkRsBdLQa88hbLhRKkGV4LxN94jPBdiSXj2XB5` |
-| **Jennifer** | `QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n` | `QmV6527S2QdWHieonTHUHV5wQS5H9weo9S33HjdJ2CB3a3` |
+| **Gattopardo** | `QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz` | `QmPeerKEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz` |
+| **Jennifer** | `QmPeerGEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz` | `QmPeerHEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz` |
 
 ### Summary
 

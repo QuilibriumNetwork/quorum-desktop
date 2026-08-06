@@ -20,7 +20,7 @@ import { DefaultImages } from '../../../utils';
 //
 // See 2026-08-01-identity-announce-cadence-research.md under .agents/issues/ §2.
 
-const PARTNER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';
+const PARTNER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const REAL_NAME = 'Ada Lovelace';
 const REAL_ICON = 'data:image/jpeg;base64,/9j/REAL';
 

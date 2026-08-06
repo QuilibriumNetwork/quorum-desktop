@@ -35,8 +35,8 @@ Debug logging confirmed the mismatch:
 [ThreadSettingsModal] hasOtherReplies=true {
   currentUserAddress: 'QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz',
   otherSenders: [
-    { id: '98a2e5...', sender: 'QmYxPTq82YeAYpiv4XEehrT6gSFkwVwuA4xWMQydAKK1ia', type: 'post' },
-    { id: 'a4e280...', sender: 'QmYxPTq82YeAYpiv4XEehrT6gSFkwVwuA4xWMQydAKK1ia', type: 'post' }
+    { id: '98a2e5...', sender: 'QmPeerPEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz', type: 'post' },
+    { id: 'a4e280...', sender: 'QmPeerPEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz', type: 'post' }
   ],
   totalMessages: 2
 }

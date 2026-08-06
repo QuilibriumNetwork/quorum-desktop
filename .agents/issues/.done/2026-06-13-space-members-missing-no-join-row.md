@@ -57,7 +57,7 @@ and the render falls back to `senderId.slice(-6)`.
 ### Live evidence
 
 Diagnostic `.agents/tools/dm-debug/06-space-member-sources.js` run against test
-space `QmZM3AKwKfMprQZvSk3Mpgii2JS31TS5izHrwJe1itprrG` ("Quorum Test 2"):
+space `QmPeerQEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz` ("Quorum Test 2"):
 
 - **89 distinct senders** have posted messages.
 - **46 of them (52%) have NO `space_members` row** — including every

@@ -261,8 +261,8 @@ fake-indexeddb + wasm-from-sibling + lingui-locale environment is unchanged.
   throwaway space is the Path B refinement** (S4), which additionally exercises
   fresh-device session-restore. Aim for reuse once the clean path works.
 - **Path B concrete target** (user A's existing throwaway space, provided 2026-07-27):
-  - spaceId: `QmbdLB6bAAdiparnE3iByhJcv5W3t3tDpx15BzCQdeG2z7`
-  - channelId: `QmYomM8EAeaCZJN8GFJjxTvKEfUDNErDdgtn2JjsKfjZpJ`
+  - spaceId: `QmPeerREgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`
+  - channelId: `QmPeerNEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`
   - A is the owner (its key is `BOT_A_PRIVATE_KEY` in .env.local). These are
     addresses, not secrets. Use for S4 once S0-S1 prove session establishment.
 

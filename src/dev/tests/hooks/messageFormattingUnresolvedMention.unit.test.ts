@@ -14,8 +14,8 @@ import { renderHook } from '@testing-library/react';
 
 import { useMessageFormatting } from '@/hooks/business/messages/useMessageFormatting';
 
-const SENDER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';
-const MENTIONED = 'QmYVtoRkxvNqRc1CQfRNikQRs2mBxGQRSL2CXYmtKL5LjD';
+const SENDER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
+const MENTIONED = 'QmPeerLEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
 const messageWithMention = () =>
   ({

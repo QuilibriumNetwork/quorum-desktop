@@ -50,7 +50,7 @@ import {
   withPreviews,
 } from '@/hooks/business/conversations/useConversationPreviews';
 
-const ADDRESS = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';
+const ADDRESS = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const CONVERSATION_ID = `${ADDRESS}/${ADDRESS}`;
 const LAST_MESSAGE_ID = 'msg-1';
 

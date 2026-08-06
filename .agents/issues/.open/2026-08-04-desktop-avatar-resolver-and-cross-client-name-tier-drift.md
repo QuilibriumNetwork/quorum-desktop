@@ -143,7 +143,7 @@ expire.
 | Mobile — `truncateAddress(addr,'medium')` → `formatAddress(addr, 6, 4)` | `QmV5xWMo…F2nX` |
 | Desktop — shared `resolveDisplayName`'s internal `truncate()` | `QmV5xW…F2nX` |
 
-Evaluated against `QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX`.
+Evaluated against `QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`.
 
 Desktop shows two fewer entropy characters. Shared's `truncate()` is a naive
 `addr.slice(0,6)…addr.slice(-4)` that spends two of its six characters on the

@@ -117,7 +117,7 @@ side still uses the doctor (receiving desktops are dev builds).
 
 - **Account A** — address `QmTestTestEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imz`.
   Primary phone (dev build) + desktop A (dev build, browser profile).
-- **Account B** — address `QmYVtoS6E7T4TL4p7Ve1KCVoMoBpz4QEajmJLCoiLjLjDd`.
+- **Account B** — address `QmPeerMEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`.
   Preview phone (`….preview` app id, release build) + desktop B (dev build).
 - **Letters burned:** T, U, V, **X** (plus "A→B #n"/"B→A #n" numeric series).
   **W** is reserved for the prod-build run; next free after that: **Y**. The

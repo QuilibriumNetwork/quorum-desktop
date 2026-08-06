@@ -14,7 +14,7 @@ created: 2026-04-08
 
 ## Problem
 
-The Privacy/Security settings screen lists all registered devices by their raw cryptographic inbox address (e.g. `QmSXkX2d1q8PASMPaMjieh6yyricTG89NY8QzEvj7273Jz`). Users cannot tell which device is which, making device management confusing and potentially unsafe.
+The Privacy/Security settings screen lists all registered devices by their raw cryptographic inbox address (e.g. `QmPeerDEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`). Users cannot tell which device is which, making device management confusing and potentially unsafe.
 
 ---
 

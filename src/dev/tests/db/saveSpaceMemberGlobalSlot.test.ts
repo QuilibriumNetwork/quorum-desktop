@@ -26,7 +26,7 @@ import { resolveSyncDeltaSlots } from '../../../services/MessageService';
 // See 2026-08-01-space-sync-member-delta-blind-to-and-erases-global-slot.md under .agents/issues/
 
 const SPACE = 'space-1';
-const MEMBER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';
+const MEMBER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
 /** A member as it exists locally: global identity set, no per-space override. */
 const localRow = (): SpaceMemberRow =>

@@ -17,7 +17,7 @@ vi.mock('@/components/ui/YouTubeFacade', () => ({
 import { MessageMarkdownRenderer } from '@/components/message/MessageMarkdownRenderer';
 
 const INVITE_URL =
-  'https://app.quorummessenger.com/invite/#spaceId=QmZM3AKwKfMprQZvSk3Mpgii2JS31TS5izHrwJe1itprrG&configKey=9e390fd97e0a61aecdce931c7f3dab04d0e57b8da89a50510981be5394714eda';
+  'https://app.quorummessenger.com/invite/#spaceId=QmPeerQEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz&configKey=9e390fd97e0a61aecdce931c7f3dab04d0e57b8da89a50510981be5394714eda';
 
 // The invite card replaces the link entirely, so "card" and "plain link" are
 // mutually exclusive outcomes — every case below asserts both directions.

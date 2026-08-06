@@ -23,7 +23,7 @@ import { MessageDB, type SpaceMemberRow } from '../../../db/messages';
 // See 2026-08-01-space-tag-can-no-longer-be-cleared-from-a-member-roster.md under .agents/issues/
 
 const SPACE = 'space-1';
-const MEMBER = 'QmNSr2YL6iLho1CQfRNikQRs2mBxGQRSL2CXYmtKL5ihUB';
+const MEMBER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
 const TAG = { letters: 'QUIL', url: 'https://example.test/tag.png', spaceId: SPACE };
 

@@ -257,7 +257,7 @@ clients until the row is cleared. Documented, decaying, accepted.
 | Mobile — `truncateAddress(addr,'medium')` → `formatAddress(addr, 6, 4)` | `QmV5xWMo…F2nX` |
 | Desktop — shared `resolveDisplayName`'s internal `truncate()` | `QmV5xW…F2nX` |
 
-Both were evaluated against `QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX`.
+Both were evaluated against `QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`.
 Desktop shows two fewer entropy characters, because shared's `truncate()` is a
 naive `slice(0,6)` that spends two of its six on the constant `Qm` prefix,
 whereas `formatAddress` is Qm-aware and counts entropy after it.

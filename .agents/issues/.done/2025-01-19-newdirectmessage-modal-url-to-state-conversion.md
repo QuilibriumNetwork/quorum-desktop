@@ -28,7 +28,7 @@ The modal had two separate issues that were both resolved:
 
 The NewDirectMessage modal had a reopening issue when:
 
-1. User was on an existing conversation (e.g., `/messages/QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n`)
+1. User was on an existing conversation (e.g., `/messages/QmPeerGEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`)
 2. Clicked to open modal → URL changed to `/messages/new`
 3. Closed modal → `navigate(-1)` caused brief reopen before landing on original conversation
 

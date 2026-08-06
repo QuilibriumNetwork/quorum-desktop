@@ -28,7 +28,7 @@ From console logs during space creation:
 [DEBUG] Before filtering: {spaceIds: 15, spaceKeys: 16, items: 12}
 ```
 
-The new space (`QmW9Hfzqqc96Z5zNf9HbGUm178Qrqoz38ezfKs4LbSvjJu`) is in `spaceIds` (15 spaces) but NOT in `spaceKeys` (only has keys for 14 other spaces + 2 orphaned spaces).
+The new space (`QmPeerJEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz`) is in `spaceIds` (15 spaces) but NOT in `spaceKeys` (only has keys for 14 other spaces + 2 orphaned spaces).
 
 After filtering logic runs, the new space gets removed because it lacks encryption keys, causing it to disappear from the nav menu.
 

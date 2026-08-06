@@ -322,7 +322,7 @@ Reuses the shared `SpaceMember`/`PublicProfile` types (`src/types/user.ts`), whi
 import { describe, it, expect } from 'vitest';
 import { resolveDisplayName } from './resolveDisplayName';
 
-const base = { address: 'QmV5xWMo5CYSxgAAy6emKFZZPCKwCsBZKZxXD3mCUZF2nX' };
+const base = { address: 'QmPeerFEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz' };
 
 describe('resolveDisplayName', () => {
   it('uses the per-space override when present (highest priority)', () => {
