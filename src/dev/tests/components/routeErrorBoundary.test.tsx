@@ -97,6 +97,20 @@ describe('RouteBoundary', () => {
     expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 
+  // `Icon` returns null for a name outside the IconName union, and consumers get
+  // no type error for it: the shipped Icon/index.d.ts re-exports from './Icon'
+  // while only Icon.web.d.ts is emitted, so under skipLibCheck the whole
+  // primitive resolves to `any`. This shipped with an invisible `alert-triangle`
+  // badge once already; assert on the rendered SVG, not on the prop.
+  it('actually renders its icon', async () => {
+    const { container } = renderApp('/spaces/s1/c1');
+    await screen.findByText("This channel couldn't be loaded");
+
+    expect(
+      container.querySelector('.onboarding-step-icon svg')
+    ).toBeInTheDocument();
+  });
+
   it('recovers the view when "Try again" succeeds', async () => {
     const user = userEvent.setup();
     renderApp('/spaces/s1/c1');
@@ -188,6 +202,18 @@ describe('AppErrorScreen', () => {
 
     expect(
       screen.getByRole('button', { name: 'Reload Quorum' })
+    ).toBeInTheDocument();
+  });
+
+  it('actually renders its icon', () => {
+    const { container } = render(
+      <I18nProvider i18n={i18n}>
+        <AppErrorScreen />
+      </I18nProvider>
+    );
+
+    expect(
+      container.querySelector('.onboarding-step-icon svg')
     ).toBeInTheDocument();
   });
 });

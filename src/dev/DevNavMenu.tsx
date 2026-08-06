@@ -60,7 +60,7 @@ const devNavItems: DevNavItem[] = [
   },
   {
     name: 'Error States',
-    icon: 'alert-triangle',
+    icon: 'skull',
     path: '/dev/error-states',
   },
 ];

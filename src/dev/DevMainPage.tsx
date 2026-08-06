@@ -71,7 +71,7 @@ export const DevMainPage: React.FC = () => {
     },
     {
       name: 'Error States',
-      icon: 'alert-triangle',
+      icon: 'skull',
       description:
         'What a user sees when a view fails to load. Real error boundaries wrapping children that really throw, so retry and recovery behave as they do in the app',
       path: '/dev/error-states',

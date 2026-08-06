@@ -45,12 +45,12 @@ export const RouteErrorFallback: React.FunctionComponent<
     <div className="error-panel__content">
       <div className="flex justify-center mb-6">
         <div className="onboarding-step-icon onboarding-step-icon--large">
-          <Icon name="alert-triangle" size="3xl" />
+          <Icon name="skull" size="3xl" />
         </div>
       </div>
       <h1 className="onboarding-title">{titleFor(scope)}</h1>
       <p className="onboarding-description mx-auto">
-        {t`Something went wrong while loading it. Trying again usually works; if it doesn't, reload the app.`}
+        {t`Trying again usually works. If it doesn't, reload the app.`}
       </p>
       <div className="error-panel__actions">
         <Button type="primary" className="onboarding-action" onClick={onRetry}>

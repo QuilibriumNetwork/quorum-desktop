@@ -11,7 +11,7 @@ import { Logo } from './Logo';
  * error in the tree, and the common causes are local (a failed IndexedDB read,
  * a component throwing), so `Maintenance` was telling users Quilibrium
  * infrastructure was down for faults that had nothing to do with it. The status
- * page is still linked, but as a second-guess rather than a diagnosis.
+ * page is still linked, but as a second guess rather than a diagnosis.
  */
 export const AppErrorScreen = () => {
   return (
@@ -26,7 +26,7 @@ export const AppErrorScreen = () => {
       <div className="w-full max-w-[460px] text-center">
         <div className="flex justify-center mb-6">
           <div className="onboarding-step-icon onboarding-step-icon--large">
-            <Icon name="alert-triangle" size="3xl" />
+            <Icon name="skull" size="3xl" />
           </div>
         </div>
         <h1 className="onboarding-title">
@@ -34,8 +34,7 @@ export const AppErrorScreen = () => {
         </h1>
         <p className="onboarding-description mx-auto">
           <Trans>
-            Quorum hit an unexpected error and couldn't continue. Reloading
-            usually fixes it. If it keeps happening, check{' '}
+            Reloading usually fixes it. If it keeps happening, check{' '}
             <a
               href="https://status.quilibrium.com/"
               target="_blank"
