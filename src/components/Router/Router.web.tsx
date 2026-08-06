@@ -95,6 +95,7 @@ const IdentityCoverage = lazyDevImport(
   () => import('@/dev/identity-coverage'),
   'IdentityCoverage'
 );
+const FakeQns = lazyDevImport(() => import('@/dev/fake-qns'), 'FakeQns');
 
 interface RouterProps {
   user: {
@@ -345,6 +346,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading identity coverage...</div>}>
               <IdentityCoverage />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && FakeQns && (
+        <Route
+          path="/dev/fake-qns"
+          element={
+            <Suspense fallback={<div>Loading fake QNS...</div>}>
+              <FakeQns />
             </Suspense>
           }
         />

@@ -62,6 +62,13 @@ export const DevMainPage: React.FC = () => {
         'How many space members and DM partners carry no identity from any source, and therefore render as a truncated address. Take one snapshot before a change and one after',
       path: '/dev/identity-coverage',
     },
+    {
+      name: 'Fake QNS',
+      icon: 'at',
+      description:
+        'Synthesize QNS .q names so every surface that renders one is reachable without owning a registered name. Read-side overlay: nothing is published',
+      path: '/dev/fake-qns',
+    },
   ];
 
   const handleNavigate = (path: string) => {
