@@ -488,5 +488,35 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
       line-height: $text-2xl-lh;
     }
   }
+
+}
+
+/* === ROUTE ERROR PANEL ===
+   Route-scoped failure state. Uses the onboarding/404 screen template (circular
+   icon badge, title, description, stacked actions) but fills its container
+   instead of the viewport, because it renders inside Layout where the sidebars
+   stay visible. `flex: 1` is ignored in a block parent, so the min-height is
+   what guarantees it never collapses. */
+.error-panel {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 20rem;
+  padding: $s-8 $s-4;
+  text-align: center;
+
+  &__content {
+    width: 100%;
+    max-width: 28rem;
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 

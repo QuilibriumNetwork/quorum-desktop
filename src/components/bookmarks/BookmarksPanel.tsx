@@ -97,7 +97,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     if (isLoading) {
       return (
         <Flex justify="center" align="center" className="bookmark-empty-state">
-          <Icon name="loader" className="empty-icon animate-spin" />
+          <Icon name="spinner" className="empty-icon animate-spin" />
           <span className="empty-message">{t`Loading bookmarks...`}</span>
         </Flex>
       );
@@ -106,7 +106,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     if (error) {
       return (
         <Flex justify="center" align="center" className="bookmark-empty-state">
-          <Icon name="alert-triangle" className="empty-icon text-danger" />
+          <Icon name="warning" className="empty-icon text-danger" />
           <span className="empty-message">{t`Failed to load bookmarks`}</span>
         </Flex>
       );

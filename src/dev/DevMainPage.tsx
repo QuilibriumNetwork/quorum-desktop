@@ -5,11 +5,17 @@ import {
   Button,
   Spacer,
   Icon,
+  type IconName,
 } from '../components/primitives';
 import { DevNavMenu } from './DevNavMenu';
 
 export const DevMainPage: React.FC = () => {
-  const devTools = [
+  const devTools: Array<{
+    name: string;
+    icon: IconName;
+    description: string;
+    path: string;
+  }> = [
     {
       name: 'Documentation',
       icon: 'book',
@@ -68,6 +74,13 @@ export const DevMainPage: React.FC = () => {
       description:
         'Synthesize QNS .q names so every surface that renders one is reachable without owning a registered name. Read-side overlay: nothing is published',
       path: '/dev/fake-qns',
+    },
+    {
+      name: 'Error States',
+      icon: 'skull',
+      description:
+        'What a user sees when a view fails to load. Real error boundaries wrapping children that really throw, so retry and recovery behave as they do in the app',
+      path: '/dev/error-states',
     },
   ];
 

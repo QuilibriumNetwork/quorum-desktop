@@ -114,7 +114,7 @@ export const BookmarksPage: React.FC = () => {
     if (error) {
       return (
         <div className="empty-state empty-state--fill">
-          <Icon name="alert-triangle" size="5xl" className="empty-state__icon" />
+          <Icon name="warning" size="5xl" className="empty-state__icon" />
           <p className="empty-state__title">{t`Failed to load bookmarks`}</p>
         </div>
       );

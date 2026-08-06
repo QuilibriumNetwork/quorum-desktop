@@ -13,31 +13,7 @@ import { DiscoverPage } from '@/components/discover-page';
 import { BookmarksPage } from '@/components/bookmarks';
 import { FarcasterPage } from '@/components/farcaster';
 import { WalletPage } from '@/components/wallet';
-
-class RouteErrorBoundary extends React.Component<
-  { fallback: React.ReactNode; children: React.ReactNode },
-  { hasError: boolean }
-> {
-  constructor(props: { fallback: React.ReactNode; children: React.ReactNode }) {
-    super(props);
-    this.state = { hasError: false };
-  }
-
-  static getDerivedStateFromError(_error: any) {
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: any, info: any) {
-    console.error('Route error boundary caught:', error, info);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return this.props.fallback;
-    }
-    return this.props.children;
-  }
-}
+import { RouteBoundary } from './RouteBoundary';
 
 // Helper function for conditional dev imports
 const lazyDevImport = (importFn: () => Promise<any>, exportName?: string) =>
@@ -96,6 +72,10 @@ const IdentityCoverage = lazyDevImport(
   'IdentityCoverage'
 );
 const FakeQns = lazyDevImport(() => import('@/dev/fake-qns'), 'FakeQns');
+const ErrorStates = lazyDevImport(
+  () => import('@/dev/error-states'),
+  'ErrorStates'
+);
 
 interface RouterProps {
   user: {
@@ -127,7 +107,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <DirectMessages />
+                  <RouteBoundary scope="conversation">
+                    <DirectMessages />
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -141,7 +123,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <DirectMessages />
+                  <RouteBoundary scope="conversation">
+                    <DirectMessages />
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -155,9 +139,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                  <RouteBoundary>
                     <DiscoverPage mode="spaces-empty" />
-                  </RouteErrorBoundary>
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -176,9 +160,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                  <RouteBoundary>
                     <DiscoverPage />
-                  </RouteErrorBoundary>
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -192,9 +176,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                  <RouteBoundary>
                     <BookmarksPage />
-                  </RouteErrorBoundary>
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -208,9 +192,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                  <RouteBoundary>
                     <FarcasterPage />
-                  </RouteErrorBoundary>
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -224,9 +208,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                  <RouteBoundary>
                     <WalletPage />
-                  </RouteErrorBoundary>
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -240,9 +224,9 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
+                  <RouteBoundary scope="channel">
                     <Space />
-                  </RouteErrorBoundary>
+                  </RouteBoundary>
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -356,6 +340,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading fake QNS...</div>}>
               <FakeQns />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && ErrorStates && (
+        <Route
+          path="/dev/error-states"
+          element={
+            <Suspense fallback={<div>Loading error states...</div>}>
+              <ErrorStates />
             </Suspense>
           }
         />

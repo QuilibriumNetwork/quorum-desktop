@@ -5,6 +5,7 @@ import {
   Callout,
   Icon,
   Portal,
+  type IconName,
 } from '@/components/primitives';
 import { ThemeRadioGroup } from '@/components/ui';
 import { DevNavMenu } from '../DevNavMenu';
@@ -29,7 +30,7 @@ import {
   UserInitialsDemo,
 } from './examples';
 
-const navigationItems = [
+const navigationItems: Array<{ id: string; label: string; icon: IconName }> = [
   { id: 'button-primitive', label: 'Button', icon: 'circle' },
   { id: 'callout-primitive', label: 'Callout', icon: 'info-circle' },
   { id: 'colorswatch-primitive', label: 'ColorSwatch', icon: 'palette' },

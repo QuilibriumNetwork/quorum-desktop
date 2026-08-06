@@ -1,4 +1,3 @@
-import { logger } from '@quilibrium/quorum-shared';
 import React, { Suspense } from 'react';
 import { Buffer } from 'buffer';
 import { useState, useEffect } from 'react';
@@ -10,7 +9,7 @@ import {
 import Connecting from './components/Connecting';
 import CustomTitlebar from './components/Titlebar';
 import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
-import { Maintenance } from './components/Maintenance';
+import { AppErrorScreen } from './components/AppErrorScreen';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
 import { Router } from './components/Router';
@@ -36,8 +35,9 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: any, info: any) {
-    logger.log(error);
-    logger.log(info);
+    // console, not logger: `logger.log` is a no-op in production builds, so a
+    // crash that reached the app root left no trace anywhere at all.
+    console.error('App error boundary caught:', error, info);
   }
 
   render() {
@@ -104,7 +104,7 @@ const App = () => {
           fallback={
             <div className="bg-surface-1 flex flex-col min-h-screen text-main">
               {isWeb() && isElectron() && <CustomTitlebar />}
-              <Maintenance />
+              <AppErrorScreen />
             </div>
           }
         >
