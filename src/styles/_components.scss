@@ -488,5 +488,27 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
       line-height: $text-2xl-lh;
     }
   }
+
+  &__description {
+    margin: 0;
+    font-size: $text-sm;
+    line-height: $text-sm-lh;
+    color: var(--color-text-subtle);
+    max-width: 28rem;
+
+    @media (min-width: 640px) {
+      font-size: $text-base;
+      line-height: $text-base-lh;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: $s-3;
+    margin-top: $s-2;
+  }
 }
 
