@@ -392,6 +392,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A typing frame returns before the ack](issues/.done/2026-08-03-a-typing-frame-is-never-acked-so-the-relay-may-redeliver-it-forever.md)
 - 🐛 [A fallback string is fed INTO the resolver, so the resolver returns it](issues/.done/2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver.md)
 - 🐛 [Global notifications panel crashes on any mention it cannot resolve](issues/.done/2026-08-04-global-notifications-panel-crashes-on-unresolvable-mention.md)
+- 🐛 [All emoji images break in a git worktree](issues/.done/2026-08-06-emoji-images-break-in-git-worktrees.md)
+- 🐛 [Emoji panel inserts the emoji at the start of the message](issues/.done/2026-08-06-emoji-panel-inserts-at-start-of-message.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -754,4 +756,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-06 10:13:52
+**Last Updated**: 2026-08-06 10:43:18
