@@ -290,6 +290,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [`.qmbak` backup cannot restore DM session continuity](issues/.open/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
+- 🐛 [Invalid icon names render nothing, and no type error catches them](issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
 - 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
@@ -760,4 +761,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-06 16:09:52
+**Last Updated**: 2026-08-06 16:47:57

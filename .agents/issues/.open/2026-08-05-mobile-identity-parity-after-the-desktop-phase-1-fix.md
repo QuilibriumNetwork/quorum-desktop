@@ -17,6 +17,32 @@ related:
 
 # Does mobile need the desktop identity fixes?
 
+> ## ⚠️ Largely ANSWERED on 2026-08-06 — do not start here
+>
+> §2, the urgent question, is settled: **yes, mobile stamped its own global name
+> into the per-space OVERRIDE slot at join**, on both join paths and on config
+> sync, and rows already stamped stayed broken. All three are fixed, along with
+> eight other breaks in the same chain.
+>
+> The direction of travel has also reversed since this file was written. It asks
+> "does mobile need desktop's fixes"; the answer is that mobile went further, and
+> **desktop is now the client that is behind** — including on a security item it
+> is exposed to today.
+>
+> **The single live document is
+> `quorum-mobile/.agents/issues/2026-08-06-qns-primary-name-work-and-desktop-parity.md`.**
+> It has a START HERE section written for someone picking the desktop work up
+> cold. Go there.
+>
+> What is still live in THIS file: §2-B (desktop → mobile per-space overrides
+> never arrive) and §1 row 1 (mobile's `auth:user` staleness). Neither is part of
+> the `.q` work; both are about a different transport and stay open here.
+>
+> §4's "do not port desktop's resolver to mobile" still holds and is now more
+> emphatic — see the parity doc's shared-code section, which says the two rules
+> that have drifted should move into `quorum-shared` rather than be copied a
+> third time.
+
 Desktop shipped Phase 1 on 2026-08-05 (branch `fix/own-identity-single-author`).
 This is the mobile side of that question, filed so it does not evaporate.
 
@@ -105,11 +131,16 @@ That matters twice:
 
 ## §5. Definition of done
 
-- [ ] §2 answered by reading mobile's join and join-receive paths, with file:line
-- [ ] If mobile does stamp: decided WITH the lead whether mobile changes, and filed in the mobile repo
+- [x] §2 answered by reading mobile's join and join-receive paths, with file:line
+      — **it stamped, on both paths and on config sync.** Fixed 2026-08-06.
+- [x] If mobile does stamp: decided WITH the lead whether mobile changes, and
+      filed in the mobile repo — done, and shipped there.
 - [ ] Mobile's `auth:user` staleness (§1 row 1) confirmed or refuted by a trace
 - [ ] The desktop → mobile per-space direction measured, and `2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md` updated with both directions
 
+The two remaining items are about profile *transport*, not name *resolution*.
+They are unaffected by the `.q` work and stay here.
+
 ---
 
-*Last updated: 2026-08-05*
+*Last updated: 2026-08-06*
