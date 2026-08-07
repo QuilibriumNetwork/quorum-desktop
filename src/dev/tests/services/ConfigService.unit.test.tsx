@@ -18,6 +18,7 @@ import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import { i18n } from '@lingui/core';
 import { messages } from '@/i18n/en/messages';
 import { ConfigService } from '@/services/ConfigService';
+import { getDefaultUserConfig } from '@/utils';
 import { QueryClient } from '@tanstack/react-query';
 
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
@@ -161,12 +162,12 @@ describe('ConfigService - Unit Tests', () => {
   });
 
   describe('2. saveConfig() - Configuration Persistence', () => {
-    it('should save config to database with updated timestamp', async () => {
+    it('should save config to database, keeping the incoming timestamp when sync is off', async () => {
       const mockConfig = {
         address: 'user-123',
         spaceIds: ['space-1'],
         allowSync: false, // Don't sync to avoid crypto operations
-        timestamp: 0,
+        timestamp: 1_700_000_000_000,
       };
 
       const mockKeyset = {
@@ -184,14 +185,14 @@ describe('ConfigService - Unit Tests', () => {
         keyset: mockKeyset,
       });
 
-      // ✅ VERIFY: Timestamp was updated on the SAVED config. saveConfig
-      // deep-clones its input (to avoid mutating a shared React Query cache
-      // object), so the assertion must read the object passed to the DB, not
-      // the caller's original mockConfig.
+      // ✅ VERIFY: The timestamp did NOT advance. Nothing was published, so
+      // nothing earned a newer one. saveConfig deep-clones its input (to avoid
+      // mutating a shared React Query cache object), so the assertion must read
+      // the object passed to the DB, not the caller's original mockConfig.
       const savedConfig = (
         mockDeps.messageDB.saveUserConfig as ReturnType<typeof vi.fn>
       ).mock.calls[0][0];
-      expect(savedConfig.timestamp).toBeGreaterThan(0);
+      expect(savedConfig.timestamp).toBe(1_700_000_000_000);
 
       // ✅ VERIFY: Config saved to database
       expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalledWith(
@@ -390,6 +391,173 @@ describe('ConfigService - Unit Tests', () => {
         expect.arrayContaining(['Config']),
         expect.anything()
       );
+    });
+  });
+
+  /**
+   * Publishing is what earns the right to a newer timestamp.
+   *
+   * getConfig resolves purely by timestamp and discards the losing side whole
+   * (ConfigService.ts:71-78); whatever wins is applied verbatim (:417-420). So a
+   * device that advances its local timestamp without the server agreeing does
+   * two silent things: it stops applying every other device's changes, and when
+   * it eventually does publish, its stale picture is adopted everywhere.
+   *
+   * The control arm is load-bearing. If BOTH arms withheld the timestamp, the
+   * "sync off" assertions would still pass while proving nothing — so the
+   * publishing case is asserted to advance.
+   *
+   * See 2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md
+   */
+  describe('4b. saveConfig() - only a publish advances the timestamp', () => {
+    const address = 'user-ts';
+    const mockKeyset = {
+      userKeyset: {
+        user_key: {
+          private_key: new Uint8Array(57),
+          public_key: new Uint8Array(57),
+        },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    /** Make the DB fake actually persist, so getConfig reads back what saveConfig wrote. */
+    function persistLocally() {
+      let stored: any;
+      mockDeps.messageDB.saveUserConfig = vi.fn(async (c: any) => {
+        stored = c;
+      });
+      mockDeps.messageDB.getUserConfig = vi.fn(async () => stored);
+      return () => stored;
+    }
+
+    /** Mocks the allowSync:true path needs to reach postUserSettings. */
+    function allowPublishing() {
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'encrypt').mockResolvedValue(
+        new Uint8Array(16).buffer as ArrayBuffer
+      );
+    }
+
+    it('withholds the timestamp when sync is off, but still persists the change', async () => {
+      const read = persistLocally();
+
+      await configService.saveConfig({
+        config: { address, spaceIds: ['space-1'], allowSync: false, timestamp: 1000 },
+        keyset: mockKeyset,
+      });
+
+      expect(read().timestamp).toBe(1000);
+      // Only the claim to authority is withheld — the user's edit still landed.
+      expect(read().spaceIds).toEqual(['space-1']);
+    });
+
+    it('does not drift across repeated offline saves', async () => {
+      const read = persistLocally();
+
+      for (const spaceIds of [['a'], ['a', 'b'], ['a', 'b', 'c']]) {
+        await configService.saveConfig({
+          config: { address, spaceIds, allowSync: false, timestamp: read()?.timestamp ?? 1000 },
+          keyset: mockKeyset,
+        });
+      }
+
+      expect(read().timestamp).toBe(1000);
+      expect(read().spaceIds).toEqual(['a', 'b', 'c']);
+    });
+
+    it('CONTROL ARM: a published config does advance the timestamp', async () => {
+      const read = persistLocally();
+      allowPublishing();
+
+      await configService.saveConfig({
+        config: { address, spaceIds: ['space-1'], allowSync: true, timestamp: 1000 },
+        keyset: mockKeyset,
+      });
+
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalled();
+      const posted = mockDeps.apiClient.postUserSettings.mock.calls[0][1];
+      expect(posted.timestamp).toBeGreaterThan(1000);
+      // What we kept locally must match what the server was told.
+      expect(read().timestamp).toBe(posted.timestamp);
+    });
+
+    it('a fresh device claims no authority, so it adopts the account config', async () => {
+      // getDefaultUserConfig stamps timestamp 0, not Date.now(). A device that
+      // has published nothing and read nothing must lose to any remote config;
+      // a fresh clock stamp would outrank the account's real blob, discard it
+      // unopened, and then publish this empty config over every other device.
+      // RegistrationPersister persists this default when the remote exists but
+      // cannot be verified or decrypted — exactly when claiming authority is
+      // most destructive. Mobile already uses 0; this keeps desktop matching.
+      const fresh = getDefaultUserConfig(address);
+      expect(fresh.timestamp).toBe(0);
+
+      const read = persistLocally();
+      await configService.saveConfig({ config: fresh, keyset: mockKeyset });
+      expect(read().timestamp).toBe(0);
+
+      // Any real remote now wins, however old.
+      const remote = { address, spaceIds: ['theirs'], spaceKeys: [], timestamp: 1 };
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(remote));
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({
+        data: { user_config: 'aabbccdd' + '000000000000000000000000', timestamp: 1, signature: 'aabbcc' },
+      });
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(
+        jsonBytes.buffer.slice(
+          jsonBytes.byteOffset,
+          jsonBytes.byteOffset + jsonBytes.byteLength
+        ) as ArrayBuffer
+      );
+
+      const result = await configService.getConfig({
+        address,
+        userKey: mockKeyset.userKeyset,
+      });
+
+      expect(result).toMatchObject({ spaceIds: ['theirs'] });
+    });
+
+    it('keeps applying another device\'s config after an offline save', async () => {
+      const read = persistLocally();
+
+      // This device edits with sync off. Nothing is published.
+      await configService.saveConfig({
+        config: { address, spaceIds: ['mine'], allowSync: false, timestamp: 1000 },
+        keyset: mockKeyset,
+      });
+
+      // The other device then publishes at a timestamp only slightly newer than
+      // the last one THIS device legitimately witnessed. Without the fix the
+      // local clock stamp above (Date.now()) dwarfs it and the remote is thrown
+      // away undecrypted, which is how a sync-off device goes permanently deaf.
+      const remote = { address, spaceIds: ['theirs'], spaceKeys: [], timestamp: 2000 };
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(remote));
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({
+        data: { user_config: 'aabbccdd' + '000000000000000000000000', timestamp: 2000, signature: 'aabbcc' },
+      });
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(
+        jsonBytes.buffer.slice(
+          jsonBytes.byteOffset,
+          jsonBytes.byteOffset + jsonBytes.byteLength
+        ) as ArrayBuffer
+      );
+
+      const result = await configService.getConfig({
+        address,
+        userKey: mockKeyset.userKeyset,
+      });
+
+      expect(result).toMatchObject({ spaceIds: ['theirs'] });
+      expect(read()).toMatchObject({ spaceIds: ['theirs'], timestamp: 2000 });
     });
   });
 

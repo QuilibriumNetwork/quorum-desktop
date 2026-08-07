@@ -518,6 +518,12 @@ export class ConfigService {
     // produce delayed "phantom" reverts after queue completion.
     const config: UserConfig = JSON.parse(JSON.stringify(configInput));
 
+    // Captured before `ts` overwrites it. Every path below that does NOT reach
+    // the server puts this back, so a save that was never published cannot
+    // advance this device's timestamp. See the note in the refuse-to-publish
+    // branch for why that matters.
+    const incomingTimestamp = configInput.timestamp ?? 0;
+
     const ts = Date.now();
     config.timestamp = ts;
 
@@ -649,14 +655,9 @@ export class ConfigService {
           droppedSpaceIds
         );
 
-        // Keep the timestamp we came in with. getConfig resolves purely by
-        // timestamp and does not merge the losing side, so a device that
-        // advanced its local timestamp without the server agreeing would treat
-        // its own config as newer than every remote one and quietly stop
-        // applying other devices' changes for as long as it keeps holding.
-        // Publishing is what earns the right to a newer timestamp. `ts` still
-        // gates the cache write below, so the UI updates as usual.
-        config.timestamp = configInput.timestamp ?? 0;
+        // Keep the timestamp we came in with — see `incomingTimestamp` above.
+        // `ts` still gates the cache write below, so the UI updates as usual.
+        config.timestamp = incomingTimestamp;
       } else {
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const configJson = JSON.stringify(uploadConfig);
@@ -705,6 +706,23 @@ export class ConfigService {
         config.deletedBookmarkIds = [];
         config.deletedUserNoteAddresses = [];
       }
+    } else {
+      // Sync is off, so nothing was published and the server never agreed to a
+      // newer timestamp — keep the one we came in with, exactly as the
+      // refuse-to-publish branch does.
+      //
+      // Without this, every local change on a sync-off device advances its
+      // timestamp unwitnessed. Two things follow, both silent. The device
+      // drifts ahead of the server, so getConfig starts returning local
+      // unconditionally and it stops applying other devices' changes for good.
+      // And when the user later turns sync ON, that stale-but-newer picture
+      // wins and is adopted verbatim by every other device, taking with it
+      // every Space and setting those devices had and this one did not.
+      //
+      // The write below still happens: the user's change persists locally.
+      // Only the claim to authority is withheld.
+      // See 2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md
+      config.timestamp = incomingTimestamp;
     }
 
     logger.log('[ConfigService] Saving config to local DB...');
