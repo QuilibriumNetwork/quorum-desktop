@@ -229,7 +229,7 @@ window.__selfIdentitySources = async () => {
     // Bookmarks measured at 75% of one real blob, 94% of it a base64 sender
     // avatar copied into every bookmark. Break them down by field so the fix is
     // chosen on evidence — see
-    // 2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md under .agents/issues/.
+    // 2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md under .agents/issues/.done/.
     const marks = config.bookmarks ?? [];
     if (marks.length) {
       const sum = (f) =>

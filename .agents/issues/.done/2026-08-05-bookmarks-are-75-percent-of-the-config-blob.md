@@ -1,10 +1,10 @@
 ---
 type: bug
 title: "Bookmarks are 656 KB of an 873 KB config blob, against a ~1 MB ceiling"
-status: in-progress
+status: done
 priority: medium
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-07
 severity: the config blob is the cross-device sync payload for everything; if it stops uploading, every setting on that device stops syncing, silently
 area: config sync / bookmarks / payload size
 repos: quorum-desktop + quorum-mobile (same blob, same limit)
@@ -18,6 +18,32 @@ related:
 # Bookmarks are three quarters of the config blob
 
 ## Status
+
+**2026-08-07 — CLOSED. Both clients ship the strip.** Mobile landed in mobile
+PR [#242](https://github.com/QuilibriumNetwork/quorum-mobile/pull/242) (`fix:
+mobile no longer re-publishes bookmark avatars into the config blob`), which was
+the last item this issue was holding for. Write-up:
+`quorum-mobile/.agents/issues/.done/2026-08-07-mobile-republishes-bookmark-avatars-into-the-config-blob.md`.
+
+Mobile stripped at `getLocalBookmarks` and `saveLocalBookmarks` — the only read
+and write points for its MMKV bookmark store, so the upload, the stored config
+copy and the remote merge are covered at once. 15 tests, asserting against the
+**decrypted uploaded payload**, each group confirmed able to fail by neutering
+the code under it. It deliberately did **not** port desktop's one-time sweep:
+the mobile equivalent is a write inside a getter, which is the only line that
+could lose a bookmark, and mobile has no bookmark surface so nobody would see it
+happen. Any write there already rewrites the whole array through the strip, so
+the store reclaims itself on the first config pull that carries bookmarks.
+
+Mobile also added an `Array.isArray` guard its own store needed — stripping maps
+over the parsed value, and `saveConfig` reads bookmarks outside its try/catch, so
+valid JSON that is not an array would have gone from "returns junk" to "this
+device cannot save its config at all". **Desktop is not exposed to that**: its
+store is IndexedDB, which returns typed rows rather than a parsed JSON string.
+
+The §4.3 size guard is NOT a remainder of this issue — it was deliberately kept
+out of the branch and has its own file,
+`.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md`.
 
 **2026-08-05 — DESKTOP SHIPPED in PR #314** (`fix(bookmarks): bookmarks stop
 eating three quarters of the config sync payload`), with the matching
@@ -34,16 +60,17 @@ updates, throwing `ConstraintError` and aborting both the apply and the restore.
 656.5 KB → **37.1 KB**, `senderIcon` 619.8 KB → **0.0 KB**, live store and blob
 copy both converged, and a real `saveConfig` + upload completed.
 
-**Still open — this is why the issue has NOT moved to `.done/`:**
+**~~Still open — this is why the issue has NOT moved to `.done/`:~~ Both
+resolved, 2026-08-07:**
 
-- **Mobile has no strip**, and it publishes the same blob. Blocked on a
-  `quorum-shared` **publish** (the version is bumped to `2.1.0-40` and merged,
-  but that repo has no CI publish step, so npm still serves `2.1.0-39`, which is
-  what mobile pins). Two lines once unblocked — see "Not done, and why" below,
-  and port-to-mobile candidate #39.
+- ~~**Mobile has no strip**~~ — **DONE**, mobile PR #242. The shared publish that
+  blocked it (`2.1.0-40` was merged but the repo has no CI publish step, so npm
+  served `2.1.0-39`) has happened; mobile took the pin in `eb069a3`.
 - §4.3, the pre-flight size guard, was deliberately left out of this branch and
   now has its own issue:
   `.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md`.
+  It is a different failure mode with its own UX question, not a remainder of
+  this one.
 
 > ⚠️ **The headline number moved for a reason worth knowing.** This issue opened
 > against an 873 KB blob. After the fix forced a fresh save, the same account read
@@ -66,16 +93,17 @@ rather than an observation at the time it was written.
 | ✅ **MEASURED** | the plaintext handed to `crypto.subtle.encrypt` (literally the uploaded blob) contains no `senderIcon` and no avatar bytes, while both bookmarks and their `senderAddress` survive |
 | ✅ **MEASURED** | the sweep writes only rows that changed, and does NOT set its completion flag when a read or write fails — so a partial failure retries next launch instead of being permanently skipped |
 | ✅ **MEASURED 2026-08-05 on the real account** | **the sweep works.** After one launch on this branch the live `bookmarks` store holds 19 rows carrying **0.0 KB** of `senderIcon`, down from 619.8 KB. Every embedded avatar is gone from local storage |
-| ⏳ **PREDICTED, not measured** | the whole blob at ~253 KB. Needs one config save first — see below. The 619.8 KB is confirmed gone from the live store; what is unconfirmed is only the resulting blob total |
+| ✅ **RESOLVED 2026-08-05, prediction falsified for an unrelated reason** | this row read "⏳ PREDICTED — the whole blob at ~253 KB". The save was taken: bookmarks landed at **37.1 KB** and both stores converged (see Status). The blob total did NOT land near 253 KB — it read 4205 KB, 98% of it encryption states from two test spaces, which is the ⚠️ note below and a different issue. The bookmark half of the arithmetic held; the whole-blob half was measuring something else |
 
-**To close this issue**, run `.agents/tools/dm-debug/08-self-identity-sources.js`
-in the console **on a build containing this branch**, after one launch (the sweep
-runs once, on mount, gated by
-`localStorage['bookmarkSenderIconsStripped:v1:<address>']`). Read the new
-verdict line, which now names the state directly instead of leaving it to be
-inferred from a number.
+~~**To close this issue**~~ — **this was run on 2026-08-05 and is no longer
+outstanding.** For anyone re-measuring later:
+`.agents/tools/dm-debug/08-self-identity-sources.js` in the console **on a build
+containing this branch**, after one launch (the sweep runs once, on mount, gated
+by `localStorage['bookmarkSenderIconsStripped:v1:<address>']`). Read the verdict
+line, which names the state directly instead of leaving it to be inferred from a
+number.
 
-That single console paste is the entire residue. It cannot be automated because
+That console paste was the entire residue. It could not be automated because
 it measures **this account's real stored bookmarks** — the 873 KB figure came
 from 18 real bookmarks with 18 real avatars, and a synthetic fixture would only
 re-measure a fixture. Everything else that was once "open the app and look" is
@@ -182,20 +210,17 @@ both were found by an instrument rather than by re-reading:
 
 ### Not done, and why
 
-1. **MOBILE has no strip.** It never wrote `senderIcon` itself, but bookmarks it
-   adopted from desktop before this change still carry one, and it publishes the
-   same blob. **Blocked on a `quorum-shared` PUBLISH, not a merge** — the helper
-   is in shared `master` (PR #75) and the version is bumped to `2.1.0-40`, but
-   that repo has **no CI publish workflow**, so `npm publish` has to be run by
-   hand. npm's latest is still `2.1.0-39`, which is exactly what mobile pins, so
-   mobile cannot import the helper until someone publishes. The change is two
-   lines once it can: strip inside
-   `getLocalBookmarks` and `saveLocalBookmarks`
-   (`services/config/configService.ts:104` and `:115`), which between them are
-   the only read and write points for MMKV bookmark storage — that covers the
-   upload (`:599`), the stored config (`:465`) and the remote merge (`:410`) at
-   once. Mobile's `BookmarksPanel` never rendered an avatar, so there is no
-   render-side work.
+1. ~~**MOBILE has no strip.**~~ **DONE 2026-08-07, mobile PR #242.** It never
+   wrote `senderIcon` itself, but bookmarks it adopted from desktop before this
+   change still carried one, and it publishes the same blob. It was blocked on a
+   `quorum-shared` PUBLISH rather than a merge — the helper was in shared
+   `master` (PR #75) at `2.1.0-40`, but that repo has no CI publish workflow, so
+   npm still served `2.1.0-39`, which is what mobile pinned. That is resolved.
+   The strip went where predicted: `getLocalBookmarks` and `saveLocalBookmarks`
+   in `services/config/configService.ts`, which between them are the only read
+   and write points for MMKV bookmark storage, covering the upload, the stored
+   config and the remote merge at once. Mobile's `BookmarksPanel` never rendered
+   an avatar, so there was no render-side work.
 
    ⚠️ **Found while checking this: bookmarks are write-only on mobile.**
    `setBookmarksPanelVisible(true)` appears nowhere in the mobile repo, so
@@ -292,7 +317,7 @@ avatar stops being frozen at bookmark time.
    returns. A pre-flight size check with a real user-facing signal would turn a
    silent stop into a visible one.
 
-## §5. Next step
+## §5. Next step — nothing remains
 
 ~~Break down the 656 KB by field before choosing.~~ **Done — see §3-A.** The answer
 is `senderIcon`, at 94% of bookmarks and 69% of the whole blob.
@@ -303,11 +328,19 @@ un-migrated sibling device would keep publishing the fat payload and this device
 would keep re-adopting it. Stripping on adopt as well as on upload is what makes
 the migration stick with no coordination between devices.
 
-**Remaining: take the measurement.**
-`.agents/tools/dm-debug/08-self-identity-sources.js` prints the breakdown, so
-re-measuring costs one console paste. Until that is run, the 873 KB → ~253 KB
-figure is arithmetic, not an observation.
+~~**Remaining: take the measurement.**~~ **Done 2026-08-05** — bookmarks
+656.5 KB → 37.1 KB, `senderIcon` 619.8 KB → 0.0 KB on the real account, both
+stores converged. The 873 KB → ~253 KB *whole-blob* arithmetic did not land,
+because the blob's remaining bulk turned out to be encryption states rather than
+anything this issue governs; that is
+`.open/2025-12-09-encryption-state-evals-bloat.md`, not a residue here.
+
+~~**Remaining: the mobile strip.**~~ **Done 2026-08-07** — mobile PR #242.
+
+What this issue does NOT cover, and never did: the pre-flight size guard (§4.3,
+its own issue) and giving mobile a way to actually *see* bookmarks
+(port-to-mobile candidate #39).
 
 ---
 
-*Last updated: 2026-08-05*
+*Last updated: 2026-08-07*

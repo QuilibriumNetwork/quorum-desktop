@@ -10,7 +10,7 @@ area: config sync / payload size / observability
 repos: quorum-desktop + quorum-mobile
 source: found by independent review during the 2026-08-04 stale-display-name investigation
 related:
-  - ".agents/issues/.open/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md"
+  - ".agents/issues/.done/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md"
   - ".agents/issues/.open/2026-07-31-spaces-list-cross-device-sync.md"
   - ".agents/issues/.open/2026-08-01-every-logger-call-is-a-no-op-in-production-builds.md"
   - ".agents/docs/config-sync-system.md"

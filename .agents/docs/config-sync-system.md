@@ -423,7 +423,7 @@ reconstructible from an address already in the payload, and it still grew to two
 thirds of the transport that every synced setting shares.
 
 A pre-flight size check that fails loudly is still **not implemented** — see
-§4.3 of `.agents/issues/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
+§4.3 of `.agents/issues/.done/2026-08-05-bookmarks-are-75-percent-of-the-config-blob.md`.
 
 ## Related Documentation
 
