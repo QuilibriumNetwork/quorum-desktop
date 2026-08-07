@@ -109,6 +109,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
+- 🐛 [A device with sync off still claims a newer timestamp](issues/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -291,6 +292,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 🐛 [Every shared primitive reaches consumers as `any`](issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
 - 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
+- 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -763,4 +765,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-07 11:41:40
+**Last Updated**: 2026-08-07 13:50:19
