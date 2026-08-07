@@ -4,7 +4,7 @@ title: "Make the Spaces list identical on every device (umbrella — start here)
 status: open
 priority: high
 created: 2026-07-31
-updated: 2026-08-04
+updated: 2026-08-07
 severity: data-integrity (Spaces vanish from a device's list) + cross-device divergence
 area: UserConfig spaces list / space add + removal propagation / ghost cleanup
 repos: quorum-desktop + quorum-mobile (+ quorum-shared for the wire type)
@@ -19,7 +19,7 @@ not, today. This is the umbrella task for getting there, and the single place to
 > **To brief an agent, paste this:**
 >
 > ```
-> Read quorum-desktop/.agents/tasks/2026-07-31-spaces-list-cross-device-sync.md first.
+> Read quorum-desktop/.agents/issues/.open/2026-07-31-spaces-list-cross-device-sync.md first.
 > It is the umbrella task for Spaces-list cross-device sync across quorum-desktop and
 > quorum-mobile. Read §1 and §2 before forming any theory, and §5 before writing code.
 > ```
@@ -64,7 +64,7 @@ Verified against both codebases 2026-07-31. **This matrix is the one piece of st
 index owns** — no other doc has it.
 
 **Adding a Space (create / join): works on every pair.** Mobile shows it one app-launch
-late — see `quorum-mobile/.agents/bugs/2026-07-19-new-desktop-space-appears-one-launch-late-on-mobile.md`
+late — see `quorum-mobile/.agents/issues/.open/2026-07-19-new-desktop-space-appears-one-launch-late-on-mobile.md`
 (low severity: the sync is deferred via `InteractionManager` and fire-and-forget, so the
 write lands after the list has rendered; fix is to invalidate the spaces query after
 `syncSpacesFromConfig`).
@@ -100,6 +100,48 @@ Settings → Restore Spaces. **The 2026-07-31 work did not close this, and was n
 to: it hardened desktop as a *publisher* and left desktop defenceless as a *receiver*,
 while mobile's publisher guard was deliberately reverted (`3a03b6f`, §3).** Desktop is the
 victim of mobile's publish, and there is no guard on the path that actually hurts it.
+
+> ### ⚠️ Correction 2026-08-07 — the publisher half was re-landed; only the receiver half is still open
+>
+> The sentence above ("mobile's publisher guard was deliberately reverted") was true when
+> written and is **now stale**. Verified against current `quorum-mobile` source and git
+> history on 2026-08-07:
+>
+> | commit | date | effect |
+> |---|---|---|
+> | `3a03b6f` | 2026-07-31 | dropped the publish hold ("mobile cannot yet tell mid-sync from a leave") — the revert this section describes |
+> | `35b3fc8` (#228) | 2026-08-04 | **re-landed it** — "this device no longer empties the Spaces list on the user's other devices" |
+> | `93f9172` (#229) | 2026-08-04 | refined it so the hold is not all-or-nothing — "a device that imported its Spaces can publish settings again" |
+>
+> **The guard is present in current code**, at
+> `quorum-mobile/services/config/configService.ts:780-796` (`if (droppedSpaceIds.length > 0)`
+> → keep the incoming timestamp, do not POST). Read directly, not inferred from the commit
+> message. The three reproductions in this section predate #228 landing.
+>
+> **What this does and does not change:**
+>
+> - ✅ **The known trigger is gone.** Mobile no longer publishes a narrowed Space list, so
+>   the specific chain in §2b's table should not recur from that cause.
+> - ❌ **The receiver-side vulnerability is untouched.** Desktop still adopts an incoming
+>   Space list verbatim, with no floor and no merge (`ConfigService.ts:417`). Any *new*
+>   source of a narrow or empty list empties the sidebar exactly as before.
+> - 🔴 **A new trigger is already being designed.** §5.2 of
+>   [the config sync overhaul](2026-08-07-config-sync-overhaul-design.md) proposes publishing
+>   a minimal config when a user disables sync. Against today's receiver that would empty
+>   every other device's sidebar and then cascade, because the receiving device
+>   re-publishes the emptiness with a newer timestamp. **That design is blocked on this
+>   issue's receiver-side fix**, which makes the receiver half worth prioritising on its own
+>   merits rather than leaving it dormant behind a fixed trigger.
+>
+> So this issue stays **open**, but its character has changed: it is no longer "spaces keep
+> vanishing", it is "the receiver trusts any list it is handed, and we currently happen to
+> have no publisher that hands it a bad one."
+
+> **Verified 2026-08-07:** §1's claim that mobile's list is storage-driven was re-checked
+> directly rather than taken from this doc. `app/(tabs)/spaces/index.tsx:98` calls
+> `useSpaces()`, which resolves through `hooks/chat/useSpaces.ts:8-14` to
+> `useStorageAdapter()`. No reference to `config.items` or `spaceIds` anywhere in the
+> screen. Mobile is confirmed structurally immune as a receiver.
 
 **What the reporter did, in order:**
 
@@ -277,7 +319,7 @@ failed config fetch.
 The remaining work is **the receive side on both platforms**, already designed but not
 implemented:
 
-- `quorum-desktop/.agents/tasks/2026-07-19-space-deletion-ghost-cleanup.md` — the owning
+- `quorum-desktop/.agents/issues/.open/2026-07-19-space-deletion-ghost-cleanup.md` — the owning
   task. Five slices; Slice 2 (`deletedSpaceIds` tombstones + purge only tombstoned ids) is
   the one that makes the lists converge. Slices 1/3/4/5 cover offline leave via the action
   queue, corrupted-space deletion, reconciling the Restore button, and bounding encryption
@@ -309,19 +351,19 @@ linked docs, not here.
 
 | doc | covers |
 |---|---|
-| `quorum-desktop/.agents/tasks/2026-07-19-space-deletion-ghost-cleanup.md` | **The owning task.** 5 slices, design agreed. Tombstones, offline leave, Restore-button conflict. Cross-repo contract notes. |
-| `quorum-mobile/.agents/bugs/2026-07-19-config-sync-add-only-deleted-spaces-linger.md` | Mobile side: add-only receive + the write-side gap + (added 2026-07-31) the orphaned-store kick path and the ordering constraint. **Gitignored — content restated in §2/§4 here.** |
-| `quorum-desktop/.agents/bugs/2026-01-09-config-sync-space-loss-race-condition.md` | The original data-loss race: `saveConfig` filter-and-overwrite deleting Spaces. Partially fixed 2026-07-31 (§3); its Option A merge is Slice 2 of the owning task. |
+| `quorum-desktop/.agents/issues/.open/2026-07-19-space-deletion-ghost-cleanup.md` | **The owning task.** 5 slices, design agreed. Tombstones, offline leave, Restore-button conflict. Cross-repo contract notes. |
+| `quorum-mobile/.agents/issues/.open/2026-07-19-config-sync-add-only-deleted-spaces-linger.md` | Mobile side: add-only receive + the write-side gap + (added 2026-07-31) the orphaned-store kick path and the ordering constraint. **Gitignored — content restated in §2/§4 here.** |
+| `quorum-desktop/.agents/issues/.open/2026-01-09-config-sync-space-loss-race-condition.md` | The original data-loss race: `saveConfig` filter-and-overwrite deleting Spaces. Partially fixed 2026-07-31 (§3); its Option A merge is Slice 2 of the owning task. |
 
 ### Adjacent, do not confuse with the above
 
 | doc | covers | relationship |
 |---|---|---|
-| `quorum-desktop/.agents/tasks/transport/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md` | Whether messages **sent into** a Space actually arrive (WebSocket transport / send durability). | **Different layer, same word.** That one is about message *delivery*; this one is about which Spaces appear in the *list*. A fix in either has no bearing on the other. Both dated 2026-07-31, so check which you actually want. |
-| `quorum-mobile/.agents/bugs/2026-06-22-userconfig-blob-not-live-synced-cross-device-master.md` | Umbrella for config **staleness** — no live refetch trigger; the blob only re-pulls on restart or incidental UI paths. | Different axis. That doc explicitly says **do not fold the space-loss work in**. A live refetch would make convergence *faster*; it would not make it *correct*. |
-| `quorum-desktop/.agents/bugs/2026-06-13-config-not-refetched-stale-until-restart.md` | The desktop half of the staleness umbrella. | Same — adjacent, not this. |
-| `quorum-mobile/.agents/bugs/2026-07-19-new-desktop-space-appears-one-launch-late-on-mobile.md` | New Space invisible on mobile until the next launch. | The *add* path's latency. Small and independent. |
-| `quorum-desktop/.agents/bugs/2025-12-09-encryption-state-evals-bloat.md` | ~2MB per created Space; pushes the config toward the upload limit. | Compounds everything here — a Space whose state is bloated can never be keyed, which is exactly the permanently-unkeyable case §4.2 warns about. Ghost Spaces multiply it. |
+| `quorum-desktop/.agents/issues/transport/2026-07-31-dm-fix-shipped-confirm-and-measure-spaces.md` | Whether messages **sent into** a Space actually arrive (WebSocket transport / send durability). | **Different layer, same word.** That one is about message *delivery*; this one is about which Spaces appear in the *list*. A fix in either has no bearing on the other. Both dated 2026-07-31, so check which you actually want. |
+| `quorum-mobile/.agents/issues/.open/2026-06-22-userconfig-blob-not-live-synced-cross-device-master.md` | Umbrella for config **staleness** — no live refetch trigger; the blob only re-pulls on restart or incidental UI paths. | Different axis. That doc explicitly says **do not fold the space-loss work in**. A live refetch would make convergence *faster*; it would not make it *correct*. |
+| `quorum-desktop/.agents/issues/.open/2026-06-13-config-not-refetched-stale-until-restart.md` | The desktop half of the staleness umbrella. | Same — adjacent, not this. |
+| `quorum-mobile/.agents/issues/.open/2026-07-19-new-desktop-space-appears-one-launch-late-on-mobile.md` | New Space invisible on mobile until the next launch. | The *add* path's latency. Small and independent. |
+| `quorum-desktop/.agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md` | ~2MB per created Space; pushes the config toward the upload limit. | Compounds everything here — a Space whose state is bloated can never be keyed, which is exactly the permanently-unkeyable case §4.2 warns about. Ghost Spaces multiply it. |
 
 ### Code entry points
 

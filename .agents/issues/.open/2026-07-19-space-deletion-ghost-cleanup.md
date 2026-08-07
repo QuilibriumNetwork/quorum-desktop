@@ -4,7 +4,7 @@ title: "Space deletion: instant/offline UX via action queue + tombstone-driven m
 status: open
 priority: high
 created: 2026-07-19
-updated: 2026-08-05
+updated: 2026-08-07
 severity: data-integrity + UX (blocking-leave, no offline; garbage accumulation compounds #108)
 spans-repos:
   - quorum-desktop (this task — implement here)
@@ -14,8 +14,8 @@ spans-repos:
 related:
   - .agents/issues/.open/2025-12-09-encryption-state-evals-bloat.md (#108 — 2MB/created-space bloat this compounds)
   - .agents/docs/features/action-queue.md (delete-space is "not yet integrated"; recommended pattern lines 731-753)
-  - ../../quorum-mobile/.agents/bugs/2026-07-19-config-sync-add-only-deleted-spaces-linger.md (MOBILE side — shared tombstone/reconciliation contract + mobile-only write-side publish gap; severity high. Any wire/config change here must stay in sync with this.)
-  - ../../quorum-mobile/.agents/reports/2026-07-19-signing-key-multidevice-hunt-tracker.md (M2 add-only sync; D7 corrupted-space delete)
+  - ../../../quorum-mobile/.agents/issues/.open/2026-07-19-config-sync-add-only-deleted-spaces-linger.md (MOBILE side — shared tombstone/reconciliation contract + mobile-only write-side publish gap; severity high. Any wire/config change here must stay in sync with this.)
+  - ../../../quorum-mobile/.agents/reports/2026-07-19-signing-key-multidevice-hunt-tracker.md (M2 add-only sync; D7 corrupted-space delete)
 ---
 
 # Space deletion: instant + offline UX, and stop leaking ghost spaces
@@ -31,6 +31,48 @@ related:
 > 2026-08-01, on branch `fix/space-delete-redirect-and-stale-list` (not
 > `fix-multidevice-signing-key`) — see the addendum section. The task stays open
 > for the rest.
+
+> ## ⚠️ Read this first — the framing changed on 2026-08-03 (#301)
+>
+> **The Delete Space button is gated to dev builds.** `Danger.tsx:30`
+> (`IS_DEV = process.env.NODE_ENV === 'development'`); release builds disable it
+> and explain why, dev builds keep it under the honest label **"Leave this
+> Space"**, and the tab is now "Danger" rather than "Delete Space". Verified in
+> current source 2026-08-07.
+>
+> Why it was gated: the button never deleted anything space-wide. It ran the
+> leave flow, and when an **owner** used it their owner key was destroyed while
+> the Space survived with nobody able to kick, rekey or delete it. Real
+> space-wide deletion needs a server purge endpoint that does not exist and has
+> been requested from the lead dev separately.
+>
+> **What this changes for this task:**
+>
+> | Part | Still true? |
+> |---|---|
+> | Root problem 1 (leave is blocking, no offline) | ✅ **Yes.** Leaving is still a normal user action and still runs this path. |
+> | Root problem 2 (config-apply is add-only → ghosts) | ✅ **Yes.** Unchanged, and it is still the ghost factory. |
+> | Root problem 3 (DB-space-not-in-config is overloaded) | ✅ **Yes.** Unchanged. |
+> | Slice 1 (instant/offline leave) | ✅ Still the main user-facing win. |
+> | Slice 2 (tombstones) | ✅ Still the fix that makes lists converge. |
+> | Slice 3 (delete works for corrupted spaces) | ⚠️ **Lower priority.** It targets a button real users can no longer press. Keep it for the dev path and for whenever the server purge lands. |
+> | Slices 4-5 | ✅ Unaffected. |
+>
+> **So read this task as being about LEAVE, not DELETE.** The user-visible bug it
+> fixes is: *leave a Space on one device and it stays in the sidebar on your
+> other devices, permanently.* That is real, live today, and independent of the
+> missing server endpoint.
+>
+> **Severity, honestly:** a stale Space row in a sidebar on another device.
+> Annoying, recoverable, no data loss and no exposure. Schedule it on its own
+> merits; nothing else is waiting on it (see the next note).
+>
+> **Not a dependency of the config-sync overhaul.** A link was briefly drawn
+> between this task and §5.2 of
+> [the config sync overhaul](2026-08-07-config-sync-overhaul-design.md), because
+> that section proposed publishing an empty config on sync-disable, which would
+> have recreated the sidebar-emptying failure. **That proposal has been parked**,
+> so the dependency no longer exists in either direction.
 
 ## Evidence (live desktop account, 2026-07-19)
 
@@ -241,7 +283,7 @@ SCOPE for this desktop task.** Do not edit the mobile repo from here. Mobile has
   the deletion (no `saveConfig` write-back, no hub leave) — see the mobile bug.
 
 Both are captured in
-`../../quorum-mobile/.agents/bugs/2026-07-19-config-sync-add-only-deleted-spaces-linger.md`
+`../../../quorum-mobile/.agents/issues/.open/2026-07-19-config-sync-add-only-deleted-spaces-linger.md`
 (severity high; write-side section + fix steps added 2026-07-21). When mobile is
 scheduled, it becomes its own task/branch that mirrors this contract.
 

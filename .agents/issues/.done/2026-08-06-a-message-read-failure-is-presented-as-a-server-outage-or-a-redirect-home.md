@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A local message-read failure is presented as a server outage, or silently redirects the user home"
-status: in-progress
+status: done
 priority: high
 created: 2026-08-06
 updated: 2026-08-06
@@ -68,8 +68,23 @@ not exist.
 
 ## Status
 
-Fixed on branch `fix/honest-message-read-failure`. Awaiting a look at the real
-app before this moves to `.done/`.
+**2026-08-06 — shipped in PR #319** (`fix(errors): a failed message read no
+longer reads as a server outage, and repair every icon that rendered nothing`).
+Depends on quorum-shared PR #76.
+
+All three items under "What to do" landed and are covered by falsified tests.
+Two things worth carrying forward:
+
+- The screens ended up on the 404 template (circular icon badge, title,
+  description, stacked `Button` primitives), not the `.empty-state` pattern the
+  first cut used, which read as an empty list rather than a failure.
+- The badge initially rendered nothing, because `alert-triangle` is not a valid
+  `IconName`. That turned out to be a much wider bug with its own issue,
+  `2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md`,
+  which is still open for the remaining primitives.
+
+`/dev/error-states` renders all four screens on demand if they need looking at
+again.
 
 **What changed**
 
