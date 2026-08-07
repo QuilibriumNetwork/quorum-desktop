@@ -116,6 +116,61 @@ threshold, not four times under it.** One more created space (~2 MB) puts it
 over, and per §2 nothing would say so. The earlier "one large bookmark away from
 the cliff" in §3 had the wrong number but, by accident, the right posture.
 
+### 6-A-bis. MEASURED 2026-08-07 on a physical Android device — 4566 KB accepted, and a NEW failure mode
+
+Captured incidentally via `adb logcat` while verifying
+[the timestamp-authority fix](../.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
+on a real phone. Not a contrived test — this is ordinary use.
+
+```
+14:35:32  W [ConfigSync] settings POST FAILED — this device is NOT publishing config: Request timeout
+14:36:01  I [ConfigSync] published ts=1786106119904 bytes=4566434 conversationSettings=3
+14:36:05  I [ConfigSync] server read-back CONFIRMS ts=1786106119904
+```
+
+**Two findings, and the first breaks the bracket above.**
+
+**1. 4566 KB (4.35 MB) was accepted, with a server read-back confirming it
+landed.** That is *higher* than the "~4 MB" figure recorded as a 400 rejection on
+2025-12-09. Both cannot be a simple byte ceiling. So either the 2025-12-09
+number was an estimate rather than a measurement, or **the limit is not a byte
+threshold at all** and the rejection was caused by something correlated with size
+rather than size itself. The updated picture:
+
+| | payload | outcome |
+|---|---|---|
+| 2026-08-07, physical device | **4566 KB (4.35 MB)** | ✅ accepted, read-back confirmed |
+| 2026-08-05 | 4205 KB (4.11 MB) | ✅ accepted |
+| 2025-12-09 | "~4 MB" | ❌ 400 rejected |
+
+This makes §4's question to the lead dev sharper, not softer: we now have a
+confirmed acceptance **above** the only recorded rejection, so "what is the
+limit" cannot be answered by bisecting these numbers. Ask what the server
+actually validates.
+
+**2. A client-side `Request timeout` is a second failure mode, distinct from the
+400.** The 4.35 MB upload exceeded the client's `DEFAULT_TIMEOUT` before the
+server ever answered. It is louder than the 400 (it does reach `logger.warn`),
+but it lands in the same catch and is equally invisible in the UI. Any size guard
+should treat "too slow to upload on a phone connection" as a failure case in its
+own right, because a payload can be under the server's ceiling and still never
+arrive over mobile data.
+
+**User-visible consequence, observed:** the operator reported the sync toggle
+"does nothing" when tapped. It was not broken — the switch was disabled for
+~13 seconds while the 4.35 MB POST was in flight, then the POST timed out and it
+silently retried. A settings toggle with no progress indication and a
+multi-second, failure-prone operation behind it reads as a broken control. This
+is P4 (indistinguishable outcomes) meeting P1 (unbounded payload) in
+[the overhaul design](2026-08-07-config-sync-overhaul-design.md), and it argues
+for §5.4's outcome reporting being surfaced next to the toggle rather than only
+in a log.
+
+> Note: the timestamp fix means the timed-out POST no longer poisons this
+> device's clock — the next pull adopted normally instead of going deaf. Before
+> that fix, this single ordinary timeout would have permanently stopped this
+> phone applying any other device's config.
+
 The ~21 MB figure remains a separate, much higher observation and should be
 treated as unreliable until reconciled — a 4 MB rejection and a 21 MB rejection
 cannot both be the limit. §4.4 still needs the real number, and this is now the

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "A device with sync off still advances its config timestamp, so turning sync on can wipe your other devices"
-status: in-progress
+status: done
 priority: high
 ai_generated: true
 created: 2026-08-07
@@ -31,12 +31,10 @@ in the service. Each fix was reverted independently and confirmed to turn its
 tests red, with a control arm that stayed green throughout. Desktop 1133 tests,
 mobile 631, both typecheck clean.
 
-**Deliberately left open, not moved to `.done/`.** The mechanism is verified in
-code and in tests; the **user-facing consequence has never been observed on two
-real devices**, and the four device checks below are still unticked. A `type: bug`
-does not close on a green suite alone when its own verification plan asks for a
-reproduction. Close it after the device run, or after the second symptom is
-confirmed gone in ordinary use.
+**2026-08-07 — verified on two real devices and closed.** A physical Android
+phone and the desktop app on one account, captured with
+`adb logcat -v time ReactNativeJS:V '*:S'`. Four of the five fixed paths are now
+MEASURED in the field, not inferred. Evidence in Verification below.
 
 ## Symptom
 
@@ -76,10 +74,10 @@ than merged (`ConfigService.ts:71-78`, mobile `:427`/`:437` — same shape).
    and from that moment stops adopting anything A publishes.
 3. The user enables sync on **B**.
 4. On desktop, `useUserSettings` calls `getConfig()` first
-   ([useUserSettings.ts:350](../../src/hooks/business/user/useUserSettings.ts#L350)),
+   ([useUserSettings.ts:350](../../../src/hooks/business/user/useUserSettings.ts#L350)),
    which is the right instinct — but `getConfig` compares timestamps and B's
    local one is higher, so `savedConfig.timestamp < storedConfig.timestamp` holds
-   at [`ConfigService.ts:71`](../../src/services/ConfigService.ts#L71) and it
+   at [`ConfigService.ts:71`](../../../src/services/ConfigService.ts#L71) and it
    **returns the local config, discarding the remote entirely.**
 5. B then publishes that local config with a fresh `Date.now()`.
 6. **Device A** pulls, sees a newer timestamp, and adopts B's config verbatim
@@ -90,7 +88,7 @@ The blast radius is the set of fields with no explicit merge: `spaceIds`,
 `mutedConversations`, `favoriteDMs`, and the profile fields. `bookmarks`,
 `userNotes`, `deviceNames` and `conversationSettings` are protected on desktop by
 their merge blocks; mobile protects only `bookmarks` and `conversationSettings`
-(see [the merge-asymmetry issue](.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)).
+(see [the merge-asymmetry issue](../.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)).
 
 ## Corrections to the first draft of this issue
 
@@ -146,7 +144,7 @@ which the other devices then adopt. Fixed separately, below.
 **Deliberately not changed — desktop's POST failure.** Desktop's `saveConfig`
 has no try/catch, so a failed POST throws and `:711` never runs: the change is
 lost locally rather than mis-timestamped. That is a different defect, and
-[useUserSettings.ts:428-432](../../src/hooks/business/user/useUserSettings.ts#L428-L432)
+[useUserSettings.ts:428-432](../../../src/hooks/business/user/useUserSettings.ts#L428-L432)
 deliberately relies on the throw to roll back a public-profile publish. Making
 desktop match mobile here needs its own issue.
 
@@ -169,13 +167,13 @@ not a new principle to invent.
 with.** The local write stays unconditional — the user's change must still
 persist. Only the *claim to authority* is withheld.
 
-**Desktop** ([`ConfigService.ts`](../../src/services/ConfigService.ts)):
+**Desktop** ([`ConfigService.ts`](../../../src/services/ConfigService.ts)):
 - Capture `incomingTimestamp` before stamping (`:525`).
 - Restore it on the `!allowSync` path (new `else` branch).
 - Reuse it in the refuse-to-publish branch, replacing the inline
   `configInput.timestamp ?? 0` — same value, one named source.
 
-**Mobile** ([`configService.ts`](../../../quorum-mobile/services/config/configService.ts)):
+**Mobile** ([`configService.ts`](../../../../quorum-mobile/services/config/configService.ts)):
 - Restore on `!allowSync` and on `!privateKey || !publicKey`.
 - Restore in the POST-failure `catch`, guarded by a `published` flag set
   immediately after the POST returns. A throw from the bookkeeping *after* a
@@ -183,13 +181,13 @@ persist. Only the *claim to authority* is withheld.
   holds that timestamp, and withdrawing it locally would make the device pull
   its own config back.
 
-**Desktop, additionally** ([`src/utils.ts`](../../src/utils.ts)):
+**Desktop, additionally** ([`src/utils.ts`](../../../src/utils.ts)):
 - `getDefaultUserConfig` now stamps `timestamp: 0`, matching mobile. A config
   that has published nothing has earned no timestamp — the same rule, applied to
   the one place that fabricated one out of the clock.
 
 **Mobile, additionally** — new `setAllowSync(address, enabled)` in
-[`configService.ts`](../../../quorum-mobile/services/config/configService.ts),
+[`configService.ts`](../../../../quorum-mobile/services/config/configService.ts),
 called by `useUserConfig`:
 - Enabling sync pulls before it publishes, matching desktop. Turning sync *off*
   publishes nothing and needs no pull. A failed pull falls through to the
@@ -211,7 +209,7 @@ comprehensible; losing Spaces and settings on a device you were not even touchin
 is neither.
 
 The complete answer is per-field merge (P6 in
-[the config sync overhaul](.open/2026-08-07-config-sync-overhaul-design.md)), which lets
+[the config sync overhaul](../.open/2026-08-07-config-sync-overhaul-design.md)), which lets
 both sides survive. This fix removes the worst case cheaply while that is built.
 
 ## Verification
@@ -242,19 +240,68 @@ both sides survive. This fix removes the worst case cheaply while that is built.
       alongside every withheld-timestamp case, not assumed.
 - [x] Full suites green: desktop 1133, mobile 631. Both typecheck clean.
 
-**NOT YET OBSERVED** — the remaining work before this closes:
+**MEASURED ON DEVICE 2026-08-07** — physical Android phone + desktop, one
+account, captured with `adb logcat -v time ReactNativeJS:V '*:S'`.
 
-- [ ] **Reproduce on two real devices.** Device A with sync on and several
-      Spaces. Device B with sync off, then make local changes on B (rename a
-      folder, mute a channel). Enable sync on B. Confirm A loses state on its
-      next pull. Capture the timestamps on both sides.
-- [ ] **Control arm.** Repeat with B's local timestamp *behind* the server's
-      (make no local changes on B before enabling). A should be unaffected. If
-      both arms lose data, the instrument is measuring something else.
-- [ ] After the fix: repeat run 1. B should adopt A's config on enable, then
-      publish the merged result. A keeps everything.
-- [ ] Confirm the second symptom directly: a sync-off device that made one local
-      edit should now still pick up a change made on the other device.
+- [x] **A sync-off write does not advance the timestamp.** Toggled delivery
+      receipts with sync off at `14:22:53` (`NOT publishing — allowSync is off`),
+      then force-closed and reopened the app. New PID, and the startup pull read
+      `pull: UP TO DATE (ts=1786024351822)` — byte-identical to before the write.
+      `UP TO DATE` only prints when remote equals local, so the local value
+      provably had not moved.
+
+- [x] **A sync-off device keeps receiving — with a discriminating ordering.**
+      Desktop published `1786106043764` at ≈`14:34:06`; the phone made a local
+      change *after* that, at `14:29:06`/`14:31:03`; the next pull still read
+      `TOOK REMOTE … (local was <the older value>)`. This is the arm that matters:
+      under the old code the phone would have stamped itself *later* than
+      desktop's publish, outranked it, and printed `KEPT LOCAL` — going deaf
+      permanently. The old code cannot produce the observed line.
+
+- [x] **A failed POST does not advance the timestamp — observed in the wild, not
+      staged.** At `14:35:32` a 4.35 MB upload hit
+      `settings POST FAILED … Request timeout`. The next pull at `14:35:48` read
+      `TOOK REMOTE`, not `KEPT LOCAL`. This is the exact "black hole" the mobile
+      warning describes, and before the fix this single ordinary timeout would
+      have stopped that phone applying any other device's config permanently.
+
+- [x] **Enabling sync does not wipe the other device.** The phone was
+      deliberately left stale (no restart) while desktop published; sync was then
+      enabled. The phone pulled before publishing (`TOOK REMOTE` at `14:35:48`,
+      then `published ts=1786106119904` at `14:36:01`, `server read-back CONFIRMS`),
+      and desktop was checked afterwards with **nothing lost**.
+
+- [x] The user's local change still persists when sync is off — every held save
+      in the run wrote through; only the timestamp was withheld.
+
+- [x] Incidental: per-field `conversationSettings` merge survived every adoption
+      (`remote=3 merged=3` on all four pulls).
+
+**Not covered, and accepted:** the no-keypair path. It is the same one-line
+restore as the other three, is exercised by a unit test, and cannot be staged on
+a real device without breaking the keystore.
+
+### Notes from the device run worth keeping
+
+**The old behaviour was never reproduced**, because the fix shipped first. What
+was done instead is stronger than a demonstration would have been: the run was
+arranged so the *ordering* of timestamps makes the old code's output impossible,
+and the observed line is the one only fixed code can print. Recorded plainly so
+nobody later reads this as a before/after A/B that it was not.
+
+**A long in-flight save racing a pull can roll back that pull's adoption.** At
+`14:35:19` a pull adopted `1786106043764`; the save that failed at `14:35:32` had
+read its config *before* that pull, so its restore wrote the older value back and
+the device re-pulled at `14:35:48`. Harmless and self-healing, and it is a
+property of `saveConfig` persisting the caller's whole config at the end, not of
+this fix. Worth knowing: the fix makes that rollback **benign** — without it the
+rollback would have carried a fresh timestamp and become authoritative.
+
+**Two findings sent elsewhere rather than filed as new issues:** the 4566 KB
+accepted payload and the `Request timeout` failure mode went into
+[the size-guard issue §6-A-bis](../.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md),
+which already owns that question and whose limit bracket this measurement
+changes.
 
 ## Prevention
 

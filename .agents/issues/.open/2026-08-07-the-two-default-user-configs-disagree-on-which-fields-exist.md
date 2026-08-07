@@ -10,7 +10,7 @@ severity: latent — one confirmed catastrophic instance already shipped and was
 area: config sync / cross-client parity / quorum-shared
 repos: quorum-desktop + quorum-mobile + quorum-shared
 related:
-  - ".agents/issues/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md"
+  - ".agents/issues/.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md"
   - ".agents/issues/.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md"
   - ".agents/issues/.open/2026-08-07-config-sync-overhaul-design.md"
   - ".agents/issues/.open/2026-07-31-spaces-list-cross-device-sync.md"
@@ -72,7 +72,7 @@ The row that is now `0` / `0` above read `Date.now()` / `0` until 2026-08-07
 Desktop's default therefore claimed to be newer than the account's real config,
 discarded it unopened, and — once the user enabled sync — published an **empty**
 config over every other device. Fixed in
-[the timestamp issue](../2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md).
+[the timestamp issue](../.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md).
 
 That fix repaired **one row of this table.** The other seven were left, which is
 what this issue is for. The lesson is not "defaults should be careful with
@@ -177,7 +177,7 @@ optional for a good reason: old blobs genuinely lack them. So the enforcement ha
 to be a **shared default plus a test on its shape**, not a stricter type.
 
 More generally, and this is the same conclusion
-[the timestamp issue](../2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
+[the timestamp issue](../.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 reached from the other direction: when one wire contract has two implementations,
 the thing to share is not the *documentation* of the rule but the *code that
 applies it*. A comment describing what both sides should do is invisible from the

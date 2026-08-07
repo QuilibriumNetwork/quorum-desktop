@@ -483,7 +483,7 @@ wins every comparison and overwrites devices that were more current than it.
 > in §8. Rule 1 is no longer an aspiration for this
 > design to deliver; it is a property the code now has, and later slices must not
 > regress it. See
-> [the issue](../2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md).
+> [the issue](../.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md).
 
 Worked example, which is the scenario this design must not make worse: device A
 syncs daily; device B has sync off but is still used, so its timestamp climbs;

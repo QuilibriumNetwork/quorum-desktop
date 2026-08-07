@@ -109,7 +109,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
-- 🐛 [A device with sync off still claims a newer timestamp](issues/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -403,6 +402,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [All emoji images break in a git worktree](issues/.done/2026-08-06-emoji-images-break-in-git-worktrees.md)
 - 🐛 [Emoji panel inserts the emoji at the start of the message](issues/.done/2026-08-06-emoji-panel-inserts-at-start-of-message.md)
 - 🐛 [Messages arriving over sync never reach an open channel, so it stays completely empty until you reload](issues/.done/2026-08-06-synced-messages-never-reach-an-open-channel-so-it-stays-empty.md)
+- 🐛 [A device with sync off still claims a newer timestamp](issues/.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -765,4 +765,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-07 13:50:19
+**Last Updated**: 2026-08-07 14:43:52
