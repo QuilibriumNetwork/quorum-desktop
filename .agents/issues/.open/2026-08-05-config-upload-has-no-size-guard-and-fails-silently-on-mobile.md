@@ -43,6 +43,15 @@ mysteriously stopped working on one device"** — with no error, no log in relea
 and no way to tell it from any of the other sync bugs already open. Anyone
 debugging that lands in the wrong place.
 
+> ⚠️ **Correction, 2026-08-08.** "the value saves locally" above was true of
+> mobile and **false of desktop**. MEASURED: desktop's POST had no `try`/`catch`,
+> so a rejection threw before the local DB write and `saveUserConfig` was never
+> called — the user's edit was discarded outright, not merely unsynced. Fixed in
+> PR #321, which is why the sentence reads correctly now; before that, an
+> oversized blob on desktop also lost every settings change made while it was
+> oversized. **None of this issue is closed by that** — no client measures the
+> payload, and mobile's failure is still compiled out in release.
+
 ## §3. It is not hypothetical
 
 > ⚠️ **Both numbers in this section are superseded — see §6.** The 873 KB was a
@@ -97,6 +106,14 @@ POSTs at `:695` and calls `saveUserConfig` at `:711` **with no try/catch between
 them**, and `QuorumApiClient` throws on any 4xx. So a rejected upload skips the
 local save. The local config was observably rewritten (its bookmark copy went
 from 619.8 KB to 0.0 KB in that same save), therefore the POST returned.
+
+> ⚠️ **This inference was valid when made and is not reusable after 2026-08-08.**
+> It works only because a failed POST skipped the local save — which was itself
+> the data-loss bug fixed in PR #321. Desktop now persists on the failure path, so
+> "the local config changed, therefore the upload succeeded" **no longer follows**.
+> The reading above stands; do not apply the technique to a fresh measurement.
+> Use the publish-outcome record instead, once
+> [it exists](2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md).
 
 **So `~1 MB observed working` should be read as `~4.2 MB observed working`.**
 
@@ -248,3 +265,6 @@ the thing that triggered all of this — are now 37.1 KB, under 1%.
 ---
 
 *Last updated: 2026-08-05*
+
+## Updates
+- **2026-08-08 08:57**: Desktop's 'the value saves locally' claim in §2 corrected — MEASURED false; a rejected POST threw before the local write and the edit was discarded. Fixed in PR #321. No part of this issue is closed by that: still no size measurement on either client, and mobile's failure still compiles out in release.

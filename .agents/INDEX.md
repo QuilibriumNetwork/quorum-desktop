@@ -328,6 +328,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Does mobile need the desktop identity fixes?](issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
 - 📋 [Your own identity, on your own devices](issues/.open/2026-08-05-own-identity-cross-device-sync-design.md)
 - 📋 [Config sync overhaul](issues/.open/2026-08-07-config-sync-overhaul-design.md)
+- 📋 [Make `allowSync` a per-device setting](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md)
+- 📋 [Record and show what the last config publish actually did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md)
 
 ### Deferred
 
@@ -765,4 +767,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-07 14:43:52
+**Last Updated**: 2026-08-08 08:57:57

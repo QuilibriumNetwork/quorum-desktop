@@ -91,13 +91,12 @@ says as much ("the spread above should include it… so list it"). A field absen
 from that list still rides through on both clients. There is no allow-list on
 either side.
 
-> **Doc correction to make when this lands.** The comment at
-> [`ConfigService.ts:406-414`](../../../src/services/ConfigService.ts#L406) and
-> the matching passage in `config-sync-system.md` state that *"mobile currently
-> only warns and publishes anyway"* on a narrowed Space list. That is stale.
-> Mobile's refuse-to-publish guard is real, at `configService.ts:780-796`
-> (`configService.ts:761` comment: *"desktop refused to be that publisher since
-> #282; this is the mobile half"*). Fix both.
+> **Doc correction — done 2026-08-08.** The comment at `ConfigService.ts:406`
+> claimed *"mobile currently only warns and publishes anyway"* on a narrowed
+> Space list. Stale since 2026-08-04: mobile's refuse-to-publish guard is real,
+> at `configService.ts:780-796`. The comment now records that both clients hold,
+> and that the receiver-side exposure is what keeps the diagnostic worth having.
+> A repo-wide sweep found no other copy of the claim.
 
 ### 1.2 Where they genuinely differ
 
@@ -660,6 +659,18 @@ on shared's dist before its app sees them.
 
 Each slice ends in something observable without reading a diff.
 
+**Every slice must reach parity on desktop and mobile.** No slice here is
+wire-coupled, so the two clients *can* land independently — but neither side is
+allowed to stay behind, because a permanently half-shipped slice gives the user
+different results on their laptop and their phone with no visible reason why.
+
+**Release order is a per-slice judgement, not a rule.** Weigh which side is
+riskier, which has the faster verify loop, which the problem was actually
+observed on, each app's release timing, and how confusing the interim gap would
+be. Some slices will sensibly ride one release; others will not. Every slice's
+Definition of Done names both halves regardless — that is what stops "later"
+becoming "never".
+
 **Slice 0 — "A device that did not publish cannot overwrite one that did." ✅ SHIPPED
 2026-08-07**, ahead of this plan, in desktop #320 and mobile #243. Rule 1 across all four non-publishing paths, plus desktop's
 fresh-device default, plus pull-before-enable on mobile. *Observable:* a device
@@ -669,13 +680,20 @@ below reads as "what is left", not "what was planned".
 
 1. **Slice 1 — "Sync tells you what it did."** §5.4 plus the size guard's measure
    and warn. *Observable:* Settings shows "Last synced: …" or a real reason it did
-   not. **No behaviour change.** Ship first: it is the instrument every later
-   slice is verified with.
+   not. Ship first: it is the instrument every later slice is verified with.
+   **Not behaviour-neutral on desktop, contrary to the original plan** — scoping
+   it found that a permanently-rejected publish throws before the local DB write,
+   so the user's change is discarded on that device. Recording the outcome means
+   catching that error, and catching it without persisting would be choosing to
+   keep losing the edit. The fix comes along.
+   **Partly shipped 2026-08-08 in desktop PR #321**: the data-loss half, with
+   acceptance tests. The recording itself, the Settings line, the shared type and
+   the whole mobile side are still to do.
 2. **Slice 2 — "Off stays off."** §5.1 device-local `allowSync`. *Observable:*
    turn sync off on device A, use device B, restart A, it is still off.
 3. **Slice 3 — "Choose what leaves."** §5.3 tiering, with Traps 1-3 resolved.
-   *Observable:* turning off key backup keeps settings syncing and shrinks the
-   blob by ~98%.
+   *Observable:* switching the keys tier off keeps settings syncing and shrinks
+   the blob by ~98%.
 4. **Slice 4 — defaults.** Flip the parent per OPEN DECISION C.
 5. **Slice 5 — freshness (P5) and field-level merge (P6).** Independent, largest,
    last.
@@ -789,7 +807,7 @@ This document is a design. It is done when:
 
 ---
 
-*Last updated: 2026-08-07*
+*Last updated: 2026-08-08*
 
 ## Change Log
 
