@@ -1054,4 +1054,130 @@ describe('ConfigService - Unit Tests', () => {
       expect(JSON.stringify(result)).not.toContain('senderIcon');
     });
   });
+
+  describe('8. saveConfig() - a rejected publish must not cost the user their edit', () => {
+    // THESE TESTS ARE EXPECTED TO FAIL until the fix lands. They exist to turn a
+    // read-the-code claim into a measurement, and they are the acceptance tests
+    // for .agents/issues/.open/2026-08-08-record-and-show-what-the-last-config-
+    // publish-actually-did.md.
+    //
+    // The claim: postUserSettings is a bare `await` with no try/catch, so a 4xx
+    // throws straight out of saveConfig and the local DB write never runs. The
+    // server refusing the blob therefore also discards whatever the user just
+    // changed, on this device, permanently — the action queue classifies the
+    // real-world rejection message as a PERMANENT error (its matcher looks for
+    // 'invalid'), so it is never retried either.
+
+    const address = 'user-reject';
+    const mockKeyset = {
+      userKeyset: {
+        user_key: {
+          private_key: new Uint8Array(57),
+          public_key: new Uint8Array(57),
+        },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    /** Make the DB fake actually persist, so we can read back what survived. */
+    function persistLocally() {
+      let stored: any;
+      mockDeps.messageDB.saveUserConfig = vi.fn(async (c: any) => {
+        stored = structuredClone(c);
+      });
+      mockDeps.messageDB.getUserConfig = vi.fn(async () => stored);
+      return () => stored;
+    }
+
+    /** Everything the allowSync:true path needs to reach postUserSettings. */
+    function arrangePublish() {
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'encrypt').mockResolvedValue(
+        new Uint8Array(16).buffer as ArrayBuffer
+      );
+    }
+
+    /**
+     * The real rejection, verbatim. The exact wording matters twice over: it is
+     * what the server returns for an oversized blob (evals-bloat #108), and
+     * ActionQueueHandlers.isPermanentError decides retry-or-not by looking for
+     * the substring 'invalid' in it.
+     */
+    const SERVER_REJECTION = new Error(
+      'Request failed with status code 400: invalid config missing data'
+    );
+
+    /** The user changed something — a new Space and a renamed profile. */
+    const editedConfig = () => ({
+      address,
+      spaceIds: ['space-1'],
+      allowSync: true,
+      timestamp: 1000,
+      name: 'edited-display-name',
+    }) as any;
+
+    it('CONTROL ARM: an accepted publish persists the edit locally', async () => {
+      // If this ever goes red, the harness is broken and the tests below prove
+      // nothing — a save that never reaches postUserSettings would "not persist"
+      // for reasons that have nothing to do with the rejection.
+      const read = persistLocally();
+      arrangePublish();
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+
+      await configService.saveConfig({ config: editedConfig(), keyset: mockKeyset });
+
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalled();
+      expect(read()?.name).toBe('edited-display-name');
+    });
+
+    it('persists the edit locally even when the server refuses the blob', async () => {
+      const read = persistLocally();
+      arrangePublish();
+      mockDeps.apiClient.postUserSettings = vi.fn().mockRejectedValue(SERVER_REJECTION);
+
+      await configService
+        .saveConfig({ config: editedConfig(), keyset: mockKeyset })
+        .catch(() => {
+          // Rejecting is correct and is asserted separately below. What must not
+          // happen is losing the edit on the way out.
+        });
+
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalled();
+      expect(read()?.name).toBe('edited-display-name');
+    });
+
+    it('still rejects, so the action queue can classify and report the failure', async () => {
+      // The guard against over-correcting the test above by swallowing the error.
+      // Swallowing would silently kill both the retry for transient failures and
+      // the 'Failed to save settings' toast for permanent ones.
+      persistLocally();
+      arrangePublish();
+      mockDeps.apiClient.postUserSettings = vi.fn().mockRejectedValue(SERVER_REJECTION);
+
+      await expect(
+        configService.saveConfig({ config: editedConfig(), keyset: mockKeyset })
+      ).rejects.toThrow(/invalid config missing data/);
+    });
+
+    it('withholds the timestamp after a rejected publish (Rule 1)', async () => {
+      // Persisting on the failure path re-opens the hole #320/#243 just closed:
+      // nothing reached the server, so nothing earned a newer timestamp. Keep the
+      // incoming one, or this device outranks every other one while being the
+      // only one that failed to publish.
+      const read = persistLocally();
+      arrangePublish();
+      mockDeps.apiClient.postUserSettings = vi.fn().mockRejectedValue(SERVER_REJECTION);
+
+      await configService
+        .saveConfig({ config: editedConfig(), keyset: mockKeyset })
+        .catch(() => {});
+
+      expect(read()?.timestamp).toBe(1000);
+    });
+  });
 });
