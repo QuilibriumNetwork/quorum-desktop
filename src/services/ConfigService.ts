@@ -408,10 +408,14 @@ export class ConfigService {
     // The remote config is applied verbatim, and the sidebar renders from
     // `config.items` (useNavItems.ts:49-53), so a publisher that narrows its
     // Space list empties this device's nav the moment its blob wins on
-    // timestamp. Desktop refuses to publish such a list (saveConfig, below);
-    // mobile currently only warns and publishes anyway. Nothing on this side
-    // recorded the adoption, which is why every report of "all my Spaces
-    // vanished" arrived with no evidence attached.
+    // timestamp. Both clients now refuse to publish such a list — desktop in
+    // saveConfig below, mobile since its #228/#229 (an earlier revert of the
+    // mobile guard is why older notes say it "only warns and publishes
+    // anyway"; that has not been true since 2026-08-04). So the known trigger
+    // is gone, but this receiver still adopts whatever it is handed, which is
+    // why the diagnostic stays: nothing else on this side records the
+    // adoption, and every report of "all my Spaces vanished" arrived with no
+    // evidence attached.
     await this.recordSpaceListShrinkOnAdopt(storedConfig, config);
 
     await this.messageDB.saveUserConfig({
@@ -523,6 +527,10 @@ export class ConfigService {
     // advance this device's timestamp. See the note in the refuse-to-publish
     // branch for why that matters.
     const incomingTimestamp = configInput.timestamp ?? 0;
+
+    // Held rather than thrown, so the local save below still runs. Re-thrown
+    // once it has. See the catch around the POST for why both halves matter.
+    let publishError: unknown;
 
     const ts = Date.now();
     config.timestamp = ts;
@@ -691,20 +699,42 @@ export class ConfigService {
           address: config.address,
           timestamp: ts,
         });
-        await this.apiClient.postUserSettings(config.address, {
-          user_address: config.address,
-          user_public_key: Buffer.from(
-            new Uint8Array(userKey.user_key.public_key)
-          ).toString('hex'),
-          user_config: ciphertext,
-          timestamp: ts,
-          signature: signature,
-        });
-        logger.log('[ConfigService] Settings posted successfully');
+        try {
+          await this.apiClient.postUserSettings(config.address, {
+            user_address: config.address,
+            user_public_key: Buffer.from(
+              new Uint8Array(userKey.user_key.public_key)
+            ).toString('hex'),
+            user_config: ciphertext,
+            timestamp: ts,
+            signature: signature,
+          });
+          logger.log('[ConfigService] Settings posted successfully');
 
-        // Reset tombstones only after successful sync (Phase 7: Critical Fix)
-        config.deletedBookmarkIds = [];
-        config.deletedUserNoteAddresses = [];
+          // Reset tombstones only after successful sync (Phase 7: Critical Fix)
+          config.deletedBookmarkIds = [];
+          config.deletedUserNoteAddresses = [];
+        } catch (error) {
+          // A refused upload used to throw straight out of saveConfig, so the
+          // local save at the end never ran and the edit the user had just made
+          // was discarded on this device. The server rejects the WHOLE blob when
+          // it is oversized (evals bloat, #108), and the queue reads "invalid"
+          // in that message as permanent, so nothing retried it either — the
+          // change was simply gone. Hold the error, let the save happen, throw
+          // after. Covered by ConfigService.unit.test.tsx §8.
+          publishError = error;
+          logger.warn(
+            '[ConfigService] Settings POST failed — keeping the change locally, not published:',
+            error
+          );
+
+          // Nothing reached the server, so nothing earned a newer timestamp.
+          // Without this, persisting on the failure path would re-open the hole
+          // #320 closed: this device would outrank every other one while being
+          // the only one that failed to publish, and would then stop applying
+          // their configs. Publishing is what earns the right to a newer stamp.
+          config.timestamp = incomingTimestamp;
+        }
       }
     } else {
       // Sync is off, so nothing was published and the server never agreed to a
@@ -738,6 +768,13 @@ export class ConfigService {
     if (cacheUpdatedAt <= ts) {
       this.queryClient.setQueryData(cacheKey, config);
     }
+
+    // Everything local has landed; now let the failure surface. The queue needs
+    // this to classify the error (permanent vs retryable) and to show "Failed to
+    // save settings". Swallowing it here would look like a passing test and be a
+    // silent regression: no retry for transient failures, no message for real
+    // ones.
+    if (publishError) throw publishError;
   }
 
   /**
