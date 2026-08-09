@@ -13,6 +13,8 @@ import {
   type SensitiveCopyMode,
 } from '../../../utils/clipboardSecurity';
 import type { RestoreReport } from '../../../services/BackupService';
+import { useConfirmation } from '../../../hooks/ui/useConfirmation';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface SecurityProps {
   stagedRegistration: any;
@@ -184,6 +186,38 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   };
 
   const isBackupBusy = isExportingBackup || isImportingBackup;
+
+  /**
+   * Confirmation before writing the file.
+   *
+   * Not a "are you sure" speed bump — the export is harmless in itself. It is
+   * the one moment the user is deciding WHERE this file will live, and the only
+   * moment telling them what is in it can change that decision. A .qmbak now
+   * carries Space ownership keys, and the account key that opens it is itself
+   * downloadable from this same screen: put both in one folder and a single
+   * theft takes the Spaces with it.
+   */
+  const exportConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: {
+      title: t`Export a backup?`,
+      message: t`This file contains the keys to your Spaces, including ownership of any Space you created, plus your direct message history.
+
+Only this account can open it. Anyone who has both this file and your exported account key could take over those Spaces, so keep them in different places.
+
+Space message history is not included. It syncs back from other members.`,
+      confirmText: t`Export backup`,
+      cancelText: t`Cancel`,
+      variant: 'warning',
+    },
+  });
+
+  /** Asks first; `handleExportBackup` runs only once the user confirms. */
+  const handleExportBackupClick = (e: React.MouseEvent) => {
+    if (exportConfirmation.isConfirming) return;
+    exportConfirmation.handleClick(e, handleExportBackup);
+  };
 
   const handleExportBackup = async () => {
     setIsExportingBackup(true);
@@ -588,19 +622,19 @@ const Security: React.FunctionComponent<SecurityProps> = ({
               <div className="flex items-start justify-between gap-3">
                 <div className="text-sm" style={{ lineHeight: 1.3 }}>
                   {/*
-                    Says what the file contains, because it is no longer just
-                    messages: it now holds your Space keys, including ownership
-                    of Spaces you created. People store "my chat history" and
-                    "the keys to my Spaces" in different places, and they can
-                    only make that call if we tell them which one this is.
+                    Deliberately short. What the file actually CONTAINS — Space
+                    keys, including ownership of Spaces you created — is the
+                    kind of thing people need at the moment they decide where to
+                    put the file, not while scanning a settings page. It lives in
+                    the confirmation modal instead.
                   */}
-                  {t`Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device. The file contains your Space keys, including ownership of Spaces you created, and can only be opened by this account. Keep it somewhere separate from your exported account key.`}
+                  {t`Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device.`}
                 </div>
                 <Button
                   type="secondary"
                   size="small"
                   className="whitespace-nowrap"
-                  onClick={handleExportBackup}
+                  onClick={handleExportBackupClick}
                   disabled={isBackupBusy}
                 >
                   {isExportingBackup ? t`Exporting...` : t`Export`}
@@ -636,6 +670,22 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         </div>
 
       </div>
+      {/* Says what the file holds, at the moment the user chooses where to keep it. */}
+      {exportConfirmation.modalConfig && (
+        <ConfirmationModal
+          visible={exportConfirmation.showModal}
+          title={exportConfirmation.modalConfig.title}
+          message={exportConfirmation.modalConfig.message}
+          confirmText={exportConfirmation.modalConfig.confirmText}
+          cancelText={exportConfirmation.modalConfig.cancelText}
+          variant={exportConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={exportConfirmation.isConfirming}
+          busyMessage={t`Exporting...`}
+          onConfirm={exportConfirmation.modalConfig.onConfirm}
+          onCancel={exportConfirmation.modalConfig.onCancel}
+        />
+      )}
     </>
   );
 };
