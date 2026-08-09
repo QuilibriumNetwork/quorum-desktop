@@ -118,12 +118,92 @@ export function domainsOf(
   };
 }
 
+/**
+ * Adopts Spaces from key material, skipping any already present locally.
+ *
+ * Injected rather than imported so BackupService does not depend on
+ * ConfigService. In the app this is `ConfigService.adoptSpaces`, which is the
+ * same path a fresh device runs on every synced login — see its doc comment for
+ * the additive guarantee this relies on.
+ */
+export type AdoptSpacesFn = (args: {
+  spaceKeys: NonNullable<UserConfig['spaceKeys']>;
+}) => Promise<{
+  restored: string[];
+  alreadyPresent: string[];
+  failed: { spaceId: string; reason: string }[];
+}>;
+
+/** Per-domain outcome of a restore, so the caller can say what did NOT happen. */
+export interface RestoreReport {
+  messagesWritten: number;
+  conversationsWritten: number;
+  /** Messages in the file that were NOT written because the user deleted them. */
+  messagesSkippedAsDeleted: number;
+  spacesRestored: string[];
+  spacesAlreadyPresent: string[];
+  spacesFailed: { spaceId: string; reason: string }[];
+  /** Format of the file that was read. */
+  version: BackupVersion;
+  /** What that file captured. */
+  domains: BackupDomains;
+}
+
 export class BackupService {
   private messageDB: MessageDB;
+  private adoptSpaces?: AdoptSpacesFn;
   private isProcessing = false;
 
-  constructor({ messageDB }: { messageDB: MessageDB }) {
+  constructor({
+    messageDB,
+    adoptSpaces,
+  }: {
+    messageDB: MessageDB;
+    /** Omit to disable Space restore entirely (export-only usage, tests). */
+    adoptSpaces?: AdoptSpacesFn;
+  }) {
     this.messageDB = messageDB;
+    this.adoptSpaces = adoptSpaces;
+  }
+
+  /**
+   * Rebuilds the per-Space key bundles that `adoptSpaces` expects from the flat
+   * arrays stored in a v2 payload.
+   *
+   * A Space with no encryption state is dropped rather than passed on: adoptSpaces
+   * would persist `{ ...undefined, inboxId }`, writing a corrupt state row that
+   * looks present and cannot decrypt anything. `saveConfig` filters the same case
+   * on the way out (ConfigService.ts:591), and this is the same rule on the way
+   * back in.
+   */
+  private buildSpaceBundles(payload: BackupPayload): {
+    bundles: NonNullable<UserConfig['spaceKeys']>;
+    skipped: { spaceId: string; reason: string }[];
+  } {
+    const bundles: NonNullable<UserConfig['spaceKeys']> = [];
+    const skipped: { spaceId: string; reason: string }[] = [];
+
+    for (const space of payload.spaces ?? []) {
+      const keys = (payload.space_keys ?? []).filter(
+        (k) => k.spaceId === space.spaceId
+      );
+      const encryptionState = (payload.encryption_states ?? []).find(
+        (s) => s.conversationId === `${space.spaceId}/${space.spaceId}`
+      );
+
+      if (keys.length === 0) {
+        skipped.push({ spaceId: space.spaceId, reason: 'no key material in backup' });
+        continue;
+      }
+      if (!encryptionState) {
+        skipped.push({ spaceId: space.spaceId, reason: 'no encryption state in backup' });
+        continue;
+      }
+
+      bundles.push({ spaceId: space.spaceId, encryptionState, keys });
+    }
+
+    return { bundles, skipped };
   }
 
   /**
@@ -293,14 +373,7 @@ export class BackupService {
   }: {
     keyset: secureChannel.UserKeyset;
     fileContent: string;
-  }): Promise<{
-    messagesWritten: number;
-    conversationsWritten: number;
-    /** Format of the file that was read (1 or 2). */
-    version: BackupVersion;
-    /** What that file captured — lets the caller say what could NOT be restored. */
-    domains: BackupDomains;
-  }> {
+  }): Promise<RestoreReport> {
     if (this.isProcessing) {
       throw new Error('A backup operation is already in progress');
     }
@@ -362,21 +435,61 @@ export class BackupService {
         );
       }
 
-      // 4. Import messages and conversations only.
-      //
-      // Space restore is deliberately NOT wired up here yet — it needs the
-      // additive per-record reconcile from slice 2 of the overhaul design, and
-      // adopting Spaces without it risks overwriting a live device's keys. The
-      // keys are captured now so that files taken from today onward can be
-      // restored once that lands; a file never taken cannot be fixed later.
+      // 4. DM messages and conversations — upsert by id, unchanged and already
+      // idempotent, which is what makes a second import of the same file a no-op.
       const result = await this.messageDB.importDMData({
         messages: payload.messages,
         conversations: payload.conversations,
       });
 
-      logger.log('[BackupService] Import complete:', result);
+      // 5. Spaces — additive only.
+      //
+      // Reconciled per record rather than per file: `adoptSpaces` restores a
+      // Space only when this device does not already have it, so importing into
+      // a live account cannot overwrite working key material, and importing an
+      // OLDER backup cannot roll a Space back. That single property is what makes
+      // every merge case safe (design §4) without asking the file how old it is.
+      //
+      // Encryption states are deliberately still not written for DMs — that is
+      // the SDK-gated slice, see design §6.
+      let spacesRestored: string[] = [];
+      let spacesAlreadyPresent: string[] = [];
+      let spacesFailed: { spaceId: string; reason: string }[] = [];
 
-      return { ...result, version: backupFile.version, domains };
+      if (domains.space_keys && this.adoptSpaces) {
+        const { bundles, skipped } = this.buildSpaceBundles(payload);
+        spacesFailed = skipped;
+
+        if (bundles.length > 0) {
+          const adopted = await this.adoptSpaces({ spaceKeys: bundles });
+          spacesRestored = adopted.restored;
+          spacesAlreadyPresent = adopted.alreadyPresent;
+          spacesFailed = [...skipped, ...adopted.failed];
+        }
+      } else if (!domains.space_keys) {
+        logger.warn(
+          '[BackupService] No Space key material in this backup ' +
+            `(format v${backupFile.version}) — DM history restored, Spaces cannot be.`
+        );
+      }
+
+      const report: RestoreReport = {
+        ...result,
+        spacesRestored,
+        spacesAlreadyPresent,
+        spacesFailed,
+        version: backupFile.version,
+        domains,
+      };
+
+      logger.log('[BackupService] Import complete:', {
+        ...report,
+        spacesRestored: spacesRestored.length,
+        spacesAlreadyPresent: spacesAlreadyPresent.length,
+        spacesFailed: spacesFailed.length,
+      });
+
+      return report;
     } finally {
       this.isProcessing = false;
     }

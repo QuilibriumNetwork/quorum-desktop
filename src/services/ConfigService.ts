@@ -113,173 +113,8 @@ export class ConfigService {
       config.items = validateItems(config.items);
     }
 
-    for (const space of config.spaceKeys ?? []) {
-      const existingSpace = await this.messageDB.getSpace(space.spaceId);
-      if (!existingSpace) {
-        try {
-          const config = space.keys.find((k) => k.keyId == 'config');
-          if (!config) {
-            logger.warn(t`Decrypted Space with no known config key`);
-            continue;
-          }
-
-          const hub = space.keys.find((k) => k.keyId == 'hub');
-          if (!hub) {
-            logger.warn(t`Decrypted Space with no known hub key`);
-            continue;
-          }
-
-          for (const key of space.keys) {
-            // Per-device-signing flip (Option A): a fresh device no longer
-            // adopts the shared `signing` slot. It signs with its own
-            // per-device `inbox` key (getSigningKey falls through to it) and
-            // announces that key via announce-keys. Skipping the synced
-            // `signing` key here — and NOT deriving one from `inbox` below —
-            // is what puts a fresh second device on its own key. Devices set
-            // up before this flip keep any previously-saved `signing` slot
-            // untouched (getSigningKey still reads it), so nothing regresses.
-            if (key.keyId === 'signing') continue;
-            await this.messageDB.saveSpaceKey(key);
-          }
-
-          const reg = (await this.apiClient.getSpace(space.spaceId)).data;
-          this.spaceInfo.current[space.spaceId] = reg;
-
-          const manifestPayload = await this.apiClient.getSpaceManifest(
-            space.spaceId
-          );
-          if (!manifestPayload) {
-            logger.warn(t`Could not obtain manifest for Space`);
-            continue;
-          }
-
-          const ciphertext = JSON.parse(
-            manifestPayload.data.space_manifest
-          ) as {
-            ciphertext: string;
-            initialization_vector: string;
-            associated_data: string;
-          };
-          const manifest = JSON.parse(
-            Buffer.from(
-              JSON.parse(
-                ch.js_decrypt_inbox_message(
-                  JSON.stringify({
-                    inbox_private_key: [
-                      ...new Uint8Array(
-                        Buffer.from(config.privateKey, 'hex')
-                      ),
-                    ],
-                    ephemeral_public_key: [
-                      ...new Uint8Array(
-                        Buffer.from(
-                          manifestPayload.data.ephemeral_public_key,
-                          'hex'
-                        )
-                      ),
-                    ],
-                    ciphertext: ciphertext,
-                  })
-                )
-              )
-            ).toString('utf-8')
-          ) as Space;
-
-          const ip = ch.js_generate_ed448();
-          const inboxPair = JSON.parse(ip);
-          const ih = await sha256.digest(
-            Buffer.from(new Uint8Array(inboxPair.public_key))
-          );
-          const inboxAddress = base58btc.baseEncode(ih.bytes);
-
-          await this.messageDB.saveSpace(manifest);
-          await this.messageDB.saveEncryptionState(
-            { ...space.encryptionState, inboxId: inboxAddress },
-            true
-          );
-
-          await this.apiClient.postHubAdd({
-            hub_address: hub.address!,
-            hub_public_key: hub.publicKey,
-            hub_signature: Buffer.from(
-              JSON.parse(
-                ch.js_sign_ed448(
-                  Buffer.from(hub.privateKey, 'hex').toString('base64'),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...new Uint8Array(
-                        Buffer.from(
-                          'add' +
-                            Buffer.from(
-                              new Uint8Array(inboxPair.public_key)
-                            ).toString('hex'),
-                          'utf-8'
-                        )
-                      ),
-                    ])
-                  ).toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-            inbox_public_key: Buffer.from(
-              new Uint8Array(inboxPair.public_key)
-            ).toString('hex'),
-            inbox_signature: Buffer.from(
-              JSON.parse(
-                ch.js_sign_ed448(
-                  Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
-                    'base64'
-                  ),
-                  Buffer.from(
-                    new Uint8Array([
-                      ...new Uint8Array(
-                        Buffer.from('add' + hub.publicKey, 'utf-8')
-                      ),
-                    ])
-                  ).toString('base64')
-                )
-              ),
-              'base64'
-            ).toString('hex'),
-          });
-
-          this.enqueueOutbound(async () => [
-            JSON.stringify({
-              type: 'listen',
-              inbox_addresses: [inboxAddress],
-            }),
-          ]);
-
-          await this.messageDB.saveSpaceKey({
-            spaceId: space.spaceId,
-            keyId: 'inbox',
-            address: inboxAddress,
-            publicKey: Buffer.from(
-              new Uint8Array(inboxPair.public_key)
-            ).toString('hex'),
-            privateKey: Buffer.from(
-              new Uint8Array(inboxPair.private_key)
-            ).toString('hex'),
-          });
-
-          this.enqueueOutbound(async () => [
-            await this.sendHubMessage(
-              space.spaceId,
-              JSON.stringify({
-                type: 'control',
-                message: {
-                  type: 'sync',
-                  inboxAddress: inboxAddress,
-                },
-              })
-            ),
-          ]);
-        } catch (e) {
-          console.error(t`Could not add Space`, e);
-        }
-      }
-    }
+    // Additive by construction: adoptSpaces skips any Space already present.
+    await this.adoptSpaces({ spaceKeys: config.spaceKeys ?? [] });
 
     // Merge deviceNames: additive union so names from all devices survive concurrent saves
     const deviceNamesMerge = mergeDeviceNames(
@@ -464,6 +299,224 @@ export class ConfigService {
       () => config
     );
     return config;
+  }
+
+  /**
+   * Adopt Spaces from key material, skipping any that already exist locally.
+   *
+   * Extracted from getConfig so the backup restore path can reuse it verbatim
+   * rather than reimplement it. Restoring a Space from a `.qmbak` is the SAME
+   * operation as adopting one from a synced config — only the source of the key
+   * bundle differs — and this is the version that has run on every multi-device
+   * login for months.
+   *
+   * **Additive by construction.** The `if (!existingSpace)` guard is the whole
+   * safety property: a Space this device already holds is never touched, so its
+   * keys cannot be overwritten by an older bundle. Any caller relying on that
+   * (the backup import does) must not bypass this method.
+   *
+   * The Space *definition* is re-fetched from the API, never taken from the
+   * caller — only key material is trusted from the bundle.
+   */
+  async adoptSpaces({
+    spaceKeys,
+  }: {
+    spaceKeys: NonNullable<UserConfig['spaceKeys']>;
+  }): Promise<{
+    restored: string[];
+    alreadyPresent: string[];
+    failed: { spaceId: string; reason: string }[];
+  }> {
+    const restored: string[] = [];
+    const alreadyPresent: string[] = [];
+    const failed: { spaceId: string; reason: string }[] = [];
+
+    for (const space of spaceKeys) {
+      const existingSpace = await this.messageDB.getSpace(space.spaceId);
+      if (existingSpace) {
+        // The additive guarantee. Counted rather than silently ignored so a
+        // restore can report "3 already present" instead of implying it did
+        // nothing.
+        alreadyPresent.push(space.spaceId);
+      }
+      if (!existingSpace) {
+        try {
+          const config = space.keys.find((k) => k.keyId == 'config');
+          if (!config) {
+            logger.warn(t`Decrypted Space with no known config key`);
+            failed.push({ spaceId: space.spaceId, reason: 'missing config key' });
+            continue;
+          }
+
+          const hub = space.keys.find((k) => k.keyId == 'hub');
+          if (!hub) {
+            logger.warn(t`Decrypted Space with no known hub key`);
+            failed.push({ spaceId: space.spaceId, reason: 'missing hub key' });
+            continue;
+          }
+
+          for (const key of space.keys) {
+            // Per-device-signing flip (Option A): a fresh device no longer
+            // adopts the shared `signing` slot. It signs with its own
+            // per-device `inbox` key (getSigningKey falls through to it) and
+            // announces that key via announce-keys. Skipping the synced
+            // `signing` key here — and NOT deriving one from `inbox` below —
+            // is what puts a fresh second device on its own key. Devices set
+            // up before this flip keep any previously-saved `signing` slot
+            // untouched (getSigningKey still reads it), so nothing regresses.
+            if (key.keyId === 'signing') continue;
+            await this.messageDB.saveSpaceKey(key);
+          }
+
+          const reg = (await this.apiClient.getSpace(space.spaceId)).data;
+          this.spaceInfo.current[space.spaceId] = reg;
+
+          const manifestPayload = await this.apiClient.getSpaceManifest(
+            space.spaceId
+          );
+          if (!manifestPayload) {
+            logger.warn(t`Could not obtain manifest for Space`);
+            continue;
+          }
+
+          const ciphertext = JSON.parse(
+            manifestPayload.data.space_manifest
+          ) as {
+            ciphertext: string;
+            initialization_vector: string;
+            associated_data: string;
+          };
+          const manifest = JSON.parse(
+            Buffer.from(
+              JSON.parse(
+                ch.js_decrypt_inbox_message(
+                  JSON.stringify({
+                    inbox_private_key: [
+                      ...new Uint8Array(
+                        Buffer.from(config.privateKey, 'hex')
+                      ),
+                    ],
+                    ephemeral_public_key: [
+                      ...new Uint8Array(
+                        Buffer.from(
+                          manifestPayload.data.ephemeral_public_key,
+                          'hex'
+                        )
+                      ),
+                    ],
+                    ciphertext: ciphertext,
+                  })
+                )
+              )
+            ).toString('utf-8')
+          ) as Space;
+
+          const ip = ch.js_generate_ed448();
+          const inboxPair = JSON.parse(ip);
+          const ih = await sha256.digest(
+            Buffer.from(new Uint8Array(inboxPair.public_key))
+          );
+          const inboxAddress = base58btc.baseEncode(ih.bytes);
+
+          await this.messageDB.saveSpace(manifest);
+          await this.messageDB.saveEncryptionState(
+            { ...space.encryptionState, inboxId: inboxAddress },
+            true
+          );
+
+          await this.apiClient.postHubAdd({
+            hub_address: hub.address!,
+            hub_public_key: hub.publicKey,
+            hub_signature: Buffer.from(
+              JSON.parse(
+                ch.js_sign_ed448(
+                  Buffer.from(hub.privateKey, 'hex').toString('base64'),
+                  Buffer.from(
+                    new Uint8Array([
+                      ...new Uint8Array(
+                        Buffer.from(
+                          'add' +
+                            Buffer.from(
+                              new Uint8Array(inboxPair.public_key)
+                            ).toString('hex'),
+                          'utf-8'
+                        )
+                      ),
+                    ])
+                  ).toString('base64')
+                )
+              ),
+              'base64'
+            ).toString('hex'),
+            inbox_public_key: Buffer.from(
+              new Uint8Array(inboxPair.public_key)
+            ).toString('hex'),
+            inbox_signature: Buffer.from(
+              JSON.parse(
+                ch.js_sign_ed448(
+                  Buffer.from(new Uint8Array(inboxPair.private_key)).toString(
+                    'base64'
+                  ),
+                  Buffer.from(
+                    new Uint8Array([
+                      ...new Uint8Array(
+                        Buffer.from('add' + hub.publicKey, 'utf-8')
+                      ),
+                    ])
+                  ).toString('base64')
+                )
+              ),
+              'base64'
+            ).toString('hex'),
+          });
+
+          this.enqueueOutbound(async () => [
+            JSON.stringify({
+              type: 'listen',
+              inbox_addresses: [inboxAddress],
+            }),
+          ]);
+
+          await this.messageDB.saveSpaceKey({
+            spaceId: space.spaceId,
+            keyId: 'inbox',
+            address: inboxAddress,
+            publicKey: Buffer.from(
+              new Uint8Array(inboxPair.public_key)
+            ).toString('hex'),
+            privateKey: Buffer.from(
+              new Uint8Array(inboxPair.private_key)
+            ).toString('hex'),
+          });
+
+          this.enqueueOutbound(async () => [
+            await this.sendHubMessage(
+              space.spaceId,
+              JSON.stringify({
+                type: 'control',
+                message: {
+                  type: 'sync',
+                  inboxAddress: inboxAddress,
+                },
+              })
+            ),
+          ]);
+
+          restored.push(space.spaceId);
+        } catch (e) {
+          console.error(t`Could not add Space`, e);
+          // Counted, not rethrown: one unreachable Space must not abandon the
+          // rest of the batch. Unchanged behaviour — only now it is reportable
+          // instead of visible solely in the console.
+          failed.push({
+            spaceId: space.spaceId,
+            reason: e instanceof Error ? e.message : String(e),
+          });
+        }
+      }
+    }
+
+    return { restored, alreadyPresent, failed };
   }
 
   /**

@@ -1534,10 +1534,22 @@ export class MessageDB {
       const messageRequest = messageStore.delete(messageId);
       messageRequest.onerror = () => reject(messageRequest.error);
 
-      // Save tombstone to prevent re-sync (only for channel messages, not DMs)
-      // DMs don't have a sync mechanism, so tombstones aren't needed
-      // DM detection: spaceId === channelId (both are partner's address)
-      if (message && message.spaceId !== message.channelId) {
+      // Save a tombstone so the message cannot come back.
+      //
+      // This used to be channel-messages-only, on the reasoning that "DMs don't
+      // have a sync mechanism, so tombstones aren't needed". That was true when
+      // written and **backup restore is exactly the mechanism that makes it
+      // false**: importing a backup taken before the deletion re-`put()`s every
+      // message it contains, so a deleted DM would silently reappear. A user who
+      // deleted a message deliberately — the case where it matters most — would
+      // have no way to know, and no second chance to delete it before the peer
+      // side of the conversation had already moved on.
+      //
+      // Writing the record is purely additive: nothing else consumes tombstones
+      // for DMs (`isMessageDeleted` guards the peer-sync re-add path, which DMs
+      // never take), so this changes no existing behaviour. The import gate in
+      // `importDMData` is the consumer.
+      if (message) {
         const tombstone: DeletedMessageRecord = {
           messageId,
           spaceId: message.spaceId,
@@ -1571,6 +1583,21 @@ export class MessageDB {
         resolve();
       };
       transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  /**
+   * Every tombstoned messageId. Used by the backup import to refuse to
+   * resurrect a message the user deleted after the backup was taken.
+   */
+  async getDeletedMessageIds(): Promise<string[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['deleted_messages'], 'readonly');
+      const store = transaction.objectStore('deleted_messages');
+      const request = store.getAllKeys();
+      request.onsuccess = () => resolve(request.result as string[]);
+      request.onerror = () => reject(request.error);
     });
   }
 
@@ -2329,8 +2356,27 @@ export class MessageDB {
   async importDMData({ messages, conversations }: {
     messages: Message[];
     conversations: Conversation[];
-  }): Promise<{ messagesWritten: number; conversationsWritten: number }> {
+  }): Promise<{
+    messagesWritten: number;
+    conversationsWritten: number;
+    messagesSkippedAsDeleted: number;
+  }> {
     await this.init();
+
+    // Tombstone gate.
+    //
+    // "Additive" protects state the user CHANGED after the backup; it does
+    // nothing for state the user REMOVED. Without this, restoring a backup taken
+    // before a deletion resurrects the deleted message — the import would undo a
+    // deliberate act, silently, and the user would have no signal that it
+    // happened. Read before the write transaction rather than inside it: one
+    // getAll instead of a get per message, and an import racing a deletion is not
+    // a real scenario.
+    const deletedIds = new Set(await this.getDeletedMessageIds());
+
+    const admissible = messages.filter((m) => !deletedIds.has(m.messageId));
+    const messagesSkippedAsDeleted = messages.length - admissible.length;
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['messages', 'conversations'], 'readwrite');
       const messageStore = transaction.objectStore('messages');
@@ -2346,13 +2392,13 @@ export class MessageDB {
       }
 
       // Write messages (dedup by messageId via put)
-      for (const msg of messages) {
+      for (const msg of admissible) {
         const request = messageStore.put(msg);
         request.onsuccess = () => { messagesWritten++; };
       }
 
       transaction.oncomplete = () => {
-        resolve({ messagesWritten, conversationsWritten });
+        resolve({ messagesWritten, conversationsWritten, messagesSkippedAsDeleted });
       };
       transaction.onerror = () => reject(transaction.error);
       transaction.onabort = () => reject(new Error('Import transaction aborted'));
