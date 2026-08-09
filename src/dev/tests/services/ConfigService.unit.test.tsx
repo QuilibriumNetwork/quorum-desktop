@@ -1228,6 +1228,158 @@ describe('ConfigService - Unit Tests', () => {
     });
   });
 
+  describe('11. getConfig() - a stale tombstone must not re-delete a re-created note', () => {
+    // The bug these were written against, MEASURED before the fix: desktop
+    // publishes its note tombstones inside the blob (uploadConfig is a spread of
+    // config) and clears them locally only after a successful POST. Mobile pulls
+    // that blob and stores them, but has NO userNotes code anywhere — it is a
+    // pure carrier — so it never clears them and republishes the same tombstone
+    // in every later save. Desktop applied remote tombstones unconditionally, so
+    // a note the user re-created was deleted again on every adopt, forever, with
+    // no error and no way out.
+    //
+    // The bare-address form could not be repaired in place: it carries no
+    // deletion time, and the blob timestamp is the carrier's republish time, so
+    // a months-old deletion always looks current. Hence `deletedUserNotes`,
+    // which carries `deletedAt` and can be compared against a note's own
+    // `updatedAt`.
+
+    const address = 'user-notes';
+    const mockUserKey = {
+      user_key: {
+        private_key: new Uint8Array(57),
+        public_key: new Uint8Array(57),
+      },
+    } as any;
+
+    function arrangeAdopt(decrypted: any, localNotes: any[]) {
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(decrypted));
+      const buffer = jsonBytes.buffer.slice(
+        jsonBytes.byteOffset,
+        jsonBytes.byteOffset + jsonBytes.byteLength
+      );
+      mockDeps.messageDB.getUserConfig = vi
+        .fn()
+        .mockResolvedValue({ address, spaceIds: [], allowSync: false, timestamp: 500 });
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue(localNotes);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({
+        data: {
+          user_config: 'aabbccdd' + '000000000000000000000000',
+          // Mobile's republish time, NOT the deletion time. This is exactly why
+          // the blob timestamp cannot stand in for a tombstone timestamp.
+          timestamp: 9000,
+          signature: 'aabbcc',
+        },
+      });
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(buffer as ArrayBuffer);
+    }
+
+    it('keeps a note that was re-created after the deletion', async () => {
+      // The user deleted this note at 1000, changed their mind, and wrote it
+      // again at 5000. The tombstone still circulating describes the OLD
+      // deletion, so it must not win.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNotes: [{ targetAddress: 'QmTargetA', deletedAt: 1000 }],
+          timestamp: 9000,
+        },
+        [{ targetAddress: 'QmTargetA', note: 'written again', updatedAt: 5000 }]
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).not.toHaveBeenCalledWith('QmTargetA');
+    });
+
+    it('ignores the legacy untimestamped tombstone entirely', async () => {
+      // This is the poisoning fix itself. Old clients still receive this array,
+      // and a carrier still republishes it forever, so honouring it on receipt
+      // is what made the deletion permanent. Nothing else in the blob mentions
+      // QmTargetA, so acting on it here would be acting on the legacy form.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNoteAddresses: ['QmTargetA'],
+          timestamp: 9000,
+        },
+        [{ targetAddress: 'QmTargetA', note: 'written again', updatedAt: 5000 }]
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).not.toHaveBeenCalledWith('QmTargetA');
+    });
+
+    it('REGRESSION GUARD: a genuine deletion still deletes', async () => {
+      // Tombstones exist to stop a stale device resurrecting a deleted note, and
+      // that has to keep working. A "fix" that simply ignored tombstones would
+      // satisfy both tests above and be worse than the bug.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNotes: [{ targetAddress: 'QmTargetB', deletedAt: 5000 }],
+          timestamp: 9000,
+        },
+        [{ targetAddress: 'QmTargetB', note: 'old note', updatedAt: 100 }]
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).toHaveBeenCalledWith('QmTargetB');
+    });
+
+    it('a tombstone still applies when no local note exists', async () => {
+      // The ordinary case: the deletion arrives on a device that has the note or
+      // has nothing. Absent counts as updatedAt 0, so the tombstone wins.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNotes: [{ targetAddress: 'QmTargetC', deletedAt: 5000 }],
+          timestamp: 9000,
+        },
+        []
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).toHaveBeenCalledWith('QmTargetC');
+    });
+
+    it('CONTROL ARM: a note nobody tombstoned is untouched', async () => {
+      // If this ever goes red the harness is wrong and none of the above means
+      // anything.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNotes: [{ targetAddress: 'QmTargetA', deletedAt: 9000 }],
+          timestamp: 9000,
+        },
+        [{ targetAddress: 'QmUnrelated', note: 'fine', updatedAt: 5000 }]
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).not.toHaveBeenCalledWith('QmUnrelated');
+    });
+  });
+
   describe('10. getConfig() - allowSync is device-local and never inherited', () => {
     // allowSync describes THIS device's relationship with the server, but it
     // rides in the account-level blob. So a decision made on one device used to

@@ -200,6 +200,16 @@ const UserProfile: React.FunctionComponent<{
         if (currentPasskeyInfo?.address) {
           const config = await messageDB.getUserConfig({ address: currentPasskeyInfo.address });
           if (config) {
+            // Timestamped form is the one receivers act on: it lets a note
+            // written again later survive this deletion, which the bare-address
+            // list could not express. That list is still written so clients
+            // predating `deletedUserNotes` keep receiving the deletion.
+            config.deletedUserNotes = [
+              ...(config.deletedUserNotes ?? []).filter(
+                t => t.targetAddress !== props.user.address
+              ),
+              { targetAddress: props.user.address, deletedAt: Date.now() },
+            ];
             config.deletedUserNoteAddresses = [
               ...(config.deletedUserNoteAddresses ?? []),
               props.user.address,

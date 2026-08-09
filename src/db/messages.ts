@@ -88,7 +88,13 @@ export type UserConfig = {
   bookmarks?: Bookmark[];
   deletedBookmarkIds?: string[];
   userNotes?: UserNote[];
+  /** @deprecated Untimestamped, so it cannot be aged out. Published for older clients, ignored on receipt — see `deletedUserNotes`. */
   deletedUserNoteAddresses?: string[];
+  // Note tombstones carrying when the deletion happened, so a note written
+  // again afterwards survives it. A carrier that never clears its tombstones
+  // republishes them forever, which made a re-created note undeletable-proof
+  // under the bare-address form.
+  deletedUserNotes?: { targetAddress: string; deletedAt: number }[];
   mutedChannels?: {
     [spaceId: string]: string[];
   };
