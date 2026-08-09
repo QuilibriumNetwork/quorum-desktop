@@ -507,6 +507,13 @@ import again → "0 restored, 1 already present". Both property tests
 mutation-verified.
 
 **Slice 2b — Space-departure tombstones. ✅ SHIPPED 2026-08-09.**
+Both write sites are now asserted at the call site, not only through the DB
+helper: `SpaceService.unit.test.tsx` for `left`, and
+`MessageService.kickDeparture.unit.test.ts` for `removed` — the latter driving a
+real kick frame through `handleNewMessage`, with controls for "kick names someone
+else" and "signature does not verify". `InvitationService.unit.test.tsx` covers
+the clear-on-rejoin. All three mutation-verified.
+
 New `departed_spaces` store at DB v15, written at the two genuine departure sites
 — `SpaceService.deleteSpace` (`left`) and `MessageService`'s removed-from-space
 handler (`removed`) — and **not** in `MessageDB.deleteSpace`, which
