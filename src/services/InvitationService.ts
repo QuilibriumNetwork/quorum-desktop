@@ -764,6 +764,10 @@ export class InvitationService {
       });
       // Clear any tombstones from a previous join to allow messages to sync
       await this.messageDB.clearTombstonesForSpace(space.spaceId);
+      // Same reasoning one level up: the user is in this Space again, so any
+      // record of having left it is no longer true and must not keep blocking a
+      // backup restore of it.
+      await this.messageDB.clearSpaceDeparture(space.spaceId);
       await this.messageDB.saveSpace(space);
       let config = await this.getConfig({
         address: currentPasskeyInfo.address,

@@ -67,6 +67,7 @@ Quick reference for debugging and creating console snippets.
 | **user_notes** | `targetAddress` | — |
 | **search_indices** | `indexKey` | `by_lastUpdated` |
 | **space_member_devices** | `[spaceId, deviceInboxAddress]` | `by_member` |
+| **departed_spaces** | `spaceId` | — |
 
 ---
 
@@ -499,6 +500,38 @@ Serialized MiniSearch indices, persisted so full-text search survives restarts.
 
 ---
 
+### departed_spaces
+
+**Key:** `spaceId`
+
+**Indexes:** none
+
+Spaces this user left or was removed from. A departure tombstone, and the Space
+analogue of `deleted_messages`.
+
+**Why it exists:** restoring a `.qmbak` taken before a departure would otherwise
+re-add the Space *and* call `postHubAdd`, so a user who was kicked would silently
+re-announce themselves to the Space that removed them. Being additive is not
+enough on its own — that protects state the user *changed*, not state the user
+*removed*.
+
+**Written by the departure call sites, never by `MessageDB.deleteSpace()`.**
+`deleteSpace` looks like the single choke point, but `EncryptionService` also
+calls it to retire the old id during a space-address **migration**, which is not
+a departure. The two genuine sites are `SpaceService.deleteSpace` (`left`) and
+`MessageService`'s removed-from-space handler (`removed`).
+
+Cleared by `InvitationService` on rejoin, alongside `clearTombstonesForSpace`.
+
+**Consumed by the backup restore only, not by config sync.** A synced config is
+the account's *current* state, published after the departure; a backup file is
+stale by construction. Gating the sync adopt path on this would break leaving a
+Space on one device and rejoining it on another.
+
+Fields: `spaceId`, `reason` (`'left' | 'removed'`), `departedAt`.
+
+---
+
 ### space_member_devices
 
 **Key:** `[spaceId, deviceInboxAddress]` (compound)
@@ -667,6 +700,7 @@ for (const s of stores) console.log(s, await countStore(s));
 | 12 | Added: user_notes store (private per-user annotations, local-only) |
 | 13 | Added: search_indices store (persisted MiniSearch full-text indices) |
 | 14 | Added: space_member_devices store (per-device space signing keys — durable multi-device) |
+| 15 | Added: departed_spaces store (Spaces the user left or was removed from — stops a backup restore re-joining them) |
 
 **When you bump this:** update `QUORUM_DB_VERSION` in `src/db/dbVersion.ts` (the
 only place the number lives), add the row above, and classify any new store in
@@ -675,4 +709,4 @@ only place the number lives), add the row above, and classify any new store in
 
 ---
 
-*Last updated: 2026-08-01*
+*Last updated: 2026-08-09*

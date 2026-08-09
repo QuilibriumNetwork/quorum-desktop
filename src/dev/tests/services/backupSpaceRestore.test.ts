@@ -427,6 +427,104 @@ describe('Backup restore — Spaces, additive only', () => {
     });
   });
 
+  describe('a restore must not re-join a Space the user left', () => {
+    // The Space half of the deletion axis, and the one with an outward-facing
+    // consequence: adoptSpaces calls postHubAdd and sends a sync control
+    // message, so re-adding a Space the user was kicked from would re-announce
+    // them to the Space that removed them.
+
+    it('a Space left after the backup is not restored', async () => {
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      // The user leaves. (Recorded by SpaceService/MessageService in the app;
+      // called directly here so the test does not depend on those flows.)
+      await db.deleteSpace(SPACE_A);
+      await db.markSpaceDeparted({ spaceId: SPACE_A, reason: 'left' });
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.spacesRestored).toEqual([]);
+      expect(report.spacesFailed).toEqual([
+        { spaceId: SPACE_A, reason: 'you left this Space after this backup was taken' },
+      ]);
+      expect(await db.getSpaces()).toHaveLength(0);
+    });
+
+    it('being removed is reported differently from leaving', async () => {
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      await db.deleteSpace(SPACE_A);
+      await db.markSpaceDeparted({ spaceId: SPACE_A, reason: 'removed' });
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.spacesFailed[0].reason).toMatch(/removed from this Space/);
+    });
+
+    it('CONTROL: a Space that was never departed DOES restore', async () => {
+      // Without this the gate could pass by restoring nothing at all.
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      db = await freshDb();
+      wire(db);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.spacesRestored).toEqual([SPACE_A]);
+    });
+
+    it('rejoining clears the departure, so the Space can be restored again', async () => {
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      await db.deleteSpace(SPACE_A);
+      await db.markSpaceDeparted({ spaceId: SPACE_A, reason: 'left' });
+      // The user is invited back (InvitationService clears the record here).
+      await db.clearSpaceDeparture(SPACE_A);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.spacesRestored).toEqual([SPACE_A]);
+    });
+
+    it('the gate does NOT apply to config sync — only to stale backup files', async () => {
+      // adoptSpaces serves both paths. A synced config is the account's CURRENT
+      // state, published after the departure; a backup is stale by construction.
+      // Gating sync on departures would break leaving on one device and
+      // rejoining on another, so the gate lives in BackupService, not here.
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const bundle = {
+        spaceId: SPACE_A,
+        encryptionState: (
+          await db.getEncryptionStates({ conversationId: `${SPACE_A}/${SPACE_A}` })
+        )[0],
+        keys: await db.getSpaceKeys(SPACE_A),
+      };
+
+      await db.deleteSpace(SPACE_A);
+      await db.markSpaceDeparted({ spaceId: SPACE_A, reason: 'left' });
+
+      const adopted = await configService.adoptSpaces({ spaceKeys: [bundle] as any });
+
+      expect(adopted.restored).toEqual([SPACE_A]);
+    });
+  });
+
   it('a v1 file restores DMs and reports that Spaces were not in it', async () => {
     // Regression guard for the back-compat promise: v1 files predate Space key
     // capture, and must still import rather than be refused.

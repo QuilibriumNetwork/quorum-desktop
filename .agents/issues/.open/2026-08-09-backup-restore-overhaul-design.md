@@ -506,12 +506,22 @@ Deletion tombstones for DMs landed with it (§4.1).
 import again → "0 restored, 1 already present". Both property tests
 mutation-verified.
 
-**Slice 2b — Space-departure tombstones. 🔴 NEXT, and it is a correctness gap, not
-a polish item.** See §4.1: leaving or being kicked leaves no record, so a restore
-re-adds the Space *and* re-announces to its hub. Needs a DB version bump, writes
-at the two genuine departure call sites (**not** in `deleteSpace`, which
-`EncryptionService` also uses for a migration), a clear-on-rejoin, and a gate in
-`adoptSpaces`.
+**Slice 2b — Space-departure tombstones. ✅ SHIPPED 2026-08-09.**
+New `departed_spaces` store at DB v15, written at the two genuine departure sites
+— `SpaceService.deleteSpace` (`left`) and `MessageService`'s removed-from-space
+handler (`removed`) — and **not** in `MessageDB.deleteSpace`, which
+`EncryptionService` also uses for a space-address migration. Cleared by
+`InvitationService` on rejoin, next to the existing `clearTombstonesForSpace`.
+
+**The gate lives in `BackupService`, not `adoptSpaces`.** That method also serves
+config sync, where the payload is the account's *current* state published after
+the departure, rather than a snapshot from the past; blocking there would break
+leaving a Space on one device and rejoining on another. A backup file is stale by
+construction, a synced config is not — and that distinction is asserted by a test.
+*Observable:* leave a Space, import an older backup → "you left this Space after
+this backup was taken", nothing re-registered. Mutation-verified, and the
+departure write is asserted at the `SpaceService` call site rather than only
+through the DB helper.
 
 **Slice 3 — Honest reporting and pre-flight.** Before writing a file, show what it
 will contain (including that it holds Space ownership keys — §10.7). Before

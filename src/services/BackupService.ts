@@ -176,14 +176,42 @@ export class BackupService {
    * on the way out (ConfigService.ts:591), and this is the same rule on the way
    * back in.
    */
-  private buildSpaceBundles(payload: BackupPayload): {
+  private async buildSpaceBundles(payload: BackupPayload): Promise<{
     bundles: NonNullable<UserConfig['spaceKeys']>;
     skipped: { spaceId: string; reason: string }[];
-  } {
+  }> {
     const bundles: NonNullable<UserConfig['spaceKeys']> = [];
     const skipped: { spaceId: string; reason: string }[] = [];
 
+    // Departure gate — the deletion axis for Spaces (design §4.1).
+    //
+    // Additive alone would happily re-add a Space the user left or was removed
+    // from after the backup was taken, and `adoptSpaces` re-registers with the
+    // hub, so a kicked user would silently re-announce to the Space that removed
+    // them.
+    //
+    // Gated HERE and not inside `adoptSpaces` on purpose. That method also serves
+    // config sync, where the payload is the account's CURRENT state — published
+    // after the departure — rather than a snapshot from the past. Blocking there
+    // would break the legitimate case of leaving on one device and rejoining on
+    // another. A backup file is stale by construction; a synced config is not.
+    const departed = new Map(
+      (await this.messageDB.getDepartedSpaces()).map((d) => [d.spaceId, d])
+    );
+
     for (const space of payload.spaces ?? []) {
+      const departure = departed.get(space.spaceId);
+      if (departure) {
+        skipped.push({
+          spaceId: space.spaceId,
+          reason:
+            departure.reason === 'removed'
+              ? 'you were removed from this Space after this backup was taken'
+              : 'you left this Space after this backup was taken',
+        });
+        continue;
+      }
+
       const keys = (payload.space_keys ?? []).filter(
         (k) => k.spaceId === space.spaceId
       );
@@ -457,7 +485,7 @@ export class BackupService {
       let spacesFailed: { spaceId: string; reason: string }[] = [];
 
       if (domains.space_keys && this.adoptSpaces) {
-        const { bundles, skipped } = this.buildSpaceBundles(payload);
+        const { bundles, skipped } = await this.buildSpaceBundles(payload);
         spacesFailed = skipped;
 
         if (bundles.length > 0) {

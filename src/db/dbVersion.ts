@@ -13,4 +13,4 @@
 export const QUORUM_DB_NAME = 'quorum_db';
 
 /** Schema version the app opens the database at. */
-export const QUORUM_DB_VERSION = 14;
+export const QUORUM_DB_VERSION = 15;

@@ -421,6 +421,20 @@ export class MessageDB {
           });
           memberDevices.createIndex('by_member', ['spaceId', 'userAddress']);
         }
+
+        if (event.oldVersion < 15) {
+          // Departure tombstones: Spaces this user left or was removed from.
+          //
+          // Mirrors `deleted_messages` for Spaces. Restoring a backup taken
+          // before a departure would otherwise re-add the Space AND re-register
+          // with its hub, so a removed user silently re-announces to a Space
+          // that kicked them.
+          //
+          // Written by the departure call sites, NOT by `deleteSpace` — that
+          // method is also used for a space-address migration, which is not a
+          // departure. See `markSpaceDeparted`.
+          db.createObjectStore('departed_spaces', { keyPath: 'spaceId' });
+        }
       };
     });
   }
@@ -1583,6 +1597,71 @@ export class MessageDB {
         resolve();
       };
       transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  /**
+   * Record that this user is no longer in a Space.
+   *
+   * **Call this from the departure sites, never from `deleteSpace()`.** It is
+   * tempting to put it there — all removal paths funnel through it, so it looks
+   * like the single choke point — but `EncryptionService` also calls
+   * `deleteSpace` to retire the old id during a space-address MIGRATION, which is
+   * not a departure. Tombstoning there would file two different facts under one
+   * name.
+   *
+   * Consumed by the backup restore, which must not resurrect a Space the user
+   * left after the backup was taken. Deliberately NOT consulted by the config
+   * sync adopt path: a synced config is the account's CURRENT state, published
+   * after the departure, whereas a backup file is stale by construction. Gating
+   * sync on this would break the legitimate case of rejoining on another device.
+   */
+  async markSpaceDeparted({
+    spaceId,
+    reason,
+  }: {
+    spaceId: string;
+    reason: 'left' | 'removed';
+  }): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['departed_spaces'], 'readwrite');
+      const store = transaction.objectStore('departed_spaces');
+      const request = store.put({ spaceId, reason, departedAt: Date.now() });
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Clear a departure record, because the user is in the Space again.
+   *
+   * Mirrors `clearTombstonesForSpace`, which does the same for that Space's
+   * message tombstones on rejoin. Without it, a rejoined Space could never be
+   * restored from a later backup.
+   */
+  async clearSpaceDeparture(spaceId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['departed_spaces'], 'readwrite');
+      const store = transaction.objectStore('departed_spaces');
+      const request = store.delete(spaceId);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /** Every Space this user left or was removed from, with the reason. */
+  async getDepartedSpaces(): Promise<
+    { spaceId: string; reason: 'left' | 'removed'; departedAt: number }[]
+  > {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['departed_spaces'], 'readonly');
+      const store = transaction.objectStore('departed_spaces');
+      const request = store.getAll();
+      request.onsuccess = () => resolve(request.result ?? []);
+      request.onerror = () => reject(request.error);
     });
   }
 

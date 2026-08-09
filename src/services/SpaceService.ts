@@ -683,6 +683,11 @@ export class SpaceService {
       () => userConfig
     );
     await this.messageDB.deleteSpace(spaceId);
+    // Departure tombstone: a genuine leave/delete, so a later backup restore
+    // must not re-add this Space or re-register with its hub. Recorded here
+    // rather than inside deleteSpace, which is also used for a space-address
+    // migration — see markSpaceDeparted.
+    await this.messageDB.markSpaceDeparted({ spaceId, reason: 'left' });
     // The sidebar and the Spaces list read the ['Spaces'] query, not the
     // config query updated above, so without this they keep serving the
     // cached pre-delete list until a page reload. createSpace already does

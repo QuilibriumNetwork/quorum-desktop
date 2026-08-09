@@ -102,6 +102,7 @@ describe('SpaceService - Unit Tests', () => {
         getSpaceMembers: vi.fn().mockResolvedValue([]),
         deleteSpaceMember: vi.fn().mockResolvedValue(undefined),
         deleteSpace: vi.fn().mockResolvedValue(undefined),
+        markSpaceDeparted: vi.fn().mockResolvedValue(undefined),
         getAllSpaceMessages: vi.fn().mockResolvedValue([]),
         deleteMessage: vi.fn().mockResolvedValue(undefined),
         getEncryptionStates: vi.fn().mockResolvedValue([]),
@@ -295,6 +296,14 @@ describe('SpaceService - Unit Tests', () => {
       expect(mockDeps.messageDB.deleteEncryptionState).toHaveBeenCalledTimes(1);
       expect(mockDeps.messageDB.deleteSpace).toHaveBeenCalledWith(spaceId);
       expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
+      // Records the departure, so a later backup restore cannot re-add this
+      // Space and re-register with its hub. Asserted at the call site because
+      // this is the wiring the backup tests cannot see — they call
+      // markSpaceDeparted directly.
+      expect(mockDeps.messageDB.markSpaceDeparted).toHaveBeenCalledWith({
+        spaceId,
+        reason: 'left',
+      });
     });
 
     // The sidebar and the Spaces list read ['Spaces'], not the config query.
