@@ -190,23 +190,26 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   /**
    * Confirmation before writing the file.
    *
-   * Not a "are you sure" speed bump — the export is harmless in itself. It is
-   * the one moment the user is deciding WHERE this file will live, and the only
-   * moment telling them what is in it can change that decision. A .qmbak now
-   * carries Space ownership keys, and the account key that opens it is itself
-   * downloadable from this same screen: put both in one folder and a single
-   * theft takes the Spaces with it.
+   * Not an "are you sure" speed bump — the export is harmless in itself. It is
+   * the moment the user learns what the file actually holds, which is no longer
+   * just messages: it carries Space ownership keys too.
+   *
+   * Deliberately states no storage advice. An earlier draft warned that anyone
+   * holding both this file AND the exported account key could take over those
+   * Spaces. That is noise for a sync-ON user, whose account key alone already
+   * fetches the Space keys from the server — and worse, framing the COMBINATION
+   * as the danger implies the account key by itself is less than total, which is
+   * the opposite of true. It is only incremental for a sync-OFF user, for whom
+   * the server holds nothing and this file is the only other copy. Rather than
+   * state something true for one group and misleading for the other, the copy
+   * sticks to what is true for both. The sync-off nuance belongs in the docs.
    */
   const exportConfirmation = useConfirmation({
     type: 'modal',
     enableShiftBypass: false,
     modalConfig: {
       title: t`Export a backup?`,
-      message: t`This file contains the keys to your Spaces, including ownership of any Space you created, plus your direct message history.
-
-Only this account can open it. Anyone who has both this file and your exported account key could take over those Spaces, so keep them in different places.
-
-Space message history is not included. It syncs back from other members.`,
+      message: t`This file contains your direct message history and the keys to your Spaces, including ownership of any you created. Only this account can open it.\n\nSpace message history is not included. It syncs back from other members.`,
       confirmText: t`Export backup`,
       cancelText: t`Cancel`,
       variant: 'warning',
