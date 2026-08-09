@@ -256,29 +256,49 @@ Covered by `backupSpaceRestore.test.ts`, control-armed (a never-deleted message
 must still restore, or the gate could pass by writing nothing) and
 mutation-verified.
 
-**Space departures — OPEN, and the harder half.** No leave/kick tombstone exists
-anywhere (READ: no `deletedSpaceIds`, `leftSpaces` or equivalent in `src/`). So
-restoring a backup taken before leaving **will** re-add the Space, and worse than
-locally: `adoptSpaces` calls `postHubAdd` and sends a `sync` control message, so a
-kicked user silently re-announces to a Space that removed them. That is an
-outward-facing action taken on stale state.
+**Space departures — MEASURED 2026-08-09, and the news is good.**
 
-The obvious fix — write the tombstone inside `MessageDB.deleteSpace()`, the single
-choke point all three removal paths funnel through — **does not work as stated**,
-and this is the trap to avoid:
+The departure record is device-local, so it is gone in the very case the feature
+exists for: total data loss, then restore. That looked like a hole. **It is not,
+for the case that matters**, and the reason is cryptographic rather than
+bookkeeping.
 
-| Caller | Meaning |
+`kickUser` does not merely edit a member list. It **rotates the Space's config
+key**, re-establishes the group ratchet without the removed member, and
+**re-encrypts the manifest to the new key** ([`SpaceService.ts`](../../../src/services/SpaceService.ts),
+kickUser). A restore rebuilds a Space by decrypting that manifest with the config
+key **from the backup** — now the old one — and it does so *before* it would
+announce the user to the hub ([`ConfigService.ts`](../../../src/services/ConfigService.ts),
+adoptSpaces). So the decrypt fails, the adopt aborts, and `postHubAdd` is never
+reached.
+
+**Measured, not read:** [`space-kick.scenario.test.ts`](../../../src/dev/tests/harness/space-kick.scenario.test.ts)
+runs two real bots against the live relay:
+
+| Step | Result |
 |---|---|
-| [`SpaceService.ts:685`](../../../src/services/SpaceService.ts#L685) | leave / delete — a real departure |
-| [`MessageService.ts:5638`](../../../src/services/MessageService.ts#L5638) | kicked — a real departure |
-| [`EncryptionService.ts:305`](../../../src/services/EncryptionService.ts#L305) | **not a departure** — a space-address *migration*, which deletes the old `spaceId` and immediately re-saves under a new one |
+| CONTROL — B reads A's post while still a member | ✅ received (so the assertions below are not vacuous) |
+| B is kicked, A posts again | ✅ B **cannot read it** |
+| B restores their **pre-kick** backup onto a wiped device | ✅ `restored=0, failed=1` — the Space does **not** come back |
+| The failure is reported, readably | ✅ *"you no longer have access to this Space — its keys were changed…"* |
 
-Tombstoning in `deleteSpace` would mark a migrated Space as "left". It happens to
-be harmless for the restore gate (the retired id should not be resurrected either),
-but it conflates two different facts under one name, which is how the next bug gets
-written. **The tombstone must be recorded by the departure call sites, not by the
-store method.** A rejoin must clear it — `clearTombstonesForSpace` is the existing
-precedent for exactly that.
+Two things came out of that run that reading would not have produced. The failure
+first surfaced to the user as `Unexpected token 'D', "Decryption"... is not valid
+JSON` — the raw SDK error through `JSON.parse`, accurate and useless — now
+translated. And vitest reported an unhandled rejection that turned out to be a
+genuine pre-existing crash, filed and fixed as
+[`2026-08-09-armed-sync-crashes-after-a-kick.md`](../.done/2026-08-09-armed-sync-crashes-after-a-kick.md).
+
+**What the tombstone is still for.** Leaving voluntarily triggers **no rekey** —
+only the owner kicking someone does — so a leaver's keys stay valid and their
+restore would re-add the Space. That is the case the record covers, and it is the
+benign one: they chose to leave and can leave again.
+
+**Residual, honestly stated.** The **hub key is not rotated** on a kick. Nothing
+reachable through the app uses it (the restore aborts first), but someone crafting
+requests by hand could still subscribe to the hub and receive traffic they cannot
+decrypt. Whether the node rejects that is a **server-side question this repo
+cannot answer** and worth putting to whoever owns it.
 
 This needs a DB version bump and touches kick/leave, so it is **its own slice**
 (now slice 2b) rather than an addendum. Until it lands, the restore reports which
@@ -540,8 +560,25 @@ the standing "Space message history is not included" note.
 *Observable:* import a v1 file → a successful restore that states plainly why no
 Spaces came back, instead of a bare message count.
 
-**Slice 4 — DM sessions.** Restore ratchet states only where no state exists for
-that conversation. **The only slice gated on the SDK answer (§10.3).**
+**Slice 4 — DM sessions. 🟢 DECIDED 2026-08-09: do not restore DM ratchet state, ever.**
+
+The right answer turned out to be the simplest one, and the app already does it.
+Import never writes DM ratchet state; when a conversation has no session, the
+first send force-starts a fresh one
+([`MessageService.ts:1537`](../../../src/services/MessageService.ts#L1537)). So
+after a restore a DM opens and is **immediately usable** — history back, typing
+works, new session established on send.
+
+That removes the hazard rather than managing it: nothing is rewound, so no message
+key can be re-derived, and there is nothing to ask the SDK about in order to ship.
+
+The only genuinely unrecoverable thing is messages a peer sent **during the gap**,
+addressed to the old session. Recovering those is precisely what would require
+restoring the old ratchet, which is precisely what is dangerous. So we accept the
+loss and say so in the UI.
+
+*Was: "restore ratchet states only where no state exists, gated on the SDK answer."
+Superseded — that design managed a risk this one does not take.*
 *Observable:* the two-party harness in §9.
 > **This slice must not block slices 1-3, 5 or 6.** If the SDK answer is slow or
 > unfavourable, ship D4 — the honest-copy fallback — and close the rest of the issue
@@ -616,9 +653,16 @@ live sessions untouched.
    below but blocks nothing else.
 2. **Re-verify §6.1 against the code.** If `inbox_mapping` or `latest_states` gain a
    reader between now and implementation, the DM slice grows.
-3. **The SDK question (§6) — and an asymmetry that needs a deliberate decision.**
-   Can a rewound sending chain re-derive an already-used message key, and can the SDK
-   expose a receive-only restore (D1)?
+3. ~~**The SDK question (§6)**~~ — **NO LONGER A BLOCKER, 2026-08-09.** Resolved by
+   not taking the risk: DM ratchet state is never restored (slice 4), so nothing is
+   rewound. The Space side inherits the sync path's behaviour rather than adding to
+   it — a synced new device already adopts a Space ratchet state from the config
+   blob, and that blob is itself a snapshot refreshed only on save, measured stale
+   for a long time on a real account (see `config-sync-system.md`). So a backup
+   restore does what multi-device login already does. Still worth asking, but as a
+   question about the existing sync path, not a gate on this work.
+
+   Retained below for whoever raises it:
 
    > ⚠️ **Raised by security review 2026-08-09, and it is a fair hit.** Slice 4 (DM
    > ratchet restore) is *blocked* pending this answer, while **slice 2 shipped and

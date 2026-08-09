@@ -369,19 +369,6 @@ export class ConfigService {
             continue;
           }
 
-          for (const key of space.keys) {
-            // Per-device-signing flip (Option A): a fresh device no longer
-            // adopts the shared `signing` slot. It signs with its own
-            // per-device `inbox` key (getSigningKey falls through to it) and
-            // announces that key via announce-keys. Skipping the synced
-            // `signing` key here — and NOT deriving one from `inbox` below —
-            // is what puts a fresh second device on its own key. Devices set
-            // up before this flip keep any previously-saved `signing` slot
-            // untouched (getSigningKey still reads it), so nothing regresses.
-            if (key.keyId === 'signing') continue;
-            await this.messageDB.saveSpaceKey(key);
-          }
-
           const reg = (await this.apiClient.getSpace(space.spaceId)).data;
           this.spaceInfo.current[space.spaceId] = reg;
 
@@ -432,6 +419,26 @@ export class ConfigService {
               )
             ).toString('utf-8')
           ) as Space;
+
+          // Written only once the manifest has decrypted — i.e. once we know
+          // this Space can actually be rebuilt. Saving them earlier left
+          // orphaned key rows for a Space that never got a `spaces` row: rows
+          // nothing renders, nothing exports (getAllSpaceData iterates Spaces,
+          // not keys), and nothing cleans up. The kicked-user case reaches
+          // exactly that path, because a kick rotates the config key and the
+          // old one can no longer open the manifest.
+          for (const key of space.keys) {
+            // Per-device-signing flip (Option A): a fresh device no longer
+            // adopts the shared `signing` slot. It signs with its own
+            // per-device `inbox` key (getSigningKey falls through to it) and
+            // announces that key via announce-keys. Skipping the synced
+            // `signing` key here — and NOT deriving one from `inbox` below —
+            // is what puts a fresh second device on its own key. Devices set
+            // up before this flip keep any previously-saved `signing` slot
+            // untouched (getSigningKey still reads it), so nothing regresses.
+            if (key.keyId === 'signing') continue;
+            await this.messageDB.saveSpaceKey(key);
+          }
 
           const ip = ch.js_generate_ed448();
           const inboxPair = JSON.parse(ip);
@@ -530,9 +537,23 @@ export class ConfigService {
           // Counted, not rethrown: one unreachable Space must not abandon the
           // rest of the batch. Unchanged behaviour — only now it is reportable
           // instead of visible solely in the console.
+          //
+          // The manifest-decrypt failure is named specially because it is the
+          // EXPECTED outcome for someone who was kicked: a kick rotates the
+          // Space's config key and re-encrypts the manifest to it, so the key in
+          // an older backup can no longer open it. Measured by the space-kick
+          // harness scenario, which saw this surface to the user as
+          // `Unexpected token 'D', "Decryption"... is not valid JSON` — the raw
+          // JSON.parse error from the SDK's failure string. Accurate, useless.
+          const raw = e instanceof Error ? e.message : String(e);
+          const looksLikeDecryptFailure =
+            /decryption|is not valid JSON|aead/i.test(raw);
           failed.push({
             spaceId: space.spaceId,
-            reason: e instanceof Error ? e.message : String(e),
+            reason: looksLikeDecryptFailure
+              ? 'you no longer have access to this Space — its keys were changed, ' +
+                'which happens when a member is removed'
+              : raw,
           });
         }
       }

@@ -228,6 +228,21 @@ export class SyncService {
     const channelId = space?.defaultChannelId || spaceId;
     const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
 
+    // The Space can disappear between a sync being armed and it firing — being
+    // kicked deletes the Space and all its keys, and an already-scheduled sync
+    // then lands here with nothing to sign with. `inboxKey.address!` below
+    // asserts non-null, so this threw an UNHANDLED rejection rather than
+    // failing quietly. Surfaced by the space-kick harness scenario.
+    //
+    // Returning matches what this method already does when there are no sync
+    // candidates: there is nothing to sync into a Space we are no longer in.
+    if (!inboxKey) {
+      logger.log(
+        `[SyncService] initiateSync: no inbox key for ${spaceId} — Space is gone, skipping`
+      );
+      return;
+    }
+
     // Get peer IDs
     const encryptionState = await this.messageDB.getEncryptionStates({
       conversationId: spaceId + '/' + spaceId,

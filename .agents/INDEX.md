@@ -405,6 +405,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Emoji panel inserts the emoji at the start of the message](issues/.done/2026-08-06-emoji-panel-inserts-at-start-of-message.md)
 - 🐛 [Messages arriving over sync never reach an open channel, so it stays completely empty until you reload](issues/.done/2026-08-06-synced-messages-never-reach-an-open-channel-so-it-stays-empty.md)
 - 🐛 [A device with sync off still claims a newer timestamp](issues/.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
+- 🐛 [An armed sync crashes after a kick](issues/.done/2026-08-09-armed-sync-crashes-after-a-kick.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -768,4 +769,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-09 14:04:55
+**Last Updated**: 2026-08-09 14:46:59
