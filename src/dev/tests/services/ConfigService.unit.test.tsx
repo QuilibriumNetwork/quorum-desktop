@@ -1229,22 +1229,20 @@ describe('ConfigService - Unit Tests', () => {
   });
 
   describe('11. getConfig() - a stale tombstone must not re-delete a re-created note', () => {
-    // EXPECTED RED until the tombstone fix lands. This turns a read-the-code
-    // trace into a measurement.
+    // The bug these were written against, MEASURED before the fix: desktop
+    // publishes its note tombstones inside the blob (uploadConfig is a spread of
+    // config) and clears them locally only after a successful POST. Mobile pulls
+    // that blob and stores them, but has NO userNotes code anywhere — it is a
+    // pure carrier — so it never clears them and republishes the same tombstone
+    // in every later save. Desktop applied remote tombstones unconditionally, so
+    // a note the user re-created was deleted again on every adopt, forever, with
+    // no error and no way out.
     //
-    // The trace: desktop publishes deletedUserNoteAddresses inside the blob
-    // (uploadConfig is a spread of config) and clears it locally only after a
-    // successful POST. Mobile pulls that blob and stores the tombstone, but has
-    // NO userNotes code anywhere — it is a pure carrier — so it never clears it
-    // and republishes it in every later save. Desktop then applies remote
-    // tombstones unconditionally, so the note is deleted again. Re-create it and
-    // the next adopt from mobile deletes it once more, forever.
-    //
-    // Nothing in the current data model can tell a fresh deletion from a stale
-    // carried one: the tombstone is a bare address with no time attached, and
-    // the blob timestamp is mobile's republish time, not the deletion time. So
-    // the first test below cannot pass without a per-tombstone timestamp. That
-    // is the point — it defines what the fix has to provide.
+    // The bare-address form could not be repaired in place: it carries no
+    // deletion time, and the blob timestamp is the carrier's republish time, so
+    // a months-old deletion always looks current. Hence `deletedUserNotes`,
+    // which carries `deletedAt` and can be compared against a note's own
+    // `updatedAt`.
 
     const address = 'user-notes';
     const mockUserKey = {
@@ -1278,8 +1276,31 @@ describe('ConfigService - Unit Tests', () => {
     }
 
     it('keeps a note that was re-created after the deletion', async () => {
-      // The user deleted this note, then changed their mind and wrote it again.
-      // The tombstone still circulating describes the OLD deletion.
+      // The user deleted this note at 1000, changed their mind, and wrote it
+      // again at 5000. The tombstone still circulating describes the OLD
+      // deletion, so it must not win.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNotes: [{ targetAddress: 'QmTargetA', deletedAt: 1000 }],
+          timestamp: 9000,
+        },
+        [{ targetAddress: 'QmTargetA', note: 'written again', updatedAt: 5000 }]
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).not.toHaveBeenCalledWith('QmTargetA');
+    });
+
+    it('ignores the legacy untimestamped tombstone entirely', async () => {
+      // This is the poisoning fix itself. Old clients still receive this array,
+      // and a carrier still republishes it forever, so honouring it on receipt
+      // is what made the deletion permanent. Nothing else in the blob mentions
+      // QmTargetA, so acting on it here would be acting on the legacy form.
       arrangeAdopt(
         {
           address,
@@ -1298,17 +1319,16 @@ describe('ConfigService - Unit Tests', () => {
     });
 
     it('REGRESSION GUARD: a genuine deletion still deletes', async () => {
-      // Must stay green through the fix. Tombstones exist to stop a stale device
-      // resurrecting a deleted note, and that has to keep working — a fix that
-      // simply ignores tombstones would pass the test above and be worse than
-      // the bug.
+      // Tombstones exist to stop a stale device resurrecting a deleted note, and
+      // that has to keep working. A "fix" that simply ignored tombstones would
+      // satisfy both tests above and be worse than the bug.
       arrangeAdopt(
         {
           address,
           spaceIds: [],
           spaceKeys: [],
           userNotes: [],
-          deletedUserNoteAddresses: ['QmTargetB'],
+          deletedUserNotes: [{ targetAddress: 'QmTargetB', deletedAt: 5000 }],
           timestamp: 9000,
         },
         [{ targetAddress: 'QmTargetB', note: 'old note', updatedAt: 100 }]
@@ -1319,8 +1339,28 @@ describe('ConfigService - Unit Tests', () => {
       expect(mockDeps.messageDB.deleteUserNote).toHaveBeenCalledWith('QmTargetB');
     });
 
+    it('a tombstone still applies when no local note exists', async () => {
+      // The ordinary case: the deletion arrives on a device that has the note or
+      // has nothing. Absent counts as updatedAt 0, so the tombstone wins.
+      arrangeAdopt(
+        {
+          address,
+          spaceIds: [],
+          spaceKeys: [],
+          userNotes: [],
+          deletedUserNotes: [{ targetAddress: 'QmTargetC', deletedAt: 5000 }],
+          timestamp: 9000,
+        },
+        []
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(mockDeps.messageDB.deleteUserNote).toHaveBeenCalledWith('QmTargetC');
+    });
+
     it('CONTROL ARM: a note nobody tombstoned is untouched', async () => {
-      // If this ever goes red the harness is wrong and neither test above means
+      // If this ever goes red the harness is wrong and none of the above means
       // anything.
       arrangeAdopt(
         {
@@ -1328,7 +1368,7 @@ describe('ConfigService - Unit Tests', () => {
           spaceIds: [],
           spaceKeys: [],
           userNotes: [],
-          deletedUserNoteAddresses: ['QmTargetA'],
+          deletedUserNotes: [{ targetAddress: 'QmTargetA', deletedAt: 9000 }],
           timestamp: 9000,
         },
         [{ targetAddress: 'QmUnrelated', note: 'fine', updatedAt: 5000 }]

@@ -299,13 +299,32 @@ export class ConfigService {
       config.conversationSettings
     );
 
-    // Merge user notes from remote
-    const deletedNoteAddresses = config.deletedUserNoteAddresses ?? [];
+    // Merge user notes from remote.
+    //
+    // Only the TIMESTAMPED tombstones are honoured. `deletedUserNoteAddresses`
+    // is still published for clients that predate `deletedUserNotes`, but is
+    // deliberately ignored here: a bare address carries no deletion time, and a
+    // client that carries userNotes without implementing them never clears the
+    // array, so it republishes the same tombstone in every later save. Applying
+    // those unconditionally deleted a note the user had re-created — again on
+    // every adopt, with no way out. The blob timestamp is no substitute; it is
+    // the carrier's republish time, so a months-old deletion looks current.
+    // See §11 of ConfigService.unit.test.tsx.
+    const noteTombstones = config.deletedUserNotes ?? [];
+    const localNoteUpdatedAt = new Map(
+      (await this.messageDB.getAllUserNotes()).map(n => [n.targetAddress, n.updatedAt])
+    );
 
-    // Always apply remote tombstones — even when there are no notes to merge
-    for (const addr of deletedNoteAddresses) {
-      await this.messageDB.deleteUserNote(addr);
+    // A deletion only beats a note older than itself. That keeps tombstones
+    // doing their real job — a stale device cannot resurrect a note deleted
+    // after it last synced — while letting a deliberate rewrite survive.
+    const appliedTombstones = noteTombstones.filter(
+      t => (localNoteUpdatedAt.get(t.targetAddress) ?? 0) < t.deletedAt
+    );
+    for (const tombstone of appliedTombstones) {
+      await this.messageDB.deleteUserNote(tombstone.targetAddress);
     }
+    const deletedNoteAddresses = appliedTombstones.map(t => t.targetAddress);
 
     if (config.userNotes && config.userNotes.length > 0) {
       const localNotes = await this.messageDB.getAllUserNotes();
@@ -740,6 +759,7 @@ export class ConfigService {
           // Reset tombstones only after successful sync (Phase 7: Critical Fix)
           config.deletedBookmarkIds = [];
           config.deletedUserNoteAddresses = [];
+          config.deletedUserNotes = [];
         } catch (error) {
           // A refused upload used to throw straight out of saveConfig, so the
           // local save at the end never ran and the edit the user had just made
