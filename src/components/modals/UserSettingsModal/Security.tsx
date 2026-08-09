@@ -12,6 +12,7 @@ import {
   SENSITIVE_CLIPBOARD_CLEAR_MS,
   type SensitiveCopyMode,
 } from '../../../utils/clipboardSecurity';
+import type { RestoreReport } from '../../../services/BackupService';
 
 interface SecurityProps {
   stagedRegistration: any;
@@ -19,7 +20,7 @@ interface SecurityProps {
   removeDevice: (key: string) => void;
   downloadKey: () => void;
   exportBackup: () => Promise<void>;
-  importBackup: (file: File) => Promise<{ messagesWritten: number; conversationsWritten: number }>;
+  importBackup: (file: File) => Promise<RestoreReport>;
   getPrivateKeyHex?: () => Promise<string>;
   removedDevices?: string[];
   deviceNames?: { [inboxAddress: string]: string };
@@ -198,6 +199,54 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     }
   };
 
+  /**
+   * Describes what the restore did AND what it deliberately did not do.
+   *
+   * A bare "restored N messages" is what let the feature imply for months that it
+   * protected Spaces when it could not restore a single one. Every line below is
+   * a case where something the user might expect back did not come back, and each
+   * has a different reason the user can act on.
+   */
+  const summariseRestore = (result: RestoreReport): string => {
+    const parts: string[] = [
+      t`Restored ${result.messagesWritten} messages and ${result.conversationsWritten} conversations.`,
+    ];
+
+    if (result.spacesRestored.length > 0) {
+      parts.push(t`Restored ${result.spacesRestored.length} Spaces.`);
+    }
+    if (result.spacesAlreadyPresent.length > 0) {
+      // Not a failure: the additive rule leaving live Spaces untouched.
+      parts.push(
+        t`${result.spacesAlreadyPresent.length} Spaces were already on this device and were left unchanged.`
+      );
+    }
+    if (result.messagesSkippedAsDeleted > 0) {
+      parts.push(
+        t`${result.messagesSkippedAsDeleted} messages were not restored because you deleted them after this backup was made.`
+      );
+    }
+    if (result.spacesFailed.length > 0) {
+      parts.push(
+        t`${result.spacesFailed.length} Spaces were skipped: ${result.spacesFailed
+          .map((s) => s.reason)
+          .join('; ')}`
+      );
+    }
+    if (!result.domains.space_keys) {
+      // The v1 case. Without this the user sees a successful restore and no
+      // Spaces, with nothing to explain why.
+      parts.push(
+        t`This backup was made by an older version and contains no Space keys, so Spaces could not be restored. Export a fresh backup to protect them.`
+      );
+    }
+    if (!result.domains.space_messages) {
+      parts.push(t`Space message history is not included in backups; it syncs from other members.`);
+    }
+
+    return parts.join(' ');
+  };
+
   const handleImportBackup = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -210,9 +259,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     setBackupSuccess(null);
     try {
       const result = await importBackup(file);
-      setBackupSuccess(
-        t`Restored ${result.messagesWritten} messages and ${result.conversationsWritten} conversations.`
-      );
+      setBackupSuccess(summariseRestore(result));
     } catch (error: any) {
       console.error('Backup import failed:', error);
       setBackupError(error.message || t`Failed to import backup`);
@@ -530,7 +577,14 @@ const Security: React.FunctionComponent<SecurityProps> = ({
             <div className="flex flex-col gap-2 p-3 rounded-md border">
               <div className="flex items-start justify-between gap-3">
                 <div className="text-sm" style={{ lineHeight: 1.3 }}>
-                  {t`Export an encrypted backup of your direct messages to restore them if you lose access to this device.`}
+                  {/*
+                    Says what the file contains, because it is no longer just
+                    messages: it now holds your Space keys, including ownership
+                    of Spaces you created. People store "my chat history" and
+                    "the keys to my Spaces" in different places, and they can
+                    only make that call if we tell them which one this is.
+                  */}
+                  {t`Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device. The file contains your Space keys, including ownership of Spaces you created, and can only be opened by this account.`}
                 </div>
                 <Button
                   type="secondary"

@@ -523,11 +523,15 @@ this backup was taken", nothing re-registered. Mutation-verified, and the
 departure write is asserted at the `SpaceService` call site rather than only
 through the DB helper.
 
-**Slice 3 — Honest reporting and pre-flight.** Before writing a file, show what it
-will contain (including that it holds Space ownership keys — §10.7). Before
-restoring, show what the file holds and what will be skipped.
-*Observable:* the export dialog names the domains; a v1 file imported into v2 code
-says plainly that it has no Space keys.
+**Slice 3 — Honest reporting and pre-flight. ✅ SHIPPED 2026-08-09.**
+The export copy now says the file contains Space keys including ownership of
+Spaces you created (§10.7's surviving requirement). The restore reports per
+domain: Spaces restored, Spaces left untouched because they were already present,
+messages withheld because they were deleted after the backup, Spaces skipped with
+the reason, plus the v1 "this file has no Space keys, export a fresh one" case and
+the standing "Space message history is not included" note.
+*Observable:* import a v1 file → a successful restore that states plainly why no
+Spaces came back, instead of a bare message count.
 
 **Slice 4 — DM sessions.** Restore ratchet states only where no state exists for
 that conversation. **The only slice gated on the SDK answer (§10.3).**
