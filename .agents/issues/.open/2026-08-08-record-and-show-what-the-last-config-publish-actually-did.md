@@ -6,7 +6,7 @@ complexity: medium
 priority: high
 ai_generated: true
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-08-09
 area: config sync / observability
 repos: quorum-desktop + quorum-mobile (+ quorum-shared for the shared type)
 parent: ".agents/issues/.open/2026-08-07-config-sync-overhaul-design.md"
@@ -53,9 +53,47 @@ threshold follow once §4.1 is answered or the data explains itself.
 
 ## Status
 
-**2026-08-08 — the data-loss half shipped in PR #321** (`fix(config): a refused
-sync no longer discards the user's change`). **This issue stays open**; the part
-it exists for has not been built yet.
+**2026-08-09 — the whole desktop side has shipped. Only mobile remains, and it
+is blocked on a package publish.**
+
+**PR #322** (`feat(config): report sync failures, and make turning sync off
+stick`) landed the recording and the UI:
+
+- Every outcome is recorded to `localStorage` (`quorum:sync:lastPublish`) with
+  `payloadBytes` and Space counts. `src/utils/lastPublish.ts`.
+- `SyncStatusLine` under the sync toggle in Privacy.
+
+**The UI is failures-only, which is a change from the design in this file.**
+"Last synced N ago" was built, reviewed with the file owner, and removed. It read
+as a health indicator but reported the last time this device had something to
+*publish*, not the last time it reached the server — pulls happen on open, pushes
+only on change. So a healthy device that had not changed a setting in three days
+announced "Last synced 3 days ago", which no user can tell apart from three days
+broken. The `off` state was pure repetition of the toggle directly above it.
+Three of the seven states were worth a row, and they were the rare ones.
+
+Consequences, both good:
+
+- The panel gains **zero rows** in normal use, so §5.3 tiering does not crowd it
+  either. Still one line, still only on failure, since both tiers travel in the
+  same upload. There is never a line per toggle.
+- The §6 copy table in this file is superseded. Only `held`, `rejected`,
+  `timeout` and `no-keys` render, in present tense.
+
+**The recording is unchanged and still runs for every outcome including success.**
+That is the instrument, and it is what settles §4.1: every publish now measures
+its own ciphertext length.
+
+**Deferred, named here so it is not mistaken for an oversight:** someone who never
+opens Settings never sees the warning. A toast was discussed and explicitly put
+off.
+
+**Types live in `@quilibrium/quorum-shared` 2.1.0-41** (shared PR #78, bumped on
+master). Not published — that is the lead dev's step, and it is what mobile waits
+on.
+
+**2026-08-08 — PR #321** landed the data-loss half first: a refused publish no
+longer discards the user's edit.
 
 What landed, desktop only:
 
@@ -69,16 +107,17 @@ What landed, desktop only:
   reverted individually and confirmed to turn a specific test red.
 - Verified: 34/34 in that file, 1137/1137 across the suite, typecheck clean.
 
-Still open, and it is most of the task:
+Still open — **mobile only**:
 
-- No outcome is recorded anywhere. The six `PublishOutcome` values, the
-  `LastPublish` record, and the `payloadBytes` measurement are all unbuilt.
-- No shared type in quorum-shared.
-- No status line in either client's privacy settings, so the user still cannot
-  tell a working sync from a dead one.
-- Nothing on mobile. Mobile never had the data-loss bug (it already persists and
-  already restores the timestamp), but it has none of the recording either, and
-  it is the client whose only signal compiles out in release.
+- No outcome is recorded on mobile, and no line in `ProfileModal`. Mobile never
+  had the data-loss bug (it already persists and already restores the timestamp),
+  but it has none of the recording, and it is the client whose only signal
+  compiles out in release builds.
+- **Blocked** until the lead dev publishes 2.1.0-41 and mobile's pin moves off
+  2.1.0-40. Report as blocked, not as an open task of ours.
+- When it unblocks, mobile is the smaller half: all five branches exist and four
+  already log. Add a record next to each log, store in MMKV, and render the same
+  failures-only line. No control-flow change needed there.
 
 ## Both clients need this — mobile most of all
 
@@ -338,19 +377,22 @@ One line of text, no new controls:
 
 ## Definition of Done
 
-- [ ] Shared type added and published
-- [ ] All six outcomes recorded on desktop
+- [x] Shared type added (2.1.0-41, shared PR #78) — **publish pending**, lead dev
+- [x] All outcomes desktop can reach are recorded — PR #322. `no-keys` is
+      unreachable here: the action queue throws on a missing keyset before
+      `saveConfig` runs
 - [ ] All six outcomes recorded on mobile
 - [x] Desktop failure path persists locally, restores the timestamp, and re-throws
       — PR #321
-- [ ] Status line visible in both clients' privacy settings
+- [ ] Status line in both clients' privacy settings — desktop done (PR #322,
+      failures-only), mobile pending
 - [ ] Verified in a mobile release build
 - [ ] Revert tests confirmed red
 - [ ] **Both clients done** — order is a scheduling call, but mobile is not optional
 
 ---
 
-*Last updated: 2026-08-08*
+*Last updated: 2026-08-09*
 
 ## Updates
 - **2026-08-08 08:32**: Instrument built before the fix: added ConfigService.unit.test.tsx section 8 (4 tests) on branch test/config-publish-failure-persistence. MEASURED — a rejected publish never calls saveUserConfig at all, so the user's edit is discarded. Control arm (accepted publish persists) passes, so the harness is sound. 32 passed / 2 failed; the 2 failures are the acceptance criteria.

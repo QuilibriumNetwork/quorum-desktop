@@ -6,7 +6,7 @@ complexity: low
 priority: high
 ai_generated: true
 created: 2026-08-08
-updated: 2026-08-08
+updated: 2026-08-09
 area: config sync / privacy / multi-device
 repos: quorum-desktop + quorum-mobile
 parent: ".agents/issues/.open/2026-08-07-config-sync-overhaul-design.md"
@@ -22,6 +22,34 @@ related:
 **Slice 2 of [the config sync overhaul](2026-08-07-config-sync-overhaul-design.md).**
 Fully unblocked. Small. Best done soon after the timestamp-authority fix
 (#320/#243), which touched the same paths.
+
+## Status
+
+**2026-08-09 — desktop shipped in PR #322** (`feat(config): report sync failures,
+and make turning sync off stick`). **Mobile remains**, and this issue stays open
+until it lands.
+
+What landed: the local `allowSync` is now authoritative at the adopt site in
+`getConfig`, set on the config object itself so the DB row, the React Query cache
+and the returned value cannot disagree. A device with no stored config starts at
+off rather than inheriting the blob's value. The field is still published, so
+older clients are unaffected.
+
+Five tests, including a control arm for the device that had sync **on**. That arm
+earned its place immediately: hardcoding `allowSync = false` passes the other
+four while quietly disabling sync for every user, and only the control arm
+catches it. Removing the fix entirely turns four red.
+
+Shipping desktop first is safe here rather than merely tolerable: desktop-patched
+against mobile-unpatched is strictly better than today's pair, not different.
+Desktop stops inheriting, mobile behaves exactly as it does now, and nothing that
+crosses the wire changes shape. There is no interim state worse than the status
+quo — see [[ship-both-clients-together]] in the private vault for why that test
+is the one that matters, given desktop ships far more often than mobile.
+
+Still open: the mobile half at `services/config/configService.ts:519`, including
+the re-read hazard noted below. Not blocked by anything external — unlike the
+publish-outcome slice, this needs no new shared type.
 
 ## What & Why
 
@@ -121,6 +149,11 @@ Confirm no other read path resolves `allowSync` from a remote object.
 - [ ] **Fresh install.** Wipe local storage on A with a blob on the server that
       says `allowSync: true`. A comes back with sync **off**, and still restores
       profile, Spaces and settings from the blob.
+- [x] **Unit-level equivalents of the two runs above, on desktop** — PR #322,
+      §10 of `ConfigService.unit.test.tsx`. Both reverts confirmed: removing the
+      fix turns four red, hardcoding `false` turns only the control arm red. The
+      two-device runs below are still worth doing on real hardware, since the
+      unit tests mock the adopt path rather than exercising a real pull.
 - [ ] **Revert the change and confirm both go red.** Especially the first: it
       passes trivially if B never actually published during the run, so confirm
       B's publish happened before trusting a green.
@@ -131,7 +164,7 @@ Confirm no other read path resolves `allowSync` from a remote object.
 
 ## Definition of Done
 
-- [ ] Desktop preserves the local `allowSync` on adopt, in DB and cache
+- [x] Desktop preserves the local `allowSync` on adopt, in DB and cache — PR #322
 - [ ] Mobile preserves it, re-reading the local value at the adopt site
 - [ ] Both verification runs pass, and both go red on revert
 - [ ] Cross-client run done in both directions
@@ -139,4 +172,4 @@ Confirm no other read path resolves `allowSync` from a remote object.
 
 ---
 
-*Last updated: 2026-08-08*
+*Last updated: 2026-08-09*

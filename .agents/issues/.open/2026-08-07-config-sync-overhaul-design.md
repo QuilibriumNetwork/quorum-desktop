@@ -6,7 +6,7 @@ complexity: very-high
 priority: high
 ai_generated: true
 created: 2026-08-07
-updated: 2026-08-07
+updated: 2026-08-09
 area: config sync / cross-client parity / privacy UX
 repos: quorum-desktop + quorum-mobile + quorum-shared
 related:
@@ -686,11 +686,17 @@ below reads as "what is left", not "what was planned".
    so the user's change is discarded on that device. Recording the outcome means
    catching that error, and catching it without persisting would be choosing to
    keep losing the edit. The fix comes along.
-   **Partly shipped 2026-08-08 in desktop PR #321**: the data-loss half, with
-   acceptance tests. The recording itself, the Settings line, the shared type and
-   the whole mobile side are still to do.
+   **✅ DESKTOP SHIPPED 2026-08-09** in PRs #321 (data-loss half) and #322
+   (recording + UI), plus shared 2.1.0-41. **Mobile blocked on that publish.**
+   *Design change made during implementation:* the line is **failures-only**.
+   "Last synced N ago" reported the last time the device had something to
+   *publish*, not the last time it reached the server, so a healthy device that
+   had changed nothing in three days read as three days broken. Zero rows in
+   normal use, which is also why §5.3 tiering will not crowd the panel.
 2. **Slice 2 — "Off stays off."** §5.1 device-local `allowSync`. *Observable:*
    turn sync off on device A, use device B, restart A, it is still off.
+   **✅ DESKTOP SHIPPED 2026-08-09** in PR #322. Mobile still to do, and not
+   blocked by anything — it needs no new shared type.
 3. **Slice 3 — "Choose what leaves."** §5.3 tiering, with Traps 1-3 resolved.
    *Observable:* switching the keys tier off keeps settings syncing and shrinks
    the blob by ~98%.
@@ -807,7 +813,7 @@ This document is a design. It is done when:
 
 ---
 
-*Last updated: 2026-08-08*
+*Last updated: 2026-08-09*
 
 ## Change Log
 

@@ -4,7 +4,7 @@ title: "The config upload has no size guard, and on a mobile release build its f
 status: open
 priority: high
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
 severity: a device that crosses the size limit stops syncing EVERY setting, permanently, with no signal to the user or to us
 area: config sync / payload size / observability
 repos: quorum-desktop + quorum-mobile
@@ -66,6 +66,18 @@ That account is one large bookmark away from the cliff, and nothing would tell
 them they had gone over.
 
 ## §4. What to build
+
+> **Partial progress 2026-08-09, desktop only (PR #322). This bug stays open.**
+> Item 1 (*measure before POSTing*) is now done on desktop as a side effect of
+> the publish-outcome record: every publish stores its own `ciphertext.length`,
+> and so does every rejection and timeout. So the readings §6 had to collect by
+> hand now accumulate on their own, which is what §4.4 needs.
+> Item 2 (*fail loudly*) is partly done: a failures-only line appears under the
+> sync toggle, though it says nothing about size.
+> **Items 3 and 4 are untouched** — no threshold, no warn-on-approach, and the
+> real server limit is still unknown. Deliberately so: the 4566 KB accepted
+> reading sits above the only recorded rejection, so any threshold picked today
+> would be picked from contradictory data. Nothing on mobile at all.
 
 1. **Measure before POSTing**, on both clients. The ciphertext length is already
    in hand at the call site.
@@ -264,7 +276,7 @@ the thing that triggered all of this — are now 37.1 KB, under 1%.
 
 ---
 
-*Last updated: 2026-08-05*
+*Last updated: 2026-08-09*
 
 ## Updates
 - **2026-08-08 08:57**: Desktop's 'the value saves locally' claim in §2 corrected — MEASURED false; a rejected POST threw before the local write and the edit was discarded. Fixed in PR #321. No part of this issue is closed by that: still no size measurement on either client, and mobile's failure still compiles out in release.
