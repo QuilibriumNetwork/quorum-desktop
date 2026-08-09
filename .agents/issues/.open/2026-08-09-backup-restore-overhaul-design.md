@@ -264,13 +264,40 @@ This also decouples the fix from the config-sync overhaul: reading `space_keys`
 directly means a correct backup **does not depend on the parked tiering decision**,
 and works identically whether sync is on, off, or has never been on.
 
-> ⚠️ **Size.** ~10k polynomial evals (~2 MB) are pre-allocated per **created** Space
-> and deleted Spaces have been observed to leak state rather than remove it (see
-> [`2025-12-09-encryption-state-evals-bloat.md`](2025-12-09-encryption-state-evals-bloat.md);
-> a real account measured 4112 KB of encryption states). A `.qmbak` is a local file,
-> not an API payload, so the ~1 MB config ceiling does not apply — but a
-> multi-hundred-MB download is its own failure. **Measure a real account's export
-> before choosing whether Space messages are included by default (§7).**
+### 5.1 Size — MEASURED 2026-08-09
+
+~10k polynomial evals (~2 MB) are pre-allocated per **created** Space, a joined one
+costs ~12-63 KB, and deleted Spaces leak their state rather than remove it (see
+[`2025-12-09-encryption-state-evals-bloat.md`](2025-12-09-encryption-state-evals-bloat.md);
+a real account measured 4112 KB of encryption states, and another 19.4 MB local
+across 10 states of which 8 were orphaned debris).
+
+Measured against the real export path (`backupSpaceKeyCoverage.test.ts`, "MEASUREMENT"):
+
+| Export | `.qmbak` bytes |
+|---|---|
+| 1 Space + 1 DM, no eval pool | **6,469 B** (~6 KB) |
+| Same, with one 2 MB eval pool | **4,200,753 B** (~4.0 MB) |
+| Growth | **4,194,284 B = exactly 2.00× the pool** |
+
+**Two findings.**
+
+1. **The eval pool passes into the backup intact.** Nothing filters it, exactly as
+   nothing filters it out of the config upload. Backup size is therefore governed by
+   the evals bug, not by message volume — the account above would produce an ~8 MB
+   file with *no messages at all*.
+2. **🆕 The file is 2× its payload, because the ciphertext is hex-encoded**
+   ([`BackupService.ts`](../../../src/services/BackupService.ts), `Buffer.from(encrypted).toString('hex')`).
+   Two hex chars per byte. **Switching the encoding to base64 would cut every
+   backup by ~33%** (2.00× → 1.33×) for a few lines of change, with the same
+   v1-reader discipline as the rest of §7. Worth doing in slice 5 when the size
+   budget is being decided anyway. Not urgent — a local file has no server ceiling
+   — but it is the cheapest size win available and nothing else in the design
+   competes with it.
+
+**A `.qmbak` is a local file, not an API payload, so the ~1 MB config ceiling does
+not apply.** The practical ceiling is what a user will tolerate downloading, and on
+these numbers the dominant term is a bug being fixed elsewhere.
 
 ---
 
@@ -402,11 +429,15 @@ disks and must keep importing, restoring what they contain.
 
 One issue, shipped in order. Each slice ends in something observable.
 
-**Slice 1 — Export the Space keys.** Read `space_keys` + Space rows directly from
-IndexedDB (not from `user_config`), bump to v2 with per-domain presence flags, keep
-the v1 reader. No import change.
-*Observable:* export a backup with sync off; a dev-tools dump of the decrypted
-payload shows every Space and its `owner` key. **Today it shows none.**
+**Slice 1 — Export the Space keys. ✅ SHIPPED 2026-08-09.**
+`MessageDB.getAllSpaceData()` reads the `spaces` and `space_keys` stores directly;
+format bumped to v2 with per-domain presence flags; v1 reader kept; a file from a
+*newer* format is refused rather than half-restored. Import unchanged.
+*Observable, now true:* a sync-off export carries all seven Space keys including
+`owner`. Covered by `backupSpaceKeyCoverage.test.ts`, whose sync-off assertions
+were inverted in the same commit — and which pins that
+`user_config.spaceKeys` is **still** empty in that export, so the fix demonstrably
+works by reading the owning store rather than by the snapshot quietly filling in.
 
 **Slice 2 — Restore Spaces, additive only.** Import adopts absent Spaces by reusing
 the §3 mechanism; present Spaces untouched. Report counts per domain.
@@ -449,10 +480,14 @@ by using the app. Reasoning about the diff is not verification here.
       Not both-empty, not both-populated — the instrument discriminates.
 - [x] **Mutation check on the instrument itself.** ✅ Assembling `spaceKeys` outside
       the `allowSync` branch turns Arm A red and leaves the controls green.
+- [x] **Size measured** ✅ **2026-08-09** — §5.1. Done against the real export path
+      with a realistic eval pool rather than a real account, so it is repeatable.
+      §10.4 no longer waits on it.
 - [ ] **Still owed: one real-account export.** The instrument measures the real
-      save/export chain against a seeded database, which is the mechanism — but not
-      a real account's actual on-disk state, and not the file size. Both remain open;
-      the size number gates §10.4.
+      save/export chain against a *seeded* database. That establishes the mechanism,
+      not one real account's actual on-disk state — in particular how many orphaned
+      encryption states a long-lived account is really carrying. Worth one export
+      when convenient; it blocks nothing.
 - [ ] Wipe → login → import. Record per domain what returned and what did not.
 - [ ] **Additive invariant, adversarially.** Import an *old* backup into a *live*
       account with more Spaces and newer DMs. Assert byte-equality of every
@@ -494,11 +529,15 @@ live sessions untouched.
 3. **The SDK question (§6):** can a rewound sending chain re-derive an already-used
    message key, and can the SDK expose a receive-only restore (D1)? Gates slice 4 only.
    Ask about the Space-side Triple Ratchet staleness (§3 step 6) in the same conversation.
-4. **Space messages in the default export?** Largest contributor to file size, and the
-   only domain that partly self-heals via peer resync. A checkbox at export is the
-   obvious answer, but a default that quietly excludes history from a file called
-   "backup" repeats the framing problem this issue exists to fix. Needs the size
-   measurement from §9.
+4. **Space messages in the default export?** Still open, but **no longer blocked on
+   a measurement** — see §5.1. The size picture came back different from the
+   assumption: the dominant term is the ~2 MB-per-created-Space eval pool, not
+   message volume, and hex encoding doubles whatever that comes to. An account with
+   no messages at all can already produce an ~8 MB file. So "Space messages are the
+   size risk" was wrong; they should be judged on whether a backup that silently
+   omits history deserves the name, which is a product call. Two cheap wins to fold
+   in when it is made: base64 instead of hex (~33% off every file), and excluding
+   orphaned encryption states for Spaces no longer in `spaces`.
 5. **Config scalars: fill-absent, or ask the user?** (§4) — product decision.
 6. **Does restore belong in onboarding?** Today import is only reachable post-login
    from Settings. For the Safari install flow
