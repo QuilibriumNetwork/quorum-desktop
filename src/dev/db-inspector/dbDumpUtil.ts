@@ -49,6 +49,10 @@ const SAFE_STORES = [
   // Which Spaces the user left or was removed from. Safe: ids and a timestamp,
   // no key material.
   'departed_spaces',
+  // Which conversations the user deleted. Safe: ids and a timestamp; the
+  // conversationId is a peer address, which this store already exposes
+  // elsewhere (conversations, messages) at the same sensitivity.
+  'deleted_conversations',
 ] as const;
 
 // Stores with sensitive data that need redaction

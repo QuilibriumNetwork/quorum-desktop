@@ -221,6 +221,11 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         t`${result.spacesAlreadyPresent.length} Spaces were already on this device and were left unchanged.`
       );
     }
+    if (result.conversationsSkippedAsDeleted > 0) {
+      parts.push(
+        t`${result.conversationsSkippedAsDeleted} conversations were not restored because you deleted them after this backup was made.`
+      );
+    }
     if (result.messagesSkippedAsDeleted > 0) {
       parts.push(
         t`${result.messagesSkippedAsDeleted} messages were not restored because you deleted them after this backup was made.`
@@ -231,6 +236,11 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         t`${result.spacesFailed.length} Spaces were skipped: ${result.spacesFailed
           .map((s) => s.reason)
           .join('; ')}`
+      );
+    }
+    if (result.domains.space_keys && !result.domains.spaces) {
+      parts.push(
+        t`This backup is inconsistent: it reports Space keys but contains no Space list, so Spaces could not be restored.`
       );
     }
     if (!result.domains.space_keys) {

@@ -140,6 +140,8 @@ export interface RestoreReport {
   conversationsWritten: number;
   /** Messages in the file that were NOT written because the user deleted them. */
   messagesSkippedAsDeleted: number;
+  /** Conversations in the file NOT written because the user deleted the chat. */
+  conversationsSkippedAsDeleted: number;
   spacesRestored: string[];
   spacesAlreadyPresent: string[];
   spacesFailed: { spaceId: string; reason: string }[];
@@ -465,10 +467,23 @@ export class BackupService {
 
       // 4. DM messages and conversations — upsert by id, unchanged and already
       // idempotent, which is what makes a second import of the same file a no-op.
-      const result = await this.messageDB.importDMData({
-        messages: payload.messages,
-        conversations: payload.conversations,
-      });
+      let result;
+      try {
+        result = await this.messageDB.importDMData({
+          messages: payload.messages,
+          conversations: payload.conversations,
+        });
+      } catch (e) {
+        // Typed, so the UI can distinguish "this file is wrong" from "this device
+        // could not write it" — previously both surfaced as whatever raw string
+        // IndexedDB happened to produce.
+        throw new BackupError(
+          'IMPORT_FAILED',
+          e instanceof Error
+            ? `Could not write the restored data: ${e.message}`
+            : 'Could not write the restored data'
+        );
+      }
 
       // 5. Spaces — additive only.
       //
@@ -484,21 +499,51 @@ export class BackupService {
       let spacesAlreadyPresent: string[] = [];
       let spacesFailed: { spaceId: string; reason: string }[] = [];
 
-      if (domains.space_keys && this.adoptSpaces) {
-        const { bundles, skipped } = await this.buildSpaceBundles(payload);
-        spacesFailed = skipped;
-
-        if (bundles.length > 0) {
-          const adopted = await this.adoptSpaces({ spaceKeys: bundles });
-          spacesRestored = adopted.restored;
-          spacesAlreadyPresent = adopted.alreadyPresent;
-          spacesFailed = [...skipped, ...adopted.failed];
-        }
-      } else if (!domains.space_keys) {
+      if (!domains.space_keys) {
         logger.warn(
           '[BackupService] No Space key material in this backup ' +
             `(format v${backupFile.version}) — DM history restored, Spaces cannot be.`
         );
+      } else if (!this.adoptSpaces) {
+        // The file HAS Space keys but this instance cannot adopt them. Previously
+        // neither branch fired here, so the restore silently ignored them and the
+        // report said nothing at all — the same silent gap this rework exists to
+        // close, just one layer up.
+        logger.warn(
+          '[BackupService] Backup contains Space keys but no adoptSpaces was ' +
+            'provided — Spaces were not restored.'
+        );
+        spacesFailed = (payload.spaces ?? []).map((s) => ({
+          spaceId: s.spaceId,
+          reason: 'Space restore is not available in this context',
+        }));
+      } else {
+        // Wrapped so a Space-restore failure cannot erase a DM restore that has
+        // ALREADY been written to disk at step 4. Without this the whole promise
+        // rejected and the user was told "Failed to import backup" about an
+        // import whose messages had landed and were staying — which reads as
+        // total failure and invites a needless retry. Per-domain outcomes, in
+        // keeping with the rest of the design.
+        try {
+          const { bundles, skipped } = await this.buildSpaceBundles(payload);
+          spacesFailed = skipped;
+
+          if (bundles.length > 0) {
+            const adopted = await this.adoptSpaces({ spaceKeys: bundles });
+            spacesRestored = adopted.restored;
+            spacesAlreadyPresent = adopted.alreadyPresent;
+            spacesFailed = [...skipped, ...adopted.failed];
+          }
+        } catch (e) {
+          logger.error('[BackupService] Space restore failed', e);
+          spacesFailed = [
+            ...spacesFailed,
+            {
+              spaceId: '*',
+              reason: e instanceof Error ? e.message : String(e),
+            },
+          ];
+        }
       }
 
       const report: RestoreReport = {

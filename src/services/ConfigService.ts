@@ -332,7 +332,21 @@ export class ConfigService {
     const failed: { spaceId: string; reason: string }[] = [];
 
     for (const space of spaceKeys) {
-      const existingSpace = await this.messageDB.getSpace(space.spaceId);
+      // Inside its own try: this read used to sit outside the per-Space catch
+      // below, so a single transient IndexedDB failure threw straight out of
+      // adoptSpaces and discarded the results of every Space already processed
+      // and persisted — the exact opposite of the isolation the catch promises.
+      let existingSpace: Space | null;
+      try {
+        existingSpace = await this.messageDB.getSpace(space.spaceId);
+      } catch (e) {
+        failed.push({
+          spaceId: space.spaceId,
+          reason: e instanceof Error ? e.message : String(e),
+        });
+        continue;
+      }
+
       if (existingSpace) {
         // The additive guarantee. Counted rather than silently ignored so a
         // restore can report "3 already present" instead of implying it did
@@ -376,6 +390,14 @@ export class ConfigService {
           );
           if (!manifestPayload) {
             logger.warn(t`Could not obtain manifest for Space`);
+            // Reported, like every other failure branch in this loop. Without
+            // this the Space fell out of restored/alreadyPresent/failed alike and
+            // vanished from the restore report — while its keys, saved a few
+            // lines above, were already on disk with no `spaces` row to render.
+            failed.push({
+              spaceId: space.spaceId,
+              reason: 'could not fetch Space manifest',
+            });
             continue;
           }
 

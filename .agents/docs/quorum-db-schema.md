@@ -68,6 +68,7 @@ Quick reference for debugging and creating console snippets.
 | **search_indices** | `indexKey` | `by_lastUpdated` |
 | **space_member_devices** | `[spaceId, deviceInboxAddress]` | `by_member` |
 | **departed_spaces** | `spaceId` | — |
+| **deleted_conversations** | `conversationId` | — |
 
 ---
 
@@ -500,6 +501,37 @@ Serialized MiniSearch indices, persisted so full-text search survives restarts.
 
 ---
 
+### deleted_conversations
+
+**Key:** `conversationId`
+
+**Indexes:** none
+
+Conversations the user deleted. The conversation-level counterpart of
+`deleted_messages`.
+
+**Why it exists:** deleting a chat removes the `conversations` row and bulk-deletes
+its messages, and the backup import used to re-`put()` both unconditionally — so
+restoring an older backup silently brought a deleted chat back. Per-message
+tombstones alone were not enough: the bulk-delete path wrote none (only the
+single-message `deleteMessage` path did), and even with them the empty
+`conversations` row would still have reappeared in the sidebar.
+
+Written by `deleteConversation`, in the same transaction as the row removal, so an
+interruption cannot leave the chat deleted with no record of why. Cleared by
+`saveConversation` — saving a conversation means it exists again, so the old
+removal is no longer the user's current intent. The backup import writes to the
+object store directly rather than through `saveConversation`, so a restore cannot
+clear its own gate.
+
+**Both gates are needed.** After a deleted chat resumes, the conversation tombstone
+is gone and only the per-message tombstones stop a later restore from resurrecting
+the messages that were deleted with it.
+
+Fields: `conversationId`, `deletedAt`.
+
+---
+
 ### departed_spaces
 
 **Key:** `spaceId`
@@ -701,6 +733,7 @@ for (const s of stores) console.log(s, await countStore(s));
 | 13 | Added: search_indices store (persisted MiniSearch full-text indices) |
 | 14 | Added: space_member_devices store (per-device space signing keys — durable multi-device) |
 | 15 | Added: departed_spaces store (Spaces the user left or was removed from — stops a backup restore re-joining them) |
+| 16 | Added: deleted_conversations store (chats the user deleted — stops a backup restore resurrecting them) |
 
 **When you bump this:** update `QUORUM_DB_VERSION` in `src/db/dbVersion.ts` (the
 only place the number lives), add the row above, and classify any new store in

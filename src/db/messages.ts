@@ -435,6 +435,18 @@ export class MessageDB {
           // departure. See `markSpaceDeparted`.
           db.createObjectStore('departed_spaces', { keyPath: 'spaceId' });
         }
+
+        if (event.oldVersion < 16) {
+          // Conversation-deletion tombstones.
+          //
+          // Message tombstones alone are not enough: deleting a chat removes the
+          // `conversations` row too, and `importDMData` used to re-`put()` it
+          // unconditionally. The chat would reappear in the sidebar — empty, but
+          // back — after the user had deliberately removed it.
+          db.createObjectStore('deleted_conversations', {
+            keyPath: 'conversationId',
+          });
+        }
       };
     });
   }
@@ -1155,14 +1167,24 @@ export class MessageDB {
     }
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction('conversations', 'readwrite');
-      const store = transaction.objectStore('conversations');
-      const request = store.put(conversation);
+      // Clears any deletion tombstone: saving a conversation means it exists
+      // again (the peer wrote, or the user started the chat afresh), so the old
+      // removal is no longer the user's current intent and must stop blocking a
+      // restore. Mirrors clearSpaceDeparture on rejoin.
+      //
+      // The backup import deliberately does NOT come through here — it writes to
+      // the store directly — so a restore cannot clear its own gate.
+      const transaction = this.db!.transaction(
+        ['conversations', 'deleted_conversations'],
+        'readwrite'
+      );
+      transaction.objectStore('conversations').put(conversation);
+      transaction
+        .objectStore('deleted_conversations')
+        .delete(conversation.conversationId);
 
-      request.onsuccess = () => {
-        resolve();
-      };
-      request.onerror = () => reject(request.error);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
     });
   }
 
@@ -1883,6 +1905,49 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Remove a Space AND record the departure, atomically.
+   *
+   * Use this for a genuine departure (leave / kicked) instead of calling
+   * `deleteSpace` and `markSpaceDeparted` in sequence. Those are two independent
+   * IndexedDB transactions, and an interruption between them — a crash, a
+   * force-quit, a quota error on the second write — leaves the Space deleted with
+   * no departure record. That state is indistinguishable from "never had it", so
+   * a later backup restore re-adds the Space and calls `postHubAdd`, re-announcing
+   * a removed user to the Space that removed them. One transaction over both
+   * stores removes the window rather than just reordering it: writing the
+   * tombstone first would instead risk a Space the user still belongs to being
+   * marked departed and silently skipped by a future restore.
+   *
+   * `deleteSpace` deliberately keeps its narrower behaviour — `EncryptionService`
+   * uses it to retire the old id during a space-address migration, which is not a
+   * departure and must not be tombstoned.
+   */
+  async deleteSpaceAsDeparture({
+    spaceId,
+    reason,
+  }: {
+    spaceId: string;
+    reason: 'left' | 'removed';
+  }): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(
+        ['spaces', 'departed_spaces'],
+        'readwrite'
+      );
+      transaction.objectStore('spaces').delete(spaceId);
+      transaction
+        .objectStore('departed_spaces')
+        .put({ spaceId, reason, departedAt: Date.now() });
+
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () =>
+        reject(transaction.error ?? new Error('departure transaction aborted'));
+    });
+  }
+
   async getSpace(spaceId: string): Promise<Space | null> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2439,6 +2504,7 @@ export class MessageDB {
     messagesWritten: number;
     conversationsWritten: number;
     messagesSkippedAsDeleted: number;
+    conversationsSkippedAsDeleted: number;
   }> {
     await this.init();
 
@@ -2452,9 +2518,23 @@ export class MessageDB {
     // getAll instead of a get per message, and an import racing a deletion is not
     // a real scenario.
     const deletedIds = new Set(await this.getDeletedMessageIds());
+    const deletedConversationIds = new Set(await this.getDeletedConversationIds());
 
-    const admissible = messages.filter((m) => !deletedIds.has(m.messageId));
+    const admissible = messages.filter(
+      (m) =>
+        !deletedIds.has(m.messageId) &&
+        // A chat deleted wholesale leaves per-message tombstones too, but gate on
+        // the conversation as well so a backup predating the tombstone work
+        // cannot slip its messages back in underneath a deleted chat.
+        !deletedConversationIds.has(`${m.spaceId}/${m.channelId}`)
+    );
     const messagesSkippedAsDeleted = messages.length - admissible.length;
+
+    const admissibleConversations = conversations.filter(
+      (c) => !deletedConversationIds.has(c.conversationId)
+    );
+    const conversationsSkippedAsDeleted =
+      conversations.length - admissibleConversations.length;
 
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['messages', 'conversations'], 'readwrite');
@@ -2465,7 +2545,7 @@ export class MessageDB {
       let conversationsWritten = 0;
 
       // Write conversations first (metadata)
-      for (const conv of conversations) {
+      for (const conv of admissibleConversations) {
         const request = conversationStore.put(conv);
         request.onsuccess = () => { conversationsWritten++; };
       }
@@ -2477,7 +2557,12 @@ export class MessageDB {
       }
 
       transaction.oncomplete = () => {
-        resolve({ messagesWritten, conversationsWritten, messagesSkippedAsDeleted });
+        resolve({
+          messagesWritten,
+          conversationsWritten,
+          messagesSkippedAsDeleted,
+          conversationsSkippedAsDeleted,
+        });
       };
       transaction.onerror = () => reject(transaction.error);
       transaction.onabort = () => reject(new Error('Import transaction aborted'));
@@ -2491,10 +2576,21 @@ export class MessageDB {
     const [spaceId, channelId] = conversationId.split('/');
     if (!spaceId || !channelId) return;
     return new Promise((resolve, reject) => {
-      // Include 'bookmarks' store to cascade delete bookmarks for deleted messages
-      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
+      // Include 'bookmarks' to cascade-delete bookmarks, and 'deleted_messages'
+      // to tombstone every message removed here.
+      //
+      // Deleting a whole conversation is the COMMON deletion action, and it used
+      // to write no tombstones at all — only the single-message `deleteMessage`
+      // path did. So restoring an older backup silently resurrected an entire
+      // deleted chat, which is exactly the invariant the tombstone gate exists to
+      // uphold. Same rule, applied to the path users actually take.
+      const transaction = this.db!.transaction(
+        ['messages', 'bookmarks', 'deleted_messages'],
+        'readwrite'
+      );
       const store = transaction.objectStore('messages');
       const bookmarkStore = transaction.objectStore('bookmarks');
+      const deletedMessagesStore = transaction.objectStore('deleted_messages');
       const bookmarkIndex = bookmarkStore.index('by_message');
       const index = store.index('by_conversation_time');
 
@@ -2530,13 +2626,33 @@ export class MessageDB {
             }
           };
 
+          deletedMessagesStore.put({
+            messageId: msg.messageId,
+            spaceId: msg.spaceId,
+            channelId: msg.channelId,
+            deletedAt: Date.now(),
+          } as DeletedMessageRecord);
+
           store.delete(msg.messageId);
           cursor.continue();
-        } else {
-          resolve();
         }
       };
 
+      request.onerror = () => reject(request.error);
+      // Resolve when the TRANSACTION commits, not when the cursor is exhausted:
+      // the tombstone puts above are still in flight at that point.
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  /** Every conversationId the user has deleted. Consumed by the backup import. */
+  async getDeletedConversationIds(): Promise<string[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['deleted_conversations'], 'readonly');
+      const request = transaction.objectStore('deleted_conversations').getAllKeys();
+      request.onsuccess = () => resolve(request.result as string[]);
       request.onerror = () => reject(request.error);
     });
   }
@@ -2544,14 +2660,22 @@ export class MessageDB {
   async deleteConversation(conversationId: string): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction('conversations', 'readwrite');
-      const store = transaction.objectStore('conversations');
-      const request = store.delete([conversationId]);
+      // Row removal and tombstone in ONE transaction — same reasoning as
+      // deleteSpaceAsDeparture: two writes leave a window where the chat is gone
+      // with no record of why, and a later restore silently brings it back.
+      const transaction = this.db!.transaction(
+        ['conversations', 'deleted_conversations'],
+        'readwrite'
+      );
+      transaction.objectStore('conversations').delete([conversationId]);
+      transaction
+        .objectStore('deleted_conversations')
+        .put({ conversationId, deletedAt: Date.now() });
 
-      request.onsuccess = () => {
-        resolve();
-      };
-      request.onerror = () => reject(request.error);
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () =>
+        reject(transaction.error ?? new Error('conversation delete aborted'));
     });
   }
 

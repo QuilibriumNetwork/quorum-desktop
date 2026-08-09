@@ -5635,13 +5635,14 @@ export class MessageService {
                     buildConfigKey({ userAddress: self_address }),
                     () => userConfig
                   );
-                  await this.messageDB.deleteSpace(spaceId);
-                  // Departure tombstone: we were removed. Without this a later
-                  // backup restore re-adds the Space and calls postHubAdd, so a
-                  // kicked user silently re-announces to the Space that removed
-                  // them — the same class of mistake as the convergence timer
-                  // below, just delayed by however long until they restore.
-                  await this.messageDB.markSpaceDeparted({
+                  // Deletion and departure record in ONE transaction. Without
+                  // the record a later backup restore re-adds the Space and
+                  // calls postHubAdd, so a kicked user re-announces to the
+                  // Space that removed them — the same class of mistake as the
+                  // convergence timer below, delayed until they restore. Two
+                  // sequential writes would leave a crash window that produces
+                  // exactly that state; see deleteSpaceAsDeparture.
+                  await this.messageDB.deleteSpaceAsDeparture({
                     spaceId,
                     reason: 'removed',
                   });

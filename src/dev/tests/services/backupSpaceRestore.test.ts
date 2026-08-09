@@ -69,6 +69,10 @@ const SPACE_A = 'QmZDbJ9cy9z1J74DgtGJEQW6yop3j15t6i31KW5McmVKzp';
 const SPACE_B = 'QmbWqM1roW69PooJC96TKePsDk7Ssqz3Sb2syp4H98texr';
 const USER_ADDRESS = 'QmaNDKajtL35LxRkwWgNn2Sz6mxkJRXxmeXwef4pNxBzUq';
 
+/** A distinct peer for the isolation tests, so they cannot collide with the
+ *  deletion-axis describe block's conversation. */
+const PEER_FOR_ISOLATION = 'QmcfTNSyig9DSfAqSmWXsGLkLiG9TGS87XXpJy3juKbKSs';
+
 const OWNER_KEY_IN_BACKUP = 'aaaa'.repeat(28);
 const OWNER_KEY_ON_DEVICE = 'bbbb'.repeat(28);
 
@@ -415,6 +419,128 @@ describe('Backup restore — Spaces, additive only', () => {
       ).toBeDefined();
     });
 
+    it('a whole conversation deleted after the backup stays deleted', async () => {
+      // The case the single-message tests missed entirely. "Delete Chat" is the
+      // common deletion action and it goes through a DIFFERENT path
+      // (deleteMessagesForConversation + deleteConversation) that wrote no
+      // tombstones at all, so restoring an older backup silently brought the
+      // entire chat back.
+      await seedDm(db, 'msg-in-deleted-chat');
+      const file = await exportFrom(db);
+
+      await db.deleteMessagesForConversation(CONV);
+      await db.deleteConversation(CONV);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      // Neither the messages nor the conversation row come back.
+      expect(
+        await db.getMessage({ spaceId: PEER, channelId: PEER, messageId: 'msg-in-deleted-chat' })
+      ).toBeUndefined();
+      // getConversation returns a wrapper object, so assert on the payload:
+      // the wrapper is truthy even when nothing was found.
+      expect(
+        (await db.getConversation({ conversationId: CONV }))?.conversation
+      ).toBeUndefined();
+      expect(report.conversationsSkippedAsDeleted).toBe(1);
+      expect(report.conversationsWritten).toBe(0);
+      expect(report.messagesWritten).toBe(0);
+    });
+
+    it('CONTROL: a conversation that was never deleted DOES restore', async () => {
+      await seedDm(db, 'msg-kept');
+      const file = await exportFrom(db);
+
+      db = await freshDb();
+      wire(db);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.conversationsWritten).toBe(1);
+      expect(report.conversationsSkippedAsDeleted).toBe(0);
+      expect(
+        (await db.getConversation({ conversationId: CONV }))?.conversation
+      ).toBeDefined();
+    });
+
+    it('starting the chat again clears the tombstone, so it can restore once more', async () => {
+      // The peer writes again, or the user re-opens the chat. saveConversation is
+      // the choke point that clears the record. The import writes to the store
+      // directly and so cannot clear its own gate.
+      await seedDm(db, 'msg-x');
+      const file = await exportFrom(db);
+
+      await db.deleteMessagesForConversation(CONV);
+      await db.deleteConversation(CONV);
+      expect(await db.getDeletedConversationIds()).toContain(CONV);
+
+      await db.saveConversation({
+        conversationId: CONV,
+        type: 'direct',
+        timestamp: 5,
+        address: PEER,
+        icon: '',
+        displayName: 'Peer',
+      } as any);
+      expect(await db.getDeletedConversationIds()).not.toContain(CONV);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+      expect(report.conversationsSkippedAsDeleted).toBe(0);
+    });
+
+    it('messages from a deleted chat stay gone even after the chat resumes', async () => {
+      // The case that makes the PER-MESSAGE tombstones in the bulk-delete path
+      // load-bearing rather than redundant with the conversation gate.
+      //
+      // Delete the chat → both tombstones written. The peer then writes again,
+      // which clears the CONVERSATION tombstone (the chat legitimately exists
+      // once more). Now restore an old backup: the conversation gate no longer
+      // blocks anything, so only the per-message tombstones stand between the
+      // user and the resurrection of messages they deleted.
+      //
+      // Found by mutation: removing the bulk tombstone write left every other
+      // test in this file green.
+      await seedDm(db, 'msg-deleted-then-chat-resumed');
+      const file = await exportFrom(db);
+
+      await db.deleteMessagesForConversation(CONV);
+      await db.deleteConversation(CONV);
+
+      // The peer writes again — chat is back, conversation tombstone cleared.
+      await db.saveConversation({
+        conversationId: CONV,
+        type: 'direct',
+        timestamp: 9,
+        address: PEER,
+        icon: '',
+        displayName: 'Peer',
+      } as any);
+      expect(await db.getDeletedConversationIds()).not.toContain(CONV);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(
+        await db.getMessage({
+          spaceId: PEER,
+          channelId: PEER,
+          messageId: 'msg-deleted-then-chat-resumed',
+        })
+      ).toBeUndefined();
+      expect(report.messagesSkippedAsDeleted).toBe(1);
+    });
+
     it('deleting a DM now writes a tombstone at all', async () => {
       // Pins the behaviour change this relies on. Tombstones used to be written
       // for channel messages only, on the reasoning that DMs have no sync
@@ -522,6 +648,122 @@ describe('Backup restore — Spaces, additive only', () => {
       const adopted = await configService.adoptSpaces({ spaceKeys: [bundle] as any });
 
       expect(adopted.restored).toEqual([SPACE_A]);
+    });
+  });
+
+  describe('failure isolation and reporting', () => {
+    // Everything here was found by code review, not by a failing test — the
+    // properties that were mutation-tested held, and the reporting around them
+    // was where the gaps were.
+
+    it('a Space whose manifest cannot be fetched is REPORTED, not silently dropped', async () => {
+      // It previously fell out of restored/alreadyPresent/failed alike, while its
+      // keys — saved a few lines earlier — were already on disk with no `spaces`
+      // row to render them. A user saw a clean restore with a Space missing.
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      db = await freshDb();
+      wire(db);
+      (configService as any).apiClient.getSpaceManifest = vi
+        .fn()
+        .mockResolvedValue(undefined);
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.spacesRestored).toEqual([]);
+      expect(report.spacesFailed).toEqual([
+        { spaceId: SPACE_A, reason: 'could not fetch Space manifest' },
+      ]);
+    });
+
+    it('one failing Space does not abandon the rest of the batch', async () => {
+      // The per-Space try/catch promises this, but the getSpace() read sat
+      // outside it, so a single transient IndexedDB failure threw straight out
+      // and discarded results for every Space already restored.
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      await seedSpace(db, SPACE_B, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      db = await freshDb();
+      wire(db);
+
+      const realGetSpace = db.getSpace.bind(db);
+      let calls = 0;
+      db.getSpace = vi.fn(async (id: string) => {
+        calls += 1;
+        if (calls === 1) throw new Error('transient IDB failure');
+        return realGetSpace(id);
+      }) as any;
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      // One reported as failed, the other still restored — not an aborted batch.
+      expect(report.spacesFailed).toHaveLength(1);
+      expect(report.spacesRestored).toHaveLength(1);
+      expect(report.spacesFailed[0].reason).toMatch(/transient IDB failure/);
+    });
+
+    it('a Space-restore failure does not erase an already-written DM restore', async () => {
+      // importDMData commits at step 4; step 5 used to be unguarded, so any throw
+      // rejected the whole call and the user was told "Failed to import backup"
+      // about an import whose messages had landed and were staying.
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      await db.saveConversation({
+        conversationId: `${PEER_FOR_ISOLATION}/${PEER_FOR_ISOLATION}`,
+        type: 'direct',
+        timestamp: 1,
+        address: PEER_FOR_ISOLATION,
+        icon: '',
+        displayName: 'Peer',
+      } as any);
+      const file = await exportFrom(db);
+
+      db = await freshDb();
+      wire(db);
+      db.getDepartedSpaces = vi
+        .fn()
+        .mockRejectedValue(new Error('departure read exploded')) as any;
+
+      const report = await backupService.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      // The DM half survived and is reported, rather than the whole call rejecting.
+      expect(report.conversationsWritten).toBe(1);
+      expect(report.spacesFailed).toEqual([
+        { spaceId: '*', reason: 'departure read exploded' },
+      ]);
+    });
+
+    it('a backup with Space keys but no adoptSpaces reports them, rather than ignoring them', async () => {
+      await seedSpace(db, SPACE_A, OWNER_KEY_IN_BACKUP);
+      const file = await exportFrom(db);
+
+      db = await freshDb();
+      wire(db);
+      // Export-only construction — the configuration the constructor documents.
+      const noAdopt = new BackupService({ messageDB: db });
+
+      const report = await noAdopt.importBackup({
+        keyset: KEYSET,
+        fileContent: file,
+      });
+
+      expect(report.spacesRestored).toEqual([]);
+      expect(report.spacesFailed).toEqual([
+        {
+          spaceId: SPACE_A,
+          reason: 'Space restore is not available in this context',
+        },
+      ]);
     });
   });
 
