@@ -20,6 +20,7 @@ import { messages } from '@/i18n/en/messages';
 import { ConfigService } from '@/services/ConfigService';
 import { getDefaultUserConfig } from '@/utils';
 import { QueryClient } from '@tanstack/react-query';
+import { buildConfigKey } from '@/hooks';
 
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   channel: {
@@ -1224,6 +1225,118 @@ describe('ConfigService - Unit Tests', () => {
         .catch(() => {});
 
       expect(read()?.timestamp).toBe(1000);
+    });
+  });
+
+  describe('10. getConfig() - allowSync is device-local and never inherited', () => {
+    // allowSync describes THIS device's relationship with the server, but it
+    // rides in the account-level blob. So a decision made on one device used to
+    // be carried to the others, and "off" could turn itself back on with nobody
+    // asking. Off must mean "do not publish" — it never meant "do not pull",
+    // and pulling is what lets a device recover without opting into publishing.
+
+    const address = 'user-devicelocal';
+    const mockUserKey = {
+      user_key: {
+        private_key: new Uint8Array(57),
+        public_key: new Uint8Array(57),
+      },
+    } as any;
+
+    /** Arrange a newer remote config that decrypts to `decrypted`. */
+    function arrangeAdopt(decrypted: any, storedConfig: any) {
+      const jsonBytes = new TextEncoder().encode(JSON.stringify(decrypted));
+      const buffer = jsonBytes.buffer.slice(
+        jsonBytes.byteOffset,
+        jsonBytes.byteOffset + jsonBytes.byteLength
+      );
+      mockDeps.messageDB.getUserConfig = vi.fn().mockResolvedValue(storedConfig);
+      mockDeps.apiClient.getUserSettings = vi.fn().mockResolvedValue({
+        data: {
+          user_config: 'aabbccdd' + '000000000000000000000000',
+          timestamp: 9000,
+          signature: 'aabbcc',
+        },
+      });
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'decrypt').mockResolvedValue(buffer as ArrayBuffer);
+    }
+
+    it('keeps sync OFF when a remote config with sync ON wins on timestamp', async () => {
+      // The multi-device case: another device is still syncing, never learned
+      // this one went quiet, and its blob eventually outranks. Before this,
+      // that silently switched publishing back on here.
+      arrangeAdopt(
+        { address, spaceIds: ['space-new'], spaceKeys: [], allowSync: true, timestamp: 9000 },
+        { address, spaceIds: [], allowSync: false, timestamp: 500 }
+      );
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(result.allowSync).toBe(false);
+      expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalledWith(
+        expect.objectContaining({ allowSync: false })
+      );
+    });
+
+    it('still adopts everything else from that config', async () => {
+      // The other half, and the one that would make this a bad trade if it
+      // broke: off means "do not publish", never "do not pull".
+      arrangeAdopt(
+        { address, spaceIds: ['space-new'], spaceKeys: [], allowSync: true, timestamp: 9000 },
+        { address, spaceIds: ['space-old'], allowSync: false, timestamp: 500 }
+      );
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(result.spaceIds).toEqual(['space-new']);
+    });
+
+    it('keeps sync ON when this device had it on', async () => {
+      // CONTROL ARM. Without it, hardcoding `false` would pass every other test
+      // in this block while quietly disabling sync for everyone.
+      arrangeAdopt(
+        { address, spaceIds: [], spaceKeys: [], allowSync: false, timestamp: 9000 },
+        { address, spaceIds: [], allowSync: true, timestamp: 500 }
+      );
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(result.allowSync).toBe(true);
+    });
+
+    it('a device with no stored config starts at off, not at whatever the blob says', async () => {
+      // Local storage lost, or a fresh install. The remote always wins against
+      // `?? 0`, so without this the blob decides — and the privacy-costing
+      // direction is the one that must never be inherited silently.
+      arrangeAdopt(
+        { address, spaceIds: ['space-new'], spaceKeys: [], allowSync: true, timestamp: 9000 },
+        undefined
+      );
+
+      const result = await configService.getConfig({ address, userKey: mockUserKey });
+
+      expect(result.allowSync).toBe(false);
+      // ...and it still restores, which is what makes off-by-default acceptable.
+      expect(result.spaceIds).toEqual(['space-new']);
+    });
+
+    it('the cached copy agrees with the row on disk', async () => {
+      // Three writes happen here (DB, React Query cache, return value). If they
+      // disagree the UI shows one thing until reload and another after.
+      arrangeAdopt(
+        { address, spaceIds: [], spaceKeys: [], allowSync: true, timestamp: 9000 },
+        { address, spaceIds: [], allowSync: false, timestamp: 500 }
+      );
+
+      await configService.getConfig({ address, userKey: mockUserKey });
+
+      const savedToDb = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      const cached = queryClient.getQueryData(
+        buildConfigKey({ userAddress: address })
+      ) as any;
+      expect(savedToDb.allowSync).toBe(false);
+      expect(cached.allowSync).toBe(false);
     });
   });
 

@@ -419,6 +419,21 @@ export class ConfigService {
     // evidence attached.
     await this.recordSpaceListShrinkOnAdopt(storedConfig, config);
 
+    // Device-local, never inherited from the blob. `allowSync` describes THIS
+    // device's relationship with the server, but it rides in the account-level
+    // config, so a decision made on one device used to be carried to the others.
+    //
+    // Two ways that turned "off" back on without anyone asking. Local storage
+    // lost: the remote wins against `?? 0` above and is adopted verbatim, sync
+    // included. Or another device still syncing: turning sync off is never
+    // published — that is the whole point of the switch — so the other device
+    // never learns, keeps publishing, and eventually wins on timestamp.
+    //
+    // Set on `config` itself rather than only on the object below, so the DB
+    // row, the cache write and the returned value cannot disagree.
+    // See 2026-08-08-make-allowsync-a-per-device-setting.md under .agents/issues/
+    config.allowSync = storedConfig?.allowSync ?? false;
+
     await this.messageDB.saveUserConfig({
       ...config,
       timestamp: savedConfig.timestamp,
