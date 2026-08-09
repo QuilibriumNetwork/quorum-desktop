@@ -609,9 +609,27 @@ live sessions untouched.
    below but blocks nothing else.
 2. **Re-verify §6.1 against the code.** If `inbox_mapping` or `latest_states` gain a
    reader between now and implementation, the DM slice grows.
-3. **The SDK question (§6):** can a rewound sending chain re-derive an already-used
-   message key, and can the SDK expose a receive-only restore (D1)? Gates slice 4 only.
-   Ask about the Space-side Triple Ratchet staleness (§3 step 6) in the same conversation.
+3. **The SDK question (§6) — and an asymmetry that needs a deliberate decision.**
+   Can a rewound sending chain re-derive an already-used message key, and can the SDK
+   expose a receive-only restore (D1)?
+
+   > ⚠️ **Raised by security review 2026-08-09, and it is a fair hit.** Slice 4 (DM
+   > ratchet restore) is *blocked* pending this answer, while **slice 2 shipped and
+   > restores a Space's Triple Ratchet state** captured at export time. Two ratchets,
+   > opposite treatment, and the difference was not a reasoned call — it fell out of
+   > which slice happened to get written first.
+   >
+   > Two things make the Space side *less* alarming, neither of which settles it:
+   > `adoptSpaces` is the pre-existing path a fresh device already runs on every
+   > synced login, and it regenerates and re-registers a fresh inbox keypair rather
+   > than resuming an old session outright. What is genuinely new is the **staleness
+   > envelope**: a synced config refreshes continuously, whereas a `.qmbak` is
+   > designed to sit in a drawer for months. This work is what makes "resume from an
+   > arbitrarily old group ratchet state" a normal user action.
+   >
+   > **Put the Space case to the SDK owner in the same conversation as the DM case**,
+   > and record the answer here. If it turns out unsafe, slice 2's Space-state restore
+   > needs the same gating slice 4 already has.
 4. **Space messages in the default export?** Still open, but **no longer blocked on
    a measurement** — see §5.1. The size picture came back different from the
    assumption: the dominant term is the ~2 MB-per-created-Space eval pool, not
@@ -632,9 +650,22 @@ live sessions untouched.
    - *File stolen, account key safe* → AES-GCM under the account-derived key already
      protects it completely. A passphrase adds nothing.
    - *File stolen **and** account key compromised* → the attacker can already log in,
-     read future DMs and impersonate the user. Space ownership is marginal against a
-     loss that is already total. A passphrase only helps if stored separately from the
-     key, which for most users it would not be.
+     read future DMs and impersonate the user. A passphrase only helps if stored
+     separately from the key, which for most users it would not be.
+   - ⚠️ **Corrected 2026-08-09 after security review.** The bullet above used to end
+     "Space ownership is marginal against a loss that is already total." **That is
+     not true for the sync-off user this whole document exists to protect**, and the
+     overstatement mattered. Before this work, a stolen `.key` file gave an attacker
+     impersonation but **not** Space ownership: with `allowSync=false` those keys
+     never left the device and the server held no copy. This branch changes that —
+     the `.qmbak` now contains them, under a key derived deterministically from the
+     `.key` file's own contents, so one theft now yields both. The domain prefix adds
+     no secrecy here; it prevents cross-purpose key confusion, not a second attacker
+     requirement. And both files land in the same Downloads folder by construction —
+     the folder commodity infostealers and cloud-backup sync target wholesale.
+     **The decision stands** (a forgotten passphrase bricking a disaster-recovery
+     file is the worse failure), but it now rests on the durability argument alone,
+     not on a claim that the marginal loss is nil.
    - *Cost:* a forgotten passphrase makes the backup undecryptable — exactly the data
      loss the feature exists to prevent. Adding a second losable secret to a
      disaster-recovery artifact is net-negative for durability.
@@ -643,7 +674,10 @@ live sessions untouched.
      ([`2026-06-11-port-key-paste-import-and-copy-export.md`](../port-from-mobile/.done/2026-06-11-port-key-paste-import-and-copy-export.md)).
    **What survives is a labelling requirement, not a crypto one** (slice 3): the export
    UI must say the file contains Space ownership keys. People choose where to store
-   "my chat history" differently from "the keys to my Spaces".
+   "my chat history" differently from "the keys to my Spaces". **Add to that** (from
+   the correction above): the copy should advise keeping the `.qmbak` and the `.key`
+   export in *different* places, since co-locating them is the single decision that
+   turns "safe" into "total loss" under this design.
 
 ---
 

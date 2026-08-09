@@ -594,7 +594,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
                     "the keys to my Spaces" in different places, and they can
                     only make that call if we tell them which one this is.
                   */}
-                  {t`Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device. The file contains your Space keys, including ownership of Spaces you created, and can only be opened by this account.`}
+                  {t`Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device. The file contains your Space keys, including ownership of Spaces you created, and can only be opened by this account. Keep it somewhere separate from your exported account key.`}
                 </div>
                 <Button
                   type="secondary"
