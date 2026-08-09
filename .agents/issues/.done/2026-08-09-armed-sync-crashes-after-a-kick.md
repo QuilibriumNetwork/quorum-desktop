@@ -20,8 +20,9 @@ related:
 
 ## Status
 
-**Fixed 2026-08-09** in the same branch as the backup/restore overhaul. The
-scenario now runs clean with no unhandled errors.
+**Fixed 2026-08-09, shipped in PR #324** (`feat(backup): back up Space keys, and
+never let a restore undo a deletion`). The `space-kick` scenario now runs clean
+with no unhandled errors, which is the verification this was found by.
 
 ## Symptom
 

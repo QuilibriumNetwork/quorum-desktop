@@ -31,6 +31,32 @@ related:
 > still READ/INFERRED: no backup has been taken on a real account, no database
 > wiped, no restore attempted.
 
+## Status
+
+**2026-08-09 — slices 1, 2, 2b and 3 shipped in PR #324**
+(`feat(backup): back up Space keys, and never let a restore undo a deletion`)
+
+What landed: the export now reads `space_keys` and `spaces` from the stores that
+own them rather than the `user_config.spaceKeys` snapshot, so a sync-off user's
+backup finally contains the key material it always claimed to. Format v2 with
+per-domain flags, v1 still readable. Restore adopts Spaces additively, refuses to
+resurrect deleted messages, deleted conversations or departed Spaces (new
+`departed_spaces` and `deleted_conversations` stores at DB v15/v16), and reports
+per domain what it did and did not do. Slice 4 was decided rather than built: DM
+ratchet state is never restored, which removes the key-reuse hazard instead of
+managing it.
+
+**Still open — this issue stays out of `.done/`:**
+
+- **Slice 5** — Space message history in the export. Unblocked (the size question
+  is answered, §5.1) but a product call.
+- **Slice 6** — mobile parity. Deliberately last, so the format stops moving first.
+- **§10.3** — the SDK question, now a note about the pre-existing sync path rather
+  than a gate on this work.
+- **§4.1 residual** — the hub key is not rotated on a kick, so whether the node
+  refuses a hand-crafted re-subscribe is a server-side question this repo cannot
+  answer.
+
 ## What this document is
 
 **The single issue for the backup rework.** Design plus the slice plan. It absorbs
