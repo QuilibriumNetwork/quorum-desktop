@@ -316,7 +316,33 @@ export class BackupService {
         const [left, right] = String(s.conversationId).split('/');
         // Anything not of the X/X form is left alone rather than guessed at.
         if (!left || left !== right) return true;
-        return liveSpaceIds.has(left) || liveConversationIds.has(s.conversationId);
+
+        // Belongs to something live: keep, no further questions.
+        if (liveSpaceIds.has(left) || liveConversationIds.has(s.conversationId)) {
+          return true;
+        }
+
+        // Neither a live Space nor a live conversation. Before dropping it, ask
+        // whether it is even a Space state — using the SAME discriminator the
+        // receive path uses to route a frame: a DM state carries `sending_inbox`
+        // and a Space state does not (MessageService `if (keys.sending_inbox)`).
+        //
+        // This closes a gap an earlier version had. A DM's encryption state can
+        // legitimately exist with NO conversation row yet: if the first frame of
+        // a new session is a control message (typing, delivery-ack, profile
+        // update) the handler returns before saveMessage ever creates the row.
+        // Matching on id shape alone would have called that an orphan and
+        // dropped it. Inert today, since DM ratchet state is never restored, but
+        // the comment used to claim a guarantee the code did not provide.
+        try {
+          if (JSON.parse(String(s.state)).sending_inbox) return true;
+        } catch {
+          // Unparseable state: keep it. Dropping something we cannot read is a
+          // guess, and this filter is only ever allowed to remove things it is
+          // certain about.
+          return true;
+        }
+        return false;
       });
 
       const droppedStates = dmData.encryption_states.length - usableStates.length;

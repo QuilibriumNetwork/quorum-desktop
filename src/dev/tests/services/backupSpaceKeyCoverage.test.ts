@@ -478,6 +478,39 @@ describe('Backup export — Space key coverage', () => {
       ).toContain(`${SPACE_ID}/${SPACE_ID}`);
     });
 
+    it('keeps a DM state whose conversation row does not exist yet', async () => {
+      // The gap a reviewer found in the first version of this filter. A DM's
+      // encryption state can legitimately exist before its conversation row: if
+      // the first frame of a new session is a control message (typing,
+      // delivery-ack, profile update) the handler returns before saveMessage
+      // creates the row. Matching on the X/X id shape alone called that an
+      // orphan and dropped it.
+      //
+      // Kept now because the state carries `sending_inbox`, which is the same
+      // discriminator the receive path uses to tell a DM from a Space.
+      // MUST differ from PEER_ADDRESS: that one has a conversation row seeded in
+      // beforeEach, so it would be kept by the live-conversation check and this
+      // test would pass without the discriminator ever running. Caught by
+      // mutation — the first version of this test used PEER_ADDRESS and stayed
+      // green with the discriminator removed.
+      const ROWLESS_PEER = 'Qmdp5Pt6drCHVWYNhPvcQtHdTgQr2gtCnU2ke83CfWHyvt';
+      await db.saveEncryptionState(
+        {
+          conversationId: `${ROWLESS_PEER}/${ROWLESS_PEER}`,
+          inboxId: 'QmRowlessInbox',
+          state: JSON.stringify({ sending_inbox: { inbox_public_key: 'x' } }),
+          timestamp: 700,
+        } as any,
+        true
+      );
+
+      const { payload } = await saveThenExport(false);
+
+      expect(
+        payload.encryption_states.map((s: any) => s.conversationId)
+      ).toContain(`${ROWLESS_PEER}/${ROWLESS_PEER}`);
+    });
+
     it('keeps a DM state, which has the same id shape as a Space state', async () => {
       // The filter cannot key on shape alone: a DM conversationId is `X/X` too.
       // Dropping DM states would be a silent data loss dressed up as a size win.

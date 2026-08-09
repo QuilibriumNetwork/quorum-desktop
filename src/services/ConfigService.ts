@@ -395,30 +395,58 @@ export class ConfigService {
             initialization_vector: string;
             associated_data: string;
           };
-          const manifest = JSON.parse(
-            Buffer.from(
-              JSON.parse(
-                ch.js_decrypt_inbox_message(
-                  JSON.stringify({
-                    inbox_private_key: [
-                      ...new Uint8Array(
-                        Buffer.from(config.privateKey, 'hex')
-                      ),
-                    ],
-                    ephemeral_public_key: [
-                      ...new Uint8Array(
-                        Buffer.from(
-                          manifestPayload.data.ephemeral_public_key,
-                          'hex'
-                        )
-                      ),
-                    ],
-                    ciphertext: ciphertext,
-                  })
+          // Decrypt in its OWN try, so "we cannot open this manifest" can be
+          // told apart from every other way this block can fail.
+          //
+          // This used to be reported by pattern-matching the outer catch's error
+          // text for /decryption|is not valid JSON|aead/. That is far too broad:
+          // the outer try also covers two API calls and two other JSON.parse
+          // calls, so an outage returning HTML would fail with "is not valid
+          // JSON" and be reported as "you no longer have access to this Space".
+          // Telling someone a RECOVERABLE Space is permanently gone is worse
+          // than the raw error it replaced, because they stop retrying.
+          //
+          // Scope, not pattern: only a failure here means the key cannot open
+          // the manifest, which is what being removed from a Space looks like.
+          let manifest: Space;
+          try {
+            manifest = JSON.parse(
+              Buffer.from(
+                JSON.parse(
+                  ch.js_decrypt_inbox_message(
+                    JSON.stringify({
+                      inbox_private_key: [
+                        ...new Uint8Array(
+                          Buffer.from(config.privateKey, 'hex')
+                        ),
+                      ],
+                      ephemeral_public_key: [
+                        ...new Uint8Array(
+                          Buffer.from(
+                            manifestPayload.data.ephemeral_public_key,
+                            'hex'
+                          )
+                        ),
+                      ],
+                      ciphertext: ciphertext,
+                    })
+                  )
                 )
-              )
-            ).toString('utf-8')
-          ) as Space;
+              ).toString('utf-8')
+            ) as Space;
+          } catch (decryptError) {
+            logger.warn(
+              t`Could not decrypt Space manifest — key no longer opens it`,
+              decryptError
+            );
+            failed.push({
+              spaceId: space.spaceId,
+              reason:
+                'you no longer have access to this Space — its keys were changed, ' +
+                'which happens when a member is removed',
+            });
+            continue;
+          }
 
           // Written only once the manifest has decrypted — i.e. once we know
           // this Space can actually be rebuilt. Saving them earlier left
@@ -545,15 +573,13 @@ export class ConfigService {
           // harness scenario, which saw this surface to the user as
           // `Unexpected token 'D', "Decryption"... is not valid JSON` — the raw
           // JSON.parse error from the SDK's failure string. Accurate, useless.
-          const raw = e instanceof Error ? e.message : String(e);
-          const looksLikeDecryptFailure =
-            /decryption|is not valid JSON|aead/i.test(raw);
+          // Reported verbatim. The one failure worth translating — the manifest
+          // not opening — is caught at its own call site above, so anything
+          // reaching here is a genuine error the user should see as-is rather
+          // than have guessed at.
           failed.push({
             spaceId: space.spaceId,
-            reason: looksLikeDecryptFailure
-              ? 'you no longer have access to this Space — its keys were changed, ' +
-                'which happens when a member is removed'
-              : raw,
+            reason: e instanceof Error ? e.message : String(e),
           });
         }
       }
