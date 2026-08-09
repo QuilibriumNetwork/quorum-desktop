@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Switch, Icon, Tooltip } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import ConfirmationModal from '../ConfirmationModal';
+import SyncStatusLine from './SyncStatusLine';
 
 interface PrivacyProps {
   allowSync: boolean;
@@ -98,6 +99,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
+          <SyncStatusLine allowSync={allowSync} />
           <div className="flex flex-row items-center gap-3 mb-3">
             <Switch value={nonRepudiable} onChange={setNonRepudiable} />
             <div className="flex flex-row items-center">

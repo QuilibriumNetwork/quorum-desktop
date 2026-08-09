@@ -42,12 +42,21 @@ beforeAll(() => {
   i18n.activate('en');
 });
 
+/** Device-local publish-outcome record — see src/utils/lastPublish.ts */
+const PUBLISH_KEY = 'quorum:sync:lastPublish';
+
 describe('ConfigService - Unit Tests', () => {
   let configService: ConfigService;
   let mockDeps: any;
   let queryClient: QueryClient;
 
   beforeEach(() => {
+    // Restore, not just clear. Several tests spy on Storage.prototype.setItem
+    // and make it throw; vi.clearAllMocks() resets call history but leaves the
+    // implementation in place, so without this the first such test silently
+    // breaks localStorage for every test after it.
+    vi.restoreAllMocks();
+
     // Create fresh QueryClient for each test
     queryClient = new QueryClient({
       defaultOptions: {
@@ -99,6 +108,10 @@ describe('ConfigService - Unit Tests', () => {
 
     // Clear all mocks before each test
     vi.clearAllMocks();
+
+    // The publish-outcome record persists across tests otherwise, so a test
+    // could read a previous test's outcome and pass without writing anything.
+    localStorage.removeItem(PUBLISH_KEY);
   });
 
   describe('1. getConfig() - Configuration Retrieval', () => {
@@ -1164,6 +1177,39 @@ describe('ConfigService - Unit Tests', () => {
       ).rejects.toThrow(/invalid config missing data/);
     });
 
+    it('records the outcome as rejected, with the size and the server message', async () => {
+      persistLocally();
+      arrangePublish();
+      mockDeps.apiClient.postUserSettings = vi.fn().mockRejectedValue(SERVER_REJECTION);
+
+      await configService
+        .saveConfig({ config: editedConfig(), keyset: mockKeyset })
+        .catch(() => {});
+
+      const record = JSON.parse(localStorage.getItem(PUBLISH_KEY)!);
+      expect(record.outcome).toBe('rejected');
+      expect(record.detail).toMatch(/invalid config missing data/);
+      // The size of a payload the server refused is the measurement that the
+      // still-unknown limit will eventually be settled with.
+      expect(record.payloadBytes).toBeGreaterThan(0);
+    });
+
+    it('distinguishes a timeout from a refusal', async () => {
+      // They mean opposite things to a user — "will retry" vs "this will never
+      // work" — so they must not collapse into one outcome.
+      persistLocally();
+      arrangePublish();
+      mockDeps.apiClient.postUserSettings = vi
+        .fn()
+        .mockRejectedValue(new Error('Request timeout'));
+
+      await configService
+        .saveConfig({ config: editedConfig(), keyset: mockKeyset })
+        .catch(() => {});
+
+      expect(JSON.parse(localStorage.getItem(PUBLISH_KEY)!).outcome).toBe('timeout');
+    });
+
     it('withholds the timestamp after a rejected publish (Rule 1)', async () => {
       // Persisting on the failure path re-opens the hole #320/#243 just closed:
       // nothing reached the server, so nothing earned a newer timestamp. Keep the
@@ -1178,6 +1224,121 @@ describe('ConfigService - Unit Tests', () => {
         .catch(() => {});
 
       expect(read()?.timestamp).toBe(1000);
+    });
+  });
+
+  describe('9. saveConfig() - every outcome leaves a record', () => {
+    // "My setting saved" has never been evidence that it synced: sync-off, a
+    // refuse-to-publish hold and a real upload all write the local row and all
+    // look identical. These assert that each one is now distinguishable after
+    // the fact, which is what the Settings line reads.
+
+    const address = 'user-outcome';
+    const mockKeyset = {
+      userKeyset: {
+        user_key: {
+          private_key: new Uint8Array(57),
+          public_key: new Uint8Array(57),
+        },
+      } as any,
+      deviceKeyset: {} as any,
+    };
+
+    function arrangePublish() {
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+      mockDeps.messageDB.getSpaceKeys = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getEncryptionStates = vi.fn().mockResolvedValue([{ id: 'enc-1' }]);
+      mockDeps.messageDB.getBookmarks = vi.fn().mockResolvedValue([]);
+      mockDeps.messageDB.getAllUserNotes = vi.fn().mockResolvedValue([]);
+      mockDeps.apiClient.postUserSettings = vi.fn().mockResolvedValue({});
+      vi.spyOn(global.crypto.subtle, 'importKey').mockResolvedValue({} as CryptoKey);
+      vi.spyOn(global.crypto.subtle, 'encrypt').mockResolvedValue(
+        new Uint8Array(16).buffer as ArrayBuffer
+      );
+    }
+
+    const record = () => JSON.parse(localStorage.getItem(PUBLISH_KEY)!);
+
+    it('records "off" when sync is disabled', async () => {
+      await configService.saveConfig({
+        config: { address, spaceIds: [], allowSync: false, timestamp: 1000 } as any,
+        keyset: mockKeyset,
+      });
+
+      expect(record().outcome).toBe('off');
+      expect(mockDeps.apiClient.postUserSettings).not.toHaveBeenCalled();
+    });
+
+    it('records "published" with the payload size and Space count', async () => {
+      arrangePublish();
+
+      await configService.saveConfig({
+        config: { address, spaceIds: ['space-1'], allowSync: true, timestamp: 1000 } as any,
+        keyset: mockKeyset,
+      });
+
+      const r = record();
+      expect(r.outcome).toBe('published');
+      expect(r.spacesPublished).toBe(1);
+      // The measurement half of the size work — free to collect here, and the
+      // only way the real server limit ever gets settled.
+      expect(r.payloadBytes).toBeGreaterThan(0);
+    });
+
+    it('records "held" with both counts when the Space list would be truncated', async () => {
+      vi.spyOn(console, 'warn').mockImplementation(() => {});
+      arrangePublish();
+      // Two Spaces listed, only one keyable locally, so the upload is held.
+      mockDeps.messageDB.getSpaces = vi.fn().mockResolvedValue([{ spaceId: 'space-1' }]);
+
+      await configService.saveConfig({
+        config: {
+          address,
+          spaceIds: ['space-1', 'space-2'],
+          allowSync: true,
+          timestamp: 1000,
+        } as any,
+        keyset: mockKeyset,
+      });
+
+      const r = record();
+      expect(r.outcome).toBe('held');
+      expect(r.spacesPublished).toBe(1);
+      expect(r.spacesHeld).toBe(1);
+      expect(mockDeps.apiClient.postUserSettings).not.toHaveBeenCalled();
+    });
+
+    it('a broken recorder never takes down config sync', async () => {
+      // An instrument that can break the path it measures is worse than none.
+      arrangePublish();
+      vi.spyOn(Storage.prototype, 'setItem').mockImplementation(() => {
+        throw new Error('quota exceeded');
+      });
+
+      await configService.saveConfig({
+        config: { address, spaceIds: ['space-1'], allowSync: true, timestamp: 1000 } as any,
+        keyset: mockKeyset,
+      });
+
+      expect(mockDeps.apiClient.postUserSettings).toHaveBeenCalled();
+      expect(mockDeps.messageDB.saveUserConfig).toHaveBeenCalled();
+    });
+
+    it('never writes the record into the synced blob', async () => {
+      // It is a per-device fact. In the blob it would broadcast to every other
+      // device, rewrite the blob on every save, and grow the payload this exists
+      // to watch.
+      arrangePublish();
+
+      await configService.saveConfig({
+        config: { address, spaceIds: ['space-1'], allowSync: true, timestamp: 1000 } as any,
+        keyset: mockKeyset,
+      });
+
+      const posted = mockDeps.apiClient.postUserSettings.mock.calls[0][1];
+      expect(JSON.stringify(posted)).not.toContain('lastPublish');
+      const saved = mockDeps.messageDB.saveUserConfig.mock.calls[0][0];
+      expect(JSON.stringify(saved)).not.toContain('lastPublish');
     });
   });
 });

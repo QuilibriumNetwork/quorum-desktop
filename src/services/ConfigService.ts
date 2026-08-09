@@ -17,6 +17,7 @@ import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { validateItems } from '../utils/folderUtils';
+import { recordLastPublish, classifyPublishError } from '../utils/lastPublish';
 import { mergeDeviceNames } from './configMergeHelpers';
 import type { Ref } from '../types/ref';
 import type { SpaceInfoMap } from '../types/spaceRefs';
@@ -666,6 +667,11 @@ export class ConfigService {
         // Keep the timestamp we came in with — see `incomingTimestamp` above.
         // `ts` still gates the cache write below, so the UI updates as usual.
         config.timestamp = incomingTimestamp;
+
+        recordLastPublish('held', {
+          spacesPublished: uploadConfig.spaceIds.length,
+          spacesHeld: droppedSpaceIds.length,
+        });
       } else {
         const iv = crypto.getRandomValues(new Uint8Array(12));
         const configJson = JSON.stringify(uploadConfig);
@@ -711,6 +717,11 @@ export class ConfigService {
           });
           logger.log('[ConfigService] Settings posted successfully');
 
+          recordLastPublish('published', {
+            payloadBytes: ciphertext.length,
+            spacesPublished: uploadConfig.spaceIds.length,
+          });
+
           // Reset tombstones only after successful sync (Phase 7: Critical Fix)
           config.deletedBookmarkIds = [];
           config.deletedUserNoteAddresses = [];
@@ -727,6 +738,14 @@ export class ConfigService {
             '[ConfigService] Settings POST failed — keeping the change locally, not published:',
             error
           );
+
+          // Recorded before the timestamp restore below, so the payload size is
+          // captured even for the failures we most want to size up.
+          recordLastPublish(classifyPublishError(error), {
+            payloadBytes: ciphertext.length,
+            spacesPublished: uploadConfig.spaceIds.length,
+            detail: error instanceof Error ? error.message : String(error),
+          });
 
           // Nothing reached the server, so nothing earned a newer timestamp.
           // Without this, persisting on the failure path would re-open the hole
@@ -753,6 +772,8 @@ export class ConfigService {
       // Only the claim to authority is withheld.
       // See 2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md
       config.timestamp = incomingTimestamp;
+
+      recordLastPublish('off');
     }
 
     logger.log('[ConfigService] Saving config to local DB...');
