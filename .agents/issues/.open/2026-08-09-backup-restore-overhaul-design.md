@@ -227,7 +227,64 @@ choose its own rule.** Every case above then falls out without a mode:
 | `allowSync` | **Never restore it.** Device-local | Adopting it from a file re-opens exactly what [`2026-08-08-make-allowsync-a-per-device-setting.md`](2026-08-08-make-allowsync-a-per-device-setting.md) closed |
 | Space messages | Upsert by id, if included at all (§7) | |
 
-Two consequences worth stating out loud, because they are what make this safe:
+### 4.1 Additive is only half of it — deletions need tombstones
+
+**Raised 2026-08-09, and the case list above misses it entirely.** Take a backup,
+then delete some DMs, or leave a Space, or get kicked from one — then restore the
+older backup. Every rule in the table says "the file has it, the device doesn't,
+so add it", and the user's deliberate removal is silently undone.
+
+Additive and tombstones are **orthogonal**, and both are required:
+
+| Axis | What it protects | Mechanism |
+|---|---|---|
+| The user **changed** something | live keys beat stale keys | additive — never overwrite what is present |
+| The user **removed** something | a deletion is not undone | tombstone — never re-add what was removed |
+
+The unifying rule: **an import must never contradict a decision the user made
+after the backup was taken.** "Absent locally" is not sufficient grounds to
+restore, because absence has two causes — never known, and deliberately removed —
+and only a tombstone distinguishes them.
+
+**DM messages — FIXED 2026-08-09.** Tombstones existed (`deleted_messages`, DB v7)
+but were written for **channel messages only**, on an explicit rationale: *"DMs
+don't have a sync mechanism, so tombstones aren't needed"*. That was true when
+written. **Backup restore is precisely the mechanism that makes it false.** DM
+deletions now write tombstones too — purely additive, since nothing else consumes
+them for DMs — and `importDMData` refuses to write any message carrying one.
+Covered by `backupSpaceRestore.test.ts`, control-armed (a never-deleted message
+must still restore, or the gate could pass by writing nothing) and
+mutation-verified.
+
+**Space departures — OPEN, and the harder half.** No leave/kick tombstone exists
+anywhere (READ: no `deletedSpaceIds`, `leftSpaces` or equivalent in `src/`). So
+restoring a backup taken before leaving **will** re-add the Space, and worse than
+locally: `adoptSpaces` calls `postHubAdd` and sends a `sync` control message, so a
+kicked user silently re-announces to a Space that removed them. That is an
+outward-facing action taken on stale state.
+
+The obvious fix — write the tombstone inside `MessageDB.deleteSpace()`, the single
+choke point all three removal paths funnel through — **does not work as stated**,
+and this is the trap to avoid:
+
+| Caller | Meaning |
+|---|---|
+| [`SpaceService.ts:685`](../../../src/services/SpaceService.ts#L685) | leave / delete — a real departure |
+| [`MessageService.ts:5638`](../../../src/services/MessageService.ts#L5638) | kicked — a real departure |
+| [`EncryptionService.ts:305`](../../../src/services/EncryptionService.ts#L305) | **not a departure** — a space-address *migration*, which deletes the old `spaceId` and immediately re-saves under a new one |
+
+Tombstoning in `deleteSpace` would mark a migrated Space as "left". It happens to
+be harmless for the restore gate (the retired id should not be resurrected either),
+but it conflates two different facts under one name, which is how the next bug gets
+written. **The tombstone must be recorded by the departure call sites, not by the
+store method.** A rejoin must clear it — `clearTombstonesForSpace` is the existing
+precedent for exactly that.
+
+This needs a DB version bump and touches kick/leave, so it is **its own slice**
+(now slice 2b) rather than an addendum. Until it lands, the restore reports which
+Spaces it re-registered so the behaviour is at least not silent.
+
+Two further consequences worth stating out loud, because they are what make this safe:
 
 - **Additive-only means an import can never make a device worse.** That single
   invariant covers cases 5, 6 and 7 and removes the need to reason about backup age
@@ -439,10 +496,22 @@ were inverted in the same commit — and which pins that
 `user_config.spaceKeys` is **still** empty in that export, so the fix demonstrably
 works by reading the owning store rather than by the snapshot quietly filling in.
 
-**Slice 2 — Restore Spaces, additive only.** Import adopts absent Spaces by reusing
-the §3 mechanism; present Spaces untouched. Report counts per domain.
-*Observable:* wipe a sync-off device, log in, import → the Space list comes back and
-channels load. Import again → "0 restored, N already present".
+**Slice 2 — Restore Spaces, additive only. ✅ SHIPPED 2026-08-09.**
+`ConfigService.adoptSpaces` extracted from `getConfig` (pure move, 46 existing
+tests green) and reused by the import via injection, so `BackupService` does not
+depend on `ConfigService`. Exposed on the MessageDB context as `adoptSpaces`,
+following the `saveConfig` pattern. Import reports per-domain counts.
+Deletion tombstones for DMs landed with it (§4.1).
+*Observable:* wipe a sync-off device, import → Spaces return and channels load;
+import again → "0 restored, 1 already present". Both property tests
+mutation-verified.
+
+**Slice 2b — Space-departure tombstones. 🔴 NEXT, and it is a correctness gap, not
+a polish item.** See §4.1: leaving or being kicked leaves no record, so a restore
+re-adds the Space *and* re-announces to its hub. Needs a DB version bump, writes
+at the two genuine departure call sites (**not** in `deleteSpace`, which
+`EncryptionService` also uses for a migration), a clear-on-rejoin, and a gate in
+`adoptSpaces`.
 
 **Slice 3 — Honest reporting and pre-flight.** Before writing a file, show what it
 will contain (including that it holds Space ownership keys — §10.7). Before
