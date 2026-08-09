@@ -2280,6 +2280,47 @@ export class MessageDB {
   }
 
   /**
+   * Collects Space rows and their key material for backup export.
+   *
+   * Reads the `spaces` and `space_keys` stores DIRECTLY, and deliberately not
+   * `user_config.spaceKeys`. That field looks like the Space key store and is
+   * actually a snapshot assembled in one branch of one function: `saveConfig`
+   * only builds it inside `if (config.allowSync)` (ConfigService.ts:554,591), and
+   * `getDefaultUserConfig` initialises it to `[]` (utils.ts:15). A user who has
+   * never enabled sync therefore has an empty `spaceKeys` on disk permanently, so
+   * exporting via that field captures no key material at all — measured, see
+   * src/dev/tests/services/backupSpaceKeyCoverage.test.ts.
+   *
+   * Reading the owning stores instead makes the export independent of whether
+   * sync is on, off, or has never been on.
+   *
+   * The Space *definition* is not what matters here — a restore re-fetches the
+   * manifest from the API (ConfigService.ts:148). What cannot be re-derived is
+   * the key material, above all the `owner` private key, which is the sole proof
+   * of Space ownership and exists in no other copy.
+   */
+  async getAllSpaceData(): Promise<{
+    spaces: Space[];
+    space_keys: {
+      address?: string;
+      spaceId: string;
+      keyId: string;
+      publicKey: string;
+      privateKey: string;
+    }[];
+  }> {
+    await this.init();
+
+    const spaces = await this.getSpaces();
+
+    const space_keys = (
+      await Promise.all(spaces.map((s) => this.getSpaceKeys(s.spaceId)))
+    ).flat();
+
+    return { spaces, space_keys };
+  }
+
+  /**
    * Imports DM data from a backup into IndexedDB using a single atomic transaction.
    * Deduplicates messages/conversations by key using put() (existing records kept).
    * Skips encryption_states and user_config (Phase 2: user has active sessions).

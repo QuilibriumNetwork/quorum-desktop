@@ -1,32 +1,29 @@
 /**
- * Backup export — does a `.qmbak` actually contain the Space keys?
+ * Backup export — does a `.qmbak` carry the Space keys?
  *
- * PURPOSE
- * Settles §1 and §10.1 of `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`,
- * which claims that a user with sync OFF exports a backup containing **no Space
- * key material at all** — including the `owner` private key, which is the only
- * proof of Space ownership and has no other copy anywhere.
+ * WHY THIS FILE EXISTS
+ * `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md` §1 claimed
+ * that a user with sync OFF exported a backup containing **no Space key material
+ * at all** — including the `owner` private key, the sole proof of Space ownership,
+ * which has no other copy anywhere. That was INFERRED from reading three places in
+ * the code. This file measured it, and it held.
  *
- * That claim was INFERRED from reading three places in the code, never observed.
- * The whole design rests on it, so it gets an instrument rather than an argument.
+ * Slice 1 then fixed it: `getAllSpaceData` reads the `spaces` and `space_keys`
+ * stores directly instead of the `user_config.spaceKeys` snapshot. The assertions
+ * below are now the other way round — a sync-off export MUST carry the keys.
+ *
+ * The pre-fix behaviour is still pinned, from the other side: §"the snapshot is
+ * still empty" proves the export works because it reads the owning stores, and
+ * NOT because something incidentally started populating the config. Without that
+ * test, a later change could reintroduce the dependency on `allowSync` and every
+ * other assertion here would stay green.
  *
  * APPROACH — integration, deliberately NOT unit
  * Real `MessageDB` on fake-indexeddb, real `ConfigService.saveConfig`, real
- * `BackupService.exportBackup`, real WebCrypto. Only the network (`apiClient`)
- * and the wasm signing core are stubbed. Mocking `messageDB` here would measure
- * the mock, which is exactly the failure mode this instrument exists to avoid:
- * the claim IS about what the real save/export chain leaves on disk.
- *
- * READING THE RESULT
- *   Arm A red, Arm B green  → the design's §1 holds. Expected.
- *   Both arms green         → §1 is REFUTED. Backups already carry Space keys;
- *                             slices 1-2 of the design are unnecessary. Stop and
- *                             rewrite the issue before writing any code.
- *   Both arms red           → the harness is broken, not the app. Neither arm
- *                             means anything. Fix the harness first.
- *
- * The last case is why Arm B exists. Without a control that SHOULD find the key,
- * "we found no key" is indistinguishable from "we looked in the wrong place".
+ * `BackupService.exportBackup`, real WebCrypto. Only the network and the wasm
+ * signing core are stubbed. Mocking `messageDB` would measure the mock, which is
+ * the exact failure mode this file exists to rule out: the claim IS about what
+ * the real save/export chain leaves in the file.
  */
 
 import 'fake-indexeddb/auto';
@@ -36,13 +33,19 @@ import { i18n } from '@lingui/core';
 import { messages } from '@/i18n/en/messages';
 import { MessageDB } from '@/db/messages';
 import { ConfigService } from '@/services/ConfigService';
-import { BackupService } from '@/services/BackupService';
+import {
+  BackupService,
+  BackupError,
+  BACKUP_FORMAT_VERSION,
+  domainsOf,
+  V1_DOMAINS,
+} from '@/services/BackupService';
 import { getDefaultUserConfig } from '@/utils';
 import { QueryClient } from '@tanstack/react-query';
 
 // The wasm core is never initialised in this suite (see vitest.config.ts), so the
-// two signing calls saveConfig makes are stubbed. Nothing under test depends on
-// the signature being real — the payload we inspect is produced before signing.
+// signing calls saveConfig makes are stubbed. Nothing under test depends on the
+// signature being real — the payload inspected here is built before signing.
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   channel: {
     SealHubEnvelope: vi.fn().mockResolvedValue({ sealed: 'hub-envelope' }),
@@ -57,13 +60,12 @@ vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
 }));
 
 /**
- * The value the whole instrument hunts for.
+ * The value the instrument hunts for.
  *
  * A distinctive hex sentinel rather than a realistic key: the strongest assertion
  * available is "does this string appear ANYWHERE in the decrypted payload", which
- * is independent of any belief about which field is supposed to carry it. A
- * realistic-looking random key would work identically but makes a failure much
- * harder to read.
+ * holds regardless of which field is supposed to carry it. A random-looking key
+ * would work identically but makes a failure far harder to read.
  */
 const OWNER_PRIVATE_KEY = 'c0ffee'.repeat(19); // 114 hex chars, Ed448-private-key length
 
@@ -82,7 +84,17 @@ const DM_INBOX = 'QmcfTNSyig9DSfAqSmWXsGLkLiG9TGS87XXpJy3juKbKSs'; // digest 0xD
 /** Direct conversations are keyed `<addr>/<addr>`, not `<addr>/<inbox>`. */
 const DM_CONVERSATION_ID = `${PEER_ADDRESS}/${PEER_ADDRESS}`;
 
-/** Ed448 keyset shape BackupService/ConfigService read `user_key` off. */
+/** The seven keys SpaceService writes when a user CREATES a Space (SpaceService.ts:356-431). */
+const CREATED_SPACE_KEY_IDS = [
+  'config',
+  'hub',
+  'owner',
+  'inbox',
+  'signing',
+  'QmGroupAlpha',
+  SPACE_ID,
+];
+
 const KEYSET = {
   user_key: {
     private_key: new Uint8Array(57).fill(7),
@@ -96,8 +108,8 @@ beforeAll(() => {
 
   // setup.ts replaces global crypto with vi.fn() stubs whose subtle.digest
   // resolves a zero-filled buffer. Real AES-GCM and SHA-512 are required here:
-  // the instrument encrypts a backup and decrypts it again, and a stubbed digest
-  // would make every derived key identical — the round trip would "pass" while
+  // this file encrypts a backup and decrypts it again, and a stubbed digest would
+  // make every derived key identical — the round trip would "pass" while
   // measuring nothing. Registered in this file's beforeAll, which runs after
   // setup.ts's.
   for (const target of [globalThis, global]) {
@@ -109,7 +121,7 @@ beforeAll(() => {
   }
 });
 
-describe('Backup export — Space key coverage (design §1 / §10.1)', () => {
+describe('Backup export — Space key coverage', () => {
   let db: MessageDB;
   let configService: ConfigService;
   let backupService: BackupService;
@@ -143,42 +155,46 @@ describe('Backup export — Space key coverage (design §1 / §10.1)', () => {
 
     backupService = new BackupService({ messageDB: db });
 
-    await seedSpaceWithFullKeyset();
+    await seedCreatedSpace();
     await seedDirectMessageConversation();
   });
 
-  /**
-   * Mirrors what SpaceService writes when a user CREATES a Space
-   * (SpaceService.ts:356-431): seven keys, of which `owner` is the irreplaceable
-   * one, plus the Space's Triple Ratchet state under `<spaceId>/<spaceId>`.
-   */
-  async function seedSpaceWithFullKeyset() {
+  /** Mirrors what SpaceService writes when a user CREATES a Space. */
+  async function seedCreatedSpace(evalPoolBytes = 0) {
     await db.saveSpace({ spaceId: SPACE_ID, name: 'Alpha' } as any);
 
-    const keys = [
-      { keyId: 'config', privateKey: 'aa'.repeat(57) },
-      { keyId: 'hub', privateKey: 'bb'.repeat(57), address: 'QmHubAlpha' },
-      { keyId: 'owner', privateKey: OWNER_PRIVATE_KEY },
-      { keyId: 'inbox', privateKey: 'dd'.repeat(57), address: 'QmInboxAlpha' },
-      { keyId: 'signing', privateKey: 'ee'.repeat(57), address: 'QmInboxAlpha' },
-      { keyId: 'QmGroupAlpha', privateKey: 'ff'.repeat(57) },
-      { keyId: SPACE_ID, privateKey: '11'.repeat(57) },
-    ];
-    for (const k of keys) {
+    const privateKeys: Record<string, string> = {
+      config: 'aa'.repeat(57),
+      hub: 'bb'.repeat(57),
+      owner: OWNER_PRIVATE_KEY,
+      inbox: 'dd'.repeat(57),
+      signing: 'ee'.repeat(57),
+      QmGroupAlpha: 'ff'.repeat(57),
+      [SPACE_ID]: '11'.repeat(57),
+    };
+    for (const keyId of CREATED_SPACE_KEY_IDS) {
       await db.saveSpaceKey({
         spaceId: SPACE_ID,
-        keyId: k.keyId,
-        publicKey: 'pub-' + k.keyId,
-        privateKey: k.privateKey,
-        ...(k.address ? { address: k.address } : {}),
+        keyId,
+        publicKey: 'pub-' + keyId,
+        privateKey: privateKeys[keyId],
+        ...(keyId === 'hub' || keyId === 'inbox' || keyId === 'signing'
+          ? { address: 'QmAddr' + keyId }
+          : {}),
       } as any);
     }
 
     await db.saveEncryptionState(
       {
         conversationId: `${SPACE_ID}/${SPACE_ID}`,
-        inboxId: 'QmInboxAlpha',
-        state: JSON.stringify({ triple_ratchet: 'space-state' }),
+        inboxId: 'QmAddrinbox',
+        state: JSON.stringify({
+          triple_ratchet: 'space-state',
+          // Stand-in for the ~10k polynomial evals pre-allocated per created
+          // Space (2025-12-09-encryption-state-evals-bloat.md). Zero by default
+          // to keep the suite fast; the size test supplies a realistic pool.
+          evals: 'e'.repeat(evalPoolBytes),
+        }),
         timestamp: 1000,
       } as any,
       true
@@ -186,9 +202,9 @@ describe('Backup export — Space key coverage (design §1 / §10.1)', () => {
   }
 
   /**
-   * A DM, so the export has known-good content. Its presence in the payload is
-   * the positive control for "the export ran and produced something real" — it
-   * separates "no Space keys" from "no output at all".
+   * A DM, so the export has known-good content. Its presence is the positive
+   * control for "the export ran and produced something real" — it separates
+   * "no Space keys" from "no output at all".
    */
   async function seedDirectMessageConversation() {
     await db.saveConversation({
@@ -211,17 +227,8 @@ describe('Backup export — Space key coverage (design §1 / §10.1)', () => {
     );
   }
 
-  /**
-   * Decrypts a produced .qmbak the way BackupService.importBackup does.
-   *
-   * The derivation is re-implemented rather than imported because the service
-   * exposes no decrypt-to-payload method. That is safe here specifically because
-   * AES-GCM is authenticated: a wrong key throws instead of returning plausible
-   * garbage, so a mistake in this helper cannot turn into a false pass.
-   */
-  async function decryptBackup(blob: Blob) {
-    const file = JSON.parse(await blob.text());
-
+  /** Derives the backup key exactly as BackupService.deriveKey does. */
+  async function deriveKey(usage: KeyUsage) {
     const prefix = new TextEncoder().encode('quorum-backup-v1');
     const priv = new Uint8Array(KEYSET.user_key.private_key);
     const combined = new Uint8Array(prefix.length + priv.length);
@@ -229,22 +236,48 @@ describe('Backup export — Space key coverage (design §1 / §10.1)', () => {
     combined.set(priv, prefix.length);
 
     const derived = await crypto.subtle.digest('SHA-512', combined);
-    const key = await crypto.subtle.importKey(
+    return crypto.subtle.importKey(
       'raw',
       derived.slice(0, 32),
       { name: 'AES-GCM', length: 256 },
       false,
-      ['decrypt']
+      [usage]
     );
+  }
 
+  /**
+   * Decrypts a produced .qmbak the way importBackup does.
+   *
+   * The derivation is re-implemented rather than imported because the service
+   * exposes no decrypt-to-payload method. Safe here specifically because AES-GCM
+   * is authenticated: a wrong key throws instead of returning plausible garbage,
+   * so a mistake in this helper cannot become a false pass.
+   */
+  async function decryptBackup(blob: Blob) {
+    const file = JSON.parse(await blob.text());
     const plaintext = await crypto.subtle.decrypt(
       { name: 'AES-GCM', iv: Buffer.from(file.iv, 'hex') },
-      key,
+      await deriveKey('decrypt'),
       Buffer.from(file.ciphertext, 'hex')
     );
+    const raw = new TextDecoder().decode(plaintext);
+    return { file, payload: JSON.parse(raw), raw, bytes: blob.size };
+  }
 
-    const json = new TextDecoder().decode(plaintext);
-    return { file, payload: JSON.parse(json), raw: json };
+  /** Writes a backup file at an arbitrary version — for back-compat tests. */
+  async function makeBackupFile(version: number, payload: unknown) {
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encrypted = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      await deriveKey('encrypt'),
+      new TextEncoder().encode(JSON.stringify(payload))
+    );
+    return JSON.stringify({
+      version,
+      iv: Buffer.from(iv).toString('hex'),
+      ciphertext: Buffer.from(encrypted).toString('hex'),
+      createdAt: Date.now(),
+    });
   }
 
   /** Saves a config through the real ConfigService, then exports a real backup. */
@@ -259,107 +292,190 @@ describe('Backup export — Space key coverage (design §1 / §10.1)', () => {
       keyset: { userKeyset: KEYSET, deviceKeyset: {} as any },
     });
 
-    const blob = await backupService.exportBackup({
-      keyset: KEYSET,
-      address: USER_ADDRESS,
-    });
-    return decryptBackup(blob);
+    return decryptBackup(
+      await backupService.exportBackup({ keyset: KEYSET, address: USER_ADDRESS })
+    );
   }
 
-  // ── Positive control ────────────────────────────────────────────────────────
-  // If this fails, nothing below is interpretable: it means the export produced
-  // nothing, so "no owner key found" would be trivially true and meaningless.
+  // ── Positive controls ───────────────────────────────────────────────────────
+  // If these fail nothing else is interpretable: an empty export would make
+  // "no owner key found" trivially true and meaningless.
 
   it('CONTROL: the export produces a decryptable file with real content', async () => {
     const { file, payload } = await saveThenExport(false);
 
-    expect(file.version).toBe(1);
+    expect(file.version).toBe(BACKUP_FORMAT_VERSION);
     expect(payload.conversations).toHaveLength(1);
     expect(payload.conversations[0].address).toBe(PEER_ADDRESS);
     expect(payload.encryption_states.length).toBeGreaterThan(0);
   });
 
-  it('CONTROL: Space ratchet states ARE already exported (design §5)', async () => {
-    // Independent of the key question, and load-bearing for the design: the
-    // Space-side Triple Ratchet state already ships in every .qmbak today. Only
-    // the keys that make it meaningful are missing.
+  it('CONTROL: Space ratchet states were already exported before slice 1', async () => {
+    // Independent of the key question and load-bearing for the design: the
+    // Space-side Triple Ratchet state has always shipped in a .qmbak. Only the
+    // keys that make it meaningful were missing.
     const { payload } = await saveThenExport(false);
 
-    const spaceState = payload.encryption_states.find(
-      (s: any) => s.conversationId === `${SPACE_ID}/${SPACE_ID}`
-    );
-    expect(spaceState).toBeDefined();
+    expect(
+      payload.encryption_states.find(
+        (s: any) => s.conversationId === `${SPACE_ID}/${SPACE_ID}`
+      )
+    ).toBeDefined();
   });
 
-  // ── Arm A — the claim under test ────────────────────────────────────────────
+  // ── Slice 1: the behaviour that changed ─────────────────────────────────────
 
-  it('ARM A (sync OFF): the backup contains NO Space key material', async () => {
+  it('sync OFF: the backup carries every Space key, including `owner`', async () => {
     const { payload, raw } = await saveThenExport(false);
 
-    // The strongest form of the assertion: the owner private key appears nowhere
-    // in the decrypted payload, whatever field might have carried it.
-    expect(raw).not.toContain(OWNER_PRIVATE_KEY);
-
-    // And the specific mechanism the design names: spaceKeys never gets assembled.
-    expect(payload.user_config?.spaceKeys ?? []).toHaveLength(0);
-
-    // There is no second source — the payload has no space_keys domain at all.
-    expect(payload).not.toHaveProperty('space_keys');
-    expect(payload).not.toHaveProperty('spaces');
-  });
-
-  it('ARM A: the Space is listed but unusable — ids without keys', async () => {
-    // The shape that makes this dangerous rather than merely incomplete: the file
-    // LOOKS like it knows about the Space. A restore reading spaceIds would report
-    // a Space it cannot actually rebuild.
-    const { payload } = await saveThenExport(false);
-
-    expect(payload.user_config?.spaceIds).toContain(SPACE_ID);
-    expect(payload.user_config?.spaceKeys ?? []).toHaveLength(0);
-  });
-
-  // ── Arm B — the control that proves Arm A looked in the right place ─────────
-
-  it('ARM B (sync ON, control): the SAME export DOES carry the owner key', async () => {
-    const { payload, raw } = await saveThenExport(true);
-
-    // Same seed, same export call, one flag different. If this is also empty the
-    // harness never had a chance of finding the key and Arm A proves nothing.
+    // The strongest form: the owner key is in the file, wherever it lives.
     expect(raw).toContain(OWNER_PRIVATE_KEY);
 
-    const spaceKeys = payload.user_config?.spaceKeys ?? [];
-    expect(spaceKeys).toHaveLength(1);
-    expect(spaceKeys[0].spaceId).toBe(SPACE_ID);
-    expect(spaceKeys[0].keys.map((k: any) => k.keyId).sort()).toEqual(
-      ['QmGroupAlpha', SPACE_ID, 'config', 'hub', 'inbox', 'owner', 'signing'].sort()
+    expect(payload.spaces.map((s: any) => s.spaceId)).toEqual([SPACE_ID]);
+    expect(payload.space_keys.map((k: any) => k.keyId).sort()).toEqual(
+      [...CREATED_SPACE_KEY_IDS].sort()
+    );
+    expect(
+      payload.space_keys.find((k: any) => k.keyId === 'owner').privateKey
+    ).toBe(OWNER_PRIVATE_KEY);
+  });
+
+  it('sync OFF: the config snapshot is STILL empty — the keys come from the store', async () => {
+    // This is the test that keeps the fix honest. The export must work because it
+    // reads `space_keys` directly, NOT because something started populating
+    // user_config.spaceKeys when sync is off. If that snapshot ever fills in
+    // here, the export has quietly re-acquired a dependency on `allowSync` and
+    // every other assertion in this file would still pass.
+    const { payload } = await saveThenExport(false);
+
+    expect(payload.user_config?.spaceKeys ?? []).toHaveLength(0);
+    expect(payload.space_keys.length).toBe(CREATED_SPACE_KEY_IDS.length);
+  });
+
+  it('sync ON: same export, same keys — the flag no longer changes the outcome', async () => {
+    // Before slice 1 this arm was the control that proved the sync-off arm was
+    // looking in the right place. It now pins the real goal: the backup is
+    // identical in substance whether sync is on or off.
+    const { payload, raw } = await saveThenExport(true);
+
+    expect(raw).toContain(OWNER_PRIVATE_KEY);
+    expect(payload.space_keys.map((k: any) => k.keyId).sort()).toEqual(
+      [...CREATED_SPACE_KEY_IDS].sort()
+    );
+    // ...and the sync path still does its own separate thing.
+    expect(postedConfigs).toHaveLength(1);
+    expect(payload.user_config.spaceKeys).toHaveLength(1);
+  });
+
+  // ── Format and back-compat ─────────────────────────────────────────────────
+
+  it('declares per-domain presence, including what it does NOT carry', async () => {
+    const { payload } = await saveThenExport(false);
+
+    expect(payload.domains).toMatchObject({
+      dm_messages: true,
+      dm_conversations: true,
+      encryption_states: true,
+      user_config: true,
+      spaces: true,
+      space_keys: true,
+      // Still out of scope. Declared false rather than omitted so a restore can
+      // say so instead of silently restoring nothing.
+      space_messages: false,
+    });
+  });
+
+  it('a v1 file still imports, and reports that it has no Space keys', async () => {
+    // v1 files are on users' disks right now. Refusing them would be the same
+    // outcome as having no backup at all.
+    const v1 = await makeBackupFile(1, {
+      messages: [],
+      conversations: [
+        {
+          conversationId: DM_CONVERSATION_ID,
+          type: 'direct',
+          timestamp: 1,
+          address: PEER_ADDRESS,
+          icon: '',
+          displayName: 'Peer',
+        },
+      ],
+      encryption_states: [],
+    });
+
+    const result = await backupService.importBackup({
+      keyset: KEYSET,
+      fileContent: v1,
+    });
+
+    expect(result.version).toBe(1);
+    expect(result.conversationsWritten).toBe(1);
+    expect(result.domains).toEqual(V1_DOMAINS);
+    expect(result.domains.space_keys).toBe(false);
+  });
+
+  it('a file from a NEWER format is refused, not half-restored', async () => {
+    // Opposite call from v1: a future file may hold domains this build would
+    // silently drop, and a partial restore that looks complete is worse than a
+    // clear refusal.
+    const future = await makeBackupFile(99, { messages: [], conversations: [] });
+
+    await expect(
+      backupService.importBackup({ keyset: KEYSET, fileContent: future })
+    ).rejects.toThrow(BackupError);
+    await expect(
+      backupService.importBackup({ keyset: KEYSET, fileContent: future })
+    ).rejects.toThrow(/newer version/i);
+  });
+
+  it('domainsOf falls back correctly for a v1 file with no domains block', () => {
+    expect(domainsOf({ version: 1 }, { messages: [], conversations: [] } as any)).toEqual(
+      V1_DOMAINS
     );
   });
 
-  it('ARM B: confirms the sync branch is what populates spaceKeys', async () => {
-    // Pins the mechanism rather than the symptom: the assembled spaceKeys also
-    // reached the upload, so the difference between the arms is the allowSync
-    // branch in saveConfig and nothing else.
-    await saveThenExport(true);
-    expect(postedConfigs).toHaveLength(1);
-  });
+  // ── Size: the number that gates the Space-messages decision ────────────────
 
-  // ── The consequence, stated as a test ──────────────────────────────────────
+  it('MEASUREMENT: a created Space\'s eval pool dominates the file, and hex doubles it', async () => {
+    // Answers §10.4 of the overhaul design without needing a real account export.
+    // A created Space pre-allocates ~10k polynomial evals (~2 MB) into its
+    // encryption state; a joined one costs ~12-63 KB
+    // (2025-12-09-encryption-state-evals-bloat.md, measured on a real account).
+    const EVAL_POOL = 2 * 1024 * 1024; // 2 MB, the measured per-created-Space cost
 
-  it('a sync-OFF backup cannot rebuild the Space; a sync-ON one can', async () => {
-    const off = await saveThenExport(false);
-    expect(off.raw).not.toContain(OWNER_PRIVATE_KEY);
+    const lean = await saveThenExport(false);
 
-    // Fresh DB + fresh service, same account: this is the restore-onto-a-wiped-
-    // device situation. What the file holds is all there is.
-    const FDBFactory = (await import('fake-indexeddb/lib/FDBFactory')).default;
-    globalThis.indexedDB = new FDBFactory();
-    const wiped = new MessageDB();
-    await wiped.init();
-    expect(await wiped.getSpaces()).toHaveLength(0);
-    expect(await wiped.getSpaceKeys(SPACE_ID)).toHaveLength(0);
+    // Re-seed the same Space with a realistic eval pool.
+    await db.saveEncryptionState(
+      {
+        conversationId: `${SPACE_ID}/${SPACE_ID}`,
+        inboxId: 'QmAddrinbox',
+        state: JSON.stringify({ triple_ratchet: 's', evals: 'e'.repeat(EVAL_POOL) }),
+        timestamp: 1001,
+      } as any,
+      true
+    );
+    const fat = await saveThenExport(false);
 
-    // Nothing in the sync-off payload could repopulate those two.
-    const restorable = off.payload.user_config?.spaceKeys ?? [];
-    expect(restorable).toHaveLength(0);
+    const growth = fat.bytes - lean.bytes;
+
+    // The eval pool passes through to the file essentially intact...
+    expect(growth).toBeGreaterThan(EVAL_POOL);
+
+    // ...and then hex encoding of the ciphertext doubles it. This is the finding
+    // that matters for the size budget: the .qmbak on disk is ~2x its payload,
+    // so a 4 MB account (two created Spaces) yields an ~8 MB download. Asserted
+    // as a range rather than a constant so AES-GCM padding/IV noise cannot make
+    // it flaky.
+    expect(growth).toBeGreaterThan(EVAL_POOL * 1.9);
+    expect(growth).toBeLessThan(EVAL_POOL * 2.2);
+
+    // Written straight to stdout: vitest's default reporter swallows console.log,
+    // and the point of this test is as much the number as the assertion. Run the
+    // file directly to read it off.
+    process.stdout.write(
+      `\n[backup size] lean=${lean.bytes}B  with-2MB-evals=${fat.bytes}B  ` +
+        `growth=${growth}B (${(growth / EVAL_POOL).toFixed(2)}x the pool)\n`
+    );
   });
 });
