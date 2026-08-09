@@ -32,6 +32,29 @@ A design for reworking the `allowSync` feature across both clients. It is **not
 approved for implementation.** §10 lists what has to be settled first, in order;
 only the last of those is a product decision, and it belongs to the file's owner.
 
+> ## 🛑 DECIDED 2026-08-09: the tiering split is PARKED. Do not build it.
+>
+> **`allowSync` stays a single switch.** §5.3 (tier the payload), §6 (the
+> parent/child UI) and §8 slices 3 and 4 are on hold, and slice 4 is blocked by
+> slice 3 anyway — flipping the default to ON only makes sense once the keys tier
+> exists to be left off.
+>
+> **Why:** not a technical objection. The owner is not comfortable committing the
+> product to a two-tier privacy model alone, and wants the lead dev's agreement
+> first. That is the right call: the split changes what the app promises about
+> where your keys live, which is a product and security commitment rather than an
+> implementation detail.
+>
+> **The privacy analysis behind it stands and is worth keeping** — see the box in
+> §5.3. In short: the split is a real privacy improvement, and the line it draws
+> is cleaner than "more sync versus less sync". Every dangerous property lives on
+> the child side.
+>
+> **Slices 1 and 2 are unaffected and already shipped on desktop.** They were
+> deliberately built to stand alone, and nothing in them assumes tiering.
+>
+> Reopen this only after the lead-dev conversation.
+
 **One naming warning before anything else.** Today `allowSync` is a **single
 switch**: when it is on, the upload always includes your Space keys, and there is
 no way to have one without the other. This document proposes splitting that into
@@ -349,9 +372,52 @@ Confirm with a real two-device test before treating as settled.)
 Until one of those exists, the honest UI copy is "cannot be deleted yet", and the
 real answer is §4.2.
 
-### 5.3 Tier the payload
+### 5.3 Tier the payload — 🛑 PARKED 2026-08-09, pending the lead dev
 
 **Addresses P3, and it is the prerequisite for any sensible default.**
+
+> ### The privacy analysis, settled 2026-08-09. Keep this even if the split never ships.
+>
+> The question that mattered was: *if the settings tier were on by default, what
+> would that leak?* Answered against the wire format and the type, both **READ**.
+>
+> **What the server sees on any publish**, either tier: `user_address`,
+> `user_public_key`, `timestamp` and `signature` in plaintext, and `user_config`
+> as opaque ciphertext. Contents never leak. Metadata does: **who, when, how big.**
+>
+> **Baseline correction.** Sync off does NOT stop the read. `getConfig` calls
+> `getUserSettings(address)` unconditionally on every start
+> ([`:60`](../../../src/services/ConfigService.ts#L60)), so "this account is
+> active" reaches the server regardless. Sync off prevents **writes**, and that is
+> the only honest comparison.
+>
+> **Settings tier (~40 KB)** adds, over off:
+> - a write timeline — a timestamped record tied to your address each time you
+>   change anything. Real, and it matters for the activist/journalist persona.
+> - almost no size signal; the blob barely moves.
+> - at rest: an undeletable archive of bookmarks, notes, blocked users, mutes,
+>   profile.
+>
+> **Keys tier (MB-scale)** adds three things that differ in *kind*:
+> 1. **Size becomes a signal.** MEASURED: a created Space ≈ 2 MB, a joined one
+>    34-63 KB. Blob size therefore approximates how many Spaces you are in and
+>    distinguishes created from joined. This is exactly what today's tooltip warns
+>    about, and with keys off it largely disappears.
+> 2. **The archive holds your Space private keys.** `privateKey` appears **only**
+>    inside `spaceKeys[].keys[]` in `UserConfig` — nowhere in the settings tier.
+>    So key compromise means "they learn your bookmarks" versus "they can decrypt
+>    your Spaces". Different category of harm.
+> 3. **It cannot be deleted.** Tolerable for mutes. Not for keys.
+>
+> **Conclusion:** the split is a genuine privacy improvement, and not because it
+> is "less sync". It draws a clean line between *metadata* and *key material*,
+> with every dangerous property on the child side. That is what would make a
+> default-on parent defensible.
+>
+> **The honest caveat, unresolved:** most of the *recovery* value is also in the
+> child. Parent-on/child-off is accurate about what it does, but a user can read
+> "sync is on" as "my Spaces are safe" when they are not. A copy problem, not an
+> architecture problem, and the one most likely to be glossed over.
 
 Same endpoint, same blob, same encryption. The client decides whether `spaceKeys`
 is included. Because the server sees only ciphertext, this is entirely a
@@ -567,7 +633,7 @@ a three-device run with staggered toggling is what actually exercises these rule
 
 ---
 
-## §6. The UX question
+## §6. The UX question — 🛑 PARKED 2026-08-09 with §5.3
 
 Settings → Privacy is already dense (eight rows on desktop). A second sync switch
 sounds like it makes that worse. It does not, for one specific reason.
@@ -700,7 +766,11 @@ below reads as "what is left", not "what was planned".
 3. **Slice 3 — "Choose what leaves."** §5.3 tiering, with Traps 1-3 resolved.
    *Observable:* switching the keys tier off keeps settings syncing and shrinks
    the blob by ~98%.
+   **🛑 PARKED 2026-08-09** pending the lead dev. `allowSync` stays a single
+   switch. See the decision box at the top.
 4. **Slice 4 — defaults.** Flip the parent per OPEN DECISION C.
+   **🛑 PARKED**, and blocked by slice 3 regardless: flipping the default to ON
+   only makes sense once there is a keys tier to leave off.
 5. **Slice 5 — freshness (P5) and field-level merge (P6).** Independent, largest,
    last.
 
@@ -835,3 +905,6 @@ clients' own privacy copy; §7 gained Rule 1 as a shared-declaration candidate;
 - §1.2's central claim that mobile uses an inbound 'allow-list' was WRONG — mobile's getConfig spreads ...decryptedConfig verbatim (configService.ts:519) then re-overrides ~10 fields for merge/defensive reasons, exactly like desktop; a field not in that list still survives. Corrected the table, added a sourced callout, and fixed downstream assumptions in §5.1, Trap 2, and the OPEN DECISION B note.
 - Trap 1 (bidirectional filter disables sync when keys tier is off) CONFIRMED on both clients by tracing the real conditionals at ConfigService.ts:608-627 (desktop) and configService.ts:728-746 (mobile) — the doc's citation had pointed at the architecture doc's illustrative snippet, not real source; corrected. Trap 2 PARTIALLY CONFIRMED: desktop's nav (useNavItems.ts) degrades gracefully by Space-row presence rather than crashing, and mobile's Spaces UI is storage-driven per the cross-device umbrella doc (2026-07-31-spaces-list-cross-device-sync.md), so it is structurally immune to this trap as a receiver — this makes B1 safer than the original framing credited, not riskier.
 - New finding not in the original doc: §5.2's 'publish once on disable' can cascade-wipe a SECOND device rather than merely 'achieve nothing.' Traced end to end (getConfig verbatim-adopts non-merged fields on a fresh higher timestamp; that device's own next saveConfig then re-publishes the now-empty spaceIds because it narrows from its own caller-provided list rather than re-deriving from the local Space table, propagating the wipe with a newer timestamp). Filed as a Blocker recommending §5.2 not ship unmitigated. Also re-verified all four dependency issues (mobile 0/3 keys, size-guard, merge-asymmetry, eval-bloat) directly against current code per the file owner's mid-review instruction — none were stale; all four remain live, current problems with citations refreshed where needed. Recorded (not resolved) recommendations on OPEN DECISIONS A/B/C in a new Blockers section, and added a full Independent Review Findings section documenting every verified/corrected claim.
+
+## Updates
+- **2026-08-09 11:32**: DECIDED: tiering split (S5.3, S6, slices 3-4) PARKED pending a lead-dev conversation. allowSync stays a single switch. Not a technical objection — the owner will not commit the product to a two-tier privacy model alone. The privacy analysis is preserved in a box in S5.3: the split IS a real improvement because private keys live only in spaceKeys, so the line is metadata vs key material rather than more-vs-less sync. Slices 1-2 unaffected, already desktop-shipped.
