@@ -286,7 +286,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A Space created on mobile does not land correctly on desktop](issues/.open/2026-08-04-mobile-created-space-syncs-badly-to-desktop-owner-missing-and-message-not-shown.md)
 - 🐛 [The two clients do not merge the same config fields](issues/.open/2026-08-05-config-merge-lists-are-asymmetric-between-desktop-and-mobile.md)
 - 🐛 [The config upload has no size guard, and mobile's failure is invisible](issues/.open/2026-08-05-config-upload-has-no-size-guard-and-fails-silently-on-mobile.md)
-- 🐛 [`.qmbak` backup cannot restore DM session continuity](issues/.open/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)
 - 🐛 [The roster diff treats your own row like a stranger's](issues/.open/2026-08-05-roster-sync-has-no-self-exclusion-a-peer-can-overwrite-your-own-row.md)
 - 🐛 [Safari wipes all IndexedDB after 7 idle days — DM ratchet state and history are unrecoverable](issues/.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md)
 - 🐛 [Every shared primitive reaches consumers as `any`](issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
@@ -330,6 +329,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Config sync overhaul](issues/.open/2026-08-07-config-sync-overhaul-design.md)
 - 📋 [Make `allowSync` a per-device setting](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md)
 - 📋 [Record and show what the last config publish actually did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md)
+- 📋 [Backup/restore overhaul](issues/.open/2026-08-09-backup-restore-overhaul-design.md)
 
 ### Deferred
 
@@ -681,6 +681,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Bug: Auto-jump to First Unread Breaks Initial Message Sync](issues/.archived/2025-11-11-auto-jump-unread-breaks-message-sync.md)
 - 🐛 [Leave Space - No Loading Feedback and UI Not Refreshing](issues/.archived/2026-03-18-leave-space-no-feedback.md)
 - 🐛 [Message list scroll jank on send — Virtuoso scroll position drift](issues/.archived/2026-03-19-message-list-scroll-jank-on-send.md)
+- 🐛 [`.qmbak` backup cannot restore DM session continuity](issues/.archived/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)
 - 🐛 [Bug: Tabler Icon Overlapping Stroke Artifact in Dropzone Circles](issues/.archived/tabler-icon-overlapping-stroke-artifact.md)
 - 🐛 [Role with message:delete permission can delete space owner's messages](issues/.archived/message-delete-owner-vulnerability.md)
 - 📋 [🚀 Search Performance Optimization - Revised Implementation Plan](issues/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -767,4 +768,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-09 11:32:48
+**Last Updated**: 2026-08-09 11:59:58

@@ -140,11 +140,31 @@ The Data Backup section appears in **User Settings > Privacy/Security**, below t
 
 ## Known Limitations
 
+> ⚠️ **The list below understates the most important one, corrected 2026-08-09.**
+> A `.qmbak` **cannot restore Spaces at all** — not for a sync-off user, not even
+> for Spaces they created and own.
+>
+> `user_config.spaceKeys` is the only place the per-Space key bundle would travel,
+> and it is assembled from IndexedDB in exactly one place, **inside
+> `if (config.allowSync)`** (`ConfigService.ts:554,591`). `getDefaultUserConfig`
+> initialises it to `[]` (`utils.ts:15`) and nothing else ever writes it. A user
+> who has never enabled sync exports a file whose `spaceKeys` is an empty array,
+> so the `owner` private key — the only proof of Space ownership, held in no other
+> copy — is in neither the backup nor the server. Fixing import to stop skipping
+> `user_config` would restore an empty array.
+>
+> Full analysis and the proposed rework:
+> [`.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`](../../issues/.open/2026-08-09-backup-restore-overhaul-design.md).
+> Do not rely on the "future-proofs the backup file for a potential fresh-device
+> restore flow" claim under Technical Decisions — it holds for `encryption_states`,
+> not for Space keys.
+
 - **No automatic backups** — users must manually export. There is no scheduled or triggered backup.
 - **No incremental backups** — each export contains all DM data. Acceptable given DM-only scope keeps file sizes manageable.
 - **Space messages not backed up** — they resync from other members. Single-member spaces can lose message history (space definition recovers via API).
 - **No fresh-device restore during onboarding** — users must complete login first, then import from Settings. A dedicated onboarding restore flow is a potential future enhancement.
 - **Import skips encryption states and config** — on an active account, only messages and conversations are restored. An `allowSync=false` user who lost data and then joined new spaces before importing cannot recover their old space list from the backup.
+- **DM session continuity is not restored** — history comes back, sessions do not. See §6 of the overhaul design above (absorbed from [the now-archived DM-sessions issue](../../issues/.archived/2026-08-05-qmbak-backup-cannot-restore-dm-sessions.md)).
 
 ## Related Documentation
 
@@ -153,4 +173,4 @@ The Data Backup section appears in **User Settings > Privacy/Security**, below t
 - [Cryptographic Architecture](../cryptographic-architecture.md) — Ed448 key hierarchy
 - [Task: User Data Backup & Restore](../../issues/.done/user-data-backup-restore-feature.md) — Implementation task with full context
 
-_Last updated: 2026-02-16_
+_Last updated: 2026-08-09_

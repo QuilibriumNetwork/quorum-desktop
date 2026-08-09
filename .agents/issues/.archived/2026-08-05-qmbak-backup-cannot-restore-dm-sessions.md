@@ -1,25 +1,52 @@
 ---
 type: bug
-title: "`.qmbak` backup cannot restore DM session continuity — export is incomplete and import discards ratchet states"
-status: open
+title: "ARCHIVED — `.qmbak` backup cannot restore DM session continuity (absorbed into the backup/restore overhaul)"
+status: archived
 priority: high
 ai_generated: true
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-09
+superseded_by:
+  - "../.open/2026-08-09-backup-restore-overhaul-design.md"
 related_docs:
   - "../../docs/features/user-data-backup.md"
   - "../../docs/cryptographic-architecture.md"
 related_issues:
-  - "2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
+  - "../.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md"
 ---
 
 # `.qmbak` backup cannot restore DM session continuity
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Do not implement the obvious fix.** Restoring ratchet states naively
-> introduces a message-key reuse hazard. See "Why the obvious fix is unsafe".
 
 ## Status
+
+> # 📦 ARCHIVED 2026-08-09 — absorbed, not closed.
+>
+> **Work from [Backup/restore overhaul](../.open/2026-08-09-backup-restore-overhaul-design.md)
+> instead.** That is now the single issue for the whole backup rework. Everything
+> below that still stands lives there: the Double Ratchet hazard is its §6, the
+> directions are §6 "Directions", and the two-party harness is the tail of its §9.
+>
+> **This file is kept for the record, not as a work item.** It is preserved because
+> the corrections are the useful part — two of its central claims were refuted on
+> re-checking, and deleting the file would erase the evidence of what was wrong and
+> why.
+>
+> **Why it was absorbed.** The rework found something larger that this issue's
+> framing could not hold: for a sync-off user the exported `user_config.spaceKeys` is
+> **empty**, because it is only ever assembled inside `if (config.allowSync)`
+> ([`ConfigService.ts:554,591`](../../../src/services/ConfigService.ts#L554)). A
+> `.qmbak` cannot restore a single Space, including ones the user created and owns —
+> a strictly worse failure than the DM one described here, and one that needs the
+> same export/import surgery. Two issues editing the same two files, one blocked on
+> the SDK and one not, was the wrong shape.
+>
+> **Two claims below are wrong** and are struck through inline in Root Cause §2:
+> `inbox_mapping` and `latest_states` are dead stores, inbound DM routing reads
+> `encryption_states` directly, and the per-conversation inbox keypair is already
+> inside the exported state blob. **The DM restore needs nothing added to the
+> export.** The crypto question in §3 stands unchanged and is the only real blocker.
 
 Analysis only, from reading the code and data model. **Nothing has been
 reproduced.** No backup has been taken, no database wiped, no restore attempted.
@@ -73,31 +100,42 @@ overwriting ratchet state would break decryption with counterparties. That is
 right. The problem is that the *other* case — restoring onto an empty database
 — has the opposite correct behaviour, and both go through the same code path.
 
-### 2. The export is missing stores the restore would need (READ)
+### 2. ~~The export is missing stores the restore would need~~ — **REFUTED 2026-08-09**
 
-Even if import wrote `encryption_states`, they would not be usable. Two
-DM-session-critical stores are never exported at all:
+> **This section was wrong.** It named three stores as DM-session-critical and
+> missing from the export. All three claims fail against the code. Kept rather than
+> deleted because the refutation is the useful part: **the export already contains
+> everything the DM receive path needs.**
 
-| Store | Purpose | Exported? |
+| Store | Original claim | Checked 2026-08-09 |
 |---|---|---|
-| `encryption_states` | Double Ratchet state per conversation+inbox | ✅ (then discarded on import) |
-| `inbox_mapping` | maps `inboxId` → `conversationId`; routes an inbound frame to its conversation | ❌ **not exported** |
-| `latest_states` | tracks the most recent state per conversation | ❌ **not exported** |
-| `conversation_users` | DM participant records | ❌ not exported |
+| `encryption_states` | exported, discarded on import | ✅ **correct** — and it is the only one that matters |
+| `inbox_mapping` | "routes an inbound frame to its conversation" | ❌ **dead store.** `getInboxMapping` ([messages.ts:1054](../../../src/db/messages.ts#L1054)) has **zero callers** in `src/`; the only other accessor is `deleteInboxMapping` ([messages.ts:2423](../../../src/db/messages.ts#L2423)). **Nothing ever writes a row.** |
+| `latest_states` | "tracks the most recent state" | ❌ **written and deleted, never read.** Written at [messages.ts:1640](../../../src/db/messages.ts#L1640), deleted from `EncryptionService.ts:79` and `MessageService.ts:7744`. No read path outside the dev DB inspector. |
+| `conversation_users` | DM participant records | Accessors defined in `messages.ts` only; no caller found in `src/` outside it |
 
-Store list READ from [messages.ts:275-289](../../../src/db/messages.ts#L275-L289);
-export scope READ from [messages.ts:2218-2262](../../../src/db/messages.ts#L2218-L2262).
+**Routing does not use `inbox_mapping`.** `handleNewMessage` builds its lookup from
+`getAllEncryptionStates()` keyed by `inboxId` and reads `states[message.inboxAddress]`
+([MessageService.ts:3892-3898](../../../src/services/MessageService.ts#L3892-L3898)).
+The "unknown inbox" path at
+[MessageService.ts:4376](../../../src/services/MessageService.ts#L4376) fires when
+there is **no encryption state** for that inbox — which is a missing state, not a
+missing mapping. The original inference read that log line as evidence for a
+mapping that is never consulted.
 
-**INFERRED:** without `inbox_mapping`, a restored ratchet state has no route from
-an arriving inbox frame to the conversation it belongs to — which is consistent
-with the observed *"DM frame for unknown inbox — no encryption state, retained
-unread"* path ([MessageService.ts:4376](../../../src/services/MessageService.ts#L4376)).
-Needs confirmation.
+**The per-conversation inbox keypair is inside `encryption_states.state`** — the
+third open question, answered. The blob is a serialized
+`DoubleRatchetStateAndInboxKeys`: the handler does `JSON.parse(found.state)` and
+reads `keys.sending_inbox`
+([MessageService.ts:4403-4406](../../../src/services/MessageService.ts#L4403-L4406)),
+and the init path takes `inbox_private_key` off the session
+([MessageService.ts:4072](../../../src/services/MessageService.ts#L4072)). It is
+exported today.
 
-Also unverified: where `ConversationInboxKeypair` (the per-conversation X448/Ed448
-inbox keypair, [encryption-state.ts:183-194](../../../../quorum-shared/src/crypto/encryption-state.ts#L183-L194))
-actually lives, and whether it is captured anywhere. If it is not, receiving on a
-restored session is impossible regardless of the other two.
+**Net: gap 2 does not exist.** `encryption_states` alone carries the routing key,
+the ratchet, and the inbox keypair. D2 below ("complete the export first") is
+therefore **not needed for DMs** — though it remains essential for Spaces, for an
+unrelated reason: see the overhaul design.
 
 ### 3. Why the obvious fix is unsafe (INFERRED — needs SDK confirmation)
 
@@ -146,11 +184,14 @@ a receive-only restore mode or a "discard the sending chain" operation.
 Sidesteps the key-reuse hazard entirely rather than reasoning about whether a
 given restore is safe.
 
-**D2 — Complete the export first, independently.** Add `inbox_mapping`,
-`latest_states` and `conversation_users` to `getAllDMData`, and confirm where the
-per-conversation inbox keypairs live. This is worth doing **regardless of which
-restore direction wins**, because no restore design can work without them, and it
-is the one part with no crypto risk. Bump the `BackupFile` version.
+**D2 — ~~Complete the export first~~ — WITHDRAWN 2026-08-09.** Adding
+`inbox_mapping`, `latest_states` and `conversation_users` would export three stores
+nothing reads (§2). The per-conversation inbox keypair question it raised is
+answered: the keypair is already in the exported state blob. **Nothing needs adding
+to the export for DMs.** The export *is* incomplete, but for Spaces rather than
+DMs — that work moved to the
+[overhaul design](../.open/2026-08-09-backup-restore-overhaul-design.md) §5, and it still
+warrants the `BackupFile` version bump.
 
 **D3 — Restore only into a provably empty database.** Gate ratchet restore on the
 target having zero encryption states. Narrower than D1 and it does *not* remove
@@ -168,7 +209,7 @@ and strictly better than silently implying more than it delivers.
 handling: wrong is silent, and neither the user nor a code reader can detect it.
 
 - [ ] **Establish the baseline.** Two accounts, a DM with history. Export a backup on A. Wipe A's IndexedDB. Import. Record precisely: what history is readable, whether a message from B (sent while A was wiped) ever decrypts, whether A can send, whether B sees it.
-- [ ] **Confirm gap 2 empirically** — that a restored `encryption_state` is unusable without `inbox_mapping`. If it turns out usable, this issue is smaller than written and should be rescoped.
+- [x] ~~**Confirm gap 2 empirically**~~ — resolved by code reading 2026-08-09, no runtime needed: routing never consults `inbox_mapping` (§2). This issue **is** smaller than written and has been rescoped accordingly.
 - [ ] **Put the key-reuse hazard to whoever owns the SDK.** Confirm or refute that a rewound sending chain re-derives identical message keys. If refuted, D3 becomes viable and this issue simplifies considerably.
 - [ ] **Control arm.** Run the same harness with no wipe at all. If both arms show the same failure, the harness is measuring something other than the restore.
 - [ ] After any fix: confirm restoring into a **live** account still leaves live sessions untouched (the original Phase 2 guarantee).
@@ -184,8 +225,9 @@ handling: wrong is silent, and neither the user nor a code reader can detect it.
 
 ## Related
 
-- [Safari ITP wipes IndexedDB after 7 idle days](2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) — the trigger that surfaced this. The defect itself is independent (it applies equally to cache clears, device resets, the Safari passkey bug, and moving to a new device), **but the two are coupled on the fix path**: see below.
-- [Guided install flow for Safari web users](2026-08-05-guided-install-flow-for-safari-web-users.md) — **this issue is on its critical path.** An iOS Home Screen web app gets a storage partition separate from Safari, so a user who installs starts with an empty database. The only handoff for their existing history is export `.qmbak` from the tab → import in the installed app. That makes this issue the migration mechanism for the ITP mitigation, not just a disaster-recovery nicety. The install flow can ship before this is fixed, but only with copy that states plainly that history transfers and sessions do not.
+- [Backup/restore overhaul](../.open/2026-08-09-backup-restore-overhaul-design.md) — **parent.** Owns Spaces, `space_keys` and the reconcile rules; §6.1 there records the corrections applied to this file. This issue keeps the DM ratchet question and nothing else.
+- [Safari ITP wipes IndexedDB after 7 idle days](../.open/2026-08-05-safari-itp-wipes-indexeddb-after-7-idle-days.md) — the trigger that surfaced this. The defect itself is independent (it applies equally to cache clears, device resets, the Safari passkey bug, and moving to a new device), **but the two are coupled on the fix path**: see below.
+- [Guided install flow for Safari web users](../.open/2026-08-05-guided-install-flow-for-safari-web-users.md) — **this issue is on its critical path.** An iOS Home Screen web app gets a storage partition separate from Safari, so a user who installs starts with an empty database. The only handoff for their existing history is export `.qmbak` from the tab → import in the installed app. That makes this issue the migration mechanism for the ITP mitigation, not just a disaster-recovery nicety. The install flow can ship before this is fixed, but only with copy that states plainly that history transfers and sessions do not.
 - [User Data Backup & Restore](../../docs/features/user-data-backup.md) — the feature as currently documented; its "Import Behavior" section describes the skip as intended, which is correct for the merge case and is the framing this issue disputes for the restore case
 - [Cryptographic Architecture](../../docs/cryptographic-architecture.md) — Double Ratchet model and key storage
 - [PWA feasibility report](../../reports/2026-08-05-pwa-mobile-fallback-feasibility.md) §3.2
