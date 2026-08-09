@@ -48,8 +48,10 @@ managing it.
 
 **Still open — this issue stays out of `.done/`:**
 
-- **Slice 5** — Space message history in the export. Unblocked (the size question
-  is answered, §5.1) but a product call.
+- **Slice 5** — Space message history in the export. **Parked 2026-08-09**: history
+  resyncs from peers, and the hub log closes the one real gap (a Space with nobody
+  left to ask) more durably than a backup could. Scoping is pre-decided if it is
+  ever needed, and the v2 format already reserves the slot.
 - **Slice 6** — mobile parity. Deliberately last, so the format stops moving first.
 - **§10.3** — the SDK question, now a note about the pre-existing sync path rather
   than a gate on this work.
@@ -611,7 +613,59 @@ Superseded — that design managed a risk this one does not take.*
 > without it. Sequencing it fourth is deliberate: every slice it depends on is
 > already delivered by then.
 
-**Slice 5 — Space message history.** Opt-in, after §10.4 and a real size measurement.
+**Slice 5 — Space message history. 🅿️ PARKED 2026-08-09. Do not build it yet.**
+
+**Why parked.** Space history already comes back from peers on desktop: the
+`space-basic` harness scenario has A post *before* B joins and asserts B receives
+it, which is only reachable through sync. So for any Space with other members,
+backing the messages up duplicates what the network already returns. (That
+scenario answers "can it work at all", not "how often" — the rate is
+uncharacterised. The durable answer is the hub log, below, not a backup.)
+
+**The one genuine gap** is a Space with **nobody left to ask**: a Space of one used
+as personal storage, or a Space everyone else abandoned. Nothing to sync from, and
+the backup would be the only copy.
+
+**The hub log closes that too.** A server-side message log means history does not
+depend on a peer being online, including for a Space of one. It exists on mobile
+and is expected on desktop. Once it lands, this slice has no justification left.
+
+**Deferring is free.** The v2 format already reserves the slot: `BackupDomains`
+carries `space_messages: false`, so a future file can start including them with no
+second format break, and today's files already declare honestly that they do not
+have them.
+
+### If it is ever built, the scoping is already settled
+
+**Include Space messages only where the user is the SOLE member. Not "Spaces they
+own".** Ownership is the wrong axis: a Space someone *joined* and everyone else has
+since left has the identical problem. The test that matches the real risk is "is
+there anyone else to sync from".
+
+**Keying on member count is safer here than it looks**, which is worth writing down
+because the instinct is to distrust it. The roster is the unreliable part of this
+system — but its known failure is a *new joiner* not receiving existing members'
+rows, and a Space nobody joined involves no such sync. More importantly the failure
+modes are asymmetric in the safe direction:
+
+| Roster is wrong how | Consequence |
+|---|---|
+| Others exist, their rows never arrived → looks solo | Backs up messages it did not need. Wasted bytes, **no data loss** |
+| Genuinely solo but looks populated → skipped | **History lost.** Requires phantom member rows, the less likely failure |
+
+So the cheap test errs toward over-including, which is the correct way for a backup
+to be wrong. The residual: one broken roster on a large Space would pull its whole
+history into the file, so this wants a **size cap** and a line in the export report
+naming what was included.
+
+**What it still would not cover:** a Space with a few members who have all gone
+quiet. Member count cannot see that — those members exist, they are simply absent.
+Only the hub log fixes it.
+
+### Reopen if
+
+- the hub log does not reach desktop, or slips far enough to matter; **or**
+- someone actually reports losing history from a Space they were alone in.
 
 **Slice 6 — Mobile parity.** Mobile has no `.qmbak` reader; a desktop backup should
 restore on mobile and vice versa. Format and reconcile rules belong in
@@ -707,8 +761,9 @@ live sessions untouched.
    > **Put the Space case to the SDK owner in the same conversation as the DM case**,
    > and record the answer here. If it turns out unsafe, slice 2's Space-state restore
    > needs the same gating slice 4 already has.
-4. **Space messages in the default export?** Still open, but **no longer blocked on
-   a measurement** — see §5.1. The size picture came back different from the
+4. ~~**Space messages in the default export?**~~ **DECIDED 2026-08-09: parked, see
+   slice 5.** History resyncs from peers, and the hub log is the durable fix for the
+   solo-Space gap. Retained below because the size reasoning stands on its own: — see §5.1. The size picture came back different from the
    assumption: the dominant term is the ~2 MB-per-created-Space eval pool, not
    message volume, and hex encoding doubles whatever that comes to. An account with
    no messages at all can already produce an ~8 MB file. So "Space messages are the
