@@ -23,9 +23,13 @@ related:
 # Backup/restore overhaul
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> Claims are labelled **READ** (verified at the cited `file:line`, 2026-08-09) or
-> **INFERRED** (reasoned, not observed). **Nothing here was observed at runtime.**
-> No backup was taken, no database wiped, no restore attempted.
+> Claims are labelled **MEASURED** (a recorded observation exists, cited),
+> **READ** (verified at the cited `file:line`, 2026-08-09) or **INFERRED**
+> (reasoned, not observed).
+>
+> **§1 is now MEASURED** (2026-08-09) — see §1.1. The rest of the document is
+> still READ/INFERRED: no backup has been taken on a real account, no database
+> wiped, no restore attempted.
 
 ## What this document is
 
@@ -62,10 +66,41 @@ dev DB inspector, and tests are the only other hits).
 calls `this.getUserConfig({ address })`
 ([`messages.ts:2266`](../../../src/db/messages.ts#L2266)).
 
-**Therefore (INFERRED, but the three reads leave no other path):** a user who has
-never enabled sync has `user_config.spaceKeys === []` on disk, permanently. Their
-`.qmbak` contains a list of `spaceIds` and **no key material for any of them**.
-Fixing import to stop skipping `user_config` would restore an empty array.
+**Therefore:** a user who has never enabled sync has `user_config.spaceKeys === []`
+on disk, permanently. Their `.qmbak` contains a list of `spaceIds` and **no key
+material for any of them**. Fixing import to stop skipping `user_config` would
+restore an empty array.
+
+### 1.1 Confirmed by measurement, 2026-08-09
+
+This was INFERRED when written. It is now **MEASURED**, and the claim held.
+
+**Instrument:** [`src/dev/tests/services/backupSpaceKeyCoverage.test.ts`](../../../src/dev/tests/services/backupSpaceKeyCoverage.test.ts)
+— integration, not unit: real `MessageDB` on fake-indexeddb, real
+`ConfigService.saveConfig`, real `BackupService.exportBackup`, real WebCrypto.
+Only the network and the wasm signing core are stubbed. It seeds a Space with the
+full seven-key set that `SpaceService` writes on create, exports a backup,
+decrypts it, and searches the whole payload for the `owner` private key.
+
+| Arm | One flag differs | Result |
+|---|---|---|
+| **A — sync OFF** | `allowSync: false` | Owner key appears **nowhere** in the payload. `user_config.spaceKeys` is empty. No `space_keys` or `spaces` domain exists in the file at all |
+| **B — sync ON (control)** | `allowSync: true` | The **same** export **does** carry the owner key, and all seven Space keys |
+
+Arm B is what makes Arm A mean anything: without a control that *should* find the
+key, "found nothing" is indistinguishable from "looked in the wrong place".
+
+**Verified sensitive by mutation.** A passing assertion proves nothing until it has
+been shown able to fail. Assembling `spaceKeys` outside the `allowSync` branch —
+the hypothetical fix — turns **all three Arm A tests red** and leaves the controls
+and Arm B green. The mutation was reverted; full suite 1169 passing.
+
+**Two findings fell out of the same run:**
+- The payload has no `space_keys` domain whatsoever, confirming there is **no second
+  source** of key material in the file (§5).
+- **Space Triple Ratchet states already ship in every `.qmbak` today** (§5's claim,
+  now measured) — the state for `<spaceId>/<spaceId>` is present in the sync-off
+  export. Only the keys that would make it usable are missing.
 
 This is the inverse of the protection the feature advertises. The `allowSync=false`
 user is precisely the one with no server-side copy of anything, and their backup is
@@ -221,8 +256,9 @@ encryption_states → already fully exported, Space states included
 ([`messages.ts:1019-1030`](../../../src/db/messages.ts#L1019-L1030)), and a Space's
 state is stored under `conversationId = spaceId + '/' + spaceId`
 ([`ConfigService.ts:579`](../../../src/services/ConfigService.ts#L579)). **The
-Space-side ratchet states are already in every `.qmbak` file on disk today.** Only
-the keys that make them meaningful are missing.
+Space-side ratchet states are already in every `.qmbak` file on disk today** —
+**MEASURED**, §1.1, the `<spaceId>/<spaceId>` state is present in a sync-off
+export. Only the keys that make them meaningful are missing.
 
 This also decouples the fix from the config-sync overhaul: reading `space_keys`
 directly means a correct backup **does not depend on the parked tiering decision**,
@@ -405,12 +441,18 @@ to stop moving first.
 Blast radius is key material and message delivery — silent when wrong, undetectable
 by using the app. Reasoning about the diff is not verification here.
 
-- [ ] **Baseline first, before any code.** Sync-off account, ≥2 Spaces (one created,
-      one joined), DM history. Export. Dump the decrypted payload. **Confirm
-      `spaceKeys` is empty** — this is the §1 claim, and it is INFERRED. If it is
-      populated, §1 is wrong and this document needs rewriting before anything is built.
-- [ ] **Control arm.** Same export with `allowSync` on. If both are empty the harness
-      is broken; if both are populated, §1 is refuted.
+- [x] **Baseline first, before any code.** ✅ **Done 2026-08-09** — §1.1. Automated
+      rather than hand-run, so it is repeatable and runs in CI:
+      `backupSpaceKeyCoverage.test.ts`. Sync-off export contains no Space key
+      material. **§1 confirmed.**
+- [x] **Control arm.** ✅ Arm B (sync on) finds the owner key in the same export.
+      Not both-empty, not both-populated — the instrument discriminates.
+- [x] **Mutation check on the instrument itself.** ✅ Assembling `spaceKeys` outside
+      the `allowSync` branch turns Arm A red and leaves the controls green.
+- [ ] **Still owed: one real-account export.** The instrument measures the real
+      save/export chain against a seeded database, which is the mechanism — but not
+      a real account's actual on-disk state, and not the file size. Both remain open;
+      the size number gates §10.4.
 - [ ] Wipe → login → import. Record per domain what returned and what did not.
 - [ ] **Additive invariant, adversarially.** Import an *old* backup into a *live*
       account with more Spaces and newer DMs. Assert byte-equality of every
@@ -442,8 +484,11 @@ live sessions untouched.
 
 ## 10. To settle before implementing
 
-1. **Confirm §1 empirically.** Everything else is contingent on it. One export from a
-   sync-off account settles it. **Do this first.**
+1. ~~**Confirm §1 empirically.**~~ ✅ **SETTLED 2026-08-09 — the claim held.** See
+   §1.1. Measured by `backupSpaceKeyCoverage.test.ts`, control-armed and
+   mutation-verified. Slices 1 and 2 are solving a real problem. What is still
+   owed is a real-account export for the **file-size** number, which gates item 4
+   below but blocks nothing else.
 2. **Re-verify §6.1 against the code.** If `inbox_mapping` or `latest_states` gain a
    reader between now and implementation, the DM slice grows.
 3. **The SDK question (§6):** can a rewound sending chain re-derive an already-used
