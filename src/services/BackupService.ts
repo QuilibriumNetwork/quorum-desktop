@@ -289,8 +289,71 @@ export class BackupService {
       const dmData = await this.messageDB.getAllDMData({ address });
       const spaceData = await this.messageDB.getAllSpaceData();
 
+      // Drop encryption states that belong to nothing this backup can restore.
+      //
+      // `getAllEncryptionStates()` is an unfiltered getAll, so it also returns
+      // states for Spaces the user no longer has. Those are ~2 MB each for a
+      // created Space (the polynomial eval pool) and they LEAK: a deleted Space
+      // has been observed leaving its state behind rather than removing it (see
+      // 2025-12-09-encryption-state-evals-bloat.md, which measured 19.4 MB local
+      // across 10 states while the UI showed 2 Spaces).
+      //
+      // They are dead weight by construction, not merely wasteful: the restore
+      // rebuilds Spaces by iterating `payload.spaces`, so a state whose Space is
+      // absent can never be matched to anything. MEASURED on a real account —
+      // 3 Spaces and 2 DMs produced a 17.6 MB file, of which roughly 13 MB was
+      // orphan states that no restore could ever use.
+      //
+      // A DM conversationId has the same `X/X` shape as a Space's, so shape
+      // alone cannot tell them apart. Keep a state if X is a live Space OR X/X is
+      // a live conversation; drop only what matches neither.
+      const liveSpaceIds = new Set(spaceData.spaces.map((s) => s.spaceId));
+      const liveConversationIds = new Set(
+        dmData.conversations.map((c) => c.conversationId)
+      );
+
+      const usableStates = dmData.encryption_states.filter((s) => {
+        const [left, right] = String(s.conversationId).split('/');
+        // Anything not of the X/X form is left alone rather than guessed at.
+        if (!left || left !== right) return true;
+        return liveSpaceIds.has(left) || liveConversationIds.has(s.conversationId);
+      });
+
+      const droppedStates = dmData.encryption_states.length - usableStates.length;
+      if (droppedStates > 0) {
+        const bytes =
+          JSON.stringify(dmData.encryption_states).length -
+          JSON.stringify(usableStates).length;
+        logger.log(
+          `[BackupService] skipped ${droppedStates} orphaned encryption state(s) ` +
+            `(~${Math.round(bytes / 1024)} KB) belonging to no current Space or conversation`
+        );
+      }
+
+      // Strip `spaceKeys` from the exported config.
+      //
+      // It is a duplicate, and an expensive one. For a sync-ON user the stored
+      // config carries a per-Space bundle that EMBEDS that Space's encryption
+      // state — the same ~2 MB eval pool already present in `encryption_states`
+      // above. So the pool shipped twice in every backup.
+      //
+      // It is also the unreliable copy: `saveConfig` only assembles it inside the
+      // allowSync branch, which is why a sync-off user's was empty and why this
+      // rework reads `space_keys` from the store that owns it instead (§1 of the
+      // overhaul design). Now that the owning stores are exported directly, the
+      // snapshot has no reader and no reason to travel.
+      //
+      // Everything else in the config — settings, bookmarks, notes, profile — is
+      // kept.
+      const { spaceKeys: _redundantSpaceKeys, ...configWithoutSpaceKeys } =
+        dmData.user_config ?? ({} as NonNullable<typeof dmData.user_config>);
+
       const payload: BackupPayload = {
         ...dmData,
+        user_config: dmData.user_config
+          ? (configWithoutSpaceKeys as typeof dmData.user_config)
+          : undefined,
+        encryption_states: usableStates,
         spaces: spaceData.spaces,
         space_keys: spaceData.space_keys,
         domains: {

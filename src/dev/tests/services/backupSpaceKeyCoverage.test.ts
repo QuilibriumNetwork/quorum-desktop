@@ -362,9 +362,14 @@ describe('Backup export — Space key coverage', () => {
     expect(payload.space_keys.map((k: any) => k.keyId).sort()).toEqual(
       [...CREATED_SPACE_KEY_IDS].sort()
     );
-    // ...and the sync path still does its own separate thing.
+    // ...and the sync path still does its own separate thing: the config was
+    // published with its spaceKeys assembled as before.
     expect(postedConfigs).toHaveLength(1);
-    expect(payload.user_config.spaceKeys).toHaveLength(1);
+    // But the BACKUP no longer carries that snapshot — it would duplicate the
+    // multi-megabyte eval pool already present in `encryption_states`. Key
+    // material travels once, from the store that owns it. See the
+    // "no weight it cannot use" block.
+    expect(payload.user_config.spaceKeys).toBeUndefined();
   });
 
   // ── Format and back-compat ─────────────────────────────────────────────────
@@ -435,6 +440,69 @@ describe('Backup export — Space key coverage', () => {
   });
 
   // ── Size: the number that gates the Space-messages decision ────────────────
+
+  describe('the file carries no weight it cannot use', () => {
+    // Both of these were found by exporting on a REAL account: 3 Spaces and 2
+    // DMs produced a 17.6 MB file, several times what the per-Space cost
+    // predicts. Neither is visible on a seeded database, because a seeded one has
+    // no debris and no sync history.
+
+    it('excludes encryption states orphaned by deleted Spaces', async () => {
+      // A created Space pre-allocates a ~2 MB eval pool, and deleting the Space
+      // has been observed to leak that state rather than remove it. The export
+      // read every state unfiltered, so the debris rode along — and it is dead
+      // weight by construction, since the restore only rebuilds Spaces present in
+      // the file.
+      const GHOST = 'QmcfTNSyig9DSfAqSmWXsGLkLiG9TGS87XXpJy3juKbKSs';
+      await db.saveEncryptionState(
+        {
+          conversationId: `${GHOST}/${GHOST}`,
+          inboxId: 'QmGhostInbox',
+          state: JSON.stringify({ evals: 'e'.repeat(64 * 1024) }),
+          timestamp: 900,
+        } as any,
+        true
+      );
+
+      const { payload, raw } = await saveThenExport(false);
+
+      expect(
+        payload.encryption_states.map((s: any) => s.conversationId)
+      ).not.toContain(`${GHOST}/${GHOST}`);
+      expect(raw).not.toContain('e'.repeat(1024));
+
+      // CONTROL: the live Space's own state is still there. Without this the
+      // filter could pass by dropping everything.
+      expect(
+        payload.encryption_states.map((s: any) => s.conversationId)
+      ).toContain(`${SPACE_ID}/${SPACE_ID}`);
+    });
+
+    it('keeps a DM state, which has the same id shape as a Space state', async () => {
+      // The filter cannot key on shape alone: a DM conversationId is `X/X` too.
+      // Dropping DM states would be a silent data loss dressed up as a size win.
+      const { payload } = await saveThenExport(false);
+
+      expect(
+        payload.encryption_states.map((s: any) => s.conversationId)
+      ).toContain(DM_CONVERSATION_ID);
+    });
+
+    it('does not ship the Space eval pool twice via user_config', async () => {
+      // With sync ON the stored config carries a per-Space bundle that EMBEDS
+      // that Space's encryption state — the same pool already exported under
+      // `encryption_states`. It travelled twice in every backup.
+      const { payload } = await saveThenExport(true);
+
+      expect(payload.user_config).toBeDefined();
+      expect(payload.user_config.spaceKeys).toBeUndefined();
+
+      // CONTROL: the rest of the config still travels, and the key material is
+      // still present via the store that owns it.
+      expect(payload.user_config.address).toBe(USER_ADDRESS);
+      expect(payload.space_keys.map((k: any) => k.keyId)).toContain('owner');
+    });
+  });
 
   it('MEASUREMENT: a created Space\'s eval pool dominates the file, and hex doubles it', async () => {
     // Answers §10.4 of the overhaul design without needing a real account export.
