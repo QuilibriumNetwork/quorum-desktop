@@ -9,7 +9,7 @@ import { type BroadcastSpaceTag, logger } from '@quilibrium/quorum-shared';
 import type { UserConfig } from '../../../db/messages';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
-import { BackupService } from '../../../services/BackupService';
+import { BackupService, type RestoreReport } from '../../../services/BackupService';
 import { PublicProfileService } from '../../../services/PublicProfileService';
 import { QuorumApiClient } from '../../../api/baseTypes';
 import type { PublicProfileResponse } from '../../../api/baseTypes';
@@ -54,7 +54,7 @@ export interface UseUserSettingsReturn {
   removeDevice: (identityKey: string) => void;
   downloadKey: () => Promise<void>;
   exportBackup: () => Promise<void>;
-  importBackup: (file: File) => Promise<{ messagesWritten: number; conversationsWritten: number }>;
+  importBackup: (file: File) => Promise<RestoreReport>;
   getPrivateKeyHex: () => Promise<string>;
   saveDeviceName: (name: string) => Promise<void>;
   deviceNames: { [inboxAddress: string]: string };
@@ -89,7 +89,7 @@ export const useUserSettings = (
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
-  const { messageDB, actionQueueService, getConfig, updateUserProfile, setTypingConfig, broadcastDeviceRevocations } = useMessageDB();
+  const { messageDB, actionQueueService, getConfig, adoptSpaces, updateUserProfile, setTypingConfig, broadcastDeviceRevocations } = useMessageDB();
   const queryClient = useQueryClient();
   const uploadRegistration = useUploadRegistration();
 
@@ -289,11 +289,13 @@ export const useUserSettings = (
     window.URL.revokeObjectURL(url);
   };
 
-  const importBackup = async (file: File): Promise<{ messagesWritten: number; conversationsWritten: number }> => {
+  const importBackup = async (file: File): Promise<RestoreReport> => {
     if (!keyset?.userKeyset) throw new Error('No keyset available');
 
     const fileContent = await file.text();
-    const backupService = new BackupService({ messageDB });
+    // adoptSpaces is what turns this from a DM-history restore into a real one.
+    // It is additive: Spaces this device already has are counted and left alone.
+    const backupService = new BackupService({ messageDB, adoptSpaces });
     return backupService.importBackup({
       keyset: keyset.userKeyset,
       fileContent,

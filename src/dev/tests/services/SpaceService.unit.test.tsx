@@ -102,6 +102,7 @@ describe('SpaceService - Unit Tests', () => {
         getSpaceMembers: vi.fn().mockResolvedValue([]),
         deleteSpaceMember: vi.fn().mockResolvedValue(undefined),
         deleteSpace: vi.fn().mockResolvedValue(undefined),
+        deleteSpaceAsDeparture: vi.fn().mockResolvedValue(undefined),
         getAllSpaceMessages: vi.fn().mockResolvedValue([]),
         deleteMessage: vi.fn().mockResolvedValue(undefined),
         getEncryptionStates: vi.fn().mockResolvedValue([]),
@@ -293,8 +294,18 @@ describe('SpaceService - Unit Tests', () => {
         expect.objectContaining({ hub_address: 'hub-address' })
       );
       expect(mockDeps.messageDB.deleteEncryptionState).toHaveBeenCalledTimes(1);
-      expect(mockDeps.messageDB.deleteSpace).toHaveBeenCalledWith(spaceId);
       expect(mockDeps.enqueueOutbound).toHaveBeenCalledTimes(1);
+      // Removal and departure record in ONE call, so an interruption cannot
+      // leave the Space deleted with no record of why — which a later backup
+      // restore would read as "never had it" and re-add. Asserted at the call
+      // site because this is the wiring the backup tests cannot see; they drive
+      // MessageDB directly.
+      expect(mockDeps.messageDB.deleteSpaceAsDeparture).toHaveBeenCalledWith({
+        spaceId,
+        reason: 'left',
+      });
+      // ...and the non-atomic pair is NOT used here any more.
+      expect(mockDeps.messageDB.deleteSpace).not.toHaveBeenCalled();
     });
 
     // The sidebar and the Spaces list read ['Spaces'], not the config query.

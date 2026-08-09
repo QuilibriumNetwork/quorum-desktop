@@ -12,6 +12,9 @@ import {
   SENSITIVE_CLIPBOARD_CLEAR_MS,
   type SensitiveCopyMode,
 } from '../../../utils/clipboardSecurity';
+import type { RestoreReport } from '../../../services/BackupService';
+import { useConfirmation } from '../../../hooks/ui/useConfirmation';
+import ConfirmationModal from '../ConfirmationModal';
 
 interface SecurityProps {
   stagedRegistration: any;
@@ -19,7 +22,7 @@ interface SecurityProps {
   removeDevice: (key: string) => void;
   downloadKey: () => void;
   exportBackup: () => Promise<void>;
-  importBackup: (file: File) => Promise<{ messagesWritten: number; conversationsWritten: number }>;
+  importBackup: (file: File) => Promise<RestoreReport>;
   getPrivateKeyHex?: () => Promise<string>;
   removedDevices?: string[];
   deviceNames?: { [inboxAddress: string]: string };
@@ -184,6 +187,41 @@ const Security: React.FunctionComponent<SecurityProps> = ({
 
   const isBackupBusy = isExportingBackup || isImportingBackup;
 
+  /**
+   * Confirmation before writing the file.
+   *
+   * Not an "are you sure" speed bump — the export is harmless in itself. It is
+   * the moment the user learns what the file actually holds, which is no longer
+   * just messages: it carries Space ownership keys too.
+   *
+   * Deliberately states no storage advice. An earlier draft warned that anyone
+   * holding both this file AND the exported account key could take over those
+   * Spaces. That is noise for a sync-ON user, whose account key alone already
+   * fetches the Space keys from the server — and worse, framing the COMBINATION
+   * as the danger implies the account key by itself is less than total, which is
+   * the opposite of true. It is only incremental for a sync-OFF user, for whom
+   * the server holds nothing and this file is the only other copy. Rather than
+   * state something true for one group and misleading for the other, the copy
+   * sticks to what is true for both. The sync-off nuance belongs in the docs.
+   */
+  const exportConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: {
+      title: t`Export a backup?`,
+      message: t`This file contains your direct message history and the keys to your Spaces, including ownership of any you created. Only this account can open it.\n\nSpace message history is not included. It syncs back from other members.`,
+      confirmText: t`Export backup`,
+      cancelText: t`Cancel`,
+      variant: 'warning',
+    },
+  });
+
+  /** Asks first; `handleExportBackup` runs only once the user confirms. */
+  const handleExportBackupClick = (e: React.MouseEvent) => {
+    if (exportConfirmation.isConfirming) return;
+    exportConfirmation.handleClick(e, handleExportBackup);
+  };
+
   const handleExportBackup = async () => {
     setIsExportingBackup(true);
     setBackupError(null);
@@ -198,6 +236,64 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     }
   };
 
+  /**
+   * Describes what the restore did AND what it deliberately did not do.
+   *
+   * A bare "restored N messages" is what let the feature imply for months that it
+   * protected Spaces when it could not restore a single one. Every line below is
+   * a case where something the user might expect back did not come back, and each
+   * has a different reason the user can act on.
+   */
+  const summariseRestore = (result: RestoreReport): string => {
+    const parts: string[] = [
+      t`Restored ${result.messagesWritten} messages and ${result.conversationsWritten} conversations.`,
+    ];
+
+    if (result.spacesRestored.length > 0) {
+      parts.push(t`Restored ${result.spacesRestored.length} Spaces.`);
+    }
+    if (result.spacesAlreadyPresent.length > 0) {
+      // Not a failure: the additive rule leaving live Spaces untouched.
+      parts.push(
+        t`${result.spacesAlreadyPresent.length} Spaces were already on this device and were left unchanged.`
+      );
+    }
+    if (result.conversationsSkippedAsDeleted > 0) {
+      parts.push(
+        t`${result.conversationsSkippedAsDeleted} conversations were not restored because you deleted them after this backup was made.`
+      );
+    }
+    if (result.messagesSkippedAsDeleted > 0) {
+      parts.push(
+        t`${result.messagesSkippedAsDeleted} messages were not restored because you deleted them after this backup was made.`
+      );
+    }
+    if (result.spacesFailed.length > 0) {
+      parts.push(
+        t`${result.spacesFailed.length} Spaces were skipped: ${result.spacesFailed
+          .map((s) => s.reason)
+          .join('; ')}`
+      );
+    }
+    if (result.domains.space_keys && !result.domains.spaces) {
+      parts.push(
+        t`This backup is inconsistent: it reports Space keys but contains no Space list, so Spaces could not be restored.`
+      );
+    }
+    if (!result.domains.space_keys) {
+      // The v1 case. Without this the user sees a successful restore and no
+      // Spaces, with nothing to explain why.
+      parts.push(
+        t`This backup was made by an older version and contains no Space keys, so Spaces could not be restored. Export a fresh backup to protect them.`
+      );
+    }
+    if (!result.domains.space_messages) {
+      parts.push(t`Space message history is not included in backups; it syncs from other members.`);
+    }
+
+    return parts.join(' ');
+  };
+
   const handleImportBackup = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -210,9 +306,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     setBackupSuccess(null);
     try {
       const result = await importBackup(file);
-      setBackupSuccess(
-        t`Restored ${result.messagesWritten} messages and ${result.conversationsWritten} conversations.`
-      );
+      setBackupSuccess(summariseRestore(result));
     } catch (error: any) {
       console.error('Backup import failed:', error);
       setBackupError(error.message || t`Failed to import backup`);
@@ -530,13 +624,20 @@ const Security: React.FunctionComponent<SecurityProps> = ({
             <div className="flex flex-col gap-2 p-3 rounded-md border">
               <div className="flex items-start justify-between gap-3">
                 <div className="text-sm" style={{ lineHeight: 1.3 }}>
-                  {t`Export an encrypted backup of your direct messages to restore them if you lose access to this device.`}
+                  {/*
+                    Deliberately short. What the file actually CONTAINS — Space
+                    keys, including ownership of Spaces you created — is the
+                    kind of thing people need at the moment they decide where to
+                    put the file, not while scanning a settings page. It lives in
+                    the confirmation modal instead.
+                  */}
+                  {t`Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device.`}
                 </div>
                 <Button
                   type="secondary"
                   size="small"
                   className="whitespace-nowrap"
-                  onClick={handleExportBackup}
+                  onClick={handleExportBackupClick}
                   disabled={isBackupBusy}
                 >
                   {isExportingBackup ? t`Exporting...` : t`Export`}
@@ -572,6 +673,22 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         </div>
 
       </div>
+      {/* Says what the file holds, at the moment the user chooses where to keep it. */}
+      {exportConfirmation.modalConfig && (
+        <ConfirmationModal
+          visible={exportConfirmation.showModal}
+          title={exportConfirmation.modalConfig.title}
+          message={exportConfirmation.modalConfig.message}
+          confirmText={exportConfirmation.modalConfig.confirmText}
+          cancelText={exportConfirmation.modalConfig.cancelText}
+          variant={exportConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={exportConfirmation.isConfirming}
+          busyMessage={t`Exporting...`}
+          onConfirm={exportConfirmation.modalConfig.onConfirm}
+          onCancel={exportConfirmation.modalConfig.onCancel}
+        />
+      )}
     </>
   );
 };

@@ -227,7 +227,84 @@ choose its own rule.** Every case above then falls out without a mode:
 | `allowSync` | **Never restore it.** Device-local | Adopting it from a file re-opens exactly what [`2026-08-08-make-allowsync-a-per-device-setting.md`](2026-08-08-make-allowsync-a-per-device-setting.md) closed |
 | Space messages | Upsert by id, if included at all (§7) | |
 
-Two consequences worth stating out loud, because they are what make this safe:
+### 4.1 Additive is only half of it — deletions need tombstones
+
+**Raised 2026-08-09, and the case list above misses it entirely.** Take a backup,
+then delete some DMs, or leave a Space, or get kicked from one — then restore the
+older backup. Every rule in the table says "the file has it, the device doesn't,
+so add it", and the user's deliberate removal is silently undone.
+
+Additive and tombstones are **orthogonal**, and both are required:
+
+| Axis | What it protects | Mechanism |
+|---|---|---|
+| The user **changed** something | live keys beat stale keys | additive — never overwrite what is present |
+| The user **removed** something | a deletion is not undone | tombstone — never re-add what was removed |
+
+The unifying rule: **an import must never contradict a decision the user made
+after the backup was taken.** "Absent locally" is not sufficient grounds to
+restore, because absence has two causes — never known, and deliberately removed —
+and only a tombstone distinguishes them.
+
+**DM messages — FIXED 2026-08-09.** Tombstones existed (`deleted_messages`, DB v7)
+but were written for **channel messages only**, on an explicit rationale: *"DMs
+don't have a sync mechanism, so tombstones aren't needed"*. That was true when
+written. **Backup restore is precisely the mechanism that makes it false.** DM
+deletions now write tombstones too — purely additive, since nothing else consumes
+them for DMs — and `importDMData` refuses to write any message carrying one.
+Covered by `backupSpaceRestore.test.ts`, control-armed (a never-deleted message
+must still restore, or the gate could pass by writing nothing) and
+mutation-verified.
+
+**Space departures — MEASURED 2026-08-09, and the news is good.**
+
+The departure record is device-local, so it is gone in the very case the feature
+exists for: total data loss, then restore. That looked like a hole. **It is not,
+for the case that matters**, and the reason is cryptographic rather than
+bookkeeping.
+
+`kickUser` does not merely edit a member list. It **rotates the Space's config
+key**, re-establishes the group ratchet without the removed member, and
+**re-encrypts the manifest to the new key** ([`SpaceService.ts`](../../../src/services/SpaceService.ts),
+kickUser). A restore rebuilds a Space by decrypting that manifest with the config
+key **from the backup** — now the old one — and it does so *before* it would
+announce the user to the hub ([`ConfigService.ts`](../../../src/services/ConfigService.ts),
+adoptSpaces). So the decrypt fails, the adopt aborts, and `postHubAdd` is never
+reached.
+
+**Measured, not read:** [`space-kick.scenario.test.ts`](../../../src/dev/tests/harness/space-kick.scenario.test.ts)
+runs two real bots against the live relay:
+
+| Step | Result |
+|---|---|
+| CONTROL — B reads A's post while still a member | ✅ received (so the assertions below are not vacuous) |
+| B is kicked, A posts again | ✅ B **cannot read it** |
+| B restores their **pre-kick** backup onto a wiped device | ✅ `restored=0, failed=1` — the Space does **not** come back |
+| The failure is reported, readably | ✅ *"you no longer have access to this Space — its keys were changed…"* |
+
+Two things came out of that run that reading would not have produced. The failure
+first surfaced to the user as `Unexpected token 'D', "Decryption"... is not valid
+JSON` — the raw SDK error through `JSON.parse`, accurate and useless — now
+translated. And vitest reported an unhandled rejection that turned out to be a
+genuine pre-existing crash, filed and fixed as
+[`2026-08-09-armed-sync-crashes-after-a-kick.md`](../.done/2026-08-09-armed-sync-crashes-after-a-kick.md).
+
+**What the tombstone is still for.** Leaving voluntarily triggers **no rekey** —
+only the owner kicking someone does — so a leaver's keys stay valid and their
+restore would re-add the Space. That is the case the record covers, and it is the
+benign one: they chose to leave and can leave again.
+
+**Residual, honestly stated.** The **hub key is not rotated** on a kick. Nothing
+reachable through the app uses it (the restore aborts first), but someone crafting
+requests by hand could still subscribe to the hub and receive traffic they cannot
+decrypt. Whether the node rejects that is a **server-side question this repo
+cannot answer** and worth putting to whoever owns it.
+
+This needs a DB version bump and touches kick/leave, so it is **its own slice**
+(now slice 2b) rather than an addendum. Until it lands, the restore reports which
+Spaces it re-registered so the behaviour is at least not silent.
+
+Two further consequences worth stating out loud, because they are what make this safe:
 
 - **Additive-only means an import can never make a device worse.** That single
   invariant covers cases 5, 6 and 7 and removes the need to reason about backup age
@@ -264,13 +341,40 @@ This also decouples the fix from the config-sync overhaul: reading `space_keys`
 directly means a correct backup **does not depend on the parked tiering decision**,
 and works identically whether sync is on, off, or has never been on.
 
-> ⚠️ **Size.** ~10k polynomial evals (~2 MB) are pre-allocated per **created** Space
-> and deleted Spaces have been observed to leak state rather than remove it (see
-> [`2025-12-09-encryption-state-evals-bloat.md`](2025-12-09-encryption-state-evals-bloat.md);
-> a real account measured 4112 KB of encryption states). A `.qmbak` is a local file,
-> not an API payload, so the ~1 MB config ceiling does not apply — but a
-> multi-hundred-MB download is its own failure. **Measure a real account's export
-> before choosing whether Space messages are included by default (§7).**
+### 5.1 Size — MEASURED 2026-08-09
+
+~10k polynomial evals (~2 MB) are pre-allocated per **created** Space, a joined one
+costs ~12-63 KB, and deleted Spaces leak their state rather than remove it (see
+[`2025-12-09-encryption-state-evals-bloat.md`](2025-12-09-encryption-state-evals-bloat.md);
+a real account measured 4112 KB of encryption states, and another 19.4 MB local
+across 10 states of which 8 were orphaned debris).
+
+Measured against the real export path (`backupSpaceKeyCoverage.test.ts`, "MEASUREMENT"):
+
+| Export | `.qmbak` bytes |
+|---|---|
+| 1 Space + 1 DM, no eval pool | **6,469 B** (~6 KB) |
+| Same, with one 2 MB eval pool | **4,200,753 B** (~4.0 MB) |
+| Growth | **4,194,284 B = exactly 2.00× the pool** |
+
+**Two findings.**
+
+1. **The eval pool passes into the backup intact.** Nothing filters it, exactly as
+   nothing filters it out of the config upload. Backup size is therefore governed by
+   the evals bug, not by message volume — the account above would produce an ~8 MB
+   file with *no messages at all*.
+2. **🆕 The file is 2× its payload, because the ciphertext is hex-encoded**
+   ([`BackupService.ts`](../../../src/services/BackupService.ts), `Buffer.from(encrypted).toString('hex')`).
+   Two hex chars per byte. **Switching the encoding to base64 would cut every
+   backup by ~33%** (2.00× → 1.33×) for a few lines of change, with the same
+   v1-reader discipline as the rest of §7. Worth doing in slice 5 when the size
+   budget is being decided anyway. Not urgent — a local file has no server ceiling
+   — but it is the cheapest size win available and nothing else in the design
+   competes with it.
+
+**A `.qmbak` is a local file, not an API payload, so the ~1 MB config ceiling does
+not apply.** The practical ceiling is what a user will tolerate downloading, and on
+these numbers the dominant term is a bug being fixed elsewhere.
 
 ---
 
@@ -402,25 +506,79 @@ disks and must keep importing, restoring what they contain.
 
 One issue, shipped in order. Each slice ends in something observable.
 
-**Slice 1 — Export the Space keys.** Read `space_keys` + Space rows directly from
-IndexedDB (not from `user_config`), bump to v2 with per-domain presence flags, keep
-the v1 reader. No import change.
-*Observable:* export a backup with sync off; a dev-tools dump of the decrypted
-payload shows every Space and its `owner` key. **Today it shows none.**
+**Slice 1 — Export the Space keys. ✅ SHIPPED 2026-08-09.**
+`MessageDB.getAllSpaceData()` reads the `spaces` and `space_keys` stores directly;
+format bumped to v2 with per-domain presence flags; v1 reader kept; a file from a
+*newer* format is refused rather than half-restored. Import unchanged.
+*Observable, now true:* a sync-off export carries all seven Space keys including
+`owner`. Covered by `backupSpaceKeyCoverage.test.ts`, whose sync-off assertions
+were inverted in the same commit — and which pins that
+`user_config.spaceKeys` is **still** empty in that export, so the fix demonstrably
+works by reading the owning store rather than by the snapshot quietly filling in.
 
-**Slice 2 — Restore Spaces, additive only.** Import adopts absent Spaces by reusing
-the §3 mechanism; present Spaces untouched. Report counts per domain.
-*Observable:* wipe a sync-off device, log in, import → the Space list comes back and
-channels load. Import again → "0 restored, N already present".
+**Slice 2 — Restore Spaces, additive only. ✅ SHIPPED 2026-08-09.**
+`ConfigService.adoptSpaces` extracted from `getConfig` (pure move, 46 existing
+tests green) and reused by the import via injection, so `BackupService` does not
+depend on `ConfigService`. Exposed on the MessageDB context as `adoptSpaces`,
+following the `saveConfig` pattern. Import reports per-domain counts.
+Deletion tombstones for DMs landed with it (§4.1).
+*Observable:* wipe a sync-off device, import → Spaces return and channels load;
+import again → "0 restored, 1 already present". Both property tests
+mutation-verified.
 
-**Slice 3 — Honest reporting and pre-flight.** Before writing a file, show what it
-will contain (including that it holds Space ownership keys — §10.7). Before
-restoring, show what the file holds and what will be skipped.
-*Observable:* the export dialog names the domains; a v1 file imported into v2 code
-says plainly that it has no Space keys.
+**Slice 2b — Space-departure tombstones. ✅ SHIPPED 2026-08-09.**
+Both write sites are now asserted at the call site, not only through the DB
+helper: `SpaceService.unit.test.tsx` for `left`, and
+`MessageService.kickDeparture.unit.test.ts` for `removed` — the latter driving a
+real kick frame through `handleNewMessage`, with controls for "kick names someone
+else" and "signature does not verify". `InvitationService.unit.test.tsx` covers
+the clear-on-rejoin. All three mutation-verified.
 
-**Slice 4 — DM sessions.** Restore ratchet states only where no state exists for
-that conversation. **The only slice gated on the SDK answer (§10.3).**
+New `departed_spaces` store at DB v15, written at the two genuine departure sites
+— `SpaceService.deleteSpace` (`left`) and `MessageService`'s removed-from-space
+handler (`removed`) — and **not** in `MessageDB.deleteSpace`, which
+`EncryptionService` also uses for a space-address migration. Cleared by
+`InvitationService` on rejoin, next to the existing `clearTombstonesForSpace`.
+
+**The gate lives in `BackupService`, not `adoptSpaces`.** That method also serves
+config sync, where the payload is the account's *current* state published after
+the departure, rather than a snapshot from the past; blocking there would break
+leaving a Space on one device and rejoining on another. A backup file is stale by
+construction, a synced config is not — and that distinction is asserted by a test.
+*Observable:* leave a Space, import an older backup → "you left this Space after
+this backup was taken", nothing re-registered. Mutation-verified, and the
+departure write is asserted at the `SpaceService` call site rather than only
+through the DB helper.
+
+**Slice 3 — Honest reporting and pre-flight. ✅ SHIPPED 2026-08-09.**
+The export copy now says the file contains Space keys including ownership of
+Spaces you created (§10.7's surviving requirement). The restore reports per
+domain: Spaces restored, Spaces left untouched because they were already present,
+messages withheld because they were deleted after the backup, Spaces skipped with
+the reason, plus the v1 "this file has no Space keys, export a fresh one" case and
+the standing "Space message history is not included" note.
+*Observable:* import a v1 file → a successful restore that states plainly why no
+Spaces came back, instead of a bare message count.
+
+**Slice 4 — DM sessions. 🟢 DECIDED 2026-08-09: do not restore DM ratchet state, ever.**
+
+The right answer turned out to be the simplest one, and the app already does it.
+Import never writes DM ratchet state; when a conversation has no session, the
+first send force-starts a fresh one
+([`MessageService.ts:1537`](../../../src/services/MessageService.ts#L1537)). So
+after a restore a DM opens and is **immediately usable** — history back, typing
+works, new session established on send.
+
+That removes the hazard rather than managing it: nothing is rewound, so no message
+key can be re-derived, and there is nothing to ask the SDK about in order to ship.
+
+The only genuinely unrecoverable thing is messages a peer sent **during the gap**,
+addressed to the old session. Recovering those is precisely what would require
+restoring the old ratchet, which is precisely what is dangerous. So we accept the
+loss and say so in the UI.
+
+*Was: "restore ratchet states only where no state exists, gated on the SDK answer."
+Superseded — that design managed a risk this one does not take.*
 *Observable:* the two-party harness in §9.
 > **This slice must not block slices 1-3, 5 or 6.** If the SDK answer is slow or
 > unfavourable, ship D4 — the honest-copy fallback — and close the rest of the issue
@@ -449,10 +607,14 @@ by using the app. Reasoning about the diff is not verification here.
       Not both-empty, not both-populated — the instrument discriminates.
 - [x] **Mutation check on the instrument itself.** ✅ Assembling `spaceKeys` outside
       the `allowSync` branch turns Arm A red and leaves the controls green.
+- [x] **Size measured** ✅ **2026-08-09** — §5.1. Done against the real export path
+      with a realistic eval pool rather than a real account, so it is repeatable.
+      §10.4 no longer waits on it.
 - [ ] **Still owed: one real-account export.** The instrument measures the real
-      save/export chain against a seeded database, which is the mechanism — but not
-      a real account's actual on-disk state, and not the file size. Both remain open;
-      the size number gates §10.4.
+      save/export chain against a *seeded* database. That establishes the mechanism,
+      not one real account's actual on-disk state — in particular how many orphaned
+      encryption states a long-lived account is really carrying. Worth one export
+      when convenient; it blocks nothing.
 - [ ] Wipe → login → import. Record per domain what returned and what did not.
 - [ ] **Additive invariant, adversarially.** Import an *old* backup into a *live*
       account with more Spaces and newer DMs. Assert byte-equality of every
@@ -491,14 +653,43 @@ live sessions untouched.
    below but blocks nothing else.
 2. **Re-verify §6.1 against the code.** If `inbox_mapping` or `latest_states` gain a
    reader between now and implementation, the DM slice grows.
-3. **The SDK question (§6):** can a rewound sending chain re-derive an already-used
-   message key, and can the SDK expose a receive-only restore (D1)? Gates slice 4 only.
-   Ask about the Space-side Triple Ratchet staleness (§3 step 6) in the same conversation.
-4. **Space messages in the default export?** Largest contributor to file size, and the
-   only domain that partly self-heals via peer resync. A checkbox at export is the
-   obvious answer, but a default that quietly excludes history from a file called
-   "backup" repeats the framing problem this issue exists to fix. Needs the size
-   measurement from §9.
+3. ~~**The SDK question (§6)**~~ — **NO LONGER A BLOCKER, 2026-08-09.** Resolved by
+   not taking the risk: DM ratchet state is never restored (slice 4), so nothing is
+   rewound. The Space side inherits the sync path's behaviour rather than adding to
+   it — a synced new device already adopts a Space ratchet state from the config
+   blob, and that blob is itself a snapshot refreshed only on save, measured stale
+   for a long time on a real account (see `config-sync-system.md`). So a backup
+   restore does what multi-device login already does. Still worth asking, but as a
+   question about the existing sync path, not a gate on this work.
+
+   Retained below for whoever raises it:
+
+   > ⚠️ **Raised by security review 2026-08-09, and it is a fair hit.** Slice 4 (DM
+   > ratchet restore) is *blocked* pending this answer, while **slice 2 shipped and
+   > restores a Space's Triple Ratchet state** captured at export time. Two ratchets,
+   > opposite treatment, and the difference was not a reasoned call — it fell out of
+   > which slice happened to get written first.
+   >
+   > Two things make the Space side *less* alarming, neither of which settles it:
+   > `adoptSpaces` is the pre-existing path a fresh device already runs on every
+   > synced login, and it regenerates and re-registers a fresh inbox keypair rather
+   > than resuming an old session outright. What is genuinely new is the **staleness
+   > envelope**: a synced config refreshes continuously, whereas a `.qmbak` is
+   > designed to sit in a drawer for months. This work is what makes "resume from an
+   > arbitrarily old group ratchet state" a normal user action.
+   >
+   > **Put the Space case to the SDK owner in the same conversation as the DM case**,
+   > and record the answer here. If it turns out unsafe, slice 2's Space-state restore
+   > needs the same gating slice 4 already has.
+4. **Space messages in the default export?** Still open, but **no longer blocked on
+   a measurement** — see §5.1. The size picture came back different from the
+   assumption: the dominant term is the ~2 MB-per-created-Space eval pool, not
+   message volume, and hex encoding doubles whatever that comes to. An account with
+   no messages at all can already produce an ~8 MB file. So "Space messages are the
+   size risk" was wrong; they should be judged on whether a backup that silently
+   omits history deserves the name, which is a product call. Two cheap wins to fold
+   in when it is made: base64 instead of hex (~33% off every file), and excluding
+   orphaned encryption states for Spaces no longer in `spaces`.
 5. **Config scalars: fill-absent, or ask the user?** (§4) — product decision.
 6. **Does restore belong in onboarding?** Today import is only reachable post-login
    from Settings. For the Safari install flow
@@ -510,9 +701,22 @@ live sessions untouched.
    - *File stolen, account key safe* → AES-GCM under the account-derived key already
      protects it completely. A passphrase adds nothing.
    - *File stolen **and** account key compromised* → the attacker can already log in,
-     read future DMs and impersonate the user. Space ownership is marginal against a
-     loss that is already total. A passphrase only helps if stored separately from the
-     key, which for most users it would not be.
+     read future DMs and impersonate the user. A passphrase only helps if stored
+     separately from the key, which for most users it would not be.
+   - ⚠️ **Corrected 2026-08-09 after security review.** The bullet above used to end
+     "Space ownership is marginal against a loss that is already total." **That is
+     not true for the sync-off user this whole document exists to protect**, and the
+     overstatement mattered. Before this work, a stolen `.key` file gave an attacker
+     impersonation but **not** Space ownership: with `allowSync=false` those keys
+     never left the device and the server held no copy. This branch changes that —
+     the `.qmbak` now contains them, under a key derived deterministically from the
+     `.key` file's own contents, so one theft now yields both. The domain prefix adds
+     no secrecy here; it prevents cross-purpose key confusion, not a second attacker
+     requirement. And both files land in the same Downloads folder by construction —
+     the folder commodity infostealers and cloud-backup sync target wholesale.
+     **The decision stands** (a forgotten passphrase bricking a disaster-recovery
+     file is the worse failure), but it now rests on the durability argument alone,
+     not on a claim that the marginal loss is nil.
    - *Cost:* a forgotten passphrase makes the backup undecryptable — exactly the data
      loss the feature exists to prevent. Adding a second losable secret to a
      disaster-recovery artifact is net-negative for durability.
@@ -521,7 +725,10 @@ live sessions untouched.
      ([`2026-06-11-port-key-paste-import-and-copy-export.md`](../port-from-mobile/.done/2026-06-11-port-key-paste-import-and-copy-export.md)).
    **What survives is a labelling requirement, not a crypto one** (slice 3): the export
    UI must say the file contains Space ownership keys. People choose where to store
-   "my chat history" differently from "the keys to my Spaces".
+   "my chat history" differently from "the keys to my Spaces". **Add to that** (from
+   the correction above): the copy should advise keeping the `.qmbak` and the `.key`
+   export in *different* places, since co-locating them is the single decision that
+   turns "safe" into "total loss" under this design.
 
 ---
 

@@ -11,6 +11,15 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { InvitationService } from '@/services/InvitationService';
 import { QueryClient } from '@tanstack/react-query';
 
+// Mock multiformats sha256 so Buffer-based digest works in jsdom — under this
+// environment `Buffer instanceof Uint8Array` is false and multiformats' coerce()
+// throws. Same mock, and same reason, as SpaceService.unit.test.tsx.
+vi.mock('multiformats/hashes/sha2', () => ({
+  sha256: {
+    digest: vi.fn().mockResolvedValue({ bytes: new Uint8Array([1, 2, 3, 4, 5, 6, 7, 8]) }),
+  },
+}));
+
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   channel: {
     SealHubEnvelope: vi.fn().mockResolvedValue(JSON.stringify({ envelope: 'mock' })),
@@ -304,6 +313,74 @@ describe('InvitationService - Unit Tests', () => {
       );
 
       expect(result).toBeUndefined();
+    });
+
+    /**
+     * Rejoining must clear the departure tombstone.
+     *
+     * `departed_spaces` (DB v15) blocks a backup restore from re-adding a Space
+     * the user left or was kicked from. If a rejoin does not clear it, a user who
+     * is invited back can never restore that Space from a backup again — the
+     * restore silently refuses with "you were removed from this Space" forever,
+     * long after it stopped being true.
+     *
+     * The clear sits next to the pre-existing `clearTombstonesForSpace` call,
+     * which does the same job for that Space's message tombstones. This asserts
+     * both, so the pair cannot drift apart.
+     *
+     * See `.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md` §4.1.
+     */
+    it('clears the departure tombstone when rejoining, alongside message tombstones', async () => {
+      mockDeps.messageDB.clearTombstonesForSpace = vi.fn().mockResolvedValue(0);
+      mockDeps.messageDB.clearSpaceDeparture = vi.fn().mockResolvedValue(undefined);
+      mockDeps.messageDB.getUserConfig = vi
+        .fn()
+        .mockResolvedValue({ address: 'address-self', spaceIds: [] });
+      invitationService = new InvitationService(mockDeps);
+
+      // A direct (non-secret-fetch) invite: the link carries the ratchet template
+      // and secret inline, which is the branch that does not need getSpaceInviteEval.
+      const template = Buffer.from(
+        JSON.stringify({ dkg_ratchet: JSON.stringify({ id: 1, total: 1 }) }),
+        'utf-8'
+      ).toString('hex');
+      const secret = 'aa'.repeat(56);
+
+      // spaceId matches what the mocked manifest decrypt returns.
+      const inviteLink =
+        `https://qm.one/invite/#spaceId=space-123&configKey=aabbcc&hubKey=ddeeff` +
+        `&template=${template}&secret=${secret}`;
+
+      await invitationService.joinInviteLink(
+        inviteLink,
+        {
+          userKeyset: {
+            user_key: { public_key: [1, 2, 3], private_key: [4, 5, 6] },
+          } as any,
+          deviceKeyset: {
+            inbox_keyset: {
+              inbox_address: 'QmDeviceInboxAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA',
+              inbox_key: { public_key: [1, 2, 3], private_key: [4, 5, 6] },
+              inbox_encryption_key: {
+                public_key: [7, 8, 9],
+                private_key: [10, 11, 12],
+              },
+            },
+            identity_key: { public_key: [13, 14, 15], private_key: [16, 17, 18] },
+            signed_pre_key: { public_key: [19, 20], private_key: [21, 22] },
+            pre_key: { public_key: [23, 24], private_key: [25, 26] },
+          } as any,
+        },
+        {
+          credentialId: 'cred',
+          address: 'address-self',
+          publicKey: 'pubkey',
+          completedOnboarding: true,
+        }
+      );
+
+      expect(mockDeps.messageDB.clearSpaceDeparture).toHaveBeenCalledWith('space-123');
+      expect(mockDeps.messageDB.clearTombstonesForSpace).toHaveBeenCalledWith('space-123');
     });
   });
 

@@ -185,6 +185,20 @@ type MessageDBContextValue = {
       deviceKeyset: secureChannel.DeviceKeyset;
     };
   }) => Promise<void>;
+  /**
+   * Adopt Spaces from key material, skipping any already present locally.
+   * Exposed so the backup restore path can reuse the same additive adoption a
+   * synced login runs, rather than reimplementing it. See ConfigService.adoptSpaces.
+   */
+  adoptSpaces: ({
+    spaceKeys,
+  }: {
+    spaceKeys: NonNullable<UserConfig['spaceKeys']>;
+  }) => Promise<{
+    restored: string[];
+    alreadyPresent: string[];
+    failed: { spaceId: string; reason: string }[];
+  }>;
   setSelfAddress: React.Dispatch<React.SetStateAction<string>>;
   ensureKeyForSpace: (user_address: string, space: Space) => Promise<string>;
   sendInviteToUser: (
@@ -753,6 +767,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       };
     }) => {
       return configService.saveConfig({ config, keyset });
+    },
+    [configService]
+  );
+
+  const adoptSpaces = React.useCallback(
+    async ({ spaceKeys }: { spaceKeys: NonNullable<UserConfig['spaceKeys']> }) => {
+      return configService.adoptSpaces({ spaceKeys });
     },
     [configService]
   );
@@ -1638,6 +1659,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         retryDirectMessage,
         getConfig,
         saveConfig,
+        adoptSpaces,
         setSelfAddress,
         ensureKeyForSpace,
         sendInviteToUser,
@@ -1680,6 +1702,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   retryDirectMessage: () => undefined as never,
   getConfig: () => undefined as never,
   saveConfig: () => undefined as never,
+  adoptSpaces: () => undefined as never,
   setSelfAddress: (_) => {},
   ensureKeyForSpace: () => undefined as never,
   sendInviteToUser: () => undefined as never,
