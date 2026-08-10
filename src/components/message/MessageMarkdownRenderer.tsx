@@ -46,11 +46,14 @@ interface MessageMarkdownRendererProps {
    * (everything is interactive whenever `onUserClick` is set).
    */
   resolveSender?: (senderId: string) => NameResolvableUser | null;
+  // Mirrors `UserProfileModalUser`; the identity fields are load-bearing.
   onUserClick?: (user: {
     address: string;
     displayName?: string;
     userIcon?: string;
     bio?: string;
+    primaryUsername?: string;
+    globalDisplayName?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
   onChannelClick?: (channelId: string) => void;
   onMessageLinkClick?: (channelId: string, messageId: string) => void;
@@ -854,6 +857,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           displayName: user?.displayName,
           userIcon: user?.userIcon,
           bio: (user as { bio?: string } | null)?.bio,
+          // Carried through so the card resolves from the same data the pill
+          // did; see UserProfileModalUser.
+          primaryUsername: user?.primaryUsername,
+          globalDisplayName: user?.globalDisplayName,
         }, event, { type: 'mention', element: target });
       }
     }

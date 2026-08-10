@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import {
   usePasskeysContext,
@@ -11,6 +11,8 @@ import { useConversations, useRegistration } from '../../queries';
 import { isValidIPFSCID, formatAddress, type Conversation, type Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
+import { resolveMemberName, formatResolvedName } from '../../../utils/resolveMemberName';
+import { useConversationsWithProfileBackfill } from '../conversations/useConversationsWithProfileBackfill';
 
 export interface UseInviteManagementOptions {
   spaceId: string;
@@ -102,21 +104,47 @@ export const useInviteManagement = (
   const { apiClient } = useQuorumApiClient();
   const navigate = useNavigate();
 
+  const directConversations = useMemo(
+    () =>
+      (conversations?.pages ?? [])
+        .flatMap((c: any) => c.conversations as Conversation[])
+        .toReversed(),
+    [conversations],
+  );
+
+  // Same backfill the DM sidebar uses, for the same reason: `primary_username`
+  // lives only in the public profile, so a raw conversation row cannot carry a
+  // QNS name.
+  //
+  // This costs nothing in practice despite being N lookups. The backfill keys on
+  // `publicProfileQueryKey` with a 1h staleTime, and the addresses here are the
+  // DM partners the sidebar has already fetched under that exact key — so this
+  // is a cache read, not a second round of requests.
+  const enrichedConversations = useConversationsWithProfileBackfill(directConversations);
+
   // Get user options for dropdown
   const getUserOptions = useCallback(() => {
-    if (!conversations?.pages) return [];
-    return conversations.pages
-      .flatMap((c: any) => c.conversations as Conversation[])
-      .toReversed()
-      .map((conversation) => ({
+    // A conversation row's `displayName` is a name off the wire, so it goes
+    // through the resolver like every other name. This dropdown is where you
+    // choose who to hand a Space invite to, and it used to render the raw field.
+    return enrichedConversations.map((conversation) => {
+      const label = formatResolvedName(
+        resolveMemberName({
+          address: conversation.address,
+          displayName: conversation.displayName,
+          primaryUsername: conversation.primaryUsername,
+        }),
+      );
+      return {
         value: conversation.address,
-        label: conversation.displayName,
+        label,
         avatar: conversation.icon,
-        displayName: conversation.displayName,  // For user initials fallback
+        displayName: label,                     // For user initials fallback
         userAddress: conversation.address,      // For deterministic color generation
         subtitle: formatAddress(conversation.address),
-      }));
-  }, [conversations]);
+      };
+    });
+  }, [enrichedConversations]);
 
   // Resolve manual address input
   useEffect(() => {

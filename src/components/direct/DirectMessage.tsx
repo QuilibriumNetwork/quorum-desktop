@@ -239,6 +239,11 @@ const DirectMessage: React.FC<{}> = () => {
   // has opted in to a public profile, we use it to fill the gaps.
   // 1h cache; 404 = no public profile, treated as null.
   const { data: recipientPublicProfile } = useUserPublicProfile(address);
+  // Your own public profile — the ONLY source of your own QNS name. See the
+  // self entry in the members map below for why this is not optional.
+  const { data: ownPublicProfile } = useUserPublicProfile(
+    user.currentPasskeyInfo?.address
+  );
 
   // Build members with fallback chain: conversation (IndexedDB) > registration
   // (network) > public profile (server) > defaults. Local fields always win
@@ -294,14 +299,29 @@ const DirectMessage: React.FC<{}> = () => {
         address: address!,
       };
     }
-    // Self data - use passkey context as primary source (always available)
+    // Self data - use passkey context as primary source (always available).
+    //
+    // `primaryUsername` cannot come from there: `currentPasskeyInfo` is the
+    // device-local auth record and carries no QNS name. Without it, YOUR OWN
+    // messages in a DM rendered your global display name while the partner
+    // beside them rendered their ".q" — the one place in a conversation where
+    // the two sides disagreed about how a name is chosen. Same 1h-cached key as
+    // the recipient fetch directly above, so it costs a cache read.
     m[user.currentPasskeyInfo!.address] = {
       address: user.currentPasskeyInfo!.address,
       userIcon: user.currentPasskeyInfo!.pfpUrl,
       displayName: user.currentPasskeyInfo!.displayName,
+      primaryUsername: ownPublicProfile?.primary_username || undefined,
     };
     return m;
-  }, [registration, conversation, address, user.currentPasskeyInfo, recipientPublicProfile]);
+  }, [
+    registration,
+    conversation,
+    address,
+    user.currentPasskeyInfo,
+    recipientPublicProfile,
+    ownPublicProfile,
+  ]);
 
   // Clean up stale encryption states when registration data changes
   // This fixes the DM inbox mismatch bug where Action Queue encrypts to old inboxes

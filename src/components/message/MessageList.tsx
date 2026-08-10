@@ -331,13 +331,25 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // unresolved so their mentions render as non-interactive truncated-address
     // pills rather than as clickable pills that would open a profile of a
     // user no longer reachable. Forwarded to Message → MessageMarkdownRenderer.
+    //
+    // The membership/kicked GATE reads the raw roster, which is the security
+    // property and must stay that way. The IDENTITY it returns comes from
+    // `mapSenderToUser`, which the container overrides with its public-profile
+    // enriched map.
+    //
+    // Returning the raw roster row here was a real defect: the raw roster
+    // cannot carry `primaryUsername` or `globalDisplayName` (only the profile
+    // fetch supplies them), so every mention pill resolved from strictly less
+    // data than the message header three lines above it — and rendered the
+    // global display name where the header rendered the ".q". Same defect
+    // mobile fixed as chain item 8b.
     const resolveSender = useCallback(
       (senderId: string) => {
         const m = members[senderId];
         if (!m || (m as any).isKicked) return null;
-        return m;
+        return mapSenderToUser(senderId) ?? m;
       },
-      [members]
+      [members, mapSenderToUser]
     );
 
     // Date separators, new-messages separators, and compact-header flags per row.

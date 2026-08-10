@@ -15,6 +15,7 @@ import {
 } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { resolveMemberName, formatResolvedName } from '../../utils/resolveMemberName';
+import { conversationMatchesSearch } from '../../utils/conversationSearch';
 import { realIconOrUndefined } from '../../utils/identityPlaceholder';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
@@ -140,14 +141,19 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
       result = result.filter((c) => mutedSet.has(c.conversationId));
     }
 
-    // Apply search
+    // Apply search. The rule lives in `conversationMatchesSearch` — it has to
+    // match the RESOLVED name, because that is what the row renders.
     if (searchInput.trim()) {
-      const searchLower = searchInput.toLowerCase().trim();
-      result = result.filter((c) => {
-        const nameMatch = c.displayName?.toLowerCase().includes(searchLower);
-        const addressMatch = c.address?.toLowerCase().includes(searchLower);
-        return nameMatch || addressMatch;
-      });
+      result = result.filter((c) =>
+        conversationMatchesSearch(
+          {
+            address: c.address,
+            displayName: c.displayName,
+            primaryUsername: (c as { primaryUsername?: string }).primaryUsername,
+          },
+          searchInput,
+        ),
+      );
     }
 
     // Sort: favorites first (when viewing "all"), then by timestamp

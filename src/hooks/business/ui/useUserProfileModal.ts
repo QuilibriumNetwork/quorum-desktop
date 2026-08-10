@@ -5,6 +5,25 @@ export interface UserProfileModalUser {
   displayName?: string;
   userIcon?: string;
   bio?: string;
+  /**
+   * QNS name and GLOBAL name, carried through from the already-enriched member
+   * the card was opened from.
+   *
+   * These are not optional extras — the space resolver needs BOTH to answer
+   * "is `displayName` a deliberate per-space name, or the global name echoed at
+   * join?", and it decides that by comparing the two. Omitting
+   * `globalDisplayName` makes `roster !== global` hold trivially, so the roster
+   * name is returned as though it had been deliberately chosen and the ".q"
+   * never gets a turn.
+   *
+   * Every call site had been dropping them while passing `displayName`, so the
+   * card threw away good data and then refetched a worse answer: the public
+   * profile's `display_name` is a DIFFERENT value from the roster's global slot
+   * and can be empty, whereas the caller's copy is the one the message list is
+   * already rendering from.
+   */
+  primaryUsername?: string;
+  globalDisplayName?: string;
 }
 
 export interface UserProfileModalContext {

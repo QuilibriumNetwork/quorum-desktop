@@ -109,6 +109,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 ["Delete Space" is Leave with a destructive-sounding label, and the owner must never click it](issues/2026-08-02-delete-space-is-leave-and-can-permanently-brick-a-space.md)
 - 🐛 [The roster pull: what it actually does](issues/2026-08-02-roster-pull-delivers-nothing-to-a-new-joiner.md)
 - 🐛 [Sync requests expire unread, behind a reconnect backlog](issues/2026-08-02-sync-requests-arrive-four-minutes-late-and-every-peer-rejects-them.md)
+- 🐛 [Eight name surfaces never reached the resolver](issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
@@ -330,6 +331,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Make `allowSync` a per-device setting](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md)
 - 📋 [Record and show what the last config publish actually did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md)
 - 📋 [Backup/restore overhaul](issues/.open/2026-08-09-backup-restore-overhaul-design.md)
+- 📋 [Name resolution: an API that cannot express a partial identity](issues/.open/2026-08-10-identity-resolution-architecture-design.md)
 
 ### Deferred
 
@@ -769,4 +771,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-09 16:09:02
+**Last Updated**: 2026-08-10 10:18:05

@@ -21,10 +21,11 @@ import { t } from '@lingui/core/macro';
 import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from './UserAvatar';
 import { ResolvedName } from './ResolvedName';
+import { formatResolvedName } from '../../utils/resolveMemberName';
 import {
-  resolveMemberName,
-  resolveSpaceMemberName,
-} from '../../utils/resolveMemberName';
+  profileCardNeedsProfileFetch,
+  resolveProfileCardName,
+} from '../../utils/profileCardIdentity';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { useQueryClient } from '@tanstack/react-query';
@@ -116,33 +117,23 @@ const UserProfile: React.FunctionComponent<{
   // fetch storm), so it arrives without it. Fall back to a single on-demand
   // public-profile fetch — only when the profile is actually open and the name
   // isn't already present — so every surface shows the handle without the storm.
-  const needsUsernameFetch = !props.user.primaryUsername && !isOwnProfile;
+  //
+  // Both rules live in `utils/profileCardIdentity`, tested there. In particular
+  // the fetch must NOT be skipped for your own profile; see that module for
+  // what skipping it cost.
+  const cardUser = {
+    address: props.user.address,
+    displayName: props.user.displayName,
+    primaryUsername: props.user.primaryUsername,
+    globalDisplayName: props.user.globalDisplayName as string | undefined,
+  };
   const { data: openedUserPublicProfile } = useUserPublicProfile(
     props.user.address,
-    { enabled: needsUsernameFetch }
+    { enabled: profileCardNeedsProfileFetch(cardUser, { spaceId: props.spaceId }) }
   );
-  const primaryUsername =
-    props.user.primaryUsername ||
-    openedUserPublicProfile?.primary_username ||
-    undefined;
-  // Global name (for the space resolver's custom-vs-default comparison).
-  const globalDisplayName =
-    (props.user.globalDisplayName as string | undefined) ||
-    openedUserPublicProfile?.display_name ||
-    undefined;
-
-  const resolvedName = props.spaceId
-    ? resolveSpaceMemberName({
-        address: props.user.address,
-        displayName: props.user.displayName,
-        primaryUsername,
-        globalDisplayName,
-      })
-    : resolveMemberName({
-        address: props.user.address,
-        displayName: props.user.displayName,
-        primaryUsername,
-      });
+  const resolvedName = resolveProfileCardName(cardUser, openedUserPublicProfile, {
+    spaceId: props.spaceId,
+  });
 
   // Bio resolution for the visible card:
   //   1. Per-space override on SpaceMember (props.user.bio) wins when set.
@@ -476,7 +467,14 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openBlockUser({
                         address: props.user.address,
-                        displayName: props.user.displayName,
+                        // The moderation modals render this as the person's
+                        // identity while you decide whether to act on them, so
+                        // it must be the resolved name — the card above already
+                        // shows it. Passing the raw roster field both hid a
+                        // real ".q" and let a forged one through unguarded, at
+                        // the surface where being sure who you are acting on
+                        // matters most.
+                        displayName: formatResolvedName(resolvedName),
                         userIcon: props.user.userIcon,
                         spaceId: props.spaceId!,
                         isUnblocking: isUserBlocked,
@@ -500,7 +498,8 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openMuteUser({
                         address: props.user.address,
-                        displayName: props.user.displayName,
+                        // Resolved, for the reason given on Block above.
+                        displayName: formatResolvedName(resolvedName),
                         userIcon: props.user.userIcon,
                         isUnmuting: isUserMuted,
                       });
@@ -522,7 +521,8 @@ const UserProfile: React.FunctionComponent<{
                       if (props.user.isKicked) return;
                       openKickUser({
                         address: props.user.address,
-                        displayName: props.user.displayName,
+                        // Resolved, for the reason given on Block above.
+                        displayName: formatResolvedName(resolvedName),
                         userIcon: props.user.userIcon,
                       });
                       props.dismiss?.();
