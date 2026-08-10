@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
 import type { Bookmark, MessageContent, PostMessage } from '@quilibrium/quorum-shared';
-import { formatAddress } from '@quilibrium/quorum-shared';
 import { Flex, Button, Icon, Tooltip } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { MessageMarkdownRenderer } from '../message/MessageMarkdownRenderer';
@@ -11,6 +10,7 @@ import { formatMessageDate, DefaultImages } from '../../utils';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { useImageModal } from '../context/ImageModalProvider';
 import { isTouchDevice } from '../../utils/platform';
+import { MemberName, useMemberIdentity, useResolvedMemberName } from '../../identity';
 
 export interface BookmarkCardProps {
   bookmark: Bookmark;
@@ -47,22 +47,34 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   const { showImageModal } = useImageModal();
 
   const senderAddress = cachedPreview.senderAddress || resolvedMessage?.content?.senderId || '';
-  const senderName = cachedPreview.senderName || t`Unknown User`;
   // Resolved from `senderAddress`, never stored on the bookmark — an embedded
   // avatar per bookmark was 69% of the encrypted config blob. Undefined is a
   // normal outcome; UserAvatar falls back to coloured initials.
   const senderIcon = useBookmarkSenderIcon(bookmark);
   const messageDate = resolvedMessage?.createdDate ?? cachedPreview.messageDate;
 
-  // Local map: bookmarks span all spaces/DMs, so we synthesize from the
-  // cached snapshot rather than pulling a per-space member list.
+  // Detached surface: BookmarkCard only mounts from the standalone
+  // /bookmarks page, which spans every space, so `spaceId` comes from the
+  // bookmark itself rather than from context. `enrich`: bounded cardinality
+  // (one sender per card) and this is where the ".q" name has to come from —
+  // cachedPreview never carried it.
+  const resolvedSender = useResolvedMemberName(senderAddress, { spaceId: bookmark.spaceId, enrich: true });
+  // Raw tiers for the mention resolver below (it expects displayName/
+  // primaryUsername/globalDisplayName separately, not a pre-resolved name).
+  const senderIdentity = useMemberIdentity(senderAddress, { spaceId: bookmark.spaceId, enrich: true });
+
+  // The sender is the only user this surface resolves for mentions inside
+  // the message body — hand the RAW tiers through so the renderer's own
+  // ladder (not a frozen cached string) decides what to show.
   const mapSenderToUser = React.useCallback(
     (_senderId: string) => ({
-      displayName: senderName,
+      displayName: senderIdentity.spaceName ?? undefined,
+      primaryUsername: senderIdentity.qnsName ?? undefined,
+      globalDisplayName: senderIdentity.globalName ?? undefined,
       userIcon: senderIcon || DefaultImages.UNKNOWN_USER,
       address: senderAddress,
     }),
-    [senderName, senderIcon, senderAddress]
+    [senderIdentity, senderIcon, senderAddress]
   );
 
   // Strict resolver — we only "know" one user at this surface: the bookmark's
@@ -70,9 +82,15 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   // and the renderer treats those as unresolved (truncated, non-interactive).
   const resolveSender = React.useCallback(
     (id: string) => (id === senderAddress
-      ? { displayName: senderName, userIcon: senderIcon, address: senderAddress }
+      ? {
+          displayName: senderIdentity.spaceName ?? undefined,
+          primaryUsername: senderIdentity.qnsName ?? undefined,
+          globalDisplayName: senderIdentity.globalName ?? undefined,
+          userIcon: senderIcon,
+          address: senderAddress,
+        }
       : null),
-    [senderAddress, senderName, senderIcon]
+    [senderAddress, senderIdentity, senderIcon]
   );
 
   const renderSourceLine = () => {
@@ -96,8 +114,12 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
         </Flex>
       );
     }
-    // DM: cachedPreview.sourceName is usually empty.
-    const counterpartLabel = senderName || (senderAddress ? formatAddress(senderAddress) : t`Unknown`);
+    // DM: cachedPreview.sourceName is usually empty. The resolver already
+    // falls back to a truncated address when nothing else is known — no
+    // caller-supplied fallback needed here.
+    const counterpartLabel = resolvedSender.isQnsVerified
+      ? `${resolvedSender.name}.q`
+      : resolvedSender.name;
     return (
       <Flex align="center" className="bookmark-card__source">
         <Icon name="message" size="sm" className="bookmark-card__source-icon" />
@@ -242,16 +264,22 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
       <Flex className="bookmark-card__body items-start">
         <UserAvatar
           userIcon={senderIcon}
-          displayName={senderName}
+          // BARE resolved name, same source as the label below — feeding the
+          // avatar a stale/different name is how a member came to render
+          // "gatto.q" beside a circle showing "G" for a totally different name.
+          displayName={resolvedSender.name}
           address={senderAddress}
           size={44}
           className="bookmark-card__avatar message-sender-icon"
         />
         <div className="bookmark-card__content message-content">
           <Flex align="center" className="bookmark-card__header min-w-0">
-            <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
-              {senderName}
-            </span>
+            <MemberName
+              address={senderAddress}
+              spaceId={bookmark.spaceId}
+              enrich
+              className="message-sender-name truncate-user-name-chat flex-shrink min-w-0"
+            />
             <span className="message-timestamp">{formattedTimestamp}</span>
           </Flex>
 

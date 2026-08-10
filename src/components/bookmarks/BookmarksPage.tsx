@@ -5,12 +5,13 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Bookmark } from '@quilibrium/quorum-shared';
 import { Button, Icon, Input, Select } from '../primitives';
 import { BookmarkCard } from './BookmarkCard';
-import { useBookmarks } from '../../hooks/business/bookmarks';
+import { useBookmarks, useBookmarkRosters } from '../../hooks/business/bookmarks';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { useOptionalShellState } from '../shell/useShellState';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
 import { FloatingPopover } from '../ui';
 import UserProfile from '../user/UserProfile';
+import { IdentityScopeProvider } from '../../identity';
 import './BookmarksPage.scss';
 
 type SourceFilter = 'all' | 'channel' | 'dm';
@@ -39,12 +40,25 @@ export const BookmarksPage: React.FC = () => {
   const userAddress = user?.currentPasskeyInfo?.address || '';
 
   const {
+    bookmarks,
     bookmarkCount,
     isLoading,
     error,
     removeBookmark,
     filterBySourceType,
   } = useBookmarks({ userAddress });
+
+  // Bookmarks span every space the user belongs to — a DETACHED surface with
+  // no single enclosing <IdentityScopeProvider> (unlike Channel.tsx, which is
+  // always inside one Space). Build one roster per distinct spaceId
+  // represented here, from ALL bookmarks rather than the filtered/searched
+  // subset, so switching the filter or typing a search term never needs a
+  // fresh IndexedDB read.
+  const bookmarkSpaceIds = React.useMemo(
+    () => bookmarks.map((b) => b.spaceId).filter((id): id is string => !!id),
+    [bookmarks]
+  );
+  const rostersBySpace = useBookmarkRosters(bookmarkSpaceIds);
 
   const [search, setSearch] = React.useState('');
   const [sourceFilter, setSourceFilter] = React.useState<SourceFilter>('all');
@@ -164,6 +178,7 @@ export const BookmarksPage: React.FC = () => {
   };
 
   return (
+    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={userAddress || null}>
     <div className="bookmarks-page">
       <PhoneHeader />
       <div className="bookmarks-page__inner">
@@ -221,6 +236,7 @@ export const BookmarksPage: React.FC = () => {
         )}
       </FloatingPopover>
     </div>
+    </IdentityScopeProvider>
   );
 };
 

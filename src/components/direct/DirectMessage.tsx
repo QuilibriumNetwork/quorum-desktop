@@ -55,6 +55,7 @@ import {
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
+import { IdentityScopeProvider } from '../../identity';
 import { useConfig } from '../../hooks/queries/config';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { MobileDrawer } from '../ui';
@@ -911,12 +912,18 @@ const DirectMessage: React.FC<{}> = () => {
                     />
                   </Tooltip>
 
-                  <BookmarksPanel
-                    isOpen={activePanel === 'bookmarks'}
-                    onClose={() => setActivePanel(null)}
-                    userAddress={userAddress}
-                    mapSenderToUser={mapSenderToUser}
-                  />
+                  {/* BookmarkItem resolves its sender through src/identity, which
+                      throws outside a provider. DM bookmarks carry no spaceId, so
+                      there is no per-space roster to hand it — rostersBySpace={{}}
+                      is correct here, not a stub. */}
+                  <IdentityScopeProvider rostersBySpace={{}} selfAddress={userAddress || null}>
+                    <BookmarksPanel
+                      isOpen={activePanel === 'bookmarks'}
+                      onClose={() => setActivePanel(null)}
+                      userAddress={userAddress}
+                      mapSenderToUser={mapSenderToUser}
+                    />
+                  </IdentityScopeProvider>
                 </div>
               )}
               <Tooltip
