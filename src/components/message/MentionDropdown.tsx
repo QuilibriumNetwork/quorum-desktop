@@ -5,8 +5,7 @@ import { getRoleColorHex, formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import type { MentionOption } from '../../hooks/business/mentions';
-import { ResolvedName } from '../user/ResolvedName';
-import { resolveSpaceMemberName } from '../../utils/resolveMemberName';
+import { MemberName, useNameResolver } from '../../identity';
 import './MentionDropdown.scss';
 
 interface CaretPosition {
@@ -60,6 +59,14 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
     }
     return null;
   }, [usePortal, caretPosition, portalTargetRef]);
+
+  // Bulk imperative resolver: rows are built inside a `.map()` over
+  // filteredOptions below, so a hook cannot be called per row (rules of
+  // hooks) — called once here, before the early return, and reused as a
+  // plain function per row. Only used for the AVATAR's bare-name input (see
+  // rule 4: avatar and name must agree); the label itself renders via
+  // <MemberName>, the SAME identityFromMaps + resolveIdentity read.
+  const { resolve } = useNameResolver();
 
   if (!isOpen || filteredOptions.length === 0) {
     return null;
@@ -126,24 +133,26 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
           </>
         );
 
-      case 'user':
+      case 'user': {
+        // No `enrich`: this list can render a whole roster (up to 50
+        // matches), same rule as the member sidebar — one row must not cost
+        // one profile fetch. Roster name only, never ".q". `resolve()` here
+        // and <MemberName> below read the SAME identityFromMaps +
+        // resolveIdentity, so the avatar's initials and the label can never
+        // disagree (rule 4) even though they're two separate elements.
+        const resolvedBareName = resolve(option.data.address).name;
         return (
           <>
             <UserAvatar
               userIcon={option.data.userIcon}
-              displayName={option.data.displayName || t`Unknown User`}
+              displayName={resolvedBareName}
               address={option.data.address}
               size={32}
               className="mention-dropdown__avatar"
             />
             <div className="mention-dropdown__info">
-              <ResolvedName
-                resolved={resolveSpaceMemberName({
-                  address: option.data.address,
-                  displayName: option.data.displayName,
-                  primaryUsername: option.data.primaryUsername,
-                  globalDisplayName: option.data.globalDisplayName,
-                })}
+              <MemberName
+                address={option.data.address}
                 className="mention-dropdown__name"
               />
               <span className="mention-dropdown__subtitle">
@@ -152,6 +161,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
             </div>
           </>
         );
+      }
 
       case 'role':
         return (

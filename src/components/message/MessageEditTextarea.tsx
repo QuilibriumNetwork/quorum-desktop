@@ -79,9 +79,31 @@ export function MessageEditTextarea({
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
+  // Bulk imperative resolver: the pills below are raw DOM nodes, built inside
+  // a loop over however many `@<address>` tokens the stored text contains —
+  // a hook cannot be called per address in that loop (rules of hooks). See
+  // `useNameResolver`'s docstring for why this hook is shaped as one call
+  // returning plain functions instead. Declared before `useMentionPillEditor`
+  // below, which needs `resolveMentionName` for its own pill-building.
+  const { resolve, requestNames } = useNameResolver();
+
+  // Entering edit mode rebuilds every pill from the stored `@<address>` tokens,
+  // which makes this the SECOND place a mention becomes a name — the composer's
+  // is `useMentionPillEditor`'s own `insertPill`. Both now resolve through the
+  // SAME identity module (src/identity), keyed only by address, so a pill can
+  // never drift from how the same member renders elsewhere.
+  const resolveMentionName = useCallback(
+    (address: string): string => {
+      const resolved = resolve(address);
+      return resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
+    },
+    [resolve]
+  );
+
   // Mention pill editor hook (for contentEditable mode)
   const pillEditor = useMentionPillEditor({
     onTextChange: setEditText,
+    resolveName: resolveMentionName,
   });
   const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
 
@@ -140,13 +162,6 @@ export function MessageEditTextarea({
     [editText, selectionRange]
   );
 
-  // Bulk imperative resolver: the pills below are raw DOM nodes, built inside
-  // a loop over however many `@<address>` tokens the stored text contains —
-  // a hook cannot be called per address in that loop (rules of hooks). See
-  // `useNameResolver`'s docstring for why this hook is shaped as one call
-  // returning plain functions instead.
-  const { resolve, requestNames } = useNameResolver();
-
   // Every user this edit could rebuild a pill for is already in the
   // message's own verified mention list — enrich that whole set in ONE
   // batch (not one request per pill) so pills can show ".q", matching the
@@ -159,20 +174,6 @@ export function MessageEditTextarea({
   useEffect(() => {
     requestNames(mentionedAddresses);
   }, [mentionedAddresses, requestNames]);
-
-  // Entering edit mode rebuilds every pill from the stored `@<address>` tokens,
-  // which makes this the SECOND place a mention becomes a name — the composer's
-  // is `extractPillDataFromOption`. Both now resolve through the SAME identity
-  // module the message body's pills use (src/identity), keyed only by
-  // address, so a pill can never drift from how the same member renders
-  // elsewhere.
-  const resolveMentionName = useCallback(
-    (address: string): string => {
-      const resolved = resolve(address);
-      return resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
-    },
-    [resolve]
-  );
 
   // Parse mentions from stored text and create pills (with double validation)
   const parseMentionsAndCreatePills = useCallback(

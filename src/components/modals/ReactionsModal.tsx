@@ -1,21 +1,15 @@
 import React, { useState, useMemo } from 'react';
 import { t } from '@lingui/core/macro';
 import { parse as parseEmoji } from '@twemoji/parser';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Modal, Flex, ScrollContainer } from '../primitives';
-import { UserAvatar } from '../user/UserAvatar';
-import { ResolvedName } from '../user/ResolvedName';
-import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
+import { MemberName, IdentityScopeProvider } from '../../identity';
+import { useMultiSpaceRosters } from '../../hooks/business/identity';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Reaction } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../emoji-picker/types';
 
 export interface MemberInfo {
-  displayName?: string;
-  /** QNS primary username (no ".q" suffix — render-time). */
-  primaryUsername?: string;
-  /** Global display name from the public profile — distinguishes a custom
-   *  per-space name from the global default in resolveSpaceMemberName. */
-  globalDisplayName?: string;
   userIcon?: string;
   address: string;
 }
@@ -26,6 +20,11 @@ interface ReactionsModalProps {
   reactions: Reaction[];
   customEmojis: CustomEmoji[];
   members: Record<string, MemberInfo>;
+  /** The Space the reacted-to message lives in. `ReactionsModal` is mounted
+   *  from `Layout.tsx` as a sibling of the app shell — there is no ambient
+   *  `<IdentityScopeProvider>` — so it mounts its own below, scoped to this
+   *  one message's space, rather than relying on ambient scope. */
+  spaceId: string;
 }
 
 export const ReactionsModal: React.FC<ReactionsModalProps> = ({
@@ -34,6 +33,34 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
   reactions,
   customEmojis,
   members,
+  spaceId,
+}) => {
+  const user = usePasskeysContext();
+  const selfAddress = user?.currentPasskeyInfo?.address || null;
+  const spaceIds = useMemo(() => [spaceId], [spaceId]);
+  const rostersBySpace = useMultiSpaceRosters(spaceIds);
+
+  return (
+    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={selfAddress}>
+      <ReactionsModalInner
+        visible={visible}
+        onClose={onClose}
+        reactions={reactions}
+        customEmojis={customEmojis}
+        members={members}
+        spaceId={spaceId}
+      />
+    </IdentityScopeProvider>
+  );
+};
+
+const ReactionsModalInner: React.FC<ReactionsModalProps> = ({
+  visible,
+  onClose,
+  reactions,
+  customEmojis,
+  members,
+  spaceId,
 }) => {
   // Default to first reaction tab
   const [selectedEmojiId, setSelectedEmojiId] = useState<string | null>(null);
@@ -46,30 +73,16 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
     return reactions.find((r) => r.emojiId === activeEmojiId);
   }, [reactions, activeEmojiId]);
 
-  // Map member IDs to user data, resolving each name once.
-  //
-  // `displayName` is passed to the resolver EXACTLY as stored, empty included.
-  // Empty means "no per-space override, follow the global identity". This used
-  // to substitute a truncated address for an empty one, which the resolver then
-  // read as a deliberate per-space name — and a per-space name outranks the QNS
-  // `.q` name, so a follow-global member appeared here as `QmXoypiz...` while
-  // their `.q` name sat unused in the very same object. The resolver produces
-  // the address fallback itself; a caller must never feed it one.
+  // The reacted-to message's memberIds, resolved through src/identity —
+  // spaceId is passed explicitly (see ReactionsModalProps.spaceId) rather
+  // than an ambient scope, since this detached surface has none of its own.
+  // `enrich`: a bounded set of reactors on ONE message.
   const reactionUsers = useMemo(() => {
     if (!selectedReaction) return [];
-    return selectedReaction.memberIds.map((memberId) => {
-      const member = members[memberId];
-      return {
-        address: memberId,
-        userIcon: member?.userIcon,
-        resolved: resolveSpaceMemberName({
-          address: memberId,
-          displayName: member?.displayName,
-          primaryUsername: member?.primaryUsername,
-          globalDisplayName: member?.globalDisplayName,
-        }),
-      };
-    });
+    return selectedReaction.memberIds.map((memberId) => ({
+      address: memberId,
+      userIcon: members[memberId]?.userIcon,
+    }));
   }, [selectedReaction, members]);
 
   // Render emoji as Twemoji image or custom emoji
@@ -139,16 +152,13 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
                 key={user.address}
                 className="items-center gap-2 py-1 min-w-0"
               >
-                <UserAvatar
-                  userIcon={user.userIcon}
-                  // Initials come from the RESOLVED name so the avatar and the
-                  // label next to it can never disagree.
-                  displayName={formatResolvedName(user.resolved)}
+                <MemberName
                   address={user.address}
-                  size={24}
-                />
-                <ResolvedName
-                  resolved={user.resolved}
+                  spaceId={spaceId}
+                  enrich
+                  withAvatar
+                  avatarSize={24}
+                  userIcon={user.userIcon}
                   className="truncate-user-name flex-1 min-w-0"
                 />
               </Flex>

@@ -17,8 +17,13 @@
  * @example
  * ```tsx
  * function MessageComposer() {
+ *   const { resolve } = useNameResolver();
  *   const pillEditor = useMentionPillEditor({
  *     onTextChange: (text) => setMessageText(text),
+ *     resolveName: (address) => {
+ *       const r = resolve(address);
+ *       return r.isQnsVerified ? `${r.name}.q` : r.name;
+ *     },
  *   });
  *
  *   const { editorRef, insertPill, extractVisualText, getCursorPosition } = pillEditor;
@@ -40,10 +45,10 @@
 import { useRef, useCallback, useEffect } from 'react';
 import type { MentionOption } from './useMentionInput';
 import {
-  extractPillDataFromOption,
   createPillElement,
   extractStorageTextFromEditor,
   getCursorPositionInElement,
+  type PillData,
 } from '../../../utils/mentionPillDom';
 
 /**
@@ -52,6 +57,21 @@ import {
 export interface UseMentionPillEditorOptions {
   /** Callback when text changes (receives storage format text) */
   onTextChange: (text: string) => void;
+  /**
+   * Resolve a user address to the label its pill should carry, e.g.
+   * `useNameResolver().resolve` with the ".q" suffix applied. Required for
+   * `insertPill` to build a 'user' pill.
+   *
+   * This hook used to build user pills via `mentionPillDom`'s
+   * `extractPillDataFromOption`, which resolves a name ITSELF
+   * (`resolveMentionPillName`) from whatever fields the picked
+   * `MentionOption` happened to carry — a second, independent resolution
+   * path that could drift from how the SAME address renders in a message
+   * header or an already-inserted pill. `resolveName` routes user pills
+   * through the identity module instead, the same read every other migrated
+   * surface uses. See `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`.
+   */
+  resolveName: (address: string) => string;
 }
 
 /**
@@ -89,8 +109,42 @@ export interface UseMentionPillEditorReturn {
 export function useMentionPillEditor(
   options: UseMentionPillEditorOptions
 ): UseMentionPillEditorReturn {
-  const { onTextChange } = options;
+  const { onTextChange, resolveName } = options;
   const editorRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Build the pill data for a picked MentionOption. User pills route through
+   * `resolveName` (the identity module) instead of `mentionPillDom`'s own
+   * `extractPillDataFromOption` — see `UseMentionPillEditorOptions.resolveName`.
+   * Role/channel/everyone pills carry no member identity, so they're built
+   * the same way `extractPillDataFromOption` always did.
+   */
+  const buildPillData = useCallback(
+    (option: MentionOption): PillData => {
+      if (option.type === 'user') {
+        return {
+          type: 'user',
+          displayName: resolveName(option.data.address),
+          address: option.data.address,
+        };
+      } else if (option.type === 'role') {
+        return {
+          type: 'role',
+          displayName: option.data.displayName,
+          address: option.data.roleTag,
+        };
+      } else if (option.type === 'channel') {
+        return {
+          type: 'channel',
+          displayName: option.data.channelName || 'Unknown Channel',
+          address: option.data.channelId,
+        };
+      } else {
+        return { type: 'everyone', displayName: 'everyone', address: 'everyone' };
+      }
+    },
+    [resolveName]
+  );
 
   /**
    * Event delegation for pill clicks.
@@ -169,7 +223,7 @@ export function useMentionPillEditor(
       }
 
       // Convert option to pill data
-      const pillData = extractPillDataFromOption(option);
+      const pillData = buildPillData(option);
 
       // Create pill element (without click handler - event delegation handles it)
       const pillSpan = createPillElement(pillData);
@@ -304,7 +358,7 @@ export function useMentionPillEditor(
       const newText = extractStorageTextFromEditor(editorRef.current);
       onTextChange(newText);
     },
-    [onTextChange]
+    [onTextChange, buildPillData]
   );
 
   return {

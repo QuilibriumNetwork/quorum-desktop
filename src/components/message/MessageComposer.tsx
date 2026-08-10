@@ -1,11 +1,11 @@
-import React, { forwardRef, useImperativeHandle, useRef, useState, useCallback, useEffect } from 'react';
+import React, { forwardRef, useImperativeHandle, useRef, useState, useCallback, useEffect, useMemo } from 'react';
 import { Button, Flex, Tooltip, Icon, TextArea, Callout } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
-import { ResolvedName } from '../user/ResolvedName';
-import { resolveSpaceMemberName, type NameResolvableUser } from '../../utils/resolveMemberName';
+import { MemberName, useNameResolver } from '../../identity';
+import { createIPFSCIDRegex } from '@quilibrium/quorum-shared';
 import type { Group } from '@quilibrium/quorum-shared';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { isTouchDevice } from '../../utils/platform';
@@ -66,7 +66,7 @@ interface MessageComposerProps {
   fileError?: string | null;
   mentionError?: string | null;
   isProcessingImage?: boolean;
-  mapSenderToUser?: (senderId: string) => NameResolvableUser | undefined;
+  mapSenderToUser?: (senderId: string) => any;
   setInReplyTo?: (inReplyTo: any) => void;
 
   // Message validation props
@@ -164,11 +164,49 @@ export const MessageComposer = forwardRef<
       canSendMessage,
     );
 
+    // Bulk imperative resolver: a picked mention becomes a raw DOM pill
+    // (mentionPillDom, via useMentionPillEditor.insertPill) — not a React
+    // render of one component per pill — so a hook cannot be called per
+    // address there (rules of hooks). Declared before useMentionPillEditor,
+    // which needs resolveMentionName for its own pill-building. See
+    // src/identity/useNameResolver.ts.
+    const { resolve, requestNames } = useNameResolver();
+    const resolveMentionName = useCallback(
+      (address: string): string => {
+        const resolved = resolve(address);
+        return resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
+      },
+      [resolve]
+    );
+
     // Mention pill editor hook (for contentEditable mode)
     const pillEditor = useMentionPillEditor({
       onTextChange: onChange,
+      resolveName: resolveMentionName,
     });
     const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
+
+    // Enrich every address already mentioned in THIS draft — bounded by the
+    // mentions in one message, not the autocomplete candidate list (which
+    // stays roster-only; see MentionDropdown). A pill already written to the
+    // DOM does not re-render when its profile lands (compose mode never
+    // rebuilds pills from `value`, unlike the edit textarea's mount-time
+    // rebuild), so this benefits a REPEATED mention of the same address
+    // later in the same draft, or an address whose profile another already-
+    // enriched surface (e.g. this composer's own reply-to preview) warmed
+    // first.
+    const mentionedAddresses = useMemo(() => {
+      const addresses = new Set<string>();
+      const userRegex = new RegExp(`@<(${createIPFSCIDRegex().source})>`, 'g');
+      let match: RegExpMatchArray | null;
+      while ((match = userRegex.exec(value)) !== null) {
+        addresses.add(match[1]);
+      }
+      return addresses;
+    }, [value]);
+    useEffect(() => {
+      requestNames(mentionedAddresses);
+    }, [mentionedAddresses, requestNames]);
 
     // Last caret position seen inside the contentEditable editor. Used to put
     // the caret back when focus has been away (emoji panel, search box, …).
@@ -785,15 +823,9 @@ export const MessageComposer = forwardRef<
               >
                 <span className="message-composer-reply-text flex items-center min-w-0 flex-1">
                   <span className="flex-shrink-0">{i18n._('Replying to')}</span>
-                  <ResolvedName
-                    resolved={resolveSpaceMemberName({
-                      address:
-                        mapSenderToUser(inReplyTo.content.senderId)?.address ??
-                        inReplyTo.content.senderId,
-                      displayName: mapSenderToUser(inReplyTo.content.senderId)?.displayName,
-                      primaryUsername: mapSenderToUser(inReplyTo.content.senderId)?.primaryUsername,
-                      globalDisplayName: mapSenderToUser(inReplyTo.content.senderId)?.globalDisplayName,
-                    })}
+                  <MemberName
+                    address={inReplyTo.content.senderId}
+                    enrich
                     className="ml-1 truncate-user-name-chat"
                   />
                 </span>

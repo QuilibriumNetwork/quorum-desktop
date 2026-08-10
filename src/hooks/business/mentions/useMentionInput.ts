@@ -33,6 +33,26 @@ const mentionCandidateName = (u: User): string =>
     globalDisplayName: u.globalDisplayName,
   }).name;
 
+// Match against every field a user could be FOUND or SHOWN by: the per-space
+// override, the QNS username, the global name (the roster ladder's fallback
+// tier — see mentionCandidateName above), and the raw address. Missing
+// `globalDisplayName` here was a real bug: a follow-global member (no
+// per-space override, the default state) is DISPLAYED by their global name,
+// but a query matching only that name found nobody, because the old
+// predicate never read the field the label actually came from.
+const userMatchesQuery = (user: User, queryLower: string): boolean => {
+  const name = user.displayName?.toLowerCase() || '';
+  const globalName = user.globalDisplayName?.toLowerCase() || '';
+  const qns = user.primaryUsername?.toLowerCase() || '';
+  const addr = user.address.toLowerCase();
+  return (
+    name.includes(queryLower) ||
+    globalName.includes(queryLower) ||
+    qns.includes(queryLower) ||
+    addr.includes(queryLower)
+  );
+};
+
 // Discriminated union for display
 export type MentionOption =
   | { type: 'user'; data: User }
@@ -125,13 +145,8 @@ export function useMentionInput({
 
       const queryLower = query.toLowerCase();
 
-      // Filter users whose QNS name, displayName, or address matches the query.
-      const matches = users.filter(user => {
-        const name = user.displayName?.toLowerCase() || '';
-        const qns = user.primaryUsername?.toLowerCase() || '';
-        const addr = user.address.toLowerCase();
-        return name.includes(queryLower) || qns.includes(queryLower) || addr.includes(queryLower);
-      });
+      // Filter users matching the name they're actually SHOWN by (or QNS/address).
+      const matches = users.filter(user => userMatchesQuery(user, queryLower));
 
       // Sort by relevance against the name the user is shown as (QNS wins).
       const sorted = sortByRelevance(matches, query, mentionCandidateName);
@@ -147,13 +162,8 @@ export function useMentionInput({
 
       const queryLower = query.toLowerCase();
 
-      // Filter users whose QNS name, displayName, or address matches the query.
-      const matches = users.filter(user => {
-        const name = user.displayName?.toLowerCase() || '';
-        const qns = user.primaryUsername?.toLowerCase() || '';
-        const addr = user.address.toLowerCase();
-        return name.includes(queryLower) || qns.includes(queryLower) || addr.includes(queryLower);
-      });
+      // Filter users matching the name they're actually SHOWN by (or QNS/address).
+      const matches = users.filter(user => userMatchesQuery(user, queryLower));
 
       // Sort by relevance against the name the user is shown as (QNS wins).
       const sorted = sortByRelevance(matches, query, mentionCandidateName);

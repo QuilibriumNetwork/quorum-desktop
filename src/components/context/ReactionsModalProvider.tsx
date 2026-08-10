@@ -9,6 +9,7 @@ interface ReactionsModalContextType {
     reactions: Reaction[];
     customEmojis: CustomEmoji[];
     members: Record<string, MemberInfo>;
+    spaceId: string;
   }) => void;
 }
 
@@ -31,6 +32,7 @@ interface ReactionsModalProviderProps {
     reactions: Reaction[];
     customEmojis: CustomEmoji[];
     members: Record<string, MemberInfo>;
+    spaceId: string;
   }) => void;
 }
 

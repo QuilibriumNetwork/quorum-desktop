@@ -177,11 +177,6 @@ export default [
     // Phase D and this whole block is deleted in Phase E. Remove your file
     // from it as part of migrating it. Never add one.
     files: [
-      'src/components/message/MessageComposer.tsx',
-      'src/components/message/MentionDropdown.tsx',
-      'src/components/message/PinnedMessagesPanel.tsx',
-      'src/components/message/ReactionsList.tsx',
-      'src/components/modals/ReactionsModal.tsx',
       'src/components/modals/SpaceSettingsModal/Account.tsx',
       'src/components/thread/ThreadPanel.tsx',
       'src/components/thread/ThreadsListPanel.tsx',
@@ -193,7 +188,6 @@ export default [
       'src/components/direct/DMUserProfileSidebar.tsx',
       'src/components/space/Channel.tsx',
       'src/hooks/business/mentions/useMentionInput.ts',
-      'src/hooks/business/mentions/useMentionPillEditor.ts',
       'src/hooks/business/spaces/useInviteManagement.ts',
       'src/hooks/business/notifications/useGlobalSenderResolver.ts',
       'src/utils/mentionPillDom.ts',
