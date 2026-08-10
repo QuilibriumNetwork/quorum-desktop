@@ -15,18 +15,23 @@ related:
   - ".agents/issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md"
 ---
 
-# Six name surfaces never reached the resolver
+# Eight name surfaces never reached the resolver
 
 ## Status
 
-**Fixed on branch `fix/name-surfaces-bypassing-the-resolver` (`8d70aa9d5`), not
-yet merged.** Suite green at 1235, lint unchanged at 0 errors, typecheck clean.
-Every rule added was shown red with its fix reverted.
+**Fixed on branch `fix/name-surfaces-bypassing-the-resolver`, not yet merged.**
+Suite green at 1244, lint unchanged at 0 errors, typecheck clean. Every rule
+added was shown red with its fix reverted.
 
-**Not yet visually verified in the running app.** The unit level is covered; what
-is not is that the right string reaches the right pixels. See "What is still
-unverified" below — that is the honest remaining gap, and it is the part a test
-cannot close.
+Two distinct defects are covered here: **six surfaces that read a name by hand**
+(the audit, parity item 6, plus item 7), and **two that special-case YOUR OWN
+identity** and so never had a QNS name to render at all. The second pair was
+found by the operator in the running app after the first six were fixed, and is
+the reason the visual pass below is not optional.
+
+**Partially verified visually.** The operator confirmed the two self-surface
+defects with `/dev/fake-qns`; their fixes are not yet re-confirmed, and the other
+six have not had a visual pass. See "What is still unverified".
 
 Part of this work is identity-resolution hardening whose detail is held
 privately. This file is the public hub and deliberately does not restate it.
@@ -58,6 +63,63 @@ and an independent review found two more. Final count **six**.
 | DM list search (`DirectMessageContactsList.tsx:147`) | Matched only the stored name, so a row the list displays under a QNS name could not be found by typing it | fixed |
 | `MessagePreview` header (`MessagePreview.tsx:204`) | Hand-rolled its own fallback chain | fixed (latent — see below) |
 | Per-space name placeholder (`SpaceSettingsModal/Account.tsx:217`) | Static `t\`Display Name\`` — item (7) | fixed |
+| Profile card, YOUR OWN (`UserProfile.tsx:120`) | Skipped the public-profile fetch when the card was your own | fixed |
+| DM messages, YOUR OWN (`DirectMessage.tsx:298`) | Built the self entry from `currentPasskeyInfo`, which has no QNS name | fixed |
+
+**Eight, not six.** The last two were found by the operator testing the first
+six in the running app with `/dev/fake-qns`, which is the argument for doing that
+pass rather than trusting a green suite: both were invisible to the audit because
+neither reads a roster row by hand. They are a different defect with a different
+shape, described next.
+
+## The self tier, which is the second defect this file covers
+
+**Desktop has no self tier**, and the parity document already says so in its
+shared-code section: *"The self tier. Mobile resolves its own row from a live
+in-memory profile; desktop has no equivalent concept."* That was recorded as a
+reason NOT to move code into `quorum-shared`. It is also, it turns out, a bug.
+
+The rule: wherever the generic member path runs, self is fine — channel message
+headers and the member sidebar both resolve, because
+`useMembersWithPublicProfileFallback` fetches every visible sender including you.
+Wherever self is **special-cased from `currentPasskeyInfo`**, it breaks, because
+that record is the device-local auth profile and carries no `primary_username`.
+
+Two instances, both reported from the running app:
+
+**The profile card.** `needsUsernameFetch = !props.user.primaryUsername && !isOwnProfile`.
+The exclusion reads as obviously safe — surely we know our own identity. One
+fetch feeds TWO fields, so skipping it cost both: the QNS name, and the GLOBAL
+name that the space resolver compares the roster name against. With the global
+name absent, `roster !== global` holds trivially and the roster name is returned
+as though deliberately chosen — **so the `.q` would have lost even had it been
+fetched.** A narrower fix that only restored `primary_username` would have looked
+right and stayed broken.
+
+**DM own messages.** The members map gave the partner `primaryUsername` from the
+public profile fetched immediately above, and built the self entry from
+`currentPasskeyInfo` alone. Your own messages therefore showed your global name
+next to a partner showing their `.q`, in the same thread.
+
+Neither costs a request: both read the same 1h-cached `publicProfileQueryKey`
+that other surfaces already populate. The "extra fetch" intuition was wrong here
+for the third time in this work — see the cost note below.
+
+### Where the guard had to go
+
+`utils/profileCardIdentity` holds the card's two rules so they can be tested
+without mounting a component with sixteen hooks. **The test asserts on the FETCH
+DECISION, not on the resolved name.** The resolver was never the broken part, so
+a test checking only that names come out right would neither have caught this nor
+catch it returning.
+
+### Still unfixed, same class
+
+`NavRail.tsx:94` reads `currentPasskeyInfo.displayName` for your own avatar and
+label. Same shape, not yet reported as visible; listed here so it is not
+rediscovered from scratch. The search surfaces
+(`useSearchResultDisplay*.ts`, `useBatchSearchResultsDisplay.ts:141`) also
+special-case self, and remain a documented deferral.
 
 ### The two that are worth understanding, not just listing
 
@@ -137,8 +199,15 @@ addresses are the DM partners the sidebar has already fetched **under the same
 key** — so it is a cache read, not a second round of requests. The fix is now
 complete.
 
-Worth keeping as a reminder that "this would cost N requests" deserves checking
-against the actual cache key before it is allowed to shrink a fix.
+The same wrong intuition is visible in the two self bugs: the profile card's
+`!isOwnProfile` exclusion and the DM's `currentPasskeyInfo`-only self entry both
+look like they are avoiding a redundant request, and both are reading a key that
+is already warm.
+
+**Three times in one piece of work, "this would cost N requests" was asserted
+without checking the cache key, and was wrong every time.** In a codebase where
+one query key is shared across every profile surface, that estimate is not
+intuitable — it has to be checked.
 
 ## What is still unverified
 
