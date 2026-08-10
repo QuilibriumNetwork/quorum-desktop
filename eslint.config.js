@@ -178,9 +178,6 @@ export default [
     // from it as part of migrating it. Never add one.
     files: [
       'src/components/modals/SpaceSettingsModal/Account.tsx',
-      'src/components/thread/ThreadPanel.tsx',
-      'src/components/thread/ThreadsListPanel.tsx',
-      'src/components/user/UserProfile.tsx',
       'src/components/user/ResolvedName.tsx',
       'src/components/direct/DirectMessage.tsx',
       'src/components/direct/DirectMessageContact.tsx',
@@ -192,7 +189,6 @@ export default [
       'src/hooks/business/notifications/useGlobalSenderResolver.ts',
       'src/utils/mentionPillDom.ts',
       'src/utils/conversationSearch.ts',
-      'src/utils/profileCardIdentity.ts',
     ],
     rules: { 'no-restricted-imports': 'off' },
   },
@@ -206,7 +202,6 @@ export default [
     // work around this rule instead of testing through <MemberName> /
     // useResolvedName) does not belong here.
     files: [
-      'src/dev/tests/utils/profileCardIdentity.test.ts',
       'src/dev/tests/utils/resolveNameForContext.test.ts',
       'src/dev/tests/utils/selfNamePlaceholder.test.ts',
       'src/dev/tests/utils/conversationSearch.test.ts',

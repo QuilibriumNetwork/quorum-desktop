@@ -1,16 +1,15 @@
 import { formatRelativeTime } from '@quilibrium/quorum-shared';
 import { Icon } from '../primitives';
 import type { ChannelThread } from '@quilibrium/quorum-shared';
+import { MemberName } from '../../identity';
 
 interface ThreadListItemProps {
   thread: ChannelThread;
   onOpen: (rootMessageId: string) => void;
-  resolveDisplayName: (senderId: string) => string;
 }
 
-export function ThreadListItem({ thread, onOpen, resolveDisplayName }: ThreadListItemProps) {
+export function ThreadListItem({ thread, onOpen }: ThreadListItemProps) {
   const title = thread.customTitle ?? thread.titleSnapshot ?? 'Thread';
-  const creatorName = resolveDisplayName(thread.createdBy);
   const replyLabel = thread.replyCount === 1 ? '1 reply' : `${thread.replyCount} replies`;
   const timeAgo = formatRelativeTime(thread.lastActivityAt);
 
@@ -31,7 +30,9 @@ export function ThreadListItem({ thread, onOpen, resolveDisplayName }: ThreadLis
         <span className="thread-list-item__title">{title}</span>
       </div>
       <div className="thread-list-item__meta">
-        <span>{`Started by ${creatorName}`}</span>
+        {/* Bounded per-panel surface (one row per thread starter) — enrich
+            so a QNS-verified starter shows their ".q". */}
+        <span>{'Started by '}<MemberName address={thread.createdBy} enrich /></span>
         <span className="thread-list-item__dot">&middot;</span>
         <span>{replyLabel}</span>
         <span className="thread-list-item__dot">&middot;</span>

@@ -12,14 +12,35 @@ import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { getThreadTitle } from '../../utils/threadTitle';
-import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
-import { IdentityScopeProvider } from '../../identity';
+import { IdentityScopeProvider, MemberName, useNameResolver } from '../../identity';
 import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
 const LazyEmojiPicker = React.lazy(() =>
   import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
 );
+
+// `useNameResolver` needs an ancestor <IdentityScopeProvider> — ThreadPanel
+// mounts its OWN provider in what it returns, so a hook call in ThreadPanel's
+// own function body would run BEFORE that provider exists in the tree (the
+// provider is a descendant of ThreadPanel, not an ancestor of it). This tiny
+// wrapper is rendered AS A CHILD of <IdentityScopeProvider> below, so its
+// hook call resolves against the real context. `resolve()` (no explicit
+// spaceId) already reads the provider's `defaultSpaceId`, which IS
+// `channelProps.spaceId` — the exact same scope TypingIndicator's names
+// need.
+const ThreadTypingIndicator: React.FC<{ scope: TypingScope | null }> = ({ scope }) => {
+  const { resolve } = useNameResolver();
+  return (
+    <TypingIndicator
+      scope={scope}
+      resolveName={(addr) => {
+        const r = resolve(addr);
+        return r.isQnsVerified ? `${r.name}.q` : r.name;
+      }}
+    />
+  );
+};
 
 export const ThreadPanel: React.FC = () => {
   const {
@@ -190,17 +211,6 @@ export const ThreadPanel: React.FC = () => {
     };
   }, [rootMessage, channelProps]);
 
-  const starterName = starterUser
-    ? formatResolvedName(
-        resolveSpaceMemberName({
-          address: starterUser.address,
-          displayName: starterUser.displayName,
-          primaryUsername: starterUser.primaryUsername,
-          globalDisplayName: starterUser.globalDisplayName,
-        }),
-      )
-    : null;
-
   const isThreadAuthor = useMemo(() => {
     if (!rootMessage?.threadMeta?.createdBy || !channelProps?.currentUserAddress) return false;
     return rootMessage.threadMeta.createdBy === channelProps.currentUserAddress;
@@ -314,7 +324,7 @@ export const ThreadPanel: React.FC = () => {
   const listHeaderContent = useMemo(() => (
     <div className="thread-panel__list-header">
       <div className="thread-panel__list-title">{threadTitle}</div>
-      {starterName && (
+      {starterUser && (
         <div className="thread-panel__list-started-by">
           {t`Started by`}{' '}
           <span
@@ -324,12 +334,15 @@ export const ThreadPanel: React.FC = () => {
             onClick={handleStarterClick}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleStarterClick(e as any); }}
           >
-            {starterName}
+            {/* Bounded single-person surface (the thread's starter) — enrich
+                so a QNS-verified starter shows their ".q", matching every
+                other "Started by" / header-style surface already migrated. */}
+            <MemberName address={starterUser.address} enrich />
           </span>
         </div>
       )}
     </div>
-  ), [threadTitle, starterName, handleStarterClick]);
+  ), [threadTitle, starterUser, handleStarterClick]);
 
   // Message resolves its sender through src/identity, which throws outside a
   // provider. ThreadPanel is a SIBLING of Channel in Space.tsx (not a
@@ -462,20 +475,14 @@ export const ThreadPanel: React.FC = () => {
 
       {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
-        <TypingIndicator
-          scope={typingScope}
-          resolveName={(addr) => {
-            const u = channelProps.mapSenderToUser(addr);
-            return formatResolvedName(
-              resolveSpaceMemberName({
-                address: u?.address ?? addr,
-                displayName: u?.displayName,
-                primaryUsername: u?.primaryUsername,
-                globalDisplayName: u?.globalDisplayName,
-              }),
-            );
-          }}
-        />
+        {/* Deliberately NOT enriched: typists are transient (a few seconds),
+            and enriching would mean subscribing to the typist list a second
+            time (TypingIndicator owns that subscription) just to fire a
+            profile request for a label about to disappear. Any address
+            already enriched elsewhere in this panel (the starter, a message
+            sender) still resolves its ".q" here for free — resolve() reads
+            whatever the provider already has cached. */}
+        <ThreadTypingIndicator scope={typingScope} />
         {isClosed ? (
           <div className="message-composer-container">
             <div className="message-composer-row">

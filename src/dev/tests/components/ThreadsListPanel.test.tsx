@@ -36,6 +36,16 @@ const olderThread: ChannelThread = {
   customTitle: 'Older Thread',
 };
 
+const getPublicProfile = vi.fn().mockResolvedValue({ data: null });
+vi.mock('../../../api/baseTypes', () => ({
+  QuorumApiClient: class {
+    getPublicProfile(address: string) {
+      return getPublicProfile(address);
+    }
+  },
+  isHandledFetchError: () => false,
+}));
+
 const mockUseChannelThreads = vi.fn();
 vi.mock('../../../hooks/business/threads/useChannelThreads', () => ({
   useChannelThreads: (args: unknown) => mockUseChannelThreads(args),
@@ -137,11 +147,16 @@ vi.mock('../../../components/ui/DropdownPanel', () => ({
 }));
 
 import { ThreadsListPanel } from '../../../components/thread/ThreadsListPanel';
+import { IdentityScopeProvider } from '../../../identity';
 
 function makeWrapper() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return ({ children }: { children: React.ReactNode }) =>
-    createElement(QueryClientProvider, { client }, children);
+    createElement(
+      QueryClientProvider,
+      { client },
+      createElement(IdentityScopeProvider, { rostersBySpace: {}, selfAddress: null }, children),
+    );
 }
 
 describe('ThreadsListPanel', () => {
@@ -151,8 +166,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     expect(screen.getByText(/JOINED THREADS/)).toBeInTheDocument();
@@ -166,8 +180,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     expect(screen.queryByText(/JOINED THREADS/)).not.toBeInTheDocument();
@@ -178,8 +191,7 @@ describe('ThreadsListPanel', () => {
   it('shows empty state when no threads', () => {
     mockUseChannelThreads.mockReturnValue({ data: [], isLoading: false });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     expect(screen.getByText(/No threads yet/i)).toBeInTheDocument();
@@ -192,8 +204,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     const input = screen.getByPlaceholderText(/Search threads/i);
@@ -210,8 +221,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     await user.type(screen.getByPlaceholderText(/Search threads/i), 'zzznomatch');

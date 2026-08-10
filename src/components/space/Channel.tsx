@@ -1551,7 +1551,6 @@ const Channel: React.FC<ChannelProps> = ({
                   onClose={() => setActivePanel(null)}
                   spaceId={spaceId}
                   channelId={channelId}
-                  mapSenderToUser={mapSenderToUser}
                 />
               </div>
               )}

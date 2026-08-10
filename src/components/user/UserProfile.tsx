@@ -21,11 +21,7 @@ import { t } from '@lingui/core/macro';
 import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from './UserAvatar';
 import { ResolvedName } from './ResolvedName';
-import { formatResolvedName } from '../../utils/resolveMemberName';
-import {
-  profileCardNeedsProfileFetch,
-  resolveProfileCardName,
-} from '../../utils/profileCardIdentity';
+import { useResolvedMemberName } from '../../identity';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { useQueryClient } from '@tanstack/react-query';
@@ -111,38 +107,38 @@ const UserProfile: React.FunctionComponent<{
   const { data: userNoteData } = useUserNote({ targetAddress: props.user.address });
   const queryClient = useQueryClient();
 
-  // QNS verified name ("name.q"). Enriched member paths (message senders, DM
-  // header) already pass `primaryUsername`. The member-list sidebar uses the
-  // raw roster (no per-member public-profile fetch, to avoid a roster-wide
-  // fetch storm), so it arrives without it. Fall back to a single on-demand
-  // public-profile fetch — only when the profile is actually open and the name
-  // isn't already present — so every surface shows the handle without the storm.
-  //
-  // Both rules live in `utils/profileCardIdentity`, tested there. In particular
-  // the fetch must NOT be skipped for your own profile; see that module for
-  // what skipping it cost.
-  const cardUser = {
-    address: props.user.address,
-    displayName: props.user.displayName,
-    primaryUsername: props.user.primaryUsername,
-    globalDisplayName: props.user.globalDisplayName as string | undefined,
-  };
-  const { data: openedUserPublicProfile } = useUserPublicProfile(
-    props.user.address,
-    { enabled: profileCardNeedsProfileFetch(cardUser, { spaceId: props.spaceId }) }
-  );
-  const resolvedName = resolveProfileCardName(cardUser, openedUserPublicProfile, {
+  // QNS verified name ("name.q"), resolved the same way every other migrated
+  // surface does: from the address + the roster/public-profile the ambient
+  // `<IdentityScopeProvider>` holds, NOT from whatever fields the caller
+  // happened to pass on `props.user`. `enrich` fetches this member's public
+  // profile on demand — the card is a bounded, one-at-a-time surface, so this
+  // is the canonical "profile card" example in the identity migration recipe.
+  // This replaced `utils/profileCardIdentity` (`profileCardNeedsProfileFetch`
+  // / `resolveProfileCardName`, deleted by this migration): that module
+  // existed only to merge caller-supplied fields with one on-demand fetch,
+  // which the provider already does for every other surface.
+  const resolvedName = useResolvedMemberName(props.user.address, {
     spaceId: props.spaceId,
+    enrich: true,
   });
 
+  // Bio and avatar are not part of the identity module's name ladder — top up
+  // from the SAME public-profile fetch `enrich` above just issued (identical
+  // react-query key, so this is a cache read, not a second network call when
+  // the request above already fired). This is what makes the card resolve
+  // its own bio/avatar from the address instead of from whatever the caller
+  // passed — see the regression this fixes in the module's test file.
+  const { data: openedUserPublicProfile } = useUserPublicProfile(props.user.address);
+
   // Bio resolution for the visible card:
-  //   1. Per-space override on SpaceMember (props.user.bio) wins when set.
-  //   2. For the current user's own profile, fall back to UserConfig.bio
+  //   1. Per-space override on SpaceMember (props.user.bio) wins when set —
+  //      a real per-space bio override, not a caller-supplied name fallback.
+  //   2. The fetched public profile's bio — the address-derived source that
+  //      makes this correct even when the caller passed nothing (e.g. a
+  //      mention-pill click, which only ever carries an address).
+  //   3. For the current user's own profile, fall back to UserConfig.bio
   //      (the global bio) so deleting the per-space override reveals the
   //      global one again instead of leaving an empty section.
-  //   3. For other members, useMembersWithPublicProfileFallback already
-  //      surfaces their public-profile bio when their per-space override
-  //      is empty AND they've opted into public profile.
   //
   // Subscribed via useQuery (not a getQueryData snapshot) so the card
   // re-renders if the global bio changes while it's open (e.g. user saves
@@ -157,7 +153,20 @@ const UserProfile: React.FunctionComponent<{
     enabled: isOwnProfile && !!currentPasskeyInfo?.address,
     networkMode: 'always',
   });
-  const resolvedBio = (props.user.bio as string | undefined) || ownConfig?.bio;
+  const resolvedBio =
+    (props.user.bio as string | undefined) ||
+    openedUserPublicProfile?.bio ||
+    ownConfig?.bio;
+
+  // Avatar: same address-derived top-up as bio. `resolvedName.name` (BARE,
+  // no ".q") — not `props.user.displayName` — so the initials fallback always
+  // agrees with the name actually rendered beside it (design constraint 4 of
+  // the identity migration: the avatar and the name must not disagree).
+  const resolvedUserIcon = (props.user.userIcon as string | undefined) || openedUserPublicProfile?.profile_image;
+  // String form of `resolvedName` for the moderation-modal payloads below —
+  // same suffix rule <MemberName>/<ResolvedName> render, kept local instead
+  // of importing `formatResolvedName` from the restricted `utils/resolveMemberName`.
+  const resolvedNameText = resolvedName.isQnsVerified ? `${resolvedName.name}.q` : resolvedName.name;
   const [noteValue, setNoteValue] = React.useState('');
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
@@ -249,8 +258,8 @@ const UserProfile: React.FunctionComponent<{
         // stacked below) — mirrors the DM profile drawer layout.
         <div className="user-profile-header">
           <UserAvatar
-            userIcon={props.user.userIcon}
-            displayName={props.user.displayName}
+            userIcon={resolvedUserIcon}
+            displayName={resolvedName.name}
             address={props.user.address}
             size={96}
           />
@@ -284,8 +293,8 @@ const UserProfile: React.FunctionComponent<{
           }
         >
           <UserAvatar
-            userIcon={props.user.userIcon}
-            displayName={props.user.displayName}
+            userIcon={resolvedUserIcon}
+            displayName={resolvedName.name}
             address={props.user.address}
             size={44}
             className="user-profile-icon"
@@ -474,7 +483,7 @@ const UserProfile: React.FunctionComponent<{
                         // real ".q" and let a forged one through unguarded, at
                         // the surface where being sure who you are acting on
                         // matters most.
-                        displayName: formatResolvedName(resolvedName),
+                        displayName: resolvedNameText,
                         userIcon: props.user.userIcon,
                         spaceId: props.spaceId!,
                         isUnblocking: isUserBlocked,
@@ -499,7 +508,7 @@ const UserProfile: React.FunctionComponent<{
                       openMuteUser({
                         address: props.user.address,
                         // Resolved, for the reason given on Block above.
-                        displayName: formatResolvedName(resolvedName),
+                        displayName: resolvedNameText,
                         userIcon: props.user.userIcon,
                         isUnmuting: isUserMuted,
                       });
@@ -522,7 +531,7 @@ const UserProfile: React.FunctionComponent<{
                       openKickUser({
                         address: props.user.address,
                         // Resolved, for the reason given on Block above.
-                        displayName: formatResolvedName(resolvedName),
+                        displayName: resolvedNameText,
                         userIcon: props.user.userIcon,
                       });
                       props.dismiss?.();

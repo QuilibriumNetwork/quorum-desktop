@@ -9,7 +9,6 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useThreadContext } from '../context/ThreadContext';
 import { isTouchDevice } from '../../utils/platform';
 import type { ChannelThread } from '@quilibrium/quorum-shared';
-import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
 import './ThreadsListPanel.scss';
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
@@ -19,12 +18,6 @@ interface ThreadsListPanelProps {
   onClose: () => void;
   spaceId: string;
   channelId: string;
-  mapSenderToUser: (senderId: string) => {
-    displayName?: string;
-    primaryUsername?: string;
-    globalDisplayName?: string;
-    address?: string;
-  } | undefined;
 }
 
 type ListItem =
@@ -36,7 +29,6 @@ export function ThreadsListPanel({
   onClose,
   spaceId,
   channelId,
-  mapSenderToUser,
 }: ThreadsListPanelProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const { messageDB } = useMessageDB();
@@ -51,19 +43,6 @@ export function ThreadsListPanel({
   useEffect(() => {
     if (!isOpen) setSearchQuery('');
   }, [isOpen]);
-
-  const resolveDisplayName = (senderId: string) => {
-    const u = mapSenderToUser(senderId);
-    if (!u) return senderId;
-    return formatResolvedName(
-      resolveSpaceMemberName({
-        address: u.address ?? senderId,
-        displayName: u.displayName,
-        primaryUsername: u.primaryUsername,
-        globalDisplayName: u.globalDisplayName,
-      }),
-    );
-  };
 
   const listItems = useMemo((): ListItem[] => {
     const now = Date.now();
@@ -165,7 +144,6 @@ export function ThreadsListPanel({
                 <ThreadListItem
                   thread={item.thread}
                   onOpen={handleOpen}
-                  resolveDisplayName={resolveDisplayName}
                 />
               </div>
             )
@@ -186,7 +164,6 @@ export function ThreadsListPanel({
               <ThreadListItem
                 thread={item.thread}
                 onOpen={handleOpen}
-                resolveDisplayName={resolveDisplayName}
               />
             </div>
           )
