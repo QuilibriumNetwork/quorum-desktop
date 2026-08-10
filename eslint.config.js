@@ -5,6 +5,28 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
 
+// Nothing outside src/identity/ may resolve a name itself. Call sites use
+// <MemberName> / useResolvedName, which take an ADDRESS — you cannot forget
+// a field you never pass.
+//
+// Patterns are bare module names (no forced "utils/" segment) so a
+// same-directory relative import is caught too, e.g. mentionPillDom.ts
+// importing './resolveMemberName' — a `**/utils/<name>` pattern would not
+// match that specifier, since the importing file already lives in utils/
+// and its own import never spells out "utils/".
+const noResolverImportsRules = {
+  'no-restricted-imports': ['error', {
+    patterns: [{
+      group: ['**/resolveMemberName', '**/mentionPillDom',
+              '**/conversationSearch', '**/profileCardIdentity',
+              '**/resolveGlobalSender', '**/resolveSelfName'],
+      message:
+        'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
+        'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
+    }],
+  }],
+};
+
 export default [
   {
     ignores: [
@@ -62,6 +84,7 @@ export default [
       ...react.configs.recommended.rules,
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
+      ...noResolverImportsRules,
       'react/jsx-no-target-blank': 'off',
       'react/prop-types': 'off', // TypeScript already validates prop types
       'react-refresh/only-export-components': [
@@ -105,6 +128,7 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       ...tseslint.configs.recommended[1]?.rules,
+      ...noResolverImportsRules,
       'react/jsx-no-target-blank': 'off',
       'react-refresh/only-export-components': [
         'warn',
@@ -131,5 +155,63 @@ export default [
       'react-hooks/refs': 'off',
       'react-hooks/use-memo': 'off',
     },
+  },
+  {
+    // RATCHET — every entry is a production file still to migrate to
+    // src/identity (<MemberName> / useResolvedName). Shrinks to zero during
+    // Phase D and this whole block is deleted in Phase E. Remove your file
+    // from it as part of migrating it. Never add one.
+    files: [
+      'src/components/message/Message.tsx',
+      'src/components/message/MessageComposer.tsx',
+      'src/components/message/MessageMarkdownRenderer.tsx',
+      'src/components/message/MessagePreview.tsx',
+      'src/components/message/MessageEditTextarea.tsx',
+      'src/components/message/MentionDropdown.tsx',
+      'src/components/message/PinnedMessagesPanel.tsx',
+      'src/components/message/ReactionsList.tsx',
+      'src/components/modals/ReactionsModal.tsx',
+      'src/components/modals/SpaceSettingsModal/Account.tsx',
+      'src/components/notifications/NotificationPanel.tsx',
+      'src/components/thread/ThreadPanel.tsx',
+      'src/components/thread/ThreadsListPanel.tsx',
+      'src/components/user/UserProfile.tsx',
+      'src/components/user/ResolvedName.tsx',
+      'src/components/direct/DirectMessage.tsx',
+      'src/components/direct/DirectMessageContact.tsx',
+      'src/components/direct/DirectMessageContactsList.tsx',
+      'src/components/direct/DMUserProfileSidebar.tsx',
+      'src/components/space/Channel.tsx',
+      'src/hooks/business/mentions/useMentionInput.ts',
+      'src/hooks/business/mentions/useMentionPillEditor.ts',
+      'src/hooks/business/spaces/useInviteManagement.ts',
+      'src/hooks/business/notifications/useGlobalSenderResolver.ts',
+      'src/utils/mentionPillDom.ts',
+      'src/utils/conversationSearch.ts',
+      'src/utils/profileCardIdentity.ts',
+    ],
+    rules: { 'no-restricted-imports': 'off' },
+  },
+  {
+    // RATCHET (tests) — direct unit tests of the six low-level resolver
+    // modules above, asserting THEIR behaviour while they still exist. Each
+    // entry disappears when its module (and this test) is deleted in Phase
+    // E, not when "migrated" in the Phase D sense — so this list shrinks on
+    // its own schedule, not in lockstep with the production list above. A
+    // test that imports one of these modules for any other reason (e.g. to
+    // work around this rule instead of testing through <MemberName> /
+    // useResolvedName) does not belong here.
+    files: [
+      'src/dev/tests/utils/profileCardIdentity.test.ts',
+      'src/dev/tests/utils/resolveNameForContext.test.ts',
+      'src/dev/tests/utils/selfNamePlaceholder.test.ts',
+      'src/dev/tests/utils/conversationSearch.test.ts',
+      'src/dev/tests/utils/mentionPillName.test.ts',
+      'src/dev/tests/utils/resolveMemberNameQnsGuard.test.ts',
+      'src/dev/tests/utils/mentionPillDom.unit.test.ts',
+      'src/dev/tests/utils/identityPlaceholder.test.ts',
+      'src/dev/tests/utils/resolveGlobalSender.globalSlot.test.ts',
+    ],
+    rules: { 'no-restricted-imports': 'off' },
   },
 ];
