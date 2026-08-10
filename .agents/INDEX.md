@@ -331,6 +331,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Make `allowSync` a per-device setting](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md)
 - 📋 [Record and show what the last config publish actually did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md)
 - 📋 [Backup/restore overhaul](issues/.open/2026-08-09-backup-restore-overhaul-design.md)
+- 📋 [Name resolution: an API that cannot express a partial identity](issues/.open/2026-08-10-identity-resolution-architecture-design.md)
 
 ### Deferred
 
@@ -770,4 +771,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-10 09:53:07
+**Last Updated**: 2026-08-10 10:18:05
