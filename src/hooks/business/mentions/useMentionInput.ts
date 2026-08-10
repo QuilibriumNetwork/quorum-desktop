@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Channel, Group } from '@quilibrium/quorum-shared';
-import { resolveSpaceMemberName } from '../../../utils/resolveMemberName';
+import { useNameResolver } from '../../../identity';
 
 interface User {
   address: string;
@@ -20,18 +20,6 @@ interface Role {
   roleTag: string;
   color: string;
 }
-
-// The name a user candidate is shown and matched by in the picker. Mentions
-// are a space feature, so the space rule applies: a custom per-space name
-// (roster name differing from the global name) wins; otherwise the QNS name
-// wins over the global name; then display name; then address.
-const mentionCandidateName = (u: User): string =>
-  resolveSpaceMemberName({
-    address: u.address,
-    displayName: u.displayName,
-    primaryUsername: u.primaryUsername,
-    globalDisplayName: u.globalDisplayName,
-  }).name;
 
 // Match against every field a user could be FOUND or SHOWN by: the per-space
 // override, the QNS username, the global name (the roster ladder's fallback
@@ -105,6 +93,27 @@ export function useMentionInput({
   const [filteredOptions, setFilteredOptions] = useState<MentionOption[]>([]);
   const [dropdownPosition] = useState({ x: 0, y: 0 }); // Will be positioned by CSS relative to textarea
 
+  // `resolve` reads the ambient roster maps a caller's <IdentityScopeProvider>
+  // already holds — the SAME data <MemberName>/MentionDropdown render a
+  // candidate from (row 10). NO `requestNames`: this surface can span a
+  // whole roster, so it must not enrich (same rule as the member sidebar) —
+  // sorting therefore orders by the roster name (per-space override, else the
+  // global name), never a fetched QNS name. See useMentionInput's file header
+  // and the identity migration recipe, design decision 3.
+  const { resolve } = useNameResolver();
+
+  // The name a user candidate is SORTED by — must match the name
+  // `<MemberName>` actually renders for them (MentionDropdown, row 10), not
+  // whatever fields happen to be on the `User` object. `userMatchesQuery`
+  // (filtering) stays on the raw fields — only sorting moved here.
+  const mentionCandidateName = useCallback(
+    (u: User): string => {
+      const r = resolve(u.address);
+      return r.isQnsVerified ? `${r.name}.q` : r.name;
+    },
+    [resolve]
+  );
+
   // Helper to sort by relevance: exact match > starts with > contains > alphabetical
   const sortByRelevance = useCallback(
     <T extends { displayName?: string; name?: string }>(
@@ -152,7 +161,7 @@ export function useMentionInput({
       const sorted = sortByRelevance(matches, query, mentionCandidateName);
       return sorted.slice(0, maxDisplayResults);
     },
-    [users, minQueryLength, maxDisplayResults, sortByRelevance]
+    [users, minQueryLength, maxDisplayResults, sortByRelevance, mentionCandidateName]
   );
 
   // Filter users for Tier 2 (1-2 chars) - bypasses minQueryLength
@@ -169,7 +178,7 @@ export function useMentionInput({
       const sorted = sortByRelevance(matches, query, mentionCandidateName);
       return sorted.slice(0, maxDisplayResults);
     },
-    [users, maxDisplayResults, sortByRelevance]
+    [users, maxDisplayResults, sortByRelevance, mentionCandidateName]
   );
 
   // Filter and rank roles based on query (Tier 3: requires minQueryLength)
@@ -344,7 +353,7 @@ export function useMentionInput({
     // Find first selectable index (skip group headers)
     const firstSelectableIndex = options.findIndex(option => option.type !== 'group-header');
     setSelectedIndex(Math.max(0, firstSelectableIndex));
-  }, [users, minQueryLength, sortByRelevance, filterUsers, filterUsersForTier2, filterRoles, filterRolesForTier2, filterChannelGroups, checkEveryoneMatch]);
+  }, [users, minQueryLength, sortByRelevance, mentionCandidateName, filterUsers, filterUsersForTier2, filterRoles, filterRolesForTier2, filterChannelGroups, checkEveryoneMatch]);
 
   // Detect @ and # mentions and extract query
   useEffect(() => {

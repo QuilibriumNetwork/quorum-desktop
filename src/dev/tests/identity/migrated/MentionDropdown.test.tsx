@@ -117,10 +117,26 @@ describe('MentionDropdown — user rows resolve via the identity module (no enri
       },
     ];
 
+    // useMentionInput's SORTING (Phase D row 19) reads the ambient roster via
+    // useNameResolver, so it now needs an <IdentityScopeProvider> ancestor —
+    // same roster this file's other tests already mount.
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    const wrapper = ({ children }: { children: React.ReactNode }) => (
+      <QueryClientProvider client={client}>
+        <IdentityScopeProvider
+          spaceId={SPACE_ID}
+          rostersBySpace={{ [SPACE_ID]: { [ADDR]: { display_name: '', global_display_name: 'Alice' } } }}
+          selfAddress={null}
+        >
+          {children}
+        </IdentityScopeProvider>
+      </QueryClientProvider>
+    );
+
     const { result, rerender } = renderHook(
       (props: { textValue: string; cursorPosition: number }) =>
         useMentionInput({ ...props, users, onMentionSelect: () => {} }),
-      { initialProps: { textValue: '@ali', cursorPosition: 4 } },
+      { wrapper, initialProps: { textValue: '@ali', cursorPosition: 4 } },
     );
     // Force the debounced filter to re-run against the current props.
     rerender({ textValue: '@ali', cursorPosition: 4 });
