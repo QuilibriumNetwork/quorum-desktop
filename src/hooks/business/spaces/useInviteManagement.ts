@@ -11,8 +11,7 @@ import { useConversations, useRegistration } from '../../queries';
 import { isValidIPFSCID, formatAddress, type Conversation, type Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
-import { resolveMemberName, formatResolvedName } from '../../../utils/resolveMemberName';
-import { useConversationsWithProfileBackfill } from '../conversations/useConversationsWithProfileBackfill';
+import { useNameResolver } from '../../../identity';
 
 export interface UseInviteManagementOptions {
   spaceId: string;
@@ -112,29 +111,24 @@ export const useInviteManagement = (
     [conversations],
   );
 
-  // Same backfill the DM sidebar uses, for the same reason: `primary_username`
-  // lives only in the public profile, so a raw conversation row cannot carry a
-  // QNS name.
-  //
-  // This costs nothing in practice despite being N lookups. The backfill keys on
-  // `publicProfileQueryKey` with a 1h staleTime, and the addresses here are the
-  // DM partners the sidebar has already fetched under that exact key — so this
-  // is a cache read, not a second round of requests.
-  const enrichedConversations = useConversationsWithProfileBackfill(directConversations);
+  // Can list every DM conversation the user has — same rule as the member
+  // sidebar / mention picker: this surface must NOT enrich. `resolve` reads
+  // the ambient <IdentityScopeProvider> (mounted by SpaceSettingsModal, one
+  // level up) with NO `requestNames` call, so opening this tab issues no
+  // public-profile fetch of its own. A partner with no published profile
+  // still gets a real name from the provider's `locallyKnownNames` (the
+  // conversation's own local displayName — SpaceSettingsModal builds that
+  // map the same way DirectMessage/DirectMessageContactsList do); a partner
+  // already enriched elsewhere in the session still shows their `.q` for
+  // free, because `resolve()` reads whatever the provider already has
+  // cached — it does not care who asked.
+  const { resolve } = useNameResolver();
 
   // Get user options for dropdown
   const getUserOptions = useCallback(() => {
-    // A conversation row's `displayName` is a name off the wire, so it goes
-    // through the resolver like every other name. This dropdown is where you
-    // choose who to hand a Space invite to, and it used to render the raw field.
-    return enrichedConversations.map((conversation) => {
-      const label = formatResolvedName(
-        resolveMemberName({
-          address: conversation.address,
-          displayName: conversation.displayName,
-          primaryUsername: conversation.primaryUsername,
-        }),
-      );
+    return directConversations.map((conversation) => {
+      const resolved = resolve(conversation.address, { global: true });
+      const label = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
       return {
         value: conversation.address,
         label,
@@ -144,7 +138,7 @@ export const useInviteManagement = (
         subtitle: formatAddress(conversation.address),
       };
     });
-  }, [enrichedConversations]);
+  }, [directConversations, resolve]);
 
   // Resolve manual address input
   useEffect(() => {
