@@ -1,35 +1,9 @@
 import {
-  hasReservedQnsSuffix,
-  resolveDisplayName as resolveSharedDisplayName,
+  resolveIdentity,
+  type MemberIdentity,
+  type IdentityScope,
 } from '@quilibrium/quorum-shared';
 import { realDisplayNameOrUndefined } from './identityPlaceholder';
-
-/**
- * A stored name that would forge the verified-QNS marker is not a name.
- *
- * Shared's `resolveDisplayName` enforces this for every tier it resolves, so
- * `resolveMemberName` below inherits it for free. `resolveSpaceMemberName` does
- * NOT — it implements the ladder itself and returns before ever reaching
- * shared, except in the all-empty case where there is nothing left to forge.
- *
- * That gap mattered: `resolveSpaceMemberName` is what messages, mentions,
- * reactions, notifications, pinned messages and the channel view all call, so
- * the shared guard covered DMs and left every space context exposed. A display
- * name of `alice.q` renders identically to a name somebody registered and
- * elected primary — `isQnsVerified` is computed and never rendered, so the
- * suffix is the only signal a viewer gets.
- *
- * Applied BEFORE the roster-vs-global echo comparison, not after. A forged
- * roster name must not merely lose to the global name, it must not participate:
- * were it compared raw, `roster !== global` would read as a deliberate
- * per-space name and return the forged string outright.
- *
- * The real fix is to make this function delegate to shared like its sibling
- * does, so there is one ladder rather than two. That is a larger change; this
- * closes the hole in the meantime.
- */
-const unreserved = (value: string): string =>
-  value && hasReservedQnsSuffix(value) ? '' : value;
 
 export interface ResolvedMemberName {
   /** The readable name to display. Never empty (falls back to the address). */
@@ -38,113 +12,96 @@ export interface ResolvedMemberName {
   isQnsVerified: boolean;
 }
 
-interface ResolvableMember {
+/**
+ * TEMPORARY desktop adapter over the shared rule.
+ *
+ * Exists only so the ~24 existing call sites keep compiling while they migrate
+ * to `src/identity`. Deleted in Phase E — do NOT add new callers, the eslint
+ * ratchet will reject them.
+ */
+const nullable = (v?: string | null): string | null => {
+  const t = (v ?? '').trim();
+  return t.length ? t : null;
+};
+
+const toIdentity = (m: {
+  address: string;
   displayName?: string | null;
   primaryUsername?: string | null;
-  address: string;
+  globalDisplayName?: string | null;
+  spaceOverrideName?: string | null;
+}): MemberIdentity => ({
+  address: m.address,
+  spaceName: nullable(m.spaceOverrideName ?? m.displayName),
+  qnsName: nullable(m.primaryUsername),
+  globalName: nullable(m.globalDisplayName),
+});
+
+const run = (identity: MemberIdentity, scope: IdentityScope): ResolvedMemberName =>
+  resolveIdentity(identity, { scope });
+
+export function resolveMemberName(
+  member: { displayName?: string | null; primaryUsername?: string | null; address: string },
+  opts: { spaceOverrideName?: string | null } = {},
+): ResolvedMemberName {
+  // The stored `'Unknown User'` literal (in any active locale) is a
+  // placeholder, not a name — demote it here, the single choke point every DM
+  // /global-context name surface goes through, so the ladder falls through to
+  // QNS and then the truncated address instead of rendering it verbatim. This
+  // is what keeps the conversation header and the DM sidebar agreeing about an
+  // unidentified partner; see
+  // .agents/issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md.
+  const globalName = nullable(realDisplayNameOrUndefined(member.displayName));
+
+  // `spaceOverrideName` is dead — MEASURED by grep 2026-08-10, no caller passes
+  // it. Mapped to the SPACE tier anyway rather than folded into globalName,
+  // because folding it would invert the ladder for any caller that started
+  // using it: an override is the most-specific tier, and the global name is the
+  // comparator it is checked against. Getting that backwards is the exact
+  // defect this whole change exists to make impossible.
+  const override = nullable(opts.spaceOverrideName);
+  if (override) {
+    return run(
+      {
+        address: member.address,
+        spaceName: override,
+        qnsName: nullable(member.primaryUsername),
+        globalName,
+      },
+      'space',
+    );
+  }
+
+  return run(
+    {
+      address: member.address,
+      // Global scope has no per-space tier; the caller's displayName IS the
+      // global name here.
+      spaceName: null,
+      qnsName: nullable(member.primaryUsername),
+      globalName,
+    },
+    'global',
+  );
 }
 
-/** Fields a `mapSenderToUser`/`resolveSender` result exposes for name resolution. */
 export interface NameResolvableUser {
   displayName?: string;
   primaryUsername?: string;
-  /** Global name from the public profile; lets resolveSpaceMemberName tell a
-   *  per-space name from the global default. */
   globalDisplayName?: string;
   address?: string;
   userIcon?: string;
 }
 
-/**
- * Desktop (camelCase) adapter over the shared `resolveDisplayName` rule, the
- * single source of precedence: spaceOverrideName → QNS → displayName → address.
- * For DM/global contexts the QNS name wins over `displayName`; space contexts
- * use `resolveSpaceMemberName`. The ".q" suffix is applied at render
- * (`<ResolvedName>` / `formatResolvedName`), not baked into `name`.
- */
-export function resolveMemberName(
-  member: ResolvableMember,
-  opts: { spaceOverrideName?: string | null } = {},
-): ResolvedMemberName {
-  const { name, isQnsVerified } = resolveSharedDisplayName(
-    {
-      address: member.address,
-      // The stored `'Unknown User'` literal is a placeholder, not a name.
-      // Demote it here — the single choke point every name surface goes
-      // through — so the ladder continues to QNS and then the truncated
-      // address instead of rendering the placeholder verbatim. Without this
-      // the sidebar showed "Unknown User" while the header, which demoted it
-      // inline, showed the address for the very same row.
-      display_name: realDisplayNameOrUndefined(member.displayName),
-      primary_username: member.primaryUsername ?? undefined,
-    },
-    { spaceOverrideName: opts.spaceOverrideName },
-  );
-  return { name, isQnsVerified };
-}
-
-/**
- * Resolve a name shown in a SPACE context (roster / effectiveMembers). Use this,
- * not `resolveMemberName`, for any space-sourced name.
- *
- * The roster `displayName` can't say whether it's a deliberate per-space name or
- * just the global name echoed at join. We disambiguate by comparing it to
- * `globalDisplayName` (free — same public-profile fetch that carries the QNS
- * name): differs → deliberate, it wins; equal → QNS name wins; global unknown →
- * keep the roster name. See .agents/docs/features/qns-username-display.md.
- */
 export function resolveSpaceMemberName(member: {
   displayName?: string | null;
   primaryUsername?: string | null;
   globalDisplayName?: string | null;
   address: string;
 }): ResolvedMemberName {
-  const roster = unreserved((member.displayName ?? '').trim());
-  const global = unreserved((member.globalDisplayName ?? '').trim());
-  const qns = unreserved((member.primaryUsername ?? '').trim());
-
-  // A roster name that DIFFERS from the global one is a deliberate per-space
-  // override and outranks everything.
-  if (roster && roster !== global) {
-    return { name: roster, isQnsVerified: false };
-  }
-
-  if (qns) return { name: qns, isQnsVerified: true };
-
-  // The global slot is a real TIER, not just a comparator.
-  //
-  // It used to be neither returned nor fallen back to: callers reached the right
-  // answer only when they happened to pass an ALREADY-MERGED displayName from
-  // useMembersWithPublicProfileFallback. Callers passing the raw roster field —
-  // the member sidebar is one — got a truncated address instead.
-  //
-  // That was latent while every roster row carried a stamped override. Once the
-  // override is correctly empty (its normal state under the two-slot model), it
-  // renders as an address for everyone. Closing it here rather than at each call
-  // site, so no surface can miss the tier again.
-  if (global) return { name: global, isQnsVerified: false };
-
-  return resolveMemberName({
-    address: member.address,
-    displayName: member.displayName,
-    primaryUsername: member.primaryUsername,
-  });
+  return run(toIdentity(member), 'space');
 }
 
-/**
- * Pick the right resolver for a message-shaped surface.
- *
- * "Is this a DM?" decides which ladder applies — a DM has no per-space tier, so
- * the QNS name outranks the plain display name there, while in a space a
- * deliberate per-space name outranks both. That choice was hand-written at three
- * separate call sites (the message body, the mention pills, the message
- * preview), which is one ladder per surface and exactly how the two pill
- * builders came to disagree. One function, so a fourth surface cannot invent a
- * fourth answer.
- *
- * Callers pass `isDm` rather than the message because the DM test itself
- * (`spaceId === channelId`) belongs to the message, not to name resolution.
- */
 export function resolveNameForContext(
   user: {
     displayName?: string | null;
@@ -154,25 +111,12 @@ export function resolveNameForContext(
   },
   { isDm = false }: { isDm?: boolean } = {},
 ): ResolvedMemberName {
-  return isDm
-    ? resolveMemberName({
-        address: user.address,
-        displayName: user.displayName,
-        primaryUsername: user.primaryUsername,
-      })
-    : resolveSpaceMemberName({
-        address: user.address,
-        displayName: user.displayName,
-        primaryUsername: user.primaryUsername,
-        globalDisplayName: user.globalDisplayName,
-      });
+  return isDm ? resolveMemberName(user) : resolveSpaceMemberName(user);
 }
 
 /**
- * Flatten a resolved name to a plain string for non-JSX contexts (input
- * placeholders, aria-labels, tooltip content, search match text). Appends the
- * ".q" suffix when the name is the verified QNS username. For JSX render sites,
- * prefer the `<ResolvedName>` component so the suffix can be accent-styled.
+ * Flatten a resolved name to a plain string for non-JSX contexts. Appends ".q"
+ * when the name is the verified QNS username.
  */
 export function formatResolvedName(resolved: ResolvedMemberName): string {
   return resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
