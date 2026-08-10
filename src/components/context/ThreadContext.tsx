@@ -12,6 +12,14 @@ import type { RosterNameRow } from '../../identity';
 export interface ThreadChannelProps {
   spaceId: string;
   channelId: string;
+  // RAW roster (Channel.tsx's own `members`, NOT the public-profile-
+  // backfilled `effectiveMembers`). Feeds MessageList's `members` prop,
+  // which is where the membership/kicked GATE
+  // (`resolveMessageListSenderGate`, Phase D row 22) reads from — a
+  // security property that must read the same raw source every surface's
+  // gate reads, never a backfill hook's output. See the fix-round-1 report
+  // at .superpowers/sdd/2026-08-10-identity-resolution-architecture-plan/
+  // phase-d-rows-22-24-report.md for why this was wrong before.
   members: any;
   // The SAME rosterRows object Channel.tsx builds for its own
   // <IdentityScopeProvider> (from the RAW `members` map, not the

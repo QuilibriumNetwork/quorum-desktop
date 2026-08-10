@@ -21,15 +21,61 @@ import tseslint from 'typescript-eslint';
 // `mentionPillDom` came off this list in Task 7: it no longer resolves a
 // name at all (resolveMentionPillName was deleted with it), so there is
 // nothing left on that module for the rule to restrict.
+const deadModulePatterns = [
+  {
+    group: ['**/resolveMemberName', '**/conversationSearch', '**/profileCardIdentity',
+            '**/resolveSelfName'],
+    message:
+      'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
+      'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
+  },
+];
+
 const noResolverImportsRules = {
+  'no-restricted-imports': ['error', { patterns: deadModulePatterns }],
+};
+
+// Fix round 1 on Phase D rows 22-24: after Task 7 deleted resolveMemberName /
+// conversationSearch / profileCardIdentity / resolveSelfName, the rule above
+// could no longer fire on anything that still exists — a tombstone, not a
+// guard. What everyone now reaches for instead is the LOW-LEVEL primitive
+// underneath src/identity's own public API: `resolveIdentity` (the tier
+// picker, from @quilibrium/quorum-shared) and `identityFromMaps` (the tier
+// ASSEMBLER, src/identity/identityProvider.ts). Restrict those directly, so
+// the rule guards the thing that actually matters again. App code uses
+// <MemberName> / useResolvedName / useNameResolver — nothing else needs
+// either primitive.
+//
+// Scoped to `src/**` with `ignores: ['src/identity/**']` below (not baked
+// into `noResolverImportsRules` itself) because src/identity/ is the module
+// that legitimately calls both — useNameResolver.ts and useResolvedName.ts
+// import identityFromMaps directly, and identityFromMaps itself calls
+// resolveIdentity nowhere (resolveIdentity is called by useResolvedName.ts
+// too). Restricting them globally would break the module meant to own them.
+const identityPrimitivePatterns = [
+  ...deadModulePatterns,
+  {
+    group: ['**/identityProvider'],
+    importNames: ['identityFromMaps'],
+    message:
+      'identityFromMaps is the tier ASSEMBLER internal to src/identity — only ' +
+      'src/identity/ may call it directly. Resolve via <MemberName> / ' +
+      'useResolvedName / useNameResolver instead. See .agents/issues/.open/' +
+      '2026-08-10-identity-resolution-architecture-design.md',
+  },
+];
+const noIdentityPrimitiveImportRules = {
   'no-restricted-imports': ['error', {
-    patterns: [
+    patterns: identityPrimitivePatterns,
+    paths: [
       {
-        group: ['**/resolveMemberName', '**/conversationSearch', '**/profileCardIdentity',
-                '**/resolveSelfName'],
+        name: '@quilibrium/quorum-shared',
+        importNames: ['resolveIdentity'],
         message:
-          'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
-          'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
+          'resolveIdentity is the low-level tier PICKER — only src/identity/ may ' +
+          'call it directly. Resolve via <MemberName> / useResolvedName / ' +
+          'useNameResolver instead. See .agents/issues/.open/' +
+          '2026-08-10-identity-resolution-architecture-design.md',
       },
     ],
   }],
@@ -163,5 +209,30 @@ export default [
       'react-hooks/refs': 'off',
       'react-hooks/use-memo': 'off',
     },
+  },
+  // Restrict the low-level identity-resolution primitives (resolveIdentity,
+  // identityFromMaps) to src/identity/ — see noIdentityPrimitiveImportRules'
+  // doc comment above. Narrower `files`/wider precedence (defined AFTER the
+  // general TS/TSX block above) means this REPLACES `no-restricted-imports`
+  // for every matching file; `ignores` keeps src/identity/ itself out of
+  // that replacement so it retains the dead-module-only rule.
+  {
+    files: ['src/**/*.{ts,tsx}'],
+    ignores: ['src/identity/**'],
+    rules: noIdentityPrimitiveImportRules,
+  },
+  // Exemption: direct unit tests of the ladder's own behaviour (the tier
+  // ASSEMBLER and the tier PICKER), asserting what they compute rather than
+  // going through <MemberName>/useResolvedName like every other test does.
+  // A component importing the primitive is not a fair exemption; a test
+  // whose entire job is pinning the primitive's own behaviour is — see
+  // each file's own doc comment for why it needs the real function instead
+  // of a mock. Defined AFTER the block above so it wins for these two files.
+  {
+    files: [
+      'src/dev/tests/identity/identityProvider.test.tsx',
+      'src/dev/tests/identity/identityResolvePerf.test.ts',
+    ],
+    rules: noResolverImportsRules,
   },
 ];

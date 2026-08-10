@@ -368,13 +368,15 @@ export const ThreadPanel: React.FC = () => {
   // provider. ThreadPanel is a SIBLING of Channel in Space.tsx (not a
   // descendant), so it does NOT inherit Channel's IdentityScopeProvider —
   // it needs its own. `channelProps.rosterRows` is the EXACT object
-  // Channel.tsx's own provider is built from (raw `members`, not the
-  // public-profile-backfilled `channelProps.members`/`effectiveMembers` —
-  // see the field's doc comment in ThreadContext.tsx for why re-deriving
-  // from the backfilled map is a trap: it happens to read the same today
-  // only because resolveIdentity's space!==global guard neutralises the
-  // difference, not because the two sources agree). Always computed (never
-  // inside the early-return below) so hook order stays fixed.
+  // Channel.tsx's own provider is built from (raw `members`) — see the
+  // field's doc comment in ThreadContext.tsx for why re-deriving from the
+  // public-profile-backfilled `effectiveMembers` map is a trap: it happens
+  // to read the same today only because resolveIdentity's space!==global
+  // guard neutralises the difference, not because the two sources agree.
+  // `channelProps.members` (passed to the message list below) is now ALSO
+  // the raw roster, not `effectiveMembers` — see that field's own doc comment
+  // in ThreadContext.tsx (the membership/kicked gate reads it). Always
+  // computed (never inside the early-return below) so hook order stays fixed.
   const rostersBySpace = useMemo(
     () => (channelProps?.spaceId ? { [channelProps.spaceId]: channelProps.rosterRows ?? {} } : {}),
     [channelProps?.spaceId, channelProps?.rosterRows],
@@ -463,6 +465,10 @@ export const ThreadPanel: React.FC = () => {
             messageList={allThreadMessages}
             setInReplyTo={composer.setInReplyTo}
             customEmoji={channelProps.customEmoji}
+            // RAW roster — see ThreadChannelProps.members's doc comment.
+            // The membership/kicked GATE below reads this directly; it must
+            // be the same raw source Channel's own per-space message list
+            // uses, not the public-profile-backfilled effectiveMembers map.
             members={channelProps.members}
             // Same enriched mapper the channel view uses. Without it MessageList
             // falls back to its internal mapper, and thread author names lose

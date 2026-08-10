@@ -33,6 +33,21 @@
 //     `onUserClick` payloads are click-payload leftovers UserProfile.tsx no
 //     longer reads either, kept only because dropping them buys nothing).
 //
+// SECURITY NOTE (fix round 1 on Phase D rows 22-24): this hook's merge
+// spreads `...local` (the raw roster row) before overriding specific
+// fields, so `isKicked` and other roster fields happen to survive into its
+// output today. Channel.tsx briefly fed that output — not the raw roster —
+// into `ThreadChannelProps.members`, which is what `<MessageList>`'s
+// membership/kicked GATE reads (`resolveMessageListSenderGate`, row 22).
+// The gate stayed closed only because of this hook's incidental
+// spread-then-override shape; nothing pinned that. A reasonable-looking
+// change here — returning an explicit field list instead of a spread —
+// would have silently reopened the gate for threads. Fixed by having
+// Channel.tsx feed the gate the raw roster directly (see
+// ThreadContext.tsx's `ThreadChannelProps.members` doc comment); this hook
+// no longer has any gate depending on its spread behaviour, but do not
+// reintroduce that dependency without re-reading this note.
+//
 // Why this hook can't just call `src/identity` itself for `displayName`:
 // Channel.tsx (the sole caller) builds its `mapSenderToUser` in its own
 // function body, which runs BEFORE `<IdentityScopeProvider>` — a DESCENDANT

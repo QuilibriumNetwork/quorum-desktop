@@ -1362,10 +1362,17 @@ const Channel: React.FC<ChannelProps> = ({
     threadCtx.setChannelProps({
       spaceId,
       channelId,
-      // Threads render messages too — pass the back-filled member map so
-      // sender displayName/avatar resolution is consistent with the
-      // channel view. Role/sidebar paths above still use raw `members`.
-      members: effectiveMembers,
+      // RAW roster, not `effectiveMembers` (the public-profile-backfilled
+      // map) — this feeds MessageList's `members` prop, which is where the
+      // membership/kicked GATE (`resolveMessageListSenderGate`, Phase D row
+      // 22) reads from. That gate is a security property and MUST read the
+      // same raw roster every other surface's gate reads (this component's
+      // own message list below passes raw `members` too); it must never depend
+      // on a backfill hook's incidental field-spreading to carry `isKicked`
+      // through. NAME/avatar resolution for thread messages is unaffected —
+      // that goes through `mapSenderToUser` below (still the enriched map)
+      // and, for rendered text, through src/identity via `rosterRows`.
+      members,
       // The SAME rosterRows object this component's own
       // <IdentityScopeProvider> below is built from (raw `members`, not
       // `effectiveMembers`) — so ThreadPanel's provider and this one
@@ -1394,7 +1401,7 @@ const Channel: React.FC<ChannelProps> = ({
       currentUserAddress: user.currentPasskeyInfo?.address,
     });
   }, [
-    spaceId, channelId, effectiveMembers, members, rosterRows, mentionUsers, roles, stickers, space?.emojis,
+    spaceId, channelId, members, rosterRows, mentionUsers, roles, stickers, space?.emojis,
     mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
     channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
     space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
