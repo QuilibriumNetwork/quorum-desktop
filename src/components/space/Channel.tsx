@@ -1309,6 +1309,11 @@ const Channel: React.FC<ChannelProps> = ({
       // sender displayName/avatar resolution is consistent with the
       // channel view. Role/sidebar paths above still use raw `members`.
       members: effectiveMembers,
+      // The SAME rosterRows object this component's own
+      // <IdentityScopeProvider> below is built from (raw `members`, not
+      // `effectiveMembers`) — so ThreadPanel's provider and this one
+      // resolve every name identically instead of merely equivalently.
+      rosterRows,
       roles,
       stickers,
       customEmoji: space?.emojis,
@@ -1332,7 +1337,7 @@ const Channel: React.FC<ChannelProps> = ({
       currentUserAddress: user.currentPasskeyInfo?.address,
     });
   }, [
-    spaceId, channelId, effectiveMembers, members, mentionUsers, roles, stickers, space?.emojis,
+    spaceId, channelId, effectiveMembers, members, rosterRows, mentionUsers, roles, stickers, space?.emojis,
     mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
     channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
     space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,

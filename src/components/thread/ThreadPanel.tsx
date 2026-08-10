@@ -334,23 +334,17 @@ export const ThreadPanel: React.FC = () => {
   // Message resolves its sender through src/identity, which throws outside a
   // provider. ThreadPanel is a SIBLING of Channel in Space.tsx (not a
   // descendant), so it does NOT inherit Channel's IdentityScopeProvider —
-  // it needs its own, built from the same enriched `members` map Channel
-  // already threaded through ThreadContext. Always computed (never inside
-  // the early-return below) so hook order stays fixed.
-  const rosterRows = useMemo(() => {
-    const rows: Record<string, { display_name?: string; global_display_name?: string }> = {};
-    const members = channelProps?.members ?? {};
-    for (const address of Object.keys(members)) {
-      rows[address] = {
-        display_name: members[address]?.displayName,
-        global_display_name: members[address]?.globalDisplayName,
-      };
-    }
-    return rows;
-  }, [channelProps?.members]);
+  // it needs its own. `channelProps.rosterRows` is the EXACT object
+  // Channel.tsx's own provider is built from (raw `members`, not the
+  // public-profile-backfilled `channelProps.members`/`effectiveMembers` —
+  // see the field's doc comment in ThreadContext.tsx for why re-deriving
+  // from the backfilled map is a trap: it happens to read the same today
+  // only because resolveIdentity's space!==global guard neutralises the
+  // difference, not because the two sources agree). Always computed (never
+  // inside the early-return below) so hook order stays fixed.
   const rostersBySpace = useMemo(
-    () => (channelProps?.spaceId ? { [channelProps.spaceId]: rosterRows } : {}),
-    [channelProps?.spaceId, rosterRows],
+    () => (channelProps?.spaceId ? { [channelProps.spaceId]: channelProps.rosterRows ?? {} } : {}),
+    [channelProps?.spaceId, channelProps?.rosterRows],
   );
 
   if (!isOpen || !threadId || !channelProps) return null;
