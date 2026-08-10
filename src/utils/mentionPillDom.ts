@@ -7,7 +7,6 @@
  * @module mentionPillDom
  */
 
-import type { MentionOption } from '../hooks/business/mentions/useMentionInput';
 import { resolveNameForContext, formatResolvedName } from './resolveMemberName';
 
 /**
@@ -64,52 +63,6 @@ export function resolveMentionPillName(
   { isDm = false }: { isDm?: boolean } = {}
 ): string {
   return formatResolvedName(resolveNameForContext(user, { isDm })) || 'Unknown User';
-}
-
-/**
- * Convert a MentionOption to PillData for pill creation.
- *
- * @param option - The mention option from autocomplete
- * @returns Pill data with type, displayName, and address
- *
- * @example
- * const pillData = extractPillDataFromOption({
- *   type: 'user',
- *   data: { address: '0x123', displayName: 'Alice' }
- * });
- * // => { type: 'user', displayName: 'Alice', address: '0x123' }
- */
-export function extractPillDataFromOption(option: MentionOption): PillData {
-  if (option.type === 'user') {
-    return {
-      type: 'user',
-      displayName: resolveMentionPillName({
-        address: option.data.address,
-        displayName: option.data.displayName,
-        primaryUsername: option.data.primaryUsername,
-        globalDisplayName: option.data.globalDisplayName,
-      }),
-      address: option.data.address,
-    };
-  } else if (option.type === 'role') {
-    return {
-      type: 'role',
-      displayName: option.data.displayName,
-      address: option.data.roleTag,
-    };
-  } else if (option.type === 'channel') {
-    return {
-      type: 'channel',
-      displayName: option.data.channelName || 'Unknown Channel',
-      address: option.data.channelId,
-    };
-  } else {
-    return {
-      type: 'everyone',
-      displayName: 'everyone',
-      address: 'everyone',
-    };
-  }
 }
 
 /**

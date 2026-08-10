@@ -177,11 +177,7 @@ export default [
     // Phase D and this whole block is deleted in Phase E. Remove your file
     // from it as part of migrating it. Never add one.
     files: [
-      'src/components/modals/SpaceSettingsModal/Account.tsx',
       'src/components/user/ResolvedName.tsx',
-      'src/components/space/Channel.tsx',
-      'src/hooks/business/mentions/useMentionInput.ts',
-      'src/hooks/business/spaces/useInviteManagement.ts',
       'src/hooks/business/notifications/useGlobalSenderResolver.ts',
       'src/utils/mentionPillDom.ts',
     ],

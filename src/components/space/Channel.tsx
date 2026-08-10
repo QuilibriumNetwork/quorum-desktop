@@ -30,12 +30,12 @@ import { MobileDrawer, ListSearchInput, TouchAwareListItem, FloatingPopover } fr
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { parseMessageHash } from '../../utils/messageHashNavigation';
-import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
-import { IdentityScopeProvider, MemberName } from '../../identity';
+import { IdentityScopeProvider, MemberName, useNameResolver } from '../../identity';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { TypingIndicator } from '../message/TypingIndicator';
+import { useTypingIndicator } from '../../hooks/business/messages/useTypingIndicator';
 import type { TypingScope } from '@quilibrium/quorum-shared';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { ThreadsListPanel } from '../thread/ThreadsListPanel';
@@ -94,6 +94,43 @@ function canPostInReadOnlyChannel(
       role.members.includes(userAddress)
   );
 }
+
+/**
+ * Typing indicator's resolved names. `useNameResolver` needs an ancestor
+ * `<IdentityScopeProvider>` — Channel's own function body runs BEFORE the
+ * provider it returns exists in the tree (the provider is a descendant of
+ * Channel, not an ancestor of it, until React actually mounts it). Same
+ * shape as ThreadPanel's `ThreadTypingIndicator` / DirectMessage's
+ * `DirectMessageComposerBar`.
+ *
+ * UNLIKE ThreadPanel's sibling (which deliberately does NOT enrich — see
+ * that file's comment above `<ThreadTypingIndicator>`), this one DOES: the
+ * main channel view is the highest-traffic surface in the app, and typists
+ * are a small, bounded set at any given moment (recipe rule 1), so
+ * `requestNames` on the current typist list is a small, worthwhile cost.
+ * The tradeoff paid for that: `useTypingIndicator(scope)` is subscribed to a
+ * SECOND time here (`<TypingIndicator>` owns its own subscription
+ * internally too) — cheap, a plain pub/sub, not a fetch.
+ *
+ * Exported for direct testing — Channel.tsx as a whole is too large to
+ * mount in a unit test.
+ */
+export const ChannelTypingIndicator: React.FC<{ scope: TypingScope | null }> = ({ scope }) => {
+  const typists = useTypingIndicator(scope);
+  const { resolve, requestNames } = useNameResolver();
+  React.useEffect(() => {
+    requestNames(typists);
+  }, [typists, requestNames]);
+  return (
+    <TypingIndicator
+      scope={scope}
+      resolveName={(addr) => {
+        const r = resolve(addr);
+        return r.isQnsVerified ? `${r.name}.q` : r.name;
+      }}
+    />
+  );
+};
 
 type ChannelProps = {
   spaceId: string;
@@ -1752,20 +1789,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
 
             <div className="message-editor-container" ref={composerContainerRef}>
-              <TypingIndicator
-                scope={typingScope}
-                resolveName={(addr) => {
-                  const u = mapSenderToUser(addr) as NameResolvableUser | undefined;
-                  return formatResolvedName(
-                    resolveSpaceMemberName({
-                      address: u?.address ?? addr,
-                      displayName: u?.displayName,
-                      primaryUsername: u?.primaryUsername,
-                      globalDisplayName: u?.globalDisplayName,
-                    }),
-                  );
-                }}
-              />
+              <ChannelTypingIndicator scope={typingScope} />
               <MessageComposer
                 canUseEveryone={canUseEveryone}
                 typingScope={typingScope}
