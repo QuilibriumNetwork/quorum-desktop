@@ -15,20 +15,33 @@ export interface UseResolvedNameOptions {
   global?: boolean;
 }
 
-/** The identity behind a name, for callers that need the tiers. */
-export function useMemberIdentity(
+/**
+ * Shared by `useMemberIdentity` and `useResolvedMemberName` so both get the
+ * tiers AND `defaultSpaceId` from a single `useIdentityContext()` read,
+ * instead of each hook reading the same context independently.
+ */
+function useMemberIdentityAndScope(
   address: string,
-  { spaceId }: { spaceId?: string } = {},
-): MemberIdentity {
+  spaceId: string | undefined,
+): { identity: MemberIdentity; defaultSpaceId: string | undefined } {
   const { sources, defaultSpaceId, request } = useIdentityContext();
   React.useEffect(() => {
     request(address);
   }, [address, request]);
   const effectiveSpaceId = spaceId ?? defaultSpaceId;
-  return React.useMemo(
+  const identity = React.useMemo(
     () => identityFromMaps(address, effectiveSpaceId, sources),
     [address, effectiveSpaceId, sources],
   );
+  return { identity, defaultSpaceId };
+}
+
+/** The identity behind a name, for callers that need the tiers. */
+export function useMemberIdentity(
+  address: string,
+  { spaceId }: { spaceId?: string } = {},
+): MemberIdentity {
+  return useMemberIdentityAndScope(address, spaceId).identity;
 }
 
 /** The resolved name as a string, with ".q" when verified. For aria-labels,
@@ -46,8 +59,7 @@ export function useResolvedMemberName(
   address: string,
   { spaceId, global = false }: UseResolvedNameOptions = {},
 ): ResolvedMemberName {
-  const identity = useMemberIdentity(address, { spaceId });
-  const { defaultSpaceId } = useIdentityContext();
+  const { identity, defaultSpaceId } = useMemberIdentityAndScope(address, spaceId);
   const scope = global || !(spaceId ?? defaultSpaceId) ? 'global' : 'space';
   return React.useMemo(
     () => resolveIdentity(identity, { scope }),
