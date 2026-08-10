@@ -129,7 +129,7 @@ const UserProfile: React.FunctionComponent<{
   };
   const { data: openedUserPublicProfile } = useUserPublicProfile(
     props.user.address,
-    { enabled: profileCardNeedsProfileFetch(cardUser) }
+    { enabled: profileCardNeedsProfileFetch(cardUser, { spaceId: props.spaceId }) }
   );
   const resolvedName = resolveProfileCardName(cardUser, openedUserPublicProfile, {
     spaceId: props.spaceId,

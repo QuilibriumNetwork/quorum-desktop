@@ -1841,6 +1841,14 @@ const Channel: React.FC<ChannelProps> = ({
                                 displayName: item.displayName,
                                 userIcon: item.userIcon,
                                 bio: item.bio,
+                                // Same lookup the row's <ResolvedName> does —
+                                // the virtualized item cannot carry these. See
+                                // UserProfileModalUser for why omitting them
+                                // does not merely degrade, it inverts.
+                                primaryUsername:
+                                  effectiveMembers[item.address]?.primaryUsername,
+                                globalDisplayName:
+                                  effectiveMembers[item.address]?.globalDisplayName,
                               },
                               event
                             )
@@ -2094,6 +2102,12 @@ const Channel: React.FC<ChannelProps> = ({
                         displayName: item.displayName,
                         userIcon: item.userIcon,
                         bio: (item as { bio?: string }).bio,
+                        // Same lookup the row's <ResolvedName> does — see
+                        // UserProfileModalUser.
+                        primaryUsername:
+                          effectiveMembers[item.address]?.primaryUsername,
+                        globalDisplayName:
+                          effectiveMembers[item.address]?.globalDisplayName,
                       },
                       { stopPropagation: () => {} } as React.MouseEvent
                     );

@@ -51,6 +51,67 @@ describe('profileCardNeedsProfileFetch — self is not a special case', () => {
       profileCardNeedsProfileFetch({ address: ADDRESS, primaryUsername: 'alice' }),
     ).toBe(false);
   });
+
+  it('still fetches in a space when the GLOBAL name is missing', () => {
+    // The QNS name alone decides nothing in a space: the ladder compares the
+    // roster name to the global name FIRST and returns the roster name when
+    // they differ, so a missing global name buries the ".q" before it is
+    // reached. A caller supplying one field and not the other must still top up.
+    expect(
+      profileCardNeedsProfileFetch(
+        { address: ADDRESS, displayName: 'GattoPardo Mobile', primaryUsername: 'gatto' },
+        { spaceId: 'space-1' },
+      ),
+    ).toBe(true);
+  });
+
+  it('does not fetch when the caller supplied the whole enriched identity', () => {
+    expect(
+      profileCardNeedsProfileFetch(
+        {
+          address: ADDRESS,
+          displayName: 'GattoPardo Mobile',
+          globalDisplayName: 'GattoPardo Mobile',
+          primaryUsername: 'gatto',
+        },
+        { spaceId: 'space-1' },
+      ),
+    ).toBe(false);
+  });
+});
+
+describe('resolveProfileCardName — the case reported from the app', () => {
+  it('shows the .q when the caller passes the enriched identity', () => {
+    // What the message list already renders as "gatto.q". The card was handed
+    // only `displayName` and so rendered "GattoPardo Mobile" beside it.
+    const r = resolveProfileCardName(
+      {
+        address: ADDRESS,
+        displayName: 'GattoPardo Mobile',
+        globalDisplayName: 'GattoPardo Mobile',
+        primaryUsername: 'gatto',
+      },
+      null,
+      { spaceId: 'space-1' },
+    );
+    expect(formatResolvedName(r)).toBe('gatto.q');
+  });
+
+  it('treats an EMPTY fetched global name as absent, not as a difference', () => {
+    // The fake-QNS overlay returns `display_name: ''` for a synthesized
+    // profile, and a real profile can carry an empty one too. Compared raw,
+    // '' !== 'GattoPardo Mobile' reads as a deliberate per-space name.
+    const r = resolveProfileCardName(
+      {
+        address: ADDRESS,
+        displayName: 'GattoPardo Mobile',
+        globalDisplayName: 'GattoPardo Mobile',
+      },
+      { primary_username: 'gatto', display_name: '' },
+      { spaceId: 'space-1' },
+    );
+    expect(formatResolvedName(r)).toBe('gatto.q');
+  });
 });
 
 describe('resolveProfileCardName — one fetch, two fields', () => {

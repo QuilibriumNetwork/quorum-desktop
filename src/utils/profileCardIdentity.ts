@@ -52,8 +52,17 @@ export interface FetchedPublicProfile {
  * the same 1h-cached `publicProfileQueryKey` that the channel and the user
  * settings modal already fetch.
  */
-export function profileCardNeedsProfileFetch(user: ProfileCardUser): boolean {
-  return !user.primaryUsername;
+export function profileCardNeedsProfileFetch(
+  user: ProfileCardUser,
+  { spaceId }: { spaceId?: string } = {},
+): boolean {
+  if (!user.primaryUsername) return true;
+  // In a space the QNS name alone is not enough to decide anything: the ladder
+  // compares the roster name against the GLOBAL name first, and without the
+  // latter that comparison always says "deliberate per-space name" and returns
+  // before the ".q" is ever considered. So a caller that supplies one and not
+  // the other must still trigger the top-up.
+  return !!spaceId && !!user.displayName && !user.globalDisplayName;
 }
 
 /**
