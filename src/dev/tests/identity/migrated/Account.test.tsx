@@ -192,4 +192,29 @@ describe('Account.tsx — per-space name placeholder, wrapped as SpaceSettingsMo
     const input = await screen.findByPlaceholderText('Your name in this Space');
     expect(input).toBeInTheDocument();
   });
+
+  it('fix round 1 — a forged primary_username ending in ".q" is dropped, never doubled to "alice.q.q"', async () => {
+    // `useMemberIdentity` returns the RAW MemberIdentity, not run through
+    // shared's resolveIdentity (which is where the forged-suffix guard,
+    // presentUnreserved, normally lives) — so Account.tsx must reapply the
+    // SAME shared hasReservedQnsSuffix check itself. This pins that it does.
+    getPublicProfile.mockResolvedValue({ data: { primary_username: 'alice.q', display_name: 'GattoPardo' } });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    render(
+      <I18nProvider i18n={i18n}>
+        <QueryClientProvider client={client}>
+          <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={{}} selfAddress={SELF_ADDR}>
+            <Account {...baseProps} />
+          </IdentityScopeProvider>
+        </QueryClientProvider>
+      </I18nProvider>,
+    );
+
+    // Falls through to the global name — the forged qns tier is dropped, not
+    // rendered (and never doubled to "alice.q.q").
+    const input = await screen.findByPlaceholderText('GattoPardo');
+    expect(input).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('alice.q.q')).not.toBeInTheDocument();
+    expect(screen.queryByPlaceholderText(/^alice\.q/)).not.toBeInTheDocument();
+  });
 });

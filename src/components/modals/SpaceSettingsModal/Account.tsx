@@ -28,6 +28,7 @@ import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
 import { useMemberIdentity } from '../../../identity';
+import { hasReservedQnsSuffix } from '@quilibrium/quorum-shared';
 
 interface AccountProps {
   spaceId: string;
@@ -109,6 +110,26 @@ const Account: React.FunctionComponent<AccountProps> = ({
     spaceId,
     enrich: true,
   });
+  // Fix round 1 (Phase D rows 19-21): `useMemberIdentity` returns the RAW
+  // `MemberIdentity` — unlike `useResolvedMemberName`, it is NOT run through
+  // shared's `resolveIdentity`, so its own forged-".q" guard
+  // (`presentUnreserved`, quorum-shared/src/utils/resolveDisplayName.ts:51-55,
+  // applied to every tier at resolveDisplayName.ts:109-113) never sees these
+  // values. Re-applying the SAME exported `hasReservedQnsSuffix` here (not a
+  // reimplementation) restores that guard for this call site. Switching to
+  // `useResolvedMemberName` instead was considered and rejected: its
+  // terminal fallback is `resolveIdentity`'s own truncated address, which
+  // would silently replace this field's deliberate instructional-copy
+  // fallback (see the placeholder's own comment below) with an address —
+  // a UX regression `useMemberIdentity` avoids by exposing the tiers
+  // separately.
+  const selfPlaceholderName = React.useMemo(() => {
+    const qns = (selfIdentity.qnsName ?? '').trim();
+    if (qns && !hasReservedQnsSuffix(qns)) return `${qns}.q`;
+    const global = (selfIdentity.globalName ?? '').trim();
+    if (global && !hasReservedQnsSuffix(global)) return global;
+    return null;
+  }, [selfIdentity.qnsName, selfIdentity.globalName]);
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const {
     confirmationStep,
@@ -235,9 +256,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
                 // this is the ONE place instructing an empty field, not
                 // rendering a member) the caller's instructional copy
                 // rather than the resolver's own truncated-address fallback.
-                selfIdentity.qnsName
-                  ? `${selfIdentity.qnsName}.q`
-                  : selfIdentity.globalName || t`Your name in this Space`
+                selfPlaceholderName || t`Your name in this Space`
               }
               labelType="static"
               error={!!displayNameError}

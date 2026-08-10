@@ -13,6 +13,7 @@ import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { getThreadTitle } from '../../utils/threadTitle';
 import { IdentityScopeProvider, MemberName, useNameResolver } from '../../identity';
+import { useTypingIndicator } from '../../hooks/business/messages/useTypingIndicator';
 import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
@@ -20,17 +21,36 @@ const LazyEmojiPicker = React.lazy(() =>
   import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
 );
 
-// `useNameResolver` needs an ancestor <IdentityScopeProvider> — ThreadPanel
-// mounts its OWN provider in what it returns, so a hook call in ThreadPanel's
-// own function body would run BEFORE that provider exists in the tree (the
-// provider is a descendant of ThreadPanel, not an ancestor of it). This tiny
-// wrapper is rendered AS A CHILD of <IdentityScopeProvider> below, so its
-// hook call resolves against the real context. `resolve()` (no explicit
-// spaceId) already reads the provider's `defaultSpaceId`, which IS
-// `channelProps.spaceId` — the exact same scope TypingIndicator's names
-// need.
-const ThreadTypingIndicator: React.FC<{ scope: TypingScope | null }> = ({ scope }) => {
-  const { resolve } = useNameResolver();
+/**
+ * `useNameResolver` needs an ancestor <IdentityScopeProvider> — ThreadPanel
+ * mounts its OWN provider in what it returns, so a hook call in ThreadPanel's
+ * own function body would run BEFORE that provider exists in the tree (the
+ * provider is a descendant of ThreadPanel, not an ancestor of it). This tiny
+ * wrapper is rendered AS A CHILD of <IdentityScopeProvider> below, so its
+ * hook call resolves against the real context. `resolve()` (no explicit
+ * spaceId) already reads the provider's `defaultSpaceId`, which IS
+ * `channelProps.spaceId` — the exact same scope TypingIndicator's names
+ * need. Same shape as Channel.tsx's `ChannelTypingIndicator`.
+ *
+ * ENRICHES — reconciled with `ChannelTypingIndicator` (fix round 1 of Phase D
+ * rows 19-21). This used to deliberately NOT enrich, reasoning that
+ * `useTypingIndicator(scope)` would need a SECOND subscription
+ * (`<TypingIndicator>` owns its own internally) just to fire a request for a
+ * label about to disappear. That reasoning undersold the fix: a typing
+ * indicator names one or two people — it IS the bounded case recipe rule 1
+ * describes — and the whole point of this migration is that the same
+ * address renders the same string everywhere, so "Alice is typing…" here and
+ * "alice.q" on her next message header must agree. The second subscription
+ * is real but cheap: `TypingService.subscribe` (quorum-shared) is a plain
+ * `Set<Listener>` registration against an in-memory map, no I/O, no
+ * network — not worth trading consistency for.
+ */
+export const ThreadTypingIndicator: React.FC<{ scope: TypingScope | null }> = ({ scope }) => {
+  const typists = useTypingIndicator(scope);
+  const { resolve, requestNames } = useNameResolver();
+  React.useEffect(() => {
+    requestNames(typists);
+  }, [typists, requestNames]);
   return (
     <TypingIndicator
       scope={scope}
@@ -475,13 +495,9 @@ export const ThreadPanel: React.FC = () => {
 
       {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
-        {/* Deliberately NOT enriched: typists are transient (a few seconds),
-            and enriching would mean subscribing to the typist list a second
-            time (TypingIndicator owns that subscription) just to fire a
-            profile request for a label about to disappear. Any address
-            already enriched elsewhere in this panel (the starter, a message
-            sender) still resolves its ".q" here for free — resolve() reads
-            whatever the provider already has cached. */}
+        {/* Enriches (see ThreadTypingIndicator above) — matches Channel's
+            typing indicator so the same person's name never disagrees
+            between the two surfaces. */}
         <ThreadTypingIndicator scope={typingScope} />
         {isClosed ? (
           <div className="message-composer-container">

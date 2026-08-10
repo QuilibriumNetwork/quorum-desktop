@@ -103,14 +103,16 @@ function canPostInReadOnlyChannel(
  * shape as ThreadPanel's `ThreadTypingIndicator` / DirectMessage's
  * `DirectMessageComposerBar`.
  *
- * UNLIKE ThreadPanel's sibling (which deliberately does NOT enrich — see
- * that file's comment above `<ThreadTypingIndicator>`), this one DOES: the
- * main channel view is the highest-traffic surface in the app, and typists
- * are a small, bounded set at any given moment (recipe rule 1), so
- * `requestNames` on the current typist list is a small, worthwhile cost.
- * The tradeoff paid for that: `useTypingIndicator(scope)` is subscribed to a
- * SECOND time here (`<TypingIndicator>` owns its own subscription
- * internally too) — cheap, a plain pub/sub, not a fetch.
+ * ENRICHES, matching `ThreadTypingIndicator` (reconciled in fix round 1 of
+ * Phase D rows 19-21 — an earlier version of this component enriched while
+ * ThreadPanel's sibling deliberately did not, so a typing sender's name
+ * could disagree between the two surfaces, exactly the class of bug this
+ * migration exists to eliminate). A typing indicator names one or two
+ * people — the bounded case recipe rule 1 describes — so `requestNames` on
+ * the current typist list is worth its small cost: `useTypingIndicator(scope)`
+ * is subscribed to a SECOND time here (`<TypingIndicator>` owns its own
+ * subscription internally too), but that's a plain in-memory `Set<Listener>`
+ * registration (`TypingService.subscribe`, quorum-shared), not a fetch.
  *
  * Exported for direct testing — Channel.tsx as a whole is too large to
  * mount in a unit test.
