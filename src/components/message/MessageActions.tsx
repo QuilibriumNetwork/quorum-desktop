@@ -1,10 +1,8 @@
 import React, { useState } from 'react';
-import { parse as parseEmoji } from '@twemoji/parser';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { Tooltip, Icon, type IconName } from '../primitives';
 import { useQuickReactions, useFrequentEmojis } from '../../hooks/business/messages';
 import { useShiftKey } from '../../hooks/ui/useShiftKey';
-import { emojiToUnified } from '../../utils/remarkTwemoji';
 import { t } from '@lingui/core/macro';
 
 interface MessageActionsProps {
@@ -214,18 +212,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           ) : (
             <>
               {/* Quick reactions - top 3 most frequently used emojis */}
-              {frequentEmojis.map(({ emoji, unified }) => {
-                // Resolve Twemoji image path from unified codepoint or native emoji
-                let twemojiSrc: string | null = null;
-                if (unified) {
-                  twemojiSrc = `/twitter/64/${unified}.png`;
-                } else {
-                  const entities = parseEmoji(emoji);
-                  if (entities.length > 0) {
-                    twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
-                  }
-                }
-
+              {frequentEmojis.map(({ emoji, twemojiSrc }) => {
                 return (
                   <div
                     key={emoji}

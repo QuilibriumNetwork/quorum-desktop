@@ -1,11 +1,9 @@
 import React from 'react';
-import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { MobileDrawer } from '../ui';
 import { Button, Icon } from '../primitives';
 import { useFrequentEmojis } from '../../hooks/business/messages';
-import { emojiToUnified } from '../../utils/remarkTwemoji';
 import './MessageActionsDrawer.scss';
 
 export interface MessageActionsDrawerProps {
@@ -144,17 +142,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   const reactionsContent = (
     <div className="message-actions-drawer__reactions">
       <div className="message-actions-drawer__reactions-row">
-        {frequentEmojis.map(({ emoji, unified }) => {
-          let twemojiSrc: string | null = null;
-          if (unified) {
-            twemojiSrc = `/twitter/64/${unified}.png`;
-          } else {
-            const entities = parseEmoji(emoji);
-            if (entities.length > 0) {
-              twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
-            }
-          }
-
+        {frequentEmojis.map(({ emoji, twemojiSrc }) => {
           return (
             <Button
               key={emoji}
