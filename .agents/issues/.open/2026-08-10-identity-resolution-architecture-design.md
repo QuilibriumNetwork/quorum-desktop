@@ -276,24 +276,53 @@ window where one client is half-migrated against a shared package the other
 cannot use. Desktop is the natural first mover because it is the only one that
 feels shared changes immediately.
 
-> ⚠️ **The trap this creates.** The breaking change (required, explicitly
-> nullable fields) hits mobile the instant someone bumps that version — and a
-> version bump normally looks like routine housekeeping. **Do not publish a
-> shared version carrying `MemberIdentity` until mobile is ready to migrate in
-> the same stroke**, or mobile will fail to build for reasons nobody connects to
-> this work. If a publish is needed sooner for unrelated reasons, keep the old
-> exports as adapters (step 1 does this) so the bump stays non-breaking.
+**What does and does not reach mobile** — worth stating precisely, because an
+earlier draft of this section got it wrong in both directions:
 
-The same asymmetry already caused confusion once: the forged-suffix guard landed
-in shared and reached desktop instantly via the symlink, while mobile still
-carried its own duplicate copy because npm had not been published past `2.1.0-39`.
+| event | does mobile see it? |
+|---|---|
+| shared change merges to shared's `master` | **no** — mobile resolves its pinned version |
+| lead dev publishes a new version to npm | **no** — mobile still pins the old number |
+| someone edits **mobile's** `package.json` to the new version | **yes**, and only then |
+
+So mobile is exposed at exactly one moment, and it is a deliberate PR in the
+mobile repo — not a merge and not a publish. There is no way to break mobile by
+accident from this side, which is what makes desktop-first safe. Step 1's
+adapters still earn their keep: they let that eventual mobile bump be routine
+rather than a flag-day migration.
+
+**We never run `npm publish`.** That is the lead dev's job. Our shared-side work
+ends at the `chore: bump to X.Y.Z-N` commit, which goes **direct on master as its
+own commit after the feature PR merges** — never on the feature branch, because
+squash-merge destroys it. Report the published version as blocked-on-lead-dev,
+not as an open task. See `[[quorum-shared-workflow]]` in the private vault.
+
+**Interop, the question to ask before shipping desktop:** *if this desktop build
+meets today's mobile build, what happens?* Nothing — this design is entirely
+read/render-side. No wire format, no synced config field, no protocol message
+changes. Old mobile talking to new desktop is unaffected, which is the condition
+`[[ship-both-clients-together]]` requires for a desktop-first release.
+
+The cadence asymmetry behind all of this: desktop ships often and by us, mobile
+rarely and only by the lead dev. Desktop reaching production well before mobile
+is the normal case, not a failure — but parity remains the commitment, so step 6
+is not optional, just later.
+
+The link-versus-pin asymmetry already caused confusion once: the forged-suffix
+guard landed in shared and reached desktop instantly via the symlink, while
+mobile still carried its own duplicate copy because npm had not been published
+past `2.1.0-39`.
 
 ## Migration order
 
 Each step is independently shippable and independently verifiable.
 
 1. **shared:** add `MemberIdentity` + `resolveIdentity`; keep the old exports as
-   thin deprecated adapters so nothing breaks mid-migration.
+   thin deprecated adapters so nothing breaks mid-migration. Follow the shared
+   repo's own workflow: feature branch, PR, squash-merge, then `chore: bump to
+   X.Y.Z-N` as a **separate commit direct on master** (a bump on the feature
+   branch is destroyed by the squash). Do not publish; that is the lead dev's
+   step and the shared-side work is done at the bump.
 2. **desktop:** build the provider + `<MemberName>` + `useResolvedName`. Prove
    it on ONE surface (the member sidebar — highest row count, so it also proves
    constraint 1).
