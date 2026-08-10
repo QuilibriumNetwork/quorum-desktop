@@ -14,9 +14,6 @@ import {
   realIconOrUndefined,
 } from '../../../utils/identityPlaceholder';
 import { DefaultImages } from '../../../utils';
-import { resolveMemberName } from '../../../utils/resolveMemberName';
-
-const ADDRESS = 'QmYVtoS6E7T4TL4pSomethingSomethingLjDd';
 
 describe('isPlaceholderDisplayName', () => {
   it('treats the stored literal, empty and nullish as placeholders', () => {
@@ -73,32 +70,11 @@ describe('demotion helpers', () => {
   });
 });
 
-// The integration that actually caused the reported bug: every name surface
-// goes through resolveMemberName, so demoting there is what makes the sidebar
-// and the header agree.
-describe('resolveMemberName treats the placeholder as no name', () => {
-  it('falls through to the address instead of rendering the placeholder', () => {
-    const resolved = resolveMemberName({
-      address: ADDRESS,
-      displayName: UNKNOWN_USER_PLACEHOLDER,
-    });
-    expect(resolved.name).not.toBe(UNKNOWN_USER_PLACEHOLDER);
-    expect(resolved.isQnsVerified).toBe(false);
-  });
-
-  it('still prefers a real name', () => {
-    expect(
-      resolveMemberName({ address: ADDRESS, displayName: 'GattoPardo' }).name
-    ).toBe('GattoPardo');
-  });
-
-  it('lets the QNS name win over the placeholder', () => {
-    const resolved = resolveMemberName({
-      address: ADDRESS,
-      displayName: UNKNOWN_USER_PLACEHOLDER,
-      primaryUsername: 'gattopardo',
-    });
-    expect(resolved.name).toBe('gattopardo');
-    expect(resolved.isQnsVerified).toBe(true);
-  });
-});
+// The integration that actually caused the reported bug used to be
+// `resolveMemberName` (deleted with the rest of `utils/resolveMemberName` —
+// see .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md).
+// The demotion now happens upstream of `src/identity`: callers that build
+// `locallyKnownNames`/roster rows (DirectMessage.tsx, DirectMessageContactsList.tsx)
+// call `realDisplayNameOrUndefined`/`realIconOrUndefined` directly (see the
+// "demotion helpers" tests above) before those values ever reach
+// `identityFromMaps`, so there is no second integration point left to pin here.

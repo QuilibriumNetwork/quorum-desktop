@@ -50,3 +50,37 @@ describe('MemberName', () => {
     expect(screen.queryByText('Unknown User')).toBeNull();
   });
 });
+
+/**
+ * The forged-".q" suffix guard, wired through the real production path
+ * (`<MemberName>` -> `useResolvedMemberName` -> `identityFromMaps` ->
+ * `resolveIdentity`), not re-testing the pure ladder itself.
+ *
+ * The exhaustive truth table for `resolveIdentity` (every tier, unicode
+ * confusable dots, the join-echo rule) lives in quorum-shared's own
+ * `resolveIdentity.test.ts` — that is now the ONLY implementation, since
+ * desktop's old `resolveSpaceMemberName` (which had its own, buggy copy of
+ * this guard — see the deleted `resolveMemberNameQnsGuard.test.ts`) no longer
+ * exists. What desktop still owns, and still needs pinned, is the WIRING:
+ * that `identityFromMaps` hands the guard real, untransformed roster/profile
+ * strings, for both scopes `<MemberName>` is actually asked to render.
+ */
+describe('MemberName — the forged .q suffix guard survives the wiring (Task 7)', () => {
+  it('space scope: drops a forged roster nickname, falls through to the global name', () => {
+    wrap(<MemberName address={ADDR} />, {
+      'space-1': { [ADDR]: { display_name: 'alice.q', global_display_name: 'Mallory' } },
+    });
+    expect(screen.getByText('Mallory')).toBeTruthy();
+    expect(screen.queryByText('alice.q')).toBeNull();
+  });
+
+  it('global scope (no spaceId in context): drops a forged local name', () => {
+    wrap(<MemberName address={ADDR} global />, {
+      'space-1': { [ADDR]: { display_name: 'Mod Alice', global_display_name: 'mallory.q' } },
+    });
+    expect(screen.queryByText('mallory.q')).toBeNull();
+    // Global scope ignores the per-space tier entirely, and the forged
+    // global name is dropped too, so this falls all the way to the address.
+    expect(screen.getByText(/Qm/)).toBeTruthy();
+  });
+});

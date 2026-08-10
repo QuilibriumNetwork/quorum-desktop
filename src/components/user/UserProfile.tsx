@@ -20,7 +20,6 @@ import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from './UserAvatar';
-import { ResolvedName } from './ResolvedName';
 import { useResolvedMemberName } from '../../identity';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
@@ -264,7 +263,10 @@ const UserProfile: React.FunctionComponent<{
             size={96}
           />
           <div className="user-profile-username">
-            <ResolvedName resolved={resolvedName} />
+            <span>
+              {resolvedName.name}
+              {resolvedName.isQnsVerified && '.q'}
+            </span>
           </div>
           <Flex className="text-subtle justify-center items-center">
             <span className="text-xs text-subtle">
@@ -301,7 +303,10 @@ const UserProfile: React.FunctionComponent<{
           />
           <div className="user-profile-text">
             <div className="user-profile-username">
-              <ResolvedName resolved={resolvedName} />
+              <span>
+                {resolvedName.name}
+                {resolvedName.isQnsVerified && '.q'}
+              </span>
             </div>
             <Flex className="py-1 text-subtle">
               <span className="text-xs text-subtle">

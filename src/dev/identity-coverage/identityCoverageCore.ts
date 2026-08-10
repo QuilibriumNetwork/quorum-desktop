@@ -29,7 +29,7 @@
  *                                                            ^^^^^^^^^^^^^^^^
  *
  * The ladder itself is `resolveDisplayName` in quorum-shared (via
- * `src/utils/resolveMemberName.ts`). Only the last two rungs are decidable from
+ * `src/identity`'s `resolveIdentity` call). Only the last two rungs are decidable from
  * local storage: QNS `primary_username` is not a field of a stored member row,
  * it arrives with the public profile. So the local count is deliberately the
  * pessimistic one, and the optional public-profile probe (see

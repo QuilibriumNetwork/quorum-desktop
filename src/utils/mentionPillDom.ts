@@ -4,10 +4,16 @@
  * Pure utility functions for creating and manipulating mention pills in contentEditable editors.
  * These functions are web-specific (use DOM APIs) and have zero React dependencies.
  *
+ * A pill's NAME comes from elsewhere (`src/identity`'s `useNameResolver`, wired
+ * through the `resolveName` callback in `useMentionPillEditor`) — this module
+ * used to also resolve the name itself (`resolveMentionPillName`, deleted along
+ * with `utils/resolveMemberName`), but that path had no production caller left:
+ * both the composer and the edit textarea build pills from the identity
+ * module's own resolution instead. See
+ * `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`.
+ *
  * @module mentionPillDom
  */
-
-import { resolveNameForContext, formatResolvedName } from './resolveMemberName';
 
 /**
  * Type of mention pill
@@ -33,37 +39,6 @@ export const MENTION_PILL_CLASSES = {
   channel: 'message-mentions-channel',
   everyone: 'message-mentions-everyone',
 } as const;
-
-/** The name fields a mention pill can be built from, whatever the source. */
-export interface MentionPillUser {
-  displayName?: string | null;
-  primaryUsername?: string | null;
-  globalDisplayName?: string | null;
-}
-
-/**
- * The one rule turning a mentioned user into the text on their pill.
- *
- * A pill's name is derived in TWO places: the composer builds one when you pick
- * from the autocomplete, and the editor rebuilds every pill from the stored
- * `@<address>` tokens when you click edit. They disagreed — the editor read
- * `user.displayName` raw, so the ".q" vanished on entering edit mode, the
- * forged-suffix guard was skipped, and an unknown sender read "Unknown User"
- * where the message body shows a truncated address.
- *
- * Both now call this. The ".q" is display-only: storage stays `@<address>` via
- * `dataset.mentionAddress` in `extractStorageTextFromEditor`, so the wire format
- * is unchanged either way.
- *
- * @param isDm - DM surfaces have no per-space tier, so the QNS name outranks the
- *   plain display name. Mirrors the choice `Message.tsx` makes for the body.
- */
-export function resolveMentionPillName(
-  user: MentionPillUser & { address: string },
-  { isDm = false }: { isDm?: boolean } = {}
-): string {
-  return formatResolvedName(resolveNameForContext(user, { isDm })) || 'Unknown User';
-}
 
 /**
  * Create a mention pill DOM element.

@@ -10,10 +10,17 @@ import tseslint from 'typescript-eslint';
 // a field you never pass.
 //
 // Patterns are bare module names (no forced "utils/" segment) so a
-// same-directory relative import is caught too, e.g. mentionPillDom.ts
-// importing './resolveMemberName' — a `**/utils/<name>` pattern would not
-// match that specifier, since the importing file already lives in utils/
-// and its own import never spells out "utils/".
+// same-directory relative import is caught too, e.g. a hypothetical
+// utils/ sibling importing './resolveMemberName' — a `**/utils/<name>`
+// pattern would not match that specifier, since the importing file already
+// lives in utils/ and its own import never spells out "utils/".
+//
+// `resolveMemberName`, `resolveSelfName`, `conversationSearch` and
+// `profileCardIdentity` themselves are gone (deleted by the migration this
+// rule enforces) — the patterns stay so the names can never be reintroduced.
+// `mentionPillDom` came off this list in Task 7: it no longer resolves a
+// name at all (resolveMentionPillName was deleted with it), so there is
+// nothing left on that module for the rule to restrict.
 const noResolverImportsRules = {
   'no-restricted-imports': ['error', {
     patterns: [
@@ -23,20 +30,6 @@ const noResolverImportsRules = {
         message:
           'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
           'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
-      },
-      // mentionPillDom is split from the group above: it still resolves a
-      // name itself (resolveMentionPillName, used by its own unmigrated
-      // ratchet entry below) but also exports pure DOM helpers
-      // (createPillElement, extractPillDataFromOption, the DOM-walk
-      // serializers) that do no resolution at all. A migrated file is
-      // allowed to import those — only the resolving export is restricted,
-      // not the whole module.
-      {
-        group: ['**/mentionPillDom'],
-        importNames: ['resolveMentionPillName'],
-        message:
-          'Resolve names via src/identity (<MemberName> / useResolvedName), not ' +
-          'resolveMentionPillName. See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
       },
     ],
   }],
@@ -170,35 +163,5 @@ export default [
       'react-hooks/refs': 'off',
       'react-hooks/use-memo': 'off',
     },
-  },
-  {
-    // RATCHET — every entry is a production file still to migrate to
-    // src/identity (<MemberName> / useResolvedName). Shrinks to zero during
-    // Phase D and this whole block is deleted in Phase E. Remove your file
-    // from it as part of migrating it. Never add one.
-    files: [
-      'src/components/user/ResolvedName.tsx',
-      'src/utils/mentionPillDom.ts',
-    ],
-    rules: { 'no-restricted-imports': 'off' },
-  },
-  {
-    // RATCHET (tests) — direct unit tests of the low-level resolver
-    // modules above, asserting THEIR behaviour while they still exist. Each
-    // entry disappears when its module (and this test) is deleted in Phase
-    // E, not when "migrated" in the Phase D sense — so this list shrinks on
-    // its own schedule, not in lockstep with the production list above. A
-    // test that imports one of these modules for any other reason (e.g. to
-    // work around this rule instead of testing through <MemberName> /
-    // useResolvedName) does not belong here.
-    files: [
-      'src/dev/tests/utils/resolveNameForContext.test.ts',
-      'src/dev/tests/utils/selfNamePlaceholder.test.ts',
-      'src/dev/tests/utils/mentionPillName.test.ts',
-      'src/dev/tests/utils/resolveMemberNameQnsGuard.test.ts',
-      'src/dev/tests/utils/mentionPillDom.unit.test.ts',
-      'src/dev/tests/utils/identityPlaceholder.test.ts',
-    ],
-    rules: { 'no-restricted-imports': 'off' },
   },
 ];

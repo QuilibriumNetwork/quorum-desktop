@@ -217,4 +217,47 @@ describe('Account.tsx — per-space name placeholder, wrapped as SpaceSettingsMo
     expect(screen.queryByPlaceholderText('alice.q.q')).not.toBeInTheDocument();
     expect(screen.queryByPlaceholderText(/^alice\.q/)).not.toBeInTheDocument();
   });
+
+  // Ported from the deleted `utils/resolveSelfName`'s `selfNamePlaceholder.test.ts`
+  // (Task 7 — that module is dead, superseded by this component's own
+  // `selfPlaceholderName`, but these two cases were real coverage the old
+  // suite had and this one didn't).
+  it('falls back to the global name when self has no QNS name elected', async () => {
+    getPublicProfile.mockResolvedValue({ data: { display_name: 'Alice Smith' } });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    render(
+      <I18nProvider i18n={i18n}>
+        <QueryClientProvider client={client}>
+          <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={{}} selfAddress={SELF_ADDR}>
+            <Account {...baseProps} />
+          </IdentityScopeProvider>
+        </QueryClientProvider>
+      </I18nProvider>,
+    );
+
+    const input = await screen.findByPlaceholderText('Alice Smith');
+    expect(input).toBeInTheDocument();
+  });
+
+  it('does not promise a global name that ends in ".q" — falls to the instructional copy instead', async () => {
+    // Every other surface drops a name forging the verified marker and
+    // renders the address instead; this field has no address to fall to, so
+    // it falls to the caller's instructional copy. Promising "mallory.q"
+    // here would be false — the app would never actually render it.
+    getPublicProfile.mockResolvedValue({ data: { display_name: 'mallory.q' } });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    render(
+      <I18nProvider i18n={i18n}>
+        <QueryClientProvider client={client}>
+          <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={{}} selfAddress={SELF_ADDR}>
+            <Account {...baseProps} />
+          </IdentityScopeProvider>
+        </QueryClientProvider>
+      </I18nProvider>,
+    );
+
+    const input = await screen.findByPlaceholderText('Your name in this Space');
+    expect(input).toBeInTheDocument();
+    expect(screen.queryByPlaceholderText('mallory.q')).not.toBeInTheDocument();
+  });
 });
