@@ -15,6 +15,19 @@
  * ".q" for. The nickname case is a non-regression check: it already rendered
  * correctly with the OLD code (a real per-space override always outranks the
  * QNS name), so this test must not be the thing that started passing it.
+ *
+ * Phase D row 24: the row HEADER migrated first (an earlier row); the
+ * `resolveGlobalSender` PROP survived because in-body `@mentions` inside the
+ * global panel's message preview (NotificationItem -> useMessageFormatting's
+ * `mapSenderToUser(id)?.displayName`) still read it. That prop, the hook
+ * behind it (`useGlobalSenderResolver`), and the module behind THAT
+ * (`buildGlobalSenderMap` / `src/utils/resolveGlobalSender.ts`) are now
+ * deleted — in-body mentions resolve through `useNameResolver().resolve(id,
+ * { spaceId: rowSpaceId })`, the SAME bulk resolver every other "many
+ * addresses outside JSX" surface uses (MessageMarkdownRenderer,
+ * MessageEditTextarea, ReactionsList). The describe block below pins that:
+ * a mentioned address that was NEVER a `resolveGlobalSender`-carryable QNS
+ * name now renders its `.q` correctly inside the notification body text.
  */
 import * as React from 'react';
 import { describe, it, expect, vi, beforeAll } from 'vitest';
@@ -96,27 +109,10 @@ import { NotificationPanel } from '@/components/notifications/NotificationPanel'
 import { IdentityScopeProvider } from '@/identity/identityProvider';
 
 const ADDR = 'QmPeerNEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
+const MENTIONED_ADDR = 'QmPeerOEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const SPACE_ID = 'space-1';
 
-/**
- * Stands in for `buildGlobalSenderMap` (src/utils/resolveGlobalSender.ts)
- * without importing it — that module is on the eslint identity-migration
- * ratchet, and this file isn't a direct unit test of it. Mirrors its actual
- * logic exactly: a roster row has no `primary_username` field, so the
- * resolved sender can NEVER carry a QNS name. That gap is the bug this
- * migration closes.
- */
-function fakeResolveGlobalSender(displayName: string, globalDisplayName: string) {
-  const resolved = {
-    address: ADDR,
-    displayName: displayName || globalDisplayName || undefined,
-    globalDisplayName: globalDisplayName || undefined,
-  };
-  return (_spaceId: string, senderId: string) =>
-    senderId === ADDR ? resolved : { address: senderId };
-}
-
-const message = (): Message =>
+const message = (overrides: Partial<Message> = {}): Message =>
   ({
     messageId: 'msg-1',
     spaceId: SPACE_ID,
@@ -131,14 +127,17 @@ const message = (): Message =>
       type: 'post' as const,
       text: 'hello there',
     },
+    ...overrides,
   }) as unknown as Message;
 
-function renderPanel(displayName: string, globalDisplayName: string) {
-  const resolveGlobalSender = fakeResolveGlobalSender(displayName, globalDisplayName);
-
+function renderPanel(
+  displayName: string,
+  globalDisplayName: string,
+  opts: { rosters?: Record<string, Record<string, unknown>>; message?: Message } = {},
+) {
   GLOBAL_NOTIFICATIONS = [
     {
-      message: message(),
+      message: opts.message ?? message(),
       channelId: 'channel-1',
       channelName: 'general',
       mentionType: 'you',
@@ -152,7 +151,9 @@ function renderPanel(displayName: string, globalDisplayName: string) {
     <QueryClientProvider client={client}>
       <MemoryRouter>
         <IdentityScopeProvider
-          rostersBySpace={{ [SPACE_ID]: { [ADDR]: { display_name: displayName, global_display_name: globalDisplayName } } }}
+          rostersBySpace={
+            opts.rosters ?? { [SPACE_ID]: { [ADDR]: { display_name: displayName, global_display_name: globalDisplayName } } }
+          }
           selfAddress={null}
         >
           <NotificationPanel
@@ -162,7 +163,6 @@ function renderPanel(displayName: string, globalDisplayName: string) {
             spaceId=""
             channelIds={[]}
             mapSenderToUser={() => undefined}
-            resolveGlobalSender={resolveGlobalSender}
           />
         </IdentityScopeProvider>
       </MemoryRouter>
@@ -199,5 +199,72 @@ describe('NotificationPanel — global sender resolves via the identity module',
     // Already correct before this migration (a real override always outranks
     // the QNS name) — this case must not be what makes the file look fixed.
     await waitFor(() => expect(authorLabel(container)).toBe('Mod Alice:'));
+  });
+});
+
+describe('NotificationPanel — global panel in-body @mentions resolve via useNameResolver (row 24)', () => {
+  it('a mentioned address with NO per-space override and a QNS name renders <qns>.q inside the preview text', async () => {
+    getPublicProfile.mockImplementation((address: string) =>
+      Promise.resolve(
+        address === MENTIONED_ADDR
+          ? { data: { primary_username: 'bob', display_name: 'Bob' } }
+          : { data: null },
+      ),
+    );
+
+    const { container } = renderPanel('', '', {
+      rosters: {
+        [SPACE_ID]: {
+          [ADDR]: { display_name: '', global_display_name: '' },
+          // No per-space override, no roster global slot — the exact shape
+          // `buildGlobalSenderMap` could never carry a QNS name for, because
+          // a roster row has no `primary_username` field at all.
+          [MENTIONED_ADDR]: { display_name: '', global_display_name: '' },
+        },
+      },
+      message: message({
+        content: {
+          senderId: ADDR,
+          type: 'post',
+          text: `hey @<${MENTIONED_ADDR}> welcome`,
+        },
+        mentions: { memberIds: [MENTIONED_ADDR] },
+      } as never),
+    });
+
+    await waitFor(() => {
+      // No literal "@" here: useMessageFormatting.ts's `displayName` is the
+      // resolved name only (the "@" only appears in ITS OWN fallback string,
+      // `@${address.substring(0,8)}...`, a pre-existing asymmetry outside
+      // this row's scope) — the mention SPAN's presence and its resolved
+      // text are what this pins.
+      expect(container.querySelector('.message-mentions-user')?.textContent).toBe('bob.q');
+    });
+  });
+
+  it('a mentioned address WITH a per-space nickname renders the nickname, not the address truncation', async () => {
+    getPublicProfile.mockResolvedValue({ data: null });
+
+    const { container } = renderPanel('', '', {
+      rosters: {
+        [SPACE_ID]: {
+          [ADDR]: { display_name: '', global_display_name: '' },
+          [MENTIONED_ADDR]: { display_name: 'Mod Bob', global_display_name: 'Bob' },
+        },
+      },
+      message: message({
+        content: {
+          senderId: ADDR,
+          type: 'post',
+          text: `hey @<${MENTIONED_ADDR}> welcome`,
+        },
+        mentions: { memberIds: [MENTIONED_ADDR] },
+      } as never),
+    });
+
+    await waitFor(() => {
+      expect(container.querySelector('.message-mentions-user')?.textContent).toBe('Mod Bob');
+    });
+    expect(container.querySelector('.notification-text')?.textContent).not.toContain('.q');
   });
 });

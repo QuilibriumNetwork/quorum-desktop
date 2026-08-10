@@ -19,7 +19,7 @@ const noResolverImportsRules = {
     patterns: [
       {
         group: ['**/resolveMemberName', '**/conversationSearch', '**/profileCardIdentity',
-                '**/resolveGlobalSender', '**/resolveSelfName'],
+                '**/resolveSelfName'],
         message:
           'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
           'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
@@ -178,13 +178,12 @@ export default [
     // from it as part of migrating it. Never add one.
     files: [
       'src/components/user/ResolvedName.tsx',
-      'src/hooks/business/notifications/useGlobalSenderResolver.ts',
       'src/utils/mentionPillDom.ts',
     ],
     rules: { 'no-restricted-imports': 'off' },
   },
   {
-    // RATCHET (tests) — direct unit tests of the six low-level resolver
+    // RATCHET (tests) — direct unit tests of the low-level resolver
     // modules above, asserting THEIR behaviour while they still exist. Each
     // entry disappears when its module (and this test) is deleted in Phase
     // E, not when "migrated" in the Phase D sense — so this list shrinks on
@@ -199,7 +198,6 @@ export default [
       'src/dev/tests/utils/resolveMemberNameQnsGuard.test.ts',
       'src/dev/tests/utils/mentionPillDom.unit.test.ts',
       'src/dev/tests/utils/identityPlaceholder.test.ts',
-      'src/dev/tests/utils/resolveGlobalSender.globalSlot.test.ts',
     ],
     rules: { 'no-restricted-imports': 'off' },
   },
