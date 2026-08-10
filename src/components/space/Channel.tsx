@@ -1886,6 +1886,12 @@ const Channel: React.FC<ChannelProps> = ({
                             className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
                           />
                           <div className="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
+                            {/* No `enrich`: deliberate. This list can be 200+ rows, and
+                                enriching would fire one public-profile fetch per rendered
+                                row on open. The roster-only default means lurkers who
+                                never posted show no ".q" here — an accepted limitation,
+                                see design decision 3 (.agents/issues/.open/
+                                2026-08-10-identity-resolution-architecture-design.md). */}
                             <MemberName
                               address={item.address}
                               className="text-md font-bold truncate-user-name"
@@ -2137,6 +2143,8 @@ const Channel: React.FC<ChannelProps> = ({
                     className="opacity-80 flex-shrink-0"
                   />
                   <div className="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1">
+                    {/* No `enrich` — same call as the desktop row above; see the comment
+                        there and design decision 3. */}
                     <MemberName
                       address={item.address}
                       className="text-md font-bold truncate-user-name"

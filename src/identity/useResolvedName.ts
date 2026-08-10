@@ -13,21 +13,45 @@ export interface UseResolvedNameOptions {
   spaceId?: string;
   /** Force the global ladder even inside a Space. Rarely needed. */
   global?: boolean;
+  /**
+   * Opt in to a public-profile fetch for this address. Default `false`: the
+   * name resolves from the roster maps already in memory and issues NO
+   * network request — a member with no cached profile renders their roster
+   * name and no ".q". This only gates whether a request is ISSUED; a
+   * profile some other enriched call site already fetched for the same
+   * address is still read here, because `identityFromMaps` does not know or
+   * care who asked (design decision 3).
+   *
+   * Only pass `true` on surfaces with bounded cardinality that genuinely
+   * need the verified ".q" — bookmarks, notifications, message headers, DM
+   * headers, the profile card. A virtualised list of members must NOT: one
+   * request per rendered row is exactly the fetch storm the member
+   * sidebar's no-fetch policy exists to prevent. See
+   * `.agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md`,
+   * decision 3.
+   */
+  enrich?: boolean;
 }
 
 /**
  * Shared by `useMemberIdentity` and `useResolvedMemberName` so both get the
  * tiers AND `defaultSpaceId` from a single `useIdentityContext()` read,
  * instead of each hook reading the same context independently.
+ *
+ * `enrich` gates ONLY the `request()` call, i.e. whether a public-profile
+ * fetch is issued for `address` — never the read. `identityFromMaps` (and so
+ * the merge/ladder) is unchanged either way; a non-enriching call site still
+ * renders a `.q` if the profile happens to already be cached from elsewhere.
  */
 function useMemberIdentityAndScope(
   address: string,
   spaceId: string | undefined,
+  enrich: boolean,
 ): { identity: MemberIdentity; defaultSpaceId: string | undefined } {
   const { sources, defaultSpaceId, request } = useIdentityContext();
   React.useEffect(() => {
-    request(address);
-  }, [address, request]);
+    if (enrich) request(address);
+  }, [address, enrich, request]);
   const effectiveSpaceId = spaceId ?? defaultSpaceId;
   const identity = React.useMemo(
     () => identityFromMaps(address, effectiveSpaceId, sources),
@@ -39,9 +63,9 @@ function useMemberIdentityAndScope(
 /** The identity behind a name, for callers that need the tiers. */
 export function useMemberIdentity(
   address: string,
-  { spaceId }: { spaceId?: string } = {},
+  { spaceId, enrich = false }: { spaceId?: string; enrich?: boolean } = {},
 ): MemberIdentity {
-  return useMemberIdentityAndScope(address, spaceId).identity;
+  return useMemberIdentityAndScope(address, spaceId, enrich).identity;
 }
 
 /** The resolved name as a string, with ".q" when verified. For aria-labels,
@@ -57,9 +81,9 @@ export function useResolvedName(
 /** The structured result, for callers that style the suffix. */
 export function useResolvedMemberName(
   address: string,
-  { spaceId, global = false }: UseResolvedNameOptions = {},
+  { spaceId, global = false, enrich = false }: UseResolvedNameOptions = {},
 ): ResolvedMemberName {
-  const { identity, defaultSpaceId } = useMemberIdentityAndScope(address, spaceId);
+  const { identity, defaultSpaceId } = useMemberIdentityAndScope(address, spaceId, enrich);
   const scope = global || !(spaceId ?? defaultSpaceId) ? 'global' : 'space';
   return React.useMemo(
     () => resolveIdentity(identity, { scope }),

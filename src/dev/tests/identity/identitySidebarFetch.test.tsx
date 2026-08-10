@@ -1,34 +1,27 @@
 /**
- * Task 5 — the member sidebar is the highest-row-count surface in the app,
- * and its now-migrated rows (Channel.tsx's desktop + mobile-drawer member
- * lists) each mount a `<MemberName>`, which calls `request(address)` on
- * mount. This is an AUTOMATED instrument for what that costs, standing in
- * for the brief's manual "add a window counter, scroll the sidebar three
- * times" recipe — a repeatable test beats a one-off manual count.
+ * Task 5b — the operator's ruling on the tension Task 5 measured and reported:
+ * profile fetching becomes OPT-IN (`enrich`), and the member sidebar does not
+ * opt in. This file used to pin the OLD default (enrich-by-default, 200
+ * concurrent fetches on open) — see git history for that version. It now pins
+ * the new rule instead, on the same automated-instrument approach: a
+ * repeatable test beats a one-off manual dev-console count.
  *
- * Two properties, matching design constraint 1 and the plan's pass condition:
+ * Three scenarios, one shared `QueryClient` per test:
  *
- *   (a) First mount: total public-profile fetches is BOUNDED BY THE NUMBER OF
- *       DISTINCT ADDRESSES rendered, never a multiple of the row count. Proven
- *       by rendering MORE rows than distinct addresses (some addresses appear
- *       twice, the way a member in two public roles appears in two role
- *       sections of the real sidebar) — a per-row-per-render bug would push
- *       the fetch count above the distinct-address count; the real mechanism
- *       (the provider's `requested` Set + React Query's queryKey dedup) caps
- *       it there.
- *
- *   (b) Revisiting the same rows adds ZERO further fetches. Two ways rows get
- *       revisited are simulated: (i) unmounting/remounting a slice of
- *       `<MemberName>` rows while `<IdentityScopeProvider>` stays mounted
- *       (Virtuoso recycling rows during a scroll) — protected by the
- *       provider's `requested` Set, which never drops an address; and (ii) a
- *       full remount of the provider subtree on the SAME `QueryClient`
- *       (leaving the channel and coming back) — protected by the provider's
- *       1h `staleTime`, since a fresh `requested` Set means fresh query
- *       observers, and only `staleTime` stands between that and a refetch.
- *       (ii) is the one the brief's "1h cache" pass condition is actually
- *       about; (i) is a weaker, always-true-by-construction check included
- *       because the brief asks for it explicitly.
+ *   1. Sidebar (default, no `enrich`), no self address in view: renders from
+ *      the roster maps already in memory, issues ZERO network requests.
+ *   2. Sidebar (default), but `selfAddress` is one of the rendered addresses:
+ *      the provider's OWN self-address request (unconditional, unrelated to
+ *      `enrich` — resolving your own ".q" is one bounded request and the self
+ *      tier depends on it) still fires, exactly once, for exactly that
+ *      address. Proves the self-request is the only source of fetching here,
+ *      not a row somehow slipping through.
+ *   3. An enriched surface (`enrich` passed explicitly, the only way to opt
+ *      in — never a provider-level flag, so two surfaces inside the same
+ *      Space can legitimately differ): fetch count is bounded by DISTINCT
+ *      addresses, never a multiple of the row count (proven the same way as
+ *      before — more rows than distinct addresses), and revisiting the same
+ *      rows adds zero further fetches.
  */
 import * as React from 'react';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
@@ -61,8 +54,8 @@ const distinctAddresses = Array.from({ length: DISTINCT_COUNT }, (_, i) => addre
 
 // 20 of the 200 distinct addresses get a SECOND row — the multi-public-role
 // case (Channel.tsx's userSections renders one row per role a member holds).
-// Total rows (220) > distinct addresses (200): the gap between the two is
-// what makes assertion (a) capable of failing.
+// Total rows (220) > distinct addresses (200): the gap is what makes the
+// "bounded by distinct addresses" assertion in scenario 3 non-trivial.
 const DUPLICATED_COUNT = 20;
 const rowAddresses = [
   ...distinctAddresses,
@@ -77,16 +70,11 @@ const rosterRows = distinctAddresses.reduce<Record<string, { display_name: strin
   {},
 );
 
-/** Resolves after a tick so overlapping in-flight calls are observable —
- *  a synchronous mock would never reveal serialized-vs-concurrent. */
-let inFlight = 0;
-let maxConcurrent = 0;
+/** Resolves after a tick — realistic async shape, and matters for scenario 3
+ *  where overlapping in-flight calls need to be observable. */
 function fakeGetPublicProfile(address: string) {
-  inFlight += 1;
-  maxConcurrent = Math.max(maxConcurrent, inFlight);
   return new Promise((resolve) => {
     setTimeout(() => {
-      inFlight -= 1;
       resolve({
         data: { display_name: `Profile ${address}`, profile_image: '', bio: '', timestamp: 1, signature: '' },
         status: 200,
@@ -95,10 +83,33 @@ function fakeGetPublicProfile(address: string) {
   });
 }
 
-/** One "sidebar": the provider plus a row per address in `addrs`. Visible
- *  rows can be a subset of `addrs` (`visibleIndexes`) to simulate Virtuoso
- *  unmounting/remounting rows on scroll without touching the provider. */
-function Sidebar({
+/** Give any (incorrect) fetch a couple of ticks to start before sampling —
+ *  the request itself is issued synchronously inside a mount effect, but
+ *  flushing twice removes any doubt this is a race rather than a true zero. */
+async function settle() {
+  await act(async () => {
+    await Promise.resolve();
+    await new Promise((r) => setTimeout(r, 10));
+  });
+}
+
+/** The member sidebar's actual call shape post-Task-5b: default options, no
+ *  `enrich`. `selfAddress` is a prop so scenario 2 can exercise the
+ *  provider's own unconditional self-request. */
+function Sidebar({ addrs, selfAddress = null }: { addrs: string[]; selfAddress?: string | null }) {
+  return (
+    <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={{ [SPACE_ID]: rosterRows }} selfAddress={selfAddress}>
+      {addrs.map((address, i) => (
+        <MemberName key={i} address={address} className="text-md font-bold truncate-user-name" />
+      ))}
+    </IdentityScopeProvider>
+  );
+}
+
+/** An enriched surface (bookmarks/notifications/message-header shape): every
+ *  row passes `enrich` explicitly — the opt-in lives at the call site, never
+ *  on the provider. `visibleIndexes` simulates Virtuoso recycling rows. */
+function EnrichedList({
   addrs,
   visibleIndexes,
 }: {
@@ -108,97 +119,113 @@ function Sidebar({
   return (
     <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={{ [SPACE_ID]: rosterRows }} selfAddress={null}>
       {addrs.map((address, i) =>
-        !visibleIndexes || visibleIndexes.has(i) ? <MemberName key={i} address={address} /> : null,
+        !visibleIndexes || visibleIndexes.has(i) ? <MemberName key={i} address={address} enrich /> : null,
       )}
     </IdentityScopeProvider>
   );
 }
 
-describe('member sidebar via <MemberName> — fetch count (design constraint 1)', () => {
+describe('member sidebar identity — enrich opt-in (design decision 3)', () => {
   beforeEach(() => {
     getPublicProfile.mockReset();
     getPublicProfile.mockImplementation(fakeGetPublicProfile);
-    inFlight = 0;
-    maxConcurrent = 0;
   });
 
-  it('(a) first mount: fetch count is bounded by distinct addresses, not row count', async () => {
+  it('1. sidebar default (no enrich), no self address in view: zero fetches', async () => {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
     render(
       <QueryClientProvider client={queryClient}>
-        <Sidebar addrs={rowAddresses} />
+        <Sidebar addrs={rowAddresses} selfAddress={null} />
       </QueryClientProvider>,
     );
+    await settle();
 
-    // Settle: wait until the call count stops climbing.
-    await waitFor(() => expect(getPublicProfile.mock.calls.length).toBe(DISTINCT_COUNT));
-
-    const fetchesAfterFirstMount = getPublicProfile.mock.calls.length;
-
-    // MEASURED, printed for the task report.
+    const fetchCount = getPublicProfile.mock.calls.length;
     // eslint-disable-next-line no-console
     console.log(
-      `[identitySidebarFetch] distinct addresses=${DISTINCT_COUNT} rows rendered=${rowAddresses.length} ` +
-        `fetches after first mount=${fetchesAfterFirstMount} max concurrent in-flight=${maxConcurrent}`,
+      `[identitySidebarFetch] scenario 1 — rows rendered=${rowAddresses.length} fetches=${fetchCount}`,
     );
 
-    // The falsifiable part: 220 rows were rendered, only 200 addresses are
-    // distinct. A per-row (rather than per-address) fetch would land at 220,
-    // strictly above DISTINCT_COUNT — this assertion catches that.
-    expect(fetchesAfterFirstMount).toBe(DISTINCT_COUNT);
-    expect(fetchesAfterFirstMount).toBeLessThan(rowAddresses.length);
+    // Exact, not a bound: the roster-only default must issue NO request.
+    expect(fetchCount).toBe(0);
   });
 
-  it('(b) revisiting the same rows adds zero further fetches', async () => {
+  it('2. sidebar default, selfAddress in view: exactly one fetch, for the self address', async () => {
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    const selfAddress = distinctAddresses[42];
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <Sidebar addrs={rowAddresses} selfAddress={selfAddress} />
+      </QueryClientProvider>,
+    );
+    await settle();
+
+    const calls = getPublicProfile.mock.calls;
+    // eslint-disable-next-line no-console
+    console.log(
+      `[identitySidebarFetch] scenario 2 — rows rendered=${rowAddresses.length} fetches=${calls.length} ` +
+        `requested=${calls.map((c) => c[0]).join(',')}`,
+    );
+
+    expect(calls.length).toBe(1);
+    // WHICH address, not just the count — the self-tier request must target
+    // the self address specifically, not merely "some one address".
+    expect(calls[0][0]).toBe(selfAddress);
+  });
+
+  it('3. enriched surface: fetches bounded by distinct addresses, revisiting adds zero', async () => {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
 
     const first = new Set(rowAddresses.map((_, i) => i));
     const { rerender, unmount } = render(
       <QueryClientProvider client={queryClient}>
-        <Sidebar addrs={rowAddresses} visibleIndexes={first} />
+        <EnrichedList addrs={rowAddresses} visibleIndexes={first} />
       </QueryClientProvider>,
     );
     await waitFor(() => expect(getPublicProfile.mock.calls.length).toBe(DISTINCT_COUNT));
     const afterFirstMount = getPublicProfile.mock.calls.length;
 
-    // (i) Scroll simulation: unmount the back half of the rows, then remount
-    // them — Virtuoso recycling rows, provider stays mounted throughout.
+    // Falsifiable half of "bounded": 220 rows were rendered, only 200
+    // addresses are distinct. A per-row (rather than per-address) fetch
+    // would land at 220, strictly above DISTINCT_COUNT.
+    expect(afterFirstMount).toBe(DISTINCT_COUNT);
+    expect(afterFirstMount).toBeLessThan(rowAddresses.length);
+
+    // (i) Scroll simulation: unmount the back half of the rows, remount them
+    // — Virtuoso recycling rows, provider stays mounted throughout.
     const backHalf = new Set(rowAddresses.map((_, i) => i).filter((i) => i >= rowAddresses.length / 2));
     rerender(
       <QueryClientProvider client={queryClient}>
-        <Sidebar addrs={rowAddresses} visibleIndexes={new Set([...first].filter((i) => !backHalf.has(i)))} />
+        <EnrichedList addrs={rowAddresses} visibleIndexes={new Set([...first].filter((i) => !backHalf.has(i)))} />
       </QueryClientProvider>,
     );
     rerender(
       <QueryClientProvider client={queryClient}>
-        <Sidebar addrs={rowAddresses} visibleIndexes={first} />
+        <EnrichedList addrs={rowAddresses} visibleIndexes={first} />
       </QueryClientProvider>,
     );
-    // Give any (incorrect) refetch a tick to start before we sample.
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 20));
-    });
+    await settle();
     const afterScrollSim = getPublicProfile.mock.calls.length;
 
     // (ii) Channel-switch simulation: unmount the WHOLE provider subtree and
-    // remount it fresh on the SAME QueryClient — this is what actually
-    // exercises the 1h staleTime, since the provider's `requested` Set (which
-    // alone would explain (i)) is gone; only the query cache can save it now.
+    // remount it fresh (re-render the parent) on the SAME QueryClient — the
+    // provider's `requested` Set is gone on a fresh mount, so only the 1h
+    // staleTime stands between this and a refetch of all 200.
     unmount();
     render(
       <QueryClientProvider client={queryClient}>
-        <Sidebar addrs={rowAddresses} visibleIndexes={first} />
+        <EnrichedList addrs={rowAddresses} visibleIndexes={first} />
       </QueryClientProvider>,
     );
-    await act(async () => {
-      await new Promise((r) => setTimeout(r, 20));
-    });
+    await settle();
     const afterFullRemount = getPublicProfile.mock.calls.length;
 
     // eslint-disable-next-line no-console
     console.log(
-      `[identitySidebarFetch] fetches after first mount=${afterFirstMount}, after scroll-sim=${afterScrollSim}, ` +
+      `[identitySidebarFetch] scenario 3 — distinct=${DISTINCT_COUNT} rows=${rowAddresses.length} ` +
+        `after first mount=${afterFirstMount}, after scroll-sim=${afterScrollSim}, ` +
         `after full provider remount=${afterFullRemount}`,
     );
 
