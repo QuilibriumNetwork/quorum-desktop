@@ -260,6 +260,34 @@ These are the things that will break a naive implementation.
 5. **Offline.** DM identity currently renders from IndexedDB with no network
    round-trip. The provider must preserve that, not make names await a fetch.
 
+## How the two repos are sequenced, and why it is safe
+
+**Desktop first, then mobile.** Not a preference — it falls out of how each repo
+consumes shared (READ from both `package.json` files, 2026-08-10):
+
+| repo | dependency | effect |
+|---|---|---|
+| desktop | `link:../quorum-shared` | local symlink; a shared change applies on rebuild |
+| mobile | `2.1.0-40` | pinned npm version |
+
+So **desktop can make the breaking shared change without touching mobile.**
+Mobile keeps building against the published version throughout, and there is no
+window where one client is half-migrated against a shared package the other
+cannot use. Desktop is the natural first mover because it is the only one that
+feels shared changes immediately.
+
+> ⚠️ **The trap this creates.** The breaking change (required, explicitly
+> nullable fields) hits mobile the instant someone bumps that version — and a
+> version bump normally looks like routine housekeeping. **Do not publish a
+> shared version carrying `MemberIdentity` until mobile is ready to migrate in
+> the same stroke**, or mobile will fail to build for reasons nobody connects to
+> this work. If a publish is needed sooner for unrelated reasons, keep the old
+> exports as adapters (step 1 does this) so the bump stays non-breaking.
+
+The same asymmetry already caused confusion once: the forged-suffix guard landed
+in shared and reached desktop instantly via the symlink, while mobile still
+carried its own duplicate copy because npm had not been published past `2.1.0-39`.
+
 ## Migration order
 
 Each step is independently shippable and independently verifiable.
