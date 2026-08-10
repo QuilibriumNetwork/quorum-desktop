@@ -147,13 +147,44 @@ These are the things that will break a naive implementation.
    register 500 observers in a 500-row member list. The provider must serve from
    an in-memory map first and fall back to a query only for detached surfaces.
    Non-negotiable; the member sidebar's no-fetch policy exists for this reason.
-2. **Detached surfaces get the GLOBAL ladder, and that is correct.** A bookmark
-   or a cross-space notification has no live roster, so a per-space override is
-   unknowable — and also meaningless outside its space. Resolving those with
-   `scope: 'global'` (QNS → global → address) is not a compromise, it is the
-   right answer, and it is strictly better than today's frozen snapshot name.
-   **This must be stated in the doc, because it means a per-space name will not
-   appear in bookmarks, and that will look like a bug to someone later.**
+2. **Detached surfaces keep the per-space name. They are not scope-less.**
+
+   > An earlier draft of this design claimed a bookmark or notification "has no
+   > live roster, so a per-space override is unknowable" and proposed resolving
+   > them globally. **That was wrong**, the operator rejected it as a
+   > regression, and it is recorded here because the wrong version is the
+   > tempting one and someone will re-propose it.
+
+   Every input needed is already present and local:
+
+   - `Bookmark` carries `spaceId` and `cachedPreview.senderAddress`
+     (`quorum-shared/dist/types/bookmark.d.ts`).
+   - The notification panel already carries `spaceId` per row.
+   - The per-space name lives in the `space_members` roster in IndexedDB,
+     readable with `messageDB.getSpaceMembers(spaceId)` — local, no network,
+     ~1-5ms.
+
+   **The mechanism already exists in this repo**:
+   [`utils/resolveGlobalSender.ts`](../../src/utils/resolveGlobalSender.ts)
+   builds a `(spaceId, senderId) → identity` lookup from exactly those rosters,
+   carrying the per-space `display_name` AND the roster's `global_display_name`.
+   The notification panel uses it today.
+
+   So the real gap in those surfaces is the **QNS name**, not the per-space one —
+   that file says so outright: *"`primaryUsername` stays optional as it is
+   unenriched here."* Which is precisely what the operator observed on
+   2026-08-10: everything worked after PR #325 except bookmarks and
+   notifications.
+
+   **Design consequence:** the identity provider is keyed on
+   `(address, spaceId?)`, not on address alone. `spaceId` comes from context
+   inside a Space and from the stored field on detached surfaces. Generalise
+   `resolveGlobalSender` into the provider rather than leaving it as a
+   notification-only side path, and add the QNS tier it lacks.
+
+   The only genuine fallback is a space you have LEFT, where the roster row may
+   be gone. Then, and only then, the global ladder applies — which is also the
+   correct answer at that point.
 3. **The membership/kicked gate is a security property and stays on the raw
    roster.** Today's `resolveSender` conflates "is this a current member?" with
    "what is their name?". Splitting them is part of this work; the gate must not
@@ -200,27 +231,34 @@ observable or measured.
 - **Step 5:** mobile's `yarn harness:qns` two-bot scenario, because the receive
   side cannot be tested on one device.
 
-## Open questions — decide before step 2
+## Decisions — settled with the operator 2026-08-10
 
-1. **Scope: context provider or explicit prop?** Context removes a whole class of
-   "wrong ladder" mistakes and keeps call sites to one argument. Explicit props
-   are easier to follow when reading a single file, and avoid a provider that
-   must be remembered at every mount point. *Leaning: context, with the prop as
-   an override for detached surfaces.*
-2. **Does `<MemberName>` own the avatar's initials too?** Several sites feed
-   `UserAvatar` a raw name while the label beside it resolves, so initials and
-   name can disagree. Folding both into one component fixes that permanently;
-   keeping them separate is a smaller change. *Leaning: fold, since it is the
-   same class of bug.*
-3. **Batch public-profile endpoint.** The docs record a standing lead-dev ask for
-   N-lookups-in-1. The provider is the natural consumer and would make full
-   roster enrichment affordable — which would in turn fix "sidebar lurkers show
-   no `.q`", currently a documented limitation. Worth confirming whether that
-   endpoint is coming before designing around its absence.
-4. **Does this supersede the shared echo-demotion move?** The parity document
-   lists that as its own task, blocked on naming the `display_name` contract.
-   This design names it (`spaceName` / `globalName` are unambiguous), so it
-   probably absorbs that item rather than coexisting with it.
+1. **Scope comes from a context provider**, with an explicit prop as the override
+   that detached surfaces use. Removes the whole "wrong ladder" class and keeps
+   call sites to one argument.
+2. **`<MemberName>` owns the avatar's initials too.** Stated by the operator as a
+   rule rather than a preference: *the initials should always render whatever the
+   displayed name is at that moment.* Several sites currently feed `UserAvatar` a
+   raw name while the label beside it resolves, so they can disagree; folding
+   them makes that unrepresentable.
+3. **Do NOT design around the batch endpoint.** Checked the source rather than
+   relying on recall: `docs/features/qns-username-display.md:143` lists it under
+   *"Protocol improvements that would simplify this (lead-dev asks, pending)"*,
+   and adds *"Neither blocks the feature."* So it has been **requested, not
+   promised** — an earlier version of this section implied it was coming, which
+   the source does not support.
+
+   This turns out not to matter, and that is the useful finding: because the
+   provider is the single place that fetches, adding batching later is a
+   one-file change with no call-site churn. So build for one-at-a-time now and
+   let it plug in if it lands. The consequence to accept meanwhile is that
+   "sidebar lurkers show no `.q`" stays a limitation, since enriching a 200-member
+   roster one request at a time is exactly the fetch storm the current policy
+   exists to prevent.
+4. **This absorbs the shared echo-demotion task.** The parity document blocks that
+   task on naming the `display_name` contract; `spaceName` / `globalName` name it
+   unambiguously. Delete that item rather than doing both, and say so in the
+   parity document so it does not look dropped.
 
 ## What this does NOT change
 
@@ -232,6 +270,10 @@ observable or measured.
 ## Definition of done
 
 - [ ] `MemberIdentity` + `resolveIdentity` in shared, with every field required
+- [ ] Provider keyed on `(address, spaceId?)`, absorbing `resolveGlobalSender`
+- [ ] Bookmarks and notifications show BOTH the per-space name and the `.q`
+      (the two surfaces still wrong after PR #325)
+- [ ] `<MemberName>` renders the avatar initials from the same resolved name
 - [ ] Desktop provider serving a virtualised list with a MEASURED observer count
 - [ ] All 28 desktop call sites migrated; zero direct resolver imports outside
       the identity module
@@ -239,6 +281,7 @@ observable or measured.
 - [ ] `/dev/fake-qns` sweep of all eighteen surfaces, with a control arm
 - [ ] Mobile migrated against the same shared rule, verified with `harness:qns`
 - [ ] Deprecated adapters deleted from shared
+- [ ] The parity document's shared echo-demotion item deleted as absorbed (4)
 
 ---
 
