@@ -14,7 +14,7 @@ import './NotificationItem.scss';
 interface NotificationItemProps {
   notification: MentionNotification | ReplyNotification;
   onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
-  displayName: string; // Message author display name
+  displayName: React.ReactNode; // Message author display name — an identity-resolved <MemberName>, not a caller-formatted string
   mapSenderToUser: (senderId: string) => any; // For rendering mentions with display names
   className?: string;
   spaceRoles?: any[]; // Space roles for mention formatting

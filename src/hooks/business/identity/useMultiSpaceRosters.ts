@@ -1,11 +1,18 @@
-// useBookmarkRosters — build the multi-space `rostersBySpace` shape
-// <IdentityScopeProvider> needs for the standalone /bookmarks page.
+// useMultiSpaceRosters — build the multi-space `rostersBySpace` shape
+// <IdentityScopeProvider> needs for a detached surface that spans more than
+// one Space.
 //
 // Every other <IdentityScopeProvider> mount (Channel.tsx) lives inside a
-// single Space and hands the provider that ONE space's roster. Bookmarks are
-// different: the /bookmarks page renders bookmarks from EVERY space the user
-// belongs to in one flat list, so a single-space roster map is not enough —
-// the provider needs one roster per distinct spaceId represented on the page.
+// single Space and hands the provider that ONE space's roster. A detached
+// surface — the standalone /bookmarks page, the global notification panel —
+// is different: it renders rows from EVERY space the user belongs to (or
+// every space a row happens to reference) in one flat list, so a
+// single-space roster map is not enough. The provider needs one roster per
+// distinct spaceId represented on the surface.
+//
+// Originally `useBookmarkRosters` (bookmarks-only); generalised here so the
+// global notification panel can reuse it instead of a second copy of the
+// same assembly — see .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md.
 //
 // Local IndexedDB reads only (no network), reusing the same query key/fetcher
 // as `useSpaceMembers` so a space already open in a Channel tab is not
@@ -18,7 +25,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { buildSpaceMembersFetcher } from '../../queries/spaceMembers/buildSpaceMembersFetcher';
 import { buildSpaceMembersKey } from '../../queries/spaceMembers/buildSpaceMembersKey';
 
-export function useBookmarkRosters(
+export function useMultiSpaceRosters(
   spaceIds: string[]
 ): Record<string, Record<string, RosterNameRow>> {
   const { messageDB } = useMessageDB();

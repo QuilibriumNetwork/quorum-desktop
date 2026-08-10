@@ -172,7 +172,6 @@ export default [
       'src/components/message/ReactionsList.tsx',
       'src/components/modals/ReactionsModal.tsx',
       'src/components/modals/SpaceSettingsModal/Account.tsx',
-      'src/components/notifications/NotificationPanel.tsx',
       'src/components/thread/ThreadPanel.tsx',
       'src/components/thread/ThreadsListPanel.tsx',
       'src/components/user/UserProfile.tsx',

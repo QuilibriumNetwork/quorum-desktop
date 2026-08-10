@@ -5,7 +5,8 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Bookmark } from '@quilibrium/quorum-shared';
 import { Button, Icon, Input, Select } from '../primitives';
 import { BookmarkCard } from './BookmarkCard';
-import { useBookmarks, useBookmarkRosters } from '../../hooks/business/bookmarks';
+import { useBookmarks } from '../../hooks/business/bookmarks';
+import { useMultiSpaceRosters } from '../../hooks/business/identity';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { useOptionalShellState } from '../shell/useShellState';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -58,7 +59,7 @@ export const BookmarksPage: React.FC = () => {
     () => bookmarks.map((b) => b.spaceId).filter((id): id is string => !!id),
     [bookmarks]
   );
-  const rostersBySpace = useBookmarkRosters(bookmarkSpaceIds);
+  const rostersBySpace = useMultiSpaceRosters(bookmarkSpaceIds);
 
   const [search, setSearch] = React.useState('');
   const [sourceFilter, setSourceFilter] = React.useState<SourceFilter>('all');
