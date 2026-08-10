@@ -39,6 +39,25 @@ const CATEGORY_ICON_CODES: Record<string, string> = {
 
 let cachedEmojis: EmojiItem[] | null = null;
 let cachedRockHand: EmojiItem | null = null;
+let cachedByUnified: Map<string, EmojiItem> | null = null;
+
+/**
+ * Look up an emoji by unified codepoint, case-insensitively.
+ *
+ * emoji-datasource-twitter stores `unified` uppercase and the picker records
+ * usage in that form, but entries migrated from the old emoji-picker-react
+ * store (`epr_suggested`) are lowercase and are carried across verbatim. An
+ * exact match drops those silently, leaving a short "Frequently Used" row for
+ * anyone who used the app before the picker rewrite.
+ */
+function findByUnified(unified: string): EmojiItem | undefined {
+  if (!cachedByUnified) {
+    cachedByUnified = new Map(
+      buildEmojiIndex().map((e) => [e.unified.toLowerCase(), e])
+    );
+  }
+  return cachedByUnified.get(unified.toLowerCase());
+}
 
 /** Convert unified codepoint string to native emoji character */
 export function unifiedToEmoji(unified: string): string {
@@ -142,9 +161,19 @@ export function buildRowData(
 
   // Frequently Used
   if (frequentUnifieds.length > 0) {
-    const freqEmojis = frequentUnifieds
-      .map((u) => emojis.find((e) => e.unified === u))
-      .filter((e): e is EmojiItem => e != null);
+    // Dedupe on the resolved emoji, not the stored key: a user who used the app
+    // both before and after the picker rewrite can hold "1f600" AND "1F600" for
+    // the same emoji, which case-insensitive lookup would otherwise list twice —
+    // and the row renders with `key={item.unified}`, so it would collide there too.
+    const seen = new Set<string>();
+    const freqEmojis: EmojiItem[] = [];
+    for (const u of frequentUnifieds) {
+      const match = findByUnified(u);
+      if (match && !seen.has(match.unified)) {
+        seen.add(match.unified);
+        freqEmojis.push(match);
+      }
+    }
 
     if (freqEmojis.length > 0) {
       categoryRowIndices.set('Frequently Used', rows.length);

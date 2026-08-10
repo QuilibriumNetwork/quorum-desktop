@@ -216,12 +216,24 @@ export const FloatingPopover: React.FC<FloatingPopoverProps> = ({
   // Close on any scroll — for anchors inside a virtualized list whose items
   // move via transforms JS positioning can't track in lockstep. Capture phase
   // catches scrolls on nested scrollers (the message list), not just window.
+  //
+  // Scrolls from INSIDE the popover are exempt. Capture walks window →
+  // document → target, so this one listener also sees the popover's own
+  // scrollers even though it is portalled out of the anchor's subtree and
+  // scroll events don't bubble. Without the exemption, a popover with
+  // scrollable content dismisses itself the moment the user scrolls it — as
+  // the emoji picker did, both on wheel and on the programmatic scroll its
+  // category buttons issue.
   React.useEffect(() => {
     if (!open || !closeOnScroll) return;
-    const handleScroll = () => onCloseRef.current();
+    const handleScroll = (e: Event) => {
+      const target = e.target as Node | null;
+      if (target && refs.floating.current?.contains(target)) return;
+      onCloseRef.current();
+    };
     window.addEventListener('scroll', handleScroll, true);
     return () => window.removeEventListener('scroll', handleScroll, true);
-  }, [open, closeOnScroll]);
+  }, [open, closeOnScroll, refs.floating]);
 
   if (!open || !anchor) return null;
 

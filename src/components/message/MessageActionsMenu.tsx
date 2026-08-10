@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
-import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { Button, Icon } from '../primitives';
 import { FloatingPopover, rectAnchor } from '../ui';
 import { useFrequentEmojis } from '../../hooks/business/messages';
-import { emojiToUnified } from '../../utils/remarkTwemoji';
 import './MessageActionsMenu.scss';
 
 // Delay for copy actions to show "Copied!" feedback
@@ -170,17 +168,7 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     >
       {/* Quick reactions row */}
         <div className="message-actions-menu__reactions">
-          {frequentEmojis.map(({ emoji, unified }) => {
-            let twemojiSrc: string | null = null;
-            if (unified) {
-              twemojiSrc = `/twitter/64/${unified}.png`;
-            } else {
-              const entities = parseEmoji(emoji);
-              if (entities.length > 0) {
-                twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
-              }
-            }
-
+          {frequentEmojis.map(({ emoji, twemojiSrc }) => {
             return (
               <Button
                 key={emoji}
