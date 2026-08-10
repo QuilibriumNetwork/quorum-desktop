@@ -16,6 +16,39 @@ related:
 
 # Name resolution: an API that cannot express a partial identity
 
+## START HERE if you are picking this up cold
+
+**This document is ready to implement.** All four design questions are settled
+(see "Decisions"); nothing here is waiting on an answer.
+
+Read in this order and do not skip 2 — it is the one that stops you building the
+wrong thing:
+
+1. This file, whole. It is short.
+2. **Constraint 2**, on detached surfaces. An earlier draft of this design got it
+   backwards and is kept inline as a rejected note. If you find yourself about to
+   resolve bookmarks with the global ladder, you have re-derived the mistake.
+3. [`utils/resolveGlobalSender.ts`](../../src/utils/resolveGlobalSender.ts) —
+   Layer 2 is a generalisation of this file, not a new build.
+4. [`2026-08-10-name-surfaces-that-never-reached-the-resolver.md`](../2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
+   — the eighteen surfaces this must not regress, which doubles as the test
+   checklist.
+5. `.agents/docs/features/qns-username-display.md` for decisions already made
+   (no badge; why the full roster is deliberately never fetched).
+
+**State as of 2026-08-10:** PR #325 shipped per-site fixes for everything except
+**bookmarks and notifications**, confirmed by the operator driving the app. Those
+two are step 3 and are your first visible win. This design supersedes those
+per-site fixes rather than adding to them — expect to delete code you find.
+
+**Two standing rules on this subsystem**, both learned expensively here:
+
+- Every fix needs a test shown to FAIL without it. Revert it, watch it go red,
+  put it back. Four assertions written during this work passed either way.
+- Label every claim MEASURED / READ / INFERRED. On this subsystem specifically,
+  six confident readings were falsified by the operator simply using the app —
+  including two in this document, which is why constraint 2 reads as it does.
+
 ## The problem, stated as evidence rather than opinion
 
 On 2026-08-10 the same defect was fixed in roughly eighteen places. Six came
@@ -99,9 +132,22 @@ one delegates to shared, so a rule added to shared protects only half the paths.
 
 ### Layer 2 — per-client identity source (stays per-client, deliberately)
 
-One provider owning `address → MemberIdentity`, assembled from the roster, the
-roster's global slots, and the public-profile cache. It is the ONLY thing that
-knows how those merge.
+One provider owning **`(address, spaceId?) → MemberIdentity`**, assembled from
+the roster, the roster's global slots, and the public-profile cache. It is the
+ONLY thing that knows how those merge.
+
+`spaceId` is part of the key, not an afterthought: it is what lets a bookmark or
+a notification show the per-space nickname (constraint 2). With no `spaceId` —
+a DM, or a Space you have left — `spaceName` resolves to `null` and the ladder
+continues to the QNS name.
+
+**Build it by generalising [`utils/resolveGlobalSender.ts`](../../src/utils/resolveGlobalSender.ts),
+not from scratch.** That file already builds a `(spaceId, senderId) → identity`
+lookup from `messageDB.getSpaceMembers`, already keeps the per-space name and the
+global name separate, and is already used by the notification panel. It is
+missing exactly one tier — the QNS name — which is why notifications show the
+nickname but not the `.q`. Two things exist that should be one: this, and
+`useMembersWithPublicProfileFallback`.
 
 This layer stays per-client because the inputs genuinely differ: mobile's rows
 are snake_case and desktop's camelCase, different query clients, different
@@ -117,19 +163,37 @@ One place, not eight.
 ### Layer 3 — the only API app code may touch
 
 ```tsx
-<MemberName address={addr} />                  // JSX; renders the ".q"
-const name = useResolvedName(addr);            // strings: aria-labels,
-                                               // notification bodies, tooltips,
-                                               // modal payloads, search text
+// JSX. Renders the name, the ".q" when verified, and — per decision 2 — the
+// avatar initials from that SAME resolved name, so the two cannot disagree.
+<MemberName address={addr} />
+<MemberName address={addr} withAvatar />
+<MemberName address={addr} spaceId={bookmark.spaceId} />   // detached surfaces
+
+// Strings: aria-labels, notification bodies, tooltips, modal payloads,
+// search-match text.
+const name = useResolvedName(addr);
+const name = useResolvedName(addr, { spaceId });
 ```
 
-Scope is supplied by an `IdentityScopeProvider` at the space/DM boundary rather
-than passed per call — a call site inside a channel should not be able to ask
-for the wrong ladder. (See open question 1: explicit prop vs context.)
+**Scope normally comes from an `IdentityScopeProvider`** mounted at the space/DM
+boundary, so a call site inside a channel cannot ask for the wrong ladder and
+passes one argument. The explicit `spaceId` prop is the override, used by the
+detached surfaces that carry their own (bookmarks, the notification panel, the
+bookmarks page) since they render outside any Space's provider.
 
 Every current call site becomes one of these two. `ResolvedName`,
 `formatResolvedName`, `resolveMentionPillName`, `resolveProfileCardName`,
-`conversationMatchesSearch` and `selfNamePlaceholder` all collapse into them.
+`conversationMatchesSearch`, `selfNamePlaceholder` and the `UserAvatar`
+`displayName` prop all collapse into them.
+
+**Avatar initials are part of this component, not a sibling.** Today several
+sites feed `UserAvatar` a raw name while the label beside it resolves, so a
+member can render `gatto.q` next to a circle showing `G` for GattoPardo. The
+operator stated the rule directly: *the initials should always render whatever
+the displayed name is at that moment.* One component owning both makes the
+disagreement unrepresentable. Note the initials must use the BARE name, not the
+suffixed one — `getInitials` splits on non-letters, so `gatto.q` would yield two
+initials from one name (mobile hit this; see its `resolveSelfName.ts`).
 
 ### Layer 4 — enforcement, because the rule is what regrows
 
@@ -205,13 +269,20 @@ Each step is independently shippable and independently verifiable.
 2. **desktop:** build the provider + `<MemberName>` + `useResolvedName`. Prove
    it on ONE surface (the member sidebar — highest row count, so it also proves
    constraint 1).
-3. **desktop:** migrate the remaining 27 files, deleting per-site resolver calls.
-4. **desktop:** add the lint rule + guard test; remove the deprecated adapters.
-5. **mobile:** same as 2–4 against the same shared rule.
-6. **shared:** delete the deprecated adapters once both clients are off them.
+3. **desktop:** migrate **bookmarks and notifications first**. They are the only
+   two surfaces still known-wrong after PR #325, the operator has confirmed every
+   other surface renders correctly, and they are the ones that exercise the
+   `spaceId` override. Fixing them early converts this plan from "a refactor you
+   have to take on faith" into "the two broken screens now work", which is the
+   only evidence the operator can actually check.
+4. **desktop:** migrate the remaining ~25 files, deleting per-site resolver calls.
+5. **desktop:** add the lint rule + guard test; remove the deprecated adapters.
+6. **mobile:** same as 2–5 against the same shared rule.
+7. **shared:** delete the deprecated adapters once both clients are off them.
 
-Do NOT start at step 3. The whole value is that step 2 proves the provider can
-serve a virtualised list before 27 files depend on it.
+Do NOT start at step 4. The whole value is that step 2 proves the provider can
+serve a virtualised list, and step 3 proves it fixes something visible, before
+25 files depend on it.
 
 ## How each step is verified
 
