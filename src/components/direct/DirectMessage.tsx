@@ -820,6 +820,10 @@ const DirectMessage: React.FC<{}> = () => {
   }, [updateReadTime]);
 
   return (
+    // Message resolves its sender through src/identity, which throws
+    // outside a provider. DMs carry no spaceId — rostersBySpace={{}} is
+    // correct here (forces the global ladder), not a stub.
+    <IdentityScopeProvider rostersBySpace={{}} selfAddress={userAddress || null}>
     <div className="chat-container">
       <Flex direction="column">
         {/* Header - full width at top */}
@@ -1174,6 +1178,7 @@ const DirectMessage: React.FC<{}> = () => {
         </MobileDrawer>
       )}
     </div>
+    </IdentityScopeProvider>
   );
 };
 

@@ -35,11 +35,7 @@ import { i18n } from '@lingui/core';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { useMobile } from '../context/MobileProvider';
 import { UserAvatar } from '../user/UserAvatar';
-import { ResolvedName } from '../user/ResolvedName';
-import {
-  resolveNameForContext,
-  formatResolvedName,
-} from '../../utils/resolveMemberName';
+import { MemberName, useResolvedMemberName, useResolvedName } from '../../identity';
 import {
   useMessageActions,
   useEmojiPicker,
@@ -151,6 +147,38 @@ const EmbeddedImage = ({
         </div>
       )}
     </div>
+  );
+};
+
+// The reply-to preview must resolve the sender the SAME way the header does
+// (same identity module, same `enrich`), so the two call sites can never
+// silently drift from each other again. It lives in its own component
+// because the reply block below is a conditionally-invoked closure inside
+// the main render — hooks cannot be called there; this is the "extract a
+// small sub-component" move the migration recipe calls for.
+const MessageReplySenderInfo: React.FC<{ address: string; userIcon?: string }> = ({
+  address,
+  userIcon,
+}) => {
+  const resolved = useResolvedMemberName(address, { enrich: true });
+  return (
+    <>
+      <UserAvatar
+        userIcon={userIcon}
+        // BARE name, same source as the label below — feeding the avatar a
+        // different name than the resolved label is how a member came to
+        // render "gatto.q" beside a circle showing "G" for someone else.
+        displayName={resolved.name}
+        address={address}
+        size={32}
+        className="message-reply-sender-icon flex-shrink-0"
+      />
+      <MemberName
+        address={address}
+        enrich
+        className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat"
+      />
+    </>
   );
 };
 
@@ -441,25 +469,21 @@ export const Message = React.memo(
     );
 
     const sender = mapSenderToUser(message.content?.senderId);
+    const senderId = message.content?.senderId ?? '';
 
-    // Space messages use the override-aware resolver; DMs (spaceId===channelId)
-    // let the QNS name win over the plain displayName.
-    const isDmMessage = message.spaceId === message.channelId;
-    const resolveSenderName = useCallback(
-      (u: {
-        displayName?: string | null;
-        primaryUsername?: string | null;
-        globalDisplayName?: string | null;
-        address?: string;
-        userAddress?: string;
-      }) =>
-        resolveNameForContext(
-          { ...u, address: u.address ?? u.userAddress ?? '' },
-          { isDm: isDmMessage },
-        ),
-      [isDmMessage],
-    );
-    const resolvedSender = resolveSenderName({ ...sender, address: sender?.address ?? message.content?.senderId });
+    // Resolves through src/identity: the surrounding IdentityScopeProvider
+    // decides the scope — Channel.tsx's space subtree for channel/thread
+    // messages, the global ladder (no spaceId) for DMs. `enrich`: a message
+    // header must show the ".q" name, and the senders visible in a channel
+    // are bounded — useMembersWithPublicProfileFallback already fetches
+    // their profiles, so this issues no additional network load.
+    const resolvedSender = useResolvedMemberName(senderId, { enrich: true });
+
+    // "Pinned by X" resolves the PINNER's identity, a different address from
+    // the sender. Always called — never moved inside the isPinned branches
+    // below — so the hook order stays fixed whether or not this message is
+    // pinned.
+    const pinnedByName = useResolvedName(message.pinnedBy ?? '', { enrich: true });
 
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
     const isNewMember = sender?.joinedAt != null &&
@@ -676,23 +700,9 @@ export const Message = React.memo(
                   }}
                 >
                   <div className="message-reply-curve flex-shrink-0" />
-                  <UserAvatar
-                    userIcon={mapSenderToUser(reply.content.senderId).userIcon}
-                    displayName={
-                      mapSenderToUser(reply.content.senderId).displayName
-                    }
+                  <MessageReplySenderInfo
                     address={reply.content.senderId}
-                    size={32}
-                    className="message-reply-sender-icon flex-shrink-0"
-                  />
-                  <ResolvedName
-                    resolved={resolveSenderName({
-                      ...mapSenderToUser(reply.content.senderId),
-                      address:
-                        mapSenderToUser(reply.content.senderId)?.address ??
-                        reply.content.senderId,
-                    })}
-                    className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat"
+                    userIcon={mapSenderToUser(reply.content.senderId).userIcon}
                   />
                   <span className="message-reply-text flex-1 min-w-0">
                     {replyTextWithNames}
@@ -719,7 +729,10 @@ export const Message = React.memo(
             <span
               className={`flex items-center min-w-0 flex-1 ${message.content.type === 'kick' ? 'text-danger' : 'text-subtle'}`}
             >
-              {formatEventMessage(formatResolvedName(resolvedSender), message.content.type)}
+              {formatEventMessage(
+                resolvedSender.isQnsVerified ? `${resolvedSender.name}.q` : resolvedSender.name,
+                message.content.type
+              )}
             </span>
           </Flex>
         )}
@@ -736,7 +749,11 @@ export const Message = React.memo(
             ) : (
               <UserAvatar
                 userIcon={sender.userIcon}
-                displayName={sender.displayName}
+                // BARE resolved name, same source as the header label below —
+                // feeding the avatar a different name than the resolved
+                // label is how a member came to render "gatto.q" beside a
+                // circle showing "G" for someone else.
+                displayName={resolvedSender.name}
                 address={sender.address}
                 size={44}
                 className="message-sender-icon"
@@ -864,8 +881,9 @@ export const Message = React.memo(
                 <>
                   {/* Desktop layout: horizontal row with username and timestamp */}
                   <Flex align="center" className="items-center min-w-0 hidden xs:flex">
-                    <ResolvedName
-                      resolved={resolvedSender}
+                    <MemberName
+                      address={senderId}
+                      enrich
                       className="message-sender-name truncate-user-name-chat flex-shrink min-w-0"
                     />
                     {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" className="ml-1.5" />}
@@ -874,7 +892,7 @@ export const Message = React.memo(
                         id={`pin-indicator-${message.messageId}`}
                         content={
                           message.pinnedBy
-                            ? t`Pinned by ${formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))}`
+                            ? t`Pinned by ${pinnedByName}`
                             : t`Pinned`
                         }
                         showOnTouch={true}
@@ -959,8 +977,9 @@ export const Message = React.memo(
 
                     {/* Username row on mobile */}
                     <Flex align="center" className="items-center min-w-0">
-                      <ResolvedName
-                        resolved={resolvedSender}
+                      <MemberName
+                        address={senderId}
+                        enrich
                         className="message-sender-name truncate-user-name-chat flex-shrink min-w-0"
                       />
                       {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" className="ml-1.5" />}
@@ -969,7 +988,7 @@ export const Message = React.memo(
                           id={`pin-indicator-mobile-${message.messageId}`}
                           content={
                             message.pinnedBy
-                              ? t`Pinned by ${formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))}`
+                              ? t`Pinned by ${pinnedByName}`
                               : t`Pinned`
                           }
                           showOnTouch={true}
@@ -1089,7 +1108,7 @@ export const Message = React.memo(
                         id={`pin-indicator-inline-${message.messageId}`}
                         content={
                           message.pinnedBy
-                            ? t`Pinned by ${formatResolvedName(resolveSenderName({ ...mapSenderToUser(message.pinnedBy), address: mapSenderToUser(message.pinnedBy)?.address ?? message.pinnedBy }))}`
+                            ? t`Pinned by ${pinnedByName}`
                             : t`Pinned`
                         }
                         showOnTouch={true}

@@ -13,6 +13,7 @@ import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { getThreadTitle } from '../../utils/threadTitle';
 import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
+import { IdentityScopeProvider } from '../../identity';
 import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
@@ -330,9 +331,36 @@ export const ThreadPanel: React.FC = () => {
     </div>
   ), [threadTitle, starterName, handleStarterClick]);
 
+  // Message resolves its sender through src/identity, which throws outside a
+  // provider. ThreadPanel is a SIBLING of Channel in Space.tsx (not a
+  // descendant), so it does NOT inherit Channel's IdentityScopeProvider —
+  // it needs its own, built from the same enriched `members` map Channel
+  // already threaded through ThreadContext. Always computed (never inside
+  // the early-return below) so hook order stays fixed.
+  const rosterRows = useMemo(() => {
+    const rows: Record<string, { display_name?: string; global_display_name?: string }> = {};
+    const members = channelProps?.members ?? {};
+    for (const address of Object.keys(members)) {
+      rows[address] = {
+        display_name: members[address]?.displayName,
+        global_display_name: members[address]?.globalDisplayName,
+      };
+    }
+    return rows;
+  }, [channelProps?.members]);
+  const rostersBySpace = useMemo(
+    () => (channelProps?.spaceId ? { [channelProps.spaceId]: rosterRows } : {}),
+    [channelProps?.spaceId, rosterRows],
+  );
+
   if (!isOpen || !threadId || !channelProps) return null;
 
   return (
+    <IdentityScopeProvider
+      spaceId={channelProps.spaceId}
+      rostersBySpace={rostersBySpace}
+      selfAddress={channelProps.currentUserAddress ?? null}
+    >
     <div
       className="thread-panel-wrapper"
       ref={panelRef}
@@ -583,6 +611,7 @@ export const ThreadPanel: React.FC = () => {
         </>
       )}
     </div>
+    </IdentityScopeProvider>
   );
 };
 

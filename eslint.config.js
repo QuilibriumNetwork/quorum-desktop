@@ -162,7 +162,6 @@ export default [
     // Phase D and this whole block is deleted in Phase E. Remove your file
     // from it as part of migrating it. Never add one.
     files: [
-      'src/components/message/Message.tsx',
       'src/components/message/MessageComposer.tsx',
       'src/components/message/MessageMarkdownRenderer.tsx',
       'src/components/message/MessagePreview.tsx',
