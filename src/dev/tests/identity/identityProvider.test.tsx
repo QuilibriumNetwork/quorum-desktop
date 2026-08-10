@@ -29,6 +29,7 @@ describe('identityFromMaps — tier assembly', () => {
       profiles: {},
       selfAddress: null,
       selfProfile: null,
+      locallyKnownNames: {},
     });
     expect(r).toEqual({
       address: ADDR,
@@ -46,6 +47,7 @@ describe('identityFromMaps — tier assembly', () => {
       profiles: { [ADDR]: { display_name: 'Profile Alice', primary_username: 'alice' } },
       selfAddress: null,
       selfProfile: null,
+      locallyKnownNames: {},
     });
     expect(r.globalName).toBe('Roster Alice');
     expect(r.qnsName).toBe('alice');
@@ -59,6 +61,7 @@ describe('identityFromMaps — tier assembly', () => {
       profiles: {},
       selfAddress: null,
       selfProfile: null,
+      locallyKnownNames: {},
     });
     expect(r.qnsName).toBeNull();
   });
@@ -69,6 +72,7 @@ describe('identityFromMaps — tier assembly', () => {
       profiles: {},
       selfAddress: null,
       selfProfile: null,
+      locallyKnownNames: {},
     });
     expect(r).toEqual({ address: ADDR, spaceName: null, qnsName: null, globalName: null });
   });
@@ -82,6 +86,7 @@ describe('identityFromMaps — tier assembly', () => {
       profiles: { [ADDR]: { display_name: 'Alice', primary_username: 'alice' } },
       selfAddress: null,
       selfProfile: null,
+      locallyKnownNames: {},
     });
     expect(r.spaceName).toBeNull();
     expect(r.qnsName).toBe('alice');
@@ -100,6 +105,7 @@ describe('identityFromMaps — offline (design constraint 5)', () => {
       profiles: {},
       selfAddress: null,
       selfProfile: null,
+      locallyKnownNames: {},
     });
     expect(r.globalName).toBe('Alice');
     expect(r.qnsName).toBeNull();
@@ -115,9 +121,65 @@ describe('identityFromMaps — the self tier', () => {
       profiles: {},
       selfAddress: ADDR,
       selfProfile: { display_name: 'GattoPardo Mobile', primary_username: 'gatto' },
+      locallyKnownNames: {},
     });
     expect(r.qnsName).toBe('gatto');
     expect(r.globalName).toBe('GattoPardo Mobile');
+  });
+});
+
+describe('identityFromMaps — the local-name tier (fix round 1, DM identity lost with no public profile)', () => {
+  // A DM partner known only from local conversation data (a peer broadcast /
+  // decrypted-frame `user_profile`, no network round-trip) — the ONLY
+  // scenario where a DM used to have nothing but a truncated address, since
+  // `rostersBySpace` is always {} for a DM (no spaceId) and this partner has
+  // never published a public profile.
+  it('falls back to the local name when neither the roster nor a fetched profile knows one', () => {
+    const r = identityFromMaps(ADDR, undefined, {
+      rostersBySpace: {},
+      profiles: {},
+      selfAddress: null,
+      selfProfile: null,
+      locallyKnownNames: { [ADDR]: 'Bob (from conversation)' },
+    });
+    expect(r.globalName).toBe('Bob (from conversation)');
+    expect(r.qnsName).toBeNull();
+  });
+
+  it('a fetched public profile still wins over the local name — the local name is the LAST resort, not the first', () => {
+    const r = identityFromMaps(ADDR, undefined, {
+      rostersBySpace: {},
+      profiles: { [ADDR]: { display_name: 'Published Bob', primary_username: 'bob' } },
+      selfAddress: null,
+      selfProfile: null,
+      locallyKnownNames: { [ADDR]: 'Bob (from conversation)' },
+    });
+    expect(r.globalName).toBe('Published Bob');
+    expect(r.qnsName).toBe('bob');
+  });
+
+  it('the roster global slot still wins over the local name (Space precedence unchanged)', () => {
+    const r = identityFromMaps(ADDR, 'space-1', {
+      rostersBySpace: {
+        'space-1': { [ADDR]: { display_name: '', global_display_name: 'Roster Alice' } },
+      },
+      profiles: {},
+      selfAddress: null,
+      selfProfile: null,
+      locallyKnownNames: { [ADDR]: 'Local Alice' },
+    });
+    expect(r.globalName).toBe('Roster Alice');
+  });
+
+  it('an empty locallyKnownNames map (every Space surface) changes nothing', () => {
+    const r = identityFromMaps(ADDR, undefined, {
+      rostersBySpace: {},
+      profiles: {},
+      selfAddress: null,
+      selfProfile: null,
+      locallyKnownNames: {},
+    });
+    expect(r.globalName).toBeNull();
   });
 });
 

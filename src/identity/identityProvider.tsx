@@ -5,6 +5,11 @@ import { QuorumApiClient, isHandledFetchError } from '../api/baseTypes';
 import type { PublicProfileResponse } from '../api/baseTypes';
 import { publicProfileQueryKey } from '../hooks/business/user/useUserPublicProfile';
 
+// Stable reference for callers that pass no `locallyKnownNames` (every Space
+// surface) — a fresh `{}` literal on every render would invalidate the
+// provider's `sources`/`value` memo on every render for those callers.
+const EMPTY_LOCAL_NAMES: Record<string, string> = {};
+
 /** The roster fields the identity needs. Mirrors SpaceMemberRow's name slots. */
 export interface RosterNameRow {
   display_name?: string | null;
@@ -18,6 +23,22 @@ export interface IdentitySources {
   profiles: Record<string, PublicProfileResponse | null>;
   selfAddress: string | null;
   selfProfile: PublicProfileResponse | null;
+  /**
+   * address -> a name known LOCALLY, with no network round-trip. Fed by a
+   * caller that already has this in memory — today that's a DM's
+   * `Conversation.displayName` (learned from a peer broadcast or a decrypted
+   * message frame; see `.agents/issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md`).
+   * Spaces have a roster instead and pass `{}` here.
+   *
+   * LAST `globalName` tier, after the roster global slot and the fetched
+   * profile: a published profile is authoritative when present, the local
+   * name is what the peer told you directly (still real, just unverified),
+   * and a truncated address is the fallback only when NOTHING knows a name.
+   * This is design constraint 5 — DM identity must render from what's
+   * already local, without waiting on a fetch — stated as data instead of
+   * as a per-surface special case.
+   */
+  locallyKnownNames: Record<string, string>;
 }
 
 const nn = (v?: string | null): string | null => {
@@ -46,8 +67,13 @@ export function identityFromMaps(
     // Only a real space context can have a per-space nickname.
     spaceName: nn(row?.display_name),
     qnsName: nn(profile?.primary_username),
-    // Prefer the live roster global slot over the published profile.
-    globalName: nn(row?.global_display_name) ?? nn(profile?.display_name),
+    // Prefer the live roster global slot, then the published profile, then a
+    // name known only locally (no fetch) — never a second, parallel lookup
+    // path; this is the one place the tiers merge.
+    globalName:
+      nn(row?.global_display_name) ??
+      nn(profile?.display_name) ??
+      nn(sources.locallyKnownNames[address]),
   };
 }
 
@@ -77,8 +103,11 @@ export const IdentityScopeProvider: React.FunctionComponent<{
   /** spaceId -> roster, already loaded by the caller (local IndexedDB read). */
   rostersBySpace: Record<string, Record<string, RosterNameRow>>;
   selfAddress: string | null;
+  /** See `IdentitySources.locallyKnownNames`. Optional — Space surfaces have
+   *  no local-name source and simply don't pass it. */
+  locallyKnownNames?: Record<string, string>;
   children: React.ReactNode;
-}> = ({ spaceId, rostersBySpace, selfAddress, children }) => {
+}> = ({ spaceId, rostersBySpace, selfAddress, locallyKnownNames = EMPTY_LOCAL_NAMES, children }) => {
   // Addresses that asked for a profile and are not in a roster-only render.
   const [requested, setRequested] = React.useState<ReadonlySet<string>>(new Set());
   const request = React.useCallback((address: string) => {
@@ -137,11 +166,11 @@ export const IdentityScopeProvider: React.FunctionComponent<{
 
   const value = React.useMemo<IdentityContextValue>(
     () => ({
-      sources: { rostersBySpace, profiles, selfAddress, selfProfile },
+      sources: { rostersBySpace, profiles, selfAddress, selfProfile, locallyKnownNames },
       defaultSpaceId: spaceId,
       request,
     }),
-    [rostersBySpace, profiles, selfAddress, selfProfile, spaceId, request],
+    [rostersBySpace, profiles, selfAddress, selfProfile, locallyKnownNames, spaceId, request],
   );
 
   return <IdentityContext.Provider value={value}>{children}</IdentityContext.Provider>;

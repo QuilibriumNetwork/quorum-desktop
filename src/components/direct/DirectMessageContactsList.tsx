@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
-import { realIconOrUndefined } from '../../utils/identityPlaceholder';
+import { realIconOrUndefined, realDisplayNameOrUndefined } from '../../utils/identityPlaceholder';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import {
@@ -127,18 +127,45 @@ const DirectMessageStripRow: React.FC<{
  */
 const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = (props) => {
   const { currentPasskeyInfo } = usePasskeysContext();
+  // Fetched here (not in Inner) so it can ALSO feed the provider's
+  // `locallyKnownNames` map — the outer shell is the one component that
+  // exists both outside the provider (as its creator) and needs this data,
+  // so lifting the fetch is cheaper than fetching it twice.
+  const { conversations: conversationsList } = useConversationPolling();
+
+  // Fed to the provider's `locallyKnownNames` tier (fix round 1, design
+  // constraint 5): a DM partner's LOCAL `Conversation.displayName` — learned
+  // from a peer broadcast or a decrypted message frame, no network
+  // round-trip — is the last resort before a truncated address, for a
+  // partner who has never published a public profile. Built from ALL
+  // conversations (not just currently-filtered/rendered ones), same
+  // reasoning as `Inner`'s proactive `requestNames` below: a row must be
+  // resolvable the moment it's needed, not only once it happens to render.
+  const localNamesByAddress = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const c of conversationsList) {
+      const name = realDisplayNameOrUndefined(c.displayName);
+      if (name && c.address) map[c.address] = name;
+    }
+    return map;
+  }, [conversationsList]);
+
   return (
     <IdentityScopeProvider
       rostersBySpace={{}}
       selfAddress={currentPasskeyInfo?.address || null}
+      locallyKnownNames={localNamesByAddress}
     >
-      <DirectMessageContactsListInner {...props} />
+      <DirectMessageContactsListInner {...props} conversationsList={conversationsList} />
     </IdentityScopeProvider>
   );
 };
 
-const DirectMessageContactsListInner: React.FC<DirectMessageContactsListProps> = ({ forceExpanded } = {}) => {
-  const { conversations: conversationsList } = useConversationPolling();
+const DirectMessageContactsListInner: React.FC<
+  DirectMessageContactsListProps & {
+    conversationsList: ReturnType<typeof useConversationPolling>['conversations'];
+  }
+> = ({ forceExpanded, conversationsList }) => {
   // Back-fill displayName / icon from the public profile for contacts whose
   // local row still holds the "Unknown User" / default-avatar placeholder,
   // and write the result through to IndexedDB so later loads are instant.

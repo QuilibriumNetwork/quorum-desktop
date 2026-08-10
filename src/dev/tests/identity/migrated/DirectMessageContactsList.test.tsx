@@ -174,6 +174,29 @@ describe('DirectMessageContactsList — render resolves via the identity module'
   });
 });
 
+describe('DirectMessageContactsList — fix round 1: wires the LOCAL conversation name into the provider', () => {
+  beforeEach(() => {
+    getPublicProfile.mockReset();
+    getMessage.mockReset();
+  });
+
+  it('a partner with NO public profile still renders their LOCAL conversation displayName, not a truncated address', async () => {
+    // No public profile at all — the OLD bug: with an always-empty roster
+    // (DMs have no spaceId) and a 404 profile, this row used to resolve to
+    // an all-null identity and render the truncated address instead.
+    getPublicProfile.mockResolvedValue({ data: null });
+
+    renderList([conversation(ADDR_A, 'Carol (local only)')]);
+
+    // The row's NAME label resolves to the local name (the address subtitle
+    // underneath it, `formatAddress(props.address)`, is unrelated —
+    // DirectMessageContact always shows it as a second line when there's no
+    // message preview yet, name or no name).
+    expect(await screen.findByText('Carol (local only)')).toBeInTheDocument();
+    expect(screen.queryByText(/\.q/)).not.toBeInTheDocument();
+  });
+});
+
 describe('DirectMessageContactsList — search matches the name the user actually sees', () => {
   beforeEach(() => {
     getPublicProfile.mockReset();

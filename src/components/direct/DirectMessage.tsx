@@ -502,6 +502,17 @@ const DirectMessage: React.FC<{}> = () => {
     };
   }, [members, address, conversation, recipientPublicProfile]);
 
+  // Fed to the provider's `locallyKnownNames` tier (fix round 1, design
+  // constraint 5): the partner's LOCAL `Conversation.displayName` — learned
+  // from a peer broadcast or a decrypted message frame, no network round-trip
+  // — is the last resort before a truncated address, for a partner who has
+  // never published a public profile. `realDisplayNameOrUndefined` demotes
+  // the stored 'Unknown User' placeholder so it never becomes a "known" name.
+  const localNamesByAddress = useMemo(() => {
+    const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName);
+    return localName && address ? { [address]: localName } : {};
+  }, [conversation, address]);
+
   // Icon size for header icons
   const headerIconSize = 'lg';
 
@@ -917,8 +928,14 @@ const DirectMessage: React.FC<{}> = () => {
   return (
     // Message resolves its sender through src/identity, which throws
     // outside a provider. DMs carry no spaceId — rostersBySpace={{}} is
-    // correct here (forces the global ladder), not a stub.
-    <IdentityScopeProvider rostersBySpace={{}} selfAddress={userAddress || null}>
+    // correct here (forces the global ladder), not a stub. locallyKnownNames
+    // is this DM's own local-conversation-data fallback (fix round 1) —
+    // constraint 5, names must render from IndexedDB with no fetch.
+    <IdentityScopeProvider
+      rostersBySpace={{}}
+      selfAddress={userAddress || null}
+      locallyKnownNames={localNamesByAddress}
+    >
     <div className="chat-container">
       <Flex direction="column">
         {/* Header - full width at top */}

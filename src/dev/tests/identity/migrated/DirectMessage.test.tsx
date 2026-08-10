@@ -39,6 +39,10 @@ beforeAll(() => {
   i18n.activate('en');
 });
 
+beforeEach(() => {
+  mockConversation = { conversation: null };
+});
+
 const getPublicProfile = vi.fn();
 vi.mock('@/api/baseTypes', () => ({
   QuorumApiClient: class {
@@ -86,8 +90,12 @@ vi.mock('@/hooks/queries/registration/useRegistrationOptional', () => ({
   }),
 }));
 
+// Mutable per-test: most tests want no local Conversation row (`null`); the
+// local-name wiring test below sets a row with a `displayName` and no
+// public profile for that address.
+let mockConversation: { conversation: Record<string, unknown> | null } = { conversation: null };
 vi.mock('@/hooks/queries/conversation/useConversation', () => ({
-  useConversation: () => ({ data: { conversation: null } }),
+  useConversation: () => ({ data: mockConversation }),
 }));
 
 vi.mock('@/hooks/queries/config', () => ({
@@ -246,6 +254,33 @@ describe('DirectMessage — header resolves the partner via the identity module'
       expect(screen.getAllByText('Bob').length).toBeGreaterThan(0);
     });
     expect(screen.queryByText(/\.q/)).not.toBeInTheDocument();
+  });
+});
+
+describe('DirectMessage — fix round 1: the header wires the LOCAL conversation name into the provider', () => {
+  beforeEach(() => {
+    getPublicProfile.mockReset();
+  });
+
+  it('a partner with no public profile at all still renders their LOCAL conversation displayName, not a truncated address', async () => {
+    // No public profile for either address — the OLD bug: with nothing but
+    // the roster (always {} for a DM) and a 404 profile, this partner used
+    // to resolve to an all-null identity and render as a truncated address,
+    // even though their name is sitting right here in the local
+    // Conversation row.
+    mockConversation = {
+      conversation: { displayName: 'Carol (local only)', icon: '', bio: '' },
+    };
+
+    renderDM({ self: null, other: null });
+
+    // The header renders the name in 3 responsive header rows (desktop,
+    // mobile xs+, mobile below-xs) PLUS the typing-indicator/composer-
+    // placeholder probes — all resolving the SAME local name, none of them
+    // falling back to the truncated address the OLD bug would have shown.
+    await waitFor(() => {
+      expect(screen.getAllByText('Carol (local only)').length).toBeGreaterThanOrEqual(3);
+    });
   });
 });
 
