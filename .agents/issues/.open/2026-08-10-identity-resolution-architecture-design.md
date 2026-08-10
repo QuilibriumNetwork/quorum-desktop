@@ -287,9 +287,9 @@ earlier draft of this section got it wrong in both directions:
 
 So mobile is exposed at exactly one moment, and it is a deliberate PR in the
 mobile repo — not a merge and not a publish. There is no way to break mobile by
-accident from this side, which is what makes desktop-first safe. Step 1's
-adapters still earn their keep: they let that eventual mobile bump be routine
-rather than a flag-day migration.
+accident from this side, which is what makes desktop-first safe. Mobile's bump and its
+migration therefore happen in one PR, deliberately — which is the whole reason no
+compatibility shim is needed.
 
 **We never run `npm publish`.** That is the lead dev's job. Our shared-side work
 ends at the `chore: bump to X.Y.Z-N` commit, which goes **direct on master as its
@@ -313,16 +313,50 @@ guard landed in shared and reached desktop instantly via the symlink, while
 mobile still carried its own duplicate copy because npm had not been published
 past `2.1.0-39`.
 
+## Why there are no adapters
+
+An earlier draft kept the old shared exports as deprecated adapters "so nothing
+breaks mid-migration". Both reasons for that turned out to be wrong, and the
+correction matters because adapters are the expensive, obvious-looking choice.
+
+**It was never about protecting mobile.** Mobile pins a version; it is unaffected
+by shared's master and by a publish alike (see the table above). It cannot be
+broken from this side.
+
+**It was about keeping desktop compiling, and that fear was ~28× too big.**
+MEASURED by grep, 2026-08-10: **exactly one file per repo imports
+`resolveDisplayName` from shared** — `src/utils/resolveMemberName.ts` on desktop,
+`utils/resolveMemberName.ts` on mobile. The other 27 desktop call sites import
+desktop's own local module, not shared. So a breaking change to shared breaks a
+single file, which step 1b fixes in the same session.
+
+That local module is the seam the whole migration runs through: it can keep its
+current exports while its internals switch to `resolveIdentity`, so steps 2-5 are
+pure desktop work with shared already settled.
+
+**And an adapter would actively hurt.** The thesis of this design is that a
+partial identity must be impossible to express. A compatibility shim preserving
+the old permissive signature preserves exactly the hazard, and Layer 4's lint
+rule cannot be switched on while a legal way to call the old API still exists.
+The shim would delay the only thing that stops this regrowing.
+
+When mobile migrates (step 6) it fixes its one file the same way, in the same PR
+as its version bump.
+
 ## Migration order
 
 Each step is independently shippable and independently verifiable.
 
-1. **shared:** add `MemberIdentity` + `resolveIdentity`; keep the old exports as
-   thin deprecated adapters so nothing breaks mid-migration. Follow the shared
-   repo's own workflow: feature branch, PR, squash-merge, then `chore: bump to
-   X.Y.Z-N` as a **separate commit direct on master** (a bump on the feature
-   branch is destroyed by the squash). Do not publish; that is the lead dev's
-   step and the shared-side work is done at the bump.
+1. **shared:** change `resolveDisplayName` into `resolveIdentity` over a required
+   `MemberIdentity`. **Breaking, deliberately, and with no compatibility shim** —
+   see "Why there are no adapters" below. Follow the shared repo's own workflow:
+   feature branch, PR, squash-merge, then `chore: bump to X.Y.Z-N` as a
+   **separate commit direct on master** (a bump on the feature branch is
+   destroyed by the squash). Do not publish; that is the lead dev's step and the
+   shared-side work is done at the bump.
+1b. **desktop, same session:** update the ONE file that imports it
+   (`src/utils/resolveMemberName.ts`). Desktop compiles again immediately. This
+   is not a migration, it is a signature fix at a single import.
 2. **desktop:** build the provider + `<MemberName>` + `useResolvedName`. Prove
    it on ONE surface (the member sidebar — highest row count, so it also proves
    constraint 1).
@@ -333,9 +367,10 @@ Each step is independently shippable and independently verifiable.
    have to take on faith" into "the two broken screens now work", which is the
    only evidence the operator can actually check.
 4. **desktop:** migrate the remaining ~25 files, deleting per-site resolver calls.
-5. **desktop:** add the lint rule + guard test; remove the deprecated adapters.
-6. **mobile:** same as 2–5 against the same shared rule.
-7. **shared:** delete the deprecated adapters once both clients are off them.
+5. **desktop:** add the lint rule + guard test. Nothing to un-deprecate, because
+   nothing was deprecated — the old API stopped existing at step 1.
+6. **mobile:** fix its one shared-importing file, then the same as 2–5, in the
+   same PR as its version bump.
 
 Do NOT start at step 4. The whole value is that step 2 proves the provider can
 serve a virtualised list, and step 3 proves it fixes something visible, before
@@ -408,7 +443,6 @@ observable or measured.
 - [ ] Lint rule + guard test, the guard shown red
 - [ ] `/dev/fake-qns` sweep of all eighteen surfaces, with a control arm
 - [ ] Mobile migrated against the same shared rule, verified with `harness:qns`
-- [ ] Deprecated adapters deleted from shared
 - [ ] The parity document's shared echo-demotion item deleted as absorbed (4)
 
 ---
