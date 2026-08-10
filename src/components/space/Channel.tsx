@@ -31,7 +31,7 @@ import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { parseMessageHash } from '../../utils/messageHashNavigation';
 import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
-import { ResolvedName } from '../user/ResolvedName';
+import { IdentityScopeProvider, MemberName } from '../../identity';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -298,6 +298,25 @@ const Channel: React.FC<ChannelProps> = ({
   const effectiveMembers = useMembersWithPublicProfileFallback(
     members,
     visibleSenderAddresses
+  );
+
+  // Roster rows for <IdentityScopeProvider>/<MemberName> (design constraint
+  // 1): the same per-space nickname + roster-global-name pair `members`
+  // already holds, reshaped to the provider's RosterNameRow — no network
+  // fetch, no fan-out over the whole space roster.
+  const rosterRows = useMemo(() => {
+    const rows: Record<string, { display_name?: string; global_display_name?: string }> = {};
+    for (const address of Object.keys(members)) {
+      rows[address] = {
+        display_name: members[address]?.displayName,
+        global_display_name: members[address]?.globalDisplayName,
+      };
+    }
+    return rows;
+  }, [members]);
+  const rostersBySpace = useMemo(
+    () => ({ [spaceId]: rosterRows }),
+    [spaceId, rosterRows]
   );
 
   // Override the sender lookup used by message rendering with the
@@ -1404,6 +1423,11 @@ const Channel: React.FC<ChannelProps> = ({
   }, [updateReadTime]);
 
   return (
+    <IdentityScopeProvider
+      spaceId={spaceId}
+      rostersBySpace={rostersBySpace}
+      selfAddress={user.currentPasskeyInfo?.address ?? null}
+    >
     <div className={`chat-container${isThreadOpen ? ' thread-open' : ''}`}>
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
@@ -1841,7 +1865,7 @@ const Channel: React.FC<ChannelProps> = ({
                                 displayName: item.displayName,
                                 userIcon: item.userIcon,
                                 bio: item.bio,
-                                // Same lookup the row's <ResolvedName> does —
+                                // Same lookup the row's <MemberName> does —
                                 // the virtualized item cannot carry these. See
                                 // UserProfileModalUser for why omitting them
                                 // does not merely degrade, it inverts.
@@ -1862,16 +1886,8 @@ const Channel: React.FC<ChannelProps> = ({
                             className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
                           />
                           <div className="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
-                            <ResolvedName
-                              resolved={resolveSpaceMemberName({
-                                address: item.address,
-                                displayName: item.displayName,
-                                // QNS/global names merged from the sender map
-                                // (no roster-wide fetch); non-posters lack .q
-                                // until they post or their profile is opened.
-                                primaryUsername: effectiveMembers[item.address]?.primaryUsername,
-                                globalDisplayName: effectiveMembers[item.address]?.globalDisplayName,
-                              })}
+                            <MemberName
+                              address={item.address}
                               className="text-md font-bold truncate-user-name"
                             />
                             {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
@@ -2102,7 +2118,7 @@ const Channel: React.FC<ChannelProps> = ({
                         displayName: item.displayName,
                         userIcon: item.userIcon,
                         bio: (item as { bio?: string }).bio,
-                        // Same lookup the row's <ResolvedName> does — see
+                        // Same lookup the row's <MemberName> does — see
                         // UserProfileModalUser.
                         primaryUsername:
                           effectiveMembers[item.address]?.primaryUsername,
@@ -2121,13 +2137,8 @@ const Channel: React.FC<ChannelProps> = ({
                     className="opacity-80 flex-shrink-0"
                   />
                   <div className="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1">
-                    <ResolvedName
-                      resolved={resolveSpaceMemberName({
-                        address: item.address,
-                        displayName: item.displayName,
-                        primaryUsername: effectiveMembers[item.address]?.primaryUsername,
-                        globalDisplayName: effectiveMembers[item.address]?.globalDisplayName,
-                      })}
+                    <MemberName
+                      address={item.address}
                       className="text-md font-bold truncate-user-name"
                     />
                     {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
@@ -2147,6 +2158,7 @@ const Channel: React.FC<ChannelProps> = ({
         </MobileDrawer>
       )}
     </div>
+    </IdentityScopeProvider>
   );
 };
 
