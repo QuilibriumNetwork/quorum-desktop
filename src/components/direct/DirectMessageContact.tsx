@@ -2,8 +2,7 @@ import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { formatAddress } from '@quilibrium/quorum-shared';
 import { UserAvatar } from '../user/UserAvatar';
-import { ResolvedName } from '../user/ResolvedName';
-import { resolveMemberName } from '../../utils/resolveMemberName';
+import { useResolvedMemberName } from '../../identity';
 import { realIconOrUndefined } from '../../utils/identityPlaceholder';
 import { Icon } from '../primitives';
 import { formatConversationTime } from '../../utils/dateFormatting';
@@ -15,10 +14,10 @@ import { isTouchDevice } from '../../utils/platform';
 const DirectMessageContact: React.FunctionComponent<{
   unread: boolean;
   address: string;
+  /** Raw stored field — used ONLY as an "is there any known identity at all"
+   *  flag for the address-subtitle fallback below. The rendered NAME never
+   *  reads this; it resolves through `useResolvedMemberName`. */
   displayName?: string;
-  /** QNS primary username (no ".q" suffix — render-time). In a DM the QNS
-   *  name overrides the display name (Model B). */
-  primaryUsername?: string;
   userIcon?: string;
   lastMessagePreview?: string;
   previewIcon?: string;
@@ -79,12 +78,17 @@ const DirectMessageContact: React.FunctionComponent<{
 
   const isActive = address === props.address || isNavigating;
 
-  // Model B: the QNS name (name.q) overrides the display name in the DM list.
-  const resolvedName = resolveMemberName({
-    address: props.address,
-    displayName: props.displayName,
-    primaryUsername: props.primaryUsername,
-  });
+  // Resolves through src/identity: DirectMessageContactsList mounts the
+  // ambient <IdentityScopeProvider> (global scope — no spaceId, so a
+  // per-space nickname is meaningless for a DM contact). `enrich`: a DM
+  // partner is one person per row and the `.q` matters here, and the
+  // contacts list already fetches a public profile per conversation today
+  // (useConversationsWithProfileBackfill) — this enrich request shares the
+  // same query key, so it costs no extra network round-trip.
+  //
+  // Computed ONCE and reused for both the avatar's bare name and the visible
+  // label below, so the two cannot disagree.
+  const resolved = useResolvedMemberName(props.address, { enrich: true });
 
   // Common content for both touch and desktop
   const contactContent = (
@@ -97,7 +101,7 @@ const DirectMessageContact: React.FunctionComponent<{
           // initials for the same row. Feed it the RESOLVED name so the
           // initials match the label underneath.
           userIcon={realIconOrUndefined(props.userIcon)}
-          displayName={resolvedName.name}
+          displayName={resolved.name}
           address={props.address}
           size={44}
           className={
@@ -120,15 +124,17 @@ const DirectMessageContact: React.FunctionComponent<{
       <div className="flex flex-col flex-1 min-w-0 pl-2">
         {/* Line 1: Name + Time */}
         <div className="flex items-center justify-between gap-2">
-          <ResolvedName
-            resolved={resolvedName}
+          <span
             className={
               'truncate-user-name flex-1 min-w-0 ' +
               (props.unread && address !== props.address
                 ? 'font-extrabold'
                 : 'font-semibold')
             }
-          />
+          >
+            {resolved.name}
+            {resolved.isQnsVerified && '.q'}
+          </span>
           {props.timestamp && (
             <span
               className={

@@ -43,11 +43,6 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { useOptionalShellState } from '../shell/useShellState';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
-import { ResolvedName } from '../user/ResolvedName';
-import {
-  resolveMemberName,
-  formatResolvedName,
-} from '../../utils/resolveMemberName';
 import {
   Button,
   Flex,
@@ -55,7 +50,12 @@ import {
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
-import { IdentityScopeProvider } from '../../identity';
+import {
+  IdentityScopeProvider,
+  MemberName,
+  useResolvedMemberName,
+  useResolvedName,
+} from '../../identity';
 import { useConfig } from '../../hooks/queries/config';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
 import { MobileDrawer } from '../ui';
@@ -67,6 +67,104 @@ import type { EmojiData } from '../emoji-picker/types';
 const LazyEmojiPicker = React.lazy(() =>
   import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
 );
+
+/**
+ * The header avatar's picture + BARE resolved name (no ".q") — the exact
+ * same identity `<MemberName>` renders beside it, so the initials can never
+ * disagree with the label (recipe rule 4). A separate small component (not a
+ * `useResolvedMemberName` call inlined in `DirectMessage`'s own body) only
+ * because it's used twice (desktop row + mobile row) with different
+ * surrounding markup; no provider self-reference issue here since
+ * `DirectMessage`'s own provider is an ANCESTOR of this component, not
+ * created by it.
+ */
+const DirectMessagePartnerAvatar: React.FC<{
+  address: string;
+  userIcon?: string;
+  size: number;
+}> = ({ address, userIcon, size }) => {
+  const resolved = useResolvedMemberName(address, { enrich: true });
+  return (
+    <UserAvatar
+      userIcon={userIcon}
+      displayName={resolved.name}
+      address={address}
+      size={size}
+    />
+  );
+};
+
+/**
+ * The typing indicator's resolved name and the composer's placeholder both
+ * need a plain STRING, computed from `useResolvedName` — a hook call that
+ * cannot live in `DirectMessage`'s own top-level body, because that body
+ * RETURNS the `<IdentityScopeProvider>` this hook needs as an ancestor (the
+ * provider is a descendant of `DirectMessage`, not an ancestor of it, until
+ * React actually mounts it). Same shape as `ThreadPanel`'s
+ * `ThreadTypingIndicator`. Mounted as a child of that provider below.
+ */
+const DirectMessageComposerBar: React.FC<{
+  typingScope: TypingScope;
+  otherAddress: string;
+  messageComposerRef: React.RefObject<MessageComposerRef | null>;
+  composer: ReturnType<typeof useMessageComposer>;
+  onShowStickers: () => void;
+  mapSenderToUser: (senderId: string) => any;
+  nonRepudiable: boolean;
+  skipSigning: boolean;
+  onSigningToggle: () => void;
+}> = ({
+  typingScope,
+  otherAddress,
+  messageComposerRef,
+  composer,
+  onShowStickers,
+  mapSenderToUser,
+  nonRepudiable,
+  skipSigning,
+  onSigningToggle,
+}) => {
+  const otherNameString = useResolvedName(otherAddress, { enrich: true });
+  return (
+    <div className="message-editor-container">
+      <TypingIndicator
+        scope={typingScope}
+        resolveName={(addr) => (addr === otherAddress ? otherNameString : undefined)}
+      />
+      <MessageComposer
+        ref={messageComposerRef}
+        value={composer.pendingMessage}
+        onChange={composer.setPendingMessage}
+        onKeyDown={composer.handleKeyDown}
+        placeholder={i18n._('Send a message to {user}', {
+          user: otherNameString,
+        })}
+        calculateRows={composer.calculateRows}
+        getRootProps={composer.getRootProps}
+        getInputProps={composer.getInputProps}
+        processedImage={composer.processedImage}
+        clearFile={composer.clearFile}
+        onSubmitMessage={composer.submitMessage}
+        onShowStickers={onShowStickers}
+        hasStickers={true}
+        emojiOnly={true}
+        inReplyTo={composer.inReplyTo}
+        fileError={composer.fileError}
+        isProcessingImage={composer.isProcessingImage}
+        mapSenderToUser={mapSenderToUser}
+        setInReplyTo={composer.setInReplyTo}
+        showSigningToggle={!nonRepudiable}
+        skipSigning={skipSigning}
+        onSigningToggle={onSigningToggle}
+        mentionError={composer.mentionError}
+        messageValidation={composer.messageValidation}
+        characterCount={composer.characterCount}
+        typingScope={typingScope}
+        canSendMessage={true}
+      />
+    </div>
+  );
+};
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet } =
@@ -240,16 +338,28 @@ const DirectMessage: React.FC<{}> = () => {
   // has opted in to a public profile, we use it to fill the gaps.
   // 1h cache; 404 = no public profile, treated as null.
   const { data: recipientPublicProfile } = useUserPublicProfile(address);
-  // Your own public profile — the ONLY source of your own QNS name. See the
-  // self entry in the members map below for why this is not optional.
-  const { data: ownPublicProfile } = useUserPublicProfile(
-    user.currentPasskeyInfo?.address
-  );
+  // NOTE: no separate `ownPublicProfile` fetch here anymore. Self's own QNS
+  // name used to be bolted onto the members map from a dedicated fetch (see
+  // the deleted self entry below) — now it comes from the identity module's
+  // OWN self tier: `<IdentityScopeProvider selfAddress={userAddress}>`
+  // (mounted below) already requests and holds the self profile for every
+  // consumer (Message.tsx's own-message rows, the header via `<MemberName>`),
+  // so a second fetch of the exact same `publicProfileQueryKey` here would be
+  // redundant, not protective.
 
   // Build members with fallback chain: conversation (IndexedDB) > registration
   // (network) > public profile (server) > defaults. Local fields always win
   // when present — the public profile only fills explicit empties.
   // Offline-friendly: conversation data renders without a network round-trip.
+  //
+  // NAME RESOLUTION no longer reads displayName/primaryUsername off this map
+  // (see `<MemberName>`/`useResolvedMemberName` calls below) — `userIcon` is
+  // still sourced here because avatar PICTURES are outside the identity
+  // module's remit (`MemberIdentity` carries no icon field), and
+  // Message.tsx's own-message/other-message avatars still read
+  // `mapSenderToUser(senderId).userIcon`. `displayName`/`primaryUsername` are
+  // kept for the OTHER party only, for Message.tsx's onUserClick snapshot
+  // payload (a different file's concern, not migrated by this row).
   const members = useMemo(() => {
     const m = {} as {
       [address: string]: {
@@ -300,19 +410,18 @@ const DirectMessage: React.FC<{}> = () => {
         address: address!,
       };
     }
-    // Self data - use passkey context as primary source (always available).
-    //
-    // `primaryUsername` cannot come from there: `currentPasskeyInfo` is the
-    // device-local auth record and carries no QNS name. Without it, YOUR OWN
-    // messages in a DM rendered your global display name while the partner
-    // beside them rendered their ".q" — the one place in a conversation where
-    // the two sides disagreed about how a name is chosen. Same 1h-cached key as
-    // the recipient fetch directly above, so it costs a cache read.
+    // Self data — AVATAR PICTURE ONLY. Deliberately NOT a full identity
+    // entry: `currentPasskeyInfo` is the device-local auth record and
+    // carries no QNS name, and hand-building displayName/primaryUsername
+    // here (as this used to) is exactly the caller-side patch the identity
+    // module's self tier (`identityFromMaps`'s `isSelf` branch, fed by the
+    // ambient `<IdentityScopeProvider selfAddress=...>` below) now owns
+    // structurally — special-casing self from `currentPasskeyInfo` is what
+    // broke the operator's own DM messages in the first place. `userIcon` is
+    // kept because avatar pictures are outside the identity module's remit.
     m[user.currentPasskeyInfo!.address] = {
       address: user.currentPasskeyInfo!.address,
       userIcon: user.currentPasskeyInfo!.pfpUrl,
-      displayName: user.currentPasskeyInfo!.displayName,
-      primaryUsername: ownPublicProfile?.primary_username || undefined,
     };
     return m;
   }, [
@@ -321,7 +430,6 @@ const DirectMessage: React.FC<{}> = () => {
     address,
     user.currentPasskeyInfo,
     recipientPublicProfile,
-    ownPublicProfile,
   ]);
 
   // Clean up stale encryption states when registration data changes
@@ -372,40 +480,27 @@ const DirectMessage: React.FC<{}> = () => {
     cleanupStaleEncryptionStates();
   }, [self?.registration, registration?.registration, address, messageDB]);
 
-  // Bio priority: local conversation row (broadcast via dm-update-profile)
-  // wins; public-profile bio is the fallback for users who opted in.
+  // Avatar picture + bio only — NAME resolution moved to `<MemberName>` /
+  // `useResolvedMemberName` (below), reading the ambient
+  // `<IdentityScopeProvider>`'s public-profile enrich for `otherUser.address`
+  // rather than `displayName`/`primaryUsername` fields threaded through this
+  // object. Bio priority stays local-first: local conversation row
+  // (broadcast via dm-update-profile) wins; public-profile bio is the
+  // fallback for users who opted in — bio has no identity-module tier.
   const otherUser = useMemo(() => {
     const base = members[address!] || {
-      // No identity yet — leave name/icon undefined so the resolver falls
-      // through to the truncated address and the avatar to address-initials.
-      displayName: undefined,
+      // No identity yet — leave icon undefined so the avatar falls through
+      // to address-derived initials.
       userIcon: undefined,
       address: address!,
     };
     const localBio = conversation?.conversation?.bio;
     return {
-      ...base,
+      address: base.address,
+      userIcon: base.userIcon,
       bio: localBio || recipientPublicProfile?.bio || undefined,
-      // QNS verified name: only the public profile carries it. Rendered as
-      // "name.q" by UserProfile when present.
-      primaryUsername:
-        (base as { primaryUsername?: string }).primaryUsername ||
-        recipientPublicProfile?.primary_username ||
-        undefined,
     };
   }, [members, address, conversation, recipientPublicProfile]);
-
-  // DM: QNS name (when published) wins over the display name.
-  const resolvedOtherName = useMemo(
-    () =>
-      resolveMemberName({
-        address: otherUser.address,
-        displayName: otherUser.displayName,
-        primaryUsername: otherUser.primaryUsername,
-      }),
-    [otherUser.address, otherUser.displayName, otherUser.primaryUsername],
-  );
-  const otherNameString = formatResolvedName(resolvedOtherName);
 
   // Icon size for header icons
   const headerIconSize = 'lg';
@@ -850,16 +945,16 @@ const DirectMessage: React.FC<{}> = () => {
             <div className="hidden lg:flex flex-1 min-w-0">
               <Flex className="items-center min-w-0">
                 <Flex direction="column" className="justify-around flex-shrink-0">
-                  <UserAvatar
+                  <DirectMessagePartnerAvatar
+                    address={otherUser.address}
                     userIcon={otherUser.userIcon}
-                    displayName={otherUser.displayName ?? otherUser.address}
-                    address={otherUser.address || ''}
                     size={28}
                   />
                 </Flex>
                 <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
-                  <ResolvedName
-                    resolved={resolvedOtherName}
+                  <MemberName
+                    address={otherUser.address}
+                    enrich
                     className="font-semibold truncate-user-name-chat flex-shrink min-w-0"
                   />
                   <span className="text-subtle flex-shrink-0 hidden xs:block">|</span>
@@ -975,17 +1070,17 @@ const DirectMessage: React.FC<{}> = () => {
           <div className="w-full lg:hidden mt-3">
             <Flex className="items-center min-w-0">
               <Flex direction="column" className="justify-around flex-shrink-0">
-                <UserAvatar
+                <DirectMessagePartnerAvatar
+                  address={otherUser.address}
                   userIcon={otherUser.userIcon}
-                  displayName={otherUser.displayName ?? otherUser.address}
-                  address={otherUser.address || ''}
                   size={28}
                 />
               </Flex>
               {/* xs and up: horizontal layout with separator */}
               <div className="pl-2 hidden xs:flex items-center gap-2 overflow-hidden min-w-0">
-                <ResolvedName
-                  resolved={resolvedOtherName}
+                <MemberName
+                  address={otherUser.address}
+                  enrich
                   className="font-semibold truncate-user-name-chat"
                 />
                 <span className="text-subtle flex-shrink-0">|</span>
@@ -1004,8 +1099,9 @@ const DirectMessage: React.FC<{}> = () => {
               </div>
               {/* Below xs: vertical layout - name above address */}
               <div className="pl-2 flex xs:hidden flex-col min-w-0">
-                <ResolvedName
-                  resolved={resolvedOtherName}
+                <MemberName
+                  address={otherUser.address}
+                  enrich
                   className="text-label font-semibold truncate"
                 />
                 <ClickToCopyContent
@@ -1113,45 +1209,17 @@ const DirectMessage: React.FC<{}> = () => {
             )}
 
             {/* Message Composer */}
-            <div className="message-editor-container">
-              <TypingIndicator
-                scope={typingScope}
-                resolveName={(addr) =>
-                  addr === otherUser.address ? otherNameString : undefined
-                }
-              />
-              <MessageComposer
-                ref={messageComposerRef}
-                value={composer.pendingMessage}
-                onChange={composer.setPendingMessage}
-                onKeyDown={composer.handleKeyDown}
-                placeholder={i18n._('Send a message to {user}', {
-                  user: otherNameString,
-                })}
-                calculateRows={composer.calculateRows}
-                getRootProps={composer.getRootProps}
-                getInputProps={composer.getInputProps}
-                processedImage={composer.processedImage}
-                clearFile={composer.clearFile}
-                onSubmitMessage={composer.submitMessage}
-                onShowStickers={handleShowEmojiPanel}
-                hasStickers={true}
-                emojiOnly={true}
-                inReplyTo={composer.inReplyTo}
-                fileError={composer.fileError}
-                isProcessingImage={composer.isProcessingImage}
-                mapSenderToUser={mapSenderToUser}
-                setInReplyTo={composer.setInReplyTo}
-                showSigningToggle={!nonRepudiable}
-                skipSigning={skipSigning}
-                onSigningToggle={() => setSkipSigning(!skipSigning)}
-                mentionError={composer.mentionError}
-                messageValidation={composer.messageValidation}
-                characterCount={composer.characterCount}
-                typingScope={typingScope}
-                canSendMessage={true}
-              />
-            </div>
+            <DirectMessageComposerBar
+              typingScope={typingScope}
+              otherAddress={otherUser.address}
+              messageComposerRef={messageComposerRef}
+              composer={composer}
+              onShowStickers={handleShowEmojiPanel}
+              mapSenderToUser={mapSenderToUser}
+              nonRepudiable={nonRepudiable}
+              skipSigning={skipSigning}
+              onSigningToggle={() => setSkipSigning(!skipSigning)}
+            />
           </div>
 
           {/* Desktop profile sidebar — hidden on mobile/tablet, shown when toggled */}
