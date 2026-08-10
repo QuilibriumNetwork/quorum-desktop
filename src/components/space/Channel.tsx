@@ -44,7 +44,7 @@ import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
-import { useMembersWithPublicProfileFallback } from '../../hooks/business/user/useMembersWithPublicProfileFallback';
+import { useVisibleSenderProfileFallback } from '../../hooks/business/user/useVisibleSenderProfileFallback';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -321,8 +321,9 @@ const Channel: React.FC<ChannelProps> = ({
   } = useChannelMessages({ spaceId, channelId, roles, members, channel, threadsEnabled });
 
   // Compute the set of sender addresses currently rendered and back-fill
-  // missing displayName/userIcon from each sender's public profile (when
-  // they've opted in). Only the visible senders are looked up — the
+  // missing userIcon/bio (and the raw primaryUsername/globalDisplayName
+  // tiers useMentionInput.ts's search matching needs) from each sender's
+  // public profile. Only the visible senders are looked up — the
   // member-list sidebar still uses the original `members` map and does
   // not trigger a fetch storm for the whole space roster.
   const visibleSenderAddresses = useMemo(() => {
@@ -334,7 +335,14 @@ const Channel: React.FC<ChannelProps> = ({
     return Array.from(set);
   }, [messageList]);
 
-  const effectiveMembers = useMembersWithPublicProfileFallback(
+  // NAME rendering for these senders no longer comes from here — the message
+  // header, mention pills, and the profile card all resolve via
+  // `src/identity` now. `effectiveMembers` remains for what `src/identity`
+  // deliberately does not cover (avatars/bio) and for the raw
+  // primaryUsername/globalDisplayName tiers `useMentionInput.ts`'s search
+  // matching still reads directly. See `useVisibleSenderProfileFallback`'s
+  // file header — Phase D row 23.
+  const effectiveMembers = useVisibleSenderProfileFallback(
     members,
     visibleSenderAddresses
   );
@@ -362,6 +370,16 @@ const Channel: React.FC<ChannelProps> = ({
   // back-filled member map. mapSenderToUserBase is kept private — never
   // passed downstream — so all message-path consumers see the enriched
   // data, while role/sidebar paths continue to use the original `members`.
+  //
+  // NAME rendering (message header, mention pills, profile card) does NOT
+  // read this anymore — those resolve via `src/identity`, keyed on address
+  // alone. What still reads this object's fields: `userIcon`/`bio` (Message's
+  // avatar and reactor icons — `src/identity` deliberately doesn't resolve
+  // avatars), and `.displayName` for ONE legacy consumer, the reply-heading
+  // preview text (`replaceMentionsWithDisplayNames`) — see
+  // `useVisibleSenderProfileFallback`'s file header for why that field's
+  // fetched-profile tier was dropped and why this can't just call
+  // `src/identity` itself.
   const mapSenderToUser = useCallback(
     (senderId: string) => {
       const member = effectiveMembers[senderId];
@@ -1895,10 +1913,13 @@ const Channel: React.FC<ChannelProps> = ({
                                 displayName: item.displayName,
                                 userIcon: item.userIcon,
                                 bio: item.bio,
-                                // Same lookup the row's <MemberName> does —
-                                // the virtualized item cannot carry these. See
-                                // UserProfileModalUser for why omitting them
-                                // does not merely degrade, it inverts.
+                                // VESTIGIAL: UserProfile.tsx resolves its own
+                                // name from `address` via `src/identity` now
+                                // and no longer reads these two off the
+                                // click payload. Kept because
+                                // `effectiveMembers` still carries them for
+                                // useMentionInput.ts's search matching, not
+                                // because this click handler needs them.
                                 primaryUsername:
                                   effectiveMembers[item.address]?.primaryUsername,
                                 globalDisplayName:
@@ -2154,8 +2175,8 @@ const Channel: React.FC<ChannelProps> = ({
                         displayName: item.displayName,
                         userIcon: item.userIcon,
                         bio: (item as { bio?: string }).bio,
-                        // Same lookup the row's <MemberName> does — see
-                        // UserProfileModalUser.
+                        // VESTIGIAL — see the desktop role-list click handler
+                        // above (same shape, mobile layout).
                         primaryUsername:
                           effectiveMembers[item.address]?.primaryUsername,
                         globalDisplayName:

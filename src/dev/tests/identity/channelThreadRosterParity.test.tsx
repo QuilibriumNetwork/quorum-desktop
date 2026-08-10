@@ -7,7 +7,8 @@
  *
  * ThreadPanel used to build its roster row from `channelProps.members`
  * (`effectiveMembers` — the public-profile-BACKFILLED map from
- * `useMembersWithPublicProfileFallback`), while Channel's own provider is
+ * `useVisibleSenderProfileFallback`, née `useMembersWithPublicProfileFallback`
+ * pre Phase D row 23), while Channel's own provider is
  * built from the RAW `members` map (Channel.tsx ~307-316). For a member
  * with NO per-space override, those two sources happen to read the same
  * TODAY, but only by accident of the backfill hook's current shape: its
@@ -34,7 +35,7 @@
  * `rosterRows` through, this test's "thread-style" input was built the OLD
  * way — a hand-constructed `effectiveMembers`-shaped row with `displayName`
  * and `globalDisplayName` deliberately NOT in lockstep (the divergence a
- * real call to `useMembersWithPublicProfileFallback` cannot produce today,
+ * real call to `useVisibleSenderProfileFallback` cannot produce today,
  * per the reasoning above, but nothing prevents it producing tomorrow) —
  * and the parity assertion failed: the channel-style row resolved to
  * "Alice", the thread-style row resolved to "Alice (public-profile-name)".

@@ -215,7 +215,7 @@ export function applyFakeQns(
     bio: actual?.bio ?? '',
     ...(primaryUsername ? { primary_username: primaryUsername } : {}),
     // Now, so a faked global name outranks whatever the roster's global slot
-    // holds. The merge in useMembersWithPublicProfileFallback picks the newer
+    // holds. The merge in useVisibleSenderProfileFallback picks the newer
     // of the two by timestamp, so a stale one here would silently lose and the
     // fake would look broken.
     timestamp: Date.now(),

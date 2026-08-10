@@ -475,8 +475,8 @@ export const Message = React.memo(
     // decides the scope — Channel.tsx's space subtree for channel/thread
     // messages, the global ladder (no spaceId) for DMs. `enrich`: a message
     // header must show the ".q" name, and the senders visible in a channel
-    // are bounded — useMembersWithPublicProfileFallback already fetches
-    // their profiles, so this issues no additional network load.
+    // are bounded — one `request()` per rendered message row, deduped by
+    // react-query, so this issues no additional network load.
     const resolvedSender = useResolvedMemberName(senderId, { enrich: true });
 
     // "Pinned by X" resolves the PINNER's identity, a different address from
@@ -770,13 +770,23 @@ export const Message = React.memo(
                       {
                         address: sender.address,
                         displayName: sender.displayName,
+                        // userIcon/bio are pre-fill only: UserProfile.tsx tops
+                        // both up from its own address-keyed fetch if either is
+                        // empty, so an unpopulated value here degrades to a
+                        // brief flash, not a wrong render.
                         userIcon: sender.userIcon,
                         bio: sender.bio,
-                        // Carry the enriched identity through. `sender` is an
-                        // effectiveMembers row, so both are already in hand and
-                        // cost nothing; dropping them made the card resolve
-                        // from strictly less than the message header beside it,
-                        // and disagree with it.
+                        // VESTIGIAL as of the identity-module migration:
+                        // UserProfile.tsx now resolves its own name via
+                        // `useResolvedMemberName(props.user.address, ...)`,
+                        // keyed on the address alone — it no longer reads
+                        // primaryUsername/globalDisplayName off this payload
+                        // (Phase D rows 1-21). Kept here only because `sender`
+                        // (an effectiveMembers row) still carries them for
+                        // `useMentionInput.ts`'s search matching elsewhere;
+                        // passing them through costs nothing and there is
+                        // nothing left to break by removing them, but nothing
+                        // to gain either.
                         primaryUsername: sender.primaryUsername,
                         globalDisplayName: sender.globalDisplayName,
                       },

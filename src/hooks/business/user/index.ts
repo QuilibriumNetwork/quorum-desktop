@@ -1,6 +1,6 @@
 export * from './useUserSettings';
 export * from './useUserPublicProfile';
-export * from './useMembersWithPublicProfileFallback';
+export * from './useVisibleSenderProfileFallback';
 export * from './useProfileImage';
 export * from './useLocaleSettings';
 export * from './useNotificationSettings';
