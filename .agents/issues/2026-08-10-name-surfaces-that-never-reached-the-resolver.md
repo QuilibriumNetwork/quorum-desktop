@@ -5,6 +5,7 @@ status: in-progress
 priority: high
 created: 2026-08-10
 updated: 2026-08-10
+shipped_in: "#325"
 area: identity resolution / QNS / cross-client parity
 repos: quorum-desktop (this), quorum-mobile (one matching defect filed)
 source: desktop parity item (6), the audit for direct override reads, plus item (7)
@@ -19,9 +20,22 @@ related:
 
 ## Status
 
-**Fixed on branch `fix/name-surfaces-bypassing-the-resolver`, not yet merged.**
-Suite green at 1244, lint unchanged at 0 errors, typecheck clean. Every rule
-added was shown red with its fix reverted.
+**2026-08-10 — shipped in PR #325** (`fix(identity): resolve every name through
+one ladder, including your own`).
+
+What landed: eleven name surfaces routed through the resolver, the self tier
+given a source on the two surfaces that lacked one, and the per-space name
+placeholder made to promise the name the app actually renders. Three copies of
+the space-versus-DM ladder choice collapsed into `resolveNameForContext`.
+
+**Deliberately NOT moved to `.done/`, and this is the point of the standing
+rule.** Suite green at 1248 with every rule shown red on revert, but the visual
+pass has not happened — and on this exact issue, twice in one session, a fix that
+was confidently reasoned about and unit-tested did not work in the running app.
+A green suite here has already been demonstrated to be insufficient evidence.
+
+Still open: the `/dev/fake-qns` sweep with a control arm, and the mobile
+invite-picker defect.
 
 Two distinct defects are covered here: **six surfaces that read a name by hand**
 (the audit, parity item 6, plus item 7), and **two that special-case YOUR OWN
