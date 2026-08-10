@@ -37,8 +37,7 @@ import { useMobile } from '../context/MobileProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { ResolvedName } from '../user/ResolvedName';
 import {
-  resolveMemberName,
-  resolveSpaceMemberName,
+  resolveNameForContext,
   formatResolvedName,
 } from '../../utils/resolveMemberName';
 import {
@@ -450,18 +449,10 @@ export const Message = React.memo(
         address?: string;
         userAddress?: string;
       }) =>
-        isDmMessage
-          ? resolveMemberName({
-              address: u.address ?? u.userAddress ?? '',
-              displayName: u.displayName,
-              primaryUsername: u.primaryUsername,
-            })
-          : resolveSpaceMemberName({
-              address: u.address ?? u.userAddress ?? '',
-              displayName: u.displayName,
-              primaryUsername: u.primaryUsername,
-              globalDisplayName: u.globalDisplayName,
-            }),
+        resolveNameForContext(
+          { ...u, address: u.address ?? u.userAddress ?? '' },
+          { isDm: isDmMessage },
+        ),
       [isDmMessage],
     );
     const resolvedSender = resolveSenderName({ ...sender, address: sender?.address ?? message.content?.senderId });

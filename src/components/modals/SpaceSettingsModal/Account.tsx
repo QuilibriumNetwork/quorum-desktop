@@ -27,6 +27,8 @@ import type { Role } from '@quilibrium/quorum-shared';
 import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
+import { useUserPublicProfile } from '../../../hooks/business/user/useUserPublicProfile';
+import { selfNamePlaceholder } from '../../../utils/resolveSelfName';
 
 interface AccountProps {
   spaceId: string;
@@ -96,6 +98,13 @@ const Account: React.FunctionComponent<AccountProps> = ({
   isMentionSettingsLoading,
 }) => {
   const { currentPasskeyInfo: userInfo } = usePasskeysContext();
+  // Your own QNS name, for the per-space name placeholder below. The public
+  // profile is the only source of `primary_username`, and reading your OWN is
+  // the same 1h-cached fetch every other surface already makes — no publish
+  // path is involved, which is why this works before the server-side publish
+  // bug is fixed. Mirrors UserSettingsModal.
+  const { data: ownPublicProfile } = useUserPublicProfile(userInfo?.address);
+  const primaryUsername = ownPublicProfile?.primary_username || undefined;
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const {
     confirmationStep,
@@ -214,7 +223,10 @@ const Account: React.FunctionComponent<AccountProps> = ({
               className="w-full md:w-80 mt-3 ml-1"
               value={displayName}
               onChange={setDisplayName}
-              placeholder={t`Display Name`}
+              placeholder={selfNamePlaceholder(
+                { primaryUsername, displayName: userInfo?.displayName },
+                t`Your name in this Space`,
+              )}
               labelType="static"
               error={!!displayNameError}
               errorMessage={displayNameError}

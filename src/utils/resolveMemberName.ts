@@ -132,6 +132,43 @@ export function resolveSpaceMemberName(member: {
 }
 
 /**
+ * Pick the right resolver for a message-shaped surface.
+ *
+ * "Is this a DM?" decides which ladder applies — a DM has no per-space tier, so
+ * the QNS name outranks the plain display name there, while in a space a
+ * deliberate per-space name outranks both. That choice was hand-written at three
+ * separate call sites (the message body, the mention pills, the message
+ * preview), which is one ladder per surface and exactly how the two pill
+ * builders came to disagree. One function, so a fourth surface cannot invent a
+ * fourth answer.
+ *
+ * Callers pass `isDm` rather than the message because the DM test itself
+ * (`spaceId === channelId`) belongs to the message, not to name resolution.
+ */
+export function resolveNameForContext(
+  user: {
+    displayName?: string | null;
+    primaryUsername?: string | null;
+    globalDisplayName?: string | null;
+    address: string;
+  },
+  { isDm = false }: { isDm?: boolean } = {},
+): ResolvedMemberName {
+  return isDm
+    ? resolveMemberName({
+        address: user.address,
+        displayName: user.displayName,
+        primaryUsername: user.primaryUsername,
+      })
+    : resolveSpaceMemberName({
+        address: user.address,
+        displayName: user.displayName,
+        primaryUsername: user.primaryUsername,
+        globalDisplayName: user.globalDisplayName,
+      });
+}
+
+/**
  * Flatten a resolved name to a plain string for non-JSX contexts (input
  * placeholders, aria-labels, tooltip content, search match text). Appends the
  * ".q" suffix when the name is the verified QNS username. For JSX render sites,

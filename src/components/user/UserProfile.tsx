@@ -24,6 +24,7 @@ import { ResolvedName } from './ResolvedName';
 import {
   resolveMemberName,
   resolveSpaceMemberName,
+  formatResolvedName,
 } from '../../utils/resolveMemberName';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
@@ -476,7 +477,14 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openBlockUser({
                         address: props.user.address,
-                        displayName: props.user.displayName,
+                        // The moderation modals render this as the person's
+                        // identity while you decide whether to act on them, so
+                        // it must be the resolved name — the card above already
+                        // shows it. Passing the raw roster field both hid a
+                        // real ".q" and let a forged one through unguarded, at
+                        // the surface where being sure who you are acting on
+                        // matters most.
+                        displayName: formatResolvedName(resolvedName),
                         userIcon: props.user.userIcon,
                         spaceId: props.spaceId!,
                         isUnblocking: isUserBlocked,
@@ -500,7 +508,8 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openMuteUser({
                         address: props.user.address,
-                        displayName: props.user.displayName,
+                        // Resolved, for the reason given on Block above.
+                        displayName: formatResolvedName(resolvedName),
                         userIcon: props.user.userIcon,
                         isUnmuting: isUserMuted,
                       });
@@ -522,7 +531,8 @@ const UserProfile: React.FunctionComponent<{
                       if (props.user.isKicked) return;
                       openKickUser({
                         address: props.user.address,
-                        displayName: props.user.displayName,
+                        // Resolved, for the reason given on Block above.
+                        displayName: formatResolvedName(resolvedName),
                         userIcon: props.user.userIcon,
                       });
                       props.dismiss?.();

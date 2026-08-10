@@ -18,6 +18,7 @@ import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '.
 import { createIPFSCIDRegex, extractMentionsFromText, applyEdit, getConversationSetting } from '@quilibrium/quorum-shared';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
+import { resolveMentionPillName } from '../../utils/mentionPillDom';
 
 /**
  * DM context for action queue handlers.
@@ -138,6 +139,27 @@ export function MessageEditTextarea({
     [editText, selectionRange]
   );
 
+  // Entering edit mode rebuilds every pill from the stored `@<address>` tokens,
+  // which makes this the SECOND place a mention becomes a name — the composer's
+  // is `extractPillDataFromOption`. Both go through `resolveMentionPillName` so
+  // they cannot drift again; see that function for what the drift cost.
+  const isDmMessage = message.spaceId === message.channelId;
+  const resolveMentionName = useCallback(
+    (address: string): string => {
+      const user = mapSenderToUser(address);
+      return resolveMentionPillName(
+        {
+          address,
+          displayName: user?.displayName,
+          primaryUsername: user?.primaryUsername,
+          globalDisplayName: user?.globalDisplayName,
+        },
+        { isDm: isDmMessage }
+      );
+    },
+    [mapSenderToUser, isDmMessage]
+  );
+
   // Parse mentions from stored text and create pills (with double validation)
   const parseMentionsAndCreatePills = useCallback(
     (text: string): DocumentFragment => {
@@ -183,8 +205,7 @@ export function MessageEditTextarea({
         // Layer 2: Verify mention exists in message.mentions
         if (message.mentions?.memberIds?.includes(address)) {
           // Layer 1: Lookup real display name
-          const user = mapSenderToUser(address);
-          const displayName = user?.displayName || `Unknown User`;
+          const displayName = resolveMentionName(address);
           mentions.push({ type: 'user', displayName, address, index, length: match[0].length });
         }
       }
@@ -257,7 +278,7 @@ export function MessageEditTextarea({
 
       return fragment;
     },
-    [message, mapSenderToUser, spaceRoles, spaceChannels]
+    [message, resolveMentionName, spaceRoles, spaceChannels]
   );
 
   // Handle mention selection from dropdown

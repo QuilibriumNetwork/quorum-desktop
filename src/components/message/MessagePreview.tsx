@@ -5,8 +5,9 @@ import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
-import { processMarkdownText, formatAddress, hasPermission } from '@quilibrium/quorum-shared';
+import { processMarkdownText, hasPermission } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
+import { resolveNameForContext, formatResolvedName } from '../../utils/resolveMemberName';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (
@@ -200,12 +201,29 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     everyoneAuthorized,
   });
 
-  // Get display name - prefer sender displayName, fallback to username, then senderId
+  // The resolver owns the whole ladder INCLUDING the address fallback — see the
+  // contract on `useChannelMessages.mapSenderToUser`, which returns a member
+  // unchanged (empty `displayName` included) precisely so no caller re-derives
+  // it. This used to hand-roll `displayName → username → formatAddress`, which
+  // skipped the QNS name and the forged-suffix guard alike.
+  //
+  // Reachable only when `hideHeader` is false; both current callers
+  // (PinnedMessagesPanel, BookmarkItem) pass it, so this was dead code sitting
+  // next to a trust marker. Resolved rather than deleted so turning the header
+  // back on cannot quietly reintroduce the gap.
   const getDisplayName = () => {
-    if (sender?.displayName) return sender.displayName;
-    if (sender?.username) return sender.username;
-    if (senderId) return formatAddress(senderId);
-    return t`Unknown User`;
+    if (!sender && !senderId) return t`Unknown User`;
+    return formatResolvedName(
+      resolveNameForContext(
+        {
+          address: sender?.address ?? senderId,
+          displayName: sender?.displayName,
+          primaryUsername: sender?.primaryUsername,
+          globalDisplayName: sender?.globalDisplayName,
+        },
+        { isDm: message.spaceId === message.channelId },
+      ),
+    );
   };
 
   // Use shared date formatting utility (matches Message.tsx format)
