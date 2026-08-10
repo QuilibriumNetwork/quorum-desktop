@@ -110,6 +110,16 @@ export const IdentityScopeProvider: React.FunctionComponent<{
   // stable per-query data refs and memo on those — a naive dep on `queries`
   // invalidates every render and cascades through every consumer.
   const dataKey = queries.map((q) => q?.data ?? null);
+  // Fingerprint on `dataUpdatedAt`, not on data presence: `setQueryData` (e.g.
+  // useUserSettings.ts's self-profile-edit write) replaces the cached object
+  // at an address that is ALREADY loaded — non-null before and after, so a
+  // presence/truthy flag can't see the change. `dataUpdatedAt` is bumped by
+  // every `setQueryData` write, so it is content-sensitive; it stays the same
+  // number across renders where nothing changed, so it doesn't reintroduce
+  // the fresh-array-every-render hazard the comment above guards against; and
+  // joining it into one string keeps the deps array a constant two elements
+  // regardless of how many addresses are requested (no variable-length spread).
+  const updatedAtKey = queries.map((q) => q?.dataUpdatedAt ?? 0).join('|');
   const profiles = React.useMemo(() => {
     const map: Record<string, PublicProfileResponse | null> = {};
     addresses.forEach((a, i) => {
@@ -117,7 +127,7 @@ export const IdentityScopeProvider: React.FunctionComponent<{
     });
     return map;
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [addresses, dataKey.map((d) => (d ? 'y' : 'n')).join('')]);
+  }, [addresses, updatedAtKey]);
 
   const selfProfile = selfAddress ? (profiles[selfAddress] ?? null) : null;
 

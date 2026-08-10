@@ -6,8 +6,17 @@
  * 200 rows must not register 200 query observers. `identityFromMaps` is pure so
  * that can be asserted without mounting anything.
  */
+import * as React from 'react';
 import { describe, it, expect } from 'vitest';
-import { identityFromMaps } from '@/identity/identityProvider';
+import { render, screen, waitFor, act } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import {
+  identityFromMaps,
+  IdentityScopeProvider,
+  useIdentityContext,
+} from '@/identity/identityProvider';
+import { publicProfileQueryKey } from '@/hooks/business/user/useUserPublicProfile';
+import type { PublicProfileResponse } from '@/api/baseTypes';
 
 const ADDR = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
@@ -109,5 +118,60 @@ describe('identityFromMaps — the self tier', () => {
     });
     expect(r.qnsName).toBe('gatto');
     expect(r.globalName).toBe('GattoPardo Mobile');
+  });
+});
+
+function NameProbe({ address }: { address: string }) {
+  const { sources, request } = useIdentityContext();
+  React.useEffect(() => {
+    request(address);
+  }, [address, request]);
+  const identity = identityFromMaps(address, undefined, sources);
+  return <span data-testid="probe-name">{identity.globalName ?? ''}</span>;
+}
+
+describe('IdentityScopeProvider — a setQueryData write to an already-loaded profile propagates', () => {
+  it('shows the NEW display_name after a self-profile edit writes the cache directly', async () => {
+    // Regression cover: useUserSettings.ts's self-edit path calls
+    // queryClient.setQueryData(publicProfileQueryKey(addr), prev => ({...}))
+    // against a profile that is ALREADY loaded — non-null before and after
+    // the write. A `profiles` memo fingerprinted only on data PRESENCE can't
+    // see that write, so the renamed user keeps seeing their OLD name on
+    // every surface until an unrelated address happens to enter or leave the
+    // requested set.
+    const queryClient = new QueryClient({
+      defaultOptions: { queries: { retry: false, gcTime: 0 } },
+    });
+    const key = publicProfileQueryKey(ADDR);
+    queryClient.setQueryData<PublicProfileResponse>(key, {
+      display_name: 'Old Name',
+      profile_image: '',
+      bio: '',
+      timestamp: 1,
+      signature: '',
+    });
+
+    render(
+      <QueryClientProvider client={queryClient}>
+        <IdentityScopeProvider rostersBySpace={{}} selfAddress={null}>
+          <NameProbe address={ADDR} />
+        </IdentityScopeProvider>
+      </QueryClientProvider>,
+    );
+
+    await waitFor(() =>
+      expect(screen.getByTestId('probe-name').textContent).toBe('Old Name'),
+    );
+
+    act(() => {
+      queryClient.setQueryData<PublicProfileResponse>(key, (prev) => ({
+        ...(prev as PublicProfileResponse),
+        display_name: 'New Name',
+      }));
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId('probe-name').textContent).toBe('New Name'),
+    );
   });
 });
