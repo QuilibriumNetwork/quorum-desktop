@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -30,13 +30,12 @@ import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
 import type { Role, Channel, PostMessage } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
-import { formatAddress } from '@quilibrium/quorum-shared';
-import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
+import { useNameResolver } from '../../identity';
 
 interface MessageMarkdownRendererProps {
   content: string;
   className?: string;
-  mapSenderToUser?: (senderId: string) => NameResolvableUser | undefined;
+  mapSenderToUser?: (senderId: string) => any;
   /**
    * Strict variant of `mapSenderToUser`. Returns null when the address is not
    * a known member, so the renderer can distinguish a real user from a
@@ -45,8 +44,11 @@ interface MessageMarkdownRendererProps {
    * When not provided, the renderer falls back to the legacy behavior
    * (everything is interactive whenever `onUserClick` is set).
    */
-  resolveSender?: (senderId: string) => NameResolvableUser | null;
-  // Mirrors `UserProfileModalUser`; the identity fields are load-bearing.
+  resolveSender?: (senderId: string) => any | null;
+  // Shape mirrors `UserProfileModalUser` (all fields but `address` optional)
+  // so the SAME handler also serves callers that still pass a full snapshot
+  // (e.g. Message.tsx's avatar click). A mention-pill click from THIS
+  // component only ever passes `address` — see the click handler below.
   onUserClick?: (user: {
     address: string;
     displayName?: string;
@@ -174,6 +176,15 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   suffix,
   embeddedMedia,
 }) => {
+  // Bulk imperative resolver: a message body can carry many `@<address>`
+  // mentions, built as plain spans inside `processMentionTokens` below (not
+  // one React component per pill), so a hook cannot be called per address —
+  // see `useNameResolver`'s docstring. Resolves through the SAME
+  // IdentityScopeProvider ambient to this render tree (Channel's for
+  // channel/thread messages, DirectMessage's for DMs, BookmarkCard's own
+  // spaceId-scoped one for bookmarks), so a mentioned member's name always
+  // matches their message-header name.
+  const { resolve, requestNames } = useNameResolver();
 
   // convertHeadersToH3 and fixUnclosedCodeBlocks now come from
   // @quilibrium/quorum-shared (the shared message-preprocessing pipeline).
@@ -371,49 +382,40 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         // User mention: <<<MENTION_USER:address>>>
         //
         // Rendering rule:
-        //   - resolveSender(address) returns a real user → pill shows the
-        //     display name and is interactive (clickable, hover cursor).
+        //   - resolveSender(address) returns a real user → pill is
+        //     interactive (clickable, hover cursor).
         //   - resolveSender(address) returns null (or isn't provided and
-        //     mapSenderToUser also yields nothing useful) → pill shows
-        //     `formatAddress(address)` and is non-interactive (no hover
-        //     cursor, no click). Communicates "this is a mention" without
-        //     lying about what clicking it will do.
+        //     mapSenderToUser also yields nothing useful) → pill is
+        //     non-interactive (no hover cursor, no click). Communicates
+        //     "this is a mention" without lying about what clicking it will
+        //     do.
         //
         // Legacy fallback: when neither resolveSender nor mapSenderToUser
         // is wired, we render the raw token as plain text (the pre-existing
         // behavior for surfaces that haven't opted in).
         const address = match[3];
         if (resolveSender || mapSenderToUser) {
-          // Two independent signals:
-          //   isResolved → "did the lookup actually find a real user?"
-          //     Used for interactivity (only interactive when we have a user
-          //     the click can actually navigate to).
-          //   has-display-name → "do we have a name we can show?"
-          //     Used purely for the label. A resolved user with no display
-          //     name still gets the truncated address as a fallback label,
-          //     but stays interactive because the click still has a target.
+          // isResolved → "did the lookup actually find a real user?" Used
+          // ONLY for interactivity (is there somewhere to navigate on
+          // click) — resolveSender/mapSenderToUser no longer supply the
+          // label; see below.
           //
           // TODO: once all callsites of mapSenderToUser have migrated to
           // resolveSender, drop the legacy branch — until then unknown users
-          // in legacy contexts still resolve to the slice-of-address fallback
-          // and remain interactive, matching pre-existing behavior.
+          // in legacy contexts still remain interactive, matching
+          // pre-existing behavior.
           const resolvedUser = resolveSender
             ? resolveSender(address)
             : (mapSenderToUser ? mapSenderToUser(address) : null);
           const isResolved = resolvedUser != null;
-          // Model B: a mentioned user shows their QNS name (name.q) unless they
-          // have a per-space name. The mention's stored token stays the address;
-          // only the displayed label changes.
-          const displayName = resolvedUser
-            ? formatResolvedName(
-                resolveSpaceMemberName({
-                  address: resolvedUser.address ?? address,
-                  displayName: resolvedUser.displayName,
-                  primaryUsername: resolvedUser.primaryUsername,
-                  globalDisplayName: resolvedUser.globalDisplayName,
-                }),
-              )
-            : formatAddress(address);
+          // The label comes from the SAME identity module a message header
+          // uses, keyed only by address — never from resolvedUser's fields —
+          // so a mentioned member's pill always agrees with their own
+          // header, and an unresolved/unknown address still gets a real
+          // (truncated-address) fallback rather than a second, divergent
+          // formatter.
+          const resolved = resolve(address);
+          const displayName = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
           const interactive = isResolved && !!onUserClick;
 
           parts.push(
@@ -422,7 +424,6 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
               className={`message-mentions-user ${interactive ? 'interactive' : 'non-interactive'}`}
               data-user-address={address}
               data-user-display-name={displayName}
-              data-user-icon={resolvedUser?.userIcon || ''}
             >
               @{displayName}
             </span>
@@ -512,7 +513,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     }
 
     return parts;
-  }, [mapSenderToUser, resolveSender, onUserClick]);
+  }, [mapSenderToUser, resolveSender, onUserClick, resolve]);
 
   // Simplified processing pipeline with stable dependencies
   // NOTE: processMessageLinks BEFORE processURLs to prevent double-processing
@@ -536,6 +537,24 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       )
     );
   }, [content, processMentions, processRoleMentions, processChannelMentions, processMessageLinks]);
+
+  // Every user address mentioned in this body, enriched in ONE batch rather
+  // than one `request()` per rendered pill — the fetch storm `enrich` on a
+  // virtualised list is designed to avoid. Bounded cardinality: the distinct
+  // people mentioned in a single message body, not the whole roster.
+  const mentionedAddresses = useMemo(() => {
+    const addresses = new Set<string>();
+    const userMentionRegex = new RegExp(`<<<MENTION_USER:(${createIPFSCIDRegex().source})>>>`, 'g');
+    let match: RegExpExecArray | null;
+    while ((match = userMentionRegex.exec(processedContent)) !== null) {
+      addresses.add(match[1]);
+    }
+    return addresses;
+  }, [processedContent]);
+
+  useEffect(() => {
+    requestNames(mentionedAddresses);
+  }, [mentionedAddresses, requestNames]);
 
   // "Jumbo emoji": when a message is nothing but emoji, render them larger.
   // 1 emoji → 64px, 2-3 → 48px, 4+ → normal inline size (sizes set in _chat.scss).
@@ -848,20 +867,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       const address = target.dataset.userAddress;
 
       if (address) {
-        // SECURITY: Always do fresh user lookup for UserProfile modal to prevent impersonation
-        const user = resolveSender
-          ? resolveSender(address)
-          : (mapSenderToUser ? mapSenderToUser(address) : null);
-        onUserClick({
-          address,
-          displayName: user?.displayName,
-          userIcon: user?.userIcon,
-          bio: (user as { bio?: string } | null)?.bio,
-          // Carried through so the card resolves from the same data the pill
-          // did; see UserProfileModalUser.
-          primaryUsername: user?.primaryUsername,
-          globalDisplayName: user?.globalDisplayName,
-        }, event, { type: 'mention', element: target });
+        // Address only — the profile card (UserProfile.tsx) resolves its own
+        // name/QNS/bio from the address once it opens, the same way the pill
+        // itself just did via `useNameResolver`. Carrying a name/icon/bio
+        // snapshot through the click event was the old pattern (a second
+        // place that could drift from the resolver); dropping it here is
+        // deliberate, not an oversight — see the identity migration report
+        // for the consumer audit that checked this is safe.
+        onUserClick({ address }, event, { type: 'mention', element: target });
       }
     }
 
@@ -880,7 +893,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       const channelId = target.dataset.channelId;
       onChannelClick(channelId);
     }
-  }, [onUserClick, onChannelClick, onMessageLinkClick, mapSenderToUser, resolveSender]);
+  }, [onUserClick, onChannelClick, onMessageLinkClick]);
 
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${emojiSizeClass} ${suffix ? 'has-inline-suffix' : ''} ${className || ''}`} onClick={handleClick}>

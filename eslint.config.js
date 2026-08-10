@@ -16,14 +16,29 @@ import tseslint from 'typescript-eslint';
 // and its own import never spells out "utils/".
 const noResolverImportsRules = {
   'no-restricted-imports': ['error', {
-    patterns: [{
-      group: ['**/resolveMemberName', '**/mentionPillDom',
-              '**/conversationSearch', '**/profileCardIdentity',
-              '**/resolveGlobalSender', '**/resolveSelfName'],
-      message:
-        'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
-        'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
-    }],
+    patterns: [
+      {
+        group: ['**/resolveMemberName', '**/conversationSearch', '**/profileCardIdentity',
+                '**/resolveGlobalSender', '**/resolveSelfName'],
+        message:
+          'Resolve names via src/identity (<MemberName> / useResolvedName). ' +
+          'See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
+      },
+      // mentionPillDom is split from the group above: it still resolves a
+      // name itself (resolveMentionPillName, used by its own unmigrated
+      // ratchet entry below) but also exports pure DOM helpers
+      // (createPillElement, extractPillDataFromOption, the DOM-walk
+      // serializers) that do no resolution at all. A migrated file is
+      // allowed to import those — only the resolving export is restricted,
+      // not the whole module.
+      {
+        group: ['**/mentionPillDom'],
+        importNames: ['resolveMentionPillName'],
+        message:
+          'Resolve names via src/identity (<MemberName> / useResolvedName), not ' +
+          'resolveMentionPillName. See .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md',
+      },
+    ],
   }],
 };
 
@@ -163,9 +178,6 @@ export default [
     // from it as part of migrating it. Never add one.
     files: [
       'src/components/message/MessageComposer.tsx',
-      'src/components/message/MessageMarkdownRenderer.tsx',
-      'src/components/message/MessagePreview.tsx',
-      'src/components/message/MessageEditTextarea.tsx',
       'src/components/message/MentionDropdown.tsx',
       'src/components/message/PinnedMessagesPanel.tsx',
       'src/components/message/ReactionsList.tsx',

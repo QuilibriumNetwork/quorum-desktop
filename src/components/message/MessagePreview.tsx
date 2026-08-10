@@ -7,7 +7,7 @@ import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
 import { processMarkdownText, hasPermission } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
-import { resolveNameForContext, formatResolvedName } from '../../utils/resolveMemberName';
+import { MemberName } from '../../identity';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (
@@ -176,7 +176,6 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
 }) => {
   // Extract senderId from the message content based on message type
   const senderId = message.content?.senderId || '';
-  const sender = mapSenderToUser && senderId ? mapSenderToUser(senderId) : null;
 
   // Gate the @everyone pill on sender authorization (sender held mention:everyone,
   // role-based, no owner bypass) — same trust rule as the message list. When the
@@ -200,31 +199,6 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     currentSpaceId,
     everyoneAuthorized,
   });
-
-  // The resolver owns the whole ladder INCLUDING the address fallback — see the
-  // contract on `useChannelMessages.mapSenderToUser`, which returns a member
-  // unchanged (empty `displayName` included) precisely so no caller re-derives
-  // it. This used to hand-roll `displayName → username → formatAddress`, which
-  // skipped the QNS name and the forged-suffix guard alike.
-  //
-  // Reachable only when `hideHeader` is false; both current callers
-  // (PinnedMessagesPanel, BookmarkItem) pass it, so this was dead code sitting
-  // next to a trust marker. Resolved rather than deleted so turning the header
-  // back on cannot quietly reintroduce the gap.
-  const getDisplayName = () => {
-    if (!sender && !senderId) return t`Unknown User`;
-    return formatResolvedName(
-      resolveNameForContext(
-        {
-          address: sender?.address ?? senderId,
-          displayName: sender?.displayName,
-          primaryUsername: sender?.primaryUsername,
-          globalDisplayName: sender?.globalDisplayName,
-        },
-        { isDm: message.spaceId === message.channelId },
-      ),
-    );
-  };
 
   // Use shared date formatting utility (matches Message.tsx format)
   const formattedTimestamp = message.createdDate
@@ -355,11 +329,20 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       style={{ backgroundColor: showBackground ? "var(--color-bg-chat)" : undefined }}
     >
       <Flex direction="column" gap="sm">
-        {/* Message header */}
+        {/* Message header. Reachable only when `hideHeader` is false; both
+            current callers (PinnedMessagesPanel, BookmarkItem) pass
+            hideHeader={true}, so this stays dead code in production today —
+            kept resolving via the identity module (not deleted) so turning
+            it back on cannot quietly reintroduce the gap `getDisplayName`
+            used to be. `enrich`: a single, bounded sender per preview. */}
         {!hideHeader && (
           <Flex align="center" className="dropdown-result-meta min-w-0">
             <Icon name="user" className="dropdown-result-user-icon flex-shrink-0" />
-            <span className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0">{getDisplayName()}</span>
+            <MemberName
+              address={senderId}
+              enrich
+              className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0"
+            />
             <Icon name="calendar-alt" className="dropdown-result-date-icon flex-shrink-0" />
             <span className="dropdown-result-date">{formattedTimestamp}</span>
           </Flex>

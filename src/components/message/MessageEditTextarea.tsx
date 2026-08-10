@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback, useEffect, useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';
 import { Flex } from '../primitives';
@@ -18,7 +18,8 @@ import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '.
 import { createIPFSCIDRegex, extractMentionsFromText, applyEdit, getConversationSetting } from '@quilibrium/quorum-shared';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
-import { resolveMentionPillName } from '../../utils/mentionPillDom';
+import { createPillElement, type PillData } from '../../utils/mentionPillDom';
+import { useNameResolver } from '../../identity';
 
 /**
  * DM context for action queue handlers.
@@ -139,25 +140,38 @@ export function MessageEditTextarea({
     [editText, selectionRange]
   );
 
+  // Bulk imperative resolver: the pills below are raw DOM nodes, built inside
+  // a loop over however many `@<address>` tokens the stored text contains —
+  // a hook cannot be called per address in that loop (rules of hooks). See
+  // `useNameResolver`'s docstring for why this hook is shaped as one call
+  // returning plain functions instead.
+  const { resolve, requestNames } = useNameResolver();
+
+  // Every user this edit could rebuild a pill for is already in the
+  // message's own verified mention list — enrich that whole set in ONE
+  // batch (not one request per pill) so pills can show ".q", matching the
+  // SAME address's pill in the message body right next to this editor
+  // (already viewed, already enriched, before Edit was even clicked).
+  const mentionedAddresses = useMemo(
+    () => new Set(message.mentions?.memberIds ?? []),
+    [message.mentions?.memberIds]
+  );
+  useEffect(() => {
+    requestNames(mentionedAddresses);
+  }, [mentionedAddresses, requestNames]);
+
   // Entering edit mode rebuilds every pill from the stored `@<address>` tokens,
   // which makes this the SECOND place a mention becomes a name — the composer's
-  // is `extractPillDataFromOption`. Both go through `resolveMentionPillName` so
-  // they cannot drift again; see that function for what the drift cost.
-  const isDmMessage = message.spaceId === message.channelId;
+  // is `extractPillDataFromOption`. Both now resolve through the SAME identity
+  // module the message body's pills use (src/identity), keyed only by
+  // address, so a pill can never drift from how the same member renders
+  // elsewhere.
   const resolveMentionName = useCallback(
     (address: string): string => {
-      const user = mapSenderToUser(address);
-      return resolveMentionPillName(
-        {
-          address,
-          displayName: user?.displayName,
-          primaryUsername: user?.primaryUsername,
-          globalDisplayName: user?.globalDisplayName,
-        },
-        { isDm: isDmMessage }
-      );
+      const resolved = resolve(address);
+      return resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
     },
-    [mapSenderToUser, isDmMessage]
+    [resolve]
   );
 
   // Parse mentions from stored text and create pills (with double validation)
@@ -165,32 +179,6 @@ export function MessageEditTextarea({
     (text: string): DocumentFragment => {
       const fragment = document.createDocumentFragment();
       let lastIndex = 0;
-
-      // Helper to create a pill element
-      const createPillElement = (
-        type: 'user' | 'role' | 'channel' | 'everyone',
-        displayName: string,
-        address: string
-      ): HTMLSpanElement => {
-        const pill = document.createElement('span');
-        pill.contentEditable = 'false';
-        pill.dataset.mentionType = type;
-        pill.dataset.mentionAddress = address;
-        pill.dataset.mentionDisplayName = displayName;
-
-        // Use the same CSS classes as rendered mentions in Message.tsx
-        const mentionClasses = {
-          user: 'message-mentions-user',
-          role: 'message-mentions-role',
-          channel: 'message-mentions-channel',
-          everyone: 'message-mentions-everyone',
-        };
-
-        pill.className = `${mentionClasses[type]} message-composer-pill`;
-        pill.textContent = type === 'channel' ? `#${displayName}` : `@${displayName}`;
-
-        return pill;
-      };
 
       // Collect all mentions
       const mentions: Array<{ type: 'user' | 'role' | 'channel' | 'everyone'; displayName: string; address: string; index: number; length: number }> = [];
@@ -265,8 +253,15 @@ export function MessageEditTextarea({
           fragment.appendChild(document.createTextNode(text.substring(lastIndex, mention.index)));
         }
 
-        // Add pill
-        fragment.appendChild(createPillElement(mention.type, mention.displayName, mention.address));
+        // Add pill — same DOM builder the composer uses (mentionPillDom), so
+        // an edited message's pills are byte-for-byte the same shape as
+        // freshly-inserted ones.
+        const pillData: PillData = {
+          type: mention.type,
+          displayName: mention.displayName,
+          address: mention.address,
+        };
+        fragment.appendChild(createPillElement(pillData));
 
         lastIndex = mention.index + mention.length;
       });
