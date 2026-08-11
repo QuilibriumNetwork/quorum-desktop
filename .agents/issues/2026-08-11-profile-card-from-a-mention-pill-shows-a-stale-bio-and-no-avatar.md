@@ -34,11 +34,12 @@ was one commit behind `feat/identity-provider`, and that commit
 rebase applied clean. The claim that this work needed re-deriving against a
 newer tree came from assuming the base predated the refactor; it did not.
 
-Not yet verified: **the visual pass in the running app.** The operator reported
-the card looking correct, but on a build of `feat/identity-provider`, which does
-not contain this fix — so that observation covers the identity branch's own name
-work, not this ladder. Bio and avatar from a mention pill still need one look
-once this branch is running.
+**Visually confirmed by the operator**, running the app from this worktree (the
+build that contains the fix): the card opened from a mention pill now shows the
+right bio and the profile picture, matching the card opened from a message
+avatar.
+
+Still open: mobile parity, and the merge itself.
 
 ## The report
 
@@ -163,7 +164,7 @@ test file mocks it properly.
 - [x] Independently code-reviewed in a fresh context
 - [x] Rebased onto the identity branch tip, clean
 - [x] The reported stale NAME resolved (closed above, not pursued)
-- [ ] Visually confirmed in the running app, from both entry points
+- [x] Visually confirmed in the running app, from both entry points
 - [ ] Mobile parity checked, or explicitly deferred
 - [ ] Merged (stacked on the identity work, so it lands after that does)
 
