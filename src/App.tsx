@@ -18,6 +18,14 @@ import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
 import { useContextMenuPrevention } from './hooks/useContextMenuPrevention';
+import { IdentityScopeProvider, type RosterNameRow } from './identity';
+
+// Stable reference so the root provider's memo (see identityProvider.tsx's
+// own EMPTY_LOCAL_NAMES) isn't invalidated by a fresh `{}` literal on every
+// App render. No spaceId, no roster — the global ladder applies by default;
+// every nested <IdentityScopeProvider> (Channel, DirectMessage, Bookmarks...)
+// still overrides this with richer, scoped data when it mounts.
+const EMPTY_ROSTERS: Record<string, Record<string, RosterNameRow>> = {};
 
 window.Buffer = Buffer;
 
@@ -108,32 +116,52 @@ const App = () => {
             </div>
           }
         >
-          {isDevRoute ? (
-            <div className="bg-app flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <Router user={user!} setUser={setUser} />
-            </div>
-          ) : user && currentPasskeyInfo ? (
-            <div className="bg-app flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <Suspense fallback={<Connecting />}>
-                <RegistrationProvider>
-                  <ResponsiveLayoutProvider>
-                    <Suspense>
-                      <Router user={user} setUser={setUser} />
-                    </Suspense>
-                  </ResponsiveLayoutProvider>
-                </RegistrationProvider>
-              </Suspense>
-            </div>
-          ) : landing && !user ? (
-            <div className="bg-onboarding flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <OnboardingFlow setUser={setUser} />
-            </div>
-          ) : (
-            <Connecting />
-          )}
+          {/* Root-level identity scope: mounted ABOVE the Router (so every
+              route's ModalProvider/AppShell/NavRail is inside it) and above
+              every dev-route render too, so no rendered component can ever
+              be outside an <IdentityScopeProvider> and hit the "Wrap the
+              route" throw in identityProvider.tsx. No spaceId, empty
+              rostersBySpace — the global ladder applies by default. Nested
+              providers (Channel, DirectMessage, Bookmarks, notifications...)
+              still mount below and override with scoped roster/local-name
+              data; this one exists purely as the backstop for surfaces
+              nobody has migrated yet (e.g. a confirmation modal or toast
+              rendered from Layout's app-level modal host, outside any
+              Space/DM provider). selfAddress comes from currentPasskeyInfo,
+              the ONLY place the address is known before a user record even
+              exists — the self tier itself resolves from the public
+              profile fetched here, never from currentPasskeyInfo's fields. */}
+          <IdentityScopeProvider
+            rostersBySpace={EMPTY_ROSTERS}
+            selfAddress={currentPasskeyInfo?.address ?? null}
+          >
+            {isDevRoute ? (
+              <div className="bg-app flex flex-col min-h-screen text-main">
+                {isWeb() && isElectron() && <CustomTitlebar />}
+                <Router user={user!} setUser={setUser} />
+              </div>
+            ) : user && currentPasskeyInfo ? (
+              <div className="bg-app flex flex-col min-h-screen text-main">
+                {isWeb() && isElectron() && <CustomTitlebar />}
+                <Suspense fallback={<Connecting />}>
+                  <RegistrationProvider>
+                    <ResponsiveLayoutProvider>
+                      <Suspense>
+                        <Router user={user} setUser={setUser} />
+                      </Suspense>
+                    </ResponsiveLayoutProvider>
+                  </RegistrationProvider>
+                </Suspense>
+              </div>
+            ) : landing && !user ? (
+              <div className="bg-onboarding flex flex-col min-h-screen text-main">
+                {isWeb() && isElectron() && <CustomTitlebar />}
+                <OnboardingFlow setUser={setUser} />
+              </div>
+            ) : (
+              <Connecting />
+            )}
+          </IdentityScopeProvider>
         </ErrorBoundary>
       </I18nProvider>
     </>
