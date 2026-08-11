@@ -4,12 +4,12 @@ title: "Desktop shows a stale display name everywhere except the User Settings f
 status: open
 priority: medium
 created: 2026-08-04
-updated: 2026-08-05
+updated: 2026-08-11
 severity: cosmetic but permanent and self-contradicting — two surfaces in the same app show two different names for the same person, and the wrong one never corrects itself
 area: identity resolution / space member roster / name precedence
 repos: quorum-desktop (visible) + quorum-mobile (sender)
 related:
-  - ".agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md (the design this bug produced — read it before implementing)"
+  - ".agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md (the design this bug produced — read it before implementing)"
   - ".agents/issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md"
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
   - ".agents/docs/features/qns-username-display.md"
@@ -30,6 +30,26 @@ became a real resolver tier for name, avatar and bio. Design and plan:
 Verified on the reporter's device after the merge candidate: source A now equals
 source B, no space holds a diverged override, the tripwire is clean, the migration
 cleared 4 legacy overrides, and name + avatar + member list all render correctly.
+
+**2026-08-11 — the file:line citations below are dead; the analysis still stands.**
+
+PR #327 deleted the two read sites this file is built around. §103's
+`resolveGlobalSender.ts:29-48` and §205/§242's
+`useMembersWithPublicProfileFallback.ts:147` no longer exist. The finding they
+supported — that a name has more than one read site, so a fix scoped to one of
+them does not reach the others — is exactly what #327 acted on: there is now a
+single read path (`src/identity/`), the notification panel's hand-rolled map is
+gone, and an eslint rule blocks a new one from appearing. Map the citations
+forward:
+
+| This file cites | Now |
+|---|---|
+| `resolveGlobalSender.ts:29-48` (global panel's own map) | `src/hooks/business/identity/useMultiSpaceRosters.ts`, feeding one `<IdentityScopeProvider>` |
+| `useMembersWithPublicProfileFallback.ts:147` | `src/hooks/business/user/useVisibleSenderProfileFallback.ts` |
+
+This does **not** close the issue. #327 changed where names are READ; this issue is
+about the roster data being stale at the SOURCE, which is upstream of every reader
+and untouched by it.
 A rename on mobile reaches desktop without a reload.
 
 **Why this stays open — two device checks are outstanding**, and this is a

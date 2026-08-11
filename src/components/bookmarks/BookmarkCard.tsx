@@ -69,13 +69,25 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   // pseudo-spaceId) forces the GLOBAL ladder, matching DirectMessage.tsx.
   const effectiveSpaceId = sourceType === 'dm' ? undefined : bookmark.spaceId;
   const resolvedSender = useResolvedMemberName(senderAddress, { spaceId: effectiveSpaceId, enrich: true });
-  // Raw tiers for the mention resolver below (it expects displayName/
-  // primaryUsername/globalDisplayName separately, not a pre-resolved name).
+  // Raw tiers for `mapSenderToUser`/`resolveSender` below.
+  //
+  // These no longer decide any LABEL. `MessageMarkdownRenderer` takes a pill's
+  // text from its own `useNameResolver().resolve(address)` call and uses the
+  // object returned here only to answer "is there a user to navigate to on
+  // click" (`resolvedUser != null` — see MessageMarkdownRenderer.tsx's
+  // `processMentionTokens`). So nothing here is rendered, and the raw tiers
+  // never bypass the forged-".q" guard the way `useMemberIdentity`'s docstring
+  // warns about.
+  //
+  // Kept rather than collapsed to `{ address }` because the shape is part of
+  // the renderer's public prop contract, which several other callers still
+  // populate the same way; narrowing it belongs with that contract's cleanup,
+  // not here.
   const senderIdentity = useMemberIdentity(senderAddress, { spaceId: effectiveSpaceId, enrich: true });
 
-  // The sender is the only user this surface resolves for mentions inside
-  // the message body — hand the RAW tiers through so the renderer's own
-  // ladder (not a frozen cached string) decides what to show.
+  // The sender is the only user this surface knows about for mentions inside
+  // the message body — everyone else resolves to null and renders as a
+  // non-interactive pill.
   const mapSenderToUser = React.useCallback(
     (_senderId: string) => ({
       displayName: senderIdentity.spaceName ?? undefined,

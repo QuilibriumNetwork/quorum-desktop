@@ -3,7 +3,7 @@ type: doc
 title: DM Architecture and Debug Playbook
 status: living
 created: 2026-06-09
-updated: 2026-06-10
+updated: 2026-08-11
 audience: future agents debugging DM-related bugs (delivery, identity, sync)
 ---
 
@@ -56,7 +56,7 @@ A DM partner's name/avatar/bio can reach you three ways. Knowing which one a giv
 3. **DM UserProfile sidebar** (the inline profile panel in DM view) — reads `conversation.bio` first, then falls back to `recipientPublicProfile?.bio` (server-side public profile, only present if the partner opted in). See [`DirectMessage.tsx`](src/components/direct/DirectMessage.tsx) `otherUser` memo.
 4. **DM message list per-message header** — reads `members` map produced by `useChannelData`-like logic; for DMs the map has one entry.
 5. **Public-profile fallback** — two hooks, same endpoint (`GET /users/:addr/public-profile`), different consumers:
-   - `useMembersWithPublicProfileFallback` — space message surfaces. Render-only fallback; fires only when a member has **neither** name **nor** icon (so it does NOT trigger for a row whose name is the literal `"Unknown User"`).
+   - `useVisibleSenderProfileFallback` (renamed from `useMembersWithPublicProfileFallback` in PR #327) — space message surfaces. Render-only fallback; fires only when a member has **neither** name **nor** icon (so it does NOT trigger for a row whose name is the literal `"Unknown User"`).
    - `useConversationsWithProfileBackfill` — DM sidebar (path 3). Per-field (`"Unknown User"` / default icon each count as empty), and **writes the result back** to the `conversations` row.
    - 404 (user opted out) → no fallback data; the field stays on its placeholder.
 

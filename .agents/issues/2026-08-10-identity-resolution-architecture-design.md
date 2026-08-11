@@ -40,8 +40,9 @@ wrong thing:
 2. **Constraint 2**, on detached surfaces. An earlier draft of this design got it
    backwards and is kept inline as a rejected note. If you find yourself about to
    resolve bookmarks with the global ladder, you have re-derived the mistake.
-3. [`utils/resolveGlobalSender.ts`](../../src/utils/resolveGlobalSender.ts) —
-   Layer 2 is a generalisation of this file, not a new build.
+3. [`src/identity/identityProvider.tsx`](../../src/identity/identityProvider.tsx) —
+   what Layer 2 became. It was built by generalising `utils/resolveGlobalSender.ts`,
+   which the implementation then deleted; read the provider itself, not that file.
 4. [`2026-08-10-name-surfaces-that-never-reached-the-resolver.md`](../2026-08-10-name-surfaces-that-never-reached-the-resolver.md)
    — the eighteen surfaces this must not regress, which doubles as the test
    checklist.
@@ -153,8 +154,12 @@ a notification show the per-space nickname (constraint 2). With no `spaceId` —
 a DM, or a Space you have left — `spaceName` resolves to `null` and the ladder
 continues to the QNS name.
 
-**Build it by generalising [`utils/resolveGlobalSender.ts`](../../src/utils/resolveGlobalSender.ts),
-not from scratch.** That file already builds a `(spaceId, senderId) → identity`
+**Build it by generalising `utils/resolveGlobalSender.ts`, not from scratch.**
+(Written before implementation; that file no longer exists — the generalisation
+landed as [`src/identity/identityProvider.tsx`](../../src/identity/identityProvider.tsx)
+plus [`useMultiSpaceRosters.ts`](../../src/hooks/business/identity/useMultiSpaceRosters.ts),
+and the file was deleted. The reasoning is kept because it explains the shape.)
+That file already builds a `(spaceId, senderId) → identity`
 lookup from `messageDB.getSpaceMembers`, already keeps the per-space name and the
 global name separate, and is already used by the notification panel. It is
 missing exactly one tier — the QNS name — which is why notifications show the
@@ -240,8 +245,8 @@ These are the things that will break a naive implementation.
      readable with `messageDB.getSpaceMembers(spaceId)` — local, no network,
      ~1-5ms.
 
-   **The mechanism already exists in this repo**:
-   [`utils/resolveGlobalSender.ts`](../../src/utils/resolveGlobalSender.ts)
+   **The mechanism already exists in this repo**: `utils/resolveGlobalSender.ts`
+   (deleted by the implementation — this is the pre-implementation state)
    builds a `(spaceId, senderId) → identity` lookup from exactly those rosters,
    carrying the per-space `display_name` AND the roster's `global_display_name`.
    The notification panel uses it today.
@@ -444,18 +449,29 @@ observable or measured.
 
 ## Definition of done
 
-- [ ] `MemberIdentity` + `resolveIdentity` in shared, with every field required
-- [ ] Provider keyed on `(address, spaceId?)`, absorbing `resolveGlobalSender`
-- [ ] Bookmarks and notifications show BOTH the per-space name and the `.q`
-      (the two surfaces still wrong after PR #325)
-- [ ] `<MemberName>` renders the avatar initials from the same resolved name
-- [ ] Desktop provider serving a virtualised list with a MEASURED observer count
-- [ ] All 28 desktop call sites migrated; zero direct resolver imports outside
-      the identity module
-- [ ] Lint rule + guard test, the guard shown red
-- [ ] `/dev/fake-qns` sweep of all eighteen surfaces, with a control arm
+Ticked 2026-08-11, after PR #327 and the three independent reviews below.
+
+- [x] `MemberIdentity` + `resolveIdentity` in shared, with every field required
+- [x] Provider keyed on `(address, spaceId?)`, absorbing `resolveGlobalSender`
+- [x] Bookmarks and notifications show BOTH the per-space name and the `.q`
+      (the two surfaces still wrong after PR #325). Notifications were confirmed
+      by the operator in the running app; **bookmarks by tests only** — that is
+      why `2026-08-10-name-surfaces-that-never-reached-the-resolver.md` is still
+      open rather than in `.done/`.
+- [x] `<MemberName>` renders the avatar initials from the same resolved name
+- [x] Desktop provider serving a virtualised list with a MEASURED observer count
+      (`identitySidebarFetch.test.tsx` — 0 / 1 / 200)
+- [x] All 28 desktop call sites migrated; zero direct resolver imports outside
+      the identity module. The real count was higher: "28" came from counting
+      resolver imports and undercounted by roughly 40%.
+- [x] Lint rule + guard test, the guard shown red
+- [ ] `/dev/fake-qns` sweep of all eighteen surfaces, with a control arm —
+      **NOT DONE.** Ad hoc operator testing substituted for it and found eight
+      further bugs, which is itself evidence the substitution was not equivalent.
 - [ ] Mobile migrated against the same shared rule, verified with `harness:qns`
-- [ ] The parity document's shared echo-demotion item deleted as absorbed (4)
+- [ ] The parity document's shared echo-demotion item deleted as absorbed (4) —
+      unverified either way at close-out; the parity issue has since moved to
+      `.done/`, so check there before assuming.
 
 ## Corrections after implementation (2026-08-11)
 

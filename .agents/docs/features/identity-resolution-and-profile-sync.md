@@ -60,10 +60,12 @@ gates whether Quorum displays your profile data to non-spacemates.
 
 ## The precedence ladder (render time)
 
-From `qns-username-display.md`, implemented by the shared
-`resolveDisplayName` + per-app adapters (`resolveSpaceMemberName` /
-`resolveMemberName` on desktop; mobile merges via
-`useMembersWithPublicProfileFallback.pickField`):
+From `qns-username-display.md`, implemented by shared `resolveIdentity` over a
+complete `MemberIdentity`, fed by `src/identity/` on desktop (mobile still merges
+via `useMembersWithPublicProfileFallback.pickField` until it ports). The desktop
+adapters this section used to name — `resolveSpaceMemberName` / `resolveMemberName`
+— were deleted in PR #327; scope (`'space'` vs `'global'`) is now an argument, not
+a choice of function:
 
 ```
 custom per-space name (C override)  →  QNS primary username .q (B)
@@ -108,8 +110,12 @@ The follow-global work removes the OVERRIDE-field stamping so a non-empty
 override roster field means a REAL override. This SHIPPED 2026-07-16 (branch
 `follow-global-profile`, both repos): the on-connect/tag-rotation rebroadcasts,
 space creation, and the editor saves no longer write the global value into the
-override fields. The `resolveSpaceMemberName` comparison trick is now a legacy
-safety net (it neutralizes old stamped rows for free) rather than load-bearing.
+override fields. The comparison trick is now a legacy safety net (it neutralizes
+old stamped rows for free) rather than load-bearing. Since PR #327 it lives in
+shared `resolveIdentity` as the space-vs-global echo check, not in a desktop
+adapter — and it is exactly why `globalName` is a REQUIRED field there: omit it
+and the comparison can never fire, so every roster name looks deliberate and the
+`.q` is silently buried.
 
 ## The TWO-SLOT wire model (what actually shipped)
 
@@ -738,8 +744,8 @@ residual: an unregistered key can still set the display name/avatar on a claimed
 | Global editor save | `src/hooks/business/user/useUserSettings.ts` | `components/UnifiedProfileEditModal.tsx` (`saveQuorum`) |
 | Publish/unpublish B | `src/services/PublicProfileService.ts` | `services/profile/publicProfile.ts` |
 | B fetch hook (1h cache) | `src/hooks/business/user/useUserPublicProfile.ts` | `hooks/useUserPublicProfile.ts` |
-| Member fallback (precedence merge) | `src/hooks/business/user/useMembersWithPublicProfileFallback.ts` | `hooks/useMembersWithPublicProfileFallback.ts` |
-| Name resolvers | `src/utils/resolveMemberName.ts` (+ shared `resolveDisplayName`) | merged inside the fallback hook (`pickField`) |
+| Member fallback (precedence merge) | `src/hooks/business/user/useVisibleSenderProfileFallback.ts` (renamed from `useMembersWithPublicProfileFallback`, PR #327) | `hooks/useMembersWithPublicProfileFallback.ts` |
+| Name resolvers | `src/identity/` (+ shared `resolveIdentity`) — `resolveMemberName.ts` deleted in PR #327 | merged inside the fallback hook (`pickField`) |
 | Space editor (override) | `useSpaceProfile.ts` + `SpaceSettingsModal/Account.tsx` | `components/SpaceSettingsModal.tsx` |
 | C receive/upsert (two-slot merge) | `MessageService.ts` (update-profile handlers + `applyGlobalProfileSlots`) | `context/WebSocketContext.tsx` (~2100 JS path, ~3589 batch path) |
 | C wire send (both slots) | `MessageService.ts` rebroadcast + `MessageDB.updateUserProfile` | `services/space/spaceMessageService.ts` (`sendUpdateProfileMessage`) |
