@@ -1,4 +1,9 @@
-export { IdentityScopeProvider, identityFromMaps, selfLocalNameEntry } from './identityProvider';
+export {
+  IdentityScopeProvider,
+  identityFromMaps,
+  selfLocalNameEntry,
+  EMPTY_ROSTERS_BY_SPACE,
+} from './identityProvider';
 export type { RosterNameRow, IdentitySources } from './identityProvider';
 export { MemberName } from './MemberName';
 export {

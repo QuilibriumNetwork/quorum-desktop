@@ -292,9 +292,18 @@ export const BookmarksPage: React.FC = () => {
   // always inside one Space). Build one roster per distinct spaceId
   // represented here, from ALL bookmarks rather than the filtered/searched
   // subset, so switching the filter or typing a search term never needs a
-  // fresh IndexedDB read.
+  // fresh IndexedDB read. `sourceType === 'channel'` filter: a 'dm' bookmark's
+  // `spaceId` is the peer's address, not a real space (same shape fixed
+  // elsewhere for this file's search/resolve calls) — querying it as one
+  // would only ever return nothing, since useMultiSpaceRosters looks it up
+  // in the spaces table, so it's filtered out here rather than fetched and
+  // ignored.
   const bookmarkSpaceIds = React.useMemo(
-    () => bookmarks.map((b) => b.spaceId).filter((id): id is string => !!id),
+    () =>
+      bookmarks
+        .filter((b) => b.sourceType === 'channel')
+        .map((b) => b.spaceId)
+        .filter((id): id is string => !!id),
     [bookmarks]
   );
   const rostersBySpace = useMultiSpaceRosters(bookmarkSpaceIds);

@@ -31,7 +31,7 @@ import { useMentionNotificationSettings } from '../../../hooks/business/mentions
 import { showToast } from '../../../utils/toast';
 import { useSpaceTag } from '../../../hooks/business/spaces/useSpaceTag';
 import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
-import { IdentityScopeProvider } from '../../../identity';
+import { EMPTY_ROSTERS_BY_SPACE, IdentityScopeProvider } from '../../../identity';
 import { useConversations } from '../../../hooks/queries';
 import { realDisplayNameOrUndefined } from '../../../utils/identityPlaceholder';
 import type { Conversation } from '@quilibrium/quorum-shared';
@@ -89,7 +89,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
   return (
     <IdentityScopeProvider
       spaceId={props.spaceId}
-      rostersBySpace={{}}
+      rostersBySpace={EMPTY_ROSTERS_BY_SPACE}
       selfAddress={user?.currentPasskeyInfo?.address ?? null}
       locallyKnownNames={locallyKnownNames}
     >

@@ -16,6 +16,15 @@ export interface RosterNameRow {
   global_display_name?: string | null;
 }
 
+/**
+ * Stable reference for detached DM-shaped surfaces that always pass
+ * `rostersBySpace={{}}` (a DM carries no spaceId — see `ConversationSettingsModal.tsx`,
+ * `DirectMessage.tsx`) — same "avoid a fresh object every render" reasoning
+ * as `EMPTY_LOCAL_NAMES` above. Exported so those call sites can import it
+ * instead of writing the literal inline.
+ */
+export const EMPTY_ROSTERS_BY_SPACE: Record<string, Record<string, RosterNameRow>> = {};
+
 export interface IdentitySources {
   /** spaceId -> address -> roster row. Local, from messageDB.getSpaceMembers. */
   rostersBySpace: Record<string, Record<string, RosterNameRow>>;

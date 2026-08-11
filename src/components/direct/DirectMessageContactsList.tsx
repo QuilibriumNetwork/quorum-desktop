@@ -28,6 +28,7 @@ import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
 import { useOptionalShellState } from '../shell/useShellState';
 import {
+  EMPTY_ROSTERS_BY_SPACE,
   IdentityScopeProvider,
   useNameResolver,
   useResolvedMemberName,
@@ -155,7 +156,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = (pro
 
   return (
     <IdentityScopeProvider
-      rostersBySpace={{}}
+      rostersBySpace={EMPTY_ROSTERS_BY_SPACE}
       selfAddress={currentPasskeyInfo?.address || null}
       locallyKnownNames={localNamesByAddress}
     >

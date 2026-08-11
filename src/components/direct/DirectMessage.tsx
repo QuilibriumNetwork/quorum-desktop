@@ -51,6 +51,7 @@ import {
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
 import {
+  EMPTY_ROSTERS_BY_SPACE,
   IdentityScopeProvider,
   MemberName,
   selfLocalNameEntry,
@@ -952,12 +953,15 @@ const DirectMessage: React.FC<{}> = () => {
 
   return (
     // Message resolves its sender through src/identity, which throws
-    // outside a provider. DMs carry no spaceId — rostersBySpace={{}} is
-    // correct here (forces the global ladder), not a stub. locallyKnownNames
-    // is this DM's own local-conversation-data fallback (fix round 1) —
-    // constraint 5, names must render from IndexedDB with no fetch.
+    // outside a provider. DMs carry no spaceId — rostersBySpace={} is
+    // correct here (forces the global ladder), not a stub. EMPTY_ROSTERS_BY_SPACE
+    // is a stable module-level reference, not a fresh `{}` literal, so it
+    // doesn't invalidate the provider's merge memo on every render.
+    // locallyKnownNames is this DM's own local-conversation-data fallback
+    // (fix round 1) — constraint 5, names must render from IndexedDB with no
+    // fetch.
     <IdentityScopeProvider
-      rostersBySpace={{}}
+      rostersBySpace={EMPTY_ROSTERS_BY_SPACE}
       selfAddress={userAddress || null}
       locallyKnownNames={localNamesByAddress}
     >
@@ -1055,7 +1059,7 @@ const DirectMessage: React.FC<{}> = () => {
 
                   {/* BookmarkItem resolves its sender through src/identity.
                       Covered by the top-level <IdentityScopeProvider> now
-                      wrapping this whole component (same rostersBySpace={{}}
+                      wrapping this whole component (same empty rostersBySpace
                       + selfAddress) — no separate provider needed here. */}
                   <BookmarksPanel
                     isOpen={activePanel === 'bookmarks'}

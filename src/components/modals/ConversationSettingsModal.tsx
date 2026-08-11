@@ -20,7 +20,7 @@ import ConfirmationModal from './ConfirmationModal';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
 import { useDMConversationSettings } from '../../hooks/business/dm/useDMConversationSettings';
-import { IdentityScopeProvider, useResolvedName } from '../../identity';
+import { EMPTY_ROSTERS_BY_SPACE, IdentityScopeProvider, useResolvedName } from '../../identity';
 import { realDisplayNameOrUndefined } from '../../utils/identityPlaceholder';
 
 type ConversationSettingsModalProps = {
@@ -39,7 +39,9 @@ type ConversationSettingsModalProps = {
  * round 1): the partner's LOCAL `Conversation.displayName` is the last
  * resort before a truncated address, for a partner who has never published a
  * public profile, and it must render with no network round-trip.
- * `rostersBySpace={{}}` is correct — a DM carries no spaceId.
+ * `rostersBySpace={EMPTY_ROSTERS_BY_SPACE}` is correct — a DM carries no
+ * spaceId; the stable module-level reference avoids a fresh `{}` literal
+ * re-invalidating the provider's merge memo on every render.
  */
 const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = (props) => {
   const { data: conversation } = useConversation({ conversationId: props.conversationId });
@@ -53,7 +55,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = (pro
 
   return (
     <IdentityScopeProvider
-      rostersBySpace={{}}
+      rostersBySpace={EMPTY_ROSTERS_BY_SPACE}
       selfAddress={currentPasskeyInfo?.address ?? null}
       locallyKnownNames={localNamesByAddress}
     >

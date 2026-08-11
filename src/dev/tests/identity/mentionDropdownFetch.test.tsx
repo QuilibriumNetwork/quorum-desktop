@@ -8,11 +8,19 @@
  *
  * Two scenarios, one shared `QueryClient` per test:
  *
- *   1. Opening the dropdown with N distinct user candidates rendered issues
- *      AT MOST one fetch per distinct candidate — never per keystroke
- *      (simulated by re-rendering with an equivalent options array, standing
- *      in for a debounced re-filter landing on the same result set) and
- *      never per render.
+ *   1. Simulates what typing actually does: the candidate list CHANGES across
+ *      renders (narrows as a filter tightens, widens again on backspace,
+ *      sometimes lands on the exact same result twice — a debounced re-filter
+ *      settling on the same set). Fetch count is asserted after EVERY step
+ *      against the number of GENUINELY NEW addresses introduced so far, never
+ *      against the render count. This replaced an earlier version (found
+ *      overclaiming in review 2026-08-11) that only ever re-rendered with the
+ *      SAME address set — a shape the provider's `requested` Set absorbs
+ *      regardless of whether the calling code is correctly memoized, so it
+ *      could not have failed even against a component that called `request()`
+ *      on every render. See the RED transcript recorded in
+ *      `.superpowers/sdd/2026-08-10-identity-resolution-architecture-plan/placeholder-and-provider-merge-report.md`
+ *      for what actually falsifies this version.
  *   2. Re-opening the dropdown (closing it — `isOpen={false}`, which
  *      `MentionDropdown` renders as `null`, unmounting every row — then
  *      reopening with the same candidates) adds ZERO further fetches: the
@@ -114,42 +122,67 @@ describe('mention autocomplete identity — enrich opt-in, fetch cost (design de
     getPublicProfile.mockImplementation(fakeGetPublicProfile);
   });
 
-  it('1. opening the dropdown: fetches bounded by distinct candidates rendered, never per keystroke/render', async () => {
+  it('1. typing narrows/widens the candidate list: fetches track genuinely NEW addresses only, never render count', async () => {
     const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    const allOptions = optionsFor(distinctAddresses);
 
-    const { rerender } = render(
-      <QueryClientProvider client={queryClient}>
-        <Dropdown isOpen options={allOptions} />
-      </QueryClientProvider>,
-    );
-    await settle();
+    // Steps simulate a real keystroke session: open on a broad match, narrow
+    // as the filter tightens (rows for 2/3/4 unmount — no new addresses, so
+    // no new fetches are expected even though it's a genuine option-list
+    // change, not a same-array re-render), widen on backspace to a DIFFERENT
+    // broader match that reveals two addresses never rendered before (5, 6 —
+    // genuinely new, so exactly 2 new fetches expected), a redundant
+    // re-render landing on that exact same widened result (debounce noise —
+    // zero new fetches), then backspace further so address 2 — narrowed out
+    // and unmounted two steps ago, its <MemberName> row genuinely destroyed
+    // and about to be genuinely recreated — reappears alongside the rest.
+    // That last step is the strongest form of "never per keystroke": it's a
+    // REAL remount of an already-known address (not a same-array re-render
+    // sidestep), so it only passes if the fetch is bounded by address
+    // identity, not by component mount lifecycle. Each step's expected DELTA
+    // is the count of addresses in that step not seen in any earlier step —
+    // never the render count and never the size of that step's own option
+    // list.
+    const steps: { label: string; addrs: number[]; expectedNewFetches: number }[] = [
+      { label: 'open (0-4)', addrs: [0, 1, 2, 3, 4], expectedNewFetches: 5 },
+      { label: 'narrow to (0-1)', addrs: [0, 1], expectedNewFetches: 0 },
+      { label: 'widen to (0,1,5,6) — 5,6 are new', addrs: [0, 1, 5, 6], expectedNewFetches: 2 },
+      { label: 'same result again (debounce noise)', addrs: [0, 1, 5, 6], expectedNewFetches: 0 },
+      { label: 'widen further: 2 REMOUNTS (already known, unmounted at step 2)', addrs: [0, 1, 2, 5, 6], expectedNewFetches: 0 },
+    ];
 
-    const afterOpen = getPublicProfile.mock.calls.length;
-    // eslint-disable-next-line no-console
-    console.log(
-      `[mentionDropdownFetch] scenario 1 — candidates rendered=${DISTINCT_COUNT} fetches=${afterOpen}`,
-    );
-    expect(afterOpen).toBe(DISTINCT_COUNT);
+    let rerender: ReturnType<typeof render>['rerender'] | undefined;
+    let runningTotal = 0;
 
-    // Simulate three keystrokes / re-renders that keep landing on the SAME
-    // result set (a fresh array each time — not a reference-equality
-    // shortcut) — the falsifiable case for "never per keystroke".
-    for (let i = 0; i < 3; i++) {
-      rerender(
+    for (const step of steps) {
+      const options = optionsFor(step.addrs.map(addressAt));
+      const tree = (
         <QueryClientProvider client={queryClient}>
-          <Dropdown isOpen options={optionsFor(distinctAddresses)} />
-        </QueryClientProvider>,
+          <Dropdown isOpen options={options} />
+        </QueryClientProvider>
       );
+      if (!rerender) {
+        ({ rerender } = render(tree));
+      } else {
+        rerender(tree);
+      }
       await settle();
+
+      const total = getPublicProfile.mock.calls.length;
+      const delta = total - runningTotal;
+      // eslint-disable-next-line no-console
+      console.log(
+        `[mentionDropdownFetch] scenario 1 — step "${step.label}": total fetches=${total} (delta=${delta}, expected delta=${step.expectedNewFetches})`,
+      );
+      expect(delta).toBe(step.expectedNewFetches);
+      runningTotal = total;
     }
 
-    const afterKeystrokes = getPublicProfile.mock.calls.length;
-    // eslint-disable-next-line no-console
-    console.log(
-      `[mentionDropdownFetch] scenario 1 — after 3 same-result re-renders, fetches=${afterKeystrokes}`,
-    );
-    expect(afterKeystrokes).toBe(afterOpen);
+    // Final cross-check, independent of the per-step deltas above: total
+    // fetches equals the count of DISTINCT addresses shown across the WHOLE
+    // session (0,1,2,3,4,5,6 = 7) — not the number of renders (4) and not
+    // the sum of each step's option-list length (5+2+4+4=15).
+    const distinctAddressesShown = new Set(steps.flatMap((s) => s.addrs)).size;
+    expect(runningTotal).toBe(distinctAddressesShown);
   });
 
   it('2. re-opening the dropdown adds ZERO further fetches — the 1h cache + provider dedupe serve it', async () => {
