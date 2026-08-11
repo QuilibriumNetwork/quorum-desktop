@@ -6,7 +6,7 @@ priority: medium
 created: 2026-08-11
 updated: 2026-08-11
 area: identity resolution / profile card
-repos: quorum-desktop (this), quorum-mobile (parity not yet checked)
+repos: quorum-desktop (this), quorum-mobile (a different defect, filed there)
 related:
   - ".agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md"
   - ".agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md"
@@ -39,7 +39,8 @@ build that contains the fix): the card opened from a mention pill now shows the
 right bio and the profile picture, matching the card opened from a message
 avatar.
 
-Still open: mobile parity, and the merge itself.
+Still open: the merge itself. Mobile parity is checked — it has a different
+defect, filed in that repo (see "Not covered").
 
 ## The report
 
