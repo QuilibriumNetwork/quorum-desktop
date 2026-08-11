@@ -20,11 +20,25 @@ interface ReactionsModalProps {
   reactions: Reaction[];
   customEmojis: CustomEmoji[];
   members: Record<string, MemberInfo>;
-  /** The Space the reacted-to message lives in. `ReactionsModal` is mounted
-   *  from `Layout.tsx` as a sibling of the app shell — there is no ambient
+  /** The reacted-to message's `spaceId`. `ReactionsModal` is mounted from
+   *  `Layout.tsx` as a sibling of the app shell — there is no ambient
    *  `<IdentityScopeProvider>` — so it mounts its own below, scoped to this
-   *  one message's space, rather than relying on ambient scope. */
+   *  one message's space, rather than relying on ambient scope.
+   *
+   *  NOT always a real Space: DM messages support reactions too
+   *  (`ReactionsList.tsx` passes `message.spaceId` unconditionally, and
+   *  nothing rejects DMs the way pins/threads do), and a DM message is
+   *  stored with `spaceId === channelId === the peer's address` (the
+   *  app-wide convention — see `MessageList.tsx:118`, `Message.tsx:384-396`,
+   *  `MessagePreview.tsx`'s identical fix). See `channelId` below and the
+   *  `isDM` derivation in `ReactionsModal`. */
   spaceId: string;
+  /** The reacted-to message's `channelId` — needed ONLY to detect the DM
+   *  shape above (`spaceId === channelId`). A real Space channel's
+   *  `channelId` is a distinct id generated at channel creation and is
+   *  never equal to its own `spaceId` by construction, so this comparison
+   *  cannot false-positive on an ordinary channel message. */
+  channelId: string;
 }
 
 export const ReactionsModal: React.FC<ReactionsModalProps> = ({
@@ -34,10 +48,18 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
   customEmojis,
   members,
   spaceId,
+  channelId,
 }) => {
   const user = usePasskeysContext();
   const selfAddress = user?.currentPasskeyInfo?.address || null;
-  const spaceIds = useMemo(() => [spaceId], [spaceId]);
+
+  const isDM = !!spaceId && spaceId === channelId;
+  const effectiveSpaceId = isDM ? undefined : spaceId;
+
+  const spaceIds = useMemo(
+    () => (effectiveSpaceId ? [effectiveSpaceId] : []),
+    [effectiveSpaceId],
+  );
   const rostersBySpace = useMultiSpaceRosters(spaceIds);
   // Same reusable source `SearchResults.tsx`/`useRootIdentityScope` use — a
   // reactor who is a DM contact (no public profile, no space roster row) is
@@ -48,6 +70,7 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
 
   return (
     <IdentityScopeProvider
+      spaceId={effectiveSpaceId}
       rostersBySpace={rostersBySpace}
       selfAddress={selfAddress}
       locallyKnownNames={locallyKnownNames}
@@ -58,13 +81,23 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
         reactions={reactions}
         customEmojis={customEmojis}
         members={members}
-        spaceId={spaceId}
+        spaceId={effectiveSpaceId}
       />
     </IdentityScopeProvider>
   );
 };
 
-const ReactionsModalInner: React.FC<ReactionsModalProps> = ({
+const ReactionsModalInner: React.FC<{
+  visible: boolean;
+  onClose: () => void;
+  reactions: Reaction[];
+  customEmojis: CustomEmoji[];
+  members: Record<string, MemberInfo>;
+  /** Already resolved to `undefined` for a DM by the parent — never the raw
+   *  pseudo-spaceId. Passed through (rather than re-deriving `isDM` here) so
+   *  there is exactly one place that decides the ladder. */
+  spaceId: string | undefined;
+}> = ({
   visible,
   onClose,
   reactions,

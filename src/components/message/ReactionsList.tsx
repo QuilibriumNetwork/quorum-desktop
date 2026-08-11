@@ -106,6 +106,11 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
         customEmojis,
         members,
         spaceId: message.spaceId,
+        // Needed so ReactionsModal can detect a DM message (spaceId ===
+        // channelId === the peer's address) and resolve reactors on the
+        // global ladder instead of forcing a per-space nickname tier that
+        // cannot exist for a DM. See ReactionsModal.tsx's own doc comment.
+        channelId: message.channelId,
       });
     }
   };

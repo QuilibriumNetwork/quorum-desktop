@@ -34,6 +34,15 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
 }) => {
   const { cachedPreview } = bookmark;
 
+  // `bookmark.spaceId` is NOT always a real Space: a DM bookmark is created
+  // with `context.spaceId = spaceId || message.spaceId` (useMessageActions.ts's
+  // `handleBookmarkToggle`), and for a DM message `message.spaceId` IS the
+  // peer's own address (the app-wide convention — same defect shape already
+  // fixed in BookmarkCard.tsx/MessagePreview.tsx/ReactionsModal.tsx).
+  // `sourceType` is the purpose-built discriminant already on the bookmark.
+  // `undefined` (never the raw pseudo-spaceId) forces the GLOBAL ladder.
+  const effectiveSpaceId = bookmark.sourceType === 'dm' ? undefined : bookmark.spaceId;
+
   // Try to resolve the full message from local IndexedDB
   const { data: resolvedMessage } = useResolvedBookmark(bookmark, true);
 
@@ -97,8 +106,11 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           disableMentionInteractivity={true}
           // Detached surface: bookmarks span every space, so in-body
           // @mentions must resolve against the BOOKMARK's own spaceId, not
-          // whatever space this panel happens to render inside.
-          currentSpaceId={bookmark.spaceId}
+          // whatever space this panel happens to render inside. (MessagePreview
+          // itself also independently detects the DM shape from `message`, so
+          // this is belt-and-suspenders, not the only guard — but passing the
+          // already-corrected value keeps this call site honest too.)
+          currentSpaceId={effectiveSpaceId}
         />
       );
     }
@@ -123,7 +135,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
                 come from — cachedPreview never carried it. */}
             <MemberName
               address={cachedPreview.senderAddress}
-              spaceId={bookmark.spaceId}
+              spaceId={effectiveSpaceId}
               enrich
               className="result-sender mr-2 truncate flex-shrink min-w-0"
             />

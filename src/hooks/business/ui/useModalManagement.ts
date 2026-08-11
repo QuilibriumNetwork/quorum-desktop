@@ -54,12 +54,14 @@ interface UseModalManagementReturn {
     customEmojis: CustomEmoji[];
     members: Record<string, MemberInfo>;
     spaceId: string;
+    channelId: string;
   };
   showReactionsModal: (config: {
     reactions: Reaction[];
     customEmojis: CustomEmoji[];
     members: Record<string, MemberInfo>;
     spaceId: string;
+    channelId: string;
   }) => void;
   hideReactionsModal: () => void;
   threadSettingsModal: {
@@ -118,12 +120,14 @@ export const useModalManagement = (): UseModalManagementReturn => {
     customEmojis: CustomEmoji[];
     members: Record<string, MemberInfo>;
     spaceId: string;
+    channelId: string;
   }>({
     visible: false,
     reactions: [],
     customEmojis: [],
     members: {},
     spaceId: '',
+    channelId: '',
   });
 
   const showAddSpaceModal = useCallback(() => {
@@ -188,6 +192,7 @@ export const useModalManagement = (): UseModalManagementReturn => {
     customEmojis: CustomEmoji[];
     members: Record<string, MemberInfo>;
     spaceId: string;
+    channelId: string;
   }) => {
     setReactionsModal({
       visible: true,
@@ -202,6 +207,7 @@ export const useModalManagement = (): UseModalManagementReturn => {
       customEmojis: [],
       members: {},
       spaceId: '',
+      channelId: '',
     });
   }, []);
 

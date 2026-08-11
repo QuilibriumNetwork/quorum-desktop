@@ -125,4 +125,51 @@ describe('BookmarkCard — sender resolves via the identity module', () => {
     expect(screen.queryByText(/\.q/)).not.toBeInTheDocument();
     expect(screen.queryByText('Stale Cached Name')).not.toBeInTheDocument();
   });
+
+  describe('a DM bookmark resolves through the GLOBAL ladder', () => {
+    // A DM bookmark is created with context.spaceId = spaceId || message.spaceId
+    // (useMessageActions.ts's handleBookmarkToggle) — for a DM message,
+    // message.spaceId IS the peer's own address (the app-wide convention,
+    // same defect shape already fixed in MessagePreview.tsx/ReactionsModal.tsx).
+    // `sourceType: 'dm'` is the purpose-built discriminant BookmarkCard now
+    // uses instead of a spaceId/channelId comparison.
+    const PEER = 'QmPeerDMBookmarkEgVKpYZKYuFu2J49zHXnA8vZtEqzz';
+
+    const dmBookmark = (): Bookmark =>
+      ({
+        bookmarkId: 'bm-dm-1',
+        messageId: 'msg-dm-1',
+        spaceId: PEER,
+        channelId: PEER,
+        conversationId: `${PEER}/${PEER}`,
+        sourceType: 'dm',
+        createdAt: 1_700_000_000_000,
+        cachedPreview: {
+          senderAddress: PEER,
+          senderName: 'Stale Cached Name',
+          textSnippet: 'hey',
+          messageDate: 1_699_999_000_000,
+          sourceName: 'Direct Message',
+          contentType: 'text',
+        },
+      }) as Bookmark;
+
+    it('renders the QNS name, never a per-space nickname from an unrelated "space" that merely shares the same key', async () => {
+      getPublicProfile.mockResolvedValue({ data: { primary_username: 'peerqns', display_name: 'Peer QNS Display' } });
+
+      // Plants the exact regression this pins: if the bookmark were still
+      // treated as living in "space" PEER, this roster row's nickname would
+      // outrank the QNS name. Because rostersBySpace here is a plain prop
+      // (not fetched), this is present from the very first render — no
+      // async race to guard against, unlike ReactionsModal's own version of
+      // this test.
+      renderCard(dmBookmark(), {
+        [PEER]: { [PEER]: { display_name: 'Unrelated Space Nickname', global_display_name: '' } },
+      });
+
+      expect(await screen.findByText('peerqns.q')).toBeInTheDocument();
+      expect(screen.queryByText('Unrelated Space Nickname')).not.toBeInTheDocument();
+      expect(screen.queryByText('Stale Cached Name')).not.toBeInTheDocument();
+    });
+  });
 });

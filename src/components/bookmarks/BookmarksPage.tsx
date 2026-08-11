@@ -113,7 +113,11 @@ const BookmarksPageInner: React.FC<{
     if (!query) return base;
     return base.filter((bookmark) => {
       const { textSnippet, sourceName, senderAddress } = bookmark.cachedPreview;
-      const resolved = resolve(senderAddress, { spaceId: bookmark.spaceId });
+      // Same fix as BookmarkCard.tsx: bookmark.spaceId is the DM peer's
+      // address for a 'dm' bookmark, not a real Space — must resolve the
+      // SAME way the card renders (recipe rule 2), including the ladder.
+      const spaceId = bookmark.sourceType === 'dm' ? undefined : bookmark.spaceId;
+      const resolved = resolve(senderAddress, { spaceId });
       const senderName = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
       return (
         senderName.toLowerCase().includes(query) ||

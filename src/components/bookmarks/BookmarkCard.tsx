@@ -58,10 +58,20 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
   // bookmark itself rather than from context. `enrich`: bounded cardinality
   // (one sender per card) and this is where the ".q" name has to come from —
   // cachedPreview never carried it.
-  const resolvedSender = useResolvedMemberName(senderAddress, { spaceId: bookmark.spaceId, enrich: true });
+  //
+  // `bookmark.spaceId` is NOT always a real Space: a DM bookmark is created
+  // with `context.spaceId = spaceId || message.spaceId` (useMessageActions.ts's
+  // `handleBookmarkToggle`), and for a DM message `message.spaceId` IS the
+  // peer's address (the app-wide convention — see MessagePreview.tsx's and
+  // ReactionsModal.tsx's identical, earlier-fixed defect). Unlike those two,
+  // `sourceType` is a purpose-built discriminant already on the bookmark —
+  // no need to compare spaceId/channelId here. `undefined` (never the raw
+  // pseudo-spaceId) forces the GLOBAL ladder, matching DirectMessage.tsx.
+  const effectiveSpaceId = sourceType === 'dm' ? undefined : bookmark.spaceId;
+  const resolvedSender = useResolvedMemberName(senderAddress, { spaceId: effectiveSpaceId, enrich: true });
   // Raw tiers for the mention resolver below (it expects displayName/
   // primaryUsername/globalDisplayName separately, not a pre-resolved name).
-  const senderIdentity = useMemberIdentity(senderAddress, { spaceId: bookmark.spaceId, enrich: true });
+  const senderIdentity = useMemberIdentity(senderAddress, { spaceId: effectiveSpaceId, enrich: true });
 
   // The sender is the only user this surface resolves for mentions inside
   // the message body — hand the RAW tiers through so the renderer's own
@@ -276,7 +286,7 @@ export const BookmarkCard: React.FC<BookmarkCardProps> = ({
           <Flex align="center" className="bookmark-card__header min-w-0">
             <MemberName
               address={senderAddress}
-              spaceId={bookmark.spaceId}
+              spaceId={effectiveSpaceId}
               enrich
               className="message-sender-name truncate-user-name-chat flex-shrink min-w-0"
             />

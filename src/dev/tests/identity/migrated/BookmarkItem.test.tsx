@@ -106,4 +106,43 @@ describe('BookmarkItem — sender resolves via the identity module', () => {
     expect(screen.queryByText(/\.q/)).not.toBeInTheDocument();
     expect(screen.queryByText('Stale Cached Name')).not.toBeInTheDocument();
   });
+
+  it('a DM bookmark (in the per-conversation panel) resolves through the GLOBAL ladder, never a per-space nickname from an unrelated "space" that merely shares the same key', async () => {
+    // Same defect shape as BookmarkCard.tsx (the standalone /bookmarks page)
+    // — BookmarkItem is the sibling used by BookmarksPanel.tsx, mounted
+    // inside DirectMessage.tsx's own header. A DM bookmark's spaceId IS the
+    // peer's address (see useMessageActions.ts's handleBookmarkToggle).
+    const PEER = 'QmPeerDMBookmarkItemEgVKpYZKYuFu2J49zHXnA8vZtEq';
+    getMessageById.mockResolvedValue(null);
+    getPublicProfile.mockResolvedValue({ data: { primary_username: 'peerqns' } });
+
+    const dmBookmark: Bookmark = {
+      bookmarkId: 'bm-dm-1',
+      messageId: 'msg-dm-1',
+      spaceId: PEER,
+      channelId: PEER,
+      conversationId: `${PEER}/${PEER}`,
+      sourceType: 'dm',
+      createdAt: 1_700_000_000_000,
+      cachedPreview: {
+        senderAddress: PEER,
+        senderName: 'Stale Cached Name',
+        textSnippet: 'hey',
+        messageDate: 1_699_999_000_000,
+        sourceName: '',
+        contentType: 'text',
+      },
+    } as Bookmark;
+
+    // Plants the exact regression this pins: a roster row for "space" PEER
+    // holding a nickname, present from the very first render (a plain prop
+    // here, not fetched) — must never be consulted for a DM.
+    renderItem(dmBookmark, {
+      [PEER]: { [PEER]: { display_name: 'Unrelated Space Nickname', global_display_name: '' } },
+    });
+
+    expect(await screen.findByText('peerqns.q')).toBeInTheDocument();
+    expect(screen.queryByText('Unrelated Space Nickname')).not.toBeInTheDocument();
+    expect(screen.queryByText('Stale Cached Name')).not.toBeInTheDocument();
+  });
 });
