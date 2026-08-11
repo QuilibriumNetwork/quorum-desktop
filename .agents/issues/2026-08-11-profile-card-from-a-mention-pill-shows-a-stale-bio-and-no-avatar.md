@@ -16,18 +16,29 @@ related:
 
 ## Status
 
-**Fixed on `fix/profile-card-mention-fields`, branched off the identity work
-(`d244903fe`), NOT off `main` — the code being fixed only exists on the identity
-branch.**
+**Fixed on `fix/profile-card-mention-fields`, rebased onto the identity work
+(`a01901f7d`), NOT off `main` — the code being fixed only exists on the identity
+branch, whose refactor of this card is what the fix builds on.**
 
 Verified: 8 new tests green, and **red on revert** — reverting only the component
 wiring makes the three component tests fail with the exact reported symptom
 (`"The bio I published to my public profile months ago."` where the roster bio
-belongs). Full suite 1384 passed / 1 unrelated load-induced timeout
-(`fetchSpaceReplies.unit.test.ts`, green in isolation). Typecheck and lint clean.
+belongs). Identity suite 247/247 on the rebased tree; full suite 1384 passed / 1
+unrelated load-induced timeout (`fetchSpaceReplies.unit.test.ts`, green in
+isolation). Typecheck and lint clean. Independent code review found nothing at
+or above its reporting bar, having re-run the red-on-revert check itself.
 
-Not yet verified: the visual pass in the running app, and the **reported stale
-NAME** (see "The name, which this does not explain").
+**No conflict with the identity branch, contrary to an early report.** The base
+was one commit behind `feat/identity-provider`, and that commit
+(`a01901f7d`, ReactionsModal + bookmarks) touches none of the files here. The
+rebase applied clean. The claim that this work needed re-deriving against a
+newer tree came from assuming the base predated the refactor; it did not.
+
+Not yet verified: **the visual pass in the running app.** The operator reported
+the card looking correct, but on a build of `feat/identity-provider`, which does
+not contain this fix — so that observation covers the identity branch's own name
+work, not this ladder. Bio and avatar from a mention pill still need one look
+once this branch is running.
 
 ## The report
 
@@ -116,9 +127,21 @@ bio and avatar. It passes. So:
   divergence is in the **sources**, not in the component — a different hunt,
   most likely the roster row the identity provider holds for that address.
 
-**Open question for the operator:** re-check the name specifically, with the
-same person, from both entry points, after the avatar/bio fix lands. It is
-possible the bio and the missing picture dominated the impression.
+**Closed, not pursued.** The operator could not recall the name specifically,
+and the identity branch's own work (the root provider gaining real rosters for
+every space, `d1f016d7`) covers the plausible source-side cause. The control arm
+stays in the test as the tripwire: if the name ever diverges between these two
+entry points, that assertion is what says so.
+
+## One thing to know if you touch the older card test
+
+`src/dev/tests/identity/migrated/UserProfile.test.tsx` (untouched here) mocks
+`messageDB` without a `getSpaceMembers` method. The card now queries the roster
+unconditionally, so in that file every render rejects that query, silently
+swallowed by react-query's `retry: false`. Harmless today — none of its fixtures
+exercise the per-space-override tier, and all five still pass — but a future
+edit there that assumes roster data flows through will be surprised. The new
+test file mocks it properly.
 
 ## Not covered
 
@@ -137,10 +160,12 @@ possible the bio and the missing picture dominated the impression.
 - [x] One ladder, shared with the surfaces that already had it right
 - [x] Tests green, and shown red with the fix reverted
 - [x] Full suite + typecheck + lint
+- [x] Independently code-reviewed in a fresh context
+- [x] Rebased onto the identity branch tip, clean
+- [x] The reported stale NAME resolved (closed above, not pursued)
 - [ ] Visually confirmed in the running app, from both entry points
-- [ ] The reported stale NAME re-checked, or filed separately
 - [ ] Mobile parity checked, or explicitly deferred
-- [ ] Merged (branched off the identity work, so it lands after that does)
+- [ ] Merged (stacked on the identity work, so it lands after that does)
 
 ---
 
