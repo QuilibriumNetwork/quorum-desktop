@@ -113,6 +113,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Durable multi-device: per-device signing keys via master-signed device statements](issues/2026-07-19-per-device-signing-keys-registration-anchored.md)
 - 📋 [DM partner identity never recovers on an established session](issues/2026-08-01-dm-partner-identity-lost-on-established-sessions.md)
 - 📋 [Spaces: desktop never re-announces identity on connect](issues/2026-08-01-space-member-identity-announce-on-connect.md)
+- 📋 [Name resolution: an API that cannot express a partial identity](issues/2026-08-10-identity-resolution-architecture-design.md)
+- 📋 [Identity Resolution Implementation Plan](issues/2026-08-10-identity-resolution-architecture-plan.md)
 
 #### Messagedb
 
@@ -292,6 +294,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [Every shared primitive reaches consumers as `any`](issues/.open/2026-08-06-invalid-icon-names-render-nothing-and-no-type-error-catches-them.md)
 - 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
+- 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -325,15 +328,13 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Promote the identity-announce gate to shared](issues/.open/2026-08-02-promote-identity-announce-gate-to-shared.md)
 - 📋 [One rule for names, no rule for avatars, and three tiers that disagree across clients](issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md)
 - 📋 [Guided install flow for Safari users](issues/.open/2026-08-05-guided-install-flow-for-safari-web-users.md)
-- 📋 [Does mobile need the desktop identity fixes?](issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
-- 📋 [Your own identity, on your own devices](issues/.open/2026-08-05-own-identity-cross-device-sync-design.md)
 - 📋 [Config sync overhaul](issues/.open/2026-08-07-config-sync-overhaul-design.md)
 - 📋 [Make `allowSync` a per-device setting](issues/.open/2026-08-08-make-allowsync-a-per-device-setting.md)
 - 📋 [Record and show what the last config publish actually did](issues/.open/2026-08-08-record-and-show-what-the-last-config-publish-actually-did.md)
 - 📋 [Backup/restore overhaul](issues/.open/2026-08-09-backup-restore-overhaul-design.md)
-- 📋 [Name resolution: an API that cannot express a partial identity](issues/.open/2026-08-10-identity-resolution-architecture-design.md)
-- 📋 [Identity Resolution Implementation Plan](issues/.open/2026-08-10-identity-resolution-architecture-plan.md)
-- 📋 [Privacy level presets](issues/.open/2026-08-10-privacy-level-presets-design.md)
+- 📋 [Composer drafts](issues/.open/2026-08-10-composer-drafts-design.md)
+- 📋 [Composer Drafts Implementation Plan](issues/.open/2026-08-10-composer-drafts-plan.md)
+- 📋 [Privacy level](issues/.open/2026-08-10-privacy-level-presets-design.md)
 
 ### Deferred
 
@@ -540,6 +541,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Identity announce: cap the retries](issues/.done/2026-08-01-identity-announce-cadence-research.md)
 - 📋 [Dev viewer: one Issues browser instead of Tasks + Bugs](issues/.done/2026-08-03-dev-issues-browser-plan.md)
 - 📋 [The dangerous branch is off everywhere. Delete it so it stays off.](issues/.done/2026-08-04-remove-the-dead-bare-name-mention-branch-from-shared.md)
+- 📋 [Does mobile need the desktop identity fixes?](issues/.done/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
+- 📋 [Your own identity, on your own devices](issues/.done/2026-08-05-own-identity-cross-device-sync-design.md)
 - 📋 [Own identity, Phase 1 — implementation plan](issues/.done/2026-08-05-own-identity-cross-device-sync-plan.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
@@ -773,4 +776,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-10 11:43:30
+**Last Updated**: 2026-08-11 21:09:11

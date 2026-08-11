@@ -4,7 +4,7 @@ title: "Six name surfaces never reached the resolver (desktop parity items 6 and
 status: in-progress
 priority: high
 created: 2026-08-10
-updated: 2026-08-10
+updated: 2026-08-11
 shipped_in: "#325"
 area: identity resolution / QNS / cross-client parity
 repos: quorum-desktop (this), quorum-mobile (one matching defect filed)
@@ -13,7 +13,7 @@ related:
   - "quorum-mobile/.agents/issues/2026-08-06-qns-primary-name-work-and-desktop-parity.md (the parity index — READ THIS FIRST)"
   - "quorum-mobile/.agents/issues/.open/2026-08-10-invite-contact-picker-renders-an-unresolved-name.md (the matching mobile defect)"
   - ".agents/docs/features/qns-username-display.md"
-  - ".agents/issues/.open/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md"
+  - ".agents/issues/.done/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md"
 ---
 
 # Eight name surfaces never reached the resolver
@@ -49,6 +49,19 @@ six have not had a visual pass. See "What is still unverified".
 
 Part of this work is identity-resolution hardening whose detail is held
 privately. This file is the public hub and deliberately does not restate it.
+
+
+**2026-08-11 — superseded by the architecture, shipped in PR #327**
+
+The per-site fixes recorded here are gone: every surface now resolves from an address through
+`src/identity`, and the two that were still wrong after #325 (bookmarks and notifications) were
+fixed as the first migrations. A checked-in audit
+(`src/dev/tests/identity/rawNameFieldAudit.test.ts`) now fails when a file starts rendering a raw
+identity field, which is the class this list was tracking by hand.
+
+Left in place rather than moved to `.done/`: this is a `type: bug`, and while the notification
+surface was confirmed by the operator in the running app, the bookmark surface was verified only by
+tests. Re-check bookmarks with a `.q` member and a non-`.q` control, then close.
 
 ## What this closes
 

@@ -13,6 +13,27 @@ related:
   - ".agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md (the 18 surfaces; regression checklist)"
 ---
 
+## Status
+
+**2026-08-11 — desktop shipped in PR #327** (`refactor(identity): member names resolve from an address, through one API`)
+
+What landed: phases A-E complete. `resolveIdentity` over a complete `MemberIdentity` in
+quorum-shared (PR #80, merged to `master` as `2efd307`, not published), one desktop identity
+provider, `<MemberName>` / `useResolvedName` / `useNameResolver` as the only public API, every call
+site migrated, the old resolvers deleted and the lint ratchet emptied. 1385 tests, tsc and lint
+clean. The "What actually happened" section below is the record, including where this plan was
+wrong.
+
+Still open:
+
+- **Phase F (mobile)** has not started. It is unblocked — shared is merged and awaiting the lead
+  dev's publish — and the handoff notes are in the same section below.
+- **Task 8's controlled sweep was never run.** Live operator testing substituted for it and found
+  eight bugs the suite could not see, but the controlled pass — all 18 surfaces with one address
+  pinned to a known non-QNS name as the control arm — has not been done.
+- The member sidebar still shows no `.q` for members who have never posted. That is the accepted
+  limitation from design decision 3 and only the batch profile endpoint fixes it.
+
 # Identity Resolution Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.

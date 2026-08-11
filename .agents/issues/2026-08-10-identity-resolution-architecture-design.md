@@ -14,6 +14,18 @@ related:
   - ".agents/docs/features/qns-username-display.md"
 ---
 
+## Status
+
+**2026-08-11 — desktop implemented, shipped in PR #327**
+
+All four layers exist on desktop. Eight things in this document changed during execution; the
+"Corrections after implementation" section at the end lists them and points at the plan's execution
+record for detail. The two structural ones are worth naming here: nested identity scopes **merge**
+with the enclosing scope rather than replacing it, and the root scope carries real roster and
+local-name data rather than being an empty crash backstop.
+
+Still open: the mobile port (step 6 of the migration order), which is unblocked but not started.
+
 # Name resolution: an API that cannot express a partial identity
 
 ## START HERE if you are picking this up cold
