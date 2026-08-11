@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "The profile card opened from a mention pill shows a stale bio and no avatar"
-status: in-progress
+status: done
 priority: medium
 created: 2026-08-11
 updated: 2026-08-11
@@ -9,38 +9,39 @@ area: identity resolution / profile card
 repos: quorum-desktop (this), quorum-mobile (a different defect, filed there)
 related:
   - ".agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md"
-  - ".agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md"
+  - ".agents/issues/2026-08-10-identity-resolution-architecture-design.md"
 ---
 
 # The profile card opened from a mention pill shows a stale bio and no avatar
 
 ## Status
 
-**Fixed on `fix/profile-card-mention-fields`, rebased onto the identity work
-(`a01901f7d`), NOT off `main` — the code being fixed only exists on the identity
-branch, whose refactor of this card is what the fix builds on.**
+**2026-08-11 — shipped in PR #328** (`fix(identity): the profile card's avatar
+and bio follow the roster, not the published profile`).
+
+What landed: `useProfileCardIdentityFields`, which owns the card's avatar and
+bio ladder in one place — caller pre-fill → per-space override → roster global
+slot → published public profile → own config bio (self only) — plus two pure
+precedence functions and a test file. `UserProfile.tsx` calls the hook instead
+of its two inline expressions.
 
 Verified: 8 new tests green, and **red on revert** — reverting only the component
 wiring makes the three component tests fail with the exact reported symptom
 (`"The bio I published to my public profile months ago."` where the roster bio
-belongs). Identity suite 247/247 on the rebased tree; full suite 1384 passed / 1
-unrelated load-induced timeout (`fetchSpaceReplies.unit.test.ts`, green in
-isolation). Typecheck and lint clean. Independent code review found nothing at
-or above its reporting bar, having re-run the red-on-revert check itself.
+belongs). Identity suite 251/251 on the final base; typecheck and lint clean.
+Independent code review found nothing at or above its reporting bar, having
+re-run the red-on-revert check itself. **Visually confirmed by the operator**
+from both entry points, on a build containing the fix.
 
-**No conflict with the identity branch, contrary to an early report.** The base
-was one commit behind `feat/identity-provider`, and that commit
-(`a01901f7d`, ReactionsModal + bookmarks) touches none of the files here. The
-rebase applied clean. The claim that this work needed re-deriving against a
-newer tree came from assuming the base predated the refactor; it did not.
-
-**Visually confirmed by the operator**, running the app from this worktree (the
-build that contains the fix): the card opened from a mention pill now shows the
-right bio and the profile picture, matching the card opened from a message
-avatar.
-
-Still open: the merge itself. Mobile parity is checked — it has a different
-defect, filed in that repo (see "Not covered").
+**Sequencing, recorded because it was contested.** The work was branched off
+`feat/identity-provider` rather than `main`, because the card it fixes only
+existed there — on `main` at the time, `resolvedBio` was
+`props.user.bio || ownConfig?.bio`, with no public-profile rung at all, and the
+name still went through the since-deleted `resolveProfileCardName`. A report
+that the base "predated the refactor" and that the diff would need re-deriving
+was wrong: the base was one commit behind that branch's tip, and the rebase
+applied clean, twice. The identity branch then squash-merged as #327, so the
+final ship was `git rebase --onto origin/main`, replaying six commits.
 
 ## The report
 
@@ -177,7 +178,7 @@ test file mocks it properly.
 - [x] The reported stale NAME resolved (closed above, not pursued)
 - [x] Visually confirmed in the running app, from both entry points
 - [x] Mobile parity checked (a different defect, filed on mobile)
-- [ ] Merged (stacked on the identity work, so it lands after that does)
+- [x] Merged as #328, after the identity work landed as #327
 
 ---
 
