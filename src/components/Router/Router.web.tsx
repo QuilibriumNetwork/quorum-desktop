@@ -76,6 +76,29 @@ const ErrorStates = lazyDevImport(
   () => import('@/dev/error-states'),
   'ErrorStates'
 );
+const DevPageLoading = lazyDevImport(
+  () => import('@/dev/shell'),
+  'DevPageLoading'
+);
+
+/**
+ * Suspense fallback for a lazily-loaded dev page.
+ *
+ * Must go through `lazyDevImport` like everything else in this file: the
+ * production build marks `/src/dev/` external (`web/vite.config.ts`), so a
+ * static import from there would emit a bare, unresolvable import into the
+ * production bundle. Loaded lazily it is simply never requested in production.
+ *
+ * The inner `Suspense fallback={null}` covers the shell's own chunk. It is tiny
+ * and shared by every dev page, so it resolves first on a cold visit and is
+ * cached for every navigation after that.
+ */
+const devFallback = (name: string) =>
+  DevPageLoading ? (
+    <Suspense fallback={null}>
+      <DevPageLoading name={name} />
+    </Suspense>
+  ) : null;
 
 interface RouterProps {
   user: {
@@ -238,7 +261,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/playground"
           element={
-            <Suspense fallback={<div>Loading playground...</div>}>
+            <Suspense fallback={devFallback('Playground')}>
               <PrimitivesPlayground />
             </Suspense>
           }
@@ -248,7 +271,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/audit"
           element={
-            <Suspense fallback={<div>Loading audit viewer...</div>}>
+            <Suspense fallback={devFallback('Component Audit')}>
               <ComponentAuditViewer />
             </Suspense>
           }
@@ -258,7 +281,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/dependencies"
           element={
-            <Suspense fallback={<div>Loading dependency analysis...</div>}>
+            <Suspense fallback={devFallback('Dependency Analysis')}>
               <DependencyAuditViewer />
             </Suspense>
           }
@@ -268,7 +291,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev"
           element={
-            <Suspense fallback={<div>Loading dev tools...</div>}>
+            <Suspense fallback={devFallback('Dev Tools')}>
               <DevMainPage />
             </Suspense>
           }
@@ -278,7 +301,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/docs/:docId?"
           element={
-            <Suspense fallback={<div>Loading documentation...</div>}>
+            <Suspense fallback={devFallback('Documentation')}>
               <Docs />
             </Suspense>
           }
@@ -288,7 +311,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/issues/:issueId?"
           element={
-            <Suspense fallback={<div>Loading issues...</div>}>
+            <Suspense fallback={devFallback('Issues')}>
               <Issues />
             </Suspense>
           }
@@ -298,7 +321,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/reports/:reportId?"
           element={
-            <Suspense fallback={<div>Loading reports...</div>}>
+            <Suspense fallback={devFallback('Reports')}>
               <Reports />
             </Suspense>
           }
@@ -308,7 +331,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/db-inspector"
           element={
-            <Suspense fallback={<div>Loading DB inspector...</div>}>
+            <Suspense fallback={devFallback('DB Inspector')}>
               <DbInspector />
             </Suspense>
           }
@@ -318,7 +341,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/dm-doctor"
           element={
-            <Suspense fallback={<div>Loading DM doctor...</div>}>
+            <Suspense fallback={devFallback('DM Doctor')}>
               <DmDoctor />
             </Suspense>
           }
@@ -328,7 +351,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/identity-coverage"
           element={
-            <Suspense fallback={<div>Loading identity coverage...</div>}>
+            <Suspense fallback={devFallback('Identity Coverage')}>
               <IdentityCoverage />
             </Suspense>
           }
@@ -338,7 +361,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/fake-qns"
           element={
-            <Suspense fallback={<div>Loading fake QNS...</div>}>
+            <Suspense fallback={devFallback('Fake QNS')}>
               <FakeQns />
             </Suspense>
           }
@@ -348,7 +371,7 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/dev/error-states"
           element={
-            <Suspense fallback={<div>Loading error states...</div>}>
+            <Suspense fallback={devFallback('Error States')}>
               <ErrorStates />
             </Suspense>
           }

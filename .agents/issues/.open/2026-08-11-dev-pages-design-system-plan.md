@@ -27,7 +27,31 @@ screenshot compared against the pre-change baseline.
 
 ---
 
-## Slice 1 — Navigating dev pages stops going blank
+## Slice 1 — Navigating dev pages stops going blank ✅ done 2026-08-11
+
+Shipped as `dev-pages-design-overhaul`. Outcome verified both ways:
+
+- Clicking a nav link: a flag set on `window` **survives** the navigation,
+  `performance` navigation entries stay at 1, the URL and heading update and the
+  nav bar stays mounted. No document teardown.
+- Control, driving the same navigation with `location.href` (the old
+  behaviour): the CDP session dies with *"Inspected target navigated or
+  closed"*, because the document really is replaced. The assertion can fail,
+  so passing it means something.
+- Operator confirmed the UI by hand.
+
+One addition beyond the original scope: `DevNavMenu`'s `currentPath` became
+optional, defaulting to `useLocation().pathname`. `DevPageLoading` needs the
+correct highlight without knowing the destination, and it incidentally fixes
+Fake QNS's missing highlight (§1-B) ahead of slice 6.
+
+One correction worth recording: `DevPageLoading` cannot be imported statically
+into `Router.web.tsx`. `web/vite.config.ts` marks `/src/dev/` **external** in
+production builds, so a static import would emit a bare unresolvable import into
+the production bundle. It goes through `lazyDevImport` like every other dev
+component, with an inner `<Suspense fallback={null}>` for the shell's own chunk.
+
+
 
 **Observable outcome:** click any tab in the dev nav. The nav bar stays on
 screen and the content swaps. No white/black flash, no 1.6 s of nothing.
@@ -176,21 +200,24 @@ not cosmetics.
 
 ## Slice 7 — Routes line up
 
-**Observable outcome:** `/dev/playground` loads the playground. The old
-`/playground` still works and lands on the new URL. `/dev/dependencies` is gone
-rather than silently serving a copy of the Audit page.
+**Observable outcome:** `/dev/playground` loads the playground.
+`/dev/dependencies` is gone rather than silently serving a copy of the Audit
+page.
 
 **Changes**
 
-- `Router.web.tsx` — add `/dev/playground`; make `/playground` a
-  `<Navigate to="/dev/playground" replace />`; delete the `/dev/dependencies`
-  route and the `DependencyAuditViewer` alias (lines 51-54).
+- `Router.web.tsx` — move `/playground` to `/dev/playground`; delete the
+  `/dev/dependencies` route and the `DependencyAuditViewer` alias (lines 51-54).
 - `src/dev/DevNavMenu.tsx`, `src/dev/DevMainPage.tsx` — update the path.
 - Grep `.agents/` and `src/` for `/playground` and `/dev/dependencies` and fix
   the references.
 
-**Verify** Load all three URLs. Assert `/playground` ends at `/dev/playground`,
-and `/dev/dependencies` renders `NotFound` rather than the audit table.
+No redirect for the old `/playground` — decided against on 2026-08-11. It is a
+dev-only route with no external consumers, so a stale bookmark landing on
+`NotFound` is the correct and cheaper outcome.
+
+**Verify** Assert `/dev/playground` loads, and that `/playground` and
+`/dev/dependencies` both render `NotFound` rather than a page.
 
 ---
 

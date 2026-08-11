@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router';
 import {
   Text,
   Flex,
@@ -84,13 +85,9 @@ export const DevMainPage: React.FC = () => {
     },
   ];
 
-  const handleNavigate = (path: string) => {
-    window.location.href = path;
-  };
-
   return (
     <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev" />
+      <DevNavMenu sticky />
       <div className="p-6 mx-auto max-w-2xl">
         <div className="text-center my-12">
           <Flex justify="center" gap="sm" className="mb-4">
@@ -104,10 +101,10 @@ export const DevMainPage: React.FC = () => {
         {/* Development Tools List */}
         <div className="space-y-4 mb-8">
           {devTools.map((tool, index) => (
-            <div
+            <Link
               key={index}
-              onClick={() => handleNavigate(tool.path)}
-              className="bg-surface-1 hover:bg-surface-2 rounded-lg p-6 border border-default hover:border-accent/50 hover:shadow-lg transition-all cursor-pointer"
+              to={tool.path}
+              className="block bg-surface-1 hover:bg-surface-2 rounded-lg p-6 border border-default hover:border-accent/50 hover:shadow-lg transition-all cursor-pointer"
             >
               <Flex gap="sm" align="center" className="mb-2">
                 <Icon name={tool.icon} size="md" className="text-accent" />
@@ -118,7 +115,7 @@ export const DevMainPage: React.FC = () => {
               <Text variant="main" size="sm">
                 {tool.description}
               </Text>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

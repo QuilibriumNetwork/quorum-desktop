@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router';
 import { Flex, Icon, type IconName } from '../components/primitives';
 
 interface DevNavItem {
@@ -66,6 +67,8 @@ const devNavItems: DevNavItem[] = [
 ];
 
 interface DevNavMenuProps {
+  /** Defaults to the live route. Pages should not pass this — the default is
+   *  what keeps the highlight correct without every page remembering to. */
   currentPath?: string;
   sticky?: boolean;
 }
@@ -74,6 +77,9 @@ export const DevNavMenu: React.FC<DevNavMenuProps> = ({
   currentPath,
   sticky = false,
 }) => {
+  const { pathname } = useLocation();
+  const activePath = currentPath ?? pathname;
+
   return (
     <div
       className={`bg-surface-00 border-b border-default ${sticky ? 'sticky top-0 z-20' : ''}`}
@@ -81,11 +87,11 @@ export const DevNavMenu: React.FC<DevNavMenuProps> = ({
       <div className="p-2 mx-auto max-w-screen-2xl">
         <Flex gap="md" className="items-center justify-center">
           {devNavItems.map((item) => {
-            const isActive = currentPath === item.path;
+            const isActive = activePath === item.path;
             return (
-              <a
+              <Link
                 key={item.path}
-                href={item.path}
+                to={item.path}
                 className={`flex items-center gap-2 px-2 py-1 rounded text-sm transition-colors ${
                   isActive
                     ? 'text-accent font-medium'
@@ -94,7 +100,7 @@ export const DevNavMenu: React.FC<DevNavMenuProps> = ({
               >
                 <Icon name={item.icon} size="sm" variant="outline" />
                 {item.name}
-              </a>
+              </Link>
             );
           })}
         </Flex>
