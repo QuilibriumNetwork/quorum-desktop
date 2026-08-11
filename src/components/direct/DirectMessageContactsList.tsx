@@ -14,7 +14,8 @@ import {
   Tooltip,
 } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
-import { realIconOrUndefined, realDisplayNameOrUndefined } from '../../utils/identityPlaceholder';
+import { realIconOrUndefined } from '../../utils/identityPlaceholder';
+import { buildLocalDmNames } from '../../hooks/business/identity';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import {
@@ -141,14 +142,16 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = (pro
   // conversations (not just currently-filtered/rendered ones), same
   // reasoning as `Inner`'s proactive `requestNames` below: a row must be
   // resolvable the moment it's needed, not only once it happens to render.
-  const localNamesByAddress = React.useMemo(() => {
-    const map: Record<string, string> = {};
-    for (const c of conversationsList) {
-      const name = realDisplayNameOrUndefined(c.displayName);
-      if (name && c.address) map[c.address] = name;
-    }
-    return map;
-  }, [conversationsList]);
+  //
+  // `buildLocalDmNames` (`src/hooks/business/identity/`) is the SAME rule
+  // `useLocalDmNames` uses for the root provider and `SearchResults` — this
+  // component already has `conversationsList` in scope for its own
+  // rendering, so it calls the pure builder directly on data it already
+  // fetched rather than opening a second subscription on the same query.
+  const localNamesByAddress = React.useMemo(
+    () => buildLocalDmNames(conversationsList),
+    [conversationsList],
+  );
 
   return (
     <IdentityScopeProvider

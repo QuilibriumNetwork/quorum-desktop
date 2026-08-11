@@ -518,6 +518,17 @@ const DirectMessage: React.FC<{}> = () => {
   // own messages rendered as your truncated address while the partner's
   // rendered correctly a few pixels away. See
   // .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+  //
+  // NOT replaced by `useLocalDmNames`/`buildLocalDmNames`
+  // (`src/hooks/business/identity/`), even though those now cover this exact
+  // case for the root provider and `SearchResults`: this reads
+  // `conversation?.conversation?.displayName` from `useConversation`, a
+  // query for THIS ONE conversation specifically, always fresh regardless of
+  // pagination. The shared hook only sees whichever page(s) of the full DM
+  // list happen to be loaded — for a conversation far enough down an
+  // unusually large list, that could miss the very conversation this screen
+  // is showing. This narrower, always-correct source is what the shared one
+  // cannot guarantee, so it stays.
   const localNamesByAddress = useMemo(() => {
     const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName);
     const partnerEntry = localName && address ? { [address]: localName } : {};

@@ -2,7 +2,7 @@
 // (mounted in App.tsx, above the Router, above every Space/DM provider).
 //
 // Before this hook existed, the root provider shipped with a permanent
-// `rostersBySpace={}` and no `locallyKnownNames` for self. That is invisible
+// `rostersBySpace={}` and no `locallyKnownNames` at all. That is invisible
 // for almost every surface, because almost every surface mounts its OWN
 // scoped provider (Channel, DirectMessage, BookmarksPage, ReactionsModal,
 // SearchResults, GlobalNotificationsModal, MessagePreview...) which shadows
@@ -17,6 +17,20 @@
 // other half of this fix). Those surfaces have nothing to fall back to but
 // the root, so the root has to actually know something.
 //
+// `locallyKnownNames` now also carries every DM partner's LOCAL conversation
+// name (`useLocalDmNames`), not just self's — a DM partner who never
+// published a public profile and is in no space roster (a DM contact, not a
+// space member) used to resolve fine inside `DirectMessage.tsx`/
+// `DirectMessageContactsList.tsx` (which each built this map by hand) and
+// fall to a truncated address literally everywhere else, including a
+// surface with NO provider of its own. **This is the reusable SOURCE, not a
+// context-propagation trick**: exactly like `useMultiSpaceRosters`, any
+// OTHER detached surface that mounts its own scoped provider (`SearchResults`
+// is the confirmed case — DM search results) must call `useLocalDmNames`
+// itself too, because a nested `<IdentityScopeProvider>` still shadows this
+// one completely. Fixing this hook alone only reaches app-level-host
+// surfaces with no provider of their own, same as bug B.
+//
 // See .agents/docs/features/identity-resolution-and-profile-sync.md, "Why a
 // surface can still fall through with a populated root" for the cost/design
 // tradeoffs recorded when this was built.
@@ -29,6 +43,7 @@ import {
   buildSpacesKey,
 } from '../../queries/spaces';
 import { useMultiSpaceRosters } from './useMultiSpaceRosters';
+import { useLocalDmNames } from './useLocalDmNames';
 import { selfLocalNameEntry, type RosterNameRow } from '../../../identity';
 
 const EMPTY_SPACES: Space[] = [];
@@ -78,10 +93,21 @@ export function useRootIdentityScope(
   const spaceIds = useMemo(() => spaces.map((s) => s.spaceId), [spaces]);
   const rostersBySpace = useMultiSpaceRosters(spaceIds);
 
-  const locallyKnownNames = useMemo(
-    () => selfLocalNameEntry(selfAddress, selfDisplayName),
-    [selfAddress, selfDisplayName],
-  );
+  // Every DM partner's locally-known name (`useLocalDmNames` — local
+  // IndexedDB conversations, no network, shares its query key with the DM
+  // sidebar's own read) merged with self's device display name
+  // (`selfLocalNameEntry`). Neither address space overlaps in practice (self
+  // is never its own DM partner), so the merge order doesn't matter; both
+  // sides already return the shared stable empty object when they have
+  // nothing to contribute, so this only allocates a new object when the
+  // underlying data actually changes.
+  const localDmNames = useLocalDmNames(selfAddress);
+  const locallyKnownNames = useMemo(() => {
+    const selfEntry = selfLocalNameEntry(selfAddress, selfDisplayName);
+    if (Object.keys(localDmNames).length === 0) return selfEntry;
+    if (Object.keys(selfEntry).length === 0) return localDmNames;
+    return { ...localDmNames, ...selfEntry };
+  }, [selfAddress, selfDisplayName, localDmNames]);
 
   return { rostersBySpace, locallyKnownNames };
 }

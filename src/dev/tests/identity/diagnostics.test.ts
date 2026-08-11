@@ -138,6 +138,19 @@ describe('recordIfDegraded — classification', () => {
   });
 
   it('does NOT flag a global (DM) scope with nothing local known — no space roster concept applies there', () => {
+    // This is the EXACT pre-fix shape of the DM-search bug (see
+    // rootScopeDmLocalNames.test.tsx / searchResultsDmLocalNames.test.tsx): a
+    // DM partner with no public profile, no space roster (they're a DM
+    // contact, not a space member), and — before `useLocalDmNames` — no
+    // `locallyKnownNames` entry either. The honest limit stated in
+    // diagnostics.ts's own docstring: `space-roster-not-loaded` has a
+    // structural signal (a MISSING roster key vs. an EMPTY one) that
+    // `locallyKnownNames` has no equivalent for — a flat map with no entry
+    // looks identical whether the caller never fed it at all (a provider
+    // defect, degraded) or genuinely has no name for this address (expected).
+    // So this bucket stays 'no-source-anywhere' / not degraded even for the
+    // provider-defect case, and did not fire for the DM-search bug this file
+    // documents the fix for.
     recordIfDegraded({
       identity: emptyIdentity(OTHER),
       scope: 'global',

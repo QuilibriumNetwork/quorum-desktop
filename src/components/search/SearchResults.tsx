@@ -12,7 +12,7 @@ import {
   useBatchSearchResultsDisplay,
 } from '../../hooks';
 import { IdentityScopeProvider } from '../../identity';
-import { useMultiSpaceRosters } from '../../hooks/business/identity';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
 import './SearchResults.scss';
 
 interface SearchResultsProps {
@@ -45,6 +45,17 @@ interface SearchResultsProps {
  * belongs to in one flat list — a detached, cross-space surface exactly like
  * `ReactionsModal` and the bookmarks/notifications panels, so this component
  * mounts its own multi-space provider rather than relying on ambient scope.
+ *
+ * Because this provider is its own mount (not the app-root one), fixing
+ * `useRootIdentityScope` alone does NOT reach here — a nested
+ * `<IdentityScopeProvider>` always shadows an ancestor's completely, nothing
+ * merges. `locallyKnownNames` is built here the same way `rostersBySpace` is:
+ * an independent call to the SAME reusable hook the root uses
+ * (`useLocalDmNames` — local IndexedDB conversations, no network, shares its
+ * query key with the DM sidebar's own read), so a DM partner known only from
+ * their local conversation record (no public profile, no space roster row —
+ * they're a DM contact, not a space member) resolves to their name instead of
+ * a truncated address in DM search results.
  */
 export const SearchResults: React.FC<SearchResultsProps> = (props) => {
   const user = usePasskeysContext();
@@ -60,9 +71,14 @@ export const SearchResults: React.FC<SearchResultsProps> = (props) => {
     return Array.from(ids);
   }, [props.results]);
   const rostersBySpace = useMultiSpaceRosters(spaceIds);
+  const locallyKnownNames = useLocalDmNames(selfAddress);
 
   return (
-    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={selfAddress}>
+    <IdentityScopeProvider
+      rostersBySpace={rostersBySpace}
+      selfAddress={selfAddress}
+      locallyKnownNames={locallyKnownNames}
+    >
       <SearchResultsInner {...props} />
     </IdentityScopeProvider>
   );
