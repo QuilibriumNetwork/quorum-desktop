@@ -1447,6 +1447,108 @@ it is the only thing that finds this class.
   were only caught by instrumenting: the fetch storm (measured), and the mention token shape (found
   by probing the operator's real IndexedDB after four wrong hypotheses).
 
+## Part 2 — what the operator's live testing found after the branch was first called "ready"
+
+The section above was written when two reviewers had verdicted the branch ship. The operator then
+drove the real app for an afternoon and found **eight more bugs**, none of which the 1300-test suite
+could see. That gap is the most important thing on this page, so it comes first.
+
+### Why the test suite could not catch any of them
+
+**Every component test mounts its own `IdentityScopeProvider` with its own data.** The component then
+passes — correctly — because in that test the data is present. But every one of these bugs was about
+*where the component sits in the real tree* and *what the provider above it actually contains at
+runtime*. A test that constructs its own provider is blind to that by construction, so the suite
+stayed green while the app was wrong.
+
+Two instruments were built to close it, and **on mobile they should exist before the migration
+starts, not after**:
+
+- `src/dev/tests/identity/rawNameFieldAudit.test.ts` — fails when a file renders a raw identity field
+  without going through the identity module. It carries an exceptions list with a one-line reason per
+  entry. This is what finds surfaces an import-derived list cannot see.
+- `src/identity/diagnostics.ts` — reports, at runtime in dev builds, any resolution that degrades to
+  the truncated-address fallback: the address, the scope, and which sources were missing. A live
+  counter sits on `/dev/identity-coverage`, so "0 degraded resolutions this session" is a readable
+  positive signal instead of a 23-surface manual pass. Console prefix `[IdentityResolution]`.
+  **Known blind spot:** in DM/global scope it cannot distinguish "nobody knows this person" from
+  "this provider was never fed local names", because an absent `locallyKnownNames` prop and an empty
+  one both arrive as `{}`. A sentinel for "prop never passed" would close it; it is not implemented.
+
+### The architectural findings — these are the ones to port deliberately
+
+**1. A nested provider must MERGE with its parent, not replace it.**
+Four separate surfaces shipped mounting a provider with strictly LESS data than the root, each
+silently rendering members as raw addresses, each found by hand hours apart. The fix is structural:
+`IdentityScopeProvider` now merges with the enclosing scope — `rostersBySpace` two-level (per space,
+then per address, so a still-loading child cannot blank out an ancestor's loaded roster),
+`locallyKnownNames` and `profiles` flat, with a child's own data winning per key.
+
+**`defaultSpaceId` is deliberately NOT merged** — it is always the provider's own prop. That is what
+keeps a DM from inheriting a per-space nickname now that the root carries every space's rosters. Get
+this wrong and a DM silently shows a nickname from an unrelated space; it is invisible to anyone
+without a nickname set, which is most testing.
+
+**2. The root provider must carry real data.**
+It was originally mounted with empty rosters purely as a crash backstop. That is not enough: anything
+rendered from an app-level host (modals, toasts, confirmations) inherits it and can resolve nothing.
+It now supplies every space's rosters plus every DM partner's locally-known name, read from local
+IndexedDB with the existing query keys — cached, shared, no new network traffic, gated on auth, and
+deliberately non-suspending because it sits above the router's Suspense boundary.
+
+**3. React context resolves where an element is RENDERED, not where it is created.**
+`showConfirmationModal({ preview: React.createElement(MessagePreview, …) })` builds the element inside
+the Channel's provider and hands it to a modal host mounted elsewhere. It renders under the host's
+context, not the creator's. This produced a mention showing a raw address in the pin/delete
+confirmation while the same mention rendered correctly in the pinned panel. Any eagerly-built element
+handed to a host has this shape.
+
+**4. `spaceId === channelId === peerAddress` for DMs.**
+Any surface reachable from both a channel and a DM inherits this. Passing a DM's `spaceId` into an
+identity scope queries a space that does not exist, gets an empty roster, and forces the space ladder
+where the global one is correct. Detect with `spaceId === channelId` — an invariant already
+load-bearing in ~44 places in `MessageService.ts`, not a new heuristic. It bit `MessagePreview`,
+`ReactionsModal`, `BookmarkCard` (twice), `BookmarkItem` and the bookmarks search filter.
+
+**5. Self needs a device-name last resort.**
+Removing `currentPasskeyInfo` as self's name source was correct — it carries no QNS name and caused
+four bugs. But desktop never publishes a display name, so a user with no published profile then had
+**no name source at all** and rendered as their own address. The device display name is now the LAST
+`globalName` source, below the published profile, and can never supply a `.q`.
+
+**6. A stored name is sometimes a placeholder, and rendering it verbatim is worse than the fallback.**
+A conversation's `displayName` can hold the peer's own address, its truncated form, or the literal
+"Unknown User". If one reaches `locallyKnownNames`, the resolver treats it as a real name and renders
+a FULL raw address — worse than the truncated address it would have produced itself. `isPlaceholderDisplayName`
+must check all of those shapes; it originally checked only the literal, and the test that was supposed
+to catch that asserted before an async query settled, so it passed against the bug.
+
+### Enrichment, corrected
+
+Decision 1 above originally excluded the mention autocomplete and the invite picker from `enrich`
+alongside the sidebar. That was over-conservative and has been reversed: the autocomplete caps
+candidates at 50 and typically shows a handful, so it is bounded and demand-driven. MEASURED after
+the change: 12 distinct candidates → 12 fetches, further keystrokes over the same results → +0,
+close and reopen → +0.
+
+**The member sidebar remains the only surface that never enriches**, because its cardinality is
+genuinely unbounded and the 200-concurrent-request measurement stands. The real fix for it is the
+batch profile endpoint, which has been requested of the lead dev and not promised — worth raising
+again, since no amount of policy tuning helps there.
+
+### Three test-quality traps this branch hit, all worth watching for
+
+1. **A vacuous assertion** — "never renders the literal 'Unknown User'" against a module with no code
+   path that could produce it. It passed against any implementation.
+2. **A test that races the thing it tests** — asserting after `waitFor(profile fetched)` while the
+   data under test arrived from a *different*, slower query. It asserted on empty state.
+3. **A test that re-proves a mechanism it already covers** — re-rendering with an identical address
+   set and calling it "no fetch per keystroke", when provider-level dedup absorbs both the correct
+   and the broken implementation.
+
+The discipline that caught all three: **revert the fix, watch the test go red with real numbers, put
+it back.** Every fix on this branch was required to show that transcript.
+
 ---
 
 *Last updated: 2026-08-11*
