@@ -95,6 +95,10 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           showBackground={false}
           hideHeader={true}
           disableMentionInteractivity={true}
+          // Detached surface: bookmarks span every space, so in-body
+          // @mentions must resolve against the BOOKMARK's own spaceId, not
+          // whatever space this panel happens to render inside.
+          currentSpaceId={bookmark.spaceId}
         />
       );
     }

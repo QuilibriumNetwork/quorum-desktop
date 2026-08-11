@@ -43,6 +43,7 @@ import { MessagePreview } from '@/components/message/MessagePreview';
 import { IdentityScopeProvider, MemberName } from '@/identity';
 
 const ADDR = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
+const MENTIONED_ADDR = 'QmPeerBEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const SPACE_ID = 'space-1';
 
 // Deliberately WRONG name — see file header.
@@ -137,6 +138,83 @@ describe('MessagePreview — header sender name resolves via the identity module
       const headerText = container.querySelector('.header-name')?.textContent;
       expect(previewText).toBe('Mod Alice');
       expect(headerText).toBe('Mod Alice');
+    });
+  });
+});
+
+/**
+ * Bug 1: an in-BODY @mention (`useMessageFormatting.ts`'s `processTextToken`,
+ * a DIFFERENT code path from the header above) built its label from
+ * `mapSenderToUser(id)?.displayName` — a raw caller-supplied field with a
+ * caller-owned fallback — instead of resolving through `src/identity`. The
+ * mention rendered the roster's global name (no ".q"), never the verified
+ * QNS name, regardless of what the mentioned member's public profile said.
+ *
+ * `hideHeader={true}` matches how every production caller (PinnedMessagesPanel,
+ * BookmarkItem, the delete/pin confirmation modals) actually renders this
+ * component — the header case above is dead code in production today.
+ */
+describe('MessagePreview — body @mentions resolve via the identity module (bug 1)', () => {
+  beforeEach(() => {
+    getPublicProfile.mockReset();
+  });
+
+  const mentionMessage = (): MessageType =>
+    ({
+      messageId: 'msg-mention-1',
+      spaceId: SPACE_ID,
+      channelId: 'channel-1',
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      signature: 'sig',
+      content: {
+        senderId: ADDR,
+        type: 'post' as const,
+        text: `hey @<${MENTIONED_ADDR}> welcome`,
+      },
+      mentions: { memberIds: [MENTIONED_ADDR], roleIds: [], channelIds: [] },
+    }) as unknown as MessageType;
+
+  function renderBody(rosters: Record<string, Record<string, unknown>>) {
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    return render(
+      <QueryClientProvider client={client}>
+        <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={rosters} selfAddress={null}>
+          <MessagePreview
+            message={mentionMessage()}
+            mapSenderToUser={staleMapSenderToUser}
+            hideHeader={true}
+            currentSpaceId={SPACE_ID}
+          />
+        </IdentityScopeProvider>
+      </QueryClientProvider>,
+    );
+  }
+
+  it('the load-bearing case: a mentioned member with a global name AND a QNS name renders <qns>.q in the mention', async () => {
+    getPublicProfile.mockResolvedValue({ data: { primary_username: 'bob', display_name: 'Bob' } });
+
+    const { container } = renderBody({
+      [SPACE_ID]: { [MENTIONED_ADDR]: { display_name: '', global_display_name: 'Bob' } },
+    });
+
+    await waitFor(() => {
+      expect(container.querySelector('.message-mentions-user')?.textContent).toBe('bob.q');
+    });
+  });
+
+  it('a mentioned member WITH a per-space nickname renders the nickname, not the QNS name', async () => {
+    getPublicProfile.mockResolvedValue({ data: { primary_username: 'bob', display_name: 'Bob' } });
+
+    const { container } = renderBody({
+      [SPACE_ID]: { [MENTIONED_ADDR]: { display_name: 'Mod Bob', global_display_name: 'Bob' } },
+    });
+
+    await waitFor(() => {
+      expect(container.querySelector('.message-mentions-user')?.textContent).toBe('Mod Bob');
     });
   });
 });

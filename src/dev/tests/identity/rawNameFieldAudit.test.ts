@@ -209,8 +209,6 @@ const EXCEPTIONS: Record<string, string> = {
     'KNOWN, UNRESOLVED: one branch resolves via `resolveName(...)` (identity-aware) but a neighboring branch reads `option.data.displayName` raw — mixed, not verified deeply enough this tranche. See second-tranche-report.md.',
   'src/hooks/business/messages/useMessageActions.ts':
     'KNOWN, UNRESOLVED: `currentPasskeyInfo?.displayName` (self-name bug) and `senderInfo?.displayName || \'Unknown User\'` (raw field + caller fallback) — both real instances of this bug class, outside the assigned row. See second-tranche-report.md.',
-  'src/hooks/business/messages/useMessageFormatting.ts':
-    'KNOWN, UNRESOLVED: `mention?.displayName || \'@${userId...}\'` — raw field with a caller-owned fallback, outside the assigned row. See second-tranche-report.md.',
 };
 
 describe('raw member-name field audit — every render either imports src/identity or is a known exception', () => {

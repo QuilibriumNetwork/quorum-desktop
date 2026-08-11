@@ -5,7 +5,7 @@ import { Flex, Icon, Button, Tooltip, Select, Modal } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
-import { MemberName, useNameResolver } from '../../identity';
+import { MemberName } from '../../identity';
 import { NotificationItem } from './NotificationItem';
 import { useAllMentions, useMentionNotificationSettings } from '../../hooks/business/mentions';
 import { useAllReplies } from '../../hooks/business/replies';
@@ -50,16 +50,6 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
   const queryClient = useQueryClient();
-  // Bulk imperative resolver for in-body @mentions inside each notification's
-  // message preview (NotificationItem -> useMessageFormatting's
-  // `mapSenderToUser(id)?.displayName`, built per row below, not one React
-  // component per mention — see `useNameResolver`'s docstring). Both modes
-  // are already inside an ambient `<IdentityScopeProvider>`: the per-space
-  // panel renders inside Channel.tsx's own provider, the global panel inside
-  // GlobalNotificationsModal's (which spans every space via
-  // `useMultiSpaceRosters`) — so this hook is always safe to call here.
-  const { resolve, requestNames } = useNameResolver();
-
 
   // Load user's saved notification settings for this space
   const { selectedTypes: savedTypes, isLoading: settingsLoading } = useMentionNotificationSettings({ spaceId });
@@ -102,24 +92,13 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     ? globalNotifications
     : [...spaceMentions, ...spaceReplies].sort((a, b) => b.message.createdDate - a.message.createdDate);
 
-  // Request public profiles for every address mentioned INSIDE the visible
-  // notifications' message bodies (distinct from the row header's sender,
-  // which <MemberName enrich> already requests) — the same bulk-enrich
-  // pattern MessageMarkdownRenderer/MessageEditTextarea use for mention
-  // pills, so a mentioned member's ".q" shows here too instead of silently
-  // never being requested. Bounded to what's actually rendered
-  // (GLOBAL_DISPLAY_CAP rows); requestNames dedupes against addresses
-  // already requested elsewhere.
-  const mentionedAddresses = React.useMemo(() => {
-    const set = new Set<string>();
-    for (const n of allNotifications) {
-      (n.message.mentions?.memberIds ?? []).forEach((id: string) => set.add(id));
-    }
-    return set;
-  }, [allNotifications]);
-  useEffect(() => {
-    requestNames(mentionedAddresses);
-  }, [mentionedAddresses, requestNames]);
+  // In-body @mention resolution (and its bulk profile-request enrich) now
+  // lives inside `useMessageFormatting`/`NotificationItem` itself, scoped by
+  // the `currentSpaceId` passed to each row below — see
+  // `useMessageFormatting.ts`. No panel-level resolver plumbing needed here
+  // anymore; each row's <IdentityScopeProvider>-backed resolve() request is
+  // deduped against every other request for the same address regardless of
+  // which component asked.
 
   const isLoading = global
     ? (gLoading || settingsLoading)
@@ -317,18 +296,6 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 {allNotifications.map((notification) => {
                   const senderId = notification.message.content?.senderId;
                   const rowSpaceId = (notification as any).spaceId ?? spaceId;
-                  // Mentions inside the message body must resolve against the
-                  // same roster as the row header. The global panel spans
-                  // spaces, so bind the resolver to THIS row's space via
-                  // `resolve`'s per-call spaceId override — the SAME bulk
-                  // resolver `<MemberName>` above and every other
-                  // "many addresses outside JSX" surface use.
-                  const resolveMentionUser = global
-                    ? (id: string) => {
-                        const r = resolve(id, { spaceId: rowSpaceId });
-                        return { displayName: r.isQnsVerified ? `${r.name}.q` : r.name };
-                      }
-                    : mapSenderToUser;
                   return (
                     <div
                       key={`${notification.message.messageId}-${notification.channelId}`}
@@ -342,11 +309,13 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                         // whatever Space the panel happens to render inside.
                         // `enrich`: bounded cardinality (one sender per row,
                         // GLOBAL_DISPLAY_CAP rows) and this is where the ".q"
-                        // name has to come from.
+                        // name has to come from. In-body @mentions resolve the
+                        // SAME way, via `currentSpaceId` — see NotificationItem.
                         displayName={
                           <MemberName address={senderId ?? ''} spaceId={rowSpaceId} enrich />
                         }
-                        mapSenderToUser={resolveMentionUser}
+                        mapSenderToUser={mapSenderToUser}
+                        currentSpaceId={rowSpaceId}
                         spaceRoles={spaceRoles}
                         spaceChannels={spaceChannels}
                         spaceName={global ? (notification as any).spaceName : undefined}
@@ -362,18 +331,6 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 {allNotifications.map((notification) => {
                   const senderId = notification.message.content?.senderId;
                   const rowSpaceId = (notification as any).spaceId ?? spaceId;
-                  // Mentions inside the message body must resolve against the
-                  // same roster as the row header. The global panel spans
-                  // spaces, so bind the resolver to THIS row's space via
-                  // `resolve`'s per-call spaceId override — the SAME bulk
-                  // resolver `<MemberName>` above and every other
-                  // "many addresses outside JSX" surface use.
-                  const resolveMentionUser = global
-                    ? (id: string) => {
-                        const r = resolve(id, { spaceId: rowSpaceId });
-                        return { displayName: r.isQnsVerified ? `${r.name}.q` : r.name };
-                      }
-                    : mapSenderToUser;
                   return (
                     <div
                       key={`${notification.message.messageId}-${notification.channelId}`}
@@ -387,11 +344,13 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                         // whatever Space the panel happens to render inside.
                         // `enrich`: bounded cardinality (one sender per row,
                         // GLOBAL_DISPLAY_CAP rows) and this is where the ".q"
-                        // name has to come from.
+                        // name has to come from. In-body @mentions resolve the
+                        // SAME way, via `currentSpaceId` — see NotificationItem.
                         displayName={
                           <MemberName address={senderId ?? ''} spaceId={rowSpaceId} enrich />
                         }
-                        mapSenderToUser={resolveMentionUser}
+                        mapSenderToUser={mapSenderToUser}
+                        currentSpaceId={rowSpaceId}
                         spaceRoles={spaceRoles}
                         spaceChannels={spaceChannels}
                         spaceName={global ? (notification as any).spaceName : undefined}

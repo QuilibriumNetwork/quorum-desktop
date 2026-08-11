@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import * as linkify from 'linkifyjs';
 import {
   isYouTubeURL,
@@ -9,15 +9,30 @@ import {
 } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../../utils/embeddedMedia';
+import { useNameResolver } from '../../../identity';
 
 interface UseMessageFormattingOptions {
   message: MessageType;
   stickers?: { [key: string]: Sticker };
+  /**
+   * Historical roster lookup. No longer read for mention-body name
+   * resolution (see `processTextToken`'s user-mention branch) — that goes
+   * through `src/identity`'s `useNameResolver` now, which owns both the name
+   * AND the truncated-address fallback. Kept in the options shape so every
+   * existing call site (Message.tsx, MessagePreview.tsx, NotificationItem.tsx)
+   * can keep passing it unchanged for their other, unrelated uses.
+   */
   mapSenderToUser: (senderId: string) => any;
   onImageClick: (imageUrl: string) => void;
   spaceRoles?: Role[];
   spaceChannels?: Channel[];
   disableMentionInteractivity?: boolean;
+  /**
+   * The space THIS message's mentions resolve against — a detached surface
+   * (a notification row, a bookmark) must pass its OWN message's spaceId so
+   * the per-space nickname ladder applies, never the ambient route's space.
+   * Also still used, unchanged, for the same-space message-link check below.
+   */
   currentSpaceId?: string;
   /**
    * Whether this message's `@everyone` was authorized — the wire flag is set AND
@@ -36,8 +51,44 @@ function isInviteLink(token: string): boolean {
 }
 
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
-  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false, currentSpaceId, everyoneAuthorized = false } = options;
+  const { message, stickers, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false, currentSpaceId, everyoneAuthorized = false } = options;
 
+  // Bulk imperative resolver for in-body @mentions — `processTextToken` is
+  // called per-token inside a `.map()`/tokenization loop by every caller
+  // (Message.tsx, MessagePreview.tsx, NotificationItem.tsx), so a hook
+  // cannot be called per mention; `resolve()` is a pure read safe to call
+  // from inside that loop, and `requestNames` below opts the whole set into
+  // one batched profile fetch. Requires an ancestor <IdentityScopeProvider>
+  // — every caller of this hook renders under the root one mounted in
+  // App.tsx (or, for a detached surface like a notification row, under its
+  // own scoped provider).
+  const { resolve, requestNames } = useNameResolver();
+
+  // Every well-formed `@<address>` mention actually present in this
+  // message's text, scanned directly from the raw content — NOT filtered
+  // through `message.mentions.memberIds`. That metadata field is a
+  // best-effort index (used elsewhere for notification triggering) and is
+  // not always populated for every address the text names; gating name
+  // resolution on it is exactly how a real, well-formed mention token
+  // degraded to raw unrendered text with no substitution at all. Mirrors
+  // MessageMarkdownRenderer's `mentionedAddresses` (the already-correct
+  // reference implementation this hook is being brought in line with).
+  const mentionedAddresses = useMemo(() => {
+    const set = new Set<string>();
+    if (message.content.type !== 'post') return set;
+    const text = Array.isArray(message.content.text)
+      ? message.content.text.join(' ')
+      : message.content.text;
+    const cidPattern = createIPFSCIDRegex().source;
+    const re = new RegExp(`@<(${cidPattern})>`, 'g');
+    let m: RegExpExecArray | null;
+    while ((m = re.exec(text)) !== null) set.add(m[1]);
+    return set;
+  }, [message]);
+
+  useEffect(() => {
+    requestNames(mentionedAddresses);
+  }, [mentionedAddresses, requestNames]);
 
   // Handle image click with size checking
   const handleImageClick = useCallback(
@@ -148,25 +199,26 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
       const userMentionRegex = new RegExp(`^@<(${cidPattern})>$`);
       const userMatch = token.match(userMentionRegex);
 
-      if (userMatch && message.mentions?.memberIds && message.mentions.memberIds.length > 0) {
-        // userMatch[1] is the address
+      if (userMatch) {
+        // userMatch[1] is the address. Render as a mention for ANY
+        // well-formed `@<CID>` token — NOT gated on
+        // `message.mentions.memberIds` (that field is a best-effort
+        // notification-triggering index, not a complete list of every
+        // address the text names; gating on it is what let a real mention
+        // fall all the way through to unrendered raw text with no
+        // substitution at all). Matches the already-correct reference
+        // implementation, `processMentions` in quorum-shared, which the
+        // main message list renders through and never checks memberIds
+        // either.
         const userId = userMatch[1];
-
-        // Only render as mention if the user is in the message's memberIds
-        if (message.mentions.memberIds.includes(userId)) {
-          // `mapSenderToUser` is typed `(id) => any` and callers legitimately
-          // return undefined for a sender they cannot resolve. Dereferencing it
-          // bare threw inside render and took the whole panel down through the
-          // error boundary. Fall back to the address label instead.
-          const mention = mapSenderToUser(userId);
-          return {
-            type: 'mention' as const,
-            key: `${messageId}-${lineIndex}-${tokenIndex}`,
-            displayName: mention?.displayName || `@${userId.substring(0, 8)}...`,
-            address: userId,
-            isInteractive: !disableMentionInteractivity,
-          };
-        }
+        const resolved = resolve(userId, { spaceId: currentSpaceId });
+        return {
+          type: 'mention' as const,
+          key: `${messageId}-${lineIndex}-${tokenIndex}`,
+          displayName: resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name,
+          address: userId,
+          isInteractive: !disableMentionInteractivity,
+        };
       }
 
       // Check for role mentions (only style if role exists in message.mentions.roleIds)
@@ -274,7 +326,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         text: token,
       };
     },
-    [mapSenderToUser, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity, currentSpaceId, everyoneAuthorized]
+    [resolve, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity, currentSpaceId, everyoneAuthorized]
   );
 
   return {
