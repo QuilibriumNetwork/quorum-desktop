@@ -26,6 +26,29 @@ local-name data rather than being an empty crash backstop.
 
 Still open: the mobile port (step 6 of the migration order), which is unblocked but not started.
 
+**2026-08-11 — reviewed, and the references around it corrected in PR #329**
+
+Three independent reviews read this document and the plan against the shipped code. The
+architecture held: the ladder, the provider merge semantics, `enrich`, `locallyKnownNames`, the
+root mount and the `spaceId === channelId === peerAddress` DM invariant were all confirmed
+correctly described, and an adversarial sweep found no live forged-`.q` bypass and no vacuous
+tests. What was wrong was the pointers — several docs, including this one's own "START HERE"
+step 3, still linked files PR #327 deleted. PR #329 fixed those and ticked the
+definition-of-done below.
+
+Two review findings are recorded rather than acted on, and are the right things to weigh before
+the mobile port:
+
+- **The mechanism is contestable.** One reviewer would have built layers 2-3 as a selector over
+  the query cache with no provider tree, on the grounds that tree position became the dominant
+  bug class and that `diagnostics.ts` plus the audit test exist to compensate for it. The
+  counter-argument is that the provider is what keeps roster subscription O(surfaces) rather
+  than O(rows) — design decision 3's measured fetch storm. Worth deciding deliberately on
+  mobile rather than inheriting.
+- **"One API" is true for the NAME only.** Avatar and bio still resolve through a separate path
+  (PR #328), so they can drift the way names did. Tracked in
+  `.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md`.
+
 # Name resolution: an API that cannot express a partial identity
 
 ## START HERE if you are picking this up cold
