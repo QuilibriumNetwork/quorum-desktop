@@ -63,11 +63,16 @@ const pinnedMessage = (): MessageType =>
     mentions: { memberIds: [MENTIONED_ADDR], roleIds: [], channelIds: [] },
   }) as unknown as MessageType;
 
+// Swappable per-test, read at CALL time (the mock factory below is a
+// closure, not evaluated until `usePinnedMessages()` actually runs) — same
+// pattern as the sibling PinnedMessagesPanel.test.tsx's `pinnedMessagesFixture`.
+let pinnedMessagesOverride: MessageType | null = null;
+
 // pinnedMessages data-loading, permissions and toggling are unrelated to
 // name resolution — return canned data instead of wiring up messageDB.
 vi.mock('@/hooks', () => ({
   usePinnedMessages: (..._args: unknown[]) => ({
-    pinnedMessages: [pinnedMessage()],
+    pinnedMessages: [pinnedMessagesOverride ?? pinnedMessage()],
     pinnedCount: 1,
     canPinMessages: false,
     togglePin: vi.fn(),
@@ -102,7 +107,9 @@ vi.mock('react-virtuoso', () => ({
 }));
 
 import { PinnedMessagesPanel } from '@/components/message/PinnedMessagesPanel';
+import { MessagePreview } from '@/components/message/MessagePreview';
 import { IdentityScopeProvider } from '@/identity/identityProvider';
+import { buildSpaceMembersKey } from '@/hooks/queries/spaceMembers/buildSpaceMembersKey';
 
 // Deliberately WRONG name — proof the body renders through the identity
 // module and not this local mapper, same convention as the sibling
@@ -112,10 +119,10 @@ const staleMapSenderToUser = (_senderId: string) => ({
   displayName: 'Stale Mapper Name',
 });
 
-function renderPanel(rosters: Record<string, Record<string, unknown>>) {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
-  return render(
-    <QueryClientProvider client={client}>
+function renderPanel(rosters: Record<string, Record<string, unknown>>, client?: QueryClient) {
+  const queryClient = client ?? new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  const result = render(
+    <QueryClientProvider client={queryClient}>
       <MemoryRouter>
         <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={rosters} selfAddress={null}>
           <PinnedMessagesPanel
@@ -129,6 +136,7 @@ function renderPanel(rosters: Record<string, Record<string, unknown>>) {
       </MemoryRouter>
     </QueryClientProvider>,
   );
+  return { ...result, client: queryClient };
 }
 
 describe('PinnedMessagesPanel — body @mentions resolve via the identity module (bug 1)', () => {
@@ -148,5 +156,90 @@ describe('PinnedMessagesPanel — body @mentions resolve via the identity module
       expect(document.querySelector('.message-mentions-user')?.textContent).toBe('bob.q');
     });
     expect(document.querySelector('.message-mentions-user')?.textContent).not.toContain('Stale Mapper Name');
+  });
+});
+
+/**
+ * The operator's actual reported split, end to end: the SAME pinned message
+ * renders correctly inside the real `PinnedMessagesPanel` (nested in
+ * Channel's own identity scope) but showed a truncated address in the
+ * unpin-confirmation modal (rendered detached, by Layout.tsx's
+ * ConfirmationModalProvider, via `usePinnedMessages.ts`'s `togglePin` —
+ * `preview: React.createElement(MessagePreview, {...})`). Reproduces both
+ * placements against the SAME message, SAME control member (an empty QNS
+ * name, so only the roster's global name can resolve it — the /dev/fake-qns
+ * shape the operator actually pinned), and the SAME shared `QueryClient`,
+ * exactly like the one cache a running app instance has.
+ */
+describe('PinnedMessagesPanel vs. the detached confirmation-modal preview — parity (the operator-reported bug)', () => {
+  // Empty QNS name deliberately: the only name source is the roster's
+  // global slot, read via useMultiSpaceRosters — the exact control shape
+  // the operator pinned in /dev/fake-qns.
+  const CONTROL_ADDR = 'QmPeerREgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
+
+  const controlPinnedMessage = (): MessageType =>
+    ({
+      messageId: 'msg-control',
+      spaceId: SPACE_ID,
+      channelId: 'channel-1',
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      signature: 'sig',
+      isPinned: true,
+      content: {
+        senderId: ADDR,
+        type: 'post' as const,
+        text: `great point @<${CONTROL_ADDR}>`,
+      },
+      mentions: { memberIds: [CONTROL_ADDR], roleIds: [], channelIds: [] },
+    }) as unknown as MessageType;
+
+  it('the pinned panel and a detached MessagePreview (the modal-host shape) resolve the mention to the SAME name — never a truncated address', async () => {
+    getPublicProfile.mockResolvedValue({ data: { primary_username: '', display_name: '' } });
+    pinnedMessagesOverride = controlPinnedMessage();
+
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    client.setQueryData(buildSpaceMembersKey({ spaceId: SPACE_ID }), [
+      { user_address: CONTROL_ADDR, display_name: '', global_display_name: 'Bright Beacon' },
+    ]);
+
+    // Nested placement: the real PinnedMessagesPanel inside Channel's own
+    // (rich) provider — this is the surface that already worked.
+    renderPanel(
+      { [SPACE_ID]: { [CONTROL_ADDR]: { display_name: '', global_display_name: 'Bright Beacon' } } },
+      client,
+    );
+
+    // Detached placement: a standalone MessagePreview under ONLY a
+    // root-style provider (empty rostersBySpace, no spaceId) — exactly what
+    // Layout.tsx's ConfirmationModalProvider renders under. Same QueryClient
+    // as above: one shared cache, like the real running app.
+    const detached = render(
+      <QueryClientProvider client={client}>
+        <IdentityScopeProvider rostersBySpace={{}} selfAddress={null}>
+          <MessagePreview
+            message={controlPinnedMessage()}
+            mapSenderToUser={staleMapSenderToUser}
+            hideHeader={true}
+            currentSpaceId={SPACE_ID}
+          />
+        </IdentityScopeProvider>
+      </QueryClientProvider>,
+    );
+
+    const truncated = `${CONTROL_ADDR.slice(0, 6)}…${CONTROL_ADDR.slice(-4)}`;
+    await waitFor(() => {
+      const nestedText = document.querySelector('.message-mentions-user')?.textContent;
+      const detachedText = detached.container.querySelector('.message-mentions-user')?.textContent;
+      expect(nestedText).toBe('Bright Beacon');
+      expect(detachedText).toBe('Bright Beacon');
+      expect(detachedText).not.toBe(truncated);
+      expect(detachedText).toBe(nestedText);
+    });
+
+    pinnedMessagesOverride = null;
   });
 });

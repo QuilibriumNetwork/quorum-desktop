@@ -41,10 +41,33 @@ vi.mock('@/api/baseTypes', () => ({
 
 import { MessagePreview } from '@/components/message/MessagePreview';
 import { IdentityScopeProvider, MemberName } from '@/identity';
+import { buildSpaceMembersKey } from '@/hooks/queries/spaceMembers/buildSpaceMembersKey';
 
 const ADDR = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const MENTIONED_ADDR = 'QmPeerBEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const SPACE_ID = 'space-1';
+
+// `MessagePreview` now mounts its OWN <IdentityScopeProvider>, sourced from
+// `useMultiSpaceRosters` — which reads the exact query-cache entry
+// `useSpaceMembers` would populate in the real app (`buildSpaceMembersKey`).
+// Seed that cache directly rather than relying on an ambient provider: after
+// the detachment fix, MessagePreview's own scope always wins for its own
+// resolution, so a roster only reachable via an ambient wrapper (and not
+// this cache) would silently never be seen by the preview itself — the same
+// gap that produced the original bug, just moved into the test harness.
+function seedRoster(
+  client: QueryClient,
+  spaceId: string,
+  rosters: Record<string, Record<string, unknown>>,
+) {
+  client.setQueryData(
+    buildSpaceMembersKey({ spaceId }),
+    Object.entries(rosters[spaceId] ?? {}).map(([user_address, row]) => ({
+      user_address,
+      ...(row as object),
+    })),
+  );
+}
 
 // Deliberately WRONG name — see file header.
 const staleMapSenderToUser = (_addr: string) => ({
@@ -77,6 +100,7 @@ function renderPreview(
   extra?: React.ReactNode,
 ) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  seedRoster(client, SPACE_ID, rosters);
   return render(
     <QueryClientProvider client={client}>
       <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={rosters} selfAddress={null}>
@@ -84,6 +108,7 @@ function renderPreview(
           message={baseMessage()}
           mapSenderToUser={staleMapSenderToUser}
           hideHeader={false}
+          currentSpaceId={SPACE_ID}
         />
         {extra}
       </IdentityScopeProvider>
@@ -180,6 +205,7 @@ describe('MessagePreview — body @mentions resolve via the identity module (bug
 
   function renderBody(rosters: Record<string, Record<string, unknown>>) {
     const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    seedRoster(client, SPACE_ID, rosters);
     return render(
       <QueryClientProvider client={client}>
         <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={rosters} selfAddress={null}>
@@ -215,6 +241,146 @@ describe('MessagePreview — body @mentions resolve via the identity module (bug
 
     await waitFor(() => {
       expect(container.querySelector('.message-mentions-user')?.textContent).toBe('Mod Bob');
+    });
+  });
+});
+
+/**
+ * The operator-reported bug, reproduced directly: `showConfirmationModal`'s
+ * `preview` (usePinnedMessages.ts's togglePin, useMessageActions.ts's
+ * handleDelete) is built inside a Channel's identity scope but RENDERED by
+ * Layout.tsx's `ConfirmationModalProvider` — a sibling of the app shell,
+ * mounted outside any Channel/DirectMessage `<IdentityScopeProvider>`. React
+ * resolves context where an element is rendered, not where it was created,
+ * so before the fix a mention inside that preview saw only App.tsx's ROOT
+ * provider (`rostersBySpace={}}`, no spaceId) — the exact shape mounted
+ * below. A member with no cached public profile then fell through every
+ * tier to the truncated-address fallback, even though the SAME member
+ * resolves correctly a few pixels away in the Pinned Messages panel (which
+ * renders inside Channel's own, richer provider).
+ *
+ * The roster is seeded into the shared query cache rather than passed to an
+ * ambient provider — the SAME mechanism a warm Channel tab uses in the real
+ * app (`useMultiSpaceRosters` shares its query key with `useSpaceMembers`,
+ * see that hook's file header) — because after the fix MessagePreview reads
+ * its OWN roster via that hook regardless of what wraps it.
+ */
+describe('MessagePreview — self-mounted identity scope survives a detached render host (confirmation-modal bug)', () => {
+  beforeEach(() => {
+    getPublicProfile.mockReset();
+  });
+
+  // The control shape from /dev/fake-qns: pinned with an EMPTY ".q" name, so
+  // the only name source is the space roster's global slot.
+  const CONTROL_ADDR = 'QmPeerCEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
+  // A second, unrelated member WITH a QNS name, for the paired case.
+  const QNS_ADDR = 'QmPeerDEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
+
+  const mentionOf = (address: string, msgId: string): MessageType =>
+    ({
+      messageId: msgId,
+      spaceId: SPACE_ID,
+      channelId: 'channel-1',
+      createdDate: Date.now(),
+      modifiedDate: Date.now(),
+      digestAlgorithm: 'sha256' as const,
+      nonce: 'nonce',
+      lastModifiedHash: 'hash',
+      signature: 'sig',
+      content: {
+        senderId: ADDR,
+        type: 'post' as const,
+        text: `ping @<${address}> please`,
+      },
+      mentions: { memberIds: [address], roleIds: [], channelIds: [] },
+    }) as unknown as MessageType;
+
+  // Mounted under ONLY a root-style provider — empty rostersBySpace, no
+  // spaceId — exactly what App.tsx mounts above the Router, which is what
+  // Layout.tsx's ConfirmationModalProvider actually renders under.
+  function renderDetached(message: MessageType, client: QueryClient) {
+    return render(
+      <QueryClientProvider client={client}>
+        <IdentityScopeProvider rostersBySpace={{}} selfAddress={null}>
+          <MessagePreview
+            message={message}
+            mapSenderToUser={() => ({})}
+            hideHeader={true}
+            currentSpaceId={SPACE_ID}
+          />
+        </IdentityScopeProvider>
+      </QueryClientProvider>,
+    );
+  }
+
+  it("the operator's control case: a member with a global name and NO QNS name renders that name — never a truncated address — with no ambient roster at all", async () => {
+    getPublicProfile.mockResolvedValue({ data: { primary_username: '', display_name: '' } });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    client.setQueryData(buildSpaceMembersKey({ spaceId: SPACE_ID }), [
+      { user_address: CONTROL_ADDR, display_name: '', global_display_name: 'Bright Beacon' },
+    ]);
+
+    const { container } = renderDetached(mentionOf(CONTROL_ADDR, 'msg-control'), client);
+
+    const truncated = `${CONTROL_ADDR.slice(0, 6)}…${CONTROL_ADDR.slice(-4)}`;
+    await waitFor(() => {
+      expect(container.querySelector('.message-mentions-user')?.textContent).toBe('Bright Beacon');
+    });
+    expect(container.querySelector('.message-mentions-user')?.textContent).not.toBe(truncated);
+  });
+
+  it('paired case: a member WITH a QNS name renders <name>.q from the same self-mounted, detached scope', async () => {
+    getPublicProfile.mockResolvedValue({ data: { primary_username: 'carol', display_name: 'Carol' } });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    client.setQueryData(buildSpaceMembersKey({ spaceId: SPACE_ID }), [
+      { user_address: QNS_ADDR, display_name: '', global_display_name: 'Carol' },
+    ]);
+
+    const { container } = renderDetached(mentionOf(QNS_ADDR, 'msg-qns'), client);
+
+    await waitFor(() => {
+      expect(container.querySelector('.message-mentions-user')?.textContent).toBe('carol.q');
+    });
+  });
+
+  it('parity: the SAME message and member resolve to the SAME string whether MessagePreview renders nested (Pinned Messages panel shape) or detached (confirmation-modal shape)', async () => {
+    getPublicProfile.mockResolvedValue({ data: { primary_username: '', display_name: '' } });
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+    client.setQueryData(buildSpaceMembersKey({ spaceId: SPACE_ID }), [
+      { user_address: CONTROL_ADDR, display_name: '', global_display_name: 'Bright Beacon' },
+    ]);
+    const message = mentionOf(CONTROL_ADDR, 'msg-parity');
+
+    // "Nested" shape: MessagePreview under a RICH ambient provider, matching
+    // PinnedMessagesPanel's placement inside Channel's own scope — same
+    // QueryClient as the detached render below, exactly like the one shared
+    // cache a running app instance actually has.
+    const nested = render(
+      <QueryClientProvider client={client}>
+        <IdentityScopeProvider
+          spaceId={SPACE_ID}
+          rostersBySpace={{ [SPACE_ID]: { [CONTROL_ADDR]: { display_name: '', global_display_name: 'Bright Beacon' } } }}
+          selfAddress={null}
+        >
+          <MessagePreview
+            message={message}
+            mapSenderToUser={() => ({})}
+            hideHeader={true}
+            currentSpaceId={SPACE_ID}
+          />
+        </IdentityScopeProvider>
+      </QueryClientProvider>,
+    );
+
+    // "Detached" shape: the confirmation-modal host — root-style provider only.
+    const detached = renderDetached(message, client);
+
+    await waitFor(() => {
+      const nestedText = nested.container.querySelector('.message-mentions-user')?.textContent;
+      const detachedText = detached.container.querySelector('.message-mentions-user')?.textContent;
+      expect(nestedText).toBe('Bright Beacon');
+      expect(detachedText).toBe('Bright Beacon');
+      expect(detachedText).toBe(nestedText);
     });
   });
 });

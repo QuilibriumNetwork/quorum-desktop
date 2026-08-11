@@ -2,12 +2,14 @@ import React from 'react';
 import type { Message as MessageType, Sticker, Role, Channel, Space } from '@quilibrium/quorum-shared';
 import { Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
 import { processMarkdownText, hasPermission } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
-import { MemberName } from '../../identity';
+import { MemberName, IdentityScopeProvider } from '../../identity';
+import { useMultiSpaceRosters } from '../../hooks/business/identity';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (
@@ -163,7 +165,57 @@ interface MessagePreviewProps {
   currentSpaceId?: string;
 }
 
-export const MessagePreview: React.FC<MessagePreviewProps> = ({
+/**
+ * `MessagePreview` is handed to hosts that render far from where it was
+ * BUILT — `showConfirmationModal`'s `preview` (`usePinnedMessages.ts`'s
+ * `togglePin`, `useMessageActions.ts`'s `handleDelete`) is constructed
+ * inside a Channel/DirectMessage's identity scope but RENDERED by
+ * `Layout.tsx`'s `ConfirmationModalProvider`, a sibling of the app shell
+ * mounted outside any Channel/DirectMessage `<IdentityScopeProvider>`.
+ * React resolves context where an element is RENDERED, not where
+ * `React.createElement`/JSX built it — so a name-resolving hook inside this
+ * component would see whatever ancestor sits above the MODAL HOST (App.tsx's
+ * root provider, `rostersBySpace={}}`), not above the button that built the
+ * element. For a member with no cached public profile, that empty roster
+ * means every tier comes up empty and the address renders truncated, even
+ * though the exact same member resolves correctly a few pixels away in the
+ * Pinned Messages panel (which renders INSIDE Channel's own provider).
+ *
+ * Fix: mount our OWN scope here, scoped to `currentSpaceId`, exactly like
+ * `ReactionsModal`/`BookmarksPage`/`GlobalNotificationsModal` already do for
+ * their own detached surfaces — never depend on an ambient provider being
+ * present. `useMultiSpaceRosters` shares its query key/fetcher with
+ * `useSpaceMembers` (`buildSpaceMembersKey`), so when this DOES render
+ * nested inside an already-open Channel (`PinnedMessagesPanel`), the roster
+ * read here is the SAME cached entry Channel's own provider was built
+ * from — an inner provider refining with identical data, never a second,
+ * emptier source that could shadow a working outer one.
+ *
+ * See .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+ */
+export const MessagePreview: React.FC<MessagePreviewProps> = (props) => {
+  const { currentSpaceId } = props;
+  const user = usePasskeysContext();
+  const selfAddress = user?.currentPasskeyInfo?.address ?? null;
+
+  const spaceIds = React.useMemo(
+    () => (currentSpaceId ? [currentSpaceId] : []),
+    [currentSpaceId],
+  );
+  const rostersBySpace = useMultiSpaceRosters(spaceIds);
+
+  return (
+    <IdentityScopeProvider
+      spaceId={currentSpaceId}
+      rostersBySpace={rostersBySpace}
+      selfAddress={selfAddress}
+    >
+      <MessagePreviewContent {...props} />
+    </IdentityScopeProvider>
+  );
+};
+
+const MessagePreviewContent: React.FC<MessagePreviewProps> = ({
   message,
   mapSenderToUser,
   stickers,
