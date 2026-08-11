@@ -1,5 +1,5 @@
 import { logger, hasPermission } from '@quilibrium/quorum-shared';
-import React, { useMemo, useState, useCallback, useRef, Suspense } from 'react';
+import React, { useMemo, useState, useCallback, useRef, useEffect, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
@@ -35,7 +35,7 @@ import { i18n } from '@lingui/core';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { useMobile } from '../context/MobileProvider';
 import { UserAvatar } from '../user/UserAvatar';
-import { MemberName, useResolvedMemberName, useResolvedName } from '../../identity';
+import { MemberName, useResolvedMemberName, useResolvedName, useNameResolver } from '../../identity';
 import {
   useMessageActions,
   useEmojiPicker,
@@ -59,7 +59,6 @@ import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { useEditHistoryModal } from '../context/EditHistoryModalProvider';
 import { MessageEditTextarea } from './MessageEditTextarea';
 import { ENABLE_MARKDOWN } from '../../config/features';
-import { replaceMentionsWithDisplayNames } from '@quilibrium/quorum-shared';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
@@ -180,6 +179,49 @@ const MessageReplySenderInfo: React.FC<{ address: string; userIcon?: string }> =
       />
     </>
   );
+};
+
+// SECURITY: the reply-preview's in-body @mentions must resolve through the
+// SAME identity ladder as every other name on this screen, including the
+// forged-".q" guard `resolveIdentity` applies. This used to render raw
+// `mapSenderToUser(address).displayName` (shared's
+// `replaceMentionsWithDisplayNames`) — an untrusted per-space/global field
+// with no suffix guard, so a member who set their own nickname to literally
+// "eviladmin.q" rendered as an indistinguishable verified QNS name in the
+// reply-preview line above every message mentioning them. `useNameResolver`
+// (bulk/imperative — many mentions, no hook per mention) owns the guard so
+// this call site never re-implements it. Lives in its own component (same
+// "extract a small sub-component" move as `MessageReplySenderInfo` above)
+// because the reply block below is a conditionally-invoked closure inside
+// the main render — hooks cannot be called there.
+const MENTION_ADDRESS_PATTERN = /@<(Qm[a-zA-Z0-9]+)>/g;
+
+const MessageReplyText: React.FC<{ text: string }> = ({ text }) => {
+  const { resolve, requestNames } = useNameResolver();
+
+  const mentionedAddresses = useMemo(() => {
+    const addresses = new Set<string>();
+    let match: RegExpExecArray | null;
+    const regex = new RegExp(MENTION_ADDRESS_PATTERN);
+    while ((match = regex.exec(text)) !== null) addresses.add(match[1]);
+    return addresses;
+  }, [text]);
+
+  useEffect(() => {
+    requestNames(mentionedAddresses);
+  }, [mentionedAddresses, requestNames]);
+
+  const resolvedText = useMemo(
+    () =>
+      text.replace(new RegExp(MENTION_ADDRESS_PATTERN), (_match, address: string) => {
+        const resolved = resolve(address);
+        const name = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
+        return `@${name}`;
+      }),
+    [text, resolve]
+  );
+
+  return <>{resolvedText}</>;
 };
 
 type MessageProps = {
@@ -666,11 +708,6 @@ export const Message = React.memo(
                     ? reply.content.text.join(' ')
                     : reply.content.text)
                 : '';
-              const replyTextWithNames = replaceMentionsWithDisplayNames(
-                replyText,
-                mapSenderToUser
-              );
-
               return (
                 <div
                   key={reply.messageId + 'rplyhd'}
@@ -705,7 +742,7 @@ export const Message = React.memo(
                     userIcon={mapSenderToUser(reply.content.senderId).userIcon}
                   />
                   <span className="message-reply-text flex-1 min-w-0">
-                    {replyTextWithNames}
+                    <MessageReplyText text={replyText} />
                   </span>
                 </div>
               );

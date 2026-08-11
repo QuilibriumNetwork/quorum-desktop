@@ -38,16 +38,19 @@ describe('MemberName', () => {
     expect(screen.queryByText(/\.q/)).toBeNull();
   });
 
-  it('falls back to a truncated address for an unknown member', () => {
+  it('falls back to the EXACT truncated-address shape for an unknown member, never a literal like "Unknown User"', () => {
+    // The resolver owns the fallback (`resolveDisplayName.ts`'s `truncate`:
+    // first 6 chars + ellipsis + last 4) — a caller-supplied literal such as
+    // "Unknown User" is the defect this API exists to make unexpressable.
+    // Pinning the EXACT shape (not a loose /Qm/ substring match) is what
+    // makes this assertion capable of failing: a regex that only checks for
+    // "Qm somewhere in the text" would pass just as happily against the
+    // untruncated full address, or any other wrong fallback string.
     wrap(<MemberName address={ADDR} />);
-    expect(screen.getByText(/Qm/)).toBeTruthy();
-  });
-
-  it('never renders the literal "Unknown User"', () => {
-    // The resolver owns the fallback; a caller-supplied literal is the defect
-    // this API exists to make unexpressable.
-    wrap(<MemberName address={ADDR} />);
+    const truncated = `${ADDR.slice(0, 6)}…${ADDR.slice(-4)}`;
+    expect(screen.getByText(truncated)).toBeTruthy();
     expect(screen.queryByText('Unknown User')).toBeNull();
+    expect(screen.queryByText(ADDR)).toBeNull();
   });
 });
 

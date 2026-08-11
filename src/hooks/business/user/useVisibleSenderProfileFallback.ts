@@ -23,15 +23,24 @@
 //     `src/identity` itself for a whole roster in a loop.
 //   - `displayName` is kept too, but ITS public-profile fetch tier is
 //     DROPPED — it now reads ONLY the raw roster (`local?.displayName ||
-//     rosterGlobalName`, no `pub?.display_name` fallback). Its remaining live
-//     consumer is `replaceMentionsWithDisplayNames` (quorum-shared), which
-//     builds the small "replying to: ..." preview line above a message —
-//     every OTHER surface that used to read `displayName` for real rendering
-//     has migrated to `src/identity` and no longer touches this hook's
-//     output at all (verified caller-by-caller; the vestigial
-//     `primaryUsername`/`globalDisplayName` fields still threaded through
-//     `onUserClick` payloads are click-payload leftovers UserProfile.tsx no
-//     longer reads either, kept only because dropping them buys nothing).
+//     rosterGlobalName`, no `pub?.display_name` fallback). It is NO LONGER a
+//     rendered name anywhere: the reply-heading preview
+//     (`Message.tsx`'s `MessageReplyText`) used to build its text with
+//     shared's `replaceMentionsWithDisplayNames(text, mapSenderToUser)`,
+//     reading this field raw — an untrusted per-space/global string with no
+//     forged-".q" guard, so a member whose nickname was literally
+//     "eviladmin.q" rendered as an indistinguishable verified name in every
+//     reply that mentioned them. Fixed by resolving those mentions through
+//     `useNameResolver` instead (same guard every other name goes through).
+//     The only remaining reader of this field is the `onUserClick` prefill
+//     payload built from `sender` in `Message.tsx` — a pre-fill only;
+//     `UserProfile.tsx` resolves its own name via `useResolvedMemberName`
+//     keyed on the address and never reads `props.user.displayName`, so a
+//     stale or forged value here degrades to a brief flash, never a wrong
+//     permanent render. Kept for that prefill and because dropping it buys
+//     nothing (the vestigial `primaryUsername`/`globalDisplayName` fields
+//     threaded through the same payload are click-payload leftovers
+//     UserProfile.tsx no longer reads either).
 //
 // SECURITY NOTE (fix round 1 on Phase D rows 22-24): this hook's merge
 // spreads `...local` (the raw roster row) before overriding specific

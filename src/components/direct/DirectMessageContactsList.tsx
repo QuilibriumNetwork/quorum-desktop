@@ -448,6 +448,20 @@ const DirectMessageContactsListInner: React.FC<
     return enhancedConversations.find((c) => c.address === contextMenu.address);
   }, [contextMenu, enhancedConversations]);
 
+  // The right-click menu's header name — resolved via `src/identity`, never
+  // `contextMenuContact.displayName` raw. That field is `Conversation.
+  // displayName`, which can literally hold the placeholder string
+  // "Unknown User" (see `isUnknownUser` above) and is stale-capable (learned
+  // once from a peer broadcast, never re-derived). `resolve()` reads the SAME
+  // ladder `<DirectMessageContact>`'s own row uses, already enriched by the
+  // proactive `requestNames(distinctAddresses)` above, so the menu header
+  // never disagrees with the row it was opened from.
+  const contextMenuHeaderName = React.useMemo(() => {
+    if (!contextMenu) return undefined;
+    const r = resolve(contextMenu.address);
+    return r.isQnsVerified ? `${r.name}.q` : r.name;
+  }, [contextMenu, resolve]);
+
   // Calculate filter availability based on data
   const hasFavorites = React.useMemo(
     () => enhancedConversations.some((c) => favoritesSet.has(c.conversationId)),
@@ -512,7 +526,7 @@ const DirectMessageContactsListInner: React.FC<
             header={{
               type: 'user',
               address: contextMenu.address,
-              displayName: contextMenuContact.displayName,
+              displayName: contextMenuHeaderName ?? '',
               userIcon: contextMenuContact.icon,
             }}
             items={getContextMenuItems(contextMenu.address, contextMenu.conversationId)}
@@ -644,7 +658,7 @@ const DirectMessageContactsListInner: React.FC<
           header={{
             type: 'user',
             address: contextMenu.address,
-            displayName: contextMenuContact.displayName,
+            displayName: contextMenuHeaderName ?? '',
             userIcon: contextMenuContact.icon,
           }}
           items={getContextMenuItems(contextMenu.address, contextMenu.conversationId)}

@@ -30,7 +30,7 @@ import { MobileDrawer, ListSearchInput, TouchAwareListItem, FloatingPopover } fr
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { parseMessageHash } from '../../utils/messageHashNavigation';
-import { IdentityScopeProvider, MemberName, useNameResolver } from '../../identity';
+import { IdentityScopeProvider, MemberName, useNameResolver, useResolvedMemberName } from '../../identity';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -131,6 +131,59 @@ export const ChannelTypingIndicator: React.FC<{ scope: TypingScope | null }> = (
         return r.isQnsVerified ? `${r.name}.q` : r.name;
       }}
     />
+  );
+};
+
+/**
+ * The member-sidebar role-list row's avatar and name label. Extracted as its
+ * own component because the row is built inside `Virtuoso`'s `itemContent`
+ * callback — called per visible row, not a place a hook can be called (same
+ * "Channel's own function body runs before the provider it returns exists"
+ * shape as `ChannelTypingIndicator` above; `itemContent` is even further
+ * removed, a callback invoked once per rendered row).
+ *
+ * FIX (final fix wave, finding 2): the avatar used to take `item.displayName
+ * ?? item.address` — `useChannelData.ts`'s `curr.display_name`, the
+ * per-space OVERRIDE tier only, with no global or profile fallback — while
+ * the label beside it (`<MemberName>`) correctly resolves through the full
+ * ladder. A member with no per-space nickname therefore showed their
+ * correctly-resolved global/QNS name next to an avatar whose initials came
+ * from their raw address. Fixed by sourcing the avatar from the SAME
+ * resolved bare name `<MemberName>` renders (`useResolvedMemberName`, no
+ * `enrich` — deliberate, see design decision 3: this list can be 200+ rows
+ * and enriching would fire one profile fetch per row).
+ */
+export const MemberListRowAvatarAndName: React.FC<{
+  address: string;
+  userIcon?: string;
+  joinedAt?: number;
+  avatarClassName: string;
+  nameWrapperClassName: string;
+}> = ({ address, userIcon, joinedAt, avatarClassName, nameWrapperClassName }) => {
+  const resolved = useResolvedMemberName(address);
+  return (
+    <>
+      <UserAvatar
+        userIcon={userIcon}
+        // BARE resolved name — the SAME source `<MemberName>` below reads —
+        // never `item.displayName`/the raw address; feeding the avatar a
+        // different name than the resolved label is how a member came to
+        // render "gatto.q" beside a circle showing "G" for someone else.
+        displayName={resolved.name}
+        address={address}
+        size={30}
+        className={avatarClassName}
+      />
+      <div className={nameWrapperClassName}>
+        {/* No `enrich` — deliberate, see design decision 3: this list can be
+            200+ rows and enriching would fire one public-profile fetch per
+            rendered row on open. */}
+        <MemberName address={address} className="text-md font-bold truncate-user-name" />
+        {joinedAt != null && Date.now() - joinedAt < 7 * 24 * 60 * 60 * 1000 && (
+          <Icon name="seedling" size="sm" variant="filled" className="ml-1.5 text-success flex-shrink-0" />
+        )}
+      </div>
+    </>
   );
 };
 
@@ -371,15 +424,17 @@ const Channel: React.FC<ChannelProps> = ({
   // passed downstream — so all message-path consumers see the enriched
   // data, while role/sidebar paths continue to use the original `members`.
   //
-  // NAME rendering (message header, mention pills, profile card) does NOT
-  // read this anymore — those resolve via `src/identity`, keyed on address
-  // alone. What still reads this object's fields: `userIcon`/`bio` (Message's
-  // avatar and reactor icons — `src/identity` deliberately doesn't resolve
-  // avatars), and `.displayName` for ONE legacy consumer, the reply-heading
-  // preview text (`replaceMentionsWithDisplayNames`) — see
-  // `useVisibleSenderProfileFallback`'s file header for why that field's
-  // fetched-profile tier was dropped and why this can't just call
-  // `src/identity` itself.
+  // NAME rendering (message header, mention pills, profile card, and now the
+  // reply-heading preview text) does NOT read this anymore — all of it
+  // resolves via `src/identity`, keyed on address alone. The reply-heading
+  // preview used to read `.displayName` off this object raw (via shared's
+  // `replaceMentionsWithDisplayNames`), which had no forged-".q" guard —
+  // fixed by routing it through `useNameResolver` in `Message.tsx`'s
+  // `MessageReplyText`. What still reads this object's fields:
+  // `userIcon`/`bio` (Message's avatar and reactor icons — `src/identity`
+  // deliberately doesn't resolve avatars), and `.displayName` as pre-fill
+  // only for the profile-card `onUserClick` payload — see
+  // `useVisibleSenderProfileFallback`'s file header.
   const mapSenderToUser = useCallback(
     (senderId: string) => {
       const member = effectiveMembers[senderId];
@@ -1936,33 +1991,13 @@ const Channel: React.FC<ChannelProps> = ({
                             )
                           }
                         >
-                          <UserAvatar
-                            userIcon={item.userIcon}
-                            displayName={item.displayName ?? item.address}
+                          <MemberListRowAvatarAndName
                             address={item.address}
-                            size={30}
-                            className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
+                            userIcon={item.userIcon}
+                            joinedAt={item.joinedAt}
+                            avatarClassName="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
+                            nameWrapperClassName="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1"
                           />
-                          <div className="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
-                            {/* No `enrich`: deliberate. This list can be 200+ rows, and
-                                enriching would fire one public-profile fetch per rendered
-                                row on open. The roster-only default means lurkers who
-                                never posted show no ".q" here — an accepted limitation,
-                                see design decision 3 (.agents/issues/.open/
-                                2026-08-10-identity-resolution-architecture-design.md). */}
-                            <MemberName
-                              address={item.address}
-                              className="text-md font-bold truncate-user-name"
-                            />
-                            {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
-                              <Icon
-                                name="seedling"
-                                size="sm"
-                                variant="filled"
-                                className="ml-1.5 text-success flex-shrink-0"
-                              />
-                            )}
-                          </div>
                         </div>
                       </div>
                     );
@@ -2193,29 +2228,13 @@ const Channel: React.FC<ChannelProps> = ({
                     );
                   }}
                 >
-                  <UserAvatar
-                    userIcon={item.userIcon}
-                    displayName={item.displayName ?? item.address}
+                  <MemberListRowAvatarAndName
                     address={item.address}
-                    size={30}
-                    className="opacity-80 flex-shrink-0"
+                    userIcon={item.userIcon}
+                    joinedAt={item.joinedAt}
+                    avatarClassName="opacity-80 flex-shrink-0"
+                    nameWrapperClassName="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1"
                   />
-                  <div className="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1">
-                    {/* No `enrich` — same call as the desktop row above; see the comment
-                        there and design decision 3. */}
-                    <MemberName
-                      address={item.address}
-                      className="text-md font-bold truncate-user-name"
-                    />
-                    {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
-                      <Icon
-                        name="seedling"
-                        size="sm"
-                        variant="filled"
-                        className="ml-1.5 text-success flex-shrink-0"
-                      />
-                    )}
-                  </div>
                 </TouchAwareListItem>
               );
             }}

@@ -12,8 +12,6 @@ export * from './useSearchResultsKeyboard';
 export * from './useSearchResultsResponsive';
 export * from './useSearchResultsOutsideClick';
 export * from './useSearchResultDisplay';
-export * from './useSearchResultDisplayDM';
-export * from './useSearchResultDisplaySpace';
 export * from './useBatchSearchResultsDisplay';
 export * from './useSearchFocusManager';
 export * from './useSearchResultHighlight';

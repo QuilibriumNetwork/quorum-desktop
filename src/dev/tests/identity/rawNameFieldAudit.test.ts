@@ -101,13 +101,15 @@ function isExcluded(relPath: string): boolean {
  *    all (a role name, a form editing your OWN profile, an already-resolved
  *    prop, a comment, a write/broadcast site, React's own devtools naming
  *    idiom that survived the strip above).
- *  - KNOWN, UNRESOLVED: a real or plausible instance of this bug class,
- *    found by this audit, OUTSIDE this tranche's assigned row (KickUserModal/
- *    MuteUserModal/BlockUserModal/ModalProvider/NewDirectMessageModal/
- *    ConversationSettingsModal/the search hooks+item). Listed here so the
- *    audit passes honestly instead of silently going green over a bug it
- *    just found — see second-tranche-report.md for the full list and the
- *    reasoning behind each.
+ *  - KNOWN, UNRESOLVED: a real instance of this bug class, found by this
+ *    audit but left unfixed because it sits outside the current fix wave's
+ *    assigned rows/findings. Listed here so the audit passes honestly
+ *    instead of silently going green over a bug it just found. Each entry's
+ *    reasoning is verified in-line, not deferred to an external report —
+ *    stale "not verified this tranche, see report X" wording is exactly what
+ *    the final fix wave (.superpowers/sdd/2026-08-10-identity-resolution-
+ *    architecture-plan/final-fix-wave-report.md) replaced with concrete
+ *    verdicts.
  */
 const EXCEPTIONS: Record<string, string> = {
   // ---- Genuine non-offenders --------------------------------------------
@@ -177,39 +179,42 @@ const EXCEPTIONS: Record<string, string> = {
     'data CLEANUP/migration: clears stale `display_name`/`user_icon` roster overrides left by an old bug (writes them empty) — a write/migration, not a render.',
   'src/hooks/business/user/useReconcileSelfIdentity.ts':
     "self-repair infrastructure, not a render: its OWN doc comment documents that ~15 sites read `currentPasskeyInfo` for self-name and this hook exists to keep that LOCAL record less stale by repairing it from the synced config. It is evidence of the problem this refactor is fixing properly elsewhere (resolving through src/identity instead of currentPasskeyInfo at all), not an instance of rendering a raw field.",
-
-  // ---- Known, unresolved (found by this audit, out of this tranche's row) ----
-  'src/hooks/business/search/useSearchResultDisplayDM.ts':
-    'KNOWN, UNRESOLVED: exported from the search barrel but never called by any component (verified via grep — no `useSearchResultDisplayDM(` call site exists in src/). Superseded in production by useBatchSearchResultsDisplay. Not migrated in this tranche (out of the assigned row); flagged here instead of silently fixed so it does not rot invisibly. See second-tranche-report.md.',
-  'src/hooks/business/search/useSearchResultDisplaySpace.ts':
-    'KNOWN, UNRESOLVED: same shape as useSearchResultDisplayDM.ts above — dead code, not migrated this tranche, flagged rather than hidden. See second-tranche-report.md.',
-  'src/hooks/business/user/useUserProfileActions.ts':
-    'KNOWN, UNRESOLVED: dead code — its own local `MuteUserTarget` (with a `displayName` field) and `openMuteModal`/`setMuteUserTarget` are never referenced anywhere else in src/ (verified via grep). A stale duplicate of the interface this tranche already fixed in useModalState.ts. See second-tranche-report.md.',
-  'src/hooks/business/ui/useUserProfileModal.ts':
-    "KNOWN, UNRESOLVED (vestigial): `UserProfileModalUser`'s displayName/primaryUsername/globalDisplayName fields are populated by callers (Channel.tsx, BookmarksPage.tsx) but the consumer (UserProfile.tsx) was migrated to resolve via src/identity and no longer reads them — likely dead weight worth deleting, not verified further this tranche. See second-tranche-report.md.",
   'src/components/ui/ContextMenu.tsx':
-    "KNOWN, UNRESOLVED: the 'user' header variant renders `header.displayName || header.address.slice(0, 8)` — a raw caller-supplied name with a caller-owned fallback. Fed by DirectMessageContactsList.tsx's right-click menu (`displayName: contextMenuContact.displayName`). A real, live surface outside this tranche's row. See second-tranche-report.md.",
-  'src/components/modals/SpaceSettingsModal/Invites.tsx':
-    'KNOWN, UNRESOLVED: the invite picker renders `option.displayName` for DM-contact invite options — a member identity, not migrated this tranche. See second-tranche-report.md.',
+    "VERIFIED non-offender (final fix wave, finding 3): the 'user' header variant used to render `header.displayName || header.address.slice(0, 8)` — a raw caller-supplied name with a caller-owned fallback, fed by DirectMessageContactsList.tsx's `contextMenuContact.displayName` (which could literally be the stored placeholder \"Unknown User\"). Fixed: `displayName` is now a REQUIRED field on the 'user' header type, and its one caller (`DirectMessageContactsList.tsx`'s `contextMenuHeaderName`) resolves it via `useNameResolver().resolve()` before ever constructing the header. This file itself still doesn't import src/identity by design (kept as a dumb UI primitive) — same category as UserAvatar/NotificationItem: an already-resolved name arrives as a prop.",
+
+  // ---- Genuine non-offenders, reclassified from KNOWN-UNRESOLVED this wave —
+  // each independently re-verified (not deferred to a future tranche) -------
   'src/components/message/MessageList.tsx':
-    "KNOWN, UNRESOLVED: `users`/`mentionRoles` prop types carry a raw `displayName?` field, with an in-file comment defending passing an EMPTY one through unchanged for the (already-migrated) resolver ladder to see — plausible legitimate plumbing, but not verified deeply enough this tranche to call a confirmed non-offender. See second-tranche-report.md.",
-  'src/components/message/MessageComposer.native.tsx':
-    'KNOWN, UNRESOLVED: reply-preview label reads `mapSenderToUser(...).displayName` — a raw caller-supplied field (mobile-only file, still production source). See second-tranche-report.md.',
-  'src/hooks/business/channels/useChannelData.ts':
-    'KNOWN, UNRESOLVED: builds a member map directly from raw roster fields (`curr.display_name`, `curr.global_display_name`) rather than the identity module\'s tier assembler — not verified this tranche whether every consumer of this map already routes names through src/identity separately. See second-tranche-report.md.',
+    "VERIFIED non-offender: `users[].displayName` flows into `useMentionInput.ts`'s `userMatchesQuery` — SEARCH matching only, the same already-accepted exception category as `useVisibleSenderProfileFallback.ts`'s `primaryUsername`/`globalDisplayName`. The rendered mention-option LABEL comes from `MentionDropdown.tsx`'s `<MemberName>` (`option.data.address`), never from this raw field. `mentionRoles[].displayName` is a ROLE name (same category as ChannelEditorModal.tsx/Roles.tsx above). `mapSenderToUser`'s `.displayName` is a type declaration only, forwarded unread to `<Message>` (already migrated, finding 1).",
   'src/hooks/business/channels/useChannelMessages.ts':
-    'KNOWN, UNRESOLVED: member shape carries a raw `displayName?` field passed through the channel message pipeline — not verified this tranche. See second-tranche-report.md.',
+    "VERIFIED non-offender: `mapSenderToUser`'s `member` branch returns `members[senderId]` (raw roster row, `displayName` included) UNCHANGED — by its own doc comment this branch is not currently reachable (Channel.tsx's enriched `effectiveMembers` map covers every reachable sender first), kept correct only so a future direct consumer can't reintroduce the old defect by substituting a fallback. Correctly does NOT invent a fallback (rule 3) — nothing renders this field.",
   'src/hooks/business/conversations/useConversationPreviews.ts':
-    "KNOWN, UNRESOLVED: comment references a past `primaryUsername` staleness trap in the same file's neighborhood — not verified this tranche whether the current code still reads it raw. See second-tranche-report.md.",
+    'VERIFIED non-offender: the `primaryUsername` match is inside a COMMENT (historical staleness-trap note) — no executable reference to any of the five raw fields anywhere in the file.',
   'src/hooks/business/conversations/useConversationsWithProfileBackfill.ts':
-    'KNOWN, UNRESOLVED: DM sidebar backfill mechanism reading/writing `displayName`/`primaryUsername` on conversation rows — plausibly a legitimate write-side backfill (parallel to useClearLegacySpaceOverrides.ts), but not verified deeply enough this tranche to confirm no render path still depends on it. See second-tranche-report.md.',
-  'src/hooks/business/conversations/useDirectMessageData.ts':
-    'KNOWN, UNRESOLVED: `displayName: user.currentPasskeyInfo!.displayName` — the same self-name bug (currentPasskeyInfo carries no QNS name) fixed elsewhere this tranche, found in a hook not in the assigned row. See second-tranche-report.md.',
+    "VERIFIED non-offender: a WRITE-side backfill (persists `displayName`/`primaryUsername` to IndexedDB when a placeholder is still stored, parallel to `useClearLegacySpaceOverrides.ts`). Its one downstream read, `DirectMessageContact.tsx`'s `props.displayName`, is used ONLY as an existence flag (`props.displayName ? <address subtitle> : null`) per that file's own doc comment — never rendered as text. The rendered name there resolves via `useResolvedMemberName`, independent of this hook's output.",
   'src/hooks/business/mentions/useMentionPillEditor.ts':
-    'KNOWN, UNRESOLVED: one branch resolves via `resolveName(...)` (identity-aware) but a neighboring branch reads `option.data.displayName` raw — mixed, not verified deeply enough this tranche. See second-tranche-report.md.',
-  'src/hooks/business/messages/useMessageActions.ts':
-    'KNOWN, UNRESOLVED: `currentPasskeyInfo?.displayName` (self-name bug) and `senderInfo?.displayName || \'Unknown User\'` (raw field + caller fallback) — both real instances of this bug class, outside the assigned row. See second-tranche-report.md.',
+    "VERIFIED non-offender: `buildPillData`'s `type: 'user'` branch resolves via `resolveName(option.data.address)` (the identity module, threaded in as a param — see `UseMentionPillEditorOptions.resolveName`). The one raw-looking neighbor, `option.data.displayName` for `type: 'role'`, is a ROLE label (`MentionOption`'s role variant), not a member name — same category as the other role-name exceptions above. `type: 'channel'` uses `channelName`, not a member field at all.",
+
+  // ---- Known, unresolved — real instances of this bug class, confirmed by
+  // this wave, deliberately left unfixed because they sit outside its 9
+  // assigned findings. Each verdict below was independently re-checked, not
+  // carried over from the prior tranche's wording. ------------------------
+  'src/hooks/business/ui/useUserProfileModal.ts':
+    "VERIFIED dead code: `UserProfileModalUser`'s `displayName`/`primaryUsername`/`globalDisplayName` fields are populated by every caller (Channel.tsx x2, Message.tsx, BookmarksPage.tsx) but `UserProfile.tsx` — the only consumer of `selectedUser` — resolves its own name via `useResolvedMemberName(props.user.address, ...)` and never reads `props.user.displayName` (confirmed: no other consumer of `userProfileModal.selectedUser` exists in src/). Left unfixed: deleting the fields requires touching every caller's object-literal construction, a larger blast radius than this wave's assigned rows.",
+  'src/components/message/MessageComposer.native.tsx':
+    "VERIFIED real bug, live production surface: this repo ships its own embedded Expo/React-Native app (`mobile/`), and Metro's platform-extension resolution means `.native.tsx` siblings ARE the mobile build's actual source, not dead weight (unlike `.native.tsx` files excluded from the WEB typecheck by tsconfig). `mapSenderToUser(inReplyTo.content.senderId).displayName` renders raw into the \"Replying to {user}\" reply-preview label — a mobile user sees the same class of forgeable/stale name Message.tsx's web reply-preview had (finding 1) before this wave's fix. Left unfixed: out of scope for a desktop-repo fix wave (native/Expo surface, no test harness set up for it here).",
+  'src/hooks/business/channels/useChannelData.ts':
+    "VERIFIED real bug: `generateVirtualizedUserList`'s member-sidebar SEARCH filter (`member.displayName?.toLowerCase().includes(term)`) matches only `curr.display_name` — the per-space OVERRIDE tier alone, no global-name or QNS fallback. A member with no per-space nickname (the default/common state, per this file's own avatar-ladder comment) has an EMPTY `displayName`, so the sidebar search can only find them by pasting their raw address, never by the global/QNS name `<MemberName>` visibly renders beside them (fixed for the AVATAR half of this same file's output in finding 2, but not this search path). Left unfixed: not named in this wave's 9 findings; flagged rather than silently patched.",
 };
+// NOTE (final fix wave): `useMessageActions.ts` and
+// `src/components/modals/SpaceSettingsModal/Invites.tsx` were exception
+// entries here before this wave (self-name bug, bookmark-write fallback, and
+// a raw invite-picker avatar name, respectively — see findings 4, 5 and 9).
+// Both now import `src/identity` directly and are no longer flagged by this
+// audit's own heuristic, so their entries were REMOVED rather than reworded
+// — keeping an entry a file no longer needs is a silent regression risk: if
+// a future edit ever drops that import, the stale entry would keep
+// suppressing the audit instead of catching the regression.
 
 describe('raw member-name field audit — every render either imports src/identity or is a known exception', () => {
   const files = SCAN_ROOTS.flatMap((root) => walk(join(REPO_ROOT, root)))

@@ -18,7 +18,14 @@ export type HeaderConfig =
   | {
       type: 'user';
       address: string;
-      displayName?: string;
+      // Required, not optional: the resolver (`src/identity`) owns the
+      // fallback for an unknown member (a truncated address), so the only
+      // caller of this header type must always supply an already-resolved
+      // name — never a raw stored field like `Conversation.displayName`,
+      // which can literally be the placeholder string "Unknown User" and is
+      // stale-capable. See `DirectMessageContactsList.tsx`'s
+      // `contextMenuHeaderName`.
+      displayName: string;
       userIcon?: string;
     }
   | {
@@ -119,17 +126,16 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
 
     switch (header.type) {
       case 'user': {
-        const displayName = header.displayName || header.address.slice(0, 8);
         return (
           <div className="context-menu-header">
             <UserAvatar
               userIcon={header.userIcon}
-              displayName={displayName}
+              displayName={header.displayName}
               address={header.address}
               size={24}
             />
             <span className="context-menu-header-text">
-              {displayName}
+              {header.displayName}
             </span>
           </div>
         );

@@ -23,7 +23,7 @@
  */
 import * as React from 'react';
 import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -44,6 +44,16 @@ vi.mock('@/api/baseTypes', () => ({
   },
   isHandledFetchError: () => false,
 }));
+
+// Forces the desktop (`role="link"`, real `onContextMenu`) branch of
+// `DirectMessageContact` — `isTouchDevice()`'s jsdom answer isn't reliable
+// across this suite (some sibling files note it reads true, some false), and
+// the touch branch below never wires `onContextMenu` at all (context menus
+// are desktop-only), so the finding-3 context-menu test needs this forced.
+vi.mock('@/utils/platform', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('@/utils/platform')>();
+  return { ...actual, isTouchDevice: () => false };
+});
 
 const SELF_ADDR = 'QmSelf000000000000000000000000000000000000';
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
@@ -233,6 +243,44 @@ describe('DirectMessageContactsList — search matches the name the user actuall
       expect(screen.getByText('alice.q')).toBeInTheDocument();
       expect(screen.queryByText('Bob')).not.toBeInTheDocument();
     });
+  });
+});
+
+describe('DirectMessageContactsList — the right-click context menu header resolves via the identity module (finding 3)', () => {
+  beforeEach(() => {
+    getPublicProfile.mockReset();
+    getMessage.mockReset();
+  });
+
+  it('does not paint the raw stored "Unknown User" placeholder when the partner actually has a resolvable name', async () => {
+    // The conversation's LOCAL/raw displayName is literally the placeholder
+    // "Unknown User" (see `isUnknownUser` above) — realistic for a contact
+    // whose row has since resolved a real name via a public profile, but
+    // whose stale/never-updated local field still holds the placeholder.
+    getPublicProfile.mockImplementation((address: string) =>
+      Promise.resolve(
+        address === ADDR_A
+          ? { data: { primary_username: 'alice', display_name: 'Alice' } }
+          : { data: null },
+      ),
+    );
+
+    renderList([conversation(ADDR_A, 'Unknown User')]);
+
+    // The row itself already resolves via the identity module (unaffected
+    // by this finding) — confirms the profile landed.
+    const rowName = await screen.findByText('alice.q');
+    const row = rowName.closest('[role="link"]') as HTMLElement;
+    expect(row).not.toBeNull();
+
+    fireEvent.contextMenu(row);
+
+    await waitFor(() => {
+      const header = document.querySelector('.context-menu-header-text');
+      expect(header).not.toBeNull();
+      expect(header!.textContent).toBe('alice.q');
+    });
+    expect(screen.queryByText('Unknown User')).not.toBeInTheDocument();
   });
 });
 

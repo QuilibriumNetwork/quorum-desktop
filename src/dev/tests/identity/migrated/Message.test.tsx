@@ -188,6 +188,7 @@ function renderMessage(
   message: MessageType,
   messageList: MessageType[],
   rosters: Record<string, Record<string, unknown>>,
+  mapSenderToUser: (senderId: string) => any = staleMapSenderToUser,
 ) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
   return render(
@@ -197,7 +198,7 @@ function renderMessage(
           <Message
             message={message}
             messageList={messageList}
-            mapSenderToUser={staleMapSenderToUser}
+            mapSenderToUser={mapSenderToUser}
             emojiPickerOpen={undefined}
             setEmojiPickerOpen={() => {}}
             emojiPickerPosition={null}
@@ -273,5 +274,80 @@ describe('Message — sender name resolves via the identity module', () => {
       expect(headerNames[0]).toBe('alice.q');
       expect(replyNames[0]).toBe('alice.q');
     });
+  });
+});
+
+// SECURITY: the reply-preview's in-body @mentions used to render
+// `mapSenderToUser(address).displayName` raw (via shared's
+// `replaceMentionsWithDisplayNames`) — a per-space/global field with no
+// forged-".q" guard. A member who sets their own nickname to literally
+// "eviladmin.q" would render as an indistinguishable verified QNS name in
+// the reply-preview line above every message that mentions them, even
+// though `resolveIdentity`'s guard (`presentUnreserved`) exists specifically
+// to drop a stored name that tries to forge that marker. See
+// `resolveDisplayName.ts`'s `presentUnreserved` docstring.
+const ATTACKER = 'QmAttackerEgVKpYZKYuFu2J49zHXnA8vZtEqHMtzzzz';
+
+// Simulates `effectiveMembers`/`useVisibleSenderProfileFallback`: a
+// per-space nickname flows through unfiltered as `displayName`.
+const forgedNameMapSenderToUser = (senderId: string) =>
+  senderId === ATTACKER
+    ? {
+        address: ATTACKER,
+        userIcon: undefined,
+        displayName: 'eviladmin.q',
+        bio: undefined,
+        primaryUsername: undefined,
+        globalDisplayName: undefined,
+      }
+    : staleMapSenderToUser(senderId);
+
+describe('Message — reply-preview in-body @mentions cannot forge a verified name (security)', () => {
+  it('a member whose stored nickname ends in ".q" does NOT render as verified in the reply-preview text', async () => {
+    // No public profile for anyone — isolates the space-tier guard: without
+    // it, "eviladmin.q" is the only candidate name and would render verified.
+    getPublicProfile.mockResolvedValue({ data: null });
+
+    const original = baseMessage({
+      messageId: 'msg-0',
+      content: {
+        senderId: ATTACKER,
+        type: 'post',
+        text: `hey @<${ATTACKER}> check this out`,
+      } as unknown as MessageType['content'],
+    });
+    const reply = baseMessage({
+      messageId: 'msg-1',
+      content: {
+        senderId: ADDR,
+        type: 'post',
+        text: 'replying',
+        repliesToMessageId: 'msg-0',
+      } as unknown as MessageType['content'],
+    });
+
+    const { container } = renderMessage(
+      reply,
+      [original, reply],
+      {
+        [SPACE_ID]: {
+          [ADDR]: { display_name: '', global_display_name: 'Alice' },
+          // The forged nickname, stored exactly the way a member's own
+          // per-space override would be.
+          [ATTACKER]: { display_name: 'eviladmin.q' },
+        },
+      },
+      forgedNameMapSenderToUser,
+    );
+
+    await waitFor(() => {
+      expect(textOf(container, '.message-reply-text').length).toBeGreaterThan(0);
+    });
+
+    const replyText = textOf(container, '.message-reply-text').join(' ');
+    expect(replyText).not.toContain('@eviladmin.q');
+    // The resolver's real fallback for a guarded-out name: a truncated
+    // address, not the forged string and not empty.
+    expect(replyText).toContain(`@${ATTACKER.slice(0, 6)}`);
   });
 });
