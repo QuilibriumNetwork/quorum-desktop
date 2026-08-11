@@ -1314,21 +1314,50 @@ decisions you must make the same way, and five are bugs you will reproduce if yo
 
 ## Decisions that changed the design
 
-**1. Profile fetching is OPT-IN, and list surfaces do not opt in.**
+**1. Profile fetching is OPT-IN, and list surfaces do not opt in — REVISED 2026-08-11.**
 `<MemberName>` originally requested a public profile on mount. MEASURED: opening a 200-member space
 fired **200 concurrent requests** where it previously fired none. The operator ruled: resolve from
 in-memory roster maps by default, and pass an explicit `enrich` prop only where the surface needs
 the `.q` AND renders a bounded number of people.
 
 - `enrich`: message headers, DM headers, bookmarks, notifications, the profile card, reactor lists,
-  pinned messages, moderation modals, search results, typing indicators.
-- **no `enrich`**: the member sidebar, mention autocomplete, invite pickers — anything that can
-  render a whole roster. Those show roster names with no `.q`. That is an accepted limitation
-  (design decision 3), not an oversight.
+  pinned messages, moderation modals, search results, typing indicators, **the mention autocomplete,
+  and the invite pickers (revised below)**.
+- **no `enrich`**: the member sidebar only — the one surface whose cardinality is genuinely
+  unbounded (a whole Space's membership, no cap).
 
-Pinned by `src/dev/tests/identity/identitySidebarFetch.test.tsx`: 0 fetches for a 200-row sidebar,
-1 when self is in view (self only), and bounded-by-distinct-address on an enriched surface with 0
-growth on revisit.
+**Revision, with the numbers in front of the operator:** the mention autocomplete and the invite
+picker were bundled into "no `enrich`" alongside the sidebar at the time of the original decision,
+and that was over-conservative — neither is actually a roster dump. `useMentionInput` caps
+candidates at `maxDisplayResults = 50`, and after a character or two it shows a handful; the invite
+picker is a search over the user's own DM contacts, not a Space's membership. The bundling produced
+a visible inconsistency: typing `@ali`, picking `Alice` from a dropdown showing a plain roster name,
+and having the posted message render `alice.q` for the same person. Both surfaces now enrich:
+
+- **Mention autocomplete** (`MentionDropdown.tsx`): each rendered user row passes `enrich` to
+  `<MemberName>`, bounded by exactly the candidates displayed — never the underlying roster
+  `useMentionInput` filters from, which is roster-sized and would reproduce the 200-request storm if
+  requested wholesale. `useMentionInput.ts` itself never calls `request`/`requestNames` — enrichment
+  is owned by the rendering component; the hook only *reads* the ambient cache (`useNameResolver().
+  resolve()`), so filtering/sorting can never disagree with what's displayed. Filtering was extended
+  to match the resolved name (`.q` included), OR'd onto the existing raw-field match rather than
+  replacing it, so typing the exact `.q` name a person is already shown by (elsewhere in the app, or
+  from a prior dropdown open) finds them.
+- **Invite picker** (`useInviteManagement.ts` / `Invites.tsx`): `getUserOptions` calls `requestNames`
+  for every DM conversation address unconditionally when the tab opens — the whole (bounded, personal)
+  contact list, not just what's currently filtered, same reasoning as `BookmarksPage.tsx`'s proactive
+  `requestNames`. `Invites.tsx`'s `ConversationList` stays a pure reader (no request of its own).
+
+Pinned by `src/dev/tests/identity/identitySidebarFetch.test.tsx` (UNCHANGED by this revision — the
+sidebar's policy did not move): 0 fetches for a 200-row sidebar, 1 when self is in view (self only),
+and bounded-by-distinct-address on an enriched surface with 0 growth on revisit. The mention
+autocomplete's equivalent measurement lives in
+`src/dev/tests/identity/mentionDropdownFetch.test.tsx`: opening the dropdown with N distinct
+candidates issues exactly N fetches (never per keystroke, never per render), and re-opening it adds
+zero further fetches (provider dedupe + the 1h per-query cache). The invite picker's is in
+`src/dev/tests/identity/migrated/useInviteManagement.test.tsx` and `SpaceSettingsModalInviteWiring.
+test.tsx`: opening the tab fetches every DM contact once (plus the provider's own unconditional
+self-address bootstrap), and reading the options again adds zero more.
 
 **2. `MemberIdentity` gained a fourth source: locally-known names.**
 The plan's tier assembly took `globalName` from the roster's global slot or the fetched profile.

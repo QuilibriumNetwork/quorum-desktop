@@ -65,7 +65,9 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
   // hooks) — called once here, before the early return, and reused as a
   // plain function per row. Only used for the AVATAR's bare-name input (see
   // rule 4: avatar and name must agree); the label itself renders via
-  // <MemberName>, the SAME identityFromMaps + resolveIdentity read.
+  // <MemberName enrich>, the SAME identityFromMaps + resolveIdentity read.
+  // `resolve()` never requests on its own — the label's own `enrich` mount
+  // effect is what issues the fetch this reads back.
   const { resolve } = useNameResolver();
 
   if (!isOpen || filteredOptions.length === 0) {
@@ -134,12 +136,22 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
         );
 
       case 'user': {
-        // No `enrich`: this list can render a whole roster (up to 50
-        // matches), same rule as the member sidebar — one row must not cost
-        // one profile fetch. Roster name only, never ".q". `resolve()` here
-        // and <MemberName> below read the SAME identityFromMaps +
-        // resolveIdentity, so the avatar's initials and the label can never
-        // disagree (rule 4) even though they're two separate elements.
+        // `enrich`: this list is BOUNDED — maxDisplayResults caps it at 50,
+        // and after a character or two it's a handful — so it opted into
+        // the same rule as bookmarks/notifications/message headers (design
+        // decision 3, revised 2026-08-11). Without this, a candidate you
+        // pick here could render plain while the message you just posted
+        // renders their verified ".q" for the same person. The member
+        // sidebar keeps its no-enrich policy (genuinely unbounded
+        // cardinality) — this surface's fetch count is bounded by DISTINCT
+        // candidates rendered, never per keystroke or render, see
+        // src/dev/tests/identity/mentionDropdownFetch.test.tsx.
+        //
+        // `resolve()` here and <MemberName enrich> below read the SAME
+        // identityFromMaps + resolveIdentity, so the avatar's initials and
+        // the label can never disagree (rule 4) even though they're two
+        // separate elements — <MemberName>'s own mount effect is what
+        // issues the request; `resolve()` only ever reads.
         const resolvedBareName = resolve(option.data.address).name;
         return (
           <>
@@ -153,6 +165,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
             <div className="mention-dropdown__info">
               <MemberName
                 address={option.data.address}
+                enrich
                 className="mention-dropdown__name"
               />
               <span className="mention-dropdown__subtitle">

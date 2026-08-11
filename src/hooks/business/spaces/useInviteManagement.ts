@@ -111,18 +111,32 @@ export const useInviteManagement = (
     [conversations],
   );
 
-  // Can list every DM conversation the user has — same rule as the member
-  // sidebar / mention picker: this surface must NOT enrich. `resolve` reads
-  // the ambient <IdentityScopeProvider> (mounted by SpaceSettingsModal, one
-  // level up) with NO `requestNames` call, so opening this tab issues no
-  // public-profile fetch of its own. A partner with no published profile
-  // still gets a real name from the provider's `locallyKnownNames` (the
-  // conversation's own local displayName — SpaceSettingsModal builds that
-  // map the same way DirectMessage/DirectMessageContactsList do); a partner
-  // already enriched elsewhere in the session still shows their `.q` for
-  // free, because `resolve()` reads whatever the provider already has
-  // cached — it does not care who asked.
-  const { resolve } = useNameResolver();
+  // A search over the user's OWN DM contacts, not a roster dump — bounded
+  // by the size of their contact list, never a whole Space's membership.
+  // Same reasoning that already lets bookmarks / DirectMessageContactsList
+  // enrich their (also personal-list-bounded) candidates applies here too
+  // (design decision 3, revised 2026-08-11): `requestNames` below asks for
+  // every DM partner's profile up front, unconditionally — not just the
+  // currently-rendered/filtered ones — so a partner's `.q` is available the
+  // moment the tab opens rather than only after the user happens to search
+  // their way to them. `resolve` reads the ambient <IdentityScopeProvider>
+  // (mounted by SpaceSettingsModal, one level up). A partner with no
+  // published profile still gets a real name from the provider's
+  // `locallyKnownNames` (the conversation's own local displayName —
+  // SpaceSettingsModal builds that map the same way
+  // DirectMessage/DirectMessageContactsList do); a partner already enriched
+  // elsewhere in the session shows their `.q` too, because `resolve()`
+  // reads whatever the provider already has cached — it does not care who
+  // asked, and this hook's own `requestNames` dedupes against that.
+  const { resolve, requestNames } = useNameResolver();
+
+  const directConversationAddresses = useMemo(
+    () => directConversations.map((c) => c.address),
+    [directConversations],
+  );
+  useEffect(() => {
+    requestNames(directConversationAddresses);
+  }, [directConversationAddresses, requestNames]);
 
   // Get user options for dropdown
   const getUserOptions = useCallback(() => {

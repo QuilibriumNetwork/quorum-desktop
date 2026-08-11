@@ -1,23 +1,34 @@
 /**
  * useInviteManagement — the invite picker's user-option labels (Phase D row
- * 20). Can list every DM conversation the user has, so — same rule as the
- * member sidebar and the mention picker (row 19) — it must NOT enrich: no
- * public-profile fetch may be issued just because the invite tab opened.
+ * 20; REVISED 2026-08-11, design decision 3, second look).
  *
- * BEFORE this migration, `getUserOptions` read `useConversationsWithProfileBackfill`
- * (an unconditional N-fetch backfill of every DM partner's public profile —
- * this WAS the "no request" rule's violation) and built each label via
+ * This is a search over the user's OWN DM contacts, not a roster dump — the
+ * same reasoning that already let bookmarks and `DirectMessageContactsList`
+ * enrich their (also personal-list-bounded) candidates up front applies
+ * here too, so the original "must NOT enrich" call was over-conservative.
+ * `getUserOptions` now calls `requestNames` for every DM conversation
+ * address, unconditionally (not just the currently-filtered/rendered ones —
+ * same reasoning as `BookmarksPage.tsx`'s proactive `requestNames`: a
+ * contact hidden by an active search term still needs its profile in hand
+ * so a NEW search term can match their QNS name on the first keystroke).
+ * This list is a personal contact list, never a space's full membership, so
+ * it does not reintroduce the fetch storm the sidebar's policy guards
+ * against.
+ *
+ * BEFORE the Phase D migration, `getUserOptions` read
+ * `useConversationsWithProfileBackfill` (an unconditional N-fetch backfill
+ * of every DM partner's public profile) and built each label via
  * `resolveMemberName`/`formatResolvedName` from the backfilled row's raw
  * fields.
  *
  * The fix resolves through `useNameResolver` (`global: true` — these are DM
- * partners, not this space's roster) with NO `requestNames` call. A DM
- * partner who has never published a public profile still gets a real name
- * from `locallyKnownNames` (the conversation's own local `displayName`,
- * mirroring the DM surfaces' fix round 1 — no network round-trip), and a
- * partner who already has an enriched profile cached (from having opened
- * their DM) still shows their `.q` for free, because `resolve()` reads
- * whatever the provider already has.
+ * partners, not this space's roster). A DM partner who has never published
+ * a public profile still gets a real name from `locallyKnownNames` (the
+ * conversation's own local `displayName`, mirroring the DM surfaces' fix
+ * round 1 — no network round-trip), and a partner who already has an
+ * enriched profile cached (from having opened their DM, or from this hook's
+ * own `requestNames`) shows their `.q`, because `resolve()` reads whatever
+ * the provider already has.
  */
 import * as React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -109,13 +120,13 @@ function wrapperFor(locallyKnownNames: Record<string, string>) {
   };
 }
 
-describe('useInviteManagement — invite picker options (no enrich)', () => {
+describe('useInviteManagement — invite picker options (enrich, bounded by the DM contact list)', () => {
   beforeEach(() => {
     getPublicProfile.mockReset();
     getPublicProfile.mockResolvedValue({ data: null });
   });
 
-  it('renders a DM partner with no public profile via the LOCAL conversation name, no fetch', async () => {
+  it('renders a DM partner with no public profile via the LOCAL conversation name (a fetch is issued, per decision 3, but resolves to null here)', async () => {
     const { result } = renderHook(
       () => useInviteManagement({ spaceId: SPACE_ID, defaultChannel: undefined }),
       { wrapper: wrapperFor({ [ADDR_A]: 'Bob (from conversation)' }) },
@@ -128,7 +139,7 @@ describe('useInviteManagement — invite picker options (no enrich)', () => {
     expect(optA?.label).not.toBe('Stale B');
   });
 
-  it('shows the .q suffix for a partner whose profile is ALREADY cached (enriched elsewhere) — for free, no fetch of its own', async () => {
+  it('shows the .q suffix for a partner whose profile resolves (this hook\'s own requestNames, or already cached from elsewhere — either source, same read)', async () => {
     getPublicProfile.mockImplementation((address: string) =>
       address === ADDR_B
         ? Promise.resolve({ data: { display_name: 'Bea', primary_username: 'bea' } })
@@ -162,10 +173,7 @@ describe('useInviteManagement — invite picker options (no enrich)', () => {
     });
   });
 
-  it('never issues a public-profile request for a DM candidate (no enrich) — opening the tab must not fire N fetches', async () => {
-    // The provider's own selfAddress bootstrap always fetches YOUR OWN
-    // profile regardless of this hook — that's not what "no enrich" governs.
-    // What must never happen is a request for a CANDIDATE in the list.
+  it('enriches every DM candidate exactly once (design decision 3, revised): opening the tab requests each contact\'s profile, bounded by the contact list, and a second read adds zero more', async () => {
     const { result } = renderHook(
       () => useInviteManagement({ spaceId: SPACE_ID, defaultChannel: undefined }),
       { wrapper: wrapperFor({ [ADDR_A]: 'Bob (from conversation)' }) },
@@ -174,9 +182,25 @@ describe('useInviteManagement — invite picker options (no enrich)', () => {
     await waitFor(() => {
       expect(result.current.getUserOptions().length).toBe(2);
     });
-    // Give any accidental effect-driven fetch a chance to fire before asserting.
-    await new Promise((r) => setTimeout(r, 50));
-    expect(getPublicProfile).not.toHaveBeenCalledWith(ADDR_A);
-    expect(getPublicProfile).not.toHaveBeenCalledWith(ADDR_B);
+
+    // Bounded by the DM contact list (2 conversations) PLUS the provider's
+    // own unconditional self-address bootstrap (unrelated to this hook —
+    // see the sibling test above) — requested up front, same reasoning as
+    // BookmarksPage's proactive requestNames, so a new search term can match
+    // a QNS name on the first keystroke rather than only after that contact
+    // happens to render once.
+    await waitFor(() => {
+      expect(getPublicProfile).toHaveBeenCalledWith(ADDR_A);
+      expect(getPublicProfile).toHaveBeenCalledWith(ADDR_B);
+    });
+    const afterFirstRead = getPublicProfile.mock.calls.length;
+    expect(afterFirstRead).toBe(3); // ADDR_A, ADDR_B, and the self address
+
+    // Reading the options again (e.g. a re-render while the tab stays open)
+    // must not re-request — the provider's own dedupe plus the 1h cache
+    // serve it back from memory.
+    result.current.getUserOptions();
+    await new Promise((r) => setTimeout(r, 20));
+    expect(getPublicProfile.mock.calls.length).toBe(afterFirstRead);
   });
 });

@@ -1,31 +1,33 @@
 /**
- * MentionDropdown — the autocomplete list can render a whole roster (up to
- * 50 matches, and an unqueried view already lists 10), so — same rule as the
- * member sidebar — it must NOT enrich: every row resolves from the roster
- * maps already in memory (`<MemberName>` with no `enrich`), never a
- * per-address public-profile fetch. A row therefore shows the roster name
- * (per-space override, else the global name) and NEVER a `.q` suffix, even
- * when the option's own data happens to carry a `primaryUsername` (e.g.
- * cached from some other enriched surface) — that data must be ignored here.
+ * MentionDropdown — REVISED 2026-08-11 (design decision 3, second look).
  *
- * BEFORE this migration a row resolved via `resolveSpaceMemberName({
- * address, displayName: option.data.displayName, primaryUsername:
- * option.data.primaryUsername, globalDisplayName: option.data.globalDisplayName
- * })` — a per-row computation fed entirely from `option.data`, independent of
- * the ambient roster. `option.data` below deliberately carries a WRONG
- * `displayName` and a `primaryUsername` that must NOT surface as `.q` — proof
- * the row renders through the identity module's roster-only ladder and not
- * this local, per-option data.
+ * The operator's original call was "any surface that can render a whole
+ * roster must not enrich" — but the mention autocomplete never renders a
+ * whole roster: `useMentionInput` caps it at `maxDisplayResults = 50`, and
+ * after a character or two it is a handful. That made this surface
+ * over-conservative, and produced a visible inconsistency: the dropdown
+ * showed a plain roster name while the message you were about to post would
+ * render `<name>.q` for the same person (message headers, DM headers, etc.
+ * already enrich). This file used to pin the OLD "never .q" rule — see git
+ * history — and now pins the new one: a rendered row asks for the SAME
+ * verified suffix the rest of the app would show for that person, via
+ * `<MemberName enrich>`.
  *
- * Also covers the filtering bug the migration surfaced: `useMentionInput`'s
- * `filterUsers` matched only the RAW `displayName` field, never
- * `globalDisplayName` — so a follow-global member (the default state, empty
- * per-space override) could not be found by typing the exact name the
- * dropdown shows for them. Fixed by matching the same fields the roster
- * ladder reads.
+ * The member sidebar is NOT part of this reversal — it is genuinely
+ * unbounded (a whole space's roster) and keeps its no-enrich policy, pinned
+ * separately by `identitySidebarFetch.test.tsx`. The fetch-COST side of this
+ * change (bounded by distinct candidates, no keystroke/render multiplier, no
+ * regrowth on reopen) is measured separately in
+ * `../mentionDropdownFetch.test.tsx` — this file covers WHAT renders, not
+ * how many requests it costs.
+ *
+ * Also still covers the filtering bug from the original migration:
+ * `useMentionInput`'s matching must read the same fields the roster ladder
+ * reads (`globalDisplayName`, not just `displayName`) — untouched by this
+ * revision.
  */
 import * as React from 'react';
-import { describe, it, expect, beforeAll } from 'vitest';
+import { describe, it, expect, beforeAll, beforeEach, vi } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { renderHook } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -38,6 +40,16 @@ beforeAll(() => {
   i18n.activate('en');
 });
 
+const getPublicProfile = vi.fn();
+vi.mock('@/api/baseTypes', () => ({
+  QuorumApiClient: class {
+    getPublicProfile(address: string) {
+      return getPublicProfile(address);
+    }
+  },
+  isHandledFetchError: () => false,
+}));
+
 import { MentionDropdown } from '@/components/message/MentionDropdown';
 import { useMentionInput } from '@/hooks/business/mentions/useMentionInput';
 import { IdentityScopeProvider } from '@/identity/identityProvider';
@@ -45,15 +57,18 @@ import { IdentityScopeProvider } from '@/identity/identityProvider';
 const ADDR = 'QmPeerDEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const SPACE_ID = 'space-1';
 
-// Deliberately WRONG displayName, plus a primaryUsername that must NOT
-// surface as ".q" on this no-enrich surface — see file header.
+// Deliberately WRONG displayName/primaryUsername on the OPTION's own data —
+// proof the row renders through the identity module's roster+profile
+// resolution, never this local, possibly-stale option payload (same
+// precedent the pre-revision test used for the roster/global tiers; now
+// extended to the QNS tier too).
 function staleOption(overrides: Partial<MentionOption & { type: 'user' }> = {}): MentionOption {
   return {
     type: 'user',
     data: {
       address: ADDR,
       displayName: 'Stale Option Name',
-      primaryUsername: 'alice',
+      primaryUsername: 'not-the-real-qns-handle',
       globalDisplayName: 'Stale Global',
       userIcon: undefined,
       ...(overrides as any).data,
@@ -65,7 +80,7 @@ function renderDropdown(
   rosters: Record<string, Record<string, unknown>>,
   options: MentionOption[],
 ) {
-  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
       <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={rosters} selfAddress={null}>
@@ -80,25 +95,53 @@ function renderDropdown(
   );
 }
 
-describe('MentionDropdown — user rows resolve via the identity module (no enrich)', () => {
-  it('the load-bearing case: no per-space nickname, a global name — renders the ROSTER name with NO .q, even though a QNS name is cached on the option', () => {
+describe('MentionDropdown — user rows enrich (bounded, capped at maxDisplayResults)', () => {
+  beforeEach(() => {
+    getPublicProfile.mockReset();
+  });
+
+  it('the load-bearing case: no per-space nickname, a global name, and a QNS name — renders <qns>.q, from the identity module (never the stale primaryUsername carried on the option itself)', async () => {
+    getPublicProfile.mockResolvedValue({
+      data: { primary_username: 'alice', display_name: 'Alice', profile_image: '', bio: '', timestamp: 1, signature: '' },
+    });
+
     renderDropdown(
       { [SPACE_ID]: { [ADDR]: { display_name: '', global_display_name: 'Alice' } } },
       [staleOption()],
     );
 
-    expect(screen.getByText('Alice')).toBeInTheDocument();
-    expect(screen.queryByText('alice.q')).not.toBeInTheDocument();
-    expect(screen.queryByText(/alice\.q|Stale/)).not.toBeInTheDocument();
+    expect(await screen.findByText('alice.q')).toBeInTheDocument();
+    expect(screen.queryByText('Stale Option Name')).not.toBeInTheDocument();
+    expect(screen.queryByText('not-the-real-qns-handle')).not.toBeInTheDocument();
   });
 
-  it('a member WITH a per-space nickname renders the nickname, no .q', () => {
+  it('a candidate with ONLY a global name (no QNS profile) renders it plain, with no .q', async () => {
+    getPublicProfile.mockResolvedValue({ data: null });
+
+    renderDropdown(
+      { [SPACE_ID]: { [ADDR]: { display_name: '', global_display_name: 'Alice' } } },
+      [staleOption()],
+    );
+
+    expect(await screen.findByText('Alice')).toBeInTheDocument();
+    // Give the (resolved-to-null) fetch a moment to settle before asserting
+    // the negative — a false pass here would just mean we asserted too early.
+    await waitFor(() => expect(getPublicProfile).toHaveBeenCalledWith(ADDR));
+    expect(screen.queryByText(/\.q/)).not.toBeInTheDocument();
+  });
+
+  it('a member WITH a per-space nickname renders the nickname, no .q — even when a QNS name IS cached (the per-space tier still outranks it)', async () => {
+    getPublicProfile.mockResolvedValue({
+      data: { primary_username: 'alice', display_name: 'Alice', profile_image: '', bio: '', timestamp: 1, signature: '' },
+    });
+
     renderDropdown(
       { [SPACE_ID]: { [ADDR]: { display_name: 'Mod Alice', global_display_name: 'Alice' } } },
       [staleOption()],
     );
 
-    expect(screen.getByText('Mod Alice')).toBeInTheDocument();
+    expect(await screen.findByText('Mod Alice')).toBeInTheDocument();
+    await waitFor(() => expect(getPublicProfile).toHaveBeenCalledWith(ADDR));
     expect(screen.queryByText(/\.q/)).not.toBeInTheDocument();
     expect(screen.queryByText('Stale Option Name')).not.toBeInTheDocument();
   });
@@ -107,7 +150,8 @@ describe('MentionDropdown — user rows resolve via the identity module (no enri
     // Follow-global state: no per-space override, name comes from
     // globalDisplayName. The OLD filter only checked `displayName` (empty)
     // + `primaryUsername` + `address`, so typing "ali" — a prefix of the
-    // exact name shown in the dropdown — found nobody.
+    // exact name shown in the dropdown — found nobody. Untouched by the
+    // enrich revision above.
     const users = [
       {
         address: ADDR,
@@ -117,10 +161,9 @@ describe('MentionDropdown — user rows resolve via the identity module (no enri
       },
     ];
 
-    // useMentionInput's SORTING (Phase D row 19) reads the ambient roster via
-    // useNameResolver, so it now needs an <IdentityScopeProvider> ancestor —
-    // same roster this file's other tests already mount.
-    const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+    getPublicProfile.mockResolvedValue({ data: null });
+
+    const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
     const wrapper = ({ children }: { children: React.ReactNode }) => (
       <QueryClientProvider client={client}>
         <IdentityScopeProvider

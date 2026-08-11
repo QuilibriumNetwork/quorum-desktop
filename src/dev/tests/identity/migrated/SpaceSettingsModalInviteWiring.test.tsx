@@ -151,7 +151,7 @@ function renderModal() {
   );
 }
 
-describe('SpaceSettingsModal -> useInviteManagement — locally-known names reach the resolver, no fetch', () => {
+describe('SpaceSettingsModal -> useInviteManagement — locally-known names reach the resolver; the tab enriches (design decision 3, revised 2026-08-11)', () => {
   beforeEach(() => {
     getPublicProfile.mockReset();
     getPublicProfile.mockResolvedValue({ data: null });
@@ -166,13 +166,17 @@ describe('SpaceSettingsModal -> useInviteManagement — locally-known names reac
     expect(screen.queryByText(/^QmPeerK/)).not.toBeInTheDocument();
   });
 
-  it('never fetches a candidate’s public profile just from the modal opening', async () => {
+  it('fetches every candidate’s public profile once the modal opens — bounded by the DM contact list, not the whole space', async () => {
     renderModal();
     await waitFor(() => {
       expect(screen.getByText('Bob (from conversation)')).toBeInTheDocument();
     });
-    await new Promise((r) => setTimeout(r, 50));
-    expect(getPublicProfile).not.toHaveBeenCalledWith(ADDR_KNOWN);
-    expect(getPublicProfile).not.toHaveBeenCalledWith(ADDR_DOUBLE_UNKNOWN);
+    // The REAL production wiring (SpaceSettingsModal's own provider ->
+    // useInviteManagement's own requestNames), not a hand-built harness —
+    // this is what proves the opt-in reaches all the way through.
+    await waitFor(() => {
+      expect(getPublicProfile).toHaveBeenCalledWith(ADDR_KNOWN);
+      expect(getPublicProfile).toHaveBeenCalledWith(ADDR_DOUBLE_UNKNOWN);
+    });
   });
 });

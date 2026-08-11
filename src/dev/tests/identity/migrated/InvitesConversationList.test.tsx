@@ -38,12 +38,14 @@ import { IdentityScopeProvider, useIdentityContext } from '@/identity/identityPr
 
 const ADDR = 'QmPeerIEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 
-// `ConversationList`'s own `resolve()` deliberately does NOT enrich (design
-// decision 3 — this list can be long). In production a DM contact's QNS name
-// can still be cached here because SOME OTHER already-enriched surface (the
-// DM sidebar itself) requested it first — `identityFromMaps` reads whatever
-// the provider already has, it does not care who asked. This probe stands in
-// for that other surface.
+// `ConversationList`'s own `resolve()` is a pure READ — it never calls
+// `request` itself; enrichment for this surface is owned by
+// `useInviteManagement.ts`'s `getUserOptions` (design decision 3, revised
+// 2026-08-11: the DM contact list is bounded, so it now enriches up front).
+// In production a DM contact's QNS name can also be cached here because SOME
+// OTHER already-enriched surface (the DM sidebar) requested it first —
+// `identityFromMaps` reads whatever the provider already has, it does not
+// care who asked. This probe stands in for either source.
 const EnrichProbe: React.FC<{ address: string }> = ({ address }) => {
   const { request } = useIdentityContext();
   React.useEffect(() => {
