@@ -447,32 +447,71 @@ observable or measured.
 
 ## Corrections after implementation (2026-08-11)
 
-Desktop is implemented. Four decisions in this document changed during execution, and the
-authoritative record is the **"What actually happened"** section at the end of
-[the plan](2026-08-10-identity-resolution-architecture-plan.md). Read it before porting to mobile.
+Desktop is implemented and shipped. **Eight things in this document changed during execution.** The
+full record, with measurements and the bugs that forced each change, is the **"What actually
+happened"** section at the end of [the plan](2026-08-10-identity-resolution-architecture-plan.md).
+Read that before porting to mobile; this list is the index to it.
 
-In brief:
+**1. Fetching is opt-in.** Layer 3's `<MemberName>` resolves from in-memory maps by default and takes
+an explicit `enrich` prop to fetch a public profile. Constraint 1 asked the provider to "serve from an
+in-memory map first"; the first implementation still requested per row, and a 200-member space
+MEASURED 200 concurrent requests on open.
 
-1. **Fetching is opt-in.** Layer 3's `<MemberName>` resolves from in-memory maps by default and
-   takes an explicit `enrich` prop to fetch a public profile. Constraint 1 said the provider should
-   "serve from an in-memory map first"; the first implementation still requested per row, and a
-   200-member space MEASURED 200 concurrent requests. List surfaces (the member sidebar, mention
-   autocomplete, invite pickers) never enrich, so their lurkers show no `.q` — decision 3's
-   accepted limitation, now enforced by default rather than by discipline.
-2. **`MemberIdentity` needs a fourth source.** A locally-known-names map feeds `globalName` as its
-   last source, because a DM partner with no published public profile otherwise resolved to a
-   truncated address — which violates constraint 5.
-3. **Layer 3 has a third API**, `useNameResolver`, for resolving many addresses imperatively
-   (raw-DOM mention pills, search filters, sort keys). Hooks cannot be called per row, and letting
-   each call site assemble the answer itself is the defect this design exists to remove.
-4. **One root provider** is mounted above the router, not only at Space/DM boundaries. Mounting
-   surface by surface left modals outside every provider, and the app crashed when one rendered.
+**The member sidebar is the ONLY surface that never enriches.** The mention autocomplete and invite
+pickers were excluded alongside it at first, which was over-conservative and has been reversed —
+they cap their candidate lists, so enrichment there is bounded and demand-driven. Decision 3's
+accepted limitation ("lurkers show no `.q`") therefore applies to the sidebar alone, and the batch
+endpoint remains the only thing that would fix it.
 
-And one correction to the analysis rather than the design: **the "28 call sites" figure came from
-counting resolver imports, which undercounted by roughly 40%.** Surfaces that render a raw identity
-field without importing anything were invisible to that count — and are equally invisible to Layer
-4's lint rule, which can only see imports. The plan's record names all three waves found afterwards
-and the audit built to catch the class.
+**2. Layer 2 gained a fourth identity source: locally-known names.** A DM partner with no published
+public profile is in no roster and has no profile tier, so they resolved to a truncated address —
+violating constraint 5. A locally-known-names map, built from local conversation records, feeds
+`globalName` as its LAST source.
+
+**3. Self needs its own last resort.** Reading self's name from `currentPasskeyInfo` was correctly
+removed (it carries no QNS name, and caused four bugs), but desktop never publishes a display name —
+so a user with no published profile then had no name source at all and rendered as their own address.
+The device display name is now the final `globalName` source for self, below the published profile,
+and can never supply a `.q`.
+
+**4. Placeholder names must be filtered before they enter a tier.** A stored conversation name is
+sometimes the peer's own address, its truncated form, or the literal "Unknown User". If one reaches
+the locally-known-names map, the resolver treats it as a real name and renders a FULL raw address —
+strictly worse than the truncated address it would have produced itself.
+
+**5. Layer 3 has a third API**, `useNameResolver`, for resolving many addresses imperatively (raw-DOM
+mention pills, search filters, sort keys). Hooks cannot be called per row, and letting each call site
+assemble the answer itself is the defect this design exists to remove.
+
+**6. Nested providers MERGE with the enclosing scope; they do not replace it.** This is the largest
+correction to Layer 2. Four separate surfaces shipped mounting a provider with strictly less data
+than the one above them, each silently rendering members as raw addresses, each found by the operator
+by hand. Merging makes "a provider supplies less than its parent" unrepresentable.
+
+`defaultSpaceId` is deliberately **not** merged — it is always the provider's own prop. That is what
+stops a DM inheriting a per-space nickname now that the root carries every space's rosters.
+
+**7. The root provider carries real data.** Mounting one above the router was originally a crash
+backstop with empty rosters. That is not sufficient: anything rendered from an app-level host
+(modals, confirmations, toasts) inherits it, so it must carry every space's rosters and every DM
+partner's local name — local IndexedDB reads on existing query keys, gated on auth, non-suspending.
+
+**8. Layer 4 gained a runtime half.** The lint rule only sees imports, so it cannot see a surface that
+renders a raw identity field without importing anything — which is where most of the late bugs were.
+Two instruments close that: a checked-in audit test that fails when a file renders a raw name field,
+and a dev-build diagnostic that reports any resolution degrading to the address fallback, with a live
+counter on `/dev/identity-coverage`. **Build both before migrating call sites, not after.**
+
+**And one correction to the analysis rather than the design:** the "28 call sites" figure came from
+counting resolver imports, which undercounted by roughly 40%. Surfaces that render a raw identity
+field without importing anything were invisible to that count, and equally invisible to Layer 4's
+lint rule. Three further waves were found afterwards — the app shell, a second tranche found by
+audit, and message-body mentions.
+
+**One contract this document never stated, and every client needs:** a DM's `spaceId` IS the peer's
+address (`spaceId === channelId === peerAddress`). Any surface reachable from both a channel and a DM
+that passes a `spaceId` into an identity scope will query a space that does not exist, get an empty
+roster, and force the space ladder where the global one is correct.
 
 ---
 
