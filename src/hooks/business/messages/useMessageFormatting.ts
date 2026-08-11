@@ -73,6 +73,12 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
   // degraded to raw unrendered text with no substitution at all. Mirrors
   // MessageMarkdownRenderer's `mentionedAddresses` (the already-correct
   // reference implementation this hook is being brought in line with).
+  //
+  // The closing `>` is optional here too, matching `processTextToken`'s own
+  // scan below — a mention token missing its closing bracket must still get
+  // its name PREFETCHED, or `resolve()` would forever return the
+  // truncated-address fallback for it even though `processTextToken` now
+  // recognizes it as a mention.
   const mentionedAddresses = useMemo(() => {
     const set = new Set<string>();
     if (message.content.type !== 'post') return set;
@@ -80,7 +86,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
       ? message.content.text.join(' ')
       : message.content.text;
     const cidPattern = createIPFSCIDRegex().source;
-    const re = new RegExp(`@<(${cidPattern})>`, 'g');
+    const re = new RegExp(`@<(${cidPattern})>?`, 'g');
     let m: RegExpExecArray | null;
     while ((m = re.exec(text)) !== null) set.add(m[1]);
     return set;
@@ -191,25 +197,52 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
           displayName: '@everyone',
           address: 'everyone',
           isInteractive: !disableMentionInteractivity,
+          prefix: '',
+          suffix: '',
         };
       }
 
-      // Check for user mentions: @<address> (legacy format only)
+      // Check for user mentions: @<address> (legacy format only).
+      //
+      // SCANS the token for a well-formed CID in `@<…>` form rather than
+      // requiring the WHOLE token to equal `@<address>` — matches the
+      // scanning behavior of the already-correct reference implementation,
+      // `processMentions` in quorum-shared, which the ordinary message list
+      // renders through: it scans full text for `@<(CID)>` and replaces only
+      // the matched substring, never requiring the surrounding text to be
+      // empty. An anchored `^@<(CID)>$` match required the token to be
+      // NOTHING but the mention — a real mention with trailing punctuation,
+      // text glued on with no separating space, or even a dropped closing
+      // bracket fell straight through to the "regular text" case below and
+      // rendered completely raw (the operator-reported bug: a real
+      // IndexedDB probe found a mention token 5 characters longer than a
+      // bare `@<CID>`, not ending in `>`).
+      //
+      // The closing `>` is consumed when present but NOT required to locate
+      // the address: a CID has a fixed, self-delimiting length (`Qm` + 44
+      // alphanumeric characters), so a token missing its closing bracket
+      // entirely still resolves instead of leaking the raw token. This is a
+      // deliberate point of leniency beyond `processMentions`'s own
+      // `hasWordBoundaries` gate (which also requires whitespace/punctuation
+      // immediately around the match) — for this per-token preview/
+      // notification fallback, showing a resolved name with awkward
+      // adjacent text is strictly better than showing a raw, unrendered CID.
+      //
+      // Whatever text sits before/after the match within the token is
+      // preserved verbatim via `prefix`/`suffix` — punctuation or adjacent
+      // text must never be swallowed just because a mention was recognized.
       const cidPattern = createIPFSCIDRegex().source;
-      const userMentionRegex = new RegExp(`^@<(${cidPattern})>$`);
+      const userMentionRegex = new RegExp(`@<(${cidPattern})>?`);
       const userMatch = token.match(userMentionRegex);
 
-      if (userMatch) {
+      if (userMatch && userMatch.index !== undefined) {
         // userMatch[1] is the address. Render as a mention for ANY
-        // well-formed `@<CID>` token — NOT gated on
-        // `message.mentions.memberIds` (that field is a best-effort
+        // well-formed `@<CID` occurrence anywhere in the token — NOT gated
+        // on `message.mentions.memberIds` (that field is a best-effort
         // notification-triggering index, not a complete list of every
         // address the text names; gating on it is what let a real mention
         // fall all the way through to unrendered raw text with no
-        // substitution at all). Matches the already-correct reference
-        // implementation, `processMentions` in quorum-shared, which the
-        // main message list renders through and never checks memberIds
-        // either.
+        // substitution at all).
         const userId = userMatch[1];
         const resolved = resolve(userId, { spaceId: currentSpaceId });
         return {
@@ -218,6 +251,8 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
           displayName: resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name,
           address: userId,
           isInteractive: !disableMentionInteractivity,
+          prefix: token.slice(0, userMatch.index),
+          suffix: token.slice(userMatch.index + userMatch[0].length),
         };
       }
 
@@ -236,6 +271,8 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
             displayName: `@${role.roleTag}`,
             address: role.roleId,
             isInteractive: !disableMentionInteractivity,
+            prefix: '',
+            suffix: '',
           };
         }
       }

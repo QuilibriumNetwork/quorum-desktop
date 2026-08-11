@@ -61,9 +61,11 @@ const renderMessageContent = (
       if (tokenData.type === 'mention') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
+            {tokenData.prefix}
             <span className="message-mentions-user non-interactive">
               {tokenData.displayName}
             </span>
+            {tokenData.suffix}
             {j < tokens.length - 1 ? ' ' : ''}
           </React.Fragment>
         );

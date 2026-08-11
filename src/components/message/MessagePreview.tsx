@@ -54,11 +54,13 @@ const renderPreviewTextWithSpecialTokens = (
       if (tokenData.type === 'mention') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
+            {tokenData.prefix}
             <span
               className={`message-mentions-user ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
             >
               {tokenData.displayName}
-            </span>{' '}
+            </span>
+            {tokenData.suffix}{' '}
           </React.Fragment>
         );
       } else if (tokenData.type === 'channel-mention') {

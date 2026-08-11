@@ -12,7 +12,7 @@
 // timestamp and wins. Sending it through `submitChannelMessage` also self-applies it
 // locally with a fresh `profileTimestamp`, which is what makes it survive that race.
 //
-// See .agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md §5-D
+// See .agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md §5-D
 
 import { useEffect, useRef } from 'react';
 import { useQueryClient } from '@tanstack/react-query';

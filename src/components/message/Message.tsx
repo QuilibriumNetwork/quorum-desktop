@@ -1338,9 +1338,11 @@ export const Message = React.memo(
                                 : 'message-mentions-user';
                             return (
                               <React.Fragment key={tokenData.key}>
+                                {tokenData.prefix}
                                 <span className={mentionClass}>
                                   {tokenData.displayName}
-                                </span>{' '}
+                                </span>
+                                {tokenData.suffix}{' '}
                               </React.Fragment>
                             );
                           }
