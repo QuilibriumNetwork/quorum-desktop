@@ -80,7 +80,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const locallyKnownNames = React.useMemo(() => {
     const map: Record<string, string> = {};
     for (const c of directConversations) {
-      const name = realDisplayNameOrUndefined(c.displayName);
+      const name = realDisplayNameOrUndefined(c.displayName, c.address);
       if (name && c.address) map[c.address] = name;
     }
     return map;

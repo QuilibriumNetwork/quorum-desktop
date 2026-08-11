@@ -4,7 +4,7 @@ import { parse as parseEmoji } from '@twemoji/parser';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Modal, Flex, ScrollContainer } from '../primitives';
 import { MemberName, IdentityScopeProvider } from '../../identity';
-import { useMultiSpaceRosters } from '../../hooks/business/identity';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Reaction } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../emoji-picker/types';
@@ -39,9 +39,19 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
   const selfAddress = user?.currentPasskeyInfo?.address || null;
   const spaceIds = useMemo(() => [spaceId], [spaceId]);
   const rostersBySpace = useMultiSpaceRosters(spaceIds);
+  // Same reusable source `SearchResults.tsx`/`useRootIdentityScope` use — a
+  // reactor who is a DM contact (no public profile, no space roster row) is
+  // known locally from their conversation record. Without this the modal had
+  // no DM-shaped local-name source of its own and fell to a truncated
+  // address for that reactor.
+  const locallyKnownNames = useLocalDmNames(selfAddress);
 
   return (
-    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={selfAddress}>
+    <IdentityScopeProvider
+      rostersBySpace={rostersBySpace}
+      selfAddress={selfAddress}
+      locallyKnownNames={locallyKnownNames}
+    >
       <ReactionsModalInner
         visible={visible}
         onClose={onClose}

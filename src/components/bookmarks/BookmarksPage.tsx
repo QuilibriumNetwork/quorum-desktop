@@ -6,7 +6,7 @@ import type { Bookmark } from '@quilibrium/quorum-shared';
 import { Button, Icon, Input, Select } from '../primitives';
 import { BookmarkCard } from './BookmarkCard';
 import { useBookmarks } from '../../hooks/business/bookmarks';
-import { useMultiSpaceRosters } from '../../hooks/business/identity';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { useOptionalShellState } from '../shell/useShellState';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -294,9 +294,20 @@ export const BookmarksPage: React.FC = () => {
     [bookmarks]
   );
   const rostersBySpace = useMultiSpaceRosters(bookmarkSpaceIds);
+  // Same reusable source `SearchResults.tsx`/`useRootIdentityScope` use — the
+  // `'dm'` source filter (SourceFilter above) means this page renders DM
+  // bookmarks too, and a DM bookmark's sender can be a DM contact known only
+  // from their local conversation record (no public profile, no space
+  // roster row). Without this the page had no DM-shaped local-name source of
+  // its own and fell to a truncated address for that sender.
+  const locallyKnownNames = useLocalDmNames(userAddress || null);
 
   return (
-    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={userAddress || null}>
+    <IdentityScopeProvider
+      rostersBySpace={rostersBySpace}
+      selfAddress={userAddress || null}
+      locallyKnownNames={locallyKnownNames}
+    >
       <BookmarksPageInner
         bookmarks={bookmarks}
         bookmarkCount={bookmarkCount}

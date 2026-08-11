@@ -42,10 +42,11 @@ vi.mock('@/api/baseTypes', () => ({
   isHandledFetchError: () => false,
 }));
 
-// No roster tier needed for this test — search resolution is exercised via
-// the global/QNS tier (public profile) alone.
+// No roster/local-name tier needed for this test — search resolution is
+// exercised via the global/QNS tier (public profile) alone.
 vi.mock('@/hooks/business/identity', () => ({
   useMultiSpaceRosters: () => ({}),
+  useLocalDmNames: () => ({}),
 }));
 
 const removeBookmark = vi.fn();

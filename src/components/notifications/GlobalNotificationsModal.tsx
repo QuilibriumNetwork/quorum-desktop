@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useSpaces } from '../../hooks/queries/spaces';
-import { useMultiSpaceRosters } from '../../hooks/business/identity';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
 import { IdentityScopeProvider } from '../../identity';
 import { NotificationPanel } from './NotificationPanel';
 
@@ -33,9 +33,19 @@ const GlobalNotificationsInner: React.FC<Props> = ({ isOpen, onClose }) => {
   // provider.
   const spaceIds = React.useMemo(() => spaces.map((s) => s.spaceId), [spaces]);
   const rostersBySpace = useMultiSpaceRosters(spaceIds);
+  // Same reusable source `SearchResults.tsx`/`useRootIdentityScope` use — a DM
+  // notification (a mention in a DM, say) can name a partner known only from
+  // their local conversation record (no public profile, no space roster row).
+  // Without this the panel had no DM-shaped local-name source of its own and
+  // fell straight to a truncated address for that row.
+  const locallyKnownNames = useLocalDmNames(selfAddress);
 
   return (
-    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={selfAddress}>
+    <IdentityScopeProvider
+      rostersBySpace={rostersBySpace}
+      selfAddress={selfAddress}
+      locallyKnownNames={locallyKnownNames}
+    >
       <NotificationPanel
         global
         isOpen={isOpen}

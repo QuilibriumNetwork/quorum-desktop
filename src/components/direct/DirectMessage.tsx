@@ -385,7 +385,7 @@ const DirectMessage: React.FC<{}> = () => {
       // has opted into a public profile.
       m[address!] = {
         displayName:
-          realDisplayNameOrUndefined(conversation.conversation.displayName) ??
+          realDisplayNameOrUndefined(conversation.conversation.displayName, address) ??
           pubName,
         userIcon:
           realIconOrUndefined(conversation.conversation.icon) ?? pubIcon,
@@ -530,7 +530,7 @@ const DirectMessage: React.FC<{}> = () => {
   // is showing. This narrower, always-correct source is what the shared one
   // cannot guarantee, so it stays.
   const localNamesByAddress = useMemo(() => {
-    const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName);
+    const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName, address);
     const partnerEntry = localName && address ? { [address]: localName } : {};
     return {
       ...partnerEntry,

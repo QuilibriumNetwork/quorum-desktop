@@ -127,8 +127,73 @@ export const useIdentityContext = (): IdentityContextValue => {
   return ctx;
 };
 
+/**
+ * Shallow merge of a flat `address -> value` map (`profiles`,
+ * `locallyKnownNames`): `own` wins per key, `parent` fills in every key
+ * `own` doesn't have an opinion on. Returns one of the two inputs UNCHANGED
+ * (same reference) whenever the other side is empty — both `EMPTY_LOCAL_NAMES`
+ * (this file) and the default `{}` a `useQueries`-backed `profiles` memo can
+ * produce are already the "nothing to contribute" case every caller up the
+ * tree treats as a stable reference; returning a fresh object here even when
+ * merging with nothing would quietly reintroduce the per-render allocation
+ * those memos exist to avoid.
+ */
+function mergeFlat<T>(
+  parent: Record<string, T>,
+  own: Record<string, T>,
+): Record<string, T> {
+  const parentKeys = Object.keys(parent);
+  if (parentKeys.length === 0) return own;
+  const ownKeys = Object.keys(own);
+  if (ownKeys.length === 0) return parent;
+  return { ...parent, ...own };
+}
+
+/**
+ * Merge for `rostersBySpace` specifically — TWO levels (spaceId, then
+ * address), not one shallow merge of the outer map. A shallow merge would
+ * let `own`'s per-space roster REPLACE `parent`'s wholesale for any spaceId
+ * both sides know about, which is exactly the shape of regression this fix
+ * exists to prevent: `useMultiSpaceRosters` always sets `map[spaceId] = {}`
+ * for a space whose query hasn't resolved yet (see that hook's own
+ * docstring), so a child provider still loading its own roster for a space
+ * the PARENT already finished loading would, under a shallow merge, blank
+ * out every address the parent already knew for that one render — a
+ * regression this fix would have introduced, not fixed. Merging per-address
+ * instead means an empty-so-far child roster simply contributes nothing for
+ * that space and the parent's rows keep showing until the child's own
+ * fetch catches up; a child address that HAS loaded still wins over a
+ * parent's for the same key (Channel's own roster read must win over root's
+ * for Channel's own space).
+ */
+function mergeRostersBySpace(
+  parent: Record<string, Record<string, RosterNameRow>>,
+  own: Record<string, Record<string, RosterNameRow>>,
+): Record<string, Record<string, RosterNameRow>> {
+  const parentSpaceIds = Object.keys(parent);
+  if (parentSpaceIds.length === 0) return own;
+  const ownSpaceIds = Object.keys(own);
+  if (ownSpaceIds.length === 0) return parent;
+
+  const merged: Record<string, Record<string, RosterNameRow>> = { ...parent };
+  for (const spaceId of ownSpaceIds) {
+    const parentRoster = parent[spaceId];
+    merged[spaceId] = parentRoster ? mergeFlat(parentRoster, own[spaceId]) : own[spaceId];
+  }
+  return merged;
+}
+
 export const IdentityScopeProvider: React.FunctionComponent<{
-  /** The Space this subtree lives in, if any. Absent for DMs and global views. */
+  /** The Space this subtree lives in, if any. Absent for DMs and global views.
+   *  NOT inherited from an enclosing scope (see the MERGE note below) — a
+   *  provider that doesn't pass this always resolves on the global ladder,
+   *  regardless of what an ancestor's own `spaceId` happens to be. Every
+   *  detached surface (bookmarks, notifications, search, reactions) relies
+   *  on exactly this: it deliberately omits `spaceId` and expects the
+   *  global ladder, even though the ROOT provider above it is, in App.tsx,
+   *  always spaceId-less too — but a future ancestor scoped to a real Space
+   *  must not leak its spaceId down into a sibling detached surface that
+   *  never asked for it. */
   spaceId?: string;
   /** spaceId -> roster, already loaded by the caller (local IndexedDB read). */
   rostersBySpace: Record<string, Record<string, RosterNameRow>>;
@@ -188,19 +253,61 @@ export const IdentityScopeProvider: React.FunctionComponent<{
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [addresses, updatedAtKey]);
 
-  const selfProfile = selfAddress ? (profiles[selfAddress] ?? null) : null;
-
   React.useEffect(() => {
     if (selfAddress) request(selfAddress);
   }, [selfAddress, request]);
 
+  // MERGE, not replace. `useContext` (not `useIdentityContext`) deliberately
+  // — the ROOT provider (App.tsx) and any isolated test mount legitimately
+  // have no ancestor, and that must degrade to "nothing to merge with", not
+  // throw. Every OTHER provider in the app (Channel, DirectMessage,
+  // BookmarksPage, ReactionsModal, GlobalNotificationsModal, MessagePreview,
+  // SearchResults...) IS a descendant of the root provider (App.tsx mounts
+  // it above the Router, which is above every ModalProvider/Layout host —
+  // see App.tsx's own comment), so `parent` here is almost always at least
+  // the root's own merged sources, recursively accumulated: each level only
+  // ever merges with its DIRECT parent, which already carries everything
+  // merged in above IT, so there is no need to walk further than one level.
+  //
+  // This is the structural fix for the recurring "provider mounted with
+  // less data than the one above it" bug class (four rounds of it, found by
+  // hand each time — see .agents/issues/2026-08-10-name-surfaces-that-never-
+  // reached-the-resolver.md): a provider that forgets a tier, or whose own
+  // fetch for a tier is still loading, now still resolves through whatever
+  // its ANCESTOR already knows, instead of silently shadowing it with less.
+  // A provider that DOES supply its own data for a given key keeps winning
+  // over its ancestor for that key (see `mergeFlat`/`mergeRostersBySpace`),
+  // so Channel's own roster for its own space is never shadowed by root's.
+  const parent = React.useContext(IdentityContext);
+
+  const mergedRostersBySpace = React.useMemo(
+    () => (parent ? mergeRostersBySpace(parent.sources.rostersBySpace, rostersBySpace) : rostersBySpace),
+    [parent, rostersBySpace],
+  );
+  const mergedProfiles = React.useMemo(
+    () => (parent ? mergeFlat(parent.sources.profiles, profiles) : profiles),
+    [parent, profiles],
+  );
+  const mergedLocallyKnownNames = React.useMemo(
+    () => (parent ? mergeFlat(parent.sources.locallyKnownNames, locallyKnownNames) : locallyKnownNames),
+    [parent, locallyKnownNames],
+  );
+
+  const selfProfile = selfAddress ? (mergedProfiles[selfAddress] ?? null) : null;
+
   const value = React.useMemo<IdentityContextValue>(
     () => ({
-      sources: { rostersBySpace, profiles, selfAddress, selfProfile, locallyKnownNames },
+      sources: {
+        rostersBySpace: mergedRostersBySpace,
+        profiles: mergedProfiles,
+        selfAddress,
+        selfProfile,
+        locallyKnownNames: mergedLocallyKnownNames,
+      },
       defaultSpaceId: spaceId,
       request,
     }),
-    [rostersBySpace, profiles, selfAddress, selfProfile, locallyKnownNames, spaceId, request],
+    [mergedRostersBySpace, mergedProfiles, selfAddress, selfProfile, mergedLocallyKnownNames, spaceId, request],
   );
 
   return <IdentityContext.Provider value={value}>{children}</IdentityContext.Provider>;

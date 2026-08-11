@@ -44,6 +44,53 @@ describe('isPlaceholderDisplayName', () => {
   });
 });
 
+// The CRITICAL regression this fix closes: a stored name that IS the
+// member's own address is not a name, it's the resolver's own fallback
+// round-tripped into storage. `buildLocalDmNames`/`realDisplayNameOrUndefined`
+// used to accept it as real, which then rendered the FULL, UNTRUNCATED
+// address on screen — worse than doing nothing, since the resolver's own
+// fallback at least truncates. See
+// .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+describe('isPlaceholderDisplayName — a name that is the address itself', () => {
+  const ADDRESS = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqzzABCDEF';
+
+  it('treats an exact address match as a placeholder', () => {
+    expect(isPlaceholderDisplayName(ADDRESS, ADDRESS)).toBe(true);
+  });
+
+  it('treats a case-different address match as a placeholder', () => {
+    expect(isPlaceholderDisplayName(ADDRESS.toUpperCase(), ADDRESS)).toBe(true);
+    expect(isPlaceholderDisplayName(ADDRESS.toLowerCase(), ADDRESS.toUpperCase())).toBe(true);
+  });
+
+  it('treats a truncated rendering of the address as a placeholder, both known truncation shapes', () => {
+    // quorum-shared resolveDisplayName's own internal fallback shape (6/4).
+    expect(isPlaceholderDisplayName(`${ADDRESS.slice(0, 6)}…${ADDRESS.slice(-4)}`, ADDRESS)).toBe(true);
+    // formatAddress's default shape (Qm + 6 / 6).
+    expect(isPlaceholderDisplayName(`${ADDRESS.slice(0, 8)}…${ADDRESS.slice(-6)}`, ADDRESS)).toBe(true);
+  });
+
+  it('does not flag a real name that merely contains an ellipsis unrelated to the address', () => {
+    expect(isPlaceholderDisplayName('Hello…World', ADDRESS)).toBe(false);
+  });
+
+  it('does not flag a real name as a placeholder just because SOME address is in scope', () => {
+    expect(isPlaceholderDisplayName('GattoPardo', ADDRESS)).toBe(false);
+  });
+
+  it('without an address in scope, only the literal/empty placeholder rules apply (no false positive on a name that happens to look address-shaped)', () => {
+    expect(isPlaceholderDisplayName(ADDRESS)).toBe(false);
+    expect(isPlaceholderDisplayName(ADDRESS, undefined)).toBe(false);
+    expect(isPlaceholderDisplayName(ADDRESS, null)).toBe(false);
+  });
+
+  it('realDisplayNameOrUndefined demotes an address-shaped name the same way', () => {
+    expect(realDisplayNameOrUndefined(ADDRESS, ADDRESS)).toBeUndefined();
+    expect(realDisplayNameOrUndefined(`${ADDRESS.slice(0, 6)}…${ADDRESS.slice(-4)}`, ADDRESS)).toBeUndefined();
+    expect(realDisplayNameOrUndefined('GattoPardo', ADDRESS)).toBe('GattoPardo');
+  });
+});
+
 describe('isPlaceholderIcon', () => {
   it('treats the default image, empty and nullish as placeholders', () => {
     expect(isPlaceholderIcon(DefaultImages.UNKNOWN_USER)).toBe(true);

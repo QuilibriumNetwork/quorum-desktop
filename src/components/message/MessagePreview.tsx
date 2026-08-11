@@ -9,7 +9,7 @@ import { formatMessageDate } from '../../utils';
 import { processMarkdownText, hasPermission } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { MemberName, IdentityScopeProvider } from '../../identity';
-import { useMultiSpaceRosters } from '../../hooks/business/identity';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (
@@ -189,26 +189,54 @@ interface MessagePreviewProps {
  * nested inside an already-open Channel (`PinnedMessagesPanel`), the roster
  * read here is the SAME cached entry Channel's own provider was built
  * from — an inner provider refining with identical data, never a second,
- * emptier source that could shadow a working outer one.
+ * emptier source that could shadow a working outer one. Also carries
+ * `useLocalDmNames` (the same reusable source `SearchResults.tsx` and the
+ * root provider use), so a DM partner known only from their local
+ * conversation record — no public profile, no space roster row — still
+ * resolves to their name rather than a truncated address inside a preview
+ * (e.g. the delete-confirmation dialog for a DM message).
  *
- * See .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+ * SECOND DEFECT, fixed here too: `currentSpaceId` is not always a real
+ * Space. `useMessageActions.ts`'s `handleDelete` builds this preview with
+ * `currentSpaceId: spaceId || message.spaceId` — for a message inside a DM,
+ * `message.spaceId` IS the peer's address (the app-wide convention: a DM's
+ * spaceId === channelId === the peer's address, see `MessageList.tsx:118`,
+ * `Message.tsx:384-396`, and the identical `message.spaceId ===
+ * message.channelId` check `SearchResults.tsx`/`SearchResultItem.tsx` already
+ * use). Passing that pseudo-spaceId straight to the provider's own `spaceId`
+ * forces the SPACE ladder — a per-space-nickname tier that cannot exist for
+ * a DM — where `DirectMessage.tsx` deliberately resolves on the GLOBAL
+ * ladder. `isDM` below detects this the same way those other call sites do:
+ * reliably, not heuristically — a real Space channel's `channelId` is a
+ * distinct id generated at channel creation and is never equal to its own
+ * `spaceId` by construction (every write site that checks this convention,
+ * `MessageService.ts`/`ThreadService.ts` among them, relies on the same
+ * fact), so the comparison cannot false-positive on an ordinary channel
+ * message. On a match, `currentSpaceId` is withheld from the provider
+ * entirely (both the roster fetch and `spaceId` prop), which is exactly the
+ * `rostersBySpace={{}}` + no-`spaceId` shape `DirectMessage.tsx` itself uses.
  */
 export const MessagePreview: React.FC<MessagePreviewProps> = (props) => {
-  const { currentSpaceId } = props;
+  const { currentSpaceId, message } = props;
   const user = usePasskeysContext();
   const selfAddress = user?.currentPasskeyInfo?.address ?? null;
 
+  const isDM = !!message.spaceId && message.spaceId === message.channelId;
+  const effectiveSpaceId = isDM ? undefined : currentSpaceId;
+
   const spaceIds = React.useMemo(
-    () => (currentSpaceId ? [currentSpaceId] : []),
-    [currentSpaceId],
+    () => (effectiveSpaceId ? [effectiveSpaceId] : []),
+    [effectiveSpaceId],
   );
   const rostersBySpace = useMultiSpaceRosters(spaceIds);
+  const locallyKnownNames = useLocalDmNames(selfAddress);
 
   return (
     <IdentityScopeProvider
-      spaceId={currentSpaceId}
+      spaceId={effectiveSpaceId}
       rostersBySpace={rostersBySpace}
       selfAddress={selfAddress}
+      locallyKnownNames={locallyKnownNames}
     >
       <MessagePreviewContent {...props} />
     </IdentityScopeProvider>

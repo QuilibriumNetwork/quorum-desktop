@@ -105,13 +105,20 @@ export interface DirectConversationIdentityRow {
  * True when a stored display name would actually render as a name.
  *
  * Mirrors the render path exactly, in both of its steps: the app demotes the
- * locale-aware `'Unknown User'` placeholder via `realDisplayNameOrUndefined`,
+ * locale-aware `'Unknown User'` placeholder (and a stored name that is just
+ * the member's own address, in full or truncated — see
+ * `isPlaceholderDisplayName`'s address check) via `realDisplayNameOrUndefined`,
  * and then quorum-shared's `resolveDisplayName` applies a trim-and-length
  * check before accepting it. A count that skipped either step would disagree
  * with the screen, which would make it worthless as a measurement.
+ *
+ * `address`, when the caller has one in scope, is passed straight through to
+ * `isPlaceholderDisplayName` — a row whose stored name is literally its own
+ * address must count as "no name" here too, or this instrument would report
+ * coverage the screen doesn't actually have.
  */
-export function hasRealName(value?: string | null): boolean {
-  if (isPlaceholderDisplayName(value)) return false;
+export function hasRealName(value?: string | null, address?: string | null): boolean {
+  if (isPlaceholderDisplayName(value, address)) return false;
   return (value ?? '').trim().length > 0;
 }
 
@@ -161,9 +168,9 @@ export interface MemberIdentityVerdict {
 export function classifyMemberIdentity(
   row: SpaceMemberIdentityRow
 ): MemberIdentityVerdict {
-  const nameFrom: IdentitySlot | null = hasRealName(row.display_name)
+  const nameFrom: IdentitySlot | null = hasRealName(row.display_name, row.user_address)
     ? 'override'
-    : hasRealName(row.global_display_name)
+    : hasRealName(row.global_display_name, row.user_address)
       ? 'global'
       : null;
 
@@ -201,7 +208,7 @@ export function classifyDmIdentity(
   row: DirectConversationIdentityRow,
   ownAddress: string | null | undefined
 ): DmIdentityVerdict {
-  const noName = !hasRealName(row.displayName);
+  const noName = !hasRealName(row.displayName, row.address);
   const noIcon = !hasRealIcon(row.icon);
   return {
     conversationId: row.conversationId,

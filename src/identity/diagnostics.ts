@@ -48,6 +48,28 @@
 // reports rather than stays silent, per the design brief: prefer reporting
 // both over reporting neither.
 //
+// ONE GAP CONSIDERED AND DELIBERATELY LEFT OPEN: this classifies
+// `rostersBySpace` (via `spaceRosterLoaded`'s `hasOwnProperty` check) but has
+// no equivalent signal for `locallyKnownNames` — an address absent from
+// `locallyKnownNames` because a provider never passed the prop at all is
+// indistinguishable here from one absent because the provider passed it and
+// genuinely has no local name for that address; both collapse into the same
+// `identity.globalName === null`. A sentinel on the prop (`undefined` = never
+// fed, `{}` = fed and empty) would make that structurally detectable, the
+// same way a missing `rostersBySpace` key already is.
+//
+// Not built: `IdentityScopeProvider` now MERGES with an enclosing scope
+// instead of replacing it (see that file's own comment on `parent`), so "a
+// provider never passed `locallyKnownNames`" is no longer a degraded state —
+// it inherits whatever an ancestor (ultimately the root, which always
+// carries every DM partner's local name) already knows, same as any other
+// tier. A sentinel would now flag "correctly inheriting from an ancestor" as
+// if it were the old bug, which is a false alarm under the new architecture,
+// not a useful signal. The residual case merging does NOT cover — an
+// address knowable only in a sibling scope with no shared ancestor bearing
+// the data — is a different shape (a genuinely separate scope, not a
+// provider that forgot a prop) and isn't what this gap was ever about.
+//
 // PRODUCTION FOOTPRINT: gated on `process.env.NODE_ENV === 'production'` at
 // the top of every exported function that does real work, mirroring
 // `src/dev/dm-doctor/warningCounters.ts` and `src/utils/selfOverrideTripwire.ts`

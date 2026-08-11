@@ -26,6 +26,7 @@ import * as React from 'react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { buildConversationsKey } from '@/hooks/queries/conversations/buildConversationsKey';
 
 const SELF = 'QmSelfRootDmNamesAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 const PARTNER = 'QmPeerRootDmNamesEgVKpYZKYuFu2J49zHXnA8vZtEqzz';
@@ -82,11 +83,35 @@ const RootAppShell: React.FC<{ address: string }> = ({ address }) => {
 
 function renderAtRootAppShell(address: string) {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
-  return render(
+  const view = render(
     <QueryClientProvider client={client}>
       <RootAppShell address={address} />
     </QueryClientProvider>,
   );
+  return { ...view, client };
+}
+
+/**
+ * Waits for `useLocalDmNames`' own conversations read — the SAME
+ * `useInfiniteQuery` key `buildConversationsKey({ type: 'direct' })` — to
+ * actually settle in the query cache.
+ *
+ * This is the fix for the false-negative bug in the "own address" and
+ * "literal Unknown User" cases below: both used to wait on
+ * `getPublicProfile` having been CALLED, which fires from an effect on
+ * mount and is satisfied on the very first `waitFor` poll — well before the
+ * async conversations page this test cares about has resolved. That let both
+ * assertions run against EMPTY `locallyKnownNames` (indistinguishable from
+ * "not loaded yet"), so neither test ever exercised the placeholder guard at
+ * all — see .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+ * Waiting on the query's own `status` instead ties the wait to the thing the
+ * guard actually runs over.
+ */
+async function waitForLocalDmNamesToSettle(client: QueryClient) {
+  await waitFor(() => {
+    const state = client.getQueryState(buildConversationsKey({ type: 'direct' }));
+    expect(state?.status).toBe('success');
+  });
 }
 
 describe('DM search-shaped resolution through the root provider — conversation-derived local names', () => {
@@ -141,15 +166,24 @@ describe('DM search-shaped resolution through the root provider — conversation
       ],
     });
 
-    renderAtRootAppShell(PARTNER);
+    const { client } = renderAtRootAppShell(PARTNER);
 
-    await waitFor(() => expect(getPublicProfile).toHaveBeenCalled());
+    // Wait for the conversations page itself to settle — NOT for
+    // `getPublicProfile` to have been called (see
+    // `waitForLocalDmNamesToSettle`'s docstring: that used to make this a
+    // false negative, asserting on empty `locallyKnownNames` before the
+    // guard ever ran over the placeholder row).
+    await waitForLocalDmNamesToSettle(client);
+
     // Falls through to the resolver's OWN truncated-address fallback — never
-    // the full raw address (which is what would render if the placeholder
-    // were treated as a real name).
-    const text = screen.getByTestId('resolved-name').textContent ?? '';
-    expect(text).toMatch(/^Qm.*…/);
-    expect(text).not.toBe(PARTNER);
+    // the full raw address, which is what renders if `isPlaceholderDisplayName`
+    // fails to recognise `displayName === address` as a placeholder and lets
+    // it through into `locallyKnownNames`.
+    const expectedTruncated = `${PARTNER.slice(0, 6)}…${PARTNER.slice(-4)}`;
+    await waitFor(() => {
+      expect(screen.getByTestId('resolved-name').textContent).toBe(expectedTruncated);
+    });
+    expect(screen.getByTestId('resolved-name').textContent).not.toBe(PARTNER);
   });
 
   it('a PLACEHOLDER conversation name (the literal "Unknown User") never leaks through as a "known" name', async () => {
@@ -158,11 +192,14 @@ describe('DM search-shaped resolution through the root provider — conversation
       conversations: [{ address: PARTNER, displayName: 'Unknown User' }],
     });
 
-    renderAtRootAppShell(PARTNER);
+    const { client } = renderAtRootAppShell(PARTNER);
 
-    await waitFor(() => expect(getPublicProfile).toHaveBeenCalled());
-    const text = screen.getByTestId('resolved-name').textContent ?? '';
-    expect(text).toMatch(/^Qm.*…/);
-    expect(text).not.toBe('Unknown User');
+    await waitForLocalDmNamesToSettle(client);
+
+    const expectedTruncated = `${PARTNER.slice(0, 6)}…${PARTNER.slice(-4)}`;
+    await waitFor(() => {
+      expect(screen.getByTestId('resolved-name').textContent).toBe(expectedTruncated);
+    });
+    expect(screen.getByTestId('resolved-name').textContent).not.toBe('Unknown User');
   });
 });

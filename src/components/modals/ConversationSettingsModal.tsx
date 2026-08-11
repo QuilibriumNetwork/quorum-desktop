@@ -47,7 +47,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = (pro
   const peerAddress = props.conversationId.split('/')[0];
 
   const localNamesByAddress = React.useMemo(() => {
-    const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName);
+    const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName, peerAddress);
     return localName ? { [peerAddress]: localName } : {};
   }, [conversation, peerAddress]);
 

@@ -67,7 +67,7 @@ export function buildLocalDmNames(
   const map: Record<string, string> = {};
   let any = false;
   for (const c of conversations) {
-    const name = realDisplayNameOrUndefined(c?.displayName);
+    const name = realDisplayNameOrUndefined(c?.displayName, c?.address);
     if (name && c?.address) {
       map[c.address] = name;
       any = true;
