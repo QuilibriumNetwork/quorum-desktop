@@ -14,6 +14,7 @@ import { buildMessagesKeyPrefix } from '../../queries/messages/buildMessagesKey'
 import { getThreadTitle } from '../../../utils/threadTitle';
 import { t } from '@lingui/core/macro';
 import { ENABLE_DM_ACTION_QUEUE } from '../../../config/features';
+import { useResolvedMemberName } from '../../../identity';
 
 /**
  * DM context for action queue handlers.
@@ -94,6 +95,23 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   const { currentPasskeyInfo } = usePasskeysContext();
   const queryClient = useQueryClient();
 
+  // Resolved via src/identity — the SAME ladder every other name on screen
+  // uses — never `currentPasskeyInfo?.displayName` directly: that's the
+  // device-local auth record, which carries no QNS name and can be stale.
+  // Used ONLY for the offline DM action-queue payload below (`buildDmActionContext`),
+  // which broadcasts a "senderDisplayName" hint to the peer inside the
+  // encrypted frame for THEIR `locallyKnownNames` tier — the identity
+  // bootstrap path for a partner with no public profile yet (see
+  // `identityProvider.tsx`'s `IdentitySources.locallyKnownNames`). Bare name
+  // only, no ".q": that tier is explicitly UNVERIFIED (a value learned from a
+  // peer's own claim, not a QNS lookup), so the suffix must never travel with
+  // it. Always called (never behind the DM branch below) so hook order stays
+  // fixed regardless of whether this message turns out to be a DM. The
+  // self-profile fetch this depends on is requested automatically by
+  // `IdentityScopeProvider` as soon as `selfAddress` is set — no `enrich`
+  // needed here.
+  const resolvedSelf = useResolvedMemberName(currentPasskeyInfo?.address ?? '');
+
   // Calculate if user can delete this message
   // canDeleteMessages already contains all permission logic including space owner privileges
   const canUserDelete = Boolean(canDeleteMessages);
@@ -113,10 +131,10 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     return {
       address,
       selfUserAddress: dmContext.self.user_address,
-      senderDisplayName: currentPasskeyInfo?.displayName,
+      senderDisplayName: resolvedSelf.name,
       senderUserIcon: currentPasskeyInfo?.pfpUrl,
     };
-  }, [dmContext, currentPasskeyInfo]);
+  }, [dmContext, currentPasskeyInfo, resolvedSelf.name]);
 
   // Handle reaction submission - optimistic update + queue
   const handleReaction = useCallback(

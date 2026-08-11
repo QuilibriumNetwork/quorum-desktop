@@ -7,11 +7,30 @@ import type {
   Emoji,
   ThreadMeta,
 } from '@quilibrium/quorum-shared';
+import type { RosterNameRow } from '../../identity';
 
 export interface ThreadChannelProps {
   spaceId: string;
   channelId: string;
+  // RAW roster (Channel.tsx's own `members`, NOT the public-profile-
+  // backfilled `effectiveMembers`). Feeds MessageList's `members` prop,
+  // which is where the membership/kicked GATE
+  // (`resolveMessageListSenderGate`, Phase D row 22) reads from — a
+  // security property that must read the same raw source every surface's
+  // gate reads, never a backfill hook's output. See the fix-round-1 report
+  // at .superpowers/sdd/2026-08-10-identity-resolution-architecture-plan/
+  // phase-d-rows-22-24-report.md for why this was wrong before.
   members: any;
+  // The SAME rosterRows object Channel.tsx builds for its own
+  // <IdentityScopeProvider> (from the RAW `members` map, not the
+  // public-profile-backfilled `effectiveMembers` above) — so ThreadPanel's
+  // provider and Channel's provider resolve every name identically. Do not
+  // derive this from `members` (effectiveMembers) instead: the backfill
+  // sets displayName to the global name for members with no per-space
+  // override, which happens to read the same today only because
+  // resolveIdentity's space!==global guard neutralises it — an incidental
+  // equivalence, not a guarantee.
+  rosterRows: Record<string, RosterNameRow>;
   roles: Role[];
   stickers?: { [key: string]: Sticker };
   customEmoji?: Emoji[];

@@ -76,7 +76,7 @@ const PROBE_CONCURRENCY = 6;
  *
  * This is the last leg of "no identity from ANY source": a member with an empty
  * local row is still renderable if they published a public profile, because the
- * render path back-fills from it (`useMembersWithPublicProfileFallback`,
+ * render path back-fills from it (`src/identity`'s enrich fetch,
  * `useConversationsWithProfileBackfill`). A 404 means they never opted in, and
  * that is the irreducible case nothing can fix at render time.
  *

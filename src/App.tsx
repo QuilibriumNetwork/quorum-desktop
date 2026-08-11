@@ -18,6 +18,8 @@ import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
 import { useContextMenuPrevention } from './hooks/useContextMenuPrevention';
+import { IdentityScopeProvider } from './identity';
+import { useRootIdentityScope } from './hooks/business/identity';
 
 window.Buffer = Buffer;
 
@@ -55,6 +57,15 @@ const App = () => {
 
   const { currentPasskeyInfo, passkeyRegistrationComplete } =
     usePasskeysContext();
+  // Real data for the root <IdentityScopeProvider> below — see
+  // useRootIdentityScope's own docstring for why this is a non-suspense
+  // read (this component wraps every branch, including the ones rendered
+  // before login) and .agents/docs/features/identity-resolution-and-profile-sync.md
+  // for the bug this closes: Kick/Mute/Block confirmations (ModalProvider,
+  // above every Space/DM provider) used to see a permanently empty roster
+  // here regardless of which space they were acting in.
+  const { rostersBySpace: rootRostersBySpace, locallyKnownNames: rootLocalNames } =
+    useRootIdentityScope(currentPasskeyInfo?.address, currentPasskeyInfo?.displayName);
   const [user, setUser] = useState<
     | {
         displayName: string;
@@ -108,32 +119,60 @@ const App = () => {
             </div>
           }
         >
-          {isDevRoute ? (
-            <div className="bg-app flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <Router user={user!} setUser={setUser} />
-            </div>
-          ) : user && currentPasskeyInfo ? (
-            <div className="bg-app flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <Suspense fallback={<Connecting />}>
-                <RegistrationProvider>
-                  <ResponsiveLayoutProvider>
-                    <Suspense>
-                      <Router user={user} setUser={setUser} />
-                    </Suspense>
-                  </ResponsiveLayoutProvider>
-                </RegistrationProvider>
-              </Suspense>
-            </div>
-          ) : landing && !user ? (
-            <div className="bg-onboarding flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <OnboardingFlow setUser={setUser} />
-            </div>
-          ) : (
-            <Connecting />
-          )}
+          {/* Root-level identity scope: mounted ABOVE the Router (so every
+              route's ModalProvider/AppShell/NavRail is inside it) and above
+              every dev-route render too, so no rendered component can ever
+              be outside an <IdentityScopeProvider> and hit the "Wrap the
+              route" throw in identityProvider.tsx. No spaceId — the global
+              ladder applies by default. Nested providers (Channel,
+              DirectMessage, Bookmarks, notifications...) still mount below
+              and override with more tightly scoped roster/local-name data;
+              this one is the backstop for surfaces that render from an
+              app-level host with NO provider of their own (Kick/Mute/Block
+              confirmations — ModalProvider sits above every Space/DM
+              provider, see Router.web.tsx) — which is why it can no longer
+              ship with a permanently empty roster (see
+              useRootIdentityScope's docstring and
+              .agents/docs/features/identity-resolution-and-profile-sync.md).
+              selfAddress comes from currentPasskeyInfo, the ONLY place the
+              address is known before a user record even exists — the self
+              tier itself resolves from the public profile fetched here
+              first, the device displayName only as the LAST resort
+              (`rootLocalNames`, via `selfLocalNameEntry`) — never from
+              currentPasskeyInfo's fields directly, and never a source of a
+              `.q`. */}
+          <IdentityScopeProvider
+            rostersBySpace={rootRostersBySpace}
+            selfAddress={currentPasskeyInfo?.address ?? null}
+            locallyKnownNames={rootLocalNames}
+          >
+            {isDevRoute ? (
+              <div className="bg-app flex flex-col min-h-screen text-main">
+                {isWeb() && isElectron() && <CustomTitlebar />}
+                <Router user={user!} setUser={setUser} />
+              </div>
+            ) : user && currentPasskeyInfo ? (
+              <div className="bg-app flex flex-col min-h-screen text-main">
+                {isWeb() && isElectron() && <CustomTitlebar />}
+                <Suspense fallback={<Connecting />}>
+                  <RegistrationProvider>
+                    <ResponsiveLayoutProvider>
+                      <Suspense>
+                        <Router user={user} setUser={setUser} />
+                      </Suspense>
+                    </ResponsiveLayoutProvider>
+                  </RegistrationProvider>
+                </Suspense>
+              </div>
+            ) : landing && !user ? (
+              <div className="bg-onboarding flex flex-col min-h-screen text-main">
+                {isWeb() && isElectron() && <CustomTitlebar />}
+                <OnboardingFlow setUser={setUser} />
+              </div>
+            ) : (
+              <Connecting />
+            )}
+          </IdentityScopeProvider>
         </ErrorBoundary>
       </I18nProvider>
     </>

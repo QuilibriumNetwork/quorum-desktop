@@ -1,5 +1,7 @@
+import * as React from 'react';
 import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render as rtlRender, screen } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 // Keep the tree light: the invite card and the YouTube facade pull in app state
 // we don't need to exercise the markdown pipeline.
@@ -15,6 +17,22 @@ vi.mock('@/components/ui/YouTubeFacade', () => ({
 }));
 
 import { MessageMarkdownRenderer } from '@/components/message/MessageMarkdownRenderer';
+import { IdentityScopeProvider } from '@/identity/identityProvider';
+
+// MessageMarkdownRenderer resolves mention names via src/identity
+// (useNameResolver), which throws outside an IdentityScopeProvider — none of
+// these cases contain a `@<address>` mention, but the provider is required
+// unconditionally (every render calls the hook), so every case needs one in
+// scope regardless of what it exercises.
+const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+const withIdentityScope = ({ children }: { children: React.ReactNode }) => (
+  <QueryClientProvider client={queryClient}>
+    <IdentityScopeProvider rostersBySpace={{}} selfAddress={null}>
+      {children}
+    </IdentityScopeProvider>
+  </QueryClientProvider>
+);
+const render = (ui: React.ReactElement) => rtlRender(ui, { wrapper: withIdentityScope });
 
 const INVITE_URL =
   'https://app.quorummessenger.com/invite/#spaceId=QmPeerQEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz&configKey=9e390fd97e0a61aecdce931c7f3dab04d0e57b8da89a50510981be5394714eda';

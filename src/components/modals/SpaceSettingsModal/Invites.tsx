@@ -6,6 +6,7 @@ import { ClickToCopyContent } from '../../ui';
 import { UserAvatar } from '../../user/UserAvatar';
 import { DefaultImages } from '../../../utils';
 import { useCopyToClipboard } from '../../../hooks/business/ui/useCopyToClipboard';
+import { useNameResolver } from '../../../identity';
 
 type InviteMode = 'one-time' | 'public';
 
@@ -51,12 +52,31 @@ interface ConversationListProps {
 // Search input + always-visible scrollable list of conversations.
 // Replaces the prior dropdown — surfacing the list immediately removes the
 // extra click and makes "pick a contact" the obvious thing to do here.
-const ConversationList: React.FunctionComponent<ConversationListProps> = ({
+// Exported for direct testing — `Invites` as a whole takes a large prop
+// surface unrelated to name/avatar resolution (invite generation state,
+// links, etc.); this is the one piece that renders a member identity.
+export const ConversationList: React.FunctionComponent<ConversationListProps> = ({
   value,
   options,
   onChange,
 }) => {
   const [searchInput, setSearchInput] = React.useState('');
+
+  // `option.displayName`/`option.label` already come resolved from
+  // `useInviteManagement.ts`'s `getUserOptions` (it calls `useNameResolver`
+  // itself, and its own `requestNames` is what enriches this bounded DM
+  // contact list — design decision 3, revised 2026-08-11) — WITH the ".q"
+  // suffix appended for a verified name. Feeding that suffixed string to
+  // `UserAvatar` as `displayName` is how a QNS-verified contact got wrong
+  // initials (`getInitials` splits on non-letters, so "alice.q" produces two
+  // initials from one name — the same class of bug as `<MemberName
+  // withAvatar>` exists to prevent, rule 4 of the migration recipe).
+  // `resolve()` here reads the SAME provider `useInviteManagement` already
+  // resolved against (`SpaceSettingsModal`'s own `<IdentityScopeProvider>`),
+  // so it is a second READ of the same cached data, not a second source of
+  // truth or a second request — it never re-implements the ".q" rule, since
+  // it only ever takes the BARE `.name`.
+  const { resolve } = useNameResolver();
 
   const filteredOptions = React.useMemo(() => {
     if (!searchInput.trim()) return options;
@@ -131,7 +151,9 @@ const ConversationList: React.FunctionComponent<ConversationListProps> = ({
                     />
                   ) : option.displayName ? (
                     <UserAvatar
-                      displayName={option.displayName}
+                      // BARE resolved name, not `option.displayName` (which
+                      // may carry ".q") — see the comment above `resolve`.
+                      displayName={resolve(option.value, { global: true }).name}
                       address={option.value}
                       size={32}
                       className="flex-shrink-0"

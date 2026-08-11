@@ -1,18 +1,46 @@
-import { describe, it, expect } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll } from 'vitest';
+import * as React from 'react';
+import { renderHook, waitFor } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { i18n } from '@lingui/core';
+import { messages } from '@/i18n/en/messages';
 
 /**
- * `mapSenderToUser` is typed `(senderId: string) => any`, and callers do return
- * undefined for a sender they cannot resolve — GlobalNotificationsModal passed
- * `() => undefined` outright. `processTextToken` dereferenced the result bare,
- * so a legacy `@<address>` mention in a notification body threw inside render
- * and the error boundary replaced the whole global notifications panel.
+ * `processTextToken`'s user-mention branch used to read a caller-supplied
+ * `mapSenderToUser(id)?.displayName` with a caller-owned fallback
+ * (`@${address.substring(0,8)}...`). `mapSenderToUser` is typed
+ * `(id) => any` and callers legitimately return undefined for a sender they
+ * cannot resolve — dereferencing it bare once threw inside render and took
+ * a whole panel down through the error boundary.
  *
- * The contract this pins: an unresolvable mention degrades to the address label.
- * It never throws.
+ * Post phase-D fix, name resolution goes through `src/identity`'s
+ * `useNameResolver` instead (see `useMessageFormatting.ts`'s
+ * `processTextToken`) — the resolver, not the caller, owns the fallback. The
+ * property this file pins is unchanged: an address the resolver cannot name
+ * degrades to a truncated-address label, never a throw. The exact fallback
+ * shape is `resolveIdentity`'s own truncation (`slice(0,6)…slice(-4)`), not
+ * the old caller-owned `@xxxxxxxx...` string — asserting the OLD shape here
+ * would silently stop testing the code that actually runs today.
  */
 
+beforeAll(() => {
+  i18n.load('en', messages);
+  i18n.activate('en');
+});
+
+const getPublicProfile = vi.fn();
+
+vi.mock('@/api/baseTypes', () => ({
+  QuorumApiClient: class {
+    getPublicProfile(address: string) {
+      return getPublicProfile(address);
+    }
+  },
+  isHandledFetchError: () => false,
+}));
+
 import { useMessageFormatting } from '@/hooks/business/messages/useMessageFormatting';
+import { IdentityScopeProvider } from '@/identity/identityProvider';
 
 const SENDER = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
 const MENTIONED = 'QmPeerLEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imzzzz';
@@ -28,37 +56,72 @@ const messageWithMention = () =>
     mentions: { memberIds: [MENTIONED], roleIds: [], channelIds: [] },
   }) as any;
 
-const tokenFor = (mapSenderToUser: (id: string) => any) => {
-  const { result } = renderHook(() =>
-    useMessageFormatting({
-      message: messageWithMention(),
-      stickers: {},
-      mapSenderToUser,
-      onImageClick: () => {},
-    })
+function renderFormatting(rosters: Record<string, Record<string, unknown>> = {}) {
+  const client = new QueryClient({ defaultOptions: { queries: { retry: false, gcTime: 0 } } });
+  const wrapper = ({ children }: { children: React.ReactNode }) =>
+    React.createElement(
+      QueryClientProvider,
+      { client },
+      React.createElement(
+        IdentityScopeProvider,
+        { spaceId: 'space-1', rostersBySpace: rosters, selfAddress: null },
+        children,
+      ),
+    );
+  return renderHook(
+    () =>
+      useMessageFormatting({
+        message: messageWithMention(),
+        stickers: {},
+        mapSenderToUser: () => undefined,
+        onImageClick: () => {},
+        currentSpaceId: 'space-1',
+      }),
+    { wrapper },
   );
-  return result.current.processTextToken(`@<${MENTIONED}>`, 'msg-1', 0, 1);
-};
+}
 
 describe('useMessageFormatting — mention with an unresolvable sender', () => {
-  it('falls back to the address label instead of throwing', () => {
-    // The exact shape GlobalNotificationsModal passes.
-    const token = tokenFor(() => undefined);
+  it('falls back to a truncated-address label instead of throwing', async () => {
+    getPublicProfile.mockResolvedValue({ data: null });
 
-    expect(token.type).toBe('mention');
-    expect(token.address).toBe(MENTIONED);
-    expect(token.displayName).toBe(`@${MENTIONED.substring(0, 8)}...`);
+    const { result } = renderFormatting();
+
+    await waitFor(() => {
+      const token = result.current.processTextToken(`@<${MENTIONED}>`, 'msg-1', 0, 1);
+      expect(token.type).toBe('mention');
+      expect(token.address).toBe(MENTIONED);
+      expect(token.displayName).toBe('QmPeer…zzzz');
+    });
   });
 
-  it('still prefers a resolved display name when one is available', () => {
-    const token = tokenFor(() => ({ address: MENTIONED, displayName: 'Ada Lovelace' }));
+  it('prefers a roster name when the identity module knows one', async () => {
+    getPublicProfile.mockResolvedValue({ data: null });
 
-    expect(token.displayName).toBe('Ada Lovelace');
+    const { result } = renderFormatting({
+      'space-1': { [MENTIONED]: { display_name: 'Ada Lovelace' } },
+    });
+
+    await waitFor(() => {
+      const token = result.current.processTextToken(`@<${MENTIONED}>`, 'msg-1', 0, 1);
+      expect(token.displayName).toBe('Ada Lovelace');
+    });
   });
 
-  it('falls back when the resolver returns a row with no display name', () => {
-    const token = tokenFor(() => ({ address: MENTIONED }));
+  it('renders the verified QNS name when the resolver has a public profile', async () => {
+    getPublicProfile.mockImplementation((address: string) =>
+      Promise.resolve(
+        address === MENTIONED
+          ? { data: { primary_username: 'ada', display_name: 'Ada Lovelace' } }
+          : { data: null },
+      ),
+    );
 
-    expect(token.displayName).toBe(`@${MENTIONED.substring(0, 8)}...`);
+    const { result } = renderFormatting();
+
+    await waitFor(() => {
+      const token = result.current.processTextToken(`@<${MENTIONED}>`, 'msg-1', 0, 1);
+      expect(token.displayName).toBe('ada.q');
+    });
   });
 });

@@ -1,6 +1,8 @@
 import React, { Suspense } from 'react';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useSpaces } from '../../hooks/queries/spaces';
-import { useGlobalSenderResolver } from '../../hooks/business/notifications';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
+import { IdentityScopeProvider } from '../../identity';
 import { NotificationPanel } from './NotificationPanel';
 
 interface Props {
@@ -21,26 +23,46 @@ interface Props {
  */
 const GlobalNotificationsInner: React.FC<Props> = ({ isOpen, onClose }) => {
   const { data: spaces = [] } = useSpaces();
-  const resolveGlobalSender = useGlobalSenderResolver(spaces);
+  const user = usePasskeysContext();
+  const selfAddress = user?.currentPasskeyInfo?.address || null;
+
+  // Detached surface: the global panel spans every space the user belongs
+  // to, same shape as the standalone /bookmarks page — no single enclosing
+  // <IdentityScopeProvider> exists for it. Each row resolves its sender via
+  // <MemberName spaceId={row.spaceId} enrich />, which throws outside a
+  // provider.
+  const spaceIds = React.useMemo(() => spaces.map((s) => s.spaceId), [spaces]);
+  const rostersBySpace = useMultiSpaceRosters(spaceIds);
+  // Same reusable source `SearchResults.tsx`/`useRootIdentityScope` use — a DM
+  // notification (a mention in a DM, say) can name a partner known only from
+  // their local conversation record (no public profile, no space roster row).
+  // Without this the panel had no DM-shaped local-name source of its own and
+  // fell straight to a truncated address for that row.
+  const locallyKnownNames = useLocalDmNames(selfAddress);
 
   return (
-    <NotificationPanel
-      global
-      isOpen={isOpen}
-      onClose={onClose}
-      spaces={spaces}
-      resolveGlobalSender={resolveGlobalSender}
-      // Required by the shared props. In global mode the panel resolves every
-      // sender — row headers AND in-body mentions — through
-      // `resolveGlobalSender` above, because a single per-space map cannot
-      // cover a list that spans spaces. This stub is the unreachable branch.
-      // It used to be reachable: the panel handed it straight to
-      // NotificationItem for mention rendering, and returning `undefined` there
-      // threw in render and took the whole panel down.
-      spaceId=""
-      channelIds={[]}
-      mapSenderToUser={() => undefined}
-    />
+    <IdentityScopeProvider
+      rostersBySpace={rostersBySpace}
+      selfAddress={selfAddress}
+      locallyKnownNames={locallyKnownNames}
+    >
+      <NotificationPanel
+        global
+        isOpen={isOpen}
+        onClose={onClose}
+        spaces={spaces}
+        // Required by the shared props. In global mode the panel resolves
+        // in-body mentions through its own `useNameResolver()` call (bound
+        // per-row to that row's spaceId), because a single per-space map
+        // cannot cover a list that spans spaces. This stub is the
+        // unreachable branch. It used to be reachable: the panel handed it
+        // straight to NotificationItem for mention rendering, and returning
+        // `undefined` there threw in render and took the whole panel down.
+        spaceId=""
+        channelIds={[]}
+        mapSenderToUser={() => undefined}
+      />
+    </IdentityScopeProvider>
   );
 };
 

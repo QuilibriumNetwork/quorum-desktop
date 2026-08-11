@@ -30,12 +30,12 @@ import { MobileDrawer, ListSearchInput, TouchAwareListItem, FloatingPopover } fr
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { parseMessageHash } from '../../utils/messageHashNavigation';
-import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
-import { ResolvedName } from '../user/ResolvedName';
+import { IdentityScopeProvider, MemberName, useNameResolver, useResolvedMemberName } from '../../identity';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { TypingIndicator } from '../message/TypingIndicator';
+import { useTypingIndicator } from '../../hooks/business/messages/useTypingIndicator';
 import type { TypingScope } from '@quilibrium/quorum-shared';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { ThreadsListPanel } from '../thread/ThreadsListPanel';
@@ -44,7 +44,7 @@ import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useBookmarks } from '../../hooks/business/bookmarks';
-import { useMembersWithPublicProfileFallback } from '../../hooks/business/user/useMembersWithPublicProfileFallback';
+import { useVisibleSenderProfileFallback } from '../../hooks/business/user/useVisibleSenderProfileFallback';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -94,6 +94,98 @@ function canPostInReadOnlyChannel(
       role.members.includes(userAddress)
   );
 }
+
+/**
+ * Typing indicator's resolved names. `useNameResolver` needs an ancestor
+ * `<IdentityScopeProvider>` — Channel's own function body runs BEFORE the
+ * provider it returns exists in the tree (the provider is a descendant of
+ * Channel, not an ancestor of it, until React actually mounts it). Same
+ * shape as ThreadPanel's `ThreadTypingIndicator` / DirectMessage's
+ * `DirectMessageComposerBar`.
+ *
+ * ENRICHES, matching `ThreadTypingIndicator` (reconciled in fix round 1 of
+ * Phase D rows 19-21 — an earlier version of this component enriched while
+ * ThreadPanel's sibling deliberately did not, so a typing sender's name
+ * could disagree between the two surfaces, exactly the class of bug this
+ * migration exists to eliminate). A typing indicator names one or two
+ * people — the bounded case recipe rule 1 describes — so `requestNames` on
+ * the current typist list is worth its small cost: `useTypingIndicator(scope)`
+ * is subscribed to a SECOND time here (`<TypingIndicator>` owns its own
+ * subscription internally too), but that's a plain in-memory `Set<Listener>`
+ * registration (`TypingService.subscribe`, quorum-shared), not a fetch.
+ *
+ * Exported for direct testing — Channel.tsx as a whole is too large to
+ * mount in a unit test.
+ */
+export const ChannelTypingIndicator: React.FC<{ scope: TypingScope | null }> = ({ scope }) => {
+  const typists = useTypingIndicator(scope);
+  const { resolve, requestNames } = useNameResolver();
+  React.useEffect(() => {
+    requestNames(typists);
+  }, [typists, requestNames]);
+  return (
+    <TypingIndicator
+      scope={scope}
+      resolveName={(addr) => {
+        const r = resolve(addr);
+        return r.isQnsVerified ? `${r.name}.q` : r.name;
+      }}
+    />
+  );
+};
+
+/**
+ * The member-sidebar role-list row's avatar and name label. Extracted as its
+ * own component because the row is built inside `Virtuoso`'s `itemContent`
+ * callback — called per visible row, not a place a hook can be called (same
+ * "Channel's own function body runs before the provider it returns exists"
+ * shape as `ChannelTypingIndicator` above; `itemContent` is even further
+ * removed, a callback invoked once per rendered row).
+ *
+ * FIX (final fix wave, finding 2): the avatar used to take `item.displayName
+ * ?? item.address` — `useChannelData.ts`'s `curr.display_name`, the
+ * per-space OVERRIDE tier only, with no global or profile fallback — while
+ * the label beside it (`<MemberName>`) correctly resolves through the full
+ * ladder. A member with no per-space nickname therefore showed their
+ * correctly-resolved global/QNS name next to an avatar whose initials came
+ * from their raw address. Fixed by sourcing the avatar from the SAME
+ * resolved bare name `<MemberName>` renders (`useResolvedMemberName`, no
+ * `enrich` — deliberate, see design decision 3: this list can be 200+ rows
+ * and enriching would fire one profile fetch per row).
+ */
+export const MemberListRowAvatarAndName: React.FC<{
+  address: string;
+  userIcon?: string;
+  joinedAt?: number;
+  avatarClassName: string;
+  nameWrapperClassName: string;
+}> = ({ address, userIcon, joinedAt, avatarClassName, nameWrapperClassName }) => {
+  const resolved = useResolvedMemberName(address);
+  return (
+    <>
+      <UserAvatar
+        userIcon={userIcon}
+        // BARE resolved name — the SAME source `<MemberName>` below reads —
+        // never `item.displayName`/the raw address; feeding the avatar a
+        // different name than the resolved label is how a member came to
+        // render "gatto.q" beside a circle showing "G" for someone else.
+        displayName={resolved.name}
+        address={address}
+        size={30}
+        className={avatarClassName}
+      />
+      <div className={nameWrapperClassName}>
+        {/* No `enrich` — deliberate, see design decision 3: this list can be
+            200+ rows and enriching would fire one public-profile fetch per
+            rendered row on open. */}
+        <MemberName address={address} className="text-md font-bold truncate-user-name" />
+        {joinedAt != null && Date.now() - joinedAt < 7 * 24 * 60 * 60 * 1000 && (
+          <Icon name="seedling" size="sm" variant="filled" className="ml-1.5 text-success flex-shrink-0" />
+        )}
+      </div>
+    </>
+  );
+};
 
 type ChannelProps = {
   spaceId: string;
@@ -282,8 +374,9 @@ const Channel: React.FC<ChannelProps> = ({
   } = useChannelMessages({ spaceId, channelId, roles, members, channel, threadsEnabled });
 
   // Compute the set of sender addresses currently rendered and back-fill
-  // missing displayName/userIcon from each sender's public profile (when
-  // they've opted in). Only the visible senders are looked up — the
+  // missing userIcon/bio (and the raw primaryUsername/globalDisplayName
+  // tiers useMentionInput.ts's search matching needs) from each sender's
+  // public profile. Only the visible senders are looked up — the
   // member-list sidebar still uses the original `members` map and does
   // not trigger a fetch storm for the whole space roster.
   const visibleSenderAddresses = useMemo(() => {
@@ -295,15 +388,53 @@ const Channel: React.FC<ChannelProps> = ({
     return Array.from(set);
   }, [messageList]);
 
-  const effectiveMembers = useMembersWithPublicProfileFallback(
+  // NAME rendering for these senders no longer comes from here — the message
+  // header, mention pills, and the profile card all resolve via
+  // `src/identity` now. `effectiveMembers` remains for what `src/identity`
+  // deliberately does not cover (avatars/bio) and for the raw
+  // primaryUsername/globalDisplayName tiers `useMentionInput.ts`'s search
+  // matching still reads directly. See `useVisibleSenderProfileFallback`'s
+  // file header — Phase D row 23.
+  const effectiveMembers = useVisibleSenderProfileFallback(
     members,
     visibleSenderAddresses
+  );
+
+  // Roster rows for <IdentityScopeProvider>/<MemberName> (design constraint
+  // 1): the same per-space nickname + roster-global-name pair `members`
+  // already holds, reshaped to the provider's RosterNameRow — no network
+  // fetch, no fan-out over the whole space roster.
+  const rosterRows = useMemo(() => {
+    const rows: Record<string, { display_name?: string; global_display_name?: string }> = {};
+    for (const address of Object.keys(members)) {
+      rows[address] = {
+        display_name: members[address]?.displayName,
+        global_display_name: members[address]?.globalDisplayName,
+      };
+    }
+    return rows;
+  }, [members]);
+  const rostersBySpace = useMemo(
+    () => ({ [spaceId]: rosterRows }),
+    [spaceId, rosterRows]
   );
 
   // Override the sender lookup used by message rendering with the
   // back-filled member map. mapSenderToUserBase is kept private — never
   // passed downstream — so all message-path consumers see the enriched
   // data, while role/sidebar paths continue to use the original `members`.
+  //
+  // NAME rendering (message header, mention pills, profile card, and now the
+  // reply-heading preview text) does NOT read this anymore — all of it
+  // resolves via `src/identity`, keyed on address alone. The reply-heading
+  // preview used to read `.displayName` off this object raw (via shared's
+  // `replaceMentionsWithDisplayNames`), which had no forged-".q" guard —
+  // fixed by routing it through `useNameResolver` in `Message.tsx`'s
+  // `MessageReplyText`. What still reads this object's fields:
+  // `userIcon`/`bio` (Message's avatar and reactor icons — `src/identity`
+  // deliberately doesn't resolve avatars), and `.displayName` as pre-fill
+  // only for the profile-card `onUserClick` payload — see
+  // `useVisibleSenderProfileFallback`'s file header.
   const mapSenderToUser = useCallback(
     (senderId: string) => {
       const member = effectiveMembers[senderId];
@@ -1286,10 +1417,22 @@ const Channel: React.FC<ChannelProps> = ({
     threadCtx.setChannelProps({
       spaceId,
       channelId,
-      // Threads render messages too — pass the back-filled member map so
-      // sender displayName/avatar resolution is consistent with the
-      // channel view. Role/sidebar paths above still use raw `members`.
-      members: effectiveMembers,
+      // RAW roster, not `effectiveMembers` (the public-profile-backfilled
+      // map) — this feeds MessageList's `members` prop, which is where the
+      // membership/kicked GATE (`resolveMessageListSenderGate`, Phase D row
+      // 22) reads from. That gate is a security property and MUST read the
+      // same raw roster every other surface's gate reads (this component's
+      // own message list below passes raw `members` too); it must never depend
+      // on a backfill hook's incidental field-spreading to carry `isKicked`
+      // through. NAME/avatar resolution for thread messages is unaffected —
+      // that goes through `mapSenderToUser` below (still the enriched map)
+      // and, for rendered text, through src/identity via `rosterRows`.
+      members,
+      // The SAME rosterRows object this component's own
+      // <IdentityScopeProvider> below is built from (raw `members`, not
+      // `effectiveMembers`) — so ThreadPanel's provider and this one
+      // resolve every name identically instead of merely equivalently.
+      rosterRows,
       roles,
       stickers,
       customEmoji: space?.emojis,
@@ -1313,7 +1456,7 @@ const Channel: React.FC<ChannelProps> = ({
       currentUserAddress: user.currentPasskeyInfo?.address,
     });
   }, [
-    spaceId, channelId, effectiveMembers, members, mentionUsers, roles, stickers, space?.emojis,
+    spaceId, channelId, members, rosterRows, mentionUsers, roles, stickers, space?.emojis,
     mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
     channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
     space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
@@ -1404,6 +1547,11 @@ const Channel: React.FC<ChannelProps> = ({
   }, [updateReadTime]);
 
   return (
+    <IdentityScopeProvider
+      spaceId={spaceId}
+      rostersBySpace={rostersBySpace}
+      selfAddress={user.currentPasskeyInfo?.address ?? null}
+    >
     <div className={`chat-container${isThreadOpen ? ' thread-open' : ''}`}>
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
@@ -1522,7 +1670,6 @@ const Channel: React.FC<ChannelProps> = ({
                   onClose={() => setActivePanel(null)}
                   spaceId={spaceId}
                   channelId={channelId}
-                  mapSenderToUser={mapSenderToUser}
                 />
               </div>
               )}
@@ -1724,20 +1871,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
 
             <div className="message-editor-container" ref={composerContainerRef}>
-              <TypingIndicator
-                scope={typingScope}
-                resolveName={(addr) => {
-                  const u = mapSenderToUser(addr) as NameResolvableUser | undefined;
-                  return formatResolvedName(
-                    resolveSpaceMemberName({
-                      address: u?.address ?? addr,
-                      displayName: u?.displayName,
-                      primaryUsername: u?.primaryUsername,
-                      globalDisplayName: u?.globalDisplayName,
-                    }),
-                  );
-                }}
-              />
+              <ChannelTypingIndicator scope={typingScope} />
               <MessageComposer
                 canUseEveryone={canUseEveryone}
                 typingScope={typingScope}
@@ -1841,10 +1975,13 @@ const Channel: React.FC<ChannelProps> = ({
                                 displayName: item.displayName,
                                 userIcon: item.userIcon,
                                 bio: item.bio,
-                                // Same lookup the row's <ResolvedName> does —
-                                // the virtualized item cannot carry these. See
-                                // UserProfileModalUser for why omitting them
-                                // does not merely degrade, it inverts.
+                                // VESTIGIAL: UserProfile.tsx resolves its own
+                                // name from `address` via `src/identity` now
+                                // and no longer reads these two off the
+                                // click payload. Kept because
+                                // `effectiveMembers` still carries them for
+                                // useMentionInput.ts's search matching, not
+                                // because this click handler needs them.
                                 primaryUsername:
                                   effectiveMembers[item.address]?.primaryUsername,
                                 globalDisplayName:
@@ -1854,35 +1991,13 @@ const Channel: React.FC<ChannelProps> = ({
                             )
                           }
                         >
-                          <UserAvatar
-                            userIcon={item.userIcon}
-                            displayName={item.displayName ?? item.address}
+                          <MemberListRowAvatarAndName
                             address={item.address}
-                            size={30}
-                            className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
+                            userIcon={item.userIcon}
+                            joinedAt={item.joinedAt}
+                            avatarClassName="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
+                            nameWrapperClassName="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1"
                           />
-                          <div className="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
-                            <ResolvedName
-                              resolved={resolveSpaceMemberName({
-                                address: item.address,
-                                displayName: item.displayName,
-                                // QNS/global names merged from the sender map
-                                // (no roster-wide fetch); non-posters lack .q
-                                // until they post or their profile is opened.
-                                primaryUsername: effectiveMembers[item.address]?.primaryUsername,
-                                globalDisplayName: effectiveMembers[item.address]?.globalDisplayName,
-                              })}
-                              className="text-md font-bold truncate-user-name"
-                            />
-                            {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
-                              <Icon
-                                name="seedling"
-                                size="sm"
-                                variant="filled"
-                                className="ml-1.5 text-success flex-shrink-0"
-                              />
-                            )}
-                          </div>
                         </div>
                       </div>
                     );
@@ -2102,8 +2217,8 @@ const Channel: React.FC<ChannelProps> = ({
                         displayName: item.displayName,
                         userIcon: item.userIcon,
                         bio: (item as { bio?: string }).bio,
-                        // Same lookup the row's <ResolvedName> does — see
-                        // UserProfileModalUser.
+                        // VESTIGIAL — see the desktop role-list click handler
+                        // above (same shape, mobile layout).
                         primaryUsername:
                           effectiveMembers[item.address]?.primaryUsername,
                         globalDisplayName:
@@ -2113,32 +2228,13 @@ const Channel: React.FC<ChannelProps> = ({
                     );
                   }}
                 >
-                  <UserAvatar
-                    userIcon={item.userIcon}
-                    displayName={item.displayName ?? item.address}
+                  <MemberListRowAvatarAndName
                     address={item.address}
-                    size={30}
-                    className="opacity-80 flex-shrink-0"
+                    userIcon={item.userIcon}
+                    joinedAt={item.joinedAt}
+                    avatarClassName="opacity-80 flex-shrink-0"
+                    nameWrapperClassName="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1"
                   />
-                  <div className="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1">
-                    <ResolvedName
-                      resolved={resolveSpaceMemberName({
-                        address: item.address,
-                        displayName: item.displayName,
-                        primaryUsername: effectiveMembers[item.address]?.primaryUsername,
-                        globalDisplayName: effectiveMembers[item.address]?.globalDisplayName,
-                      })}
-                      className="text-md font-bold truncate-user-name"
-                    />
-                    {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
-                      <Icon
-                        name="seedling"
-                        size="sm"
-                        variant="filled"
-                        className="ml-1.5 text-success flex-shrink-0"
-                      />
-                    )}
-                  </div>
                 </TouchAwareListItem>
               );
             }}
@@ -2147,6 +2243,7 @@ const Channel: React.FC<ChannelProps> = ({
         </MobileDrawer>
       )}
     </div>
+    </IdentityScopeProvider>
   );
 };
 

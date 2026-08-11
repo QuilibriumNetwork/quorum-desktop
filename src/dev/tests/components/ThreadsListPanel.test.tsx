@@ -36,6 +36,16 @@ const olderThread: ChannelThread = {
   customTitle: 'Older Thread',
 };
 
+const getPublicProfile = vi.fn().mockResolvedValue({ data: null });
+vi.mock('../../../api/baseTypes', () => ({
+  QuorumApiClient: class {
+    getPublicProfile(address: string) {
+      return getPublicProfile(address);
+    }
+  },
+  isHandledFetchError: () => false,
+}));
+
 const mockUseChannelThreads = vi.fn();
 vi.mock('../../../hooks/business/threads/useChannelThreads', () => ({
   useChannelThreads: (args: unknown) => mockUseChannelThreads(args),
@@ -58,16 +68,51 @@ vi.mock('../../../utils/platform', () => ({
   isTouchDevice: () => false,
 }));
 
-vi.mock('@quilibrium/quorum-shared', () => ({
-  formatRelativeTime: () => '2h ago',
-  resolveDisplayName: (name?: string) => name ?? 'User',
-  // The real implementation, not a stub. `resolveSpaceMemberName` drops a name
-  // that would forge the verified `.q` marker, and stubbing this to a constant
-  // would switch that guard off for anything this panel renders — a mock that
-  // silently disables a security rule is worse than no mock.
-  hasReservedQnsSuffix: (name: string) =>
-    name.replace(/[.．﹒․]/g, '.').trim().toLowerCase().endsWith('.q'),
-}));
+vi.mock('@quilibrium/quorum-shared', () => {
+  // The real algorithm, not a stub. `resolveSpaceMemberName` delegates to
+  // `resolveIdentity` for both the space/QNS/global ladder AND the guard that
+  // drops a name forging the verified `.q` marker — stubbing this to a
+  // constant would switch that guard off for anything this panel renders, and
+  // a mock that silently disables a security rule is worse than no mock.
+  const hasReservedQnsSuffix = (name: string) =>
+    name.replace(/[.．﹒․]/g, '.').trim().toLowerCase().endsWith('.q');
+
+  const present = (s?: string | null): string | null => {
+    const t = (s ?? '').trim();
+    return t.length ? t : null;
+  };
+  const presentUnreserved = (s?: string | null): string | null => {
+    const t = present(s);
+    if (!t) return null;
+    return hasReservedQnsSuffix(t) ? null : t;
+  };
+  const truncate = (addr: string): string =>
+    addr.length > 10 ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : addr;
+
+  return {
+    formatRelativeTime: () => '2h ago',
+    resolveIdentity: (
+      identity: {
+        address: string;
+        spaceName: string | null;
+        qnsName: string | null;
+        globalName: string | null;
+      },
+      { scope }: { scope: 'space' | 'global' },
+    ) => {
+      const qns = presentUnreserved(identity.qnsName);
+      const global = presentUnreserved(identity.globalName);
+      if (scope === 'space') {
+        const space = presentUnreserved(identity.spaceName);
+        if (space && space !== global) return { name: space, isQnsVerified: false };
+      }
+      if (qns) return { name: qns, isQnsVerified: true };
+      if (global) return { name: global, isQnsVerified: false };
+      return { name: truncate(identity.address), isQnsVerified: false };
+    },
+    hasReservedQnsSuffix,
+  };
+});
 
 // Mock primitives
 vi.mock('@/components/primitives', () => ({
@@ -102,11 +147,16 @@ vi.mock('../../../components/ui/DropdownPanel', () => ({
 }));
 
 import { ThreadsListPanel } from '../../../components/thread/ThreadsListPanel';
+import { IdentityScopeProvider } from '../../../identity';
 
 function makeWrapper() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return ({ children }: { children: React.ReactNode }) =>
-    createElement(QueryClientProvider, { client }, children);
+    createElement(
+      QueryClientProvider,
+      { client },
+      createElement(IdentityScopeProvider, { rostersBySpace: {}, selfAddress: null }, children),
+    );
 }
 
 describe('ThreadsListPanel', () => {
@@ -116,8 +166,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     expect(screen.getByText(/JOINED THREADS/)).toBeInTheDocument();
@@ -131,8 +180,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     expect(screen.queryByText(/JOINED THREADS/)).not.toBeInTheDocument();
@@ -143,8 +191,7 @@ describe('ThreadsListPanel', () => {
   it('shows empty state when no threads', () => {
     mockUseChannelThreads.mockReturnValue({ data: [], isLoading: false });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     expect(screen.getByText(/No threads yet/i)).toBeInTheDocument();
@@ -157,8 +204,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     const input = screen.getByPlaceholderText(/Search threads/i);
@@ -175,8 +221,7 @@ describe('ThreadsListPanel', () => {
       isLoading: false,
     });
     render(
-      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1"
-        mapSenderToUser={() => ({ displayName: 'Alice' })} />,
+      <ThreadsListPanel isOpen={true} onClose={vi.fn()} spaceId="s1" channelId="c1" />,
       { wrapper: makeWrapper() }
     );
     await user.type(screen.getByPlaceholderText(/Search threads/i), 'zzznomatch');

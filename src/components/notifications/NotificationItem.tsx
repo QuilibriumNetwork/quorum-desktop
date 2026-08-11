@@ -14,13 +14,22 @@ import './NotificationItem.scss';
 interface NotificationItemProps {
   notification: MentionNotification | ReplyNotification;
   onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
-  displayName: string; // Message author display name
-  mapSenderToUser: (senderId: string) => any; // For rendering mentions with display names
+  displayName: React.ReactNode; // Message author display name — an identity-resolved <MemberName>, not a caller-formatted string
+  mapSenderToUser: (senderId: string) => any; // Legacy roster lookup — no longer read for in-body @mention names (see useMessageFormatting.ts), kept for interface stability
   className?: string;
   spaceRoles?: any[]; // Space roles for mention formatting
   spaceChannels?: any[]; // Space channels for mention formatting
   compactDate?: boolean; // Compact date format (omit time for today/yesterday)
   spaceName?: string; // When set (global panel), renders a "Space › #channel" breadcrumb
+  /**
+   * The space THIS row's message belongs to — a notification row is a
+   * detached surface (the global panel spans every space), so in-body
+   * @mentions must resolve against the row's OWN space, never whatever
+   * space the panel happens to render inside. Matches the SAME spaceId the
+   * row's `displayName` (`<MemberName spaceId={rowSpaceId} enrich>`) was
+   * built with, from NotificationPanel.
+   */
+  currentSpaceId?: string;
 }
 
 // Helper function to render message content with proper mention formatting
@@ -52,9 +61,11 @@ const renderMessageContent = (
       if (tokenData.type === 'mention') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
+            {tokenData.prefix}
             <span className="message-mentions-user non-interactive">
               {tokenData.displayName}
             </span>
+            {tokenData.suffix}
             {j < tokens.length - 1 ? ' ' : ''}
           </React.Fragment>
         );
@@ -91,6 +102,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   spaceChannels = [],
   compactDate = false,
   spaceName,
+  currentSpaceId,
 }) => {
   const { message, channelName } = notification;
 
@@ -115,6 +127,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     spaceChannels,
     disableMentionInteractivity: true, // Non-interactive in notifications
     everyoneAuthorized,
+    currentSpaceId,
   });
 
   // We render relative time (dayjs fromNow) rather than the formatted date, but

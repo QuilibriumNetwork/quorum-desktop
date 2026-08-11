@@ -122,6 +122,33 @@ interface MessageListProps {
   anchorQueryKeyPrefix?: readonly unknown[];
 }
 
+// SECURITY: the membership/kicked GATE for message-body mention pills and
+// (via `mapSenderToUser`) message headers. Reads ONLY the raw `members`
+// roster passed into <MessageList> — never `src/identity`, which knows
+// nothing about kicks and would silently let a kicked member's mention
+// render as interactive again if this logic were ever routed through it.
+//
+// Pure and exported so it is unit-testable on its own (see
+// `src/dev/tests/identity/migrated/MessageList.test.tsx`) without mounting
+// the virtualized list. Answers ONLY "is this address a current, non-kicked
+// member" — the NAME shown for a resolved mention comes from `src/identity`
+// separately (`useNameResolver` in MessageMarkdownRenderer, `<MemberName>` /
+// `useResolvedMemberName` in the header). Earlier this function's non-null
+// branch returned `mapSenderToUser(senderId) ?? m` — an identity-enriched
+// object — but every consumer only ever checked the result for null/non-null
+// (see MessageMarkdownRenderer's `isResolved = resolvedUser != null`), so
+// dropping the merge and returning the raw roster row is behaviorally
+// identical for every caller while removing the gate's only dependency on
+// the identity layer. Phase D row 22.
+export function resolveMessageListSenderGate(
+  members: Record<string, unknown>,
+  senderId: string,
+): unknown | null {
+  const m = members[senderId] as { isKicked?: boolean } | undefined;
+  if (!m || m.isKicked) return null;
+  return m;
+}
+
 function useWindowSize() {
   const [size, setSize] = React.useState([0, 0]);
   useLayoutEffect(() => {
@@ -332,24 +359,17 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // pills rather than as clickable pills that would open a profile of a
     // user no longer reachable. Forwarded to Message → MessageMarkdownRenderer.
     //
-    // The membership/kicked GATE reads the raw roster, which is the security
-    // property and must stay that way. The IDENTITY it returns comes from
-    // `mapSenderToUser`, which the container overrides with its public-profile
-    // enriched map.
-    //
-    // Returning the raw roster row here was a real defect: the raw roster
-    // cannot carry `primaryUsername` or `globalDisplayName` (only the profile
-    // fetch supplies them), so every mention pill resolved from strictly less
-    // data than the message header three lines above it — and rendered the
-    // global display name where the header rendered the ".q". Same defect
-    // mobile fixed as chain item 8b.
+    // The membership/kicked GATE reads the raw roster and ONLY the raw
+    // roster — see `resolveMessageListSenderGate` above. It no longer merges
+    // in `mapSenderToUser`'s output: every consumer of this function's return
+    // value only ever checked it for null/non-null (the NAME shown for a
+    // resolved mention now comes from `src/identity` — `useNameResolver` in
+    // MessageMarkdownRenderer, `<MemberName>`/`useResolvedMemberName` in the
+    // header — keyed on the address alone), so there is nothing left for this
+    // gate to enrich.
     const resolveSender = useCallback(
-      (senderId: string) => {
-        const m = members[senderId];
-        if (!m || (m as any).isKicked) return null;
-        return mapSenderToUser(senderId) ?? m;
-      },
-      [members, mapSenderToUser]
+      (senderId: string) => resolveMessageListSenderGate(members, senderId),
+      [members]
     );
 
     // Date separators, new-messages separators, and compact-header flags per row.

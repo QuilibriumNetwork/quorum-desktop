@@ -4,11 +4,9 @@ import { Trans } from '@lingui/react/macro';
 import { useQueryClient } from '@tanstack/react-query';
 import { logger } from '@quilibrium/quorum-shared';
 import { Icon } from '../primitives';
-import { UserAvatar } from '../user/UserAvatar';
 import { ClickToCopyContent } from '../ui';
 import { formatAddress } from '@quilibrium/quorum-shared';
-import { ResolvedName } from '../user/ResolvedName';
-import { resolveMemberName } from '../../utils/resolveMemberName';
+import { MemberName } from '../../identity';
 import { useMessageDB } from '../context/useMessageDB';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { validateUserNote, MAX_USER_NOTE_LENGTH } from '../../hooks/business/validation';
@@ -17,10 +15,9 @@ import './DMUserProfileSidebar.scss';
 interface DMUserProfileSidebarProps {
   user: {
     address: string;
-    displayName?: string;
-    /** QNS primary username (no ".q" suffix — render-time). In a DM the QNS
-     *  name overrides the display name (Model B). */
-    primaryUsername?: string;
+    /** Avatar picture only — outside the identity module's remit (a
+     *  `MemberIdentity` carries no icon field). The NAME comes from
+     *  `<MemberName>` below, never from a caller-supplied displayName. */
     userIcon?: string;
     bio?: string;
   };
@@ -78,18 +75,15 @@ export const DMUserProfileSidebar: React.FC<DMUserProfileSidebarProps> = ({ user
     <div className="dm-profile-sidebar">
       {/* Identity block */}
       <div className="dm-profile-identity">
-        <UserAvatar
-          userIcon={user.userIcon}
-          displayName={user.displayName ?? user.address}
+        {/* withAvatar: the avatar's initials and the name label resolve from
+            the SAME identity-module lookup, so they cannot disagree — see
+            .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md. */}
+        <MemberName
           address={user.address}
-          size={96}
-        />
-        <ResolvedName
-          resolved={resolveMemberName({
-            address: user.address,
-            displayName: user.displayName,
-            primaryUsername: user.primaryUsername,
-          })}
+          enrich
+          withAvatar
+          userIcon={user.userIcon}
+          avatarSize={96}
           className="dm-profile-name truncate text-main font-semibold text-base"
         />
         <div className="dm-profile-address">

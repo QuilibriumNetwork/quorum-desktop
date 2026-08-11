@@ -7,6 +7,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { formatAddress } from '@quilibrium/quorum-shared';
+import { useResolvedName } from '../../identity';
 import { useOptionalShellState } from './useShellState';
 import { useSpaces } from '../../hooks/queries/spaces';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
@@ -91,9 +92,19 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   const shell = useOptionalShellState();
   const isPhone = shell?.viewport === 'phone';
 
-  const displayName = user?.currentPasskeyInfo?.displayName || 'User';
   const userIcon = user?.currentPasskeyInfo?.pfpUrl;
   const userAddress = user?.currentPasskeyInfo?.address || '';
+  // SELF identity: resolves from the user's own public profile via the
+  // identity module, never from `currentPasskeyInfo` (device-local auth
+  // record, carries no QNS name) — the same rule as every other self surface
+  // (the profile card, DM own messages). `enrich`: one bounded address, an
+  // always-mounted surface, genuinely needs the verified ".q". Falls back to
+  // the passkey's raw displayName only when there's no address to resolve at
+  // all (not yet authenticated).
+  const resolvedSelfName = useResolvedName(userAddress, { enrich: true, surface: 'NavRail:self' });
+  const displayName = userAddress
+    ? resolvedSelfName
+    : user?.currentPasskeyInfo?.displayName || 'User';
 
   // Global notifications: the bell opens a centered Modal (rendered by
   // ModalProvider). NavRail only needs the unread-presence dot — the panel and

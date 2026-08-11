@@ -4,7 +4,7 @@ title: "Identity resolution and profile sync (canonical model)"
 status: done
 ai_generated: true
 created: 2026-07-16
-updated: 2026-08-03
+updated: 2026-08-11
 related_docs:
   - "qns-username-display.md"
   - "user-config-sync.md"
@@ -223,6 +223,7 @@ moves queue POSITION. See `issues/2026-08-02-sync-requests-arrive-four-minutes-l
 |---|---|
 | **The architecture** | this document — read "Why a name goes missing" next |
 | **The measurement tool** | `/dev/identity-coverage` (dev builds only). Take a snapshot before and after any change |
+| **The LIVE resolver instrument** | `src/identity/diagnostics.ts` — fires the instant a resolution degrades, not on a snapshot. Session counter on the same `/dev/identity-coverage` page. See "The root-provider class of bug" below |
 | **Your OWN identity** | `.agents/tools/dm-debug/08-self-identity-sources.js` — one console paste; prints all four stores your own name lives in, your roster row per space, and the config blob's size budget. Run this FIRST for any "my own name is wrong" report |
 | **Tripwire** | `localStorage['quorum:diag:selfOverrideWrites']` — every non-empty write to your OWN per-space override, with a stack. Should stay empty; only the Space Settings editor may appear |
 | **Migration record** | `localStorage['quorum:diag:clearedSpaceOverrides']` — what the one-time legacy-override clear destroyed, since it is irreversible |
@@ -249,6 +250,117 @@ before trusting any older wording:
    refreshing, which is narrower.
 2. The fix was believed to be a join-triggered announce. **Killed by arithmetic**
    before it was built: broadcast fan-out makes it N² in traffic.
+
+## The root-provider class of bug, and the instrument that watches for it (2026-08-11)
+
+Two more defects, found by the operator with `/dev/fake-qns` after the eight
+surfaces in `.agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md`
+were fixed. Both are the SAME shape as each other, and a different shape from
+that file's "read a name by hand" bugs: here every surface correctly called
+`<MemberName>`/`useResolvedMemberName` — the resolver just had nothing to
+resolve FROM.
+
+**Bug A — the operator's own name fell to their own address.** Self's
+identity deliberately stopped reading `currentPasskeyInfo` as a PRIMARY
+source (it carries no QNS name — see `identityFromMaps`'s `isSelf` branch in
+`src/identity/identityProvider.tsx`), which fixed four real bugs recorded in
+the file above. That left self with only the fetched public profile as a
+name source. Desktop never publishes a primary username (`/dev/fake-qns`
+says so explicitly), so a user whose public profile also carries no
+`display_name` had NO name source anywhere and fell to a truncated address —
+in the nav rail (no roster, no spaceId) and in their own DM messages (a DM's
+`rostersBySpace` is always `{}`, no space roster concept).
+
+**Fix:** `selfLocalNameEntry(address, displayName)` — the device's own
+`currentPasskeyInfo.displayName`, fed into `IdentitySources.locallyKnownNames`
+as the LAST `globalName` tier, below the roster global slot and the
+published profile. Same shape as a DM partner's own `locallyKnownNames`
+entry (a name known locally, no network round-trip, last resort before the
+address) — it can never supply a `.q`, because a device display name is not
+a QNS name. Wired into App.tsx's root provider and `DirectMessage.tsx`'s own
+provider, the two places self had no other source.
+
+**Bug B — Kick/Mute/Block confirmations rendered a member's address.**
+These three modals are mounted by `ModalProvider` (`Router.web.tsx`), which
+wraps `<Space />`, not the reverse — so they sit ABOVE every Space/DM
+`<IdentityScopeProvider>` and only ever see the ROOT one (`App.tsx`). That
+root shipped with a PERMANENT `rostersBySpace={}` (a stable empty object,
+literally no keys, ever) — so a member with no cached public profile had
+nothing to resolve from, no matter which space the action was in, even
+though the SAME member's name was rendering correctly one provider layer
+down in the channel behind the modal.
+
+**Fix:** `useRootIdentityScope` (`src/hooks/business/identity/`) feeds the
+root provider real data — the user's own rosters via `useMultiSpaceRosters`
+(the same hook `GlobalNotificationsModal`/`MessagePreview`/`ReactionsModal`
+already use for their own detached surfaces) plus `selfLocalNameEntry`. A
+deliberately NON-suspense read (`useSpaces()` is suspense-backed, and this
+hook runs in `App.tsx` above the Router's own Suspense boundary, wrapping
+every branch including onboarding and the "Connecting" screen — a suspense
+read there would force ALL of them through a fallback-then-remount on first
+load). A plain `useQuery` against the same query key (`buildSpacesKey({})`)
+instead just re-renders once the local IndexedDB read resolves, sharing its
+cache with every other `useSpaces()` caller. Cost: one extra IndexedDB read
+per space the user belongs to, at startup once authenticated, cached 60s and
+shared with `useSpaceMembers` — the same cost `GlobalNotificationsModal`
+already paid on open, just paid once at startup instead of per-open.
+
+Swept every other app-level host (`ModalProvider`, `ConfirmationModalProvider`
+via `Layout.tsx`, the toast host) for the same shape: everything else either
+mounts its own scoped provider already (`MessagePreview`, `ReactionsModal`,
+`ConversationSettingsModal`, `SpaceSettingsModal`, `SearchResults`,
+`BookmarksPage`, `GlobalNotificationsModal`, `DirectMessage`,
+`DirectMessageContactsList`, `ThreadPanel`, `Channel`) or resolves from a
+hook called by a component that is a DESCENDANT of one of those (`Message.tsx`,
+`useMessageActions`, `useSearchResultDisplay`, ...). Kick/Mute/Block were the
+only three with no provider of their own anywhere above them.
+
+### Why the component tests could not catch this class
+
+Every test in `src/dev/tests/identity/` mounts its OWN `<IdentityScopeProvider>`
+with hand-built `rostersBySpace`/`locallyKnownNames` — that is the whole point
+of the identity module's design (constraint 1: a virtualised list must not
+register 200 query observers, so the merge is a pure function tested with
+plain objects). But it means a component test can only ever prove "this
+component resolves correctly GIVEN a provider with the right data" — it
+can never prove "the provider this component actually gets, in the real
+tree, HAS the right data". `KickUserModal.test.tsx` passed a populated
+roster to its wrapping provider and always had, for exactly this reason:
+nothing in that test's setup could have caught that the REAL app mounts
+`KickUserModal` under a provider with a permanently empty one.
+
+This is a structural blind spot, not an oversight in any one test. A test
+mounts its own provider; it can never observe what the real tree provides.
+The wiring bug lives one level up from anything a component test's `render()`
+call can see.
+
+**This is what `src/identity/diagnostics.ts` is for.** It runs inside the
+real resolver hooks (`useResolvedMemberName`, `useNameResolver`), in the real
+app, and fires the moment a resolution falls through to the truncated-address
+fallback — which is observable regardless of which provider produced it, or
+why. It distinguishes (best-effort; see the module's own docstring for the
+exact classification and its acknowledged limits) a provider that is missing
+data it should have had (`self-no-local-source`, `space-roster-not-loaded` —
+DEGRADED, warned to the console) from a genuinely unknown member
+(`no-source-anywhere` — reported for visibility, never warned). Dev builds
+only (`process.env.NODE_ENV === 'production'` gate, dead-code-eliminated by
+Vite, same pattern as `src/dev/dm-doctor/warningCounters.ts`), wrapped in
+try/catch throughout, and it can never affect what renders.
+
+Session counters and the last 100 events (deduped, occurrence-counted) are on
+`/dev/identity-coverage` under "Live resolution diagnostics (this session)",
+updating live via `useSyncExternalStore` as you click around — no snapshot
+button, no special mode. "0 degraded resolutions this session" is meant to
+read as a positive signal: the instrument is live and has caught nothing, not
+merely that nobody has looked.
+
+Proven against Bug A itself: with `selfLocalNameEntry` temporarily reverted
+to always return `{}`, both `rootScopeSelfName.test.tsx` and the DM
+own-message test went red (the address rendered, as expected) AND the
+diagnostic printed, naming the exact address and `self-no-local-source` as
+the reason, before the revert was undone. See the task report for the full
+transcript:
+`.superpowers/sdd/2026-08-10-identity-resolution-architecture-plan/root-scope-and-diagnostic-report.md`.
 
 ## Why a name goes missing, and what repairs it (convergence model)
 
@@ -565,7 +677,7 @@ When someone reports a member rendering as an address:
   user's current one.
 
   **Fixed** in the Phase 1 work (see
-  `.agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md`): joins
+  `.agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md`): joins
   file identity under the global slot, nothing authors our own override but the Space
   Settings editor, and a one-time broadcast clear removes the existing ones. The
   2026-07-16 "no auto-migration" decision was reversed for exactly this reason — the
@@ -639,4 +751,4 @@ residual: an unregistered key can still set the display name/avatar on a claimed
 | Channel A sync | `src/services/ConfigService.ts` | `services/config/configService.ts` |
 
 ---
-*Last updated: 2026-08-05*
+*Last updated: 2026-08-11*

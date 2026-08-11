@@ -101,10 +101,11 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   const { message } = result;
   const isThread = !!(message.threadId || message.isThreadReply);
 
-  // Use batch-loaded display data instead of individual hooks
-  const displayName =
-    displayData?.displayName ||
-    (displayData?.isLoading ? 'Loading...' : 'Unknown User');
+  // Use batch-loaded display data instead of individual hooks. NAME is
+  // already resolved through src/identity by useBatchSearchResultsDisplay —
+  // the resolver owns the fallback (a truncated address), so no caller-owned
+  // "Unknown User"/"Loading..." placeholder is layered on top here.
+  const displayName = displayData?.displayName ?? '';
   const channelName =
     displayData?.channelName ||
     (displayData?.isLoading ? 'Loading...' : 'Unknown Channel');

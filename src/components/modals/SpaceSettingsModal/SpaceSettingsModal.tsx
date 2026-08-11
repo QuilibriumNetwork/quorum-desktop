@@ -31,6 +31,10 @@ import { useMentionNotificationSettings } from '../../../hooks/business/mentions
 import { showToast } from '../../../utils/toast';
 import { useSpaceTag } from '../../../hooks/business/spaces/useSpaceTag';
 import { InviteEvalsExhaustedError } from '../../../services/InvitationService';
+import { EMPTY_ROSTERS_BY_SPACE, IdentityScopeProvider } from '../../../identity';
+import { useConversations } from '../../../hooks/queries';
+import { realDisplayNameOrUndefined } from '../../../utils/identityPlaceholder';
+import type { Conversation } from '@quilibrium/quorum-shared';
 import Account from './Account';
 import General from './General';
 import Channels from './Channels';
@@ -42,7 +46,59 @@ import Invites from './Invites';
 import Danger from './Danger';
 import Navigation from './Navigation';
 
+/**
+ * Mounts the modal's own <IdentityScopeProvider>. `SpaceSettingsModal` is
+ * rendered by `ModalProvider` (Router.web.tsx level) — a SIBLING of
+ * Layout/Space/Channel, not a descendant — so Channel's own provider is NOT
+ * an ancestor here. Without this, `Account.tsx`'s per-space name placeholder
+ * (`useMemberIdentity`) and `useInviteManagement`'s invite-picker labels
+ * (`useNameResolver`) both throw the moment the modal opens.
+ *
+ * `locallyKnownNames` is built here (not inside `useInviteManagement`) for
+ * the same reason DirectMessageContactsList lifts it: the outer shell is the
+ * one component that exists both outside the provider (as its creator) and
+ * needs this data. Mirrors the DM surfaces' fix round 1 (design constraint
+ * 5) — a DM partner with no published public profile still resolves from
+ * their local `Conversation.displayName`, no network round-trip, which is
+ * what lets the invite picker (row 20, deliberately NOT enriching) show a
+ * real name instead of a truncated address for someone you've never had
+ * their profile fetched for.
+ */
 const SpaceSettingsModal: React.FunctionComponent<{
+  spaceId: string;
+  dismiss: () => void;
+  initialTab?: 'account' | 'general' | 'invites' | 'roles';
+}> = (props) => {
+  const user = usePasskeysContext();
+  const { data: conversations } = useConversations({ type: 'direct' });
+
+  const directConversations = React.useMemo(
+    () => (conversations?.pages ?? []).flatMap((c: any) => c.conversations as Conversation[]),
+    [conversations],
+  );
+
+  const locallyKnownNames = React.useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const c of directConversations) {
+      const name = realDisplayNameOrUndefined(c.displayName, c.address);
+      if (name && c.address) map[c.address] = name;
+    }
+    return map;
+  }, [directConversations]);
+
+  return (
+    <IdentityScopeProvider
+      spaceId={props.spaceId}
+      rostersBySpace={EMPTY_ROSTERS_BY_SPACE}
+      selfAddress={user?.currentPasskeyInfo?.address ?? null}
+      locallyKnownNames={locallyKnownNames}
+    >
+      <SpaceSettingsModalInner {...props} />
+    </IdentityScopeProvider>
+  );
+};
+
+const SpaceSettingsModalInner: React.FunctionComponent<{
   spaceId: string;
   dismiss: () => void;
   initialTab?: 'account' | 'general' | 'invites' | 'roles';

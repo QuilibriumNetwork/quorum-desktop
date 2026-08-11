@@ -14,9 +14,8 @@ import {
   Tooltip,
 } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
-import { resolveMemberName, formatResolvedName } from '../../utils/resolveMemberName';
-import { conversationMatchesSearch } from '../../utils/conversationSearch';
 import { realIconOrUndefined } from '../../utils/identityPlaceholder';
+import { buildLocalDmNames } from '../../hooks/business/identity';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import {
@@ -28,6 +27,12 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
 import { useOptionalShellState } from '../shell/useShellState';
+import {
+  EMPTY_ROSTERS_BY_SPACE,
+  IdentityScopeProvider,
+  useNameResolver,
+  useResolvedMemberName,
+} from '../../identity';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_CONVERSATIONS =
@@ -60,11 +65,119 @@ interface DirectMessageContactsListProps {
   forceExpanded?: boolean;
 }
 
-const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ forceExpanded } = {}) => {
+/**
+ * The collapsed sidebar's one-row-per-contact strip. A `.map()` body cannot
+ * call a hook per iteration (Rules of Hooks), so this is its own component —
+ * mirrors `<DirectMessageContact>`, the expanded row, which resolves the
+ * same way. `enrich`: same bounded, one-person-per-row surface.
+ */
+const DirectMessageStripRow: React.FC<{
+  address: string;
+  icon?: string;
+  isActive: boolean;
+  unread: boolean;
+  onNavigate: () => void;
+  onContextMenu: (e: React.MouseEvent) => void;
+}> = ({ address, icon, isActive, unread, onNavigate, onContextMenu }) => {
+  // Computed ONCE and reused for the tooltip, the aria-label and the
+  // avatar's bare name, so none of them can disagree.
+  const resolved = useResolvedMemberName(address, { enrich: true });
+  const name = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
+
+  return (
+    <Tooltip
+      id={`dm-strip-${address}`}
+      content={name}
+      place="right"
+      showOnTouch={false}
+    >
+      <button
+        type="button"
+        className={`direct-messages-strip-row sidebar-row-chrome ${isActive ? 'direct-messages-strip-row--active' : ''}`}
+        onClick={onNavigate}
+        onContextMenu={onContextMenu}
+        aria-label={name}
+        aria-current={isActive ? 'page' : undefined}
+      >
+        <div className="direct-messages-strip-avatar">
+          <UserAvatar
+            // Same resolved identity as the tooltip/aria-label above — a
+            // placeholder must never reach here.
+            displayName={resolved.name}
+            userIcon={realIconOrUndefined(icon)}
+            address={address}
+            size={44}
+          />
+          {unread && <span className="icon-unread-dot" />}
+        </div>
+      </button>
+    </Tooltip>
+  );
+};
+
+/**
+ * DM contacts are a DETACHED surface mounted from `Sidebar.tsx` (the app
+ * shell) — there is no ambient `<IdentityScopeProvider>` above it, unlike
+ * `Channel.tsx`'s space subtree. This thin shell mounts one (global scope:
+ * DM conversations carry no spaceId, so a per-space nickname is meaningless
+ * here) and renders the real body as its child, so the child's hook calls
+ * (`useNameResolver`, and `<DirectMessageContact>`'s own
+ * `useResolvedMemberName`) resolve against real context instead of running
+ * before the provider — which THIS component itself creates — exists in the
+ * tree. Same shape as `DirectMessage.tsx`'s own provider and `ThreadPanel`'s
+ * `ThreadTypingIndicator`.
+ */
+const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = (props) => {
+  const { currentPasskeyInfo } = usePasskeysContext();
+  // Fetched here (not in Inner) so it can ALSO feed the provider's
+  // `locallyKnownNames` map — the outer shell is the one component that
+  // exists both outside the provider (as its creator) and needs this data,
+  // so lifting the fetch is cheaper than fetching it twice.
   const { conversations: conversationsList } = useConversationPolling();
+
+  // Fed to the provider's `locallyKnownNames` tier (fix round 1, design
+  // constraint 5): a DM partner's LOCAL `Conversation.displayName` — learned
+  // from a peer broadcast or a decrypted message frame, no network
+  // round-trip — is the last resort before a truncated address, for a
+  // partner who has never published a public profile. Built from ALL
+  // conversations (not just currently-filtered/rendered ones), same
+  // reasoning as `Inner`'s proactive `requestNames` below: a row must be
+  // resolvable the moment it's needed, not only once it happens to render.
+  //
+  // `buildLocalDmNames` (`src/hooks/business/identity/`) is the SAME rule
+  // `useLocalDmNames` uses for the root provider and `SearchResults` — this
+  // component already has `conversationsList` in scope for its own
+  // rendering, so it calls the pure builder directly on data it already
+  // fetched rather than opening a second subscription on the same query.
+  const localNamesByAddress = React.useMemo(
+    () => buildLocalDmNames(conversationsList),
+    [conversationsList],
+  );
+
+  return (
+    <IdentityScopeProvider
+      rostersBySpace={EMPTY_ROSTERS_BY_SPACE}
+      selfAddress={currentPasskeyInfo?.address || null}
+      locallyKnownNames={localNamesByAddress}
+    >
+      <DirectMessageContactsListInner {...props} conversationsList={conversationsList} />
+    </IdentityScopeProvider>
+  );
+};
+
+const DirectMessageContactsListInner: React.FC<
+  DirectMessageContactsListProps & {
+    conversationsList: ReturnType<typeof useConversationPolling>['conversations'];
+  }
+> = ({ forceExpanded, conversationsList }) => {
   // Back-fill displayName / icon from the public profile for contacts whose
   // local row still holds the "Unknown User" / default-avatar placeholder,
   // and write the result through to IndexedDB so later loads are instant.
+  // Name RESOLUTION (the .q suffix, search matching) no longer reads the
+  // `primaryUsername` this attaches — that now comes from the identity
+  // module's own `enrich` request below, which shares the same
+  // `publicProfileQueryKey(address)` cache entry, so this doesn't add a
+  // second network round-trip per partner.
   const conversationsBackfilled =
     useConversationsWithProfileBackfill(conversationsList);
   // Previews are cached by lastMessageId; everything else on the row (read
@@ -128,6 +241,35 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
     return conversationsWithPreviews;
   }, [conversationsWithPreviews, mockConversations]);
 
+  // Imperative/bulk resolution — search matching runs inside a `useMemo`
+  // over every conversation, not inside JSX, so it cannot call a hook per
+  // row (see `useNameResolver`'s docstring). `resolve()` is a pure read of
+  // whatever the provider already has; `requestNames()` below is what
+  // actually asks for a profile fetch.
+  const { resolve, requestNames } = useNameResolver();
+
+  // Request every distinct partner's profile up front, not just the ones
+  // currently rendered — a conversation hidden by an active filter/search
+  // still needs its profile in hand so a NEW search term can match its QNS
+  // name on the first keystroke, not only after it happens to render once.
+  // `requestNames` dedupes internally, and shares the same
+  // `publicProfileQueryKey(address)` cache entry `<DirectMessageContact>`'s
+  // own `enrich` requests below use — no second fetch path.
+  const distinctAddresses = React.useMemo(() => {
+    const seen = new Set<string>();
+    const out: string[] = [];
+    for (const c of enhancedConversations) {
+      if (c.address && !seen.has(c.address)) {
+        seen.add(c.address);
+        out.push(c.address);
+      }
+    }
+    return out;
+  }, [enhancedConversations]);
+  React.useEffect(() => {
+    requestNames(distinctAddresses);
+  }, [distinctAddresses, requestNames]);
+
   // Filter and sort conversations
   const filteredConversations = React.useMemo(() => {
     let result = enhancedConversations;
@@ -141,19 +283,24 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
       result = result.filter((c) => mutedSet.has(c.conversationId));
     }
 
-    // Apply search. The rule lives in `conversationMatchesSearch` — it has to
-    // match the RESOLVED name, because that is what the row renders.
+    // Apply search — must match the RESOLVED name, because that is what the
+    // row renders. Ports `conversationSearch.ts`'s exact matching rule
+    // (resolved name OR raw stored displayName OR address — a strict
+    // superset, see that file's history) onto `resolve()` from the identity
+    // module instead of the deleted `resolveMemberName`.
     if (searchInput.trim()) {
-      result = result.filter((c) =>
-        conversationMatchesSearch(
-          {
-            address: c.address,
-            displayName: c.displayName,
-            primaryUsername: (c as { primaryUsername?: string }).primaryUsername,
-          },
-          searchInput,
-        ),
-      );
+      const needle = searchInput.trim().toLowerCase();
+      result = result.filter((c) => {
+        const resolved = resolve(c.address);
+        const resolvedName = resolved.isQnsVerified
+          ? `${resolved.name}.q`
+          : resolved.name;
+        return (
+          resolvedName.toLowerCase().includes(needle) ||
+          !!c.displayName?.toLowerCase().includes(needle) ||
+          !!c.address?.toLowerCase().includes(needle)
+        );
+      });
     }
 
     // Sort: favorites first (when viewing "all"), then by timestamp
@@ -167,7 +314,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
     }
 
     return result;
-  }, [enhancedConversations, filter, searchInput, favoritesSet, mutedSet]);
+  }, [enhancedConversations, filter, searchInput, favoritesSet, mutedSet, resolve]);
 
   const { deleteConversation } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -305,6 +452,20 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
     return enhancedConversations.find((c) => c.address === contextMenu.address);
   }, [contextMenu, enhancedConversations]);
 
+  // The right-click menu's header name — resolved via `src/identity`, never
+  // `contextMenuContact.displayName` raw. That field is `Conversation.
+  // displayName`, which can literally hold the placeholder string
+  // "Unknown User" (see `isUnknownUser` above) and is stale-capable (learned
+  // once from a peer broadcast, never re-derived). `resolve()` reads the SAME
+  // ladder `<DirectMessageContact>`'s own row uses, already enriched by the
+  // proactive `requestNames(distinctAddresses)` above, so the menu header
+  // never disagrees with the row it was opened from.
+  const contextMenuHeaderName = React.useMemo(() => {
+    if (!contextMenu) return undefined;
+    const r = resolve(contextMenu.address);
+    return r.isQnsVerified ? `${r.name}.q` : r.name;
+  }, [contextMenu, resolve]);
+
   // Calculate filter availability based on data
   const hasFavorites = React.useMemo(
     () => enhancedConversations.some((c) => favoritesSet.has(c.conversationId)),
@@ -352,53 +513,15 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
               (c.lastReadTimestamp ?? 0) < c.timestamp &&
               !mutedSet.has(c.conversationId);
             return (
-              <Tooltip
+              <DirectMessageStripRow
                 key={'dmc-strip-' + c.address}
-                id={`dm-strip-${c.address}`}
-                content={formatResolvedName(
-                  resolveMemberName({
-                    address: c.address,
-                    displayName: c.displayName,
-                    primaryUsername: (c as { primaryUsername?: string }).primaryUsername,
-                  }),
-                )}
-                place="right"
-                showOnTouch={false}
-              >
-                <button
-                  type="button"
-                  className={`direct-messages-strip-row sidebar-row-chrome ${isActive ? 'direct-messages-strip-row--active' : ''}`}
-                  onClick={() => navigate(`/messages/${c.address}`)}
-                  onContextMenu={handleContextMenu(c.address, c.conversationId)}
-                  aria-label={formatResolvedName(
-                    resolveMemberName({
-                      address: c.address,
-                      displayName: c.displayName,
-                      primaryUsername: (c as { primaryUsername?: string }).primaryUsername,
-                    }),
-                  )}
-                  aria-current={isActive ? 'page' : undefined}
-                >
-                  <div className="direct-messages-strip-avatar">
-                    <UserAvatar
-                      // Same resolved identity as the expanded row and the
-                      // tooltip above — a placeholder must never reach here.
-                      displayName={
-                        resolveMemberName({
-                          address: c.address,
-                          displayName: c.displayName,
-                          primaryUsername: (c as { primaryUsername?: string })
-                            .primaryUsername,
-                        }).name
-                      }
-                      userIcon={realIconOrUndefined(c.icon)}
-                      address={c.address}
-                      size={44}
-                    />
-                    {unread && <span className="icon-unread-dot" />}
-                  </div>
-                </button>
-              </Tooltip>
+                address={c.address}
+                icon={c.icon}
+                isActive={isActive}
+                unread={unread}
+                onNavigate={() => navigate(`/messages/${c.address}`)}
+                onContextMenu={handleContextMenu(c.address, c.conversationId)}
+              />
             );
           })}
         </div>
@@ -407,7 +530,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
             header={{
               type: 'user',
               address: contextMenu.address,
-              displayName: contextMenuContact.displayName,
+              displayName: contextMenuHeaderName ?? '',
               userIcon: contextMenuContact.icon,
             }}
             items={getContextMenuItems(contextMenu.address, contextMenu.conversationId)}
@@ -519,7 +642,6 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
                   address={c.address}
                   userIcon={c.icon}
                   displayName={c.displayName}
-                  primaryUsername={(c as { primaryUsername?: string }).primaryUsername}
                   lastMessagePreview={c.preview}
                   previewIcon={c.previewIcon}
                   timestamp={c.timestamp}
@@ -540,7 +662,7 @@ const DirectMessageContactsList: React.FC<DirectMessageContactsListProps> = ({ f
           header={{
             type: 'user',
             address: contextMenu.address,
-            displayName: contextMenuContact.displayName,
+            displayName: contextMenuHeaderName ?? '',
             userIcon: contextMenuContact.icon,
           }}
           items={getContextMenuItems(contextMenu.address, contextMenu.conversationId)}

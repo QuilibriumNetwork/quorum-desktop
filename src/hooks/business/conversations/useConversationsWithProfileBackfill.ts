@@ -111,7 +111,7 @@ export function useConversationsWithProfileBackfill(
     return conversations.map((c) => {
       const pub = profileByAddress[c.address];
       if (!pub) return c;
-      const nameNeedsFill = isPlaceholderName(c.displayName);
+      const nameNeedsFill = isPlaceholderName(c.displayName, c.address);
       const iconNeedsFill = isPlaceholderIcon(c.icon);
       const primaryUsername = pub.primary_username || undefined;
       if (!nameNeedsFill && !iconNeedsFill) {
@@ -138,7 +138,7 @@ export function useConversationsWithProfileBackfill(
       if (!pub) continue;
 
       const nextName =
-        isPlaceholderName(c.displayName) && pub.display_name
+        isPlaceholderName(c.displayName, c.address) && pub.display_name
           ? pub.display_name
           : undefined;
       const nextIcon =
@@ -163,7 +163,7 @@ export function useConversationsWithProfileBackfill(
           const row = existing.conversation;
           const merged: Conversation = {
             ...row,
-            ...(nextName && isPlaceholderName(row.displayName)
+            ...(nextName && isPlaceholderName(row.displayName, row.address)
               ? { displayName: nextName }
               : {}),
             ...(nextIcon && isPlaceholderIcon(row.icon)

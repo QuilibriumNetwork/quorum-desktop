@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { i18n } from '@lingui/core';
 import { parse as parseEmoji } from '@twemoji/parser';
 import { Flex, Tooltip } from '../primitives';
 import { useReactionsModal } from '../context/ReactionsModalProvider';
 import { isTouchDevice } from '../../utils/platform';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
-import { resolveSpaceMemberName, formatResolvedName, type NameResolvableUser } from '../../utils/resolveMemberName';
+import { useNameResolver } from '../../identity';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from '../emoji-picker/types';
 import type { MemberInfo } from '../modals/ReactionsModal';
@@ -37,7 +37,7 @@ interface ReactionsListProps {
   message: MessageType;
   userAddress: string;
   customEmojis: CustomEmoji[];
-  mapSenderToUser: (senderId: string) => NameResolvableUser | undefined;
+  mapSenderToUser: (senderId: string) => any;
   onReactionClick: (emojiId: string) => void;
 }
 
@@ -51,7 +51,28 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
   const { showReactionsModal } = useReactionsModal();
   const isTouch = isTouchDevice();
 
-  // Build members record for all users who reacted (for modal)
+  // Bulk imperative resolver: the tooltip's reactor names are built inside a
+  // `.map()` over reactions/memberIds, so a hook cannot be called per
+  // address in that loop (rules of hooks) — resolve() is a plain function
+  // safe to call per-address there. See src/identity/useNameResolver.ts.
+  const { resolve, requestNames } = useNameResolver();
+
+  // Reactors on this ONE message — a bounded set, worth enriching so the
+  // tooltip can show ".q". Resolves through src/identity: ReactionsList
+  // renders inside Channel/DM/Thread's space subtree, so the surrounding
+  // IdentityScopeProvider decides scope.
+  const reactorAddresses = useMemo(() => {
+    const addresses = new Set<string>();
+    message.reactions?.forEach((r) => r.memberIds.forEach((id) => addresses.add(id)));
+    return addresses;
+  }, [message.reactions]);
+  useEffect(() => {
+    requestNames(reactorAddresses);
+  }, [reactorAddresses, requestNames]);
+
+  // Build members record for all users who reacted (for the modal). Only
+  // userIcon is needed here — the resolver (via ReactionsModal's own
+  // IdentityScopeProvider) owns the name, keyed by address + spaceId.
   const members = useMemo(() => {
     if (!message.reactions) return {};
     const memberRecord: Record<string, MemberInfo> = {};
@@ -60,9 +81,6 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
         if (!memberRecord[id]) {
           const user = mapSenderToUser(id);
           memberRecord[id] = {
-            displayName: user?.displayName,
-            primaryUsername: user?.primaryUsername,
-            globalDisplayName: user?.globalDisplayName,
             userIcon: user?.userIcon,
             address: id,
           };
@@ -87,6 +105,12 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
         reactions: message.reactions,
         customEmojis,
         members,
+        spaceId: message.spaceId,
+        // Needed so ReactionsModal can detect a DM message (spaceId ===
+        // channelId === the peer's address) and resolve reactors on the
+        // global ladder instead of forcing a per-space nickname tier that
+        // cannot exist for a DM. See ReactionsModal.tsx's own doc comment.
+        channelId: message.channelId,
       });
     }
   };
@@ -96,22 +120,16 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
   return (
     <Flex className="flex-wrap pt-1 -mr-1">
       {message.reactions.map((r) => {
-        // Build tooltip content showing who reacted
+        // Build tooltip content showing who reacted. resolve() is the same
+        // identityFromMaps + resolveIdentity read <MemberName> uses, so the
+        // tooltip agrees with every other rendering of the same address —
+        // the resolver owns the fallback (a truncated address) too, so no
+        // caller-supplied `id.slice(0, 8) + '...'` fallback here.
         const maxNames = 3;
         const reactorNames = r.memberIds
           .map((id) => {
-            const u = mapSenderToUser(id);
-            const resolved = u
-              ? formatResolvedName(
-                  resolveSpaceMemberName({
-                    address: u.address ?? id,
-                    displayName: u.displayName,
-                    primaryUsername: u.primaryUsername,
-                    globalDisplayName: u.globalDisplayName,
-                  }),
-                )
-              : id.slice(0, 8) + '...';
-            const name = resolved;
+            const resolved = resolve(id);
+            const name = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
             // Truncate long names in tooltip (max ~20 chars)
             return name.length > 20 ? name.slice(0, 18) + '...' : name;
           })

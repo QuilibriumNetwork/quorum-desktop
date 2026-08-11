@@ -27,8 +27,8 @@ import type { Role } from '@quilibrium/quorum-shared';
 import { getRoleColorHex } from '@quilibrium/quorum-shared';
 import type { SpaceNotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
-import { useUserPublicProfile } from '../../../hooks/business/user/useUserPublicProfile';
-import { selfNamePlaceholder } from '../../../utils/resolveSelfName';
+import { useMemberIdentity } from '../../../identity';
+import { hasReservedQnsSuffix } from '@quilibrium/quorum-shared';
 
 interface AccountProps {
   spaceId: string;
@@ -98,13 +98,38 @@ const Account: React.FunctionComponent<AccountProps> = ({
   isMentionSettingsLoading,
 }) => {
   const { currentPasskeyInfo: userInfo } = usePasskeysContext();
-  // Your own QNS name, for the per-space name placeholder below. The public
-  // profile is the only source of `primary_username`, and reading your OWN is
-  // the same 1h-cached fetch every other surface already makes — no publish
-  // path is involved, which is why this works before the server-side publish
-  // bug is fixed. Mirrors UserSettingsModal.
-  const { data: ownPublicProfile } = useUserPublicProfile(userInfo?.address);
-  const primaryUsername = ownPublicProfile?.primary_username || undefined;
+  // Your own identity, for the per-space name placeholder below — resolved
+  // via the SAME module every other migrated surface uses, scoped to THIS
+  // space so the placeholder promises exactly what an empty override field
+  // resolves to. `enrich` is redundant-but-harmless here: the ambient
+  // <IdentityScopeProvider> (mounted by SpaceSettingsModal, one level up)
+  // already auto-fetches `selfAddress`'s own public profile, and `request()`
+  // dedupes. No `useUserPublicProfile` call needed any more — this replaces
+  // it AND `utils/resolveSelfName`'s `selfNamePlaceholder`.
+  const selfIdentity = useMemberIdentity(userInfo?.address ?? '', {
+    spaceId,
+    enrich: true,
+  });
+  // Fix round 1 (Phase D rows 19-21): `useMemberIdentity` returns the RAW
+  // `MemberIdentity` — unlike `useResolvedMemberName`, it is NOT run through
+  // shared's `resolveIdentity`, so its own forged-".q" guard
+  // (`presentUnreserved`, quorum-shared/src/utils/resolveDisplayName.ts:51-55,
+  // applied to every tier at resolveDisplayName.ts:109-113) never sees these
+  // values. Re-applying the SAME exported `hasReservedQnsSuffix` here (not a
+  // reimplementation) restores that guard for this call site. Switching to
+  // `useResolvedMemberName` instead was considered and rejected: its
+  // terminal fallback is `resolveIdentity`'s own truncated address, which
+  // would silently replace this field's deliberate instructional-copy
+  // fallback (see the placeholder's own comment below) with an address —
+  // a UX regression `useMemberIdentity` avoids by exposing the tiers
+  // separately.
+  const selfPlaceholderName = React.useMemo(() => {
+    const qns = (selfIdentity.qnsName ?? '').trim();
+    if (qns && !hasReservedQnsSuffix(qns)) return `${qns}.q`;
+    const global = (selfIdentity.globalName ?? '').trim();
+    if (global && !hasReservedQnsSuffix(global)) return global;
+    return null;
+  }, [selfIdentity.qnsName, selfIdentity.globalName]);
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const {
     confirmationStep,
@@ -223,10 +248,16 @@ const Account: React.FunctionComponent<AccountProps> = ({
               className="w-full md:w-80 mt-3 ml-1"
               value={displayName}
               onChange={setDisplayName}
-              placeholder={selfNamePlaceholder(
-                { primaryUsername, displayName: userInfo?.displayName },
-                t`Your name in this Space`,
-              )}
+              placeholder={
+                // A placeholder here is a PROMISE (see the old
+                // resolveSelfName.ts): what an empty per-space field
+                // actually resolves to. Same ladder every other migrated
+                // surface uses — QNS name, then global name, then (since
+                // this is the ONE place instructing an empty field, not
+                // rendering a member) the caller's instructional copy
+                // rather than the resolver's own truncated-address fallback.
+                selfPlaceholderName || t`Your name in this Space`
+              }
               labelType="static"
               error={!!displayNameError}
               errorMessage={displayNameError}

@@ -14,9 +14,6 @@ import {
   realIconOrUndefined,
 } from '../../../utils/identityPlaceholder';
 import { DefaultImages } from '../../../utils';
-import { resolveMemberName } from '../../../utils/resolveMemberName';
-
-const ADDRESS = 'QmYVtoS6E7T4TL4pSomethingSomethingLjDd';
 
 describe('isPlaceholderDisplayName', () => {
   it('treats the stored literal, empty and nullish as placeholders', () => {
@@ -47,6 +44,53 @@ describe('isPlaceholderDisplayName', () => {
   });
 });
 
+// The CRITICAL regression this fix closes: a stored name that IS the
+// member's own address is not a name, it's the resolver's own fallback
+// round-tripped into storage. `buildLocalDmNames`/`realDisplayNameOrUndefined`
+// used to accept it as real, which then rendered the FULL, UNTRUNCATED
+// address on screen — worse than doing nothing, since the resolver's own
+// fallback at least truncates. See
+// .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
+describe('isPlaceholderDisplayName — a name that is the address itself', () => {
+  const ADDRESS = 'QmPeerAEgVKpYZKYuFu2J49zHXnA8vZtEqzzABCDEF';
+
+  it('treats an exact address match as a placeholder', () => {
+    expect(isPlaceholderDisplayName(ADDRESS, ADDRESS)).toBe(true);
+  });
+
+  it('treats a case-different address match as a placeholder', () => {
+    expect(isPlaceholderDisplayName(ADDRESS.toUpperCase(), ADDRESS)).toBe(true);
+    expect(isPlaceholderDisplayName(ADDRESS.toLowerCase(), ADDRESS.toUpperCase())).toBe(true);
+  });
+
+  it('treats a truncated rendering of the address as a placeholder, both known truncation shapes', () => {
+    // quorum-shared resolveDisplayName's own internal fallback shape (6/4).
+    expect(isPlaceholderDisplayName(`${ADDRESS.slice(0, 6)}…${ADDRESS.slice(-4)}`, ADDRESS)).toBe(true);
+    // formatAddress's default shape (Qm + 6 / 6).
+    expect(isPlaceholderDisplayName(`${ADDRESS.slice(0, 8)}…${ADDRESS.slice(-6)}`, ADDRESS)).toBe(true);
+  });
+
+  it('does not flag a real name that merely contains an ellipsis unrelated to the address', () => {
+    expect(isPlaceholderDisplayName('Hello…World', ADDRESS)).toBe(false);
+  });
+
+  it('does not flag a real name as a placeholder just because SOME address is in scope', () => {
+    expect(isPlaceholderDisplayName('GattoPardo', ADDRESS)).toBe(false);
+  });
+
+  it('without an address in scope, only the literal/empty placeholder rules apply (no false positive on a name that happens to look address-shaped)', () => {
+    expect(isPlaceholderDisplayName(ADDRESS)).toBe(false);
+    expect(isPlaceholderDisplayName(ADDRESS, undefined)).toBe(false);
+    expect(isPlaceholderDisplayName(ADDRESS, null)).toBe(false);
+  });
+
+  it('realDisplayNameOrUndefined demotes an address-shaped name the same way', () => {
+    expect(realDisplayNameOrUndefined(ADDRESS, ADDRESS)).toBeUndefined();
+    expect(realDisplayNameOrUndefined(`${ADDRESS.slice(0, 6)}…${ADDRESS.slice(-4)}`, ADDRESS)).toBeUndefined();
+    expect(realDisplayNameOrUndefined('GattoPardo', ADDRESS)).toBe('GattoPardo');
+  });
+});
+
 describe('isPlaceholderIcon', () => {
   it('treats the default image, empty and nullish as placeholders', () => {
     expect(isPlaceholderIcon(DefaultImages.UNKNOWN_USER)).toBe(true);
@@ -73,32 +117,11 @@ describe('demotion helpers', () => {
   });
 });
 
-// The integration that actually caused the reported bug: every name surface
-// goes through resolveMemberName, so demoting there is what makes the sidebar
-// and the header agree.
-describe('resolveMemberName treats the placeholder as no name', () => {
-  it('falls through to the address instead of rendering the placeholder', () => {
-    const resolved = resolveMemberName({
-      address: ADDRESS,
-      displayName: UNKNOWN_USER_PLACEHOLDER,
-    });
-    expect(resolved.name).not.toBe(UNKNOWN_USER_PLACEHOLDER);
-    expect(resolved.isQnsVerified).toBe(false);
-  });
-
-  it('still prefers a real name', () => {
-    expect(
-      resolveMemberName({ address: ADDRESS, displayName: 'GattoPardo' }).name
-    ).toBe('GattoPardo');
-  });
-
-  it('lets the QNS name win over the placeholder', () => {
-    const resolved = resolveMemberName({
-      address: ADDRESS,
-      displayName: UNKNOWN_USER_PLACEHOLDER,
-      primaryUsername: 'gattopardo',
-    });
-    expect(resolved.name).toBe('gattopardo');
-    expect(resolved.isQnsVerified).toBe(true);
-  });
-});
+// The integration that actually caused the reported bug used to be
+// `resolveMemberName` (deleted with the rest of `utils/resolveMemberName` —
+// see .agents/issues/.open/2026-08-10-identity-resolution-architecture-design.md).
+// The demotion now happens upstream of `src/identity`: callers that build
+// `locallyKnownNames`/roster rows (DirectMessage.tsx, DirectMessageContactsList.tsx)
+// call `realDisplayNameOrUndefined`/`realIconOrUndefined` directly (see the
+// "demotion helpers" tests above) before those values ever reach
+// `identityFromMaps`, so there is no second integration point left to pin here.

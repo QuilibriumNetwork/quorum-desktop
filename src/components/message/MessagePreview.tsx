@@ -2,12 +2,14 @@ import React from 'react';
 import type { Message as MessageType, Sticker, Role, Channel, Space } from '@quilibrium/quorum-shared';
 import { Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
 import { processMarkdownText, hasPermission } from '@quilibrium/quorum-shared';
 import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
-import { resolveNameForContext, formatResolvedName } from '../../utils/resolveMemberName';
+import { MemberName, IdentityScopeProvider } from '../../identity';
+import { useMultiSpaceRosters, useLocalDmNames } from '../../hooks/business/identity';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (
@@ -54,11 +56,13 @@ const renderPreviewTextWithSpecialTokens = (
       if (tokenData.type === 'mention') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
+            {tokenData.prefix}
             <span
               className={`message-mentions-user ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
             >
               {tokenData.displayName}
-            </span>{' '}
+            </span>
+            {tokenData.suffix}{' '}
           </React.Fragment>
         );
       } else if (tokenData.type === 'channel-mention') {
@@ -161,7 +165,85 @@ interface MessagePreviewProps {
   currentSpaceId?: string;
 }
 
-export const MessagePreview: React.FC<MessagePreviewProps> = ({
+/**
+ * `MessagePreview` is handed to hosts that render far from where it was
+ * BUILT — `showConfirmationModal`'s `preview` (`usePinnedMessages.ts`'s
+ * `togglePin`, `useMessageActions.ts`'s `handleDelete`) is constructed
+ * inside a Channel/DirectMessage's identity scope but RENDERED by
+ * `Layout.tsx`'s `ConfirmationModalProvider`, a sibling of the app shell
+ * mounted outside any Channel/DirectMessage `<IdentityScopeProvider>`.
+ * React resolves context where an element is RENDERED, not where
+ * `React.createElement`/JSX built it — so a name-resolving hook inside this
+ * component would see whatever ancestor sits above the MODAL HOST (App.tsx's
+ * root provider, `rostersBySpace={}}`), not above the button that built the
+ * element. For a member with no cached public profile, that empty roster
+ * means every tier comes up empty and the address renders truncated, even
+ * though the exact same member resolves correctly a few pixels away in the
+ * Pinned Messages panel (which renders INSIDE Channel's own provider).
+ *
+ * Fix: mount our OWN scope here, scoped to `currentSpaceId`, exactly like
+ * `ReactionsModal`/`BookmarksPage`/`GlobalNotificationsModal` already do for
+ * their own detached surfaces — never depend on an ambient provider being
+ * present. `useMultiSpaceRosters` shares its query key/fetcher with
+ * `useSpaceMembers` (`buildSpaceMembersKey`), so when this DOES render
+ * nested inside an already-open Channel (`PinnedMessagesPanel`), the roster
+ * read here is the SAME cached entry Channel's own provider was built
+ * from — an inner provider refining with identical data, never a second,
+ * emptier source that could shadow a working outer one. Also carries
+ * `useLocalDmNames` (the same reusable source `SearchResults.tsx` and the
+ * root provider use), so a DM partner known only from their local
+ * conversation record — no public profile, no space roster row — still
+ * resolves to their name rather than a truncated address inside a preview
+ * (e.g. the delete-confirmation dialog for a DM message).
+ *
+ * SECOND DEFECT, fixed here too: `currentSpaceId` is not always a real
+ * Space. `useMessageActions.ts`'s `handleDelete` builds this preview with
+ * `currentSpaceId: spaceId || message.spaceId` — for a message inside a DM,
+ * `message.spaceId` IS the peer's address (the app-wide convention: a DM's
+ * spaceId === channelId === the peer's address, see `MessageList.tsx:118`,
+ * `Message.tsx:384-396`, and the identical `message.spaceId ===
+ * message.channelId` check `SearchResults.tsx`/`SearchResultItem.tsx` already
+ * use). Passing that pseudo-spaceId straight to the provider's own `spaceId`
+ * forces the SPACE ladder — a per-space-nickname tier that cannot exist for
+ * a DM — where `DirectMessage.tsx` deliberately resolves on the GLOBAL
+ * ladder. `isDM` below detects this the same way those other call sites do:
+ * reliably, not heuristically — a real Space channel's `channelId` is a
+ * distinct id generated at channel creation and is never equal to its own
+ * `spaceId` by construction (every write site that checks this convention,
+ * `MessageService.ts`/`ThreadService.ts` among them, relies on the same
+ * fact), so the comparison cannot false-positive on an ordinary channel
+ * message. On a match, `currentSpaceId` is withheld from the provider
+ * entirely (both the roster fetch and `spaceId` prop), which is exactly the
+ * `rostersBySpace={{}}` + no-`spaceId` shape `DirectMessage.tsx` itself uses.
+ */
+export const MessagePreview: React.FC<MessagePreviewProps> = (props) => {
+  const { currentSpaceId, message } = props;
+  const user = usePasskeysContext();
+  const selfAddress = user?.currentPasskeyInfo?.address ?? null;
+
+  const isDM = !!message.spaceId && message.spaceId === message.channelId;
+  const effectiveSpaceId = isDM ? undefined : currentSpaceId;
+
+  const spaceIds = React.useMemo(
+    () => (effectiveSpaceId ? [effectiveSpaceId] : []),
+    [effectiveSpaceId],
+  );
+  const rostersBySpace = useMultiSpaceRosters(spaceIds);
+  const locallyKnownNames = useLocalDmNames(selfAddress);
+
+  return (
+    <IdentityScopeProvider
+      spaceId={effectiveSpaceId}
+      rostersBySpace={rostersBySpace}
+      selfAddress={selfAddress}
+      locallyKnownNames={locallyKnownNames}
+    >
+      <MessagePreviewContent {...props} />
+    </IdentityScopeProvider>
+  );
+};
+
+const MessagePreviewContent: React.FC<MessagePreviewProps> = ({
   message,
   mapSenderToUser,
   stickers,
@@ -176,7 +258,6 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
 }) => {
   // Extract senderId from the message content based on message type
   const senderId = message.content?.senderId || '';
-  const sender = mapSenderToUser && senderId ? mapSenderToUser(senderId) : null;
 
   // Gate the @everyone pill on sender authorization (sender held mention:everyone,
   // role-based, no owner bypass) — same trust rule as the message list. When the
@@ -200,31 +281,6 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     currentSpaceId,
     everyoneAuthorized,
   });
-
-  // The resolver owns the whole ladder INCLUDING the address fallback — see the
-  // contract on `useChannelMessages.mapSenderToUser`, which returns a member
-  // unchanged (empty `displayName` included) precisely so no caller re-derives
-  // it. This used to hand-roll `displayName → username → formatAddress`, which
-  // skipped the QNS name and the forged-suffix guard alike.
-  //
-  // Reachable only when `hideHeader` is false; both current callers
-  // (PinnedMessagesPanel, BookmarkItem) pass it, so this was dead code sitting
-  // next to a trust marker. Resolved rather than deleted so turning the header
-  // back on cannot quietly reintroduce the gap.
-  const getDisplayName = () => {
-    if (!sender && !senderId) return t`Unknown User`;
-    return formatResolvedName(
-      resolveNameForContext(
-        {
-          address: sender?.address ?? senderId,
-          displayName: sender?.displayName,
-          primaryUsername: sender?.primaryUsername,
-          globalDisplayName: sender?.globalDisplayName,
-        },
-        { isDm: message.spaceId === message.channelId },
-      ),
-    );
-  };
 
   // Use shared date formatting utility (matches Message.tsx format)
   const formattedTimestamp = message.createdDate
@@ -355,11 +411,20 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       style={{ backgroundColor: showBackground ? "var(--color-bg-chat)" : undefined }}
     >
       <Flex direction="column" gap="sm">
-        {/* Message header */}
+        {/* Message header. Reachable only when `hideHeader` is false; both
+            current callers (PinnedMessagesPanel, BookmarkItem) pass
+            hideHeader={true}, so this stays dead code in production today —
+            kept resolving via the identity module (not deleted) so turning
+            it back on cannot quietly reintroduce the gap `getDisplayName`
+            used to be. `enrich`: a single, bounded sender per preview. */}
         {!hideHeader && (
           <Flex align="center" className="dropdown-result-meta min-w-0">
             <Icon name="user" className="dropdown-result-user-icon flex-shrink-0" />
-            <span className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0">{getDisplayName()}</span>
+            <MemberName
+              address={senderId}
+              enrich
+              className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0"
+            />
             <Icon name="calendar-alt" className="dropdown-result-date-icon flex-shrink-0" />
             <span className="dropdown-result-date">{formattedTimestamp}</span>
           </Flex>

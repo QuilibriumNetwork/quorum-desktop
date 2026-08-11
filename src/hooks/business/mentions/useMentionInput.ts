@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Channel, Group } from '@quilibrium/quorum-shared';
-import { resolveSpaceMemberName } from '../../../utils/resolveMemberName';
+import { useNameResolver } from '../../../identity';
 
 interface User {
   address: string;
@@ -21,17 +21,32 @@ interface Role {
   color: string;
 }
 
-// The name a user candidate is shown and matched by in the picker. Mentions
-// are a space feature, so the space rule applies: a custom per-space name
-// (roster name differing from the global name) wins; otherwise the QNS name
-// wins over the global name; then display name; then address.
-const mentionCandidateName = (u: User): string =>
-  resolveSpaceMemberName({
-    address: u.address,
-    displayName: u.displayName,
-    primaryUsername: u.primaryUsername,
-    globalDisplayName: u.globalDisplayName,
-  }).name;
+// Match against every RAW field a user could be found by: the per-space
+// override, the QNS username, the global name (the roster ladder's fallback
+// tier — see mentionCandidateName below), and the raw address. Missing
+// `globalDisplayName` here was a real bug: a follow-global member (no
+// per-space override, the default state) is DISPLAYED by their global name,
+// but a query matching only that name found nobody, because the old
+// predicate never read the field the label actually came from.
+//
+// Kept as a search aid alongside `candidateMatchesQuery` below (which reads
+// the RESOLVED name) rather than replaced by it: `primaryUsername` here can
+// carry a QNS handle from `Channel.tsx`'s visible-sender back-fill before
+// this surface's own enrichment has fetched anything for a given candidate
+// (see `rawNameFieldAudit.test.ts`'s documented exception for this file's
+// raw-field use, and `MessageList.tsx`'s).
+const userMatchesQuery = (user: User, queryLower: string): boolean => {
+  const name = user.displayName?.toLowerCase() || '';
+  const globalName = user.globalDisplayName?.toLowerCase() || '';
+  const qns = user.primaryUsername?.toLowerCase() || '';
+  const addr = user.address.toLowerCase();
+  return (
+    name.includes(queryLower) ||
+    globalName.includes(queryLower) ||
+    qns.includes(queryLower) ||
+    addr.includes(queryLower)
+  );
+};
 
 // Discriminated union for display
 export type MentionOption =
@@ -85,6 +100,43 @@ export function useMentionInput({
   const [filteredOptions, setFilteredOptions] = useState<MentionOption[]>([]);
   const [dropdownPosition] = useState({ x: 0, y: 0 }); // Will be positioned by CSS relative to textarea
 
+  // `resolve` reads the ambient roster + profile maps a caller's
+  // <IdentityScopeProvider> already holds — the SAME data <MemberName>/
+  // MentionDropdown render a candidate from (row 10). This hook never calls
+  // `request`/`requestNames` itself — enrichment for what's actually shown
+  // is MentionDropdown's job (`<MemberName enrich>` per rendered row,
+  // bounded by `maxDisplayResults`, design decision 3 revised 2026-08-11);
+  // `resolve()` here only ever READS whatever that (or any other already-
+  // enriched surface) has already fetched, so sorting/filtering can never
+  // show a candidate the dropdown wouldn't also show, or vice versa.
+  const { resolve } = useNameResolver();
+
+  // The name a user candidate is SORTED by — must match the name
+  // `<MemberName enrich>` actually renders for them (MentionDropdown, row
+  // 10), ".q" included, not whatever fields happen to be on the `User`
+  // object.
+  const mentionCandidateName = useCallback(
+    (u: User): string => {
+      const r = resolve(u.address);
+      return r.isQnsVerified ? `${r.name}.q` : r.name;
+    },
+    [resolve]
+  );
+
+  // FILTERING must match what's DISPLAYED too — typing the exact ".q" name
+  // a candidate is already shown by (here, or anywhere else in the app that
+  // enriched them first) has to find them, even when that differs from
+  // every raw field on the `User` object (`userMatchesQuery`'s bare
+  // `primaryUsername`, with no suffix, never matches a query that includes
+  // ".q"). OR'd with the raw-field check rather than replacing it — the raw
+  // fields still find a candidate nobody has enriched yet.
+  const candidateMatchesQuery = useCallback(
+    (user: User, queryLower: string): boolean =>
+      userMatchesQuery(user, queryLower) ||
+      mentionCandidateName(user).toLowerCase().includes(queryLower),
+    [mentionCandidateName]
+  );
+
   // Helper to sort by relevance: exact match > starts with > contains > alphabetical
   const sortByRelevance = useCallback(
     <T extends { displayName?: string; name?: string }>(
@@ -125,19 +177,15 @@ export function useMentionInput({
 
       const queryLower = query.toLowerCase();
 
-      // Filter users whose QNS name, displayName, or address matches the query.
-      const matches = users.filter(user => {
-        const name = user.displayName?.toLowerCase() || '';
-        const qns = user.primaryUsername?.toLowerCase() || '';
-        const addr = user.address.toLowerCase();
-        return name.includes(queryLower) || qns.includes(queryLower) || addr.includes(queryLower);
-      });
+      // Filter users matching the name they're actually SHOWN by, ".q"
+      // included (or a raw field, or the address).
+      const matches = users.filter(user => candidateMatchesQuery(user, queryLower));
 
       // Sort by relevance against the name the user is shown as (QNS wins).
       const sorted = sortByRelevance(matches, query, mentionCandidateName);
       return sorted.slice(0, maxDisplayResults);
     },
-    [users, minQueryLength, maxDisplayResults, sortByRelevance]
+    [users, minQueryLength, maxDisplayResults, sortByRelevance, mentionCandidateName, candidateMatchesQuery]
   );
 
   // Filter users for Tier 2 (1-2 chars) - bypasses minQueryLength
@@ -147,19 +195,15 @@ export function useMentionInput({
 
       const queryLower = query.toLowerCase();
 
-      // Filter users whose QNS name, displayName, or address matches the query.
-      const matches = users.filter(user => {
-        const name = user.displayName?.toLowerCase() || '';
-        const qns = user.primaryUsername?.toLowerCase() || '';
-        const addr = user.address.toLowerCase();
-        return name.includes(queryLower) || qns.includes(queryLower) || addr.includes(queryLower);
-      });
+      // Filter users matching the name they're actually SHOWN by, ".q"
+      // included (or a raw field, or the address).
+      const matches = users.filter(user => candidateMatchesQuery(user, queryLower));
 
       // Sort by relevance against the name the user is shown as (QNS wins).
       const sorted = sortByRelevance(matches, query, mentionCandidateName);
       return sorted.slice(0, maxDisplayResults);
     },
-    [users, maxDisplayResults, sortByRelevance]
+    [users, maxDisplayResults, sortByRelevance, mentionCandidateName, candidateMatchesQuery]
   );
 
   // Filter and rank roles based on query (Tier 3: requires minQueryLength)
@@ -334,7 +378,7 @@ export function useMentionInput({
     // Find first selectable index (skip group headers)
     const firstSelectableIndex = options.findIndex(option => option.type !== 'group-header');
     setSelectedIndex(Math.max(0, firstSelectableIndex));
-  }, [users, minQueryLength, sortByRelevance, filterUsers, filterUsersForTier2, filterRoles, filterRolesForTier2, filterChannelGroups, checkEveryoneMatch]);
+  }, [users, minQueryLength, sortByRelevance, mentionCandidateName, filterUsers, filterUsersForTier2, filterRoles, filterRolesForTier2, filterChannelGroups, checkEveryoneMatch]);
 
   // Detect @ and # mentions and extract query
   useEffect(() => {

@@ -184,6 +184,8 @@ const Layout: React.FunctionComponent<{
           reactions={reactionsModal.reactions}
           customEmojis={reactionsModal.customEmojis}
           members={reactionsModal.members}
+          spaceId={reactionsModal.spaceId}
+          channelId={reactionsModal.channelId}
           onClose={hideReactionsModal}
         />
       )}

@@ -11,6 +11,7 @@ import { isTouchDevice } from '../../utils/platform';
 import { formatMessageDate } from '../../utils';
 import { useResolvedBookmark } from '../../hooks/queries/bookmarks';
 import { MessagePreview } from '../message/MessagePreview';
+import { MemberName } from '../../identity';
 
 export interface BookmarkItemProps {
   bookmark: Bookmark;
@@ -32,6 +33,15 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   compactDate = false,
 }) => {
   const { cachedPreview } = bookmark;
+
+  // `bookmark.spaceId` is NOT always a real Space: a DM bookmark is created
+  // with `context.spaceId = spaceId || message.spaceId` (useMessageActions.ts's
+  // `handleBookmarkToggle`), and for a DM message `message.spaceId` IS the
+  // peer's own address (the app-wide convention — same defect shape already
+  // fixed in BookmarkCard.tsx/MessagePreview.tsx/ReactionsModal.tsx).
+  // `sourceType` is the purpose-built discriminant already on the bookmark.
+  // `undefined` (never the raw pseudo-spaceId) forces the GLOBAL ladder.
+  const effectiveSpaceId = bookmark.sourceType === 'dm' ? undefined : bookmark.spaceId;
 
   // Try to resolve the full message from local IndexedDB
   const { data: resolvedMessage } = useResolvedBookmark(bookmark, true);
@@ -94,6 +104,13 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           showBackground={false}
           hideHeader={true}
           disableMentionInteractivity={true}
+          // Detached surface: bookmarks span every space, so in-body
+          // @mentions must resolve against the BOOKMARK's own spaceId, not
+          // whatever space this panel happens to render inside. (MessagePreview
+          // itself also independently detects the DM shape from `message`, so
+          // this is belt-and-suspenders, not the only guard — but passing the
+          // already-corrected value keeps this call site honest too.)
+          currentSpaceId={effectiveSpaceId}
         />
       );
     }
@@ -111,9 +128,17 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
         <Flex justify="between" className="result-meta-container">
           <Flex className="result-meta items-center min-w-0">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
-            <span className="result-sender mr-2 truncate flex-shrink min-w-0">
-              {cachedPreview.senderName || t`Unknown User`}
-            </span>
+            {/* Detached surface: bookmarks span every space, so the per-space
+                nickname must come from the bookmark's OWN spaceId, never from
+                context. `enrich`: bounded cardinality (one sender per row,
+                MAX_BOOKMARKS rows), and this is where the ".q" name has to
+                come from — cachedPreview never carried it. */}
+            <MemberName
+              address={cachedPreview.senderAddress}
+              spaceId={effectiveSpaceId}
+              enrich
+              className="result-sender mr-2 truncate flex-shrink min-w-0"
+            />
           </Flex>
           <Flex className="result-meta items-center flex-shrink-0 whitespace-nowrap">
             <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />

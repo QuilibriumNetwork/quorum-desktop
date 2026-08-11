@@ -12,13 +12,55 @@ import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { getThreadTitle } from '../../utils/threadTitle';
-import { resolveSpaceMemberName, formatResolvedName } from '../../utils/resolveMemberName';
+import { IdentityScopeProvider, MemberName, useNameResolver } from '../../identity';
+import { useTypingIndicator } from '../../hooks/business/messages/useTypingIndicator';
 import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
 const LazyEmojiPicker = React.lazy(() =>
   import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
 );
+
+/**
+ * `useNameResolver` needs an ancestor <IdentityScopeProvider> — ThreadPanel
+ * mounts its OWN provider in what it returns, so a hook call in ThreadPanel's
+ * own function body would run BEFORE that provider exists in the tree (the
+ * provider is a descendant of ThreadPanel, not an ancestor of it). This tiny
+ * wrapper is rendered AS A CHILD of <IdentityScopeProvider> below, so its
+ * hook call resolves against the real context. `resolve()` (no explicit
+ * spaceId) already reads the provider's `defaultSpaceId`, which IS
+ * `channelProps.spaceId` — the exact same scope TypingIndicator's names
+ * need. Same shape as Channel.tsx's `ChannelTypingIndicator`.
+ *
+ * ENRICHES — reconciled with `ChannelTypingIndicator` (fix round 1 of Phase D
+ * rows 19-21). This used to deliberately NOT enrich, reasoning that
+ * `useTypingIndicator(scope)` would need a SECOND subscription
+ * (`<TypingIndicator>` owns its own internally) just to fire a request for a
+ * label about to disappear. That reasoning undersold the fix: a typing
+ * indicator names one or two people — it IS the bounded case recipe rule 1
+ * describes — and the whole point of this migration is that the same
+ * address renders the same string everywhere, so "Alice is typing…" here and
+ * "alice.q" on her next message header must agree. The second subscription
+ * is real but cheap: `TypingService.subscribe` (quorum-shared) is a plain
+ * `Set<Listener>` registration against an in-memory map, no I/O, no
+ * network — not worth trading consistency for.
+ */
+export const ThreadTypingIndicator: React.FC<{ scope: TypingScope | null }> = ({ scope }) => {
+  const typists = useTypingIndicator(scope);
+  const { resolve, requestNames } = useNameResolver();
+  React.useEffect(() => {
+    requestNames(typists);
+  }, [typists, requestNames]);
+  return (
+    <TypingIndicator
+      scope={scope}
+      resolveName={(addr) => {
+        const r = resolve(addr);
+        return r.isQnsVerified ? `${r.name}.q` : r.name;
+      }}
+    />
+  );
+};
 
 export const ThreadPanel: React.FC = () => {
   const {
@@ -189,17 +231,6 @@ export const ThreadPanel: React.FC = () => {
     };
   }, [rootMessage, channelProps]);
 
-  const starterName = starterUser
-    ? formatResolvedName(
-        resolveSpaceMemberName({
-          address: starterUser.address,
-          displayName: starterUser.displayName,
-          primaryUsername: starterUser.primaryUsername,
-          globalDisplayName: starterUser.globalDisplayName,
-        }),
-      )
-    : null;
-
   const isThreadAuthor = useMemo(() => {
     if (!rootMessage?.threadMeta?.createdBy || !channelProps?.currentUserAddress) return false;
     return rootMessage.threadMeta.createdBy === channelProps.currentUserAddress;
@@ -313,7 +344,7 @@ export const ThreadPanel: React.FC = () => {
   const listHeaderContent = useMemo(() => (
     <div className="thread-panel__list-header">
       <div className="thread-panel__list-title">{threadTitle}</div>
-      {starterName && (
+      {starterUser && (
         <div className="thread-panel__list-started-by">
           {t`Started by`}{' '}
           <span
@@ -323,16 +354,42 @@ export const ThreadPanel: React.FC = () => {
             onClick={handleStarterClick}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleStarterClick(e as any); }}
           >
-            {starterName}
+            {/* Bounded single-person surface (the thread's starter) — enrich
+                so a QNS-verified starter shows their ".q", matching every
+                other "Started by" / header-style surface already migrated. */}
+            <MemberName address={starterUser.address} enrich />
           </span>
         </div>
       )}
     </div>
-  ), [threadTitle, starterName, handleStarterClick]);
+  ), [threadTitle, starterUser, handleStarterClick]);
+
+  // Message resolves its sender through src/identity, which throws outside a
+  // provider. ThreadPanel is a SIBLING of Channel in Space.tsx (not a
+  // descendant), so it does NOT inherit Channel's IdentityScopeProvider —
+  // it needs its own. `channelProps.rosterRows` is the EXACT object
+  // Channel.tsx's own provider is built from (raw `members`) — see the
+  // field's doc comment in ThreadContext.tsx for why re-deriving from the
+  // public-profile-backfilled `effectiveMembers` map is a trap: it happens
+  // to read the same today only because resolveIdentity's space!==global
+  // guard neutralises the difference, not because the two sources agree.
+  // `channelProps.members` (passed to the message list below) is now ALSO
+  // the raw roster, not `effectiveMembers` — see that field's own doc comment
+  // in ThreadContext.tsx (the membership/kicked gate reads it). Always
+  // computed (never inside the early-return below) so hook order stays fixed.
+  const rostersBySpace = useMemo(
+    () => (channelProps?.spaceId ? { [channelProps.spaceId]: channelProps.rosterRows ?? {} } : {}),
+    [channelProps?.spaceId, channelProps?.rosterRows],
+  );
 
   if (!isOpen || !threadId || !channelProps) return null;
 
   return (
+    <IdentityScopeProvider
+      spaceId={channelProps.spaceId}
+      rostersBySpace={rostersBySpace}
+      selfAddress={channelProps.currentUserAddress ?? null}
+    >
     <div
       className="thread-panel-wrapper"
       ref={panelRef}
@@ -408,6 +465,10 @@ export const ThreadPanel: React.FC = () => {
             messageList={allThreadMessages}
             setInReplyTo={composer.setInReplyTo}
             customEmoji={channelProps.customEmoji}
+            // RAW roster — see ThreadChannelProps.members's doc comment.
+            // The membership/kicked GATE below reads this directly; it must
+            // be the same raw source Channel's own per-space message list
+            // uses, not the public-profile-backfilled effectiveMembers map.
             members={channelProps.members}
             // Same enriched mapper the channel view uses. Without it MessageList
             // falls back to its internal mapper, and thread author names lose
@@ -440,20 +501,10 @@ export const ThreadPanel: React.FC = () => {
 
       {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
-        <TypingIndicator
-          scope={typingScope}
-          resolveName={(addr) => {
-            const u = channelProps.mapSenderToUser(addr);
-            return formatResolvedName(
-              resolveSpaceMemberName({
-                address: u?.address ?? addr,
-                displayName: u?.displayName,
-                primaryUsername: u?.primaryUsername,
-                globalDisplayName: u?.globalDisplayName,
-              }),
-            );
-          }}
-        />
+        {/* Enriches (see ThreadTypingIndicator above) — matches Channel's
+            typing indicator so the same person's name never disagrees
+            between the two surfaces. */}
+        <ThreadTypingIndicator scope={typingScope} />
         {isClosed ? (
           <div className="message-composer-container">
             <div className="message-composer-row">
@@ -583,6 +634,7 @@ export const ThreadPanel: React.FC = () => {
         </>
       )}
     </div>
+    </IdentityScopeProvider>
   );
 };
 

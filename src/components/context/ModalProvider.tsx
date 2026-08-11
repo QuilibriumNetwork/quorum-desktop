@@ -103,9 +103,9 @@ const BlockUserModalContainer: React.FC<{
           ? unblockUser(target.address)
           : blockUser(target.address)
       }
-      userName={target.displayName}
       userIcon={target.userIcon}
       userAddress={target.address}
+      spaceId={target.spaceId}
       isUnblocking={target.isUnblocking}
     />
   );
@@ -202,7 +202,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
           <KickUserModal
             visible={true}
             onClose={modalState.closeKickUser}
-            userName={modalState.state.kickUser.target.displayName}
             userIcon={modalState.state.kickUser.target.userIcon}
             userAddress={modalState.state.kickUser.target.address}
           />
@@ -218,7 +217,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
                 ? unmuteUser(modalState.state.muteUser.target!.address)
                 : muteUser(modalState.state.muteUser.target!.address, days)
             }
-            userName={modalState.state.muteUser.target.displayName}
             userIcon={modalState.state.muteUser.target.userIcon}
             userAddress={modalState.state.muteUser.target.address}
             isUnmuting={modalState.state.muteUser.target.isUnmuting}

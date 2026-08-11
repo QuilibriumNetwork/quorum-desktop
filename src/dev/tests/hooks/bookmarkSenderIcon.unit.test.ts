@@ -6,7 +6,7 @@
  * looked up at render. These tests pin two things:
  *
  * 1. the lookup ORDER, which must match the one every other surface uses
- *    (useMembersWithPublicProfileFallback), so a bookmark and the message it
+ *    (useVisibleSenderProfileFallback), so a bookmark and the message it
  *    points at never disagree about who sent it;
  * 2. that every source actually BELONGS to the sender. A DM conversation
  *    record carries the COUNTERPART's identity, so using it without checking

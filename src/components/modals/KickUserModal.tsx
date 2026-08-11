@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useParams } from 'react-router';
 import { Button, Modal, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { useUserKicking } from '../../hooks';
@@ -6,11 +7,11 @@ import { useModalSaveState } from '../../hooks';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import { t } from '@lingui/core/macro';
 import { formatAddress } from '@quilibrium/quorum-shared';
+import { useResolvedMemberName } from '../../identity';
 
 type KickUserModalProps = {
   visible: boolean;
   onClose: () => void;
-  userName: string;
   userIcon?: string;
   userAddress: string;
 };
@@ -18,6 +19,23 @@ type KickUserModalProps = {
 const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   const { kicking, confirmationStep, handleKickClick, kickUserFromSpace, resetConfirmation } =
     useUserKicking();
+
+  // `KickUserModal` is mounted by `ModalProvider` above any per-space
+  // `<IdentityScopeProvider>` (see Router.web.tsx: ModalProvider wraps
+  // <Space/>, not the reverse) — the ambient scope has no spaceId. Kick is
+  // ALWAYS a Space-scoped action, so spaceId comes from the route, exactly
+  // the same source `useUserKicking` itself already reads, so the name and
+  // the action always agree on which space they're acting in. `enrich`: one
+  // bounded address, this one confirmation.
+  const { spaceId } = useParams();
+  const resolvedName = useResolvedMemberName(props.userAddress, {
+    spaceId,
+    enrich: true,
+    surface: 'KickUserModal',
+  });
+  const resolvedNameText = resolvedName.isQnsVerified
+    ? `${resolvedName.name}.q`
+    : resolvedName.name;
 
   const { isSaving, saveUntilComplete } = useModalSaveState({
     maxTimeout: 30000,         // 30s failsafe
@@ -66,13 +84,15 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
         <Flex gap="md" align="center">
           <UserAvatar
             userIcon={props.userIcon}
-            displayName={props.userName}
+            // BARE name (no ".q") — matches the initials to whatever the
+            // label actually renders (recipe rule 4).
+            displayName={resolvedName.name}
             address={props.userAddress}
             size={40}
           />
           <div className="flex-1 min-w-0 flex flex-col">
             <span className="text-body font-semibold truncate-user-name">
-              {props.userName}
+              {resolvedNameText}
             </span>
             <span className="text-small">
               {formatAddress(props.userAddress)}

@@ -9,7 +9,7 @@
 // and the avatar is looked up here instead.
 //
 // The ladder is the same one every other surface uses
-// (`useMembersWithPublicProfileFallback`): per-space override → roster global
+// (`useVisibleSenderProfileFallback`): per-space override → roster global
 // slot → public profile, with the DM conversation record standing in for the
 // roster on DM bookmarks. A miss is not an error — `UserAvatar` renders
 // coloured initials, which is what a sender with no avatar has always shown.
