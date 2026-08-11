@@ -53,6 +53,7 @@ import { useBookmarks } from '../../hooks/business/bookmarks';
 import {
   IdentityScopeProvider,
   MemberName,
+  selfLocalNameEntry,
   useResolvedMemberName,
   useResolvedName,
 } from '../../identity';
@@ -508,10 +509,23 @@ const DirectMessage: React.FC<{}> = () => {
   // — is the last resort before a truncated address, for a partner who has
   // never published a public profile. `realDisplayNameOrUndefined` demotes
   // the stored 'Unknown User' placeholder so it never becomes a "known" name.
+  //
+  // ALSO carries self's device display name (`selfLocalNameEntry` — same
+  // helper the root provider in App.tsx uses). Without it, YOUR OWN messages
+  // in this DM had no name source at all: this provider's `rostersBySpace`
+  // is always `{}` (a DM has no space roster), so if your own public profile
+  // carries no `display_name`, self's `globalName` tier was null and your
+  // own messages rendered as your truncated address while the partner's
+  // rendered correctly a few pixels away. See
+  // .agents/issues/2026-08-10-name-surfaces-that-never-reached-the-resolver.md.
   const localNamesByAddress = useMemo(() => {
     const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName);
-    return localName && address ? { [address]: localName } : {};
-  }, [conversation, address]);
+    const partnerEntry = localName && address ? { [address]: localName } : {};
+    return {
+      ...partnerEntry,
+      ...selfLocalNameEntry(user.currentPasskeyInfo?.address, user.currentPasskeyInfo?.displayName),
+    };
+  }, [conversation, address, user.currentPasskeyInfo]);
 
   // Icon size for header icons
   const headerIconSize = 'lg';

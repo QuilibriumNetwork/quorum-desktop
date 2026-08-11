@@ -101,7 +101,7 @@ export const NavRail: React.FunctionComponent<NavRailProps> = ({ collapsed, onTo
   // always-mounted surface, genuinely needs the verified ".q". Falls back to
   // the passkey's raw displayName only when there's no address to resolve at
   // all (not yet authenticated).
-  const resolvedSelfName = useResolvedName(userAddress, { enrich: true });
+  const resolvedSelfName = useResolvedName(userAddress, { enrich: true, surface: 'NavRail:self' });
   const displayName = userAddress
     ? resolvedSelfName
     : user?.currentPasskeyInfo?.displayName || 'User';

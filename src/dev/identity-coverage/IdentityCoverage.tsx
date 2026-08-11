@@ -10,7 +10,7 @@
  * second snapshot is the point, not a caveat.
  */
 
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button, Icon } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
@@ -27,6 +27,10 @@ import {
   probePublicProfiles,
   readIdentityCoverageStores,
 } from './identityCoverageDb';
+import {
+  getIdentityDiagnosticsState,
+  subscribeIdentityDiagnostics,
+} from '../../identity';
 
 function truncateAddress(address: string): string {
   if (address.length <= 20) return address;
@@ -61,6 +65,105 @@ const Stat: React.FC<StatProps> = ({ label, value, hint, tone }) => (
     )}
   </div>
 );
+
+/**
+ * Live counter for `src/identity/diagnostics.ts` — the resolver-side
+ * instrument, distinct from everything else on this page. Everything above
+ * reads IndexedDB, a snapshot you take on demand; this reads an in-memory
+ * event log that updates itself the moment a resolution degrades, just from
+ * clicking around the app normally (open the nav rail, open Kick/Mute/Block,
+ * scroll a channel) — no special mode, no snapshot button.
+ *
+ * `useSyncExternalStore` rather than a `useEffect` + `useState` subscribe
+ * dance: the diagnostic module already exposes a plain subscribe/getSnapshot
+ * pair (`subscribeIdentityDiagnostics` / `getIdentityDiagnosticsState`),
+ * which is exactly what this hook is for, and it avoids the classic bug of
+ * missing an update that fires between render and effect-mount.
+ *
+ * "0 degraded resolutions this session" is a positive signal, not merely the
+ * absence of a warning — the operator can read it as "the instrument is
+ * live and has caught nothing" rather than wonder whether it's running at
+ * all.
+ */
+const LiveResolutionDiagnostics: React.FC = () => {
+  const state = useSyncExternalStore(
+    subscribeIdentityDiagnostics,
+    getIdentityDiagnosticsState,
+    getIdentityDiagnosticsState,
+  );
+
+  return (
+    <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
+      <Flex justify="between" align="center" className="mb-2 flex-wrap gap-2">
+        <Text variant="strong" size="lg">
+          Live resolution diagnostics (this session)
+        </Text>
+        <Text variant="strong" size="xl" className={countTone(state.degradedTotal)}>
+          {state.degradedTotal} degraded resolution{state.degradedTotal === 1 ? '' : 's'}
+        </Text>
+      </Flex>
+      <Text variant="subtle" size="xs" className="mb-3 block">
+        Fires the instant a name resolves to a truncated address from a
+        provider that was missing data it should have had (your own identity
+        with no local source, or a Space roster this provider never loaded) —
+        NOT for a genuinely unknown member, which is counted separately below
+        and never warned to the console. Click around the app normally; this
+        updates live. Resets on reload — it is a session counter, not a
+        persisted log.
+      </Text>
+      <Flex gap="lg" className="flex-wrap mb-2">
+        <Stat
+          label="Degraded"
+          value={state.degradedTotal}
+          hint="provider missing data it should have had"
+          tone={countTone(state.degradedTotal)}
+        />
+        <Stat
+          label="Expected (no source anywhere)"
+          value={state.expectedTotal}
+          hint="likely a genuinely unknown member — not warned"
+        />
+      </Flex>
+      {state.events.length > 0 && (
+        <div className="overflow-x-auto mt-2">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="text-left border-b border-default">
+                <th className="py-1 pr-4">When</th>
+                <th className="py-1 pr-4">Surface</th>
+                <th className="py-1 pr-4">Address</th>
+                <th className="py-1 pr-4">Scope</th>
+                <th className="py-1 pr-4">Reason</th>
+                <th className="py-1">×</th>
+              </tr>
+            </thead>
+            <tbody>
+              {state.events.slice(0, 20).map((e) => (
+                <tr
+                  key={`${e.address}|${e.scope}|${e.spaceId ?? ''}|${e.reason}`}
+                  className="border-b border-default/50"
+                >
+                  <td className="py-1 pr-4 font-mono text-xs">{e.at}</td>
+                  <td className="py-1 pr-4">{e.surface}</td>
+                  <td className="py-1 pr-4 font-mono text-xs">
+                    {truncateAddress(e.address)}
+                    {e.isSelf && ' (you)'}
+                  </td>
+                  <td className="py-1 pr-4">
+                    {e.scope}
+                    {e.spaceId ? ` (${truncateAddress(e.spaceId)})` : ''}
+                  </td>
+                  <td className={`py-1 pr-4 ${e.degraded ? 'text-red-500' : ''}`}>{e.reason}</td>
+                  <td className="py-1">{e.occurrences}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const IdentityCoverage: React.FC = () => {
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -199,6 +302,8 @@ export const IdentityCoverage: React.FC = () => {
             </Text>
           </div>
         )}
+
+        <LiveResolutionDiagnostics />
 
         {/* Controls */}
         <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">

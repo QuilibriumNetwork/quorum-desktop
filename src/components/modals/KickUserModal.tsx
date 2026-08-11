@@ -28,7 +28,11 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   // the action always agree on which space they're acting in. `enrich`: one
   // bounded address, this one confirmation.
   const { spaceId } = useParams();
-  const resolvedName = useResolvedMemberName(props.userAddress, { spaceId, enrich: true });
+  const resolvedName = useResolvedMemberName(props.userAddress, {
+    spaceId,
+    enrich: true,
+    surface: 'KickUserModal',
+  });
   const resolvedNameText = resolvedName.isQnsVerified
     ? `${resolvedName.name}.q`
     : resolvedName.name;

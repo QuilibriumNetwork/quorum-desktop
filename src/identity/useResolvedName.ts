@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { resolveIdentity, type MemberIdentity } from '@quilibrium/quorum-shared';
-import { identityFromMaps, useIdentityContext } from './identityProvider';
+import { identityFromMaps, useIdentityContext, type IdentitySources } from './identityProvider';
+import { recordIfDegraded } from './diagnostics';
 
 export interface ResolvedMemberName {
   name: string;
@@ -13,6 +14,14 @@ export interface UseResolvedNameOptions {
   spaceId?: string;
   /** Force the global ladder even inside a Space. Rarely needed. */
   global?: boolean;
+  /**
+   * A label for the degraded-resolution diagnostic (dev builds only — see
+   * `src/identity/diagnostics.ts`), so a fallback-to-address report names
+   * the surface that rendered it instead of making the operator guess.
+   * Optional: when omitted, the diagnostic falls back to a best-effort
+   * guess from the call stack. Has no effect on what renders.
+   */
+  surface?: string;
   /**
    * Opt in to a public-profile fetch for this address. Default `false`: the
    * name resolves from the roster maps already in memory and issues NO
@@ -47,7 +56,7 @@ function useMemberIdentityAndScope(
   address: string,
   spaceId: string | undefined,
   enrich: boolean,
-): { identity: MemberIdentity; defaultSpaceId: string | undefined } {
+): { identity: MemberIdentity; defaultSpaceId: string | undefined; sources: IdentitySources } {
   const { sources, defaultSpaceId, request } = useIdentityContext();
   React.useEffect(() => {
     if (enrich) request(address);
@@ -57,7 +66,7 @@ function useMemberIdentityAndScope(
     () => identityFromMaps(address, effectiveSpaceId, sources),
     [address, effectiveSpaceId, sources],
   );
-  return { identity, defaultSpaceId };
+  return { identity, defaultSpaceId, sources };
 }
 
 /** The identity behind a name, for callers that need the tiers. */
@@ -81,10 +90,21 @@ export function useResolvedName(
 /** The structured result, for callers that style the suffix. */
 export function useResolvedMemberName(
   address: string,
-  { spaceId, global = false, enrich = false }: UseResolvedNameOptions = {},
+  { spaceId, global = false, enrich = false, surface }: UseResolvedNameOptions = {},
 ): ResolvedMemberName {
-  const { identity, defaultSpaceId } = useMemberIdentityAndScope(address, spaceId, enrich);
+  const { identity, defaultSpaceId, sources } = useMemberIdentityAndScope(address, spaceId, enrich);
   const scope = global || !(spaceId ?? defaultSpaceId) ? 'global' : 'space';
+  const effectiveSpaceId = spaceId ?? defaultSpaceId;
+
+  // Dev-build-only (see diagnostics.ts) — fires the moment this resolution
+  // fell through to the truncated-address fallback. An effect, not an inline
+  // call, so it runs after commit (never during render) and re-fires only
+  // when the resolved identity/scope actually changes, not on every
+  // unrelated re-render of the surface that called this hook.
+  React.useEffect(() => {
+    recordIfDegraded({ identity, scope, sources, spaceId: effectiveSpaceId, surface });
+  }, [identity, scope, sources, effectiveSpaceId, surface]);
+
   return React.useMemo(
     () => resolveIdentity(identity, { scope }),
     [identity, scope],

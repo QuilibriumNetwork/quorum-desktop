@@ -35,7 +35,9 @@ export const MemberName: React.FunctionComponent<MemberNameProps> = ({
   userIcon,
   ...opts
 }) => {
-  const resolved = useResolvedMemberName(address, opts);
+  // Default `surface` so a degraded-resolution report from this component
+  // is never blank — an explicit `surface` in `opts` still wins.
+  const resolved = useResolvedMemberName(address, { surface: 'MemberName', ...opts });
 
   const label = (
     <span className={className}>

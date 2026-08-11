@@ -309,6 +309,25 @@ describe('DirectMessage — YOUR OWN name in your own DM messages resolves from 
     expect(screen.queryByText('Stale Local Display Name')).not.toBeInTheDocument();
   });
 
+  it('bug A: a self public profile with NO display_name and NO primary_username renders the device display name, never a truncated address', async () => {
+    // The exact reproduction reported from the running app: `/dev/fake-qns`
+    // removed the operator's own `.q`, and their published profile carried
+    // no display_name either — so `globalName` had nothing but a fetched
+    // profile to draw on, and self fell through to a truncated address in
+    // their own DM messages while everyone else's messages rendered fine.
+    // Fixed by wiring `currentPasskeyInfo.displayName` into the provider's
+    // `locallyKnownNames` as the LAST globalName source (`selfLocalNameEntry`,
+    // same helper App.tsx's root provider uses) — never a source of a `.q`.
+    renderDM({
+      self: { primary_username: '', display_name: '' },
+      other: { primary_username: '', display_name: 'Bob' },
+    });
+
+    const ownMessageName = await screen.findByTestId('own-message-name');
+    expect(ownMessageName).toHaveTextContent('Stale Local Display Name');
+    expect(ownMessageName.textContent).not.toMatch(/^Qm.*…/);
+  });
+
   it('the members map no longer hand-builds a self identity (displayName/primaryUsername)', async () => {
     renderDM({
       self: { primary_username: 'gatto', display_name: 'GattoPardo' },

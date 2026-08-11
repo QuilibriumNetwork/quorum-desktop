@@ -47,6 +47,36 @@ const nn = (v?: string | null): string | null => {
 };
 
 /**
+ * Self's entry for `IdentitySources.locallyKnownNames` — the device's own
+ * `currentPasskeyInfo.displayName`, used ONLY as the LAST `globalName`
+ * source, below the roster global slot and the published profile.
+ *
+ * Why this exists: self's identity deliberately stopped reading from
+ * `currentPasskeyInfo` as a PRIMARY source (it carries no QNS name — see
+ * `identityFromMaps`'s `isSelf` branch), which fixed four real bugs. But that
+ * left self with only the fetched public profile as a name source, and
+ * desktop never publishes a primary username — so a user whose public
+ * profile carries no `display_name` had NO name source at all and fell to a
+ * truncated address, in their own nav rail and their own DM messages. This
+ * is the same shape as a DM partner's `locallyKnownNames` entry (see that
+ * field's own docstring): a name known locally, with no network round-trip,
+ * used as a last resort before the address — it can never supply a `.q`,
+ * because a device display name is not a QNS name.
+ *
+ * Returns the stable `{}` reference when there is nothing to contribute, so
+ * a caller building a provider's `locallyKnownNames` doesn't invalidate its
+ * own memo on every render passing an entry that resolves to empty.
+ */
+export function selfLocalNameEntry(
+  address: string | null | undefined,
+  displayName: string | null | undefined,
+): Record<string, string> {
+  const name = nn(displayName);
+  if (!address || !name) return EMPTY_LOCAL_NAMES;
+  return { [address]: name };
+}
+
+/**
  * Pure tier assembly. Kept separate from React so the merge is unit-testable
  * and so a virtualised list can resolve 200 rows from maps already in memory
  * without registering 200 query observers (design constraint 1).

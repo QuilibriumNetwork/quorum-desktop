@@ -34,7 +34,11 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
   // agree on which space. `enrich`: one bounded address, this one
   // confirmation.
   const { spaceId } = useParams();
-  const resolvedName = useResolvedMemberName(userAddress, { spaceId, enrich: true });
+  const resolvedName = useResolvedMemberName(userAddress, {
+    spaceId,
+    enrich: true,
+    surface: 'MuteUserModal',
+  });
   const resolvedNameText = resolvedName.isQnsVerified
     ? `${resolvedName.name}.q`
     : resolvedName.name;

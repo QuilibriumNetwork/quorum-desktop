@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { resolveIdentity, type MemberIdentity } from '@quilibrium/quorum-shared';
 import { identityFromMaps, useIdentityContext } from './identityProvider';
+import { recordIfDegraded } from './diagnostics';
 import type { ResolvedMemberName } from './useResolvedName';
 
 export interface NameResolverOptions {
@@ -11,6 +12,9 @@ export interface NameResolverOptions {
   spaceId?: string;
   /** Force the global ladder even inside a Space. Rarely needed. */
   global?: boolean;
+  /** Same as `UseResolvedNameOptions.surface` — a label for the
+   *  degraded-resolution diagnostic (dev builds only). */
+  surface?: string;
 }
 
 export interface NameResolver {
@@ -75,6 +79,13 @@ export function useNameResolver(): NameResolver {
       const effectiveSpaceId = opts.spaceId ?? defaultSpaceId;
       const identity: MemberIdentity = identityFromMaps(address, effectiveSpaceId, sources);
       const scope = opts.global || !effectiveSpaceId ? 'global' : 'space';
+      // Dev-build-only (see diagnostics.ts). Called inline, not from an
+      // effect: `resolve` is invoked imperatively inside a loop building raw
+      // DOM/markdown tokens, outside React's render-effect lifecycle, so
+      // there is no commit phase to defer to. The dedupe window in
+      // `recordIfDegraded` keeps a re-render that rebuilds every pill from
+      // spamming the console.
+      recordIfDegraded({ identity, scope, sources, spaceId: effectiveSpaceId, surface: opts.surface });
       return resolveIdentity(identity, { scope });
     },
     [sources, defaultSpaceId],

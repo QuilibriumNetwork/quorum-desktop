@@ -38,7 +38,11 @@ const BlockUserModal: React.FunctionComponent<BlockUserModalProps> = ({
   // `<IdentityScopeProvider>` — same reasoning as Kick/Mute, but `spaceId`
   // arrives as a genuine prop here since the caller already has it.
   // `enrich`: one bounded address, this one confirmation.
-  const resolvedName = useResolvedMemberName(userAddress, { spaceId, enrich: true });
+  const resolvedName = useResolvedMemberName(userAddress, {
+    spaceId,
+    enrich: true,
+    surface: 'BlockUserModal',
+  });
   const resolvedNameText = resolvedName.isQnsVerified
     ? `${resolvedName.name}.q`
     : resolvedName.name;
