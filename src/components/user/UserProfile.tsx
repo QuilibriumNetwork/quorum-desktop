@@ -23,6 +23,7 @@ import { UserAvatar } from './UserAvatar';
 import { useResolvedMemberName } from '../../identity';
 import { useUserNote, buildUserNoteKey } from '../../hooks/queries/userNotes';
 import { useUserPublicProfile } from '../../hooks/business/user/useUserPublicProfile';
+import { useProfileCardIdentityFields } from '../../hooks/business/user/useProfileCardIdentityFields';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildSpaceKey } from '../../hooks/queries/space/buildSpaceKey';
 import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
@@ -129,15 +130,8 @@ const UserProfile: React.FunctionComponent<{
   // passed — see the regression this fixes in the module's test file.
   const { data: openedUserPublicProfile } = useUserPublicProfile(props.user.address);
 
-  // Bio resolution for the visible card:
-  //   1. Per-space override on SpaceMember (props.user.bio) wins when set —
-  //      a real per-space bio override, not a caller-supplied name fallback.
-  //   2. The fetched public profile's bio — the address-derived source that
-  //      makes this correct even when the caller passed nothing (e.g. a
-  //      mention-pill click, which only ever carries an address).
-  //   3. For the current user's own profile, fall back to UserConfig.bio
-  //      (the global bio) so deleting the per-space override reveals the
-  //      global one again instead of leaving an empty section.
+  // Your own GLOBAL bio — the last bio tier, so clearing a per-space override
+  // reveals it again instead of leaving an empty section.
   //
   // Subscribed via useQuery (not a getQueryData snapshot) so the card
   // re-renders if the global bio changes while it's open (e.g. user saves
@@ -152,16 +146,28 @@ const UserProfile: React.FunctionComponent<{
     enabled: isOwnProfile && !!currentPasskeyInfo?.address,
     networkMode: 'always',
   });
-  const resolvedBio =
-    (props.user.bio as string | undefined) ||
-    openedUserPublicProfile?.bio ||
-    ownConfig?.bio;
-
-  // Avatar: same address-derived top-up as bio. `resolvedName.name` (BARE,
-  // no ".q") — not `props.user.displayName` — so the initials fallback always
-  // agrees with the name actually rendered beside it (design constraint 4 of
-  // the identity migration: the avatar and the name must not disagree).
-  const resolvedUserIcon = (props.user.userIcon as string | undefined) || openedUserPublicProfile?.profile_image;
+  // Bio and avatar resolve from the ADDRESS, on the same ladder every other
+  // surface renders from: caller pre-fill → per-space override → the roster's
+  // live-pushed global slot → the published public profile (→ your own config
+  // bio, self only). The middle rung is the one that used to be missing:
+  // without it a card opened from a mention pill — which carries an address
+  // and nothing else — fell straight to the opt-in, hour-cached public profile
+  // and showed a stale bio and no avatar, while the same person's card opened
+  // from a message avatar showed both. See the hook for the full write-up.
+  //
+  // `resolvedName.name` (BARE, no ".q") — not `props.user.displayName` — is
+  // what feeds the initials fallback below, so it always agrees with the name
+  // actually rendered beside it (design constraint 4 of the identity
+  // migration: the avatar and the name must not disagree).
+  const { userIcon: resolvedUserIcon, bio: resolvedBio } = useProfileCardIdentityFields({
+    address: props.user.address,
+    spaceId: props.spaceId,
+    callerIcon: props.user.userIcon as string | undefined,
+    callerBio: props.user.bio as string | undefined,
+    publicProfileIcon: openedUserPublicProfile?.profile_image,
+    publicProfileBio: openedUserPublicProfile?.bio,
+    ownConfigBio: ownConfig?.bio,
+  });
   // The moderation modals (Block/Mute/Kick) now resolve the name themselves
   // from `address` via src/identity — no name payload is threaded through
   // `openBlockUser`/`openMuteUser`/`openKickUser` anymore (was
