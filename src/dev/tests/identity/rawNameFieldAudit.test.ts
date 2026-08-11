@@ -1,0 +1,261 @@
+/**
+ * The instrument this refactor's second tranche exists to leave behind.
+ *
+ * The 24-row migration table that drove Phase D was built from "which files
+ * import a name resolver" — so a file that never imported one (it just
+ * rendered `member.display_name` or `currentPasskeyInfo.displayName`
+ * straight from a query/prop, no resolver in sight) was invisible to that
+ * table AND to the eslint ratchet that guards resolver imports. Two of that
+ * exact class were found by the operator driving the app (a crashing modal,
+ * a nav-rail tooltip showing the wrong name); the rest — the search hooks,
+ * the moderation modals, `ConversationSettingsModal` — were found only by a
+ * manual audit. This test is that audit, made permanent.
+ *
+ * WHAT IT SCANS: `src/components/**` and `src/hooks/business/**` — the
+ * render + display-shaping layers, where every real defect in this class has
+ * lived. Deliberately EXCLUDES `src/hooks/queries/**` and `src/hooks/mutations/**`
+ * (the data-fetching boundary: a fetcher or query-key builder reading
+ * `response.display_name` off a raw API/DB payload is the data layer doing
+ * its job, exactly like `identityProvider.tsx`'s own internal reads — it is
+ * not a RENDER, and there is nowhere else for that read to happen). Also
+ * excludes `src/identity/**` itself (the one module allowed to own this) and
+ * `src/components/primitives/**` (SCSS-only re-export shims, no logic).
+ *
+ * WHAT COUNTS AS AN OFFENSE: a file that (a) references one of the five raw
+ * member-name fields (`displayName`, `primaryUsername`, `globalDisplayName`,
+ * `display_name`, `primary_username`) as a plain identifier — a property
+ * read (`x.displayName`) or a destructure (`{ displayName }`) — AND (b) does
+ * NOT import anything from `src/identity`. Condition (b) is the load-bearing
+ * half: a component that already imports `useResolvedName`/`<MemberName>`
+ * and ALSO happens to have a prop or local named `displayName` (an avatar
+ * receiving an already-resolved BARE name, say) is not the bug this exists
+ * to catch — the bug is a raw field reaching the screen with NO resolver
+ * anywhere in the file. This is why `UserAvatar.tsx` (receives an
+ * already-resolved name as a prop, never looks anything up itself) is a
+ * genuine exception below rather than something papered over by the import
+ * check.
+ *
+ * HONESTY, NOT COVERAGE: this is a grep-shaped heuristic, not a type-aware
+ * linter — it cannot tell a resolved local variable named `displayName` from
+ * a raw prop of the same name inside a file that imports identity for an
+ * unrelated reason, and it cannot see through a re-export or a renamed
+ * import. It exists to make the CLASS of bug loud again, not to replace
+ * review. Keep the exceptions list honest: every entry needs a one-line
+ * reason a reviewer can check against the file, not a rubber stamp.
+ */
+import { describe, it, expect } from 'vitest';
+import { readFileSync, readdirSync, statSync } from 'node:fs';
+import { join, relative, sep } from 'node:path';
+
+const REPO_ROOT = process.cwd();
+const SCAN_ROOTS = ['src/components', 'src/hooks/business'];
+const EXCLUDE_DIR_PREFIXES = [
+  'src/identity',
+  'src/components/primitives',
+];
+
+const RAW_FIELD_PATTERN = /\b(displayName|primaryUsername|globalDisplayName|display_name|primary_username)\b/;
+const IDENTITY_IMPORT_PATTERN =
+  /from\s+['"]((?:\.\.?\/)*identity(?:\/[^'"]*)?|@\/identity(?:\/[^'"]*)?)['"]/;
+// React's own devtools naming idiom (`SomeComponent.displayName = 'SomeComponent'`,
+// for forwardRef/memo components to show a real name in devtools) has NOTHING
+// to do with a member's name — it is common, grows over time as components are
+// added, and would otherwise force a fresh one-line exception on every new
+// forwardRef/memo component forever. Stripped before pattern-matching rather
+// than exception-listed one file at a time.
+const REACT_DEVTOOLS_DISPLAYNAME_ASSIGNMENT = /\b[\w.]+\.displayName\s*=\s*(['"])[^'"]*\1\s*;?/g;
+
+function stripKnownNoise(source: string): string {
+  return source.replace(REACT_DEVTOOLS_DISPLAYNAME_ASSIGNMENT, '');
+}
+
+function toPosix(p: string): string {
+  return p.split(sep).join('/');
+}
+
+function walk(dir: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(dir)) {
+    const full = join(dir, entry);
+    const stat = statSync(full);
+    if (stat.isDirectory()) {
+      walk(full, out);
+    } else if (/\.(ts|tsx)$/.test(entry) && !/\.(test|spec)\.[jt]sx?$/.test(entry)) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+function isExcluded(relPath: string): boolean {
+  return EXCLUDE_DIR_PREFIXES.some(
+    (prefix) => relPath === prefix || relPath.startsWith(prefix + '/'),
+  );
+}
+
+/**
+ * Files that DO match the raw-field pattern and DO NOT import `src/identity`.
+ * Every entry needs a one-line reason, verified by reading the file, not
+ * assumed. Two kinds of entry, both honest, neither a rubber stamp:
+ *
+ *  - GENUINE NON-OFFENDER: the field is not a member's rendered identity at
+ *    all (a role name, a form editing your OWN profile, an already-resolved
+ *    prop, a comment, a write/broadcast site, React's own devtools naming
+ *    idiom that survived the strip above).
+ *  - KNOWN, UNRESOLVED: a real or plausible instance of this bug class,
+ *    found by this audit, OUTSIDE this tranche's assigned row (KickUserModal/
+ *    MuteUserModal/BlockUserModal/ModalProvider/NewDirectMessageModal/
+ *    ConversationSettingsModal/the search hooks+item). Listed here so the
+ *    audit passes honestly instead of silently going green over a bug it
+ *    just found — see second-tranche-report.md for the full list and the
+ *    reasoning behind each.
+ */
+const EXCEPTIONS: Record<string, string> = {
+  // ---- Genuine non-offenders --------------------------------------------
+  'src/components/context/MessageDB.tsx':
+    'the storage/sync layer (MessageDBProvider): merges incoming broadcast profile updates into local Conversation/roster records and persists them — the WRITE side that PRODUCES the fields src/identity later reads, not a render. Renders no JSX for a member name.',
+  'src/components/modals/NewDirectMessageModal.tsx':
+    'WRITE site, not a render: seeds a brand-new Conversation row\'s displayName placeholder (the localized "Unknown User" literal) before any identity is known. This is one of the two canonical write sites `utils/identityPlaceholder.ts` documents by name (`realDisplayNameOrUndefined` exists specifically to demote this literal back to `undefined` at READ time) — verified false positive, task explicitly flagged this file for review.',
+  'src/components/search/SearchResultItem.tsx':
+    'receives an already-RESOLVED `displayName` string via `displayData` (computed by useBatchSearchResultsDisplay, which DOES import src/identity) — a pure presentational pass-through, same category as UserAvatar/NotificationItem.',
+  'src/hooks/business/user/useVisibleSenderProfileFallback.ts':
+    "already reviewed and extensively documented in-file by a prior tranche (Phase D rows 22-24 fix round 1): every REAL name-rendering consumer has migrated to src/identity; the one remaining `displayName` consumer is quorum-shared's `replaceMentionsWithDisplayNames` building a 'replying to' preview line, and `primaryUsername`/`globalDisplayName` feed `useMentionInput.ts`'s SEARCH matching (outside this migration's scope, cannot call a per-candidate hook in a loop). Not re-verified line-by-line this tranche; deferred to that existing documentation rather than re-litigated.",
+  'src/components/user/UserAvatar/UserAvatar.web.tsx':
+    'receives an already-resolved BARE name as a `displayName` prop (initials/color derivation only), never looks anything up itself.',
+  'src/components/user/UserAvatar/UserAvatar.native.tsx':
+    'same as the .web sibling — already-resolved prop, no lookup.',
+  'src/components/Router/Router.web.tsx':
+    'type-only: `displayName` is a field on the app-level `user` object threaded through as a prop to children; Router itself renders none of it.',
+  'src/components/Router/Router.native.tsx':
+    'same as the .web sibling — type-only pass-through.',
+  'src/components/modals/ChannelEditorModal.tsx':
+    '`role.displayName` is a ROLE name (mention-role option label), not a member name — out of scope per the recipe (role display names are not member names).',
+  'src/components/modals/SpaceSettingsModal/Roles.tsx':
+    'role EDITING form — `r.displayName` is the role being created/renamed, not a member.',
+  'src/components/space/RolePreview.tsx':
+    '`role.displayName` — role name, not a member name (the recipe names this file explicitly as an expected false positive).',
+  'src/hooks/business/spaces/useRoleManagement.ts':
+    'role editing form state (`updateRoleDisplayName`, role defaults) — role names, not member names.',
+  'src/components/notifications/NotificationItem.tsx':
+    "the file's own doc comment: `displayName: React.ReactNode // ... an identity-resolved <MemberName>, not a caller-formatted string` — already-resolved prop, verified in the component body.",
+  'src/components/user/UserOnlineStateIndicator.tsx':
+    'comment only ("Message users: Only have displayName/userIcon...") — no code reference to the field.',
+  'src/hooks/business/user/useUserPublicProfile.ts':
+    'comment only — no code reference to the field.',
+  'src/components/onboarding/OnboardingFlow.tsx':
+    "onboarding: the user's OWN display name, being entered for the first time — there is no public profile yet to resolve (chicken-and-egg, identity resolution needs an authenticated address first).",
+  'src/components/onboarding/steps/CompleteStep.tsx':
+    'onboarding step, same reasoning as OnboardingFlow.tsx.',
+  'src/components/onboarding/steps/DisplayNameStep.tsx':
+    "onboarding step — the INPUT FIELD for the user's own new display name, plus its live validation. Nothing to resolve; this is what they are typing.",
+  'src/hooks/business/user/useOnboardingFlowLogic.ts':
+    'onboarding flow state — same reasoning as the onboarding components above.',
+  'src/hooks/business/user/useUnifiedOnboardingFlow.ts':
+    'onboarding flow state — same reasoning.',
+  'src/hooks/business/user/useAuthenticationFlow.ts':
+    'builds the initial self user record straight from the passkey response during sign-in/sign-up, before any provider or public profile exists — the legitimate bootstrap source, not a render.',
+  'src/components/modals/UserSettingsModal/General.tsx':
+    "settings form editing YOUR OWN profile (display name + primary username fields) — the operator's explicit exception category.",
+  'src/components/modals/UserSettingsModal/UserSettingsModal.tsx':
+    'same settings-form category as General.tsx (the tab container/save logic).',
+  'src/hooks/business/user/useUserSettings.ts':
+    'business logic behind the self-settings form (General.tsx/UserSettingsModal.tsx) — editing your own profile.',
+  'src/hooks/business/spaces/useSpaceProfile.ts':
+    "the per-space profile EDIT form (analogous to General.tsx, scoped to one space) — editing your own space-level display name.",
+  'src/components/user/UserProfileEdit.tsx':
+    'self-profile edit form (mobile/native variant of the same settings flow).',
+  'src/hooks/business/validation/errorTranslator.ts':
+    'form-validation COPY for the display-name input field ("Display name is required", etc.) — strings about the field, not a rendered identity.',
+  'src/hooks/business/validation/useDisplayNameValidation.ts':
+    'validates the TEXT the user is typing into the display-name input — not a render of anyone\'s identity.',
+  'src/hooks/business/spaces/useSpaceCreation.ts':
+    'WRITE site: passes your own `currentPasskeyInfo.displayName` as an argument to the space-creation API call (establishing your initial profile in the new space) — a broadcast, not a render. Same category as NewDirectMessageModal.tsx (see identityPlaceholder.ts\'s documented write-site list).',
+  'src/hooks/business/spaces/useSpaceLeaving.ts':
+    'WRITE site: `updateUserProfile(currentPasskeyInfo.displayName ?? \'\', ...)` broadcasts your own profile when clearing a stale space tag — a broadcast, not a render.',
+  'src/hooks/business/spaces/useSpaceTagStartupRefresh.ts':
+    'WRITE site: same `updateUserProfile(currentPasskeyInfo.displayName ?? \'\', ...)` broadcast pattern as useSpaceLeaving.ts, on startup tag-refresh.',
+  'src/hooks/business/user/useClearLegacySpaceOverrides.ts':
+    'data CLEANUP/migration: clears stale `display_name`/`user_icon` roster overrides left by an old bug (writes them empty) — a write/migration, not a render.',
+  'src/hooks/business/user/useReconcileSelfIdentity.ts':
+    "self-repair infrastructure, not a render: its OWN doc comment documents that ~15 sites read `currentPasskeyInfo` for self-name and this hook exists to keep that LOCAL record less stale by repairing it from the synced config. It is evidence of the problem this refactor is fixing properly elsewhere (resolving through src/identity instead of currentPasskeyInfo at all), not an instance of rendering a raw field.",
+
+  // ---- Known, unresolved (found by this audit, out of this tranche's row) ----
+  'src/hooks/business/search/useSearchResultDisplayDM.ts':
+    'KNOWN, UNRESOLVED: exported from the search barrel but never called by any component (verified via grep — no `useSearchResultDisplayDM(` call site exists in src/). Superseded in production by useBatchSearchResultsDisplay. Not migrated in this tranche (out of the assigned row); flagged here instead of silently fixed so it does not rot invisibly. See second-tranche-report.md.',
+  'src/hooks/business/search/useSearchResultDisplaySpace.ts':
+    'KNOWN, UNRESOLVED: same shape as useSearchResultDisplayDM.ts above — dead code, not migrated this tranche, flagged rather than hidden. See second-tranche-report.md.',
+  'src/hooks/business/user/useUserProfileActions.ts':
+    'KNOWN, UNRESOLVED: dead code — its own local `MuteUserTarget` (with a `displayName` field) and `openMuteModal`/`setMuteUserTarget` are never referenced anywhere else in src/ (verified via grep). A stale duplicate of the interface this tranche already fixed in useModalState.ts. See second-tranche-report.md.',
+  'src/hooks/business/ui/useUserProfileModal.ts':
+    "KNOWN, UNRESOLVED (vestigial): `UserProfileModalUser`'s displayName/primaryUsername/globalDisplayName fields are populated by callers (Channel.tsx, BookmarksPage.tsx) but the consumer (UserProfile.tsx) was migrated to resolve via src/identity and no longer reads them — likely dead weight worth deleting, not verified further this tranche. See second-tranche-report.md.",
+  'src/components/ui/ContextMenu.tsx':
+    "KNOWN, UNRESOLVED: the 'user' header variant renders `header.displayName || header.address.slice(0, 8)` — a raw caller-supplied name with a caller-owned fallback. Fed by DirectMessageContactsList.tsx's right-click menu (`displayName: contextMenuContact.displayName`). A real, live surface outside this tranche's row. See second-tranche-report.md.",
+  'src/components/modals/SpaceSettingsModal/Invites.tsx':
+    'KNOWN, UNRESOLVED: the invite picker renders `option.displayName` for DM-contact invite options — a member identity, not migrated this tranche. See second-tranche-report.md.',
+  'src/components/message/MessageList.tsx':
+    "KNOWN, UNRESOLVED: `users`/`mentionRoles` prop types carry a raw `displayName?` field, with an in-file comment defending passing an EMPTY one through unchanged for the (already-migrated) resolver ladder to see — plausible legitimate plumbing, but not verified deeply enough this tranche to call a confirmed non-offender. See second-tranche-report.md.",
+  'src/components/message/MessageComposer.native.tsx':
+    'KNOWN, UNRESOLVED: reply-preview label reads `mapSenderToUser(...).displayName` — a raw caller-supplied field (mobile-only file, still production source). See second-tranche-report.md.',
+  'src/hooks/business/channels/useChannelData.ts':
+    'KNOWN, UNRESOLVED: builds a member map directly from raw roster fields (`curr.display_name`, `curr.global_display_name`) rather than the identity module\'s tier assembler — not verified this tranche whether every consumer of this map already routes names through src/identity separately. See second-tranche-report.md.',
+  'src/hooks/business/channels/useChannelMessages.ts':
+    'KNOWN, UNRESOLVED: member shape carries a raw `displayName?` field passed through the channel message pipeline — not verified this tranche. See second-tranche-report.md.',
+  'src/hooks/business/conversations/useConversationPreviews.ts':
+    "KNOWN, UNRESOLVED: comment references a past `primaryUsername` staleness trap in the same file's neighborhood — not verified this tranche whether the current code still reads it raw. See second-tranche-report.md.",
+  'src/hooks/business/conversations/useConversationsWithProfileBackfill.ts':
+    'KNOWN, UNRESOLVED: DM sidebar backfill mechanism reading/writing `displayName`/`primaryUsername` on conversation rows — plausibly a legitimate write-side backfill (parallel to useClearLegacySpaceOverrides.ts), but not verified deeply enough this tranche to confirm no render path still depends on it. See second-tranche-report.md.',
+  'src/hooks/business/conversations/useDirectMessageData.ts':
+    'KNOWN, UNRESOLVED: `displayName: user.currentPasskeyInfo!.displayName` — the same self-name bug (currentPasskeyInfo carries no QNS name) fixed elsewhere this tranche, found in a hook not in the assigned row. See second-tranche-report.md.',
+  'src/hooks/business/mentions/useMentionPillEditor.ts':
+    'KNOWN, UNRESOLVED: one branch resolves via `resolveName(...)` (identity-aware) but a neighboring branch reads `option.data.displayName` raw — mixed, not verified deeply enough this tranche. See second-tranche-report.md.',
+  'src/hooks/business/messages/useMessageActions.ts':
+    'KNOWN, UNRESOLVED: `currentPasskeyInfo?.displayName` (self-name bug) and `senderInfo?.displayName || \'Unknown User\'` (raw field + caller fallback) — both real instances of this bug class, outside the assigned row. See second-tranche-report.md.',
+  'src/hooks/business/messages/useMessageFormatting.ts':
+    'KNOWN, UNRESOLVED: `mention?.displayName || \'@${userId...}\'` — raw field with a caller-owned fallback, outside the assigned row. See second-tranche-report.md.',
+};
+
+describe('raw member-name field audit — every render either imports src/identity or is a known exception', () => {
+  const files = SCAN_ROOTS.flatMap((root) => walk(join(REPO_ROOT, root)))
+    .map((abs) => toPosix(relative(REPO_ROOT, abs)))
+    .filter((rel) => !isExcluded(rel))
+    .sort();
+
+  it('scanned a non-trivial number of files (the walker itself is not broken)', () => {
+    expect(files.length).toBeGreaterThan(50);
+  });
+
+  it('every exception entry still exists on disk (no stale exceptions)', () => {
+    for (const relPath of Object.keys(EXCEPTIONS)) {
+      expect(
+        () => readFileSync(join(REPO_ROOT, relPath), 'utf8'),
+        `Exception lists ${relPath}, which no longer exists — remove the stale entry.`,
+      ).not.toThrow();
+    }
+  });
+
+  it('no file outside src/identity renders a raw member-name field without resolving through it', () => {
+    const offenders: string[] = [];
+
+    for (const relPath of files) {
+      const rawSource = readFileSync(join(REPO_ROOT, relPath), 'utf8');
+      const source = stripKnownNoise(rawSource);
+      if (!RAW_FIELD_PATTERN.test(source)) continue;
+      if (IDENTITY_IMPORT_PATTERN.test(source)) continue;
+      if (EXCEPTIONS[relPath]) continue;
+      offenders.push(relPath);
+    }
+
+    expect(
+      offenders,
+      'The following files render a raw member-name field ' +
+        '(displayName / primaryUsername / globalDisplayName / display_name / ' +
+        'primary_username) with no import from src/identity, and are not on ' +
+        'the exceptions list. Either migrate the file onto <MemberName> / ' +
+        'useResolvedName (see .superpowers/sdd/2026-08-10-identity-resolution-' +
+        'architecture-plan/phase-d-recipe.md), or — ONLY if it is a genuine ' +
+        'non-offender (an avatar receiving an already-resolved name, a role ' +
+        'name, pure data plumbing) — add it to EXCEPTIONS above with a ' +
+        'one-line reason:\n' +
+        offenders.map((f) => `  - ${f}`).join('\n'),
+    ).toEqual([]);
+  });
+});

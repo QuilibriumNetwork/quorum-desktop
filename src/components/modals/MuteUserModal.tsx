@@ -1,15 +1,16 @@
 import * as React from 'react';
+import { useParams } from 'react-router';
 import { Button, Modal, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import { formatAddress } from '@quilibrium/quorum-shared';
 import { showError } from '../../utils/toast';
+import { useResolvedMemberName } from '../../identity';
 
 interface MuteUserModalProps {
   visible: boolean;
   onClose: () => void;
   onConfirm: (days: number) => Promise<void>;
-  userName: string;
   userIcon?: string;
   userAddress: string;
   isUnmuting?: boolean;
@@ -19,12 +20,24 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
   visible,
   onClose,
   onConfirm,
-  userName,
   userIcon,
   userAddress,
   isUnmuting = false,
 }) => {
   const [days, setDays] = React.useState(1); // Default to 1 day
+
+  // `MuteUserModal` is mounted by `ModalProvider` above any per-space
+  // `<IdentityScopeProvider>` — same reasoning as `KickUserModal`. Mute is
+  // ALWAYS a Space-scoped action, and the underlying `useUserMuting` hook
+  // (called by ModalProvider to build `onConfirm`) already sources spaceId
+  // from the route, not a prop — mirrored here so the name and the action
+  // agree on which space. `enrich`: one bounded address, this one
+  // confirmation.
+  const { spaceId } = useParams();
+  const resolvedName = useResolvedMemberName(userAddress, { spaceId, enrich: true });
+  const resolvedNameText = resolvedName.isQnsVerified
+    ? `${resolvedName.name}.q`
+    : resolvedName.name;
 
   // Reset state when modal opens
   React.useEffect(() => {
@@ -72,13 +85,15 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
         <Flex gap="md" align="center">
           <UserAvatar
             userIcon={userIcon}
-            displayName={userName}
+            // BARE name (no ".q") — matches the initials to whatever the
+            // label actually renders (recipe rule 4).
+            displayName={resolvedName.name}
             address={userAddress}
             size={40}
           />
           <div className="flex-1 min-w-0 flex flex-col">
             <span className="text-body font-semibold truncate-user-name">
-              {userName}
+              {resolvedNameText}
             </span>
             <span className="text-small">
               {formatAddress(userAddress)}

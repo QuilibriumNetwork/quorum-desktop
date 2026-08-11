@@ -162,10 +162,11 @@ const UserProfile: React.FunctionComponent<{
   // agrees with the name actually rendered beside it (design constraint 4 of
   // the identity migration: the avatar and the name must not disagree).
   const resolvedUserIcon = (props.user.userIcon as string | undefined) || openedUserPublicProfile?.profile_image;
-  // String form of `resolvedName` for the moderation-modal payloads below —
-  // same suffix rule <MemberName>/<ResolvedName> render, kept local instead
-  // of importing `formatResolvedName` from the restricted `utils/resolveMemberName`.
-  const resolvedNameText = resolvedName.isQnsVerified ? `${resolvedName.name}.q` : resolvedName.name;
+  // The moderation modals (Block/Mute/Kick) now resolve the name themselves
+  // from `address` via src/identity — no name payload is threaded through
+  // `openBlockUser`/`openMuteUser`/`openKickUser` anymore (was
+  // `displayName: resolvedNameText`, the exact field-threading this refactor
+  // removes; see KickUserModal/MuteUserModal/BlockUserModal).
   const [noteValue, setNoteValue] = React.useState('');
   const [noteCharCount, setNoteCharCount] = React.useState(0);
   const [isNoteFocused, setIsNoteFocused] = React.useState(false);
@@ -481,14 +482,6 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openBlockUser({
                         address: props.user.address,
-                        // The moderation modals render this as the person's
-                        // identity while you decide whether to act on them, so
-                        // it must be the resolved name — the card above already
-                        // shows it. Passing the raw roster field both hid a
-                        // real ".q" and let a forged one through unguarded, at
-                        // the surface where being sure who you are acting on
-                        // matters most.
-                        displayName: resolvedNameText,
                         userIcon: props.user.userIcon,
                         spaceId: props.spaceId!,
                         isUnblocking: isUserBlocked,
@@ -512,8 +505,6 @@ const UserProfile: React.FunctionComponent<{
                     onClick={() => {
                       openMuteUser({
                         address: props.user.address,
-                        // Resolved, for the reason given on Block above.
-                        displayName: resolvedNameText,
                         userIcon: props.user.userIcon,
                         isUnmuting: isUserMuted,
                       });
@@ -535,8 +526,6 @@ const UserProfile: React.FunctionComponent<{
                       if (props.user.isKicked) return;
                       openKickUser({
                         address: props.user.address,
-                        // Resolved, for the reason given on Block above.
-                        displayName: resolvedNameText,
                         userIcon: props.user.userIcon,
                       });
                       props.dismiss?.();

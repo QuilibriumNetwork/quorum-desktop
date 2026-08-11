@@ -1,6 +1,7 @@
 import React from 'react';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { SearchResult, SearchContext } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
 import { Icon, Flex, Callout, Input } from '../primitives';
@@ -10,6 +11,8 @@ import {
   useSearchResultsState,
   useBatchSearchResultsDisplay,
 } from '../../hooks';
+import { IdentityScopeProvider } from '../../identity';
+import { useMultiSpaceRosters } from '../../hooks/business/identity';
 import './SearchResults.scss';
 
 interface SearchResultsProps {
@@ -31,7 +34,41 @@ interface SearchResultsProps {
   placeholder?: string;
 }
 
-export const SearchResults: React.FC<SearchResultsProps> = ({
+/**
+ * `SearchResults` is the mount point for `useBatchSearchResultsDisplay`
+ * (name resolution via `src/identity`), so it needs an ambient
+ * `<IdentityScopeProvider>` to be an ANCESTOR of the hook call — a component
+ * cannot both call a hook that needs the provider and return that same
+ * provider as its own descendant. Wherever `<GlobalSearch>` happens to be
+ * mounted (a DM header, a Channel header, the sidebar) may or may not sit
+ * inside a matching scope, and search results can span EVERY space the user
+ * belongs to in one flat list — a detached, cross-space surface exactly like
+ * `ReactionsModal` and the bookmarks/notifications panels, so this component
+ * mounts its own multi-space provider rather than relying on ambient scope.
+ */
+export const SearchResults: React.FC<SearchResultsProps> = (props) => {
+  const user = usePasskeysContext();
+  const selfAddress = user?.currentPasskeyInfo?.address || null;
+
+  const spaceIds = React.useMemo(() => {
+    const ids = new Set<string>();
+    props.results.forEach((result) => {
+      const { message } = result;
+      const isDM = message.spaceId === message.channelId;
+      if (!isDM) ids.add(message.spaceId);
+    });
+    return Array.from(ids);
+  }, [props.results]);
+  const rostersBySpace = useMultiSpaceRosters(spaceIds);
+
+  return (
+    <IdentityScopeProvider rostersBySpace={rostersBySpace} selfAddress={selfAddress}>
+      <SearchResultsInner {...props} />
+    </IdentityScopeProvider>
+  );
+};
+
+const SearchResultsInner: React.FC<SearchResultsProps> = ({
   results,
   isLoading,
   isError,

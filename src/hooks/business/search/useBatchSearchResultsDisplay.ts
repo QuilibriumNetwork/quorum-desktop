@@ -1,13 +1,11 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../../db/messages';
 import type { Group, Channel } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { DefaultImages } from '../../../utils';
-import { buildUserInfoFetcher } from '../../queries/userInfo/buildUserInfoFetcher';
-import { buildUserInfoKey } from '../../queries/userInfo/buildUserInfoKey';
+import { useNameResolver } from '../../../identity';
 import { buildSpaceFetcher } from '../../queries/space/buildSpaceFetcher';
 import { buildSpaceKey } from '../../queries/space/buildSpaceKey';
 
@@ -35,59 +33,57 @@ export interface UseBatchSearchResultsDisplayReturn {
  * Batch search results display hook that efficiently loads display data for all search results
  * This replaces individual useSearchResultDisplayDM and useSearchResultDisplaySpace hooks
  * to prevent cascading async operations that cause page refresh and focus stealing
+ *
+ * NAME resolution is imperative/bulk via `useNameResolver` (`src/identity`) —
+ * a search result set spans an unbounded, only-known-at-render set of
+ * distinct senders across possibly many spaces and DMs, which is exactly the
+ * "many addresses, outside JSX" shape that hook exists for (a per-item
+ * `useResolvedName` call would violate the rules of hooks). `requestNames`
+ * enriches every distinct sender in one call (search renders a bounded
+ * result set and the ".q" matters); `resolve` reads the SAME ladder
+ * `<MemberName>` uses, spaceId passed per-result so a Space message's sender
+ * gets their per-space nickname and a DM message's sender resolves on the
+ * global ladder (DMs carry no spaceId). The caller (`SearchResults.tsx`)
+ * mounts the ambient `<IdentityScopeProvider>` — a multi-space one, since
+ * results can span every space the user belongs to.
  */
 export const useBatchSearchResultsDisplay = ({
   results,
 }: UseBatchSearchResultsDisplayProps): UseBatchSearchResultsDisplayReturn => {
   const { messageDB } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
+  const { resolve, requestNames } = useNameResolver();
 
   // Extract unique identifiers for batch operations
-  const { uniqueUserIds, uniqueSpaceIds, dmResults, spaceResults } =
-    useMemo(() => {
-      const userIds = new Set<string>();
-      const spaceIds = new Set<string>();
-      const dmResults: SearchResult[] = [];
-      const spaceResults: SearchResult[] = [];
+  const { uniqueSenderIds, uniqueSpaceIds } = useMemo(() => {
+    const senderIds = new Set<string>();
+    const spaceIds = new Set<string>();
 
-      results.forEach((result) => {
-        const { message } = result;
-        const isDM = message.spaceId === message.channelId;
+    results.forEach((result) => {
+      const { message } = result;
+      const isDM = message.spaceId === message.channelId;
 
-        if (isDM) {
-          dmResults.push(result);
-          // For DMs, we need user info for the sender (unless it's current user)
-          if (message.content.senderId !== currentPasskeyInfo?.address) {
-            userIds.add(message.content.senderId);
-          }
-        } else {
-          spaceResults.push(result);
-          // For space messages, we need both user and space info
-          userIds.add(message.content.senderId);
-          spaceIds.add(message.spaceId);
-        }
-      });
+      senderIds.add(message.content.senderId);
+      if (!isDM) {
+        spaceIds.add(message.spaceId);
+      }
+    });
 
-      return {
-        uniqueUserIds: Array.from(userIds),
-        uniqueSpaceIds: Array.from(spaceIds),
-        dmResults,
-        spaceResults,
-      };
-    }, [results, currentPasskeyInfo]);
+    return {
+      uniqueSenderIds: Array.from(senderIds),
+      uniqueSpaceIds: Array.from(spaceIds),
+    };
+  }, [results]);
 
-  // Batch fetch user info for all unique users
-  const userInfoQueries = useQueries({
-    queries: uniqueUserIds.map((address) => ({
-      queryKey: buildUserInfoKey({ address }),
-      queryFn: buildUserInfoFetcher({ messageDB, address }),
-      refetchOnMount: false, // Use cached data when available
-      staleTime: 5 * 60 * 1000, // 5 minutes
-      retry: 1, // Limit retries to prevent cascading failures
-    })),
-  });
+  // Enrich every distinct sender in one call — deduped against addresses
+  // already requested, so this is a no-op on a render that doesn't change
+  // the result set, not a fetch storm.
+  useEffect(() => {
+    requestNames(uniqueSenderIds);
+  }, [uniqueSenderIds, requestNames]);
 
-  // Batch fetch space info for all unique spaces
+  // Batch fetch space info for all unique spaces (channel/space NAME display,
+  // unrelated to member identity)
   const spaceInfoQueries = useQueries({
     queries: uniqueSpaceIds.map((spaceId) => ({
       queryKey: buildSpaceKey({ spaceId }),
@@ -97,18 +93,6 @@ export const useBatchSearchResultsDisplay = ({
       retry: 1, // Limit retries to prevent cascading failures
     })),
   });
-
-  // Create lookup maps for efficient data access
-  const userInfoMap = useMemo(() => {
-    const map = new Map();
-    uniqueUserIds.forEach((address, index) => {
-      const query = userInfoQueries[index];
-      if (query?.data) {
-        map.set(address, query.data);
-      }
-    });
-    return map;
-  }, [uniqueUserIds, userInfoQueries]);
 
   const spaceInfoMap = useMemo(() => {
     const map = new Map();
@@ -129,29 +113,22 @@ export const useBatchSearchResultsDisplay = ({
       const { message } = result;
       const isDM = message.spaceId === message.channelId;
       const messageId = message.messageId;
+      const senderId = message.content.senderId;
+
+      // The resolver owns the fallback (a truncated address) — never a
+      // caller-owned "Unknown User"/"Loading..." placeholder here.
+      const resolved = resolve(senderId, isDM ? {} : { spaceId: message.spaceId });
+      const displayName = resolved.isQnsVerified ? `${resolved.name}.q` : resolved.name;
 
       if (isDM) {
-        // Handle DM display logic
-        let displayName = t`Unknown User`;
-        let icon: string = DefaultImages.UNKNOWN_USER as string;
-        let isLoading = false;
-
-        if (message.content.senderId === currentPasskeyInfo?.address) {
-          // Current user's message
-          displayName = currentPasskeyInfo?.displayName || t`You`;
-          icon = currentPasskeyInfo?.pfpUrl || DefaultImages.UNKNOWN_USER;
-        } else {
-          // Other user's message - try to get from batch loaded data
-          const userInfo = userInfoMap.get(message.content.senderId);
-          if (userInfo) {
-            displayName = userInfo.display_name || t`Unknown User`;
-            // Note: User info might not have icon, would need conversation data
-            // For now, use default icon to avoid additional async calls
-          } else {
-            // Still loading or failed to load
-            isLoading = true;
-          }
-        }
+        // Icon: unrelated to identity resolution. Self uses the passkey
+        // picture; the other party has no cheap local source here (would
+        // need a conversation fetch per row), so it stays the default —
+        // unchanged from before this migration.
+        const icon =
+          senderId === currentPasskeyInfo?.address
+            ? currentPasskeyInfo?.pfpUrl || undefined
+            : undefined;
 
         dataMap.set(messageId, {
           messageId,
@@ -160,15 +137,11 @@ export const useBatchSearchResultsDisplay = ({
           spaceName: t`Direct Message`,
           channelName: displayName,
           icon,
-          isLoading,
+          isLoading: false,
         });
       } else {
         // Handle Space display logic
-        const userInfo = userInfoMap.get(message.content.senderId);
         const spaceInfo = spaceInfoMap.get(message.spaceId);
-
-        const displayName = userInfo?.display_name || t`Unknown User`;
-        const spaceName = spaceInfo?.spaceName || t`Unknown Space`;
 
         // Get channel name from space data
         let channelName = message.channelId;
@@ -183,29 +156,25 @@ export const useBatchSearchResultsDisplay = ({
           }
         }
 
-        const isLoading = !userInfo || !spaceInfo;
-
         dataMap.set(messageId, {
           messageId,
           isDM: false,
           displayName,
-          spaceName,
+          spaceName: spaceInfo?.spaceName || t`Unknown Space`,
           channelName,
           icon: undefined, // Spaces don't have icons in search results
-          isLoading,
+          isLoading: !spaceInfo,
         });
       }
     });
 
     return dataMap;
-  }, [results, userInfoMap, spaceInfoMap, currentPasskeyInfo]);
+  }, [results, resolve, spaceInfoMap, currentPasskeyInfo]);
 
   // Check if any queries are still loading
   const isAnyLoading = useMemo(() => {
-    return [...userInfoQueries, ...spaceInfoQueries].some(
-      (query) => query.isLoading
-    );
-  }, [userInfoQueries, spaceInfoQueries]);
+    return spaceInfoQueries.some((query) => query.isLoading);
+  }, [spaceInfoQueries]);
 
   // Trigger focus maintenance when results data updates
   // This helps prevent focus stealing during async data loading

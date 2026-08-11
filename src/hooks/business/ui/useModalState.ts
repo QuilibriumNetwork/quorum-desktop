@@ -1,9 +1,12 @@
 import { useReducer, useCallback } from 'react';
 
-// Mute target interface
+// Mute target interface. Carries no caller-supplied name field —
+// KickUserModal/MuteUserModal/BlockUserModal resolve the person's name
+// themselves from `address` via src/identity; threading a name string
+// through here is exactly the field-threading this refactor exists to
+// remove.
 export interface MuteUserTarget {
   address: string;
-  displayName: string;
   userIcon?: string;
   isUnmuting?: boolean;
 }
@@ -11,14 +14,12 @@ export interface MuteUserTarget {
 // Kick target interface
 export interface KickUserTarget {
   address: string;
-  displayName: string;
   userIcon?: string;
 }
 
 // Block target interface (personal viewer-side block — per space)
 export interface BlockUserTarget {
   address: string;
-  displayName: string;
   userIcon?: string;
   spaceId: string;
   isUnblocking?: boolean;

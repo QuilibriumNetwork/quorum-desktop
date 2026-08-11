@@ -20,6 +20,8 @@ import ConfirmationModal from './ConfirmationModal';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
 import { useDMConversationSettings } from '../../hooks/business/dm/useDMConversationSettings';
+import { IdentityScopeProvider, useResolvedName } from '../../identity';
+import { realDisplayNameOrUndefined } from '../../utils/identityPlaceholder';
 
 type ConversationSettingsModalProps = {
   conversationId: string;
@@ -27,11 +29,42 @@ type ConversationSettingsModalProps = {
   visible: boolean;
 };
 
-const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
-  conversationId,
-  onClose,
-  visible,
-}) => {
+/**
+ * `ConversationSettingsModal` is mounted by `ModalProvider`, an ancestor of
+ * `<DirectMessages />` (Router.web.tsx), so it sits OUTSIDE the specific DM's
+ * own `<IdentityScopeProvider>` (DirectMessage.tsx mounts one scoped to the
+ * currently-open conversation). This is a detached, single-DM surface — like
+ * a bookmark row — so it mounts its OWN provider, wired the same way
+ * DirectMessage.tsx wires `locallyKnownNames` (design constraint 5 / fix
+ * round 1): the partner's LOCAL `Conversation.displayName` is the last
+ * resort before a truncated address, for a partner who has never published a
+ * public profile, and it must render with no network round-trip.
+ * `rostersBySpace={{}}` is correct — a DM carries no spaceId.
+ */
+const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = (props) => {
+  const { data: conversation } = useConversation({ conversationId: props.conversationId });
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const peerAddress = props.conversationId.split('/')[0];
+
+  const localNamesByAddress = React.useMemo(() => {
+    const localName = realDisplayNameOrUndefined(conversation?.conversation?.displayName);
+    return localName ? { [peerAddress]: localName } : {};
+  }, [conversation, peerAddress]);
+
+  return (
+    <IdentityScopeProvider
+      rostersBySpace={{}}
+      selfAddress={currentPasskeyInfo?.address ?? null}
+      locallyKnownNames={localNamesByAddress}
+    >
+      <ConversationSettingsModalContent {...props} peerAddress={peerAddress} />
+    </IdentityScopeProvider>
+  );
+};
+
+const ConversationSettingsModalContent: React.FC<
+  ConversationSettingsModalProps & { peerAddress: string }
+> = ({ conversationId, onClose, visible, peerAddress }) => {
   const { data: conversation } = useConversation({ conversationId });
   const { getConfig, keyset, deleteConversation, deleteEncryptionStates } =
     useMessageDB();
@@ -77,8 +110,13 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   // DMSettingsSheet "Fix Encryption"). Local-only: the next outgoing message
   // establishes a fresh session via a new init envelope, and the counterparty
   // replaces its old session for this device when that envelope arrives.
-  const counterpartyName =
-    conversation?.conversation?.displayName ?? t`this contact`;
+  //
+  // NAME resolves through src/identity (this modal's own provider above),
+  // never the raw `conversation.displayName` field with a caller-owned
+  // `?? 'this contact'` fallback standing in for the member's name — the
+  // resolver owns the fallback (a truncated address). `enrich`: one bounded
+  // address, this one confirmation.
+  const counterpartyName = useResolvedName(peerAddress, { enrich: true });
   const [resetSuccess, setResetSuccess] = React.useState(false);
   const resetConfirmation = useConfirmation({
     type: 'modal',
