@@ -149,11 +149,21 @@ test file mocks it properly.
 - **DMs.** `props.spaceId` is absent there, so there is no roster to read and
   the ladder degrades to caller → public profile, exactly as before. The DM
   sidebar was not part of this report.
-- **Mobile parity.** Not checked. Mobile has its own
-  `useMembersWithPublicProfileFallback` and its own profile card; if its card
-  has an address-only entry point, it very likely has this bug too. Per the
-  standing lesson in the parity index, a fix that lands on one client and leaves
-  the other as a TODO is not a shipped fix.
+- **Mobile parity — checked, and it is a DIFFERENT bug.** Mobile's
+  `UserProfileModal` has no fallback chain and needs none: every caller hands it
+  an already-resolved identity. Its avatar goes through `resolveMemberAvatar`
+  (override → global slot) and is fine. Its **bio has no such resolver** — four
+  call sites read `member.bio` raw, i.e. the per-space override only, so the bio
+  disappears for any member the visible-senders merge never touched (most
+  visibly the space-settings member list, which never goes through that merge at
+  all). Filed as
+  `quorum-mobile/.agents/issues/.open/2026-08-11-profile-modal-bio-is-read-raw-so-it-vanishes-for-any-unmerged-member.md`.
+
+  Worth noting for anyone doing the next parity sweep: the two clients had the
+  same *class* of defect (a rendered identity field not going through a ladder)
+  with completely different *shapes* — desktop's was gated on which pill you
+  clicked, mobile's on whether the member had posted recently. Looking for
+  desktop's symptom on mobile would have found nothing.
 
 ## Definition of done
 
@@ -165,7 +175,7 @@ test file mocks it properly.
 - [x] Rebased onto the identity branch tip, clean
 - [x] The reported stale NAME resolved (closed above, not pursued)
 - [x] Visually confirmed in the running app, from both entry points
-- [ ] Mobile parity checked, or explicitly deferred
+- [x] Mobile parity checked (a different defect, filed on mobile)
 - [ ] Merged (stacked on the identity work, so it lands after that does)
 
 ---
