@@ -3,7 +3,7 @@ type: doc
 title: Markdown Renderer
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-08-11
 ---
 
 # Markdown Renderer
@@ -374,7 +374,7 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - **Format**: `@<Qm...>` is the canonical form. The shared function also tolerates a legacy bare `@name` ONLY when a `members` array is supplied (mobile back-compat); desktop passes no members, so the shim is inert on desktop.
 - **Rendering**: `text`/`p`/`h3`/`li` components catch tokens and render styled spans via `processMentionTokens()`
 - **Security**: Prevents markdown interpretation and XSS attacks
-- **Display Name Handling**: resolved at RENDER time in `processMentionTokens` (MessageMarkdownRenderer.tsx), via `resolveSender`/`mapSenderToUser` then `resolveSpaceMemberName`. A resolved user shows their name and is clickable; an unresolved address shows a non-interactive truncated-address pill. The lookup is always fresh (no name baked into the token) to prevent spoofing.
+- **Display Name Handling**: resolved at RENDER time in `processMentionTokens` (MessageMarkdownRenderer.tsx). Since PR #327 the **label** comes from `useNameResolver().resolve(address)` — the identity module, keyed only by address — so a mention pill always agrees with that member's own message header. `resolveSender`/`mapSenderToUser` survive but no longer supply the label: they decide **interactivity only** (is there a user to navigate to on click). A resolved user shows their name and is clickable; an unresolved address shows a non-interactive truncated-address pill. The lookup is always fresh (no name baked into the token) to prevent spoofing, and it runs through shared `resolveIdentity`, so the forged-`.q` guard applies to pills too.
 - **Example**: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → styled pill, name looked up at render
 
 ### Everyone Mentions

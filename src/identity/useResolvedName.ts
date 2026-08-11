@@ -69,7 +69,21 @@ function useMemberIdentityAndScope(
   return { identity, defaultSpaceId, sources };
 }
 
-/** The identity behind a name, for callers that need the tiers. */
+/**
+ * The identity behind a name, for callers that need the tiers.
+ *
+ * ⚠️ The returned `MemberIdentity` is RAW. It has NOT been through shared's
+ * `resolveIdentity`, so the forged-".q" guard (`presentUnreserved`) has never
+ * seen these values. `globalName` and `spaceName` are user-controlled strings
+ * that can contain a fake ".q" suffix — **rendering one directly presents an
+ * unverified name as if it were verified.**
+ *
+ * If you only need a name to display, use `useResolvedName` /
+ * `useResolvedMemberName` / `<MemberName>` instead; they are guarded. Reach for
+ * this hook only when you genuinely need the tiers apart — and then re-apply
+ * the guard, as `SpaceSettingsModal/Account.tsx` does with the same exported
+ * `hasReservedQnsSuffix` (never a reimplementation of it).
+ */
 export function useMemberIdentity(
   address: string,
   { spaceId, enrich = false }: { spaceId?: string; enrich?: boolean } = {},

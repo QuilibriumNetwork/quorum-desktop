@@ -5,7 +5,7 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-07-19T00:00:00.000Z
+updated: 2026-08-11
 related_docs: ["mention-pills-ui-system.md"]
 ---
 
@@ -563,7 +563,7 @@ A single, app-level notification panel that aggregates unread mentions and repli
 ### Entry point and presentation
 
 - **NavRail bell** — `NavRail` has a `notifications` rail item (bell icon) as the **last** item in the rail. It is not a route; clicking it calls `openNotifications()` from the `ModalProvider` context. It never shows an "active" pathname state because it opens a modal rather than navigating.
-- **Modal presentation** — `NotificationPanel` has an opt-in `global` prop. In global mode it renders its content inside the **`Modal` primitive** (`size="medium"`, 600px wide) rather than the per-space `DropdownPanel`. This gives the dimmed/blurred backdrop, escape/click-outside, focus management, and correct z-index above the AppShell chrome for free — the architecturally correct home for a top-level-triggered centered panel (see `.agents/docs/features/modals.md`). It is mounted via the **ModalProvider system** (router level), not inside NavRail, so its backdrop stacks above the rail/sidebar. A Suspense-isolated container `GlobalNotificationsModal` owns the suspense-backed `useSpaces` / `useGlobalSenderResolver` calls and renders the panel.
+- **Modal presentation** — `NotificationPanel` has an opt-in `global` prop. In global mode it renders its content inside the **`Modal` primitive** (`size="medium"`, 600px wide) rather than the per-space `DropdownPanel`. This gives the dimmed/blurred backdrop, escape/click-outside, focus management, and correct z-index above the AppShell chrome for free — the architecturally correct home for a top-level-triggered centered panel (see `.agents/docs/features/modals.md`). It is mounted via the **ModalProvider system** (router level), not inside NavRail, so its backdrop stacks above the rail/sidebar. A Suspense-isolated container `GlobalNotificationsModal` owns the suspense-backed `useSpaces` call, mounts the panel's `<IdentityScopeProvider>` (see "Sender name resolution" below), and renders the panel.
 - **Taller, longer preview (global only)** — `.notification-panel--global` makes the modal taller (`max-height: 85vh`, `min-height: min(85vh, 560px)`) without widening it, and is a flex column whose inner list is the single scroll region (the modal root is `overflow: hidden` so there's exactly one scrollbar). Global rows also show a longer message preview (char cap 400 vs 200; `-webkit-line-clamp: 5` vs 2). The per-space panel keeps its compact 350px list, 200-char cap, and 2-line clamp.
 - **Presence dot** — the bell shows an unread **badge** (`.nav-rail__notif-dot`, scoped under `.nav-rail`) when `useSpaceMentionCounts` or `useSpaceReplyCounts` (driven by all spaces) report any unread. These are the existing early-exit count hooks (cheap; they cap at "9+"), so the dot costs no extra panel fetch. It is positioned over the bell's right side with a ring in the rail background. The dot clears once the relevant channels are read.
 
@@ -589,11 +589,24 @@ Constants live in `src/hooks/business/notifications/constants.ts` (standalone to
 
 ### Sender name resolution
 
-The per-space panel uses `Channel`'s `mapSenderToUser` (built from one space's enriched members). The global panel spans spaces, so it uses `useGlobalSenderResolver(spaces)`:
+**Rewritten by PR #327.** Both panels now resolve a sender the same way every other
+surface does: from an **address**, through `src/identity/`. `useGlobalSenderResolver`
+and `src/utils/resolveGlobalSender.ts` were deleted.
 
-- It pre-fetches each space's roster via `messageDB.getSpaceMembers(spaceId)` (React Query, 30s stale) and builds a synchronous resolver `(spaceId, senderId) => { address, displayName, userIcon }`, with an address-only fallback until rosters load or for unknown senders.
-- The pure core `buildGlobalSenderMap(membersBySpace)` in `src/utils/resolveGlobalSender.ts` is unit-tested in isolation.
-- Note: `Space.members` is `string[]` (addresses only); enriched member objects come from `getSpaceMembers` (`channel.UserProfile[]`). `primaryUsername`/`globalDisplayName` are not on the roster (they come from the public-profile fetch), so they are optional — parity with the per-space path when unenriched. The resolver output feeds the existing `resolveSpaceMemberName(...)` call in `NotificationPanel` unchanged.
+- `GlobalNotificationsModal` mounts an `<IdentityScopeProvider>` fed by
+  `useMultiSpaceRosters(spaceIds)` + `useLocalDmNames()`, because the panel is a
+  detached, cross-space surface with no single enclosing scope. It still pre-fetches
+  each space's roster via `messageDB.getSpaceMembers(spaceId)` (React Query, 30s
+  stale) — that hook is the reusable version of what `resolveGlobalSender` used to do.
+- Each row renders `<MemberName address={senderId} spaceId={row.spaceId} enrich />`
+  ([NotificationPanel.tsx:315](../../../src/components/notifications/NotificationPanel.tsx#L315)).
+  `spaceId` per row is what makes a cross-space panel show each sender's **per-space**
+  nickname; `enrich` is safe here because the row count is capped (see the bounded
+  fetch above).
+- Mentions **inside** a notification's message body resolve through the same scope via
+  `useNameResolver()`, so a mention pill in the panel agrees with the same pill in the
+  channel. That was one of the operator-found bugs this PR fixed.
+- Note: `Space.members` is `string[]` (addresses only); enriched member objects come from `getSpaceMembers` (`channel.UserProfile[]`). `primaryUsername`/`globalDisplayName` are not on the roster (they come from the public-profile fetch), so they are optional — parity with the per-space path when unenriched.
 
 ### Row layout (mobile-style, both panels)
 
@@ -633,7 +646,7 @@ The per-space bell inside a space still uses the anchored right-aligned `Dropdow
 - `src/hooks/business/mentions/fetchSpaceMentions.ts`, `src/hooks/business/replies/fetchSpaceReplies.ts` — pure per-space fetchers (shared source of truth).
 - `src/hooks/business/mentions/useAllMentionsGlobal.ts`, `src/hooks/business/replies/useAllRepliesGlobal.ts` — per-space loops.
 - `src/hooks/business/notifications/useGlobalNotifications.ts` — composition + cap + `truncated`.
-- `src/hooks/business/notifications/useGlobalSenderResolver.ts`, `src/utils/resolveGlobalSender.ts` — cross-space sender names.
+- `src/hooks/business/identity/useMultiSpaceRosters.ts` — cross-space rosters for the panel's identity scope. (Replaced `useGlobalSenderResolver.ts` + `utils/resolveGlobalSender.ts`, both deleted in PR #327.)
 - `src/hooks/business/notifications/constants.ts` — `GLOBAL_PER_CHANNEL_LIMIT`, `GLOBAL_DISPLAY_CAP`.
 - `src/components/notifications/GlobalNotificationsModal.tsx` — Suspense-isolated container rendered by ModalProvider; owns `useSpaces`/`useGlobalSenderResolver` and mounts the panel in global mode.
 - `src/components/notifications/NotificationPanel.tsx` — `global` mode (Modal shell vs DropdownPanel; context-aware title; cross-space confirm mark-all).

@@ -4,7 +4,7 @@ title: "Desktop has no avatar resolver, and three name tiers resolve differently
 status: open
 priority: medium
 created: 2026-08-04
-updated: 2026-08-05
+updated: 2026-08-11
 area: identity resolution / desktop-mobile parity / quorum-shared
 source: split out of 2026-08-04-desktop-screens-inject-an-address-as-a-display-name-and-defeat-the-resolver (PR #310) — these were two of its Definition-of-Done items that are not part of that defect and are cross-client decisions rather than desktop ones
 related:
@@ -33,6 +33,30 @@ resolver, and the open design question stands**: whether to promote mobile's
 desktop. That is a cross-client call and is still unmade.
 
 §3-C (address fallback formatted differently) and §3-D (`isAddressFallback`)
+untouched.
+
+**2026-08-11 — code references below are stale; the item itself is still open.**
+
+PR #327 deleted every desktop file this issue cites. `resolveSpaceMemberName` /
+`resolveMemberName` (`src/utils/resolveMemberName.ts`) and
+`useMembersWithPublicProfileFallback.ts` no longer exist. Read the citations as a
+description of the pre-#327 state, and map them forward:
+
+| This issue cites | Now |
+|---|---|
+| `resolveSpaceMemberName` / `resolveMemberName` | shared `resolveIdentity(identity, { scope })` |
+| `useMembersWithPublicProfileFallback.ts:147` | `src/hooks/business/user/useVisibleSenderProfileFallback.ts` |
+| desktop's name ladder | `src/identity/` — see `2026-08-10-identity-resolution-architecture-design.md` |
+
+**§3-A's fix survived the migration**: the global slot is still a real tier
+(`globalName` in `MemberIdentity`), and it is now a REQUIRED field, so the tier
+cannot be silently dropped by a caller.
+
+**Nothing else here is resolved.** §2's actual question — promote mobile's
+`resolveMemberAvatar` into shared, or twin it on desktop — is if anything sharper
+now: names went through the unification and **avatar/bio did not**. PR #328 had to
+fix the profile card's avatar through a separate path, so the second, parallel
+resolution path this issue is about is now the only one left. §3-C and §3-D remain
 untouched.
 
 ## 1. Why this is its own item

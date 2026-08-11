@@ -95,10 +95,18 @@ window.__selfIdentitySources = async () => {
   }
 
   // ---- the render ladder, replicated exactly -----------------------------
-  // useMembersWithPublicProfileFallback.ts:139-158 then
-  // resolveSpaceMemberName (utils/resolveMemberName.ts:66) then shared
-  // resolveDisplayName. Kept literal rather than tidy so a future drift in
-  // either file shows up as a disagreement with the app, not as a silent pass.
+  // ⚠️ STALE REFERENCE (2026-08-11): this replicated the ladder as it stood
+  // before PR #327. Both files named below were deleted — the ladder is now
+  // shared `resolveIdentity` (quorum-shared/src/utils/resolveDisplayName.ts),
+  // fed by `src/identity/identityProvider.tsx`. The replication below has NOT
+  // been re-derived against those, so treat a disagreement with the app as
+  // "this script is out of date" first, and check the current ladder before
+  // concluding the app is wrong.
+  //   was: useMembersWithPublicProfileFallback.ts:139-158 then
+  //        resolveSpaceMemberName (utils/resolveMemberName.ts:66) then shared
+  //        resolveDisplayName.
+  // Kept literal rather than tidy so a future drift shows up as a
+  // disagreement with the app, not as a silent pass.
   const present = (s) => {
     const t = (s ?? '').trim();
     return t.length ? t : null;

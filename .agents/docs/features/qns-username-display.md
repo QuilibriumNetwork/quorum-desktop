@@ -4,7 +4,7 @@ title: "QNS Username Display (name resolution)"
 status: done
 ai_generated: true
 created: 2026-06-11
-updated: 2026-08-06
+updated: 2026-08-11
 related_docs: ["input-validation-reference.md"]
 related_tasks: [".agents/issues/port-from-mobile/.done/2026-06-11-qns-username-overrides-display-name-plan.md", ".agents/issues/port-from-mobile/.done/2026-06-10-qns-username-display-design.md"]
 ---
@@ -47,14 +47,37 @@ custom per-space name  →  QNS primary username (.q)  →  global display name 
 
 ### Resolvers (single source of truth)
 
-- `@quilibrium/quorum-shared` → `resolveDisplayName(member, { spaceOverrideName })` — the shared precedence rule, returns `{ name, isQnsVerified }`.
-- `src/utils/resolveMemberName.ts` — the desktop adapter over the shared helper. Three exports:
-  - `resolveMemberName(member)` — **DM/global contexts.** QNS wins over `displayName`.
-  - `resolveSpaceMemberName(member)` — **space contexts.** Implements custom-name detection (below), then delegates to `resolveMemberName`.
-  - `formatResolvedName(resolved)` — flattens to a plain string (`name.q` when verified) for non-JSX sites: placeholders, tooltips, aria-labels.
-- `src/components/user/ResolvedName.tsx` — the one JSX component that renders a resolved name with the `.q` suffix (same font/size/weight/color as the name). All JSX sites use it so the suffix treatment can never drift.
+> **Rewritten 2026-08-11 (PR #327).** Everything named in this section before that
+> date — `resolveMemberName`, `resolveSpaceMemberName`, `formatResolvedName`,
+> `ResolvedName.tsx` — has been **deleted**. A call site no longer picks a resolver
+> by context; it passes an **address** and the module picks the scope.
 
-Rule of thumb for new code: name sourced from a **space roster / effectiveMembers** → `resolveSpaceMemberName`. Name in a **DM or profile-global** context → `resolveMemberName`. Never re-implement precedence at a call site.
+- `@quilibrium/quorum-shared` → `resolveIdentity(identity, { scope })` — the shared
+  precedence rule over a complete `MemberIdentity` (`address`, `spaceName`,
+  `qnsName`, `globalName`, all required and explicitly nullable). Returns
+  `{ name, isQnsVerified }`. `scope` is `'space'` or `'global'`.
+- [`src/identity/`](../../../src/identity/) — the desktop layer. Its whole public
+  surface:
+  - `<MemberName address=… />` — the JSX component. Renders the name and the `.q`,
+    and owns avatar initials from that same resolved name.
+  - `useResolvedName(address, opts)` — the flat string (`name.q` when verified),
+    for aria-labels, tooltips, notification bodies, modal payloads.
+  - `useResolvedMemberName(address, opts)` — `{ name, isQnsVerified }`, for callers
+    that style the suffix themselves.
+  - `useNameResolver()` — `resolve(address)` / `requestNames(addresses)`, for
+    resolving MANY addresses outside JSX (raw-DOM mention pills, search filters,
+    sort keys), where a hook cannot be called per row.
+  - `useMemberIdentity(address, opts)` — the **raw tiers**. See the warning on its
+    docstring: its return value has NOT been through `resolveIdentity`, so a caller
+    that renders a tier directly bypasses the forged-`.q` guard.
+
+Rule of thumb for new code: **pass the address, never the fields.** `spaceId` comes
+from the surrounding `<IdentityScopeProvider>`; pass it explicitly only on a
+detached surface (a bookmark, a notification) that carries its own stored one. An
+eslint rule blocks resolving a name anywhere outside `src/identity/`.
+
+Full architecture, including the provider merge semantics and the traps:
+[`2026-08-10-identity-resolution-architecture-design.md`](../../issues/2026-08-10-identity-resolution-architecture-design.md).
 
 ### Custom-name detection (the comparison trick)
 
@@ -75,14 +98,17 @@ user elects QNS primary name
   → published in their signed public profile (primary_username + display_name)
   → desktop fetches the public profile          ← the ONLY source of both fields
   → fields land on member objects
-  → resolvers pick the name → <ResolvedName> renders it (.q when verified)
+  → the identity provider assembles the tiers for an address
+  → resolveIdentity picks the name → <MemberName> renders it (.q when verified)
 ```
 
 Fetch scopes (deliberate, perf-driven):
 
-- **Space message senders**: `useMembersWithPublicProfileFallback` fetches the public profile for **every visible message sender** in the open channel (bounded, 1h React Query cache shared with the profile-card key). It enriches `effectiveMembers` with `primaryUsername` + `globalDisplayName`.
-- **Member sidebar**: no fetches of its own. It cheap-merges `primaryUsername`/`globalDisplayName` from `effectiveMembers`, so only members who have posted show `.q` there. The full roster is deliberately never fetched (fetch-storm protection).
-- **Mention autocomplete**: candidates come from the roster merged with `effectiveMembers` (same cheap merge). Matching also runs against `primaryUsername`, so typing `@ali` finds `alice`. The pill displays the resolved name; the stored token stays `@<address>` (wire format unchanged).
+- **Space message senders**: `useVisibleSenderProfileFallback` (renamed from
+  `useMembersWithPublicProfileFallback` in PR #327) fetches the public profile for **every visible message sender** in the open channel (bounded, 1h React Query cache shared with the profile-card key). It enriches `effectiveMembers` with `primaryUsername` + `globalDisplayName`.
+- **Member sidebar**: no fetches of its own — the only surface that never passes
+  `enrich`. It cheap-merges `primaryUsername`/`globalDisplayName` from `effectiveMembers`, so only members who have posted show `.q` there. The full roster is deliberately never fetched (fetch-storm protection: a 200-member space MEASURED 200 concurrent requests on open before the no-fetch policy).
+- **Mention autocomplete**: candidates come from the roster merged with `effectiveMembers` (same cheap merge). Matching also runs against `primaryUsername`, so typing `@ali` finds `alice`. The pill displays the resolved name; the stored token stays `@<address>` (wire format unchanged). Since PR #327 it **does** enrich: the candidate list is capped, so the fetch is bounded and demand-driven (MEASURED: 12 candidates → 12 fetches; further keystrokes over the same results → +0).
 - **DMs**: `useUserPublicProfile(address)` per conversation partner; the DM list backfill (`useConversationsWithProfileBackfill`) fetches each partner's profile (small N) and returns `ConversationWithQns`.
 - **Profile card** (`UserProfile.tsx`): uses the member object's fields when present, otherwise does one on-demand profile fetch while open.
 
@@ -138,7 +164,10 @@ What the public/private toggle does NOT do: gate reachability. The QNS resolver 
 - **Custom name identical to the global name** reads as "not custom", so the QNS name shows. Tiny corner case; degrades to a correct name without honoring the (invisible) custom intent.
 - **Stale profile cache after a global rename** (up to 1h) can briefly read the roster name as custom, hiding `.q`. Always degrades to a correct name without `.q`, never a wrong name.
 - **Sidebar lurkers**: members who never posted in the open channel show no `.q` in the member sidebar (no profile fetch for them). It appears once they post or their profile card is opened. Full-roster enrichment would need virtualized visible-range tracking (possible follow-up).
-- **Search results and bookmark cards** do not QNS-resolve (different data source / frozen snapshot; deferred, logged in the implementation plan).
+- ~~**Search results and bookmark cards** do not QNS-resolve~~ — **fixed in PR #327.**
+  Both now resolve from the address through `src/identity/` like every other surface,
+  so a bookmark shows the sender's current name rather than the string frozen at
+  bookmark-creation time.
 - **Live data dependency**: no real `.q` shows until mobile actually publishes `primary_username` (two mobile-side bugs filed 2026-06-10 in `quorum-mobile/.agents/bugs/`).
 - **Protocol improvements that would simplify this** (lead-dev asks, pending): a batch public-profile endpoint (N lookups → 1 request) and an explicit is-custom-name flag on `update-profile` (would replace the comparison trick). Neither blocks the feature.
 

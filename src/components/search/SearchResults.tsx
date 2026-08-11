@@ -46,10 +46,20 @@ interface SearchResultsProps {
  * `ReactionsModal` and the bookmarks/notifications panels, so this component
  * mounts its own multi-space provider rather than relying on ambient scope.
  *
- * Because this provider is its own mount (not the app-root one), fixing
- * `useRootIdentityScope` alone does NOT reach here — a nested
- * `<IdentityScopeProvider>` always shadows an ancestor's completely, nothing
- * merges. `locallyKnownNames` is built here the same way `rostersBySpace` is:
+ * Because this provider is its own mount (not the app-root one), it feeds
+ * itself rather than relying on `useRootIdentityScope` — search spans every
+ * space, so it needs the multi-space roster whatever sits above it.
+ *
+ * (This comment used to say a nested provider "always shadows an ancestor's
+ * completely, nothing merges". That was true when it was written and is NOT
+ * true now: since the merge fix, a nested `<IdentityScopeProvider>` MERGES with
+ * the enclosing scope — `rostersBySpace` two levels deep, `locallyKnownNames`
+ * and `profiles` flat, child wins per key — so a child can only ever add data,
+ * never remove it. `defaultSpaceId` is the one field that does not merge; it is
+ * always the provider's own prop, which is what stops a DM inheriting an
+ * unrelated space's nickname. See `identityProvider.tsx`.)
+ *
+ * `locallyKnownNames` is built here the same way `rostersBySpace` is:
  * an independent call to the SAME reusable hook the root uses
  * (`useLocalDmNames` — local IndexedDB conversations, no network, shares its
  * query key with the DM sidebar's own read), so a DM partner known only from
