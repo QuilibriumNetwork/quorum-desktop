@@ -295,6 +295,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
+- 🐛 [The auto-clear message is stated as a guarantee it cannot give](issues/.open/2026-08-12-clipboard-auto-clear-promise-ignores-clipboard-managers.md)
+- 🐛 ["Download file" has no confirmation](issues/.open/2026-08-12-download-key-button-has-no-confirmation.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -335,6 +337,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Composer drafts](issues/.open/2026-08-10-composer-drafts-design.md)
 - 📋 [Composer Drafts Implementation Plan](issues/.open/2026-08-10-composer-drafts-plan.md)
 - 📋 [Privacy level](issues/.open/2026-08-10-privacy-level-presets-design.md)
+- 📋 [Dependabot's 78 alerts, triaged against what actually ships](issues/.open/2026-08-12-dependabot-78-alerts-triage-react-router-bump.md)
 
 ### Deferred
 
@@ -781,4 +784,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-12 11:56:32
+**Last Updated**: 2026-08-12 16:36:26
