@@ -129,12 +129,12 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: result.conversationsSkippedAsDeleted
-#: src/components/modals/UserSettingsModal/Security.tsx:263
+#: src/components/modals/UserSettingsModal/Security.tsx:320
 msgid "{0} conversations were not restored because you deleted them after this backup was made."
 msgstr "{0} conversations were not restored because you deleted them after this backup was made."
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Security.tsx:352
+#: src/components/modals/UserSettingsModal/Security.tsx:409
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 
@@ -154,7 +154,7 @@ msgid "{0} mentioned you in {spaceName}"
 msgstr "{0} mentioned you in {spaceName}"
 
 #. placeholder {0}: result.messagesSkippedAsDeleted
-#: src/components/modals/UserSettingsModal/Security.tsx:268
+#: src/components/modals/UserSettingsModal/Security.tsx:325
 msgid "{0} messages were not restored because you deleted them after this backup was made."
 msgstr "{0} messages were not restored because you deleted them after this backup was made."
 
@@ -204,13 +204,13 @@ msgid "{0} results"
 msgstr "{0} results"
 
 #. placeholder {0}: result.spacesAlreadyPresent.length
-#: src/components/modals/UserSettingsModal/Security.tsx:258
+#: src/components/modals/UserSettingsModal/Security.tsx:315
 msgid "{0} Spaces were already on this device and were left unchanged."
 msgstr "{0} Spaces were already on this device and were left unchanged."
 
 #. placeholder {0}: result.spacesFailed.length
 #. placeholder {1}: result.spacesFailed .map((s) => s.reason) .join('; ')
-#: src/components/modals/UserSettingsModal/Security.tsx:273
+#: src/components/modals/UserSettingsModal/Security.tsx:330
 msgid "{0} Spaces were skipped: {1}"
 msgstr "{0} Spaces were skipped: {1}"
 
@@ -289,7 +289,7 @@ msgstr "0 = forever"
 msgid "0 hours"
 msgstr "0 hours"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:351
+#: src/components/modals/UserSettingsModal/Security.tsx:408
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 device marked for removal. Click \"Save Changes\" to confirm."
 
@@ -337,7 +337,7 @@ msgstr "Account address"
 msgid "Account Address"
 msgstr "Account Address"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:484
+#: src/components/modals/UserSettingsModal/Security.tsx:541
 msgid "Account Key"
 msgstr "Account Key"
 
@@ -509,9 +509,23 @@ msgstr "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GI
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 
+#: src/components/modals/UserSettingsModal/Security.tsx:719
+msgid "Anyone who photographs this code owns your account. Scan it now, then close this."
+msgstr "Anyone who photographs this code owns your account. Scan it now, then close this."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:269
+msgid ""
+"Anyone who sees or photographs this code can take full control of your account and steal any funds it holds.\n"
+"\n"
+"Only continue if you are somewhere private and ready to scan immediately. The code hides itself after 60 seconds."
+msgstr ""
+"Anyone who sees or photographs this code can take full control of your account and steal any funds it holds.\n"
+"\n"
+"Only continue if you are somewhere private and ready to scan immediately. The code hides itself after 60 seconds."
+
 #: src/components/modals/UserSettingsModal/Security.tsx:576
-msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
-msgstr "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+#~ msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
 
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:232
 msgid "App version"
@@ -582,7 +596,7 @@ msgstr "Are you sure you want to unpin this message?"
 msgid "attach image"
 msgstr "attach image"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:334
+#: src/components/modals/UserSettingsModal/Security.tsx:391
 msgid "Authorized Devices"
 msgstr "Authorized Devices"
 
@@ -704,9 +718,10 @@ msgstr "Can't sync: no key is available on this device."
 #: src/components/modals/MuteUserModal.tsx:148
 #: src/components/modals/UserSettingsModal/Help.tsx:32
 #: src/components/modals/UserSettingsModal/Privacy.tsx:295
-#: src/components/modals/UserSettingsModal/Security.tsx:214
-#: src/components/modals/UserSettingsModal/Security.tsx:541
-#: src/components/modals/UserSettingsModal/Security.tsx:585
+#: src/components/modals/UserSettingsModal/Security.tsx:194
+#: src/components/modals/UserSettingsModal/Security.tsx:227
+#: src/components/modals/UserSettingsModal/Security.tsx:252
+#: src/components/modals/UserSettingsModal/Security.tsx:271
 #: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:457
@@ -914,6 +929,10 @@ msgstr "Conversation with {counterpartLabel}"
 msgid "Copied!"
 msgstr "Copied!"
 
+#: src/components/modals/UserSettingsModal/Security.tsx:251
+msgid "Copy"
+msgstr "Copy"
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:675
 msgid "Copy a link"
 msgstr "Copy a link"
@@ -932,7 +951,7 @@ msgstr "Copy address"
 msgid "Copy Failed"
 msgstr "Copy Failed"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:427
+#: src/components/modals/UserSettingsModal/Security.tsx:484
 msgid "Copy full address"
 msgstr "Copy full address"
 
@@ -941,7 +960,7 @@ msgstr "Copy full address"
 msgid "Copy invite link to clipboard"
 msgstr "Copy invite link to clipboard"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:511
+#: src/components/modals/UserSettingsModal/Security.tsx:569
 msgid "Copy key"
 msgstr "Copy key"
 
@@ -960,7 +979,11 @@ msgstr "Copy message"
 msgid "Copy message link"
 msgstr "Copy message link"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:549
+#: src/components/modals/UserSettingsModal/Security.tsx:249
+msgid "Copy your private key?"
+msgstr "Copy your private key?"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:684
 msgid "Copying..."
 msgstr "Copying..."
 
@@ -1064,7 +1087,7 @@ msgstr "Danger Zone"
 msgid "Dark"
 msgstr "Dark"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:621
+#: src/components/modals/UserSettingsModal/Security.tsx:619
 msgid "Data Backup"
 msgstr "Data Backup"
 
@@ -1263,7 +1286,7 @@ msgstr "Device name cannot contain HTML"
 msgid "Device name must be {0} characters or less"
 msgstr "Device name must be {0} characters or less"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:337
+#: src/components/modals/UserSettingsModal/Security.tsx:394
 msgid "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
 msgstr "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
 
@@ -1308,7 +1331,15 @@ msgstr "Display name is too long"
 msgid "Documentation"
 msgstr "Documentation"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:500
+#: src/components/modals/UserSettingsModal/Security.tsx:730
+msgid "Done"
+msgstr "Done"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:226
+msgid "Download"
+msgstr "Download"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:558
 msgid "Download file"
 msgstr "Download file"
 
@@ -1316,9 +1347,13 @@ msgstr "Download file"
 msgid "Download Key Backup"
 msgstr "Download Key Backup"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:528
+#: src/components/modals/UserSettingsModal/Security.tsx:587
 msgid "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
 msgstr "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:223
+msgid "Download your private key?"
+msgstr "Download your private key?"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:130
 msgid "Drag and drop or"
@@ -1514,15 +1549,15 @@ msgstr "Expand sidebar"
 msgid "Explore"
 msgstr "Explore"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:643
+#: src/components/modals/UserSettingsModal/Security.tsx:641
 msgid "Export"
 msgstr "Export"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:211
+#: src/components/modals/UserSettingsModal/Security.tsx:191
 msgid "Export a backup?"
 msgstr "Export a backup?"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:634
+#: src/components/modals/UserSettingsModal/Security.tsx:632
 msgid "Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device."
 msgstr "Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device."
 
@@ -1530,12 +1565,12 @@ msgstr "Export an encrypted backup of your direct messages and your Spaces, so y
 #~ msgid "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
 #~ msgstr "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:213
+#: src/components/modals/UserSettingsModal/Security.tsx:193
 msgid "Export backup"
 msgstr "Export backup"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:643
-#: src/components/modals/UserSettingsModal/Security.tsx:687
+#: src/components/modals/UserSettingsModal/Security.tsx:641
+#: src/components/modals/UserSettingsModal/Security.tsx:760
 msgid "Exporting..."
 msgstr "Exporting..."
 
@@ -1544,7 +1579,7 @@ msgstr "Exporting..."
 msgid "Failed to block user"
 msgstr "Failed to block user"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:140
+#: src/components/modals/UserSettingsModal/Security.tsx:127
 msgid "Failed to copy private key"
 msgstr "Failed to copy private key"
 
@@ -1570,7 +1605,7 @@ msgstr "Failed to delete message"
 msgid "Failed to edit message"
 msgstr "Failed to edit message"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:233
+#: src/components/modals/UserSettingsModal/Security.tsx:290
 msgid "Failed to export backup"
 msgstr "Failed to export backup"
 
@@ -1579,7 +1614,7 @@ msgstr "Failed to export backup"
 msgid "Failed to generate invite link. Please try again."
 msgstr "Failed to generate invite link. Please try again."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:312
+#: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "Failed to import backup"
 msgstr "Failed to import backup"
 
@@ -1608,6 +1643,10 @@ msgstr "Failed to parse WebSocket message:"
 #: src/services/ActionQueueHandlers.ts:276
 msgid "Failed to pin message"
 msgstr "Failed to pin message"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:94
+msgid "Failed to read your private key"
+msgstr "Failed to read your private key"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Failed to reset encryption sessions"
@@ -1884,8 +1923,8 @@ msgid "Help others recognize you with a profile picture."
 msgstr "Help others recognize you with a profile picture."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:612
-msgid "Hide"
-msgstr "Hide"
+#~ msgid "Hide"
+#~ msgstr "Hide"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Hide key"
@@ -1913,12 +1952,12 @@ msgid "I understand"
 msgstr "I understand"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:549
-msgid "I Understand, Copy"
-msgstr "I Understand, Copy"
+#~ msgid "I Understand, Copy"
+#~ msgstr "I Understand, Copy"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:593
-msgid "I Understand, Show QR"
-msgstr "I Understand, Show QR"
+#~ msgid "I Understand, Show QR"
+#~ msgstr "I Understand, Show QR"
 
 #: src/components/message/Message.tsx:974
 #: src/components/message/Message.tsx:1070
@@ -1933,7 +1972,7 @@ msgstr "I've already saved my key"
 msgid "If users report that this invite link isn't working, click to republish it. The link URL stays the same."
 msgstr "If users report that this invite link isn't working, click to republish it. The link URL stays the same."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:652
+#: src/components/modals/UserSettingsModal/Security.tsx:650
 msgid "Import a backup instead"
 msgstr "Import a backup instead"
 
@@ -1953,7 +1992,7 @@ msgstr "Import your account key"
 msgid "Important messages will be pinned here"
 msgstr "Important messages will be pinned here"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:652
+#: src/components/modals/UserSettingsModal/Security.tsx:650
 msgid "Importing..."
 msgstr "Importing..."
 
@@ -2182,7 +2221,6 @@ msgid "Loading your profile..."
 msgstr "Loading your profile..."
 
 #: src/components/discover-page/DiscoverPage.tsx:123
-#: src/components/modals/UserSettingsModal/Security.tsx:593
 msgid "Loading..."
 msgstr "Loading..."
 
@@ -2218,7 +2256,7 @@ msgstr "Make role invisible"
 msgid "Make role public"
 msgstr "Make role public"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:327
+#: src/components/modals/UserSettingsModal/Security.tsx:384
 msgid "Manage authorized devices, key export, mobile import, and encrypted message backups."
 msgstr "Manage authorized devices, key export, mobile import, and encrypted message backups."
 
@@ -2676,11 +2714,11 @@ msgstr "Paste key"
 msgid "Paste your private key"
 msgstr "Paste your private key"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:464
+#: src/components/modals/UserSettingsModal/Security.tsx:521
 msgid "Pending"
 msgstr "Pending"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:450
+#: src/components/modals/UserSettingsModal/Security.tsx:507
 msgid "Pending removal - click Save to confirm"
 msgstr "Pending removal - click Save to confirm"
 
@@ -2750,6 +2788,10 @@ msgstr "Pinned by {pinnedByName}"
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
+#: src/components/modals/UserSettingsModal/Security.tsx:744
+msgid "Preparing download..."
+msgstr "Preparing download..."
+
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:69
 msgid "Preview"
 msgstr "Preview"
@@ -2773,12 +2815,20 @@ msgid "Private key (hex)"
 msgstr "Private key (hex)"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:559
-msgid "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
-msgstr "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
+#~ msgid "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
+#~ msgstr "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:603
+msgid "Private key copied. Quorum will clear it from your clipboard in 60 seconds. Clipboard history tools keep their own copy, so clear those too."
+msgstr "Private key copied. Quorum will clear it from your clipboard in 60 seconds. Clipboard history tools keep their own copy, so clear those too."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:560
-msgid "Private key copied. Store it securely and clear your clipboard when you're done."
-msgstr "Private key copied. Store it securely and clear your clipboard when you're done."
+#~ msgid "Private key copied. Store it securely and clear your clipboard when you're done."
+#~ msgstr "Private key copied. Store it securely and clear your clipboard when you're done."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:604
+msgid "Private key copied. Store it securely, then clear your clipboard and your clipboard history."
+msgstr "Private key copied. Store it securely, then clear your clipboard and your clipboard history."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:88
 msgid "Private key saved to selected folder"
@@ -2809,8 +2859,8 @@ msgid "Public spaces"
 msgstr "Public spaces"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:607
-msgid "QR code will auto-hide in 60 seconds"
-msgstr "QR code will auto-hide in 60 seconds"
+#~ msgid "QR code will auto-hide in 60 seconds"
+#~ msgstr "QR code will auto-hide in 60 seconds"
 
 #: src/components/Maintenance.tsx:29
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
@@ -2849,6 +2899,10 @@ msgstr "Read receipts"
 msgid "Read-only"
 msgstr "Read-only"
 
+#: src/components/modals/UserSettingsModal/Security.tsx:699
+msgid "Reading your key..."
+msgstr "Reading your key..."
+
 #: src/components/direct/DirectMessageContactsList.tsx:622
 msgid "Ready to start a truly private conversation?"
 msgstr "Ready to start a truly private conversation?"
@@ -2882,7 +2936,7 @@ msgstr "Reload Quorum"
 msgid "Reloading usually fixes it. If it keeps happening, check <0>status.quilibrium.com</0> for service updates."
 msgstr "Reloading usually fixes it. If it keeps happening, check <0>status.quilibrium.com</0> for service updates."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:464
+#: src/components/modals/UserSettingsModal/Security.tsx:521
 msgid "Remove"
 msgstr "Remove"
 
@@ -2902,7 +2956,7 @@ msgstr "Remove from Favorites"
 msgid "Removing..."
 msgstr "Removing..."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:435
+#: src/components/modals/UserSettingsModal/Security.tsx:492
 msgid "Rename this device"
 msgstr "Rename this device"
 
@@ -3002,7 +3056,7 @@ msgstr "Restore your account from your private key — upload the key file or pa
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
-#: src/components/modals/UserSettingsModal/Security.tsx:249
+#: src/components/modals/UserSettingsModal/Security.tsx:306
 msgid "Restored {0} messages and {1} conversations."
 msgstr "Restored {0} messages and {1} conversations."
 
@@ -3012,7 +3066,7 @@ msgid "Restored {0} Space(s)"
 msgstr "Restored {0} Space(s)"
 
 #. placeholder {0}: result.spacesRestored.length
-#: src/components/modals/UserSettingsModal/Security.tsx:253
+#: src/components/modals/UserSettingsModal/Security.tsx:310
 msgid "Restored {0} Spaces."
 msgstr "Restored {0} Spaces."
 
@@ -3154,7 +3208,7 @@ msgid "Searching..."
 msgstr "Searching..."
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:20
-#: src/components/modals/UserSettingsModal/Security.tsx:324
+#: src/components/modals/UserSettingsModal/Security.tsx:381
 msgid "Security"
 msgstr "Security"
 
@@ -3267,9 +3321,14 @@ msgstr "Show Muted Channels"
 msgid "Show Online Status"
 msgstr "Show Online Status"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:522
+#: src/components/modals/UserSettingsModal/Security.tsx:270
+#: src/components/modals/UserSettingsModal/Security.tsx:581
 msgid "Show QR"
 msgstr "Show QR"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:268
+msgid "Show your private key as a QR code?"
+msgstr "Show your private key as a QR code?"
 
 #. placeholder {0}: entries.length
 #: src/components/discover-page/DiscoverTab.tsx:139
@@ -3319,7 +3378,7 @@ msgstr "Space Description"
 msgid "Space ID"
 msgstr "Space ID"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:291
+#: src/components/modals/UserSettingsModal/Security.tsx:348
 msgid "Space message history is not included in backups; it syncs from other members."
 msgstr "Space message history is not included in backups; it syncs from other members."
 
@@ -3466,11 +3525,11 @@ msgstr "The passkey setup timed out. You can try again, or continue without Pass
 #~ msgid "This action cannot be undone and will permanently delete this Space and all of its channels and messages."
 #~ msgstr "This action cannot be undone and will permanently delete this Space and all of its channels and messages."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:280
+#: src/components/modals/UserSettingsModal/Security.tsx:337
 msgid "This backup is inconsistent: it reports Space keys but contains no Space list, so Spaces could not be restored."
 msgstr "This backup is inconsistent: it reports Space keys but contains no Space list, so Spaces could not be restored."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:287
+#: src/components/modals/UserSettingsModal/Security.tsx:344
 msgid "This backup was made by an older version and contains no Space keys, so Spaces could not be restored. Export a fresh backup to protect them."
 msgstr "This backup was made by an older version and contains no Space keys, so Spaces could not be restored. Export a fresh backup to protect them."
 
@@ -3496,19 +3555,19 @@ msgid "This conversation overrides your global setting. Click \"Reset to global\
 msgstr "This conversation overrides your global setting. Click \"Reset to global\" to use your global preference."
 
 #: src/components/modals/UserSettingsModal/Security.tsx:536
-msgid "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
-msgstr "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
+#~ msgid "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
+#~ msgstr "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
 
 #: src/components/modals/CreateSpaceModal.tsx:187
 #: src/components/modals/SpaceSettingsModal/General.tsx:189
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:473
+#: src/components/modals/UserSettingsModal/Security.tsx:530
 msgid "This device"
 msgstr "This device"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:212
+#: src/components/modals/UserSettingsModal/Security.tsx:192
 msgid ""
 "This file contains your direct message history and the keys to your Spaces, including ownership of any you created. Only this account can open it.\n"
 "\n"
@@ -3517,6 +3576,10 @@ msgstr ""
 "This file contains your direct message history and the keys to your Spaces, including ownership of any you created. Only this account can open it.\n"
 "\n"
 "Space message history is not included. It syncs back from other members."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:727
+msgid "This hides itself after 60 seconds."
+msgstr "This hides itself after 60 seconds."
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
@@ -3558,6 +3621,26 @@ msgstr "This page couldn't be loaded"
 #: src/services/InvitationService.ts:580
 msgid "This public invite link is no longer valid."
 msgstr "This public invite link is no longer valid."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:250
+msgid ""
+"This puts your account's private key on the clipboard in plain text. Anyone who can read your clipboard can take full control of your account.\n"
+"\n"
+"Clipboard history and sync tools keep their own copy, which Quorum cannot clear. Paste it somewhere safe, then clear your clipboard and its history."
+msgstr ""
+"This puts your account's private key on the clipboard in plain text. Anyone who can read your clipboard can take full control of your account.\n"
+"\n"
+"Clipboard history and sync tools keep their own copy, which Quorum cannot clear. Paste it somewhere safe, then clear your clipboard and its history."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:224
+msgid ""
+"This saves your account's private key to your device as an unencrypted text file, named after your account address.\n"
+"\n"
+"Anyone who opens that file controls your account permanently. There is no way to revoke or reset it. Downloads folders are often synced to cloud storage, so move it somewhere you control."
+msgstr ""
+"This saves your account's private key to your device as an unencrypted text file, named after your account address.\n"
+"\n"
+"Anyone who opens that file controls your account permanently. There is no way to revoke or reset it. Downloads folders are often synced to cloud storage, so move it somewhere you control."
 
 #: src/components/modals/ThreadSettingsModal.tsx:196
 msgid "This thread cannot be deleted because it contains messages from other users."
@@ -4258,7 +4341,11 @@ msgstr "Your next message to each contact will establish a fresh secure connecti
 msgid "Your next message will establish a fresh secure connection."
 msgstr "Your next message will establish a fresh secure connection."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:488
+#: src/components/modals/UserSettingsModal/Security.tsx:713
+msgid "Your private key"
+msgstr "Your private key"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:545
 msgid "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
 msgstr "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
 

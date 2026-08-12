@@ -129,12 +129,14 @@ msgid "[Sticker]"
 msgstr "[스티커]"
 
 #. placeholder {0}: result.conversationsSkippedAsDeleted
-#: src/components/modals/UserSettingsModal/Security.tsx:263
-msgid "{0} conversations were not restored because you deleted them after this backup was made."
+#: src/components/modals/UserSettingsModal/Security.tsx:320
+msgid ""
+"{0} conversations were not restored because you deleted them after this "
+"backup was made."
 msgstr "이 백업이 생성된 후 삭제했기 때문에 {0}개의 대화가 복원되지 않았습니다."
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Security.tsx:352
+#: src/components/modals/UserSettingsModal/Security.tsx:409
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 개의 장치가 제거를 위해 표시되었습니다. \"변경 사항 저장\"을 클릭하여 확인하십시오."
 
@@ -154,8 +156,10 @@ msgid "{0} mentioned you in {spaceName}"
 msgstr "{0}가 {spaceName}에서 당신을 언급했습니다"
 
 #. placeholder {0}: result.messagesSkippedAsDeleted
-#: src/components/modals/UserSettingsModal/Security.tsx:268
-msgid "{0} messages were not restored because you deleted them after this backup was made."
+#: src/components/modals/UserSettingsModal/Security.tsx:325
+msgid ""
+"{0} messages were not restored because you deleted them after this backup "
+"was made."
 msgstr "이 백업이 생성된 후 삭제했기 때문에 {0}개의 메시지가 복원되지 않았습니다."
 
 #. placeholder {0}: allNotifications.length
@@ -204,13 +208,13 @@ msgid "{0} results"
 msgstr "{0} 결과들"
 
 #. placeholder {0}: result.spacesAlreadyPresent.length
-#: src/components/modals/UserSettingsModal/Security.tsx:258
+#: src/components/modals/UserSettingsModal/Security.tsx:315
 msgid "{0} Spaces were already on this device and were left unchanged."
 msgstr "{0}개의 Space가 이미 이 기기에 있었고 변경되지 않았습니다."
 
 #. placeholder {0}: result.spacesFailed.length
 #. placeholder {1}: result.spacesFailed .map((s) => s.reason) .join('; ')
-#: src/components/modals/UserSettingsModal/Security.tsx:273
+#: src/components/modals/UserSettingsModal/Security.tsx:330
 msgid "{0} Spaces were skipped: {1}"
 msgstr "{0}개의 Space를 건너뛰었습니다: {1}"
 
@@ -222,9 +226,6 @@ msgstr "{bookmarkCount} 북마크"
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} 북마크들"
 
-#~ msgid "{contextCount} bookmark here"
-#~ msgstr "{contextCount} 마커가 여기 있습니다"
-
 #: src/components/bookmarks/BookmarksPanel.tsx:181
 msgid "{contextCount} bookmark in this conversation"
 msgstr "이 대화에 {contextCount}개의 북마크"
@@ -232,9 +233,6 @@ msgstr "이 대화에 {contextCount}개의 북마크"
 #: src/components/bookmarks/BookmarksPanel.tsx:184
 msgid "{contextCount} bookmark in this Space"
 msgstr "이 공간에 {contextCount}개의 북마크"
-
-#~ msgid "{contextCount} bookmarks here"
-#~ msgstr "{contextCount} 마커가 여기 있습니다"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:182
 msgid "{contextCount} bookmarks in this conversation"
@@ -287,7 +285,7 @@ msgstr "0 = 영원히"
 msgid "0 hours"
 msgstr "0 시간"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:351
+#: src/components/modals/UserSettingsModal/Security.tsx:408
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 개의 장치가 제거를 위해 표시되었습니다. \"변경 사항 저장\"을 클릭하여 확인하십시오."
 
@@ -300,20 +298,25 @@ msgid "4-Character Code"
 msgstr "4자 코드"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
-msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
-msgstr "passkey는 기기의 보안 기능(Face ID, 지문, PIN)을 사용하여 계정을 보호합니다. 비밀번호보다 안전하며 기억할 필요가 없습니다."
+msgid ""
+"A passkey uses your device's security features (Face ID, fingerprint, or "
+"PIN) to protect your account. It's more secure than a password and you don't"
+" have to remember anything."
+msgstr ""
+"passkey는 기기의 보안 기능(Face ID, 지문, PIN)을 사용하여 계정을 보호합니다. 비밀번호보다 안전하며 기억할 필요가 "
+"없습니다."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:544
-msgid "A reusable link anyone can use to join. Share it on social media or your website."
+msgid ""
+"A reusable link anyone can use to join. Share it on social media or your "
+"website."
 msgstr "누구나 참여할 수 있는 재사용 가능한 링크입니다. 소셜 미디어나 당신의 웹사이트에 공유하세요."
 
-#: src/services/MessageService.ts:6527
-#: src/services/NotificationService.ts:297
+#: src/services/MessageService.ts:6527 src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "역할"
 
-#: src/services/MessageService.ts:6537
-#: src/services/NotificationService.ts:296
+#: src/services/MessageService.ts:6537 src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "공간"
@@ -335,7 +338,7 @@ msgstr "계정 주소"
 msgid "Account Address"
 msgstr "계정 주소"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:484
+#: src/components/modals/UserSettingsModal/Security.tsx:541
 msgid "Account Key"
 msgstr "계정 키"
 
@@ -405,12 +408,20 @@ msgid "Add to Favorites"
 msgstr "즐겨찾기에 추가"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:47
-msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr "최대 50개의 사용자 정의 이모지를 추가하세요. 사용자 정의 이모지는 Space 내에서만 사용할 수 있습니다. PNG, JPG 또는 GIF를 업로드할 수 있으며, 최대 5MB(자동 최적화됨)입니다."
+msgid ""
+"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
+"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr ""
+"최대 50개의 사용자 정의 이모지를 추가하세요. 사용자 정의 이모지는 Space 내에서만 사용할 수 있습니다. PNG, JPG 또는 "
+"GIF를 업로드할 수 있으며, 최대 5MB(자동 최적화됨)입니다."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:47
-msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
-msgstr "최대 50개의 사용자 정의 스티커를 추가하세요. 사용자 정의 스티커는 Space 내에서만 사용할 수 있습니다. PNG, JPG 또는 GIF를 업로드할 수 있으며, 최대 25MB(자동 최적화됨)입니다."
+msgid ""
+"Add up to 50 custom stickers. Custom stickers can only be used within a "
+"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr ""
+"최대 50개의 사용자 정의 스티커를 추가하세요. 사용자 정의 스티커는 Space 내에서만 사용할 수 있습니다. PNG, JPG 또는 "
+"GIF를 업로드할 수 있으며, 최대 25MB(자동 최적화됨)입니다."
 
 #: src/components/user/UserProfile.tsx:404
 msgid "Adding..."
@@ -482,9 +493,6 @@ msgstr "항상 직접 메시지 서명"
 msgid "Always sign messages"
 msgstr "항상 메시지 서명"
 
-#~ msgid "An error occurred while deleting the Space. Please try again."
-#~ msgstr "공간을 삭제하는 동안 오류가 발생했습니다. 다시 시도하십시오."
-
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:88
 msgid "An error occurred while resetting app data. Please try again."
 msgstr "앱 데이터를 재설정하는 동안 오류가 발생했습니다. 다시 시도해 주세요."
@@ -499,16 +507,32 @@ msgid "and"
 msgstr "그리고"
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
+msgid ""
+"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
+"for emoji use."
 msgstr "애니메이션 이모지 GIF는 100KB를 초과할 수 없습니다. 이모지 사용을 위해 GIF를 최적화해 주세요."
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
+msgid ""
+"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
+"for sticker use."
 msgstr "애니메이션 스티커 GIF는 750KB를 초과할 수 없습니다. 스티커 사용을 위해 GIF를 최적화해 주세요."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:576
-msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
-msgstr "이 QR 코드를 보거나 사진을 찍는 누구나 당신의 Quorum 계정을 완전히 제어하고 관련된 자금을 훔칠 수 있습니다. 개인적인 장소에 있고 즉시 스캔할 준비가 되어 있는 경우에만 진행하십시오."
+#: src/components/modals/UserSettingsModal/Security.tsx:719
+msgid ""
+"Anyone who photographs this code owns your account. Scan it now, then close "
+"this."
+msgstr "이 코드를 촬영하는 사람은 누구나 당신의 계정을 소유합니다. 지금 스캔한 다음 닫으십시오."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:269
+msgid ""
+"Anyone who sees or photographs this code can take full control of your account and steal any funds it holds.\n"
+"\n"
+"Only continue if you are somewhere private and ready to scan immediately. The code hides itself after 60 seconds."
+msgstr ""
+"이 코드를 보거나 촬영하는 사람은 누구나 당신의 계정을 완전히 제어하고 보유하고 있는 모든 자금을 훔칠 수 있습니다.\n"
+"\n"
+"개인적인 공간에 있고 즉시 스캔할 준비가 된 경우에만 계속하십시오. 코드는 60초 후에 자동으로 숨겨집니다."
 
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:232
 msgid "App version"
@@ -526,11 +550,14 @@ msgstr "가 입력 중입니다"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:434
 #: src/hooks/business/channels/useChannelManagement.ts:238
-msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
+msgid ""
+"Are you sure you want to delete this channel? All messages will be lost. "
+"This action cannot be undone."
 msgstr "이 채널을 삭제하시겠습니까? 모든 메시지가 사라집니다. 이 작업은 취소할 수 없습니다."
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:435
-msgid "Are you sure you want to delete this channel? This action cannot be undone."
+msgid ""
+"Are you sure you want to delete this channel? This action cannot be undone."
 msgstr "이 채널을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
 
 #: src/components/modals/ConversationSettingsModal.tsx:102
@@ -544,11 +571,14 @@ msgstr ""
 "이 작업은 당신의 기기에서만 대화를 삭제합니다. 다른 참가자는 여전히 대화 기록에 접근할 수 있습니다."
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:455
-msgid "Are you sure you want to delete this group? All channels inside it and their messages will be lost. This action cannot be undone."
+msgid ""
+"Are you sure you want to delete this group? All channels inside it and their"
+" messages will be lost. This action cannot be undone."
 msgstr "이 그룹을 삭제하시겠습니까? 그룹 내 모든 채널과 메시지가 삭제됩니다. 이 작업은 취소할 수 없습니다."
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:456
-msgid "Are you sure you want to delete this group? This action cannot be undone."
+msgid ""
+"Are you sure you want to delete this group? This action cannot be undone."
 msgstr "이 그룹을 삭제하시겠습니까? 이 작업은 취소할 수 없습니다."
 
 #: src/hooks/business/messages/useMessageActions.ts:445
@@ -559,12 +589,13 @@ msgstr "이 메시지를 삭제하시겠습니까?"
 msgid "Are you sure you want to delete this role?"
 msgstr "이 역할을 삭제하시겠습니까?"
 
-#~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
-#~ msgstr "이 Space를 떠나시겠습니까? 다시 초대받지 않으면 재가입할 수 없습니다."
-
 #: src/components/modals/LeaveSpaceModal.tsx:47
-msgid "Are you sure you want to leave this Space? You'll need an invite to rejoin, though a public invite link will still work if this Space has one."
-msgstr "이 스페이스를 떠나시겠습니까? 다시 참여하려면 초대가 필요하지만, 이 스페이스에 공개 초대 링크가 있는 경우 해당 링크는 계속 작동합니다."
+msgid ""
+"Are you sure you want to leave this Space? You'll need an invite to rejoin, "
+"though a public invite link will still work if this Space has one."
+msgstr ""
+"이 스페이스를 떠나시겠습니까? 다시 참여하려면 초대가 필요하지만, 이 스페이스에 공개 초대 링크가 있는 경우 해당 링크는 계속 "
+"작동합니다."
 
 #: src/hooks/business/messages/usePinnedMessages.ts:326
 msgid "Are you sure you want to pin this message?"
@@ -578,7 +609,7 @@ msgstr "이 메시지의 고정을 해제하시겠습니까?"
 msgid "attach image"
 msgstr "이미지 첨부"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:334
+#: src/components/modals/UserSettingsModal/Security.tsx:391
 msgid "Authorized Devices"
 msgstr "승인된 기기"
 
@@ -700,9 +731,10 @@ msgstr "동기화할 수 없습니다: 이 기기에서 사용할 수 있는 키
 #: src/components/modals/MuteUserModal.tsx:148
 #: src/components/modals/UserSettingsModal/Help.tsx:32
 #: src/components/modals/UserSettingsModal/Privacy.tsx:295
-#: src/components/modals/UserSettingsModal/Security.tsx:214
-#: src/components/modals/UserSettingsModal/Security.tsx:541
-#: src/components/modals/UserSettingsModal/Security.tsx:585
+#: src/components/modals/UserSettingsModal/Security.tsx:194
+#: src/components/modals/UserSettingsModal/Security.tsx:227
+#: src/components/modals/UserSettingsModal/Security.tsx:252
+#: src/components/modals/UserSettingsModal/Security.tsx:271
 #: src/components/notifications/NotificationPanel.tsx:205
 #: src/hooks/business/channels/useChannelManagement.ts:244
 #: src/hooks/business/messages/useMessageActions.ts:457
@@ -723,12 +755,16 @@ msgstr "기본 채널이 포함된 그룹은 삭제할 수 없습니다."
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
 #: src/hooks/business/ui/useCustomAssets.ts:149
-msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgid ""
+"Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "한 번에 {0}개 이상의 파일을 업로드할 수 없습니다 ({remaining} 슬롯 남음)"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:82
-msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
-msgstr "변경 사항은 자동으로 적용되지만, 활성 페이지가 업데이트되지 않을 수 있습니다. 새 언어를 적용하려면 페이지를 새로 고치세요."
+msgid ""
+"Changes are made automatically, but the active page may not be updated. "
+"Refresh the page to apply the new language."
+msgstr ""
+"변경 사항은 자동으로 적용되지만, 활성 페이지가 업데이트되지 않을 수 있습니다. 새 언어를 적용하려면 페이지를 새로 고치세요."
 
 #: src/components/modals/ChannelEditorModal.tsx:138
 msgid "Channel Icon"
@@ -870,8 +906,7 @@ msgstr "퇴장 확인"
 msgid "Confirm Reset"
 msgstr "재설정 확인"
 
-#: src/components/Connecting.tsx:13
-#: src/components/ConnectingClassic.tsx:22
+#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "연결 중"
 
@@ -885,7 +920,8 @@ msgid "Continue without passkey"
 msgstr "passkey 없이 계속"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:77
-msgid "Control what others can see about you and how your behaviour is shared."
+msgid ""
+"Control what others can see about you and how your behaviour is shared."
 msgstr "다른 사람들이 당신에 대해 무엇을 볼 수 있는지, 당신의 행동이 어떻게 공유되는지 제어합니다."
 
 #: src/components/direct/DirectMessage.tsx:1027
@@ -910,6 +946,10 @@ msgstr "{counterpartLabel}님과의 대화"
 msgid "Copied!"
 msgstr "복사됨!"
 
+#: src/components/modals/UserSettingsModal/Security.tsx:251
+msgid "Copy"
+msgstr "복사"
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:675
 msgid "Copy a link"
 msgstr "링크 복사"
@@ -928,7 +968,7 @@ msgstr "주소 복사"
 msgid "Copy Failed"
 msgstr "복사 실패"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:427
+#: src/components/modals/UserSettingsModal/Security.tsx:484
 msgid "Copy full address"
 msgstr "주소 전체 복사"
 
@@ -937,7 +977,7 @@ msgstr "주소 전체 복사"
 msgid "Copy invite link to clipboard"
 msgstr "초대 링크를 클립보드에 복사"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:511
+#: src/components/modals/UserSettingsModal/Security.tsx:569
 msgid "Copy key"
 msgstr "키 복사"
 
@@ -956,7 +996,11 @@ msgstr "메시지 복사"
 msgid "Copy message link"
 msgstr "메시지 링크 복사"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:549
+#: src/components/modals/UserSettingsModal/Security.tsx:249
+msgid "Copy your private key?"
+msgstr "당신의 개인 키를 복사하시겠습니까?"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:684
 msgid "Copying..."
 msgstr "복사 중..."
 
@@ -987,16 +1031,22 @@ msgid "Could not verify invite"
 msgstr "초대를 확인할 수 없습니다"
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:247
-msgid "Couldn't decrypt your saved profile. Please re-enter your name and profile image."
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
 msgstr "저장된 프로필을 복호화할 수 없습니다. 이름과 프로필 이미지를 다시 입력해 주세요."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:252
 #: src/hooks/business/user/useUnifiedOnboardingFlow.ts:360
-msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
 msgstr "저장된 프로필을 불러올 수 없습니다. 이름과 프로필 이미지를 다시 입력해 주세요."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:86
-msgid "Couldn't reset: Quorum is open in another tab. Close all other Quorum tabs, then try again."
+msgid ""
+"Couldn't reset: Quorum is open in another tab. Close all other Quorum tabs, "
+"then try again."
 msgstr "재설정할 수 없습니다: Quorum이 다른 탭에서 열려 있습니다. 다른 모든 Quorum 탭을 닫은 다음 다시 시도하십시오."
 
 #: src/components/discover-page/DiscoverPage.tsx:92
@@ -1010,8 +1060,12 @@ msgid "Create a Space"
 msgstr "스페이스 만들기"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:56
-msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
-msgstr "태그를 생성하여 멤버들이 메시지 옆에 사용자 이름과 함께 표시할 수 있습니다. 이미지를 업로드하고 4자 코드를 설정하여 Space를 식별하세요."
+msgid ""
+"Create a tag that members can display next to their username in messages. "
+"Upload an image and set a 4-character code to identify your Space."
+msgstr ""
+"태그를 생성하여 멤버들이 메시지 옆에 사용자 이름과 함께 표시할 수 있습니다. 이미지를 업로드하고 4자 코드를 설정하여 Space를 "
+"식별하세요."
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:25
 msgid "Create New Account"
@@ -1060,7 +1114,7 @@ msgstr "위험 구역"
 msgid "Dark"
 msgstr "어두운"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:621
+#: src/components/modals/UserSettingsModal/Security.tsx:619
 msgid "Data Backup"
 msgstr "데이터 백업"
 
@@ -1090,8 +1144,11 @@ msgid "Default channels cannot be deleted."
 msgstr "기본 채널은 삭제할 수 없습니다."
 
 #: src/components/modals/CreateSpaceModal.tsx:212
-msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
-msgstr "기본 Space 설정은 가장 일반적인 채팅 경험을 제공하지만, 더 높은 개인 정보 보호 보장을 원하신다면 이러한 고급 설정을 검토하세요."
+msgid ""
+"Default Space settings provide the most typical chat experience, but for "
+"higher privacy guarantees, review these advanced settings."
+msgstr ""
+"기본 Space 설정은 가장 일반적인 채팅 경험을 제공하지만, 더 높은 개인 정보 보호 보장을 원하신다면 이러한 고급 설정을 검토하세요."
 
 #: src/hooks/business/messages/useMessageActions.ts:459
 msgid "delete"
@@ -1197,8 +1254,13 @@ msgid "Delete Thread"
 msgstr "스레드 삭제"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:59
-msgid "Deleting a Space is not available yet. Today this would only remove your own copy: everyone else would keep the Space, its channels and all of its messages, and you would permanently lose the ability to manage it."
-msgstr "스페이스 삭제는 아직 사용할 수 없습니다. 현재는 당신의 사본만 제거됩니다. 다른 모든 사람은 스페이스, 채널 및 모든 메시지를 유지하며, 당신은 스페이스를 관리할 수 있는 기능을 영구적으로 잃게 됩니다."
+msgid ""
+"Deleting a Space is not available yet. Today this would only remove your own"
+" copy: everyone else would keep the Space, its channels and all of its "
+"messages, and you would permanently lose the ability to manage it."
+msgstr ""
+"스페이스 삭제는 아직 사용할 수 없습니다. 현재는 당신의 사본만 제거됩니다. 다른 모든 사람은 스페이스, 채널 및 모든 메시지를 "
+"유지하며, 당신은 스페이스를 관리할 수 있는 기능을 영구적으로 잃게 됩니다."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:524
 msgid "Deleting Space..."
@@ -1239,11 +1301,20 @@ msgid "Desktop notifications are not supported in this browser."
 msgstr "이 브라우저에서는 데스크톱 알림이 지원되지 않습니다."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:52
-msgid "Dev builds only. This does not delete the Space. It announces that you have left, removes your inbox from the hub, and erases your local copy. Every other member keeps the Space, its channels and all of its messages, and you lose the ability to manage it for good."
-msgstr "개발 빌드 전용입니다. 이 작업은 스페이스를 삭제하지 않습니다. 당신이 떠났음을 알리고, 허브에서 당신의 받은 편지함을 제거하며, 당신의 로컬 사본을 지웁니다. 다른 모든 멤버는 스페이스, 채널 및 모든 메시지를 유지하며, 당신은 스페이스를 영원히 관리할 수 있는 기능을 잃게 됩니다."
+msgid ""
+"Dev builds only. This does not delete the Space. It announces that you have "
+"left, removes your inbox from the hub, and erases your local copy. Every "
+"other member keeps the Space, its channels and all of its messages, and you "
+"lose the ability to manage it for good."
+msgstr ""
+"개발 빌드 전용입니다. 이 작업은 스페이스를 삭제하지 않습니다. 당신이 떠났음을 알리고, 허브에서 당신의 받은 편지함을 제거하며, 당신의"
+" 로컬 사본을 지웁니다. 다른 모든 멤버는 스페이스, 채널 및 모든 메시지를 유지하며, 당신은 스페이스를 영원히 관리할 수 있는 기능을 "
+"잃게 됩니다."
 
 #: src/hooks/business/validation/errorTranslator.ts:59
-msgid "Device name can only contain letters, numbers, spaces, hyphens, and parentheses"
+msgid ""
+"Device name can only contain letters, numbers, spaces, hyphens, and "
+"parentheses"
 msgstr "기기 이름은 문자, 숫자, 공백, 하이픈 및 괄호만 포함할 수 있습니다"
 
 #: src/hooks/business/validation/errorTranslator.ts:56
@@ -1259,9 +1330,14 @@ msgstr "기기 이름에 HTML을 포함할 수 없습니다"
 msgid "Device name must be {0} characters or less"
 msgstr "기기 이름은 {0}자 이내로 작성해야 합니다."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:337
-msgid "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
-msgstr "현재 당신의 계정에서 새 메시지를 수신하도록 승인된 기기입니다. 기기를 제거하면 새 메시지가 해당 기기에 도달하지 않습니다. 기기에서 로그아웃되거나 로컬 데이터가 삭제되지는 않습니다."
+#: src/components/modals/UserSettingsModal/Security.tsx:394
+msgid ""
+"Devices currently authorized to receive new messages on your account. "
+"Removing a device stops new messages from reaching it. It does not log the "
+"device out or delete its local data."
+msgstr ""
+"현재 당신의 계정에서 새 메시지를 수신하도록 승인된 기기입니다. 기기를 제거하면 새 메시지가 해당 기기에 도달하지 않습니다. 기기에서 "
+"로그아웃되거나 로컬 데이터가 삭제되지는 않습니다."
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:137
 #: src/hooks/business/search/useSearchResultDisplay.ts:96
@@ -1277,15 +1353,13 @@ msgid "Discover Spaces"
 msgstr "공간 탐색"
 
 #: src/components/modals/UserSettingsModal/General.tsx:212
-msgid "Display a tag from one of your Spaces next to your username in messages."
+msgid ""
+"Display a tag from one of your Spaces next to your username in messages."
 msgstr "메시지에서 사용자 이름 옆에 소유한 Space 중 하나의 태그를 표시합니다."
 
 #: src/components/modals/UserSettingsModal/General.tsx:128
 msgid "Display name"
 msgstr "표시 이름"
-
-#~ msgid "Display Name"
-#~ msgstr "표시 이름"
 
 #: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
@@ -1303,7 +1377,15 @@ msgstr "표시 이름이 너무 깁니다"
 msgid "Documentation"
 msgstr "문서"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:500
+#: src/components/modals/UserSettingsModal/Security.tsx:730
+msgid "Done"
+msgstr "완료"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:226
+msgid "Download"
+msgstr "다운로드"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:558
 msgid "Download file"
 msgstr "파일 다운로드"
 
@@ -1311,9 +1393,17 @@ msgstr "파일 다운로드"
 msgid "Download Key Backup"
 msgstr "키 백업 다운로드"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:528
-msgid "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
-msgstr "다운로드하면 .key 파일이 저장됩니다. 복사하면 원시 키(16진수)가 클립보드에 저장됩니다. QR 코드 표시는 Quorum 모바일 앱으로 가져오기 위한 것입니다."
+#: src/components/modals/UserSettingsModal/Security.tsx:587
+msgid ""
+"Download saves a .key file. Copy puts the raw key (hex) on your clipboard. "
+"Show QR is for importing into the Quorum mobile app."
+msgstr ""
+"다운로드하면 .key 파일이 저장됩니다. 복사하면 원시 키(16진수)가 클립보드에 저장됩니다. QR 코드 표시는 Quorum 모바일 "
+"앱으로 가져오기 위한 것입니다."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:223
+msgid "Download your private key?"
+msgstr "당신의 개인 키를 다운로드하시겠습니까?"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:130
 msgid "Drag and drop or"
@@ -1415,11 +1505,15 @@ msgid "Encryption Reset"
 msgstr "암호화 재설정"
 
 #: src/services/InvitationService.ts:101
-msgid "Encryption state is missing required template data. Please generate a public invite link first."
+msgid ""
+"Encryption state is missing required template data. Please generate a public"
+" invite link first."
 msgstr "암호화 상태에 필요한 템플릿 데이터가 없습니다. 먼저 공개 초대 링크를 생성하세요."
 
 #: src/services/InvitationService.ts:262
-msgid "Encryption state is missing required template data. The invite pool was not initialized."
+msgid ""
+"Encryption state is missing required template data. The invite pool was not "
+"initialized."
 msgstr "암호화 상태에 필요한 템플릿 데이터가 누락되었습니다. 초대 풀이 초기화되지 않았습니다."
 
 #: src/services/InvitationService.ts:269
@@ -1427,7 +1521,9 @@ msgid "Encryption state is missing state data."
 msgstr "암호화 상태에 상태 데이터가 누락되었습니다."
 
 #: src/services/InvitationService.ts:116
-msgid "Encryption state is missing state data. Please generate a public invite link first."
+msgid ""
+"Encryption state is missing state data. Please generate a public invite link"
+" first."
 msgstr "암호화 상태에 상태 데이터가 없습니다. 먼저 공개 초대 링크를 생성하세요."
 
 #: src/components/modals/CreateSpaceModal.tsx:175
@@ -1500,8 +1596,7 @@ msgstr "Esc 키로"
 msgid "Expand group"
 msgstr "그룹 펼치기"
 
-#: src/components/shell/NavRail.tsx:239
-#: src/components/shell/NavRail.tsx:247
+#: src/components/shell/NavRail.tsx:239 src/components/shell/NavRail.tsx:247
 msgid "Expand sidebar"
 msgstr "사이드바 펼치기"
 
@@ -1509,27 +1604,26 @@ msgstr "사이드바 펼치기"
 msgid "Explore"
 msgstr "탐색"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:643
+#: src/components/modals/UserSettingsModal/Security.tsx:641
 msgid "Export"
 msgstr "내보내기"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:211
+#: src/components/modals/UserSettingsModal/Security.tsx:191
 msgid "Export a backup?"
 msgstr "백업을 내보내시겠습니까?"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:634
-msgid "Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device."
+#: src/components/modals/UserSettingsModal/Security.tsx:632
+msgid ""
+"Export an encrypted backup of your direct messages and your Spaces, so you "
+"can restore them if you lose access to this device."
 msgstr "직접 메시지와 Space의 암호화된 백업을 내보내면 이 기기에 대한 접근 권한을 잃었을 때 복원할 수 있습니다."
 
-#~ msgid "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
-#~ msgstr "이 장치에 대한 액세스 권한을 잃은 경우 메시지를 복원할 수 있도록 암호화된 백업을 내보냅니다."
-
-#: src/components/modals/UserSettingsModal/Security.tsx:213
+#: src/components/modals/UserSettingsModal/Security.tsx:193
 msgid "Export backup"
 msgstr "백업 내보내기"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:643
-#: src/components/modals/UserSettingsModal/Security.tsx:687
+#: src/components/modals/UserSettingsModal/Security.tsx:641
+#: src/components/modals/UserSettingsModal/Security.tsx:760
 msgid "Exporting..."
 msgstr "내보내는 중..."
 
@@ -1538,7 +1632,7 @@ msgstr "내보내는 중..."
 msgid "Failed to block user"
 msgstr "사용자 차단에 실패했습니다."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:140
+#: src/components/modals/UserSettingsModal/Security.tsx:127
 msgid "Failed to copy private key"
 msgstr "개인 키 복사 실패"
 
@@ -1564,7 +1658,7 @@ msgstr "메시지 삭제에 실패했습니다"
 msgid "Failed to edit message"
 msgstr "메시지 편집에 실패했습니다"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:233
+#: src/components/modals/UserSettingsModal/Security.tsx:290
 msgid "Failed to export backup"
 msgstr "백업 내보내기 실패"
 
@@ -1573,7 +1667,7 @@ msgstr "백업 내보내기 실패"
 msgid "Failed to generate invite link. Please try again."
 msgstr "초대 링크 생성에 실패했습니다. 다시 시도해 주세요."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:312
+#: src/components/modals/UserSettingsModal/Security.tsx:369
 msgid "Failed to import backup"
 msgstr "백업 가져오기 실패"
 
@@ -1602,6 +1696,10 @@ msgstr "WebSocket 메시지를 구문 분석하는 데 실패했습니다:"
 #: src/services/ActionQueueHandlers.ts:276
 msgid "Failed to pin message"
 msgstr "메시지 고정에 실패했습니다"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:94
+msgid "Failed to read your private key"
+msgstr "당신의 개인 키를 읽는 데 실패했습니다"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Failed to reset encryption sessions"
@@ -1783,8 +1881,17 @@ msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "폴더 이름은 {MAX_NAME_LENGTH}자 이하여야 합니다"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:60
-msgid "For privacy, your ownership is hidden from other clients. This means: Delete permission holders can delete your messages permanently, Mute permission holders can mute you (reversible). Only grant these to trusted users. Also note: if you're the only one with a role, your actions may reveal you as the owner—consider sharing roles with other trusted users."
-msgstr "개인정보 보호를 위해 당신의 소유권이 다른 클라이언트에게 숨겨져 있습니다. 이는 다음을 의미합니다: 삭제 권한 보유자는 당신의 메시지를 영구적으로 삭제할 수 있으며, 음소거 권한 보유자는 당신을 음소거할 수 있습니다(되돌릴 수 있음). 이러한 권한은 신뢰할 수 있는 사용자에게만 부여하십시오. 또한, 당신이 유일한 역할을 가진 경우 당신의 행동이 소유자로 드러날 수 있으므로, 다른 신뢰할 수 있는 사용자와 역할을 공유하는 것을 고려하십시오."
+msgid ""
+"For privacy, your ownership is hidden from other clients. This means: Delete"
+" permission holders can delete your messages permanently, Mute permission "
+"holders can mute you (reversible). Only grant these to trusted users. Also "
+"note: if you're the only one with a role, your actions may reveal you as the"
+" owner—consider sharing roles with other trusted users."
+msgstr ""
+"개인정보 보호를 위해 당신의 소유권이 다른 클라이언트에게 숨겨져 있습니다. 이는 다음을 의미합니다: 삭제 권한 보유자는 당신의 메시지를 "
+"영구적으로 삭제할 수 있으며, 음소거 권한 보유자는 당신을 음소거할 수 있습니다(되돌릴 수 있음). 이러한 권한은 신뢰할 수 있는 "
+"사용자에게만 부여하십시오. 또한, 당신이 유일한 역할을 가진 경우 당신의 행동이 소유자로 드러날 수 있으므로, 다른 신뢰할 수 있는 "
+"사용자와 역할을 공유하는 것을 고려하십시오."
 
 #: src/services/SpaceService.ts:243
 msgid "general"
@@ -1800,8 +1907,13 @@ msgid "General Chat"
 msgstr "일반 채팅"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:637
-msgid "Generate a fresh one-time invite link and copy it to your clipboard. Each click creates a new link. Paste it wherever you want (email, WhatsApp, etc.)."
-msgstr "새로운 일회성 초대 링크를 생성하여 당신의 클립보드에 복사합니다. 클릭할 때마다 새 링크가 생성됩니다. 원하는 곳(이메일, WhatsApp 등)에 붙여넣으세요."
+msgid ""
+"Generate a fresh one-time invite link and copy it to your clipboard. Each "
+"click creates a new link. Paste it wherever you want (email, WhatsApp, "
+"etc.)."
+msgstr ""
+"새로운 일회성 초대 링크를 생성하여 당신의 클립보드에 복사합니다. 클릭할 때마다 새 링크가 생성됩니다. 원하는 곳(이메일, "
+"WhatsApp 등)에 붙여넣으세요."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:797
 msgid "Generate Link"
@@ -1877,10 +1989,6 @@ msgstr "도움"
 msgid "Help others recognize you with a profile picture."
 msgstr "프로필 사진으로 다른 사람들이 당신을 알아볼 수 있게 해주세요."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:612
-msgid "Hide"
-msgstr "숨기기"
-
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Hide key"
 msgstr "키 숨기기"
@@ -1906,14 +2014,6 @@ msgstr "이미 계정이 있습니다"
 msgid "I understand"
 msgstr "이해했습니다"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:549
-msgid "I Understand, Copy"
-msgstr "이해했습니다, 복사"
-
-#: src/components/modals/UserSettingsModal/Security.tsx:593
-msgid "I Understand, Show QR"
-msgstr "이해했습니다, QR 표시"
-
 #: src/components/message/Message.tsx:974
 #: src/components/message/Message.tsx:1070
 msgid "I'm new!"
@@ -1924,10 +2024,12 @@ msgid "I've already saved my key"
 msgstr "키를 이미 저장했습니다"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:821
-msgid "If users report that this invite link isn't working, click to republish it. The link URL stays the same."
+msgid ""
+"If users report that this invite link isn't working, click to republish it. "
+"The link URL stays the same."
 msgstr "사용자들이 이 초대 링크가 작동하지 않는다고 보고하면, 클릭하여 다시 게시하세요. 링크 URL은 동일하게 유지됩니다."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:652
+#: src/components/modals/UserSettingsModal/Security.tsx:650
 msgid "Import a backup instead"
 msgstr "대신 백업을 가져오세요"
 
@@ -1947,7 +2049,7 @@ msgstr "계정 키 가져오기"
 msgid "Important messages will be pinned here"
 msgstr "중요한 메시지는 여기 고정됩니다"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:652
+#: src/components/modals/UserSettingsModal/Security.tsx:650
 msgid "Importing..."
 msgstr "가져오는 중..."
 
@@ -1960,13 +2062,12 @@ msgid "invalid address for signature"
 msgstr "서명을 위한 잘못된 주소"
 
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid "Invalid address format. Addresses must use valid alphanumeric characters."
+msgid ""
+"Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "잘못된 주소 형식입니다. 주소는 유효한 영숫자 문자만 사용해야 합니다."
 
-#: src/services/InvitationService.ts:458
-#: src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501
-#: src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
+#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
 msgid "invalid link"
 msgstr "잘못된 링크"
 
@@ -1976,8 +2077,7 @@ msgid "Invalid message ID"
 msgstr "유효하지 않은 메시지 ID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474
-#: src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
 msgid "invalid response"
 msgstr "잘못된 응답"
 
@@ -2060,7 +2160,9 @@ msgid "Jump to present"
 msgstr "현재로 점프"
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:18
-msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
+msgid ""
+"Keep the file you downloaded safe and private! Anyone with this file can "
+"access your account."
 msgstr "다운로드한 파일을 안전하고 비공개로 보관하세요! 이 파일을 가진 사람은 누구나 계정에 접근할 수 있습니다."
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:16
@@ -2073,8 +2175,12 @@ msgstr "키에 16진수가 아닌 문자가 포함되어 있습니다."
 
 #. placeholder {0}: cleanHex.length
 #: src/components/onboarding/steps/ImportKeyStep.tsx:55
-msgid "Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
-msgstr "키는 {ED448_PRIVATE_KEY_HEX_LENGTH}자여야 합니다 ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
+msgid ""
+"Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters "
+"({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
+msgstr ""
+"키는 {ED448_PRIVATE_KEY_HEX_LENGTH}자여야 합니다 "
+"({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:107
 msgid "Key Ready"
@@ -2176,7 +2282,6 @@ msgid "Loading your profile..."
 msgstr "프로필을 로딩 중입니다..."
 
 #: src/components/discover-page/DiscoverPage.tsx:123
-#: src/components/modals/UserSettingsModal/Security.tsx:593
 msgid "Loading..."
 msgstr "로딩 중..."
 
@@ -2212,8 +2317,10 @@ msgstr "역할을 보이지 않게 만들기"
 msgid "Make role public"
 msgstr "역할을 공개로 만들기"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:327
-msgid "Manage authorized devices, key export, mobile import, and encrypted message backups."
+#: src/components/modals/UserSettingsModal/Security.tsx:384
+msgid ""
+"Manage authorized devices, key export, mobile import, and encrypted message "
+"backups."
 msgstr "승인된 기기, 키 내보내기, 모바일 가져오기 및 암호화된 메시지 백업을 관리합니다."
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:342
@@ -2261,8 +2368,13 @@ msgid "Members List"
 msgstr "회원 목록"
 
 #: src/components/modals/ChannelEditorModal.tsx:185
-msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
-msgstr "선택된 역할의 구성원은 이 읽기 전용 채널에서 메시지를 게시, 삭제 및 고정할 수 있습니다. 참고: 공간 소유자도 여기에서 게시하려면 관리자 역할에 있어야 합니다."
+msgid ""
+"Members of selected roles can post, delete, and pin messages in this read-"
+"only channel. Note: Space owners must also be in a manager role to post "
+"here."
+msgstr ""
+"선택된 역할의 구성원은 이 읽기 전용 채널에서 메시지를 게시, 삭제 및 고정할 수 있습니다. 참고: 공간 소유자도 여기에서 게시하려면 "
+"관리자 역할에 있어야 합니다."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Mention Everyone"
@@ -2275,7 +2387,8 @@ msgstr "메시지 작업"
 #: src/components/message/Message.tsx:990
 #: src/components/message/Message.tsx:1086
 #: src/components/message/Message.tsx:1146
-msgid "Message does not have a valid signature, this may not be from the sender"
+msgid ""
+"Message does not have a valid signature, this may not be from the sender"
 msgstr "메시지에 유효한 서명이 없습니다. 이는 발신자가 아닐 수 있습니다."
 
 #: src/components/message/MessageComposer.tsx:244
@@ -2366,7 +2479,9 @@ msgid "Name or Address"
 msgstr "이름 또는 주소"
 
 #: src/hooks/business/validation/errorTranslator.ts:38
-msgid "Names can't end in \".q\" — that suffix is reserved for verified Quilibrium names."
+msgid ""
+"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
+"names."
 msgstr "이름은 \".q\"로 끝날 수 없습니다. 이 접미사는 확인된 Quilibrium 이름에 예약되어 있습니다."
 
 #: src/hooks/business/validation/errorTranslator.ts:37
@@ -2394,11 +2509,18 @@ msgid "New Folder"
 msgstr "새 폴더"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:568
-msgid "New invites can't be issued from this device for this Space. Existing invite links keep working. This typically affects spaces created on the desktop app before June 2026."
-msgstr "이 스페이스에 대해 이 기기에서 새 초대를 발행할 수 없습니다. 기존 초대 링크는 계속 작동합니다. 이는 일반적으로 2026년 6월 이전에 데스크톱 앱에서 생성된 스페이스에 영향을 미칩니다."
+msgid ""
+"New invites can't be issued from this device for this Space. Existing invite"
+" links keep working. This typically affects spaces created on the desktop "
+"app before June 2026."
+msgstr ""
+"이 스페이스에 대해 이 기기에서 새 초대를 발행할 수 없습니다. 기존 초대 링크는 계속 작동합니다. 이는 일반적으로 2026년 6월 "
+"이전에 데스크톱 앱에서 생성된 스페이스에 영향을 미칩니다."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:562
-msgid "New invites can't be issued from this device, but the existing public invite link still works — copy it or send it via DM below."
+msgid ""
+"New invites can't be issued from this device, but the existing public invite"
+" link still works — copy it or send it via DM below."
 msgstr "이 기기에서 새 초대를 발행할 수 없지만, 기존 공개 초대 링크는 여전히 작동합니다. 복사하거나 아래 DM을 통해 보내세요."
 
 #. placeholder {0}: metadata.senderName
@@ -2407,8 +2529,13 @@ msgid "New message from {0}"
 msgstr "{0}로부터의 새 메시지"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:556
-msgid "New one-time invites can't be issued from this device for this Space. The public invite link still works — switch to <0>Public Link</0> above to copy it or send it via DM."
-msgstr "이 스페이스에 대해 이 기기에서 새로운 일회성 초대를 발행할 수 없습니다. 공개 초대 링크는 여전히 작동합니다. 위 <0>공개 링크</0>로 전환하여 복사하거나 DM을 통해 보내세요."
+msgid ""
+"New one-time invites can't be issued from this device for this Space. The "
+"public invite link still works — switch to <0>Public Link</0> above to copy "
+"it or send it via DM."
+msgstr ""
+"이 스페이스에 대해 이 기기에서 새로운 일회성 초대를 발행할 수 없습니다. 공개 초대 링크는 여전히 작동합니다. 위 <0>공개 "
+"링크</0>로 전환하여 복사하거나 DM을 통해 보내세요."
 
 #: src/components/direct/DMUserProfileSidebar.tsx:113
 msgid "No bio yet."
@@ -2455,11 +2582,14 @@ msgid "No emoji found"
 msgstr "이모티콘을 찾을 수 없습니다"
 
 #: src/services/InvitationService.ts:254
-msgid "No encryption state found for this Space. Cannot generate public invite."
+msgid ""
+"No encryption state found for this Space. Cannot generate public invite."
 msgstr "이 스페이스에 대한 암호화 상태를 찾을 수 없습니다. 공개 초대를 생성할 수 없습니다."
 
 #: src/services/InvitationService.ts:95
-msgid "No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first."
+msgid ""
+"No encryption state found for this Space. The Space may need to be "
+"initialized or you may need to generate a public invite link first."
 msgstr "이 공간에 대한 암호화 상태를 찾을 수 없습니다. 공간을 초기화해야 하거나 먼저 공개 초대 링크를 생성해야 할 수 있습니다."
 
 #: src/components/direct/DirectMessageContactsList.tsx:605
@@ -2518,8 +2648,7 @@ msgstr "읽지 않은 알림이 없습니다"
 msgid "No user found for @{usernameQuery}."
 msgstr "@{usernameQuery}에 해당하는 사용자를 찾을 수 없습니다."
 
-#: src/components/space/Channel.tsx:1937
-#: src/components/space/Channel.tsx:2180
+#: src/components/space/Channel.tsx:1937 src/components/space/Channel.tsx:2180
 msgid "No users found!"
 msgstr "사용자를 찾을 수 없습니다!"
 
@@ -2549,13 +2678,13 @@ msgstr "알림 권한이 부여되지 않음"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:328
 #: src/components/modals/UserSettingsModal/Navigation.tsx:21
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
-#: src/components/shell/NavRail.tsx:66
-#: src/components/space/Channel.tsx:1681
+#: src/components/shell/NavRail.tsx:66 src/components/space/Channel.tsx:1681
 msgid "Notifications"
 msgstr "알림"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:68
-msgid "Notifications are blocked. Please enable them in your browser settings."
+msgid ""
+"Notifications are blocked. Please enable them in your browser settings."
 msgstr "알림이 차단되었습니다. 이 사이트에 대해 브라우저 설정에서 활성화해 주세요."
 
 #: src/services/NotificationService.ts:63
@@ -2581,7 +2710,9 @@ msgid "Notify me for:"
 msgstr "다음에 대해 알림:"
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
-msgid "Now let's store your account key inside your passkey. One more confirmation needed."
+msgid ""
+"Now let's store your account key inside your passkey. One more confirmation "
+"needed."
 msgstr "이제 passkey 내부에 계정 키를 저장합시다. 한 번 더 확인이 필요합니다."
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
@@ -2621,8 +2752,7 @@ msgstr "열기 {0}"
 msgid "Open navigation"
 msgstr "네비게이션 열기"
 
-#: src/components/shell/NavRail.tsx:278
-#: src/components/shell/NavRail.tsx:293
+#: src/components/shell/NavRail.tsx:278 src/components/shell/NavRail.tsx:293
 msgid "Open user settings"
 msgstr "사용자 설정 열기"
 
@@ -2639,23 +2769,35 @@ msgid "Original"
 msgstr "원본"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:185
-msgid "Override your display name, avatar, and bio for this Space. Other Spaces and your global profile are unaffected."
-msgstr "이 스페이스에 대한 당신의 표시 이름, 아바타 및 자기소개를 재정의합니다. 다른 스페이스와 당신의 전역 프로필에는 영향을 미치지 않습니다."
+msgid ""
+"Override your display name, avatar, and bio for this Space. Other Spaces and"
+" your global profile are unaffected."
+msgstr ""
+"이 스페이스에 대한 당신의 표시 이름, 아바타 및 자기소개를 재정의합니다. 다른 스페이스와 당신의 전역 프로필에는 영향을 미치지 "
+"않습니다."
 
 #: src/components/NotFound.tsx:18
 msgid "Page Not Found"
 msgstr "페이지를 찾을 수 없습니다"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
-msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr "passkey 설정이 실패했습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
+msgid ""
+"Passkey setup failed. You can try again, or continue without Passkey (still "
+"secure, just without device hardware protection)."
+msgstr ""
+"passkey 설정이 실패했습니다. 다시 시도하거나 passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
-msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr "이 브라우저에서는 passkey를 지원하지 않습니다. passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
+msgid ""
+"Passkeys aren't supported on this browser. You'll need to continue without "
+"Passkey (still secure, just without device hardware protection)."
+msgstr ""
+"이 브라우저에서는 passkey를 지원하지 않습니다. passkey 없이 계속할 수 있습니다(안전하지만 기기 하드웨어 보호 없이)."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
-msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
+msgid ""
+"Passkeys use your device's built-in security to protect your account. This "
+"requires two quick confirmations via your device."
 msgstr "passkey는 기기의 내장 보안 기능을 사용하여 계정을 보호합니다. 이는 기기를 통한 두 번의 간단한 확인이 필요합니다."
 
 #: src/components/modals/AddSpaceModal.tsx:145
@@ -2670,11 +2812,11 @@ msgstr "키 붙여넣기"
 msgid "Paste your private key"
 msgstr "개인 키를 붙여넣으십시오"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:464
+#: src/components/modals/UserSettingsModal/Security.tsx:521
 msgid "Pending"
 msgstr "대기 중"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:450
+#: src/components/modals/UserSettingsModal/Security.tsx:507
 msgid "Pending removal - click Save to confirm"
 msgstr "대기 중 제거 - 확인하려면 저장을 클릭하십시오."
 
@@ -2728,9 +2870,6 @@ msgstr "확인 없이 고정/고정 해제"
 msgid "Pinned"
 msgstr "고정됨"
 
-#~ msgid "Pinned by {0}"
-#~ msgstr "{0}에 의해 고정됨"
-
 #: src/components/message/Message.tsx:942
 #: src/components/message/Message.tsx:1038
 #: src/components/message/Message.tsx:1158
@@ -2740,6 +2879,10 @@ msgstr "{pinnedByName}님이 고정함"
 #: src/components/space/Channel.tsx:1614
 msgid "Pinned Messages"
 msgstr "고정된 메시지"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:744
+msgid "Preparing download..."
+msgstr "다운로드 준비 중..."
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:69
 msgid "Preview"
@@ -2763,13 +2906,19 @@ msgstr "개인 정보 보호"
 msgid "Private key (hex)"
 msgstr "개인 키 (16진수)"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:559
-msgid "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
-msgstr "개인 키가 복사되었습니다. 60초 후에 클립보드에서 자동으로 지워집니다."
+#: src/components/modals/UserSettingsModal/Security.tsx:603
+msgid ""
+"Private key copied. Quorum will clear it from your clipboard in 60 seconds. "
+"Clipboard history tools keep their own copy, so clear those too."
+msgstr ""
+"개인 키가 복사되었습니다. Quorum은 60초 후에 클립보드에서 지울 것입니다. 클립보드 기록 도구는 자체 복사본을 유지하므로 해당 "
+"기록도 지우십시오."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:560
-msgid "Private key copied. Store it securely and clear your clipboard when you're done."
-msgstr "개인 키가 복사되었습니다. 안전하게 보관하고 완료되면 클립보드를 지우십시오."
+#: src/components/modals/UserSettingsModal/Security.tsx:604
+msgid ""
+"Private key copied. Store it securely, then clear your clipboard and your "
+"clipboard history."
+msgstr "개인 키가 복사되었습니다. 안전하게 보관한 다음 클립보드와 클립보드 기록을 지우십시오."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:88
 msgid "Private key saved to selected folder"
@@ -2799,21 +2948,28 @@ msgstr "공개 프로필"
 msgid "Public spaces"
 msgstr "공개 공간"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:607
-msgid "QR code will auto-hide in 60 seconds"
-msgstr "QR 코드는 60초 후에 자동으로 숨겨집니다"
-
 #: src/components/Maintenance.tsx:29
-msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
-msgstr "Quorum 인프라가 현재 배포 중입니다. 새로 고침 후 <0>status.quilibrium.com</0>에서 업데이트를 확인하세요."
+msgid ""
+"Quorum infrastructure is being deployed at this time. Please try refreshing,"
+" and check <0>status.quilibrium.com</0> for updates."
+msgstr ""
+"Quorum 인프라가 현재 배포 중입니다. 새로 고침 후 <0>status.quilibrium.com</0>에서 업데이트를 확인하세요."
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:36
-msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
-msgstr "Quorum은 이메일이나 전화번호 없이 자신의 아이덴티티를 소유하는 분산형 메시징 플랫폼입니다. 오직 당신만이 제어할 수 있는 안전한 키만 필요합니다."
+msgid ""
+"Quorum is a decentralized messaging platform where you own your identity. No"
+" email, no phone number - just a secure key that only you control."
+msgstr ""
+"Quorum은 이메일이나 전화번호 없이 자신의 아이덴티티를 소유하는 분산형 메시징 플랫폼입니다. 오직 당신만이 제어할 수 있는 안전한 "
+"키만 필요합니다."
 
 #: src/components/context/RegistrationPersister.tsx:270
-msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
-msgstr "브라우저가 포커스되지 않은 상태에서 Quorum이 로드되었거나, passkey 요청이 거부되었습니다. 메시지에 접근하려면 다시 인증하세요."
+msgid ""
+"Quorum was loaded while the browser was not in focus or a passkey request "
+"was rejected. Please reauthorize to access your messages."
+msgstr ""
+"브라우저가 포커스되지 않은 상태에서 Quorum이 로드되었거나, passkey 요청이 거부되었습니다. 메시지에 접근하려면 다시 "
+"인증하세요."
 
 #: src/components/modals/ReactionsModal.tsx:162
 msgid "Reactions"
@@ -2839,6 +2995,10 @@ msgstr "읽음 확인"
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:697
 msgid "Read-only"
 msgstr "읽기 전용"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:699
+msgid "Reading your key..."
+msgstr "당신의 키를 읽는 중..."
 
 #: src/components/direct/DirectMessageContactsList.tsx:622
 msgid "Ready to start a truly private conversation?"
@@ -2870,10 +3030,13 @@ msgid "Reload Quorum"
 msgstr "Quorum 다시 로드"
 
 #: src/components/AppErrorScreen.tsx:36
-msgid "Reloading usually fixes it. If it keeps happening, check <0>status.quilibrium.com</0> for service updates."
-msgstr "다시 로드하면 보통 해결됩니다. 계속 발생하면 <0>status.quilibrium.com</0>에서 서비스 업데이트를 확인하십시오."
+msgid ""
+"Reloading usually fixes it. If it keeps happening, check "
+"<0>status.quilibrium.com</0> for service updates."
+msgstr ""
+"다시 로드하면 보통 해결됩니다. 계속 발생하면 <0>status.quilibrium.com</0>에서 서비스 업데이트를 확인하십시오."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:464
+#: src/components/modals/UserSettingsModal/Security.tsx:521
 msgid "Remove"
 msgstr "제거"
 
@@ -2893,7 +3056,7 @@ msgstr "즐겨찾기에서 제거"
 msgid "Removing..."
 msgstr "제거 중..."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:435
+#: src/components/modals/UserSettingsModal/Security.tsx:492
 msgid "Rename this device"
 msgstr "이 기기 이름 변경"
 
@@ -2926,8 +3089,12 @@ msgid "Require Message Signing"
 msgstr "메시지 서명 필요"
 
 #: src/components/modals/CreateSpaceModal.tsx:228
-msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
-msgstr "이 Space에서 전송된 메시지가 발신자에 의해 서명되도록 요구합니다. 기술적으로 말하자면, 이는 이 Space의 메시지를 부인할 수 없게 만듭니다."
+msgid ""
+"Require messages sent in this Space to be signed by the sender. Technically "
+"speaking, this makes the messages in this Space non-repudiable."
+msgstr ""
+"이 Space에서 전송된 메시지가 발신자에 의해 서명되도록 요구합니다. 기술적으로 말하자면, 이는 이 Space의 메시지를 부인할 수 "
+"없게 만듭니다."
 
 #: src/components/modals/AddSpaceModal.tsx:264
 #: src/components/modals/UserSettingsModal/Help.tsx:122
@@ -2942,9 +3109,6 @@ msgstr "모두 재설정"
 msgid "Reset App Data"
 msgstr "앱 데이터 재설정"
 
-#~ msgid "Reset Encryption Session"
-#~ msgstr "암호화 세션 재설정"
-
 #: src/components/modals/ConversationSettingsModal.tsx:473
 msgid "Reset if messages fail to send or decrypt"
 msgstr "메시지 전송 또는 해독에 실패하면 재설정하십시오"
@@ -2953,16 +3117,15 @@ msgstr "메시지 전송 또는 해독에 실패하면 재설정하십시오"
 msgid "Reset Session"
 msgstr "세션 재설정"
 
-#~ msgid "Reset the encryption session if messages fail to send or decrypt. The next message will establish a fresh secure connection."
-#~ msgstr "메시지 전송 또는 해독에 실패하는 경우 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다."
-
 #: src/components/modals/ConversationSettingsModal.tsx:365
 #: src/components/modals/ConversationSettingsModal.tsx:404
 msgid "Reset to global"
 msgstr "전역 설정으로 재설정"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:113
-msgid "Reset your DM encryption sessions if messages are failing to send or decrypt."
+msgid ""
+"Reset your DM encryption sessions if messages are failing to send or "
+"decrypt."
 msgstr "메시지 전송 또는 해독에 실패하는 경우 DM 암호화 세션을 재설정하십시오."
 
 #: src/components/modals/ConversationSettingsModal.tsx:538
@@ -2981,16 +3144,20 @@ msgid "Restore"
 msgstr "복원"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:162
-msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
 msgstr "이 장치에 존재하지만 탐색 메뉴에서 누락된 공간을 복원합니다."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:87
-msgid "Restore your account from your private key — upload the key file or paste the key directly."
+msgid ""
+"Restore your account from your private key — upload the key file or paste "
+"the key directly."
 msgstr "개인 키에서 계정을 복원하십시오 — 키 파일을 업로드하거나 키를 직접 붙여넣으십시오."
 
 #. placeholder {0}: result.messagesWritten
 #. placeholder {1}: result.conversationsWritten
-#: src/components/modals/UserSettingsModal/Security.tsx:249
+#: src/components/modals/UserSettingsModal/Security.tsx:306
 msgid "Restored {0} messages and {1} conversations."
 msgstr "{0}개의 메시지와 {1}개의 대화를 복원했습니다."
 
@@ -3000,7 +3167,7 @@ msgid "Restored {0} Space(s)"
 msgstr "{0}개의 공간을 복원했습니다."
 
 #. placeholder {0}: result.spacesRestored.length
-#: src/components/modals/UserSettingsModal/Security.tsx:253
+#: src/components/modals/UserSettingsModal/Security.tsx:310
 msgid "Restored {0} Spaces."
 msgstr "{0}개의 Space를 복원했습니다."
 
@@ -3086,13 +3253,11 @@ msgstr "이모티콘 검색..."
 msgid "Search failed: {0}"
 msgstr "검색 실패: {0}"
 
-#: src/hooks/useSearchContext.native.ts:98
-#: src/hooks/useSearchContext.ts:90
+#: src/hooks/useSearchContext.native.ts:98 src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "여기에서 검색"
 
-#: src/hooks/useSearchContext.native.ts:96
-#: src/hooks/useSearchContext.ts:88
+#: src/hooks/useSearchContext.native.ts:96 src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "이 Space에서 검색"
 
@@ -3142,7 +3307,7 @@ msgid "Searching..."
 msgstr "검색 중..."
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:20
-#: src/components/modals/UserSettingsModal/Security.tsx:324
+#: src/components/modals/UserSettingsModal/Security.tsx:381
 msgid "Security"
 msgstr "보안"
 
@@ -3175,7 +3340,8 @@ msgid "Send"
 msgstr "전송"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:539
-msgid "Send a one-time invite directly to someone. Each link can only be used once."
+msgid ""
+"Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "누군가에게 일회성 초대를 직접 보냅니다. 각 링크는 한 번만 사용할 수 있습니다."
 
 #: src/services/ActionQueueHandlers.ts:1205
@@ -3236,8 +3402,13 @@ msgid "Shift+Enter for new line"
 msgstr "Shift+Enter로 새 줄 추가"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:46
-msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
-msgstr "Quorum이 백그라운드에 있을 때 새 메시지를 받을 때 데스크톱 알림을 표시합니다. 이 기능을 활성화하면 브라우저에서 권한을 요청합니다."
+msgid ""
+"Show desktop notifications when you receive new messages while Quorum is in "
+"the background. Your browser will ask for permission when you enable this "
+"feature."
+msgstr ""
+"Quorum이 백그라운드에 있을 때 새 메시지를 받을 때 데스크톱 알림을 표시합니다. 이 기능을 활성화하면 브라우저에서 권한을 "
+"요청합니다."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Show key"
@@ -3255,9 +3426,14 @@ msgstr "음소거된 채널 보기"
 msgid "Show Online Status"
 msgstr "온라인 상태 표시"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:522
+#: src/components/modals/UserSettingsModal/Security.tsx:270
+#: src/components/modals/UserSettingsModal/Security.tsx:581
 msgid "Show QR"
 msgstr "QR 표시"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:268
+msgid "Show your private key as a QR code?"
+msgstr "당신의 개인 키를 QR 코드로 표시하시겠습니까?"
 
 #. placeholder {0}: entries.length
 #: src/components/discover-page/DiscoverTab.tsx:139
@@ -3266,7 +3442,8 @@ msgstr "{total}개의 공간 중 {0}개 표시 중"
 
 #: src/components/search/SearchResults.tsx:250
 #: src/components/search/SearchResults.tsx:280
-msgid "Showing first 500 results. Refine your search for more specific results."
+msgid ""
+"Showing first 500 results. Refine your search for more specific results."
 msgstr "첫 500개의 결과를 표시합니다. 더 구체적인 결과를 위해 검색을 세분화하세요."
 
 #: src/components/notifications/NotificationPanel.tsx:369
@@ -3307,8 +3484,10 @@ msgstr "Space 설명"
 msgid "Space ID"
 msgstr "공간 ID"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:291
-msgid "Space message history is not included in backups; it syncs from other members."
+#: src/components/modals/UserSettingsModal/Security.tsx:348
+msgid ""
+"Space message history is not included in backups; it syncs from other "
+"members."
 msgstr "Space 메시지 기록은 백업에 포함되지 않으며, 다른 멤버로부터 동기화됩니다."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
@@ -3400,7 +3579,9 @@ msgid "Sync is failing: the request timed out. It will keep retrying."
 msgstr "동기화에 실패했습니다: 요청 시간이 초과되었습니다. 계속 재시도합니다."
 
 #: src/components/modals/UserSettingsModal/SyncStatusLine.tsx:61
-msgid "Sync is failing: the server refused your settings. Your changes are saved on this device."
+msgid ""
+"Sync is failing: the server refused your settings. Your changes are saved on"
+" this device."
 msgstr "동기화에 실패했습니다: 서버가 당신의 설정을 거부했습니다. 당신의 변경 사항은 이 기기에 저장됩니다."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:591
@@ -3443,23 +3624,33 @@ msgid "The invite link has expired or is invalid."
 msgstr "초대 링크가 만료되었거나 유효하지 않습니다."
 
 #: src/components/NotFound.tsx:21
-msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgid ""
+"The page you're looking for doesn't exist or has been moved. Let's get you "
+"back on track."
 msgstr "찾고 있는 페이지는 존재하지 않거나 이동되었습니다. 다시 길을 찾도록 도와드리겠습니다."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
-msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr "passkey 설정 시간이 초과되었습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 하드웨어 보호 없이)."
+msgid ""
+"The passkey setup timed out. You can try again, or continue without Passkey "
+"(still secure, just without device hardware protection)."
+msgstr ""
+"passkey 설정 시간이 초과되었습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 "
+"하드웨어 보호 없이)."
 
-#~ msgid "This action cannot be undone and will permanently delete this Space and all of its channels and messages."
-#~ msgstr "이 작업은 취소할 수 없으며, 이 공간과 모든 채널 및 메시지를 영구적으로 삭제합니다."
+#: src/components/modals/UserSettingsModal/Security.tsx:337
+msgid ""
+"This backup is inconsistent: it reports Space keys but contains no Space "
+"list, so Spaces could not be restored."
+msgstr ""
+"이 백업은 일관성이 없습니다: Space 키를 보고하지만 Space 목록이 포함되어 있지 않아 Space를 복원할 수 없었습니다."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:280
-msgid "This backup is inconsistent: it reports Space keys but contains no Space list, so Spaces could not be restored."
-msgstr "이 백업은 일관성이 없습니다: Space 키를 보고하지만 Space 목록이 포함되어 있지 않아 Space를 복원할 수 없었습니다."
-
-#: src/components/modals/UserSettingsModal/Security.tsx:287
-msgid "This backup was made by an older version and contains no Space keys, so Spaces could not be restored. Export a fresh backup to protect them."
-msgstr "이 백업은 이전 버전으로 생성되었으며 Space 키가 포함되어 있지 않아 Space를 복원할 수 없었습니다. Space를 보호하려면 새 백업을 내보내십시오."
+#: src/components/modals/UserSettingsModal/Security.tsx:344
+msgid ""
+"This backup was made by an older version and contains no Space keys, so "
+"Spaces could not be restored. Export a fresh backup to protect them."
+msgstr ""
+"이 백업은 이전 버전으로 생성되었으며 Space 키가 포함되어 있지 않아 Space를 복원할 수 없었습니다. Space를 보호하려면 새 "
+"백업을 내보내십시오."
 
 #: src/components/modals/UserSettingsModal/General.tsx:151
 msgid "This bio will be visible to others when they view your profile."
@@ -3469,32 +3660,29 @@ msgstr "이 바이오는 프로필을 볼 때 다른 사용자에게 표시됩�
 msgid "This channel couldn't be loaded"
 msgstr "이 채널을 로드할 수 없습니다"
 
-#~ msgid "this contact"
-#~ msgstr "이 연락처"
-
 #: src/components/RouteErrorFallback.tsx:22
 msgid "This conversation couldn't be loaded"
 msgstr "이 대화를 로드할 수 없습니다"
 
 #: src/components/modals/ConversationSettingsModal.tsx:372
 #: src/components/modals/ConversationSettingsModal.tsx:411
-msgid "This conversation overrides your global setting. Click \"Reset to global\" to use your global preference."
+msgid ""
+"This conversation overrides your global setting. Click \"Reset to global\" "
+"to use your global preference."
 msgstr "이 대화는 전역 설정을 재정의합니다. 전역 기본 설정을 사용하려면 \"전역 설정으로 재설정\"을 클릭하세요."
-
-#: src/components/modals/UserSettingsModal/Security.tsx:536
-msgid "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
-msgstr "이렇게 하면 개인 키가 일반 텍스트로 클립보드에 복사됩니다. 클립보드에 접근할 수 있는 사람은 누구나 당신의 계정을 완전히 제어할 수 있습니다. 안전한 곳에 보관하고 나중에 클립보드를 지우십시오."
 
 #: src/components/modals/CreateSpaceModal.tsx:187
 #: src/components/modals/SpaceSettingsModal/General.tsx:189
-msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
+msgid ""
+"This description will be visible on invites and shown to people when they "
+"look up or join your Space using an invite link."
 msgstr "이 설명은 초대에서 보이며, 사람들이 초대 링크를 사용하여 Space를 검색하거나 가입할 때 표시됩니다."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:473
+#: src/components/modals/UserSettingsModal/Security.tsx:530
 msgid "This device"
 msgstr "이 장치"
 
-#: src/components/modals/UserSettingsModal/Security.tsx:212
+#: src/components/modals/UserSettingsModal/Security.tsx:192
 msgid ""
 "This file contains your direct message history and the keys to your Spaces, including ownership of any you created. Only this account can open it.\n"
 "\n"
@@ -3504,20 +3692,30 @@ msgstr ""
 "\n"
 "Space 메시지 기록은 포함되지 않습니다. 다른 멤버로부터 다시 동기화됩니다."
 
+#: src/components/modals/UserSettingsModal/Security.tsx:727
+msgid "This hides itself after 60 seconds."
+msgstr "이것은 60초 후에 자동으로 숨겨집니다."
+
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
 msgstr "이건 좀 부끄럽네요..."
 
 #: src/components/onboarding/steps/DisplayNameStep.tsx:22
-msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
+msgid ""
+"This is how others will see you in Quorum. You can change this anytime in "
+"Settings."
 msgstr "다른 사용자가 Quorum에서 당신을 보는 방식입니다. 설정에서 언제든지 변경할 수 있습니다."
 
 #: src/components/modals/ChannelEditorModal.tsx:100
-msgid "This is the default channel for the Space. To change it go to Space Settings → General."
+msgid ""
+"This is the default channel for the Space. To change it go to Space Settings"
+" → General."
 msgstr "이것은 공간의 기본 채널입니다. 변경하려면 공간 설정 → 일반으로 이동하세요."
 
 #: src/components/modals/UserSettingsModal/General.tsx:187
-msgid "This is your public address and is safe to share with anyone you want to interact with."
+msgid ""
+"This is your public address and is safe to share with anyone you want to "
+"interact with."
 msgstr "이것은 당신의 공개 주소이며, 상호작용하고 싶은 누구와도 공유해도 안전합니다."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:778
@@ -3529,7 +3727,9 @@ msgid "This link was generated by a Space owner. It does not expire."
 msgstr "이 링크는 스페이스 소유자가 생성했습니다. 만료되지 않습니다."
 
 #: src/components/notifications/NotificationPanel.tsx:203
-msgid "This marks mentions and replies as read across all your spaces. This can't be undone."
+msgid ""
+"This marks mentions and replies as read across all your spaces. This can't "
+"be undone."
 msgstr "모든 공간에서 멘션과 답글을 읽음으로 표시합니다. 이 작업은 되돌릴 수 없습니다."
 
 #: src/hooks/business/validation/errorTranslator.ts:36
@@ -3545,8 +3745,29 @@ msgstr "이 페이지를 로드할 수 없습니다"
 msgid "This public invite link is no longer valid."
 msgstr "이 공개 초대 링크는 더 이상 유효하지 않습니다."
 
+#: src/components/modals/UserSettingsModal/Security.tsx:250
+msgid ""
+"This puts your account's private key on the clipboard in plain text. Anyone who can read your clipboard can take full control of your account.\n"
+"\n"
+"Clipboard history and sync tools keep their own copy, which Quorum cannot clear. Paste it somewhere safe, then clear your clipboard and its history."
+msgstr ""
+"이렇게 하면 당신의 계정 개인 키가 일반 텍스트로 클립보드에 저장됩니다. 당신의 클립보드를 읽을 수 있는 사람은 누구나 당신의 계정을 완전히 제어할 수 있습니다.\n"
+"\n"
+"클립보드 기록 및 동기화 도구는 Quorum이 지울 수 없는 자체 복사본을 유지합니다. 안전한 곳에 붙여넣은 다음 클립보드와 기록을 지우십시오."
+
+#: src/components/modals/UserSettingsModal/Security.tsx:224
+msgid ""
+"This saves your account's private key to your device as an unencrypted text file, named after your account address.\n"
+"\n"
+"Anyone who opens that file controls your account permanently. There is no way to revoke or reset it. Downloads folders are often synced to cloud storage, so move it somewhere you control."
+msgstr ""
+"이렇게 하면 당신의 계정 개인 키가 당신의 계정 주소로 이름이 지정된 암호화되지 않은 텍스트 파일로 당신의 장치에 저장됩니다.\n"
+"\n"
+"이 파일을 여는 사람은 누구나 당신의 계정을 영구적으로 제어합니다. 이를 취소하거나 재설정할 방법은 없습니다. 다운로드 폴더는 종종 클라우드 저장소와 동기화되므로 당신이 제어하는 곳으로 이동하십시오."
+
 #: src/components/modals/ThreadSettingsModal.tsx:196
-msgid "This thread cannot be deleted because it contains messages from other users."
+msgid ""
+"This thread cannot be deleted because it contains messages from other users."
 msgstr "이 스레드는 다른 사용자의 메시지를 포함하므로 삭제할 수 없습니다."
 
 #: src/components/thread/ThreadPanel.tsx:519
@@ -3574,12 +3795,20 @@ msgid "This user will not be able to send messages for {days} days."
 msgstr "이 사용자는 {days} 일 동안 메시지를 보낼 수 없습니다."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:796
-msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
+msgid ""
+"This will create a public invite link that anyone can use to join your "
+"Space. Consider who you share this link with."
 msgstr "이 링크는 누구나 사용할 수 있는 공개 초대 링크를 생성합니다. 이 링크를 공유할 대상을 고려하세요."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:75
-msgid "This will delete all your data from this browser, including your private keys and all direct messages. Direct messages cannot be recovered. Make sure you have exported your private key from the Privacy/Security settings. This action cannot be undone."
-msgstr "이 작업은 이 브라우저에서 당신의 모든 데이터를 삭제합니다. 개인 키와 모든 DM(1:1 메시지)도 포함됩니다. DM은 복구할 수 없습니다. 개인정보/보안 설정에서 개인 키를 내보내셨는지 확인하세요. 이 작업은 되돌릴 수 없습니다."
+msgid ""
+"This will delete all your data from this browser, including your private "
+"keys and all direct messages. Direct messages cannot be recovered. Make sure"
+" you have exported your private key from the Privacy/Security settings. This"
+" action cannot be undone."
+msgstr ""
+"이 작업은 이 브라우저에서 당신의 모든 데이터를 삭제합니다. 개인 키와 모든 DM(1:1 메시지)도 포함됩니다. DM은 복구할 수 "
+"없습니다. 개인정보/보안 설정에서 개인 키를 내보내셨는지 확인하세요. 이 작업은 되돌릴 수 없습니다."
 
 #: src/components/modals/ConversationSettingsModal.tsx:129
 msgid ""
@@ -3590,15 +3819,6 @@ msgstr ""
 "이렇게 하면 {counterpartyName}과의 암호화 세션이 재설정됩니다. 다음 메시지는 새로운 보안 연결을 설정합니다.\n"
 "\n"
 "메시지 전송 또는 해독에 실패하는 경우 사용하십시오."
-
-#~ msgid ""
-#~ "This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
-#~ "\n"
-#~ "Use this if messages are failing to send or decrypt. Message history is not affected."
-#~ msgstr ""
-#~ "이것은 {counterpartyName}님과의 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다.\n"
-#~ "\n"
-#~ "메시지 전송 또는 해독에 실패하는 경우 이 기능을 사용하십시오. 메시지 기록에는 영향을 미치지 않습니다."
 
 #: src/components/modals/UserSettingsModal/Help.tsx:30
 msgid ""
@@ -3639,7 +3859,9 @@ msgstr "어쨌든 10초 후에 시간 초과..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:58
 #: src/components/modals/ConfirmationModal.tsx:92
-msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
+msgid ""
+"TIP: Hold down shift when clicking {protipAction} to bypass this "
+"confirmation entirely."
 msgstr "팁: {protipAction}을 클릭할 때 Shift 키를 누르고 있으면 이 확인을 완전히 우회할 수 있습니다."
 
 #: src/components/modals/ThreadSettingsModal.tsx:140
@@ -3655,7 +3877,9 @@ msgid "Title cannot exceed {THREAD_TITLE_MAX_CHARS} characters"
 msgstr "제목은 {THREAD_TITLE_MAX_CHARS}자를 초과할 수 없습니다"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:74
-msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
+msgid ""
+"To disable notifications, please change the setting in your browser "
+"settings. Notifications cannot be disabled programmatically."
 msgstr "알림을 비활성화하려면 브라우저 설정에서 설정을 변경하세요. 알림은 프로그래밍적으로 비활성화할 수 없습니다."
 
 #: src/utils/dateFormatting.ts:31
@@ -3663,7 +3887,8 @@ msgid "Today"
 msgstr "오늘"
 
 #: src/hooks/business/messages/useMessageComposer.ts:145
-msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
+msgid ""
+"Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "메시지에 언급이 너무 많습니다. 최대 {MAX_MENTIONS_PER_MESSAGE}개가 허용됩니다."
 
 #: src/components/RouteErrorFallback.tsx:57
@@ -3683,8 +3908,13 @@ msgid "Trying again usually works. If it doesn't, reload the app."
 msgstr "다시 시도하면 보통 해결됩니다. 해결되지 않으면 앱을 다시 로드하십시오."
 
 #: src/components/modals/CreateSpaceModal.tsx:252
-msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
-msgstr "이 설정을 켜면 초대 링크가 있는 누구나 자동으로 참여할 수 있습니다. 끄면 참여하기 전에 각 사람을 미리 보고 승인할 수 있습니다. 참고: 공개 링크는 링크가 활성화되어 있는 동안 당신의 Space에 대한 전체 읽기 권한을 부여합니다."
+msgid ""
+"Turn this on to let anyone with the invite link join automatically. Turn it "
+"off to preview and approve each person before they can join. Note: Public "
+"links give full read access to your Space while the link is active."
+msgstr ""
+"이 설정을 켜면 초대 링크가 있는 누구나 자동으로 참여할 수 있습니다. 끄면 참여하기 전에 각 사람을 미리 보고 승인할 수 있습니다. "
+"참고: 공개 링크는 링크가 활성화되어 있는 동안 당신의 Space에 대한 전체 읽기 권한을 부여합니다."
 
 #. placeholder {0}: role.displayName.trim()
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:404
@@ -3695,9 +3925,6 @@ msgstr "두 역할은 \"{0}\" 이름을 공유할 수 없습니다."
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:403
 msgid "Two roles can't share the tag @{0}."
 msgstr "두 역할은 @{0} 태그를 공유할 수 없습니다."
-
-#~ msgid "Type DELETE to confirm"
-#~ msgstr "삭제를 확인하려면 DELETE를 입력하세요."
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:97
 msgid "Type RESET to confirm"
@@ -3737,7 +3964,9 @@ msgid "Unable to copy to clipboard"
 msgstr "클립보드에 복사할 수 없습니다"
 
 #: src/services/SpaceService.ts:574
-msgid "Unable to leave Space due to incomplete configuration. The Space data may be corrupted."
+msgid ""
+"Unable to leave Space due to incomplete configuration. The Space data may be"
+" corrupted."
 msgstr "불완전한 구성으로 인해 공간을 나갈 수 없습니다. 공간 데이터가 손상되었을 수 있습니다."
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
@@ -3775,8 +4004,7 @@ msgstr "사용자 차단 해제"
 
 #: src/components/direct/DirectMessageContactsList.tsx:490
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:4260
-#: src/services/MessageService.ts:6409
+#: src/services/MessageService.ts:4260 src/services/MessageService.ts:6409
 msgid "Unknown"
 msgstr "알 수 없음"
 
@@ -3797,16 +4025,11 @@ msgstr "알 수 없는 시간"
 #: src/components/message/MessageEditTextarea.tsx:605
 #: src/components/modals/NewDirectMessageModal.tsx:78
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:204
-#: src/services/MessageService.ts:3652
-#: src/services/MessageService.ts:3847
-#: src/services/MessageService.ts:4115
-#: src/services/MessageService.ts:4219
-#: src/services/MessageService.ts:6984
-#: src/services/MessageService.ts:7100
-#: src/services/MessageService.ts:7185
-#: src/services/MessageService.ts:7407
-#: src/services/MessageService.ts:7609
+#: src/services/EncryptionService.ts:204 src/services/MessageService.ts:3652
+#: src/services/MessageService.ts:3847 src/services/MessageService.ts:4115
+#: src/services/MessageService.ts:4219 src/services/MessageService.ts:6984
+#: src/services/MessageService.ts:7100 src/services/MessageService.ts:7185
+#: src/services/MessageService.ts:7407 src/services/MessageService.ts:7609
 #: src/utils/identityPlaceholder.ts:47
 msgid "Unknown User"
 msgstr "알 수 없는 사용자"
@@ -3855,19 +4078,21 @@ msgid "Unpin this post"
 msgstr "이 게시물 고정 해제"
 
 #: src/components/direct/DirectMessage.tsx:1214
-msgid "Until you reply, this sender will not see your display name or profile picture"
+msgid ""
+"Until you reply, this sender will not see your display name or profile "
+"picture"
 msgstr "당신이 응답할 때까지, 이 발신자는 당신의 표시 이름이나 프로필 사진을 볼 수 없습니다."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:591
-msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
-msgstr "모든 구성원의 강제 퇴장 기록을 업데이트합니다. 퇴장한 사용자가 여전히 일부 구성원에게 활성 상태로 나타나는 경우 사용하세요."
+msgid ""
+"Update kick records for all members. Use this if kicked users still appear "
+"active to some members."
+msgstr ""
+"모든 구성원의 강제 퇴장 기록을 업데이트합니다. 퇴장한 사용자가 여전히 일부 구성원에게 활성 상태로 나타나는 경우 사용하세요."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 2:1"
 msgstr "당신의 공간을 위한 배너를 업로드하세요 - PNG 또는 JPG - 최적 비율 2:1"
-
-#~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
-#~ msgstr "당신의 Space에 배너 업로드 - PNG 또는 JPG - 최적 비율 3:1"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:237
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
@@ -3927,7 +4152,8 @@ msgstr "사용자 프로필"
 
 #: src/components/modals/ConversationSettingsModal.tsx:373
 #: src/components/modals/ConversationSettingsModal.tsx:412
-msgid "Uses your global setting. Toggle to override for this conversation only."
+msgid ""
+"Uses your global setting. Toggle to override for this conversation only."
 msgstr "전역 설정을 사용합니다. 이 대화에만 적용되도록 재정의하려면 토글하세요."
 
 #: src/components/context/WebsocketProvider.tsx:313
@@ -3956,11 +4182,11 @@ msgid "View Thread"
 msgstr "스레드 보기"
 
 #: src/components/modals/UserSettingsModal/SyncStatusLine.tsx:59
-msgid "Waiting for Spaces to finish syncing before this device publishes again."
+msgid ""
+"Waiting for Spaces to finish syncing before this device publishes again."
 msgstr "이 기기가 다시 게시하기 전에 Space가 동기화를 완료하기를 기다리는 중입니다."
 
-#: src/components/shell/NavRail.tsx:60
-#: src/components/wallet/WalletPage.tsx:30
+#: src/components/shell/NavRail.tsx:60 src/components/wallet/WalletPage.tsx:30
 msgid "Wallet"
 msgstr "지갑"
 
@@ -3990,47 +4216,83 @@ msgstr "오늘 당신의 마음속에 무엇이 있나요?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:436
 #: src/components/modals/SpaceSettingsModal/General.tsx:306
-msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
+msgid ""
+"When enabled, all previous versions of edited messages will be saved. When "
+"disabled, only the current edited version is kept."
 msgstr "활성화되면 편집된 메시지의 모든 이전 버전이 저장됩니다. 비활성화되면 현재 편집된 버전만 유지됩니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:154
-msgid "When enabled, other users can see when you are active. This feature is not yet available."
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
 msgstr "활성화되면 다른 사용자가 당신이 활동 중인지 볼 수 있습니다. 이 기능은 아직 제공되지 않습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:91
-msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
-msgstr "이 기능이 활성화되면, 사용자 데이터, 공간 및 공간 키가 장치 간에 동기화됩니다. 이를 활성화하면 계정의 메타데이터 가시성이 증가하여 새로운 공간에 가입했을 때를 알 수 있지만, 가입한 공간은 알 수 없습니다."
+msgid ""
+"When enabled, synchronizes your user data, Spaces, and Space keys between "
+"devices. Enabling this increases metadata visibility of your account, which "
+"can reveal when you have joined new Spaces, although not the Spaces you have"
+" joined."
+msgstr ""
+"이 기능이 활성화되면, 사용자 데이터, 공간 및 공간 키가 장치 간에 동기화됩니다. 이를 활성화하면 계정의 메타데이터 가시성이 증가하여 "
+"새로운 공간에 가입했을 때를 알 수 있지만, 가입한 공간은 알 수 없습니다."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:281
-msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
-msgstr "메시지가 서명되면 발신자는 자신의 키에서 온 것임을 확인합니다. 메시지가 서명되지 않으면 발신자는 그럴듯한 부인 가능성을 가집니다. 이 설정은 이 공간의 모든 메시지에 적용됩니다."
+msgid ""
+"When messages are signed, senders confirm they come from their key. When "
+"messages aren't signed, senders have plausible deniability. This setting "
+"applies to all messages in this Space."
+msgstr ""
+"메시지가 서명되면 발신자는 자신의 키에서 온 것임을 확인합니다. 메시지가 서명되지 않으면 발신자는 그럴듯한 부인 가능성을 가집니다. 이 "
+"설정은 이 공간의 모든 메시지에 적용됩니다."
 
 #: src/components/modals/ConversationSettingsModal.tsx:329
-msgid "When muted, new messages won't show unread indicators or desktop notifications."
+msgid ""
+"When muted, new messages won't show unread indicators or desktop "
+"notifications."
 msgstr "음소거된 상태에서는 새 메시지가 읽지 않은 표시나 데스크탑 알림을 표시하지 않습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:134
-msgid "When on, anyone with your Quorum address can see your display name, avatar, and bio, even outside the Spaces you share. Useful when someone DMs you and you want them to recognize who you are. Off by default."
-msgstr "이 기능을 켜면 당신의 Quorum 주소를 가진 모든 사람이 당신의 표시 이름, 아바타 및 자기소개를 볼 수 있습니다. 이는 당신이 공유하는 공간 외부에서도 마찬가지입니다. 누군가 당신에게 DM을 보내고 당신이 누구인지 그들이 알아볼 수 있도록 하고 싶을 때 유용합니다. 기본적으로 꺼져 있습니다."
+msgid ""
+"When on, anyone with your Quorum address can see your display name, avatar, "
+"and bio, even outside the Spaces you share. Useful when someone DMs you and "
+"you want them to recognize who you are. Off by default."
+msgstr ""
+"이 기능을 켜면 당신의 Quorum 주소를 가진 모든 사람이 당신의 표시 이름, 아바타 및 자기소개를 볼 수 있습니다. 이는 당신이 "
+"공유하는 공간 외부에서도 마찬가지입니다. 누군가 당신에게 DM을 보내고 당신이 누구인지 그들이 알아볼 수 있도록 하고 싶을 때 "
+"유용합니다. 기본적으로 꺼져 있습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:252
-msgid "When on, everyone in a Space channel sees when you're typing, and you see when they're typing."
+msgid ""
+"When on, everyone in a Space channel sees when you're typing, and you see "
+"when they're typing."
 msgstr "켜져 있으면 공간 채널의 모든 사람이 당신이 입력하는 것을 볼 수 있고, 당신은 그들이 입력하는 것을 볼 수 있습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:181
-msgid "When on, senders see when their messages reach your device, and you see when yours reach theirs."
-msgstr "켜져 있으면 발신자는 메시지가 당신의 기기에 도착한 시점을 확인하고, 당신는 당신의 메시지가 상대방 기기에 도착한 시점을 확인합니다."
+msgid ""
+"When on, senders see when their messages reach your device, and you see when"
+" yours reach theirs."
+msgstr ""
+"켜져 있으면 발신자는 메시지가 당신의 기기에 도착한 시점을 확인하고, 당신는 당신의 메시지가 상대방 기기에 도착한 시점을 확인합니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:205
-msgid "When on, senders see when you've read their messages, and you see when yours are read."
+msgid ""
+"When on, senders see when you've read their messages, and you see when yours"
+" are read."
 msgstr "켜져 있으면 발신자는 당신이 상대방의 메시지를 읽은 시점을 확인하고, 당신는 당신의 메시지가 읽힌 시점을 확인합니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:275
-msgid "When on, your device fetches thumbnails from YouTube for the links you send, which reveals your IP to Google. When off, recipients see a plain link instead."
-msgstr "켜면 장치가 보내는 링크의 YouTube 썸네일을 가져오므로 Google에 IP가 노출됩니다. 끄면 수신자는 일반 링크를 보게 됩니다."
+msgid ""
+"When on, your device fetches thumbnails from YouTube for the links you send,"
+" which reveals your IP to Google. When off, recipients see a plain link "
+"instead."
+msgstr ""
+"켜면 장치가 보내는 링크의 YouTube 썸네일을 가져오므로 Google에 IP가 노출됩니다. 끄면 수신자는 일반 링크를 보게 됩니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:229
-msgid "When on, your DM contacts see when you're typing, and you see when they're typing."
+msgid ""
+"When on, your DM contacts see when you're typing, and you see when they're "
+"typing."
 msgstr "켜면, DM 연락처가 당신이 입력 중인지, 그리고 당신이 그들이 입력 중인지 볼 수 있습니다."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:370
@@ -4050,20 +4312,34 @@ msgid "When someone replies to your messages"
 msgstr "누군가 당신의 메시지에 답글을 달 때"
 
 #: src/components/modals/ConversationSettingsModal.tsx:308
-msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
-msgstr "메시지에 서명하면 해당 메시지가 당신의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. 모든 대화의 기본값은 사용자 설정에서 변경할 수 있습니다."
+msgid ""
+"When you sign a message, you are confirming that it comes from your key. "
+"When you don't sign a message, you have plausible deniability. The default "
+"for all conversations can be changed in User Settings."
+msgstr ""
+"메시지에 서명하면 해당 메시지가 당신의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. "
+"모든 대화의 기본값은 사용자 설정에서 변경할 수 있습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:111
-msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
-msgstr "메시지에 서명하면 해당 메시지가 당신의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. 이 설정은 각 대화 및 메시지에 대해 개별적으로 제어할 수 있습니다."
+msgid ""
+"When you sign a message, you are confirming that it comes from your key. "
+"When you don't sign a message, you have plausible deniability. You can "
+"control this setting for each conversation and message individually."
+msgstr ""
+"메시지에 서명하면 해당 메시지가 당신의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. "
+"이 설정은 각 대화 및 메시지에 대해 개별적으로 제어할 수 있습니다."
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
 msgstr "이 작업을 왜 해야 하나요?"
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:40
-msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr "이 백업 없이 기기를 잃으면 계정도 잃게 됩니다 - '비밀번호를 잊어버렸습니다' 옵션이 없습니다. 이는 개인 정보 보호를 위한 대가입니다 :-)"
+msgid ""
+"Without this backup, losing your device means losing your account - there's "
+"no 'forgot password' option. This is the price you pay for privacy :-)"
+msgstr ""
+"이 백업 없이 기기를 잃으면 계정도 잃게 됩니다 - '비밀번호를 잊어버렸습니다' 옵션이 없습니다. 이는 개인 정보 보호를 위한 대가입니다"
+" :-)"
 
 #: src/utils/dateFormatting.ts:32
 msgid "Yesterday"
@@ -4072,12 +4348,6 @@ msgstr "어제"
 #: src/utils/dateFormatting.ts:33
 msgid "Yesterday at {time}"
 msgstr "어제 {time}"
-
-#~ msgid "Yesterday at {timeFormatted}"
-#~ msgstr "어제 {timeFormatted}에"
-
-#~ msgid "You"
-#~ msgstr "당신"
 
 #: src/components/modals/AddSpaceModal.tsx:116
 msgid "You are already a member of this Space."
@@ -4094,19 +4364,28 @@ msgid "You are the owner of this Space"
 msgstr "당신은 이 공간의 소유자입니다."
 
 #: src/components/modals/NewDirectMessageModal.tsx:159
-msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
+msgid ""
+"You can change this later for this conversation by clicking the lock icon in"
+" the Conversation view."
 msgstr "대화 보기에서 자물쇠 아이콘을 클릭하여 나중에 이 대화에 대해 변경할 수 있습니다."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:79
-msgid "You can manage your Space mention notifications in each Space's settings."
+msgid ""
+"You can manage your Space mention notifications in each Space's settings."
 msgstr "각 공간의 설정에서 공간 멘션 알림을 관리할 수 있습니다."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
-msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr "passkey 설정을 취소했습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 하드웨어 보호 없이)."
+msgid ""
+"You cancelled the passkey setup. You can try again, or continue without "
+"Passkey (still secure, just without device hardware protection)."
+msgstr ""
+"passkey 설정을 취소했습니다. 다시 시도하거나, passkey 없이 계속 진행할 수 있습니다 (아직 안전하지만, 기기 하드웨어 보호"
+" 없이)."
 
 #: src/components/modals/GroupEditorModal.tsx:116
-msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
+msgid ""
+"You cannot delete a group that contains channels. Delete all {channelCount} "
+"channels in this group first."
 msgstr "채널이 포함된 그룹을 삭제할 수 없습니다. 먼저 이 그룹의 모든 {channelCount} 채널을 삭제하세요."
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:743
@@ -4135,33 +4414,38 @@ msgid "You have new unread messages"
 msgstr "새로 읽지 않은 메시지가 있습니다."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:56
-msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
-msgstr "당신는 관리 작업(킥 제외)을 위해 역할을 할당해야 합니다. 삭제 및 음소거 권한을 신중하게 부여하십시오. <0><1>자세히 알아보기</1></0>"
-
-#~ msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
-#~ msgstr "다시 초대받지 않으면 재가입할 수 없습니다. 기존 메시지는 삭제되지 않습니다."
+msgid ""
+"You must assign yourself a role for moderation actions (except kicking). "
+"Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr ""
+"당신는 관리 작업(킥 제외)을 위해 역할을 할당해야 합니다. 삭제 및 음소거 권한을 신중하게 부여하십시오. <0><1>자세히 "
+"알아보기</1></0>"
 
 #: src/components/modals/BlockUserModal.tsx:99
-msgid "You won't see any of {resolvedNameText}'s messages in this Space. This only affects your view, and only in this Space. You can unblock anytime."
-msgstr "이 Space에서 {resolvedNameText}의 메시지를 볼 수 없습니다. 이는 당신의 보기에만 영향을 미치며, 이 Space에서만 적용됩니다. 언제든지 차단을 해제할 수 있습니다."
-
-#~ msgid "You won't see any of {userName}'s messages in this Space. This only affects your view, and only in this Space. You can unblock anytime."
-#~ msgstr "당신은 이 공간에서 {userName}님의 메시지를 볼 수 없습니다. 이것은 당신의 보기 방식에만 영향을 미치며, 이 공간에서만 적용됩니다. 언제든지 차단을 해제할 수 있습니다."
+msgid ""
+"You won't see any of {resolvedNameText}'s messages in this Space. This only "
+"affects your view, and only in this Space. You can unblock anytime."
+msgstr ""
+"이 Space에서 {resolvedNameText}의 메시지를 볼 수 없습니다. 이는 당신의 보기에만 영향을 미치며, 이 Space에서만"
+" 적용됩니다. 언제든지 차단을 해제할 수 있습니다."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:467
-msgid "You'll need an invite to rejoin, though a public invite link will still work if this Space has one. Your existing messages will NOT be deleted."
-msgstr "다시 참여하려면 초대가 필요하지만, 이 스페이스에 공개 초대 링크가 있는 경우 해당 링크는 계속 작동합니다. 당신의 기존 메시지는 삭제되지 않습니다."
+msgid ""
+"You'll need an invite to rejoin, though a public invite link will still work"
+" if this Space has one. Your existing messages will NOT be deleted."
+msgstr ""
+"다시 참여하려면 초대가 필요하지만, 이 스페이스에 공개 초대 링크가 있는 경우 해당 링크는 계속 작동합니다. 당신의 기존 메시지는 "
+"삭제되지 않습니다."
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:19
-msgid "You'll need this file to recover your account if you lose access to your device."
+msgid ""
+"You'll need this file to recover your account if you lose access to your "
+"device."
 msgstr "기기 접근 권한을 잃은 경우 계정을 복구하기 위해 이 파일이 필요합니다."
 
 #: src/components/modals/BlockUserModal.tsx:98
 msgid "You'll see {resolvedNameText}'s messages in this Space again."
 msgstr "이 Space에서 {resolvedNameText}의 메시지를 다시 볼 수 있습니다."
-
-#~ msgid "You'll see {userName}'s messages in this Space again."
-#~ msgstr "이 공간에서 {userName}님의 메시지를 다시 볼 수 있습니다."
 
 #: src/components/notifications/NotificationPanel.tsx:234
 msgid "You're all caught up!"
@@ -4172,8 +4456,13 @@ msgid "You're all set!"
 msgstr "준비 완료!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:587
-msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
-msgstr "이 공간의 구성원 목록에 없습니다. 이를 수정하면 당신의 프로필이 당신의 인박스 주소와 함께 로컬에 저장되어 공간 구성원 목록에 추가됩니다."
+msgid ""
+"You're not listed in this Space's members. Correcting this will add you to "
+"the Space Members list (stores your profile locally with your inbox "
+"address)."
+msgstr ""
+"이 공간의 구성원 목록에 없습니다. 이를 수정하면 당신의 프로필이 당신의 인박스 주소와 함께 로컬에 저장되어 공간 구성원 목록에 "
+"추가됩니다."
 
 #: src/components/ui/OfflineBanner.tsx:56
 msgid "You're offline"
@@ -4201,16 +4490,31 @@ msgid "You've been invited to join a Space"
 msgstr "당신은 공간에 가입하라는 초대를 받았습니다."
 
 #: src/components/onboarding/steps/DisplayNameStep.tsx:60
-msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
-msgstr "계정 주소는 계정 키에서 파생된 고유한 공개 식별자입니다. 다른 사용자가 이를 사용하여 당신을 찾고 메시지를 보낼 수 있습니다. 이를 마치 변경할 수 없는 사용자 이름으로 생각하세요."
+msgid ""
+"Your account address is a unique public identifier derived from your account"
+" key. Others can use it to find and message you. Think of it like a username"
+" that can never change."
+msgstr ""
+"계정 주소는 계정 키에서 파생된 고유한 공개 식별자입니다. 다른 사용자가 이를 사용하여 당신을 찾고 메시지를 보낼 수 있습니다. 이를 "
+"마치 변경할 수 없는 사용자 이름으로 생각하세요."
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:179
-msgid "Your account key is a private key that proves ownership of your account. You can download it as a file (.key) or copy it from your account settings. Keep it safe — whoever has it can access your account."
-msgstr "당신의 계정 키는 당신의 계정 소유권을 증명하는 개인 키입니다. 파일(.key)로 다운로드하거나 계정 설정에서 복사할 수 있습니다. 안전하게 보관하십시오 — 키를 가진 사람은 누구나 당신의 계정에 접근할 수 있습니다."
+msgid ""
+"Your account key is a private key that proves ownership of your account. You"
+" can download it as a file (.key) or copy it from your account settings. "
+"Keep it safe — whoever has it can access your account."
+msgstr ""
+"당신의 계정 키는 당신의 계정 소유권을 증명하는 개인 키입니다. 파일(.key)로 다운로드하거나 계정 설정에서 복사할 수 있습니다. "
+"안전하게 보관하십시오 — 키를 가진 사람은 누구나 당신의 계정에 접근할 수 있습니다."
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
-msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
-msgstr "계정 키는 Quorum에서의 고유한 정체성입니다. 당신이 당신임을 증명하는 마스터 비밀번호와 같지만, 자동으로 생성되어 passkey에 안전하게 저장됩니다."
+msgid ""
+"Your account key is your unique identity in Quorum. It's like a master "
+"password that proves you are you - but it's generated automatically and "
+"stored securely in your passkey."
+msgstr ""
+"계정 키는 Quorum에서의 고유한 정체성입니다. 당신이 당신임을 증명하는 마스터 비밀번호와 같지만, 자동으로 생성되어 passkey에 "
+"안전하게 저장됩니다."
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
@@ -4221,27 +4525,46 @@ msgid "Your Details"
 msgstr "당신의 세부정보"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:292
-msgid "Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time."
-msgstr "당신의 표시 이름, 프로필 사진 및 자기소개는 당신의 Quorum 주소를 가진 모든 사람이 읽을 수 있으며, 여기에는 당신이 공유하는 공간 외부의 사람들도 포함됩니다. 기존 공간 구성원은 당신이 설정하기 전에 가입했더라도 당신의 최신 프로필을 볼 수 있습니다. 이 기능은 언제든지 끌 수 있습니다."
+msgid ""
+"Your display name, profile picture, and bio will be readable by anyone with "
+"your Quorum address, including people outside the Spaces you share with "
+"them. Existing Space members will see your latest profile even if they "
+"joined before you set it. You can turn this off at any time."
+msgstr ""
+"당신의 표시 이름, 프로필 사진 및 자기소개는 당신의 Quorum 주소를 가진 모든 사람이 읽을 수 있으며, 여기에는 당신이 공유하는 "
+"공간 외부의 사람들도 포함됩니다. 기존 공간 구성원은 당신이 설정하기 전에 가입했더라도 당신의 최신 프로필을 볼 수 있습니다. 이 기능은"
+" 언제든지 끌 수 있습니다."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:259
 msgid "Your name in this Space"
 msgstr "이 Space에서의 당신의 이름"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:135
-msgid "Your next message to each contact will establish a fresh secure connection."
+msgid ""
+"Your next message to each contact will establish a fresh secure connection."
 msgstr "각 연락처로 보내는 당신의 다음 메시지는 새로운 보안 연결을 설정합니다."
 
 #: src/components/modals/ConversationSettingsModal.tsx:486
 msgid "Your next message will establish a fresh secure connection."
 msgstr "당신의 다음 메시지는 새로운 보안 연결을 설정합니다."
 
-#: src/components/modals/UserSettingsModal/Security.tsx:488
-msgid "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
-msgstr "당신의 개인 키는 당신의 계정 소유권을 증명하는 유일한 증거입니다. 이를 가진 사람은 누구나 당신을 사칭하고 당신의 Space의 Apex 수익을 훔칠 수 있습니다. 절대로 공유하지 마십시오."
+#: src/components/modals/UserSettingsModal/Security.tsx:713
+msgid "Your private key"
+msgstr "당신의 개인 키"
+
+#: src/components/modals/UserSettingsModal/Security.tsx:545
+msgid ""
+"Your private key is the only proof of ownership of your account. Anyone who "
+"has it can impersonate you and steal your Space's Apex earnings. Never share"
+" it."
+msgstr ""
+"당신의 개인 키는 당신의 계정 소유권을 증명하는 유일한 증거입니다. 이를 가진 사람은 누구나 당신을 사칭하고 당신의 Space의 Apex"
+" 수익을 훔칠 수 있습니다. 절대로 공유하지 마십시오."
 
 #: src/utils/imageProcessing/errors.ts:40
-msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgid ""
+"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
+" JPEG file extension."
 msgstr "프로필 이미지 크기는 {maxSize} 이하이어야 하며 PNG, JPG 또는 JPEG 파일 확장자여야 합니다."
 
 #: src/components/modals/UserSettingsModal/General.tsx:138
@@ -4263,3 +4586,118 @@ msgstr "YouTube 비디오"
 #: src/components/ui/YouTubeFacade.tsx:114
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 비디오 썸네일"
+
+#~ msgid "{contextCount} bookmark here"
+#~ msgstr "{contextCount} 마커가 여기 있습니다"
+
+#~ msgid "{contextCount} bookmarks here"
+#~ msgstr "{contextCount} 마커가 여기 있습니다"
+
+#~ msgid "An error occurred while deleting the Space. Please try again."
+#~ msgstr "공간을 삭제하는 동안 오류가 발생했습니다. 다시 시도하십시오."
+
+#~ msgid ""
+#~ "Anyone who sees or photographs this QR code can take full control of your "
+#~ "Quorum account and steal any associated funds. Only proceed if you are in a "
+#~ "private location and ready to scan immediately."
+#~ msgstr ""
+#~ "이 QR 코드를 보거나 사진을 찍는 누구나 당신의 Quorum 계정을 완전히 제어하고 관련된 자금을 훔칠 수 있습니다. 개인적인 장소에 "
+#~ "있고 즉시 스캔할 준비가 되어 있는 경우에만 진행하십시오."
+
+#~ msgid ""
+#~ "Are you sure you want to leave this Space? You won't be able to rejoin "
+#~ "unless you are re-invited."
+#~ msgstr "이 Space를 떠나시겠습니까? 다시 초대받지 않으면 재가입할 수 없습니다."
+
+#~ msgid "Display Name"
+#~ msgstr "표시 이름"
+
+#~ msgid ""
+#~ "Export an encrypted backup of your direct messages to restore them if you "
+#~ "lose access to this device."
+#~ msgstr "이 장치에 대한 액세스 권한을 잃은 경우 메시지를 복원할 수 있도록 암호화된 백업을 내보냅니다."
+
+#~ msgid "Hide"
+#~ msgstr "숨기기"
+
+#~ msgid "I Understand, Copy"
+#~ msgstr "이해했습니다, 복사"
+
+#~ msgid "I Understand, Show QR"
+#~ msgstr "이해했습니다, QR 표시"
+
+#~ msgid "Pinned by {0}"
+#~ msgstr "{0}에 의해 고정됨"
+
+#~ msgid ""
+#~ "Private key copied. It will be cleared from your clipboard automatically in "
+#~ "60 seconds."
+#~ msgstr "개인 키가 복사되었습니다. 60초 후에 클립보드에서 자동으로 지워집니다."
+
+#~ msgid ""
+#~ "Private key copied. Store it securely and clear your clipboard when you're "
+#~ "done."
+#~ msgstr "개인 키가 복사되었습니다. 안전하게 보관하고 완료되면 클립보드를 지우십시오."
+
+#~ msgid "QR code will auto-hide in 60 seconds"
+#~ msgstr "QR 코드는 60초 후에 자동으로 숨겨집니다"
+
+#~ msgid "Reset Encryption Session"
+#~ msgstr "암호화 세션 재설정"
+
+#~ msgid ""
+#~ "Reset the encryption session if messages fail to send or decrypt. The next "
+#~ "message will establish a fresh secure connection."
+#~ msgstr "메시지 전송 또는 해독에 실패하는 경우 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다."
+
+#~ msgid ""
+#~ "This action cannot be undone and will permanently delete this Space and all "
+#~ "of its channels and messages."
+#~ msgstr "이 작업은 취소할 수 없으며, 이 공간과 모든 채널 및 메시지를 영구적으로 삭제합니다."
+
+#~ msgid "this contact"
+#~ msgstr "이 연락처"
+
+#~ msgid ""
+#~ "This copies your private key to the clipboard in plain text. Anyone with "
+#~ "access to your clipboard can take full control of your account. Store it "
+#~ "somewhere safe and clear your clipboard afterwards."
+#~ msgstr ""
+#~ "이렇게 하면 개인 키가 일반 텍스트로 클립보드에 복사됩니다. 클립보드에 접근할 수 있는 사람은 누구나 당신의 계정을 완전히 제어할 수 "
+#~ "있습니다. 안전한 곳에 보관하고 나중에 클립보드를 지우십시오."
+
+#~ msgid ""
+#~ "This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
+#~ "\n"
+#~ "Use this if messages are failing to send or decrypt. Message history is not affected."
+#~ msgstr ""
+#~ "이것은 {counterpartyName}님과의 암호화 세션을 재설정합니다. 다음 메시지는 새로운 보안 연결을 설정합니다.\n"
+#~ "\n"
+#~ "메시지 전송 또는 해독에 실패하는 경우 이 기능을 사용하십시오. 메시지 기록에는 영향을 미치지 않습니다."
+
+#~ msgid "Type DELETE to confirm"
+#~ msgstr "삭제를 확인하려면 DELETE를 입력하세요."
+
+#~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
+#~ msgstr "당신의 Space에 배너 업로드 - PNG 또는 JPG - 최적 비율 3:1"
+
+#~ msgid "Yesterday at {timeFormatted}"
+#~ msgstr "어제 {timeFormatted}에"
+
+#~ msgid "You"
+#~ msgstr "당신"
+
+#~ msgid ""
+#~ "You won't be able to rejoin unless you are re-invited. Your existing "
+#~ "messages will NOT be deleted."
+#~ msgstr "다시 초대받지 않으면 재가입할 수 없습니다. 기존 메시지는 삭제되지 않습니다."
+
+#~ msgid ""
+#~ "You won't see any of {userName}'s messages in this Space. This only affects "
+#~ "your view, and only in this Space. You can unblock anytime."
+#~ msgstr ""
+#~ "당신은 이 공간에서 {userName}님의 메시지를 볼 수 없습니다. 이것은 당신의 보기 방식에만 영향을 미치며, 이 공간에서만 "
+#~ "적용됩니다. 언제든지 차단을 해제할 수 있습니다."
+
+#~ msgid "You'll see {userName}'s messages in this Space again."
+#~ msgstr "이 공간에서 {userName}님의 메시지를 다시 볼 수 있습니다."
