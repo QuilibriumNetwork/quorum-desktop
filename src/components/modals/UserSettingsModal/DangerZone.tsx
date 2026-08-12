@@ -4,6 +4,7 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { useQueryClient } from '@tanstack/react-query';
 import { useDeregisterThisDevice } from '../../../hooks/business/user/useDeregisterThisDevice';
+import { wipeLocalAppData } from '../../../services/resetAppData';
 
 const DangerZone: React.FunctionComponent = () => {
   const queryClient = useQueryClient();
@@ -44,22 +45,14 @@ const DangerZone: React.FunctionComponent = () => {
       // Clear React Query cache
       queryClient.clear();
 
-      // Delete IndexedDB database. A blocked delete means another tab still
-      // holds the DB open — treating it as success (the old behavior) silently
-      // reloaded on the SAME data, so the reset appeared to do nothing. Reject
-      // so the user is told to close other tabs instead.
-      await new Promise<void>((resolve, reject) => {
-        const req = indexedDB.deleteDatabase('quorum_db');
-        req.onsuccess = () => resolve();
-        req.onerror = () => reject(req.error);
-        req.onblocked = () => reject(new Error('blocked'));
-      });
-
-      // Clear all localStorage
-      localStorage.clear();
-
-      // Clear sessionStorage
-      sessionStorage.clear();
+      // Both IndexedDB databases (the app's own and the SDK's key store) plus
+      // all web storage. Deliberately AFTER the deregistration above, which
+      // signs with the master key this destroys.
+      //
+      // A blocked delete still rejects rather than resolving: treating it as
+      // success (the old behavior) silently reloaded on the SAME data, so the
+      // reset appeared to do nothing.
+      await wipeLocalAppData();
 
       // Hard reload to clear in-memory state
       window.location.reload();
