@@ -99,6 +99,12 @@ export default {
 
       borderColor: {
         DEFAULT: 'var(--color-border-default)',
+        // `DEFAULT` only names the bare `border` utility and the preflight rule
+        // that colours every element's border. It does NOT create `border-default`,
+        // which ~90 call sites here write explicitly. Without this key that class
+        // generates nothing; it went unnoticed for so long because preflight
+        // already paints the same colour, so the dead class looked like it worked.
+        default: 'var(--color-border-default)',
         subtle: 'var(--color-border-subtle)',
         strong: 'var(--color-border-strong)',
         stronger: 'var(--color-border-stronger)',

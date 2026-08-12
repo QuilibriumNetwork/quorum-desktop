@@ -596,7 +596,7 @@ export const ComponentAuditViewer: React.FC = () => {
 
         {/* Ready to Build Panel */}
         {data.mobile_strategy && (
-          <div className="bg-accent/10 rounded-lg p-4 border border-accent/30 mb-6">
+          <div className="bg-accent-rgb/10 rounded-lg p-4 border border-accent-rgb/30 mb-6">
             <Flex gap="sm" className="mb-3 items-center">
               <span className="text-base text-strong text-accent-700 dark:text-accent-300">
                 🚀 Ready to Build Now - {data.mobile_strategy.current_phase}
@@ -856,7 +856,7 @@ export const ComponentAuditViewer: React.FC = () => {
                 <tbody>
                   {filteredComponents.map(([key, component]) => (
                     <React.Fragment key={key}>
-                      <tr className="border-b border-default hover:bg-surface-2/50 transition-colors">
+                      <tr className="border-b border-default hover:bg-surface-2 transition-colors">
                         <td className="px-4 py-3">
                           <div>
                             <p className="font-medium text-strong">
@@ -901,7 +901,7 @@ export const ComponentAuditViewer: React.FC = () => {
                                 {component.dependencies
                                   .slice(0, 3)
                                   .map((dep, idx) => (
-                                    <span className="px-1.5 py-0.5 bg-accent/10 text-accent-600 dark:text-accent-400 rounded text-xs" key={idx} title={dep}>
+                                    <span className="px-1.5 py-0.5 bg-accent-rgb/10 text-accent-600 dark:text-accent-400 rounded text-xs" key={idx} title={dep}>
                                       {dep.length > 10
                                         ? dep.substring(0, 10) + '...'
                                         : dep}
@@ -946,7 +946,7 @@ export const ComponentAuditViewer: React.FC = () => {
                       </tr>
 
                       {expandedRows.has(key) && (
-                        <tr className="bg-surface-2/30 border-b border-default">
+                        <tr className="bg-surface-2 border-b border-default">
                           <td colSpan={10} className="px-4 py-4">
                             <div className="space-y-3">
                               <div>
@@ -967,7 +967,7 @@ export const ComponentAuditViewer: React.FC = () => {
                                     {component.hooks.map((hook, index) => (
                                       <span
                                         key={index}
-                                        className="px-2 py-1 bg-accent/10 text-accent-600 dark:text-accent-400 rounded text-xs"
+                                        className="px-2 py-1 bg-accent-rgb/10 text-accent-600 dark:text-accent-400 rounded text-xs"
                                       >
                                         {hook}
                                       </span>
@@ -1182,7 +1182,7 @@ export const ComponentAuditViewer: React.FC = () => {
                   subtitle: 'Native implementation complete',
                   filter: (comp: ComponentAudit) =>
                     ['done', 'ready'].includes(comp.native),
-                  color: 'bg-accent/10 border-accent/30',
+                  color: 'bg-accent-rgb/10 border-accent-rgb/30',
                   urgency: 'done',
                 },
               ];
@@ -1222,7 +1222,7 @@ export const ComponentAuditViewer: React.FC = () => {
                         {components.slice(0, 8).map(([key, component]) => (
                           <div
                             key={key}
-                            className="flex items-center justify-between p-4 bg-surface-0 rounded-lg border border-default hover:bg-surface-1/50 transition-colors"
+                            className="flex items-center justify-between p-4 bg-surface-0 rounded-lg border border-default hover:bg-surface-1 transition-colors"
                           >
                             <div className="flex-1">
                               <div className="flex items-center gap-4 mb-2">
@@ -1238,7 +1238,7 @@ export const ComponentAuditViewer: React.FC = () => {
                                   />
                                   {component.dependencies &&
                                     component.dependencies.length > 0 && (
-                                      <span className="text-xs bg-accent/10 text-accent px-2 py-1 rounded">
+                                      <span className="text-xs bg-accent-rgb/10 text-accent px-2 py-1 rounded">
                                         {component.dependencies.length} deps
                                       </span>
                                     )}

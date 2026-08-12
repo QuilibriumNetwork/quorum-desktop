@@ -457,7 +457,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
           <>
             <Spacer size="xl" direction="vertical" />
             <Callout variant="error" size="md">
-              <div className="text-md">
+              <div className="text-base">
                 <Trans>Leave this Space</Trans>
               </div>
               <div className="pt-2 text-sm">

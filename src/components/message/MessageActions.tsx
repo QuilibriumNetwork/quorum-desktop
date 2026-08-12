@@ -111,7 +111,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   const dangerIconButtonClass =
     'text-center text-surface-9 hover:text-danger hover:scale-125 xl:hover:scale-150 transition duration-200 rounded-md flex items-center justify-center cursor-pointer';
   const separatorClass =
-    'w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5';
+    'w-2 mr-2 text-center flex flex-col border-r border-surface-5';
 
   // Build the Shift-mode quick-action list. Each entry is rendered only if a
   // handler is provided and the corresponding capability is granted.

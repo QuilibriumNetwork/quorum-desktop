@@ -713,10 +713,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
         {/* Loading Hash Message Indicator */}
         {isLoadingHashMessage && (
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-chat-overlay rounded-lg p-4 shadow-lg">
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-modal rounded-lg p-4 shadow-lg">
             <div className="flex items-center space-x-3">
-              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
-              <span className="text-sm text-primary">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-accent" />
+              <span className="text-sm text-main">
                 <Trans>Loading message...</Trans>
               </span>
             </div>

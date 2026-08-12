@@ -195,7 +195,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                       >
                         <Icon
                           name={r.isPublic !== false ? "eye" : "eye-off"}
-                          className="cursor-pointer text-main hover:text-main-hover"
+                          className="cursor-pointer text-main hover:text-strong"
                           onClick={() => toggleRolePublic(i)}
                         />
                       </Tooltip>

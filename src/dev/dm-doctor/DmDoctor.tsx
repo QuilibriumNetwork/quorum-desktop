@@ -318,7 +318,7 @@ export const DmDoctor: React.FC = () => {
                   {distribution.map(([spaceId, count]) => {
                     const isGhost = Boolean(ownAddress) && spaceId === ownAddress;
                     return (
-                      <tr key={spaceId} className="border-b border-default/50">
+                      <tr key={spaceId} className="border-b border-subtle">
                         <td className="py-1 pr-4 font-mono">{truncateAddress(spaceId)}</td>
                         <td className="py-1 pr-4">{count}</td>
                         <td className="py-1">
@@ -380,7 +380,7 @@ export const DmDoctor: React.FC = () => {
                 </thead>
                 <tbody>
                   {history.map((entry, i) => (
-                    <tr key={entry.id} className="border-b border-default/50">
+                    <tr key={entry.id} className="border-b border-subtle">
                       <td className="py-1 pr-4">{i + 1}</td>
                       <td className="py-1 pr-4 font-mono">{entry.atIso}</td>
                       <td className="py-1 pr-4">{entry.prefix}</td>
@@ -456,7 +456,7 @@ export const DmDoctor: React.FC = () => {
                 </thead>
                 <tbody>
                   {ghosts.map((row) => (
-                    <tr key={row.conversationId} className="border-b border-default/50">
+                    <tr key={row.conversationId} className="border-b border-subtle">
                       <td className="py-1 pr-4 font-mono">{truncateAddress(row.address)}</td>
                       <td className="py-1 pr-4">{row.displayName || '(none)'}</td>
                       <td className="py-1 pr-4 font-mono">
@@ -513,7 +513,7 @@ export const DmDoctor: React.FC = () => {
                       </tr>
                     )}
                     {inventory.rows.map((row) => (
-                      <tr key={`${row.conversationId}-${row.address}`} className="border-b border-default/50">
+                      <tr key={`${row.conversationId}-${row.address}`} className="border-b border-subtle">
                         <td className="py-1 pr-4 font-mono">{truncateAddress(row.conversationId)}</td>
                         <td className="py-1 pr-4 font-mono">{truncateAddress(row.address)}</td>
                         <td className="py-1 pr-4">{row.displayName}</td>

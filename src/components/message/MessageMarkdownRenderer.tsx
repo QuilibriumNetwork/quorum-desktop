@@ -720,7 +720,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     // Style blockquotes
     blockquote: ({ children, ...props }: any) => (
       <blockquote
-        className="border-l-4 border-accent/50 pl-4 py-1 my-2 text-subtle italic"
+        className="border-l-4 border-accent-rgb/50 pl-4 py-1 my-2 text-subtle italic"
         {...props}
       >
         {children}

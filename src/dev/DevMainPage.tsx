@@ -94,7 +94,7 @@ export const DevMainPage: React.FC = () => {
             <Link
               key={index}
               to={tool.path}
-              className="block h-full no-underline bg-surface-1 hover:bg-surface-2 rounded-lg p-5 border border-default hover:border-accent/50 hover:shadow-lg transition-all cursor-pointer"
+              className="block h-full no-underline bg-surface-1 hover:bg-surface-2 rounded-lg p-5 border border-default hover:border-accent-rgb/50 hover:shadow-lg transition-all cursor-pointer"
             >
               <div className="flex items-center gap-2 mb-2">
                 <Icon name={tool.icon} size="lg" className="text-accent" />

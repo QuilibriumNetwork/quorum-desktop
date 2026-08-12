@@ -100,7 +100,7 @@ function Sidebar({ addrs, selfAddress = null }: { addrs: string[]; selfAddress?:
   return (
     <IdentityScopeProvider spaceId={SPACE_ID} rostersBySpace={{ [SPACE_ID]: rosterRows }} selfAddress={selfAddress}>
       {addrs.map((address, i) => (
-        <MemberName key={i} address={address} className="text-md font-bold truncate-user-name" />
+        <MemberName key={i} address={address} className="text-base font-bold truncate-user-name" />
       ))}
     </IdentityScopeProvider>
   );
