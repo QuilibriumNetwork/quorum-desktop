@@ -158,7 +158,7 @@ export const FakeQns: React.FC = () => {
           subtitle="See where a .q name renders without owning one. Dev builds only. Read-side overlay: nothing is written, signed, or published."
         />
 
-      <div className="border border-dashed border-yellow-500 rounded-lg p-4">
+      <div className="bg-surface-1 rounded-lg border border-default p-4">
 
         <Flex direction="column" className="gap-3">
           <Toggle
@@ -229,10 +229,8 @@ export const FakeQns: React.FC = () => {
           named, there is nothing to compare against. Pin a member to a known
           name, or to no name at all, and the difference tells you which tier
           actually won. */}
-      <div className="border border-dashed border-yellow-500 rounded-lg p-4">
-        <Text variant="strong" size="sm" className="block text-yellow-500">
-          Pin one address
-        </Text>
+      <div className="bg-surface-1 rounded-lg border border-default p-4">
+        <h2 className="text-subtitle mb-1">Pin one address</h2>
         <Text variant="subtle" size="xs" className="block mb-3">
           Overrides the everyone rule for a single member. Leave the name empty
           to give them no .q at all — that is your control.
@@ -310,7 +308,7 @@ export const FakeQns: React.FC = () => {
           from mobile's — mobile's member list cannot show a .q at all, this one
           can but only for people who have posted. Writing mobile's caveat here
           would send someone hunting the wrong thing. */}
-      <Text size="xs" className="text-yellow-500">
+      <Text variant="subtle" size="sm" className="block">
         The member sidebar only shows a .q for members who have posted in the
         open channel — it cheap-merges from the message senders and never
         fetches the full roster. A silent lurker showing no .q there is expected,
