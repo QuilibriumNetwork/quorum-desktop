@@ -37,7 +37,11 @@
   /* text */
   --color-text-strong: #3b3b3b;
   --color-text-main: 54 54 54;
-  --color-text-subtle: #818181;
+  /* Darkened from #818181, which rendered at 3.37-3.90:1 and failed WCAG AA.
+     This clears 4.5:1 on every light surface it lands on (5.49 on surface-00,
+     5.09 on surface-1, 4.75 on surface-2). The dark theme's #bfb5c8 already
+     passed at 7.55-9.35 and is deliberately left alone. */
+  --color-text-subtle: #696969;
   --color-text-muted: #b6b6b6;
   --color-text-danger: rgb(var(--danger));
   --color-text-warning: rgb(var(--warning));

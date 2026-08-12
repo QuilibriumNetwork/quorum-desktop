@@ -24,7 +24,7 @@
   font-weight: $font-bold;
   line-height: $text-2xl-lh;
   letter-spacing: $tracking-wide;
-  color: rgb(var(--color-text-strong));
+  color: var(--color-text-strong);
 }
 
 // Tab titles in complex modals (e.g. "Privacy/Security", "Account Settings")
@@ -70,7 +70,7 @@
   font-size: $text-sm-responsive; // 16px mobile -> 14px desktop
   font-weight: $font-normal;
   line-height: $text-sm-responsive-lh;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
 }
 
 // Interactive element labels (bright, prominent)
@@ -87,7 +87,7 @@
   font-size: $text-xs-responsive; // 14px mobile -> 12px desktop
   font-weight: $font-normal;
   line-height: $text-xs-responsive-lh;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
 }
 
 // Always-small text (no mobile size bump)
@@ -95,5 +95,5 @@
   font-size: $text-xs; // Always 12px
   font-weight: $font-normal;
   line-height: $text-xs-lh;
-  color: rgb(var(--color-text-subtle));
+  color: var(--color-text-subtle);
 }
