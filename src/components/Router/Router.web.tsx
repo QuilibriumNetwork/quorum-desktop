@@ -72,10 +72,6 @@ const ErrorStates = lazyDevImport(
   () => import('@/dev/error-states'),
   'ErrorStates'
 );
-const TypographyCompare = lazyDevImport(
-  () => import('@/dev/typography-compare'),
-  'TypographyCompare'
-);
 const DevPageLoading = lazyDevImport(
   () => import('@/dev/shell'),
   'DevPageLoading'
@@ -363,16 +359,6 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={devFallback('Error States')}>
               <ErrorStates />
-            </Suspense>
-          }
-        />
-      )}
-      {process.env.NODE_ENV === 'development' && TypographyCompare && (
-        <Route
-          path="/dev/typography-compare"
-          element={
-            <Suspense fallback={devFallback('Typography Compare')}>
-              <TypographyCompare />
             </Suspense>
           }
         />

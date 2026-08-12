@@ -1,1 +1,0 @@
-export { TypographyCompare } from './TypographyCompare';

@@ -148,9 +148,9 @@
 .message-edit-container {
   margin-top: $s-2;
   padding: $s-3;
-  background-color: rgb(var(--surface-2));
+  background-color: var(--surface-2);
   border-radius: $rounded-md;
-  border: 1px solid rgb(var(--surface-4));
+  border: 1px solid var(--surface-4);
 }
 
 .message-edit-textarea {
@@ -201,39 +201,11 @@
   margin-top: $s-2;
 }
 
-.message-edit-cancel-button,
-.message-edit-save-button {
-  padding: $s-1 $s-3;
-  border-radius: $rounded-sm;
-  border: none;
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all $duration-200 ease;
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-.message-edit-cancel-button {
-  background-color: rgb(var(--surface-3));
-  color: rgb(var(--text-main));
-
-  &:hover:not(:disabled) {
-    background-color: rgb(var(--surface-4));
-  }
-}
-
-.message-edit-save-button {
-  background-color: rgb(var(--primary));
-  color: rgb(var(--text-on-primary));
-
-  &:hover:not(:disabled) {
-    background-color: rgb(var(--primary-hover));
-  }
-}
+/* `.message-edit-cancel-button` / `.message-edit-save-button` were removed here:
+   no `.tsx` ever rendered them, and their colours pointed at `--primary`,
+   `--text-main` and `--text-on-primary`, which are defined nowhere in the repo.
+   The edit actions row renders "Esc to CANCEL - Enter to SAVE" as `.link`
+   spans instead, so there was never a button for these to style. */
 
 /* Username truncation now handled by centralized .truncate-user-name class in _base.scss */
 
