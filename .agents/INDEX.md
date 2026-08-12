@@ -295,6 +295,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
+- 🐛 [Four typography classes have no working colour](issues/.open/2026-08-12-typography-classes-have-no-working-colour.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -335,6 +336,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Composer drafts](issues/.open/2026-08-10-composer-drafts-design.md)
 - 📋 [Composer Drafts Implementation Plan](issues/.open/2026-08-10-composer-drafts-plan.md)
 - 📋 [Privacy level](issues/.open/2026-08-10-privacy-level-presets-design.md)
+- 📋 [Dev pages: one layout system](issues/.open/2026-08-11-dev-pages-design-system-design.md)
+- 📋 [Dev pages design system — implementation plan](issues/.open/2026-08-11-dev-pages-design-system-plan.md)
 
 ### Deferred
 
@@ -777,4 +780,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-11 21:14:32
+**Last Updated**: 2026-08-12 09:55:50

@@ -130,10 +130,14 @@ variables from a different naming scheme that was never adopted here.
 
 Only some of this is live:
 
-- **`.message-edit-container` (151, 153) is rendered** — `MessageEditTextarea.tsx:676`.
-  So the inline message-edit box currently has **no background colour and no
-  border colour**; the border falls back to `currentColor`. This is a real
-  user-visible defect, not just a latent one.
+- **`.message-edit-container` (151, 153) is rendered** — `MessageEditTextarea.tsx:676`,
+  with no other class, so nothing else supplies a background. The inline
+  message-edit box currently has **no background and no border at all**.
+  Note the border is worse than the background: `background-color` is a
+  longhand, so only the colour is lost, but `border: 1px solid rgb(var(--surface-4))`
+  is a *shorthand* — one invalid component invalidates the whole declaration, so
+  the width and style go too and `border-style` stays at its initial `none`.
+  This is a real user-visible defect, not just a latent one.
 - **`.message-edit-cancel-button` / `.message-edit-save-button` (220-234) are dead
   CSS** — no consumer in any `.tsx`. `MessageEditTextarea.tsx:735` renders
   `.message-edit-actions`, but never the two button classes. Their broken

@@ -16,6 +16,20 @@ related:
 Executes [the design](2026-08-11-dev-pages-design-system-design.md). Branch:
 `dev-pages-design-overhaul`.
 
+## Status
+
+**All nine slices complete and verified, 2026-08-12. Pending merge.** Ten
+commits on the branch, one per slice plus two the operator asked for mid-flight
+(the playground rework and the Component Audit deprecation notice).
+
+Two findings were spun out rather than absorbed:
+
+- `.open/2026-08-12-typography-classes-have-no-working-colour.md` — four
+  semantic typography classes set a colour the browser silently drops. Affects
+  production app-wide, so it was filed rather than fixed here.
+- The `Text` primitive's removal from `src/dev/` closed the last exception to a
+  rule the repo already had; the primitives guide has been corrected to match.
+
 Nine slices. Each one ends in something observable in the browser, so it can be
 checked by using the pages rather than by reading the diff. Slices are ordered
 so the biggest irritation goes first and each is independently shippable — if
@@ -140,7 +154,12 @@ slice at the end.
 
 ---
 
-## Slice 3 — The shell exists, and three pages prove it
+## Slice 3 — The shell exists, and three pages prove it ✅ done 2026-08-12
+
+All three pilots measured identical: titleTop 69, 24px h1 (later 30px, slice 4),
+content column 1024. DB Inspector's narrowing from `6xl` to `5xl` did not crowd
+its two-column layout.
+
 
 **Observable outcome:** DM Doctor, Identity Coverage and DB Inspector have
 identical header geometry and identical content width. Put their screenshots
@@ -166,7 +185,13 @@ does not crowd.
 
 ---
 
-## Slice 4 — Every remaining page adopts the shell
+## Slice 4 — Every remaining page adopts the shell ✅ done 2026-08-12
+
+All eleven pages measured at titleTop 69, a 30px h1, four width tiers
+(768/1024/1280/full) and no horizontal scroll — the risk flagged for the Audit
+table. Playground was initially left on its own frame, then folded in fully once
+the operator asked for the sticky sub-header to go (see below).
+
 
 **Observable outcome:** all eleven dev pages share one header and one of four
 named widths. Clicking through the whole nav feels like one product.
@@ -191,7 +216,15 @@ checking or they overlap.
 
 ---
 
-## Slice 5 — Home becomes a grid
+## Slice 5 — Home becomes a grid ✅ done 2026-08-12
+
+Measured docH 900 at 1440x900, from a 1597px single column. Two extras the
+operator caught: card titles went to 20px, and descriptions were rendering
+accent blue. That second one was a regression from slice 1 (the card became an
+`<a>`, and `Text variant="main"` emits no colour class so it inherited the link
+colour) compounded by a real stylesheet bug — filed as
+`.open/2026-08-12-typography-classes-have-no-working-colour.md`.
+
 
 **Observable outcome:** all ten tool cards visible at 1440x900 without
 scrolling. Two columns on a medium window, one on narrow.
@@ -204,7 +237,11 @@ scrolling. Two columns on a medium window, one on narrow.
 
 ---
 
-## Slice 6 — Fake QNS looks like the rest of the app
+## Slice 6 — Fake QNS looks like the rest of the app ✅ done 2026-08-12
+
+No `yellow-500` and no `border-dashed` remain, and the page highlights itself in
+the nav.
+
 
 **Observable outcome:** Fake QNS uses the same background, borders, text colours
 and card treatment as every other dev page. No amber, no dashed borders, not
@@ -223,7 +260,11 @@ not cosmetics.
 
 ---
 
-## Slice 7 — Routes line up
+## Slice 7 — Routes line up ✅ done 2026-08-12
+
+`/dev/playground` loads; `/dev/dependencies` returns 404. `App.tsx` lost its
+now-redundant `/playground` branch.
+
 
 **Observable outcome:** `/dev/playground` loads the playground.
 `/dev/dependencies` is gone rather than silently serving a copy of the Audit
@@ -246,7 +287,21 @@ dev-only route with no external consumers, so a stale bookmark landing on
 
 ---
 
-## Slice 8 — Retire the `Text` primitive, and small text becomes readable
+## Slice 8 — Retire the `Text` primitive, and small text becomes readable ✅ done 2026-08-12
+
+Shipped as two commits, deliberately: a size-preserving conversion first (so any
+visual diff is only the colour becoming explicit), then the readability bump.
+`grep -rn "<Text" src/dev` returns 0, from 154 uses across 11 files.
+
+The plan said not to batch this as a regex. In practice a converter that
+decomposed `variant`/`size`/`weight`/`as` into utilities handled 151 of 154
+mechanically and *refused* the 3 with a dynamic `variant`, which were done by
+hand. The judgment the plan was protecting is real, but it lives in the
+readability pass, not the conversion.
+
+text-xs counts, before -> after: DM Doctor 7 -> 0, Identity Coverage 6 -> 0,
+Fake QNS 9 -> 1; DB Inspector 24, Issues 1214, Audit 1016 all unchanged.
+
 
 **Observable outcome:** explanatory paragraphs on the dev pages are comfortably
 readable at 14px. Badges, pills and table headers are unchanged. Nothing looks
@@ -289,7 +344,15 @@ nothing checked.
 
 ---
 
-## Slice 9 — Docs match reality
+## Slice 9 — Docs match reality ✅ done 2026-08-12
+
+The Dependency Map section is gone, routes corrected, and `shell/` documented as
+the contract for new tools with the two rules that caused the worst bugs here
+(use `<Link>`, never `<a href>`; never the `Text` primitive). Also swept four
+stale `/playground` references out of `.agents/docs/`, and removed the
+"exception is dev/playground files" carve-out from the primitives guide, which
+is no longer true.
+
 
 **Observable outcome:** `src/dev/README.md` describes the tools that exist, at
 the URLs they actually live at.
