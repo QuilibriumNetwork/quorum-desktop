@@ -25,8 +25,8 @@
 import React, { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Text, Flex, Button } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { Flex, Button } from '../../components/primitives';
+import { DevPage, DevPageHeader } from '../shell';
 import {
   clearFakeQns,
   deriveFakeQName,
@@ -63,12 +63,12 @@ const Toggle: React.FC<ToggleProps> = ({
       className="mt-1 cursor-pointer"
     />
     <span>
-      <Text variant="strong" size="sm" className="block">
+      <span className="text-sm text-strong block">
         {label}
-      </Text>
-      <Text variant="subtle" size="xs" className="block">
+      </span>
+      <span className="text-sm text-subtle block max-w-3xl">
         {hint}
-      </Text>
+      </span>
     </span>
   </label>
 );
@@ -151,17 +151,19 @@ export const FakeQns: React.FC = () => {
   const entries = Object.entries(state.entries);
 
   return (
-    <Flex direction="column" className="h-full overflow-auto p-6 gap-4">
-      <DevNavMenu />
+    <DevPage>
+        <DevPageHeader
+          icon="at"
+          title="Fake QNS"
+          subtitle="See where a .q name renders without owning one. Dev builds only. Read-side overlay: nothing is written, signed, or published."
+        />
 
-      <div className="border border-dashed border-yellow-500 rounded-lg p-4">
-        <Text variant="strong" size="lg" className="block text-yellow-500">
-          {'</>'} Fake QNS (dev builds only)
-        </Text>
-        <Text variant="subtle" size="xs" className="block mb-4">
-          See where a .q name renders without owning one. Read-side overlay
-          only: nothing is written, signed, or published.
-        </Text>
+      {/* MEASURE is capped inside full-width cards rather than by narrowing the
+          cards: the page keeps the one width every dev page has, but no line of
+          prose runs the full 1280px, and no input stretches away from the button
+          that acts on it. */}
+      <div className="space-y-4">
+      <div className="bg-surface-1 rounded-lg border border-default p-4">
 
         <Flex direction="column" className="gap-3">
           <Toggle
@@ -180,16 +182,16 @@ export const FakeQns: React.FC = () => {
             body is the MENTIONED person, which is you). The blanket switch
             below is for the few that render somebody else. */}
         <div className="mt-4 pt-4 border-t border-neutral-700">
-          <Text variant="strong" size="sm" className="block">
+          <span className="text-sm text-strong block">
             1 · Give MYSELF a .q
-          </Text>
-          <Text variant="subtle" size="xs" className="block mb-2">
+          </span>
+          <span className="text-sm text-subtle block mb-2 max-w-3xl">
             Start here. Pins this name for your own address
             {ownAddress ? '' : ' (no address yet — sign in first)'}. Desktop
             never publishes a primary username, so unlike mobile this is a
             read-side overlay with no real profile write.
-          </Text>
-          <Flex className="gap-2 items-center">
+          </span>
+          <Flex className="gap-2 items-center max-w-xl">
             <input
               className="flex-1 px-2 py-1 rounded border border-neutral-600 bg-transparent text-sm"
               placeholder="e.g. qatest"
@@ -232,15 +234,13 @@ export const FakeQns: React.FC = () => {
           named, there is nothing to compare against. Pin a member to a known
           name, or to no name at all, and the difference tells you which tier
           actually won. */}
-      <div className="border border-dashed border-yellow-500 rounded-lg p-4">
-        <Text variant="strong" size="sm" className="block text-yellow-500">
-          Pin one address
-        </Text>
-        <Text variant="subtle" size="xs" className="block mb-3">
+      <div className="bg-surface-1 rounded-lg border border-default p-4">
+        <h2 className="text-subtitle mb-1">Pin one address</h2>
+        <span className="text-sm text-subtle block mb-3 max-w-3xl">
           Overrides the everyone rule for a single member. Leave the name empty
           to give them no .q at all — that is your control.
-        </Text>
-        <Flex className="gap-2 items-center flex-wrap">
+        </span>
+        <Flex className="gap-2 items-center flex-wrap max-w-3xl">
           <input
             className="flex-1 min-w-64 px-2 py-1 rounded border border-neutral-600 bg-transparent text-sm font-mono"
             placeholder="Qm… address"
@@ -261,30 +261,33 @@ export const FakeQns: React.FC = () => {
         </Flex>
 
         {entries.length > 0 && (
-          <Flex direction="column" className="gap-1 mt-3">
+          <div className="mt-3 max-w-3xl divide-y divide-default border-t border-default">
             {entries.map(([addr, entry]) => (
-              <Flex key={addr} className="gap-2 items-center">
-                <Text size="xs" className="font-mono flex-1 truncate">
+              <div
+                key={addr}
+                className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-center gap-3 py-2"
+              >
+                <span className="text-xs font-mono truncate" title={addr}>
                   {addr}
-                </Text>
-                <Text size="xs" variant="subtle">
+                </span>
+                <span className="text-sm text-subtle whitespace-nowrap">
                   {entry.private
                     ? 'private'
                     : entry.primaryUsername
                       ? `${entry.primaryUsername}.q`
                       : 'no .q (control)'}
-                </Text>
+                </span>
                 <Button size="sm" onClick={() => handleUnpin(addr)}>
                   Unpin
                 </Button>
-              </Flex>
+              </div>
             ))}
-          </Flex>
+          </div>
         )}
       </div>
 
       <Flex className="gap-3 items-center">
-        <Text size="xs" variant="subtle" className="flex-1">
+        <span className="text-xs text-subtle flex-1">
           {state.enabled
             ? state.allProfilesPrivate
               ? 'all profiles private'
@@ -297,28 +300,29 @@ export const FakeQns: React.FC = () => {
           state.entries[ownAddress.toLowerCase()]?.primaryUsername
             ? ` · me: ${state.entries[ownAddress.toLowerCase()]!.primaryUsername}.q`
             : ' · me: none'}
-        </Text>
+        </span>
         <Button size="sm" onClick={handleReset}>
           Reset
         </Button>
       </Flex>
 
-      <Text size="xs" variant="subtle">
+      <span className="text-sm text-subtle block max-w-3xl">
         Reopen the space after a change — an open screen holds an
         already-resolved member map. Keep these switches matched with mobile&apos;s
         panel when comparing the two clients, or you are comparing different
         inputs.
-      </Text>
+      </span>
       {/* Desktop's own limitation, stated where it will be read. It differs
           from mobile's — mobile's member list cannot show a .q at all, this one
           can but only for people who have posted. Writing mobile's caveat here
           would send someone hunting the wrong thing. */}
-      <Text size="xs" className="text-yellow-500">
+      <span className="text-sm text-subtle block">
         The member sidebar only shows a .q for members who have posted in the
         open channel — it cheap-merges from the message senders and never
         fetches the full roster. A silent lurker showing no .q there is expected,
         not a regression.
-      </Text>
-    </Flex>
+      </span>
+      </div>
+    </DevPage>
   );
 };

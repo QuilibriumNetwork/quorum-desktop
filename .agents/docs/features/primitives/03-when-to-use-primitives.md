@@ -203,7 +203,7 @@ Ask these questions:
 
 ### When NOT to Use Text Primitive on Web
 
-**Don't use Text on web. It has been removed from all production web code.** The only exception is dev/playground files.
+**Don't use Text on web. It has been removed from all production web code, and as of 2026-08-12 from `src/dev/` too** — there is no longer any exception. `grep -rn '<Text' src/dev` returns nothing, and should stay that way.
 
 **On web, always use CSS classes:**
 - All web-only components (`.web.tsx`)

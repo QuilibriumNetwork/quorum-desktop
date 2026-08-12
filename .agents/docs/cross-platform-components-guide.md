@@ -855,7 +855,7 @@ export class ChannelErrorBoundary extends React.Component {
 **Web Testing (Primary):**
 
 1. Run `yarn dev` to start development server
-2. Navigate to `/playground` for primitive testing
+2. Navigate to `/dev/playground` for primitive testing
 3. Test components with different props, themes, and screen sizes
 4. Verify responsive behavior and theme switching
 

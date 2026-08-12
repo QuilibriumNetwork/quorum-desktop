@@ -72,8 +72,11 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
       {/* Header */}
       <Flex justify="between">
         <Flex direction="column" gap="xs">
-          <span className="text-3xl font-bold">{title}</span>
-          <span className="text-subtle">{description}</span>
+          {/* 24px: one step under the 30px page title, so sections still read
+              as major breaks in a long page without out-sizing the h1 the way
+              the old `text-3xl` did. */}
+          <h2 className="text-2xl font-bold">{title}</h2>
+          <span className="text-label">{description}</span>
         </Flex>
 
         <Flex gap="xs">

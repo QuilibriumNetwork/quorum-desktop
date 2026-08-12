@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Text, Icon } from '../../../components/primitives';
+import { Flex, Icon } from '../../../components/primitives';
 import { type MarkdownFile } from '../hooks/useMarkdownFiles';
 import {
   asList,
@@ -35,9 +35,9 @@ const Entry: React.FC<{ label: string; children: React.ReactNode }> = ({
   children,
 }) => (
   <div className="flex gap-2">
-    <Text variant="subtle" size="sm" className="shrink-0">
+    <span className="text-sm text-subtle shrink-0">
       {label}:
-    </Text>
+    </span>
     {children}
   </div>
 );
@@ -60,17 +60,17 @@ export const FrontmatterPanel: React.FC<{ file: MarkdownFile }> = ({ file }) => 
         <div className="bg-danger/10 border border-danger/30 rounded-md p-3 mb-3">
           <Flex gap="sm" align="center" className="mb-1">
             <Icon name="warning" size="sm" className="text-danger" />
-            <Text variant="strong" size="sm" className="text-danger">
+            <span className="text-sm text-strong text-danger">
               Frontmatter could not be parsed
-            </Text>
+            </span>
           </Flex>
-          <Text variant="subtle" size="sm">
+          <span className="text-sm text-subtle">
             {file.parseError}
-          </Text>
-          <Text variant="muted" size="sm" className="mt-1">
+          </span>
+          <span className="text-sm text-muted mt-1">
             Everything below is missing because of it. Fix the YAML at the top of
             the file, then re-run <code>yarn scan-docs</code>.
-          </Text>
+          </span>
         </div>
       )}
 
@@ -78,24 +78,19 @@ export const FrontmatterPanel: React.FC<{ file: MarkdownFile }> = ({ file }) => 
         {/* State comes from the folder, not from `status:` — see deriveState. */}
         {file.status && (
           <Entry label="State">
-            <Text
-              variant="main"
-              size="sm"
-              weight="medium"
-              className="capitalize"
-            >
+            <span className="text-sm font-medium text-main capitalize">
               {file.status.replace(/-/g, ' ')}
-            </Text>
+            </span>
           </Entry>
         )}
 
         {primary.map((field) => (
           <Entry key={field.key} label={field.label}>
-            <Text variant="main" size="sm" weight="medium">
+            <span className="text-sm font-medium text-main">
               {DATE_FIELDS.has(field.key)
                 ? formatDate(formatFieldValue(field.value))
                 : formatFieldValue(field.value)}
-            </Text>
+            </span>
           </Entry>
         ))}
       </div>
@@ -104,19 +99,14 @@ export const FrontmatterPanel: React.FC<{ file: MarkdownFile }> = ({ file }) => 
         <div className="mt-3 pt-3 border-t border-default space-y-2">
           {relations.map((field) => (
             <div key={field.key} className="flex flex-wrap gap-2 items-baseline">
-              <Text variant="subtle" size="sm" className="shrink-0">
+              <span className="text-sm text-subtle shrink-0">
                 {field.label}:
-              </Text>
+              </span>
               <div className="flex flex-wrap gap-1">
                 {asList(field.value).map((entry, index) => (
-                  <Text
-                    key={`${entry}-${index}`}
-                    variant="main"
-                    size="sm"
-                    className="bg-surface-3 px-1.5 py-0.5 rounded font-mono"
-                  >
+                  <span className="text-sm text-main bg-surface-3 px-1.5 py-0.5 rounded font-mono" key={`${entry}-${index}`}>
                     {entry}
-                  </Text>
+                  </span>
                 ))}
               </div>
             </div>
@@ -126,17 +116,17 @@ export const FrontmatterPanel: React.FC<{ file: MarkdownFile }> = ({ file }) => 
 
       {other.length > 0 && (
         <div className="mt-3 pt-3 border-t border-default space-y-2">
-          <Text variant="muted" size="sm" weight="medium">
+          <span className="text-sm font-medium text-muted">
             Other fields
-          </Text>
+          </span>
           {other.map((field) => (
             <div key={field.key} className="flex flex-wrap gap-2 items-baseline">
-              <Text variant="subtle" size="sm" className="shrink-0">
+              <span className="text-sm text-subtle shrink-0">
                 {field.label}:
-              </Text>
-              <Text variant="main" size="sm">
+              </span>
+              <span className="text-sm text-main">
                 {formatFieldValue(field.value)}
-              </Text>
+              </span>
             </div>
           ))}
         </div>

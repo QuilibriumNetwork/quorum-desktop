@@ -9,7 +9,7 @@
 
 import React from 'react';
 import { Button, Flex, Icon } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import { RouteBoundary } from '../../components/Router/RouteBoundary';
 import { AppErrorScreen } from '../../components/AppErrorScreen';
 import type { RouteErrorScope } from '../../components/RouteErrorFallback';
@@ -113,15 +113,12 @@ export const ErrorStates: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev/error-states" />
-      <div className="mx-auto max-w-4xl p-6">
-        <h1 className="text-strong mb-2 text-2xl">Error States</h1>
-        <p className="text-subtle mb-8">
-          What a user sees when a view fails to load. Every panel below holds a
-          real error boundary wrapping a child that really throws, so retry and
-          recovery behave exactly as they do in the app.
-        </p>
+    <DevPage>
+        <DevPageHeader
+          icon="skull"
+          title="Error States"
+          subtitle="What a user sees when a view fails to load. Every panel below holds a real error boundary wrapping a child that really throws, so retry and recovery behave exactly as they do in the app."
+        />
 
         <BoundaryDemo
           scope="channel"
@@ -161,7 +158,6 @@ export const ErrorStates: React.FC = () => {
           usually local. The status link survives as a second guess, not a
           diagnosis.
         </p>
-      </div>
-    </div>
+    </DevPage>
   );
 };

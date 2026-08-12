@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Text, Flex, Button, Icon, Input, Select } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { Flex, Button, Icon, Input, Select } from '../../components/primitives';
+import { DevPage, DevPageHeader, DevStat } from '../shell';
 import {
   scanSequence,
   findGhostConversations,
@@ -171,34 +171,26 @@ export const DmDoctor: React.FC = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev/dm-doctor" sticky />
-
-      <div className="p-6 mx-auto max-w-5xl">
-        <Flex gap="sm" align="center" className="mb-2">
-          <Icon name="bug" size="xl" className="text-accent" />
-          <div>
-            <Text as="h1" variant="strong" size="2xl" weight="bold">
-              DM Doctor
-            </Text>
-            <Text variant="subtle" size="sm">
-              Resident diagnostic for the DM-loss / misfiling investigation. Own
-              address: {ownAddress ? truncateAddress(ownAddress) : 'unknown (not signed in)'}
-            </Text>
-          </div>
-        </Flex>
+    <DevPage>
+        <DevPageHeader
+          icon="bug"
+          title="DM Doctor"
+          subtitle={`Resident diagnostic for the DM-loss / misfiling investigation. Own address: ${
+            ownAddress ? truncateAddress(ownAddress) : 'unknown (not signed in)'
+          }`}
+        />
 
         {copyStatus && (
           <div className="fixed top-4 right-4 bg-surface-2 border border-accent px-4 py-2 rounded-lg shadow-lg z-50">
-            <Text variant="main" size="sm">{copyStatus}</Text>
+            <span className="text-sm text-main">{copyStatus}</span>
           </div>
         )}
 
         {/* Controls */}
         <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
-          <Text variant="strong" size="lg" className="mb-3">
+          <span className="text-lg text-strong mb-3">
             Sequence scan
-          </Text>
+          </span>
           <Flex gap="md" align="end" className="flex-wrap">
             <div className="w-32">
               <Input
@@ -218,9 +210,9 @@ export const DmDoctor: React.FC = () => {
               />
             </div>
             <div className="w-44">
-              <Text variant="subtle" size="xs" className="mb-1 block">
+              <span className="text-sm text-subtle mb-1 block">
                 Window
-              </Text>
+              </span>
               <Select
                 value={windowOption}
                 options={WINDOW_OPTIONS}
@@ -246,18 +238,18 @@ export const DmDoctor: React.FC = () => {
               </Button>
             )}
           </Flex>
-          <Text variant="subtle" size="xs" className="mt-2">
+          <span className="text-sm text-subtle mt-2">
             Scans the WHOLE messages store for "{'{prefix} N'}" (case-insensitive),
             same matching as .agents/tools/dm-debug/07-receiver-probe.js. Prefix
             letters get reused across test rounds, so matches outside the
             selected window are excluded from the counts below but never hidden
             from the report.
-          </Text>
+          </span>
         </div>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mt-6">
-            <Text variant="strong" className="text-red-500">{error}</Text>
+            <span className="text-strong text-red-500">{error}</span>
           </div>
         )}
 
@@ -265,58 +257,54 @@ export const DmDoctor: React.FC = () => {
         {scanResult && (
           <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
             <Flex justify="between" align="center" className="mb-4">
-              <Text variant="strong" size="lg">
+              <span className="text-lg text-strong">
                 Results — prefix "{scanPrefix}" ({SCAN_WINDOW_LABELS[scanResult.window.option]})
-              </Text>
-              <Text
-                variant="strong"
-                size="xl"
-                className={scanResult.missing.length ? 'text-red-500' : 'text-green-500'}
-              >
+              </span>
+              <span className={`text-xl text-strong ${scanResult.missing.length ? 'text-red-500' : 'text-green-500'}`}>
                 {scanResult.landed}/{scanExpected} landed
-              </Text>
+              </span>
             </Flex>
 
             {scanResult.window.matchesOutsideWindow > 0 && (
               <div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-2 mb-4">
-                <Text variant="strong" size="sm" className="text-yellow-500">
+                <span className="text-sm text-strong text-yellow-500">
                   {scanResult.window.matchesOutsideWindow} match(es) for this prefix fall OUTSIDE the
                   selected window (oldest {formatIsoOrNa(scanResult.window.outsideOldestMs)}, newest{' '}
                   {formatIsoOrNa(scanResult.window.outsideNewestMs)}) — a previous run may have used this
                   same letter. Not counted in landed/missing above; widen the window to see them.
-                </Text>
+                </span>
               </div>
             )}
 
             {scanResult.window.spanSuspicious && (
               <div className="bg-yellow-500/10 border border-yellow-500/30 rounded p-2 mb-4">
-                <Text variant="strong" size="sm" className="text-yellow-500">
+                <span className="text-sm text-strong text-yellow-500">
                   SPAN-SUSPICIOUS: in-window hits span {Math.round(scanResult.window.spanSeconds ?? 0)}s
                   (over 30 minutes) — the window likely caught more than one run. Narrow the window.
-                </Text>
+                </span>
               </div>
             )}
 
             <Flex gap="lg" className="flex-wrap mb-4">
               <div>
-                <Text variant="subtle" size="xs">Missing</Text>
-                <Text variant={scanResult.missing.length ? 'strong' : 'main'} size="sm" className={scanResult.missing.length ? 'text-red-500' : ''}>
+                <span className="text-sm text-subtle">Missing</span>
+                <span className={`text-sm ${scanResult.missing.length ? 'text-red-500' : 'text-main'}`}>
                   {scanResult.missing.length ? scanResult.missing.join(', ') : 'none'}
-                </Text>
+                </span>
               </div>
               <div>
-                <Text variant="subtle" size="xs">Duplicates</Text>
-                <Text variant={scanResult.duplicates ? 'strong' : 'main'} size="sm" className={scanResult.duplicates ? 'text-yellow-500' : ''}>
+                <span className="text-sm text-subtle">Duplicates</span>
+                <span className={`text-sm ${scanResult.duplicates ? 'text-yellow-500' : 'text-main'}`}>
                   {scanResult.duplicates}
-                </Text>
+                </span>
               </div>
               <div>
-                <Text variant="subtle" size="xs">Rows scanned across</Text>
-                <Text variant="main" size="sm">{distribution.length} conversation(s)</Text>
+                <span className="text-sm text-subtle">Rows scanned across</span>
+                <span className="text-sm text-main">{distribution.length} conversation(s)</span>
               </div>
             </Flex>
 
-            <Text variant="strong" size="sm" className="mb-2">Per-conversation distribution</Text>
+            <span className="text-sm text-strong mb-2">Per-conversation distribution</span>
             <div className="overflow-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -363,7 +351,7 @@ export const DmDoctor: React.FC = () => {
           <Flex justify="between" align="center" className="mb-3">
             <Flex gap="sm" align="center">
               <Icon name="clock" size="md" className="text-accent" />
-              <Text variant="strong" size="lg">Session scan history ({history.length})</Text>
+              <span className="text-lg text-strong">Session scan history ({history.length})</span>
             </Flex>
             {history.length > 0 && (
               <Button variant="ghost" size="sm" onClick={clearHistory}>
@@ -373,10 +361,10 @@ export const DmDoctor: React.FC = () => {
             )}
           </Flex>
           {history.length === 0 ? (
-            <Text variant="subtle" size="sm">
+            <span className="text-sm text-subtle">
               No scans run yet this session. Every scan you run is kept here (and in "Copy full
               report") until you clear it or reload the page.
-            </Text>
+            </span>
           ) : (
             <div className="overflow-auto">
               <table className="w-full text-sm">
@@ -414,34 +402,33 @@ export const DmDoctor: React.FC = () => {
           <Flex justify="between" align="center" className="mb-3">
             <Flex gap="sm" align="center">
               <Icon name="warning" size="md" className="text-yellow-500" />
-              <Text variant="strong" size="lg">Warning counters (since app start)</Text>
+              <span className="text-lg text-strong">Warning counters (since app start)</span>
             </Flex>
             <Button variant="ghost" size="sm" onClick={() => setWarningState(getDmWarningState())}>
               <Icon name="refresh" size="sm" />
             </Button>
           </Flex>
           {warningState?.installedAt && (
-            <Text variant="subtle" size="xs" className="mb-3">
+            <span className="text-sm text-subtle mb-3">
               Installed at {warningState.installedAt}
-            </Text>
+            </span>
           )}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {(Object.keys(WARNING_LABELS) as DmWarningKey[]).map((key) => (
-              <div key={key} className="bg-surface-2 rounded p-3">
-                <Text variant="subtle" size="xs">{WARNING_LABELS[key]}</Text>
-                <Text
-                  variant="strong"
-                  size="2xl"
-                  className={warningState && warningState.counts[key] > 0 ? 'text-red-500' : ''}
-                >
-                  {warningState?.counts[key] ?? 0}
-                </Text>
-                {warningState && warningState.lastHits[key].length > 0 && (
-                  <Text variant="subtle" size="xs" className="mt-1 block">
-                    last: {warningState.lastHits[key][0]}
-                  </Text>
-                )}
-              </div>
+              <DevStat
+                key={key}
+                className="bg-surface-2 rounded p-3"
+                label={WARNING_LABELS[key]}
+                value={warningState?.counts[key] ?? 0}
+                tone={
+                  warningState && warningState.counts[key] > 0 ? 'bad' : 'neutral'
+                }
+                hint={
+                  warningState && warningState.lastHits[key].length > 0
+                    ? `last: ${warningState.lastHits[key][0]}`
+                    : undefined
+                }
+              />
             ))}
           </div>
         </div>
@@ -450,12 +437,12 @@ export const DmDoctor: React.FC = () => {
         <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
           <Flex gap="sm" align="center" className="mb-3">
             <Icon name="ghost" size="md" className="text-accent" />
-            <Text variant="strong" size="lg">Ghost / duplicate conversation rows (flagged summary)</Text>
+            <span className="text-lg text-strong">Ghost / duplicate conversation rows (flagged summary)</span>
           </Flex>
           {ghosts === null ? (
-            <Text variant="subtle" size="sm">Run a scan to check for ghost conversations.</Text>
+            <span className="text-sm text-subtle">Run a scan to check for ghost conversations.</span>
           ) : ghosts.length === 0 ? (
-            <Text variant="subtle" size="sm">None found.</Text>
+            <span className="text-sm text-subtle">None found.</span>
           ) : (
             <div className="overflow-auto">
               <table className="w-full text-sm">
@@ -492,20 +479,20 @@ export const DmDoctor: React.FC = () => {
         <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6 mb-8">
           <Flex gap="sm" align="center" className="mb-1">
             <Icon name="clipboard-list" size="md" className="text-accent" />
-            <Text variant="strong" size="lg">Direct conversations inventory (every row, unconditionally)</Text>
+            <span className="text-lg text-strong">Direct conversations inventory (every row, unconditionally)</span>
           </Flex>
-          <Text variant="subtle" size="xs" className="mb-3">
+          <span className="text-sm text-subtle mb-3">
             The ghost card above only ever prints its own positives — a suspicious row it doesn't
             flag looks identical to a row it never saw. This lists every `type: 'direct'` row so you
             can judge for yourself, plus any messages-store keys with no matching conversation row.
-          </Text>
+          </span>
           {inventory === null ? (
-            <Text variant="subtle" size="sm">Run a scan to build the inventory.</Text>
+            <span className="text-sm text-subtle">Run a scan to build the inventory.</span>
           ) : (
             <>
-              <Text variant="subtle" size="xs" className="mb-2">
+              <span className="text-sm text-subtle mb-2">
                 total direct rows: {inventory.totalDirectRows}
-              </Text>
+              </span>
               <div className="overflow-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -553,7 +540,6 @@ export const DmDoctor: React.FC = () => {
             </>
           )}
         </div>
-      </div>
-    </div>
+    </DevPage>
   );
 };

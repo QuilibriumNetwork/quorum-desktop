@@ -105,8 +105,7 @@ const App = () => {
 
   // Check if we're on a dev route that doesn't need authentication
   const isDevRoute = process.env.NODE_ENV === 'development' &&
-    (window.location.pathname.startsWith('/playground') ||
-     window.location.pathname.startsWith('/dev'));
+    window.location.pathname.startsWith('/dev');
 
   return (
     <>

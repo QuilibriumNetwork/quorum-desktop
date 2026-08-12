@@ -24,7 +24,7 @@ This guide helps developers manage existing components and create new ones in ou
 
 - **Primitives Collection**: `@quilibrium/quorum-shared` — cross-platform UI building blocks (this repo's `src/components/primitives/` is a re-export barrel + SCSS, not the source)
 - **Theming System**: `@quilibrium/quorum-shared` — `useTheme`, `ThemeProvider`, and color tokens (previously `src/components/primitives/theme/colors.ts`, now in quorum-shared)
-- **Dev Playground**: Test primitives on web here (`/playground`); native testing happens in the `quorum-mobile` repo (Expo)
+- **Dev Playground**: Test primitives on web here (`/dev/playground`); native testing happens in the `quorum-mobile` repo (Expo)
 - **Platform Files**: `.web.tsx` for browser (here/shared), `.native.tsx` for React Native (in `quorum-mobile` or `quorum-shared`, NOT in `quorum-desktop/src/`)
 - **Mobile Testing**: in the **`quorum-mobile`** repo (Expo) — there is no `/mobile` workspace in this repo
 - **Components Audit**: `/src/dev` audit of all components (WIP) accessible via `/dev/audit` in frontend
@@ -292,7 +292,7 @@ From component-development-guide.md:
 ### Web Testing (Primary)
 
 1. Run `yarn dev`
-2. Navigate to `/playground` (web playground for primitives)
+2. Navigate to `/dev/playground` (web playground for primitives)
 3. Test your component with different props/states
 4. Verify responsive behavior and theme switching
 
@@ -513,7 +513,7 @@ import { Button } from '../primitives/Button';
 
 1. Check existing primitives first - don't reinvent
 2. Review [when-to-use-primitives.md](./features/primitives/03-when-to-use-primitives.md) for guidance
-3. Test with web playground (`/playground`) here, and for shared code coordinate native testing in `quorum-mobile`, before implementing in main app
+3. Test with web playground (`/dev/playground`) here, and for shared code coordinate native testing in `quorum-mobile`, before implementing in main app
 4. Follow existing patterns from similar components
 
 ## Best Practices Summary

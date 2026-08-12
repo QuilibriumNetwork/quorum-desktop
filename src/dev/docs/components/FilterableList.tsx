@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Input, Flex, Text, Icon } from '../../../components/primitives';
+import { Input, Flex, Icon } from '../../../components/primitives';
 import { type MarkdownFile, type MarkdownSection } from '../hooks/useMarkdownFiles';
 import type { IconName } from '../../../components/primitives';
 import {
@@ -234,9 +234,9 @@ export const FilterableList: React.FC<FilterableListProps> = ({
         <Flex direction="column" gap="md">
           {/* Search */}
           <div>
-            <Text variant="subtle" size="sm" weight="medium" className="mb-2">
+            <span className="text-sm font-medium text-subtle mb-2">
               Search
-            </Text>
+            </span>
             <Input
               type="text"
               placeholder={`Search ${noun}...`}
@@ -249,9 +249,9 @@ export const FilterableList: React.FC<FilterableListProps> = ({
           {filterOptions.map(({ spec, options }) =>
             options.length > 1 ? (
               <div key={spec.key}>
-                <Text variant="subtle" size="sm" weight="medium" className="mb-2">
+                <span className="text-sm font-medium text-subtle mb-2">
                   {spec.label}
-                </Text>
+                </span>
                 <Flex gap="xs" className="flex-wrap">
                   {options.map((option) => {
                     const isActive =
@@ -288,9 +288,9 @@ export const FilterableList: React.FC<FilterableListProps> = ({
           {/* Results count */}
           <div className="pt-2 border-t border-default">
             <Flex gap="sm" align="center" className="flex-wrap">
-              <Text variant="subtle" size="sm">
+              <span className="text-sm text-subtle">
                 Showing {filteredFiles.length} of {files.length} {noun}
-              </Text>
+              </span>
               {(activeCount > 0 || searchTerm) && (
                 <button
                   onClick={() => {
@@ -323,12 +323,12 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                 size="2xl"
                 className="text-muted mx-auto mb-4"
               />
-              <Text variant="subtle" size="lg">
+              <span className="text-lg text-subtle">
                 No {noun} found
-              </Text>
-              <Text variant="muted" size="sm">
+              </span>
+              <span className="text-sm text-muted">
                 Try adjusting your filters
-              </Text>
+              </span>
             </div>
           )}
         </div>
@@ -355,9 +355,9 @@ const FileRow: React.FC<{ file: MarkdownFile; basePath: string }> = ({
       className="block hover:text-accent transition-colors"
     >
       <Flex gap="sm" align="center" className="flex-wrap">
-        <Text variant="main" size="md">
+        <span className="text-base text-main">
           • {file.title}
-        </Text>
+        </span>
         {file.issueType && (
           <span
             className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getTypeStyle(
@@ -449,17 +449,12 @@ const IssueGroups: React.FC<{ files: MarkdownFile[]; basePath: string }> = ({
           <div className="mb-2">
             <Flex gap="xs" align="center">
               <Icon name="folder" size="md" className="text-accent" />
-              <Text
-                variant="main"
-                size="lg"
-                weight="semibold"
-                className="text-accent"
-              >
+              <span className="text-lg font-semibold text-main text-accent">
                 {capitalize(epic)}
-              </Text>
-              <Text variant="subtle" size="sm">
+              </span>
+              <span className="text-sm text-subtle">
                 ({epicFiles.length})
-              </Text>
+              </span>
             </Flex>
             <div className="h-px bg-border mt-1" />
           </div>
@@ -563,9 +558,9 @@ const FolderView: React.FC<{
     <div className="mb-2">
       <Flex gap="xs" align="center">
         <Icon name="folder" size="md" className="text-accent" />
-        <Text variant="main" size="lg" weight="semibold" className="text-accent">
+        <span className="text-lg font-semibold text-main text-accent">
           {capitalize(folder.name)}
-        </Text>
+        </span>
       </Flex>
       <div className="h-px bg-border mt-1" />
     </div>

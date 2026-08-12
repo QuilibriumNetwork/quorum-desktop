@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  Text,
-  Flex,
-  Button,
-  Spacer,
-  Icon,
-  type IconName,
-} from '../components/primitives';
-import { DevNavMenu } from './DevNavMenu';
+import { Link } from 'react-router';
+import { Icon, type IconName } from '../components/primitives';
+import { DevPage, DevPageHeader } from './shell';
 
 export const DevMainPage: React.FC = () => {
   const devTools: Array<{
@@ -40,7 +34,7 @@ export const DevMainPage: React.FC = () => {
       icon: 'flask',
       description:
         'Test and preview all primitive components with color palette',
-      path: '/playground',
+      path: '/dev/playground',
     },
     {
       name: 'Component Audit',
@@ -84,44 +78,36 @@ export const DevMainPage: React.FC = () => {
     },
   ];
 
-  const handleNavigate = (path: string) => {
-    window.location.href = path;
-  };
-
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev" />
-      <div className="p-6 mx-auto max-w-2xl">
-        <div className="text-center my-12">
-          <Flex justify="center" gap="sm" className="mb-4">
-            <Icon name="tools" size="2xl" className="text-strong" />
-            <Text as="h1" variant="strong" size="3xl" weight="bold">
-              Development Tools
-            </Text>
-          </Flex>
-        </div>
+    <DevPage>
+        <DevPageHeader
+          icon="tools"
+          title="Development Tools"
+          subtitle="Instruments and browsers for working on Quorum. Development builds only."
+        />
 
-        {/* Development Tools List */}
-        <div className="space-y-4 mb-8">
+        {/* A single column of ten cards ran to 1597px, so the last three were
+            always below the fold. `h-full` keeps a long description from making
+            one card taller than its row neighbours. */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
           {devTools.map((tool, index) => (
-            <div
+            <Link
               key={index}
-              onClick={() => handleNavigate(tool.path)}
-              className="bg-surface-1 hover:bg-surface-2 rounded-lg p-6 border border-default hover:border-accent/50 hover:shadow-lg transition-all cursor-pointer"
+              to={tool.path}
+              className="block h-full no-underline bg-surface-1 hover:bg-surface-2 rounded-lg p-5 border border-default hover:border-accent/50 hover:shadow-lg transition-all cursor-pointer"
             >
-              <Flex gap="sm" align="center" className="mb-2">
-                <Icon name={tool.icon} size="md" className="text-accent" />
-                <Text variant="strong" size="lg">
+              <div className="flex items-center gap-2 mb-2">
+                <Icon name={tool.icon} size="lg" className="text-accent" />
+                <span className="text-xl font-bold text-strong">
                   {tool.name}
-                </Text>
-              </Flex>
-              <Text variant="main" size="sm">
-                {tool.description}
-              </Text>
-            </div>
+                </span>
+              </div>
+              {/* Explicit colour: the card is an <a>, so anything without one
+                  inherits the link blue and the description reads as accent. */}
+              <p className="text-label text-subtle">{tool.description}</p>
+            </Link>
           ))}
         </div>
-      </div>
-    </div>
+    </DevPage>
   );
 };

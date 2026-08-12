@@ -38,10 +38,10 @@ without metadata until the YAML is fixed.
 ### 🎮 Primitives Playground
 
 **Path**: `PrimitivesPlayground.tsx`  
-**Access**: `/playground` route during development  
+**Access**: `/dev/playground` route during development  
 **Purpose**: Interactive testing environment for cross-platform UI primitives
 
-- Test all primitive components (Button, Input, Modal, Container, Flex, etc.)
+- Test all primitive components (Button, Input, Modal, Flex, etc.)
 - Complete color system showcase with CSS variables
 - Theme switching (light/dark) and accent color testing
 - Real-time prop testing and visual validation
@@ -57,17 +57,6 @@ without metadata until the YAML is fixed.
 - `audit.json` - Complete metadata for all 64 components
 - `update_audit.py` - Python script to regenerate audit data
 - Mobile readiness tracking and progress statistics
-
-### 🗺️ Dependency Map
-
-**Path**: `components-audit/DependencyMapViewer.tsx`
-**Access**: `/dev/dependencies` route during development
-**Purpose**: Visual roadmap for mobile component development strategy
-
-- `DependencyMapViewer.tsx` - Interactive dependency visualization
-- `dependency-map.json` - 6-level component hierarchy analysis
-- `mobile-roadmap.md` - Phase-by-phase mobile development plan
-- Build order recommendations (Level 0 primitives → Level 5 complex components)
 
 ### 🗄️ DB Inspector
 
@@ -103,14 +92,31 @@ without metadata until the YAML is fixed.
 - Private user notes and serialized search indices are redacted
 - Safe to use with real accounts
 
-### 🧭 Navigation System
+### 🧭 Page Shell — start here when adding a tool
 
-**Path**: `DevNavMenu.tsx`
-**Purpose**: Consistent navigation across all development tools
+**Path**: `shell/`
+**Purpose**: The layout contract every dev page follows, so they stop drifting apart
 
-- Unified navigation bar for all dev interfaces
-- Active page highlighting and smooth transitions
-- Sticky positioning for easy tool switching
+```tsx
+<DevPage width="standard">        {/* narrow | standard | wide | full */}
+  <DevPageHeader icon="bug" title="My Tool" subtitle="What it measures" />
+  …
+</DevPage>
+```
+
+- `DevPage` — app background, always-sticky nav, one of four named width tiers.
+  Pick a tier; do not invent a `max-w-*`.
+- `DevPageHeader` — icon, title, subtitle, optional right-aligned `actions`.
+- `DevStat` — a labelled number, block-level by construction, with a semantic
+  `tone` (`good | bad | warn | neutral`).
+- `DevPageLoading` — the Suspense fallback while a page's lazy chunk arrives.
+- `DevNavMenu` — reads the active route from `useLocation()`. Do not pass
+  `currentPath`; the one page that forgot to was the one that never highlighted.
+
+**Two rules for anything added here.** Use `<Link>`, never `<a href>` — an
+`<a href>` is a full document navigation that re-bootstraps the whole app and
+blanks the screen for over a second. And use plain HTML with Tailwind text
+utilities, never the `Text` primitive, which is native-only.
 
 ### 🧪 Test Suite
 
@@ -132,22 +138,29 @@ yarn dev
 
 ### Development Routes
 
-- **`/dev`** - Main development hub with tool overview and documentation viewer
+Every dev tool lives under `/dev`.
+
+- **`/dev`** - Main development hub
 - **`/dev/docs`** - Browse project documentation
-- **`/dev/tasks`** - View development tasks and plans
-- **`/dev/bugs`** - Browse bug reports and issues
+- **`/dev/issues`** - Bugs and tasks, filterable by type, state and priority
 - **`/dev/reports`** - Security audits, research and analysis reports
-- **`/playground`** - Interactive primitives testing environment
-- **`/dev/audit`** - Component audit and mobile readiness tracker
-- **`/dev/dependencies`** - Visual dependency map and mobile roadmap
+- **`/dev/playground`** - Interactive primitives testing environment
+- **`/dev/audit`** - Component audit (obsolete — see the notice on the page)
 - **`/dev/db-inspector`** - IndexedDB browser with redacted sensitive data
+- **`/dev/dm-doctor`** - DM-loss sequence scan and receive-path counters
+- **`/dev/identity-coverage`** - How many people render as a truncated address
+- **`/dev/fake-qns`** - Synthesize .q names without owning one
+- **`/dev/error-states`** - What a user sees when a view fails to load
 
 ## Notes
 
-- **Cross-Platform Ready**: All tools support the mobile/web shared architecture
-- **Production Excluded**: Dev tools are automatically excluded from production builds
-- **Live Sync**: Web playground uses shared components directly (always current)
+- **Production Excluded**: `web/vite.config.ts` marks `/src/dev/` external in
+  production builds. Anything under `src/dev/` referenced from a production file
+  must therefore go through `lazyDevImport` — a static import would emit an
+  unresolvable bare import into the production bundle.
+- **Live Sync**: the playground uses the shared primitives directly, so it is
+  always current.
 
 ---
 
-_Last updated: 2026-02-05_
+_Last updated: 2026-08-12_

@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Flex,
-  Text,
   Icon,
 } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import { MarkdownViewer } from './MarkdownViewer';
 import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
@@ -49,23 +48,12 @@ export const Docs: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath={window.location.pathname} />
-      <div className="p-6 mx-auto max-w-6xl">
-        <div className="text-center mb-8">
-          <Flex justify="center" gap="sm" className="mb-4">
-            <Icon name="book" size="2xl" className="text-strong" />
-            <Text as="h1" variant="strong" size="3xl" weight="bold">
-              Documentation
-            </Text>
-          </Flex>
-          <Text as="p" variant="main" size="lg" className="mb-2" align="center">
-            Project Documentation & Guides
-          </Text>
-          <Text as="p" variant="subtle" align="center">
-            Browse all documentation files from .agents/docs/
-          </Text>
-        </div>
+    <DevPage>
+        <DevPageHeader
+          icon="book"
+          title="Documentation"
+          subtitle="Browse all documentation files from .agents/docs/"
+        />
 
         {/* Loading State */}
         {loading && (
@@ -75,9 +63,9 @@ export const Docs: React.FC = () => {
               size="2xl"
               className="text-accent mx-auto mb-4"
             />
-            <Text variant="main" size="lg">
+            <span className="text-lg text-main">
               Loading documentation files...
-            </Text>
+            </span>
           </div>
         )}
 
@@ -86,17 +74,17 @@ export const Docs: React.FC = () => {
           <div className="bg-danger/10 border border-danger/30 rounded-lg p-6 mb-8">
             <Flex gap="sm" align="center" className="mb-2">
               <Icon name="warning" size="md" className="text-danger" />
-              <Text variant="strong" size="lg" className="text-danger">
+              <span className="text-lg text-strong text-danger">
                 Error Loading Documentation
-              </Text>
+              </span>
             </Flex>
-            <Text variant="main" size="sm" className="mb-4">
+            <span className="text-sm text-main mb-4">
               {error}
-            </Text>
-            <Text variant="subtle" size="sm">
+            </span>
+            <span className="text-sm text-subtle">
               The system is using a placeholder implementation. To see real
               files, implement the markdown loading API or build process.
-            </Text>
+            </span>
           </div>
         )}
 
@@ -104,7 +92,6 @@ export const Docs: React.FC = () => {
         {!loading && (
           <FilterableList files={docFiles} section="docs" basePath="/dev/docs" />
         )}
-      </div>
-    </div>
+    </DevPage>
   );
 };
