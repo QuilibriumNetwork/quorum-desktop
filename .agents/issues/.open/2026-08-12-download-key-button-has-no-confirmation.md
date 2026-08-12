@@ -74,7 +74,13 @@ there.
 
 ## Status
 
-Filed 2026-08-12 out of the key-material egress audit, where it is F4. Confirmed
-by reading the source; not urgent, and explicitly deprioritised at filing time.
+**Fixed on branch `fix/account-key-confirmations` (LOCAL, not pushed).** The
+download button now goes through a confirmation modal, alongside a wider redesign
+that gives Copy key and Show QR the same treatment. Guarded by
+`src/dev/tests/components/securityKeyExportGating.test.tsx` (revert-checked).
+Closes when that branch merges. See the branch tracker:
+[2026-08-12-unshipped-security-branches.md](2026-08-12-unshipped-security-branches.md).
+
+Filed 2026-08-12 out of the key-material egress audit, where it is F4.
 
 *Last updated: 2026-08-12*

@@ -78,7 +78,11 @@ without saying that the clipboard is not the only place it went.
 
 ## Status
 
-Filed 2026-08-12 out of the key-material egress audit, where it is F8. Not
-urgent; filed so the wording is fixed the next time this screen is touched.
+**Fixed on branch `fix/account-key-confirmations` (LOCAL, not pushed).** Both the
+copy-success callout and the pre-copy warning now name the clipboard-history
+caveat. Closes when that branch merges. See the branch tracker:
+[2026-08-12-unshipped-security-branches.md](2026-08-12-unshipped-security-branches.md).
+
+Filed 2026-08-12 out of the key-material egress audit, where it is F8.
 
 *Last updated: 2026-08-12*
