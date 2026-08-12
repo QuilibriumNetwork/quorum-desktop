@@ -210,7 +210,7 @@ export const DmDoctor: React.FC = () => {
               />
             </div>
             <div className="w-44">
-              <span className="text-xs text-subtle mb-1 block">
+              <span className="text-sm text-subtle mb-1 block">
                 Window
               </span>
               <Select
@@ -238,7 +238,7 @@ export const DmDoctor: React.FC = () => {
               </Button>
             )}
           </Flex>
-          <span className="text-xs text-subtle mt-2">
+          <span className="text-sm text-subtle mt-2">
             Scans the WHOLE messages store for "{'{prefix} N'}" (case-insensitive),
             same matching as .agents/tools/dm-debug/07-receiver-probe.js. Prefix
             letters get reused across test rounds, so matches outside the
@@ -287,19 +287,19 @@ export const DmDoctor: React.FC = () => {
 
             <Flex gap="lg" className="flex-wrap mb-4">
               <div>
-                <span className="text-xs text-subtle">Missing</span>
+                <span className="text-sm text-subtle">Missing</span>
                 <span className={`text-sm ${scanResult.missing.length ? 'text-red-500' : 'text-main'}`}>
                   {scanResult.missing.length ? scanResult.missing.join(', ') : 'none'}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-subtle">Duplicates</span>
+                <span className="text-sm text-subtle">Duplicates</span>
                 <span className={`text-sm ${scanResult.duplicates ? 'text-yellow-500' : 'text-main'}`}>
                   {scanResult.duplicates}
                 </span>
               </div>
               <div>
-                <span className="text-xs text-subtle">Rows scanned across</span>
+                <span className="text-sm text-subtle">Rows scanned across</span>
                 <span className="text-sm text-main">{distribution.length} conversation(s)</span>
               </div>
             </Flex>
@@ -409,7 +409,7 @@ export const DmDoctor: React.FC = () => {
             </Button>
           </Flex>
           {warningState?.installedAt && (
-            <span className="text-xs text-subtle mb-3">
+            <span className="text-sm text-subtle mb-3">
               Installed at {warningState.installedAt}
             </span>
           )}
@@ -481,7 +481,7 @@ export const DmDoctor: React.FC = () => {
             <Icon name="clipboard-list" size="md" className="text-accent" />
             <span className="text-lg text-strong">Direct conversations inventory (every row, unconditionally)</span>
           </Flex>
-          <span className="text-xs text-subtle mb-3">
+          <span className="text-sm text-subtle mb-3">
             The ghost card above only ever prints its own positives — a suspicious row it doesn't
             flag looks identical to a row it never saw. This lists every `type: 'direct'` row so you
             can judge for yourself, plus any messages-store keys with no matching conversation row.
@@ -490,7 +490,7 @@ export const DmDoctor: React.FC = () => {
             <span className="text-sm text-subtle">Run a scan to build the inventory.</span>
           ) : (
             <>
-              <span className="text-xs text-subtle mb-2">
+              <span className="text-sm text-subtle mb-2">
                 total direct rows: {inventory.totalDirectRows}
               </span>
               <div className="overflow-auto">

@@ -66,7 +66,7 @@ const Toggle: React.FC<ToggleProps> = ({
       <span className="text-sm text-strong block">
         {label}
       </span>
-      <span className="text-xs text-subtle block">
+      <span className="text-sm text-subtle block">
         {hint}
       </span>
     </span>
@@ -180,7 +180,7 @@ export const FakeQns: React.FC = () => {
           <span className="text-sm text-strong block">
             1 · Give MYSELF a .q
           </span>
-          <span className="text-xs text-subtle block mb-2">
+          <span className="text-sm text-subtle block mb-2">
             Start here. Pins this name for your own address
             {ownAddress ? '' : ' (no address yet — sign in first)'}. Desktop
             never publishes a primary username, so unlike mobile this is a
@@ -231,7 +231,7 @@ export const FakeQns: React.FC = () => {
           actually won. */}
       <div className="bg-surface-1 rounded-lg border border-default p-4">
         <h2 className="text-subtitle mb-1">Pin one address</h2>
-        <span className="text-xs text-subtle block mb-3">
+        <span className="text-sm text-subtle block mb-3">
           Overrides the everyone rule for a single member. Leave the name empty
           to give them no .q at all — that is your control.
         </span>
@@ -298,7 +298,7 @@ export const FakeQns: React.FC = () => {
         </Button>
       </Flex>
 
-      <span className="text-xs text-subtle">
+      <span className="text-sm text-subtle">
         Reopen the space after a change — an open screen holds an
         already-resolved member map. Keep these switches matched with mobile&apos;s
         panel when comparing the two clients, or you are comparing different

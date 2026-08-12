@@ -91,7 +91,7 @@ const LiveResolutionDiagnostics: React.FC = () => {
           {state.degradedTotal} degraded resolution{state.degradedTotal === 1 ? '' : 's'}
         </span>
       </Flex>
-      <span className="text-xs text-subtle mb-3 block">
+      <span className="text-sm text-subtle mb-3 block">
         Fires the instant a name resolves to a truncated address from a
         provider that was missing data it should have had (your own identity
         with no local source, or a Space roster this provider never loaded) —
@@ -324,7 +324,7 @@ export const IdentityCoverage: React.FC = () => {
               </>
             )}
           </Flex>
-          <span className="text-xs text-subtle mt-2 block">
+          <span className="text-sm text-subtle mt-2 block">
             Counts a person as having no identity when the per-space override
             slot AND the global slot are both empty — the two-slot model the
             older console probe (06-space-member-sources.js) predates. Read
@@ -422,7 +422,7 @@ export const IdentityCoverage: React.FC = () => {
                 />
               </Flex>
 
-              <span className="text-xs text-subtle block">
+              <span className="text-sm text-subtle block">
                 The two headline figures are kept apart because they have
                 different causes and different fixes: a missing row is a
                 join/sync transport gap, an empty row is an announce/digest gap.
