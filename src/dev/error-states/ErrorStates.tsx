@@ -113,7 +113,7 @@ export const ErrorStates: React.FC = () => {
   }
 
   return (
-    <DevPage width="narrow">
+    <DevPage>
         <DevPageHeader
           icon="skull"
           title="Error States"

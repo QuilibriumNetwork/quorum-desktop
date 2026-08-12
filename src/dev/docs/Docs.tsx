@@ -48,7 +48,7 @@ export const Docs: React.FC = () => {
   }
 
   return (
-    <DevPage width="wide">
+    <DevPage>
         <DevPageHeader
           icon="book"
           title="Documentation"

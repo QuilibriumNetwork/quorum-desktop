@@ -401,7 +401,7 @@ export const ComponentAuditViewer: React.FC = () => {
   };
 
   return (
-    <DevPage width="full">
+    <DevPage>
         <DevPageHeader
           icon="chart-line"
           title="Component Audit Dashboard"

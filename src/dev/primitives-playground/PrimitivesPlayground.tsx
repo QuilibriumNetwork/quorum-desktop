@@ -138,7 +138,7 @@ export const PrimitivesPlayground: React.FC = () => {
   }, []);
 
   return (
-    <DevPage width="full">
+    <DevPage>
         <DevPageHeader
           icon="flask"
           title="Primitives Playground"

@@ -30,6 +30,9 @@ left alone, because correcting it changes production appearance broadly and that
 should be its own reviewed change with before/after screenshots. The dev pages
 work around it by pairing the class with a Tailwind colour utility.
 
+Reviewed 2026-08-12: scope widened and the approach chosen after a visual
+comparison — see **Decision** below. Still unimplemented, by choice.
+
 ## Evidence
 
 `src/styles/_colors.scss` — **both themes** carry the identical mixed format, so
@@ -174,23 +177,60 @@ rendering at `main` will start rendering at `subtle` (dimmer) or `strong`
 (brighter). Both themes need checking. It should ship with before/after captures
 of the main modals and settings panes, not on reasoning alone.
 
-## Blockers
+## Visual comparison page
 
-- 🛑 **Scope: does this issue also cover the `Message.scss` cluster?** The
-  review found the same defect there (section above), but the issue as written
-  is scoped to the four typography rules, and the file's owner decides whether
-  to widen it. The two halves have different risk profiles:
-  - Typography (4 rules) — changes text colour across the whole app, needs
-    before/after captures in both themes.
-  - `.message-edit-container` (2 rules) — one component, restores a background
-    and border that are currently missing; visually additive and easy to check
-    in isolation.
-  - The two dead button rules (220-234) — deletable, zero visual risk.
-  - Options: (a) widen this issue to all three; (b) fix
-    `.message-edit-container` separately as a smaller, faster change and keep
-    this issue on typography; (c) split the dead CSS into its own cleanup.
-    **(b) looks best** — it decouples a cheap, safe fix from the broad one that
-    needs screenshot review.
+`/dev/typography-compare` (`src/dev/typography-compare/`) renders the current
+state and both candidate fixes side by side, in the real stylesheet, with a
+theme toggle and a live contrast readout measured off the DOM.
+
+It exists because the decision below could not be made from hex values — "does
+the UI still look good" needs an actual look. The left column has no overrides,
+so it is genuinely what the app renders today; the other two add exactly the
+declaration each fix would add and nothing else.
+
+**Delete the page once this ships and is signed off** — it documents a decision,
+not a feature.
+
+## Decision (2026-08-12)
+
+Both open questions were settled by the file's owner after reviewing
+`/dev/typography-compare` in both themes. No blockers remain.
+
+1. **Scope is widened** to cover every instance of this defect, not just the
+   four typography rules. That means `Message.scss` too.
+2. **Take "Fix + AA contrast"** — the third column. Apply the `rgb()` fixes *and*
+   darken light-theme `--color-text-subtle` so the result meets WCAG AA. The
+   "fix only" variant was rejected on the light theme.
+
+Deliberately **not implemented yet** — scheduled, not abandoned.
+
+### Implementation checklist
+
+- [ ] `src/styles/_colors.scss` line 40 — light theme
+      `--color-text-subtle: #818181` → `#696969`.
+      Ratios become 5.49 / 5.09 / 4.75 against surface-00 / -1 / -2, so AA passes
+      on every surface it is used on. **Dark theme is not touched** — `#bfb5c8`
+      already passes at 7.55–9.35.
+- [ ] `src/styles/_typography.scss` lines 27, 73, 90, 98 —
+      `rgb(var(--color-text-*))` → `var(--color-text-*)`. Four rules, one file.
+- [ ] `src/components/message/Message.scss` lines 151, 153 —
+      same unwrapping for `--surface-2` / `--surface-4`, restoring the message
+      edit box's missing background and border.
+- [ ] `src/components/message/Message.scss` lines 220-234 — delete
+      `.message-edit-cancel-button` / `.message-edit-save-button`. Dead CSS with
+      no `.tsx` consumer, and their `--primary` / `--text-main` references point
+      at variables that do not exist.
+- [ ] Add the regression guard described under **Verification** below.
+- [ ] Delete `src/dev/typography-compare/` and its route + nav entry
+      (`Router.web.tsx`, `DevNavMenu.tsx`) once signed off.
+
+Note that the ~11 call sites already pairing the class with a Tailwind colour
+utility are unaffected, because `@tailwind utilities` loads after
+`_typography.scss` (`src/index.scss:9`) and wins on equal specificity. Verified
+on the comparison page.
+
+Darkening `--color-text-subtle` also repairs the ~100 existing direct consumers
+of that variable, which fail AA today. That is a side benefit, not extra scope.
 
 ## Verification
 
@@ -232,3 +272,6 @@ instead of these six instances, and it would have caught the missing
 - Added the light-theme block (_colors.scss 38-40) alongside the dark one — it has the identical mixed format and a fix must cover both. Added the third alias --color-field-option-text (line 132), which the doc omitted.
 - Added a Blockers entry for the scope decision (widen to Message.scss, or split) rather than deciding it, and a verification one-liner for the Message.scss case plus a proposed regression guard that would catch the whole bug class.
 - Frontmatter checked: type bug, status open, .open/ folder — all consistent, no change needed.
+
+## Updates
+- **2026-08-12 10:18**: Owner reviewed /dev/typography-compare in both themes and chose 'Fix + AA contrast' with scope widened to every instance of the defect. Both Blockers resolved, replaced with a Decision section and an implementation checklist. Implementation deferred by choice — status stays open.

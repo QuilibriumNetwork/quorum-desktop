@@ -48,7 +48,7 @@ export const Reports: React.FC = () => {
   }
 
   return (
-    <DevPage width="wide">
+    <DevPage>
         <DevPageHeader
           icon="clipboard"
           title="Reports & Audits"

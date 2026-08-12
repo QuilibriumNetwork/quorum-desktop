@@ -64,6 +64,11 @@ const devNavItems: DevNavItem[] = [
     icon: 'skull',
     path: '/dev/error-states',
   },
+  {
+    name: 'Typography Compare',
+    icon: 'heading',
+    path: '/dev/typography-compare',
+  },
 ];
 
 interface DevNavMenuProps {

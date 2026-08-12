@@ -90,7 +90,7 @@ export const DbInspector: React.FC = () => {
   const versionMismatch = info != null && info.dbVersion !== info.appDbVersion;
 
   return (
-    <DevPage width="standard">
+    <DevPage>
         <DevPageHeader
           icon="database"
           title="DB Inspector"

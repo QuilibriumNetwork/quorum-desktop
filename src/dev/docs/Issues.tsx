@@ -53,7 +53,7 @@ export const Issues: React.FC = () => {
   }
 
   return (
-    <DevPage width="wide">
+    <DevPage>
         <DevPageHeader
           icon="clipboard-list"
           title="Issues"

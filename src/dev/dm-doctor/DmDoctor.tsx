@@ -171,7 +171,7 @@ export const DmDoctor: React.FC = () => {
     : [];
 
   return (
-    <DevPage width="standard">
+    <DevPage>
         <DevPageHeader
           icon="bug"
           title="DM Doctor"

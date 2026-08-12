@@ -10,7 +10,7 @@
  * The `Text` primitive is native-only and must not be used —
  * see `.agents/docs/features/primitives/03-when-to-use-primitives.md`.
  */
-export { DevPage, type DevPageWidth } from './DevPage';
+export { DevPage } from './DevPage';
 export { DevPageHeader } from './DevPageHeader';
 export { DevPageLoading } from './DevPageLoading';
 export { DevStat, type DevStatTone } from './DevStat';

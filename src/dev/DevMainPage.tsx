@@ -79,7 +79,7 @@ export const DevMainPage: React.FC = () => {
   ];
 
   return (
-    <DevPage width="wide">
+    <DevPage>
         <DevPageHeader
           icon="tools"
           title="Development Tools"

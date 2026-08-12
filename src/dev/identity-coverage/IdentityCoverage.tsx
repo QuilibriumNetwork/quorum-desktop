@@ -266,7 +266,7 @@ export const IdentityCoverage: React.FC = () => {
   }, []);
 
   return (
-    <DevPage width="standard">
+    <DevPage>
         <DevPageHeader
           icon="id-badge"
           title="Identity Coverage"
