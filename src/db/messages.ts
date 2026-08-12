@@ -3194,9 +3194,9 @@ export class MessageDB {
   //   await window.__messageDB.deleteBloatedEncryptionState(conversationId, inboxId)
   //
   // `window.__messageDB` is assigned in src/components/context/MessageDB.tsx
-  // behind an `import.meta.env?.DEV` guard. It was previously unguarded and
-  // shipped to production, which handed the whole database to any script on
-  // the page. Do not remove that guard.
+  // behind an `import.meta.env?.DEV` guard. Keep it there: this is a
+  // read/write handle to the whole database, and anything on `window` in a
+  // production build is readable by any script on the page.
 
   /**
    * Analyzes all encryption states and returns a report of their sizes and structure.

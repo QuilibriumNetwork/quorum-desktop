@@ -93,7 +93,7 @@ export function installDmWarningCounters(): DmWarningCounterState {
     };
   });
 
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && import.meta.env?.DEV) {
     (window as unknown as { __dmWarningCounters: () => DmWarningCounterState }).__dmWarningCounters =
       getDmWarningState;
   }

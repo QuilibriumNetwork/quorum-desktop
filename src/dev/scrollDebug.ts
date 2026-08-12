@@ -462,6 +462,6 @@ function fmt(v: number | undefined): string {
 
 export const scrollDebug = new ScrollDebug();
 
-if (typeof window !== 'undefined') {
+if (typeof window !== 'undefined' && import.meta.env?.DEV) {
   (window as any).__scrollDebug = scrollDebug;
 }

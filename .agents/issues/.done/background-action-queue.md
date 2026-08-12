@@ -1338,9 +1338,9 @@ await actionQueueService.enqueue('action-type', context, dedupKey);
 
 ## Testing
 
-Debug commands available in browser console (**development builds only since
-2026-08-12** — `window.__actionQueue` and `window.__messageDB` are now gated
-behind `import.meta.env?.DEV` and are `undefined` in production):
+Debug commands available in browser console (**development builds only** —
+`window.__actionQueue` and `window.__messageDB` are gated behind
+`import.meta.env?.DEV` and are `undefined` in production):
 ```javascript
 // Check queue stats
 await window.__actionQueue.getStats()

@@ -55,7 +55,7 @@ The standalone acks appeared more broken than piggybacked acks because piggyback
 
 1. Add logging to the `sendDeliveryAck` handler execute method to confirm it runs
 2. Add logging after `encryptAndSendDm` completes to confirm encryption succeeds
-3. Check Action Queue stats (`window.__actionQueue.getStats()` — development builds only since 2026-08-12, the global is now `import.meta.env?.DEV`-gated) for failed `send-delivery-ack` tasks
+3. Check Action Queue stats (`window.__actionQueue.getStats()` — development builds only, the global is `import.meta.env?.DEV`-gated) for failed `send-delivery-ack` tasks
 4. Check if the encrypted ack actually appears in WebSocket traffic (Network tab)
 5. On the sender side, check if the ack message arrives at `handleNewMessage` at all
 

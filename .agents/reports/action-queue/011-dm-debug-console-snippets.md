@@ -55,10 +55,10 @@ A collection of browser console snippets for debugging DM delivery issues.
 > | `window.__actionQueue` | Same: dev builds only. |
 > | `window.__keyset` | **Removed outright.** Snippets using it return `undefined` everywhere. |
 >
-> All three previously shipped to production unguarded, which published the
-> account's private keys and the whole database to any script running on the
-> page. The two debug handles were kept because real debugging workflows depend
-> on them, but they are now gated. **Do not remove those guards, and do not
+> Debug handles are development-only: anything on `window` in a production
+> build is readable by every script in the page. The two below were kept
+> because real debugging workflows depend on them; `__keyset` was dropped
+> because nothing needed it. **Do not remove those guards, and do not
 > reintroduce `window.__keyset`.**
 >
 > Where a snippet below needs `__keyset` (the local device inbox address), the

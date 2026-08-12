@@ -4,6 +4,18 @@ import react from 'eslint-plugin-react';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import tseslint from 'typescript-eslint';
+import noUngatedDebugGlobals from './eslint-rules/no-ungated-debug-globals.js';
+
+// Debug globals (`window.__something = …`) must be behind a development-only
+// guard. Applied to every file, including src/dev/ — dev tooling is exactly
+// where these are written, and being under src/dev/ is a convention, not a
+// mechanism that keeps code out of the bundle.
+const quorumPlugin = {
+  rules: { 'no-ungated-debug-globals': noUngatedDebugGlobals },
+};
+const debugGlobalRules = {
+  'quorum/no-ungated-debug-globals': 'error',
+};
 
 // Nothing outside src/identity/ may resolve a name itself. Call sites use
 // <MemberName> / useResolvedName, which take an ADDRESS — you cannot forget
@@ -132,6 +144,7 @@ export default [
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      quorum: quorumPlugin,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -139,6 +152,7 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       ...noResolverImportsRules,
+      ...debugGlobalRules,
       'react/jsx-no-target-blank': 'off',
       'react/prop-types': 'off', // TypeScript already validates prop types
       'react-refresh/only-export-components': [
@@ -175,6 +189,7 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
       '@typescript-eslint': tseslint.plugin,
+      quorum: quorumPlugin,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -183,6 +198,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       ...tseslint.configs.recommended[1]?.rules,
       ...noResolverImportsRules,
+      ...debugGlobalRules,
       'react/jsx-no-target-blank': 'off',
       'react-refresh/only-export-components': [
         'warn',
