@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button, Icon, Input, Select } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
-import { DevStat } from '../shell';
+import { DevPage, DevPageHeader, DevStat } from '../shell';
 import {
   scanSequence,
   findGhostConversations,
@@ -172,22 +171,14 @@ export const DmDoctor: React.FC = () => {
     : [];
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev/dm-doctor" sticky />
-
-      <div className="p-6 mx-auto max-w-5xl">
-        <Flex gap="sm" align="center" className="mb-2">
-          <Icon name="bug" size="xl" className="text-accent" />
-          <div>
-            <Text as="h1" variant="strong" size="2xl" weight="bold">
-              DM Doctor
-            </Text>
-            <Text variant="subtle" size="sm">
-              Resident diagnostic for the DM-loss / misfiling investigation. Own
-              address: {ownAddress ? truncateAddress(ownAddress) : 'unknown (not signed in)'}
-            </Text>
-          </div>
-        </Flex>
+    <DevPage width="standard">
+        <DevPageHeader
+          icon="bug"
+          title="DM Doctor"
+          subtitle={`Resident diagnostic for the DM-loss / misfiling investigation. Own address: ${
+            ownAddress ? truncateAddress(ownAddress) : 'unknown (not signed in)'
+          }`}
+        />
 
         {copyStatus && (
           <div className="fixed top-4 right-4 bg-surface-2 border border-accent px-4 py-2 rounded-lg shadow-lg z-50">
@@ -553,7 +544,6 @@ export const DmDoctor: React.FC = () => {
             </>
           )}
         </div>
-      </div>
-    </div>
+    </DevPage>
   );
 };

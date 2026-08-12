@@ -5,7 +5,7 @@ import {
   Button,
   Icon,
 } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import {
   getDbInfo,
   dumpStore,
@@ -91,27 +91,17 @@ export const DbInspector: React.FC = () => {
   const versionMismatch = info != null && info.dbVersion !== info.appDbVersion;
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev/db-inspector" sticky />
-
-      <div className="p-6 mx-auto max-w-6xl">
-        {/* Header */}
-        <Flex justify="between" align="center" className="mb-6">
-          <Flex gap="sm" align="center">
-            <Icon name="database" size="xl" className="text-accent" />
-            <div>
-              <Text as="h1" variant="strong" size="2xl" weight="bold">
-                DB Inspector
-              </Text>
-              <Text variant="subtle" size="sm">
-                {info
-                  ? `${info.dbName} v${info.dbVersion} · IndexedDB browser with redacted sensitive data`
-                  : 'IndexedDB browser with redacted sensitive data'}
-              </Text>
-            </div>
-          </Flex>
-
-          <Flex gap="sm">
+    <DevPage width="standard">
+        <DevPageHeader
+          icon="database"
+          title="DB Inspector"
+          subtitle={
+            info
+              ? `${info.dbName} v${info.dbVersion} · IndexedDB browser with redacted sensitive data`
+              : 'IndexedDB browser with redacted sensitive data'
+          }
+          actions={
+            <>
             <Button
               variant="secondary"
               size="sm"
@@ -139,8 +129,9 @@ export const DbInspector: React.FC = () => {
               <Icon name="copy" size="sm" />
               Copy All
             </Button>
-          </Flex>
-        </Flex>
+            </>
+          }
+        />
 
         {/* Copy status toast */}
         {copyStatus && (
@@ -347,7 +338,6 @@ export const DbInspector: React.FC = () => {
             <div><span className="text-accent">__dbInfo()</span> - Live DB version, store list, drift</div>
           </div>
         </div>
-      </div>
-    </div>
+    </DevPage>
   );
 };

@@ -13,8 +13,7 @@
 import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button, Icon } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
-import { DevStat, type DevStatTone } from '../shell';
+import { DevPage, DevPageHeader, DevStat, type DevStatTone } from '../shell';
 import {
   buildIdentityCoverageSnapshot,
   computeCoverageDelta,
@@ -267,23 +266,14 @@ export const IdentityCoverage: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath="/dev/identity-coverage" sticky />
-
-      <div className="p-6 mx-auto max-w-5xl">
-        <Flex gap="sm" align="center" className="mb-2">
-          <Icon name="id-badge" size="xl" className="text-accent" />
-          <div>
-            <Text as="h1" variant="strong" size="2xl" weight="bold">
-              Identity Coverage
-            </Text>
-            <Text variant="subtle" size="sm">
-              How many people cannot render as anything but a truncated address.
-              Own address:{' '}
-              {ownAddress ? truncateAddress(ownAddress) : 'unknown (not signed in)'}
-            </Text>
-          </div>
-        </Flex>
+    <DevPage width="standard">
+        <DevPageHeader
+          icon="id-badge"
+          title="Identity Coverage"
+          subtitle={`How many people cannot render as anything but a truncated address. Own address: ${
+            ownAddress ? truncateAddress(ownAddress) : 'unknown (not signed in)'
+          }`}
+        />
 
         {copyStatus && (
           <div className="fixed top-4 right-4 bg-surface-2 border border-accent px-4 py-2 rounded-lg shadow-lg z-50">
@@ -617,7 +607,6 @@ export const IdentityCoverage: React.FC = () => {
             </Text>
           </div>
         )}
-      </div>
-    </div>
+    </DevPage>
   );
 };
