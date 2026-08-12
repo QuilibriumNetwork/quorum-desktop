@@ -47,6 +47,34 @@ A collection of browser console snippets for debugging DM delivery issues.
 
 ---
 
+> **⚠️ Note (2026-08-12): these snippets are now DEVELOPMENT-ONLY, and one global was removed.**
+>
+> | Global | Status |
+> |---|---|
+> | `window.__messageDB` | Still available, but **only in `yarn dev` builds** (gated behind `import.meta.env?.DEV`). `undefined` in production. |
+> | `window.__actionQueue` | Same: dev builds only. |
+> | `window.__keyset` | **Removed outright.** Snippets using it return `undefined` everywhere. |
+>
+> Debug handles are development-only: anything on `window` in a production
+> build is readable by every script in the page. The two below were kept
+> because real debugging workflows depend on them; `__keyset` was dropped
+> because nothing needed it. **Do not remove those guards, and do not
+> reintroduce `window.__keyset`.**
+>
+> Where a snippet below needs `__keyset` (the local device inbox address), the
+> only supported way to get it is to add a temporary DEV-gated handle while you
+> debug, following `src/dev/db-inspector/dbDumpUtil.ts:494`:
+>
+> ```ts
+> if (typeof window !== 'undefined' && import.meta.env?.DEV) {
+>   (window as any).__keyset = { deviceKeyset, userKeyset };
+> }
+> ```
+>
+> Do not commit it. Note that the API side of the comparison
+> (`/users/<address>` → `device_registrations`) still works unchanged, so only
+> the local half of each identity check needs this.
+
 ## Snippets
 
 ### 1. Identity Check
@@ -60,6 +88,8 @@ const tx = db.transaction('user_config', 'readonly');
 const store = tx.objectStore('user_config');
 const config = await new Promise(r => { const req = store.getAll(); req.onsuccess = () => r(req.result); });
 const myAddr = config[0]?.address;
+// REMOVED: window.__keyset no longer exists (see note at top of this file).
+// Add a temporary DEV-gated handle to run this line locally.
 const myInbox = window.__keyset?.deviceKeyset?.inbox_keyset?.inbox_address;
 
 console.log('=== IDENTITY CHECK ===');
@@ -125,6 +155,8 @@ Checks receiver's encryption state for the sender. **Navigate to DM conversation
 // === RECEIVER DIAGNOSTIC ===
 const otherAddr = location.pathname.split('/messages/')[1]?.split('/')[0]
   || location.pathname.split('/dm/')[1]?.split('/')[0];
+// REMOVED: window.__keyset no longer exists (see note at top of this file).
+// Add a temporary DEV-gated handle to run this line locally.
 const myInbox = window.__keyset?.deviceKeyset?.inbox_keyset?.inbox_address;
 console.log('=== Receiver Diagnostic ===');
 console.log('My device inbox:', myInbox);

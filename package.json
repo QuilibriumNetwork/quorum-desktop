@@ -29,7 +29,8 @@
   "scripts": {
     "dev": "vite --config web/vite.config.ts",
     "dev:clean": "rimraf node_modules/.vite && vite --config web/vite.config.ts",
-    "build": "vite build --config web/vite.config.ts",
+    "build": "vite build --config web/vite.config.ts && yarn check:bundle",
+    "check:bundle": "node scripts/check-bundle-globals.mjs",
     "build:preview": "yarn build && yarn preview --config web/vite.config.ts",
     "electron:dev": "cross-env NODE_ENV=development electron web/electron/main.cjs",
     "electron:build": "yarn build && electron-builder",

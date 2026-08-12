@@ -293,10 +293,14 @@ type MessageDBContextProps = {
 const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const messageDB = useMemo(() => {
     const db = new MessageDB();
-    // Expose for debugging bloated encryption states
-    // Usage: await window.__messageDB.analyzeEncryptionStates()
-    // Usage: await window.__messageDB.cleanBloatedEncryptionStates({ dryRun: false })
-    (window as any).__messageDB = db;
+    // Dev-only console handle for the debug utilities in src/db/messages.ts
+    // (analyzeEncryptionStates, deleteBloatedEncryptionState, ...).
+    // Keep the guard: this is a read/write handle to the whole database, and
+    // anything on `window` in a production build is readable by any script on
+    // the page. Same pattern as src/dev/db-inspector/dbDumpUtil.ts.
+    if (typeof window !== 'undefined' && import.meta.env?.DEV) {
+      (window as any).__messageDB = db;
+    }
     return db;
   }, []);
   const queryClient = useQueryClient();
@@ -1146,8 +1150,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   // ActionQueueService (depends on all other services)
   const actionQueueService = useMemo(() => {
     const service = new ActionQueueService(messageDB);
-    // Expose for debugging: window.__actionQueue
-    (window as any).__actionQueue = service;
+    // Dev-only console handle (getStats(), processQueue(), ...).
+    // Keep the guard: this service holds the user and device keysets and
+    // exposes them via getUserKeyset(), so it must never reach a production
+    // bundle. Same pattern as src/dev/db-inspector/dbDumpUtil.ts.
+    if (typeof window !== 'undefined' && import.meta.env?.DEV) {
+      (window as any).__actionQueue = service;
+    }
     return service;
   }, [messageDB]);
 

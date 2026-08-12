@@ -19,7 +19,7 @@ The PR-level code review of the typing-indicators feature flagged that every DM 
 
 Source: `src/services/MessageService.ts` `encryptAndSendDm` (called by `sendEphemeralDMControl`) calls `DoubleRatchetInboxEncrypt` and then `messageDB.saveEncryptionState(newEncryptionState, true)` for each target inbox session.
 
-The reviewer's concern: with active typing in a DM, a user generates roughly one ratchet advance every 5 seconds (the throttle window). Over time this could bloat the encryption-states table. The reviewer cited the existing known bloat issue (see the `window.__messageDB.analyzeEncryptionStates()` debug helper in `MessageDB.tsx`) and recommended switching to a piggyback-only model like delivery-acks use.
+The reviewer's concern: with active typing in a DM, a user generates roughly one ratchet advance every 5 seconds (the throttle window). Over time this could bloat the encryption-states table. The reviewer cited the existing known bloat issue (see the `window.__messageDB.analyzeEncryptionStates()` debug helper in `MessageDB.tsx` — development builds only, the global is `import.meta.env?.DEV`-gated) and recommended switching to a piggyback-only model like delivery-acks use.
 
 ## Open questions before any code changes
 
