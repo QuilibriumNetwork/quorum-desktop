@@ -1,14 +1,14 @@
 ---
 type: task
 title: "Dev pages design system: implementation plan"
-status: open
+status: done
 priority: medium
 created: 2026-08-11
-updated: 2026-08-11
+updated: 2026-08-12
 area: dev tools / layout / design consistency
 repos: quorum-desktop
 related:
-  - ".agents/issues/.open/2026-08-11-dev-pages-design-system-design.md (the design this executes)"
+  - ".agents/issues/.done/2026-08-11-dev-pages-design-system-design.md (the design this executes)"
 ---
 
 # Dev pages design system — implementation plan
@@ -18,26 +18,24 @@ Executes [the design](2026-08-11-dev-pages-design-system-design.md). Branch:
 
 ## Status
 
-**All nine slices complete and verified, 2026-08-12. Pending merge.** Ten
-commits on the branch, one per slice plus two the operator asked for mid-flight
-(the playground rework and the Component Audit deprecation notice).
+**2026-08-12 — shipped in PR #330** (`refactor(dev): the /dev pages share one
+layout, and navigating them stops going blank`)
 
-Two findings were spun out rather than absorbed:
+What landed: all nine slices. The eleven `/dev` pages share one shell
+(`src/dev/shell/`) and one width; nav routes client-side so it no longer blanks
+the screen for ~1.6s; the `Text` primitive is gone from `src/dev` (154 uses);
+`/playground` moved to `/dev/playground` and the dead `/dev/dependencies` route
+was removed; Home is a grid, Fake QNS is neutral, and the Component Audit is
+flagged obsolete.
 
-- `.open/2026-08-12-typography-classes-have-no-working-colour.md` — four
-  semantic typography classes set a colour the browser silently drops. Affects
-  production app-wide, so it was filed rather than fixed here.
-- The `Text` primitive's removal from `src/dev/` closed the last exception to a
-  rule the repo already had; the primitives guide has been corrected to match.
+Verified with a headless browser over CDP: collision sweep clean on every page
+from a baseline of five hits on two, nav clicks record no document navigation
+(with a control run that does), 1407 tests pass, and the production build
+carries no dev code.
 
-Nine slices. Each one ends in something observable in the browser, so it can be
-checked by using the pages rather than by reading the diff. Slices are ordered
-so the biggest irritation goes first and each is independently shippable — if
-work stops after any slice, what shipped is coherent.
-
-Every slice is verified with the CDP harness described in the design §6, at
-1440x900. "Sweep" below means the collision probe; "capture" means a full-page
-screenshot compared against the pre-change baseline.
+One finding was spun out rather than fixed:
+[`.open/2026-08-12-typography-classes-have-no-working-colour.md`](2026-08-12-typography-classes-have-no-working-colour.md)
+— it changes production appearance app-wide and wants its own reviewed change.
 
 ---
 
@@ -430,4 +428,4 @@ page at a time regardless of how many agents produced the diff.
 
 ---
 
-*Last updated: 2026-08-11*
+*Last updated: 2026-08-12*

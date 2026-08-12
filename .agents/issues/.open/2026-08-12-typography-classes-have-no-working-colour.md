@@ -11,7 +11,7 @@ related:
   - "src/styles/_typography.scss (the four broken rules)"
   - "src/styles/_colors.scss (the mixed hex / rgb-triplet variable formats)"
   - "src/components/message/Message.scss (same defect, found by review 2026-08-12)"
-  - ".agents/issues/.open/2026-08-11-dev-pages-design-system-design.md (found while doing this)"
+  - ".agents/issues/.done/2026-08-11-dev-pages-design-system-design.md (found while doing this)"
 ---
 
 # Four typography classes have no working colour

@@ -1,10 +1,10 @@
 ---
 type: task
 title: "Dev pages: one layout system, so the eleven /dev tools stop drifting apart"
-status: open
+status: done
 priority: medium
 created: 2026-08-11
-updated: 2026-08-11
+updated: 2026-08-12
 area: dev tools / layout / design consistency
 repos: quorum-desktop
 related:
@@ -24,19 +24,24 @@ would then drift again.
 
 ## Status
 
-Design agreed 2026-08-11. Scope decisions taken with the operator:
+**2026-08-12 — shipped in PR #330** (`refactor(dev): the /dev pages share one
+layout, and navigating them stops going blank`)
 
-- **Type scale:** bump prose, hints, help text and stat labels to `text-sm`;
-  leave badges, pills, counts and dense table column headers at `text-xs`.
-  Not a blanket sweep.
-- **Fake QNS:** fully neutral. Adopt the standard chrome and drop the amber
-  entirely, including any conditional warning banner.
+What landed: all nine slices. The eleven `/dev` pages share one shell
+(`src/dev/shell/`) and one width; nav routes client-side so it no longer blanks
+the screen for ~1.6s; the `Text` primitive is gone from `src/dev` (154 uses);
+`/playground` moved to `/dev/playground` and the dead `/dev/dependencies` route
+was removed; Home is a grid, Fake QNS is neutral, and the Component Audit is
+flagged obsolete.
 
-Revised the same day, on the operator's observation that the `Text` primitive is
-obsolete on web. Confirmed — see §1-H. This turned out to be the root cause of
-the misalignment rather than a separate concern, and it supersedes the mechanical
-`text-xs → text-sm` sweep with adoption of the existing semantic typography
-classes. §2-F is rewritten accordingly.
+Verified with a headless browser over CDP: collision sweep clean on every page
+from a baseline of five hits on two, nav clicks record no document navigation
+(with a control run that does), 1407 tests pass, and the production build
+carries no dev code.
+
+One finding was spun out rather than fixed:
+[`.open/2026-08-12-typography-classes-have-no-working-colour.md`](2026-08-12-typography-classes-have-no-working-colour.md)
+— it changes production appearance app-wide and wants its own reviewed change.
 
 ---
 
@@ -288,25 +293,32 @@ correctly.
 `bg-surface-1 rounded-lg p-6 border border-default` card is already consistent
 across pages and is not a source of drift; wrapping it would be churn.
 
-### 2-B. Width tiers
+### 2-B. Width — one for every page
 
-Four named tiers replace six ad-hoc values:
+> **Superseded 2026-08-12, before merge.** This section originally specified
+> four named tiers (`narrow` 3xl / `standard` 5xl / `wide` 7xl / `full`
+> screen-2xl), on the reasoning that a dense data table and a three-field form
+> genuinely want different widths.
+>
+> Built and measured, that reasoning did not survive contact: clicking through
+> the nav still made the content jump, so the tiers had reproduced the
+> inconsistency they replaced, just in a tidier form. The operator's call was to
+> collapse them.
 
-| Tier | Value | For | Pages |
-|---|---|---|---|
-| `narrow` | `max-w-3xl` | reading, forms | Error States, Fake QNS |
-| `standard` | `max-w-5xl` | most tools | Home, DM Doctor, Identity Coverage, DB Inspector |
-| `wide` | `max-w-7xl` | doc browsers | Docs, Issues, Reports |
-| `full` | `max-w-screen-2xl` | dense tables | Audit, Playground |
+**Every dev page uses one width: `max-w-7xl` (1280px)**, the homepage's. `DevPage`
+takes no width prop at all, so there is nothing to pick and nothing to drift.
 
-The tiers exist because the needs are genuinely different — a data table and a
-three-field form should not share a width. What matters is that a page picks a
-named tier rather than inventing a number.
+MEASURED after the change, at a 1920 viewport: all twelve pages report a 1280px
+content column and no horizontal overflow.
 
-Two deliberate changes beyond normalisation: DB Inspector drops `6xl → 5xl`
-(its two-column layout has significant dead space at 1440px, visible in the
-capture), and Audit gains `max-w-screen-2xl` so it stops running edge-to-edge
-on wide monitors.
+The cost is real and worth stating: a form-heavy page stretched to 1280 reads
+badly — prose runs to unreadable line lengths and controls strand themselves at
+opposite ends of the row. The answer is to cap **measure inside** the page
+rather than to narrow the page. Fake QNS is the worked example: full-width
+cards, but prose capped at `max-w-3xl`, inputs kept beside the buttons that act
+on them, and the pinned-address list a tight grid instead of a full-width flex
+row. Any future dev page with a form should copy that, not reach for a narrower
+container.
 
 ### 2-C. Home becomes a grid
 
@@ -479,4 +491,4 @@ instrument or the change is wrong, not the two target pages.
 
 ---
 
-*Last updated: 2026-08-11*
+*Last updated: 2026-08-12*

@@ -336,8 +336,6 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Composer drafts](issues/.open/2026-08-10-composer-drafts-design.md)
 - 📋 [Composer Drafts Implementation Plan](issues/.open/2026-08-10-composer-drafts-plan.md)
 - 📋 [Privacy level](issues/.open/2026-08-10-privacy-level-presets-design.md)
-- 📋 [Dev pages: one layout system](issues/.open/2026-08-11-dev-pages-design-system-design.md)
-- 📋 [Dev pages design system — implementation plan](issues/.open/2026-08-11-dev-pages-design-system-plan.md)
 
 ### Deferred
 
@@ -548,6 +546,8 @@ This is the main index for all documentation, bug reports, and task management.
 - 📋 [Does mobile need the desktop identity fixes?](issues/.done/2026-08-05-mobile-identity-parity-after-the-desktop-phase-1-fix.md)
 - 📋 [Your own identity, on your own devices](issues/.done/2026-08-05-own-identity-cross-device-sync-design.md)
 - 📋 [Own identity, Phase 1 — implementation plan](issues/.done/2026-08-05-own-identity-cross-device-sync-plan.md)
+- 📋 [Dev pages: one layout system](issues/.done/2026-08-11-dev-pages-design-system-design.md)
+- 📋 [Dev pages design system — implementation plan](issues/.done/2026-08-11-dev-pages-design-system-plan.md)
 - 📋 [AccentColorSwitcher Cross-Platform Migration + Persistence](issues/.done/accent-color-switcher-cross-platform-migration.md)
 - 📋 [Add Context to Desktop Notifications](issues/.done/rich-desktop-notifications-context.md)
 - 📋 [Add DM-Specific Action Queue Handlers](issues/.done/dm-action-queue-handlers.md)
@@ -780,4 +780,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-12 09:55:50
+**Last Updated**: 2026-08-12 10:34:42
