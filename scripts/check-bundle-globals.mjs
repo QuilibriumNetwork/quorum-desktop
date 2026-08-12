@@ -1,23 +1,36 @@
+#!/usr/bin/env node
 /**
  * Fail the build if a debug global reached the production bundle.
  *
  * Second half of the guard whose first half is the ESLint rule
  * `quorum/no-ungated-debug-globals`. The lint rule reads the source; this
  * reads the artifact users actually download. Both exist because source can
- * be correct while output is not — a guard that does not strip, a dependency
- * re-exposing something, a bundler config change.
+ * be correct while output is not — a guard that does not strip, a bundler
+ * config change, or a lint rule that was disabled with a comment.
  *
- * How the watchlist is built
- * --------------------------
- * NOT a hardcoded denylist, which would go stale as soon as someone adds a
- * new global. Every `__`-prefixed global assigned to `window`/`globalThis`
- * anywhere in src/ or web/ is discovered by scanning the source, then
- * asserted absent from the bundle. Add a new dev-only global and it is
- * covered automatically, with no edit here.
+ * What it looks for
+ * -----------------
+ * Assignments of a `__`-prefixed property onto the global object, **in the
+ * built output**:
  *
- * DELETED_GLOBALS is the one hardcoded part: names removed outright, which by
- * definition no longer appear in source and so cannot be rediscovered. They
- * are listed so they cannot quietly return.
+ *     window.__x = …        globalThis.__x = …        window['__x'] = …
+ *     const w = window; w.__x = …          (alias, see below)
+ *
+ * It deliberately does NOT decide what to look for by scanning `src/`. An
+ * earlier version did, which made it blind by construction to anything the
+ * source-side regex could not express — notably assignment through a local
+ * alias, where the secret shipped and this check still reported OK. Reading
+ * only the artifact removes that whole class, and also stops a code comment
+ * that happens to mention `window.__something` from being mistaken for a real
+ * assignment.
+ *
+ * Aliases: minifiers keep `window` as-is (it is a global) but rename locals,
+ * so `const w = window; w.__x = y` emits as `const a=window;a.__x=y`. The
+ * scan therefore collects identifiers assigned from `window`/`globalThis` and
+ * checks property writes on those too. Measured against the real bundle this
+ * adds zero false positives.
+ *
+ * Property names survive minification, which is what makes any of this sound.
  *
  * Usage: node scripts/check-bundle-globals.mjs [bundleDir]
  * Runs automatically after `yarn build`.
@@ -31,51 +44,68 @@ const repoRoot = fileURLToPath(new URL('..', import.meta.url));
 const bundleDir = process.argv[2]
   ? join(repoRoot, process.argv[2])
   : join(repoRoot, 'dist');
-const sourceDirs = ['src', 'web'].map((d) => join(repoRoot, d));
 
-/** Removed outright. Not discoverable from source, so listed explicitly. */
-const DELETED_GLOBALS = ['__keyset'];
+const SCANNED_EXTENSIONS = ['.js', '.mjs', '.cjs', '.html'];
 
-/** Third-party globals that legitimately appear in a production bundle. */
-const ALLOWED = [
-  '__REACT_DEVTOOLS_GLOBAL_HOOK__',
-  '__vite__',
-  '__VITE_',
-  '__esModule',
-];
+/**
+ * Third-party globals that legitimately appear in a production bundle.
+ * EXACT names only, never prefixes: a `startsWith` test let a crafted name
+ * like `__vite__mySecret` inherit an entry's trust silently.
+ */
+const ALLOWED = new Set([
+  '__reactRouterVersion', // react-router, sets this on window by design
+]);
 
-function walk(dir, extensions) {
+/**
+ * Names removed outright, which must never reappear in any form. Matched as a
+ * bare substring rather than as an assignment, because for these the bar is
+ * "does not occur at all".
+ */
+const FORBIDDEN_ANYWHERE = ['__keyset'];
+
+function walk(dir) {
   if (!existsSync(dir)) return [];
   const out = [];
   for (const entry of readdirSync(dir)) {
-    const full = join(dir, entry);
     if (entry === 'node_modules' || entry === '.git') continue;
-    if (statSync(full).isDirectory()) out.push(...walk(full, extensions));
-    else if (extensions.some((e) => entry.endsWith(e))) out.push(full);
+    const full = join(dir, entry);
+    if (statSync(full).isDirectory()) out.push(...walk(full));
+    else if (SCANNED_EXTENSIONS.some((e) => entry.endsWith(e))) out.push(full);
   }
   return out;
 }
 
-// `(window as any).__x =`, `window.__x =`, `globalThis.__x =`,
-// `window['__x'] =`, `(window as unknown as {…}).__x =`
-const SOURCE_GLOBAL = /(?:window|globalThis)[^\n;]{0,200}?\.\s*(__[A-Za-z0-9_]+)\s*=[^=]|(?:window|globalThis)\s*\[\s*['"](__[A-Za-z0-9_]+)['"]\s*\]\s*=[^=]/g;
+const escape = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-function discoverFromSource() {
-  const names = new Set(DELETED_GLOBALS);
-  for (const dir of sourceDirs) {
-    for (const file of walk(dir, ['.ts', '.tsx', '.js', '.jsx', '.cjs', '.mjs'])) {
-      const text = readFileSync(file, 'utf8');
-      for (const m of text.matchAll(SOURCE_GLOBAL)) {
-        const name = m[1] ?? m[2];
-        if (name && !ALLOWED.some((a) => name.startsWith(a))) names.add(name);
+/** Identifiers that hold `window` / `globalThis`, so `a.__x =` is caught too. */
+function collectAliases(text) {
+  const aliases = new Set();
+  const pattern =
+    /(?:^|[;,{}()\s=])([A-Za-z_$][A-Za-z0-9_$]*)\s*=\s*(?:window|globalThis)\b(?!\s*\.)/g;
+  for (const match of text.matchAll(pattern)) aliases.add(match[1]);
+  return aliases;
+}
+
+/** Every `<base>.__name =` / `<base>['__name'] =` write in this text. */
+function findGlobalWrites(text) {
+  const bases = ['window', 'globalThis', ...collectAliases(text)];
+  const found = [];
+  for (const base of bases) {
+    const b = escape(base);
+    const patterns = [
+      new RegExp(`\\b${b}\\s*\\.\\s*(__[A-Za-z0-9_$]{1,60})\\s*=(?!=)`, 'g'),
+      new RegExp(`\\b${b}\\s*\\[\\s*["'](__[A-Za-z0-9_$]{1,60})["']\\s*\\]\\s*=(?!=)`, 'g'),
+    ];
+    for (const pattern of patterns) {
+      for (const match of text.matchAll(pattern)) {
+        found.push({ name: match[1], base, index: match.index ?? 0 });
       }
     }
   }
-  return [...names].sort();
+  return found;
 }
 
-const watchlist = discoverFromSource();
-const bundleFiles = walk(bundleDir, ['.js', '.mjs']);
+const bundleFiles = walk(bundleDir);
 
 if (bundleFiles.length === 0) {
   console.error(
@@ -87,26 +117,44 @@ if (bundleFiles.length === 0) {
 }
 
 const violations = [];
+const seen = new Set();
+
 for (const file of bundleFiles) {
   const text = readFileSync(file, 'utf8');
-  for (const name of watchlist) {
-    // Property names survive minification, so a literal search is sound.
-    let index = text.indexOf(name);
-    while (index !== -1) {
-      violations.push({
-        file: relative(repoRoot, file),
-        name,
-        excerpt: text.slice(Math.max(0, index - 40), index + 60).replace(/\n/g, ' '),
-      });
-      break; // one report per name per file is enough
-    }
+  const shortPath = relative(repoRoot, file);
+
+  for (const { name, base, index } of findGlobalWrites(text)) {
+    if (ALLOWED.has(name)) continue;
+    const key = `${shortPath}::${name}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    violations.push({
+      file: shortPath,
+      name,
+      detail: `assigned to \`${base}\``,
+      excerpt: text.slice(Math.max(0, index - 40), index + 60).replace(/\s+/g, ' '),
+    });
+  }
+
+  for (const name of FORBIDDEN_ANYWHERE) {
+    const index = text.indexOf(name);
+    if (index === -1) continue;
+    const key = `${shortPath}::${name}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    violations.push({
+      file: shortPath,
+      name,
+      detail: 'removed outright, must not appear in any form',
+      excerpt: text.slice(Math.max(0, index - 40), index + 60).replace(/\s+/g, ' '),
+    });
   }
 }
 
 if (violations.length > 0) {
   console.error('\n[check-bundle-globals] DEBUG GLOBALS FOUND IN THE PRODUCTION BUNDLE\n');
   for (const v of violations) {
-    console.error(`  ✗ ${v.name}  in ${v.file}`);
+    console.error(`  ✗ ${v.name}  (${v.detail})  in ${v.file}`);
     console.error(`      …${v.excerpt}…`);
   }
   console.error(
@@ -121,6 +169,6 @@ if (violations.length > 0) {
 }
 
 console.log(
-  `[check-bundle-globals] OK — ${watchlist.length} debug global(s) checked ` +
-    `against ${bundleFiles.length} bundle file(s), none present: ${watchlist.join(', ')}`
+  `[check-bundle-globals] OK — ${bundleFiles.length} bundle file(s) scanned, ` +
+    'no ungated debug globals on window/globalThis.'
 );
