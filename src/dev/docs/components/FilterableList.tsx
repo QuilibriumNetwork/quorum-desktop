@@ -456,7 +456,7 @@ const IssueGroups: React.FC<{ files: MarkdownFile[]; basePath: string }> = ({
                 ({epicFiles.length})
               </span>
             </Flex>
-            <div className="h-px bg-border mt-1" />
+            <div className="h-px bg-surface-5 mt-1" />
           </div>
           <ul className="space-y-2 mb-4">
             {epicFiles.map((file) => (
@@ -562,7 +562,7 @@ const FolderView: React.FC<{
           {capitalize(folder.name)}
         </span>
       </Flex>
-      <div className="h-px bg-border mt-1" />
+      <div className="h-px bg-surface-5 mt-1" />
     </div>
 
     {folder.files.length > 0 && (
@@ -590,7 +590,7 @@ function getStatusStyle(status: string): string {
     case 'done':
       return 'bg-success/20 text-success border border-success/30';
     case 'in-progress':
-      return 'bg-accent/20 text-accent border border-accent/30';
+      return 'bg-accent-rgb/20 text-accent border border-accent-rgb/30';
     case 'on-hold':
       return 'bg-warning/20 text-warning border border-warning/30';
     case 'open':
@@ -598,7 +598,7 @@ function getStatusStyle(status: string): string {
     case 'deferred':
       return 'bg-info/20 text-info border border-info/30';
     case 'archived':
-      return 'bg-muted/20 text-muted border border-muted/30';
+      return 'bg-surface-3 text-muted border border-subtle';
     default:
       return 'bg-surface-2 text-subtle border border-default';
   }
@@ -607,7 +607,7 @@ function getStatusStyle(status: string): string {
 function getTypeStyle(type: string): string {
   return type === 'bug'
     ? 'bg-danger/20 text-danger border border-danger/30'
-    : 'bg-accent/10 text-accent border border-accent/20';
+    : 'bg-accent-rgb/10 text-accent border border-accent-rgb/20';
 }
 
 function getPriorityStyle(priority: string): string {
@@ -615,7 +615,7 @@ function getPriorityStyle(priority: string): string {
     case 'low':
       return 'bg-success/20 text-success border border-success/30';
     case 'medium':
-      return 'bg-accent/20 text-accent border border-accent/30';
+      return 'bg-accent-rgb/20 text-accent border border-accent-rgb/30';
     case 'high':
       return 'bg-danger/20 text-danger border border-danger/30';
     default:

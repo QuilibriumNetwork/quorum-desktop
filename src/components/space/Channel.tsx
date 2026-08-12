@@ -178,7 +178,7 @@ export const MemberListRowAvatarAndName: React.FC<{
         {/* No `enrich` — deliberate, see design decision 3: this list can be
             200+ rows and enriching would fire one public-profile fetch per
             rendered row on open. */}
-        <MemberName address={address} className="text-md font-bold truncate-user-name" />
+        <MemberName address={address} className="text-base font-bold truncate-user-name" />
         {joinedAt != null && Date.now() - joinedAt < 7 * 24 * 60 * 60 * 1000 && (
           <Icon name="seedling" size="sm" variant="filled" className="ml-1.5 text-success flex-shrink-0" />
         )}

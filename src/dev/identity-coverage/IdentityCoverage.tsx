@@ -130,7 +130,7 @@ const LiveResolutionDiagnostics: React.FC = () => {
               {state.events.slice(0, 20).map((e) => (
                 <tr
                   key={`${e.address}|${e.scope}|${e.spaceId ?? ''}|${e.reason}`}
-                  className="border-b border-default/50"
+                  className="border-b border-subtle"
                 >
                   <td className="py-1 pr-4 font-mono text-xs">{e.at}</td>
                   <td className="py-1 pr-4">{e.surface}</td>
@@ -482,7 +482,7 @@ export const IdentityCoverage: React.FC = () => {
                     {latest.spaces.map((space) => (
                       <tr
                         key={space.spaceId}
-                        className="border-b border-default/50"
+                        className="border-b border-subtle"
                       >
                         <td className="py-1 pr-4">
                           {space.spaceName}
@@ -569,7 +569,7 @@ export const IdentityCoverage: React.FC = () => {
                       {history.map((snapshot, index) => (
                         <tr
                           key={snapshot.atIso}
-                          className="border-b border-default/50"
+                          className="border-b border-subtle"
                         >
                           <td className="py-1 pr-4">{index + 1}</td>
                           <td className="py-1 pr-4 font-mono text-xs">

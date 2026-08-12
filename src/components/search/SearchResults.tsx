@@ -275,7 +275,7 @@ const SearchResultsInner: React.FC<SearchResultsProps> = ({
                 )}
               />
               {results.length >= 500 && (
-                <div className="p-3 border-top">
+                <div className="p-3 border-t border-default">
                   <Callout variant="info" className="w-full">
                     {t`Showing first 500 results. Refine your search for more specific results.`}
                   </Callout>

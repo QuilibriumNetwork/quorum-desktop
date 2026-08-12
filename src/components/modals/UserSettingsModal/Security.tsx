@@ -389,7 +389,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
                       <>
                         <input
                           autoFocus
-                          className="flex-1 min-w-0 bg-transparent border border-subtle rounded px-2 py-0.5 text-sm text-main outline-none focus:border-primary"
+                          className="flex-1 min-w-0 bg-transparent border border-subtle rounded px-2 py-0.5 text-sm text-main outline-none focus:border-accent"
                           value={editValue}
                           onChange={e => setEditValue(e.target.value)}
                           onKeyDown={handleEditKeyDown}

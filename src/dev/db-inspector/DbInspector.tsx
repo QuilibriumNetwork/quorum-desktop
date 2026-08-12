@@ -210,7 +210,7 @@ export const DbInspector: React.FC = () => {
                         onClick={() => loadStore(storeName)}
                         className={`w-full text-left px-3 py-2 rounded-md transition-colors ${
                           isSelected
-                            ? 'bg-accent/20 border border-accent/50'
+                            ? 'bg-accent-rgb/20 border border-accent-rgb/50'
                             : 'hover:bg-surface-2 border border-transparent'
                         }`}
                       >
