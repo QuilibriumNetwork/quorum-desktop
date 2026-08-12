@@ -32,7 +32,7 @@ const devNavItems: DevNavItem[] = [
   {
     name: 'Playground',
     icon: 'flask',
-    path: '/playground',
+    path: '/dev/playground',
   },
   {
     name: 'Audit',

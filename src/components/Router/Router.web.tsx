@@ -48,10 +48,6 @@ const ComponentAuditViewer = lazyDevImport(
   () => import('@/dev/components-audit'),
   'ComponentAuditViewer'
 );
-const DependencyAuditViewer = lazyDevImport(
-  () => import('@/dev/components-audit'),
-  'ComponentAuditViewer'
-);
 const DevMainPage = lazyDevImport(
   () => import('@/dev/DevMainPage'),
   'DevMainPage'
@@ -259,7 +255,7 @@ export function Router({ user, setUser }: RouterProps) {
       <Route path="/invite/" element={<InviteRoute />} />
       {process.env.NODE_ENV === 'development' && PrimitivesPlayground && (
         <Route
-          path="/playground"
+          path="/dev/playground"
           element={
             <Suspense fallback={devFallback('Playground')}>
               <PrimitivesPlayground />
@@ -273,16 +269,6 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={devFallback('Component Audit')}>
               <ComponentAuditViewer />
-            </Suspense>
-          }
-        />
-      )}
-      {process.env.NODE_ENV === 'development' && DependencyAuditViewer && (
-        <Route
-          path="/dev/dependencies"
-          element={
-            <Suspense fallback={devFallback('Dependency Analysis')}>
-              <DependencyAuditViewer />
             </Suspense>
           }
         />

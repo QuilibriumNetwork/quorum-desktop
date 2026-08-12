@@ -34,7 +34,7 @@ export const DevMainPage: React.FC = () => {
       icon: 'flask',
       description:
         'Test and preview all primitive components with color palette',
-      path: '/playground',
+      path: '/dev/playground',
     },
     {
       name: 'Component Audit',
