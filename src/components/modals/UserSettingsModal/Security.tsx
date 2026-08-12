@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Icon, Tooltip, Spacer, ScrollContainer, Callout } from '../../primitives';
+import { Button, Icon, Tooltip, Spacer, ScrollContainer, Callout, Modal } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QRCodeSVG } from 'qrcode.react';
@@ -41,19 +41,16 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   deviceNames = {},
   saveDeviceName,
 }) => {
-  // QR code display state - requires explicit user confirmation
-  const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
+  // QR display state. The confirmation itself is a ConfirmationModal (below);
+  // this only tracks the reveal.
   const [showQRCode, setShowQRCode] = React.useState(false);
   const [privateKeyHex, setPrivateKeyHex] = React.useState<string | null>(null);
-  const [isLoadingKey, setIsLoadingKey] = React.useState(false);
 
-  // Copy-private-key state - requires explicit user confirmation, mirrors the QR reveal.
+  // Copy-private-key state.
   // copyMode records HOW the copy was performed: 'auto-clear' (Electron main
   // process guarantees the 60s clear) vs 'best-effort' (plain web build, where
-  // an unfocused page cannot touch the clipboard) — the success message
-  // adapts so we never promise a clear we can't deliver.
-  const [showCopyConfirmation, setShowCopyConfirmation] = React.useState(false);
-  const [isCopyingKey, setIsCopyingKey] = React.useState(false);
+  // an unfocused page cannot touch the clipboard). The success message adapts
+  // so we never promise a clear we can't deliver.
   const [copyMode, setCopyMode] = React.useState<SensitiveCopyMode | null>(null);
   const [copyError, setCopyError] = React.useState<string | null>(null);
   // Purely cosmetic: hides the success callout; the actual clipboard clearing
@@ -67,42 +64,40 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   const [backupSuccess, setBackupSuccess] = React.useState<string | null>(null);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  // Auto-hide QR code after 60 seconds for security
+  /**
+   * The QR carries the whole account, so it self-destructs rather than waiting
+   * to be dismissed. Closing the modal (button, Esc, or backdrop) does the same
+   * thing, which is why the reveal needed a modal in the first place: an inline
+   * panel had no instant way out.
+   */
   React.useEffect(() => {
     if (showQRCode) {
       const timer = setTimeout(() => {
         setShowQRCode(false);
         setPrivateKeyHex(null);
-        setShowQRConfirmation(false);
-      }, 60000);
+      }, SENSITIVE_CLIPBOARD_CLEAR_MS);
       return () => clearTimeout(timer);
     }
   }, [showQRCode]);
 
-  const handleShowQRClick = () => {
-    setShowQRConfirmation(true);
-  };
-
   const handleConfirmShowQR = async () => {
     if (!getPrivateKeyHex) return;
-
-    setIsLoadingKey(true);
+    // Errors surface through the same callout the copy path uses; without this
+    // a rejected passkey prompt left the button looking inert.
+    setCopyError(null);
     try {
       const keyHex = await getPrivateKeyHex();
       setPrivateKeyHex(keyHex);
       setShowQRCode(true);
-      setShowQRConfirmation(false);
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to get private key:', error);
-    } finally {
-      setIsLoadingKey(false);
+      setCopyError(error?.message || t`Failed to read your private key`);
     }
   };
 
   const handleHideQR = () => {
     setShowQRCode(false);
     setPrivateKeyHex(null);
-    setShowQRConfirmation(false);
   };
 
   // Hide the copy-success callout timer on unmount (the clipboard clearing
@@ -113,21 +108,13 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     };
   }, []);
 
-  const handleCopyKeyClick = () => {
-    setCopyMode(null);
-    setCopyError(null);
-    setShowCopyConfirmation(true);
-  };
-
   const handleConfirmCopyKey = async () => {
     if (!getPrivateKeyHex) return;
 
-    setIsCopyingKey(true);
     setCopyError(null);
     try {
       const keyHex = await getPrivateKeyHex();
       const mode = await copySensitiveText(keyHex);
-      setShowCopyConfirmation(false);
       setCopyMode(mode);
 
       // Hide the success callout when the auto-clear window elapses.
@@ -138,14 +125,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
     } catch (error: any) {
       console.error('Failed to copy private key:', error);
       setCopyError(error?.message || t`Failed to copy private key`);
-      setShowCopyConfirmation(false);
-    } finally {
-      setIsCopyingKey(false);
     }
-  };
-
-  const handleCancelCopy = () => {
-    setShowCopyConfirmation(false);
   };
 
   // Device rename state
@@ -220,6 +200,83 @@ const Security: React.FunctionComponent<SecurityProps> = ({
   const handleExportBackupClick = (e: React.MouseEvent) => {
     if (exportConfirmation.isConfirming) return;
     exportConfirmation.handleClick(e, handleExportBackup);
+  };
+
+  /**
+   * Confirmation before writing the raw private key to disk.
+   *
+   * "Download file" used to be the only one of the three Account Key actions
+   * with no gate at all — one click and the unencrypted key was in the
+   * downloads folder — while "Copy key" and "Show QR" both required a second,
+   * explicitly-worded click. That asymmetry was backwards: a clipboard entry
+   * expires and a QR code is dismissed, but a file persists, and it persists in
+   * a directory that is cloud-synced on a large share of machines.
+   *
+   * The copy names the filename, because the file is self-identifying — it is
+   * `<your address>.key`, so anyone who finds it later knows which account it
+   * opens.
+   */
+  const downloadConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: {
+      title: t`Download your private key?`,
+      message: t`This saves your account's private key to your device as an unencrypted text file, named after your account address.\n\nAnyone who opens that file controls your account permanently. There is no way to revoke or reset it. Downloads folders are often synced to cloud storage, so move it somewhere you control.`,
+      // One word. "I understand, download" wrapped onto two lines in the button.
+      confirmText: t`Download`,
+      cancelText: t`Cancel`,
+      variant: 'danger',
+    },
+  });
+
+  /** Asks first; the download runs only once the user confirms. */
+  const handleDownloadKeyClick = (e: React.MouseEvent) => {
+    if (downloadConfirmation.isConfirming) return;
+    downloadConfirmation.handleClick(e, async () => downloadKey());
+  };
+
+  /**
+   * Copy and Show QR used to warn through inline callouts rendered BELOW the
+   * button row, inside a scrollable panel. On a short window the warning could
+   * sit off-screen entirely, so the user clicked "I Understand" having never
+   * seen what they were agreeing to. A modal cannot be scrolled past, and it
+   * makes all three Account Key actions behave the same way.
+   */
+  const copyConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: {
+      title: t`Copy your private key?`,
+      message: t`This puts your account's private key on the clipboard in plain text. Anyone who can read your clipboard can take full control of your account.\n\nClipboard history and sync tools keep their own copy, which Quorum cannot clear. Paste it somewhere safe, then clear your clipboard and its history.`,
+      confirmText: t`Copy`,
+      cancelText: t`Cancel`,
+      variant: 'danger',
+    },
+  });
+
+  const handleCopyKeyClick = (e: React.MouseEvent) => {
+    if (copyConfirmation.isConfirming) return;
+    setCopyMode(null);
+    setCopyError(null);
+    copyConfirmation.handleClick(e, handleConfirmCopyKey);
+  };
+
+  const qrConfirmation = useConfirmation({
+    type: 'modal',
+    enableShiftBypass: false,
+    modalConfig: {
+      title: t`Show your private key as a QR code?`,
+      message: t`Anyone who sees or photographs this code can take full control of your account and steal any funds it holds.\n\nOnly continue if you are somewhere private and ready to scan immediately. The code hides itself after 60 seconds.`,
+      confirmText: t`Show QR`,
+      cancelText: t`Cancel`,
+      variant: 'danger',
+    },
+  });
+
+  const handleShowQRClick = (e: React.MouseEvent) => {
+    if (qrConfirmation.isConfirming) return;
+    setCopyError(null);
+    qrConfirmation.handleClick(e, handleConfirmShowQR);
   };
 
   const handleExportBackup = async () => {
@@ -494,7 +551,8 @@ const Security: React.FunctionComponent<SecurityProps> = ({
                 type="danger-outline"
                 size="small"
                 className="whitespace-nowrap"
-                onClick={downloadKey}
+                onClick={handleDownloadKeyClick}
+                disabled={downloadConfirmation.isConfirming}
               >
                 <Icon name="download" size="sm" className="mr-1" />
                 {t`Download file`}
@@ -505,7 +563,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
                   size="small"
                   className="whitespace-nowrap"
                   onClick={handleCopyKeyClick}
-                  disabled={isCopyingKey}
+                  disabled={copyConfirmation.isConfirming}
                 >
                   <Icon name="copy" size="sm" className="mr-1" />
                   {t`Copy key`}
@@ -517,6 +575,7 @@ const Security: React.FunctionComponent<SecurityProps> = ({
                   size="small"
                   className="whitespace-nowrap"
                   onClick={handleShowQRClick}
+                  disabled={qrConfirmation.isConfirming}
                 >
                   <Icon name="qrcode" size="sm" className="mr-1" />
                   {t`Show QR`}
@@ -528,36 +587,21 @@ const Security: React.FunctionComponent<SecurityProps> = ({
               {t`Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app.`}
             </div>
 
-            {/* Copy confirmation */}
-            {showCopyConfirmation && (
-              <>
-                <Callout variant="error" size="sm">
-                  <div className="text-sm">
-                    {t`This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards.`}
-                  </div>
-                </Callout>
-                <div className="flex gap-2 justify-end">
-                  <Button type="secondary" size="small" onClick={handleCancelCopy}>
-                    {t`Cancel`}
-                  </Button>
-                  <Button
-                    type="danger"
-                    size="small"
-                    onClick={handleConfirmCopyKey}
-                    disabled={isCopyingKey}
-                  >
-                    {isCopyingKey ? t`Copying...` : t`I Understand, Copy`}
-                  </Button>
-                </div>
-              </>
-            )}
-
+            {/*
+              Both messages name the clipboard-history caveat, and the
+              auto-clear one needs it most: clearing the system clipboard is
+              real, but it does not reach the copies Windows Clipboard History,
+              macOS Universal Clipboard, or any clipboard manager has already
+              taken. Stating the 60s clear on its own read as "the key is no
+              longer anywhere", which is frequently false and leads people to
+              skip the one step the app cannot do for them.
+            */}
             {copyMode && (
               <Callout variant="success" size="sm">
                 <div className="text-sm">
                   {copyMode === 'auto-clear'
-                    ? t`Private key copied. It will be cleared from your clipboard automatically in 60 seconds.`
-                    : t`Private key copied. Store it securely and clear your clipboard when you're done.`}
+                    ? t`Private key copied. Quorum will clear it from your clipboard in 60 seconds. Clipboard history tools keep their own copy, so clear those too.`
+                    : t`Private key copied. Store it securely, then clear your clipboard and your clipboard history.`}
                 </div>
               </Callout>
             )}
@@ -568,52 +612,6 @@ const Security: React.FunctionComponent<SecurityProps> = ({
               </Callout>
             )}
 
-            {/* QR confirmation */}
-            {showQRConfirmation && !showQRCode && (
-              <>
-                <Callout variant="error" size="sm">
-                  <div className="text-sm">
-                    {t`Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately.`}
-                  </div>
-                </Callout>
-                <div className="flex gap-2 justify-end">
-                  <Button
-                    type="secondary"
-                    size="small"
-                    onClick={() => setShowQRConfirmation(false)}
-                  >
-                    {t`Cancel`}
-                  </Button>
-                  <Button
-                    type="danger"
-                    size="small"
-                    onClick={handleConfirmShowQR}
-                    disabled={isLoadingKey}
-                  >
-                    {isLoadingKey ? t`Loading...` : t`I Understand, Show QR`}
-                  </Button>
-                </div>
-              </>
-            )}
-
-            {/* QR display */}
-            {showQRCode && privateKeyHex && (
-              <>
-                <div className="flex flex-col items-center">
-                  <div className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG value={privateKeyHex} size={200} level="M" />
-                  </div>
-                  <div className="text-xs text-muted text-center mt-3">
-                    {t`QR code will auto-hide in 60 seconds`}
-                  </div>
-                </div>
-                <div className="flex justify-end">
-                  <Button type="secondary" size="small" onClick={handleHideQR}>
-                    {t`Hide`}
-                  </Button>
-                </div>
-              </>
-            )}
           </div>
         </div>
 
@@ -673,6 +671,81 @@ const Security: React.FunctionComponent<SecurityProps> = ({
         </div>
 
       </div>
+      {copyConfirmation.modalConfig && (
+        <ConfirmationModal
+          visible={copyConfirmation.showModal}
+          title={copyConfirmation.modalConfig.title}
+          message={copyConfirmation.modalConfig.message}
+          confirmText={copyConfirmation.modalConfig.confirmText}
+          cancelText={copyConfirmation.modalConfig.cancelText}
+          variant={copyConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={copyConfirmation.isConfirming}
+          busyMessage={t`Copying...`}
+          onConfirm={copyConfirmation.modalConfig.onConfirm}
+          onCancel={copyConfirmation.modalConfig.onCancel}
+        />
+      )}
+      {qrConfirmation.modalConfig && (
+        <ConfirmationModal
+          visible={qrConfirmation.showModal}
+          title={qrConfirmation.modalConfig.title}
+          message={qrConfirmation.modalConfig.message}
+          confirmText={qrConfirmation.modalConfig.confirmText}
+          cancelText={qrConfirmation.modalConfig.cancelText}
+          variant={qrConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={qrConfirmation.isConfirming}
+          busyMessage={t`Reading your key...`}
+          onConfirm={qrConfirmation.modalConfig.onConfirm}
+          onCancel={qrConfirmation.modalConfig.onCancel}
+        />
+      )}
+      {/*
+        The QR lives in its own modal rather than inline in the panel. Closing
+        it IS hiding it, so Esc and the backdrop both work as an instant
+        get-it-off-my-screen, which the old inline panel had no equivalent of.
+        The 60s timer closes the same modal.
+      */}
+      <Modal
+        visible={showQRCode && !!privateKeyHex}
+        onClose={handleHideQR}
+        title={t`Your private key`}
+        size="small"
+      >
+        <div className="flex flex-col items-center gap-3">
+          <Callout variant="error" size="sm">
+            <div className="text-sm">
+              {t`Anyone who photographs this code owns your account. Scan it now, then close this.`}
+            </div>
+          </Callout>
+          {/* White plate: QR readers need the light-on-dark contrast inverted. */}
+          <div className="bg-white p-4 rounded-lg">
+            {privateKeyHex && <QRCodeSVG value={privateKeyHex} size={200} level="M" />}
+          </div>
+          <div className="text-xs text-muted text-center">
+            {t`This hides itself after 60 seconds.`}
+          </div>
+          <Button type="secondary" size="small" onClick={handleHideQR}>
+            {t`Done`}
+          </Button>
+        </div>
+      </Modal>
+      {downloadConfirmation.modalConfig && (
+        <ConfirmationModal
+          visible={downloadConfirmation.showModal}
+          title={downloadConfirmation.modalConfig.title}
+          message={downloadConfirmation.modalConfig.message}
+          confirmText={downloadConfirmation.modalConfig.confirmText}
+          cancelText={downloadConfirmation.modalConfig.cancelText}
+          variant={downloadConfirmation.modalConfig.variant}
+          showProtip={false}
+          busy={downloadConfirmation.isConfirming}
+          busyMessage={t`Preparing download...`}
+          onConfirm={downloadConfirmation.modalConfig.onConfirm}
+          onCancel={downloadConfirmation.modalConfig.onCancel}
+        />
+      )}
       {/* Says what the file holds, at the moment the user chooses where to keep it. */}
       {exportConfirmation.modalConfig && (
         <ConfirmationModal
