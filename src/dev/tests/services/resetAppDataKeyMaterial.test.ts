@@ -24,6 +24,7 @@ import { webcrypto } from 'node:crypto';
 import { Buffer } from 'buffer';
 import { passkey } from '@quilibrium/quilibrium-js-sdk-channels';
 import { wipeLocalAppData } from '@/services/resetAppData';
+import { QUORUM_DB_NAME } from '@/db/dbVersion';
 
 /** Matches `fqAppPrefix: 'Quorum'` in useUnifiedOnboardingFlow.ts. */
 const APP_PREFIX = 'Quorum';
@@ -56,6 +57,34 @@ beforeEach(async () => {
   localStorage.clear();
   sessionStorage.clear();
 });
+
+/** Stand in for MessageDB: create the app database with one store. */
+const createAppDb = (): Promise<IDBDatabase> =>
+  new Promise((resolve) => {
+    const open = indexedDB.open(QUORUM_DB_NAME, 1);
+    open.onupgradeneeded = () => open.result.createObjectStore('messages');
+    open.onsuccess = () => resolve(open.result);
+  });
+
+/**
+ * Whether the app database is still there.
+ *
+ * Opening it is the portable probe: `onupgradeneeded` only fires when there was
+ * nothing to open. It leaves an empty database behind, which is harmless — each
+ * test gets a fresh IndexedDB factory.
+ */
+const appDbExists = (): Promise<boolean> =>
+  new Promise((resolve) => {
+    let existed = true;
+    const open = indexedDB.open(QUORUM_DB_NAME);
+    open.onupgradeneeded = () => {
+      existed = false;
+    };
+    open.onsuccess = () => {
+      open.result.close();
+      resolve(existed);
+    };
+  });
 
 /** Onboarding on the fallback path: master key to id=1, flag set. */
 const seedFallbackRegistration = async () => {
@@ -131,16 +160,18 @@ describe('the fix: wipeLocalAppData clears the SDK key store', () => {
     await expect(passkey.loadKeyDecryptData(2)).rejects.toBe('no data');
   });
 
-  it('still clears the app database and web storage', async () => {
+  it('still deletes the app database', async () => {
     await seedFallbackRegistration();
-    await new Promise<void>((resolve) => {
-      const open = indexedDB.open('quorum_db', 1);
-      open.onupgradeneeded = () => open.result.createObjectStore('messages');
-      open.onsuccess = () => {
-        open.result.close();
-        resolve();
-      };
-    });
+    (await createAppDb()).close();
+
+    await wipeLocalAppData();
+
+    expect(await appDbExists()).toBe(false);
+  });
+
+  it('still clears web storage', async () => {
+    await seedFallbackRegistration();
+    sessionStorage.setItem('some-session-state', 'x');
 
     await wipeLocalAppData();
 
@@ -156,14 +187,49 @@ describe('the fix: wipeLocalAppData clears the SDK key store', () => {
   it('rejects with "blocked" rather than half-completing', async () => {
     await seedFallbackRegistration();
 
-    const held = await new Promise<IDBDatabase>((resolve) => {
-      const open = indexedDB.open('quorum_db', 1);
-      open.onupgradeneeded = () => open.result.createObjectStore('messages');
-      open.onsuccess = () => resolve(open.result);
-    });
-
     // Holding the connection open makes deleteDatabase fire onblocked.
+    const held = await createAppDb();
+
     await expect(wipeLocalAppData()).rejects.toThrow('blocked');
     held.close();
+  });
+
+  /**
+   * The failure path, pinned deliberately.
+   *
+   * It is tempting to move the storage clears into a `finally` so a failed
+   * wipe still "does as much as it can". That is the wrong trade: clearing
+   * `passkeys-list` — the only record that an account exists on this device —
+   * while key material is still on disk would lock the user out AND leave
+   * behind the exact thing the reset exists to remove. Failing without
+   * touching storage leaves a state the user retries out of cleanly, because
+   * deleting an already-deleted database succeeds.
+   */
+  it('leaves web storage untouched when the wipe fails', async () => {
+    await seedFallbackRegistration();
+    const held = await createAppDb();
+
+    await expect(wipeLocalAppData()).rejects.toThrow('blocked');
+
+    expect(localStorage.getItem('passkeys-list')).not.toBeNull();
+    expect(localStorage.getItem(FALLBACK_FLAG)).toBe('true');
+    held.close();
+  });
+
+  /**
+   * Retrying after a blocked reset has to converge, otherwise the error the
+   * user is shown ("close your other tabs, then try again") is a dead end.
+   */
+  it('completes on retry once the blocking connection closes', async () => {
+    await seedFallbackRegistration();
+    const held = await createAppDb();
+    await expect(wipeLocalAppData()).rejects.toThrow('blocked');
+
+    held.close();
+    await wipeLocalAppData();
+
+    expect(await appDbExists()).toBe(false);
+    expect(localStorage.length).toBe(0);
+    await expect(passkey.loadKeyDecryptData(1)).rejects.toBe('no data');
   });
 });

@@ -9,8 +9,7 @@
  * master key, and this is what destroys the master key.
  */
 
-/** The app's own store: messages, spaces, config. */
-const APP_DB = 'quorum_db';
+import { QUORUM_DB_NAME } from '../db/dbVersion';
 
 /**
  * The SDK's key store (`@quilibrium/quilibrium-js-sdk-channels`, `callOnStore`).
@@ -47,11 +46,19 @@ const deleteDatabase = (name: string): Promise<void> =>
  * Order is deliberate. `quorum_db` is the one held open long-term (MessageDB),
  * so it is the one that realistically blocks — attempting it first means a
  * blocked reset aborts having deleted nothing, instead of destroying the key
- * store and then failing. The user closes the other tab and retries onto a
- * consistent state.
+ * store and then failing. The key store is opened and closed per operation by
+ * the SDK, so it is the far less likely of the two to block.
+ *
+ * The storage clears deliberately do NOT run on failure. Clearing them anyway
+ * would drop `passkeys-list` — the only record that an account exists here —
+ * while key material was still on disk, which locks the user out AND keeps the
+ * thing the reset was supposed to remove. Failing without touching storage
+ * leaves a state the user can simply retry out of, since deleting an
+ * already-deleted database succeeds. `resetAppDataKeyMaterial.test.ts` pins
+ * this, so please don't "tidy" it into a `finally`.
  */
 export const wipeLocalAppData = async (): Promise<void> => {
-  await deleteDatabase(APP_DB);
+  await deleteDatabase(QUORUM_DB_NAME);
   await deleteDatabase(SDK_KEY_DB);
   localStorage.clear();
   sessionStorage.clear();
