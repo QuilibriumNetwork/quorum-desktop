@@ -11,3 +11,4 @@
  * see `.agents/docs/features/primitives/03-when-to-use-primitives.md`.
  */
 export { DevPageLoading } from './DevPageLoading';
+export { DevStat, type DevStatTone } from './DevStat';

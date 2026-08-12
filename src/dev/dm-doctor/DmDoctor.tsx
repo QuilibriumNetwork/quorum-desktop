@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button, Icon, Input, Select } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
+import { DevStat } from '../shell';
 import {
   scanSequence,
   findGhostConversations,
@@ -427,21 +428,20 @@ export const DmDoctor: React.FC = () => {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {(Object.keys(WARNING_LABELS) as DmWarningKey[]).map((key) => (
-              <div key={key} className="bg-surface-2 rounded p-3">
-                <Text variant="subtle" size="xs">{WARNING_LABELS[key]}</Text>
-                <Text
-                  variant="strong"
-                  size="2xl"
-                  className={warningState && warningState.counts[key] > 0 ? 'text-red-500' : ''}
-                >
-                  {warningState?.counts[key] ?? 0}
-                </Text>
-                {warningState && warningState.lastHits[key].length > 0 && (
-                  <Text variant="subtle" size="xs" className="mt-1 block">
-                    last: {warningState.lastHits[key][0]}
-                  </Text>
-                )}
-              </div>
+              <DevStat
+                key={key}
+                className="bg-surface-2 rounded p-3"
+                label={WARNING_LABELS[key]}
+                value={warningState?.counts[key] ?? 0}
+                tone={
+                  warningState && warningState.counts[key] > 0 ? 'bad' : 'neutral'
+                }
+                hint={
+                  warningState && warningState.lastHits[key].length > 0
+                    ? `last: ${warningState.lastHits[key][0]}`
+                    : undefined
+                }
+              />
             ))}
           </div>
         </div>

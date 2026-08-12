@@ -113,7 +113,7 @@ carries an explicit `className="block"` — the label does not.
 MEASURED via DOM probe: label is `SPAN`, `display: inline`; next sibling is
 `SPAN`, `display: inline`, text `"0"`.
 
-A sweep across all eleven pages found **exactly six collisions on two pages**:
+A sweep across all eleven pages found **exactly five collisions on two pages**:
 
 | Page | Collision | Sizes |
 |---|---|---|
@@ -122,10 +122,24 @@ A sweep across all eleven pages found **exactly six collisions on two pages**:
 | DM Doctor | `SESSION REPLACED by init envelope \| 0` | 12px → 24px |
 | DM Doctor | `DM frame for unknown inbox \| 0` | 12px → 24px |
 | DM Doctor | `decrypt fail/error/unable \| 0` | 12px → 24px |
-| DM Doctor | `Sequence scan \| Scans the WH…` | 18px → 12px |
 
 The other nine pages return zero collisions — they are the control arm, and they
 must still return zero after the change.
+
+> **Corrected 2026-08-12.** The first version of this table listed a sixth hit,
+> `Sequence scan | Scans the WH…` on DM Doctor. It was an artifact: the detector
+> filtered a parent's children down to the inline ones and then compared
+> *consecutive survivors*, so it paired two spans that have a block-level
+> `<Flex>` between them and therefore never share a line. Tightened to require
+> real vertical overlap plus `b.left >= a.right`, which re-ran to the five above.
+> Worth recording, because the artifact would have shown up as a "fix" that
+> changed nothing.
+
+**Caveat on coverage.** The sweep only sees rendered DOM. Identity Coverage has
+roughly fifteen further stats inside its snapshot results, which render only
+after "Take snapshot" against a signed-in account with data. They carry the same
+defect and are fixed by the same change, but they are verified by types and
+review rather than by the instrument.
 
 Note the Audit page's stat tiles are *not* affected: they use
 `<div className="text-2xl font-bold">`

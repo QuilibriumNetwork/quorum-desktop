@@ -83,7 +83,32 @@ QNS currently renders `<DevNavMenu />` with no props — confirm it still mounts
 
 ---
 
-## Slice 2 — Stat labels stop colliding with their numbers
+## Slice 2 — Stat labels stop colliding with their numbers ✅ done 2026-08-12
+
+Sweep returns `[]` on all eleven pages, from a baseline of five hits on two.
+The nine control pages stayed `[]` throughout. Captures confirm label, value and
+hint now stack, with the tone colour on the number. Typecheck clean; lint
+unchanged at 0 errors / 278 warnings, so nothing new was introduced.
+
+Three things worth recording:
+
+- **The baseline was five, not six.** The sixth was a detector artifact — see
+  the corrected table in design §1-D. Found by tightening the instrument before
+  trusting it, which is why it did not turn into a phantom fix.
+- **`tone` being semantic paid for itself immediately.** Typing it as
+  `good | bad | warn | neutral` rather than a class string made the compiler
+  surface six further call sites that were passing raw Tailwind classes,
+  including two `text-yellow-500` that no one had classified. Added a `warn`
+  tone and a `deltaTone()` helper — deltas have the opposite polarity to counts
+  (an increase is bad), which the old shared `countTone` silently got wrong.
+- **`countTone` had to split in two.** Six table cells use it as a `className`
+  rather than through a stat, so they now call `countToneClass()`.
+
+Not verified by instrument: the ~15 stats inside Identity Coverage's snapshot
+results, which need a signed-in account with data to render. Converted and
+typechecked, but unproven visually.
+
+
 
 **Observable outcome:** on Identity Coverage, `Degraded` and `0` sit on separate
 lines with the number below the label. Same on DM Doctor's three warning

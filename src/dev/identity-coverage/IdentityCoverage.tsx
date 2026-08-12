@@ -14,6 +14,7 @@ import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'rea
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button, Icon } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
+import { DevStat, type DevStatTone } from '../shell';
 import {
   buildIdentityCoverageSnapshot,
   computeCoverageDelta,
@@ -39,32 +40,21 @@ function truncateAddress(address: string): string {
 
 /** Green when the count is zero, red otherwise — the acceptance criterion for
  *  the whole task is this number reaching zero and staying there. */
-function countTone(value: number): string {
+function countTone(value: number): DevStatTone {
+  return value === 0 ? 'good' : 'bad';
+}
+
+/** For a delta, any increase is bad and flat-or-down is good — the opposite
+ *  polarity to `countTone`, which reads a raw count. */
+function deltaTone(value: number): DevStatTone {
+  return value > 0 ? 'bad' : 'good';
+}
+
+/** Same rule, as a class, for the table cells that colour their own text
+ *  rather than going through `DevStat`. */
+function countToneClass(value: number): string {
   return value === 0 ? 'text-green-500' : 'text-red-500';
 }
-
-interface StatProps {
-  label: string;
-  value: number | string;
-  hint?: string;
-  tone?: string;
-}
-
-const Stat: React.FC<StatProps> = ({ label, value, hint, tone }) => (
-  <div className="min-w-32">
-    <Text variant="subtle" size="xs">
-      {label}
-    </Text>
-    <Text variant="strong" size="xl" className={tone}>
-      {value}
-    </Text>
-    {hint && (
-      <Text variant="subtle" size="xs" className="block">
-        {hint}
-      </Text>
-    )}
-  </div>
-);
 
 /**
  * Live counter for `src/identity/diagnostics.ts` — the resolver-side
@@ -98,7 +88,7 @@ const LiveResolutionDiagnostics: React.FC = () => {
         <Text variant="strong" size="lg">
           Live resolution diagnostics (this session)
         </Text>
-        <Text variant="strong" size="xl" className={countTone(state.degradedTotal)}>
+        <Text variant="strong" size="xl" className={countToneClass(state.degradedTotal)}>
           {state.degradedTotal} degraded resolution{state.degradedTotal === 1 ? '' : 's'}
         </Text>
       </Flex>
@@ -112,13 +102,13 @@ const LiveResolutionDiagnostics: React.FC = () => {
         persisted log.
       </Text>
       <Flex gap="lg" className="flex-wrap mb-2">
-        <Stat
+        <DevStat
           label="Degraded"
           value={state.degradedTotal}
           hint="provider missing data it should have had"
           tone={countTone(state.degradedTotal)}
         />
-        <Stat
+        <DevStat
           label="Expected (no source anywhere)"
           value={state.expectedTotal}
           hint="likely a genuinely unknown member — not warned"
@@ -377,33 +367,25 @@ export const IdentityCoverage: React.FC = () => {
               Delta — first snapshot to last (negative is improvement)
             </Text>
             <Flex gap="lg" className="flex-wrap">
-              <Stat
+              <DevStat
                 label="Senders with no member row"
                 value={formatSigned(delta.sendersWithNoRow)}
-                tone={
-                  delta.sendersWithNoRow > 0 ? 'text-red-500' : 'text-green-500'
-                }
+                tone={deltaTone(delta.sendersWithNoRow)}
               />
-              <Stat
+              <DevStat
                 label="Rows with no identity"
                 value={formatSigned(delta.rowsNoIdentity)}
-                tone={
-                  delta.rowsNoIdentity > 0 ? 'text-red-500' : 'text-green-500'
-                }
+                tone={deltaTone(delta.rowsNoIdentity)}
               />
-              <Stat
+              <DevStat
                 label="No-identity total"
                 value={formatSigned(delta.noIdentityTotal)}
-                tone={
-                  delta.noIdentityTotal > 0 ? 'text-red-500' : 'text-green-500'
-                }
+                tone={deltaTone(delta.noIdentityTotal)}
               />
-              <Stat
+              <DevStat
                 label="DM rows with no identity"
                 value={formatSigned(delta.dmRowsNoIdentity)}
-                tone={
-                  delta.dmRowsNoIdentity > 0 ? 'text-red-500' : 'text-green-500'
-                }
+                tone={deltaTone(delta.dmRowsNoIdentity)}
               />
             </Flex>
           </div>
@@ -420,35 +402,35 @@ export const IdentityCoverage: React.FC = () => {
                 <Text
                   variant="strong"
                   size="2xl"
-                  className={countTone(latest.totals.noIdentityTotal)}
+                  className={countToneClass(latest.totals.noIdentityTotal)}
                 >
                   {latest.totals.noIdentityTotal} with no identity
                 </Text>
               </Flex>
 
               <Flex gap="lg" className="flex-wrap mb-4">
-                <Stat
+                <DevStat
                   label="Senders with no member row"
                   value={latest.totals.sendersWithNoRow}
                   hint="their join never arrived"
                   tone={countTone(latest.totals.sendersWithNoRow)}
                 />
-                <Stat
+                <DevStat
                   label="Rows with no identity"
                   value={latest.totals.rowsNoIdentity}
                   hint="row arrived carrying nothing"
                   tone={countTone(latest.totals.rowsNoIdentity)}
                 />
-                <Stat
+                <DevStat
                   label="Distinct senders"
                   value={latest.totals.distinctSenders}
                 />
-                <Stat label="Member rows" value={latest.totals.memberRows} />
-                <Stat
+                <DevStat label="Member rows" value={latest.totals.memberRows} />
+                <DevStat
                   label="Rows with no name"
                   value={latest.totals.rowsNoName}
                 />
-                <Stat
+                <DevStat
                   label="Rows with no avatar"
                   value={latest.totals.rowsNoIcon}
                 />
@@ -471,20 +453,20 @@ export const IdentityCoverage: React.FC = () => {
                   Public-profile probe
                 </Text>
                 <Flex gap="lg" className="flex-wrap mb-2">
-                  <Stat label="Probed" value={latest.publicProfile.probed} />
-                  <Stat
+                  <DevStat label="Probed" value={latest.publicProfile.probed} />
+                  <DevStat
                     label="Recoverable at render"
                     value={latest.publicProfile.recoverable}
                     hint="public profile can fill it"
-                    tone="text-yellow-500"
+                    tone="warn"
                   />
-                  <Stat
+                  <DevStat
                     label="No source anywhere"
                     value={latest.publicProfile.noSource}
                     hint="never opted in — irreducible"
                     tone={countTone(latest.publicProfile.noSource)}
                   />
-                  <Stat
+                  <DevStat
                     label="Fetch errors"
                     value={latest.publicProfile.errors}
                     hint="not evidence of a missing profile"
@@ -526,18 +508,18 @@ export const IdentityCoverage: React.FC = () => {
                         </td>
                         <td className="py-1 pr-4">{space.distinctSenders}</td>
                         <td
-                          className={`py-1 pr-4 ${countTone(space.sendersWithNoRow)}`}
+                          className={`py-1 pr-4 ${countToneClass(space.sendersWithNoRow)}`}
                         >
                           {space.sendersWithNoRow}
                         </td>
                         <td className="py-1 pr-4">{space.memberRows}</td>
                         <td
-                          className={`py-1 pr-4 ${countTone(space.rowsNoIdentity)}`}
+                          className={`py-1 pr-4 ${countToneClass(space.rowsNoIdentity)}`}
                         >
                           {space.rowsNoIdentity}
                         </td>
                         <td
-                          className={`py-1 font-medium ${countTone(space.noIdentityTotal)}`}
+                          className={`py-1 font-medium ${countToneClass(space.noIdentityTotal)}`}
                         >
                           {space.noIdentityTotal}
                         </td>
@@ -561,20 +543,20 @@ export const IdentityCoverage: React.FC = () => {
                 Direct messages
               </Text>
               <Flex gap="lg" className="flex-wrap">
-                <Stat label="Direct rows" value={latest.dms.directRows} />
-                <Stat
+                <DevStat label="Direct rows" value={latest.dms.directRows} />
+                <DevStat
                   label="Rows with no identity"
                   value={latest.dms.rowsNoIdentity}
                   tone={countTone(latest.dms.rowsNoIdentity)}
                 />
-                <Stat label="Rows with no name" value={latest.dms.rowsNoName} />
-                <Stat label="Rows with no avatar" value={latest.dms.rowsNoIcon} />
+                <DevStat label="Rows with no name" value={latest.dms.rowsNoName} />
+                <DevStat label="Rows with no avatar" value={latest.dms.rowsNoIcon} />
                 {latest.dms.selfRows > 0 && (
-                  <Stat
+                  <DevStat
                     label="Self-keyed rows"
                     value={latest.dms.selfRows}
                     hint="excluded — ghost conversation"
-                    tone="text-yellow-500"
+                    tone="warn"
                   />
                 )}
               </Flex>
@@ -614,7 +596,7 @@ export const IdentityCoverage: React.FC = () => {
                             {snapshot.totals.rowsNoIdentity}
                           </td>
                           <td
-                            className={`py-1 font-medium ${countTone(snapshot.totals.noIdentityTotal)}`}
+                            className={`py-1 font-medium ${countToneClass(snapshot.totals.noIdentityTotal)}`}
                           >
                             {snapshot.totals.noIdentityTotal}
                           </td>
