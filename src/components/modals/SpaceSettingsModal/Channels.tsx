@@ -531,7 +531,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
           <button
             {...listeners}
             aria-label={t`Drag to reorder group`}
-            className="cursor-grab active:cursor-grabbing text-muted hover:text-subtle p-1 shrink-0"
+            className="cursor-grab active:cursor-grabbing text-subtle hover:text-main p-1 shrink-0"
           >
             <Icon name="grip-vertical" />
           </button>
@@ -539,7 +539,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
             onClick={onToggleCollapsed}
             aria-label={isCollapsed ? t`Expand group` : t`Collapse group`}
             aria-expanded={!isCollapsed}
-            className="cursor-pointer p-1 text-muted hover:text-subtle shrink-0"
+            className="cursor-pointer p-1 text-subtle hover:text-main shrink-0"
           >
             <Icon name={isCollapsed ? 'chevron-right' : 'chevron-down'} />
           </button>
@@ -564,7 +564,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
           >
             <button
               onClick={onEditGroup}
-              className="cursor-pointer p-1 text-muted hover:text-subtle"
+              className="cursor-pointer p-1 text-subtle hover:text-main"
               aria-label={t`Edit group`}
             >
               <Icon name="edit" />
@@ -577,7 +577,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
           >
             <button
               onClick={onAddChannel}
-              className="cursor-pointer p-1 text-muted hover:text-subtle"
+              className="cursor-pointer p-1 text-subtle hover:text-main"
               aria-label={t`Add channel to group`}
             >
               <Icon name="plus" />
@@ -590,7 +590,7 @@ const SortableGroup: React.FunctionComponent<SortableGroupProps> = ({
           >
             <button
               onClick={onDeleteGroup}
-              className="cursor-pointer p-1 text-muted hover:text-danger"
+              className="cursor-pointer p-1 text-subtle hover:text-danger"
               aria-label={t`Delete group`}
             >
               <Icon name="trash" />
@@ -677,7 +677,7 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
         <button
           {...listeners}
           aria-label={t`Drag to reorder channel`}
-          className="cursor-grab active:cursor-grabbing text-muted hover:text-subtle p-1"
+          className="cursor-grab active:cursor-grabbing text-subtle hover:text-main p-1"
         >
           <Icon name="grip-vertical" />
         </button>
@@ -712,7 +712,7 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
             className={
               isDefault
                 ? 'p-1 text-warning cursor-default'
-                : 'cursor-pointer p-1 text-muted hover:text-warning'
+                : 'cursor-pointer p-1 text-subtle hover:text-warning'
             }
             aria-label={
               isDefault
@@ -730,7 +730,7 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
         >
           <button
             onClick={onEdit}
-            className="cursor-pointer p-1 text-muted hover:text-subtle"
+            className="cursor-pointer p-1 text-subtle hover:text-main"
             aria-label={t`Edit channel`}
           >
             <Icon name="edit" />
@@ -748,7 +748,7 @@ const SortableChannel: React.FunctionComponent<SortableChannelProps> = ({
           <button
             onClick={onDelete}
             disabled={isDefault}
-            className="cursor-pointer p-1 text-muted hover:text-danger disabled:opacity-40 disabled:cursor-not-allowed"
+            className="cursor-pointer p-1 text-subtle hover:text-danger disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label={t`Delete channel`}
           >
             <Icon name="trash" />
@@ -763,7 +763,7 @@ const ChannelRowGhost: React.FunctionComponent<{
   isDefault: boolean;
 }> = ({ channel, isDefault }) => (
   <div className="flex items-center gap-2 px-3 py-2 bg-modal border border-default rounded shadow-lg cursor-grabbing">
-    <Icon name="grip-vertical" className="text-muted" />
+    <Icon name="grip-vertical" className="text-subtle" />
     <Icon name={(channel.icon || 'hashtag') as any} className="text-muted" />
     <span className="font-medium">{channel.channelName}</span>
     {isDefault && (
@@ -794,7 +794,7 @@ const GroupPreview: React.FunctionComponent<{
 
 const GroupHeaderGhost: React.FunctionComponent<{ group: Group }> = ({ group }) => (
   <div className="flex items-center gap-2 px-3 py-2.5 bg-surface-4 border border-default rounded shadow-lg cursor-grabbing">
-    <Icon name="grip-vertical" className="text-muted shrink-0" />
+    <Icon name="grip-vertical" className="text-subtle shrink-0" />
     <span className="font-semibold uppercase text-xs tracking-wider truncate">
       {group.groupName}
     </span>
