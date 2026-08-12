@@ -8,7 +8,7 @@ updated: 2026-08-05
 area: identity resolution / space member roster / config sync
 repos: quorum-desktop only
 related:
-  - ".agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md (the spec — read it first)"
+  - ".agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md (the spec — read it first)"
   - ".agents/issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md (the bug, with the measurement)"
 ---
 
@@ -631,7 +631,7 @@ Create `src/hooks/business/user/useReconcileSelfIdentity.ts`:
 // Repairing that one record repairs every reader at once, because they all read the
 // same object from usePasskeysContext().
 //
-// See .agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md §5-A
+// See .agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md §5-A
 
 import { useEffect, useRef } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -1210,7 +1210,7 @@ address, `ranRef` guard, and **do not set the flag on failure** so it retries.
 // local write is invisible on the wire and an un-migrated sibling device would
 // re-announce the old value with a fresher timestamp and win.
 //
-// See .agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md §5-D
+// See .agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md §5-D
 
 export const CLEAR_FLAG_PREFIX = 'spaceOverridesCleared:v1:';
 export const CLEAR_LOG_KEY = 'quorum:diag:clearedSpaceOverrides';

@@ -1,13 +1,15 @@
 ---
 type: task
 title: "Your own identity, on your own devices: give it one author"
-status: open
+status: done
 priority: high
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-11
 area: identity resolution / config sync / cross-device / desktop-mobile parity
 repos: quorum-desktop now; quorum-shared + quorum-mobile only if Phase 2 is triggered
 related:
+  - ".agents/issues/2026-08-10-identity-resolution-architecture-design.md (supersedes the READ side of this doc — see the 2026-08-11 note)"
+  - ".agents/issues/2026-08-10-identity-resolution-architecture-plan.md"
   - ".agents/issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md (the bug this came from, with the 2026-08-05 measurement)"
   - ".agents/issues/.open/2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md"
   - ".agents/issues/.open/2026-06-13-config-not-refetched-stale-until-restart.md"
@@ -20,6 +22,61 @@ related:
 # Your own identity, on your own devices
 
 ## Status
+
+**CLOSED 2026-08-11. Both phases are resolved and this document has no work of
+its own left.** Phase 1 shipped in PR #313 and was device-verified; Phase 2 was
+killed by measurement rather than built. It is retained as the record of both.
+
+Three Definition-of-Done items were still unticked when this closed. All three
+were checked against the code on 2026-08-11 rather than assumed:
+
+- **The `saveSpaceMember` instrument** this document asked for (see §7's ⚠️ note)
+  **exists and is wired in**: `src/utils/selfOverrideTripwire.ts`, called from
+  `saveSpaceMember` in `src/db/messages.ts`, with its own test. Device-verified
+  clean on the reporter's account.
+- **`identity-resolution-and-profile-sync.md` was corrected** — it now states
+  outright that stamped rows were "neither decaying nor legacy".
+- **`config-sync-system.md` was NOT corrected, and has been now.** Its
+  "Encryption State Filtering" section claimed the filtering exists "to prevent
+  server validation errors", which is false: the whole config is AES-GCM
+  encrypted before upload, so the server only ever sees ciphertext (§4 of this
+  document). Fixed 2026-08-11.
+
+**What remains open is verification, and it belongs to the bug, not here.** The
+two outstanding device checks — the notifications drawer, and other members
+rendering normally in a busy space — live on
+`2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md`,
+which is `type: bug` and will not close without them. Holding this design open as
+a second copy of those checks tracked nothing extra.
+
+> ### 2026-08-11 — the READ side of this document has been superseded
+>
+> `2026-08-10-identity-resolution-architecture-design.md` and its plan rebuilt
+> how a name is *resolved*: one provider keyed on `(address, spaceId?)`, one
+> `<MemberName>` / `useResolvedName` API, and a lint rule that stops anything
+> outside `src/identity/` resolving a name at all.
+>
+> **That is a different axis from this document, which is about who *authors*
+> your identity and whether it reaches your other devices.** Phase 1 stands as
+> shipped, Phase 2 stays dead, and the privacy argument in §4 is untouched. The
+> Phase 1 artifacts are still on disk and still running: `useReconcileSelfIdentity.ts`,
+> `useClearLegacySpaceOverrides.ts`, and `spaceProfilePayload.ts:96`'s presence
+> semantics (READ 2026-08-11).
+>
+> Three parts are now stale and are marked inline where they appear:
+>
+> - **§5-C-ii is dead.** `src/utils/resolveGlobalSender.ts` no longer exists
+>   (deleted 2026-08-10 in `f647895a8`, absorbed by the identity provider).
+>   There is no `buildGlobalSenderMap` left to teach.
+> - **§5-E is no longer the checklist.** Its surfaces are covered structurally
+>   now rather than site by site.
+> - **§7's notification-drawer item** describes an outcome that still matters
+>   and a mechanism that no longer exists.
+>
+> One surface §5-E named specifically is still worth an action, just not the one
+> it describes: `useSearchResultDisplayDM.ts` was found to be **dead code** (no
+> call site in `src/`) during the 2026-08-11 audit tranche, so it is a deletion,
+> not a resolver fix.
 
 **2026-08-05 — Phase 1 shipped in PR #313. Phase 2 killed by measurement, not
 built.** Kept open only for the two outstanding device checks in
@@ -283,6 +340,13 @@ permanently, growing with every new joiner.
 
 #### 5-C-ii. Required, ships with 5-C
 
+> ⛔ **DEAD as written, 2026-08-11 — the file it names no longer exists.**
+> `src/utils/resolveGlobalSender.ts` and `useGlobalSenderResolver.ts` were deleted
+> on 2026-08-10 (`f647895a8`) and absorbed into the identity provider, which
+> implements the full ladder including the QNS tier the old map could never
+> produce. There is no `buildGlobalSenderMap` to teach. The *requirement* was met,
+> by replacement rather than by the edit described here.
+
 Teach `buildGlobalSenderMap` the ladder: override → global slot → public profile.
 `identityCoverageCore.ts:164-172` already implements it and can be followed.
 
@@ -371,6 +435,23 @@ used for config shrink (`quorum:diag:configSpaceShrink`). Use `console.warn`, no
 `logger.warn` — see the no-op-logger bug.
 
 ### 5-E. Surfaces to verify, including two that are easy to miss
+
+> ⚠️ **Superseded as a checklist, 2026-08-11.** Every surface below now resolves
+> through `src/identity/`, and the regression checklist that replaced this one is
+> the eighteen surfaces in
+> `2026-08-10-name-surfaces-that-never-reached-the-resolver.md`, swept with a
+> control arm via `/dev/fake-qns`. Two corrections to what is written here:
+>
+> - The **search results** note is half right and half stale.
+>   `useSearchResultDisplay.ts` and `useBatchSearchResultsDisplay.ts` were migrated
+>   to `src/identity` on 2026-08-11; `useSearchResultDisplayDM.ts` was **not**,
+>   because it turned out to have no call site anywhere in `src/`. It is dead code
+>   awaiting deletion, not a live stale-name path.
+> - The **global notification panel** entry is superseded by the note on 5-C-ii.
+>
+> The two carry-forward writers named at the end (`EncryptionService.ts:174-187`
+> and the optimistic `setQueryData` beside the join write) are **not** superseded —
+> they are write sites, which this refactor never touched. They stay live here.
 
 NavRail tooltip · DM self entry · message authors · member list · mention pills and
 autocomplete · reactions list and modal · thread panels · pinned messages ·
@@ -475,6 +556,11 @@ test decides whether Phase 2 is needed at all.
 > receive sites) while the claim was being written. A fixed list of unit tests
 > pinned to N known call sites cannot show the N+1th does not exist.
 >
+> ✅ **DONE.** The instrument exists and is wired in: `src/utils/selfOverrideTripwire.ts`,
+> called from `saveSpaceMember` in `src/db/messages.ts`, with its own test at
+> `src/dev/tests/utils/selfOverrideTripwire.test.ts`. Device-verified clean on the
+> reporter's account after PR #313 (see the bug file's Status).
+>
 > **Build an instrument instead:** a guard inside `saveSpaceMember` that warns when
 > a non-empty `display_name` is written for `user_address === selfAddress` from
 > anywhere not explicitly tagged as the editor. That is an exhaustive check, it
@@ -482,7 +568,7 @@ test decides whether Phase 2 is needed at all.
 > more in this subsystem than reading ever has.
 - [ ] The on-connect announce no longer re-stamps an override it did not author
 - [ ] Existing stale overrides are gone after one run
-- [ ] A member who joins **after** this ships renders with a name in the **global notifications drawer**, not a truncated address (the 5-C-i regression)
+- [ ] A member who joins **after** this ships renders with a name in the **global notifications drawer**, not a truncated address (the 5-C-i regression) — outcome still required, but 5-C-ii's mechanism is gone; verify it against the identity provider instead (see the 2026-08-11 note)
 - [ ] The clear survives a sibling device re-announcing the old override (5-D-i)
 - [ ] A cold start with no config and no network still shows a name, not a blank (5-A-i)
 - [ ] Each fix has a test that goes **red** when the fix is reverted — verified, not assumed
@@ -492,8 +578,8 @@ test decides whether Phase 2 is needed at all.
 > changing the real code in `MessageService.ts` will **not** turn that file red. It
 > will keep passing while certifying behaviour the shipped code no longer has.
 > Either make it import the real logic, or update the copy deliberately and say so.
-- [ ] `identity-resolution-and-profile-sync.md` corrected: legacy stamps are not decaying, and the join path still stamps
-- [ ] `config-sync-system.md` corrected: the server cannot validate `spaceIds`/`spaceKeys`, it only receives ciphertext
+- [x] `identity-resolution-and-profile-sync.md` corrected: legacy stamps are not decaying, and the join path still stamps — done, see that doc's "It described stamped rows as a decaying legacy condition" correction
+- [x] `config-sync-system.md` corrected: the server cannot validate `spaceIds`/`spaceKeys`, it only receives ciphertext — done 2026-08-11, "Encryption State Filtering"
 
 **Phase 2 gate**
 
@@ -502,4 +588,4 @@ test decides whether Phase 2 is needed at all.
 
 ---
 
-*Last updated: 2026-08-05*
+*Last updated: 2026-08-11*

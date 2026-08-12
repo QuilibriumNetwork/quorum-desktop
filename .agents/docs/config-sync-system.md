@@ -282,7 +282,24 @@ Config is saved (and potentially synced) when:
 
 ### Encryption State Filtering
 
-Spaces without complete encryption data are filtered out during sync to prevent server validation errors. This happens in two scenarios:
+Spaces without complete encryption data are filtered out during sync. This happens in two scenarios:
+
+> **Correction, 2026-08-11 — this filtering is NOT for the server's benefit.**
+> This section previously said the filtering exists "to prevent server validation
+> errors". It cannot: the **entire** config object is AES-GCM encrypted on-device
+> before upload (READ, `ConfigService.saveConfig`), so the POST carries only
+> `user_address`, `user_public_key`, the ciphertext, a timestamp and a signature.
+> `spaceIds` and `spaceKeys` are inside that ciphertext and the server never sees
+> them in plaintext — it has nothing to validate them against.
+>
+> The filtering is still correct and should stay; its purpose is **client-side
+> consistency**. A `spaceId` whose `spaceKey` has no `encryptionState` is
+> unusable on the device that downloads it, so shipping the pair out of step
+> propagates a broken space rather than a missing one.
+>
+> Stated honestly: the client-side purpose is READ from the filtering code and
+> its comments, not confirmed against a server implementation. What is settled is
+> the negative — the server is not the audience for this check.
 
 #### 1. Missing Encryption States
 
@@ -444,4 +461,4 @@ A pre-flight size check that fails loudly is still **not implemented** — see
 ---
 
 
-*Last updated: 2026-08-05*
+*Last updated: 2026-08-11*

@@ -1,21 +1,40 @@
 ---
 type: task
 title: "Does mobile need the desktop identity fixes? Three questions, one of them urgent"
-status: open
+status: done
 priority: medium
 created: 2026-08-05
-updated: 2026-08-05
+updated: 2026-08-11
 area: identity resolution / desktop-mobile parity
 repos: quorum-mobile (investigate), quorum-desktop (reference implementation)
 source: raised while verifying the desktop Phase 1 fix on a device — "wondering if mobile also needs all these fixes"
 related:
-  - ".agents/issues/.open/2026-08-05-own-identity-cross-device-sync-design.md (what desktop did and why)"
+  - ".agents/issues/2026-08-10-identity-resolution-architecture-plan.md (Phase F is mobile's answer to §4)"
+  - ".agents/issues/.done/2026-08-05-own-identity-cross-device-sync-design.md (what desktop did and why)"
   - ".agents/issues/.open/2026-08-04-desktop-shows-a-stale-name-everywhere-except-the-user-settings-field.md (the bug, with measurements)"
   - ".agents/issues/.open/2026-08-04-desktop-avatar-resolver-and-cross-client-name-tier-drift.md"
   - ".agents/docs/features/identity-resolution-and-profile-sync.md"
 ---
 
 # Does mobile need the desktop identity fixes?
+
+## Status
+
+**CLOSED 2026-08-11. This was a tracker, and every item it tracked now lives
+somewhere better.** Nothing here was abandoned — each live item was re-homed
+first, and this file closed second:
+
+| item | where it lives now |
+|---|---|
+| §2 — does mobile stamp its own override at join? | **Answered and fixed** on mobile, 2026-08-06. It did, on both join paths and on config sync |
+| §2-B — desktop → mobile per-space overrides never arrive | `2026-08-01-per-space-override-does-not-reach-your-own-other-devices.md`, which holds the same measured both-directions table and the hypothesis ranking. **Still open, still unfixed** |
+| §1 row 1 — mobile's `auth:user` staleness | **Re-filed in the mobile repo** as `.agents/issues/.open/2026-08-05-auth-user-record-has-no-live-writer-for-a-rename-made-elsewhere.md`, with the original claim's mechanism traced and half refuted |
+| §4 — "do not port desktop's resolver to mobile" | Reversed a second time; the mobile work is Phase F of `2026-08-10-identity-resolution-architecture-plan.md` |
+
+The reason to close rather than keep it open: it duplicated trackers that own
+their items properly, and a duplicate tracker is how a fixed thing keeps looking
+broken and an unfixed thing keeps looking covered. The §4 reversal below is
+preserved because it is the record of a decision that flipped twice.
 
 > ## ⚠️ Largely ANSWERED on 2026-08-06 — do not start here
 >
@@ -38,10 +57,10 @@ related:
 > never arrive) and §1 row 1 (mobile's `auth:user` staleness). Neither is part of
 > the `.q` work; both are about a different transport and stay open here.
 >
-> §4's "do not port desktop's resolver to mobile" still holds and is now more
-> emphatic — see the parity doc's shared-code section, which says the two rules
-> that have drifted should move into `quorum-shared` rather than be copied a
-> third time.
+> §4's "do not port desktop's resolver to mobile" **has since reversed a second
+> time — see the 2026-08-11 note on that bullet before acting on it.** The rules
+> did move into `quorum-shared`, exactly as the parity doc asked; desktop then
+> built a provider/component layer on top that mobile still lacks.
 
 Desktop shipped Phase 1 on 2026-08-05 (branch `fix/own-identity-single-author`).
 This is the mobile side of that question, filed so it does not evaporate.
@@ -119,8 +138,33 @@ That matters twice:
 
 ## §4. What NOT to do
 
-- **Do not port desktop's resolver changes to mobile.** Mobile already has the
-  ladder; desktop was the one behind. Copying would be a regression.
+- ~~**Do not port desktop's resolver changes to mobile.**~~ **⚠️ REVERSED AGAIN,
+  2026-08-11. Do not follow this bullet as written — it would tell you to skip
+  the mobile work.**
+
+  It was true on 2026-08-06: mobile had the ladder and desktop was behind, so
+  copying desktop would have been a regression. Desktop then rebuilt the whole
+  read side
+  (`2026-08-10-identity-resolution-architecture-design.md` + plan): the rule moved
+  into `quorum-shared` as `resolveIdentity` over a `MemberIdentity` whose fields
+  are all required and explicitly nullable, and desktop gained one identity
+  provider, one `<MemberName>` / `useResolvedName` API, and a lint rule making a
+  direct resolver call impossible outside `src/identity/`.
+
+  **Mobile is now the client without that architecture**, and porting it is
+  Phase F / Task 9 of that plan — not a copy of desktop's old resolver, which no
+  longer exists (`src/utils/resolveMemberName.ts` was deleted in `5783a2df6`).
+
+  What has NOT reversed is the reason the original bullet existed: mobile's
+  *adapters* still stay per-client (snake_case rows, its own query client, its
+  own placeholder semantics). Only the **rule** is shared. That distinction is
+  the parity document's own, and it survives intact.
+
+  MEASURED 2026-08-11: npm `@quilibrium/quorum-shared@2.1.0-42` (published
+  2026-08-10 21:02Z) already ships `MemberIdentity` and `resolveIdentity` in
+  `dist/utils/resolveDisplayName.d.ts`. Mobile pins `2.1.0-40`. **So Phase F is
+  not blocked on the lead dev publishing** — the bump and mobile's migration go
+  in one PR, because the shared change is breaking by design.
 - **Do not port the one-time override clear blindly.** Desktop's was justified by
   a measurement on a real account showing four diverged overrides that could not
   be told from deliberate ones. Whether mobile's rows are in the same state is a
@@ -143,4 +187,4 @@ They are unaffected by the `.q` work and stay here.
 
 ---
 
-*Last updated: 2026-08-06*
+*Last updated: 2026-08-11*

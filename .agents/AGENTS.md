@@ -156,6 +156,16 @@ recalled.
   `.secret/` into `.done/`, add its `INDEX.md` row, and say in the commit that the
   fix is live. A deliberate act, never a side effect of tidying.
 
+## 🔑 Key material
+
+Never widen where a private key, keyset or ratchet state can be observed — no globals,
+no unencrypted persistence, no logging, no telemetry or crash payloads. This applies to
+features, not just debug helpers; the check is "does this line make a secret observable
+somewhere new?". Dev-only diagnostics must be **build-gated** (`import.meta.env?.DEV`) and
+verified against the built bundle rather than the source — a `// debug only` comment is not
+a gate, and neither is living under `src/dev/`. The `quorum/no-ungated-debug-globals` lint
+rule enforces this on every file; do not silence it.
+
 ## 📚 Key Documentation
 
 - **Workflow Guide**: [agents-workflow.md](agents-workflow.md)

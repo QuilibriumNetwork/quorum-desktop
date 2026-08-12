@@ -5,7 +5,7 @@ status: done
 ai_generated: true
 reviewed_by: null
 created: 2026-02-16
-updated: 2026-02-16
+updated: 2026-08-12
 related_docs:
   - data-management-architecture-guide.md
   - config-sync-system.md
@@ -20,9 +20,9 @@ related_tasks:
 
 ## Overview
 
-The backup system allows users to export and import encrypted `.qmbak` files containing their direct message history. This protects against data loss from browser cache clears, device resets, or the Safari passkey bug — scenarios where DM data is permanently unrecoverable due to the P2P architecture (no server-side message storage).
+The backup system allows users to export and import encrypted `.qmbak` files containing their direct message history and, since format v2, their Spaces and Space keys. This protects against data loss from browser cache clears, device resets, or the Safari passkey bug — scenarios where DM data is permanently unrecoverable due to the P2P architecture (no server-side message storage).
 
-The feature lives in **User Settings > Privacy/Security > Data Backup** and provides two operations:
+The feature lives in **User Settings > Security > Data Backup** and provides two operations:
 - **Export**: encrypts all DM data into a downloadable `.qmbak` file
 - **Import**: decrypts a `.qmbak` file and restores messages into IndexedDB
 
@@ -34,12 +34,20 @@ Backup files use the `.qmbak` extension and contain a JSON `BackupFile` structur
 
 ```typescript
 interface BackupFile {
-  version: 1;
+  version: BackupVersion;  // 1 | 2 — writer is pinned to the newest (2)
   iv: string;         // hex-encoded AES-GCM IV (12 bytes)
   ciphertext: string; // hex-encoded encrypted payload
   createdAt: number;  // export timestamp (ms)
 }
 ```
+
+**Two format versions exist and both must keep importing** (`BackupService.ts:6-17`).
+v1 files are on users' disks already; only the *writer* is pinned to the newest:
+
+| Version | Carries |
+|---|---|
+| **v1** | DM messages, DM conversations, encryption states, `user_config` |
+| **v2** (current, `BACKUP_FORMAT_VERSION = 2`) | everything in v1, **plus `spaces` + `space_keys`** read from the stores that own them rather than from the `user_config.spaceKeys` snapshot, **plus `domains`** |
 
 The encrypted payload (`BackupPayload`) contains:
 
@@ -48,9 +56,18 @@ interface BackupPayload {
   messages: Message[];           // DM messages only
   conversations: Conversation[]; // DM conversation metadata
   encryption_states: EncryptionState[]; // Double Ratchet states
-  user_config?: UserConfig;      // spaces, bookmarks, settings
+  user_config?: UserConfig;      // bookmarks, settings
+  spaces?: Space[];              // v2
+  space_keys?: BackupSpaceKey[]; // v2
+  domains?: BackupDomains;       // v2 — what this file actually captured
 }
 ```
+
+`domains` exists so a restore can state plainly what a file did and did not
+capture, instead of silently restoring nothing. It distinguishes "an empty
+`space_keys` means the user has no Spaces" (v2, a true answer) from "the format
+never looked" (v1). `space_messages` is declared `false` rather than omitted, for
+the same reason.
 
 ### Encryption
 
@@ -67,14 +84,14 @@ The `quorum-backup-v1` domain prefix ensures the backup encryption key is distin
 - **`src/services/BackupService.ts`** — Core service with `exportBackup()` and `importBackup()` methods. Handles encryption, decryption, file validation, and concurrency guards.
 - **`src/db/messages.ts`** — `getAllDMData()` collects all DM data for export; `importDMData()` writes messages and conversations via a single atomic IndexedDB transaction.
 - **`src/hooks/business/user/useUserSettings.ts`** — `exportBackup()` and `importBackup()` functions that wire the service to the UI, handling file download and file reading.
-- **`src/components/modals/UserSettingsModal/Privacy.tsx`** — UI with Export button and "Import a backup instead" link.
+- **`src/components/modals/UserSettingsModal/Security.tsx`** — UI with Export button and "Import a backup instead" link, in the "Data Backup" section below "Account Key".
 - **`src/services/index.ts`** — Re-exports `BackupService`, `BackupError`, and related types.
 
 ### Data Flow
 
 **Export:**
 ```
-Privacy.tsx (click Export)
+Security.tsx (click Export)
   → useUserSettings.exportBackup()
     → BackupService.exportBackup()
       → MessageDB.getAllDMData() — paginated fetch of DM conversations, messages, encryption states, config
@@ -87,7 +104,7 @@ Privacy.tsx (click Export)
 
 **Import:**
 ```
-Privacy.tsx (click "Import a backup instead" → file picker)
+Security.tsx (click "Import a backup instead" → file picker)
   → useUserSettings.importBackup(file)
     → file.text()
     → BackupService.importBackup()
@@ -106,9 +123,29 @@ Privacy.tsx (click "Import a backup instead" → file picker)
 When importing on an already-active account:
 - **Messages and conversations** are restored via `put()` (upsert). Existing records are overwritten; new records are added. Importing the same backup twice produces no duplicates.
 - **Encryption states** are **skipped** — overwriting active Double Ratchet states would break DM decryption with counterparties.
-- **User config** is **skipped** — overwriting would lose the user's current spaces, bookmarks, and settings.
+- **User config** is **skipped** — overwriting would lose the user's current bookmarks and settings.
+- **Spaces (v2)** are restored **additively** via an injected `adoptSpaces` function, with a departure gate.
 
 The import runs in a single IndexedDB `readwrite` transaction across the `messages` and `conversations` stores. If any write fails, the entire transaction aborts — no partial imports.
+
+### The departure gate (v2 Space restore)
+
+`buildSpaceBundles()` (`BackupService.ts`) refuses to re-add a Space the user has
+since left or been removed from, checked against `getDepartedSpaces()`. This is a
+safety property, not a tidiness one: `adoptSpaces` **re-registers with the hub**,
+so restoring a stale backup would make a removed user silently re-announce
+themselves to the Space that kicked them.
+
+The gate deliberately lives here and **not** inside `adoptSpaces`, because that
+method also serves config sync, where the payload is the account's *current*
+state (published after the departure) rather than a snapshot from the past.
+A backup file is stale by construction; a synced config is not. Blocking inside
+`adoptSpaces` would break the legitimate "leave on one device, rejoin on another"
+case.
+
+A Space is also skipped, and reported, when the file carries no key material for
+it, or no encryption state — `adoptSpaces` would otherwise persist a corrupt
+state row that looks present and decrypts nothing.
 
 ### Error Handling
 
@@ -124,7 +161,7 @@ A service-level `isProcessing` guard prevents concurrent export/import operation
 
 ## UI Design
 
-The Data Backup section appears in **User Settings > Privacy/Security**, below the Mobile Import section:
+The Data Backup section appears in **User Settings > Security**, below the "Account Key" section:
 
 - **Export button** — prominent, inside a bordered card with descriptive text
 - **Import link** — subtle underlined text ("Import a backup instead") inside the same card, since importing on an active account is a rare action
@@ -140,24 +177,25 @@ The Data Backup section appears in **User Settings > Privacy/Security**, below t
 
 ## Known Limitations
 
-> ⚠️ **The list below understates the most important one, corrected 2026-08-09.**
-> A `.qmbak` **cannot restore Spaces at all** — not for a sync-off user, not even
-> for Spaces they created and own.
+> ✅ **The Spaces limitation was FIXED on 2026-08-09 — this note is kept for
+> history, corrected 2026-08-12.**
 >
-> `user_config.spaceKeys` is the only place the per-Space key bundle would travel,
-> and it is assembled from IndexedDB in exactly one place, **inside
-> `if (config.allowSync)`** (`ConfigService.ts:554,591`). `getDefaultUserConfig`
-> initialises it to `[]` (`utils.ts:15`) and nothing else ever writes it. A user
-> who has never enabled sync exports a file whose `spaceKeys` is an empty array,
-> so the `owner` private key — the only proof of Space ownership, held in no other
-> copy — is in neither the backup nor the server. Fixing import to stop skipping
-> `user_config` would restore an empty array.
+> This doc previously carried a warning that a `.qmbak` "cannot restore Spaces at
+> all". That was true of the v1 format and is **no longer true**. Commit
+> `d53aa5e9b` ("feat(backup): back up Space keys, and never let a restore undo a
+> deletion", #324) shipped format **v2**, which reads `spaces` and `space_keys`
+> from the stores that own them rather than from the `user_config.spaceKeys`
+> snapshot — so the old dependency on `if (config.allowSync)` is gone and a
+> sync-off user's export now carries their Space key material.
 >
-> Full analysis and the proposed rework:
-> [`.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`](../../issues/.open/2026-08-09-backup-restore-overhaul-design.md).
-> Do not rely on the "future-proofs the backup file for a potential fresh-device
-> restore flow" claim under Technical Decisions — it holds for `encryption_states`,
-> not for Space keys.
+> Restore is additive and gated: `buildSpaceBundles()` skips any Space the user
+> has since left or been removed from (`getDepartedSpaces()`), because
+> `adoptSpaces` re-registers with the hub and a stale backup would otherwise make
+> a removed user silently re-announce themselves to a Space that kicked them.
+> Spaces lacking key material or encryption state in the file are skipped and
+> reported rather than restored half-formed.
+>
+> Design history: [`.agents/issues/.open/2026-08-09-backup-restore-overhaul-design.md`](../../issues/.open/2026-08-09-backup-restore-overhaul-design.md).
 
 - **No automatic backups** — users must manually export. There is no scheduled or triggered backup.
 - **No incremental backups** — each export contains all DM data. Acceptable given DM-only scope keeps file sizes manageable.
@@ -173,4 +211,4 @@ The Data Backup section appears in **User Settings > Privacy/Security**, below t
 - [Cryptographic Architecture](../cryptographic-architecture.md) — Ed448 key hierarchy
 - [Task: User Data Backup & Restore](../../issues/.done/user-data-backup-restore-feature.md) — Implementation task with full context
 
-_Last updated: 2026-08-09_
+_Last updated: 2026-08-12_
