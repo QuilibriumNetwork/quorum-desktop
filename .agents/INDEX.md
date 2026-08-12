@@ -295,7 +295,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [MessageDB never recovers from an abnormally closed IndexedDB connection](issues/.open/2026-08-06-messagedb-never-recovers-from-an-abnormally-closed-connection.md)
 - 🐛 [The two default user configs disagree on which fields exist](issues/.open/2026-08-07-the-two-default-user-configs-disagree-on-which-fields-exist.md)
 - 🐛 [Generating a public invite link never reaches existing members](issues/.open/2026-08-11-public-invite-link-never-reaches-existing-members.md)
-- 🐛 [Four typography classes have no working colour](issues/.open/2026-08-12-typography-classes-have-no-working-colour.md)
+- 🐛 [No `hover:text-*` utility generates any CSS](issues/.open/2026-08-12-hover-text-utilities-generate-no-css.md)
 - 📋 [User Status Feature Implementation Plan](issues/.open/2025-01-20-user-status.md)
 - 📋 [Implement Message Forwarding with Privacy Controls](issues/.open/2025-11-16-message-forwarding-with-privacy-controls.md)
 - 📋 [Implement Smart Context Extraction Around Mentions in NotificationPanel](issues/.open/2025-11-19-notification-mention-context-extraction.md)
@@ -413,6 +413,7 @@ This is the main index for all documentation, bug reports, and task management.
 - 🐛 [A device with sync off still claims a newer timestamp](issues/.done/2026-08-07-a-device-with-sync-off-still-claims-a-newer-timestamp.md)
 - 🐛 [An armed sync crashes after a kick](issues/.done/2026-08-09-armed-sync-crashes-after-a-kick.md)
 - 🐛 [The profile card opened from a mention pill shows a stale bio and no avatar](issues/.done/2026-08-11-profile-card-from-a-mention-pill-shows-a-stale-bio-and-no-avatar.md)
+- 🐛 [Four typography classes have no working colour](issues/.done/2026-08-12-typography-classes-have-no-working-colour.md)
 - 🐛 [Bug: Emoji Picker Grid Has Empty Space on Right Side in Mobile Drawer](issues/.done/emoji-picker-mobile-drawer-empty-space.md)
 - 🐛 [Channel/Group Save Race Condition](issues/.done/channel-group-save-race-condition.md)
 - 🐛 [Config Save Missing React Query Cache Update Causes Stale allowSync](issues/.done/config-save-stale-cache-allowsync.md)
@@ -780,4 +781,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-08-12 10:34:42
+**Last Updated**: 2026-08-12 11:23:32

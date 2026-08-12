@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Four typography classes set a colour that browsers silently drop, so text inherits instead"
-status: open
+status: done
 priority: medium
 created: 2026-08-12
 updated: 2026-08-12
@@ -31,7 +31,25 @@ should be its own reviewed change with before/after screenshots. The dev pages
 work around it by pairing the class with a Tailwind colour utility.
 
 Reviewed 2026-08-12: scope widened and the approach chosen after a visual
-comparison — see **Decision** below. Still unimplemented, by choice.
+comparison — see **Decision** below.
+
+**2026-08-12 — shipped in PR #331** (`fix(styles): typography colours actually
+apply, and low-contrast text meets AA`)
+
+What landed: the four typography rules and the two live `Message.scss` rules now
+use `var(--color-text-*)` instead of wrapping a hex in `rgb()`, so they apply for
+the first time. Light-theme `--color-text-subtle` moved `#818181` → `#696969` so
+the newly-applying text clears WCAG AA. The two dead message-edit button rules
+were deleted. A regression guard now fails on any variable used inside
+`rgb()`/`rgba()` that is not a numeric triplet or is undefined.
+
+How it was verified: the guard was written first and confirmed **red** on all 28
+offending declarations, then green after the fix. Full suite 1408 tests across
+150 files, `tsc` 0 errors, `eslint` no new warnings. The shipped CSS bundle was
+inspected directly to confirm the declarations survive the build, and the colour
+change was reviewed on screen in both themes before being chosen.
+
+The comparison page at `/dev/typography-compare` was deleted as planned.
 
 ## Evidence
 
@@ -206,22 +224,22 @@ Deliberately **not implemented yet** — scheduled, not abandoned.
 
 ### Implementation checklist
 
-- [ ] `src/styles/_colors.scss` line 40 — light theme
+- [x] `src/styles/_colors.scss` line 40 — light theme
       `--color-text-subtle: #818181` → `#696969`.
       Ratios become 5.49 / 5.09 / 4.75 against surface-00 / -1 / -2, so AA passes
       on every surface it is used on. **Dark theme is not touched** — `#bfb5c8`
       already passes at 7.55–9.35.
-- [ ] `src/styles/_typography.scss` lines 27, 73, 90, 98 —
+- [x] `src/styles/_typography.scss` lines 27, 73, 90, 98 —
       `rgb(var(--color-text-*))` → `var(--color-text-*)`. Four rules, one file.
-- [ ] `src/components/message/Message.scss` lines 151, 153 —
+- [x] `src/components/message/Message.scss` lines 151, 153 —
       same unwrapping for `--surface-2` / `--surface-4`, restoring the message
       edit box's missing background and border.
-- [ ] `src/components/message/Message.scss` lines 220-234 — delete
+- [x] `src/components/message/Message.scss` lines 220-234 — delete
       `.message-edit-cancel-button` / `.message-edit-save-button`. Dead CSS with
       no `.tsx` consumer, and their `--primary` / `--text-main` references point
       at variables that do not exist.
-- [ ] Add the regression guard described under **Verification** below.
-- [ ] Delete `src/dev/typography-compare/` and its route + nav entry
+- [x] Add the regression guard described under **Verification** below.
+- [x] Delete `src/dev/typography-compare/` and its route + nav entry
       (`Router.web.tsx`, `DevNavMenu.tsx`) once signed off.
 
 Note that the ~11 call sites already pairing the class with a Tailwind colour
