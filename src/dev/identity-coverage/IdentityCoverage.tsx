@@ -12,7 +12,7 @@
 
 import React, { useCallback, useMemo, useState, useSyncExternalStore } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Text, Flex, Button, Icon } from '../../components/primitives';
+import { Flex, Button, Icon } from '../../components/primitives';
 import { DevPage, DevPageHeader, DevStat, type DevStatTone } from '../shell';
 import {
   buildIdentityCoverageSnapshot,
@@ -84,14 +84,14 @@ const LiveResolutionDiagnostics: React.FC = () => {
   return (
     <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
       <Flex justify="between" align="center" className="mb-2 flex-wrap gap-2">
-        <Text variant="strong" size="lg">
+        <span className="text-lg text-strong">
           Live resolution diagnostics (this session)
-        </Text>
-        <Text variant="strong" size="xl" className={countToneClass(state.degradedTotal)}>
+        </span>
+        <span className={`text-xl text-strong ${countToneClass(state.degradedTotal)}`}>
           {state.degradedTotal} degraded resolution{state.degradedTotal === 1 ? '' : 's'}
-        </Text>
+        </span>
       </Flex>
-      <Text variant="subtle" size="xs" className="mb-3 block">
+      <span className="text-xs text-subtle mb-3 block">
         Fires the instant a name resolves to a truncated address from a
         provider that was missing data it should have had (your own identity
         with no local source, or a Space roster this provider never loaded) —
@@ -99,7 +99,7 @@ const LiveResolutionDiagnostics: React.FC = () => {
         and never warned to the console. Click around the app normally; this
         updates live. Resets on reload — it is a session counter, not a
         persisted log.
-      </Text>
+      </span>
       <Flex gap="lg" className="flex-wrap mb-2">
         <DevStat
           label="Degraded"
@@ -277,9 +277,9 @@ export const IdentityCoverage: React.FC = () => {
 
         {copyStatus && (
           <div className="fixed top-4 right-4 bg-surface-2 border border-accent px-4 py-2 rounded-lg shadow-lg z-50">
-            <Text variant="main" size="sm">
+            <span className="text-sm text-main">
               {copyStatus}
-            </Text>
+            </span>
           </div>
         )}
 
@@ -324,38 +324,38 @@ export const IdentityCoverage: React.FC = () => {
               </>
             )}
           </Flex>
-          <Text variant="subtle" size="xs" className="mt-2 block">
+          <span className="text-xs text-subtle mt-2 block">
             Counts a person as having no identity when the per-space override
             slot AND the global slot are both empty — the two-slot model the
             older console probe (06-space-member-sources.js) predates. Read
             straight from IndexedDB, so this measures what persisted. Take one
             snapshot, reload the app, take another: the delta is the
             measurement. Baseline for comparison — {HISTORICAL_BASELINE}
-          </Text>
+          </span>
         </div>
 
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mt-6">
-            <Text variant="strong" className="text-red-500">
+            <span className="text-strong text-red-500">
               {error}
-            </Text>
+            </span>
           </div>
         )}
 
         {probeProgress && !probing && (
           <div className="bg-surface-1 border border-default rounded-lg p-3 mt-6">
-            <Text variant="subtle" size="sm">
+            <span className="text-sm text-subtle">
               {probeProgress}
-            </Text>
+            </span>
           </div>
         )}
 
         {/* Delta */}
         {delta && (
           <div className="bg-surface-1 rounded-lg border border-accent p-4 mt-6">
-            <Text variant="strong" size="lg" className="mb-3">
+            <span className="text-lg text-strong mb-3">
               Delta — first snapshot to last (negative is improvement)
-            </Text>
+            </span>
             <Flex gap="lg" className="flex-wrap">
               <DevStat
                 label="Senders with no member row"
@@ -386,16 +386,12 @@ export const IdentityCoverage: React.FC = () => {
           <>
             <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
               <Flex justify="between" align="center" className="mb-4">
-                <Text variant="strong" size="lg">
+                <span className="text-lg text-strong">
                   Latest snapshot — {latest.atIso}
-                </Text>
-                <Text
-                  variant="strong"
-                  size="2xl"
-                  className={countToneClass(latest.totals.noIdentityTotal)}
-                >
+                </span>
+                <span className={`text-2xl text-strong ${countToneClass(latest.totals.noIdentityTotal)}`}>
                   {latest.totals.noIdentityTotal} with no identity
-                </Text>
+                </span>
               </Flex>
 
               <Flex gap="lg" className="flex-wrap mb-4">
@@ -426,22 +422,22 @@ export const IdentityCoverage: React.FC = () => {
                 />
               </Flex>
 
-              <Text variant="subtle" size="xs" className="block">
+              <span className="text-xs text-subtle block">
                 The two headline figures are kept apart because they have
                 different causes and different fixes: a missing row is a
                 join/sync transport gap, an empty row is an announce/digest gap.
                 They are disjoint sets, so the total is their sum. Read from{' '}
                 {latest.messagesScanned} message rows, {latest.memberRowsScanned}{' '}
                 member rows, {latest.conversationsScanned} conversation rows.
-              </Text>
+              </span>
             </div>
 
             {/* Public-profile probe */}
             {latest.publicProfile && (
               <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
-                <Text variant="strong" size="lg" className="mb-3">
+                <span className="text-lg text-strong mb-3">
                   Public-profile probe
-                </Text>
+                </span>
                 <Flex gap="lg" className="flex-wrap mb-2">
                   <DevStat label="Probed" value={latest.publicProfile.probed} />
                   <DevStat
@@ -467,9 +463,9 @@ export const IdentityCoverage: React.FC = () => {
 
             {/* Per space */}
             <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
-              <Text variant="strong" size="lg" className="mb-3">
+              <span className="text-lg text-strong mb-3">
                 Per space (worst first)
-              </Text>
+              </span>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -529,9 +525,9 @@ export const IdentityCoverage: React.FC = () => {
 
             {/* DMs */}
             <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
-              <Text variant="strong" size="lg" className="mb-3">
+              <span className="text-lg text-strong mb-3">
                 Direct messages
-              </Text>
+              </span>
               <Flex gap="lg" className="flex-wrap">
                 <DevStat label="Direct rows" value={latest.dms.directRows} />
                 <DevStat
@@ -555,9 +551,9 @@ export const IdentityCoverage: React.FC = () => {
             {/* Snapshot history */}
             {history.length > 1 && (
               <div className="bg-surface-1 rounded-lg border border-default p-4 mt-6">
-                <Text variant="strong" size="lg" className="mb-3">
+                <span className="text-lg text-strong mb-3">
                   Snapshots this session
-                </Text>
+                </span>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead>
@@ -602,9 +598,9 @@ export const IdentityCoverage: React.FC = () => {
 
         {!latest && !loading && (
           <div className="bg-surface-1 rounded-lg border border-default p-8 mt-6 text-center">
-            <Text variant="subtle">
+            <span className="text-subtle">
               Take a snapshot to read the current identity coverage.
-            </Text>
+            </span>
           </div>
         )}
     </DevPage>

@@ -25,7 +25,7 @@
 import React, { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Text, Flex, Button } from '../../components/primitives';
+import { Flex, Button } from '../../components/primitives';
 import { DevPage, DevPageHeader } from '../shell';
 import {
   clearFakeQns,
@@ -63,12 +63,12 @@ const Toggle: React.FC<ToggleProps> = ({
       className="mt-1 cursor-pointer"
     />
     <span>
-      <Text variant="strong" size="sm" className="block">
+      <span className="text-sm text-strong block">
         {label}
-      </Text>
-      <Text variant="subtle" size="xs" className="block">
+      </span>
+      <span className="text-xs text-subtle block">
         {hint}
-      </Text>
+      </span>
     </span>
   </label>
 );
@@ -177,15 +177,15 @@ export const FakeQns: React.FC = () => {
             body is the MENTIONED person, which is you). The blanket switch
             below is for the few that render somebody else. */}
         <div className="mt-4 pt-4 border-t border-neutral-700">
-          <Text variant="strong" size="sm" className="block">
+          <span className="text-sm text-strong block">
             1 · Give MYSELF a .q
-          </Text>
-          <Text variant="subtle" size="xs" className="block mb-2">
+          </span>
+          <span className="text-xs text-subtle block mb-2">
             Start here. Pins this name for your own address
             {ownAddress ? '' : ' (no address yet — sign in first)'}. Desktop
             never publishes a primary username, so unlike mobile this is a
             read-side overlay with no real profile write.
-          </Text>
+          </span>
           <Flex className="gap-2 items-center">
             <input
               className="flex-1 px-2 py-1 rounded border border-neutral-600 bg-transparent text-sm"
@@ -231,10 +231,10 @@ export const FakeQns: React.FC = () => {
           actually won. */}
       <div className="bg-surface-1 rounded-lg border border-default p-4">
         <h2 className="text-subtitle mb-1">Pin one address</h2>
-        <Text variant="subtle" size="xs" className="block mb-3">
+        <span className="text-xs text-subtle block mb-3">
           Overrides the everyone rule for a single member. Leave the name empty
           to give them no .q at all — that is your control.
-        </Text>
+        </span>
         <Flex className="gap-2 items-center flex-wrap">
           <input
             className="flex-1 min-w-64 px-2 py-1 rounded border border-neutral-600 bg-transparent text-sm font-mono"
@@ -259,16 +259,16 @@ export const FakeQns: React.FC = () => {
           <Flex direction="column" className="gap-1 mt-3">
             {entries.map(([addr, entry]) => (
               <Flex key={addr} className="gap-2 items-center">
-                <Text size="xs" className="font-mono flex-1 truncate">
+                <span className="text-xs font-mono flex-1 truncate">
                   {addr}
-                </Text>
-                <Text size="xs" variant="subtle">
+                </span>
+                <span className="text-xs text-subtle">
                   {entry.private
                     ? 'private'
                     : entry.primaryUsername
                       ? `${entry.primaryUsername}.q`
                       : 'no .q (control)'}
-                </Text>
+                </span>
                 <Button size="sm" onClick={() => handleUnpin(addr)}>
                   Unpin
                 </Button>
@@ -279,7 +279,7 @@ export const FakeQns: React.FC = () => {
       </div>
 
       <Flex className="gap-3 items-center">
-        <Text size="xs" variant="subtle" className="flex-1">
+        <span className="text-xs text-subtle flex-1">
           {state.enabled
             ? state.allProfilesPrivate
               ? 'all profiles private'
@@ -292,28 +292,28 @@ export const FakeQns: React.FC = () => {
           state.entries[ownAddress.toLowerCase()]?.primaryUsername
             ? ` · me: ${state.entries[ownAddress.toLowerCase()]!.primaryUsername}.q`
             : ' · me: none'}
-        </Text>
+        </span>
         <Button size="sm" onClick={handleReset}>
           Reset
         </Button>
       </Flex>
 
-      <Text size="xs" variant="subtle">
+      <span className="text-xs text-subtle">
         Reopen the space after a change — an open screen holds an
         already-resolved member map. Keep these switches matched with mobile&apos;s
         panel when comparing the two clients, or you are comparing different
         inputs.
-      </Text>
+      </span>
       {/* Desktop's own limitation, stated where it will be read. It differs
           from mobile's — mobile's member list cannot show a .q at all, this one
           can but only for people who have posted. Writing mobile's caveat here
           would send someone hunting the wrong thing. */}
-      <Text variant="subtle" size="sm" className="block">
+      <span className="text-sm text-subtle block">
         The member sidebar only shows a .q for members who have posted in the
         open channel — it cheap-merges from the message senders and never
         fetches the full roster. A silent lurker showing no .q there is expected,
         not a regression.
-      </Text>
+      </span>
     </DevPage>
   );
 };

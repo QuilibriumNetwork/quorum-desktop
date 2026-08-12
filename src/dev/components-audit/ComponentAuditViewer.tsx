@@ -6,7 +6,6 @@ import {
   Button,
   Callout,
   Flex,
-  Text,
 } from '../../components/primitives';
 import { DevPage, DevPageHeader } from '../shell';
 
@@ -150,11 +149,9 @@ const StatusBadge: React.FC<{
   };
 
   return (
-    <Text
-      className={`px-2 py-1 rounded text-xs font-medium ${getStatusClass()}`}
-    >
+    <span className={`${`px-2 py-1 rounded text-xs font-medium ${getStatusClass()}`}`}>
       {getStatusLabel()}
-    </Text>
+    </span>
   );
 };
 
@@ -188,11 +185,9 @@ const CategoryBadge: React.FC<{ category: ComponentCategory }> = ({
   };
 
   return (
-    <Text
-      className={`px-2 py-1 rounded text-xs font-medium ${getCategoryClass()}`}
-    >
+    <span className={`${`px-2 py-1 rounded text-xs font-medium ${getCategoryClass()}`}`}>
       {getCategoryLabel()}
-    </Text>
+    </span>
   );
 };
 
@@ -228,11 +223,9 @@ const UsageBadge: React.FC<{ used: string }> = ({ used }) => {
   };
 
   return (
-    <Text
-      className={`px-2 py-1 rounded text-xs font-medium ${getUsageClass()}`}
-    >
+    <span className={`${`px-2 py-1 rounded text-xs font-medium ${getUsageClass()}`}`}>
       {getUsageLabel()}
-    </Text>
+    </span>
   );
 };
 
@@ -272,11 +265,9 @@ const ComplexityBadge: React.FC<{
   };
 
   return (
-    <Text
-      className={`px-2 py-1 rounded text-xs font-medium ${getComplexityClass()}`}
-    >
+    <span className={`${`px-2 py-1 rounded text-xs font-medium ${getComplexityClass()}`}`}>
       {getComplexityLabel()}
-    </Text>
+    </span>
   );
 };
 
@@ -429,33 +420,21 @@ export const ComponentAuditViewer: React.FC = () => {
         {/* Stats Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text
-              as="h3"
-              variant="subtle"
-              size="sm"
-              weight="medium"
-              className="mb-2"
-            >
+            <h3 className="text-sm font-medium text-subtle mb-2">
               Total Components
-            </Text>
-            <Text variant="strong" size="2xl" weight="bold">
+            </h3>
+            <span className="text-2xl font-bold text-strong">
               {data.stats.total}
-            </Text>
+            </span>
           </div>
 
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text
-              as="h3"
-              variant="subtle"
-              size="sm"
-              weight="medium"
-              className="mb-2"
-            >
+            <h3 className="text-sm font-medium text-subtle mb-2">
               Primitives Migrated
-            </Text>
-            <Text variant="strong" size="2xl" weight="bold">
+            </h3>
+            <span className="text-2xl font-bold text-strong">
               {data.stats.primitives_done}/{data.stats.total}
-            </Text>
+            </span>
             <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-accent h-full transition-all duration-300"
@@ -467,18 +446,12 @@ export const ComponentAuditViewer: React.FC = () => {
           </div>
 
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text
-              as="h3"
-              variant="subtle"
-              size="sm"
-              weight="medium"
-              className="mb-2"
-            >
+            <h3 className="text-sm font-medium text-subtle mb-2">
               Logic Extracted
-            </Text>
-            <Text variant="strong" size="2xl" weight="bold">
+            </h3>
+            <span className="text-2xl font-bold text-strong">
               {data.stats.logic_extraction_done}/{data.stats.total}
-            </Text>
+            </span>
             <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-success h-full transition-all duration-300"
@@ -490,18 +463,12 @@ export const ComponentAuditViewer: React.FC = () => {
           </div>
 
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text
-              as="h3"
-              variant="subtle"
-              size="sm"
-              weight="medium"
-              className="mb-2"
-            >
+            <h3 className="text-sm font-medium text-subtle mb-2">
               Native Done
-            </Text>
-            <Text variant="strong" size="2xl" weight="bold">
+            </h3>
+            <span className="text-2xl font-bold text-strong">
               {data.stats.native_done}/{data.stats.total}
-            </Text>
+            </span>
             <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-success h-full transition-all duration-300"
@@ -513,18 +480,12 @@ export const ComponentAuditViewer: React.FC = () => {
           </div>
 
           <div className="bg-surface-1 rounded-lg p-4 border border-default">
-            <Text
-              as="h3"
-              variant="subtle"
-              size="sm"
-              weight="medium"
-              className="mb-2"
-            >
+            <h3 className="text-sm font-medium text-subtle mb-2">
               Native Ready (Tested)
-            </Text>
-            <Text variant="strong" size="2xl" weight="bold">
+            </h3>
+            <span className="text-2xl font-bold text-strong">
               {data.stats.native_ready}/{data.stats.total}
-            </Text>
+            </span>
             <div className="mt-2 bg-surface-3 rounded-full h-2 overflow-hidden">
               <div
                 className="bg-info h-full transition-all duration-300"
@@ -637,13 +598,9 @@ export const ComponentAuditViewer: React.FC = () => {
         {data.mobile_strategy && (
           <div className="bg-accent/10 rounded-lg p-4 border border-accent/30 mb-6">
             <Flex gap="sm" className="mb-3 items-center">
-              <Text
-                variant="strong"
-                size="md"
-                className="text-accent-700 dark:text-accent-300"
-              >
+              <span className="text-base text-strong text-accent-700 dark:text-accent-300">
                 🚀 Ready to Build Now - {data.mobile_strategy.current_phase}
-              </Text>
+              </span>
             </Flex>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {data.mobile_strategy.ready_to_build.map((item, idx) => (
@@ -651,17 +608,17 @@ export const ComponentAuditViewer: React.FC = () => {
                   key={idx}
                   className="bg-white/50 dark:bg-black/20 rounded p-3"
                 >
-                  <Text variant="strong" size="sm" className="mb-1">
+                  <span className="text-sm text-strong mb-1">
                     {item.name}
-                  </Text>
+                  </span>
                   <Flex gap="xs" className="mb-1 items-center">
-                    <Text variant="subtle" size="xs">
+                    <span className="text-xs text-subtle">
                       {item.effort}
-                    </Text>
+                    </span>
                   </Flex>
-                  <Text variant="main" size="xs">
+                  <span className="text-xs text-main">
                     {item.reason}
-                  </Text>
+                  </span>
                 </div>
               ))}
             </div>
@@ -671,9 +628,9 @@ export const ComponentAuditViewer: React.FC = () => {
         {/* View Mode Toggle */}
         <Flex gap="md" wrap className="mb-6">
           <Flex direction="column" className="min-w-[200px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               View Mode
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={viewMode}
@@ -691,9 +648,9 @@ export const ComponentAuditViewer: React.FC = () => {
         {/* Filters */}
         <Flex gap="md" wrap className="mb-6">
           <Flex direction="column" className="w-[250px] flex-shrink-0">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Search
-            </Text>
+            </span>
             <Input
               type="text"
               placeholder="Search components..."
@@ -704,9 +661,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[160px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Categories
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={categoryFilter}
@@ -723,9 +680,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[140px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Primitives
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={primitivesFilter}
@@ -742,9 +699,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[120px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Logic
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={logicFilter}
@@ -762,9 +719,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[120px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Native
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={nativeFilter}
@@ -783,9 +740,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[120px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Usage
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={usageFilter}
@@ -805,9 +762,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[140px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Sort Order
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={sortOrder}
@@ -823,9 +780,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[140px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               Complexity
-            </Text>
+            </span>
             <Select
               variant="bordered"
               value={complexityFilter}
@@ -843,9 +800,9 @@ export const ComponentAuditViewer: React.FC = () => {
           </Flex>
 
           <Flex direction="column" className="min-w-[120px]">
-            <Text variant="subtle" size="xs" className="mb-1">
+            <span className="text-xs text-subtle mb-1">
               &nbsp;
-            </Text>
+            </span>
             <Button
               type="subtle"
               onClick={clearAllFilters}
@@ -944,24 +901,20 @@ export const ComponentAuditViewer: React.FC = () => {
                                 {component.dependencies
                                   .slice(0, 3)
                                   .map((dep, idx) => (
-                                    <Text
-                                      key={idx}
-                                      className="px-1.5 py-0.5 bg-accent/10 text-accent-600 dark:text-accent-400 rounded text-xs"
-                                      title={dep}
-                                    >
+                                    <span className="px-1.5 py-0.5 bg-accent/10 text-accent-600 dark:text-accent-400 rounded text-xs" key={idx} title={dep}>
                                       {dep.length > 10
                                         ? dep.substring(0, 10) + '...'
                                         : dep}
-                                    </Text>
+                                    </span>
                                   ))}
                                 {component.dependencies.length > 3 && (
-                                  <Text className="px-1.5 py-0.5 bg-surface-2 text-subtle rounded text-xs">
+                                  <span className="px-1.5 py-0.5 bg-surface-2 text-subtle rounded text-xs">
                                     +{component.dependencies.length - 3}
-                                  </Text>
+                                  </span>
                                 )}
                               </div>
                             ) : (
-                              <Text className="text-xs text-muted">None</Text>
+                              <span className="text-xs text-muted">None</span>
                             )}
                           </div>
                         </td>
@@ -1104,9 +1057,9 @@ export const ComponentAuditViewer: React.FC = () => {
           <div className="space-y-8">
             {/* Development Phase Overview */}
             <div className="bg-surface-1 rounded-lg p-6 border border-default">
-              <Text size="lg" weight="semibold" className="mb-4">
+              <span className="text-lg font-semibold mb-4">
                 🎯 Native Development Roadmap
-              </Text>
+              </span>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-500">
@@ -1249,16 +1202,12 @@ export const ComponentAuditViewer: React.FC = () => {
                     <div className="p-6">
                       <div className="flex justify-between items-start mb-6">
                         <div className="flex-1 pr-4">
-                          <Text
-                            size="xl"
-                            weight="semibold"
-                            className="block mb-2"
-                          >
+                          <span className="text-xl font-semibold block mb-2">
                             {phase.title}
-                          </Text>
-                          <Text size="sm" className="text-subtle block">
+                          </span>
+                          <span className="text-sm text-subtle block">
                             {phase.subtitle}
-                          </Text>
+                          </span>
                         </div>
                         <div className="text-right">
                           <div className="text-2xl font-bold text-accent">
@@ -1277,9 +1226,9 @@ export const ComponentAuditViewer: React.FC = () => {
                           >
                             <div className="flex-1">
                               <div className="flex items-center gap-4 mb-2">
-                                <Text size="sm" weight="medium">
+                                <span className="text-sm font-medium">
                                   {component.name}
-                                </Text>
+                                </span>
 
                                 {/* Status indicators */}
                                 <div className="flex gap-2">
@@ -1296,12 +1245,9 @@ export const ComponentAuditViewer: React.FC = () => {
                                 </div>
                               </div>
 
-                              <Text
-                                size="xs"
-                                className="text-subtle line-clamp-1 mb-2"
-                              >
+                              <span className="text-xs text-subtle line-clamp-1 mb-2">
                                 {component.description}
-                              </Text>
+                              </span>
 
                               {/* Dependencies preview */}
                               {component.dependencies &&
@@ -1358,12 +1304,9 @@ export const ComponentAuditViewer: React.FC = () => {
                                 />
                               </div>
 
-                              <Text
-                                size="xs"
-                                className="text-subtle w-8 text-right"
-                              >
+                              <span className="text-xs text-subtle w-8 text-right">
                                 L{component.dependency_level || 0}
-                              </Text>
+                              </span>
 
                               {phase.urgency === 'high' && (
                                 <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded font-medium">
@@ -1376,10 +1319,10 @@ export const ComponentAuditViewer: React.FC = () => {
 
                         {components.length > 8 && (
                           <div className="text-center py-3">
-                            <Text size="sm" className="text-subtle">
+                            <span className="text-sm text-subtle">
                               +{components.length - 8} more components in this
                               phase
-                            </Text>
+                            </span>
                           </div>
                         )}
                       </div>
@@ -1391,61 +1334,45 @@ export const ComponentAuditViewer: React.FC = () => {
 
             {/* Build Strategy Summary */}
             <div className="bg-surface-1 rounded-lg p-6 border border-default">
-              <Text size="lg" weight="semibold" className="mb-4">
+              <span className="text-lg font-semibold mb-4">
                 💡 Build Strategy
-              </Text>
+              </span>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <Text
-                    size="sm"
-                    weight="medium"
-                    className="mb-2 text-green-600 block"
-                  >
+                  <span className="text-sm font-medium mb-2 text-green-600 block">
                     Phase 1: Foundations
-                  </Text>
-                  <Text size="xs" className="text-subtle block">
+                  </span>
+                  <span className="text-xs text-subtle block">
                     Start with basic components (no dependencies). These are
                     building blocks for everything else.
-                  </Text>
+                  </span>
                 </div>
                 <div>
-                  <Text
-                    size="sm"
-                    weight="medium"
-                    className="mb-2 text-blue-600 block"
-                  >
+                  <span className="text-sm font-medium mb-2 text-blue-600 block">
                     Phase 2: Simple Components
-                  </Text>
-                  <Text size="xs" className="text-subtle block">
+                  </span>
+                  <span className="text-xs text-subtle block">
                     Build components with 1-3 dependencies once their
                     prerequisites are complete.
-                  </Text>
+                  </span>
                 </div>
                 <div>
-                  <Text
-                    size="sm"
-                    weight="medium"
-                    className="mb-2 text-orange-600 block"
-                  >
+                  <span className="text-sm font-medium mb-2 text-orange-600 block">
                     Phase 3: Medium Complexity
-                  </Text>
-                  <Text size="xs" className="text-subtle block">
+                  </span>
+                  <span className="text-xs text-subtle block">
                     Tackle components with 4-6 dependencies. Plan refactoring
                     and testing carefully.
-                  </Text>
+                  </span>
                 </div>
                 <div>
-                  <Text
-                    size="sm"
-                    weight="medium"
-                    className="mb-2 text-red-600 block"
-                  >
+                  <span className="text-sm font-medium mb-2 text-red-600 block">
                     Phase 4: Complex Systems
-                  </Text>
-                  <Text size="xs" className="text-subtle block">
+                  </span>
+                  <span className="text-xs text-subtle block">
                     Handle complex components (7+ deps) last. Consider breaking
                     them down further.
-                  </Text>
+                  </span>
                 </div>
               </div>
             </div>

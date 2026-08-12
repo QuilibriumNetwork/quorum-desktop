@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Text,
   Flex,
   Button,
   Icon,
@@ -136,14 +135,14 @@ export const DbInspector: React.FC = () => {
         {/* Copy status toast */}
         {copyStatus && (
           <div className="fixed top-4 right-4 bg-surface-2 border border-accent px-4 py-2 rounded-lg shadow-lg z-50">
-            <Text variant="main" size="sm">{copyStatus}</Text>
+            <span className="text-sm text-main">{copyStatus}</span>
           </div>
         )}
 
         {/* Error state */}
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 rounded-lg p-4 mb-6">
-            <Text variant="strong" className="text-red-500">{error}</Text>
+            <span className="text-strong text-red-500">{error}</span>
           </div>
         )}
 
@@ -152,30 +151,30 @@ export const DbInspector: React.FC = () => {
             see the dev gotcha in .agents/docs/quorum-db-schema.md. */}
         {!loading && versionMismatch && info && (
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
-            <Text variant="strong" className="text-yellow-500">
+            <span className="text-strong text-yellow-500">
               Schema drift: database is at v{info.dbVersion}, this build expects v
               {info.appDbVersion}
-            </Text>
-            <Text variant="subtle" size="sm" className="mt-1">
+            </span>
+            <span className="text-sm text-subtle mt-1">
               {info.missingStores.length > 0
                 ? `Missing stores: ${info.missingStores.join(', ')}. `
                 : ''}
               Reset the DB (Settings → Danger Zone → Reset App Data) or reload the app to
               let it upgrade.
-            </Text>
+            </span>
           </div>
         )}
 
         {/* Stores present in the DB that have no redaction rule yet */}
         {!loading && info && info.unclassifiedStores.length > 0 && (
           <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4 mb-6">
-            <Text variant="strong" className="text-yellow-500">
+            <span className="text-strong text-yellow-500">
               Unclassified stores: {info.unclassifiedStores.join(', ')}
-            </Text>
-            <Text variant="subtle" size="sm" className="mt-1">
+            </span>
+            <span className="text-sm text-subtle mt-1">
               Every field is redacted until they are added to SAFE_STORES or
               SENSITIVE_STORES in dbDumpUtil.ts.
-            </Text>
+            </span>
           </div>
         )}
 
@@ -183,7 +182,7 @@ export const DbInspector: React.FC = () => {
         {loading && (
           <div className="text-center py-12">
             <Icon name="spinner" size="xl" className="animate-spin text-accent" />
-            <Text variant="subtle" className="mt-2">Loading database...</Text>
+            <span className="text-subtle mt-2">Loading database...</span>
           </div>
         )}
 
@@ -194,8 +193,8 @@ export const DbInspector: React.FC = () => {
             <div className="lg:col-span-1">
               <div className="bg-surface-1 rounded-lg border border-default p-4">
                 <Flex justify="between" align="center" className="mb-4">
-                  <Text variant="strong" size="lg">Stores</Text>
-                  <Text variant="subtle" size="sm">{totalRecords} total records</Text>
+                  <span className="text-lg text-strong">Stores</span>
+                  <span className="text-sm text-subtle">{totalRecords} total records</span>
                 </Flex>
 
                 <div className="space-y-2">
@@ -229,21 +228,17 @@ export const DbInspector: React.FC = () => {
                                 }
                               />
                             )}
-                            <Text
-                              variant={isSelected ? 'strong' : 'main'}
-                              size="sm"
-                              className="font-mono"
+                            <span
+                              className={`text-sm font-mono ${
+                                isSelected ? 'text-strong' : 'text-main'
+                              }`}
                             >
                               {storeName}
-                            </Text>
+                            </span>
                           </Flex>
-                          <Text
-                            variant="subtle"
-                            size="xs"
-                            className="bg-surface-2 px-2 py-0.5 rounded"
-                          >
+                          <span className="text-xs text-subtle bg-surface-2 px-2 py-0.5 rounded">
                             {count}
-                          </Text>
+                          </span>
                         </Flex>
                       </button>
                     );
@@ -254,9 +249,9 @@ export const DbInspector: React.FC = () => {
                 <div className="mt-4 pt-4 border-t border-default">
                   <Flex gap="xs" align="center">
                     <Icon name="lock" size="xs" className="text-yellow-500" />
-                    <Text variant="subtle" size="xs">
+                    <span className="text-xs text-subtle">
                       Sensitive data redacted
-                    </Text>
+                    </span>
                   </Flex>
                 </div>
               </div>
@@ -267,14 +262,14 @@ export const DbInspector: React.FC = () => {
               {!selectedStore && (
                 <div className="bg-surface-1 rounded-lg border border-default p-8 text-center">
                   <Icon name="database" size="2xl" className="text-subtle mb-4" />
-                  <Text variant="subtle">Select a store to view records</Text>
+                  <span className="text-subtle">Select a store to view records</span>
                 </div>
               )}
 
               {selectedStore && storeLoading && (
                 <div className="bg-surface-1 rounded-lg border border-default p-8 text-center">
                   <Icon name="spinner" size="xl" className="animate-spin text-accent" />
-                  <Text variant="subtle" className="mt-2">Loading {selectedStore}...</Text>
+                  <span className="text-subtle mt-2">Loading {selectedStore}...</span>
                 </div>
               )}
 
@@ -284,9 +279,9 @@ export const DbInspector: React.FC = () => {
                   <div className="p-4 border-b border-default">
                     <Flex justify="between" align="center">
                       <Flex gap="sm" align="center">
-                        <Text variant="strong" size="lg" className="font-mono">
+                        <span className="text-lg text-strong font-mono">
                           {storeData.name}
-                        </Text>
+                        </span>
                         {storeData.classification !== 'safe' && (
                           <span className="bg-yellow-500/20 text-yellow-500 text-xs px-2 py-0.5 rounded">
                             {storeData.classification === 'unclassified'
@@ -296,10 +291,10 @@ export const DbInspector: React.FC = () => {
                         )}
                       </Flex>
                       <Flex gap="sm" align="center">
-                        <Text variant="subtle" size="sm">
+                        <span className="text-sm text-subtle">
                           {storeData.count} records
                           {storeData.truncated && ` (showing first ${storeData.records?.length})`}
-                        </Text>
+                        </span>
                         <Button variant="ghost" size="sm" onClick={copyStoreData}>
                           <Icon name="copy" size="sm" />
                         </Button>
@@ -314,9 +309,9 @@ export const DbInspector: React.FC = () => {
                         {JSON.stringify(storeData.records, null, 2)}
                       </pre>
                     ) : (
-                      <Text variant="subtle" className="text-center py-8">
+                      <span className="text-subtle text-center py-8">
                         No records in this store
-                      </Text>
+                      </span>
                     )}
                   </div>
                 </div>
@@ -327,9 +322,9 @@ export const DbInspector: React.FC = () => {
 
         {/* Console usage hint */}
         <div className="mt-8 bg-surface-1 rounded-lg border border-default p-4">
-          <Text variant="strong" size="sm" className="mb-2">
+          <span className="text-sm text-strong mb-2">
             Console Commands
-          </Text>
+          </span>
           <div className="font-mono text-xs space-y-1 text-subtle">
             <div><span className="text-accent">__dbDump()</span> - Dump all stores (no messages)</div>
             <div><span className="text-accent">__dbDump(true)</span> - Dump all stores including messages</div>

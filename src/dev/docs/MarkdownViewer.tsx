@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Text,
   Flex,
   Button,
   Icon,
@@ -255,22 +254,22 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
             <Icon name="arrow-left" size="sm" />
             Back
           </Button>
-          <Text variant="subtle" size="sm" className="font-mono">
+          <span className="text-sm text-subtle font-mono">
             {filePath}
-          </Text>
+          </span>
         </Flex>
 
         {loading && (
           <div className="text-center py-8">
-            <Text variant="subtle">Loading markdown content...</Text>
+            <span className="text-subtle">Loading markdown content...</span>
           </div>
         )}
 
         {error && !loading && (
           <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 mb-6">
-            <Text variant="main" className="text-danger">
+            <span className="text-main text-danger">
               {error}
-            </Text>
+            </span>
           </div>
         )}
 
@@ -289,7 +288,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
         {!loading && !content && !error && (
           <div className="text-center py-8">
-            <Text variant="subtle">No content found</Text>
+            <span className="text-subtle">No content found</span>
           </div>
         )}
       </div>

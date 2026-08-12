@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Flex,
-  Text,
   Icon,
 } from '../../components/primitives';
 import { DevPage, DevPageHeader } from '../shell';
@@ -64,9 +63,9 @@ export const Docs: React.FC = () => {
               size="2xl"
               className="text-accent mx-auto mb-4"
             />
-            <Text variant="main" size="lg">
+            <span className="text-lg text-main">
               Loading documentation files...
-            </Text>
+            </span>
           </div>
         )}
 
@@ -75,17 +74,17 @@ export const Docs: React.FC = () => {
           <div className="bg-danger/10 border border-danger/30 rounded-lg p-6 mb-8">
             <Flex gap="sm" align="center" className="mb-2">
               <Icon name="warning" size="md" className="text-danger" />
-              <Text variant="strong" size="lg" className="text-danger">
+              <span className="text-lg text-strong text-danger">
                 Error Loading Documentation
-              </Text>
+              </span>
             </Flex>
-            <Text variant="main" size="sm" className="mb-4">
+            <span className="text-sm text-main mb-4">
               {error}
-            </Text>
-            <Text variant="subtle" size="sm">
+            </span>
+            <span className="text-sm text-subtle">
               The system is using a placeholder implementation. To see real
               files, implement the markdown loading API or build process.
-            </Text>
+            </span>
           </div>
         )}
 
