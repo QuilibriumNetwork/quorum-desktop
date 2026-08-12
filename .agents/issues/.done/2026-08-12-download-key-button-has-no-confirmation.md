@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "\"Download file\" writes the account private key to disk with no confirmation, unlike its two sibling buttons"
-status: open
+status: done
 priority: low
 created: 2026-08-12
 updated: 2026-08-12
@@ -74,12 +74,15 @@ there.
 
 ## Status
 
-**Fixed on branch `fix/account-key-confirmations` (LOCAL, not pushed).** The
-download button now goes through a confirmation modal, alongside a wider redesign
-that gives Copy key and Show QR the same treatment. Guarded by
-`src/dev/tests/components/securityKeyExportGating.test.tsx` (revert-checked).
-Closes when that branch merges. See the branch tracker:
-[2026-08-12-unshipped-security-branches.md](2026-08-12-unshipped-security-branches.md).
+**2026-08-12 — shipped in PR #336** (`fix(settings): confirm every Account Key
+action the same way`).
+
+What landed: the Download file button now goes through a confirmation modal that
+names the three facts a user needs (unencrypted, named after the account
+address, downloads are often cloud-synced), alongside a wider redesign giving
+Copy key and Show QR the same modal treatment. Verified by
+`src/dev/tests/components/securityKeyExportGating.test.tsx`, which drives the real
+component and is revert-checked, and by the user confirming the modals visually.
 
 Filed 2026-08-12 out of the key-material egress audit, where it is F4.
 

@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "The copy-key success message promises an auto-clear that clipboard managers and cloud clipboard defeat"
-status: open
+status: done
 priority: low
 created: 2026-08-12
 updated: 2026-08-12
@@ -78,10 +78,13 @@ without saying that the clipboard is not the only place it went.
 
 ## Status
 
-**Fixed on branch `fix/account-key-confirmations` (LOCAL, not pushed).** Both the
-copy-success callout and the pre-copy warning now name the clipboard-history
-caveat. Closes when that branch merges. See the branch tracker:
-[2026-08-12-unshipped-security-branches.md](2026-08-12-unshipped-security-branches.md).
+**2026-08-12 — shipped in PR #336** (`fix(settings): confirm every Account Key
+action the same way`).
+
+What landed: both the copy-success callout and the pre-copy warning now state
+that clipboard history and sync tools keep their own copy, which Quorum cannot
+clear, so the user knows to clear those too. The Electron auto-clear message no
+longer reads as "the key is no longer anywhere".
 
 Filed 2026-08-12 out of the key-material egress audit, where it is F8.
 

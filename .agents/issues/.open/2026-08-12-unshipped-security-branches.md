@@ -23,13 +23,22 @@ someone runs `git branch`.
 
 | Branch | What it is | Verified | Next action |
 |---|---|---|---|
-| **`fix/account-key-confirmations`** | Download-key confirmation (F4), clipboard-promise wording (F8), and all three Account Key actions redesigned to confirm through a modal (Download / Copy / Show QR), QR in its own modal. | ✅ Tests + typecheck + lint green. Modals visually confirmed by Kyn. | **Ready to ship.** Push, PR, merge. |
-| **`fix/tighten-csp-v2`** | Tightens the Content Security Policy so the app can only send data to its own API (was `default-src *`). Stacked on the branch above. | ⚠️ Tests green, but **not run against a real page load.** | **Soak first.** See below, then push/merge. |
+| ~~`fix/account-key-confirmations`~~ | Download-key confirmation (F4), clipboard-promise wording (F8), and all three Account Key actions redesigned to confirm through a modal (Download / Copy / Show QR), QR in its own modal. | ✅ Tests + typecheck + lint green. Modals visually confirmed by Kyn. | ✅ **Shipped in PR #336, 2026-08-12.** |
+| **`fix/tighten-csp-v2`** | Tightens the Content Security Policy so the app can only send data to its own API (was `default-src *`). **Was stacked on the shipped branch above, so it now needs a rebase onto `main` before shipping** (the account-key commit is already upstream via the squash and will drop out cleanly). | ⚠️ Tests green, but **not run against a real page load.** | **Rebase onto `main`, then soak.** See below. |
 
 The CSP is deliberately a **separate** branch: it is the one change whose failure
 is felt by users (a blocked resource), and it had two real breaks caught in
-review, so it must not ride in with the low-risk UX fixes. It was NOT removed —
-it is complete and committed, just quarantined until soaked.
+review, so it did not ride in with the low-risk UX fixes. It is complete and
+committed, just quarantined until soaked.
+
+To rebase it after the #336 merge, from the `.worktrees/secondary` worktree:
+
+```bash
+git fetch origin main --quiet
+git checkout fix/tighten-csp-v2
+git rebase --onto origin/main fix/account-key-confirmations
+# git reports the account-key commit "already upstream" and drops it — expected.
+```
 
 ## How to soak the CSP before shipping it
 
