@@ -5,7 +5,7 @@ import {
   Text,
   Icon,
 } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import { MarkdownViewer } from './MarkdownViewer';
 import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
@@ -49,23 +49,12 @@ export const Reports: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath={window.location.pathname} />
-      <div className="p-6 mx-auto max-w-6xl">
-        <div className="text-center mb-8">
-          <Flex justify="center" gap="sm" className="mb-4">
-            <Icon name="clipboard" size="2xl" className="text-strong" />
-            <Text as="h1" variant="strong" size="3xl" weight="bold">
-              Reports & Audits
-            </Text>
-          </Flex>
-          <Text as="p" variant="main" size="lg" className="mb-2" align="center">
-            Security Audits, Research & Analysis Reports
-          </Text>
-          <Text as="p" variant="subtle" align="center">
-            Browse all reports from .agents/reports/
-          </Text>
-        </div>
+    <DevPage width="wide">
+        <DevPageHeader
+          icon="clipboard"
+          title="Reports & Audits"
+          subtitle="Security audits, research and analysis from .agents/reports/"
+        />
 
         {/* Loading State */}
         {loading && (
@@ -104,7 +93,6 @@ export const Reports: React.FC = () => {
         {!loading && (
           <FilterableList files={reportFiles} section="reports" basePath="/dev/reports" />
         )}
-      </div>
-    </div>
+    </DevPage>
   );
 };

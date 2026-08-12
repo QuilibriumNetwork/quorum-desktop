@@ -26,7 +26,7 @@ import React, { useCallback, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Text, Flex, Button } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import {
   clearFakeQns,
   deriveFakeQName,
@@ -151,17 +151,14 @@ export const FakeQns: React.FC = () => {
   const entries = Object.entries(state.entries);
 
   return (
-    <Flex direction="column" className="h-full overflow-auto p-6 gap-4">
-      <DevNavMenu />
+    <DevPage width="narrow">
+        <DevPageHeader
+          icon="at"
+          title="Fake QNS"
+          subtitle="See where a .q name renders without owning one. Dev builds only. Read-side overlay: nothing is written, signed, or published."
+        />
 
       <div className="border border-dashed border-yellow-500 rounded-lg p-4">
-        <Text variant="strong" size="lg" className="block text-yellow-500">
-          {'</>'} Fake QNS (dev builds only)
-        </Text>
-        <Text variant="subtle" size="xs" className="block mb-4">
-          See where a .q name renders without owning one. Read-side overlay
-          only: nothing is written, signed, or published.
-        </Text>
 
         <Flex direction="column" className="gap-3">
           <Toggle
@@ -319,6 +316,6 @@ export const FakeQns: React.FC = () => {
         fetches the full roster. A silent lurker showing no .q there is expected,
         not a regression.
       </Text>
-    </Flex>
+    </DevPage>
   );
 };

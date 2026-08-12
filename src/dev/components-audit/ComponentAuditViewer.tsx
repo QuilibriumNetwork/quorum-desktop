@@ -7,7 +7,7 @@ import {
   Flex,
   Text,
 } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 
 type AuditStatus =
   | 'todo'
@@ -409,18 +409,12 @@ export const ComponentAuditViewer: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-app overflow-y-auto">
-      <DevNavMenu currentPath={window.location.pathname} />
-      <div className="p-6 w-full">
-        <Text
-          as="h1"
-          variant="strong"
-          size="3xl"
-          weight="bold"
-          className="my-6"
-        >
-          Component Audit Dashboard
-        </Text>
+    <DevPage width="full">
+        <DevPageHeader
+          icon="chart-line"
+          title="Component Audit Dashboard"
+          subtitle="Migration status of every component, and mobile readiness"
+        />
 
         {/* Stats Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">
@@ -1468,7 +1462,6 @@ export const ComponentAuditViewer: React.FC = () => {
             Back to Top
           </a>
         </Flex>
-      </div>
-    </div>
+    </DevPage>
   );
 };

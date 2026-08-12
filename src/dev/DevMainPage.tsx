@@ -8,7 +8,7 @@ import {
   Icon,
   type IconName,
 } from '../components/primitives';
-import { DevNavMenu } from './DevNavMenu';
+import { DevPage, DevPageHeader } from './shell';
 
 export const DevMainPage: React.FC = () => {
   const devTools: Array<{
@@ -86,17 +86,12 @@ export const DevMainPage: React.FC = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu sticky />
-      <div className="p-6 mx-auto max-w-2xl">
-        <div className="text-center my-12">
-          <Flex justify="center" gap="sm" className="mb-4">
-            <Icon name="tools" size="2xl" className="text-strong" />
-            <Text as="h1" variant="strong" size="3xl" weight="bold">
-              Development Tools
-            </Text>
-          </Flex>
-        </div>
+    <DevPage width="standard">
+        <DevPageHeader
+          icon="tools"
+          title="Development Tools"
+          subtitle="Instruments and browsers for working on Quorum. Development builds only."
+        />
 
         {/* Development Tools List */}
         <div className="space-y-4 mb-8">
@@ -118,7 +113,6 @@ export const DevMainPage: React.FC = () => {
             </Link>
           ))}
         </div>
-      </div>
-    </div>
+    </DevPage>
   );
 };

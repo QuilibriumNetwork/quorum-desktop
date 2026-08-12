@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Flex, Text, Icon } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import { MarkdownViewer } from './MarkdownViewer';
 import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
@@ -53,23 +53,12 @@ export const Issues: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath={window.location.pathname} />
-      <div className="p-6 mx-auto max-w-6xl">
-        <div className="text-center mb-8">
-          <Flex justify="center" gap="sm" className="mb-4">
-            <Icon name="clipboard-list" size="2xl" className="text-strong" />
-            <Text as="h1" variant="strong" size="3xl" weight="bold">
-              Issues
-            </Text>
-          </Flex>
-          <Text as="p" variant="main" size="lg" className="mb-2" align="center">
-            Bugs and Tasks
-          </Text>
-          <Text as="p" variant="subtle" align="center">
-            Browse all issues from .agents/issues/
-          </Text>
-        </div>
+    <DevPage width="wide">
+        <DevPageHeader
+          icon="clipboard-list"
+          title="Issues"
+          subtitle="Bugs and tasks from .agents/issues/, filterable by type, state and priority"
+        />
 
         {/* Loading State */}
         {loading && (
@@ -112,7 +101,6 @@ export const Issues: React.FC = () => {
             basePath="/dev/issues"
           />
         )}
-      </div>
-    </div>
+    </DevPage>
   );
 };

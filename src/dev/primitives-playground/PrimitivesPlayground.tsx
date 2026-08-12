@@ -139,14 +139,12 @@ export const PrimitivesPlayground: React.FC = () => {
 
   return (
     <div className="h-full flex flex-col">
-      <DevNavMenu currentPath="/playground" sticky />
+      <DevNavMenu sticky />
 
       {/* Header - constrained width */}
       <div className="sticky top-[41px] z-10 bg-surface-00 p-6 pr-8 -mt-px">
         <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Primitives Playground</h1>
-          </div>
+          <h1 className="text-title-large">Primitives Playground</h1>
 
           {/* Theme Controls */}
           <div className="flex items-center gap-6 ml-auto">

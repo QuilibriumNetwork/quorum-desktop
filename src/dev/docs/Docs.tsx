@@ -5,7 +5,7 @@ import {
   Text,
   Icon,
 } from '../../components/primitives';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import { MarkdownViewer } from './MarkdownViewer';
 import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
@@ -49,23 +49,12 @@ export const Docs: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-app">
-      <DevNavMenu currentPath={window.location.pathname} />
-      <div className="p-6 mx-auto max-w-6xl">
-        <div className="text-center mb-8">
-          <Flex justify="center" gap="sm" className="mb-4">
-            <Icon name="book" size="2xl" className="text-strong" />
-            <Text as="h1" variant="strong" size="3xl" weight="bold">
-              Documentation
-            </Text>
-          </Flex>
-          <Text as="p" variant="main" size="lg" className="mb-2" align="center">
-            Project Documentation & Guides
-          </Text>
-          <Text as="p" variant="subtle" align="center">
-            Browse all documentation files from .agents/docs/
-          </Text>
-        </div>
+    <DevPage width="wide">
+        <DevPageHeader
+          icon="book"
+          title="Documentation"
+          subtitle="Browse all documentation files from .agents/docs/"
+        />
 
         {/* Loading State */}
         {loading && (
@@ -104,7 +93,6 @@ export const Docs: React.FC = () => {
         {!loading && (
           <FilterableList files={docFiles} section="docs" basePath="/dev/docs" />
         )}
-      </div>
-    </div>
+    </DevPage>
   );
 };
