@@ -8,7 +8,7 @@ import {
   type IconName,
 } from '@/components/primitives';
 import { ThemeRadioGroup } from '@/components/ui';
-import { DevNavMenu } from '../DevNavMenu';
+import { DevPage, DevPageHeader } from '../shell';
 import {
   ButtonExamples,
   CalloutExamples,
@@ -72,7 +72,7 @@ export const PrimitivesPlayground: React.FC = () => {
     if (element) {
       const elementTop = element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
-        top: elementTop - 160, // Offset for sticky header (41px nav + ~80px header + 40px buffer)
+        top: elementTop - 80, // Clears the sticky nav (~45px); the page header no longer sticks
         behavior: 'smooth'
       });
     }
@@ -93,7 +93,7 @@ export const PrimitivesPlayground: React.FC = () => {
   // Update active section based on scroll position
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + 160; // Match the scroll offset
+      const scrollPosition = window.scrollY + 80; // Match the scroll offset
 
       for (const item of navigationItems) {
         const element = document.getElementById(item.id);
@@ -138,27 +138,16 @@ export const PrimitivesPlayground: React.FC = () => {
   }, []);
 
   return (
-    <div className="h-full flex flex-col">
-      <DevNavMenu sticky />
+    <DevPage width="full">
+        <DevPageHeader
+          icon="flask"
+          title="Primitives Playground"
+          subtitle="Every primitive, with live props and the full colour system"
+        />
 
-      {/* Header - constrained width */}
-      <div className="sticky top-[41px] z-10 bg-surface-00 p-6 pr-8 -mt-px">
-        <div className="max-w-screen-2xl mx-auto flex items-center justify-between">
-          <h1 className="text-title-large">Primitives Playground</h1>
-
-          {/* Theme Controls */}
-          <div className="flex items-center gap-6 ml-auto">
-            <ThemeRadioGroup horizontal />
-          </div>
-        </div>
-      </div>
-
-      {/* Full width background area below header */}
-      <div className="flex flex-1 overflow-hidden bg-surface-0">
-        {/* Constrained content container inside full-width bg */}
-        <div className="max-w-screen-2xl mx-auto w-full flex">
+      <div className="flex items-start gap-8">
           {/* Components Content */}
-          <div className="flex-1 p-8 space-y-8 overflow-y-auto pr-80">
+          <div className="flex-1 min-w-0 space-y-8">
             {/* Demo */}
             <div>
               <Callout variant="info" className="mb-6">
@@ -194,10 +183,18 @@ export const PrimitivesPlayground: React.FC = () => {
             </div>
           </div>
 
-          {/* Navigation Sidebar - fixed positioned */}
-          <div className="fixed right-[calc((100vw-1536px)/2)] top-[150px] w-72 h-[calc(100vh-155px)] bg-surface-0 border-l border-default overflow-y-auto z-10">
-            <div className="p-4">
-              <nav className="space-y-2">
+          {/* Navigation sidebar. Sticky inside the content column rather than
+              `fixed` with a hardcoded `calc((100vw-1536px)/2)` offset, which
+              went negative on any viewport under 1536px and pushed the sidebar
+              off the right edge. */}
+          <aside className="w-72 shrink-0 sticky top-16 max-h-[calc(100vh-5rem)] overflow-y-auto bg-surface-1 border border-default rounded-lg">
+            <div className="p-3">
+              {/* Icon-only light/dark/system, in a row. `horizontal` also
+                  turns on tooltips, so the row needs no heading. */}
+              <div className="mb-4 pb-4 border-b border-default">
+                <ThemeRadioGroup horizontal />
+              </div>
+              <nav className="space-y-1">
                 {navigationItems.map((item) => (
                   <a
                     key={item.id}
@@ -207,7 +204,7 @@ export const PrimitivesPlayground: React.FC = () => {
                       scrollToSection(item.id);
                       window.history.pushState(null, '', `#${item.id}`);
                     }}
-                    className={`block px-3 py-2 mt-6 rounded-lg text-sm transition-colors duration-150 flex items-center gap-2 no-underline cursor-pointer ${
+                    className={`px-3 py-2 rounded-lg text-sm transition-colors duration-150 flex items-center gap-2 no-underline cursor-pointer ${
                       activeSection === item.id
                         ? 'bg-accent text-white'
                         : 'text-subtle hover:bg-surface-3 hover:text-main'
@@ -219,8 +216,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 ))}
               </nav>
             </div>
-          </div>
-        </div>
+          </aside>
       </div>
 
       {/* Toast Portal for testing toast examples */}
@@ -245,6 +241,6 @@ export const PrimitivesPlayground: React.FC = () => {
           </div>
         </Portal>
       )}
-    </div>
+    </DevPage>
   );
 };

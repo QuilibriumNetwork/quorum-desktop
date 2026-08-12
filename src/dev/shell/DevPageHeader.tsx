@@ -34,7 +34,12 @@ export const DevPageHeader: React.FC<DevPageHeaderProps> = ({
     <div className="flex items-start gap-3">
       <Icon name={icon} size="xl" className="text-accent shrink-0 mt-1" />
       <div>
-        <h1 className="text-title-large">{title}</h1>
+        {/* 30px, one step above `.text-title-large` (24px). The semantic scale
+            tops out at 24 because it was written for modals and dialogs, and
+            these are standalone full pages whose sections need room to be
+            prominent underneath. Section headings sit at 24px, body below that,
+            so the hierarchy stays 30 > 24 > 16/14. */}
+        <h1 className="text-3xl font-bold text-strong">{title}</h1>
         {subtitle && <p className="text-label">{subtitle}</p>}
       </div>
     </div>
