@@ -109,7 +109,8 @@ tells the truth loudly.
 ## Compounding bug 2026-07-19 — space deletion LEAKS the bloated state (garbage accumulation)
 
 Found while cleaning a real test account. The diagnostic
-(`window.__messageDB.analyzeEncryptionStates()`) showed **10 bloated ~2MB
+(`window.__messageDB.analyzeEncryptionStates()` — development builds only since
+2026-08-12, the global is now `import.meta.env?.DEV`-gated) showed **10 bloated ~2MB
 created-space states = 19.4MB local**, while the UI showed only **2 created
 spaces**. So ~8 created-space encryption states (~16MB) were orphaned debris
 from spaces "deleted" earlier — the space vanished from the UI but its ~2MB

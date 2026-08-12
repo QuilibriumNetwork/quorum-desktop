@@ -72,6 +72,11 @@ The Quorum network can experience intermittent issues unrelated to our code:
 
 ## Common Diagnostic Commands
 
+> **Development builds only (since 2026-08-12).** `window.__actionQueue` and
+> `window.__messageDB` are gated behind `import.meta.env?.DEV` and are
+> `undefined` in production. See
+> [action-queue.md → Debugging](../../docs/features/action-queue.md#debugging).
+
 ```javascript
 // Check queue stats
 await window.__actionQueue.getStats()

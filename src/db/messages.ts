@@ -3189,9 +3189,14 @@ export class MessageDB {
   // ============================================
   // See: 2025-12-09-encryption-state-evals-bloat.md under .agents/issues/
   //
-  // Usage (browser console):
+  // Usage (browser console, DEVELOPMENT BUILDS ONLY):
   //   await window.__messageDB.analyzeEncryptionStates()
   //   await window.__messageDB.deleteBloatedEncryptionState(conversationId, inboxId)
+  //
+  // `window.__messageDB` is assigned in src/components/context/MessageDB.tsx
+  // behind an `import.meta.env?.DEV` guard. It was previously unguarded and
+  // shipped to production, which handed the whole database to any script on
+  // the page. Do not remove that guard.
 
   /**
    * Analyzes all encryption states and returns a report of their sizes and structure.
@@ -3312,7 +3317,7 @@ export class MessageDB {
   /**
    * Deletes a specific bloated encryption state entirely.
    * WARNING: This will require re-establishing the encryption session for that space/conversation.
-   * Use from browser console: await window.__messageDB.deleteBloatedEncryptionState(conversationId, inboxId)
+   * Use from browser console in development only: await window.__messageDB.deleteBloatedEncryptionState(conversationId, inboxId)
    */
   async deleteBloatedEncryptionState(conversationId: string, inboxId: string): Promise<boolean> {
     await this.init();

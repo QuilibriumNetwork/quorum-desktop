@@ -632,6 +632,14 @@ Some handlers are safe to retry by design:
 
 ## Debugging
 
+> **Development builds only (since 2026-08-12).** `window.__actionQueue` and
+> `window.__messageDB` are gated behind `import.meta.env?.DEV` and are
+> `undefined` in production. They previously shipped to production unguarded,
+> which exposed the account's private keys (via
+> `__actionQueue.getUserKeyset()`) and the whole database to any script on the
+> page. The guards live in `src/components/context/MessageDB.tsx` — do not
+> remove them.
+
 ```javascript
 // Check queue stats
 await window.__actionQueue.getStats()
