@@ -4,6 +4,7 @@ import {
   Input,
   Select,
   Button,
+  Callout,
   Flex,
   Text,
 } from '../../components/primitives';
@@ -415,6 +416,15 @@ export const ComponentAuditViewer: React.FC = () => {
           title="Component Audit Dashboard"
           subtitle="Migration status of every component, and mobile readiness"
         />
+
+        <Callout variant="warning" className="mb-6">
+          <strong>This audit is obsolete.</strong> It tracked a cross-platform
+          migration that no longer describes how the app is built: this repo is
+          not cross-platform any more, and the architecture it was measuring
+          progress against has been superseded. The numbers and per-component
+          statuses below are kept for reference only — do not plan work from
+          them.
+        </Callout>
 
         {/* Stats Dashboard */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 mb-8">

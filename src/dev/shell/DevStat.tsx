@@ -46,6 +46,6 @@ export const DevStat: React.FC<DevStatProps> = ({
   <div className={`min-w-32 ${className}`}>
     <div className="text-label-strong">{label}</div>
     <div className={`text-2xl font-bold ${TONE_CLASS[tone]}`}>{value}</div>
-    {hint && <div className="text-label mt-1">{hint}</div>}
+    {hint && <div className="text-label text-subtle mt-1">{hint}</div>}
   </div>
 );

@@ -40,7 +40,7 @@ export const DevPageHeader: React.FC<DevPageHeaderProps> = ({
             prominent underneath. Section headings sit at 24px, body below that,
             so the hierarchy stays 30 > 24 > 16/14. */}
         <h1 className="text-3xl font-bold text-strong">{title}</h1>
-        {subtitle && <p className="text-label">{subtitle}</p>}
+        {subtitle && <p className="text-label text-subtle">{subtitle}</p>}
       </div>
     </div>
     {actions && <div className="flex flex-wrap gap-2">{actions}</div>}
