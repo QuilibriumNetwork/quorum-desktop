@@ -5,8 +5,8 @@
  * - User is offline (shows queued actions count)
  * - User hasn't dismissed it this session
  *
- * Does NOT display when online - action queue processing happens silently
- * and "Syncing Space..." toast handles sync feedback separately.
+ * Does NOT display when online - action queue processing happens silently.
+ * (There is no sync toast any more; it was removed on 2026-08-13.)
  *
  * Dismiss behavior:
  * - User can close with X button

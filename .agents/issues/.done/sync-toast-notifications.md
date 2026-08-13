@@ -12,6 +12,14 @@ updated: '2026-05-18'
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
+> **SUPERSEDED 2026-08-13 — the toast described here no longer exists.** It was removed
+> because the 2026-05-18 trigger below fires on sync *intent* (`requestSync`, once per
+> space per connect), so it appeared on every refresh regardless of whether anything
+> needed syncing, and it was a single global toast rather than per-space. The rebuild,
+> and the measurement it is gated on, are in
+> `.agents/issues/.open/2026-08-13-sync-indicator-needs-a-per-space-behind-by-signal.md`.
+> Kept for the protocol history, which is still accurate and still useful.
+
 ## 2026-05-18 — Reworked (current behavior)
 
 The original implementation below was reworked because the toast almost never fired in practice. Root cause: the trigger was a per-chunk message-count threshold (`>= 20`), but the new manifest/delta sync protocol chunks by byte size (5MB), so most syncs arrive as a single delta with a wide range of message counts and the threshold check produced non-deterministic results. It also fired late (after data verification, inside the receive handler), missing the user-anxious window between login and first delta arrival.
