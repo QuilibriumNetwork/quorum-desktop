@@ -667,6 +667,10 @@ export const Message = React.memo(
           (isCompact ? 'message-compact ' : '') +
           // Desktop: hover effect; Touch: no extra styling (gap/border handled by .message-row wrapper)
           (isTouchDevice() ? '' : 'hover:bg-chat-hover ') +
+          // While editing, hold the same background the row gets on hover so the
+          // message being edited stays visually singled out even as the pointer
+          // moves away to the textarea.
+          (editingMessageId === message.messageId ? 'bg-chat-hover ' : '') +
           (highlightClassName ? ` ${highlightClassName}` : '')
         }
         // Desktop mouse interaction

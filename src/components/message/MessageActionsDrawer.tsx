@@ -221,7 +221,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             onClick={handleEdit}
             className="mobile-drawer__action-item"
           >
-            <Icon name="edit" />
+            <Icon name="pencil" />
             <span>{t`Edit message`}</span>
           </div>
         )}
