@@ -4,12 +4,29 @@ title: "78 Dependabot alerts triaged against the shipped bundle: 76 don't ship, 
 status: open
 priority: low
 created: 2026-08-12
-updated: 2026-08-12
+updated: 2026-08-13
 area: dependencies / supply chain
 platforms: quorum-desktop — web and Electron
 ---
 
 # Dependabot's 78 alerts, triaged against what actually ships
+
+## Status
+
+**2026-08-13 — the one action shipped in PR #337**
+(`fix(onboarding): stop telling users the no-passkey path is still secure`).
+
+What landed: `react-router` and `react-router-dom` bumped 7.17.0 → 7.18.2,
+clearing the 5 alerts including both runtime highs. Suite green afterwards (1428
+tests), typecheck and lint clean, production build and the bundle-globals check
+both pass. Nobody has driven the running app against the new version; the app
+uses only the declarative API, so the exposure to that library's churn is small.
+
+Still open, which is why this file stays here: **the elliptic question below is
+unanswered.** `elliptic` 6.6.1 is genuinely in the shipped bundle, has no patched
+version to move to, and whether its ECDSA is ever *called* is INFERRED rather than
+measured. Closing that needs a runtime breakpoint on those exports, not more
+grepping. Everything else in this triage is either inert or actioned.
 
 ## Why this exists
 
@@ -116,4 +133,4 @@ runtime packages flagged here are absent from the bundle entirely.
 
 ---
 
-*Last updated: 2026-08-12*
+*Last updated: 2026-08-13*
