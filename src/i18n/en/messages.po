@@ -15,6 +15,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr "Welcome to Quorum, {name}! Your account is ready to go."
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -29,11 +34,6 @@ msgstr "{role} - {count}"
 #: src/hooks/business/channels/useChannelData.ts:208
 msgid "No Role - {count}"
 msgstr "No Role - {count}"
-
-#. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Welcome to Quorum, {name}! Your account is secured and ready to go."
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -86,6 +86,11 @@ msgstr "has been kicked"
 #: src/components/direct/DirectMessage.tsx:141
 msgid "Send a message to {user}"
 msgstr "Send a message to {user}"
+
+#. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Welcome to Quorum, {name}! Your account is secured and ready to go."
 
 #: src/components/message/Message.tsx:1007
 #: src/components/message/Message.tsx:1020
@@ -2691,12 +2696,20 @@ msgid "Page Not Found"
 msgstr "Page Not Found"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
-msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+msgid "Passkey setup failed. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
+msgstr "Passkey setup failed. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
+#~ msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
-msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
-msgstr "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
+msgid "Passkeys aren't supported on this browser, so you'll need to continue without one. Your account key will be stored on this device, so anyone who can read its files could take over your account."
+msgstr "Passkeys aren't supported on this browser, so you'll need to continue without one. Your account key will be stored on this device, so anyone who can read its files could take over your account."
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
+#~ msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
 msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
@@ -3518,8 +3531,12 @@ msgid "The page you're looking for doesn't exist or has been moved. Let's get yo
 msgstr "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
-msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+msgid "The passkey setup timed out. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
+msgstr "The passkey setup timed out. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
+#~ msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:44
 #~ msgid "This action cannot be undone and will permanently delete this Space and all of its channels and messages."
@@ -4204,8 +4221,12 @@ msgid "You can manage your Space mention notifications in each Space's settings.
 msgstr "You can manage your Space mention notifications in each Space's settings."
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
-msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
-msgstr "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+msgid "You cancelled the passkey setup. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
+msgstr "You cancelled the passkey setup. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
+#~ msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
 
 #: src/components/modals/GroupEditorModal.tsx:116
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

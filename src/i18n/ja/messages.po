@@ -15,6 +15,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+msgid "Welcome to Quorum, {name}! Your account is ready to go."
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -29,11 +34,6 @@ msgstr "{role} - {count}"
 #: src/hooks/business/channels/useChannelData.ts:208
 msgid "No Role - {count}"
 msgstr "役割なし - {count}"
-
-#. js-lingui-explicit-id
-#: src/components/onboarding/steps/CompleteStep.tsx:19
-msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
-msgstr "Quorumへようこそ、{name}！アカウントは安全に設定され、使用準備ができています。"
 
 #. js-lingui-explicit-id
 #: src/components/space/Channel.tsx:1883
@@ -87,6 +87,11 @@ msgstr "がキックされました"
 msgid "Send a message to {user}"
 msgstr "{user} にメッセージを送信"
 
+#. js-lingui-explicit-id
+#: src/components/onboarding/steps/CompleteStep.tsx:19
+#~ msgid "Welcome to Quorum, {name}! Your account is secured and ready to go."
+#~ msgstr "Quorumへようこそ、{name}！アカウントは安全に設定され、使用準備ができています。"
+
 #: src/components/message/Message.tsx:1007
 #: src/components/message/Message.tsx:1020
 #: src/components/message/Message.tsx:1141
@@ -130,9 +135,7 @@ msgstr "[ステッカー]"
 
 #. placeholder {0}: result.conversationsSkippedAsDeleted
 #: src/components/modals/UserSettingsModal/Security.tsx:320
-msgid ""
-"{0} conversations were not restored because you deleted them after this "
-"backup was made."
+msgid "{0} conversations were not restored because you deleted them after this backup was made."
 msgstr "このバックアップ作成後に削除されたため、{0}件の会話は復元されませんでした。"
 
 #. placeholder {0}: removedDevices.length
@@ -157,9 +160,7 @@ msgstr "{0}が{spaceName}であなたに言及しました"
 
 #. placeholder {0}: result.messagesSkippedAsDeleted
 #: src/components/modals/UserSettingsModal/Security.tsx:325
-msgid ""
-"{0} messages were not restored because you deleted them after this backup "
-"was made."
+msgid "{0} messages were not restored because you deleted them after this backup was made."
 msgstr "このバックアップ作成後に削除されたため、{0}件のメッセージは復元されませんでした。"
 
 #. placeholder {0}: allNotifications.length
@@ -226,6 +227,9 @@ msgstr "{bookmarkCount} ブックマーク"
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} ブックマーク"
 
+#~ msgid "{contextCount} bookmark here"
+#~ msgstr "{contextCount} マーカーがあります"
+
 #: src/components/bookmarks/BookmarksPanel.tsx:181
 msgid "{contextCount} bookmark in this conversation"
 msgstr "この会話のブックマーク {contextCount} 件"
@@ -233,6 +237,9 @@ msgstr "この会話のブックマーク {contextCount} 件"
 #: src/components/bookmarks/BookmarksPanel.tsx:184
 msgid "{contextCount} bookmark in this Space"
 msgstr "このスペースのブックマーク {contextCount} 件"
+
+#~ msgid "{contextCount} bookmarks here"
+#~ msgstr "{contextCount} マーカーがあります"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:182
 msgid "{contextCount} bookmarks in this conversation"
@@ -298,25 +305,20 @@ msgid "4-Character Code"
 msgstr "4文字のコード"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:80
-msgid ""
-"A passkey uses your device's security features (Face ID, fingerprint, or "
-"PIN) to protect your account. It's more secure than a password and you don't"
-" have to remember anything."
-msgstr ""
-"passkeyは、デバイスのセキュリティ機能（Face "
-"ID、指紋、またはPIN）を使用してアカウントを保護します。パスワードよりも安全で、何も覚える必要はありません。"
+msgid "A passkey uses your device's security features (Face ID, fingerprint, or PIN) to protect your account. It's more secure than a password and you don't have to remember anything."
+msgstr "passkeyは、デバイスのセキュリティ機能（Face ID、指紋、またはPIN）を使用してアカウントを保護します。パスワードよりも安全で、何も覚える必要はありません。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:544
-msgid ""
-"A reusable link anyone can use to join. Share it on social media or your "
-"website."
+msgid "A reusable link anyone can use to join. Share it on social media or your website."
 msgstr "誰でも参加できる再利用可能なリンクです。ソーシャルメディアやウェブサイトで共有してください。"
 
-#: src/services/MessageService.ts:6527 src/services/NotificationService.ts:297
+#: src/services/MessageService.ts:6527
+#: src/services/NotificationService.ts:297
 msgid "a role"
 msgstr "役割"
 
-#: src/services/MessageService.ts:6537 src/services/NotificationService.ts:296
+#: src/services/MessageService.ts:6537
+#: src/services/NotificationService.ts:296
 #: src/services/NotificationService.ts:309
 msgid "a Space"
 msgstr "スペース"
@@ -408,18 +410,12 @@ msgid "Add to Favorites"
 msgstr "お気に入りに追加"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:47
-msgid ""
-"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
-"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr ""
-"最大50個のカスタム絵文字を追加できます。カスタム絵文字はSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大5MB（自動最適化）。"
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr "最大50個のカスタム絵文字を追加できます。カスタム絵文字はSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大5MB（自動最適化）。"
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:47
-msgid ""
-"Add up to 50 custom stickers. Custom stickers can only be used within a "
-"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
-msgstr ""
-"最大50個のカスタムステッカーを追加できます。カスタムステッカーはSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大25MB（自動最適化）。"
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr "最大50個のカスタムステッカーを追加できます。カスタムステッカーはSpace内でのみ使用できます。PNG、JPG、またはGIFをアップロードできます。最大25MB（自動最適化）。"
 
 #: src/components/user/UserProfile.tsx:404
 msgid "Adding..."
@@ -491,6 +487,9 @@ msgstr "ダイレクトメッセージに常に署名する"
 msgid "Always sign messages"
 msgstr "メッセージに常に署名する"
 
+#~ msgid "An error occurred while deleting the Space. Please try again."
+#~ msgstr "スペースの削除中にエラーが発生しました。もう一度お試しください。"
+
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:88
 msgid "An error occurred while resetting app data. Please try again."
 msgstr "アプリデータのリセット中にエラーが発生しました。もう一度お試しください。"
@@ -505,21 +504,15 @@ msgid "and"
 msgstr "and"
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid ""
-"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
-"for emoji use."
+msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
 msgstr "アニメーション絵文字GIFは100KBを超えることはできません。絵文字用にGIFを最適化してください。"
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid ""
-"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
-"for sticker use."
+msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "アニメーションステッカーGIFは750KBを超えることはできません。ステッカー用にGIFを最適化してください。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:719
-msgid ""
-"Anyone who photographs this code owns your account. Scan it now, then close "
-"this."
+msgid "Anyone who photographs this code owns your account. Scan it now, then close this."
 msgstr "このコードを撮影した人は誰でも、あなたのアカウントを完全に乗っ取ることができます。今すぐスキャンして、この画面を閉じてください。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:269
@@ -531,6 +524,9 @@ msgstr ""
 "このコードを見た人や撮影した人は誰でも、あなたのアカウントを完全に乗っ取り、保有する資金をすべて盗むことができます。\n"
 "\n"
 "周囲に人がいない場所で、すぐにスキャンできる場合のみ続行してください。コードは60秒後に自動的に非表示になります。"
+
+#~ msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "このQRコードを見たり写真を撮ったりした人は、あなたのQuorumアカウントを完全に制御し、関連する資金を盗むことができます。プライベートな場所にいて、すぐにスキャンする準備ができている場合のみ進んでください。"
 
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:232
 msgid "App version"
@@ -548,14 +544,11 @@ msgstr "入力中"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:434
 #: src/hooks/business/channels/useChannelManagement.ts:238
-msgid ""
-"Are you sure you want to delete this channel? All messages will be lost. "
-"This action cannot be undone."
+msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 msgstr "このチャンネルを削除してもよろしいですか？すべてのメッセージが失われます。この操作は元に戻せません。"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:435
-msgid ""
-"Are you sure you want to delete this channel? This action cannot be undone."
+msgid "Are you sure you want to delete this channel? This action cannot be undone."
 msgstr "このチャンネルを削除してもよろしいですか？この操作は取り消せません。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:102
@@ -568,14 +561,11 @@ msgstr ""
 "この操作はあなたのデバイスからのみ会話を削除します。他の参加者は会話履歴にアクセスできます。"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:455
-msgid ""
-"Are you sure you want to delete this group? All channels inside it and their"
-" messages will be lost. This action cannot be undone."
+msgid "Are you sure you want to delete this group? All channels inside it and their messages will be lost. This action cannot be undone."
 msgstr "このグループを削除してもよろしいですか？グループ内のすべてのチャンネルとメッセージが失われます。この操作は取り消せません。"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:456
-msgid ""
-"Are you sure you want to delete this group? This action cannot be undone."
+msgid "Are you sure you want to delete this group? This action cannot be undone."
 msgstr "このグループを削除してもよろしいですか？この操作は取り消せません。"
 
 #: src/hooks/business/messages/useMessageActions.ts:445
@@ -586,10 +576,11 @@ msgstr "このメッセージを削除してもよろしいですか？"
 msgid "Are you sure you want to delete this role?"
 msgstr "この役割を削除してもよろしいですか？"
 
+#~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
+#~ msgstr "このスペースを離れますか？再招待されない限り再参加できません。"
+
 #: src/components/modals/LeaveSpaceModal.tsx:47
-msgid ""
-"Are you sure you want to leave this Space? You'll need an invite to rejoin, "
-"though a public invite link will still work if this Space has one."
+msgid "Are you sure you want to leave this Space? You'll need an invite to rejoin, though a public invite link will still work if this Space has one."
 msgstr "このスペースを本当に離れますか？再参加するには招待状が必要ですが、このスペースに公開招待リンクがある場合は、引き続き機能します。"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:326
@@ -750,14 +741,11 @@ msgstr "デフォルトのチャンネルを含むグループは削除できま
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:103
 #: src/hooks/business/ui/useCustomAssets.ts:149
-msgid ""
-"Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "一度に {0} ファイル以上をアップロードすることはできません（{remaining} スロットが残っています）"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:82
-msgid ""
-"Changes are made automatically, but the active page may not be updated. "
-"Refresh the page to apply the new language."
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "変更は自動的に行われますが、アクティブなページが更新されない場合があります。新しい言語を適用するにはページを更新してください。"
 
 #: src/components/modals/ChannelEditorModal.tsx:138
@@ -900,7 +888,8 @@ msgstr "退出を確認"
 msgid "Confirm Reset"
 msgstr "リセットを確認"
 
-#: src/components/Connecting.tsx:13 src/components/ConnectingClassic.tsx:22
+#: src/components/Connecting.tsx:13
+#: src/components/ConnectingClassic.tsx:22
 msgid "Connecting"
 msgstr "接続中"
 
@@ -914,8 +903,7 @@ msgid "Continue without passkey"
 msgstr "passkeyなしで続ける"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:77
-msgid ""
-"Control what others can see about you and how your behaviour is shared."
+msgid "Control what others can see about you and how your behaviour is shared."
 msgstr "他のユーザーがあなたについて何を見ることができるか、そしてあなたの行動がどのように共有されるかを制御します。"
 
 #: src/components/direct/DirectMessage.tsx:1027
@@ -1025,22 +1013,16 @@ msgid "Could not verify invite"
 msgstr "招待を確認できませんでした"
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:247
-msgid ""
-"Couldn't decrypt your saved profile. Please re-enter your name and profile "
-"image."
+msgid "Couldn't decrypt your saved profile. Please re-enter your name and profile image."
 msgstr "保存されたプロフィールを復号化できませんでした。名前とプロフィール画像を再入力してください。"
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:252
 #: src/hooks/business/user/useUnifiedOnboardingFlow.ts:360
-msgid ""
-"Couldn't load your saved profile. Please re-enter your name and profile "
-"image."
+msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "保存されたプロフィールを読み込めませんでした。名前とプロフィール画像を再入力してください。"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:86
-msgid ""
-"Couldn't reset: Quorum is open in another tab. Close all other Quorum tabs, "
-"then try again."
+msgid "Couldn't reset: Quorum is open in another tab. Close all other Quorum tabs, then try again."
 msgstr "リセットできませんでした: Quorum が別のタブで開いています。他のすべての Quorum タブを閉じてから、もう一度お試しください。"
 
 #: src/components/discover-page/DiscoverPage.tsx:92
@@ -1054,9 +1036,7 @@ msgid "Create a Space"
 msgstr "スペースを作成"
 
 #: src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx:56
-msgid ""
-"Create a tag that members can display next to their username in messages. "
-"Upload an image and set a 4-character code to identify your Space."
+msgid "Create a tag that members can display next to their username in messages. Upload an image and set a 4-character code to identify your Space."
 msgstr "メンバーがメッセージに表示できるタグを作成します。画像をアップロードし、スペースを識別する4文字のコードを設定してください。"
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:25
@@ -1136,11 +1116,8 @@ msgid "Default channels cannot be deleted."
 msgstr "デフォルトのチャンネルは削除できません。"
 
 #: src/components/modals/CreateSpaceModal.tsx:212
-msgid ""
-"Default Space settings provide the most typical chat experience, but for "
-"higher privacy guarantees, review these advanced settings."
-msgstr ""
-"デフォルトのSpace設定は最も一般的なチャット体験を提供しますが、より高いプライバシー保証のために、これらの高度な設定を確認してください。"
+msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
+msgstr "デフォルトのSpace設定は最も一般的なチャット体験を提供しますが、より高いプライバシー保証のために、これらの高度な設定を確認してください。"
 
 #: src/hooks/business/messages/useMessageActions.ts:459
 msgid "delete"
@@ -1246,12 +1223,8 @@ msgid "Delete Thread"
 msgstr "スレッドを削除"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:59
-msgid ""
-"Deleting a Space is not available yet. Today this would only remove your own"
-" copy: everyone else would keep the Space, its channels and all of its "
-"messages, and you would permanently lose the ability to manage it."
-msgstr ""
-"スペースの削除はまだ利用できません。現在、これはあなた自身のコピーを削除するだけであり、他の全員はスペース、そのチャンネル、およびすべてのメッセージを保持し、あなたはそれを管理する能力を永久に失います。"
+msgid "Deleting a Space is not available yet. Today this would only remove your own copy: everyone else would keep the Space, its channels and all of its messages, and you would permanently lose the ability to manage it."
+msgstr "スペースの削除はまだ利用できません。現在、これはあなた自身のコピーを削除するだけであり、他の全員はスペース、そのチャンネル、およびすべてのメッセージを保持し、あなたはそれを管理する能力を永久に失います。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:524
 msgid "Deleting Space..."
@@ -1292,18 +1265,11 @@ msgid "Desktop notifications are not supported in this browser."
 msgstr "このブラウザではデスクトップ通知はサポートされていません。"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:52
-msgid ""
-"Dev builds only. This does not delete the Space. It announces that you have "
-"left, removes your inbox from the hub, and erases your local copy. Every "
-"other member keeps the Space, its channels and all of its messages, and you "
-"lose the ability to manage it for good."
-msgstr ""
-"開発ビルドのみ。これはスペースを削除しません。あなたが離れたことを通知し、ハブから受信トレイを削除し、ローカルコピーを消去します。他のすべてのメンバーはスペース、そのチャンネル、およびすべてのメッセージを保持し、あなたはそれを管理する能力を永久に失います。"
+msgid "Dev builds only. This does not delete the Space. It announces that you have left, removes your inbox from the hub, and erases your local copy. Every other member keeps the Space, its channels and all of its messages, and you lose the ability to manage it for good."
+msgstr "開発ビルドのみ。これはスペースを削除しません。あなたが離れたことを通知し、ハブから受信トレイを削除し、ローカルコピーを消去します。他のすべてのメンバーはスペース、そのチャンネル、およびすべてのメッセージを保持し、あなたはそれを管理する能力を永久に失います。"
 
 #: src/hooks/business/validation/errorTranslator.ts:59
-msgid ""
-"Device name can only contain letters, numbers, spaces, hyphens, and "
-"parentheses"
+msgid "Device name can only contain letters, numbers, spaces, hyphens, and parentheses"
 msgstr "デバイス名には英数字、スペース、ハイフン、および括弧のみを使用できます"
 
 #: src/hooks/business/validation/errorTranslator.ts:56
@@ -1320,12 +1286,8 @@ msgid "Device name must be {0} characters or less"
 msgstr "デバイス名は {0} 文字以内でなければなりません"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:394
-msgid ""
-"Devices currently authorized to receive new messages on your account. "
-"Removing a device stops new messages from reaching it. It does not log the "
-"device out or delete its local data."
-msgstr ""
-"現在、あなたのアカウントで新しいメッセージを受信する権限を持つデバイスです。デバイスを削除すると、新しいメッセージがそのデバイスに届かなくなります。デバイスからログアウトしたり、ローカルデータを削除したりすることはありません。"
+msgid "Devices currently authorized to receive new messages on your account. Removing a device stops new messages from reaching it. It does not log the device out or delete its local data."
+msgstr "現在、あなたのアカウントで新しいメッセージを受信する権限を持つデバイスです。デバイスを削除すると、新しいメッセージがそのデバイスに届かなくなります。デバイスからログアウトしたり、ローカルデータを削除したりすることはありません。"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:137
 #: src/hooks/business/search/useSearchResultDisplay.ts:96
@@ -1341,13 +1303,15 @@ msgid "Discover Spaces"
 msgstr "スペースを発見"
 
 #: src/components/modals/UserSettingsModal/General.tsx:212
-msgid ""
-"Display a tag from one of your Spaces next to your username in messages."
+msgid "Display a tag from one of your Spaces next to your username in messages."
 msgstr "メッセージにユーザー名の隣に、自分のスペースからタグを表示できます。"
 
 #: src/components/modals/UserSettingsModal/General.tsx:128
 msgid "Display name"
 msgstr "表示名"
+
+#~ msgid "Display Name"
+#~ msgstr "表示名"
 
 #: src/hooks/business/validation/errorTranslator.ts:39
 msgid "Display name cannot contain special characters"
@@ -1382,11 +1346,8 @@ msgid "Download Key Backup"
 msgstr "キーのバックアップをダウンロード"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:587
-msgid ""
-"Download saves a .key file. Copy puts the raw key (hex) on your clipboard. "
-"Show QR is for importing into the Quorum mobile app."
-msgstr ""
-"ダウンロードすると.keyファイルが保存されます。コピーすると、生のキー（16進数）がクリップボードに置かれます。QRを表示は、Quorumモバイルアプリにインポートするためのものです。"
+msgid "Download saves a .key file. Copy puts the raw key (hex) on your clipboard. Show QR is for importing into the Quorum mobile app."
+msgstr "ダウンロードすると.keyファイルが保存されます。コピーすると、生のキー（16進数）がクリップボードに置かれます。QRを表示は、Quorumモバイルアプリにインポートするためのものです。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:223
 msgid "Download your private key?"
@@ -1492,15 +1453,11 @@ msgid "Encryption Reset"
 msgstr "暗号化のリセット"
 
 #: src/services/InvitationService.ts:101
-msgid ""
-"Encryption state is missing required template data. Please generate a public"
-" invite link first."
+msgid "Encryption state is missing required template data. Please generate a public invite link first."
 msgstr "暗号化状態に必要なテンプレートデータがありません。最初に公開招待リンクを生成してください。"
 
 #: src/services/InvitationService.ts:262
-msgid ""
-"Encryption state is missing required template data. The invite pool was not "
-"initialized."
+msgid "Encryption state is missing required template data. The invite pool was not initialized."
 msgstr "暗号化の状態に必要なテンプレートデータがありません。招待プールは初期化されませんでした。"
 
 #: src/services/InvitationService.ts:269
@@ -1508,9 +1465,7 @@ msgid "Encryption state is missing state data."
 msgstr "暗号化の状態に状態データがありません。"
 
 #: src/services/InvitationService.ts:116
-msgid ""
-"Encryption state is missing state data. Please generate a public invite link"
-" first."
+msgid "Encryption state is missing state data. Please generate a public invite link first."
 msgstr "暗号化状態に状態データがありません。最初に公開招待リンクを生成してください。"
 
 #: src/components/modals/CreateSpaceModal.tsx:175
@@ -1583,7 +1538,8 @@ msgstr "Escで"
 msgid "Expand group"
 msgstr "グループを展開"
 
-#: src/components/shell/NavRail.tsx:239 src/components/shell/NavRail.tsx:247
+#: src/components/shell/NavRail.tsx:239
+#: src/components/shell/NavRail.tsx:247
 msgid "Expand sidebar"
 msgstr "サイドバーを展開"
 
@@ -1600,10 +1556,11 @@ msgid "Export a backup?"
 msgstr "バックアップをエクスポートしますか？"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:632
-msgid ""
-"Export an encrypted backup of your direct messages and your Spaces, so you "
-"can restore them if you lose access to this device."
+msgid "Export an encrypted backup of your direct messages and your Spaces, so you can restore them if you lose access to this device."
 msgstr "このデバイスへのアクセスを失った場合に復元できるよう、ダイレクトメッセージとスペースの暗号化されたバックアップをエクスポートします。"
+
+#~ msgid "Export an encrypted backup of your direct messages to restore them if you lose access to this device."
+#~ msgstr "このデバイスへのアクセスを失った場合に復元できるように、暗号化されたバックアップをエクスポートします。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:193
 msgid "Export backup"
@@ -1868,14 +1825,8 @@ msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "フォルダー名は{MAX_NAME_LENGTH}文字以下でなければなりません"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:60
-msgid ""
-"For privacy, your ownership is hidden from other clients. This means: Delete"
-" permission holders can delete your messages permanently, Mute permission "
-"holders can mute you (reversible). Only grant these to trusted users. Also "
-"note: if you're the only one with a role, your actions may reveal you as the"
-" owner—consider sharing roles with other trusted users."
-msgstr ""
-"プライバシーのため、あなたの所有権は他のクライアントから隠されています。これは意味します：削除権限を持つ者はあなたのメッセージを永久に削除でき、ミュート権限を持つ者はあなたをミュートできます（元に戻せます）。これらは信頼できるユーザーにのみ付与してください。また、あなたが唯一の役割を持っている場合、あなたの行動は所有者としてのあなたを明らかにする可能性があるため、他の信頼できるユーザーと役割を共有することを検討してください。"
+msgid "For privacy, your ownership is hidden from other clients. This means: Delete permission holders can delete your messages permanently, Mute permission holders can mute you (reversible). Only grant these to trusted users. Also note: if you're the only one with a role, your actions may reveal you as the owner—consider sharing roles with other trusted users."
+msgstr "プライバシーのため、あなたの所有権は他のクライアントから隠されています。これは意味します：削除権限を持つ者はあなたのメッセージを永久に削除でき、ミュート権限を持つ者はあなたをミュートできます（元に戻せます）。これらは信頼できるユーザーにのみ付与してください。また、あなたが唯一の役割を持っている場合、あなたの行動は所有者としてのあなたを明らかにする可能性があるため、他の信頼できるユーザーと役割を共有することを検討してください。"
 
 #: src/services/SpaceService.ts:243
 msgid "general"
@@ -1891,12 +1842,8 @@ msgid "General Chat"
 msgstr "一般チャット"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:637
-msgid ""
-"Generate a fresh one-time invite link and copy it to your clipboard. Each "
-"click creates a new link. Paste it wherever you want (email, WhatsApp, "
-"etc.)."
-msgstr ""
-"新しいワンタイム招待リンクを生成し、クリップボードにコピーします。クリックするたびに新しいリンクが作成されます。必要な場所に貼り付けてください（メール、WhatsAppなど）。"
+msgid "Generate a fresh one-time invite link and copy it to your clipboard. Each click creates a new link. Paste it wherever you want (email, WhatsApp, etc.)."
+msgstr "新しいワンタイム招待リンクを生成し、クリップボードにコピーします。クリックするたびに新しいリンクが作成されます。必要な場所に貼り付けてください（メール、WhatsAppなど）。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:797
 msgid "Generate Link"
@@ -1972,6 +1919,9 @@ msgstr "ヘルプ"
 msgid "Help others recognize you with a profile picture."
 msgstr "プロフィール写真を設定して、他のユーザーがあなたを認識しやすくしましょう。"
 
+#~ msgid "Hide"
+#~ msgstr "非表示"
+
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Hide key"
 msgstr "キーを非表示"
@@ -1997,6 +1947,12 @@ msgstr "すでにアカウントがあります"
 msgid "I understand"
 msgstr "理解しました"
 
+#~ msgid "I Understand, Copy"
+#~ msgstr "理解しました、コピー"
+
+#~ msgid "I Understand, Show QR"
+#~ msgstr "理解しました、QRを表示"
+
 #: src/components/message/Message.tsx:974
 #: src/components/message/Message.tsx:1070
 msgid "I'm new!"
@@ -2007,9 +1963,7 @@ msgid "I've already saved my key"
 msgstr "キーをすでに保存しました"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:821
-msgid ""
-"If users report that this invite link isn't working, click to republish it. "
-"The link URL stays the same."
+msgid "If users report that this invite link isn't working, click to republish it. The link URL stays the same."
 msgstr "この招待リンクが機能しないとユーザーから報告があった場合は、クリックして再公開してください。リンクのURLは変更されません。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:650
@@ -2045,12 +1999,13 @@ msgid "invalid address for signature"
 msgstr "署名用の無効なアドレス"
 
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid ""
-"Invalid address format. Addresses must use valid alphanumeric characters."
+msgid "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "無効なアドレス形式です。アドレスは有効な英数字を使用する必要があります。"
 
-#: src/services/InvitationService.ts:458 src/services/InvitationService.ts:469
-#: src/services/InvitationService.ts:501 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:458
+#: src/services/InvitationService.ts:469
+#: src/services/InvitationService.ts:501
+#: src/services/InvitationService.ts:570
 msgid "invalid link"
 msgstr "無効なリンク"
 
@@ -2060,7 +2015,8 @@ msgid "Invalid message ID"
 msgstr "無効なメッセージID"
 
 #: src/hooks/business/spaces/useInviteValidation.ts:51
-#: src/services/InvitationService.ts:474 src/services/InvitationService.ts:537
+#: src/services/InvitationService.ts:474
+#: src/services/InvitationService.ts:537
 msgid "invalid response"
 msgstr "無効な応答"
 
@@ -2143,9 +2099,7 @@ msgid "Jump to present"
 msgstr "現在にジャンプ"
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:18
-msgid ""
-"Keep the file you downloaded safe and private! Anyone with this file can "
-"access your account."
+msgid "Keep the file you downloaded safe and private! Anyone with this file can access your account."
 msgstr "ダウンロードしたファイルを安全に保管してください！このファイルを持っている人は誰でもアカウントにアクセスできます。"
 
 #: src/components/onboarding/steps/SecurityWarningStep.tsx:16
@@ -2158,11 +2112,8 @@ msgstr "キーに16進数以外の文字が含まれています。"
 
 #. placeholder {0}: cleanHex.length
 #: src/components/onboarding/steps/ImportKeyStep.tsx:55
-msgid ""
-"Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters "
-"({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
-msgstr ""
-"キーは{ED448_PRIVATE_KEY_HEX_LENGTH}文字である必要があります（{0}/{ED448_PRIVATE_KEY_HEX_LENGTH}）。"
+msgid "Key must be {ED448_PRIVATE_KEY_HEX_LENGTH} characters ({0}/{ED448_PRIVATE_KEY_HEX_LENGTH})."
+msgstr "キーは{ED448_PRIVATE_KEY_HEX_LENGTH}文字である必要があります（{0}/{ED448_PRIVATE_KEY_HEX_LENGTH}）。"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:107
 msgid "Key Ready"
@@ -2300,9 +2251,7 @@ msgid "Make role public"
 msgstr "役割を公開する"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:384
-msgid ""
-"Manage authorized devices, key export, mobile import, and encrypted message "
-"backups."
+msgid "Manage authorized devices, key export, mobile import, and encrypted message backups."
 msgstr "認証済みデバイス、キーのエクスポート、モバイルインポート、および暗号化されたメッセージのバックアップを管理します。"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:342
@@ -2350,13 +2299,8 @@ msgid "Members List"
 msgstr "メンバーリスト"
 
 #: src/components/modals/ChannelEditorModal.tsx:185
-msgid ""
-"Members of selected roles can post, delete, and pin messages in this read-"
-"only channel. Note: Space owners must also be in a manager role to post "
-"here."
-msgstr ""
-"選択した役割のメンバーは、この読み取り専用チャンネルでメッセージを投稿、削除、ピン留めできます。注意: "
-"スペースのオーナーは、ここに投稿するためにマネージャー役割にもいる必要があります。"
+msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
+msgstr "選択した役割のメンバーは、この読み取り専用チャンネルでメッセージを投稿、削除、ピン留めできます。注意: スペースのオーナーは、ここに投稿するためにマネージャー役割にもいる必要があります。"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:168
 msgid "Mention Everyone"
@@ -2369,8 +2313,7 @@ msgstr "メッセージアクション"
 #: src/components/message/Message.tsx:990
 #: src/components/message/Message.tsx:1086
 #: src/components/message/Message.tsx:1146
-msgid ""
-"Message does not have a valid signature, this may not be from the sender"
+msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "メッセージには有効な署名がありません。これは送信者からのものではない可能性があります"
 
 #: src/components/message/MessageComposer.tsx:244
@@ -2461,9 +2404,7 @@ msgid "Name or Address"
 msgstr "名前またはアドレス"
 
 #: src/hooks/business/validation/errorTranslator.ts:38
-msgid ""
-"Names can't end in \".q\" — that suffix is reserved for verified Quilibrium "
-"names."
+msgid "Names can't end in \".q\" — that suffix is reserved for verified Quilibrium names."
 msgstr "名前は「.q」で終わることはできません。この接尾辞は、認証済みの Quilibrium 名のために予約されています。"
 
 #: src/hooks/business/validation/errorTranslator.ts:37
@@ -2491,19 +2432,12 @@ msgid "New Folder"
 msgstr "新しいフォルダー"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:568
-msgid ""
-"New invites can't be issued from this device for this Space. Existing invite"
-" links keep working. This typically affects spaces created on the desktop "
-"app before June 2026."
-msgstr ""
-"このデバイスからこのスペースの新しい招待を発行することはできません。既存の招待リンクは引き続き機能します。これは通常、2026年6月より前にデスクトップアプリで作成されたスペースに影響します。"
+msgid "New invites can't be issued from this device for this Space. Existing invite links keep working. This typically affects spaces created on the desktop app before June 2026."
+msgstr "このデバイスからこのスペースの新しい招待を発行することはできません。既存の招待リンクは引き続き機能します。これは通常、2026年6月より前にデスクトップアプリで作成されたスペースに影響します。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:562
-msgid ""
-"New invites can't be issued from this device, but the existing public invite"
-" link still works — copy it or send it via DM below."
-msgstr ""
-"このデバイスから新しい招待を発行することはできませんが、既存の公開招待リンクは引き続き機能します。コピーするか、以下のDMで送信してください。"
+msgid "New invites can't be issued from this device, but the existing public invite link still works — copy it or send it via DM below."
+msgstr "このデバイスから新しい招待を発行することはできませんが、既存の公開招待リンクは引き続き機能します。コピーするか、以下のDMで送信してください。"
 
 #. placeholder {0}: metadata.senderName
 #: src/services/NotificationService.ts:293
@@ -2511,12 +2445,8 @@ msgid "New message from {0}"
 msgstr "{0}からの新しいメッセージ"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:556
-msgid ""
-"New one-time invites can't be issued from this device for this Space. The "
-"public invite link still works — switch to <0>Public Link</0> above to copy "
-"it or send it via DM."
-msgstr ""
-"このデバイスからこのスペースの新しいワンタイム招待を発行することはできません。公開招待リンクは引き続き機能します。コピーするか、DMで送信するには、上記の<0>公開リンク</0>に切り替えてください。"
+msgid "New one-time invites can't be issued from this device for this Space. The public invite link still works — switch to <0>Public Link</0> above to copy it or send it via DM."
+msgstr "このデバイスからこのスペースの新しいワンタイム招待を発行することはできません。公開招待リンクは引き続き機能します。コピーするか、DMで送信するには、上記の<0>公開リンク</0>に切り替えてください。"
 
 #: src/components/direct/DMUserProfileSidebar.tsx:113
 msgid "No bio yet."
@@ -2563,14 +2493,11 @@ msgid "No emoji found"
 msgstr "絵文字が見つかりません"
 
 #: src/services/InvitationService.ts:254
-msgid ""
-"No encryption state found for this Space. Cannot generate public invite."
+msgid "No encryption state found for this Space. Cannot generate public invite."
 msgstr "このスペースの暗号化の状態が見つかりません。公開招待を生成できません。"
 
 #: src/services/InvitationService.ts:95
-msgid ""
-"No encryption state found for this Space. The Space may need to be "
-"initialized or you may need to generate a public invite link first."
+msgid "No encryption state found for this Space. The Space may need to be initialized or you may need to generate a public invite link first."
 msgstr "このスペースの暗号化状態が見つかりません。スペースを初期化する必要があるか、最初に公開招待リンクを生成する必要があるかもしれません。"
 
 #: src/components/direct/DirectMessageContactsList.tsx:605
@@ -2629,7 +2556,8 @@ msgstr "未読の通知はありません"
 msgid "No user found for @{usernameQuery}."
 msgstr "@{usernameQuery} のユーザーは見つかりませんでした。"
 
-#: src/components/space/Channel.tsx:1937 src/components/space/Channel.tsx:2180
+#: src/components/space/Channel.tsx:1937
+#: src/components/space/Channel.tsx:2180
 msgid "No users found!"
 msgstr "ユーザーが見つかりません！"
 
@@ -2659,13 +2587,13 @@ msgstr "通知の権限が付与されていません"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:328
 #: src/components/modals/UserSettingsModal/Navigation.tsx:21
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
-#: src/components/shell/NavRail.tsx:66 src/components/space/Channel.tsx:1681
+#: src/components/shell/NavRail.tsx:66
+#: src/components/space/Channel.tsx:1681
 msgid "Notifications"
 msgstr "通知"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:68
-msgid ""
-"Notifications are blocked. Please enable them in your browser settings."
+msgid "Notifications are blocked. Please enable them in your browser settings."
 msgstr "通知がブロックされています。このサイトのブラウザ設定で有効にしてください。"
 
 #: src/services/NotificationService.ts:63
@@ -2691,9 +2619,7 @@ msgid "Notify me for:"
 msgstr "通知対象:"
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:21
-msgid ""
-"Now let's store your account key inside your passkey. One more confirmation "
-"needed."
+msgid "Now let's store your account key inside your passkey. One more confirmation needed."
 msgstr "次に、passkey内にアカウントキーを保存します。もう1つの確認が必要です。"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
@@ -2733,7 +2659,8 @@ msgstr "{0} を開く"
 msgid "Open navigation"
 msgstr "ナビゲーションを開く"
 
-#: src/components/shell/NavRail.tsx:278 src/components/shell/NavRail.tsx:293
+#: src/components/shell/NavRail.tsx:278
+#: src/components/shell/NavRail.tsx:293
 msgid "Open user settings"
 msgstr "ユーザー設定を開く"
 
@@ -2750,9 +2677,7 @@ msgid "Original"
 msgstr "元の"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:185
-msgid ""
-"Override your display name, avatar, and bio for this Space. Other Spaces and"
-" your global profile are unaffected."
+msgid "Override your display name, avatar, and bio for this Space. Other Spaces and your global profile are unaffected."
 msgstr "このスペースの表示名、アバター、自己紹介を上書きします。他のスペースやグローバルプロフィールには影響しません。"
 
 #: src/components/NotFound.tsx:18
@@ -2760,23 +2685,23 @@ msgid "Page Not Found"
 msgstr "ページが見つかりません"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
-msgid ""
-"Passkey setup failed. You can try again, or continue without Passkey (still "
-"secure, just without device hardware protection)."
+msgid "Passkey setup failed. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
 msgstr ""
-"passkeyの設定に失敗しました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護がありません）。"
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:20
+#~ msgid "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "passkeyの設定に失敗しました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護がありません）。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
-msgid ""
-"Passkeys aren't supported on this browser. You'll need to continue without "
-"Passkey (still secure, just without device hardware protection)."
+msgid "Passkeys aren't supported on this browser, so you'll need to continue without one. Your account key will be stored on this device, so anyone who can read its files could take over your account."
 msgstr ""
-"このブラウザではpasskeyがサポートされていません。passkeyなしで続ける必要があります（まだ安全ですが、デバイスのハードウェア保護がありません）。"
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:16
+#~ msgid "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "このブラウザではpasskeyがサポートされていません。passkeyなしで続ける必要があります（まだ安全ですが、デバイスのハードウェア保護がありません）。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:37
-msgid ""
-"Passkeys use your device's built-in security to protect your account. This "
-"requires two quick confirmations via your device."
+msgid "Passkeys use your device's built-in security to protect your account. This requires two quick confirmations via your device."
 msgstr "passkeyは、デバイスの組み込みセキュリティを使用してアカウントを保護します。これには、デバイスを介した2つの簡単な確認が必要です。"
 
 #: src/components/modals/AddSpaceModal.tsx:145
@@ -2849,6 +2774,9 @@ msgstr "確認なしでピン留め/ピン留め解除"
 msgid "Pinned"
 msgstr "ピン留め済み"
 
+#~ msgid "Pinned by {0}"
+#~ msgstr "{0} によってピン留めされました"
+
 #: src/components/message/Message.tsx:942
 #: src/components/message/Message.tsx:1038
 #: src/components/message/Message.tsx:1158
@@ -2885,18 +2813,18 @@ msgstr "プライバシー"
 msgid "Private key (hex)"
 msgstr "秘密鍵（16進数）"
 
+#~ msgid "Private key copied. It will be cleared from your clipboard automatically in 60 seconds."
+#~ msgstr "秘密鍵がコピーされました。60秒後にクリップボードから自動的にクリアされます。"
+
 #: src/components/modals/UserSettingsModal/Security.tsx:603
-msgid ""
-"Private key copied. Quorum will clear it from your clipboard in 60 seconds. "
-"Clipboard history tools keep their own copy, so clear those too."
-msgstr ""
-"秘密鍵をコピーしました。Quorum "
-"は60秒後にクリップボードから削除します。クリップボード履歴ツールは独自のコピーを保持するため、そちらも消去してください。"
+msgid "Private key copied. Quorum will clear it from your clipboard in 60 seconds. Clipboard history tools keep their own copy, so clear those too."
+msgstr "秘密鍵をコピーしました。Quorum は60秒後にクリップボードから削除します。クリップボード履歴ツールは独自のコピーを保持するため、そちらも消去してください。"
+
+#~ msgid "Private key copied. Store it securely and clear your clipboard when you're done."
+#~ msgstr "秘密鍵がコピーされました。安全な場所に保管し、完了したらクリップボードをクリアしてください。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:604
-msgid ""
-"Private key copied. Store it securely, then clear your clipboard and your "
-"clipboard history."
+msgid "Private key copied. Store it securely, then clear your clipboard and your clipboard history."
 msgstr "秘密鍵をコピーしました。安全な場所に保管したうえで、クリップボードとクリップボード履歴を消去してください。"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:88
@@ -2927,27 +2855,20 @@ msgstr "公開プロフィール"
 msgid "Public spaces"
 msgstr "公開スペース"
 
+#~ msgid "QR code will auto-hide in 60 seconds"
+#~ msgstr "QRコードは60秒後に自動的に非表示になります"
+
 #: src/components/Maintenance.tsx:29
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing,"
-" and check <0>status.quilibrium.com</0> for updates."
-msgstr ""
-"Quorumのインフラストラクチャが現在展開されています。ページを更新して、<0>status.quilibrium.com</0>でアップデートを確認してください。"
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>status.quilibrium.com</0> for updates."
+msgstr "Quorumのインフラストラクチャが現在展開されています。ページを更新して、<0>status.quilibrium.com</0>でアップデートを確認してください。"
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:36
-msgid ""
-"Quorum is a decentralized messaging platform where you own your identity. No"
-" email, no phone number - just a secure key that only you control."
-msgstr ""
-"Quorumは、あなたが自分のアイデンティティを所有する分散型メッセージングプラットフォームです。メールアドレスや電話番号は必要ありません - "
-"あなたが制御する安全なキーだけが必要です。"
+msgid "Quorum is a decentralized messaging platform where you own your identity. No email, no phone number - just a secure key that only you control."
+msgstr "Quorumは、あなたが自分のアイデンティティを所有する分散型メッセージングプラットフォームです。メールアドレスや電話番号は必要ありません - あなたが制御する安全なキーだけが必要です。"
 
 #: src/components/context/RegistrationPersister.tsx:270
-msgid ""
-"Quorum was loaded while the browser was not in focus or a passkey request "
-"was rejected. Please reauthorize to access your messages."
-msgstr ""
-"ブラウザがフォーカスされていない間にQuorumが読み込まれたか、passkeyリクエストが拒否されました。メッセージにアクセスするには再認証してください。"
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "ブラウザがフォーカスされていない間にQuorumが読み込まれたか、passkeyリクエストが拒否されました。メッセージにアクセスするには再認証してください。"
 
 #: src/components/modals/ReactionsModal.tsx:162
 msgid "Reactions"
@@ -3008,11 +2929,8 @@ msgid "Reload Quorum"
 msgstr "Quorumを再読み込み"
 
 #: src/components/AppErrorScreen.tsx:36
-msgid ""
-"Reloading usually fixes it. If it keeps happening, check "
-"<0>status.quilibrium.com</0> for service updates."
-msgstr ""
-"再読み込みすると通常は修正されます。引き続き発生する場合は、サービスアップデートについて<0>status.quilibrium.com</0>をご確認ください。"
+msgid "Reloading usually fixes it. If it keeps happening, check <0>status.quilibrium.com</0> for service updates."
+msgstr "再読み込みすると通常は修正されます。引き続き発生する場合は、サービスアップデートについて<0>status.quilibrium.com</0>をご確認ください。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:521
 msgid "Remove"
@@ -3067,11 +2985,8 @@ msgid "Require Message Signing"
 msgstr "メッセージ署名を要求"
 
 #: src/components/modals/CreateSpaceModal.tsx:228
-msgid ""
-"Require messages sent in this Space to be signed by the sender. Technically "
-"speaking, this makes the messages in this Space non-repudiable."
-msgstr ""
-"このSpace内で送信されたメッセージが送信者によって署名されることを要求します。技術的には、これによりこのSpace内のメッセージは否認できなくなります。"
+msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
+msgstr "このSpace内で送信されたメッセージが送信者によって署名されることを要求します。技術的には、これによりこのSpace内のメッセージは否認できなくなります。"
 
 #: src/components/modals/AddSpaceModal.tsx:264
 #: src/components/modals/UserSettingsModal/Help.tsx:122
@@ -3086,6 +3001,9 @@ msgstr "すべてリセット"
 msgid "Reset App Data"
 msgstr "アプリデータをリセット"
 
+#~ msgid "Reset Encryption Session"
+#~ msgstr "暗号化セッションをリセット"
+
 #: src/components/modals/ConversationSettingsModal.tsx:473
 msgid "Reset if messages fail to send or decrypt"
 msgstr "メッセージの送信または復号に失敗した場合にリセットしてください"
@@ -3094,15 +3012,16 @@ msgstr "メッセージの送信または復号に失敗した場合にリセッ
 msgid "Reset Session"
 msgstr "セッションをリセット"
 
+#~ msgid "Reset the encryption session if messages fail to send or decrypt. The next message will establish a fresh secure connection."
+#~ msgstr "メッセージの送信または復号化に失敗した場合、暗号化セッションをリセットしてください。次のメッセージで新しい安全な接続が確立されます。"
+
 #: src/components/modals/ConversationSettingsModal.tsx:365
 #: src/components/modals/ConversationSettingsModal.tsx:404
 msgid "Reset to global"
 msgstr "グローバル設定にリセット"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:113
-msgid ""
-"Reset your DM encryption sessions if messages are failing to send or "
-"decrypt."
+msgid "Reset your DM encryption sessions if messages are failing to send or decrypt."
 msgstr "メッセージの送信または復号に失敗している場合は、DM暗号化セッションをリセットしてください。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:538
@@ -3121,15 +3040,11 @@ msgid "Restore"
 msgstr "復元"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:162
-msgid ""
-"Restore Spaces that exist on this device but are missing from your "
-"navigation menu."
+msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "このデバイスに存在するがナビゲーションメニューから欠落しているスペースを復元します。"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:87
-msgid ""
-"Restore your account from your private key — upload the key file or paste "
-"the key directly."
+msgid "Restore your account from your private key — upload the key file or paste the key directly."
 msgstr "秘密鍵からアカウントを復元します — キーファイルをアップロードするか、キーを直接貼り付けてください。"
 
 #. placeholder {0}: result.messagesWritten
@@ -3230,11 +3145,13 @@ msgstr "絵文字を検索..."
 msgid "Search failed: {0}"
 msgstr "検索に失敗しました: {0}"
 
-#: src/hooks/useSearchContext.native.ts:98 src/hooks/useSearchContext.ts:90
+#: src/hooks/useSearchContext.native.ts:98
+#: src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "ここで検索"
 
-#: src/hooks/useSearchContext.native.ts:96 src/hooks/useSearchContext.ts:88
+#: src/hooks/useSearchContext.native.ts:96
+#: src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "このスペースで検索"
 
@@ -3317,8 +3234,7 @@ msgid "Send"
 msgstr "送信"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:539
-msgid ""
-"Send a one-time invite directly to someone. Each link can only be used once."
+msgid "Send a one-time invite directly to someone. Each link can only be used once."
 msgstr "誰かに直接ワンタイム招待を送信します。各リンクは一度しか使用できません。"
 
 #: src/services/ActionQueueHandlers.ts:1205
@@ -3379,13 +3295,8 @@ msgid "Shift+Enter for new line"
 msgstr "Shift+Enterで改行"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:46
-msgid ""
-"Show desktop notifications when you receive new messages while Quorum is in "
-"the background. Your browser will ask for permission when you enable this "
-"feature."
-msgstr ""
-"Quorum "
-"がバックグラウンドにあるときに新しいメッセージを受信したときにデスクトップ通知を表示します。この機能を有効にすると、ブラウザが権限を求めます。"
+msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
+msgstr "Quorum がバックグラウンドにあるときに新しいメッセージを受信したときにデスクトップ通知を表示します。この機能を有効にすると、ブラウザが権限を求めます。"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:159
 msgid "Show key"
@@ -3419,8 +3330,7 @@ msgstr "{total}個のスペース中{0}個を表示中"
 
 #: src/components/search/SearchResults.tsx:250
 #: src/components/search/SearchResults.tsx:280
-msgid ""
-"Showing first 500 results. Refine your search for more specific results."
+msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "最初の500件の結果を表示しています。より具体的な結果を得るには検索を絞り込んでください。"
 
 #: src/components/notifications/NotificationPanel.tsx:369
@@ -3462,9 +3372,7 @@ msgid "Space ID"
 msgstr "スペースID"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:348
-msgid ""
-"Space message history is not included in backups; it syncs from other "
-"members."
+msgid "Space message history is not included in backups; it syncs from other members."
 msgstr "スペースのメッセージ履歴はバックアップに含まれません。他のメンバーから同期されます。"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:161
@@ -3556,9 +3464,7 @@ msgid "Sync is failing: the request timed out. It will keep retrying."
 msgstr "同期に失敗しています: リクエストがタイムアウトしました。再試行を続けます。"
 
 #: src/components/modals/UserSettingsModal/SyncStatusLine.tsx:61
-msgid ""
-"Sync is failing: the server refused your settings. Your changes are saved on"
-" this device."
+msgid "Sync is failing: the server refused your settings. Your changes are saved on this device."
 msgstr "同期に失敗しています: サーバーが設定を拒否しました。変更はこのデバイスに保存されています。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:591
@@ -3601,30 +3507,27 @@ msgid "The invite link has expired or is invalid."
 msgstr "招待リンクは期限切れまたは無効です。"
 
 #: src/components/NotFound.tsx:21
-msgid ""
-"The page you're looking for doesn't exist or has been moved. Let's get you "
-"back on track."
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
 msgstr "お探しのページは存在しないか、移動されました。元に戻りましょう。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
-msgid ""
-"The passkey setup timed out. You can try again, or continue without Passkey "
-"(still secure, just without device hardware protection)."
+msgid "The passkey setup timed out. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
 msgstr ""
-"passkeyの設定がタイムアウトしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:18
+#~ msgid "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "passkeyの設定がタイムアウトしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
+
+#~ msgid "This action cannot be undone and will permanently delete this Space and all of its channels and messages."
+#~ msgstr "この操作は取り消せません。これにより、このスペースとすべてのチャネルおよびメッセージが永久に削除されます。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:337
-msgid ""
-"This backup is inconsistent: it reports Space keys but contains no Space "
-"list, so Spaces could not be restored."
+msgid "This backup is inconsistent: it reports Space keys but contains no Space list, so Spaces could not be restored."
 msgstr "このバックアップは矛盾しています: スペースキーを報告していますが、スペースリストが含まれていないため、スペースを復元できませんでした。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:344
-msgid ""
-"This backup was made by an older version and contains no Space keys, so "
-"Spaces could not be restored. Export a fresh backup to protect them."
-msgstr ""
-"このバックアップは古いバージョンで作成されており、スペースキーが含まれていないため、スペースを復元できませんでした。保護するために新しいバックアップをエクスポートしてください。"
+msgid "This backup was made by an older version and contains no Space keys, so Spaces could not be restored. Export a fresh backup to protect them."
+msgstr "このバックアップは古いバージョンで作成されており、スペースキーが含まれていないため、スペースを復元できませんでした。保護するために新しいバックアップをエクスポートしてください。"
 
 #: src/components/modals/UserSettingsModal/General.tsx:151
 msgid "This bio will be visible to others when they view your profile."
@@ -3634,22 +3537,24 @@ msgstr "このバイオは、他の人があなたのプロフィールを表示
 msgid "This channel couldn't be loaded"
 msgstr "このチャンネルは読み込めませんでした"
 
+#~ msgid "this contact"
+#~ msgstr "この連絡先"
+
 #: src/components/RouteErrorFallback.tsx:22
 msgid "This conversation couldn't be loaded"
 msgstr "この会話は読み込めませんでした"
 
 #: src/components/modals/ConversationSettingsModal.tsx:372
 #: src/components/modals/ConversationSettingsModal.tsx:411
-msgid ""
-"This conversation overrides your global setting. Click \"Reset to global\" "
-"to use your global preference."
+msgid "This conversation overrides your global setting. Click \"Reset to global\" to use your global preference."
 msgstr "この会話ではグローバル設定が上書きされています。「グローバル設定にリセット」をクリックして、グローバル設定を使用してください。"
+
+#~ msgid "This copies your private key to the clipboard in plain text. Anyone with access to your clipboard can take full control of your account. Store it somewhere safe and clear your clipboard afterwards."
+#~ msgstr "これにより、秘密鍵がプレーンテキストでクリップボードにコピーされます。クリップボードにアクセスできる人は誰でも、あなたのアカウントを完全に制御できます。安全な場所に保管し、後でクリップボードをクリアしてください。"
 
 #: src/components/modals/CreateSpaceModal.tsx:187
 #: src/components/modals/SpaceSettingsModal/General.tsx:189
-msgid ""
-"This description will be visible on invites and shown to people when they "
-"look up or join your Space using an invite link."
+msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "この説明は招待状に表示され、招待リンクを使用してSpaceを検索または参加する際に人々に表示されます。"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:530
@@ -3675,21 +3580,15 @@ msgid "This is embarrassing..."
 msgstr "これは恥ずかしいです..."
 
 #: src/components/onboarding/steps/DisplayNameStep.tsx:22
-msgid ""
-"This is how others will see you in Quorum. You can change this anytime in "
-"Settings."
+msgid "This is how others will see you in Quorum. You can change this anytime in Settings."
 msgstr "これが Quorum で他のユーザーがあなたを見ることになります。設定でいつでも変更できます。"
 
 #: src/components/modals/ChannelEditorModal.tsx:100
-msgid ""
-"This is the default channel for the Space. To change it go to Space Settings"
-" → General."
+msgid "This is the default channel for the Space. To change it go to Space Settings → General."
 msgstr "これはスペースのデフォルトのチャネルです。変更するには、スペース設定 → 一般に移動してください。"
 
 #: src/components/modals/UserSettingsModal/General.tsx:187
-msgid ""
-"This is your public address and is safe to share with anyone you want to "
-"interact with."
+msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "これはあなたの公開アドレスであり、やり取りしたい相手と共有しても安全です。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:778
@@ -3701,9 +3600,7 @@ msgid "This link was generated by a Space owner. It does not expire."
 msgstr "このリンクはスペースの所有者によって生成されました。期限切れになりません。"
 
 #: src/components/notifications/NotificationPanel.tsx:203
-msgid ""
-"This marks mentions and replies as read across all your spaces. This can't "
-"be undone."
+msgid "This marks mentions and replies as read across all your spaces. This can't be undone."
 msgstr "これにより、すべてのスペースでメンションと返信が既読になります。この操作は元に戻せません。"
 
 #: src/hooks/business/validation/errorTranslator.ts:36
@@ -3740,8 +3637,7 @@ msgstr ""
 "そのファイルを開いた人は誰でも、あなたのアカウントを永久に支配できます。取り消しやリセットの手段はありません。ダウンロードフォルダはクラウドストレージと同期されていることが多いため、自分で管理できる場所に移動してください。"
 
 #: src/components/modals/ThreadSettingsModal.tsx:196
-msgid ""
-"This thread cannot be deleted because it contains messages from other users."
+msgid "This thread cannot be deleted because it contains messages from other users."
 msgstr "このスレッドは削除できません。他のユーザーのメッセージが含まれているためです。"
 
 #: src/components/thread/ThreadPanel.tsx:519
@@ -3769,19 +3665,12 @@ msgid "This user will not be able to send messages for {days} days."
 msgstr "このユーザーは{days}日間メッセージを送信できません。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:796
-msgid ""
-"This will create a public invite link that anyone can use to join your "
-"Space. Consider who you share this link with."
+msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "これにより、誰でも参加できる公開招待リンクが作成されます。このリンクを共有する相手を考慮してください。"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:75
-msgid ""
-"This will delete all your data from this browser, including your private "
-"keys and all direct messages. Direct messages cannot be recovered. Make sure"
-" you have exported your private key from the Privacy/Security settings. This"
-" action cannot be undone."
-msgstr ""
-"これにより、このブラウザ上のすべてのデータが削除されます。秘密鍵やすべてのダイレクトメッセージも含まれます。ダイレクトメッセージは復元できません。プライバシー/セキュリティ設定から秘密鍵をエクスポートしていることを確認してください。この操作は取り消せません。"
+msgid "This will delete all your data from this browser, including your private keys and all direct messages. Direct messages cannot be recovered. Make sure you have exported your private key from the Privacy/Security settings. This action cannot be undone."
+msgstr "これにより、このブラウザ上のすべてのデータが削除されます。秘密鍵やすべてのダイレクトメッセージも含まれます。ダイレクトメッセージは復元できません。プライバシー/セキュリティ設定から秘密鍵をエクスポートしていることを確認してください。この操作は取り消せません。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:129
 msgid ""
@@ -3792,6 +3681,15 @@ msgstr ""
 "これにより、{counterpartyName}との暗号化セッションがリセットされます。次のメッセージで新しい安全な接続が確立されます。\n"
 "\n"
 "メッセージの送信または復号に失敗している場合に使用してください。"
+
+#~ msgid ""
+#~ "This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
+#~ "\n"
+#~ "Use this if messages are failing to send or decrypt. Message history is not affected."
+#~ msgstr ""
+#~ "これにより、{counterpartyName}との暗号化セッションがリセットされます。次のメッセージで新しい安全な接続が確立されます。\n"
+#~ "\n"
+#~ "メッセージの送信または復号化に失敗する場合にこれを使用してください。メッセージ履歴には影響しません。"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:30
 msgid ""
@@ -3832,9 +3730,7 @@ msgstr "とにかく10秒後にタイムアウトします..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:58
 #: src/components/modals/ConfirmationModal.tsx:92
-msgid ""
-"TIP: Hold down shift when clicking {protipAction} to bypass this "
-"confirmation entirely."
+msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
 msgstr "ヒント: {protipAction}をクリックする際にシフトを押し続けると、この確認を完全にバイパスできます。"
 
 #: src/components/modals/ThreadSettingsModal.tsx:140
@@ -3850,9 +3746,7 @@ msgid "Title cannot exceed {THREAD_TITLE_MAX_CHARS} characters"
 msgstr "タイトルは{THREAD_TITLE_MAX_CHARS}文字を超えられません"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:74
-msgid ""
-"To disable notifications, please change the setting in your browser "
-"settings. Notifications cannot be disabled programmatically."
+msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "通知を無効にするには、ブラウザの設定で設定を変更してください。通知はプログラムで無効にすることはできません。"
 
 #: src/utils/dateFormatting.ts:31
@@ -3860,8 +3754,7 @@ msgid "Today"
 msgstr "今日"
 
 #: src/hooks/business/messages/useMessageComposer.ts:145
-msgid ""
-"Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
+msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "メッセージ内の言及が多すぎます。最大{MAX_MENTIONS_PER_MESSAGE}件まで許可されています。"
 
 #: src/components/RouteErrorFallback.tsx:57
@@ -3881,13 +3774,8 @@ msgid "Trying again usually works. If it doesn't, reload the app."
 msgstr "再試行すると通常はうまくいきます。うまくいかない場合は、アプリを再読み込みしてください。"
 
 #: src/components/modals/CreateSpaceModal.tsx:252
-msgid ""
-"Turn this on to let anyone with the invite link join automatically. Turn it "
-"off to preview and approve each person before they can join. Note: Public "
-"links give full read access to your Space while the link is active."
-msgstr ""
-"これをオンにすると、招待リンクを持っている誰でも自動的に参加できるようになります。オフにすると、参加する前に各人をプレビューして承認することができます。注意:"
-" 公開リンクは、リンクがアクティブな間、あなたのSpaceへの完全な読み取りアクセスを提供します。"
+msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
+msgstr "これをオンにすると、招待リンクを持っている誰でも自動的に参加できるようになります。オフにすると、参加する前に各人をプレビューして承認することができます。注意: 公開リンクは、リンクがアクティブな間、あなたのSpaceへの完全な読み取りアクセスを提供します。"
 
 #. placeholder {0}: role.displayName.trim()
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:404
@@ -3898,6 +3786,9 @@ msgstr "2つのロールで「{0}」という名前を共有することはで�
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:403
 msgid "Two roles can't share the tag @{0}."
 msgstr "2つのロールでタグ@{0}を共有することはできません。"
+
+#~ msgid "Type DELETE to confirm"
+#~ msgstr "DELETEと入力して確認してください"
 
 #: src/components/modals/UserSettingsModal/DangerZone.tsx:97
 msgid "Type RESET to confirm"
@@ -3937,9 +3828,7 @@ msgid "Unable to copy to clipboard"
 msgstr "クリップボードにコピーできません"
 
 #: src/services/SpaceService.ts:574
-msgid ""
-"Unable to leave Space due to incomplete configuration. The Space data may be"
-" corrupted."
+msgid "Unable to leave Space due to incomplete configuration. The Space data may be corrupted."
 msgstr "設定が不完全なため、スペースを退出できません。スペースデータが破損している可能性があります。"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
@@ -3977,7 +3866,8 @@ msgstr "ユーザーのブロックを解除"
 
 #: src/components/direct/DirectMessageContactsList.tsx:490
 #: src/components/modals/JoinSpaceModal.tsx:110
-#: src/services/MessageService.ts:4260 src/services/MessageService.ts:6409
+#: src/services/MessageService.ts:4260
+#: src/services/MessageService.ts:6409
 msgid "Unknown"
 msgstr "不明"
 
@@ -3998,11 +3888,16 @@ msgstr "不明な時間"
 #: src/components/message/MessageEditTextarea.tsx:605
 #: src/components/modals/NewDirectMessageModal.tsx:78
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:204 src/services/MessageService.ts:3652
-#: src/services/MessageService.ts:3847 src/services/MessageService.ts:4115
-#: src/services/MessageService.ts:4219 src/services/MessageService.ts:6984
-#: src/services/MessageService.ts:7100 src/services/MessageService.ts:7185
-#: src/services/MessageService.ts:7407 src/services/MessageService.ts:7609
+#: src/services/EncryptionService.ts:204
+#: src/services/MessageService.ts:3652
+#: src/services/MessageService.ts:3847
+#: src/services/MessageService.ts:4115
+#: src/services/MessageService.ts:4219
+#: src/services/MessageService.ts:6984
+#: src/services/MessageService.ts:7100
+#: src/services/MessageService.ts:7185
+#: src/services/MessageService.ts:7407
+#: src/services/MessageService.ts:7609
 #: src/utils/identityPlaceholder.ts:47
 msgid "Unknown User"
 msgstr "不明なユーザー"
@@ -4051,20 +3946,19 @@ msgid "Unpin this post"
 msgstr "この投稿のピン留めを解除"
 
 #: src/components/direct/DirectMessage.tsx:1214
-msgid ""
-"Until you reply, this sender will not see your display name or profile "
-"picture"
+msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "あなたが返信するまで、この送信者はあなたの表示名やプロフィール写真を見ることができません"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:591
-msgid ""
-"Update kick records for all members. Use this if kicked users still appear "
-"active to some members."
+msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "全メンバーのキック記録を更新します。キックされたユーザーがまだ一部のメンバーにアクティブとして表示される場合に使用してください。"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 2:1"
 msgstr "スペースのバナーをアップロード - PNG または JPG - 最適な比率は 2:1"
+
+#~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
+#~ msgstr "あなたのスペースのバナーをアップロード - PNGまたはJPG - 最適な比率3:1"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:237
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
@@ -4124,8 +4018,7 @@ msgstr "User Profile"
 
 #: src/components/modals/ConversationSettingsModal.tsx:373
 #: src/components/modals/ConversationSettingsModal.tsx:412
-msgid ""
-"Uses your global setting. Toggle to override for this conversation only."
+msgid "Uses your global setting. Toggle to override for this conversation only."
 msgstr "グローバル設定を使用します。この会話のみで上書きするには切り替えてください。"
 
 #: src/components/context/WebsocketProvider.tsx:313
@@ -4154,11 +4047,11 @@ msgid "View Thread"
 msgstr "スレッドを表示"
 
 #: src/components/modals/UserSettingsModal/SyncStatusLine.tsx:59
-msgid ""
-"Waiting for Spaces to finish syncing before this device publishes again."
+msgid "Waiting for Spaces to finish syncing before this device publishes again."
 msgstr "このデバイスが再度公開する前に、スペースの同期が完了するのを待っています。"
 
-#: src/components/shell/NavRail.tsx:60 src/components/wallet/WalletPage.tsx:30
+#: src/components/shell/NavRail.tsx:60
+#: src/components/wallet/WalletPage.tsx:30
 msgid "Wallet"
 msgstr "ウォレット"
 
@@ -4188,80 +4081,47 @@ msgstr "今日は何を考えていますか？"
 
 #: src/components/modals/ConversationSettingsModal.tsx:436
 #: src/components/modals/SpaceSettingsModal/General.tsx:306
-msgid ""
-"When enabled, all previous versions of edited messages will be saved. When "
-"disabled, only the current edited version is kept."
+msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "有効にすると、編集されたメッセージのすべての以前のバージョンが保存されます。無効にすると、現在の編集バージョンのみが保持されます。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:154
-msgid ""
-"When enabled, other users can see when you are active. This feature is not "
-"yet available."
+msgid "When enabled, other users can see when you are active. This feature is not yet available."
 msgstr "有効にすると、他のユーザーはあなたがアクティブなときに見ることができます。この機能はまだ利用できません。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:91
-msgid ""
-"When enabled, synchronizes your user data, Spaces, and Space keys between "
-"devices. Enabling this increases metadata visibility of your account, which "
-"can reveal when you have joined new Spaces, although not the Spaces you have"
-" joined."
-msgstr ""
-"有効にすると、あなたのユーザーデータ、スペース、およびスペースキーがデバイス間で同期されます。これを有効にすると、あなたのアカウントのメタデータの可視性が向上し、新しいスペースに参加したときが明らかになる可能性がありますが、参加したスペース自体は明らかになりません。"
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "有効にすると、あなたのユーザーデータ、スペース、およびスペースキーがデバイス間で同期されます。これを有効にすると、あなたのアカウントのメタデータの可視性が向上し、新しいスペースに参加したときが明らかになる可能性がありますが、参加したスペース自体は明らかになりません。"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:281
-msgid ""
-"When messages are signed, senders confirm they come from their key. When "
-"messages aren't signed, senders have plausible deniability. This setting "
-"applies to all messages in this Space."
-msgstr ""
-"メッセージが署名されると、送信者はそれが自分のキーから来ていることを確認します。メッセージが署名されていない場合、送信者は信頼性のある否認が可能です。この設定は、このスペース内のすべてのメッセージに適用されます。"
+msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
+msgstr "メッセージが署名されると、送信者はそれが自分のキーから来ていることを確認します。メッセージが署名されていない場合、送信者は信頼性のある否認が可能です。この設定は、このスペース内のすべてのメッセージに適用されます。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:329
-msgid ""
-"When muted, new messages won't show unread indicators or desktop "
-"notifications."
+msgid "When muted, new messages won't show unread indicators or desktop notifications."
 msgstr "ミュート中は、新しいメッセージが未読インジケーターやデスクトップ通知を表示しません。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:134
-msgid ""
-"When on, anyone with your Quorum address can see your display name, avatar, "
-"and bio, even outside the Spaces you share. Useful when someone DMs you and "
-"you want them to recognize who you are. Off by default."
-msgstr ""
-"有効にすると、あなたの Quorum "
-"アドレスを知っている人なら誰でも、あなたが共有しているスペース以外でも、あなたの表示名、アバター、自己紹介を見ることができます。誰かがあなたにDMを送ってきて、あなたが誰であるかを認識してほしい場合に便利です。デフォルトではオフになっています。"
+msgid "When on, anyone with your Quorum address can see your display name, avatar, and bio, even outside the Spaces you share. Useful when someone DMs you and you want them to recognize who you are. Off by default."
+msgstr "有効にすると、あなたの Quorum アドレスを知っている人なら誰でも、あなたが共有しているスペース以外でも、あなたの表示名、アバター、自己紹介を見ることができます。誰かがあなたにDMを送ってきて、あなたが誰であるかを認識してほしい場合に便利です。デフォルトではオフになっています。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:252
-msgid ""
-"When on, everyone in a Space channel sees when you're typing, and you see "
-"when they're typing."
+msgid "When on, everyone in a Space channel sees when you're typing, and you see when they're typing."
 msgstr "オンにすると、スペースチャンネルの全員があなたの入力時に表示され、あなたも彼らの入力時に表示されます。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:181
-msgid ""
-"When on, senders see when their messages reach your device, and you see when"
-" yours reach theirs."
-msgstr ""
-"オンにすると、送信者はメッセージがあなたのデバイスに届いたことを確認でき、あなたもあなたのメッセージが相手のデバイスに届いたことを確認できます。"
+msgid "When on, senders see when their messages reach your device, and you see when yours reach theirs."
+msgstr "オンにすると、送信者はメッセージがあなたのデバイスに届いたことを確認でき、あなたもあなたのメッセージが相手のデバイスに届いたことを確認できます。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:205
-msgid ""
-"When on, senders see when you've read their messages, and you see when yours"
-" are read."
+msgid "When on, senders see when you've read their messages, and you see when yours are read."
 msgstr "オンにすると、送信者はあなたがメッセージを読んだことを確認でき、あなたもあなたのメッセージが読まれたことを確認できます。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:275
-msgid ""
-"When on, your device fetches thumbnails from YouTube for the links you send,"
-" which reveals your IP to Google. When off, recipients see a plain link "
-"instead."
-msgstr ""
-"オンにすると、あなたのデバイスは送信したリンクのYouTubeサムネイルを取得し、これによりGoogleにあなたのIPアドレスが明らかになります。オフにすると、受信者は通常のリンクのみを見ることができます。"
+msgid "When on, your device fetches thumbnails from YouTube for the links you send, which reveals your IP to Google. When off, recipients see a plain link instead."
+msgstr "オンにすると、あなたのデバイスは送信したリンクのYouTubeサムネイルを取得し、これによりGoogleにあなたのIPアドレスが明らかになります。オフにすると、受信者は通常のリンクのみを見ることができます。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:229
-msgid ""
-"When on, your DM contacts see when you're typing, and you see when they're "
-"typing."
+msgid "When on, your DM contacts see when you're typing, and you see when they're typing."
 msgstr "オンの場合、DMの相手にあなたが入力中であることが表示され、相手が入力中であることもあなたに表示されます。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:370
@@ -4281,32 +4141,20 @@ msgid "When someone replies to your messages"
 msgstr "誰かがあなたのメッセージに返信したとき"
 
 #: src/components/modals/ConversationSettingsModal.tsx:308
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. The default "
-"for all conversations can be changed in User Settings."
-msgstr ""
-"メッセージに署名すると、それが自分のキーから来ていることを確認します。メッセージに署名しない場合、信頼性のある否認が可能です。すべての会話のデフォルトはユーザー設定で変更できます。"
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
+msgstr "メッセージに署名すると、それが自分のキーから来ていることを確認します。メッセージに署名しない場合、信頼性のある否認が可能です。すべての会話のデフォルトはユーザー設定で変更できます。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:111
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. You can "
-"control this setting for each conversation and message individually."
-msgstr ""
-"メッセージに署名すると、それが自分のキーから来ていることを確認します。メッセージに署名しない場合、信頼性のある否認が可能です。この設定は、各会話とメッセージごとに個別に制御できます。"
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
+msgstr "メッセージに署名すると、それが自分のキーから来ていることを確認します。メッセージに署名しない場合、信頼性のある否認が可能です。この設定は、各会話とメッセージごとに個別に制御できます。"
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:39
 msgid "Why do I need to do this?"
 msgstr "なぜこれをしなければならないのですか？"
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:40
-msgid ""
-"Without this backup, losing your device means losing your account - there's "
-"no 'forgot password' option. This is the price you pay for privacy :-)"
-msgstr ""
-"このバックアップがないと、デバイスを失うことはアカウントを失うことを意味します - "
-"パスワードを忘れた場合のオプションはありません。これはプライバシーのための代償です :-)"
+msgid "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
+msgstr "このバックアップがないと、デバイスを失うことはアカウントを失うことを意味します - パスワードを忘れた場合のオプションはありません。これはプライバシーのための代償です :-)"
 
 #: src/utils/dateFormatting.ts:32
 msgid "Yesterday"
@@ -4315,6 +4163,12 @@ msgstr "昨日"
 #: src/utils/dateFormatting.ts:33
 msgid "Yesterday at {time}"
 msgstr "昨日 {time}"
+
+#~ msgid "Yesterday at {timeFormatted}"
+#~ msgstr "昨日 {timeFormatted}"
+
+#~ msgid "You"
+#~ msgstr "あなた"
 
 #: src/components/modals/AddSpaceModal.tsx:116
 msgid "You are already a member of this Space."
@@ -4331,29 +4185,24 @@ msgid "You are the owner of this Space"
 msgstr "このスペースの所有者です"
 
 #: src/components/modals/NewDirectMessageModal.tsx:159
-msgid ""
-"You can change this later for this conversation by clicking the lock icon in"
-" the Conversation view."
+msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
 msgstr "会話ビューでロックアイコンをクリックすることで、この会話のために後で変更できます。"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:79
-msgid ""
-"You can manage your Space mention notifications in each Space's settings."
+msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "各スペースの設定でスペースのメンション通知を管理できます。"
 
 #: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
-msgid ""
-"You cancelled the passkey setup. You can try again, or continue without "
-"Passkey (still secure, just without device hardware protection)."
+msgid "You cancelled the passkey setup. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account."
 msgstr ""
-"passkeyの設定をキャンセルしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
+
+#: src/components/onboarding/steps/CreatePasskeyStep.tsx:14
+#~ msgid "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)."
+#~ msgstr "passkeyの設定をキャンセルしました。再度試すか、passkeyなしで続けることができます（まだ安全ですが、デバイスのハードウェア保護はありません）。"
 
 #: src/components/modals/GroupEditorModal.tsx:116
-msgid ""
-"You cannot delete a group that contains channels. Delete all {channelCount} "
-"channels in this group first."
-msgstr ""
-"チャンネルを含むグループを削除することはできません。このグループ内のすべての{channelCount}チャンネルを最初に削除してください。"
+msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
+msgstr "チャンネルを含むグループを削除することはできません。このグループ内のすべての{channelCount}チャンネルを最初に削除してください。"
 
 #: src/components/modals/SpaceSettingsModal/Channels.tsx:743
 msgid "You cannot delete the default channel."
@@ -4381,34 +4230,33 @@ msgid "You have new unread messages"
 msgstr "新しい未読メッセージがあります"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:56
-msgid ""
-"You must assign yourself a role for moderation actions (except kicking). "
-"Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
-msgstr ""
-"モデレーションアクション（キックを除く）を行うには、自分に役割を割り当てる必要があります。削除およびミュート権限は慎重に付与してください。<0><1>詳細を学ぶ</1></0>"
+msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr "モデレーションアクション（キックを除く）を行うには、自分に役割を割り当てる必要があります。削除およびミュート権限は慎重に付与してください。<0><1>詳細を学ぶ</1></0>"
+
+#~ msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+#~ msgstr "再招待されない限り再参加できません。既存のメッセージは削除されません。"
 
 #: src/components/modals/BlockUserModal.tsx:99
-msgid ""
-"You won't see any of {resolvedNameText}'s messages in this Space. This only "
-"affects your view, and only in this Space. You can unblock anytime."
-msgstr ""
-"このスペースでは、{resolvedNameText}のメッセージは表示されません。これはあなたの表示にのみ影響し、このスペース内でのみです。いつでもブロック解除できます。"
+msgid "You won't see any of {resolvedNameText}'s messages in this Space. This only affects your view, and only in this Space. You can unblock anytime."
+msgstr "このスペースでは、{resolvedNameText}のメッセージは表示されません。これはあなたの表示にのみ影響し、このスペース内でのみです。いつでもブロック解除できます。"
+
+#~ msgid "You won't see any of {userName}'s messages in this Space. This only affects your view, and only in this Space. You can unblock anytime."
+#~ msgstr "このスペースでは、{userName}さんのメッセージは表示されません。これはあなたの表示のみに影響し、このスペース内でのみ適用されます。いつでもブロックを解除できます。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:467
-msgid ""
-"You'll need an invite to rejoin, though a public invite link will still work"
-" if this Space has one. Your existing messages will NOT be deleted."
+msgid "You'll need an invite to rejoin, though a public invite link will still work if this Space has one. Your existing messages will NOT be deleted."
 msgstr "再参加するには招待状が必要ですが、このスペースに公開招待リンクがある場合は、引き続き機能します。既存のメッセージは削除されません。"
 
 #: src/components/onboarding/steps/BackupKeyStep.tsx:19
-msgid ""
-"You'll need this file to recover your account if you lose access to your "
-"device."
+msgid "You'll need this file to recover your account if you lose access to your device."
 msgstr "デバイスへのアクセスを失った場合にアカウントを回復するためにこのファイルが必要です。"
 
 #: src/components/modals/BlockUserModal.tsx:98
 msgid "You'll see {resolvedNameText}'s messages in this Space again."
 msgstr "このスペースで{resolvedNameText}のメッセージが再び表示されます。"
+
+#~ msgid "You'll see {userName}'s messages in this Space again."
+#~ msgstr "このスペースで{userName}さんのメッセージが再び表示されます。"
 
 #: src/components/notifications/NotificationPanel.tsx:234
 msgid "You're all caught up!"
@@ -4419,12 +4267,8 @@ msgid "You're all set!"
 msgstr "設定完了！"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:587
-msgid ""
-"You're not listed in this Space's members. Correcting this will add you to "
-"the Space Members list (stores your profile locally with your inbox "
-"address)."
-msgstr ""
-"あなたはこのSpaceのメンバーにリストされていません。これを修正すると、あなたはSpaceメンバーリストに追加されます（あなたのプロフィールがローカルに保存され、受信トレイのアドレスが保存されます）。"
+msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
+msgstr "あなたはこのSpaceのメンバーにリストされていません。これを修正すると、あなたはSpaceメンバーリストに追加されます（あなたのプロフィールがローカルに保存され、受信トレイのアドレスが保存されます）。"
 
 #: src/components/ui/OfflineBanner.tsx:56
 msgid "You're offline"
@@ -4452,30 +4296,16 @@ msgid "You've been invited to join a Space"
 msgstr "スペースに参加するよう招待されました"
 
 #: src/components/onboarding/steps/DisplayNameStep.tsx:60
-msgid ""
-"Your account address is a unique public identifier derived from your account"
-" key. Others can use it to find and message you. Think of it like a username"
-" that can never change."
-msgstr ""
-"アカウントアドレスは、アカウントキーから派生した一意の公開識別子です。他のユーザーがあなたを見つけたり、メッセージを送ったりするために使用できます。ユーザー名のように永遠に変わらないものと考えてください。"
+msgid "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
+msgstr "アカウントアドレスは、アカウントキーから派生した一意の公開識別子です。他のユーザーがあなたを見つけたり、メッセージを送ったりするために使用できます。ユーザー名のように永遠に変わらないものと考えてください。"
 
 #: src/components/onboarding/steps/ImportKeyStep.tsx:179
-msgid ""
-"Your account key is a private key that proves ownership of your account. You"
-" can download it as a file (.key) or copy it from your account settings. "
-"Keep it safe — whoever has it can access your account."
-msgstr ""
-"あなたのアカウントキーは、あなたのアカウントの所有権を証明する秘密鍵です。ファイル（.key）としてダウンロードするか、アカウント設定からコピーできます。安全に保管してください"
-" — それを持っている人は誰でもあなたのアカウントにアクセスできます。"
+msgid "Your account key is a private key that proves ownership of your account. You can download it as a file (.key) or copy it from your account settings. Keep it safe — whoever has it can access your account."
+msgstr "あなたのアカウントキーは、あなたのアカウントの所有権を証明する秘密鍵です。ファイル（.key）としてダウンロードするか、アカウント設定からコピーできます。安全に保管してください — それを持っている人は誰でもあなたのアカウントにアクセスできます。"
 
 #: src/components/onboarding/steps/SaveKeyToPasskeyStep.tsx:36
-msgid ""
-"Your account key is your unique identity in Quorum. It's like a master "
-"password that proves you are you - but it's generated automatically and "
-"stored securely in your passkey."
-msgstr ""
-"アカウントキーは、Quorum "
-"におけるあなたのユニークなアイデンティティです。これは、あなたがあなたであることを証明するマスターパスワードのようなものですが、自動的に生成され、passkeyに安全に保存されます。"
+msgid "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
+msgstr "アカウントキーは、Quorum におけるあなたのユニークなアイデンティティです。これは、あなたがあなたであることを証明するマスターパスワードのようなものですが、自動的に生成され、passkeyに安全に保存されます。"
 
 #: src/components/onboarding/steps/WelcomeStep.tsx:18
 msgid "Your communities, your rules - no platform can ban you."
@@ -4486,22 +4316,15 @@ msgid "Your Details"
 msgstr "あなたの詳細"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:292
-msgid ""
-"Your display name, profile picture, and bio will be readable by anyone with "
-"your Quorum address, including people outside the Spaces you share with "
-"them. Existing Space members will see your latest profile even if they "
-"joined before you set it. You can turn this off at any time."
-msgstr ""
-"あなたの表示名、プロフィール写真、自己紹介は、あなたの Quorum "
-"アドレスを知っている人なら誰でも閲覧できます。これには、あなたが共有しているスペース以外のユーザーも含まれます。既存のスペースメンバーは、あなたが設定する前に参加していたとしても、あなたの最新のプロフィールを見ることができます。これはいつでもオフにできます。"
+msgid "Your display name, profile picture, and bio will be readable by anyone with your Quorum address, including people outside the Spaces you share with them. Existing Space members will see your latest profile even if they joined before you set it. You can turn this off at any time."
+msgstr "あなたの表示名、プロフィール写真、自己紹介は、あなたの Quorum アドレスを知っている人なら誰でも閲覧できます。これには、あなたが共有しているスペース以外のユーザーも含まれます。既存のスペースメンバーは、あなたが設定する前に参加していたとしても、あなたの最新のプロフィールを見ることができます。これはいつでもオフにできます。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:259
 msgid "Your name in this Space"
 msgstr "このスペースでのあなたの名前"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:135
-msgid ""
-"Your next message to each contact will establish a fresh secure connection."
+msgid "Your next message to each contact will establish a fresh secure connection."
 msgstr "各連絡先への次のメッセージで新しい安全な接続が確立されます。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:486
@@ -4513,17 +4336,11 @@ msgid "Your private key"
 msgstr "あなたの秘密鍵"
 
 #: src/components/modals/UserSettingsModal/Security.tsx:545
-msgid ""
-"Your private key is the only proof of ownership of your account. Anyone who "
-"has it can impersonate you and steal your Space's Apex earnings. Never share"
-" it."
-msgstr ""
-"あなたの秘密鍵は、あなたのアカウントの唯一の所有権の証明です。それを持っている人は誰でもあなたになりすまし、あなたのSpaceのApex収益を盗むことができます。決して共有しないでください。"
+msgid "Your private key is the only proof of ownership of your account. Anyone who has it can impersonate you and steal your Space's Apex earnings. Never share it."
+msgstr "あなたの秘密鍵は、あなたのアカウントの唯一の所有権の証明です。それを持っている人は誰でもあなたになりすまし、あなたのSpaceのApex収益を盗むことができます。決して共有しないでください。"
 
 #: src/utils/imageProcessing/errors.ts:40
-msgid ""
-"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
-" JPEG file extension."
+msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "プロフィール画像のサイズは{maxSize}以下でなければならず、PNG、JPG、またはJPEGファイル拡張子でなければなりません。"
 
 #: src/components/modals/UserSettingsModal/General.tsx:138
@@ -4545,115 +4362,3 @@ msgstr "YouTube動画"
 #: src/components/ui/YouTubeFacade.tsx:114
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube動画サムネイル"
-
-#~ msgid "{contextCount} bookmark here"
-#~ msgstr "{contextCount} マーカーがあります"
-
-#~ msgid "{contextCount} bookmarks here"
-#~ msgstr "{contextCount} マーカーがあります"
-
-#~ msgid "An error occurred while deleting the Space. Please try again."
-#~ msgstr "スペースの削除中にエラーが発生しました。もう一度お試しください。"
-
-#~ msgid ""
-#~ "Anyone who sees or photographs this QR code can take full control of your "
-#~ "Quorum account and steal any associated funds. Only proceed if you are in a "
-#~ "private location and ready to scan immediately."
-#~ msgstr ""
-#~ "このQRコードを見たり写真を撮ったりした人は、あなたのQuorumアカウントを完全に制御し、関連する資金を盗むことができます。プライベートな場所にいて、すぐにスキャンする準備ができている場合のみ進んでください。"
-
-#~ msgid ""
-#~ "Are you sure you want to leave this Space? You won't be able to rejoin "
-#~ "unless you are re-invited."
-#~ msgstr "このスペースを離れますか？再招待されない限り再参加できません。"
-
-#~ msgid "Display Name"
-#~ msgstr "表示名"
-
-#~ msgid ""
-#~ "Export an encrypted backup of your direct messages to restore them if you "
-#~ "lose access to this device."
-#~ msgstr "このデバイスへのアクセスを失った場合に復元できるように、暗号化されたバックアップをエクスポートします。"
-
-#~ msgid "Hide"
-#~ msgstr "非表示"
-
-#~ msgid "I Understand, Copy"
-#~ msgstr "理解しました、コピー"
-
-#~ msgid "I Understand, Show QR"
-#~ msgstr "理解しました、QRを表示"
-
-#~ msgid "Pinned by {0}"
-#~ msgstr "{0} によってピン留めされました"
-
-#~ msgid ""
-#~ "Private key copied. It will be cleared from your clipboard automatically in "
-#~ "60 seconds."
-#~ msgstr "秘密鍵がコピーされました。60秒後にクリップボードから自動的にクリアされます。"
-
-#~ msgid ""
-#~ "Private key copied. Store it securely and clear your clipboard when you're "
-#~ "done."
-#~ msgstr "秘密鍵がコピーされました。安全な場所に保管し、完了したらクリップボードをクリアしてください。"
-
-#~ msgid "QR code will auto-hide in 60 seconds"
-#~ msgstr "QRコードは60秒後に自動的に非表示になります"
-
-#~ msgid "Reset Encryption Session"
-#~ msgstr "暗号化セッションをリセット"
-
-#~ msgid ""
-#~ "Reset the encryption session if messages fail to send or decrypt. The next "
-#~ "message will establish a fresh secure connection."
-#~ msgstr "メッセージの送信または復号化に失敗した場合、暗号化セッションをリセットしてください。次のメッセージで新しい安全な接続が確立されます。"
-
-#~ msgid ""
-#~ "This action cannot be undone and will permanently delete this Space and all "
-#~ "of its channels and messages."
-#~ msgstr "この操作は取り消せません。これにより、このスペースとすべてのチャネルおよびメッセージが永久に削除されます。"
-
-#~ msgid "this contact"
-#~ msgstr "この連絡先"
-
-#~ msgid ""
-#~ "This copies your private key to the clipboard in plain text. Anyone with "
-#~ "access to your clipboard can take full control of your account. Store it "
-#~ "somewhere safe and clear your clipboard afterwards."
-#~ msgstr ""
-#~ "これにより、秘密鍵がプレーンテキストでクリップボードにコピーされます。クリップボードにアクセスできる人は誰でも、あなたのアカウントを完全に制御できます。安全な場所に保管し、後でクリップボードをクリアしてください。"
-
-#~ msgid ""
-#~ "This will reset the encryption session with {counterpartyName}. The next message will establish a fresh secure connection.\n"
-#~ "\n"
-#~ "Use this if messages are failing to send or decrypt. Message history is not affected."
-#~ msgstr ""
-#~ "これにより、{counterpartyName}との暗号化セッションがリセットされます。次のメッセージで新しい安全な接続が確立されます。\n"
-#~ "\n"
-#~ "メッセージの送信または復号化に失敗する場合にこれを使用してください。メッセージ履歴には影響しません。"
-
-#~ msgid "Type DELETE to confirm"
-#~ msgstr "DELETEと入力して確認してください"
-
-#~ msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
-#~ msgstr "あなたのスペースのバナーをアップロード - PNGまたはJPG - 最適な比率3:1"
-
-#~ msgid "Yesterday at {timeFormatted}"
-#~ msgstr "昨日 {timeFormatted}"
-
-#~ msgid "You"
-#~ msgstr "あなた"
-
-#~ msgid ""
-#~ "You won't be able to rejoin unless you are re-invited. Your existing "
-#~ "messages will NOT be deleted."
-#~ msgstr "再招待されない限り再参加できません。既存のメッセージは削除されません。"
-
-#~ msgid ""
-#~ "You won't see any of {userName}'s messages in this Space. This only affects "
-#~ "your view, and only in this Space. You can unblock anytime."
-#~ msgstr ""
-#~ "このスペースでは、{userName}さんのメッセージは表示されません。これはあなたの表示のみに影響し、このスペース内でのみ適用されます。いつでもブロックを解除できます。"
-
-#~ msgid "You'll see {userName}'s messages in this Space again."
-#~ msgstr "このスペースで{userName}さんのメッセージが再び表示されます。"
