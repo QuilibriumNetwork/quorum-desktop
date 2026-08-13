@@ -17,7 +17,7 @@ export const CompleteStep: React.FC<StepProps> = ({ flow }) => {
       <h1 className="onboarding-title">{t`You're all set!`}</h1>
       <p className="onboarding-description">
         {i18n._(
-          'Welcome to Quorum, {name}! Your account is secured and ready to go.',
+          'Welcome to Quorum, {name}! Your account is ready to go.',
           { name: flow.displayName }
         )}
       </p>

@@ -11,13 +11,13 @@ interface StepProps {
 function getErrorMessage(code: string): string {
   switch (code) {
     case 'user_cancelled':
-      return t`You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection).`;
+      return t`You cancelled the passkey setup. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account.`;
     case 'not_supported':
-      return t`Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection).`;
+      return t`Passkeys aren't supported on this browser, so you'll need to continue without one. Your account key will be stored on this device, so anyone who can read its files could take over your account.`;
     case 'timeout':
-      return t`The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection).`;
+      return t`The passkey setup timed out. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account.`;
     default:
-      return t`Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection).`;
+      return t`Passkey setup failed. You can try again, or continue without one. Without a passkey your account key is stored on this device, so anyone who can read its files could take over your account.`;
   }
 }
 
