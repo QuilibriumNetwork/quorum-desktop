@@ -276,9 +276,15 @@ Verify the app loads in browser — check for blank pages (ESM import failures a
 
 ### 5d. Mobile compatibility (if applicable)
 ```bash
-cd $REPO && yarn mobile
+cd "$(dirname "$REPO")/quorum-mobile" && yarn start
 ```
 Check Metro bundles without errors. If it fails, look for ESM-only packages (Phase 2d).
+
+> This step used to run `yarn mobile` inside `$REPO`, against an Expo playground
+> embedded in quorum-desktop. That workspace was deleted on 2026-08-13, so there
+> is no Metro bundler in quorum-desktop any more and the old command fails with
+> "command not found". Native verification happens in the `quorum-mobile`
+> checkout, a sibling of `$REPO` alongside `quorum-shared`.
 
 ### 5e. Check for DOM API leaks
 ```bash
