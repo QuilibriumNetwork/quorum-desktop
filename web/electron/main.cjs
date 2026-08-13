@@ -89,11 +89,11 @@ ipcMain.handle('clipboard:copy-secret', (_event, text) => {
 app.on('before-quit', clearSensitiveClipboardIfUnchanged);
 
 // App/taskbar icon. In dev the asset lives in public/; in a packaged build
-// Vite copies public/ into dist/web/. Used for the runtime window + taskbar
+// Vite copies public/ into dist/. Used for the runtime window + taskbar
 // (packaged installer/exe icons come from electron-builder's build.icon).
 const windowIcon = path.join(
   __dirname,
-  isDev ? '../../public/icon-512.png' : '../../dist/web/icon-512.png'
+  isDev ? '../../public/icon-512.png' : '../../dist/icon-512.png'
 );
 
 function createWindow() {
@@ -114,7 +114,7 @@ function createWindow() {
   mainWindow.loadURL(
     isDev
       ? devUrl
-      : `file://${path.join(__dirname, '../../dist/web/index.html')}`,
+      : `file://${path.join(__dirname, '../../dist/index.html')}`,
     {}
   );
 

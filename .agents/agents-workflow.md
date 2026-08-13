@@ -214,7 +214,7 @@ Before implementing, read relevant docs:
 
 | Task | Primary Documentation |
 |------|----------------------|
-| Component architecture | [Component Architecture Workflow](issues/mobile-dev/docs/component-architecture-workflow-explained.md) |
+| Component architecture | [Component Management Guide](docs/component-management-guide.md) |
 | Testing primitives | Primitives Testing Guide |
 | Repository structure | Web/Native Repo Structure |
 | Platform detection | [Quick Reference - Platform Detection](../AGENTS.md#mobile-first-development) |

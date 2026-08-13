@@ -121,14 +121,10 @@ const EXCEPTIONS: Record<string, string> = {
     'receives an already-RESOLVED `displayName` string via `displayData` (computed by useBatchSearchResultsDisplay, which DOES import src/identity) — a pure presentational pass-through, same category as UserAvatar/NotificationItem.',
   'src/hooks/business/user/useVisibleSenderProfileFallback.ts':
     "already reviewed and extensively documented in-file by a prior tranche (Phase D rows 22-24 fix round 1): every REAL name-rendering consumer has migrated to src/identity; the one remaining `displayName` consumer is quorum-shared's `replaceMentionsWithDisplayNames` building a 'replying to' preview line, and `primaryUsername`/`globalDisplayName` feed `useMentionInput.ts`'s SEARCH matching (outside this migration's scope, cannot call a per-candidate hook in a loop). Not re-verified line-by-line this tranche; deferred to that existing documentation rather than re-litigated.",
-  'src/components/user/UserAvatar/UserAvatar.web.tsx':
+  'src/components/user/UserAvatar/UserAvatar.tsx':
     'receives an already-resolved BARE name as a `displayName` prop (initials/color derivation only), never looks anything up itself.',
-  'src/components/user/UserAvatar/UserAvatar.native.tsx':
-    'same as the .web sibling — already-resolved prop, no lookup.',
-  'src/components/Router/Router.web.tsx':
+  'src/components/Router/Router.tsx':
     'type-only: `displayName` is a field on the app-level `user` object threaded through as a prop to children; Router itself renders none of it.',
-  'src/components/Router/Router.native.tsx':
-    'same as the .web sibling — type-only pass-through.',
   'src/components/modals/ChannelEditorModal.tsx':
     '`role.displayName` is a ROLE name (mention-role option label), not a member name — out of scope per the recipe (role display names are not member names).',
   'src/components/modals/SpaceSettingsModal/Roles.tsx':
@@ -203,8 +199,13 @@ const EXCEPTIONS: Record<string, string> = {
   // carried over from the prior tranche's wording. ------------------------
   'src/hooks/business/ui/useUserProfileModal.ts':
     "VERIFIED dead code: `UserProfileModalUser`'s `displayName`/`primaryUsername`/`globalDisplayName` fields are populated by every caller (Channel.tsx x2, Message.tsx, BookmarksPage.tsx) but `UserProfile.tsx` — the only consumer of `selectedUser` — resolves its own name via `useResolvedMemberName(props.user.address, ...)` and never reads `props.user.displayName` (confirmed: no other consumer of `userProfileModal.selectedUser` exists in src/). Left unfixed: deleting the fields requires touching every caller's object-literal construction, a larger blast radius than this wave's assigned rows.",
-  'src/components/message/MessageComposer.native.tsx':
-    "OBSOLETE COMPONENT — ruled by the operator 2026-08-11, after an independent review re-flagged this as a live HIGH. `mapSenderToUser(inReplyTo.content.senderId).displayName` does render a raw, unguarded name into the \"Replying to {user}\" reply-preview label, and Metro's platform-extension resolution WOULD make it the mobile build's source — but the embedded `mobile/` workspace is a superseded POC (last touched 2026-03-24; the real mobile app is the separate quorum-mobile repo) and this component will never be used. Not a live vulnerability, and not worth fixing. The whole `mobile/` workspace and its `.native.tsx` siblings are a deletion candidate; until they go, this entry exists so the next audit does not re-raise it as a finding.",
+  // RESOLVED 2026-08-13 by deletion, as this entry anticipated:
+  // `src/components/message/MessageComposer.native.tsx` rendered a raw,
+  // unguarded name into its "Replying to {user}" reply-preview label. It was
+  // ruled not-a-live-vulnerability on 2026-08-11 because the embedded `mobile/`
+  // workspace that would have bundled it was a superseded POC. That workspace
+  // and all 30 `.native.tsx` siblings are now gone, so the finding is moot and
+  // its exception entry is removed rather than carried.
   'src/hooks/business/channels/useChannelData.ts':
     "VERIFIED real bug: `generateVirtualizedUserList`'s member-sidebar SEARCH filter (`member.displayName?.toLowerCase().includes(term)`) matches only `curr.display_name` — the per-space OVERRIDE tier alone, no global-name or QNS fallback. A member with no per-space nickname (the default/common state, per this file's own avatar-ladder comment) has an EMPTY `displayName`, so the sidebar search can only find them by pasting their raw address, never by the global/QNS name `<MemberName>` visibly renders beside them (fixed for the AVATAR half of this same file's output in finding 2, but not this search path). Left unfixed: not named in this wave's 9 findings; flagged rather than silently patched.",
 };

@@ -2,9 +2,6 @@
   "name": "quorum-desktop",
   "private": true,
   "version": "2.1.0-2",
-  "workspaces": [
-    "mobile"
-  ],
   "main": "web/electron/main.cjs",
   "type": "module",
   "build": {
@@ -47,14 +44,7 @@
     "test": "vitest",
     "test:run": "vitest --run",
     "harness": "vitest --run --config vitest.harness.config.ts",
-    "harness:cross": "node src/dev/tests/harness/run-cross.mjs",
-    "mobile": "cd mobile && expo start --dev-client",
-    "mobile:clear": "cd mobile && expo start --dev-client --clear",
-    "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
-    "mobile:connect": "adb shell am force-stop com.quorum && adb shell am start -n com.quorum/.MainActivity -a android.intent.action.VIEW -d \"exp+quorum://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081\"",
-    "mobile:android": "cd mobile && expo run:android",
-    "mobile:ios": "cd mobile && expo run:ios",
-    "mobile:web": "cd mobile && expo start --web"
+    "harness:cross": "node src/dev/tests/harness/run-cross.mjs"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

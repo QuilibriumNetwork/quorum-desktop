@@ -24,6 +24,6 @@
     "types": ["node"]
   },
   "include": ["src"],
-  "exclude": ["src/dev/tests", "src/**/*.native.tsx", "src/**/*.native.ts"],
+  "exclude": ["src/dev/tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -569,7 +569,7 @@ interface ButtonProps {
 ## Related Documentation
 
 - Component Architecture Masterplan
-- [Primitive Migration Audit](../issues/mobile-dev/.archived/primitive-migration-audit.md)
+- [Primitive Migration Audit](../issues/.archived/mobile-dev/.archived/primitive-migration-audit.md)
 - [quorum-shared Architecture](./../docs/quorum-shared-architecture.md)
 - [Cross-Platform Theming](../docs/features/cross-platform-theming.md)
 

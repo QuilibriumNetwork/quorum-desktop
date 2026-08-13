@@ -6,12 +6,12 @@ ai_generated: true
 created: 2026-03-15
 updated: 2026-03-15
 related_docs:
-  - .agents/docs/expo-dev-testing-guide.md
+  - .agents/docs/.archived/expo-dev-testing-guide.md
 ---
 
 # Android Build Workflow
 
-> **⚠️ Deprecated — targets the in-repo `mobile/` playground (single-repo era).** The `yarn mobile:android` / `yarn mobile:clear` / `yarn mobile:connect` commands below drive the **`quorum-desktop/mobile/` test playground**, a leftover from the abandoned single-repo cross-platform plan. The real Android build for the shipping mobile app lives in the separate **`quorum-mobile`** repo (`yarn android` / `expo run:android` there). This guide remains only until the stale `mobile/` folder + `mobile:*` scripts are removed from this repo (follow-up code/config cleanup). **For real Android builds, use `quorum-mobile`.**
+> **🗄️ ARCHIVED 2026-08-13 — everything this guide describes has been deleted.** The `yarn mobile:android` / `yarn mobile:clear` / `yarn mobile:connect` commands below drove the `quorum-desktop/mobile/` playground, a leftover from the abandoned plan to build the mobile app inside this repo. That workspace was removed on 2026-08-13 (see [`2026-08-13-remove-single-repo-cross-platform-leftovers.md`](../../issues/2026-08-13-remove-single-repo-cross-platform-leftovers.md)). **None of the commands below will work.** Real Android builds live in the separate **`quorum-mobile`** repo. Kept only for the Windows environment notes (`ANDROID_HOME` / `JAVA_HOME` / `GRADLE_USER_HOME`, and the accented-username junction workaround), which still apply to native builds anywhere on this machine.
 
 > **AI-Generated**: May contain errors. Verify before use.
 
@@ -227,7 +227,7 @@ cd mobile/android && ./gradlew clean
 
 ## Related Documentation
 
-- [Expo Dev Testing Guide](../expo-dev-testing-guide.md) — General Expo setup and testing workflows
+- [Expo Dev Testing Guide](expo-dev-testing-guide.md) — General Expo setup and testing workflows
 - [Metro Bundling Bug Report](../../issues/.done/2026-03-15-mobile-metro-bundling-failure.md) — Full investigation details
 
 ---

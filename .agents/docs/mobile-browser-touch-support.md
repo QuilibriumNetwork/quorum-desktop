@@ -1,18 +1,32 @@
 ---
-type: task
-title: Mobile/Touch Implementation Transition Plan
-status: in-progress
-priority: low
-created: 2026-01-09T00:00:00.000Z
-updated: '2026-04-09'
+type: doc
+title: Mobile-Browser Touch Support
+status: done
+created: 2026-01-09
+updated: 2026-08-13
 ---
 
-# Mobile/Touch Implementation Transition Plan
+# Mobile-Browser Touch Support
 
-> **Status (2026-04-09)**: The `quorum-mobile` native app now exists as a separate repo. The "Phase 2: When Native App is Ready" phase described below has begun. Key decisions from this doc have been validated:
-> - All mobile browser components in this repo (`MobileDrawer`, `MessageActionsDrawer`, `EmojiPickerDrawer`) are **kept** — they serve mobile browser users and remain correct
-> - Native equivalents are being built in `quorum-mobile` using these as templates
-> - The "Template Usage Strategy" section at the bottom remains a useful reference for `quorum-mobile` devs
+> **What this is, and why it is a doc rather than a plan (2026-08-13).** This started
+> life as a *transition* plan: an audit of this repo's touch support, written to decide
+> what to keep once a native app existed. That question has been answered, and the
+> answer was **keep all of it**. So the audit below is no longer a plan to execute; it
+> is the inventory of a live subsystem, and the only documentation this repo has for it.
+> It was moved here from `issues/mobile-dev/` when that folder was archived.
+>
+> **This is about phones using the web app in a browser — not about React Native.**
+> Desktop-browser-on-a-phone is a supported case and always has been. The components
+> below are load-bearing: as of 2026-08-13, `MessageActionsDrawer` has 376 references
+> in `src/`, `EmojiPickerDrawer` 117, `MobileDrawer` 87. Do not read "mobile" here as
+> "the native app" and delete something.
+>
+> The native app lives in `quorum-mobile` and reimplements these interactions itself;
+> the "Template Usage Strategy" section at the end is the part written for its
+> developers, and is the one part of this file that faces outward.
+>
+> Confirmed still accurate on 2026-08-13. The phase framing ("when the native app is
+> ready") is historical — it is ready, it shipped, and nothing here was removed.
 
 ## Executive Summary
 

@@ -1,18 +1,17 @@
 /**
- * CRYPTO UTILITIES INDEX
- * ======================
+ * CRYPTO UTILITIES
+ * ================
  *
- * This file acts as the entry point for crypto utilities.
- * It will automatically resolve to the correct platform-specific implementation:
- * - crypto.web.ts for web browsers
- * - crypto.native.ts for React Native
+ * Hashing and encoding re-exports, hex conversion helpers, and UserConfig
+ * decryption.
  *
- * This is just a fallback for TypeScript - the actual platform-specific
- * files will be used by the bundlers (Vite for web, Metro for mobile).
+ * This file used to have a `crypto.web.ts` twin holding a byte-identical copy
+ * of every named export, from when a `crypto.native.ts` was meant to be the
+ * third sibling. Because Vite resolved `.web.ts` ahead of `.ts`, the twin was
+ * what actually shipped while TypeScript only ever checked this file — so the
+ * two could have silently diverged. They had not, and the twin is now gone.
  */
 
-// Default export for web (this file is mainly for TypeScript)
-// The bundlers will actually use the .web.ts or .native.ts versions
 export { sha256 } from 'multiformats/hashes/sha2';
 export { base58btc } from 'multiformats/bases/base58';
 

@@ -8,11 +8,6 @@ function isElectron(): boolean {
     typeof (window as any).electronAPI !== 'undefined';
 }
 
-function isMobileApp(): boolean {
-  return typeof navigator !== 'undefined' &&
-    navigator.product === 'ReactNative';
-}
-
 function detectOS(): string {
   if (typeof navigator === 'undefined') return 'Unknown';
   const ua = navigator.userAgent;
@@ -52,12 +47,16 @@ function detectBrowserSync(): string {
 
 /**
  * Returns a human-readable suggested device name.
- * Examples: "Desktop App (Windows)", "Chrome (macOS)", "Mobile App (iOS)"
+ * Examples: "Desktop App (Windows)", "Chrome (macOS)", "Safari (iOS)"
+ *
+ * There is deliberately no "Mobile App" case. A React Native check used to sit
+ * here, but this bundle only ever runs in a browser or in Electron, so it could
+ * never fire. Phone users reach this app through the browser and are named for
+ * the browser they used, which is what actually distinguishes their device.
  */
 export async function getDeviceName(): Promise<string> {
   const os = detectOS();
   if (isElectron()) return `Desktop App (${os})`;
-  if (isMobileApp()) return `Mobile App (${os})`;
   const isBrave = await detectBrave();
   const browser = isBrave ? 'Brave' : detectBrowserSync();
   return `${browser} (${os})`;
